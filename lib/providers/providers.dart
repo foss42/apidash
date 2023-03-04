@@ -59,16 +59,24 @@ class CollectionStateNotifier extends StateNotifier<List<RequestModel>> {
     HTTPVerb? method,
     String? url,
     int? requestTabIndex,
+    List<KVRow>? requestHeaders,
+    List<KVRow>? requestParams,
+    ContentType? requestBodyContentType,
     dynamic requestBody,
-    int? responseStatus,
-    Map<String, String>? responseHeaders,
-    String? responseBody,
   }) {
     final idx = idxOfId(id);
     final newModel = state[idx].copyWith(
       method: method,
       url: url,
+      requestTabIndex: requestTabIndex,
+      requestHeaders: requestHeaders,
+      requestParams: requestParams,
+      requestBodyContentType: requestBodyContentType,
+      requestBody: requestBody,
     );
+    //print(newModel);
     state = [...state.sublist(0, idx), newModel, ...state.sublist(idx + 1)];
   }
+
+  Future<void> sendRequest(String id) async {}
 }

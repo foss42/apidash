@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/providers.dart';
+import 'editor_pane/url_card.dart';
+import 'editor_pane/details_card.dart';
 
 class RequestEditorPane extends ConsumerStatefulWidget {
   const RequestEditorPane({
@@ -21,13 +23,19 @@ class _RequestEditorPaneState extends ConsumerState<RequestEditorPane> {
   Widget build(BuildContext context) {
     final activeId = ref.watch(activeItemIdStateProvider);
     if (activeId == null) {
-      return Text("Select One");
+      return Text("Select");
     } else {
       return Padding(
         padding: const EdgeInsets.all(8),
         child: Column(
           children: [
-            Container(),
+            EditorPaneRequestURLCard(),
+            SizedBox(
+              height: 10,
+            ),
+            Expanded(
+              child: EditorPaneRequestDetailsCard(),
+            ),
           ],
         ),
       );

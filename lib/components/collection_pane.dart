@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/models.dart';
 import '../providers/providers.dart';
+import '../utils/utils.dart';
 import '../consts.dart';
 
 class CollectionPane extends ConsumerStatefulWidget {
@@ -73,6 +74,7 @@ class _RequestListState extends ConsumerState<RequestList> {
   @override
   Widget build(BuildContext context) {
     final requestItems = ref.watch(collectionStateNotifierProvider);
+
     return ReorderableListView.builder(
       buildDefaultDragHandles: false,
       shrinkWrap: true,
@@ -92,7 +94,9 @@ class _RequestListState extends ConsumerState<RequestList> {
           key: Key(requestItems[index].id),
           index: index,
           child: RequestItem(
-              id: requestItems[index].id, requestModel: requestItems[index]),
+            id: requestItems[index].id,
+            requestModel: requestItems[index],
+          ),
         );
       },
     );
@@ -156,7 +160,7 @@ class _RequestItemState extends ConsumerState<RequestItem> {
                 ),
                 Expanded(
                   child: Text(
-                    widget.requestModel.id,
+                    getRequestTitleFromUrl(widget.requestModel.url),
                     softWrap: false,
                     overflow: TextOverflow.fade,
                   ),
@@ -215,12 +219,13 @@ class MethodBox extends StatelessWidget {
       text = "DEL";
     }
     return SizedBox(
-      width: 25,
+      width: 28,
       child: Text(
         text,
         style: TextStyle(
           fontSize: 8,
           fontWeight: FontWeight.bold,
+          color: getHTTPMethodColor(method),
         ),
       ),
     );
