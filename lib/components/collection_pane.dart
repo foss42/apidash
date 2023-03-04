@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../models/models.dart';
+import '../providers/providers.dart';
+import '../consts.dart';
 
-class CollectionPane extends StatefulWidget {
+class CollectionPane extends ConsumerStatefulWidget {
   const CollectionPane({
     Key? key,
   }) : super(key: key);
 
   @override
-  State<CollectionPane> createState() => _CollectionPaneState();
+  ConsumerState<CollectionPane> createState() => _CollectionPaneState();
 }
 
-class _CollectionPaneState extends State<CollectionPane> {
-  int len = 0;
-
+class _CollectionPaneState extends ConsumerState<CollectionPane> {
   @override
   void initState() {
     super.initState();
@@ -29,9 +31,11 @@ class _CollectionPaneState extends State<CollectionPane> {
             children: [
               ElevatedButton(
                 onPressed: () {
-                  setState(() {
-                    len += 1;
-                  });
+                  String newId =
+                      ref.read(collectionStateNotifierProvider.notifier).add();
+                  ref
+                      .read(activeItemIdStateProvider.notifier)
+                      .update((state) => newId);
                 },
                 child: const Text('+ New'),
               ),
@@ -40,9 +44,9 @@ class _CollectionPaneState extends State<CollectionPane> {
           const SizedBox(
             height: 8,
           ),
-          Expanded(
+          const Expanded(
             child: SingleChildScrollView(
-              child: RequestList(l: len),
+              child: RequestList(),
             ),
           ),
         ],
@@ -51,21 +55,16 @@ class _CollectionPaneState extends State<CollectionPane> {
   }
 }
 
-class RequestList extends StatefulWidget {
+class RequestList extends ConsumerStatefulWidget {
   const RequestList({
     Key? key,
-    required this.l,
   }) : super(key: key);
 
-  final int l;
-
   @override
-  State<RequestList> createState() => _RequestListState();
+  ConsumerState<RequestList> createState() => _RequestListState();
 }
 
-class _RequestListState extends State<RequestList> {
-  List<String> requestItems = [];
-
+class _RequestListState extends ConsumerState<RequestList> {
   @override
   void initState() {
     super.initState();
@@ -73,9 +72,7 @@ class _RequestListState extends State<RequestList> {
 
   @override
   Widget build(BuildContext context) {
-    if (requestItems.length != widget.l) {
-      requestItems = List.generate(widget.l, (index) => "request${index + 1}");
-    }
+    final requestItems = ref.watch(collectionStateNotifierProvider);
     return ReorderableListView.builder(
       buildDefaultDragHandles: false,
       shrinkWrap: true,
@@ -85,19 +82,17 @@ class _RequestListState extends State<RequestList> {
           newIndex -= 1;
         }
         if (oldIndex != newIndex) {
-          var t = requestItems[oldIndex];
-          requestItems[oldIndex] = requestItems[newIndex];
-          requestItems[newIndex] = t;
-          setState(() {
-            requestItems = [...requestItems];
-          });
+          ref
+              .read(collectionStateNotifierProvider.notifier)
+              .reorder(oldIndex, newIndex);
         }
       },
       itemBuilder: (context, index) {
         return ReorderableDragStartListener(
-          key: Key(requestItems[index]),
+          key: Key(requestItems[index].id),
           index: index,
-          child: RequestItem(id: requestItems[index]),
+          child: RequestItem(
+              id: requestItems[index].id, requestModel: requestItems[index]),
         );
       },
     );
@@ -106,19 +101,21 @@ class _RequestListState extends State<RequestList> {
 
 enum RequestItemMenuOption { delete, duplicate }
 
-class RequestItem extends StatefulWidget {
+class RequestItem extends ConsumerStatefulWidget {
   const RequestItem({
     required this.id,
+    required this.requestModel,
     Key? key,
   }) : super(key: key);
 
   final String id;
+  final RequestModel requestModel;
 
   @override
-  State<RequestItem> createState() => _RequestItemState();
+  ConsumerState<RequestItem> createState() => _RequestItemState();
 }
 
-class _RequestItemState extends State<RequestItem> {
+class _RequestItemState extends ConsumerState<RequestItem> {
   late Color _color;
 
   @override
@@ -129,17 +126,23 @@ class _RequestItemState extends State<RequestItem> {
 
   @override
   Widget build(BuildContext context) {
+    final activeRequest = ref.watch(activeItemIdStateProvider);
+    bool isActiveId = activeRequest == widget.id;
     return Material(
       borderRadius: BorderRadius.circular(10.0),
-      elevation: 1,
-      color: Colors.grey.shade50,
+      elevation: isActiveId ? 2 : 0,
+      color: isActiveId ? Colors.grey.shade300 : _color,
       child: InkWell(
         borderRadius: BorderRadius.circular(10.0),
-        onTap: () {},
+        onTap: () {
+          ref
+              .read(activeItemIdStateProvider.notifier)
+              .update((state) => widget.id);
+        },
         child: Padding(
           padding: EdgeInsets.only(
             left: 10,
-            right: 0,
+            right: isActiveId ? 0 : 20,
             top: 5,
             bottom: 5,
           ),
@@ -147,30 +150,50 @@ class _RequestItemState extends State<RequestItem> {
             height: 22,
             child: Row(
               children: [
-                MethodBox(),
+                MethodBox(method: widget.requestModel.method),
                 const SizedBox(
                   width: 5,
                 ),
                 Expanded(
                   child: Text(
-                    widget.id,
+                    widget.requestModel.id,
+                    softWrap: false,
+                    overflow: TextOverflow.fade,
                   ),
                 ),
-                PopupMenuButton<RequestItemMenuOption>(
-                  padding: EdgeInsets.zero,
-                  splashRadius: 14,
-                  iconSize: 14,
-                  itemBuilder: (BuildContext context) =>
-                      <PopupMenuEntry<RequestItemMenuOption>>[
-                    const PopupMenuItem<RequestItemMenuOption>(
-                      value: RequestItemMenuOption.delete,
-                      child: Text('Delete'),
-                    ),
-                    const PopupMenuItem<RequestItemMenuOption>(
-                      value: RequestItemMenuOption.duplicate,
-                      child: Text('Duplicate'),
-                    ),
-                  ],
+                Visibility(
+                  visible: isActiveId,
+                  child: PopupMenuButton<RequestItemMenuOption>(
+                    padding: EdgeInsets.zero,
+                    splashRadius: 14,
+                    iconSize: 14,
+                    onSelected: (RequestItemMenuOption item) {
+                      if (item == RequestItemMenuOption.delete) {
+                        ref
+                            .read(activeItemIdStateProvider.notifier)
+                            .update((state) => null);
+                        ref
+                            .read(collectionStateNotifierProvider.notifier)
+                            .remove(widget.id);
+                      }
+                      if (item == RequestItemMenuOption.duplicate) {
+                        ref
+                            .read(collectionStateNotifierProvider.notifier)
+                            .duplicate(widget.id);
+                      }
+                    },
+                    itemBuilder: (BuildContext context) =>
+                        <PopupMenuEntry<RequestItemMenuOption>>[
+                      const PopupMenuItem<RequestItemMenuOption>(
+                        value: RequestItemMenuOption.delete,
+                        child: Text('Delete'),
+                      ),
+                      const PopupMenuItem<RequestItemMenuOption>(
+                        value: RequestItemMenuOption.duplicate,
+                        child: Text('Duplicate'),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -182,11 +205,15 @@ class _RequestItemState extends State<RequestItem> {
 }
 
 class MethodBox extends StatelessWidget {
-  const MethodBox({super.key});
+  const MethodBox({super.key, required this.method});
+  final HTTPVerb method;
 
   @override
   Widget build(BuildContext context) {
-    String text = "get".toUpperCase();
+    String text = method.name.toUpperCase();
+    if (method == HTTPVerb.delete) {
+      text = "DEL";
+    }
     return SizedBox(
       width: 25,
       child: Text(
