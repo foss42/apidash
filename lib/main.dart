@@ -1,20 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:desktop_window/desktop_window.dart';
+import 'screens/screens.dart';
 
-void main() {
-  runApp(const MainApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  Size size = await DesktopWindow.getWindowSize();
+  print(size);
+  await DesktopWindow.setWindowSize(Size(1400, 800));
+  await DesktopWindow.setMinWindowSize(Size(1200, 800));
+  runApp(App());
 }
 
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+class App extends StatelessWidget {
+  const App({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
-        ),
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
       ),
+      home: const HomePage(),
     );
   }
 }

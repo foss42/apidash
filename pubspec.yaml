@@ -9,7 +9,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
+  multi_split_view: ^2.4.0
+  desktop_window: ^0.4.0
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter
