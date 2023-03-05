@@ -26,23 +26,23 @@ class _EditorPaneRequestURLCardState
     return Card(
       shape: cardShape,
       child: Padding(
-        padding: EdgeInsets.symmetric(
+        padding: const EdgeInsets.symmetric(
           vertical: 5,
           horizontal: 20,
         ),
         child: Row(
           children: [
-            DropdownButtonHTTPMethod(),
+            const DropdownButtonHTTPMethod(),
             const SizedBox(
               width: 20,
             ),
-            Expanded(
+            const Expanded(
               child: URLTextField(),
             ),
             const SizedBox(
               width: 20,
             ),
-            Container(
+            SizedBox(
               height: 36,
               child: ElevatedButton(
                 onPressed: () async {
@@ -51,8 +51,11 @@ class _EditorPaneRequestURLCardState
                       .sendRequest(activeId!);
                 },
                 child: Row(
-                  children: [
-                    Text("Send"),
+                  children: const [
+                    Text(
+                      "Send",
+                      style: textStyleButton,
+                    ),
                     SizedBox(
                       width: 10,
                     ),
@@ -80,14 +83,9 @@ class DropdownButtonHTTPMethod extends ConsumerStatefulWidget {
 
 class _DropdownButtonHTTPMethodState
     extends ConsumerState<DropdownButtonHTTPMethod> {
-  //late HTTPVerb dropdownValue;
-
   @override
   void initState() {
     super.initState();
-    //dropdownValue = ref
-    //    .read(collectionStateNotifierProvider.notifier)
-    //    .idxOfId(String id);
   }
 
   @override
@@ -97,34 +95,31 @@ class _DropdownButtonHTTPMethodState
     final idIdx = collection.indexWhere((m) => m.id == activeId);
     final method = ref.watch(
         collectionStateNotifierProvider.select((value) => value[idIdx].method));
-    //final model = ref
-    //    .read(collectionStateNotifierProvider.notifier)
-    //    .getRequestModel(activeId!);
     return DropdownButton<HTTPVerb>(
-      focusColor: Colors.white,
-      //value: collection[idIdx].method,
-      value: method, //model.method,
+      focusColor: colorBg,
+      value: method,
       icon: const Icon(Icons.unfold_more_rounded),
       elevation: 4,
       underline: Container(
         height: 0,
-        //color: Colors.deepPurpleAccent,
       ),
       onChanged: (HTTPVerb? value) {
         ref
             .read(collectionStateNotifierProvider.notifier)
             .update(activeId!, method: value);
       },
-      borderRadius: BorderRadius.circular(10),
+      borderRadius: borderRadius10,
       items: HTTPVerb.values.map<DropdownMenuItem<HTTPVerb>>((HTTPVerb value) {
         return DropdownMenuItem<HTTPVerb>(
-          //alignment: AlignmentDirectional.center,
           value: value,
           child: Padding(
             padding: const EdgeInsets.only(left: 16),
             child: Text(
               value.name.toUpperCase(),
-              style: TextStyle(color: getHTTPMethodColor(value)),
+              style: codeStyle.copyWith(
+                fontWeight: FontWeight.bold,
+                color: getHTTPMethodColor(value),
+              ),
             ),
           ),
         );
@@ -157,9 +152,10 @@ class _URLTextFieldState extends ConsumerState<URLTextField> {
           .read(collectionStateNotifierProvider.notifier)
           .getRequestModel(activeId!)
           .url,
+      style: codeStyle,
       decoration: InputDecoration(
         hintText: "Enter API endpoint like api.foss42.com/country/codes",
-        hintStyle: TextStyle(color: Colors.grey.shade500),
+        hintStyle: codeStyle.copyWith(color: colorGrey500),
         border: InputBorder.none,
       ),
       onChanged: (value) {

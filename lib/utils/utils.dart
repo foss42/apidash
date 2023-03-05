@@ -1,6 +1,25 @@
 import 'package:flutter/material.dart';
 import '../consts.dart';
 
+Color? getResponseStatusCodeColor(int? statusCode) {
+  if (statusCode == null) {
+    return Colors.grey.shade700;
+  }
+  if (statusCode >= 500) {
+    return Colors.amber.shade900;
+  }
+  if (statusCode >= 400) {
+    return Colors.red.shade800;
+  }
+  if (statusCode >= 300) {
+    return Colors.blue.shade800;
+  }
+  if (statusCode >= 200) {
+    return Colors.green.shade800;
+  }
+  return Colors.grey.shade700;
+}
+
 Color getHTTPMethodColor(HTTPVerb method) {
   Color col;
   switch (method) {
@@ -38,4 +57,23 @@ String getRequestTitleFromUrl(String? url) {
     return rem;
   }
   return url;
+}
+
+String humanizeDuration(Duration? duration) {
+  if (duration == null) {
+    return "";
+  }
+  if (duration.inMinutes >= 1) {
+    var min = duration.inMinutes;
+    var secs = duration.inSeconds.remainder(60);
+    return "$min.$secs m";
+  }
+  if (duration.inSeconds >= 1) {
+    var secs = duration.inSeconds;
+    var mili = duration.inMilliseconds.remainder(1000) ~/ 10;
+    return "$secs.$mili s";
+  } else {
+    var mili = duration.inMilliseconds.remainder(1000);
+    return "$mili ms";
+  }
 }

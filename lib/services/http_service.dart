@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter_api_tool/consts.dart';
 import 'package:http/http.dart' as http;
 import 'package:collection/collection.dart' show mergeMaps;
 import '../models/models.dart';
+import '../../consts.dart';
 
 const SUPPORTED_URI_SCHEMES = [
   "https",

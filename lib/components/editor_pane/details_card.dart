@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:multi_split_view/multi_split_view.dart';
 import 'request_pane.dart';
 import 'response_pane.dart';
@@ -30,8 +29,8 @@ class _EditorPaneRequestDetailsCardState
         data: MultiSplitViewThemeData(
           dividerThickness: 3,
           dividerPainter: DividerPainters.background(
-            color: Colors.grey.shade200,
-            highlightedColor: Colors.grey.shade400,
+            color: colorGrey200,
+            highlightedColor: colorGrey400,
             animationEnabled: false,
           ),
         ),

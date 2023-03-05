@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/models.dart';
 import '../providers/providers.dart';
 import '../utils/utils.dart';
+import 'styles.dart';
 import '../consts.dart';
 
 class CollectionPane extends ConsumerStatefulWidget {
@@ -38,7 +39,10 @@ class _CollectionPaneState extends ConsumerState<CollectionPane> {
                       .read(activeItemIdStateProvider.notifier)
                       .update((state) => newId);
                 },
-                child: const Text('+ New'),
+                child: const Text(
+                  '+ New',
+                  style: textStyleButton,
+                ),
               ),
             ],
           ),
@@ -120,12 +124,9 @@ class RequestItem extends ConsumerStatefulWidget {
 }
 
 class _RequestItemState extends ConsumerState<RequestItem> {
-  late Color _color;
-
   @override
   void initState() {
     super.initState();
-    _color = Colors.grey.shade50;
   }
 
   @override
@@ -133,11 +134,11 @@ class _RequestItemState extends ConsumerState<RequestItem> {
     final activeRequest = ref.watch(activeItemIdStateProvider);
     bool isActiveId = activeRequest == widget.id;
     return Material(
-      borderRadius: BorderRadius.circular(10.0),
+      borderRadius: borderRadius10,
       elevation: isActiveId ? 2 : 0,
-      color: isActiveId ? Colors.grey.shade300 : _color,
+      color: isActiveId ? colorGrey300 : colorGrey50,
       child: InkWell(
-        borderRadius: BorderRadius.circular(10.0),
+        borderRadius: borderRadius10,
         onTap: () {
           ref
               .read(activeItemIdStateProvider.notifier)

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:multi_split_view/multi_split_view.dart';
 import '../components/components.dart';
+import '../components/styles.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -32,8 +33,8 @@ class HomePageState extends State<HomePage> {
               data: MultiSplitViewThemeData(
                 dividerThickness: 4,
                 dividerPainter: DividerPainters.background(
-                  color: Colors.grey.shade200,
-                  highlightedColor: Colors.grey.shade400,
+                  color: colorGrey200,
+                  highlightedColor: colorGrey400,
                   animationEnabled: false,
                 ),
               ),

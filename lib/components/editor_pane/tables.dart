@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:davi/davi.dart';
 import '../../models/models.dart';
 import '../../providers/providers.dart';
+import '../styles.dart';
 
 class EditRequestURLParams extends ConsumerStatefulWidget {
   const EditRequestURLParams({Key? key}) : super(key: key);
@@ -26,7 +27,11 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
     return TextFormField(
         key: Key("$activeId-$idx-params-k"),
         initialValue: rows[idx].k,
-        decoration: const InputDecoration(hintText: "Add URL Parameter"),
+        style: codeStyle,
+        decoration: InputDecoration(
+          hintStyle: codeStyle,
+          hintText: "Add URL Parameter",
+        ),
         onChanged: (value) {
           rows[idx] = rows[idx].copyWith(k: value);
           _onFieldChange(activeId!);
@@ -39,7 +44,11 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
     return TextFormField(
         key: Key("$activeId-$idx-params-v"),
         initialValue: rows[idx].v,
-        decoration: const InputDecoration(hintText: "Add Value"),
+        style: codeStyle,
+        decoration: InputDecoration(
+          hintStyle: codeStyle,
+          hintText: "Add Value",
+        ),
         onChanged: (value) {
           rows[idx] = rows[idx].copyWith(v: value);
           _onFieldChange(activeId!);
@@ -75,44 +84,36 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
         ),
       ],
     );
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(10),
-          child: Row(
-            children: [
-              ElevatedButton(
-                onPressed: () {
-                  rows.add(const KVRow("", ""));
-                  model.addRow(const KVRow("", ""));
-                },
-                child: const Text("+ Add Param"),
-              ),
-            ],
-          ),
-        ),
-        Expanded(
-          child: DaviTheme(
-            data: DaviThemeData(
-              columnDividerThickness: 1,
-              columnDividerColor: Colors.grey.shade100,
-              row: RowThemeData(dividerColor: Colors.grey.shade100),
-              decoration: const BoxDecoration(
-                border: Border(),
-              ),
-              header: HeaderThemeData(
-                color: Colors.grey.shade100,
-                columnDividerColor: Colors.grey.shade100,
-                bottomBorderHeight: 1,
-              ),
-              headerCell: const HeaderCellThemeData(
-                alignment: Alignment.center,
-              ),
+    return Container(
+      decoration: tableContainerDecoration,
+      margin: p5,
+      child: Column(
+        children: [
+          Padding(
+            padding: p10,
+            child: Row(
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    rows.add(const KVRow("", ""));
+                    model.addRow(const KVRow("", ""));
+                  },
+                  child: const Text(
+                    "+ Add Param",
+                    style: textStyleButton,
+                  ),
+                ),
+              ],
             ),
-            child: Davi<KVRow>(model),
           ),
-        ),
-      ],
+          Expanded(
+            child: DaviTheme(
+              data: tableThemeData,
+              child: Davi<KVRow>(model),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -138,7 +139,11 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
     return TextFormField(
         key: Key("$activeId-$idx-headers-k"),
         initialValue: rows[idx].k,
-        decoration: const InputDecoration(hintText: "Add Header Name"),
+        style: codeStyle,
+        decoration: InputDecoration(
+          hintStyle: codeStyle,
+          hintText: "Add Header Name",
+        ),
         onChanged: (value) {
           rows[idx] = rows[idx].copyWith(k: value);
           _onFieldChange(activeId!);
@@ -151,7 +156,11 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
     return TextFormField(
         key: Key("$activeId-$idx-headers-v"),
         initialValue: rows[idx].v,
-        decoration: const InputDecoration(hintText: "Add Header Value"),
+        style: codeStyle,
+        decoration: InputDecoration(
+          hintStyle: codeStyle,
+          hintText: "Add Header Value",
+        ),
         onChanged: (value) {
           rows[idx] = rows[idx].copyWith(v: value);
           _onFieldChange(activeId!);
@@ -187,44 +196,36 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
         ),
       ],
     );
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(10),
-          child: Row(
-            children: [
-              ElevatedButton(
-                onPressed: () {
-                  rows.add(const KVRow("", ""));
-                  model.addRow(const KVRow("", ""));
-                },
-                child: const Text("+ Add Header"),
-              ),
-            ],
-          ),
-        ),
-        Expanded(
-          child: DaviTheme(
-            data: DaviThemeData(
-              columnDividerThickness: 1,
-              columnDividerColor: Colors.grey.shade100,
-              row: RowThemeData(dividerColor: Colors.grey.shade100),
-              decoration: const BoxDecoration(
-                border: Border(),
-              ),
-              header: HeaderThemeData(
-                color: Colors.grey.shade100,
-                columnDividerColor: Colors.grey.shade100,
-                bottomBorderHeight: 1,
-              ),
-              headerCell: const HeaderCellThemeData(
-                alignment: Alignment.center,
-              ),
+    return Container(
+      decoration: tableContainerDecoration,
+      margin: p5,
+      child: Column(
+        children: [
+          Padding(
+            padding: p10,
+            child: Row(
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    rows.add(const KVRow("", ""));
+                    model.addRow(const KVRow("", ""));
+                  },
+                  child: const Text(
+                    "+ Add Header",
+                    style: textStyleButton,
+                  ),
+                ),
+              ],
             ),
-            child: Davi<KVRow>(model),
           ),
-        ),
-      ],
+          Expanded(
+            child: DaviTheme(
+              data: tableThemeData,
+              child: Davi<KVRow>(model),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
