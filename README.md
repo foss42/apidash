@@ -9,7 +9,7 @@ Using API Dash, you can draft API requests via an easy to use GUI. It allows you
 
 ## Motivation
 
-Our team (Ankit & Ashita) started the [foss42](https://foss42.com) initiative of building open source APIs a few months back and after working with various API clients we always felt that many of these client lacked cross-platform support and good code generation ability especially for mobile first developers. As Flutter is a cross platform framework and could help us achieve this from a single code-base, we decided to start working on this open source initiative in FOSS Hack 3.0 using it.
+Our team (Ankit & Ashita) started the [foss42](https://foss42.com) initiative of building open source APIs a few months back and after working with various API clients we always felt that many of these clients lacked cross-platform support and good code generation ability especially for mobile first developers. As Flutter is a cross platform framework and could help us achieve this from a single code-base, we decided to start working on this open source initiative in FOSS Hack 3.0 using it.
 
 ## Project Timeline
 
