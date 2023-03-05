@@ -104,7 +104,7 @@ class CollectionStateNotifier extends StateNotifier<List<RequestModel>> {
         responseModel: responseModel,
       );
     }
-    print(newRequestModel);
+    //print(newRequestModel);
     state = [
       ...state.sublist(0, idx),
       newRequestModel,

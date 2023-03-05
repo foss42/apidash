@@ -23,7 +23,7 @@ class _RequestEditorPaneState extends ConsumerState<RequestEditorPane> {
   Widget build(BuildContext context) {
     final activeId = ref.watch(activeItemIdStateProvider);
     if (activeId == null) {
-      return Text("Select");
+      return const RequestEditorPaneHome();
     } else {
       return Padding(
         padding: const EdgeInsets.all(8),
@@ -40,5 +40,24 @@ class _RequestEditorPaneState extends ConsumerState<RequestEditorPane> {
         ),
       );
     }
+  }
+}
+
+class RequestEditorPaneHome extends StatelessWidget {
+  const RequestEditorPaneHome({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text("Welcome to API Dash!",
+              style: Theme.of(context).textTheme.headlineLarge),
+          Text("Click on the +New button to create a new request draft",
+              style: Theme.of(context).textTheme.titleMedium),
+        ],
+      ),
+    );
   }
 }
