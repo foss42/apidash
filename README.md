@@ -36,5 +36,5 @@ The following is the initial roadmap that we laid out before we started hacking 
 ## Current Limitations
 
 - The request body currently supports only text and json input. File, Form-field and other inputs will be supported soon.
-- The response body that can be currently visualized should be a text or json. We have plans to support more mime-types in near future. For example, is the response is a video, the user will be able to directly play that video in near future.
+- The response body that can be currently visualized should be a text or json. We have plans to support more mime-types in near future. For example, if the response is a video, the user will be able to directly play that video in the tool in near future.
 - Due to time constraints we currently do not have collection persistence or export as it will require some more work and we will continue working on it.
