@@ -21,7 +21,7 @@ The following is the initial roadmap that we laid out before we started hacking 
 
 - [x] App UI
 - [x] Allowing users to create, duplicate, delete, rearrange API requests
-- [x] Flutter App State Managemnt using riverpod
+- [x] Flutter App State Management using riverpod
 - [x] Users can select the request method (GET, POST, PATCH, etc.)
 - [x] Users can input query parameters, headers and body
 - [x] Fetching results
@@ -34,4 +34,4 @@ The following is the initial roadmap that we laid out before we started hacking 
 
 - The request body currently supports only text and json input. File, Form-field and other inputs will be supported soon.
 - The response body that can be currently visualized should be a text or json. We have plans to support more mime-types in near future. For example, is the response is a video, the user will be able to directly play that video in near future.
-- Due to time contraints we currently do not have collection persistence or export as it will require some more work and we will continue working on it.
+- Due to time constraints we currently do not have collection persistence or export as it will require some more work and we will continue working on it.
