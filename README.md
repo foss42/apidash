@@ -20,7 +20,7 @@ This is a new project that was started on 4th March, 2023.
 
 ## Roadmap
 
-The following is the initial roadmap that we laid out before we started hacking this project. (What we have acheived so far has a tick ✅)
+The following is the initial roadmap that we laid out before we started hacking this project. (What we have achieved so far has a tick ✅)
 
 ✅ App UI  
 ✅ Allowing users to create, duplicate, delete, rearrange API requests  
