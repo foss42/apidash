@@ -30,8 +30,8 @@ The following is the initial roadmap that we laid out before we started hacking 
 ✅ Fetching results  
 ✅ Displaying results is a nice form  
 ✅ Users can take a copy of the response  
-❌ Generating the Dart code corresponding to the requests  
-❌ Saving the collection of requests created by the user (Persistence)  
+🚧 Generating the Dart code corresponding to the requests  
+🚧 Saving the collection of requests created by the user (Persistence)  
 
 ## Current Limitations
 
