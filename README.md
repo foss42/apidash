@@ -13,7 +13,7 @@ Our team (Ankit & Ashita) started the [foss42](https://foss42.com) initiative of
 
 ## Project Timeline
 
-This a new project that was started on 4th March, 2023.
+This is a new project that was started on 4th March, 2023.
 
 ## Roadmap
 
