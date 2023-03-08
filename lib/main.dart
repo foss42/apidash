@@ -27,7 +27,8 @@ class App extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         fontFamily: GoogleFonts.openSans().fontFamily,
-        primarySwatch: Colors.indigo,
+        colorSchemeSeed: Colors.blue,
+        useMaterial3: true,
       ),
       home: const HomePage(),
     );
