@@ -84,36 +84,39 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
         ),
       ],
     );
-    return Container(
-      decoration: tableContainerDecoration,
-      margin: p5,
-      child: Column(
-        children: [
-          Padding(
-            padding: p10,
-            child: Row(
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    rows.add(const KVRow("", ""));
-                    model.addRow(const KVRow("", ""));
-                  },
-                  child: const Text(
-                    "+ Add Param",
-                    style: textStyleButton,
-                  ),
+    return Stack(
+      children: [
+        Container(
+          decoration: tableContainerDecoration,
+          margin: p5,
+          child: Column(
+            children: [
+              Expanded(
+                child: DaviTheme(
+                  data: tableThemeData,
+                  child: Davi<KVRow>(model),
                 ),
-              ],
+              ),
+            ],
+          ),
+        ),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 30),
+            child: FilledButton.tonal(
+              onPressed: () {
+                rows.add(const KVRow("", ""));
+                model.addRow(const KVRow("", ""));
+              },
+              child: const Text(
+                "+ Add Param",
+                style: textStyleButton,
+              ),
             ),
           ),
-          Expanded(
-            child: DaviTheme(
-              data: tableThemeData,
-              child: Davi<KVRow>(model),
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -196,36 +199,39 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
         ),
       ],
     );
-    return Container(
-      decoration: tableContainerDecoration,
-      margin: p5,
-      child: Column(
-        children: [
-          Padding(
-            padding: p10,
-            child: Row(
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    rows.add(const KVRow("", ""));
-                    model.addRow(const KVRow("", ""));
-                  },
-                  child: const Text(
-                    "+ Add Header",
-                    style: textStyleButton,
-                  ),
+    return Stack(
+      children: [
+        Container(
+          decoration: tableContainerDecoration,
+          margin: p5,
+          child: Column(
+            children: [
+              Expanded(
+                child: DaviTheme(
+                  data: tableThemeData,
+                  child: Davi<KVRow>(model),
                 ),
-              ],
+              ),
+            ],
+          ),
+        ),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 30),
+            child: FilledButton.tonal(
+              onPressed: () {
+                rows.add(const KVRow("", ""));
+                model.addRow(const KVRow("", ""));
+              },
+              child: const Text(
+                "+ Add Header",
+                style: textStyleButton,
+              ),
             ),
           ),
-          Expanded(
-            child: DaviTheme(
-              data: tableThemeData,
-              child: Davi<KVRow>(model),
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

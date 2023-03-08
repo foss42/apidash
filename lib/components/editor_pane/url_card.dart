@@ -44,7 +44,7 @@ class _EditorPaneRequestURLCardState
             ),
             SizedBox(
               height: 36,
-              child: ElevatedButton(
+              child: FilledButton(
                 onPressed: () async {
                   ref
                       .read(collectionStateNotifierProvider.notifier)
