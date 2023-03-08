@@ -49,3 +49,4 @@ linux/
 macos/
 windows/
 web/
+.vscode/settings.json

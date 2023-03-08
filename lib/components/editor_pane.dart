@@ -28,7 +28,7 @@ class _RequestEditorPaneState extends ConsumerState<RequestEditorPane> {
       return Padding(
         padding: const EdgeInsets.all(8),
         child: Column(
-          children: [
+          children: const [
             EditorPaneRequestURLCard(),
             SizedBox(
               height: 10,

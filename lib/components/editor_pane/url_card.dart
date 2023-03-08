@@ -150,7 +150,7 @@ class _URLTextFieldState extends ConsumerState<URLTextField> {
       key: Key("url-${activeId!}"),
       initialValue: ref
           .read(collectionStateNotifierProvider.notifier)
-          .getRequestModel(activeId!)
+          .getRequestModel(activeId)
           .url,
       style: codeStyle,
       decoration: InputDecoration(
@@ -161,7 +161,7 @@ class _URLTextFieldState extends ConsumerState<URLTextField> {
       onChanged: (value) {
         ref
             .read(collectionStateNotifierProvider.notifier)
-            .update(activeId!, url: value);
+            .update(activeId, url: value);
       },
     );
   }

@@ -20,6 +20,8 @@ class CollectionStateNotifier extends StateNotifier<List<RequestModel>> {
           ),
         ]);
 
+  final baseResponseModel = const ResponseModel();
+
   int idxOfId(String id) => state.indexWhere((element) => element.id == id);
 
   RequestModel getRequestModel(String id) {
@@ -95,8 +97,10 @@ class CollectionStateNotifier extends StateNotifier<List<RequestModel>> {
         message: responseRec.$2,
       );
     } else {
-      final responseModel = ResponseModel()
-          .fromResponse(response: responseRec.$0!, time: responseRec.$1!);
+      final responseModel = baseResponseModel.fromResponse(
+        response: responseRec.$0!,
+        time: responseRec.$1!,
+      );
       int statusCode = responseRec.$0!.statusCode;
       newRequestModel = requestModel.copyWith(
         responseStatus: statusCode,
