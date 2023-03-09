@@ -55,7 +55,7 @@ class _DropdownButtonBodyContentTypeState
     extends ConsumerState<DropdownButtonBodyContentType> {
   @override
   Widget build(BuildContext context) {
-    final activeId = ref.watch(activeItemIdStateProvider);
+    final activeId = ref.watch(activeIdStateProvider);
     final collection = ref.read(collectionStateNotifierProvider);
     final idIdx = collection.indexWhere((m) => m.id == activeId);
     final requestBodyContentType = ref.watch(collectionStateNotifierProvider
@@ -112,7 +112,7 @@ class _TextFieldEditorState extends ConsumerState<TextFieldEditor> {
 
   @override
   Widget build(BuildContext context) {
-    final activeId = ref.watch(activeItemIdStateProvider);
+    final activeId = ref.watch(activeIdStateProvider);
     final reqestModel = ref
         .read(collectionStateNotifierProvider.notifier)
         .getRequestModel(activeId!);

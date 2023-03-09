@@ -21,7 +21,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
   }
 
   Widget _buildHeaderField(BuildContext context, DaviRow<KVRow> row) {
-    String? activeId = ref.read(activeItemIdStateProvider);
+    String? activeId = ref.read(activeIdStateProvider);
     int idx = row.index;
     return TextFormField(
         key: Key("$activeId-$idx-headers-k"),
@@ -38,7 +38,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
   }
 
   Widget _buildValueField(BuildContext context, DaviRow<KVRow> row) {
-    String? activeId = ref.read(activeItemIdStateProvider);
+    String? activeId = ref.read(activeIdStateProvider);
     int idx = row.index;
     return TextFormField(
         key: Key("$activeId-$idx-headers-v"),
@@ -81,7 +81,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
       ),
     );
 
-    final activeId = ref.watch(activeItemIdStateProvider);
+    final activeId = ref.watch(activeIdStateProvider);
     final collection = ref.watch(collectionStateNotifierProvider);
     final idIdx = collection.indexWhere((m) => m.id == activeId);
     rows = collection[idIdx].requestHeaders ?? [const KVRow("", "")];

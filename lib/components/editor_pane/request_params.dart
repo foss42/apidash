@@ -22,7 +22,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
   }
 
   Widget _buildParamField(BuildContext context, DaviRow<KVRow> row) {
-    String? activeId = ref.read(activeItemIdStateProvider);
+    String? activeId = ref.read(activeIdStateProvider);
     int idx = row.index;
     return TextFormField(
         key: Key("$activeId-$idx-params-k"),
@@ -39,7 +39,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
   }
 
   Widget _buildValueField(BuildContext context, DaviRow<KVRow> row) {
-    String? activeId = ref.read(activeItemIdStateProvider);
+    String? activeId = ref.read(activeIdStateProvider);
     int idx = row.index;
     return TextFormField(
         key: Key("$activeId-$idx-params-v"),
@@ -82,7 +82,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
       ),
     );
 
-    final activeId = ref.watch(activeItemIdStateProvider);
+    final activeId = ref.watch(activeIdStateProvider);
     final collection = ref.watch(collectionStateNotifierProvider);
     final idIdx = collection.indexWhere((m) => m.id == activeId);
     rows = collection[idIdx].requestParams ?? [const KVRow("", "")];
