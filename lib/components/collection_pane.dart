@@ -36,7 +36,7 @@ class _CollectionPaneState extends ConsumerState<CollectionPane> {
                   String newId =
                       ref.read(collectionStateNotifierProvider.notifier).add();
                   ref
-                      .read(activeItemIdStateProvider.notifier)
+                      .read(activeIdStateProvider.notifier)
                       .update((state) => newId);
                 },
                 child: const Text(
@@ -137,7 +137,7 @@ class _RequestItemState extends ConsumerState<RequestItem> {
     final Color color = Theme.of(context).colorScheme.surface;
     final Color shadowColor = Theme.of(context).colorScheme.shadow;
     final Color surfaceTint = Theme.of(context).colorScheme.primary;
-    final activeRequest = ref.watch(activeItemIdStateProvider);
+    final activeRequest = ref.watch(activeIdStateProvider);
     bool isActiveId = activeRequest == widget.id;
     return Material(
       borderRadius: border12,
@@ -149,9 +149,7 @@ class _RequestItemState extends ConsumerState<RequestItem> {
       child: InkWell(
         borderRadius: border12,
         onTap: () {
-          ref
-              .read(activeItemIdStateProvider.notifier)
-              .update((state) => widget.id);
+          ref.read(activeIdStateProvider.notifier).update((state) => widget.id);
         },
         child: Padding(
           padding: EdgeInsets.only(
@@ -184,7 +182,7 @@ class _RequestItemState extends ConsumerState<RequestItem> {
                     onSelected: (RequestItemMenuOption item) {
                       if (item == RequestItemMenuOption.delete) {
                         ref
-                            .read(activeItemIdStateProvider.notifier)
+                            .read(activeIdStateProvider.notifier)
                             .update((state) => null);
                         ref
                             .read(collectionStateNotifierProvider.notifier)

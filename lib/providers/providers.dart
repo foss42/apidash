@@ -6,7 +6,7 @@ import '../consts.dart';
 
 const _uuid = Uuid();
 
-final activeItemIdStateProvider = StateProvider<String?>((ref) => null);
+final activeIdStateProvider = StateProvider<String?>((ref) => null);
 
 final StateNotifierProvider<CollectionStateNotifier, List<RequestModel>>
     collectionStateNotifierProvider =

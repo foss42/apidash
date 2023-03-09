@@ -24,7 +24,7 @@ class _EditorPaneRequestURLCardState
   Widget build(BuildContext context) {
     final Color shadowColor = Theme.of(context).colorScheme.shadow;
     final Color color = Theme.of(context).colorScheme.surface;
-    final activeId = ref.watch(activeItemIdStateProvider);
+    final activeId = ref.watch(activeIdStateProvider);
     return Card(
       //elevation: 1,
       //shadowColor: shadowColor,
@@ -102,7 +102,7 @@ class _DropdownButtonHTTPMethodState
   @override
   Widget build(BuildContext context) {
     final Color color = Theme.of(context).colorScheme.surface;
-    final activeId = ref.watch(activeItemIdStateProvider);
+    final activeId = ref.watch(activeIdStateProvider);
     final collection = ref.read(collectionStateNotifierProvider);
     final idIdx = collection.indexWhere((m) => m.id == activeId);
     final method = ref.watch(
@@ -157,7 +157,7 @@ class _URLTextFieldState extends ConsumerState<URLTextField> {
 
   @override
   Widget build(BuildContext context) {
-    final activeId = ref.watch(activeItemIdStateProvider);
+    final activeId = ref.watch(activeIdStateProvider);
     return TextFormField(
       key: Key("url-${activeId!}"),
       initialValue: ref

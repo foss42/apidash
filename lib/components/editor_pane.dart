@@ -22,7 +22,7 @@ class _RequestEditorPaneState extends ConsumerState<RequestEditorPane> {
 
   @override
   Widget build(BuildContext context) {
-    final activeId = ref.watch(activeItemIdStateProvider);
+    final activeId = ref.watch(activeIdStateProvider);
     if (activeId == null) {
       return const RequestEditorPaneHome();
     } else {

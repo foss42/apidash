@@ -29,7 +29,7 @@ class _EditRequestPaneState extends ConsumerState<EditRequestPane>
 
   @override
   Widget build(BuildContext context) {
-    final activeId = ref.watch(activeItemIdStateProvider);
+    final activeId = ref.watch(activeIdStateProvider);
     _controller.index = ref
         .read(collectionStateNotifierProvider.notifier)
         .getRequestModel(activeId!)

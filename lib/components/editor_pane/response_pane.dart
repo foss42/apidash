@@ -24,7 +24,7 @@ class _ResponsePaneState extends ConsumerState<ResponsePane> {
 
   @override
   Widget build(BuildContext context) {
-    final activeId = ref.watch(activeItemIdStateProvider);
+    final activeId = ref.watch(activeIdStateProvider);
     final collection = ref.read(collectionStateNotifierProvider);
     final idIdx = collection.indexWhere((m) => m.id == activeId);
     final status = ref.watch(collectionStateNotifierProvider
