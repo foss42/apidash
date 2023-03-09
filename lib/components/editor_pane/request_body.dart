@@ -19,27 +19,21 @@ class _EditRequestBodyState extends State<EditRequestBody> {
       margin: p5,
       child: Column(
         children: [
-          Padding(
-            padding: p10,
+          Container(
+            color: Theme.of(context).colorScheme.surface,
+            height: 32,
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: const [
                 Text(
                   "Select Content Type:",
-                  //style: Theme.of(context).textTheme.titleMedium,
                 ),
-                SizedBox(
-                  height: 30,
-                  child: DropdownButtonBodyContentType(),
-                ),
+                DropdownButtonBodyContentType(),
               ],
             ),
           ),
-          const Divider(),
           const Expanded(
-            child: Padding(
-              padding: p10,
-              child: TextFieldEditor(),
-            ),
+            child: TextFieldEditor(),
           )
         ],
       ),
@@ -75,9 +69,8 @@ class _DropdownButtonBodyContentTypeState
       ),
       elevation: 4,
       style: codeStyle.copyWith(
-          color: Theme.of(context)
-              .colorScheme
-              .primary), //Theme.of(context).textTheme.bodyMedium,
+        color: Theme.of(context).colorScheme.primary,
+      ),
       underline: Container(
         height: 0,
       ),
@@ -92,7 +85,7 @@ class _DropdownButtonBodyContentTypeState
         return DropdownMenuItem<ContentType>(
           value: value,
           child: Padding(
-            padding: const EdgeInsets.only(left: 8),
+            padding: ps8,
             child: Text(
               value.name,
               style: textStyleButton,
@@ -125,21 +118,33 @@ class _TextFieldEditorState extends ConsumerState<TextFieldEditor> {
         .getRequestModel(activeId!);
     return TextFormField(
       key: Key("$activeId-body"),
+      keyboardType: TextInputType.multiline,
+      expands: true,
+      maxLines: null,
+      textAlignVertical: TextAlignVertical.top,
       initialValue: reqestModel.requestBody ?? "",
+      style: codeStyle,
       onChanged: (value) {
         ref
             .read(collectionStateNotifierProvider.notifier)
             .update(activeId, requestBody: value);
       },
-      style: codeStyle,
       decoration: InputDecoration(
         hintText: "Enter content (body)",
         hintStyle: codeStyle.copyWith(color: colorGrey500),
-        border: InputBorder.none,
+        focusedBorder: OutlineInputBorder(
+          borderRadius: border12,
+          borderSide: BorderSide(
+            color: Theme.of(context).colorScheme.surfaceVariant,
+          ),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: border12,
+          borderSide: BorderSide(
+            color: Theme.of(context).colorScheme.surfaceVariant,
+          ),
+        ),
       ),
-      keyboardType: TextInputType.multiline,
-      expands: true,
-      maxLines: null,
     );
   }
 }
