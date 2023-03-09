@@ -1,5 +1,7 @@
 # API Dash ⚡️
 
+[![Discord Server Invite](https://img.shields.io/badge/DISCORD-JOIN%20SERVER-5663F7?style=for-the-badge&logo=discord&logoColor=white)](https://bit.ly/heyfoss)
+
 API Dash is a beautiful open-source cross-platform HTTP Client that can help you explore APIs.
 
 Using API Dash, you can draft API requests via an easy to use GUI. It allows you to:
