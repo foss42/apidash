@@ -63,6 +63,25 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
 
   @override
   Widget build(BuildContext context) {
+    final tableThemeData = DaviThemeData(
+      columnDividerThickness: 1,
+      columnDividerColor: colorGrey100,
+      row: RowThemeData(dividerColor: colorGrey100),
+      decoration: const BoxDecoration(
+        border: Border(),
+      ),
+      header: HeaderThemeData(
+        color: Theme.of(context).colorScheme.surface,
+        columnDividerColor: colorGrey100,
+        bottomBorderHeight: 1,
+        bottomBorderColor: colorGrey100,
+      ),
+      headerCell: const HeaderCellThemeData(
+        alignment: Alignment.center,
+        textStyle: null,
+      ),
+    );
+
     final activeId = ref.watch(activeItemIdStateProvider);
     final collection = ref.watch(collectionStateNotifierProvider);
     final idIdx = collection.indexWhere((m) => m.id == activeId);
@@ -87,11 +106,16 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
           width: 30,
           cellBuilder: (BuildContext context, DaviRow<KVRow> row) {
             return InkWell(
-                child: const Icon(Icons.remove_circle, size: 16),
-                onTap: () {
-                  rows.removeAt(row.index);
-                  _onFieldChange(activeId!);
-                });
+              child: Icon(
+                Icons.remove_circle,
+                size: 16,
+                color: Colors.red.withOpacity(0.9),
+              ),
+              onTap: () {
+                rows.removeAt(row.index);
+                _onFieldChange(activeId!);
+              },
+            );
           },
         ),
       ],

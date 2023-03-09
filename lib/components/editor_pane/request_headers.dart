@@ -62,12 +62,29 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
 
   @override
   Widget build(BuildContext context) {
+    final tableThemeData = DaviThemeData(
+      columnDividerThickness: 1,
+      columnDividerColor: colorGrey100,
+      row: RowThemeData(dividerColor: colorGrey100),
+      decoration: const BoxDecoration(
+        border: Border(),
+      ),
+      header: HeaderThemeData(
+        color: Theme.of(context).colorScheme.surface,
+        columnDividerColor: colorGrey100,
+        bottomBorderHeight: 1,
+        bottomBorderColor: colorGrey100,
+      ),
+      headerCell: const HeaderCellThemeData(
+        alignment: Alignment.center,
+        textStyle: null,
+      ),
+    );
+
     final activeId = ref.watch(activeItemIdStateProvider);
-    rows = ref
-            .read(collectionStateNotifierProvider.notifier)
-            .getRequestModel(activeId!)
-            .requestHeaders ??
-        [];
+    final collection = ref.watch(collectionStateNotifierProvider);
+    final idIdx = collection.indexWhere((m) => m.id == activeId);
+    rows = collection[idIdx].requestHeaders ?? [const KVRow("", "")];
     DaviModel<KVRow> model = DaviModel<KVRow>(
       rows: rows,
       columns: [
@@ -82,6 +99,23 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
           grow: 1,
           cellBuilder: _buildValueField,
           sortable: false,
+        ),
+        DaviColumn(
+          pinStatus: PinStatus.none,
+          width: 30,
+          cellBuilder: (BuildContext context, DaviRow<KVRow> row) {
+            return InkWell(
+              child: Icon(
+                Icons.remove_circle,
+                size: 16,
+                color: Colors.red.withOpacity(0.9),
+              ),
+              onTap: () {
+                rows.removeAt(row.index);
+                _onFieldChange(activeId!);
+              },
+            );
+          },
         ),
       ],
     );
@@ -108,7 +142,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
             child: ElevatedButton.icon(
               onPressed: () {
                 rows.add(const KVRow("", ""));
-                model.addRow(const KVRow("", ""));
+                _onFieldChange(activeId!);
               },
               icon: const Icon(Icons.add),
               label: const Text(

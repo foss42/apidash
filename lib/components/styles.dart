@@ -22,24 +22,6 @@ const tableContainerDecoration = BoxDecoration(
   color: colorBg,
   borderRadius: border12,
 );
-final tableThemeData = DaviThemeData(
-  columnDividerThickness: 1,
-  columnDividerColor: colorGrey100,
-  row: RowThemeData(dividerColor: colorGrey100),
-  decoration: const BoxDecoration(
-    border: Border(),
-  ),
-  header: HeaderThemeData(
-    color: colorGrey50,
-    columnDividerColor: colorGrey100,
-    bottomBorderHeight: 1,
-    bottomBorderColor: colorGrey100,
-  ),
-  headerCell: const HeaderCellThemeData(
-    alignment: Alignment.center,
-    textStyle: null,
-  ),
-);
 
 const p5 = EdgeInsets.all(5);
 const p10 = EdgeInsets.all(10);
