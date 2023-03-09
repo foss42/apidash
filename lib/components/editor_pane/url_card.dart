@@ -22,13 +22,8 @@ class _EditorPaneRequestURLCardState
 
   @override
   Widget build(BuildContext context) {
-    final Color shadowColor = Theme.of(context).colorScheme.shadow;
-    final Color color = Theme.of(context).colorScheme.surface;
     final activeId = ref.watch(activeIdStateProvider);
     return Card(
-      //elevation: 1,
-      //shadowColor: shadowColor,
-      //surfaceTintColor: color,
       elevation: 0,
       shape: RoundedRectangleBorder(
         side: BorderSide(
@@ -120,7 +115,6 @@ class _DropdownButtonHTTPMethodState
             .read(collectionStateNotifierProvider.notifier)
             .update(activeId!, method: value);
       },
-      //borderRadius: borderRadius10,
       items: HTTPVerb.values.map<DropdownMenuItem<HTTPVerb>>((HTTPVerb value) {
         return DropdownMenuItem<HTTPVerb>(
           value: value,

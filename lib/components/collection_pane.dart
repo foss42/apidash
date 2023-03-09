@@ -135,14 +135,12 @@ class _RequestItemState extends ConsumerState<RequestItem> {
   @override
   Widget build(BuildContext context) {
     final Color color = Theme.of(context).colorScheme.surface;
-    final Color shadowColor = Theme.of(context).colorScheme.shadow;
     final Color surfaceTint = Theme.of(context).colorScheme.primary;
     final activeRequest = ref.watch(activeIdStateProvider);
     bool isActiveId = activeRequest == widget.id;
     return Material(
       borderRadius: border12,
       elevation: isActiveId ? 1 : 0,
-      //shadowColor: isActiveId ? shadowColor : null,
       surfaceTintColor: isActiveId ? surfaceTint : null,
       color: color,
       type: MaterialType.card,
