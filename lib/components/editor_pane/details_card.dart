@@ -24,7 +24,13 @@ class _EditorPaneRequestDetailsCardState
   @override
   Widget build(BuildContext context) {
     return Card(
-      shape: cardShape,
+      shape: RoundedRectangleBorder(
+        side: BorderSide(
+          color: Theme.of(context).colorScheme.surfaceVariant,
+        ),
+        borderRadius: border12,
+      ),
+      elevation: 0,
       child: MultiSplitViewTheme(
         data: MultiSplitViewThemeData(
           dividerThickness: 3,

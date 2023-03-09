@@ -97,9 +97,12 @@ class _RequestListState extends ConsumerState<RequestList> {
         return ReorderableDragStartListener(
           key: Key(requestItems[index].id),
           index: index,
-          child: RequestItem(
-            id: requestItems[index].id,
-            requestModel: requestItems[index],
+          child: Padding(
+            padding: const EdgeInsets.all(1),
+            child: RequestItem(
+              id: requestItems[index].id,
+              requestModel: requestItems[index],
+            ),
           ),
         );
       },
@@ -131,14 +134,20 @@ class _RequestItemState extends ConsumerState<RequestItem> {
 
   @override
   Widget build(BuildContext context) {
+    final Color color = Theme.of(context).colorScheme.surface;
+    final Color shadowColor = Theme.of(context).colorScheme.shadow;
+    final Color surfaceTint = Theme.of(context).colorScheme.primary;
     final activeRequest = ref.watch(activeItemIdStateProvider);
     bool isActiveId = activeRequest == widget.id;
     return Material(
-      borderRadius: borderRadius10,
-      elevation: isActiveId ? 2 : 0,
-      color: isActiveId ? colorGrey300 : colorGrey50,
+      borderRadius: border12,
+      elevation: isActiveId ? 1 : 0,
+      //shadowColor: isActiveId ? shadowColor : null,
+      surfaceTintColor: isActiveId ? surfaceTint : null,
+      color: color,
+      type: MaterialType.card,
       child: InkWell(
-        borderRadius: borderRadius10,
+        borderRadius: border12,
         onTap: () {
           ref
               .read(activeItemIdStateProvider.notifier)
@@ -152,7 +161,7 @@ class _RequestItemState extends ConsumerState<RequestItem> {
             bottom: 5,
           ),
           child: SizedBox(
-            height: 22,
+            height: 20,
             child: Row(
               children: [
                 MethodBox(method: widget.requestModel.method),

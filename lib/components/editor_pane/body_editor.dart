@@ -86,7 +86,7 @@ class _DropdownButtonBodyContentTypeState
             .read(collectionStateNotifierProvider.notifier)
             .update(activeId!, requestBodyContentType: value);
       },
-      borderRadius: borderRadius10,
+      borderRadius: border12,
       items: ContentType.values
           .map<DropdownMenuItem<ContentType>>((ContentType value) {
         return DropdownMenuItem<ContentType>(

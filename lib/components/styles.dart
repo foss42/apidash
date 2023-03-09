@@ -16,17 +16,11 @@ final colorGrey500 = Colors.grey.shade500;
 final colorErrorMsg = colorGrey500;
 
 final borderRadius10 = BorderRadius.circular(10);
-final cardShape = RoundedRectangleBorder(
-  side: const BorderSide(
-    color: Colors.white70,
-    width: 1,
-  ),
-  borderRadius: borderRadius10,
-);
+const border12 = BorderRadius.all(Radius.circular(12));
 
-final tableContainerDecoration = BoxDecoration(
+const tableContainerDecoration = BoxDecoration(
   color: colorBg,
-  borderRadius: borderRadius10,
+  borderRadius: border12,
 );
 final tableThemeData = DaviThemeData(
   columnDividerThickness: 1,

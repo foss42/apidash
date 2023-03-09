@@ -104,13 +104,14 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
           alignment: Alignment.bottomCenter,
           child: Padding(
             padding: const EdgeInsets.only(bottom: 30),
-            child: FilledButton.tonal(
+            child: ElevatedButton.icon(
               onPressed: () {
                 rows.add(const KVRow("", ""));
                 model.addRow(const KVRow("", ""));
               },
-              child: const Text(
-                "+ Add Param",
+              icon: const Icon(Icons.add),
+              label: const Text(
+                "Add Param",
                 style: textStyleButton,
               ),
             ),
@@ -219,13 +220,14 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
           alignment: Alignment.bottomCenter,
           child: Padding(
             padding: const EdgeInsets.only(bottom: 30),
-            child: FilledButton.tonal(
+            child: ElevatedButton.icon(
               onPressed: () {
                 rows.add(const KVRow("", ""));
                 model.addRow(const KVRow("", ""));
               },
-              child: const Text(
-                "+ Add Header",
+              icon: const Icon(Icons.add),
+              label: const Text(
+                "Add Header",
                 style: textStyleButton,
               ),
             ),

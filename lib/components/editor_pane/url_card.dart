@@ -22,9 +22,20 @@ class _EditorPaneRequestURLCardState
 
   @override
   Widget build(BuildContext context) {
+    final Color shadowColor = Theme.of(context).colorScheme.shadow;
+    final Color color = Theme.of(context).colorScheme.surface;
     final activeId = ref.watch(activeItemIdStateProvider);
     return Card(
-      shape: cardShape,
+      //elevation: 1,
+      //shadowColor: shadowColor,
+      //surfaceTintColor: color,
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        side: BorderSide(
+          color: Theme.of(context).colorScheme.surfaceVariant,
+        ),
+        borderRadius: border12,
+      ),
       child: Padding(
         padding: const EdgeInsets.symmetric(
           vertical: 5,
@@ -90,13 +101,14 @@ class _DropdownButtonHTTPMethodState
 
   @override
   Widget build(BuildContext context) {
+    final Color color = Theme.of(context).colorScheme.surface;
     final activeId = ref.watch(activeItemIdStateProvider);
     final collection = ref.read(collectionStateNotifierProvider);
     final idIdx = collection.indexWhere((m) => m.id == activeId);
     final method = ref.watch(
         collectionStateNotifierProvider.select((value) => value[idIdx].method));
     return DropdownButton<HTTPVerb>(
-      focusColor: colorBg,
+      focusColor: color,
       value: method,
       icon: const Icon(Icons.unfold_more_rounded),
       elevation: 4,
@@ -108,7 +120,7 @@ class _DropdownButtonHTTPMethodState
             .read(collectionStateNotifierProvider.notifier)
             .update(activeId!, method: value);
       },
-      borderRadius: borderRadius10,
+      //borderRadius: borderRadius10,
       items: HTTPVerb.values.map<DropdownMenuItem<HTTPVerb>>((HTTPVerb value) {
         return DropdownMenuItem<HTTPVerb>(
           value: value,
