@@ -24,7 +24,7 @@ class _CollectionPaneState extends ConsumerState<CollectionPane> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8),
+      padding: p8,
       child: Column(
         children: [
           Row(
@@ -98,7 +98,7 @@ class _RequestListState extends ConsumerState<RequestList> {
           key: Key(requestItems[index].id),
           index: index,
           child: Padding(
-            padding: const EdgeInsets.all(1),
+            padding: p1,
             child: RequestItem(
               id: requestItems[index].id,
               requestModel: requestItems[index],

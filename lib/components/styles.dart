@@ -23,5 +23,8 @@ const tableContainerDecoration = BoxDecoration(
   borderRadius: border12,
 );
 
+const p1 = EdgeInsets.all(1);
 const p5 = EdgeInsets.all(5);
+const p8 = EdgeInsets.all(8);
+const ps8 = EdgeInsets.only(left: 8);
 const p10 = EdgeInsets.all(10);

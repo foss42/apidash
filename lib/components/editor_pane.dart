@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/providers.dart';
 import 'editor_pane/url_card.dart';
 import 'editor_pane/details_card.dart';
+import 'styles.dart';
 
 class RequestEditorPane extends ConsumerStatefulWidget {
   const RequestEditorPane({
@@ -26,7 +27,7 @@ class _RequestEditorPaneState extends ConsumerState<RequestEditorPane> {
       return const RequestEditorPaneHome();
     } else {
       return Padding(
-        padding: const EdgeInsets.all(8),
+        padding: p8,
         child: Column(
           children: const [
             EditorPaneRequestURLCard(),
