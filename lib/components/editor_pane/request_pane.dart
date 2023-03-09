@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../providers/providers.dart';
 import '../styles.dart';
-import 'tables.dart';
-import 'body_editor.dart';
+import 'request_headers.dart';
+import 'request_params.dart';
+import 'request_body.dart';
 
 class EditRequestPane extends ConsumerStatefulWidget {
   const EditRequestPane({super.key});

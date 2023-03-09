@@ -1,0 +1,124 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:davi/davi.dart';
+import '../../models/models.dart';
+import '../../providers/providers.dart';
+import '../styles.dart';
+
+class EditRequestHeaders extends ConsumerStatefulWidget {
+  const EditRequestHeaders({Key? key}) : super(key: key);
+
+  @override
+  ConsumerState<EditRequestHeaders> createState() => EditRequestHeadersState();
+}
+
+class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
+  late List<KVRow> rows;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  Widget _buildHeaderField(BuildContext context, DaviRow<KVRow> row) {
+    String? activeId = ref.read(activeItemIdStateProvider);
+    int idx = row.index;
+    return TextFormField(
+        key: Key("$activeId-$idx-headers-k"),
+        initialValue: rows[idx].k,
+        style: codeStyle,
+        decoration: InputDecoration(
+          hintStyle: codeStyle,
+          hintText: "Add Header Name",
+        ),
+        onChanged: (value) {
+          rows[idx] = rows[idx].copyWith(k: value);
+          _onFieldChange(activeId!);
+        });
+  }
+
+  Widget _buildValueField(BuildContext context, DaviRow<KVRow> row) {
+    String? activeId = ref.read(activeItemIdStateProvider);
+    int idx = row.index;
+    return TextFormField(
+        key: Key("$activeId-$idx-headers-v"),
+        initialValue: rows[idx].v,
+        style: codeStyle,
+        decoration: InputDecoration(
+          hintStyle: codeStyle,
+          hintText: "Add Header Value",
+        ),
+        onChanged: (value) {
+          rows[idx] = rows[idx].copyWith(v: value);
+          _onFieldChange(activeId!);
+        });
+  }
+
+  void _onFieldChange(String activeId) {
+    ref
+        .read(collectionStateNotifierProvider.notifier)
+        .update(activeId, requestHeaders: rows);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final activeId = ref.watch(activeItemIdStateProvider);
+    rows = ref
+            .read(collectionStateNotifierProvider.notifier)
+            .getRequestModel(activeId!)
+            .requestHeaders ??
+        [];
+    DaviModel<KVRow> model = DaviModel<KVRow>(
+      rows: rows,
+      columns: [
+        DaviColumn(
+          name: 'Header Name',
+          grow: 1,
+          cellBuilder: _buildHeaderField,
+          sortable: false,
+        ),
+        DaviColumn(
+          name: 'Header Value',
+          grow: 1,
+          cellBuilder: _buildValueField,
+          sortable: false,
+        ),
+      ],
+    );
+    return Stack(
+      children: [
+        Container(
+          decoration: tableContainerDecoration,
+          margin: p5,
+          child: Column(
+            children: [
+              Expanded(
+                child: DaviTheme(
+                  data: tableThemeData,
+                  child: Davi<KVRow>(model),
+                ),
+              ),
+            ],
+          ),
+        ),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 30),
+            child: ElevatedButton.icon(
+              onPressed: () {
+                rows.add(const KVRow("", ""));
+                model.addRow(const KVRow("", ""));
+              },
+              icon: const Icon(Icons.add),
+              label: const Text(
+                "Add Header",
+                style: textStyleButton,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
