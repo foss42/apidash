@@ -64,11 +64,9 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
   @override
   Widget build(BuildContext context) {
     final activeId = ref.watch(activeItemIdStateProvider);
-    rows = ref
-            .read(collectionStateNotifierProvider.notifier)
-            .getRequestModel(activeId!)
-            .requestParams ??
-        [];
+    final collection = ref.watch(collectionStateNotifierProvider);
+    final idIdx = collection.indexWhere((m) => m.id == activeId);
+    rows = collection[idIdx].requestParams ?? [const KVRow("", "")];
     DaviModel<KVRow> model = DaviModel<KVRow>(
       rows: rows,
       columns: [
@@ -76,11 +74,25 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
           name: 'URL Parameter',
           grow: 1,
           cellBuilder: _buildParamField,
+          sortable: false,
         ),
         DaviColumn(
           name: 'Value',
           grow: 1,
           cellBuilder: _buildValueField,
+          sortable: false,
+        ),
+        DaviColumn(
+          pinStatus: PinStatus.none,
+          width: 30,
+          cellBuilder: (BuildContext context, DaviRow<KVRow> row) {
+            return InkWell(
+                child: const Icon(Icons.remove_circle, size: 16),
+                onTap: () {
+                  rows.removeAt(row.index);
+                  _onFieldChange(activeId!);
+                });
+          },
         ),
       ],
     );
@@ -107,7 +119,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
             child: ElevatedButton.icon(
               onPressed: () {
                 rows.add(const KVRow("", ""));
-                model.addRow(const KVRow("", ""));
+                _onFieldChange(activeId!);
               },
               icon: const Icon(Icons.add),
               label: const Text(
@@ -192,11 +204,13 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
           name: 'Header Name',
           grow: 1,
           cellBuilder: _buildHeaderField,
+          sortable: false,
         ),
         DaviColumn(
           name: 'Header Value',
           grow: 1,
           cellBuilder: _buildValueField,
+          sortable: false,
         ),
       ],
     );
