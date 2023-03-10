@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:multi_split_view/multi_split_view.dart';
-import '../components/components.dart';
-import '../components/styles.dart';
+import '../widgets/widgets.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
