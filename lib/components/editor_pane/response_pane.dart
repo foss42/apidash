@@ -25,12 +25,16 @@ class _ResponsePaneState extends ConsumerState<ResponsePane> {
   @override
   Widget build(BuildContext context) {
     final activeId = ref.watch(activeIdStateProvider);
+    final sentRequestId = ref.watch(sentRequestIdStateProvider);
     final collection = ref.read(collectionStateNotifierProvider);
     final idIdx = collection.indexWhere((m) => m.id == activeId);
     final status = ref.watch(collectionStateNotifierProvider
         .select((value) => (value[idIdx].responseStatus,
                             value[idIdx].message,
                             value[idIdx].responseModel)));
+    if(sentRequestId != null && sentRequestId == activeId){
+      return const SendingWidget();
+    }
     if (status.$0 == null) {
       return const NotSentWidget();
     }
@@ -59,6 +63,7 @@ class NotSentWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final color = Theme.of(context).colorScheme.secondary;
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -66,14 +71,41 @@ class NotSentWidget extends StatelessWidget {
           Icon(
             Icons.north_east_rounded,
             size: 40,
-            color: colorErrorMsg,
+            color: color, 
           ),
           Text(
             'Not Sent',
             style: Theme.of(context)
                 .textTheme
                 .titleMedium
-                ?.copyWith(color: colorErrorMsg),
+                ?.copyWith(color: color),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class SendingWidget extends StatelessWidget {
+  const SendingWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final color = Theme.of(context).colorScheme.secondary;
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          ColorFiltered(
+            colorFilter: ColorFilter.mode(
+            //Color.fromARGB(123, 71, 84, 179), 
+              color.withOpacity(0.7),
+              BlendMode.dstIn,
+            ),
+            child: const Image(
+              image: sendingIndicator, 
+              width: 300,
+            ),
           ),
         ],
       ),
@@ -88,6 +120,7 @@ class ErrorMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final color = Theme.of(context).colorScheme.secondary;
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -95,14 +128,14 @@ class ErrorMessage extends StatelessWidget {
           Icon(
             Icons.warning_rounded,
             size: 40,
-            color: colorErrorMsg,
+            color: color,
           ),
           Text(
             message ?? 'And error occurred.',
             style: Theme.of(context)
                 .textTheme
                 .titleMedium
-                ?.copyWith(color: colorErrorMsg),
+                ?.copyWith(color: color),
           ),
         ],
       ),
