@@ -5,16 +5,15 @@ import '../../utils/utils.dart';
 import '../styles.dart';
 import '../../consts.dart';
 
-class EditorPaneRequestURLCard extends ConsumerStatefulWidget {
+class EditorPaneRequestURLCard extends StatefulWidget {
   const EditorPaneRequestURLCard({super.key});
 
   @override
-  ConsumerState<EditorPaneRequestURLCard> createState() =>
+  State<EditorPaneRequestURLCard> createState() =>
       _EditorPaneRequestURLCardState();
 }
 
-class _EditorPaneRequestURLCardState
-    extends ConsumerState<EditorPaneRequestURLCard> {
+class _EditorPaneRequestURLCardState extends State<EditorPaneRequestURLCard> {
   @override
   void initState() {
     super.initState();
@@ -22,7 +21,6 @@ class _EditorPaneRequestURLCardState
 
   @override
   Widget build(BuildContext context) {
-    final activeId = ref.watch(activeIdStateProvider);
     return Card(
       elevation: 0,
       shape: RoundedRectangleBorder(
@@ -37,38 +35,20 @@ class _EditorPaneRequestURLCardState
           horizontal: 20,
         ),
         child: Row(
-          children: [
-            const DropdownButtonHTTPMethod(),
-            const SizedBox(
+          children: const [
+            DropdownButtonHTTPMethod(),
+            SizedBox(
               width: 20,
             ),
-            const Expanded(
+            Expanded(
               child: URLTextField(),
             ),
-            const SizedBox(
+            SizedBox(
               width: 20,
             ),
             SizedBox(
               height: 36,
-              child: FilledButton(
-                onPressed: () async {
-                  ref
-                      .read(collectionStateNotifierProvider.notifier)
-                      .sendRequest(activeId!);
-                },
-                child: Row(
-                  children: const [
-                    Text(
-                      "Send",
-                      style: textStyleButton,
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Icon(size: 16, Icons.send),
-                  ],
-                ),
-              ),
+              child: SendRequestButton(),
             ),
           ],
         ),
@@ -169,6 +149,68 @@ class _URLTextFieldState extends ConsumerState<URLTextField> {
             .read(collectionStateNotifierProvider.notifier)
             .update(activeId, url: value);
       },
+    );
+  }
+}
+
+class SendRequestButton extends ConsumerStatefulWidget {
+  const SendRequestButton({
+    super.key,
+  });
+
+  @override
+  ConsumerState<SendRequestButton> createState() => _SendRequestButtonState();
+}
+
+class _SendRequestButtonState extends ConsumerState<SendRequestButton> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final activeId = ref.watch(activeIdStateProvider);
+    final sentRequestId = ref.watch(sentRequestIdStateProvider);
+    bool disable = sentRequestId != null;
+    return FilledButton(
+      onPressed: disable
+          ? null
+          : () async {
+              ref
+                  .read(sentRequestIdStateProvider.notifier)
+                  .update((state) => activeId);
+              await Future.delayed(
+                const Duration(seconds: 5),
+                () {
+                  ref
+                      .read(collectionStateNotifierProvider.notifier)
+                      .sendRequest(activeId!);
+                },
+              );
+              ref
+                  .read(sentRequestIdStateProvider.notifier)
+                  .update((state) => null);
+            },
+      child: Row(
+        children: [
+          Text(
+            disable
+                ? (activeId == sentRequestId ? "Sending.." : "Busy")
+                : "Send",
+            style: textStyleButton,
+          ),
+          if (!disable)
+            const SizedBox(
+              width: 10,
+            ),
+          if (!disable)
+            const Icon(
+              size: 16,
+              Icons.send,
+            ),
+        ],
+      ),
     );
   }
 }
