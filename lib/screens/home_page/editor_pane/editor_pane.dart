@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../providers/providers.dart';
-import 'editor_pane/url_card.dart';
-import 'editor_pane/details_card.dart';
-import 'styles.dart';
+import 'package:apidash/providers/providers.dart';
+import 'package:apidash/consts.dart';
+import 'details_card/details_card.dart';
+import 'url_card.dart';
 
 class RequestEditorPane extends ConsumerStatefulWidget {
   const RequestEditorPane({

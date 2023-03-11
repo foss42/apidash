@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:multi_split_view/multi_split_view.dart';
-import 'request_pane.dart';
-import 'response_pane.dart';
-import '../styles.dart';
+import 'package:apidash/consts.dart';
+import 'request_pane/request_pane.dart';
+import 'response_pane/response_pane.dart';
 
 class EditorPaneRequestDetailsCard extends StatefulWidget {
   const EditorPaneRequestDetailsCard({super.key});

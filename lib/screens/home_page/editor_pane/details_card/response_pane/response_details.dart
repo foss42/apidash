@@ -3,11 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_json_view/flutter_json_view.dart';
-import '../../models/request_model.dart';
-import '../../providers/providers.dart';
-import '../styles.dart';
-import "../../utils/utils.dart";
-import "../../consts.dart";
+import 'package:apidash/providers/providers.dart';
+import 'package:apidash/models/models.dart';
+import 'package:apidash/utils/utils.dart';
+import 'package:apidash/consts.dart';
 
 final jsonViewTheme = JsonViewTheme(
   defaultTextStyle: codeStyle,

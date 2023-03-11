@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:multi_split_view/multi_split_view.dart';
-import '../widgets/widgets.dart';
+import 'package:apidash/consts.dart';
+import 'editor_pane/editor_pane.dart';
+import 'collection_pane.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);

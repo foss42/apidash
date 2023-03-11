@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../providers/providers.dart';
-import '../styles.dart';
-import '../../consts.dart';
+import 'package:apidash/providers/providers.dart';
+import 'package:apidash/consts.dart';
 
 class EditRequestBody extends StatefulWidget {
   const EditRequestBody({super.key});

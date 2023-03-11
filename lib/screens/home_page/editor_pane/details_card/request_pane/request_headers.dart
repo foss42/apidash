@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:davi/davi.dart';
-import '../../models/models.dart';
-import '../../providers/providers.dart';
-import '../styles.dart';
+import 'package:apidash/providers/providers.dart';
+import 'package:apidash/models/models.dart';
+import 'package:apidash/consts.dart';
 
-class EditRequestURLParams extends ConsumerStatefulWidget {
-  const EditRequestURLParams({Key? key}) : super(key: key);
+class EditRequestHeaders extends ConsumerStatefulWidget {
+  const EditRequestHeaders({Key? key}) : super(key: key);
 
   @override
-  ConsumerState<EditRequestURLParams> createState() =>
-      EditRequestURLParamsState();
+  ConsumerState<EditRequestHeaders> createState() => EditRequestHeadersState();
 }
 
-class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
+class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
   late List<KVRow> rows;
 
   @override
@@ -21,16 +20,16 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
     super.initState();
   }
 
-  Widget _buildParamField(BuildContext context, DaviRow<KVRow> row) {
+  Widget _buildHeaderField(BuildContext context, DaviRow<KVRow> row) {
     String? activeId = ref.read(activeIdStateProvider);
     int idx = row.index;
     return TextFormField(
-        key: Key("$activeId-$idx-params-k"),
+        key: Key("$activeId-$idx-headers-k"),
         initialValue: rows[idx].k,
         style: codeStyle,
         decoration: InputDecoration(
           hintStyle: codeStyle,
-          hintText: "Add URL Parameter",
+          hintText: "Add Header Name",
         ),
         onChanged: (value) {
           rows[idx] = rows[idx].copyWith(k: value);
@@ -42,12 +41,12 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
     String? activeId = ref.read(activeIdStateProvider);
     int idx = row.index;
     return TextFormField(
-        key: Key("$activeId-$idx-params-v"),
+        key: Key("$activeId-$idx-headers-v"),
         initialValue: rows[idx].v,
         style: codeStyle,
         decoration: InputDecoration(
           hintStyle: codeStyle,
-          hintText: "Add Value",
+          hintText: "Add Header Value",
         ),
         onChanged: (value) {
           rows[idx] = rows[idx].copyWith(v: value);
@@ -58,7 +57,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
   void _onFieldChange(String activeId) {
     ref
         .read(collectionStateNotifierProvider.notifier)
-        .update(activeId, requestParams: rows);
+        .update(activeId, requestHeaders: rows);
   }
 
   @override
@@ -85,18 +84,18 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
     final activeId = ref.watch(activeIdStateProvider);
     final collection = ref.watch(collectionStateNotifierProvider);
     final idIdx = collection.indexWhere((m) => m.id == activeId);
-    rows = collection[idIdx].requestParams ?? [const KVRow("", "")];
+    rows = collection[idIdx].requestHeaders ?? [const KVRow("", "")];
     DaviModel<KVRow> model = DaviModel<KVRow>(
       rows: rows,
       columns: [
         DaviColumn(
-          name: 'URL Parameter',
+          name: 'Header Name',
           grow: 1,
-          cellBuilder: _buildParamField,
+          cellBuilder: _buildHeaderField,
           sortable: false,
         ),
         DaviColumn(
-          name: 'Value',
+          name: 'Header Value',
           grow: 1,
           cellBuilder: _buildValueField,
           sortable: false,
@@ -147,7 +146,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
               },
               icon: const Icon(Icons.add),
               label: const Text(
-                "Add Param",
+                "Add Header",
                 style: textStyleButton,
               ),
             ),

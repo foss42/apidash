@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../providers/providers.dart';
-import "../../consts.dart";
+import 'package:apidash/providers/providers.dart';
+import 'package:apidash/consts.dart';
 import 'response_details.dart';
 
 class ResponsePane extends ConsumerStatefulWidget {

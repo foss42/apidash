@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/models.dart';
-import '../providers/providers.dart';
-import '../utils/utils.dart';
-import 'styles.dart';
-import '../consts.dart';
+import 'package:apidash/providers/providers.dart';
+import 'package:apidash/models/models.dart';
+import 'package:apidash/utils/utils.dart';
+import 'package:apidash/consts.dart';
 
 class CollectionPane extends ConsumerStatefulWidget {
   const CollectionPane({
