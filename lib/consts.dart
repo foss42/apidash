@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:davi/davi.dart';
 
 final kColorTransparent = MaterialStateProperty.all<Color>(Colors.transparent);
 const kColorBg = Colors.white;
@@ -35,6 +36,20 @@ const kTabHeight = 45.0;
 const kHeaderHeight = 32.0;
 
 const kRandMax = 100000;
+
+const kTableThemeData = DaviThemeData(
+  columnDividerThickness: 1,
+  columnDividerColor: Colors.transparent,
+  row: RowThemeData(
+    dividerColor: Colors.transparent,
+  ),
+  decoration: BoxDecoration(
+    border: Border(),
+  ),
+  header: HeaderThemeData(
+    visible: false,
+  ),
+);
 
 enum HTTPVerb { get, head, post, put, patch, delete }
 

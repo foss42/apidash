@@ -38,6 +38,18 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
                 ),
           ),
           hintText: "Add Header Name",
+          focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(
+              color: Theme.of(context).colorScheme.primary.withOpacity(
+                    kHintOpacity,
+                  ),
+            ),
+          ),
+          enabledBorder: UnderlineInputBorder(
+            borderSide: BorderSide(
+              color: Theme.of(context).colorScheme.surfaceVariant,
+            ),
+          ),
         ),
         onChanged: (value) {
           rows[idx] = rows[idx].copyWith(k: value);
@@ -58,7 +70,19 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
                   kHintOpacity,
                 ),
           ),
-          hintText: "Add Header Value",
+          hintText: " Add Header Value",
+          focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(
+              color: Theme.of(context).colorScheme.primary.withOpacity(
+                    kHintOpacity,
+                  ),
+            ),
+          ),
+          enabledBorder: UnderlineInputBorder(
+            borderSide: BorderSide(
+              color: Theme.of(context).colorScheme.surfaceVariant,
+            ),
+          ),
         ),
         onChanged: (value) {
           rows[idx] = rows[idx].copyWith(v: value);
@@ -81,20 +105,6 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
         .select((value) => value[idIdx].requestHeaders?.length));
     rows = collection[idIdx].requestHeaders ?? [const KVRow("", "")];
 
-    final tableThemeData = DaviThemeData(
-      columnDividerThickness: 1,
-      columnDividerColor: Theme.of(context).colorScheme.surfaceVariant,
-      row: RowThemeData(
-        dividerColor: Theme.of(context).colorScheme.surfaceVariant,
-      ),
-      decoration: const BoxDecoration(
-        border: Border(),
-      ),
-      header: const HeaderThemeData(
-        visible: false,
-      ),
-    );
-
     DaviModel<KVRow> model = DaviModel<KVRow>(
       rows: rows,
       columns: [
@@ -103,6 +113,15 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
           grow: 1,
           cellBuilder: (_, row) => _buildHeaderField(context, row),
           sortable: false,
+        ),
+        DaviColumn(
+          width: 30,
+          cellBuilder: (BuildContext context, DaviRow<KVRow> row) {
+            return Text(
+              "=",
+              style: kCodeStyle,
+            );
+          },
         ),
         DaviColumn(
           name: 'Header Value',
@@ -142,7 +161,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
             children: [
               Expanded(
                 child: DaviTheme(
-                  data: tableThemeData,
+                  data: kTableThemeData,
                   child: Davi<KVRow>(model),
                 ),
               ),
