@@ -26,7 +26,7 @@ class _EditorPaneRequestURLCardState extends State<EditorPaneRequestURLCard> {
         side: BorderSide(
           color: Theme.of(context).colorScheme.surfaceVariant,
         ),
-        borderRadius: border12,
+        borderRadius: kBorder12,
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(
@@ -36,11 +36,11 @@ class _EditorPaneRequestURLCardState extends State<EditorPaneRequestURLCard> {
         child: Row(
           children: const [
             DropdownButtonHTTPMethod(),
-            hspacer20,
+            kHSpacer20,
             Expanded(
               child: URLTextField(),
             ),
-            hspacer20,
+            kHSpacer20,
             SizedBox(
               height: 36,
               child: SendRequestButton(),
@@ -97,7 +97,7 @@ class _DropdownButtonHTTPMethodState
             padding: const EdgeInsets.only(left: 16),
             child: Text(
               value.name.toUpperCase(),
-              style: codeStyle.copyWith(
+              style: kCodeStyle.copyWith(
                 fontWeight: FontWeight.bold,
                 color: getHTTPMethodColor(value),
               ),
@@ -133,10 +133,10 @@ class _URLTextFieldState extends ConsumerState<URLTextField> {
           .read(collectionStateNotifierProvider.notifier)
           .getRequestModel(activeId)
           .url,
-      style: codeStyle,
+      style: kCodeStyle,
       decoration: InputDecoration(
         hintText: "Enter API endpoint like api.foss42.com/country/codes",
-        hintStyle: codeHintStyle,
+        hintStyle: kCodeHintStyle,
         border: InputBorder.none,
       ),
       onChanged: (value) {
@@ -193,9 +193,9 @@ class _SendRequestButtonState extends ConsumerState<SendRequestButton> {
             disable
                 ? (activeId == sentRequestId ? "Sending.." : "Busy")
                 : "Send",
-            style: textStyleButton,
+            style: kTextStyleButton,
           ),
-          if (!disable) hspacer10,
+          if (!disable) kHSpacer10,
           if (!disable)
             const Icon(
               size: 16,

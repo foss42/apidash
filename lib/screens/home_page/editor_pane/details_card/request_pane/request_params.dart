@@ -22,7 +22,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
   @override
   void initState() {
     super.initState();
-    seed = random.nextInt(randRange);
+    seed = random.nextInt(kRandMax);
   }
 
   Widget _buildParamField(BuildContext context, DaviRow<KVRow> row) {
@@ -31,9 +31,9 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
     return TextFormField(
         key: Key("$activeId-$idx-params-k-$seed"),
         initialValue: rows[idx].k,
-        style: codeStyle,
+        style: kCodeStyle,
         decoration: InputDecoration(
-          hintStyle: codeHintStyle,
+          hintStyle: kCodeHintStyle,
           hintText: "Add URL Parameter",
         ),
         onChanged: (value) {
@@ -48,9 +48,9 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
     return TextFormField(
         key: Key("$activeId-$idx-params-v-$seed"),
         initialValue: rows[idx].v,
-        style: codeStyle,
+        style: kCodeStyle,
         decoration: InputDecoration(
-          hintStyle: codeHintStyle,
+          hintStyle: kCodeHintStyle,
           hintText: "Add Value",
         ),
         onChanged: (value) {
@@ -69,16 +69,16 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
   Widget build(BuildContext context) {
     final tableThemeData = DaviThemeData(
       columnDividerThickness: 1,
-      columnDividerColor: colorGrey100,
-      row: RowThemeData(dividerColor: colorGrey100),
+      columnDividerColor: kColorGrey100,
+      row: RowThemeData(dividerColor: kColorGrey100),
       decoration: const BoxDecoration(
         border: Border(),
       ),
       header: HeaderThemeData(
         color: Theme.of(context).colorScheme.surface,
-        columnDividerColor: colorGrey100,
+        columnDividerColor: kColorGrey100,
         bottomBorderHeight: 1,
-        bottomBorderColor: colorGrey100,
+        bottomBorderColor: kColorGrey100,
       ),
       headerCell: const HeaderCellThemeData(
         alignment: Alignment.center,
@@ -119,7 +119,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
               ),
               onTap: () {
                 rows.removeAt(row.index);
-                seed = random.nextInt(randRange);
+                seed = random.nextInt(kRandMax);
                 _onFieldChange(activeId!);
               },
             );
@@ -130,8 +130,8 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
     return Stack(
       children: [
         Container(
-          decoration: tableContainerDecoration,
-          margin: p5,
+          decoration: kTableContainerDecoration,
+          margin: kP5,
           child: Column(
             children: [
               Expanded(
@@ -155,7 +155,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
               icon: const Icon(Icons.add),
               label: const Text(
                 "Add Param",
-                style: textStyleButton,
+                style: kTextStyleButton,
               ),
             ),
           ),

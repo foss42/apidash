@@ -8,4 +8,3 @@ analyzer:
 
 linter:
   rules:
-    constant_identifier_names: false

@@ -1,58 +1,59 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-final colorTransparent = MaterialStateProperty.all<Color>(Colors.transparent);
-const colorBg = Colors.white;
-final colorGrey50 = Colors.grey.shade50;
-final colorGrey100 = Colors.grey.shade100;
-final colorGrey200 = Colors.grey.shade200;
-final colorGrey300 = Colors.grey.shade300;
-final colorGrey400 = Colors.grey.shade400;
-final colorGrey500 = Colors.grey.shade500;
-final colorErrorMsg = colorGrey500;
+final kColorTransparent = MaterialStateProperty.all<Color>(Colors.transparent);
+const kColorBg = Colors.white;
+final kColorGrey50 = Colors.grey.shade50;
+final kColorGrey100 = Colors.grey.shade100;
+final kColorGrey200 = Colors.grey.shade200;
+final kColorGrey300 = Colors.grey.shade300;
+final kColorGrey400 = Colors.grey.shade400;
+final kColorGrey500 = Colors.grey.shade500;
+final kColorErrorMsg = kColorGrey500;
 
-final codeStyle = GoogleFonts.sourceCodePro();
-final codeHintStyle = codeStyle.copyWith(color: colorGrey500);
+final kCodeStyle = GoogleFonts.sourceCodePro();
+final kCodeHintStyle = kCodeStyle.copyWith(color: kColorGrey500);
 
-const textStyleButton = TextStyle(fontWeight: FontWeight.bold);
+const kTextStyleButton = TextStyle(fontWeight: FontWeight.bold);
 
-final borderRadius10 = BorderRadius.circular(10);
-const border12 = BorderRadius.all(Radius.circular(12));
+final kBorderRadius10 = BorderRadius.circular(10);
+const kBorder12 = BorderRadius.all(Radius.circular(12));
 
-const tableContainerDecoration = BoxDecoration(
-  color: colorBg,
-  borderRadius: border12,
+const kTableContainerDecoration = BoxDecoration(
+  color: kColorBg,
+  borderRadius: kBorder12,
 );
 
-const p1 = EdgeInsets.all(1);
-const p5 = EdgeInsets.all(5);
-const p8 = EdgeInsets.all(8);
-const ps8 = EdgeInsets.only(left: 8);
-const p10 = EdgeInsets.all(10);
+const kP1 = EdgeInsets.all(1);
+const kP5 = EdgeInsets.all(5);
+const kP8 = EdgeInsets.all(8);
+const kPs8 = EdgeInsets.only(left: 8);
+const kP10 = EdgeInsets.all(10);
 
-const hspacer5 = SizedBox(width: 5);
-const hspacer10 = SizedBox(width: 10);
-const hspacer20 = SizedBox(width: 20);
-const vspacer5 = SizedBox(height: 5);
-const vspacer8 = SizedBox(height: 8);
-const vspacer10 = SizedBox(height: 10);
+const kHSpacer5 = SizedBox(width: 5);
+const kHSpacer10 = SizedBox(width: 10);
+const kHSpacer20 = SizedBox(width: 20);
+const kVSpacer5 = SizedBox(height: 5);
+const kVSpacer8 = SizedBox(height: 8);
+const kVSpacer10 = SizedBox(height: 10);
 
-const tabAnimationDuration = Duration(milliseconds: 200);
+const kTabAnimationDuration = Duration(milliseconds: 200);
 const kTabHeight = 45.0;
+const kHeaderHeight = 32.0;
 
-const randRange = 100000;
+const kRandMax = 100000;
 
 enum HTTPVerb { get, head, post, put, patch, delete }
 
 enum ContentType { json, text }
 
-const DEFAULT_METHOD = HTTPVerb.get;
-const DEFAULT_BODY_CONTENT_TYPE = ContentType.json;
-const JSON_MIMETYPE = 'application/json';
+const kDefaultHttpMethod = HTTPVerb.get;
+const kDefaultContentType = ContentType.json;
+const kJsonMimeType = 'application/json';
 
 const sendingIndicator = AssetImage("assets/sending.gif");
 
-const RESPONSE_CODE_REASONS = {
+const kResponseCodeReasons = {
   // 100s
   100: 'Continue',
   101: 'Switching Protocols',

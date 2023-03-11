@@ -23,7 +23,7 @@ class _CollectionPaneState extends ConsumerState<CollectionPane> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: p8,
+      padding: kP8,
       child: Column(
         children: [
           Row(
@@ -40,12 +40,12 @@ class _CollectionPaneState extends ConsumerState<CollectionPane> {
                 },
                 child: const Text(
                   '+ New',
-                  style: textStyleButton,
+                  style: kTextStyleButton,
                 ),
               ),
             ],
           ),
-          vspacer8,
+          kVSpacer8,
           const Expanded(
             child: SingleChildScrollView(
               child: RequestList(),
@@ -95,7 +95,7 @@ class _RequestListState extends ConsumerState<RequestList> {
           key: Key(requestItems[index].id),
           index: index,
           child: Padding(
-            padding: p1,
+            padding: kP1,
             child: RequestItem(
               id: requestItems[index].id,
               requestModel: requestItems[index],
@@ -136,13 +136,13 @@ class _RequestItemState extends ConsumerState<RequestItem> {
     final activeRequest = ref.watch(activeIdStateProvider);
     bool isActiveId = activeRequest == widget.id;
     return Material(
-      borderRadius: border12,
+      borderRadius: kBorder12,
       elevation: isActiveId ? 1 : 0,
       surfaceTintColor: isActiveId ? surfaceTint : null,
       color: color,
       type: MaterialType.card,
       child: InkWell(
-        borderRadius: border12,
+        borderRadius: kBorder12,
         onTap: () {
           ref.read(activeIdStateProvider.notifier).update((state) => widget.id);
         },
@@ -158,7 +158,7 @@ class _RequestItemState extends ConsumerState<RequestItem> {
             child: Row(
               children: [
                 MethodBox(method: widget.requestModel.method),
-                hspacer5,
+                kHSpacer5,
                 Expanded(
                   child: Text(
                     getRequestTitleFromUrl(widget.requestModel.url),

@@ -28,15 +28,15 @@ class _EditorPaneRequestDetailsCardState
         side: BorderSide(
           color: Theme.of(context).colorScheme.surfaceVariant,
         ),
-        borderRadius: border12,
+        borderRadius: kBorder12,
       ),
       elevation: 0,
       child: MultiSplitViewTheme(
         data: MultiSplitViewThemeData(
           dividerThickness: 3,
           dividerPainter: DividerPainters.background(
-            color: colorGrey200,
-            highlightedColor: colorGrey400,
+            color: kColorGrey200,
+            highlightedColor: kColorGrey400,
             animationEnabled: false,
           ),
         ),

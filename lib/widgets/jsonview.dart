@@ -3,9 +3,9 @@ import 'package:apidash/consts.dart';
 import 'package:flutter/material.dart';
 
 final jsonViewTheme = JsonViewTheme(
-  defaultTextStyle: codeStyle,
+  defaultTextStyle: kCodeStyle,
   viewType: JsonViewType.collapsible,
-  backgroundColor: colorBg,
+  backgroundColor: kColorBg,
   stringStyle: const TextStyle(color: Colors.brown),
   closeIcon: const Icon(
     Icons.arrow_drop_up,

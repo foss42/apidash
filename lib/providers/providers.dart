@@ -105,7 +105,7 @@ class CollectionStateNotifier extends StateNotifier<List<RequestModel>> {
       int statusCode = responseRec.$0!.statusCode;
       newRequestModel = requestModel.copyWith(
         responseStatus: statusCode,
-        message: RESPONSE_CODE_REASONS[statusCode],
+        message: kResponseCodeReasons[statusCode],
         responseModel: responseModel,
       );
     }

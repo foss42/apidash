@@ -10,12 +10,12 @@ import '../consts.dart';
 class RequestModel {
   const RequestModel({
     required this.id,
-    this.method = DEFAULT_METHOD,
+    this.method = kDefaultHttpMethod,
     this.url = "",
     this.requestTabIndex = 0,
     this.requestHeaders,
     this.requestParams,
-    this.requestBodyContentType = DEFAULT_BODY_CONTENT_TYPE,
+    this.requestBodyContentType = kDefaultContentType,
     this.requestBody,
     this.responseStatus,
     this.message,
@@ -126,7 +126,7 @@ class ResponseModel {
       headers: responseHeaders,
       requestHeaders: response.request?.headers,
       contentType: contentType,
-      body: contentType == JSON_MIMETYPE
+      body: contentType == kJsonMimeType
           ? utf8.decode(response.bodyBytes)
           : response.body,
       time: time,

@@ -28,17 +28,17 @@ class _ResponseBodyState extends ConsumerState<ResponseBody> {
     var body = responseModel?.body ?? '';
     var contentType = responseModel?.contentType ?? "";
     return Padding(
-      padding: p10,
+      padding: kP10,
       child: SingleChildScrollView(
         child: Column(
           children: [
-            vspacer5,
+            kVSpacer5,
             Row(
               children: [
                 Expanded(
                   child: Text(
                     "Body ${body.isEmpty ? '(empty)' : ''}",
-                    style: codeStyle,
+                    style: kCodeStyle,
                   ),
                 ),
                 if (body.isNotEmpty)
@@ -58,8 +58,8 @@ class _ResponseBodyState extends ConsumerState<ResponseBody> {
                   ),
               ],
             ),
-            vspacer5,
-            if (body.isNotEmpty && contentType.startsWith(JSON_MIMETYPE))
+            kVSpacer5,
+            if (body.isNotEmpty && contentType.startsWith(kJsonMimeType))
               JsonView.string(
                 body,
                 theme: jsonViewTheme,

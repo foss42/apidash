@@ -27,18 +27,18 @@ class _ResponseDetailsState extends ConsumerState<ResponseDetails> {
           children: const [
             Text(
               "Response",
-              style: textStyleButton,
+              style: kTextStyleButton,
             ),
           ],
         ),
-        vspacer5,
+        kVSpacer5,
         Row(
           children: [
             SizedBox(
-              width: 50,
+              width: kHeaderHeight,
               child: Text(
                 "$responseStatus",
-                style: codeStyle.copyWith(
+                style: kCodeStyle.copyWith(
                   color: getResponseStatusCodeColor(responseStatus),
                   fontWeight: FontWeight.bold,
                 ),
@@ -47,7 +47,7 @@ class _ResponseDetailsState extends ConsumerState<ResponseDetails> {
             Expanded(
               child: Text(
                 message ?? "",
-                style: codeStyle.copyWith(
+                style: kCodeStyle.copyWith(
                   color: getResponseStatusCodeColor(responseStatus),
                   fontWeight: FontWeight.bold,
                 ),
@@ -57,7 +57,7 @@ class _ResponseDetailsState extends ConsumerState<ResponseDetails> {
               width: 100,
               child: Text(
                 humanizeDuration(responseModel!.time),
-                style: codeStyle.copyWith(
+                style: kCodeStyle.copyWith(
                   color: getResponseStatusCodeColor(responseStatus),
                   fontWeight: FontWeight.bold,
                 ),

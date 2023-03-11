@@ -27,11 +27,11 @@ class _RequestEditorPaneState extends ConsumerState<RequestEditorPane> {
       return const RequestEditorPaneHome();
     } else {
       return Padding(
-        padding: p8,
+        padding: kP8,
         child: Column(
           children: const [
             EditorPaneRequestURLCard(),
-            vspacer10,
+            kVSpacer10,
             Expanded(
               child: EditorPaneRequestDetailsCard(),
             ),

@@ -22,7 +22,7 @@ class _EditRequestPaneState extends ConsumerState<EditRequestPane>
     super.initState();
     _controller = TabController(
       length: 3,
-      animationDuration: tabAnimationDuration,
+      animationDuration: kTabAnimationDuration,
       vsync: this,
     );
   }
@@ -39,7 +39,7 @@ class _EditRequestPaneState extends ConsumerState<EditRequestPane>
         TabBar(
           key: Key(activeId),
           controller: _controller,
-          overlayColor: colorTransparent,
+          overlayColor: kColorTransparent,
           onTap: (index) {
             ref
                 .read(collectionStateNotifierProvider.notifier)
@@ -54,7 +54,7 @@ class _EditRequestPaneState extends ConsumerState<EditRequestPane>
                   textAlign: TextAlign.center,
                   overflow: TextOverflow.fade,
                   softWrap: false,
-                  style: textStyleButton,
+                  style: kTextStyleButton,
                 ),
               ),
             ),
@@ -65,7 +65,7 @@ class _EditRequestPaneState extends ConsumerState<EditRequestPane>
                   'Headers',
                   textAlign: TextAlign.center,
                   overflow: TextOverflow.fade,
-                  style: textStyleButton,
+                  style: kTextStyleButton,
                 ),
               ),
             ),
@@ -76,7 +76,7 @@ class _EditRequestPaneState extends ConsumerState<EditRequestPane>
                   'Body',
                   textAlign: TextAlign.center,
                   overflow: TextOverflow.fade,
-                  style: textStyleButton,
+                  style: kTextStyleButton,
                 ),
               ),
             ),

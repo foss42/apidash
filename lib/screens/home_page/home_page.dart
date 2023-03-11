@@ -34,8 +34,8 @@ class HomePageState extends State<HomePage> {
               data: MultiSplitViewThemeData(
                 dividerThickness: 4,
                 dividerPainter: DividerPainters.background(
-                  color: colorGrey200,
-                  highlightedColor: colorGrey400,
+                  color: kColorGrey200,
+                  highlightedColor: kColorGrey400,
                   animationEnabled: false,
                 ),
               ),

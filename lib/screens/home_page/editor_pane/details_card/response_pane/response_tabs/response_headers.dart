@@ -29,17 +29,17 @@ class _ResponseHeadersState extends ConsumerState<ResponseHeaders> {
         collection[idIdx].responseModel?.requestHeaders ?? {};
     final responseHeaders = collection[idIdx].responseModel?.headers ?? {};
     return Container(
-      decoration: tableContainerDecoration,
-      margin: p5,
+      decoration: kTableContainerDecoration,
+      margin: kP5,
       child: ListView(
         children: [
-          vspacer5,
+          kVSpacer5,
           Row(
             children: [
               Expanded(
                 child: Text(
                   "Request Headers (${requestHeaders.length} items)",
-                  style: codeStyle,
+                  style: kCodeStyle,
                 ),
               ),
               if (requestHeaders.isNotEmpty)
@@ -60,19 +60,19 @@ class _ResponseHeadersState extends ConsumerState<ResponseHeaders> {
                 ),
             ],
           ),
-          if (requestHeaders.isNotEmpty) vspacer5,
+          if (requestHeaders.isNotEmpty) kVSpacer5,
           if (requestHeaders.isNotEmpty)
             JsonView.map(
               requestHeaders,
               theme: jsonViewTheme,
             ),
-          vspacer5,
+          kVSpacer5,
           Row(
             children: [
               Expanded(
                 child: Text(
                   "Response Headers (${responseHeaders.length} items)",
-                  style: codeStyle,
+                  style: kCodeStyle,
                 ),
               ),
               if (responseHeaders.isNotEmpty)
@@ -93,7 +93,7 @@ class _ResponseHeadersState extends ConsumerState<ResponseHeaders> {
                 ),
             ],
           ),
-          if (responseHeaders.isNotEmpty) vspacer5,
+          if (responseHeaders.isNotEmpty) kVSpacer5,
           if (responseHeaders.isNotEmpty)
             JsonView.map(
               responseHeaders,

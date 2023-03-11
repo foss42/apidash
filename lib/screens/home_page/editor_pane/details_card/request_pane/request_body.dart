@@ -14,13 +14,13 @@ class _EditRequestBodyState extends State<EditRequestBody> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: tableContainerDecoration,
-      margin: p5,
+      decoration: kTableContainerDecoration,
+      margin: kP5,
       child: Column(
         children: [
           Container(
             color: Theme.of(context).colorScheme.surface,
-            height: 32,
+            height: kHeaderHeight,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: const [
@@ -60,14 +60,14 @@ class _DropdownButtonBodyContentTypeState
     final requestBodyContentType = ref.watch(collectionStateNotifierProvider
         .select((value) => value[idIdx].requestBodyContentType));
     return DropdownButton<ContentType>(
-      focusColor: colorGrey50,
+      focusColor: kColorGrey50,
       value: requestBodyContentType,
       icon: const Icon(
         Icons.unfold_more_rounded,
         size: 16,
       ),
       elevation: 4,
-      style: codeStyle.copyWith(
+      style: kCodeStyle.copyWith(
         color: Theme.of(context).colorScheme.primary,
       ),
       underline: Container(
@@ -78,16 +78,16 @@ class _DropdownButtonBodyContentTypeState
             .read(collectionStateNotifierProvider.notifier)
             .update(activeId!, requestBodyContentType: value);
       },
-      borderRadius: border12,
+      borderRadius: kBorder12,
       items: ContentType.values
           .map<DropdownMenuItem<ContentType>>((ContentType value) {
         return DropdownMenuItem<ContentType>(
           value: value,
           child: Padding(
-            padding: ps8,
+            padding: kPs8,
             child: Text(
               value.name,
-              style: textStyleButton,
+              style: kTextStyleButton,
             ),
           ),
         );
@@ -122,7 +122,7 @@ class _TextFieldEditorState extends ConsumerState<TextFieldEditor> {
       maxLines: null,
       textAlignVertical: TextAlignVertical.top,
       initialValue: reqestModel.requestBody ?? "",
-      style: codeStyle,
+      style: kCodeStyle,
       onChanged: (value) {
         ref
             .read(collectionStateNotifierProvider.notifier)
@@ -130,15 +130,15 @@ class _TextFieldEditorState extends ConsumerState<TextFieldEditor> {
       },
       decoration: InputDecoration(
         hintText: "Enter content (body)",
-        hintStyle: codeHintStyle,
+        hintStyle: kCodeHintStyle,
         focusedBorder: OutlineInputBorder(
-          borderRadius: border12,
+          borderRadius: kBorder12,
           borderSide: BorderSide(
             color: Theme.of(context).colorScheme.surfaceVariant,
           ),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: border12,
+          borderRadius: kBorder12,
           borderSide: BorderSide(
             color: Theme.of(context).colorScheme.surfaceVariant,
           ),

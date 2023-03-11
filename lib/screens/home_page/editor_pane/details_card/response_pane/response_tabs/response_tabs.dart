@@ -21,7 +21,7 @@ class _ResponseTabsState extends ConsumerState<ResponseTabs>
     super.initState();
     _controller = TabController(
       length: 2,
-      animationDuration: tabAnimationDuration,
+      animationDuration: kTabAnimationDuration,
       vsync: this,
     );
   }
@@ -34,7 +34,7 @@ class _ResponseTabsState extends ConsumerState<ResponseTabs>
         TabBar(
           key: Key(activeId!),
           controller: _controller,
-          overlayColor: colorTransparent,
+          overlayColor: kColorTransparent,
           onTap: (index) {},
           tabs: const [
             SizedBox(
@@ -45,7 +45,7 @@ class _ResponseTabsState extends ConsumerState<ResponseTabs>
                   textAlign: TextAlign.center,
                   overflow: TextOverflow.fade,
                   softWrap: false,
-                  style: textStyleButton,
+                  style: kTextStyleButton,
                 ),
               ),
             ),
@@ -56,7 +56,7 @@ class _ResponseTabsState extends ConsumerState<ResponseTabs>
                   'Headers',
                   textAlign: TextAlign.center,
                   overflow: TextOverflow.fade,
-                  style: textStyleButton,
+                  style: kTextStyleButton,
                 ),
               ),
             ),
