@@ -33,7 +33,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
         initialValue: rows[idx].k,
         style: codeStyle,
         decoration: InputDecoration(
-          hintStyle: codeStyle,
+          hintStyle: codeHintStyle,
           hintText: "Add URL Parameter",
         ),
         onChanged: (value) {
@@ -50,7 +50,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
         initialValue: rows[idx].v,
         style: codeStyle,
         decoration: InputDecoration(
-          hintStyle: codeStyle,
+          hintStyle: codeHintStyle,
           hintText: "Add Value",
         ),
         onChanged: (value) {

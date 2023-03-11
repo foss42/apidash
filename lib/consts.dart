@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-final codeStyle = GoogleFonts.sourceCodePro();
-
-const textStyleButton = TextStyle(fontWeight: FontWeight.bold);
-
 final colorTransparent = MaterialStateProperty.all<Color>(Colors.transparent);
 const colorBg = Colors.white;
 final colorGrey50 = Colors.grey.shade50;
@@ -14,6 +10,11 @@ final colorGrey300 = Colors.grey.shade300;
 final colorGrey400 = Colors.grey.shade400;
 final colorGrey500 = Colors.grey.shade500;
 final colorErrorMsg = colorGrey500;
+
+final codeStyle = GoogleFonts.sourceCodePro();
+final codeHintStyle = codeStyle.copyWith(color: colorGrey500);
+
+const textStyleButton = TextStyle(fontWeight: FontWeight.bold);
 
 final borderRadius10 = BorderRadius.circular(10);
 const border12 = BorderRadius.all(Radius.circular(12));

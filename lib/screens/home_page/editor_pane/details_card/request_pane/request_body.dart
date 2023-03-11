@@ -130,7 +130,7 @@ class _TextFieldEditorState extends ConsumerState<TextFieldEditor> {
       },
       decoration: InputDecoration(
         hintText: "Enter content (body)",
-        hintStyle: codeStyle.copyWith(color: colorGrey500),
+        hintStyle: codeHintStyle,
         focusedBorder: OutlineInputBorder(
           borderRadius: border12,
           borderSide: BorderSide(

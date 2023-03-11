@@ -32,7 +32,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
         initialValue: rows[idx].k,
         style: codeStyle,
         decoration: InputDecoration(
-          hintStyle: codeStyle,
+          hintStyle: codeHintStyle,
           hintText: "Add Header Name",
         ),
         onChanged: (value) {
@@ -49,7 +49,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
         initialValue: rows[idx].v,
         style: codeStyle,
         decoration: InputDecoration(
-          hintStyle: codeStyle,
+          hintStyle: codeHintStyle,
           hintText: "Add Header Value",
         ),
         onChanged: (value) {
