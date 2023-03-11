@@ -35,8 +35,10 @@ class _EditorPaneRequestDetailsCardState
         data: MultiSplitViewThemeData(
           dividerThickness: 3,
           dividerPainter: DividerPainters.background(
-            color: kColorGrey200,
-            highlightedColor: kColorGrey400,
+            color: Theme.of(context).colorScheme.surfaceVariant,
+            highlightedColor: Theme.of(context).colorScheme.outline.withOpacity(
+                  kHintOpacity,
+                ),
             animationEnabled: false,
           ),
         ),

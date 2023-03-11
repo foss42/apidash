@@ -29,6 +29,7 @@ class App extends StatelessWidget {
         fontFamily: GoogleFonts.openSans().fontFamily,
         colorSchemeSeed: Colors.blue,
         useMaterial3: true,
+        brightness: Brightness.light,
       ),
       home: const HomePage(),
     );

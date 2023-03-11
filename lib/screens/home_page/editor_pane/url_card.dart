@@ -71,14 +71,14 @@ class _DropdownButtonHTTPMethodState
 
   @override
   Widget build(BuildContext context) {
-    final Color color = Theme.of(context).colorScheme.surface;
+    final surfaceColor = Theme.of(context).colorScheme.surface;
     final activeId = ref.watch(activeIdStateProvider);
     final collection = ref.read(collectionStateNotifierProvider);
     final idIdx = collection.indexWhere((m) => m.id == activeId);
     final method = ref.watch(
         collectionStateNotifierProvider.select((value) => value[idIdx].method));
     return DropdownButton<HTTPVerb>(
-      focusColor: color,
+      focusColor: surfaceColor,
       value: method,
       icon: const Icon(Icons.unfold_more_rounded),
       elevation: 4,
@@ -136,7 +136,11 @@ class _URLTextFieldState extends ConsumerState<URLTextField> {
       style: kCodeStyle,
       decoration: InputDecoration(
         hintText: "Enter API endpoint like api.foss42.com/country/codes",
-        hintStyle: kCodeHintStyle,
+        hintStyle: kCodeStyle.copyWith(
+          color: Theme.of(context).colorScheme.outline.withOpacity(
+                kHintOpacity,
+              ),
+        ),
         border: InputBorder.none,
       ),
       onChanged: (value) {
