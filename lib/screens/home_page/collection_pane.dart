@@ -45,9 +45,7 @@ class _CollectionPaneState extends ConsumerState<CollectionPane> {
               ),
             ],
           ),
-          const SizedBox(
-            height: 8,
-          ),
+          vspacer8,
           const Expanded(
             child: SingleChildScrollView(
               child: RequestList(),
@@ -160,9 +158,7 @@ class _RequestItemState extends ConsumerState<RequestItem> {
             child: Row(
               children: [
                 MethodBox(method: widget.requestModel.method),
-                const SizedBox(
-                  width: 5,
-                ),
+                hspacer5,
                 Expanded(
                   child: Text(
                     getRequestTitleFromUrl(widget.requestModel.url),

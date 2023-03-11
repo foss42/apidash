@@ -30,7 +30,15 @@ const p8 = EdgeInsets.all(8);
 const ps8 = EdgeInsets.only(left: 8);
 const p10 = EdgeInsets.all(10);
 
+const hspacer5 = SizedBox(width: 5);
+const hspacer10 = SizedBox(width: 10);
+const hspacer20 = SizedBox(width: 20);
+const vspacer5 = SizedBox(height: 5);
+const vspacer8 = SizedBox(height: 8);
+const vspacer10 = SizedBox(height: 10);
+
 const tabAnimationDuration = Duration(milliseconds: 200);
+const kTabHeight = 45.0;
 
 const randRange = 100000;
 

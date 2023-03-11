@@ -31,9 +31,7 @@ class _RequestEditorPaneState extends ConsumerState<RequestEditorPane> {
         child: Column(
           children: const [
             EditorPaneRequestURLCard(),
-            SizedBox(
-              height: 10,
-            ),
+            vspacer10,
             Expanded(
               child: EditorPaneRequestDetailsCard(),
             ),

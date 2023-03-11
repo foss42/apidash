@@ -32,7 +32,7 @@ class _ResponseBodyState extends ConsumerState<ResponseBody> {
       child: SingleChildScrollView(
         child: Column(
           children: [
-            const SizedBox(height: 5),
+            vspacer5,
             Row(
               children: [
                 Expanded(
@@ -58,7 +58,7 @@ class _ResponseBodyState extends ConsumerState<ResponseBody> {
                   ),
               ],
             ),
-            const SizedBox(height: 5),
+            vspacer5,
             if (body.isNotEmpty && contentType.startsWith(JSON_MIMETYPE))
               JsonView.string(
                 body,

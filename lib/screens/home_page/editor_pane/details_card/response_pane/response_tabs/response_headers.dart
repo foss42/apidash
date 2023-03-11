@@ -33,7 +33,7 @@ class _ResponseHeadersState extends ConsumerState<ResponseHeaders> {
       margin: p5,
       child: ListView(
         children: [
-          const SizedBox(height: 5),
+          vspacer5,
           Row(
             children: [
               Expanded(
@@ -60,13 +60,13 @@ class _ResponseHeadersState extends ConsumerState<ResponseHeaders> {
                 ),
             ],
           ),
-          if (requestHeaders.isNotEmpty) const SizedBox(height: 5),
+          if (requestHeaders.isNotEmpty) vspacer5,
           if (requestHeaders.isNotEmpty)
             JsonView.map(
               requestHeaders,
               theme: jsonViewTheme,
             ),
-          const SizedBox(height: 5),
+          vspacer5,
           Row(
             children: [
               Expanded(
@@ -93,7 +93,7 @@ class _ResponseHeadersState extends ConsumerState<ResponseHeaders> {
                 ),
             ],
           ),
-          if (responseHeaders.isNotEmpty) const SizedBox(height: 5),
+          if (responseHeaders.isNotEmpty) vspacer5,
           if (responseHeaders.isNotEmpty)
             JsonView.map(
               responseHeaders,

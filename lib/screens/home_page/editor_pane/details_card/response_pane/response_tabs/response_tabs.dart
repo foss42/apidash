@@ -38,7 +38,7 @@ class _ResponseTabsState extends ConsumerState<ResponseTabs>
           onTap: (index) {},
           tabs: const [
             SizedBox(
-              height: 45,
+              height: kTabHeight,
               child: Center(
                 child: Text(
                   'Body',
@@ -50,7 +50,7 @@ class _ResponseTabsState extends ConsumerState<ResponseTabs>
               ),
             ),
             SizedBox(
-              height: 45,
+              height: kTabHeight,
               child: Center(
                 child: Text(
                   'Headers',

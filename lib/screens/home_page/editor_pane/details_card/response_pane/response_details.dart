@@ -31,7 +31,7 @@ class _ResponseDetailsState extends ConsumerState<ResponseDetails> {
             ),
           ],
         ),
-        const SizedBox(height: 5),
+        vspacer5,
         Row(
           children: [
             SizedBox(

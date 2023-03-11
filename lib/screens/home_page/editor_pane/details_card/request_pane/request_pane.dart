@@ -47,7 +47,7 @@ class _EditRequestPaneState extends ConsumerState<EditRequestPane>
           },
           tabs: const [
             SizedBox(
-              height: 45,
+              height: kTabHeight,
               child: Center(
                 child: Text(
                   'URL Params',
@@ -59,7 +59,7 @@ class _EditRequestPaneState extends ConsumerState<EditRequestPane>
               ),
             ),
             SizedBox(
-              height: 45,
+              height: kTabHeight,
               child: Center(
                 child: Text(
                   'Headers',
@@ -70,7 +70,7 @@ class _EditRequestPaneState extends ConsumerState<EditRequestPane>
               ),
             ),
             SizedBox(
-              height: 45,
+              height: kTabHeight,
               child: Center(
                 child: Text(
                   'Body',

@@ -36,15 +36,11 @@ class _EditorPaneRequestURLCardState extends State<EditorPaneRequestURLCard> {
         child: Row(
           children: const [
             DropdownButtonHTTPMethod(),
-            SizedBox(
-              width: 20,
-            ),
+            hspacer20,
             Expanded(
               child: URLTextField(),
             ),
-            SizedBox(
-              width: 20,
-            ),
+            hspacer20,
             SizedBox(
               height: 36,
               child: SendRequestButton(),
@@ -140,7 +136,7 @@ class _URLTextFieldState extends ConsumerState<URLTextField> {
       style: codeStyle,
       decoration: InputDecoration(
         hintText: "Enter API endpoint like api.foss42.com/country/codes",
-        hintStyle: codeStyle.copyWith(color: colorGrey500),
+        hintStyle: codeHintStyle,
         border: InputBorder.none,
       ),
       onChanged: (value) {
@@ -180,9 +176,9 @@ class _SendRequestButtonState extends ConsumerState<SendRequestButton> {
                   .read(sentRequestIdStateProvider.notifier)
                   .update((state) => activeId);
               await Future.delayed(
-                const Duration(seconds: 5),
-                () {
-                  ref
+                const Duration(seconds: 3),
+                () async {
+                  await ref
                       .read(collectionStateNotifierProvider.notifier)
                       .sendRequest(activeId!);
                 },
@@ -199,10 +195,7 @@ class _SendRequestButtonState extends ConsumerState<SendRequestButton> {
                 : "Send",
             style: textStyleButton,
           ),
-          if (!disable)
-            const SizedBox(
-              width: 10,
-            ),
+          if (!disable) hspacer10,
           if (!disable)
             const Icon(
               size: 16,
