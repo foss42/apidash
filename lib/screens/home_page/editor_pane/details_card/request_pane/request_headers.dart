@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:davi/davi.dart';
@@ -14,17 +15,20 @@ class EditRequestHeaders extends ConsumerStatefulWidget {
 
 class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
   late List<KVRow> rows;
+  final random = Random.secure();
+  late int seed;
 
   @override
   void initState() {
     super.initState();
+    seed = random.nextInt(randRange);
   }
 
   Widget _buildHeaderField(BuildContext context, DaviRow<KVRow> row) {
     String? activeId = ref.read(activeIdStateProvider);
     int idx = row.index;
     return TextFormField(
-        key: Key("$activeId-$idx-headers-k"),
+        key: Key("$activeId-$idx-headers-k-$seed"),
         initialValue: rows[idx].k,
         style: codeStyle,
         decoration: InputDecoration(
@@ -41,7 +45,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
     String? activeId = ref.read(activeIdStateProvider);
     int idx = row.index;
     return TextFormField(
-        key: Key("$activeId-$idx-headers-v"),
+        key: Key("$activeId-$idx-headers-v-$seed"),
         initialValue: rows[idx].v,
         style: codeStyle,
         decoration: InputDecoration(
@@ -82,8 +86,13 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
     );
 
     final activeId = ref.watch(activeIdStateProvider);
-    final collection = ref.watch(collectionStateNotifierProvider);
+    /*final collection = ref.watch(collectionStateNotifierProvider);
     final idIdx = collection.indexWhere((m) => m.id == activeId);
+    rows = collection[idIdx].requestHeaders ?? [const KVRow("", "")];*/
+    final collection = ref.read(collectionStateNotifierProvider);
+    final idIdx = collection.indexWhere((m) => m.id == activeId);
+    final length = ref.watch(collectionStateNotifierProvider
+        .select((value) => value[idIdx].requestHeaders?.length));
     rows = collection[idIdx].requestHeaders ?? [const KVRow("", "")];
     DaviModel<KVRow> model = DaviModel<KVRow>(
       rows: rows,
@@ -112,6 +121,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
               ),
               onTap: () {
                 rows.removeAt(row.index);
+                seed = random.nextInt(randRange);
                 _onFieldChange(activeId!);
               },
             );

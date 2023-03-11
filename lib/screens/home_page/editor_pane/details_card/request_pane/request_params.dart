@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:davi/davi.dart';
@@ -15,17 +16,20 @@ class EditRequestURLParams extends ConsumerStatefulWidget {
 
 class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
   late List<KVRow> rows;
+  final random = Random.secure();
+  late int seed;
 
   @override
   void initState() {
     super.initState();
+    seed = random.nextInt(randRange);
   }
 
   Widget _buildParamField(BuildContext context, DaviRow<KVRow> row) {
     String? activeId = ref.read(activeIdStateProvider);
     int idx = row.index;
     return TextFormField(
-        key: Key("$activeId-$idx-params-k"),
+        key: Key("$activeId-$idx-params-k-$seed"),
         initialValue: rows[idx].k,
         style: codeStyle,
         decoration: InputDecoration(
@@ -42,7 +46,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
     String? activeId = ref.read(activeIdStateProvider);
     int idx = row.index;
     return TextFormField(
-        key: Key("$activeId-$idx-params-v"),
+        key: Key("$activeId-$idx-params-v-$seed"),
         initialValue: rows[idx].v,
         style: codeStyle,
         decoration: InputDecoration(
@@ -83,8 +87,10 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
     );
 
     final activeId = ref.watch(activeIdStateProvider);
-    final collection = ref.watch(collectionStateNotifierProvider);
+    final collection = ref.read(collectionStateNotifierProvider);
     final idIdx = collection.indexWhere((m) => m.id == activeId);
+    final length = ref.watch(collectionStateNotifierProvider
+        .select((value) => value[idIdx].requestParams?.length));
     rows = collection[idIdx].requestParams ?? [const KVRow("", "")];
     DaviModel<KVRow> model = DaviModel<KVRow>(
       rows: rows,
@@ -113,6 +119,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
               ),
               onTap: () {
                 rows.removeAt(row.index);
+                seed = random.nextInt(randRange);
                 _onFieldChange(activeId!);
               },
             );
