@@ -31,7 +31,9 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
     return TextFormField(
         key: Key("$activeId-$idx-params-k-$seed"),
         initialValue: rows[idx].k,
-        style: kCodeStyle,
+        style: kCodeStyle.copyWith(
+          color: Theme.of(context).colorScheme.onSurface,
+        ),
         decoration: InputDecoration(
           hintStyle: kCodeStyle.copyWith(
             color: Theme.of(context).colorScheme.outline.withOpacity(
@@ -64,7 +66,9 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
     return TextFormField(
         key: Key("$activeId-$idx-params-v-$seed"),
         initialValue: rows[idx].v,
-        style: kCodeStyle,
+        style: kCodeStyle.copyWith(
+          color: Theme.of(context).colorScheme.onSurface,
+        ),
         decoration: InputDecoration(
           hintStyle: kCodeStyle.copyWith(
             color: Theme.of(context).colorScheme.outline.withOpacity(

@@ -82,6 +82,7 @@ class _EditRequestPaneState extends ConsumerState<EditRequestPane>
             ),
           ],
         ),
+        kVSpacer5,
         Expanded(
           child: TabBarView(
             controller: _controller,

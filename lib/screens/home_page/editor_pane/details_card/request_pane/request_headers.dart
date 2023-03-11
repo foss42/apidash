@@ -30,7 +30,9 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
     return TextFormField(
         key: Key("$activeId-$idx-headers-k-$seed"),
         initialValue: rows[idx].k,
-        style: kCodeStyle,
+        style: kCodeStyle.copyWith(
+          color: Theme.of(context).colorScheme.onSurface,
+        ),
         decoration: InputDecoration(
           hintStyle: kCodeStyle.copyWith(
             color: Theme.of(context).colorScheme.outline.withOpacity(
@@ -63,7 +65,9 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
     return TextFormField(
         key: Key("$activeId-$idx-headers-v-$seed"),
         initialValue: rows[idx].v,
-        style: kCodeStyle,
+        style: kCodeStyle.copyWith(
+          color: Theme.of(context).colorScheme.onSurface,
+        ),
         decoration: InputDecoration(
           hintStyle: kCodeStyle.copyWith(
             color: Theme.of(context).colorScheme.outline.withOpacity(
