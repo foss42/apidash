@@ -22,7 +22,7 @@ class _EditRequestPaneState extends ConsumerState<EditRequestPane>
     super.initState();
     _controller = TabController(
       length: 3,
-      animationDuration: const Duration(milliseconds: 200),
+      animationDuration: tabAnimationDuration,
       vsync: this,
     );
   }
@@ -39,7 +39,7 @@ class _EditRequestPaneState extends ConsumerState<EditRequestPane>
         TabBar(
           key: Key(activeId),
           controller: _controller,
-          overlayColor: MaterialStateProperty.all<Color>(Colors.transparent),
+          overlayColor: colorTransparent,
           onTap: (index) {
             ref
                 .read(collectionStateNotifierProvider.notifier)

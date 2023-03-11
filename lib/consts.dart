@@ -5,6 +5,7 @@ final codeStyle = GoogleFonts.sourceCodePro();
 
 const textStyleButton = TextStyle(fontWeight: FontWeight.bold);
 
+final colorTransparent = MaterialStateProperty.all<Color>(Colors.transparent);
 const colorBg = Colors.white;
 final colorGrey50 = Colors.grey.shade50;
 final colorGrey100 = Colors.grey.shade100;
@@ -27,6 +28,10 @@ const p5 = EdgeInsets.all(5);
 const p8 = EdgeInsets.all(8);
 const ps8 = EdgeInsets.only(left: 8);
 const p10 = EdgeInsets.all(10);
+
+const tabAnimationDuration = Duration(milliseconds: 200);
+
+const randRange = 100000;
 
 enum HTTPVerb { get, head, post, put, patch, delete }
 
