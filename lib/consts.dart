@@ -3,11 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 
 final kColorTransparent = MaterialStateProperty.all<Color>(Colors.transparent);
 const kColorBg = Colors.white;
-final kColorGrey100 = Colors.grey.shade100;
-final kColorGrey500 = Colors.grey.shade500;
 
 final kCodeStyle = GoogleFonts.sourceCodePro();
-final kCodeHintStyle = kCodeStyle.copyWith(color: kColorGrey500);
 const kHintOpacity = 0.6;
 
 const kTextStyleButton = TextStyle(fontWeight: FontWeight.bold);

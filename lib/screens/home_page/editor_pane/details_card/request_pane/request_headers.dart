@@ -32,7 +32,11 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
         initialValue: rows[idx].k,
         style: kCodeStyle,
         decoration: InputDecoration(
-          hintStyle: kCodeHintStyle,
+          hintStyle: kCodeStyle.copyWith(
+            color: Theme.of(context).colorScheme.outline.withOpacity(
+                  kHintOpacity,
+                ),
+          ),
           hintText: "Add Header Name",
         ),
         onChanged: (value) {
@@ -49,7 +53,11 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
         initialValue: rows[idx].v,
         style: kCodeStyle,
         decoration: InputDecoration(
-          hintStyle: kCodeHintStyle,
+          hintStyle: kCodeStyle.copyWith(
+            color: Theme.of(context).colorScheme.outline.withOpacity(
+                  kHintOpacity,
+                ),
+          ),
           hintText: "Add Header Value",
         ),
         onChanged: (value) {
@@ -66,47 +74,40 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
 
   @override
   Widget build(BuildContext context) {
-    final tableThemeData = DaviThemeData(
-      columnDividerThickness: 1,
-      columnDividerColor: kColorGrey100,
-      row: RowThemeData(dividerColor: kColorGrey100),
-      decoration: const BoxDecoration(
-        border: Border(),
-      ),
-      header: HeaderThemeData(
-        color: Theme.of(context).colorScheme.surface,
-        columnDividerColor: kColorGrey100,
-        bottomBorderHeight: 1,
-        bottomBorderColor: kColorGrey100,
-      ),
-      headerCell: const HeaderCellThemeData(
-        alignment: Alignment.center,
-        textStyle: null,
-      ),
-    );
-
     final activeId = ref.watch(activeIdStateProvider);
-    /*final collection = ref.watch(collectionStateNotifierProvider);
-    final idIdx = collection.indexWhere((m) => m.id == activeId);
-    rows = collection[idIdx].requestHeaders ?? [const KVRow("", "")];*/
     final collection = ref.read(collectionStateNotifierProvider);
     final idIdx = collection.indexWhere((m) => m.id == activeId);
     final length = ref.watch(collectionStateNotifierProvider
         .select((value) => value[idIdx].requestHeaders?.length));
     rows = collection[idIdx].requestHeaders ?? [const KVRow("", "")];
+
+    final tableThemeData = DaviThemeData(
+      columnDividerThickness: 1,
+      columnDividerColor: Theme.of(context).colorScheme.surfaceVariant,
+      row: RowThemeData(
+        dividerColor: Theme.of(context).colorScheme.surfaceVariant,
+      ),
+      decoration: const BoxDecoration(
+        border: Border(),
+      ),
+      header: const HeaderThemeData(
+        visible: false,
+      ),
+    );
+
     DaviModel<KVRow> model = DaviModel<KVRow>(
       rows: rows,
       columns: [
         DaviColumn(
           name: 'Header Name',
           grow: 1,
-          cellBuilder: _buildHeaderField,
+          cellBuilder: (_, row) => _buildHeaderField(context, row),
           sortable: false,
         ),
         DaviColumn(
           name: 'Header Value',
           grow: 1,
-          cellBuilder: _buildValueField,
+          cellBuilder: (_, row) => _buildValueField(context, row),
           sortable: false,
         ),
         DaviColumn(
@@ -132,7 +133,10 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
     return Stack(
       children: [
         Container(
-          decoration: kTableContainerDecoration,
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.background,
+            borderRadius: kBorder12,
+          ),
           margin: kP5,
           child: Column(
             children: [
