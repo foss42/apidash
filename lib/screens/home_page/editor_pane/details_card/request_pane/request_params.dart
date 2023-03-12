@@ -161,7 +161,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
             color: Theme.of(context).colorScheme.background,
             borderRadius: kBorder12,
           ),
-          margin: kP5,
+          margin: kP10,
           child: Column(
             children: [
               Expanded(
