@@ -1,20 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
+import 'package:apidash/widgets/editor.dart';
 import 'package:apidash/consts.dart';
 
-class EditRequestBody extends StatefulWidget {
+class EditRequestBody extends ConsumerStatefulWidget {
   const EditRequestBody({super.key});
 
   @override
-  State<EditRequestBody> createState() => _EditRequestBodyState();
+  ConsumerState<EditRequestBody> createState() => _EditRequestBodyState();
 }
 
-class _EditRequestBodyState extends State<EditRequestBody> {
+class _EditRequestBodyState extends ConsumerState<EditRequestBody> {
   @override
   Widget build(BuildContext context) {
+    final activeId = ref.watch(activeIdStateProvider);
+    final reqestModel = ref
+        .read(collectionStateNotifierProvider.notifier)
+        .getRequestModel(activeId!);
     return Container(
-      decoration: kTableContainerDecoration,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.background,
+        borderRadius: kBorder12,
+      ),
       margin: kP5,
       child: Column(
         children: [
@@ -31,8 +39,16 @@ class _EditRequestBodyState extends State<EditRequestBody> {
               ],
             ),
           ),
-          const Expanded(
-            child: TextFieldEditor(),
+          Expanded(
+            child: TextFieldEditor(
+              fieldKey: "$activeId-body",
+              initialValue: reqestModel.requestBody,
+              onChanged: (String value) {
+                ref
+                    .read(collectionStateNotifierProvider.notifier)
+                    .update(activeId, requestBody: value);
+              },
+            ),
           )
         ],
       ),
@@ -54,13 +70,14 @@ class _DropdownButtonBodyContentTypeState
     extends ConsumerState<DropdownButtonBodyContentType> {
   @override
   Widget build(BuildContext context) {
+    final surfaceColor = Theme.of(context).colorScheme.surface;
     final activeId = ref.watch(activeIdStateProvider);
     final collection = ref.read(collectionStateNotifierProvider);
     final idIdx = collection.indexWhere((m) => m.id == activeId);
     final requestBodyContentType = ref.watch(collectionStateNotifierProvider
         .select((value) => value[idIdx].requestBodyContentType));
     return DropdownButton<ContentType>(
-      focusColor: kColorGrey50,
+      focusColor: surfaceColor,
       value: requestBodyContentType,
       icon: const Icon(
         Icons.unfold_more_rounded,
@@ -92,58 +109,6 @@ class _DropdownButtonBodyContentTypeState
           ),
         );
       }).toList(),
-    );
-  }
-}
-
-class TextFieldEditor extends ConsumerStatefulWidget {
-  const TextFieldEditor({Key? key}) : super(key: key);
-
-  @override
-  ConsumerState<TextFieldEditor> createState() => _TextFieldEditorState();
-}
-
-class _TextFieldEditorState extends ConsumerState<TextFieldEditor> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final activeId = ref.watch(activeIdStateProvider);
-    final reqestModel = ref
-        .read(collectionStateNotifierProvider.notifier)
-        .getRequestModel(activeId!);
-    return TextFormField(
-      key: Key("$activeId-body"),
-      keyboardType: TextInputType.multiline,
-      expands: true,
-      maxLines: null,
-      textAlignVertical: TextAlignVertical.top,
-      initialValue: reqestModel.requestBody ?? "",
-      style: kCodeStyle,
-      onChanged: (value) {
-        ref
-            .read(collectionStateNotifierProvider.notifier)
-            .update(activeId, requestBody: value);
-      },
-      decoration: InputDecoration(
-        hintText: "Enter content (body)",
-        hintStyle: kCodeHintStyle,
-        focusedBorder: OutlineInputBorder(
-          borderRadius: kBorder12,
-          borderSide: BorderSide(
-            color: Theme.of(context).colorScheme.surfaceVariant,
-          ),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: kBorder12,
-          borderSide: BorderSide(
-            color: Theme.of(context).colorScheme.surfaceVariant,
-          ),
-        ),
-      ),
     );
   }
 }
