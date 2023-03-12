@@ -18,13 +18,8 @@ class TextFieldEditor extends StatefulWidget {
 
 class _TextFieldEditorState extends State<TextFieldEditor> {
   final TextEditingController controller = TextEditingController();
-  final editorFocusNode = FocusNode();
-  final keyboardListnerFocusNode = FocusNode();
-
-  @override
-  void initState() {
-    super.initState();
-  }
+  late final FocusNode editorFocusNode;
+  late final FocusNode keyboardListnerFocusNode;
 
   void insertTab() {
     String sp = "    ";
@@ -43,6 +38,22 @@ class _TextFieldEditorState extends State<TextFieldEditor> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    editorFocusNode = FocusNode(debugLabel: "Editor Focus Node");
+    keyboardListnerFocusNode =
+        FocusNode(debugLabel: "Keyboard Listner Focus Node");
+  }
+
+  @override
+  void dispose() {
+    keyboardListnerFocusNode.dispose();
+    editorFocusNode.dispose();
+    super.dispose();
+  }
+
+  /*
+  @override
   Widget build(BuildContext context) {
     if (widget.initialValue != null) {
       controller.text = widget.initialValue!;
@@ -55,6 +66,11 @@ class _TextFieldEditorState extends State<TextFieldEditor> {
           if (kIsWeb) {
             FocusScope.of(context).previousFocus();
           } else {
+            print(FocusScope.of(context).debugLabel);
+            print("here");
+            //FocusScope.of(context).requestFocus(editorFocusNode);
+            //FocusScope.of(context).previousFocus();
+            //FocusScope.of(context).unfocus();
             editorFocusNode.requestFocus();
           }
           insertTab();
@@ -92,12 +108,50 @@ class _TextFieldEditorState extends State<TextFieldEditor> {
         ),
       ),
     );
-  }
+  }*/
 
   @override
-  void dispose() {
-    keyboardListnerFocusNode.dispose();
-    editorFocusNode.dispose();
-    super.dispose();
+  Widget build(BuildContext context) {
+    if (widget.initialValue != null) {
+      controller.text = widget.initialValue!;
+    }
+    return CallbackShortcuts(
+      bindings: <ShortcutActivator, VoidCallback>{
+        const SingleActivator(LogicalKeyboardKey.tab): () {
+          insertTab();
+        },
+      },
+      child: TextFormField(
+        key: Key(widget.fieldKey),
+        controller: controller,
+        focusNode: editorFocusNode,
+        keyboardType: TextInputType.multiline,
+        expands: true,
+        maxLines: null,
+        style: kCodeStyle,
+        textAlignVertical: TextAlignVertical.top,
+        onChanged: widget.onChanged,
+        decoration: InputDecoration(
+          hintText: "Enter content (body)",
+          hintStyle: TextStyle(
+            color: Theme.of(context).colorScheme.outline.withOpacity(
+                  kHintOpacity,
+                ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Theme.of(context).colorScheme.primary.withOpacity(
+                    kHintOpacity,
+                  ),
+            ),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Theme.of(context).colorScheme.surfaceVariant,
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
