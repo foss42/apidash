@@ -41,7 +41,8 @@ class _EditRequestBodyState extends ConsumerState<EditRequestBody> {
           ),
           Expanded(
             child: TextFieldEditor(
-              fieldKey: "$activeId-body",
+              key: Key("$activeId-body"),
+              fieldKey: "$activeId-body-editor",
               initialValue: reqestModel.requestBody,
               onChanged: (String value) {
                 ref
