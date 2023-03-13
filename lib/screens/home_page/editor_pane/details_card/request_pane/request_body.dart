@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
-import 'package:apidash/widgets/editor.dart';
+import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
 
 class EditRequestBody extends ConsumerStatefulWidget {
@@ -25,8 +25,7 @@ class _EditRequestBodyState extends ConsumerState<EditRequestBody> {
       margin: kP5,
       child: Column(
         children: [
-          Container(
-            color: Theme.of(context).colorScheme.surface,
+          SizedBox(
             height: kHeaderHeight,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
