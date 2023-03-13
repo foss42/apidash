@@ -6,18 +6,9 @@ import 'package:collection/collection.dart' show mergeMaps;
 import '../models/models.dart';
 import '../../consts.dart';
 
-const SUPPORTED_URI_SCHEMES = [
-  "https",
-  "http"
-];
-
-const DEFAULT_URI_SCHEME = "https://";
-
-const METHODS_WITH_BODY = [HTTPVerb.post, HTTPVerb.put, HTTPVerb.patch, HTTPVerb.delete,];
-
 (String?, bool) getUriScheme(Uri uri) {
   if(uri.hasScheme){
-    if(SUPPORTED_URI_SCHEMES.contains(uri.scheme)){
+    if(kSupportedUriSchemes.contains(uri.scheme)){
       return (uri.scheme, true);
     }
     return (uri.scheme, false);
@@ -41,7 +32,7 @@ const METHODS_WITH_BODY = [HTTPVerb.post, HTTPVerb.put, HTTPVerb.patch, HTTPVerb
     }
   }
   else {
-    url = DEFAULT_URI_SCHEME + url;
+    url = kDefaultUriScheme + url;
   }
 
   uri =  Uri.parse(url);
@@ -69,7 +60,7 @@ Future<(http.Response?, Duration?, String?)> request(RequestModel requestModel) 
     http.Response response;
     String? body;
     try {
-      if(METHODS_WITH_BODY.contains(requestModel.method)){
+      if(kMethodsWithBody.contains(requestModel.method)){
         if(requestModel.requestBody != null){
           var contentLength = utf8.encode(requestModel.requestBody).length;
           if (contentLength > 0){
