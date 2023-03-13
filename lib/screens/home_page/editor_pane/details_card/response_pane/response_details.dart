@@ -23,47 +23,62 @@ class _ResponseDetailsState extends ConsumerState<ResponseDetails> {
     final responseModel = collection[idIdx].responseModel;
     return Column(
       children: [
-        Row(
-          children: const [
-            Text(
-              "Response",
-              style: kTextStyleButton,
-            ),
-          ],
-        ),
-        kVSpacer5,
-        Row(
-          children: [
-            SizedBox(
-              width: kHeaderHeight,
-              child: Text(
-                "$responseStatus",
-                style: kCodeStyle.copyWith(
-                  color: getResponseStatusCodeColor(responseStatus),
-                  fontWeight: FontWeight.bold,
+        Padding(
+          padding: kPh20v10,
+          child: SizedBox(
+            height: kHeaderHeight,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text.rich(
+                  TextSpan(
+                    children: [
+                      const TextSpan(
+                        text: "Response (",
+                      ),
+                      TextSpan(
+                        text: "$responseStatus",
+                        style: TextStyle(
+                          color: getResponseStatusCodeColor(
+                            responseStatus,
+                            brightness: Theme.of(context).brightness,
+                          ),
+                          fontFamily: kCodeStyle.fontFamily,
+                        ),
+                      ),
+                      const TextSpan(
+                        text: ")",
+                      ),
+                    ],
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
                 ),
-              ),
-            ),
-            Expanded(
-              child: Text(
-                message ?? "",
-                style: kCodeStyle.copyWith(
-                  color: getResponseStatusCodeColor(responseStatus),
-                  fontWeight: FontWeight.bold,
+                kHSpacer20,
+                Expanded(
+                  child: Text(
+                    message ?? "",
+                    softWrap: false,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                          fontFamily: kCodeStyle.fontFamily,
+                          color: getResponseStatusCodeColor(
+                            responseStatus,
+                            brightness: Theme.of(context).brightness,
+                          ),
+                        ),
+                  ),
                 ),
-              ),
-            ),
-            SizedBox(
-              width: 100,
-              child: Text(
-                humanizeDuration(responseModel!.time),
-                style: kCodeStyle.copyWith(
-                  color: getResponseStatusCodeColor(responseStatus),
-                  fontWeight: FontWeight.bold,
+                kHSpacer20,
+                Text(
+                  humanizeDuration(responseModel?.time),
+                  style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                        fontFamily: kCodeStyle.fontFamily,
+                        color: Theme.of(context).colorScheme.secondary,
+                      ),
                 ),
-              ),
+              ],
             ),
-          ],
+          ),
         ),
         const Expanded(
           child: ResponseTabs(),

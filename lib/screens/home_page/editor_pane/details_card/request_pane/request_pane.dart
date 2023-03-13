@@ -36,6 +36,28 @@ class _EditRequestPaneState extends ConsumerState<EditRequestPane>
         .requestTabIndex;
     return Column(
       children: [
+        Padding(
+          padding: kPh20v10,
+          child: SizedBox(
+            height: kHeaderHeight,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Request",
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                FilledButton.tonalIcon(
+                  onPressed: () {},
+                  icon: const Icon(
+                    Icons.code_rounded,
+                  ),
+                  label: const Text("Generate Code"),
+                ),
+              ],
+            ),
+          ),
+        ),
         TabBar(
           key: Key(activeId),
           controller: _controller,

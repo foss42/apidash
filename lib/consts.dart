@@ -22,6 +22,7 @@ const kP1 = EdgeInsets.all(1);
 const kP5 = EdgeInsets.all(5);
 const kP8 = EdgeInsets.all(8);
 const kPs8 = EdgeInsets.only(left: 8);
+const kPh20v10 = EdgeInsets.symmetric(horizontal: 20, vertical: 10);
 const kP10 = EdgeInsets.all(10);
 
 const kHSpacer5 = SizedBox(width: 5);
