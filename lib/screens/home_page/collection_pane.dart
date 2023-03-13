@@ -226,7 +226,10 @@ class MethodBox extends StatelessWidget {
         style: TextStyle(
           fontSize: 8,
           fontWeight: FontWeight.bold,
-          color: getHTTPMethodColor(method),
+          color: getHTTPMethodColor(
+            method,
+            brightness: Theme.of(context).brightness,
+          ),
         ),
       ),
     );

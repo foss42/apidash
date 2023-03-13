@@ -1,26 +1,31 @@
 import 'package:flutter/material.dart';
 import '../consts.dart';
 
-Color? getResponseStatusCodeColor(int? statusCode) {
-  if (statusCode == null) {
-    return Colors.grey.shade700;
+Color getResponseStatusCodeColor(int? statusCode,
+    {Brightness brightness = Brightness.light}) {
+  Color col = Colors.grey.shade700;
+  if (statusCode != null) {
+    if (statusCode >= 200) {
+      col = Colors.green.shade800;
+    }
+    if (statusCode >= 300) {
+      col = Colors.blue.shade800;
+    }
+    if (statusCode >= 400) {
+      col = Colors.red.shade800;
+    }
+    if (statusCode >= 500) {
+      col = Colors.amber.shade900;
+    }
   }
-  if (statusCode >= 500) {
-    return Colors.amber.shade900;
+  if (brightness == Brightness.dark) {
+    col = Color.alphaBlend(col.withOpacity(0.4), Colors.white);
   }
-  if (statusCode >= 400) {
-    return Colors.red.shade800;
-  }
-  if (statusCode >= 300) {
-    return Colors.blue.shade800;
-  }
-  if (statusCode >= 200) {
-    return Colors.green.shade800;
-  }
-  return Colors.grey.shade700;
+  return col;
 }
 
-Color getHTTPMethodColor(HTTPVerb method) {
+Color getHTTPMethodColor(HTTPVerb method,
+    {Brightness brightness = Brightness.light}) {
   Color col;
   switch (method) {
     case HTTPVerb.get:
@@ -41,6 +46,9 @@ Color getHTTPMethodColor(HTTPVerb method) {
     case HTTPVerb.delete:
       col = Colors.red.shade800;
       break;
+  }
+  if (brightness == Brightness.dark) {
+    col = Color.alphaBlend(col.withOpacity(0.4), Colors.white);
   }
   return col;
 }

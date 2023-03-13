@@ -99,7 +99,10 @@ class _DropdownButtonHTTPMethodState
               value.name.toUpperCase(),
               style: kCodeStyle.copyWith(
                 fontWeight: FontWeight.bold,
-                color: getHTTPMethodColor(value),
+                color: getHTTPMethodColor(
+                  value,
+                  brightness: Theme.of(context).brightness,
+                ),
               ),
             ),
           ),
