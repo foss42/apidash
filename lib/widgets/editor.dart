@@ -89,6 +89,15 @@ class _TextFieldEditorState extends State<TextFieldEditor> {
               color: Theme.of(context).colorScheme.surfaceVariant,
             ),
           ),
+          filled: true,
+          hoverColor: Colors.transparent,
+          fillColor: Theme.of(context).brightness == Brightness.dark
+              ? Color.alphaBlend(
+                  Theme.of(context).colorScheme.surface.withOpacity(0.8),
+                  Colors.black)
+              : Color.alphaBlend(
+                  Theme.of(context).colorScheme.surface.withOpacity(0.2),
+                  Colors.white),
         ),
       ),
     );
