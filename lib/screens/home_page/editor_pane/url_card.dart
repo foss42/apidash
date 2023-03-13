@@ -26,7 +26,7 @@ class _EditorPaneRequestURLCardState extends State<EditorPaneRequestURLCard> {
         side: BorderSide(
           color: Theme.of(context).colorScheme.surfaceVariant,
         ),
-        borderRadius: kBorder12,
+        borderRadius: kBorderRadius12,
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(

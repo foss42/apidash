@@ -10,12 +10,13 @@ const kHintOpacity = 0.6;
 
 const kTextStyleButton = TextStyle(fontWeight: FontWeight.bold);
 
+const kBorderRadius8 = BorderRadius.all(Radius.circular(8));
 final kBorderRadius10 = BorderRadius.circular(10);
-const kBorder12 = BorderRadius.all(Radius.circular(12));
+const kBorderRadius12 = BorderRadius.all(Radius.circular(12));
 
 const kTableContainerDecoration = BoxDecoration(
   color: kColorBg,
-  borderRadius: kBorder12,
+  borderRadius: kBorderRadius12,
 );
 
 const kP1 = EdgeInsets.all(1);

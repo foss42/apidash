@@ -136,13 +136,13 @@ class _RequestItemState extends ConsumerState<RequestItem> {
     final activeRequest = ref.watch(activeIdStateProvider);
     bool isActiveId = activeRequest == widget.id;
     return Material(
-      borderRadius: kBorder12,
+      borderRadius: kBorderRadius12,
       elevation: isActiveId ? 1 : 0,
       surfaceTintColor: isActiveId ? surfaceTint : null,
       color: color,
       type: MaterialType.card,
       child: InkWell(
-        borderRadius: kBorder12,
+        borderRadius: kBorderRadius12,
         onTap: () {
           ref.read(activeIdStateProvider.notifier).update((state) => widget.id);
         },

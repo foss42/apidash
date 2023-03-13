@@ -28,7 +28,7 @@ class _EditorPaneRequestDetailsCardState
         side: BorderSide(
           color: Theme.of(context).colorScheme.surfaceVariant,
         ),
-        borderRadius: kBorder12,
+        borderRadius: kBorderRadius12,
       ),
       elevation: 0,
       child: MultiSplitViewTheme(

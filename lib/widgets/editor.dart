@@ -76,6 +76,7 @@ class _TextFieldEditorState extends State<TextFieldEditor> {
                 ),
           ),
           focusedBorder: OutlineInputBorder(
+            borderRadius: kBorderRadius8,
             borderSide: BorderSide(
               color: Theme.of(context).colorScheme.primary.withOpacity(
                     kHintOpacity,
@@ -83,6 +84,7 @@ class _TextFieldEditorState extends State<TextFieldEditor> {
             ),
           ),
           enabledBorder: OutlineInputBorder(
+            borderRadius: kBorderRadius8,
             borderSide: BorderSide(
               color: Theme.of(context).colorScheme.surfaceVariant,
             ),

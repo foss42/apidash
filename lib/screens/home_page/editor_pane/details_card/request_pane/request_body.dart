@@ -21,7 +21,6 @@ class _EditRequestBodyState extends ConsumerState<EditRequestBody> {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.background,
-        borderRadius: kBorder12,
       ),
       margin: kP5,
       child: Column(
@@ -96,7 +95,7 @@ class _DropdownButtonBodyContentTypeState
             .read(collectionStateNotifierProvider.notifier)
             .update(activeId!, requestBodyContentType: value);
       },
-      borderRadius: kBorder12,
+      borderRadius: kBorderRadius8,
       items: ContentType.values
           .map<DropdownMenuItem<ContentType>>((ContentType value) {
         return DropdownMenuItem<ContentType>(
