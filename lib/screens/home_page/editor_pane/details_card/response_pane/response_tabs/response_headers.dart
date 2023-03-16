@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
+import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
+
+const kHeaderRow = ["Header Name", "Header Value"];
 
 class ResponseHeaders extends ConsumerStatefulWidget {
   const ResponseHeaders({super.key});
@@ -32,19 +34,19 @@ class _ResponseHeadersState extends ConsumerState<ResponseHeaders> {
           getHeaderBox(context, responseHeaders, "Response Headers"),
           if (responseHeaders.isNotEmpty) kVSpacer5,
           if (responseHeaders.isNotEmpty)
-            getTable(
-              context,
-              responseHeaders,
-              ["Header Name", "Header Value"],
+            MapTable(
+              map: responseHeaders,
+              colNames: kHeaderRow,
+              firstColumnHeaderCase: true,
             ),
           kVSpacer10,
           getHeaderBox(context, requestHeaders, "Request Headers"),
           if (requestHeaders.isNotEmpty) kVSpacer5,
           if (requestHeaders.isNotEmpty)
-            getTable(
-              context,
-              requestHeaders,
-              ["Header Name", "Header Value"],
+            MapTable(
+              map: requestHeaders,
+              colNames: kHeaderRow,
+              firstColumnHeaderCase: true,
             ),
         ],
       ),
@@ -65,97 +67,11 @@ class _ResponseHeadersState extends ConsumerState<ResponseHeaders> {
             ),
           ),
           if (map.isNotEmpty)
-            TextButton(
-              onPressed: () async {
-                await Clipboard.setData(
-                    ClipboardData(text: encoder.convert(map)));
-              },
-              child: Row(
-                children: const [
-                  Icon(
-                    Icons.content_copy,
-                    size: 20,
-                  ),
-                  Text("Copy")
-                ],
-              ),
+            CopyButton(
+              toCopy: encoder.convert(map),
             ),
         ],
       ),
     );
-  }
-
-  Widget getTable(BuildContext context, Map map, List<String> headers) {
-    return Table(
-      border: TableBorder(
-        horizontalInside: BorderSide(
-          color: Theme.of(context).colorScheme.surfaceVariant,
-        ),
-      ),
-      columnWidths: const <int, TableColumnWidth>{
-        0: FlexColumnWidth(),
-        1: FlexColumnWidth(),
-      },
-      defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-      children: [
-        getHeaderRow(context, headers),
-        ...getTableRowsFromMap(context, map),
-      ],
-    );
-  }
-
-  TableRow getHeaderRow(BuildContext context, List<String> headers) {
-    return TableRow(
-      children: headers
-          .map<TableCell>(
-            (e) => TableCell(
-              verticalAlignment: TableCellVerticalAlignment.top,
-              child: Padding(
-                padding: kP1,
-                child: SelectableText(
-                  e,
-                  style: kCodeStyle.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                ),
-              ),
-            ),
-          )
-          .toList(),
-    );
-  }
-
-  List<TableRow> getTableRowsFromMap(BuildContext context, Map map) {
-    return map.entries
-        .map<TableRow>(
-          (entry) => TableRow(
-            children: [
-              TableCell(
-                verticalAlignment: TableCellVerticalAlignment.top,
-                child: Padding(
-                  padding: kP1,
-                  child: SelectableText(
-                    entry.key,
-                    style: kCodeStyle.copyWith(
-                      color: Theme.of(context).colorScheme.tertiary,
-                    ),
-                  ),
-                ),
-              ),
-              TableCell(
-                verticalAlignment: TableCellVerticalAlignment.top,
-                child: Padding(
-                  padding: kP1,
-                  child: SelectableText(
-                    entry.value,
-                    style: kCodeStyle,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        )
-        .toList();
   }
 }
