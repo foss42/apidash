@@ -61,7 +61,7 @@ class _EditRequestPaneState extends ConsumerState<EditRequestPane>
                   ),
                   label: SizedBox(
                     width: 75,
-                    child: Text(codePaneVisible ? "Hide Code" : "Show Code"),
+                    child: Text(codePaneVisible ? "Hide Code" : "View Code"),
                   ),
                 ),
               ],
