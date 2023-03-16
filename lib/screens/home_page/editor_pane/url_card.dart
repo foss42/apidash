@@ -183,7 +183,7 @@ class _SendRequestButtonState extends ConsumerState<SendRequestButton> {
                   .read(sentRequestIdStateProvider.notifier)
                   .update((state) => activeId);
               await Future.delayed(
-                const Duration(seconds: 3),
+                const Duration(seconds: 1),
                 () async {
                   await ref
                       .read(collectionStateNotifierProvider.notifier)
