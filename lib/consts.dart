@@ -82,6 +82,7 @@ const kTypeText = 'text';
 // application
 const kSubTypeJson = 'json';
 const kSubTypePdf = 'pdf';
+const kSubTypeSql = 'sql';
 const kSubTypeXml = 'xml'; // also text
 const kSubTypeOctetStream = 'octet-stream';
 
@@ -124,10 +125,12 @@ const Map<String, Map<String, List<ResponseBodyView>>>
     kSubTypeDefaultViewOptions: kNoBodyViewOptions,
     kSubTypeJson: kCodeRawBodyViewOptions,
     kSubTypePdf: kPreviewBodyViewOptions,
+    kSubTypeSql: kCodeRawBodyViewOptions,
     kSubTypeXml: kCodeRawBodyViewOptions,
   },
   kTypeImage: {
     kSubTypeDefaultViewOptions: kPreviewBodyViewOptions,
+    kSubTypeSvg: kCodeRawBodyViewOptions,
   },
   kTypeAudio: {
     kSubTypeDefaultViewOptions: kPreviewBodyViewOptions,
