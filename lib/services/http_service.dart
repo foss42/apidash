@@ -17,7 +17,8 @@ import '../../consts.dart';
 }
 
 (Uri?, String?) getValidRequestUri(String? url, List<KVRow>? requestParams) {
-  if(url == null || url.trim() == ""){
+  url = url?.trim();
+  if(url == null || url == ""){
     return (null, "URL is missing!");
   }
   Uri? uri =  Uri.tryParse(url);
