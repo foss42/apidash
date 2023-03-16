@@ -38,6 +38,7 @@ const kVSpacer10 = SizedBox(height: 10);
 const kTabAnimationDuration = Duration(milliseconds: 200);
 const kTabHeight = 45.0;
 const kHeaderHeight = 32.0;
+const kSegmentHeight = 24.0;
 
 const kRandMax = 100000;
 
@@ -71,7 +72,81 @@ const kDefaultHttpMethod = HTTPVerb.get;
 const kDefaultContentType = ContentType.json;
 
 const JsonEncoder encoder = JsonEncoder.withIndent('    ');
-const kJsonMimeType = 'application/json';
+
+const kTypeApplication = 'application';
+const kTypeImage = 'image';
+const kTypeAudio = 'audio';
+const kTypeVideo = 'video';
+const kTypeText = 'text';
+
+// application
+const kSubTypeJson = 'json';
+const kSubTypePdf = 'pdf';
+const kSubTypeXml = 'xml'; // also text
+
+// text
+const kSubTypeCss = 'css';
+const kSubTypeCsv = 'csv';
+const kSubTypeHtml = 'html';
+const kSubTypeJavascript = 'javascript';
+const kSubTypeMarkdown = 'markdown';
+const kSubTypePlain = 'plain';
+
+//image
+const kSubTypeSvg = 'svg+xml';
+
+const kSubTypeDefaultViewOptions = 'all';
+
+enum ResponseBodyView { preview, code, raw }
+
+const Map<ResponseBodyView, IconData> kResponseBodyViewIcons = {
+  ResponseBodyView.preview: Icons.visibility_rounded,
+  ResponseBodyView.code: Icons.code_rounded,
+  ResponseBodyView.raw: Icons.text_snippet_rounded
+};
+
+const kDefaultBodyViewOptions = [ResponseBodyView.raw];
+const kCodeRawBodyViewOptions = [ResponseBodyView.code, ResponseBodyView.raw];
+const kPreviewRawBodyViewOptions = [
+  ResponseBodyView.preview,
+  ResponseBodyView.raw
+];
+const kPreviewCodeRawBodyViewOptions = [
+  ResponseBodyView.preview,
+  ResponseBodyView.code,
+  ResponseBodyView.raw
+];
+
+const Map<String, Map<String, List<ResponseBodyView>>>
+    kResponseBodyViewOptions = {
+  kTypeApplication: {
+    kSubTypeDefaultViewOptions: kDefaultBodyViewOptions,
+    kSubTypeJson: kCodeRawBodyViewOptions,
+    kSubTypePdf: kPreviewRawBodyViewOptions,
+    kSubTypeXml: kCodeRawBodyViewOptions,
+  },
+  kTypeImage: {
+    kSubTypeDefaultViewOptions: kPreviewRawBodyViewOptions,
+  },
+  kTypeAudio: {
+    kSubTypeDefaultViewOptions: kPreviewRawBodyViewOptions,
+  },
+  kTypeVideo: {
+    kSubTypeDefaultViewOptions: kPreviewRawBodyViewOptions,
+  },
+  kTypeText: {
+    kSubTypeDefaultViewOptions: kDefaultBodyViewOptions,
+    kSubTypeCss: kCodeRawBodyViewOptions,
+    kSubTypeHtml: kCodeRawBodyViewOptions,
+    kSubTypeJavascript: kCodeRawBodyViewOptions,
+    kSubTypeXml: kCodeRawBodyViewOptions,
+    kSubTypeMarkdown: kCodeRawBodyViewOptions,
+  },
+};
+
+const Map<String, String> kCodeHighlighterMap = {
+  kSubTypeHtml: "xml",
+};
 
 const sendingIndicator = AssetImage("assets/sending.gif");
 
@@ -143,3 +218,9 @@ const kResponseCodeReasons = {
   510: 'Not Extended',
   511: 'Network Authentication Required',
 };
+
+const kMimeTypeRaiseIssue =
+    " is currently not supported.\nPlease raise an issue in API Dash GitHub repo - https://github.com/foss42/api-dash so that we can prioritize adding it to the tool.";
+
+const kRaiseIssue =
+    "\nIf the behaviour is unexpected, please raise an issue in API Dash GitHub repo - https://github.com/foss42/api-dash so that we can resolve it.";

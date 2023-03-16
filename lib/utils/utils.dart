@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:http_parser/http_parser.dart';
 import '../consts.dart';
 
 Color getResponseStatusCodeColor(int? statusCode,
@@ -83,5 +84,44 @@ String humanizeDuration(Duration? duration) {
   } else {
     var mili = duration.inMilliseconds.remainder(1000);
     return "$mili ms";
+  }
+}
+
+String capitalizeFirstLetter(String? text) {
+  if (text == null || text == "") {
+    return "";
+  } else if (text.length == 1) {
+    return text.toUpperCase();
+  } else {
+    var first = text[0];
+    var rest = text.substring(1);
+    return first.toUpperCase() + rest;
+  }
+}
+
+String formatHeaderCase(String text) {
+  var sp = text.split("-");
+  sp = sp.map((e) => capitalizeFirstLetter(e)).toList();
+  return sp.join("-");
+}
+
+(List<ResponseBodyView>, String?)  getResponseBodyViewOptions(MediaType mediaType){
+  var type = mediaType.type;
+  var subtype = mediaType.subtype;
+  print(mediaType);
+  if(kResponseBodyViewOptions.containsKey(type)){
+    if(subtype.contains(kSubTypeJson)){
+      subtype = kSubTypeJson;
+    }
+    if(subtype.contains(kSubTypeXml)){
+      subtype = kSubTypeXml;
+    }
+    if (kResponseBodyViewOptions[type]!.containsKey(subtype)){
+       return (kResponseBodyViewOptions[type]![subtype]!, kCodeHighlighterMap[subtype] ?? subtype);
+    }
+    return (kResponseBodyViewOptions[type]![kSubTypeDefaultViewOptions]!, subtype);
+  }
+  else {
+    return (kDefaultBodyViewOptions, null);
   }
 }

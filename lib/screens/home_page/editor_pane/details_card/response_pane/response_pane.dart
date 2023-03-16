@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
+import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
 import 'response_details.dart';
 
@@ -32,7 +33,7 @@ class _ResponsePaneState extends ConsumerState<ResponsePane> {
       return const NotSentWidget();
     }
     if (responseStatus == -1) {
-      return ErrorMessage(message: message);
+      return ErrorMessage(message: '$message. $kRaiseIssue');
     }
     return const ResponseDetails();
   }
@@ -89,34 +90,6 @@ class SendingWidget extends StatelessWidget {
               image: sendingIndicator,
               width: 300,
             ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class ErrorMessage extends StatelessWidget {
-  const ErrorMessage({super.key, required this.message});
-
-  final String? message;
-
-  @override
-  Widget build(BuildContext context) {
-    final color = Theme.of(context).colorScheme.secondary;
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.warning_rounded,
-            size: 40,
-            color: color,
-          ),
-          Text(
-            message ?? 'And error occurred.',
-            style:
-                Theme.of(context).textTheme.titleMedium?.copyWith(color: color),
           ),
         ],
       ),
