@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'error_message.dart';
 import 'package:apidash/consts.dart';
 
 class Previewer extends StatefulWidget {
@@ -20,24 +21,26 @@ class _PreviewerState extends State<Previewer> {
   @override
   Widget build(BuildContext context) {
     if (widget.type == kTypeApplication && widget.subtype == kSubTypePdf) {
-      return const SelectableText("PDF viewing $kMimeTypeRaiseIssue");
+      return const ErrorMessage(message: "PDF viewing $kMimeTypeRaiseIssue");
     }
     if (widget.type == kTypeImage) {
       return Image.memory(
         widget.bytes,
         errorBuilder: (context, _, stackTrace) {
-          return SelectableText(
-              "${widget.type}/${widget.subtype} mimetype preview $kMimeTypeRaiseIssue");
+          return ErrorMessage(
+              message:
+                  "${widget.type}/${widget.subtype} mimetype preview $kMimeTypeRaiseIssue");
         },
       );
     }
     if (widget.type == kTypeAudio) {
-      return const SelectableText("Audio playing $kMimeTypeRaiseIssue");
+      return const ErrorMessage(message: "Audio playing $kMimeTypeRaiseIssue");
     }
     if (widget.type == kTypeVideo) {
-      return const SelectableText("Video playing $kMimeTypeRaiseIssue");
+      return const ErrorMessage(message: "Video playing $kMimeTypeRaiseIssue");
     }
-    return SelectableText(
-        "${widget.type}/${widget.subtype} mimetype preview $kMimeTypeRaiseIssue");
+    return ErrorMessage(
+        message:
+            "${widget.type}/${widget.subtype} mimetype preview $kMimeTypeRaiseIssue");
   }
 }

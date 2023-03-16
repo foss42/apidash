@@ -122,6 +122,6 @@ String formatHeaderCase(String text) {
     return (kResponseBodyViewOptions[type]![kSubTypeDefaultViewOptions]!, subtype);
   }
   else {
-    return (kDefaultBodyViewOptions, null);
+    return (kNoBodyViewOptions, null);
   }
 }

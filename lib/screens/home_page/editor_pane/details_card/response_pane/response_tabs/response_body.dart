@@ -1,8 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:apidash/providers/providers.dart';
-import 'package:apidash/models/models.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/utils/utils.dart';
 import 'package:apidash/consts.dart';
@@ -27,6 +27,7 @@ class _ResponseBodyState extends ConsumerState<ResponseBody> {
     final idIdx = collection.indexWhere((m) => m.id == activeId);
     final responseModel = collection[idIdx].responseModel;
     var mediaType = responseModel?.mediaType;
+    var body = responseModel?.body;
     if (responseModel == null) {
       return const ErrorMessage(
           message: 'Error: No Response Data Found. $kRaiseIssue');
@@ -36,112 +37,129 @@ class _ResponseBodyState extends ConsumerState<ResponseBody> {
           message:
               'Unknown Response content type - ${responseModel.contentType}. $kRaiseIssue');
     }
+    if (body == null) {
+      return const ErrorMessage(
+          message: 'Response body is empty. $kRaiseIssue');
+    }
+    var responseBodyView = getResponseBodyViewOptions(mediaType);
+    print(responseBodyView);
+    var options = responseBodyView.$0;
+    var highlightLanguage = responseBodyView.$1;
+    if (options == kNoBodyViewOptions) {
+      return ErrorMessage(
+          message:
+              "Viewing response data of Content-Type\n'${mediaType.mimeType}' $kMimeTypeRaiseIssue");
+    }
     return BodySuccess(
       mediaType: mediaType,
-      responseModel: responseModel,
+      options: options,
+      bytes: responseModel.bodyBytes!,
+      body: body,
+      highlightLanguage: highlightLanguage,
     );
   }
 }
 
 class BodySuccess extends StatefulWidget {
   const BodySuccess(
-      {super.key, required this.mediaType, required this.responseModel});
+      {super.key,
+      required this.mediaType,
+      required this.body,
+      required this.options,
+      required this.bytes,
+      this.highlightLanguage});
   final MediaType mediaType;
-  final ResponseModel responseModel;
+  final List<ResponseBodyView> options;
+  final String body;
+  final Uint8List bytes;
+  final String? highlightLanguage;
   @override
   State<BodySuccess> createState() => _BodySuccessState();
 }
 
 class _BodySuccessState extends State<BodySuccess> {
+  int segmentIdx = 0;
+
   @override
   Widget build(BuildContext context) {
-    String? body = widget.responseModel.body;
-    if (body == null) {
-      return Padding(
-        padding: kP5,
-        child: Text(
-          '(empty)',
-          style: kCodeStyle,
-        ),
-      );
-    }
-    var bytes = widget.responseModel.bodyBytes!;
-    var responseBodyView = getResponseBodyViewOptions(widget.mediaType);
-    print(responseBodyView);
-    return Padding(
-      padding: kPh20v5,
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            SizedBox(
-              height: kHeaderHeight,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  responseBodyView.$0 == kDefaultBodyViewOptions
-                      ? const SizedBox()
-                      : ResponseBodyViewSelector(options: responseBodyView.$0),
-                  CopyButton(toCopy: body),
-                ],
-              ),
-            ),
-            if (responseBodyView.$0.contains(ResponseBodyView.preview))
-              Previewer(
-                bytes: bytes,
-                type: widget.mediaType.type,
-                subtype: widget.mediaType.subtype,
-              ),
-            if (responseBodyView.$0.contains(ResponseBodyView.code))
-              CodeHighlight(
-                input: body,
-                language: responseBodyView.$1,
-                textStyle: kCodeStyle,
-              ),
-            if (responseBodyView.$0.contains(ResponseBodyView.raw))
-              SelectableText(body),
-          ],
-        ),
-      ),
+    var currentSeg = widget.options[segmentIdx];
+
+    final textContainerdecoration = BoxDecoration(
+      color: Theme.of(context).brightness == Brightness.dark
+          ? Color.alphaBlend(
+              Theme.of(context).colorScheme.surface.withOpacity(0.8),
+              Colors.black)
+          : Color.alphaBlend(
+              Theme.of(context).colorScheme.surface.withOpacity(0.2),
+              Colors.white),
+      border: Border.all(color: Theme.of(context).colorScheme.surfaceVariant),
+      borderRadius: kBorderRadius8,
     );
-  }
-}
 
-class ResponseBodyViewSelector extends StatefulWidget {
-  const ResponseBodyViewSelector({super.key, required this.options});
-
-  final List<ResponseBodyView> options;
-  @override
-  State<ResponseBodyViewSelector> createState() =>
-      _ResponseBodyViewSelectorState();
-}
-
-class _ResponseBodyViewSelectorState extends State<ResponseBodyViewSelector> {
-  late ResponseBodyView value;
-
-  @override
-  void initState() {
-    super.initState();
-    value = widget.options[0];
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return SegmentedButton<ResponseBodyView>(
-      segments: widget.options
-          .map<ButtonSegment<ResponseBodyView>>(
-            (e) => ButtonSegment<ResponseBodyView>(
-              value: e,
-              label: Text(capitalizeFirstLetter(e.name)),
-              icon: Icon(kResponseBodyViewIcons[e]),
+    return Padding(
+      padding: kP10,
+      child: Column(
+        children: [
+          SizedBox(
+            height: kHeaderHeight,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                (widget.options == kRawBodyViewOptions)
+                    ? const SizedBox()
+                    : SegmentedButton<ResponseBodyView>(
+                        selectedIcon: Icon(kResponseBodyViewIcons[currentSeg]),
+                        segments: widget.options
+                            .map<ButtonSegment<ResponseBodyView>>(
+                              (e) => ButtonSegment<ResponseBodyView>(
+                                value: e,
+                                label: Text(capitalizeFirstLetter(e.name)),
+                                icon: Icon(kResponseBodyViewIcons[e]),
+                              ),
+                            )
+                            .toList(),
+                        selected: {currentSeg},
+                        onSelectionChanged: (newSelection) {
+                          setState(() {
+                            segmentIdx =
+                                widget.options.indexOf(newSelection.first);
+                          });
+                        },
+                      ),
+                kCodeRawBodyViewOptions.contains(currentSeg)
+                    ? CopyButton(toCopy: widget.body)
+                    : const SizedBox(),
+              ],
             ),
-          )
-          .toList(),
-      selected: {value},
-      onSelectionChanged: (newSelection) {
-        setState(() {
-          value = newSelection.first;
-        });
-      },
+          ),
+          kVSpacer10,
+          Expanded(
+            child: currentSeg == ResponseBodyView.preview
+                ? Previewer(
+                    bytes: widget.bytes,
+                    type: widget.mediaType.type,
+                    subtype: widget.mediaType.subtype,
+                  )
+                : (currentSeg == ResponseBodyView.code
+                    ? //SizedBox()
+                    CodeHighlight(
+                        input: widget.body,
+                        language: widget.highlightLanguage,
+                        textStyle: kCodeStyle,
+                      )
+                    : Container(
+                        padding: kP8,
+                        decoration: textContainerdecoration,
+                        child: SingleChildScrollView(
+                          child: SelectableText(
+                            widget.body,
+                            style: kCodeStyle,
+                          ),
+                        ),
+                      )),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -83,6 +83,7 @@ const kTypeText = 'text';
 const kSubTypeJson = 'json';
 const kSubTypePdf = 'pdf';
 const kSubTypeXml = 'xml'; // also text
+const kSubTypeOctetStream = 'octet-stream';
 
 // text
 const kSubTypeCss = 'css';
@@ -97,7 +98,7 @@ const kSubTypeSvg = 'svg+xml';
 
 const kSubTypeDefaultViewOptions = 'all';
 
-enum ResponseBodyView { preview, code, raw }
+enum ResponseBodyView { preview, code, raw, none }
 
 const Map<ResponseBodyView, IconData> kResponseBodyViewIcons = {
   ResponseBodyView.preview: Icons.visibility_rounded,
@@ -105,11 +106,11 @@ const Map<ResponseBodyView, IconData> kResponseBodyViewIcons = {
   ResponseBodyView.raw: Icons.text_snippet_rounded
 };
 
-const kDefaultBodyViewOptions = [ResponseBodyView.raw];
+const kNoBodyViewOptions = [ResponseBodyView.none];
+const kRawBodyViewOptions = [ResponseBodyView.raw];
 const kCodeRawBodyViewOptions = [ResponseBodyView.code, ResponseBodyView.raw];
-const kPreviewRawBodyViewOptions = [
+const kPreviewBodyViewOptions = [
   ResponseBodyView.preview,
-  ResponseBodyView.raw
 ];
 const kPreviewCodeRawBodyViewOptions = [
   ResponseBodyView.preview,
@@ -120,22 +121,22 @@ const kPreviewCodeRawBodyViewOptions = [
 const Map<String, Map<String, List<ResponseBodyView>>>
     kResponseBodyViewOptions = {
   kTypeApplication: {
-    kSubTypeDefaultViewOptions: kDefaultBodyViewOptions,
+    kSubTypeDefaultViewOptions: kNoBodyViewOptions,
     kSubTypeJson: kCodeRawBodyViewOptions,
-    kSubTypePdf: kPreviewRawBodyViewOptions,
+    kSubTypePdf: kPreviewBodyViewOptions,
     kSubTypeXml: kCodeRawBodyViewOptions,
   },
   kTypeImage: {
-    kSubTypeDefaultViewOptions: kPreviewRawBodyViewOptions,
+    kSubTypeDefaultViewOptions: kPreviewBodyViewOptions,
   },
   kTypeAudio: {
-    kSubTypeDefaultViewOptions: kPreviewRawBodyViewOptions,
+    kSubTypeDefaultViewOptions: kPreviewBodyViewOptions,
   },
   kTypeVideo: {
-    kSubTypeDefaultViewOptions: kPreviewRawBodyViewOptions,
+    kSubTypeDefaultViewOptions: kPreviewBodyViewOptions,
   },
   kTypeText: {
-    kSubTypeDefaultViewOptions: kDefaultBodyViewOptions,
+    kSubTypeDefaultViewOptions: kRawBodyViewOptions,
     kSubTypeCss: kCodeRawBodyViewOptions,
     kSubTypeHtml: kCodeRawBodyViewOptions,
     kSubTypeJavascript: kCodeRawBodyViewOptions,
