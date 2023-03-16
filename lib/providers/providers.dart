@@ -8,6 +8,7 @@ const _uuid = Uuid();
 
 final activeIdStateProvider = StateProvider<String?>((ref) => null);
 final sentRequestIdStateProvider = StateProvider<String?>((ref) => null);
+final codePaneVisibleStateProvider = StateProvider<bool>((ref) => false);
 
 final StateNotifierProvider<CollectionStateNotifier, List<RequestModel>>
     collectionStateNotifierProvider =

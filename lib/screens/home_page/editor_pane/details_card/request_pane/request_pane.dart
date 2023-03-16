@@ -30,6 +30,7 @@ class _EditRequestPaneState extends ConsumerState<EditRequestPane>
   @override
   Widget build(BuildContext context) {
     final activeId = ref.watch(activeIdStateProvider);
+    final codePaneVisible = ref.watch(codePaneVisibleStateProvider);
     _controller.index = ref
         .read(collectionStateNotifierProvider.notifier)
         .getRequestModel(activeId!)
@@ -48,11 +49,20 @@ class _EditRequestPaneState extends ConsumerState<EditRequestPane>
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 FilledButton.tonalIcon(
-                  onPressed: () {},
-                  icon: const Icon(
-                    Icons.code_rounded,
+                  onPressed: () {
+                    ref
+                        .read(codePaneVisibleStateProvider.notifier)
+                        .update((state) => !codePaneVisible);
+                  },
+                  icon: Icon(
+                    codePaneVisible
+                        ? Icons.code_off_rounded
+                        : Icons.code_rounded,
                   ),
-                  label: const Text("Generate Code"),
+                  label: SizedBox(
+                    width: 75,
+                    child: Text(codePaneVisible ? "Hide Code" : "Show Code"),
+                  ),
                 ),
               ],
             ),
