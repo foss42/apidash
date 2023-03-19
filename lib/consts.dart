@@ -56,6 +56,100 @@ const kTableThemeData = DaviThemeData(
   ),
 );
 
+const kCodePreviewLinesLimit = 500;
+
+const kLightCodeTheme = {
+  'root':
+      TextStyle(backgroundColor: Color(0xffffffff), color: Color(0xff000000)),
+  'comment': TextStyle(color: Color(0xff007400), fontStyle: FontStyle.italic),
+  'quote': TextStyle(color: Color(0xff007400)),
+  'tag': TextStyle(color: Color(0xffaa0d91)),
+  'attribute': TextStyle(color: Color(0xffaa0d91)),
+  'keyword': TextStyle(color: Color(0xffaa0d91)),
+  'selector-tag': TextStyle(color: Color(0xffaa0d91)),
+  'literal': TextStyle(color: Color(0xffaa0d91)),
+  'name': TextStyle(color: Color(0xffaa0d91)),
+  'variable': TextStyle(color: Color(0xff3F6E74)),
+  'template-variable': TextStyle(color: Color(0xff3F6E74)),
+  'code': TextStyle(color: Color(0xffc41a16)),
+  'string': TextStyle(color: Color(0xffc41a16)),
+  'meta-string': TextStyle(color: Color(0xffc41a16)),
+  'regexp': TextStyle(color: Color(0xff0E0EFF)),
+  'link': TextStyle(color: Color(0xff0E0EFF)),
+  'title': TextStyle(color: Color(0xff1c00cf)),
+  'symbol': TextStyle(color: Color(0xff1c00cf)),
+  'bullet': TextStyle(color: Color(0xff1c00cf)),
+  'number': TextStyle(color: Color(0xff1c00cf)),
+  'section': TextStyle(color: Color(0xff643820)),
+  'meta': TextStyle(color: Color(0xff643820)),
+  'type': TextStyle(color: Color(0xff5c2699)),
+  'built_in': TextStyle(color: Color(0xff5c2699)),
+  'builtin-name': TextStyle(color: Color(0xff5c2699)),
+  'params': TextStyle(color: Color(0xff5c2699)),
+  'attr': TextStyle(color: Color(0xff836C28)),
+  'subst': TextStyle(color: Color(0xff000000)),
+  'formula': TextStyle(
+      backgroundColor: Color(0xffeeeeee), fontStyle: FontStyle.italic),
+  'addition': TextStyle(backgroundColor: Color(0xffbaeeba)),
+  'deletion': TextStyle(backgroundColor: Color(0xffffc8bd)),
+  'selector-id': TextStyle(color: Color(0xff9b703f)),
+  'selector-class': TextStyle(color: Color(0xff9b703f)),
+  'doctag': TextStyle(fontWeight: FontWeight.bold),
+  'strong': TextStyle(fontWeight: FontWeight.bold),
+  'emphasis': TextStyle(fontStyle: FontStyle.italic),
+};
+
+const kDarkCodeTheme = {
+  'root':
+      TextStyle(backgroundColor: Color(0xff011627), color: Color(0xffd6deeb)),
+  'keyword': TextStyle(color: Color(0xffc792ea)),
+  'built_in': TextStyle(color: Color(0xffaddb67), fontStyle: FontStyle.italic),
+  'type': TextStyle(color: Color(0xff82aaff)),
+  'literal': TextStyle(color: Color(0xffff5874)),
+  'number': TextStyle(color: Color(0xffF78C6C)),
+  'regexp': TextStyle(color: Color(0xff5ca7e4)),
+  'string': TextStyle(color: Color(0xffecc48d)),
+  'subst': TextStyle(color: Color(0xffd3423e)),
+  'symbol': TextStyle(color: Color(0xff82aaff)),
+  'class': TextStyle(color: Color(0xffffcb8b)),
+  'function': TextStyle(color: Color(0xff82AAFF)),
+  'title': TextStyle(color: Color(0xffDCDCAA), fontStyle: FontStyle.italic),
+  'params': TextStyle(color: Color(0xff7fdbca)),
+  'comment': TextStyle(color: Color(0xff637777), fontStyle: FontStyle.italic),
+  'doctag': TextStyle(color: Color(0xff7fdbca)),
+  'meta': TextStyle(color: Color(0xff82aaff)),
+  'meta-keyword': TextStyle(color: Color(0xff82aaff)),
+  'meta-string': TextStyle(color: Color(0xffecc48d)),
+  'section': TextStyle(color: Color(0xff82b1ff)),
+  'tag': TextStyle(color: Color(0xff7fdbca)),
+  'name': TextStyle(color: Color(0xff7fdbca)),
+  'builtin-name': TextStyle(color: Color(0xff7fdbca)),
+  'attr': TextStyle(color: Color(0xff7fdbca)),
+  'attribute': TextStyle(color: Color(0xff80cbc4)),
+  'variable': TextStyle(color: Color(0xffaddb67)),
+  'bullet': TextStyle(color: Color(0xffd9f5dd)),
+  'code': TextStyle(color: Color(0xff80CBC4)),
+  'emphasis': TextStyle(color: Color(0xffc792ea), fontStyle: FontStyle.italic),
+  'strong': TextStyle(color: Color(0xffaddb67), fontWeight: FontWeight.bold),
+  'formula': TextStyle(color: Color(0xffc792ea)),
+  'link': TextStyle(color: Color(0xffff869a)),
+  'quote': TextStyle(color: Color(0xff697098), fontStyle: FontStyle.italic),
+  'selector-tag': TextStyle(color: Color(0xffff6363)),
+  'selector-id': TextStyle(color: Color(0xfffad430)),
+  'selector-class':
+      TextStyle(color: Color(0xffaddb67), fontStyle: FontStyle.italic),
+  'selector-attr':
+      TextStyle(color: Color(0xffc792ea), fontStyle: FontStyle.italic),
+  'selector-pseudo':
+      TextStyle(color: Color(0xffc792ea), fontStyle: FontStyle.italic),
+  'template-tag': TextStyle(color: Color(0xffc792ea)),
+  'template-variable': TextStyle(color: Color(0xffaddb67)),
+  'addition':
+      TextStyle(color: Color(0xffaddb67ff), fontStyle: FontStyle.italic),
+  'deletion':
+      TextStyle(color: Color(0xffef535090), fontStyle: FontStyle.italic),
+};
+
 enum HTTPVerb { get, head, post, put, patch, delete }
 
 enum ContentType { json, text }
@@ -101,10 +195,15 @@ const kSubTypeDefaultViewOptions = 'all';
 
 enum ResponseBodyView { preview, code, raw, none }
 
-const Map<ResponseBodyView, IconData> kResponseBodyViewIcons = {
-  ResponseBodyView.preview: Icons.visibility_rounded,
-  ResponseBodyView.code: Icons.code_rounded,
-  ResponseBodyView.raw: Icons.text_snippet_rounded
+const kKeyIcon = "icon";
+const kKeyName = "name";
+const Map<ResponseBodyView, Map> kResponseBodyViewIcons = {
+  ResponseBodyView.preview: {
+    kKeyName: "Preview",
+    kKeyIcon: Icons.visibility_rounded
+  },
+  ResponseBodyView.code: {kKeyName: "Preview", kKeyIcon: Icons.code_rounded},
+  ResponseBodyView.raw: {kKeyName: "Raw", kKeyIcon: Icons.text_snippet_rounded}
 };
 
 const kNoBodyViewOptions = [ResponseBodyView.none];

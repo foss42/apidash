@@ -1,5 +1,5 @@
 export 'editor.dart';
-export 'code_highlighter.dart';
+export 'code_previewer.dart';
 export 'buttons.dart';
 export 'tables.dart';
 export 'previewer.dart';

@@ -51,6 +51,7 @@ class _ResponseBodyState extends ConsumerState<ResponseBody> {
               "Viewing response data of Content-Type\n'${mediaType.mimeType}' $kMimeTypeRaiseIssue");
     }
     return BodySuccess(
+      key: Key("$activeId-response"),
       mediaType: mediaType,
       options: options,
       bytes: responseModel.bodyBytes!,
@@ -83,7 +84,9 @@ class _BodySuccessState extends State<BodySuccess> {
   @override
   Widget build(BuildContext context) {
     var currentSeg = widget.options[segmentIdx];
-
+    var codeTheme = Theme.of(context).brightness == Brightness.light
+        ? kLightCodeTheme
+        : kDarkCodeTheme;
     final textContainerdecoration = BoxDecoration(
       color: Theme.of(context).brightness == Brightness.dark
           ? Color.alphaBlend(
@@ -108,13 +111,16 @@ class _BodySuccessState extends State<BodySuccess> {
                 (widget.options == kRawBodyViewOptions)
                     ? const SizedBox()
                     : SegmentedButton<ResponseBodyView>(
-                        selectedIcon: Icon(kResponseBodyViewIcons[currentSeg]),
+                        selectedIcon:
+                            Icon(kResponseBodyViewIcons[currentSeg]![kKeyIcon]),
                         segments: widget.options
                             .map<ButtonSegment<ResponseBodyView>>(
                               (e) => ButtonSegment<ResponseBodyView>(
                                 value: e,
-                                label: Text(capitalizeFirstLetter(e.name)),
-                                icon: Icon(kResponseBodyViewIcons[e]),
+                                label:
+                                    Text(kResponseBodyViewIcons[e]![kKeyName]),
+                                icon:
+                                    Icon(kResponseBodyViewIcons[e]![kKeyIcon]),
                               ),
                             )
                             .toList(),
@@ -133,30 +139,47 @@ class _BodySuccessState extends State<BodySuccess> {
             ),
           ),
           kVSpacer10,
-          Expanded(
-            child: currentSeg == ResponseBodyView.preview
-                ? Previewer(
-                    bytes: widget.bytes,
-                    type: widget.mediaType.type,
-                    subtype: widget.mediaType.subtype,
-                  )
-                : (currentSeg == ResponseBodyView.code
-                    ? //SizedBox()
-                    CodeHighlight(
-                        input: widget.body,
-                        language: widget.highlightLanguage,
-                        textStyle: kCodeStyle,
-                      )
-                    : Container(
-                        padding: kP8,
-                        decoration: textContainerdecoration,
-                        child: SingleChildScrollView(
-                          child: SelectableText(
-                            widget.body,
-                            style: kCodeStyle,
-                          ),
-                        ),
-                      )),
+          Visibility(
+            visible: currentSeg == ResponseBodyView.preview,
+            child: Expanded(
+              child: Previewer(
+                bytes: widget.bytes,
+                type: widget.mediaType.type,
+                subtype: widget.mediaType.subtype,
+              ),
+            ),
+          ),
+          Visibility(
+            visible: currentSeg == ResponseBodyView.code,
+            child: Expanded(
+              child: Container(
+                width: double.maxFinite,
+                padding: kP8,
+                decoration: textContainerdecoration,
+                child: CodePreviewer(
+                  code: widget.body,
+                  theme: codeTheme,
+                  language: widget.highlightLanguage,
+                  textStyle: kCodeStyle,
+                ),
+              ),
+            ),
+          ),
+          Visibility(
+            visible: currentSeg == ResponseBodyView.raw,
+            child: Expanded(
+              child: Container(
+                width: double.maxFinite,
+                padding: kP8,
+                decoration: textContainerdecoration,
+                child: SingleChildScrollView(
+                  child: SelectableText(
+                    widget.body,
+                    style: kCodeStyle,
+                  ),
+                ),
+              ),
+            ),
           ),
         ],
       ),
