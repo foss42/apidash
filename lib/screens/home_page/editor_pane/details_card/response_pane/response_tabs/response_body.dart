@@ -28,6 +28,7 @@ class _ResponseBodyState extends ConsumerState<ResponseBody> {
     final responseModel = collection[idIdx].responseModel;
     var mediaType = responseModel?.mediaType;
     var body = responseModel?.body;
+    var formattedBody = responseModel?.formattedBody;
     if (responseModel == null) {
       return const ErrorMessage(
           message: 'Error: No Response Data Found. $kRaiseIssue');
@@ -50,12 +51,19 @@ class _ResponseBodyState extends ConsumerState<ResponseBody> {
           message:
               "Viewing response data of Content-Type\n'${mediaType.mimeType}' $kMimeTypeRaiseIssue");
     }
+
+    if (formattedBody == null) {
+      options = [...options];
+      options.remove(ResponseBodyView.code);
+    }
+
     return BodySuccess(
       key: Key("$activeId-response"),
       mediaType: mediaType,
       options: options,
       bytes: responseModel.bodyBytes!,
       body: body,
+      formattedBody: formattedBody,
       highlightLanguage: highlightLanguage,
     );
   }
@@ -68,11 +76,13 @@ class BodySuccess extends StatefulWidget {
       required this.body,
       required this.options,
       required this.bytes,
+      this.formattedBody,
       this.highlightLanguage});
   final MediaType mediaType;
   final List<ResponseBodyView> options;
   final String body;
   final Uint8List bytes;
+  final String? formattedBody;
   final String? highlightLanguage;
   @override
   State<BodySuccess> createState() => _BodySuccessState();
@@ -149,22 +159,23 @@ class _BodySuccessState extends State<BodySuccess> {
               ),
             ),
           ),
-          Visibility(
-            visible: currentSeg == ResponseBodyView.code,
-            child: Expanded(
-              child: Container(
-                width: double.maxFinite,
-                padding: kP8,
-                decoration: textContainerdecoration,
-                child: CodePreviewer(
-                  code: widget.body,
-                  theme: codeTheme,
-                  language: widget.highlightLanguage,
-                  textStyle: kCodeStyle,
+          if (widget.formattedBody != null)
+            Visibility(
+              visible: currentSeg == ResponseBodyView.code,
+              child: Expanded(
+                child: Container(
+                  width: double.maxFinite,
+                  padding: kP8,
+                  decoration: textContainerdecoration,
+                  child: CodePreviewer(
+                    code: widget.formattedBody!,
+                    theme: codeTheme,
+                    language: widget.highlightLanguage,
+                    textStyle: kCodeStyle,
+                  ),
                 ),
               ),
             ),
-          ),
           Visibility(
             visible: currentSeg == ResponseBodyView.raw,
             child: Expanded(
