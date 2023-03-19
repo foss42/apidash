@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http_parser/http_parser.dart';
+import 'package:xml/xml.dart';
 import '../consts.dart';
 
 Color getResponseStatusCodeColor(int? statusCode,
@@ -124,4 +126,32 @@ String formatHeaderCase(String text) {
   else {
     return (kNoBodyViewOptions, null);
   }
+}
+
+String? formatBody(String body, MediaType? mediaType){
+  if(mediaType != null){
+    var subtype = mediaType.subtype;
+    try {
+      if(subtype.contains(kSubTypeJson)){        
+        final tmp = jsonDecode(body);
+        String result = encoder.convert(tmp);
+        return result;
+      }
+      if(subtype.contains(kSubTypeXml)){
+        final document = XmlDocument.parse(body);
+        String result = document.toXmlString(pretty: true, indent: '  ');
+        return result;
+      }
+      if(subtype == kSubTypeHtml){
+        var len = body.length;
+        var lines = body.split("\n").length;
+        if(lines !=0 && len/lines <= kCodeCharsPerLineLimit){
+          return body;
+        }
+      }
+    } catch (e) {
+      return null;
+    }
+  }
+  return null;
 }

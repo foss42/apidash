@@ -1,12 +1,7 @@
-import 'dart:io';
-import 'dart:convert';
-import 'dart:typed_data';
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
-import 'package:http_parser/http_parser.dart';
+import 'package:apidash/consts.dart';
 import 'kvrow_model.dart';
-import '../consts.dart';
+import 'response_model.dart';
 
 @immutable
 class RequestModel {
@@ -93,68 +88,6 @@ class RequestModel {
       "Response Status: $responseStatus",
       "Response Message: $message",
       "Response: ${responseModel.toString()}"
-    ].join("\n");
-  }
-}
-
-@immutable
-class ResponseModel {
-  const ResponseModel({
-    this.statusCode,
-    this.headers,
-    this.requestHeaders,
-    this.contentType,
-    this.mediaType,
-    this.body,
-    this.bodyBytes,
-    this.time,
-  });
-
-  final int? statusCode;
-  final Map<String, String>? headers;
-  final Map<String, String>? requestHeaders;
-  final String? contentType;
-  final MediaType? mediaType;
-  final String? body;
-  final Uint8List? bodyBytes;
-  final Duration? time;
-
-  ResponseModel fromResponse({
-    required Response response,
-    Duration? time,
-  }) {
-    var contentType = response.headers[HttpHeaders.contentTypeHeader];
-    MediaType? mediaType;
-    try {
-      mediaType = MediaType.parse(contentType!);
-    } catch (e) {
-      mediaType = null;
-    }
-    final responseHeaders = mergeMaps(
-        {HttpHeaders.contentLengthHeader: response.contentLength.toString()},
-        response.headers);
-    return ResponseModel(
-      statusCode: response.statusCode,
-      headers: responseHeaders,
-      requestHeaders: response.request?.headers,
-      contentType: contentType,
-      mediaType: mediaType,
-      body: (mediaType?.subtype == kSubTypeJson)
-          ? utf8.decode(response.bodyBytes)
-          : response.body,
-      bodyBytes: response.bodyBytes,
-      time: time,
-    );
-  }
-
-  @override
-  String toString() {
-    return [
-      "Response Status: $statusCode",
-      "Response Time: $time",
-      "Response Headers: ${headers.toString()}",
-      "Response Request Headers: ${requestHeaders.toString()}",
-      "Response Body: $body",
     ].join("\n");
   }
 }

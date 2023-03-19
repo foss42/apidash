@@ -18,8 +18,9 @@ dependencies:
   http_parser: ^4.0.2
   collection: ^1.17.0
   google_fonts: ^4.0.3
-  flutter_highlighter: ^0.1.1
   highlighter: ^0.1.1
+  string_scanner: ^1.2.0
+  xml: ^6.2.2
 
 dev_dependencies:
   flutter_test:
