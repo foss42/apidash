@@ -57,6 +57,7 @@ const kTableThemeData = DaviThemeData(
 );
 
 const kCodePreviewLinesLimit = 500;
+const kCodeCharsPerLineLimit = 200;
 
 const kLightCodeTheme = {
   'root':
@@ -165,21 +166,19 @@ const kMethodsWithBody = [
 const kDefaultHttpMethod = HTTPVerb.get;
 const kDefaultContentType = ContentType.json;
 
-const JsonEncoder encoder = JsonEncoder.withIndent('    ');
+const JsonEncoder encoder = JsonEncoder.withIndent('  ');
 
 const kTypeApplication = 'application';
-const kTypeImage = 'image';
-const kTypeAudio = 'audio';
-const kTypeVideo = 'video';
-const kTypeText = 'text';
-
 // application
 const kSubTypeJson = 'json';
 const kSubTypePdf = 'pdf';
 const kSubTypeSql = 'sql';
-const kSubTypeXml = 'xml'; // also text
+const kSubTypeXml = 'xml';
 const kSubTypeOctetStream = 'octet-stream';
+const kSubTypeYaml = 'x-yaml';
+const kSubTypeYml = 'x-yml';
 
+const kTypeText = 'text';
 // text
 const kSubTypeCss = 'css';
 const kSubTypeCsv = 'csv';
@@ -187,9 +186,16 @@ const kSubTypeHtml = 'html';
 const kSubTypeJavascript = 'javascript';
 const kSubTypeMarkdown = 'markdown';
 const kSubTypePlain = 'plain';
+const kSubTypeTextXml = 'xml';
+const kSubTypeTextYaml = 'yaml';
+const kSubTypeTextYml = 'yml';
 
+const kTypeImage = 'image';
 //image
 const kSubTypeSvg = 'svg+xml';
+
+const kTypeAudio = 'audio';
+const kTypeVideo = 'video';
 
 const kSubTypeDefaultViewOptions = 'all';
 
@@ -226,6 +232,8 @@ const Map<String, Map<String, List<ResponseBodyView>>>
     kSubTypePdf: kPreviewBodyViewOptions,
     kSubTypeSql: kCodeRawBodyViewOptions,
     kSubTypeXml: kCodeRawBodyViewOptions,
+    kSubTypeYaml: kCodeRawBodyViewOptions,
+    kSubTypeYml: kCodeRawBodyViewOptions,
   },
   kTypeImage: {
     kSubTypeDefaultViewOptions: kPreviewBodyViewOptions,
@@ -242,13 +250,19 @@ const Map<String, Map<String, List<ResponseBodyView>>>
     kSubTypeCss: kCodeRawBodyViewOptions,
     kSubTypeHtml: kCodeRawBodyViewOptions,
     kSubTypeJavascript: kCodeRawBodyViewOptions,
-    kSubTypeXml: kCodeRawBodyViewOptions,
     kSubTypeMarkdown: kCodeRawBodyViewOptions,
+    kSubTypeTextXml: kCodeRawBodyViewOptions,
+    kSubTypeTextYaml: kCodeRawBodyViewOptions,
+    kSubTypeTextYml: kCodeRawBodyViewOptions,
   },
 };
 
 const Map<String, String> kCodeHighlighterMap = {
   kSubTypeHtml: "xml",
+  kSubTypeYaml: "yaml",
+  kSubTypeYml: "yaml",
+  kSubTypeTextYaml: "yaml",
+  kSubTypeTextYml: "yaml",
 };
 
 const sendingIndicator = AssetImage("assets/sending.gif");
