@@ -134,7 +134,7 @@ String? formatBody(String body, MediaType? mediaType){
     try {
       if(subtype.contains(kSubTypeJson)){        
         final tmp = jsonDecode(body);
-        String result = encoder.convert(tmp);
+        String result = kEncoder.convert(tmp);
         return result;
       }
       if(subtype.contains(kSubTypeXml)){
@@ -144,8 +144,9 @@ String? formatBody(String body, MediaType? mediaType){
       }
       if(subtype == kSubTypeHtml){
         var len = body.length;
-        var lines = body.split("\n").length;
-        if(lines !=0 && len/lines <= kCodeCharsPerLineLimit){
+        var lines = kSplitter.convert(body);
+        var numOfLines = lines.length;
+        if(numOfLines !=0 && len/numOfLines <= kCodeCharsPerLineLimit){
           return body;
         }
       }

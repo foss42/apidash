@@ -174,7 +174,8 @@ const kCodegenSuccessStatusCodes = {
 };
 const kDefaultContentType = ContentType.json;
 
-const JsonEncoder encoder = JsonEncoder.withIndent('  ');
+const JsonEncoder kEncoder = JsonEncoder.withIndent('  ');
+const LineSplitter kSplitter = LineSplitter();
 
 const kTypeApplication = 'application';
 // application

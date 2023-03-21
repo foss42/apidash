@@ -68,7 +68,7 @@ class _ResponseHeadersState extends ConsumerState<ResponseHeaders> {
           ),
           if (map.isNotEmpty)
             CopyButton(
-              toCopy: encoder.convert(map),
+              toCopy: kEncoder.convert(map),
             ),
         ],
       ),
