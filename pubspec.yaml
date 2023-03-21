@@ -21,6 +21,7 @@ dependencies:
   highlighter: ^0.1.1
   string_scanner: ^1.2.0
   xml: ^6.2.2
+  jinja: ^0.4.2
 
 dev_dependencies:
   flutter_test:
