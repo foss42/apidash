@@ -24,7 +24,6 @@ class _CodePaneState extends ConsumerState<CodePane> {
     final collection = ref.watch(collectionStateNotifierProvider);
     final idIdx = collection.indexWhere((m) => m.id == activeId);
     final requestModel = collection[idIdx];
-    print("update");
     var codeTheme = Theme.of(context).brightness == Brightness.light
         ? kLightCodeTheme
         : kDarkCodeTheme;
@@ -39,17 +38,34 @@ class _CodePaneState extends ConsumerState<CodePane> {
       border: Border.all(color: Theme.of(context).colorScheme.surfaceVariant),
       borderRadius: kBorderRadius8,
     );
+
+    final code = getDartHttpCode(requestModel);
     return Padding(
       padding: kP10,
       child: Column(
         children: [
+          SizedBox(
+            height: kHeaderHeight,
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    "Code",
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                ),
+                CopyButton(toCopy: code),
+              ],
+            ),
+          ),
+          kVSpacer10,
           Expanded(
             child: Container(
               width: double.maxFinite,
               padding: kP8,
               decoration: textContainerdecoration,
-              child: CodePreviewer(
-                code: getDartHttpCode(requestModel),
+              child: CodeGenPreviewer(
+                code: code,
                 theme: codeTheme,
                 language: 'dart',
                 textStyle: kCodeStyle,

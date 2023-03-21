@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'dart:convert';
 import 'package:jinja/jinja.dart' as jj;
 import 'package:apidash/consts.dart';
 import 'package:apidash/models/models.dart' show RequestModel, rowsToMap;
@@ -6,12 +8,14 @@ String kTemplateUrl = """import 'package:http/http.dart' as http;
 
 void main() async {
   var uri = Uri.parse('{{url}}');
+
 """;
 
 String kTemplateParams = """
 
   var queryParams = {{params}};
 """;
+int kParamsPadding = 20;
 
 String kStringUrlParams = """
 
@@ -25,25 +29,37 @@ String kStringNoUrlParams = """
   uri = uri.replace(queryParameters: queryParams);
 """;
 
-String kTemplateHeaders = """
-
-  var headers = {{headers}};
-""";
-
 String kTemplateBody = """
 
   String body = r'''{{body}}''';
+
 """;
+
+String kBodyImportDartConvert = """
+import 'dart:convert';
+""";
+
+String kBodyLength = """
+
+  var contentLength = utf8.encode(body).length;
+""";
+
+String kTemplateHeaders = """
+
+  var headers = {{headers}};
+
+""";
+int kHeadersPadding = 16;
 
 String kTemplateRequest = """
 
-  response = await http.{{method}}(requestUrl""";
+  final response = await http.{{method}}(uri""";
 
 String kStringRequestHeaders = """,
-                                   headers: headers""";
+                                  headers: headers""";
 
 String kStringRequestBody = """,
-                                   body: body""";
+                                  body: body""";
 String kStringRequestEnd = """);
 """;
 
@@ -67,6 +83,16 @@ String kStringResult = r"""
 }
 """;
 
+String padMultilineString(String text, int padding,
+    {bool firstLinePadded = false}) {
+  var lines = kSplitter.convert(text);
+  int start = firstLinePadded ? 0 : 1;
+  for (start; start < lines.length; start++) {
+    lines[start] = ' ' * padding + lines[start];
+  }
+  return lines.join("\n");
+}
+
 String getDartHttpCode(RequestModel requestModel) {
   //try {
   String result = "";
@@ -85,7 +111,9 @@ String getDartHttpCode(RequestModel requestModel) {
     var params = rowsToMap(requestModel.requestParams) ?? {};
     if (params.isNotEmpty) {
       var templateParams = jj.Template(kTemplateParams);
-      result += templateParams.render({"params": encoder.convert(params)});
+      var paramsString = kEncoder.convert(params);
+      paramsString = padMultilineString(paramsString, kParamsPadding);
+      result += templateParams.render({"params": paramsString});
       Uri uri = Uri.parse(url);
       if (uri.hasQuery) {
         result += kStringUrlParams;
@@ -95,22 +123,40 @@ String getDartHttpCode(RequestModel requestModel) {
     }
   }
 
-  var headersList = requestModel.requestHeaders;
-  if (headersList != null) {
-    var headers = rowsToMap(requestModel.requestHeaders) ?? {};
-    if (headers.isNotEmpty) {
-      hasHeaders = true;
-      var templateHeaders = jj.Template(kTemplateHeaders);
-      result += templateHeaders.render({"headers": encoder.convert(headers)});
+  var method = requestModel.method;
+  if (kMethodsWithBody.contains(method) && requestModel.requestBody != null) {
+    var contentLength = utf8.encode(requestModel.requestBody).length;
+    if (contentLength > 0) {
+      hasBody = true;
+      var body = requestModel.requestBody;
+      var templateBody = jj.Template(kTemplateBody);
+      result += templateBody.render({"body": body});
+      result = kBodyImportDartConvert + result;
+      result += kBodyLength;
     }
   }
 
-  var method = requestModel.method;
-  if (kMethodsWithBody.contains(method) && requestModel.requestBody != null) {
-    var body = requestModel.requestBody;
-    hasBody = true;
-    var templateBody = jj.Template(kTemplateBody);
-    result += templateBody.render({"body": body});
+  var headersList = requestModel.requestHeaders;
+  if (headersList != null || hasBody) {
+    var headers = rowsToMap(requestModel.requestHeaders) ?? {};
+    if (headers.isNotEmpty || hasBody) {
+      hasHeaders = true;
+      if (hasBody) {
+        headers[HttpHeaders.contentLengthHeader] = r"$contentLength";
+        switch (requestModel.requestBodyContentType) {
+          case ContentType.json:
+            headers[HttpHeaders.contentTypeHeader] = 'application/json';
+            break;
+          case ContentType.text:
+            headers[HttpHeaders.contentTypeHeader] = 'text/plain';
+            break;
+        }
+      }
+      var headersString = kEncoder.convert(headers);
+      headersString = padMultilineString(headersString, kHeadersPadding);
+      var templateHeaders = jj.Template(kTemplateHeaders);
+      result += templateHeaders.render({"headers": headersString});
+    }
   }
 
   var templateRequest = jj.Template(kTemplateRequest);
