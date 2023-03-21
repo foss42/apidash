@@ -2,41 +2,48 @@
 
 [![Discord Server Invite](https://img.shields.io/badge/DISCORD-JOIN%20SERVER-5663F7?style=for-the-badge&logo=discord&logoColor=white)](https://bit.ly/heyfoss)
 
-API Dash is a beautiful open-source cross-platform HTTP Client that can help you explore APIs.
+### Please support this initiative by giving this project a Star ⭐️
 
-Using API Dash, you can draft API requests via an easy to use GUI. It allows you to:
-- Create different types of HTTP requests (GET, POST, PUT, etc.)
+API Dash is a beautiful open-source cross-platform API Client that can help you easily create & customize your API requests, visually inspect responses and generate Dart code on the go.
+
+## Download
+API Dash is available for Mac, Windows, and Linux and can be downloaded from the below link.
+Link - 
+
+## Features of API Dash
+
+### Create & Customize API Requests
+Using API Dash, you can draft API requests via an easy to use GUI which allows you to:
+- Create different types of HTTP requests (GET, HEAD, POST, PATCH, PUT and DELETE)
 - Easily manipulate and play around with request inputs like headers, query parameters and body.
-- Parse the response to inspect the outputs (HTTP status code, error messages, header, body, time taken) to better understand, debug and test the APIs. 
+
+
+### Visually inspect API Responses
+Using API Dash, you can:
+- Inspect the API Response (HTTP status code, error message, headers, body, time taken)
+- View formatted code previews for responses of various content types like JSON, XML, YAML, HTML, SQL, etc.
+- For APIs which return results as images, API Dash helps you save a lot of time by directly previewing these results and supports a wide variety of image file formats such as jpeg, png, gif, etc. 
+
+
+### Generate Dart Code Automatically
+API Dash is the **only** open source API client that supports advanced Dart code generation so that you can easily integrate APIs in your Dart/Flutter project.
+For each request, you can click on **View Code** to directly view the corresponding Dart code which you can then *Copy* and directly run it on DartPad.
+
 
 ![apidash (1)](https://user-images.githubusercontent.com/1382619/222961170-ae45c4b8-2f23-4308-9d90-3a8af237a673.png)
 
+## Need Any Help?
 
-## Motivation
+In case you need any help with API Dash or are encountering any issue while runninng the tool, please feel free to drop by our [Discord server](https://bit.ly/heyfoss) and we can have a chat in the **#foss** channel.
 
-Our team (Ankit & Ashita) started the [foss42](https://foss42.com) initiative of building open source APIs a few months back and after working with various API clients we always felt that many of these clients lacked cross-platform support and good code generation ability especially for mobile first developers. As Flutter is a cross platform framework and could help us achieve this from a single code-base, we decided to start working on this open source initiative in FOSS Hack 3.0 using Flutter.
+## Provide Feedback, Report Bugs & Request New Features
 
-## Project Timeline
+Just click on the [Issue tab](https://github.com/foss42/api-dash/issues) to raise a new issue in this repo.
 
-This is a new project that was started on 4th March, 2023.
+## How can I Contribute?
 
-## Roadmap
+We value your participation in this open source project. If you have ideas or suggestions to improve API Dash, please feel free to start a new Issue in this repository. We would love to work with you on the subsequent PRs. 
 
-The following is the initial roadmap that we laid out before we started hacking this project. (What we have achieved so far has a tick ✅)
+## I have not contributed to any open source project before. Will I get any guidance?
 
-✅ App UI  
-✅ Allowing users to create, duplicate, delete, rearrange API requests  
-✅ Flutter App State Management using riverpod  
-✅ Users can select the request method (GET, POST, PATCH, etc.)  
-✅ Users can input query parameters, headers and body  
-✅ Fetching results  
-✅ Displaying results is a nice form  
-✅ Users can take a copy of the response  
-🚧 Generating the Dart code corresponding to the requests  
-🚧 Saving the collection of requests created by the user (Persistence)  
-
-## Current Limitations
-
-- The request body currently supports only text and json input. File, Form-field and other inputs will be supported soon.
-- The response body that can be currently visualized should be a text or json. We have plans to support more mime-types in near future. For example, if the response is a video, the user will be able to directly play that video in the tool in near future.
-- Due to time constraints we currently do not have collection persistence or export as it will require some more work and we will continue working on it.
+In case you are new to the open source ecosystem, we would be more than happy to guide you through the entire process. Please feel free to get in touch via GitHub issues or drop by our [Discord server](https://bit.ly/heyfoss).
