@@ -6,7 +6,7 @@ import 'error_message.dart';
 (String, bool) sanitize(String input) {
   bool limitedLines = false;
   int tabSize = 4;
-  var lines = input.split("\n");
+  var lines =  kSplitter.convert(input);
   if (lines.length > kCodePreviewLinesLimit) {
     lines = lines.sublist(0, kCodePreviewLinesLimit);
     limitedLines = true;
@@ -67,7 +67,7 @@ class _CodePreviewerState extends State<CodePreviewer> {
       textStyle = textStyle.merge(widget.textStyle);
     }
     processed = sanitize(widget.code);
-    spans = generateSpans(processed.$0, widget.language, widget.theme, processed.$1);
+    spans = asyncGenerateSpans(processed.$0, widget.language, widget.theme, processed.$1);
   }
 
   @override
@@ -131,7 +131,7 @@ class _CodePreviewerState extends State<CodePreviewer> {
   }
 }
 
-Future<List<TextSpan>> generateSpans(
+Future<List<TextSpan>> asyncGenerateSpans(
     String code, String? language, Map<String, TextStyle> theme, bool limitedLines) async {
   var parsed = highlight.parse(code, language: language);
   var spans = convert(parsed.nodes!, theme);
