@@ -33,7 +33,7 @@ class _ResponsePaneState extends ConsumerState<ResponsePane> {
       return const NotSentWidget();
     }
     if (responseStatus == -1) {
-      return ErrorMessage(message: '$message. $kRaiseIssue');
+      return ErrorMessage(message: '$message. $kUnexpectedRaiseIssue');
     }
     return const ResponseDetails();
   }

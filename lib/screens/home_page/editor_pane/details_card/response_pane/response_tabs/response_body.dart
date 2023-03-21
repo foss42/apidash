@@ -31,16 +31,16 @@ class _ResponseBodyState extends ConsumerState<ResponseBody> {
     var formattedBody = responseModel?.formattedBody;
     if (responseModel == null) {
       return const ErrorMessage(
-          message: 'Error: No Response Data Found. $kRaiseIssue');
+          message: 'Error: No Response Data Found. $kUnexpectedRaiseIssue');
     }
     if (mediaType == null) {
       return ErrorMessage(
           message:
-              'Unknown Response content type - ${responseModel.contentType}. $kRaiseIssue');
+              'Unknown Response content type - ${responseModel.contentType}. $kUnexpectedRaiseIssue');
     }
     if (body == null) {
       return const ErrorMessage(
-          message: 'Response body is empty. $kRaiseIssue');
+          message: 'Response body is empty. $kUnexpectedRaiseIssue');
     }
     var responseBodyView = getResponseBodyViewOptions(mediaType);
     print(responseBodyView);
