@@ -164,6 +164,14 @@ const kMethodsWithBody = [
   HTTPVerb.delete,
 ];
 const kDefaultHttpMethod = HTTPVerb.get;
+const kCodegenSuccessStatusCodes = {
+  HTTPVerb.get: [200],
+  HTTPVerb.head: [200],
+  HTTPVerb.post: [200, 201, 204],
+  HTTPVerb.put: [200, 201, 204],
+  HTTPVerb.patch: [200, 201, 204],
+  HTTPVerb.delete: [200, 202, 204]
+};
 const kDefaultContentType = ContentType.json;
 
 const JsonEncoder encoder = JsonEncoder.withIndent('  ');
@@ -267,11 +275,15 @@ const Map<String, String> kCodeHighlighterMap = {
 
 const sendingIndicator = AssetImage("assets/sending.gif");
 
+// HTTP response status codes
+// https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
 const kResponseCodeReasons = {
-  // 100s
+  // 100s - Informational responses
   100: 'Continue',
   101: 'Switching Protocols',
-  // 200s
+  102: 'Processing',
+  103: 'Early Hints',
+  // 200s - Successful responses
   200: 'OK',
   201: 'Created',
   202: 'Accepted',
@@ -282,7 +294,7 @@ const kResponseCodeReasons = {
   207: 'Multi-Status',
   208: 'Already Reported',
   226: 'IM Used',
-  // 300s
+  // 300s - Redirection messages
   300: 'Multiple Choices',
   301: 'Moved Permanently',
   302: 'Found',
@@ -292,7 +304,7 @@ const kResponseCodeReasons = {
   306: 'Switch Proxy',
   307: 'Temporary Redirect',
   308: 'Permanent Redirect',
-  // 400s
+  // 400s - Client error responses
   400: 'Bad Request',
   401: 'Unauthorized',
   402: 'Payment Required',
@@ -322,7 +334,7 @@ const kResponseCodeReasons = {
   429: 'Too Many Requests',
   431: 'Request Header Fields Too Large',
   451: 'Unavailable For Legal Reasons',
-  // 500s
+  // 500s - Server error responses
   500: 'Internal Server Error',
   501: 'Not Implemented',
   502: 'Bad Gateway',
@@ -337,7 +349,10 @@ const kResponseCodeReasons = {
 };
 
 const kMimeTypeRaiseIssue =
-    " is currently not supported.\nPlease raise an issue in API Dash GitHub repo - https://github.com/foss42/api-dash so that we can prioritize adding it to the tool.";
+    " is currently not supported.\nPlease raise an issue in API Dash GitHub repo -\nhttps://github.com/foss42/api-dash\nso that we can prioritize adding it to the tool.";
+
+const kUnexpectedRaiseIssue =
+    "\nIf the behaviour is unexpected, please raise an issue in API Dash GitHub repo -\nhttps://github.com/foss42/api-dash\nso that we can resolve it.";
 
 const kRaiseIssue =
-    "\nIf the behaviour is unexpected, please raise an issue in API Dash GitHub repo - https://github.com/foss42/api-dash so that we can resolve it.";
+    "\nPlease raise an issue in API Dash GitHub repo -\nhttps://github.com/foss42/api-dash\nso that we can resolve it.";
