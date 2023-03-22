@@ -64,3 +64,14 @@ Map<String, String>? rowsToMap(List<KVRow>? kvRows, {bool isHeader = false}) {
   }
   return finalMap;
 }
+
+List<KVRow>? mapToRows(Map<String, String>? kvMap) {
+  if (kvMap == null) {
+    return null;
+  }
+  List<KVRow> finalRows = [];
+  for (var k in kvMap.keys) {
+    finalRows.add(KVRow(k, kvMap[k]));
+  }
+  return finalRows;
+}
