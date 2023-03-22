@@ -28,8 +28,23 @@ class _CollectionPaneState extends ConsumerState<CollectionPane> {
         children: [
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              TextButton.icon(
+                onPressed: () {
+                  ref
+                      .read(activeIdStateProvider.notifier)
+                      .update((state) => null);
+                },
+                icon: const Icon(
+                  Icons.home,
+                  size: 20,
+                ),
+                label: const Text(
+                  'Home',
+                  style: kTextStyleButton,
+                ),
+              ),
               ElevatedButton(
                 onPressed: () {
                   String newId =
