@@ -87,8 +87,8 @@ String getRequestTitleFromUrl(String? url) {
   }
 }
 
-String? formatBody(String body, MediaType? mediaType){
-  if(mediaType != null){
+String? formatBody(String? body, MediaType? mediaType){
+  if(mediaType != null && body != null){
     var subtype = mediaType.subtype;
     try {
       if(subtype.contains(kSubTypeJson)){        
