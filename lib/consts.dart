@@ -213,6 +213,11 @@ const kTypeVideo = 'video';
 
 const kSubTypeDefaultViewOptions = 'all';
 
+const kContentTypeMap = {
+  ContentType.json: "$kTypeApplication/$kSubTypeJson",
+  ContentType.text: "$kTypeText/$kSubTypePlain",
+};
+
 enum ResponseBodyView { preview, code, raw, none }
 
 const kKeyIcon = "icon";

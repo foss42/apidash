@@ -21,14 +21,7 @@ Future<(http.Response?, Duration?, String?)> request(RequestModel requestModel) 
           if (contentLength > 0){
             body = requestModel.requestBody as String;
             headers[HttpHeaders.contentLengthHeader] = contentLength.toString();
-            switch(requestModel.requestBodyContentType){
-              case ContentType.json:
-                headers[HttpHeaders.contentTypeHeader] = 'application/json';
-                break;
-              case ContentType.text:
-                headers[HttpHeaders.contentTypeHeader] = 'text/plain';
-                break;
-            }
+            headers[HttpHeaders.contentTypeHeader] = kContentTypeMap[requestModel.requestBodyContentType] ?? "";
           }
         }
       }

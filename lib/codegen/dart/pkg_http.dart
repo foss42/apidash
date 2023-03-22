@@ -136,14 +136,8 @@ import 'dart:convert';
           hasHeaders = true;
           if (hasBody) {
             headers[HttpHeaders.contentLengthHeader] = r"$contentLength";
-            switch (requestModel.requestBodyContentType) {
-              case ContentType.json:
-                headers[HttpHeaders.contentTypeHeader] = 'application/json';
-                break;
-              case ContentType.text:
-                headers[HttpHeaders.contentTypeHeader] = 'text/plain';
-                break;
-            }
+            headers[HttpHeaders.contentTypeHeader] =
+                kContentTypeMap[requestModel.requestBodyContentType] ?? "";
           }
           var headersString = kEncoder.convert(headers);
           headersString = padMultilineString(headersString, kHeadersPadding);
