@@ -43,7 +43,7 @@ class _ResponseBodyState extends ConsumerState<ResponseBody> {
           message: 'Response body is empty. $kUnexpectedRaiseIssue');
     }
     var responseBodyView = getResponseBodyViewOptions(mediaType);
-    print(responseBodyView);
+    //print(responseBodyView);
     var options = responseBodyView.$0;
     var highlightLanguage = responseBodyView.$1;
     if (options == kNoBodyViewOptions) {
