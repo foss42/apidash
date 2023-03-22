@@ -2,7 +2,7 @@ import 'dart:io';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:collection/collection.dart';
+import 'package:collection/collection.dart' show mergeMaps;
 import 'package:http/http.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:apidash/utils/utils.dart';
@@ -49,7 +49,6 @@ class ResponseModel {
     final body = (mediaType?.subtype == kSubTypeJson)
         ? utf8.decode(response.bodyBytes)
         : response.body;
-    final formattedBody = formatBody(body, mediaType);
     return ResponseModel(
       statusCode: response.statusCode,
       headers: responseHeaders,
@@ -57,10 +56,52 @@ class ResponseModel {
       contentType: contentType,
       mediaType: mediaType,
       body: body,
-      formattedBody: formattedBody,
+      formattedBody: formatBody(body, mediaType),
       bodyBytes: response.bodyBytes,
       time: time,
     );
+  }
+
+  factory ResponseModel.fromJson(Map<String, dynamic> data) {
+    MediaType? mediaType;
+    Duration? timeElapsed;
+    final statusCode = data["statusCode"] as int?;
+    final headers = data["headers"] as Map<String, String>?;
+    final requestHeaders = data["requestHeaders"] as Map<String, String>?;
+    final contentType = headers?[HttpHeaders.contentTypeHeader];
+    try {
+      mediaType = MediaType.parse(contentType!);
+    } catch (e) {
+      mediaType = null;
+    }
+    final body = data["body"] as String?;
+    final bodyBytes = data["bodyBytes"] as Uint8List?;
+    final time = data["time"] as int?;
+    if (time != null) {
+      timeElapsed = Duration(microseconds: time);
+    }
+    return ResponseModel(
+      statusCode: statusCode,
+      headers: headers,
+      requestHeaders: requestHeaders,
+      contentType: contentType,
+      mediaType: mediaType,
+      body: body,
+      formattedBody: formatBody(body, mediaType),
+      bodyBytes: bodyBytes,
+      time: timeElapsed,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "statusCode": statusCode,
+      "headers": headers,
+      "requestHeaders": requestHeaders,
+      "body": body,
+      "bodyBytes": bodyBytes,
+      "time": time?.inMicroseconds,
+    };
   }
 
   @override
@@ -68,8 +109,9 @@ class ResponseModel {
     return [
       "Response Status: $statusCode",
       "Response Time: $time",
-      "Response Headers: ${headers.toString()}",
-      "Response Request Headers: ${requestHeaders.toString()}",
+      "Response Headers: $headers",
+      "Response Request Headers: $requestHeaders",
+      "Response Content-Type: $contentType",
       "Response Body: $body",
     ].join("\n");
   }
