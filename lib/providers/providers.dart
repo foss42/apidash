@@ -67,7 +67,7 @@ class CollectionStateNotifier extends StateNotifier<List<RequestModel>> {
     List<KVRow>? requestHeaders,
     List<KVRow>? requestParams,
     ContentType? requestBodyContentType,
-    dynamic requestBody,
+    String? requestBody,
     int? responseStatus,
     String? message,
     ResponseModel? responseModel,

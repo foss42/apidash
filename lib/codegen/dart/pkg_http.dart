@@ -116,14 +116,13 @@ import 'dart:convert';
       }
 
       var method = requestModel.method;
-      if (kMethodsWithBody.contains(method) &&
-          requestModel.requestBody != null) {
-        var contentLength = utf8.encode(requestModel.requestBody).length;
+      var requestBody = requestModel.requestBody;
+      if (kMethodsWithBody.contains(method) && requestBody != null) {
+        var contentLength = utf8.encode(requestBody).length;
         if (contentLength > 0) {
           hasBody = true;
-          var body = requestModel.requestBody;
           var templateBody = jj.Template(kTemplateBody);
-          result += templateBody.render({"body": body});
+          result += templateBody.render({"body": requestBody});
           result = kBodyImportDartConvert + result;
           result += kBodyLength;
         }

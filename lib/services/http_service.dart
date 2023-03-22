@@ -14,15 +14,14 @@ Future<(http.Response?, Duration?, String?)> request(RequestModel requestModel) 
     Map<String, String> headers = rowsToMap(requestModel.requestHeaders) ?? {};
     http.Response response;
     String? body;
-    try {
-      if(kMethodsWithBody.contains(requestModel.method)){
-        if(requestModel.requestBody != null){
-          var contentLength = utf8.encode(requestModel.requestBody).length;
-          if (contentLength > 0){
-            body = requestModel.requestBody as String;
-            headers[HttpHeaders.contentLengthHeader] = contentLength.toString();
-            headers[HttpHeaders.contentTypeHeader] = kContentTypeMap[requestModel.requestBodyContentType] ?? "";
-          }
+    try { 
+      var requestBody = requestModel.requestBody;
+      if(kMethodsWithBody.contains(requestModel.method) && requestBody != null){
+        var contentLength = utf8.encode(requestBody).length;
+        if (contentLength > 0){
+          body = requestBody;
+          headers[HttpHeaders.contentLengthHeader] = contentLength.toString();
+          headers[HttpHeaders.contentTypeHeader] = kContentTypeMap[requestModel.requestBodyContentType] ?? "";
         }
       }
       Stopwatch stopwatch = Stopwatch()..start();
