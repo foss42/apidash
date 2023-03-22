@@ -34,6 +34,7 @@ const kHSpacer20 = SizedBox(width: 20);
 const kVSpacer5 = SizedBox(height: 5);
 const kVSpacer8 = SizedBox(height: 8);
 const kVSpacer10 = SizedBox(height: 10);
+const kVSpacer20 = SizedBox(height: 20);
 
 const kTabAnimationDuration = Duration(milliseconds: 200);
 const kTabHeight = 45.0;
@@ -348,6 +349,13 @@ const kResponseCodeReasons = {
   510: 'Not Extended',
   511: 'Network Authentication Required',
 };
+
+const kIntro =
+    """An open-source cross-platform API GUI Client that can help you:
+- Create & customize API requests
+- Visually inspect API responses
+- Generate Dart Code Automatically
+""";
 
 const kMimeTypeRaiseIssue =
     " is currently not supported.\nPlease raise an issue in API Dash GitHub repo -\nhttps://github.com/foss42/api-dash\nso that we can prioritize adding it to the tool.";
