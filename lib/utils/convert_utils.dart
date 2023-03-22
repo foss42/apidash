@@ -1,3 +1,5 @@
+import '../consts.dart';
+
 String humanizeDuration(Duration? duration) {
   if (duration == null) {
     return "";
@@ -33,4 +35,14 @@ String formatHeaderCase(String text) {
   var sp = text.split("-");
   sp = sp.map((e) => capitalizeFirstLetter(e)).toList();
   return sp.join("-");
+}
+
+String padMultilineString(String text, int padding,
+    {bool firstLinePadded = false}) {
+  var lines = kSplitter.convert(text);
+  int start = firstLinePadded ? 0 : 1;
+  for (start; start < lines.length; start++) {
+    lines[start] = ' ' * padding + lines[start];
+  }
+  return lines.join("\n");
 }
