@@ -13,6 +13,8 @@ class CodePane extends ConsumerStatefulWidget {
 }
 
 class _CodePaneState extends ConsumerState<CodePane> {
+  final DartHttpCodeGen dartHttpCodeGen = DartHttpCodeGen();
+
   @override
   void initState() {
     super.initState();
@@ -39,7 +41,7 @@ class _CodePaneState extends ConsumerState<CodePane> {
       borderRadius: kBorderRadius8,
     );
 
-    final code = getDartHttpCode(requestModel);
+    final code = dartHttpCodeGen.getCode(requestModel);
     if (code == null) {
       return const ErrorMessage(
         message: "An error was encountered while generating code. $kRaiseIssue",
