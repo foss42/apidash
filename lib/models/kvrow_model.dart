@@ -19,20 +19,3 @@ class KVRow {
     return {k: v}.toString();
   }
 }
-
-Map<String, String>? rowsToMap(List<KVRow>? kvRows, {bool isHeader = false}) {
-  if (kvRows == null) {
-    return null;
-  }
-  Map<String, String> finalMap = {};
-  for (var row in kvRows) {
-    if (row.k.trim() != "") {
-      String key = row.k;
-      if (isHeader) {
-        key = key.toLowerCase();
-      }
-      finalMap[key] = row.v;
-    }
-  }
-  return finalMap;
-}

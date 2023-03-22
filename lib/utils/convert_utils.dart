@@ -1,4 +1,5 @@
 import '../consts.dart';
+import 'package:apidash/models/models.dart' show KVRow;
 
 String humanizeDuration(Duration? duration) {
   if (duration == null) {
@@ -45,4 +46,21 @@ String padMultilineString(String text, int padding,
     lines[start] = ' ' * padding + lines[start];
   }
   return lines.join("\n");
+}
+
+Map<String, String>? rowsToMap(List<KVRow>? kvRows, {bool isHeader = false}) {
+  if (kvRows == null) {
+    return null;
+  }
+  Map<String, String> finalMap = {};
+  for (var row in kvRows) {
+    if (row.k.trim() != "") {
+      String key = row.k;
+      if (isHeader) {
+        key = key.toLowerCase();
+      }
+      finalMap[key] = row.v;
+    }
+  }
+  return finalMap;
 }

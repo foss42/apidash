@@ -2,55 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
-import 'package:collection/collection.dart' show mergeMaps;
-import '../models/models.dart';
-import '../../consts.dart';
-
-(String?, bool) getUriScheme(Uri uri) {
-  if(uri.hasScheme){
-    if(kSupportedUriSchemes.contains(uri.scheme)){
-      return (uri.scheme, true);
-    }
-    return (uri.scheme, false);
-  }
-  return (null, false);
-}
-
-(Uri?, String?) getValidRequestUri(String? url, List<KVRow>? requestParams) {
-  url = url?.trim();
-  if(url == null || url == ""){
-    return (null, "URL is missing!");
-  }
-  Uri? uri =  Uri.tryParse(url);
-  if(uri == null){
-    return (null, "Check URL (malformed)");
-  }
-  (String?, bool) urlScheme = getUriScheme(uri);
-
-  if(urlScheme.$0 != null){
-    if (!urlScheme.$1){
-      return (null, "Unsupported URL Scheme (${urlScheme.$0})");
-    }
-  }
-  else {
-    url = kDefaultUriScheme + url;
-  }
-
-  uri =  Uri.parse(url);
-  if (uri.hasFragment){
-    uri = uri.removeFragment();
-  }
-
-  Map<String, String>? queryParams = rowsToMap(requestParams);
-  if(queryParams != null){
-    if(uri.hasQuery){
-      Map<String, String> urlQueryParams = uri.queryParameters;
-      queryParams = mergeMaps(urlQueryParams, queryParams);
-    }
-    uri = uri.replace(queryParameters: queryParams);
-  }
-  return (uri, null);
-}
+import 'package:apidash/utils/utils.dart';
+import 'package:apidash/models/models.dart';
+import 'package:apidash/consts.dart';
 
 Future<(http.Response?, Duration?, String?)> request(RequestModel requestModel) async {
   (Uri?, String?) uriRec = getValidRequestUri(requestModel.url, 

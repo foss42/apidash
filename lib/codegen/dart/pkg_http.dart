@@ -2,8 +2,8 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:jinja/jinja.dart' as jj;
 import 'package:apidash/consts.dart';
-import 'package:apidash/utils/utils.dart' show padMultilineString;
-import 'package:apidash/models/models.dart' show RequestModel, rowsToMap;
+import 'package:apidash/utils/utils.dart' show padMultilineString, rowsToMap;
+import 'package:apidash/models/models.dart' show RequestModel;
 
 class DartHttpCodeGen {
   String kTemplateUrl = """import 'package:http/http.dart' as http;
