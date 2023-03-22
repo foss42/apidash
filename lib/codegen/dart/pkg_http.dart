@@ -93,97 +93,97 @@ String padMultilineString(String text, int padding,
   return lines.join("\n");
 }
 
-String getDartHttpCode(RequestModel requestModel) {
-  //try {
-  String result = "";
-  bool hasHeaders = false;
-  bool hasBody = false;
+String? getDartHttpCode(RequestModel requestModel) {
+  try {
+    String result = "";
+    bool hasHeaders = false;
+    bool hasBody = false;
 
-  String url = requestModel.url;
-  if (!url.contains("://") && url.isNotEmpty) {
-    url = kDefaultUriScheme + url;
-  }
-  var templateUrl = jj.Template(kTemplateUrl);
-  result += templateUrl.render({"url": url});
-
-  var paramsList = requestModel.requestParams;
-  if (paramsList != null) {
-    var params = rowsToMap(requestModel.requestParams) ?? {};
-    if (params.isNotEmpty) {
-      var templateParams = jj.Template(kTemplateParams);
-      var paramsString = kEncoder.convert(params);
-      paramsString = padMultilineString(paramsString, kParamsPadding);
-      result += templateParams.render({"params": paramsString});
-      Uri uri = Uri.parse(url);
-      if (uri.hasQuery) {
-        result += kStringUrlParams;
-      } else {
-        result += kStringNoUrlParams;
-      }
+    String url = requestModel.url;
+    if (!url.contains("://") && url.isNotEmpty) {
+      url = kDefaultUriScheme + url;
     }
-  }
+    var templateUrl = jj.Template(kTemplateUrl);
+    result += templateUrl.render({"url": url});
 
-  var method = requestModel.method;
-  if (kMethodsWithBody.contains(method) && requestModel.requestBody != null) {
-    var contentLength = utf8.encode(requestModel.requestBody).length;
-    if (contentLength > 0) {
-      hasBody = true;
-      var body = requestModel.requestBody;
-      var templateBody = jj.Template(kTemplateBody);
-      result += templateBody.render({"body": body});
-      result = kBodyImportDartConvert + result;
-      result += kBodyLength;
-    }
-  }
-
-  var headersList = requestModel.requestHeaders;
-  if (headersList != null || hasBody) {
-    var headers = rowsToMap(requestModel.requestHeaders) ?? {};
-    if (headers.isNotEmpty || hasBody) {
-      hasHeaders = true;
-      if (hasBody) {
-        headers[HttpHeaders.contentLengthHeader] = r"$contentLength";
-        switch (requestModel.requestBodyContentType) {
-          case ContentType.json:
-            headers[HttpHeaders.contentTypeHeader] = 'application/json';
-            break;
-          case ContentType.text:
-            headers[HttpHeaders.contentTypeHeader] = 'text/plain';
-            break;
+    var paramsList = requestModel.requestParams;
+    if (paramsList != null) {
+      var params = rowsToMap(requestModel.requestParams) ?? {};
+      if (params.isNotEmpty) {
+        var templateParams = jj.Template(kTemplateParams);
+        var paramsString = kEncoder.convert(params);
+        paramsString = padMultilineString(paramsString, kParamsPadding);
+        result += templateParams.render({"params": paramsString});
+        Uri uri = Uri.parse(url);
+        if (uri.hasQuery) {
+          result += kStringUrlParams;
+        } else {
+          result += kStringNoUrlParams;
         }
       }
-      var headersString = kEncoder.convert(headers);
-      headersString = padMultilineString(headersString, kHeadersPadding);
-      var templateHeaders = jj.Template(kTemplateHeaders);
-      result += templateHeaders.render({"headers": headersString});
     }
+
+    var method = requestModel.method;
+    if (kMethodsWithBody.contains(method) && requestModel.requestBody != null) {
+      var contentLength = utf8.encode(requestModel.requestBody).length;
+      if (contentLength > 0) {
+        hasBody = true;
+        var body = requestModel.requestBody;
+        var templateBody = jj.Template(kTemplateBody);
+        result += templateBody.render({"body": body});
+        result = kBodyImportDartConvert + result;
+        result += kBodyLength;
+      }
+    }
+
+    var headersList = requestModel.requestHeaders;
+    if (headersList != null || hasBody) {
+      var headers = rowsToMap(requestModel.requestHeaders) ?? {};
+      if (headers.isNotEmpty || hasBody) {
+        hasHeaders = true;
+        if (hasBody) {
+          headers[HttpHeaders.contentLengthHeader] = r"$contentLength";
+          switch (requestModel.requestBodyContentType) {
+            case ContentType.json:
+              headers[HttpHeaders.contentTypeHeader] = 'application/json';
+              break;
+            case ContentType.text:
+              headers[HttpHeaders.contentTypeHeader] = 'text/plain';
+              break;
+          }
+        }
+        var headersString = kEncoder.convert(headers);
+        headersString = padMultilineString(headersString, kHeadersPadding);
+        var templateHeaders = jj.Template(kTemplateHeaders);
+        result += templateHeaders.render({"headers": headersString});
+      }
+    }
+
+    var templateRequest = jj.Template(kTemplateRequest);
+    result += templateRequest.render({"method": method.name});
+
+    if (hasHeaders) {
+      result += kStringRequestHeaders;
+    }
+
+    if (hasBody) {
+      result += kStringRequestBody;
+    }
+
+    result += kStringRequestEnd;
+
+    var success = kCodegenSuccessStatusCodes[method]!;
+    if (success.length > 1) {
+      var templateMultiSuccess = jj.Template(kTemplateMultiSuccess);
+      result += templateMultiSuccess.render({"codes": success});
+    } else {
+      var templateSingleSuccess = jj.Template(kTemplateSingleSuccess);
+      result += templateSingleSuccess.render({"code": success[0]});
+    }
+    result += kStringResult;
+
+    return result;
+  } catch (e) {
+    return null;
   }
-
-  var templateRequest = jj.Template(kTemplateRequest);
-  result += templateRequest.render({"method": method.name});
-
-  if (hasHeaders) {
-    result += kStringRequestHeaders;
-  }
-
-  if (hasBody) {
-    result += kStringRequestBody;
-  }
-
-  result += kStringRequestEnd;
-
-  var success = kCodegenSuccessStatusCodes[method]!;
-  if (success.length > 1) {
-    var templateMultiSuccess = jj.Template(kTemplateMultiSuccess);
-    result += templateMultiSuccess.render({"codes": success});
-  } else {
-    var templateSingleSuccess = jj.Template(kTemplateSingleSuccess);
-    result += templateSingleSuccess.render({"code": success[0]});
-  }
-  result += kStringResult;
-
-  return result;
-  //} catch (e) {
-  //  return "An error was encountered while generating code. $kRaiseIssue";
-  //}
 }

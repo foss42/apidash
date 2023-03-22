@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:davi/davi.dart';
 
+const kDiscordUrl = "https://bit.ly/heyfoss";
+const kGitUrl = "https://github.com/foss42/api-dash";
+const kIssueUrl = "$kGitUrl/issues";
+
 final kColorTransparent = MaterialStateProperty.all<Color>(Colors.transparent);
 const kColorBg = Colors.white;
 
@@ -358,10 +362,10 @@ const kIntro =
 """;
 
 const kMimeTypeRaiseIssue =
-    " is currently not supported.\nPlease raise an issue in API Dash GitHub repo -\nhttps://github.com/foss42/api-dash\nso that we can prioritize adding it to the tool.";
+    " is currently not supported.\nPlease raise an issue in API Dash GitHub repo so that we can prioritize adding it to the tool.";
 
 const kUnexpectedRaiseIssue =
-    "\nIf the behaviour is unexpected, please raise an issue in API Dash GitHub repo -\nhttps://github.com/foss42/api-dash\nso that we can resolve it.";
+    "\nIf the behaviour is unexpected, please raise an issue in API Dash GitHub repo so that we can resolve it.";
 
 const kRaiseIssue =
-    "\nPlease raise an issue in API Dash GitHub repo -\nhttps://github.com/foss42/api-dash\nso that we can resolve it.";
+    "\nPlease raise an issue in API Dash GitHub repo so that we can resolve it.";

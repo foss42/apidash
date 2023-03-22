@@ -40,40 +40,46 @@ class _CodePaneState extends ConsumerState<CodePane> {
     );
 
     final code = getDartHttpCode(requestModel);
-    return Padding(
-      padding: kP10,
-      child: Column(
-        children: [
-          SizedBox(
-            height: kHeaderHeight,
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    "Code",
-                    style: Theme.of(context).textTheme.titleMedium,
+    if (code == null) {
+      return const ErrorMessage(
+        message: "An error was encountered while generating code. $kRaiseIssue",
+      );
+    } else {
+      return Padding(
+        padding: kP10,
+        child: Column(
+          children: [
+            SizedBox(
+              height: kHeaderHeight,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      "Code",
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
                   ),
-                ),
-                CopyButton(toCopy: code),
-              ],
-            ),
-          ),
-          kVSpacer10,
-          Expanded(
-            child: Container(
-              width: double.maxFinite,
-              padding: kP8,
-              decoration: textContainerdecoration,
-              child: CodeGenPreviewer(
-                code: code,
-                theme: codeTheme,
-                language: 'dart',
-                textStyle: kCodeStyle,
+                  CopyButton(toCopy: code),
+                ],
               ),
             ),
-          ),
-        ],
-      ),
-    );
+            kVSpacer10,
+            Expanded(
+              child: Container(
+                width: double.maxFinite,
+                padding: kP8,
+                decoration: textContainerdecoration,
+                child: CodeGenPreviewer(
+                  code: code,
+                  theme: codeTheme,
+                  language: 'dart',
+                  textStyle: kCodeStyle,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
   }
 }

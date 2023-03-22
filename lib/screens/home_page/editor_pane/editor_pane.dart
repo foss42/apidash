@@ -136,7 +136,7 @@ class RequestEditorPaneHome extends ConsumerWidget {
               ),
               FilledButton.icon(
                 onPressed: () {
-                  launchUrl(Uri.parse("https://bit.ly/heyfoss"));
+                  launchUrl(Uri.parse(kDiscordUrl));
                 },
                 icon: const Icon(Icons.discord),
                 label: const Text(
@@ -171,7 +171,7 @@ class RequestEditorPaneHome extends ConsumerWidget {
               ),
               FilledButton.icon(
                 onPressed: () {
-                  launchUrl(Uri.parse("https://github.com/foss42/api-dash"));
+                  launchUrl(Uri.parse(kGitUrl));
                 },
                 icon: const Icon(Icons.code_rounded),
                 label: const Text(
@@ -190,7 +190,7 @@ class RequestEditorPaneHome extends ConsumerWidget {
               ),
               FilledButton.icon(
                 onPressed: () {
-                  launchUrl(Uri.parse("https://github.com/foss42/api-dash"));
+                  launchUrl(Uri.parse(kGitUrl));
                 },
                 icon: const Icon(Icons.star),
                 label: const Text(
