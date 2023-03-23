@@ -22,6 +22,7 @@ void main() async {
         window_size.setWindowFrame(frame);
         window_size.setWindowMinSize(const Size(900, 600));
         window_size.setWindowMaxSize(Size.infinite);
+        window_size.setWindowTitle("API Dash");
       }
     });
   }
