@@ -79,18 +79,29 @@ class RequestEditorPaneHome extends ConsumerWidget {
           kVSpacer10,
           Row(
             children: [
-              Text(
-                "Please support this project by giving it a ",
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              FilledButton.icon(
-                onPressed: () {
-                  launchUrl(Uri.parse(kGitUrl));
-                },
-                icon: const Icon(Icons.star),
-                label: const Text(
-                  'Star on GitHub',
-                  style: kTextStyleButton,
+              Expanded(
+                child: Text.rich(
+                  TextSpan(
+                    children: [
+                      TextSpan(
+                        text: "Please support this project by giving us a ",
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      WidgetSpan(
+                        alignment: PlaceholderAlignment.middle,
+                        child: FilledButton.icon(
+                          onPressed: () {
+                            launchUrl(Uri.parse(kGitUrl));
+                          },
+                          icon: const Icon(Icons.star),
+                          label: const Text(
+                            'Star on GitHub',
+                            style: kTextStyleButton,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -109,26 +120,38 @@ class RequestEditorPaneHome extends ConsumerWidget {
           kVSpacer20,
           Row(
             children: [
-              Text(
-                "Click on the ",
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  String newId =
-                      ref.read(collectionStateNotifierProvider.notifier).add();
-                  ref
-                      .read(activeIdStateProvider.notifier)
-                      .update((state) => newId);
-                },
-                child: const Text(
-                  '+ New',
-                  style: kTextStyleButton,
+              Expanded(
+                child: Text.rich(
+                  TextSpan(
+                    children: [
+                      TextSpan(
+                        text: "Click on the ",
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      WidgetSpan(
+                        alignment: PlaceholderAlignment.middle,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            String newId = ref
+                                .read(collectionStateNotifierProvider.notifier)
+                                .add();
+                            ref
+                                .read(activeIdStateProvider.notifier)
+                                .update((state) => newId);
+                          },
+                          child: const Text(
+                            '+ New',
+                            style: kTextStyleButton,
+                          ),
+                        ),
+                      ),
+                      TextSpan(
+                        text: " button to start drafting a new API request.",
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              Text(
-                " button to start drafting a new API request.",
-                style: Theme.of(context).textTheme.titleMedium,
               ),
             ],
           ),
@@ -147,23 +170,34 @@ class RequestEditorPaneHome extends ConsumerWidget {
           kVSpacer20,
           Row(
             children: [
-              Text(
-                "Join our ",
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              FilledButton.icon(
-                onPressed: () {
-                  launchUrl(Uri.parse(kDiscordUrl));
-                },
-                icon: const Icon(Icons.discord),
-                label: const Text(
-                  'Discord Server',
-                  style: kTextStyleButton,
+              Expanded(
+                child: Text.rich(
+                  TextSpan(
+                    children: [
+                      TextSpan(
+                        text: "Join our ",
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      WidgetSpan(
+                        alignment: PlaceholderAlignment.middle,
+                        child: FilledButton.icon(
+                          onPressed: () {
+                            launchUrl(Uri.parse(kDiscordUrl));
+                          },
+                          icon: const Icon(Icons.discord),
+                          label: const Text(
+                            'Discord Server',
+                            style: kTextStyleButton,
+                          ),
+                        ),
+                      ),
+                      TextSpan(
+                        text: " and drop a message in the #foss channel.",
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              Text(
-                " and drop a message in the #foss channel.",
-                style: Theme.of(context).textTheme.titleMedium,
               ),
             ],
           ),
@@ -182,18 +216,29 @@ class RequestEditorPaneHome extends ConsumerWidget {
           kVSpacer20,
           Row(
             children: [
-              Text(
-                "Just raise an issue in our ",
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              FilledButton.icon(
-                onPressed: () {
-                  launchUrl(Uri.parse(kGitUrl));
-                },
-                icon: const Icon(Icons.code_rounded),
-                label: const Text(
-                  'Github Repo',
-                  style: kTextStyleButton,
+              Expanded(
+                child: Text.rich(
+                  TextSpan(
+                    children: [
+                      TextSpan(
+                        text: "Just raise an issue in our ",
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      WidgetSpan(
+                        alignment: PlaceholderAlignment.middle,
+                        child: FilledButton.icon(
+                          onPressed: () {
+                            launchUrl(Uri.parse(kGitUrl));
+                          },
+                          icon: const Icon(Icons.code_rounded),
+                          label: const Text(
+                            'Github Repo',
+                            style: kTextStyleButton,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
