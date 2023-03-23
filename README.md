@@ -19,6 +19,9 @@ Using API Dash, you can draft API requests via an easy to use GUI which allows y
 - Create different types of HTTP requests (GET, HEAD, POST, PATCH, PUT and DELETE)
 - Easily manipulate and play around with request inputs like headers, query parameters and body.
 
+**Feature Preview 👇**
+
+https://user-images.githubusercontent.com/1382619/227081895-22af076f-469c-4f70-86e6-3dda8beccd31.mp4
 
 ### Visually inspect API Responses
 Using API Dash, you can:
@@ -26,11 +29,17 @@ Using API Dash, you can:
 - View formatted code previews for responses of various content types like JSON, XML, YAML, HTML, SQL, etc.
 - For APIs which return results as images, API Dash helps you save a lot of time by directly previewing these results and supports a wide variety of image file formats such as jpeg, png, gif, etc. 
 
+**Feature Preview 👇**
+
+https://user-images.githubusercontent.com/1382619/227082005-7b374f5a-c406-4963-8f97-71fda4a58f69.mp4
 
 ### Generate Dart Code Automatically
 API Dash is the **only** open source API client that supports advanced Dart code generation so that you can easily integrate APIs in your Dart/Flutter project.
 For each request, you can click on **View Code** to directly view the corresponding Dart code which you can then *Copy* and directly run it on DartPad.
 
+**Feature Preview 👇**
+
+https://user-images.githubusercontent.com/1382619/227082072-2c829996-2550-425d-ad73-e81f96d2d270.mp4
 
 ## Need Any Help?
 
