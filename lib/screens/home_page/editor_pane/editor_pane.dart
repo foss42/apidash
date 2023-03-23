@@ -53,10 +53,8 @@ class RequestEditorPaneHome extends ConsumerWidget {
         vertical: 40,
         horizontal: 60,
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
+      child: ListView(
         children: [
-          kVSpacer20,
           Row(
             children: [
               Expanded(
@@ -74,6 +72,25 @@ class RequestEditorPaneHome extends ConsumerWidget {
                 child: Text(
                   kIntro,
                   style: Theme.of(context).textTheme.titleMedium,
+                ),
+              ),
+            ],
+          ),
+          kVSpacer10,
+          Row(
+            children: [
+              Text(
+                "Please support this project by giving it a ",
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              FilledButton.icon(
+                onPressed: () {
+                  launchUrl(Uri.parse(kGitUrl));
+                },
+                icon: const Icon(Icons.star),
+                label: const Text(
+                  'Star on GitHub',
+                  style: kTextStyleButton,
                 ),
               ),
             ],
@@ -176,25 +193,6 @@ class RequestEditorPaneHome extends ConsumerWidget {
                 icon: const Icon(Icons.code_rounded),
                 label: const Text(
                   'Github Repo',
-                  style: kTextStyleButton,
-                ),
-              ),
-            ],
-          ),
-          kVSpacer20,
-          Row(
-            children: [
-              Text(
-                "Please support this project by giving it a ",
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              FilledButton.icon(
-                onPressed: () {
-                  launchUrl(Uri.parse(kGitUrl));
-                },
-                icon: const Icon(Icons.star),
-                label: const Text(
-                  'Star',
                   style: kTextStyleButton,
                 ),
               ),

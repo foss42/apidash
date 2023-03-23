@@ -360,11 +360,7 @@ const kResponseCodeReasons = {
 };
 
 const kIntro =
-    """An open-source cross-platform API GUI Client that can help you:
-- Create & customize API requests
-- Visually inspect API responses
-- Generate Dart Code Automatically
-""";
+    """API Dash is a beautiful open-source cross-platform API Client built using Flutter which can help you easily create & customize your API requests, visually inspect responses and generate Dart code on the go.""";
 
 const kMimeTypeRaiseIssue =
     " is currently not supported.\nPlease raise an issue in API Dash GitHub repo so that we can prioritize adding it to the tool.";
