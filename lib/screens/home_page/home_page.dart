@@ -14,7 +14,7 @@ class HomePage extends StatefulWidget {
 class HomePageState extends State<HomePage> {
   final MultiSplitViewController _controller = MultiSplitViewController(
     areas: [
-      Area(size: 300, minimalSize: 200),
+      Area(size: 250, minimalSize: 200),
       Area(minimalWeight: 0.7),
     ],
   );

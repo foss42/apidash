@@ -23,6 +23,10 @@ dependencies:
   string_scanner: ^1.2.0
   xml: ^6.2.2
   jinja: ^0.4.2
+  window_size:
+    git:
+      url: https://github.com/google/flutter-desktop-embedding.git
+      path: plugins/window_size
 
 dev_dependencies:
   flutter_test:
