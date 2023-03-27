@@ -10,8 +10,8 @@ API Dash is a beautiful open-source cross-platform API Client that can help you 
 
 ## Download
 API Dash is available for Mac and Windows currently, and can be downloaded from the links below:
-- MacOS (Universal build) - Download Link & Installation Instructions
-- Windows (64-bit) - Download Link & Installation Instructions
+- MacOS (Universal build) - Download Link & [Installation Instructions](https://github.com/foss42/api-dash/blob/main/INSTALLATION.md#macos)
+- Windows (64-bit) - Download Link & [Installation Instructions](https://github.com/foss42/api-dash/blob/main/INSTALLATION.md#windows)
 
 ## Features of API Dash
 
