@@ -42,6 +42,11 @@ For each request, you can click on **View Code** to directly view the correspond
 
 https://user-images.githubusercontent.com/1382619/227082072-2c829996-2550-425d-ad73-e81f96d2d270.mp4
 
+## Other Features
+
+- All user data is persisted locally on the disk. To save the current snapshot, just press the **Save** button in the collection pane. 
+- You can also re-arrange (press and drag), duplicate and delete the API drafts.
+
 ## Need Any Help?
 
 In case you need any help with API Dash or are encountering any issue while running the tool, please feel free to drop by our [Discord server](https://bit.ly/heyfoss) and we can have a chat in the **#foss** channel.
