@@ -44,7 +44,7 @@ https://user-images.githubusercontent.com/1382619/227082072-2c829996-2550-425d-a
 
 ## Need Any Help?
 
-In case you need any help with API Dash or are encountering any issue while runninng the tool, please feel free to drop by our [Discord server](https://bit.ly/heyfoss) and we can have a chat in the **#foss** channel.
+In case you need any help with API Dash or are encountering any issue while running the tool, please feel free to drop by our [Discord server](https://bit.ly/heyfoss) and we can have a chat in the **#foss** channel.
 
 ## Provide Feedback, Report Bugs & Request New Features
 
