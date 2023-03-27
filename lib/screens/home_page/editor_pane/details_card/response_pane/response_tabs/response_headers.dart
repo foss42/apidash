@@ -22,7 +22,7 @@ class _ResponseHeadersState extends ConsumerState<ResponseHeaders> {
   @override
   Widget build(BuildContext context) {
     final activeId = ref.watch(activeIdStateProvider);
-    final collection = ref.watch(collectionStateNotifierProvider);
+    final collection = ref.watch(collectionStateNotifierProvider)!;
     final idIdx = collection.indexWhere((m) => m.id == activeId);
     final requestHeaders =
         collection[idIdx].responseModel?.requestHeaders ?? {};

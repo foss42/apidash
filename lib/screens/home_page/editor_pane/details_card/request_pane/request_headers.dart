@@ -103,10 +103,10 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
   @override
   Widget build(BuildContext context) {
     final activeId = ref.watch(activeIdStateProvider);
-    final collection = ref.read(collectionStateNotifierProvider);
+    final collection = ref.read(collectionStateNotifierProvider)!;
     final idIdx = collection.indexWhere((m) => m.id == activeId);
     final length = ref.watch(collectionStateNotifierProvider
-        .select((value) => value[idIdx].requestHeaders?.length));
+        .select((value) => value![idIdx].requestHeaders?.length));
     rows = collection[idIdx].requestHeaders ?? [const KVRow("", "")];
 
     DaviModel<KVRow> model = DaviModel<KVRow>(

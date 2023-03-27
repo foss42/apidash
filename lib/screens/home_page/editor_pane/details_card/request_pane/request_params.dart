@@ -104,10 +104,10 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
   @override
   Widget build(BuildContext context) {
     final activeId = ref.watch(activeIdStateProvider);
-    final collection = ref.read(collectionStateNotifierProvider);
+    final collection = ref.read(collectionStateNotifierProvider)!;
     final idIdx = collection.indexWhere((m) => m.id == activeId);
     final length = ref.watch(collectionStateNotifierProvider
-        .select((value) => value[idIdx].requestParams?.length));
+        .select((value) => value![idIdx].requestParams?.length));
     rows = collection[idIdx].requestParams ?? [const KVRow("", "")];
 
     DaviModel<KVRow> model = DaviModel<KVRow>(

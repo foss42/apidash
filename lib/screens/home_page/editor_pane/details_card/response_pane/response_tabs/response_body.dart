@@ -23,7 +23,7 @@ class _ResponseBodyState extends ConsumerState<ResponseBody> {
   @override
   Widget build(BuildContext context) {
     final activeId = ref.watch(activeIdStateProvider);
-    final collection = ref.watch(collectionStateNotifierProvider);
+    final collection = ref.watch(collectionStateNotifierProvider)!;
     final idIdx = collection.indexWhere((m) => m.id == activeId);
     final responseModel = collection[idIdx].responseModel;
     var mediaType = responseModel?.mediaType;

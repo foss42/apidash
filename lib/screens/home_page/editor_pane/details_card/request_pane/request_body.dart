@@ -71,10 +71,10 @@ class _DropdownButtonBodyContentTypeState
   Widget build(BuildContext context) {
     final surfaceColor = Theme.of(context).colorScheme.surface;
     final activeId = ref.watch(activeIdStateProvider);
-    final collection = ref.read(collectionStateNotifierProvider);
+    final collection = ref.read(collectionStateNotifierProvider)!;
     final idIdx = collection.indexWhere((m) => m.id == activeId);
     final requestBodyContentType = ref.watch(collectionStateNotifierProvider
-        .select((value) => value[idIdx].requestBodyContentType));
+        .select((value) => value![idIdx].requestBodyContentType));
     return DropdownButton<ContentType>(
       focusColor: surfaceColor,
       value: requestBodyContentType,

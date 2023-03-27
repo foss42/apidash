@@ -22,13 +22,20 @@ class _CollectionPaneState extends ConsumerState<CollectionPane> {
 
   @override
   Widget build(BuildContext context) {
+    final collection = ref.watch(collectionStateNotifierProvider);
+    final savingData = ref.watch(saveDataStateProvider);
+    if (collection == null) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
     return Padding(
       padding: kP8,
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Wrap(
+            alignment: WrapAlignment.spaceBetween,
             children: [
               TextButton.icon(
                 onPressed: () {
@@ -45,6 +52,30 @@ class _CollectionPaneState extends ConsumerState<CollectionPane> {
                   style: kTextStyleButton,
                 ),
               ),
+              TextButton.icon(
+                onPressed: savingData
+                    ? null
+                    : () async {
+                        ref
+                            .read(saveDataStateProvider.notifier)
+                            .update((state) => true);
+                        await ref
+                            .read(collectionStateNotifierProvider.notifier)
+                            .saveData();
+                        ref
+                            .read(saveDataStateProvider.notifier)
+                            .update((state) => false);
+                      },
+                icon: const Icon(
+                  Icons.save,
+                  size: 20,
+                ),
+                label: const Text(
+                  'Save',
+                  style: kTextStyleButton,
+                ),
+              ),
+              //const Spacer(),
               ElevatedButton(
                 onPressed: () {
                   String newId =
@@ -89,8 +120,7 @@ class _RequestListState extends ConsumerState<RequestList> {
 
   @override
   Widget build(BuildContext context) {
-    final requestItems = ref.watch(collectionStateNotifierProvider);
-
+    final requestItems = ref.watch(collectionStateNotifierProvider)!;
     return ReorderableListView.builder(
       buildDefaultDragHandles: false,
       shrinkWrap: true,

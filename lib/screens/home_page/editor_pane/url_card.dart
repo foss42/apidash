@@ -73,10 +73,10 @@ class _DropdownButtonHTTPMethodState
   Widget build(BuildContext context) {
     final surfaceColor = Theme.of(context).colorScheme.surface;
     final activeId = ref.watch(activeIdStateProvider);
-    final collection = ref.read(collectionStateNotifierProvider);
+    final collection = ref.read(collectionStateNotifierProvider)!;
     final idIdx = collection.indexWhere((m) => m.id == activeId);
-    final method = ref.watch(
-        collectionStateNotifierProvider.select((value) => value[idIdx].method));
+    final method = ref.watch(collectionStateNotifierProvider
+        .select((value) => value![idIdx].method));
     return DropdownButton<HTTPVerb>(
       focusColor: surfaceColor,
       value: method,
@@ -186,7 +186,7 @@ class _SendRequestButtonState extends ConsumerState<SendRequestButton> {
                   .read(codePaneVisibleStateProvider.notifier)
                   .update((state) => false);
               await Future.delayed(
-                const Duration(seconds: 1),
+                const Duration(seconds: 0),
                 () async {
                   await ref
                       .read(collectionStateNotifierProvider.notifier)

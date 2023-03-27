@@ -18,14 +18,27 @@ class HiveHandler {
     dataBox = Hive.box(kDataBox);
   }
 
-  List<String>? getIds() => dataBox.get(kDataBoxIds) as List<String>?;
+  dynamic getIds() => dataBox.get(kDataBoxIds);
   Future<void> setIds(List<String>? ids) => dataBox.put(kDataBoxIds, ids);
 
-  Map<String, dynamic>? getRequestModel(String id) =>
-      dataBox.get(id) as Map<String, dynamic>?;
+  dynamic getRequestModel(String id) => dataBox.get(id);
   Future<void> setRequestModel(
           String id, Map<String, dynamic>? requestModelJson) =>
       dataBox.put(id, requestModelJson);
 
   Future<int> clear() => dataBox.clear();
+
+  void delete(String key) => dataBox.delete(key);
+
+  Future<void> removeUnused() async {
+    var ids = getIds();
+    if (ids != null) {
+      ids = ids as List;
+      for (var key in dataBox.keys.toList()) {
+        if (key != kDataBoxIds && !ids.contains(key)) {
+          await dataBox.delete(key);
+        }
+      }
+    }
+  }
 }
