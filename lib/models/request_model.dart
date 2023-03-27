@@ -87,10 +87,8 @@ class RequestModel {
       method = kDefaultHttpMethod;
     }
     final url = data["url"] as String;
-    final requestHeaders =
-        mapToRows(data["requestHeaders"] as Map<String, String>?);
-    final requestParams =
-        mapToRows(data["requestParams"] as Map<String, String>?);
+    final requestHeaders = data["requestHeaders"];
+    final requestParams = data["requestParams"];
     try {
       requestBodyContentType =
           ContentType.values.byName(data["requestBodyContentType"] as String);
@@ -100,9 +98,10 @@ class RequestModel {
     final requestBody = data["requestBody"] as String?;
     final responseStatus = data["responseStatus"] as int?;
     final message = data["message"] as String?;
-    final responseModelJson = data["responseModel"] as Map<String, dynamic>?;
+    final responseModelJson = data["responseModel"];
     if (responseModelJson != null) {
-      responseModel = ResponseModel.fromJson(responseModelJson);
+      responseModel =
+          ResponseModel.fromJson(Map<String, dynamic>.from(responseModelJson));
     } else {
       responseModel = null;
     }
@@ -112,8 +111,12 @@ class RequestModel {
       method: method,
       url: url,
       requestTabIndex: 0,
-      requestHeaders: requestHeaders,
-      requestParams: requestParams,
+      requestHeaders: requestHeaders != null
+          ? mapToRows(Map<String, String>.from(requestHeaders))
+          : null,
+      requestParams: requestParams != null
+          ? mapToRows(Map<String, String>.from(requestParams))
+          : null,
       requestBodyContentType: requestBodyContentType,
       requestBody: requestBody,
       responseStatus: responseStatus,

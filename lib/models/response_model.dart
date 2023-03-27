@@ -66,8 +66,8 @@ class ResponseModel {
     MediaType? mediaType;
     Duration? timeElapsed;
     final statusCode = data["statusCode"] as int?;
-    final headers = data["headers"] as Map<String, String>?;
-    final requestHeaders = data["requestHeaders"] as Map<String, String>?;
+    final headers = data["headers"];
+    final requestHeaders = data["requestHeaders"];
     final contentType = headers?[HttpHeaders.contentTypeHeader];
     try {
       mediaType = MediaType.parse(contentType!);
@@ -82,8 +82,10 @@ class ResponseModel {
     }
     return ResponseModel(
       statusCode: statusCode,
-      headers: headers,
-      requestHeaders: requestHeaders,
+      headers: headers != null ? Map<String, String>.from(headers) : null,
+      requestHeaders: requestHeaders != null
+          ? Map<String, String>.from(requestHeaders)
+          : null,
       contentType: contentType,
       mediaType: mediaType,
       body: body,
