@@ -2,7 +2,7 @@
 name: Feature request
 about: Help us make API Dash better by suggesting new features.
 title: ''
-labels: bug, enhancement
+labels: enhancement
 assignees: ashitaprasad
 
 ---
