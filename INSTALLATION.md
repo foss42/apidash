@@ -1,13 +1,13 @@
 # Installation Instructions
 
 ## Windows 
-Download the latest Windows Installer (64 bit) from here - Link
+Download the latest Windows Installer (64 bit) from here - [Link](https://github.com/foss42/api-dash/releases/download/v0.1.0/api_dash_windows_x64.exe)
 
 To install it, simply double click on the installer and follow the step by step installation wizard.
 
 ## MacOS
 
-Download the latest MacOS Installer (Universal - Intel and Apple Silicon) from here - Link
+Download the latest MacOS Installer (Universal - Intel and Apple Silicon) from here - [Link](https://github.com/foss42/api-dash/releases/download/v0.1.0/api_dash_macos.dmg)
 
 **As this app is distributed outside the App Store you have to follow the following instructions to setup and run it only for the first time.**
 
