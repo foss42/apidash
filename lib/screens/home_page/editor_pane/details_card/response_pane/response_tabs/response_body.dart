@@ -150,13 +150,18 @@ class _BodySuccessState extends State<BodySuccess> {
           ),
           kVSpacer10,
           Visibility(
-            visible: currentSeg == ResponseBodyView.preview,
+            visible: currentSeg == ResponseBodyView.preview ||
+                currentSeg == ResponseBodyView.none,
             child: Expanded(
-              child: Previewer(
-                bytes: widget.bytes,
-                type: widget.mediaType.type,
-                subtype: widget.mediaType.subtype,
-              ),
+              child: currentSeg == ResponseBodyView.preview
+                  ? Previewer(
+                      bytes: widget.bytes,
+                      type: widget.mediaType.type,
+                      subtype: widget.mediaType.subtype,
+                    )
+                  : ErrorMessage(
+                      message:
+                          "$kMimeTypeRaiseIssueStart'${widget.mediaType.mimeType}' $kMimeTypeRaiseIssueEnd"),
             ),
           ),
           if (widget.formattedBody != null)

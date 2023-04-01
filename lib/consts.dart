@@ -185,10 +185,10 @@ const LineSplitter kSplitter = LineSplitter();
 const kTypeApplication = 'application';
 // application
 const kSubTypeJson = 'json';
+const kSubTypeOctetStream = 'octet-stream';
 const kSubTypePdf = 'pdf';
 const kSubTypeSql = 'sql';
 const kSubTypeXml = 'xml';
-const kSubTypeOctetStream = 'octet-stream';
 const kSubTypeYaml = 'x-yaml';
 const kSubTypeYml = 'x-yml';
 
@@ -223,6 +223,7 @@ enum ResponseBodyView { preview, code, raw, none }
 const kKeyIcon = "icon";
 const kKeyName = "name";
 const Map<ResponseBodyView, Map> kResponseBodyViewIcons = {
+  ResponseBodyView.none: {kKeyName: "Preview", kKeyIcon: Icons.warning},
   ResponseBodyView.preview: {
     kKeyName: "Preview",
     kKeyIcon: Icons.visibility_rounded
@@ -232,6 +233,7 @@ const Map<ResponseBodyView, Map> kResponseBodyViewIcons = {
 };
 
 const kNoBodyViewOptions = [ResponseBodyView.none];
+const kNoRawBodyViewOptions = [ResponseBodyView.none, ResponseBodyView.raw];
 const kRawBodyViewOptions = [ResponseBodyView.raw];
 const kCodeRawBodyViewOptions = [ResponseBodyView.code, ResponseBodyView.raw];
 const kPreviewBodyViewOptions = [
@@ -246,8 +248,9 @@ const kPreviewCodeRawBodyViewOptions = [
 const Map<String, Map<String, List<ResponseBodyView>>>
     kResponseBodyViewOptions = {
   kTypeApplication: {
-    kSubTypeDefaultViewOptions: kNoBodyViewOptions,
+    kSubTypeDefaultViewOptions: kNoRawBodyViewOptions,
     kSubTypeJson: kCodeRawBodyViewOptions,
+    kSubTypeOctetStream: kNoBodyViewOptions,
     kSubTypePdf: kPreviewBodyViewOptions,
     kSubTypeSql: kCodeRawBodyViewOptions,
     kSubTypeXml: kCodeRawBodyViewOptions,
@@ -361,6 +364,12 @@ const kResponseCodeReasons = {
 
 const kIntro =
     """API Dash is a beautiful open-source cross-platform API Client built using Flutter which can help you easily create & customize your API requests, visually inspect responses and generate Dart code on the go.""";
+
+const kMimeTypeRaiseIssueStart =
+    "Please click on 'Raw' to view the unformatted raw results as a visual preview for the response Content-Type - ";
+
+const kMimeTypeRaiseIssueEnd =
+    " is currently not available.\nKindly raise an issue in API Dash GitHub repo so that we can add a Visual Preview logic for this content-type.";
 
 const kMimeTypeRaiseIssue =
     " is currently not supported.\nPlease raise an issue in API Dash GitHub repo so that we can prioritize adding it to the tool.";
