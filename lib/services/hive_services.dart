@@ -6,6 +6,9 @@ const String kDataBox = "data";
 // sequence of ids
 const String kDataBoxIds = "ids";
 
+// dark theme boolean
+const String kDataBoxTheme = "theme";
+
 Future<void> openBoxes() async {
   await Hive.initFlutter();
   await Hive.openBox(kDataBox);
@@ -17,6 +20,9 @@ class HiveHandler {
   HiveHandler() {
     dataBox = Hive.box(kDataBox);
   }
+
+  dynamic getTheme() => dataBox.get(kDataBoxTheme);
+  Future<void> setTheme(bool? theme) => dataBox.put(kDataBoxTheme, theme);
 
   dynamic getIds() => dataBox.get(kDataBoxIds);
   Future<void> setIds(List<String>? ids) => dataBox.put(kDataBoxIds, ids);

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:math' as math;
+import 'package:apidash/providers/providers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:window_size/window_size.dart' as window_size;
@@ -39,11 +40,12 @@ void main() async {
   );
 }
 
-class App extends StatelessWidget {
+class App extends ConsumerWidget {
   const App({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = ref.watch(themeStateProvider);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -52,6 +54,17 @@ class App extends StatelessWidget {
         useMaterial3: true,
         brightness: Brightness.light,
       ),
+      darkTheme: ThemeData(
+        fontFamily: GoogleFonts.openSans().fontFamily,
+        colorSchemeSeed: Colors.blue,
+        useMaterial3: true,
+        brightness: Brightness.dark,
+      ),
+      themeMode: theme != null
+          ? theme
+              ? ThemeMode.light
+              : ThemeMode.dark
+          : ThemeMode.system,
       home: const HomePage(),
     );
   }
