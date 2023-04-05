@@ -48,6 +48,7 @@ class RequestEditorPaneHome extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final theme = ref.watch(themeStateProvider);
     return Padding(
       padding: const EdgeInsets.symmetric(
         vertical: 40,
@@ -152,6 +153,48 @@ class RequestEditorPaneHome extends ConsumerWidget {
                     ],
                   ),
                 ),
+              ),
+            ],
+          ),
+          kVSpacer10,
+          Row(
+            children: [
+              Text.rich(
+                TextSpan(
+                  children: [
+                    const TextSpan(
+                      text: "Choose your theme now: ",
+                    ),
+                    WidgetSpan(
+                      alignment: PlaceholderAlignment.middle,
+                      child: ElevatedButton(
+                        onPressed: () async => await ref
+                            .read(themeStateProvider.notifier)
+                            .toggle(),
+                        child: Row(
+                          children: [
+                            theme != null
+                                ? theme
+                                    ? const Icon(Icons.dark_mode)
+                                    : const Icon(Icons.light_mode)
+                                : const Icon(Icons.light_mode),
+                            kHSpacer10,
+                            Text.rich(
+                              TextSpan(
+                                text: theme != null
+                                    ? theme
+                                        ? "Dark"
+                                        : "Light"
+                                    : "Light",
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                style: Theme.of(context).textTheme.titleMedium,
               ),
             ],
           ),

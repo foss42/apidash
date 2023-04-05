@@ -12,6 +12,26 @@ final codePaneVisibleStateProvider = StateProvider<bool>((ref) => false);
 final saveDataStateProvider = StateProvider<bool>((ref) => false);
 final clearDataStateProvider = StateProvider<bool>((ref) => false);
 
+final StateNotifierProvider<ThemeStateNotifier, bool?> themeStateProvider =
+    StateNotifierProvider((ref) => ThemeStateNotifier());
+
+class ThemeStateNotifier extends StateNotifier<bool?> {
+  ThemeStateNotifier() : super(false) {
+    loadData();
+  }
+
+  final hiveHandler = HiveHandler();
+
+  Future<void> toggle() async {
+    state = !state!;
+    await hiveHandler.setTheme(state);
+  }
+
+  void loadData() {
+    state = hiveHandler.getTheme() ?? false;
+  }
+}
+
 final StateNotifierProvider<CollectionStateNotifier, List<RequestModel>?>
     collectionStateNotifierProvider =
     StateNotifierProvider((ref) => CollectionStateNotifier());
