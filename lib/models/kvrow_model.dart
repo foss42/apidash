@@ -18,4 +18,21 @@ class KVRow {
   String toString() {
     return {k: v}.toString();
   }
+
+  @override
+  bool operator ==(Object other) {
+    return other is KVRow &&
+        other.runtimeType == runtimeType &&
+        other.k == k &&
+        other.v == v;
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(
+      runtimeType,
+      k,
+      v,
+    );
+  }
 }
