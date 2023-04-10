@@ -14,8 +14,6 @@ class ResponseModel {
     this.statusCode,
     this.headers,
     this.requestHeaders,
-    this.contentType,
-    this.mediaType,
     this.body,
     this.formattedBody,
     this.bodyBytes,
@@ -25,27 +23,22 @@ class ResponseModel {
   final int? statusCode;
   final Map<String, String>? headers;
   final Map<String, String>? requestHeaders;
-  final String? contentType;
-  final MediaType? mediaType;
   final String? body;
   final String? formattedBody;
   final Uint8List? bodyBytes;
   final Duration? time;
 
+  String? get contentType => getContentTypeFromHeaders(headers);
+  MediaType? get mediaType => getMediaTypeFromHeaders(headers);
+
   ResponseModel fromResponse({
     required Response response,
     Duration? time,
   }) {
-    MediaType? mediaType;
-    var contentType = response.headers[HttpHeaders.contentTypeHeader];
-    try {
-      mediaType = MediaType.parse(contentType!);
-    } catch (e) {
-      mediaType = null;
-    }
     final responseHeaders = mergeMaps(
         {HttpHeaders.contentLengthHeader: response.contentLength.toString()},
         response.headers);
+    MediaType? mediaType = getMediaTypeFromHeaders(responseHeaders);
     final body = (mediaType?.subtype == kSubTypeJson)
         ? utf8.decode(response.bodyBytes)
         : response.body;
@@ -53,8 +46,6 @@ class ResponseModel {
       statusCode: response.statusCode,
       headers: responseHeaders,
       requestHeaders: response.request?.headers,
-      contentType: contentType,
-      mediaType: mediaType,
       body: body,
       formattedBody: formatBody(body, mediaType),
       bodyBytes: response.bodyBytes,
@@ -63,17 +54,15 @@ class ResponseModel {
   }
 
   factory ResponseModel.fromJson(Map<String, dynamic> data) {
-    MediaType? mediaType;
     Duration? timeElapsed;
     final statusCode = data["statusCode"] as int?;
-    final headers = data["headers"];
-    final requestHeaders = data["requestHeaders"];
-    final contentType = headers?[HttpHeaders.contentTypeHeader];
-    try {
-      mediaType = MediaType.parse(contentType!);
-    } catch (e) {
-      mediaType = null;
-    }
+    final headers = data["headers"] != null
+        ? Map<String, String>.from(data["headers"])
+        : null;
+    MediaType? mediaType = getMediaTypeFromHeaders(headers);
+    final requestHeaders = data["requestHeaders"] != null
+        ? Map<String, String>.from(data["requestHeaders"])
+        : null;
     final body = data["body"] as String?;
     final bodyBytes = data["bodyBytes"] as Uint8List?;
     final time = data["time"] as int?;
@@ -82,12 +71,8 @@ class ResponseModel {
     }
     return ResponseModel(
       statusCode: statusCode,
-      headers: headers != null ? Map<String, String>.from(headers) : null,
-      requestHeaders: requestHeaders != null
-          ? Map<String, String>.from(requestHeaders)
-          : null,
-      contentType: contentType,
-      mediaType: mediaType,
+      headers: headers,
+      requestHeaders: requestHeaders,
       body: body,
       formattedBody: formatBody(body, mediaType),
       bodyBytes: bodyBytes,
@@ -113,7 +98,6 @@ class ResponseModel {
       "Response Time: $time",
       "Response Headers: $headers",
       "Response Request Headers: $requestHeaders",
-      "Response Content-Type: $contentType",
       "Response Body: $body",
     ].join("\n");
   }
