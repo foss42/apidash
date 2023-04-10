@@ -7,15 +7,17 @@ String humanizeDuration(Duration? duration) {
   }
   if (duration.inMinutes >= 1) {
     var min = duration.inMinutes;
-    var secs = duration.inSeconds.remainder(60);
-    return "$min.$secs m";
+    var secs = duration.inSeconds.remainder(60) * 100 ~/ 60;
+    var secondsPadding = secs < 10 ? "0" : "";
+    return "$min.$secondsPadding$secs m";
   }
   if (duration.inSeconds >= 1) {
     var secs = duration.inSeconds;
     var mili = duration.inMilliseconds.remainder(1000) ~/ 10;
-    return "$secs.$mili s";
+    var milisecondsPadding = mili < 10 ? "0" : "";
+    return "$secs.$milisecondsPadding$mili s";
   } else {
-    var mili = duration.inMilliseconds.remainder(1000);
+    var mili = duration.inMilliseconds;
     return "$mili ms";
   }
 }
