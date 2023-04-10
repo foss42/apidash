@@ -22,7 +22,8 @@ class HiveHandler {
   }
 
   dynamic getTheme() => dataBox.get(kDataBoxTheme);
-  Future<void> setTheme(bool? theme) => dataBox.put(kDataBoxTheme, theme);
+  Future<void> setTheme(Map<String, dynamic>? theme) =>
+      dataBox.put(kDataBoxTheme, theme);
 
   dynamic getIds() => dataBox.get(kDataBoxIds);
   Future<void> setIds(List<String>? ids) => dataBox.put(kDataBoxIds, ids);

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:apidash/providers/providers.dart';
@@ -173,22 +174,78 @@ class RequestEditorPaneHome extends ConsumerWidget {
                             .toggle(),
                         child: Row(
                           children: [
-                            theme != null
-                                ? theme
+                            theme.themeMode != null
+                                ? theme.themeMode!
                                     ? const Icon(Icons.dark_mode)
                                     : const Icon(Icons.light_mode)
                                 : const Icon(Icons.light_mode),
                             kHSpacer10,
                             Text.rich(
                               TextSpan(
-                                text: theme != null
-                                    ? theme
+                                text: theme.themeMode != null
+                                    ? theme.themeMode!
                                         ? "Dark"
                                         : "Light"
                                     : "Light",
                               ),
                             ),
                           ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+            ],
+          ),
+          kVSpacer10,
+          Row(
+            children: [
+              Text.rich(
+                TextSpan(
+                  children: [
+                    const TextSpan(text: "Choose your primary color:"),
+                    const WidgetSpan(child: kHSpacer10),
+                    WidgetSpan(
+                      alignment: PlaceholderAlignment.middle,
+                      child: SizedBox(
+                        width: 30,
+                        height: 30,
+                        child: InkWell(
+                          onTap: () {
+                            Color pickerColor = theme.primaryColor;
+                            Color currentColor = pickerColor;
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: const Text('Pick a color!'),
+                                content: ColorPicker(
+                                  pickerColor: theme.primaryColor,
+                                  onColorChanged: (Color value) =>
+                                      currentColor = value,
+                                  enableAlpha: false,
+                                ),
+                                actions: <Widget>[
+                                  ElevatedButton(
+                                    child: const Text('Got it'),
+                                    onPressed: () {
+                                      ref
+                                          .read(themeStateProvider.notifier)
+                                          .setPrimaryColor(currentColor);
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              color: theme.primaryColor,
+                            ),
+                          ),
                         ),
                       ),
                     ),

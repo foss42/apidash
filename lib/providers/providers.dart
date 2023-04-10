@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart' show Color;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import '../models/models.dart';
@@ -12,23 +13,36 @@ final codePaneVisibleStateProvider = StateProvider<bool>((ref) => false);
 final saveDataStateProvider = StateProvider<bool>((ref) => false);
 final clearDataStateProvider = StateProvider<bool>((ref) => false);
 
-final StateNotifierProvider<ThemeStateNotifier, bool?> themeStateProvider =
+final StateNotifierProvider<ThemeStateNotifier, ThemeModel> themeStateProvider =
     StateNotifierProvider((ref) => ThemeStateNotifier());
 
-class ThemeStateNotifier extends StateNotifier<bool?> {
-  ThemeStateNotifier() : super(false) {
+class ThemeStateNotifier extends StateNotifier<ThemeModel> {
+  ThemeStateNotifier() : super(ThemeModel()) {
     loadData();
   }
 
   final hiveHandler = HiveHandler();
 
   Future<void> toggle() async {
-    state = !state!;
-    await hiveHandler.setTheme(state);
+    if (state.themeMode == null) {
+      state = state.copyWith(themeMode: false);
+    } else {
+      state = state.copyWith(themeMode: !state.themeMode!);
+    }
+    await hiveHandler.setTheme(state.toJson());
+  }
+
+  Future<void> setPrimaryColor(Color color) async {
+    state = state.copyWith(primaryColor: color);
+    await hiveHandler.setTheme(state.toJson());
   }
 
   void loadData() {
-    state = hiveHandler.getTheme() ?? false;
+    dynamic themeResult = hiveHandler.getTheme();
+    if (themeResult != null) {
+      state = ThemeModel.fromJson(
+          Map<String, dynamic>.from(hiveHandler.getTheme()));
+    }
   }
 }
 

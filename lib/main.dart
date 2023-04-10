@@ -46,22 +46,23 @@ class App extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = ref.watch(themeStateProvider);
+    theme.themeMode ??= ThemeMode.system == Brightness.light ? true : false;
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         fontFamily: GoogleFonts.openSans().fontFamily,
-        colorSchemeSeed: Colors.blue,
+        colorSchemeSeed: theme.primaryColor,
         useMaterial3: true,
         brightness: Brightness.light,
       ),
       darkTheme: ThemeData(
         fontFamily: GoogleFonts.openSans().fontFamily,
-        colorSchemeSeed: Colors.blue,
+        colorSchemeSeed: theme.primaryColor,
         useMaterial3: true,
         brightness: Brightness.dark,
       ),
-      themeMode: theme != null
-          ? theme
+      themeMode: theme.themeMode != null
+          ? theme.themeMode!
               ? ThemeMode.light
               : ThemeMode.dark
           : ThemeMode.system,
