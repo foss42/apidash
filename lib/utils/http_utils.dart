@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:collection/collection.dart' show mergeMaps;
 import 'package:http_parser/http_parser.dart';
 import 'package:xml/xml.dart';
@@ -18,6 +19,28 @@ String getRequestTitleFromUrl(String? url) {
     return rem;
   }
   return url;
+}
+
+String? getContentTypeFromHeaders(Map? headers) {
+  return headers?[HttpHeaders.contentTypeHeader];
+}
+
+MediaType? getMediaTypeFromContentType(String? contentType) {
+  if (contentType != null) {
+    try {
+      MediaType mediaType = MediaType.parse(contentType);
+      return mediaType;
+    } catch (e) {
+      return null;
+    }
+  }
+  return null;
+}
+
+MediaType? getMediaTypeFromHeaders(Map? headers) {
+  var contentType = getContentTypeFromHeaders(headers);
+  MediaType? mediaType = getMediaTypeFromContentType(contentType);
+  return mediaType;
 }
 
 (String?, bool) getUriScheme(Uri uri) {
