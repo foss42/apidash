@@ -84,7 +84,7 @@ class SendingWidget extends StatelessWidget {
             colorFilter: ColorFilter.mode(
               //Color.fromARGB(123, 71, 84, 179),
               color.withOpacity(0.7),
-              BlendMode.dstIn,
+              BlendMode.srcIn,
             ),
             child: const Image(
               image: sendingIndicator,
