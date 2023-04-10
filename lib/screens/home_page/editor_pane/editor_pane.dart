@@ -220,11 +220,13 @@ class RequestEditorPaneHome extends ConsumerWidget {
                               context: context,
                               builder: (context) => AlertDialog(
                                 title: const Text('Pick a color!'),
-                                content: ColorPicker(
-                                  pickerColor: theme.primaryColor,
-                                  onColorChanged: (Color value) =>
-                                      currentColor = value,
-                                  enableAlpha: false,
+                                content: SingleChildScrollView(
+                                  child: ColorPicker(
+                                    pickerColor: theme.primaryColor,
+                                    onColorChanged: (Color value) =>
+                                        currentColor = value,
+                                    enableAlpha: false,
+                                  ),
                                 ),
                                 actions: <Widget>[
                                   ElevatedButton(
