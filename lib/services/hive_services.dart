@@ -42,6 +42,7 @@ class HiveHandler {
     if (ids != null) {
       ids = ids as List;
       for (var key in dataBox.keys.toList()) {
+        if (key == kDataBoxTheme) continue;
         if (key != kDataBoxIds && !ids.contains(key)) {
           await dataBox.delete(key);
         }
