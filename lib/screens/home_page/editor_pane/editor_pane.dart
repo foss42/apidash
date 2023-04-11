@@ -257,6 +257,35 @@ class RequestEditorPaneHome extends ConsumerWidget {
               ),
             ],
           ),
+          kVSpacer10,
+          Row(
+            children: [
+              Text.rich(
+                TextSpan(
+                  children: [
+                    WidgetSpan(
+                      alignment: PlaceholderAlignment.middle,
+                      child: ElevatedButton(
+                        onPressed: () =>
+                            ref.read(themeStateProvider.notifier).delete(),
+                        child: Row(
+                          children: const [
+                            Text.rich(
+                              TextSpan(
+                                text: "Reset",
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const TextSpan(text: " your theme"),
+                  ],
+                ),
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+            ],
+          ),
           kVSpacer20,
           kVSpacer10,
           Row(

@@ -44,6 +44,11 @@ class ThemeStateNotifier extends StateNotifier<ThemeModel> {
           Map<String, dynamic>.from(hiveHandler.getTheme()));
     }
   }
+
+  void delete() {
+    state = ThemeModel();
+    hiveHandler.delete(kDataBoxTheme);
+  }
 }
 
 final StateNotifierProvider<CollectionStateNotifier, List<RequestModel>?>
