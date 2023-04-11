@@ -30,5 +30,8 @@ void main() {
     test('Testing getRequestTitleFromUrl using url5', () {
       expect(getRequestTitleFromUrl(url5), url5Expected);
     });
+    test('Testing getRequestTitleFromUrl for null value', () {
+      expect(getRequestTitleFromUrl(null), url1Expected);
+    });
   });
 }
