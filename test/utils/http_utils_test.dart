@@ -2,36 +2,37 @@ import 'package:test/test.dart';
 import 'package:apidash/utils/http_utils.dart';
 
 void main() {
-  String url1 = "";
-  String url1Expected = "untitled";
-  String url2 = " ";
-  String url2Expected = "untitled";
-  String url3 = "https://api.foss42.com/country/codes";
-  String url3Expected = "api.foss42.com/country/codes";
-  String url4 = "api.foss42.com/country/data";
-  String url4Expected = "api.foss42.com/country/data";
-  String url5 = "http://";
-  String url5Expected = "untitled";
-
   group("Testing getRequestTitleFromUrl function", () {
+    String titleUntitled = "untitled";
     test('Testing getRequestTitleFromUrl using url1', () {
-      expect(getRequestTitleFromUrl(url1), url1Expected);
+      String url1 = "";
+      expect(getRequestTitleFromUrl(url1), titleUntitled);
     });
 
     test('Testing getRequestTitleFromUrl using url2', () {
-      expect(getRequestTitleFromUrl(url2), url2Expected);
+      String url2 = " ";
+      expect(getRequestTitleFromUrl(url2), titleUntitled);
     });
+
     test('Testing getRequestTitleFromUrl using url3', () {
-      expect(getRequestTitleFromUrl(url3), url3Expected);
+      String url3 = "https://api.foss42.com/country/codes";
+      String title3Expected = "api.foss42.com/country/codes";
+      expect(getRequestTitleFromUrl(url3), title3Expected);
     });
+
     test('Testing getRequestTitleFromUrl using url4', () {
-      expect(getRequestTitleFromUrl(url4), url4Expected);
+      String url4 = "api.foss42.com/country/data";
+      String title4Expected = "api.foss42.com/country/data";
+      expect(getRequestTitleFromUrl(url4), title4Expected);
     });
+
     test('Testing getRequestTitleFromUrl using url5', () {
-      expect(getRequestTitleFromUrl(url5), url5Expected);
+      String url5 = "http://";
+      expect(getRequestTitleFromUrl(url5), titleUntitled);
     });
+
     test('Testing getRequestTitleFromUrl for null value', () {
-      expect(getRequestTitleFromUrl(null), url1Expected);
+      expect(getRequestTitleFromUrl(null), titleUntitled);
     });
   });
 }
