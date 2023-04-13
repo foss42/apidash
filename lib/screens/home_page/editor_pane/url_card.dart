@@ -83,6 +83,7 @@ class _DropdownButtonHTTPMethodState
       underline: Container(
         height: 0,
       ),
+      borderRadius: kBorderRadius12,
       onChanged: (HTTPVerb? value) {
         ref
             .read(collectionStateNotifierProvider.notifier)
