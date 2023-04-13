@@ -15,12 +15,12 @@ class ResponseDetails extends ConsumerStatefulWidget {
 class _ResponseDetailsState extends ConsumerState<ResponseDetails> {
   @override
   Widget build(BuildContext context) {
-    final activeId = ref.watch(activeIdStateProvider);
-    final collection = ref.read(collectionStateNotifierProvider)!;
-    final idIdx = collection.indexWhere((m) => m.id == activeId);
-    final responseStatus = collection[idIdx].responseStatus;
-    final message = collection[idIdx].message;
-    final responseModel = collection[idIdx].responseModel;
+    final responseStatus = ref.watch(
+        activeRequestModelProvider.select((value) => value?.responseStatus));
+    final message =
+        ref.watch(activeRequestModelProvider.select((value) => value?.message));
+    final responseModel = ref.watch(
+        activeRequestModelProvider.select((value) => value?.responseModel));
     return Column(
       children: [
         Padding(

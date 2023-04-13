@@ -1,31 +1,32 @@
 import 'package:hive_flutter/hive_flutter.dart';
 
-// constants
 const String kDataBox = "data";
+const String kKeyDataBoxIds = "ids";
 
-// sequence of ids
-const String kDataBoxIds = "ids";
-
-// dark theme boolean
-const String kDataBoxTheme = "theme";
+const String kSettingsBox = "settings";
+const String kKeySettingsBoxDarkMode = "darkMode";
 
 Future<void> openBoxes() async {
   await Hive.initFlutter();
   await Hive.openBox(kDataBox);
+  await Hive.openBox(kSettingsBox);
 }
 
 class HiveHandler {
   late final Box dataBox;
+  late final Box settingsBox;
 
   HiveHandler() {
     dataBox = Hive.box(kDataBox);
+    settingsBox = Hive.box(kSettingsBox);
   }
 
-  dynamic getTheme() => dataBox.get(kDataBoxTheme);
-  Future<void> setTheme(bool? theme) => dataBox.put(kDataBoxTheme, theme);
+  dynamic getDarkMode() => settingsBox.get(kKeySettingsBoxDarkMode);
+  Future<void> setDarkMode(bool isDark) =>
+      settingsBox.put(kKeySettingsBoxDarkMode, isDark);
 
-  dynamic getIds() => dataBox.get(kDataBoxIds);
-  Future<void> setIds(List<String>? ids) => dataBox.put(kDataBoxIds, ids);
+  dynamic getIds() => dataBox.get(kKeyDataBoxIds);
+  Future<void> setIds(List<String>? ids) => dataBox.put(kKeyDataBoxIds, ids);
 
   dynamic getRequestModel(String id) => dataBox.get(id);
   Future<void> setRequestModel(
@@ -41,7 +42,7 @@ class HiveHandler {
     if (ids != null) {
       ids = ids as List;
       for (var key in dataBox.keys.toList()) {
-        if (key != kDataBoxIds && !ids.contains(key)) {
+        if (key != kKeyDataBoxIds && !ids.contains(key)) {
           await dataBox.delete(key);
         }
       }

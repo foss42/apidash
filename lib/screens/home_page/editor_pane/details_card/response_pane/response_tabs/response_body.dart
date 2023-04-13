@@ -22,22 +22,20 @@ class _ResponseBodyState extends ConsumerState<ResponseBody> {
 
   @override
   Widget build(BuildContext context) {
-    final activeId = ref.watch(activeIdStateProvider);
-    final collection = ref.watch(collectionStateNotifierProvider)!;
-    final idIdx = collection.indexWhere((m) => m.id == activeId);
-    final responseModel = collection[idIdx].responseModel;
-    var mediaType = responseModel?.mediaType;
-    var body = responseModel?.body;
-    var formattedBody = responseModel?.formattedBody;
+    final activeRequestModel = ref.watch(activeRequestModelProvider);
+    final responseModel = activeRequestModel?.responseModel;
     if (responseModel == null) {
       return const ErrorMessage(
           message: 'Error: No Response Data Found. $kUnexpectedRaiseIssue');
     }
+    var mediaType = responseModel.mediaType;
     if (mediaType == null) {
       return ErrorMessage(
           message:
               'Unknown Response content type - ${responseModel.contentType}. $kUnexpectedRaiseIssue');
     }
+    var body = responseModel.body;
+    var formattedBody = responseModel.formattedBody;
     if (body == null) {
       return const ErrorMessage(
           message: 'Response body is empty. $kUnexpectedRaiseIssue');
@@ -58,7 +56,7 @@ class _ResponseBodyState extends ConsumerState<ResponseBody> {
     }
 
     return BodySuccess(
-      key: Key("$activeId-response"),
+      key: Key("${activeRequestModel!.id}-response"),
       mediaType: mediaType,
       options: options,
       bytes: responseModel.bodyBytes!,

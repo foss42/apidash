@@ -48,7 +48,7 @@ class RequestEditorPaneHome extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = ref.watch(themeStateProvider);
+    final isDarkMode = ref.watch(darkModeProvider);
     return Padding(
       padding: const EdgeInsets.symmetric(
         vertical: 40,
@@ -167,28 +167,16 @@ class RequestEditorPaneHome extends ConsumerWidget {
                     ),
                     WidgetSpan(
                       alignment: PlaceholderAlignment.middle,
-                      child: ElevatedButton(
-                        onPressed: () async => await ref
-                            .read(themeStateProvider.notifier)
-                            .toggle(),
-                        child: Row(
-                          children: [
-                            theme != null
-                                ? theme
-                                    ? const Icon(Icons.dark_mode)
-                                    : const Icon(Icons.light_mode)
-                                : const Icon(Icons.light_mode),
-                            kHSpacer10,
-                            Text.rich(
-                              TextSpan(
-                                text: theme != null
-                                    ? theme
-                                        ? "Dark"
-                                        : "Light"
-                                    : "Light",
-                              ),
-                            ),
-                          ],
+                      child: ElevatedButton.icon(
+                        onPressed: () async {
+                          await ref.read(darkModeProvider.notifier).toggle();
+                        },
+                        icon: isDarkMode
+                            ? const Icon(Icons.dark_mode)
+                            : const Icon(Icons.light_mode),
+                        label: Text(
+                          isDarkMode ? "Dark" : "Light",
+                          style: kTextStyleButton,
                         ),
                       ),
                     ),

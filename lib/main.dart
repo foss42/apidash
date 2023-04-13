@@ -45,7 +45,7 @@ class App extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = ref.watch(themeStateProvider);
+    final isDarkMode = ref.watch(darkModeProvider);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -60,11 +60,7 @@ class App extends ConsumerWidget {
         useMaterial3: true,
         brightness: Brightness.dark,
       ),
-      themeMode: theme != null
-          ? theme
-              ? ThemeMode.light
-              : ThemeMode.dark
-          : ThemeMode.system,
+      themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
       home: const HomePage(),
     );
   }

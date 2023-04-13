@@ -22,10 +22,10 @@ class _ResponsePaneState extends ConsumerState<ResponsePane> {
   Widget build(BuildContext context) {
     final activeId = ref.watch(activeIdStateProvider);
     final sentRequestId = ref.watch(sentRequestIdStateProvider);
-    final collection = ref.read(collectionStateNotifierProvider)!;
-    final idIdx = collection.indexWhere((m) => m.id == activeId);
-    final responseStatus = collection[idIdx].responseStatus;
-    final message = collection[idIdx].message;
+    final responseStatus = ref.watch(
+        activeRequestModelProvider.select((value) => value?.responseStatus));
+    final message =
+        ref.watch(activeRequestModelProvider.select((value) => value?.message));
     if (sentRequestId != null && sentRequestId == activeId) {
       return const SendingWidget();
     }

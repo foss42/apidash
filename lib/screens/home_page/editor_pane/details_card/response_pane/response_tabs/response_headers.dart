@@ -21,12 +21,12 @@ class _ResponseHeadersState extends ConsumerState<ResponseHeaders> {
 
   @override
   Widget build(BuildContext context) {
-    final activeId = ref.watch(activeIdStateProvider);
-    final collection = ref.watch(collectionStateNotifierProvider)!;
-    final idIdx = collection.indexWhere((m) => m.id == activeId);
-    final requestHeaders =
-        collection[idIdx].responseModel?.requestHeaders ?? {};
-    final responseHeaders = collection[idIdx].responseModel?.headers ?? {};
+    final requestHeaders = ref.watch(activeRequestModelProvider
+            .select((value) => value?.responseModel?.requestHeaders)) ??
+        {};
+    final responseHeaders = ref.watch(activeRequestModelProvider
+            .select((value) => value?.responseModel?.headers)) ??
+        {};
     return Padding(
       padding: kPh20v5,
       child: ListView(

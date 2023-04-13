@@ -22,10 +22,7 @@ class _CodePaneState extends ConsumerState<CodePane> {
 
   @override
   Widget build(BuildContext context) {
-    final activeId = ref.watch(activeIdStateProvider);
-    final collection = ref.watch(collectionStateNotifierProvider)!;
-    final idIdx = collection.indexWhere((m) => m.id == activeId);
-    final requestModel = collection[idIdx];
+    final activeRequestModel = ref.watch(activeRequestModelProvider);
     var codeTheme = Theme.of(context).brightness == Brightness.light
         ? kLightCodeTheme
         : kDarkCodeTheme;
@@ -41,7 +38,7 @@ class _CodePaneState extends ConsumerState<CodePane> {
       borderRadius: kBorderRadius8,
     );
 
-    final code = dartHttpCodeGen.getCode(requestModel);
+    final code = dartHttpCodeGen.getCode(activeRequestModel!);
     if (code == null) {
       return const ErrorMessage(
         message: "An error was encountered while generating code. $kRaiseIssue",

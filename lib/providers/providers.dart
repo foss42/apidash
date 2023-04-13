@@ -6,43 +6,56 @@ import '../consts.dart';
 
 const _uuid = Uuid();
 
+final hiveHandler = HiveHandler();
+
+final StateNotifierProvider<ThemeStateNotifier, bool> darkModeProvider =
+    StateNotifierProvider((ref) => ThemeStateNotifier(hiveHandler));
+
+class ThemeStateNotifier extends StateNotifier<bool> {
+  ThemeStateNotifier(this.hiveHandler) : super(false) {
+    state = hiveHandler.getDarkMode() ?? false;
+  }
+  final HiveHandler hiveHandler;
+
+  Future<void> toggle() async {
+    state = !state;
+    await hiveHandler.setDarkMode(state);
+  }
+}
+
 final activeIdStateProvider = StateProvider<String?>((ref) => null);
 final sentRequestIdStateProvider = StateProvider<String?>((ref) => null);
 final codePaneVisibleStateProvider = StateProvider<bool>((ref) => false);
 final saveDataStateProvider = StateProvider<bool>((ref) => false);
 final clearDataStateProvider = StateProvider<bool>((ref) => false);
 
-final StateNotifierProvider<ThemeStateNotifier, bool?> themeStateProvider =
-    StateNotifierProvider((ref) => ThemeStateNotifier());
-
-class ThemeStateNotifier extends StateNotifier<bool?> {
-  ThemeStateNotifier() : super(false) {
-    loadData();
+final activeRequestModelProvider = StateProvider<RequestModel?>((ref) {
+  final activeId = ref.watch(activeIdStateProvider);
+  final collection = ref.watch(collectionStateNotifierProvider);
+  if (activeId == null || collection == null) {
+    return null;
+  } else {
+    final idIdx = collection.indexWhere((m) => m.id == activeId);
+    if (idIdx.isNegative) {
+      return null;
+    } else {
+      return collection[idIdx];
+    }
   }
-
-  final hiveHandler = HiveHandler();
-
-  Future<void> toggle() async {
-    state = !state!;
-    await hiveHandler.setTheme(state);
-  }
-
-  void loadData() {
-    state = hiveHandler.getTheme() ?? false;
-  }
-}
+});
 
 final StateNotifierProvider<CollectionStateNotifier, List<RequestModel>?>
     collectionStateNotifierProvider =
-    StateNotifierProvider((ref) => CollectionStateNotifier());
+    StateNotifierProvider((ref) => CollectionStateNotifier(ref, hiveHandler));
 
 class CollectionStateNotifier extends StateNotifier<List<RequestModel>?> {
-  CollectionStateNotifier() : super(null) {
+  CollectionStateNotifier(this.ref, this.hiveHandler) : super(null) {
     loadData();
   }
 
+  final Ref ref;
+  final HiveHandler hiveHandler;
   final baseResponseModel = const ResponseModel();
-  final hiveHandler = HiveHandler();
 
   List<String> getIds() => state!.map((e) => e.id).toList();
   int idxOfId(String id) => state!.indexWhere((element) => element.id == id);
@@ -115,6 +128,8 @@ class CollectionStateNotifier extends StateNotifier<List<RequestModel>?> {
   }
 
   Future<void> sendRequest(String id) async {
+    ref.read(sentRequestIdStateProvider.notifier).update((state) => id);
+    ref.read(codePaneVisibleStateProvider.notifier).update((state) => false);
     final idx = idxOfId(id);
     RequestModel requestModel = getRequestModel(id);
     var responseRec = await request(requestModel);
@@ -137,6 +152,7 @@ class CollectionStateNotifier extends StateNotifier<List<RequestModel>?> {
       );
     }
     //print(newRequestModel);
+    ref.read(sentRequestIdStateProvider.notifier).update((state) => null);
     state = [
       ...state!.sublist(0, idx),
       newRequestModel,
