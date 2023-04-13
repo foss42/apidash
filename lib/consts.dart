@@ -31,6 +31,8 @@ const kPs8 = EdgeInsets.only(left: 8);
 const kPh20v5 = EdgeInsets.symmetric(horizontal: 20, vertical: 5);
 const kPh20v10 = EdgeInsets.symmetric(horizontal: 20, vertical: 10);
 const kP10 = EdgeInsets.all(10);
+const kPt5o10 =
+    EdgeInsets.only(left: 10.0, right: 10.0, top: 5.0, bottom: 10.0);
 
 const kHSpacer5 = SizedBox(width: 5);
 const kHSpacer10 = SizedBox(width: 10);

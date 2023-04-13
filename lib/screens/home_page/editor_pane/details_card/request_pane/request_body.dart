@@ -22,7 +22,7 @@ class _EditRequestBodyState extends ConsumerState<EditRequestBody> {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.background,
       ),
-      margin: kP5,
+      margin: kPt5o10,
       child: Column(
         children: [
           SizedBox(
