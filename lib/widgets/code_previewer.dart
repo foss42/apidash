@@ -1,12 +1,16 @@
+import 'dart:convert';
+
+import 'package:apidash/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:highlighter/highlighter.dart' show highlight, Node;
-import 'package:apidash/consts.dart';
+import 'package:json_view/json_view.dart';
+
 import 'error_message.dart';
 
 (String, bool) sanitize(String input) {
   bool limitedLines = false;
   int tabSize = 4;
-  var lines =  kSplitter.convert(input);
+  var lines = kSplitter.convert(input);
   if (lines.length > kCodePreviewLinesLimit) {
     lines = lines.sublist(0, kCodePreviewLinesLimit);
     limitedLines = true;
@@ -67,11 +71,35 @@ class _CodePreviewerState extends State<CodePreviewer> {
       textStyle = textStyle.merge(widget.textStyle);
     }
     processed = sanitize(widget.code);
-    spans = asyncGenerateSpans(processed.$0, widget.language, widget.theme, processed.$1);
+    spans = asyncGenerateSpans(
+        processed.$0, widget.language, widget.theme, processed.$1);
   }
+
+  bool get isJsonViewable =>
+      widget.language == kSubTypeJson && widget.code
+          .length
+          < kJsonPreviewLimit;
 
   @override
   Widget build(BuildContext context) {
+    if (isJsonViewable) {
+      return JsonConfig(
+        data: JsonConfigData(
+          gap: kJsonViewGap,
+          style: const JsonStyleScheme(
+            quotation: JsonQuotation.same('"'),
+            openAtStart: false,
+            arrow: Icon(Icons.arrow_right_rounded),
+            // too large depth will cause performance issue
+            depth: kJsonViewDepth,
+          ),
+          color: const JsonColorScheme(),
+        ),
+        child: JsonView(
+          json: jsonDecode(widget.code),
+        ),
+      );
+    }
     return Padding(
       padding: widget.padding,
       child: FutureBuilder(
@@ -87,7 +115,7 @@ class _CodePreviewerState extends State<CodePreviewer> {
               controller: controllerV,
               child: Scrollbar(
                 notificationPredicate: (notification) =>
-                    notification.depth == 1,
+                notification.depth == 1,
                 thickness: 10,
                 thumbVisibility: true,
                 controller: controllerH,
@@ -131,12 +159,13 @@ class _CodePreviewerState extends State<CodePreviewer> {
   }
 }
 
-Future<List<TextSpan>> asyncGenerateSpans(
-    String code, String? language, Map<String, TextStyle> theme, bool limitedLines) async {
+Future<List<TextSpan>> asyncGenerateSpans(String code, String? language,
+    Map<String, TextStyle> theme, bool limitedLines) async {
   var parsed = highlight.parse(code, language: language);
   var spans = convert(parsed.nodes!, theme);
-  if(limitedLines) {
-    spans.add(const TextSpan(text: "\n... more.\nPreview ends here ($kCodePreviewLinesLimit lines).\nYou can check Raw for full result."));
+  if (limitedLines) {
+    spans.add(const TextSpan(
+        text: "\n... more.\nPreview ends here ($kCodePreviewLinesLimit lines).\nYou can check Raw for full result."));
   }
   return spans;
 }

@@ -46,6 +46,8 @@ const kTabAnimationDuration = Duration(milliseconds: 200);
 const kTabHeight = 45.0;
 const kHeaderHeight = 32.0;
 const kSegmentHeight = 24.0;
+const kJsonViewGap = 100;
+const kJsonViewDepth = 2;
 
 const kRandMax = 100000;
 
@@ -64,6 +66,7 @@ const kTableThemeData = DaviThemeData(
 );
 
 const kCodePreviewLinesLimit = 500;
+const kJsonPreviewLimit = 5000;
 const kCodeCharsPerLineLimit = 200;
 
 const kLightCodeTheme = {

@@ -312,6 +312,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.8.0"
+  json_view:
+    dependency: "direct main"
+    description:
+      name: json_view
+      sha256: bc34d95586b1d36b2641fa5ff33d31cfd8c234d355d4444e2e3d6b62e7a22108
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.4.0"
   lints:
     dependency: transitive
     description:
