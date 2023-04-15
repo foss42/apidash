@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:davi/davi.dart';
@@ -10,7 +12,15 @@ const kIssueUrl = "$kGitUrl/issues";
 final kColorTransparent = MaterialStateProperty.all<Color>(Colors.transparent);
 const kColorBg = Colors.white;
 
-final kCodeStyle = GoogleFonts.sourceCodePro();
+final kFontFamilyFallback = (!kIsWeb && (Platform.isIOS || Platform.isMacOS))
+    ? null
+    : <String>[GoogleFonts.notoColorEmoji().fontFamily!];
+
+final kCodeStyle = TextStyle(
+  fontFamily: GoogleFonts.sourceCodePro().fontFamily,
+  fontFamilyFallback: kFontFamilyFallback,
+);
+
 const kHintOpacity = 0.6;
 
 const kTextStyleButton = TextStyle(fontWeight: FontWeight.bold);

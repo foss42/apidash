@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'services/services.dart';
 import 'screens/screens.dart';
+import 'consts.dart' show kFontFamilyFallback;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,6 +34,7 @@ void main() async {
     }
   }
   await openBoxes();
+  GoogleFonts.config.allowRuntimeFetching = false;
   runApp(
     const ProviderScope(
       child: App(),
@@ -50,12 +52,14 @@ class App extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         fontFamily: GoogleFonts.openSans().fontFamily,
+        fontFamilyFallback: kFontFamilyFallback,
         colorSchemeSeed: Colors.blue,
         useMaterial3: true,
         brightness: Brightness.light,
       ),
       darkTheme: ThemeData(
         fontFamily: GoogleFonts.openSans().fontFamily,
+        fontFamilyFallback: kFontFamilyFallback,
         colorSchemeSeed: Colors.blue,
         useMaterial3: true,
         brightness: Brightness.dark,
