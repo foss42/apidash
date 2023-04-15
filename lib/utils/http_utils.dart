@@ -94,6 +94,9 @@ MediaType? getMediaTypeFromHeaders(Map? headers) {
   var subtype = mediaType.subtype;
   //print(mediaType);
   if(kResponseBodyViewOptions.containsKey(type)){
+    if (kResponseBodyViewOptions[type]!.containsKey(subtype)){
+       return (kResponseBodyViewOptions[type]![subtype]!, kCodeHighlighterMap[subtype] ?? subtype);
+    }
     if(subtype.contains(kSubTypeJson)){
       subtype = kSubTypeJson;
     }

@@ -288,6 +288,7 @@ const Map<String, Map<String, List<ResponseBodyView>>>
 
 const Map<String, String> kCodeHighlighterMap = {
   kSubTypeHtml: "xml",
+  kSubTypeSvg: "xml",
   kSubTypeYaml: "yaml",
   kSubTypeYml: "yaml",
   kSubTypeTextYaml: "yaml",
