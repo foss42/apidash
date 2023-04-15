@@ -25,7 +25,7 @@ class HiveHandler {
   Future<void> setDarkMode(bool isDark) =>
       settingsBox.put(kKeySettingsBoxDarkMode, isDark);
 
-  dynamic getIds() => dataBox.get(kKeyDataBoxIds);
+  List<String>? getIds() => dataBox.get(kKeyDataBoxIds);
   Future<void> setIds(List<String>? ids) => dataBox.put(kKeyDataBoxIds, ids);
 
   dynamic getRequestModel(String id) => dataBox.get(id);
@@ -39,12 +39,10 @@ class HiveHandler {
 
   Future<void> removeUnused() async {
     var ids = getIds();
-    if (ids != null) {
-      ids = ids as List;
-      for (var key in dataBox.keys.toList()) {
-        if (key != kKeyDataBoxIds && !ids.contains(key)) {
-          await dataBox.delete(key);
-        }
+    if (ids == null) return;
+    for (String key in dataBox.keys) {
+      if (key != kKeyDataBoxIds && !ids.contains(key)) {
+        await dataBox.delete(key);
       }
     }
   }
