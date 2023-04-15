@@ -61,7 +61,7 @@ Map<String, String>? rowsToMap(List<KVRow>? kvRows, {bool isHeader = false}) {
       if (isHeader) {
         key = key.toLowerCase();
       }
-      finalMap[key] = row.v;
+      finalMap[key] = row.v.toString();
     }
   }
   return finalMap;
