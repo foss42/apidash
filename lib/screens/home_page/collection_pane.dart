@@ -75,7 +75,6 @@ class _CollectionPaneState extends ConsumerState<CollectionPane> {
                   style: kTextStyleButton,
                 ),
               ),
-              //const Spacer(),
               ElevatedButton(
                 onPressed: () {
                   String newId =
