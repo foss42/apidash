@@ -1,0 +1,34 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "api_dash",
+            "request": "launch",
+            "type": "dart",
+            "toolArgs": [
+                "--enable-experiment=records",
+            ],
+        },
+        {
+            "name": "api_dash (profile mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile",
+            "toolArgs": [
+                "--enable-experiment=records",
+            ],
+        },
+        {
+            "name": "api_dash (release mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release",
+            "toolArgs": [
+                "--enable-experiment=records",
+            ],
+        }
+    ]
+}
