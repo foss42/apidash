@@ -1,8 +1,9 @@
+import 'package:apidash/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:multi_split_view/multi_split_view.dart';
-import 'package:apidash/consts.dart';
-import 'editor_pane/editor_pane.dart';
+
 import 'collection_pane.dart';
+import 'editor_pane/editor_pane.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -27,31 +28,24 @@ class HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          Expanded(
-            child: MultiSplitViewTheme(
-              data: MultiSplitViewThemeData(
-                dividerThickness: 3,
-                dividerPainter: DividerPainters.background(
-                  color: Theme.of(context).colorScheme.surfaceVariant,
-                  highlightedColor:
-                      Theme.of(context).colorScheme.outline.withOpacity(
-                            kHintOpacity,
-                          ),
-                  animationEnabled: false,
+      body: MultiSplitViewTheme(
+        data: MultiSplitViewThemeData(
+          dividerThickness: 3,
+          dividerPainter: DividerPainters.background(
+            color: Theme.of(context).colorScheme.surfaceVariant,
+            highlightedColor: Theme.of(context).colorScheme.outline.withOpacity(
+                  kHintOpacity,
                 ),
-              ),
-              child: MultiSplitView(
-                controller: _controller,
-                children: const [
-                  CollectionPane(),
-                  RequestEditorPane(),
-                ],
-              ),
-            ),
+            animationEnabled: false,
           ),
-        ],
+        ),
+        child: MultiSplitView(
+          controller: _controller,
+          children: const [
+            CollectionPane(),
+            RequestEditorPane(),
+          ],
+        ),
       ),
     );
   }
