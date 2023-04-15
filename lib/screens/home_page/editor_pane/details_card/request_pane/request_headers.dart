@@ -1,10 +1,11 @@
 import 'dart:math';
+
+import 'package:apidash/consts.dart';
+import 'package:apidash/models/models.dart';
+import 'package:apidash/providers/providers.dart';
+import 'package:davi/davi.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:davi/davi.dart';
-import 'package:apidash/providers/providers.dart';
-import 'package:apidash/models/models.dart';
-import 'package:apidash/consts.dart';
 
 class EditRequestHeaders extends ConsumerStatefulWidget {
   const EditRequestHeaders({Key? key}) : super(key: key);
@@ -105,8 +106,6 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
     final activeId = ref.watch(activeIdStateProvider);
     final collection = ref.read(collectionStateNotifierProvider)!;
     final idIdx = collection.indexWhere((m) => m.id == activeId);
-    final length = ref.watch(collectionStateNotifierProvider
-        .select((value) => value![idIdx].requestHeaders?.length));
     rows = collection[idIdx].requestHeaders ?? [const KVRow("", "")];
 
     DaviModel<KVRow> model = DaviModel<KVRow>(
