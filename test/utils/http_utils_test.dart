@@ -3,6 +3,7 @@ import 'package:http_parser/http_parser.dart';
 import 'package:apidash/utils/http_utils.dart';
 import 'package:apidash/models/kvrow_model.dart';
 import 'package:apidash/consts.dart';
+import '../test_utilities.dart';
 
 void main() {
   group("Testing getRequestTitleFromUrl function", () {
@@ -149,31 +150,31 @@ void main() {
 
   group("Testing getUriScheme", () {
     test('Testing getUriScheme for https', () {
-      Uri uriScheme1 = Uri(
+      Uri uri1 = Uri(
           scheme: 'https',
           host: 'dart.dev',
           path: 'guides/libraries/library-tour',
           fragment: 'numbers');
       String uriScheme1Expected = 'https';
-      expect(getUriScheme(uriScheme1), (uriScheme1Expected,true));
+      expect(getUriScheme(uri1), (uriScheme1Expected,true));
     });
     test('Testing getUriScheme for mailto scheme value', () {
-      Uri uriScheme2 = Uri(scheme: 'mailto');
+      Uri uri2 = Uri(scheme: 'mailto');
       String uriScheme2Expected = 'mailto';
-      expect(getUriScheme(uriScheme2), (uriScheme2Expected,false));
+      expect(getUriScheme(uri2), (uriScheme2Expected,false));
     });
     test('Testing getUriScheme for empty scheme value', () {
-      Uri uriScheme3 = Uri(
+      Uri uri3 = Uri(
           scheme: '');
-      expect(getUriScheme(uriScheme3), (null,false));
+      expect(getUriScheme(uri3), (null,false));
     });
     test('Testing getUriScheme for null scheme value', () {
-      Uri uriScheme4 = Uri(
+      Uri uri4 = Uri(
           scheme: null);
-      expect(getUriScheme(uriScheme4), (null,false));
+      expect(getUriScheme(uri4), (null,false));
     });
   });
-  
+
   group("Testing getValidRequestUri", () {
     test('Testing getValidRequestUri for normal values', () {
       String url1 = "https://api.foss42.com/country/data";
@@ -238,66 +239,136 @@ void main() {
 
   group("Testing getResponseBodyViewOptions", () {
     test('Testing getResponseBodyViewOptions for application/json', () {
-      MediaType mediaType1Expected = MediaType("application", "json");
-      var result1 = getResponseBodyViewOptions(mediaType1Expected);
+      MediaType mediaType1 = MediaType("application", "json");
+      var result1 = getResponseBodyViewOptions(mediaType1);
       expect(result1.$0,kCodeRawBodyViewOptions);
       expect(result1.$1, "json");
     });
     test('Testing getResponseBodyViewOptions for application/xml', () {
-      MediaType mediaType2Expected = MediaType("application", "xml");
-      var result2 = getResponseBodyViewOptions(mediaType2Expected);
+      MediaType mediaType2 = MediaType("application", "xml");
+      var result2 = getResponseBodyViewOptions(mediaType2);
       expect(result2.$0, kCodeRawBodyViewOptions);
       expect(result2.$1,"xml");
     });
     test('Testing getResponseBodyViewOptions for message/news a format currently not supported', () {
-      MediaType mediaType3Expected = MediaType("message", "news");
-      var result3 = getResponseBodyViewOptions(mediaType3Expected);
+      MediaType mediaType3 = MediaType("message", "news");
+      var result3 = getResponseBodyViewOptions(mediaType3);
       expect(result3.$0,kNoBodyViewOptions);
       expect(result3.$1,null);
     });
     test('Testing getResponseBodyViewOptions for application/calendar+json', () {
-      MediaType mediaType4Expected = MediaType("application", "calendar+json");
-      var result4 = getResponseBodyViewOptions(mediaType4Expected);
+      MediaType mediaType4 = MediaType("application", "calendar+json");
+      var result4 = getResponseBodyViewOptions(mediaType4);
       expect(result4.$0,kCodeRawBodyViewOptions);
       expect(result4.$1, "json");
     });
     test('Testing getResponseBodyViewOptions for image/svg+xml', () {
-      MediaType mediaType5Expected = MediaType("image", "svg+xml");
-      var result5 = getResponseBodyViewOptions(mediaType5Expected);
+      MediaType mediaType5 = MediaType("image", "svg+xml");
+      var result5 = getResponseBodyViewOptions(mediaType5);
       expect(result5.$0,kCodeRawBodyViewOptions);
       expect(result5.$1, "xml");
     });
     test('Testing getResponseBodyViewOptions for application/xhtml+xml', () {
-      MediaType mediaType6Expected = MediaType("application", "xhtml+xml");
-      var result6 = getResponseBodyViewOptions(mediaType6Expected);
+      MediaType mediaType6 = MediaType("application", "xhtml+xml");
+      var result6 = getResponseBodyViewOptions(mediaType6);
       expect(result6.$0,kCodeRawBodyViewOptions);
       expect(result6.$1, "xml");
     });
     test('Testing getResponseBodyViewOptions for application/xml-external-parsed-entity', () {
-      MediaType mediaType7Expected = MediaType("application", "xml-external-parsed-entity");
-      var result7 = getResponseBodyViewOptions(mediaType7Expected);
+      MediaType mediaType7 = MediaType("application", "xml-external-parsed-entity");
+      var result7 = getResponseBodyViewOptions(mediaType7);
       expect(result7.$0,kCodeRawBodyViewOptions);
       expect(result7.$1, "xml");
     });
     test('Testing getResponseBodyViewOptions for text/html', () {
-      MediaType mediaType8Expected = MediaType("text", "html");
-      var result8 = getResponseBodyViewOptions(mediaType8Expected);
+      MediaType mediaType8 = MediaType("text", "html");
+      var result8 = getResponseBodyViewOptions(mediaType8);
       expect(result8.$0,kCodeRawBodyViewOptions);
       expect(result8.$1, "xml");
     });
     test('Testing getResponseBodyViewOptions for application/pdf', () {
-      MediaType mediaType9Expected = MediaType("application", "pdf");
-      var result9 = getResponseBodyViewOptions(mediaType9Expected);
+      MediaType mediaType9 = MediaType("application", "pdf");
+      var result9 = getResponseBodyViewOptions(mediaType9);
       expect(result9.$0,kPreviewBodyViewOptions);
       expect(result9.$1, "pdf");
     });
      test('Testing getResponseBodyViewOptions for text/calendar', () {
-      MediaType mediaType10Expected = MediaType("text", "calendar");
-      var result10 = getResponseBodyViewOptions(mediaType10Expected);
+      MediaType mediaType10 = MediaType("text", "calendar");
+      var result10 = getResponseBodyViewOptions(mediaType10);
       expect(result10.$0,kRawBodyViewOptions);
       expect(result10.$1, "calendar");
     });
   });
 
-  
+  group("Testing formatBody", () {
+    test('Testing formatBody for null values', () {
+      expect(formatBody(null, null),null);
+    });
+    test('Testing formatBody for null body values', () {
+      MediaType mediaType1 = MediaType("application", "xml");
+      expect(formatBody(null, mediaType1),null);
+    });
+    test('Testing formatBody for null MediaType values', () {
+      String body1 = '''
+  {
+    "text":"The Chosen One";
+  }
+''';
+      expect(formatBody(body1, null),null);
+    });
+    test('Testing formatBody for json subtype values', () {
+      String body2 = '''{"data":{"area":9831510.0,"population":331893745}}''';
+      MediaType mediaType2 = MediaType("application", "json");
+      String result2Expected = '''{
+  "data": {
+    "area": 9831510.0,
+    "population": 331893745
+  }
+}''';
+      expect(formatBody(body2, mediaType2),result2Expected);
+    });
+    test('Testing formatBody for xml subtype values', () {
+      String body3 = '''
+<breakfast_menu>
+<food>
+<name>Belgian Waffles</name>
+<price>5.95 USD</price>
+<description>Two of our famous Belgian Waffles with plenty of real maple syrup</description>
+<calories>650</calories>
+</food>
+</breakfast_menu>
+''';
+      MediaType mediaType3 = MediaType("application", "xml");
+      String result3Expected = '''<breakfast_menu>
+  <food>
+    <name>Belgian Waffles</name>
+    <price>5.95 USD</price>
+    <description>Two of our famous Belgian Waffles with plenty of real maple syrup</description>
+    <calories>650</calories>
+  </food>
+</breakfast_menu>''';
+      expect(formatBody(body3, mediaType3),result3Expected);
+    });
+    group("Testing formatBody for html", () {
+      MediaType mediaTypeHtml = MediaType("text", "html");
+      test('Testing formatBody for html subtype values', () {
+      String body4 = '''<html>
+<body>
+<h1>My First Heading</h1>
+<p>My first paragraph.</p>
+</body>
+</html>''';     
+      expect(formatBody(body4, mediaTypeHtml),body4);
+    });
+    
+    test('Testing formatBody for html subtype values with random values', () {
+      String body5 = '''<html>${getRandomStringLines(100, 10000)}</html>''';
+      expect(formatBody(body5, mediaTypeHtml),null);
+    });
+    test('Testing formatBody for html subtype values with random values within limit', () {
+      String body6 = '''<html>${getRandomStringLines(100, 190)}</html>''';
+      expect(formatBody(body6, mediaTypeHtml),body6);
+    });
+    });    
+  });
 }
