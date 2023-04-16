@@ -10,7 +10,6 @@ const kGitUrl = "https://github.com/foss42/api-dash";
 const kIssueUrl = "$kGitUrl/issues";
 
 final kColorTransparent = MaterialStateProperty.all<Color>(Colors.transparent);
-const kColorBg = Colors.white;
 
 final kFontFamilyFallback = (!kIsWeb && (Platform.isIOS || Platform.isMacOS))
     ? null
@@ -28,11 +27,6 @@ const kTextStyleButton = TextStyle(fontWeight: FontWeight.bold);
 const kBorderRadius8 = BorderRadius.all(Radius.circular(8));
 final kBorderRadius10 = BorderRadius.circular(10);
 const kBorderRadius12 = BorderRadius.all(Radius.circular(12));
-
-const kTableContainerDecoration = BoxDecoration(
-  color: kColorBg,
-  borderRadius: kBorderRadius12,
-);
 
 const kP1 = EdgeInsets.all(1);
 const kP5 = EdgeInsets.all(5);
