@@ -69,30 +69,3 @@ class NotSentWidget extends StatelessWidget {
     );
   }
 }
-
-class SendingWidget extends StatelessWidget {
-  const SendingWidget({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final color = Theme.of(context).colorScheme.secondary;
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          ColorFiltered(
-            colorFilter: ColorFilter.mode(
-              //Color.fromARGB(123, 71, 84, 179),
-              color.withOpacity(0.7),
-              BlendMode.dstIn,
-            ),
-            child: const Image(
-              image: sendingIndicator,
-              width: 300,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}

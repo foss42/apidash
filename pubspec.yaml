@@ -26,6 +26,7 @@ dependencies:
       url: https://github.com/google/flutter-desktop-embedding.git
       path: plugins/window_size
   hive_flutter: ^1.1.0
+  lottie: ^2.3.2
 
 dev_dependencies:
   flutter_test:
@@ -38,4 +39,4 @@ flutter:
   uses-material-design: true
   assets:
     - google_fonts/
-    - assets/sending.gif
+    - assets/
