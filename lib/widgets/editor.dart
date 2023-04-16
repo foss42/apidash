@@ -90,14 +90,13 @@ class _TextFieldEditorState extends State<TextFieldEditor> {
             ),
           ),
           filled: true,
-          hoverColor: Colors.transparent,
-          fillColor: Theme.of(context).brightness == Brightness.dark
-              ? Color.alphaBlend(
-                  Theme.of(context).colorScheme.surface.withOpacity(0.8),
-                  Colors.black)
-              : Color.alphaBlend(
-                  Theme.of(context).colorScheme.surface.withOpacity(0.2),
-                  Colors.white),
+          hoverColor: kColorTransparent,
+          fillColor: Color.alphaBlend(
+              (Theme.of(context).brightness == Brightness.dark
+                      ? Theme.of(context).colorScheme.onPrimaryContainer
+                      : Theme.of(context).colorScheme.primaryContainer)
+                  .withOpacity(kForegroundOpacity),
+              Theme.of(context).colorScheme.surface),
         ),
       ),
     );

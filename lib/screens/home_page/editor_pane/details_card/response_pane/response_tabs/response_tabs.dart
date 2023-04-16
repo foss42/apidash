@@ -34,7 +34,7 @@ class _ResponseTabsState extends ConsumerState<ResponseTabs>
         TabBar(
           key: Key(activeId!),
           controller: _controller,
-          overlayColor: kColorTransparent,
+          overlayColor: kColorTransparentState,
           onTap: (index) {},
           tabs: const [
             SizedBox(

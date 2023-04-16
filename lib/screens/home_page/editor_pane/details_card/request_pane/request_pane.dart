@@ -71,7 +71,7 @@ class _EditRequestPaneState extends ConsumerState<EditRequestPane>
         TabBar(
           key: Key(activeId),
           controller: _controller,
-          overlayColor: kColorTransparent,
+          overlayColor: kColorTransparentState,
           onTap: (index) {
             ref
                 .read(collectionStateNotifierProvider.notifier)

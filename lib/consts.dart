@@ -9,7 +9,9 @@ const kDiscordUrl = "https://bit.ly/heyfoss";
 const kGitUrl = "https://github.com/foss42/api-dash";
 const kIssueUrl = "$kGitUrl/issues";
 
-final kColorTransparent = MaterialStateProperty.all<Color>(Colors.transparent);
+final kColorTransparentState =
+    MaterialStateProperty.all<Color>(Colors.transparent);
+const kColorTransparent = Colors.transparent;
 
 final kFontFamilyFallback = (!kIsWeb && (Platform.isIOS || Platform.isMacOS))
     ? null
@@ -21,6 +23,7 @@ final kCodeStyle = TextStyle(
 );
 
 const kHintOpacity = 0.6;
+const kForegroundOpacity = 0.05;
 
 const kTextStyleButton = TextStyle(fontWeight: FontWeight.bold);
 
@@ -55,9 +58,9 @@ const kRandMax = 100000;
 
 const kTableThemeData = DaviThemeData(
   columnDividerThickness: 1,
-  columnDividerColor: Colors.transparent,
+  columnDividerColor: kColorTransparent,
   row: RowThemeData(
-    dividerColor: Colors.transparent,
+    dividerColor: kColorTransparent,
   ),
   decoration: BoxDecoration(
     border: Border(),
