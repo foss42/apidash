@@ -1,5 +1,6 @@
 import 'package:test/test.dart';
 import 'package:apidash/utils/convert_utils.dart';
+import 'package:apidash/models/kvrow_model.dart';
 
 void main() {
   group("Testing humanizeDuration function", () {
@@ -65,6 +66,65 @@ void main() {
       String headerText2 = "x-cloud-trace-context";
       String headerText2Expected = "X-Cloud-Trace-Context";
       expect(formatHeaderCase(headerText2), headerText2Expected);
+    });
+  });
+  group("Testing rowsToMap", () {
+    test('Testing for null', () {
+      expect(rowsToMap(null), null);
+    });
+    test('Testing for string KVRow values', () {
+      KVRow kvRow1 = const KVRow("code", "IN");
+      expect(rowsToMap([kvRow1]), {"code": "IN"});
+    });
+    test('Testing when header is True', () {
+      KVRow kvRow2 = const KVRow("Text", "ABC");
+      expect(rowsToMap([kvRow2], isHeader: true), {"text": "ABC"});
+    });
+    test('Testing when header is false and key is in upper case', () {
+      List<KVRow> kvRow3 = const [
+        KVRow("TEXT", "ABC"),
+        KVRow("version", 0.1),
+        KVRow("month", 4)
+      ];
+      expect(
+          rowsToMap(kvRow3), {"TEXT": "ABC", "version": "0.1", "month": "4"});
+    });
+  });
+
+  group("Testing mapToRows", () {
+    test('Testing for null', () {
+      expect(mapToRows(null), null);
+    });
+    test('Testing with a map value', () {
+      Map<String, String> value1 = {"text": "abc", "lang": "eng", "code": "1"};
+      List<KVRow> result1Expected = const [
+        KVRow("text", "abc"),
+        KVRow("lang", "eng"),
+        KVRow("code", "1")
+      ];
+      expect(mapToRows(value1), result1Expected);
+    });
+  });
+
+  group("Testing padMultilineString", () {
+    String text1 =
+        '''Using API Dash, you can draft API requests via an easy to use GUI which allows you to:
+Create different types of HTTP requests (GET, HEAD, POST, PATCH, PUT and DELETE)
+Easily manipulate and play around with request inputs like headers, query parameters and body.''';
+    test('Testing when firstLinePadded is true ', () {
+      String text1FirstLinePaddedExpected =
+          '''          Using API Dash, you can draft API requests via an easy to use GUI which allows you to:
+          Create different types of HTTP requests (GET, HEAD, POST, PATCH, PUT and DELETE)
+          Easily manipulate and play around with request inputs like headers, query parameters and body.''';
+      expect(padMultilineString(text1, 10, firstLinePadded: true),
+          text1FirstLinePaddedExpected);
+    });
+    test('Testing when firstLinePadded is false ', () {
+      String text1FirstLineNotPaddedExpected =
+          '''Using API Dash, you can draft API requests via an easy to use GUI which allows you to:
+          Create different types of HTTP requests (GET, HEAD, POST, PATCH, PUT and DELETE)
+          Easily manipulate and play around with request inputs like headers, query parameters and body.''';
+      expect(padMultilineString(text1, 10), text1FirstLineNotPaddedExpected);
     });
   });
 }
