@@ -70,6 +70,18 @@ const kTableThemeData = DaviThemeData(
   ),
 );
 
+const kIconRemoveDark = Icon(
+  Icons.remove_circle,
+  size: 16,
+  color: Color(0xffcf6679),
+);
+
+final kIconRemoveLight = Icon(
+  Icons.remove_circle,
+  size: 16,
+  color: Colors.red.withOpacity(0.9),
+);
+
 const kCodePreviewLinesLimit = 500;
 const kCodeCharsPerLineLimit = 200;
 

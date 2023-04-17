@@ -121,7 +121,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
         ),
         DaviColumn(
           width: 30,
-          cellBuilder: (BuildContext context, DaviRow<KVRow> row) {
+          cellBuilder: (_, row) {
             return Text(
               "=",
               style: kCodeStyle,
@@ -137,13 +137,11 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
         DaviColumn(
           pinStatus: PinStatus.none,
           width: 30,
-          cellBuilder: (BuildContext context, DaviRow<KVRow> row) {
+          cellBuilder: (_, row) {
             return InkWell(
-              child: Icon(
-                Icons.remove_circle,
-                size: 16,
-                color: Colors.red.withOpacity(0.9),
-              ),
+              child: Theme.of(context).brightness == Brightness.dark
+                  ? kIconRemoveDark
+                  : kIconRemoveLight,
               onTap: () {
                 rows.removeAt(row.index);
                 seed = random.nextInt(kRandMax);
