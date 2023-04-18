@@ -13,6 +13,13 @@ final kColorTransparentState =
     MaterialStateProperty.all<Color>(Colors.transparent);
 const kColorTransparent = Colors.transparent;
 
+const kWindowTitle = "API Dash";
+const kMinWindowSize = Size(900, 600);
+const kMinInitialWindowWidth = 1200.0;
+const kMinInitialWindowHeight = 800.0;
+
+const kColorSchemeSeed = Colors.blue;
+final kFontFamily = GoogleFonts.openSans().fontFamily;
 final kFontFamilyFallback = (!kIsWeb && (Platform.isIOS || Platform.isMacOS))
     ? null
     : <String>[GoogleFonts.notoColorEmoji().fontFamily!];

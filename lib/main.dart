@@ -1,38 +1,14 @@
-import 'dart:io';
-import 'dart:math' as math;
-import 'package:apidash/providers/providers.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:window_size/window_size.dart' as window_size;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'providers/providers.dart';
 import 'services/services.dart';
 import 'screens/screens.dart';
-import 'consts.dart' show kFontFamilyFallback;
+import 'consts.dart' show kFontFamily, kFontFamilyFallback, kColorSchemeSeed;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  if (!kIsWeb) {
-    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-      window_size.getWindowInfo().then((window) {
-        final screen = window.screen;
-        if (screen != null) {
-          final screenFrame = screen.visibleFrame;
-          final width =
-              math.max((screenFrame.width / 2).roundToDouble(), 1200.0);
-          final height =
-              math.max((screenFrame.height / 2).roundToDouble(), 800.0);
-          final left = ((screenFrame.width - width) / 2).roundToDouble();
-          final top = ((screenFrame.height - height) / 3).roundToDouble();
-          final frame = Rect.fromLTWH(left, top, width, height);
-          window_size.setWindowFrame(frame);
-          window_size.setWindowMinSize(const Size(900, 600));
-          window_size.setWindowMaxSize(Size.infinite);
-          window_size.setWindowTitle("API Dash");
-        }
-      });
-    }
-  }
+  await setupInitialWindow();
   await openBoxes();
   GoogleFonts.config.allowRuntimeFetching = false;
   runApp(
@@ -51,16 +27,16 @@ class App extends ConsumerWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        fontFamily: GoogleFonts.openSans().fontFamily,
+        fontFamily: kFontFamily,
         fontFamilyFallback: kFontFamilyFallback,
-        colorSchemeSeed: Colors.blue,
+        colorSchemeSeed: kColorSchemeSeed,
         useMaterial3: true,
         brightness: Brightness.light,
       ),
       darkTheme: ThemeData(
-        fontFamily: GoogleFonts.openSans().fontFamily,
+        fontFamily: kFontFamily,
         fontFamilyFallback: kFontFamilyFallback,
-        colorSchemeSeed: Colors.blue,
+        colorSchemeSeed: kColorSchemeSeed,
         useMaterial3: true,
         brightness: Brightness.dark,
       ),
