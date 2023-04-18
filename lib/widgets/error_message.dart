@@ -22,7 +22,7 @@ class ErrorMessage extends StatelessWidget {
               color: color,
             ),
             SelectableText(
-              message ?? 'And error occurred. $kUnexpectedRaiseIssue',
+              message ?? 'An error occurred. $kUnexpectedRaiseIssue',
               textAlign: TextAlign.center,
               style: Theme.of(context)
                   .textTheme
