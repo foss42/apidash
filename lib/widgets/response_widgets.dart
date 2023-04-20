@@ -1,0 +1,488 @@
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:http_parser/http_parser.dart';
+import 'package:lottie/lottie.dart';
+import 'package:apidash/utils/utils.dart';
+import 'package:apidash/widgets/widgets.dart';
+import 'package:apidash/models/models.dart';
+import 'package:apidash/consts.dart';
+
+class NotSentWidget extends StatelessWidget {
+  const NotSentWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final color = Theme.of(context).colorScheme.secondary;
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.north_east_rounded,
+            size: 40,
+            color: color,
+          ),
+          Text(
+            'Not Sent',
+            style:
+                Theme.of(context).textTheme.titleMedium?.copyWith(color: color),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class SendingWidget extends StatelessWidget {
+  const SendingWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Lottie.asset("assets/sending.json"),
+        ],
+      ),
+    );
+  }
+}
+
+class ResponsePaneHeader extends StatefulWidget {
+  const ResponsePaneHeader({
+    super.key,
+    this.responseStatus,
+    this.message,
+    this.time,
+  });
+
+  final int? responseStatus;
+  final String? message;
+  final Duration? time;
+  @override
+  State<ResponsePaneHeader> createState() => _ResponsePaneHeaderState();
+}
+
+class _ResponsePaneHeaderState extends State<ResponsePaneHeader> {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: kPh20v10,
+      child: SizedBox(
+        height: kHeaderHeight,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text.rich(
+              TextSpan(
+                children: [
+                  const TextSpan(
+                    text: "Response (",
+                  ),
+                  TextSpan(
+                    text: "${widget.responseStatus}",
+                    style: TextStyle(
+                      color: getResponseStatusCodeColor(
+                        widget.responseStatus,
+                        brightness: Theme.of(context).brightness,
+                      ),
+                      fontFamily: kCodeStyle.fontFamily,
+                    ),
+                  ),
+                  const TextSpan(
+                    text: ")",
+                  ),
+                ],
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+            ),
+            kHSpacer20,
+            Expanded(
+              child: Text(
+                widget.message ?? "",
+                softWrap: false,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                      fontFamily: kCodeStyle.fontFamily,
+                      color: getResponseStatusCodeColor(
+                        widget.responseStatus,
+                        brightness: Theme.of(context).brightness,
+                      ),
+                    ),
+              ),
+            ),
+            kHSpacer20,
+            Text(
+              humanizeDuration(widget.time),
+              style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                    fontFamily: kCodeStyle.fontFamily,
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ResponseTabView extends StatefulWidget {
+  const ResponseTabView({
+    super.key,
+    this.activeId,
+    required this.children,
+  });
+
+  final String? activeId;
+  final List<Widget> children;
+  @override
+  State<ResponseTabView> createState() => _ResponseTabViewState();
+}
+
+class _ResponseTabViewState extends State<ResponseTabView>
+    with TickerProviderStateMixin {
+  late final TabController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TabController(
+      length: 2,
+      animationDuration: kTabAnimationDuration,
+      vsync: this,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        TabBar(
+          key: Key(widget.activeId!),
+          controller: _controller,
+          overlayColor: kColorTransparentState,
+          onTap: (index) {},
+          tabs: const [
+            SizedBox(
+              height: kTabHeight,
+              child: Center(
+                child: Text(
+                  'Body',
+                  textAlign: TextAlign.center,
+                  overflow: TextOverflow.fade,
+                  softWrap: false,
+                  style: kTextStyleButton,
+                ),
+              ),
+            ),
+            SizedBox(
+              height: kTabHeight,
+              child: Center(
+                child: Text(
+                  'Headers',
+                  textAlign: TextAlign.center,
+                  overflow: TextOverflow.fade,
+                  style: kTextStyleButton,
+                ),
+              ),
+            ),
+          ],
+        ),
+        Expanded(
+          child: TabBarView(
+            controller: _controller,
+            physics: const NeverScrollableScrollPhysics(),
+            children: widget.children,
+          ),
+        ),
+      ],
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+}
+
+class ResponseHeadersHeader extends StatefulWidget {
+  const ResponseHeadersHeader({
+    super.key,
+    required this.map,
+    required this.name,
+  });
+
+  final Map map;
+  final String name;
+  @override
+  State<ResponseHeadersHeader> createState() => _ResponseHeadersHeaderState();
+}
+
+class _ResponseHeadersHeaderState extends State<ResponseHeadersHeader> {
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: kHeaderHeight,
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              "${widget.name} (${widget.map.length} items)",
+              style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+          ),
+          if (widget.map.isNotEmpty)
+            CopyButton(
+              toCopy: kEncoder.convert(widget.map),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+const kHeaderRow = ["Header Name", "Header Value"];
+
+class ResponseHeaders extends StatefulWidget {
+  const ResponseHeaders({
+    super.key,
+    required this.responseHeaders,
+    required this.requestHeaders,
+  });
+
+  final Map responseHeaders;
+  final Map requestHeaders;
+  @override
+  State<ResponseHeaders> createState() => _ResponseHeadersState();
+}
+
+class _ResponseHeadersState extends State<ResponseHeaders> {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: kPh20v5,
+      child: ListView(
+        children: [
+          ResponseHeadersHeader(
+            map: widget.responseHeaders,
+            name: "Response Headers",
+          ),
+          if (widget.responseHeaders.isNotEmpty) kVSpacer5,
+          if (widget.responseHeaders.isNotEmpty)
+            MapTable(
+              map: widget.responseHeaders,
+              colNames: kHeaderRow,
+              firstColumnHeaderCase: true,
+            ),
+          kVSpacer10,
+          ResponseHeadersHeader(
+            map: widget.requestHeaders,
+            name: "Request Headers",
+          ),
+          if (widget.requestHeaders.isNotEmpty) kVSpacer5,
+          if (widget.requestHeaders.isNotEmpty)
+            MapTable(
+              map: widget.requestHeaders,
+              colNames: kHeaderRow,
+              firstColumnHeaderCase: true,
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class ResponseBody extends StatefulWidget {
+  const ResponseBody({
+    super.key,
+    this.activeRequestModel,
+  });
+
+  final RequestModel? activeRequestModel;
+  @override
+  State<ResponseBody> createState() => _ResponseBodyState();
+}
+
+class _ResponseBodyState extends State<ResponseBody> {
+  @override
+  Widget build(BuildContext context) {
+    final responseModel = widget.activeRequestModel?.responseModel;
+    if (responseModel == null) {
+      return const ErrorMessage(
+          message: 'Error: No Response Data Found. $kUnexpectedRaiseIssue');
+    }
+    var mediaType = responseModel.mediaType;
+    if (mediaType == null) {
+      return ErrorMessage(
+          message:
+              'Unknown Response content type - ${responseModel.contentType}. $kUnexpectedRaiseIssue');
+    }
+    var body = responseModel.body;
+    var formattedBody = responseModel.formattedBody;
+    if (body == null) {
+      return const ErrorMessage(
+          message: 'Response body is empty. $kUnexpectedRaiseIssue');
+    }
+    var responseBodyView = getResponseBodyViewOptions(mediaType);
+    //print(responseBodyView);
+    var options = responseBodyView.$0;
+    var highlightLanguage = responseBodyView.$1;
+    if (options == kNoBodyViewOptions) {
+      return ErrorMessage(
+          message:
+              "Viewing response data of Content-Type\n'${mediaType.mimeType}' $kMimeTypeRaiseIssue");
+    }
+
+    if (formattedBody == null) {
+      options = [...options];
+      options.remove(ResponseBodyView.code);
+    }
+
+    return BodySuccess(
+      key: Key("${widget.activeRequestModel!.id}-response"),
+      mediaType: mediaType,
+      options: options,
+      bytes: responseModel.bodyBytes!,
+      body: body,
+      formattedBody: formattedBody,
+      highlightLanguage: highlightLanguage,
+    );
+  }
+}
+
+class BodySuccess extends StatefulWidget {
+  const BodySuccess(
+      {super.key,
+      required this.mediaType,
+      required this.body,
+      required this.options,
+      required this.bytes,
+      this.formattedBody,
+      this.highlightLanguage});
+  final MediaType mediaType;
+  final List<ResponseBodyView> options;
+  final String body;
+  final Uint8List bytes;
+  final String? formattedBody;
+  final String? highlightLanguage;
+  @override
+  State<BodySuccess> createState() => _BodySuccessState();
+}
+
+class _BodySuccessState extends State<BodySuccess> {
+  int segmentIdx = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    var currentSeg = widget.options[segmentIdx];
+    var codeTheme = Theme.of(context).brightness == Brightness.light
+        ? kLightCodeTheme
+        : kDarkCodeTheme;
+    final textContainerdecoration = BoxDecoration(
+      color: Color.alphaBlend(
+          (Theme.of(context).brightness == Brightness.dark
+                  ? Theme.of(context).colorScheme.onPrimaryContainer
+                  : Theme.of(context).colorScheme.primaryContainer)
+              .withOpacity(kForegroundOpacity),
+          Theme.of(context).colorScheme.surface),
+      border: Border.all(color: Theme.of(context).colorScheme.surfaceVariant),
+      borderRadius: kBorderRadius8,
+    );
+
+    return Padding(
+      padding: kP10,
+      child: Column(
+        children: [
+          SizedBox(
+            height: kHeaderHeight,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                (widget.options == kRawBodyViewOptions)
+                    ? const SizedBox()
+                    : SegmentedButton<ResponseBodyView>(
+                        selectedIcon:
+                            Icon(kResponseBodyViewIcons[currentSeg]![kKeyIcon]),
+                        segments: widget.options
+                            .map<ButtonSegment<ResponseBodyView>>(
+                              (e) => ButtonSegment<ResponseBodyView>(
+                                value: e,
+                                label:
+                                    Text(kResponseBodyViewIcons[e]![kKeyName]),
+                                icon:
+                                    Icon(kResponseBodyViewIcons[e]![kKeyIcon]),
+                              ),
+                            )
+                            .toList(),
+                        selected: {currentSeg},
+                        onSelectionChanged: (newSelection) {
+                          setState(() {
+                            segmentIdx =
+                                widget.options.indexOf(newSelection.first);
+                          });
+                        },
+                      ),
+                kCodeRawBodyViewOptions.contains(currentSeg)
+                    ? CopyButton(toCopy: widget.body)
+                    : const SizedBox(),
+              ],
+            ),
+          ),
+          kVSpacer10,
+          Visibility(
+            visible: currentSeg == ResponseBodyView.preview ||
+                currentSeg == ResponseBodyView.none,
+            child: Expanded(
+              child: currentSeg == ResponseBodyView.preview
+                  ? Previewer(
+                      bytes: widget.bytes,
+                      type: widget.mediaType.type,
+                      subtype: widget.mediaType.subtype,
+                    )
+                  : ErrorMessage(
+                      message:
+                          "$kMimeTypeRaiseIssueStart'${widget.mediaType.mimeType}' $kMimeTypeRaiseIssueEnd"),
+            ),
+          ),
+          if (widget.formattedBody != null)
+            Visibility(
+              visible: currentSeg == ResponseBodyView.code,
+              child: Expanded(
+                child: Container(
+                  width: double.maxFinite,
+                  padding: kP8,
+                  decoration: textContainerdecoration,
+                  child: CodePreviewer(
+                    code: widget.formattedBody!,
+                    theme: codeTheme,
+                    language: widget.highlightLanguage,
+                    textStyle: kCodeStyle,
+                  ),
+                ),
+              ),
+            ),
+          Visibility(
+            visible: currentSeg == ResponseBodyView.raw,
+            child: Expanded(
+              child: Container(
+                width: double.maxFinite,
+                padding: kP8,
+                decoration: textContainerdecoration,
+                child: SingleChildScrollView(
+                  child: SelectableText(
+                    widget.body,
+                    style: kCodeStyle,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
