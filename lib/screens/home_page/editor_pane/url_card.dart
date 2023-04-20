@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
-import 'package:apidash/utils/utils.dart';
+import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
 
 class EditorPaneRequestURLCard extends StatefulWidget {
@@ -43,7 +43,7 @@ class _EditorPaneRequestURLCardState extends State<EditorPaneRequestURLCard> {
             kHSpacer20,
             SizedBox(
               height: 36,
-              child: SendRequestButton(),
+              child: SendButton(),
             ),
           ],
         ),
@@ -71,42 +71,16 @@ class _DropdownButtonHTTPMethodState
 
   @override
   Widget build(BuildContext context) {
-    final surfaceColor = Theme.of(context).colorScheme.surface;
     final activeId = ref.watch(activeIdStateProvider);
     final method =
         ref.watch(activeRequestModelProvider.select((value) => value?.method));
-    return DropdownButton<HTTPVerb>(
-      focusColor: surfaceColor,
-      value: method,
-      icon: const Icon(Icons.unfold_more_rounded),
-      elevation: 4,
-      underline: Container(
-        height: 0,
-      ),
-      borderRadius: kBorderRadius12,
+    return DropdownButtonHttpMethod(
+      method: method,
       onChanged: (HTTPVerb? value) {
         ref
             .read(collectionStateNotifierProvider.notifier)
             .update(activeId!, method: value);
       },
-      items: HTTPVerb.values.map<DropdownMenuItem<HTTPVerb>>((HTTPVerb value) {
-        return DropdownMenuItem<HTTPVerb>(
-          value: value,
-          child: Padding(
-            padding: const EdgeInsets.only(left: 16),
-            child: Text(
-              value.name.toUpperCase(),
-              style: kCodeStyle.copyWith(
-                fontWeight: FontWeight.bold,
-                color: getHTTPMethodColor(
-                  value,
-                  brightness: Theme.of(context).brightness,
-                ),
-              ),
-            ),
-          ),
-        );
-      }).toList(),
     );
   }
 }
@@ -129,22 +103,12 @@ class _URLTextFieldState extends ConsumerState<URLTextField> {
   @override
   Widget build(BuildContext context) {
     final activeId = ref.watch(activeIdStateProvider);
-    return TextFormField(
-      key: Key("url-${activeId!}"),
+    return URLField(
+      activeId: activeId!,
       initialValue: ref
           .read(collectionStateNotifierProvider.notifier)
           .getRequestModel(activeId)
           .url,
-      style: kCodeStyle,
-      decoration: InputDecoration(
-        hintText: "Enter API endpoint like api.foss42.com/country/codes",
-        hintStyle: kCodeStyle.copyWith(
-          color: Theme.of(context).colorScheme.outline.withOpacity(
-                kHintOpacity,
-              ),
-        ),
-        border: InputBorder.none,
-      ),
       onChanged: (value) {
         ref
             .read(collectionStateNotifierProvider.notifier)
@@ -154,16 +118,16 @@ class _URLTextFieldState extends ConsumerState<URLTextField> {
   }
 }
 
-class SendRequestButton extends ConsumerStatefulWidget {
-  const SendRequestButton({
+class SendButton extends ConsumerStatefulWidget {
+  const SendButton({
     super.key,
   });
 
   @override
-  ConsumerState<SendRequestButton> createState() => _SendRequestButtonState();
+  ConsumerState<SendButton> createState() => _SendButtonState();
 }
 
-class _SendRequestButtonState extends ConsumerState<SendRequestButton> {
+class _SendButtonState extends ConsumerState<SendButton> {
   @override
   void initState() {
     super.initState();
@@ -173,31 +137,14 @@ class _SendRequestButtonState extends ConsumerState<SendRequestButton> {
   Widget build(BuildContext context) {
     final activeId = ref.watch(activeIdStateProvider);
     final sentRequestId = ref.watch(sentRequestIdStateProvider);
-    bool disable = sentRequestId != null;
-    return FilledButton(
-      onPressed: disable
-          ? null
-          : () {
-              ref
-                  .read(collectionStateNotifierProvider.notifier)
-                  .sendRequest(activeId!);
-            },
-      child: Row(
-        children: [
-          Text(
-            disable
-                ? (activeId == sentRequestId ? "Sending.." : "Busy")
-                : "Send",
-            style: kTextStyleButton,
-          ),
-          if (!disable) kHSpacer10,
-          if (!disable)
-            const Icon(
-              size: 16,
-              Icons.send,
-            ),
-        ],
-      ),
+    return SendRequestButton(
+      activeId: activeId,
+      sentRequestId: sentRequestId,
+      onTap: () {
+        ref
+            .read(collectionStateNotifierProvider.notifier)
+            .sendRequest(activeId!);
+      },
     );
   }
 }

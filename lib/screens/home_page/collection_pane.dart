@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
+import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/models/models.dart';
-import 'package:apidash/utils/utils.dart';
 import 'package:apidash/consts.dart';
 
 class CollectionPane extends ConsumerStatefulWidget {
@@ -152,8 +152,6 @@ class _RequestListState extends ConsumerState<RequestList> {
   }
 }
 
-enum RequestItemMenuOption { delete, duplicate }
-
 class RequestItem extends ConsumerStatefulWidget {
   const RequestItem({
     required this.id,
@@ -176,107 +174,27 @@ class _RequestItemState extends ConsumerState<RequestItem> {
 
   @override
   Widget build(BuildContext context) {
-    final Color color = Theme.of(context).colorScheme.surface;
-    final Color surfaceTint = Theme.of(context).colorScheme.primary;
-    final activeRequest = ref.watch(activeIdStateProvider);
-    bool isActiveId = activeRequest == widget.id;
-    return Material(
-      borderRadius: kBorderRadius12,
-      elevation: isActiveId ? 1 : 0,
-      surfaceTintColor: isActiveId ? surfaceTint : null,
-      color: color,
-      type: MaterialType.card,
-      child: InkWell(
-        borderRadius: kBorderRadius12,
-        onTap: () {
-          ref.read(activeIdStateProvider.notifier).update((state) => widget.id);
-        },
-        child: Padding(
-          padding: EdgeInsets.only(
-            left: 10,
-            right: isActiveId ? 0 : 20,
-            top: 5,
-            bottom: 5,
-          ),
-          child: SizedBox(
-            height: 20,
-            child: Row(
-              children: [
-                MethodBox(method: widget.requestModel.method),
-                kHSpacer5,
-                Expanded(
-                  child: Text(
-                    getRequestTitleFromUrl(widget.requestModel.url),
-                    softWrap: false,
-                    overflow: TextOverflow.fade,
-                  ),
-                ),
-                Visibility(
-                  visible: isActiveId,
-                  child: PopupMenuButton<RequestItemMenuOption>(
-                    padding: EdgeInsets.zero,
-                    splashRadius: 14,
-                    iconSize: 14,
-                    onSelected: (RequestItemMenuOption item) {
-                      if (item == RequestItemMenuOption.delete) {
-                        ref
-                            .read(activeIdStateProvider.notifier)
-                            .update((state) => null);
-                        ref
-                            .read(collectionStateNotifierProvider.notifier)
-                            .remove(widget.id);
-                      }
-                      if (item == RequestItemMenuOption.duplicate) {
-                        ref
-                            .read(collectionStateNotifierProvider.notifier)
-                            .duplicate(widget.id);
-                      }
-                    },
-                    itemBuilder: (BuildContext context) =>
-                        <PopupMenuEntry<RequestItemMenuOption>>[
-                      const PopupMenuItem<RequestItemMenuOption>(
-                        value: RequestItemMenuOption.delete,
-                        child: Text('Delete'),
-                      ),
-                      const PopupMenuItem<RequestItemMenuOption>(
-                        value: RequestItemMenuOption.duplicate,
-                        child: Text('Duplicate'),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
+    final activeRequestId = ref.watch(activeIdStateProvider);
 
-class MethodBox extends StatelessWidget {
-  const MethodBox({super.key, required this.method});
-  final HTTPVerb method;
-
-  @override
-  Widget build(BuildContext context) {
-    String text = method.name.toUpperCase();
-    if (method == HTTPVerb.delete) {
-      text = "DEL";
-    }
-    return SizedBox(
-      width: 28,
-      child: Text(
-        text,
-        style: TextStyle(
-          fontSize: 8,
-          fontWeight: FontWeight.bold,
-          color: getHTTPMethodColor(
-            method,
-            brightness: Theme.of(context).brightness,
-          ),
-        ),
-      ),
+    return SidebarRequestCard(
+      id: widget.id,
+      activeRequestId: activeRequestId,
+      url: widget.requestModel.url,
+      method: widget.requestModel.method,
+      onTap: () {
+        ref.read(activeIdStateProvider.notifier).update((state) => widget.id);
+      },
+      onMenuSelected: (RequestItemMenuOption item) {
+        if (item == RequestItemMenuOption.delete) {
+          ref.read(activeIdStateProvider.notifier).update((state) => null);
+          ref.read(collectionStateNotifierProvider.notifier).remove(widget.id);
+        }
+        if (item == RequestItemMenuOption.duplicate) {
+          ref
+              .read(collectionStateNotifierProvider.notifier)
+              .duplicate(widget.id);
+        }
+      },
     );
   }
 }

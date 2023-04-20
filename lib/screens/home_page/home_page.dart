@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:multi_split_view/multi_split_view.dart';
-import 'package:apidash/consts.dart';
+import 'package:apidash/widgets/widgets.dart';
 import 'editor_pane/editor_pane.dart';
 import 'collection_pane.dart';
 
@@ -12,53 +11,11 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
-  final MultiSplitViewController _controller = MultiSplitViewController(
-    areas: [
-      Area(size: 250, minimalSize: 200),
-      Area(minimalWeight: 0.7),
-    ],
-  );
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        children: [
-          Expanded(
-            child: MultiSplitViewTheme(
-              data: MultiSplitViewThemeData(
-                dividerThickness: 3,
-                dividerPainter: DividerPainters.background(
-                  color: Theme.of(context).colorScheme.surfaceVariant,
-                  highlightedColor:
-                      Theme.of(context).colorScheme.outline.withOpacity(
-                            kHintOpacity,
-                          ),
-                  animationEnabled: false,
-                ),
-              ),
-              child: MultiSplitView(
-                controller: _controller,
-                children: const [
-                  CollectionPane(),
-                  RequestEditorPane(),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
+    return const DashboardSplitView(
+      sidebarWidget: CollectionPane(),
+      mainWidget: RequestEditorPane(),
     );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
   }
 }

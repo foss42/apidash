@@ -179,6 +179,8 @@ const kDarkCodeTheme = {
   'variable': TextStyle(color: Color(0xffaddb67)),
 };
 
+enum RequestItemMenuOption { delete, duplicate }
+
 enum HTTPVerb { get, head, post, put, patch, delete }
 
 enum ContentType { json, text }
@@ -311,8 +313,6 @@ const Map<String, String> kCodeHighlighterMap = {
   kSubTypeTextYml: "yaml",
 };
 
-const sendingIndicator = AssetImage("assets/sending.gif");
-
 // HTTP response status codes
 // https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
 const kResponseCodeReasons = {
@@ -403,3 +403,9 @@ const kUnexpectedRaiseIssue =
 
 const kRaiseIssue =
     "\nPlease raise an issue in API Dash GitHub repo so that we can resolve it.";
+
+const kHintTextUrlCard = "Enter API endpoint like api.foss42.com/country/codes";
+const kLabelSend = "Send";
+const kLabelSending = "Sending..";
+const kLabelBusy = "Busy";
+const kLabelCopy = "Copy";
