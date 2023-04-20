@@ -3,23 +3,23 @@ import '../consts.dart';
 
 Color getResponseStatusCodeColor(int? statusCode,
     {Brightness brightness = Brightness.light}) {
-  Color col = Colors.grey.shade700;
+  Color col = kColorStatusCodeDefault;
   if (statusCode != null) {
     if (statusCode >= 200) {
-      col = Colors.green.shade800;
+      col = kColorStatusCode200;
     }
     if (statusCode >= 300) {
-      col = Colors.blue.shade800;
+      col = kColorStatusCode300;
     }
     if (statusCode >= 400) {
-      col = Colors.red.shade800;
+      col = kColorStatusCode400;
     }
     if (statusCode >= 500) {
-      col = Colors.amber.shade900;
+      col = kColorStatusCode500;
     }
   }
   if (brightness == Brightness.dark) {
-    col = Color.alphaBlend(col.withOpacity(0.4), Colors.white);
+    col = Color.alphaBlend(col.withOpacity(kOpacityDarkModeBlend), kColorWhite);
   }
   return col;
 }
@@ -29,26 +29,26 @@ Color getHTTPMethodColor(HTTPVerb method,
   Color col;
   switch (method) {
     case HTTPVerb.get:
-      col = Colors.green.shade800;
+      col = kColorHttpMethodGet;
       break;
     case HTTPVerb.head:
-      col = Colors.green.shade800;
+      col = kColorHttpMethodHead;
       break;
     case HTTPVerb.post:
-      col = Colors.blue.shade800;
+      col = kColorHttpMethodPost;
       break;
     case HTTPVerb.put:
-      col = Colors.amber.shade900;
+      col = kColorHttpMethodPut;
       break;
     case HTTPVerb.patch:
-      col = Colors.amber.shade900;
+      col = kColorHttpMethodPatch;
       break;
     case HTTPVerb.delete:
-      col = Colors.red.shade800;
+      col = kColorHttpMethodDelete;
       break;
   }
   if (brightness == Brightness.dark) {
-    col = Color.alphaBlend(col.withOpacity(0.4), Colors.white);
+    col = Color.alphaBlend(col.withOpacity(kOpacityDarkModeBlend), kColorWhite);
   }
   return col;
 }

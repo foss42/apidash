@@ -12,6 +12,7 @@ const kIssueUrl = "$kGitUrl/issues";
 final kColorTransparentState =
     MaterialStateProperty.all<Color>(Colors.transparent);
 const kColorTransparent = Colors.transparent;
+const kColorWhite = Colors.white;
 
 const kWindowTitle = "API Dash";
 const kMinWindowSize = Size(900, 600);
@@ -178,6 +179,20 @@ const kDarkCodeTheme = {
   'type': TextStyle(color: Color(0xff82aaff)),
   'variable': TextStyle(color: Color(0xffaddb67)),
 };
+
+final kColorStatusCodeDefault = Colors.grey.shade700;
+final kColorStatusCode200 = Colors.green.shade800;
+final kColorStatusCode300 = Colors.blue.shade800;
+final kColorStatusCode400 = Colors.red.shade800;
+final kColorStatusCode500 = Colors.amber.shade900;
+const kOpacityDarkModeBlend = 0.4;
+
+final kColorHttpMethodGet = Colors.green.shade800;
+final kColorHttpMethodHead = kColorHttpMethodGet;
+final kColorHttpMethodPost = Colors.blue.shade800;
+final kColorHttpMethodPut = Colors.amber.shade900;
+final kColorHttpMethodPatch = kColorHttpMethodPut;
+final kColorHttpMethodDelete = Colors.red.shade800;
 
 enum RequestItemMenuOption { delete, duplicate }
 
