@@ -19,7 +19,7 @@ Color getResponseStatusCodeColor(int? statusCode,
     }
   }
   if (brightness == Brightness.dark) {
-    col = Color.alphaBlend(col.withOpacity(kOpacityDarkModeBlend), kColorWhite);
+    col = getDarkModeColor(col);
   }
   return col;
 }
@@ -48,7 +48,14 @@ Color getHTTPMethodColor(HTTPVerb method,
       break;
   }
   if (brightness == Brightness.dark) {
-    col = Color.alphaBlend(col.withOpacity(kOpacityDarkModeBlend), kColorWhite);
+    col = getDarkModeColor(col);
   }
   return col;
+}
+
+Color getDarkModeColor(Color col) {
+  return Color.alphaBlend(
+    col.withOpacity(kOpacityDarkModeBlend),
+    kColorWhite,
+  );
 }
