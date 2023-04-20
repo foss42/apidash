@@ -136,7 +136,7 @@ const kLightCodeTheme = {
 const kDarkCodeTheme = {
   'root':
       TextStyle(backgroundColor: Color(0xff011627), color: Color(0xffd6deeb)),
-  'addition': TextStyle(color: Color(0xffaddb67ff)),
+  'addition': TextStyle(color: Color(0xffaddb67)),
   'attr': TextStyle(color: Color(0xff7fdbca)),
   'attribute': TextStyle(color: Color(0xff80cbc4)),
   'built_in': TextStyle(color: Color(0xffaddb67)),
@@ -145,7 +145,7 @@ const kDarkCodeTheme = {
   'class': TextStyle(color: Color(0xffffcb8b)),
   'code': TextStyle(color: Color(0xff80CBC4)),
   'comment': TextStyle(color: Color(0xff637777), fontStyle: FontStyle.italic),
-  'deletion': TextStyle(color: Color(0xffef535090)),
+  'deletion': TextStyle(color: Color(0xffef5350)),
   'doctag': TextStyle(color: Color(0xff7fdbca)),
   'emphasis': TextStyle(color: Color(0xffc792ea)),
   'formula': TextStyle(color: Color(0xffc792ea), fontStyle: FontStyle.italic),
