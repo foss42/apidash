@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:highlighter/highlighter.dart' show highlight;
+import 'package:apidash/consts.dart';
 import 'code_previewer.dart' show convert;
+import 'buttons.dart' show CopyButton;
 
 class CodeGenPreviewer extends StatefulWidget {
   const CodeGenPreviewer({
@@ -96,4 +98,71 @@ List<TextSpan> generateSpans(
   var parsed = highlight.parse(code, language: language);
   var spans = convert(parsed.nodes!, theme);
   return spans;
+}
+
+class ViewCodePane extends StatefulWidget {
+  const ViewCodePane({
+    super.key,
+    required this.code,
+  });
+
+  final String code;
+
+  @override
+  State<ViewCodePane> createState() => _ViewCodePaneState();
+}
+
+class _ViewCodePaneState extends State<ViewCodePane> {
+  @override
+  Widget build(BuildContext context) {
+    var codeTheme = Theme.of(context).brightness == Brightness.light
+        ? kLightCodeTheme
+        : kDarkCodeTheme;
+    final textContainerdecoration = BoxDecoration(
+      color: Color.alphaBlend(
+          (Theme.of(context).brightness == Brightness.dark
+                  ? Theme.of(context).colorScheme.onPrimaryContainer
+                  : Theme.of(context).colorScheme.primaryContainer)
+              .withOpacity(kForegroundOpacity),
+          Theme.of(context).colorScheme.surface),
+      border: Border.all(color: Theme.of(context).colorScheme.surfaceVariant),
+      borderRadius: kBorderRadius8,
+    );
+
+    return Padding(
+      padding: kP10,
+      child: Column(
+        children: [
+          SizedBox(
+            height: kHeaderHeight,
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    "Code",
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                ),
+                CopyButton(toCopy: widget.code),
+              ],
+            ),
+          ),
+          kVSpacer10,
+          Expanded(
+            child: Container(
+              width: double.maxFinite,
+              padding: kP8,
+              decoration: textContainerdecoration,
+              child: CodeGenPreviewer(
+                code: widget.code,
+                theme: codeTheme,
+                language: 'dart',
+                textStyle: kCodeStyle,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
