@@ -69,43 +69,16 @@ class _DropdownButtonBodyContentTypeState
     extends ConsumerState<DropdownButtonBodyContentType> {
   @override
   Widget build(BuildContext context) {
-    final surfaceColor = Theme.of(context).colorScheme.surface;
     final activeId = ref.watch(activeIdStateProvider);
     final requestBodyContentType = ref.watch(activeRequestModelProvider
-        .select((value) => value!.requestBodyContentType));
-    return DropdownButton<ContentType>(
-      focusColor: surfaceColor,
-      value: requestBodyContentType,
-      icon: const Icon(
-        Icons.unfold_more_rounded,
-        size: 16,
-      ),
-      elevation: 4,
-      style: kCodeStyle.copyWith(
-        color: Theme.of(context).colorScheme.primary,
-      ),
-      underline: Container(
-        height: 0,
-      ),
+        .select((value) => value?.requestBodyContentType));
+    return DropdownButtonContentType(
+      contentType: requestBodyContentType,
       onChanged: (ContentType? value) {
         ref
             .read(collectionStateNotifierProvider.notifier)
             .update(activeId!, requestBodyContentType: value);
       },
-      borderRadius: kBorderRadius12,
-      items: ContentType.values
-          .map<DropdownMenuItem<ContentType>>((ContentType value) {
-        return DropdownMenuItem<ContentType>(
-          value: value,
-          child: Padding(
-            padding: kPs8,
-            child: Text(
-              value.name,
-              style: kTextStyleButton,
-            ),
-          ),
-        );
-      }).toList(),
     );
   }
 }
