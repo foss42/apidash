@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:davi/davi.dart';
 import 'package:apidash/providers/providers.dart';
+import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
 
@@ -25,76 +26,6 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
     seed = random.nextInt(kRandMax);
   }
 
-  Widget _buildParamField(BuildContext context, DaviRow<KVRow> row) {
-    String? activeId = ref.read(activeIdStateProvider);
-    int idx = row.index;
-    return TextFormField(
-        key: Key("$activeId-$idx-params-k-$seed"),
-        initialValue: rows[idx].k,
-        style: kCodeStyle.copyWith(
-          color: Theme.of(context).colorScheme.onSurface,
-        ),
-        decoration: InputDecoration(
-          hintStyle: kCodeStyle.copyWith(
-            color: Theme.of(context).colorScheme.outline.withOpacity(
-                  kHintOpacity,
-                ),
-          ),
-          hintText: "Add URL Parameter",
-          focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(
-              color: Theme.of(context).colorScheme.primary.withOpacity(
-                    kHintOpacity,
-                  ),
-            ),
-          ),
-          enabledBorder: UnderlineInputBorder(
-            borderSide: BorderSide(
-              color: Theme.of(context).colorScheme.surfaceVariant,
-            ),
-          ),
-        ),
-        onChanged: (value) {
-          rows[idx] = rows[idx].copyWith(k: value);
-          _onFieldChange(activeId!);
-        });
-  }
-
-  Widget _buildValueField(BuildContext context, DaviRow<KVRow> row) {
-    String? activeId = ref.read(activeIdStateProvider);
-    int idx = row.index;
-    return TextFormField(
-        key: Key("$activeId-$idx-params-v-$seed"),
-        initialValue: rows[idx].v,
-        style: kCodeStyle.copyWith(
-          color: Theme.of(context).colorScheme.onSurface,
-        ),
-        decoration: InputDecoration(
-          hintStyle: kCodeStyle.copyWith(
-            color: Theme.of(context).colorScheme.outline.withOpacity(
-                  kHintOpacity,
-                ),
-          ),
-          hintText: "Add Value",
-          focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(
-              color: Theme.of(context).colorScheme.primary.withOpacity(
-                    kHintOpacity,
-                  ),
-            ),
-          ),
-          enabledBorder: UnderlineInputBorder(
-            borderSide: BorderSide(
-              color: Theme.of(context).colorScheme.surfaceVariant,
-            ),
-          ),
-        ),
-        onChanged: (value) {
-          rows[idx] = rows[idx].copyWith(v: value);
-          _onFieldChange(activeId!);
-        });
-  }
-
   void _onFieldChange(String activeId) {
     ref
         .read(collectionStateNotifierProvider.notifier)
@@ -104,11 +35,10 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
   @override
   Widget build(BuildContext context) {
     final activeId = ref.watch(activeIdStateProvider);
-    final collection = ref.read(collectionStateNotifierProvider)!;
-    final idIdx = collection.indexWhere((m) => m.id == activeId);
-    final length = ref.watch(collectionStateNotifierProvider
-        .select((value) => value![idIdx].requestParams?.length));
-    rows = collection[idIdx].requestParams ?? [const KVRow("", "")];
+    final length = ref.watch(activeRequestModelProvider
+        .select((value) => value?.requestParams?.length));
+    rows = ref.read(activeRequestModelProvider)?.requestParams ??
+        [const KVRow("", "")];
 
     DaviModel<KVRow> model = DaviModel<KVRow>(
       rows: rows,
@@ -116,7 +46,19 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
         DaviColumn(
           name: 'URL Parameter',
           grow: 1,
-          cellBuilder: (_, row) => _buildParamField(context, row),
+          cellBuilder: (_, row) {
+            int idx = row.index;
+            return CellField(
+              colorScheme: Theme.of(context).colorScheme,
+              keyId: "$activeId-$idx-params-k-$seed",
+              initialValue: rows[idx].k,
+              hintText: "Add URL Parameter",
+              onChanged: (value) {
+                rows[idx] = rows[idx].copyWith(k: value);
+                _onFieldChange(activeId!);
+              },
+            );
+          },
           sortable: false,
         ),
         DaviColumn(
@@ -131,7 +73,19 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
         DaviColumn(
           name: 'Value',
           grow: 1,
-          cellBuilder: (_, row) => _buildValueField(context, row),
+          cellBuilder: (_, row) {
+            int idx = row.index;
+            return CellField(
+              colorScheme: Theme.of(context).colorScheme,
+              keyId: "$activeId-$idx-params-v-$seed",
+              initialValue: rows[idx].v,
+              hintText: "Add Value",
+              onChanged: (value) {
+                rows[idx] = rows[idx].copyWith(v: value);
+                _onFieldChange(activeId!);
+              },
+            );
+          },
           sortable: false,
         ),
         DaviColumn(
