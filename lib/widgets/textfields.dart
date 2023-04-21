@@ -44,19 +44,20 @@ class _URLFieldState extends State<URLField> {
 }
 
 class CellField extends StatefulWidget {
-  const CellField(
-      {super.key,
-      required this.colorScheme,
-      required this.keyId,
-      required this.initialValue,
-      this.hintText,
-      this.onChanged});
+  const CellField({
+    super.key,
+    required this.keyId,
+    this.initialValue,
+    this.hintText,
+    this.onChanged,
+    this.colorScheme,
+  });
 
-  final ColorScheme colorScheme;
   final String keyId;
-  final String initialValue;
+  final String? initialValue;
   final String? hintText;
   final void Function(String)? onChanged;
+  final ColorScheme? colorScheme;
 
   @override
   State<CellField> createState() => _CellFieldState();
@@ -65,29 +66,30 @@ class CellField extends StatefulWidget {
 class _CellFieldState extends State<CellField> {
   @override
   Widget build(BuildContext context) {
+    var colorScheme = widget.colorScheme ?? Theme.of(context).colorScheme;
     return TextFormField(
       key: Key(widget.keyId),
       initialValue: widget.initialValue,
       style: kCodeStyle.copyWith(
-        color: widget.colorScheme.onSurface,
+        color: colorScheme.onSurface,
       ),
       decoration: InputDecoration(
         hintStyle: kCodeStyle.copyWith(
-          color: widget.colorScheme.outline.withOpacity(
+          color: colorScheme.outline.withOpacity(
             kHintOpacity,
           ),
         ),
         hintText: widget.hintText,
         focusedBorder: UnderlineInputBorder(
           borderSide: BorderSide(
-            color: widget.colorScheme.primary.withOpacity(
+            color: colorScheme.primary.withOpacity(
               kHintOpacity,
             ),
           ),
         ),
         enabledBorder: UnderlineInputBorder(
           borderSide: BorderSide(
-            color: widget.colorScheme.surfaceVariant,
+            color: colorScheme.surfaceVariant,
           ),
         ),
       ),

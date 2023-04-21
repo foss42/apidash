@@ -47,7 +47,6 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
           cellBuilder: (_, row) {
             int idx = row.index;
             return CellField(
-              colorScheme: Theme.of(context).colorScheme,
               keyId: "$activeId-$idx-headers-k-$seed",
               initialValue: rows[idx].k,
               hintText: "Add Header Name",
@@ -55,6 +54,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
                 rows[idx] = rows[idx].copyWith(k: value);
                 _onFieldChange(activeId!);
               },
+              colorScheme: Theme.of(context).colorScheme,
             );
           },
           sortable: false,
@@ -74,7 +74,6 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
           cellBuilder: (_, row) {
             int idx = row.index;
             return CellField(
-              colorScheme: Theme.of(context).colorScheme,
               keyId: "$activeId-$idx-headers-v-$seed",
               initialValue: rows[idx].v,
               hintText: " Add Header Value",
@@ -82,6 +81,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
                 rows[idx] = rows[idx].copyWith(v: value);
                 _onFieldChange(activeId!);
               },
+              colorScheme: Theme.of(context).colorScheme,
             );
           },
           sortable: false,
