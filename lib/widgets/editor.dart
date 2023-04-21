@@ -33,6 +33,7 @@ class _TextFieldEditorState extends State<TextFieldEditor> {
         extentOffset: controller.selection.extentOffset + sp.length,
       ),
     );
+    widget.onChanged?.call(text);
   }
 
   @override
