@@ -8,3 +8,11 @@ We would love to work with you on the resulting Pull Requests.
 
 In case you are new to the open source ecosystem, we would be more than happy to guide you through the entire process. 
 Please feel free to get in touch via GitHub issues or drop by our [Discord server](https://bit.ly/heyfoss).
+
+### Dev Notes 
+
+This project uses [Records feature in Dart](https://github.com/dart-lang/language/blob/main/accepted/future-releases/records/records-feature-specification.md) which is still experimental, so to run the project you need to execute the following command:
+
+```
+flutter run --enable-experiment=records
+```
