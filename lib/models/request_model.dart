@@ -10,6 +10,8 @@ class RequestModel {
     required this.id,
     this.method = kDefaultHttpMethod,
     this.url = "",
+    this.name = "",
+    this.description = "",
     this.requestTabIndex = 0,
     this.requestHeaders,
     this.requestParams,
@@ -23,6 +25,8 @@ class RequestModel {
   final String id;
   final HTTPVerb method;
   final String url;
+  final String name;
+  final String description;
   final int requestTabIndex;
   final List<KVRow>? requestHeaders;
   final List<KVRow>? requestParams;
@@ -39,6 +43,8 @@ class RequestModel {
       id: id,
       method: method,
       url: url,
+      name: name,
+      description: description,
       requestHeaders: requestHeaders,
       requestParams: requestParams,
       requestBodyContentType: requestBodyContentType,
@@ -50,6 +56,8 @@ class RequestModel {
     String? id,
     HTTPVerb? method,
     String? url,
+    String? name,
+    String? description,
     int? requestTabIndex,
     List<KVRow>? requestHeaders,
     List<KVRow>? requestParams,
@@ -63,6 +71,8 @@ class RequestModel {
       id: id ?? this.id,
       method: method ?? this.method,
       url: url ?? this.url,
+      name: name ?? this.name,
+      description: description ?? this.description,
       requestTabIndex: requestTabIndex ?? this.requestTabIndex,
       requestHeaders: requestHeaders ?? this.requestHeaders,
       requestParams: requestParams ?? this.requestParams,
@@ -87,6 +97,8 @@ class RequestModel {
       method = kDefaultHttpMethod;
     }
     final url = data["url"] as String;
+    final name = data["name"] as String?;
+    final description = data["description"] as String?;
     final requestHeaders = data["requestHeaders"];
     final requestParams = data["requestParams"];
     try {
@@ -110,6 +122,8 @@ class RequestModel {
       id: id,
       method: method,
       url: url,
+      name: name ?? "",
+      description: description ?? "",
       requestTabIndex: 0,
       requestHeaders: requestHeaders != null
           ? mapToRows(Map<String, String>.from(requestHeaders))
@@ -130,6 +144,8 @@ class RequestModel {
       "id": id,
       "method": method.name,
       "url": url,
+      "name": name,
+      "description": description,
       "requestHeaders": rowsToMap(requestHeaders),
       "requestParams": rowsToMap(requestParams),
       "requestBodyContentType": requestBodyContentType.name,
@@ -146,6 +162,8 @@ class RequestModel {
       "Request Id: $id",
       "Request Method: ${method.name}",
       "Request URL: $url",
+      "Request Name: $name",
+      "Request Description: $description",
       "Request Tab Index: ${requestTabIndex.toString()}",
       "Request Headers: ${requestHeaders.toString()}",
       "Request Params: ${requestParams.toString()}",

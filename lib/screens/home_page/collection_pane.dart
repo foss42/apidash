@@ -175,14 +175,32 @@ class _RequestItemState extends ConsumerState<RequestItem> {
   @override
   Widget build(BuildContext context) {
     final activeRequestId = ref.watch(activeIdStateProvider);
+    final editRequestId = ref.watch(activeIdEditStateProvider);
 
     return SidebarRequestCard(
       id: widget.id,
-      activeRequestId: activeRequestId,
-      url: widget.requestModel.url,
       method: widget.requestModel.method,
+      name: widget.requestModel.name,
+      url: widget.requestModel.url,
+      activeRequestId: activeRequestId,
+      editRequestId: editRequestId,
       onTap: () {
         ref.read(activeIdStateProvider.notifier).update((state) => widget.id);
+      },
+      onDoubleTap: () {
+        ref.read(activeIdStateProvider.notifier).update((state) => widget.id);
+        ref
+            .read(activeIdEditStateProvider.notifier)
+            .update((state) => widget.id);
+      },
+      onChangedNameEditor: (value) {
+        value = value.trim();
+        ref
+            .read(collectionStateNotifierProvider.notifier)
+            .update(editRequestId!, name: value);
+      },
+      onTapOutsideNameEditor: () {
+        ref.read(activeIdEditStateProvider.notifier).update((state) => null);
       },
       onMenuSelected: (RequestItemMenuOption item) {
         if (item == RequestItemMenuOption.delete) {

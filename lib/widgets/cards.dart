@@ -8,18 +8,28 @@ class SidebarRequestCard extends StatefulWidget {
   const SidebarRequestCard({
     super.key,
     required this.id,
-    required this.activeRequestId,
-    required this.url,
     required this.method,
+    this.name,
+    this.url,
+    this.activeRequestId,
+    this.editRequestId,
     this.onTap,
+    this.onDoubleTap,
+    this.onChangedNameEditor,
+    this.onTapOutsideNameEditor,
     this.onMenuSelected,
   });
 
   final String id;
-  final String? activeRequestId;
-  final String url;
+  final String? name;
+  final String? url;
   final HTTPVerb method;
+  final String? activeRequestId;
+  final String? editRequestId;
   final void Function()? onTap;
+  final void Function()? onDoubleTap;
+  final Function(String)? onChangedNameEditor;
+  final Function()? onTapOutsideNameEditor;
   final Function(RequestItemMenuOption)? onMenuSelected;
 
   @override
@@ -30,17 +40,29 @@ class _SidebarRequestCardState extends State<SidebarRequestCard> {
   @override
   Widget build(BuildContext context) {
     final Color color = Theme.of(context).colorScheme.surface;
+    final Color colorVariant =
+        Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5);
     final Color surfaceTint = Theme.of(context).colorScheme.primary;
     bool isActiveId = widget.activeRequestId == widget.id;
-    return Material(
-      borderRadius: kBorderRadius12,
+    bool inEditMode = widget.editRequestId == widget.id;
+    return Card(
+      shape: const RoundedRectangleBorder(
+        borderRadius: kBorderRadius12,
+      ),
       elevation: isActiveId ? 1 : 0,
       surfaceTintColor: isActiveId ? surfaceTint : null,
-      color: color,
-      type: MaterialType.card,
+      color: isActiveId
+          ? Theme.of(context).colorScheme.brightness == Brightness.dark
+              ? colorVariant
+              : color
+          : color,
+      margin: EdgeInsets.zero,
       child: InkWell(
         borderRadius: kBorderRadius12,
-        onTap: widget.onTap,
+        hoverColor: colorVariant,
+        focusColor: colorVariant.withOpacity(0.5),
+        onTap: inEditMode ? null : widget.onTap,
+        onDoubleTap: inEditMode ? null : widget.onDoubleTap,
         child: Padding(
           padding: EdgeInsets.only(
             left: 10,
@@ -55,14 +77,33 @@ class _SidebarRequestCardState extends State<SidebarRequestCard> {
                 MethodBox(method: widget.method),
                 kHSpacer5,
                 Expanded(
-                  child: Text(
-                    getRequestTitleFromUrl(widget.url),
-                    softWrap: false,
-                    overflow: TextOverflow.fade,
-                  ),
+                  child: inEditMode
+                      ? TextFormField(
+                          initialValue: widget.name,
+                          autofocus: true,
+                          style: Theme.of(context).textTheme.bodyMedium,
+                          onTapOutside: (_) {
+                            widget.onTapOutsideNameEditor?.call();
+                            FocusScope.of(context).unfocus();
+                          },
+                          onChanged: widget.onChangedNameEditor,
+                          decoration: const InputDecoration(
+                            isCollapsed: true,
+                            contentPadding: EdgeInsets.zero,
+                            border: InputBorder.none,
+                          ),
+                        )
+                      : Text(
+                          (widget.name != null &&
+                                  widget.name!.trim().isNotEmpty)
+                              ? widget.name!
+                              : getRequestTitleFromUrl(widget.url),
+                          softWrap: false,
+                          overflow: TextOverflow.fade,
+                        ),
                 ),
                 Visibility(
-                  visible: isActiveId,
+                  visible: isActiveId && !inEditMode,
                   child: RequestCardMenu(
                     onSelected: widget.onMenuSelected,
                   ),

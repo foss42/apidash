@@ -24,6 +24,7 @@ class ThemeStateNotifier extends StateNotifier<bool> {
 }
 
 final activeIdStateProvider = StateProvider<String?>((ref) => null);
+final activeIdEditStateProvider = StateProvider<String?>((ref) => null);
 final sentRequestIdStateProvider = StateProvider<String?>((ref) => null);
 final codePaneVisibleStateProvider = StateProvider<bool>((ref) => false);
 final saveDataStateProvider = StateProvider<bool>((ref) => false);
@@ -102,6 +103,8 @@ class CollectionStateNotifier extends StateNotifier<List<RequestModel>?> {
     String id, {
     HTTPVerb? method,
     String? url,
+    String? name,
+    String? description,
     int? requestTabIndex,
     List<KVRow>? requestHeaders,
     List<KVRow>? requestParams,
@@ -115,6 +118,8 @@ class CollectionStateNotifier extends StateNotifier<List<RequestModel>?> {
     final newModel = state![idx].copyWith(
         method: method,
         url: url,
+        name: name,
+        description: description,
         requestTabIndex: requestTabIndex,
         requestHeaders: requestHeaders,
         requestParams: requestParams,
