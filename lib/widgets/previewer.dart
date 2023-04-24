@@ -27,9 +27,7 @@ class _PreviewerState extends State<Previewer> {
       return Image.memory(
         widget.bytes,
         errorBuilder: (context, _, stackTrace) {
-          return ErrorMessage(
-              message:
-                  "${widget.type}/${widget.subtype} mimetype preview $kMimeTypeRaiseIssue");
+          return const ErrorMessage(message: kImageError);
         },
       );
     }

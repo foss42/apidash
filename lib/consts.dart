@@ -416,6 +416,9 @@ const kMimeTypeRaiseIssue =
 const kUnexpectedRaiseIssue =
     "\nIf the behaviour is unexpected, please raise an issue in API Dash GitHub repo so that we can resolve it.";
 
+const kImageError =
+    "There seems to be an issue rendering this image. Please raise an issue in API Dash GitHub repo so that we can resolve it.";
+
 const kRaiseIssue =
     "\nPlease raise an issue in API Dash GitHub repo so that we can resolve it.";
 
