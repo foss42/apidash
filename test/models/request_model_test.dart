@@ -109,11 +109,11 @@ void main() {
   test('Testing toJson', () {
     expect(requestModelDup.toJson(), requestModelAsJson);
   });
-  /*
+
   test('Testing fromJson', () {
-    expect(RequestModel.fromJson(requestModelDup.toJson()), requestModelDup);
+    final modelFromJson = RequestModel.fromJson(requestModelAsJson);
+    expect(modelFromJson, requestModelDup);
   });
-  */
 
   final requestModeDupString = [
     "Request Id: 1",

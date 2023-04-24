@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart' show mapToRows, rowsToMap;
 import 'kvrow_model.dart';
@@ -185,8 +186,8 @@ class RequestModel {
         other.name == name &&
         other.description == description &&
         other.requestTabIndex == requestTabIndex &&
-        other.requestHeaders == requestHeaders &&
-        other.requestParams == requestParams &&
+        listEquals(other.requestHeaders, requestHeaders) &&
+        listEquals(other.requestParams, requestParams) &&
         other.requestBodyContentType == requestBodyContentType &&
         other.requestBody == requestBody &&
         other.responseStatus == responseStatus &&
