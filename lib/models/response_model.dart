@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:collection/collection.dart' show mergeMaps;
 import 'package:http/http.dart';
 import 'package:http_parser/http_parser.dart';
@@ -100,5 +101,32 @@ class ResponseModel {
       "Response Request Headers: $requestHeaders",
       "Response Body: $body",
     ].join("\n");
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is ResponseModel &&
+        other.runtimeType == runtimeType &&
+        other.statusCode == statusCode &&
+        mapEquals(other.headers, headers) &&
+        mapEquals(other.requestHeaders, requestHeaders) &&
+        other.body == body &&
+        other.formattedBody == formattedBody &&
+        other.bodyBytes == bodyBytes &&
+        other.time == time;
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(
+      runtimeType,
+      statusCode,
+      headers,
+      requestHeaders,
+      body,
+      formattedBody,
+      bodyBytes,
+      time,
+    );
   }
 }
