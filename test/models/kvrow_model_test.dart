@@ -13,4 +13,8 @@ void main() {
   test('Testing copyWith()', () {
     expect(kvRow1.copyWith(k: "winter", v: "26"), kvRow2Expected);
   });
+
+  test('Testing hashcode', () {
+    expect(kvRow1.hashCode, greaterThan(0));
+  });
 }
