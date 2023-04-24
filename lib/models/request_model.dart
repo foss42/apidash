@@ -174,4 +174,43 @@ class RequestModel {
       "Response: ${responseModel.toString()}"
     ].join("\n");
   }
+
+  @override
+  bool operator ==(Object other) {
+    return other is RequestModel &&
+        other.runtimeType == runtimeType &&
+        other.id == id &&
+        other.method == method &&
+        other.url == url &&
+        other.name == name &&
+        other.description == description &&
+        other.requestTabIndex == requestTabIndex &&
+        other.requestHeaders == requestHeaders &&
+        other.requestParams == requestParams &&
+        other.requestBodyContentType == requestBodyContentType &&
+        other.requestBody == requestBody &&
+        other.responseStatus == responseStatus &&
+        other.message == message &&
+        other.responseModel == responseModel;
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(
+      runtimeType,
+      id,
+      method,
+      url,
+      name,
+      description,
+      requestTabIndex,
+      requestHeaders,
+      requestParams,
+      requestBodyContentType,
+      requestBody,
+      responseStatus,
+      message,
+      responseModel,
+    );
+  }
 }
