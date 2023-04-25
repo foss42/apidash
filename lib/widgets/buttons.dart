@@ -23,6 +23,7 @@ class _CopyButtonState extends State<CopyButton> {
         sm.showSnackBar(getSnackBar("Copied"));
       },
       child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: const [
           Icon(
             Icons.content_copy,
@@ -63,6 +64,7 @@ class _SendRequestButtonState extends State<SendRequestButton> {
     return FilledButton(
       onPressed: disable ? null : widget.onTap,
       child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Text(
             disable
@@ -129,6 +131,7 @@ class _SaveInDownloadsButtonState extends State<SaveInDownloadsButton> {
             }
           : null,
       child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: const [
           Icon(
             Icons.download,
