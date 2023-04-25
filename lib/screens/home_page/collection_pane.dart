@@ -22,6 +22,7 @@ class _CollectionPaneState extends ConsumerState<CollectionPane> {
 
   @override
   Widget build(BuildContext context) {
+    var sm = ScaffoldMessenger.of(context);
     final collection = ref.watch(collectionStateNotifierProvider);
     final savingData = ref.watch(saveDataStateProvider);
     if (collection == null) {
@@ -65,6 +66,9 @@ class _CollectionPaneState extends ConsumerState<CollectionPane> {
                         ref
                             .read(saveDataStateProvider.notifier)
                             .update((state) => false);
+
+                        sm.hideCurrentSnackBar();
+                        sm.showSnackBar(getSnackBar("Saved"));
                       },
                 icon: const Icon(
                   Icons.save,
