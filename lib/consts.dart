@@ -423,7 +423,10 @@ const kRaiseIssue =
     "\nPlease raise an issue in API Dash GitHub repo so that we can resolve it.";
 
 const kHintTextUrlCard = "Enter API endpoint like api.foss42.com/country/codes";
+const kLabelPlusNew = "+ New";
 const kLabelSend = "Send";
 const kLabelSending = "Sending..";
 const kLabelBusy = "Busy";
 const kLabelCopy = "Copy";
+const kLabelSave = "Save";
+const kLabelDownload = "Download";

@@ -106,7 +106,7 @@ class _IntroMessageState extends State<IntroMessage> {
                         child: ElevatedButton(
                           onPressed: widget.onNew,
                           child: const Text(
-                            '+ New',
+                            kLabelPlusNew,
                             style: kTextStyleButton,
                           ),
                         ),

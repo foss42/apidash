@@ -75,7 +75,7 @@ class _CollectionPaneState extends ConsumerState<CollectionPane> {
                   size: 20,
                 ),
                 label: const Text(
-                  'Save',
+                  kLabelSave,
                   style: kTextStyleButton,
                 ),
               ),
@@ -89,7 +89,7 @@ class _CollectionPaneState extends ConsumerState<CollectionPane> {
                       .update((state) => newId);
                 },
                 child: const Text(
-                  '+ New',
+                  kLabelPlusNew,
                   style: kTextStyleButton,
                 ),
               ),
