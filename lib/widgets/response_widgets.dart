@@ -393,96 +393,117 @@ class _BodySuccessState extends State<BodySuccess> {
       borderRadius: kBorderRadius8,
     );
 
-    return Padding(
-      padding: kP10,
-      child: Column(
-        children: [
-          SizedBox(
-            height: kHeaderHeight,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                (widget.options == kRawBodyViewOptions)
-                    ? const SizedBox()
-                    : SegmentedButton<ResponseBodyView>(
-                        selectedIcon:
-                            Icon(kResponseBodyViewIcons[currentSeg]![kKeyIcon]),
-                        segments: widget.options
-                            .map<ButtonSegment<ResponseBodyView>>(
-                              (e) => ButtonSegment<ResponseBodyView>(
-                                value: e,
-                                label:
-                                    Text(kResponseBodyViewIcons[e]![kKeyName]),
-                                icon:
-                                    Icon(kResponseBodyViewIcons[e]![kKeyIcon]),
-                              ),
-                            )
-                            .toList(),
-                        selected: {currentSeg},
-                        onSelectionChanged: (newSelection) {
-                          setState(() {
-                            segmentIdx =
-                                widget.options.indexOf(newSelection.first);
-                          });
-                        },
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        var showLabel = false;
+        switch (widget.options.length) {
+          case 1:
+            showLabel = (constraints.maxWidth < 300) ? false : true;
+            break;
+          case 2:
+            showLabel = (constraints.maxWidth < 400) ? false : true;
+            break;
+          case 3:
+            showLabel = (constraints.maxWidth < 500) ? false : true;
+            break;
+        }
+        return Padding(
+          padding: kP10,
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  (widget.options == kRawBodyViewOptions)
+                      ? const SizedBox()
+                      : SegmentedButton<ResponseBodyView>(
+                          selectedIcon: Icon(
+                              kResponseBodyViewIcons[currentSeg]![kKeyIcon]),
+                          segments: widget.options
+                              .map<ButtonSegment<ResponseBodyView>>(
+                                (e) => ButtonSegment<ResponseBodyView>(
+                                  value: e,
+                                  label: Text(
+                                      kResponseBodyViewIcons[e]![kKeyName]),
+                                  icon: Icon(
+                                      kResponseBodyViewIcons[e]![kKeyIcon]),
+                                ),
+                              )
+                              .toList(),
+                          selected: {currentSeg},
+                          onSelectionChanged: (newSelection) {
+                            setState(() {
+                              segmentIdx =
+                                  widget.options.indexOf(newSelection.first);
+                            });
+                          },
+                        ),
+                  const Spacer(),
+                  kCodeRawBodyViewOptions.contains(currentSeg)
+                      ? CopyButton(
+                          toCopy: widget.body,
+                          showLabel: showLabel,
+                        )
+                      : const SizedBox(),
+                  SaveInDownloadsButton(
+                    content: widget.bytes,
+                    mimeType: widget.mediaType.mimeType,
+                    showLabel: showLabel,
+                  ),
+                ],
+              ),
+              kVSpacer10,
+              Visibility(
+                visible: currentSeg == ResponseBodyView.preview ||
+                    currentSeg == ResponseBodyView.none,
+                child: Expanded(
+                  child: currentSeg == ResponseBodyView.preview
+                      ? Previewer(
+                          bytes: widget.bytes,
+                          type: widget.mediaType.type,
+                          subtype: widget.mediaType.subtype,
+                        )
+                      : ErrorMessage(
+                          message:
+                              "$kMimeTypeRaiseIssueStart'${widget.mediaType.mimeType}' $kMimeTypeRaiseIssueEnd"),
+                ),
+              ),
+              if (widget.formattedBody != null)
+                Visibility(
+                  visible: currentSeg == ResponseBodyView.code,
+                  child: Expanded(
+                    child: Container(
+                      width: double.maxFinite,
+                      padding: kP8,
+                      decoration: textContainerdecoration,
+                      child: CodePreviewer(
+                        code: widget.formattedBody!,
+                        theme: codeTheme,
+                        language: widget.highlightLanguage,
+                        textStyle: kCodeStyle,
                       ),
-                kCodeRawBodyViewOptions.contains(currentSeg)
-                    ? CopyButton(toCopy: widget.body)
-                    : const SizedBox(),
-              ],
-            ),
-          ),
-          kVSpacer10,
-          Visibility(
-            visible: currentSeg == ResponseBodyView.preview ||
-                currentSeg == ResponseBodyView.none,
-            child: Expanded(
-              child: currentSeg == ResponseBodyView.preview
-                  ? Previewer(
-                      bytes: widget.bytes,
-                      type: widget.mediaType.type,
-                      subtype: widget.mediaType.subtype,
-                    )
-                  : ErrorMessage(
-                      message:
-                          "$kMimeTypeRaiseIssueStart'${widget.mediaType.mimeType}' $kMimeTypeRaiseIssueEnd"),
-            ),
-          ),
-          if (widget.formattedBody != null)
-            Visibility(
-              visible: currentSeg == ResponseBodyView.code,
-              child: Expanded(
-                child: Container(
-                  width: double.maxFinite,
-                  padding: kP8,
-                  decoration: textContainerdecoration,
-                  child: CodePreviewer(
-                    code: widget.formattedBody!,
-                    theme: codeTheme,
-                    language: widget.highlightLanguage,
-                    textStyle: kCodeStyle,
+                    ),
+                  ),
+                ),
+              Visibility(
+                visible: currentSeg == ResponseBodyView.raw,
+                child: Expanded(
+                  child: Container(
+                    width: double.maxFinite,
+                    padding: kP8,
+                    decoration: textContainerdecoration,
+                    child: SingleChildScrollView(
+                      child: SelectableText(
+                        widget.body,
+                        style: kCodeStyle,
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
-          Visibility(
-            visible: currentSeg == ResponseBodyView.raw,
-            child: Expanded(
-              child: Container(
-                width: double.maxFinite,
-                padding: kP8,
-                decoration: textContainerdecoration,
-                child: SingleChildScrollView(
-                  child: SelectableText(
-                    widget.body,
-                    style: kCodeStyle,
-                  ),
-                ),
-              ),
-            ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
