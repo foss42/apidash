@@ -1,10 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:uuid/uuid.dart';
 import '../models/models.dart';
 import '../services/services.dart';
+import '../utils/utils.dart' show uuid;
 import '../consts.dart';
-
-const _uuid = Uuid();
 
 final hiveHandler = HiveHandler();
 
@@ -68,7 +66,7 @@ class CollectionStateNotifier extends StateNotifier<List<RequestModel>?> {
 
   String add() {
     final newRequestModel = RequestModel(
-      id: _uuid.v1(),
+      id: uuid.v1(),
     );
     state = [newRequestModel, ...state!];
     return newRequestModel.id;
@@ -90,7 +88,7 @@ class CollectionStateNotifier extends StateNotifier<List<RequestModel>?> {
   void duplicate(String id) {
     final idx = idxOfId(id);
     final newModel = state![idx].duplicate(
-      id: _uuid.v1(),
+      id: uuid.v1(),
     );
     state = [
       ...state!.sublist(0, idx + 1),
@@ -175,7 +173,7 @@ class CollectionStateNotifier extends StateNotifier<List<RequestModel>?> {
     if (ids == null) {
       state = [
         RequestModel(
-          id: _uuid.v1(),
+          id: uuid.v1(),
         ),
       ];
     } else {
