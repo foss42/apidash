@@ -27,6 +27,8 @@ dependencies:
       path: plugins/window_size
   hive_flutter: ^1.1.0
   lottie: ^2.3.2
+  mime_dart: ^3.0.0
+  path_provider: ^2.0.14
 
 dev_dependencies:
   flutter_test:
