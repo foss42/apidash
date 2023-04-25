@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:highlighter/highlighter.dart' show highlight;
 import 'package:apidash/consts.dart';
+import 'package:apidash/utils/utils.dart';
 import 'code_previewer.dart' show convert;
-import 'buttons.dart' show CopyButton;
+import 'buttons.dart';
 
 class CodeGenPreviewer extends StatefulWidget {
   const CodeGenPreviewer({
@@ -144,6 +145,10 @@ class _ViewCodePaneState extends State<ViewCodePane> {
                   ),
                 ),
                 CopyButton(toCopy: widget.code),
+                SaveInDownloadsButton(
+                  content: stringToBytes(widget.code),
+                  mimeType: "application/vnd.dart",
+                )
               ],
             ),
           ),
