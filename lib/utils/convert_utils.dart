@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+import 'dart:convert';
 import '../consts.dart';
 import 'package:apidash/models/models.dart' show KVRow;
 
@@ -76,4 +78,14 @@ List<KVRow>? mapToRows(Map<String, String>? kvMap) {
     finalRows.add(KVRow(k, kvMap[k]));
   }
   return finalRows;
+}
+
+Uint8List? stringToBytes(String? text) {
+  if (text == null) {
+    return null;
+  } else {
+    var l = utf8.encode(text);
+    var bytes = Uint8List.fromList(l);
+    return bytes;
+  }
 }
