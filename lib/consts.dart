@@ -61,6 +61,7 @@ const kTabAnimationDuration = Duration(milliseconds: 200);
 const kTabHeight = 45.0;
 const kHeaderHeight = 32.0;
 const kSegmentHeight = 24.0;
+const kTextButtonMinWidth = 36.0;
 
 const kRandMax = 100000;
 
