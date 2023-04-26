@@ -48,7 +48,8 @@ class RequestEditorPaneHome extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isDarkMode = ref.watch(darkModeProvider);
+    final isDarkMode =
+        ref.watch(settingsProvider.select((value) => value.isDark));
 
     return IntroMessage(
       isDarkMode: isDarkMode,
@@ -57,7 +58,8 @@ class RequestEditorPaneHome extends ConsumerWidget {
         ref.read(activeIdStateProvider.notifier).update((state) => newId);
       },
       onModeToggle: () async {
-        await ref.read(darkModeProvider.notifier).toggle();
+        var mode = ref.read(settingsProvider).isDark;
+        await ref.read(settingsProvider.notifier).update(isDark: !mode);
       },
     );
   }
