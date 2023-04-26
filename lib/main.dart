@@ -8,8 +8,9 @@ import 'consts.dart' show kFontFamily, kFontFamilyFallback, kColorSchemeSeed;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await setupInitialWindow();
   await openBoxes();
+  Size? sz = getInitialSize();
+  await setupInitialWindow(sz);
   GoogleFonts.config.allowRuntimeFetching = false;
   runApp(
     const ProviderScope(
@@ -18,12 +19,31 @@ void main() async {
   );
 }
 
-class App extends ConsumerWidget {
-  const App({Key? key}) : super(key: key);
+class App extends ConsumerStatefulWidget {
+  const App({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final isDarkMode = ref.watch(darkModeProvider);
+  ConsumerState<App> createState() => _AppState();
+}
+
+class _AppState extends ConsumerState<App> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeMetrics() {
+    Size sz = WidgetsBinding.instance.window.physicalSize;
+    double dpr = WidgetsBinding.instance.window.devicePixelRatio;
+    ref.read(settingsProvider.notifier).update(size: sz / dpr);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDarkMode =
+        ref.watch(settingsProvider.select((value) => value.isDark));
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -43,5 +63,11 @@ class App extends ConsumerWidget {
       themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
       home: const HomePage(),
     );
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 }
