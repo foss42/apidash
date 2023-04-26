@@ -51,3 +51,4 @@ windows/
 web/
 .vscode/settings.json
 icons/
+coverage/*
