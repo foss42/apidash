@@ -93,7 +93,7 @@ import 'dart:convert';
 
       String url = requestModel.url;
       if (!url.contains("://") && url.isNotEmpty) {
-        url = kDefaultUriScheme + url;
+        url = "$kDefaultUriScheme://$url";
       }
       var templateUrl = jj.Template(kTemplateUrl);
       result += templateUrl.render({"url": url});

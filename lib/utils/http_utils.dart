@@ -70,7 +70,7 @@ MediaType? getMediaTypeFromHeaders(Map? headers) {
     }
   }
   else {
-    url = kDefaultUriScheme + url;
+    url = "$kDefaultUriScheme://$url";
   }
 
   uri =  Uri.parse(url);

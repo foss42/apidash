@@ -202,7 +202,7 @@ enum HTTPVerb { get, head, post, put, patch, delete }
 enum ContentType { json, text }
 
 const kSupportedUriSchemes = ["https", "http"];
-const kDefaultUriScheme = "https://";
+const kDefaultUriScheme = "https";
 const kMethodsWithBody = [
   HTTPVerb.post,
   HTTPVerb.put,
