@@ -5,17 +5,23 @@ import 'package:flutter/foundation.dart';
 import 'package:window_size/window_size.dart' as window_size;
 import '../consts.dart';
 
-Future<void> setupInitialWindow() async {
+Future<void> setupInitialWindow(Size? sz) async {
   if (!kIsWeb) {
     if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-      window_size.getWindowInfo().then((window) {
+      await window_size.getWindowInfo().then((window) {
         final screen = window.screen;
         if (screen != null) {
           final screenFrame = screen.visibleFrame;
-          final width = math.max(
-              (screenFrame.width / 2).roundToDouble(), kMinInitialWindowWidth);
-          final height = math.max((screenFrame.height / 2).roundToDouble(),
-              kMinInitialWindowHeight);
+          double width, height;
+          if (sz == null) {
+            width = math.max((screenFrame.width / 2).roundToDouble(),
+                kMinInitialWindowWidth);
+            height = math.max((screenFrame.height / 2).roundToDouble(),
+                kMinInitialWindowHeight);
+          } else {
+            width = sz.width;
+            height = sz.height;
+          }
           final left = ((screenFrame.width - width) / 2).roundToDouble();
           final top = ((screenFrame.height - height) / 3).roundToDouble();
           final frame = Rect.fromLTWH(left, top, width, height);
@@ -27,4 +33,8 @@ Future<void> setupInitialWindow() async {
       });
     }
   }
+}
+
+Future<void> resetWindowSize() async {
+  await setupInitialWindow(null);
 }
