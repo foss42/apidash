@@ -11,7 +11,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await openBoxes();
   var win = getInitialSize();
-  await setupWindow(sz: win.$0, off: win.$1); //setupInitialWindow(sz);
+  await setupWindow(sz: win.$0, off: win.$1);
   GoogleFonts.config.allowRuntimeFetching = false;
   runApp(
     const ProviderScope(
