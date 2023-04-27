@@ -16,12 +16,14 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
   Future<void> update({
     bool? isDark,
     Size? size,
+    Offset? offset,
     String? defaultUriScheme,
     bool? saveResponses,
   }) async {
     state = state.copyWith(
       isDark: isDark,
       size: size,
+      offset: offset,
       defaultUriScheme: defaultUriScheme,
       saveResponses: saveResponses,
     );
