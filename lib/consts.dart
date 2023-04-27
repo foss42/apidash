@@ -9,10 +9,12 @@ const kDiscordUrl = "https://bit.ly/heyfoss";
 const kGitUrl = "https://github.com/foss42/api-dash";
 const kIssueUrl = "$kGitUrl/issues";
 
-final kIsMacOS = Platform.isMacOS;
-final kIsWindows = Platform.isWindows;
-final kIsLinux = Platform.isLinux;
-final kIsDesktop = kIsMacOS || kIsWindows || kIsLinux;
+final kIsMacOS = !kIsWeb && Platform.isMacOS;
+final kIsWindows = !kIsWeb && Platform.isWindows;
+final kIsLinux = !kIsWeb && Platform.isLinux;
+final kIsApple = !kIsWeb && (Platform.isIOS || Platform.isMacOS);
+final kIsDesktop =
+    !kIsWeb && (Platform.isMacOS || Platform.isWindows || Platform.isLinux);
 
 final kColorTransparentState =
     MaterialStateProperty.all<Color>(Colors.transparent);
@@ -26,9 +28,8 @@ const kMinInitialWindowHeight = 800.0;
 
 const kColorSchemeSeed = Colors.blue;
 final kFontFamily = GoogleFonts.openSans().fontFamily;
-final kFontFamilyFallback = (!kIsWeb && (Platform.isIOS || Platform.isMacOS))
-    ? null
-    : <String>[GoogleFonts.notoColorEmoji().fontFamily!];
+final kFontFamilyFallback =
+    kIsApple ? null : <String>[GoogleFonts.notoColorEmoji().fontFamily!];
 
 final kCodeStyle = TextStyle(
   fontFamily: GoogleFonts.sourceCodePro().fontFamily,

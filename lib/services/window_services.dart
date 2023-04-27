@@ -6,7 +6,7 @@ import 'package:window_manager/window_manager.dart';
 import '../consts.dart';
 
 Future<void> setupInitialWindow(Size? sz) async {
-  if (!kIsWeb && kIsDesktop) {
+  if (kIsDesktop) {
     await window_size.getWindowInfo().then((window) {
       final screen = window.screen;
       if (screen != null) {
@@ -38,7 +38,7 @@ Future<void> resetWindowSize() async {
 }
 
 Future<void> setupWindow({Size? sz, Offset? off, bool center = false}) async {
-  if (!kIsWeb && kIsDesktop) {
+  if (kIsDesktop) {
     double width = kMinInitialWindowWidth, height = kMinInitialWindowHeight;
     if (sz == null) {
       await window_size.getWindowInfo().then((window) {
