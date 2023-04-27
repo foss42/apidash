@@ -9,6 +9,11 @@ const kDiscordUrl = "https://bit.ly/heyfoss";
 const kGitUrl = "https://github.com/foss42/api-dash";
 const kIssueUrl = "$kGitUrl/issues";
 
+final kIsMacOS = Platform.isMacOS;
+final kIsWindows = Platform.isWindows;
+final kIsLinux = Platform.isLinux;
+final kIsDesktop = kIsMacOS || kIsWindows || kIsLinux;
+
 final kColorTransparentState =
     MaterialStateProperty.all<Color>(Colors.transparent);
 const kColorTransparent = Colors.transparent;
@@ -46,6 +51,7 @@ const kPs8 = EdgeInsets.only(left: 8);
 const kPh20v5 = EdgeInsets.symmetric(horizontal: 20, vertical: 5);
 const kPh20v10 = EdgeInsets.symmetric(horizontal: 20, vertical: 10);
 const kP10 = EdgeInsets.all(10);
+const kPt24o8 = EdgeInsets.only(top: 24, left: 8.0, right: 8.0, bottom: 8.0);
 const kPt5o10 =
     EdgeInsets.only(left: 10.0, right: 10.0, top: 5.0, bottom: 10.0);
 

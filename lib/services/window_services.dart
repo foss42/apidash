@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
@@ -7,32 +6,30 @@ import 'package:window_manager/window_manager.dart';
 import '../consts.dart';
 
 Future<void> setupInitialWindow(Size? sz) async {
-  if (!kIsWeb) {
-    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-      await window_size.getWindowInfo().then((window) {
-        final screen = window.screen;
-        if (screen != null) {
-          final screenFrame = screen.visibleFrame;
-          double width, height;
-          if (sz == null) {
-            width = math.max((screenFrame.width / 2).roundToDouble(),
-                kMinInitialWindowWidth);
-            height = math.max((screenFrame.height / 2).roundToDouble(),
-                kMinInitialWindowHeight);
-          } else {
-            width = sz.width;
-            height = sz.height;
-          }
-          final left = ((screenFrame.width - width) / 2).roundToDouble();
-          final top = ((screenFrame.height - height) / 3).roundToDouble();
-          final frame = Rect.fromLTWH(left, top, width, height);
-          window_size.setWindowFrame(frame);
-          window_size.setWindowMinSize(kMinWindowSize);
-          window_size.setWindowMaxSize(Size.infinite);
-          window_size.setWindowTitle(kWindowTitle);
+  if (!kIsWeb && kIsDesktop) {
+    await window_size.getWindowInfo().then((window) {
+      final screen = window.screen;
+      if (screen != null) {
+        final screenFrame = screen.visibleFrame;
+        double width, height;
+        if (sz == null) {
+          width = math.max(
+              (screenFrame.width / 2).roundToDouble(), kMinInitialWindowWidth);
+          height = math.max((screenFrame.height / 2).roundToDouble(),
+              kMinInitialWindowHeight);
+        } else {
+          width = sz.width;
+          height = sz.height;
         }
-      });
-    }
+        final left = ((screenFrame.width - width) / 2).roundToDouble();
+        final top = ((screenFrame.height - height) / 3).roundToDouble();
+        final frame = Rect.fromLTWH(left, top, width, height);
+        window_size.setWindowFrame(frame);
+        window_size.setWindowMinSize(kMinWindowSize);
+        window_size.setWindowMaxSize(Size.infinite);
+        window_size.setWindowTitle(kWindowTitle);
+      }
+    });
   }
 }
 
@@ -41,42 +38,39 @@ Future<void> resetWindowSize() async {
 }
 
 Future<void> setupWindow({Size? sz, Offset? off, bool center = false}) async {
-  if (!kIsWeb) {
-    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-      double width = kMinInitialWindowWidth, height = kMinInitialWindowHeight;
-      if (sz == null) {
-        await window_size.getWindowInfo().then((window) {
-          final screen = window.screen;
-          if (screen != null) {
-            final screenFrame = screen.visibleFrame;
-            width = math.max((screenFrame.width / 2).roundToDouble(),
-                kMinInitialWindowWidth);
-            height = math.max((screenFrame.height / 2).roundToDouble(),
-                kMinInitialWindowHeight);
-          }
-        });
-      } else {
-        width = sz.width;
-        height = sz.height;
-      }
-
-      await windowManager.ensureInitialized();
-      WindowOptions windowOptions = WindowOptions(
-        size: Size(width, height),
-        center: center,
-        minimumSize: kMinWindowSize,
-        skipTaskbar: false,
-        title: kWindowTitle,
-        titleBarStyle: Platform.isMacOS ? TitleBarStyle.hidden : null,
-      );
-      if (off != null) {
-        await windowManager.setPosition(off);
-      }
-
-      windowManager.waitUntilReadyToShow(windowOptions, () async {
-        await windowManager.show();
-        await windowManager.focus();
+  if (!kIsWeb && kIsDesktop) {
+    double width = kMinInitialWindowWidth, height = kMinInitialWindowHeight;
+    if (sz == null) {
+      await window_size.getWindowInfo().then((window) {
+        final screen = window.screen;
+        if (screen != null) {
+          final screenFrame = screen.visibleFrame;
+          width = math.max(
+              (screenFrame.width / 2).roundToDouble(), kMinInitialWindowWidth);
+          height = math.max((screenFrame.height / 2).roundToDouble(),
+              kMinInitialWindowHeight);
+        }
       });
+    } else {
+      width = sz.width;
+      height = sz.height;
     }
+
+    await windowManager.ensureInitialized();
+    WindowOptions windowOptions = WindowOptions(
+      size: Size(width, height),
+      center: center,
+      minimumSize: kMinWindowSize,
+      skipTaskbar: false,
+      title: kWindowTitle,
+      titleBarStyle: kIsMacOS ? TitleBarStyle.hidden : null,
+    );
+    if (off != null) {
+      await windowManager.setPosition(off);
+    }
+    windowManager.waitUntilReadyToShow(windowOptions, () async {
+      await windowManager.show();
+      await windowManager.focus();
+    });
   }
 }

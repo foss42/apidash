@@ -31,7 +31,7 @@ class _CollectionPaneState extends ConsumerState<CollectionPane> {
       );
     }
     return Padding(
-      padding: kP8,
+      padding: kIsMacOS ? kPt24o8 : kP8,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
