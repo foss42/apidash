@@ -29,6 +29,7 @@ dependencies:
   lottie: ^2.3.2
   mime_dart: ^3.0.0
   path_provider: ^2.0.14
+  window_manager: ^0.3.2
 
 dev_dependencies:
   flutter_test:

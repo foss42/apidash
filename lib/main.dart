@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:window_manager/window_manager.dart';
 import 'providers/providers.dart';
 import 'services/services.dart';
 import 'screens/screens.dart';
@@ -9,8 +10,8 @@ import 'consts.dart' show kFontFamily, kFontFamilyFallback, kColorSchemeSeed;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await openBoxes();
-  Size? sz = getInitialSize();
-  await setupInitialWindow(sz);
+  var win = getInitialSize();
+  await setupWindow(sz: win.$0, off: win.$1); //setupInitialWindow(sz);
   GoogleFonts.config.allowRuntimeFetching = false;
   runApp(
     const ProviderScope(
@@ -26,18 +27,30 @@ class App extends ConsumerStatefulWidget {
   ConsumerState<App> createState() => _AppState();
 }
 
-class _AppState extends ConsumerState<App> with WidgetsBindingObserver {
+class _AppState extends ConsumerState<App> with WindowListener {
   @override
   void initState() {
+    windowManager.addListener(this);
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
   }
 
   @override
-  void didChangeMetrics() {
-    Size sz = WidgetsBinding.instance.window.physicalSize;
-    double dpr = WidgetsBinding.instance.window.devicePixelRatio;
-    ref.read(settingsProvider.notifier).update(size: sz / dpr);
+  void onWindowFocus() {
+    setState(() {});
+  }
+
+  @override
+  void onWindowResized() {
+    windowManager.getSize().then((value) {
+      ref.read(settingsProvider.notifier).update(size: value);
+    });
+  }
+
+  @override
+  void onWindowMoved() async {
+    windowManager.getPosition().then((value) {
+      ref.read(settingsProvider.notifier).update(offset: value);
+    });
   }
 
   @override
@@ -67,7 +80,7 @@ class _AppState extends ConsumerState<App> with WidgetsBindingObserver {
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
+    windowManager.removeListener(this);
     super.dispose();
   }
 }
