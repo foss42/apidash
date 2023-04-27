@@ -12,14 +12,21 @@ Future<void> openBoxes() async {
   await Hive.openBox(kSettingsBox);
 }
 
-Size? getInitialSize() {
+(Size?, Offset?) getInitialSize() {
+  Size? sz;
+  Offset? off;
   var settingsBox = Hive.box(kSettingsBox);
   double? w = settingsBox.get("width") as double?;
   double? h = settingsBox.get("height") as double?;
   if (w != null && h != null) {
-    return Size(w, h);
+    sz = Size(w, h);
   }
-  return null;
+  double? dx = settingsBox.get("dx") as double?;
+  double? dy = settingsBox.get("dy") as double?;
+  if (dx != null && dy != null) {
+    off = Offset(dx, dy);
+  }
+  return (sz, off);
 }
 
 final hiveHandler = HiveHandler();
