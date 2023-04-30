@@ -1,6 +1,5 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'package:window_size/window_size.dart' as window_size;
 import 'package:window_manager/window_manager.dart';
 import '../consts.dart';

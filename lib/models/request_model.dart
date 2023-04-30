@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart' show mapToRows, rowsToMap;
