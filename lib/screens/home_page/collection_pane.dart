@@ -129,6 +129,7 @@ class _RequestListState extends ConsumerState<RequestList> {
       buildDefaultDragHandles: false,
       shrinkWrap: true,
       itemCount: requestItems.length,
+      physics: const NeverScrollableScrollPhysics(),
       onReorder: (int oldIndex, int newIndex) {
         if (oldIndex < newIndex) {
           newIndex -= 1;
