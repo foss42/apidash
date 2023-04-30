@@ -37,15 +37,6 @@ void main() async {
 
 """;
 
-  String kBodyImportDartConvert = """
-import 'dart:convert';
-""";
-
-  String kBodyLength = """
-
-  var contentLength = utf8.encode(body).length;
-""";
-
   String kTemplateHeaders = """
 
   var headers = {{headers}};
@@ -62,25 +53,16 @@ import 'dart:convert';
 
   String kStringRequestBody = """,
                                   body: body""";
-  String kStringRequestEnd = """);
-""";
+  String kStringRequestEnd = r""");
 
-  String kTemplateSingleSuccess = """
-
-  if (response.statusCode == {{code}}) {
-""";
-
-  String kTemplateMultiSuccess = """
-
-  if ({{codes}}.contains(response.statusCode)) {\n""";
-
-  String kStringResult = r"""
-
-    print('Status Code: ${response.statusCode}');
-    print('Result: ${response.body}');
+  int statusCode = response.statusCode;
+  if (statusCode >= 200 && statusCode < 300) {
+    print('Status Code: $statusCode');
+    print('Response Body: ${response.body}');
   }
   else{
-    print('Error Status Code: ${response.statusCode}');
+    print('Error Status Code: $statusCode');
+    print('Error Response Body: ${response.body}');
   }
 }
 """;
@@ -123,8 +105,6 @@ import 'dart:convert';
           hasBody = true;
           var templateBody = jj.Template(kTemplateBody);
           result += templateBody.render({"body": requestBody});
-          result = kBodyImportDartConvert + result;
-          result += kBodyLength;
         }
       }
 
@@ -134,7 +114,6 @@ import 'dart:convert';
         if (headers.isNotEmpty || hasBody) {
           hasHeaders = true;
           if (hasBody) {
-            headers[HttpHeaders.contentLengthHeader] = r"$contentLength";
             headers[HttpHeaders.contentTypeHeader] =
                 kContentTypeMap[requestModel.requestBodyContentType] ?? "";
           }
@@ -157,17 +136,6 @@ import 'dart:convert';
       }
 
       result += kStringRequestEnd;
-
-      var success = kCodegenSuccessStatusCodes[method]!;
-      if (success.length > 1) {
-        var templateMultiSuccess = jj.Template(kTemplateMultiSuccess);
-        result += templateMultiSuccess.render({"codes": success});
-      } else {
-        var templateSingleSuccess = jj.Template(kTemplateSingleSuccess);
-        result += templateSingleSuccess.render({"code": success[0]});
-      }
-      result += kStringResult;
-
       return result;
     } catch (e) {
       return null;

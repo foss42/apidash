@@ -217,14 +217,6 @@ const kMethodsWithBody = [
   HTTPVerb.delete,
 ];
 const kDefaultHttpMethod = HTTPVerb.get;
-const kCodegenSuccessStatusCodes = {
-  HTTPVerb.get: [200],
-  HTTPVerb.head: [200],
-  HTTPVerb.post: [200, 201, 204],
-  HTTPVerb.put: [200, 201, 204],
-  HTTPVerb.patch: [200, 201, 204],
-  HTTPVerb.delete: [200, 202, 204]
-};
 const kDefaultContentType = ContentType.json;
 
 const JsonEncoder kEncoder = JsonEncoder.withIndent('  ');
