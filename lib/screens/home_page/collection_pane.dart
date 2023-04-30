@@ -97,9 +97,7 @@ class _CollectionPaneState extends ConsumerState<CollectionPane> {
           ),
           kVSpacer8,
           const Expanded(
-            child: SingleChildScrollView(
-              child: RequestList(),
-            ),
+            child: RequestList(),
           ),
         ],
       ),
@@ -127,9 +125,7 @@ class _RequestListState extends ConsumerState<RequestList> {
     final requestItems = ref.watch(collectionStateNotifierProvider)!;
     return ReorderableListView.builder(
       buildDefaultDragHandles: false,
-      shrinkWrap: true,
       itemCount: requestItems.length,
-      physics: const NeverScrollableScrollPhysics(),
       onReorder: (int oldIndex, int newIndex) {
         if (oldIndex < newIndex) {
           newIndex -= 1;
