@@ -67,7 +67,7 @@ Future<void> setupWindow({Size? sz, Offset? off, bool center = false}) async {
     if (off != null) {
       await windowManager.setPosition(off);
     }
-    windowManager.waitUntilReadyToShow(windowOptions, () async {
+    await windowManager.waitUntilReadyToShow(windowOptions, () async {
       await windowManager.show();
       await windowManager.focus();
     });

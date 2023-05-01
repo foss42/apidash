@@ -35,19 +35,17 @@ class _AppState extends ConsumerState<App> with WindowListener {
   }
 
   @override
-  void onWindowFocus() {
-    setState(() {});
-  }
-
-  @override
   void onWindowResized() {
     windowManager.getSize().then((value) {
       ref.read(settingsProvider.notifier).update(size: value);
     });
+    windowManager.getPosition().then((value) {
+      ref.read(settingsProvider.notifier).update(offset: value);
+    });
   }
 
   @override
-  void onWindowMoved() async {
+  void onWindowMoved() {
     windowManager.getPosition().then((value) {
       ref.read(settingsProvider.notifier).update(offset: value);
     });
