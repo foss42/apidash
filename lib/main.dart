@@ -30,8 +30,8 @@ class App extends ConsumerStatefulWidget {
 class _AppState extends ConsumerState<App> with WindowListener {
   @override
   void initState() {
-    windowManager.addListener(this);
     super.initState();
+    windowManager.addListener(this);
   }
 
   @override
