@@ -89,28 +89,27 @@ MediaType? getMediaTypeFromHeaders(Map? headers) {
   return (uri, null);
 }
 
-(List<ResponseBodyView>, String?)  getResponseBodyViewOptions(MediaType mediaType){
-  var type = mediaType.type;
-  var subtype = mediaType.subtype;
-  //print(mediaType);
-  if(kResponseBodyViewOptions.containsKey(type)){
-    if (kResponseBodyViewOptions[type]!.containsKey(subtype)){
-       return (kResponseBodyViewOptions[type]![subtype]!, kCodeHighlighterMap[subtype] ?? subtype);
+(List<ResponseBodyView>, String?)  getResponseBodyViewOptions(MediaType? mediaType){
+  if(mediaType != null){
+    var type = mediaType.type;
+    var subtype = mediaType.subtype;
+    if(kResponseBodyViewOptions.containsKey(type)){
+      if (kResponseBodyViewOptions[type]!.containsKey(subtype)){
+        return (kResponseBodyViewOptions[type]![subtype]!, kCodeHighlighterMap[subtype] ?? subtype);
+      }
+      if(subtype.contains(kSubTypeJson)){
+        subtype = kSubTypeJson;
+      }
+      if(subtype.contains(kSubTypeXml)){
+        subtype = kSubTypeXml;
+      }
+      if (kResponseBodyViewOptions[type]!.containsKey(subtype)){
+        return (kResponseBodyViewOptions[type]![subtype]!, kCodeHighlighterMap[subtype] ?? subtype);
+      }
+      return (kResponseBodyViewOptions[type]![kSubTypeDefaultViewOptions]!, subtype);
     }
-    if(subtype.contains(kSubTypeJson)){
-      subtype = kSubTypeJson;
-    }
-    if(subtype.contains(kSubTypeXml)){
-      subtype = kSubTypeXml;
-    }
-    if (kResponseBodyViewOptions[type]!.containsKey(subtype)){
-       return (kResponseBodyViewOptions[type]![subtype]!, kCodeHighlighterMap[subtype] ?? subtype);
-    }
-    return (kResponseBodyViewOptions[type]![kSubTypeDefaultViewOptions]!, subtype);
   }
-  else {
-    return (kNoBodyViewOptions, null);
-  }
+  return (kNoBodyViewOptions, null);
 }
 
 String? formatBody(String? body, MediaType? mediaType){

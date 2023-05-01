@@ -313,29 +313,34 @@ class _ResponseBodyState extends State<ResponseBody> {
     final responseModel = widget.activeRequestModel?.responseModel;
     if (responseModel == null) {
       return const ErrorMessage(
-          message: 'Error: No Response Data Found. $kUnexpectedRaiseIssue');
-    }
-    var mediaType = responseModel.mediaType;
-    if (mediaType == null) {
-      return ErrorMessage(
           message:
-              'Unknown Response content type - ${responseModel.contentType}. $kUnexpectedRaiseIssue');
+              'Error: Response data does not exist. $kUnexpectedRaiseIssue');
     }
+
     var body = responseModel.body;
     var formattedBody = responseModel.formattedBody;
     if (body == null) {
       return const ErrorMessage(
-          message: 'Response body is empty. $kUnexpectedRaiseIssue');
+          message: 'Response body is missing (null). $kUnexpectedRaiseIssue');
     }
-    var responseBodyView = getResponseBodyViewOptions(mediaType);
-    //print(responseBodyView);
-    var options = responseBodyView.$0;
-    var highlightLanguage = responseBodyView.$1;
-    if (options == kNoBodyViewOptions) {
+    if (body.isEmpty) {
+      return const ErrorMessage(
+        message: 'No content',
+        showIcon: false,
+        showIssueButton: false,
+      );
+    }
+
+    var mediaType = responseModel.mediaType;
+    if (mediaType == null) {
       return ErrorMessage(
           message:
-              "Viewing response data of Content-Type\n'${mediaType.mimeType}' $kMimeTypeRaiseIssue");
+              'Unknown Response Content-Type - ${responseModel.contentType}. $kUnexpectedRaiseIssue');
     }
+
+    var responseBodyView = getResponseBodyViewOptions(mediaType);
+    var options = responseBodyView.$0;
+    var highlightLanguage = responseBodyView.$1;
 
     if (formattedBody == null) {
       options = [...options];
@@ -456,15 +461,12 @@ class _BodySuccessState extends State<BodySuccess> {
                 visible: currentSeg == ResponseBodyView.preview ||
                     currentSeg == ResponseBodyView.none,
                 child: Expanded(
-                  child: currentSeg == ResponseBodyView.preview
-                      ? Previewer(
-                          bytes: widget.bytes,
-                          type: widget.mediaType.type,
-                          subtype: widget.mediaType.subtype,
-                        )
-                      : ErrorMessage(
-                          message:
-                              "$kMimeTypeRaiseIssueStart'${widget.mediaType.mimeType}' $kMimeTypeRaiseIssueEnd"),
+                  child: Previewer(
+                    bytes: widget.bytes,
+                    type: widget.mediaType.type,
+                    subtype: widget.mediaType.subtype,
+                    hasRaw: widget.options.contains(ResponseBodyView.raw),
+                  ),
                 ),
               ),
               if (widget.formattedBody != null)

@@ -3,9 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ErrorMessage extends StatelessWidget {
-  const ErrorMessage({super.key, required this.message});
+  const ErrorMessage({
+    super.key,
+    required this.message,
+    this.showIcon = true,
+    this.showIssueButton = true,
+  });
 
   final String? message;
+  final bool showIcon;
+  final bool showIssueButton;
 
   @override
   Widget build(BuildContext context) {
@@ -16,11 +23,13 @@ class ErrorMessage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.warning_rounded,
-              size: 40,
-              color: color,
-            ),
+            showIcon
+                ? Icon(
+                    Icons.warning_rounded,
+                    size: 40,
+                    color: color,
+                  )
+                : const SizedBox(),
             SelectableText(
               message ?? 'An error occurred. $kUnexpectedRaiseIssue',
               textAlign: TextAlign.center,
@@ -30,16 +39,18 @@ class ErrorMessage extends StatelessWidget {
                   ?.copyWith(color: color),
             ),
             kVSpacer20,
-            FilledButton.tonalIcon(
-              onPressed: () {
-                launchUrl(Uri.parse(kGitUrl));
-              },
-              icon: const Icon(Icons.arrow_outward_rounded),
-              label: Text(
-                'Raise Issue',
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-            ),
+            showIssueButton
+                ? FilledButton.tonalIcon(
+                    onPressed: () {
+                      launchUrl(Uri.parse(kGitUrl));
+                    },
+                    icon: const Icon(Icons.arrow_outward_rounded),
+                    label: Text(
+                      'Raise Issue',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                  )
+                : const SizedBox(),
           ],
         ),
       ),

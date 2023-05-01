@@ -291,7 +291,7 @@ const Map<String, Map<String, List<ResponseBodyView>>>
     kSubTypeDefaultViewOptions: kNoRawBodyViewOptions,
     kSubTypeJson: kCodeRawBodyViewOptions,
     kSubTypeOctetStream: kNoBodyViewOptions,
-    kSubTypePdf: kPreviewBodyViewOptions,
+    kSubTypePdf: kNoBodyViewOptions,
     kSubTypeSql: kCodeRawBodyViewOptions,
     kSubTypeXml: kCodeRawBodyViewOptions,
     kSubTypeYaml: kCodeRawBodyViewOptions,
@@ -302,10 +302,10 @@ const Map<String, Map<String, List<ResponseBodyView>>>
     kSubTypeSvg: kCodeRawBodyViewOptions,
   },
   kTypeAudio: {
-    kSubTypeDefaultViewOptions: kPreviewBodyViewOptions,
+    kSubTypeDefaultViewOptions: kNoBodyViewOptions,
   },
   kTypeVideo: {
-    kSubTypeDefaultViewOptions: kPreviewBodyViewOptions,
+    kSubTypeDefaultViewOptions: kNoBodyViewOptions,
   },
   kTypeText: {
     kSubTypeDefaultViewOptions: kRawBodyViewOptions,
@@ -404,14 +404,13 @@ const kResponseCodeReasons = {
 const kIntro =
     """API Dash is a beautiful open-source cross-platform API Client built using Flutter which can help you easily create & customize your API requests, visually inspect responses and generate Dart code on the go.""";
 
-const kMimeTypeRaiseIssueStart =
-    "Please click on 'Raw' to view the unformatted raw results as a visual preview for the response Content-Type - ";
+const kMimeTypeRawRaiseIssueStart =
+    "Please click on 'Raw' to view the unformatted raw results as the response preview for Content-Type ";
 
-const kMimeTypeRaiseIssueEnd =
-    " is currently not available.\nKindly raise an issue in API Dash GitHub repo so that we can add a Visual Preview logic for this content-type.";
+const kMimeTypeRaiseIssueStart = "Response preview for Content-Type ";
 
 const kMimeTypeRaiseIssue =
-    " is currently not supported.\nPlease raise an issue in API Dash GitHub repo so that we can prioritize adding it to the tool.";
+    " is currently not supported.\nPlease raise an issue in API Dash GitHub repo so that we can add a Previewer for this content-type.";
 
 const kUnexpectedRaiseIssue =
     "\nIf the behaviour is unexpected, please raise an issue in API Dash GitHub repo so that we can resolve it.";
