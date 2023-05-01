@@ -2,7 +2,6 @@ import 'dart:typed_data';
 import 'package:test/test.dart';
 import 'package:apidash/models/response_model.dart';
 import 'package:http/http.dart' as http;
-import 'package:http_parser/http_parser.dart';
 
 void main() {
   int statusCode = 200;
