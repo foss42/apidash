@@ -17,9 +17,10 @@ void main() {
       ),
     );
 
-    expect(find.text("PDF viewing $kMimeTypeRaiseIssue"), findsOneWidget);
-    expect(find.text("Audio playing $kMimeTypeRaiseIssue"), findsNothing);
-    expect(find.text("Video playing $kMimeTypeRaiseIssue"), findsNothing);
+    expect(
+        find.text(
+            "${kMimeTypeRaiseIssueStart}application/pdf$kMimeTypeRaiseIssue"),
+        findsOneWidget);
   });
 
   testWidgets('Testing when type/subtype is audio/mpeg', (tester) async {
@@ -32,9 +33,9 @@ void main() {
       ),
     );
 
-    expect(find.text("Audio playing $kMimeTypeRaiseIssue"), findsOneWidget);
-    expect(find.text("PDF viewing $kMimeTypeRaiseIssue"), findsNothing);
-    expect(find.text("Video playing $kMimeTypeRaiseIssue"), findsNothing);
+    expect(
+        find.text("${kMimeTypeRaiseIssueStart}audio/mpeg$kMimeTypeRaiseIssue"),
+        findsOneWidget);
   });
 
   testWidgets('Testing when type/subtype is video/H264', (tester) async {
@@ -47,9 +48,9 @@ void main() {
       ),
     );
 
-    expect(find.text("Audio playing $kMimeTypeRaiseIssue"), findsNothing);
-    expect(find.text("PDF viewing $kMimeTypeRaiseIssue"), findsNothing);
-    expect(find.text("Video playing $kMimeTypeRaiseIssue"), findsOneWidget);
+    expect(
+        find.text("${kMimeTypeRaiseIssueStart}video/H264$kMimeTypeRaiseIssue"),
+        findsOneWidget);
   });
 
   testWidgets('Testing when type/subtype is model/step+xml', (tester) async {
@@ -62,10 +63,9 @@ void main() {
       ),
     );
 
-    expect(find.text("Audio playing $kMimeTypeRaiseIssue"), findsNothing);
-    expect(find.text("PDF viewing $kMimeTypeRaiseIssue"), findsNothing);
-    expect(find.text("Video playing $kMimeTypeRaiseIssue"), findsNothing);
-    expect(find.text("model/step+xml mimetype preview $kMimeTypeRaiseIssue"),
+    expect(
+        find.text(
+            "${kMimeTypeRaiseIssueStart}model/step+xml$kMimeTypeRaiseIssue"),
         findsOneWidget);
   });
 
@@ -80,11 +80,6 @@ void main() {
       ),
     );
 
-    expect(find.text("Audio playing $kMimeTypeRaiseIssue"), findsNothing);
-    expect(find.text("PDF viewing $kMimeTypeRaiseIssue"), findsNothing);
-    expect(find.text("Video playing $kMimeTypeRaiseIssue"), findsNothing);
-    expect(find.text("model/step+xml mimetype preview $kMimeTypeRaiseIssue"),
-        findsNothing);
     await tester.pumpAndSettle();
 
     expect(find.byType(Image), findsOneWidget);
