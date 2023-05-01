@@ -289,7 +289,7 @@ void main() {
     test('Testing getResponseBodyViewOptions for application/pdf', () {
       MediaType mediaType9 = MediaType("application", "pdf");
       var result9 = getResponseBodyViewOptions(mediaType9);
-      expect(result9.$0,kPreviewBodyViewOptions);
+      expect(result9.$0,kNoBodyViewOptions);
       expect(result9.$1, "pdf");
     });
      test('Testing getResponseBodyViewOptions for text/calendar', () {

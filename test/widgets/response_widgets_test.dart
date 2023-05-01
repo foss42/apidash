@@ -156,7 +156,9 @@ void main() {
       ),
     );
 
-    expect(find.text('Error: No Response Data Found. $kUnexpectedRaiseIssue'),
+    expect(
+        find.text(
+            'Error: Response data does not exist. $kUnexpectedRaiseIssue'),
         findsOneWidget);
   });
 
@@ -231,7 +233,7 @@ void main() {
       ),
     );
 
-    expect(find.text('Response body is empty. $kUnexpectedRaiseIssue'),
+    expect(find.text('Response body is missing (null). $kUnexpectedRaiseIssue'),
         findsOneWidget);
   });
 
@@ -258,7 +260,7 @@ void main() {
 
     expect(
         find.text(
-            'Unknown Response content type - ${responseModelNoHeaders.contentType}. $kUnexpectedRaiseIssue'),
+            'Unknown Response Content-Type - ${responseModelNoHeaders.contentType}. $kUnexpectedRaiseIssue'),
         findsOneWidget);
   });
 
@@ -285,8 +287,9 @@ void main() {
     //await Future.delayed(const Duration(seconds: 5));
     expect(
         find.text(
-            "Viewing response data of Content-Type\n'${responseModelOctet.mediaType?.mimeType}' $kMimeTypeRaiseIssue"),
+            "${kMimeTypeRaiseIssueStart}application/octet-stream$kMimeTypeRaiseIssue"),
         findsOneWidget);
+    expect(find.byIcon(Icons.download), findsOneWidget);
   });
 
   testWidgets('Testing Response Body for no formatted body', (tester) async {
@@ -334,8 +337,9 @@ void main() {
 
     expect(
         find.text(
-            "$kMimeTypeRaiseIssueStart'application/json' $kMimeTypeRaiseIssueEnd"),
+            "${kMimeTypeRawRaiseIssueStart}application/json$kMimeTypeRaiseIssue"),
         findsOneWidget);
+    expect(find.byIcon(Icons.download), findsOneWidget);
   });
 
   testWidgets('Testing Body Success for ResponseBodyView.raw', (tester) async {
@@ -357,6 +361,7 @@ void main() {
 
     await tester.pumpAndSettle();
     expect(find.text('Hello from API Dash'), findsOneWidget);
+    expect(find.byIcon(Icons.download), findsOneWidget);
   });
 
   testWidgets('Testing Body Success for ResponseBodyView.code', (tester) async {
