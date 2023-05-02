@@ -4,7 +4,7 @@ import 'package:window_size/window_size.dart' as window_size;
 import 'package:window_manager/window_manager.dart';
 import '../consts.dart';
 
-Future<void> setupInitialWindow(Size? sz) async {
+Future<void> setupInitialWindow({Size? sz}) async {
   if (kIsDesktop) {
     await window_size.getWindowInfo().then((window) {
       final screen = window.screen;
