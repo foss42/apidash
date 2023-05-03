@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:apidash/utils/utils.dart';
 import 'package:apidash/consts.dart';
 import "snackbars.dart";
@@ -159,6 +160,83 @@ class _SaveInDownloadsButtonState extends State<SaveInDownloadsButton> {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class RepoButton extends StatefulWidget {
+  const RepoButton({
+    super.key,
+    this.text,
+    this.icon,
+  });
+
+  final String? text;
+  final IconData? icon;
+
+  @override
+  State<RepoButton> createState() => _RepoButtonState();
+}
+
+class _RepoButtonState extends State<RepoButton> {
+  @override
+  Widget build(BuildContext context) {
+    var label = widget.text ?? "GitHub";
+    if (widget.icon == null) {
+      return FilledButton(
+        onPressed: () {
+          launchUrl(Uri.parse(kGitUrl));
+        },
+        child: Text(
+          label,
+          style: kTextStyleButton,
+        ),
+      );
+    }
+    return FilledButton.icon(
+      onPressed: () {
+        launchUrl(Uri.parse(kGitUrl));
+      },
+      icon: Icon(
+        widget.icon,
+        size: 20.0,
+      ),
+      label: Text(
+        label,
+        style: kTextStyleButton,
+      ),
+    );
+  }
+}
+
+class DiscordButton extends StatefulWidget {
+  const DiscordButton({
+    super.key,
+    this.text,
+  });
+
+  final String? text;
+
+  @override
+  State<DiscordButton> createState() => _DiscordButtonState();
+}
+
+class _DiscordButtonState extends State<DiscordButton> {
+  @override
+  Widget build(BuildContext context) {
+    var label = widget.text ?? 'Discord Server';
+    return FilledButton.icon(
+      onPressed: () {
+        launchUrl(Uri.parse(kDiscordUrl));
+      },
+      icon: const Icon(
+        Icons.discord,
+        size: 20.0,
+      ),
+      label: Text(
+        label,
+        style: kTextStyleButton,
       ),
     );
   }
