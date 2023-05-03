@@ -28,6 +28,8 @@ final StateNotifierProvider<CollectionStateNotifier, List<RequestModel>?>
 class CollectionStateNotifier extends StateNotifier<List<RequestModel>?> {
   CollectionStateNotifier(this.ref, this.hiveHandler) : super(null) {
     loadData();
+    Future.microtask(() =>
+        ref.read(activeIdStateProvider.notifier).update((s) => state?[0].id));
   }
 
   final Ref ref;
@@ -42,12 +44,14 @@ class CollectionStateNotifier extends StateNotifier<List<RequestModel>?> {
     return state![idx];
   }
 
-  String add() {
+  void add() {
     final newRequestModel = RequestModel(
       id: uuid.v1(),
     );
     state = [newRequestModel, ...state!];
-    return newRequestModel.id;
+    ref
+        .read(activeIdStateProvider.notifier)
+        .update((state) => newRequestModel.id);
   }
 
   void reorder(int oldIdx, int newIdx) {
@@ -56,11 +60,21 @@ class CollectionStateNotifier extends StateNotifier<List<RequestModel>?> {
   }
 
   void remove(String id) {
-    hiveHandler.delete(id);
+    int idx = idxOfId(id);
+    String? newId;
+    if (idx == 0 && state!.length > 1) {
+      newId = state![1].id;
+    } else if (state!.length > 2) {
+      newId = state![idx - 1].id;
+    } else {
+      newId = null;
+    }
+
     state = [
       for (final model in state!)
         if (model.id != id) model,
     ];
+    ref.read(activeIdStateProvider.notifier).update((state) => newId);
   }
 
   void duplicate(String id) {
@@ -146,16 +160,15 @@ class CollectionStateNotifier extends StateNotifier<List<RequestModel>?> {
     state = [];
   }
 
-  Future<void> loadData() async {
+  void loadData() {
     var ids = hiveHandler.getIds();
-    if (ids == null) {
+    if (ids == null || ids.length == 0) {
       state = [
         RequestModel(
           id: uuid.v1(),
         ),
       ];
     } else {
-      await hiveHandler.removeUnused();
       List<RequestModel> data = [];
       for (var id in ids) {
         var jsonModel = hiveHandler.getRequestModel(id);
@@ -175,5 +188,6 @@ class CollectionStateNotifier extends StateNotifier<List<RequestModel>?> {
     for (var e in state!) {
       await hiveHandler.setRequestModel(e.id, e.toJson());
     }
+    await hiveHandler.removeUnused();
   }
 }

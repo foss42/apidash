@@ -39,21 +39,6 @@ class _CollectionPaneState extends ConsumerState<CollectionPane> {
             alignment: WrapAlignment.spaceBetween,
             children: [
               TextButton.icon(
-                onPressed: () {
-                  ref
-                      .read(activeIdStateProvider.notifier)
-                      .update((state) => null);
-                },
-                icon: const Icon(
-                  Icons.home,
-                  size: 20,
-                ),
-                label: const Text(
-                  'Home',
-                  style: kTextStyleButton,
-                ),
-              ),
-              TextButton.icon(
                 onPressed: savingData
                     ? null
                     : () async {
@@ -82,11 +67,7 @@ class _CollectionPaneState extends ConsumerState<CollectionPane> {
               //const Spacer(),
               ElevatedButton(
                 onPressed: () {
-                  String newId =
-                      ref.read(collectionStateNotifierProvider.notifier).add();
-                  ref
-                      .read(activeIdStateProvider.notifier)
-                      .update((state) => newId);
+                  ref.read(collectionStateNotifierProvider.notifier).add();
                 },
                 child: const Text(
                   kLabelPlusNew,
@@ -205,7 +186,6 @@ class _RequestItemState extends ConsumerState<RequestItem> {
       },
       onMenuSelected: (RequestItemMenuOption item) {
         if (item == RequestItemMenuOption.delete) {
-          ref.read(activeIdStateProvider.notifier).update((state) => null);
           ref.read(collectionStateNotifierProvider.notifier).remove(widget.id);
         }
         if (item == RequestItemMenuOption.duplicate) {

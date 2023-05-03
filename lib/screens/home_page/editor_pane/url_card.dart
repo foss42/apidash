@@ -71,15 +71,15 @@ class _DropdownButtonHTTPMethodState
 
   @override
   Widget build(BuildContext context) {
-    final activeId = ref.watch(activeIdStateProvider);
     final method =
         ref.watch(activeRequestModelProvider.select((value) => value?.method));
     return DropdownButtonHttpMethod(
       method: method,
       onChanged: (HTTPVerb? value) {
+        final activeId = ref.read(activeRequestModelProvider)!.id;
         ref
             .read(collectionStateNotifierProvider.notifier)
-            .update(activeId!, method: value);
+            .update(activeId, method: value);
       },
     );
   }
