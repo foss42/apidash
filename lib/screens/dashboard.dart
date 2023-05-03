@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
+import 'package:apidash/consts.dart';
 import 'home_page/home_page.dart';
 import 'intro_page.dart';
-import 'package:apidash/consts.dart';
+import 'settings_page.dart';
 
 class Dashboard extends ConsumerStatefulWidget {
   const Dashboard({super.key});
@@ -36,15 +37,26 @@ class _DashboardState extends ConsumerState<Dashboard> {
                 child: Align(
                   alignment: Alignment.bottomCenter,
                   child: Padding(
-                    padding: const EdgeInsets.only(bottom: 8.0),
+                    padding: const EdgeInsets.only(bottom: 16.0),
                     child: TextButton(
-                      onPressed: () {
-                        ref
-                            .read(navRailIndexStateProvider.notifier)
-                            .update((state) => null);
-                      },
+                      style: (railIdx == null)
+                          ? TextButton.styleFrom(
+                              backgroundColor: Theme.of(context)
+                                  .colorScheme
+                                  .secondaryContainer,
+                            )
+                          : null,
+                      onPressed: (railIdx == null)
+                          ? null
+                          : () {
+                              ref
+                                  .read(navRailIndexStateProvider.notifier)
+                                  .update((state) => null);
+                            },
                       child: Icon(
-                        Icons.settings_outlined,
+                        (railIdx == null)
+                            ? Icons.settings
+                            : Icons.settings_outlined,
                         color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
@@ -71,7 +83,7 @@ class _DashboardState extends ConsumerState<Dashboard> {
             ),
             Expanded(
               child: <int?, Widget>{
-                null: const IntroPage(),
+                null: const SettingsPage(),
                 0: const IntroPage(),
                 1: const HomePage()
               }[railIdx]!,
