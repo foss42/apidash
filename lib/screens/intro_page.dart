@@ -1,27 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 
-class IntroPage extends ConsumerWidget {
+class IntroPage extends StatefulWidget {
   const IntroPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final isDarkMode =
-        ref.watch(settingsProvider.select((value) => value.isDark));
+  State<IntroPage> createState() => _IntroPageState();
+}
 
-    return Scaffold(
-      body: IntroMessage(
-        isDarkMode: isDarkMode,
-        onNew: () {
-          ref.read(collectionStateNotifierProvider.notifier).add();
-        },
-        onModeToggle: () async {
-          var mode = ref.read(settingsProvider).isDark;
-          await ref.read(settingsProvider.notifier).update(isDark: !mode);
-        },
-      ),
-    );
+class _IntroPageState extends State<IntroPage> {
+  @override
+  Widget build(BuildContext context) {
+    return const IntroMessage();
   }
 }
