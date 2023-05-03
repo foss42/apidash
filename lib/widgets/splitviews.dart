@@ -31,31 +31,22 @@ class DashboardSplitViewState extends State<DashboardSplitView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
+    return MultiSplitViewTheme(
+      data: MultiSplitViewThemeData(
+        dividerThickness: 3,
+        dividerPainter: DividerPainters.background(
+          color: Theme.of(context).colorScheme.surfaceVariant,
+          highlightedColor: Theme.of(context).colorScheme.outline.withOpacity(
+                kHintOpacity,
+              ),
+          animationEnabled: false,
+        ),
+      ),
+      child: MultiSplitView(
+        controller: _controller,
         children: [
-          Expanded(
-            child: MultiSplitViewTheme(
-              data: MultiSplitViewThemeData(
-                dividerThickness: 3,
-                dividerPainter: DividerPainters.background(
-                  color: Theme.of(context).colorScheme.surfaceVariant,
-                  highlightedColor:
-                      Theme.of(context).colorScheme.outline.withOpacity(
-                            kHintOpacity,
-                          ),
-                  animationEnabled: false,
-                ),
-              ),
-              child: MultiSplitView(
-                controller: _controller,
-                children: [
-                  widget.sidebarWidget,
-                  widget.mainWidget,
-                ],
-              ),
-            ),
-          ),
+          widget.sidebarWidget,
+          widget.mainWidget,
         ],
       ),
     );

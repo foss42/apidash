@@ -77,7 +77,7 @@ class _DashAppState extends ConsumerState<DashApp> {
         brightness: Brightness.dark,
       ),
       themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
-      home: const HomePage(),
+      home: const Dashboard(),
     );
   }
 }

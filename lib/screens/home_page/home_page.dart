@@ -13,9 +13,15 @@ class HomePage extends StatefulWidget {
 class HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    return const DashboardSplitView(
-      sidebarWidget: CollectionPane(),
-      mainWidget: RequestEditorPane(),
+    return Column(
+      children: const [
+        Expanded(
+          child: DashboardSplitView(
+            sidebarWidget: CollectionPane(),
+            mainWidget: RequestEditorPane(),
+          ),
+        ),
+      ],
     );
   }
 }
