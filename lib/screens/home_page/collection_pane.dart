@@ -42,15 +42,9 @@ class _CollectionPaneState extends ConsumerState<CollectionPane> {
                 onPressed: savingData
                     ? null
                     : () async {
-                        ref
-                            .read(saveDataStateProvider.notifier)
-                            .update((state) => true);
                         await ref
                             .read(collectionStateNotifierProvider.notifier)
                             .saveData();
-                        ref
-                            .read(saveDataStateProvider.notifier)
-                            .update((state) => false);
 
                         sm.hideCurrentSnackBar();
                         sm.showSnackBar(getSnackBar("Saved"));
