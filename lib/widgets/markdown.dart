@@ -23,10 +23,6 @@ class _CustomMarkdownState extends State<CustomMarkdown> {
     );
     return Markdown(
       styleSheet: mdStyleSheet,
-      padding: const EdgeInsets.symmetric(
-        vertical: 40,
-        horizontal: 60,
-      ),
       data: widget.data,
       selectable: true,
       extensionSet: md.ExtensionSet.gitHubFlavored,
