@@ -79,6 +79,7 @@ class _SidebarRequestCardState extends State<SidebarRequestCard> {
                 Expanded(
                   child: inEditMode
                       ? TextFormField(
+                          key: Key("${widget.id}-name"),
                           initialValue: widget.name,
                           autofocus: true,
                           style: Theme.of(context).textTheme.bodyMedium,
