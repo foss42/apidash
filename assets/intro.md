@@ -2,9 +2,17 @@
 
 #br
 
-API Dash is a beautiful open-source cross-platform API Client built using Flutter which can help you easily create & customize your API requests, visually inspect responses and generate Dart code on the go.
+Using API Dash, you can easily create & customize your API requests, visually inspect responses and generate Dart code on the go.
 
 Please support this project by giving us a ~`Star on GitHub`~
+
+#br
+
+## What's new in this release?
+
+#br
+
+View full changelog [here](https://github.com/foss42/api-dash/blob/main/CHANGELOG.md).
 
 #br
 
