@@ -6,13 +6,51 @@
 
 API Dash is a beautiful open-source cross-platform API Client that can help you easily create & customize your API requests, visually inspect responses and generate Dart code on the go.
 
-![OG_v2](https://user-images.githubusercontent.com/1382619/226843161-a70bd080-8565-4513-a8f2-21927ecd50bf.png)
+![OG_v2]()
 
-## Download
+## Download (v0.1.0)
 API Dash is available for Mac and Windows currently, and can be downloaded from the links below:
 - MacOS (Universal build - Apple Silicon & Intel) - [Download Link](https://bit.ly/3nnS6VE) & [Installation Instructions](https://github.com/foss42/api-dash/blob/main/INSTALLATION.md#macos)
 - Windows (64-bit) - [Download Link](https://bit.ly/3FTXHt8) & [Installation Instructions](https://github.com/foss42/api-dash/blob/main/INSTALLATION.md#windows)
 - Linux - Please upvote & subscribe to this [issue](https://github.com/foss42/api-dash/issues/1)
+
+## What's new in v0.2.0?
+
+### 1. Brand new UI
+
+We have revamped the UI to provide a better user experience along with a new settings screen.
+
+https://user-images.githubusercontent.com/615622/236213480-8094cdac-a599-4106-a523-3725315688e5.mp4
+
+### 2. Dark Mode Support
+
+https://user-images.githubusercontent.com/615622/236202915-fbeeca4e-5108-41da-858a-1b7ba2b4f579.mov
+
+### 3. Emoji support
+
+You can now easily send text content with emojis and preview any API response containing emojis.
+
+![Emoji](https://user-images.githubusercontent.com/615622/236203297-31bc0381-91be-4c7c-8ace-c17aeec061ad.png)
+
+### 4. Rename any request
+
+Just double-click on it and enter the name.
+
+https://user-images.githubusercontent.com/615622/236203140-54088e4f-84ec-4280-b4cd-334eb7b549e1.mov
+
+### 5. Save response body of any mimetype
+
+You can now save response body of any mimetype (image, text, etc.) directly in the Downloads folder by clicking on the Download button.
+
+<p align="center">
+<img width="516" alt="light-download" src="https://user-images.githubusercontent.com/615622/236203401-754da8d1-291f-492d-b870-eb1fb36372f7.png">
+</p>
+
+6. Window size and position is persisted and the configuration is restored on app start.
+7. Notification on save, download and any other user action (UX improvement).
+8. Linux builds are now available for API Dash (.deb & .rpm).
+
+.. and various bug fixes & performance improvements.
 
 ## Features of API Dash
 
