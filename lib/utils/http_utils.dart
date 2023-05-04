@@ -53,7 +53,11 @@ MediaType? getMediaTypeFromHeaders(Map? headers) {
   return (null, false);
 }
 
-(Uri?, String?) getValidRequestUri(String? url, List<KVRow>? requestParams) {
+(Uri?, String?) getValidRequestUri(
+  String? url, 
+  List<KVRow>? requestParams, 
+  String defaultUriScheme
+) {
   url = url?.trim();
   if(url == null || url == ""){
     return (null, "URL is missing!");
@@ -70,7 +74,7 @@ MediaType? getMediaTypeFromHeaders(Map? headers) {
     }
   }
   else {
-    url = "$kDefaultUriScheme://$url";
+    url = "$defaultUriScheme://$url";
   }
 
   uri =  Uri.parse(url);

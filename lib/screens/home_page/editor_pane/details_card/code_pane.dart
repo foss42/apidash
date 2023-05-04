@@ -23,7 +23,9 @@ class _CodePaneState extends ConsumerState<CodePane> {
   @override
   Widget build(BuildContext context) {
     final activeRequestModel = ref.watch(activeRequestModelProvider);
-    final code = dartHttpCodeGen.getCode(activeRequestModel!);
+    final defaultUriScheme =
+        ref.watch(settingsProvider.select((value) => value.defaultUriScheme));
+    final code = dartHttpCodeGen.getCode(activeRequestModel!, defaultUriScheme);
     if (code == null) {
       return const ErrorMessage(
         message: "An error was encountered while generating code. $kRaiseIssue",

@@ -67,7 +67,10 @@ void main() async {
 }
 """;
 
-  String? getCode(RequestModel requestModel) {
+  String? getCode(
+    RequestModel requestModel,
+    String defaultUriScheme,
+  ) {
     try {
       String result = "";
       bool hasHeaders = false;
@@ -75,7 +78,7 @@ void main() async {
 
       String url = requestModel.url;
       if (!url.contains("://") && url.isNotEmpty) {
-        url = "$kDefaultUriScheme://$url";
+        url = "$defaultUriScheme://$url";
       }
       var templateUrl = jj.Template(kTemplateUrl);
       result += templateUrl.render({"url": url});

@@ -6,9 +6,13 @@ import 'package:apidash/utils/utils.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
 
-Future<(http.Response?, Duration?, String?)> request(RequestModel requestModel) async {
+Future<(http.Response?, Duration?, String?)> request(
+  RequestModel requestModel, 
+  String defaultUriScheme,
+) async {
   (Uri?, String?) uriRec = getValidRequestUri(requestModel.url, 
-                                           requestModel.requestParams);
+                                           requestModel.requestParams,
+                                           defaultUriScheme);
   if(uriRec.$0 != null){
     Uri requestUrl = uriRec.$0!;
     Map<String, String> headers = rowsToMap(requestModel.requestHeaders) ?? {};

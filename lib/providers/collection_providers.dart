@@ -1,10 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:apidash/providers/providers.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/services/services.dart'
     show hiveHandler, HiveHandler, request;
 import 'package:apidash/utils/utils.dart' show uuid;
 import 'package:apidash/consts.dart';
-import 'ui_providers.dart';
 
 final activeRequestModelProvider = StateProvider<RequestModel?>((ref) {
   final activeId = ref.watch(activeIdStateProvider);
@@ -125,9 +125,11 @@ class CollectionStateNotifier extends StateNotifier<List<RequestModel>?> {
   Future<void> sendRequest(String id) async {
     ref.read(sentRequestIdStateProvider.notifier).update((state) => id);
     ref.read(codePaneVisibleStateProvider.notifier).update((state) => false);
+    final defaultUriScheme =
+        ref.read(settingsProvider.select((value) => value.defaultUriScheme));
     final idx = idxOfId(id);
     RequestModel requestModel = getRequestModel(id);
-    var responseRec = await request(requestModel);
+    var responseRec = await request(requestModel, defaultUriScheme);
     late final RequestModel newRequestModel;
     if (responseRec.$0 == null) {
       newRequestModel = requestModel.copyWith(
