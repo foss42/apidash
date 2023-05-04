@@ -14,7 +14,7 @@ API Dash is available for Mac and Windows currently, and can be downloaded from 
 - Windows (64-bit) - [Download Link](https://bit.ly/3FTXHt8) & [Installation Instructions](https://github.com/foss42/api-dash/blob/main/INSTALLATION.md#windows)
 - Linux - Please upvote & subscribe to this [issue](https://github.com/foss42/api-dash/issues/1)
 
-## What's new in v0.2.0?
+## What's new in v0.2.0? (Coming Soon)
 
 ### 1. Brand new UI
 
