@@ -10,10 +10,11 @@ API Dash is a beautiful open-source cross-platform API Client that can help you 
 
 ## Download
 API Dash is available for Mac and Windows currently, and can be downloaded from the links below:
-- MacOS Universal build for Apple Silicon & Intel Chips ([Installation Instructions](https://github.com/foss42/api-dash/blob/main/INSTALLATION.md#macos)) - [Download Link](https://bit.ly/3nnS6VE)
-- Windows 64-bit ([Installation Instructions](https://github.com/foss42/api-dash/blob/main/INSTALLATION.md#windows)) - [Download Link](https://bit.ly/3FTXHt8)
+- MacOS Universal build for Apple Silicon & Intel Chips ([Installation Instructions](https://github.com/foss42/api-dash/blob/main/INSTALLATION.md#macos)) - [Download Link](https://bit.ly/44wmazf)
+- Windows 64-bit ([Installation Instructions](https://github.com/foss42/api-dash/blob/main/INSTALLATION.md#windows)) - [Download Link](https://bit.ly/424ExKb)
+- Linux ([Installation Instructions](https://github.com/foss42/api-dash/blob/main/INSTALLATION.md#linux)) -  `.deb` ([amd64](https://bit.ly/44sWPq2), [arm64](https://bit.ly/3pdVgvP)) & `.rpm` ([x86_64](https://bit.ly/417gWHe), [aarch64](https://bit.ly/3LWdJWV))  
 
-## What's new in v0.2.0? (Coming Soon)
+## What's new in v0.2.0?
 
 ### 1. Brand new UI
 
@@ -48,8 +49,6 @@ You can now save response body of any mimetype (image, text, etc.) directly in t
 6. Window size and position is persisted and the configuration is restored on app start.
 7. Notification on save, download and any other user action (UX improvement).
 8. Linux builds are now available for API Dash (.deb & .rpm).
-
-.. and various bug fixes & performance improvements.
 
 ## Features of API Dash
 
