@@ -13,7 +13,7 @@ class _IntroPageState extends State<IntroPage> {
   @override
   Widget build(BuildContext context) {
     return const Padding(
-      padding: kPh60v40,
+      padding: kPh60,
       child: IntroMessage(),
     );
   }

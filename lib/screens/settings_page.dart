@@ -23,7 +23,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
         Container(
           constraints: const BoxConstraints(maxWidth: 800),
           child: ListView(
-            padding: kPh20v40,
+            padding: kPh20t40,
             shrinkWrap: true,
             children: [
               Text("Settings",

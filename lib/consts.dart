@@ -58,14 +58,12 @@ const kP10 = EdgeInsets.all(10);
 const kPt24o8 = EdgeInsets.only(top: 24, left: 8.0, right: 8.0, bottom: 8.0);
 const kPt5o10 =
     EdgeInsets.only(left: 10.0, right: 10.0, top: 5.0, bottom: 10.0);
-const kPh20v40 = EdgeInsets.symmetric(
-  horizontal: 20,
-  vertical: 40,
+const kPh20t40 = EdgeInsets.only(
+  left: 20,
+  right: 20,
+  top: 40,
 );
-const kPh60v40 = EdgeInsets.symmetric(
-  horizontal: 60,
-  vertical: 40,
-);
+const kPh60 = EdgeInsets.symmetric(horizontal: 60);
 
 const kHSpacer5 = SizedBox(width: 5);
 const kHSpacer10 = SizedBox(width: 10);
