@@ -22,7 +22,13 @@ class _IntroMessageState extends State<IntroMessage> {
       builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
         if ((snapshot.connectionState == ConnectionState.done) &&
             snapshot.hasData) {
-          return CustomMarkdown(data: snapshot.data!);
+          String text = snapshot.data!;
+          if (Theme.of(context).brightness == Brightness.dark) {
+            text = text.replaceAll("{{mode}}", "dark");
+          } else {
+            text = text.replaceAll("{{mode}}", "light");
+          }
+          return CustomMarkdown(data: text);
         }
         if (snapshot.hasError) {
           return const ErrorMessage(message: "An error occured");
