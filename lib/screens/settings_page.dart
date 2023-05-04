@@ -18,12 +18,12 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     final clearingData = ref.watch(clearDataStateProvider);
     var sm = ScaffoldMessenger.of(context);
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Container(
           constraints: const BoxConstraints(maxWidth: 800),
           child: ListView(
-            padding: kPh60v40,
+            padding: kPh20v40,
             shrinkWrap: true,
             children: [
               Text("Settings",
