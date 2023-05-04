@@ -83,18 +83,45 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                       backgroundColor: settings.isDark
                           ? kColorDarkDanger
                           : kColorLightDanger,
-                      surfaceTintColor: Colors.red,
+                      surfaceTintColor: kColorRed,
                       foregroundColor: Theme.of(context).colorScheme.onPrimary),
                   onPressed: clearingData
                       ? null
-                      : () async {
-                          await ref
-                              .read(collectionStateNotifierProvider.notifier)
-                              .clearData();
+                      : () => showDialog<String>(
+                            context: context,
+                            builder: (BuildContext context) => AlertDialog(
+                              title: const Text('Clear Data'),
+                              content: const Text(
+                                  'This action will clear all the requests data from the disk and is irreversible. Do you want to proceed?'),
+                              actions: <Widget>[
+                                TextButton(
+                                  onPressed: () =>
+                                      Navigator.pop(context, 'Cancel'),
+                                  child: const Text('Cancel'),
+                                ),
+                                TextButton(
+                                  onPressed: () async {
+                                    Navigator.pop(context, 'Yes');
+                                    await ref
+                                        .read(collectionStateNotifierProvider
+                                            .notifier)
+                                        .clearData();
 
-                          sm.hideCurrentSnackBar();
-                          sm.showSnackBar(getSnackBar("Requests Data Cleared"));
-                        },
+                                    sm.hideCurrentSnackBar();
+                                    sm.showSnackBar(
+                                        getSnackBar("Requests Data Cleared"));
+                                  },
+                                  child: Text(
+                                    'Yes',
+                                    style: kTextStyleButton.copyWith(
+                                        color: settings.isDark
+                                            ? kColorDarkDanger
+                                            : kColorLightDanger),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                   child: const Text("Clear Data"),
                 ),
               ),

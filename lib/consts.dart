@@ -20,6 +20,7 @@ final kColorTransparentState =
     MaterialStateProperty.all<Color>(Colors.transparent);
 const kColorTransparent = Colors.transparent;
 const kColorWhite = Colors.white;
+const kColorRed = Colors.red;
 final kColorLightDanger = Colors.red.withOpacity(0.9);
 const kColorDarkDanger = Color(0xffcf6679);
 
