@@ -43,13 +43,6 @@ Using API Dash, you can easily create & customize your API requests, visually in
 .. and various bug fixes & performance improvements. View full changelog [here](https://github.com/foss42/api-dash/blob/main/CHANGELOG.md).
 
 #br
-
-## Getting Started
-
-#br
-
-Try out this live example 
-
 #br
 
 ## Support Channel
@@ -65,3 +58,10 @@ Join our ~`Discord Server`~ and drop a message in the #foss channel.
 #br
 
 Just raise an issue in our ~`Github Repo`~
+
+#br
+#br
+#br
+#br
+#br
+#br
