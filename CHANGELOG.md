@@ -6,23 +6,23 @@ The following features were added in this release:
 
 1. A brand new UI with Settings.
 
-![UI](resource:assets/intro/{{mode}}-ui.png)
+<img width="1012" alt="light-ui" src="https://user-images.githubusercontent.com/615622/236202665-37f9193f-9e7d-4a0e-a9e1-cba198b8a22a.png">
 
 2. Dark Mode Support
 
-![Dark Mode](resource:assets/intro/{{mode}}-darkmode.gif)
+https://user-images.githubusercontent.com/615622/236202915-fbeeca4e-5108-41da-858a-1b7ba2b4f579.mov
 
 3. You can now rename any request. Just double-click on it and enter the name.
 
-![Rename Request](resource:assets/intro/{{mode}}-rename.gif)
+https://user-images.githubusercontent.com/615622/236203140-54088e4f-84ec-4280-b4cd-334eb7b549e1.mov
 
 4. Emoji support across the app. You can now easily send text content with emojis and preview any API response containing emojis.
 
-![Emoji Support](resource:assets/intro/{{mode}}-emoji.png)
+<img width="1012" alt="light-emoji" src="https://user-images.githubusercontent.com/615622/236203297-31bc0381-91be-4c7c-8ace-c17aeec061ad.png">
 
 5. You can now save response body of any mimetype (image, text, etc.) directly in the Downloads folder by clicking on the Download button.
 
-![Save Response Body](resource:assets/intro/{{mode}}-download.png)
+<img width="516" alt="light-download" src="https://user-images.githubusercontent.com/615622/236203401-754da8d1-291f-492d-b870-eb1fb36372f7.png">
 
 6. Window size and position is persisted and the configuration is restored on app start.
 7. Notification on save, download and any other user action (UX improvement).
