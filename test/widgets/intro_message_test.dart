@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:apidash/widgets/intro_message.dart';
-import 'package:apidash/consts.dart';
 
 void main() {
   testWidgets('Testing Intro Message', (tester) async {
@@ -9,16 +8,13 @@ void main() {
       const MaterialApp(
         title: 'Intro Message',
         home: Scaffold(
-          body: IntroMessage(isDarkMode: false),
+          body: IntroMessage(),
         ),
       ),
     );
 
-    expect(find.byType(Padding), findsAtLeastNWidgets(1));
-    expect(find.byType(Expanded), findsAtLeastNWidgets(1));
-    expect(find.byType(ListView), findsOneWidget);
+    await tester.pumpAndSettle();
     expect(find.text('Welcome to API Dash ⚡️'), findsOneWidget);
-    expect(find.text(kIntro), findsOneWidget);
     expect(find.text('Getting Started'), findsOneWidget);
 
     expect(find.byType(RichText), findsAtLeastNWidgets(1));
