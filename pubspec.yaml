@@ -46,3 +46,4 @@ flutter:
   assets:
     - google_fonts/
     - assets/
+    - assets/intro/
