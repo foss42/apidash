@@ -188,10 +188,15 @@ class CollectionStateNotifier extends StateNotifier<List<RequestModel>?> {
   }
 
   Future<void> saveData() async {
+    final saveResponse =
+        ref.read(settingsProvider.select((value) => value.saveResponses));
     final ids = getIds();
     await hiveHandler.setIds(ids);
     for (var e in state!) {
-      await hiveHandler.setRequestModel(e.id, e.toJson());
+      await hiveHandler.setRequestModel(
+        e.id,
+        e.toJson(includeResponse: saveResponse),
+      );
     }
     await hiveHandler.removeUnused();
   }

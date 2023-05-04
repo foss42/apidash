@@ -139,7 +139,7 @@ class RequestModel {
     );
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toJson({bool includeResponse = true}) {
     return {
       "id": id,
       "method": method.name,
@@ -150,9 +150,9 @@ class RequestModel {
       "requestParams": rowsToMap(requestParams),
       "requestBodyContentType": requestBodyContentType.name,
       "requestBody": requestBody,
-      "responseStatus": responseStatus,
-      "message": message,
-      "responseModel": responseModel?.toJson(),
+      "responseStatus": includeResponse ? responseStatus : null,
+      "message": includeResponse ? message : null,
+      "responseModel": includeResponse ? responseModel?.toJson() : null,
     };
   }
 

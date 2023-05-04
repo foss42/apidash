@@ -64,8 +64,8 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
               CheckboxListTile(
                 contentPadding: EdgeInsets.zero,
                 title: const Text("Save Responses"),
-                subtitle: const Text(
-                    "Saves disk space & clears all previous responses on App start"),
+                subtitle:
+                    const Text("Save disk space by not storing API responses"),
                 value: settings.saveResponses,
                 onChanged: (value) {
                   ref
