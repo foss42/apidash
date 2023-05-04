@@ -37,8 +37,8 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
     final activeId = ref.watch(activeIdStateProvider);
     final length = ref.watch(activeRequestModelProvider
         .select((value) => value?.requestParams?.length));
-    rows = ref.read(activeRequestModelProvider)?.requestParams ??
-        [const KVRow("", "")];
+    var rP = ref.read(activeRequestModelProvider)?.requestParams;
+    rows = (rP == null || rP.isEmpty) ? [const KVRow("", "")] : rP;
 
     DaviModel<KVRow> model = DaviModel<KVRow>(
       rows: rows,

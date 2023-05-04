@@ -36,8 +36,9 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
     final activeId = ref.watch(activeIdStateProvider);
     final length = ref.watch(activeRequestModelProvider
         .select((value) => value?.requestHeaders?.length));
-    rows = ref.read(activeRequestModelProvider)?.requestHeaders ??
-        [const KVRow("", "")];
+    var rH = ref.read(activeRequestModelProvider)?.requestHeaders;
+    rows = (rH == null || rH.isEmpty) ? [const KVRow("", "")] : rH;
+
     DaviModel<KVRow> model = DaviModel<KVRow>(
       rows: rows,
       columns: [
