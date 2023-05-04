@@ -56,7 +56,7 @@ MediaType? getMediaTypeFromHeaders(Map? headers) {
 (Uri?, String?) getValidRequestUri(
   String? url, 
   List<KVRow>? requestParams, 
-  String defaultUriScheme
+  {String defaultUriScheme = kDefaultUriScheme}
 ) {
   url = url?.trim();
   if(url == null || url == ""){

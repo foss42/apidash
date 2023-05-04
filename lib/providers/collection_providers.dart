@@ -129,7 +129,8 @@ class CollectionStateNotifier extends StateNotifier<List<RequestModel>?> {
         ref.read(settingsProvider.select((value) => value.defaultUriScheme));
     final idx = idxOfId(id);
     RequestModel requestModel = getRequestModel(id);
-    var responseRec = await request(requestModel, defaultUriScheme);
+    var responseRec =
+        await request(requestModel, defaultUriScheme: defaultUriScheme);
     late final RequestModel newRequestModel;
     if (responseRec.$0 == null) {
       newRequestModel = requestModel.copyWith(

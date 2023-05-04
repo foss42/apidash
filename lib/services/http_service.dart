@@ -8,11 +8,11 @@ import 'package:apidash/consts.dart';
 
 Future<(http.Response?, Duration?, String?)> request(
   RequestModel requestModel, 
-  String defaultUriScheme,
+  {String defaultUriScheme = kDefaultUriScheme}
 ) async {
   (Uri?, String?) uriRec = getValidRequestUri(requestModel.url, 
                                            requestModel.requestParams,
-                                           defaultUriScheme);
+                                           defaultUriScheme: defaultUriScheme);
   if(uriRec.$0 != null){
     Uri requestUrl = uriRec.$0!;
     Map<String, String> headers = rowsToMap(requestModel.requestHeaders) ?? {};
