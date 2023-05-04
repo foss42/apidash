@@ -20,7 +20,7 @@ API Dash is available for Mac and Windows currently, and can be downloaded from 
 
 We have revamped the UI to provide a better user experience along with a new settings screen.
 
-https://user-images.githubusercontent.com/615622/236213480-8094cdac-a599-4106-a523-3725315688e5.mp4
+https://user-images.githubusercontent.com/615622/236214993-e7818697-4f1d-4759-9a66-66e5ed64fa58.mp4
 
 ### 2. Dark Mode Support
 
