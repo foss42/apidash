@@ -20,6 +20,8 @@ final kColorTransparentState =
     MaterialStateProperty.all<Color>(Colors.transparent);
 const kColorTransparent = Colors.transparent;
 const kColorWhite = Colors.white;
+final kColorLightDanger = Colors.red.withOpacity(0.9);
+const kColorDarkDanger = Color(0xffcf6679);
 
 const kWindowTitle = "API Dash";
 const kMinWindowSize = Size(900, 600);
@@ -55,6 +57,10 @@ const kP10 = EdgeInsets.all(10);
 const kPt24o8 = EdgeInsets.only(top: 24, left: 8.0, right: 8.0, bottom: 8.0);
 const kPt5o10 =
     EdgeInsets.only(left: 10.0, right: 10.0, top: 5.0, bottom: 10.0);
+const kPh60v40 = EdgeInsets.symmetric(
+  horizontal: 60,
+  vertical: 40,
+);
 
 const kHSpacer5 = SizedBox(width: 5);
 const kHSpacer10 = SizedBox(width: 10);
@@ -89,13 +95,13 @@ const kTableThemeData = DaviThemeData(
 const kIconRemoveDark = Icon(
   Icons.remove_circle,
   size: 16,
-  color: Color(0xffcf6679),
+  color: kColorDarkDanger,
 );
 
 final kIconRemoveLight = Icon(
   Icons.remove_circle,
   size: 16,
-  color: Colors.red.withOpacity(0.9),
+  color: kColorLightDanger,
 );
 
 const kCodePreviewLinesLimit = 500;
@@ -400,9 +406,6 @@ const kResponseCodeReasons = {
   510: 'Not Extended',
   511: 'Network Authentication Required',
 };
-
-const kIntro =
-    """API Dash is a beautiful open-source cross-platform API Client built using Flutter which can help you easily create & customize your API requests, visually inspect responses and generate Dart code on the go.""";
 
 const kMimeTypeRawRaiseIssueStart =
     "Please click on 'Raw' to view the unformatted raw results as the response preview for Content-Type ";

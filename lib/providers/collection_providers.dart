@@ -156,7 +156,10 @@ class CollectionStateNotifier extends StateNotifier<List<RequestModel>?> {
   }
 
   Future<void> clearData() async {
+    ref.read(clearDataStateProvider.notifier).update((state) => true);
+    ref.read(activeIdStateProvider.notifier).update((state) => null);
     await hiveHandler.clear();
+    ref.read(clearDataStateProvider.notifier).update((state) => false);
     state = [];
   }
 
