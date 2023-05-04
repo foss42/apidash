@@ -1,5 +1,34 @@
 # API Dash ⚡️ Changelog
 
+## v0.2.0 [04-05-2023]
+
+The following features were added in this release:
+
+1. A brand new UI with Settings.
+
+![UI](resource:assets/intro/{{mode}}-ui.png)
+
+2. Dark Mode Support
+
+![Dark Mode](resource:assets/intro/{{mode}}-darkmode.gif)
+
+3. You can now rename any request. Just double-click on it and enter the name.
+
+![Rename Request](resource:assets/intro/{{mode}}-rename.gif)
+
+4. Emoji support across the app. You can now easily send text content with emojis and preview any API response containing emojis.
+
+![Emoji Support](resource:assets/intro/{{mode}}-emoji.png)
+
+5. You can now save response body of any mimetype (image, text, etc.) directly in the Downloads folder by clicking on the Download button.
+
+![Save Response Body](resource:assets/intro/{{mode}}-download.png)
+
+6. Window size and position is persisted and the configuration is restored on app start.
+7. Notification on save, download and any other user action (UX improvement).
+8. Linux builds are now available for API Dash (.deb & .rpm)
+
+.. and various bug fixes & performance improvements.
 
 ## v0.1.0 [27-03-2023]
 
