@@ -42,4 +42,46 @@ Note: The next step has to be performed twice so that macOS adds the app to whit
 
 **Step 10** - This process has to be followed only once and from the next time you can directly launch the API Dash App from the Launchpad.
 
+## Linux
 
+### Debian-based Linux Distributions (Debian, Ubuntu, Linux Mint, etc.)
+
+Download the `.deb` file from the latest release (link) corresponding to you CPU architecture (x64/amd64 or arm64).
+
+`cd` to the Downloads folder and execute the following command to install API Dash.
+
+```
+sudo apt install ./apidash-<fullname>.deb
+```
+
+or
+
+```
+sudo dpkg -i apidash-<fullname>.deb
+```
+
+Launch API Dash via `apidash` command or by clicking on the API Dash app icon.
+
+### Red Hat-based Linux Distributions (Fedora, Rocky, AlmaLinux, CentOS, RHEL, etc.)
+
+Download the `.rpm` file from the latest release (link) corresponding to you CPU architecture (x86_64 or aarch64/arm64).
+
+`cd` to the Downloads folder and execute the following command to install API Dash.
+
+```
+sudo dnf localinstall ./apidash-<fullname>.rpm
+```
+
+or
+
+```
+sudo rpm -i apidash-<fullname>.rpm
+```
+
+or
+
+```
+sudo yum localinstall ./apidash-<fullname>.rpm
+```
+
+Launch API Dash via `apidash` command or by clicking on the API Dash app icon.
