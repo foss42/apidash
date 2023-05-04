@@ -1,6 +1,6 @@
 # API Dash ⚡️ Changelog
 
-## v0.2.0 [04-05-2023]
+## v0.2.0 [05-05-2023]
 
 The following features were added in this release:
 
