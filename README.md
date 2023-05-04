@@ -6,7 +6,7 @@
 
 API Dash is a beautiful open-source cross-platform API Client that can help you easily create & customize your API requests, visually inspect responses and generate Dart code on the go.
 
-![OG_v2]()
+![API Dash](https://user-images.githubusercontent.com/615622/236290563-872588da-5093-46f7-a4f4-0ad12a0da6ae.png)
 
 ## Download
 API Dash is available for Mac and Windows currently, and can be downloaded from the links below:
