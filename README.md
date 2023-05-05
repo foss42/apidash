@@ -25,21 +25,21 @@ API Dash can be downloaded from the links below:
         <tr>
             <td>macOS</td>
           <td><code>.dmg</code></td>
-            <td><a href="https://github.com/foss42/api-dash/blob/main/INSTALLATION.md#macos" target="_blank">Link</a></td>
+            <td><a href="https://github.com/foss42/api-dash/blob/main/INSTALLATION.md#macos">Link</a></td>
             <td>Apple Silicon & Intel</td>
             <td><a href="https://bit.ly/44wmazf">Link</a></td>
         </tr>
         <tr>
             <td>Windows</td>
             <td><code>.exe</code></td>
-            <td><a href="https://github.com/foss42/api-dash/blob/main/INSTALLATION.md#windows" target="_blank">Link</a></td>
+            <td><a href="https://github.com/foss42/api-dash/blob/main/INSTALLATION.md#windows">Link</a></td>
             <td>64-bit</td>
             <td><a href="https://bit.ly/424ExKb">Link</a></td>
         </tr>
         <tr>
             <td rowspan=4>Linux</td>
             <td rowspan=2><code>.deb</code></td>          
-            <td rowspan=2><a href="https://github.com/foss42/api-dash/blob/main/INSTALLATION.md#debian-based-linux-distributions-debian-ubuntu-linux-mint-etc" target="_blank">Link</a></td>
+            <td rowspan=2><a href="https://github.com/foss42/api-dash/blob/main/INSTALLATION.md#debian-based-linux-distributions-debian-ubuntu-linux-mint-etc">Link</a></td>
             <td>amd64</td>
             <td><a href="https://bit.ly/44sWPq2">Link</a></td>
         </tr>
@@ -49,7 +49,7 @@ API Dash can be downloaded from the links below:
         </tr>
         <tr>
             <td rowspan=2><code>.rpm</code></td>
-            <td rowspan=2><a href="https://github.com/foss42/api-dash/blob/main/INSTALLATION.md#red-hat-based-linux-distributions-fedora-rocky-almalinux-centos-rhel-etc" target="_blank">Link</a></td>
+            <td rowspan=2><a href="https://github.com/foss42/api-dash/blob/main/INSTALLATION.md#red-hat-based-linux-distributions-fedora-rocky-almalinux-centos-rhel-etc">Link</a></td>
             <td>x86_64</td>
             <td><a href="https://bit.ly/417gWHe">Link</a></td>
         </tr>
