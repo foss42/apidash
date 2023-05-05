@@ -24,7 +24,7 @@ https://user-images.githubusercontent.com/615622/236203140-54088e4f-84ec-4280-b4
 
 <img width="516" alt="light-download" src="https://user-images.githubusercontent.com/615622/236203401-754da8d1-291f-492d-b870-eb1fb36372f7.png">
 
-6. Window size and position is persisted and the configuration is restored on app start.
+6. Window size and position is persisted and the configuration is restored on app start. (Only macOS & Windows)
 7. Notification on save, download and any other user action (UX improvement).
 8. Linux builds are now available for API Dash (.deb & .rpm)
 

@@ -56,7 +56,7 @@ You can now save response body of any mimetype (image, text, etc.) directly in t
 <img width="516" alt="light-download" src="https://user-images.githubusercontent.com/615622/236203401-754da8d1-291f-492d-b870-eb1fb36372f7.png">
 </p>
 
-6. Window size and position is persisted and the configuration is restored on app start.
+6. Window size and position is persisted and the configuration is restored on app start. (Only macOS & Windows)
 7. Notification on save, download and any other user action (UX improvement).
 8. Linux builds are now available for API Dash (.deb & .rpm).
 
