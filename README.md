@@ -18,7 +18,7 @@ API Dash can be downloaded from the links below:
             <th>Distribution</th>
             <th>Installation Guide</th>
             <th>CPU/Architecture</th>
-            <th>Link</th>
+            <th>Download Link</th>
         </tr>
     </thead>
     <tbody>
