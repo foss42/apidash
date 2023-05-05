@@ -1,13 +1,13 @@
 # Installation Instructions
 
 ## Windows 
-Download the latest Windows Installer (64 bit) from here - [Link](https://github.com/foss42/api-dash/releases/download/v0.1.0/api_dash_windows_x64.exe)
+Download the latest Windows Installer (64 bit) from [here](https://github.com/foss42/api-dash/releases/latest)
 
 To install it, simply double click on the installer and follow the step by step installation wizard.
 
 ## MacOS
 
-Download the latest MacOS Installer (Universal - Intel and Apple Silicon) from here - [Link](https://github.com/foss42/api-dash/releases/download/v0.1.0/api_dash_macos.dmg)
+Download the latest MacOS Installer (Universal - Intel and Apple Silicon) from [here](https://github.com/foss42/api-dash/releases/latest)
 
 **As this app is distributed outside the App Store you have to follow the following instructions to setup and run it only for the first time.**
 
@@ -46,7 +46,7 @@ Note: The next step has to be performed twice so that macOS adds the app to whit
 
 ### Debian-based Linux Distributions (Debian, Ubuntu, Linux Mint, etc.)
 
-Download the `.deb` file from the latest release (link) corresponding to you CPU architecture (x64/amd64 or arm64).
+Download the `.deb` file from the [latest release](https://github.com/foss42/api-dash/releases/latest) corresponding to you CPU architecture (x64/amd64 or arm64).
 
 `cd` to the Downloads folder and execute the following command to install API Dash.
 
@@ -64,7 +64,7 @@ Launch API Dash via `apidash` command or by clicking on the API Dash app icon.
 
 ### Red Hat-based Linux Distributions (Fedora, Rocky, AlmaLinux, CentOS, RHEL, etc.)
 
-Download the `.rpm` file from the latest release (link) corresponding to you CPU architecture (x86_64 or aarch64/arm64).
+Download the `.rpm` file from the [latest release](https://github.com/foss42/api-dash/releases/latest) corresponding to you CPU architecture (x86_64 or aarch64/arm64).
 
 `cd` to the Downloads folder and execute the following command to install API Dash.
 
