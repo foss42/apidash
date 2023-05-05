@@ -9,10 +9,57 @@ API Dash is a beautiful open-source cross-platform API Client that can help you 
 ![API Dash](https://user-images.githubusercontent.com/615622/236290563-872588da-5093-46f7-a4f4-0ad12a0da6ae.png)
 
 ## Download
-API Dash is available for Mac and Windows currently, and can be downloaded from the links below:
-- MacOS Universal build for Apple Silicon & Intel Chips ([Installation Instructions](https://github.com/foss42/api-dash/blob/main/INSTALLATION.md#macos)) - [Download Link](https://bit.ly/44wmazf)
-- Windows 64-bit ([Installation Instructions](https://github.com/foss42/api-dash/blob/main/INSTALLATION.md#windows)) - [Download Link](https://bit.ly/424ExKb)
-- Linux ([Installation Instructions](https://github.com/foss42/api-dash/blob/main/INSTALLATION.md#linux)) -  `.deb` ([amd64](https://bit.ly/44sWPq2), [arm64](https://bit.ly/3pdVgvP)) & `.rpm` ([x86_64](https://bit.ly/417gWHe), [aarch64](https://bit.ly/3LWdJWV))  
+API Dash can be downloaded from the links below:
+
+<table>
+    <thead>
+        <tr>
+            <th>OS</th>
+            <th>Distribution</th>
+            <th>Installation Guide</th>
+            <th>CPU/Architecture</th>
+            <th>Link</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>macOS</td>
+          <td><code>.dmg</code></td>
+            <td><a href="https://github.com/foss42/api-dash/blob/main/INSTALLATION.md#macos" target="_blank">Link</a></td>
+            <td>Apple Silicon & Intel</td>
+            <td><a href="https://bit.ly/44wmazf">Link</a></td>
+        </tr>
+        <tr>
+            <td>Windows</td>
+            <td><code>.exe</code></td>
+            <td><a href="https://github.com/foss42/api-dash/blob/main/INSTALLATION.md#windows" target="_blank">Link</a></td>
+            <td>64-bit</td>
+            <td><a href="https://bit.ly/424ExKb">Link</a></td>
+        </tr>
+        <tr>
+            <td rowspan=4>Linux</td>
+            <td rowspan=2><code>.deb</code></td>          
+            <td rowspan=2><a href="https://github.com/foss42/api-dash/blob/main/INSTALLATION.md#debian-based-linux-distributions-debian-ubuntu-linux-mint-etc" target="_blank">Link</a></td>
+            <td>amd64</td>
+            <td><a href="https://bit.ly/44sWPq2">Link</a></td>
+        </tr>
+         <tr>
+            <td>arm64</td>
+            <td><a href="https://bit.ly/3pdVgvP">Link</a></td>
+        </tr>
+        <tr>
+            <td rowspan=2><code>.rpm</code></td>
+            <td rowspan=2><a href="https://github.com/foss42/api-dash/blob/main/INSTALLATION.md#red-hat-based-linux-distributions-fedora-rocky-almalinux-centos-rhel-etc" target="_blank">Link</a></td>
+            <td>x86_64</td>
+            <td><a href="https://bit.ly/417gWHe">Link</a></td>
+        </tr>
+         <tr>
+            <td>aarch64</td>
+            <td><a href="https://bit.ly/3LWdJWV">Link</a></td>
+        </tr>
+    </tbody>
+</table>
+
 
 ## Provide Feedback, Report Bugs & Request New Features
 
