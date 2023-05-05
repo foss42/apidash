@@ -14,6 +14,16 @@ API Dash is available for Mac and Windows currently, and can be downloaded from 
 - Windows 64-bit ([Installation Instructions](https://github.com/foss42/api-dash/blob/main/INSTALLATION.md#windows)) - [Download Link](https://bit.ly/424ExKb)
 - Linux ([Installation Instructions](https://github.com/foss42/api-dash/blob/main/INSTALLATION.md#linux)) -  `.deb` ([amd64](https://bit.ly/44sWPq2), [arm64](https://bit.ly/3pdVgvP)) & `.rpm` ([x86_64](https://bit.ly/417gWHe), [aarch64](https://bit.ly/3LWdJWV))  
 
+## Provide Feedback, Report Bugs & Request New Features
+
+Just click on the [Issue tab](https://github.com/foss42/api-dash/issues) to raise a new issue in this repo.
+
+## Contribute to API Dash
+
+You can get started with some ["good first issues"](https://github.com/foss42/api-dash/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22).
+
+Also, check out [CONTRIBUTING.md](CONTRIBUTING.md)
+
 ## What's new in v0.2.0?
 
 ### 1. Brand new UI
@@ -87,11 +97,3 @@ https://user-images.githubusercontent.com/1382619/227082072-2c829996-2550-425d-a
 ## Need Any Help?
 
 In case you need any help with API Dash or are encountering any issue while running the tool, please feel free to drop by our [Discord server](https://bit.ly/heyfoss) and we can have a chat in the **#foss** channel.
-
-## Provide Feedback, Report Bugs & Request New Features
-
-Just click on the [Issue tab](https://github.com/foss42/api-dash/issues) to raise a new issue in this repo.
-
-## How can I Contribute?
-
-Please check out [CONTRIBUTING.md](CONTRIBUTING.md)
