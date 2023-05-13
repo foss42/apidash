@@ -58,7 +58,7 @@ API Dash can be downloaded from the links below:
     </tbody>
 </table>
 
-## A Quick Glimpse into API Dash ⚡️ (Demo Video)
+## A Quick Glimpse of API Dash ⚡️ (Demo Video)
 
 https://github.com/foss42/api-dash/assets/615622/fccc569e-3152-47be-9f94-ceb851ee85a0
 
