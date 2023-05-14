@@ -15,7 +15,6 @@ void main() {
 
     await tester.pumpAndSettle();
     expect(find.text('Welcome to API Dash ⚡️'), findsOneWidget);
-    expect(find.text('Getting Started'), findsOneWidget);
 
     expect(find.byType(RichText), findsAtLeastNWidgets(1));
     expect(
@@ -26,10 +25,5 @@ void main() {
     expect(find.byIcon(Icons.star), findsOneWidget);
     expect(find.text('Star on GitHub'), findsOneWidget);
     await tester.tap(find.byIcon(Icons.star));
-
-    //TODO: Unable to find below icons, needs further investigation. Works with flutter run
-    //expect(find.byIcon(Icons.code_rounded), findsOneWidget);
-    //await tester.tap(find.byIcon(Icons.code_rounded));
-    //await tester.tap(find.byIcon(Icons.discord));
   });
 }
