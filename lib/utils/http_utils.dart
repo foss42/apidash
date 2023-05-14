@@ -68,9 +68,9 @@ MediaType? getMediaTypeFromHeaders(Map? headers) {
   }
   (String?, bool) urlScheme = getUriScheme(uri);
 
-  if(urlScheme.$0 != null){
-    if (!urlScheme.$1){
-      return (null, "Unsupported URL Scheme (${urlScheme.$0})");
+  if(urlScheme.$1 != null){
+    if (!urlScheme.$2){
+      return (null, "Unsupported URL Scheme (${urlScheme.$1})");
     }
   }
   else {

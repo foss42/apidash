@@ -339,8 +339,8 @@ class _ResponseBodyState extends State<ResponseBody> {
     }
 
     var responseBodyView = getResponseBodyViewOptions(mediaType);
-    var options = responseBodyView.$0;
-    var highlightLanguage = responseBodyView.$1;
+    var options = responseBodyView.$1;
+    var highlightLanguage = responseBodyView.$2;
 
     if (formattedBody == null) {
       options = [...options];

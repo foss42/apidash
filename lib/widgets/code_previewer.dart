@@ -67,7 +67,7 @@ class _CodePreviewerState extends State<CodePreviewer> {
       textStyle = textStyle.merge(widget.textStyle);
     }
     processed = sanitize(widget.code);
-    spans = asyncGenerateSpans(processed.$0, widget.language, widget.theme, processed.$1);
+    spans = asyncGenerateSpans(processed.$1, widget.language, widget.theme, processed.$2);
   }
 
   @override

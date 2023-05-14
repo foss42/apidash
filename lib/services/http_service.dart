@@ -13,8 +13,8 @@ Future<(http.Response?, Duration?, String?)> request(
   (Uri?, String?) uriRec = getValidRequestUri(requestModel.url, 
                                            requestModel.requestParams,
                                            defaultUriScheme: defaultUriScheme);
-  if(uriRec.$0 != null){
-    Uri requestUrl = uriRec.$0!;
+  if(uriRec.$1 != null){
+    Uri requestUrl = uriRec.$1!;
     Map<String, String> headers = rowsToMap(requestModel.requestHeaders) ?? {};
     http.Response response;
     String? body;
@@ -67,6 +67,6 @@ Future<(http.Response?, Duration?, String?)> request(
     }
   }
   else {
-    return (null, null, uriRec.$1);
+    return (null, null, uriRec.$2);
   }
 }
