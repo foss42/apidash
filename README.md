@@ -103,9 +103,14 @@ Just click on the [Issue tab](https://github.com/foss42/api-dash/issues) to rais
 
 ## Contribute to API Dash
 
-You can get started with some ["good first issues"](https://github.com/foss42/api-dash/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22).
+You can contribute to API Dash in any or all of the following ways: 
 
-Also, check out [CONTRIBUTING.md](CONTRIBUTING.md)
+- [Ask a question](https://github.com/foss42/api-dash/discussions)
+- [Submit a bug report](https://github.com/foss42/api-dash/issues/new/choose)
+- [Request a new feature](https://github.com/foss42/api-dash/issues/new/choose)
+- [Suggest ways to improve the developer experience of an existing feature](https://github.com/foss42/api-dash/issues/new/choose)
+- [Add documentation](https://github.com/foss42/api-dash/issues/new/choose)
+- To add a new feature, resolve an existing issue or add a new test to the project, check out our [Contribution Guidelines](CONTRIBUTING.md).  
 
 ## Need Any Help?
 
