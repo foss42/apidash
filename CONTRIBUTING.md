@@ -19,6 +19,8 @@ In case you are new to the open source ecosystem, we would be more than happy to
 
 ### Some things to keep in mind before opening a PR
 
+> PRs with precise changes (like adding a new test, resolving a bug/issue, adding a new feature) are always preferred over a single PR with a ton of file changes as they are easier to review and merge.
+
 We currently do not accept PRs that involve:
 - Code refactoring without any new feature addition/existing issue resolution.
 - Bumping of dependency versions (SDKs, Packages).
