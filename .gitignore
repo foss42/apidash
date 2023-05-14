@@ -49,6 +49,8 @@ linux/
 macos/
 windows/
 web/
-.vscode/settings.json
+.vscode/*
 icons/
 coverage/*
+installers/*
+.metadata

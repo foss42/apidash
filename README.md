@@ -109,7 +109,7 @@ You can contribute to API Dash in any or all of the following ways:
 - [Submit a bug report](https://github.com/foss42/api-dash/issues/new/choose)
 - [Request a new feature](https://github.com/foss42/api-dash/issues/new/choose)
 - [Suggest ways to improve the developer experience of an existing feature](https://github.com/foss42/api-dash/issues/new/choose)
-- [Add documentation](https://github.com/foss42/api-dash/issues/new/choose)
+- Add documentation
 - To add a new feature, resolve an existing issue or add a new test to the project, check out our [Contribution Guidelines](CONTRIBUTING.md).  
 
 ## Need Any Help?
