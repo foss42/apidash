@@ -15,7 +15,8 @@ void main() {
 
     await tester.pumpAndSettle();
     expect(find.text('Welcome to API Dash ⚡️'), findsOneWidget);
-    expect(find.text('Getting Started'), findsOneWidget);
+    // removed from assets/intro.md
+    // expect(find.text('Getting Started'), findsOneWidget);
 
     expect(find.byType(RichText), findsAtLeastNWidgets(1));
     expect(
