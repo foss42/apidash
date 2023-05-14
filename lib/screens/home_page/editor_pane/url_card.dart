@@ -28,13 +28,13 @@ class _EditorPaneRequestURLCardState extends State<EditorPaneRequestURLCard> {
         ),
         borderRadius: kBorderRadius12,
       ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
+      child: const Padding(
+        padding: EdgeInsets.symmetric(
           vertical: 5,
           horizontal: 20,
         ),
         child: Row(
-          children: const [
+          children: [
             DropdownButtonHTTPMethod(),
             kHSpacer20,
             Expanded(

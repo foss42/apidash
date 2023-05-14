@@ -10,8 +10,8 @@ void main() {
       MaterialApp(
         title: 'URL Field',
         theme: kThemeDataDark,
-        home: Scaffold(
-          body: Column(children: const [URLField(activeId: '2')]),
+        home: const Scaffold(
+          body: Column(children: [URLField(activeId: '2')]),
         ),
       ),
     );
@@ -30,9 +30,9 @@ void main() {
       MaterialApp(
         title: 'CellField',
         theme: kThemeDataLight,
-        home: Scaffold(
+        home: const Scaffold(
           body: Column(
-            children: const [
+            children: [
               CellField(
                 keyId: "4",
                 hintText: "Passing some hint text",
