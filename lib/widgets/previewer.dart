@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'error_message.dart';
 import 'package:apidash/consts.dart';
+import 'package:printing/printing.dart';
 
 class Previewer extends StatefulWidget {
   const Previewer({
@@ -33,7 +34,10 @@ class _PreviewerState extends State<Previewer> {
       );
     }
     if (widget.type == kTypeApplication && widget.subtype == kSubTypePdf) {
-      // TODO: PDF Viewer
+      return PdfPreview(
+        build: (_) => widget.bytes,
+        useActions: false,
+      );
     }
     if (widget.type == kTypeAudio) {
       // TODO: Audio Player
