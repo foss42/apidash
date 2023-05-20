@@ -37,6 +37,9 @@ class _PreviewerState extends State<Previewer> {
       return PdfPreview(
         build: (_) => widget.bytes,
         useActions: false,
+        onError: (context, error) {
+          return const ErrorMessage(message: kPdfError);
+        },
       );
     }
     if (widget.type == kTypeAudio) {
