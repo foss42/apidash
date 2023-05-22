@@ -80,7 +80,7 @@ You can contribute by adding missing/new tests for:
 ```
 flutter run --enable-experiment=records
 ```
-**NOTE**: You may encounter an invalid Dart Package name error. Remember to rename the project's parent directory to something other than the default "api-dash," as it is not a valid Dart Package name.
+**Note**: In case you encounter an invalid Dart Package name error on your first run, rename the project's folder name from  "api-dash" to "apidash" and re-run.
 
 ### How to run tests?
 
@@ -96,7 +96,7 @@ To generate coverage report as html execute:
 genhtml coverage/lcov.info -o coverage/html  
 ```
 
-*Note*: On macOS you need to have `lcov` installed on your system (`brew install lcov`) to run the above command.
+**Note**: On macOS you need to have `lcov` installed on your system (`brew install lcov`) to run the above command.
 
 To view the coverage report in the browser for further analysis, execute: 
 
