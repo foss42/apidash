@@ -80,6 +80,7 @@ You can contribute by adding missing/new tests for:
 ```
 flutter run --enable-experiment=records
 ```
+**NOTE**: You may encounter an invalid Dart Package name error. Remember to rename the project's parent directory to something other than the default "api-dash," as it is not a valid Dart Package name.
 
 ### How to run tests?
 
