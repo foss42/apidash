@@ -1,3 +1,5 @@
+<div id="top"></div>
+
 # API Dash ⚡️
 
 [![Discord Server Invite](https://img.shields.io/badge/DISCORD-JOIN%20SERVER-5663F7?style=for-the-badge&logo=discord&logoColor=white)](https://bit.ly/heyfoss)
@@ -115,3 +117,7 @@ You can contribute to API Dash in any or all of the following ways:
 ## Need Any Help?
 
 In case you need any help with API Dash or are encountering any issue while running the tool, please feel free to drop by our [Discord server](https://bit.ly/heyfoss) and we can have a chat in the **#foss** channel.
+
+
+
+<p align="right">(<a href="#top">Back to top</a>)</p>
