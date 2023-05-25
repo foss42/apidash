@@ -70,21 +70,13 @@ You can contribute by adding missing/new tests for:
 
 ## General Instructions 
 
-### How to run API Dash locally?
+### What is the supported Flutter/Dart version?
 
-1. Fork the project.
-2. Create a clone of the forked project on your computer to run it locally.
-3. Based on your desktop environment, enable Windows, macOS or Linux for the project. Select the same target device.
-4. This project uses [Records feature in Dart](https://github.com/dart-lang/language/blob/main/accepted/future-releases/records/records-feature-specification.md), so to run the project execute the following command:
+As the project has not migrated to Dart 3, the latest Flutter version we support is `3.7.12` (Dart `2.19.6`). If you are using newer flutter version, you will get errors. 
 
-```
-flutter run --enable-experiment=records
-```
-**Note**: In case you encounter an invalid Dart Package name error on your first run, rename the project's folder name from  "api-dash" to "apidash" and re-run.
+In case you are setting up Flutter for the first time, just go ahead and download version `3.7.12` (Stable) SDK from the [Flutter SDK Archive](https://docs.flutter.dev/release/archive). Then proceed with the Flutter installation.
 
-### How to downgrade to the right Flutter/Dart version?
-
-Currently, the project is designed to run on older version of Dart(2.19.6) and Flutter(3.7.12). If you are trying to build the project on any other version, you may face issues. Use the instructions below to downgrade/upgrade if you are on any version other than the ones mentioned.
+In case you have already setup Flutter, make sure to switch to `stable` branch and use the instructions below to downgrade/upgrade if you are on any version other than the one mentioned above.
 
 1. Locate the directory where you have installed Flutter SDK and navigate to it. The contents of the directory should resemble the following:
 ```
@@ -95,16 +87,16 @@ bin                    dev                   packages
 CODE_OF_CONDUCT.md     examples              PATENT_GRANT
 CODEOWNERS             flutter_console.bat   README.md
 ```
-2. In the same directory, execute the following command to change the head of the local Flutter SDK to version [3.7.12](https://docs.flutter.dev/release/archive).
+
+2. In the same directory, execute the following command to change the head of the local Flutter SDK to version `3.7.12`.
 ```
 git checkout 4d9e56e
 ```
-3. Run the Flutter Doctor command to download the required files and libraries for the downgraded/upgraded version:
+
+3. Run the Flutter Doctor command to verify:
 ```
-flutter doctor -v
-```
-4. Check the output under the Flutter section. It should resemble the following:
-```
+$ flutter doctor -v
+
 [!] Flutter (Channel unknown, 3.7.12, on Ubuntu 22.04.2 LTS 5.19.0-42-generic,
     locale en_IN)
     ! Flutter version 3.7.12 on channel unknown at
@@ -123,8 +115,19 @@ flutter doctor -v
     • If those were intentional, you can disregard the above warnings; however
       it is recommended to use "git" directly to perform update checks and
       upgrades.
+```
+
+### How to run API Dash locally?
+
+1. Fork the project.
+2. Create a clone of the forked project on your computer to run it locally.
+3. Based on your desktop environment, enable Windows, macOS or Linux for the project. Select the same target device.
+4. This project uses [Records feature in Dart](https://github.com/dart-lang/language/blob/main/accepted/future-releases/records/records-feature-specification.md), so to run the project execute the following command:
 
 ```
+flutter run --enable-experiment=records
+```
+**Note**: In case you encounter an invalid Dart Package name error on your first run, rename the project's folder name from  "api-dash" to "apidash" and re-run.
 
 ### How to run tests?
 
