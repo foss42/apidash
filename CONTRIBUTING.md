@@ -82,6 +82,50 @@ flutter run --enable-experiment=records
 ```
 **Note**: In case you encounter an invalid Dart Package name error on your first run, rename the project's folder name from  "api-dash" to "apidash" and re-run.
 
+### How to downgrade to the right Flutter/Dart version?
+
+Currently, the project is designed to run on older version of Dart(2.19.6) and Flutter(3.7.12). If you are trying to build the project on any other version, you may face issues. Use the instructions below to downgrade/upgrade if you are on any version other than the ones mentioned.
+
+1. Locate the directory where you have installed Flutter SDK and navigate to it. The contents of the directory should resemble the following:
+```
+$ ls
+analysis_options.yaml  CONTRIBUTING.md       flutter_root.iml  TESTOWNERS
+AUTHORS                dartdoc_options.yaml  LICENSE           version
+bin                    dev                   packages
+CODE_OF_CONDUCT.md     examples              PATENT_GRANT
+CODEOWNERS             flutter_console.bat   README.md
+```
+2. In the same directory, execute the following command to change the head of the local Flutter SDK to version [3.7.12](https://docs.flutter.dev/release/archive).
+```
+git checkout 4d9e56e
+```
+3. Run the Flutter Doctor command to download the required files and libraries for the downgraded/upgraded version:
+```
+flutter doctor -v
+```
+4. Check the output under the Flutter section. It should resemble the following:
+```
+[!] Flutter (Channel unknown, 3.7.12, on Ubuntu 22.04.2 LTS 5.19.0-42-generic,
+    locale en_IN)
+    ! Flutter version 3.7.12 on channel unknown at
+      /home/<user>/snap/flutter/common/flutter
+      Currently on an unknown channel. Run `flutter channel` to switch to an
+      official channel.
+      If that doesn't fix the issue, reinstall Flutter by following instructions
+      at https://flutter.dev/docs/get-started/install.
+    ! Unknown upstream repository.
+      Reinstall Flutter by following instructions at
+      https://flutter.dev/docs/get-started/install.
+    • Framework revision 4d9e56e694 (5 weeks ago), 2023-04-17 21:47:46 -0400
+    • Engine revision 1a65d409c7
+    • Dart version 2.19.6
+    • DevTools version 2.20.1
+    • If those were intentional, you can disregard the above warnings; however
+      it is recommended to use "git" directly to perform update checks and
+      upgrades.
+
+```
+
 ### How to run tests?
 
 To run tests execute the following command:
