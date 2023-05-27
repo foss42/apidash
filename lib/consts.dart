@@ -217,6 +217,14 @@ enum HTTPVerb { get, head, post, put, patch, delete }
 
 enum ContentType { json, text }
 
+enum CodegenLanguage {
+  dartHttp("Dart - http"),
+  kotlinOkHttp("Kotlin - OkHttp");
+
+  const CodegenLanguage(this.label);
+  final String label;
+}
+
 const kSupportedUriSchemes = ["https", "http"];
 const kDefaultUriScheme = "https";
 const kMethodsWithBody = [
@@ -227,6 +235,7 @@ const kMethodsWithBody = [
 ];
 const kDefaultHttpMethod = HTTPVerb.get;
 const kDefaultContentType = ContentType.json;
+const kDefaultCodegenLanguage = CodegenLanguage.dartHttp;
 
 const JsonEncoder kEncoder = JsonEncoder.withIndent('  ');
 const LineSplitter kSplitter = LineSplitter();

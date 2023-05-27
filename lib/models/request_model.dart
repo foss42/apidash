@@ -16,6 +16,7 @@ class RequestModel {
     this.requestHeaders,
     this.requestParams,
     this.requestBodyContentType = kDefaultContentType,
+    this.codegenLanguage,
     this.requestBody,
     this.responseStatus,
     this.message,
@@ -31,6 +32,7 @@ class RequestModel {
   final List<KVRow>? requestHeaders;
   final List<KVRow>? requestParams;
   final ContentType requestBodyContentType;
+  final CodegenLanguage? codegenLanguage;
   final String? requestBody;
   final int? responseStatus;
   final String? message;
@@ -66,6 +68,7 @@ class RequestModel {
     int? responseStatus,
     String? message,
     ResponseModel? responseModel,
+    CodegenLanguage? codegenLanguage,
   }) {
     return RequestModel(
       id: id ?? this.id,
@@ -111,6 +114,7 @@ class RequestModel {
     final responseStatus = data["responseStatus"] as int?;
     final message = data["message"] as String?;
     final responseModelJson = data["responseModel"];
+    final codegenLanguage = data["codegenLanguage"];
     if (responseModelJson != null) {
       responseModel =
           ResponseModel.fromJson(Map<String, dynamic>.from(responseModelJson));
@@ -136,6 +140,7 @@ class RequestModel {
       responseStatus: responseStatus,
       message: message,
       responseModel: responseModel,
+      codegenLanguage: codegenLanguage,
     );
   }
 
@@ -171,7 +176,8 @@ class RequestModel {
       "Request Body: ${requestBody.toString()}",
       "Response Status: $responseStatus",
       "Response Message: $message",
-      "Response: ${responseModel.toString()}"
+      "Response: ${responseModel.toString()}",
+      "Codegen Language: ${codegenLanguage?.label.toString()}"
     ].join("\n");
   }
 

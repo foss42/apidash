@@ -99,6 +99,7 @@ class CollectionStateNotifier extends StateNotifier<List<RequestModel>?> {
     List<KVRow>? requestHeaders,
     List<KVRow>? requestParams,
     ContentType? requestBodyContentType,
+    CodegenLanguage? codegenLanguage,
     String? requestBody,
     int? responseStatus,
     String? message,
@@ -117,8 +118,10 @@ class CollectionStateNotifier extends StateNotifier<List<RequestModel>?> {
         requestBody: requestBody,
         responseStatus: responseStatus,
         message: message,
-        responseModel: responseModel);
-    //print(newModel);
+        responseModel: responseModel,
+        codegenLanguage: codegenLanguage,
+    );
+    print(newModel);
     state = [...state!.sublist(0, idx), newModel, ...state!.sublist(idx + 1)];
   }
 

@@ -1,7 +1,11 @@
+import 'package:apidash/widgets/dropdowns.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:highlighter/highlighter.dart' show highlight;
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart';
+import '../providers/collection_providers.dart';
+import '../providers/ui_providers.dart';
 import 'code_previewer.dart' show convert;
 import 'buttons.dart';
 
@@ -101,19 +105,18 @@ List<TextSpan> generateSpans(
   return spans;
 }
 
-class ViewCodePane extends StatefulWidget {
+class ViewCodePane extends ConsumerStatefulWidget {
   const ViewCodePane({
     super.key,
     required this.code,
   });
 
   final String code;
-
   @override
-  State<ViewCodePane> createState() => _ViewCodePaneState();
+  ConsumerState createState() => _ViewCodePaneState();
 }
 
-class _ViewCodePaneState extends State<ViewCodePane> {
+class _ViewCodePaneState extends ConsumerState<ViewCodePane> {
   @override
   Widget build(BuildContext context) {
     var codeTheme = Theme.of(context).brightness == Brightness.light
@@ -144,6 +147,7 @@ class _ViewCodePaneState extends State<ViewCodePane> {
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                 ),
+                const DropdownButtonCodeCodegenLanguage(),
                 CopyButton(toCopy: widget.code),
                 SaveInDownloadsButton(
                   content: stringToBytes(widget.code),
@@ -168,6 +172,33 @@ class _ViewCodePaneState extends State<ViewCodePane> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class DropdownButtonCodeCodegenLanguage extends ConsumerStatefulWidget {
+  const DropdownButtonCodeCodegenLanguage({
+    super.key,
+  });
+
+  @override
+  ConsumerState createState() => _DropdownButtonCodeCodegenLanguageState();
+}
+
+class _DropdownButtonCodeCodegenLanguageState
+    extends ConsumerState<DropdownButtonCodeCodegenLanguage> {
+  @override
+  Widget build(BuildContext context) {
+    final activeId = ref.watch(activeIdStateProvider);
+    final requestCodeLanguage = ref.watch(
+        activeRequestModelProvider.select((value) => value?.codegenLanguage));
+    return DropdownButtonCodegenLanguage(
+      codegenLanguage: requestCodeLanguage,
+      onChanged: (CodegenLanguage? value) {
+        ref
+            .read(collectionStateNotifierProvider.notifier)
+            .update(activeId!, codegenLanguage: value);
+      },
     );
   }
 }

@@ -1,8 +1,8 @@
+import 'package:apidash/codegen/kotlin-okhttp/pkg-okhttp.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
-import 'package:apidash/codegen/codegen.dart';
 import 'package:apidash/consts.dart';
 
 class CodePane extends ConsumerStatefulWidget {
@@ -13,7 +13,8 @@ class CodePane extends ConsumerStatefulWidget {
 }
 
 class _CodePaneState extends ConsumerState<CodePane> {
-  final DartHttpCodeGen dartHttpCodeGen = DartHttpCodeGen();
+  // final DartHttpCodeGen dartHttpCodeGen = DartHttpCodeGen();
+  final KotlinHttpCodeGen kotlinHttpCodeGen = KotlinHttpCodeGen();
 
   @override
   void initState() {
@@ -25,7 +26,7 @@ class _CodePaneState extends ConsumerState<CodePane> {
     final activeRequestModel = ref.watch(activeRequestModelProvider);
     final defaultUriScheme =
         ref.watch(settingsProvider.select((value) => value.defaultUriScheme));
-    final code = dartHttpCodeGen.getCode(activeRequestModel!, defaultUriScheme);
+    final code = kotlinHttpCodeGen.getCode(activeRequestModel!);
     if (code == null) {
       return const ErrorMessage(
         message: "An error was encountered while generating code. $kRaiseIssue",
