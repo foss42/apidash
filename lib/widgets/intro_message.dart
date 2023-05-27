@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:apidash/consts.dart';
 import 'markdown.dart';
 import 'error_message.dart';
 
@@ -28,7 +29,10 @@ class _IntroMessageState extends State<IntroMessage> {
           } else {
             text = text.replaceAll("{{mode}}", "light");
           }
-          return CustomMarkdown(data: text);
+          return CustomMarkdown(
+            data: text,
+            padding: kPh60,
+          );
         }
         if (snapshot.hasError) {
           return const ErrorMessage(message: "An error occured");

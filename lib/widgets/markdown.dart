@@ -8,8 +8,11 @@ class CustomMarkdown extends StatefulWidget {
   const CustomMarkdown({
     super.key,
     required this.data,
+    this.padding = const EdgeInsets.all(16.0),
   });
   final String data;
+  final EdgeInsets padding;
+
   @override
   State<CustomMarkdown> createState() => _CustomMarkdownState();
 }
@@ -22,6 +25,7 @@ class _CustomMarkdownState extends State<CustomMarkdown> {
       p: Theme.of(context).textTheme.titleMedium,
     );
     return Markdown(
+      padding: widget.padding,
       styleSheet: mdStyleSheet,
       data: widget.data,
       selectable: true,
