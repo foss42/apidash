@@ -82,11 +82,15 @@ class _DashboardState extends ConsumerState<Dashboard> {
               color: Theme.of(context).colorScheme.surfaceVariant,
             ),
             Expanded(
-              child: <int?, Widget>{
-                null: const SettingsPage(),
-                0: const IntroPage(),
-                1: const HomePage()
-              }[railIdx]!,
+              child: IndexedStack(
+                alignment: AlignmentDirectional.topCenter,
+                index: railIdx == null ? 0 : railIdx + 1,
+                children: const [
+                  SettingsPage(),
+                  IntroPage(),
+                  HomePage(),
+                ],
+              ),
             )
           ],
         ),
