@@ -13,8 +13,6 @@ class CodePane extends ConsumerStatefulWidget {
 }
 
 class _CodePaneState extends ConsumerState<CodePane> {
-  final DartHttpCodeGen dartHttpCodeGen = DartHttpCodeGen();
-
   @override
   void initState() {
     super.initState();
@@ -22,10 +20,13 @@ class _CodePaneState extends ConsumerState<CodePane> {
 
   @override
   Widget build(BuildContext context) {
+    final CodegenLanguage codegenLanguage =
+        ref.watch(codegenLanguageStateProvider);
+    final Codegen codegen = Codegen(codegenLanguage: codegenLanguage);
     final activeRequestModel = ref.watch(activeRequestModelProvider);
     final defaultUriScheme =
         ref.watch(settingsProvider.select((value) => value.defaultUriScheme));
-    final code = dartHttpCodeGen.getCode(activeRequestModel!, defaultUriScheme);
+    final code = codegen.getCode(ref, activeRequestModel!, defaultUriScheme);
     if (code == null) {
       return const ErrorMessage(
         message: "An error was encountered while generating code. $kRaiseIssue",
