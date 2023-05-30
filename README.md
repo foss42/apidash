@@ -60,6 +60,8 @@ API Dash can be downloaded from the links below:
 
 ## A Quick Glimpse of API Dash ⚡️ (Demo Video)
 
+Demo Video on Youtube - [Link](https://youtu.be/IQlrgpNpS2s) (In case there is an error loading the embedded video below 👇)
+
 https://github.com/foss42/api-dash/assets/615622/fccc569e-3152-47be-9f94-ceb851ee85a0
 
 ## List of Features
