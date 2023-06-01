@@ -78,6 +78,7 @@ const kTabHeight = 45.0;
 const kHeaderHeight = 32.0;
 const kSegmentHeight = 24.0;
 const kTextButtonMinWidth = 36.0;
+const kSliderWidth = 160.0;
 
 const kRandMax = 100000;
 
@@ -423,6 +424,9 @@ const kUnexpectedRaiseIssue =
 
 const kImageError =
     "There seems to be an issue rendering this image. Please raise an issue in API Dash GitHub repo so that we can resolve it.";
+
+const kAudioError =
+    "There seems to be an issue playing this audio. Please raise an issue in API Dash GitHub repo so that we can resolve it.";
 
 const kRaiseIssue =
     "\nPlease raise an issue in API Dash GitHub repo so that we can resolve it.";
