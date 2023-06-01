@@ -229,8 +229,8 @@ const kDefaultHttpMethod = HTTPVerb.get;
 const kDefaultContentType = ContentType.json;
 
 enum CodegenLanguage {
-  dartHttp("Dart - http"),
-  kotlinOkHttp("Kotlin - OkHttp");
+  dartHttp("Dart (http)"),
+  kotlinOkHttp("Kotlin (OkHttp)");
 
   const CodegenLanguage(this.label);
   final String label;

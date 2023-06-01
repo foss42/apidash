@@ -1,12 +1,6 @@
-import 'package:apidash/widgets/dropdowns.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:highlighter/highlighter.dart' show highlight;
-import 'package:apidash/consts.dart';
-import 'package:apidash/utils/utils.dart';
-import '../providers/ui_providers.dart';
 import 'code_previewer.dart' show convert;
-import 'buttons.dart';
 
 class CodeGenPreviewer extends StatefulWidget {
   const CodeGenPreviewer({
@@ -102,99 +96,4 @@ List<TextSpan> generateSpans(
   var parsed = highlight.parse(code, language: language);
   var spans = convert(parsed.nodes!, theme);
   return spans;
-}
-
-class ViewCodePane extends StatefulWidget {
-  const ViewCodePane({
-    super.key,
-    required this.code,
-  });
-
-  final String code;
-
-  @override
-  State<ViewCodePane> createState() => _ViewCodePaneState();
-}
-
-class _ViewCodePaneState extends State<ViewCodePane> {
-  @override
-  Widget build(BuildContext context) {
-    var codeTheme = Theme.of(context).brightness == Brightness.light
-        ? kLightCodeTheme
-        : kDarkCodeTheme;
-    final textContainerdecoration = BoxDecoration(
-      color: Color.alphaBlend(
-          (Theme.of(context).brightness == Brightness.dark
-                  ? Theme.of(context).colorScheme.onPrimaryContainer
-                  : Theme.of(context).colorScheme.primaryContainer)
-              .withOpacity(kForegroundOpacity),
-          Theme.of(context).colorScheme.surface),
-      border: Border.all(color: Theme.of(context).colorScheme.surfaceVariant),
-      borderRadius: kBorderRadius8,
-    );
-
-    return Padding(
-      padding: kP10,
-      child: Column(
-        children: [
-          SizedBox(
-            height: kHeaderHeight,
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    "Code",
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                ),
-                const DropdownButtonCodeCodegenLanguage(),
-                CopyButton(toCopy: widget.code),
-                SaveInDownloadsButton(
-                  content: stringToBytes(widget.code),
-                  mimeType: "application/vnd.dart",
-                )
-              ],
-            ),
-          ),
-          kVSpacer10,
-          Expanded(
-            child: Container(
-              width: double.maxFinite,
-              padding: kP8,
-              decoration: textContainerdecoration,
-              child: CodeGenPreviewer(
-                code: widget.code,
-                theme: codeTheme,
-                language: 'dart',
-                textStyle: kCodeStyle,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class DropdownButtonCodeCodegenLanguage extends ConsumerStatefulWidget {
-  const DropdownButtonCodeCodegenLanguage({
-    super.key,
-  });
-
-  @override
-  ConsumerState createState() => _DropdownButtonCodeCodegenLanguageState();
-}
-
-class _DropdownButtonCodeCodegenLanguageState
-    extends ConsumerState<DropdownButtonCodeCodegenLanguage> {
-  @override
-  Widget build(BuildContext context) {
-    final requestCodeLanguage = ref.watch(codegenLanguageStateProvider);
-    return DropdownButtonCodegenLanguage(
-      codegenLanguage: requestCodeLanguage,
-      onChanged: (CodegenLanguage? value) {
-        ref.read(codegenLanguageStateProvider.notifier).state = value!;
-      },
-    );
-  }
 }

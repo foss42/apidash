@@ -69,6 +69,8 @@ val body = "${requestModel.requestBody}".toRequestBody(mediaType)\n""";
         requestModel.method != HTTPVerb.head &&
         requestModel.method != HTTPVerb.delete) {
       result = """$result  .${requestModel.method.name}(body)\n""";
+    } else if (requestModel.method == HTTPVerb.head) {
+      result = """$result  .${requestModel.method.name}()\n""";
     }
     if (requestModel.method == HTTPVerb.delete) {
       result = """$result  .method("DELETE", body)\n""";

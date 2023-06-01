@@ -8,21 +8,16 @@ import '../providers/settings_providers.dart';
 import 'dart/pkg_http.dart';
 
 class Codegen {
-  const Codegen({required this.codegenLanguage});
-  final CodegenLanguage codegenLanguage;
   String? getCode(
-    WidgetRef ref,
+    CodegenLanguage codegenLanguage,
     RequestModel requestModel,
     String defaultUriScheme,
   ) {
-    final activeRequestModel = ref.watch(activeRequestModelProvider);
-    final defaultUriScheme =
-        ref.watch(settingsProvider.select((value) => value.defaultUriScheme));
     switch (codegenLanguage) {
       case CodegenLanguage.dartHttp:
-        return DartHttpCodeGen().getCode(activeRequestModel!, defaultUriScheme);
+        return DartHttpCodeGen().getCode(requestModel, defaultUriScheme);
       case CodegenLanguage.kotlinOkHttp:
-        return KotlinOkHttpCodeGen().getCode(activeRequestModel!);
+        return KotlinOkHttpCodeGen().getCode(requestModel);
       default:
         throw ArgumentError('Invalid codegenLanguage');
     }
