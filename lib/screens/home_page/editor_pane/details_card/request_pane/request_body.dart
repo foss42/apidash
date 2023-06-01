@@ -15,7 +15,7 @@ class _EditRequestBodyState extends ConsumerState<EditRequestBody> {
   @override
   Widget build(BuildContext context) {
     final activeId = ref.watch(activeIdStateProvider);
-    final reqestModel = ref
+    final requestModel = ref
         .read(collectionStateNotifierProvider.notifier)
         .getRequestModel(activeId!);
     return Container(
@@ -41,7 +41,7 @@ class _EditRequestBodyState extends ConsumerState<EditRequestBody> {
             child: TextFieldEditor(
               key: Key("$activeId-body"),
               fieldKey: "$activeId-body-editor",
-              initialValue: reqestModel.requestBody,
+              initialValue: requestModel.requestBody,
               onChanged: (String value) {
                 ref
                     .read(collectionStateNotifierProvider.notifier)
