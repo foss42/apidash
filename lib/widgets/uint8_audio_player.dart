@@ -88,7 +88,7 @@ class _Uint8AudioPlayerState extends State<Uint8AudioPlayer> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Duration Position Builder (time elapsed / total duration)
+                    // Duration Position Builder (time elapsed)
                     _buildDuration(
                       player.positionStream,
                       maxDuration: player.duration,

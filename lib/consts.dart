@@ -312,7 +312,7 @@ const Map<String, Map<String, List<ResponseBodyView>>>
     kSubTypeSvg: kCodeRawBodyViewOptions,
   },
   kTypeAudio: {
-    kSubTypeDefaultViewOptions: kNoBodyViewOptions,
+    kSubTypeDefaultViewOptions: kPreviewBodyViewOptions,
   },
   kTypeVideo: {
     kSubTypeDefaultViewOptions: kNoBodyViewOptions,

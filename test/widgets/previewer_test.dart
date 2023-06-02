@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:apidash/widgets/previewer.dart';
+import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
 import 'package:flutter/foundation.dart';
 import '../test_consts.dart';
@@ -33,9 +33,7 @@ void main() {
       ),
     );
 
-    expect(
-        find.text("${kMimeTypeRaiseIssueStart}audio/mpeg$kMimeTypeRaiseIssue"),
-        findsOneWidget);
+    expect(find.byType(Uint8AudioPlayer), findsOneWidget);
   });
 
   testWidgets('Testing when type/subtype is video/H264', (tester) async {
