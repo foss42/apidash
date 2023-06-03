@@ -39,9 +39,9 @@ class _PreviewerState extends State<Previewer> {
     if (widget.type == kTypeAudio) {
       return Uint8AudioPlayer(
         bytes: widget.bytes,
-        type: widget.type,
-        subtype: widget.subtype,
-        errorBuilder: (context, _, stacktrace) {
+        type: widget.type!,
+        subtype: widget.subtype!,
+        errorBuilder: (context, error, stacktrace) {
           return const ErrorMessage(message: kAudioError);
         },
       );

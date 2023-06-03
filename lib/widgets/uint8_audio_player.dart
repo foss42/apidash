@@ -12,11 +12,10 @@ typedef AudioErrorWidgetBuilder = Widget Function(
 
 // Uint8List AudioSource for just_audio
 class Uint8AudioSource extends StreamAudioSource {
-  Uint8AudioSource(this.bytes, {this.type = 'audio', this.subtype = 'mpeg'});
+  Uint8AudioSource(this.bytes, {required this.contentType});
 
   final List<int> bytes;
-  final String? type;
-  final String? subtype;
+  final String contentType;
 
   @override
   Future<StreamAudioResponse> request([int? start, int? end]) async {
@@ -27,7 +26,7 @@ class Uint8AudioSource extends StreamAudioSource {
       contentLength: end - start,
       offset: start,
       stream: Stream.value(bytes.sublist(start, end)),
-      contentType: '$type/$subtype',
+      contentType: contentType,
     );
   }
 }
@@ -37,14 +36,14 @@ class Uint8AudioPlayer extends StatefulWidget {
   const Uint8AudioPlayer({
     super.key,
     required this.bytes,
-    this.type,
-    this.subtype,
+    required this.type,
+    required this.subtype,
     required this.errorBuilder,
   });
 
   final Uint8List bytes;
-  final String? type;
-  final String? subtype;
+  final String type;
+  final String subtype;
   final AudioErrorWidgetBuilder errorBuilder;
 
   @override
@@ -56,8 +55,10 @@ class _Uint8AudioPlayerState extends State<Uint8AudioPlayer> {
 
   @override
   void initState() {
-    player.setAudioSource(Uint8AudioSource(widget.bytes,
-        type: widget.type, subtype: widget.subtype));
+    player.setAudioSource(Uint8AudioSource(
+      widget.bytes,
+      contentType: '${widget.type}/${widget.subtype}',
+    ));
     super.initState();
   }
 
@@ -85,29 +86,32 @@ class _Uint8AudioPlayerState extends State<Uint8AudioPlayer> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 // Audio Player
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // Duration Position Builder (time elapsed)
-                    _buildDuration(
-                      player.positionStream,
-                      maxDuration: player.duration,
-                    ),
+                Padding(
+                  padding: kPh20v10,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Duration Position Builder (time elapsed)
+                      _buildDuration(
+                        player.positionStream,
+                        maxDuration: player.duration,
+                      ),
 
-                    // Slider to view & change Duration Position
-                    _buildPositionBar(
-                      player.positionStream,
-                      maxDuration: player.duration,
-                      onChanged: (value) =>
-                          player.seek(Duration(seconds: value.toInt())),
-                    ),
+                      // Slider to view & change Duration Position
+                      _buildPositionBar(
+                        player.positionStream,
+                        maxDuration: player.duration,
+                        onChanged: (value) =>
+                            player.seek(Duration(seconds: value.toInt())),
+                      ),
 
-                    // Total Duration
-                    Text(
-                      audioPosition(player.duration),
-                      style: TextStyle(fontFamily: kCodeStyle.fontFamily),
-                    ),
-                  ],
+                      // Total Duration
+                      Text(
+                        audioPosition(player.duration),
+                        style: TextStyle(fontFamily: kCodeStyle.fontFamily),
+                      ),
+                    ],
+                  ),
                 ),
 
                 // Audio Player Controls
@@ -133,6 +137,13 @@ class _Uint8AudioPlayerState extends State<Uint8AudioPlayer> {
                   ],
                 ),
               ],
+            );
+          } else if (processingState == ProcessingState.idle) {
+            // Error in Loading AudioSource
+            return widget.errorBuilder(
+              context,
+              ErrorDescription('${player.audioSource} Loading Error'),
+              snapshot.stackTrace,
             );
           } else {
             return const Center(child: CircularProgressIndicator());
@@ -197,8 +208,7 @@ class _Uint8AudioPlayerState extends State<Uint8AudioPlayer> {
     return StreamBuilder<Duration>(
       stream: stream,
       builder: (context, snapshot) {
-        return SizedBox(
-          width: kSliderWidth,
+        return Flexible(
           child: SliderTheme(
             data: SliderTheme.of(context).copyWith(
               trackShape: const RectangularSliderTrackShape(),

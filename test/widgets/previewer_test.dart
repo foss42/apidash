@@ -118,4 +118,21 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text(kImageError), findsOneWidget);
   });
+
+  testWidgets('Testing when type/subtype is audio/mpeg corrupted',
+      (tester) async {
+    Uint8List bytesAudioCorrupt =
+        Uint8List.fromList(List.generate(100, (index) => index));
+    await tester.pumpWidget(
+      MaterialApp(
+        title: 'Previewer',
+        home: Scaffold(
+          body: Previewer(
+              type: 'audio', subtype: 'mpeg', bytes: bytesAudioCorrupt),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text(kAudioError), findsOneWidget);
+  });
 }
