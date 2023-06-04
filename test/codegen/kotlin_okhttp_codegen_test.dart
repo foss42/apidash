@@ -1,4 +1,5 @@
 import 'package:apidash/codegen/kotlin/pkg_okhttp.dart';
+import 'package:apidash/models/kvrow_model.dart';
 import 'package:apidash/models/request_model.dart';
 import 'package:test/test.dart';
 import 'package:apidash/consts.dart';
@@ -114,6 +115,44 @@ val client = OkHttpClient()
 val request = Request.Builder()
   .url("https://jsonplaceholder.typicode.com/posts/1")
   .head()
+  .build()
+val response = client.newCall(request).execute()
+
+println(response.body!!.string())
+""";
+      expect(kotlinOkHttpCodeGen.getCode(requestModel), expectedCode);
+    });
+
+    test(
+        'getCode returns valid code for requests with headers and query parameters',
+        () {
+      const requestModel = RequestModel(
+        url: 'https://jsonplaceholder.typicode.com/posts',
+        method: HTTPVerb.get,
+        requestParams: [
+          KVRow('userId', 1),
+        ],
+        requestHeaders: [
+          KVRow('Custom-Header-1', 'Value-1'),
+          KVRow('Custom-Header-2', 'Value-2')
+        ],
+        id: '1',
+      );
+      const expectedCode = """import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MultipartBody
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import java.io.File
+import java.util.concurrent.TimeUnit
+
+val client = OkHttpClient()
+val request = Request.Builder()
+  .url("https://jsonplaceholder.typicode.com/posts")
+  .addQueryParameter("userId", "1")
+  .addHeader("Custom-Header-1", "Value-1")
+  .addHeader("Custom-Header-2", "Value-2")
   .build()
 val response = client.newCall(request).execute()
 

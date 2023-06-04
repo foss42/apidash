@@ -59,6 +59,8 @@ void main() async {
             Expanded(
               child: ViewCodePane(
                 code: code,
+                codegenLanguage: CodegenLanguage.dartHttp,
+                onChangedCodegenLanguage: (p0) {},
               ),
             ),
           ],
@@ -85,6 +87,8 @@ void main() async {
             Expanded(
               child: ViewCodePane(
                 code: code,
+                codegenLanguage: CodegenLanguage.dartHttp,
+                onChangedCodegenLanguage: (p0) {},
               ),
             ),
           ],

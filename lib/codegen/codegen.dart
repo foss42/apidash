@@ -1,10 +1,7 @@
 import 'package:apidash/codegen/kotlin/pkg_okhttp.dart';
 import 'package:apidash/consts.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../models/request_model.dart';
-import '../providers/collection_providers.dart';
-import '../providers/settings_providers.dart';
+import 'package:apidash/models/models.dart' show RequestModel;
 import 'dart/pkg_http.dart';
 
 class Codegen {

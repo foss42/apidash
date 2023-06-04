@@ -39,23 +39,33 @@ class _CodePaneState extends ConsumerState<CodePane> {
     }
     return ViewCodePane(
       code: code,
+      codegenLanguage: codegenLanguage,
+      onChangedCodegenLanguage: (CodegenLanguage? value) {
+        ref
+            .read(codegenLanguageStateProvider.notifier)
+            .update((state) => value!);
+      },
     );
   }
 }
 
-class ViewCodePane extends ConsumerStatefulWidget {
+class ViewCodePane extends StatefulWidget {
   const ViewCodePane({
     super.key,
     required this.code,
+    required this.codegenLanguage,
+    required this.onChangedCodegenLanguage,
   });
 
   final String code;
+  final CodegenLanguage codegenLanguage;
+  final Function(CodegenLanguage?) onChangedCodegenLanguage;
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _ViewCodePaneState();
+  State<ViewCodePane> createState() => _ViewCodePaneState();
 }
 
-class _ViewCodePaneState extends ConsumerState<ViewCodePane> {
+class _ViewCodePaneState extends State<ViewCodePane> {
   @override
   Widget build(BuildContext context) {
     var codeTheme = Theme.of(context).brightness == Brightness.light
@@ -87,12 +97,8 @@ class _ViewCodePaneState extends ConsumerState<ViewCodePane> {
                   ),
                 ),
                 DropdownButtonCodegenLanguage(
-                  codegenLanguage: ref.watch(codegenLanguageStateProvider),
-                  onChanged: (CodegenLanguage? value) {
-                    ref
-                        .read(codegenLanguageStateProvider.notifier)
-                        .update((state) => value!);
-                  },
+                  codegenLanguage: widget.codegenLanguage,
+                  onChanged: widget.onChangedCodegenLanguage,
                 ),
                 CopyButton(toCopy: widget.code),
                 SaveInDownloadsButton(
