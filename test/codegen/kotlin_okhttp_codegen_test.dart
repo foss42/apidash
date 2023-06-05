@@ -1,6 +1,5 @@
 import 'package:apidash/codegen/kotlin/pkg_okhttp.dart';
-import 'package:apidash/models/kvrow_model.dart';
-import 'package:apidash/models/request_model.dart';
+import 'package:apidash/models/models.dart' show KVRow, RequestModel;
 import 'package:test/test.dart';
 import 'package:apidash/consts.dart';
 
