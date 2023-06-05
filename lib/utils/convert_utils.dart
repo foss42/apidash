@@ -24,6 +24,14 @@ String humanizeDuration(Duration? duration) {
   }
 }
 
+String audioPosition(Duration? duration) {
+  if (duration == null) return "";
+  var min = duration.inMinutes;
+  var secs = duration.inSeconds.remainder(60);
+  var secondsPadding = secs < 10 ? "0" : "";
+  return "$min:$secondsPadding$secs";
+}
+
 String capitalizeFirstLetter(String? text) {
   if (text == null || text == "") {
     return "";
