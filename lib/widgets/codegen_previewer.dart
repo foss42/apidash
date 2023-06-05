@@ -1,7 +1,7 @@
-import 'package:apidash/consts.dart';
-import 'package:apidash/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:highlighter/highlighter.dart' show highlight;
+import 'package:apidash/consts.dart';
+import 'package:apidash/utils/utils.dart';
 import 'code_previewer.dart';
 import 'widgets.dart'
     show CopyButton, DropdownButtonCodegenLanguage, SaveInDownloadsButton;
