@@ -16,5 +16,4 @@ export 'request_widgets.dart';
 export 'response_widgets.dart';
 export 'snackbars.dart';
 export 'markdown.dart';
-export 'view_codepane.dart';
 export 'uint8_audio_player.dart';
