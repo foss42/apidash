@@ -1,6 +1,7 @@
+import 'package:apidash/widgets/widgets.dart'
+    show ViewCodePane, CodeGenPreviewer;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:apidash/widgets/codegen_previewer.dart';
 import 'package:apidash/consts.dart';
 import '../test_consts.dart';
 
@@ -58,6 +59,8 @@ void main() async {
             Expanded(
               child: ViewCodePane(
                 code: code,
+                codegenLanguage: CodegenLanguage.dartHttp,
+                onChangedCodegenLanguage: (p0) {},
               ),
             ),
           ],
@@ -84,6 +87,8 @@ void main() async {
             Expanded(
               child: ViewCodePane(
                 code: code,
+                codegenLanguage: CodegenLanguage.dartHttp,
+                onChangedCodegenLanguage: (p0) {},
               ),
             ),
           ],

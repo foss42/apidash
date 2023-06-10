@@ -109,3 +109,55 @@ class _DropdownButtonContentTypeState extends State<DropdownButtonContentType> {
     );
   }
 }
+
+class DropdownButtonCodegenLanguage extends StatefulWidget {
+  const DropdownButtonCodegenLanguage({
+    Key? key,
+    this.codegenLanguage,
+    this.onChanged,
+  }) : super(key: key);
+
+  @override
+  State<DropdownButtonCodegenLanguage> createState() =>
+      _DropdownButtonCodegenLanguageState();
+  final CodegenLanguage? codegenLanguage;
+  final void Function(CodegenLanguage?)? onChanged;
+}
+
+class _DropdownButtonCodegenLanguageState
+    extends State<DropdownButtonCodegenLanguage> {
+  @override
+  Widget build(BuildContext context) {
+    final surfaceColor = Theme.of(context).colorScheme.surface;
+    return DropdownButton<CodegenLanguage>(
+      focusColor: surfaceColor,
+      value: widget.codegenLanguage,
+      icon: const Icon(
+        Icons.unfold_more_rounded,
+        size: 16,
+      ),
+      elevation: 4,
+      style: kCodeStyle.copyWith(
+        color: Theme.of(context).colorScheme.primary,
+      ),
+      underline: Container(
+        height: 0,
+      ),
+      onChanged: widget.onChanged,
+      borderRadius: kBorderRadius12,
+      items: CodegenLanguage.values
+          .map<DropdownMenuItem<CodegenLanguage>>((CodegenLanguage value) {
+        return DropdownMenuItem<CodegenLanguage>(
+          value: value,
+          child: Padding(
+            padding: kPs8,
+            child: Text(
+              value.label,
+              style: kTextStyleButton,
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
+}

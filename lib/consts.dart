@@ -228,6 +228,14 @@ const kMethodsWithBody = [
 const kDefaultHttpMethod = HTTPVerb.get;
 const kDefaultContentType = ContentType.json;
 
+enum CodegenLanguage {
+  dartHttp("Dart (http)"),
+  kotlinOkHttp("Kotlin (OkHttp)");
+
+  const CodegenLanguage(this.label);
+  final String label;
+}
+
 const JsonEncoder kEncoder = JsonEncoder.withIndent('  ');
 const LineSplitter kSplitter = LineSplitter();
 
