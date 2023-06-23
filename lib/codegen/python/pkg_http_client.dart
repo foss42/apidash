@@ -49,7 +49,7 @@ print(data.decode("utf-8"))
     result += "?";
     for (final queryParam in requestModel.requestParams!) {
       result +=
-          "${queryParam.k.replaceAll(" ", "%20")}=${queryParam.v.replaceAll(" ", "%20")}&";
+          "${queryParam.k.toString().replaceAll(" ", "%20")}=${queryParam.v.toString().replaceAll(" ", "%20")}&";
     }
     return result.substring(0, result.length - 1);
   }
