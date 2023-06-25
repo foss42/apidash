@@ -1,20 +1,26 @@
 import 'package:jinja/jinja.dart' as jj;
 import 'package:apidash/models/models.dart' show RequestModel;
+import 'package:apidash/utils/utils.dart' show padMultilineString, rowsToMap;
+import 'package:apidash/consts.dart';
 
 class PythonRequestCodeGen {
+  int kHeadersPadding = 16;
   String kPythonTemplate = '''
 import requests
+import json
 
 def main():
     url = '{{url}}'
 
-    {{params}}
+    params = {{params}}
 
     {{body}}
 
     headers = {{headers}}
 
-    response = requests.{{method}}(url{{request_headers}}{{request_body}})
+    response = requests.{{method}}(
+        url{{request_params}}{{request_headers}}{{request_body}}
+    )
 
     status_code = response.status_code
     if 200 <= status_code < 300:
@@ -31,6 +37,7 @@ main()
     try {
       bool hasHeaders = false;
       bool hasBody = false;
+      bool hasParams = false;
 
       String url = requestModel.url;
       if (!url.contains('://') && url.isNotEmpty) {
@@ -40,9 +47,9 @@ main()
       var paramsList = requestModel.requestParams;
       String params = '';
       if (paramsList != null) {
-        params = '';
+        hasParams = true;
         for (var param in paramsList) {
-          params += '${param.k} = ${param.v}\n    ';
+          params += '\n        "${param.k}": "${param.v}",';
         }
       }
 
@@ -52,19 +59,31 @@ main()
       String requestBodyString = '';
       if (requestBody != null) {
         hasBody = true;
-        requestBodyString = "data = '''$requestBody'''\n    ";
+        var bodyType = requestModel.requestBodyContentType;
+        if (bodyType == ContentType.text) {
+          requestBodyString = "data = '''$requestBody'''\n";
+        } else if (bodyType == ContentType.json) {
+          int index = requestBody.lastIndexOf("}");
+          if (requestBody[index - 1] == ",") {
+            requestBody = requestBody.substring(0, index - 1) +
+                requestBody.substring(index);
+          }
+          requestBodyString =
+              "data = '''$requestBody''' \ndata = json.loads(data)\n";
+        }
       }
 
       var headersList = requestModel.requestHeaders;
       String headers = '';
       if (headersList != null || hasBody) {
-        headers = '';
-        for (var header in headersList ?? []) {
-          headers += "'${header.k}': '${header.v}',\n    ";
-        }
-        if (hasBody) {
-          headers +=
-              "'Content-Type': '${requestModel.requestBodyContentType}',\n    ";
+        var head = rowsToMap(requestModel.requestHeaders) ?? {};
+        if (head.isNotEmpty || hasBody) {
+          if (hasBody) {
+            head["content-type"] =
+                kContentTypeMap[requestModel.requestBodyContentType] ?? "";
+          }
+          headers = kEncoder.convert(head);
+          headers = padMultilineString(headers, kHeadersPadding);
         }
         hasHeaders = headers.isNotEmpty;
       }
@@ -72,12 +91,13 @@ main()
       var template = jj.Template(kPythonTemplate);
       var pythonCode = template.render({
         'url': url,
-        'params': params,
+        'params': '{$params \n    }',
         'body': requestBodyString,
-        'headers': '{\n    $headers}',
+        'headers': headers,
         'method': method,
-        'request_headers': hasHeaders ? 'headers=headers,\n    ' : '',
-        'request_body': hasBody ? 'data=data,\n    ' : '',
+        'request_params': hasParams ? ', params=params' : '',
+        'request_headers': hasHeaders ? ', headers=headers' : '',
+        'request_body': hasBody ? ', data=data' : '',
       });
 
       return pythonCode;
