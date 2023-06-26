@@ -40,7 +40,7 @@ class _CopyButtonState extends State<CopyButton> {
                 Icons.content_copy,
                 size: 20,
               ),
-              if (widget.showLabel) const Text(kLabelCopy)
+              if (widget.showLabel) Text(MediaQuery.of(context).size.width > 1315 ? kLabelCopy : '')
             ],
           ),
         ),
@@ -156,7 +156,7 @@ class _SaveInDownloadsButtonState extends State<SaveInDownloadsButton> {
                 Icons.download,
                 size: 20,
               ),
-              if (widget.showLabel) const Text(kLabelDownload)
+              if (widget.showLabel) Text(MediaQuery.of(context).size.width > 1315 ? kLabelDownload : '')
             ],
           ),
         ),

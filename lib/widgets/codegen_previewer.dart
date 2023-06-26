@@ -140,23 +140,36 @@ class _ViewCodePaneState extends State<ViewCodePane> {
       child: Column(
         children: [
           SizedBox(
-            height: kHeaderHeight,
+            height: kHeaderHeight*2,
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Expanded(
+                Flexible(
+                  flex: 1,
                   child: Text(
                     "Code",
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                 ),
-                DropdownButtonCodegenLanguage(
-                  codegenLanguage: widget.codegenLanguage,
-                  onChanged: widget.onChangedCodegenLanguage,
+                Flexible(
+                  flex: 3,
+                  child: DropdownButtonCodegenLanguage(
+                    codegenLanguage: widget.codegenLanguage,
+                    onChanged: widget.onChangedCodegenLanguage,
+                  ),
                 ),
-                CopyButton(toCopy: widget.code),
-                SaveInDownloadsButton(
-                  content: stringToBytes(widget.code),
-                  mimeType: "application/vnd.dart",
+                Flexible(
+                  flex:  MediaQuery.of(context).size.width>1350?2:1,
+                  child: CopyButton(
+                    toCopy: widget.code,
+                  ),
+                ),
+                Flexible(
+                  flex: MediaQuery.of(context).size.width>1350?2:1,
+                  child: SaveInDownloadsButton(
+                    content: stringToBytes(widget.code),
+                    mimeType: "application/vnd.dart",
+                  ),
                 )
               ],
             ),
