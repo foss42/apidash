@@ -16,6 +16,10 @@ final kIsApple = !kIsWeb && (Platform.isIOS || Platform.isMacOS);
 final kIsDesktop =
     !kIsWeb && (Platform.isMacOS || Platform.isWindows || Platform.isLinux);
 
+final kIsIOS = !kIsWeb && Platform.isIOS;
+final kIsAndroid = !kIsWeb && Platform.isAndroid;
+final kIsMobile = !kIsWeb && (Platform.isIOS || Platform.isAndroid);
+
 final kColorTransparentState =
     MaterialStateProperty.all<Color>(Colors.transparent);
 const kColorTransparent = Colors.transparent;
