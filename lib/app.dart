@@ -1,9 +1,12 @@
+import 'package:apidash/screens/home_page/collection_pane.dart';
+import 'package:apidash/widgets/mobile_dashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:window_manager/window_manager.dart';
 import 'providers/providers.dart';
 import 'screens/screens.dart';
-import 'consts.dart' show kFontFamily, kFontFamilyFallback, kColorSchemeSeed;
+import 'consts.dart'
+    show kFontFamily, kFontFamilyFallback, kColorSchemeSeed, kIsMobile;
 
 class App extends ConsumerStatefulWidget {
   const App({super.key});
@@ -63,6 +66,7 @@ class _DashAppState extends ConsumerState<DashApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        visualDensity: VisualDensity.adaptivePlatformDensity,
         fontFamily: kFontFamily,
         fontFamilyFallback: kFontFamilyFallback,
         colorSchemeSeed: kColorSchemeSeed,
@@ -77,7 +81,12 @@ class _DashAppState extends ConsumerState<DashApp> {
         brightness: Brightness.dark,
       ),
       themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
-      home: const Dashboard(),
+      home: kIsMobile
+          ? const MobileDashboard(
+              title: 'Requests',
+              scaffoldBody: CollectionPane(),
+            )
+          : const Dashboard(),
     );
   }
 }
