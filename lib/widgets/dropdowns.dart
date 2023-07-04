@@ -151,12 +151,9 @@ class _DropdownButtonCodegenLanguageState
           value: value,
           child: Padding(
             padding: kPs8,
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width <1315?MediaQuery.of(context).size.width * 0.1:MediaQuery.of(context).size.width * 0.09,
-              child: Text(
-                value.label,
-                style: kTextStyleButton,
-              ),
+            child: Text(
+              value.label,
+              style: kTextStyleButton,
             ),
           ),
         );
