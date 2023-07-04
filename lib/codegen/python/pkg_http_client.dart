@@ -24,7 +24,7 @@ print(data.decode("utf-8"))
     result +=
         """headers = {\n'Content-Type':'${requestModel.requestBodyContentType == ContentType.json ? 'application/json' : 'text/plain'}'\n${addHeaders(requestModel)}},\n""";
     result +=
-        "conn.request(\"${requestModel.method.name.toUpperCase()}\", \"${getUrl(requestModel)["endpoint"]}${addQueryParams(requestModel)}\", payload, headers)\n";
+        "conn.request(\"${requestModel.method.name.toUpperCase()}\", \"${getUrl(requestModel)["endpoint"]}${addQueryParams(requestModel)}\", payload, headers)}\n";
     result += footerSnippet;
 
     return result;
