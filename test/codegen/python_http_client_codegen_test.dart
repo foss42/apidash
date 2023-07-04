@@ -21,7 +21,7 @@ payload = json.dumps()
 headers = {
 'Content-Type':'application/json'
 },
-conn.request("GET", "/todos/1", payload, headers)}
+conn.request("GET", "/todos/1", payload, headers)
 res = conn.getresponse()
 data = res.read()
 print(data.decode("utf-8"))
@@ -45,7 +45,7 @@ payload = json.dumps({"title": "foo","body": "bar","userId": 1})
 headers = {
 'Content-Type':'application/json'
 },
-conn.request("POST", "/todos", payload, headers)}
+conn.request("POST", "/todos", payload, headers)
 res = conn.getresponse()
 data = res.read()
 print(data.decode("utf-8"))
@@ -69,7 +69,7 @@ payload = json.dumps({"title": "foo","body": "bar","userId": 1})
 headers = {
 'Content-Type':'application/json'
 },
-conn.request("DELETE", "/todos/1", payload, headers)}
+conn.request("DELETE", "/todos/1", payload, headers)
 res = conn.getresponse()
 data = res.read()
 print(data.decode("utf-8"))
@@ -91,7 +91,7 @@ payload = json.dumps()
 headers = {
 'Content-Type':'application/json'
 },
-conn.request("HEAD", "/todos/1", payload, headers)}
+conn.request("HEAD", "/todos/1", payload, headers)
 res = conn.getresponse()
 data = res.read()
 print(data.decode("utf-8"))
@@ -124,7 +124,7 @@ headers = {
 'Custom-Header-1':'Value-1',
 'Custom-Header-2':'Value-2',
 },
-conn.request("GET", "/posts?userId=1", payload, headers)}
+conn.request("GET", "/posts?userId=1", payload, headers)
 res = conn.getresponse()
 data = res.read()
 print(data.decode("utf-8"))
