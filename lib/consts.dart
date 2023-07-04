@@ -230,8 +230,7 @@ const kDefaultContentType = ContentType.json;
 
 enum CodegenLanguage {
   dartHttp("Dart (http)"),
-  kotlinOkHttp("Kotlin (OkHttp)"),
-  pythonHttpClient("Python (http.client)");
+  kotlinOkHttp("Kotlin (OkHttp)");
 
   const CodegenLanguage(this.label);
   final String label;
