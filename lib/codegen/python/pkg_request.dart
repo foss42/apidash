@@ -10,13 +10,7 @@ import requests
 import json
 
 def main():
-    url = '{{url}}'
-
-    params = {{params}}
-
-    {{body}}
-
-    headers = {{headers}}
+    url = '{{url}}'{{params}}{{body}}{{headers}}
 
     response = requests.{{method}}(
         url{{request_params}}{{request_headers}}{{request_body}}
@@ -28,7 +22,7 @@ def main():
         print('Response Body:', response.text)
     else:
         print('Error Status Code:', status_code)
-        print('Error Response Body:', response.text)
+        print('Error Response Body:', response.reason)
 
 main()
 ''';
@@ -47,9 +41,11 @@ main()
       var paramsList = requestModel.requestParams;
       String params = '';
       if (paramsList != null) {
-        hasParams = true;
         for (var param in paramsList) {
-          params += '\n        "${param.k}": "${param.v}",';
+          if (param.k.isNotEmpty) {
+            hasParams = true;
+            params += '\n        "${param.k}": "${param.v}",';
+          }
         }
       }
 
@@ -57,19 +53,23 @@ main()
 
       var requestBody = requestModel.requestBody;
       String requestBodyString = '';
-      if (requestBody != null) {
+      if (requestBody != null && requestBody.isNotEmpty) {
         hasBody = true;
         var bodyType = requestModel.requestBodyContentType;
         if (bodyType == ContentType.text) {
           requestBodyString = "data = '''$requestBody'''\n";
         } else if (bodyType == ContentType.json) {
           int index = requestBody.lastIndexOf("}");
-          if (requestBody[index - 1] == ",") {
-            requestBody = requestBody.substring(0, index - 1) +
-                requestBody.substring(index);
+          index--;
+          while (requestBody[index] == " " || requestBody[index] == "\n") {
+            index--;
+          }
+          if (requestBody[index] == ",") {
+            requestBody = requestBody.substring(0, index) +
+                requestBody.substring(index + 1);
           }
           requestBodyString =
-              "data = '''$requestBody''' \ndata = json.loads(data)\n";
+              "data = '''$requestBody''' \n    data = json.loads(data)\n";
         }
       }
 
@@ -91,9 +91,9 @@ main()
       var template = jj.Template(kPythonTemplate);
       var pythonCode = template.render({
         'url': url,
-        'params': '{$params \n    }',
-        'body': requestBodyString,
-        'headers': headers,
+        'params': hasParams ? '\n\n    params = {$params \n    }' : '',
+        'body': hasBody ? '\n\n    $requestBodyString' : '',
+        'headers': hasHeaders ? '\n\n    headers = $headers' : '',
         'method': method,
         'request_params': hasParams ? ', params=params' : '',
         'request_headers': hasHeaders ? ', headers=headers' : '',
