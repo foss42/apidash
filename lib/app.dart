@@ -1,5 +1,3 @@
-import 'package:apidash/screens/home_page/collection_pane.dart';
-import 'package:apidash/screens/mobile/mobile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:window_manager/window_manager.dart';

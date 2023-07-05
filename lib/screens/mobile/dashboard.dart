@@ -1,8 +1,8 @@
-import 'package:apidash/screens/home_page/collection_pane.dart';
-import 'package:apidash/screens/intro_page.dart';
-import 'package:apidash/screens/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../intro_page.dart';
+import '../settings_page.dart';
+import '../home_page/collection_pane.dart';
 
 class MobileDashboard extends ConsumerStatefulWidget {
   const MobileDashboard(
