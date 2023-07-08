@@ -14,7 +14,6 @@ void main() {
         id: '',
       );
       const expectedCode = """import requests
-import json
 
 def main():
     url = 'https://jsonplaceholder.typicode.com/todos/1'
@@ -44,14 +43,11 @@ main()""";
         id: '1',
       );
       const expectedCode = """import requests
-import json
 
 def main():
     url = 'https://jsonplaceholder.typicode.com/posts'
 
-    data = '''{"title": "foo","body": "bar","userId": 1}''' 
-    data = json.loads(data)
-
+    data = '''{"title": "foo","body": "bar","userId": 1}'''
 
     headers = {
                   "content-type": "application/json"
@@ -82,14 +78,11 @@ main()""";
         id: '1',
       );
       const expectedCode = """import requests
-import json
 
 def main():
     url = 'https://jsonplaceholder.typicode.com/posts/1'
 
-    data = '''{"title": "foo","body": "bar","userId": 1}''' 
-    data = json.loads(data)
-
+    data = '''{"title": "foo","body": "bar","userId": 1}'''
 
     headers = {
                   "content-type": "application/json"
@@ -118,7 +111,6 @@ main()""";
         id: '1',
       );
       const expectedCode = """import requests
-import json
 
 def main():
     url = 'https://jsonplaceholder.typicode.com/posts/1'
@@ -155,7 +147,6 @@ main()""";
         id: '1',
       );
       const expectedCode = """import requests
-import json
 
 def main():
     url = 'https://jsonplaceholder.typicode.com/posts'

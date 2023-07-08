@@ -7,7 +7,6 @@ class PythonRequestCodeGen {
   int kHeadersPadding = 16;
   String kPythonTemplate = '''
 import requests
-import json
 
 def main():
     url = '{{url}}'{{params}}{{body}}{{headers}}
@@ -56,9 +55,7 @@ main()
       if (requestBody != null && requestBody.isNotEmpty) {
         hasBody = true;
         var bodyType = requestModel.requestBodyContentType;
-        if (bodyType == ContentType.text) {
-          requestBodyString = "data = '''$requestBody'''\n";
-        } else if (bodyType == ContentType.json) {
+        if (bodyType == ContentType.json) {
           int index = requestBody.lastIndexOf("}");
           index--;
           while (requestBody[index] == " " || requestBody[index] == "\n") {
@@ -68,9 +65,8 @@ main()
             requestBody = requestBody.substring(0, index) +
                 requestBody.substring(index + 1);
           }
-          requestBodyString =
-              "data = '''$requestBody''' \n    data = json.loads(data)\n";
         }
+        requestBodyString = "data = '''$requestBody'''";
       }
 
       var headersList = requestModel.requestHeaders;
