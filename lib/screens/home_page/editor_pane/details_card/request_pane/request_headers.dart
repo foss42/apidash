@@ -96,6 +96,9 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
                   ? kIconRemoveDark
                   : kIconRemoveLight,
               onTap: () {
+                if (rows.length == 1) {
+                  return;
+                }
                 rows.removeAt(row.index);
                 seed = random.nextInt(kRandMax);
                 _onFieldChange(activeId!);
