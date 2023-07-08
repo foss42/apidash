@@ -54,3 +54,4 @@ icons/
 coverage/*
 installers/*
 .metadata
+.fvm/
