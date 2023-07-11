@@ -25,11 +25,11 @@ class _EditRequestBodyState extends ConsumerState<EditRequestBody> {
       margin: kPt5o10,
       child: Column(
         children: [
-          SizedBox(
+          const SizedBox(
             height: kHeaderHeight,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
+              children: [
                 Text(
                   "Select Content Type:",
                 ),

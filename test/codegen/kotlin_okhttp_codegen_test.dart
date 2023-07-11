@@ -52,7 +52,7 @@ import java.util.concurrent.TimeUnit
 
 val client = OkHttpClient()
 val mediaType = "application/json".toMediaType()
-val body = "{\"title\": \"foo\",\"body\": \"bar\",\"userId\": 1}".toRequestBody(mediaType)
+val body = "{"title": "foo","body": "bar","userId": 1}".toRequestBody(mediaType)
 val request = Request.Builder()
   .url("https://jsonplaceholder.typicode.com/posts")
   .post(body)
@@ -83,7 +83,7 @@ import java.util.concurrent.TimeUnit
 
 val client = OkHttpClient()
 val mediaType = "application/json".toMediaType()
-val body = "{\"title\": \"foo\",\"body\": \"bar\",\"userId\": 1}".toRequestBody(mediaType)
+val body = "{"title": "foo","body": "bar","userId": 1}".toRequestBody(mediaType)
 val request = Request.Builder()
   .url("https://jsonplaceholder.typicode.com/posts/1")
   .method("DELETE", body)

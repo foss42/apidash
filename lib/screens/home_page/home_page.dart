@@ -13,8 +13,8 @@ class HomePage extends StatefulWidget {
 class HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: const [
+    return const Column(
+      children: [
         Expanded(
           child: DashboardSplitView(
             sidebarWidget: CollectionPane(),

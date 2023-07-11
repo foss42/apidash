@@ -28,8 +28,8 @@ class _RequestEditorPaneState extends ConsumerState<RequestEditorPane> {
     } else {
       return Padding(
         padding: kIsMacOS ? kPt24o8 : kP8,
-        child: Column(
-          children: const [
+        child: const Column(
+          children: [
             EditorPaneRequestURLCard(),
             kVSpacer10,
             Expanded(

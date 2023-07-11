@@ -45,71 +45,78 @@ class _SidebarRequestCardState extends State<SidebarRequestCard> {
     final Color surfaceTint = Theme.of(context).colorScheme.primary;
     bool isActiveId = widget.activeRequestId == widget.id;
     bool inEditMode = widget.editRequestId == widget.id;
-    return Card(
-      shape: const RoundedRectangleBorder(
-        borderRadius: kBorderRadius12,
-      ),
-      elevation: isActiveId ? 1 : 0,
-      surfaceTintColor: isActiveId ? surfaceTint : null,
-      color: isActiveId
-          ? Theme.of(context).colorScheme.brightness == Brightness.dark
-              ? colorVariant
-              : color
-          : color,
-      margin: EdgeInsets.zero,
-      child: InkWell(
-        borderRadius: kBorderRadius12,
-        hoverColor: colorVariant,
-        focusColor: colorVariant.withOpacity(0.5),
-        onTap: inEditMode ? null : widget.onTap,
-        onDoubleTap: inEditMode ? null : widget.onDoubleTap,
-        child: Padding(
-          padding: EdgeInsets.only(
-            left: 10,
-            right: isActiveId ? 0 : 20,
-            top: 5,
-            bottom: 5,
-          ),
-          child: SizedBox(
-            height: 20,
-            child: Row(
-              children: [
-                MethodBox(method: widget.method),
-                kHSpacer5,
-                Expanded(
-                  child: inEditMode
-                      ? TextFormField(
-                          key: Key("${widget.id}-name"),
-                          initialValue: widget.name,
-                          autofocus: true,
-                          style: Theme.of(context).textTheme.bodyMedium,
-                          onTapOutside: (_) {
-                            widget.onTapOutsideNameEditor?.call();
-                            FocusScope.of(context).unfocus();
-                          },
-                          onChanged: widget.onChangedNameEditor,
-                          decoration: const InputDecoration(
-                            isCollapsed: true,
-                            contentPadding: EdgeInsets.zero,
-                            border: InputBorder.none,
-                          ),
-                        )
-                      : Text(
-                          (widget.name != null &&
-                                  widget.name!.trim().isNotEmpty)
-                              ? widget.name!
-                              : getRequestTitleFromUrl(widget.url),
-                          softWrap: false,
-                          overflow: TextOverflow.fade,
-                        ),
+     return Scrollbar(
+      child: SingleChildScrollView(
+        child: Align(
+          alignment: Alignment.topRight, // Aligns the sidebar to the top right corner
+    child: Card(
+            shape: const RoundedRectangleBorder(
+              borderRadius: kBorderRadius12,
+            ),
+            elevation: isActiveId ? 1 : 0,
+            surfaceTintColor: isActiveId ? surfaceTint : null,
+            color: isActiveId
+                ? Theme.of(context).colorScheme.brightness == Brightness.dark
+                    ? colorVariant
+                    : color
+                : color,
+            margin: EdgeInsets.zero,
+            child: InkWell(
+              borderRadius: kBorderRadius12,
+              hoverColor: colorVariant,
+              focusColor: colorVariant.withOpacity(0.5),
+              onTap: inEditMode ? null : widget.onTap,
+              onDoubleTap: inEditMode ? null : widget.onDoubleTap,
+              child: Padding(
+                padding: EdgeInsets.only(
+                  left: 10,
+                  right: isActiveId ? 0 : 20,
+                  top: 5,
+                  bottom: 5,
                 ),
-                Visibility(
-                  visible: isActiveId && !inEditMode,
-                  child: RequestCardMenu(
-                    onSelected: widget.onMenuSelected,
+                child: SizedBox(
+                  height: 20,
+                  child: Row(
+                    children: [
+                      MethodBox(method: widget.method),
+                      kHSpacer5,
+                      Expanded(
+                        child: inEditMode
+                            ? TextFormField(
+                                key: Key("${widget.id}-name"),
+                                initialValue: widget.name,
+                                autofocus: true,
+                                style: Theme.of(context).textTheme.bodyMedium,
+                                onTapOutside: (_) {
+                                  widget.onTapOutsideNameEditor?.call();
+                                  FocusScope.of(context).unfocus();
+                                },
+                                onChanged: widget.onChangedNameEditor,
+                                decoration: const InputDecoration(
+                                  isCollapsed: true,
+                                  contentPadding: EdgeInsets.zero,
+                                  border: InputBorder.none,
+                                ),
+                              )
+                            : Text(
+                                (widget.name != null &&
+                                        widget.name!.trim().isNotEmpty)
+                                    ? widget.name!
+                                    : getRequestTitleFromUrl(widget.url),
+                                softWrap: false,
+                                overflow: TextOverflow.fade,
+                              ),
+                      ),
+                      Visibility(
+                        visible: isActiveId && !inEditMode,
+                        child: RequestCardMenu(
+                          onSelected: widget.onMenuSelected,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
+              ),
             ),
           ),
         ),
