@@ -104,12 +104,14 @@ class SaveInDownloadsButton extends StatefulWidget {
     super.key,
     this.content,
     this.mimeType,
+    this.ext,
     this.name,
     this.showLabel = true,
   });
 
   final Uint8List? content;
   final String? mimeType;
+  final String? ext;
   final String? name;
   final bool showLabel;
 
@@ -129,10 +131,9 @@ class _SaveInDownloadsButtonState extends State<SaveInDownloadsButton> {
           onPressed: (widget.content != null)
               ? () async {
                   var message = "";
-                  var ext = getFileExtension(widget.mimeType);
                   var path = await getFileDownloadpath(
                     widget.name,
-                    ext,
+                    widget.ext ?? getFileExtension(widget.mimeType),
                   );
                   if (path != null) {
                     try {
