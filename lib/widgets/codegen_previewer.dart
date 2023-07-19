@@ -135,48 +135,55 @@ class _ViewCodePaneState extends State<ViewCodePane> {
       borderRadius: kBorderRadius8,
     );
 
-    return Padding(
-      padding: kP10,
-      child: Column(
-        children: [
-          SizedBox(
-            height: kHeaderHeight,
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    "Code",
-                    style: Theme.of(context).textTheme.titleMedium,
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        var showLabel = showButtonLabelsInViewCodePane(
+          constraints.maxWidth,
+        );
+        return Padding(
+          padding: kP10,
+          child: Column(
+            children: [
+              SizedBox(
+                height: kHeaderHeight,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: DropdownButtonCodegenLanguage(
+                        codegenLanguage: widget.codegenLanguage,
+                        onChanged: widget.onChangedCodegenLanguage,
+                      ),
+                    ),
+                    CopyButton(
+                      toCopy: widget.code,
+                      showLabel: showLabel,
+                    ),
+                    SaveInDownloadsButton(
+                      content: stringToBytes(widget.code),
+                      mimeType: "application/vnd.dart",
+                      showLabel: showLabel,
+                    )
+                  ],
+                ),
+              ),
+              kVSpacer10,
+              Expanded(
+                child: Container(
+                  width: double.maxFinite,
+                  padding: kP8,
+                  decoration: textContainerdecoration,
+                  child: CodeGenPreviewer(
+                    code: widget.code,
+                    theme: codeTheme,
+                    language: 'dart',
+                    textStyle: kCodeStyle,
                   ),
                 ),
-                DropdownButtonCodegenLanguage(
-                  codegenLanguage: widget.codegenLanguage,
-                  onChanged: widget.onChangedCodegenLanguage,
-                ),
-                CopyButton(toCopy: widget.code),
-                SaveInDownloadsButton(
-                  content: stringToBytes(widget.code),
-                  mimeType: "application/vnd.dart",
-                )
-              ],
-            ),
-          ),
-          kVSpacer10,
-          Expanded(
-            child: Container(
-              width: double.maxFinite,
-              padding: kP8,
-              decoration: textContainerdecoration,
-              child: CodeGenPreviewer(
-                code: widget.code,
-                theme: codeTheme,
-                language: 'dart',
-                textStyle: kCodeStyle,
               ),
-            ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

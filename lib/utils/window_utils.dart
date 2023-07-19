@@ -10,3 +10,7 @@ bool showButtonLabelsInBodySuccess(int options, double maxWidth) {
       return false;
   }
 }
+
+bool showButtonLabelsInViewCodePane(double maxWidth) {
+  return (maxWidth < 400) ? false : true;
+}
