@@ -160,7 +160,7 @@ class _ViewCodePaneState extends State<ViewCodePane> {
                     ),
                     SaveInDownloadsButton(
                       content: stringToBytes(widget.code),
-                      mimeType: "application/vnd.dart",
+                      ext: widget.codegenLanguage.ext,
                       showLabel: showLabel,
                     )
                   ],
@@ -175,7 +175,7 @@ class _ViewCodePaneState extends State<ViewCodePane> {
                   child: CodeGenPreviewer(
                     code: widget.code,
                     theme: codeTheme,
-                    language: 'dart',
+                    language: widget.codegenLanguage.codeHighlightLang,
                     textStyle: kCodeStyle,
                   ),
                 ),

@@ -230,11 +230,13 @@ const kDefaultHttpMethod = HTTPVerb.get;
 const kDefaultContentType = ContentType.json;
 
 enum CodegenLanguage {
-  dartHttp("Dart (http)"),
-  kotlinOkHttp("Kotlin (OkHttp)");
+  dartHttp("Dart (http)", "dart", "dart"),
+  kotlinOkHttp("Kotlin (OkHttp)", "java", "kt");
 
-  const CodegenLanguage(this.label);
+  const CodegenLanguage(this.label, this.codeHighlightLang, this.ext);
   final String label;
+  final String codeHighlightLang;
+  final String ext;
 }
 
 const JsonEncoder kEncoder = JsonEncoder.withIndent('  ');
