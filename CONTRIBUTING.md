@@ -151,6 +151,20 @@ To view the coverage report in the browser for further analysis, execute:
 open coverage/html/index.html
 ```
 
+#### Testing a single file
+
+To run tests specified in a single file, execute the following command:
+
+```
+flutter test --enable-experiment=records <file_path>.dart
+```
+
+Example:
+
+```
+flutter test --enable-experiment=records test/widgets/codegen_previewer_test.dart
+```
+
 ### How to add a new package to pubspec.yaml?
 
 Instead of copy pasting from pub.dev, it is recommended that you use `flutter pub add package_name` to add a new package to `pubspec.yaml`. You can read more [here](https://docs.flutter.dev/packages-and-plugins/using-packages#adding-a-package-dependency-to-an-app-using-flutter-pub-add).
