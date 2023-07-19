@@ -400,18 +400,10 @@ class _BodySuccessState extends State<BodySuccess> {
 
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-        var showLabel = false;
-        switch (widget.options.length) {
-          case 1:
-            showLabel = (constraints.maxWidth < 300) ? false : true;
-            break;
-          case 2:
-            showLabel = (constraints.maxWidth < 400) ? false : true;
-            break;
-          case 3:
-            showLabel = (constraints.maxWidth < 500) ? false : true;
-            break;
-        }
+        var showLabel = showButtonLabelsInBodySuccess(
+          widget.options.length,
+          constraints.maxWidth,
+        );
         return Padding(
           padding: kP10,
           child: Column(
