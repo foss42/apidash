@@ -1,5 +1,7 @@
 bool showButtonLabelsInBodySuccess(int options, double maxWidth) {
   switch (options) {
+    case 0:
+      return true;
     case 1:
       return (maxWidth < 300) ? false : true;
     case 2:
