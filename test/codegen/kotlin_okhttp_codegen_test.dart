@@ -9,11 +9,11 @@ void main() {
 
     test('getCode returns valid code for GET request', () {
       const requestModel = RequestModel(
-        url: 'https://jsonplaceholder.typicode.com/todos/1',
+        url: 'https://api.foss42.com',
         method: HTTPVerb.get,
         id: '',
       );
-      const expectedCode = """import okhttp3.MediaType.Companion.toMediaType
+      const expectedCode = r"""import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit
 
 val client = OkHttpClient()
 val request = Request.Builder()
-  .url("https://jsonplaceholder.typicode.com/todos/1")
+  .url("https://api.foss42.com")
   .build()
 val response = client.newCall(request).execute()
 
@@ -35,13 +35,13 @@ println(response.body!!.string())
 
     test('getCode returns valid code for POST request', () {
       const requestModel = RequestModel(
-        url: 'https://jsonplaceholder.typicode.com/posts',
+        url: 'https://api.foss42.com/case/lower',
         method: HTTPVerb.post,
-        requestBody: '{"title": "foo","body": "bar","userId": 1}',
+        requestBody: '{"text": "IS Upper"}',
         requestBodyContentType: ContentType.json,
         id: '1',
       );
-      const expectedCode = """import okhttp3.MediaType.Companion.toMediaType
+      const expectedCode = r"""import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -52,9 +52,9 @@ import java.util.concurrent.TimeUnit
 
 val client = OkHttpClient()
 val mediaType = "application/json".toMediaType()
-val body = "{\"title\": \"foo\",\"body\": \"bar\",\"userId\": 1}".toRequestBody(mediaType)
+val body = "{"text": "IS Upper"}".toRequestBody(mediaType)
 val request = Request.Builder()
-  .url("https://jsonplaceholder.typicode.com/posts")
+  .url("https://api.foss42.com/case/lower")
   .post(body)
   .build()
 val response = client.newCall(request).execute()
@@ -72,7 +72,7 @@ println(response.body!!.string())
         requestBodyContentType: ContentType.json,
         id: '1',
       );
-      const expectedCode = """import okhttp3.MediaType.Companion.toMediaType
+      const expectedCode = r"""import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -83,7 +83,7 @@ import java.util.concurrent.TimeUnit
 
 val client = OkHttpClient()
 val mediaType = "application/json".toMediaType()
-val body = "{\"title\": \"foo\",\"body\": \"bar\",\"userId\": 1}".toRequestBody(mediaType)
+val body = "{"title": "foo","body": "bar","userId": 1}".toRequestBody(mediaType)
 val request = Request.Builder()
   .url("https://jsonplaceholder.typicode.com/posts/1")
   .method("DELETE", body)
