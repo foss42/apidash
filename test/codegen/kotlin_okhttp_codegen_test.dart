@@ -1,19 +1,13 @@
 import 'package:apidash/codegen/kotlin/pkg_okhttp.dart';
-import 'package:apidash/models/models.dart' show KVRow, RequestModel;
 import 'package:test/test.dart';
-import 'package:apidash/consts.dart';
+import 'request_models.dart';
 
 void main() {
   group('KotlinOkHttpCodeGen', () {
     final kotlinOkHttpCodeGen = KotlinOkHttpCodeGen();
 
     test('getCode returns valid code for GET request', () {
-      const requestModel = RequestModel(
-        url: 'https://jsonplaceholder.typicode.com/todos/1',
-        method: HTTPVerb.get,
-        id: '',
-      );
-      const expectedCode = """import okhttp3.MediaType.Companion.toMediaType
+      const expectedCode = r"""import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -24,24 +18,17 @@ import java.util.concurrent.TimeUnit
 
 val client = OkHttpClient()
 val request = Request.Builder()
-  .url("https://jsonplaceholder.typicode.com/todos/1")
+  .url("https://api.foss42.com")
   .build()
 val response = client.newCall(request).execute()
 
 println(response.body!!.string())
 """;
-      expect(kotlinOkHttpCodeGen.getCode(requestModel), expectedCode);
+      expect(kotlinOkHttpCodeGen.getCode(requestModelGet1), expectedCode);
     });
 
     test('getCode returns valid code for POST request', () {
-      const requestModel = RequestModel(
-        url: 'https://jsonplaceholder.typicode.com/posts',
-        method: HTTPVerb.post,
-        requestBody: '{"title": "foo","body": "bar","userId": 1}',
-        requestBodyContentType: ContentType.json,
-        id: '1',
-      );
-      const expectedCode = """import okhttp3.MediaType.Companion.toMediaType
+      const expectedCode = r"""import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -52,27 +39,20 @@ import java.util.concurrent.TimeUnit
 
 val client = OkHttpClient()
 val mediaType = "application/json".toMediaType()
-val body = "{\"title\": \"foo\",\"body\": \"bar\",\"userId\": 1}".toRequestBody(mediaType)
+val body = "{"text": "IS Upper"}".toRequestBody(mediaType)
 val request = Request.Builder()
-  .url("https://jsonplaceholder.typicode.com/posts")
+  .url("https://api.foss42.com/case/lower")
   .post(body)
   .build()
 val response = client.newCall(request).execute()
 
 println(response.body!!.string())
 """;
-      expect(kotlinOkHttpCodeGen.getCode(requestModel), expectedCode);
+      expect(kotlinOkHttpCodeGen.getCode(requestModelPost1), expectedCode);
     });
 
     test('getCode returns valid code for DELETE request', () {
-      const requestModel = RequestModel(
-        url: 'https://jsonplaceholder.typicode.com/posts/1',
-        method: HTTPVerb.delete,
-        requestBody: '{"title": "foo","body": "bar","userId": 1}',
-        requestBodyContentType: ContentType.json,
-        id: '1',
-      );
-      const expectedCode = """import okhttp3.MediaType.Companion.toMediaType
+      const expectedCode = r"""import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -83,7 +63,7 @@ import java.util.concurrent.TimeUnit
 
 val client = OkHttpClient()
 val mediaType = "application/json".toMediaType()
-val body = "{\"title\": \"foo\",\"body\": \"bar\",\"userId\": 1}".toRequestBody(mediaType)
+val body = "{"title": "foo","body": "bar","userId": 1}".toRequestBody(mediaType)
 val request = Request.Builder()
   .url("https://jsonplaceholder.typicode.com/posts/1")
   .method("DELETE", body)
@@ -92,15 +72,10 @@ val response = client.newCall(request).execute()
 
 println(response.body!!.string())
 """;
-      expect(kotlinOkHttpCodeGen.getCode(requestModel), expectedCode);
+      expect(kotlinOkHttpCodeGen.getCode(requestModelDelete1), expectedCode);
     });
 
     test('getCode returns valid code for HEAD request', () {
-      const requestModel = RequestModel(
-        url: 'https://jsonplaceholder.typicode.com/posts/1',
-        method: HTTPVerb.head,
-        id: '1',
-      );
       const expectedCode = """import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
@@ -119,24 +94,12 @@ val response = client.newCall(request).execute()
 
 println(response.body!!.string())
 """;
-      expect(kotlinOkHttpCodeGen.getCode(requestModel), expectedCode);
+      expect(kotlinOkHttpCodeGen.getCode(requestModelHead1), expectedCode);
     });
 
     test(
         'getCode returns valid code for requests with headers and query parameters',
         () {
-      const requestModel = RequestModel(
-        url: 'https://jsonplaceholder.typicode.com/posts',
-        method: HTTPVerb.get,
-        requestParams: [
-          KVRow('userId', 1),
-        ],
-        requestHeaders: [
-          KVRow('Custom-Header-1', 'Value-1'),
-          KVRow('Custom-Header-2', 'Value-2')
-        ],
-        id: '1',
-      );
       const expectedCode = """import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
@@ -157,7 +120,7 @@ val response = client.newCall(request).execute()
 
 println(response.body!!.string())
 """;
-      expect(kotlinOkHttpCodeGen.getCode(requestModel), expectedCode);
+      expect(kotlinOkHttpCodeGen.getCode(requestModelGet2), expectedCode);
     });
   });
 }

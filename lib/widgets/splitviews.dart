@@ -76,8 +76,8 @@ class EqualSplitView extends StatefulWidget {
 class _EqualSplitViewState extends State<EqualSplitView> {
   final MultiSplitViewController _controller = MultiSplitViewController(
     areas: [
-      Area(minimalSize: 300),
-      Area(minimalSize: 300),
+      Area(minimalSize: kMinRequestEditorDetailsCardPaneSize),
+      Area(minimalSize: kMinRequestEditorDetailsCardPaneSize),
     ],
   );
 

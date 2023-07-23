@@ -32,6 +32,7 @@ const kWindowTitle = "API Dash";
 const kMinWindowSize = Size(900, 600);
 const kMinInitialWindowWidth = 1200.0;
 const kMinInitialWindowHeight = 800.0;
+const kMinRequestEditorDetailsCardPaneSize = 300.0;
 
 const kColorSchemeSeed = Colors.blue;
 final kFontFamily = GoogleFonts.openSans().fontFamily;
@@ -233,11 +234,13 @@ const kDefaultHttpMethod = HTTPVerb.get;
 const kDefaultContentType = ContentType.json;
 
 enum CodegenLanguage {
-  dartHttp("Dart (http)"),
-  kotlinOkHttp("Kotlin (OkHttp)");
+  dartHttp("Dart (http)", "dart", "dart"),
+  kotlinOkHttp("Kotlin (OkHttp)", "java", "kt");
 
-  const CodegenLanguage(this.label);
+  const CodegenLanguage(this.label, this.codeHighlightLang, this.ext);
   final String label;
+  final String codeHighlightLang;
+  final String ext;
 }
 
 const JsonEncoder kEncoder = JsonEncoder.withIndent('  ');
