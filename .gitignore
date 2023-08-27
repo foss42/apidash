@@ -49,6 +49,7 @@ linux/
 macos/
 windows/
 web/
+ios/
 .vscode/*
 icons/
 coverage/*
