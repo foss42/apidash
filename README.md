@@ -23,21 +23,21 @@ API Dash can be downloaded from the links below:
         <tr>
             <td>macOS</td>
           <td><code>.dmg</code></td>
-            <td><a href="https://github.com/foss42/api-dash/blob/main/INSTALLATION.md#macos">Link</a></td>
+            <td><a href="https://github.com/foss42/apidash/blob/main/INSTALLATION.md#macos">Link</a></td>
             <td>Apple Silicon & Intel</td>
             <td><a href="https://bit.ly/44wmazf">Link</a></td>
         </tr>
         <tr>
             <td>Windows</td>
             <td><code>.exe</code></td>
-            <td><a href="https://github.com/foss42/api-dash/blob/main/INSTALLATION.md#windows">Link</a></td>
+            <td><a href="https://github.com/foss42/apidash/blob/main/INSTALLATION.md#windows">Link</a></td>
             <td>64-bit</td>
             <td><a href="https://bit.ly/424ExKb">Link</a></td>
         </tr>
         <tr>
             <td rowspan=4>Linux</td>
             <td rowspan=2><code>.deb</code></td>          
-            <td rowspan=2><a href="https://github.com/foss42/api-dash/blob/main/INSTALLATION.md#debian-based-linux-distributions-debian-ubuntu-linux-mint-etc">Link</a></td>
+            <td rowspan=2><a href="https://github.com/foss42/apidash/blob/main/INSTALLATION.md#debian-based-linux-distributions-debian-ubuntu-linux-mint-etc">Link</a></td>
             <td>amd64</td>
             <td><a href="https://bit.ly/44sWPq2">Link</a></td>
         </tr>
@@ -47,7 +47,7 @@ API Dash can be downloaded from the links below:
         </tr>
         <tr>
             <td rowspan=2><code>.rpm</code></td>
-            <td rowspan=2><a href="https://github.com/foss42/api-dash/blob/main/INSTALLATION.md#red-hat-based-linux-distributions-fedora-rocky-almalinux-centos-rhel-etc">Link</a></td>
+            <td rowspan=2><a href="https://github.com/foss42/apidash/blob/main/INSTALLATION.md#red-hat-based-linux-distributions-fedora-rocky-almalinux-centos-rhel-etc">Link</a></td>
             <td>x86_64</td>
             <td><a href="https://bit.ly/417gWHe">Link</a></td>
         </tr>
@@ -62,7 +62,7 @@ API Dash can be downloaded from the links below:
 
 Demo Video on Youtube - [Link](https://youtu.be/IQlrgpNpS2s) (In case there is an error loading the embedded video below 👇)
 
-https://github.com/foss42/api-dash/assets/615622/fccc569e-3152-47be-9f94-ceb851ee85a0
+https://github.com/foss42/apidash/assets/615622/fccc569e-3152-47be-9f94-ceb851ee85a0
 
 ## List of Features
 
@@ -101,16 +101,16 @@ Visit [CHANGELOG.md](CHANGELOG.md)
 
 ## Provide Feedback, Report Bugs & Request New Features
 
-Just click on the [Issue tab](https://github.com/foss42/api-dash/issues) to raise a new issue in this repo.
+Just click on the [Issue tab](https://github.com/foss42/apidash/issues) to raise a new issue in this repo.
 
 ## Contribute to API Dash
 
 You can contribute to API Dash in any or all of the following ways: 
 
-- [Ask a question](https://github.com/foss42/api-dash/discussions)
-- [Submit a bug report](https://github.com/foss42/api-dash/issues/new/choose)
-- [Request a new feature](https://github.com/foss42/api-dash/issues/new/choose)
-- [Suggest ways to improve the developer experience of an existing feature](https://github.com/foss42/api-dash/issues/new/choose)
+- [Ask a question](https://github.com/foss42/apidash/discussions)
+- [Submit a bug report](https://github.com/foss42/apidash/issues/new/choose)
+- [Request a new feature](https://github.com/foss42/apidash/issues/new/choose)
+- [Suggest ways to improve the developer experience of an existing feature](https://github.com/foss42/apidash/issues/new/choose)
 - Add documentation
 - To add a new feature, resolve an existing issue or add a new test to the project, check out our [Contribution Guidelines](CONTRIBUTING.md).  
 

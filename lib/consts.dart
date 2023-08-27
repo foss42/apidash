@@ -6,7 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:davi/davi.dart';
 
 const kDiscordUrl = "https://bit.ly/heyfoss";
-const kGitUrl = "https://github.com/foss42/api-dash";
+const kGitUrl = "https://github.com/foss42/apidash";
 const kIssueUrl = "$kGitUrl/issues";
 
 final kIsMacOS = !kIsWeb && Platform.isMacOS;

@@ -45,7 +45,7 @@ const requestModelGet4 = RequestModel(
 /// GET request model with headers
 const requestModelGet5 = RequestModel(
   id: 'get5',
-  url: 'https://api.github.com/repos/foss42/api-dash',
+  url: 'https://api.github.com/repos/foss42/apidash',
   method: HTTPVerb.get,
   requestHeaders: [
     KVRow('Authorization', 'Bearer XYZ'),

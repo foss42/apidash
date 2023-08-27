@@ -40,7 +40,7 @@ Using API Dash, you can easily create & customize your API requests, visually in
 7. Notification on save, download and any other user action (UX improvement).
 8. Linux builds are now available for API Dash (.deb & .rpm)
 
-.. and various bug fixes & performance improvements. View full changelog [here](https://github.com/foss42/api-dash/blob/main/CHANGELOG.md).
+.. and various bug fixes & performance improvements. View full changelog [here](https://github.com/foss42/apidash/blob/main/CHANGELOG.md).
 
 #br
 #br
