@@ -72,50 +72,11 @@ You can contribute by adding missing/new tests for:
 
 ### What is the supported Flutter/Dart version?
 
-As the project has not migrated to Dart 3, the latest Flutter version we support is `3.7.12` (Dart `2.19.6`). If you are using newer flutter version, you will get errors. 
+This project supports the latest Dart 3 & Flutter version. If you are using older Flutter version that does not support Dart 3, you might get errors. 
 
-In case you are setting up Flutter for the first time, just go ahead and download version `3.7.12` (Stable) SDK from the [Flutter SDK Archive](https://docs.flutter.dev/release/archive). Then proceed with the Flutter installation.
+In case you are setting up Flutter for the first time, just go ahead and download the latest (Stable) SDK from the [Flutter SDK Archive](https://docs.flutter.dev/release/archive). Then proceed with the Flutter installation.
 
-In case you have already setup Flutter, make sure to switch to `stable` branch and use the instructions below to downgrade/upgrade if you are on any version other than the one mentioned above.
-
-1. Locate the directory where you have installed Flutter SDK and navigate to it. The contents of the directory should resemble the following:
-```
-$ ls
-analysis_options.yaml  CONTRIBUTING.md       flutter_root.iml  TESTOWNERS
-AUTHORS                dartdoc_options.yaml  LICENSE           version
-bin                    dev                   packages
-CODE_OF_CONDUCT.md     examples              PATENT_GRANT
-CODEOWNERS             flutter_console.bat   README.md
-```
-
-2. In the same directory, execute the following command to change the head of the local Flutter SDK to version `3.7.12`.
-```
-git checkout 4d9e56e
-```
-
-3. Run the Flutter Doctor command to verify:
-```
-$ flutter doctor -v
-
-[!] Flutter (Channel unknown, 3.7.12, on Ubuntu 22.04.2 LTS 5.19.0-42-generic,
-    locale en_IN)
-    ! Flutter version 3.7.12 on channel unknown at
-      /home/<user>/snap/flutter/common/flutter
-      Currently on an unknown channel. Run `flutter channel` to switch to an
-      official channel.
-      If that doesn't fix the issue, reinstall Flutter by following instructions
-      at https://flutter.dev/docs/get-started/install.
-    ! Unknown upstream repository.
-      Reinstall Flutter by following instructions at
-      https://flutter.dev/docs/get-started/install.
-    • Framework revision 4d9e56e694 (5 weeks ago), 2023-04-17 21:47:46 -0400
-    • Engine revision 1a65d409c7
-    • Dart version 2.19.6
-    • DevTools version 2.20.1
-    • If those were intentional, you can disregard the above warnings; however
-      it is recommended to use "git" directly to perform update checks and
-      upgrades.
-```
+In case you have already setup Flutter, make sure to switch to `stable` branch and upgrade it.
 
 ### How to run API Dash locally?
 
@@ -125,7 +86,7 @@ $ flutter doctor -v
 4. This project uses [Records feature in Dart](https://github.com/dart-lang/language/blob/main/accepted/future-releases/records/records-feature-specification.md), so to run the project execute the following command:
 
 ```
-flutter run --enable-experiment=records
+flutter run
 ```
 
 ### How to run tests?
@@ -133,7 +94,7 @@ flutter run --enable-experiment=records
 To run tests execute the following command:
 
 ```
-flutter test --enable-experiment=records --coverage
+flutter test --coverage
 ```
 
 To generate coverage report as html execute:
@@ -155,13 +116,13 @@ open coverage/html/index.html
 To run tests specified in a single file, execute the following command:
 
 ```
-flutter test --enable-experiment=records <file_path>.dart
+flutter test <file_path>.dart
 ```
 
 Example:
 
 ```
-flutter test --enable-experiment=records test/widgets/codegen_previewer_test.dart
+flutter test test/widgets/codegen_previewer_test.dart
 ```
 
 ### How to add a new package to pubspec.yaml?
