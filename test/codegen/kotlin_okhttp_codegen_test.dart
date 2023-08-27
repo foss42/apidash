@@ -1,6 +1,6 @@
 import 'package:apidash/codegen/kotlin/pkg_okhttp.dart';
 import 'package:test/test.dart';
-import 'request_models.dart';
+import '../request_models.dart';
 
 void main() {
   group('KotlinOkHttpCodeGen', () {
