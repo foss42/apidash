@@ -132,17 +132,17 @@ class CollectionStateNotifier extends StateNotifier<List<RequestModel>?> {
     var responseRec =
         await request(requestModel, defaultUriScheme: defaultUriScheme);
     late final RequestModel newRequestModel;
-    if (responseRec.$0 == null) {
+    if (responseRec.$1 == null) {
       newRequestModel = requestModel.copyWith(
         responseStatus: -1,
-        message: responseRec.$2,
+        message: responseRec.$3,
       );
     } else {
       final responseModel = baseResponseModel.fromResponse(
-        response: responseRec.$0!,
-        time: responseRec.$1!,
+        response: responseRec.$1!,
+        time: responseRec.$2!,
       );
-      int statusCode = responseRec.$0!.statusCode;
+      int statusCode = responseRec.$1!.statusCode;
       newRequestModel = requestModel.copyWith(
         responseStatus: statusCode,
         message: kResponseCodeReasons[statusCode],

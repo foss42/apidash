@@ -13,7 +13,7 @@ void main() async {
     await setupInitialWindow();
   } else {
     var win = getInitialSize();
-    await setupWindow(sz: win.$0, off: win.$1);
+    await setupWindow(sz: win.$1, off: win.$2);
   }
   runApp(
     ProviderScope(
