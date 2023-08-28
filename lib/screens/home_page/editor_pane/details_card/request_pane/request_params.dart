@@ -38,7 +38,9 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
     final length = ref.watch(activeRequestModelProvider
         .select((value) => value?.requestParams?.length));
     var rP = ref.read(activeRequestModelProvider)?.requestParams;
-    rows = (rP == null || rP.isEmpty) ? [const NameValueModel("", "")] : rP;
+    rows = (rP == null || rP.isEmpty)
+        ? [const NameValueModel(name: "", value: "")]
+        : rP;
 
     DaviModel<NameValueModel> model = DaviModel<NameValueModel>(
       rows: rows,
@@ -50,10 +52,10 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
             int idx = row.index;
             return CellField(
               keyId: "$activeId-$idx-params-k-$seed",
-              initialValue: rows[idx].k,
+              initialValue: rows[idx].name,
               hintText: "Add URL Parameter",
               onChanged: (value) {
-                rows[idx] = rows[idx].copyWith(k: value);
+                rows[idx] = rows[idx].copyWith(name: value);
                 _onFieldChange(activeId!);
               },
               colorScheme: Theme.of(context).colorScheme,
@@ -77,10 +79,10 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
             int idx = row.index;
             return CellField(
               keyId: "$activeId-$idx-params-v-$seed",
-              initialValue: rows[idx].v,
+              initialValue: rows[idx].value,
               hintText: "Add Value",
               onChanged: (value) {
-                rows[idx] = rows[idx].copyWith(v: value);
+                rows[idx] = rows[idx].copyWith(value: value);
                 _onFieldChange(activeId!);
               },
               colorScheme: Theme.of(context).colorScheme,
@@ -134,7 +136,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
             padding: const EdgeInsets.only(bottom: 30),
             child: ElevatedButton.icon(
               onPressed: () {
-                rows.add(const NameValueModel("", ""));
+                rows.add(const NameValueModel(name: "", value: ""));
                 _onFieldChange(activeId!);
               },
               icon: const Icon(Icons.add),

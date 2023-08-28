@@ -37,6 +37,8 @@ dependencies:
   just_audio: ^0.9.34
   just_audio_mpv: ^0.1.7
   just_audio_windows: ^0.2.0
+  freezed_annotation: ^2.4.1
+  json_annotation: ^4.8.1
 
 dev_dependencies:
   flutter_test:
@@ -44,6 +46,9 @@ dev_dependencies:
   flutter_lints: ^2.0.2
   flutter_launcher_icons: ^0.13.1
   test: ^1.24.3
+  build_runner: ^2.4.6
+  freezed: ^2.4.1
+  json_serializable: ^6.7.1
   
 flutter:
   uses-material-design: true

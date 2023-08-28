@@ -73,18 +73,18 @@ void main() {
       expect(rowsToMap(null), null);
     });
     test('Testing for string KVRow values', () {
-      const kvRow1 = NameValueModel("code", "IN");
+      const kvRow1 = NameValueModel(name: "code", value: "IN");
       expect(rowsToMap([kvRow1]), {"code": "IN"});
     });
     test('Testing when header is True', () {
-      const kvRow2 = NameValueModel("Text", "ABC");
+      const kvRow2 = NameValueModel(name: "Text", value: "ABC");
       expect(rowsToMap([kvRow2], isHeader: true), {"text": "ABC"});
     });
     test('Testing when header is false and key is in upper case', () {
       const kvRow3 = <NameValueModel>[
-        NameValueModel("TEXT", "ABC"),
-        NameValueModel("version", 0.1),
-        NameValueModel("month", 4),
+        NameValueModel(name: "TEXT", value: "ABC"),
+        NameValueModel(name: "version", value: 0.1),
+        NameValueModel(name: "month", value: 4),
       ];
       expect(
           rowsToMap(kvRow3), {"TEXT": "ABC", "version": "0.1", "month": "4"});
@@ -98,9 +98,9 @@ void main() {
     test('Testing with a map value', () {
       Map<String, String> value1 = {"text": "abc", "lang": "eng", "code": "1"};
       const result1Expected = <NameValueModel>[
-        NameValueModel("text", "abc"),
-        NameValueModel("lang", "eng"),
-        NameValueModel("code", "1")
+        NameValueModel(name: "text", value: "abc"),
+        NameValueModel(name: "lang", value: "eng"),
+        NameValueModel(name: "code", value: "1")
       ];
       expect(mapToRows(value1), result1Expected);
     });

@@ -176,7 +176,7 @@ void main() {
   group("Testing getValidRequestUri", () {
     test('Testing getValidRequestUri for normal values', () {
       String url1 = "https://api.foss42.com/country/data";
-      const kvRow1 = NameValueModel("code", "US");
+      const kvRow1 = NameValueModel(name: "code", value: "US");
       Uri uri1Expected = Uri(
           scheme: 'https',
           host: 'api.foss42.com',
@@ -185,16 +185,16 @@ void main() {
       expect(getValidRequestUri(url1, [kvRow1]), (uri1Expected, null));
     });
     test('Testing getValidRequestUri for null url value', () {
-      const kvRow2 = NameValueModel("code", "US");
+      const kvRow2 = NameValueModel(name: "code", value: "US");
       expect(getValidRequestUri(null, [kvRow2]), (null, "URL is missing!"));
     });
     test('Testing getValidRequestUri for empty url value', () {
-      const kvRow3 = NameValueModel("", "");
+      const kvRow3 = NameValueModel(name: "", value: "");
       expect(getValidRequestUri("", [kvRow3]), (null, "URL is missing!"));
     });
     test('Testing getValidRequestUri when https is not provided in url', () {
       String url4 = "api.foss42.com/country/data";
-      const kvRow4 = NameValueModel("code", "US");
+      const kvRow4 = NameValueModel(name: "code", value: "US");
       Uri uri4Expected = Uri(
           scheme: 'https',
           host: 'api.foss42.com',
@@ -218,7 +218,7 @@ void main() {
     test('Testing getValidRequestUri when query params in both url and kvrow',
         () {
       String url6 = "api.foss42.com/country/data?code=IND";
-      const kvRow6 = NameValueModel("code", "US");
+      const kvRow6 = NameValueModel(name: "code", value: "US");
       Uri uri6Expected = Uri(
           scheme: 'https',
           host: 'api.foss42.com',

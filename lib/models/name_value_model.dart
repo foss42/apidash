@@ -1,38 +1,17 @@
-import 'package:flutter/material.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:flutter/foundation.dart';
 
-@immutable
-class NameValueModel {
-  const NameValueModel(this.k, this.v);
+part 'name_value_model.freezed.dart';
 
-  final String k;
-  final dynamic v;
+part 'name_value_model.g.dart';
 
-  NameValueModel copyWith({
-    String? k,
-    dynamic v,
-  }) {
-    return NameValueModel(k ?? this.k, v ?? this.v);
-  }
+@freezed
+class NameValueModel with _$NameValueModel {
+  const factory NameValueModel({
+    required String name,
+    required dynamic value,
+  }) = _NameValueModel;
 
-  @override
-  String toString() {
-    return {k: v}.toString();
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is NameValueModel &&
-        other.runtimeType == runtimeType &&
-        other.k == k &&
-        other.v == v;
-  }
-
-  @override
-  int get hashCode {
-    return Object.hash(
-      runtimeType,
-      k,
-      v,
-    );
-  }
+  factory NameValueModel.fromJson(Map<String, Object?> json) =>
+      _$NameValueModelFromJson(json);
 }

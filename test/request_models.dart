@@ -14,7 +14,7 @@ const requestModelGet2 = RequestModel(
   url: 'https://api.foss42.com/country/data',
   method: HTTPVerb.get,
   requestParams: [
-    NameValueModel('code', 'US'),
+    NameValueModel(name: 'code', value: 'US'),
   ],
 );
 
@@ -24,7 +24,7 @@ const requestModelGet3 = RequestModel(
   url: 'https://api.foss42.com/country/data?code=US',
   method: HTTPVerb.get,
   requestParams: [
-    NameValueModel('code', 'IND'),
+    NameValueModel(name: 'code', value: 'IND'),
   ],
 );
 
@@ -34,11 +34,11 @@ const requestModelGet4 = RequestModel(
   url: 'https://api.foss42.com/humanize/social',
   method: HTTPVerb.get,
   requestParams: [
-    NameValueModel('num', '8700000'),
-    NameValueModel('digits', '3'),
-    NameValueModel('system', 'SS'),
-    NameValueModel('add_space', 'true'),
-    NameValueModel('trailing_zeros', 'true'),
+    NameValueModel(name: 'num', value: '8700000'),
+    NameValueModel(name: 'digits', value: '3'),
+    NameValueModel(name: 'system', value: 'SS'),
+    NameValueModel(name: 'add_space', value: 'true'),
+    NameValueModel(name: 'trailing_zeros', value: 'true'),
   ],
 );
 
@@ -48,7 +48,7 @@ const requestModelGet5 = RequestModel(
   url: 'https://api.github.com/repos/foss42/apidash',
   method: HTTPVerb.get,
   requestHeaders: [
-    NameValueModel('Authorization', 'Bearer XYZ'),
+    NameValueModel(name: 'Authorization', value: 'Bearer XYZ'),
   ],
 );
 
@@ -58,10 +58,10 @@ const requestModelGet6 = RequestModel(
   url: 'https://api.foss42.com/humanize/social',
   method: HTTPVerb.get,
   requestHeaders: [
-    NameValueModel('Authorization', 'Bearer XYZ'),
+    NameValueModel(name: 'Authorization', value: 'Bearer XYZ'),
   ],
   requestParams: [
-    NameValueModel('raw', 'true'),
+    NameValueModel(name: 'raw', value: 'true'),
   ],
 );
 

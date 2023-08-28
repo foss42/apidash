@@ -204,8 +204,9 @@ void main() {
       url: 'api.foss42.com/case/lower',
       name: 'foss42 api',
       requestHeaders: [
-        NameValueModel('content-length', '18'),
-        NameValueModel('content-type', 'application/json; charset=utf-8')
+        NameValueModel(name: 'content-length', value: '18'),
+        NameValueModel(
+            name: 'content-type', value: 'application/json; charset=utf-8')
       ],
       requestBodyContentType: ContentType.json,
       requestBody: '''{

@@ -67,12 +67,12 @@ Map<String, String>? rowsToMap(List<NameValueModel>? kvRows,
   }
   Map<String, String> finalMap = {};
   for (var row in kvRows) {
-    if (row.k.trim() != "") {
-      String key = row.k;
+    if (row.name.trim() != "") {
+      String key = row.name;
       if (isHeader) {
         key = key.toLowerCase();
       }
-      finalMap[key] = row.v.toString();
+      finalMap[key] = row.value.toString();
     }
   }
   return finalMap;
@@ -84,7 +84,7 @@ List<NameValueModel>? mapToRows(Map<String, String>? kvMap) {
   }
   List<NameValueModel> finalRows = [];
   for (var k in kvMap.keys) {
-    finalRows.add(NameValueModel(k, kvMap[k]));
+    finalRows.add(NameValueModel(name: k, value: kvMap[k]));
   }
   return finalRows;
 }

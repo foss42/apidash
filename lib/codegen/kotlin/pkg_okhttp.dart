@@ -47,7 +47,7 @@ val body = "${requestModel.requestBody}".toRequestBody(mediaType)\n""";
     }
     for (final queryParam in requestModel.requestParams!) {
       result =
-          """$result  .addQueryParameter("${queryParam.k}", "${queryParam.v}")\n""";
+          """$result  .addQueryParameter("${queryParam.name}", "${queryParam.value}")\n""";
     }
     return result;
   }
@@ -58,7 +58,7 @@ val body = "${requestModel.requestBody}".toRequestBody(mediaType)\n""";
       return result;
     }
     for (final header in requestModel.requestHeaders!) {
-      result = """$result  .addHeader("${header.k}", "${header.v}")\n""";
+      result = """$result  .addHeader("${header.name}", "${header.value}")\n""";
     }
     return result;
   }
