@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:apidash/providers/providers.dart';
-import 'package:apidash/widgets/widgets.dart';
+import '../providers/providers.dart';
+import '../widgets/widgets.dart';
+import '../utils/utils.dart';
 import 'package:apidash/consts.dart';
 
 class SettingsPage extends ConsumerStatefulWidget {
@@ -72,6 +73,24 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                       .read(settingsProvider.notifier)
                       .update(saveResponses: value);
                 },
+              ),
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                hoverColor: kColorTransparent,
+                title: const Text('Export Collection'),
+                subtitle: const Text('Export your collection to a JSON file'),
+                trailing: FilledButton(
+                  onPressed: () async {
+                    var data = ref
+                        .read(collectionStateNotifierProvider.notifier)
+                        .exportData();
+                    var pth = await getFileDownloadpath(null, "json");
+                    if (pth != null) {
+                      await saveFile(pth, jsonMapToBytes(data));
+                    }
+                  },
+                  child: const Text("Export Data"),
+                ),
               ),
               ListTile(
                 contentPadding: EdgeInsets.zero,

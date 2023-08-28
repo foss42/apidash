@@ -203,4 +203,10 @@ class CollectionStateNotifier extends StateNotifier<List<RequestModel>?> {
     await hiveHandler.removeUnused();
     ref.read(saveDataStateProvider.notifier).update((state) => false);
   }
+
+  Map<String, dynamic> exportData() {
+    return {
+      "data": state!.map((e) => e.toJson(includeResponse: false)).toList()
+    };
+  }
 }

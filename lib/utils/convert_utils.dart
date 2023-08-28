@@ -98,3 +98,14 @@ Uint8List? stringToBytes(String? text) {
     return bytes;
   }
 }
+
+Uint8List jsonMapToBytes(Map<String, dynamic>? map) {
+  if (map == null) {
+    return Uint8List.fromList([]);
+  } else {
+    String text = kEncoder.convert(map);
+    var l = utf8.encode(text);
+    var bytes = Uint8List.fromList(l);
+    return bytes;
+  }
+}
