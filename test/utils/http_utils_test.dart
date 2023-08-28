@@ -368,13 +368,15 @@ void main() {
       });
 
       test('Testing formatBody for html subtype values with random values', () {
-        String body5 = '''<html>${getRandomStringLines(100, 10000)}</html>''';
+        String body5 =
+            '''<html>${RandomStringGenerator.getRandomStringLines(100, 10000)}</html>''';
         expect(formatBody(body5, mediaTypeHtml), null);
       });
       test(
           'Testing formatBody for html subtype values with random values within limit',
           () {
-        String body6 = '''<html>${getRandomStringLines(100, 190)}</html>''';
+        String body6 =
+            '''<html>${RandomStringGenerator.getRandomStringLines(100, 190)}</html>''';
         expect(formatBody(body6, mediaTypeHtml), body6);
       });
     });
