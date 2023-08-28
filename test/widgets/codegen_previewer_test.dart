@@ -69,7 +69,18 @@ void main() async {
     );
 
     await tester.pumpAndSettle();
-    expect(find.text('Code'), findsOneWidget);
+    expect(find.byType(DropdownButton<CodegenLanguage>), findsOneWidget);
+    expect(
+        (tester.widget(find.byType(DropdownButton<CodegenLanguage>))
+                as DropdownButton)
+            .value,
+        equals(CodegenLanguage.dartHttp));
+
+    await tester.tap(find.text('Dart (http)'));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+
+    expect(find.text('Kotlin (OkHttp)'), findsWidgets);
 
     expect(find.textContaining('Error Status Code', findRichText: true),
         findsOneWidget);
@@ -97,7 +108,7 @@ void main() async {
     );
 
     await tester.pumpAndSettle();
-    expect(find.text('Code'), findsOneWidget);
+    expect(find.text('Dart (http)'), findsOneWidget);
 
     expect(find.textContaining('Error Status Code', findRichText: true),
         findsOneWidget);

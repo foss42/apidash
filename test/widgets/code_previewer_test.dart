@@ -50,7 +50,7 @@ void main() async {
   });
   testWidgets('Testing for code previewer when code is of 1000 lines',
       (tester) async {
-    String codeLines = getRandomStringLines(1000, 20);
+    String codeLines = RandomStringGenerator.getRandomStringLines(1000, 20);
     await tester.pumpWidget(
       MaterialApp(
         title: 'Code Previewer',
