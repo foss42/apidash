@@ -55,7 +55,7 @@ const requestModelGet5 = RequestModel(
 /// GET request model with headers & query params
 const requestModelGet6 = RequestModel(
   id: 'get6',
-  url: 'https://api.foss42.com/humanize/social',
+  url: 'https://api.github.com/repos/foss42/apidash',
   method: HTTPVerb.get,
   requestHeaders: [
     NameValueModel(name: 'Authorization', value: 'Bearer XYZ'),
@@ -68,11 +68,26 @@ const requestModelGet6 = RequestModel(
 /// GET request model with body
 const requestModelGet7 = RequestModel(
   id: 'get7',
-  url: 'https://api.foss42.com/humanize/social',
+  url: 'https://api.foss42.com',
   method: HTTPVerb.get,
   requestBodyContentType: ContentType.text,
   requestBody:
       'This is a random text which should not be attached with a GET request',
+);
+
+/// GET request model with empty header & query param name
+const requestModelGet8 = RequestModel(
+  id: 'get8',
+  url: 'https://api.github.com/repos/foss42/apidash',
+  method: HTTPVerb.get,
+  requestHeaders: [
+    NameValueModel(name: 'Authorization', value: 'Bearer XYZ'),
+    NameValueModel(name: '', value: 'Bearer XYZ'),
+  ],
+  requestParams: [
+    NameValueModel(name: 'raw', value: 'true'),
+    NameValueModel(name: '', value: 'true'),
+  ],
 );
 
 /// Basic HEAD request model
@@ -89,9 +104,19 @@ const requestModelHead2 = RequestModel(
   method: HTTPVerb.head,
 );
 
-/// Basic POST request model
+/// Basic POST request model (txt body)
 const requestModelPost1 = RequestModel(
-  id: 'post1',
+    id: 'post1',
+    url: 'https://api.foss42.com/case/lower',
+    method: HTTPVerb.post,
+    requestBody: r"""{
+"text": "I LOVE Flutter"
+}""",
+    requestBodyContentType: ContentType.text);
+
+/// POST request model with JSON body
+const requestModelPost2 = RequestModel(
+  id: 'post2',
   url: 'https://api.foss42.com/case/lower',
   method: HTTPVerb.post,
   requestBody: r"""{
@@ -99,28 +124,59 @@ const requestModelPost1 = RequestModel(
 }""",
 );
 
-/// POST request model with txt body
-const requestModelPost2 = RequestModel(
-  id: 'post1',
+/// POST request model with headers
+const requestModelPost3 = RequestModel(
+  id: 'post3',
   url: 'https://api.foss42.com/case/lower',
   method: HTTPVerb.post,
   requestBody: r"""{
 "text": "I LOVE Flutter"
 }""",
   requestBodyContentType: ContentType.json,
+  requestHeaders: [
+    NameValueModel(name: 'Authorization', value: 'Bearer XYZ'),
+  ],
 );
 
-/// POST request model with headers
-
 /// PUT request model
+const requestModelPut1 = RequestModel(
+  id: 'put1',
+  url: 'https://reqres.in/api/users/2',
+  method: HTTPVerb.put,
+  requestBody: r"""{
+"name": "morpheus",
+"job": "zion resident"
+}""",
+  requestBodyContentType: ContentType.json,
+);
 
 /// PATCH request model
+const requestModelPatch1 = RequestModel(
+  id: 'patch1',
+  url: 'https://reqres.in/api/users/2',
+  method: HTTPVerb.patch,
+  requestBody: r"""{
+"name": "marfeus",
+"job": "accountant"
+}""",
+  requestBodyContentType: ContentType.json,
+);
 
 /// Basic DELETE request model
 const requestModelDelete1 = RequestModel(
   id: 'delete1',
-  url: 'https://jsonplaceholder.typicode.com/posts/1',
+  url: 'https://reqres.in/api/users/2',
   method: HTTPVerb.delete,
-  requestBody: '{"title": "foo","body": "bar","userId": 1}',
+);
+
+/// Basic DELETE with body
+const requestModelDelete2 = RequestModel(
+  id: 'delete1',
+  url: 'https://reqres.in/api/users/2',
+  method: HTTPVerb.delete,
+  requestBody: r"""{
+"name": "marfeus",
+"job": "accountant"
+}""",
   requestBodyContentType: ContentType.json,
 );
