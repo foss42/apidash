@@ -232,7 +232,7 @@ const kDefaultContentType = ContentType.json;
 
 enum CodegenLanguage {
   dartHttp("Dart (http)", "dart", "dart"),
-  kotlinOkHttp("Kotlin (OkHttp)", "java", "kt");
+  kotlinOkHttp("Kotlin (okhttp3)", "java", "kt");
 
   const CodegenLanguage(this.label, this.codeHighlightLang, this.ext);
   final String label;
