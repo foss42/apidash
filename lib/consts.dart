@@ -226,6 +226,7 @@ const kMethodsWithBody = [
   HTTPVerb.patch,
   HTTPVerb.delete,
 ];
+
 const kDefaultHttpMethod = HTTPVerb.get;
 const kDefaultContentType = ContentType.json;
 

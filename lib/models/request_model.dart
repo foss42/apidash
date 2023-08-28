@@ -8,14 +8,14 @@ import 'response_model.dart';
 class RequestModel {
   const RequestModel({
     required this.id,
-    this.method = kDefaultHttpMethod,
+    this.method = HTTPVerb.get,
     this.url = "",
     this.name = "",
     this.description = "",
     this.requestTabIndex = 0,
     this.requestHeaders,
     this.requestParams,
-    this.requestBodyContentType = kDefaultContentType,
+    this.requestBodyContentType = ContentType.json,
     this.requestBody,
     this.responseStatus,
     this.message,
