@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 
 @immutable
-class KVRow {
-  const KVRow(this.k, this.v);
+class NameValueModel {
+  const NameValueModel(this.k, this.v);
 
   final String k;
   final dynamic v;
 
-  KVRow copyWith({
+  NameValueModel copyWith({
     String? k,
     dynamic v,
   }) {
-    return KVRow(k ?? this.k, v ?? this.v);
+    return NameValueModel(k ?? this.k, v ?? this.v);
   }
 
   @override
@@ -21,7 +21,7 @@ class KVRow {
 
   @override
   bool operator ==(Object other) {
-    return other is KVRow &&
+    return other is NameValueModel &&
         other.runtimeType == runtimeType &&
         other.k == k &&
         other.v == v;

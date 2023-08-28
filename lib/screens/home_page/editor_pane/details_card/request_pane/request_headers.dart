@@ -15,7 +15,7 @@ class EditRequestHeaders extends ConsumerStatefulWidget {
 }
 
 class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
-  late List<KVRow> rows;
+  late List<NameValueModel> rows;
   final random = Random.secure();
   late int seed;
 
@@ -37,9 +37,9 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
     final length = ref.watch(activeRequestModelProvider
         .select((value) => value?.requestHeaders?.length));
     var rH = ref.read(activeRequestModelProvider)?.requestHeaders;
-    rows = (rH == null || rH.isEmpty) ? [const KVRow("", "")] : rH;
+    rows = (rH == null || rH.isEmpty) ? [const NameValueModel("", "")] : rH;
 
-    DaviModel<KVRow> model = DaviModel<KVRow>(
+    DaviModel<NameValueModel> model = DaviModel<NameValueModel>(
       rows: rows,
       columns: [
         DaviColumn(
@@ -121,7 +121,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
               Expanded(
                 child: DaviTheme(
                   data: kTableThemeData,
-                  child: Davi<KVRow>(model),
+                  child: Davi<NameValueModel>(model),
                 ),
               ),
             ],
@@ -133,7 +133,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
             padding: const EdgeInsets.only(bottom: 30),
             child: ElevatedButton.icon(
               onPressed: () {
-                rows.add(const KVRow("", ""));
+                rows.add(const NameValueModel("", ""));
                 _onFieldChange(activeId!);
               },
               icon: const Icon(Icons.add),

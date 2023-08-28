@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 import 'dart:convert';
+import '../models/models.dart';
 import '../consts.dart';
-import 'package:apidash/models/models.dart' show KVRow;
 
 String humanizeDuration(Duration? duration) {
   if (duration == null) {
@@ -60,7 +60,8 @@ String padMultilineString(String text, int padding,
   return lines.join("\n");
 }
 
-Map<String, String>? rowsToMap(List<KVRow>? kvRows, {bool isHeader = false}) {
+Map<String, String>? rowsToMap(List<NameValueModel>? kvRows,
+    {bool isHeader = false}) {
   if (kvRows == null) {
     return null;
   }
@@ -77,13 +78,13 @@ Map<String, String>? rowsToMap(List<KVRow>? kvRows, {bool isHeader = false}) {
   return finalMap;
 }
 
-List<KVRow>? mapToRows(Map<String, String>? kvMap) {
+List<NameValueModel>? mapToRows(Map<String, String>? kvMap) {
   if (kvMap == null) {
     return null;
   }
-  List<KVRow> finalRows = [];
+  List<NameValueModel> finalRows = [];
   for (var k in kvMap.keys) {
-    finalRows.add(KVRow(k, kvMap[k]));
+    finalRows.add(NameValueModel(k, kvMap[k]));
   }
   return finalRows;
 }

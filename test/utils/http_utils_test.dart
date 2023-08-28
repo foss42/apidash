@@ -1,7 +1,7 @@
 import 'package:test/test.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:apidash/utils/http_utils.dart';
-import 'package:apidash/models/kvrow_model.dart';
+import 'package:apidash/models/name_value_model.dart';
 import 'package:apidash/consts.dart';
 import '../test_utilities.dart';
 
@@ -176,7 +176,7 @@ void main() {
   group("Testing getValidRequestUri", () {
     test('Testing getValidRequestUri for normal values', () {
       String url1 = "https://api.foss42.com/country/data";
-      KVRow kvRow1 = const KVRow("code", "US");
+      const kvRow1 = NameValueModel("code", "US");
       Uri uri1Expected = Uri(
           scheme: 'https',
           host: 'api.foss42.com',
@@ -185,16 +185,16 @@ void main() {
       expect(getValidRequestUri(url1, [kvRow1]), (uri1Expected, null));
     });
     test('Testing getValidRequestUri for null url value', () {
-      KVRow kvRow2 = const KVRow("code", "US");
+      const kvRow2 = NameValueModel("code", "US");
       expect(getValidRequestUri(null, [kvRow2]), (null, "URL is missing!"));
     });
     test('Testing getValidRequestUri for empty url value', () {
-      KVRow kvRow3 = const KVRow("", "");
+      const kvRow3 = NameValueModel("", "");
       expect(getValidRequestUri("", [kvRow3]), (null, "URL is missing!"));
     });
     test('Testing getValidRequestUri when https is not provided in url', () {
       String url4 = "api.foss42.com/country/data";
-      KVRow kvRow4 = const KVRow("code", "US");
+      const kvRow4 = NameValueModel("code", "US");
       Uri uri4Expected = Uri(
           scheme: 'https',
           host: 'api.foss42.com',
@@ -218,7 +218,7 @@ void main() {
     test('Testing getValidRequestUri when query params in both url and kvrow',
         () {
       String url6 = "api.foss42.com/country/data?code=IND";
-      KVRow kvRow6 = const KVRow("code", "US");
+      const kvRow6 = NameValueModel("code", "US");
       Uri uri6Expected = Uri(
           scheme: 'https',
           host: 'api.foss42.com',

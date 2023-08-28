@@ -16,7 +16,7 @@ class EditRequestURLParams extends ConsumerStatefulWidget {
 }
 
 class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
-  late List<KVRow> rows;
+  late List<NameValueModel> rows;
   final random = Random.secure();
   late int seed;
 
@@ -38,9 +38,9 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
     final length = ref.watch(activeRequestModelProvider
         .select((value) => value?.requestParams?.length));
     var rP = ref.read(activeRequestModelProvider)?.requestParams;
-    rows = (rP == null || rP.isEmpty) ? [const KVRow("", "")] : rP;
+    rows = (rP == null || rP.isEmpty) ? [const NameValueModel("", "")] : rP;
 
-    DaviModel<KVRow> model = DaviModel<KVRow>(
+    DaviModel<NameValueModel> model = DaviModel<NameValueModel>(
       rows: rows,
       columns: [
         DaviColumn(
@@ -122,7 +122,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
               Expanded(
                 child: DaviTheme(
                   data: kTableThemeData,
-                  child: Davi<KVRow>(model),
+                  child: Davi<NameValueModel>(model),
                 ),
               ),
             ],
@@ -134,7 +134,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
             padding: const EdgeInsets.only(bottom: 30),
             child: ElevatedButton.icon(
               onPressed: () {
-                rows.add(const KVRow("", ""));
+                rows.add(const NameValueModel("", ""));
                 _onFieldChange(activeId!);
               },
               icon: const Icon(Icons.add),

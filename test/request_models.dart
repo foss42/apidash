@@ -1,4 +1,4 @@
-import 'package:apidash/models/models.dart' show KVRow, RequestModel;
+import 'package:apidash/models/models.dart' show NameValueModel, RequestModel;
 import 'package:apidash/consts.dart';
 
 /// Basic GET request model
@@ -14,7 +14,7 @@ const requestModelGet2 = RequestModel(
   url: 'https://api.foss42.com/country/data',
   method: HTTPVerb.get,
   requestParams: [
-    KVRow('code', 'US'),
+    NameValueModel('code', 'US'),
   ],
 );
 
@@ -24,7 +24,7 @@ const requestModelGet3 = RequestModel(
   url: 'https://api.foss42.com/country/data?code=US',
   method: HTTPVerb.get,
   requestParams: [
-    KVRow('code', 'IND'),
+    NameValueModel('code', 'IND'),
   ],
 );
 
@@ -34,11 +34,11 @@ const requestModelGet4 = RequestModel(
   url: 'https://api.foss42.com/humanize/social',
   method: HTTPVerb.get,
   requestParams: [
-    KVRow('num', '8700000'),
-    KVRow('digits', '3'),
-    KVRow('system', 'SS'),
-    KVRow('add_space', 'true'),
-    KVRow('trailing_zeros', 'true'),
+    NameValueModel('num', '8700000'),
+    NameValueModel('digits', '3'),
+    NameValueModel('system', 'SS'),
+    NameValueModel('add_space', 'true'),
+    NameValueModel('trailing_zeros', 'true'),
   ],
 );
 
@@ -48,7 +48,7 @@ const requestModelGet5 = RequestModel(
   url: 'https://api.github.com/repos/foss42/apidash',
   method: HTTPVerb.get,
   requestHeaders: [
-    KVRow('Authorization', 'Bearer XYZ'),
+    NameValueModel('Authorization', 'Bearer XYZ'),
   ],
 );
 
@@ -58,10 +58,10 @@ const requestModelGet6 = RequestModel(
   url: 'https://api.foss42.com/humanize/social',
   method: HTTPVerb.get,
   requestHeaders: [
-    KVRow('Authorization', 'Bearer XYZ'),
+    NameValueModel('Authorization', 'Bearer XYZ'),
   ],
   requestParams: [
-    KVRow('raw', 'true'),
+    NameValueModel('raw', 'true'),
   ],
 );
 

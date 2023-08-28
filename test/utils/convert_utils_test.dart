@@ -1,6 +1,6 @@
 import 'package:test/test.dart';
 import 'package:apidash/utils/convert_utils.dart';
-import 'package:apidash/models/kvrow_model.dart';
+import 'package:apidash/models/name_value_model.dart';
 
 void main() {
   group("Testing humanizeDuration function", () {
@@ -73,18 +73,18 @@ void main() {
       expect(rowsToMap(null), null);
     });
     test('Testing for string KVRow values', () {
-      KVRow kvRow1 = const KVRow("code", "IN");
+      const kvRow1 = NameValueModel("code", "IN");
       expect(rowsToMap([kvRow1]), {"code": "IN"});
     });
     test('Testing when header is True', () {
-      KVRow kvRow2 = const KVRow("Text", "ABC");
+      const kvRow2 = NameValueModel("Text", "ABC");
       expect(rowsToMap([kvRow2], isHeader: true), {"text": "ABC"});
     });
     test('Testing when header is false and key is in upper case', () {
-      List<KVRow> kvRow3 = const [
-        KVRow("TEXT", "ABC"),
-        KVRow("version", 0.1),
-        KVRow("month", 4)
+      const kvRow3 = <NameValueModel>[
+        NameValueModel("TEXT", "ABC"),
+        NameValueModel("version", 0.1),
+        NameValueModel("month", 4),
       ];
       expect(
           rowsToMap(kvRow3), {"TEXT": "ABC", "version": "0.1", "month": "4"});
@@ -97,10 +97,10 @@ void main() {
     });
     test('Testing with a map value', () {
       Map<String, String> value1 = {"text": "abc", "lang": "eng", "code": "1"};
-      List<KVRow> result1Expected = const [
-        KVRow("text", "abc"),
-        KVRow("lang", "eng"),
-        KVRow("code", "1")
+      const result1Expected = <NameValueModel>[
+        NameValueModel("text", "abc"),
+        NameValueModel("lang", "eng"),
+        NameValueModel("code", "1")
       ];
       expect(mapToRows(value1), result1Expected);
     });

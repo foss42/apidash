@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:collection/collection.dart' show mergeMaps;
 import 'package:http_parser/http_parser.dart';
 import 'package:xml/xml.dart';
-import 'package:apidash/models/models.dart' show KVRow;
+import '../models/models.dart';
 import 'convert_utils.dart' show rowsToMap;
 import '../consts.dart';
 
@@ -53,7 +53,8 @@ MediaType? getMediaTypeFromHeaders(Map? headers) {
   return (null, false);
 }
 
-(Uri?, String?) getValidRequestUri(String? url, List<KVRow>? requestParams,
+(Uri?, String?) getValidRequestUri(
+    String? url, List<NameValueModel>? requestParams,
     {String defaultUriScheme = kDefaultUriScheme}) {
   url = url?.trim();
   if (url == null || url == "") {
