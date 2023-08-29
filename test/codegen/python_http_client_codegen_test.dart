@@ -1,6 +1,5 @@
 import 'package:apidash/codegen/python/pkg_http_client.dart';
-import 'package:apidash/models/models.dart' show KVRow, RequestModel;
-import 'package:apidash/models/name_value_model.dart';
+import 'package:apidash/models/models.dart';
 import 'package:test/test.dart';
 import 'package:apidash/consts.dart';
 

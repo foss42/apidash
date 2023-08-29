@@ -41,9 +41,9 @@ main()
       String params = '';
       if (paramsList != null) {
         for (var param in paramsList) {
-          if (param.k.isNotEmpty) {
+          if (param.name.isNotEmpty) {
             hasParams = true;
-            params += '\n        "${param.k}": "${param.v}",';
+            params += '\n        "${param.name}": "${param.value}",';
           }
         }
       }
