@@ -1,5 +1,6 @@
 import 'package:apidash/codegen/kotlin/pkg_okhttp.dart';
 import 'python/pkg_http_client.dart';
+import 'package:apidash/codegen/python/pkg_request.dart';
 import 'package:apidash/consts.dart';
 
 import 'package:apidash/models/models.dart' show RequestModel;
@@ -18,6 +19,8 @@ class Codegen {
         return KotlinOkHttpCodeGen().getCode(requestModel);
       case CodegenLanguage.pythonHttpClient:
         return PythonHttpClient().getCode(requestModel);
+      case CodegenLanguage.pythonRequests:
+        return PythonRequestCodeGen().getCode(requestModel, defaultUriScheme);
       default:
         throw ArgumentError('Invalid codegenLanguage');
     }
