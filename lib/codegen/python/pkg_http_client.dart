@@ -36,7 +36,7 @@ print(data.decode("utf-8"))
       return result;
     }
     for (final header in requestModel.requestHeaders!) {
-      result += """'${header.k}':'${header.v}',\n""";
+      result += """'${header.name}':'${header.value}',\n""";
     }
     return result;
   }
@@ -49,7 +49,7 @@ print(data.decode("utf-8"))
     result += "?";
     for (final queryParam in requestModel.requestParams!) {
       result +=
-          "${queryParam.k.toString().replaceAll(" ", "%20")}=${queryParam.v.toString().replaceAll(" ", "%20")}&";
+          "${queryParam.name.toString().replaceAll(" ", "%20")}=${queryParam.value.toString().replaceAll(" ", "%20")}&";
     }
     return result.substring(0, result.length - 1);
   }
@@ -59,7 +59,7 @@ print(data.decode("utf-8"))
     if (requestModel.url.startsWith('http://') ||
         requestModel.url.startsWith('https://')) {
       result = requestModel.url.substring(requestModel.url.indexOf('://') + 3);
-    }else{
+    } else {
       result = requestModel.url;
     }
     Map<String, String> resultMap = {};

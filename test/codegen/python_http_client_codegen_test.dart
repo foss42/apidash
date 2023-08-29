@@ -1,11 +1,12 @@
 import 'package:apidash/codegen/python/pkg_http_client.dart';
 import 'package:apidash/models/models.dart' show KVRow, RequestModel;
+import 'package:apidash/models/name_value_model.dart';
 import 'package:test/test.dart';
 import 'package:apidash/consts.dart';
 
 void main() {
   group('PythonHttpClient', () {
-    final PythonHttpClient pythonHttpClient = PythonHttpClient(); 
+    final PythonHttpClient pythonHttpClient = PythonHttpClient();
 
     test('getCode returns valid code for GET request', () {
       const requestModel = RequestModel(
@@ -106,11 +107,11 @@ print(data.decode("utf-8"))
         url: 'https://jsonplaceholder.typicode.com/posts',
         method: HTTPVerb.get,
         requestParams: [
-          KVRow('userId', 1),
+          NameValueModel(name: 'userId', value: 1),
         ],
         requestHeaders: [
-          KVRow('Custom-Header-1', 'Value-1'),
-          KVRow('Custom-Header-2', 'Value-2')
+          NameValueModel(name: 'Custom-Header-1', value: 'Value-1'),
+          NameValueModel(name: 'Custom-Header-2', value: 'Value-2')
         ],
         id: '1',
       );
