@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
 import 'package:flutter/foundation.dart';
+import 'package:printing/printing.dart' show PdfPreview;
 import '../test_consts.dart';
 
 void main() {
@@ -20,7 +21,8 @@ void main() {
     expect(
         find.text(
             "${kMimeTypeRaiseIssueStart}application/pdf$kMimeTypeRaiseIssue"),
-        findsOneWidget);
+        findsNothing);
+    expect(find.byType(PdfPreview), findsOneWidget);
   });
 
   testWidgets('Testing when type/subtype is audio/mpeg', (tester) async {
