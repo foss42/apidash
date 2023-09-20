@@ -171,7 +171,7 @@ const requestModelDelete1 = RequestModel(
 
 /// Basic DELETE with body
 const requestModelDelete2 = RequestModel(
-  id: 'delete1',
+  id: 'delete2',
   url: 'https://reqres.in/api/users/2',
   method: HTTPVerb.delete,
   requestBody: r"""{
