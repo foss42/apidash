@@ -2,7 +2,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'error_message.dart';
 import 'package:apidash/consts.dart';
+import 'package:printing/printing.dart';
 import 'uint8_audio_player.dart';
+
 
 class Previewer extends StatefulWidget {
   const Previewer({
@@ -34,7 +36,13 @@ class _PreviewerState extends State<Previewer> {
       );
     }
     if (widget.type == kTypeApplication && widget.subtype == kSubTypePdf) {
-      // TODO: PDF Viewer
+      return PdfPreview(
+        build: (_) => widget.bytes,
+        useActions: false,
+        onError: (context, error) {
+          return const ErrorMessage(message: kPdfError);
+        },
+      );
     }
     if (widget.type == kTypeAudio) {
       return Uint8AudioPlayer(

@@ -39,6 +39,7 @@ dependencies:
   just_audio_windows: ^0.2.0
   freezed_annotation: ^2.4.1
   json_annotation: ^4.8.1
+  printing: ^5.11.0
 
 dev_dependencies:
   flutter_test:
