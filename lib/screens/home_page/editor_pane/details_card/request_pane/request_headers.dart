@@ -15,7 +15,7 @@ class EditRequestHeaders extends ConsumerStatefulWidget {
 }
 
 class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
-  late List<KVRow> rows;
+  late List<NameValueModel> rows;
   final random = Random.secure();
   late int seed;
 
@@ -37,9 +37,11 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
     final length = ref.watch(activeRequestModelProvider
         .select((value) => value?.requestHeaders?.length));
     var rH = ref.read(activeRequestModelProvider)?.requestHeaders;
-    rows = (rH == null || rH.isEmpty) ? [const KVRow("", "")] : rH;
+    rows = (rH == null || rH.isEmpty)
+        ? [const NameValueModel(name: "", value: "")]
+        : rH;
 
-    DaviModel<KVRow> model = DaviModel<KVRow>(
+    DaviModel<NameValueModel> model = DaviModel<NameValueModel>(
       rows: rows,
       columns: [
         DaviColumn(
@@ -49,10 +51,10 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
             int idx = row.index;
             return CellField(
               keyId: "$activeId-$idx-headers-k-$seed",
-              initialValue: rows[idx].k,
+              initialValue: rows[idx].name,
               hintText: "Add Header Name",
               onChanged: (value) {
-                rows[idx] = rows[idx].copyWith(k: value);
+                rows[idx] = rows[idx].copyWith(name: value);
                 _onFieldChange(activeId!);
               },
               colorScheme: Theme.of(context).colorScheme,
@@ -76,10 +78,10 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
             int idx = row.index;
             return CellField(
               keyId: "$activeId-$idx-headers-v-$seed",
-              initialValue: rows[idx].v,
+              initialValue: rows[idx].value,
               hintText: " Add Header Value",
               onChanged: (value) {
-                rows[idx] = rows[idx].copyWith(v: value);
+                rows[idx] = rows[idx].copyWith(value: value);
                 _onFieldChange(activeId!);
               },
               colorScheme: Theme.of(context).colorScheme,
@@ -96,6 +98,9 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
                   ? kIconRemoveDark
                   : kIconRemoveLight,
               onTap: () {
+                if (rows.length == 1) {
+                  return;
+                }
                 rows.removeAt(row.index);
                 seed = random.nextInt(kRandMax);
                 _onFieldChange(activeId!);
@@ -118,7 +123,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
               Expanded(
                 child: DaviTheme(
                   data: kTableThemeData,
-                  child: Davi<KVRow>(model),
+                  child: Davi<NameValueModel>(model),
                 ),
               ),
             ],
@@ -130,7 +135,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
             padding: const EdgeInsets.only(bottom: 30),
             child: ElevatedButton.icon(
               onPressed: () {
-                rows.add(const KVRow("", ""));
+                rows.add(const NameValueModel(name: "", value: ""));
                 _onFieldChange(activeId!);
               },
               icon: const Icon(Icons.add),

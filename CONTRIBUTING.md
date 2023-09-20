@@ -4,10 +4,10 @@ We value your participation in this open source project. This page will give you
 
 You can contribute to the project in any or all of the following ways: 
 
-- [Ask a question](https://github.com/foss42/api-dash/discussions)
-- [Submit a bug report](https://github.com/foss42/api-dash/issues/new/choose)
-- [Request a new feature](https://github.com/foss42/api-dash/issues/new/choose)
-- [Suggest ways to improve the developer experience of an existing feature](https://github.com/foss42/api-dash/issues/new/choose)
+- [Ask a question](https://github.com/foss42/apidash/discussions)
+- [Submit a bug report](https://github.com/foss42/apidash/issues/new/choose)
+- [Request a new feature](https://github.com/foss42/apidash/issues/new/choose)
+- [Suggest ways to improve the developer experience of an existing feature](https://github.com/foss42/apidash/issues/new/choose)
 - Add documentation
 - Add a new feature, resolve an existing issue or add a new test to the project. (Goto [Code Contribution Guidelines](#code-contribution-guidelines)).
 
@@ -27,11 +27,11 @@ We currently do not accept PRs that involve:
 
 ### Resolving an existing issue / Adding a requested feature
 
-You can find all existing issues [here](https://github.com/foss42/api-dash/issues). A good place to start is to take a look at ["good first issues"](https://github.com/foss42/api-dash/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22). 
+You can find all existing issues [here](https://github.com/foss42/apidash/issues). A good place to start is to take a look at ["good first issues"](https://github.com/foss42/apidash/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22). 
 
 **Step 1** - Identify the issue you want to work on.  
 **Step 2** - Comment on the issue so that we can discuss how to approach and solve the problem.  
-**Step 3** - Fork the [`foss42/api-dash`](https://github.com/foss42/api-dash) repo to your account.  
+**Step 3** - Fork the [`foss42/apidash`](https://github.com/foss42/apidash) repo to your account.  
 **Step 4** - Create a new branch in your fork and name it `add-feature-xyz` or `resolve-issue-xyz`.  
 **Step 5** - Run API Dash locally (More details [here](#how-to-run-api-dash-locally)).  
 **Step 6** - Make code changes in the branch.  
@@ -41,8 +41,8 @@ You can find all existing issues [here](https://github.com/foss42/api-dash/issue
 
 ### Adding a new feature
 
-**Step 1** - Open an [issue](https://github.com/foss42/api-dash/issues/new/choose) so that we can discuss on the new feature.  
-**Step 2** - Fork the [`foss42/api-dash`](https://github.com/foss42/api-dash) repo to your account.  
+**Step 1** - Open an [issue](https://github.com/foss42/apidash/issues/new/choose) so that we can discuss on the new feature.  
+**Step 2** - Fork the [`foss42/apidash`](https://github.com/foss42/apidash) repo to your account.  
 **Step 3** - Create a new branch in your fork and name it `add-feature-xyz`.   
 **Step 4** - Run API Dash locally (More details [here](#how-to-run-api-dash-locally)).  
 **Step 5** - Make the necessary code changes required to implement the feature in the branch.  
@@ -61,7 +61,7 @@ You can contribute by adding missing/new tests for:
 - Services (`lib/services/`).
 
 **Step 1** - Identify the test you want to add or improve.  
-**Step 2** - Fork the [`foss42/api-dash`](https://github.com/foss42/api-dash) repo to your account.  
+**Step 2** - Fork the [`foss42/apidash`](https://github.com/foss42/apidash) repo to your account.  
 **Step 3** - Create a new branch in your fork and name it `add-test-xyz`.  
 **Step 4** - Add the test to an existing test file or create a new test file in the `test` folder.  
 **Step 5** - Run the tests locally (More details [here](#how-to-run-tests)).  
@@ -69,6 +69,14 @@ You can contribute by adding missing/new tests for:
 **Step 7** - Wait for feedback and review. We will closely work with you on the Pull Request.
 
 ## General Instructions 
+
+### What is the supported Flutter/Dart version?
+
+This project supports the latest Dart 3 & Flutter version. If you are using older Flutter version that does not support Dart 3, you might get errors. 
+
+In case you are setting up Flutter for the first time, just go ahead and download the latest (Stable) SDK from the [Flutter SDK Archive](https://docs.flutter.dev/release/archive). Then proceed with the Flutter installation.
+
+In case you have already setup Flutter, make sure to switch to `stable` branch and upgrade it.
 
 ### How to run API Dash locally?
 
@@ -78,7 +86,7 @@ You can contribute by adding missing/new tests for:
 4. This project uses [Records feature in Dart](https://github.com/dart-lang/language/blob/main/accepted/future-releases/records/records-feature-specification.md), so to run the project execute the following command:
 
 ```
-flutter run --enable-experiment=records
+flutter run
 ```
 
 ### How to run tests?
@@ -86,7 +94,7 @@ flutter run --enable-experiment=records
 To run tests execute the following command:
 
 ```
-flutter test --enable-experiment=records --coverage
+flutter test --coverage
 ```
 
 To generate coverage report as html execute:
@@ -95,10 +103,28 @@ To generate coverage report as html execute:
 genhtml coverage/lcov.info -o coverage/html  
 ```
 
-*Note*: On macOS you need to have `lcov` installed on your system (`brew install lcov`) to run the above command.
+**Note**: On macOS you need to have `lcov` installed on your system (`brew install lcov`) to run the above command.
 
 To view the coverage report in the browser for further analysis, execute: 
 
 ```
 open coverage/html/index.html
 ```
+
+#### Testing a single file
+
+To run tests specified in a single file, execute the following command:
+
+```
+flutter test <file_path>.dart
+```
+
+Example:
+
+```
+flutter test test/widgets/codegen_previewer_test.dart
+```
+
+### How to add a new package to pubspec.yaml?
+
+Instead of copy pasting from pub.dev, it is recommended that you use `flutter pub add package_name` to add a new package to `pubspec.yaml`. You can read more [here](https://docs.flutter.dev/packages-and-plugins/using-packages#adding-a-package-dependency-to-an-app-using-flutter-pub-add).

@@ -6,7 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:davi/davi.dart';
 
 const kDiscordUrl = "https://bit.ly/heyfoss";
-const kGitUrl = "https://github.com/foss42/api-dash";
+const kGitUrl = "https://github.com/foss42/apidash";
 const kIssueUrl = "$kGitUrl/issues";
 
 final kIsMacOS = !kIsWeb && Platform.isMacOS;
@@ -28,6 +28,7 @@ const kWindowTitle = "API Dash";
 const kMinWindowSize = Size(900, 600);
 const kMinInitialWindowWidth = 1200.0;
 const kMinInitialWindowHeight = 800.0;
+const kMinRequestEditorDetailsCardPaneSize = 300.0;
 
 const kColorSchemeSeed = Colors.blue;
 final kFontFamily = GoogleFonts.openSans().fontFamily;
@@ -225,8 +226,21 @@ const kMethodsWithBody = [
   HTTPVerb.patch,
   HTTPVerb.delete,
 ];
+
 const kDefaultHttpMethod = HTTPVerb.get;
 const kDefaultContentType = ContentType.json;
+
+enum CodegenLanguage {
+  dartHttp("Dart (http)", "dart", "dart"),
+  kotlinOkHttp("Kotlin (okhttp3)", "java", "kt"),
+  pythonHttpClient("Python (http.client)", "python", "py"),
+  pythonRequests("Python (requests)", "python", "py");
+
+  const CodegenLanguage(this.label, this.codeHighlightLang, this.ext);
+  final String label;
+  final String codeHighlightLang;
+  final String ext;
+}
 
 const JsonEncoder kEncoder = JsonEncoder.withIndent('  ');
 const LineSplitter kSplitter = LineSplitter();
@@ -311,7 +325,7 @@ const Map<String, Map<String, List<ResponseBodyView>>>
     kSubTypeSvg: kCodeRawBodyViewOptions,
   },
   kTypeAudio: {
-    kSubTypeDefaultViewOptions: kNoBodyViewOptions,
+    kSubTypeDefaultViewOptions: kPreviewBodyViewOptions,
   },
   kTypeVideo: {
     kSubTypeDefaultViewOptions: kNoBodyViewOptions,
@@ -426,6 +440,9 @@ const kImageError =
 
 const kPdfError =
     "There seems to be an issue rendering this pdf. Please raise an issue in API Dash GitHub repo so that we can resolve it.";
+
+const kAudioError =
+    "There seems to be an issue playing this audio. Please raise an issue in API Dash GitHub repo so that we can resolve it.";
 
 const kRaiseIssue =
     "\nPlease raise an issue in API Dash GitHub repo so that we can resolve it.";

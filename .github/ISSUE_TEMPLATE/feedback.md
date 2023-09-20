@@ -4,7 +4,7 @@ about: Wanted to share something regarding API Dash that is neither a bug nor a 
   Don't worry, we got you covered.
 title: ''
 labels: ''
-assignees: animator
+assignees: ''
 
 ---
 

@@ -1,21 +1,21 @@
 import 'package:flutter/foundation.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart' show mapToRows, rowsToMap;
-import 'kvrow_model.dart';
+import 'name_value_model.dart';
 import 'response_model.dart';
 
 @immutable
 class RequestModel {
   const RequestModel({
     required this.id,
-    this.method = kDefaultHttpMethod,
+    this.method = HTTPVerb.get,
     this.url = "",
     this.name = "",
     this.description = "",
     this.requestTabIndex = 0,
     this.requestHeaders,
     this.requestParams,
-    this.requestBodyContentType = kDefaultContentType,
+    this.requestBodyContentType = ContentType.json,
     this.requestBody,
     this.responseStatus,
     this.message,
@@ -28,8 +28,8 @@ class RequestModel {
   final String name;
   final String description;
   final int requestTabIndex;
-  final List<KVRow>? requestHeaders;
-  final List<KVRow>? requestParams;
+  final List<NameValueModel>? requestHeaders;
+  final List<NameValueModel>? requestParams;
   final ContentType requestBodyContentType;
   final String? requestBody;
   final int? responseStatus;
@@ -59,8 +59,8 @@ class RequestModel {
     String? name,
     String? description,
     int? requestTabIndex,
-    List<KVRow>? requestHeaders,
-    List<KVRow>? requestParams,
+    List<NameValueModel>? requestHeaders,
+    List<NameValueModel>? requestParams,
     ContentType? requestBodyContentType,
     String? requestBody,
     int? responseStatus,

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'error_message.dart';
 import 'package:apidash/consts.dart';
 import 'package:printing/printing.dart';
+import 'uint8_audio_player.dart';
+
 
 class Previewer extends StatefulWidget {
   const Previewer({
@@ -43,7 +45,14 @@ class _PreviewerState extends State<Previewer> {
       );
     }
     if (widget.type == kTypeAudio) {
-      // TODO: Audio Player
+      return Uint8AudioPlayer(
+        bytes: widget.bytes,
+        type: widget.type!,
+        subtype: widget.subtype!,
+        errorBuilder: (context, error, stacktrace) {
+          return const ErrorMessage(message: kAudioError);
+        },
+      );
     }
     if (widget.type == kTypeVideo) {
       // TODO: Video Player

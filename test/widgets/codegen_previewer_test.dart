@@ -1,6 +1,7 @@
+import 'package:apidash/widgets/widgets.dart'
+    show ViewCodePane, CodeGenPreviewer;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:apidash/widgets/codegen_previewer.dart';
 import 'package:apidash/consts.dart';
 import '../test_consts.dart';
 
@@ -58,6 +59,8 @@ void main() async {
             Expanded(
               child: ViewCodePane(
                 code: code,
+                codegenLanguage: CodegenLanguage.dartHttp,
+                onChangedCodegenLanguage: (p0) {},
               ),
             ),
           ],
@@ -66,7 +69,18 @@ void main() async {
     );
 
     await tester.pumpAndSettle();
-    expect(find.text('Code'), findsOneWidget);
+    expect(find.byType(DropdownButton<CodegenLanguage>), findsOneWidget);
+    expect(
+        (tester.widget(find.byType(DropdownButton<CodegenLanguage>))
+                as DropdownButton)
+            .value,
+        equals(CodegenLanguage.dartHttp));
+
+    await tester.tap(find.text('Dart (http)'));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+
+    expect(find.text('Kotlin (OkHttp)'), findsWidgets);
 
     expect(find.textContaining('Error Status Code', findRichText: true),
         findsOneWidget);
@@ -84,6 +98,8 @@ void main() async {
             Expanded(
               child: ViewCodePane(
                 code: code,
+                codegenLanguage: CodegenLanguage.dartHttp,
+                onChangedCodegenLanguage: (p0) {},
               ),
             ),
           ],
@@ -92,7 +108,7 @@ void main() async {
     );
 
     await tester.pumpAndSettle();
-    expect(find.text('Code'), findsOneWidget);
+    expect(find.text('Dart (http)'), findsOneWidget);
 
     expect(find.textContaining('Error Status Code', findRichText: true),
         findsOneWidget);
