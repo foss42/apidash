@@ -134,7 +134,7 @@ const requestModelPost3 = RequestModel(
 }""",
   requestBodyContentType: ContentType.json,
   requestHeaders: [
-    NameValueModel(name: 'Authorization', value: 'Bearer XYZ'),
+    NameValueModel(name: 'User-Agent', value: 'Test Agent'),
   ],
 );
 
