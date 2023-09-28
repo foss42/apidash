@@ -122,7 +122,7 @@ void main() async {
   var uri = Uri.parse('https://api.github.com/repos/foss42/apidash');
 
   var headers = {
-                  "Authorization": "Bearer XYZ"
+                  "User-Agent": "Test Agent"
                 };
 
   final response = await http.get(uri,
@@ -154,7 +154,7 @@ void main() async {
   uri = uri.replace(queryParameters: queryParams);
 
   var headers = {
-                  "Authorization": "Bearer XYZ"
+                  "User-Agent": "Test Agent"
                 };
 
   final response = await http.get(uri,
@@ -208,7 +208,7 @@ void main() async {
   uri = uri.replace(queryParameters: queryParams);
 
   var headers = {
-                  "Authorization": "Bearer XYZ"
+                  "User-Agent": "Test Agent"
                 };
 
   final response = await http.get(uri,
@@ -351,7 +351,7 @@ void main() async {
 }''';
 
   var headers = {
-                  "Authorization": "Bearer XYZ",
+                  "User-Agent": "Test Agent",
                   "content-type": "application/json"
                 };
 
