@@ -18,7 +18,7 @@ class Codegen {
       case CodegenLanguage.kotlinOkHttp:
         return KotlinOkHttpCodeGen().getCode(requestModel);
       case CodegenLanguage.pythonHttpClient:
-        return PythonHttpClient().getCode(requestModel);
+        return PythonHttpClient().getCode(requestModel, defaultUriScheme);
       case CodegenLanguage.pythonRequests:
         return PythonRequestCodeGen().getCode(requestModel, defaultUriScheme);
       default:
