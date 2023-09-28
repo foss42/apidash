@@ -6,7 +6,7 @@ import 'package:apidash/utils/utils.dart' show padMultilineString, rowsToMap;
 import 'package:apidash/models/models.dart' show RequestModel;
 
 class DartHttpCodeGen {
-  String kTemplateUrl = """import 'package:http/http.dart' as http;
+  String kTemplateStart = """import 'package:http/http.dart' as http;
 
 void main() async {
   var uri = Uri.parse('{{url}}');
@@ -80,7 +80,7 @@ void main() async {
       if (!url.contains("://") && url.isNotEmpty) {
         url = "$defaultUriScheme://$url";
       }
-      var templateUrl = jj.Template(kTemplateUrl);
+      var templateUrl = jj.Template(kTemplateStart);
       result += templateUrl.render({"url": url});
 
       var paramsList = requestModel.requestParams;
