@@ -1,135 +1,376 @@
 import 'package:apidash/codegen/python/pkg_http_client.dart';
-import 'package:apidash/models/models.dart';
+import '../request_models.dart';
 import 'package:test/test.dart';
-import 'package:apidash/consts.dart';
 
 void main() {
-  group('PythonHttpClient', () {
-    final PythonHttpClient pythonHttpClient = PythonHttpClient();
+  final pythonHttpClient = PythonHttpClient();
 
-    test('getCode returns valid code for GET request', () {
-      const requestModel = RequestModel(
-        url: 'https://jsonplaceholder.typicode.com/todos/1',
-        method: HTTPVerb.get,
-        id: '',
-      );
-      const expectedCode = """import http.client
-import json
+  group('GET Request', () {
+    test('GET 1', () {
+      const expectedCode = r"""import http.client
 
-conn = http.client.HTTPSConnection('jsonplaceholder.typicode.com')
-payload = json.dumps()
-headers = {
-'Content-Type':'application/json'
-},
-conn.request("GET", "/todos/1", payload, headers)
+conn = http.client.HTTPSConnection("api.foss42.com")
+conn.request("GET", "")
+
 res = conn.getresponse()
 data = res.read()
+
 print(data.decode("utf-8"))
 """;
-      expect(pythonHttpClient.getCode(requestModel), expectedCode);
+      expect(pythonHttpClient.getCode(requestModelGet1, "https"), expectedCode);
     });
 
-    test('getCode returns valid code for POST request', () {
-      const requestModel = RequestModel(
-        url: 'https://jsonplaceholder.typicode.com/todos',
-        method: HTTPVerb.post,
-        requestBody: '{"title": "foo","body": "bar","userId": 1}',
-        requestBodyContentType: ContentType.json,
-        id: '1',
-      );
-      const expectedCode = """import http.client
-import json
+    test('GET 2', () {
+      const expectedCode = r"""import http.client
+from urllib.parse import urlencode
 
-conn = http.client.HTTPSConnection('jsonplaceholder.typicode.com')
-payload = json.dumps({"title": "foo","body": "bar","userId": 1})
-headers = {
-'Content-Type':'application/json'
-},
-conn.request("POST", "/todos", payload, headers)
+queryParams = {
+                "code": "US"
+              }
+queryParamsStr = '?' + urlencode(queryParams)
+
+conn = http.client.HTTPSConnection("api.foss42.com")
+conn.request("GET", "/country/data" + queryParamsStr)
+
 res = conn.getresponse()
 data = res.read()
+
 print(data.decode("utf-8"))
 """;
-      expect(pythonHttpClient.getCode(requestModel), expectedCode);
+      expect(pythonHttpClient.getCode(requestModelGet2, "https"), expectedCode);
     });
 
-    test('getCode returns valid code for DELETE request', () {
-      const requestModel = RequestModel(
-        url: 'https://jsonplaceholder.typicode.com/todos/1',
-        method: HTTPVerb.delete,
-        requestBody: '{"title": "foo","body": "bar","userId": 1}',
-        requestBodyContentType: ContentType.json,
-        id: '1',
-      );
-      const expectedCode = """import http.client
-import json
+    test('GET 3', () {
+      const expectedCode = r"""import http.client
+from urllib.parse import urlencode
 
-conn = http.client.HTTPSConnection('jsonplaceholder.typicode.com')
-payload = json.dumps({"title": "foo","body": "bar","userId": 1})
-headers = {
-'Content-Type':'application/json'
-},
-conn.request("DELETE", "/todos/1", payload, headers)
+queryParams = {
+                "code": "IND"
+              }
+queryParamsStr = '?' + urlencode(queryParams)
+
+conn = http.client.HTTPSConnection("api.foss42.com")
+conn.request("GET", "/country/data" + queryParamsStr)
+
 res = conn.getresponse()
 data = res.read()
+
 print(data.decode("utf-8"))
 """;
-      expect(pythonHttpClient.getCode(requestModel), expectedCode);
+      expect(pythonHttpClient.getCode(requestModelGet3, "https"), expectedCode);
     });
 
-    test('getCode returns valid code for HEAD request', () {
-      const requestModel = RequestModel(
-        url: 'https://jsonplaceholder.typicode.com/todos/1',
-        method: HTTPVerb.head,
-        id: '1',
-      );
-      const expectedCode = """import http.client
-import json
+    test('GET 4', () {
+      const expectedCode = r"""import http.client
+from urllib.parse import urlencode
 
-conn = http.client.HTTPSConnection('jsonplaceholder.typicode.com')
-payload = json.dumps()
-headers = {
-'Content-Type':'application/json'
-},
-conn.request("HEAD", "/todos/1", payload, headers)
+queryParams = {
+                "num": "8700000",
+                "digits": "3",
+                "system": "SS",
+                "add_space": "true",
+                "trailing_zeros": "true"
+              }
+queryParamsStr = '?' + urlencode(queryParams)
+
+conn = http.client.HTTPSConnection("api.foss42.com")
+conn.request("GET", "/humanize/social" + queryParamsStr)
+
 res = conn.getresponse()
 data = res.read()
+
 print(data.decode("utf-8"))
 """;
-      expect(pythonHttpClient.getCode(requestModel), expectedCode);
+      expect(pythonHttpClient.getCode(requestModelGet4, "https"), expectedCode);
     });
 
-    test(
-        'getCode returns valid code for requests with headers and query parameters',
-        () {
-      const requestModel = RequestModel(
-        url: 'https://jsonplaceholder.typicode.com/posts',
-        method: HTTPVerb.get,
-        requestParams: [
-          NameValueModel(name: 'userId', value: 1),
-        ],
-        requestHeaders: [
-          NameValueModel(name: 'Custom-Header-1', value: 'Value-1'),
-          NameValueModel(name: 'Custom-Header-2', value: 'Value-2')
-        ],
-        id: '1',
-      );
-      const expectedCode = """import http.client
-import json
+    test('GET 5', () {
+      const expectedCode = r"""import http.client
 
-conn = http.client.HTTPSConnection('jsonplaceholder.typicode.com')
-payload = json.dumps()
 headers = {
-'Content-Type':'application/json'
-'Custom-Header-1':'Value-1',
-'Custom-Header-2':'Value-2',
-},
-conn.request("GET", "/posts?userId=1", payload, headers)
+            "User-Agent": "Test Agent"
+          }
+
+conn = http.client.HTTPSConnection("api.github.com")
+conn.request("GET", "/repos/foss42/apidash",
+              headers= headers)
+
 res = conn.getresponse()
 data = res.read()
+
 print(data.decode("utf-8"))
 """;
-      expect(pythonHttpClient.getCode(requestModel), expectedCode);
+      expect(pythonHttpClient.getCode(requestModelGet5, "https"), expectedCode);
+    });
+
+    test('GET 6', () {
+      const expectedCode = r"""import http.client
+from urllib.parse import urlencode
+
+queryParams = {
+                "raw": "true"
+              }
+queryParamsStr = '?' + urlencode(queryParams)
+
+headers = {
+            "User-Agent": "Test Agent"
+          }
+
+conn = http.client.HTTPSConnection("api.github.com")
+conn.request("GET", "/repos/foss42/apidash" + queryParamsStr,
+              headers= headers)
+
+res = conn.getresponse()
+data = res.read()
+
+print(data.decode("utf-8"))
+""";
+      expect(pythonHttpClient.getCode(requestModelGet6, "https"), expectedCode);
+    });
+
+    test('GET 7', () {
+      const expectedCode = r"""import http.client
+
+conn = http.client.HTTPSConnection("api.foss42.com")
+conn.request("GET", "")
+
+res = conn.getresponse()
+data = res.read()
+
+print(data.decode("utf-8"))
+""";
+      expect(pythonHttpClient.getCode(requestModelGet7, "https"), expectedCode);
+    });
+
+    test('GET 8', () {
+      const expectedCode = r"""import http.client
+from urllib.parse import urlencode
+
+queryParams = {
+                "raw": "true"
+              }
+queryParamsStr = '?' + urlencode(queryParams)
+
+headers = {
+            "User-Agent": "Test Agent"
+          }
+
+conn = http.client.HTTPSConnection("api.github.com")
+conn.request("GET", "/repos/foss42/apidash" + queryParamsStr,
+              headers= headers)
+
+res = conn.getresponse()
+data = res.read()
+
+print(data.decode("utf-8"))
+""";
+      expect(pythonHttpClient.getCode(requestModelGet8, "https"), expectedCode);
+    });
+  });
+
+  group('HEAD Request', () {
+    test('HEAD 1', () {
+      const expectedCode = r"""import http.client
+
+conn = http.client.HTTPSConnection("api.foss42.com")
+conn.request("HEAD", "")
+
+res = conn.getresponse()
+data = res.read()
+
+print(data.decode("utf-8"))
+""";
+      expect(
+          pythonHttpClient.getCode(requestModelHead1, "https"), expectedCode);
+    });
+
+    test('HEAD 2', () {
+      const expectedCode = r"""import http.client
+
+conn = http.client.HTTPConnection("api.foss42.com")
+conn.request("HEAD", "")
+
+res = conn.getresponse()
+data = res.read()
+
+print(data.decode("utf-8"))
+""";
+      expect(pythonHttpClient.getCode(requestModelHead2, "http"), expectedCode);
+    });
+  });
+
+  group('POST Request', () {
+    test('POST 1', () {
+      const expectedCode = r"""import http.client
+
+body = r'''{
+"text": "I LOVE Flutter"
+}'''
+
+headers = {
+            "content-type": "text/plain"
+          }
+
+conn = http.client.HTTPSConnection("api.foss42.com")
+conn.request("POST", "/case/lower",
+              body= body,
+              headers= headers)
+
+res = conn.getresponse()
+data = res.read()
+
+print(data.decode("utf-8"))
+""";
+      expect(
+          pythonHttpClient.getCode(requestModelPost1, "https"), expectedCode);
+    });
+
+    test('POST 2', () {
+      const expectedCode = r"""import http.client
+
+body = r'''{
+"text": "I LOVE Flutter"
+}'''
+
+headers = {
+            "content-type": "application/json"
+          }
+
+conn = http.client.HTTPSConnection("api.foss42.com")
+conn.request("POST", "/case/lower",
+              body= body,
+              headers= headers)
+
+res = conn.getresponse()
+data = res.read()
+
+print(data.decode("utf-8"))
+""";
+      expect(
+          pythonHttpClient.getCode(requestModelPost2, "https"), expectedCode);
+    });
+
+    test('POST 3', () {
+      const expectedCode = r"""import http.client
+
+body = r'''{
+"text": "I LOVE Flutter"
+}'''
+
+headers = {
+            "User-Agent": "Test Agent",
+            "content-type": "application/json"
+          }
+
+conn = http.client.HTTPSConnection("api.foss42.com")
+conn.request("POST", "/case/lower",
+              body= body,
+              headers= headers)
+
+res = conn.getresponse()
+data = res.read()
+
+print(data.decode("utf-8"))
+""";
+      expect(
+          pythonHttpClient.getCode(requestModelPost3, "https"), expectedCode);
+    });
+  });
+  group('PUT Request', () {
+    test('PUT 1', () {
+      const expectedCode = r"""import http.client
+
+body = r'''{
+"name": "morpheus",
+"job": "zion resident"
+}'''
+
+headers = {
+            "content-type": "application/json"
+          }
+
+conn = http.client.HTTPSConnection("reqres.in")
+conn.request("PUT", "/api/users/2",
+              body= body,
+              headers= headers)
+
+res = conn.getresponse()
+data = res.read()
+
+print(data.decode("utf-8"))
+""";
+      expect(pythonHttpClient.getCode(requestModelPut1, "https"), expectedCode);
+    });
+  });
+
+  group('PATCH Request', () {
+    test('PATCH 1', () {
+      const expectedCode = r"""import http.client
+
+body = r'''{
+"name": "marfeus",
+"job": "accountant"
+}'''
+
+headers = {
+            "content-type": "application/json"
+          }
+
+conn = http.client.HTTPSConnection("reqres.in")
+conn.request("PATCH", "/api/users/2",
+              body= body,
+              headers= headers)
+
+res = conn.getresponse()
+data = res.read()
+
+print(data.decode("utf-8"))
+""";
+      expect(
+          pythonHttpClient.getCode(requestModelPatch1, "https"), expectedCode);
+    });
+  });
+
+  group('DELETE Request', () {
+    test('DELETE 1', () {
+      const expectedCode = r"""import http.client
+
+conn = http.client.HTTPSConnection("reqres.in")
+conn.request("DELETE", "/api/users/2")
+
+res = conn.getresponse()
+data = res.read()
+
+print(data.decode("utf-8"))
+""";
+      expect(
+          pythonHttpClient.getCode(requestModelDelete1, "https"), expectedCode);
+    });
+
+    test('DELETE 2', () {
+      const expectedCode = r"""import http.client
+
+body = r'''{
+"name": "marfeus",
+"job": "accountant"
+}'''
+
+headers = {
+            "content-type": "application/json"
+          }
+
+conn = http.client.HTTPSConnection("reqres.in")
+conn.request("DELETE", "/api/users/2",
+              body= body,
+              headers= headers)
+
+res = conn.getresponse()
+data = res.read()
+
+print(data.decode("utf-8"))
+""";
+      expect(
+          pythonHttpClient.getCode(requestModelDelete2, "https"), expectedCode);
     });
   });
 }
