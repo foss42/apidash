@@ -48,7 +48,7 @@ const requestModelGet5 = RequestModel(
   url: 'https://api.github.com/repos/foss42/apidash',
   method: HTTPVerb.get,
   requestHeaders: [
-    NameValueModel(name: 'Authorization', value: 'Bearer XYZ'),
+    NameValueModel(name: 'User-Agent', value: 'Test Agent'),
   ],
 );
 
@@ -58,7 +58,7 @@ const requestModelGet6 = RequestModel(
   url: 'https://api.github.com/repos/foss42/apidash',
   method: HTTPVerb.get,
   requestHeaders: [
-    NameValueModel(name: 'Authorization', value: 'Bearer XYZ'),
+    NameValueModel(name: 'User-Agent', value: 'Test Agent'),
   ],
   requestParams: [
     NameValueModel(name: 'raw', value: 'true'),
@@ -81,7 +81,7 @@ const requestModelGet8 = RequestModel(
   url: 'https://api.github.com/repos/foss42/apidash',
   method: HTTPVerb.get,
   requestHeaders: [
-    NameValueModel(name: 'Authorization', value: 'Bearer XYZ'),
+    NameValueModel(name: 'User-Agent', value: 'Test Agent'),
     NameValueModel(name: '', value: 'Bearer XYZ'),
   ],
   requestParams: [
