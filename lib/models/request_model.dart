@@ -45,8 +45,8 @@ class RequestModel {
       url: url,
       name: name,
       description: description,
-      requestHeaders: requestHeaders,
-      requestParams: requestParams,
+      requestHeaders: requestHeaders != null ? [...requestHeaders!] : null,
+      requestParams: requestParams != null ? [...requestParams!] : null,
       requestBodyContentType: requestBodyContentType,
       requestBody: requestBody,
     );
@@ -67,6 +67,8 @@ class RequestModel {
     String? message,
     ResponseModel? responseModel,
   }) {
+    var headers = requestHeaders ?? this.requestHeaders;
+    var params = requestParams ?? this.requestParams;
     return RequestModel(
       id: id ?? this.id,
       method: method ?? this.method,
@@ -74,8 +76,8 @@ class RequestModel {
       name: name ?? this.name,
       description: description ?? this.description,
       requestTabIndex: requestTabIndex ?? this.requestTabIndex,
-      requestHeaders: requestHeaders ?? this.requestHeaders,
-      requestParams: requestParams ?? this.requestParams,
+      requestHeaders: headers != null ? [...headers] : null,
+      requestParams: params != null ? [...params] : null,
       requestBodyContentType:
           requestBodyContentType ?? this.requestBodyContentType,
       requestBody: requestBody ?? this.requestBody,
