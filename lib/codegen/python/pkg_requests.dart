@@ -6,7 +6,7 @@ import 'package:apidash/utils/utils.dart'
     show getValidRequestUri, padMultilineString, rowsToMap;
 import 'package:apidash/models/models.dart' show RequestModel;
 
-class PythonRequestCodeGen {
+class PythonRequestsCodeGen {
   final String kTemplateStart = """import requests
 
 url = '{{url}}'
