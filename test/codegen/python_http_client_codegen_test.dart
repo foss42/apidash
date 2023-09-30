@@ -3,7 +3,7 @@ import '../request_models.dart';
 import 'package:test/test.dart';
 
 void main() {
-  final pythonHttpClient = PythonHttpClient();
+  final pythonHttpClientCodeGen = PythonHttpClientCodeGen();
 
   group('GET Request', () {
     test('GET 1', () {
@@ -17,7 +17,8 @@ data = res.read()
 
 print(data.decode("utf-8"))
 """;
-      expect(pythonHttpClient.getCode(requestModelGet1, "https"), expectedCode);
+      expect(pythonHttpClientCodeGen.getCode(requestModelGet1, "https"),
+          expectedCode);
     });
 
     test('GET 2', () {
@@ -37,7 +38,8 @@ data = res.read()
 
 print(data.decode("utf-8"))
 """;
-      expect(pythonHttpClient.getCode(requestModelGet2, "https"), expectedCode);
+      expect(pythonHttpClientCodeGen.getCode(requestModelGet2, "https"),
+          expectedCode);
     });
 
     test('GET 3', () {
@@ -57,7 +59,8 @@ data = res.read()
 
 print(data.decode("utf-8"))
 """;
-      expect(pythonHttpClient.getCode(requestModelGet3, "https"), expectedCode);
+      expect(pythonHttpClientCodeGen.getCode(requestModelGet3, "https"),
+          expectedCode);
     });
 
     test('GET 4', () {
@@ -81,7 +84,8 @@ data = res.read()
 
 print(data.decode("utf-8"))
 """;
-      expect(pythonHttpClient.getCode(requestModelGet4, "https"), expectedCode);
+      expect(pythonHttpClientCodeGen.getCode(requestModelGet4, "https"),
+          expectedCode);
     });
 
     test('GET 5', () {
@@ -100,7 +104,8 @@ data = res.read()
 
 print(data.decode("utf-8"))
 """;
-      expect(pythonHttpClient.getCode(requestModelGet5, "https"), expectedCode);
+      expect(pythonHttpClientCodeGen.getCode(requestModelGet5, "https"),
+          expectedCode);
     });
 
     test('GET 6', () {
@@ -125,7 +130,8 @@ data = res.read()
 
 print(data.decode("utf-8"))
 """;
-      expect(pythonHttpClient.getCode(requestModelGet6, "https"), expectedCode);
+      expect(pythonHttpClientCodeGen.getCode(requestModelGet6, "https"),
+          expectedCode);
     });
 
     test('GET 7', () {
@@ -139,7 +145,8 @@ data = res.read()
 
 print(data.decode("utf-8"))
 """;
-      expect(pythonHttpClient.getCode(requestModelGet7, "https"), expectedCode);
+      expect(pythonHttpClientCodeGen.getCode(requestModelGet7, "https"),
+          expectedCode);
     });
 
     test('GET 8', () {
@@ -164,7 +171,8 @@ data = res.read()
 
 print(data.decode("utf-8"))
 """;
-      expect(pythonHttpClient.getCode(requestModelGet8, "https"), expectedCode);
+      expect(pythonHttpClientCodeGen.getCode(requestModelGet8, "https"),
+          expectedCode);
     });
   });
 
@@ -180,8 +188,8 @@ data = res.read()
 
 print(data.decode("utf-8"))
 """;
-      expect(
-          pythonHttpClient.getCode(requestModelHead1, "https"), expectedCode);
+      expect(pythonHttpClientCodeGen.getCode(requestModelHead1, "https"),
+          expectedCode);
     });
 
     test('HEAD 2', () {
@@ -195,7 +203,8 @@ data = res.read()
 
 print(data.decode("utf-8"))
 """;
-      expect(pythonHttpClient.getCode(requestModelHead2, "http"), expectedCode);
+      expect(pythonHttpClientCodeGen.getCode(requestModelHead2, "http"),
+          expectedCode);
     });
   });
 
@@ -221,8 +230,8 @@ data = res.read()
 
 print(data.decode("utf-8"))
 """;
-      expect(
-          pythonHttpClient.getCode(requestModelPost1, "https"), expectedCode);
+      expect(pythonHttpClientCodeGen.getCode(requestModelPost1, "https"),
+          expectedCode);
     });
 
     test('POST 2', () {
@@ -246,8 +255,8 @@ data = res.read()
 
 print(data.decode("utf-8"))
 """;
-      expect(
-          pythonHttpClient.getCode(requestModelPost2, "https"), expectedCode);
+      expect(pythonHttpClientCodeGen.getCode(requestModelPost2, "https"),
+          expectedCode);
     });
 
     test('POST 3', () {
@@ -272,8 +281,8 @@ data = res.read()
 
 print(data.decode("utf-8"))
 """;
-      expect(
-          pythonHttpClient.getCode(requestModelPost3, "https"), expectedCode);
+      expect(pythonHttpClientCodeGen.getCode(requestModelPost3, "https"),
+          expectedCode);
     });
   });
   group('PUT Request', () {
@@ -299,7 +308,8 @@ data = res.read()
 
 print(data.decode("utf-8"))
 """;
-      expect(pythonHttpClient.getCode(requestModelPut1, "https"), expectedCode);
+      expect(pythonHttpClientCodeGen.getCode(requestModelPut1, "https"),
+          expectedCode);
     });
   });
 
@@ -326,8 +336,8 @@ data = res.read()
 
 print(data.decode("utf-8"))
 """;
-      expect(
-          pythonHttpClient.getCode(requestModelPatch1, "https"), expectedCode);
+      expect(pythonHttpClientCodeGen.getCode(requestModelPatch1, "https"),
+          expectedCode);
     });
   });
 
@@ -343,8 +353,8 @@ data = res.read()
 
 print(data.decode("utf-8"))
 """;
-      expect(
-          pythonHttpClient.getCode(requestModelDelete1, "https"), expectedCode);
+      expect(pythonHttpClientCodeGen.getCode(requestModelDelete1, "https"),
+          expectedCode);
     });
 
     test('DELETE 2', () {
@@ -369,8 +379,8 @@ data = res.read()
 
 print(data.decode("utf-8"))
 """;
-      expect(
-          pythonHttpClient.getCode(requestModelDelete2, "https"), expectedCode);
+      expect(pythonHttpClientCodeGen.getCode(requestModelDelete2, "https"),
+          expectedCode);
     });
   });
 }
