@@ -62,6 +62,7 @@ print(data.decode("utf-8"))
     try {
       String result = "";
       bool hasHeaders = false;
+      bool hasQuery = false;
       bool hasBody = false;
 
       String url = requestModel.url;
@@ -77,6 +78,7 @@ print(data.decode("utf-8"))
         if (uri.hasQuery) {
           var params = uri.queryParameters;
           if (params.isNotEmpty) {
+            hasQuery = true;
             var templateParams = jj.Template(kTemplateParams);
             var paramsString = kEncoder.convert(params);
             paramsString = padMultilineString(paramsString, kParamsPadding);
@@ -121,9 +123,7 @@ print(data.decode("utf-8"))
         result += templateRequest.render({
           "method": method.name.toUpperCase(),
           "path": uri.path,
-          "queryParamsStr": (uri.hasQuery && uri.queryParameters.isNotEmpty)
-              ? " + queryParamsStr"
-              : "",
+          "queryParamsStr": hasQuery ? " + queryParamsStr" : "",
         });
 
         if (hasBody) {
