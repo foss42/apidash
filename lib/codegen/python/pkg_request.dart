@@ -65,7 +65,7 @@ print('Response Body:', response.text)
   ) {
     try {
       String result = "";
-      bool hasParams = false;
+      bool hasQuery = false;
       bool hasHeaders = false;
       bool hasBody = false;
       bool hasJsonBody = false;
@@ -83,9 +83,9 @@ print('Response Body:', response.text)
             .render({"url": "${uri.scheme}://${uri.authority}${uri.path}"});
 
         if (uri.hasQuery) {
-          hasParams = true;
           var params = uri.queryParameters;
           if (params.isNotEmpty) {
+            hasQuery = true;
             var templateParams = jj.Template(kTemplateParams);
             var paramsString = kEncoder.convert(params);
             paramsString = padMultilineString(paramsString, kParamsPadding);
@@ -131,7 +131,7 @@ print('Response Body:', response.text)
           "method": method.name.toLowerCase(),
         });
 
-        if (hasParams) {
+        if (hasQuery) {
           result += kStringRequestParams;
         }
 
