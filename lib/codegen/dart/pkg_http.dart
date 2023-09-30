@@ -80,8 +80,8 @@ void main() async {
       if (!url.contains("://") && url.isNotEmpty) {
         url = "$defaultUriScheme://$url";
       }
-      var templateUrl = jj.Template(kTemplateStart);
-      result += templateUrl.render({"url": url});
+      var templateStartUrl = jj.Template(kTemplateStart);
+      result += templateStartUrl.render({"url": url});
 
       var paramsList = requestModel.requestParams;
       if (paramsList != null) {
