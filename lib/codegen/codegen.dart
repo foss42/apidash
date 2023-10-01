@@ -15,7 +15,7 @@ class Codegen {
       case CodegenLanguage.dartHttp:
         return DartHttpCodeGen().getCode(requestModel, defaultUriScheme);
       case CodegenLanguage.kotlinOkHttp:
-        return KotlinOkHttpCodeGen().getCode(requestModel);
+        return KotlinOkHttpCodeGen().getCode(requestModel, defaultUriScheme);
       case CodegenLanguage.pythonHttpClient:
         return PythonHttpClientCodeGen()
             .getCode(requestModel, defaultUriScheme);

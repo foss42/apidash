@@ -1,79 +1,157 @@
+import 'dart:convert';
 import 'package:apidash/consts.dart';
-
+import 'package:jinja/jinja.dart' as jj;
+import 'package:apidash/utils/utils.dart' show getValidRequestUri, rowsToMap;
 import '../../models/request_model.dart';
 
 class KotlinOkHttpCodeGen {
-  final String headerSnippet = """import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.MultipartBody
-import okhttp3.OkHttpClient
-import okhttp3.Request
+  final String kTemplateStart = """import okhttp3.OkHttpClient
+import okhttp3.Request{{importForQuery}}{{importForBody}}
+
+fun main() {
+    val client = OkHttpClient()
+
+""";
+
+  final String kStringImportForQuery = """
+
+import okhttp3.HttpUrl.Companion.toHttpUrl""";
+
+  final String kStringImportForBody = """
+
 import okhttp3.RequestBody.Companion.toRequestBody
-import okhttp3.RequestBody.Companion.asRequestBody
-import java.io.File
-import java.util.concurrent.TimeUnit
+import okhttp3.MediaType.Companion.toMediaType""";
 
-val client = OkHttpClient()
+  final String kTemplateUrl = '''
+
+    val url = "{{url}}"
+
+''';
+
+  final String kTemplateUrlQuery = '''
+
+    val url = "{{url}}".toHttpUrl().newBuilder()
+{{params}}        .build()
+
+''';
+
+  String kTemplateRequestBody = '''
+
+    val mediaType = "{{contentType}}".toMediaType()
+
+    val body = """{{body}}""".toRequestBody(mediaType)
+
+''';
+
+  final String kStringRequestStart = """
+
+    val request = Request.Builder()
+        .url(url)
 """;
 
-  final String footerSnippet = """  .build()
-val response = client.newCall(request).execute()
+  final String kTemplateRequestEnd = """
+        .{{method}}({{hasBody}})
+        .build()
 
-println(response.body!!.string())
+    val response = client.newCall(request).execute()
+
+    println(response.code)
+    println(response.body?.string())
+}
+
 """;
-  String getCode(RequestModel requestModel) {
-    String result = "";
-    result = result + headerSnippet;
-    if (requestModel.method != HTTPVerb.get &&
-        requestModel.method != HTTPVerb.head) {
-      result =
-          """${result}val mediaType = "${requestModel.requestBodyContentType == ContentType.json ? "application/json" : "text/plain"}".toMediaType()
-val body = "${requestModel.requestBody}".toRequestBody(mediaType)\n""";
-    }
-    result = "${result}val request = Request.Builder()\n";
 
-    result = "$result  .url(\"${requestModel.url}\")\n";
-    result = result + addQueryParams(requestModel);
-    result = result + addRequestMethod(requestModel);
-    result = result + addHeaders(requestModel);
-    result = result + footerSnippet;
+  String? getCode(
+    RequestModel requestModel,
+    String defaultUriScheme,
+  ) {
+    try {
+      String result = "";
+      bool hasHeaders = false;
+      bool hasQuery = false;
+      bool hasBody = false;
 
-    return result;
-  }
+      String url = requestModel.url;
+      if (!url.contains("://") && url.isNotEmpty) {
+        url = "$defaultUriScheme://$url";
+      }
 
-  String addQueryParams(RequestModel requestModel) {
-    String result = "";
-    if (requestModel.requestParams == null) {
+      var rec = getValidRequestUri(url, requestModel.requestParams);
+      Uri? uri = rec.$1;
+
+      if (uri != null) {
+        String url = "${uri.scheme}://${uri.authority}${uri.path}";
+
+        if (uri.hasQuery) {
+          var params = uri.queryParameters;
+          if (params.isNotEmpty) {
+            hasQuery = true;
+            var templateParams = jj.Template(kTemplateUrlQuery);
+            result += templateParams
+                .render({"url": url, "params": getQueryParams(params)});
+          }
+        }
+        if (!hasQuery) {
+          var templateUrl = jj.Template(kTemplateUrl);
+          result += templateUrl.render({"url": url});
+        }
+
+        var method = requestModel.method;
+        var requestBody = requestModel.requestBody;
+        if (kMethodsWithBody.contains(method) && requestBody != null) {
+          var contentLength = utf8.encode(requestBody).length;
+          if (contentLength > 0) {
+            hasBody = true;
+            String contentType =
+                kContentTypeMap[requestModel.requestBodyContentType] ?? "";
+            var templateBody = jj.Template(kTemplateRequestBody);
+            result += templateBody
+                .render({"contentType": contentType, "body": requestBody});
+          }
+        }
+
+        var templateStart = jj.Template(kTemplateStart);
+        var stringStart = templateStart.render({
+          "importForQuery": hasQuery ? kStringImportForQuery : "",
+          "importForBody": hasBody ? kStringImportForBody : ""
+        });
+
+        result = stringStart + result;
+        result += kStringRequestStart;
+
+        var headersList = requestModel.requestHeaders;
+        if (headersList != null) {
+          var headers = rowsToMap(requestModel.requestHeaders) ?? {};
+          if (headers.isNotEmpty) {
+            hasHeaders = true;
+            result += getHeaders(headers);
+          }
+        }
+
+        var templateRequestEnd = jj.Template(kTemplateRequestEnd);
+        result += templateRequestEnd.render({
+          "method": method.name.toLowerCase(),
+          "hasBody": hasBody ? "body" : "",
+        });
+      }
       return result;
+    } catch (e) {
+      return null;
     }
-    for (final queryParam in requestModel.requestParams!) {
-      result =
-          """$result  .addQueryParameter("${queryParam.name}", "${queryParam.value}")\n""";
+  }
+
+  String getQueryParams(Map<String, String> params) {
+    String result = "";
+    for (final k in params.keys) {
+      result = """$result        .addQueryParameter("$k", "${params[k]}")\n""";
     }
     return result;
   }
 
-  String addHeaders(RequestModel requestModel) {
+  String getHeaders(Map<String, String> headers) {
     String result = "";
-    if (requestModel.requestHeaders == null) {
-      return result;
-    }
-    for (final header in requestModel.requestHeaders!) {
-      result = """$result  .addHeader("${header.name}", "${header.value}")\n""";
-    }
-    return result;
-  }
-
-  String addRequestMethod(RequestModel requestModel) {
-    String result = "";
-    if (requestModel.method != HTTPVerb.get &&
-        requestModel.method != HTTPVerb.head &&
-        requestModel.method != HTTPVerb.delete) {
-      result = """$result  .${requestModel.method.name}(body)\n""";
-    } else if (requestModel.method == HTTPVerb.head) {
-      result = """$result  .${requestModel.method.name}()\n""";
-    }
-    if (requestModel.method == HTTPVerb.delete) {
-      result = """$result  .method("DELETE", body)\n""";
+    for (final k in headers.keys) {
+      result = """$result        .addHeader("$k", "${headers[k]}")\n""";
     }
     return result;
   }
