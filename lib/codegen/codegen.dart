@@ -4,6 +4,7 @@ import 'dart/pkg_http.dart';
 import 'kotlin/pkg_okhttp.dart';
 import 'python/pkg_http_client.dart';
 import 'python/pkg_requests.dart';
+import 'others/har.dart';
 
 class Codegen {
   String? getCode(
@@ -12,6 +13,8 @@ class Codegen {
     String defaultUriScheme,
   ) {
     switch (codegenLanguage) {
+      case CodegenLanguage.har:
+        return HARCodeGen().getCode(requestModel);
       case CodegenLanguage.dartHttp:
         return DartHttpCodeGen().getCode(requestModel, defaultUriScheme);
       case CodegenLanguage.kotlinOkHttp:

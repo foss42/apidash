@@ -231,6 +231,7 @@ const kDefaultHttpMethod = HTTPVerb.get;
 const kDefaultContentType = ContentType.json;
 
 enum CodegenLanguage {
+  har("HAR", "json", "json"),
   dartHttp("Dart (http)", "dart", "dart"),
   kotlinOkHttp("Kotlin (okhttp3)", "java", "kt"),
   pythonHttpClient("Python (http.client)", "python", "py"),
