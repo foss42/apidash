@@ -77,17 +77,27 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
               ListTile(
                 contentPadding: EdgeInsets.zero,
                 hoverColor: kColorTransparent,
-                title: const Text('Export Collection'),
-                subtitle: const Text('Export your collection to a JSON file'),
+                title: const Text('Export Data'),
+                subtitle: const Text(
+                    'Export your collection to HAR (HTTP Archive format).\nVersion control this file or import in other API clients.'),
                 trailing: FilledButton(
                   onPressed: () async {
-                    var data = ref
-                        .read(collectionStateNotifierProvider.notifier)
-                        .exportData();
-                    var pth = await getFileDownloadpath(null, "json");
-                    if (pth != null) {
-                      await saveFile(pth, jsonMapToBytes(data));
+                    var message = "";
+                    try {
+                      var data = await ref
+                          .read(collectionStateNotifierProvider.notifier)
+                          .exportDataToHAR();
+                      var pth = await getFileDownloadpath(null, "har");
+                      if (pth != null) {
+                        await saveFile(pth, jsonMapToBytes(data));
+                        var sp = getShortPath(pth);
+                        message = 'Saved to $sp';
+                      }
+                    } catch (e) {
+                      message = "An error occurred while exporting.";
                     }
+                    sm.hideCurrentSnackBar();
+                    sm.showSnackBar(getSnackBar(message, small: false));
                   },
                   child: const Text("Export Data"),
                 ),

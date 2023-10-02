@@ -3,7 +3,7 @@ import 'package:apidash/providers/providers.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/services/services.dart'
     show hiveHandler, HiveHandler, request;
-import 'package:apidash/utils/utils.dart' show uuid;
+import 'package:apidash/utils/utils.dart' show uuid, collectionToHAR;
 import 'package:apidash/consts.dart';
 
 final activeRequestModelProvider = StateProvider<RequestModel?>((ref) {
@@ -204,9 +204,11 @@ class CollectionStateNotifier extends StateNotifier<List<RequestModel>?> {
     ref.read(saveDataStateProvider.notifier).update((state) => false);
   }
 
-  Map<String, dynamic> exportData() {
-    return {
-      "data": state!.map((e) => e.toJson(includeResponse: false)).toList()
-    };
+  Future<Map<String, dynamic>> exportDataToHAR() async {
+    var result = await collectionToHAR(state);
+    return result;
+    // return {
+    //   "data": state!.map((e) => e.toJson(includeResponse: false)).toList()
+    // };
   }
 }
