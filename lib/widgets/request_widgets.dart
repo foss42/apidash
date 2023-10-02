@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
+import 'tabs.dart';
 
 class RequestPane extends StatefulWidget {
   const RequestPane({
@@ -10,6 +11,7 @@ class RequestPane extends StatefulWidget {
     this.onPressedCodeButton,
     this.onTapTabBar,
     required this.children,
+    this.showIndicators = const [false, false, false],
   });
 
   final String? activeId;
@@ -18,6 +20,7 @@ class RequestPane extends StatefulWidget {
   final void Function()? onPressedCodeButton;
   final void Function(int)? onTapTabBar;
   final List<Widget> children;
+  final List<bool> showIndicators;
 
   @override
   State<RequestPane> createState() => _RequestPaneState();
@@ -77,40 +80,18 @@ class _RequestPaneState extends State<RequestPane>
           controller: _controller,
           overlayColor: kColorTransparentState,
           onTap: widget.onTapTabBar,
-          tabs: const [
-            SizedBox(
-              height: kTabHeight,
-              child: Center(
-                child: Text(
-                  'URL Params',
-                  textAlign: TextAlign.center,
-                  overflow: TextOverflow.fade,
-                  softWrap: false,
-                  style: kTextStyleButton,
-                ),
-              ),
+          tabs: [
+            TabLabel(
+              text: 'URL Params',
+              showIndicator: widget.showIndicators[0],
             ),
-            SizedBox(
-              height: kTabHeight,
-              child: Center(
-                child: Text(
-                  'Headers',
-                  textAlign: TextAlign.center,
-                  overflow: TextOverflow.fade,
-                  style: kTextStyleButton,
-                ),
-              ),
+            TabLabel(
+              text: 'Headers',
+              showIndicator: widget.showIndicators[1],
             ),
-            SizedBox(
-              height: kTabHeight,
-              child: Center(
-                child: Text(
-                  'Body',
-                  textAlign: TextAlign.center,
-                  overflow: TextOverflow.fade,
-                  style: kTextStyleButton,
-                ),
-              ),
+            TabLabel(
+              text: 'Body',
+              showIndicator: widget.showIndicators[2],
             ),
           ],
         ),
