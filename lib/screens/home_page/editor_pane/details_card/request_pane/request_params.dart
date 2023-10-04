@@ -7,6 +7,8 @@ import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
 
+const kNameValueEmptyModel = NameValueModel(name: "", value: "");
+
 class EditRequestURLParams extends ConsumerStatefulWidget {
   const EditRequestURLParams({Key? key}) : super(key: key);
 
@@ -39,7 +41,9 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
         .select((value) => value?.requestParams?.length));
     var rP = ref.read(activeRequestModelProvider)?.requestParams;
     rows = (rP == null || rP.isEmpty)
-        ? [const NameValueModel(name: "", value: "")]
+        ? [
+            kNameValueEmptyModel,
+          ]
         : rP;
 
     DaviModel<NameValueModel> model = DaviModel<NameValueModel>(
@@ -99,9 +103,6 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
                   ? kIconRemoveDark
                   : kIconRemoveLight,
               onTap: () {
-                if (rows.length == 1) {
-                  return;
-                }
                 rows.removeAt(row.index);
                 seed = random.nextInt(kRandMax);
                 _onFieldChange(activeId!);
@@ -136,7 +137,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
             padding: const EdgeInsets.only(bottom: 30),
             child: ElevatedButton.icon(
               onPressed: () {
-                rows.add(const NameValueModel(name: "", value: ""));
+                rows.add(kNameValueEmptyModel);
                 _onFieldChange(activeId!);
               },
               icon: const Icon(Icons.add),
