@@ -15,3 +15,5 @@ class NameValueModel with _$NameValueModel {
   factory NameValueModel.fromJson(Map<String, Object?> json) =>
       _$NameValueModelFromJson(json);
 }
+
+const kNameValueEmptyModel = NameValueModel(name: "", value: "");

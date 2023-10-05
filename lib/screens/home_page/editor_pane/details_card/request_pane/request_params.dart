@@ -7,8 +7,6 @@ import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
 
-const kNameValueEmptyModel = NameValueModel(name: "", value: "");
-
 class EditRequestURLParams extends ConsumerStatefulWidget {
   const EditRequestURLParams({Key? key}) : super(key: key);
 
@@ -103,8 +101,16 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
                   ? kIconRemoveDark
                   : kIconRemoveLight,
               onTap: () {
-                rows.removeAt(row.index);
                 seed = random.nextInt(kRandMax);
+                if (rows.length == 1) {
+                  setState(() {
+                    rows = [
+                      kNameValueEmptyModel,
+                    ];
+                  });
+                } else {
+                  rows.removeAt(row.index);
+                }
                 _onFieldChange(activeId!);
               },
             );

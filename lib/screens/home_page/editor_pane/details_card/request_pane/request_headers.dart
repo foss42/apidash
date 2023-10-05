@@ -38,7 +38,9 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
         .select((value) => value?.requestHeaders?.length));
     var rH = ref.read(activeRequestModelProvider)?.requestHeaders;
     rows = (rH == null || rH.isEmpty)
-        ? [const NameValueModel(name: "", value: "")]
+        ? [
+            kNameValueEmptyModel,
+          ]
         : rH;
 
     DaviModel<NameValueModel> model = DaviModel<NameValueModel>(
@@ -98,11 +100,16 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
                   ? kIconRemoveDark
                   : kIconRemoveLight,
               onTap: () {
-                if (rows.length == 1) {
-                  return;
-                }
-                rows.removeAt(row.index);
                 seed = random.nextInt(kRandMax);
+                if (rows.length == 1) {
+                  setState(() {
+                    rows = [
+                      kNameValueEmptyModel,
+                    ];
+                  });
+                } else {
+                  rows.removeAt(row.index);
+                }
                 _onFieldChange(activeId!);
               },
             );
@@ -135,7 +142,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
             padding: const EdgeInsets.only(bottom: 30),
             child: ElevatedButton.icon(
               onPressed: () {
-                rows.add(const NameValueModel(name: "", value: ""));
+                rows.add(kNameValueEmptyModel);
                 _onFieldChange(activeId!);
               },
               icon: const Icon(Icons.add),
