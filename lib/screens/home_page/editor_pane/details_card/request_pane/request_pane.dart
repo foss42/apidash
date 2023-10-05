@@ -21,10 +21,10 @@ class _EditRequestPaneState extends ConsumerState<EditRequestPane> {
     final tabIndex = ref.watch(
         activeRequestModelProvider.select((value) => value?.requestTabIndex));
 
-    final headerLength = ref.watch(activeRequestModelProvider
-        .select((value) => value?.requestHeaders?.length));
-    final paramLength = ref.watch(activeRequestModelProvider
-        .select((value) => value?.requestParams?.length));
+    final headerLength = ref.watch(
+        activeRequestModelProvider.select((value) => value?.headersMap.length));
+    final paramLength = ref.watch(
+        activeRequestModelProvider.select((value) => value?.paramsMap.length));
     final bodyLength = ref.watch(activeRequestModelProvider
         .select((value) => value?.requestBody?.length));
 
