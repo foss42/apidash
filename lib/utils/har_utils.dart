@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:apidash/consts.dart';
-import 'package:apidash/utils/utils.dart' show rowsToMap, getValidRequestUri;
+import 'package:apidash/utils/utils.dart' show getValidRequestUri;
 import 'package:apidash/models/models.dart' show RequestModel;
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -99,7 +99,7 @@ Map<String, dynamic> requestModelToHARJsonRequest(
 
   var paramsList = requestModel.requestParams;
   if (paramsList != null) {
-    var params = rowsToMap(requestModel.requestParams) ?? {};
+    var params = requestModel.paramsMap;
     if (params.isNotEmpty) {
       for (final k in params.keys) {
         var m = {"name": k, "value": params[k]};
@@ -129,7 +129,7 @@ Map<String, dynamic> requestModelToHARJsonRequest(
 
   var headersList = requestModel.requestHeaders;
   if (headersList != null || hasBody) {
-    var headers = rowsToMap(requestModel.requestHeaders) ?? {};
+    var headers = requestModel.headersMap;
     if (headers.isNotEmpty || hasBody) {
       if (hasBody) {
         var m = {

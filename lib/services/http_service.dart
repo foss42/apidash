@@ -17,7 +17,7 @@ Future<(http.Response?, Duration?, String?)> request(
   );
   if (uriRec.$1 != null) {
     Uri requestUrl = uriRec.$1!;
-    Map<String, String> headers = rowsToMap(requestModel.requestHeaders) ?? {};
+    Map<String, String> headers = requestModel.headersMap;
     http.Response response;
     String? body;
     try {

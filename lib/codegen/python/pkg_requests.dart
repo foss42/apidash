@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:jinja/jinja.dart' as jj;
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart'
-    show getValidRequestUri, padMultilineString, rowsToMap;
+    show getValidRequestUri, padMultilineString;
 import 'package:apidash/models/models.dart' show RequestModel;
 
 class PythonRequestsCodeGen {
@@ -112,7 +112,7 @@ print('Response Body:', response.text)
 
         var headersList = requestModel.requestHeaders;
         if (headersList != null || hasBody) {
-          var headers = rowsToMap(requestModel.requestHeaders) ?? {};
+          var headers = requestModel.headersMap;
           if (headers.isNotEmpty || hasBody) {
             hasHeaders = true;
             if (hasBody) {

@@ -2,7 +2,7 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:jinja/jinja.dart' as jj;
 import 'package:apidash/consts.dart';
-import 'package:apidash/utils/utils.dart' show padMultilineString, rowsToMap;
+import 'package:apidash/utils/utils.dart' show padMultilineString;
 import 'package:apidash/models/models.dart' show RequestModel;
 
 class DartHttpCodeGen {
@@ -85,7 +85,7 @@ void main() async {
 
       var paramsList = requestModel.requestParams;
       if (paramsList != null) {
-        var params = rowsToMap(requestModel.requestParams) ?? {};
+        var params = requestModel.paramsMap;
         if (params.isNotEmpty) {
           var templateParams = jj.Template(kTemplateParams);
           var paramsString = kEncoder.convert(params);
@@ -113,7 +113,7 @@ void main() async {
 
       var headersList = requestModel.requestHeaders;
       if (headersList != null || hasBody) {
-        var headers = rowsToMap(requestModel.requestHeaders) ?? {};
+        var headers = requestModel.headersMap;
         if (headers.isNotEmpty || hasBody) {
           hasHeaders = true;
           if (hasBody) {

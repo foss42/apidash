@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:apidash/consts.dart';
 import 'package:jinja/jinja.dart' as jj;
-import 'package:apidash/utils/utils.dart' show getValidRequestUri, rowsToMap;
+import 'package:apidash/utils/utils.dart' show getValidRequestUri;
 import '../../models/request_model.dart';
 
 class KotlinOkHttpCodeGen {
@@ -121,7 +121,7 @@ import okhttp3.MediaType.Companion.toMediaType""";
 
         var headersList = requestModel.requestHeaders;
         if (headersList != null) {
-          var headers = rowsToMap(requestModel.requestHeaders) ?? {};
+          var headers = requestModel.headersMap;
           if (headers.isNotEmpty) {
             hasHeaders = true;
             result += getHeaders(headers);
