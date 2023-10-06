@@ -231,6 +231,7 @@ const kDefaultHttpMethod = HTTPVerb.get;
 const kDefaultContentType = ContentType.json;
 
 enum CodegenLanguage {
+  curl("cURL", "bash", "curl"),
   har("HAR", "json", "har"),
   dartHttp("Dart (http)", "dart", "dart"),
   kotlinOkHttp("Kotlin (okhttp3)", "java", "kt"),
