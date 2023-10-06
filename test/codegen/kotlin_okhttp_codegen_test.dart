@@ -1,4 +1,4 @@
-import 'package:apidash/codegen/kotlin/pkg_okhttp.dart';
+import 'package:apidash/codegen/kotlin/okhttp.dart';
 import 'package:test/test.dart';
 import '../request_models.dart';
 

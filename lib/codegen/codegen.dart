@@ -1,9 +1,9 @@
 import 'package:apidash/models/models.dart' show RequestModel;
 import 'package:apidash/consts.dart';
-import 'dart/pkg_http.dart';
-import 'kotlin/pkg_okhttp.dart';
-import 'python/pkg_http_client.dart';
-import 'python/pkg_requests.dart';
+import 'dart/http.dart';
+import 'kotlin/okhttp.dart';
+import 'python/http_client.dart';
+import 'python/requests.dart';
 import 'others/har.dart';
 import 'others/curl.dart';
 

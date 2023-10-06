@@ -1,4 +1,4 @@
-import 'package:apidash/codegen/python/pkg_requests.dart';
+import 'package:apidash/codegen/python/requests.dart';
 import '../request_models.dart';
 import 'package:test/test.dart';
 

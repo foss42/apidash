@@ -1,4 +1,4 @@
-import 'package:apidash/codegen/dart/pkg_http.dart';
+import 'package:apidash/codegen/dart/http.dart';
 import 'package:test/test.dart';
 import '../request_models.dart';
 
