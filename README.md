@@ -95,6 +95,25 @@ https://github.com/foss42/apidash/assets/615622/fccc569e-3152-47be-9f94-ceb851ee
 - Customize various options using a dedicated Settings screen.
 - Window Configuration (Size & Position) is persisted and restored on app start. (Only macOS & Windows)
 
+## Code Generators
+
+API Dash currently supports API integration code generation for the following languages/libraries.
+
+|Language|Library|
+|--|--|
+| cURL |  |
+| HAR |  |
+| Dart | `http` |
+| JavaScript | `axios` |
+| JavaScript | `fetch` |
+| JavaScript (`node.js`) | `axios` |
+| JavaScript (`node.js`) | `fetch` |
+| Python | `http.client` |
+| Python | `requests` |
+| Kotlin | `okhttp3` |
+
+We welcome contributions to support other programming languages/libraries/frameworks. Please check out more details [here](https://github.com/foss42/apidash/discussions/80).
+
 ## What's new in v0.2.0?
 
 Visit [CHANGELOG.md](CHANGELOG.md)
