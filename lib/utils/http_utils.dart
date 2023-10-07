@@ -53,6 +53,15 @@ MediaType? getMediaTypeFromHeaders(Map? headers) {
   return (null, false);
 }
 
+String stripUriParams(Uri uri) {
+  return "${uri.scheme}://${uri.authority}${uri.path}";
+}
+
+String stripUrlParams(String url) {
+  var idx = url.indexOf("?");
+  return idx > 0 ? url.substring(0, idx) : url;
+}
+
 (Uri?, String?) getValidRequestUri(
     String? url, List<NameValueModel>? requestParams,
     {String defaultUriScheme = kDefaultUriScheme}) {
