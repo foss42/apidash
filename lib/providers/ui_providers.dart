@@ -9,4 +9,4 @@ final codePaneVisibleStateProvider = StateProvider<bool>((ref) => false);
 final saveDataStateProvider = StateProvider<bool>((ref) => false);
 final clearDataStateProvider = StateProvider<bool>((ref) => false);
 final codegenLanguageStateProvider =
-    StateProvider<CodegenLanguage>((ref) => CodegenLanguage.dartHttp);
+    StateProvider<CodegenLanguage>((ref) => CodegenLanguage.curl);
