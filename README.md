@@ -78,7 +78,7 @@ https://github.com/foss42/apidash/assets/615622/fccc569e-3152-47be-9f94-ceb851ee
 - Save 💾 response body of any mimetype (`image`, `text`, etc.) directly in the `Downloads` folder of your system by clicking on the `Download` button.
 
 **👩🏻‍💻 Code Generation**
-- The **only** open source API client that supports advanced Dart code generation so that you can easily integrate APIs in your Dart/Flutter project or directly run it on DartPad.
+- We started out as the **only** open source API client that supports advanced Dart code generation so that you can easily integrate APIs in your Dart/Flutter project or directly run it on DartPad. But, now API Dash supports generation of well-tested integration codes for **JavaScript**, **Python**, **Kotlin** & various other languages. You can check out the [full list of supported languages/libraries](https://github.com/foss42/apidash#code-generators).
 
 **🌙 Full Dark Mode Support**
 - Easily switch between light mode and dark mode.
