@@ -2,7 +2,39 @@
 
 ## v0.3.0 [09-10-2023]
 
-The following features have been added in this release:
+In this release we have migrated the project to Dart 3 & the following features have been added in this release:
+
+1. Well tested code generators for `cURL`, `HAR`, Python (`requests`, `http.client`), JavaScript (`axios`, `fetch`), node.js (`axios`, `fetch`) & Kotlin (`okhttp3`).
+
+![New Code Generators](https://github.com/foss42/apidash/assets/615622/2082bd6c-bfab-4441-b24a-2610fe506b21)
+
+2. Export your data into a `HAR` (HTTP Archive) file that can be version controlled & can be directly imported in other API Clients like Postman, Paw, etc. To access this option goto `Settings > Export Data`.
+
+![Export Data](https://github.com/foss42/apidash/assets/615622/e39993dd-810f-40b8-8b07-76b49b31bbcb)
+
+3. Tab indicators for Request URL Parameters, Headers and Body tabs to quickly identify the
+
+![Tab Indicators](https://github.com/foss42/apidash/assets/615622/c2d7e264-8009-4920-991b-99d580a1c27b)
+
+4. PDF
+
+![PDF](https://github.com/foss42/apidash/assets/615622/4b07c435-1a29-4495-80de-0aeab712372a)
+
+5. Audio (wav , mp3)
+
+![Audio](https://github.com/foss42/apidash/assets/615622/2c48968d-80ce-4c19-8b6f-af7dd2f8b355)
+
+6. Support APNG
+
+
+
+7. Updated Help & Support page.
+
+![help & Support](https://github.com/foss42/apidash/assets/615622/8c2d82b1-1395-472a-b9f4-469fd9ab6bbb)
+
+along with other bug fixes & performance updates.
+
+A big thank you to these wonderful developers for their contributions in this release: [@aqsasayyed](https://github.com/aqsasayyed), [@mmjsmohit](https://github.com/mmjsmohit), [@Dushant-Bansal](https://github.com/Dushant-Bansal), [@Mixel2004](https://github.com/Mixel2004), [@morpheus-30](https://github.com/morpheus-30) & [@madhupashish](https://github.com/madhupashish)
 
 ## v0.2.0 [05-05-2023]
 
