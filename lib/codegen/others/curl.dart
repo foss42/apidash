@@ -2,6 +2,7 @@ import 'package:jinja/jinja.dart' as jj;
 import 'package:apidash/utils/utils.dart' show requestModelToHARJsonRequest;
 import 'package:apidash/models/models.dart' show RequestModel;
 
+// ignore: camel_case_types
 class cURLCodeGen {
   String kTemplateStart = """curl{{method}} --url '{{url}}'
 """;
