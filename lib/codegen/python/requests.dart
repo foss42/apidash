@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:jinja/jinja.dart' as jj;
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart'
-    show getValidRequestUri, padMultilineString;
+    show getValidRequestUri, padMultilineString, stripUriParams;
 import 'package:apidash/models/models.dart' show RequestModel;
 
 class PythonRequestsCodeGen {
@@ -79,8 +79,7 @@ print('Response Body:', response.text)
       Uri? uri = rec.$1;
       if (uri != null) {
         var templateStartUrl = jj.Template(kTemplateStart);
-        result += templateStartUrl
-            .render({"url": "${uri.scheme}://${uri.authority}${uri.path}"});
+        result += templateStartUrl.render({"url": stripUriParams(uri)});
 
         if (uri.hasQuery) {
           var params = uri.queryParameters;

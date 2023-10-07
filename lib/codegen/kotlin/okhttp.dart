@@ -1,7 +1,8 @@
 import 'dart:convert';
 import 'package:apidash/consts.dart';
 import 'package:jinja/jinja.dart' as jj;
-import 'package:apidash/utils/utils.dart' show getValidRequestUri;
+import 'package:apidash/utils/utils.dart'
+    show getValidRequestUri, stripUriParams;
 import '../../models/request_model.dart';
 
 class KotlinOkHttpCodeGen {
@@ -80,7 +81,7 @@ import okhttp3.MediaType.Companion.toMediaType""";
       Uri? uri = rec.$1;
 
       if (uri != null) {
-        String url = "${uri.scheme}://${uri.authority}${uri.path}";
+        String url = stripUriParams(uri);
 
         if (uri.hasQuery) {
           var params = uri.queryParameters;

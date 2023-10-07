@@ -4,7 +4,6 @@ import 'package:apidash/utils/utils.dart'
     show requestModelToHARJsonRequest, padMultilineString;
 import 'package:apidash/models/models.dart' show RequestModel;
 
-// ignore: camel_case_types
 class FetchCodeGen {
   FetchCodeGen({this.isNodeJs = false});
 
