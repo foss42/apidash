@@ -4,6 +4,7 @@ import 'dart/http.dart';
 import 'kotlin/okhttp.dart';
 import 'python/http_client.dart';
 import 'python/requests.dart';
+import 'js/axios.dart';
 import 'js/fetch.dart';
 import 'others/har.dart';
 import 'others/curl.dart';
@@ -21,8 +22,13 @@ class Codegen {
         return HARCodeGen().getCode(requestModel, defaultUriScheme);
       case CodegenLanguage.dartHttp:
         return DartHttpCodeGen().getCode(requestModel, defaultUriScheme);
+      case CodegenLanguage.jsAxios:
+        return AxiosCodeGen().getCode(requestModel, defaultUriScheme);
       case CodegenLanguage.jsFetch:
         return FetchCodeGen().getCode(requestModel, defaultUriScheme);
+      case CodegenLanguage.nodejsAxios:
+        return AxiosCodeGen(isNodeJs: true)
+            .getCode(requestModel, defaultUriScheme);
       case CodegenLanguage.nodejsFetch:
         return FetchCodeGen(isNodeJs: true)
             .getCode(requestModel, defaultUriScheme);
