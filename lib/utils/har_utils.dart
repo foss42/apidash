@@ -91,17 +91,14 @@ Map<String, dynamic> requestModelToHARJsonRequest(
     if (u[u.length - 1] == "?") {
       u = u.substring(0, u.length - 1);
     }
-  }
 
-  json["method"] = requestModel.method.name.toUpperCase();
-  json["url"] = u;
-  json["httpVersion"] = "HTTP/1.1";
-  json["queryString"] = [];
-  json["headers"] = [];
+    json["method"] = requestModel.method.name.toUpperCase();
+    json["url"] = u;
+    json["httpVersion"] = "HTTP/1.1";
+    json["queryString"] = [];
+    json["headers"] = [];
 
-  var paramsList = requestModel.requestParams;
-  if (paramsList != null) {
-    var params = requestModel.paramsMap;
+    var params = uri.queryParameters;
     if (params.isNotEmpty) {
       for (final k in params.keys) {
         var m = {"name": k, "value": params[k]};
@@ -111,54 +108,53 @@ Map<String, dynamic> requestModelToHARJsonRequest(
         json["queryString"].add(m);
       }
     }
-  }
 
-  var method = requestModel.method;
-  var requestBody = requestModel.requestBody;
-  if (kMethodsWithBody.contains(method) && requestBody != null) {
-    var contentLength = utf8.encode(requestBody).length;
-    if (contentLength > 0) {
-      hasBody = true;
-      json["postData"] = {};
-      json["postData"]["mimeType"] =
-          kContentTypeMap[requestModel.requestBodyContentType] ?? "";
-      json["postData"]["text"] = requestBody;
-      if (exportMode) {
-        json["postData"]["comment"] = "";
+    var method = requestModel.method;
+    var requestBody = requestModel.requestBody;
+    if (kMethodsWithBody.contains(method) && requestBody != null) {
+      var contentLength = utf8.encode(requestBody).length;
+      if (contentLength > 0) {
+        hasBody = true;
+        json["postData"] = {};
+        json["postData"]["mimeType"] =
+            kContentTypeMap[requestModel.requestBodyContentType] ?? "";
+        json["postData"]["text"] = requestBody;
+        if (exportMode) {
+          json["postData"]["comment"] = "";
+        }
       }
     }
-  }
 
-  var headersList = requestModel.requestHeaders;
-  if (headersList != null || hasBody) {
-    var headers = requestModel.headersMap;
-    if (headers.isNotEmpty || hasBody) {
-      if (hasBody) {
-        var m = {
-          "name": "Content-Type",
-          "value": kContentTypeMap[requestModel.requestBodyContentType] ?? ""
-        };
-        if (exportMode) {
-          m["comment"] = "";
+    var headersList = requestModel.requestHeaders;
+    if (headersList != null || hasBody) {
+      var headers = requestModel.headersMap;
+      if (headers.isNotEmpty || hasBody) {
+        if (hasBody) {
+          var m = {
+            "name": "Content-Type",
+            "value": kContentTypeMap[requestModel.requestBodyContentType] ?? ""
+          };
+          if (exportMode) {
+            m["comment"] = "";
+          }
+          json["headers"].add(m);
         }
-        json["headers"].add(m);
-      }
-      for (final k in headers.keys) {
-        var m = {"name": k, "value": headers[k]};
-        if (exportMode) {
-          m["comment"] = "";
+        for (final k in headers.keys) {
+          var m = {"name": k, "value": headers[k]};
+          if (exportMode) {
+            m["comment"] = "";
+          }
+          json["headers"].add(m);
         }
-        json["headers"].add(m);
       }
     }
-  }
 
-  if (exportMode) {
-    json["comment"] = "";
-    json["cookies"] = [];
-    json["headersSize"] = -1;
-    json["bodySize"] = hasBody ? utf8.encode(requestBody!).length : 0;
+    if (exportMode) {
+      json["comment"] = "";
+      json["cookies"] = [];
+      json["headersSize"] = -1;
+      json["bodySize"] = hasBody ? utf8.encode(requestBody!).length : 0;
+    }
   }
-
   return json;
 }
