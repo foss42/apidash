@@ -1,5 +1,9 @@
 # API Dash ⚡️ Changelog
 
+## v0.3.0 [09-10-2023]
+
+The following features have been added in this release:
+
 ## v0.2.0 [05-05-2023]
 
 The following features were added in this release:
@@ -39,7 +43,9 @@ Initial release
 ### Features included in v0.1.0
 
 #### 1. Create & Customize API Requests
+
 Draft API requests via an easy to use GUI which allows you to:
+
 - Create different types of HTTP requests (GET, HEAD, POST, PATCH, PUT and DELETE)
 - Easily manipulate and play around with request inputs like headers, query parameters and body.
 
@@ -51,7 +57,7 @@ https://user-images.githubusercontent.com/1382619/227081895-22af076f-469c-4f70-8
 
 - Inspect the API Response (HTTP status code, error message, headers, body, time taken)
 - View formatted code previews for responses of various content types like JSON, XML, YAML, HTML, SQL, etc.
-- For APIs which return results as images, API Dash helps you save a lot of time by directly previewing these results and supports a wide variety of image file formats such as jpeg, png, gif, etc. 
+- For APIs which return results as images, API Dash helps you save a lot of time by directly previewing these results and supports a wide variety of image file formats such as jpeg, png, gif, etc.
 
 **Feature Preview (Video)👇**
 
@@ -60,7 +66,7 @@ https://user-images.githubusercontent.com/1382619/227082005-7b374f5a-c406-4963-8
 #### 3. Generate Dart Code Automatically
 
 API Dash is the **only** open source API client that supports Dart code generation so that you can easily integrate APIs in your Dart/Flutter project.
-For each request, you can click on **View Code** to directly view the corresponding Dart code which you can then *Copy* and directly run it on DartPad.
+For each request, you can click on **View Code** to directly view the corresponding Dart code which you can then _Copy_ and directly run it on DartPad.
 
 **Feature Preview (Video)👇**
 
@@ -68,5 +74,5 @@ https://user-images.githubusercontent.com/1382619/227082072-2c829996-2550-425d-a
 
 #### Other Features
 
-- All user data is persisted locally on the disk. To save the current snapshot, just press the **Save** button in the collection pane. 
+- All user data is persisted locally on the disk. To save the current snapshot, just press the **Save** button in the collection pane.
 - You can also re-arrange (press and drag), duplicate and delete the API drafts.
