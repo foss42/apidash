@@ -72,6 +72,7 @@ Map<String, dynamic> entryToHAR(RequestModel requestModel) {
 
 Map<String, dynamic> requestModelToHARJsonRequest(
   RequestModel requestModel, {
+  defaultUriScheme = kDefaultUriScheme,
   bool exportMode = false,
 }) {
   Map<String, dynamic> json = {};
@@ -80,6 +81,7 @@ Map<String, dynamic> requestModelToHARJsonRequest(
   var rec = getValidRequestUri(
     requestModel.url,
     requestModel.requestParams,
+    defaultUriScheme: defaultUriScheme,
   );
 
   Uri? uri = rec.$1;
