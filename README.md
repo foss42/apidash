@@ -114,7 +114,7 @@ API Dash currently supports API integration code generation for the following la
 
 We welcome contributions to support other programming languages/libraries/frameworks. Please check out more details [here](https://github.com/foss42/apidash/discussions/80).
 
-## What's new in v0.2.0?
+## What's new in v0.3.0?
 
 Visit [CHANGELOG.md](CHANGELOG.md)
 
