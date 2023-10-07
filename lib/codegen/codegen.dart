@@ -4,6 +4,7 @@ import 'dart/http.dart';
 import 'kotlin/okhttp.dart';
 import 'python/http_client.dart';
 import 'python/requests.dart';
+import 'js/fetch.dart';
 import 'others/har.dart';
 import 'others/curl.dart';
 
@@ -17,9 +18,14 @@ class Codegen {
       case CodegenLanguage.curl:
         return cURLCodeGen().getCode(requestModel, defaultUriScheme);
       case CodegenLanguage.har:
-        return HARCodeGen().getCode(requestModel);
+        return HARCodeGen().getCode(requestModel, defaultUriScheme);
       case CodegenLanguage.dartHttp:
         return DartHttpCodeGen().getCode(requestModel, defaultUriScheme);
+      case CodegenLanguage.jsFetch:
+        return FetchCodeGen().getCode(requestModel, defaultUriScheme);
+      case CodegenLanguage.nodejsFetch:
+        return FetchCodeGen(isNodeJs: true)
+            .getCode(requestModel, defaultUriScheme);
       case CodegenLanguage.kotlinOkHttp:
         return KotlinOkHttpCodeGen().getCode(requestModel, defaultUriScheme);
       case CodegenLanguage.pythonHttpClient:

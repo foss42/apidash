@@ -234,6 +234,8 @@ enum CodegenLanguage {
   curl("cURL", "bash", "curl"),
   har("HAR", "json", "har"),
   dartHttp("Dart (http)", "dart", "dart"),
+  jsFetch("JavaScript (fetch)", "javascript", "js"),
+  nodejsFetch("node.js (fetch)", "javascript", "js"),
   kotlinOkHttp("Kotlin (okhttp3)", "java", "kt"),
   pythonHttpClient("Python (http.client)", "python", "py"),
   pythonRequests("Python (requests)", "python", "py");
