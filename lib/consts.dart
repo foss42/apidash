@@ -65,6 +65,9 @@ const kPh20t40 = EdgeInsets.only(
   top: 40,
 );
 const kPh60 = EdgeInsets.symmetric(horizontal: 60);
+const kP24CollectionPane = EdgeInsets.only(top: 24, left: 8.0, bottom: 8.0);
+const kP8CollectionPane = EdgeInsets.only(top: 8.0, left: 8.0, bottom: 8.0);
+const kPr8CollectionPane = EdgeInsets.only(right: 8.0);
 
 const kHSpacer5 = SizedBox(width: 5);
 const kHSpacer10 = SizedBox(width: 10);

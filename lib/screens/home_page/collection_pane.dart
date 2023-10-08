@@ -31,44 +31,47 @@ class _CollectionPaneState extends ConsumerState<CollectionPane> {
       );
     }
     return Padding(
-      padding: kIsMacOS ? kPt24o8 : kP8,
+      padding: kIsMacOS ? kP24CollectionPane : kP8CollectionPane,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Wrap(
-            alignment: WrapAlignment.spaceBetween,
-            children: [
-              TextButton.icon(
-                onPressed: savingData
-                    ? null
-                    : () async {
-                        await ref
-                            .read(collectionStateNotifierProvider.notifier)
-                            .saveData();
+          Padding(
+            padding: kPr8CollectionPane,
+            child: Wrap(
+              alignment: WrapAlignment.spaceBetween,
+              children: [
+                TextButton.icon(
+                  onPressed: savingData
+                      ? null
+                      : () async {
+                          await ref
+                              .read(collectionStateNotifierProvider.notifier)
+                              .saveData();
 
-                        sm.hideCurrentSnackBar();
-                        sm.showSnackBar(getSnackBar("Saved"));
-                      },
-                icon: const Icon(
-                  Icons.save,
-                  size: 20,
+                          sm.hideCurrentSnackBar();
+                          sm.showSnackBar(getSnackBar("Saved"));
+                        },
+                  icon: const Icon(
+                    Icons.save,
+                    size: 20,
+                  ),
+                  label: const Text(
+                    kLabelSave,
+                    style: kTextStyleButton,
+                  ),
                 ),
-                label: const Text(
-                  kLabelSave,
-                  style: kTextStyleButton,
+                //const Spacer(),
+                ElevatedButton(
+                  onPressed: () {
+                    ref.read(collectionStateNotifierProvider.notifier).add();
+                  },
+                  child: const Text(
+                    kLabelPlusNew,
+                    style: kTextStyleButton,
+                  ),
                 ),
-              ),
-              //const Spacer(),
-              ElevatedButton(
-                onPressed: () {
-                  ref.read(collectionStateNotifierProvider.notifier).add();
-                },
-                child: const Text(
-                  kLabelPlusNew,
-                  style: kTextStyleButton,
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
           kVSpacer8,
           const Expanded(
@@ -90,40 +93,57 @@ class RequestList extends ConsumerStatefulWidget {
 }
 
 class _RequestListState extends ConsumerState<RequestList> {
+  late final ScrollController controller;
+
   @override
   void initState() {
     super.initState();
+    controller = ScrollController();
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final requestItems = ref.watch(collectionStateNotifierProvider)!;
-    return ReorderableListView.builder(
-      buildDefaultDragHandles: false,
-      itemCount: requestItems.length,
-      onReorder: (int oldIndex, int newIndex) {
-        if (oldIndex < newIndex) {
-          newIndex -= 1;
-        }
-        if (oldIndex != newIndex) {
-          ref
-              .read(collectionStateNotifierProvider.notifier)
-              .reorder(oldIndex, newIndex);
-        }
-      },
-      itemBuilder: (context, index) {
-        return ReorderableDragStartListener(
-          key: Key(requestItems[index].id),
-          index: index,
-          child: Padding(
-            padding: kP1,
-            child: RequestItem(
-              id: requestItems[index].id,
-              requestModel: requestItems[index],
+
+    return Scrollbar(
+      controller: controller,
+      thumbVisibility: true,
+      radius: const Radius.circular(12),
+      child: ReorderableListView.builder(
+        padding: kPr8CollectionPane,
+        scrollController: controller,
+        buildDefaultDragHandles: false,
+        itemCount: requestItems.length,
+        onReorder: (int oldIndex, int newIndex) {
+          if (oldIndex < newIndex) {
+            newIndex -= 1;
+          }
+          if (oldIndex != newIndex) {
+            ref
+                .read(collectionStateNotifierProvider.notifier)
+                .reorder(oldIndex, newIndex);
+          }
+        },
+        itemBuilder: (context, index) {
+          return ReorderableDragStartListener(
+            key: Key(requestItems[index].id),
+            index: index,
+            child: Padding(
+              padding: kP1,
+              child: RequestItem(
+                id: requestItems[index].id,
+                requestModel: requestItems[index],
+              ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }
