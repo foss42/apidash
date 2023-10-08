@@ -90,6 +90,7 @@ https://github.com/foss42/apidash/assets/615622/fccc569e-3152-47be-9f94-ceb851ee
 
 **💾 Data**
 - Data is persisted locally on the disk. To save the current snapshot, just press the **Save** button in the collection pane.
+- Export your data into a HAR (HTTP Archive) file that can be version controlled & can be directly imported in other API Clients like Postman, Paw, etc. To access this option goto `Settings > Export Data`.
 
 **⚙️ Settings & Other Options**
 - Customize various options using a dedicated Settings screen.
