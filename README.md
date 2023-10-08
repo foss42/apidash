@@ -124,24 +124,35 @@ Here is the complete list of mimetypes that can be directly previewed in API Das
 |--|--|--|--|
 | PDF | `application/pdf` | `.pdf` | |
 | Image | `image/apng` | `.apng` | Animated |
+| Image | `image/avif` | `.avif` | |
 | Image | `image/bmp` | `.bmp` | |
 | Image | `image/gif` | `.gif` | Animated |
 | Image | `image/jpeg` | `.jpeg` or `.jpg`| |
+| Image | `image/jp2` | `.jp2` | |
+| Image | `image/jpx` | `.jpf` or `.jpx` | |
+| Image | `image/pict` | `.pct` | |
+| Image | `image/portable-anymap` | `.pnm` | |
 | Image | `image/png` | `.png` | |
+| Image | `image/sgi` | `.sgi` | |
 | Image | `image/svg+xml` | `.svg` | Partial support. See issue https://github.com/foss42/apidash/issues/20 |
 | Image | `image/tiff` | `.tiff` | |
+| Image | `image/targa` | `.tga` | |
+| Image | `image/vnd.wap.wbmp` | `.wbmp` | |
 | Image | `image/webp` | `.webp` | |
-| Audio | `audio/3gpp` | `.3gp` | |
-| Audio | `audio/3gpp2` | `.3g2` | |
-| Audio | `audio/aac` | `.aac` | |
-| Audio | `audio/midi` | `.mid`or `.midi` | |
+| Image | `image/xwindowdump` | `.xwd` | |
+| Image | `image/x-icon` | `.ico` | |
+| Image | `image/x-portable-anymap` | `.pnm` | |
+| Image | `image/x-portable-bitmap` | `.pbm` | |
+| Image | `image/x-portable-graymap` | `.pgm` | |
+| Image | `image/x-portable-pixmap` | `.ppm` | |
+| Image | `image/x-tga` | `.tga` | |
+| Image | `image/x-xwindowdump` | `.xwd` | |
+| Audio | `audio/flac` | `.flac` | |
 | Audio | `audio/mpeg` | `.mp3` | |
 | Audio | `audio/mp4` | `.m4a` or `.mp4a` | |
 | Audio | `audio/x-m4a` | `.m4a` | |
-| Audio | `audio/ogg` | `.oga` | |
 | Audio | `audio/wav` | `.wav` | |
 | Audio | `audio/wave` | `.wav` | |
-| Audio | `audio/webm` | `.webm` | |
 
 We welcome PRs to add support for previewing other multimedia mimetypes. Please go ahead and raise an issue so that we can discuss the approach.
 We are adding support for other mimetypes with each release. But, if you are looking for any particular mimetype support, please go ahead and open an issue. We will prioritize it's addition.
