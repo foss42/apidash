@@ -41,6 +41,19 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                   ref.read(settingsProvider.notifier).update(isDark: value);
                 },
               ),
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                hoverColor: kColorTransparent,
+                title: const Text('Collection Pane Scrollbar Visiblity'),
+                subtitle: Text(
+                    'Current selection: ${settings.alwaysShowCollectionPaneScrollbar ? "Always show" : "Show only when scrolling"}'),
+                value: settings.alwaysShowCollectionPaneScrollbar,
+                onChanged: (bool? value) {
+                  ref
+                      .read(settingsProvider.notifier)
+                      .update(alwaysShowCollectionPaneScrollbar: value);
+                },
+              ),
               ListTile(
                 contentPadding: EdgeInsets.zero,
                 hoverColor: kColorTransparent,

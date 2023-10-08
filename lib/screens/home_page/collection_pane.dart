@@ -110,10 +110,12 @@ class _RequestListState extends ConsumerState<RequestList> {
   @override
   Widget build(BuildContext context) {
     final requestItems = ref.watch(collectionStateNotifierProvider)!;
+    final alwaysShowCollectionPaneScrollbar = ref.watch(settingsProvider
+        .select((value) => value.alwaysShowCollectionPaneScrollbar));
 
     return Scrollbar(
       controller: controller,
-      thumbVisibility: true,
+      thumbVisibility: alwaysShowCollectionPaneScrollbar ? true : null,
       radius: const Radius.circular(12),
       child: ReorderableListView.builder(
         padding: kPr8CollectionPane,
