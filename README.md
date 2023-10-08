@@ -67,14 +67,14 @@ https://github.com/foss42/apidash/assets/615622/fccc569e-3152-47be-9f94-ceb851ee
 ## List of Features
 
 **↗️ Create & Customize API Requests**
-- Create different types of HTTP requests (`GET`, `HEAD`, `POST`, `PATCH`, `PUT` and `DELETE`)
+- Create different types of HTTP requests (`GET`, `HEAD`, `POST`, `PATCH`, `PUT` and `DELETE`).
 - Easily manipulate and play around with request inputs like `headers`, `query parameters` and `body`.
 - Full support to send text content with 🥳 Unicode/Emoji and preview any API response containing Unicode/Emoji.
 
-**🔎 Visually Inspect and Download API Responses**
-- Inspect the API Response (HTTP status code, error message, headers, body, time taken)
+**🔎 Visually Preview and Download Data & Multimedia API Responses**
+- Inspect the API Response (HTTP status code, error message, headers, body, time taken).
 - View formatted code previews for responses of various content types like `JSON`, `XML`, `YAML`, `HTML`, `SQL`, etc.
-- Supports directly previewing these a wide variety of 🖼 image file formats such as `jpeg`, `png`, `gif`, etc. 
+- API Dash supports exploring, testing & previewing Multimedia API responses which is **not supported by any other API client**. You can directly test APIs that return images, PDF, audio & more. Check out the [full list of supported mimetypes/formats here](). 
 - Save 💾 response body of any mimetype (`image`, `text`, etc.) directly in the `Downloads` folder of your system by clicking on the `Download` button.
 
 **👩🏻‍💻 Code Generation**
@@ -113,6 +113,13 @@ API Dash currently supports API integration code generation for the following la
 | Kotlin | `okhttp3` |
 
 We welcome contributions to support other programming languages/libraries/frameworks. Please check out more details [here](https://github.com/foss42/apidash/discussions/80).
+
+## MIME Types supported by API Dash Response Previewer
+
+API Dash supports exploring, testing & previewing Multimedia API responses which is **not supported by any other API client**. You can directly test APIs that return images, PDF, audio & more. 
+API Dash Supports directly previewing these a wide variety of 🖼 image file formats such as `jpeg`, `png`, `gif`, etc.
+
+
 
 ## What's new in v0.3.0?
 
