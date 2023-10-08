@@ -74,7 +74,7 @@ https://github.com/foss42/apidash/assets/615622/fccc569e-3152-47be-9f94-ceb851ee
 **🔎 Visually Preview and Download Data & Multimedia API Responses**
 - Inspect the API Response (HTTP status code, error message, headers, body, time taken).
 - View formatted code previews for responses of various content types like `JSON`, `XML`, `YAML`, `HTML`, `SQL`, etc.
-- API Dash supports exploring, testing & previewing Multimedia API responses which is **not supported by any other API client**. You can directly test APIs that return images, PDF, audio & more. Check out the [full list of supported mimetypes/formats here](). 
+- API Dash helps explore, test & preview Multimedia API responses which is **not supported by any other API client**. You can directly test APIs that return images, PDF, audio & more. Check out the [full list of supported mimetypes/formats here](https://github.com/foss42/apidash#mime-types-supported-by-api-dash-response-previewer). 
 - Save 💾 response body of any mimetype (`image`, `text`, etc.) directly in the `Downloads` folder of your system by clicking on the `Download` button.
 
 **👩🏻‍💻 Code Generation**
@@ -116,10 +116,50 @@ We welcome contributions to support other programming languages/libraries/framew
 
 ## MIME Types supported by API Dash Response Previewer
 
-API Dash supports exploring, testing & previewing Multimedia API responses which is **not supported by any other API client**. You can directly test APIs that return images, PDF, audio & more. 
-API Dash Supports directly previewing these a wide variety of 🖼 image file formats such as `jpeg`, `png`, `gif`, etc.
+API Dash is a next-gen API client that supports exploring, testing & previewing various data & multimedia API responses which is limited/not supported by other API clients. You can directly test APIs that return images, PDF, audio & more. 
 
+Here is the complete list of mimetypes that can be directly previewed in API Dash:
 
+|File Type|Mimetype|Extension|Comment|
+|--|--|--|--|
+| PDF | `application/pdf` | `.pdf` | |
+| Image | `image/apng` | `.apng` | Animated |
+| Image | `image/bmp` | `.bmp` | |
+| Image | `image/gif` | `.gif` | Animated |
+| Image | `image/jpeg` | `.jpeg` or `.jpg`| |
+| Image | `image/png` | `.png` | |
+| Image | `image/svg+xml` | `.svg` | Partial support. See issue https://github.com/foss42/apidash/issues/20 |
+| Image | `image/tiff` | `.tiff` | |
+| Image | `image/webp` | `.webp` | |
+| Audio | `audio/3gpp` | `.3gp` | |
+| Audio | `audio/3gpp2` | `.3g2` | |
+| Audio | `audio/aac` | `.aac` | |
+| Audio | `audio/midi` | `.mid`or `.midi` | |
+| Audio | `audio/mpeg` | `.mp3` | |
+| Audio | `audio/mp4` | `.m4a` or `.mp4a` | |
+| Audio | `audio/x-m4a` | `.m4a` | |
+| Audio | `audio/ogg` | `.oga` | |
+| Audio | `audio/wav` | `.wav` | |
+| Audio | `audio/wave` | `.wav` | |
+| Audio | `audio/webm` | `.webm` | |
+
+We welcome PRs to add support for previewing other multimedia mimetypes. Please go ahead and raise an issue so that we can discuss the approach.
+We are adding support for other mimetypes with each release. But, if you are looking for any particular mimetype support, please go ahead and open an issue. We will prioritize it's addition.
+
+Here is the complete list of mimetypes that are syntax highlighted in API Dash:
+
+|Mimetype|Extension|Comment|
+|--|--|--|
+| `application/json` | `.json` |Other mimetypes like `application/geo+json`, `application/vcard+json` that are based on `json` are also supported.|
+| `application/xml` | `.xml` |Other mimetypes like `application/xhtml+xml`, `application/vcard+xml` that are based on `xml` are also supported.|
+| `text/xml` | `.xml` ||
+| `application/yaml` | `.yaml` | Others - `application/x-yaml` or `application/x-yml` |
+| `text/yaml` | `.yaml` | Others - `text/yml`|
+| `application/sql` | `.sql` | |
+| `text/css` | `.css` | |
+| `text/html` | `.html` | Only syntax highlighting, no web preview. |
+| `text/javascript` | `.js` | |
+| `text/markdown` | `.md` | |
 
 ## What's new in v0.3.0?
 
