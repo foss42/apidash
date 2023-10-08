@@ -320,7 +320,7 @@ const Map<String, Map<String, List<ResponseBodyView>>>
     kSubTypeDefaultViewOptions: kNoRawBodyViewOptions,
     kSubTypeJson: kCodeRawBodyViewOptions,
     kSubTypeOctetStream: kNoBodyViewOptions,
-    kSubTypePdf: kNoBodyViewOptions,
+    kSubTypePdf: kPreviewBodyViewOptions,
     kSubTypeSql: kCodeRawBodyViewOptions,
     kSubTypeXml: kCodeRawBodyViewOptions,
     kSubTypeYaml: kCodeRawBodyViewOptions,
