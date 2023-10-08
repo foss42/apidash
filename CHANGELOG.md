@@ -33,6 +33,10 @@ In this release we have migrated the project to Dart 3 & the following features 
 
 ![help & Support](https://github.com/foss42/apidash/assets/615622/8c2d82b1-1395-472a-b9f4-469fd9ab6bbb)
 
+8. Scrollbar added to collection pane which can be switched between being permanently visible or being visible only while scrolling.
+
+![scroll](https://github.com/foss42/apidash/assets/615622/4aab396e-ba0d-4b21-b04f-f8127e6d21eb)
+
 along with other bug fixes & performance updates.
 
 A big thank you to these wonderful developers for their contributions in this release: [@aqsasayyed](https://github.com/aqsasayyed), [@mmjsmohit](https://github.com/mmjsmohit), [@Dushant-Bansal](https://github.com/Dushant-Bansal), [@Mixel2004](https://github.com/Mixel2004), [@morpheus-30](https://github.com/morpheus-30) & [@madhupashish](https://github.com/madhupashish)
