@@ -261,7 +261,8 @@ const kSubTypeOctetStream = 'octet-stream';
 const kSubTypePdf = 'pdf';
 const kSubTypeSql = 'sql';
 const kSubTypeXml = 'xml';
-const kSubTypeYaml = 'x-yaml';
+const kSubTypeYaml = 'yaml';
+const kSubTypeXYaml = 'x-yaml';
 const kSubTypeYml = 'x-yml';
 
 const kTypeText = 'text';
@@ -327,6 +328,7 @@ const Map<String, Map<String, List<ResponseBodyView>>>
     kSubTypeSql: kCodeRawBodyViewOptions,
     kSubTypeXml: kCodeRawBodyViewOptions,
     kSubTypeYaml: kCodeRawBodyViewOptions,
+    kSubTypeXYaml: kCodeRawBodyViewOptions,
     kSubTypeYml: kCodeRawBodyViewOptions,
   },
   kTypeImage: {
@@ -355,8 +357,9 @@ const Map<String, String> kCodeHighlighterMap = {
   kSubTypeHtml: "xml",
   kSubTypeSvg: "xml",
   kSubTypeYaml: "yaml",
+  kSubTypeXYaml: "yaml",
   kSubTypeYml: "yaml",
-  kSubTypeTextYaml: "yaml",
+  //kSubTypeTextYaml: "yaml",
   kSubTypeTextYml: "yaml",
 };
 
