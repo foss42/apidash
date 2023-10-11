@@ -41,6 +41,7 @@ dependencies:
   json_annotation: ^4.8.1
   printing: ^5.11.0
   package_info_plus: ^4.1.0
+  flutter_typeahead: ^4.8.0
 
 dev_dependencies:
   flutter_test:

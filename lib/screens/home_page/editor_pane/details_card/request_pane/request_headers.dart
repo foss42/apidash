@@ -51,13 +51,16 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
           grow: 1,
           cellBuilder: (_, row) {
             int idx = row.index;
-            return CellField(
+            TextEditingController headerController =
+                TextEditingController(text: rows[idx].name);
+            return HeaderField(
               keyId: "$activeId-$idx-headers-k-$seed",
-              initialValue: rows[idx].name,
+              controller: headerController,
               hintText: "Add Header Name",
               onChanged: (value) {
                 rows[idx] = rows[idx].copyWith(name: value);
                 _onFieldChange(activeId!);
+                headerController.text = value;
               },
               colorScheme: Theme.of(context).colorScheme,
             );
