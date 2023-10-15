@@ -114,7 +114,7 @@ class JsonSearchField extends StatelessWidget {
       decoration: const InputDecoration(
         isDense: true,
         border: InputBorder.none,
-        hintText: 'Search',
+        hintText: 'Search..',
       ),
     );
   }

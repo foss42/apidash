@@ -7,6 +7,7 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import '../consts.dart';
 import "snackbars.dart";
+import 'textfields.dart';
 
 class JsonPreviewerColor {
   const JsonPreviewerColor._();
@@ -214,41 +215,54 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
                     : dataExplorerThemeDark,
               ),
             ),
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: searchController,
-                    onChanged: (term) => state.search(term),
-                    decoration: const InputDecoration(
-                      hintText: 'Search',
+            Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.background,
+                border: Border.all(
+                    color: Theme.of(context).colorScheme.surfaceVariant),
+                borderRadius: kBorderRadius8,
+              ),
+              child: Row(
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Icon(
+                      Icons.search,
+                      size: 18,
                     ),
                   ),
-                ),
-                const SizedBox(
-                  width: 8,
-                ),
-                if (state.searchResults.isNotEmpty) Text(_searchFocusText()),
-                if (state.searchResults.isNotEmpty)
-                  IconButton(
-                    onPressed: () {
-                      store.focusPreviousSearchResult();
-                      _scrollToSearchMatch();
-                    },
-                    icon: const Icon(Icons.arrow_drop_up),
+                  Expanded(
+                    child: JsonSearchField(
+                      controller: searchController,
+                      onChanged: (term) => state.search(term),
+                    ),
                   ),
-                if (state.searchResults.isNotEmpty)
-                  IconButton(
-                    onPressed: () {
-                      store.focusNextSearchResult();
-                      _scrollToSearchMatch();
-                    },
-                    icon: const Icon(Icons.arrow_drop_down),
+                  const SizedBox(
+                    width: 8,
                   ),
-              ],
-            ),
-            const SizedBox(
-              height: 16.0,
+                  if (state.searchResults.isNotEmpty)
+                    Text(_searchFocusText(),
+                        style: Theme.of(context).textTheme.bodySmall),
+                  if (state.searchResults.isNotEmpty)
+                    IconButton(
+                      visualDensity: VisualDensity.compact,
+                      onPressed: () {
+                        store.focusPreviousSearchResult();
+                        _scrollToSearchMatch();
+                      },
+                      icon: const Icon(Icons.arrow_drop_up),
+                    ),
+                  if (state.searchResults.isNotEmpty)
+                    IconButton(
+                      visualDensity: VisualDensity.compact,
+                      onPressed: () {
+                        store.focusNextSearchResult();
+                        _scrollToSearchMatch();
+                      },
+                      icon: const Icon(Icons.arrow_drop_down),
+                    ),
+                ],
+              ),
             ),
           ],
         ),
