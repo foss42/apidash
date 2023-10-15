@@ -97,3 +97,25 @@ class _CellFieldState extends State<CellField> {
     );
   }
 }
+
+class JsonSearchField extends StatelessWidget {
+  const JsonSearchField({super.key, this.onChanged, this.controller});
+
+  final void Function(String)? onChanged;
+  final TextEditingController? controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      controller: controller,
+      onChanged: onChanged,
+      style: kCodeStyle,
+      cursorHeight: 18,
+      decoration: const InputDecoration(
+        isDense: true,
+        border: InputBorder.none,
+        hintText: 'Search',
+      ),
+    );
+  }
+}
