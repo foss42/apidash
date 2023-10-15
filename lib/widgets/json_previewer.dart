@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:json_data_explorer/json_data_explorer.dart';
 import 'package:provider/provider.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-
+import 'package:url_launcher/url_launcher_string.dart';
 import '../consts.dart';
 
 class JsonPreviewerColor {
@@ -19,6 +19,8 @@ class JsonPreviewerColor {
       Color(0xFFF29D0B);
   static const Color lightValueText = Color(0xffc41a16);
   static const Color lightValueSearchHighlightText = Color(0xffc41a16);
+  static const Color lightValueNum = Color(0xff3F6E74);
+  static const Color lightValueBool = Color(0xff1c00cf);
   static const Color lightValueSearchHighlightBackground = Color(0xFFFFEDAD);
   static const Color lightFocusedValueSearchHighlightText = Colors.black;
   static const Color lightFocusedValueSearchHighlightBackground =
@@ -38,6 +40,8 @@ class JsonPreviewerColor {
       Color(0xffc41a16);
   static const Color darkValueText = Color(0xffecc48d);
   static const Color darkValueSearchHighlightText = Color(0xffecc48d);
+  static const Color darkValueNum = Color(0xffaddb67);
+  static const Color darkValueBool = Color(0xff82aaff);
   static const Color darkValueSearchHighlightBackground = Color(0xff9b703f);
   static const Color darkFocusedValueSearchHighlightText = Color(0xffd6deeb);
   static const Color darkFocusedValueSearchHighlightBackground =
@@ -217,20 +221,11 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
                 itemSpacing: 4,
                 rootInformationBuilder: (context, node) =>
                     rootInfoBox(context, node),
-
-                /// Build an animated collapse/expand indicator. Implicitly
-                /// animates the indicator when
-                /// [NodeViewModelState.isCollapsed] changes.
                 collapsableToggleBuilder: (context, node) => AnimatedRotation(
                   turns: node.isCollapsed ? -0.25 : 0,
                   duration: const Duration(milliseconds: 300),
                   child: const Icon(Icons.arrow_drop_down),
                 ),
-
-                /// Builds a trailing widget that copies the node key: value
-                ///
-                /// Uses [NodeViewModelState.isFocused] to display the
-                /// widget only in focused widgets.
                 trailingBuilder: (context, node) => node.isFocused
                     ? IconButton(
                         padding: EdgeInsets.zero,
@@ -242,25 +237,9 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
                         onPressed: () => _printNode(node),
                       )
                     : const SizedBox(),
-
-                /// Creates a custom format for classes and array names.
                 rootNameFormatter: (dynamic name) => '$name',
-
-                /// Dynamically changes the property value style and
-                /// interaction when an URL is detected.
-                // valueStyleBuilder: (dynamic value, style) {
-                //   final isUrl = _valueIsUrl(value);
-                //   return PropertyOverrides(
-                //     style: isUrl
-                //         ? style.copyWith(
-                //             decoration: TextDecoration.underline,
-                //           )
-                //         : style,
-                //     //onTap: isUrl ? () => _launchUrl(value as String) : null,
-                //   );
-                // },
-
-                /// Theme definitions of the json data explorer
+                valueStyleBuilder: (value, style) =>
+                    valueStyleOverride(context, value, style),
                 theme: (Theme.of(context).brightness == Brightness.light)
                     ? dataExplorerThemeLight
                     : dataExplorerThemeDark,
@@ -269,6 +248,45 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
           ],
         ),
       ),
+    );
+  }
+
+  PropertyOverrides valueStyleOverride(
+    BuildContext context,
+    dynamic value,
+    TextStyle style,
+  ) {
+    TextStyle newStyle = style;
+    bool isUrl = false;
+    if (value.runtimeType.toString() == "num" ||
+        value.runtimeType.toString() == "double" ||
+        value.runtimeType.toString() == "int") {
+      newStyle = style.copyWith(
+        color: (Theme.of(context).brightness == Brightness.light)
+            ? JsonPreviewerColor.lightValueNum
+            : JsonPreviewerColor.darkValueNum,
+      );
+    } else if (value.runtimeType.toString() == "bool") {
+      newStyle = style.copyWith(
+        color: (Theme.of(context).brightness == Brightness.light)
+            ? JsonPreviewerColor.lightValueBool
+            : JsonPreviewerColor.darkValueBool,
+      );
+    } else {
+      isUrl = _valueIsUrl(value);
+      if (isUrl) {
+        newStyle = style.copyWith(
+          decoration: TextDecoration.underline,
+          decorationColor: (Theme.of(context).brightness == Brightness.light)
+              ? JsonPreviewerColor.lightValueText
+              : JsonPreviewerColor.darkValueText,
+        );
+      }
+    }
+
+    return PropertyOverrides(
+      style: newStyle,
+      onTap: isUrl ? () => _launchUrl(value as String) : null,
     );
   }
 
@@ -321,6 +339,10 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
       return Uri.tryParse(value)?.hasAbsolutePath ?? false;
     }
     return false;
+  }
+
+  Future _launchUrl(String url) {
+    return launchUrlString(url);
   }
 
   @override
