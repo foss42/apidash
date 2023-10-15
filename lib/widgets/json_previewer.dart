@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:json_data_explorer/json_data_explorer.dart';
 import 'package:provider/provider.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import '../consts.dart';
+import "snackbars.dart";
 
 class JsonPreviewerColor {
   const JsonPreviewerColor._();
@@ -151,6 +153,7 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
 
   @override
   Widget build(BuildContext context) {
+    var sm = ScaffoldMessenger.of(context);
     return ChangeNotifierProvider.value(
       value: store,
       child: Consumer<DataExplorerStore>(
@@ -162,9 +165,6 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
                 Expanded(
                   child: TextField(
                     controller: searchController,
-
-                    /// Delegates the search to [DataExplorerStore] when
-                    /// the text field changes.
                     onChanged: (term) => state.search(term),
                     decoration: const InputDecoration(
                       hintText: 'Search',
@@ -227,14 +227,22 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
                   child: const Icon(Icons.arrow_drop_down),
                 ),
                 trailingBuilder: (context, node) => node.isFocused
-                    ? IconButton(
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(maxHeight: 18),
-                        icon: const Icon(
-                          Icons.copy,
-                          size: 18,
+                    ? Padding(
+                        padding: const EdgeInsets.only(right: 12),
+                        child: IconButton(
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(maxHeight: 18),
+                          icon: const Icon(
+                            Icons.copy,
+                            size: 18,
+                          ),
+                          onPressed: () async {
+                            await Clipboard.setData(ClipboardData(
+                                text: kEncoder.convert(toJson(node))));
+                            sm.hideCurrentSnackBar();
+                            sm.showSnackBar(getSnackBar("Copied"));
+                          },
                         ),
-                        onPressed: () => _printNode(node),
                       )
                     : const SizedBox(),
                 valueStyleBuilder: (value, style) =>
@@ -313,15 +321,6 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
   String _searchFocusText() =>
       '${store.focusedSearchResultIndex + 1} of ${store.searchResults.length}';
 
-  void _printNode(NodeViewModelState node) {
-    if (node.isRoot) {
-      final value = node.isClass ? 'class' : 'array';
-      debugPrint('${node.key}: $value');
-      return;
-    }
-    debugPrint('${node.key}: ${node.value}');
-  }
-
   void _scrollToSearchMatch() {
     final index = store.displayNodes.indexOf(store.focusedSearchResult.node);
     if (index != -1) {
@@ -348,5 +347,33 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
   void dispose() {
     searchController.dispose();
     super.dispose();
+  }
+}
+
+dynamic toJson(
+  NodeViewModelState node,
+) {
+  dynamic res;
+  if (node.isRoot) {
+    if (node.isClass) {
+      res = {};
+      for (var i in node.children) {
+        res.addAll(toJson(i));
+      }
+    }
+    if (node.isArray) {
+      res = [];
+      for (var i in node.children) {
+        res.add(toJson(i));
+      }
+    }
+  } else {
+    res = node.value;
+  }
+
+  if (node.parent != null && node.parent!.isArray) {
+    return res;
+  } else {
+    return {node.key: res};
   }
 }
