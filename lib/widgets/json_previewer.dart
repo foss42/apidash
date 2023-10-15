@@ -4,6 +4,124 @@ import 'package:json_data_explorer/json_data_explorer.dart';
 import 'package:provider/provider.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
+import '../consts.dart';
+
+class JsonPreviewerColor {
+  const JsonPreviewerColor._();
+
+  static const Color lightRootInfoBox = Color(0x80E1E1E1);
+  static const Color lightRootKeyText = Colors.black;
+  static const Color lightPropertyKeyText = Colors.black;
+  static const Color lightKeySearchHighlightText = Colors.black;
+  static const Color lightKeySearchHighlightBackground = Color(0xFFFFEDAD);
+  static const Color lightFocusedKeySearchHighlightText = Colors.black;
+  static const Color lightFocusedKeySearchHighlightBackground =
+      Color(0xFFF29D0B);
+  static const Color lightValueText = Color(0xffc41a16);
+  static const Color lightValueSearchHighlightText = Color(0xffc41a16);
+  static const Color lightValueSearchHighlightBackground = Color(0xFFFFEDAD);
+  static const Color lightFocusedValueSearchHighlightText = Colors.black;
+  static const Color lightFocusedValueSearchHighlightBackground =
+      Color(0xFFF29D0B);
+  static const Color lightIndentationLineColor =
+      Color.fromARGB(255, 213, 213, 213);
+  static const Color lightHighlightColor = Color(0xFFF1F1F1);
+
+// Dark colors
+  static const Color darkRootInfoBox = Color.fromARGB(255, 83, 13, 19);
+  static const Color darkRootKeyText = Color(0xffd6deeb);
+  static const Color darkPropertyKeyText = Color(0xffd6deeb);
+  static const Color darkKeySearchHighlightText = Color(0xffd6deeb);
+  static const Color darkKeySearchHighlightBackground = Color(0xff9b703f);
+  static const Color darkFocusedKeySearchHighlightText = Color(0xffd6deeb);
+  static const Color darkFocusedKeySearchHighlightBackground =
+      Color(0xffc41a16);
+  static const Color darkValueText = Color(0xffecc48d);
+  static const Color darkValueSearchHighlightText = Color(0xffecc48d);
+  static const Color darkValueSearchHighlightBackground = Color(0xff9b703f);
+  static const Color darkFocusedValueSearchHighlightText = Color(0xffd6deeb);
+  static const Color darkFocusedValueSearchHighlightBackground =
+      Color(0xffc41a16);
+  static const Color darkIndentationLineColor =
+      Color.fromARGB(255, 119, 119, 119);
+  static const Color darkHighlightColor = Color.fromARGB(255, 55, 55, 55);
+}
+
+final dataExplorerThemeLight = DataExplorerTheme(
+  rootKeyTextStyle: kCodeStyle.copyWith(
+    color: JsonPreviewerColor.lightRootKeyText,
+    fontWeight: FontWeight.bold,
+  ),
+  propertyKeyTextStyle: kCodeStyle.copyWith(
+    color: JsonPreviewerColor.lightPropertyKeyText,
+    fontWeight: FontWeight.bold,
+  ),
+  keySearchHighlightTextStyle: kCodeStyle.copyWith(
+    color: JsonPreviewerColor.lightKeySearchHighlightText,
+    backgroundColor: JsonPreviewerColor.lightKeySearchHighlightBackground,
+    fontWeight: FontWeight.bold,
+  ),
+  focusedKeySearchHighlightTextStyle: kCodeStyle.copyWith(
+    color: JsonPreviewerColor.lightFocusedKeySearchHighlightText,
+    backgroundColor:
+        JsonPreviewerColor.lightFocusedKeySearchHighlightBackground,
+    fontWeight: FontWeight.bold,
+  ),
+  valueTextStyle: kCodeStyle.copyWith(
+    color: JsonPreviewerColor.lightValueText,
+  ),
+  valueSearchHighlightTextStyle: kCodeStyle.copyWith(
+    color: JsonPreviewerColor.lightValueSearchHighlightText,
+    backgroundColor: JsonPreviewerColor.lightValueSearchHighlightBackground,
+    fontWeight: FontWeight.bold,
+  ),
+  focusedValueSearchHighlightTextStyle: kCodeStyle.copyWith(
+    color: JsonPreviewerColor.lightFocusedValueSearchHighlightText,
+    backgroundColor:
+        JsonPreviewerColor.lightFocusedValueSearchHighlightBackground,
+    fontWeight: FontWeight.bold,
+  ),
+  indentationLineColor: JsonPreviewerColor.lightIndentationLineColor,
+  highlightColor: JsonPreviewerColor.lightHighlightColor,
+);
+
+final dataExplorerThemeDark = DataExplorerTheme(
+  rootKeyTextStyle: kCodeStyle.copyWith(
+    color: JsonPreviewerColor.darkRootKeyText,
+    fontWeight: FontWeight.bold,
+  ),
+  propertyKeyTextStyle: kCodeStyle.copyWith(
+    color: JsonPreviewerColor.darkPropertyKeyText,
+    fontWeight: FontWeight.bold,
+  ),
+  keySearchHighlightTextStyle: kCodeStyle.copyWith(
+    color: JsonPreviewerColor.darkKeySearchHighlightText,
+    backgroundColor: JsonPreviewerColor.darkKeySearchHighlightBackground,
+    fontWeight: FontWeight.bold,
+  ),
+  focusedKeySearchHighlightTextStyle: kCodeStyle.copyWith(
+    color: JsonPreviewerColor.darkFocusedKeySearchHighlightText,
+    backgroundColor: JsonPreviewerColor.darkFocusedKeySearchHighlightBackground,
+    fontWeight: FontWeight.bold,
+  ),
+  valueTextStyle: kCodeStyle.copyWith(
+    color: JsonPreviewerColor.darkValueText,
+  ),
+  valueSearchHighlightTextStyle: kCodeStyle.copyWith(
+    color: JsonPreviewerColor.darkValueSearchHighlightText,
+    backgroundColor: JsonPreviewerColor.darkValueSearchHighlightBackground,
+    fontWeight: FontWeight.bold,
+  ),
+  focusedValueSearchHighlightTextStyle: kCodeStyle.copyWith(
+    color: JsonPreviewerColor.darkFocusedValueSearchHighlightText,
+    backgroundColor:
+        JsonPreviewerColor.darkFocusedValueSearchHighlightBackground,
+    fontWeight: FontWeight.bold,
+  ),
+  indentationLineColor: JsonPreviewerColor.darkIndentationLineColor,
+  highlightColor: JsonPreviewerColor.darkHighlightColor,
+);
+
 class JsonPreviewer extends StatefulWidget {
   const JsonPreviewer({
     super.key,
@@ -97,31 +215,8 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
                 nodes: state.displayNodes,
                 itemScrollController: itemScrollController,
                 itemSpacing: 4,
-
-                /// Builds a widget after each root node displaying the
-                /// number of children nodes that it has. Displays `{x}`
-                /// if it is a class or `[x]` in case of arrays.
-                rootInformationBuilder: (context, node) => DecoratedBox(
-                  decoration: const BoxDecoration(
-                    color: Color(0x80E1E1E1),
-                    borderRadius: BorderRadius.all(Radius.circular(2)),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 4,
-                      vertical: 2,
-                    ),
-                    child: Text(
-                      node.isClass
-                          ? '{${node.childrenCount}}'
-                          : '[${node.childrenCount}]',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: const Color(0xFF6F6F6F),
-                      ),
-                    ),
-                  ),
-                ),
+                rootInformationBuilder: (context, node) =>
+                    rootInfoBox(context, node),
 
                 /// Build an animated collapse/expand indicator. Implicitly
                 /// animates the indicator when
@@ -153,64 +248,46 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
 
                 /// Dynamically changes the property value style and
                 /// interaction when an URL is detected.
-                valueStyleBuilder: (dynamic value, style) {
-                  final isUrl = _valueIsUrl(value);
-                  return PropertyOverrides(
-                    style: isUrl
-                        ? style.copyWith(
-                            decoration: TextDecoration.underline,
-                          )
-                        : style,
-                    //onTap: isUrl ? () => _launchUrl(value as String) : null,
-                  );
-                },
+                // valueStyleBuilder: (dynamic value, style) {
+                //   final isUrl = _valueIsUrl(value);
+                //   return PropertyOverrides(
+                //     style: isUrl
+                //         ? style.copyWith(
+                //             decoration: TextDecoration.underline,
+                //           )
+                //         : style,
+                //     //onTap: isUrl ? () => _launchUrl(value as String) : null,
+                //   );
+                // },
 
                 /// Theme definitions of the json data explorer
-                theme: DataExplorerTheme(
-                  rootKeyTextStyle: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                  propertyKeyTextStyle: TextStyle(
-                    color: Colors.black.withOpacity(0.7),
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                  keySearchHighlightTextStyle: TextStyle(
-                    color: Colors.black,
-                    backgroundColor: const Color(0xFFFFEDAD),
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                  focusedKeySearchHighlightTextStyle: TextStyle(
-                    color: Colors.black,
-                    backgroundColor: const Color(0xFFF29D0B),
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                  valueTextStyle: TextStyle(
-                    color: const Color(0xFFCA442C),
-                    fontSize: 16,
-                  ),
-                  valueSearchHighlightTextStyle: TextStyle(
-                    color: const Color(0xFFCA442C),
-                    backgroundColor: const Color(0xFFFFEDAD),
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                  focusedValueSearchHighlightTextStyle: TextStyle(
-                    color: Colors.black,
-                    backgroundColor: const Color(0xFFF29D0B),
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                  indentationLineColor: const Color(0xFFE1E1E1),
-                  highlightColor: const Color(0xFFF1F1F1),
-                ),
+                theme: (Theme.of(context).brightness == Brightness.light)
+                    ? dataExplorerThemeLight
+                    : dataExplorerThemeDark,
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  DecoratedBox rootInfoBox(BuildContext context, NodeViewModelState node) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: (Theme.of(context).brightness == Brightness.light)
+            ? JsonPreviewerColor.lightRootInfoBox
+            : JsonPreviewerColor.darkRootInfoBox,
+        borderRadius: const BorderRadius.all(Radius.circular(2)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 4,
+          vertical: 2,
+        ),
+        child: Text(
+          node.isClass ? '{${node.childrenCount}}' : '[${node.childrenCount}]',
+          style: kCodeStyle,
         ),
       ),
     );
