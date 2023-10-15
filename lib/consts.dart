@@ -312,6 +312,10 @@ const kCodeRawBodyViewOptions = [ResponseBodyView.code, ResponseBodyView.raw];
 const kPreviewBodyViewOptions = [
   ResponseBodyView.preview,
 ];
+const kPreviewRawBodyViewOptions = [
+  ResponseBodyView.preview,
+  ResponseBodyView.raw
+];
 const kPreviewCodeRawBodyViewOptions = [
   ResponseBodyView.preview,
   ResponseBodyView.code,
@@ -322,7 +326,7 @@ const Map<String, Map<String, List<ResponseBodyView>>>
     kResponseBodyViewOptions = {
   kTypeApplication: {
     kSubTypeDefaultViewOptions: kNoRawBodyViewOptions,
-    kSubTypeJson: kCodeRawBodyViewOptions,
+    kSubTypeJson: kPreviewRawBodyViewOptions,
     kSubTypeOctetStream: kNoBodyViewOptions,
     kSubTypePdf: kPreviewBodyViewOptions,
     kSubTypeSql: kCodeRawBodyViewOptions,
