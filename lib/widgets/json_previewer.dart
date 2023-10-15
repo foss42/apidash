@@ -237,10 +237,16 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
                             size: 18,
                           ),
                           onPressed: () async {
-                            await Clipboard.setData(ClipboardData(
-                                text: kEncoder.convert(toJson(node))));
+                            String msg;
+                            try {
+                              await Clipboard.setData(ClipboardData(
+                                  text: kEncoder.convert(toJson(node))));
+                              msg = "Copied";
+                            } catch (e) {
+                              msg = "An error occurred";
+                            }
                             sm.hideCurrentSnackBar();
-                            sm.showSnackBar(getSnackBar("Copied"));
+                            sm.showSnackBar(getSnackBar(msg));
                           },
                         ),
                       )
