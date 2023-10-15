@@ -237,7 +237,6 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
                         onPressed: () => _printNode(node),
                       )
                     : const SizedBox(),
-                rootNameFormatter: (dynamic name) => '$name',
                 valueStyleBuilder: (value, style) =>
                     valueStyleOverride(context, value, style),
                 theme: (Theme.of(context).brightness == Brightness.light)
