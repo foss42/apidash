@@ -13,7 +13,12 @@ void main() {
       MaterialApp(
         title: 'Previewer',
         home: Scaffold(
-          body: Previewer(type: 'application', subtype: 'pdf', bytes: bytes1),
+          body: Previewer(
+            type: 'application',
+            subtype: 'pdf',
+            bytes: bytes1,
+            body: "",
+          ),
         ),
       ),
     );
@@ -30,7 +35,12 @@ void main() {
       MaterialApp(
         title: 'Previewer',
         home: Scaffold(
-          body: Previewer(type: 'audio', subtype: 'mpeg', bytes: bytes1),
+          body: Previewer(
+            type: 'audio',
+            subtype: 'mpeg',
+            bytes: bytes1,
+            body: "",
+          ),
         ),
       ),
     );
@@ -43,7 +53,12 @@ void main() {
       MaterialApp(
         title: 'Previewer',
         home: Scaffold(
-          body: Previewer(type: 'video', subtype: 'H264', bytes: bytes1),
+          body: Previewer(
+            type: 'video',
+            subtype: 'H264',
+            bytes: bytes1,
+            body: "",
+          ),
         ),
       ),
     );
@@ -58,7 +73,12 @@ void main() {
       MaterialApp(
         title: 'Previewer',
         home: Scaffold(
-          body: Previewer(type: 'model', subtype: 'step+xml', bytes: bytes1),
+          body: Previewer(
+            type: 'model',
+            subtype: 'step+xml',
+            bytes: bytes1,
+            body: "",
+          ),
         ),
       ),
     );
@@ -74,8 +94,12 @@ void main() {
       MaterialApp(
         title: 'Previewer',
         home: Scaffold(
-          body:
-              Previewer(type: 'image', subtype: 'jpeg', bytes: kBodyBytesJpeg),
+          body: Previewer(
+            type: 'image',
+            subtype: 'jpeg',
+            bytes: kBodyBytesJpeg,
+            body: "",
+          ),
         ),
       ),
     );
@@ -113,7 +137,11 @@ void main() {
         title: 'Previewer',
         home: Scaffold(
           body: Previewer(
-              type: 'image', subtype: 'jpeg', bytes: bytesJpegCorrupt),
+            type: 'image',
+            subtype: 'jpeg',
+            bytes: bytesJpegCorrupt,
+            body: "",
+          ),
         ),
       ),
     );
@@ -130,7 +158,11 @@ void main() {
         title: 'Previewer',
         home: Scaffold(
           body: Previewer(
-              type: 'audio', subtype: 'mpeg', bytes: bytesAudioCorrupt),
+            type: 'audio',
+            subtype: 'mpeg',
+            bytes: bytesAudioCorrupt,
+            body: "",
+          ),
         ),
       ),
     );
