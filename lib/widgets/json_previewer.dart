@@ -161,6 +161,60 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () async {
+                    await _copy(kEncoder.convert(jsonDecode(widget.code)), sm);
+                  },
+                  child: const Text('Copy'),
+                ),
+                TextButton(
+                  onPressed: state.areAllExpanded() ? null : state.expandAll,
+                  child: const Text('Expand All'),
+                ),
+                TextButton(
+                  onPressed: state.areAllCollapsed() ? null : state.collapseAll,
+                  child: const Text('Collapse All'),
+                ),
+              ],
+            ),
+            Expanded(
+              child: JsonDataExplorer(
+                nodes: state.displayNodes,
+                itemScrollController: itemScrollController,
+                itemSpacing: 4,
+                rootInformationBuilder: (context, node) =>
+                    rootInfoBox(context, node),
+                collapsableToggleBuilder: (context, node) => AnimatedRotation(
+                  turns: node.isCollapsed ? -0.25 : 0,
+                  duration: const Duration(milliseconds: 300),
+                  child: const Icon(Icons.arrow_drop_down),
+                ),
+                trailingBuilder: (context, node) => node.isFocused
+                    ? Padding(
+                        padding: const EdgeInsets.only(right: 12),
+                        child: IconButton(
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(maxHeight: 18),
+                          icon: const Icon(
+                            Icons.copy,
+                            size: 18,
+                          ),
+                          onPressed: () async {
+                            await _copy(kEncoder.convert(toJson(node)), sm);
+                          },
+                        ),
+                      )
+                    : const SizedBox(),
+                valueStyleBuilder: (value, style) =>
+                    valueStyleOverride(context, value, style),
+                theme: (Theme.of(context).brightness == Brightness.light)
+                    ? dataExplorerThemeLight
+                    : dataExplorerThemeDark,
+              ),
+            ),
+            Row(
               children: [
                 Expanded(
                   child: TextField(
@@ -196,72 +250,22 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
             const SizedBox(
               height: 16.0,
             ),
-            Row(
-              children: [
-                TextButton(
-                  onPressed: state.areAllExpanded() ? null : state.expandAll,
-                  child: const Text('Expand All'),
-                ),
-                const SizedBox(
-                  width: 8.0,
-                ),
-                TextButton(
-                  onPressed: state.areAllCollapsed() ? null : state.collapseAll,
-                  child: const Text('Collapse All'),
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 16.0,
-            ),
-            Expanded(
-              child: JsonDataExplorer(
-                nodes: state.displayNodes,
-                itemScrollController: itemScrollController,
-                itemSpacing: 4,
-                rootInformationBuilder: (context, node) =>
-                    rootInfoBox(context, node),
-                collapsableToggleBuilder: (context, node) => AnimatedRotation(
-                  turns: node.isCollapsed ? -0.25 : 0,
-                  duration: const Duration(milliseconds: 300),
-                  child: const Icon(Icons.arrow_drop_down),
-                ),
-                trailingBuilder: (context, node) => node.isFocused
-                    ? Padding(
-                        padding: const EdgeInsets.only(right: 12),
-                        child: IconButton(
-                          padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(maxHeight: 18),
-                          icon: const Icon(
-                            Icons.copy,
-                            size: 18,
-                          ),
-                          onPressed: () async {
-                            String msg;
-                            try {
-                              await Clipboard.setData(ClipboardData(
-                                  text: kEncoder.convert(toJson(node))));
-                              msg = "Copied";
-                            } catch (e) {
-                              msg = "An error occurred";
-                            }
-                            sm.hideCurrentSnackBar();
-                            sm.showSnackBar(getSnackBar(msg));
-                          },
-                        ),
-                      )
-                    : const SizedBox(),
-                valueStyleBuilder: (value, style) =>
-                    valueStyleOverride(context, value, style),
-                theme: (Theme.of(context).brightness == Brightness.light)
-                    ? dataExplorerThemeLight
-                    : dataExplorerThemeDark,
-              ),
-            ),
           ],
         ),
       ),
     );
+  }
+
+  Future<void> _copy(String text, ScaffoldMessengerState sm) async {
+    String msg;
+    try {
+      await Clipboard.setData(ClipboardData(text: text));
+      msg = "Copied";
+    } catch (e) {
+      msg = "An error occurred";
+    }
+    sm.hideCurrentSnackBar();
+    sm.showSnackBar(getSnackBar(msg));
   }
 
   PropertyOverrides valueStyleOverride(
