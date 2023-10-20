@@ -55,9 +55,7 @@ class _HeaderFieldState extends State<HeaderField> {
       suggestionsCallback: headerSuggestionCallback,
       suggestionsBoxDecoration: suggestionBoxDecorations(context),
       textFieldConfiguration: TextFieldConfiguration(
-        onChanged: (s) {
-          widget.onChanged?.call(s);
-        },
+        onChanged: widget.onChanged,
         controller: controller,
         style: kCodeStyle.copyWith(
           color: colorScheme.onSurface,

@@ -33,7 +33,9 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
 
   @override
   Widget build(BuildContext context) {
-    final activeId = ref.read(activeIdStateProvider);
+    final activeId = ref.watch(activeIdStateProvider);
+    final length = ref.watch(activeRequestModelProvider
+        .select((value) => value?.requestHeaders?.length));
     var rH = ref.read(activeRequestModelProvider)?.requestHeaders;
     rows = (rH == null || rH.isEmpty)
         ? [
