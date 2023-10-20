@@ -453,11 +453,17 @@ class _BodySuccessState extends State<BodySuccess> {
                 visible: currentSeg == ResponseBodyView.preview ||
                     currentSeg == ResponseBodyView.none,
                 child: Expanded(
-                  child: Previewer(
-                    bytes: widget.bytes,
-                    type: widget.mediaType.type,
-                    subtype: widget.mediaType.subtype,
-                    hasRaw: widget.options.contains(ResponseBodyView.raw),
+                  child: Container(
+                    width: double.maxFinite,
+                    padding: kP8,
+                    decoration: textContainerdecoration,
+                    child: Previewer(
+                      bytes: widget.bytes,
+                      body: widget.body,
+                      type: widget.mediaType.type,
+                      subtype: widget.mediaType.subtype,
+                      hasRaw: widget.options.contains(ResponseBodyView.raw),
+                    ),
                   ),
                 ),
               ),
