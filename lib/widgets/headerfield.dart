@@ -7,14 +7,14 @@ class HeaderField extends StatefulWidget {
   const HeaderField({
     super.key,
     required this.keyId,
-    required this.controller,
     this.hintText,
+    this.initialValue,
     this.onChanged,
     this.colorScheme,
   });
-  final TextEditingController controller;
   final String keyId;
   final String? hintText;
+  final String? initialValue;
   final void Function(String)? onChanged;
   final ColorScheme? colorScheme;
 
@@ -23,25 +23,42 @@ class HeaderField extends StatefulWidget {
 }
 
 class _HeaderFieldState extends State<HeaderField> {
+  late TextEditingController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = TextEditingController(text: widget.initialValue);
+    controller.selection =
+        TextSelection.collapsed(offset: controller.text.length);
+  }
+
   @override
   Widget build(BuildContext context) {
     var colorScheme = widget.colorScheme ?? Theme.of(context).colorScheme;
-    return TypeAheadFormField(
-      minCharsForSuggestions: 1,
-      hideOnEmpty: true,
+    return TypeAheadField(
       key: Key(widget.keyId),
-      onSuggestionSelected: widget.onChanged!,
+      hideOnEmpty: true,
+      minCharsForSuggestions: 1,
+      onSuggestionSelected: (value) {
+        setState(() {
+          controller.text = value;
+        });
+        widget.onChanged!.call(value);
+      },
       itemBuilder: (context, String suggestion) {
         return ListTile(
           dense: true,
           title: Text(suggestion),
         );
       },
-      suggestionsCallback: getHeaderSuggestions,
+      suggestionsCallback: headerSuggestionCallback,
       suggestionsBoxDecoration: suggestionBoxDecorations(context),
       textFieldConfiguration: TextFieldConfiguration(
-        onChanged: widget.onChanged!,
-        controller: widget.controller,
+        onChanged: (s) {
+          widget.onChanged?.call(s);
+        },
+        controller: controller,
         style: kCodeStyle.copyWith(
           color: colorScheme.onSurface,
         ),

@@ -33,9 +33,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
 
   @override
   Widget build(BuildContext context) {
-    final activeId = ref.watch(activeIdStateProvider);
-    final length = ref.watch(activeRequestModelProvider
-        .select((value) => value?.requestHeaders?.length));
+    final activeId = ref.read(activeIdStateProvider);
     var rH = ref.read(activeRequestModelProvider)?.requestHeaders;
     rows = (rH == null || rH.isEmpty)
         ? [
@@ -51,16 +49,13 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
           grow: 1,
           cellBuilder: (_, row) {
             int idx = row.index;
-            TextEditingController headerController =
-                TextEditingController(text: rows[idx].name);
             return HeaderField(
               keyId: "$activeId-$idx-headers-k-$seed",
-              controller: headerController,
+              initialValue: rows[idx].name,
               hintText: "Add Header Name",
               onChanged: (value) {
                 rows[idx] = rows[idx].copyWith(name: value);
                 _onFieldChange(activeId!);
-                headerController.text = value;
               },
               colorScheme: Theme.of(context).colorScheme,
             );
