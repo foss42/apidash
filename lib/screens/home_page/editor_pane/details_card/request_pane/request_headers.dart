@@ -51,7 +51,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
           grow: 1,
           cellBuilder: (_, row) {
             int idx = row.index;
-            return CellField(
+            return HeaderField(
               keyId: "$activeId-$idx-headers-k-$seed",
               initialValue: rows[idx].name,
               hintText: "Add Header Name",

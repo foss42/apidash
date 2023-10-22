@@ -41,6 +41,7 @@ dependencies:
   json_annotation: ^4.8.1
   printing: ^5.11.0
   package_info_plus: ^4.1.0
+  flutter_typeahead: ^4.8.0
   provider: ^6.0.5
   json_data_explorer: ^0.1.0
   scrollable_positioned_list: ^0.2.3
