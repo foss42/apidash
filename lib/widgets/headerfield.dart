@@ -23,14 +23,29 @@ class HeaderField extends StatefulWidget {
 }
 
 class _HeaderFieldState extends State<HeaderField> {
-  late TextEditingController controller;
+  final TextEditingController controller = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    controller = TextEditingController(text: widget.initialValue);
+    controller.text = widget.initialValue ?? "";
     controller.selection =
         TextSelection.collapsed(offset: controller.text.length);
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(HeaderField oldWidget) {
+    if (oldWidget.initialValue != widget.initialValue) {
+      controller.text = widget.initialValue ?? "";
+      controller.selection =
+          TextSelection.collapsed(offset: controller.text.length);
+    }
   }
 
   @override
