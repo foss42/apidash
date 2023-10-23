@@ -6,14 +6,17 @@ part of 'name_value_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_NameValueModel _$$_NameValueModelFromJson(Map<String, dynamic> json) =>
-    _$_NameValueModel(
+_$NameValueModelImpl _$$NameValueModelImplFromJson(Map<String, dynamic> json) =>
+    _$NameValueModelImpl(
+      enabled: json['enabled'] as bool? ?? true,
       name: json['name'] as String,
       value: json['value'],
     );
 
-Map<String, dynamic> _$$_NameValueModelToJson(_$_NameValueModel instance) =>
+Map<String, dynamic> _$$NameValueModelImplToJson(
+        _$NameValueModelImpl instance) =>
     <String, dynamic>{
+      'enabled': instance.enabled,
       'name': instance.name,
       'value': instance.value,
     };

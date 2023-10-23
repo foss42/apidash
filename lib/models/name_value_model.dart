@@ -8,6 +8,7 @@ part 'name_value_model.g.dart';
 @freezed
 class NameValueModel with _$NameValueModel {
   const factory NameValueModel({
+    @Default(true) bool enabled,
     required String name,
     required dynamic value,
   }) = _NameValueModel;

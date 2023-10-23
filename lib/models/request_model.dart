@@ -36,7 +36,9 @@ class RequestModel {
   final String? message;
   final ResponseModel? responseModel;
 
-  Map<String, String> get headersMap => rowsToMap(requestHeaders) ?? {};
+  Map<String, String> get headersMap =>
+      rowsToMap(requestHeaders?.where((element) => element.enabled).toList()) ??
+      {};
   Map<String, String> get paramsMap => rowsToMap(requestParams) ?? {};
 
   RequestModel duplicate({

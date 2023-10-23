@@ -10,6 +10,7 @@ export 'splitviews.dart';
 export 'texts.dart';
 export 'textfields.dart';
 export 'headerfield.dart';
+export 'checkbox.dart';
 export 'menus.dart';
 export 'cards.dart';
 export 'intro_message.dart';

@@ -20,6 +20,7 @@ NameValueModel _$NameValueModelFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$NameValueModel {
+  bool get enabled => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   dynamic get value => throw _privateConstructorUsedError;
 
@@ -35,7 +36,7 @@ abstract class $NameValueModelCopyWith<$Res> {
           NameValueModel value, $Res Function(NameValueModel) then) =
       _$NameValueModelCopyWithImpl<$Res, NameValueModel>;
   @useResult
-  $Res call({String name, dynamic value});
+  $Res call({bool enabled, String name, dynamic value});
 }
 
 /// @nodoc
@@ -51,10 +52,15 @@ class _$NameValueModelCopyWithImpl<$Res, $Val extends NameValueModel>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? enabled = null,
     Object? name = null,
     Object? value = freezed,
   }) {
     return _then(_value.copyWith(
+      enabled: null == enabled
+          ? _value.enabled
+          : enabled // ignore: cast_nullable_to_non_nullable
+              as bool,
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -68,31 +74,36 @@ class _$NameValueModelCopyWithImpl<$Res, $Val extends NameValueModel>
 }
 
 /// @nodoc
-abstract class _$$_NameValueModelCopyWith<$Res>
+abstract class _$$NameValueModelImplCopyWith<$Res>
     implements $NameValueModelCopyWith<$Res> {
-  factory _$$_NameValueModelCopyWith(
-          _$_NameValueModel value, $Res Function(_$_NameValueModel) then) =
-      __$$_NameValueModelCopyWithImpl<$Res>;
+  factory _$$NameValueModelImplCopyWith(_$NameValueModelImpl value,
+          $Res Function(_$NameValueModelImpl) then) =
+      __$$NameValueModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String name, dynamic value});
+  $Res call({bool enabled, String name, dynamic value});
 }
 
 /// @nodoc
-class __$$_NameValueModelCopyWithImpl<$Res>
-    extends _$NameValueModelCopyWithImpl<$Res, _$_NameValueModel>
-    implements _$$_NameValueModelCopyWith<$Res> {
-  __$$_NameValueModelCopyWithImpl(
-      _$_NameValueModel _value, $Res Function(_$_NameValueModel) _then)
+class __$$NameValueModelImplCopyWithImpl<$Res>
+    extends _$NameValueModelCopyWithImpl<$Res, _$NameValueModelImpl>
+    implements _$$NameValueModelImplCopyWith<$Res> {
+  __$$NameValueModelImplCopyWithImpl(
+      _$NameValueModelImpl _value, $Res Function(_$NameValueModelImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? enabled = null,
     Object? name = null,
     Object? value = freezed,
   }) {
-    return _then(_$_NameValueModel(
+    return _then(_$NameValueModelImpl(
+      enabled: null == enabled
+          ? _value.enabled
+          : enabled // ignore: cast_nullable_to_non_nullable
+              as bool,
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -107,14 +118,18 @@ class __$$_NameValueModelCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_NameValueModel
+class _$NameValueModelImpl
     with DiagnosticableTreeMixin
     implements _NameValueModel {
-  const _$_NameValueModel({required this.name, required this.value});
+  const _$NameValueModelImpl(
+      {this.enabled = true, required this.name, required this.value});
 
-  factory _$_NameValueModel.fromJson(Map<String, dynamic> json) =>
-      _$$_NameValueModelFromJson(json);
+  factory _$NameValueModelImpl.fromJson(Map<String, dynamic> json) =>
+      _$$NameValueModelImplFromJson(json);
 
+  @override
+  @JsonKey()
+  final bool enabled;
   @override
   final String name;
   @override
@@ -122,7 +137,7 @@ class _$_NameValueModel
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'NameValueModel(name: $name, value: $value)';
+    return 'NameValueModel(enabled: $enabled, name: $name, value: $value)';
   }
 
   @override
@@ -130,6 +145,7 @@ class _$_NameValueModel
     super.debugFillProperties(properties);
     properties
       ..add(DiagnosticsProperty('type', 'NameValueModel'))
+      ..add(DiagnosticsProperty('enabled', enabled))
       ..add(DiagnosticsProperty('name', name))
       ..add(DiagnosticsProperty('value', value));
   }
@@ -138,7 +154,8 @@ class _$_NameValueModel
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_NameValueModel &&
+            other is _$NameValueModelImpl &&
+            (identical(other.enabled, enabled) || other.enabled == enabled) &&
             (identical(other.name, name) || other.name == name) &&
             const DeepCollectionEquality().equals(other.value, value));
   }
@@ -146,17 +163,18 @@ class _$_NameValueModel
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(
-      runtimeType, name, const DeepCollectionEquality().hash(value));
+      runtimeType, enabled, name, const DeepCollectionEquality().hash(value));
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_NameValueModelCopyWith<_$_NameValueModel> get copyWith =>
-      __$$_NameValueModelCopyWithImpl<_$_NameValueModel>(this, _$identity);
+  _$$NameValueModelImplCopyWith<_$NameValueModelImpl> get copyWith =>
+      __$$NameValueModelImplCopyWithImpl<_$NameValueModelImpl>(
+          this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_NameValueModelToJson(
+    return _$$NameValueModelImplToJson(
       this,
     );
   }
@@ -164,18 +182,21 @@ class _$_NameValueModel
 
 abstract class _NameValueModel implements NameValueModel {
   const factory _NameValueModel(
-      {required final String name,
-      required final dynamic value}) = _$_NameValueModel;
+      {final bool enabled,
+      required final String name,
+      required final dynamic value}) = _$NameValueModelImpl;
 
   factory _NameValueModel.fromJson(Map<String, dynamic> json) =
-      _$_NameValueModel.fromJson;
+      _$NameValueModelImpl.fromJson;
 
+  @override
+  bool get enabled;
   @override
   String get name;
   @override
   dynamic get value;
   @override
   @JsonKey(ignore: true)
-  _$$_NameValueModelCopyWith<_$_NameValueModel> get copyWith =>
+  _$$NameValueModelImplCopyWith<_$NameValueModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

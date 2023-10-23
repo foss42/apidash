@@ -47,6 +47,20 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
       rows: rows,
       columns: [
         DaviColumn(
+          width: 36,
+          cellBuilder: (_, row) {
+            int idx = row.index;
+            return HeaderCheckBox(
+              initialValue: rows[idx].enabled,
+              onChanged: (value) {
+                rows[idx] = rows[idx].copyWith(enabled: value);
+                _onFieldChange(activeId!);
+              },
+              colorScheme: Theme.of(context).colorScheme,
+            );
+          },
+        ),
+        DaviColumn(
           name: 'Header Name',
           grow: 1,
           cellBuilder: (_, row) {
