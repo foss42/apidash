@@ -1,6 +1,6 @@
 # API Dash ⚡️ Changelog
 
-## v0.3.0 [09-10-2023]
+## v0.3.0 [29-10-2023]
 
 In this release we have migrated the project to Dart 3 & the following features have been added in this release:
 
