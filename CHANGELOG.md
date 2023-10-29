@@ -1,6 +1,6 @@
 # API Dash ⚡️ Changelog
 
-## v0.3.0 [09-10-2023]
+## v0.3.0 [29-10-2023]
 
 In this release we have migrated the project to Dart 3 & the following features have been added in this release:
 
@@ -8,32 +8,40 @@ In this release we have migrated the project to Dart 3 & the following features 
 
 ![New Code Generators](https://github.com/foss42/apidash/assets/615622/2082bd6c-bfab-4441-b24a-2610fe506b21)
 
-2. Export your data into a `HAR` (HTTP Archive) file that can be version controlled & can be directly imported in other API Clients like Postman, Paw, etc. To access this option goto `Settings > Export Data`.
+2. Interactive JSON Response viewer with a Find Box to easily explore the results.
+
+![JSON Viewer](https://github.com/foss42/apidash/assets/615622/f8e93e9c-6226-49bf-b0a5-6b57aa3b4678)
+
+3. Auto-suggestions for the most popularly used headers.
+
+![Auto-suggestions](https://github.com/foss42/apidash/assets/615622/93f4faf5-faa3-46b6-880c-a6f9dcc4d349)
+
+4. Export your data into a `HAR` (HTTP Archive) file that can be version controlled & can be directly imported in other API Clients like Postman, Paw, etc. To access this option goto `Settings > Export Data`.
 
 ![Export Data](https://github.com/foss42/apidash/assets/615622/e39993dd-810f-40b8-8b07-76b49b31bbcb)
 
-3. Tab indicators for Request URL Parameters, Headers and Body tabs to quickly identify the
+5. Tab indicators for Request URL Parameters, Headers and Body tabs to quickly identify the
 
 ![Tab Indicators](https://github.com/foss42/apidash/assets/615622/c2d7e264-8009-4920-991b-99d580a1c27b)
 
-4. PDF
+6. PDF
 
 ![PDF](https://github.com/foss42/apidash/assets/615622/4b07c435-1a29-4495-80de-0aeab712372a)
 
-5. Audio (wav , mp3)
+7. Audio (wav , mp3)
 
 ![Audio](https://github.com/foss42/apidash/assets/615622/2c48968d-80ce-4c19-8b6f-af7dd2f8b355)
 
-6. Support APNG
+8. Support APNG
 
 ![APNG](https://github.com/foss42/apidash/assets/615622/bb8d58df-afb7-4495-94a9-83071443fcf7)
 
 
-7. Updated Help & Support page.
+9. Updated Help & Support page.
 
 ![help & Support](https://github.com/foss42/apidash/assets/615622/8c2d82b1-1395-472a-b9f4-469fd9ab6bbb)
 
-8. Scrollbar added to collection pane which can be switched between being permanently visible or being visible only while scrolling.
+10. Scrollbar added to collection pane which can be switched between being permanently visible or being visible only while scrolling.
 
 ![scroll](https://github.com/foss42/apidash/assets/615622/4aab396e-ba0d-4b21-b04f-f8127e6d21eb)
 
