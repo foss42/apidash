@@ -75,6 +75,25 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                       );
                     }).toList()),
               ),
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                hoverColor: kColorTransparent,
+                title: const Text('Default Code Generator'),
+                trailing: DropdownMenu(
+                    onSelected: (value) {
+                      ref
+                          .read(settingsProvider.notifier)
+                          .update(defaultCodeGenLang: value);
+                    },
+                    initialSelection: settings.defaultCodeGenLang,
+                    dropdownMenuEntries: CodegenLanguage.values
+                        .map<DropdownMenuEntry<CodegenLanguage>>((value) {
+                      return DropdownMenuEntry<CodegenLanguage>(
+                        value: value,
+                        label: value.label,
+                      );
+                    }).toList()),
+              ),
               CheckboxListTile(
                 contentPadding: EdgeInsets.zero,
                 title: const Text("Save Responses"),
