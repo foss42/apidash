@@ -1,6 +1,6 @@
 # API Dash ⚡️ Changelog
 
-## v0.3.0 [29-10-2023]
+## v0.3.0 [In works]
 
 In this release we have migrated the project to Dart 3 & the following features have been added in this release:
 
@@ -35,7 +35,6 @@ In this release we have migrated the project to Dart 3 & the following features 
 8. Support APNG
 
 ![APNG](https://github.com/foss42/apidash/assets/615622/bb8d58df-afb7-4495-94a9-83071443fcf7)
-
 
 9. Updated Help & Support page.
 
