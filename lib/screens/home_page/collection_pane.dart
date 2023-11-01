@@ -7,8 +7,8 @@ import 'package:apidash/consts.dart';
 
 class CollectionPane extends ConsumerStatefulWidget {
   const CollectionPane({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   ConsumerState<CollectionPane> createState() => _CollectionPaneState();
@@ -85,8 +85,8 @@ class _CollectionPaneState extends ConsumerState<CollectionPane> {
 
 class RequestList extends ConsumerStatefulWidget {
   const RequestList({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   ConsumerState<RequestList> createState() => _RequestListState();
@@ -154,10 +154,10 @@ class _RequestListState extends ConsumerState<RequestList> {
 
 class RequestItem extends ConsumerStatefulWidget {
   const RequestItem({
+    super.key,
     required this.id,
     required this.requestModel,
-    Key? key,
-  }) : super(key: key);
+  });
 
   final String id;
   final RequestModel requestModel;

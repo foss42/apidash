@@ -8,7 +8,7 @@ import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
 
 class EditRequestHeaders extends ConsumerStatefulWidget {
-  const EditRequestHeaders({Key? key}) : super(key: key);
+  const EditRequestHeaders({super.key});
 
   @override
   ConsumerState<EditRequestHeaders> createState() => EditRequestHeadersState();
