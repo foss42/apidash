@@ -109,6 +109,7 @@ class _RequestListState extends ConsumerState<RequestList> {
 
   @override
   Widget build(BuildContext context) {
+    final requestSequence = ref.watch(requestSequenceProvider);
     final requestItems = ref.watch(collectionStateNotifierProvider)!;
     final alwaysShowCollectionPaneScrollbar = ref.watch(settingsProvider
         .select((value) => value.alwaysShowCollectionPaneScrollbar));
@@ -121,7 +122,7 @@ class _RequestListState extends ConsumerState<RequestList> {
         padding: kPr8CollectionPane,
         scrollController: controller,
         buildDefaultDragHandles: false,
-        itemCount: requestItems.length,
+        itemCount: requestSequence.length,
         onReorder: (int oldIndex, int newIndex) {
           if (oldIndex < newIndex) {
             newIndex -= 1;
@@ -133,14 +134,15 @@ class _RequestListState extends ConsumerState<RequestList> {
           }
         },
         itemBuilder: (context, index) {
+          var id = requestSequence[index];
           return ReorderableDragStartListener(
-            key: Key(requestItems[index].id),
+            key: ValueKey(id),
             index: index,
             child: Padding(
               padding: kP1,
               child: RequestItem(
-                id: requestItems[index].id,
-                requestModel: requestItems[index],
+                id: id,
+                requestModel: requestItems[id]!,
               ),
             ),
           );

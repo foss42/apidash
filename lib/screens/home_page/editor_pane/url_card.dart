@@ -108,7 +108,7 @@ class _URLTextFieldState extends ConsumerState<URLTextField> {
       initialValue: ref
           .read(collectionStateNotifierProvider.notifier)
           .getRequestModel(activeId)
-          .url,
+          ?.url,
       onChanged: (value) {
         ref
             .read(collectionStateNotifierProvider.notifier)
