@@ -1,10 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:apidash/providers/providers.dart';
-import 'package:apidash/models/models.dart';
-import 'package:apidash/services/services.dart'
-    show hiveHandler, HiveHandler, request;
-import 'package:apidash/utils/utils.dart' show uuid, collectionToHAR;
-import 'package:apidash/consts.dart';
+import 'settings_providers.dart';
+import 'ui_providers.dart';
+import '../models/models.dart';
+import '../services/services.dart' show hiveHandler, HiveHandler, request;
+import '../utils/utils.dart' show uuid, collectionToHAR;
+import '../consts.dart';
+
+final activeIdStateProvider = StateProvider<String?>((ref) => null);
 
 final activeRequestModelProvider = StateProvider<RequestModel?>((ref) {
   final activeId = ref.watch(activeIdStateProvider);
@@ -12,81 +14,97 @@ final activeRequestModelProvider = StateProvider<RequestModel?>((ref) {
   if (activeId == null || collection == null) {
     return null;
   } else {
-    final idIdx = collection.indexWhere((m) => m.id == activeId);
-    if (idIdx.isNegative) {
-      return null;
-    } else {
-      return collection[idIdx];
-    }
+    return collection[activeId];
   }
 });
 
-final StateNotifierProvider<CollectionStateNotifier, List<RequestModel>?>
+final requestSequenceProvider = StateProvider<List<String>>((ref) {
+  var ids = hiveHandler.getIds();
+  return ids ?? [];
+});
+
+final StateNotifierProvider<CollectionStateNotifier, Map<String, RequestModel>?>
     collectionStateNotifierProvider =
     StateNotifierProvider((ref) => CollectionStateNotifier(ref, hiveHandler));
 
-class CollectionStateNotifier extends StateNotifier<List<RequestModel>?> {
+class CollectionStateNotifier
+    extends StateNotifier<Map<String, RequestModel>?> {
   CollectionStateNotifier(this.ref, this.hiveHandler) : super(null) {
     loadData();
-    Future.microtask(() =>
-        ref.read(activeIdStateProvider.notifier).update((s) => state?[0].id));
+    Future.microtask(() => ref.read(activeIdStateProvider.notifier).state =
+        ref.read(requestSequenceProvider)[0]);
   }
 
   final Ref ref;
   final HiveHandler hiveHandler;
   final baseResponseModel = const ResponseModel();
 
-  List<String> getIds() => state!.map((e) => e.id).toList();
-  int idxOfId(String id) => state!.indexWhere((element) => element.id == id);
+  bool hasId(String id) => state?.keys.contains(id) ?? false;
 
-  RequestModel getRequestModel(String id) {
-    final idx = idxOfId(id);
-    return state![idx];
+  RequestModel? getRequestModel(String id) {
+    return state?[id];
   }
 
   void add() {
+    final id = uuid.v1();
     final newRequestModel = RequestModel(
-      id: uuid.v1(),
+      id: id,
     );
-    state = [newRequestModel, ...state!];
+    var map = {...state!};
+    map[id] = newRequestModel;
+    state = map;
     ref
-        .read(activeIdStateProvider.notifier)
-        .update((state) => newRequestModel.id);
+        .read(requestSequenceProvider.notifier)
+        .update((state) => [id, ...state]);
+    ref.read(activeIdStateProvider.notifier).state = newRequestModel.id;
   }
 
   void reorder(int oldIdx, int newIdx) {
-    final item = state!.removeAt(oldIdx);
-    state!.insert(newIdx, item);
+    var itemIds = ref.read(requestSequenceProvider);
+    final itemId = itemIds.removeAt(oldIdx);
+    itemIds.insert(newIdx, itemId);
+    ref.read(requestSequenceProvider.notifier).state = [...itemIds];
   }
 
   void remove(String id) {
-    int idx = idxOfId(id);
+    var itemIds = ref.read(requestSequenceProvider);
+    int idx = itemIds.indexOf(id);
+    itemIds.remove(id);
+    ref.read(requestSequenceProvider.notifier).state = [...itemIds];
+
     String? newId;
-    if (idx == 0 && state!.length > 1) {
-      newId = state![1].id;
-    } else if (state!.length > 2) {
-      newId = state![idx - 1].id;
+    if (idx == 0 && itemIds.isNotEmpty) {
+      newId = itemIds[0];
+    } else if (itemIds.length > 1) {
+      newId = itemIds[idx - 1];
     } else {
       newId = null;
     }
 
-    state = [
-      for (final model in state!)
-        if (model.id != id) model,
-    ];
-    ref.read(activeIdStateProvider.notifier).update((state) => newId);
+    ref.read(activeIdStateProvider.notifier).state = newId;
+
+    var map = {...state!};
+    map.remove(id);
+    state = map;
   }
 
   void duplicate(String id) {
-    final idx = idxOfId(id);
-    final newModel = state![idx].duplicate(
-      id: uuid.v1(),
+    final newId = uuid.v1();
+
+    var itemIds = ref.read(requestSequenceProvider);
+    int idx = itemIds.indexOf(id);
+
+    final newModel = state![id]!.duplicate(
+      id: newId,
     );
-    state = [
-      ...state!.sublist(0, idx + 1),
-      newModel,
-      ...state!.sublist(idx + 1)
-    ];
+
+    itemIds.insert(idx + 1, newId);
+    var map = {...state!};
+    map[newId] = newModel;
+    state = map;
+
+    ref.read(requestSequenceProvider.notifier).state = [...itemIds];
+    ref.read(activeIdStateProvider.notifier).state = newId;
   }
 
   void update(
@@ -104,8 +122,7 @@ class CollectionStateNotifier extends StateNotifier<List<RequestModel>?> {
     String? message,
     ResponseModel? responseModel,
   }) {
-    final idx = idxOfId(id);
-    final newModel = state![idx].copyWith(
+    final newModel = state![id]!.copyWith(
         method: method,
         url: url,
         name: name,
@@ -119,16 +136,18 @@ class CollectionStateNotifier extends StateNotifier<List<RequestModel>?> {
         message: message,
         responseModel: responseModel);
     //print(newModel);
-    state = [...state!.sublist(0, idx), newModel, ...state!.sublist(idx + 1)];
+    var map = {...state!};
+    map[id] = newModel;
+    state = map;
   }
 
   Future<void> sendRequest(String id) async {
-    ref.read(sentRequestIdStateProvider.notifier).update((state) => id);
-    ref.read(codePaneVisibleStateProvider.notifier).update((state) => false);
+    ref.read(sentRequestIdStateProvider.notifier).state = id;
+    ref.read(codePaneVisibleStateProvider.notifier).state = false;
     final defaultUriScheme =
         ref.read(settingsProvider.select((value) => value.defaultUriScheme));
-    final idx = idxOfId(id);
-    RequestModel requestModel = getRequestModel(id);
+
+    RequestModel requestModel = state![id]!;
     var responseRec =
         await request(requestModel, defaultUriScheme: defaultUriScheme);
     late final RequestModel newRequestModel;
@@ -150,38 +169,39 @@ class CollectionStateNotifier extends StateNotifier<List<RequestModel>?> {
       );
     }
     //print(newRequestModel);
-    ref.read(sentRequestIdStateProvider.notifier).update((state) => null);
-    state = [
-      ...state!.sublist(0, idx),
-      newRequestModel,
-      ...state!.sublist(idx + 1)
-    ];
+    ref.read(sentRequestIdStateProvider.notifier).state = null;
+    var map = {...state!};
+    map[id] = newRequestModel;
+    state = map;
   }
 
   Future<void> clearData() async {
-    ref.read(clearDataStateProvider.notifier).update((state) => true);
-    ref.read(activeIdStateProvider.notifier).update((state) => null);
+    ref.read(clearDataStateProvider.notifier).state = true;
+    ref.read(activeIdStateProvider.notifier).state = null;
     await hiveHandler.clear();
-    ref.read(clearDataStateProvider.notifier).update((state) => false);
-    state = [];
+    ref.read(clearDataStateProvider.notifier).state = false;
+    ref.read(requestSequenceProvider.notifier).state = [];
+    state = {};
   }
 
   void loadData() {
     var ids = hiveHandler.getIds();
     if (ids == null || ids.length == 0) {
-      state = [
-        RequestModel(
-          id: uuid.v1(),
+      String newId = uuid.v1();
+      state = {
+        newId: RequestModel(
+          id: newId,
         ),
-      ];
+      };
+      ref.read(requestSequenceProvider.notifier).state = [newId];
     } else {
-      List<RequestModel> data = [];
+      Map<String, RequestModel> data = {};
       for (var id in ids) {
         var jsonModel = hiveHandler.getRequestModel(id);
         if (jsonModel != null) {
           var requestModel =
               RequestModel.fromJson(Map<String, dynamic>.from(jsonModel));
-          data.add(requestModel);
+          data[id] = requestModel;
         }
       }
       state = data;
@@ -189,23 +209,22 @@ class CollectionStateNotifier extends StateNotifier<List<RequestModel>?> {
   }
 
   Future<void> saveData() async {
-    ref.read(saveDataStateProvider.notifier).update((state) => true);
-    final saveResponse =
-        ref.read(settingsProvider.select((value) => value.saveResponses));
-    final ids = getIds();
+    ref.read(saveDataStateProvider.notifier).state = true;
+    final saveResponse = ref.read(settingsProvider).saveResponses;
+    final ids = ref.read(requestSequenceProvider);
     await hiveHandler.setIds(ids);
-    for (var e in state!) {
+    for (var id in ids) {
       await hiveHandler.setRequestModel(
-        e.id,
-        e.toJson(includeResponse: saveResponse),
+        id,
+        state?[id]?.toJson(includeResponse: saveResponse),
       );
     }
     await hiveHandler.removeUnused();
-    ref.read(saveDataStateProvider.notifier).update((state) => false);
+    ref.read(saveDataStateProvider.notifier).state = false;
   }
 
   Future<Map<String, dynamic>> exportDataToHAR() async {
-    var result = await collectionToHAR(state);
+    var result = await collectionToHAR(state?.values.toList());
     return result;
     // return {
     //   "data": state!.map((e) => e.toJson(includeResponse: false)).toList()
