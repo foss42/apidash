@@ -33,9 +33,8 @@ class _EditRequestPaneState extends ConsumerState<EditRequestPane> {
       codePaneVisible: codePaneVisible,
       tabIndex: tabIndex,
       onPressedCodeButton: () {
-        ref
-            .read(codePaneVisibleStateProvider.notifier)
-            .update((state) => !codePaneVisible);
+        ref.read(codePaneVisibleStateProvider.notifier).state =
+            !codePaneVisible;
       },
       onTapTabBar: (index) {
         ref

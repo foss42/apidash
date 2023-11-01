@@ -183,13 +183,11 @@ class _RequestItemState extends ConsumerState<RequestItem> {
       activeRequestId: activeRequestId,
       editRequestId: editRequestId,
       onTap: () {
-        ref.read(activeIdStateProvider.notifier).update((state) => widget.id);
+        ref.read(activeIdStateProvider.notifier).state = widget.id;
       },
       onDoubleTap: () {
-        ref.read(activeIdStateProvider.notifier).update((state) => widget.id);
-        ref
-            .read(activeIdEditStateProvider.notifier)
-            .update((state) => widget.id);
+        ref.read(activeIdStateProvider.notifier).state = widget.id;
+        ref.read(activeIdEditStateProvider.notifier).state = widget.id;
       },
       onChangedNameEditor: (value) {
         value = value.trim();
@@ -198,7 +196,7 @@ class _RequestItemState extends ConsumerState<RequestItem> {
             .update(editRequestId!, name: value);
       },
       onTapOutsideNameEditor: () {
-        ref.read(activeIdEditStateProvider.notifier).update((state) => null);
+        ref.read(activeIdEditStateProvider.notifier).state = null;
       },
       onMenuSelected: (RequestItemMenuOption item) {
         if (item == RequestItemMenuOption.delete) {
