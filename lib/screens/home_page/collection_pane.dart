@@ -5,23 +5,13 @@ import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
 
-class CollectionPane extends ConsumerStatefulWidget {
+class CollectionPane extends ConsumerWidget {
   const CollectionPane({
     super.key,
   });
 
   @override
-  ConsumerState<CollectionPane> createState() => _CollectionPaneState();
-}
-
-class _CollectionPaneState extends ConsumerState<CollectionPane> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     var sm = ScaffoldMessenger.of(context);
     final collection = ref.watch(collectionStateNotifierProvider);
     final savingData = ref.watch(saveDataStateProvider);
