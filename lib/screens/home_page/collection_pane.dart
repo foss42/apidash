@@ -142,7 +142,7 @@ class _RequestListState extends ConsumerState<RequestList> {
   }
 }
 
-class RequestItem extends ConsumerStatefulWidget {
+class RequestItem extends ConsumerWidget {
   const RequestItem({
     super.key,
     required this.id,
@@ -153,33 +153,23 @@ class RequestItem extends ConsumerStatefulWidget {
   final RequestModel requestModel;
 
   @override
-  ConsumerState<RequestItem> createState() => _RequestItemState();
-}
-
-class _RequestItemState extends ConsumerState<RequestItem> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final activeRequestId = ref.watch(activeIdStateProvider);
     final editRequestId = ref.watch(activeIdEditStateProvider);
 
     return SidebarRequestCard(
-      id: widget.id,
-      method: widget.requestModel.method,
-      name: widget.requestModel.name,
-      url: widget.requestModel.url,
+      id: id,
+      method: requestModel.method,
+      name: requestModel.name,
+      url: requestModel.url,
       activeRequestId: activeRequestId,
       editRequestId: editRequestId,
       onTap: () {
-        ref.read(activeIdStateProvider.notifier).state = widget.id;
+        ref.read(activeIdStateProvider.notifier).state = id;
       },
       onDoubleTap: () {
-        ref.read(activeIdStateProvider.notifier).state = widget.id;
-        ref.read(activeIdEditStateProvider.notifier).state = widget.id;
+        ref.read(activeIdStateProvider.notifier).state = id;
+        ref.read(activeIdEditStateProvider.notifier).state = id;
       },
       onChangedNameEditor: (value) {
         value = value.trim();
@@ -192,12 +182,10 @@ class _RequestItemState extends ConsumerState<RequestItem> {
       },
       onMenuSelected: (RequestItemMenuOption item) {
         if (item == RequestItemMenuOption.delete) {
-          ref.read(collectionStateNotifierProvider.notifier).remove(widget.id);
+          ref.read(collectionStateNotifierProvider.notifier).remove(id);
         }
         if (item == RequestItemMenuOption.duplicate) {
-          ref
-              .read(collectionStateNotifierProvider.notifier)
-              .duplicate(widget.id);
+          ref.read(collectionStateNotifierProvider.notifier).duplicate(id);
         }
       },
     );
