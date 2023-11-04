@@ -181,6 +181,9 @@ class RequestItem extends ConsumerWidget {
         ref.read(activeIdEditStateProvider.notifier).state = null;
       },
       onMenuSelected: (RequestItemMenuOption item) {
+        if (item == RequestItemMenuOption.edit) {
+          ref.read(activeIdEditStateProvider.notifier).state = id;
+        }
         if (item == RequestItemMenuOption.delete) {
           ref.read(collectionStateNotifierProvider.notifier).remove(id);
         }
