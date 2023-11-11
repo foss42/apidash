@@ -167,10 +167,12 @@ class RequestItem extends ConsumerWidget {
       onTap: () {
         ref.read(activeIdStateProvider.notifier).state = id;
       },
-      onDoubleTap: () {
-        ref.read(activeIdStateProvider.notifier).state = id;
-        ref.read(activeIdEditStateProvider.notifier).state = id;
-      },
+      // onDoubleTap: () {
+      //   ref.read(activeIdStateProvider.notifier).state = id;
+      //   ref.read(activeIdEditStateProvider.notifier).state = id;
+      // },
+      // controller: ref.watch(nameTextFieldControllerProvider),
+      focusNode: ref.watch(nameTextFieldFocusNodeProvider),
       onChangedNameEditor: (value) {
         value = value.trim();
         ref
@@ -182,7 +184,20 @@ class RequestItem extends ConsumerWidget {
       },
       onMenuSelected: (RequestItemMenuOption item) {
         if (item == RequestItemMenuOption.edit) {
+          // var controller =
+          //     ref.read(nameTextFieldControllerProvider.notifier).state;
+          // controller.text = requestModel.name;
+          // controller.selection = TextSelection.fromPosition(
+          //   TextPosition(offset: controller.text.length),
+          // );
           ref.read(activeIdEditStateProvider.notifier).state = id;
+          Future.delayed(
+            const Duration(milliseconds: 150),
+            () => ref
+                .read(nameTextFieldFocusNodeProvider.notifier)
+                .state
+                .requestFocus(),
+          );
         }
         if (item == RequestItemMenuOption.delete) {
           ref.read(collectionStateNotifierProvider.notifier).remove(id);
