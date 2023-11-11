@@ -4,7 +4,7 @@ import 'package:apidash/utils/utils.dart';
 import 'menus.dart' show RequestCardMenu;
 import 'texts.dart' show MethodBox;
 
-class SidebarRequestCard extends StatefulWidget {
+class SidebarRequestCard extends StatelessWidget {
   const SidebarRequestCard({
     super.key,
     required this.id,
@@ -17,6 +17,8 @@ class SidebarRequestCard extends StatefulWidget {
     this.onDoubleTap,
     this.onSecondaryTap,
     this.onChangedNameEditor,
+    // this.controller,
+    this.focusNode,
     this.onTapOutsideNameEditor,
     this.onMenuSelected,
   });
@@ -31,27 +33,24 @@ class SidebarRequestCard extends StatefulWidget {
   final void Function()? onDoubleTap;
   final void Function()? onSecondaryTap;
   final Function(String)? onChangedNameEditor;
+  // final TextEditingController? controller;
+  final FocusNode? focusNode;
   final Function()? onTapOutsideNameEditor;
   final Function(RequestItemMenuOption)? onMenuSelected;
 
-  @override
-  State<SidebarRequestCard> createState() => _SidebarRequestCardState();
-}
-
-class _SidebarRequestCardState extends State<SidebarRequestCard> {
   @override
   Widget build(BuildContext context) {
     final Color color = Theme.of(context).colorScheme.surface;
     final Color colorVariant =
         Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5);
     final Color surfaceTint = Theme.of(context).colorScheme.primary;
-    bool isActiveId = widget.activeRequestId == widget.id;
-    bool inEditMode = widget.editRequestId == widget.id;
-    String name = (widget.name != null && widget.name!.trim().isNotEmpty)
-        ? widget.name!
-        : getRequestTitleFromUrl(widget.url);
+    bool isActiveId = activeRequestId == id;
+    bool inEditMode = editRequestId == id;
+    String nm = (name != null && name!.trim().isNotEmpty)
+        ? name!
+        : getRequestTitleFromUrl(url);
     return Tooltip(
-      message: name,
+      message: nm,
       waitDuration: const Duration(seconds: 1),
       child: Card(
         shape: const RoundedRectangleBorder(
@@ -69,9 +68,9 @@ class _SidebarRequestCardState extends State<SidebarRequestCard> {
           borderRadius: kBorderRadius8,
           hoverColor: colorVariant,
           focusColor: colorVariant.withOpacity(0.5),
-          onTap: inEditMode ? null : widget.onTap,
-          onDoubleTap: inEditMode ? null : widget.onDoubleTap,
-          onSecondaryTap: widget.onSecondaryTap,
+          onTap: inEditMode ? null : onTap,
+          // onDoubleTap: inEditMode ? null : onDoubleTap,
+          onSecondaryTap: onSecondaryTap,
           child: Padding(
             padding: EdgeInsets.only(
               left: 6,
@@ -83,20 +82,22 @@ class _SidebarRequestCardState extends State<SidebarRequestCard> {
               height: 20,
               child: Row(
                 children: [
-                  MethodBox(method: widget.method),
+                  MethodBox(method: method),
                   kHSpacer4,
                   Expanded(
                     child: inEditMode
                         ? TextFormField(
-                            key: Key("${widget.id}-name"),
-                            initialValue: widget.name,
-                            autofocus: true,
+                            key: ValueKey("$id-name"),
+                            initialValue: name,
+                            // controller: controller,
+                            focusNode: focusNode,
+                            //autofocus: true,
                             style: Theme.of(context).textTheme.bodyMedium,
                             onTapOutside: (_) {
-                              widget.onTapOutsideNameEditor?.call();
-                              FocusScope.of(context).unfocus();
+                              onTapOutsideNameEditor?.call();
+                              //FocusScope.of(context).unfocus();
                             },
-                            onChanged: widget.onChangedNameEditor,
+                            onChanged: onChangedNameEditor,
                             decoration: const InputDecoration(
                               isCollapsed: true,
                               contentPadding: EdgeInsets.zero,
@@ -104,7 +105,7 @@ class _SidebarRequestCardState extends State<SidebarRequestCard> {
                             ),
                           )
                         : Text(
-                            name,
+                            nm,
                             softWrap: false,
                             overflow: TextOverflow.fade,
                           ),
@@ -114,7 +115,7 @@ class _SidebarRequestCardState extends State<SidebarRequestCard> {
                     child: SizedBox(
                       width: 28,
                       child: RequestCardMenu(
-                        onSelected: widget.onMenuSelected,
+                        onSelected: onMenuSelected,
                       ),
                     ),
                   ),
