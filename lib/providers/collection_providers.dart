@@ -30,9 +30,16 @@ final StateNotifierProvider<CollectionStateNotifier, Map<String, RequestModel>?>
 class CollectionStateNotifier
     extends StateNotifier<Map<String, RequestModel>?> {
   CollectionStateNotifier(this.ref, this.hiveHandler) : super(null) {
-    loadData();
-    Future.microtask(() => ref.read(activeIdStateProvider.notifier).state =
-        ref.read(requestSequenceProvider)[0]);
+    var status = loadData();
+    Future.microtask(() {
+      if (status) {
+        ref.read(requestSequenceProvider.notifier).state = [
+          state!.keys.first,
+        ];
+      }
+      ref.read(activeIdStateProvider.notifier).state =
+          ref.read(requestSequenceProvider)[0];
+    });
   }
 
   final Ref ref;
@@ -184,7 +191,7 @@ class CollectionStateNotifier
     state = {};
   }
 
-  void loadData() {
+  bool loadData() {
     var ids = hiveHandler.getIds();
     if (ids == null || ids.length == 0) {
       String newId = uuid.v1();
@@ -193,7 +200,7 @@ class CollectionStateNotifier
           id: newId,
         ),
       };
-      ref.read(requestSequenceProvider.notifier).state = [newId];
+      return true;
     } else {
       Map<String, RequestModel> data = {};
       for (var id in ids) {
@@ -205,6 +212,7 @@ class CollectionStateNotifier
         }
       }
       state = data;
+      return false;
     }
   }
 
