@@ -41,7 +41,7 @@ class _EditRequestBodyState extends ConsumerState<EditRequestBody> {
             child: TextFieldEditor(
               key: Key("$activeId-body"),
               fieldKey: "$activeId-body-editor",
-              initialValue: requestModel.requestBody,
+              initialValue: requestModel?.requestBody,
               onChanged: (String value) {
                 ref
                     .read(collectionStateNotifierProvider.notifier)

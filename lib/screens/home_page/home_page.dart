@@ -4,7 +4,7 @@ import 'editor_pane/editor_pane.dart';
 import 'collection_pane.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({super.key});
 
   @override
   HomePageState createState() => HomePageState();

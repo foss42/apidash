@@ -69,6 +69,7 @@ const kP24CollectionPane = EdgeInsets.only(top: 24, left: 8.0, bottom: 8.0);
 const kP8CollectionPane = EdgeInsets.only(top: 8.0, left: 8.0, bottom: 8.0);
 const kPr8CollectionPane = EdgeInsets.only(right: 8.0);
 
+const kHSpacer4 = SizedBox(width: 4);
 const kHSpacer5 = SizedBox(width: 5);
 const kHSpacer10 = SizedBox(width: 10);
 const kHSpacer20 = SizedBox(width: 20);
@@ -215,7 +216,7 @@ final kColorHttpMethodPut = Colors.amber.shade900;
 final kColorHttpMethodPatch = kColorHttpMethodPut;
 final kColorHttpMethodDelete = Colors.red.shade800;
 
-enum RequestItemMenuOption { delete, duplicate }
+enum RequestItemMenuOption { edit, delete, duplicate }
 
 enum HTTPVerb { get, head, post, put, patch, delete }
 

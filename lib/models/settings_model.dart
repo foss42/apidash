@@ -9,6 +9,7 @@ class SettingsModel {
       this.size,
       this.offset,
       this.defaultUriScheme = kDefaultUriScheme,
+      this.defaultCodeGenLang = CodegenLanguage.curl,
       this.saveResponses = true});
 
   final bool isDark;
@@ -16,6 +17,7 @@ class SettingsModel {
   final Size? size;
   final Offset? offset;
   final String defaultUriScheme;
+  final CodegenLanguage defaultCodeGenLang;
   final bool saveResponses;
 
   SettingsModel copyWith({
@@ -24,6 +26,7 @@ class SettingsModel {
     Size? size,
     Offset? offset,
     String? defaultUriScheme,
+    CodegenLanguage? defaultCodeGenLang,
     bool? saveResponses,
   }) {
     return SettingsModel(
@@ -32,6 +35,7 @@ class SettingsModel {
           this.alwaysShowCollectionPaneScrollbar,
       size: size ?? this.size,
       defaultUriScheme: defaultUriScheme ?? this.defaultUriScheme,
+      defaultCodeGenLang: defaultCodeGenLang ?? this.defaultCodeGenLang,
       offset: offset ?? this.offset,
       saveResponses: saveResponses ?? this.saveResponses,
     );
@@ -54,6 +58,16 @@ class SettingsModel {
       offset = Offset(dx, dy);
     }
     final defaultUriScheme = data["defaultUriScheme"] as String?;
+    final defaultCodeGenLangStr = data["defaultCodeGenLang"] as String?;
+    CodegenLanguage? defaultCodeGenLang;
+    if (defaultCodeGenLangStr != null) {
+      try {
+        defaultCodeGenLang =
+            CodegenLanguage.values.byName(defaultCodeGenLangStr);
+      } catch (e) {
+        // pass
+      }
+    }
     final saveResponses = data["saveResponses"] as bool?;
 
     const sm = SettingsModel();
@@ -64,6 +78,7 @@ class SettingsModel {
       size: size,
       offset: offset,
       defaultUriScheme: defaultUriScheme,
+      defaultCodeGenLang: defaultCodeGenLang,
       saveResponses: saveResponses,
     );
   }
@@ -77,6 +92,7 @@ class SettingsModel {
       "dx": offset?.dx,
       "dy": offset?.dy,
       "defaultUriScheme": defaultUriScheme,
+      "defaultCodeGenLang": defaultCodeGenLang.name,
       "saveResponses": saveResponses,
     };
   }

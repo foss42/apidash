@@ -33,9 +33,7 @@ class _DashboardState extends ConsumerState<Dashboard> {
                     IconButton(
                       isSelected: railIdx == 0,
                       onPressed: () {
-                        ref
-                            .read(navRailIndexStateProvider.notifier)
-                            .update((state) => 0);
+                        ref.read(navRailIndexStateProvider.notifier).state = 0;
                       },
                       icon: const Icon(Icons.auto_awesome_mosaic_outlined),
                       selectedIcon: const Icon(Icons.auto_awesome_mosaic),
@@ -116,9 +114,7 @@ class _DashboardState extends ConsumerState<Dashboard> {
       onPressed: isSelected
           ? null
           : () {
-              ref
-                  .read(navRailIndexStateProvider.notifier)
-                  .update((state) => buttonIdx);
+              ref.read(navRailIndexStateProvider.notifier).state = buttonIdx;
             },
       child: Icon(
         isSelected ? selectedIcon : icon,

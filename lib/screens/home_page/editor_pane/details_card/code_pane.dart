@@ -40,9 +40,7 @@ class _CodePaneState extends ConsumerState<CodePane> {
       code: code,
       codegenLanguage: codegenLanguage,
       onChangedCodegenLanguage: (CodegenLanguage? value) {
-        ref
-            .read(codegenLanguageStateProvider.notifier)
-            .update((state) => value!);
+        ref.read(codegenLanguageStateProvider.notifier).state = value!;
       },
     );
   }

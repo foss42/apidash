@@ -51,38 +51,36 @@ class _MapTableState extends State<MapTable> {
               )
               .toList(),
         ),
-        ...widget.map.entries
-            .map<TableRow>(
-              (entry) => TableRow(
-                children: [
-                  TableCell(
-                    verticalAlignment: TableCellVerticalAlignment.top,
-                    child: Padding(
-                      padding: kP1,
-                      child: SelectableText(
-                        widget.firstColumnHeaderCase
-                            ? formatHeaderCase(entry.key)
-                            : entry.key,
-                        style: kCodeStyle.copyWith(
-                          color: Theme.of(context).colorScheme.tertiary,
-                        ),
-                      ),
+        ...widget.map.entries.map<TableRow>(
+          (entry) => TableRow(
+            children: [
+              TableCell(
+                verticalAlignment: TableCellVerticalAlignment.top,
+                child: Padding(
+                  padding: kP1,
+                  child: SelectableText(
+                    widget.firstColumnHeaderCase
+                        ? formatHeaderCase(entry.key)
+                        : entry.key,
+                    style: kCodeStyle.copyWith(
+                      color: Theme.of(context).colorScheme.tertiary,
                     ),
                   ),
-                  TableCell(
-                    verticalAlignment: TableCellVerticalAlignment.top,
-                    child: Padding(
-                      padding: kP1,
-                      child: SelectableText(
-                        entry.value,
-                        style: kCodeStyle,
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
-            )
-            .toList(),
+              TableCell(
+                verticalAlignment: TableCellVerticalAlignment.top,
+                child: Padding(
+                  padding: kP1,
+                  child: SelectableText(
+                    entry.value,
+                    style: kCodeStyle,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }

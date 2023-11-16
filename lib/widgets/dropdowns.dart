@@ -112,10 +112,10 @@ class _DropdownButtonContentTypeState extends State<DropdownButtonContentType> {
 
 class DropdownButtonCodegenLanguage extends StatefulWidget {
   const DropdownButtonCodegenLanguage({
-    Key? key,
+    super.key,
     this.codegenLanguage,
     this.onChanged,
-  }) : super(key: key);
+  });
 
   @override
   State<DropdownButtonCodegenLanguage> createState() =>

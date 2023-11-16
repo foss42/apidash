@@ -5,23 +5,13 @@ import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
 
-class CollectionPane extends ConsumerStatefulWidget {
+class CollectionPane extends ConsumerWidget {
   const CollectionPane({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
-  ConsumerState<CollectionPane> createState() => _CollectionPaneState();
-}
-
-class _CollectionPaneState extends ConsumerState<CollectionPane> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     var sm = ScaffoldMessenger.of(context);
     final collection = ref.watch(collectionStateNotifierProvider);
     final savingData = ref.watch(saveDataStateProvider);
@@ -85,8 +75,8 @@ class _CollectionPaneState extends ConsumerState<CollectionPane> {
 
 class RequestList extends ConsumerStatefulWidget {
   const RequestList({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   ConsumerState<RequestList> createState() => _RequestListState();
@@ -109,6 +99,7 @@ class _RequestListState extends ConsumerState<RequestList> {
 
   @override
   Widget build(BuildContext context) {
+    final requestSequence = ref.watch(requestSequenceProvider);
     final requestItems = ref.watch(collectionStateNotifierProvider)!;
     final alwaysShowCollectionPaneScrollbar = ref.watch(settingsProvider
         .select((value) => value.alwaysShowCollectionPaneScrollbar));
@@ -121,7 +112,7 @@ class _RequestListState extends ConsumerState<RequestList> {
         padding: kPr8CollectionPane,
         scrollController: controller,
         buildDefaultDragHandles: false,
-        itemCount: requestItems.length,
+        itemCount: requestSequence.length,
         onReorder: (int oldIndex, int newIndex) {
           if (oldIndex < newIndex) {
             newIndex -= 1;
@@ -133,14 +124,15 @@ class _RequestListState extends ConsumerState<RequestList> {
           }
         },
         itemBuilder: (context, index) {
+          var id = requestSequence[index];
           return ReorderableDragStartListener(
-            key: Key(requestItems[index].id),
+            key: ValueKey(id),
             index: index,
             child: Padding(
               padding: kP1,
               child: RequestItem(
-                id: requestItems[index].id,
-                requestModel: requestItems[index],
+                id: id,
+                requestModel: requestItems[id]!,
               ),
             ),
           );
@@ -150,47 +142,37 @@ class _RequestListState extends ConsumerState<RequestList> {
   }
 }
 
-class RequestItem extends ConsumerStatefulWidget {
+class RequestItem extends ConsumerWidget {
   const RequestItem({
+    super.key,
     required this.id,
     required this.requestModel,
-    Key? key,
-  }) : super(key: key);
+  });
 
   final String id;
   final RequestModel requestModel;
 
   @override
-  ConsumerState<RequestItem> createState() => _RequestItemState();
-}
-
-class _RequestItemState extends ConsumerState<RequestItem> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final activeRequestId = ref.watch(activeIdStateProvider);
     final editRequestId = ref.watch(activeIdEditStateProvider);
 
     return SidebarRequestCard(
-      id: widget.id,
-      method: widget.requestModel.method,
-      name: widget.requestModel.name,
-      url: widget.requestModel.url,
+      id: id,
+      method: requestModel.method,
+      name: requestModel.name,
+      url: requestModel.url,
       activeRequestId: activeRequestId,
       editRequestId: editRequestId,
       onTap: () {
-        ref.read(activeIdStateProvider.notifier).update((state) => widget.id);
+        ref.read(activeIdStateProvider.notifier).state = id;
       },
-      onDoubleTap: () {
-        ref.read(activeIdStateProvider.notifier).update((state) => widget.id);
-        ref
-            .read(activeIdEditStateProvider.notifier)
-            .update((state) => widget.id);
-      },
+      // onDoubleTap: () {
+      //   ref.read(activeIdStateProvider.notifier).state = id;
+      //   ref.read(activeIdEditStateProvider.notifier).state = id;
+      // },
+      // controller: ref.watch(nameTextFieldControllerProvider),
+      focusNode: ref.watch(nameTextFieldFocusNodeProvider),
       onChangedNameEditor: (value) {
         value = value.trim();
         ref
@@ -198,16 +180,30 @@ class _RequestItemState extends ConsumerState<RequestItem> {
             .update(editRequestId!, name: value);
       },
       onTapOutsideNameEditor: () {
-        ref.read(activeIdEditStateProvider.notifier).update((state) => null);
+        ref.read(activeIdEditStateProvider.notifier).state = null;
       },
       onMenuSelected: (RequestItemMenuOption item) {
+        if (item == RequestItemMenuOption.edit) {
+          // var controller =
+          //     ref.read(nameTextFieldControllerProvider.notifier).state;
+          // controller.text = requestModel.name;
+          // controller.selection = TextSelection.fromPosition(
+          //   TextPosition(offset: controller.text.length),
+          // );
+          ref.read(activeIdEditStateProvider.notifier).state = id;
+          Future.delayed(
+            const Duration(milliseconds: 150),
+            () => ref
+                .read(nameTextFieldFocusNodeProvider.notifier)
+                .state
+                .requestFocus(),
+          );
+        }
         if (item == RequestItemMenuOption.delete) {
-          ref.read(collectionStateNotifierProvider.notifier).remove(widget.id);
+          ref.read(collectionStateNotifierProvider.notifier).remove(id);
         }
         if (item == RequestItemMenuOption.duplicate) {
-          ref
-              .read(collectionStateNotifierProvider.notifier)
-              .duplicate(widget.id);
+          ref.read(collectionStateNotifierProvider.notifier).duplicate(id);
         }
       },
     );

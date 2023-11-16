@@ -7,8 +7,8 @@ import 'url_card.dart';
 
 class RequestEditorPane extends ConsumerStatefulWidget {
   const RequestEditorPane({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   ConsumerState<RequestEditorPane> createState() => _RequestEditorPaneState();

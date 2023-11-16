@@ -48,7 +48,7 @@ class RequestModel {
       id: id,
       method: method,
       url: url,
-      name: name,
+      name: "$name (copy)",
       description: description,
       requestHeaders: requestHeaders != null ? [...requestHeaders!] : null,
       requestParams: requestParams != null ? [...requestParams!] : null,

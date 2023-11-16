@@ -4,10 +4,10 @@ import 'package:apidash/consts.dart';
 
 class DashboardSplitView extends StatefulWidget {
   const DashboardSplitView({
-    Key? key,
+    super.key,
     required this.sidebarWidget,
     required this.mainWidget,
-  }) : super(key: key);
+  });
 
   final Widget sidebarWidget;
   final Widget mainWidget;

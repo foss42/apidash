@@ -8,7 +8,7 @@ import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
 
 class EditRequestURLParams extends ConsumerStatefulWidget {
-  const EditRequestURLParams({Key? key}) : super(key: key);
+  const EditRequestURLParams({super.key});
 
   @override
   ConsumerState<EditRequestURLParams> createState() =>
