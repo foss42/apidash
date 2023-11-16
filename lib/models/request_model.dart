@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:apidash/consts.dart';
-import 'package:apidash/utils/utils.dart' show mapToRows, rowsToMap;
+import 'package:apidash/utils/utils.dart'
+    show mapToRows, rowsToMap, mapToRows1, rowsToMap1;
 import 'name_value_model.dart';
 import 'response_model.dart';
 
@@ -124,6 +125,25 @@ class RequestModel {
     } else {
       responseModel = null;
     }
+    List<NameValueModel>? requestHeadersList;
+    List<NameValueModel>? requestParamsList;
+    if (requestHeaders != null) {
+      try {
+        requestHeadersList =
+            mapToRows(Map<String, String>.from(requestHeaders));
+      } catch (e) {
+        requestHeadersList =
+            mapToRows1(Map<String, List<dynamic>>.from(requestHeaders));
+      }
+    }
+    if (requestParams != null) {
+      try {
+        requestParamsList = mapToRows(Map<String, String>.from(requestParams));
+      } catch (e) {
+        requestParamsList =
+            mapToRows1(Map<String, List<dynamic>>.from(requestParams));
+      }
+    }
 
     return RequestModel(
       id: id,
@@ -132,12 +152,8 @@ class RequestModel {
       name: name ?? "",
       description: description ?? "",
       requestTabIndex: 0,
-      requestHeaders: requestHeaders != null
-          ? mapToRows(Map<String, String>.from(requestHeaders))
-          : null,
-      requestParams: requestParams != null
-          ? mapToRows(Map<String, String>.from(requestParams))
-          : null,
+      requestHeaders: requestHeadersList,
+      requestParams: requestParamsList,
       requestBodyContentType: requestBodyContentType,
       requestBody: requestBody,
       responseStatus: responseStatus,
@@ -153,8 +169,8 @@ class RequestModel {
       "url": url,
       "name": name,
       "description": description,
-      "requestHeaders": rowsToMap(requestHeaders),
-      "requestParams": rowsToMap(requestParams),
+      "requestHeaders": rowsToMap1(requestHeaders),
+      "requestParams": rowsToMap1(requestParams),
       "requestBodyContentType": requestBodyContentType.name,
       "requestBody": requestBody,
       "responseStatus": includeResponse ? responseStatus : null,

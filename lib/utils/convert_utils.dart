@@ -78,13 +78,43 @@ Map<String, String>? rowsToMap(List<NameValueModel>? kvRows,
   return finalMap;
 }
 
+Map<String, List<dynamic>>? rowsToMap1(List<NameValueModel>? kvRows,
+    {bool isHeader = false}) {
+  if (kvRows == null) {
+    return null;
+  }
+  Map<String, List<dynamic>> finalMap = {};
+  for (var row in kvRows) {
+    if (row.name.trim() != "") {
+      String key = row.name;
+      if (isHeader) {
+        key = key.toLowerCase();
+      }
+      finalMap[key] = [row.enabled, row.value.toString()];
+    }
+  }
+  return finalMap;
+}
+
 List<NameValueModel>? mapToRows(Map<String, String>? kvMap) {
   if (kvMap == null) {
     return null;
   }
   List<NameValueModel> finalRows = [];
   for (var k in kvMap.keys) {
-    finalRows.add(NameValueModel(name: k, value: kvMap[k]));
+    finalRows.add(NameValueModel(enabled: true, name: k, value: kvMap[k]));
+  }
+  return finalRows;
+}
+
+List<NameValueModel>? mapToRows1(Map<String, List<dynamic>>? kvMap) {
+  if (kvMap == null) {
+    return null;
+  }
+  List<NameValueModel> finalRows = [];
+  for (var k in kvMap.keys) {
+    finalRows.add(
+        NameValueModel(enabled: kvMap[k]![0], name: k, value: kvMap[k]![1]));
   }
   return finalRows;
 }
