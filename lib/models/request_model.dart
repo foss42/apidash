@@ -40,7 +40,9 @@ class RequestModel {
   Map<String, String> get headersMap =>
       rowsToMap(requestHeaders?.where((element) => element.enabled).toList()) ??
       {};
-  Map<String, String> get paramsMap => rowsToMap(requestParams) ?? {};
+  Map<String, String> get paramsMap =>
+      rowsToMap(requestParams?.where((element) => element.enabled).toList()) ??
+      {};
 
   RequestModel duplicate({
     required String id,
