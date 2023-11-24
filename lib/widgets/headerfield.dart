@@ -41,6 +41,7 @@ class _HeaderFieldState extends State<HeaderField> {
 
   @override
   void didUpdateWidget(HeaderField oldWidget) {
+    super.didUpdateWidget(oldWidget);
     if (oldWidget.initialValue != widget.initialValue) {
       controller.text = widget.initialValue ?? "";
       controller.selection =

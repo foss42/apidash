@@ -5,12 +5,13 @@ void main() {
   const nmRow1 = NameValueModel(name: "harry", value: 23);
 
   test('Testing toString()', () {
-    const resultExpected = 'NameValueModel(name: harry, value: 23)';
+    const resultExpected =
+        'NameValueModel(enabled: true, name: harry, value: 23)';
     expect(nmRow1.toString(), resultExpected);
   });
 
   test('Testing toJson()', () {
-    const resultExpected = {"name": "harry", "value": 23};
+    const resultExpected = {"enabled": true, "name": "harry", "value": 23};
     expect(nmRow1.toJson(), resultExpected);
   });
 

@@ -103,8 +103,8 @@ void main() {
     "name": 'foss42 api',
     'description': '',
     "requestHeaders": {
-      'content-length': '18',
-      'content-type': 'application/json; charset=utf-8'
+      'content-length': [true, '18'],
+      'content-type': [true, 'application/json; charset=utf-8']
     },
     'requestParams': null,
     "requestBodyContentType": 'json',
@@ -139,7 +139,7 @@ void main() {
     "Request Name: foss42 api",
     "Request Description: ",
     "Request Tab Index: 0",
-    "Request Headers: [NameValueModel(name: content-length, value: 18), NameValueModel(name: content-type, value: application/json; charset=utf-8)]",
+    "Request Headers: [NameValueModel(enabled: true, name: content-length, value: 18), NameValueModel(enabled: true, name: content-type, value: application/json; charset=utf-8)]",
     "Request Params: null",
     "Request Body Content Type: ContentType.json",
     'Request Body: {\n"text":"WORLD"\n}',
