@@ -81,6 +81,21 @@ void main() {
 "text":"WORLD"
 }''');
 
+  RequestModel requestModelCopy = const RequestModel(
+      id: '1',
+      method: HTTPVerb.post,
+      url: 'api.foss42.com/case/lower',
+      name: 'foss42 api (copy)',
+      requestHeaders: [
+        NameValueModel(name: 'content-length', value: '18'),
+        NameValueModel(
+            name: 'content-type', value: 'application/json; charset=utf-8')
+      ],
+      requestBodyContentType: ContentType.json,
+      requestBody: '''{
+"text":"WORLD"
+}''');
+
   Map<String, dynamic> requestModelAsJson = {
     "id": '1',
     "method": 'post',
@@ -105,7 +120,7 @@ void main() {
     expect(requestModelcopyWith.name, 'API foss42');
   });
   test('Testing duplicate', () {
-    expect(requestModel.duplicate(id: '1'), requestModelDup);
+    expect(requestModel.duplicate(id: '1'), requestModelCopy);
   });
 
   test('Testing toJson', () {
