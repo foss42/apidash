@@ -241,7 +241,7 @@ void main() {
     test('Testing getResponseBodyViewOptions for application/json', () {
       MediaType mediaType1 = MediaType("application", "json");
       var result1 = getResponseBodyViewOptions(mediaType1);
-      expect(result1.$1, kCodeRawBodyViewOptions);
+      expect(result1.$1, kPreviewRawBodyViewOptions);
       expect(result1.$2, "json");
     });
     test('Testing getResponseBodyViewOptions for application/xml', () {
@@ -262,7 +262,7 @@ void main() {
         () {
       MediaType mediaType4 = MediaType("application", "calendar+json");
       var result4 = getResponseBodyViewOptions(mediaType4);
-      expect(result4.$1, kCodeRawBodyViewOptions);
+      expect(result4.$1, kPreviewRawBodyViewOptions);
       expect(result4.$2, "json");
     });
     test('Testing getResponseBodyViewOptions for image/svg+xml', () {
@@ -295,7 +295,7 @@ void main() {
     test('Testing getResponseBodyViewOptions for application/pdf', () {
       MediaType mediaType9 = MediaType("application", "pdf");
       var result9 = getResponseBodyViewOptions(mediaType9);
-      expect(result9.$1, kNoBodyViewOptions);
+      expect(result9.$1, kPreviewBodyViewOptions);
       expect(result9.$2, "pdf");
     });
     test('Testing getResponseBodyViewOptions for text/calendar', () {
