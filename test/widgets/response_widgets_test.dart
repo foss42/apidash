@@ -341,7 +341,7 @@ void main() {
             "${kMimeTypeRawRaiseIssueStart}application/json$kMimeTypeRaiseIssue"),
         findsOneWidget);
     expect(find.byIcon(Icons.download), findsOneWidget);
-  }, skip: true);
+  });
 
   testWidgets('Testing Body Success for ResponseBodyView.raw', (tester) async {
     await tester.pumpWidget(

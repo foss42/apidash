@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:json_data_explorer/json_data_explorer.dart';
@@ -134,7 +133,7 @@ class JsonPreviewer extends StatefulWidget {
     super.key,
     required this.code,
   });
-  final String code;
+  final dynamic code;
 
   @override
   State<JsonPreviewer> createState() => _JsonPreviewerState();
@@ -148,7 +147,7 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
   @override
   void initState() {
     super.initState();
-    store.buildNodes(jsonDecode(widget.code), areAllCollapsed: true);
+    store.buildNodes(widget.code, areAllCollapsed: true);
     store.expandAll();
   }
 
@@ -166,7 +165,7 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
               children: [
                 TextButton(
                   onPressed: () async {
-                    await _copy(kEncoder.convert(jsonDecode(widget.code)), sm);
+                    await _copy(kEncoder.convert(widget.code), sm);
                   },
                   child: const Text('Copy'),
                 ),
