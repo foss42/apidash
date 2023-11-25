@@ -6,6 +6,7 @@ import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
+import 'package:highlighter/languages/ini.dart';
 
 class EditRequestURLParams extends ConsumerStatefulWidget {
   const EditRequestURLParams({super.key});
@@ -52,14 +53,24 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
           width: 36,
           cellBuilder: (_, row) {
             int idx = row.index;
-            return HeaderCheckBox(
-              keyId: "$activeId-$idx-params-e-$seed",
-              initialValue: rows[idx].enabled,
-              onChanged: (value) {
-                rows[idx] = rows[idx].copyWith(enabled: value);
-                _onFieldChange(activeId!);
+
+            ValueNotifier<bool> initialValue = ValueNotifier(rows[idx].enabled);
+            void onChanged(bool value) {
+              rows[idx] = rows[idx].copyWith(enabled: value);
+              initialValue.value = value;
+              _onFieldChange(activeId!);
+            }
+
+            return ValueListenableBuilder(
+              valueListenable: initialValue,
+              builder: (_, value, __) {
+                return HeaderCheckBox(
+                  keyId: "$activeId-$idx-params-e-$seed",
+                  initialValue: value,
+                  onChanged: onChanged,
+                  colorScheme: Theme.of(context).colorScheme,
+                );
               },
-              colorScheme: Theme.of(context).colorScheme,
             );
           },
         ),
