@@ -91,6 +91,48 @@ void main() {
     });
   });
 
+  group("Testing rowsToMap1", () {
+    test('Testing for null', () {
+      expect(rowsToMap1(null), null);
+    });
+    test('Testing for string KVRow values when enabled not passed', () {
+      const kvRow1 = NameValueModel(name: "code", value: "IN");
+      expect(rowsToMap1([kvRow1]), {
+        "code": [true, "IN"]
+      });
+    });
+    test('Testing for string KVRow values when enabled is True', () {
+      const kvRow1 = NameValueModel(enabled: true, name: "code", value: "IN");
+      expect(rowsToMap1([kvRow1]), {
+        "code": [true, "IN"]
+      });
+    });
+    test('Testing for string KVRow values when enabled is False', () {
+      const kvRow1 = NameValueModel(enabled: false, name: "code", value: "IN");
+      expect(rowsToMap1([kvRow1]), {
+        "code": [false, "IN"]
+      });
+    });
+    test('Testing when header is True', () {
+      const kvRow2 = NameValueModel(name: "Text", value: "ABC");
+      expect(rowsToMap1([kvRow2], isHeader: true), {
+        "text": [true, "ABC"]
+      });
+    });
+    test('Testing when header is false and key is in upper case', () {
+      const kvRow3 = <NameValueModel>[
+        NameValueModel(enabled: true, name: "TEXT", value: "ABC"),
+        NameValueModel(enabled: false, name: "version", value: 0.1),
+        NameValueModel(enabled: true, name: "month", value: 4),
+      ];
+      expect(rowsToMap1(kvRow3), {
+        "TEXT": [true, "ABC"],
+        "version": [false, "0.1"],
+        "month": [true, "4"]
+      });
+    });
+  });
+
   group("Testing mapToRows", () {
     test('Testing for null', () {
       expect(mapToRows(null), null);
@@ -103,6 +145,25 @@ void main() {
         NameValueModel(name: "code", value: "1")
       ];
       expect(mapToRows(value1), result1Expected);
+    });
+  });
+
+  group("Testing mapToRows1", () {
+    test('Testing for null', () {
+      expect(mapToRows1(null), null);
+    });
+    test('Testing with a map value', () {
+      Map<String, List<dynamic>> value1 = {
+        "text": [true, "abc"],
+        "lang": [false, "eng"],
+        "code": [true, "1"]
+      };
+      const result1Expected = <NameValueModel>[
+        NameValueModel(enabled: true, name: "text", value: "abc"),
+        NameValueModel(enabled: false, name: "lang", value: "eng"),
+        NameValueModel(enabled: true, name: "code", value: "1")
+      ];
+      expect(mapToRows1(value1), result1Expected);
     });
   });
 
