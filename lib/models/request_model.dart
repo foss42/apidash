@@ -132,18 +132,18 @@ class RequestModel {
     if (requestHeaders != null) {
       try {
         requestHeadersList =
-            mapToRows(Map<String, String>.from(requestHeaders));
+            mapToRows1(Map<String, List<dynamic>>.from(requestHeaders));
       } catch (e) {
         requestHeadersList =
-            mapToRows1(Map<String, List<dynamic>>.from(requestHeaders));
+            mapToRows(Map<String, String>.from(requestHeaders));
       }
     }
     if (requestParams != null) {
       try {
-        requestParamsList = mapToRows(Map<String, String>.from(requestParams));
-      } catch (e) {
         requestParamsList =
             mapToRows1(Map<String, List<dynamic>>.from(requestParams));
+      } catch (e) {
+        requestParamsList = mapToRows(Map<String, String>.from(requestParams));
       }
     }
 

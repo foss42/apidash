@@ -48,10 +48,12 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
       rows: rows,
       columns: [
         DaviColumn(
+          name: 'Checkbox',
           width: 36,
           cellBuilder: (_, row) {
             int idx = row.index;
             return HeaderCheckBox(
+              keyId: "$activeId-$idx-params-e-$seed",
               initialValue: rows[idx].enabled,
               onChanged: (value) {
                 rows[idx] = rows[idx].copyWith(enabled: value);

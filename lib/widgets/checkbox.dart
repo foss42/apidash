@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
 class HeaderCheckBox extends StatefulWidget {
+  final String keyId;
   final bool initialValue;
   final ValueChanged<bool> onChanged;
   final ColorScheme? colorScheme;
   const HeaderCheckBox({
     super.key,
+    required this.keyId,
     required this.initialValue,
     required this.onChanged,
     this.colorScheme,
@@ -16,7 +18,7 @@ class HeaderCheckBox extends StatefulWidget {
 }
 
 class _HeaderCheckBoxState extends State<HeaderCheckBox> {
-  late bool _value;
+  bool _value = true;
 
   @override
   void initState() {
@@ -25,9 +27,18 @@ class _HeaderCheckBoxState extends State<HeaderCheckBox> {
   }
 
   @override
+  void didUpdateWidget(HeaderCheckBox oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.initialValue != widget.initialValue) {
+      _value = widget.initialValue;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     var colorScheme = widget.colorScheme ?? Theme.of(context).colorScheme;
     return Checkbox(
+        key: Key(widget.keyId),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(3),
         ),

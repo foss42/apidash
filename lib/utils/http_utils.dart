@@ -88,7 +88,10 @@ String stripUrlParams(String url) {
     uri = uri.removeFragment();
   }
 
-  Map<String, String>? queryParams = rowsToMap(requestParams);
+  List<NameValueModel>? enabledParams = requestParams
+      ?.where((element) => element.enabled)
+      .toList(growable: false);
+  Map<String, String>? queryParams = rowsToMap(enabledParams);
   if (queryParams != null) {
     if (uri.hasQuery) {
       Map<String, String> urlQueryParams = uri.queryParameters;
