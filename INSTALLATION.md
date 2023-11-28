@@ -11,36 +11,32 @@ Download the latest MacOS Installer (Universal - Intel and Apple Silicon) from [
 
 **As this app is distributed outside the App Store you have to follow the following instructions to setup and run it only for the first time.**
 
-You can refer to the video given below which shows the steps to install and run API Dash on macOS.
+![‎installation ‎001](https://github.com/foss42/apidash/assets/1382619/05c05272-8bff-42a5-9203-c51a66d22f5d)
 
-https://user-images.githubusercontent.com/1382619/227956871-87376f18-d80f-4a53-9456-cb724f8149c7.mp4
+![‎installation ‎002](https://github.com/foss42/apidash/assets/1382619/a729d2fc-a863-4704-b9c6-eed4c3704175)
 
+![‎installation ‎003](https://github.com/foss42/apidash/assets/1382619/b07a5563-aeda-48b3-912f-578e50275579)
+
+![‎installation ‎004](https://github.com/foss42/apidash/assets/1382619/e09bc786-fada-4874-aa6f-8f104797472f)
+
+![‎installation ‎005](https://github.com/foss42/apidash/assets/1382619/a3a60cdb-e15b-4268-93e5-cc4b203bbe64)
+
+![‎installation ‎006](https://github.com/foss42/apidash/assets/1382619/c34824d2-6848-42fa-8731-da3a40790144)
+
+![‎installation ‎007](https://github.com/foss42/apidash/assets/1382619/d1f96bd1-d847-4966-b225-f69ca562d9ad)
+
+![‎installation ‎008](https://github.com/foss42/apidash/assets/1382619/929acfae-0d2e-4de0-8158-469c8e12b487)
+
+![‎installation ‎009](https://github.com/foss42/apidash/assets/1382619/3cf1d94b-0ec3-4ba8-b981-54d3f9dd0d2d)
+
+
+This process has to be followed only once and from the next time you can directly launch the API Dash App from the Launchpad.
 
 ##
 
+You can refer to the video given below which shows the steps to install and run API Dash on macOS.
 
-**Step 1** - After downloading `api_dash_macos.dmg` file, right click & open it.  
-Note: If you directly open it by double clicking, macOS will warn you and not allow you to open it. So, right click and open it again.
-
-**Step 2** - Click Open in the dialog box
-
-**Step 3** - Drag and drop API Dash App in the Applications folder as shown in the video
-
-**Step 4** - Now go to the Applications folder
-
-Note: The next step has to be performed twice so that macOS adds the app to whitelist
-
-**Step 5** - Right click on API Dash App & click Open
-
-**Step 6** - Click OK
-
-**Step 7** - Once again right click on API Dash App & then click on Open
-
-**Step 8** - Now in this new dialog box click on Open to launch the API Dash App
-
-**Step 9** - The application is now ready for use 
-
-**Step 10** - This process has to be followed only once and from the next time you can directly launch the API Dash App from the Launchpad.
+https://user-images.githubusercontent.com/1382619/227956871-87376f18-d80f-4a53-9456-cb724f8149c7.mp4
 
 ## Linux
 
