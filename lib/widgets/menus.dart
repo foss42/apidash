@@ -25,7 +25,7 @@ class _RequestCardMenuState extends State<RequestCardMenu> {
           <PopupMenuEntry<RequestItemMenuOption>>[
         const PopupMenuItem<RequestItemMenuOption>(
           value: RequestItemMenuOption.edit,
-          child: Text('Edit Name'),
+          child: Text('Rename'),
         ),
         const PopupMenuItem<RequestItemMenuOption>(
           value: RequestItemMenuOption.delete,
