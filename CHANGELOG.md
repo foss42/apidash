@@ -1,46 +1,51 @@
 # API Dash ⚡️ Changelog
 
-## v0.3.0 [In progress]
+## v0.3.0 [29-11-2023]
 
-In this release we have migrated the project to Dart 3 & the following features have been added in this release:
+In this major release, we have migrated the project to Dart 3 & added tons of amazing new features mentioned below:
 
-1. Well tested code generators for `cURL`, `HAR`, Python (`requests`, `http.client`), JavaScript (`axios`, `fetch`), node.js (`axios`, `fetch`) & Kotlin (`okhttp3`).
+1. Create collections and folders to easily organize your APIs.
 
-![New Code Generators](https://github.com/foss42/apidash/assets/615622/2082bd6c-bfab-4441-b24a-2610fe506b21)
+![Collections and Folders](https://github.com/foss42/apidash/assets/615622/4f4de13e-60fd-4b0c-88d2-e3818d787e93)
 
-2. Interactive JSON Response viewer with a Find Box to easily explore the results.
+2. Well tested code generators for `cURL`, `HAR`, Python (`requests`, `http.client`), JavaScript (`axios`, `fetch`), node.js (`axios`, `fetch`) & Kotlin (`okhttp3`).
 
-![JSON Viewer](https://github.com/foss42/apidash/assets/615622/f8e93e9c-6226-49bf-b0a5-6b57aa3b4678)
+![New Code Generators](https://github.com/foss42/apidash/assets/615622/2ff1b071-cbeb-4603-a11c-bd6b5f52f364)
 
-3. Auto-suggestions for the most popularly used headers.
+3. Interactive JSON Response viewer with a Find Box to easily explore the results.
 
-![Auto-suggestions](https://github.com/foss42/apidash/assets/615622/93f4faf5-faa3-46b6-880c-a6f9dcc4d349)
+![JSON Viewer](https://github.com/foss42/apidash/assets/615622/5a7dd8c1-32e8-4277-af92-6a8947bc9cc5)
 
-4. Export your data into a `HAR` (HTTP Archive) file that can be version controlled & can be directly imported in other API Clients like Postman, Paw, etc. To access this option goto `Settings > Export Data`.
+4. Auto-suggestions for the most popularly used headers.
 
-![Export Data](https://github.com/foss42/apidash/assets/615622/e39993dd-810f-40b8-8b07-76b49b31bbcb)
+![Auto-suggestions](https://github.com/foss42/apidash/assets/615622/c8a763c6-91ea-4262-86f9-52c6c99a435a)
 
-5. Tab indicators for Request URL Parameters, Headers and Body tabs to quickly identify the
+5. Export collections & folders into a `HAR` (HTTP Archive) file that can be version controlled & can be directly imported in other API Clients like Postman, Paw, etc. You can also export your entire data via `Settings > Export Data`.
 
-![Tab Indicators](https://github.com/foss42/apidash/assets/615622/c2d7e264-8009-4920-991b-99d580a1c27b)
+![Export Collection](https://github.com/foss42/apidash/assets/615622/d4e4ea43-cf5d-4e4a-9069-1574c512a3ad)
+![Export Data](https://github.com/foss42/apidash/assets/615622/cda22e7d-a588-47e4-a5f7-5dccef889bd1)
 
-6. PDF
+6. Tab indicators for Request URL Parameters, Headers and Body tabs to quickly identify the
 
-![PDF](https://github.com/foss42/apidash/assets/615622/4b07c435-1a29-4495-80de-0aeab712372a)
+![Tab Indicators](https://github.com/foss42/apidash/assets/615622/f1eacf28-ed79-4e2c-8438-c307f9f6f38a)
 
-7. Audio (wav , mp3)
+7. Support for PDF response
 
-![Audio](https://github.com/foss42/apidash/assets/615622/2c48968d-80ce-4c19-8b6f-af7dd2f8b355)
+![PDF](https://github.com/foss42/apidash/assets/615622/39b45290-47ab-4b3d-a19d-1406bbb8cc68)
 
-8. Support APNG
+8. Support for Audio (wav , mp3) response
+
+![Audio](https://github.com/foss42/apidash/assets/615622/e2f61c92-3c40-4dd6-a654-f3148badfa8e)
+
+9. Support for APNG response
 
 ![APNG](https://github.com/foss42/apidash/assets/615622/bb8d58df-afb7-4495-94a9-83071443fcf7)
 
-9. Updated Help & Support page.
+10. Updated Help & Support page.
 
 ![help & Support](https://github.com/foss42/apidash/assets/615622/8c2d82b1-1395-472a-b9f4-469fd9ab6bbb)
 
-10. Scrollbar added to collection pane which can be switched between being permanently visible or being visible only while scrolling.
+11. Scrollbar added to collection pane which can be switched between being permanently visible or being visible only while scrolling.
 
 ![scroll](https://github.com/foss42/apidash/assets/615622/4aab396e-ba0d-4b21-b04f-f8127e6d21eb)
 
