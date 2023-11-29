@@ -27,35 +27,35 @@ API Dash can be downloaded from the links below:
           <td><code>.dmg</code></td>
             <td><a href="https://github.com/foss42/apidash/blob/main/INSTALLATION.md#macos">Link</a></td>
             <td>Apple Silicon & Intel</td>
-            <td><a href="https://github.com/foss42/apidash/releases/download/latest/apidash-macos.dmg">Link</a></td>
+            <td><a href="https://github.com/foss42/apidash/releases/latest/download/apidash-macos.dmg">Link</a></td>
         </tr>
         <tr>
             <td>Windows</td>
             <td><code>.exe</code></td>
             <td><a href="https://github.com/foss42/apidash/blob/main/INSTALLATION.md#windows">Link</a></td>
             <td>64-bit</td>
-            <td><a href="https://github.com/foss42/apidash/releases/download/latest/apidash-windows-x86_64.exe">Link</a></td>
+            <td><a href="https://github.com/foss42/apidash/releases/latest/download/apidash-windows-x86_64.exe">Link</a></td>
         </tr>
         <tr>
             <td rowspan=4>Linux</td>
             <td rowspan=2><code>.deb</code></td>          
             <td rowspan=2><a href="https://github.com/foss42/apidash/blob/main/INSTALLATION.md#debian-based-linux-distributions-debian-ubuntu-linux-mint-etc">Link</a></td>
             <td>amd64</td>
-            <td><a href="https://github.com/foss42/apidash/releases/download/latest/apidash-linux-amd64.deb">Link</a></td>
+            <td><a href="https://github.com/foss42/apidash/releases/latest/download/apidash-linux-amd64.deb">Link</a></td>
         </tr>
          <tr>
             <td>arm64</td>
-            <td><a href="https://github.com/foss42/apidash/releases/download/latest/apidash-linux-arm64.deb">Link</a></td>
+            <td><a href="https://github.com/foss42/apidash/releases/latest/download/apidash-linux-arm64.deb">Link</a></td>
         </tr>
         <tr>
             <td rowspan=2><code>.rpm</code></td>
             <td rowspan=2><a href="https://github.com/foss42/apidash/blob/main/INSTALLATION.md#red-hat-based-linux-distributions-fedora-rocky-almalinux-centos-rhel-etc">Link</a></td>
             <td>x86_64</td>
-            <td><a href="https://github.com/foss42/apidash/releases/download/latest/apidash-linux-x86_64.rpm">Link</a></td>
+            <td><a href="https://github.com/foss42/apidash/releases/latest/download/apidash-linux-x86_64.rpm">Link</a></td>
         </tr>
          <tr>
             <td>aarch64</td>
-            <td><a href="https://github.com/foss42/apidash/releases/download/latest/apidash-linux-aarch64.rpm">Link</a></td>
+            <td><a href="https://github.com/foss42/apidash/releases/latest/download/apidash-linux-aarch64.rpm">Link</a></td>
         </tr>
     </tbody>
 </table>
