@@ -25,7 +25,7 @@ In this major release, we have migrated the project to Dart 3 & added tons of am
 ![Export Collection](https://github.com/foss42/apidash/assets/615622/d4e4ea43-cf5d-4e4a-9069-1574c512a3ad)
 ![Export Data](https://github.com/foss42/apidash/assets/615622/cda22e7d-a588-47e4-a5f7-5dccef889bd1)
 
-6. Tab indicators for Request URL Parameters, Headers and Body tabs to quickly identify the
+6. Tab indicators for Request URL Parameters, Headers and Body tabs to quickly identify if they are populated.
 
 ![Tab Indicators](https://github.com/foss42/apidash/assets/615622/f1eacf28-ed79-4e2c-8438-c307f9f6f38a)
 
