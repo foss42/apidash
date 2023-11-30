@@ -16,8 +16,8 @@ void main() async {
     await setupWindow(sz: win.$1, off: win.$2);
   }
   runApp(
-    ProviderScope(
-      child: kIsLinux ? const DashApp() : const App(),
+    const ProviderScope(
+      child: DashApp(),
     ),
   );
 }

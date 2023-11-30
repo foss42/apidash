@@ -3,7 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:window_manager/window_manager.dart';
 import 'providers/providers.dart';
 import 'screens/screens.dart';
-import 'consts.dart' show kFontFamily, kFontFamilyFallback, kColorSchemeSeed;
+import 'consts.dart'
+    show kIsLinux, kFontFamily, kFontFamilyFallback, kColorSchemeSeed;
 
 class App extends ConsumerStatefulWidget {
   const App({super.key});
@@ -38,7 +39,7 @@ class _AppState extends ConsumerState<App> with WindowListener {
 
   @override
   Widget build(BuildContext context) {
-    return const DashApp();
+    return const Dashboard();
   }
 
   @override
@@ -77,7 +78,7 @@ class _DashAppState extends ConsumerState<DashApp> {
         brightness: Brightness.dark,
       ),
       themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
-      home: const Dashboard(),
+      home: kIsLinux ? const Dashboard() : const App(),
     );
   }
 }
