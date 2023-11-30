@@ -18,7 +18,7 @@ class _DashboardState extends ConsumerState<Dashboard> {
   Widget build(BuildContext context) {
     final railIdx = ref.watch(navRailIndexStateProvider);
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: kIsWindows ? Colors.transparent : null,
       body: SafeArea(
         child: Row(
           children: <Widget>[
