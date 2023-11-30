@@ -68,9 +68,6 @@ Future<void> setupWindow({Size? sz, Offset? off, bool center = false}) async {
       title: kWindowTitle,
       titleBarStyle: kIsMacOS || kIsWindows ? TitleBarStyle.hidden : null,
     );
-    windowManager.setMinimizable(false);
-    windowManager.setMaximizable(false);
-    windowManager.setClosable(false);
     if (off != null) {
       await windowManager.setPosition(off);
     }
@@ -79,6 +76,7 @@ Future<void> setupWindow({Size? sz, Offset? off, bool center = false}) async {
       await windowManager.focus();
     });
     if (kIsWindows) {
+      Window.hideWindowControls();
       Window.setEffect(effect: WindowEffect.mica);
     }
   }
