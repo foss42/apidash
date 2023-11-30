@@ -30,7 +30,10 @@ dependencies:
   lottie: ^2.6.0
   mime_dart: ^3.0.0
   path_provider: ^2.1.0
-  window_manager: ^0.3.5
+  window_manager: 
+    git:
+      url: https://github.com/damywise/window_manager
+      branch: acrylic
   path: ^1.8.3
   flutter_markdown: ^0.6.17+1
   markdown: ^7.1.1
@@ -45,6 +48,7 @@ dependencies:
   provider: ^6.0.5
   json_data_explorer: ^0.1.0
   scrollable_positioned_list: ^0.2.3
+  flutter_acrylic: ^1.1.3
 
 dev_dependencies:
   flutter_test:

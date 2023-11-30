@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:window_manager/window_manager.dart';
+import 'package:window_manager/window_manager.dart' hide WindowCaption;
 import 'providers/providers.dart';
 import 'screens/screens.dart';
-import 'consts.dart' show kFontFamily, kFontFamilyFallback, kColorSchemeSeed;
+import 'consts.dart'
+    show kFontFamily, kFontFamilyFallback, kColorSchemeSeed, kIsWindows;
+import 'widgets/window_caption.dart';
 
 class App extends ConsumerStatefulWidget {
   const App({super.key});
@@ -77,7 +79,20 @@ class _DashAppState extends ConsumerState<DashApp> {
         brightness: Brightness.dark,
       ),
       themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
-      home: const Dashboard(),
+      home: Stack(
+        children: [
+          Dashboard(),
+          if (kIsWindows)
+            SizedBox(
+              width: double.infinity,
+              height: 28,
+              child: WindowCaption(
+                brightness: isDarkMode ? Brightness.dark : Brightness.light,
+                backgroundColor: Colors.transparent,
+              ),
+            ),
+        ],
+      ),
     );
   }
 }

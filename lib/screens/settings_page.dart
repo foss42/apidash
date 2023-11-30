@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_acrylic/flutter_acrylic.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/providers.dart';
 import '../widgets/widgets.dart';
@@ -38,6 +39,9 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                     'Current selection: ${settings.isDark ? "Dark Mode" : "Light mode"}'),
                 value: settings.isDark,
                 onChanged: (bool? value) {
+                  if (kIsWindows && value != null) {
+                    Window.setEffect(effect: WindowEffect.mica, dark: value);
+                  }
                   ref.read(settingsProvider.notifier).update(isDark: value);
                 },
               ),

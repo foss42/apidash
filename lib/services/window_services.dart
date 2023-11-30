@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:flutter_acrylic/flutter_acrylic.dart';
 import 'package:window_size/window_size.dart' as window_size;
 import 'package:window_manager/window_manager.dart';
 import '../consts.dart';
@@ -38,6 +39,9 @@ Future<void> resetWindowSize() async {
 
 Future<void> setupWindow({Size? sz, Offset? off, bool center = false}) async {
   if (kIsDesktop) {
+    if (kIsWindows) {
+      Window.initialize();
+    }
     double width = kMinInitialWindowWidth, height = kMinInitialWindowHeight;
     if (sz == null) {
       await window_size.getWindowInfo().then((window) {
@@ -62,8 +66,11 @@ Future<void> setupWindow({Size? sz, Offset? off, bool center = false}) async {
       minimumSize: kMinWindowSize,
       skipTaskbar: false,
       title: kWindowTitle,
-      titleBarStyle: kIsMacOS ? TitleBarStyle.hidden : null,
+      titleBarStyle: kIsMacOS || kIsWindows ? TitleBarStyle.hidden : null,
     );
+    windowManager.setMinimizable(false);
+    windowManager.setMaximizable(false);
+    windowManager.setClosable(false);
     if (off != null) {
       await windowManager.setPosition(off);
     }
@@ -71,5 +78,8 @@ Future<void> setupWindow({Size? sz, Offset? off, bool center = false}) async {
       await windowManager.show();
       await windowManager.focus();
     });
+    if (kIsWindows) {
+      Window.setEffect(effect: WindowEffect.mica);
+    }
   }
 }
