@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'error_message.dart';
@@ -30,9 +31,14 @@ class _PreviewerState extends State<Previewer> {
   @override
   Widget build(BuildContext context) {
     if (widget.type == kTypeApplication && widget.subtype == kSubTypeJson) {
-      return JsonPreviewer(
-        code: widget.body,
-      );
+      try {
+        var preview = JsonPreviewer(
+          code: jsonDecode(widget.body),
+        );
+        return preview;
+      } catch (e) {
+        // pass
+      }
     }
     if (widget.type == kTypeImage) {
       return Image.memory(

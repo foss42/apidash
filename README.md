@@ -6,6 +6,8 @@
 
 API Dash is a beautiful open-source cross-platform API Client that can help you easily create & customize your API requests, visually inspect responses and generate Dart code on the go.
 
+![Image](https://github.com/foss42/apidash/assets/615622/984b3c95-a6a1-48a5-a6ba-5a1e95802b5d)
+
 ## Download
 API Dash can be downloaded from the links below:
 
@@ -25,44 +27,38 @@ API Dash can be downloaded from the links below:
           <td><code>.dmg</code></td>
             <td><a href="https://github.com/foss42/apidash/blob/main/INSTALLATION.md#macos">Link</a></td>
             <td>Apple Silicon & Intel</td>
-            <td><a href="https://bit.ly/44wmazf">Link</a></td>
+            <td><a href="https://github.com/foss42/apidash/releases/latest/download/apidash-macos.dmg">Link</a></td>
         </tr>
         <tr>
             <td>Windows</td>
             <td><code>.exe</code></td>
             <td><a href="https://github.com/foss42/apidash/blob/main/INSTALLATION.md#windows">Link</a></td>
             <td>64-bit</td>
-            <td><a href="https://bit.ly/424ExKb">Link</a></td>
+            <td><a href="https://github.com/foss42/apidash/releases/latest/download/apidash-windows-x86_64.exe">Link</a></td>
         </tr>
         <tr>
             <td rowspan=4>Linux</td>
             <td rowspan=2><code>.deb</code></td>          
             <td rowspan=2><a href="https://github.com/foss42/apidash/blob/main/INSTALLATION.md#debian-based-linux-distributions-debian-ubuntu-linux-mint-etc">Link</a></td>
             <td>amd64</td>
-            <td><a href="https://bit.ly/44sWPq2">Link</a></td>
+            <td><a href="https://github.com/foss42/apidash/releases/latest/download/apidash-linux-amd64.deb">Link</a></td>
         </tr>
          <tr>
             <td>arm64</td>
-            <td><a href="https://bit.ly/3pdVgvP">Link</a></td>
+            <td><a href="https://github.com/foss42/apidash/releases/latest/download/apidash-linux-arm64.deb">Link</a></td>
         </tr>
         <tr>
             <td rowspan=2><code>.rpm</code></td>
             <td rowspan=2><a href="https://github.com/foss42/apidash/blob/main/INSTALLATION.md#red-hat-based-linux-distributions-fedora-rocky-almalinux-centos-rhel-etc">Link</a></td>
             <td>x86_64</td>
-            <td><a href="https://bit.ly/417gWHe">Link</a></td>
+            <td><a href="https://github.com/foss42/apidash/releases/latest/download/apidash-linux-x86_64.rpm">Link</a></td>
         </tr>
          <tr>
             <td>aarch64</td>
-            <td><a href="https://bit.ly/3LWdJWV">Link</a></td>
+            <td><a href="https://github.com/foss42/apidash/releases/latest/download/apidash-linux-aarch64.rpm">Link</a></td>
         </tr>
     </tbody>
 </table>
-
-## A Quick Glimpse of API Dash ⚡️ (Demo Video)
-
-Demo Video on Youtube - [Link](https://youtu.be/IQlrgpNpS2s) (In case there is an error loading the embedded video below 👇)
-
-https://github.com/foss42/apidash/assets/615622/fccc569e-3152-47be-9f94-ceb851ee85a0
 
 ## List of Features
 
@@ -70,6 +66,11 @@ https://github.com/foss42/apidash/assets/615622/fccc569e-3152-47be-9f94-ceb851ee
 - Create different types of HTTP requests (`GET`, `HEAD`, `POST`, `PATCH`, `PUT` and `DELETE`).
 - Easily manipulate and play around with request inputs like `headers`, `query parameters` and `body`.
 - Full support to send text content with 🥳 Unicode/Emoji and preview any API response containing Unicode/Emoji.
+
+**💼 Organize Requests in Collections & Folders**
+- Create collections and folders to organize your requests.
+- Press and Drag to Re-arrange requests.  
+- Click and open popup menu to rename, duplicate and delete a request.
 
 **🔎 Visually Preview and Download Data & Multimedia API Responses**
 - Inspect the API Response (HTTP status code, error message, headers, body, time taken).
@@ -83,14 +84,10 @@ https://github.com/foss42/apidash/assets/615622/fccc569e-3152-47be-9f94-ceb851ee
 **🌙 Full Dark Mode Support**
 - Easily switch between light mode and dark mode.
 
-**💼 Organize Requests in Collection Pane**
-- Press and Drag to Re-arrange requests. 
-- Double-click to rename requests. 
-- Click and open popup menu to duplicate and delete a request.
-
 **💾 Data**
 - Data is persisted locally on the disk. To save the current snapshot, just press the **Save** button in the collection pane.
-- Export your data into a HAR (HTTP Archive) file that can be version controlled & can be directly imported in other API Clients like Postman, Paw, etc. To access this option goto `Settings > Export Data`.
+- Click and open the collection/folder popup menu to export it as HAR. This can be version controlled & can be directly imported in other API Clients like Postman, Paw, etc.
+- Export your entire data into a HAR (HTTP Archive) file. To access this option goto `Settings > Export Data`.
 
 **⚙️ Settings & Other Options**
 - Customize various options using a dedicated Settings screen.
