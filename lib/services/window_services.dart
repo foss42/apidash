@@ -41,6 +41,7 @@ Future<void> setupWindow({Size? sz, Offset? off, bool center = false}) async {
   if (kIsDesktop) {
     if (kIsWindows) {
       Window.initialize();
+      Window.hideWindowControls();
     }
     double width = kMinInitialWindowWidth, height = kMinInitialWindowHeight;
     if (sz == null) {
@@ -76,7 +77,6 @@ Future<void> setupWindow({Size? sz, Offset? off, bool center = false}) async {
       await windowManager.focus();
     });
     if (kIsWindows) {
-      Window.hideWindowControls();
       Window.setEffect(effect: WindowEffect.mica);
     }
   }

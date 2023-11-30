@@ -11,13 +11,14 @@ void main() async {
   await openBoxes();
   if (kIsLinux) {
     await setupInitialWindow();
-  } else {
-    var win = getInitialSize();
-    await setupWindow(sz: win.$1, off: win.$2);
   }
   runApp(
     ProviderScope(
       child: kIsLinux ? const DashApp() : const App(),
     ),
   );
+  if (!kIsLinux) {
+    var win = getInitialSize();
+    await setupWindow(sz: win.$1, off: win.$2);
+  }
 }
