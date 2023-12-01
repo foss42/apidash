@@ -1,10 +1,16 @@
+import 'package:apidash/widgets/window_caption.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:window_manager/window_manager.dart';
+import 'package:window_manager/window_manager.dart' hide WindowCaption;
 import 'providers/providers.dart';
 import 'screens/screens.dart';
 import 'consts.dart'
-    show kIsLinux, kFontFamily, kFontFamilyFallback, kColorSchemeSeed;
+    show
+        kIsWindows,
+        kIsLinux,
+        kFontFamily,
+        kFontFamilyFallback,
+        kColorSchemeSeed;
 
 class App extends ConsumerStatefulWidget {
   const App({super.key});
@@ -63,22 +69,37 @@ class _DashAppState extends ConsumerState<DashApp> {
         ref.watch(settingsProvider.select((value) => value.isDark));
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        fontFamily: kFontFamily,
-        fontFamilyFallback: kFontFamilyFallback,
-        colorSchemeSeed: kColorSchemeSeed,
-        useMaterial3: true,
-        brightness: Brightness.light,
+      home: Stack(
+        children: [
+          MaterialApp(
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(
+              fontFamily: kFontFamily,
+              fontFamilyFallback: kFontFamilyFallback,
+              colorSchemeSeed: kColorSchemeSeed,
+              useMaterial3: true,
+              brightness: Brightness.light,
+            ),
+            darkTheme: ThemeData(
+              fontFamily: kFontFamily,
+              fontFamilyFallback: kFontFamilyFallback,
+              colorSchemeSeed: kColorSchemeSeed,
+              useMaterial3: true,
+              brightness: Brightness.dark,
+            ),
+            themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
+            home: kIsLinux ? const Dashboard() : const App(),
+          ),
+          if (kIsWindows)
+            SizedBox(
+              height: 29,
+              child: WindowCaption(
+                backgroundColor: Colors.transparent,
+                brightness: isDarkMode ? Brightness.dark : Brightness.light,
+              ),
+            ),
+        ],
       ),
-      darkTheme: ThemeData(
-        fontFamily: kFontFamily,
-        fontFamilyFallback: kFontFamilyFallback,
-        colorSchemeSeed: kColorSchemeSeed,
-        useMaterial3: true,
-        brightness: Brightness.dark,
-      ),
-      themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
-      home: kIsLinux ? const Dashboard() : const App(),
     );
   }
 }

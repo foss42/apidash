@@ -27,7 +27,7 @@ class _RequestEditorPaneState extends ConsumerState<RequestEditorPane> {
       return const RequestEditorDefault();
     } else {
       return Padding(
-        padding: kIsMacOS ? kPt24o8 : kP8,
+        padding: kIsMacOS || kIsWindows ? kPt24o8 : kP8,
         child: const Column(
           children: [
             EditorPaneRequestURLCard(),
