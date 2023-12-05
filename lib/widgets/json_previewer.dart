@@ -333,7 +333,7 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
           horizontal: 4,
           vertical: 2,
         ),
-        child: Text(
+        child: SelectableText(
           node.isClass ? '{${node.childrenCount}}' : '[${node.childrenCount}]',
           style: kCodeStyle,
         ),
