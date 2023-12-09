@@ -69,6 +69,21 @@ class _DashAppState extends ConsumerState<DashApp> {
         ref.watch(settingsProvider.select((value) => value.isDark));
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        fontFamily: kFontFamily,
+        fontFamilyFallback: kFontFamilyFallback,
+        colorSchemeSeed: kColorSchemeSeed,
+        useMaterial3: true,
+        brightness: Brightness.light,
+      ),
+      darkTheme: ThemeData(
+        fontFamily: kFontFamily,
+        fontFamilyFallback: kFontFamilyFallback,
+        colorSchemeSeed: kColorSchemeSeed,
+        useMaterial3: true,
+        brightness: Brightness.dark,
+      ),
+      themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
       home: Stack(
         children: [
           MaterialApp(
