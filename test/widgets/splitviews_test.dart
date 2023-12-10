@@ -6,12 +6,12 @@ import 'package:multi_split_view/multi_split_view.dart';
 void main() {
   testWidgets('Testing for Dashboard Splitview', (tester) async {
     await tester.pumpWidget(
-      MaterialApp(
+      const MaterialApp(
         title: 'Dashboard Splitview',
         home: Scaffold(
           body: DashboardSplitView(
-            sidebarWidget: Column(children: const [Text("Hello")]),
-            mainWidget: Column(children: const [Text("World")]),
+            sidebarWidget: Column(children: [Text("Hello")]),
+            mainWidget: Column(children: [Text("World")]),
           ),
         ),
       ),
@@ -23,12 +23,12 @@ void main() {
   });
   testWidgets('Testing for Equal SplitView', (tester) async {
     await tester.pumpWidget(
-      MaterialApp(
+      const MaterialApp(
         title: 'Equal SplitView',
         home: Scaffold(
           body: EqualSplitView(
-            leftWidget: Column(children: const [Text("Hello equal")]),
-            rightWidget: Column(children: const [Text("World equal")]),
+            leftWidget: Column(children: [Text("Hello equal")]),
+            rightWidget: Column(children: [Text("World equal")]),
           ),
         ),
       ),

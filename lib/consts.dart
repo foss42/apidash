@@ -6,7 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:davi/davi.dart';
 
 const kDiscordUrl = "https://bit.ly/heyfoss";
-const kGitUrl = "https://github.com/foss42/api-dash";
+const kGitUrl = "https://github.com/foss42/apidash";
 const kIssueUrl = "$kGitUrl/issues";
 
 final kIsMacOS = !kIsWeb && Platform.isMacOS;
@@ -69,7 +69,11 @@ const kPh20t40 = EdgeInsets.only(
   top: 40,
 );
 const kPh60 = EdgeInsets.symmetric(horizontal: 60);
+const kP24CollectionPane = EdgeInsets.only(top: 24, left: 8.0, bottom: 8.0);
+const kP8CollectionPane = EdgeInsets.only(top: 8.0, left: 8.0, bottom: 8.0);
+const kPr8CollectionPane = EdgeInsets.only(right: 8.0);
 
+const kHSpacer4 = SizedBox(width: 4);
 const kHSpacer5 = SizedBox(width: 5);
 const kHSpacer10 = SizedBox(width: 10);
 const kHSpacer20 = SizedBox(width: 20);
@@ -82,7 +86,7 @@ const kTabAnimationDuration = Duration(milliseconds: 200);
 const kTabHeight = 45.0;
 const kHeaderHeight = 32.0;
 const kSegmentHeight = 24.0;
-const kTextButtonMinWidth = 36.0;
+const kTextButtonMinWidth = 44.0;
 
 const kRandMax = 100000;
 
@@ -216,7 +220,7 @@ final kColorHttpMethodPut = Colors.amber.shade900;
 final kColorHttpMethodPatch = kColorHttpMethodPut;
 final kColorHttpMethodDelete = Colors.red.shade800;
 
-enum RequestItemMenuOption { delete, duplicate }
+enum RequestItemMenuOption { edit, delete, duplicate }
 
 enum HTTPVerb { get, head, post, put, patch, delete }
 
@@ -230,12 +234,21 @@ const kMethodsWithBody = [
   HTTPVerb.patch,
   HTTPVerb.delete,
 ];
+
 const kDefaultHttpMethod = HTTPVerb.get;
 const kDefaultContentType = ContentType.json;
 
 enum CodegenLanguage {
+  curl("cURL", "bash", "curl"),
+  har("HAR", "json", "har"),
   dartHttp("Dart (http)", "dart", "dart"),
-  kotlinOkHttp("Kotlin (OkHttp)", "java", "kt");
+  jsAxios("JavaScript (axios)", "javascript", "js"),
+  jsFetch("JavaScript (fetch)", "javascript", "js"),
+  nodejsAxios("node.js (axios)", "javascript", "js"),
+  nodejsFetch("node.js (fetch)", "javascript", "js"),
+  kotlinOkHttp("Kotlin (okhttp3)", "java", "kt"),
+  pythonHttpClient("Python (http.client)", "python", "py"),
+  pythonRequests("Python (requests)", "python", "py");
 
   const CodegenLanguage(this.label, this.codeHighlightLang, this.ext);
   final String label;
@@ -253,7 +266,8 @@ const kSubTypeOctetStream = 'octet-stream';
 const kSubTypePdf = 'pdf';
 const kSubTypeSql = 'sql';
 const kSubTypeXml = 'xml';
-const kSubTypeYaml = 'x-yaml';
+const kSubTypeYaml = 'yaml';
+const kSubTypeXYaml = 'x-yaml';
 const kSubTypeYml = 'x-yml';
 
 const kTypeText = 'text';
@@ -303,6 +317,10 @@ const kCodeRawBodyViewOptions = [ResponseBodyView.code, ResponseBodyView.raw];
 const kPreviewBodyViewOptions = [
   ResponseBodyView.preview,
 ];
+const kPreviewRawBodyViewOptions = [
+  ResponseBodyView.preview,
+  ResponseBodyView.raw
+];
 const kPreviewCodeRawBodyViewOptions = [
   ResponseBodyView.preview,
   ResponseBodyView.code,
@@ -313,12 +331,13 @@ const Map<String, Map<String, List<ResponseBodyView>>>
     kResponseBodyViewOptions = {
   kTypeApplication: {
     kSubTypeDefaultViewOptions: kNoRawBodyViewOptions,
-    kSubTypeJson: kCodeRawBodyViewOptions,
+    kSubTypeJson: kPreviewRawBodyViewOptions,
     kSubTypeOctetStream: kNoBodyViewOptions,
-    kSubTypePdf: kNoBodyViewOptions,
+    kSubTypePdf: kPreviewBodyViewOptions,
     kSubTypeSql: kCodeRawBodyViewOptions,
     kSubTypeXml: kCodeRawBodyViewOptions,
     kSubTypeYaml: kCodeRawBodyViewOptions,
+    kSubTypeXYaml: kCodeRawBodyViewOptions,
     kSubTypeYml: kCodeRawBodyViewOptions,
   },
   kTypeImage: {
@@ -347,8 +366,9 @@ const Map<String, String> kCodeHighlighterMap = {
   kSubTypeHtml: "xml",
   kSubTypeSvg: "xml",
   kSubTypeYaml: "yaml",
+  kSubTypeXYaml: "yaml",
   kSubTypeYml: "yaml",
-  kSubTypeTextYaml: "yaml",
+  //kSubTypeTextYaml: "yaml",
   kSubTypeTextYml: "yaml",
 };
 
@@ -438,6 +458,9 @@ const kUnexpectedRaiseIssue =
 
 const kImageError =
     "There seems to be an issue rendering this image. Please raise an issue in API Dash GitHub repo so that we can resolve it.";
+
+const kPdfError =
+    "There seems to be an issue rendering this pdf. Please raise an issue in API Dash GitHub repo so that we can resolve it.";
 
 const kAudioError =
     "There seems to be an issue playing this audio. Please raise an issue in API Dash GitHub repo so that we can resolve it.";

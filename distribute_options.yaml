@@ -6,12 +6,7 @@ releases:
         package:
           platform: linux
           target: deb
-          build_args:
-            enable-experiment: records
       - name: release-dev-linux-rpm
         package:
           platform: linux
           target: rpm
-          build_args:
-            enable-experiment: records
-

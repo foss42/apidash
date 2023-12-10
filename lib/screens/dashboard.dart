@@ -21,60 +21,59 @@ class _DashboardState extends ConsumerState<Dashboard> {
       body: SafeArea(
         child: Row(
           children: <Widget>[
-            NavigationRail(
-              selectedIndex: railIdx,
-              groupAlignment: -1.0,
-              onDestinationSelected: (int index) {
-                setState(() {
-                  ref
-                      .read(navRailIndexStateProvider.notifier)
-                      .update((state) => index);
-                });
-              },
-              labelType: NavigationRailLabelType.all,
-              leading: SizedBox(height: kIsMacOS ? 24.0 : 8.0),
-              trailing: Expanded(
-                child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 16.0),
-                    child: TextButton(
-                      style: (railIdx == null)
-                          ? TextButton.styleFrom(
-                              backgroundColor: Theme.of(context)
-                                  .colorScheme
-                                  .secondaryContainer,
-                            )
-                          : null,
-                      onPressed: (railIdx == null)
-                          ? null
-                          : () {
-                              ref
-                                  .read(navRailIndexStateProvider.notifier)
-                                  .update((state) => null);
-                            },
-                      child: Icon(
-                        (railIdx == null)
-                            ? Icons.settings
-                            : Icons.settings_outlined,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
+            Column(
+              children: [
+                SizedBox(
+                  height: kIsMacOS ? 32.0 : 16.0,
+                  width: 64,
+                ),
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      isSelected: railIdx == 0,
+                      onPressed: () {
+                        ref.read(navRailIndexStateProvider.notifier).state = 0;
+                      },
+                      icon: const Icon(Icons.auto_awesome_mosaic_outlined),
+                      selectedIcon: const Icon(Icons.auto_awesome_mosaic),
                     ),
+                    Text(
+                      'Requests',
+                      style: Theme.of(context).textTheme.labelSmall,
+                    ),
+                  ],
+                ),
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 16.0),
+                        child: bottomButton(context, railIdx, 1, Icons.help,
+                            Icons.help_outline),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 16.0),
+                        child: bottomButton(context, railIdx, 2, Icons.settings,
+                            Icons.settings_outlined),
+                      ),
+                    ],
                   ),
                 ),
-              ),
-              destinations: const <NavigationRailDestination>[
-                NavigationRailDestination(
-                  icon: Icon(Icons.home_outlined),
-                  selectedIcon: Icon(Icons.home),
-                  label: Text('Home'),
-                ),
-                NavigationRailDestination(
-                  icon: Icon(Icons.auto_awesome_mosaic_outlined),
-                  selectedIcon: Icon(Icons.auto_awesome_mosaic),
-                  label: Text('Requests'),
-                ),
               ],
+              // destinations: const <NavigationRailDestination>[
+              //   // NavigationRailDestination(
+              //   //   icon: Icon(Icons.home_outlined),
+              //   //   selectedIcon: Icon(Icons.home),
+              //   //   label: Text('Home'),
+              //   // ),
+              //   NavigationRailDestination(
+              //     icon: Icon(Icons.auto_awesome_mosaic_outlined),
+              //     selectedIcon: Icon(Icons.auto_awesome_mosaic),
+              //     label: Text('Requests'),
+              //   ),
+              // ],
             ),
             VerticalDivider(
               thickness: 1,
@@ -84,16 +83,42 @@ class _DashboardState extends ConsumerState<Dashboard> {
             Expanded(
               child: IndexedStack(
                 alignment: AlignmentDirectional.topCenter,
-                index: railIdx == null ? 0 : railIdx + 1,
+                index: railIdx,
                 children: const [
-                  SettingsPage(),
-                  IntroPage(),
                   HomePage(),
+                  IntroPage(),
+                  SettingsPage(),
                 ],
               ),
             )
           ],
         ),
+      ),
+    );
+  }
+
+  TextButton bottomButton(
+    BuildContext context,
+    int railIdx,
+    int buttonIdx,
+    IconData selectedIcon,
+    IconData icon,
+  ) {
+    bool isSelected = railIdx == buttonIdx;
+    return TextButton(
+      style: isSelected
+          ? TextButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+            )
+          : null,
+      onPressed: isSelected
+          ? null
+          : () {
+              ref.read(navRailIndexStateProvider.notifier).state = buttonIdx;
+            },
+      child: Icon(
+        isSelected ? selectedIcon : icon,
+        color: Theme.of(context).colorScheme.onSurfaceVariant,
       ),
     );
   }

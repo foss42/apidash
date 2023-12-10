@@ -4,9 +4,12 @@ import 'package:flutter/services.dart';
 import 'package:apidash/consts.dart';
 
 class TextFieldEditor extends StatefulWidget {
-  const TextFieldEditor(
-      {Key? key, required this.fieldKey, this.onChanged, this.initialValue})
-      : super(key: key);
+  const TextFieldEditor({
+    super.key,
+    required this.fieldKey,
+    this.onChanged,
+    this.initialValue,
+  });
 
   final String fieldKey;
   final Function(String)? onChanged;

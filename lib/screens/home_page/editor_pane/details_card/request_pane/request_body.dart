@@ -25,11 +25,11 @@ class _EditRequestBodyState extends ConsumerState<EditRequestBody> {
       margin: kPt5o10,
       child: Column(
         children: [
-          SizedBox(
+          const SizedBox(
             height: kHeaderHeight,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
+              children: [
                 Text(
                   "Select Content Type:",
                 ),
@@ -41,7 +41,7 @@ class _EditRequestBodyState extends ConsumerState<EditRequestBody> {
             child: TextFieldEditor(
               key: Key("$activeId-body"),
               fieldKey: "$activeId-body-editor",
-              initialValue: requestModel.requestBody,
+              initialValue: requestModel?.requestBody,
               onChanged: (String value) {
                 ref
                     .read(collectionStateNotifierProvider.notifier)

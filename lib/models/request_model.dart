@@ -1,21 +1,21 @@
 import 'package:flutter/foundation.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart' show mapToRows, rowsToMap;
-import 'kvrow_model.dart';
+import 'name_value_model.dart';
 import 'response_model.dart';
 
 @immutable
 class RequestModel {
   const RequestModel({
     required this.id,
-    this.method = kDefaultHttpMethod,
+    this.method = HTTPVerb.get,
     this.url = "",
     this.name = "",
     this.description = "",
     this.requestTabIndex = 0,
     this.requestHeaders,
     this.requestParams,
-    this.requestBodyContentType = kDefaultContentType,
+    this.requestBodyContentType = ContentType.json,
     this.requestBody,
     this.responseStatus,
     this.message,
@@ -28,13 +28,16 @@ class RequestModel {
   final String name;
   final String description;
   final int requestTabIndex;
-  final List<KVRow>? requestHeaders;
-  final List<KVRow>? requestParams;
+  final List<NameValueModel>? requestHeaders;
+  final List<NameValueModel>? requestParams;
   final ContentType requestBodyContentType;
   final String? requestBody;
   final int? responseStatus;
   final String? message;
   final ResponseModel? responseModel;
+
+  Map<String, String> get headersMap => rowsToMap(requestHeaders) ?? {};
+  Map<String, String> get paramsMap => rowsToMap(requestParams) ?? {};
 
   RequestModel duplicate({
     required String id,
@@ -43,10 +46,10 @@ class RequestModel {
       id: id,
       method: method,
       url: url,
-      name: name,
+      name: "$name (copy)",
       description: description,
-      requestHeaders: requestHeaders,
-      requestParams: requestParams,
+      requestHeaders: requestHeaders != null ? [...requestHeaders!] : null,
+      requestParams: requestParams != null ? [...requestParams!] : null,
       requestBodyContentType: requestBodyContentType,
       requestBody: requestBody,
     );
@@ -59,14 +62,16 @@ class RequestModel {
     String? name,
     String? description,
     int? requestTabIndex,
-    List<KVRow>? requestHeaders,
-    List<KVRow>? requestParams,
+    List<NameValueModel>? requestHeaders,
+    List<NameValueModel>? requestParams,
     ContentType? requestBodyContentType,
     String? requestBody,
     int? responseStatus,
     String? message,
     ResponseModel? responseModel,
   }) {
+    var headers = requestHeaders ?? this.requestHeaders;
+    var params = requestParams ?? this.requestParams;
     return RequestModel(
       id: id ?? this.id,
       method: method ?? this.method,
@@ -74,8 +79,8 @@ class RequestModel {
       name: name ?? this.name,
       description: description ?? this.description,
       requestTabIndex: requestTabIndex ?? this.requestTabIndex,
-      requestHeaders: requestHeaders ?? this.requestHeaders,
-      requestParams: requestParams ?? this.requestParams,
+      requestHeaders: headers != null ? [...headers] : null,
+      requestParams: params != null ? [...params] : null,
       requestBodyContentType:
           requestBodyContentType ?? this.requestBodyContentType,
       requestBody: requestBody ?? this.requestBody,

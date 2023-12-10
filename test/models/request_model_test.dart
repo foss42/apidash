@@ -55,8 +55,9 @@ void main() {
       url: 'api.foss42.com/case/lower',
       name: 'foss42 api',
       requestHeaders: const [
-        KVRow('content-length', '18'),
-        KVRow('content-type', 'application/json; charset=utf-8')
+        NameValueModel(name: 'content-length', value: '18'),
+        NameValueModel(
+            name: 'content-type', value: 'application/json; charset=utf-8')
       ],
       requestBodyContentType: ContentType.json,
       requestBody: '''{
@@ -71,8 +72,24 @@ void main() {
       url: 'api.foss42.com/case/lower',
       name: 'foss42 api',
       requestHeaders: [
-        KVRow('content-length', '18'),
-        KVRow('content-type', 'application/json; charset=utf-8')
+        NameValueModel(name: 'content-length', value: '18'),
+        NameValueModel(
+            name: 'content-type', value: 'application/json; charset=utf-8')
+      ],
+      requestBodyContentType: ContentType.json,
+      requestBody: '''{
+"text":"WORLD"
+}''');
+
+  RequestModel requestModelCopy = const RequestModel(
+      id: '1',
+      method: HTTPVerb.post,
+      url: 'api.foss42.com/case/lower',
+      name: 'foss42 api (copy)',
+      requestHeaders: [
+        NameValueModel(name: 'content-length', value: '18'),
+        NameValueModel(
+            name: 'content-type', value: 'application/json; charset=utf-8')
       ],
       requestBodyContentType: ContentType.json,
       requestBody: '''{
@@ -103,7 +120,7 @@ void main() {
     expect(requestModelcopyWith.name, 'API foss42');
   });
   test('Testing duplicate', () {
-    expect(requestModel.duplicate(id: '1'), requestModelDup);
+    expect(requestModel.duplicate(id: '1'), requestModelCopy);
   });
 
   test('Testing toJson', () {
@@ -122,7 +139,7 @@ void main() {
     "Request Name: foss42 api",
     "Request Description: ",
     "Request Tab Index: 0",
-    "Request Headers: [{content-length: 18}, {content-type: application/json; charset=utf-8}]",
+    "Request Headers: [NameValueModel(name: content-length, value: 18), NameValueModel(name: content-type, value: application/json; charset=utf-8)]",
     "Request Params: null",
     "Request Body Content Type: ContentType.json",
     'Request Body: {\n"text":"WORLD"\n}',

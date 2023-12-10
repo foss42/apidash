@@ -339,8 +339,8 @@ class _ResponseBodyState extends State<ResponseBody> {
     }
 
     var responseBodyView = getResponseBodyViewOptions(mediaType);
-    var options = responseBodyView.$0;
-    var highlightLanguage = responseBodyView.$1;
+    var options = responseBodyView.$1;
+    var highlightLanguage = responseBodyView.$2;
 
     if (formattedBody == null) {
       options = [...options];
@@ -453,11 +453,17 @@ class _BodySuccessState extends State<BodySuccess> {
                 visible: currentSeg == ResponseBodyView.preview ||
                     currentSeg == ResponseBodyView.none,
                 child: Expanded(
-                  child: Previewer(
-                    bytes: widget.bytes,
-                    type: widget.mediaType.type,
-                    subtype: widget.mediaType.subtype,
-                    hasRaw: widget.options.contains(ResponseBodyView.raw),
+                  child: Container(
+                    width: double.maxFinite,
+                    padding: kP8,
+                    decoration: textContainerdecoration,
+                    child: Previewer(
+                      bytes: widget.bytes,
+                      body: widget.body,
+                      type: widget.mediaType.type,
+                      subtype: widget.mediaType.subtype,
+                      hasRaw: widget.options.contains(ResponseBodyView.raw),
+                    ),
                   ),
                 ),
               ),

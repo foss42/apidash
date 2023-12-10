@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:apidash/providers/providers.dart';
-import 'package:apidash/widgets/widgets.dart';
+import '../providers/providers.dart';
+import '../widgets/widgets.dart';
+import '../utils/utils.dart';
 import 'package:apidash/consts.dart';
 
 class SettingsPage extends ConsumerStatefulWidget {
@@ -42,6 +43,19 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                   ref.read(settingsProvider.notifier).update(isDark: value);
                 },
               ),
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                hoverColor: kColorTransparent,
+                title: const Text('Collection Pane Scrollbar Visiblity'),
+                subtitle: Text(
+                    'Current selection: ${settings.alwaysShowCollectionPaneScrollbar ? "Always show" : "Show only when scrolling"}'),
+                value: settings.alwaysShowCollectionPaneScrollbar,
+                onChanged: (bool? value) {
+                  ref
+                      .read(settingsProvider.notifier)
+                      .update(alwaysShowCollectionPaneScrollbar: value);
+                },
+              ),
               ListTile(
                 contentPadding: EdgeInsets.zero,
                 hoverColor: kColorTransparent,
@@ -63,6 +77,25 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                       );
                     }).toList()),
               ),
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                hoverColor: kColorTransparent,
+                title: const Text('Default Code Generator'),
+                trailing: DropdownMenu(
+                    onSelected: (value) {
+                      ref
+                          .read(settingsProvider.notifier)
+                          .update(defaultCodeGenLang: value);
+                    },
+                    initialSelection: settings.defaultCodeGenLang,
+                    dropdownMenuEntries: CodegenLanguage.values
+                        .map<DropdownMenuEntry<CodegenLanguage>>((value) {
+                      return DropdownMenuEntry<CodegenLanguage>(
+                        value: value,
+                        label: value.label,
+                      );
+                    }).toList()),
+              ),
               CheckboxListTile(
                 contentPadding: EdgeInsets.zero,
                 title: const Text("Save Responses"),
@@ -74,6 +107,34 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                       .read(settingsProvider.notifier)
                       .update(saveResponses: value);
                 },
+              ),
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                hoverColor: kColorTransparent,
+                title: const Text('Export Data'),
+                subtitle: const Text(
+                    'Export your collection to HAR (HTTP Archive format).\nVersion control this file or import in other API clients.'),
+                trailing: FilledButton(
+                  onPressed: () async {
+                    var message = "";
+                    try {
+                      var data = await ref
+                          .read(collectionStateNotifierProvider.notifier)
+                          .exportDataToHAR();
+                      var pth = await getFileDownloadpath(null, "har");
+                      if (pth != null) {
+                        await saveFile(pth, jsonMapToBytes(data));
+                        var sp = getShortPath(pth);
+                        message = 'Saved to $sp';
+                      }
+                    } catch (e) {
+                      message = "An error occurred while exporting.";
+                    }
+                    sm.hideCurrentSnackBar();
+                    sm.showSnackBar(getSnackBar(message, small: false));
+                  },
+                  child: const Text("Export Data"),
+                ),
               ),
               ListTile(
                 contentPadding: EdgeInsets.zero,

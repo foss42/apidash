@@ -1,7 +1,7 @@
 import 'package:test/test.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:apidash/utils/http_utils.dart';
-import 'package:apidash/models/kvrow_model.dart';
+import 'package:apidash/models/name_value_model.dart';
 import 'package:apidash/consts.dart';
 import '../test_utilities.dart';
 
@@ -156,74 +156,74 @@ void main() {
           path: 'guides/libraries/library-tour',
           fragment: 'numbers');
       String uriScheme1Expected = 'https';
-      expect(getUriScheme(uri1), (uriScheme1Expected,true));
+      expect(getUriScheme(uri1), (uriScheme1Expected, true));
     });
     test('Testing getUriScheme for mailto scheme value', () {
       Uri uri2 = Uri(scheme: 'mailto');
       String uriScheme2Expected = 'mailto';
-      expect(getUriScheme(uri2), (uriScheme2Expected,false));
+      expect(getUriScheme(uri2), (uriScheme2Expected, false));
     });
     test('Testing getUriScheme for empty scheme value', () {
-      Uri uri3 = Uri(
-          scheme: '');
-      expect(getUriScheme(uri3), (null,false));
+      Uri uri3 = Uri(scheme: '');
+      expect(getUriScheme(uri3), (null, false));
     });
     test('Testing getUriScheme for null scheme value', () {
-      Uri uri4 = Uri(
-          scheme: null);
-      expect(getUriScheme(uri4), (null,false));
+      Uri uri4 = Uri(scheme: null);
+      expect(getUriScheme(uri4), (null, false));
     });
   });
 
   group("Testing getValidRequestUri", () {
     test('Testing getValidRequestUri for normal values', () {
       String url1 = "https://api.foss42.com/country/data";
-      KVRow kvRow1 = const KVRow("code", "US");
+      const kvRow1 = NameValueModel(name: "code", value: "US");
       Uri uri1Expected = Uri(
           scheme: 'https',
           host: 'api.foss42.com',
           path: 'country/data',
-          queryParameters: {'code':'US'});
+          queryParameters: {'code': 'US'});
       expect(getValidRequestUri(url1, [kvRow1]), (uri1Expected, null));
     });
     test('Testing getValidRequestUri for null url value', () {
-      KVRow kvRow2 = const KVRow("code", "US");
+      const kvRow2 = NameValueModel(name: "code", value: "US");
       expect(getValidRequestUri(null, [kvRow2]), (null, "URL is missing!"));
     });
     test('Testing getValidRequestUri for empty url value', () {
-      KVRow kvRow3 = const KVRow("", "");
+      const kvRow3 = NameValueModel(name: "", value: "");
       expect(getValidRequestUri("", [kvRow3]), (null, "URL is missing!"));
     });
     test('Testing getValidRequestUri when https is not provided in url', () {
       String url4 = "api.foss42.com/country/data";
-      KVRow kvRow4 = const KVRow("code", "US");
+      const kvRow4 = NameValueModel(name: "code", value: "US");
       Uri uri4Expected = Uri(
           scheme: 'https',
           host: 'api.foss42.com',
           path: 'country/data',
-          queryParameters: {'code':'US'});
+          queryParameters: {'code': 'US'});
       expect(getValidRequestUri(url4, [kvRow4]), (uri4Expected, null));
     });
     test('Testing getValidRequestUri when url has fragment', () {
       String url5 = "https://dart.dev/guides/libraries/library-tour#numbers";
       Uri uri5Expected = Uri(
-    scheme: 'https',
-     host: 'dart.dev',
-     path: '/guides/libraries/library-tour');
+          scheme: 'https',
+          host: 'dart.dev',
+          path: '/guides/libraries/library-tour');
       expect(getValidRequestUri(url5, null), (uri5Expected, null));
     });
     test('Testing getValidRequestUri when uri scheme is not supported', () {
       String url5 = "mailto:someone@example.com";
-      expect(getValidRequestUri(url5, null), (null, "Unsupported URL Scheme (mailto)"));
+      expect(getValidRequestUri(url5, null),
+          (null, "Unsupported URL Scheme (mailto)"));
     });
-    test('Testing getValidRequestUri when query params in both url and kvrow', () {
+    test('Testing getValidRequestUri when query params in both url and kvrow',
+        () {
       String url6 = "api.foss42.com/country/data?code=IND";
-      KVRow kvRow6 = const KVRow("code", "US");
+      const kvRow6 = NameValueModel(name: "code", value: "US");
       Uri uri6Expected = Uri(
           scheme: 'https',
           host: 'api.foss42.com',
           path: 'country/data',
-          queryParameters: {'code':'US'});
+          queryParameters: {'code': 'US'});
       expect(getValidRequestUri(url6, [kvRow6]), (uri6Expected, null));
     });
     test('Testing getValidRequestUri when kvrow is null', () {
@@ -232,7 +232,7 @@ void main() {
           scheme: 'https',
           host: 'api.foss42.com',
           path: 'country/data',
-          queryParameters: {'code':'US'});
+          queryParameters: {'code': 'US'});
       expect(getValidRequestUri(url7, null), (uri7Expected, null));
     });
   });
@@ -241,72 +241,78 @@ void main() {
     test('Testing getResponseBodyViewOptions for application/json', () {
       MediaType mediaType1 = MediaType("application", "json");
       var result1 = getResponseBodyViewOptions(mediaType1);
-      expect(result1.$0,kCodeRawBodyViewOptions);
-      expect(result1.$1, "json");
+      expect(result1.$1, kPreviewRawBodyViewOptions);
+      expect(result1.$2, "json");
     });
     test('Testing getResponseBodyViewOptions for application/xml', () {
       MediaType mediaType2 = MediaType("application", "xml");
       var result2 = getResponseBodyViewOptions(mediaType2);
-      expect(result2.$0, kCodeRawBodyViewOptions);
-      expect(result2.$1,"xml");
+      expect(result2.$1, kCodeRawBodyViewOptions);
+      expect(result2.$2, "xml");
     });
-    test('Testing getResponseBodyViewOptions for message/news a format currently not supported', () {
+    test(
+        'Testing getResponseBodyViewOptions for message/news a format currently not supported',
+        () {
       MediaType mediaType3 = MediaType("message", "news");
       var result3 = getResponseBodyViewOptions(mediaType3);
-      expect(result3.$0,kNoBodyViewOptions);
-      expect(result3.$1,null);
+      expect(result3.$1, kNoBodyViewOptions);
+      expect(result3.$2, null);
     });
-    test('Testing getResponseBodyViewOptions for application/calendar+json', () {
+    test('Testing getResponseBodyViewOptions for application/calendar+json',
+        () {
       MediaType mediaType4 = MediaType("application", "calendar+json");
       var result4 = getResponseBodyViewOptions(mediaType4);
-      expect(result4.$0,kCodeRawBodyViewOptions);
-      expect(result4.$1, "json");
+      expect(result4.$1, kPreviewRawBodyViewOptions);
+      expect(result4.$2, "json");
     });
     test('Testing getResponseBodyViewOptions for image/svg+xml', () {
       MediaType mediaType5 = MediaType("image", "svg+xml");
       var result5 = getResponseBodyViewOptions(mediaType5);
-      expect(result5.$0,kCodeRawBodyViewOptions);
-      expect(result5.$1, "xml");
+      expect(result5.$1, kCodeRawBodyViewOptions);
+      expect(result5.$2, "xml");
     });
     test('Testing getResponseBodyViewOptions for application/xhtml+xml', () {
       MediaType mediaType6 = MediaType("application", "xhtml+xml");
       var result6 = getResponseBodyViewOptions(mediaType6);
-      expect(result6.$0,kCodeRawBodyViewOptions);
-      expect(result6.$1, "xml");
+      expect(result6.$1, kCodeRawBodyViewOptions);
+      expect(result6.$2, "xml");
     });
-    test('Testing getResponseBodyViewOptions for application/xml-external-parsed-entity', () {
-      MediaType mediaType7 = MediaType("application", "xml-external-parsed-entity");
+    test(
+        'Testing getResponseBodyViewOptions for application/xml-external-parsed-entity',
+        () {
+      MediaType mediaType7 =
+          MediaType("application", "xml-external-parsed-entity");
       var result7 = getResponseBodyViewOptions(mediaType7);
-      expect(result7.$0,kCodeRawBodyViewOptions);
-      expect(result7.$1, "xml");
+      expect(result7.$1, kCodeRawBodyViewOptions);
+      expect(result7.$2, "xml");
     });
     test('Testing getResponseBodyViewOptions for text/html', () {
       MediaType mediaType8 = MediaType("text", "html");
       var result8 = getResponseBodyViewOptions(mediaType8);
-      expect(result8.$0,kCodeRawBodyViewOptions);
-      expect(result8.$1, "xml");
+      expect(result8.$1, kCodeRawBodyViewOptions);
+      expect(result8.$2, "xml");
     });
     test('Testing getResponseBodyViewOptions for application/pdf', () {
       MediaType mediaType9 = MediaType("application", "pdf");
       var result9 = getResponseBodyViewOptions(mediaType9);
-      expect(result9.$0,kNoBodyViewOptions);
-      expect(result9.$1, "pdf");
+      expect(result9.$1, kPreviewBodyViewOptions);
+      expect(result9.$2, "pdf");
     });
-     test('Testing getResponseBodyViewOptions for text/calendar', () {
+    test('Testing getResponseBodyViewOptions for text/calendar', () {
       MediaType mediaType10 = MediaType("text", "calendar");
       var result10 = getResponseBodyViewOptions(mediaType10);
-      expect(result10.$0,kRawBodyViewOptions);
-      expect(result10.$1, "calendar");
+      expect(result10.$1, kRawBodyViewOptions);
+      expect(result10.$2, "calendar");
     });
   });
 
   group("Testing formatBody", () {
     test('Testing formatBody for null values', () {
-      expect(formatBody(null, null),null);
+      expect(formatBody(null, null), null);
     });
     test('Testing formatBody for null body values', () {
       MediaType mediaType1 = MediaType("application", "xml");
-      expect(formatBody(null, mediaType1),null);
+      expect(formatBody(null, mediaType1), null);
     });
     test('Testing formatBody for null MediaType values', () {
       String body1 = '''
@@ -314,7 +320,7 @@ void main() {
     "text":"The Chosen One";
   }
 ''';
-      expect(formatBody(body1, null),null);
+      expect(formatBody(body1, null), null);
     });
     test('Testing formatBody for json subtype values', () {
       String body2 = '''{"data":{"area":9831510.0,"population":331893745}}''';
@@ -325,7 +331,7 @@ void main() {
     "population": 331893745
   }
 }''';
-      expect(formatBody(body2, mediaType2),result2Expected);
+      expect(formatBody(body2, mediaType2), result2Expected);
     });
     test('Testing formatBody for xml subtype values', () {
       String body3 = '''
@@ -347,28 +353,32 @@ void main() {
     <calories>650</calories>
   </food>
 </breakfast_menu>''';
-      expect(formatBody(body3, mediaType3),result3Expected);
+      expect(formatBody(body3, mediaType3), result3Expected);
     });
     group("Testing formatBody for html", () {
       MediaType mediaTypeHtml = MediaType("text", "html");
       test('Testing formatBody for html subtype values', () {
-      String body4 = '''<html>
+        String body4 = '''<html>
 <body>
 <h1>My First Heading</h1>
 <p>My first paragraph.</p>
 </body>
-</html>''';     
-      expect(formatBody(body4, mediaTypeHtml),body4);
+</html>''';
+        expect(formatBody(body4, mediaTypeHtml), body4);
+      });
+
+      test('Testing formatBody for html subtype values with random values', () {
+        String body5 =
+            '''<html>${RandomStringGenerator.getRandomStringLines(100, 10000)}</html>''';
+        expect(formatBody(body5, mediaTypeHtml), null);
+      });
+      test(
+          'Testing formatBody for html subtype values with random values within limit',
+          () {
+        String body6 =
+            '''<html>${RandomStringGenerator.getRandomStringLines(100, 190)}</html>''';
+        expect(formatBody(body6, mediaTypeHtml), body6);
+      });
     });
-    
-    test('Testing formatBody for html subtype values with random values', () {
-      String body5 = '''<html>${getRandomStringLines(100, 10000)}</html>''';
-      expect(formatBody(body5, mediaTypeHtml),null);
-    });
-    test('Testing formatBody for html subtype values with random values within limit', () {
-      String body6 = '''<html>${getRandomStringLines(100, 190)}</html>''';
-      expect(formatBody(body6, mediaTypeHtml),body6);
-    });
-    });    
   });
 }

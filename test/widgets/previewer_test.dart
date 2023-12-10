@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
 import 'package:flutter/foundation.dart';
+import 'package:printing/printing.dart' show PdfPreview;
 import '../test_consts.dart';
 
 void main() {
@@ -12,7 +13,12 @@ void main() {
       MaterialApp(
         title: 'Previewer',
         home: Scaffold(
-          body: Previewer(type: 'application', subtype: 'pdf', bytes: bytes1),
+          body: Previewer(
+            type: 'application',
+            subtype: 'pdf',
+            bytes: bytes1,
+            body: "",
+          ),
         ),
       ),
     );
@@ -20,7 +26,8 @@ void main() {
     expect(
         find.text(
             "${kMimeTypeRaiseIssueStart}application/pdf$kMimeTypeRaiseIssue"),
-        findsOneWidget);
+        findsNothing);
+    expect(find.byType(PdfPreview), findsOneWidget);
   });
 
   testWidgets('Testing when type/subtype is audio/mpeg', (tester) async {
@@ -28,7 +35,12 @@ void main() {
       MaterialApp(
         title: 'Previewer',
         home: Scaffold(
-          body: Previewer(type: 'audio', subtype: 'mpeg', bytes: bytes1),
+          body: Previewer(
+            type: 'audio',
+            subtype: 'mpeg',
+            bytes: bytes1,
+            body: "",
+          ),
         ),
       ),
     );
@@ -41,7 +53,12 @@ void main() {
       MaterialApp(
         title: 'Previewer',
         home: Scaffold(
-          body: Previewer(type: 'video', subtype: 'H264', bytes: bytes1),
+          body: Previewer(
+            type: 'video',
+            subtype: 'H264',
+            bytes: bytes1,
+            body: "",
+          ),
         ),
       ),
     );
@@ -56,7 +73,12 @@ void main() {
       MaterialApp(
         title: 'Previewer',
         home: Scaffold(
-          body: Previewer(type: 'model', subtype: 'step+xml', bytes: bytes1),
+          body: Previewer(
+            type: 'model',
+            subtype: 'step+xml',
+            bytes: bytes1,
+            body: "",
+          ),
         ),
       ),
     );
@@ -72,8 +94,12 @@ void main() {
       MaterialApp(
         title: 'Previewer',
         home: Scaffold(
-          body:
-              Previewer(type: 'image', subtype: 'jpeg', bytes: kBodyBytesJpeg),
+          body: Previewer(
+            type: 'image',
+            subtype: 'jpeg',
+            bytes: kBodyBytesJpeg,
+            body: "",
+          ),
         ),
       ),
     );
@@ -111,7 +137,11 @@ void main() {
         title: 'Previewer',
         home: Scaffold(
           body: Previewer(
-              type: 'image', subtype: 'jpeg', bytes: bytesJpegCorrupt),
+            type: 'image',
+            subtype: 'jpeg',
+            bytes: bytesJpegCorrupt,
+            body: "",
+          ),
         ),
       ),
     );
@@ -128,7 +158,11 @@ void main() {
         title: 'Previewer',
         home: Scaffold(
           body: Previewer(
-              type: 'audio', subtype: 'mpeg', bytes: bytesAudioCorrupt),
+            type: 'audio',
+            subtype: 'mpeg',
+            bytes: bytesAudioCorrupt,
+            body: "",
+          ),
         ),
       ),
     );

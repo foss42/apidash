@@ -1,19 +1,24 @@
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'error_message.dart';
 import 'package:apidash/consts.dart';
+import 'package:printing/printing.dart';
 import 'uint8_audio_player.dart';
+import 'json_previewer.dart';
 
 class Previewer extends StatefulWidget {
   const Previewer({
     super.key,
     required this.bytes,
+    required this.body,
     this.type,
     this.subtype,
     this.hasRaw = false,
   });
 
   final Uint8List bytes;
+  final String body;
   final String? type;
   final String? subtype;
   final bool hasRaw;
@@ -25,6 +30,16 @@ class Previewer extends StatefulWidget {
 class _PreviewerState extends State<Previewer> {
   @override
   Widget build(BuildContext context) {
+    if (widget.type == kTypeApplication && widget.subtype == kSubTypeJson) {
+      try {
+        var preview = JsonPreviewer(
+          code: jsonDecode(widget.body),
+        );
+        return preview;
+      } catch (e) {
+        // pass
+      }
+    }
     if (widget.type == kTypeImage) {
       return Image.memory(
         widget.bytes,
@@ -34,7 +49,13 @@ class _PreviewerState extends State<Previewer> {
       );
     }
     if (widget.type == kTypeApplication && widget.subtype == kSubTypePdf) {
-      // TODO: PDF Viewer
+      return PdfPreview(
+        build: (_) => widget.bytes,
+        useActions: false,
+        onError: (context, error) {
+          return const ErrorMessage(message: kPdfError);
+        },
+      );
     }
     if (widget.type == kTypeAudio) {
       return Uint8AudioPlayer(

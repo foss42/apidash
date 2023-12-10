@@ -41,19 +41,14 @@ class _CodeGenPreviewerState extends State<CodeGenPreviewer> {
   }
 
   @override
-  void initState() {
-    super.initState();
+  Widget build(BuildContext context) {
+    final spans = generateSpans(widget.code, widget.language, widget.theme);
     textStyle = TextStyle(
       color: widget.theme[_rootKey]?.color ?? _defaultFontColor,
     );
     if (widget.textStyle != null) {
       textStyle = textStyle.merge(widget.textStyle);
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final spans = generateSpans(widget.code, widget.language, widget.theme);
     return Padding(
       padding: widget.padding,
       child: Scrollbar(

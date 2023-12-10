@@ -18,25 +18,34 @@ class _EditRequestPaneState extends ConsumerState<EditRequestPane> {
   Widget build(BuildContext context) {
     final activeId = ref.watch(activeIdStateProvider);
     final codePaneVisible = ref.watch(codePaneVisibleStateProvider);
-    var index = ref
-        .read(collectionStateNotifierProvider.notifier)
-        .getRequestModel(activeId!)
-        .requestTabIndex;
+    final tabIndex = ref.watch(
+        activeRequestModelProvider.select((value) => value?.requestTabIndex));
+
+    final headerLength = ref.watch(
+        activeRequestModelProvider.select((value) => value?.headersMap.length));
+    final paramLength = ref.watch(
+        activeRequestModelProvider.select((value) => value?.paramsMap.length));
+    final bodyLength = ref.watch(activeRequestModelProvider
+        .select((value) => value?.requestBody?.length));
 
     return RequestPane(
       activeId: activeId,
       codePaneVisible: codePaneVisible,
-      tabIndex: index,
+      tabIndex: tabIndex,
       onPressedCodeButton: () {
-        ref
-            .read(codePaneVisibleStateProvider.notifier)
-            .update((state) => !codePaneVisible);
+        ref.read(codePaneVisibleStateProvider.notifier).state =
+            !codePaneVisible;
       },
       onTapTabBar: (index) {
         ref
             .read(collectionStateNotifierProvider.notifier)
-            .update(activeId, requestTabIndex: index);
+            .update(activeId!, requestTabIndex: index);
       },
+      showIndicators: [
+        paramLength != null && paramLength > 0,
+        headerLength != null && headerLength > 0,
+        bodyLength != null && bodyLength > 0,
+      ],
       children: const [
         EditRequestURLParams(),
         EditRequestHeaders(),

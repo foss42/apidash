@@ -7,8 +7,8 @@ import 'url_card.dart';
 
 class RequestEditorPane extends ConsumerStatefulWidget {
   const RequestEditorPane({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   ConsumerState<RequestEditorPane> createState() => _RequestEditorPaneState();
@@ -28,8 +28,8 @@ class _RequestEditorPaneState extends ConsumerState<RequestEditorPane> {
     } else {
       return Padding(
         padding: kIsMacOS ? kPt24o8 : kP8,
-        child: Column(
-          children: const [
+        child: const Column(
+          children: [
             EditorPaneRequestURLCard(),
             kVSpacer10,
             Expanded(

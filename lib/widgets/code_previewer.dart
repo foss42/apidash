@@ -6,7 +6,7 @@ import 'error_message.dart';
 (String, bool) sanitize(String input) {
   bool limitedLines = false;
   int tabSize = 4;
-  var lines =  kSplitter.convert(input);
+  var lines = kSplitter.convert(input);
   if (lines.length > kCodePreviewLinesLimit) {
     lines = lines.sublist(0, kCodePreviewLinesLimit);
     limitedLines = true;
@@ -67,7 +67,12 @@ class _CodePreviewerState extends State<CodePreviewer> {
       textStyle = textStyle.merge(widget.textStyle);
     }
     processed = sanitize(widget.code);
-    spans = asyncGenerateSpans(processed.$0, widget.language, widget.theme, processed.$1);
+    spans = asyncGenerateSpans(
+      processed.$1,
+      widget.language,
+      widget.theme,
+      processed.$2,
+    );
   }
 
   @override
@@ -131,12 +136,14 @@ class _CodePreviewerState extends State<CodePreviewer> {
   }
 }
 
-Future<List<TextSpan>> asyncGenerateSpans(
-    String code, String? language, Map<String, TextStyle> theme, bool limitedLines) async {
+Future<List<TextSpan>> asyncGenerateSpans(String code, String? language,
+    Map<String, TextStyle> theme, bool limitedLines) async {
   var parsed = highlight.parse(code, language: language);
   var spans = convert(parsed.nodes!, theme);
-  if(limitedLines) {
-    spans.add(const TextSpan(text: "\n... more.\nPreview ends here ($kCodePreviewLinesLimit lines).\nYou can check Raw for full result."));
+  if (limitedLines) {
+    spans.add(const TextSpan(
+        text:
+            "\n... more.\nPreview ends here ($kCodePreviewLinesLimit lines).\nYou can check Raw for full result."));
   }
   return spans;
 }
