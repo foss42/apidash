@@ -12,12 +12,16 @@ void main() async {
   if (kIsLinux) {
     await setupInitialWindow();
   }
+  if (kIsMacOS) {
+    var win = getInitialSize();
+    await setupWindow(sz: win.$1, off: win.$2);
+  }
   runApp(
     const ProviderScope(
       child: DashApp(),
     ),
   );
-  if (kIsWindows || kIsMacOS) {
+  if (kIsWindows) {
     var win = getInitialSize();
     await setupWindow(sz: win.$1, off: win.$2);
   }
