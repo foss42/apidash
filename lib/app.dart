@@ -4,7 +4,7 @@ import 'package:window_manager/window_manager.dart';
 import 'providers/providers.dart';
 import 'screens/screens.dart';
 import 'consts.dart'
-    show kIsLinux, kFontFamily, kFontFamilyFallback, kColorSchemeSeed;
+    show kIsLinux, kIsMobile, kFontFamily, kFontFamilyFallback, kColorSchemeSeed;
 
 class App extends ConsumerStatefulWidget {
   const App({super.key});
@@ -64,6 +64,7 @@ class _DashAppState extends ConsumerState<DashApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        visualDensity: VisualDensity.adaptivePlatformDensity,
         fontFamily: kFontFamily,
         fontFamilyFallback: kFontFamilyFallback,
         colorSchemeSeed: kColorSchemeSeed,
@@ -78,7 +79,12 @@ class _DashAppState extends ConsumerState<DashApp> {
         brightness: Brightness.dark,
       ),
       themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
-      home: kIsLinux ? const Dashboard() : const App(),
+      home: kIsMobile
+          ? const MobileDashboard(
+              title: 'Requests',
+              scaffoldBody: CollectionPane(),
+            )
+          : kIsLinux ? const Dashboard() : const App(),
     );
   }
 }
