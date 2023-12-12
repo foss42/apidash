@@ -1,10 +1,10 @@
+import 'package:apidash/widgets/window_caption.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:window_manager/window_manager.dart';
+import 'package:window_manager/window_manager.dart' hide WindowCaption;
 import 'providers/providers.dart';
 import 'screens/screens.dart';
-import 'consts.dart'
-    show kIsLinux, kIsMobile, kFontFamily, kFontFamilyFallback, kColorSchemeSeed;
+import 'consts.dart';
 
 class App extends ConsumerStatefulWidget {
   const App({super.key});
@@ -84,7 +84,19 @@ class _DashAppState extends ConsumerState<DashApp> {
               title: 'Requests',
               scaffoldBody: CollectionPane(),
             )
-          : kIsLinux ? const Dashboard() : const App(),
+          : Stack(
+        children: [
+          kIsLinux ? const Dashboard() : const App(),
+          if (kIsWindows)
+            SizedBox(
+              height: 29,
+              child: WindowCaption(
+                backgroundColor: Colors.transparent,
+                brightness: isDarkMode ? Brightness.dark : Brightness.light,
+              ),
+            ),
+        ],
+      ),
     );
   }
 }
