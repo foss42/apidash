@@ -12,7 +12,7 @@ void main() async {
   if (kIsLinux) {
     await setupInitialWindow();
   }
-  if (kIsMacOS) {
+  if (kIsMacOS || kIsWindows) {
     var win = getInitialSize();
     await setupWindow(sz: win.$1, off: win.$2);
   }
@@ -21,8 +21,4 @@ void main() async {
       child: DashApp(),
     ),
   );
-  if (kIsWindows) {
-    var win = getInitialSize();
-    await setupWindow(sz: win.$1, off: win.$2);
-  }
 }
