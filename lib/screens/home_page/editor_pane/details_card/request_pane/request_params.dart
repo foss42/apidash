@@ -17,6 +17,7 @@ class EditRequestURLParams extends ConsumerStatefulWidget {
 
 class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
   late List<NameValueModel> rows;
+  late List<bool> enabledRows;
   final random = Random.secure();
   late int seed;
 
@@ -27,9 +28,11 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
   }
 
   void _onFieldChange(String activeId) {
-    ref
-        .read(collectionStateNotifierProvider.notifier)
-        .update(activeId, requestParams: rows);
+    ref.read(collectionStateNotifierProvider.notifier).update(
+          activeId,
+          requestParams: rows,
+          enabledParams: enabledRows,
+        );
   }
 
   @override
@@ -43,10 +46,31 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
             kNameValueEmptyModel,
           ]
         : rP;
+    enabledRows = ref.read(activeRequestModelProvider)?.enabledParams ??
+        List.filled(rows.length, true, growable: true);
 
     DaviModel<NameValueModel> model = DaviModel<NameValueModel>(
       rows: rows,
       columns: [
+        DaviColumn(
+          name: 'Checkbox',
+          width: 36,
+          cellBuilder: (_, row) {
+            int idx = row.index;
+
+            return CheckBox(
+              keyId: "$activeId-$idx-params-c-$seed",
+              value: enabledRows[idx],
+              onChanged: (value) {
+                setState(() {
+                  enabledRows[idx] = value!;
+                });
+                _onFieldChange(activeId!);
+              },
+              colorScheme: Theme.of(context).colorScheme,
+            );
+          },
+        ),
         DaviColumn(
           name: 'URL Parameter',
           grow: 1,
@@ -107,9 +131,13 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
                     rows = [
                       kNameValueEmptyModel,
                     ];
+                    enabledRows = [true];
                   });
                 } else {
-                  rows.removeAt(row.index);
+                  setState(() {
+                    enabledRows.removeAt(row.index);
+                    rows.removeAt(row.index);
+                  });
                 }
                 _onFieldChange(activeId!);
               },
@@ -143,7 +171,10 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
             padding: const EdgeInsets.only(bottom: 30),
             child: ElevatedButton.icon(
               onPressed: () {
-                rows.add(kNameValueEmptyModel);
+                setState(() {
+                  rows.add(kNameValueEmptyModel);
+                  enabledRows.add(true);
+                });
                 _onFieldChange(activeId!);
               },
               icon: const Icon(Icons.add),

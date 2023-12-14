@@ -81,6 +81,7 @@ Map<String, dynamic> requestModelToHARJsonRequest(
   var rec = getValidRequestUri(
     requestModel.url,
     requestModel.requestParams,
+    requestModel.enabledParams,
     defaultUriScheme: defaultUriScheme,
   );
 

@@ -77,7 +77,11 @@ import okhttp3.MediaType.Companion.toMediaType""";
         url = "$defaultUriScheme://$url";
       }
 
-      var rec = getValidRequestUri(url, requestModel.requestParams);
+      var rec = getValidRequestUri(
+        url,
+        requestModel.requestParams,
+        requestModel.enabledParams,
+      );
       Uri? uri = rec.$1;
 
       if (uri != null) {

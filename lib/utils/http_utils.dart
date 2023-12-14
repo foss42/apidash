@@ -4,7 +4,7 @@ import 'package:collection/collection.dart' show mergeMaps;
 import 'package:http_parser/http_parser.dart';
 import 'package:xml/xml.dart';
 import '../models/models.dart';
-import 'convert_utils.dart' show rowsToMap;
+import 'convert_utils.dart' show getEnabledRows, rowsToMap;
 import '../consts.dart';
 
 String getRequestTitleFromUrl(String? url) {
@@ -63,7 +63,7 @@ String stripUrlParams(String url) {
 }
 
 (Uri?, String?) getValidRequestUri(
-    String? url, List<NameValueModel>? requestParams,
+    String? url, List<NameValueModel>? requestParams, List<bool>? enabledParams,
     {String defaultUriScheme = kDefaultUriScheme}) {
   url = url?.trim();
   if (url == null || url == "") {
@@ -88,7 +88,8 @@ String stripUrlParams(String url) {
     uri = uri.removeFragment();
   }
 
-  Map<String, String>? queryParams = rowsToMap(requestParams);
+  Map<String, String>? queryParams =
+      rowsToMap(getEnabledRows(requestParams, enabledParams));
   if (queryParams != null) {
     if (uri.hasQuery) {
       Map<String, String> urlQueryParams = uri.queryParameters;

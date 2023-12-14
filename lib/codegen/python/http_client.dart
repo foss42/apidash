@@ -71,7 +71,11 @@ print(data.decode("utf-8"))
       }
 
       result += kTemplateStart;
-      var rec = getValidRequestUri(url, requestModel.requestParams);
+      var rec = getValidRequestUri(
+        url,
+        requestModel.requestParams,
+        requestModel.enabledParams,
+      );
       Uri? uri = rec.$1;
 
       if (uri != null) {

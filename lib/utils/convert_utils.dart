@@ -109,3 +109,11 @@ Uint8List jsonMapToBytes(Map<String, dynamic>? map) {
     return bytes;
   }
 }
+
+List<NameValueModel> getEnabledRows(
+    List<NameValueModel>? rows, List<bool>? enabledList) {
+  if (rows == null || enabledList == null) {
+    return rows ?? [];
+  }
+  return rows.where((element) => enabledList[rows.indexOf(element)]).toList();
+}

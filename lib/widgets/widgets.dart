@@ -8,6 +8,7 @@ export 'error_message.dart';
 export 'dropdowns.dart';
 export 'splitviews.dart';
 export 'texts.dart';
+export 'checkbox.dart';
 export 'textfields.dart';
 export 'headerfield.dart';
 export 'menus.dart';

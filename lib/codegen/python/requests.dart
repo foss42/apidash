@@ -75,7 +75,11 @@ print('Response Body:', response.text)
         url = "$defaultUriScheme://$url";
       }
 
-      var rec = getValidRequestUri(url, requestModel.requestParams);
+      var rec = getValidRequestUri(
+        url,
+        requestModel.requestParams,
+        requestModel.enabledParams,
+      );
       Uri? uri = rec.$1;
       if (uri != null) {
         var templateStartUrl = jj.Template(kTemplateStart);

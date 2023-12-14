@@ -1,3 +1,4 @@
+import 'package:apidash/utils/convert_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart' show mapToRows, rowsToMap;
@@ -15,6 +16,8 @@ class RequestModel {
     this.requestTabIndex = 0,
     this.requestHeaders,
     this.requestParams,
+    this.enabledHeaders,
+    this.enabledParams,
     this.requestBodyContentType = ContentType.json,
     this.requestBody,
     this.responseStatus,
@@ -30,14 +33,18 @@ class RequestModel {
   final int requestTabIndex;
   final List<NameValueModel>? requestHeaders;
   final List<NameValueModel>? requestParams;
+  final List<bool>? enabledHeaders;
+  final List<bool>? enabledParams;
   final ContentType requestBodyContentType;
   final String? requestBody;
   final int? responseStatus;
   final String? message;
   final ResponseModel? responseModel;
 
-  Map<String, String> get headersMap => rowsToMap(requestHeaders) ?? {};
-  Map<String, String> get paramsMap => rowsToMap(requestParams) ?? {};
+  Map<String, String> get headersMap =>
+      rowsToMap(getEnabledRows(requestHeaders, enabledHeaders)) ?? {};
+  Map<String, String> get paramsMap =>
+      rowsToMap(getEnabledRows(requestParams, enabledParams)) ?? {};
 
   RequestModel duplicate({
     required String id,
@@ -50,6 +57,8 @@ class RequestModel {
       description: description,
       requestHeaders: requestHeaders != null ? [...requestHeaders!] : null,
       requestParams: requestParams != null ? [...requestParams!] : null,
+      enabledHeaders: enabledHeaders != null ? [...enabledHeaders!] : null,
+      enabledParams: enabledParams != null ? [...enabledParams!] : null,
       requestBodyContentType: requestBodyContentType,
       requestBody: requestBody,
     );
@@ -64,6 +73,8 @@ class RequestModel {
     int? requestTabIndex,
     List<NameValueModel>? requestHeaders,
     List<NameValueModel>? requestParams,
+    List<bool>? enabledHeaders,
+    List<bool>? enabledParams,
     ContentType? requestBodyContentType,
     String? requestBody,
     int? responseStatus,
@@ -72,6 +83,8 @@ class RequestModel {
   }) {
     var headers = requestHeaders ?? this.requestHeaders;
     var params = requestParams ?? this.requestParams;
+    var eHeaders = enabledHeaders ?? this.enabledHeaders;
+    var eParams = enabledParams ?? this.enabledParams;
     return RequestModel(
       id: id ?? this.id,
       method: method ?? this.method,
@@ -81,6 +94,8 @@ class RequestModel {
       requestTabIndex: requestTabIndex ?? this.requestTabIndex,
       requestHeaders: headers != null ? [...headers] : null,
       requestParams: params != null ? [...params] : null,
+      enabledHeaders: eHeaders != null ? [...eHeaders] : null,
+      enabledParams: eParams != null ? [...eParams] : null,
       requestBodyContentType:
           requestBodyContentType ?? this.requestBodyContentType,
       requestBody: requestBody ?? this.requestBody,
@@ -106,6 +121,8 @@ class RequestModel {
     final description = data["description"] as String?;
     final requestHeaders = data["requestHeaders"];
     final requestParams = data["requestParams"];
+    final enabledHeaders = data["enabledHeaders"] as List<bool>?;
+    final enabledParams = data["enabledParams"] as List<bool>?;
     try {
       requestBodyContentType =
           ContentType.values.byName(data["requestBodyContentType"] as String);
@@ -136,6 +153,8 @@ class RequestModel {
       requestParams: requestParams != null
           ? mapToRows(Map<String, String>.from(requestParams))
           : null,
+      enabledHeaders: enabledHeaders,
+      enabledParams: enabledParams,
       requestBodyContentType: requestBodyContentType,
       requestBody: requestBody,
       responseStatus: responseStatus,
@@ -153,6 +172,8 @@ class RequestModel {
       "description": description,
       "requestHeaders": rowsToMap(requestHeaders),
       "requestParams": rowsToMap(requestParams),
+      "enabledHeaders": enabledHeaders,
+      "enabledParams": enabledParams,
       "requestBodyContentType": requestBodyContentType.name,
       "requestBody": requestBody,
       "responseStatus": includeResponse ? responseStatus : null,
@@ -171,7 +192,9 @@ class RequestModel {
       "Request Description: $description",
       "Request Tab Index: ${requestTabIndex.toString()}",
       "Request Headers: ${requestHeaders.toString()}",
+      "Enabled Headers: ${enabledHeaders.toString()}",
       "Request Params: ${requestParams.toString()}",
+      "Enabled Params: ${enabledParams.toString()}",
       "Request Body Content Type: ${requestBodyContentType.toString()}",
       "Request Body: ${requestBody.toString()}",
       "Response Status: $responseStatus",
@@ -192,6 +215,8 @@ class RequestModel {
         other.requestTabIndex == requestTabIndex &&
         listEquals(other.requestHeaders, requestHeaders) &&
         listEquals(other.requestParams, requestParams) &&
+        listEquals(other.enabledHeaders, enabledHeaders) &&
+        listEquals(other.enabledParams, enabledParams) &&
         other.requestBodyContentType == requestBodyContentType &&
         other.requestBody == requestBody &&
         other.responseStatus == responseStatus &&
@@ -211,6 +236,8 @@ class RequestModel {
       requestTabIndex,
       requestHeaders,
       requestParams,
+      enabledHeaders,
+      enabledParams,
       requestBodyContentType,
       requestBody,
       responseStatus,

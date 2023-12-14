@@ -123,6 +123,8 @@ class CollectionStateNotifier
     int? requestTabIndex,
     List<NameValueModel>? requestHeaders,
     List<NameValueModel>? requestParams,
+    List<bool>? enabledHeaders,
+    List<bool>? enabledParams,
     ContentType? requestBodyContentType,
     String? requestBody,
     int? responseStatus,
@@ -137,12 +139,13 @@ class CollectionStateNotifier
         requestTabIndex: requestTabIndex,
         requestHeaders: requestHeaders,
         requestParams: requestParams,
+        enabledHeaders: enabledHeaders,
+        enabledParams: enabledParams,
         requestBodyContentType: requestBodyContentType,
         requestBody: requestBody,
         responseStatus: responseStatus,
         message: message,
         responseModel: responseModel);
-    //print(newModel);
     var map = {...state!};
     map[id] = newModel;
     state = map;
@@ -175,7 +178,6 @@ class CollectionStateNotifier
         responseModel: responseModel,
       );
     }
-    //print(newRequestModel);
     ref.read(sentRequestIdStateProvider.notifier).state = null;
     var map = {...state!};
     map[id] = newRequestModel;
