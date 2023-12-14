@@ -106,7 +106,9 @@ void main() {
       'content-length': '18',
       'content-type': 'application/json; charset=utf-8'
     },
+    'enabledHeaders': null,
     'requestParams': null,
+    'enabledParams': null,
     "requestBodyContentType": 'json',
     "requestBody": '''{
 "text":"WORLD"
@@ -140,7 +142,9 @@ void main() {
     "Request Description: ",
     "Request Tab Index: 0",
     "Request Headers: [NameValueModel(name: content-length, value: 18), NameValueModel(name: content-type, value: application/json; charset=utf-8)]",
+    "Enabled Headers: null",
     "Request Params: null",
+    "Enabled Params: null",
     "Request Body Content Type: ContentType.json",
     'Request Body: {\n"text":"WORLD"\n}',
     "Response Status: null",
