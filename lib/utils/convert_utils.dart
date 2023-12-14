@@ -110,10 +110,12 @@ Uint8List jsonMapToBytes(Map<String, dynamic>? map) {
   }
 }
 
-List<NameValueModel> getEnabledRows(
+List<NameValueModel>? getEnabledRows(
     List<NameValueModel>? rows, List<bool>? enabledList) {
   if (rows == null || enabledList == null) {
-    return rows ?? [];
+    return rows;
   }
-  return rows.where((element) => enabledList[rows.indexOf(element)]).toList();
+  List<NameValueModel> finalRows =
+      rows.where((element) => enabledList[rows.indexOf(element)]).toList();
+  return finalRows == [] ? null : finalRows;
 }
