@@ -342,7 +342,7 @@ const Map<String, Map<String, List<ResponseBodyView>>>
   },
   kTypeImage: {
     kSubTypeDefaultViewOptions: kPreviewBodyViewOptions,
-    kSubTypeSvg: kPreviewCodeRawBodyViewOptions,
+    kSubTypeSvg: kPreviewRawBodyViewOptions,
   },
   kTypeAudio: {
     kSubTypeDefaultViewOptions: kPreviewBodyViewOptions,
