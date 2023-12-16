@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'error_message.dart';
 import 'package:apidash/consts.dart';
 import 'package:printing/printing.dart';
@@ -39,6 +40,12 @@ class _PreviewerState extends State<Previewer> {
       } catch (e) {
         // pass
       }
+    }
+    if (widget.type == kTypeImage && widget.subtype == kSubTypeSvg) {
+      final String rawSvg = widget.body;
+      return SvgPicture.string(
+        rawSvg,
+      );
     }
     if (widget.type == kTypeImage) {
       return Image.memory(
