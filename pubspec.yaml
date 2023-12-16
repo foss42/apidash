@@ -49,6 +49,7 @@ dependencies:
     version: ^0.1.1
   scrollable_positioned_list: ^0.2.3
   flutter_svg: ^2.0.9
+  vector_graphics_compiler: ^1.1.9+1
 
 dev_dependencies:
   flutter_test:
