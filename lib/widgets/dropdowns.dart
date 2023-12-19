@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:apidash/utils/utils.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash/utils/utils.dart';
+import 'package:flutter/material.dart';
 
 class DropdownButtonHttpMethod extends StatefulWidget {
   const DropdownButtonHttpMethod({

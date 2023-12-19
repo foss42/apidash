@@ -1,7 +1,10 @@
-import 'dart:typed_data';
 import 'dart:convert';
-import '../models/models.dart';
+import 'dart:typed_data';
+
+import 'package:apidash/models/form_data_model.dart';
+
 import '../consts.dart';
+import '../models/models.dart';
 
 String humanizeDuration(Duration? duration) {
   if (duration == null) {
@@ -78,6 +81,17 @@ Map<String, String>? rowsToMap(List<NameValueModel>? kvRows,
   return finalMap;
 }
 
+Map<String, String>? rowsToFormDataMap(
+  List<FormDataModel>? kvRows,
+) {
+  if (kvRows == null) {
+    return null;
+  }
+  Map<String, String> finalMap = {};
+  for (var row in kvRows) {}
+  return finalMap;
+}
+
 List<NameValueModel>? mapToRows(Map<String, String>? kvMap) {
   if (kvMap == null) {
     return null;
@@ -85,6 +99,21 @@ List<NameValueModel>? mapToRows(Map<String, String>? kvMap) {
   List<NameValueModel> finalRows = [];
   for (var k in kvMap.keys) {
     finalRows.add(NameValueModel(name: k, value: kvMap[k]));
+  }
+  return finalRows;
+}
+
+List<FormDataModel>? mapToFormRows(Map<String, String>? kvMap) {
+  if (kvMap == null) {
+    return null;
+  }
+  List<FormDataModel> finalRows = [];
+  for (var k in kvMap.keys) {
+    finalRows.add(FormDataModel(
+      name: k,
+      value: kvMap[k],
+      type: FormDataType.text,
+    ));
   }
   return finalRows;
 }

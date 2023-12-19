@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'name_value_model.dart';
+part of 'form_data_model.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -14,34 +14,35 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
 
-NameValueModel _$NameValueModelFromJson(Map<String, dynamic> json) {
-  return _NameValueModel.fromJson(json);
+FormDataModel _$FormDataModelFromJson(Map<String, dynamic> json) {
+  return _FormDataModel.fromJson(json);
 }
 
 /// @nodoc
-mixin _$NameValueModel {
+mixin _$FormDataModel {
   String get name => throw _privateConstructorUsedError;
   dynamic get value => throw _privateConstructorUsedError;
+  FormDataType get type => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
-  $NameValueModelCopyWith<NameValueModel> get copyWith =>
+  $FormDataModelCopyWith<FormDataModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $NameValueModelCopyWith<$Res> {
-  factory $NameValueModelCopyWith(
-          NameValueModel value, $Res Function(NameValueModel) then) =
-      _$NameValueModelCopyWithImpl<$Res, NameValueModel>;
+abstract class $FormDataModelCopyWith<$Res> {
+  factory $FormDataModelCopyWith(
+          FormDataModel value, $Res Function(FormDataModel) then) =
+      _$FormDataModelCopyWithImpl<$Res, FormDataModel>;
   @useResult
-  $Res call({String name, dynamic value});
+  $Res call({String name, dynamic value, FormDataType type});
 }
 
 /// @nodoc
-class _$NameValueModelCopyWithImpl<$Res, $Val extends NameValueModel>
-    implements $NameValueModelCopyWith<$Res> {
-  _$NameValueModelCopyWithImpl(this._value, this._then);
+class _$FormDataModelCopyWithImpl<$Res, $Val extends FormDataModel>
+    implements $FormDataModelCopyWith<$Res> {
+  _$FormDataModelCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -53,6 +54,7 @@ class _$NameValueModelCopyWithImpl<$Res, $Val extends NameValueModel>
   $Res call({
     Object? name = null,
     Object? value = freezed,
+    Object? type = null,
   }) {
     return _then(_value.copyWith(
       name: null == name
@@ -63,27 +65,31 @@ class _$NameValueModelCopyWithImpl<$Res, $Val extends NameValueModel>
           ? _value.value
           : value // ignore: cast_nullable_to_non_nullable
               as dynamic,
+      type: null == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
+              as FormDataType,
     ) as $Val);
   }
 }
 
 /// @nodoc
-abstract class _$$NameValueModelImplCopyWith<$Res>
-    implements $NameValueModelCopyWith<$Res> {
-  factory _$$NameValueModelImplCopyWith(_$NameValueModelImpl value,
-          $Res Function(_$NameValueModelImpl) then) =
-      __$$NameValueModelImplCopyWithImpl<$Res>;
+abstract class _$$FormDataModelImplCopyWith<$Res>
+    implements $FormDataModelCopyWith<$Res> {
+  factory _$$FormDataModelImplCopyWith(
+          _$FormDataModelImpl value, $Res Function(_$FormDataModelImpl) then) =
+      __$$FormDataModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String name, dynamic value});
+  $Res call({String name, dynamic value, FormDataType type});
 }
 
 /// @nodoc
-class __$$NameValueModelImplCopyWithImpl<$Res>
-    extends _$NameValueModelCopyWithImpl<$Res, _$NameValueModelImpl>
-    implements _$$NameValueModelImplCopyWith<$Res> {
-  __$$NameValueModelImplCopyWithImpl(
-      _$NameValueModelImpl _value, $Res Function(_$NameValueModelImpl) _then)
+class __$$FormDataModelImplCopyWithImpl<$Res>
+    extends _$FormDataModelCopyWithImpl<$Res, _$FormDataModelImpl>
+    implements _$$FormDataModelImplCopyWith<$Res> {
+  __$$FormDataModelImplCopyWithImpl(
+      _$FormDataModelImpl _value, $Res Function(_$FormDataModelImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -91,8 +97,9 @@ class __$$NameValueModelImplCopyWithImpl<$Res>
   $Res call({
     Object? name = null,
     Object? value = freezed,
+    Object? type = null,
   }) {
-    return _then(_$NameValueModelImpl(
+    return _then(_$FormDataModelImpl(
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -101,82 +108,81 @@ class __$$NameValueModelImplCopyWithImpl<$Res>
           ? _value.value
           : value // ignore: cast_nullable_to_non_nullable
               as dynamic,
+      type: null == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
+              as FormDataType,
     ));
   }
 }
 
 /// @nodoc
 @JsonSerializable()
-class _$NameValueModelImpl
-    with DiagnosticableTreeMixin
-    implements _NameValueModel {
-  const _$NameValueModelImpl({required this.name, required this.value});
+class _$FormDataModelImpl implements _FormDataModel {
+  const _$FormDataModelImpl(
+      {required this.name, required this.value, required this.type});
 
-  factory _$NameValueModelImpl.fromJson(Map<String, dynamic> json) =>
-      _$$NameValueModelImplFromJson(json);
+  factory _$FormDataModelImpl.fromJson(Map<String, dynamic> json) =>
+      _$$FormDataModelImplFromJson(json);
 
   @override
   final String name;
   @override
   final dynamic value;
+  @override
+  final FormDataType type;
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'NameValueModel(name: $name, value: $value)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'NameValueModel'))
-      ..add(DiagnosticsProperty('name', name))
-      ..add(DiagnosticsProperty('value', value));
+  String toString() {
+    return 'FormDataModel(name: $name, value: $value, type: $type)';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$NameValueModelImpl &&
+            other is _$FormDataModelImpl &&
             (identical(other.name, name) || other.name == name) &&
-            const DeepCollectionEquality().equals(other.value, value));
+            const DeepCollectionEquality().equals(other.value, value) &&
+            (identical(other.type, type) || other.type == type));
   }
 
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(
-      runtimeType, name, const DeepCollectionEquality().hash(value));
+      runtimeType, name, const DeepCollectionEquality().hash(value), type);
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$NameValueModelImplCopyWith<_$NameValueModelImpl> get copyWith =>
-      __$$NameValueModelImplCopyWithImpl<_$NameValueModelImpl>(
-          this, _$identity);
+  _$$FormDataModelImplCopyWith<_$FormDataModelImpl> get copyWith =>
+      __$$FormDataModelImplCopyWithImpl<_$FormDataModelImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$NameValueModelImplToJson(
+    return _$$FormDataModelImplToJson(
       this,
     );
   }
 }
 
-abstract class _NameValueModel implements NameValueModel {
-  const factory _NameValueModel(
+abstract class _FormDataModel implements FormDataModel {
+  const factory _FormDataModel(
       {required final String name,
-      required final dynamic value}) = _$NameValueModelImpl;
+      required final dynamic value,
+      required final FormDataType type}) = _$FormDataModelImpl;
 
-  factory _NameValueModel.fromJson(Map<String, dynamic> json) =
-      _$NameValueModelImpl.fromJson;
+  factory _FormDataModel.fromJson(Map<String, dynamic> json) =
+      _$FormDataModelImpl.fromJson;
 
   @override
   String get name;
   @override
   dynamic get value;
   @override
+  FormDataType get type;
+  @override
   @JsonKey(ignore: true)
-  _$$NameValueModelImplCopyWith<_$NameValueModelImpl> get copyWith =>
+  _$$FormDataModelImplCopyWith<_$FormDataModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

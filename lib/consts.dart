@@ -1,9 +1,10 @@
-import 'dart:io';
 import 'dart:convert';
+import 'dart:io';
+
+import 'package:davi/davi.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:davi/davi.dart';
 
 const kDiscordUrl = "https://bit.ly/heyfoss";
 const kGitUrl = "https://github.com/foss42/apidash";
@@ -224,7 +225,9 @@ enum RequestItemMenuOption { edit, delete, duplicate }
 
 enum HTTPVerb { get, head, post, put, patch, delete }
 
-enum ContentType { json, text }
+enum ContentType { json, text, formdata }
+
+enum FormDataType { text, file }
 
 const kSupportedUriSchemes = ["https", "http"];
 const kDefaultUriScheme = "https";
@@ -294,6 +297,11 @@ const kSubTypeDefaultViewOptions = 'all';
 const kContentTypeMap = {
   ContentType.json: "$kTypeApplication/$kSubTypeJson",
   ContentType.text: "$kTypeText/$kSubTypePlain",
+  ContentType.formdata: "multipart/form-data",
+};
+const kFormDataTypeMap = {
+  FormDataType.file: "File",
+  FormDataType.text: "Text",
 };
 
 enum ResponseBodyView { preview, code, raw, none }

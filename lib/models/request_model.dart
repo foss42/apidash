@@ -1,6 +1,8 @@
-import 'package:flutter/foundation.dart';
 import 'package:apidash/consts.dart';
-import 'package:apidash/utils/utils.dart' show mapToRows, rowsToMap;
+import 'package:apidash/models/form_data_model.dart';
+import 'package:apidash/utils/convert_utils.dart';
+import 'package:flutter/foundation.dart';
+
 import 'name_value_model.dart';
 import 'response_model.dart';
 
@@ -20,6 +22,7 @@ class RequestModel {
     this.responseStatus,
     this.message,
     this.responseModel,
+    this.formDataList,
   });
 
   final String id;
@@ -30,6 +33,7 @@ class RequestModel {
   final int requestTabIndex;
   final List<NameValueModel>? requestHeaders;
   final List<NameValueModel>? requestParams;
+  final List<FormDataModel>? formDataList;
   final ContentType requestBodyContentType;
   final String? requestBody;
   final int? responseStatus;
@@ -52,6 +56,7 @@ class RequestModel {
       requestParams: requestParams != null ? [...requestParams!] : null,
       requestBodyContentType: requestBodyContentType,
       requestBody: requestBody,
+      formDataList: formDataList != null ? [...formDataList!] : null,
     );
   }
 
@@ -69,6 +74,7 @@ class RequestModel {
     int? responseStatus,
     String? message,
     ResponseModel? responseModel,
+    List<FormDataModel>? formDataList,
   }) {
     var headers = requestHeaders ?? this.requestHeaders;
     var params = requestParams ?? this.requestParams;
@@ -87,6 +93,7 @@ class RequestModel {
       responseStatus: responseStatus ?? this.responseStatus,
       message: message ?? this.message,
       responseModel: responseModel ?? this.responseModel,
+      formDataList: formDataList ?? this.formDataList,
     );
   }
 
@@ -116,6 +123,8 @@ class RequestModel {
     final responseStatus = data["responseStatus"] as int?;
     final message = data["message"] as String?;
     final responseModelJson = data["responseModel"];
+    final formDataList = data["formDataList"];
+
     if (responseModelJson != null) {
       responseModel =
           ResponseModel.fromJson(Map<String, dynamic>.from(responseModelJson));
@@ -141,6 +150,9 @@ class RequestModel {
       responseStatus: responseStatus,
       message: message,
       responseModel: responseModel,
+      formDataList: formDataList != null
+          ? mapToFormRows(Map<String, String>.from(formDataList))
+          : null,
     );
   }
 
