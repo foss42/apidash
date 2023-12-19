@@ -1,10 +1,12 @@
+import 'package:apidash/models/form_data_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'settings_providers.dart';
-import 'ui_providers.dart';
+
+import '../consts.dart';
 import '../models/models.dart';
 import '../services/services.dart' show hiveHandler, HiveHandler, request;
 import '../utils/utils.dart' show uuid, collectionToHAR;
-import '../consts.dart';
+import 'settings_providers.dart';
+import 'ui_providers.dart';
 
 final activeIdStateProvider = StateProvider<String?>((ref) => null);
 
@@ -128,20 +130,23 @@ class CollectionStateNotifier
     int? responseStatus,
     String? message,
     ResponseModel? responseModel,
+    List<FormDataModel>? formDataList,
   }) {
     final newModel = state![id]!.copyWith(
-        method: method,
-        url: url,
-        name: name,
-        description: description,
-        requestTabIndex: requestTabIndex,
-        requestHeaders: requestHeaders,
-        requestParams: requestParams,
-        requestBodyContentType: requestBodyContentType,
-        requestBody: requestBody,
-        responseStatus: responseStatus,
-        message: message,
-        responseModel: responseModel);
+      method: method,
+      url: url,
+      name: name,
+      description: description,
+      requestTabIndex: requestTabIndex,
+      requestHeaders: requestHeaders,
+      requestParams: requestParams,
+      requestBodyContentType: requestBodyContentType,
+      requestBody: requestBody,
+      responseStatus: responseStatus,
+      message: message,
+      responseModel: responseModel,
+      formDataList: formDataList,
+    );
     //print(newModel);
     var map = {...state!};
     map[id] = newModel;

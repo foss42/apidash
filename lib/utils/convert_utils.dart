@@ -81,14 +81,19 @@ Map<String, String>? rowsToMap(List<NameValueModel>? kvRows,
   return finalMap;
 }
 
-Map<String, String>? rowsToFormDataMap(
+List<Map<String, dynamic>>? rowsToFormDataMap(
   List<FormDataModel>? kvRows,
 ) {
   if (kvRows == null) {
     return null;
   }
-  Map<String, String> finalMap = {};
-  for (var row in kvRows) {}
+  List<Map<String, dynamic>> finalMap = kvRows
+      .map((FormDataModel formData) => {
+            "name": formData.name,
+            "value": formData.value,
+            "type": formData.type.name,
+          })
+      .toList();
   return finalMap;
 }
 
@@ -103,18 +108,17 @@ List<NameValueModel>? mapToRows(Map<String, String>? kvMap) {
   return finalRows;
 }
 
-List<FormDataModel>? mapToFormRows(Map<String, String>? kvMap) {
+List<FormDataModel>? listToFormDataModel(List? kvMap) {
   if (kvMap == null) {
     return null;
   }
-  List<FormDataModel> finalRows = [];
-  for (var k in kvMap.keys) {
-    finalRows.add(FormDataModel(
-      name: k,
-      value: kvMap[k],
-      type: FormDataType.text,
-    ));
-  }
+  List<FormDataModel> finalRows = kvMap
+      .map((formData) => FormDataModel(
+            name: formData["name"],
+            value: formData["value"],
+            type: kMapFormDataType[formData["type"]] ?? FormDataType.text,
+          ))
+      .toList();
   return finalRows;
 }
 

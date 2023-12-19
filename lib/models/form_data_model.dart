@@ -16,7 +16,7 @@ class FormDataModel with _$FormDataModel {
       _$FormDataModelFromJson(json);
 }
 
-const kNameValueEmptyModel = FormDataModel(
+const kFormDataEmptyModel = FormDataModel(
   name: "",
   value: "",
   type: FormDataType.text,

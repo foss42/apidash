@@ -150,9 +150,8 @@ class RequestModel {
       responseStatus: responseStatus,
       message: message,
       responseModel: responseModel,
-      formDataList: formDataList != null
-          ? mapToFormRows(Map<String, String>.from(formDataList))
-          : null,
+      formDataList:
+          formDataList != null ? listToFormDataModel(formDataList) : null,
     );
   }
 
@@ -170,6 +169,7 @@ class RequestModel {
       "responseStatus": includeResponse ? responseStatus : null,
       "message": includeResponse ? message : null,
       "responseModel": includeResponse ? responseModel?.toJson() : null,
+      "formDataList": rowsToFormDataMap(formDataList)
     };
   }
 
@@ -189,6 +189,7 @@ class RequestModel {
       "Response Status: $responseStatus",
       "Response Message: $message",
       "Response: ${responseModel.toString()}"
+          "FormData: ${formDataList.toString()}"
     ].join("\n");
   }
 
@@ -208,7 +209,8 @@ class RequestModel {
         other.requestBody == requestBody &&
         other.responseStatus == responseStatus &&
         other.message == message &&
-        other.responseModel == responseModel;
+        other.responseModel == responseModel &&
+        other.formDataList == formDataList;
   }
 
   @override
@@ -228,6 +230,7 @@ class RequestModel {
       responseStatus,
       message,
       responseModel,
+      formDataList,
     );
   }
 }

@@ -58,6 +58,7 @@ const kP1 = EdgeInsets.all(1);
 const kP5 = EdgeInsets.all(5);
 const kP8 = EdgeInsets.all(8);
 const kPs8 = EdgeInsets.only(left: 8);
+const kPs2 = EdgeInsets.only(left: 2);
 const kPh20v5 = EdgeInsets.symmetric(horizontal: 20, vertical: 5);
 const kPh20v10 = EdgeInsets.symmetric(horizontal: 20, vertical: 10);
 const kP10 = EdgeInsets.all(10);
@@ -302,6 +303,10 @@ const kContentTypeMap = {
 const kFormDataTypeMap = {
   FormDataType.file: "File",
   FormDataType.text: "Text",
+};
+const kMapFormDataType = {
+  "File": FormDataType.file,
+  "Text": FormDataType.text,
 };
 
 enum ResponseBodyView { preview, code, raw, none }
