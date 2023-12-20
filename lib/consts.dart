@@ -301,12 +301,12 @@ const kContentTypeMap = {
   ContentType.formdata: "multipart/form-data",
 };
 const kFormDataTypeMap = {
-  FormDataType.file: "File",
-  FormDataType.text: "Text",
+  FormDataType.file: "file",
+  FormDataType.text: "text",
 };
 const kMapFormDataType = {
-  "File": FormDataType.file,
-  "Text": FormDataType.text,
+  "file": FormDataType.file,
+  "text": FormDataType.text,
 };
 
 enum ResponseBodyView { preview, code, raw, none }

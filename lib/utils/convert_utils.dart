@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:apidash/models/form_data_model.dart';
+import 'package:http/http.dart' as http;
 
 import '../consts.dart';
 import '../models/models.dart';
@@ -141,4 +142,21 @@ Uint8List jsonMapToBytes(Map<String, dynamic>? map) {
     var bytes = Uint8List.fromList(l);
     return bytes;
   }
+}
+
+Future<http.Response> convertStreamedResponse(
+  http.StreamedResponse streamedResponse,
+) async {
+  Uint8List bodyBytes = await streamedResponse.stream.toBytes();
+
+  http.Response response = http.Response.bytes(
+    bodyBytes,
+    streamedResponse.statusCode,
+    headers: streamedResponse.headers,
+    persistentConnection: streamedResponse.persistentConnection,
+    reasonPhrase: streamedResponse.reasonPhrase,
+    request: streamedResponse.request,
+  );
+
+  return response;
 }

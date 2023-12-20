@@ -1,5 +1,7 @@
 import 'package:apidash/models/form_data_model.dart';
+import 'package:apidash/services/http_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:http/http.dart' as http;
 
 import '../consts.dart';
 import '../models/models.dart';
@@ -158,10 +160,20 @@ class CollectionStateNotifier
     ref.read(codePaneVisibleStateProvider.notifier).state = false;
     final defaultUriScheme =
         ref.read(settingsProvider.select((value) => value.defaultUriScheme));
-
+    (http.Response?, Duration?, String?)? responseRec;
     RequestModel requestModel = state![id]!;
-    var responseRec =
-        await request(requestModel, defaultUriScheme: defaultUriScheme);
+    if (requestModel.formDataList != null &&
+        requestModel.formDataList!.isNotEmpty) {
+      responseRec = await multiPartRequest(
+        requestModel,
+        defaultUriScheme: defaultUriScheme,
+      );
+    } else {
+      responseRec = await request(
+        requestModel,
+        defaultUriScheme: defaultUriScheme,
+      );
+    }
     late final RequestModel newRequestModel;
     if (responseRec.$1 == null) {
       newRequestModel = requestModel.copyWith(
@@ -180,7 +192,6 @@ class CollectionStateNotifier
         responseModel: responseModel,
       );
     }
-    //print(newRequestModel);
     ref.read(sentRequestIdStateProvider.notifier).state = null;
     var map = {...state!};
     map[id] = newRequestModel;
