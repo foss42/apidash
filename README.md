@@ -138,7 +138,7 @@ Here is the complete list of mimetypes that can be directly previewed in API Das
 | Image | `image/portable-anymap` | `.pnm` | |
 | Image | `image/png` | `.png` | |
 | Image | `image/sgi` | `.sgi` | |
-| Image | `image/svg+xml` | `.svg` | Partial support. See issue https://github.com/foss42/apidash/issues/20 |
+| Image | `image/svg+xml` | `.svg` | |
 | Image | `image/tiff` | `.tiff` | |
 | Image | `image/targa` | `.tga` | |
 | Image | `image/vnd.wap.wbmp` | `.wbmp` | |

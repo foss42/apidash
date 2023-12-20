@@ -355,7 +355,7 @@ const Map<String, Map<String, List<ResponseBodyView>>>
   },
   kTypeImage: {
     kSubTypeDefaultViewOptions: kPreviewBodyViewOptions,
-    kSubTypeSvg: kCodeRawBodyViewOptions,
+    kSubTypeSvg: kPreviewRawBodyViewOptions,
   },
   kTypeAudio: {
     kSubTypeDefaultViewOptions: kPreviewBodyViewOptions,
@@ -471,6 +471,9 @@ const kUnexpectedRaiseIssue =
 
 const kImageError =
     "There seems to be an issue rendering this image. Please raise an issue in API Dash GitHub repo so that we can resolve it.";
+
+const kSvgError =
+    "There seems to be an issue rendering this SVG image. Please raise an issue in API Dash GitHub repo so that we can resolve it.";
 
 const kPdfError =
     "There seems to be an issue rendering this pdf. Please raise an issue in API Dash GitHub repo so that we can resolve it.";
