@@ -1,11 +1,11 @@
 import 'package:apidash/models/form_data_model.dart';
-import 'package:apidash/services/http_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 
 import '../consts.dart';
 import '../models/models.dart';
-import '../services/services.dart' show hiveHandler, HiveHandler, request;
+import '../services/services.dart'
+    show hiveHandler, HiveHandler, request, multiPartRequest;
 import '../utils/utils.dart' show uuid, collectionToHAR;
 import 'settings_providers.dart';
 import 'ui_providers.dart';
