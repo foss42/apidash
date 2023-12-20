@@ -68,22 +68,22 @@ class _$NameValueModelCopyWithImpl<$Res, $Val extends NameValueModel>
 }
 
 /// @nodoc
-abstract class _$$NameValueModelImplCopyWith<$Res>
+abstract class _$$_NameValueModelCopyWith<$Res>
     implements $NameValueModelCopyWith<$Res> {
-  factory _$$NameValueModelImplCopyWith(_$NameValueModelImpl value,
-          $Res Function(_$NameValueModelImpl) then) =
-      __$$NameValueModelImplCopyWithImpl<$Res>;
+  factory _$$_NameValueModelCopyWith(
+          _$_NameValueModel value, $Res Function(_$_NameValueModel) then) =
+      __$$_NameValueModelCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({String name, dynamic value});
 }
 
 /// @nodoc
-class __$$NameValueModelImplCopyWithImpl<$Res>
-    extends _$NameValueModelCopyWithImpl<$Res, _$NameValueModelImpl>
-    implements _$$NameValueModelImplCopyWith<$Res> {
-  __$$NameValueModelImplCopyWithImpl(
-      _$NameValueModelImpl _value, $Res Function(_$NameValueModelImpl) _then)
+class __$$_NameValueModelCopyWithImpl<$Res>
+    extends _$NameValueModelCopyWithImpl<$Res, _$_NameValueModel>
+    implements _$$_NameValueModelCopyWith<$Res> {
+  __$$_NameValueModelCopyWithImpl(
+      _$_NameValueModel _value, $Res Function(_$_NameValueModel) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -92,7 +92,7 @@ class __$$NameValueModelImplCopyWithImpl<$Res>
     Object? name = null,
     Object? value = freezed,
   }) {
-    return _then(_$NameValueModelImpl(
+    return _then(_$_NameValueModel(
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -107,13 +107,13 @@ class __$$NameValueModelImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$NameValueModelImpl
+class _$_NameValueModel
     with DiagnosticableTreeMixin
     implements _NameValueModel {
-  const _$NameValueModelImpl({required this.name, required this.value});
+  const _$_NameValueModel({required this.name, required this.value});
 
-  factory _$NameValueModelImpl.fromJson(Map<String, dynamic> json) =>
-      _$$NameValueModelImplFromJson(json);
+  factory _$_NameValueModel.fromJson(Map<String, dynamic> json) =>
+      _$$_NameValueModelFromJson(json);
 
   @override
   final String name;
@@ -138,7 +138,7 @@ class _$NameValueModelImpl
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$NameValueModelImpl &&
+            other is _$_NameValueModel &&
             (identical(other.name, name) || other.name == name) &&
             const DeepCollectionEquality().equals(other.value, value));
   }
@@ -151,13 +151,12 @@ class _$NameValueModelImpl
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$NameValueModelImplCopyWith<_$NameValueModelImpl> get copyWith =>
-      __$$NameValueModelImplCopyWithImpl<_$NameValueModelImpl>(
-          this, _$identity);
+  _$$_NameValueModelCopyWith<_$_NameValueModel> get copyWith =>
+      __$$_NameValueModelCopyWithImpl<_$_NameValueModel>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$NameValueModelImplToJson(
+    return _$$_NameValueModelToJson(
       this,
     );
   }
@@ -166,10 +165,10 @@ class _$NameValueModelImpl
 abstract class _NameValueModel implements NameValueModel {
   const factory _NameValueModel(
       {required final String name,
-      required final dynamic value}) = _$NameValueModelImpl;
+      required final dynamic value}) = _$_NameValueModel;
 
   factory _NameValueModel.fromJson(Map<String, dynamic> json) =
-      _$NameValueModelImpl.fromJson;
+      _$_NameValueModel.fromJson;
 
   @override
   String get name;
@@ -177,6 +176,6 @@ abstract class _NameValueModel implements NameValueModel {
   dynamic get value;
   @override
   @JsonKey(ignore: true)
-  _$$NameValueModelImplCopyWith<_$NameValueModelImpl> get copyWith =>
+  _$$_NameValueModelCopyWith<_$_NameValueModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
