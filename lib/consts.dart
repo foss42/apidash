@@ -242,6 +242,7 @@ enum CodegenLanguage {
   curl("cURL", "bash", "curl"),
   har("HAR", "json", "har"),
   dartHttp("Dart (http)", "dart", "dart"),
+  dartDio("Dart (dio)", "dart", "dart"),
   jsAxios("JavaScript (axios)", "javascript", "js"),
   jsFetch("JavaScript (fetch)", "javascript", "js"),
   nodejsAxios("node.js (axios)", "javascript", "js"),
