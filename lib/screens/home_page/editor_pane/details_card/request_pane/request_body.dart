@@ -18,6 +18,8 @@ class _EditRequestBodyState extends ConsumerState<EditRequestBody> {
     final requestModel = ref
         .read(collectionStateNotifierProvider.notifier)
         .getRequestModel(activeId!);
+    final contentType = ref.watch(activeRequestModelProvider
+        .select((value) => value?.requestBodyContentType));
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.background,
@@ -39,6 +41,7 @@ class _EditRequestBodyState extends ConsumerState<EditRequestBody> {
           ),
           Expanded(
             child: TextFieldEditor(
+              contentType: contentType,
               key: Key("$activeId-body"),
               fieldKey: "$activeId-body-editor",
               initialValue: requestModel?.requestBody,
