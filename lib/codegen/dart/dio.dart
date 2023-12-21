@@ -17,7 +17,7 @@ class DartDioCodeGen {
       }
       final next = generatedDartCode(
         url: url,
-        method: requestModel.method.name,
+        method: requestModel.method,
         queryParams: requestModel.paramsMap,
         headers: requestModel.headersMap,
         body: requestModel.requestBody,
@@ -31,7 +31,7 @@ class DartDioCodeGen {
 
   String generatedDartCode({
     required String url,
-    required String method,
+    required HTTPVerb method,
     required Map<String, String> queryParams,
     required Map<String, String> headers,
     required String? body,
@@ -56,9 +56,10 @@ class DartDioCodeGen {
     }
 
     Expression? dataExp;
-    if (body != null) {
+    if (kMethodsWithBody.contains(method) && (body?.isNotEmpty ?? false)) {
       final strContent = CodeExpression(Code('r\'\'\'$body\'\'\''));
       switch (contentType) {
+        // dio dosen't need pass `content-type` header when body is json or plain text
         case ContentType.json:
           final convertImport = Directive.import('dart:convert', as: 'convert');
           sbf.writeln(convertImport.accept(emitter));
@@ -66,6 +67,7 @@ class DartDioCodeGen {
               .assign(refer('convert.json.decode').call([strContent]));
         case ContentType.text:
           dataExp = declareFinal('data').assign(strContent);
+        // when add new type of [ContentType], need update [dataExp].
       }
     }
     final responseExp = declareFinal('response').assign(InvokeExpression.newOf(
@@ -81,7 +83,7 @@ class DartDioCodeGen {
         if (dataExp != null) 'data': refer('data'),
       },
       [],
-      method,
+      method.name,
     ).awaited);
 
     final mainFunction = Method((m) {

@@ -1,6 +1,16 @@
 import 'package:apidash/codegen/dart/http.dart';
+import 'package:dart_style/dart_style.dart';
 import 'package:test/test.dart';
 import '../request_models.dart';
+
+final _formatter = DartFormatter(fixes: [
+  StyleFix.singleCascadeStatements
+]);
+
+extension on String {
+  // format code before compare
+  String get format => _formatter.format(this);
+}
 
 void main() {
   final dartHttpCodeGen = DartHttpCodeGen();
@@ -25,7 +35,10 @@ void main() async {
   }
 }
 """;
-      expect(dartHttpCodeGen.getCode(requestModelGet1, "https"), expectedCode);
+      expect(
+        dartHttpCodeGen.getCode(requestModelGet1, "https"),
+        expectedCode.format,
+      );
     });
 
     test('GET 2', () {
@@ -34,9 +47,7 @@ void main() async {
 void main() async {
   var uri = Uri.parse('https://api.foss42.com/country/data');
 
-  var queryParams = {
-                      "code": "US"
-                    };
+  var queryParams = {'code': 'US'};
   uri = uri.replace(queryParameters: queryParams);
 
   final response = await http.get(uri);
@@ -52,18 +63,18 @@ void main() async {
   }
 }
 """;
-      expect(dartHttpCodeGen.getCode(requestModelGet2, "https"), expectedCode);
+      expect(
+        dartHttpCodeGen.getCode(requestModelGet2, "https"),
+        expectedCode.format,
+      );
     });
 
     test('GET 3', () {
       const expectedCode = r"""import 'package:http/http.dart' as http;
-
 void main() async {
   var uri = Uri.parse('https://api.foss42.com/country/data?code=US');
 
-  var queryParams = {
-                      "code": "IND"
-                    };
+  var queryParams = {'code': 'IND'};
   var urlQueryParams = Map<String,String>.from(uri.queryParameters);
   urlQueryParams.addAll(queryParams);
   uri = uri.replace(queryParameters: urlQueryParams);
@@ -81,7 +92,10 @@ void main() async {
   }
 }
 """;
-      expect(dartHttpCodeGen.getCode(requestModelGet3, "https"), expectedCode);
+      expect(
+        dartHttpCodeGen.getCode(requestModelGet3, "https"),
+        expectedCode.format,
+      );
     });
 
     test('GET 4', () {
@@ -91,12 +105,12 @@ void main() async {
   var uri = Uri.parse('https://api.foss42.com/humanize/social');
 
   var queryParams = {
-                      "num": "8700000",
-                      "digits": "3",
-                      "system": "SS",
-                      "add_space": "true",
-                      "trailing_zeros": "true"
-                    };
+    'num': '8700000',
+    'digits': '3',
+    'system': 'SS',
+    'add_space': 'true',
+    'trailing_zeros': 'true',
+  };
   uri = uri.replace(queryParameters: queryParams);
 
   final response = await http.get(uri);
@@ -112,7 +126,10 @@ void main() async {
   }
 }
 """;
-      expect(dartHttpCodeGen.getCode(requestModelGet4, "https"), expectedCode);
+      expect(
+        dartHttpCodeGen.getCode(requestModelGet4, "https"),
+        expectedCode.format,
+      );
     });
 
     test('GET 5', () {
@@ -121,12 +138,12 @@ void main() async {
 void main() async {
   var uri = Uri.parse('https://api.github.com/repos/foss42/apidash');
 
-  var headers = {
-                  "User-Agent": "Test Agent"
-                };
+  var headers = {'User-Agent': 'Test Agent'};
 
-  final response = await http.get(uri,
-                                  headers: headers);
+  final response = await http.get(
+    uri,
+    headers: headers,
+  );
 
   int statusCode = response.statusCode;
   if (statusCode >= 200 && statusCode < 300) {
@@ -139,7 +156,10 @@ void main() async {
   }
 }
 """;
-      expect(dartHttpCodeGen.getCode(requestModelGet5, "https"), expectedCode);
+      expect(
+        dartHttpCodeGen.getCode(requestModelGet5, "https"),
+        expectedCode.format,
+      );
     });
 
     test('GET 6', () {
@@ -148,17 +168,15 @@ void main() async {
 void main() async {
   var uri = Uri.parse('https://api.github.com/repos/foss42/apidash');
 
-  var queryParams = {
-                      "raw": "true"
-                    };
+  var queryParams = {'raw': 'true'};
   uri = uri.replace(queryParameters: queryParams);
 
-  var headers = {
-                  "User-Agent": "Test Agent"
-                };
+  var headers = {'User-Agent': 'Test Agent'};
 
-  final response = await http.get(uri,
-                                  headers: headers);
+  final response = await http.get(
+    uri,
+    headers: headers,
+  );
 
   int statusCode = response.statusCode;
   if (statusCode >= 200 && statusCode < 300) {
@@ -171,7 +189,10 @@ void main() async {
   }
 }
 """;
-      expect(dartHttpCodeGen.getCode(requestModelGet6, "https"), expectedCode);
+      expect(
+        dartHttpCodeGen.getCode(requestModelGet6, "https"),
+        expectedCode.format,
+      );
     });
 
     test('GET 7', () {
@@ -193,7 +214,10 @@ void main() async {
   }
 }
 """;
-      expect(dartHttpCodeGen.getCode(requestModelGet7, "https"), expectedCode);
+      expect(
+        dartHttpCodeGen.getCode(requestModelGet7, "https"),
+        expectedCode.format,
+      );
     });
 
     test('GET 8', () {
@@ -202,17 +226,15 @@ void main() async {
 void main() async {
   var uri = Uri.parse('https://api.github.com/repos/foss42/apidash');
 
-  var queryParams = {
-                      "raw": "true"
-                    };
+  var queryParams = {'raw': 'true'};
   uri = uri.replace(queryParameters: queryParams);
 
-  var headers = {
-                  "User-Agent": "Test Agent"
-                };
+  var headers = {'User-Agent': 'Test Agent'};
 
-  final response = await http.get(uri,
-                                  headers: headers);
+  final response = await http.get(
+    uri,
+    headers: headers,
+  );
 
   int statusCode = response.statusCode;
   if (statusCode >= 200 && statusCode < 300) {
@@ -225,7 +247,10 @@ void main() async {
   }
 }
 """;
-      expect(dartHttpCodeGen.getCode(requestModelGet8, "https"), expectedCode);
+      expect(
+        dartHttpCodeGen.getCode(requestModelGet8, "https"),
+        expectedCode.format,
+      );
     });
   });
 
@@ -249,7 +274,10 @@ void main() async {
   }
 }
 """;
-      expect(dartHttpCodeGen.getCode(requestModelHead1, "https"), expectedCode);
+      expect(
+        dartHttpCodeGen.getCode(requestModelHead1, "https"),
+        expectedCode.format,
+      );
     });
 
     test('HEAD 2', () {
@@ -271,7 +299,8 @@ void main() async {
   }
 }
 """;
-      expect(dartHttpCodeGen.getCode(requestModelHead2, "http"), expectedCode);
+      expect(dartHttpCodeGen.getCode(requestModelHead2, "http"),
+          expectedCode.format);
     });
   });
 
@@ -286,13 +315,13 @@ void main() async {
 "text": "I LOVE Flutter"
 }''';
 
-  var headers = {
-                  "content-type": "text/plain"
-                };
+  var headers = {'content-type': 'text/plain'};
 
-  final response = await http.post(uri,
-                                  headers: headers,
-                                  body: body);
+  final response = await http.post(
+    uri,
+    headers: headers,
+    body: body,
+  );
 
   int statusCode = response.statusCode;
   if (statusCode >= 200 && statusCode < 300) {
@@ -305,7 +334,10 @@ void main() async {
   }
 }
 """;
-      expect(dartHttpCodeGen.getCode(requestModelPost1, "https"), expectedCode);
+      expect(
+        dartHttpCodeGen.getCode(requestModelPost1, "https"),
+        expectedCode.format,
+      );
     });
 
     test('POST 2', () {
@@ -318,13 +350,13 @@ void main() async {
 "text": "I LOVE Flutter"
 }''';
 
-  var headers = {
-                  "content-type": "application/json"
-                };
+  var headers = {'content-type': 'application/json'};
 
-  final response = await http.post(uri,
-                                  headers: headers,
-                                  body: body);
+  final response = await http.post(
+    uri,
+    headers: headers,
+    body: body,
+  );
 
   int statusCode = response.statusCode;
   if (statusCode >= 200 && statusCode < 300) {
@@ -337,7 +369,10 @@ void main() async {
   }
 }
 """;
-      expect(dartHttpCodeGen.getCode(requestModelPost2, "https"), expectedCode);
+      expect(
+        dartHttpCodeGen.getCode(requestModelPost2, "https"),
+        expectedCode.format,
+      );
     });
 
     test('POST 3', () {
@@ -351,13 +386,15 @@ void main() async {
 }''';
 
   var headers = {
-                  "User-Agent": "Test Agent",
-                  "content-type": "application/json"
-                };
+    'User-Agent': 'Test Agent',
+    'content-type': 'application/json',
+  };
 
-  final response = await http.post(uri,
-                                  headers: headers,
-                                  body: body);
+  final response = await http.post(
+    uri,
+    headers: headers,
+    body: body,
+  );
 
   int statusCode = response.statusCode;
   if (statusCode >= 200 && statusCode < 300) {
@@ -370,7 +407,10 @@ void main() async {
   }
 }
 """;
-      expect(dartHttpCodeGen.getCode(requestModelPost3, "https"), expectedCode);
+      expect(
+        dartHttpCodeGen.getCode(requestModelPost3, "https"),
+        expectedCode.format,
+      );
     });
   });
   group('PUT Request', () {
@@ -385,13 +425,13 @@ void main() async {
 "job": "zion resident"
 }''';
 
-  var headers = {
-                  "content-type": "application/json"
-                };
+  var headers = {'content-type': 'application/json'};
 
-  final response = await http.put(uri,
-                                  headers: headers,
-                                  body: body);
+  final response = await http.put(
+    uri,
+    headers: headers,
+    body: body,
+  );
 
   int statusCode = response.statusCode;
   if (statusCode >= 200 && statusCode < 300) {
@@ -404,7 +444,10 @@ void main() async {
   }
 }
 """;
-      expect(dartHttpCodeGen.getCode(requestModelPut1, "https"), expectedCode);
+      expect(
+        dartHttpCodeGen.getCode(requestModelPut1, "https"),
+        expectedCode.format,
+      );
     });
   });
 
@@ -420,13 +463,13 @@ void main() async {
 "job": "accountant"
 }''';
 
-  var headers = {
-                  "content-type": "application/json"
-                };
+  var headers = {'content-type': 'application/json'};
 
-  final response = await http.patch(uri,
-                                  headers: headers,
-                                  body: body);
+  final response = await http.patch(
+    uri,
+    headers: headers,
+    body: body,
+  );
 
   int statusCode = response.statusCode;
   if (statusCode >= 200 && statusCode < 300) {
@@ -440,7 +483,9 @@ void main() async {
 }
 """;
       expect(
-          dartHttpCodeGen.getCode(requestModelPatch1, "https"), expectedCode);
+        dartHttpCodeGen.getCode(requestModelPatch1, "https"),
+        expectedCode.format,
+      );
     });
   });
 
@@ -465,7 +510,9 @@ void main() async {
 }
 """;
       expect(
-          dartHttpCodeGen.getCode(requestModelDelete1, "https"), expectedCode);
+        dartHttpCodeGen.getCode(requestModelDelete1, "https"),
+        expectedCode.format,
+      );
     });
 
     test('DELETE 2', () {
@@ -479,13 +526,13 @@ void main() async {
 "job": "accountant"
 }''';
 
-  var headers = {
-                  "content-type": "application/json"
-                };
+  var headers = {'content-type': 'application/json'};
 
-  final response = await http.delete(uri,
-                                  headers: headers,
-                                  body: body);
+  final response = await http.delete(
+    uri,
+    headers: headers,
+    body: body,
+  );
 
   int statusCode = response.statusCode;
   if (statusCode >= 200 && statusCode < 300) {
@@ -499,7 +546,9 @@ void main() async {
 }
 """;
       expect(
-          dartHttpCodeGen.getCode(requestModelDelete2, "https"), expectedCode);
+        dartHttpCodeGen.getCode(requestModelDelete2, "https"),
+        expectedCode.format,
+      );
     });
   });
 }
