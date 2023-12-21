@@ -27,7 +27,6 @@ class DartHttpCodeGen {
       );
       return next;
     } catch (e) {
-      print(e);
       return null;
     }
   }
