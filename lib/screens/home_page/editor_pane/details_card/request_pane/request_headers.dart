@@ -126,13 +126,13 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
               onTap: () {
                 seed = random.nextInt(kRandMax);
                 if (rows.length == 1) {
-                  rows = [
-                    kNameValueEmptyModel,
-                  ];
-                  isRowEnabledList = [true];
+                  setState(() {
+                    rows = [kNameValueEmptyModel];
+                    isRowEnabledList = [true];
+                  });
                 } else {
-                  isRowEnabledList.removeAt(row.index);
                   rows.removeAt(row.index);
+                  isRowEnabledList.removeAt(row.index);
                 }
                 _onFieldChange(activeId!);
               },

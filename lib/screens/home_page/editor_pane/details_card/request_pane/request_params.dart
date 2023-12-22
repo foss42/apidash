@@ -128,13 +128,13 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
               onTap: () {
                 seed = random.nextInt(kRandMax);
                 if (rows.length == 1) {
-                  rows = [
-                    kNameValueEmptyModel,
-                  ];
-                  isRowEnabledList = [true];
+                  setState(() {
+                    rows = [kNameValueEmptyModel];
+                    isRowEnabledList = [true];
+                  });
                 } else {
-                  isRowEnabledList.removeAt(row.index);
                   rows.removeAt(row.index);
+                  isRowEnabledList.removeAt(row.index);
                 }
                 _onFieldChange(activeId!);
               },
@@ -168,10 +168,8 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
             padding: const EdgeInsets.only(bottom: 30),
             child: ElevatedButton.icon(
               onPressed: () {
-                setState(() {
-                  rows.add(kNameValueEmptyModel);
-                  isRowEnabledList.add(true);
-                });
+                rows.add(kNameValueEmptyModel);
+                isRowEnabledList.add(true);
                 _onFieldChange(activeId!);
               },
               icon: const Icon(Icons.add),
