@@ -27,9 +27,11 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
             padding: kPh20t40,
             shrinkWrap: true,
             children: [
-              Text("Settings",
-                  style: Theme.of(context).textTheme.headlineLarge),
-              const Divider(),
+              kIsDesktop
+                  ? Text("Settings",
+                      style: Theme.of(context).textTheme.headlineLarge)
+                  : const SizedBox.shrink(),
+              kIsDesktop ? const Divider() : const SizedBox.shrink(),
               SwitchListTile(
                 contentPadding: EdgeInsets.zero,
                 hoverColor: kColorTransparent,

@@ -62,7 +62,7 @@ Future<void> setupWindow({Size? sz, Offset? off, bool center = false}) async {
       minimumSize: kMinWindowSize,
       skipTaskbar: false,
       title: kWindowTitle,
-      titleBarStyle: kIsMacOS ? TitleBarStyle.hidden : null,
+      titleBarStyle: kIsMacOS || kIsWindows ? TitleBarStyle.hidden : null,
     );
     if (off != null) {
       await windowManager.setPosition(off);

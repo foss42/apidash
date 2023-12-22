@@ -16,6 +16,10 @@ final kIsApple = !kIsWeb && (Platform.isIOS || Platform.isMacOS);
 final kIsDesktop =
     !kIsWeb && (Platform.isMacOS || Platform.isWindows || Platform.isLinux);
 
+final kIsIOS = !kIsWeb && Platform.isIOS;
+final kIsAndroid = !kIsWeb && Platform.isAndroid;
+final kIsMobile = !kIsWeb && (Platform.isIOS || Platform.isAndroid);
+
 final kColorTransparentState =
     MaterialStateProperty.all<Color>(Colors.transparent);
 const kColorTransparent = Colors.transparent;
@@ -338,7 +342,7 @@ const Map<String, Map<String, List<ResponseBodyView>>>
   },
   kTypeImage: {
     kSubTypeDefaultViewOptions: kPreviewBodyViewOptions,
-    kSubTypeSvg: kCodeRawBodyViewOptions,
+    kSubTypeSvg: kPreviewRawBodyViewOptions,
   },
   kTypeAudio: {
     kSubTypeDefaultViewOptions: kPreviewBodyViewOptions,
@@ -454,6 +458,9 @@ const kUnexpectedRaiseIssue =
 
 const kImageError =
     "There seems to be an issue rendering this image. Please raise an issue in API Dash GitHub repo so that we can resolve it.";
+
+const kSvgError =
+    "There seems to be an issue rendering this SVG image. Please raise an issue in API Dash GitHub repo so that we can resolve it.";
 
 const kPdfError =
     "There seems to be an issue rendering this pdf. Please raise an issue in API Dash GitHub repo so that we can resolve it.";
