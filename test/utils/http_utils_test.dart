@@ -182,16 +182,15 @@ void main() {
           host: 'api.foss42.com',
           path: 'country/data',
           queryParameters: {'code': 'US'});
-      expect(getValidRequestUri(url1, [kvRow1], null), (uri1Expected, null));
+      expect(getValidRequestUri(url1, [kvRow1]), (uri1Expected, null));
     });
     test('Testing getValidRequestUri for null url value', () {
       const kvRow2 = NameValueModel(name: "code", value: "US");
-      expect(
-          getValidRequestUri(null, [kvRow2], null), (null, "URL is missing!"));
+      expect(getValidRequestUri(null, [kvRow2]), (null, "URL is missing!"));
     });
     test('Testing getValidRequestUri for empty url value', () {
       const kvRow3 = NameValueModel(name: "", value: "");
-      expect(getValidRequestUri("", [kvRow3], null), (null, "URL is missing!"));
+      expect(getValidRequestUri("", [kvRow3]), (null, "URL is missing!"));
     });
     test('Testing getValidRequestUri when https is not provided in url', () {
       String url4 = "api.foss42.com/country/data";
@@ -201,7 +200,7 @@ void main() {
           host: 'api.foss42.com',
           path: 'country/data',
           queryParameters: {'code': 'US'});
-      expect(getValidRequestUri(url4, [kvRow4], null), (uri4Expected, null));
+      expect(getValidRequestUri(url4, [kvRow4]), (uri4Expected, null));
     });
     test('Testing getValidRequestUri when url has fragment', () {
       String url5 = "https://dart.dev/guides/libraries/library-tour#numbers";
@@ -209,11 +208,11 @@ void main() {
           scheme: 'https',
           host: 'dart.dev',
           path: '/guides/libraries/library-tour');
-      expect(getValidRequestUri(url5, null, null), (uri5Expected, null));
+      expect(getValidRequestUri(url5, null), (uri5Expected, null));
     });
     test('Testing getValidRequestUri when uri scheme is not supported', () {
       String url5 = "mailto:someone@example.com";
-      expect(getValidRequestUri(url5, null, null),
+      expect(getValidRequestUri(url5, null),
           (null, "Unsupported URL Scheme (mailto)"));
     });
     test('Testing getValidRequestUri when query params in both url and kvrow',
@@ -225,7 +224,7 @@ void main() {
           host: 'api.foss42.com',
           path: 'country/data',
           queryParameters: {'code': 'US'});
-      expect(getValidRequestUri(url6, [kvRow6], null), (uri6Expected, null));
+      expect(getValidRequestUri(url6, [kvRow6]), (uri6Expected, null));
     });
     test('Testing getValidRequestUri when kvrow is null', () {
       String url7 = "api.foss42.com/country/data?code=US";
@@ -234,7 +233,7 @@ void main() {
           host: 'api.foss42.com',
           path: 'country/data',
           queryParameters: {'code': 'US'});
-      expect(getValidRequestUri(url7, null, null), (uri7Expected, null));
+      expect(getValidRequestUri(url7, null), (uri7Expected, null));
     });
   });
 

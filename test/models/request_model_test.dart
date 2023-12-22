@@ -106,9 +106,9 @@ void main() {
       'content-length': '18',
       'content-type': 'application/json; charset=utf-8'
     },
-    'enabledHeaders': null,
+    'isHeaderEnabledList': null,
     'requestParams': null,
-    'enabledParams': null,
+    'isParamEnabledList': null,
     "requestBodyContentType": 'json',
     "requestBody": '''{
 "text":"WORLD"

@@ -80,8 +80,7 @@ Map<String, dynamic> requestModelToHARJsonRequest(
 
   var rec = getValidRequestUri(
     requestModel.url,
-    requestModel.requestParams,
-    requestModel.enabledParams,
+    requestModel.enabledRequestParams,
     defaultUriScheme: defaultUriScheme,
   );
 
@@ -126,9 +125,9 @@ Map<String, dynamic> requestModelToHARJsonRequest(
       }
     }
 
-    var headersList = requestModel.requestHeaders;
+    var headersList = requestModel.enabledRequestHeaders;
     if (headersList != null || hasBody) {
-      var headers = requestModel.headersMap;
+      var headers = requestModel.enabledHeadersMap;
       if (headers.isNotEmpty || hasBody) {
         if (hasBody) {
           var m = {

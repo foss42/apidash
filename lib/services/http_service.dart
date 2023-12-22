@@ -12,13 +12,12 @@ Future<(http.Response?, Duration?, String?)> request(
 }) async {
   (Uri?, String?) uriRec = getValidRequestUri(
     requestModel.url,
-    requestModel.requestParams,
-    requestModel.enabledParams,
+    requestModel.enabledRequestParams,
     defaultUriScheme: defaultUriScheme,
   );
   if (uriRec.$1 != null) {
     Uri requestUrl = uriRec.$1!;
-    Map<String, String> headers = requestModel.headersMap;
+    Map<String, String> headers = requestModel.enabledHeadersMap;
     http.Response response;
     String? body;
     try {

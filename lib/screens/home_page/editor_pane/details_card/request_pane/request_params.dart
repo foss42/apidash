@@ -17,7 +17,7 @@ class EditRequestURLParams extends ConsumerStatefulWidget {
 
 class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
   late List<NameValueModel> rows;
-  late List<bool> enabledRows;
+  late List<bool> isRowEnabledList;
   final random = Random.secure();
   late int seed;
 
@@ -31,7 +31,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
     ref.read(collectionStateNotifierProvider.notifier).update(
           activeId,
           requestParams: rows,
-          enabledParams: enabledRows,
+          isParamEnabledList: isRowEnabledList,
         );
   }
 
@@ -46,8 +46,9 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
             kNameValueEmptyModel,
           ]
         : rP;
-    enabledRows = ref.read(activeRequestModelProvider)?.enabledParams ??
-        List.filled(rows.length, true, growable: true);
+    isRowEnabledList =
+        ref.read(activeRequestModelProvider)?.isParamEnabledList ??
+            List.filled(rows.length, true, growable: true);
 
     DaviModel<NameValueModel> model = DaviModel<NameValueModel>(
       rows: rows,
@@ -60,10 +61,10 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
 
             return CheckBox(
               keyId: "$activeId-$idx-params-c-$seed",
-              value: enabledRows[idx],
+              value: isRowEnabledList[idx],
               onChanged: (value) {
                 setState(() {
-                  enabledRows[idx] = value!;
+                  isRowEnabledList[idx] = value!;
                 });
                 _onFieldChange(activeId!);
               },
@@ -127,17 +128,13 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
               onTap: () {
                 seed = random.nextInt(kRandMax);
                 if (rows.length == 1) {
-                  setState(() {
-                    rows = [
-                      kNameValueEmptyModel,
-                    ];
-                    enabledRows = [true];
-                  });
+                  rows = [
+                    kNameValueEmptyModel,
+                  ];
+                  isRowEnabledList = [true];
                 } else {
-                  setState(() {
-                    enabledRows.removeAt(row.index);
-                    rows.removeAt(row.index);
-                  });
+                  isRowEnabledList.removeAt(row.index);
+                  rows.removeAt(row.index);
                 }
                 _onFieldChange(activeId!);
               },
@@ -173,7 +170,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
               onPressed: () {
                 setState(() {
                   rows.add(kNameValueEmptyModel);
-                  enabledRows.add(true);
+                  isRowEnabledList.add(true);
                 });
                 _onFieldChange(activeId!);
               },

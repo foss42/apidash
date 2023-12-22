@@ -73,8 +73,7 @@ print(data.decode("utf-8"))
       result += kTemplateStart;
       var rec = getValidRequestUri(
         url,
-        requestModel.requestParams,
-        requestModel.enabledParams,
+        requestModel.enabledRequestParams,
       );
       Uri? uri = rec.$1;
 
@@ -101,9 +100,9 @@ print(data.decode("utf-8"))
           }
         }
 
-        var headersList = requestModel.requestHeaders;
+        var headersList = requestModel.enabledRequestHeaders;
         if (headersList != null || hasBody) {
-          var headers = requestModel.headersMap;
+          var headers = requestModel.enabledHeadersMap;
           if (headers.isNotEmpty || hasBody) {
             hasHeaders = true;
             if (hasBody) {

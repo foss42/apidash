@@ -77,8 +77,7 @@ print('Response Body:', response.text)
 
       var rec = getValidRequestUri(
         url,
-        requestModel.requestParams,
-        requestModel.enabledParams,
+        requestModel.enabledRequestParams,
       );
       Uri? uri = rec.$1;
       if (uri != null) {
@@ -113,9 +112,9 @@ print('Response Body:', response.text)
           }
         }
 
-        var headersList = requestModel.requestHeaders;
+        var headersList = requestModel.enabledRequestHeaders;
         if (headersList != null || hasBody) {
-          var headers = requestModel.headersMap;
+          var headers = requestModel.enabledHeadersMap;
           if (headers.isNotEmpty || hasBody) {
             hasHeaders = true;
             if (hasBody) {
