@@ -1,7 +1,7 @@
-import 'dart:convert';
 import 'dart:typed_data';
-import 'package:apidash/consts.dart';
-import 'package:apidash/models/models.dart';
+import 'dart:convert';
+import '../models/models.dart';
+import '../consts.dart';
 import 'package:http/http.dart' as http;
 
 String humanizeDuration(Duration? duration) {

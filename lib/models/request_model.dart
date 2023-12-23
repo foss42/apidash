@@ -1,10 +1,7 @@
 import 'package:apidash/consts.dart';
-import 'package:apidash/models/form_data_model.dart';
 import 'package:apidash/utils/convert_utils.dart';
 import 'package:flutter/foundation.dart';
-
-import 'name_value_model.dart';
-import 'response_model.dart';
+import 'package:apidash/models/models.dart';
 
 @immutable
 class RequestModel {
