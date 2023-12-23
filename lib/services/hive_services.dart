@@ -48,9 +48,8 @@ class HiveHandler {
 
   dynamic getRequestModel(String id) => dataBox.get(id);
   Future<void> setRequestModel(
-      String id, Map<String, dynamic>? requestModelJson) {
-    return dataBox.put(id, requestModelJson);
-  }
+          String id, Map<String, dynamic>? requestModelJson) =>
+      dataBox.put(id, requestModelJson);
 
   Future<int> clear() => dataBox.clear();
 
