@@ -1,16 +1,7 @@
 import 'package:apidash/codegen/dart/http.dart';
-import 'package:dart_style/dart_style.dart';
 import 'package:test/test.dart';
+
 import '../request_models.dart';
-
-final _formatter = DartFormatter(fixes: [
-  StyleFix.singleCascadeStatements
-]);
-
-extension on String {
-  // format code before compare
-  String get format => _formatter.format(this);
-}
 
 void main() {
   final dartHttpCodeGen = DartHttpCodeGen();
@@ -28,17 +19,13 @@ void main() async {
   if (statusCode >= 200 && statusCode < 300) {
     print('Status Code: $statusCode');
     print('Response Body: ${response.body}');
-  }
-  else{
+  } else {
     print('Error Status Code: $statusCode');
     print('Error Response Body: ${response.body}');
   }
 }
 """;
-      expect(
-        dartHttpCodeGen.getCode(requestModelGet1, "https"),
-        expectedCode.format,
-      );
+      expect(dartHttpCodeGen.getCode(requestModelGet1, "https"), expectedCode);
     });
 
     test('GET 2', () {
@@ -56,26 +43,24 @@ void main() async {
   if (statusCode >= 200 && statusCode < 300) {
     print('Status Code: $statusCode');
     print('Response Body: ${response.body}');
-  }
-  else{
+  } else {
     print('Error Status Code: $statusCode');
     print('Error Response Body: ${response.body}');
   }
 }
 """;
-      expect(
-        dartHttpCodeGen.getCode(requestModelGet2, "https"),
-        expectedCode.format,
-      );
+
+      expect(dartHttpCodeGen.getCode(requestModelGet2, "https"), expectedCode);
     });
 
     test('GET 3', () {
       const expectedCode = r"""import 'package:http/http.dart' as http;
+
 void main() async {
   var uri = Uri.parse('https://api.foss42.com/country/data?code=US');
 
   var queryParams = {'code': 'IND'};
-  var urlQueryParams = Map<String,String>.from(uri.queryParameters);
+  var urlQueryParams = Map<String, String>.from(uri.queryParameters);
   urlQueryParams.addAll(queryParams);
   uri = uri.replace(queryParameters: urlQueryParams);
 
@@ -85,17 +70,13 @@ void main() async {
   if (statusCode >= 200 && statusCode < 300) {
     print('Status Code: $statusCode');
     print('Response Body: ${response.body}');
-  }
-  else{
+  } else {
     print('Error Status Code: $statusCode');
     print('Error Response Body: ${response.body}');
   }
 }
 """;
-      expect(
-        dartHttpCodeGen.getCode(requestModelGet3, "https"),
-        expectedCode.format,
-      );
+      expect(dartHttpCodeGen.getCode(requestModelGet3, "https"), expectedCode);
     });
 
     test('GET 4', () {
@@ -119,17 +100,13 @@ void main() async {
   if (statusCode >= 200 && statusCode < 300) {
     print('Status Code: $statusCode');
     print('Response Body: ${response.body}');
-  }
-  else{
+  } else {
     print('Error Status Code: $statusCode');
     print('Error Response Body: ${response.body}');
   }
 }
 """;
-      expect(
-        dartHttpCodeGen.getCode(requestModelGet4, "https"),
-        expectedCode.format,
-      );
+      expect(dartHttpCodeGen.getCode(requestModelGet4, "https"), expectedCode);
     });
 
     test('GET 5', () {
@@ -149,17 +126,13 @@ void main() async {
   if (statusCode >= 200 && statusCode < 300) {
     print('Status Code: $statusCode');
     print('Response Body: ${response.body}');
-  }
-  else{
+  } else {
     print('Error Status Code: $statusCode');
     print('Error Response Body: ${response.body}');
   }
 }
 """;
-      expect(
-        dartHttpCodeGen.getCode(requestModelGet5, "https"),
-        expectedCode.format,
-      );
+      expect(dartHttpCodeGen.getCode(requestModelGet5, "https"), expectedCode);
     });
 
     test('GET 6', () {
@@ -182,17 +155,13 @@ void main() async {
   if (statusCode >= 200 && statusCode < 300) {
     print('Status Code: $statusCode');
     print('Response Body: ${response.body}');
-  }
-  else{
+  } else {
     print('Error Status Code: $statusCode');
     print('Error Response Body: ${response.body}');
   }
 }
 """;
-      expect(
-        dartHttpCodeGen.getCode(requestModelGet6, "https"),
-        expectedCode.format,
-      );
+      expect(dartHttpCodeGen.getCode(requestModelGet6, "https"), expectedCode);
     });
 
     test('GET 7', () {
@@ -207,17 +176,13 @@ void main() async {
   if (statusCode >= 200 && statusCode < 300) {
     print('Status Code: $statusCode');
     print('Response Body: ${response.body}');
-  }
-  else{
+  } else {
     print('Error Status Code: $statusCode');
     print('Error Response Body: ${response.body}');
   }
 }
 """;
-      expect(
-        dartHttpCodeGen.getCode(requestModelGet7, "https"),
-        expectedCode.format,
-      );
+      expect(dartHttpCodeGen.getCode(requestModelGet7, "https"), expectedCode);
     });
 
     test('GET 8', () {
@@ -240,17 +205,13 @@ void main() async {
   if (statusCode >= 200 && statusCode < 300) {
     print('Status Code: $statusCode');
     print('Response Body: ${response.body}');
-  }
-  else{
+  } else {
     print('Error Status Code: $statusCode');
     print('Error Response Body: ${response.body}');
   }
 }
 """;
-      expect(
-        dartHttpCodeGen.getCode(requestModelGet8, "https"),
-        expectedCode.format,
-      );
+      expect(dartHttpCodeGen.getCode(requestModelGet8, "https"), expectedCode);
     });
   });
 
@@ -267,17 +228,13 @@ void main() async {
   if (statusCode >= 200 && statusCode < 300) {
     print('Status Code: $statusCode');
     print('Response Body: ${response.body}');
-  }
-  else{
+  } else {
     print('Error Status Code: $statusCode');
     print('Error Response Body: ${response.body}');
   }
 }
 """;
-      expect(
-        dartHttpCodeGen.getCode(requestModelHead1, "https"),
-        expectedCode.format,
-      );
+      expect(dartHttpCodeGen.getCode(requestModelHead1, "https"), expectedCode);
     });
 
     test('HEAD 2', () {
@@ -292,15 +249,13 @@ void main() async {
   if (statusCode >= 200 && statusCode < 300) {
     print('Status Code: $statusCode');
     print('Response Body: ${response.body}');
-  }
-  else{
+  } else {
     print('Error Status Code: $statusCode');
     print('Error Response Body: ${response.body}');
   }
 }
 """;
-      expect(dartHttpCodeGen.getCode(requestModelHead2, "http"),
-          expectedCode.format);
+      expect(dartHttpCodeGen.getCode(requestModelHead2, "http"), expectedCode);
     });
   });
 
@@ -327,17 +282,13 @@ void main() async {
   if (statusCode >= 200 && statusCode < 300) {
     print('Status Code: $statusCode');
     print('Response Body: ${response.body}');
-  }
-  else{
+  } else {
     print('Error Status Code: $statusCode');
     print('Error Response Body: ${response.body}');
   }
 }
 """;
-      expect(
-        dartHttpCodeGen.getCode(requestModelPost1, "https"),
-        expectedCode.format,
-      );
+      expect(dartHttpCodeGen.getCode(requestModelPost1, "https"), expectedCode);
     });
 
     test('POST 2', () {
@@ -362,17 +313,13 @@ void main() async {
   if (statusCode >= 200 && statusCode < 300) {
     print('Status Code: $statusCode');
     print('Response Body: ${response.body}');
-  }
-  else{
+  } else {
     print('Error Status Code: $statusCode');
     print('Error Response Body: ${response.body}');
   }
 }
 """;
-      expect(
-        dartHttpCodeGen.getCode(requestModelPost2, "https"),
-        expectedCode.format,
-      );
+      expect(dartHttpCodeGen.getCode(requestModelPost2, "https"), expectedCode);
     });
 
     test('POST 3', () {
@@ -400,17 +347,13 @@ void main() async {
   if (statusCode >= 200 && statusCode < 300) {
     print('Status Code: $statusCode');
     print('Response Body: ${response.body}');
-  }
-  else{
+  } else {
     print('Error Status Code: $statusCode');
     print('Error Response Body: ${response.body}');
   }
 }
 """;
-      expect(
-        dartHttpCodeGen.getCode(requestModelPost3, "https"),
-        expectedCode.format,
-      );
+      expect(dartHttpCodeGen.getCode(requestModelPost3, "https"), expectedCode);
     });
   });
   group('PUT Request', () {
@@ -437,17 +380,13 @@ void main() async {
   if (statusCode >= 200 && statusCode < 300) {
     print('Status Code: $statusCode');
     print('Response Body: ${response.body}');
-  }
-  else{
+  } else {
     print('Error Status Code: $statusCode');
     print('Error Response Body: ${response.body}');
   }
 }
 """;
-      expect(
-        dartHttpCodeGen.getCode(requestModelPut1, "https"),
-        expectedCode.format,
-      );
+      expect(dartHttpCodeGen.getCode(requestModelPut1, "https"), expectedCode);
     });
   });
 
@@ -475,17 +414,14 @@ void main() async {
   if (statusCode >= 200 && statusCode < 300) {
     print('Status Code: $statusCode');
     print('Response Body: ${response.body}');
-  }
-  else{
+  } else {
     print('Error Status Code: $statusCode');
     print('Error Response Body: ${response.body}');
   }
 }
 """;
       expect(
-        dartHttpCodeGen.getCode(requestModelPatch1, "https"),
-        expectedCode.format,
-      );
+          dartHttpCodeGen.getCode(requestModelPatch1, "https"), expectedCode);
     });
   });
 
@@ -502,17 +438,14 @@ void main() async {
   if (statusCode >= 200 && statusCode < 300) {
     print('Status Code: $statusCode');
     print('Response Body: ${response.body}');
-  }
-  else{
+  } else {
     print('Error Status Code: $statusCode');
     print('Error Response Body: ${response.body}');
   }
 }
 """;
       expect(
-        dartHttpCodeGen.getCode(requestModelDelete1, "https"),
-        expectedCode.format,
-      );
+          dartHttpCodeGen.getCode(requestModelDelete1, "https"), expectedCode);
     });
 
     test('DELETE 2', () {
@@ -538,17 +471,14 @@ void main() async {
   if (statusCode >= 200 && statusCode < 300) {
     print('Status Code: $statusCode');
     print('Response Body: ${response.body}');
-  }
-  else{
+  } else {
     print('Error Status Code: $statusCode');
     print('Error Response Body: ${response.body}');
   }
 }
 """;
       expect(
-        dartHttpCodeGen.getCode(requestModelDelete2, "https"),
-        expectedCode.format,
-      );
+          dartHttpCodeGen.getCode(requestModelDelete2, "https"), expectedCode);
     });
   });
 }

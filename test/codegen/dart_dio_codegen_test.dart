@@ -1,16 +1,7 @@
 import 'package:apidash/codegen/dart/dio.dart';
-import 'package:dart_style/dart_style.dart';
 import 'package:test/test.dart';
+
 import '../request_models.dart';
-
-final _formatter = DartFormatter(fixes: [
-  StyleFix.singleCascadeStatements
-]);
-
-extension on String {
-  // format code before compare
-  String get format => _formatter.format(this);
-}
 
 void main() {
   final dartDioCodeGen = DartDioCodeGen();
@@ -34,10 +25,7 @@ void main() async {
   }
 }
 """;
-      expect(
-        dartDioCodeGen.getCode(requestModelGet1, "https"),
-        expectedCode.format,
-      );
+      expect(dartDioCodeGen.getCode(requestModelGet1, "https"), expectedCode);
     });
 
     test('GET 2', () {
@@ -62,10 +50,7 @@ void main() async {
   }
 }
 """;
-      expect(
-        dartDioCodeGen.getCode(requestModelGet2, "https"),
-        expectedCode.format,
-      );
+      expect(dartDioCodeGen.getCode(requestModelGet2, "https"), expectedCode);
     });
 
     test('GET 3', () {
@@ -90,10 +75,7 @@ void main() async {
   }
 }
 """;
-      expect(
-        dartDioCodeGen.getCode(requestModelGet3, "https"),
-        expectedCode.format,
-      );
+      expect(dartDioCodeGen.getCode(requestModelGet3, "https"), expectedCode);
     });
 
     test('GET 4', () {
@@ -102,11 +84,11 @@ void main() async {
 void main() async {
   try {
     final queryParams = {
-    'num': '8700000',
-    'digits': '3',
-    'system': 'SS',
-    'add_space': 'true',
-    'trailing_zeros': 'true',
+      'num': '8700000',
+      'digits': '3',
+      'system': 'SS',
+      'add_space': 'true',
+      'trailing_zeros': 'true',
     };
     final response = await dio.Dio.get(
       'https://api.foss42.com/humanize/social',
@@ -124,10 +106,7 @@ void main() async {
   }
 }
 """;
-      expect(
-        dartDioCodeGen.getCode(requestModelGet4, "https"),
-        expectedCode.format,
-      );
+      expect(dartDioCodeGen.getCode(requestModelGet4, "https"), expectedCode);
     });
 
     test('GET 5', () {
@@ -152,10 +131,7 @@ void main() async {
   }
 }
 """;
-      expect(
-        dartDioCodeGen.getCode(requestModelGet5, "https"),
-        expectedCode.format,
-      );
+      expect(dartDioCodeGen.getCode(requestModelGet5, "https"), expectedCode);
     });
 
     test('GET 6', () {
@@ -182,10 +158,7 @@ void main() async {
   }
 }
 """;
-      expect(
-        dartDioCodeGen.getCode(requestModelGet6, "https"),
-        expectedCode.format,
-      );
+      expect(dartDioCodeGen.getCode(requestModelGet6, "https"), expectedCode);
     });
 
     test('GET 7', () {
@@ -206,10 +179,7 @@ void main() async {
   }
 }
 """;
-      expect(
-        dartDioCodeGen.getCode(requestModelGet7, "https"),
-        expectedCode.format,
-      );
+      expect(dartDioCodeGen.getCode(requestModelGet7, "https"), expectedCode);
     });
 
     test('GET 8', () {
@@ -236,10 +206,7 @@ void main() async {
   }
 }
 """;
-      expect(
-        dartDioCodeGen.getCode(requestModelGet8, "https"),
-        expectedCode.format,
-      );
+      expect(dartDioCodeGen.getCode(requestModelGet8, "https"), expectedCode);
     });
   });
 
@@ -262,10 +229,7 @@ void main() async {
   }
 }
 """;
-      expect(
-        dartDioCodeGen.getCode(requestModelHead1, "https"),
-        expectedCode.format,
-      );
+      expect(dartDioCodeGen.getCode(requestModelHead1, "https"), expectedCode);
     });
 
     test('HEAD 2', () {
@@ -286,8 +250,7 @@ void main() async {
   }
 }
 """;
-      expect(dartDioCodeGen.getCode(requestModelHead2, "http"),
-          expectedCode.format);
+      expect(dartDioCodeGen.getCode(requestModelHead2, "http"), expectedCode);
     });
   });
 
@@ -297,7 +260,7 @@ void main() async {
 
 void main() async {
   try {
-      final data = r'''{
+    final data = r'''{
 "text": "I LOVE Flutter"
 }''';
     final response = await dio.Dio.post(
@@ -316,10 +279,7 @@ void main() async {
   }
 }
 """;
-      expect(
-        dartDioCodeGen.getCode(requestModelPost1, "https"),
-        expectedCode.format,
-      );
+      expect(dartDioCodeGen.getCode(requestModelPost1, "https"), expectedCode);
     });
 
     test('POST 2', () {
@@ -347,10 +307,7 @@ void main() async {
   }
 }
 """;
-      expect(
-        dartDioCodeGen.getCode(requestModelPost2, "https"),
-        expectedCode.format,
-      );
+      expect(dartDioCodeGen.getCode(requestModelPost2, "https"), expectedCode);
     });
 
     test('POST 3', () {
@@ -380,10 +337,7 @@ void main() async {
   }
 }
 """;
-      expect(
-        dartDioCodeGen.getCode(requestModelPost3, "https"),
-        expectedCode.format,
-      );
+      expect(dartDioCodeGen.getCode(requestModelPost3, "https"), expectedCode);
     });
   });
   group('PUT Request', () {
@@ -413,10 +367,7 @@ void main() async {
   }
 }
 """;
-      expect(
-        dartDioCodeGen.getCode(requestModelPut1, "https"),
-        expectedCode.format,
-      );
+      expect(dartDioCodeGen.getCode(requestModelPut1, "https"), expectedCode);
     });
   });
 
@@ -447,10 +398,7 @@ void main() async {
   }
 }
 """;
-      expect(
-        dartDioCodeGen.getCode(requestModelPatch1, "https"),
-        expectedCode.format,
-      );
+      expect(dartDioCodeGen.getCode(requestModelPatch1, "https"), expectedCode);
     });
   });
 
@@ -474,9 +422,7 @@ void main() async {
 }
 """;
       expect(
-        dartDioCodeGen.getCode(requestModelDelete1, "https"),
-        expectedCode.format,
-      );
+          dartDioCodeGen.getCode(requestModelDelete1, "https"), expectedCode);
     });
 
     test('DELETE 2', () {
@@ -506,9 +452,7 @@ void main() async {
 }
 """;
       expect(
-        dartDioCodeGen.getCode(requestModelDelete2, "https"),
-        expectedCode.format,
-      );
+          dartDioCodeGen.getCode(requestModelDelete2, "https"), expectedCode);
     });
   });
 }
