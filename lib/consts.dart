@@ -1,10 +1,9 @@
-import 'dart:convert';
 import 'dart:io';
-
-import 'package:davi/davi.dart';
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:davi/davi.dart';
 
 const kDiscordUrl = "https://bit.ly/heyfoss";
 const kGitUrl = "https://github.com/foss42/apidash";
@@ -49,6 +48,10 @@ const kHintOpacity = 0.6;
 const kForegroundOpacity = 0.05;
 
 const kTextStyleButton = TextStyle(fontWeight: FontWeight.bold);
+const kFormDataButton = TextStyle(
+  fontSize: 12,
+  fontWeight: FontWeight.w600,
+);
 
 const kBorderRadius8 = BorderRadius.all(Radius.circular(8));
 final kBorderRadius10 = BorderRadius.circular(10);
@@ -74,7 +77,7 @@ const kPh60 = EdgeInsets.symmetric(horizontal: 60);
 const kP24CollectionPane = EdgeInsets.only(top: 24, left: 8.0, bottom: 8.0);
 const kP8CollectionPane = EdgeInsets.only(top: 8.0, left: 8.0, bottom: 8.0);
 const kPr8CollectionPane = EdgeInsets.only(right: 8.0);
-
+const kpsV5 = EdgeInsets.symmetric(vertical: 2);
 const kHSpacer4 = SizedBox(width: 4);
 const kHSpacer5 = SizedBox(width: 5);
 const kHSpacer10 = SizedBox(width: 10);
@@ -299,14 +302,6 @@ const kContentTypeMap = {
   ContentType.json: "$kTypeApplication/$kSubTypeJson",
   ContentType.text: "$kTypeText/$kSubTypePlain",
   ContentType.formdata: "multipart/form-data",
-};
-const kFormDataTypeMap = {
-  FormDataType.file: "file",
-  FormDataType.text: "text",
-};
-const kMapFormDataType = {
-  "file": FormDataType.file,
-  "text": FormDataType.text,
 };
 
 enum ResponseBodyView { preview, code, raw, none }

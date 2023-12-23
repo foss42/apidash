@@ -27,10 +27,8 @@ class FormDataField extends StatefulWidget {
 }
 
 class _FormDataFieldState extends State<FormDataField> {
-  TextEditingController valueController = TextEditingController();
   @override
   void initState() {
-    valueController.text = widget.initialValue ?? "";
     super.initState();
   }
 
@@ -42,45 +40,41 @@ class _FormDataFieldState extends State<FormDataField> {
         Expanded(
           flex: 1,
           child: TextFormField(
-            controller: valueController,
+            initialValue: widget.initialValue,
             key: Key(widget.keyId),
             style: kCodeStyle.copyWith(
               color: colorScheme.onSurface,
             ),
             decoration: InputDecoration(
-              hintStyle: kCodeStyle.copyWith(
-                color: colorScheme.outline.withOpacity(
-                  kHintOpacity,
-                ),
-              ),
-              hintText: widget.hintText,
-              focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(
-                  color: colorScheme.primary.withOpacity(
+                hintStyle: kCodeStyle.copyWith(
+                  color: colorScheme.outline.withOpacity(
                     kHintOpacity,
                   ),
                 ),
-              ),
-              enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(
-                  color: colorScheme.surfaceVariant,
+                hintText: widget.hintText,
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    color: colorScheme.primary.withOpacity(
+                      kHintOpacity,
+                    ),
+                  ),
                 ),
-              ),
-            ),
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    color: colorScheme.surfaceVariant,
+                  ),
+                ),
+                suffixIcon: DropdownButtonFormData(
+                  formDataType: widget.formDataType,
+                  onChanged: (p0) {
+                    if (widget.onFormDataTypeChanged != null) {
+                      widget.onFormDataTypeChanged!(p0);
+                    }
+                  },
+                )),
             onChanged: widget.onChanged,
           ),
         ),
-        Expanded(
-          child: DropdownButtonFormData(
-            formDataType: widget.formDataType,
-            onChanged: (p0) {
-              if (widget.onFormDataTypeChanged != null) {
-                widget.onFormDataTypeChanged!(p0);
-                valueController.clear();
-              }
-            },
-          ),
-        )
       ],
     );
   }

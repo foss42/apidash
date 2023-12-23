@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:apidash/consts.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/form_data_widget.dart';
@@ -15,12 +13,9 @@ class EditRequestBody extends ConsumerStatefulWidget {
 }
 
 class _EditRequestBodyState extends ConsumerState<EditRequestBody> {
-  final random = Random.secure();
-  late int seed;
   @override
   void initState() {
     super.initState();
-    seed = random.nextInt(kRandMax);
   }
 
   @override
@@ -54,12 +49,7 @@ class _EditRequestBodyState extends ConsumerState<EditRequestBody> {
           ),
           Expanded(
             child: requestBodyStateWatcher == ContentType.formdata
-                ? FormDataWidget(
-                    seed: seed,
-                    onFormDataRemove: () {
-                      seed = random.nextInt(kRandMax);
-                    },
-                  )
+                ? const FormDataWidget()
                 : TextFieldEditor(
                     key: Key("$activeId-body"),
                     fieldKey: "$activeId-body-editor",

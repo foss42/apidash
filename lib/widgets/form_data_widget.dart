@@ -1,5 +1,7 @@
+import 'dart:math';
 import 'package:apidash/consts.dart';
 import 'package:apidash/models/form_data_model.dart';
+import 'package:apidash/models/models.dart';
 import 'package:apidash/providers/collection_providers.dart';
 import 'package:apidash/widgets/form_data_field.dart';
 import 'package:apidash/widgets/textfields.dart';
@@ -9,43 +11,48 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class FormDataWidget extends ConsumerStatefulWidget {
-  const FormDataWidget({
-    super.key,
-    required this.seed,
-    required this.onFormDataRemove,
-  });
-  final int seed;
-  final Function onFormDataRemove;
+  const FormDataWidget({super.key});
   @override
   ConsumerState<FormDataWidget> createState() => _FormDataBodyState();
 }
 
 class _FormDataBodyState extends ConsumerState<FormDataWidget> {
+  late int seed;
+  final random = Random.secure();
+  late List<FormDataModel> rows;
+  @override
+  void initState() {
+    super.initState();
+    seed = random.nextInt(kRandMax);
+  }
+
   @override
   Widget build(BuildContext context) {
     final activeId = ref.watch(activeIdStateProvider);
-    final requestModel = ref
-        .read(collectionStateNotifierProvider.notifier)
-        .getRequestModel(activeId!);
-    List<FormDataModel> rows = requestModel?.formDataList ?? [];
-    DaviModel<FormDataModel> model = DaviModel<FormDataModel>(
+    var formRows = ref.read(activeRequestModelProvider)?.formDataList;
+    rows =
+        formRows == null || formRows.isEmpty ? [kFormDataEmptyModel] : formRows;
+
+    DaviModel<FormDataModel> daviModelRows = DaviModel<FormDataModel>(
       rows: rows,
       columns: [
         DaviColumn(
+          cellPadding: kpsV5,
           name: 'Key',
           grow: 1,
           cellBuilder: (_, row) {
             int idx = row.index;
-            return SizedBox(
+            return Theme(
+              data: Theme.of(context),
               child: FormDataField(
-                keyId: "$activeId-$idx-form-v-${widget.seed}",
+                keyId: "$activeId-$idx-form-v-$seed",
                 initialValue: rows[idx].name,
                 hintText: " Key",
                 onChanged: (value) {
                   rows[idx] = rows[idx].copyWith(
                     name: value,
                   );
-                  _onFieldChange(activeId);
+                  _onFieldChange(activeId!);
                 },
                 colorScheme: Theme.of(context).colorScheme,
                 formDataType: rows[idx].type,
@@ -54,7 +61,8 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                     type: value ?? FormDataType.text,
                   );
                   rows[idx] = rows[idx].copyWith(value: "");
-                  _onFieldChange(activeId);
+                  setState(() {});
+                  _onFieldChange(activeId!);
                 },
               ),
             );
@@ -62,7 +70,9 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
           sortable: false,
         ),
         DaviColumn(
-          width: 10,
+          width: 30,
+          cellPadding: kpsV5,
+          cellAlignment: Alignment.center,
           cellBuilder: (_, row) {
             return Text(
               "=",
@@ -73,6 +83,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
         DaviColumn(
           name: 'Value',
           grow: 4,
+          cellPadding: kpsV5,
           cellBuilder: (_, row) {
             int idx = row.index;
             return rows[idx].type == FormDataType.file
@@ -83,36 +94,35 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                       child: Row(
                         children: [
                           Expanded(
-                            child: ElevatedButtonTheme(
-                              data: const ElevatedButtonThemeData(),
+                            child: Theme(
+                              data: Theme.of(context),
                               child: ElevatedButton.icon(
+                                icon: const Icon(
+                                  Icons.snippet_folder_rounded,
+                                  size: 20,
+                                ),
+                                style: const ButtonStyle(),
                                 onPressed: () async {
                                   FilePickerResult? pickedResult =
                                       await FilePicker.platform.pickFiles();
                                   if (pickedResult != null &&
-                                      pickedResult.files.isNotEmpty) {
+                                      pickedResult.files.isNotEmpty &&
+                                      pickedResult.files.first.path != null) {
                                     rows[idx] = rows[idx].copyWith(
-                                      value: pickedResult.files.first.path,
+                                      value: pickedResult.files.first.path!,
                                     );
-                                    _onFieldChange(activeId);
+                                    setState(() {});
+                                    _onFieldChange(activeId!);
                                   }
                                 },
-                                icon: const Icon(
-                                  Icons.snippet_folder_rounded,
-                                  size: 18,
-                                ),
                                 label: Text(
-                                  rows[idx].type == FormDataType.file
-                                      ? (rows[idx].value != null
-                                          ? rows[idx].value.toString()
-                                          : "Select File")
+                                  (rows[idx].type == FormDataType.file &&
+                                          rows[idx].value.isNotEmpty)
+                                      ? rows[idx].value.toString()
                                       : "Select File",
                                   textAlign: TextAlign.center,
                                   overflow: TextOverflow.ellipsis,
-                                  style: kTextStyleButton.copyWith(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
-                                  ),
+                                  style: kFormDataButton,
                                 ),
                               ),
                             ),
@@ -122,12 +132,12 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                     ),
                   )
                 : CellField(
-                    keyId: "$activeId-$idx-form-v-${widget.seed}",
+                    keyId: "$activeId-$idx-form-v-$seed",
                     initialValue: rows[idx].value,
                     hintText: " Value",
                     onChanged: (value) {
                       rows[idx] = rows[idx].copyWith(value: value);
-                      _onFieldChange(activeId);
+                      _onFieldChange(activeId!);
                     },
                     colorScheme: Theme.of(context).colorScheme,
                   );
@@ -143,17 +153,16 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                   ? kIconRemoveDark
                   : kIconRemoveLight,
               onTap: () {
-                widget.onFormDataRemove();
+                seed = random.nextInt(kRandMax);
                 if (rows.length == 1) {
                   setState(() {
-                    rows = [
-                      kFormDataEmptyModel,
-                    ];
+                    rows = [kFormDataEmptyModel];
                   });
                 } else {
                   rows.removeAt(row.index);
                 }
-                _onFieldChange(activeId);
+                _onFieldChange(activeId!);
+                setState(() {});
               },
             );
           },
@@ -173,7 +182,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
               Expanded(
                 child: DaviTheme(
                   data: kTableThemeData,
-                  child: Davi<FormDataModel>(model),
+                  child: Davi<FormDataModel>(daviModelRows),
                 ),
               ),
             ],
@@ -185,8 +194,10 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
             padding: const EdgeInsets.only(bottom: 30),
             child: ElevatedButton.icon(
               onPressed: () {
-                rows.add(kFormDataEmptyModel);
-                _onFieldChange(activeId);
+                setState(() {
+                  rows.add(kFormDataEmptyModel);
+                });
+                _onFieldChange(activeId!);
               },
               icon: const Icon(Icons.add),
               label: const Text(
@@ -201,12 +212,9 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
   }
 
   void _onFieldChange(String activeId) {
-    List<FormDataModel> formDataList =
-        ref.read(collectionStateNotifierProvider)?[activeId]?.formDataList ??
-            [];
     ref.read(collectionStateNotifierProvider.notifier).update(
           activeId,
-          formDataList: formDataList,
+          formDataList: rows,
         );
   }
 }

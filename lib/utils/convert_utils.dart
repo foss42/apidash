@@ -1,11 +1,8 @@
 import 'dart:convert';
 import 'dart:typed_data';
-
-import 'package:apidash/models/form_data_model.dart';
+import 'package:apidash/consts.dart';
+import 'package:apidash/models/models.dart';
 import 'package:http/http.dart' as http;
-
-import '../consts.dart';
-import '../models/models.dart';
 
 String humanizeDuration(Duration? duration) {
   if (duration == null) {
@@ -113,14 +110,22 @@ List<FormDataModel>? listToFormDataModel(List? kvMap) {
   if (kvMap == null) {
     return null;
   }
-  List<FormDataModel> finalRows = kvMap
-      .map((formData) => FormDataModel(
-            name: formData["name"],
-            value: formData["value"],
-            type: kMapFormDataType[formData["type"]] ?? FormDataType.text,
-          ))
-      .toList();
+  List<FormDataModel> finalRows = kvMap.map(
+    (formData) {
+      return FormDataModel(
+        name: formData["name"],
+        value: formData["value"],
+        type: getFormDataType(formData["type"]),
+      );
+    },
+  ).toList();
   return finalRows;
+}
+
+FormDataType getFormDataType(String? type) {
+  List<FormDataType> formData = FormDataType.values;
+  return formData.firstWhere((element) => element.name == type,
+      orElse: () => FormDataType.text);
 }
 
 Uint8List? stringToBytes(String? text) {

@@ -21,7 +21,7 @@ FormDataModel _$FormDataModelFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$FormDataModel {
   String get name => throw _privateConstructorUsedError;
-  dynamic get value => throw _privateConstructorUsedError;
+  String get value => throw _privateConstructorUsedError;
   FormDataType get type => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -36,7 +36,7 @@ abstract class $FormDataModelCopyWith<$Res> {
           FormDataModel value, $Res Function(FormDataModel) then) =
       _$FormDataModelCopyWithImpl<$Res, FormDataModel>;
   @useResult
-  $Res call({String name, dynamic value, FormDataType type});
+  $Res call({String name, String value, FormDataType type});
 }
 
 /// @nodoc
@@ -53,7 +53,7 @@ class _$FormDataModelCopyWithImpl<$Res, $Val extends FormDataModel>
   @override
   $Res call({
     Object? name = null,
-    Object? value = freezed,
+    Object? value = null,
     Object? type = null,
   }) {
     return _then(_value.copyWith(
@@ -61,10 +61,10 @@ class _$FormDataModelCopyWithImpl<$Res, $Val extends FormDataModel>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
-      value: freezed == value
+      value: null == value
           ? _value.value
           : value // ignore: cast_nullable_to_non_nullable
-              as dynamic,
+              as String,
       type: null == type
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
@@ -81,7 +81,7 @@ abstract class _$$FormDataModelImplCopyWith<$Res>
       __$$FormDataModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String name, dynamic value, FormDataType type});
+  $Res call({String name, String value, FormDataType type});
 }
 
 /// @nodoc
@@ -96,7 +96,7 @@ class __$$FormDataModelImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? name = null,
-    Object? value = freezed,
+    Object? value = null,
     Object? type = null,
   }) {
     return _then(_$FormDataModelImpl(
@@ -104,10 +104,10 @@ class __$$FormDataModelImplCopyWithImpl<$Res>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
-      value: freezed == value
+      value: null == value
           ? _value.value
           : value // ignore: cast_nullable_to_non_nullable
-              as dynamic,
+              as String,
       type: null == type
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
@@ -128,7 +128,7 @@ class _$FormDataModelImpl implements _FormDataModel {
   @override
   final String name;
   @override
-  final dynamic value;
+  final String value;
   @override
   final FormDataType type;
 
@@ -143,14 +143,13 @@ class _$FormDataModelImpl implements _FormDataModel {
         (other.runtimeType == runtimeType &&
             other is _$FormDataModelImpl &&
             (identical(other.name, name) || other.name == name) &&
-            const DeepCollectionEquality().equals(other.value, value) &&
+            (identical(other.value, value) || other.value == value) &&
             (identical(other.type, type) || other.type == type));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, name, const DeepCollectionEquality().hash(value), type);
+  int get hashCode => Object.hash(runtimeType, name, value, type);
 
   @JsonKey(ignore: true)
   @override
@@ -169,7 +168,7 @@ class _$FormDataModelImpl implements _FormDataModel {
 abstract class _FormDataModel implements FormDataModel {
   const factory _FormDataModel(
       {required final String name,
-      required final dynamic value,
+      required final String value,
       required final FormDataType type}) = _$FormDataModelImpl;
 
   factory _FormDataModel.fromJson(Map<String, dynamic> json) =
@@ -178,7 +177,7 @@ abstract class _FormDataModel implements FormDataModel {
   @override
   String get name;
   @override
-  dynamic get value;
+  String get value;
   @override
   FormDataType get type;
   @override

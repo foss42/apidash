@@ -9,7 +9,7 @@ part of 'form_data_model.dart';
 _$FormDataModelImpl _$$FormDataModelImplFromJson(Map<String, dynamic> json) =>
     _$FormDataModelImpl(
       name: json['name'] as String,
-      value: json['value'],
+      value: json['value'] as String,
       type: $enumDecode(_$FormDataTypeEnumMap, json['type']),
     );
 

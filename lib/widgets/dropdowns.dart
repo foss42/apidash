@@ -129,6 +129,7 @@ class _DropdownButtonFormData extends State<DropdownButtonFormData> {
   Widget build(BuildContext context) {
     final surfaceColor = Theme.of(context).colorScheme.surface;
     return DropdownButton<FormDataType>(
+      dropdownColor: surfaceColor,
       focusColor: surfaceColor,
       value: widget.formDataType,
       icon: const Icon(
