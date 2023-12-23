@@ -2,6 +2,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter/foundation.dart';
 
 part 'name_value_model.freezed.dart';
+
 part 'name_value_model.g.dart';
 
 @freezed
