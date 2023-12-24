@@ -7,6 +7,10 @@ import 'package:path_provider/path_provider.dart';
 
 const uuid = Uuid();
 
+String getNewUuid() {
+  return uuid.v1();
+}
+
 String? getFileExtension(String? mimeType) {
   if (mimeType == null) {
     return null;
