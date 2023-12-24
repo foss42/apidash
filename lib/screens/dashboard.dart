@@ -6,16 +6,11 @@ import 'home_page/home_page.dart';
 import 'intro_page.dart';
 import 'settings_page.dart';
 
-class Dashboard extends ConsumerStatefulWidget {
+class Dashboard extends ConsumerWidget {
   const Dashboard({super.key});
 
   @override
-  ConsumerState<Dashboard> createState() => _DashboardState();
-}
-
-class _DashboardState extends ConsumerState<Dashboard> {
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final railIdx = ref.watch(navRailIndexStateProvider);
     return Scaffold(
       body: SafeArea(
@@ -50,13 +45,13 @@ class _DashboardState extends ConsumerState<Dashboard> {
                     children: [
                       Padding(
                         padding: const EdgeInsets.only(bottom: 16.0),
-                        child: bottomButton(context, railIdx, 1, Icons.help,
-                            Icons.help_outline),
+                        child: bottomButton(context, ref, railIdx, 1,
+                            Icons.help, Icons.help_outline),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(bottom: 16.0),
-                        child: bottomButton(context, railIdx, 2, Icons.settings,
-                            Icons.settings_outlined),
+                        child: bottomButton(context, ref, railIdx, 2,
+                            Icons.settings, Icons.settings_outlined),
                       ),
                     ],
                   ),
@@ -99,6 +94,7 @@ class _DashboardState extends ConsumerState<Dashboard> {
 
   TextButton bottomButton(
     BuildContext context,
+    WidgetRef ref,
     int railIdx,
     int buttonIdx,
     IconData selectedIcon,
