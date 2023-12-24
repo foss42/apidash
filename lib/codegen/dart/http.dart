@@ -1,147 +1,163 @@
 import 'dart:io';
-import 'dart:convert';
-import 'package:jinja/jinja.dart' as jj;
+
 import 'package:apidash/consts.dart';
-import 'package:apidash/utils/utils.dart' show padMultilineString;
 import 'package:apidash/models/models.dart' show RequestModel;
+import 'package:code_builder/code_builder.dart';
+import 'package:dart_style/dart_style.dart';
+
+import 'shared.dart';
 
 class DartHttpCodeGen {
-  String kTemplateStart = """import 'package:http/http.dart' as http;
-
-void main() async {
-  var uri = Uri.parse('{{url}}');
-
-""";
-
-  String kTemplateParams = """
-
-  var queryParams = {{params}};
-""";
-  int kParamsPadding = 20;
-
-  String kStringUrlParams = """
-
-  var urlQueryParams = Map<String,String>.from(uri.queryParameters);
-  urlQueryParams.addAll(queryParams);
-  uri = uri.replace(queryParameters: urlQueryParams);
-""";
-
-  String kStringNoUrlParams = """
-
-  uri = uri.replace(queryParameters: queryParams);
-""";
-
-  String kTemplateBody = """
-
-  String body = r'''{{body}}''';
-
-""";
-
-  String kTemplateHeaders = """
-
-  var headers = {{headers}};
-
-""";
-  int kHeadersPadding = 16;
-
-  String kTemplateRequest = """
-
-  final response = await http.{{method}}(uri""";
-
-  String kStringRequestHeaders = """,
-                                  headers: headers""";
-
-  String kStringRequestBody = """,
-                                  body: body""";
-  String kStringRequestEnd = r""");
-
-  int statusCode = response.statusCode;
-  if (statusCode >= 200 && statusCode < 300) {
-    print('Status Code: $statusCode');
-    print('Response Body: ${response.body}');
-  }
-  else{
-    print('Error Status Code: $statusCode');
-    print('Error Response Body: ${response.body}');
-  }
-}
-""";
-
   String? getCode(
     RequestModel requestModel,
     String defaultUriScheme,
   ) {
     try {
-      String result = "";
-      bool hasHeaders = false;
-      bool hasBody = false;
-
       String url = requestModel.url;
       if (!url.contains("://") && url.isNotEmpty) {
         url = "$defaultUriScheme://$url";
       }
-      var templateStartUrl = jj.Template(kTemplateStart);
-      result += templateStartUrl.render({"url": url});
-
-      var paramsList = requestModel.requestParams;
-      if (paramsList != null) {
-        var params = requestModel.paramsMap;
-        if (params.isNotEmpty) {
-          var templateParams = jj.Template(kTemplateParams);
-          var paramsString = kEncoder.convert(params);
-          paramsString = padMultilineString(paramsString, kParamsPadding);
-          result += templateParams.render({"params": paramsString});
-          Uri uri = Uri.parse(url);
-          if (uri.hasQuery) {
-            result += kStringUrlParams;
-          } else {
-            result += kStringNoUrlParams;
-          }
-        }
-      }
-
-      var method = requestModel.method;
-      var requestBody = requestModel.requestBody;
-      if (kMethodsWithBody.contains(method) && requestBody != null) {
-        var contentLength = utf8.encode(requestBody).length;
-        if (contentLength > 0) {
-          hasBody = true;
-          var templateBody = jj.Template(kTemplateBody);
-          result += templateBody.render({"body": requestBody});
-        }
-      }
-
-      var headersList = requestModel.requestHeaders;
-      if (headersList != null || hasBody) {
-        var headers = requestModel.headersMap;
-        if (headers.isNotEmpty || hasBody) {
-          hasHeaders = true;
-          if (hasBody) {
-            headers[HttpHeaders.contentTypeHeader] =
-                kContentTypeMap[requestModel.requestBodyContentType] ?? "";
-          }
-          var headersString = kEncoder.convert(headers);
-          headersString = padMultilineString(headersString, kHeadersPadding);
-          var templateHeaders = jj.Template(kTemplateHeaders);
-          result += templateHeaders.render({"headers": headersString});
-        }
-      }
-
-      var templateRequest = jj.Template(kTemplateRequest);
-      result += templateRequest.render({"method": method.name});
-
-      if (hasHeaders) {
-        result += kStringRequestHeaders;
-      }
-
-      if (hasBody) {
-        result += kStringRequestBody;
-      }
-
-      result += kStringRequestEnd;
-      return result;
+      final next = generatedDartCode(
+        url: url,
+        method: requestModel.method,
+        queryParams: requestModel.paramsMap,
+        headers: requestModel.headersMap,
+        body: requestModel.requestBody,
+        contentType: requestModel.requestBodyContentType,
+      );
+      return next;
     } catch (e) {
       return null;
     }
+  }
+
+  String generatedDartCode({
+    required String url,
+    required HTTPVerb method,
+    required Map<String, String> queryParams,
+    required Map<String, String> headers,
+    required String? body,
+    required ContentType contentType,
+  }) {
+    final uri = Uri.parse(url);
+
+    final sbf = StringBuffer();
+    final emitter = DartEmitter();
+    final dioImport = Directive.import('package:http/http.dart', as: 'http');
+    sbf.writeln(dioImport.accept(emitter));
+
+    final uriExp =
+        declareVar('uri').assign(refer('Uri.parse').call([literalString(url)]));
+
+    final composeHeaders = headers;
+    Expression? dataExp;
+    if (kMethodsWithBody.contains(method) && (body?.isNotEmpty ?? false)) {
+      final strContent = CodeExpression(Code('r\'\'\'$body\'\'\''));
+      dataExp = declareVar('body', type: refer('String')).assign(strContent);
+
+      composeHeaders.putIfAbsent(HttpHeaders.contentTypeHeader,
+          () => kContentTypeMap[contentType] ?? '');
+    }
+
+    Expression? queryParamExp;
+    List<Expression>? uriReassignExps;
+    //     var urlQueryParams = Map<String,String>.from(uri.queryParameters);
+    // urlQueryParams.addAll(queryParams);
+    // uri = uri.replace(queryParameters: urlQueryParams);
+
+    if (queryParams.isNotEmpty) {
+      queryParamExp = declareVar('queryParams').assign(
+        literalMap(queryParams.map((key, value) => MapEntry(key, value))),
+      );
+
+      uriReassignExps = [
+        if (uri.hasQuery)
+          declareVar('urlQueryParams').assign(
+            InvokeExpression.newOf(
+              refer('Map<String,String>'),
+              [refer('uri.queryParameters')],
+              {},
+              [],
+              'from',
+            ),
+          ),
+        if (uri.hasQuery)
+          refer('urlQueryParams')
+              .property('addAll')
+              .call([refer('queryParams')], {}),
+        refer('uri').assign(refer('uri').property('replace').call([], {
+          'queryParameters':
+              uri.hasQuery ? refer('urlQueryParams') : refer('queryParams'),
+        }))
+      ];
+    }
+
+    Expression? headerExp;
+    if (headers.isNotEmpty) {
+      headerExp = declareVar('headers').assign(
+        literalMap(headers.map((key, value) => MapEntry(key, value))),
+      );
+    }
+    final responseExp = declareFinal('response').assign(InvokeExpression.newOf(
+      refer('http.${method.name}'),
+      [refer('uri')],
+      {
+        if (headerExp != null) 'headers': refer('headers'),
+        if (dataExp != null) 'body': refer('body'),
+      },
+      [],
+    ).awaited);
+
+    final mainFunction = Method((m) {
+      final statusRef = refer('statusCode');
+      m
+        ..name = 'main'
+        ..returns = refer('void')
+        ..modifier = MethodModifier.async
+        ..body = Block((b) {
+          b.statements.add(uriExp.statement);
+          if (queryParamExp != null) {
+            b.statements.add(const Code('\n'));
+            b.statements.add(queryParamExp.statement);
+          }
+          if (uriReassignExps != null) {
+            b.statements.addAll(uriReassignExps.map((e) => e.statement));
+          }
+          if (dataExp != null) {
+            b.statements.add(const Code('\n'));
+            b.statements.add(dataExp.statement);
+          }
+          if (headerExp != null) {
+            b.statements.add(const Code('\n'));
+            b.statements.add(headerExp.statement);
+          }
+          b.statements.add(const Code('\n'));
+          b.statements.add(responseExp.statement);
+          b.statements.add(const Code('\n'));
+          b.statements.add(declareVar('statusCode', type: refer('int'))
+              .assign(refer('response').property('statusCode'))
+              .statement);
+          b.statements.add(declareIfElse(
+            condition: statusRef
+                .greaterOrEqualTo(literalNum(200))
+                .and(statusRef.lessThan(literalNum(300))),
+            body: [
+              refer('print').call([literalString(r'Status Code: $statusCode')]),
+              refer('print')
+                  .call([literalString(r'Response Body: ${response.body}')]),
+            ],
+            elseBody: [
+              refer('print')
+                  .call([literalString(r'Error Status Code: $statusCode')]),
+              refer('print').call(
+                  [literalString(r'Error Response Body: ${response.body}')]),
+            ],
+          ));
+        });
+    });
+
+    sbf.writeln(mainFunction.accept(emitter));
+
+    return DartFormatter(pageWidth: 160).format(sbf.toString());
   }
 }
