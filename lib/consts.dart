@@ -63,14 +63,27 @@ const kP10 = EdgeInsets.all(10);
 const kPt24o8 = EdgeInsets.only(top: 24, left: 8.0, right: 8.0, bottom: 8.0);
 const kPt5o10 =
     EdgeInsets.only(left: 10.0, right: 10.0, top: 5.0, bottom: 10.0);
+const kPh20 = EdgeInsets.symmetric(
+  horizontal: 20,
+);
 const kPh20t40 = EdgeInsets.only(
   left: 20,
   right: 20,
   top: 40,
 );
 const kPh60 = EdgeInsets.symmetric(horizontal: 60);
-const kP24CollectionPane = EdgeInsets.only(top: 24, left: 8.0, bottom: 8.0);
-const kP8CollectionPane = EdgeInsets.only(top: 8.0, left: 8.0, bottom: 8.0);
+const kP24CollectionPane = EdgeInsets.only(
+  top: 24,
+  left: 4.0,
+  //right: 4.0,
+  // bottom: 8.0,
+);
+const kP8CollectionPane = EdgeInsets.only(
+  top: 8.0,
+  left: 4.0,
+  //right: 4.0,
+  // bottom: 8.0,
+);
 const kPr8CollectionPane = EdgeInsets.only(right: 8.0);
 
 const kHSpacer4 = SizedBox(width: 4);
