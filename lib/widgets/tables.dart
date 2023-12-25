@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:apidash/utils/utils.dart';
 import 'package:apidash/consts.dart';
 
-class MapTable extends StatefulWidget {
+class MapTable extends StatelessWidget {
   const MapTable(
       {super.key,
       required this.map,
@@ -13,11 +13,6 @@ class MapTable extends StatefulWidget {
   final List<String> colNames;
   final bool firstColumnHeaderCase;
 
-  @override
-  State<MapTable> createState() => _MapTableState();
-}
-
-class _MapTableState extends State<MapTable> {
   @override
   Widget build(BuildContext context) {
     return Table(
@@ -33,7 +28,7 @@ class _MapTableState extends State<MapTable> {
       defaultVerticalAlignment: TableCellVerticalAlignment.middle,
       children: [
         TableRow(
-          children: widget.colNames
+          children: colNames
               .map<TableCell>(
                 (e) => TableCell(
                   verticalAlignment: TableCellVerticalAlignment.top,
@@ -51,7 +46,7 @@ class _MapTableState extends State<MapTable> {
               )
               .toList(),
         ),
-        ...widget.map.entries.map<TableRow>(
+        ...map.entries.map<TableRow>(
           (entry) => TableRow(
             children: [
               TableCell(
@@ -59,7 +54,7 @@ class _MapTableState extends State<MapTable> {
                 child: Padding(
                   padding: kP1,
                   child: SelectableText(
-                    widget.firstColumnHeaderCase
+                    firstColumnHeaderCase
                         ? formatHeaderCase(entry.key)
                         : entry.key,
                     style: kCodeStyle.copyWith(

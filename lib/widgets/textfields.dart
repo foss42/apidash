@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
 
-class URLField extends StatefulWidget {
+class URLField extends StatelessWidget {
   const URLField({
     super.key,
     required this.activeId,
@@ -14,20 +14,10 @@ class URLField extends StatefulWidget {
   final void Function(String)? onChanged;
 
   @override
-  State<URLField> createState() => _URLFieldState();
-}
-
-class _URLFieldState extends State<URLField> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return TextFormField(
-      key: Key("url-${widget.activeId}"),
-      initialValue: widget.initialValue,
+      key: Key("url-$activeId"),
+      initialValue: initialValue,
       style: kCodeStyle,
       decoration: InputDecoration(
         hintText: kHintTextUrlCard,
@@ -38,12 +28,12 @@ class _URLFieldState extends State<URLField> {
         ),
         border: InputBorder.none,
       ),
-      onChanged: widget.onChanged,
+      onChanged: onChanged,
     );
   }
 }
 
-class CellField extends StatefulWidget {
+class CellField extends StatelessWidget {
   const CellField({
     super.key,
     required this.keyId,
@@ -60,40 +50,35 @@ class CellField extends StatefulWidget {
   final ColorScheme? colorScheme;
 
   @override
-  State<CellField> createState() => _CellFieldState();
-}
-
-class _CellFieldState extends State<CellField> {
-  @override
   Widget build(BuildContext context) {
-    var colorScheme = widget.colorScheme ?? Theme.of(context).colorScheme;
+    var clrScheme = colorScheme ?? Theme.of(context).colorScheme;
     return TextFormField(
-      key: Key(widget.keyId),
-      initialValue: widget.initialValue,
+      key: Key(keyId),
+      initialValue: initialValue,
       style: kCodeStyle.copyWith(
-        color: colorScheme.onSurface,
+        color: clrScheme.onSurface,
       ),
       decoration: InputDecoration(
         hintStyle: kCodeStyle.copyWith(
-          color: colorScheme.outline.withOpacity(
+          color: clrScheme.outline.withOpacity(
             kHintOpacity,
           ),
         ),
-        hintText: widget.hintText,
+        hintText: hintText,
         focusedBorder: UnderlineInputBorder(
           borderSide: BorderSide(
-            color: colorScheme.primary.withOpacity(
+            color: clrScheme.primary.withOpacity(
               kHintOpacity,
             ),
           ),
         ),
         enabledBorder: UnderlineInputBorder(
           borderSide: BorderSide(
-            color: colorScheme.surfaceVariant,
+            color: clrScheme.surfaceVariant,
           ),
         ),
       ),
-      onChanged: widget.onChanged,
+      onChanged: onChanged,
     );
   }
 }
