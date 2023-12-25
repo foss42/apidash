@@ -12,10 +12,14 @@ class MethodBox extends StatelessWidget {
     if (method == HTTPVerb.delete) {
       text = "DEL";
     }
+    if (method == HTTPVerb.patch) {
+      text = "PAT";
+    }
     return SizedBox(
-      width: 28,
+      width: 24,
       child: Text(
         text,
+        textAlign: TextAlign.center,
         style: TextStyle(
           fontSize: 8,
           fontWeight: FontWeight.bold,

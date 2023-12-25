@@ -129,15 +129,11 @@ class SidebarRequestCard extends StatelessWidget {
   }
 }
 
-class RequestDetailsCard extends StatefulWidget {
+class RequestDetailsCard extends StatelessWidget {
   const RequestDetailsCard({super.key, this.child});
 
   final Widget? child;
   @override
-  State<RequestDetailsCard> createState() => _RequestDetailsCardState();
-}
-
-class _RequestDetailsCardState extends State<RequestDetailsCard> {
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -148,7 +144,7 @@ class _RequestDetailsCardState extends State<RequestDetailsCard> {
         borderRadius: kBorderRadius12,
       ),
       elevation: 0,
-      child: widget.child,
+      child: child,
     );
   }
 }

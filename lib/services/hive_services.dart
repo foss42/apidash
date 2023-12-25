@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
-const String kDataBox = "data";
+const String kDataBox = "apidash-data";
 const String kKeyDataBoxIds = "ids";
 
-const String kSettingsBox = "settings";
+const String kSettingsBox = "apidash-settings";
 
 Future<void> openBoxes() async {
   await Hive.initFlutter();
