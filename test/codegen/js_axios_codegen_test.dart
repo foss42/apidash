@@ -324,6 +324,7 @@ axios(config)
       expect(axiosCodeGen.getCode(requestModelPost3, "https"), expectedCode);
     });
   });
+
   group('PUT Request', () {
     test('PUT 1', () {
       const expectedCode = r"""let config = {
@@ -423,6 +424,114 @@ axios(config)
     });
 """;
       expect(axiosCodeGen.getCode(requestModelDelete2, "https"), expectedCode);
+    });
+  });
+
+  group('Request with enabled Rows', () {
+    test('Enabled Params', () {
+      const expectedCode = r"""let config = {
+  url: 'https://api.foss42.com/humanize/social',
+  method: 'get',
+  params: {
+    "num": "8700000",
+    "add_space": "true"
+  }
+};
+
+axios(config)
+    .then(function (response) {
+        // handle success
+        console.log(response.status);
+        console.log(response.data);
+    })
+    .catch(function (error) {
+        // handle error
+        console.log(error.response.status);
+        console.log(error);
+    });
+""";
+      expect(axiosCodeGen.getCode(requestModelEnabledParams, "https"),
+          expectedCode);
+    });
+
+    test('Enabled Headers', () {
+      const expectedCode = r"""let config = {
+  url: 'https://api.foss42.com/humanize/social',
+  method: 'get',
+  headers: {
+    "User-Agent": "Test Agent"
+  }
+};
+
+axios(config)
+    .then(function (response) {
+        // handle success
+        console.log(response.status);
+        console.log(response.data);
+    })
+    .catch(function (error) {
+        // handle error
+        console.log(error.response.status);
+        console.log(error);
+    });
+""";
+      expect(
+          axiosCodeGen.getCode(
+            requestModelEnabledHeaders,
+            "https",
+          ),
+          expectedCode);
+    });
+
+    test('Enabled Headers and Params', () {
+      const expectedCode = r"""let config = {
+  url: 'https://api.foss42.com/humanize/social',
+  method: 'get',
+  params: {
+    "num": "8700000",
+    "digits": "3"
+  },
+  headers: {
+    "User-Agent": "Test Agent"
+  }
+};
+
+axios(config)
+    .then(function (response) {
+        // handle success
+        console.log(response.status);
+        console.log(response.data);
+    })
+    .catch(function (error) {
+        // handle error
+        console.log(error.response.status);
+        console.log(error);
+    });
+""";
+      expect(
+          axiosCodeGen.getCode(requestModelEnabledRows, "https"), expectedCode);
+    });
+
+    test('Disabled Headders and Params', () {
+      const expectedCode = r"""let config = {
+  url: 'https://api.foss42.com/humanize/social',
+  method: 'get'
+};
+
+axios(config)
+    .then(function (response) {
+        // handle success
+        console.log(response.status);
+        console.log(response.data);
+    })
+    .catch(function (error) {
+        // handle error
+        console.log(error.response.status);
+        console.log(error);
+    });
+""";
+      expect(axiosCodeGen.getCode(requestModelDisabledRows, "https"),
+          expectedCode);
     });
   });
 }

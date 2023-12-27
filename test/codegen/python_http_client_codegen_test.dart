@@ -285,6 +285,7 @@ print(data.decode("utf-8"))
           expectedCode);
     });
   });
+
   group('PUT Request', () {
     test('PUT 1', () {
       const expectedCode = r"""import http.client
@@ -380,6 +381,97 @@ data = res.read()
 print(data.decode("utf-8"))
 """;
       expect(pythonHttpClientCodeGen.getCode(requestModelDelete2, "https"),
+          expectedCode);
+    });
+  });
+
+  group('Request with enabled Rows', () {
+    test('Enabled Params', () {
+      const expectedCode = r"""import http.client
+from urllib.parse import urlencode
+
+queryParams = {
+                "num": "8700000",
+                "add_space": "true"
+              }
+queryParamsStr = '?' + urlencode(queryParams)
+
+conn = http.client.HTTPSConnection("api.foss42.com")
+conn.request("GET", "/humanize/social" + queryParamsStr)
+
+res = conn.getresponse()
+data = res.read()
+
+print(data.decode("utf-8"))
+""";
+      expect(
+          pythonHttpClientCodeGen.getCode(requestModelEnabledParams, "https"),
+          expectedCode);
+    });
+
+    test('Enabled Headers', () {
+      const expectedCode = r"""import http.client
+
+headers = {
+            "User-Agent": "Test Agent"
+          }
+
+conn = http.client.HTTPSConnection("api.foss42.com")
+conn.request("GET", "/humanize/social",
+              headers= headers)
+
+res = conn.getresponse()
+data = res.read()
+
+print(data.decode("utf-8"))
+""";
+      expect(
+          pythonHttpClientCodeGen.getCode(
+            requestModelEnabledHeaders,
+            "https",
+          ),
+          expectedCode);
+    });
+
+    test('Enabled Headers and Params', () {
+      const expectedCode = r"""import http.client
+from urllib.parse import urlencode
+
+queryParams = {
+                "num": "8700000",
+                "digits": "3"
+              }
+queryParamsStr = '?' + urlencode(queryParams)
+
+headers = {
+            "User-Agent": "Test Agent"
+          }
+
+conn = http.client.HTTPSConnection("api.foss42.com")
+conn.request("GET", "/humanize/social" + queryParamsStr,
+              headers= headers)
+
+res = conn.getresponse()
+data = res.read()
+
+print(data.decode("utf-8"))
+""";
+      expect(pythonHttpClientCodeGen.getCode(requestModelEnabledRows, "https"),
+          expectedCode);
+    });
+
+    test('Disabled Headders and Params', () {
+      const expectedCode = r"""import http.client
+
+conn = http.client.HTTPSConnection("api.foss42.com")
+conn.request("GET", "/humanize/social")
+
+res = conn.getresponse()
+data = res.read()
+
+print(data.decode("utf-8"))
+""";
+      expect(pythonHttpClientCodeGen.getCode(requestModelDisabledRows, "https"),
           expectedCode);
     });
   });

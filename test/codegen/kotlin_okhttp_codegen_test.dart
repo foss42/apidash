@@ -369,6 +369,7 @@ fun main() {
           expectedCode);
     });
   });
+
   group('PUT Request', () {
     test('PUT 1', () {
       const expectedCode = r'''import okhttp3.OkHttpClient
@@ -494,6 +495,118 @@ fun main() {
 }
 ''';
       expect(kotlinOkHttpCodeGen.getCode(requestModelDelete2, "https"),
+          expectedCode);
+    });
+  });
+
+  group('Request with enabled Rows', () {
+    test('Enabled Params', () {
+      const expectedCode = r"""import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.HttpUrl.Companion.toHttpUrl
+
+fun main() {
+    val client = OkHttpClient()
+
+    val url = "https://api.foss42.com/humanize/social".toHttpUrl().newBuilder()
+        .addQueryParameter("num", "8700000")
+        .addQueryParameter("add_space", "true")
+        .build()
+
+    val request = Request.Builder()
+        .url(url)
+        .get()
+        .build()
+
+    val response = client.newCall(request).execute()
+
+    println(response.code)
+    println(response.body?.string())
+}
+""";
+      expect(kotlinOkHttpCodeGen.getCode(requestModelEnabledParams, "https"),
+          expectedCode);
+    });
+
+    test('Enabled Headers', () {
+      const expectedCode = r"""import okhttp3.OkHttpClient
+import okhttp3.Request
+
+fun main() {
+    val client = OkHttpClient()
+
+    val url = "https://api.foss42.com/humanize/social"
+
+    val request = Request.Builder()
+        .url(url)
+        .addHeader("User-Agent", "Test Agent")
+        .get()
+        .build()
+
+    val response = client.newCall(request).execute()
+
+    println(response.code)
+    println(response.body?.string())
+}
+""";
+      expect(
+          kotlinOkHttpCodeGen.getCode(
+            requestModelEnabledHeaders,
+            "https",
+          ),
+          expectedCode);
+    });
+
+    test('Enabled Headers and Params', () {
+      const expectedCode = r"""import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.HttpUrl.Companion.toHttpUrl
+
+fun main() {
+    val client = OkHttpClient()
+
+    val url = "https://api.foss42.com/humanize/social".toHttpUrl().newBuilder()
+        .addQueryParameter("num", "8700000")
+        .addQueryParameter("digits", "3")
+        .build()
+
+    val request = Request.Builder()
+        .url(url)
+        .addHeader("User-Agent", "Test Agent")
+        .get()
+        .build()
+
+    val response = client.newCall(request).execute()
+
+    println(response.code)
+    println(response.body?.string())
+}
+""";
+      expect(kotlinOkHttpCodeGen.getCode(requestModelEnabledRows, "https"),
+          expectedCode);
+    });
+
+    test('Disabled Headders and Params', () {
+      const expectedCode = r"""import okhttp3.OkHttpClient
+import okhttp3.Request
+
+fun main() {
+    val client = OkHttpClient()
+
+    val url = "https://api.foss42.com/humanize/social"
+
+    val request = Request.Builder()
+        .url(url)
+        .get()
+        .build()
+
+    val response = client.newCall(request).execute()
+
+    println(response.code)
+    println(response.body?.string())
+}
+""";
+      expect(kotlinOkHttpCodeGen.getCode(requestModelDisabledRows, "https"),
           expectedCode);
     });
   });

@@ -100,6 +100,7 @@ void main() {
       expect(curlCodeGen.getCode(requestModelPost3, "https"), expectedCode);
     });
   });
+
   group('PUT Request', () {
     test('PUT 1', () {
       const expectedCode = r"""curl --request PUT \
@@ -142,6 +143,42 @@ void main() {
 "job": "accountant"
 }'""";
       expect(curlCodeGen.getCode(requestModelDelete2, "https"), expectedCode);
+    });
+  });
+
+  group('Request with enabled Rows', () {
+    test('Enabled Params', () {
+      const expectedCode =
+          r"""curl --url 'https://api.foss42.com/humanize/social?num=8700000&add_space=true'""";
+      expect(curlCodeGen.getCode(requestModelEnabledParams, "https"),
+          expectedCode);
+    });
+
+    test('Enabled Headers', () {
+      const expectedCode =
+          r"""curl --url 'https://api.foss42.com/humanize/social' \
+  --header 'User-Agent: Test Agent'""";
+      expect(
+          curlCodeGen.getCode(
+            requestModelEnabledHeaders,
+            "https",
+          ),
+          expectedCode);
+    });
+
+    test('Enabled Headers and Params', () {
+      const expectedCode =
+          r"""curl --url 'https://api.foss42.com/humanize/social?num=8700000&digits=3' \
+  --header 'User-Agent: Test Agent'""";
+      expect(
+          curlCodeGen.getCode(requestModelEnabledRows, "https"), expectedCode);
+    });
+
+    test('Disabled Headders and Params', () {
+      const expectedCode =
+          r"""curl --url 'https://api.foss42.com/humanize/social'""";
+      expect(
+          curlCodeGen.getCode(requestModelDisabledRows, "https"), expectedCode);
     });
   });
 }

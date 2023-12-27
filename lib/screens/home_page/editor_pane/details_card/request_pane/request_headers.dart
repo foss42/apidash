@@ -127,7 +127,9 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
                 seed = random.nextInt(kRandMax);
                 if (rows.length == 1) {
                   setState(() {
-                    rows = [kNameValueEmptyModel];
+                    rows = [
+                      kNameValueEmptyModel,
+                    ];
                     isRowEnabledList = [true];
                   });
                 } else {

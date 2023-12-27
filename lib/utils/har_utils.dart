@@ -74,6 +74,7 @@ Map<String, dynamic> requestModelToHARJsonRequest(
   RequestModel requestModel, {
   defaultUriScheme = kDefaultUriScheme,
   bool exportMode = false,
+  bool useEnabled = false,
 }) {
   Map<String, dynamic> json = {};
   bool hasBody = false;
@@ -125,9 +126,12 @@ Map<String, dynamic> requestModelToHARJsonRequest(
       }
     }
 
-    var headersList = requestModel.enabledRequestHeaders;
+    var headersList = useEnabled
+        ? requestModel.enabledRequestHeaders
+        : requestModel.requestHeaders;
     if (headersList != null || hasBody) {
-      var headers = requestModel.enabledHeadersMap;
+      var headers =
+          useEnabled ? requestModel.enabledHeadersMap : requestModel.headersMap;
       if (headers.isNotEmpty || hasBody) {
         if (hasBody) {
           var m = {

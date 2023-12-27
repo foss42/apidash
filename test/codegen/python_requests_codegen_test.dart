@@ -248,6 +248,7 @@ print('Response Body:', response.text)
           expectedCode);
     });
   });
+
   group('PUT Request', () {
     test('PUT 1', () {
       const expectedCode = r"""import requests
@@ -321,6 +322,85 @@ print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
       expect(pythonRequestsCodeGen.getCode(requestModelDelete2, "https"),
+          expectedCode);
+    });
+  });
+  group('Request with enabled Rows', () {
+    test('Enabled Params', () {
+      const expectedCode = r"""import requests
+
+url = 'https://api.foss42.com/humanize/social'
+
+params = {
+           "num": "8700000",
+           "add_space": "true"
+         }
+
+response = requests.get(url, params=params)
+
+print('Status Code:', response.status_code)
+print('Response Body:', response.text)
+""";
+      expect(pythonRequestsCodeGen.getCode(requestModelEnabledParams, "https"),
+          expectedCode);
+    });
+
+    test('Enabled Headers', () {
+      const expectedCode = r"""import requests
+
+url = 'https://api.foss42.com/humanize/social'
+
+headers = {
+            "User-Agent": "Test Agent"
+          }
+
+response = requests.get(url, headers=headers)
+
+print('Status Code:', response.status_code)
+print('Response Body:', response.text)
+""";
+      expect(
+          pythonRequestsCodeGen.getCode(
+            requestModelEnabledHeaders,
+            "https",
+          ),
+          expectedCode);
+    });
+
+    test('Enabled Headers and Params', () {
+      const expectedCode = r"""import requests
+
+url = 'https://api.foss42.com/humanize/social'
+
+params = {
+           "num": "8700000",
+           "digits": "3"
+         }
+
+headers = {
+            "User-Agent": "Test Agent"
+          }
+
+response = requests.get(url, params=params, headers=headers)
+
+print('Status Code:', response.status_code)
+print('Response Body:', response.text)
+""";
+      expect(pythonRequestsCodeGen.getCode(requestModelEnabledRows, "https"),
+          expectedCode);
+    });
+
+    test('Disabled Headders and Params', () {
+      const expectedCode = r"""import requests
+
+url = 'https://api.foss42.com/humanize/social'
+
+response = requests.get(url)
+
+print('Status Code:', response.status_code)
+print('Response Body:', response.text)
+""";
+      expect(pythonRequestsCodeGen.getCode(requestModelDisabledRows, "https"),
           expectedCode);
     });
   });

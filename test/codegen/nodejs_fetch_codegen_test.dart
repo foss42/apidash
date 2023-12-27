@@ -386,6 +386,7 @@ fetch(url, options)
       expect(fetchCodeGen.getCode(requestModelPost3, "https"), expectedCode);
     });
   });
+
   group('PUT Request', () {
     test('PUT 1', () {
       const expectedCode = r"""import fetch from 'node-fetch';
@@ -512,6 +513,130 @@ fetch(url, options)
     });
 """;
       expect(fetchCodeGen.getCode(requestModelDelete2, "https"), expectedCode);
+    });
+  });
+
+  group('Request with enabled Rows', () {
+    test('Enabled Params', () {
+      const expectedCode = r"""import fetch from 'node-fetch';
+
+let url = 'https://api.foss42.com/humanize/social?num=8700000&add_space=true';
+
+let options = {
+  method: 'GET'
+};
+
+let status;
+fetch(url, options)
+    .then(res => {
+        status = res.status;
+        return res.json()
+    })
+    .then(body => {
+        console.log(status);
+        console.log(body);
+    })
+    .catch(err => {
+        console.log(status);
+        console.error('error:' + err);
+    });
+""";
+      expect(fetchCodeGen.getCode(requestModelEnabledParams, "https"),
+          expectedCode);
+    });
+
+    test('Enabled Headers', () {
+      const expectedCode = r"""import fetch from 'node-fetch';
+
+let url = 'https://api.foss42.com/humanize/social';
+
+let options = {
+  method: 'GET',
+  headers: {
+    "User-Agent": "Test Agent"
+  }
+};
+
+let status;
+fetch(url, options)
+    .then(res => {
+        status = res.status;
+        return res.json()
+    })
+    .then(body => {
+        console.log(status);
+        console.log(body);
+    })
+    .catch(err => {
+        console.log(status);
+        console.error('error:' + err);
+    });
+""";
+      expect(
+          fetchCodeGen.getCode(
+            requestModelEnabledHeaders,
+            "https",
+          ),
+          expectedCode);
+    });
+
+    test('Enabled Headers and Params', () {
+      const expectedCode = r"""import fetch from 'node-fetch';
+
+let url = 'https://api.foss42.com/humanize/social?num=8700000&digits=3';
+
+let options = {
+  method: 'GET',
+  headers: {
+    "User-Agent": "Test Agent"
+  }
+};
+
+let status;
+fetch(url, options)
+    .then(res => {
+        status = res.status;
+        return res.json()
+    })
+    .then(body => {
+        console.log(status);
+        console.log(body);
+    })
+    .catch(err => {
+        console.log(status);
+        console.error('error:' + err);
+    });
+""";
+      expect(
+          fetchCodeGen.getCode(requestModelEnabledRows, "https"), expectedCode);
+    });
+
+    test('Disabled Headders and Params', () {
+      const expectedCode = r"""import fetch from 'node-fetch';
+
+let url = 'https://api.foss42.com/humanize/social';
+
+let options = {
+  method: 'GET'
+};
+
+let status;
+fetch(url, options)
+    .then(res => {
+        status = res.status;
+        return res.json()
+    })
+    .then(body => {
+        console.log(status);
+        console.log(body);
+    })
+    .catch(err => {
+        console.log(status);
+        console.error('error:' + err);
+    });
+""";
+      expect(fetchCodeGen.getCode(requestModelDisabledRows, "https"),
+          expectedCode);
     });
   });
 }

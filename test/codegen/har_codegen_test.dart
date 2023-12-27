@@ -240,6 +240,7 @@ void main() {
       expect(harCodeGen.getCode(requestModelPost3, "https"), expectedCode);
     });
   });
+
   group('PUT Request', () {
     test('PUT 1', () {
       const expectedCode = r"""{
@@ -314,6 +315,88 @@ void main() {
   }
 }""";
       expect(harCodeGen.getCode(requestModelDelete2, "https"), expectedCode);
+    });
+  });
+
+  group('Request with enabled Rows', () {
+    test('Enabled Params', () {
+      const expectedCode = r"""{
+  "method": "GET",
+  "url": "https://api.foss42.com/humanize/social?num=8700000&add_space=true",
+  "httpVersion": "HTTP/1.1",
+  "queryString": [
+    {
+      "name": "num",
+      "value": "8700000"
+    },
+    {
+      "name": "add_space",
+      "value": "true"
+    }
+  ],
+  "headers": []
+}""";
+      expect(
+          harCodeGen.getCode(requestModelEnabledParams, "https"), expectedCode);
+    });
+
+    test('Enabled Headers', () {
+      const expectedCode = r"""{
+  "method": "GET",
+  "url": "https://api.foss42.com/humanize/social",
+  "httpVersion": "HTTP/1.1",
+  "queryString": [],
+  "headers": [
+    {
+      "name": "User-Agent",
+      "value": "Test Agent"
+    }
+  ]
+}""";
+      expect(
+          harCodeGen.getCode(
+            requestModelEnabledHeaders,
+            "https",
+          ),
+          expectedCode);
+    });
+
+    test('Enabled Headers and Params', () {
+      const expectedCode = r"""{
+  "method": "GET",
+  "url": "https://api.foss42.com/humanize/social?num=8700000&digits=3",
+  "httpVersion": "HTTP/1.1",
+  "queryString": [
+    {
+      "name": "num",
+      "value": "8700000"
+    },
+    {
+      "name": "digits",
+      "value": "3"
+    }
+  ],
+  "headers": [
+    {
+      "name": "User-Agent",
+      "value": "Test Agent"
+    }
+  ]
+}""";
+      expect(
+          harCodeGen.getCode(requestModelEnabledRows, "https"), expectedCode);
+    });
+
+    test('Disabled Headders and Params', () {
+      const expectedCode = r"""{
+  "method": "GET",
+  "url": "https://api.foss42.com/humanize/social",
+  "httpVersion": "HTTP/1.1",
+  "queryString": [],
+  "headers": []
+}""";
+      expect(
+          harCodeGen.getCode(requestModelDisabledRows, "https"), expectedCode);
     });
   });
 }

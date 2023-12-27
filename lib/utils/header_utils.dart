@@ -15,6 +15,7 @@ Map<String, String> headers = {
       "Indicates the encoding transformations that have been applied to the entity body of the response.",
   "Content-Security-Policy":
       "Controls the sources from which content can be loaded on a web page to mitigate various types of attacks.",
+  "Content-Type": "Indicates the media type of the entity body.",
   "Cookie": "Used to send previously stored cookies back to the server.",
   "Cross-Origin-Embedder-Policy":
       "Controls whether a document is allowed to be embedded in another document.",
