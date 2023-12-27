@@ -4,7 +4,7 @@ import 'package:markdown/markdown.dart' as md;
 import 'package:url_launcher/url_launcher.dart';
 import 'buttons.dart';
 
-class CustomMarkdown extends StatefulWidget {
+class CustomMarkdown extends StatelessWidget {
   const CustomMarkdown({
     super.key,
     required this.data,
@@ -14,20 +14,15 @@ class CustomMarkdown extends StatefulWidget {
   final EdgeInsets padding;
 
   @override
-  State<CustomMarkdown> createState() => _CustomMarkdownState();
-}
-
-class _CustomMarkdownState extends State<CustomMarkdown> {
-  @override
   Widget build(BuildContext context) {
     final mdStyleSheet = MarkdownStyleSheet(
       h1: Theme.of(context).textTheme.headlineLarge,
       p: Theme.of(context).textTheme.titleMedium,
     );
     return Markdown(
-      padding: widget.padding,
+      padding: padding,
       styleSheet: mdStyleSheet,
-      data: widget.data,
+      data: data,
       selectable: true,
       extensionSet: md.ExtensionSet.gitHubFlavored,
       onTapLink: (text, href, title) {

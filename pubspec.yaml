@@ -51,6 +51,8 @@ dependencies:
   file_picker: ^6.1.1
   flutter_svg: ^2.0.9
   vector_graphics_compiler: ^1.1.9+1
+  code_builder: ^4.9.0
+  dart_style: ^2.3.4
 
 dev_dependencies:
   flutter_test:
