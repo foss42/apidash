@@ -68,6 +68,8 @@ class DartDioCodeGen {
         case ContentType.text:
           dataExp = declareFinal('data').assign(strContent);
         // when add new type of [ContentType], need update [dataExp].
+        case ContentType.formdata:
+        // TODO: Need to Handle this case.
       }
     }
     final responseExp = declareFinal('response').assign(InvokeExpression.newOf(

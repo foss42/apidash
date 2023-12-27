@@ -143,7 +143,7 @@ class _DropdownButtonFormData extends State<DropdownButtonFormData> {
   }
 }
 
-class DropdownButtonCodegenLanguage extends StatefulWidget {
+class DropdownButtonCodegenLanguage extends StatelessWidget {
   const DropdownButtonCodegenLanguage({
     super.key,
     this.codegenLanguage,
