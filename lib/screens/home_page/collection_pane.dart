@@ -108,40 +108,36 @@ class _RequestListState extends ConsumerState<RequestList> {
       controller: controller,
       thumbVisibility: alwaysShowCollectionPaneScrollbar ? true : null,
       radius: const Radius.circular(12),
-      child: requestSequence.isNotEmpty
-          ? ReorderableListView.builder(
-              padding: kPr8CollectionPane,
-              scrollController: controller,
-              buildDefaultDragHandles: false,
-              itemCount: requestSequence.length,
-              onReorder: (int oldIndex, int newIndex) {
-                if (oldIndex < newIndex) {
-                  newIndex -= 1;
-                }
-                if (oldIndex != newIndex) {
-                  ref
-                      .read(collectionStateNotifierProvider.notifier)
-                      .reorder(oldIndex, newIndex);
-                }
-              },
-              itemBuilder: (context, index) {
-                var id = requestSequence[index];
-                return ReorderableDragStartListener(
-                  key: ValueKey(id),
-                  index: index,
-                  child: Padding(
-                    padding: kP1,
-                    child: RequestItem(
-                      id: id,
-                      requestModel: requestItems[id]!,
-                    ),
-                  ),
-                );
-              },
-            )
-          : const Center(
-              child: Text("No Requests found"),
+      child: ReorderableListView.builder(
+        padding: kPr8CollectionPane,
+        scrollController: controller,
+        buildDefaultDragHandles: false,
+        itemCount: requestSequence.length,
+        onReorder: (int oldIndex, int newIndex) {
+          if (oldIndex < newIndex) {
+            newIndex -= 1;
+          }
+          if (oldIndex != newIndex) {
+            ref
+                .read(collectionStateNotifierProvider.notifier)
+                .reorder(oldIndex, newIndex);
+          }
+        },
+        itemBuilder: (context, index) {
+          var id = requestSequence[index];
+          return ReorderableDragStartListener(
+            key: ValueKey(id),
+            index: index,
+            child: Padding(
+              padding: kP1,
+              child: RequestItem(
+                id: id,
+                requestModel: requestItems[id]!,
+              ),
             ),
+          );
+        },
+      ),
     );
   }
 }

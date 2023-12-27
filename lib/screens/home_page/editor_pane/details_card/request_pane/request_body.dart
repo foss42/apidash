@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
-import 'package:apidash/widgets/form_data_widget.dart';
 
 class EditRequestBody extends ConsumerStatefulWidget {
   const EditRequestBody({super.key});
@@ -13,11 +12,6 @@ class EditRequestBody extends ConsumerStatefulWidget {
 }
 
 class _EditRequestBodyState extends ConsumerState<EditRequestBody> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     final activeId = ref.watch(activeIdStateProvider);

@@ -161,8 +161,8 @@ class CollectionStateNotifier
     (http.Response?, Duration?, String?)? responseRec = await request(
       requestModel,
       defaultUriScheme: defaultUriScheme,
-      isMultiPartRequest: requestModel.formDataList != null &&
-          requestModel.formDataList!.isNotEmpty,
+      isMultiPartRequest:
+          requestModel.requestBodyContentType == ContentType.formdata,
     );
     late final RequestModel newRequestModel;
     if (responseRec.$1 == null) {
