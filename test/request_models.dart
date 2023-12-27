@@ -90,6 +90,94 @@ const requestModelGet8 = RequestModel(
   ],
 );
 
+/// GET request model with some params enabled
+const requestModelGet9 = RequestModel(
+  id: 'enabledParams',
+  url: 'https://api.foss42.com/humanize/social',
+  method: HTTPVerb.get,
+  requestParams: [
+    NameValueModel(name: 'num', value: '8700000'),
+    NameValueModel(name: 'digits', value: '3'),
+    NameValueModel(name: 'system', value: 'SS'),
+    NameValueModel(name: 'add_space', value: 'true'),
+  ],
+  isParamEnabledList: [
+    true,
+    false,
+    false,
+    true,
+  ],
+);
+
+/// GET Request model with some headers enabled
+const requestModelGet10 = RequestModel(
+  id: 'enabledParams',
+  url: 'https://api.foss42.com/humanize/social',
+  method: HTTPVerb.get,
+  requestHeaders: [
+    NameValueModel(name: 'User-Agent', value: 'Test Agent'),
+    NameValueModel(name: 'Content-Type', value: 'application/json'),
+  ],
+  isHeaderEnabledList: [
+    true,
+    false,
+  ],
+);
+
+/// GET Request model with some headers & URL parameters enabled
+const requestModelGet11 = RequestModel(
+  id: 'enabledRows',
+  url: 'https://api.foss42.com/humanize/social',
+  method: HTTPVerb.get,
+  requestParams: [
+    NameValueModel(name: 'num', value: '8700000'),
+    NameValueModel(name: 'digits', value: '3'),
+    NameValueModel(name: 'system', value: 'SS'),
+    NameValueModel(name: 'add_space', value: 'true'),
+  ],
+  requestHeaders: [
+    NameValueModel(name: 'User-Agent', value: 'Test Agent'),
+    NameValueModel(name: 'Content-Type', value: 'application/json'),
+  ],
+  isParamEnabledList: [
+    true,
+    true,
+    false,
+    false,
+  ],
+  isHeaderEnabledList: [
+    true,
+    false,
+  ],
+);
+
+/// Request model with all headers & URL parameters disabled
+const requestModelGet12 = RequestModel(
+  id: 'disabledRows',
+  url: 'https://api.foss42.com/humanize/social',
+  method: HTTPVerb.get,
+  requestParams: [
+    NameValueModel(name: 'num', value: '8700000'),
+    NameValueModel(name: 'digits', value: '3'),
+    NameValueModel(name: 'system', value: 'SS'),
+    NameValueModel(name: 'add_space', value: 'true'),
+  ],
+  requestHeaders: [
+    NameValueModel(name: 'User-Agent', value: 'Test Agent'),
+    NameValueModel(name: 'Content-Type', value: 'application/json'),
+  ],
+  isParamEnabledList: [
+    false,
+    false,
+    false,
+    false,
+  ],
+  isHeaderEnabledList: [
+    false,
+    false,
+  ],
+);
+
 /// Basic HEAD request model
 const requestModelHead1 = RequestModel(
   id: 'head1',
@@ -179,92 +267,4 @@ const requestModelDelete2 = RequestModel(
 "job": "accountant"
 }""",
   requestBodyContentType: ContentType.json,
-);
-
-/// Request model with enabled params
-const requestModelEnabledParams = RequestModel(
-  id: 'enabledParams',
-  url: 'https://api.foss42.com/humanize/social',
-  method: HTTPVerb.get,
-  requestParams: [
-    NameValueModel(name: 'num', value: '8700000'),
-    NameValueModel(name: 'digits', value: '3'),
-    NameValueModel(name: 'system', value: 'SS'),
-    NameValueModel(name: 'add_space', value: 'true'),
-  ],
-  isParamEnabledList: [
-    true,
-    false,
-    false,
-    true,
-  ],
-);
-
-/// Request model with enabled headers
-const requestModelEnabledHeaders = RequestModel(
-  id: 'enabledParams',
-  url: 'https://api.foss42.com/humanize/social',
-  method: HTTPVerb.get,
-  requestHeaders: [
-    NameValueModel(name: 'User-Agent', value: 'Test Agent'),
-    NameValueModel(name: 'Content-Type', value: 'application/json'),
-  ],
-  isHeaderEnabledList: [
-    true,
-    false,
-  ],
-);
-
-/// Request model with enabled rows
-const requestModelEnabledRows = RequestModel(
-  id: 'enabledRows',
-  url: 'https://api.foss42.com/humanize/social',
-  method: HTTPVerb.get,
-  requestParams: [
-    NameValueModel(name: 'num', value: '8700000'),
-    NameValueModel(name: 'digits', value: '3'),
-    NameValueModel(name: 'system', value: 'SS'),
-    NameValueModel(name: 'add_space', value: 'true'),
-  ],
-  requestHeaders: [
-    NameValueModel(name: 'User-Agent', value: 'Test Agent'),
-    NameValueModel(name: 'Content-Type', value: 'application/json'),
-  ],
-  isParamEnabledList: [
-    true,
-    true,
-    false,
-    false,
-  ],
-  isHeaderEnabledList: [
-    true,
-    false,
-  ],
-);
-
-/// Request model with disabled rows
-const requestModelDisabledRows = RequestModel(
-  id: 'disabledRows',
-  url: 'https://api.foss42.com/humanize/social',
-  method: HTTPVerb.get,
-  requestParams: [
-    NameValueModel(name: 'num', value: '8700000'),
-    NameValueModel(name: 'digits', value: '3'),
-    NameValueModel(name: 'system', value: 'SS'),
-    NameValueModel(name: 'add_space', value: 'true'),
-  ],
-  requestHeaders: [
-    NameValueModel(name: 'User-Agent', value: 'Test Agent'),
-    NameValueModel(name: 'Content-Type', value: 'application/json'),
-  ],
-  isParamEnabledList: [
-    false,
-    false,
-    false,
-    false,
-  ],
-  isHeaderEnabledList: [
-    false,
-    false,
-  ],
 );
