@@ -2,8 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'settings_providers.dart';
 import 'ui_providers.dart';
 import '../models/models.dart';
-import '../services/services.dart'
-    show hiveHandler, HiveHandler, request, multiPartRequest;
+import '../services/services.dart' show hiveHandler, HiveHandler, request;
 import '../utils/utils.dart' show uuid, collectionToHAR;
 import '../consts.dart';
 import 'package:http/http.dart' as http;
@@ -158,20 +157,13 @@ class CollectionStateNotifier
     ref.read(codePaneVisibleStateProvider.notifier).state = false;
     final defaultUriScheme =
         ref.read(settingsProvider.select((value) => value.defaultUriScheme));
-    (http.Response?, Duration?, String?)? responseRec;
     RequestModel requestModel = state![id]!;
-    if (requestModel.formDataList != null &&
-        requestModel.formDataList!.isNotEmpty) {
-      responseRec = await multiPartRequest(
-        requestModel,
-        defaultUriScheme: defaultUriScheme,
-      );
-    } else {
-      responseRec = await request(
-        requestModel,
-        defaultUriScheme: defaultUriScheme,
-      );
-    }
+    (http.Response?, Duration?, String?)? responseRec = await request(
+      requestModel,
+      defaultUriScheme: defaultUriScheme,
+      isMultiPartRequest: requestModel.formDataList != null &&
+          requestModel.formDataList!.isNotEmpty,
+    );
     late final RequestModel newRequestModel;
     if (responseRec.$1 == null) {
       newRequestModel = requestModel.copyWith(

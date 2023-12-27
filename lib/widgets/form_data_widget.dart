@@ -39,7 +39,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
         DaviColumn(
           cellPadding: kpsV5,
           name: 'Key',
-          grow: 1,
+          grow: 4,
           cellBuilder: (_, row) {
             int idx = row.index;
             return Theme(
@@ -47,7 +47,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
               child: FormDataField(
                 keyId: "$activeId-$idx-form-v-$seed",
                 initialValue: rows[idx].name,
-                hintText: " Key",
+                hintText: " Add Key",
                 onChanged: (value) {
                   rows[idx] = rows[idx].copyWith(
                     name: value,
@@ -70,7 +70,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
           sortable: false,
         ),
         DaviColumn(
-          width: 30,
+          width: 40,
           cellPadding: kpsV5,
           cellAlignment: Alignment.center,
           cellBuilder: (_, row) {
@@ -89,52 +89,55 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
             return rows[idx].type == FormDataType.file
                 ? Align(
                     alignment: Alignment.centerLeft,
-                    child: Padding(
-                      padding: kPs8,
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Theme(
-                              data: Theme.of(context),
-                              child: ElevatedButton.icon(
-                                icon: const Icon(
-                                  Icons.snippet_folder_rounded,
-                                  size: 20,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Theme(
+                            data: Theme.of(context),
+                            child: ElevatedButton.icon(
+                              icon: const Icon(
+                                Icons.snippet_folder_rounded,
+                                size: 20,
+                              ),
+                              style: ButtonStyle(
+                                shape: MaterialStatePropertyAll(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
                                 ),
-                                style: const ButtonStyle(),
-                                onPressed: () async {
-                                  FilePickerResult? pickedResult =
-                                      await FilePicker.platform.pickFiles();
-                                  if (pickedResult != null &&
-                                      pickedResult.files.isNotEmpty &&
-                                      pickedResult.files.first.path != null) {
-                                    rows[idx] = rows[idx].copyWith(
-                                      value: pickedResult.files.first.path!,
-                                    );
-                                    setState(() {});
-                                    _onFieldChange(activeId!);
-                                  }
-                                },
-                                label: Text(
-                                  (rows[idx].type == FormDataType.file &&
-                                          rows[idx].value.isNotEmpty)
-                                      ? rows[idx].value.toString()
-                                      : "Select File",
-                                  textAlign: TextAlign.center,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: kFormDataButton,
-                                ),
+                              ),
+                              onPressed: () async {
+                                FilePickerResult? pickedResult =
+                                    await FilePicker.platform.pickFiles();
+                                if (pickedResult != null &&
+                                    pickedResult.files.isNotEmpty &&
+                                    pickedResult.files.first.path != null) {
+                                  rows[idx] = rows[idx].copyWith(
+                                    value: pickedResult.files.first.path!,
+                                  );
+                                  setState(() {});
+                                  _onFieldChange(activeId!);
+                                }
+                              },
+                              label: Text(
+                                (rows[idx].type == FormDataType.file &&
+                                        rows[idx].value.isNotEmpty)
+                                    ? rows[idx].value.toString()
+                                    : "Select File",
+                                textAlign: TextAlign.center,
+                                overflow: TextOverflow.ellipsis,
+                                style: kFormDataButtonLabelTextStyle,
                               ),
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   )
                 : CellField(
                     keyId: "$activeId-$idx-form-v-$seed",
                     initialValue: rows[idx].value,
-                    hintText: " Value",
+                    hintText: " Add Value",
                     onChanged: (value) {
                       rows[idx] = rows[idx].copyWith(value: value);
                       _onFieldChange(activeId!);

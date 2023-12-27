@@ -140,9 +140,7 @@ class _DropdownButtonFormData extends State<DropdownButtonFormData> {
       style: kCodeStyle.copyWith(
         color: Theme.of(context).colorScheme.primary,
       ),
-      underline: Container(
-        height: 0,
-      ),
+      underline: const IgnorePointer(),
       onChanged: widget.onChanged,
       borderRadius: kBorderRadius12,
       items: FormDataType.values
