@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:apidash/utils/header_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:davi/davi.dart';
@@ -78,6 +79,23 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
           grow: 1,
           cellBuilder: (_, row) {
             int idx = row.index;
+
+            if (row.data.name == kContentType) {
+               return HeaderField(
+                keyId: "$activeId-$idx-headers-v-$seed",
+                initialValue: rows[idx].value,
+                hintText: " Add Header Value",
+                onChanged: (value) {
+                  rows[idx] = rows[idx].copyWith(value: value);
+                  _onFieldChange(activeId!);
+                },
+                headerSuggestionsCallback: (pattern) {
+                  return getHeaderValueSuggestions(pattern);
+                },
+                colorScheme: Theme.of(context).colorScheme,
+              );
+            }
+
             return CellField(
               keyId: "$activeId-$idx-headers-v-$seed",
               initialValue: rows[idx].value,
