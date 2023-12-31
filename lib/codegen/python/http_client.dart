@@ -1,13 +1,23 @@
 import 'dart:io';
 import 'dart:convert';
+import 'package:apidash/utils/convert_utils.dart';
+import 'package:apidash/utils/extensions/request_model_extension.dart';
 import 'package:jinja/jinja.dart' as jj;
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart'
     show getValidRequestUri, padMultilineString;
-import 'package:apidash/models/models.dart' show RequestModel;
+import 'package:apidash/models/models.dart' show FormDataModel, RequestModel;
 
 class PythonHttpClientCodeGen {
   final String kTemplateStart = """import http.client
+{% if isFormDataRequest %}
+import mimetypes
+from codecs import encode
+import uuid
+
+headers = {}
+boundary = str(uuid.uuid4())
+{% endif %}
 """;
 
   String kTemplateParams = """
@@ -41,6 +51,10 @@ conn = http.client.HTTP{{isHttps}}Connection("{{authority}}")""";
 
 conn.request("{{method}}", "{{path}}"{{queryParamsStr}}""";
 
+  String kTemplateFormDataRequest = """
+conn.request("{{method}}", "{{path}}"{{queryParamsStr}},body=payload, headers=headers
+""";
+
   String kStringRequestBody = """,
               body= body""";
 
@@ -55,10 +69,43 @@ data = res.read()
 print(data.decode("utf-8"))
 """;
 
+  final String kStringFormDataBody = r'''
+def build_data_list(fields):
+    dataList = []
+    for field in fields:
+        name = field.get('name', '')
+        value = field.get('value', '')
+        type_ = field.get('type', 'text')
+
+        dataList.append(encode(f'--{boundary}'))
+        if type_ == 'text':
+            dataList.append(encode(f'Content-Disposition: form-data; name="{name}"'))
+            dataList.append(encode('Content-Type: text/plain'))
+            dataList.append(encode(''))
+            dataList.append(encode(value))
+        elif type_ == 'file':
+            dataList.append(encode(f'Content-Disposition: form-data; name="{name}"; filename="{value}"'))
+            dataList.append(encode(f'Content-Type: {mimetypes.guess_type(value)[0] or "application/octet-stream"}'))
+            dataList.append(encode(''))
+            dataList.append(open(value, 'rb').read())
+
+    dataList.append(encode(f'--{boundary}--'))
+    dataList.append(encode(''))
+    return dataList
+dataList = build_data_list({{fields_list}})
+body = b'\r\n'.join(dataList)
+''';
+
+  String kFormDataHeaders = '''
+headers['Content-type'] = f'multipart/form-data; boundary={boundary}';
+''';
+
   String? getCode(
     RequestModel requestModel,
     String defaultUriScheme,
   ) {
+    List<FormDataModel> formDataList = requestModel.formDataList ?? [];
+
     try {
       String result = "";
       bool hasHeaders = false;
@@ -69,8 +116,12 @@ print(data.decode("utf-8"))
       if (!url.contains("://") && url.isNotEmpty) {
         url = "$defaultUriScheme://$url";
       }
-
-      result += kTemplateStart;
+      var templateStartUrl = jj.Template(kTemplateStart);
+      result += templateStartUrl.render(
+        {
+          "isFormDataRequest": requestModel.isFormDataRequest,
+        },
+      );
       var rec = getValidRequestUri(url, requestModel.requestParams);
       Uri? uri = rec.$1;
 
@@ -112,13 +163,20 @@ print(data.decode("utf-8"))
             result += templateHeaders.render({"headers": headersString});
           }
         }
-
+        if (requestModel.isFormDataRequest) {
+          result += kFormDataHeaders;
+          var formDataBodyData = jj.Template(kStringFormDataBody);
+          result += formDataBodyData.render(
+            {
+              "fields_list": json.encode(rowsToFormDataMap(formDataList)),
+            },
+          );
+        }
         var templateConnection = jj.Template(kTemplateConnection);
         result += templateConnection.render({
           "isHttps": uri.scheme == "https" ? "S" : "",
           "authority": uri.authority
         });
-
         var templateRequest = jj.Template(kTemplateRequest);
         result += templateRequest.render({
           "method": method.name.toUpperCase(),
@@ -126,11 +184,11 @@ print(data.decode("utf-8"))
           "queryParamsStr": hasQuery ? " + queryParamsStr" : "",
         });
 
-        if (hasBody) {
+        if (hasBody || requestModel.isFormDataRequest) {
           result += kStringRequestBody;
         }
 
-        if (hasHeaders) {
+        if (hasHeaders || requestModel.isFormDataRequest) {
           result += kStringRequestHeaders;
         }
 
@@ -138,6 +196,7 @@ print(data.decode("utf-8"))
       }
       return result;
     } catch (e) {
+      print(e);
       return null;
     }
   }

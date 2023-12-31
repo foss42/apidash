@@ -1,15 +1,34 @@
 import 'dart:io';
 import 'dart:convert';
+import 'package:apidash/utils/convert_utils.dart';
+import 'package:apidash/utils/extensions/request_model_extension.dart';
 import 'package:jinja/jinja.dart' as jj;
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart'
     show getValidRequestUri, padMultilineString, stripUriParams;
-import 'package:apidash/models/models.dart' show RequestModel;
+import 'package:apidash/models/models.dart' show FormDataModel, RequestModel;
 
 class PythonRequestsCodeGen {
   final String kTemplateStart = """import requests
+{% if isFormDataRequest %}
+import mimetypes
+from codecs import encode
+import uuid
 
+headers = {}
+boundary = str(uuid.uuid4())
+{% endif %}
 url = '{{url}}'
+
+""";
+
+  final String kTemplateFormDataImports = """
+import mimetypes
+from codecs import encode
+import uuid
+
+headers = {}
+boundary = str(uuid.uuid4())
 
 """;
 
@@ -45,6 +64,32 @@ headers = {{headers}}
 response = requests.{{method}}(url
 """;
 
+  final String kStringFormDataBody = r'''
+def build_data_list(fields):
+    dataList = []
+    for field in fields:
+        name = field.get('name', '')
+        value = field.get('value', '')
+        type_ = field.get('type', 'text')
+
+        dataList.append(encode(f'--{boundary}'))
+        if type_ == 'text':
+            dataList.append(encode(f'Content-Disposition: form-data; name="{name}"'))
+            dataList.append(encode('Content-Type: text/plain'))
+            dataList.append(encode(''))
+            dataList.append(encode(value))
+        elif type_ == 'file':
+            dataList.append(encode(f'Content-Disposition: form-data; name="{name}"; filename="{value}"'))
+            dataList.append(encode(f'Content-Type: {mimetypes.guess_type(value)[0] or "application/octet-stream"}'))
+            dataList.append(encode(''))
+            dataList.append(open(value, 'rb').read())
+
+    dataList.append(encode(f'--{boundary}--'))
+    dataList.append(encode(''))
+    return dataList
+dataList = build_data_list({{fields_list}})
+payload = b'\r\n'.join(dataList)
+''';
   String kStringRequestParams = """, params=params""";
 
   String kStringRequestBody = """, data=payload""";
@@ -52,6 +97,9 @@ response = requests.{{method}}(url
   String kStringRequestJson = """, json=payload""";
 
   String kStringRequestHeaders = """, headers=headers""";
+  String kFormDataHeaders = '''
+headers['Content-type'] = f'multipart/form-data; boundary={boundary}';
+''';
 
   final String kStringRequestEnd = """)
 
@@ -69,6 +117,7 @@ print('Response Body:', response.text)
       bool hasHeaders = false;
       bool hasBody = false;
       bool hasJsonBody = false;
+      List<FormDataModel> formDataList = requestModel.formDataList ?? [];
 
       String url = requestModel.url;
       if (!url.contains("://") && url.isNotEmpty) {
@@ -79,7 +128,10 @@ print('Response Body:', response.text)
       Uri? uri = rec.$1;
       if (uri != null) {
         var templateStartUrl = jj.Template(kTemplateStart);
-        result += templateStartUrl.render({"url": stripUriParams(uri)});
+        result += templateStartUrl.render({
+          "url": stripUriParams(uri),
+          'isFormDataRequest': requestModel.isFormDataRequest
+        });
 
         if (uri.hasQuery) {
           var params = uri.queryParameters;
@@ -124,7 +176,15 @@ print('Response Body:', response.text)
             result += templateHeaders.render({"headers": headersString});
           }
         }
-
+        if (requestModel.isFormDataRequest) {
+          result += kFormDataHeaders;
+          var formDataBodyData = jj.Template(kStringFormDataBody);
+          result += formDataBodyData.render(
+            {
+              "fields_list": json.encode(rowsToFormDataMap(formDataList)),
+            },
+          );
+        }
         var templateRequest = jj.Template(kTemplateRequest);
         result += templateRequest.render({
           "method": method.name.toLowerCase(),
@@ -134,15 +194,15 @@ print('Response Body:', response.text)
           result += kStringRequestParams;
         }
 
-        if (hasBody) {
+        if (hasBody || requestModel.isFormDataRequest) {
           result += kStringRequestBody;
         }
 
-        if (hasJsonBody) {
+        if (hasJsonBody || requestModel.isFormDataRequest) {
           result += kStringRequestJson;
         }
 
-        if (hasHeaders) {
+        if (hasHeaders || requestModel.isFormDataRequest) {
           result += kStringRequestHeaders;
         }
 
