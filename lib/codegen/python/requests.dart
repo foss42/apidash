@@ -1,11 +1,15 @@
 import 'dart:io';
 import 'dart:convert';
-import 'package:apidash/utils/convert_utils.dart';
 import 'package:apidash/utils/extensions/request_model_extension.dart';
 import 'package:jinja/jinja.dart' as jj;
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart'
-    show getValidRequestUri, padMultilineString, stripUriParams;
+    show
+        getNewUuid,
+        getValidRequestUri,
+        padMultilineString,
+        rowsToFormDataMap,
+        stripUriParams;
 import 'package:apidash/models/models.dart' show FormDataModel, RequestModel;
 
 class PythonRequestsCodeGen {
@@ -13,22 +17,8 @@ class PythonRequestsCodeGen {
 {% if isFormDataRequest %}
 import mimetypes
 from codecs import encode
-import uuid
-
-headers = {}
-boundary = str(uuid.uuid4())
 {% endif %}
 url = '{{url}}'
-
-""";
-
-  final String kTemplateFormDataImports = """
-import mimetypes
-from codecs import encode
-import uuid
-
-headers = {}
-boundary = str(uuid.uuid4())
 
 """;
 
@@ -56,6 +46,8 @@ payload = {{body}}
 headers = {{headers}}
 
 """;
+  String kTemplateFormHeaderContentType = '''
+multipart/form-data; boundary={{boundary}}''';
 
   int kHeadersPadding = 10;
 
@@ -72,7 +64,7 @@ def build_data_list(fields):
         value = field.get('value', '')
         type_ = field.get('type', 'text')
 
-        dataList.append(encode(f'--{boundary}'))
+        dataList.append(encode('--{{boundary}}'))
         if type_ == 'text':
             dataList.append(encode(f'Content-Disposition: form-data; name="{name}"'))
             dataList.append(encode('Content-Type: text/plain'))
@@ -84,12 +76,13 @@ def build_data_list(fields):
             dataList.append(encode(''))
             dataList.append(open(value, 'rb').read())
 
-    dataList.append(encode(f'--{boundary}--'))
+    dataList.append(encode('--{{boundary}}--'))
     dataList.append(encode(''))
     return dataList
 dataList = build_data_list({{fields_list}})
 payload = b'\r\n'.join(dataList)
 ''';
+
   String kStringRequestParams = """, params=params""";
 
   String kStringRequestBody = """, data=payload""";
@@ -97,9 +90,6 @@ payload = b'\r\n'.join(dataList)
   String kStringRequestJson = """, json=payload""";
 
   String kStringRequestHeaders = """, headers=headers""";
-  String kFormDataHeaders = '''
-headers['Content-type'] = f'multipart/form-data; boundary={boundary}';
-''';
 
   final String kStringRequestEnd = """)
 
@@ -118,6 +108,7 @@ print('Response Body:', response.text)
       bool hasBody = false;
       bool hasJsonBody = false;
       List<FormDataModel> formDataList = requestModel.formDataList ?? [];
+      String uuid = getNewUuid();
 
       String url = requestModel.url;
       if (!url.contains("://") && url.isNotEmpty) {
@@ -164,6 +155,13 @@ print('Response Body:', response.text)
         var headersList = requestModel.requestHeaders;
         if (headersList != null || hasBody) {
           var headers = requestModel.headersMap;
+          if (requestModel.isFormDataRequest) {
+            var formHeaderTemplate =
+                jj.Template(kTemplateFormHeaderContentType);
+            headers[HttpHeaders.contentTypeHeader] = formHeaderTemplate.render({
+              "boundary": uuid,
+            });
+          }
           if (headers.isNotEmpty || hasBody) {
             hasHeaders = true;
             if (hasBody) {
@@ -177,11 +175,11 @@ print('Response Body:', response.text)
           }
         }
         if (requestModel.isFormDataRequest) {
-          result += kFormDataHeaders;
           var formDataBodyData = jj.Template(kStringFormDataBody);
           result += formDataBodyData.render(
             {
               "fields_list": json.encode(rowsToFormDataMap(formDataList)),
+              "boundary": uuid,
             },
           );
         }

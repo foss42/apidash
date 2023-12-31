@@ -1,11 +1,10 @@
 import 'dart:io';
 import 'dart:convert';
-import 'package:apidash/utils/convert_utils.dart';
 import 'package:apidash/utils/extensions/request_model_extension.dart';
 import 'package:jinja/jinja.dart' as jj;
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart'
-    show getValidRequestUri, padMultilineString;
+    show getNewUuid, getValidRequestUri, padMultilineString, rowsToFormDataMap;
 import 'package:apidash/models/models.dart' show FormDataModel, RequestModel;
 
 class PythonHttpClientCodeGen {
@@ -13,11 +12,8 @@ class PythonHttpClientCodeGen {
 {% if isFormDataRequest %}
 import mimetypes
 from codecs import encode
-import uuid
-
-headers = {}
-boundary = str(uuid.uuid4())
 {% endif %}
+
 """;
 
   String kTemplateParams = """
@@ -40,6 +36,8 @@ body = r'''{{body}}'''
 headers = {{headers}}
 
 """;
+  String kTemplateFormHeaderContentType = '''
+multipart/form-data; boundary={{boundary}}''';
 
   int kHeadersPadding = 10;
 
@@ -50,10 +48,6 @@ conn = http.client.HTTP{{isHttps}}Connection("{{authority}}")""";
   String kTemplateRequest = """
 
 conn.request("{{method}}", "{{path}}"{{queryParamsStr}}""";
-
-  String kTemplateFormDataRequest = """
-conn.request("{{method}}", "{{path}}"{{queryParamsStr}},body=payload, headers=headers
-""";
 
   String kStringRequestBody = """,
               body= body""";
@@ -76,8 +70,7 @@ def build_data_list(fields):
         name = field.get('name', '')
         value = field.get('value', '')
         type_ = field.get('type', 'text')
-
-        dataList.append(encode(f'--{boundary}'))
+        dataList.append(encode('--{{boundary}}'))
         if type_ == 'text':
             dataList.append(encode(f'Content-Disposition: form-data; name="{name}"'))
             dataList.append(encode('Content-Type: text/plain'))
@@ -88,23 +81,18 @@ def build_data_list(fields):
             dataList.append(encode(f'Content-Type: {mimetypes.guess_type(value)[0] or "application/octet-stream"}'))
             dataList.append(encode(''))
             dataList.append(open(value, 'rb').read())
-
-    dataList.append(encode(f'--{boundary}--'))
+    dataList.append(encode(f'--{{boundary}}--'))
     dataList.append(encode(''))
     return dataList
 dataList = build_data_list({{fields_list}})
 body = b'\r\n'.join(dataList)
 ''';
-
-  String kFormDataHeaders = '''
-headers['Content-type'] = f'multipart/form-data; boundary={boundary}';
-''';
-
   String? getCode(
     RequestModel requestModel,
     String defaultUriScheme,
   ) {
     List<FormDataModel> formDataList = requestModel.formDataList ?? [];
+    String uuid = getNewUuid();
 
     try {
       String result = "";
@@ -116,6 +104,7 @@ headers['Content-type'] = f'multipart/form-data; boundary={boundary}';
       if (!url.contains("://") && url.isNotEmpty) {
         url = "$defaultUriScheme://$url";
       }
+
       var templateStartUrl = jj.Template(kTemplateStart);
       result += templateStartUrl.render(
         {
@@ -151,6 +140,13 @@ headers['Content-type'] = f'multipart/form-data; boundary={boundary}';
         var headersList = requestModel.requestHeaders;
         if (headersList != null || hasBody) {
           var headers = requestModel.headersMap;
+          if (requestModel.isFormDataRequest) {
+            var formHeaderTemplate =
+                jj.Template(kTemplateFormHeaderContentType);
+            headers[HttpHeaders.contentTypeHeader] = formHeaderTemplate.render({
+              "boundary": uuid,
+            });
+          }
           if (headers.isNotEmpty || hasBody) {
             hasHeaders = true;
             if (hasBody) {
@@ -164,11 +160,11 @@ headers['Content-type'] = f'multipart/form-data; boundary={boundary}';
           }
         }
         if (requestModel.isFormDataRequest) {
-          result += kFormDataHeaders;
           var formDataBodyData = jj.Template(kStringFormDataBody);
           result += formDataBodyData.render(
             {
               "fields_list": json.encode(rowsToFormDataMap(formDataList)),
+              "boundary": uuid,
             },
           );
         }
@@ -177,6 +173,7 @@ headers['Content-type'] = f'multipart/form-data; boundary={boundary}';
           "isHttps": uri.scheme == "https" ? "S" : "",
           "authority": uri.authority
         });
+
         var templateRequest = jj.Template(kTemplateRequest);
         result += templateRequest.render({
           "method": method.name.toUpperCase(),
@@ -196,7 +193,6 @@ headers['Content-type'] = f'multipart/form-data; boundary={boundary}';
       }
       return result;
     } catch (e) {
-      print(e);
       return null;
     }
   }
