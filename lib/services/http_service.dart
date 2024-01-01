@@ -28,7 +28,7 @@ Future<(http.Response?, Duration?, String?)> request(
         if (contentLength > 0) {
           body = requestBody;
           headers[HttpHeaders.contentLengthHeader] = contentLength.toString();
-          if (!headers.containsKey(HttpHeaders.connectionHeader)) {
+          if (!headers.containsKey(HttpHeaders.contentTypeHeader)) {
               headers[HttpHeaders.contentTypeHeader] = 
                 kContentTypeMap[requestModel.requestBodyContentType] ?? "";
           }
