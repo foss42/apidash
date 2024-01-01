@@ -15,7 +15,6 @@ Map<String, String> headers = {
       "Indicates the encoding transformations that have been applied to the entity body of the response.",
   "Content-Security-Policy":
       "Controls the sources from which content can be loaded on a web page to mitigate various types of attacks.",
-  "Content-Type": "Indicates the original media type of the resource (prior to any content encoding applied for sending)",
   "Cookie": "Used to send previously stored cookies back to the server.",
   "Cross-Origin-Embedder-Policy":
       "Controls whether a document is allowed to be embedded in another document.",
@@ -68,16 +67,6 @@ List<String> getHeaderSuggestions(String pattern) {
   return headers.keys
       .where(
         (element) => element.toLowerCase().contains(pattern.toLowerCase()),
-      )
-      .toList();
-}
-
-List<String> headerValues = ['application/json', 'text/plain'];
-
-List<String> getHeaderValueSuggestions(String pattern) {
-  return headerValues
-      .where(
-        (element) => element.contains(pattern.toLowerCase()),
       )
       .toList();
 }

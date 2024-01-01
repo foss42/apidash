@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:apidash/utils/header_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
@@ -12,14 +10,12 @@ class HeaderField extends StatefulWidget {
     this.hintText,
     this.initialValue,
     this.onChanged,
-    this.headerSuggestionsCallback,
     this.colorScheme,
   });
   final String keyId;
   final String? hintText;
   final String? initialValue;
   final void Function(String)? onChanged;
-  final FutureOr<Iterable<String>> Function(String)? headerSuggestionsCallback;
   final ColorScheme? colorScheme;
 
   @override
@@ -71,7 +67,7 @@ class _HeaderFieldState extends State<HeaderField> {
           title: Text(suggestion),
         );
       },
-      suggestionsCallback: widget.headerSuggestionsCallback ?? headerSuggestionCallback,
+      suggestionsCallback: headerSuggestionCallback,
       suggestionsBoxDecoration: suggestionBoxDecorations(context),
       textFieldConfiguration: TextFieldConfiguration(
         onChanged: widget.onChanged,

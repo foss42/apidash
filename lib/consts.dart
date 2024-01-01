@@ -305,8 +305,6 @@ const kTypeVideo = 'video';
 
 const kSubTypeDefaultViewOptions = 'all';
 
-const kContentType = 'Content-Type';
-
 const kContentTypeMap = {
   ContentType.json: "$kTypeApplication/$kSubTypeJson",
   ContentType.text: "$kTypeText/$kSubTypePlain",
