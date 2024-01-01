@@ -1,3 +1,4 @@
+import 'package:apidash/widgets/raw.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http_parser/http_parser.dart';
@@ -407,22 +408,31 @@ class _BodySuccessState extends State<BodySuccess> {
         return Padding(
           padding: kP10,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Row(
+              Wrap(
+                alignment: WrapAlignment.spaceBetween,
                 children: [
                   (widget.options == kRawBodyViewOptions)
                       ? const SizedBox()
                       : SegmentedButton<ResponseBodyView>(
-                          selectedIcon: Icon(
-                              kResponseBodyViewIcons[currentSeg]![kKeyIcon]),
+                          selectedIcon: showLabel
+                              ? Icon(
+                                  kResponseBodyViewIcons[currentSeg]![kKeyIcon],
+                                )
+                              : null,
                           segments: widget.options
                               .map<ButtonSegment<ResponseBodyView>>(
                                 (e) => ButtonSegment<ResponseBodyView>(
                                   value: e,
-                                  label: Text(
-                                      kResponseBodyViewIcons[e]![kKeyName]),
+                                  label: showLabel
+                                      ? Text(
+                                          kResponseBodyViewIcons[e]![kKeyName],
+                                        )
+                                      : null,
                                   icon: Icon(
-                                      kResponseBodyViewIcons[e]![kKeyIcon]),
+                                    kResponseBodyViewIcons[e]![kKeyIcon],
+                                  ),
                                 ),
                               )
                               .toList(),
@@ -434,8 +444,11 @@ class _BodySuccessState extends State<BodySuccess> {
                             });
                           },
                         ),
-                  const Spacer(),
-                  kCodeRawBodyViewOptions.contains(currentSeg)
+                  // const Spacer(),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      kCodeRawBodyViewOptions.contains(currentSeg)
                       ? CopyButton(
                           toCopy: widget.body,
                           showLabel: showLabel,
@@ -446,6 +459,8 @@ class _BodySuccessState extends State<BodySuccess> {
                     mimeType: widget.mediaType.mimeType,
                     showLabel: showLabel,
                   ),
+                    ],
+                  )
                 ],
               ),
               kVSpacer10,
@@ -491,11 +506,9 @@ class _BodySuccessState extends State<BodySuccess> {
                     width: double.maxFinite,
                     padding: kP8,
                     decoration: textContainerdecoration,
-                    child: SingleChildScrollView(
-                      child: SelectableText(
-                        widget.body,
-                        style: kCodeStyle,
-                      ),
+                    child: Raw(
+                      body: widget.body,
+                      style: kCodeStyle,
                     ),
                   ),
                 ),
