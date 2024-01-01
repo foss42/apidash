@@ -46,13 +46,14 @@ class _RequestPaneState extends State<RequestPane>
       _controller.index = widget.tabIndex!;
     }
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Padding(
           padding: kPh20v10,
           child: SizedBox(
             height: kHeaderHeight,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: Wrap(
+              alignment: WrapAlignment.spaceBetween,
               children: [
                 Text(
                   "Request",
@@ -65,10 +66,9 @@ class _RequestPaneState extends State<RequestPane>
                         ? Icons.code_off_rounded
                         : Icons.code_rounded,
                   ),
-                  label: SizedBox(
-                    width: 75,
-                    child: Text(
-                        widget.codePaneVisible ? "Hide Code" : "View Code"),
+                  label: Text(
+                    widget.codePaneVisible ? "Hide Code" : "View Code",
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],
