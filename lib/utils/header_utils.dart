@@ -2,8 +2,18 @@ Map<String, String> headers = {
   "Accept": "Specifies the media types that are acceptable for the response.",
   "Accept-Encoding":
       "Indicates the encoding methods the client can understand.",
+  "Access-Control-Allow-Headers":
+      "Specifies a list of HTTP headers that can be used in an actual request after a preflight request including the Access-Control-Request-Headers header is made.",
+  "Access-Control-Allow-Methods":
+      "Specifies a list of HTTP request methods allowed during CORS. ",
+  "Access-Control-Allow-Origin":
+      "Indicates whether the response can be shared with the requesting code from the given origin.",
+  "Access-Control-Max-Age":
+      "Indicates the maximum amount of time the results of a preflight request can be cached.",
   "Access-Control-Request-Headers":
       "Used in preflight requests during CORS to specify the headers that will be included in the actual request.",
+  "Access-Control-Request-Method":
+      "Used in preflight requests during CORS to indicate the HTTP method that will be used in the actual request.",
   "Authorization":
       "Contains credentials for authenticating the client with the server.",
   "Authorization Bearer Token": "Often used for token-based authentication.",
@@ -15,6 +25,8 @@ Map<String, String> headers = {
       "Indicates the encoding transformations that have been applied to the entity body of the response.",
   "Content-Security-Policy":
       "Controls the sources from which content can be loaded on a web page to mitigate various types of attacks.",
+  "Content-Type":
+      "Indicates the original media type of the resource before any content-encoding applied for sending.",
   "Cookie": "Used to send previously stored cookies back to the server.",
   "Cross-Origin-Embedder-Policy":
       "Controls whether a document is allowed to be embedded in another document.",
@@ -25,6 +37,8 @@ Map<String, String> headers = {
   "DNT":
       "Informs websites whether the user's preference is to opt out of online tracking.",
   "Expect": "Indicates certain expectations that need to be met by the server.",
+  "Expires":
+      "Contains the date/time after which the response is considered expired",
   "Host": "Specifies the domain name of the server and the port number.",
   "If-Match":
       "Used for conditional requests, allows the server to respond based on certain conditions.",
