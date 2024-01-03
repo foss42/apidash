@@ -47,37 +47,21 @@ function readFile(file) {
 ''';
   String kMultiPartBodyTemplate = r'''
 async function buildDataList(fields) {
-  const dataList = [];
+  var formdata = new FormData();
   for (const field of fields) {
       const name = field.name || '';
       const value = field.value || '';
       const type = field.type || 'text';
 
-      dataList.push(`--{{boundary}}`);
       if (type === 'text') {
-          dataList.push(`Content-Disposition: form-data; name="${name}"`);
-          dataList.push('Content-Type: text/plain');
-          dataList.push('');
-          dataList.push(value);
+        formdata.append(name, value);
       } else if (type === 'file') {
-        const fileContent = await readFile(value);
-        dataList.push(`Content-Disposition: form-data; name="$name"; filename="${value.name}"`);
-        dataList.push(`Content-Type: ${value.type}`);
-        dataList.push('');
-        {% if isNodeJs %}dataList.push(fileContent);
-        {% else %}
-        dataList.push(fileContent.content);{% endif %}}
+        formdata.append(name,{% if isNodeJs %} fs.createReadStream(value){% else %} fileInput.files[0],value{% endif %});
       }
 
-  dataList.push(`--{{boundary}}--`);
-  dataList.push('');
-  return dataList.join('\r\n');
 }
-var dataList = [];
-buildDataList({{fields_list}})
-  .then(data => dataList = data)
-  .catch(err => console.error(err));
-const payload = dataList.join('\r\n');
+
+const payload = buildDataList({{fields_list}});
 
 ''';
   String kStringRequest = """
