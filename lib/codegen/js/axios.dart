@@ -1,8 +1,14 @@
+import 'dart:convert';
 import 'package:apidash/consts.dart';
+import 'package:apidash/utils/extensions/request_model_extension.dart';
 import 'package:jinja/jinja.dart' as jj;
 import 'package:apidash/utils/utils.dart'
-    show requestModelToHARJsonRequest, padMultilineString, stripUrlParams;
-import 'package:apidash/models/models.dart' show RequestModel;
+    show
+        padMultilineString,
+        requestModelToHARJsonRequest,
+        rowsToFormDataMap,
+        stripUrlParams;
+import 'package:apidash/models/models.dart' show FormDataModel, RequestModel;
 
 class AxiosCodeGen {
   AxiosCodeGen({this.isNodeJs = false});
@@ -10,6 +16,8 @@ class AxiosCodeGen {
   final bool isNodeJs;
 
   String kStringImportNode = """import axios from 'axios';
+{% if isFormDataRequest and isNodeJs %}const fs = require('fs');
+{% endif %}
 
 """;
 
@@ -46,13 +54,45 @@ axios(config)
         console.log(error);
     });
 """;
+  String kMultiPartBodyTemplate = r'''
+async function buildFormData(fields) {
+  var formdata = new FormData();
+  for (const field of fields) {
+      const name = field.name || '';
+      const value = field.value || '';
+      const type = field.type || 'text';
 
+      if (type === 'text') {
+        formdata.append(name, value);
+      } else if (type === 'file') {
+        formdata.append(name,{% if isNodeJs %} fs.createReadStream(value){% else %} fileInput.files[0],value{% endif %});
+      }
+    }
+  return formdata;
+}
+
+
+''';
+  var kGetFormDataTemplate = '''buildFormData({{fields_list}});
+''';
   String? getCode(
     RequestModel requestModel,
     String defaultUriScheme,
   ) {
     try {
-      String result = isNodeJs ? kStringImportNode : "";
+      List<FormDataModel> formDataList = requestModel.formDataList ?? [];
+      jj.Template kNodejsImportTemplate = jj.Template(kStringImportNode);
+      String importsData = kNodejsImportTemplate.render({
+        "isFormDataRequest": requestModel.isFormDataRequest,
+        "isNodeJs": isNodeJs,
+      });
+
+      String result = importsData;
+      var templateMultiPartBody = jj.Template(kMultiPartBodyTemplate);
+      var renderedMultiPartBody = templateMultiPartBody.render({
+        "isNodeJs": isNodeJs,
+      });
+      result += renderedMultiPartBody;
 
       String url = requestModel.url;
       if (!url.contains("://") && url.isNotEmpty) {
@@ -80,18 +120,30 @@ axios(config)
       }
 
       var headers = harJson["headers"];
-      if (headers.isNotEmpty) {
+      if (headers.isNotEmpty || requestModel.isFormDataRequest) {
         var templateHeader = jj.Template(kTemplateHeader);
         var m = {};
         for (var i in headers) {
           m[i["name"]] = i["value"];
         }
+        if (requestModel.isFormDataRequest) {
+          m['Content-Type'] = 'multipart/form-data';
+        }
         result += templateHeader
             .render({"headers": padMultilineString(kEncoder.convert(m), 2)});
       }
+      var templateBody = jj.Template(kTemplateBody);
 
+      if (requestModel.isFormDataRequest) {
+        var getFieldDataTemplate = jj.Template(kGetFormDataTemplate);
+
+        result += templateBody.render({
+          "body": getFieldDataTemplate.render({
+            "fields_list": json.encode(rowsToFormDataMap(formDataList)),
+          })
+        });
+      }
       if (harJson["postData"]?["text"] != null) {
-        var templateBody = jj.Template(kTemplateBody);
         result += templateBody
             .render({"body": kEncoder.convert(harJson["postData"]["text"])});
       }

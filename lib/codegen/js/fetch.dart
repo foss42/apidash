@@ -5,7 +5,7 @@ import 'package:apidash/utils/convert_utils.dart';
 import 'package:apidash/utils/extensions/request_model_extension.dart';
 import 'package:jinja/jinja.dart' as jj;
 import 'package:apidash/utils/utils.dart'
-    show getNewUuid, padMultilineString, requestModelToHARJsonRequest;
+    show padMultilineString, requestModelToHARJsonRequest;
 import 'package:apidash/models/models.dart' show FormDataModel, RequestModel;
 
 class FetchCodeGen {
@@ -13,14 +13,16 @@ class FetchCodeGen {
 
   final bool isNodeJs;
 
-  String kStringImportNode = """
+  String kStringImportNode =
+      """
 import fetch from 'node-fetch';
 {% if isFormDataRequest %}const fs = require('fs');{% endif %}
 
 
 """;
 
-  String kTemplateStart = """let url = '{{url}}';
+  String kTemplateStart =
+      """let url = '{{url}}';
 
 let options = {
   method: '{{method}}'
@@ -33,19 +35,9 @@ let options = {
   String kTemplateBody = """,
   body: {{body}}
 """;
-  String kMultiPartFileReader = '''
-function readFile(file) {
-  {% if isNodeJs %} return fs.readFile(file, 'binary'); {% else %} return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = reject;
-       reader.readAsArrayBuffer(file);
-  });
-{% endif %}
-}
 
-''';
-  String kMultiPartBodyTemplate = r'''
+  String kMultiPartBodyTemplate =
+      r'''
 async function buildDataList(fields) {
   var formdata = new FormData();
   for (const field of fields) {
@@ -58,13 +50,15 @@ async function buildDataList(fields) {
       } else if (type === 'file') {
         formdata.append(name,{% if isNodeJs %} fs.createReadStream(value){% else %} fileInput.files[0],value{% endif %});
       }
-
+    }
+  return formdata;
 }
 
 const payload = buildDataList({{fields_list}});
 
 ''';
-  String kStringRequest = """
+  String kStringRequest =
+      """
 
 };
 
@@ -90,7 +84,6 @@ fetch(url, options)
   ) {
     try {
       List<FormDataModel> formDataList = requestModel.formDataList ?? [];
-      String uuid = getNewUuid();
       jj.Template kNodejsImportTemplate = jj.Template(kStringImportNode);
       String importsData = kNodejsImportTemplate.render({
         "isFormDataRequest": requestModel.isFormDataRequest,
@@ -98,15 +91,8 @@ fetch(url, options)
 
       String result = isNodeJs ? importsData : "";
       if (requestModel.isFormDataRequest) {
-        jj.Template kMultiPartFileReaderTemplate =
-            jj.Template(kMultiPartFileReader);
-        result += kMultiPartFileReaderTemplate.render({
-          "isNodeJs": isNodeJs,
-        });
-        var boundary = uuid;
         var templateMultiPartBody = jj.Template(kMultiPartBodyTemplate);
         result += templateMultiPartBody.render({
-          "boundary": boundary,
           "isNodeJs": isNodeJs,
           "fields_list": json.encode(rowsToFormDataMap(formDataList)),
         });
@@ -131,7 +117,7 @@ fetch(url, options)
         var templateHeader = jj.Template(kTemplateHeader);
         var m = {};
         if (requestModel.isFormDataRequest) {
-          m["Content-Type"] = "multipart/form-data; boundary=$uuid";
+          m["Content-Type"] = "multipart/form-data";
         }
         for (var i in headers) {
           m[i["name"]] = i["value"];
