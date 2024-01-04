@@ -1,19 +1,28 @@
+import 'dart:convert';
+
 import 'package:apidash/consts.dart';
+import 'package:apidash/utils/convert_utils.dart';
+import 'package:apidash/utils/extensions/request_model_extension.dart';
 import 'package:jinja/jinja.dart' as jj;
 import 'package:apidash/utils/utils.dart'
-    show requestModelToHARJsonRequest, padMultilineString;
-import 'package:apidash/models/models.dart' show RequestModel;
+    show padMultilineString, requestModelToHARJsonRequest;
+import 'package:apidash/models/models.dart' show FormDataModel, RequestModel;
 
 class FetchCodeGen {
   FetchCodeGen({this.isNodeJs = false});
 
   final bool isNodeJs;
 
-  String kStringImportNode = """import fetch from 'node-fetch';
+  String kStringImportNode =
+      """
+import fetch from 'node-fetch';
+{% if isFormDataRequest %}const fs = require('fs');{% endif %}
+
 
 """;
 
-  String kTemplateStart = """let url = '{{url}}';
+  String kTemplateStart =
+      """let url = '{{url}}';
 
 let options = {
   method: '{{method}}'
@@ -24,11 +33,32 @@ let options = {
 """;
 
   String kTemplateBody = """,
-  body: 
-{{body}}
+  body: {{body}}
 """;
 
-  String kStringRequest = """
+  String kMultiPartBodyTemplate =
+      r'''
+async function buildDataList(fields) {
+  var formdata = new FormData();
+  for (const field of fields) {
+      const name = field.name || '';
+      const value = field.value || '';
+      const type = field.type || 'text';
+
+      if (type === 'text') {
+        formdata.append(name, value);
+      } else if (type === 'file') {
+        formdata.append(name,{% if isNodeJs %} fs.createReadStream(value){% else %} fileInput.files[0],value{% endif %});
+      }
+    }
+  return formdata;
+}
+
+const payload = buildDataList({{fields_list}});
+
+''';
+  String kStringRequest =
+      """
 
 };
 
@@ -53,8 +83,20 @@ fetch(url, options)
     String defaultUriScheme,
   ) {
     try {
-      String result = isNodeJs ? kStringImportNode : "";
+      List<FormDataModel> formDataList = requestModel.formDataList ?? [];
+      jj.Template kNodejsImportTemplate = jj.Template(kStringImportNode);
+      String importsData = kNodejsImportTemplate.render({
+        "isFormDataRequest": requestModel.isFormDataRequest,
+      });
 
+      String result = isNodeJs ? importsData : "";
+      if (requestModel.isFormDataRequest) {
+        var templateMultiPartBody = jj.Template(kMultiPartBodyTemplate);
+        result += templateMultiPartBody.render({
+          "isNodeJs": isNodeJs,
+          "fields_list": json.encode(rowsToFormDataMap(formDataList)),
+        });
+      }
       String url = requestModel.url;
       if (!url.contains("://") && url.isNotEmpty) {
         url = "$defaultUriScheme://$url";
@@ -70,21 +112,33 @@ fetch(url, options)
       });
 
       var headers = harJson["headers"];
+
       if (headers.isNotEmpty) {
         var templateHeader = jj.Template(kTemplateHeader);
         var m = {};
+        if (requestModel.isFormDataRequest) {
+          m["Content-Type"] = "multipart/form-data";
+        }
         for (var i in headers) {
           m[i["name"]] = i["value"];
         }
-        result += templateHeader
-            .render({"headers": padMultilineString(kEncoder.convert(m), 2)});
+        result += templateHeader.render({
+          "headers": padMultilineString(kEncoder.convert(m), 2),
+        });
       }
 
       if (harJson["postData"]?["text"] != null) {
         var templateBody = jj.Template(kTemplateBody);
-        result += templateBody
-            .render({"body": kEncoder.convert(harJson["postData"]["text"])});
+        result += templateBody.render({
+          "body": kEncoder.convert(harJson["postData"]["text"]),
+        });
+      } else if (requestModel.isFormDataRequest) {
+        var templateBody = jj.Template(kTemplateBody);
+        result += templateBody.render({
+          "body": 'payload',
+        });
       }
+
       result += kStringRequest;
       return result;
     } catch (e) {

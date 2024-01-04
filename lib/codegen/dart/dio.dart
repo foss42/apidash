@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:apidash/consts.dart';
 import 'package:apidash/models/request_model.dart' show RequestModel;
+import 'package:apidash/utils/convert_utils.dart';
 import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
 
@@ -22,6 +25,7 @@ class DartDioCodeGen {
         headers: requestModel.headersMap,
         body: requestModel.requestBody,
         contentType: requestModel.requestBodyContentType,
+        formData: rowsToFormDataMap(requestModel.formDataList) ?? [],
       );
       return next;
     } catch (e) {
@@ -36,6 +40,7 @@ class DartDioCodeGen {
     required Map<String, String> headers,
     required String? body,
     required ContentType contentType,
+    required List<Map<String, dynamic>> formData,
   }) {
     final sbf = StringBuffer();
     final emitter = DartEmitter();
@@ -54,9 +59,22 @@ class DartDioCodeGen {
         literalMap(headers.map((key, value) => MapEntry(key, value))),
       );
     }
-
+    final multiPartList = Code('''
+      final List<Map<String,String>> formDataList = ${json.encode(formData)};
+      for (var formField in formDataList) {
+        if (formField['type'] == 'file') {
+          formData.files.add(MapEntry(
+            formField['name'],
+            await MultipartFile.fromFile(formField['value'], filename: formField['value']),
+          ));
+        } else {
+          formData.fields.add(MapEntry(formField['name'], formField['value']));
+        }
+      }
+    ''');
     Expression? dataExp;
-    if (kMethodsWithBody.contains(method) && (body?.isNotEmpty ?? false)) {
+    if ((kMethodsWithBody.contains(method) && (body?.isNotEmpty ?? false) ||
+        contentType == ContentType.formdata)) {
       final strContent = CodeExpression(Code('r\'\'\'$body\'\'\''));
       switch (contentType) {
         // dio dosen't need pass `content-type` header when body is json or plain text
@@ -69,7 +87,7 @@ class DartDioCodeGen {
           dataExp = declareFinal('data').assign(strContent);
         // when add new type of [ContentType], need update [dataExp].
         case ContentType.formdata:
-        // TODO: Need to Handle this case.
+          dataExp = declareFinal('data').assign(refer('FormData()'));
       }
     }
     final responseExp = declareFinal('response').assign(InvokeExpression.newOf(
@@ -95,6 +113,8 @@ class DartDioCodeGen {
           if (queryParamExp != null) queryParamExp,
           if (headerExp != null) headerExp,
           if (dataExp != null) dataExp,
+          if ((contentType == ContentType.formdata && formData.isNotEmpty))
+            multiPartList,
           responseExp,
           refer('print').call([refer('response').property('statusCode')]),
           refer('print').call([refer('response').property('data')]),
@@ -124,6 +144,8 @@ class DartDioCodeGen {
 
     sbf.writeln(mainFunction.accept(emitter));
 
-    return DartFormatter(pageWidth: 160).format(sbf.toString());
+    return DartFormatter(
+            pageWidth: contentType == ContentType.formdata ? 70 : 160)
+        .format(sbf.toString());
   }
 }

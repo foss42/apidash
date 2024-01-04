@@ -39,6 +39,7 @@ Future<(http.Response?, Duration?, String?)> request(
           requestModel.method.name.toUpperCase(),
           requestUrl,
         );
+        multiPartRequest.headers.addAll(headers);
         for (FormDataModel formData in (requestModel.formDataList ?? [])) {
           if (formData.type == FormDataType.text) {
             multiPartRequest.fields.addAll({formData.name: formData.value});
