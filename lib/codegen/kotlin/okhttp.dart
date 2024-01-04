@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'package:apidash/consts.dart';
+import 'package:apidash/utils/convert_utils.dart';
+import 'package:apidash/utils/extensions/request_model_extension.dart';
 import 'package:jinja/jinja.dart' as jj;
 import 'package:apidash/utils/utils.dart'
     show getValidRequestUri, stripUriParams;
@@ -61,6 +63,13 @@ import okhttp3.MediaType.Companion.toMediaType""";
 }
 
 """;
+// Converting list of form data objects to kolin multi part data
+  String kFormDataBody = '''
+    val body = MultipartBody.Builder().setType(MultipartBody.FORM){% for item in formDataList %}{% if item.type == 'file' %}
+          .addFormDataPart("{{item.name}}",null,File("{{item.value}}").asRequestBody("application/octet-stream".toMediaType()))
+          {% else %}.addFormDataPart("{{item.name}}","{{item.value}}")
+          {% endif %}{% endfor %}.build()
+''';
 
   String? getCode(
     RequestModel requestModel,
@@ -68,7 +77,6 @@ import okhttp3.MediaType.Companion.toMediaType""";
   ) {
     try {
       String result = "";
-      bool hasHeaders = false;
       bool hasQuery = false;
       bool hasBody = false;
 
@@ -99,7 +107,13 @@ import okhttp3.MediaType.Companion.toMediaType""";
 
         var method = requestModel.method;
         var requestBody = requestModel.requestBody;
-        if (kMethodsWithBody.contains(method) && requestBody != null) {
+        if (requestModel.isFormDataRequest) {
+          var formDataTemplate = jj.Template(kFormDataBody);
+
+          result += formDataTemplate.render({
+            "formDataList": rowsToFormDataMap(requestModel.formDataList),
+          });
+        } else if (kMethodsWithBody.contains(method) && requestBody != null) {
           var contentLength = utf8.encode(requestBody).length;
           if (contentLength > 0) {
             hasBody = true;
@@ -124,7 +138,6 @@ import okhttp3.MediaType.Companion.toMediaType""";
         if (headersList != null) {
           var headers = requestModel.headersMap;
           if (headers.isNotEmpty) {
-            hasHeaders = true;
             result += getHeaders(headers);
           }
         }
@@ -132,7 +145,7 @@ import okhttp3.MediaType.Companion.toMediaType""";
         var templateRequestEnd = jj.Template(kTemplateRequestEnd);
         result += templateRequestEnd.render({
           "method": method.name.toLowerCase(),
-          "hasBody": hasBody ? "body" : "",
+          "hasBody": (hasBody || requestModel.isFormDataRequest) ? "body" : "",
         });
       }
       return result;
