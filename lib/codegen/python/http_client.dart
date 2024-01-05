@@ -102,7 +102,9 @@ print(data.decode("utf-8"))
           var headers = requestModel.headersMap;
           if (headers.isNotEmpty || hasBody) {
             hasHeaders = true;
-            if (hasBody) {
+            bool hasContentTypeHeader = headers.keys.any((k) => k.toLowerCase() == HttpHeaders.contentTypeHeader);
+
+            if (hasBody && !hasContentTypeHeader) {
               headers[HttpHeaders.contentTypeHeader] =
                   kContentTypeMap[requestModel.requestBodyContentType] ?? "";
             }

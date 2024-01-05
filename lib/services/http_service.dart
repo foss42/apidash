@@ -28,8 +28,11 @@ Future<(http.Response?, Duration?, String?)> request(
         if (contentLength > 0) {
           body = requestBody;
           headers[HttpHeaders.contentLengthHeader] = contentLength.toString();
-          headers[HttpHeaders.contentTypeHeader] =
+          final hasContentTypeHeader = headers.keys.any((k) => k.toLowerCase() == HttpHeaders.contentTypeHeader);
+          if (!hasContentTypeHeader) {
+            headers[HttpHeaders.contentTypeHeader] = 
               kContentTypeMap[requestModel.requestBodyContentType] ?? "";
+          }
         }
       }
       Stopwatch stopwatch = Stopwatch()..start();
