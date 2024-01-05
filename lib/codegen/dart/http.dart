@@ -55,8 +55,11 @@ class DartHttpCodeGen {
       final strContent = CodeExpression(Code('r\'\'\'$body\'\'\''));
       dataExp = declareVar('body', type: refer('String')).assign(strContent);
 
-      composeHeaders.putIfAbsent(HttpHeaders.contentTypeHeader,
+      final hasContentTypeHeader = composeHeaders.keys.any((k) => k.toLowerCase() == HttpHeaders.contentTypeHeader);
+      if (!hasContentTypeHeader) {
+        composeHeaders.putIfAbsent(HttpHeaders.contentTypeHeader,
           () => kContentTypeMap[contentType] ?? '');
+      }
     }
 
     Expression? queryParamExp;
