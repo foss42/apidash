@@ -22,8 +22,8 @@ class DartHttpCodeGen {
       final next = generatedDartCode(
         url: url,
         method: requestModel.method,
-        queryParams: requestModel.paramsMap,
-        headers: requestModel.headersMap,
+        queryParams: requestModel.enabledParamsMap,
+        headers: requestModel.enabledHeadersMap,
         body: requestModel.requestBody,
         contentType: requestModel.requestBodyContentType,
         formData: rowsToFormDataMap(requestModel.formDataList) ?? [],
@@ -59,8 +59,11 @@ class DartHttpCodeGen {
       final strContent = CodeExpression(Code('r\'\'\'$body\'\'\''));
       dataExp = declareVar('body', type: refer('String')).assign(strContent);
 
-      composeHeaders.putIfAbsent(HttpHeaders.contentTypeHeader,
+      final hasContentTypeHeader = composeHeaders.keys.any((k) => k.toLowerCase() == HttpHeaders.contentTypeHeader);
+      if (!hasContentTypeHeader) {
+        composeHeaders.putIfAbsent(HttpHeaders.contentTypeHeader,
           () => kContentTypeMap[contentType] ?? '');
+      }
     }
 
     Expression? queryParamExp;

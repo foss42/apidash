@@ -21,8 +21,8 @@ class DartDioCodeGen {
       final next = generatedDartCode(
         url: url,
         method: requestModel.method,
-        queryParams: requestModel.paramsMap,
-        headers: requestModel.headersMap,
+        queryParams: requestModel.enabledParamsMap,
+        headers: requestModel.enabledHeadersMap,
         body: requestModel.requestBody,
         contentType: requestModel.requestBodyContentType,
         formData: rowsToFormDataMap(requestModel.formDataList) ?? [],

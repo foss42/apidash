@@ -213,6 +213,117 @@ void main() async {
 """;
       expect(dartHttpCodeGen.getCode(requestModelGet8, "https"), expectedCode);
     });
+
+    test('GET 9', () {
+      const expectedCode = r"""import 'package:http/http.dart' as http;
+
+void main() async {
+  var uri = Uri.parse('https://api.foss42.com/humanize/social');
+
+  var queryParams = {
+    'num': '8700000',
+    'add_space': 'true',
+  };
+  uri = uri.replace(queryParameters: queryParams);
+
+  final response = await http.get(uri);
+
+  int statusCode = response.statusCode;
+  if (statusCode >= 200 && statusCode < 300) {
+    print('Status Code: $statusCode');
+    print('Response Body: ${response.body}');
+  } else {
+    print('Error Status Code: $statusCode');
+    print('Error Response Body: ${response.body}');
+  }
+}
+""";
+      expect(dartHttpCodeGen.getCode(requestModelGet9, "https"), expectedCode);
+    });
+
+    test('GET 10', () {
+      const expectedCode = r"""import 'package:http/http.dart' as http;
+
+void main() async {
+  var uri = Uri.parse('https://api.foss42.com/humanize/social');
+
+  var headers = {'User-Agent': 'Test Agent'};
+
+  final response = await http.get(
+    uri,
+    headers: headers,
+  );
+
+  int statusCode = response.statusCode;
+  if (statusCode >= 200 && statusCode < 300) {
+    print('Status Code: $statusCode');
+    print('Response Body: ${response.body}');
+  } else {
+    print('Error Status Code: $statusCode');
+    print('Error Response Body: ${response.body}');
+  }
+}
+""";
+      expect(
+          dartHttpCodeGen.getCode(
+            requestModelGet10,
+            "https",
+          ),
+          expectedCode);
+    });
+
+    test('GET 11', () {
+      const expectedCode = r"""import 'package:http/http.dart' as http;
+
+void main() async {
+  var uri = Uri.parse('https://api.foss42.com/humanize/social');
+
+  var queryParams = {
+    'num': '8700000',
+    'digits': '3',
+  };
+  uri = uri.replace(queryParameters: queryParams);
+
+  var headers = {'User-Agent': 'Test Agent'};
+
+  final response = await http.get(
+    uri,
+    headers: headers,
+  );
+
+  int statusCode = response.statusCode;
+  if (statusCode >= 200 && statusCode < 300) {
+    print('Status Code: $statusCode');
+    print('Response Body: ${response.body}');
+  } else {
+    print('Error Status Code: $statusCode');
+    print('Error Response Body: ${response.body}');
+  }
+}
+""";
+      expect(dartHttpCodeGen.getCode(requestModelGet11, "https"), expectedCode);
+    });
+
+    test('GET 12', () {
+      const expectedCode = r"""import 'package:http/http.dart' as http;
+
+void main() async {
+  var uri = Uri.parse('https://api.foss42.com/humanize/social');
+
+  final response = await http.get(uri);
+
+  int statusCode = response.statusCode;
+  if (statusCode >= 200 && statusCode < 300) {
+    print('Status Code: $statusCode');
+    print('Response Body: ${response.body}');
+  } else {
+    print('Error Status Code: $statusCode');
+    print('Error Response Body: ${response.body}');
+  }
+}
+""";
+      expect(dartHttpCodeGen.getCode(requestModelGet12, "https"), expectedCode);
+    });
   });
 
   group('HEAD Request', () {
@@ -356,6 +467,7 @@ void main() async {
       expect(dartHttpCodeGen.getCode(requestModelPost3, "https"), expectedCode);
     });
   });
+
   group('PUT Request', () {
     test('PUT 1', () {
       const expectedCode = r"""import 'package:http/http.dart' as http;

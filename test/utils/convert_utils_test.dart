@@ -127,4 +127,39 @@ Easily manipulate and play around with request inputs like headers, query parame
       expect(padMultilineString(text1, 10), text1FirstLineNotPaddedExpected);
     });
   });
+
+  group("Test getEnabledRows", () {
+    test('Testing for null', () {
+      expect(getEnabledRows(null, null), null);
+    });
+    test('Testing for empty list', () {
+      expect(getEnabledRows([], []), []);
+    });
+    const kvRow1 = NameValueModel(name: "code", value: "IN");
+    const kvRow2 = NameValueModel(name: "lang", value: "eng");
+    const kvRow3 = NameValueModel(name: "version", value: 0.1);
+    const kvRow4 = NameValueModel(name: "month", value: 4);
+    test('Testing with isRowEnabledList null', () {
+      expect(getEnabledRows([kvRow1, kvRow2, kvRow3, kvRow4], null),
+          [kvRow1, kvRow2, kvRow3, kvRow4]);
+    });
+    test('Testing for list with all enabled', () {
+      expect(
+          getEnabledRows(
+              [kvRow1, kvRow2, kvRow3, kvRow4], [true, true, true, true]),
+          [kvRow1, kvRow2, kvRow3, kvRow4]);
+    });
+    test('Testing for list with all disabled', () {
+      expect(
+          getEnabledRows(
+              [kvRow1, kvRow2, kvRow3, kvRow4], [false, false, false, false]),
+          []);
+    });
+    test('Testing for list with some disabled', () {
+      expect(
+          getEnabledRows(
+              [kvRow1, kvRow2, kvRow3, kvRow4], [true, false, true, false]),
+          [kvRow1, kvRow3]);
+    });
+  });
 }

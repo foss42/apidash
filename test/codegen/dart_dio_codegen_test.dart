@@ -208,6 +208,115 @@ void main() async {
 """;
       expect(dartDioCodeGen.getCode(requestModelGet8, "https"), expectedCode);
     });
+
+    test('GET 9', () {
+      const expectedCode = r"""import 'package:dio/dio.dart' as dio;
+
+void main() async {
+  try {
+    final queryParams = {
+      'num': '8700000',
+      'add_space': 'true',
+    };
+    final response = await dio.Dio.get(
+      'https://api.foss42.com/humanize/social',
+      queryParameters: queryParams,
+    );
+    print(response.statusCode);
+    print(response.data);
+  } on DioException catch (e, s) {
+    print(e.response?.statusCode);
+    print(e.response?.data);
+    print(s);
+  } catch (e, s) {
+    print(e);
+    print(s);
+  }
+}
+""";
+      expect(dartDioCodeGen.getCode(requestModelGet9, "https"), expectedCode);
+    });
+
+    test('GET 10', () {
+      const expectedCode = r"""import 'package:dio/dio.dart' as dio;
+
+void main() async {
+  try {
+    final headers = {'User-Agent': 'Test Agent'};
+    final response = await dio.Dio.get(
+      'https://api.foss42.com/humanize/social',
+      options: Options(headers: headers),
+    );
+    print(response.statusCode);
+    print(response.data);
+  } on DioException catch (e, s) {
+    print(e.response?.statusCode);
+    print(e.response?.data);
+    print(s);
+  } catch (e, s) {
+    print(e);
+    print(s);
+  }
+}
+""";
+      expect(
+          dartDioCodeGen.getCode(
+            requestModelGet10,
+            "https",
+          ),
+          expectedCode);
+    });
+
+    test('GET 11', () {
+      const expectedCode = r"""import 'package:dio/dio.dart' as dio;
+
+void main() async {
+  try {
+    final queryParams = {
+      'num': '8700000',
+      'digits': '3',
+    };
+    final headers = {'User-Agent': 'Test Agent'};
+    final response = await dio.Dio.get(
+      'https://api.foss42.com/humanize/social',
+      queryParameters: queryParams,
+      options: Options(headers: headers),
+    );
+    print(response.statusCode);
+    print(response.data);
+  } on DioException catch (e, s) {
+    print(e.response?.statusCode);
+    print(e.response?.data);
+    print(s);
+  } catch (e, s) {
+    print(e);
+    print(s);
+  }
+}
+""";
+      expect(dartDioCodeGen.getCode(requestModelGet11, "https"), expectedCode);
+    });
+
+    test('GET 12', () {
+      const expectedCode = r"""import 'package:dio/dio.dart' as dio;
+
+void main() async {
+  try {
+    final response = await dio.Dio.get('https://api.foss42.com/humanize/social');
+    print(response.statusCode);
+    print(response.data);
+  } on DioException catch (e, s) {
+    print(e.response?.statusCode);
+    print(e.response?.data);
+    print(s);
+  } catch (e, s) {
+    print(e);
+    print(s);
+  }
+}
+""";
+      expect(dartDioCodeGen.getCode(requestModelGet12, "https"), expectedCode);
+    });
   });
 
   group('HEAD Request', () {
@@ -340,6 +449,7 @@ void main() async {
       expect(dartDioCodeGen.getCode(requestModelPost3, "https"), expectedCode);
     });
   });
+
   group('PUT Request', () {
     test('PUT 1', () {
       const expectedCode = r"""import 'package:dio/dio.dart' as dio;

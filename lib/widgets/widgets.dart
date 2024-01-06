@@ -1,5 +1,6 @@
 export 'buttons.dart';
 export 'cards.dart';
+export 'checkbox.dart';
 export 'code_previewer.dart';
 export 'codegen_previewer.dart';
 export 'dropdowns.dart';

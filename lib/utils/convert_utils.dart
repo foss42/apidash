@@ -165,3 +165,13 @@ Future<http.Response> convertStreamedResponse(
 
   return response;
 }
+
+List<NameValueModel>? getEnabledRows(
+    List<NameValueModel>? rows, List<bool>? isRowEnabledList) {
+  if (rows == null || isRowEnabledList == null) {
+    return rows;
+  }
+  List<NameValueModel> finalRows =
+      rows.where((element) => isRowEnabledList[rows.indexOf(element)]).toList();
+  return finalRows == [] ? null : finalRows;
+}

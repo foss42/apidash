@@ -111,7 +111,11 @@ body = b'\r\n'.join(dataList)
           "isFormDataRequest": requestModel.isFormDataRequest,
         },
       );
-      var rec = getValidRequestUri(url, requestModel.requestParams);
+      var rec = getValidRequestUri(
+        url,
+        requestModel.enabledRequestParams,
+      );
+
       Uri? uri = rec.$1;
 
       if (uri != null) {
@@ -137,9 +141,9 @@ body = b'\r\n'.join(dataList)
           }
         }
 
-        var headersList = requestModel.requestHeaders;
+        var headersList = requestModel.enabledRequestHeaders;
         if (headersList != null || hasBody) {
-          var headers = requestModel.headersMap;
+          var headers = requestModel.enabledHeadersMap;
           if (requestModel.isFormDataRequest) {
             var formHeaderTemplate =
                 jj.Template(kTemplateFormHeaderContentType);
@@ -147,9 +151,12 @@ body = b'\r\n'.join(dataList)
               "boundary": uuid,
             });
           }
+
           if (headers.isNotEmpty || hasBody) {
             hasHeaders = true;
-            if (hasBody) {
+            bool hasContentTypeHeader = headers.keys.any((k) => k.toLowerCase() == HttpHeaders.contentTypeHeader);
+
+            if (hasBody && !hasContentTypeHeader) {
               headers[HttpHeaders.contentTypeHeader] =
                   kContentTypeMap[requestModel.requestBodyContentType] ?? "";
             }

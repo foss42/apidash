@@ -13,12 +13,12 @@ Future<(http.Response?, Duration?, String?)> request(
 }) async {
   (Uri?, String?) uriRec = getValidRequestUri(
     requestModel.url,
-    requestModel.requestParams,
+    requestModel.enabledRequestParams,
     defaultUriScheme: defaultUriScheme,
   );
   if (uriRec.$1 != null) {
     Uri requestUrl = uriRec.$1!;
-    Map<String, String> headers = requestModel.headersMap;
+    Map<String, String> headers = requestModel.enabledHeadersMap;
     http.Response response;
     String? body;
     try {
@@ -29,8 +29,11 @@ Future<(http.Response?, Duration?, String?)> request(
         if (contentLength > 0) {
           body = requestBody;
           headers[HttpHeaders.contentLengthHeader] = contentLength.toString();
-          headers[HttpHeaders.contentTypeHeader] =
+          final hasContentTypeHeader = headers.keys.any((k) => k.toLowerCase() == HttpHeaders.contentTypeHeader);
+          if (!hasContentTypeHeader) {
+            headers[HttpHeaders.contentTypeHeader] = 
               kContentTypeMap[requestModel.requestBodyContentType] ?? "";
+          }
         }
       }
       Stopwatch stopwatch = Stopwatch()..start();

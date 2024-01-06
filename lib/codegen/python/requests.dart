@@ -115,7 +115,10 @@ print('Response Body:', response.text)
         url = "$defaultUriScheme://$url";
       }
 
-      var rec = getValidRequestUri(url, requestModel.requestParams);
+      var rec = getValidRequestUri(
+        url,
+        requestModel.enabledRequestParams,
+      );
       Uri? uri = rec.$1;
       if (uri != null) {
         var templateStartUrl = jj.Template(kTemplateStart);
@@ -152,9 +155,9 @@ print('Response Body:', response.text)
           }
         }
 
-        var headersList = requestModel.requestHeaders;
+        var headersList = requestModel.enabledRequestHeaders;
         if (headersList != null || hasBody) {
-          var headers = requestModel.headersMap;
+          var headers = requestModel.enabledHeadersMap;
           if (requestModel.isFormDataRequest) {
             var formHeaderTemplate =
                 jj.Template(kTemplateFormHeaderContentType);

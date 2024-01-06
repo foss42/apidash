@@ -149,6 +149,83 @@ void main() {
 }""";
       expect(harCodeGen.getCode(requestModelGet8, "https"), expectedCode);
     });
+
+    test('GET 9', () {
+      const expectedCode = r"""{
+  "method": "GET",
+  "url": "https://api.foss42.com/humanize/social?num=8700000&add_space=true",
+  "httpVersion": "HTTP/1.1",
+  "queryString": [
+    {
+      "name": "num",
+      "value": "8700000"
+    },
+    {
+      "name": "add_space",
+      "value": "true"
+    }
+  ],
+  "headers": []
+}""";
+      expect(harCodeGen.getCode(requestModelGet9, "https"), expectedCode);
+    });
+
+    test('GET 10', () {
+      const expectedCode = r"""{
+  "method": "GET",
+  "url": "https://api.foss42.com/humanize/social",
+  "httpVersion": "HTTP/1.1",
+  "queryString": [],
+  "headers": [
+    {
+      "name": "User-Agent",
+      "value": "Test Agent"
+    }
+  ]
+}""";
+      expect(
+          harCodeGen.getCode(
+            requestModelGet10,
+            "https",
+          ),
+          expectedCode);
+    });
+
+    test('GET 11', () {
+      const expectedCode = r"""{
+  "method": "GET",
+  "url": "https://api.foss42.com/humanize/social?num=8700000&digits=3",
+  "httpVersion": "HTTP/1.1",
+  "queryString": [
+    {
+      "name": "num",
+      "value": "8700000"
+    },
+    {
+      "name": "digits",
+      "value": "3"
+    }
+  ],
+  "headers": [
+    {
+      "name": "User-Agent",
+      "value": "Test Agent"
+    }
+  ]
+}""";
+      expect(harCodeGen.getCode(requestModelGet11, "https"), expectedCode);
+    });
+
+    test('GET 12', () {
+      const expectedCode = r"""{
+  "method": "GET",
+  "url": "https://api.foss42.com/humanize/social",
+  "httpVersion": "HTTP/1.1",
+  "queryString": [],
+  "headers": []
+}""";
+      expect(harCodeGen.getCode(requestModelGet12, "https"), expectedCode);
+    });
   });
 
   group('HEAD Request', () {
@@ -240,6 +317,7 @@ void main() {
       expect(harCodeGen.getCode(requestModelPost3, "https"), expectedCode);
     });
   });
+
   group('PUT Request', () {
     test('PUT 1', () {
       const expectedCode = r"""{
