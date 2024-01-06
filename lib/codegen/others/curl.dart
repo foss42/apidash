@@ -28,7 +28,7 @@ class cURLCodeGen {
       }
       var rM = requestModel.copyWith(url: url);
 
-      var harJson = requestModelToHARJsonRequest(rM);
+      var harJson = requestModelToHARJsonRequest(rM, useEnabled: true);
 
       var templateStart = jj.Template(kTemplateStart);
       result += templateStart.render({

@@ -71,7 +71,10 @@ print(data.decode("utf-8"))
       }
 
       result += kTemplateStart;
-      var rec = getValidRequestUri(url, requestModel.requestParams);
+      var rec = getValidRequestUri(
+        url,
+        requestModel.enabledRequestParams,
+      );
       Uri? uri = rec.$1;
 
       if (uri != null) {
@@ -97,12 +100,14 @@ print(data.decode("utf-8"))
           }
         }
 
-        var headersList = requestModel.requestHeaders;
+        var headersList = requestModel.enabledRequestHeaders;
         if (headersList != null || hasBody) {
-          var headers = requestModel.headersMap;
+          var headers = requestModel.enabledHeadersMap;
           if (headers.isNotEmpty || hasBody) {
             hasHeaders = true;
-            if (hasBody) {
+            bool hasContentTypeHeader = headers.keys.any((k) => k.toLowerCase() == HttpHeaders.contentTypeHeader);
+
+            if (hasBody && !hasContentTypeHeader) {
               headers[HttpHeaders.contentTypeHeader] =
                   kContentTypeMap[requestModel.requestBodyContentType] ?? "";
             }

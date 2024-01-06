@@ -77,7 +77,10 @@ import okhttp3.MediaType.Companion.toMediaType""";
         url = "$defaultUriScheme://$url";
       }
 
-      var rec = getValidRequestUri(url, requestModel.requestParams);
+      var rec = getValidRequestUri(
+        url,
+        requestModel.enabledRequestParams,
+      );
       Uri? uri = rec.$1;
 
       if (uri != null) {
@@ -120,9 +123,9 @@ import okhttp3.MediaType.Companion.toMediaType""";
         result = stringStart + result;
         result += kStringRequestStart;
 
-        var headersList = requestModel.requestHeaders;
+        var headersList = requestModel.enabledRequestHeaders;
         if (headersList != null) {
-          var headers = requestModel.headersMap;
+          var headers = requestModel.enabledHeadersMap;
           if (headers.isNotEmpty) {
             hasHeaders = true;
             result += getHeaders(headers);

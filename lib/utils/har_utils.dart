@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart' show getValidRequestUri;
 import 'package:apidash/models/models.dart' show RequestModel;
@@ -74,13 +75,14 @@ Map<String, dynamic> requestModelToHARJsonRequest(
   RequestModel requestModel, {
   defaultUriScheme = kDefaultUriScheme,
   bool exportMode = false,
+  bool useEnabled = false,
 }) {
   Map<String, dynamic> json = {};
   bool hasBody = false;
 
   var rec = getValidRequestUri(
     requestModel.url,
-    requestModel.requestParams,
+    requestModel.enabledRequestParams,
     defaultUriScheme: defaultUriScheme,
   );
 
@@ -125,11 +127,16 @@ Map<String, dynamic> requestModelToHARJsonRequest(
       }
     }
 
-    var headersList = requestModel.requestHeaders;
+    var headersList = useEnabled
+        ? requestModel.enabledRequestHeaders
+        : requestModel.requestHeaders;
     if (headersList != null || hasBody) {
-      var headers = requestModel.headersMap;
+      var headers =
+          useEnabled ? requestModel.enabledHeadersMap : requestModel.headersMap;
       if (headers.isNotEmpty || hasBody) {
-        if (hasBody) {
+        bool hasContentTypeHeader = headers.keys.any((k) => k.toLowerCase() == HttpHeaders.contentTypeHeader);
+        
+        if (hasBody && !hasContentTypeHeader) {
           var m = {
             "name": "Content-Type",
             "value": kContentTypeMap[requestModel.requestBodyContentType] ?? ""

@@ -153,6 +153,84 @@ print('Response Body:', response.text)
       expect(pythonRequestsCodeGen.getCode(requestModelGet8, "https"),
           expectedCode);
     });
+
+    test('GET 9', () {
+      const expectedCode = r"""import requests
+
+url = 'https://api.foss42.com/humanize/social'
+
+params = {
+           "num": "8700000",
+           "add_space": "true"
+         }
+
+response = requests.get(url, params=params)
+
+print('Status Code:', response.status_code)
+print('Response Body:', response.text)
+""";
+      expect(pythonRequestsCodeGen.getCode(requestModelGet9, "https"),
+          expectedCode);
+    });
+
+    test('GET 10', () {
+      const expectedCode = r"""import requests
+
+url = 'https://api.foss42.com/humanize/social'
+
+headers = {
+            "User-Agent": "Test Agent"
+          }
+
+response = requests.get(url, headers=headers)
+
+print('Status Code:', response.status_code)
+print('Response Body:', response.text)
+""";
+      expect(
+          pythonRequestsCodeGen.getCode(
+            requestModelGet10,
+            "https",
+          ),
+          expectedCode);
+    });
+
+    test('GET 11', () {
+      const expectedCode = r"""import requests
+
+url = 'https://api.foss42.com/humanize/social'
+
+params = {
+           "num": "8700000",
+           "digits": "3"
+         }
+
+headers = {
+            "User-Agent": "Test Agent"
+          }
+
+response = requests.get(url, params=params, headers=headers)
+
+print('Status Code:', response.status_code)
+print('Response Body:', response.text)
+""";
+      expect(pythonRequestsCodeGen.getCode(requestModelGet11, "https"),
+          expectedCode);
+    });
+
+    test('GET 12', () {
+      const expectedCode = r"""import requests
+
+url = 'https://api.foss42.com/humanize/social'
+
+response = requests.get(url)
+
+print('Status Code:', response.status_code)
+print('Response Body:', response.text)
+""";
+      expect(pythonRequestsCodeGen.getCode(requestModelGet12, "https"),
+          expectedCode);
+    });
   });
 
   group('HEAD Request', () {
@@ -248,6 +326,7 @@ print('Response Body:', response.text)
           expectedCode);
     });
   });
+
   group('PUT Request', () {
     test('PUT 1', () {
       const expectedCode = r"""import requests

@@ -16,6 +16,7 @@ class EditRequestHeaders extends ConsumerStatefulWidget {
 
 class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
   late List<NameValueModel> rows;
+  late List<bool> isRowEnabledList;
   final random = Random.secure();
   late int seed;
 
@@ -26,9 +27,11 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
   }
 
   void _onFieldChange(String activeId) {
-    ref
-        .read(collectionStateNotifierProvider.notifier)
-        .update(activeId, requestHeaders: rows);
+    ref.read(collectionStateNotifierProvider.notifier).update(
+          activeId,
+          requestHeaders: rows,
+          isHeaderEnabledList: isRowEnabledList,
+        );
   }
 
   @override
@@ -42,10 +45,31 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
             kNameValueEmptyModel,
           ]
         : rH;
+    isRowEnabledList =
+        ref.read(activeRequestModelProvider)?.isHeaderEnabledList ??
+            List.filled(rows.length, true, growable: true);
 
     DaviModel<NameValueModel> model = DaviModel<NameValueModel>(
       rows: rows,
       columns: [
+        DaviColumn(
+          name: 'Checkbox',
+          width: 36,
+          cellBuilder: (_, row) {
+            int idx = row.index;
+            return CheckBox(
+              keyId: "$activeId-$idx-headers-c-$seed",
+              value: isRowEnabledList[idx],
+              onChanged: (value) {
+                setState(() {
+                  isRowEnabledList[idx] = value!;
+                });
+                _onFieldChange(activeId!);
+              },
+              colorScheme: Theme.of(context).colorScheme,
+            );
+          },
+        ),
         DaviColumn(
           name: 'Header Name',
           grow: 1,
@@ -106,9 +130,11 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
                     rows = [
                       kNameValueEmptyModel,
                     ];
+                    isRowEnabledList = [true];
                   });
                 } else {
                   rows.removeAt(row.index);
+                  isRowEnabledList.removeAt(row.index);
                 }
                 _onFieldChange(activeId!);
               },
@@ -143,6 +169,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
             child: ElevatedButton.icon(
               onPressed: () {
                 rows.add(kNameValueEmptyModel);
+                isRowEnabledList.add(true);
                 _onFieldChange(activeId!);
               },
               icon: const Icon(Icons.add),

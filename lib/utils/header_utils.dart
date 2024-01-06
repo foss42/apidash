@@ -32,7 +32,7 @@ Map<String, String> headers = {
   "Content-Security-Policy":
       "Controls the sources from which content can be loaded on a web page to mitigate various types of attacks.",
   "Content-Type":
-      "Indicates the original media type of the resource before any content-encoding applied for sending.",
+      "Indicates the original media type of the resource (prior to any content encoding applied for sending)",
   "Cookie": "Used to send previously stored cookies back to the server.",
   "Cross-Origin-Embedder-Policy":
       "Controls whether a document is allowed to be embedded in another document.",

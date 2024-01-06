@@ -54,6 +54,37 @@ void main() {
   --header 'User-Agent: Test Agent'""";
       expect(curlCodeGen.getCode(requestModelGet8, "https"), expectedCode);
     });
+
+    test('GET 9', () {
+      const expectedCode =
+          r"""curl --url 'https://api.foss42.com/humanize/social?num=8700000&add_space=true'""";
+      expect(curlCodeGen.getCode(requestModelGet9, "https"), expectedCode);
+    });
+
+    test('GET 10', () {
+      const expectedCode =
+          r"""curl --url 'https://api.foss42.com/humanize/social' \
+  --header 'User-Agent: Test Agent'""";
+      expect(
+          curlCodeGen.getCode(
+            requestModelGet10,
+            "https",
+          ),
+          expectedCode);
+    });
+
+    test('GET 11', () {
+      const expectedCode =
+          r"""curl --url 'https://api.foss42.com/humanize/social?num=8700000&digits=3' \
+  --header 'User-Agent: Test Agent'""";
+      expect(curlCodeGen.getCode(requestModelGet11, "https"), expectedCode);
+    });
+
+    test('GET 12', () {
+      const expectedCode =
+          r"""curl --url 'https://api.foss42.com/humanize/social'""";
+      expect(curlCodeGen.getCode(requestModelGet12, "https"), expectedCode);
+    });
   });
 
   group('HEAD Request', () {
@@ -100,6 +131,7 @@ void main() {
       expect(curlCodeGen.getCode(requestModelPost3, "https"), expectedCode);
     });
   });
+
   group('PUT Request', () {
     test('PUT 1', () {
       const expectedCode = r"""curl --request PUT \
