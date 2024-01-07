@@ -134,8 +134,9 @@ Map<String, dynamic> requestModelToHARJsonRequest(
       var headers =
           useEnabled ? requestModel.enabledHeadersMap : requestModel.headersMap;
       if (headers.isNotEmpty || hasBody) {
-        bool hasContentTypeHeader = headers.keys.any((k) => k.toLowerCase() == HttpHeaders.contentTypeHeader);
-        
+        bool hasContentTypeHeader = headers.keys
+            .any((k) => k.toLowerCase() == HttpHeaders.contentTypeHeader);
+
         if (hasBody && !hasContentTypeHeader) {
           var m = {
             "name": "Content-Type",
