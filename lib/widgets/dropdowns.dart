@@ -93,6 +93,56 @@ class DropdownButtonContentType extends StatelessWidget {
   }
 }
 
+class DropdownButtonFormData extends StatefulWidget {
+  const DropdownButtonFormData({
+    super.key,
+    this.formDataType,
+    this.onChanged,
+  });
+
+  final FormDataType? formDataType;
+  final void Function(FormDataType?)? onChanged;
+
+  @override
+  State<DropdownButtonFormData> createState() => _DropdownButtonFormData();
+}
+
+class _DropdownButtonFormData extends State<DropdownButtonFormData> {
+  @override
+  Widget build(BuildContext context) {
+    final surfaceColor = Theme.of(context).colorScheme.surface;
+    return DropdownButton<FormDataType>(
+      dropdownColor: surfaceColor,
+      focusColor: surfaceColor,
+      value: widget.formDataType,
+      icon: const Icon(
+        Icons.unfold_more_rounded,
+        size: 16,
+      ),
+      elevation: 4,
+      style: kCodeStyle.copyWith(
+        color: Theme.of(context).colorScheme.primary,
+      ),
+      underline: const IgnorePointer(),
+      onChanged: widget.onChanged,
+      borderRadius: kBorderRadius12,
+      items: FormDataType.values
+          .map<DropdownMenuItem<FormDataType>>((FormDataType value) {
+        return DropdownMenuItem<FormDataType>(
+          value: value,
+          child: Padding(
+            padding: kPs8,
+            child: Text(
+              value.name,
+              style: kTextStyleButton,
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
+}
+
 class DropdownButtonCodegenLanguage extends StatelessWidget {
   const DropdownButtonCodegenLanguage({
     super.key,

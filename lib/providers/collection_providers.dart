@@ -5,6 +5,7 @@ import '../models/models.dart';
 import '../services/services.dart' show hiveHandler, HiveHandler, request;
 import '../utils/utils.dart' show uuid, collectionToHAR;
 import '../consts.dart';
+import 'package:http/http.dart' as http;
 
 final activeIdStateProvider = StateProvider<String?>((ref) => null);
 
@@ -127,6 +128,7 @@ class CollectionStateNotifier
     List<bool>? isParamEnabledList,
     ContentType? requestBodyContentType,
     String? requestBody,
+    List<FormDataModel>? requestFormDataList,
     int? responseStatus,
     String? message,
     ResponseModel? responseModel,
@@ -143,9 +145,11 @@ class CollectionStateNotifier
         isParamEnabledList: isParamEnabledList,
         requestBodyContentType: requestBodyContentType,
         requestBody: requestBody,
+        requestFormDataList: requestFormDataList,
         responseStatus: responseStatus,
         message: message,
         responseModel: responseModel);
+    //print(newModel);
     var map = {...state!};
     map[id] = newModel;
     state = map;
@@ -156,10 +160,13 @@ class CollectionStateNotifier
     ref.read(codePaneVisibleStateProvider.notifier).state = false;
     final defaultUriScheme =
         ref.read(settingsProvider.select((value) => value.defaultUriScheme));
-
     RequestModel requestModel = state![id]!;
-    var responseRec =
-        await request(requestModel, defaultUriScheme: defaultUriScheme);
+    (http.Response?, Duration?, String?)? responseRec = await request(
+      requestModel,
+      defaultUriScheme: defaultUriScheme,
+      isMultiPartRequest:
+          requestModel.requestBodyContentType == ContentType.formdata,
+    );
     late final RequestModel newRequestModel;
     if (responseRec.$1 == null) {
       newRequestModel = requestModel.copyWith(

@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:apidash/consts.dart';
+import 'package:apidash/models/form_data_model.dart';
+import 'package:apidash/utils/convert_utils.dart';
 import 'package:apidash/utils/utils.dart' show getValidRequestUri;
 import 'package:apidash/models/models.dart' show RequestModel;
 import 'package:package_info_plus/package_info_plus.dart';
@@ -153,7 +155,9 @@ Map<String, dynamic> requestModelToHARJsonRequest(
         }
       }
     }
-
+    if (requestModel.isFormDataRequest) {
+      json["formData"] = requestModel.formDataMapList;
+    }
     if (exportMode) {
       json["comment"] = "";
       json["cookies"] = [];

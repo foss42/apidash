@@ -48,6 +48,10 @@ const kHintOpacity = 0.6;
 const kForegroundOpacity = 0.05;
 
 const kTextStyleButton = TextStyle(fontWeight: FontWeight.bold);
+const kFormDataButtonLabelTextStyle = TextStyle(
+  fontSize: 12,
+  fontWeight: FontWeight.w600,
+);
 
 const kBorderRadius8 = BorderRadius.all(Radius.circular(8));
 final kBorderRadius10 = BorderRadius.circular(10);
@@ -57,6 +61,7 @@ const kP1 = EdgeInsets.all(1);
 const kP5 = EdgeInsets.all(5);
 const kP8 = EdgeInsets.all(8);
 const kPs8 = EdgeInsets.only(left: 8);
+const kPs2 = EdgeInsets.only(left: 2);
 const kPh20v5 = EdgeInsets.symmetric(horizontal: 20, vertical: 5);
 const kPh20v10 = EdgeInsets.symmetric(horizontal: 20, vertical: 10);
 const kP10 = EdgeInsets.all(10);
@@ -85,7 +90,7 @@ const kP8CollectionPane = EdgeInsets.only(
   // bottom: 8.0,
 );
 const kPr8CollectionPane = EdgeInsets.only(right: 8.0);
-
+const kpsV5 = EdgeInsets.symmetric(vertical: 2);
 const kHSpacer4 = SizedBox(width: 4);
 const kHSpacer5 = SizedBox(width: 5);
 const kHSpacer10 = SizedBox(width: 10);
@@ -237,7 +242,9 @@ enum RequestItemMenuOption { edit, delete, duplicate }
 
 enum HTTPVerb { get, head, post, put, patch, delete }
 
-enum ContentType { json, text }
+enum ContentType { json, text, formdata }
+
+enum FormDataType { text, file }
 
 const kSupportedUriSchemes = ["https", "http"];
 const kDefaultUriScheme = "https";
@@ -308,6 +315,7 @@ const kSubTypeDefaultViewOptions = 'all';
 const kContentTypeMap = {
   ContentType.json: "$kTypeApplication/$kSubTypeJson",
   ContentType.text: "$kTypeText/$kSubTypePlain",
+  ContentType.formdata: "multipart/form-data",
 };
 
 enum ResponseBodyView { preview, code, raw, none }
