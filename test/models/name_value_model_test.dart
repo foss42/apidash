@@ -13,6 +13,11 @@ void main() {
     const resultExpected = {"name": "harry", "value": 23};
     expect(nmRow1.toJson(), resultExpected);
   });
+  test('Testing fromJson()', () {
+    const resultExpected = nmRow1;
+    expect(NameValueModel.fromJson({"name": "harry", "value": 23}),
+        resultExpected);
+  });
 
   test('Testing copyWith()', () {
     const resultExpected = NameValueModel(name: "winter", value: "26");
