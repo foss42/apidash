@@ -8,7 +8,6 @@ void main() {
   group('GET Request', () {
     test('GET 1', () {
       const expectedCode = r"""import axios from 'axios';
-
 let config = {
   url: 'https://api.foss42.com',
   method: 'get'
@@ -31,7 +30,6 @@ axios(config)
 
     test('GET 2', () {
       const expectedCode = r"""import axios from 'axios';
-
 let config = {
   url: 'https://api.foss42.com/country/data',
   method: 'get',
@@ -57,7 +55,6 @@ axios(config)
 
     test('GET 3', () {
       const expectedCode = r"""import axios from 'axios';
-
 let config = {
   url: 'https://api.foss42.com/country/data',
   method: 'get',
@@ -83,7 +80,6 @@ axios(config)
 
     test('GET 4', () {
       const expectedCode = r"""import axios from 'axios';
-
 let config = {
   url: 'https://api.foss42.com/humanize/social',
   method: 'get',
@@ -113,7 +109,6 @@ axios(config)
 
     test('GET 5', () {
       const expectedCode = r"""import axios from 'axios';
-
 let config = {
   url: 'https://api.github.com/repos/foss42/apidash',
   method: 'get',
@@ -139,7 +134,6 @@ axios(config)
 
     test('GET 6', () {
       const expectedCode = r"""import axios from 'axios';
-
 let config = {
   url: 'https://api.github.com/repos/foss42/apidash',
   method: 'get',
@@ -168,7 +162,6 @@ axios(config)
 
     test('GET 7', () {
       const expectedCode = r"""import axios from 'axios';
-
 let config = {
   url: 'https://api.foss42.com',
   method: 'get'
@@ -191,7 +184,6 @@ axios(config)
 
     test('GET 8', () {
       const expectedCode = r"""import axios from 'axios';
-
 let config = {
   url: 'https://api.github.com/repos/foss42/apidash',
   method: 'get',
@@ -220,7 +212,6 @@ axios(config)
 
     test('GET 9', () {
       const expectedCode = r"""import axios from 'axios';
-
 let config = {
   url: 'https://api.foss42.com/humanize/social',
   method: 'get',
@@ -247,7 +238,6 @@ axios(config)
 
     test('GET 10', () {
       const expectedCode = r"""import axios from 'axios';
-
 let config = {
   url: 'https://api.foss42.com/humanize/social',
   method: 'get',
@@ -278,7 +268,6 @@ axios(config)
 
     test('GET 11', () {
       const expectedCode = r"""import axios from 'axios';
-
 let config = {
   url: 'https://api.foss42.com/humanize/social',
   method: 'get',
@@ -308,7 +297,6 @@ axios(config)
 
     test('GET 12', () {
       const expectedCode = r"""import axios from 'axios';
-
 let config = {
   url: 'https://api.foss42.com/humanize/social',
   method: 'get'
@@ -333,7 +321,6 @@ axios(config)
   group('HEAD Request', () {
     test('HEAD 1', () {
       const expectedCode = r"""import axios from 'axios';
-
 let config = {
   url: 'https://api.foss42.com',
   method: 'head'
@@ -356,7 +343,6 @@ axios(config)
 
     test('HEAD 2', () {
       const expectedCode = r"""import axios from 'axios';
-
 let config = {
   url: 'http://api.foss42.com',
   method: 'head'
@@ -381,7 +367,6 @@ axios(config)
   group('POST Request', () {
     test('POST 1', () {
       const expectedCode = r"""import axios from 'axios';
-
 let config = {
   url: 'https://api.foss42.com/case/lower',
   method: 'post',
@@ -408,7 +393,6 @@ axios(config)
 
     test('POST 2', () {
       const expectedCode = r"""import axios from 'axios';
-
 let config = {
   url: 'https://api.foss42.com/case/lower',
   method: 'post',
@@ -435,7 +419,6 @@ axios(config)
 
     test('POST 3', () {
       const expectedCode = r"""import axios from 'axios';
-
 let config = {
   url: 'https://api.foss42.com/case/lower',
   method: 'post',
@@ -465,7 +448,6 @@ axios(config)
   group('PUT Request', () {
     test('PUT 1', () {
       const expectedCode = r"""import axios from 'axios';
-
 let config = {
   url: 'https://reqres.in/api/users/2',
   method: 'put',
@@ -494,7 +476,6 @@ axios(config)
   group('PATCH Request', () {
     test('PATCH 1', () {
       const expectedCode = r"""import axios from 'axios';
-
 let config = {
   url: 'https://reqres.in/api/users/2',
   method: 'patch',
@@ -523,7 +504,6 @@ axios(config)
   group('DELETE Request', () {
     test('DELETE 1', () {
       const expectedCode = r"""import axios from 'axios';
-
 let config = {
   url: 'https://reqres.in/api/users/2',
   method: 'delete'
@@ -546,7 +526,6 @@ axios(config)
 
     test('DELETE 2', () {
       const expectedCode = r"""import axios from 'axios';
-
 let config = {
   url: 'https://reqres.in/api/users/2',
   method: 'delete',
