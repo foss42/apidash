@@ -12,7 +12,6 @@ class PythonHttpClientCodeGen {
 import mimetypes
 from codecs import encode
 {% endif %}
-
 """;
 
   String kTemplateParams = """

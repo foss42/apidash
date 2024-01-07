@@ -28,7 +28,8 @@ let options = {
 """;
 
   String kTemplateBody = """,
-  body: {{body}}
+  body: 
+{{body}}
 """;
 
   String kMultiPartBodyTemplate = r'''
