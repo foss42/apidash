@@ -11,6 +11,7 @@ class AxiosCodeGen {
   final bool isNodeJs;
 
   String kStringImportNode = """{% if isNodeJs %}import axios from 'axios';
+
 {% endif %}{% if isFormDataRequest and isNodeJs %}const fs = require('fs');{% endif %}
 """;
 
