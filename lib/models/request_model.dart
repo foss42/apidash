@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/foundation.dart';
 import '../utils/utils.dart'
     show
@@ -62,6 +63,9 @@ class RequestModel {
   List<Map<String, dynamic>> get formDataMapList =>
       rowsToFormDataMapList(requestFormDataList) ?? [];
   bool get isFormDataRequest => requestBodyContentType == ContentType.formdata;
+
+  bool get hasContentTypeHeader => enabledHeadersMap.keys
+      .any((k) => k.toLowerCase() == HttpHeaders.contentTypeHeader);
 
   RequestModel duplicate({
     required String id,

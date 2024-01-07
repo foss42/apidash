@@ -152,10 +152,7 @@ body = b'\r\n'.join(dataList)
 
           if (headers.isNotEmpty || hasBody) {
             hasHeaders = true;
-            bool hasContentTypeHeader = headers.keys
-                .any((k) => k.toLowerCase() == HttpHeaders.contentTypeHeader);
-
-            if (hasBody && !hasContentTypeHeader) {
+            if (hasBody && !requestModel.hasContentTypeHeader) {
               headers[HttpHeaders.contentTypeHeader] =
                   kContentTypeMap[requestModel.requestBodyContentType] ?? "";
             }

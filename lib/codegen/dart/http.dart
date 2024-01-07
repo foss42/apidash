@@ -20,9 +20,10 @@ class DartHttpCodeGen {
         url: url,
         method: requestModel.method,
         queryParams: requestModel.enabledParamsMap,
-        headers: requestModel.enabledHeadersMap,
-        body: requestModel.requestBody,
+        headers: {...requestModel.enabledHeadersMap},
         contentType: requestModel.requestBodyContentType,
+        hasContentTypeHeader: requestModel.hasContentTypeHeader, 
+        body: requestModel.requestBody,
         formData: requestModel.formDataMapList,
       );
       return next;
@@ -36,8 +37,9 @@ class DartHttpCodeGen {
     required HTTPVerb method,
     required Map<String, String> queryParams,
     required Map<String, String> headers,
-    required String? body,
     required ContentType contentType,
+    required String? body,
+    required bool hasContentTypeHeader,
     required List<Map<String, dynamic>> formData,
   }) {
     final uri = Uri.parse(url);
@@ -50,16 +52,12 @@ class DartHttpCodeGen {
     final uriExp =
         declareVar('uri').assign(refer('Uri.parse').call([literalString(url)]));
 
-    final composeHeaders = headers;
     Expression? dataExp;
     if (kMethodsWithBody.contains(method) && (body?.isNotEmpty ?? false)) {
       final strContent = CodeExpression(Code('r\'\'\'$body\'\'\''));
       dataExp = declareVar('body', type: refer('String')).assign(strContent);
-
-      final hasContentTypeHeader = composeHeaders.keys
-          .any((k) => k.toLowerCase() == HttpHeaders.contentTypeHeader);
       if (!hasContentTypeHeader) {
-        composeHeaders.putIfAbsent(HttpHeaders.contentTypeHeader,
+        headers.putIfAbsent(HttpHeaders.contentTypeHeader,
             () => kContentTypeMap[contentType] ?? '');
       }
     }
