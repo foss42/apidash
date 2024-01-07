@@ -418,8 +418,7 @@ let options = {
   headers: {
     "Content-Type": "text/plain"
   },
-  body: 
-"{\n\"text\": \"I LOVE Flutter\"\n}"
+  body: "{\n\"text\": \"I LOVE Flutter\"\n}"
 };
 
 let status;
@@ -450,8 +449,7 @@ let options = {
   headers: {
     "Content-Type": "application/json"
   },
-  body: 
-"{\n\"text\": \"I LOVE Flutter\"\n}"
+  body: "{\n\"text\": \"I LOVE Flutter\"\n}"
 };
 
 let status;
@@ -483,8 +481,7 @@ let options = {
     "Content-Type": "application/json",
     "User-Agent": "Test Agent"
   },
-  body: 
-"{\n\"text\": \"I LOVE Flutter\"\n}"
+  body: "{\n\"text\": \"I LOVE Flutter\"\n}"
 };
 
 let status;
@@ -517,8 +514,7 @@ let options = {
   headers: {
     "Content-Type": "application/json"
   },
-  body: 
-"{\n\"name\": \"morpheus\",\n\"job\": \"zion resident\"\n}"
+  body: "{\n\"name\": \"morpheus\",\n\"job\": \"zion resident\"\n}"
 };
 
 let status;
@@ -551,8 +547,7 @@ let options = {
   headers: {
     "Content-Type": "application/json"
   },
-  body: 
-"{\n\"name\": \"marfeus\",\n\"job\": \"accountant\"\n}"
+  body: "{\n\"name\": \"marfeus\",\n\"job\": \"accountant\"\n}"
 };
 
 let status;
@@ -612,8 +607,7 @@ let options = {
   headers: {
     "Content-Type": "application/json"
   },
-  body: 
-"{\n\"name\": \"marfeus\",\n\"job\": \"accountant\"\n}"
+  body: "{\n\"name\": \"marfeus\",\n\"job\": \"accountant\"\n}"
 };
 
 let status;

@@ -10,10 +10,10 @@ class AxiosCodeGen {
 
   final bool isNodeJs;
 
-  String kStringImportNode = """import axios from 'axios';
-{% if isFormDataRequest and isNodeJs %}const fs = require('fs');
-{% endif %}
+  String kStringImportNode = """{% if isNodeJs %}import axios from 'axios';
 
+{% endif %}{% if isFormDataRequest and isNodeJs %}
+const fs = require('fs');{% endif %}
 """;
 
   String kTemplateStart = """let config = {
@@ -82,11 +82,14 @@ async function buildFormData(fields) {
       });
 
       String result = importsData;
-      var templateMultiPartBody = jj.Template(kMultiPartBodyTemplate);
-      var renderedMultiPartBody = templateMultiPartBody.render({
-        "isNodeJs": isNodeJs,
-      });
-      result += renderedMultiPartBody;
+      if (requestModel.isFormDataRequest &&
+          requestModel.formDataMapList.isNotEmpty) {
+        var templateMultiPartBody = jj.Template(kMultiPartBodyTemplate);
+        var renderedMultiPartBody = templateMultiPartBody.render({
+          "isNodeJs": isNodeJs,
+        });
+        result += renderedMultiPartBody;
+      }
 
       String url = requestModel.url;
       if (!url.contains("://") && url.isNotEmpty) {
@@ -128,7 +131,8 @@ async function buildFormData(fields) {
       }
       var templateBody = jj.Template(kTemplateBody);
 
-      if (requestModel.isFormDataRequest) {
+      if (requestModel.isFormDataRequest &&
+          requestModel.formDataMapList.isNotEmpty) {
         var getFieldDataTemplate = jj.Template(kGetFormDataTemplate);
 
         result += templateBody.render({

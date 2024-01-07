@@ -7,8 +7,7 @@ import 'package:apidash/models/models.dart' show RequestModel;
 import 'package:apidash/consts.dart';
 
 class PythonHttpClientCodeGen {
-  final String kTemplateStart = """import http.client
-{% if isFormDataRequest %}
+  final String kTemplateStart = """import http.client{% if isFormDataRequest %}
 import mimetypes
 from codecs import encode
 {% endif %}
