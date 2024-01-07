@@ -149,7 +149,6 @@ class CollectionStateNotifier
         responseStatus: responseStatus,
         message: message,
         responseModel: responseModel);
-    );
     //print(newModel);
     var map = {...state!};
     map[id] = newModel;

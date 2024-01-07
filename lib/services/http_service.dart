@@ -29,10 +29,11 @@ Future<(http.Response?, Duration?, String?)> request(
         if (contentLength > 0) {
           body = requestBody;
           headers[HttpHeaders.contentLengthHeader] = contentLength.toString();
-          final hasContentTypeHeader = headers.keys.any((k) => k.toLowerCase() == HttpHeaders.contentTypeHeader);
+          final hasContentTypeHeader = headers.keys
+              .any((k) => k.toLowerCase() == HttpHeaders.contentTypeHeader);
           if (!hasContentTypeHeader) {
-            headers[HttpHeaders.contentTypeHeader] = 
-              kContentTypeMap[requestModel.requestBodyContentType] ?? "";
+            headers[HttpHeaders.contentTypeHeader] =
+                kContentTypeMap[requestModel.requestBodyContentType] ?? "";
           }
         }
       }
@@ -43,7 +44,8 @@ Future<(http.Response?, Duration?, String?)> request(
           requestUrl,
         );
         multiPartRequest.headers.addAll(headers);
-        for (FormDataModel formData in (requestModel.formDataList ?? [])) {
+        for (FormDataModel formData
+            in (requestModel.requestFormDataList ?? [])) {
           if (formData.type == FormDataType.text) {
             multiPartRequest.fields.addAll({formData.name: formData.value});
           } else {
