@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart'
@@ -52,6 +53,9 @@ class RequestModel {
       rowsToMap(enabledRequestParams) ?? {};
   Map<String, String> get headersMap => rowsToMap(requestHeaders) ?? {};
   Map<String, String> get paramsMap => rowsToMap(requestParams) ?? {};
+
+  bool get hasContentTypeHeader => enabledHeadersMap.keys
+      .any((k) => k.toLowerCase() == HttpHeaders.contentTypeHeader);
 
   RequestModel duplicate({
     required String id,

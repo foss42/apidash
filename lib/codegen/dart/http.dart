@@ -21,9 +21,10 @@ class DartHttpCodeGen {
         url: url,
         method: requestModel.method,
         queryParams: requestModel.enabledParamsMap,
-        headers: requestModel.enabledHeadersMap,
+        headers: {...requestModel.enabledHeadersMap},
         body: requestModel.requestBody,
         contentType: requestModel.requestBodyContentType,
+        hasContentTypeHeader: requestModel.hasContentTypeHeader,
       );
       return next;
     } catch (e) {
@@ -38,6 +39,7 @@ class DartHttpCodeGen {
     required Map<String, String> headers,
     required String? body,
     required ContentType contentType,
+    required bool hasContentTypeHeader,
   }) {
     final uri = Uri.parse(url);
 
@@ -49,16 +51,13 @@ class DartHttpCodeGen {
     final uriExp =
         declareVar('uri').assign(refer('Uri.parse').call([literalString(url)]));
 
-    final composeHeaders = headers;
     Expression? dataExp;
     if (kMethodsWithBody.contains(method) && (body?.isNotEmpty ?? false)) {
       final strContent = CodeExpression(Code('r\'\'\'$body\'\'\''));
       dataExp = declareVar('body', type: refer('String')).assign(strContent);
 
-      final hasContentTypeHeader = composeHeaders.keys
-          .any((k) => k.toLowerCase() == HttpHeaders.contentTypeHeader);
       if (!hasContentTypeHeader) {
-        composeHeaders.putIfAbsent(HttpHeaders.contentTypeHeader,
+        headers.putIfAbsent(HttpHeaders.contentTypeHeader,
             () => kContentTypeMap[contentType] ?? '');
       }
     }
