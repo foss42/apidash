@@ -31,7 +31,7 @@ Future<(http.Response?, Duration?, String?)> request(
           headers[HttpHeaders.contentLengthHeader] = contentLength.toString();
           if (!requestModel.hasContentTypeHeader) {
             headers[HttpHeaders.contentTypeHeader] =
-                kContentTypeMap[requestModel.requestBodyContentType] ?? "";
+                requestModel.requestBodyContentType.header;
           }
         }
       }

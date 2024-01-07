@@ -242,8 +242,6 @@ enum RequestItemMenuOption { edit, delete, duplicate }
 
 enum HTTPVerb { get, head, post, put, patch, delete }
 
-enum ContentType { json, text, formdata }
-
 enum FormDataType { text, file }
 
 const kSupportedUriSchemes = ["https", "http"];
@@ -312,25 +310,25 @@ const kTypeVideo = 'video';
 
 const kSubTypeDefaultViewOptions = 'all';
 
-const kContentTypeMap = {
-  ContentType.json: "$kTypeApplication/$kSubTypeJson",
-  ContentType.text: "$kTypeText/$kSubTypePlain",
-  ContentType.formdata: "multipart/form-data",
-};
+enum ContentType {
+  json("$kTypeApplication/$kSubTypeJson"),
+  text("$kTypeText/$kSubTypePlain"),
+  formdata("multipart/form-data");
 
-enum ResponseBodyView { preview, code, raw, none }
+  const ContentType(this.header);
+  final String header;
+}
 
-const kKeyIcon = "icon";
-const kKeyName = "name";
-const Map<ResponseBodyView, Map> kResponseBodyViewIcons = {
-  ResponseBodyView.none: {kKeyName: "Preview", kKeyIcon: Icons.warning},
-  ResponseBodyView.preview: {
-    kKeyName: "Preview",
-    kKeyIcon: Icons.visibility_rounded
-  },
-  ResponseBodyView.code: {kKeyName: "Preview", kKeyIcon: Icons.code_rounded},
-  ResponseBodyView.raw: {kKeyName: "Raw", kKeyIcon: Icons.text_snippet_rounded}
-};
+enum ResponseBodyView {
+  preview("Preview", Icons.visibility_rounded),
+  code("Preview", Icons.code_rounded),
+  raw("Raw", Icons.text_snippet_rounded),
+  none("Preview", Icons.warning);
+
+  const ResponseBodyView(this.label, this.icon);
+  final String label;
+  final IconData icon;
+}
 
 const kNoBodyViewOptions = [ResponseBodyView.none];
 const kNoRawBodyViewOptions = [ResponseBodyView.none, ResponseBodyView.raw];

@@ -121,7 +121,7 @@ Map<String, dynamic> requestModelToHARJsonRequest(
         hasBody = true;
         json["postData"] = {};
         json["postData"]["mimeType"] =
-            kContentTypeMap[requestModel.requestBodyContentType] ?? "";
+            requestModel.requestBodyContentType.header;
         json["postData"]["text"] = requestBody;
         if (exportMode) {
           json["postData"]["comment"] = "";
@@ -139,7 +139,7 @@ Map<String, dynamic> requestModelToHARJsonRequest(
         if (hasBody && !requestModel.hasContentTypeHeader) {
           var m = {
             "name": "Content-Type",
-            "value": kContentTypeMap[requestModel.requestBodyContentType] ?? ""
+            "value": requestModel.requestBodyContentType.header
           };
           if (exportMode) {
             m["comment"] = "";

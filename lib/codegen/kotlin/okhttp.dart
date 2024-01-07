@@ -118,8 +118,7 @@ import okhttp3.MediaType.Companion.toMediaType""";
           var contentLength = utf8.encode(requestBody).length;
           if (contentLength > 0) {
             hasBody = true;
-            String contentType =
-                kContentTypeMap[requestModel.requestBodyContentType] ?? "";
+            String contentType = requestModel.requestBodyContentType.header;
             var templateBody = jj.Template(kTemplateRequestBody);
             result += templateBody
                 .render({"contentType": contentType, "body": requestBody});

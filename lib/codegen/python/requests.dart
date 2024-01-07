@@ -162,7 +162,7 @@ print('Response Body:', response.text)
             hasHeaders = true;
             if (hasBody) {
               headers[HttpHeaders.contentTypeHeader] =
-                  kContentTypeMap[requestModel.requestBodyContentType] ?? "";
+                  requestModel.requestBodyContentType.header;
             }
             var headersString = kEncoder.convert(headers);
             headersString = padMultilineString(headersString, kHeadersPadding);

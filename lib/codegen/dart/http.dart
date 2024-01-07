@@ -22,7 +22,7 @@ class DartHttpCodeGen {
         queryParams: requestModel.enabledParamsMap,
         headers: {...requestModel.enabledHeadersMap},
         contentType: requestModel.requestBodyContentType,
-        hasContentTypeHeader: requestModel.hasContentTypeHeader, 
+        hasContentTypeHeader: requestModel.hasContentTypeHeader,
         body: requestModel.requestBody,
         formData: requestModel.formDataMapList,
       );
@@ -57,8 +57,8 @@ class DartHttpCodeGen {
       final strContent = CodeExpression(Code('r\'\'\'$body\'\'\''));
       dataExp = declareVar('body', type: refer('String')).assign(strContent);
       if (!hasContentTypeHeader) {
-        headers.putIfAbsent(HttpHeaders.contentTypeHeader,
-            () => kContentTypeMap[contentType] ?? '');
+        headers.putIfAbsent(
+            HttpHeaders.contentTypeHeader, () => contentType.header);
       }
     }
 

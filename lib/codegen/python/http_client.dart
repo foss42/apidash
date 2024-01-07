@@ -154,7 +154,7 @@ body = b'\r\n'.join(dataList)
             hasHeaders = true;
             if (hasBody && !requestModel.hasContentTypeHeader) {
               headers[HttpHeaders.contentTypeHeader] =
-                  kContentTypeMap[requestModel.requestBodyContentType] ?? "";
+                  requestModel.requestBodyContentType.header;
             }
             var headersString = kEncoder.convert(headers);
             headersString = padMultilineString(headersString, kHeadersPadding);
