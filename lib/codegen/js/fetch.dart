@@ -14,7 +14,6 @@ class FetchCodeGen {
 import fetch from 'node-fetch';
 {% if isFormDataRequest %}const fs = require('fs');{% endif %}
 
-
 """;
 
   String kTemplateStart = """let url = '{{url}}';
