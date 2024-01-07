@@ -1,11 +1,10 @@
 import 'dart:io';
 import 'dart:convert';
-import 'package:apidash/utils/extensions/request_model_extension.dart';
 import 'package:jinja/jinja.dart' as jj;
-import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart'
-    show getNewUuid, getValidRequestUri, padMultilineString, rowsToFormDataMap;
-import 'package:apidash/models/models.dart' show FormDataModel, RequestModel;
+    show getNewUuid, getValidRequestUri, padMultilineString;
+import 'package:apidash/models/models.dart' show RequestModel;
+import 'package:apidash/consts.dart';
 
 class PythonHttpClientCodeGen {
   final String kTemplateStart = """import http.client
@@ -91,7 +90,6 @@ body = b'\r\n'.join(dataList)
     RequestModel requestModel,
     String defaultUriScheme,
   ) {
-    List<FormDataModel> formDataList = requestModel.formDataList ?? [];
     String uuid = getNewUuid();
 
     try {
@@ -154,7 +152,8 @@ body = b'\r\n'.join(dataList)
 
           if (headers.isNotEmpty || hasBody) {
             hasHeaders = true;
-            bool hasContentTypeHeader = headers.keys.any((k) => k.toLowerCase() == HttpHeaders.contentTypeHeader);
+            bool hasContentTypeHeader = headers.keys
+                .any((k) => k.toLowerCase() == HttpHeaders.contentTypeHeader);
 
             if (hasBody && !hasContentTypeHeader) {
               headers[HttpHeaders.contentTypeHeader] =
@@ -170,7 +169,7 @@ body = b'\r\n'.join(dataList)
           var formDataBodyData = jj.Template(kStringFormDataBody);
           result += formDataBodyData.render(
             {
-              "fields_list": json.encode(rowsToFormDataMap(formDataList)),
+              "fields_list": json.encode(requestModel.formDataMapList),
               "boundary": uuid,
             },
           );

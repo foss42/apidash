@@ -1,28 +1,23 @@
 import 'dart:convert';
-
-import 'package:apidash/consts.dart';
-import 'package:apidash/utils/convert_utils.dart';
-import 'package:apidash/utils/extensions/request_model_extension.dart';
 import 'package:jinja/jinja.dart' as jj;
 import 'package:apidash/utils/utils.dart'
     show padMultilineString, requestModelToHARJsonRequest;
-import 'package:apidash/models/models.dart' show FormDataModel, RequestModel;
+import 'package:apidash/models/models.dart' show RequestModel;
+import 'package:apidash/consts.dart';
 
 class FetchCodeGen {
   FetchCodeGen({this.isNodeJs = false});
 
   final bool isNodeJs;
 
-  String kStringImportNode =
-      """
+  String kStringImportNode = """
 import fetch from 'node-fetch';
 {% if isFormDataRequest %}const fs = require('fs');{% endif %}
 
 
 """;
 
-  String kTemplateStart =
-      """let url = '{{url}}';
+  String kTemplateStart = """let url = '{{url}}';
 
 let options = {
   method: '{{method}}'
@@ -36,8 +31,7 @@ let options = {
   body: {{body}}
 """;
 
-  String kMultiPartBodyTemplate =
-      r'''
+  String kMultiPartBodyTemplate = r'''
 async function buildDataList(fields) {
   var formdata = new FormData();
   for (const field of fields) {
@@ -57,8 +51,7 @@ async function buildDataList(fields) {
 const payload = buildDataList({{fields_list}});
 
 ''';
-  String kStringRequest =
-      """
+  String kStringRequest = """
 
 };
 
@@ -83,7 +76,6 @@ fetch(url, options)
     String defaultUriScheme,
   ) {
     try {
-      List<FormDataModel> formDataList = requestModel.formDataList ?? [];
       jj.Template kNodejsImportTemplate = jj.Template(kStringImportNode);
       String importsData = kNodejsImportTemplate.render({
         "isFormDataRequest": requestModel.isFormDataRequest,
@@ -94,7 +86,7 @@ fetch(url, options)
         var templateMultiPartBody = jj.Template(kMultiPartBodyTemplate);
         result += templateMultiPartBody.render({
           "isNodeJs": isNodeJs,
-          "fields_list": json.encode(rowsToFormDataMap(formDataList)),
+          "fields_list": json.encode(requestModel.formDataMapList),
         });
       }
       String url = requestModel.url;

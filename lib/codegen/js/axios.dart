@@ -1,14 +1,9 @@
 import 'dart:convert';
-import 'package:apidash/consts.dart';
-import 'package:apidash/utils/extensions/request_model_extension.dart';
 import 'package:jinja/jinja.dart' as jj;
 import 'package:apidash/utils/utils.dart'
-    show
-        padMultilineString,
-        requestModelToHARJsonRequest,
-        rowsToFormDataMap,
-        stripUrlParams;
-import 'package:apidash/models/models.dart' show FormDataModel, RequestModel;
+    show padMultilineString, requestModelToHARJsonRequest, stripUrlParams;
+import 'package:apidash/models/models.dart' show RequestModel;
+import 'package:apidash/consts.dart';
 
 class AxiosCodeGen {
   AxiosCodeGen({this.isNodeJs = false});
@@ -80,7 +75,6 @@ async function buildFormData(fields) {
     String defaultUriScheme,
   ) {
     try {
-      List<FormDataModel> formDataList = requestModel.formDataList ?? [];
       jj.Template kNodejsImportTemplate = jj.Template(kStringImportNode);
       String importsData = kNodejsImportTemplate.render({
         "isFormDataRequest": requestModel.isFormDataRequest,
@@ -139,7 +133,7 @@ async function buildFormData(fields) {
 
         result += templateBody.render({
           "body": getFieldDataTemplate.render({
-            "fields_list": json.encode(rowsToFormDataMap(formDataList)),
+            "fields_list": json.encode(requestModel.formDataMapList),
           })
         });
       }

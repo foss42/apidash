@@ -1,12 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
-
-import 'package:apidash/consts.dart';
-import 'package:apidash/models/models.dart' show RequestModel;
-import 'package:apidash/utils/convert_utils.dart';
 import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
-
+import 'package:apidash/models/models.dart' show RequestModel;
+import 'package:apidash/consts.dart';
 import 'shared.dart';
 
 class DartHttpCodeGen {
@@ -26,7 +23,7 @@ class DartHttpCodeGen {
         headers: requestModel.enabledHeadersMap,
         body: requestModel.requestBody,
         contentType: requestModel.requestBodyContentType,
-        formData: rowsToFormDataMap(requestModel.formDataList) ?? [],
+        formData: requestModel.formDataMapList,
       );
       return next;
     } catch (e) {
@@ -59,10 +56,11 @@ class DartHttpCodeGen {
       final strContent = CodeExpression(Code('r\'\'\'$body\'\'\''));
       dataExp = declareVar('body', type: refer('String')).assign(strContent);
 
-      final hasContentTypeHeader = composeHeaders.keys.any((k) => k.toLowerCase() == HttpHeaders.contentTypeHeader);
+      final hasContentTypeHeader = composeHeaders.keys
+          .any((k) => k.toLowerCase() == HttpHeaders.contentTypeHeader);
       if (!hasContentTypeHeader) {
         composeHeaders.putIfAbsent(HttpHeaders.contentTypeHeader,
-          () => kContentTypeMap[contentType] ?? '');
+            () => kContentTypeMap[contentType] ?? '');
       }
     }
 

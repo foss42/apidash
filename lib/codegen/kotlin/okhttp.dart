@@ -1,11 +1,9 @@
 import 'dart:convert';
-import 'package:apidash/consts.dart';
-import 'package:apidash/utils/convert_utils.dart';
-import 'package:apidash/utils/extensions/request_model_extension.dart';
 import 'package:jinja/jinja.dart' as jj;
 import 'package:apidash/utils/utils.dart'
     show getValidRequestUri, stripUriParams;
 import '../../models/request_model.dart';
+import 'package:apidash/consts.dart';
 
 class KotlinOkHttpCodeGen {
   final String kTemplateStart = """import okhttp3.OkHttpClient
@@ -114,7 +112,7 @@ import okhttp3.MediaType.Companion.toMediaType""";
           var formDataTemplate = jj.Template(kFormDataBody);
 
           result += formDataTemplate.render({
-            "formDataList": rowsToFormDataMap(requestModel.formDataList),
+            "formDataList": requestModel.formDataMapList,
           });
         } else if (kMethodsWithBody.contains(method) && requestBody != null) {
           var contentLength = utf8.encode(requestBody).length;

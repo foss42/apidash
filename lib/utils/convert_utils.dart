@@ -79,7 +79,18 @@ Map<String, String>? rowsToMap(List<NameValueModel>? kvRows,
   return finalMap;
 }
 
-List<Map<String, dynamic>>? rowsToFormDataMap(
+List<NameValueModel>? mapToRows(Map<String, String>? kvMap) {
+  if (kvMap == null) {
+    return null;
+  }
+  List<NameValueModel> finalRows = [];
+  for (var k in kvMap.keys) {
+    finalRows.add(NameValueModel(name: k, value: kvMap[k]));
+  }
+  return finalRows;
+}
+
+List<Map<String, dynamic>>? rowsToFormDataMapList(
   List<FormDataModel>? kvRows,
 ) {
   if (kvRows == null) {
@@ -95,18 +106,7 @@ List<Map<String, dynamic>>? rowsToFormDataMap(
   return finalMap;
 }
 
-List<NameValueModel>? mapToRows(Map<String, String>? kvMap) {
-  if (kvMap == null) {
-    return null;
-  }
-  List<NameValueModel> finalRows = [];
-  for (var k in kvMap.keys) {
-    finalRows.add(NameValueModel(name: k, value: kvMap[k]));
-  }
-  return finalRows;
-}
-
-List<FormDataModel>? listToFormDataModel(List? kvMap) {
+List<FormDataModel>? mapListToFormDataModelRows(List<Map>? kvMap) {
   if (kvMap == null) {
     return null;
   }
@@ -123,8 +123,7 @@ List<FormDataModel>? listToFormDataModel(List? kvMap) {
 }
 
 FormDataType getFormDataType(String? type) {
-  List<FormDataType> formData = FormDataType.values;
-  return formData.firstWhere((element) => element.name == type,
+  return FormDataType.values.firstWhere((element) => element.name == type,
       orElse: () => FormDataType.text);
 }
 
