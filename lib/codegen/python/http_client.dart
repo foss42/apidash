@@ -7,8 +7,8 @@ import 'package:apidash/models/models.dart' show RequestModel;
 import 'package:apidash/consts.dart';
 
 class PythonHttpClientCodeGen {
-  final String kTemplateStart = """import http.client{% if isFormDataRequest %}
-import mimetypes
+  final String kTemplateStart = """import http.client
+{% if isFormDataRequest %}import mimetypes
 from codecs import encode
 {% endif %}
 """;
@@ -61,6 +61,7 @@ print(data.decode("utf-8"))
 """;
 
   final String kStringFormDataBody = r'''
+
 def build_data_list(fields):
     dataList = []
     for field in fields:
@@ -81,6 +82,7 @@ def build_data_list(fields):
     dataList.append(encode(f'--{{boundary}}--'))
     dataList.append(encode(''))
     return dataList
+
 dataList = build_data_list({{fields_list}})
 body = b'\r\n'.join(dataList)
 ''';

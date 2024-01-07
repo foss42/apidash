@@ -8,8 +8,7 @@ import 'package:apidash/models/models.dart' show RequestModel;
 
 class PythonRequestsCodeGen {
   final String kTemplateStart = """import requests
-{% if isFormDataRequest %}
-import mimetypes
+{% if isFormDataRequest %}import mimetypes
 from codecs import encode
 {% endif %}
 url = '{{url}}'
@@ -51,6 +50,7 @@ response = requests.{{method}}(url
 """;
 
   final String kStringFormDataBody = r'''
+
 def build_data_list(fields):
     dataList = []
     for field in fields:
@@ -69,10 +69,10 @@ def build_data_list(fields):
             dataList.append(encode(f'Content-Type: {mimetypes.guess_type(value)[0] or "application/octet-stream"}'))
             dataList.append(encode(''))
             dataList.append(open(value, 'rb').read())
-
     dataList.append(encode('--{{boundary}}--'))
     dataList.append(encode(''))
     return dataList
+
 dataList = build_data_list({{fields_list}})
 payload = b'\r\n'.join(dataList)
 ''';
