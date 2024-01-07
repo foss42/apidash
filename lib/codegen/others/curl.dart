@@ -52,7 +52,7 @@ class cURLCodeGen {
         }
       }
       if (harJson['formData'] != null) {
-        var formDataList = harJson['formData'] as List<Map<String, String>>;
+        var formDataList = harJson['formData'] as List<Map<String, dynamic>>;
         for (var formData in formDataList) {
           var templateFormData = jj.Template(kTemplateFormData);
           if (formData['type'] != null &&
