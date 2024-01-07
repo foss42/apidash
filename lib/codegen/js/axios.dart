@@ -11,9 +11,7 @@ class AxiosCodeGen {
   final bool isNodeJs;
 
   String kStringImportNode = """{% if isNodeJs %}import axios from 'axios';
-
-{% endif %}{% if isFormDataRequest and isNodeJs %}
-const fs = require('fs');{% endif %}
+{% endif %}{% if isFormDataRequest and isNodeJs %}const fs = require('fs');{% endif %}
 """;
 
   String kTemplateStart = """let config = {
@@ -50,6 +48,8 @@ axios(config)
     });
 """;
   String kMultiPartBodyTemplate = r'''
+
+
 async function buildFormData(fields) {
   var formdata = new FormData();
   for (const field of fields) {
