@@ -42,8 +42,6 @@ class Codegen {
             .getCode(requestModel, defaultUriScheme);
       case CodegenLanguage.pythonRequests:
         return PythonRequestsCodeGen().getCode(requestModel, defaultUriScheme);
-      default:
-        throw ArgumentError('Invalid codegenLanguage');
     }
   }
 }

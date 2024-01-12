@@ -9,15 +9,16 @@ import 'package:apidash/consts.dart';
 Future<(http.Response?, Duration?, String?)> request(
   RequestModel requestModel, {
   String defaultUriScheme = kDefaultUriScheme,
+  bool isMultiPartRequest = false,
 }) async {
   (Uri?, String?) uriRec = getValidRequestUri(
     requestModel.url,
-    requestModel.requestParams,
+    requestModel.enabledRequestParams,
     defaultUriScheme: defaultUriScheme,
   );
   if (uriRec.$1 != null) {
     Uri requestUrl = uriRec.$1!;
-    Map<String, String> headers = requestModel.headersMap;
+    Map<String, String> headers = requestModel.enabledHeadersMap;
     http.Response response;
     String? body;
     try {
@@ -28,11 +29,38 @@ Future<(http.Response?, Duration?, String?)> request(
         if (contentLength > 0) {
           body = requestBody;
           headers[HttpHeaders.contentLengthHeader] = contentLength.toString();
-          headers[HttpHeaders.contentTypeHeader] =
-              kContentTypeMap[requestModel.requestBodyContentType] ?? "";
+          if (!requestModel.hasContentTypeHeader) {
+            headers[HttpHeaders.contentTypeHeader] =
+                requestModel.requestBodyContentType.header;
+          }
         }
       }
       Stopwatch stopwatch = Stopwatch()..start();
+      if (isMultiPartRequest) {
+        var multiPartRequest = http.MultipartRequest(
+          requestModel.method.name.toUpperCase(),
+          requestUrl,
+        );
+        multiPartRequest.headers.addAll(headers);
+        for (FormDataModel formData
+            in (requestModel.requestFormDataList ?? [])) {
+          if (formData.type == FormDataType.text) {
+            multiPartRequest.fields.addAll({formData.name: formData.value});
+          } else {
+            multiPartRequest.files.add(
+              await http.MultipartFile.fromPath(
+                formData.name,
+                formData.value,
+              ),
+            );
+          }
+        }
+        http.StreamedResponse multiPartResponse = await multiPartRequest.send();
+        stopwatch.stop();
+        http.Response convertedMultiPartResponse =
+            await convertStreamedResponse(multiPartResponse);
+        return (convertedMultiPartResponse, stopwatch.elapsed, null);
+      }
       switch (requestModel.method) {
         case HTTPVerb.get:
           response = await http.get(requestUrl, headers: headers);

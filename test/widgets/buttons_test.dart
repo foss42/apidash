@@ -1,7 +1,8 @@
-import 'package:apidash/consts.dart';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:apidash/widgets/buttons.dart';
+import 'package:apidash/consts.dart';
 import '../test_consts.dart';
 
 void main() {
@@ -53,6 +54,7 @@ void main() {
     await tester.tap(button1);
     expect(changedValue, 'Send');
   });
+
   testWidgets('Testing for Send Request button when sentRequestId is not null',
       (tester) async {
     await tester.pumpWidget(
@@ -76,6 +78,7 @@ void main() {
 
     expect(tester.widget<FilledButton>(button1).enabled, isFalse);
   });
+
   testWidgets('Testing for Send Request button when sentRequestId = activeId',
       (tester) async {
     await tester.pumpWidget(
@@ -98,5 +101,114 @@ void main() {
     expect(button1, findsOneWidget);
 
     expect(tester.widget<FilledButton>(button1).enabled, isFalse);
+  });
+
+  testWidgets('Testing for Save in Downloads button', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        title: 'Save in Downloads button',
+        theme: kThemeDataLight,
+        home: const Scaffold(
+          body: SaveInDownloadsButton(),
+        ),
+      ),
+    );
+
+    expect(find.byIcon(Icons.download), findsOneWidget);
+    expect(find.text("Download"), findsOneWidget);
+
+    final button1 = find.byType(TextButton);
+    expect(button1, findsOneWidget);
+
+    expect(tester.widget<TextButton>(button1).enabled, isFalse);
+  });
+
+  testWidgets('Testing for Save in Downloads button 2', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        title: 'Save in Downloads button',
+        theme: kThemeDataLight,
+        home: Scaffold(
+          body: SaveInDownloadsButton(
+            content: Uint8List.fromList([1]),
+          ),
+        ),
+      ),
+    );
+
+    expect(find.byIcon(Icons.download), findsOneWidget);
+    expect(find.text("Download"), findsOneWidget);
+
+    final button1 = find.byType(TextButton);
+    expect(button1, findsOneWidget);
+
+    expect(tester.widget<TextButton>(button1).enabled, isTrue);
+  });
+
+  testWidgets('Testing for Repo button', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        title: 'Repo button',
+        theme: kThemeDataLight,
+        home: const Scaffold(
+          body: RepoButton(
+            icon: Icons.code,
+          ),
+        ),
+      ),
+    );
+
+    expect(find.byIcon(Icons.code), findsOneWidget);
+    expect(find.text("GitHub"), findsOneWidget);
+  });
+
+  testWidgets('Testing for Repo button icon = null', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        title: 'Repo button',
+        theme: kThemeDataLight,
+        home: const Scaffold(
+          body: RepoButton(),
+        ),
+      ),
+    );
+
+    expect(find.byIcon(Icons.code), findsNothing);
+    expect(find.text("GitHub"), findsOneWidget);
+
+    final button1 = find.byType(FilledButton);
+    expect(button1, findsOneWidget);
+
+    expect(tester.widget<FilledButton>(button1).enabled, isTrue);
+  });
+
+  testWidgets('Testing for Discord button', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        title: 'Discord button',
+        theme: kThemeDataLight,
+        home: const Scaffold(
+          body: DiscordButton(),
+        ),
+      ),
+    );
+
+    expect(find.byIcon(Icons.discord), findsOneWidget);
+    expect(find.text("Discord Server"), findsOneWidget);
+  });
+
+  testWidgets('Testing for Save button', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        title: 'Save button',
+        theme: kThemeDataLight,
+        home: const Scaffold(
+          body: SaveButton(),
+        ),
+      ),
+    );
+
+    expect(find.byIcon(Icons.save), findsOneWidget);
+    expect(find.text("Save"), findsOneWidget);
   });
 }

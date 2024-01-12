@@ -9,8 +9,10 @@ class HARCodeGen {
   ) {
     try {
       var harString = kEncoder.convert(requestModelToHARJsonRequest(
-          requestModel,
-          defaultUriScheme: defaultUriScheme));
+        requestModel,
+        defaultUriScheme: defaultUriScheme,
+        useEnabled: true,
+      ));
       return harString;
     } catch (e) {
       return null;

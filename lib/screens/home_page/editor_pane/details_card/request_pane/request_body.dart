@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
+import 'request_form_data.dart';
 
 class EditRequestBody extends ConsumerStatefulWidget {
   const EditRequestBody({super.key});
@@ -20,6 +21,7 @@ class _EditRequestBodyState extends ConsumerState<EditRequestBody> {
         .getRequestModel(activeId!);
     final contentType = ref.watch(activeRequestModelProvider
         .select((value) => value?.requestBodyContentType));
+
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.background,
@@ -40,17 +42,19 @@ class _EditRequestBodyState extends ConsumerState<EditRequestBody> {
             ),
           ),
           Expanded(
-            child: TextFieldEditor(
-              contentType: contentType,
-              key: Key("$activeId-body"),
-              fieldKey: "$activeId-body-editor",
-              initialValue: requestModel?.requestBody,
-              onChanged: (String value) {
-                ref
-                    .read(collectionStateNotifierProvider.notifier)
-                    .update(activeId, requestBody: value);
-              },
-            ),
+            child: contentType == ContentType.formdata
+                ? const FormDataWidget()
+                : TextFieldEditor(
+                    key: Key("$activeId-body"),
+                    fieldKey: "$activeId-body-editor",
+                    contentType: contentType,
+                    initialValue: requestModel?.requestBody,
+                    onChanged: (String value) {
+                      ref
+                          .read(collectionStateNotifierProvider.notifier)
+                          .update(activeId, requestBody: value);
+                    },
+                  ),
           )
         ],
       ),
