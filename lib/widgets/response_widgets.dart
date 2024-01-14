@@ -425,7 +425,7 @@ class _BodySuccessState extends State<BodySuccess> {
                   const Spacer(),
                   kCodeRawBodyViewOptions.contains(currentSeg)
                       ? CopyButton(
-                          toCopy: widget.body,
+                          toCopy: widget.formattedBody ?? widget.body,
                           showLabel: showLabel,
                         )
                       : const SizedBox(),
@@ -481,7 +481,7 @@ class _BodySuccessState extends State<BodySuccess> {
                     decoration: textContainerdecoration,
                     child: SingleChildScrollView(
                       child: SelectableText(
-                        widget.body,
+                        widget.formattedBody ?? widget.body,
                         style: kCodeStyle,
                       ),
                     ),
