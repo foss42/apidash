@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'dart:convert';
 import '../models/models.dart';
 import '../consts.dart';
+import 'package:http/http.dart' as http;
 
 String humanizeDuration(Duration? duration) {
   if (duration == null) {
@@ -89,6 +90,43 @@ List<NameValueModel>? mapToRows(Map<String, String>? kvMap) {
   return finalRows;
 }
 
+List<Map<String, dynamic>>? rowsToFormDataMapList(
+  List<FormDataModel>? kvRows,
+) {
+  if (kvRows == null) {
+    return null;
+  }
+  List<Map<String, dynamic>> finalMap = kvRows
+      .map((FormDataModel formData) => {
+            "name": formData.name,
+            "value": formData.value,
+            "type": formData.type.name,
+          })
+      .toList();
+  return finalMap;
+}
+
+List<FormDataModel>? mapListToFormDataModelRows(List<Map>? kvMap) {
+  if (kvMap == null) {
+    return null;
+  }
+  List<FormDataModel> finalRows = kvMap.map(
+    (formData) {
+      return FormDataModel(
+        name: formData["name"],
+        value: formData["value"],
+        type: getFormDataType(formData["type"]),
+      );
+    },
+  ).toList();
+  return finalRows;
+}
+
+FormDataType getFormDataType(String? type) {
+  return FormDataType.values.firstWhere((element) => element.name == type,
+      orElse: () => FormDataType.text);
+}
+
 Uint8List? stringToBytes(String? text) {
   if (text == null) {
     return null;
@@ -108,4 +146,31 @@ Uint8List jsonMapToBytes(Map<String, dynamic>? map) {
     var bytes = Uint8List.fromList(l);
     return bytes;
   }
+}
+
+Future<http.Response> convertStreamedResponse(
+  http.StreamedResponse streamedResponse,
+) async {
+  Uint8List bodyBytes = await streamedResponse.stream.toBytes();
+
+  http.Response response = http.Response.bytes(
+    bodyBytes,
+    streamedResponse.statusCode,
+    headers: streamedResponse.headers,
+    persistentConnection: streamedResponse.persistentConnection,
+    reasonPhrase: streamedResponse.reasonPhrase,
+    request: streamedResponse.request,
+  );
+
+  return response;
+}
+
+List<NameValueModel>? getEnabledRows(
+    List<NameValueModel>? rows, List<bool>? isRowEnabledList) {
+  if (rows == null || isRowEnabledList == null) {
+    return rows;
+  }
+  List<NameValueModel> finalRows =
+      rows.where((element) => isRowEnabledList[rows.indexOf(element)]).toList();
+  return finalRows == [] ? null : finalRows;
 }

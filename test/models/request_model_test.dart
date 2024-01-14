@@ -106,11 +106,14 @@ void main() {
       'content-length': '18',
       'content-type': 'application/json; charset=utf-8'
     },
+    'isHeaderEnabledList': null,
     'requestParams': null,
+    'isParamEnabledList': null,
     "requestBodyContentType": 'json',
     "requestBody": '''{
 "text":"WORLD"
 }''',
+    'requestFormDataList': null,
     'responseStatus': null,
     'message': null,
     'responseModel': null
@@ -140,9 +143,12 @@ void main() {
     "Request Description: ",
     "Request Tab Index: 0",
     "Request Headers: [NameValueModel(name: content-length, value: 18), NameValueModel(name: content-type, value: application/json; charset=utf-8)]",
+    "Enabled Headers: null",
     "Request Params: null",
+    "Enabled Params: null",
     "Request Body Content Type: ContentType.json",
     'Request Body: {\n"text":"WORLD"\n}',
+    'Request FormData: null',
     "Response Status: null",
     "Response Message: null",
     "Response: null"
@@ -150,6 +156,29 @@ void main() {
   test('Testing toString', () {
     expect(requestModelDup.toString(), requestModeDupString);
   });
+
+  test('Testing getters', () {
+    expect(requestModel.enabledRequestHeaders, const [
+      NameValueModel(name: 'content-length', value: '18'),
+      NameValueModel(
+          name: 'content-type', value: 'application/json; charset=utf-8')
+    ]);
+    expect(requestModel.enabledRequestParams, null);
+    expect(requestModel.enabledHeadersMap, {
+      'content-length': '18',
+      'content-type': 'application/json; charset=utf-8'
+    });
+    expect(requestModel.enabledParamsMap, {});
+    expect(requestModel.headersMap, {
+      'content-length': '18',
+      'content-type': 'application/json; charset=utf-8'
+    });
+    expect(requestModel.paramsMap, {});
+    expect(requestModel.formDataMapList, []);
+    expect(requestModel.isFormDataRequest, false);
+    expect(requestModel.hasContentTypeHeader, true);
+  });
+
   test('Testing hashcode', () {
     expect(requestModel.hashCode, greaterThan(0));
   });

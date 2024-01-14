@@ -59,3 +59,13 @@ Color getDarkModeColor(Color col) {
     kColorWhite,
   );
 }
+
+double? getJsonPreviewerMaxRootNodeWidth(double w) {
+  if (w < 300) {
+    return 150;
+  }
+  if (w < 400) {
+    return 200;
+  }
+  return w - 150;
+}

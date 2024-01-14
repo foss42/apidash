@@ -10,6 +10,9 @@ class cURLCodeGen {
   String kTemplateHeader = """ \\
   --header '{{name}}: {{value}}'
 """;
+  String kTemplateFormData = """ \\
+  --form '{{name}}: {{value}}'
+""";
 
   String kTemplateBody = """ \\
   --data '{{body}}'
@@ -28,7 +31,7 @@ class cURLCodeGen {
       }
       var rM = requestModel.copyWith(url: url);
 
-      var harJson = requestModelToHARJsonRequest(rM);
+      var harJson = requestModelToHARJsonRequest(rM, useEnabled: true);
 
       var templateStart = jj.Template(kTemplateStart);
       result += templateStart.render({
@@ -46,6 +49,23 @@ class cURLCodeGen {
           var templateHeader = jj.Template(kTemplateHeader);
           result += templateHeader
               .render({"name": item["name"], "value": item["value"]});
+        }
+      }
+      if (harJson['formData'] != null) {
+        var formDataList = harJson['formData'] as List<Map<String, dynamic>>;
+        for (var formData in formDataList) {
+          var templateFormData = jj.Template(kTemplateFormData);
+          if (formData['type'] != null &&
+              formData['name'] != null &&
+              formData['value'] != null &&
+              formData['name']!.isNotEmpty &&
+              formData['value']!.isNotEmpty) {
+            result += templateFormData.render({
+              "name": formData["name"],
+              "value":
+                  "${formData['type'] == 'file' ? '@' : ''}${formData["value"]}",
+            });
+          }
         }
       }
 

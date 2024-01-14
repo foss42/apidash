@@ -1,8 +1,14 @@
+import 'dart:io';
 import 'package:flutter/foundation.dart';
-import 'package:apidash/consts.dart';
-import 'package:apidash/utils/utils.dart' show mapToRows, rowsToMap;
-import 'name_value_model.dart';
-import 'response_model.dart';
+import '../utils/utils.dart'
+    show
+        mapListToFormDataModelRows,
+        rowsToFormDataMapList,
+        mapToRows,
+        rowsToMap,
+        getEnabledRows;
+import '../consts.dart';
+import 'models.dart';
 
 @immutable
 class RequestModel {
@@ -15,8 +21,11 @@ class RequestModel {
     this.requestTabIndex = 0,
     this.requestHeaders,
     this.requestParams,
+    this.isHeaderEnabledList,
+    this.isParamEnabledList,
     this.requestBodyContentType = ContentType.json,
     this.requestBody,
+    this.requestFormDataList,
     this.responseStatus,
     this.message,
     this.responseModel,
@@ -30,14 +39,33 @@ class RequestModel {
   final int requestTabIndex;
   final List<NameValueModel>? requestHeaders;
   final List<NameValueModel>? requestParams;
+  final List<bool>? isHeaderEnabledList;
+  final List<bool>? isParamEnabledList;
   final ContentType requestBodyContentType;
   final String? requestBody;
+  final List<FormDataModel>? requestFormDataList;
   final int? responseStatus;
   final String? message;
   final ResponseModel? responseModel;
 
+  List<NameValueModel>? get enabledRequestHeaders =>
+      getEnabledRows(requestHeaders, isHeaderEnabledList);
+  List<NameValueModel>? get enabledRequestParams =>
+      getEnabledRows(requestParams, isParamEnabledList);
+
+  Map<String, String> get enabledHeadersMap =>
+      rowsToMap(enabledRequestHeaders) ?? {};
+  Map<String, String> get enabledParamsMap =>
+      rowsToMap(enabledRequestParams) ?? {};
   Map<String, String> get headersMap => rowsToMap(requestHeaders) ?? {};
   Map<String, String> get paramsMap => rowsToMap(requestParams) ?? {};
+
+  List<Map<String, dynamic>> get formDataMapList =>
+      rowsToFormDataMapList(requestFormDataList) ?? [];
+  bool get isFormDataRequest => requestBodyContentType == ContentType.formdata;
+
+  bool get hasContentTypeHeader => enabledHeadersMap.keys
+      .any((k) => k.toLowerCase() == HttpHeaders.contentTypeHeader);
 
   RequestModel duplicate({
     required String id,
@@ -50,8 +78,14 @@ class RequestModel {
       description: description,
       requestHeaders: requestHeaders != null ? [...requestHeaders!] : null,
       requestParams: requestParams != null ? [...requestParams!] : null,
+      isHeaderEnabledList:
+          isHeaderEnabledList != null ? [...isHeaderEnabledList!] : null,
+      isParamEnabledList:
+          isParamEnabledList != null ? [...isParamEnabledList!] : null,
       requestBodyContentType: requestBodyContentType,
       requestBody: requestBody,
+      requestFormDataList:
+          requestFormDataList != null ? [...requestFormDataList!] : null,
     );
   }
 
@@ -64,14 +98,19 @@ class RequestModel {
     int? requestTabIndex,
     List<NameValueModel>? requestHeaders,
     List<NameValueModel>? requestParams,
+    List<bool>? isHeaderEnabledList,
+    List<bool>? isParamEnabledList,
     ContentType? requestBodyContentType,
     String? requestBody,
+    List<FormDataModel>? requestFormDataList,
     int? responseStatus,
     String? message,
     ResponseModel? responseModel,
   }) {
     var headers = requestHeaders ?? this.requestHeaders;
     var params = requestParams ?? this.requestParams;
+    var enabledHeaders = isHeaderEnabledList ?? this.isHeaderEnabledList;
+    var enabledParams = isParamEnabledList ?? this.isParamEnabledList;
     return RequestModel(
       id: id ?? this.id,
       method: method ?? this.method,
@@ -81,9 +120,12 @@ class RequestModel {
       requestTabIndex: requestTabIndex ?? this.requestTabIndex,
       requestHeaders: headers != null ? [...headers] : null,
       requestParams: params != null ? [...params] : null,
+      isHeaderEnabledList: enabledHeaders != null ? [...enabledHeaders] : null,
+      isParamEnabledList: enabledParams != null ? [...enabledParams] : null,
       requestBodyContentType:
           requestBodyContentType ?? this.requestBodyContentType,
       requestBody: requestBody ?? this.requestBody,
+      requestFormDataList: requestFormDataList ?? this.requestFormDataList,
       responseStatus: responseStatus ?? this.responseStatus,
       message: message ?? this.message,
       responseModel: responseModel ?? this.responseModel,
@@ -106,6 +148,8 @@ class RequestModel {
     final description = data["description"] as String?;
     final requestHeaders = data["requestHeaders"];
     final requestParams = data["requestParams"];
+    final isHeaderEnabledList = data["isHeaderEnabledList"] as List<bool>?;
+    final isParamEnabledList = data["isParamEnabledList"] as List<bool>?;
     try {
       requestBodyContentType =
           ContentType.values.byName(data["requestBodyContentType"] as String);
@@ -113,9 +157,11 @@ class RequestModel {
       requestBodyContentType = kDefaultContentType;
     }
     final requestBody = data["requestBody"] as String?;
+    final requestFormDataList = data["requestFormDataList"];
     final responseStatus = data["responseStatus"] as int?;
     final message = data["message"] as String?;
     final responseModelJson = data["responseModel"];
+
     if (responseModelJson != null) {
       responseModel =
           ResponseModel.fromJson(Map<String, dynamic>.from(responseModelJson));
@@ -136,8 +182,13 @@ class RequestModel {
       requestParams: requestParams != null
           ? mapToRows(Map<String, String>.from(requestParams))
           : null,
+      isHeaderEnabledList: isHeaderEnabledList,
+      isParamEnabledList: isParamEnabledList,
       requestBodyContentType: requestBodyContentType,
       requestBody: requestBody,
+      requestFormDataList: requestFormDataList != null
+          ? mapListToFormDataModelRows(List<Map>.from(requestFormDataList))
+          : null,
       responseStatus: responseStatus,
       message: message,
       responseModel: responseModel,
@@ -153,8 +204,11 @@ class RequestModel {
       "description": description,
       "requestHeaders": rowsToMap(requestHeaders),
       "requestParams": rowsToMap(requestParams),
+      "isHeaderEnabledList": isHeaderEnabledList,
+      "isParamEnabledList": isParamEnabledList,
       "requestBodyContentType": requestBodyContentType.name,
       "requestBody": requestBody,
+      "requestFormDataList": rowsToFormDataMapList(requestFormDataList),
       "responseStatus": includeResponse ? responseStatus : null,
       "message": includeResponse ? message : null,
       "responseModel": includeResponse ? responseModel?.toJson() : null,
@@ -171,9 +225,12 @@ class RequestModel {
       "Request Description: $description",
       "Request Tab Index: ${requestTabIndex.toString()}",
       "Request Headers: ${requestHeaders.toString()}",
+      "Enabled Headers: ${isHeaderEnabledList.toString()}",
       "Request Params: ${requestParams.toString()}",
+      "Enabled Params: ${isParamEnabledList.toString()}",
       "Request Body Content Type: ${requestBodyContentType.toString()}",
       "Request Body: ${requestBody.toString()}",
+      "Request FormData: ${requestFormDataList.toString()}",
       "Response Status: $responseStatus",
       "Response Message: $message",
       "Response: ${responseModel.toString()}"
@@ -192,8 +249,11 @@ class RequestModel {
         other.requestTabIndex == requestTabIndex &&
         listEquals(other.requestHeaders, requestHeaders) &&
         listEquals(other.requestParams, requestParams) &&
+        listEquals(other.isHeaderEnabledList, isHeaderEnabledList) &&
+        listEquals(other.isParamEnabledList, isParamEnabledList) &&
         other.requestBodyContentType == requestBodyContentType &&
         other.requestBody == requestBody &&
+        other.requestFormDataList == requestFormDataList &&
         other.responseStatus == responseStatus &&
         other.message == message &&
         other.responseModel == responseModel;
@@ -211,8 +271,11 @@ class RequestModel {
       requestTabIndex,
       requestHeaders,
       requestParams,
+      isHeaderEnabledList,
+      isParamEnabledList,
       requestBodyContentType,
       requestBody,
+      requestFormDataList,
       responseStatus,
       message,
       responseModel,

@@ -3,7 +3,11 @@
 ## Windows 
 Download the latest Windows Installer (64 bit) from [here](https://github.com/foss42/apidash/releases/latest)
 
-To install it, simply double click on the installer and follow the step by step installation wizard.
+To install it, simply double click on the installer.
+
+If prompted by Windows that **Windows prevented an unrecognized app from running**, click on **Run anyway**. 
+
+Now, follow the step by step installation wizard.
 
 ## MacOS
 

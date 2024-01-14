@@ -230,6 +230,125 @@ fetch(url, options)
 """;
       expect(fetchCodeGen.getCode(requestModelGet8, "https"), expectedCode);
     });
+
+    test('GET 9', () {
+      const expectedCode = r"""import fetch from 'node-fetch';
+
+let url = 'https://api.foss42.com/humanize/social?num=8700000&add_space=true';
+
+let options = {
+  method: 'GET'
+};
+
+let status;
+fetch(url, options)
+    .then(res => {
+        status = res.status;
+        return res.json()
+    })
+    .then(body => {
+        console.log(status);
+        console.log(body);
+    })
+    .catch(err => {
+        console.log(status);
+        console.error('error:' + err);
+    });
+""";
+      expect(fetchCodeGen.getCode(requestModelGet9, "https"), expectedCode);
+    });
+
+    test('GET 10', () {
+      const expectedCode = r"""import fetch from 'node-fetch';
+
+let url = 'https://api.foss42.com/humanize/social';
+
+let options = {
+  method: 'GET',
+  headers: {
+    "User-Agent": "Test Agent"
+  }
+};
+
+let status;
+fetch(url, options)
+    .then(res => {
+        status = res.status;
+        return res.json()
+    })
+    .then(body => {
+        console.log(status);
+        console.log(body);
+    })
+    .catch(err => {
+        console.log(status);
+        console.error('error:' + err);
+    });
+""";
+      expect(
+          fetchCodeGen.getCode(
+            requestModelGet10,
+            "https",
+          ),
+          expectedCode);
+    });
+
+    test('GET 11', () {
+      const expectedCode = r"""import fetch from 'node-fetch';
+
+let url = 'https://api.foss42.com/humanize/social?num=8700000&digits=3';
+
+let options = {
+  method: 'GET',
+  headers: {
+    "User-Agent": "Test Agent"
+  }
+};
+
+let status;
+fetch(url, options)
+    .then(res => {
+        status = res.status;
+        return res.json()
+    })
+    .then(body => {
+        console.log(status);
+        console.log(body);
+    })
+    .catch(err => {
+        console.log(status);
+        console.error('error:' + err);
+    });
+""";
+      expect(fetchCodeGen.getCode(requestModelGet11, "https"), expectedCode);
+    });
+
+    test('GET 12', () {
+      const expectedCode = r"""import fetch from 'node-fetch';
+
+let url = 'https://api.foss42.com/humanize/social';
+
+let options = {
+  method: 'GET'
+};
+
+let status;
+fetch(url, options)
+    .then(res => {
+        status = res.status;
+        return res.json()
+    })
+    .then(body => {
+        console.log(status);
+        console.log(body);
+    })
+    .catch(err => {
+        console.log(status);
+        console.error('error:' + err);
+    });
+""";
+      expect(fetchCodeGen.getCode(requestModelGet12, "https"), expectedCode);
+    });
   });
 
   group('HEAD Request', () {
@@ -386,6 +505,7 @@ fetch(url, options)
       expect(fetchCodeGen.getCode(requestModelPost3, "https"), expectedCode);
     });
   });
+
   group('PUT Request', () {
     test('PUT 1', () {
       const expectedCode = r"""import fetch from 'node-fetch';

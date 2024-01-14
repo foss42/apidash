@@ -16,6 +16,10 @@ final kIsApple = !kIsWeb && (Platform.isIOS || Platform.isMacOS);
 final kIsDesktop =
     !kIsWeb && (Platform.isMacOS || Platform.isWindows || Platform.isLinux);
 
+final kIsIOS = !kIsWeb && Platform.isIOS;
+final kIsAndroid = !kIsWeb && Platform.isAndroid;
+final kIsMobile = !kIsWeb && (Platform.isIOS || Platform.isAndroid);
+
 final kColorTransparentState =
     MaterialStateProperty.all<Color>(Colors.transparent);
 const kColorTransparent = Colors.transparent;
@@ -44,6 +48,11 @@ const kHintOpacity = 0.6;
 const kForegroundOpacity = 0.05;
 
 const kTextStyleButton = TextStyle(fontWeight: FontWeight.bold);
+const kTextStyleButtonSmall = TextStyle(fontSize: 12);
+const kFormDataButtonLabelTextStyle = TextStyle(
+  fontSize: 12,
+  fontWeight: FontWeight.w600,
+);
 
 const kBorderRadius8 = BorderRadius.all(Radius.circular(8));
 final kBorderRadius10 = BorderRadius.circular(10);
@@ -53,22 +62,36 @@ const kP1 = EdgeInsets.all(1);
 const kP5 = EdgeInsets.all(5);
 const kP8 = EdgeInsets.all(8);
 const kPs8 = EdgeInsets.only(left: 8);
+const kPs2 = EdgeInsets.only(left: 2);
 const kPh20v5 = EdgeInsets.symmetric(horizontal: 20, vertical: 5);
 const kPh20v10 = EdgeInsets.symmetric(horizontal: 20, vertical: 10);
 const kP10 = EdgeInsets.all(10);
 const kPt24o8 = EdgeInsets.only(top: 24, left: 8.0, right: 8.0, bottom: 8.0);
 const kPt5o10 =
     EdgeInsets.only(left: 10.0, right: 10.0, top: 5.0, bottom: 10.0);
+const kPh20 = EdgeInsets.symmetric(
+  horizontal: 20,
+);
 const kPh20t40 = EdgeInsets.only(
   left: 20,
   right: 20,
   top: 40,
 );
 const kPh60 = EdgeInsets.symmetric(horizontal: 60);
-const kP24CollectionPane = EdgeInsets.only(top: 24, left: 8.0, bottom: 8.0);
-const kP8CollectionPane = EdgeInsets.only(top: 8.0, left: 8.0, bottom: 8.0);
+const kP24CollectionPane = EdgeInsets.only(
+  top: 24,
+  left: 4.0,
+  //right: 4.0,
+  // bottom: 8.0,
+);
+const kP8CollectionPane = EdgeInsets.only(
+  top: 8.0,
+  left: 4.0,
+  //right: 4.0,
+  // bottom: 8.0,
+);
 const kPr8CollectionPane = EdgeInsets.only(right: 8.0);
-
+const kpsV5 = EdgeInsets.symmetric(vertical: 2);
 const kHSpacer4 = SizedBox(width: 4);
 const kHSpacer5 = SizedBox(width: 5);
 const kHSpacer10 = SizedBox(width: 10);
@@ -220,7 +243,7 @@ enum RequestItemMenuOption { edit, delete, duplicate }
 
 enum HTTPVerb { get, head, post, put, patch, delete }
 
-enum ContentType { json, text }
+enum FormDataType { text, file }
 
 const kSupportedUriSchemes = ["https", "http"];
 const kDefaultUriScheme = "https";
@@ -238,6 +261,7 @@ enum CodegenLanguage {
   curl("cURL", "bash", "curl"),
   har("HAR", "json", "har"),
   dartHttp("Dart (http)", "dart", "dart"),
+  dartDio("Dart (dio)", "dart", "dart"),
   jsAxios("JavaScript (axios)", "javascript", "js"),
   jsFetch("JavaScript (fetch)", "javascript", "js"),
   nodejsAxios("node.js (axios)", "javascript", "js"),
@@ -287,24 +311,25 @@ const kTypeVideo = 'video';
 
 const kSubTypeDefaultViewOptions = 'all';
 
-const kContentTypeMap = {
-  ContentType.json: "$kTypeApplication/$kSubTypeJson",
-  ContentType.text: "$kTypeText/$kSubTypePlain",
-};
+enum ContentType {
+  json("$kTypeApplication/$kSubTypeJson"),
+  text("$kTypeText/$kSubTypePlain"),
+  formdata("multipart/form-data");
 
-enum ResponseBodyView { preview, code, raw, none }
+  const ContentType(this.header);
+  final String header;
+}
 
-const kKeyIcon = "icon";
-const kKeyName = "name";
-const Map<ResponseBodyView, Map> kResponseBodyViewIcons = {
-  ResponseBodyView.none: {kKeyName: "Preview", kKeyIcon: Icons.warning},
-  ResponseBodyView.preview: {
-    kKeyName: "Preview",
-    kKeyIcon: Icons.visibility_rounded
-  },
-  ResponseBodyView.code: {kKeyName: "Preview", kKeyIcon: Icons.code_rounded},
-  ResponseBodyView.raw: {kKeyName: "Raw", kKeyIcon: Icons.text_snippet_rounded}
-};
+enum ResponseBodyView {
+  preview("Preview", Icons.visibility_rounded),
+  code("Preview", Icons.code_rounded),
+  raw("Raw", Icons.text_snippet_rounded),
+  none("Preview", Icons.warning);
+
+  const ResponseBodyView(this.label, this.icon);
+  final String label;
+  final IconData icon;
+}
 
 const kNoBodyViewOptions = [ResponseBodyView.none];
 const kNoRawBodyViewOptions = [ResponseBodyView.none, ResponseBodyView.raw];
@@ -338,7 +363,7 @@ const Map<String, Map<String, List<ResponseBodyView>>>
   },
   kTypeImage: {
     kSubTypeDefaultViewOptions: kPreviewBodyViewOptions,
-    kSubTypeSvg: kCodeRawBodyViewOptions,
+    kSubTypeSvg: kPreviewRawBodyViewOptions,
   },
   kTypeAudio: {
     kSubTypeDefaultViewOptions: kPreviewBodyViewOptions,
@@ -454,6 +479,9 @@ const kUnexpectedRaiseIssue =
 
 const kImageError =
     "There seems to be an issue rendering this image. Please raise an issue in API Dash GitHub repo so that we can resolve it.";
+
+const kSvgError =
+    "There seems to be an issue rendering this SVG image. Please raise an issue in API Dash GitHub repo so that we can resolve it.";
 
 const kPdfError =
     "There seems to be an issue rendering this pdf. Please raise an issue in API Dash GitHub repo so that we can resolve it.";

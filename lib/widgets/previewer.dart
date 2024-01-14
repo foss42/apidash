@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'error_message.dart';
-import 'package:apidash/consts.dart';
 import 'package:printing/printing.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
+import 'error_message.dart';
 import 'uint8_audio_player.dart';
 import 'json_previewer.dart';
+import '../consts.dart';
 
 class Previewer extends StatefulWidget {
   const Previewer({
@@ -38,6 +40,18 @@ class _PreviewerState extends State<Previewer> {
         return preview;
       } catch (e) {
         // pass
+      }
+    }
+    if (widget.type == kTypeImage && widget.subtype == kSubTypeSvg) {
+      final String rawSvg = widget.body;
+      try {
+        parseWithoutOptimizers(rawSvg);
+        var svgImg = SvgPicture.string(
+          rawSvg,
+        );
+        return svgImg;
+      } catch (e) {
+        return const ErrorMessage(message: kSvgError);
       }
     }
     if (widget.type == kTypeImage) {

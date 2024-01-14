@@ -268,7 +268,7 @@ void main() {
     test('Testing getResponseBodyViewOptions for image/svg+xml', () {
       MediaType mediaType5 = MediaType("image", "svg+xml");
       var result5 = getResponseBodyViewOptions(mediaType5);
-      expect(result5.$1, kCodeRawBodyViewOptions);
+      expect(result5.$1, kPreviewRawBodyViewOptions);
       expect(result5.$2, "xml");
     });
     test('Testing getResponseBodyViewOptions for application/xhtml+xml', () {

@@ -87,4 +87,88 @@ void main() {
 
     expect(changedValue, ContentType.text);
   });
+
+  testWidgets('Testing Dropdown for FormData', (tester) async {
+    dynamic changedValue;
+    await tester.pumpWidget(
+      MaterialApp(
+        title: 'Dropdown FormData Type testing',
+        theme: kThemeDataLight,
+        home: Scaffold(
+          body: Center(
+            child: Column(
+              children: [
+                DropdownButtonFormData(
+                  formDataType: FormDataType.file,
+                  onChanged: (value) {
+                    changedValue = value!;
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+
+    expect(find.byIcon(Icons.unfold_more_rounded), findsOneWidget);
+    expect(find.byType(DropdownButton<FormDataType>), findsOneWidget);
+    expect(
+        (tester.widget(find.byType(DropdownButton<FormDataType>))
+                as DropdownButton)
+            .value,
+        equals(FormDataType.file));
+
+    await tester.tap(find.text('file'));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+
+    await tester.tap(find.text('text').last);
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+
+    expect(changedValue, FormDataType.text);
+  });
+
+  testWidgets('Testing Dropdown for Codegen', (tester) async {
+    dynamic changedValue;
+    await tester.pumpWidget(
+      MaterialApp(
+        title: 'Dropdown Codegen Type testing',
+        theme: kThemeDataLight,
+        home: Scaffold(
+          body: Center(
+            child: Column(
+              children: [
+                DropdownButtonCodegenLanguage(
+                  codegenLanguage: CodegenLanguage.curl,
+                  onChanged: (value) {
+                    changedValue = value!;
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+
+    expect(find.byIcon(Icons.unfold_more_rounded), findsOneWidget);
+    expect(find.byType(DropdownButton<CodegenLanguage>), findsOneWidget);
+    expect(
+        (tester.widget(find.byType(DropdownButton<CodegenLanguage>))
+                as DropdownButton)
+            .value,
+        equals(CodegenLanguage.curl));
+
+    await tester.tap(find.text('cURL'));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+
+    await tester.tap(find.text('Dart (dio)').last);
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+
+    expect(changedValue, CodegenLanguage.dartDio);
+  });
 }

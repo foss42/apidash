@@ -5,16 +5,11 @@ import '../consts.dart';
 import 'markdown.dart';
 import 'error_message.dart';
 
-class IntroMessage extends StatefulWidget {
+class IntroMessage extends StatelessWidget {
   const IntroMessage({
     super.key,
   });
 
-  @override
-  State<IntroMessage> createState() => _IntroMessageState();
-}
-
-class _IntroMessageState extends State<IntroMessage> {
   @override
   Widget build(BuildContext context) {
     late String text;

@@ -39,12 +39,20 @@ dependencies:
   just_audio_windows: ^0.2.0
   freezed_annotation: ^2.4.1
   json_annotation: ^4.8.1
-  printing: ^5.11.0
+  printing: ^5.11.1
   package_info_plus: ^4.1.0
   flutter_typeahead: ^4.8.0
   provider: ^6.0.5
-  json_data_explorer: ^0.1.0
+  json_data_explorer:
+    git:
+      url: https://github.com/foss42/json_data_explorer.git
+      ref: 9fa58d7b51e65174ab11cbcae17bba88a4194dde
   scrollable_positioned_list: ^0.2.3
+  file_picker: ^6.1.1
+  flutter_svg: ^2.0.9
+  vector_graphics_compiler: ^1.1.9+1
+  code_builder: ^4.9.0
+  dart_style: ^2.3.4
 
 dev_dependencies:
   flutter_test:

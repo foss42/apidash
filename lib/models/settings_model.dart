@@ -101,4 +101,32 @@ class SettingsModel {
   String toString() {
     return toJson().toString();
   }
+
+  @override
+  bool operator ==(Object other) {
+    return other is SettingsModel &&
+        other.runtimeType == runtimeType &&
+        other.isDark == isDark &&
+        other.alwaysShowCollectionPaneScrollbar ==
+            alwaysShowCollectionPaneScrollbar &&
+        other.size == size &&
+        other.offset == offset &&
+        other.defaultUriScheme == defaultUriScheme &&
+        other.defaultCodeGenLang == defaultCodeGenLang &&
+        other.saveResponses == saveResponses;
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(
+      runtimeType,
+      isDark,
+      alwaysShowCollectionPaneScrollbar,
+      size,
+      offset,
+      defaultUriScheme,
+      defaultCodeGenLang,
+      saveResponses,
+    );
+  }
 }

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:window_manager/window_manager.dart';
+import 'package:window_manager/window_manager.dart' hide WindowCaption;
+import 'widgets/widgets.dart' show WindowCaption;
 import 'providers/providers.dart';
 import 'screens/screens.dart';
-import 'consts.dart' show kFontFamily, kFontFamilyFallback, kColorSchemeSeed;
+import 'consts.dart';
 
 class App extends ConsumerStatefulWidget {
   const App({super.key});
@@ -38,7 +39,7 @@ class _AppState extends ConsumerState<App> with WindowListener {
 
   @override
   Widget build(BuildContext context) {
-    return const DashApp();
+    return const Dashboard();
   }
 
   @override
@@ -63,6 +64,7 @@ class _DashAppState extends ConsumerState<DashApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        visualDensity: VisualDensity.adaptivePlatformDensity,
         fontFamily: kFontFamily,
         fontFamilyFallback: kFontFamilyFallback,
         colorSchemeSeed: kColorSchemeSeed,
@@ -77,7 +79,25 @@ class _DashAppState extends ConsumerState<DashApp> {
         brightness: Brightness.dark,
       ),
       themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
-      home: const Dashboard(),
+      home: kIsMobile
+          ? const MobileDashboard(
+              title: 'Requests',
+              scaffoldBody: CollectionPane(),
+            )
+          : Stack(
+              children: [
+                kIsLinux ? const Dashboard() : const App(),
+                if (kIsWindows)
+                  SizedBox(
+                    height: 29,
+                    child: WindowCaption(
+                      backgroundColor: Colors.transparent,
+                      brightness:
+                          isDarkMode ? Brightness.dark : Brightness.light,
+                    ),
+                  ),
+              ],
+            ),
     );
   }
 }

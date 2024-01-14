@@ -50,7 +50,7 @@ class SendingWidget extends StatelessWidget {
   }
 }
 
-class ResponsePaneHeader extends StatefulWidget {
+class ResponsePaneHeader extends StatelessWidget {
   const ResponsePaneHeader({
     super.key,
     this.responseStatus,
@@ -61,11 +61,7 @@ class ResponsePaneHeader extends StatefulWidget {
   final int? responseStatus;
   final String? message;
   final Duration? time;
-  @override
-  State<ResponsePaneHeader> createState() => _ResponsePaneHeaderState();
-}
 
-class _ResponsePaneHeaderState extends State<ResponsePaneHeader> {
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -82,10 +78,10 @@ class _ResponsePaneHeaderState extends State<ResponsePaneHeader> {
                     text: "Response (",
                   ),
                   TextSpan(
-                    text: "${widget.responseStatus}",
+                    text: "$responseStatus",
                     style: TextStyle(
                       color: getResponseStatusCodeColor(
-                        widget.responseStatus,
+                        responseStatus,
                         brightness: Theme.of(context).brightness,
                       ),
                       fontFamily: kCodeStyle.fontFamily,
@@ -101,13 +97,13 @@ class _ResponsePaneHeaderState extends State<ResponsePaneHeader> {
             kHSpacer20,
             Expanded(
               child: Text(
-                widget.message ?? "",
+                message ?? "",
                 softWrap: false,
                 overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.titleMedium!.copyWith(
                       fontFamily: kCodeStyle.fontFamily,
                       color: getResponseStatusCodeColor(
-                        widget.responseStatus,
+                        responseStatus,
                         brightness: Theme.of(context).brightness,
                       ),
                     ),
@@ -115,7 +111,7 @@ class _ResponsePaneHeaderState extends State<ResponsePaneHeader> {
             ),
             kHSpacer20,
             Text(
-              humanizeDuration(widget.time),
+              humanizeDuration(time),
               style: Theme.of(context).textTheme.titleMedium!.copyWith(
                     fontFamily: kCodeStyle.fontFamily,
                     color: Theme.of(context).colorScheme.secondary,
@@ -208,7 +204,7 @@ class _ResponseTabViewState extends State<ResponseTabView>
   }
 }
 
-class ResponseHeadersHeader extends StatefulWidget {
+class ResponseHeadersHeader extends StatelessWidget {
   const ResponseHeadersHeader({
     super.key,
     required this.map,
@@ -217,11 +213,7 @@ class ResponseHeadersHeader extends StatefulWidget {
 
   final Map map;
   final String name;
-  @override
-  State<ResponseHeadersHeader> createState() => _ResponseHeadersHeaderState();
-}
 
-class _ResponseHeadersHeaderState extends State<ResponseHeadersHeader> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -230,15 +222,15 @@ class _ResponseHeadersHeaderState extends State<ResponseHeadersHeader> {
         children: [
           Expanded(
             child: Text(
-              "${widget.name} (${widget.map.length} items)",
+              "$name (${map.length} items)",
               style: Theme.of(context).textTheme.labelLarge!.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
             ),
           ),
-          if (widget.map.isNotEmpty)
+          if (map.isNotEmpty)
             CopyButton(
-              toCopy: kEncoder.convert(widget.map),
+              toCopy: kEncoder.convert(map),
             ),
         ],
       ),
@@ -248,7 +240,7 @@ class _ResponseHeadersHeaderState extends State<ResponseHeadersHeader> {
 
 const kHeaderRow = ["Header Name", "Header Value"];
 
-class ResponseHeaders extends StatefulWidget {
+class ResponseHeaders extends StatelessWidget {
   const ResponseHeaders({
     super.key,
     required this.responseHeaders,
@@ -257,11 +249,7 @@ class ResponseHeaders extends StatefulWidget {
 
   final Map responseHeaders;
   final Map requestHeaders;
-  @override
-  State<ResponseHeaders> createState() => _ResponseHeadersState();
-}
 
-class _ResponseHeadersState extends State<ResponseHeaders> {
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -269,25 +257,25 @@ class _ResponseHeadersState extends State<ResponseHeaders> {
       child: ListView(
         children: [
           ResponseHeadersHeader(
-            map: widget.responseHeaders,
+            map: responseHeaders,
             name: "Response Headers",
           ),
-          if (widget.responseHeaders.isNotEmpty) kVSpacer5,
-          if (widget.responseHeaders.isNotEmpty)
+          if (responseHeaders.isNotEmpty) kVSpacer5,
+          if (responseHeaders.isNotEmpty)
             MapTable(
-              map: widget.responseHeaders,
+              map: responseHeaders,
               colNames: kHeaderRow,
               firstColumnHeaderCase: true,
             ),
           kVSpacer10,
           ResponseHeadersHeader(
-            map: widget.requestHeaders,
+            map: requestHeaders,
             name: "Request Headers",
           ),
-          if (widget.requestHeaders.isNotEmpty) kVSpacer5,
-          if (widget.requestHeaders.isNotEmpty)
+          if (requestHeaders.isNotEmpty) kVSpacer5,
+          if (requestHeaders.isNotEmpty)
             MapTable(
-              map: widget.requestHeaders,
+              map: requestHeaders,
               colNames: kHeaderRow,
               firstColumnHeaderCase: true,
             ),
@@ -297,21 +285,17 @@ class _ResponseHeadersState extends State<ResponseHeaders> {
   }
 }
 
-class ResponseBody extends StatefulWidget {
+class ResponseBody extends StatelessWidget {
   const ResponseBody({
     super.key,
     this.activeRequestModel,
   });
 
   final RequestModel? activeRequestModel;
-  @override
-  State<ResponseBody> createState() => _ResponseBodyState();
-}
 
-class _ResponseBodyState extends State<ResponseBody> {
   @override
   Widget build(BuildContext context) {
-    final responseModel = widget.activeRequestModel?.responseModel;
+    final responseModel = activeRequestModel?.responseModel;
     if (responseModel == null) {
       return const ErrorMessage(
           message:
@@ -349,7 +333,7 @@ class _ResponseBodyState extends State<ResponseBody> {
     }
 
     return BodySuccess(
-      key: Key("${widget.activeRequestModel!.id}-response"),
+      key: Key("${activeRequestModel!.id}-response"),
       mediaType: mediaType,
       options: options,
       bytes: responseModel.bodyBytes!,
@@ -416,23 +400,20 @@ class _BodySuccessState extends State<BodySuccess> {
                   (widget.options == kRawBodyViewOptions)
                       ? const SizedBox()
                       : SegmentedButton<ResponseBodyView>(
-                          selectedIcon: showLabel
-                              ? Icon(
-                                  kResponseBodyViewIcons[currentSeg]![kKeyIcon],
-                                )
-                              : null,
+                          style: const ButtonStyle(
+                            padding: MaterialStatePropertyAll(
+                              EdgeInsets.symmetric(
+                                horizontal: 8,
+                              ),
+                            ),
+                          ),
+                          selectedIcon: Icon(currentSeg.icon),
                           segments: widget.options
                               .map<ButtonSegment<ResponseBodyView>>(
                                 (e) => ButtonSegment<ResponseBodyView>(
                                   value: e,
-                                  label: showLabel
-                                      ? Text(
-                                          kResponseBodyViewIcons[e]![kKeyName],
-                                        )
-                                      : null,
-                                  icon: Icon(
-                                    kResponseBodyViewIcons[e]![kKeyIcon],
-                                  ),
+                                  label: Text(e.label),
+                                  icon: Icon(e.icon),
                                 ),
                               )
                               .toList(),
