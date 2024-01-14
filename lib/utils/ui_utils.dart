@@ -67,5 +67,5 @@ double? getJsonPreviewerMaxRootNodeWidth(double w) {
   if (w < 400) {
     return 200;
   }
-  return null;
+  return w - 150;
 }
