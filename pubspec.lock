@@ -548,8 +548,8 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: HEAD
-      resolved-ref: "320c9fc7d4b8366daa1d70ba28523977ab101d9f"
+      ref: "9fa58d7b51e65174ab11cbcae17bba88a4194dde"
+      resolved-ref: "9fa58d7b51e65174ab11cbcae17bba88a4194dde"
       url: "https://github.com/foss42/json_data_explorer.git"
     source: git
     version: "0.1.2"
