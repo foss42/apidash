@@ -55,7 +55,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
       columns: [
         DaviColumn(
           name: 'Checkbox',
-          width: 36,
+          width: 30,
           cellBuilder: (_, row) {
             int idx = row.index;
 
@@ -74,6 +74,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
         ),
         DaviColumn(
           name: 'URL Parameter',
+          width: 70,
           grow: 1,
           cellBuilder: (_, row) {
             int idx = row.index;

@@ -397,6 +397,13 @@ class _BodySuccessState extends State<BodySuccess> {
                   (widget.options == kRawBodyViewOptions)
                       ? const SizedBox()
                       : SegmentedButton<ResponseBodyView>(
+                          style: const ButtonStyle(
+                            padding: MaterialStatePropertyAll(
+                              EdgeInsets.symmetric(
+                                horizontal: 8,
+                              ),
+                            ),
+                          ),
                           selectedIcon: Icon(currentSeg.icon),
                           segments: widget.options
                               .map<ButtonSegment<ResponseBodyView>>(
@@ -418,7 +425,7 @@ class _BodySuccessState extends State<BodySuccess> {
                   const Spacer(),
                   kCodeRawBodyViewOptions.contains(currentSeg)
                       ? CopyButton(
-                          toCopy: widget.body,
+                          toCopy: widget.formattedBody ?? widget.body,
                           showLabel: showLabel,
                         )
                       : const SizedBox(),
@@ -474,7 +481,7 @@ class _BodySuccessState extends State<BodySuccess> {
                     decoration: textContainerdecoration,
                     child: SingleChildScrollView(
                       child: SelectableText(
-                        widget.body,
+                        widget.formattedBody ?? widget.body,
                         style: kCodeStyle,
                       ),
                     ),
