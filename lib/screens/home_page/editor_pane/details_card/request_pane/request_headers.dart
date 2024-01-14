@@ -54,7 +54,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
       columns: [
         DaviColumn(
           name: 'Checkbox',
-          width: 36,
+          width: 30,
           cellBuilder: (_, row) {
             int idx = row.index;
             return CheckBox(
@@ -72,6 +72,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
         ),
         DaviColumn(
           name: 'Header Name',
+          width: 70,
           grow: 1,
           cellBuilder: (_, row) {
             int idx = row.index;
