@@ -48,6 +48,7 @@ const kHintOpacity = 0.6;
 const kForegroundOpacity = 0.05;
 
 const kTextStyleButton = TextStyle(fontWeight: FontWeight.bold);
+const kTextStyleButtonSmall = TextStyle(fontSize: 12);
 const kFormDataButtonLabelTextStyle = TextStyle(
   fontSize: 12,
   fontWeight: FontWeight.w600,

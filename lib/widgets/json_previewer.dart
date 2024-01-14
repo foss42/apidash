@@ -181,17 +181,26 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
                         onPressed: () async {
                           await _copy(kEncoder.convert(widget.code), sm);
                         },
-                        child: const Text('Copy'),
+                        child: const Text(
+                          'Copy',
+                          style: kTextStyleButtonSmall,
+                        ),
                       ),
                       TextButton(
                         onPressed:
                             state.areAllExpanded() ? null : state.expandAll,
-                        child: const Text('Expand All'),
+                        child: const Text(
+                          'Expand All',
+                          style: kTextStyleButtonSmall,
+                        ),
                       ),
                       TextButton(
                         onPressed:
                             state.areAllCollapsed() ? null : state.collapseAll,
-                        child: const Text('Collapse All'),
+                        child: const Text(
+                          'Collapse All',
+                          style: kTextStyleButtonSmall,
+                        ),
                       ),
                     ],
                   ),
