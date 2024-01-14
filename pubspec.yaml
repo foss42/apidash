@@ -46,7 +46,7 @@ dependencies:
   json_data_explorer:
     git:
       url: https://github.com/foss42/json_data_explorer.git
-    version: ^0.1.1
+    version: ^0.1.2
   scrollable_positioned_list: ^0.2.3
   file_picker: ^6.1.1
   flutter_svg: ^2.0.9
