@@ -152,6 +152,14 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
   }
 
   @override
+  void didUpdateWidget(JsonPreviewer oldWidget) {
+    if (oldWidget.code != widget.code) {
+      store.buildNodes(widget.code, areAllCollapsed: true);
+      store.expandAll();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     var sm = ScaffoldMessenger.of(context);
     return ChangeNotifierProvider.value(
