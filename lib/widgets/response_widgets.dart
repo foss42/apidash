@@ -1,4 +1,3 @@
-import 'package:apidash/widgets/raw.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http_parser/http_parser.dart';
@@ -392,10 +391,8 @@ class _BodySuccessState extends State<BodySuccess> {
         return Padding(
           padding: kP10,
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Wrap(
-                alignment: WrapAlignment.spaceBetween,
+              Row(
                 children: [
                   (widget.options == kRawBodyViewOptions)
                       ? const SizedBox()
@@ -425,11 +422,8 @@ class _BodySuccessState extends State<BodySuccess> {
                             });
                           },
                         ),
-                  // const Spacer(),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      kCodeRawBodyViewOptions.contains(currentSeg)
+                  const Spacer(),
+                  kCodeRawBodyViewOptions.contains(currentSeg)
                       ? CopyButton(
                           toCopy: widget.body,
                           showLabel: showLabel,
@@ -440,8 +434,6 @@ class _BodySuccessState extends State<BodySuccess> {
                     mimeType: widget.mediaType.mimeType,
                     showLabel: showLabel,
                   ),
-                    ],
-                  )
                 ],
               ),
               kVSpacer10,
@@ -487,9 +479,11 @@ class _BodySuccessState extends State<BodySuccess> {
                     width: double.maxFinite,
                     padding: kP8,
                     decoration: textContainerdecoration,
-                    child: Raw(
-                      body: widget.body,
-                      style: kCodeStyle,
+                    child: SingleChildScrollView(
+                      child: SelectableText(
+                        widget.body,
+                        style: kCodeStyle,
+                      ),
                     ),
                   ),
                 ),
