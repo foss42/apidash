@@ -1,3 +1,4 @@
+import 'package:apidash/screens/environments_page/environments_home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
@@ -16,59 +17,81 @@ class Dashboard extends ConsumerWidget {
       body: SafeArea(
         child: Row(
           children: <Widget>[
-            Column(
-              children: [
-                SizedBox(
-                  height: kIsMacOS ? 32.0 : 16.0,
-                  width: 64,
-                ),
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      isSelected: railIdx == 0,
-                      onPressed: () {
-                        ref.read(navRailIndexStateProvider.notifier).state = 0;
-                      },
-                      icon: const Icon(Icons.auto_awesome_mosaic_outlined),
-                      selectedIcon: const Icon(Icons.auto_awesome_mosaic),
-                    ),
-                    Text(
-                      'Requests',
-                      style: Theme.of(context).textTheme.labelSmall,
-                    ),
-                  ],
-                ),
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 5),
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: kIsMacOS ? 32.0 : 16.0,
+                    width: 64,
+                  ),
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 16.0),
-                        child: bottomButton(context, ref, railIdx, 1,
-                            Icons.help, Icons.help_outline),
+                      IconButton(
+                        isSelected: railIdx == 0,
+                        onPressed: () {
+                          ref.read(navRailIndexStateProvider.notifier).state =
+                              0;
+                        },
+                        icon: const Icon(Icons.auto_awesome_mosaic_outlined),
+                        selectedIcon: const Icon(Icons.auto_awesome_mosaic),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 16.0),
-                        child: bottomButton(context, ref, railIdx, 2,
-                            Icons.settings, Icons.settings_outlined),
+                      Text(
+                        'Requests',
+                        style: Theme.of(context).textTheme.labelSmall,
                       ),
                     ],
                   ),
-                ),
-              ],
-              // destinations: const <NavigationRailDestination>[
-              //   // NavigationRailDestination(
-              //   //   icon: Icon(Icons.home_outlined),
-              //   //   selectedIcon: Icon(Icons.home),
-              //   //   label: Text('Home'),
-              //   // ),
-              //   NavigationRailDestination(
-              //     icon: Icon(Icons.auto_awesome_mosaic_outlined),
-              //     selectedIcon: Icon(Icons.auto_awesome_mosaic),
-              //     label: Text('Requests'),
-              //   ),
-              // ],
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        isSelected: railIdx == 3,
+                        onPressed: () {
+                          ref.read(navRailIndexStateProvider.notifier).state =
+                              3;
+                        },
+                        icon: const Icon(Icons.auto_awesome_mosaic_outlined),
+                        selectedIcon: const Icon(Icons.laptop_windows_outlined),
+                      ),
+                      Text(
+                        'Environment',
+                        style: Theme.of(context).textTheme.labelSmall,
+                      ),
+                    ],
+                  ),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 16.0),
+                          child: bottomButton(context, ref, railIdx, 1,
+                              Icons.help, Icons.help_outline),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 16.0),
+                          child: bottomButton(context, ref, railIdx, 2,
+                              Icons.settings, Icons.settings_outlined),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+                // destinations: const <NavigationRailDestination>[
+                //   // NavigationRailDestination(
+                //   //   icon: Icon(Icons.home_outlined),
+                //   //   selectedIcon: Icon(Icons.home),
+                //   //   label: Text('Home'),
+                //   // ),
+                //   NavigationRailDestination(
+                //     icon: Icon(Icons.auto_awesome_mosaic_outlined),
+                //     selectedIcon: Icon(Icons.auto_awesome_mosaic),
+                //     label: Text('Requests'),
+                //   ),
+                // ],
+              ),
             ),
             VerticalDivider(
               thickness: 1,
@@ -83,6 +106,7 @@ class Dashboard extends ConsumerWidget {
                   HomePage(),
                   IntroPage(),
                   SettingsPage(),
+                  EnvironmentsPage()
                 ],
               ),
             )

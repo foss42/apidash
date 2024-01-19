@@ -1,3 +1,4 @@
+import 'package:apidash/models/environments_model.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart';
@@ -145,6 +146,105 @@ class RequestDetailsCard extends StatelessWidget {
       ),
       elevation: 0,
       child: child,
+    );
+  }
+}
+
+class EnvironmentsListCard extends StatelessWidget {
+  final EnvironmentModel environmentModel;
+
+  const EnvironmentsListCard({super.key, required this.environmentModel});
+
+  @override
+  Widget build(BuildContext context) {
+    final Color color = Theme.of(context).colorScheme.surface;
+
+    final Color colorVariant =
+        Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5);
+    final Color surfaceTint = Theme.of(context).colorScheme.primary;
+    return Tooltip(
+      message: environmentModel.name,
+      waitDuration: const Duration(seconds: 1),
+      child: Padding(
+        padding: kP1,
+        child: Card(
+          shape: const RoundedRectangleBorder(
+            borderRadius: kBorderRadius8,
+          ),
+          elevation: environmentModel.isActive ? 1 : 0,
+          surfaceTintColor: environmentModel.isActive ? surfaceTint : null,
+          color: environmentModel.isActive
+              ? Theme.of(context).colorScheme.brightness == Brightness.dark
+                  ? colorVariant
+                  : color
+              : color,
+          margin: EdgeInsets.zero,
+          child: InkWell(
+            borderRadius: kBorderRadius8,
+            hoverColor: colorVariant,
+            focusColor: colorVariant.withOpacity(0.5),
+            // onTap: inEditMode ? null : onTap,
+            // onDoubleTap: inEditMode ? null : onDoubleTap,
+            // onSecondaryTap: onSecondaryTap,
+            child: Padding(
+              padding: EdgeInsets.only(
+                left: 6,
+                right: environmentModel.isActive ? 6 : 10,
+                top: 5,
+                bottom: 5,
+              ),
+              child: SizedBox(
+                height: 20,
+                child: Row(
+                  children: [
+                    // MethodBox(method: method),
+                    kHSpacer4,
+                    Expanded(
+                      child:
+                          // inEditMode
+                          //     ? TextFormField(
+                          //         key: ValueKey("$id-name"),
+                          //         initialValue: name,
+                          //         // controller: controller,
+                          //         focusNode: focusNode,
+                          //         //autofocus: true,
+                          //         style: Theme.of(context).textTheme.bodyMedium,
+                          //         onTapOutside: (_) {
+                          //           onTapOutsideNameEditor?.call();
+                          //           //FocusScope.of(context).unfocus();
+                          //         },
+                          //         onChanged: onChangedNameEditor,
+                          //         decoration: const InputDecoration(
+                          //           isCollapsed: true,
+                          //           contentPadding: EdgeInsets.zero,
+                          //           border: InputBorder.none,
+                          //         ),
+                          //       )
+                          //     :
+
+                          Text(
+                        environmentModel.name,
+                        softWrap: false,
+                        overflow: TextOverflow.fade,
+                      ),
+                    ),
+                    // Visibility(
+                    //   visible: environmentModel.isActive && !inEditMode,
+                    //   // visible: environmentModel.isActive && !inEditMode,
+                    //   child: SizedBox(
+                    //     width: 28,
+                    //     child: RequestCardMenu(
+                    //       onSelected: onMenuSelected,
+                    //     ),
+                    //   ),
+                    // ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
