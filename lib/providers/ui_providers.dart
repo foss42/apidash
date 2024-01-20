@@ -24,3 +24,12 @@ final nameTextFieldFocusNodeProvider =
   });
   return focusNode;
 });
+
+final environmentTextFieldFocusNodeProvider =
+    StateProvider.autoDispose<FocusNode>((ref) {
+  FocusNode focusNode = FocusNode();
+  ref.onDispose(() {
+    focusNode.dispose();
+  });
+  return focusNode;
+});

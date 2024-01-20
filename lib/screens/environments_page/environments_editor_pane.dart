@@ -24,6 +24,9 @@ class _EnvironmentsCollectionsPaneState
     extends ConsumerState<EnvironmentsEditorPane> {
   @override
   Widget build(BuildContext context) {
+    EnvironmentCollectionStateNotifier environmentStateNotifier =
+        ref.read(environmentCollectionStateNotifierProvider.notifier);
+
     var rows = widget.environmentModel.variables;
     DaviModel<EnvironmentVariableModel> environmentVariableDeviModel =
         DaviModel<EnvironmentVariableModel>(
@@ -38,9 +41,8 @@ class _EnvironmentsCollectionsPaneState
               keyId: row.data.id,
               value: rows[idx].isActive,
               onChanged: (value) {
-                ref
-                    .read(environmentCollectionStateNotifierProvider.notifier)
-                    .toggleEnvironmentVariableCheckBox = rows[idx].id;
+                environmentStateNotifier.toggleEnvironmentVariableCheckBox =
+                    rows[idx].id;
               },
               colorScheme: Theme.of(context).colorScheme,
             );
@@ -51,11 +53,18 @@ class _EnvironmentsCollectionsPaneState
           width: 70,
           grow: 1,
           cellBuilder: (_, row) {
+            int idx = row.index;
+
             return HeaderField(
               keyId: row.data.id,
               initialValue: row.data.variable,
               hintText: "Add new Variable",
-              onChanged: (value) {},
+              onChanged: (value) {
+                environmentStateNotifier.onEnvironmentVariableChanged(
+                  environmentVariableId: rows[idx].id,
+                  variable: value,
+                );
+              },
               colorScheme: Theme.of(context).colorScheme,
             );
           },
@@ -70,7 +79,12 @@ class _EnvironmentsCollectionsPaneState
               keyId: row.data.id,
               initialValue: rows[idx].value,
               hintText: " Add new Value",
-              onChanged: (value) {},
+              onChanged: (value) {
+                environmentStateNotifier.onEnvironmentValueChanged(
+                  environmentVariableId: rows[idx].id,
+                  value: value,
+                );
+              },
               colorScheme: Theme.of(context).colorScheme,
             );
           },
@@ -81,17 +95,15 @@ class _EnvironmentsCollectionsPaneState
           width: 30,
           cellBuilder: (_, row) {
             int idx = row.index;
-
             return InkWell(
               child: Theme.of(context).brightness == Brightness.dark
                   ? kIconRemoveDark
                   : kIconRemoveLight,
               onTap: () {
-                ref
-                    .read(environmentCollectionStateNotifierProvider.notifier)
+                environmentStateNotifier
                     .removeEnvironmentVariableFromActiveEnvironment(
-                      environmentVariableIndexId: rows[idx].id,
-                    );
+                  environmentVariableIndexId: rows[idx].id,
+                );
               },
             );
           },

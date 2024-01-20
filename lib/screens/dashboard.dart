@@ -58,7 +58,7 @@ class Dashboard extends ConsumerWidget {
                         ),
                       ),
                       Text(
-                        'Environment',
+                        'Environments',
                         style: Theme.of(context).textTheme.labelSmall,
                       ),
                     ],

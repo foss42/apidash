@@ -1,7 +1,10 @@
 import 'package:apidash/models/environments_model.dart';
+import 'package:apidash/providers/environment_collection_providers.dart';
+import 'package:apidash/providers/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'menus.dart' show RequestCardMenu;
 import 'texts.dart' show MethodBox;
 
@@ -150,13 +153,16 @@ class RequestDetailsCard extends StatelessWidget {
   }
 }
 
-class EnvironmentsListCard extends StatelessWidget {
+class EnvironmentsListCard extends ConsumerWidget {
   final EnvironmentModel environmentModel;
 
-  const EnvironmentsListCard({super.key, required this.environmentModel});
+  const EnvironmentsListCard({
+    super.key,
+    required this.environmentModel,
+  });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final Color color = Theme.of(context).colorScheme.surface;
 
     final Color colorVariant =
@@ -200,33 +206,40 @@ class EnvironmentsListCard extends StatelessWidget {
                     // MethodBox(method: method),
                     kHSpacer4,
                     Expanded(
-                      child:
-                          // inEditMode
-                          //     ? TextFormField(
-                          //         key: ValueKey("$id-name"),
-                          //         initialValue: name,
-                          //         // controller: controller,
-                          //         focusNode: focusNode,
-                          //         //autofocus: true,
-                          //         style: Theme.of(context).textTheme.bodyMedium,
-                          //         onTapOutside: (_) {
-                          //           onTapOutsideNameEditor?.call();
-                          //           //FocusScope.of(context).unfocus();
-                          //         },
-                          //         onChanged: onChangedNameEditor,
-                          //         decoration: const InputDecoration(
-                          //           isCollapsed: true,
-                          //           contentPadding: EdgeInsets.zero,
-                          //           border: InputBorder.none,
-                          //         ),
-                          //       )
-                          //     :
-
-                          Text(
-                        environmentModel.name,
-                        softWrap: false,
-                        overflow: TextOverflow.fade,
-                      ),
+                      child: environmentModel.inEditMode
+                          ? TextFormField(
+                              key: ValueKey("${environmentModel.id}-name"),
+                              initialValue: environmentModel.name,
+                              // controller: controller,
+                              focusNode: ref
+                                  .watch(environmentTextFieldFocusNodeProvider),
+                              //autofocus: true,
+                              style: Theme.of(context).textTheme.bodyMedium,
+                              onTapOutside: (_) {
+                                // onTapOutsideNameEditor?.call();
+                                FocusScope.of(context).unfocus();
+                              },
+                              onChanged: (value) {
+                                ref
+                                    .read(
+                                        environmentCollectionStateNotifierProvider
+                                            .notifier)
+                                    .onEnvironmentNameChanged(
+                                      environmentId: environmentModel.id,
+                                      name: value,
+                                    );
+                              },
+                              decoration: const InputDecoration(
+                                isCollapsed: true,
+                                contentPadding: EdgeInsets.zero,
+                                border: InputBorder.none,
+                              ),
+                            )
+                          : Text(
+                              environmentModel.name,
+                              softWrap: false,
+                              overflow: TextOverflow.fade,
+                            ),
                     ),
                     // Visibility(
                     //   visible: environmentModel.isActive && !inEditMode,

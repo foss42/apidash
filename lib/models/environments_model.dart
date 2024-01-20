@@ -50,14 +50,15 @@ class EnvironmentModel {
   final String id;
   final String name;
   final bool isActive;
+  final bool inEditMode;
   final List<EnvironmentVariableModel> variables;
 
-  EnvironmentModel({
-    required this.id,
-    required this.name,
-    required this.variables,
-    required this.isActive,
-  });
+  EnvironmentModel(
+      {required this.id,
+      required this.name,
+      required this.variables,
+      required this.isActive,
+      required this.inEditMode});
 
   factory EnvironmentModel.fromJson(Map<String, dynamic> json) {
     return EnvironmentModel(
@@ -67,6 +68,7 @@ class EnvironmentModel {
           .map((e) => EnvironmentVariableModel.fromJson(e))
           .toList(),
       isActive: json['isActive'],
+      inEditMode: json['inEditMode'] ?? false,
     );
   }
   Map<String, dynamic> toJson() {
@@ -75,6 +77,7 @@ class EnvironmentModel {
       'name': name,
       'variables': variables.map((e) => e.toJson()).toList(),
       'isActive': isActive,
+      'inEditMode': inEditMode,
     };
   }
 
@@ -83,12 +86,14 @@ class EnvironmentModel {
     String? name,
     List<EnvironmentVariableModel>? variables,
     bool? isActive,
+    bool? inEditMode,
   }) {
     return EnvironmentModel(
       id: id ?? this.id,
       name: name ?? this.name,
       variables: variables ?? this.variables,
       isActive: isActive ?? this.isActive,
+      inEditMode: inEditMode ?? this.inEditMode,
     );
   }
 }

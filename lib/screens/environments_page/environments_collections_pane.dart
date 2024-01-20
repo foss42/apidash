@@ -30,7 +30,10 @@ class _EnvironmentsCollectionsPaneState
                 //const Spacer(),
                 ElevatedButton(
                   onPressed: () {
-                    // ref.read(collectionStateNotifierProvider.notifier).add();
+                    ref
+                        .read(
+                            environmentCollectionStateNotifierProvider.notifier)
+                        .createNewEnvironment();
                   },
                   child: const Text(
                     kLabelPlusNew,
