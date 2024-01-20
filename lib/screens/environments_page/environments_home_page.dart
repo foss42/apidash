@@ -1,3 +1,5 @@
+import 'package:apidash/models/environments_model.dart';
+import 'package:apidash/providers/environment_collection_providers.dart';
 import 'package:apidash/screens/environments_page/environments_collections_pane.dart';
 import 'package:apidash/screens/environments_page/environments_editor_pane.dart';
 import 'package:apidash/widgets/widgets.dart';
@@ -15,13 +17,26 @@ class EnvironmentsPage extends ConsumerStatefulWidget {
 class _EnvironmentsPageState extends ConsumerState<EnvironmentsPage> {
   @override
   Widget build(BuildContext context) {
-    return const Column(
+    EnvironmentModel? activeEnvironment = ref
+        .watch(environmentCollectionStateNotifierProvider)
+        ?.getActiveEnvironment;
+    return Column(
       children: [
         Expanded(
-            child: DashboardSplitView(
-          sidebarWidget: EnvironmentsCollectionsPane(),
-          mainWidget: EnvironmentsEditorPane(),
-        ))
+          child: DashboardSplitView(
+            sidebarWidget: const EnvironmentsCollectionsPane(),
+            mainWidget: activeEnvironment != null
+                ? EnvironmentsEditorPane(
+                    environmentModel: activeEnvironment,
+                  )
+                : Center(
+                    child: Text(
+                      "No Active Environment",
+                      style: Theme.of(context).textTheme.headlineSmall,
+                    ),
+                  ),
+          ),
+        )
       ],
     );
   }

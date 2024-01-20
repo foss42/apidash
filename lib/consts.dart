@@ -122,6 +122,20 @@ const kTableThemeData = DaviThemeData(
     visible: false,
   ),
 );
+const kTableEnvironmentThemeData = DaviThemeData(
+  columnDividerThickness: 1,
+  columnDividerColor: kColorTransparent,
+  row: RowThemeData(
+    dividerColor: kColorTransparent,
+  ),
+  header: HeaderThemeData(
+    columnDividerColor: kColorTransparent,
+    bottomBorderColor: kColorTransparent,
+  ),
+  decoration: BoxDecoration(
+    border: Border(),
+  ),
+);
 
 const kIconRemoveDark = Icon(
   Icons.remove_circle,

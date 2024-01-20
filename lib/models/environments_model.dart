@@ -37,8 +37,12 @@ class EnvironmentsModel {
     );
   }
 
-  EnvironmentModel? getActiveEnvironment() {
-    return environments.firstWhereOrNull((e) => e.id == activeEnvironmentId);
+  EnvironmentModel? get getActiveEnvironment {
+    return environments.firstWhereOrNull((e) => e.isActive);
+  }
+
+  int get getActiveEnvironmentIndex {
+    return environments.indexWhere((e) => e.isActive);
   }
 }
 
@@ -93,17 +97,20 @@ class EnvironmentVariableModel {
   final String id;
   final String variable;
   final String value;
+  final bool isActive;
 
   EnvironmentVariableModel({
     required this.id,
     required this.variable,
     required this.value,
+    required this.isActive,
   });
   factory EnvironmentVariableModel.fromJson(Map<String, dynamic> json) {
     return EnvironmentVariableModel(
       id: json['id'],
       variable: json['variable'],
       value: json['value'],
+      isActive: json['isActive'],
     );
   }
   Map<String, dynamic> toJson() {
@@ -111,6 +118,7 @@ class EnvironmentVariableModel {
       'id': id,
       'variable': variable,
       'value': value,
+      'isActive': isActive,
     };
   }
 
@@ -118,11 +126,13 @@ class EnvironmentVariableModel {
     String? id,
     String? variable,
     String? value,
+    bool? isActive,
   }) {
     return EnvironmentVariableModel(
       id: id ?? this.id,
       variable: variable ?? this.variable,
       value: value ?? this.value,
+      isActive: isActive ?? this.isActive,
     );
   }
 }

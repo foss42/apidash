@@ -52,8 +52,10 @@ class Dashboard extends ConsumerWidget {
                           ref.read(navRailIndexStateProvider.notifier).state =
                               3;
                         },
-                        icon: const Icon(Icons.auto_awesome_mosaic_outlined),
-                        selectedIcon: const Icon(Icons.laptop_windows_outlined),
+                        icon: const Icon(Icons.laptop_windows_outlined),
+                        selectedIcon: const Icon(
+                          Icons.laptop_windows_outlined,
+                        ),
                       ),
                       Text(
                         'Environment',
