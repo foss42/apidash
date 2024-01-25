@@ -34,6 +34,8 @@ class EditorPaneRequestURLCard extends StatelessWidget {
               height: 36,
               child: SendButton(),
             ),
+            kHSpacer20,
+            DropdownButtonHTTPMethod(),
           ],
         ),
       ),
