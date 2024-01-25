@@ -1,19 +1,20 @@
-import 'package:apidash/models/environments_model.dart';
+import 'package:apidash/models/environments_list_model.dart';
 import 'package:apidash/utils/utils.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:uuid/uuid.dart';
 
 final environmentCollectionStateNotifierProvider = StateNotifierProvider<
-    EnvironmentCollectionStateNotifier, EnvironmentsModel?>((ref) {
+    EnvironmentCollectionStateNotifier, EnvironmentsListModel?>((ref) {
   return EnvironmentCollectionStateNotifier(ref);
 });
 
 class EnvironmentCollectionStateNotifier
-    extends StateNotifier<EnvironmentsModel> {
+    extends StateNotifier<EnvironmentsListModel> {
   final Ref ref;
 
   EnvironmentCollectionStateNotifier(this.ref)
       : super(
-          EnvironmentsModel(
+          EnvironmentsListModel(
             activeEnvironmentId: uuid.v1(),
             environments: [
               EnvironmentModel(
@@ -29,7 +30,10 @@ class EnvironmentCollectionStateNotifier
     // TODO: handle hive db in future
   }
   void createNewEnvironment() {
+    String envId = uuid.v1();
+
     state = state.copyWith(
+      activeEnvironmentId: envId,
       environments: [
         ...state.environments,
         EnvironmentModel(
@@ -51,7 +55,54 @@ class EnvironmentCollectionStateNotifier
       environments: [
         ...state.environments.map((e) {
           if (e.id == environmentId) {
-            e = e.copyWith(name: name);
+            e = e.copyWith(
+              name: name,
+              inEditMode: false,
+            );
+          }
+          return e;
+        })
+      ],
+    );
+  }
+
+  void activateEnvironment({
+    required String environmentId,
+  }) {
+    state = state.copyWith(
+      activeEnvironmentId: environmentId,
+      environments: [
+        ...state.environments.map((e) {
+          e = e.copyWith(
+            isActive: e.id == environmentId,
+          );
+          return e;
+        })
+      ],
+    );
+  }
+
+  void deleteEnvironment({
+    required String environmentId,
+  }) {
+    List<EnvironmentModel> environmentsModel = [...state.environments];
+    environmentsModel.removeWhere((element) => element.id == environmentId);
+    state = state.copyWith(
+      activeEnvironmentId: environmentsModel.first.id,
+      environments: environmentsModel,
+    );
+  }
+
+  void changeToEditMode({
+    required String environmentId,
+  }) {
+    state = state.copyWith(
+      environments: [
+        ...state.environments.map((e) {
+          if (e.id == environmentId) {
+            e = e.copyWith(
+              inEditMode: true,
+            );
           }
           return e;
         })

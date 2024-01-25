@@ -1,4 +1,4 @@
-import 'package:apidash/models/environments_model.dart';
+import 'package:apidash/models/environments_list_model.dart';
 import 'package:apidash/providers/environment_collection_providers.dart';
 import 'package:apidash/screens/environments_page/environments_collections_pane.dart';
 import 'package:apidash/screens/environments_page/environments_editor_pane.dart';

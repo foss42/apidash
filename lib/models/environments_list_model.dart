@@ -2,17 +2,17 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 @immutable
-class EnvironmentsModel {
+class EnvironmentsListModel {
   final String activeEnvironmentId;
   final List<EnvironmentModel> environments;
 
-  const EnvironmentsModel({
+  const EnvironmentsListModel({
     required this.activeEnvironmentId,
     required this.environments,
   });
 
-  factory EnvironmentsModel.fromJson(Map<String, dynamic> json) {
-    return EnvironmentsModel(
+  factory EnvironmentsListModel.fromJson(Map<String, dynamic> json) {
+    return EnvironmentsListModel(
       activeEnvironmentId: json['activeEnvironmentId'],
       environments: (json['environments'] as List)
           .map((e) => EnvironmentModel.fromJson(e))
@@ -27,22 +27,22 @@ class EnvironmentsModel {
     };
   }
 
-  EnvironmentsModel copyWith({
+  EnvironmentsListModel copyWith({
     String? activeEnvironmentId,
     List<EnvironmentModel>? environments,
   }) {
-    return EnvironmentsModel(
+    return EnvironmentsListModel(
       activeEnvironmentId: activeEnvironmentId ?? this.activeEnvironmentId,
       environments: environments ?? this.environments,
     );
   }
 
   EnvironmentModel? get getActiveEnvironment {
-    return environments.firstWhereOrNull((e) => e.isActive);
+    return environments.firstWhereOrNull((e) => e.id == activeEnvironmentId);
   }
 
   int get getActiveEnvironmentIndex {
-    return environments.indexWhere((e) => e.isActive);
+    return environments.indexWhere((e) => e.id == activeEnvironmentId);
   }
 }
 

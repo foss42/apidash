@@ -1,6 +1,7 @@
-import 'package:apidash/models/environments_model.dart';
+import 'package:apidash/models/environments_list_model.dart';
 import 'package:apidash/providers/environment_collection_providers.dart';
 import 'package:apidash/providers/providers.dart';
+import 'package:apidash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart';
@@ -153,7 +154,7 @@ class RequestDetailsCard extends StatelessWidget {
   }
 }
 
-class EnvironmentsListCard extends ConsumerWidget {
+class EnvironmentsListCard extends ConsumerStatefulWidget {
   final EnvironmentModel environmentModel;
 
   const EnvironmentsListCard({
@@ -162,24 +163,44 @@ class EnvironmentsListCard extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<EnvironmentsListCard> createState() =>
+      _EnvironmentsListCardState();
+}
+
+class _EnvironmentsListCardState extends ConsumerState<EnvironmentsListCard> {
+  final TextEditingController nameController = TextEditingController();
+  @override
+  void initState() {
+    nameController.text = widget.environmentModel.name;
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final Color color = Theme.of(context).colorScheme.surface;
 
     final Color colorVariant =
         Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5);
+
+    EnvironmentCollectionStateNotifier environmentCollectionStateNotifier =
+        ref.read(environmentCollectionStateNotifierProvider.notifier);
+
+    var sm = ScaffoldMessenger.of(context);
+
     final Color surfaceTint = Theme.of(context).colorScheme.primary;
     return Tooltip(
-      message: environmentModel.name,
+      message: widget.environmentModel.name,
       waitDuration: const Duration(seconds: 1),
       child: Padding(
-        padding: kP1,
+        padding: const EdgeInsets.symmetric(vertical: 3),
         child: Card(
           shape: const RoundedRectangleBorder(
             borderRadius: kBorderRadius8,
           ),
-          elevation: environmentModel.isActive ? 1 : 0,
-          surfaceTintColor: environmentModel.isActive ? surfaceTint : null,
-          color: environmentModel.isActive
+          elevation: widget.environmentModel.isActive ? 1 : 0,
+          surfaceTintColor:
+              widget.environmentModel.isActive ? surfaceTint : null,
+          color: widget.environmentModel.isActive
               ? Theme.of(context).colorScheme.brightness == Brightness.dark
                   ? colorVariant
                   : color
@@ -189,13 +210,26 @@ class EnvironmentsListCard extends ConsumerWidget {
             borderRadius: kBorderRadius8,
             hoverColor: colorVariant,
             focusColor: colorVariant.withOpacity(0.5),
-            // onTap: inEditMode ? null : onTap,
-            // onDoubleTap: inEditMode ? null : onDoubleTap,
-            // onSecondaryTap: onSecondaryTap,
+            onDoubleTap: () {
+              if (widget.environmentModel.name == "Globals") {
+                sm.showSnackBar(
+                  getSnackBar("Globals name cannot be edited", small: false),
+                );
+                return;
+              }
+              environmentCollectionStateNotifier.changeToEditMode(
+                environmentId: widget.environmentModel.id,
+              );
+            },
+            onTap: () {
+              environmentCollectionStateNotifier.activateEnvironment(
+                environmentId: widget.environmentModel.id,
+              );
+            },
             child: Padding(
               padding: EdgeInsets.only(
                 left: 6,
-                right: environmentModel.isActive ? 6 : 10,
+                right: widget.environmentModel.isActive ? 6 : 10,
                 top: 5,
                 bottom: 5,
               ),
@@ -203,54 +237,61 @@ class EnvironmentsListCard extends ConsumerWidget {
                 height: 20,
                 child: Row(
                   children: [
-                    // MethodBox(method: method),
                     kHSpacer4,
                     Expanded(
-                      child: environmentModel.inEditMode
+                      child: widget.environmentModel.inEditMode
                           ? TextFormField(
-                              key: ValueKey("${environmentModel.id}-name"),
-                              initialValue: environmentModel.name,
-                              // controller: controller,
+                              key: ValueKey(
+                                  "${widget.environmentModel.id}-name"),
+                              controller: nameController,
                               focusNode: ref
                                   .watch(environmentTextFieldFocusNodeProvider),
-                              //autofocus: true,
+                              autofocus: true,
                               style: Theme.of(context).textTheme.bodyMedium,
                               onTapOutside: (_) {
-                                // onTapOutsideNameEditor?.call();
+                                if (nameController.text.isNotEmpty) {
+                                  environmentCollectionStateNotifier
+                                      .onEnvironmentNameChanged(
+                                    environmentId: widget.environmentModel.id,
+                                    name: nameController.text,
+                                  );
+                                }
                                 FocusScope.of(context).unfocus();
                               },
-                              onChanged: (value) {
-                                ref
-                                    .read(
-                                        environmentCollectionStateNotifierProvider
-                                            .notifier)
-                                    .onEnvironmentNameChanged(
-                                      environmentId: environmentModel.id,
-                                      name: value,
-                                    );
+                              onFieldSubmitted: (value) {
+                                if (value.isNotEmpty) {
+                                  environmentCollectionStateNotifier
+                                      .onEnvironmentNameChanged(
+                                    environmentId: widget.environmentModel.id,
+                                    name: value,
+                                  );
+                                }
+                                FocusScope.of(context).unfocus();
                               },
                               decoration: const InputDecoration(
                                 isCollapsed: true,
                                 contentPadding: EdgeInsets.zero,
                                 border: InputBorder.none,
+                                hintText: "Enter Environment Name",
                               ),
                             )
                           : Text(
-                              environmentModel.name,
+                              widget.environmentModel.name,
                               softWrap: false,
                               overflow: TextOverflow.fade,
                             ),
                     ),
-                    // Visibility(
-                    //   visible: environmentModel.isActive && !inEditMode,
-                    //   // visible: environmentModel.isActive && !inEditMode,
-                    //   child: SizedBox(
-                    //     width: 28,
-                    //     child: RequestCardMenu(
-                    //       onSelected: onMenuSelected,
-                    //     ),
-                    //   ),
-                    // ),
+                    Visibility(
+                      visible: widget.environmentModel.isActive &&
+                          !(widget.environmentModel.inEditMode) &&
+                          widget.environmentModel.name != "Globals",
+                      child: SizedBox(
+                        width: 28,
+                        child: EnvironmentCardMenu(
+                          onSelected: onMenuSelected,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -259,5 +300,23 @@ class EnvironmentsListCard extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  onMenuSelected(RequestItemMenuOption requestItemMenuOption) {
+    switch (requestItemMenuOption) {
+      case RequestItemMenuOption.delete:
+        ref
+            .read(environmentCollectionStateNotifierProvider.notifier)
+            .deleteEnvironment(environmentId: widget.environmentModel.id);
+        break;
+      case RequestItemMenuOption.edit:
+        ref
+            .read(environmentCollectionStateNotifierProvider.notifier)
+            .changeToEditMode(
+              environmentId: widget.environmentModel.id,
+            );
+        break;
+      default:
+    }
   }
 }

@@ -1,5 +1,5 @@
 import 'package:apidash/consts.dart';
-import 'package:apidash/models/environments_model.dart';
+import 'package:apidash/models/environments_list_model.dart';
 import 'package:apidash/providers/environment_collection_providers.dart';
 import 'package:apidash/widgets/checkbox.dart';
 import 'package:apidash/widgets/headerfield.dart';
@@ -115,14 +115,25 @@ class _EnvironmentsCollectionsPaneState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Environments',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+            style: Theme.of(context).textTheme.headlineSmall,
           ),
           kVSpacer10,
-          Text(
-            "Global variables for your API requests that are available in all requests in all environments.",
-            style: Theme.of(context).textTheme.bodyMedium,
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                widget.environmentModel.name,
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              widget.environmentModel.name == "Globals"
+                  ? Text(
+                      "Global variables for your API requests that are available in all requests in all environments.",
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    )
+                  : const IgnorePointer(),
+            ],
           ),
           kVSpacer10,
           Expanded(

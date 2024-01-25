@@ -1,5 +1,5 @@
 import 'package:apidash/consts.dart';
-import 'package:apidash/models/environments_model.dart';
+import 'package:apidash/models/environments_list_model.dart';
 import 'package:apidash/providers/environment_collection_providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
