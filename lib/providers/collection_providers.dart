@@ -1,3 +1,5 @@
+import 'package:apidash/models/environments_list_model.dart';
+import 'package:apidash/providers/environment_collection_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'settings_providers.dart';
 import 'ui_providers.dart';
@@ -228,12 +230,24 @@ class CollectionStateNotifier
   Future<void> saveData() async {
     ref.read(saveDataStateProvider.notifier).state = true;
     final saveResponse = ref.read(settingsProvider).saveResponses;
+    List<EnvironmentModel> environmentsList =
+        (ref.read(environmentCollectionStateNotifierProvider)?.environments ??
+            []);
     final ids = ref.read(requestSequenceProvider);
+    final envIds = ref.read(getEnvironmentsIdsProvider);
     await hiveHandler.setIds(ids);
+    await hiveHandler.setEnvironmentIds(envIds);
     for (var id in ids) {
       await hiveHandler.setRequestModel(
         id,
         state?[id]?.toJson(includeResponse: saveResponse),
+      );
+    }
+
+    for (var env in environmentsList) {
+      await hiveHandler.setEnvironment(
+        env.id,
+        env.toJson(),
       );
     }
     await hiveHandler.removeUnused();

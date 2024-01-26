@@ -1,7 +1,5 @@
 import 'package:collection/collection.dart';
-import 'package:flutter/material.dart';
 
-@immutable
 class EnvironmentsListModel {
   final List<EnvironmentModel> environments;
 
@@ -54,7 +52,7 @@ class EnvironmentModel {
       required this.isActive,
       required this.inEditMode});
 
-  factory EnvironmentModel.fromJson(Map<String, dynamic> json) {
+  factory EnvironmentModel.fromJson(dynamic json) {
     return EnvironmentModel(
       id: json['id'],
       name: json['name'],
