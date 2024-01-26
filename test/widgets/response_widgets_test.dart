@@ -431,7 +431,9 @@ void main() async {
     expect(find.byType(Image), findsOneWidget);
   });
 
-  testWidgets('Testing Body Success tap segment', (tester) async {
+  testWidgets(
+      'Testing Body Success tap segment. formattedBody is always shown in Raw',
+      (tester) async {
     await tester.pumpWidget(
       MaterialApp(
         title: 'Body Success',
@@ -458,7 +460,37 @@ void main() async {
 
     await tester.tap(find.text('Raw'));
     await tester.pumpAndSettle();
-    expect(find.text('Formatted Hello from API Dash'), findsNothing);
+    expect(find.text('Formatted Hello from API Dash'), findsOneWidget);
+    expect(find.text('Raw Hello from API Dash'), findsNothing);
+  });
+
+  testWidgets('Testing Body Success tap segment for formattedBody null',
+      (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        title: 'Body Success',
+        theme: kThemeDataLight,
+        home: Scaffold(
+          body: BodySuccess(
+            body: 'Raw Hello from API Dash',
+            formattedBody: null,
+            mediaType: MediaType("text", "csv"),
+            options: const [
+              ResponseBodyView.code,
+              ResponseBodyView.raw,
+            ],
+            bytes: kBodyBytesJpeg,
+            highlightLanguage: 'txt',
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+    expect(find.text('Raw Hello from API Dash'), findsOneWidget);
+
+    await tester.tap(find.text('Raw'));
+    await tester.pumpAndSettle();
     expect(find.text('Raw Hello from API Dash'), findsOneWidget);
   });
 }

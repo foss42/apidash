@@ -437,57 +437,48 @@ class _BodySuccessState extends State<BodySuccess> {
                 ],
               ),
               kVSpacer10,
-              Visibility(
-                visible: currentSeg == ResponseBodyView.preview ||
-                    currentSeg == ResponseBodyView.none,
-                child: Expanded(
-                  child: Container(
-                    width: double.maxFinite,
-                    padding: kP8,
-                    decoration: textContainerdecoration,
-                    child: Previewer(
-                      bytes: widget.bytes,
-                      body: widget.body,
-                      type: widget.mediaType.type,
-                      subtype: widget.mediaType.subtype,
-                      hasRaw: widget.options.contains(ResponseBodyView.raw),
+              switch (currentSeg) {
+                ResponseBodyView.preview || ResponseBodyView.none => Expanded(
+                    child: Container(
+                      width: double.maxFinite,
+                      padding: kP8,
+                      decoration: textContainerdecoration,
+                      child: Previewer(
+                        bytes: widget.bytes,
+                        body: widget.body,
+                        type: widget.mediaType.type,
+                        subtype: widget.mediaType.subtype,
+                        hasRaw: widget.options.contains(ResponseBodyView.raw),
+                      ),
                     ),
                   ),
-                ),
-              ),
-              if (widget.formattedBody != null)
-                Visibility(
-                  visible: currentSeg == ResponseBodyView.code,
-                  child: Expanded(
+                ResponseBodyView.code => Expanded(
                     child: Container(
                       width: double.maxFinite,
                       padding: kP8,
                       decoration: textContainerdecoration,
                       child: CodePreviewer(
-                        code: widget.formattedBody!,
+                        code: widget.formattedBody ?? widget.body,
                         theme: codeTheme,
                         language: widget.highlightLanguage,
                         textStyle: kCodeStyle,
                       ),
                     ),
                   ),
-                ),
-              Visibility(
-                visible: currentSeg == ResponseBodyView.raw,
-                child: Expanded(
-                  child: Container(
-                    width: double.maxFinite,
-                    padding: kP8,
-                    decoration: textContainerdecoration,
-                    child: SingleChildScrollView(
-                      child: SelectableText(
-                        widget.formattedBody ?? widget.body,
-                        style: kCodeStyle,
+                ResponseBodyView.raw => Expanded(
+                    child: Container(
+                      width: double.maxFinite,
+                      padding: kP8,
+                      decoration: textContainerdecoration,
+                      child: SingleChildScrollView(
+                        child: SelectableText(
+                          widget.formattedBody ?? widget.body,
+                          style: kCodeStyle,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ),
+              }
             ],
           ),
         );
