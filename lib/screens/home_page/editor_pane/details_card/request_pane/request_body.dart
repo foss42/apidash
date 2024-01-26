@@ -44,7 +44,7 @@ class _EditRequestBodyState extends ConsumerState<EditRequestBody> {
           Expanded(
               child: switch (contentType) {
             ContentType.formdata => const FormDataWidget(),
-            ContentType.json => JsonTextFieldEditor(
+            ContentType.json => TextFieldEditor(
                 key: Key("$activeId-json-body"),
                 fieldKey: "$activeId-json-body-editor",
                 initialValue: requestModel?.requestBody,
