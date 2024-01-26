@@ -19,10 +19,9 @@ class _EditRequestBodyState extends ConsumerState<EditRequestBody> {
     final requestModel = ref
         .read(collectionStateNotifierProvider.notifier)
         .getRequestModel(activeId!);
-    ContentType? requestBodyStateWatcher = (ref
-            .watch(collectionStateNotifierProvider)![activeId]
-            ?.requestBodyContentType) ??
-        ContentType.values.first;
+    final contentType = ref.watch(activeRequestModelProvider
+        .select((value) => value?.requestBodyContentType));
+
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.background,
@@ -43,19 +42,29 @@ class _EditRequestBodyState extends ConsumerState<EditRequestBody> {
             ),
           ),
           Expanded(
-            child: requestBodyStateWatcher == ContentType.formdata
-                ? const FormDataWidget()
-                : TextFieldEditor(
-                    key: Key("$activeId-body"),
-                    fieldKey: "$activeId-body-editor",
-                    initialValue: requestModel?.requestBody,
-                    onChanged: (String value) {
-                      ref
-                          .read(collectionStateNotifierProvider.notifier)
-                          .update(activeId, requestBody: value);
-                    },
-                  ),
-          )
+              child: switch (contentType) {
+            ContentType.formdata => const FormDataWidget(),
+            ContentType.json => JsonTextFieldEditor(
+                key: Key("$activeId-json-body"),
+                fieldKey: "$activeId-json-body-editor",
+                initialValue: requestModel?.requestBody,
+                onChanged: (String value) {
+                  ref
+                      .read(collectionStateNotifierProvider.notifier)
+                      .update(activeId, requestBody: value);
+                },
+              ),
+            _ => TextFieldEditor(
+                key: Key("$activeId-body"),
+                fieldKey: "$activeId-body-editor",
+                initialValue: requestModel?.requestBody,
+                onChanged: (String value) {
+                  ref
+                      .read(collectionStateNotifierProvider.notifier)
+                      .update(activeId, requestBody: value);
+                },
+              ),
+          })
         ],
       ),
     );
