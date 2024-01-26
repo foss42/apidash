@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:apidash/widgets/editor.dart';
-import 'package:json_text_field/json_text_field.dart';
 import '../test_consts.dart';
 
 void main() {
@@ -27,10 +26,11 @@ void main() {
       ),
     );
 
-    expect(find.byType(JsonTextField), findsOneWidget);
+    expect(find.byType(TextFormField), findsOneWidget);
     expect(find.byKey(const Key("2")), findsOneWidget);
     expect(find.text('Enter content (body)'), findsOneWidget);
-    var txtForm = find.byKey(const Key("2")).first;
+    var txtForm = find.byKey(const Key("2"));
+    await tester.enterText(txtForm, 'entering 123 for testing content body');
     await tester.pump();
     await tester.pumpAndSettle();
 
@@ -40,7 +40,7 @@ void main() {
 
     await tester.pump();
     await tester.pumpAndSettle();
-    expect(changedValue, '  ');
+    expect(changedValue, 'entering 123 for testing content body    ');
   });
   testWidgets('Testing Editor Dark theme', (tester) async {
     dynamic changedValue;
@@ -63,10 +63,12 @@ void main() {
         ),
       ),
     );
-    expect(find.byType(JsonTextField), findsOneWidget);
+    expect(find.text('initial'), findsOneWidget);
+    expect(find.byType(TextFormField), findsOneWidget);
     expect(find.byKey(const Key("2")), findsOneWidget);
     expect(find.text('Enter content (body)'), findsOneWidget);
     var txtForm = find.byKey(const Key("2"));
+    await tester.enterText(txtForm, 'entering 123 for testing content body');
     await tester.pump();
     await tester.pumpAndSettle();
 
@@ -76,6 +78,6 @@ void main() {
 
     await tester.pump();
     await tester.pumpAndSettle();
-    expect(changedValue, 'initial  ');
+    expect(changedValue, 'entering 123 for testing content body    ');
   });
 }
