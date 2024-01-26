@@ -42,20 +42,29 @@ class _EditRequestBodyState extends ConsumerState<EditRequestBody> {
             ),
           ),
           Expanded(
-            child: contentType == ContentType.formdata
-                ? const FormDataWidget()
-                : TextFieldEditor(
-                    key: Key("$activeId-body"),
-                    fieldKey: "$activeId-body-editor",
-                    contentType: contentType,
-                    initialValue: requestModel?.requestBody,
-                    onChanged: (String value) {
-                      ref
-                          .read(collectionStateNotifierProvider.notifier)
-                          .update(activeId, requestBody: value);
-                    },
-                  ),
-          )
+              child: switch (contentType) {
+            ContentType.formdata => const FormDataWidget(),
+            ContentType.json => JsonTextFieldEditor(
+                key: Key("$activeId-json-body"),
+                fieldKey: "$activeId-json-body-editor",
+                initialValue: requestModel?.requestBody,
+                onChanged: (String value) {
+                  ref
+                      .read(collectionStateNotifierProvider.notifier)
+                      .update(activeId, requestBody: value);
+                },
+              ),
+            _ => TextFieldEditor(
+                key: Key("$activeId-body"),
+                fieldKey: "$activeId-body-editor",
+                initialValue: requestModel?.requestBody,
+                onChanged: (String value) {
+                  ref
+                      .read(collectionStateNotifierProvider.notifier)
+                      .update(activeId, requestBody: value);
+                },
+              ),
+          })
         ],
       ),
     );
