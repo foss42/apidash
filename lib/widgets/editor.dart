@@ -2,7 +2,6 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:apidash/consts.dart';
-import 'package:json_text_field/json_text_field.dart';
 
 class TextFieldEditor extends StatefulWidget {
   const TextFieldEditor({
@@ -10,23 +9,21 @@ class TextFieldEditor extends StatefulWidget {
     required this.fieldKey,
     this.onChanged,
     this.initialValue,
-    this.contentType,
   });
 
   final String fieldKey;
   final Function(String)? onChanged;
   final String? initialValue;
-  final ContentType? contentType;
   @override
   State<TextFieldEditor> createState() => _TextFieldEditorState();
 }
 
 class _TextFieldEditorState extends State<TextFieldEditor> {
-  final JsonTextFieldController controller = JsonTextFieldController();
+  final TextEditingController controller = TextEditingController();
   late final FocusNode editorFocusNode;
 
   void insertTab() {
-    String sp = "  ";
+    String sp = "    ";
     int offset = math.min(
         controller.selection.baseOffset, controller.selection.extentOffset);
     String text = controller.text.substring(0, offset) +
@@ -45,9 +42,6 @@ class _TextFieldEditorState extends State<TextFieldEditor> {
   @override
   void initState() {
     super.initState();
-    if (widget.contentType == ContentType.json) {
-      controller.formatJson(sortJson: false);
-    }
     editorFocusNode = FocusNode(debugLabel: "Editor Focus Node");
   }
 
@@ -68,22 +62,7 @@ class _TextFieldEditorState extends State<TextFieldEditor> {
           insertTab();
         },
       },
-      child: JsonTextField(
-        stringHighlightStyle: kCodeStyle.copyWith(
-          color: Theme.of(context).colorScheme.secondary,
-        ),
-        keyHighlightStyle: kCodeStyle.copyWith(
-          color: Theme.of(context).colorScheme.primary,
-          fontWeight: FontWeight.bold,
-        ),
-        errorContainerDecoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.error.withOpacity(
-                kForegroundOpacity,
-              ),
-          borderRadius: kBorderRadius8,
-        ),
-        showErrorMessage: true,
-        isFormatting: widget.contentType == ContentType.json,
+      child: TextFormField(
         key: Key(widget.fieldKey),
         controller: controller,
         focusNode: editorFocusNode,
@@ -92,12 +71,7 @@ class _TextFieldEditorState extends State<TextFieldEditor> {
         maxLines: null,
         style: kCodeStyle,
         textAlignVertical: TextAlignVertical.top,
-        onChanged: (value) {
-          widget.onChanged?.call(value);
-          if (widget.contentType == ContentType.json) {
-            controller.formatJson(sortJson: false);
-          }
-        },
+        onChanged: widget.onChanged,
         decoration: InputDecoration(
           hintText: "Enter content (body)",
           hintStyle: TextStyle(
