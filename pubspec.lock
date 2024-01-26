@@ -581,10 +581,10 @@ packages:
     dependency: "direct main"
     description:
       name: json_text_field
-      sha256: caec2d687221746f81503a0cfad263d349ecb3d538dd518b820beafc32f1dfce
+      sha256: "2d5500550a50323e20105960449378e1ac6c05404298ebf23b5d212b29b45085"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.0"
+    version: "1.1.0"
   just_audio:
     dependency: "direct main"
     description:

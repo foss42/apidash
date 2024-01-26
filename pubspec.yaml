@@ -10,7 +10,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  
   multi_split_view: ^2.4.0
   url_launcher: ^6.1.12
   flutter_riverpod: ^2.3.7
@@ -54,7 +53,7 @@ dependencies:
   vector_graphics_compiler: ^1.1.9+1
   code_builder: ^4.9.0
   dart_style: ^2.3.4
-  json_text_field: ^1.0.0
+  json_text_field: ^1.1.0
 
 dev_dependencies:
   flutter_test:
