@@ -18,8 +18,8 @@ class _EnvironmentsPageState extends ConsumerState<EnvironmentsPage> {
   @override
   Widget build(BuildContext context) {
     EnvironmentModel? activeEnvironment = ref
-        .watch(environmentCollectionStateNotifierProvider)
-        ?.getActiveEnvironment;
+        .watch(environmentCollectionStateNotifierProvider.notifier)
+        .activeEnvModelData;
     return Column(
       children: [
         Expanded(

@@ -27,7 +27,7 @@ class _EnvironmentsCollectionsPaneState
     EnvironmentCollectionStateNotifier environmentStateNotifier =
         ref.read(environmentCollectionStateNotifierProvider.notifier);
 
-    var rows = widget.environmentModel.variables;
+    var rows = widget.environmentModel.getEnvironmentVariables;
     DaviModel<EnvironmentVariableModel> environmentVariableDeviModel =
         DaviModel<EnvironmentVariableModel>(
       rows: rows,

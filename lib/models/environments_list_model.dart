@@ -1,40 +1,20 @@
-import 'package:collection/collection.dart';
+class EnvironmentsMapModel {
+  final Map<String, EnvironmentModel>? environments;
 
-class EnvironmentsListModel {
-  final List<EnvironmentModel> environments;
-
-  const EnvironmentsListModel({
-    required this.environments,
+  const EnvironmentsMapModel({
+    this.environments,
   });
-
-  factory EnvironmentsListModel.fromJson(Map<String, dynamic> json) {
-    return EnvironmentsListModel(
-      environments: (json['environments'] as List)
-          .map((e) => EnvironmentModel.fromJson(e))
-          .toList(),
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'environments': environments.map((e) => e.toJson()).toList(),
-    };
-  }
-
-  EnvironmentsListModel copyWith({
-    List<EnvironmentModel>? environments,
+  // generate copy with method
+  EnvironmentsMapModel copyWith({
+    Map<String, EnvironmentModel>? environments,
   }) {
-    return EnvironmentsListModel(
+    return EnvironmentsMapModel(
       environments: environments ?? this.environments,
     );
   }
 
-  EnvironmentModel? get getActiveEnvironment {
-    return environments.firstWhereOrNull((e) => e.isActive);
-  }
-
-  int get getActiveEnvironmentIndex {
-    return environments.indexWhere((e) => e.isActive);
+  get environmentsMap {
+    return environments;
   }
 }
 
@@ -43,40 +23,22 @@ class EnvironmentModel {
   final String name;
   final bool isActive;
   final bool inEditMode;
-  final List<EnvironmentVariableModel> variables;
+  final Map<String, EnvironmentVariableModel> variables;
+  List<EnvironmentVariableModel> get getEnvironmentVariables =>
+      variables.values.toList();
 
-  EnvironmentModel(
-      {required this.id,
-      required this.name,
-      required this.variables,
-      required this.isActive,
-      required this.inEditMode});
-
-  factory EnvironmentModel.fromJson(dynamic json) {
-    return EnvironmentModel(
-      id: json['id'],
-      name: json['name'],
-      variables: (json['variables'] as List)
-          .map((e) => EnvironmentVariableModel.fromJson(e))
-          .toList(),
-      isActive: json['isActive'],
-      inEditMode: json['inEditMode'] ?? false,
-    );
-  }
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'variables': variables.map((e) => e.toJson()).toList(),
-      'isActive': isActive,
-      'inEditMode': inEditMode,
-    };
-  }
+  EnvironmentModel({
+    required this.id,
+    required this.name,
+    required this.variables,
+    required this.isActive,
+    required this.inEditMode,
+  });
 
   EnvironmentModel copyWith({
     String? id,
     String? name,
-    List<EnvironmentVariableModel>? variables,
+    Map<String, EnvironmentVariableModel>? variables,
     bool? isActive,
     bool? inEditMode,
   }) {
@@ -86,6 +48,20 @@ class EnvironmentModel {
       variables: variables ?? this.variables,
       isActive: isActive ?? this.isActive,
       inEditMode: inEditMode ?? this.inEditMode,
+    );
+  }
+
+  Map<String, dynamic>? toJson() {
+    return null;
+  }
+
+  static EnvironmentModel fromJson(environmentVariables) {
+    return EnvironmentModel(
+      id: environmentVariables['id'],
+      name: environmentVariables['name'],
+      variables: environmentVariables['variables'],
+      isActive: environmentVariables['isActive'],
+      inEditMode: environmentVariables['inEditMode'] ?? false,
     );
   }
 }

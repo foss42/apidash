@@ -230,9 +230,9 @@ class CollectionStateNotifier
   Future<void> saveData() async {
     ref.read(saveDataStateProvider.notifier).state = true;
     final saveResponse = ref.read(settingsProvider).saveResponses;
-    List<EnvironmentModel> environmentsList =
+    Map<String, EnvironmentModel>? environmentsList =
         (ref.read(environmentCollectionStateNotifierProvider)?.environments ??
-            []);
+            {});
     final ids = ref.read(requestSequenceProvider);
     final envIds = ref.read(getEnvironmentsIdsProvider);
     await hiveHandler.setIds(ids);
@@ -243,13 +243,12 @@ class CollectionStateNotifier
         state?[id]?.toJson(includeResponse: saveResponse),
       );
     }
-
-    for (var env in environmentsList) {
+    environmentsList.forEach((key, value) async {
       await hiveHandler.setEnvironment(
-        env.id,
-        env.toJson(),
+        key,
+        value.toJson(),
       );
-    }
+    });
     await hiveHandler.removeUnused();
     ref.read(saveDataStateProvider.notifier).state = false;
   }
