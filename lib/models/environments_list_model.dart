@@ -1,23 +1,3 @@
-class EnvironmentsMapModel {
-  final Map<String, EnvironmentModel>? environments;
-
-  const EnvironmentsMapModel({
-    this.environments,
-  });
-  // generate copy with method
-  EnvironmentsMapModel copyWith({
-    Map<String, EnvironmentModel>? environments,
-  }) {
-    return EnvironmentsMapModel(
-      environments: environments ?? this.environments,
-    );
-  }
-
-  get environmentsMap {
-    return environments;
-  }
-}
-
 class EnvironmentModel {
   final String id;
   final String name;

@@ -231,8 +231,7 @@ class CollectionStateNotifier
     ref.read(saveDataStateProvider.notifier).state = true;
     final saveResponse = ref.read(settingsProvider).saveResponses;
     Map<String, EnvironmentModel>? environmentsList =
-        (ref.read(environmentCollectionStateNotifierProvider)?.environments ??
-            {});
+        (ref.read(environmentsStateNotifierProvider));
     final ids = ref.read(requestSequenceProvider);
     final envIds = ref.read(getEnvironmentsIdsProvider);
     await hiveHandler.setIds(ids);
@@ -243,7 +242,7 @@ class CollectionStateNotifier
         state?[id]?.toJson(includeResponse: saveResponse),
       );
     }
-    environmentsList.forEach((key, value) async {
+    environmentsList?.forEach((key, value) async {
       await hiveHandler.setEnvironment(
         key,
         value.toJson(),

@@ -24,8 +24,8 @@ class _EnvironmentsCollectionsPaneState
     extends ConsumerState<EnvironmentsEditorPane> {
   @override
   Widget build(BuildContext context) {
-    EnvironmentCollectionStateNotifier environmentStateNotifier =
-        ref.read(environmentCollectionStateNotifierProvider.notifier);
+    EnvironmentsStateNotifier environmentStateNotifier =
+        ref.read(environmentsStateNotifierProvider.notifier);
 
     var rows = widget.environmentModel.getEnvironmentVariables;
     DaviModel<EnvironmentVariableModel> environmentVariableDeviModel =
@@ -100,8 +100,7 @@ class _EnvironmentsCollectionsPaneState
                   ? kIconRemoveDark
                   : kIconRemoveLight,
               onTap: () {
-                environmentStateNotifier
-                    .removeEnvironmentVariableFromActiveEnvironment(
+                environmentStateNotifier.removeVariable(
                   environmentVariableIndexId: rows[idx].id,
                 );
               },
@@ -169,9 +168,8 @@ class _EnvironmentsCollectionsPaneState
                     child: ElevatedButton.icon(
                       onPressed: () {
                         ref
-                            .read(environmentCollectionStateNotifierProvider
-                                .notifier)
-                            .addEmptyEnvironmentVariable();
+                            .read(environmentsStateNotifierProvider.notifier)
+                            .addVariable();
                       },
                       icon: const Icon(Icons.add),
                       label: const Text(

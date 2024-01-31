@@ -17,7 +17,7 @@ class _EnvironmentsCollectionsPaneState
     extends ConsumerState<EnvironmentsCollectionsPane> {
   @override
   Widget build(BuildContext context) {
-    String activeKey = ref.read(activeEnvironmentIdProvider) ?? '';
+    String activeKey = ref.watch(activeEnvironmentIdProvider) ?? '';
     Key collectionKey = ValueKey(activeKey);
     return Padding(
       key: collectionKey,
@@ -34,10 +34,8 @@ class _EnvironmentsCollectionsPaneState
                 ElevatedButton(
                   onPressed: () {
                     ref
-                        .read(
-                            environmentCollectionStateNotifierProvider.notifier)
-                        .createNewEnvironment();
-                    setState(() {});
+                        .read(environmentsStateNotifierProvider.notifier)
+                        .create();
                   },
                   child: const Text(
                     kLabelPlusNew,
@@ -62,15 +60,17 @@ class EnvironmentsCollectionsList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    List<EnvironmentModel> environments = ref
-        .watch(environmentCollectionStateNotifierProvider.notifier)
-        .environmentModels;
+    String activeKey = ref.watch(activeEnvironmentIdProvider) ?? '';
+    Key collectionKey = ValueKey(activeKey);
+    List<EnvironmentModel> environments =
+        ref.watch(environmentsStateNotifierProvider.notifier).environmentModels;
 
     return ListView.builder(
       padding: kPr8CollectionPane,
       itemCount: environments.length,
       itemBuilder: (context, index) {
         return EnvironmentsListCard(
+          key: collectionKey,
           environmentModel: environments[index],
         );
       },

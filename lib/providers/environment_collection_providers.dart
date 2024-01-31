@@ -7,9 +7,9 @@ final activeEnvironmentIdProvider = StateProvider<String?>((ref) {
   return null;
 });
 
-final environmentCollectionStateNotifierProvider = StateNotifierProvider<
-    EnvironmentCollectionStateNotifier, EnvironmentsMapModel?>((ref) {
-  return EnvironmentCollectionStateNotifier(
+final environmentsStateNotifierProvider = StateNotifierProvider<
+    EnvironmentsStateNotifier, Map<String, EnvironmentModel>>((ref) {
+  return EnvironmentsStateNotifier(
     ref,
     hiveHandler,
   );
@@ -20,20 +20,34 @@ final getEnvironmentsIdsProvider = StateProvider<List<String>>((ref) {
   return ids ?? [];
 });
 
-class EnvironmentCollectionStateNotifier
-    extends StateNotifier<EnvironmentsMapModel?> {
+final activeEnvironmentProvider = StateProvider<EnvironmentModel?>((ref) {
+  final activeId = ref.watch(activeEnvironmentIdProvider);
+  final environments = (ref.watch(environmentsStateNotifierProvider));
+  if (activeId == null) {
+    return null;
+  } else {
+    return environments[activeId];
+  }
+});
+
+class EnvironmentsStateNotifier
+    extends StateNotifier<Map<String, EnvironmentModel>> {
   final HiveHandler hiveHandler;
   final Ref ref;
 
   EnvironmentModel? get activeEnvModelData =>
-      state?.environments?[ref.read(activeEnvironmentIdProvider)];
-  EnvironmentCollectionStateNotifier(
+      ref.read(activeEnvironmentProvider);
+  EnvironmentsStateNotifier(
     this.ref,
     this.hiveHandler,
-  ) : super(null) {
+  ) : super({}) {
+    loadInitialData();
+  }
+  List<EnvironmentModel> get environmentModels => state.values.toList();
+
+  void loadInitialData() {
     List<String>? environmentIds = hiveHandler.getEnvironmentIds();
     if (environmentIds != null && environmentIds.isNotEmpty) {
-      EnvironmentsMapModel environmentsListModel = const EnvironmentsMapModel();
       Map<String, EnvironmentModel> environmentsMap = {};
       for (var environmentId in environmentIds) {
         var environmentVariables = hiveHandler.getEnvironment(environmentId);
@@ -50,8 +64,8 @@ class EnvironmentCollectionStateNotifier
         );
         environmentsMap[environmentId] = environmentModel;
       }
-      environmentsListModel.copyWith(environments: environmentsMap);
-      state = environmentsListModel;
+
+      state = environmentsMap;
     } else {
       String id = uuid.v1();
       var initialGlobalState = EnvironmentModel(
@@ -61,22 +75,18 @@ class EnvironmentCollectionStateNotifier
         variables: {},
         inEditMode: false,
       );
-      EnvironmentsMapModel environmentsListModel = EnvironmentsMapModel(
-        environments: {
-          id: initialGlobalState,
-        },
-      );
+
       Future.delayed(Duration.zero, () {
         ref.read(activeEnvironmentIdProvider.notifier).update((state) => id);
       });
-      state = environmentsListModel;
+      state = {
+        id: initialGlobalState,
+      };
     }
   }
-  List<EnvironmentModel> get environmentModels =>
-      state?.environments?.values.toList().cast<EnvironmentModel>() ?? [];
 
-  void createNewEnvironment() {
-    Map<String, EnvironmentModel> environmentsMap = state?.environments ?? {};
+  void create() {
+    Map<String, EnvironmentModel> environmentsMap = {...state};
 
     String id = uuid.v1();
     ref
@@ -89,57 +99,44 @@ class EnvironmentCollectionStateNotifier
       variables: {},
       inEditMode: true,
     );
-    state = state?.copyWith(environments: environmentsMap);
-    ref.read(activeEnvironmentIdProvider.notifier).update((state) => id);
+    state = environmentsMap;
   }
 
-  void onEnvironmentNameChanged({
-    required String environmentId,
-    required String name,
+  void update(
+    String id, {
+    String? name,
+    bool? isActive,
+    bool? inEditMode,
+    Map<String, EnvironmentVariableModel>? variables,
   }) {
-    Map<String, EnvironmentModel> environmentsMap = state?.environments ?? {};
-    if (environmentsMap.containsKey(environmentId)) {
-      environmentsMap[environmentId] =
-          environmentsMap[environmentId]!.copyWith(name: name);
-      state = state?.copyWith(environments: environmentsMap);
+    if (!(state.containsKey(id))) {
+      return;
     }
+    final envModel = state[id]!.copyWith(
+      inEditMode: inEditMode,
+      isActive: isActive,
+      name: name,
+      variables: variables,
+    );
+    var envs = {...state};
+    envs[id] = envModel;
+    state = envs;
+    ref
+        .read(getEnvironmentsIdsProvider.notifier)
+        .update((state) => [...state, id]);
   }
 
-  void activateEnvironment({
-    required String environmentId,
-  }) {
-    Map<String, EnvironmentModel> environmentsMap = state?.environments ?? {};
-    if (environmentsMap.containsKey(environmentId)) {
-      ref
-          .read(activeEnvironmentIdProvider.notifier)
-          .update((state) => environmentId);
+  void delete(String id) {
+    if (!(state.containsKey(id))) {
+      return;
     }
+    var envs = {...state};
+    envs.remove(id);
+    state = envs;
   }
 
-  void deleteEnvironment({
-    required String environmentId,
-  }) {
-    Map<String, EnvironmentModel> environmentsMap = state?.environments ?? {};
-    if (environmentsMap.containsKey(environmentId)) {
-      environmentsMap.remove(environmentId);
-      state = state?.copyWith(environments: environmentsMap);
-    }
-  }
-
-  void changeToEditMode({
-    required String environmentId,
-  }) {
-    Map<String, EnvironmentModel> environmentsMap = state?.environments ?? {};
-    if (environmentsMap.containsKey(environmentId)) {
-      environmentsMap[environmentId] =
-          environmentsMap[environmentId]!.copyWith(inEditMode: true);
-      state = state?.copyWith(
-        environments: environmentsMap,
-      );
-    }
-  }
-
-  void addEmptyEnvironmentVariable() {
+  // variable flow
+  void addVariable() {
     String id = uuid.v1();
     EnvironmentVariableModel emptyEnvironmentVariableModel =
         EnvironmentVariableModel(
@@ -148,7 +145,7 @@ class EnvironmentCollectionStateNotifier
       value: "",
       isActive: true,
     );
-    Map<String, EnvironmentModel> environmentsMap = state?.environments ?? {};
+    Map<String, EnvironmentModel> environmentsMap = {...state};
     EnvironmentModel? activeEnvironmentModel = activeEnvModelData;
     if (activeEnvironmentModel != null) {
       activeEnvironmentModel.variables.addEntries(
@@ -160,34 +157,18 @@ class EnvironmentCollectionStateNotifier
         ],
       );
       environmentsMap[activeEnvironmentModel.id] = activeEnvironmentModel;
-      state = state?.copyWith(environments: environmentsMap);
+      state = environmentsMap;
     }
   }
 
-  set toggleEnvironmentVariableCheckBox(String environmentVariableIndexId) {
-    Map<String, EnvironmentModel> environmentsMap = state?.environments ?? {};
-    EnvironmentModel? activeEnvironmentModel = activeEnvModelData;
-    if (activeEnvironmentModel != null) {
-      EnvironmentVariableModel environmentVariableModel =
-          activeEnvironmentModel.variables[environmentVariableIndexId]!;
-
-      activeEnvironmentModel.variables[environmentVariableIndexId] =
-          environmentVariableModel.copyWith(
-        isActive: !environmentVariableModel.isActive,
-      );
-      environmentsMap[activeEnvironmentModel.id] = activeEnvironmentModel;
-      state = state?.copyWith(environments: environmentsMap);
-    }
-  }
-
-  void removeEnvironmentVariableFromActiveEnvironment({
+  void removeVariable({
     required String environmentVariableIndexId,
   }) {
-    Map<String, EnvironmentModel> environmentsMap = state?.environments ?? {};
+    Map<String, EnvironmentModel> environmentsMap = {...state};
     EnvironmentModel? activeEnvironmentModel = activeEnvModelData;
     if (activeEnvironmentModel != null) {
       activeEnvironmentModel.variables.remove(environmentVariableIndexId);
-      state = state?.copyWith(environments: environmentsMap);
+      state = environmentsMap;
     }
   }
 
@@ -195,7 +176,7 @@ class EnvironmentCollectionStateNotifier
     required String environmentVariableId,
     required String variable,
   }) {
-    Map<String, EnvironmentModel> environmentsMap = state?.environments ?? {};
+    Map<String, EnvironmentModel> environmentsMap = {...state};
     EnvironmentModel? activeEnvironmentModel = activeEnvModelData;
     if (activeEnvironmentModel != null) {
       EnvironmentVariableModel environmentVariableModel =
@@ -206,7 +187,7 @@ class EnvironmentCollectionStateNotifier
         variable: variable,
       );
       environmentsMap[activeEnvironmentModel.id] = activeEnvironmentModel;
-      state = state?.copyWith(environments: environmentsMap);
+      state = environmentsMap;
     }
   }
 
@@ -214,7 +195,7 @@ class EnvironmentCollectionStateNotifier
     required String environmentVariableId,
     required String value,
   }) {
-    Map<String, EnvironmentModel> environmentsMap = state?.environments ?? {};
+    Map<String, EnvironmentModel> environmentsMap = {...state};
     EnvironmentModel? activeEnvironmentModel = activeEnvModelData;
     if (activeEnvironmentModel != null) {
       EnvironmentVariableModel environmentVariableModel =
@@ -225,7 +206,23 @@ class EnvironmentCollectionStateNotifier
         isActive: !environmentVariableModel.isActive,
       );
       environmentsMap[activeEnvironmentModel.id] = activeEnvironmentModel;
-      state = state?.copyWith(environments: environmentsMap);
+      state = environmentsMap;
+    }
+  }
+
+  set toggleEnvironmentVariableCheckBox(String environmentVariableId) {
+    Map<String, EnvironmentModel> environmentsMap = {...state};
+    EnvironmentModel? activeEnvironmentModel = activeEnvModelData;
+    if (activeEnvironmentModel != null) {
+      EnvironmentVariableModel environmentVariableModel =
+          activeEnvironmentModel.variables[environmentVariableId]!;
+
+      activeEnvironmentModel.variables[environmentVariableId] =
+          environmentVariableModel.copyWith(
+        isActive: !environmentVariableModel.isActive,
+      );
+      environmentsMap[activeEnvironmentModel.id] = activeEnvironmentModel;
+      state = environmentsMap;
     }
   }
 }

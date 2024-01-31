@@ -182,13 +182,15 @@ class _EnvironmentsListCardState extends ConsumerState<EnvironmentsListCard> {
     final Color colorVariant =
         Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5);
 
-    EnvironmentCollectionStateNotifier environmentCollectionStateNotifier =
-        ref.read(environmentCollectionStateNotifierProvider.notifier);
+    EnvironmentsStateNotifier environmentCollectionStateNotifier =
+        ref.read(environmentsStateNotifierProvider.notifier);
 
     var sm = ScaffoldMessenger.of(context);
 
     final Color surfaceTint = Theme.of(context).colorScheme.primary;
+    Key activeCollectionKey = ValueKey(widget.environmentModel.inEditMode);
     return Tooltip(
+      key: activeCollectionKey,
       message: widget.environmentModel.name,
       waitDuration: const Duration(seconds: 1),
       child: Padding(
@@ -217,13 +219,15 @@ class _EnvironmentsListCardState extends ConsumerState<EnvironmentsListCard> {
                 );
                 return;
               }
-              environmentCollectionStateNotifier.changeToEditMode(
-                environmentId: widget.environmentModel.id,
+              environmentCollectionStateNotifier.update(
+                widget.environmentModel.id,
+                inEditMode: true,
               );
             },
             onTap: () {
-              environmentCollectionStateNotifier.activateEnvironment(
-                environmentId: widget.environmentModel.id,
+              environmentCollectionStateNotifier.update(
+                widget.environmentModel.id,
+                isActive: true,
               );
             },
             child: Padding(
@@ -239,10 +243,9 @@ class _EnvironmentsListCardState extends ConsumerState<EnvironmentsListCard> {
                   children: [
                     kHSpacer4,
                     Expanded(
+                      key: activeCollectionKey,
                       child: widget.environmentModel.inEditMode
                           ? TextFormField(
-                              key: ValueKey(
-                                  "${widget.environmentModel.id}-name"),
                               controller: nameController,
                               focusNode: ref
                                   .watch(environmentTextFieldFocusNodeProvider),
@@ -250,20 +253,20 @@ class _EnvironmentsListCardState extends ConsumerState<EnvironmentsListCard> {
                               style: Theme.of(context).textTheme.bodyMedium,
                               onTapOutside: (_) {
                                 if (nameController.text.isNotEmpty) {
-                                  environmentCollectionStateNotifier
-                                      .onEnvironmentNameChanged(
-                                    environmentId: widget.environmentModel.id,
+                                  environmentCollectionStateNotifier.update(
+                                    widget.environmentModel.id,
                                     name: nameController.text,
+                                    inEditMode: false,
                                   );
                                 }
                                 FocusScope.of(context).unfocus();
                               },
                               onFieldSubmitted: (value) {
                                 if (value.isNotEmpty) {
-                                  environmentCollectionStateNotifier
-                                      .onEnvironmentNameChanged(
-                                    environmentId: widget.environmentModel.id,
+                                  environmentCollectionStateNotifier.update(
+                                    widget.environmentModel.id,
                                     name: value,
+                                    inEditMode: false,
                                   );
                                 }
                                 FocusScope.of(context).unfocus();
@@ -306,14 +309,13 @@ class _EnvironmentsListCardState extends ConsumerState<EnvironmentsListCard> {
     switch (requestItemMenuOption) {
       case RequestItemMenuOption.delete:
         ref
-            .read(environmentCollectionStateNotifierProvider.notifier)
-            .deleteEnvironment(environmentId: widget.environmentModel.id);
+            .read(environmentsStateNotifierProvider.notifier)
+            .delete(widget.environmentModel.id);
         break;
       case RequestItemMenuOption.edit:
-        ref
-            .read(environmentCollectionStateNotifierProvider.notifier)
-            .changeToEditMode(
-              environmentId: widget.environmentModel.id,
+        ref.read(environmentsStateNotifierProvider.notifier).update(
+              widget.environmentModel.id,
+              inEditMode: true,
             );
         break;
       default:
