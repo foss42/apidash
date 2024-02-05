@@ -1,7 +1,8 @@
+import 'package:flutter/foundation.dart';
+
 class EnvironmentModel {
   final String id;
   final String name;
-  final bool isActive;
   final bool inEditMode;
   final Map<String, EnvironmentVariableModel> variables;
   List<EnvironmentVariableModel> get getEnvironmentVariables =>
@@ -11,7 +12,6 @@ class EnvironmentModel {
     required this.id,
     required this.name,
     required this.variables,
-    required this.isActive,
     required this.inEditMode,
   });
 
@@ -26,7 +26,6 @@ class EnvironmentModel {
       id: id ?? this.id,
       name: name ?? this.name,
       variables: variables ?? this.variables,
-      isActive: isActive ?? this.isActive,
       inEditMode: inEditMode ?? this.inEditMode,
     );
   }
@@ -40,9 +39,27 @@ class EnvironmentModel {
       id: environmentVariables['id'],
       name: environmentVariables['name'],
       variables: environmentVariables['variables'],
-      isActive: environmentVariables['isActive'],
       inEditMode: environmentVariables['inEditMode'] ?? false,
     );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is EnvironmentModel &&
+        other.id == id &&
+        other.name == name &&
+        other.inEditMode == inEditMode &&
+        mapEquals(other.variables, variables);
+  }
+
+  @override
+  int get hashCode {
+    return id.hashCode ^
+        name.hashCode ^
+        inEditMode.hashCode ^
+        variables.hashCode;
   }
 }
 
@@ -87,5 +104,21 @@ class EnvironmentVariableModel {
       value: value ?? this.value,
       isActive: isActive ?? this.isActive,
     );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is EnvironmentVariableModel &&
+        other.id == id &&
+        other.variable == variable &&
+        other.value == value &&
+        other.isActive == isActive;
+  }
+
+  @override
+  int get hashCode {
+    return id.hashCode ^ variable.hashCode ^ value.hashCode ^ isActive.hashCode;
   }
 }

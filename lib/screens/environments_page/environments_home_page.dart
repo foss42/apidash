@@ -17,7 +17,9 @@ class EnvironmentsPage extends ConsumerStatefulWidget {
 class _EnvironmentsPageState extends ConsumerState<EnvironmentsPage> {
   @override
   Widget build(BuildContext context) {
-    EnvironmentModel? activeEnvironment = ref.watch(activeEnvironmentProvider);
+    String? activeEnvironmentId = ref.watch(activeEnvironmentIdProvider);
+    EnvironmentModel? activeEnvironment =
+        ref.watch(environmentsStateNotifierProvider)[activeEnvironmentId];
     return Column(
       children: [
         Expanded(

@@ -41,8 +41,10 @@ class _EnvironmentsCollectionsPaneState
               keyId: row.data.id,
               value: rows[idx].isActive,
               onChanged: (value) {
-                environmentStateNotifier.toggleEnvironmentVariableCheckBox =
-                    rows[idx].id;
+                environmentStateNotifier.updateEnvironmentVariable(
+                  rows[idx].id,
+                  isActive: value,
+                );
               },
               colorScheme: Theme.of(context).colorScheme,
             );
@@ -60,8 +62,8 @@ class _EnvironmentsCollectionsPaneState
               initialValue: row.data.variable,
               hintText: "Add new Variable",
               onChanged: (value) {
-                environmentStateNotifier.onEnvironmentVariableChanged(
-                  environmentVariableId: rows[idx].id,
+                environmentStateNotifier.updateEnvironmentVariable(
+                  rows[idx].id,
                   variable: value,
                 );
               },
@@ -80,8 +82,8 @@ class _EnvironmentsCollectionsPaneState
               initialValue: rows[idx].value,
               hintText: " Add new Value",
               onChanged: (value) {
-                environmentStateNotifier.onEnvironmentValueChanged(
-                  environmentVariableId: rows[idx].id,
+                environmentStateNotifier.updateEnvironmentVariable(
+                  rows[idx].id,
                   value: value,
                 );
               },
@@ -109,7 +111,9 @@ class _EnvironmentsCollectionsPaneState
         ),
       ],
     );
+    String? activeEnv = ref.watch(activeEnvironmentIdProvider);
     return Padding(
+      key: ValueKey(activeEnv),
       padding: kIsMacOS || kIsWindows ? kPt24o8 : kP8,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

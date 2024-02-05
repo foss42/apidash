@@ -17,10 +17,10 @@ class _EnvironmentsCollectionsPaneState
     extends ConsumerState<EnvironmentsCollectionsPane> {
   @override
   Widget build(BuildContext context) {
-    String activeKey = ref.watch(activeEnvironmentIdProvider) ?? '';
-    Key collectionKey = ValueKey(activeKey);
+    // String activeKey = ref.watch(activeEnvironmentIdProvider) ?? '';
+    // Key collectionKey = ValueKey(activeKey);
     return Padding(
-      key: collectionKey,
+      // key: collectionKey,
       padding: kIsMacOS ? kP24CollectionPane : kP8CollectionPane,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -60,17 +60,14 @@ class EnvironmentsCollectionsList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    String activeKey = ref.watch(activeEnvironmentIdProvider) ?? '';
-    Key collectionKey = ValueKey(activeKey);
     List<EnvironmentModel> environments =
-        ref.watch(environmentsStateNotifierProvider.notifier).environmentModels;
+        ref.watch(environmentsStateNotifierProvider).values.toList();
 
     return ListView.builder(
       padding: kPr8CollectionPane,
       itemCount: environments.length,
       itemBuilder: (context, index) {
         return EnvironmentsListCard(
-          key: collectionKey,
           environmentModel: environments[index],
         );
       },
