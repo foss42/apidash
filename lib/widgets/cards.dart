@@ -189,6 +189,8 @@ class _EnvironmentsListCardState extends ConsumerState<EnvironmentsListCard> {
 
     final Color surfaceTint = Theme.of(context).colorScheme.primary;
     Key activeCollectionKey = ValueKey(widget.environmentModel.inEditMode);
+    bool isActive =
+        ref.watch(activeEnvironmentIdProvider) == widget.environmentModel.id;
     return Tooltip(
       key: activeCollectionKey,
       message: widget.environmentModel.name,
@@ -199,10 +201,9 @@ class _EnvironmentsListCardState extends ConsumerState<EnvironmentsListCard> {
           shape: const RoundedRectangleBorder(
             borderRadius: kBorderRadius8,
           ),
-          elevation: widget.environmentModel.isActive ? 1 : 0,
-          surfaceTintColor:
-              widget.environmentModel.isActive ? surfaceTint : null,
-          color: widget.environmentModel.isActive
+          elevation: isActive ? 1 : 0,
+          surfaceTintColor: isActive ? surfaceTint : null,
+          color: isActive
               ? Theme.of(context).colorScheme.brightness == Brightness.dark
                   ? colorVariant
                   : color
@@ -228,12 +229,13 @@ class _EnvironmentsListCardState extends ConsumerState<EnvironmentsListCard> {
               environmentCollectionStateNotifier.update(
                 widget.environmentModel.id,
                 isActive: true,
+                isSelect: true,
               );
             },
             child: Padding(
               padding: EdgeInsets.only(
                 left: 6,
-                right: widget.environmentModel.isActive ? 6 : 10,
+                right: isActive ? 6 : 10,
                 top: 5,
                 bottom: 5,
               ),
@@ -285,7 +287,7 @@ class _EnvironmentsListCardState extends ConsumerState<EnvironmentsListCard> {
                             ),
                     ),
                     Visibility(
-                      visible: widget.environmentModel.isActive &&
+                      visible: isActive &&
                           !(widget.environmentModel.inEditMode) &&
                           widget.environmentModel.name != "Globals",
                       child: SizedBox(
