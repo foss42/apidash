@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
+import 'package:multi_trigger_autocomplete/multi_trigger_autocomplete.dart';
 
 class EditorPaneRequestURLCard extends StatelessWidget {
   const EditorPaneRequestURLCard({super.key});
@@ -64,6 +65,27 @@ class DropdownButtonHTTPMethod extends ConsumerWidget {
   }
 }
 
+class EnvironmentChangeDropDown extends ConsumerWidget {
+  const EnvironmentChangeDropDown({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final method =
+        ref.watch(activeRequestModelProvider.select((value) => value?.method));
+    return DropdownButtonHttpMethod(
+      method: method,
+      onChanged: (HTTPVerb? value) {
+        final activeId = ref.read(activeRequestModelProvider)!.id;
+        ref
+            .read(collectionStateNotifierProvider.notifier)
+            .update(activeId, method: value);
+      },
+    );
+  }
+}
+
 class URLTextField extends ConsumerWidget {
   const URLTextField({
     super.key,
@@ -72,16 +94,47 @@ class URLTextField extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final activeId = ref.watch(activeIdStateProvider);
-    return URLField(
-      activeId: activeId!,
-      initialValue: ref
-          .read(collectionStateNotifierProvider.notifier)
-          .getRequestModel(activeId)
-          ?.url,
-      onChanged: (value) {
-        ref
-            .read(collectionStateNotifierProvider.notifier)
-            .update(activeId, url: value);
+    return MultiTriggerAutocomplete(
+      initialValue: TextEditingValue(
+        text: ref
+                .read(collectionStateNotifierProvider.notifier)
+                .getRequestModel(activeId!)
+                ?.url ??
+            '',
+      ),
+      autocompleteTriggers: [
+        // Add the triggers you want to use for autocomplete
+        AutocompleteTrigger(
+          trigger: '{{',
+          optionsViewBuilder: (context, autocompleteQuery, controller) {
+            print(autocompleteQuery.query);
+            return SizedBox(
+              child: Card(
+                child: ListView(
+                  shrinkWrap: true,
+                  children: const [
+                    ListTile(
+                      title: Text("TEst"),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+      ],
+      fieldViewBuilder: (context, textEditingController, focusNode) {
+        return URLField(
+          activeId: activeId,
+          // initialValue: ,
+          onChanged: (value) {
+            ref
+                .read(collectionStateNotifierProvider.notifier)
+                .update(activeId, url: value);
+          },
+          focusNode: focusNode,
+          controller: textEditingController,
+        );
       },
     );
   }

@@ -7,11 +7,15 @@ class URLField extends StatelessWidget {
     required this.activeId,
     this.initialValue,
     this.onChanged,
+    this.focusNode,
+    this.controller,
   });
 
   final String activeId;
   final String? initialValue;
   final void Function(String)? onChanged;
+  final FocusNode? focusNode;
+  final TextEditingController? controller;
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +33,8 @@ class URLField extends StatelessWidget {
         border: InputBorder.none,
       ),
       onChanged: onChanged,
+      focusNode: focusNode,
+      controller: controller,
     );
   }
 }
