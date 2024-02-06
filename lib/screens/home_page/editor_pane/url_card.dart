@@ -1,3 +1,5 @@
+import 'package:apidash/models/environments_list_model.dart';
+import 'package:apidash/providers/environment_collection_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
@@ -36,7 +38,7 @@ class EditorPaneRequestURLCard extends StatelessWidget {
               child: SendButton(),
             ),
             kHSpacer20,
-            DropdownButtonHTTPMethod(),
+            EnvironmentChangeDropDown(),
           ],
         ),
       ),
@@ -72,15 +74,13 @@ class EnvironmentChangeDropDown extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final method =
-        ref.watch(activeRequestModelProvider.select((value) => value?.method));
-    return DropdownButtonHttpMethod(
-      method: method,
-      onChanged: (HTTPVerb? value) {
-        final activeId = ref.read(activeRequestModelProvider)!.id;
-        ref
-            .read(collectionStateNotifierProvider.notifier)
-            .update(activeId, method: value);
+    String? activeEnvironmentId = ref.watch(activeEnvironmentIdProvider);
+    EnvironmentModel? activeEnvironment =
+        ref.watch(environmentsStateNotifierProvider)[activeEnvironmentId];
+    return DropdownButtonEnvironment(
+      method: activeEnvironment,
+      onChanged: (EnvironmentModel? value) {
+        print(value?.name);
       },
     );
   }
@@ -94,6 +94,9 @@ class URLTextField extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final activeId = ref.watch(activeIdStateProvider);
+    String? activeEnvironmentId = ref.watch(activeEnvironmentIdProvider);
+    EnvironmentModel? activeEnvironment =
+        ref.watch(environmentsStateNotifierProvider)[activeEnvironmentId];
     return MultiTriggerAutocomplete(
       initialValue: TextEditingValue(
         text: ref
@@ -107,17 +110,47 @@ class URLTextField extends ConsumerWidget {
         AutocompleteTrigger(
           trigger: '{{',
           optionsViewBuilder: (context, autocompleteQuery, controller) {
-            print(autocompleteQuery.query);
-            return SizedBox(
-              child: Card(
-                child: ListView(
-                  shrinkWrap: true,
-                  children: const [
-                    ListTile(
-                      title: Text("TEst"),
-                    ),
-                  ],
-                ),
+            List<EnvironmentVariableModel> environmentVariableNames =
+                (activeEnvironment?.variables.values
+                        .where(
+                            (e) => e.variable.contains(autocompleteQuery.query))
+                        .toList() ??
+                    []);
+            return Card(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: environmentVariableNames.isEmpty
+                    ? const IgnorePointer()
+                    : ListView.builder(
+                        itemCount: environmentVariableNames.length,
+                        shrinkWrap: true,
+                        itemBuilder: (BuildContext context, int index) {
+                          return InkWell(
+                            onTap: () {
+                              controller.selection =
+                                  autocompleteQuery.selection;
+                              String inserted =
+                                  '${environmentVariableNames[index].variable}}}';
+                              final text = controller.text;
+                              final selection = controller.selection;
+                              final newText = text.replaceRange(
+                                selection.start,
+                                selection.end,
+                                inserted,
+                              );
+                              controller.value = TextEditingValue(
+                                text: newText,
+                                selection: TextSelection.collapsed(
+                                    offset:
+                                        selection.baseOffset + inserted.length),
+                              );
+                            },
+                            child: Text(
+                              environmentVariableNames[index].variable,
+                            ),
+                          );
+                        },
+                      ),
               ),
             );
           },

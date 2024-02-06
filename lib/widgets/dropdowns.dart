@@ -1,6 +1,9 @@
+import 'package:apidash/models/environments_list_model.dart';
+import 'package:apidash/providers/environment_collection_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash/utils/utils.dart';
 import 'package:apidash/consts.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class DropdownButtonHttpMethod extends StatelessWidget {
   const DropdownButtonHttpMethod({
@@ -47,47 +50,54 @@ class DropdownButtonHttpMethod extends StatelessWidget {
   }
 }
 
-class DropdownButtonEnvironment extends StatelessWidget {
+class DropdownButtonEnvironment extends ConsumerWidget {
   const DropdownButtonEnvironment({
     super.key,
     this.method,
     this.onChanged,
   });
 
-  final HTTPVerb? method;
-  final void Function(HTTPVerb? value)? onChanged;
+  final EnvironmentModel? method;
+  final void Function(EnvironmentModel? value)? onChanged;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final environments = ref.watch(environmentsStateNotifierProvider);
     final surfaceColor = Theme.of(context).colorScheme.surface;
-    return DropdownButton<HTTPVerb>(
-      focusColor: surfaceColor,
-      value: method,
-      icon: const Icon(Icons.unfold_more_rounded),
-      elevation: 4,
-      underline: Container(
-        height: 0,
+    return Tooltip(
+      richMessage: const TextSpan(
+        text: "Environment",
       ),
-      borderRadius: kBorderRadius12,
-      onChanged: onChanged,
-      items: HTTPVerb.values.map<DropdownMenuItem<HTTPVerb>>((HTTPVerb value) {
-        return DropdownMenuItem<HTTPVerb>(
-          value: value,
-          child: Padding(
-            padding: const EdgeInsets.only(left: 16),
-            child: Text(
-              value.name.toUpperCase(),
-              style: kCodeStyle.copyWith(
-                fontWeight: FontWeight.bold,
-                color: getHTTPMethodColor(
-                  value,
-                  brightness: Theme.of(context).brightness,
+      child: DropdownButton<EnvironmentModel>(
+        focusColor: surfaceColor,
+        value: method,
+        icon: const Icon(
+          Icons.unfold_more_rounded,
+          size: 18,
+        ),
+        elevation: 4,
+        underline: Container(
+          height: 0,
+        ),
+        borderRadius: kBorderRadius12,
+        onChanged: onChanged,
+        items: environments.values
+            .map<DropdownMenuItem<EnvironmentModel>>((EnvironmentModel value) {
+          return DropdownMenuItem<EnvironmentModel>(
+            value: value,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 16),
+              child: Text(
+                value.name.toUpperCase(),
+                style: kCodeStyle.copyWith(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13,
                 ),
               ),
             ),
-          ),
-        );
-      }).toList(),
+          );
+        }).toList(),
+      ),
     );
   }
 }
