@@ -229,7 +229,7 @@ void main() {
         title: 'Response Body',
         theme: kThemeDataLight,
         home: Scaffold(
-          body: ResponseBody(activeRequestModel: requestModelNoResponseBody),
+          body: ResponseBody(selectedRequestModel: requestModelNoResponseBody),
         ),
       ),
     );
@@ -254,7 +254,8 @@ void main() {
         title: 'Response Body',
         theme: kThemeDataLight,
         home: Scaffold(
-          body: ResponseBody(activeRequestModel: requestModelNoResponseHeaders),
+          body:
+              ResponseBody(selectedRequestModel: requestModelNoResponseHeaders),
         ),
       ),
     );
@@ -281,7 +282,8 @@ void main() {
         title: 'Response Body',
         theme: kThemeDataLight,
         home: Scaffold(
-          body: ResponseBody(activeRequestModel: requestModelNoResponseHeaders),
+          body:
+              ResponseBody(selectedRequestModel: requestModelNoResponseHeaders),
         ),
       ),
     );
@@ -308,7 +310,8 @@ void main() {
         title: 'Response Body',
         theme: kThemeDataLight,
         home: Scaffold(
-          body: ResponseBody(activeRequestModel: requestModelNoResponseHeaders),
+          body:
+              ResponseBody(selectedRequestModel: requestModelNoResponseHeaders),
         ),
       ),
     );

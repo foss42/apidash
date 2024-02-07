@@ -287,14 +287,14 @@ class ResponseHeaders extends StatelessWidget {
 class ResponseBody extends StatelessWidget {
   const ResponseBody({
     super.key,
-    this.activeRequestModel,
+    this.selectedRequestModel,
   });
 
-  final RequestModel? activeRequestModel;
+  final RequestModel? selectedRequestModel;
 
   @override
   Widget build(BuildContext context) {
-    final responseModel = activeRequestModel?.responseModel;
+    final responseModel = selectedRequestModel?.responseModel;
     if (responseModel == null) {
       return const ErrorMessage(
           message:
@@ -332,7 +332,7 @@ class ResponseBody extends StatelessWidget {
     }
 
     return BodySuccess(
-      key: Key("${activeRequestModel!.id}-response"),
+      key: Key("${selectedRequestModel!.id}-response"),
       mediaType: mediaType,
       options: options,
       bytes: responseModel.bodyBytes!,

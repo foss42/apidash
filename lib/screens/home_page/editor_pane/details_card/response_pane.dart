@@ -95,9 +95,9 @@ class ResponseBodyTab extends ConsumerStatefulWidget {
 class _ResponseBodyTabState extends ConsumerState<ResponseBodyTab> {
   @override
   Widget build(BuildContext context) {
-    final activeRequestModel = ref.watch(selectedRequestModelProvider);
+    final selectedRequestModel = ref.watch(selectedRequestModelProvider);
     return ResponseBody(
-      activeRequestModel: activeRequestModel,
+      selectedRequestModel: selectedRequestModel,
     );
   }
 }
