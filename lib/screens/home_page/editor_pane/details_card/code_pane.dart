@@ -25,7 +25,7 @@ class _CodePaneState extends ConsumerState<CodePane> {
     final CodegenLanguage codegenLanguage =
         ref.watch(codegenLanguageStateProvider);
 
-    final activeRequestModel = ref.watch(activeRequestModelProvider);
+    final activeRequestModel = ref.watch(selectedRequestModelProvider);
     final defaultUriScheme =
         ref.watch(settingsProvider.select((value) => value.defaultUriScheme));
 

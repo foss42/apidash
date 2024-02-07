@@ -19,7 +19,7 @@ class _EditRequestBodyState extends ConsumerState<EditRequestBody> {
     final requestModel = ref
         .read(collectionStateNotifierProvider.notifier)
         .getRequestModel(activeId!);
-    final contentType = ref.watch(activeRequestModelProvider
+    final contentType = ref.watch(selectedRequestModelProvider
         .select((value) => value?.requestBodyContentType));
 
     return Container(
@@ -86,7 +86,7 @@ class _DropdownButtonBodyContentTypeState
   @override
   Widget build(BuildContext context) {
     final activeId = ref.watch(activeIdStateProvider);
-    final requestBodyContentType = ref.watch(activeRequestModelProvider
+    final requestBodyContentType = ref.watch(selectedRequestModelProvider
         .select((value) => value?.requestBodyContentType));
     return DropdownButtonContentType(
       contentType: requestBodyContentType,

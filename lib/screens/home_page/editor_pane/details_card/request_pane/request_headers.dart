@@ -37,16 +37,16 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
   @override
   Widget build(BuildContext context) {
     final activeId = ref.watch(activeIdStateProvider);
-    final length = ref.watch(activeRequestModelProvider
+    final length = ref.watch(selectedRequestModelProvider
         .select((value) => value?.requestHeaders?.length));
-    var rH = ref.read(activeRequestModelProvider)?.requestHeaders;
+    var rH = ref.read(selectedRequestModelProvider)?.requestHeaders;
     rows = (rH == null || rH.isEmpty)
         ? [
             kNameValueEmptyModel,
           ]
         : rH;
     isRowEnabledList =
-        ref.read(activeRequestModelProvider)?.isHeaderEnabledList ??
+        ref.read(selectedRequestModelProvider)?.isHeaderEnabledList ??
             List.filled(rows.length, true, growable: true);
 
     DaviModel<NameValueModel> model = DaviModel<NameValueModel>(

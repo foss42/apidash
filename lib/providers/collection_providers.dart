@@ -9,7 +9,7 @@ import 'package:http/http.dart' as http;
 
 final activeIdStateProvider = StateProvider<String?>((ref) => null);
 
-final activeRequestModelProvider = StateProvider<RequestModel?>((ref) {
+final selectedRequestModelProvider = StateProvider<RequestModel?>((ref) {
   final activeId = ref.watch(activeIdStateProvider);
   final collection = ref.watch(collectionStateNotifierProvider);
   if (activeId == null || collection == null) {

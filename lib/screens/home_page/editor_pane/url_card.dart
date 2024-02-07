@@ -48,12 +48,12 @@ class DropdownButtonHTTPMethod extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final method =
-        ref.watch(activeRequestModelProvider.select((value) => value?.method));
+    final method = ref
+        .watch(selectedRequestModelProvider.select((value) => value?.method));
     return DropdownButtonHttpMethod(
       method: method,
       onChanged: (HTTPVerb? value) {
-        final activeId = ref.read(activeRequestModelProvider)!.id;
+        final activeId = ref.read(selectedRequestModelProvider)!.id;
         ref
             .read(collectionStateNotifierProvider.notifier)
             .update(activeId, method: value);

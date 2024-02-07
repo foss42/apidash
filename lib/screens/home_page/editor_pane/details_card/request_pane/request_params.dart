@@ -38,16 +38,16 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
   @override
   Widget build(BuildContext context) {
     final activeId = ref.watch(activeIdStateProvider);
-    final length = ref.watch(activeRequestModelProvider
+    final length = ref.watch(selectedRequestModelProvider
         .select((value) => value?.requestParams?.length));
-    var rP = ref.read(activeRequestModelProvider)?.requestParams;
+    var rP = ref.read(selectedRequestModelProvider)?.requestParams;
     rows = (rP == null || rP.isEmpty)
         ? [
             kNameValueEmptyModel,
           ]
         : rP;
     isRowEnabledList =
-        ref.read(activeRequestModelProvider)?.isParamEnabledList ??
+        ref.read(selectedRequestModelProvider)?.isParamEnabledList ??
             List.filled(rows.length, true, growable: true);
 
     DaviModel<NameValueModel> model = DaviModel<NameValueModel>(

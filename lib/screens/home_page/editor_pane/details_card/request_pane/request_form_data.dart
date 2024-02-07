@@ -29,7 +29,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
   @override
   Widget build(BuildContext context) {
     final activeId = ref.watch(activeIdStateProvider);
-    var formRows = ref.read(activeRequestModelProvider)?.requestFormDataList;
+    var formRows = ref.read(selectedRequestModelProvider)?.requestFormDataList;
     rows =
         formRows == null || formRows.isEmpty ? [kFormDataEmptyModel] : formRows;
 

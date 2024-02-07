@@ -17,9 +17,9 @@ class _ResponsePaneState extends ConsumerState<ResponsePane> {
     final activeId = ref.watch(activeIdStateProvider);
     final sentRequestId = ref.watch(sentRequestIdStateProvider);
     final responseStatus = ref.watch(
-        activeRequestModelProvider.select((value) => value?.responseStatus));
-    final message =
-        ref.watch(activeRequestModelProvider.select((value) => value?.message));
+        selectedRequestModelProvider.select((value) => value?.responseStatus));
+    final message = ref
+        .watch(selectedRequestModelProvider.select((value) => value?.message));
     if (sentRequestId != null && sentRequestId == activeId) {
       return const SendingWidget();
     }
@@ -44,11 +44,11 @@ class _ResponseDetailsState extends ConsumerState<ResponseDetails> {
   @override
   Widget build(BuildContext context) {
     final responseStatus = ref.watch(
-        activeRequestModelProvider.select((value) => value?.responseStatus));
-    final message =
-        ref.watch(activeRequestModelProvider.select((value) => value?.message));
+        selectedRequestModelProvider.select((value) => value?.responseStatus));
+    final message = ref
+        .watch(selectedRequestModelProvider.select((value) => value?.message));
     final responseModel = ref.watch(
-        activeRequestModelProvider.select((value) => value?.responseModel));
+        selectedRequestModelProvider.select((value) => value?.responseModel));
     return Column(
       children: [
         ResponsePaneHeader(
@@ -95,7 +95,7 @@ class ResponseBodyTab extends ConsumerStatefulWidget {
 class _ResponseBodyTabState extends ConsumerState<ResponseBodyTab> {
   @override
   Widget build(BuildContext context) {
-    final activeRequestModel = ref.watch(activeRequestModelProvider);
+    final activeRequestModel = ref.watch(selectedRequestModelProvider);
     return ResponseBody(
       activeRequestModel: activeRequestModel,
     );
@@ -112,10 +112,10 @@ class ResponseHeadersTab extends ConsumerStatefulWidget {
 class _ResponseHeadersTabState extends ConsumerState<ResponseHeadersTab> {
   @override
   Widget build(BuildContext context) {
-    final requestHeaders = ref.watch(activeRequestModelProvider
+    final requestHeaders = ref.watch(selectedRequestModelProvider
             .select((value) => value?.responseModel?.requestHeaders)) ??
         {};
-    final responseHeaders = ref.watch(activeRequestModelProvider
+    final responseHeaders = ref.watch(selectedRequestModelProvider
             .select((value) => value?.responseModel?.headers)) ??
         {};
     return ResponseHeaders(
