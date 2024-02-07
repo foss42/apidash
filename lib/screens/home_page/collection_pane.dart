@@ -155,7 +155,7 @@ class RequestItem extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final activeRequestId = ref.watch(activeIdStateProvider);
-    final editRequestId = ref.watch(activeIdEditStateProvider);
+    final editRequestId = ref.watch(selectedIdEditStateProvider);
 
     return SidebarRequestCard(
       id: id,
@@ -169,7 +169,7 @@ class RequestItem extends ConsumerWidget {
       },
       // onDoubleTap: () {
       //   ref.read(activeIdStateProvider.notifier).state = id;
-      //   ref.read(activeIdEditStateProvider.notifier).state = id;
+      //   ref.read(selectedIdEditStateProvider.notifier).state = id;
       // },
       // controller: ref.watch(nameTextFieldControllerProvider),
       focusNode: ref.watch(nameTextFieldFocusNodeProvider),
@@ -180,7 +180,7 @@ class RequestItem extends ConsumerWidget {
             .update(editRequestId!, name: value);
       },
       onTapOutsideNameEditor: () {
-        ref.read(activeIdEditStateProvider.notifier).state = null;
+        ref.read(selectedIdEditStateProvider.notifier).state = null;
       },
       onMenuSelected: (RequestItemMenuOption item) {
         if (item == RequestItemMenuOption.edit) {
@@ -190,7 +190,7 @@ class RequestItem extends ConsumerWidget {
           // controller.selection = TextSelection.fromPosition(
           //   TextPosition(offset: controller.text.length),
           // );
-          ref.read(activeIdEditStateProvider.notifier).state = id;
+          ref.read(selectedIdEditStateProvider.notifier).state = id;
           Future.delayed(
             const Duration(milliseconds: 150),
             () => ref
