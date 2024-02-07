@@ -15,10 +15,10 @@ class EditRequestBody extends ConsumerStatefulWidget {
 class _EditRequestBodyState extends ConsumerState<EditRequestBody> {
   @override
   Widget build(BuildContext context) {
-    final activeId = ref.watch(activeIdStateProvider);
+    final selectedId = ref.watch(activeIdStateProvider);
     final requestModel = ref
         .read(collectionStateNotifierProvider.notifier)
-        .getRequestModel(activeId!);
+        .getRequestModel(selectedId!);
     final contentType = ref.watch(selectedRequestModelProvider
         .select((value) => value?.requestBodyContentType));
 
@@ -45,23 +45,23 @@ class _EditRequestBodyState extends ConsumerState<EditRequestBody> {
               child: switch (contentType) {
             ContentType.formdata => const FormDataWidget(),
             ContentType.json => TextFieldEditor(
-                key: Key("$activeId-json-body"),
-                fieldKey: "$activeId-json-body-editor",
+                key: Key("$selectedId-json-body"),
+                fieldKey: "$selectedId-json-body-editor",
                 initialValue: requestModel?.requestBody,
                 onChanged: (String value) {
                   ref
                       .read(collectionStateNotifierProvider.notifier)
-                      .update(activeId, requestBody: value);
+                      .update(selectedId, requestBody: value);
                 },
               ),
             _ => TextFieldEditor(
-                key: Key("$activeId-body"),
-                fieldKey: "$activeId-body-editor",
+                key: Key("$selectedId-body"),
+                fieldKey: "$selectedId-body-editor",
                 initialValue: requestModel?.requestBody,
                 onChanged: (String value) {
                   ref
                       .read(collectionStateNotifierProvider.notifier)
-                      .update(activeId, requestBody: value);
+                      .update(selectedId, requestBody: value);
                 },
               ),
           })
@@ -85,7 +85,7 @@ class _DropdownButtonBodyContentTypeState
     extends ConsumerState<DropdownButtonBodyContentType> {
   @override
   Widget build(BuildContext context) {
-    final activeId = ref.watch(activeIdStateProvider);
+    final selectedId = ref.watch(activeIdStateProvider);
     final requestBodyContentType = ref.watch(selectedRequestModelProvider
         .select((value) => value?.requestBodyContentType));
     return DropdownButtonContentType(
@@ -93,7 +93,7 @@ class _DropdownButtonBodyContentTypeState
       onChanged: (ContentType? value) {
         ref
             .read(collectionStateNotifierProvider.notifier)
-            .update(activeId!, requestBodyContentType: value);
+            .update(selectedId!, requestBodyContentType: value);
       },
     );
   }

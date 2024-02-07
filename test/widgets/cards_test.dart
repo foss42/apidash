@@ -16,7 +16,7 @@ void main() {
             children: [
               SidebarRequestCard(
                 id: '23',
-                activeRequestId: '2',
+                selectedId: '2',
                 url: 'https://api.foss42.com',
                 method: HTTPVerb.get,
                 onTap: () {
@@ -61,7 +61,7 @@ void main() {
             children: [
               SidebarRequestCard(
                 id: '2',
-                activeRequestId: '2',
+                selectedId: '2',
                 editRequestId: '2',
                 url: 'https://api.foss42.com',
                 method: HTTPVerb.get,

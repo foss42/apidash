@@ -14,13 +14,13 @@ class ResponsePane extends ConsumerStatefulWidget {
 class _ResponsePaneState extends ConsumerState<ResponsePane> {
   @override
   Widget build(BuildContext context) {
-    final activeId = ref.watch(activeIdStateProvider);
+    final selectedId = ref.watch(activeIdStateProvider);
     final sentRequestId = ref.watch(sentRequestIdStateProvider);
     final responseStatus = ref.watch(
         selectedRequestModelProvider.select((value) => value?.responseStatus));
     final message = ref
         .watch(selectedRequestModelProvider.select((value) => value?.message));
-    if (sentRequestId != null && sentRequestId == activeId) {
+    if (sentRequestId != null && sentRequestId == selectedId) {
       return const SendingWidget();
     }
     if (responseStatus == null) {
@@ -74,9 +74,9 @@ class ResponseTabs extends ConsumerStatefulWidget {
 class _ResponseTabsState extends ConsumerState<ResponseTabs> {
   @override
   Widget build(BuildContext context) {
-    final activeId = ref.watch(activeIdStateProvider);
+    final selectedId = ref.watch(activeIdStateProvider);
     return ResponseTabView(
-      activeId: activeId,
+      selectedId: selectedId,
       children: const [
         ResponseBodyTab(),
         ResponseHeadersTab(),

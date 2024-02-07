@@ -126,11 +126,11 @@ class ResponsePaneHeader extends StatelessWidget {
 class ResponseTabView extends StatefulWidget {
   const ResponseTabView({
     super.key,
-    this.activeId,
+    this.selectedId,
     required this.children,
   });
 
-  final String? activeId;
+  final String? selectedId;
   final List<Widget> children;
   @override
   State<ResponseTabView> createState() => _ResponseTabViewState();
@@ -155,7 +155,7 @@ class _ResponseTabViewState extends State<ResponseTabView>
     return Column(
       children: [
         TabBar(
-          key: Key(widget.activeId!),
+          key: Key(widget.selectedId!),
           controller: _controller,
           overlayColor: kColorTransparentState,
           onTap: (index) {},

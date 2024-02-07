@@ -10,12 +10,12 @@ import 'package:http/http.dart' as http;
 final activeIdStateProvider = StateProvider<String?>((ref) => null);
 
 final selectedRequestModelProvider = StateProvider<RequestModel?>((ref) {
-  final activeId = ref.watch(activeIdStateProvider);
+  final selectedId = ref.watch(activeIdStateProvider);
   final collection = ref.watch(collectionStateNotifierProvider);
-  if (activeId == null || collection == null) {
+  if (selectedId == null || collection == null) {
     return null;
   } else {
-    return collection[activeId];
+    return collection[selectedId];
   }
 });
 

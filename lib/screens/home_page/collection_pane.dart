@@ -162,7 +162,7 @@ class RequestItem extends ConsumerWidget {
       method: requestModel.method,
       name: requestModel.name,
       url: requestModel.url,
-      activeRequestId: activeRequestId,
+      selectedId: activeRequestId,
       editRequestId: editRequestId,
       onTap: () {
         ref.read(activeIdStateProvider.notifier).state = id;
