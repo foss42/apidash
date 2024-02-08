@@ -6,16 +6,11 @@ import 'request_headers.dart';
 import 'request_params.dart';
 import 'request_body.dart';
 
-class EditRequestPane extends ConsumerStatefulWidget {
+class EditRequestPane extends ConsumerWidget {
   const EditRequestPane({super.key});
 
   @override
-  ConsumerState<EditRequestPane> createState() => _EditRequestPaneState();
-}
-
-class _EditRequestPaneState extends ConsumerState<EditRequestPane> {
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final selectedId = ref.watch(activeIdStateProvider);
     final codePaneVisible = ref.watch(codePaneVisibleStateProvider);
     final tabIndex = ref.watch(
