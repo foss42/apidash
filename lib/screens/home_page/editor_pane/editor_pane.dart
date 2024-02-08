@@ -12,7 +12,7 @@ class RequestEditorPane extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedId = ref.watch(activeIdStateProvider);
+    final selectedId = ref.watch(selectedIdStateProvider);
     if (selectedId == null) {
       return const RequestEditorDefault();
     } else {

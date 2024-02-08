@@ -154,7 +154,7 @@ class RequestItem extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final activeRequestId = ref.watch(activeIdStateProvider);
+    final selectedId = ref.watch(selectedIdStateProvider);
     final editRequestId = ref.watch(selectedIdEditStateProvider);
 
     return SidebarRequestCard(
@@ -162,13 +162,13 @@ class RequestItem extends ConsumerWidget {
       method: requestModel.method,
       name: requestModel.name,
       url: requestModel.url,
-      selectedId: activeRequestId,
+      selectedId: selectedId,
       editRequestId: editRequestId,
       onTap: () {
-        ref.read(activeIdStateProvider.notifier).state = id;
+        ref.read(selectedIdStateProvider.notifier).state = id;
       },
       // onDoubleTap: () {
-      //   ref.read(activeIdStateProvider.notifier).state = id;
+      //   ref.read(selectedIdStateProvider.notifier).state = id;
       //   ref.read(selectedIdEditStateProvider.notifier).state = id;
       // },
       // controller: ref.watch(nameTextFieldControllerProvider),

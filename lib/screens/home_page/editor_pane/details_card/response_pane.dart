@@ -9,7 +9,7 @@ class ResponsePane extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedId = ref.watch(activeIdStateProvider);
+    final selectedId = ref.watch(selectedIdStateProvider);
     final sentRequestId = ref.watch(sentRequestIdStateProvider);
     final responseStatus = ref.watch(
         selectedRequestModelProvider.select((value) => value?.responseStatus));
@@ -59,7 +59,7 @@ class ResponseTabs extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedId = ref.watch(activeIdStateProvider);
+    final selectedId = ref.watch(selectedIdStateProvider);
     return ResponseTabView(
       selectedId: selectedId,
       children: const [

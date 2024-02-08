@@ -37,7 +37,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
 
   @override
   Widget build(BuildContext context) {
-    final selectedId = ref.watch(activeIdStateProvider);
+    final selectedId = ref.watch(selectedIdStateProvider);
     final length = ref.watch(selectedRequestModelProvider
         .select((value) => value?.requestParams?.length));
     var rP = ref.read(selectedRequestModelProvider)?.requestParams;

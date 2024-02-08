@@ -10,7 +10,7 @@ class EditRequestBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedId = ref.watch(activeIdStateProvider);
+    final selectedId = ref.watch(selectedIdStateProvider);
     final requestModel = ref
         .read(collectionStateNotifierProvider.notifier)
         .getRequestModel(selectedId!);
@@ -39,6 +39,7 @@ class EditRequestBody extends ConsumerWidget {
           Expanded(
             child: switch (contentType) {
               ContentType.formdata => const FormDataWidget(),
+              // TODO: Fix JsonTextFieldEditor & plug it here
               ContentType.json => TextFieldEditor(
                   key: Key("$selectedId-json-body"),
                   fieldKey: "$selectedId-json-body-editor",
@@ -74,7 +75,7 @@ class DropdownButtonBodyContentType extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedId = ref.watch(activeIdStateProvider);
+    final selectedId = ref.watch(selectedIdStateProvider);
     final requestBodyContentType = ref.watch(selectedRequestModelProvider
         .select((value) => value?.requestBodyContentType));
     return DropdownButtonContentType(
