@@ -27,9 +27,9 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
     seed = random.nextInt(kRandMax);
   }
 
-  void _onFieldChange(String activeId) {
+  void _onFieldChange(String selectedId) {
     ref.read(collectionStateNotifierProvider.notifier).update(
-          activeId,
+          selectedId,
           requestParams: rows,
           isParamEnabledList: isRowEnabledList,
         );
@@ -37,7 +37,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
 
   @override
   Widget build(BuildContext context) {
-    final activeId = ref.watch(activeIdStateProvider);
+    final selectedId = ref.watch(activeIdStateProvider);
     final length = ref.watch(selectedRequestModelProvider
         .select((value) => value?.requestParams?.length));
     var rP = ref.read(selectedRequestModelProvider)?.requestParams;
@@ -60,13 +60,13 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
             int idx = row.index;
 
             return CheckBox(
-              keyId: "$activeId-$idx-params-c-$seed",
+              keyId: "$selectedId-$idx-params-c-$seed",
               value: isRowEnabledList[idx],
               onChanged: (value) {
                 setState(() {
                   isRowEnabledList[idx] = value!;
                 });
-                _onFieldChange(activeId!);
+                _onFieldChange(selectedId!);
               },
               colorScheme: Theme.of(context).colorScheme,
             );
@@ -79,12 +79,12 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
           cellBuilder: (_, row) {
             int idx = row.index;
             return CellField(
-              keyId: "$activeId-$idx-params-k-$seed",
+              keyId: "$selectedId-$idx-params-k-$seed",
               initialValue: rows[idx].name,
               hintText: "Add URL Parameter",
               onChanged: (value) {
                 rows[idx] = rows[idx].copyWith(name: value);
-                _onFieldChange(activeId!);
+                _onFieldChange(selectedId!);
               },
               colorScheme: Theme.of(context).colorScheme,
             );
@@ -106,12 +106,12 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
           cellBuilder: (_, row) {
             int idx = row.index;
             return CellField(
-              keyId: "$activeId-$idx-params-v-$seed",
+              keyId: "$selectedId-$idx-params-v-$seed",
               initialValue: rows[idx].value,
               hintText: "Add Value",
               onChanged: (value) {
                 rows[idx] = rows[idx].copyWith(value: value);
-                _onFieldChange(activeId!);
+                _onFieldChange(selectedId!);
               },
               colorScheme: Theme.of(context).colorScheme,
             );
@@ -139,7 +139,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
                   rows.removeAt(row.index);
                   isRowEnabledList.removeAt(row.index);
                 }
-                _onFieldChange(activeId!);
+                _onFieldChange(selectedId!);
               },
             );
           },
@@ -173,7 +173,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
               onPressed: () {
                 rows.add(kNameValueEmptyModel);
                 isRowEnabledList.add(true);
-                _onFieldChange(activeId!);
+                _onFieldChange(selectedId!);
               },
               icon: const Icon(Icons.add),
               label: const Text(

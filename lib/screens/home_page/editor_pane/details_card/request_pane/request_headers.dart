@@ -26,9 +26,9 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
     seed = random.nextInt(kRandMax);
   }
 
-  void _onFieldChange(String activeId) {
+  void _onFieldChange(String selectedId) {
     ref.read(collectionStateNotifierProvider.notifier).update(
-          activeId,
+          selectedId,
           requestHeaders: rows,
           isHeaderEnabledList: isRowEnabledList,
         );
@@ -36,7 +36,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
 
   @override
   Widget build(BuildContext context) {
-    final activeId = ref.watch(activeIdStateProvider);
+    final selectedId = ref.watch(activeIdStateProvider);
     final length = ref.watch(selectedRequestModelProvider
         .select((value) => value?.requestHeaders?.length));
     var rH = ref.read(selectedRequestModelProvider)?.requestHeaders;
@@ -58,13 +58,13 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
           cellBuilder: (_, row) {
             int idx = row.index;
             return CheckBox(
-              keyId: "$activeId-$idx-headers-c-$seed",
+              keyId: "$selectedId-$idx-headers-c-$seed",
               value: isRowEnabledList[idx],
               onChanged: (value) {
                 setState(() {
                   isRowEnabledList[idx] = value!;
                 });
-                _onFieldChange(activeId!);
+                _onFieldChange(selectedId!);
               },
               colorScheme: Theme.of(context).colorScheme,
             );
@@ -77,12 +77,12 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
           cellBuilder: (_, row) {
             int idx = row.index;
             return HeaderField(
-              keyId: "$activeId-$idx-headers-k-$seed",
+              keyId: "$selectedId-$idx-headers-k-$seed",
               initialValue: rows[idx].name,
               hintText: "Add Header Name",
               onChanged: (value) {
                 rows[idx] = rows[idx].copyWith(name: value);
-                _onFieldChange(activeId!);
+                _onFieldChange(selectedId!);
               },
               colorScheme: Theme.of(context).colorScheme,
             );
@@ -104,12 +104,12 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
           cellBuilder: (_, row) {
             int idx = row.index;
             return CellField(
-              keyId: "$activeId-$idx-headers-v-$seed",
+              keyId: "$selectedId-$idx-headers-v-$seed",
               initialValue: rows[idx].value,
               hintText: " Add Header Value",
               onChanged: (value) {
                 rows[idx] = rows[idx].copyWith(value: value);
-                _onFieldChange(activeId!);
+                _onFieldChange(selectedId!);
               },
               colorScheme: Theme.of(context).colorScheme,
             );
@@ -137,7 +137,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
                   rows.removeAt(row.index);
                   isRowEnabledList.removeAt(row.index);
                 }
-                _onFieldChange(activeId!);
+                _onFieldChange(selectedId!);
               },
             );
           },
@@ -171,7 +171,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
               onPressed: () {
                 rows.add(kNameValueEmptyModel);
                 isRowEnabledList.add(true);
-                _onFieldChange(activeId!);
+                _onFieldChange(selectedId!);
               },
               icon: const Icon(Icons.add),
               label: const Text(

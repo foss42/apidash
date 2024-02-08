@@ -26,7 +26,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final activeId = ref.watch(activeIdStateProvider);
+    final selectedId = ref.watch(activeIdStateProvider);
     var formRows = ref.read(selectedRequestModelProvider)?.requestFormDataList;
     rows =
         formRows == null || formRows.isEmpty ? [kFormDataEmptyModel] : formRows;
@@ -43,14 +43,14 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
             return Theme(
               data: Theme.of(context),
               child: FormDataField(
-                keyId: "$activeId-$idx-form-v-$seed",
+                keyId: "$selectedId-$idx-form-v-$seed",
                 initialValue: rows[idx].name,
                 hintText: " Add Key",
                 onChanged: (value) {
                   rows[idx] = rows[idx].copyWith(
                     name: value,
                   );
-                  _onFieldChange(activeId!);
+                  _onFieldChange(selectedId!);
                 },
                 colorScheme: Theme.of(context).colorScheme,
                 formDataType: rows[idx].type,
@@ -60,7 +60,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                   );
                   rows[idx] = rows[idx].copyWith(value: "");
                   setState(() {});
-                  _onFieldChange(activeId!);
+                  _onFieldChange(selectedId!);
                 },
               ),
             );
@@ -113,7 +113,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                                     value: pickedResult.files.first.path!,
                                   );
                                   setState(() {});
-                                  _onFieldChange(activeId!);
+                                  _onFieldChange(selectedId!);
                                 }
                               },
                               label: Text(
@@ -132,12 +132,12 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                     ),
                   )
                 : CellField(
-                    keyId: "$activeId-$idx-form-v-$seed",
+                    keyId: "$selectedId-$idx-form-v-$seed",
                     initialValue: rows[idx].value,
                     hintText: " Add Value",
                     onChanged: (value) {
                       rows[idx] = rows[idx].copyWith(value: value);
-                      _onFieldChange(activeId!);
+                      _onFieldChange(selectedId!);
                     },
                     colorScheme: Theme.of(context).colorScheme,
                   );
@@ -161,7 +161,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                 } else {
                   rows.removeAt(row.index);
                 }
-                _onFieldChange(activeId!);
+                _onFieldChange(selectedId!);
                 setState(() {});
               },
             );
@@ -197,7 +197,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                 setState(() {
                   rows.add(kFormDataEmptyModel);
                 });
-                _onFieldChange(activeId!);
+                _onFieldChange(selectedId!);
               },
               icon: const Icon(Icons.add),
               label: const Text(
@@ -211,9 +211,9 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
     );
   }
 
-  void _onFieldChange(String activeId) {
+  void _onFieldChange(String selectedId) {
     ref.read(collectionStateNotifierProvider.notifier).update(
-          activeId,
+          selectedId,
           requestFormDataList: rows,
         );
   }

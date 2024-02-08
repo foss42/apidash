@@ -22,8 +22,8 @@ class _RequestEditorPaneState extends ConsumerState<RequestEditorPane> {
 
   @override
   Widget build(BuildContext context) {
-    final activeId = ref.watch(activeIdStateProvider);
-    if (activeId == null) {
+    final selectedId = ref.watch(activeIdStateProvider);
+    if (selectedId == null) {
       return const RequestEditorDefault();
     } else {
       return Padding(

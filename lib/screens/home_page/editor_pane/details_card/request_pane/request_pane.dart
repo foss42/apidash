@@ -16,7 +16,7 @@ class EditRequestPane extends ConsumerStatefulWidget {
 class _EditRequestPaneState extends ConsumerState<EditRequestPane> {
   @override
   Widget build(BuildContext context) {
-    final activeId = ref.watch(activeIdStateProvider);
+    final selectedId = ref.watch(activeIdStateProvider);
     final codePaneVisible = ref.watch(codePaneVisibleStateProvider);
     final tabIndex = ref.watch(
         selectedRequestModelProvider.select((value) => value?.requestTabIndex));
@@ -29,7 +29,7 @@ class _EditRequestPaneState extends ConsumerState<EditRequestPane> {
         .select((value) => value?.requestBody?.length));
 
     return RequestPane(
-      activeId: activeId,
+      selectedId: selectedId,
       codePaneVisible: codePaneVisible,
       tabIndex: tabIndex,
       onPressedCodeButton: () {
@@ -39,7 +39,7 @@ class _EditRequestPaneState extends ConsumerState<EditRequestPane> {
       onTapTabBar: (index) {
         ref
             .read(collectionStateNotifierProvider.notifier)
-            .update(activeId!, requestTabIndex: index);
+            .update(selectedId!, requestTabIndex: index);
       },
       showIndicators: [
         paramLength != null && paramLength > 0,
