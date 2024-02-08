@@ -4,6 +4,7 @@ import 'package:path/path.dart' as p;
 import 'package:mime_dart/mime_dart.dart';
 import 'package:uuid/uuid.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:file_picker/file_picker.dart';
 
 const uuid = Uuid();
 
@@ -49,4 +50,9 @@ String getShortPath(String path) {
 
 String getTempFileName() {
   return uuid.v1();
+}
+
+Future<FilePickerResult?> pickFile() async {
+  FilePickerResult? pickedResult = await FilePicker.platform.pickFiles();
+  return pickedResult;
 }

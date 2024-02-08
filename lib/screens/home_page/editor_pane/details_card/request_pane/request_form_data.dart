@@ -1,14 +1,12 @@
 import 'dart:math';
-import 'package:apidash/consts.dart';
-import 'package:apidash/models/form_data_model.dart';
-import 'package:apidash/models/models.dart';
-import 'package:apidash/providers/collection_providers.dart';
-import 'package:apidash/widgets/form_data_field.dart';
-import 'package:apidash/widgets/textfields.dart';
-import 'package:davi/davi.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:davi/davi.dart';
+import 'package:apidash/providers/providers.dart';
+import 'package:apidash/widgets/widgets.dart';
+import 'package:apidash/models/models.dart';
+import 'package:apidash/utils/utils.dart';
+import 'package:apidash/consts.dart';
 
 class FormDataWidget extends ConsumerStatefulWidget {
   const FormDataWidget({super.key});
@@ -107,8 +105,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                                 ),
                               ),
                               onPressed: () async {
-                                FilePickerResult? pickedResult =
-                                    await FilePicker.platform.pickFiles();
+                                var pickedResult = await pickFile();
                                 if (pickedResult != null &&
                                     pickedResult.files.isNotEmpty &&
                                     pickedResult.files.first.path != null) {
