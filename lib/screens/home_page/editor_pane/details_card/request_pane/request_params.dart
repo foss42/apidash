@@ -16,9 +16,9 @@ class EditRequestURLParams extends ConsumerStatefulWidget {
 }
 
 class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
+  final random = Random.secure();
   late List<NameValueModel> rows;
   late List<bool> isRowEnabledList;
-  final random = Random.secure();
   late int seed;
 
   @override
@@ -58,7 +58,6 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
           width: 30,
           cellBuilder: (_, row) {
             int idx = row.index;
-
             return CheckBox(
               keyId: "$selectedId-$idx-params-c-$seed",
               value: isRowEnabledList[idx],
