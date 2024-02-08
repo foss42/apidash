@@ -15,9 +15,9 @@ class EditRequestHeaders extends ConsumerStatefulWidget {
 }
 
 class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
+  final random = Random.secure();
   late List<NameValueModel> rows;
   late List<bool> isRowEnabledList;
-  final random = Random.secure();
   late int seed;
 
   @override
