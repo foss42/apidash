@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:apidash/models/environments_list_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:apidash/utils/utils.dart';
 import 'package:apidash/models/models.dart';
@@ -10,9 +11,12 @@ Future<(http.Response?, Duration?, String?)> request(
   RequestModel requestModel, {
   String defaultUriScheme = kDefaultUriScheme,
   bool isMultiPartRequest = false,
+  List<EnvironmentVariableModel> environmentVariables = const [],
 }) async {
+  String convertedUrl = getOriginalValueFormat(
+      url: requestModel.url, envVars: environmentVariables);
   (Uri?, String?) uriRec = getValidRequestUri(
-    requestModel.url,
+    convertedUrl,
     requestModel.enabledRequestParams,
     defaultUriScheme: defaultUriScheme,
   );

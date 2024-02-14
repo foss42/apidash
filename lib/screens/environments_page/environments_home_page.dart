@@ -17,17 +17,17 @@ class EnvironmentsPage extends ConsumerStatefulWidget {
 class _EnvironmentsPageState extends ConsumerState<EnvironmentsPage> {
   @override
   Widget build(BuildContext context) {
-    String? activeEnvironmentId = ref.watch(activeEnvironmentIdProvider);
-    EnvironmentModel? activeEnvironment =
-        ref.watch(environmentsStateNotifierProvider)[activeEnvironmentId];
+    String? selectedEnvironmentId = ref.watch(selectedEnvironmentIdProvider);
+    EnvironmentModel? selectedEnvironment =
+        ref.watch(environmentsStateNotifierProvider)[selectedEnvironmentId];
     return Column(
       children: [
         Expanded(
           child: DashboardSplitView(
             sidebarWidget: const EnvironmentsCollectionsPane(),
-            mainWidget: activeEnvironment != null
+            mainWidget: selectedEnvironment != null
                 ? EnvironmentsEditorPane(
-                    environmentModel: activeEnvironment,
+                    environmentModel: selectedEnvironment,
                   )
                 : Center(
                     child: Text(

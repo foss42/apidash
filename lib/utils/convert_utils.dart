@@ -1,8 +1,11 @@
 import 'dart:typed_data';
 import 'dart:convert';
+import 'package:apidash/models/environments_list_model.dart';
+
 import '../models/models.dart';
 import '../consts.dart';
 import 'package:http/http.dart' as http;
+import 'package:jinja/jinja.dart' as jj;
 
 String humanizeDuration(Duration? duration) {
   if (duration == null) {
@@ -173,4 +176,28 @@ List<NameValueModel>? getEnabledRows(
   List<NameValueModel> finalRows =
       rows.where((element) => isRowEnabledList[rows.indexOf(element)]).toList();
   return finalRows == [] ? null : finalRows;
+}
+
+/// this will provide the original converted string formats from the environment data
+String getOriginalValueFormat({
+  List<EnvironmentVariableModel> envVars = const [],
+  String url = "",
+}) {
+  var templateStartUrl = jj.Template(url);
+
+  RegExp regExp = RegExp(r'{{(.*?)}}');
+  Iterable<Match> matches = regExp.allMatches(url);
+
+  Map<String, String> variableOccurrences = {};
+  for (Match match in matches) {
+    String matchVariable = (match.group(1) ?? "").trim();
+    if (matchVariable.isNotEmpty) {
+      String matchValue = envVars
+          .firstWhere((element) => element.variable == matchVariable)
+          .value;
+      variableOccurrences[matchVariable] = matchValue;
+    }
+  }
+  url = templateStartUrl.render(variableOccurrences);
+  return url;
 }

@@ -74,13 +74,17 @@ class EnvironmentChangeDropDown extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    String? activeEnvironmentId = ref.watch(activeEnvironmentIdProvider);
-    EnvironmentModel? activeEnvironment =
-        ref.watch(environmentsStateNotifierProvider)[activeEnvironmentId];
+    Map<String, EnvironmentModel>? environments =
+        ref.watch(environmentsStateNotifierProvider);
+    String? activeEnvironmentId =
+        ref.watch(activeEnvironmentIdProvider) ?? environments?.keys.first;
+
     return DropdownButtonEnvironment(
-      method: activeEnvironment,
+      method: environments?[activeEnvironmentId],
       onChanged: (EnvironmentModel? value) {
-        print(value?.name);
+        ref
+            .read(activeEnvironmentIdProvider.notifier)
+            .update((state) => value?.id);
       },
     );
   }
@@ -95,8 +99,17 @@ class URLTextField extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final activeId = ref.watch(activeIdStateProvider);
     String? activeEnvironmentId = ref.watch(activeEnvironmentIdProvider);
-    EnvironmentModel? activeEnvironment =
-        ref.watch(environmentsStateNotifierProvider)[activeEnvironmentId];
+    Map<String, EnvironmentModel>? environments =
+        ref.watch(environmentsStateNotifierProvider);
+
+    List<EnvironmentVariableModel> activeEnvironmentVariables =
+        environments?.keys.first == activeEnvironmentId
+            ? []
+            : (environments?[activeEnvironmentId]?.variables.values ?? [])
+                .toList();
+    List<EnvironmentVariableModel> globalEnvironment =
+        (environments?.values.first.variables.values ?? []).toList();
+
     return MultiTriggerAutocomplete(
       initialValue: TextEditingValue(
         text: ref
@@ -106,16 +119,17 @@ class URLTextField extends ConsumerWidget {
             '',
       ),
       autocompleteTriggers: [
-        // Add the triggers you want to use for autocomplete
         AutocompleteTrigger(
           trigger: '{{',
           optionsViewBuilder: (context, autocompleteQuery, controller) {
-            List<EnvironmentVariableModel> environmentVariableNames =
-                (activeEnvironment?.variables.values
-                        .where(
-                            (e) => e.variable.contains(autocompleteQuery.query))
-                        .toList() ??
-                    []);
+            List<EnvironmentVariableModel> environmentVariableNames = ([
+              ...globalEnvironment,
+              ...activeEnvironmentVariables
+            ]
+                .where((EnvironmentVariableModel environmentVariable) =>
+                    environmentVariable.variable
+                        .contains(autocompleteQuery.query))
+                .toList());
             return Card(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -138,11 +152,9 @@ class URLTextField extends ConsumerWidget {
                                 selection.end,
                                 inserted,
                               );
-                              controller.value = TextEditingValue(
-                                text: newText,
-                                selection: TextSelection.collapsed(
-                                    offset:
-                                        selection.baseOffset + inserted.length),
+                              controller.text = newText;
+                              controller.selection = TextSelection.collapsed(
+                                offset: selection.baseOffset + inserted.length,
                               );
                             },
                             child: Text(

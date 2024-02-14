@@ -190,7 +190,7 @@ class _EnvironmentsListCardState extends ConsumerState<EnvironmentsListCard> {
     final Color surfaceTint = Theme.of(context).colorScheme.primary;
     Key activeCollectionKey = ValueKey(widget.environmentModel.inEditMode);
     bool isActive =
-        ref.watch(activeEnvironmentIdProvider) == widget.environmentModel.id;
+        ref.watch(selectedEnvironmentIdProvider) == widget.environmentModel.id;
     return Tooltip(
       key: activeCollectionKey,
       message: widget.environmentModel.name,

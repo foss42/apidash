@@ -160,6 +160,20 @@ class CollectionStateNotifier
   Future<void> sendRequest(String id) async {
     ref.read(sentRequestIdStateProvider.notifier).state = id;
     ref.read(codePaneVisibleStateProvider.notifier).state = false;
+
+    String? activeEnvironmentId = ref.watch(activeEnvironmentIdProvider);
+    Map<String, EnvironmentModel>? environments =
+        ref.watch(environmentsStateNotifierProvider);
+
+    List<EnvironmentVariableModel> activeEnvironmentVariables =
+        environments?.keys.first == activeEnvironmentId
+            ? []
+            : (environments?[activeEnvironmentId]?.variables.values ?? [])
+                .toList();
+    List<EnvironmentVariableModel> globalEnvironment =
+        (environments?.values.first.variables.values ?? []).toList();
+    List<EnvironmentVariableModel> environmentVariableNames =
+        ([...globalEnvironment, ...activeEnvironmentVariables]);
     final defaultUriScheme =
         ref.read(settingsProvider.select((value) => value.defaultUriScheme));
     RequestModel requestModel = state![id]!;
@@ -168,6 +182,7 @@ class CollectionStateNotifier
       defaultUriScheme: defaultUriScheme,
       isMultiPartRequest:
           requestModel.requestBodyContentType == ContentType.formdata,
+      environmentVariables: environmentVariableNames,
     );
     late final RequestModel newRequestModel;
     if (responseRec.$1 == null) {

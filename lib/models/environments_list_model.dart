@@ -19,7 +19,6 @@ class EnvironmentModel {
     String? id,
     String? name,
     Map<String, EnvironmentVariableModel>? variables,
-    bool? isActive,
     bool? inEditMode,
   }) {
     return EnvironmentModel(
@@ -31,7 +30,12 @@ class EnvironmentModel {
   }
 
   Map<String, dynamic>? toJson() {
-    return null;
+    return {
+      'id': id,
+      'name': name,
+      'variables': variables.values.map((e) => e.toJson()).toList(),
+      'inEditMode': inEditMode,
+    };
   }
 
   static EnvironmentModel fromJson(environmentVariables) {

@@ -6,6 +6,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 final activeEnvironmentIdProvider = StateProvider<String?>((ref) {
   return null;
 });
+final selectedEnvironmentIdProvider = StateProvider<String?>((ref) {
+  return null;
+});
 
 final environmentsStateNotifierProvider = StateNotifierProvider<
     EnvironmentsStateNotifier, Map<String, EnvironmentModel>>((ref) {
@@ -25,11 +28,21 @@ class EnvironmentsStateNotifier
   final HiveHandler hiveHandler;
   final Ref ref;
 
+  EnvironmentModel? get selectedEnvModelData {
+    final selectedId = ref.read(selectedEnvironmentIdProvider);
+
+    if (selectedId == null) {
+      return state.values.first;
+    } else {
+      return state[selectedId];
+    }
+  }
+
   EnvironmentModel? get activeEnvModelData {
     final activeId = ref.read(activeEnvironmentIdProvider);
 
     if (activeId == null) {
-      return null;
+      return state.values.first;
     } else {
       return state[activeId];
     }
@@ -72,7 +85,7 @@ class EnvironmentsStateNotifier
       );
 
       Future.delayed(Duration.zero, () {
-        ref.read(activeEnvironmentIdProvider.notifier).update((state) => id);
+        ref.read(selectedEnvironmentIdProvider.notifier).update((state) => id);
       });
       state = {
         id: initialGlobalState,
@@ -93,7 +106,7 @@ class EnvironmentsStateNotifier
       variables: {},
       inEditMode: true,
     );
-    ref.read(activeEnvironmentIdProvider.notifier).update((state) => id);
+    ref.read(selectedEnvironmentIdProvider.notifier).update((state) => id);
 
     state = environmentsMap;
     print(state.length);
@@ -113,7 +126,6 @@ class EnvironmentsStateNotifier
 
     final envModel = state[id]!.copyWith(
       inEditMode: inEditMode,
-      isActive: isActive,
       name: name,
       variables: variables,
     );
@@ -125,7 +137,7 @@ class EnvironmentsStateNotifier
         .update((state) => [...state, id]);
 
     if (isSelect ?? false) {
-      ref.read(activeEnvironmentIdProvider.notifier).update((state) => id);
+      ref.read(selectedEnvironmentIdProvider.notifier).update((state) => id);
     }
   }
 
@@ -149,7 +161,7 @@ class EnvironmentsStateNotifier
       isActive: true,
     );
     Map<String, EnvironmentModel> environmentsMap = {...state};
-    EnvironmentModel? activeEnvironmentModel = activeEnvModelData;
+    EnvironmentModel? activeEnvironmentModel = selectedEnvModelData;
     if (activeEnvironmentModel != null) {
       activeEnvironmentModel.variables.addEntries(
         [
@@ -168,7 +180,7 @@ class EnvironmentsStateNotifier
     required String environmentVariableIndexId,
   }) {
     Map<String, EnvironmentModel> environmentsMap = {...state};
-    EnvironmentModel? activeEnvironmentModel = activeEnvModelData;
+    EnvironmentModel? activeEnvironmentModel = selectedEnvModelData;
     if (activeEnvironmentModel != null) {
       activeEnvironmentModel.variables.remove(environmentVariableIndexId);
       state = environmentsMap;
@@ -182,7 +194,7 @@ class EnvironmentsStateNotifier
     bool? isActive,
   }) {
     Map<String, EnvironmentModel> environmentsMap = {...state};
-    EnvironmentModel? activeEnvironmentModel = activeEnvModelData;
+    EnvironmentModel? activeEnvironmentModel = selectedEnvModelData;
     if (activeEnvironmentModel != null) {
       EnvironmentVariableModel environmentVariableModel =
           activeEnvironmentModel.variables[environmentVariableId]!;

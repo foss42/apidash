@@ -2,7 +2,6 @@ import 'package:apidash/consts.dart';
 import 'package:apidash/models/environments_list_model.dart';
 import 'package:apidash/providers/environment_collection_providers.dart';
 import 'package:apidash/widgets/checkbox.dart';
-import 'package:apidash/widgets/headerfield.dart';
 import 'package:apidash/widgets/textfields.dart';
 import 'package:davi/davi.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -56,8 +55,7 @@ class _EnvironmentsCollectionsPaneState
           grow: 1,
           cellBuilder: (_, row) {
             int idx = row.index;
-
-            return HeaderField(
+            return CellField(
               keyId: row.data.id,
               initialValue: row.data.variable,
               hintText: "Add new Variable",
@@ -111,9 +109,9 @@ class _EnvironmentsCollectionsPaneState
         ),
       ],
     );
-    String? activeEnv = ref.watch(activeEnvironmentIdProvider);
+    String? selectedEnv = ref.watch(selectedEnvironmentIdProvider);
     return Padding(
-      key: ValueKey(activeEnv),
+      key: ValueKey(selectedEnv),
       padding: kIsMacOS || kIsWindows ? kPt24o8 : kP8,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
