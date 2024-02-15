@@ -21,8 +21,13 @@ class ResponsePane extends ConsumerWidget {
     if (responseStatus == null) {
       return const NotSentWidget();
     }
+
     if (responseStatus == -1) {
       return ErrorMessage(message: '$message. $kUnexpectedRaiseIssue');
+    }
+
+    if(responseStatus == -2){
+      return const CancelledWidget();
     }
     return const ResponseDetails();
   }
