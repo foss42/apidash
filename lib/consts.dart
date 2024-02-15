@@ -496,6 +496,7 @@ const kHintTextUrlCard = "Enter API endpoint like api.foss42.com/country/codes";
 const kLabelPlusNew = "+ New";
 const kLabelSend = "Send";
 const kLabelSending = "Sending..";
+const kLabelCancel = "Cancel";
 const kLabelBusy = "Busy";
 const kLabelCopy = "Copy";
 const kLabelSave = "Save";
