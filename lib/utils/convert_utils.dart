@@ -1,8 +1,8 @@
-import 'dart:typed_data';
 import 'dart:convert';
-import '../models/models.dart';
+import 'dart:typed_data';
+
 import '../consts.dart';
-import 'package:http/http.dart' as http;
+import '../models/models.dart';
 
 String humanizeDuration(Duration? duration) {
   if (duration == null) {
@@ -148,22 +148,23 @@ Uint8List jsonMapToBytes(Map<String, dynamic>? map) {
   }
 }
 
-Future<http.Response> convertStreamedResponse(
-  http.StreamedResponse streamedResponse,
-) async {
-  Uint8List bodyBytes = await streamedResponse.stream.toBytes();
-
-  http.Response response = http.Response.bytes(
-    bodyBytes,
-    streamedResponse.statusCode,
-    headers: streamedResponse.headers,
-    persistentConnection: streamedResponse.persistentConnection,
-    reasonPhrase: streamedResponse.reasonPhrase,
-    request: streamedResponse.request,
-  );
-
-  return response;
-}
+// Not Required for Dio Package
+// Future<http.Response> convertStreamedResponse(
+//   http.StreamedResponse streamedResponse,
+// ) async {
+//   Uint8List bodyBytes = await streamedResponse.stream.toBytes();
+//
+//   http.Response response = http.Response.bytes(
+//     bodyBytes,
+//     streamedResponse.statusCode,
+//     headers: streamedResponse.headers,
+//     persistentConnection: streamedResponse.persistentConnection,
+//     reasonPhrase: streamedResponse.reasonPhrase,
+//     request: streamedResponse.request,
+//   );
+//
+//   return response;
+// }
 
 List<NameValueModel>? getEnabledRows(
     List<NameValueModel>? rows, List<bool>? isRowEnabledList) {
@@ -173,4 +174,12 @@ List<NameValueModel>? getEnabledRows(
   List<NameValueModel> finalRows =
       rows.where((element) => isRowEnabledList[rows.indexOf(element)]).toList();
   return finalRows == [] ? null : finalRows;
+}
+
+Map<String, String> convertFromDynamic(Map<String, dynamic> map) {
+  return map.map((key, value) => MapEntry(key, value.toString()));
+}
+
+Map<String, String> convertResponseHeaders(Map<String, List<dynamic>> map) {
+  return map.map((key, value) => MapEntry(key, value[0].toString()));
 }
