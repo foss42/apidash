@@ -1,7 +1,7 @@
 import 'dart:typed_data';
+import 'package:dio/dio.dart';
 import 'package:test/test.dart';
 import 'package:apidash/models/response_model.dart';
-import 'package:http/http.dart' as http;
 
 void main() {
   int statusCode = 200;
@@ -80,8 +80,8 @@ void main() {
   });
 
   test('Testing fromResponse', () async {
-    final response = await http.get(
-      Uri.parse('https://api.foss42.com/'),
+    final response = await Dio().get(
+      'https://api.foss42.com/',
     );
     final responseData = responseModel.fromResponse(response: response);
     expect(responseData.statusCode, 200);
@@ -92,8 +92,8 @@ void main() {
 }''');
   });
   test('Testing fromResponse for contentType not Json', () async {
-    final response = await http.get(
-      Uri.parse('https://foss42.com/'),
+    final response = await Dio().get(
+      'https://foss42.com/',
     );
     final responseData = responseModel.fromResponse(response: response);
     expect(responseData.statusCode, 200);
