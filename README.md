@@ -205,4 +205,4 @@ You can contribute to API Dash in any or all of the following ways:
 
 ## Need Any Help?
 
-In case you need any help with API Dash or are encountering any issue while running the tool, please feel free to drop by our [Discord server](https://bit.ly/heyfoss) and we can have a chat in the **#foss** channel.
+In case you need any help with API Dash or are encountering any issue while running the tool, please feel free to drop by our [Discord server](https://bit.ly/heyfoss) and we can have a chat in the **#foss-apidash** channel.
