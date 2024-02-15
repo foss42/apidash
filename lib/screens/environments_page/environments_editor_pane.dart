@@ -55,7 +55,7 @@ class _EnvironmentsCollectionsPaneState
           grow: 1,
           cellBuilder: (_, row) {
             int idx = row.index;
-            return CellField(
+            return EnvironmentEditField(
               keyId: row.data.id,
               initialValue: row.data.variable,
               hintText: "Add new Variable",
@@ -75,7 +75,7 @@ class _EnvironmentsCollectionsPaneState
           grow: 1,
           cellBuilder: (_, row) {
             int idx = row.index;
-            return CellField(
+            return EnvironmentEditField(
               keyId: row.data.id,
               initialValue: rows[idx].value,
               hintText: " Add new Value",

@@ -13,8 +13,10 @@ Future<(http.Response?, Duration?, String?)> request(
   bool isMultiPartRequest = false,
   List<EnvironmentVariableModel> environmentVariables = const [],
 }) async {
-  String convertedUrl = getOriginalValueFormat(
-      url: requestModel.url, envVars: environmentVariables);
+  String convertedUrl = envParamConversion(
+    url: requestModel.url,
+    envVars: environmentVariables,
+  );
   (Uri?, String?) uriRec = getValidRequestUri(
     convertedUrl,
     requestModel.enabledRequestParams,

@@ -179,7 +179,7 @@ List<NameValueModel>? getEnabledRows(
 }
 
 /// this will provide the original converted string formats from the environment data
-String getOriginalValueFormat({
+String envParamConversion({
   List<EnvironmentVariableModel> envVars = const [],
   String url = "",
 }) {
