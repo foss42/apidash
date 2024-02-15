@@ -50,28 +50,30 @@ class SendRequestButton extends StatelessWidget {
     required this.selectedId,
     required this.sentRequestId,
     required this.onTap,
+    required this.cancel,
   });
 
   final String? selectedId;
   final String? sentRequestId;
   final void Function() onTap;
+  final void Function() cancel;
 
   @override
   Widget build(BuildContext context) {
-    bool disable = sentRequestId != null;
+    bool disableSend = sentRequestId != null;
     return FilledButton(
-      onPressed: disable ? null : onTap,
+      onPressed: disableSend ? cancel : onTap,
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            disable
-                ? (selectedId == sentRequestId ? kLabelSending : kLabelBusy)
+            disableSend
+                ? (selectedId == sentRequestId ? kLabelCancel : kLabelBusy)
                 : kLabelSend,
             style: kTextStyleButton,
           ),
-          if (!disable) kHSpacer10,
-          if (!disable)
+          if (!disableSend) kHSpacer10,
+          if (!disableSend)
             const Icon(
               size: 16,
               Icons.send,

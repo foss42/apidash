@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'settings_providers.dart';
 import 'ui_providers.dart';
@@ -5,7 +6,6 @@ import '../models/models.dart';
 import '../services/services.dart' show hiveHandler, HiveHandler, request;
 import '../utils/utils.dart' show uuid, collectionToHAR;
 import '../consts.dart';
-import 'package:http/http.dart' as http;
 
 final selectedIdStateProvider = StateProvider<String?>((ref) => null);
 
@@ -46,6 +46,13 @@ class CollectionStateNotifier
   final Ref ref;
   final HiveHandler hiveHandler;
   final baseResponseModel = const ResponseModel();
+  CancelToken _cancelToken = CancelToken();
+
+  @override
+  void dispose() {
+    _cancelToken.cancel();
+    super.dispose();
+  }
 
   bool hasId(String id) => state?.keys.contains(id) ?? false;
 
@@ -155,30 +162,42 @@ class CollectionStateNotifier
     state = map;
   }
 
+  Future<void> cancelRequest() async{
+    _cancelToken.cancel();
+    _cancelToken = CancelToken();
+  }
+
   Future<void> sendRequest(String id) async {
     ref.read(sentRequestIdStateProvider.notifier).state = id;
     ref.read(codePaneVisibleStateProvider.notifier).state = false;
     final defaultUriScheme =
         ref.read(settingsProvider.select((value) => value.defaultUriScheme));
     RequestModel requestModel = state![id]!;
-    (http.Response?, Duration?, String?)? responseRec = await request(
+    (Response?, Duration?, String?)? responseRec = await request(
       requestModel,
+      cancelToken: _cancelToken,
       defaultUriScheme: defaultUriScheme,
       isMultiPartRequest:
           requestModel.requestBodyContentType == ContentType.formdata,
     );
     late final RequestModel newRequestModel;
     if (responseRec.$1 == null) {
-      newRequestModel = requestModel.copyWith(
-        responseStatus: -1,
-        message: responseRec.$3,
-      );
+      if(responseRec.$3=='DioExceptionType.cancel'){
+        newRequestModel = requestModel.copyWith(
+          responseStatus: -2,
+        );
+      }else{
+        newRequestModel = requestModel.copyWith(
+          responseStatus: -1,
+          message: responseRec.$3,
+        );
+      }
     } else {
       final responseModel = baseResponseModel.fromResponse(
         response: responseRec.$1!,
         time: responseRec.$2!,
       );
-      int statusCode = responseRec.$1!.statusCode;
+      int statusCode = responseRec.$1!.statusCode!;
       newRequestModel = requestModel.copyWith(
         responseStatus: statusCode,
         message: kResponseCodeReasons[statusCode],
