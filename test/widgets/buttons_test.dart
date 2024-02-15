@@ -41,6 +41,7 @@ void main() {
             onTap: () {
               changedValue = 'Send';
             },
+            cancel: (){},
           ),
         ),
       ),
@@ -55,6 +56,34 @@ void main() {
     expect(changedValue, 'Send');
   });
 
+  testWidgets('Testing for Send Request Button when request cancelled', (tester) async {
+    dynamic changedValue;
+    await tester.pumpWidget(
+      MaterialApp(
+        title: 'Send Request button',
+        theme: kThemeDataLight,
+        home: Scaffold(
+          body: SendRequestButton(
+            selectedId: '1',
+            sentRequestId: '1',
+            onTap: () {},
+            cancel: (){
+              changedValue = 'Cancel';
+            },
+          ),
+        ),
+      ),
+    );
+
+    expect(find.byIcon(Icons.send), findsNothing);
+    expect(find.text(kLabelCancel), findsOneWidget);
+    final button1 = find.byType(FilledButton);
+    expect(button1, findsOneWidget);
+
+    await tester.tap(button1);
+    expect(changedValue, 'Cancel');
+  });
+
   testWidgets('Testing for Send Request button when sentRequestId is not null',
       (tester) async {
     await tester.pumpWidget(
@@ -66,6 +95,7 @@ void main() {
             selectedId: '1',
             sentRequestId: '2',
             onTap: () {},
+            cancel: (){},
           ),
         ),
       ),
@@ -90,6 +120,7 @@ void main() {
             selectedId: '1',
             sentRequestId: '1',
             onTap: () {},
+            cancel: (){},
           ),
         ),
       ),
