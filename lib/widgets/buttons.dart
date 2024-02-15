@@ -1,8 +1,9 @@
+import 'package:apidash/consts.dart';
+import 'package:apidash/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:apidash/utils/utils.dart';
-import 'package:apidash/consts.dart';
+
 import "snackbars.dart";
 
 class CopyButton extends StatelessWidget {
@@ -62,7 +63,17 @@ class SendRequestButton extends StatelessWidget {
   Widget build(BuildContext context) {
     bool disableSend = sentRequestId != null;
     return FilledButton(
-      onPressed: disableSend ? cancel : onTap,
+      style: ButtonStyle(
+        backgroundColor: getBackgroundColor(
+          context,
+          disableSend,
+        ),
+      ),
+      onPressed: disableSend
+          ? (selectedId == sentRequestId)
+              ? cancel
+              : null
+          : onTap,
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -72,15 +83,30 @@ class SendRequestButton extends StatelessWidget {
                 : kLabelSend,
             style: kTextStyleButton,
           ),
-          if (!disableSend) kHSpacer10,
-          if (!disableSend)
-            const Icon(
+          if (selectedId == sentRequestId && disableSend) kHSpacer10,
+          if (selectedId == sentRequestId && disableSend)
+            Icon(
               size: 16,
-              Icons.send,
+              disableSend ? Icons.cancel_outlined : Icons.send,
             ),
         ],
       ),
     );
+  }
+
+  MaterialStateProperty<Color>? getBackgroundColor(
+      BuildContext context, bool disableSend) {
+    final cancel = Theme.of(context).brightness == Brightness.dark
+        ? kColorDarkDanger
+        : kColorLightDanger;
+    final send = Theme.of(context).colorScheme.primary;
+
+    return MaterialStateProperty.resolveWith((states) {
+      if (!states.contains(MaterialState.disabled)) {
+        return disableSend ? cancel : send;
+      }
+      return Theme.of(context).disabledColor;
+    });
   }
 }
 
