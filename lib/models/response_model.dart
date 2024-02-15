@@ -1,11 +1,12 @@
-import 'dart:io';
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
-import 'package:collection/collection.dart' show mergeMaps;
-import 'package:http/http.dart';
-import 'package:http_parser/http_parser.dart';
-import 'package:apidash/utils/utils.dart';
+import 'dart:io';
+
 import 'package:apidash/consts.dart';
+import 'package:apidash/utils/utils.dart';
+import 'package:collection/collection.dart' show mergeMaps;
+import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
+import 'package:http_parser/http_parser.dart';
 
 @immutable
 class ResponseModel {
@@ -28,26 +29,30 @@ class ResponseModel {
   final Duration? time;
 
   String? get contentType => getContentTypeFromHeaders(headers);
+
   MediaType? get mediaType => getMediaTypeFromHeaders(headers);
 
   ResponseModel fromResponse({
     required Response response,
     Duration? time,
   }) {
-    final responseHeaders = mergeMaps(
-        {HttpHeaders.contentLengthHeader: response.contentLength.toString()},
-        response.headers);
+    final responseHeaders = mergeMaps({
+      HttpHeaders.contentLengthHeader:
+          response.headers.map.values.length.toString()
+    }, convertResponseHeaders(response.headers.map));
     MediaType? mediaType = getMediaTypeFromHeaders(responseHeaders);
     final body = (mediaType?.subtype == kSubTypeJson)
-        ? utf8.decode(response.bodyBytes)
-        : response.body;
+        ? utf8.decode(response.data)
+        : response.data;
     return ResponseModel(
       statusCode: response.statusCode,
       headers: responseHeaders,
-      requestHeaders: response.request?.headers,
+      requestHeaders: convertFromDynamic(response.requestOptions.headers),
       body: body,
       formattedBody: formatBody(body, mediaType),
-      bodyBytes: response.bodyBytes,
+      bodyBytes: (mediaType?.subtype == kSubTypeJson)
+          ? response.data
+          : utf8.encode(response.data),
       time: time,
     );
   }
