@@ -15,7 +15,6 @@ dependencies:
   flutter_riverpod: ^2.3.7
   uuid: ^4.1.0
   davi: ^3.4.1
-  http: ^1.1.0
   http_parser: ^4.0.2
   collection: ^1.17.2
   google_fonts: ^6.1.0
@@ -54,6 +53,7 @@ dependencies:
   code_builder: ^4.9.0
   dart_style: ^2.3.4
   json_text_field: ^1.1.0
+  dio: ^5.4.0
 
 dev_dependencies:
   flutter_test:
