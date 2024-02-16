@@ -126,11 +126,11 @@ class ResponsePaneHeader extends StatelessWidget {
 class ResponseTabView extends StatefulWidget {
   const ResponseTabView({
     super.key,
-    this.activeId,
+    this.selectedId,
     required this.children,
   });
 
-  final String? activeId;
+  final String? selectedId;
   final List<Widget> children;
   @override
   State<ResponseTabView> createState() => _ResponseTabViewState();
@@ -155,7 +155,7 @@ class _ResponseTabViewState extends State<ResponseTabView>
     return Column(
       children: [
         TabBar(
-          key: Key(widget.activeId!),
+          key: Key(widget.selectedId!),
           controller: _controller,
           overlayColor: kColorTransparentState,
           onTap: (index) {},
@@ -287,14 +287,14 @@ class ResponseHeaders extends StatelessWidget {
 class ResponseBody extends StatelessWidget {
   const ResponseBody({
     super.key,
-    this.activeRequestModel,
+    this.selectedRequestModel,
   });
 
-  final RequestModel? activeRequestModel;
+  final RequestModel? selectedRequestModel;
 
   @override
   Widget build(BuildContext context) {
-    final responseModel = activeRequestModel?.responseModel;
+    final responseModel = selectedRequestModel?.responseModel;
     if (responseModel == null) {
       return const ErrorMessage(
           message:
@@ -332,7 +332,7 @@ class ResponseBody extends StatelessWidget {
     }
 
     return BodySuccess(
-      key: Key("${activeRequestModel!.id}-response"),
+      key: Key("${selectedRequestModel!.id}-response"),
       mediaType: mediaType,
       options: options,
       bytes: responseModel.bodyBytes!,
@@ -437,57 +437,48 @@ class _BodySuccessState extends State<BodySuccess> {
                 ],
               ),
               kVSpacer10,
-              Visibility(
-                visible: currentSeg == ResponseBodyView.preview ||
-                    currentSeg == ResponseBodyView.none,
-                child: Expanded(
-                  child: Container(
-                    width: double.maxFinite,
-                    padding: kP8,
-                    decoration: textContainerdecoration,
-                    child: Previewer(
-                      bytes: widget.bytes,
-                      body: widget.body,
-                      type: widget.mediaType.type,
-                      subtype: widget.mediaType.subtype,
-                      hasRaw: widget.options.contains(ResponseBodyView.raw),
+              switch (currentSeg) {
+                ResponseBodyView.preview || ResponseBodyView.none => Expanded(
+                    child: Container(
+                      width: double.maxFinite,
+                      padding: kP8,
+                      decoration: textContainerdecoration,
+                      child: Previewer(
+                        bytes: widget.bytes,
+                        body: widget.body,
+                        type: widget.mediaType.type,
+                        subtype: widget.mediaType.subtype,
+                        hasRaw: widget.options.contains(ResponseBodyView.raw),
+                      ),
                     ),
                   ),
-                ),
-              ),
-              if (widget.formattedBody != null)
-                Visibility(
-                  visible: currentSeg == ResponseBodyView.code,
-                  child: Expanded(
+                ResponseBodyView.code => Expanded(
                     child: Container(
                       width: double.maxFinite,
                       padding: kP8,
                       decoration: textContainerdecoration,
                       child: CodePreviewer(
-                        code: widget.formattedBody!,
+                        code: widget.formattedBody ?? widget.body,
                         theme: codeTheme,
                         language: widget.highlightLanguage,
                         textStyle: kCodeStyle,
                       ),
                     ),
                   ),
-                ),
-              Visibility(
-                visible: currentSeg == ResponseBodyView.raw,
-                child: Expanded(
-                  child: Container(
-                    width: double.maxFinite,
-                    padding: kP8,
-                    decoration: textContainerdecoration,
-                    child: SingleChildScrollView(
-                      child: SelectableText(
-                        widget.formattedBody ?? widget.body,
-                        style: kCodeStyle,
+                ResponseBodyView.raw => Expanded(
+                    child: Container(
+                      width: double.maxFinite,
+                      padding: kP8,
+                      decoration: textContainerdecoration,
+                      child: SingleChildScrollView(
+                        child: SelectableText(
+                          widget.formattedBody ?? widget.body,
+                          style: kCodeStyle,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ),
+              }
             ],
           ),
         );

@@ -25,6 +25,7 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
     String? defaultUriScheme,
     CodegenLanguage? defaultCodeGenLang,
     bool? saveResponses,
+    bool? promptBeforeClosing,
   }) async {
     state = state.copyWith(
       isDark: isDark,
@@ -34,6 +35,7 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
       defaultUriScheme: defaultUriScheme,
       defaultCodeGenLang: defaultCodeGenLang,
       saveResponses: saveResponses,
+      promptBeforeClosing: promptBeforeClosing,
     );
     await hiveHandler.saveSettings(state.toJson());
   }

@@ -11,7 +11,7 @@ void main() {
         title: 'URL Field',
         theme: kThemeDataDark,
         home: const Scaffold(
-          body: Column(children: [URLField(activeId: '2')]),
+          body: Column(children: [URLField(selectedId: '2')]),
         ),
       ),
     );

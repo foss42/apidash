@@ -16,7 +16,7 @@ class SidebarRequestCard extends StatelessWidget {
     required this.method,
     this.name,
     this.url,
-    this.activeRequestId,
+    this.selectedId,
     this.editRequestId,
     this.onTap,
     this.onDoubleTap,
@@ -32,7 +32,7 @@ class SidebarRequestCard extends StatelessWidget {
   final String? name;
   final String? url;
   final HTTPVerb method;
-  final String? activeRequestId;
+  final String? selectedId;
   final String? editRequestId;
   final void Function()? onTap;
   final void Function()? onDoubleTap;
@@ -49,7 +49,7 @@ class SidebarRequestCard extends StatelessWidget {
     final Color colorVariant =
         Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5);
     final Color surfaceTint = Theme.of(context).colorScheme.primary;
-    bool isActiveId = activeRequestId == id;
+    bool isSelected = selectedId == id;
     bool inEditMode = editRequestId == id;
     String nm = (name != null && name!.trim().isNotEmpty)
         ? name!
@@ -61,9 +61,9 @@ class SidebarRequestCard extends StatelessWidget {
         shape: const RoundedRectangleBorder(
           borderRadius: kBorderRadius8,
         ),
-        elevation: isActiveId ? 1 : 0,
-        surfaceTintColor: isActiveId ? surfaceTint : null,
-        color: isActiveId
+        elevation: isSelected ? 1 : 0,
+        surfaceTintColor: isSelected ? surfaceTint : null,
+        color: isSelected
             ? Theme.of(context).colorScheme.brightness == Brightness.dark
                 ? colorVariant
                 : color
@@ -79,7 +79,7 @@ class SidebarRequestCard extends StatelessWidget {
           child: Padding(
             padding: EdgeInsets.only(
               left: 6,
-              right: isActiveId ? 6 : 10,
+              right: isSelected ? 6 : 10,
               top: 5,
               bottom: 5,
             ),
@@ -116,7 +116,7 @@ class SidebarRequestCard extends StatelessWidget {
                           ),
                   ),
                   Visibility(
-                    visible: isActiveId && !inEditMode,
+                    visible: isSelected && !inEditMode,
                     child: SizedBox(
                       width: 28,
                       child: RequestCardMenu(

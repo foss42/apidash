@@ -53,15 +53,15 @@ class DropdownButtonHTTPMethod extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final method =
-        ref.watch(activeRequestModelProvider.select((value) => value?.method));
+    final method = ref
+        .watch(selectedRequestModelProvider.select((value) => value?.method));
     return DropdownButtonHttpMethod(
       method: method,
       onChanged: (HTTPVerb? value) {
-        final activeId = ref.read(activeRequestModelProvider)!.id;
+        final selectedId = ref.read(selectedRequestModelProvider)!.id;
         ref
             .read(collectionStateNotifierProvider.notifier)
-            .update(activeId, method: value);
+            .update(selectedId, method: value);
       },
     );
   }
@@ -97,16 +97,16 @@ class URLTextField extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final activeId = ref.watch(activeIdStateProvider) ?? "";
+    final selectedId = ref.watch(selectedIdStateProvider);
 
     return EnvironmentAutoSuggestionWidget(
       builder: (context, textEditingController, focusNode) {
         return URLField(
-          activeId: activeId,
+          selectedId: selectedId,
           onChanged: (value) {
             ref
                 .read(collectionStateNotifierProvider.notifier)
-                .update(activeId, url: value);
+                .update(selectedId, url: value);
           },
           focusNode: focusNode,
           controller: textEditingController,
@@ -114,13 +114,13 @@ class URLTextField extends ConsumerWidget {
       },
       onEnvironmentVariableTap: (updatedText) {
         ref.read(collectionStateNotifierProvider.notifier).update(
-              activeId,
+              selectedId,
               url: updatedText,
             );
       },
       initialValue: ref
               .read(collectionStateNotifierProvider.notifier)
-              .getRequestModel(activeId)
+              .getRequestModel(selectedId!)
               ?.url ??
           '',
     );
@@ -134,15 +134,15 @@ class SendButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final activeId = ref.watch(activeIdStateProvider);
+    final selectedId = ref.watch(selectedIdStateProvider);
     final sentRequestId = ref.watch(sentRequestIdStateProvider);
     return SendRequestButton(
-      activeId: activeId,
+      selectedId: selectedId,
       sentRequestId: sentRequestId,
       onTap: () {
         ref
             .read(collectionStateNotifierProvider.notifier)
-            .sendRequest(activeId!);
+            .sendRequest(selectedId!);
       },
     );
   }

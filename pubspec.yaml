@@ -54,6 +54,7 @@ dependencies:
   code_builder: ^4.9.0
   dart_style: ^2.3.4
   multi_trigger_autocomplete: ^1.0.0
+  json_text_field: ^1.1.0
 
 dev_dependencies:
   flutter_test:

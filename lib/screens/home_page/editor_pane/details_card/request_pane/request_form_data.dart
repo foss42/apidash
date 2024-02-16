@@ -1,14 +1,12 @@
 import 'dart:math';
-import 'package:apidash/consts.dart';
-import 'package:apidash/models/form_data_model.dart';
-import 'package:apidash/models/models.dart';
-import 'package:apidash/providers/collection_providers.dart';
-import 'package:apidash/widgets/form_data_field.dart';
-import 'package:apidash/widgets/textfields.dart';
-import 'package:davi/davi.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:davi/davi.dart';
+import 'package:apidash/providers/providers.dart';
+import 'package:apidash/widgets/widgets.dart';
+import 'package:apidash/models/models.dart';
+import 'package:apidash/utils/utils.dart';
+import 'package:apidash/consts.dart';
 
 class FormDataWidget extends ConsumerStatefulWidget {
   const FormDataWidget({super.key});
@@ -28,8 +26,8 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final activeId = ref.watch(activeIdStateProvider);
-    var formRows = ref.read(activeRequestModelProvider)?.requestFormDataList;
+    final selectedId = ref.watch(selectedIdStateProvider);
+    var formRows = ref.read(selectedRequestModelProvider)?.requestFormDataList;
     rows =
         formRows == null || formRows.isEmpty ? [kFormDataEmptyModel] : formRows;
 
@@ -45,14 +43,14 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
             return Theme(
               data: Theme.of(context),
               child: FormDataField(
-                keyId: "$activeId-$idx-form-v-$seed",
+                keyId: "$selectedId-$idx-form-v-$seed",
                 initialValue: rows[idx].name,
                 hintText: " Add Key",
                 onChanged: (value) {
                   rows[idx] = rows[idx].copyWith(
                     name: value,
                   );
-                  _onFieldChange(activeId!);
+                  _onFieldChange(selectedId!);
                 },
                 colorScheme: Theme.of(context).colorScheme,
                 formDataType: rows[idx].type,
@@ -62,7 +60,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                   );
                   rows[idx] = rows[idx].copyWith(value: "");
                   setState(() {});
-                  _onFieldChange(activeId!);
+                  _onFieldChange(selectedId!);
                 },
               ),
             );
@@ -107,8 +105,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                                 ),
                               ),
                               onPressed: () async {
-                                FilePickerResult? pickedResult =
-                                    await FilePicker.platform.pickFiles();
+                                var pickedResult = await pickFile();
                                 if (pickedResult != null &&
                                     pickedResult.files.isNotEmpty &&
                                     pickedResult.files.first.path != null) {
@@ -116,7 +113,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                                     value: pickedResult.files.first.path!,
                                   );
                                   setState(() {});
-                                  _onFieldChange(activeId!);
+                                  _onFieldChange(selectedId!);
                                 }
                               },
                               label: Text(
@@ -135,12 +132,12 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                     ),
                   )
                 : CellField(
-                    keyId: "$activeId-$idx-form-v-$seed",
+                    keyId: "$selectedId-$idx-form-v-$seed",
                     initialValue: rows[idx].value,
                     hintText: " Add Value",
                     onChanged: (value) {
                       rows[idx] = rows[idx].copyWith(value: value);
-                      _onFieldChange(activeId!);
+                      _onFieldChange(selectedId!);
                     },
                     colorScheme: Theme.of(context).colorScheme,
                   );
@@ -164,7 +161,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                 } else {
                   rows.removeAt(row.index);
                 }
-                _onFieldChange(activeId!);
+                _onFieldChange(selectedId!);
                 setState(() {});
               },
             );
@@ -200,7 +197,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                 setState(() {
                   rows.add(kFormDataEmptyModel);
                 });
-                _onFieldChange(activeId!);
+                _onFieldChange(selectedId!);
               },
               icon: const Icon(Icons.add),
               label: const Text(
@@ -214,9 +211,9 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
     );
   }
 
-  void _onFieldChange(String activeId) {
+  void _onFieldChange(String selectedId) {
     ref.read(collectionStateNotifierProvider.notifier).update(
-          activeId,
+          selectedId,
           requestFormDataList: rows,
         );
   }

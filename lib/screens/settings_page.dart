@@ -112,6 +112,18 @@ class SettingsPage extends ConsumerWidget {
                       .update(saveResponses: value);
                 },
               ),
+              CheckboxListTile(
+                contentPadding: EdgeInsets.zero,
+                title: const Text("Show Save Alert on App Close"),
+                subtitle: const Text(
+                    "Show a confirmation dialog to save workspace when the user closes the app"),
+                value: settings.promptBeforeClosing,
+                onChanged: (value) {
+                  ref
+                      .read(settingsProvider.notifier)
+                      .update(promptBeforeClosing: value);
+                },
+              ),
               ListTile(
                 contentPadding: EdgeInsets.zero,
                 hoverColor: kColorTransparent,

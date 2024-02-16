@@ -36,7 +36,7 @@ void main() {
         theme: kThemeDataLight,
         home: Scaffold(
           body: SendRequestButton(
-            activeId: '1',
+            selectedId: '1',
             sentRequestId: null,
             onTap: () {
               changedValue = 'Send';
@@ -63,7 +63,7 @@ void main() {
         theme: kThemeDataLight,
         home: Scaffold(
           body: SendRequestButton(
-            activeId: '1',
+            selectedId: '1',
             sentRequestId: '2',
             onTap: () {},
           ),
@@ -79,7 +79,7 @@ void main() {
     expect(tester.widget<FilledButton>(button1).enabled, isFalse);
   });
 
-  testWidgets('Testing for Send Request button when sentRequestId = activeId',
+  testWidgets('Testing for Send Request button when sentRequestId = selectedId',
       (tester) async {
     await tester.pumpWidget(
       MaterialApp(
@@ -87,7 +87,7 @@ void main() {
         theme: kThemeDataLight,
         home: Scaffold(
           body: SendRequestButton(
-            activeId: '1',
+            selectedId: '1',
             sentRequestId: '1',
             onTap: () {},
           ),

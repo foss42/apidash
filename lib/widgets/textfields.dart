@@ -5,14 +5,14 @@ import 'package:apidash/consts.dart';
 class URLField extends StatelessWidget {
   const URLField({
     super.key,
-    required this.activeId,
+    required this.selectedId,
     this.initialValue,
     this.onChanged,
     this.focusNode,
     this.controller,
   });
 
-  final String activeId;
+  final String selectedId;
   final String? initialValue;
   final void Function(String)? onChanged;
   final FocusNode? focusNode;
@@ -21,7 +21,7 @@ class URLField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      key: Key("url-$activeId"),
+      key: Key("url-$selectedId"),
       initialValue: initialValue,
       style: kCodeStyle,
       decoration: InputDecoration(

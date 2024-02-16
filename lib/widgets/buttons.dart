@@ -47,12 +47,12 @@ class CopyButton extends StatelessWidget {
 class SendRequestButton extends StatelessWidget {
   const SendRequestButton({
     super.key,
-    required this.activeId,
+    required this.selectedId,
     required this.sentRequestId,
     required this.onTap,
   });
 
-  final String? activeId;
+  final String? selectedId;
   final String? sentRequestId;
   final void Function() onTap;
 
@@ -66,7 +66,7 @@ class SendRequestButton extends StatelessWidget {
         children: [
           Text(
             disable
-                ? (activeId == sentRequestId ? kLabelSending : kLabelBusy)
+                ? (selectedId == sentRequestId ? kLabelSending : kLabelBusy)
                 : kLabelSend,
             style: kTextStyleButton,
           ),

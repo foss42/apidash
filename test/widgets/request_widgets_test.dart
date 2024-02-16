@@ -11,7 +11,7 @@ void main() {
         theme: kThemeDataLight,
         home: Scaffold(
           body: RequestPane(
-            activeId: '1',
+            selectedId: '1',
             codePaneVisible: true,
             children: const [Text('abc'), Text('xyz'), Text('mno')],
             onPressedCodeButton: () {},
@@ -41,7 +41,7 @@ void main() {
         theme: kThemeDataLight,
         home: Scaffold(
           body: RequestPane(
-            activeId: '1',
+            selectedId: '1',
             codePaneVisible: true,
             onPressedCodeButton: () {},
             tabIndex: 1,
@@ -72,7 +72,7 @@ void main() {
         theme: kThemeDataLight,
         home: Scaffold(
           body: RequestPane(
-            activeId: '1',
+            selectedId: '1',
             codePaneVisible: false,
             onPressedCodeButton: () {},
             tabIndex: 2,
@@ -104,7 +104,7 @@ void main() {
         theme: kThemeDataLight,
         home: Scaffold(
           body: RequestPane(
-            activeId: '1',
+            selectedId: '1',
             codePaneVisible: false,
             onPressedCodeButton: () {},
             onTapTabBar: (value) {

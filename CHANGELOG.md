@@ -1,5 +1,22 @@
 # API Dash ⚡️ Changelog
 
+## v0.4.0 [WIP]
+
+In this release, we have added the following features:
+
+1. Save on Close so that you are prompted to save when you close the app. You can change this setting anytime in the Settings.
+2. JSON previewer Bug fixes.
+3. Clean new look on Windows.
+4. Arch Linux Support
+5. Checkbox for URL Params & Headers
+6. Support for SVG response
+7. Multi-part request & form data support
+8. Dio Code generator
+9. Dart http codegen has been rewritten using dart code builder
+10. Ability to override request contenttype
+11. More header suggestions
+    
+
 ## v0.3.0 [29-11-2023]
 
 In this major release, we have migrated the project to Dart 3 & added tons of amazing new features mentioned below:
