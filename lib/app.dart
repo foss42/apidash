@@ -109,12 +109,12 @@ class DashApp extends ConsumerWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          visualDensity: VisualDensity.adaptivePlatformDensity,
           fontFamily: kFontFamily,
           fontFamilyFallback: kFontFamilyFallback,
           colorSchemeSeed: kColorSchemeSeed,
           useMaterial3: true,
           brightness: Brightness.light,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
         darkTheme: ThemeData(
           fontFamily: kFontFamily,

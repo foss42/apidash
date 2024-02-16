@@ -85,13 +85,17 @@ class DropdownButtonEnvironment extends ConsumerWidget {
             .map<DropdownMenuItem<EnvironmentModel>>((EnvironmentModel value) {
           return DropdownMenuItem<EnvironmentModel>(
             value: value,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 16),
-              child: Text(
-                value.name.toUpperCase(),
-                style: kCodeStyle.copyWith(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 13,
+            child: SizedBox(
+              width: 90,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 16),
+                child: Text(
+                  value.name.toUpperCase(),
+                  style: kCodeStyle.copyWith(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
               ),
             ),

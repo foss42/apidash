@@ -1,4 +1,3 @@
-import 'package:apidash/screens/home_page/editor_pane/environment_auto_suggestion_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
 
@@ -59,38 +58,33 @@ class CellField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var clrScheme = colorScheme ?? Theme.of(context).colorScheme;
-    return EnvironmentAutoSuggestionWidget(
-      onEnvironmentVariableTap: onChanged,
-      builder: (context, textEditingController, focusNode) {
-        return TextFormField(
-          key: Key(keyId),
-          style: kCodeStyle.copyWith(
-            color: clrScheme.onSurface,
+    return TextFormField(
+      key: Key(keyId),
+      initialValue: initialValue,
+      style: kCodeStyle.copyWith(
+        color: clrScheme.onSurface,
+      ),
+      decoration: InputDecoration(
+        hintStyle: kCodeStyle.copyWith(
+          color: clrScheme.outline.withOpacity(
+            kHintOpacity,
           ),
-          decoration: InputDecoration(
-            hintStyle: kCodeStyle.copyWith(
-              color: clrScheme.outline.withOpacity(
-                kHintOpacity,
-              ),
-            ),
-            hintText: hintText,
-            focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(
-                color: clrScheme.primary.withOpacity(
-                  kHintOpacity,
-                ),
-              ),
-            ),
-            enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(
-                color: clrScheme.surfaceVariant,
-              ),
+        ),
+        hintText: hintText,
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(
+            color: clrScheme.primary.withOpacity(
+              kHintOpacity,
             ),
           ),
-          onChanged: onChanged,
-        );
-      },
-      initialValue: initialValue ?? "",
+        ),
+        enabledBorder: UnderlineInputBorder(
+          borderSide: BorderSide(
+            color: clrScheme.surfaceVariant,
+          ),
+        ),
+      ),
+      onChanged: onChanged,
     );
   }
 }
