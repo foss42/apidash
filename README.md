@@ -90,7 +90,7 @@ API Dash can be downloaded from the links below:
 
 **👩🏻‍💻 Code Generation**
 
-- We started out as the **only** open source API client that supports advanced Dart code generation so that you can easily integrate APIs in your Dart/Flutter project or directly run it on DartPad. But, now API Dash supports generation of well-tested integration codes for **JavaScript**, **Python**, **Kotlin** & various other languages. You can check out the [full list of supported languages/libraries](https://github.com/foss42/apidash?tab=readme-ov-file#code-generators).
+- We started out as the **only** open source API client which supported advanced Dart code generation to easily integrate APIs in Dart/Flutter projects or to directly run it on DartPad. With time we have added more code-gens and currently API Dash supports generation of well-tested integration codes for **JavaScript**, **Python**, **Kotlin** & various other languages. You can check out the [full list of supported languages/libraries](https://github.com/foss42/apidash?tab=readme-ov-file#code-generators).
 
 **🌙 Full Dark Mode Support**
 
