@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
 import 'tabs.dart';
@@ -11,6 +12,7 @@ class RequestPane extends StatefulWidget {
     this.onPressedCodeButton,
     this.onTapTabBar,
     required this.children,
+    required this.tabLabels,
     this.showIndicators = const [false, false, false],
   });
 
@@ -20,6 +22,7 @@ class RequestPane extends StatefulWidget {
   final void Function()? onPressedCodeButton;
   final void Function(int)? onTapTabBar;
   final List<Widget> children;
+  final List<String> tabLabels;
   final List<bool> showIndicators;
 
   @override
@@ -34,7 +37,7 @@ class _RequestPaneState extends State<RequestPane>
   void initState() {
     super.initState();
     _controller = TabController(
-      length: 3,
+      length: widget.children.length,
       animationDuration: kTabAnimationDuration,
       vsync: this,
     );
@@ -81,17 +84,11 @@ class _RequestPaneState extends State<RequestPane>
           overlayColor: kColorTransparentState,
           onTap: widget.onTapTabBar,
           tabs: [
-            TabLabel(
-              text: 'URL Params',
-              showIndicator: widget.showIndicators[0],
-            ),
-            TabLabel(
-              text: 'Headers',
-              showIndicator: widget.showIndicators[1],
-            ),
-            TabLabel(
-              text: 'Body',
-              showIndicator: widget.showIndicators[2],
+            ...widget.children.mapIndexed(
+              (index, child) => TabLabel(
+                text: widget.tabLabels[index],
+                showIndicator: widget.showIndicators[index],
+              ),
             ),
           ],
         ),

@@ -232,6 +232,9 @@ final kColorStatusCode400 = Colors.red.shade800;
 final kColorStatusCode500 = Colors.amber.shade900;
 const kOpacityDarkModeBlend = 0.4;
 
+final kColorProtocolHttp = Colors.blue.shade800;
+final kColorProtocolWebsocket = Colors.red.shade800;
+
 final kColorHttpMethodGet = Colors.green.shade800;
 final kColorHttpMethodHead = kColorHttpMethodGet;
 final kColorHttpMethodPost = Colors.blue.shade800;
@@ -242,6 +245,8 @@ final kColorHttpMethodDelete = Colors.red.shade800;
 enum RequestItemMenuOption { edit, delete, duplicate }
 
 enum HTTPVerb { get, head, post, put, patch, delete }
+
+enum Protocol { http, websocket }
 
 enum FormDataType { text, file }
 
@@ -254,6 +259,7 @@ const kMethodsWithBody = [
   HTTPVerb.delete,
 ];
 
+const kDefaultProtocol = Protocol.http;
 const kDefaultHttpMethod = HTTPVerb.get;
 const kDefaultContentType = ContentType.json;
 

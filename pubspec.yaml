@@ -54,6 +54,7 @@ dependencies:
   code_builder: ^4.9.0
   dart_style: ^2.3.4
   json_text_field: ^1.1.0
+  web_socket_channel: 
 
 dev_dependencies:
   flutter_test:

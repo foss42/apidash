@@ -24,6 +24,23 @@ Color getResponseStatusCodeColor(int? statusCode,
   return col;
 }
 
+Color getProtocolColor(Protocol protocol,
+    {Brightness brightness = Brightness.light}) {
+  Color col;
+  switch (protocol) {
+    case Protocol.http:
+      col = kColorProtocolHttp;
+      break;
+    case Protocol.websocket:
+      col = kColorProtocolWebsocket;
+      break;
+  }
+  if (brightness == Brightness.dark) {
+    col = getDarkModeColor(col);
+  }
+  return col;
+}
+
 Color getHTTPMethodColor(HTTPVerb method,
     {Brightness brightness = Brightness.light}) {
   Color col;

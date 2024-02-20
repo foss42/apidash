@@ -44,6 +44,44 @@ class CopyButton extends StatelessWidget {
   }
 }
 
+class ConnectWebsocketButton extends StatelessWidget {
+  const ConnectWebsocketButton({
+    super.key,
+    required this.selectedId,
+    required this.sentRequestId,
+    required this.onTap,
+  });
+
+  final String? selectedId;
+  final String? sentRequestId;
+  final void Function() onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    bool disable = sentRequestId != null;
+    return FilledButton(
+      onPressed: disable ? null : onTap,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            disable
+                ? (selectedId == sentRequestId ? kLabelSending : kLabelBusy)
+                : "Connect",
+            style: kTextStyleButton,
+          ),
+          if (!disable) kHSpacer10,
+          if (!disable)
+            const Icon(
+              size: 16,
+              Icons.send,
+            ),
+        ],
+      ),
+    );
+  }
+}
+
 class SendRequestButton extends StatelessWidget {
   const SendRequestButton({
     super.key,

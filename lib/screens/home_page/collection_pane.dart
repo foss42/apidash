@@ -51,6 +51,7 @@ class CollectionPane extends ConsumerWidget {
                   ),
                 ),
                 //const Spacer(),
+
                 ElevatedButton(
                   onPressed: () {
                     ref.read(collectionStateNotifierProvider.notifier).add();

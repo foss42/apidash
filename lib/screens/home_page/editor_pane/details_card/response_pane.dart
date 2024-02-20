@@ -24,6 +24,7 @@ class ResponsePane extends ConsumerWidget {
     if (responseStatus == -1) {
       return ErrorMessage(message: '$message. $kUnexpectedRaiseIssue');
     }
+
     return const ResponseDetails();
   }
 }
@@ -39,6 +40,25 @@ class ResponseDetails extends ConsumerWidget {
         .watch(selectedRequestModelProvider.select((value) => value?.message));
     final responseModel = ref.watch(
         selectedRequestModelProvider.select((value) => value?.responseModel));
+    final requestModel = ref.watch(selectedRequestModelProvider);
+
+    if (requestModel?.protocol == Protocol.websocket) {
+      return Consumer(
+        builder: (context, ref, child) {
+          // Watch the messages list
+          final messages = ref.watch(messagesProvider);
+
+          return ListView.builder(
+            itemCount: messages.length,
+            itemBuilder: (context, index) {
+              return ListTile(
+                title: Text(messages[index]),
+              );
+            },
+          );
+        },
+      );
+    }
     return Column(
       children: [
         ResponsePaneHeader(

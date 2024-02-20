@@ -6,8 +6,8 @@ import 'request_headers.dart';
 import 'request_params.dart';
 import 'request_body.dart';
 
-class EditRequestPane extends ConsumerWidget {
-  const EditRequestPane({super.key});
+class EditHTTPRequestPane extends ConsumerWidget {
+  const EditHTTPRequestPane({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -40,6 +40,11 @@ class EditRequestPane extends ConsumerWidget {
         paramLength != null && paramLength > 0,
         headerLength != null && headerLength > 0,
         bodyLength != null && bodyLength > 0,
+      ],
+      tabLabels: const [
+        'URL Params',
+        'Headers',
+        'Body',
       ],
       children: const [
         EditRequestURLParams(),

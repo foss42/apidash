@@ -1,3 +1,4 @@
+import 'package:apidash/services/websocket_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'settings_providers.dart';
 import 'ui_providers.dart';
@@ -22,6 +23,49 @@ final selectedRequestModelProvider = StateProvider<RequestModel?>((ref) {
 final requestSequenceProvider = StateProvider<List<String>>((ref) {
   var ids = hiveHandler.getIds();
   return ids ?? [];
+});
+
+final webSocketManagerProvider =
+    Provider.family<WebSocketManager, String>((ref, url) {
+  final webSocketManager = WebSocketManager(
+    onMessageReceived: (message) {
+      // Assuming you're within a context where `ref` is available
+      ref.read(messagesProvider.notifier).addMessage(message);
+    },
+  );
+  ref.onDispose(() => webSocketManager.disconnect());
+
+  webSocketManager.connect(url);
+  return webSocketManager;
+});
+
+final webSocketProvider =
+    StreamProvider.autoDispose.family<dynamic, String>((ref, url) async* {
+  final webSocketManager = ref.watch(webSocketManagerProvider(url));
+
+  // return webSocketManager.messages;
+
+  await for (final value in webSocketManager.channel!.stream) {
+    yield value.toString();
+    print(value);
+  }
+});
+
+class MessagesNotifier extends StateNotifier<List<String>> {
+  MessagesNotifier() : super([]);
+
+  void addMessage(String message) {
+    state = [message, ...state];
+  }
+
+  void clearMessages() {
+    state = [];
+  }
+}
+
+final messagesProvider =
+    StateNotifierProvider<MessagesNotifier, List<String>>((ref) {
+  return MessagesNotifier();
 });
 
 final StateNotifierProvider<CollectionStateNotifier, Map<String, RequestModel>?>
@@ -117,6 +161,7 @@ class CollectionStateNotifier
 
   void update(
     String id, {
+    Protocol? protocol,
     HTTPVerb? method,
     String? url,
     String? name,
@@ -134,6 +179,7 @@ class CollectionStateNotifier
     ResponseModel? responseModel,
   }) {
     final newModel = state![id]!.copyWith(
+        protocol: protocol,
         method: method,
         url: url,
         name: name,
@@ -153,6 +199,75 @@ class CollectionStateNotifier
     var map = {...state!};
     map[id] = newModel;
     state = map;
+  }
+
+  Future<void> connectWebsocket(String id) async {
+    ref.read(sentRequestIdStateProvider.notifier).state = id;
+    ref.read(codePaneVisibleStateProvider.notifier).state = false;
+
+    // final defaultUriScheme =
+    //     ref.read(settingsProvider.select((value) => value.defaultUriScheme));
+    RequestModel requestModel = state![id]!;
+
+    // final channel = WebSocketChannel.connect(
+    //   Uri.parse(requestModel.url),
+    // );
+    // print(channel.toString());
+
+    final webSocketManager =
+        ref.watch(webSocketManagerProvider(requestModel.url));
+    // webSocketManager.connect(requestModel.url);
+    webSocketManager.sendMessage('Hello');
+
+    // (http.Response?, Duration?, String?)? responseRec = await request(
+    //   requestModel,
+    //   defaultUriScheme: defaultUriScheme,
+    //   isMultiPartRequest:
+    //       requestModel.requestBodyContentType == ContentType.formdata,
+    // );
+    // late final RequestModel newRequestModel;
+    // if (responseRec.$1 == null) {
+    //   newRequestModel = requestModel.copyWith(
+    //     responseStatus: -1,
+    //     message: responseRec.$3,
+    //   );
+    // } else {
+    //   final responseModel = baseResponseModel.fromResponse(
+    //     response: responseRec.$1!,
+    //     time: responseRec.$2!,
+    //   );
+    //   int statusCode = responseRec.$1!.statusCode;
+    //   newRequestModel = requestModel.copyWith(
+    //     responseStatus: statusCode,
+    //     message: kResponseCodeReasons[statusCode],
+    //     responseModel: responseModel,
+    //   );
+    // }
+
+    late final RequestModel newRequestModel;
+
+    newRequestModel = requestModel.copyWith(responseStatus: 200, message: "ok");
+
+    ref.read(sentRequestIdStateProvider.notifier).state = null;
+    var map = {...state!};
+    map[id] = newRequestModel;
+    state = map;
+  }
+
+  Future<void> sendWebsocketRequest(String id) async {
+    ref.read(sentRequestIdStateProvider.notifier).state = id;
+    ref.read(codePaneVisibleStateProvider.notifier).state = false;
+
+    RequestModel requestModel = state![id]!;
+    print(
+        'request model in the send WebscoketRequest: url: ${requestModel.url}');
+    final webSocketManager =
+        ref.watch(webSocketManagerProvider(state![id]!.url));
+
+    print("has channel : ${webSocketManager.channel != null}");
+    webSocketManager.sendMessage(requestModel.message!);
+
+    ref.read(sentRequestIdStateProvider.notifier).state = null;
   }
 
   Future<void> sendRequest(String id) async {
