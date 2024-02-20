@@ -29,6 +29,28 @@ class ResponsePane extends ConsumerWidget {
   }
 }
 
+IconData _getIconForMessageType(WebhookMessageType messageType) {
+  switch (messageType) {
+    case WebhookMessageType.info:
+      return Icons.info;
+    case WebhookMessageType.server:
+      return Icons.arrow_downward;
+    case WebhookMessageType.client:
+      return Icons.arrow_upward;
+  }
+}
+
+Color _getColorForMessageType(WebhookMessageType messageType) {
+  switch (messageType) {
+    case WebhookMessageType.info:
+      return Colors.blue;
+    case WebhookMessageType.server:
+      return Colors.orange;
+    case WebhookMessageType.client:
+      return Colors.lightGreen;
+  }
+}
+
 class ResponseDetails extends ConsumerWidget {
   const ResponseDetails({super.key});
 
@@ -45,14 +67,22 @@ class ResponseDetails extends ConsumerWidget {
     if (requestModel?.protocol == Protocol.websocket) {
       return Consumer(
         builder: (context, ref, child) {
-          // Watch the messages list
-          final messages = ref.watch(messagesProvider);
+          final messages = ref.watch(webhookMessagesProvider);
 
           return ListView.builder(
             itemCount: messages.length,
             itemBuilder: (context, index) {
               return ListTile(
-                title: Text(messages[index]),
+                title: Text(
+                  messages[index].message,
+                  style: TextStyle(
+                      color: _getColorForMessageType(messages[index].type)),
+                ),
+                subtitle: Text(messages[index].timestamp.toString()),
+                leading: Icon(
+                  _getIconForMessageType(messages[index].type),
+                  color: _getColorForMessageType(messages[index].type),
+                ),
               );
             },
           );

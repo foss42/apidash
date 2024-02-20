@@ -30,6 +30,9 @@ class RequestModel {
     this.responseStatus,
     this.message,
     this.responseModel,
+    this.webSocketServerMessages = const [],
+    this.webSocketClientMessages = const [],
+    this.webSocketInfoMessages = const [],
   });
 
   final String id;
@@ -49,6 +52,9 @@ class RequestModel {
   final int? responseStatus;
   final String? message;
   final ResponseModel? responseModel;
+  final List<String> webSocketServerMessages;
+  final List<String> webSocketClientMessages;
+  final List<String> webSocketInfoMessages;
 
   List<NameValueModel>? get enabledRequestHeaders =>
       getEnabledRows(requestHeaders, isHeaderEnabledList);

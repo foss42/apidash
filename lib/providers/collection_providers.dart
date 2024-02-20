@@ -27,10 +27,26 @@ final requestSequenceProvider = StateProvider<List<String>>((ref) {
 
 final webSocketManagerProvider =
     Provider.family<WebSocketManager, String>((ref, url) {
+  final webhookMessages = ref.read(webhookMessagesProvider.notifier);
   final webSocketManager = WebSocketManager(
+    onConnecting: () {
+      webhookMessages.addMessage(
+          "Connecting to server $url", WebhookMessageType.info);
+    },
+    onConnected: () {
+      ref
+          .read(webhookMessagesProvider.notifier)
+          .addMessage("Connected to server $url", WebhookMessageType.info);
+    },
+    onDisconnected: () {
+      ref
+          .read(webhookMessagesProvider.notifier)
+          .addMessage("Disconnected from server $url", WebhookMessageType.info);
+    },
     onMessageReceived: (message) {
-      // Assuming you're within a context where `ref` is available
-      ref.read(messagesProvider.notifier).addMessage(message);
+      ref
+          .read(webhookMessagesProvider.notifier)
+          .addMessage(message, WebhookMessageType.server);
     },
   );
   ref.onDispose(() => webSocketManager.disconnect());
@@ -43,28 +59,48 @@ final webSocketProvider =
     StreamProvider.autoDispose.family<dynamic, String>((ref, url) async* {
   final webSocketManager = ref.watch(webSocketManagerProvider(url));
 
-  // return webSocketManager.messages;
-
   await for (final value in webSocketManager.channel!.stream) {
     yield value.toString();
-    print(value);
   }
 });
 
-class MessagesNotifier extends StateNotifier<List<String>> {
-  MessagesNotifier() : super([]);
+// class WebhookMessages {
+//   WebhookMessages(this.serverMessages, this.clientMessages, this.infoMessages);
+//   final List<WebhookMessage> serverMessages;
+//   final List<WebhookMessage> clientMessages;
+//   final List<WebhookMessage> infoMessages;
+// }
 
-  void addMessage(String message) {
-    state = [message, ...state];
-  }
+enum WebhookMessageType { server, client, info }
 
-  void clearMessages() {
-    state = [];
-  }
+class WebhookMessage {
+  WebhookMessage(this.message, this.timestamp, this.type);
+  final String message;
+  final DateTime timestamp;
+  final WebhookMessageType type;
 }
 
-final messagesProvider =
-    StateNotifierProvider<MessagesNotifier, List<String>>((ref) {
+class MessagesNotifier extends StateNotifier<List<WebhookMessage>> {
+  MessagesNotifier() : super([]);
+
+  void addMessage(String message, WebhookMessageType type) {
+    state = [
+      WebhookMessage(message, DateTime.now(), type),
+      ...state,
+    ];
+  }
+
+  // void addMessage(String message) {
+  //   state = [message, ...state];
+  // }
+
+  // void clearMessages() {
+  //   state = [];
+  // }
+}
+
+final webhookMessagesProvider =
+    StateNotifierProvider<MessagesNotifier, List<WebhookMessage>>((ref) {
   return MessagesNotifier();
 });
 
@@ -195,7 +231,7 @@ class CollectionStateNotifier
         responseStatus: responseStatus,
         message: message,
         responseModel: responseModel);
-    //print(newModel);
+
     var map = {...state!};
     map[id] = newModel;
     state = map;
@@ -205,44 +241,9 @@ class CollectionStateNotifier
     ref.read(sentRequestIdStateProvider.notifier).state = id;
     ref.read(codePaneVisibleStateProvider.notifier).state = false;
 
-    // final defaultUriScheme =
-    //     ref.read(settingsProvider.select((value) => value.defaultUriScheme));
     RequestModel requestModel = state![id]!;
 
-    // final channel = WebSocketChannel.connect(
-    //   Uri.parse(requestModel.url),
-    // );
-    // print(channel.toString());
-
-    final webSocketManager =
-        ref.watch(webSocketManagerProvider(requestModel.url));
-    // webSocketManager.connect(requestModel.url);
-    webSocketManager.sendMessage('Hello');
-
-    // (http.Response?, Duration?, String?)? responseRec = await request(
-    //   requestModel,
-    //   defaultUriScheme: defaultUriScheme,
-    //   isMultiPartRequest:
-    //       requestModel.requestBodyContentType == ContentType.formdata,
-    // );
-    // late final RequestModel newRequestModel;
-    // if (responseRec.$1 == null) {
-    //   newRequestModel = requestModel.copyWith(
-    //     responseStatus: -1,
-    //     message: responseRec.$3,
-    //   );
-    // } else {
-    //   final responseModel = baseResponseModel.fromResponse(
-    //     response: responseRec.$1!,
-    //     time: responseRec.$2!,
-    //   );
-    //   int statusCode = responseRec.$1!.statusCode;
-    //   newRequestModel = requestModel.copyWith(
-    //     responseStatus: statusCode,
-    //     message: kResponseCodeReasons[statusCode],
-    //     responseModel: responseModel,
-    //   );
-    // }
+    ref.watch(webSocketManagerProvider(requestModel.url));
 
     late final RequestModel newRequestModel;
 
@@ -259,12 +260,13 @@ class CollectionStateNotifier
     ref.read(codePaneVisibleStateProvider.notifier).state = false;
 
     RequestModel requestModel = state![id]!;
-    print(
-        'request model in the send WebscoketRequest: url: ${requestModel.url}');
+
     final webSocketManager =
         ref.watch(webSocketManagerProvider(state![id]!.url));
 
-    print("has channel : ${webSocketManager.channel != null}");
+    ref
+        .read(webhookMessagesProvider.notifier)
+        .addMessage(requestModel.message!, WebhookMessageType.client);
     webSocketManager.sendMessage(requestModel.message!);
 
     ref.read(sentRequestIdStateProvider.notifier).state = null;
