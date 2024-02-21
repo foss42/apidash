@@ -30,6 +30,7 @@ class RequestModel {
     this.responseStatus,
     this.message,
     this.responseModel,
+    this.webSocketConnected,
     this.webSocketServerMessages = const [],
     this.webSocketClientMessages = const [],
     this.webSocketInfoMessages = const [],
@@ -52,6 +53,7 @@ class RequestModel {
   final int? responseStatus;
   final String? message;
   final ResponseModel? responseModel;
+  final bool? webSocketConnected;
   final List<String> webSocketServerMessages;
   final List<String> webSocketClientMessages;
   final List<String> webSocketInfoMessages;
@@ -95,6 +97,7 @@ class RequestModel {
       requestBody: requestBody,
       requestFormDataList:
           requestFormDataList != null ? [...requestFormDataList!] : null,
+      webSocketConnected: webSocketConnected,
     );
   }
 
@@ -116,6 +119,7 @@ class RequestModel {
     int? responseStatus,
     String? message,
     ResponseModel? responseModel,
+    bool? webSocketConnected,
   }) {
     var headers = requestHeaders ?? this.requestHeaders;
     var params = requestParams ?? this.requestParams;
@@ -140,6 +144,7 @@ class RequestModel {
       responseStatus: responseStatus ?? this.responseStatus,
       message: message ?? this.message,
       responseModel: responseModel ?? this.responseModel,
+      webSocketConnected: webSocketConnected ?? this.webSocketConnected,
     );
   }
 

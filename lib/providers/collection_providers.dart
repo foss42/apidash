@@ -29,29 +29,22 @@ final webSocketManagerProvider =
     Provider.family<WebSocketManager, String>((ref, url) {
   final webhookMessages = ref.read(webhookMessagesProvider.notifier);
   final webSocketManager = WebSocketManager(
-    onConnecting: () {
-      webhookMessages.addMessage(
-          "Connecting to server $url", WebhookMessageType.info);
+    addMessage: (String message, WebsocketMessageType type) {
+      webhookMessages.addMessage(message, type);
     },
-    onConnected: () {
-      ref
-          .read(webhookMessagesProvider.notifier)
-          .addMessage("Connected to server $url", WebhookMessageType.info);
-    },
-    onDisconnected: () {
-      ref
-          .read(webhookMessagesProvider.notifier)
-          .addMessage("Disconnected from server $url", WebhookMessageType.info);
-    },
-    onMessageReceived: (message) {
-      ref
-          .read(webhookMessagesProvider.notifier)
-          .addMessage(message, WebhookMessageType.server);
+    toggleConnect: () {
+      final requestModel = ref.read(selectedRequestModelProvider.notifier);
+      if (requestModel.state != null) {
+        final newRequestModel = requestModel.state!.copyWith(
+          webSocketConnected:
+              !(requestModel.state!.webSocketConnected ?? false),
+        );
+        requestModel.update((state) => newRequestModel);
+      }
     },
   );
   ref.onDispose(() => webSocketManager.disconnect());
 
-  webSocketManager.connect(url);
   return webSocketManager;
 });
 
@@ -64,43 +57,19 @@ final webSocketProvider =
   }
 });
 
-// class WebhookMessages {
-//   WebhookMessages(this.serverMessages, this.clientMessages, this.infoMessages);
-//   final List<WebhookMessage> serverMessages;
-//   final List<WebhookMessage> clientMessages;
-//   final List<WebhookMessage> infoMessages;
-// }
-
-enum WebhookMessageType { server, client, info }
-
-class WebhookMessage {
-  WebhookMessage(this.message, this.timestamp, this.type);
-  final String message;
-  final DateTime timestamp;
-  final WebhookMessageType type;
-}
-
-class MessagesNotifier extends StateNotifier<List<WebhookMessage>> {
+class MessagesNotifier extends StateNotifier<List<WebsocketMessage>> {
   MessagesNotifier() : super([]);
 
-  void addMessage(String message, WebhookMessageType type) {
+  void addMessage(String message, WebsocketMessageType type) {
     state = [
-      WebhookMessage(message, DateTime.now(), type),
+      WebsocketMessage(message, DateTime.now(), type),
       ...state,
     ];
   }
-
-  // void addMessage(String message) {
-  //   state = [message, ...state];
-  // }
-
-  // void clearMessages() {
-  //   state = [];
-  // }
 }
 
 final webhookMessagesProvider =
-    StateNotifierProvider<MessagesNotifier, List<WebhookMessage>>((ref) {
+    StateNotifierProvider<MessagesNotifier, List<WebsocketMessage>>((ref) {
   return MessagesNotifier();
 });
 
@@ -243,7 +212,30 @@ class CollectionStateNotifier
 
     RequestModel requestModel = state![id]!;
 
-    ref.watch(webSocketManagerProvider(requestModel.url));
+    final webSocketManager =
+        ref.watch(webSocketManagerProvider(requestModel.url));
+    webSocketManager.connect(requestModel.url);
+
+    late final RequestModel newRequestModel;
+
+    newRequestModel = requestModel.copyWith(responseStatus: 200, message: "ok");
+
+    ref.read(sentRequestIdStateProvider.notifier).state = null;
+    var map = {...state!};
+    map[id] = newRequestModel;
+    state = map;
+  }
+
+  Future<void> disconnectWebsocket(String id) async {
+    ref.read(sentRequestIdStateProvider.notifier).state = id;
+    ref.read(codePaneVisibleStateProvider.notifier).state = false;
+
+    RequestModel requestModel = state![id]!;
+
+    final webSocketManager =
+        ref.watch(webSocketManagerProvider(requestModel.url));
+
+    webSocketManager.disconnect();
 
     late final RequestModel newRequestModel;
 
@@ -266,7 +258,7 @@ class CollectionStateNotifier
 
     ref
         .read(webhookMessagesProvider.notifier)
-        .addMessage(requestModel.message!, WebhookMessageType.client);
+        .addMessage(requestModel.message!, WebsocketMessageType.client);
     webSocketManager.sendMessage(requestModel.message!);
 
     ref.read(sentRequestIdStateProvider.notifier).state = null;

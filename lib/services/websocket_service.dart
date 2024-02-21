@@ -2,34 +2,44 @@ import 'dart:async';
 
 import 'package:web_socket_channel/io.dart';
 
+enum WebsocketMessageType { server, client, info }
+
+class WebsocketMessage {
+  WebsocketMessage(this.message, this.timestamp, this.type);
+  final String message;
+  final DateTime timestamp;
+  final WebsocketMessageType type;
+}
+
 class WebSocketManager {
   IOWebSocketChannel? channel;
-  final Function()? onConnecting;
-  final Function()? onConnected;
-  final Function()? onDisconnected;
-  final Function(String)? onMessageReceived;
+  final void Function(String, WebsocketMessageType) addMessage;
+  final void Function() toggleConnect;
 
-  WebSocketManager(
-      {this.onConnecting,
-      this.onConnected,
-      this.onDisconnected,
-      this.onMessageReceived});
+  WebSocketManager({required this.addMessage, required this.toggleConnect});
 
   Future<void> connect(String url) async {
-    // TODO does interfere with the onConnected callback
-    // onConnecting?.call();
+    // TODO does interfere with the addMessage callback
+    // addMessage("WebSocket channel connecting: $url", WebsocketMessageType.info);
     channel = IOWebSocketChannel.connect(url);
 
     channel?.ready.then((value) {
-      onConnected?.call();
+      toggleConnect();
+      addMessage(
+          "WebSocket channel connected: $url", WebsocketMessageType.info);
     });
 
-    channel?.stream.listen((message) {
-      onMessageReceived?.call(message);
-    }, onError: (error) {
-      print("Error on WebSocket channel: $error");
-      // Handle error or close the connection as needed
-    });
+    channel?.stream.listen(
+      (message) {
+        addMessage(message, WebsocketMessageType.server);
+      },
+      onError: (error) {
+        addMessage("WebSocket channel error: $url", WebsocketMessageType.info);
+      },
+      onDone: () {
+        addMessage("WebSocket channel closed: $url", WebsocketMessageType.info);
+      },
+    );
   }
 
   void sendMessage(String message) {
@@ -40,7 +50,8 @@ class WebSocketManager {
 
   void disconnect() {
     if (channel != null) {
-      onDisconnected?.call();
+      toggleConnect();
+      addMessage("WebSocket channel disconnecting", WebsocketMessageType.info);
       channel!.sink.close();
       channel = null;
     }

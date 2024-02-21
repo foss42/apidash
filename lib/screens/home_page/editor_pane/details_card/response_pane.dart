@@ -1,3 +1,4 @@
+import 'package:apidash/services/websocket_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
@@ -29,24 +30,24 @@ class ResponsePane extends ConsumerWidget {
   }
 }
 
-IconData _getIconForMessageType(WebhookMessageType messageType) {
+IconData _getIconForMessageType(WebsocketMessageType messageType) {
   switch (messageType) {
-    case WebhookMessageType.info:
+    case WebsocketMessageType.info:
       return Icons.info;
-    case WebhookMessageType.server:
+    case WebsocketMessageType.server:
       return Icons.arrow_downward;
-    case WebhookMessageType.client:
+    case WebsocketMessageType.client:
       return Icons.arrow_upward;
   }
 }
 
-Color _getColorForMessageType(WebhookMessageType messageType) {
+Color _getColorForMessageType(WebsocketMessageType messageType) {
   switch (messageType) {
-    case WebhookMessageType.info:
+    case WebsocketMessageType.info:
       return Colors.blue;
-    case WebhookMessageType.server:
+    case WebsocketMessageType.server:
       return Colors.orange;
-    case WebhookMessageType.client:
+    case WebsocketMessageType.client:
       return Colors.lightGreen;
   }
 }

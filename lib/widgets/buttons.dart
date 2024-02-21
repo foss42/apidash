@@ -49,11 +49,13 @@ class ConnectWebsocketButton extends StatelessWidget {
     super.key,
     required this.selectedId,
     required this.sentRequestId,
+    required this.connected,
     required this.onTap,
   });
 
   final String? selectedId;
   final String? sentRequestId;
+  final bool connected;
   final void Function() onTap;
 
   @override
@@ -67,15 +69,22 @@ class ConnectWebsocketButton extends StatelessWidget {
           Text(
             disable
                 ? (selectedId == sentRequestId ? kLabelSending : kLabelBusy)
-                : "Connect",
+                : connected
+                    ? "Disconnect"
+                    : "Connect",
             style: kTextStyleButton,
           ),
           if (!disable) kHSpacer10,
           if (!disable)
-            const Icon(
-              size: 16,
-              Icons.send,
-            ),
+            connected
+                ? const Icon(
+                    size: 16,
+                    Icons.close,
+                  )
+                : const Icon(
+                    size: 16,
+                    Icons.computer,
+                  ),
         ],
       ),
     );
