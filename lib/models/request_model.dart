@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:apidash/services/websocket_service.dart';
 import 'package:flutter/foundation.dart';
 import '../utils/utils.dart'
     show
@@ -31,9 +32,7 @@ class RequestModel {
     this.message,
     this.responseModel,
     this.webSocketConnected,
-    this.webSocketServerMessages = const [],
-    this.webSocketClientMessages = const [],
-    this.webSocketInfoMessages = const [],
+    this.webSocketMessages = const [],
   });
 
   final String id;
@@ -54,9 +53,7 @@ class RequestModel {
   final String? message;
   final ResponseModel? responseModel;
   final bool? webSocketConnected;
-  final List<String> webSocketServerMessages;
-  final List<String> webSocketClientMessages;
-  final List<String> webSocketInfoMessages;
+  final List<WebsocketMessage> webSocketMessages;
 
   List<NameValueModel>? get enabledRequestHeaders =>
       getEnabledRows(requestHeaders, isHeaderEnabledList);
@@ -98,6 +95,7 @@ class RequestModel {
       requestFormDataList:
           requestFormDataList != null ? [...requestFormDataList!] : null,
       webSocketConnected: webSocketConnected,
+      webSocketMessages: webSocketMessages,
     );
   }
 
@@ -120,6 +118,7 @@ class RequestModel {
     String? message,
     ResponseModel? responseModel,
     bool? webSocketConnected,
+    List<WebsocketMessage>? webSocketMessages,
   }) {
     var headers = requestHeaders ?? this.requestHeaders;
     var params = requestParams ?? this.requestParams;
@@ -145,6 +144,7 @@ class RequestModel {
       message: message ?? this.message,
       responseModel: responseModel ?? this.responseModel,
       webSocketConnected: webSocketConnected ?? this.webSocketConnected,
+      webSocketMessages: webSocketMessages ?? this.webSocketMessages,
     );
   }
 
@@ -182,6 +182,8 @@ class RequestModel {
     final requestFormDataList = data["requestFormDataList"];
     final responseStatus = data["responseStatus"] as int?;
     final message = data["message"] as String?;
+    final webSocketMessages =
+        data["webSocketMessages"] as List<WebsocketMessage>?;
     final responseModelJson = data["responseModel"];
 
     if (responseModelJson != null) {
@@ -214,6 +216,7 @@ class RequestModel {
           : null,
       responseStatus: responseStatus,
       message: message,
+      webSocketMessages: webSocketMessages ?? [],
       responseModel: responseModel,
     );
   }
@@ -235,6 +238,9 @@ class RequestModel {
       "requestFormDataList": rowsToFormDataMapList(requestFormDataList),
       "responseStatus": includeResponse ? responseStatus : null,
       "message": includeResponse ? message : null,
+      "webSocketMessages": includeResponse
+          ? webSocketMessages.map((e) => e.toJson()).toList()
+          : null,
       "responseModel": includeResponse ? responseModel?.toJson() : null,
     };
   }
@@ -258,6 +264,7 @@ class RequestModel {
       "Request FormData: ${requestFormDataList.toString()}",
       "Response Status: $responseStatus",
       "Response Message: $message",
+      "WebSocket Messages: ${webSocketMessages.toString()}",
       "Response: ${responseModel.toString()}"
     ].join("\n");
   }
@@ -282,6 +289,7 @@ class RequestModel {
         other.requestFormDataList == requestFormDataList &&
         other.responseStatus == responseStatus &&
         other.message == message &&
+        other.webSocketMessages == webSocketMessages &&
         other.responseModel == responseModel;
   }
 
@@ -305,6 +313,7 @@ class RequestModel {
       requestFormDataList,
       responseStatus,
       message,
+      webSocketMessages,
       responseModel,
     );
   }

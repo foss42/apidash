@@ -27,10 +27,11 @@ final requestSequenceProvider = StateProvider<List<String>>((ref) {
 
 final webSocketManagerProvider =
     Provider.family<WebSocketManager, String>((ref, url) {
-  final webhookMessages = ref.read(webhookMessagesProvider.notifier);
   final webSocketManager = WebSocketManager(
     addMessage: (String message, WebsocketMessageType type) {
-      webhookMessages.addMessage(message, type);
+      ref
+          .read(collectionStateNotifierProvider.notifier)
+          .addWebSocketMessage(message, type);
     },
     toggleConnect: () {
       final requestModel = ref.read(selectedRequestModelProvider.notifier);
@@ -55,22 +56,6 @@ final webSocketProvider =
   await for (final value in webSocketManager.channel!.stream) {
     yield value.toString();
   }
-});
-
-class MessagesNotifier extends StateNotifier<List<WebsocketMessage>> {
-  MessagesNotifier() : super([]);
-
-  void addMessage(String message, WebsocketMessageType type) {
-    state = [
-      WebsocketMessage(message, DateTime.now(), type),
-      ...state,
-    ];
-  }
-}
-
-final webhookMessagesProvider =
-    StateNotifierProvider<MessagesNotifier, List<WebsocketMessage>>((ref) {
-  return MessagesNotifier();
 });
 
 final StateNotifierProvider<CollectionStateNotifier, Map<String, RequestModel>?>
@@ -260,12 +245,24 @@ class CollectionStateNotifier
       await webSocketManager.connect(requestModel.url);
     }
 
-    ref
-        .read(webhookMessagesProvider.notifier)
-        .addMessage(requestModel.message!, WebsocketMessageType.client);
+    ref.read(collectionStateNotifierProvider.notifier).addWebSocketMessage(
+        requestModel.message!, WebsocketMessageType.client);
     webSocketManager.sendMessage(requestModel.message!);
 
     ref.read(sentRequestIdStateProvider.notifier).state = null;
+  }
+
+  void addWebSocketMessage(String message, WebsocketMessageType type) {
+    final selectedId = ref.read(selectedIdStateProvider.notifier).state;
+
+    var map = {...state!};
+    map[selectedId!] = state![selectedId]!.copyWith(
+      webSocketMessages: [
+        WebsocketMessage(message, DateTime.now(), type),
+        ...state![selectedId]!.webSocketMessages,
+      ],
+    );
+    state = map;
   }
 
   Future<void> sendRequest(String id) async {

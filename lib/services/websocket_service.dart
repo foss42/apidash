@@ -9,6 +9,14 @@ class WebsocketMessage {
   final String message;
   final DateTime timestamp;
   final WebsocketMessageType type;
+
+  Map<String, dynamic> toJson() {
+    return {
+      "message": message,
+      "timestamp": timestamp.toIso8601String(),
+      "type": type,
+    };
+  }
 }
 
 class WebSocketManager {

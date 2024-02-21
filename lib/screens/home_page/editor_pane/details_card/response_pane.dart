@@ -72,7 +72,8 @@ class ResponseDetails extends ConsumerWidget {
     if (requestModel?.protocol == Protocol.websocket) {
       return Consumer(
         builder: (context, ref, child) {
-          final messages = ref.watch(webhookMessagesProvider);
+          final requestModel = ref.watch(selectedRequestModelProvider);
+          final messages = requestModel!.webSocketMessages;
 
           return ListView.builder(
             itemCount: messages.length,
