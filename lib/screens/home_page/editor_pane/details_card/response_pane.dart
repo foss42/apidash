@@ -38,6 +38,8 @@ IconData _getIconForMessageType(WebsocketMessageType messageType) {
       return Icons.arrow_downward;
     case WebsocketMessageType.client:
       return Icons.arrow_upward;
+    case WebsocketMessageType.error:
+      return Icons.error;
   }
 }
 
@@ -49,6 +51,8 @@ Color _getColorForMessageType(WebsocketMessageType messageType) {
       return Colors.orange;
     case WebsocketMessageType.client:
       return Colors.lightGreen;
+    case WebsocketMessageType.error:
+      return Colors.red;
   }
 }
 

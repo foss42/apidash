@@ -43,7 +43,7 @@ final webSocketManagerProvider =
       }
     },
   );
-  ref.onDispose(() => webSocketManager.disconnect());
+  ref.onDispose(() => webSocketManager.disconnect(url));
 
   return webSocketManager;
 });
@@ -235,7 +235,7 @@ class CollectionStateNotifier
     final webSocketManager =
         ref.watch(webSocketManagerProvider(requestModel.url));
 
-    webSocketManager.disconnect();
+    webSocketManager.disconnect(requestModel.url);
 
     late final RequestModel newRequestModel;
 
@@ -247,7 +247,7 @@ class CollectionStateNotifier
     state = map;
   }
 
-  Future<void> sendWebsocketRequest(String id) async {
+  Future<void> sendWebSocketRequest(String id) async {
     ref.read(sentRequestIdStateProvider.notifier).state = id;
     ref.read(codePaneVisibleStateProvider.notifier).state = false;
 
@@ -255,6 +255,10 @@ class CollectionStateNotifier
 
     final webSocketManager =
         ref.watch(webSocketManagerProvider(state![id]!.url));
+
+    if (webSocketManager.channel == null) {
+      await webSocketManager.connect(requestModel.url);
+    }
 
     ref
         .read(webhookMessagesProvider.notifier)

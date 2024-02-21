@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:web_socket_channel/io.dart';
 
-enum WebsocketMessageType { server, client, info }
+enum WebsocketMessageType { server, client, info, error }
 
 class WebsocketMessage {
   WebsocketMessage(this.message, this.timestamp, this.type);
@@ -19,11 +19,10 @@ class WebSocketManager {
   WebSocketManager({required this.addMessage, required this.toggleConnect});
 
   Future<void> connect(String url) async {
-    // TODO does interfere with the addMessage callback
-    // addMessage("WebSocket channel connecting: $url", WebsocketMessageType.info);
+    addMessage("WebSocket channel connecting: $url", WebsocketMessageType.info);
     channel = IOWebSocketChannel.connect(url);
 
-    channel?.ready.then((value) {
+    await channel?.ready.then((value) {
       toggleConnect();
       addMessage(
           "WebSocket channel connected: $url", WebsocketMessageType.info);
@@ -34,7 +33,7 @@ class WebSocketManager {
         addMessage(message, WebsocketMessageType.server);
       },
       onError: (error) {
-        addMessage("WebSocket channel error: $url", WebsocketMessageType.info);
+        addMessage("WebSocket channel error: $url", WebsocketMessageType.error);
       },
       onDone: () {
         addMessage("WebSocket channel closed: $url", WebsocketMessageType.info);
@@ -48,10 +47,11 @@ class WebSocketManager {
     } else {}
   }
 
-  void disconnect() {
+  void disconnect(String url) {
     if (channel != null) {
       toggleConnect();
-      addMessage("WebSocket channel disconnecting", WebsocketMessageType.info);
+      addMessage(
+          "WebSocket channel disconnecting: $url", WebsocketMessageType.info);
       channel!.sink.close();
       channel = null;
     }

@@ -1,4 +1,3 @@
-import 'package:apidash/screens/home_page/editor_pane/details_card/request_pane/request_form_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
@@ -29,7 +28,6 @@ class EditRequestMessage extends ConsumerWidget {
                 fieldKey: "$selectedId-message-editor",
                 initialValue: requestModel?.message,
                 onChanged: (String value) {
-                  print("message changed: $value");
                   ref
                       .read(collectionStateNotifierProvider.notifier)
                       .update(selectedId, message: value);
@@ -44,14 +42,12 @@ class EditRequestMessage extends ConsumerWidget {
         child: Padding(
           padding: const EdgeInsets.only(bottom: 30),
           child: ElevatedButton.icon(
-            onPressed: () {
-              ref
-                  .read(collectionStateNotifierProvider.notifier)
-                  .sendWebsocketRequest(selectedId);
-            },
-            icon: const Icon(Icons.add),
+            onPressed: () => ref
+                .read(collectionStateNotifierProvider.notifier)
+                .sendWebSocketRequest(selectedId),
+            icon: const Icon(Icons.send),
             label: const Text(
-              "Send Websocket Message",
+              kLabelSend,
               style: kTextStyleButton,
             ),
           ),

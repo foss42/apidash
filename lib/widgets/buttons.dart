@@ -61,30 +61,35 @@ class ConnectWebsocketButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool disable = sentRequestId != null;
+    bool isBusy = selectedId == sentRequestId;
     return FilledButton(
       onPressed: disable ? null : onTap,
       child: Row(
         mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            disable
-                ? (selectedId == sentRequestId ? kLabelSending : kLabelBusy)
-                : connected
-                    ? "Disconnect"
-                    : "Connect",
-            style: kTextStyleButton,
-          ),
-          if (!disable) kHSpacer10,
-          if (!disable)
-            connected
-                ? const Icon(
-                    size: 16,
-                    Icons.close,
-                  )
-                : const Icon(
-                    size: 16,
-                    Icons.computer,
-                  ),
+        children: <Widget>[
+          if (disable)
+            Text(
+              (isBusy ? kLabelSending : kLabelBusy),
+              style: kTextStyleButton,
+            )
+          else ...[
+            Text(
+              connected ? kLabelDisconnect : kLabelConnect,
+              style: kTextStyleButton,
+            ),
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+              child: VerticalDivider(
+                color: Colors.white,
+                thickness: 2,
+                width: 2,
+              ),
+            ),
+            CircleAvatar(
+              radius: 8,
+              backgroundColor: connected ? Colors.green : Colors.red,
+            ),
+          ]
         ],
       ),
     );
