@@ -374,7 +374,7 @@ const Map<String, Map<String, List<ResponseBodyView>>>
   kTypeText: {
     kSubTypeDefaultViewOptions: kRawBodyViewOptions,
     kSubTypeCss: kCodeRawBodyViewOptions,
-    kSubTypeHtml: kCodeRawBodyViewOptions,
+    kSubTypeHtml: kPreviewRawBodyViewOptions,
     kSubTypeJavascript: kCodeRawBodyViewOptions,
     kSubTypeMarkdown: kCodeRawBodyViewOptions,
     kSubTypeTextXml: kCodeRawBodyViewOptions,
@@ -482,6 +482,9 @@ const kImageError =
 
 const kSvgError =
     "There seems to be an issue rendering this SVG image. Please raise an issue in API Dash GitHub repo so that we can resolve it.";
+
+const kHtmlError =
+    "There seems to be an issue rendering this HTML document. Please raise an issue in API Dash GitHub repo so that we can resolve it.";
 
 const kPdfError =
     "There seems to be an issue rendering this pdf. Please raise an issue in API Dash GitHub repo so that we can resolve it.";

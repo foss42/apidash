@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:printing/printing.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 import 'error_message.dart';
 import 'uint8_audio_player.dart';
@@ -40,6 +41,18 @@ class _PreviewerState extends State<Previewer> {
         return preview;
       } catch (e) {
         // pass
+      }
+    }
+    if (widget.type == kTypeText && widget.subtype == kSubTypeHtml) {
+      try {
+        parseWithoutOptimizers(widget.body);
+        return SingleChildScrollView(
+          child: HtmlWidget(
+            widget.body,
+          ),
+        );
+      } catch (e) {
+        return const ErrorMessage(message: kHtmlError);
       }
     }
     if (widget.type == kTypeImage && widget.subtype == kSubTypeSvg) {

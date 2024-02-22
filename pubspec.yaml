@@ -54,6 +54,7 @@ dependencies:
   code_builder: ^4.9.0
   dart_style: ^2.3.4
   json_text_field: ^1.1.0
+  flutter_widget_from_html: ^0.14.11
 
 dev_dependencies:
   flutter_test:
