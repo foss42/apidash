@@ -38,13 +38,12 @@ class _PreviewerState extends State<Previewer> {
   @override
   void initState() {
     super.initState();
-    csvData = []; 
+    csvData = [];
   }
-
 
   void processCsv(String body) {
     print("hello");
-    csvData = const CsvToListConverter().convert(body , eol: '\n');
+    csvData = const CsvToListConverter().convert(body, eol: '\n');
     print(csvData);
     setState(() {});
   }
@@ -76,8 +75,14 @@ class _PreviewerState extends State<Previewer> {
     if (widget.type == kTypeText && widget.subtype == kSubTypeHtml) {
       try {
         return SingleChildScrollView(
-          child: HtmlWidget(
-            widget.body,
+          child: Row(
+            children: [
+              Flexible(
+                child: HtmlWidget(
+                  widget.body,
+                ),
+              ),
+            ],
           ),
         );
       } catch (e) {
