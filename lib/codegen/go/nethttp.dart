@@ -8,51 +8,51 @@ class GoNetHttpCodeGen {
 package main
 
 import (
-\t"fmt"
-\t"io"
-\t"net/http"${isBodyPresent ? '\n\t"strings"' : ''}
+  "fmt"
+  "io"
+  "net/http"${isBodyPresent ? '\n  "strings"' : ''}
 )\n
 """;
 
   String kTemplateStart = """func main() {
-\turl := "%s"
-\tmethod := "%s"\n""";
+  url := "%s"
+  method := "%s"\n""";
 
-  String kTemplateHeader = """\theaders := map[string]string{
+  String kTemplateHeader = """  headers := map[string]string{
 %s
-\t}\n""";
+  }\n""";
 
   String kTemplateBody = """%s""";
 
   String kStringRequest = """
-\tif err != nil {
-\t\tfmt.Println("Error creating request:", err)
-\t\treturn
-\t}
+  if err != nil {
+    fmt.Println("Error creating request:", err)
+    return
+  }
 
-\t// Set headers
-\tfor key, value := range headers {
-\t\treq.Header.Set(key, value)
-\t}
+  // Set headers
+  for key, value := range headers {
+    req.Header.Set(key, value)
+  }
 
-\t// Make the HTTP request
-\tclient := &http.Client{}
-\tresp, err := client.Do(req)
-\tif err != nil {
-\t\tfmt.Println("Error making request:", err)
-\t\treturn
-\t}
-\tdefer resp.Body.Close()
+  // Make the HTTP request
+  client := &http.Client{}
+  resp, err := client.Do(req)
+  if err != nil {
+    fmt.Println("Error making request:", err)
+    return
+  }
+  defer resp.Body.Close()
 
-\tfmt.Printf("%s\\n%s\\n\\n", resp.Status, resp.Header)
+  fmt.Printf("%s\\n%s\\n\\n", resp.Status, resp.Header)
 
-\t// Read and print the response
-\tbodyText, err := io.ReadAll(resp.Body)
-\tif err != nil {
-\t\tfmt.Println("Error reading response body:", err)
-\t\treturn
-\t}
-\tfmt.Println(string(bodyText))
+  // Read and print the response
+  bodyText, err := io.ReadAll(resp.Body)
+  if err != nil {
+    fmt.Println("Error reading response body:", err)
+    return
+  }
+  fmt.Println(string(bodyText))
 }
 """;
 
@@ -77,21 +77,21 @@ import (
       if (harJson['headers'] != null && harJson['headers'].isNotEmpty) {
         var headers = '';
         for (var header in harJson['headers']) {
-          headers += '\t\t"${header['name']}": "${header['value']}",\n';
+          headers += '    "${header['name']}": "${header['value']}",\n';
         }
         result += kTemplateHeader.replaceAll('%s', headers.trimRight());
       } else {
-        result += '\theaders := map[string]string{}\n';
+        result += '  headers := map[string]string{}\n';
       }
 
       // Add body if present
       if (isBodyPresent) {
         result += kTemplateBody.replaceAll('%s',
-            '${'\tbody := strings.NewReader(`${harJson['postData']['text']}'}`)\n');
+            '${'  body := strings.NewReader(`${harJson['postData']['text']}'}`)\n');
       }
 
       result +=
-          '''\n\treq, err := http.NewRequest(method, url, ${isBodyPresent ? 'body' : 'nil'})\n''';
+          '''\n  req, err := http.NewRequest(method, url, ${isBodyPresent ? 'body' : 'nil'})\n''';
 
       // Add the request execution code
       result += kStringRequest;
