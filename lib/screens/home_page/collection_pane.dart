@@ -50,6 +50,22 @@ class CollectionPane extends ConsumerWidget {
                     style: kTextStyleButton,
                   ),
                 ),
+                TextButton.icon(
+                  onPressed: () {
+                    ref
+                        .read(collectionStateNotifierProvider.notifier)
+                        .clearData();
+                  },
+                  icon: const Icon(
+                    Icons.clear_all,
+                    size: 20,
+                  ),
+                  label: const Text(
+                    'Clear',
+                    style: kTextStyleButton,
+                  ),
+                ),
+
                 //const Spacer(),
                 ElevatedButton(
                   onPressed: () {
