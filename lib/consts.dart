@@ -500,3 +500,4 @@ const kLabelBusy = "Busy";
 const kLabelCopy = "Copy";
 const kLabelSave = "Save";
 const kLabelDownload = "Download";
+const kLabelImport = "Import";

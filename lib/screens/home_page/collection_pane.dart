@@ -1,3 +1,4 @@
+import 'package:apidash/dialogs/dialogs_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
@@ -67,6 +68,18 @@ class CollectionPane extends ConsumerWidget {
           const Expanded(
             child: RequestList(),
           ),
+          TextButton.icon(
+            onPressed: () => DialogsWrapper.importRequestsDialog(context),
+            icon: const Icon(
+              Icons.sim_card_download_outlined,
+              size: 20,
+            ),
+            label: const Text(
+              kLabelImport,
+              style: kTextStyleButton,
+            ),
+          ),
+          kVSpacer8,
         ],
       ),
     );

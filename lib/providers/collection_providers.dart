@@ -67,6 +67,19 @@ class CollectionStateNotifier
     ref.read(selectedIdStateProvider.notifier).state = newRequestModel.id;
   }
 
+  /// Adds a new [RequestModel] into state with prefilled data
+  void addNewRequest(RequestModel newRequestModel) {
+    final id = newRequestModel.id;
+
+    var map = {...state!};
+    map[id] = newRequestModel;
+    state = map;
+    ref
+        .read(requestSequenceProvider.notifier)
+        .update((state) => [id, ...state]);
+    ref.read(selectedIdStateProvider.notifier).state = newRequestModel.id;
+  }
+
   void reorder(int oldIdx, int newIdx) {
     var itemIds = ref.read(requestSequenceProvider);
     final itemId = itemIds.removeAt(oldIdx);
