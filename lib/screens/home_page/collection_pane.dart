@@ -1,3 +1,4 @@
+import 'package:apidash/services/hive_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
@@ -34,12 +35,19 @@ class CollectionPane extends ConsumerWidget {
                   onPressed: savingData
                       ? null
                       : () async {
-                          await ref
-                              .read(collectionStateNotifierProvider.notifier)
-                              .saveData();
+                          var itemIds = ref.read(requestSequenceProvider);
+                          if (itemIds.isEmpty) {
+                            sm.hideCurrentSnackBar();
+                            sm.showSnackBar(getSnackBar(
+                                "Add some data to save the session"));
+                          } else {
+                            await ref
+                                .read(collectionStateNotifierProvider.notifier)
+                                .saveData();
 
-                          sm.hideCurrentSnackBar();
-                          sm.showSnackBar(getSnackBar("Saved"));
+                            sm.hideCurrentSnackBar();
+                            sm.showSnackBar(getSnackBar("Saved"));
+                          }
                         },
                   icon: const Icon(
                     Icons.save,
