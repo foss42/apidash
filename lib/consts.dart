@@ -374,7 +374,7 @@ const Map<String, Map<String, List<ResponseBodyView>>>
   kTypeText: {
     kSubTypeDefaultViewOptions: kRawBodyViewOptions,
     kSubTypeCss: kCodeRawBodyViewOptions,
-    kSubTypeHtml: kPreviewRawBodyViewOptions,
+    kSubTypeHtml: kPreviewCodeRawBodyViewOptions,
     kSubTypeJavascript: kCodeRawBodyViewOptions,
     kSubTypeMarkdown: kCodeRawBodyViewOptions,
     kSubTypeTextXml: kCodeRawBodyViewOptions,

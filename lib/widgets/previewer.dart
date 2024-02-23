@@ -45,7 +45,6 @@ class _PreviewerState extends State<Previewer> {
     }
     if (widget.type == kTypeText && widget.subtype == kSubTypeHtml) {
       try {
-        parseWithoutOptimizers(widget.body);
         return SingleChildScrollView(
           child: HtmlWidget(
             widget.body,
