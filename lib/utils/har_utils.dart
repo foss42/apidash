@@ -87,12 +87,16 @@ Map<String, dynamic> requestModelToHARJsonRequest(
 
   Uri? uri = rec.$1;
   var u = "";
+  if (uri == null) {
+    json["method"] = requestModel.method.name.toUpperCase();
+    json["url"] = u;
+  }
+
   if (uri != null) {
     u = uri.toString();
     if (u[u.length - 1] == "?") {
       u = u.substring(0, u.length - 1);
     }
-
     json["method"] = requestModel.method.name.toUpperCase();
     json["url"] = u;
     json["httpVersion"] = "HTTP/1.1";
