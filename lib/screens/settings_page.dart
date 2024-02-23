@@ -39,20 +39,47 @@ class SettingsPage extends ConsumerWidget {
               SwitchListTile(
                 contentPadding: EdgeInsets.zero,
                 hoverColor: kColorTransparent,
-                title: const Text('Switch Theme Mode'),
-                subtitle: Text(
-                    'Current selection: ${settings.isDark ? "Dark Mode" : "Light mode"}'),
+                title: const Text(
+                  'Switch Theme Mode',
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                ),
+                subtitle: Row(
+                  children: [
+                    Text(
+                      'Current selection: ',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      '${settings.isDark ? "Dark Mode" : "Light mode"}',
+                      style: TextStyle(fontWeight: FontWeight.normal),
+                    ),
+                  ],
+                ),
                 value: settings.isDark,
                 onChanged: (bool? value) {
                   ref.read(settingsProvider.notifier).update(isDark: value);
                 },
               ),
+              Divider(),
               SwitchListTile(
                 contentPadding: EdgeInsets.zero,
                 hoverColor: kColorTransparent,
-                title: const Text('Collection Pane Scrollbar Visiblity'),
-                subtitle: Text(
-                    'Current selection: ${settings.alwaysShowCollectionPaneScrollbar ? "Always show" : "Show only when scrolling"}'),
+                title: const Text(
+                  'Collection Pane Scrollbar Visiblity',
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                ),
+                subtitle: Row(
+                  children: [
+                    Text(
+                      'Current selection: ',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      '${settings.alwaysShowCollectionPaneScrollbar ? "Always show" : "Show only when scrolling"}',
+                      style: TextStyle(fontWeight: FontWeight.normal),
+                    ),
+                  ],
+                ),
                 value: settings.alwaysShowCollectionPaneScrollbar,
                 onChanged: (bool? value) {
                   ref
@@ -60,10 +87,14 @@ class SettingsPage extends ConsumerWidget {
                       .update(alwaysShowCollectionPaneScrollbar: value);
                 },
               ),
+              Divider(),
               ListTile(
                 contentPadding: EdgeInsets.zero,
                 hoverColor: kColorTransparent,
-                title: const Text('Default URI Scheme'),
+                title: const Text(
+                  'Default URI Scheme',
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                ),
                 subtitle: Text(
                     'api.foss42.com → ${settings.defaultUriScheme}://api.foss42.com'),
                 trailing: DropdownMenu(
@@ -81,10 +112,14 @@ class SettingsPage extends ConsumerWidget {
                       );
                     }).toList()),
               ),
+              Divider(),
               ListTile(
                 contentPadding: EdgeInsets.zero,
                 hoverColor: kColorTransparent,
-                title: const Text('Default Code Generator'),
+                title: const Text(
+                  'Default Code Generator',
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                ),
                 trailing: DropdownMenu(
                     onSelected: (value) {
                       ref
@@ -100,9 +135,16 @@ class SettingsPage extends ConsumerWidget {
                       );
                     }).toList()),
               ),
+              SizedBox(
+                height: 5,
+              ),
+              Divider(),
               CheckboxListTile(
                 contentPadding: EdgeInsets.zero,
-                title: const Text("Save Responses"),
+                title: const Text(
+                  "Save Responses",
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                ),
                 subtitle:
                     const Text("Save disk space by not storing API responses"),
                 value: settings.saveResponses,
@@ -112,9 +154,13 @@ class SettingsPage extends ConsumerWidget {
                       .update(saveResponses: value);
                 },
               ),
+              Divider(),
               CheckboxListTile(
                 contentPadding: EdgeInsets.zero,
-                title: const Text("Show Save Alert on App Close"),
+                title: const Text(
+                  "Show Save Alert on App Close",
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                ),
                 subtitle: const Text(
                     "Show a confirmation dialog to save workspace when the user closes the app"),
                 value: settings.promptBeforeClosing,
@@ -124,10 +170,14 @@ class SettingsPage extends ConsumerWidget {
                       .update(promptBeforeClosing: value);
                 },
               ),
+              Divider(),
               ListTile(
                 contentPadding: EdgeInsets.zero,
                 hoverColor: kColorTransparent,
-                title: const Text('Export Data'),
+                title: const Text(
+                  'Export Data',
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                ),
                 subtitle: const Text(
                     'Export your collection to HAR (HTTP Archive format).\nVersion control this file or import in other API clients.'),
                 trailing: FilledButton.icon(
@@ -144,10 +194,14 @@ class SettingsPage extends ConsumerWidget {
                   ),
                 ),
               ),
+              Divider(),
               ListTile(
                 contentPadding: EdgeInsets.zero,
                 hoverColor: kColorTransparent,
-                title: const Text('Clear Data'),
+                title: const Text(
+                  'Clear Data',
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                ),
                 subtitle: const Text('Delete all requests data from the disk'),
                 trailing: FilledButton.tonalIcon(
                   style: FilledButton.styleFrom(
@@ -199,6 +253,9 @@ class SettingsPage extends ConsumerWidget {
                     size: 20,
                   ),
                 ),
+              ),
+              SizedBox(
+                height: 5,
               ),
             ],
           ),
