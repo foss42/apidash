@@ -1,6 +1,9 @@
 import 'dart:convert';
+import 'package:csv/csv.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:printing/printing.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
@@ -30,6 +33,22 @@ class Previewer extends StatefulWidget {
 }
 
 class _PreviewerState extends State<Previewer> {
+  late List<List<dynamic>> csvData;
+
+  @override
+  void initState() {
+    super.initState();
+    csvData = []; 
+  }
+
+
+  void processCsv(String body) {
+    print("hello");
+    csvData = const CsvToListConverter().convert(body , eol: '\n');
+    print(csvData);
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     if (widget.type == kTypeApplication && widget.subtype == kSubTypeJson) {
@@ -54,6 +73,57 @@ class _PreviewerState extends State<Previewer> {
         return const ErrorMessage(message: kSvgError);
       }
     }
+    if (widget.type == kTypeText && widget.subtype == kSubTypeHtml) {
+      try {
+        return SingleChildScrollView(
+          child: HtmlWidget(
+            widget.body,
+          ),
+        );
+      } catch (e) {
+        return const ErrorMessage(message: kHtmlError);
+      }
+    }
+    if (widget.type == kTypeText && widget.subtype == kSubTypeCsv) {
+      processCsv(widget.body);
+      try {
+        print(csvData[1]);
+
+        return SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: DataTable(
+            columns: csvData[0]
+                .map(
+                  (item) => DataColumn(
+                    label: Text(
+                      item.toString(),
+                    ),
+                  ),
+                )
+                .toList(),
+            rows: csvData
+                .skip(1)
+                .map(
+                  (csvrow) => DataRow(
+                    cells: csvrow
+                        .map(
+                          (csvItem) => DataCell(
+                            Text(
+                              csvItem.toString(),
+                            ),
+                          ),
+                        )
+                        .toList(),
+                  ),
+                )
+                .toList(),
+          ),
+        );
+      } catch (e) {
+        return const ErrorMessage(message: kCsvError);
+      }
+    }
+
     if (widget.type == kTypeImage) {
       return Image.memory(
         widget.bytes,
