@@ -43,8 +43,6 @@ class RustReqwestCodeGen {
     }
 
 """;
-  String kTemplateFormHeaderContentType = '''
-multipart/form-data; boundary={{boundary}}''';
 
   int kHeadersPadding = 10;
 
@@ -157,13 +155,6 @@ multipart/form-data; boundary={{boundary}}''';
         var headersList = requestModel.enabledRequestHeaders;
         if (headersList != null || hasBody) {
           var headers = requestModel.enabledHeadersMap;
-          if (requestModel.isFormDataRequest) {
-            var formHeaderTemplate =
-                jj.Template(kTemplateFormHeaderContentType);
-            headers[HttpHeaders.contentTypeHeader] = formHeaderTemplate.render({
-              "boundary": uuid,
-            });
-          }
           if (headers.isNotEmpty || hasBody) {
             hasHeaders = true;
             if (hasBody) {
@@ -181,7 +172,6 @@ multipart/form-data; boundary={{boundary}}''';
           result += formDataBodyData.render(
             {
               "fields_list": json.encode(requestModel.formDataMapList),
-              "boundary": uuid,
             },
           );
         }
@@ -206,7 +196,7 @@ multipart/form-data; boundary={{boundary}}''';
           result += kStringRequestForm;
         }
 
-        if (hasHeaders || requestModel.isFormDataRequest) {
+        if (hasHeaders) {
           result += kStringRequestHeaders;
         }
 
