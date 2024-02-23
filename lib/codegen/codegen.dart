@@ -1,3 +1,4 @@
+import 'package:apidash/codegen/go/nethttp.dart';
 import 'package:apidash/models/models.dart' show RequestModel;
 import 'package:apidash/consts.dart';
 import 'dart/http.dart';
@@ -25,6 +26,8 @@ class Codegen {
         return DartHttpCodeGen().getCode(requestModel, defaultUriScheme);
       case CodegenLanguage.dartDio:
         return DartDioCodeGen().getCode(requestModel, defaultUriScheme);
+      case CodegenLanguage.goNetHttp:
+        return GoNetHttpCodeGen().getCode(requestModel, defaultUriScheme);
       case CodegenLanguage.jsAxios:
         return AxiosCodeGen().getCode(requestModel, defaultUriScheme);
       case CodegenLanguage.jsFetch:
