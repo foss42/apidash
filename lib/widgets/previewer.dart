@@ -42,9 +42,7 @@ class _PreviewerState extends State<Previewer> {
   }
 
   void processCsv(String body) {
-    print("hello");
     csvData = const CsvToListConverter().convert(body, eol: '\n');
-    print(csvData);
     setState(() {});
   }
 
@@ -92,8 +90,6 @@ class _PreviewerState extends State<Previewer> {
     if (widget.type == kTypeText && widget.subtype == kSubTypeCsv) {
       processCsv(widget.body);
       try {
-        print(csvData[1]);
-
         return SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: DataTable(
