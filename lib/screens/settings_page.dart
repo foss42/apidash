@@ -45,13 +45,13 @@ class SettingsPage extends ConsumerWidget {
                 ),
                 subtitle: Row(
                   children: [
-                    Text(
+                    const Text(
                       'Current selection: ',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     Text(
                       '${settings.isDark ? "Dark Mode" : "Light mode"}',
-                      style: TextStyle(fontWeight: FontWeight.normal),
+                      style: const TextStyle(fontWeight: FontWeight.normal),
                     ),
                   ],
                 ),
@@ -60,7 +60,7 @@ class SettingsPage extends ConsumerWidget {
                   ref.read(settingsProvider.notifier).update(isDark: value);
                 },
               ),
-              Divider(),
+              const Divider(),
               SwitchListTile(
                 contentPadding: EdgeInsets.zero,
                 hoverColor: kColorTransparent,
@@ -70,13 +70,13 @@ class SettingsPage extends ConsumerWidget {
                 ),
                 subtitle: Row(
                   children: [
-                    Text(
+                    const Text(
                       'Current selection: ',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     Text(
                       '${settings.alwaysShowCollectionPaneScrollbar ? "Always show" : "Show only when scrolling"}',
-                      style: TextStyle(fontWeight: FontWeight.normal),
+                      style: const TextStyle(fontWeight: FontWeight.normal),
                     ),
                   ],
                 ),
@@ -87,7 +87,7 @@ class SettingsPage extends ConsumerWidget {
                       .update(alwaysShowCollectionPaneScrollbar: value);
                 },
               ),
-              Divider(),
+              const Divider(),
               ListTile(
                 contentPadding: EdgeInsets.zero,
                 hoverColor: kColorTransparent,
@@ -112,7 +112,7 @@ class SettingsPage extends ConsumerWidget {
                       );
                     }).toList()),
               ),
-              Divider(),
+              const Divider(),
               ListTile(
                 contentPadding: EdgeInsets.zero,
                 hoverColor: kColorTransparent,
@@ -135,10 +135,10 @@ class SettingsPage extends ConsumerWidget {
                       );
                     }).toList()),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 5,
               ),
-              Divider(),
+              const Divider(),
               CheckboxListTile(
                 contentPadding: EdgeInsets.zero,
                 title: const Text(
@@ -154,7 +154,7 @@ class SettingsPage extends ConsumerWidget {
                       .update(saveResponses: value);
                 },
               ),
-              Divider(),
+              const Divider(),
               CheckboxListTile(
                 contentPadding: EdgeInsets.zero,
                 title: const Text(
@@ -170,7 +170,7 @@ class SettingsPage extends ConsumerWidget {
                       .update(promptBeforeClosing: value);
                 },
               ),
-              Divider(),
+              const Divider(),
               ListTile(
                 contentPadding: EdgeInsets.zero,
                 hoverColor: kColorTransparent,
@@ -194,7 +194,7 @@ class SettingsPage extends ConsumerWidget {
                   ),
                 ),
               ),
-              Divider(),
+              const Divider(),
               ListTile(
                 contentPadding: EdgeInsets.zero,
                 hoverColor: kColorTransparent,
@@ -254,7 +254,7 @@ class SettingsPage extends ConsumerWidget {
                   ),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 5,
               ),
             ],
