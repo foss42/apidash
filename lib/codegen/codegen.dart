@@ -5,6 +5,7 @@ import 'dart/dio.dart';
 import 'kotlin/okhttp.dart';
 import 'python/http_client.dart';
 import 'python/requests.dart';
+import 'rust/reqwest.dart';
 import 'js/axios.dart';
 import 'js/fetch.dart';
 import 'others/har.dart';
@@ -42,6 +43,8 @@ class Codegen {
             .getCode(requestModel, defaultUriScheme);
       case CodegenLanguage.pythonRequests:
         return PythonRequestsCodeGen().getCode(requestModel, defaultUriScheme);
+      case CodegenLanguage.rustReqwest:
+        return RustReqwestCodeGen().getCode(requestModel, defaultUriScheme);
     }
   }
 }
