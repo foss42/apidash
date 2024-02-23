@@ -130,7 +130,9 @@ body = b'\r\n'.join(dataList)
 
         var method = requestModel.method;
         var requestBody = requestModel.requestBody;
-        if (kMethodsWithBody.contains(method) && requestBody != null) {
+        if (kMethodsWithBody.contains(method) &&
+            requestBody != null &&
+            !requestModel.isFormDataRequest) {
           var contentLength = utf8.encode(requestBody).length;
           if (contentLength > 0) {
             hasBody = true;
