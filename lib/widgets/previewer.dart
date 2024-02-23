@@ -33,19 +33,6 @@ class Previewer extends StatefulWidget {
 }
 
 class _PreviewerState extends State<Previewer> {
-  late List<List<dynamic>> csvData;
-
-  @override
-  void initState() {
-    super.initState();
-    csvData = [];
-  }
-
-  void processCsv(String body) {
-    csvData = const CsvToListConverter().convert(body, eol: '\n');
-    setState(() {});
-  }
-
   @override
   Widget build(BuildContext context) {
     if (widget.type == kTypeApplication && widget.subtype == kSubTypeJson) {
@@ -88,38 +75,8 @@ class _PreviewerState extends State<Previewer> {
       }
     }
     if (widget.type == kTypeText && widget.subtype == kSubTypeCsv) {
-      processCsv(widget.body);
       try {
-        return SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: DataTable(
-            columns: csvData[0]
-                .map(
-                  (item) => DataColumn(
-                    label: Text(
-                      item.toString(),
-                    ),
-                  ),
-                )
-                .toList(),
-            rows: csvData
-                .skip(1)
-                .map(
-                  (csvrow) => DataRow(
-                    cells: csvrow
-                        .map(
-                          (csvItem) => DataCell(
-                            Text(
-                              csvItem.toString(),
-                            ),
-                          ),
-                        )
-                        .toList(),
-                  ),
-                )
-                .toList(),
-          ),
-        );
+        return CsvPreviewer(body: widget.body);
       } catch (e) {
         return const ErrorMessage(message: kCsvError);
       }
@@ -159,5 +116,51 @@ class _PreviewerState extends State<Previewer> {
         ? "$kMimeTypeRawRaiseIssueStart${widget.type}/${widget.subtype}$kMimeTypeRaiseIssue"
         : "$kMimeTypeRaiseIssueStart${widget.type}/${widget.subtype}$kMimeTypeRaiseIssue";
     return ErrorMessage(message: message);
+  }
+}
+
+class CsvPreviewer extends StatelessWidget {
+  const CsvPreviewer({Key? key, required this.body}) : super(key: key);
+
+  final String body;
+
+  @override
+  Widget build(BuildContext context) {
+    try {
+      final List<List<dynamic>> csvData =
+          const CsvToListConverter().convert(body, eol: '\n');
+      return SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: DataTable(
+          columns: csvData[0]
+              .map(
+                (item) => DataColumn(
+                  label: Text(
+                    item.toString(),
+                  ),
+                ),
+              )
+              .toList(),
+          rows: csvData
+              .skip(1)
+              .map(
+                (csvrow) => DataRow(
+                  cells: csvrow
+                      .map(
+                        (csvItem) => DataCell(
+                          Text(
+                            csvItem.toString(),
+                          ),
+                        ),
+                      )
+                      .toList(),
+                ),
+              )
+              .toList(),
+        ),
+      );
+    } catch (e) {
+      return const ErrorMessage(message: kCsvError);
+    }
   }
 }
