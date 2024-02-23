@@ -7,6 +7,7 @@ import 'python/http_client.dart';
 import 'python/requests.dart';
 import 'js/axios.dart';
 import 'js/fetch.dart';
+import 'rust/actix.dart';
 import 'others/har.dart';
 import 'others/curl.dart';
 
@@ -42,6 +43,8 @@ class Codegen {
             .getCode(requestModel, defaultUriScheme);
       case CodegenLanguage.pythonRequests:
         return PythonRequestsCodeGen().getCode(requestModel, defaultUriScheme);
+      case CodegenLanguage.rustActix:
+        return RustActixCodeGen().getCode(requestModel, defaultUriScheme);
     }
   }
 }
