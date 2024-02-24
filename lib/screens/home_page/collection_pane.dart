@@ -1,9 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:apidash/consts.dart';
+import 'package:apidash/models/models.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
-import 'package:apidash/models/models.dart';
-import 'package:apidash/consts.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class CollectionPane extends ConsumerWidget {
   const CollectionPane({
@@ -161,6 +161,7 @@ class RequestItem extends ConsumerWidget {
     return SidebarRequestCard(
       id: id,
       method: requestModel.method,
+      protocol: requestModel.protocol,
       name: requestModel.name,
       url: requestModel.url,
       selectedId: selectedId,
