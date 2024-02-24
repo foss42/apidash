@@ -28,7 +28,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
   }
 
   void _onFieldChange(String selectedId) {
-    ref.read(collectionStateNotifierProvider.notifier).update(
+    ref.watch(collectionStateNotifierProvider.notifier).update(
           selectedId,
           requestParams: rows,
           isParamEnabledList: isRowEnabledList,
@@ -37,17 +37,18 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
 
   @override
   Widget build(BuildContext context) {
+    rows = [];
     final selectedId = ref.watch(selectedIdStateProvider);
     final length = ref.watch(selectedRequestModelProvider
         .select((value) => value?.requestParams?.length));
-    var rP = ref.read(selectedRequestModelProvider)?.requestParams;
+    final rP = ref.watch(selectedRequestModelProvider)?.requestParams;
     rows = (rP == null || rP.isEmpty)
         ? [
             kNameValueEmptyModel,
           ]
         : rP;
     isRowEnabledList =
-        ref.read(selectedRequestModelProvider)?.isParamEnabledList ??
+        ref.watch(selectedRequestModelProvider)?.isParamEnabledList ??
             List.filled(rows.length, true, growable: true);
 
     DaviModel<NameValueModel> model = DaviModel<NameValueModel>(

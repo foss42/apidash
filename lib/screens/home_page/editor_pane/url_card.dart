@@ -1,3 +1,4 @@
+import 'package:apidash/models/models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
@@ -77,9 +78,21 @@ class URLTextField extends ConsumerWidget {
           .getRequestModel(selectedId)
           ?.url,
       onChanged: (value) {
-        ref
-            .read(collectionStateNotifierProvider.notifier)
-            .update(selectedId, url: value);
+        final Uri uri = Uri.parse(value);
+        final Map<String, String> urlParams = uri.queryParameters;
+        List<NameValueModel> requestParams = [];
+
+        urlParams.forEach((key, value) {
+          requestParams.add(
+            NameValueModel(name: key, value: value),
+          );
+        });
+
+        ref.read(collectionStateNotifierProvider.notifier).update(
+              selectedId,
+              url: value,
+              requestParams: requestParams,
+            );
       },
     );
   }
