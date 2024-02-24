@@ -35,7 +35,6 @@ class NotSentWidget extends StatelessWidget {
   }
 }
 
-
 class SendingWidget extends StatefulWidget {
   const SendingWidget({Key? key}) : super(key: key);
 
@@ -80,9 +79,19 @@ class _SendingWidgetState extends State<SendingWidget> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
-            'Time elapsed: $_seconds.${(_milliseconds / 100).floor().toString().padLeft(2, '0')}',
-            style: TextStyle(fontSize: 24),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.alarm),
+              const SizedBox(width: 10,),
+              Text(
+                'Time elapsed: $_seconds.${(_milliseconds / 100).floor().toString().padLeft(2, '0')}',
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.fade,
+                softWrap: false,
+                style: kTextStyleButton,
+              ),
+            ],
           ),
           Lottie.asset("assets/sending.json"),
         ],
