@@ -79,13 +79,15 @@ class _SendingWidgetState extends State<SendingWidget> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Row(
+           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Icon(Icons.alarm),
-              const SizedBox(width: 10,),
+              const SizedBox(
+                width: 10,
+              ),
               Text(
-                'Time elapsed: $_seconds.${(_milliseconds / 100).floor().toString().padLeft(2, '0')}',
+                'Time elapsed: ${humanizeDuration(Duration(seconds: _seconds, milliseconds: _milliseconds))}',
                 textAlign: TextAlign.center,
                 overflow: TextOverflow.fade,
                 softWrap: false,
