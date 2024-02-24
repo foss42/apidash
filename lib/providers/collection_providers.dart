@@ -133,23 +133,29 @@ class CollectionStateNotifier
     String? message,
     ResponseModel? responseModel,
   }) {
+    // Switch from GET to POST if request has payload of any kind
+    if (requestBody != null && state![id]!.method == HTTPVerb.get) {
+      method = HTTPVerb.post;
+    }
+
     final newModel = state![id]!.copyWith(
-        method: method,
-        url: url,
-        name: name,
-        description: description,
-        requestTabIndex: requestTabIndex,
-        requestHeaders: requestHeaders,
-        requestParams: requestParams,
-        isHeaderEnabledList: isHeaderEnabledList,
-        isParamEnabledList: isParamEnabledList,
-        requestBodyContentType: requestBodyContentType,
-        requestBody: requestBody,
-        requestFormDataList: requestFormDataList,
-        responseStatus: responseStatus,
-        message: message,
-        responseModel: responseModel);
-    //print(newModel);
+      method: method,
+      url: url,
+      name: name,
+      description: description,
+      requestTabIndex: requestTabIndex,
+      requestHeaders: requestHeaders,
+      requestParams: requestParams,
+      isHeaderEnabledList: isHeaderEnabledList,
+      isParamEnabledList: isParamEnabledList,
+      requestBodyContentType: requestBodyContentType,
+      requestBody: requestBody,
+      requestFormDataList: requestFormDataList,
+      responseStatus: responseStatus,
+      message: message,
+      responseModel: responseModel,
+    );
+
     var map = {...state!};
     map[id] = newModel;
     state = map;

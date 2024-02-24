@@ -31,6 +31,7 @@ migrate_working_dir/
 .pub-cache/
 .pub/
 /build/
+pubspec.lock
 
 # Symbolication related
 app.*.symbols
@@ -57,3 +58,6 @@ coverage/*
 installers/*
 .metadata
 .fvm/
+
+# unit tests hive storage
+test/unit-test-hive-storage/
