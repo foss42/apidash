@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http_parser/http_parser.dart';
@@ -33,8 +35,44 @@ class NotSentWidget extends StatelessWidget {
   }
 }
 
-class SendingWidget extends StatelessWidget {
-  const SendingWidget({super.key});
+
+class SendingWidget extends StatefulWidget {
+  const SendingWidget({Key? key}) : super(key: key);
+
+  @override
+  _SendingWidgetState createState() => _SendingWidgetState();
+}
+
+class _SendingWidgetState extends State<SendingWidget> {
+  late Timer _timer;
+  int _seconds = 0;
+  int _milliseconds = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _startTimer();
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
+
+  void _startTimer() {
+    const duration = Duration(milliseconds: 100);
+    _timer = Timer.periodic(duration, (timer) {
+      setState(() {
+        if (_milliseconds == 999) {
+          _seconds++;
+          _milliseconds = 0;
+        } else {
+          _milliseconds += 100;
+        }
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,6 +80,10 @@ class SendingWidget extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          Text(
+            'Time elapsed: $_seconds.${(_milliseconds / 100).floor().toString().padLeft(2, '0')}',
+            style: TextStyle(fontSize: 24),
+          ),
           Lottie.asset("assets/sending.json"),
         ],
       ),
