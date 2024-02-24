@@ -492,6 +492,9 @@ const kAudioError =
 const kRaiseIssue =
     "\nPlease raise an issue in API Dash GitHub repo so that we can resolve it.";
 
+const kNoAPIEndpoint =
+    "\nOops! It looks like you haven't entered a URL. \n \n Remember, even the best code generators need a little spark of inspiration - and that's your URL!";
+
 const kHintTextUrlCard = "Enter API endpoint like api.foss42.com/country/codes";
 const kLabelPlusNew = "+ New";
 const kLabelSend = "Send";
