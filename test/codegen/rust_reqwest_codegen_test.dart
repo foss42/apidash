@@ -9,16 +9,17 @@ void main() {
     test('GET 1', () {
       const expectedCode =
           r"""fn main() -> Result<(), Box<dyn std::error::Error>> {
-  let client = reqwest::blocking::Client::new();
-  let url = "https://api.foss42.com";
+    let client = reqwest::blocking::Client::new();
+    let url = "https://api.foss42.com";
 
-  let response = client.get(url)
-    .send()?;
+    let response = client
+        .get(url)
+        .send()?;
 
-  println!("Status Code: {}", response.status()); 
-  println!("Response Body: {}", response.text()?);
+    println!("Status Code: {}", response.status()); 
+    println!("Response Body: {}", response.text()?);
 
-  Ok(())
+    Ok(())
 }
 """;
       expect(
@@ -28,19 +29,18 @@ void main() {
     test('GET 2', () {
       const expectedCode =
           r"""fn main() -> Result<(), Box<dyn std::error::Error>> {
-  let client = reqwest::blocking::Client::new();
-  let url = "https://api.foss42.com/country/data";
+    let client = reqwest::blocking::Client::new();
+    let url = "https://api.foss42.com/country/data";
 
-  let params = [("code", "US")];
+    let response = client
+        .get(url)
+        .query(&[("code", "US")])
+        .send()?;
 
-  let response = client.get(url)
-    .query(&params)
-    .send()?;
+    println!("Status Code: {}", response.status()); 
+    println!("Response Body: {}", response.text()?);
 
-  println!("Status Code: {}", response.status()); 
-  println!("Response Body: {}", response.text()?);
-
-  Ok(())
+    Ok(())
 }
 """;
       expect(
@@ -50,19 +50,18 @@ void main() {
     test('GET 3', () {
       const expectedCode =
           r"""fn main() -> Result<(), Box<dyn std::error::Error>> {
-  let client = reqwest::blocking::Client::new();
-  let url = "https://api.foss42.com/country/data";
+    let client = reqwest::blocking::Client::new();
+    let url = "https://api.foss42.com/country/data";
 
-  let params = [("code", "IND")];
+    let response = client
+        .get(url)
+        .query(&[("code", "IND")])
+        .send()?;
 
-  let response = client.get(url)
-    .query(&params)
-    .send()?;
+    println!("Status Code: {}", response.status()); 
+    println!("Response Body: {}", response.text()?);
 
-  println!("Status Code: {}", response.status()); 
-  println!("Response Body: {}", response.text()?);
-
-  Ok(())
+    Ok(())
 }
 """;
       expect(
@@ -72,19 +71,18 @@ void main() {
     test('GET 4', () {
       const expectedCode =
           r"""fn main() -> Result<(), Box<dyn std::error::Error>> {
-  let client = reqwest::blocking::Client::new();
-  let url = "https://api.foss42.com/humanize/social";
+    let client = reqwest::blocking::Client::new();
+    let url = "https://api.foss42.com/humanize/social";
 
-  let params = [("num", "8700000"), ("digits", "3"), ("system", "SS"), ("add_space", "true"), ("trailing_zeros", "true")];
+    let response = client
+        .get(url)
+        .query(&[("num", "8700000"), ("digits", "3"), ("system", "SS"), ("add_space", "true"), ("trailing_zeros", "true")])
+        .send()?;
 
-  let response = client.get(url)
-    .query(&params)
-    .send()?;
+    println!("Status Code: {}", response.status()); 
+    println!("Response Body: {}", response.text()?);
 
-  println!("Status Code: {}", response.status()); 
-  println!("Response Body: {}", response.text()?);
-
-  Ok(())
+    Ok(())
 }
 """;
       expect(
@@ -94,26 +92,18 @@ void main() {
     test('GET 5', () {
       const expectedCode =
           r"""fn main() -> Result<(), Box<dyn std::error::Error>> {
-  let client = reqwest::blocking::Client::new();
-  let url = "https://api.github.com/repos/foss42/apidash";
+    let client = reqwest::blocking::Client::new();
+    let url = "https://api.github.com/repos/foss42/apidash";
 
-  let header_str = r#"{
-            "User-Agent": "Test Agent"
-          }"#;
-    let headers_map: std::collections::HashMap<&str, &str> = serde_json::from_str(header_str)?; // Deserialize as &str
-    let mut headers = reqwest::header::HeaderMap::new();
-    for (key, val) in headers_map {
-        headers.insert(key, reqwest::header::HeaderValue::from_str(val)?);
-    }
+    let response = client
+        .get(url)
+        .header("User-Agent", "Test Agent")
+        .send()?;
 
-  let response = client.get(url)
-    .headers(headers)
-    .send()?;
+    println!("Status Code: {}", response.status()); 
+    println!("Response Body: {}", response.text()?);
 
-  println!("Status Code: {}", response.status()); 
-  println!("Response Body: {}", response.text()?);
-
-  Ok(())
+    Ok(())
 }
 """;
       expect(
@@ -123,29 +113,19 @@ void main() {
     test('GET 6', () {
       const expectedCode =
           r"""fn main() -> Result<(), Box<dyn std::error::Error>> {
-  let client = reqwest::blocking::Client::new();
-  let url = "https://api.github.com/repos/foss42/apidash";
+    let client = reqwest::blocking::Client::new();
+    let url = "https://api.github.com/repos/foss42/apidash";
 
-  let params = [("raw", "true")];
+    let response = client
+        .get(url)
+        .query(&[("raw", "true")])
+        .header("User-Agent", "Test Agent")
+        .send()?;
 
-  let header_str = r#"{
-            "User-Agent": "Test Agent"
-          }"#;
-    let headers_map: std::collections::HashMap<&str, &str> = serde_json::from_str(header_str)?; // Deserialize as &str
-    let mut headers = reqwest::header::HeaderMap::new();
-    for (key, val) in headers_map {
-        headers.insert(key, reqwest::header::HeaderValue::from_str(val)?);
-    }
+    println!("Status Code: {}", response.status()); 
+    println!("Response Body: {}", response.text()?);
 
-  let response = client.get(url)
-    .query(&params)
-    .headers(headers)
-    .send()?;
-
-  println!("Status Code: {}", response.status()); 
-  println!("Response Body: {}", response.text()?);
-
-  Ok(())
+    Ok(())
 }
 """;
       expect(
@@ -155,16 +135,17 @@ void main() {
     test('GET 7', () {
       const expectedCode =
           r"""fn main() -> Result<(), Box<dyn std::error::Error>> {
-  let client = reqwest::blocking::Client::new();
-  let url = "https://api.foss42.com";
+    let client = reqwest::blocking::Client::new();
+    let url = "https://api.foss42.com";
 
-  let response = client.get(url)
-    .send()?;
+    let response = client
+        .get(url)
+        .send()?;
 
-  println!("Status Code: {}", response.status()); 
-  println!("Response Body: {}", response.text()?);
+    println!("Status Code: {}", response.status()); 
+    println!("Response Body: {}", response.text()?);
 
-  Ok(())
+    Ok(())
 }
 """;
       expect(
@@ -174,29 +155,19 @@ void main() {
     test('GET 8', () {
       const expectedCode =
           r"""fn main() -> Result<(), Box<dyn std::error::Error>> {
-  let client = reqwest::blocking::Client::new();
-  let url = "https://api.github.com/repos/foss42/apidash";
+    let client = reqwest::blocking::Client::new();
+    let url = "https://api.github.com/repos/foss42/apidash";
 
-  let params = [("raw", "true")];
+    let response = client
+        .get(url)
+        .query(&[("raw", "true")])
+        .header("User-Agent", "Test Agent")
+        .send()?;
 
-  let header_str = r#"{
-            "User-Agent": "Test Agent"
-          }"#;
-    let headers_map: std::collections::HashMap<&str, &str> = serde_json::from_str(header_str)?; // Deserialize as &str
-    let mut headers = reqwest::header::HeaderMap::new();
-    for (key, val) in headers_map {
-        headers.insert(key, reqwest::header::HeaderValue::from_str(val)?);
-    }
+    println!("Status Code: {}", response.status()); 
+    println!("Response Body: {}", response.text()?);
 
-  let response = client.get(url)
-    .query(&params)
-    .headers(headers)
-    .send()?;
-
-  println!("Status Code: {}", response.status()); 
-  println!("Response Body: {}", response.text()?);
-
-  Ok(())
+    Ok(())
 }
 """;
       expect(
@@ -206,19 +177,18 @@ void main() {
     test('GET 9', () {
       const expectedCode =
           r"""fn main() -> Result<(), Box<dyn std::error::Error>> {
-  let client = reqwest::blocking::Client::new();
-  let url = "https://api.foss42.com/humanize/social";
+    let client = reqwest::blocking::Client::new();
+    let url = "https://api.foss42.com/humanize/social";
 
-  let params = [("num", "8700000"), ("add_space", "true")];
+    let response = client
+        .get(url)
+        .query(&[("num", "8700000"), ("add_space", "true")])
+        .send()?;
 
-  let response = client.get(url)
-    .query(&params)
-    .send()?;
+    println!("Status Code: {}", response.status()); 
+    println!("Response Body: {}", response.text()?);
 
-  println!("Status Code: {}", response.status()); 
-  println!("Response Body: {}", response.text()?);
-
-  Ok(())
+    Ok(())
 }
 """;
       expect(
@@ -228,26 +198,18 @@ void main() {
     test('GET 10', () {
       const expectedCode =
           r"""fn main() -> Result<(), Box<dyn std::error::Error>> {
-  let client = reqwest::blocking::Client::new();
-  let url = "https://api.foss42.com/humanize/social";
+    let client = reqwest::blocking::Client::new();
+    let url = "https://api.foss42.com/humanize/social";
 
-  let header_str = r#"{
-            "User-Agent": "Test Agent"
-          }"#;
-    let headers_map: std::collections::HashMap<&str, &str> = serde_json::from_str(header_str)?; // Deserialize as &str
-    let mut headers = reqwest::header::HeaderMap::new();
-    for (key, val) in headers_map {
-        headers.insert(key, reqwest::header::HeaderValue::from_str(val)?);
-    }
+    let response = client
+        .get(url)
+        .header("User-Agent", "Test Agent")
+        .send()?;
 
-  let response = client.get(url)
-    .headers(headers)
-    .send()?;
+    println!("Status Code: {}", response.status()); 
+    println!("Response Body: {}", response.text()?);
 
-  println!("Status Code: {}", response.status()); 
-  println!("Response Body: {}", response.text()?);
-
-  Ok(())
+    Ok(())
 }
 """;
       expect(
@@ -261,29 +223,19 @@ void main() {
     test('GET 11', () {
       const expectedCode =
           r"""fn main() -> Result<(), Box<dyn std::error::Error>> {
-  let client = reqwest::blocking::Client::new();
-  let url = "https://api.foss42.com/humanize/social";
+    let client = reqwest::blocking::Client::new();
+    let url = "https://api.foss42.com/humanize/social";
 
-  let params = [("num", "8700000"), ("digits", "3")];
+    let response = client
+        .get(url)
+        .query(&[("num", "8700000"), ("digits", "3")])
+        .header("User-Agent", "Test Agent")
+        .send()?;
 
-  let header_str = r#"{
-            "User-Agent": "Test Agent"
-          }"#;
-    let headers_map: std::collections::HashMap<&str, &str> = serde_json::from_str(header_str)?; // Deserialize as &str
-    let mut headers = reqwest::header::HeaderMap::new();
-    for (key, val) in headers_map {
-        headers.insert(key, reqwest::header::HeaderValue::from_str(val)?);
-    }
+    println!("Status Code: {}", response.status()); 
+    println!("Response Body: {}", response.text()?);
 
-  let response = client.get(url)
-    .query(&params)
-    .headers(headers)
-    .send()?;
-
-  println!("Status Code: {}", response.status()); 
-  println!("Response Body: {}", response.text()?);
-
-  Ok(())
+    Ok(())
 }
 """;
       expect(
@@ -293,16 +245,17 @@ void main() {
     test('GET 12', () {
       const expectedCode =
           r"""fn main() -> Result<(), Box<dyn std::error::Error>> {
-  let client = reqwest::blocking::Client::new();
-  let url = "https://api.foss42.com/humanize/social";
+    let client = reqwest::blocking::Client::new();
+    let url = "https://api.foss42.com/humanize/social";
 
-  let response = client.get(url)
-    .send()?;
+    let response = client
+        .get(url)
+        .send()?;
 
-  println!("Status Code: {}", response.status()); 
-  println!("Response Body: {}", response.text()?);
+    println!("Status Code: {}", response.status()); 
+    println!("Response Body: {}", response.text()?);
 
-  Ok(())
+    Ok(())
 }
 """;
       expect(
@@ -314,16 +267,17 @@ void main() {
     test('HEAD 1', () {
       const expectedCode =
           r"""fn main() -> Result<(), Box<dyn std::error::Error>> {
-  let client = reqwest::blocking::Client::new();
-  let url = "https://api.foss42.com";
+    let client = reqwest::blocking::Client::new();
+    let url = "https://api.foss42.com";
 
-  let response = client.head(url)
-    .send()?;
+    let response = client
+        .head(url)
+        .send()?;
 
-  println!("Status Code: {}", response.status()); 
-  println!("Response Body: {}", response.text()?);
+    println!("Status Code: {}", response.status()); 
+    println!("Response Body: {}", response.text()?);
 
-  Ok(())
+    Ok(())
 }
 """;
       expect(
@@ -333,16 +287,17 @@ void main() {
     test('HEAD 2', () {
       const expectedCode =
           r"""fn main() -> Result<(), Box<dyn std::error::Error>> {
-  let client = reqwest::blocking::Client::new();
-  let url = "http://api.foss42.com";
+    let client = reqwest::blocking::Client::new();
+    let url = "http://api.foss42.com";
 
-  let response = client.head(url)
-    .send()?;
+    let response = client
+        .head(url)
+        .send()?;
 
-  println!("Status Code: {}", response.status()); 
-  println!("Response Body: {}", response.text()?);
+    println!("Status Code: {}", response.status()); 
+    println!("Response Body: {}", response.text()?);
 
-  Ok(())
+    Ok(())
 }
 """;
       expect(
@@ -354,31 +309,22 @@ void main() {
     test('POST 1', () {
       const expectedCode =
           r"""fn main() -> Result<(), Box<dyn std::error::Error>> {
-  let client = reqwest::blocking::Client::new();
-  let url = "https://api.foss42.com/case/lower";
+    let client = reqwest::blocking::Client::new();
+    let url = "https://api.foss42.com/case/lower";
 
-  let payload = b"{
+    let payload = b"{
 "text": "I LOVE Flutter"
 }";
 
-  let header_str = r#"{
-            "content-type": "text/plain"
-          }"#;
-    let headers_map: std::collections::HashMap<&str, &str> = serde_json::from_str(header_str)?; // Deserialize as &str
-    let mut headers = reqwest::header::HeaderMap::new();
-    for (key, val) in headers_map {
-        headers.insert(key, reqwest::header::HeaderValue::from_str(val)?);
-    }
+    let response = client
+        .post(url)
+        .body(payload.to_vec())
+        .send()?;
 
-  let response = client.post(url)
-    .body(payload.to_vec())
-    .headers(headers)
-    .send()?;
+    println!("Status Code: {}", response.status()); 
+    println!("Response Body: {}", response.text()?);
 
-  println!("Status Code: {}", response.status()); 
-  println!("Response Body: {}", response.text()?);
-
-  Ok(())
+    Ok(())
 }
 """;
       expect(
@@ -388,21 +334,22 @@ void main() {
     test('POST 2', () {
       const expectedCode =
           r"""fn main() -> Result<(), Box<dyn std::error::Error>> {
-  let client = reqwest::blocking::Client::new();
-  let url = "https://api.foss42.com/case/lower";
+    let client = reqwest::blocking::Client::new();
+    let url = "https://api.foss42.com/case/lower";
 
-  let payload = serde_json::json!({
+    let payload = serde_json::json!({
 "text": "I LOVE Flutter"
 });
 
-  let response = client.post(url)
-    .json(&payload)
-    .send()?;
+    let response = client
+        .post(url)
+        .json(&payload)
+        .send()?;
 
-  println!("Status Code: {}", response.status()); 
-  println!("Response Body: {}", response.text()?);
+    println!("Status Code: {}", response.status()); 
+    println!("Response Body: {}", response.text()?);
 
-  Ok(())
+    Ok(())
 }
 """;
       expect(
@@ -412,31 +359,23 @@ void main() {
     test('POST 3', () {
       const expectedCode =
           r"""fn main() -> Result<(), Box<dyn std::error::Error>> {
-  let client = reqwest::blocking::Client::new();
-  let url = "https://api.foss42.com/case/lower";
+    let client = reqwest::blocking::Client::new();
+    let url = "https://api.foss42.com/case/lower";
 
-  let payload = serde_json::json!({
+    let payload = serde_json::json!({
 "text": "I LOVE Flutter"
 });
 
-  let header_str = r#"{
-            "User-Agent": "Test Agent"
-          }"#;
-    let headers_map: std::collections::HashMap<&str, &str> = serde_json::from_str(header_str)?; // Deserialize as &str
-    let mut headers = reqwest::header::HeaderMap::new();
-    for (key, val) in headers_map {
-        headers.insert(key, reqwest::header::HeaderValue::from_str(val)?);
-    }
+    let response = client
+        .post(url)
+        .header("User-Agent", "Test Agent")
+        .json(&payload)
+        .send()?;
 
-  let response = client.post(url)
-    .json(&payload)
-    .headers(headers)
-    .send()?;
+    println!("Status Code: {}", response.status()); 
+    println!("Response Body: {}", response.text()?);
 
-  println!("Status Code: {}", response.status()); 
-  println!("Response Body: {}", response.text()?);
-
-  Ok(())
+    Ok(())
 }
 """;
       expect(
@@ -448,22 +387,23 @@ void main() {
     test('PUT 1', () {
       const expectedCode =
           r"""fn main() -> Result<(), Box<dyn std::error::Error>> {
-  let client = reqwest::blocking::Client::new();
-  let url = "https://reqres.in/api/users/2";
+    let client = reqwest::blocking::Client::new();
+    let url = "https://reqres.in/api/users/2";
 
-  let payload = serde_json::json!({
+    let payload = serde_json::json!({
 "name": "morpheus",
 "job": "zion resident"
 });
 
-  let response = client.put(url)
-    .json(&payload)
-    .send()?;
+    let response = client
+        .put(url)
+        .json(&payload)
+        .send()?;
 
-  println!("Status Code: {}", response.status()); 
-  println!("Response Body: {}", response.text()?);
+    println!("Status Code: {}", response.status()); 
+    println!("Response Body: {}", response.text()?);
 
-  Ok(())
+    Ok(())
 }
 """;
       expect(
@@ -475,22 +415,23 @@ void main() {
     test('PATCH 1', () {
       const expectedCode =
           r"""fn main() -> Result<(), Box<dyn std::error::Error>> {
-  let client = reqwest::blocking::Client::new();
-  let url = "https://reqres.in/api/users/2";
+    let client = reqwest::blocking::Client::new();
+    let url = "https://reqres.in/api/users/2";
 
-  let payload = serde_json::json!({
+    let payload = serde_json::json!({
 "name": "marfeus",
 "job": "accountant"
 });
 
-  let response = client.patch(url)
-    .json(&payload)
-    .send()?;
+    let response = client
+        .patch(url)
+        .json(&payload)
+        .send()?;
 
-  println!("Status Code: {}", response.status()); 
-  println!("Response Body: {}", response.text()?);
+    println!("Status Code: {}", response.status()); 
+    println!("Response Body: {}", response.text()?);
 
-  Ok(())
+    Ok(())
 }
 """;
       expect(rustReqwestCodeGen.getCode(requestModelPatch1, "https"),
@@ -502,16 +443,17 @@ void main() {
     test('DELETE 1', () {
       const expectedCode =
           r"""fn main() -> Result<(), Box<dyn std::error::Error>> {
-  let client = reqwest::blocking::Client::new();
-  let url = "https://reqres.in/api/users/2";
+    let client = reqwest::blocking::Client::new();
+    let url = "https://reqres.in/api/users/2";
 
-  let response = client.delete(url)
-    .send()?;
+    let response = client
+        .delete(url)
+        .send()?;
 
-  println!("Status Code: {}", response.status()); 
-  println!("Response Body: {}", response.text()?);
+    println!("Status Code: {}", response.status()); 
+    println!("Response Body: {}", response.text()?);
 
-  Ok(())
+    Ok(())
 }
 """;
       expect(rustReqwestCodeGen.getCode(requestModelDelete1, "https"),
@@ -521,22 +463,23 @@ void main() {
     test('DELETE 2', () {
       const expectedCode =
           r"""fn main() -> Result<(), Box<dyn std::error::Error>> {
-  let client = reqwest::blocking::Client::new();
-  let url = "https://reqres.in/api/users/2";
+    let client = reqwest::blocking::Client::new();
+    let url = "https://reqres.in/api/users/2";
 
-  let payload = serde_json::json!({
+    let payload = serde_json::json!({
 "name": "marfeus",
 "job": "accountant"
 });
 
-  let response = client.delete(url)
-    .json(&payload)
-    .send()?;
+    let response = client
+        .delete(url)
+        .json(&payload)
+        .send()?;
 
-  println!("Status Code: {}", response.status()); 
-  println!("Response Body: {}", response.text()?);
+    println!("Status Code: {}", response.status()); 
+    println!("Response Body: {}", response.text()?);
 
-  Ok(())
+    Ok(())
 }
 """;
       expect(rustReqwestCodeGen.getCode(requestModelDelete2, "https"),
