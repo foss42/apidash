@@ -1,3 +1,4 @@
+import 'package:apidash/codegen/java/okhttp.dart';
 import 'package:apidash/models/models.dart' show RequestModel;
 import 'package:apidash/consts.dart';
 import 'dart/http.dart';
@@ -42,6 +43,8 @@ class Codegen {
             .getCode(requestModel, defaultUriScheme);
       case CodegenLanguage.pythonRequests:
         return PythonRequestsCodeGen().getCode(requestModel, defaultUriScheme);
+      case CodegenLanguage.javaOkhttp:
+        return JavaOkHttpCodeGen().getCode(requestModel, defaultUriScheme);
     }
   }
 }
