@@ -1,6 +1,7 @@
 import 'package:apidash/codegen/others/curl.dart';
-import '../request_models.dart';
 import 'package:test/test.dart';
+
+import '../request_models.dart';
 
 void main() {
   final curlCodeGen = cURLCodeGen();
@@ -19,7 +20,7 @@ void main() {
 
     test('GET 3', () {
       const expectedCode =
-          r"""curl --url 'https://api.foss42.com/country/data?code=IND'""";
+          r"""curl --url 'https://api.foss42.com/country/data?code=US&code=IND'""";
       expect(curlCodeGen.getCode(requestModelGet3, "https"), expectedCode);
     });
 
