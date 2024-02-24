@@ -489,6 +489,28 @@ void main() async {
       ),
     );
 
+    testWidgets('SendingWidget displays timer and Lottie animation', (tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(
+          body: SendingWidget(),
+        ),
+      ),
+    );
+
+    expect(find.text('Timer: 0.00'), findsOneWidget);
+    expect(find.byType(Lottie), findsOneWidget);
+
+    await tester.pump(const Duration(seconds: 1));
+    
+    expect(find.text('Timer: 1.00'), findsOneWidget);
+
+
+    await tester.pump(const Duration(seconds: 1));
+
+    expect(find.text('Timer: 2.00'), findsOneWidget);
+  });
+
     await tester.pumpAndSettle();
     expect(find.text('Raw Hello from API Dash'), findsOneWidget);
 
