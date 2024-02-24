@@ -1,4 +1,3 @@
-import 'package:apidash/codegen/julia/http.dart';
 import 'package:apidash/models/models.dart' show RequestModel;
 import 'package:apidash/consts.dart';
 import 'dart/http.dart';
@@ -10,6 +9,7 @@ import 'js/axios.dart';
 import 'js/fetch.dart';
 import 'others/har.dart';
 import 'others/curl.dart';
+import 'julia/http.dart';
 
 class Codegen {
   String? getCode(
