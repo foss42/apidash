@@ -1,3 +1,4 @@
+import 'package:apidash/codegen/julia/http.dart';
 import 'package:apidash/models/models.dart' show RequestModel;
 import 'package:apidash/consts.dart';
 import 'dart/http.dart';
@@ -42,6 +43,8 @@ class Codegen {
             .getCode(requestModel, defaultUriScheme);
       case CodegenLanguage.pythonRequests:
         return PythonRequestsCodeGen().getCode(requestModel, defaultUriScheme);
+      case CodegenLanguage.juliaHttpRequests:
+        return JuliaHttpClientCodeGen().getCode(requestModel, defaultUriScheme);
     }
   }
 }
