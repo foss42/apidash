@@ -499,16 +499,16 @@ void main() async {
         ),
       );
 
-      expect(find.text('Timer: 0.00'), findsOneWidget);
+      expect(find.text('Time elapsed: 0 ms'), findsOneWidget);
       expect(find.byType(Lottie), findsOneWidget);
 
       await tester.pump(const Duration(seconds: 1));
 
-      expect(find.text('Timer: 1.00'), findsOneWidget);
+      expect(find.text('Time elapsed: 100 s'), findsOneWidget);
 
       await tester.pump(const Duration(seconds: 1));
 
-      expect(find.text('Timer: 2.00'), findsOneWidget);
+      expect(find.text('Time elapsed: 200 s'), findsOneWidget);
     });
 
     await tester.pumpAndSettle();
