@@ -9,6 +9,7 @@ import 'js/axios.dart';
 import 'js/fetch.dart';
 import 'others/har.dart';
 import 'others/curl.dart';
+import 'java/httpclient.dart';
 
 class Codegen {
   String? getCode(
@@ -42,6 +43,8 @@ class Codegen {
             .getCode(requestModel, defaultUriScheme);
       case CodegenLanguage.pythonRequests:
         return PythonRequestsCodeGen().getCode(requestModel, defaultUriScheme);
+      case CodegenLanguage.javaHttpClient:
+        return JavaHttpClientCodeGen().getCode(requestModel, defaultUriScheme);
     }
   }
 }
