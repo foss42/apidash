@@ -40,15 +40,16 @@ func main() {
   }
   defer resp.Body.Close()
 
-  fmt.Printf("%s\n%s\n\n", resp.Status, resp.Header)
-
   // Read and print the response
-  bodyText, err := io.ReadAll(resp.Body)
-  if err != nil {
-    fmt.Println("Error reading response body:", err)
-    return
+  bodyText, _ := io.ReadAll(resp.Body)
+
+  if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+    fmt.Printf("Status Code: %d\n", resp.StatusCode)
+    fmt.Printf("Response Body: %s\n", string(bodyText))
+  } else {
+    fmt.Printf("Error Status Code: %d\n", resp.StatusCode)
+    fmt.Printf("Error Response Body: %s\n", string(bodyText))
   }
-  fmt.Println(string(bodyText))
 }
 """;
       expect(goNetHttpCodeGen.getCode(requestModelGet1, "https"), expectedCode);
@@ -88,15 +89,16 @@ func main() {
   }
   defer resp.Body.Close()
 
-  fmt.Printf("%s\n%s\n\n", resp.Status, resp.Header)
-
   // Read and print the response
-  bodyText, err := io.ReadAll(resp.Body)
-  if err != nil {
-    fmt.Println("Error reading response body:", err)
-    return
+  bodyText, _ := io.ReadAll(resp.Body)
+
+  if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+    fmt.Printf("Status Code: %d\n", resp.StatusCode)
+    fmt.Printf("Response Body: %s\n", string(bodyText))
+  } else {
+    fmt.Printf("Error Status Code: %d\n", resp.StatusCode)
+    fmt.Printf("Error Response Body: %s\n", string(bodyText))
   }
-  fmt.Println(string(bodyText))
 }
 """;
       expect(goNetHttpCodeGen.getCode(requestModelGet2, "https"), expectedCode);
@@ -136,15 +138,16 @@ func main() {
   }
   defer resp.Body.Close()
 
-  fmt.Printf("%s\n%s\n\n", resp.Status, resp.Header)
-
   // Read and print the response
-  bodyText, err := io.ReadAll(resp.Body)
-  if err != nil {
-    fmt.Println("Error reading response body:", err)
-    return
+  bodyText, _ := io.ReadAll(resp.Body)
+
+  if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+    fmt.Printf("Status Code: %d\n", resp.StatusCode)
+    fmt.Printf("Response Body: %s\n", string(bodyText))
+  } else {
+    fmt.Printf("Error Status Code: %d\n", resp.StatusCode)
+    fmt.Printf("Error Response Body: %s\n", string(bodyText))
   }
-  fmt.Println(string(bodyText))
 }
 """;
       expect(goNetHttpCodeGen.getCode(requestModelGet3, "https"), expectedCode);
@@ -184,15 +187,16 @@ func main() {
   }
   defer resp.Body.Close()
 
-  fmt.Printf("%s\n%s\n\n", resp.Status, resp.Header)
-
   // Read and print the response
-  bodyText, err := io.ReadAll(resp.Body)
-  if err != nil {
-    fmt.Println("Error reading response body:", err)
-    return
+  bodyText, _ := io.ReadAll(resp.Body)
+
+  if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+    fmt.Printf("Status Code: %d\n", resp.StatusCode)
+    fmt.Printf("Response Body: %s\n", string(bodyText))
+  } else {
+    fmt.Printf("Error Status Code: %d\n", resp.StatusCode)
+    fmt.Printf("Error Response Body: %s\n", string(bodyText))
   }
-  fmt.Println(string(bodyText))
 }
 """;
       expect(goNetHttpCodeGen.getCode(requestModelGet4, "https"), expectedCode);
@@ -234,15 +238,16 @@ func main() {
   }
   defer resp.Body.Close()
 
-  fmt.Printf("%s\n%s\n\n", resp.Status, resp.Header)
-
   // Read and print the response
-  bodyText, err := io.ReadAll(resp.Body)
-  if err != nil {
-    fmt.Println("Error reading response body:", err)
-    return
+  bodyText, _ := io.ReadAll(resp.Body)
+
+  if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+    fmt.Printf("Status Code: %d\n", resp.StatusCode)
+    fmt.Printf("Response Body: %s\n", string(bodyText))
+  } else {
+    fmt.Printf("Error Status Code: %d\n", resp.StatusCode)
+    fmt.Printf("Error Response Body: %s\n", string(bodyText))
   }
-  fmt.Println(string(bodyText))
 }
 """;
       expect(goNetHttpCodeGen.getCode(requestModelGet5, "https"), expectedCode);
@@ -284,15 +289,16 @@ func main() {
   }
   defer resp.Body.Close()
 
-  fmt.Printf("%s\n%s\n\n", resp.Status, resp.Header)
-
   // Read and print the response
-  bodyText, err := io.ReadAll(resp.Body)
-  if err != nil {
-    fmt.Println("Error reading response body:", err)
-    return
+  bodyText, _ := io.ReadAll(resp.Body)
+
+  if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+    fmt.Printf("Status Code: %d\n", resp.StatusCode)
+    fmt.Printf("Response Body: %s\n", string(bodyText))
+  } else {
+    fmt.Printf("Error Status Code: %d\n", resp.StatusCode)
+    fmt.Printf("Error Response Body: %s\n", string(bodyText))
   }
-  fmt.Println(string(bodyText))
 }
 """;
       expect(goNetHttpCodeGen.getCode(requestModelGet6, "https"), expectedCode);
@@ -332,15 +338,16 @@ func main() {
   }
   defer resp.Body.Close()
 
-  fmt.Printf("%s\n%s\n\n", resp.Status, resp.Header)
-
   // Read and print the response
-  bodyText, err := io.ReadAll(resp.Body)
-  if err != nil {
-    fmt.Println("Error reading response body:", err)
-    return
+  bodyText, _ := io.ReadAll(resp.Body)
+
+  if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+    fmt.Printf("Status Code: %d\n", resp.StatusCode)
+    fmt.Printf("Response Body: %s\n", string(bodyText))
+  } else {
+    fmt.Printf("Error Status Code: %d\n", resp.StatusCode)
+    fmt.Printf("Error Response Body: %s\n", string(bodyText))
   }
-  fmt.Println(string(bodyText))
 }
 """;
       expect(goNetHttpCodeGen.getCode(requestModelGet7, "https"), expectedCode);
@@ -382,15 +389,16 @@ func main() {
   }
   defer resp.Body.Close()
 
-  fmt.Printf("%s\n%s\n\n", resp.Status, resp.Header)
-
   // Read and print the response
-  bodyText, err := io.ReadAll(resp.Body)
-  if err != nil {
-    fmt.Println("Error reading response body:", err)
-    return
+  bodyText, _ := io.ReadAll(resp.Body)
+
+  if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+    fmt.Printf("Status Code: %d\n", resp.StatusCode)
+    fmt.Printf("Response Body: %s\n", string(bodyText))
+  } else {
+    fmt.Printf("Error Status Code: %d\n", resp.StatusCode)
+    fmt.Printf("Error Response Body: %s\n", string(bodyText))
   }
-  fmt.Println(string(bodyText))
 }
 """;
       expect(goNetHttpCodeGen.getCode(requestModelGet8, "https"), expectedCode);
@@ -430,15 +438,16 @@ func main() {
   }
   defer resp.Body.Close()
 
-  fmt.Printf("%s\n%s\n\n", resp.Status, resp.Header)
-
   // Read and print the response
-  bodyText, err := io.ReadAll(resp.Body)
-  if err != nil {
-    fmt.Println("Error reading response body:", err)
-    return
+  bodyText, _ := io.ReadAll(resp.Body)
+
+  if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+    fmt.Printf("Status Code: %d\n", resp.StatusCode)
+    fmt.Printf("Response Body: %s\n", string(bodyText))
+  } else {
+    fmt.Printf("Error Status Code: %d\n", resp.StatusCode)
+    fmt.Printf("Error Response Body: %s\n", string(bodyText))
   }
-  fmt.Println(string(bodyText))
 }
 """;
       expect(goNetHttpCodeGen.getCode(requestModelGet9, "https"), expectedCode);
@@ -480,15 +489,16 @@ func main() {
   }
   defer resp.Body.Close()
 
-  fmt.Printf("%s\n%s\n\n", resp.Status, resp.Header)
-
   // Read and print the response
-  bodyText, err := io.ReadAll(resp.Body)
-  if err != nil {
-    fmt.Println("Error reading response body:", err)
-    return
+  bodyText, _ := io.ReadAll(resp.Body)
+
+  if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+    fmt.Printf("Status Code: %d\n", resp.StatusCode)
+    fmt.Printf("Response Body: %s\n", string(bodyText))
+  } else {
+    fmt.Printf("Error Status Code: %d\n", resp.StatusCode)
+    fmt.Printf("Error Response Body: %s\n", string(bodyText))
   }
-  fmt.Println(string(bodyText))
 }
 """;
       expect(
@@ -535,15 +545,16 @@ func main() {
   }
   defer resp.Body.Close()
 
-  fmt.Printf("%s\n%s\n\n", resp.Status, resp.Header)
-
   // Read and print the response
-  bodyText, err := io.ReadAll(resp.Body)
-  if err != nil {
-    fmt.Println("Error reading response body:", err)
-    return
+  bodyText, _ := io.ReadAll(resp.Body)
+
+  if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+    fmt.Printf("Status Code: %d\n", resp.StatusCode)
+    fmt.Printf("Response Body: %s\n", string(bodyText))
+  } else {
+    fmt.Printf("Error Status Code: %d\n", resp.StatusCode)
+    fmt.Printf("Error Response Body: %s\n", string(bodyText))
   }
-  fmt.Println(string(bodyText))
 }
 """;
       expect(
@@ -584,15 +595,16 @@ func main() {
   }
   defer resp.Body.Close()
 
-  fmt.Printf("%s\n%s\n\n", resp.Status, resp.Header)
-
   // Read and print the response
-  bodyText, err := io.ReadAll(resp.Body)
-  if err != nil {
-    fmt.Println("Error reading response body:", err)
-    return
+  bodyText, _ := io.ReadAll(resp.Body)
+
+  if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+    fmt.Printf("Status Code: %d\n", resp.StatusCode)
+    fmt.Printf("Response Body: %s\n", string(bodyText))
+  } else {
+    fmt.Printf("Error Status Code: %d\n", resp.StatusCode)
+    fmt.Printf("Error Response Body: %s\n", string(bodyText))
   }
-  fmt.Println(string(bodyText))
 }
 """;
       expect(
@@ -635,15 +647,16 @@ func main() {
   }
   defer resp.Body.Close()
 
-  fmt.Printf("%s\n%s\n\n", resp.Status, resp.Header)
-
   // Read and print the response
-  bodyText, err := io.ReadAll(resp.Body)
-  if err != nil {
-    fmt.Println("Error reading response body:", err)
-    return
+  bodyText, _ := io.ReadAll(resp.Body)
+
+  if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+    fmt.Printf("Status Code: %d\n", resp.StatusCode)
+    fmt.Printf("Response Body: %s\n", string(bodyText))
+  } else {
+    fmt.Printf("Error Status Code: %d\n", resp.StatusCode)
+    fmt.Printf("Error Response Body: %s\n", string(bodyText))
   }
-  fmt.Println(string(bodyText))
 }
 """;
       expect(
@@ -684,15 +697,16 @@ func main() {
   }
   defer resp.Body.Close()
 
-  fmt.Printf("%s\n%s\n\n", resp.Status, resp.Header)
-
   // Read and print the response
-  bodyText, err := io.ReadAll(resp.Body)
-  if err != nil {
-    fmt.Println("Error reading response body:", err)
-    return
+  bodyText, _ := io.ReadAll(resp.Body)
+
+  if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+    fmt.Printf("Status Code: %d\n", resp.StatusCode)
+    fmt.Printf("Response Body: %s\n", string(bodyText))
+  } else {
+    fmt.Printf("Error Status Code: %d\n", resp.StatusCode)
+    fmt.Printf("Error Response Body: %s\n", string(bodyText))
   }
-  fmt.Println(string(bodyText))
 }
 """;
       expect(goNetHttpCodeGen.getCode(requestModelHead2, "http"), expectedCode);
@@ -740,15 +754,16 @@ func main() {
   }
   defer resp.Body.Close()
 
-  fmt.Printf("%s\n%s\n\n", resp.Status, resp.Header)
-
   // Read and print the response
-  bodyText, err := io.ReadAll(resp.Body)
-  if err != nil {
-    fmt.Println("Error reading response body:", err)
-    return
+  bodyText, _ := io.ReadAll(resp.Body)
+
+  if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+    fmt.Printf("Status Code: %d\n", resp.StatusCode)
+    fmt.Printf("Response Body: %s\n", string(bodyText))
+  } else {
+    fmt.Printf("Error Status Code: %d\n", resp.StatusCode)
+    fmt.Printf("Error Response Body: %s\n", string(bodyText))
   }
-  fmt.Println(string(bodyText))
 }
 """;
 
@@ -796,15 +811,16 @@ func main() {
   }
   defer resp.Body.Close()
 
-  fmt.Printf("%s\n%s\n\n", resp.Status, resp.Header)
-
   // Read and print the response
-  bodyText, err := io.ReadAll(resp.Body)
-  if err != nil {
-    fmt.Println("Error reading response body:", err)
-    return
+  bodyText, _ := io.ReadAll(resp.Body)
+
+  if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+    fmt.Printf("Status Code: %d\n", resp.StatusCode)
+    fmt.Printf("Response Body: %s\n", string(bodyText))
+  } else {
+    fmt.Printf("Error Status Code: %d\n", resp.StatusCode)
+    fmt.Printf("Error Response Body: %s\n", string(bodyText))
   }
-  fmt.Println(string(bodyText))
 }
 """;
       expect(
@@ -852,15 +868,16 @@ func main() {
   }
   defer resp.Body.Close()
 
-  fmt.Printf("%s\n%s\n\n", resp.Status, resp.Header)
-
   // Read and print the response
-  bodyText, err := io.ReadAll(resp.Body)
-  if err != nil {
-    fmt.Println("Error reading response body:", err)
-    return
+  bodyText, _ := io.ReadAll(resp.Body)
+
+  if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+    fmt.Printf("Status Code: %d\n", resp.StatusCode)
+    fmt.Printf("Response Body: %s\n", string(bodyText))
+  } else {
+    fmt.Printf("Error Status Code: %d\n", resp.StatusCode)
+    fmt.Printf("Error Response Body: %s\n", string(bodyText))
   }
-  fmt.Println(string(bodyText))
 }
 """;
       expect(
@@ -910,15 +927,16 @@ func main() {
   }
   defer resp.Body.Close()
 
-  fmt.Printf("%s\n%s\n\n", resp.Status, resp.Header)
-
   // Read and print the response
-  bodyText, err := io.ReadAll(resp.Body)
-  if err != nil {
-    fmt.Println("Error reading response body:", err)
-    return
+  bodyText, _ := io.ReadAll(resp.Body)
+
+  if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+    fmt.Printf("Status Code: %d\n", resp.StatusCode)
+    fmt.Printf("Response Body: %s\n", string(bodyText))
+  } else {
+    fmt.Printf("Error Status Code: %d\n", resp.StatusCode)
+    fmt.Printf("Error Response Body: %s\n", string(bodyText))
   }
-  fmt.Println(string(bodyText))
 }
 """;
       expect(goNetHttpCodeGen.getCode(requestModelPut1, "https"), expectedCode);
@@ -967,15 +985,16 @@ func main() {
   }
   defer resp.Body.Close()
 
-  fmt.Printf("%s\n%s\n\n", resp.Status, resp.Header)
-
   // Read and print the response
-  bodyText, err := io.ReadAll(resp.Body)
-  if err != nil {
-    fmt.Println("Error reading response body:", err)
-    return
+  bodyText, _ := io.ReadAll(resp.Body)
+
+  if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+    fmt.Printf("Status Code: %d\n", resp.StatusCode)
+    fmt.Printf("Response Body: %s\n", string(bodyText))
+  } else {
+    fmt.Printf("Error Status Code: %d\n", resp.StatusCode)
+    fmt.Printf("Error Response Body: %s\n", string(bodyText))
   }
-  fmt.Println(string(bodyText))
 }
 """;
       expect(
@@ -1018,15 +1037,16 @@ func main() {
   }
   defer resp.Body.Close()
 
-  fmt.Printf("%s\n%s\n\n", resp.Status, resp.Header)
-
   // Read and print the response
-  bodyText, err := io.ReadAll(resp.Body)
-  if err != nil {
-    fmt.Println("Error reading response body:", err)
-    return
+  bodyText, _ := io.ReadAll(resp.Body)
+
+  if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+    fmt.Printf("Status Code: %d\n", resp.StatusCode)
+    fmt.Printf("Response Body: %s\n", string(bodyText))
+  } else {
+    fmt.Printf("Error Status Code: %d\n", resp.StatusCode)
+    fmt.Printf("Error Response Body: %s\n", string(bodyText))
   }
-  fmt.Println(string(bodyText))
 }
 """;
       expect(
@@ -1074,15 +1094,16 @@ func main() {
   }
   defer resp.Body.Close()
 
-  fmt.Printf("%s\n%s\n\n", resp.Status, resp.Header)
-
   // Read and print the response
-  bodyText, err := io.ReadAll(resp.Body)
-  if err != nil {
-    fmt.Println("Error reading response body:", err)
-    return
+  bodyText, _ := io.ReadAll(resp.Body)
+
+  if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+    fmt.Printf("Status Code: %d\n", resp.StatusCode)
+    fmt.Printf("Response Body: %s\n", string(bodyText))
+  } else {
+    fmt.Printf("Error Status Code: %d\n", resp.StatusCode)
+    fmt.Printf("Error Response Body: %s\n", string(bodyText))
   }
-  fmt.Println(string(bodyText))
 }
 """;
       expect(
