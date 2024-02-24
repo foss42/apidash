@@ -312,13 +312,14 @@ void main() {
     let client = reqwest::blocking::Client::new();
     let url = "https://api.foss42.com/case/lower";
 
-    let payload = b"{
+    let payload = r#"{
 "text": "I LOVE Flutter"
-}";
+}"#;
 
     let response = client
         .post(url)
-        .body(payload.to_vec())
+        .header("content-type", "text/plain")
+        .body(payload)
         .send()?;
 
     println!("Status Code: {}", response.status()); 

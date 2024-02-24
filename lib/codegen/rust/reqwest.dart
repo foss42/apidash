@@ -18,7 +18,7 @@ class RustReqwestCodeGen {
 
   String kTemplateBody = """
 
-    let payload = b"{{body}}";
+    let payload = r#"{{body}}"#;
 
 """;
 
@@ -65,7 +65,7 @@ class RustReqwestCodeGen {
     }
 ''';
 
-  String kStringRequestBody = """\n        .body(payload.to_vec())""";
+  String kStringRequestBody = """\n        .body(payload)""";
 
   String kStringRequestJson = """\n        .json(&payload)""";
 
@@ -150,14 +150,13 @@ class RustReqwestCodeGen {
         }
 
         var headersList = requestModel.enabledRequestHeaders;
-        if (headersList != null) {
+        if (headersList != null || hasBody) {
           var headers = requestModel.enabledHeadersMap;
+          if (hasBody) {
+            headers[HttpHeaders.contentTypeHeader] =
+                requestModel.requestBodyContentType.header;
+          }
           if (headers.isNotEmpty) {
-            if (hasBody) {
-              headers[HttpHeaders.contentTypeHeader] =
-                  requestModel.requestBodyContentType.header;
-            }
-
             var templateHeaders = jj.Template(kTemplateHeaders);
             result += templateHeaders.render({"headers": headers});
           }
