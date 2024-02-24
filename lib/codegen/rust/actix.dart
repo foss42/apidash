@@ -7,8 +7,10 @@ import 'package:apidash/utils/utils.dart'
 import 'package:apidash/models/models.dart' show RequestModel;
 
 class RustActixCodeGen {
-  final String kTemplateStart =
-      """{% if isFormDataRequest %}use std::io::Read;{% endif %}
+  final String kTemplateStart = """
+{%- if isFormDataRequest -%}
+use std::io::Read;
+{% endif -%}  
 #[actix_rt::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let url = "{{url}}";
@@ -105,7 +107,7 @@ multipart/form-data; boundary={{boundary}}''';
   String kStringRequestNormal = """\n        .send()""";
 
   String kTemplateRequestHeaders =
-      """\n        {% for key, val in headers %}.insert_header(("{{key}}", "{{val}}")){% if not loop.last %}{{ '\n        ' }}{% endif %}{% endfor %}""";
+      """\n        {% for key, val in headers -%}.insert_header(("{{key}}", "{{val}}")){% if not loop.last %}{{ '\n        ' }}{% endif %}{%- endfor -%}""";
 
   final String kStringRequestEnd = """\n        .await\n        .unwrap();
 
@@ -192,12 +194,6 @@ multipart/form-data; boundary={{boundary}}''';
         var headersList = requestModel.enabledRequestHeaders;
         if (headersList != null) {
           var headers = requestModel.enabledHeadersMap;
-          if (headers.isNotEmpty) {
-            if (hasBody) {
-              headers[HttpHeaders.contentTypeHeader] =
-                  requestModel.requestBodyContentType.header;
-            }
-          }
           if (requestModel.isFormDataRequest) {
             var formHeaderTemplate =
                 jj.Template(kTemplateFormHeaderContentType);
@@ -206,8 +202,15 @@ multipart/form-data; boundary={{boundary}}''';
             });
           }
 
-          var templateHeaders = jj.Template(kTemplateRequestHeaders);
-          result += templateHeaders.render({"headers": headers});
+          if (headers.isNotEmpty) {
+            if (hasBody) {
+              headers[HttpHeaders.contentTypeHeader] =
+                  requestModel.requestBodyContentType.header;
+            }
+
+            var templateHeaders = jj.Template(kTemplateRequestHeaders);
+            result += templateHeaders.render({"headers": headers});
+          }
         }
 
         if (hasBody || requestModel.isFormDataRequest) {
