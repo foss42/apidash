@@ -18,16 +18,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 """;
 
-  String kTemplateParams = """
-
-    let params = {{params}};
-
-""";
-  int kParamsPadding = 9;
+  String kTemplateParams =
+      """\n        .query(&{{ params }})\n        .unwrap()""";
 
   String kTemplateBody = """
 
-    let payload = "{{body}}";
+    let payload = r#"{{body}}"#;
 
 """;
 
@@ -37,10 +33,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 """;
 
+  String kTemplateHeaders =
+      """\n        {% for key, val in headers -%}.insert_header(("{{key}}", "{{val}}")){% if not loop.last %}{{ '\n        ' }}{% endif %}{%- endfor -%}""";
+
   String kTemplateFormHeaderContentType = '''
 multipart/form-data; boundary={{boundary}}''';
-
-  int kHeadersPadding = 10;
 
   String kTemplateRequest = """
 
@@ -97,17 +94,11 @@ multipart/form-data; boundary={{boundary}}''';
     let payload = build_data_list(form_data_items);
 """;
 
-  String kTemplateRequestParams =
-      """\n        .query(&{{ params }})\n        .unwrap()""";
-
   String kStringRequestBody = """\n        .send_body(payload)""";
 
   String kStringRequestJson = """\n        .send_json(&payload)""";
 
   String kStringRequestNormal = """\n        .send()""";
-
-  String kTemplateRequestHeaders =
-      """\n        {% for key, val in headers -%}.insert_header(("{{key}}", "{{val}}")){% if not loop.last %}{{ '\n        ' }}{% endif %}{%- endfor -%}""";
 
   final String kStringRequestEnd = """\n        .await\n        .unwrap();
 
@@ -186,13 +177,13 @@ multipart/form-data; boundary={{boundary}}''';
                 .map((entry) => '("${entry.key}", "${entry.value}")')
                 .toList();
             var paramsString = "[${tupleStrings.join(', ')}]";
-            var templateParms = jj.Template(kTemplateRequestParams);
+            var templateParms = jj.Template(kTemplateParams);
             result += templateParms.render({"params": paramsString});
           }
         }
 
         var headersList = requestModel.enabledRequestHeaders;
-        if (headersList != null) {
+        if (headersList != null || hasBody || requestModel.isFormDataRequest) {
           var headers = requestModel.enabledHeadersMap;
           if (requestModel.isFormDataRequest) {
             var formHeaderTemplate =
@@ -200,15 +191,13 @@ multipart/form-data; boundary={{boundary}}''';
             headers[HttpHeaders.contentTypeHeader] = formHeaderTemplate.render({
               "boundary": uuid,
             });
+          } else if (hasBody) {
+            headers[HttpHeaders.contentTypeHeader] =
+                requestModel.requestBodyContentType.header;
           }
 
           if (headers.isNotEmpty) {
-            if (hasBody) {
-              headers[HttpHeaders.contentTypeHeader] =
-                  requestModel.requestBodyContentType.header;
-            }
-
-            var templateHeaders = jj.Template(kTemplateRequestHeaders);
+            var templateHeaders = jj.Template(kTemplateHeaders);
             result += templateHeaders.render({"headers": headers});
           }
         }
