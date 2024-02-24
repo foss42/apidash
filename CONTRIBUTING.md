@@ -83,7 +83,7 @@ In case you have already setup Flutter, make sure to switch to `stable` branch a
 1. Fork the project.
 2. Create a clone of the forked project on your computer to run it locally.
 3. Based on your desktop environment, enable Windows, macOS or Linux for the project. Select the same target device.
-4. This project uses [Records feature in Dart](https://github.com/dart-lang/language/blob/main/accepted/future-releases/records/records-feature-specification.md), so to run the project execute the following command:
+4. Run the project by executing the following command:
 
 ```
 flutter run
