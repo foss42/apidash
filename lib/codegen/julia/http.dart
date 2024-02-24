@@ -8,8 +8,8 @@ import 'package:apidash/models/models.dart' show RequestModel;
 
 class JuliaHttpClientCodeGen {
   final String kTemplateStart = """using HTTP,JSON
-{% if isFormDataRequest %}using Base:MIME
-{% endif %}
+
+
 url = "{{url}}"
 
 """;
