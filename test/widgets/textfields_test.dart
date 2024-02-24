@@ -1,7 +1,8 @@
+import 'package:apidash/consts.dart';
+import 'package:apidash/widgets/textfields.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:apidash/widgets/textfields.dart';
-import 'package:apidash/consts.dart';
+
 import '../test_consts.dart';
 
 void main() {
@@ -19,7 +20,7 @@ void main() {
     expect(find.byType(TextFormField), findsOneWidget);
     expect(find.byKey(const Key("url-2")), findsOneWidget);
     expect(find.byKey(const Key("2")), findsNothing);
-    expect(find.text(kHintTextUrlCard), findsOneWidget);
+    expect(find.text(kHintTextHTTPUrlCard), findsOneWidget);
     var txtForm = find.byKey(const Key("url-2"));
     await tester.enterText(txtForm, 'entering 123');
     await tester.pump();

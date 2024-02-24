@@ -14,8 +14,16 @@ class WebsocketMessage {
     return {
       "message": message,
       "timestamp": timestamp.toIso8601String(),
-      "type": type,
+      "type": type.name,
     };
+  }
+
+  factory WebsocketMessage.fromJson(Map<String, dynamic> data) {
+    final message = data["message"] as String;
+    final timestamp = DateTime.parse(data["timestamp"] as String);
+    final type = WebsocketMessageType.values.byName(data["type"] as String);
+
+    return WebsocketMessage(message, timestamp, type);
   }
 }
 

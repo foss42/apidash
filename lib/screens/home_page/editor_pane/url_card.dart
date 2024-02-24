@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:apidash/consts.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
-import 'package:apidash/consts.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class EditorPaneRequestURLCard extends ConsumerWidget {
   const EditorPaneRequestURLCard({super.key});
@@ -127,8 +127,10 @@ class URLTextField extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedId = ref.watch(selectedIdStateProvider);
+    final requestModel = ref.watch(selectedRequestModelProvider);
     return URLField(
       selectedId: selectedId!,
+      protocol: requestModel?.protocol,
       initialValue: ref
           .read(collectionStateNotifierProvider.notifier)
           .getRequestModel(selectedId)

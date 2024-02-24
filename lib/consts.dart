@@ -1,9 +1,10 @@
-import 'dart:io';
 import 'dart:convert';
+import 'dart:io';
+
+import 'package:davi/davi.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:davi/davi.dart';
 
 const kDiscordUrl = "https://bit.ly/heyfoss";
 const kGitUrl = "https://github.com/foss42/apidash";
@@ -498,7 +499,10 @@ const kAudioError =
 const kRaiseIssue =
     "\nPlease raise an issue in API Dash GitHub repo so that we can resolve it.";
 
-const kHintTextUrlCard = "Enter API endpoint like api.foss42.com/country/codes";
+const kHintTextHTTPUrlCard =
+    "Enter API endpoint like api.foss42.com/country/codes";
+const kHintTextWebsocketUrlCard =
+    "Enter Websocket server like wss://echo.websocket.org";
 const kLabelPlusNew = "+ New";
 const kLabelSend = "Send";
 const kLabelSending = "Sending..";

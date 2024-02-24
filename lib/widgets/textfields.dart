@@ -1,15 +1,17 @@
-import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
+import 'package:flutter/material.dart';
 
 class URLField extends StatelessWidget {
   const URLField({
     super.key,
     required this.selectedId,
+    this.protocol,
     this.initialValue,
     this.onChanged,
   });
 
   final String selectedId;
+  final Protocol? protocol;
   final String? initialValue;
   final void Function(String)? onChanged;
 
@@ -20,7 +22,9 @@ class URLField extends StatelessWidget {
       initialValue: initialValue,
       style: kCodeStyle,
       decoration: InputDecoration(
-        hintText: kHintTextUrlCard,
+        hintText: protocol == Protocol.websocket
+            ? kHintTextWebsocketUrlCard
+            : kHintTextHTTPUrlCard,
         hintStyle: kCodeStyle.copyWith(
           color: Theme.of(context).colorScheme.outline.withOpacity(
                 kHintOpacity,

@@ -1,6 +1,9 @@
 import 'dart:io';
+
 import 'package:apidash/services/websocket_service.dart';
 import 'package:flutter/foundation.dart';
+
+import '../consts.dart';
 import '../utils/utils.dart'
     show
         mapListToFormDataModelRows,
@@ -8,7 +11,6 @@ import '../utils/utils.dart'
         mapToRows,
         rowsToMap,
         getEnabledRows;
-import '../consts.dart';
 import 'models.dart';
 
 @immutable
@@ -152,6 +154,7 @@ class RequestModel {
     Protocol protocol;
     HTTPVerb method;
     ContentType requestBodyContentType;
+    List<WebsocketMessage>? webSocketMessages;
     ResponseModel? responseModel;
 
     final id = data["id"] as String;
@@ -182,8 +185,12 @@ class RequestModel {
     final requestFormDataList = data["requestFormDataList"];
     final responseStatus = data["responseStatus"] as int?;
     final message = data["message"] as String?;
-    final webSocketMessages =
-        data["webSocketMessages"] as List<WebsocketMessage>?;
+
+    if (data["webSocketMessages"] != null) {
+      webSocketMessages = (data["webSocketMessages"] as List)
+          .map((e) => WebsocketMessage.fromJson(Map<String, dynamic>.from(e)))
+          .toList();
+    }
     final responseModelJson = data["responseModel"];
 
     if (responseModelJson != null) {
