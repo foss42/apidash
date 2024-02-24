@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:apidash/widgets/csv_previewer.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:printing/printing.dart';
@@ -81,6 +82,13 @@ class _PreviewerState extends State<Previewer> {
         },
       );
     }
+    if (widget.type == kTypeText && widget.subtype == kSubTypeCsv) {
+      try {
+        return CsvPreviewer(body: widget.body);
+      } catch (e) {
+        return const ErrorMessage(message: kCsvError);
+      }
+    }
     if (widget.type == kTypeVideo) {
       // TODO: Video Player
     }
@@ -89,4 +97,5 @@ class _PreviewerState extends State<Previewer> {
         : "$kMimeTypeRaiseIssueStart${widget.type}/${widget.subtype}$kMimeTypeRaiseIssue";
     return ErrorMessage(message: message);
   }
+  
 }
