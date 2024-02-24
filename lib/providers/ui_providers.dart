@@ -7,6 +7,11 @@ final sentRequestIdStateProvider = StateProvider<String?>((ref) => null);
 final codePaneVisibleStateProvider = StateProvider<bool>((ref) => false);
 final saveDataStateProvider = StateProvider<bool>((ref) => false);
 final clearDataStateProvider = StateProvider<bool>((ref) => false);
+
+/// As part of UX, when body is added to GET requests, they're
+/// auto converted to POST requests. UI Snackbar trigger for the same
+final autoSwitchPOSTStateProvider = StateProvider<bool>((ref) => false);
+
 // final nameTextFieldControllerProvider =
 //     StateProvider.autoDispose<TextEditingController>((ref) {
 //   TextEditingController controller = TextEditingController(text: "");

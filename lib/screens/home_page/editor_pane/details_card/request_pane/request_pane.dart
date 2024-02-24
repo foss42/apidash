@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
@@ -14,7 +15,8 @@ class EditRequestPane extends ConsumerWidget {
     final selectedId = ref.watch(selectedIdStateProvider);
     final codePaneVisible = ref.watch(codePaneVisibleStateProvider);
     final tabIndex = ref.watch(
-        selectedRequestModelProvider.select((value) => value?.requestTabIndex));
+      selectedRequestModelProvider.select((value) => value?.requestTabIndex),
+    );
 
     final headerLength = ref.watch(selectedRequestModelProvider
         .select((value) => value?.headersMap.length));
@@ -22,6 +24,15 @@ class EditRequestPane extends ConsumerWidget {
         .select((value) => value?.paramsMap.length));
     final bodyLength = ref.watch(selectedRequestModelProvider
         .select((value) => value?.requestBody?.length));
+
+    // show snackbar when auto switch triggers
+    ref.listen(autoSwitchPOSTStateProvider, (_, currentValue) {
+      if (currentValue) {
+        final sm = ScaffoldMessenger.of(context);
+        sm.hideCurrentSnackBar();
+        sm.showSnackBar(getSnackBar('Switching to POST Request'));
+      }
+    });
 
     return RequestPane(
       selectedId: selectedId,

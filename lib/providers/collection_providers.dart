@@ -134,8 +134,12 @@ class CollectionStateNotifier
     ResponseModel? responseModel,
   }) {
     // Switch from GET to POST if request has payload of any kind
-    if (requestBody != null && state![id]!.method == HTTPVerb.get) {
+    // primarily, text, json and formData
+    if ((requestBody != null || requestFormDataList != null) &&
+        state![id]!.method == HTTPVerb.get) {
+      ref.read(autoSwitchPOSTStateProvider.notifier).state = true;
       method = HTTPVerb.post;
+      ref.read(autoSwitchPOSTStateProvider.notifier).state = false;
     }
 
     final newModel = state![id]!.copyWith(
