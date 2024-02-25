@@ -510,5 +510,6 @@ const kLabelConnect = "Connect";
 const kLabelDisconnect = "Disconnect";
 const kLabelBusy = "Busy";
 const kLabelCopy = "Copy";
+const kLabelDelete = "Delete";
 const kLabelSave = "Save";
 const kLabelDownload = "Download";

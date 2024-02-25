@@ -1,9 +1,49 @@
+import 'package:apidash/consts.dart';
+import 'package:apidash/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:apidash/utils/utils.dart';
-import 'package:apidash/consts.dart';
+
 import "snackbars.dart";
+
+class DeleteMessagesButton extends StatelessWidget {
+  const DeleteMessagesButton({
+    super.key,
+    required this.onTap,
+    this.showLabel = true,
+  });
+
+  final bool showLabel;
+  final void Function() onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    var sm = ScaffoldMessenger.of(context);
+    return Tooltip(
+      message: showLabel ? '' : kLabelCopy,
+      child: SizedBox(
+        width: showLabel ? null : kTextButtonMinWidth,
+        child: TextButton(
+          onPressed: () {
+            onTap();
+            sm.hideCurrentSnackBar();
+            sm.showSnackBar(getSnackBar("Messages deleted"));
+          },
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(
+                Icons.delete,
+                size: 20,
+              ),
+              if (showLabel) const Text(kLabelDelete)
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
 
 class CopyButton extends StatelessWidget {
   const CopyButton({

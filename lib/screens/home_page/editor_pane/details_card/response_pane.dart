@@ -1,9 +1,9 @@
+import 'package:apidash/consts.dart';
+import 'package:apidash/providers/providers.dart';
 import 'package:apidash/services/websocket_service.dart';
+import 'package:apidash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:apidash/providers/providers.dart';
-import 'package:apidash/widgets/widgets.dart';
-import 'package:apidash/consts.dart';
 
 class ResponsePane extends ConsumerWidget {
   const ResponsePane({super.key});
@@ -74,23 +74,33 @@ class ResponseDetails extends ConsumerWidget {
         builder: (context, ref, child) {
           final requestModel = ref.watch(selectedRequestModelProvider);
           final messages = requestModel!.webSocketMessages;
+          final collection = ref.read(collectionStateNotifierProvider.notifier);
 
-          return ListView.builder(
-            itemCount: messages.length,
-            itemBuilder: (context, index) {
-              return ListTile(
-                title: Text(
-                  messages[index].message,
-                  style: TextStyle(
-                      color: _getColorForMessageType(messages[index].type)),
-                ),
-                subtitle: Text(messages[index].timestamp.toString()),
-                leading: Icon(
-                  _getIconForMessageType(messages[index].type),
-                  color: _getColorForMessageType(messages[index].type),
-                ),
-              );
-            },
+          return Stack(
+            children: [
+              ListView.builder(
+                itemCount: messages.length,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    title: Text(
+                      messages[index].message,
+                      style: TextStyle(
+                          color: _getColorForMessageType(messages[index].type)),
+                    ),
+                    subtitle: Text(messages[index].timestamp.toString()),
+                    leading: Icon(
+                      _getIconForMessageType(messages[index].type),
+                      color: _getColorForMessageType(messages[index].type),
+                    ),
+                  );
+                },
+              ),
+              Positioned(
+                  right: 0,
+                  child: DeleteMessagesButton(
+                    onTap: collection.deleteWebsocketMessages,
+                  )),
+            ],
           );
         },
       );

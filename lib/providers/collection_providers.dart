@@ -266,6 +266,16 @@ class CollectionStateNotifier
     state = map;
   }
 
+  void deleteWebsocketMessages() {
+    final selectedId = ref.read(selectedIdStateProvider.notifier).state;
+
+    var map = {...state!};
+    map[selectedId!] = state![selectedId]!.copyWith(
+      webSocketMessages: [],
+    );
+    state = map;
+  }
+
   Future<void> sendRequest(String id) async {
     ref.read(sentRequestIdStateProvider.notifier).state = id;
     ref.read(codePaneVisibleStateProvider.notifier).state = false;
