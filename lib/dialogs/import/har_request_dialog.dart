@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:apidash/consts.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/providers/collection_providers.dart';
@@ -11,10 +10,10 @@ import 'package:uuid/uuid.dart';
 /// Imports requests from a HAR Archive file
 ///
 class ImportRequestsFromHARDialog extends ConsumerStatefulWidget {
-  const ImportRequestsFromHARDialog({required this.harFile, super.key});
+  const ImportRequestsFromHARDialog({required this.harJSON, super.key});
 
-  /// File instance of selected HAR file
-  final File harFile;
+  /// Stores HAR content into JSON to avoid multiple [jsonDecode]
+  final Map harJSON;
 
   @override
   ConsumerState<ImportRequestsFromHARDialog> createState() =>
@@ -23,30 +22,9 @@ class ImportRequestsFromHARDialog extends ConsumerStatefulWidget {
 
 class _ImportRequestsFromHARDialogState
     extends ConsumerState<ImportRequestsFromHARDialog> {
-  /// Stores HAR content into JSON to avoid multiple [jsonDecode]
-  Map? harJSON;
-
-  @override
-  initState() {
-    extractHARFile();
-    super.initState();
-  }
-
-  /// Sets [widget.harFile] to the provided path and extracts contents
-  /// into [harJSON]
-  Future<void> extractHARFile() async {
-    final string = await widget.harFile.readAsString();
-
-    setState(() {
-      harJSON = jsonDecode(string);
-    });
-  }
-
   /// Returns length of API Request Entities from HAR Archive
   int harListLength() {
-    if (harJSON == null) return 0;
-
-    return (harJSON!['log']['entries'] as List).length;
+    return (widget.harJSON['log']['entries'] as List).length;
   }
 
   /// Reusable [NameValueModel] generator for parsing
@@ -63,17 +41,16 @@ class _ImportRequestsFromHARDialogState
 
   /// Returns widget with HAR API Entry at [index]
   Widget generateHARTile(context, index) {
-    if (harJSON == null) return Container();
-
-    final String url = harJSON!['log']['entries'][index]['request']['url'];
+    final String url =
+        widget.harJSON!['log']['entries'][index]['request']['url'];
     final List headersJSON =
-        harJSON!['log']['entries'][index]['request']['headers'] as List;
+        widget.harJSON['log']['entries'][index]['request']['headers'] as List;
 
-    final List paramsJSON =
-        harJSON!['log']['entries'][index]['request']['queryString'] as List;
+    final List paramsJSON = widget.harJSON['log']['entries'][index]['request']
+        ['queryString'] as List;
 
     final String methodString =
-        harJSON!['log']['entries'][index]['request']['method'];
+        widget.harJSON['log']['entries'][index]['request']['method'];
 
     HTTPVerb method = HTTPVerb.values.firstWhere(
       (element) => element.name == methodString.toLowerCase(),
