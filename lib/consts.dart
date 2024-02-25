@@ -245,6 +245,8 @@ enum HTTPVerb { get, head, post, put, patch, delete }
 
 enum FormDataType { text, file }
 
+enum ImportFileType { har, unknown }
+
 const kSupportedUriSchemes = ["https", "http"];
 const kDefaultUriScheme = "https";
 const kMethodsWithBody = [
