@@ -102,6 +102,8 @@ class ConnectWebsocketButton extends StatelessWidget {
   Widget build(BuildContext context) {
     bool disable = sentRequestId != null;
     bool isBusy = selectedId == sentRequestId;
+
+    print(connected);
     return FilledButton(
       onPressed: disable ? null : onTap,
       child: Row(

@@ -96,10 +96,11 @@ class ResponseDetails extends ConsumerWidget {
                 },
               ),
               Positioned(
-                  right: 0,
-                  child: DeleteMessagesButton(
-                    onTap: collection.deleteWebsocketMessages,
-                  )),
+                right: 0,
+                child: DeleteMessagesButton(
+                  onTap: collection.deleteWebsocketMessages,
+                ),
+              ),
             ],
           );
         },

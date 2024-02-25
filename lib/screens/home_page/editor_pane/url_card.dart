@@ -155,7 +155,13 @@ class ConnectButton extends ConsumerWidget {
     final sentRequestId = ref.watch(sentRequestIdStateProvider);
     final requestModel = ref.watch(selectedRequestModelProvider);
 
-    final connected = requestModel?.webSocketConnected ?? false;
+    // final connected = requestModel?.webSocketConnected ?? false;
+    final collection = ref.watch(collectionStateNotifierProvider.notifier);
+    // print("ConnectButton: ${requestModel!.webSocketConnected}");
+
+    // GO THIS WAY
+    print("ConnectButton: ${collection.isWebsocketConnected()}");
+    final connected = collection.isWebsocketConnected();
 
     return ConnectWebsocketButton(
       selectedId: selectedId,

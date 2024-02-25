@@ -36,12 +36,16 @@ final webSocketManagerProvider =
     },
     toggleConnect: () {
       final requestModel = ref.read(selectedRequestModelProvider.notifier);
+      print("toggle connection");
       if (requestModel.state != null) {
-        final newRequestModel = requestModel.state!.copyWith(
-          webSocketConnected:
-              !(requestModel.state!.webSocketConnected ?? false),
-        );
-        requestModel.update((state) => newRequestModel);
+        // print("current: ${requestModel.state!.webSocketConnected}");
+        // print("new: ${!(requestModel.state!.webSocketConnected ?? false)}");
+        // final newRequestModel = requestModel.state!.copyWith(
+        //   webSocketConnected:
+        //       !(requestModel.state!.webSocketConnected ?? false),
+        // );
+        // requestModel.update((state) => newRequestModel);
+        // print("saved: ${requestModel.state?.webSocketConnected}");
       }
     },
   );
@@ -274,6 +278,15 @@ class CollectionStateNotifier
       webSocketMessages: [],
     );
     state = map;
+  }
+
+  bool isWebsocketConnected() {
+    final selectedId = ref.read(selectedIdStateProvider.notifier).state;
+
+    final webSocketManager =
+        ref.watch(webSocketManagerProvider(state![selectedId]!.url));
+
+    return webSocketManager.channel != null;
   }
 
   Future<void> sendRequest(String id) async {
