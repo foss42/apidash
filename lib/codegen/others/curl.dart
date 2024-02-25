@@ -26,7 +26,6 @@ class cURLCodeGen {
       String result = "";
 
       String url = requestModel.url;
-
       if (!url.contains("://") && url.isNotEmpty) {
         url = "$defaultUriScheme://$url";
       }
@@ -43,7 +42,6 @@ class cURLCodeGen {
         },
         "url": harJson["url"],
       });
-
 
       var headers = harJson["headers"];
       if (headers.isNotEmpty) {
