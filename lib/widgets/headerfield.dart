@@ -1,6 +1,6 @@
+import 'package:apidash/consts.dart';
 import 'package:apidash/utils/header_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:apidash/consts.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 
 class HeaderField extends StatefulWidget {
@@ -41,6 +41,7 @@ class _HeaderFieldState extends State<HeaderField> {
 
   @override
   void didUpdateWidget(HeaderField oldWidget) {
+    super.didUpdateWidget(oldWidget);
     if (oldWidget.initialValue != widget.initialValue) {
       controller.text = widget.initialValue ?? "";
       controller.selection =
@@ -53,9 +54,9 @@ class _HeaderFieldState extends State<HeaderField> {
     var colorScheme = widget.colorScheme ?? Theme.of(context).colorScheme;
     return TypeAheadField(
       key: Key(widget.keyId),
-      hideOnEmpty: true,
-      minCharsForSuggestions: 1,
-      onSuggestionSelected: (value) {
+      hideOnEmpty: false,
+      controller: controller,
+      onSelected: (value) {
         setState(() {
           controller.text = value;
         });
@@ -68,19 +69,16 @@ class _HeaderFieldState extends State<HeaderField> {
         );
       },
       suggestionsCallback: headerSuggestionCallback,
-      suggestionsBoxDecoration: suggestionBoxDecorations(context),
-      textFieldConfiguration: TextFieldConfiguration(
+      decorationBuilder: suggestionBoxDecorations,
+      constraints: const BoxConstraints(maxHeight: 400),
+      builder: (context, controller, focusNode) => TextField(
         onChanged: widget.onChanged,
         controller: controller,
-        style: kCodeStyle.copyWith(
-          color: colorScheme.onSurface,
-        ),
+        focusNode: focusNode,
+        style: kCodeStyle.copyWith(color: colorScheme.onSurface),
         decoration: InputDecoration(
           hintStyle: kCodeStyle.copyWith(
-            color: colorScheme.outline.withOpacity(
-              kHintOpacity,
-            ),
-          ),
+              color: colorScheme.outline.withOpacity(kHintOpacity)),
           hintText: widget.hintText,
           focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(
@@ -99,22 +97,22 @@ class _HeaderFieldState extends State<HeaderField> {
     );
   }
 
-  SuggestionsBoxDecoration suggestionBoxDecorations(BuildContext context) {
-    return SuggestionsBoxDecoration(
+  Material suggestionBoxDecorations(BuildContext context, Widget child) {
+    return Material(
       elevation: 4,
-      constraints: const BoxConstraints(maxHeight: 400),
       shape: RoundedRectangleBorder(
-        side: BorderSide(
-          color: Theme.of(context).dividerColor,
-          width: 1.2,
-        ),
+        side: BorderSide(color: Theme.of(context).dividerColor, width: 1.2),
         borderRadius: const BorderRadius.vertical(bottom: Radius.circular(8)),
       ),
       clipBehavior: Clip.hardEdge,
+      child: child,
     );
   }
 
-  Future<List<String>> headerSuggestionCallback(String pattern) async {
+  Future<List<String>?> headerSuggestionCallback(String pattern) async {
+    if (pattern.isEmpty) {
+      return null;
+    }
     return getHeaderSuggestions(pattern);
   }
 }
