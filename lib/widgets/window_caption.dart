@@ -41,6 +41,13 @@ class _WindowCaptionState extends State<WindowCaption> with WindowListener {
             onPanStart: (details) {
               windowManager.startDragging();
             },
+            onDoubleTap: () async {
+              if (await windowManager.isMaximized()) {
+                windowManager.unmaximize();
+              } else {
+                windowManager.maximize();
+              }
+            },
             child: const SizedBox(
               height: double.infinity,
             ),
