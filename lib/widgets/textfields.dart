@@ -95,7 +95,6 @@ class JsonSearchField extends StatelessWidget {
       controller: controller,
       onChanged: onChanged,
       style: kCodeStyle,
-      cursorHeight: 18,
       decoration: const InputDecoration(
         isDense: true,
         border: InputBorder.none,
