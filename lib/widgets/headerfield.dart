@@ -54,7 +54,7 @@ class _HeaderFieldState extends State<HeaderField> {
     var colorScheme = widget.colorScheme ?? Theme.of(context).colorScheme;
     return TypeAheadField(
       key: Key(widget.keyId),
-      hideOnEmpty: false,
+      hideOnEmpty: true,
       controller: controller,
       onSelected: (value) {
         setState(() {
@@ -65,11 +65,15 @@ class _HeaderFieldState extends State<HeaderField> {
       itemBuilder: (context, String suggestion) {
         return ListTile(
           dense: true,
-          title: Text(suggestion),
+          title: Text(
+            suggestion,
+            style: TextStyle(color: colorScheme.inverseSurface),
+          ),
         );
       },
       suggestionsCallback: headerSuggestionCallback,
-      decorationBuilder: suggestionBoxDecorations,
+      decorationBuilder: (context, child) =>
+          suggestionBoxDecorations(context, child, colorScheme),
       constraints: const BoxConstraints(maxHeight: 400),
       builder: (context, controller, focusNode) => TextField(
         onChanged: widget.onChanged,
@@ -97,9 +101,11 @@ class _HeaderFieldState extends State<HeaderField> {
     );
   }
 
-  Material suggestionBoxDecorations(BuildContext context, Widget child) {
+  Material suggestionBoxDecorations(
+      BuildContext context, Widget child, ColorScheme colorScheme) {
     return Material(
       elevation: 4,
+      color: colorScheme.surface,
       shape: RoundedRectangleBorder(
         side: BorderSide(color: Theme.of(context).dividerColor, width: 1.2),
         borderRadius: const BorderRadius.vertical(bottom: Radius.circular(8)),
