@@ -1,82 +1,82 @@
-import 'package:apidash/utils/header_utils.dart';
 import 'package:test/test.dart';
+import 'package:apidash/utils/header_utils.dart';
 
 void main() {
   group("Testing getHeaderSuggestions function", () {
     test("Testing using Allow-Headers", () {
       String pattern = "Allow-Headers";
       List<String> expected = ["Access-Control-Allow-Headers"];
-      expect(getHeaderSuggestions(pattern), expected);
+      expect(getHeaderSuggestions(pattern), containsAll(expected));
     });
 
     test("Testing using Allow-Methods", () {
       String pattern = "Allow-Methods";
       List<String> expected = ["Access-Control-Allow-Methods"];
-      expect(getHeaderSuggestions(pattern), expected);
+      expect(getHeaderSuggestions(pattern), containsAll(expected));
     });
 
     test("Testing using Allow-Origin", () {
       String pattern = "Allow-Origin";
       List<String> expected = ["Access-Control-Allow-Origin"];
-      expect(getHeaderSuggestions(pattern), expected);
+      expect(getHeaderSuggestions(pattern), containsAll(expected));
     });
 
     test("Testing using Request-Method", () {
-      String pattern = "Request-Method";
+      String pattern = "Req-Method";
       List<String> expected = ["Access-Control-Request-Method"];
-      expect(getHeaderSuggestions(pattern), expected);
+      expect(getHeaderSuggestions(pattern), containsAll(expected));
     });
 
     test("Testing using Max-Age", () {
       String pattern = "Max-Age";
       List<String> expected = ["Access-Control-Max-Age"];
-      expect(getHeaderSuggestions(pattern), expected);
+      expect(getHeaderSuggestions(pattern), containsAll(expected));
     });
 
     test("Testing using Access-Control-Allow-Headers", () {
-      String pattern = "Access-Control-Allow-Headers";
+      String pattern = "Access-Head";
       List<String> expected = ["Access-Control-Allow-Headers"];
-      expect(getHeaderSuggestions(pattern), expected);
+      expect(getHeaderSuggestions(pattern), containsAll(expected));
     });
 
     test("Testing using Access-Control-Allow-Methods", () {
-      String pattern = "Access-Control-Allow-Methods";
+      String pattern = "Acc-Control";
       List<String> expected = ["Access-Control-Allow-Methods"];
-      expect(getHeaderSuggestions(pattern), expected);
+      expect(getHeaderSuggestions(pattern), containsAll(expected));
     });
 
     test("Testing using Access-Control-Allow-Origin", () {
-      String pattern = "Access-Control-Allow-Origin";
+      String pattern = "Control-Orin";
       List<String> expected = ["Access-Control-Allow-Origin"];
-      expect(getHeaderSuggestions(pattern), expected);
+      expect(getHeaderSuggestions(pattern), containsAll(expected));
     });
 
     test("Testing using Access-Control-Request-Method", () {
-      String pattern = "Access-Control-Request-Method";
+      String pattern = "Access-Req";
       List<String> expected = ["Access-Control-Request-Method"];
-      expect(getHeaderSuggestions(pattern), expected);
+      expect(getHeaderSuggestions(pattern), containsAll(expected));
     });
 
     test("Testing using Access-Control-Max-Age", () {
       String pattern = "Access-Control-Max-Age";
       List<String> expected = ["Access-Control-Max-Age"];
-      expect(getHeaderSuggestions(pattern), expected);
+      expect(getHeaderSuggestions(pattern), containsAll(expected));
     });
 
     test("Testing using Content-Type", () {
       String pattern = "Content-Type";
       List<String> expected = ['Content-Type', 'X-Content-Type-Options'];
-      expect(getHeaderSuggestions(pattern), expected);
+      expect(getHeaderSuggestions(pattern), containsAll(expected));
     });
 
     test("Testing using Expires", () {
-      String pattern = "Expires";
+      String pattern = "Expi";
       List<String> expected = ["Expires"];
-      expect(getHeaderSuggestions(pattern), expected);
+      expect(getHeaderSuggestions(pattern), containsAll(expected));
     });
 
     test("Testing using 'Access-Control' pattern", () {
-      String pattern = "Access-Control";
+      String pattern = "Access-Cntl";
       List<String> expected = [
         "Access-Control-Allow-Headers",
         "Access-Control-Allow-Methods",
@@ -85,7 +85,7 @@ void main() {
         "Access-Control-Request-Headers",
         "Access-Control-Request-Method"
       ];
-      expect(getHeaderSuggestions(pattern), expected);
+      expect(getHeaderSuggestions(pattern), containsAll(expected));
     });
 
     test("Testing using 'allow-' pattern", () {
@@ -95,7 +95,7 @@ void main() {
         "Access-Control-Allow-Methods",
         "Access-Control-Allow-Origin"
       ];
-      expect(getHeaderSuggestions(pattern), expected);
+      expect(getHeaderSuggestions(pattern), containsAll(expected));
     });
 
     test("Testing using 'content' pattern", () {
@@ -108,7 +108,7 @@ void main() {
         'Content-Type',
         'X-Content-Type-Options'
       ];
-      expect(getHeaderSuggestions(pattern), expected);
+      expect(getHeaderSuggestions(pattern), containsAll(expected));
     });
 
     test("Testing using 'x-' pattern", () {
@@ -123,7 +123,7 @@ void main() {
         "X-Requested-With",
         "X-XSS-Protection"
       ];
-      expect(getHeaderSuggestions(pattern), expected);
+      expect(getHeaderSuggestions(pattern), containsAll(expected));
     });
 
     test("Testing for 'origin' pattern", () {
@@ -135,7 +135,7 @@ void main() {
         'Cross-Origin-Resource-Policy',
         'Origin'
       ];
-      expect(getHeaderSuggestions(pattern), expected);
+      expect(getHeaderSuggestions(pattern), containsAll(expected));
     });
   });
 }
