@@ -43,7 +43,6 @@ class EditWebsocketRequestPane extends ConsumerWidget {
         messageLength != null && messageLength > 0,
         paramLength != null && paramLength > 0,
         headerLength != null && headerLength > 0,
-        bodyLength != null && bodyLength > 0,
       ],
       tabLabels: const [
         'Message',
