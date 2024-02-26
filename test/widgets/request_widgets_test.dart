@@ -14,7 +14,7 @@ void main() {
           body: RequestPane(
             selectedId: '1',
             codePaneVisible: true,
-            tabLabels: const ['abc', 'xyz', 'mno'],
+            tabLabels: const ['URL Params', 'Headers', 'Body'],
             onPressedCodeButton: () {},
             children: const [Text('abc'), Text('xyz'), Text('mno')],
           ),
@@ -47,7 +47,7 @@ void main() {
             codePaneVisible: true,
             onPressedCodeButton: () {},
             tabIndex: 1,
-            tabLabels: const ['abc', 'xyz', 'mno'],
+            tabLabels: const ['URL Params', 'Headers', 'Body'],
             children: const [Text('abc'), Text('xyz'), Text('mno')],
           ),
         ),
@@ -79,7 +79,7 @@ void main() {
             codePaneVisible: false,
             onPressedCodeButton: () {},
             tabIndex: 2,
-            tabLabels: const ['abc', 'xyz', 'mno'],
+            tabLabels: const ['URL Params', 'Headers', 'Body'],
             children: const [Text('abc'), Text('xyz'), Text('mno')],
           ),
         ),
@@ -114,7 +114,7 @@ void main() {
             onTapTabBar: (value) {
               computedTabIndex = value;
             },
-            tabLabels: const ['abc', 'xyz', 'mno'],
+            tabLabels: const ['URL Params', 'Headers', 'Body'],
             children: const [Text('abc'), Text('xyz'), Text('mno')],
           ),
         ),

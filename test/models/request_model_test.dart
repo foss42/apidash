@@ -69,6 +69,7 @@ void main() {
 
   RequestModel requestModelDup = const RequestModel(
       id: '1',
+      protocol: Protocol.http,
       method: HTTPVerb.post,
       url: 'api.foss42.com/case/lower',
       name: 'foss42 api',
@@ -99,6 +100,7 @@ void main() {
 
   Map<String, dynamic> requestModelAsJson = {
     "id": '1',
+    'protocol': 'http',
     "method": 'post',
     "url": 'api.foss42.com/case/lower',
     "name": 'foss42 api',
@@ -117,6 +119,7 @@ void main() {
     'requestFormDataList': null,
     'responseStatus': null,
     'message': null,
+    'webSocketMessages': null,
     'responseModel': null
   };
   test('Testing copyWith', () {
@@ -138,6 +141,7 @@ void main() {
 
   final requestModeDupString = [
     "Request Id: 1",
+    "Request Protocol: http",
     "Request Method: post",
     "Request URL: api.foss42.com/case/lower",
     "Request Name: foss42 api",
@@ -152,6 +156,7 @@ void main() {
     'Request FormData: null',
     "Response Status: null",
     "Response Message: null",
+    "WebSocket Messages: null",
     "Response: null"
   ].join("\n");
   test('Testing toString', () {

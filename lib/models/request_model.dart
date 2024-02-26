@@ -33,7 +33,7 @@ class RequestModel {
     this.responseStatus,
     this.message,
     this.responseModel,
-    this.webSocketMessages = const [],
+    this.webSocketMessages,
     this.webSocketManager,
   });
 
@@ -54,7 +54,7 @@ class RequestModel {
   final int? responseStatus;
   final String? message;
   final ResponseModel? responseModel;
-  final List<WebsocketMessage> webSocketMessages;
+  final List<WebsocketMessage>? webSocketMessages;
 
   List<NameValueModel>? get enabledRequestHeaders =>
       getEnabledRows(requestHeaders, isHeaderEnabledList);
@@ -223,7 +223,7 @@ class RequestModel {
           : null,
       responseStatus: responseStatus,
       message: message,
-      webSocketMessages: webSocketMessages ?? [],
+      webSocketMessages: webSocketMessages,
       responseModel: responseModel,
     );
   }
@@ -246,7 +246,7 @@ class RequestModel {
       "responseStatus": includeResponse ? responseStatus : null,
       "message": includeResponse ? message : null,
       "webSocketMessages": includeResponse
-          ? webSocketMessages.map((e) => e.toJson()).toList()
+          ? webSocketMessages?.map((e) => e.toJson()).toList()
           : null,
       "responseModel": includeResponse ? responseModel?.toJson() : null,
     };

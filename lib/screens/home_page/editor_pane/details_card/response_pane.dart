@@ -81,11 +81,11 @@ class ResponseDetails extends ConsumerWidget {
           return Stack(
             children: [
               ListView.builder(
-                itemCount: messages.length,
+                itemCount: messages?.length,
                 itemBuilder: (context, index) {
                   return ListTile(
                     title: Text(
-                      messages[index].message,
+                      messages![index].message,
                       style: TextStyle(
                           color: _getColorForMessageType(messages[index].type)),
                     ),

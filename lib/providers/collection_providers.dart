@@ -250,7 +250,7 @@ class CollectionStateNotifier
       map[id] = state![id]!.copyWith(
         webSocketMessages: [
           WebsocketMessage(message, DateTime.now(), type),
-          ...state![id]!.webSocketMessages,
+          ...?state![id]!.webSocketMessages,
         ],
       );
     }
