@@ -18,17 +18,8 @@ void main() async {
     await setupWindow(sz: win.$1, off: win.$2);
   }
   runApp(
-    ProviderScope(
-      child: GestureDetector(
-        onDoubleTap: () async {
-          if (await windowManager.isMaximized()) {
-            windowManager.unmaximize();
-          } else {
-            windowManager.maximize();
-          }
-        },
-        child: const DashApp(),
-      ),
+    const ProviderScope(
+      child: DashApp(),
     ),
   );
 }

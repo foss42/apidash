@@ -131,7 +131,7 @@ class DashApp extends ConsumerWidget {
           : Stack(
               children: [
                 kIsLinux ? const Dashboard() : const App(),
-                if (kIsWindows)
+                if (kIsWindows || kIsMacOS)
                   SizedBox(
                     height: 29,
                     child: WindowCaption(

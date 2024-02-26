@@ -1,3 +1,4 @@
+import 'package:apidash/consts.dart';
 import 'package:flutter/material.dart';
 
 import 'package:window_manager/window_manager.dart';
@@ -41,47 +42,61 @@ class _WindowCaptionState extends State<WindowCaption> with WindowListener {
             onPanStart: (details) {
               windowManager.startDragging();
             },
+            onDoubleTap: () async {
+              if (await windowManager.isMaximized()) {
+                windowManager.unmaximize();
+              } else {
+                windowManager.maximize();
+              }
+            },
             child: const SizedBox(
               height: double.infinity,
             ),
           ),
         ),
-        WindowCaptionButton.minimize(
-          brightness: widget.brightness,
-          onPressed: () async {
-            bool isMinimized = await windowManager.isMinimized();
-            if (isMinimized) {
-              windowManager.restore();
-            } else {
-              windowManager.minimize();
-            }
-          },
-        ),
-        FutureBuilder<bool>(
-          future: windowManager.isMaximized(),
-          builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-            if (snapshot.data == true) {
-              return WindowCaptionButton.unmaximize(
-                brightness: widget.brightness,
-                onPressed: () {
-                  windowManager.unmaximize();
-                },
-              );
-            }
-            return WindowCaptionButton.maximize(
-              brightness: widget.brightness,
-              onPressed: () {
-                windowManager.maximize();
-              },
-            );
-          },
-        ),
-        WindowCaptionButton.close(
-          brightness: widget.brightness,
-          onPressed: () {
-            windowManager.close();
-          },
-        ),
+        kIsWindows
+            ? Row(
+                children: [
+                  WindowCaptionButton.minimize(
+                    brightness: widget.brightness,
+                    onPressed: () async {
+                      bool isMinimized = await windowManager.isMinimized();
+                      if (isMinimized) {
+                        windowManager.restore();
+                      } else {
+                        windowManager.minimize();
+                      }
+                    },
+                  ),
+                  FutureBuilder<bool>(
+                    future: windowManager.isMaximized(),
+                    builder:
+                        (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                      if (snapshot.data == true) {
+                        return WindowCaptionButton.unmaximize(
+                          brightness: widget.brightness,
+                          onPressed: () {
+                            windowManager.unmaximize();
+                          },
+                        );
+                      }
+                      return WindowCaptionButton.maximize(
+                        brightness: widget.brightness,
+                        onPressed: () {
+                          windowManager.maximize();
+                        },
+                      );
+                    },
+                  ),
+                  WindowCaptionButton.close(
+                    brightness: widget.brightness,
+                    onPressed: () {
+                      windowManager.close();
+                    },
+                  ),
+                ],
+              )
+            : Container(),
       ],
     );
   }
