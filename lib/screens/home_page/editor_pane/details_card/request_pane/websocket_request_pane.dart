@@ -1,11 +1,11 @@
+import 'package:apidash/providers/providers.dart';
 import 'package:apidash/screens/home_page/editor_pane/details_card/request_pane/request_message.dart';
+import 'package:apidash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:apidash/providers/providers.dart';
-import 'package:apidash/widgets/widgets.dart';
+
 import 'request_headers.dart';
 import 'request_params.dart';
-import 'request_body.dart';
 
 class EditWebsocketRequestPane extends ConsumerWidget {
   const EditWebsocketRequestPane({super.key});
@@ -49,13 +49,11 @@ class EditWebsocketRequestPane extends ConsumerWidget {
         'Message',
         'URL Params',
         'Headers',
-        'Body',
       ],
       children: const [
         EditRequestMessage(),
         EditRequestURLParams(),
         EditRequestHeaders(),
-        EditRequestBody(),
       ],
     );
   }
