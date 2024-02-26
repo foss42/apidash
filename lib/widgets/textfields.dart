@@ -23,7 +23,7 @@ class URLField extends StatelessWidget {
       style: kCodeStyle,
       decoration: InputDecoration(
         hintText: protocol == Protocol.websocket
-            ? kHintTextWebsocketUrlCard
+            ? kHintTextWebSocketUrlCard
             : kHintTextHTTPUrlCard,
         hintStyle: kCodeStyle.copyWith(
           color: Theme.of(context).colorScheme.outline.withOpacity(

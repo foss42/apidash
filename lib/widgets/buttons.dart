@@ -84,8 +84,8 @@ class CopyButton extends StatelessWidget {
   }
 }
 
-class ConnectWebsocketButton extends StatelessWidget {
-  const ConnectWebsocketButton({
+class ConnectWebSocketButton extends StatelessWidget {
+  const ConnectWebSocketButton({
     super.key,
     required this.selectedId,
     required this.sentRequestId,

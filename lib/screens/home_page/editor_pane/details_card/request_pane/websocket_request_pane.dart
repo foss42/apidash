@@ -7,8 +7,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'request_headers.dart';
 import 'request_params.dart';
 
-class EditWebsocketRequestPane extends ConsumerWidget {
-  const EditWebsocketRequestPane({super.key});
+class EditWebSocketRequestPane extends ConsumerWidget {
+  const EditWebSocketRequestPane({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

@@ -2,13 +2,13 @@ import 'dart:async';
 
 import 'package:web_socket_channel/io.dart';
 
-enum WebsocketMessageType { server, client, info, error }
+enum WebSocketMessageType { server, client, info, error }
 
-class WebsocketMessage {
-  WebsocketMessage(this.message, this.timestamp, this.type);
+class WebSocketMessage {
+  WebSocketMessage(this.message, this.timestamp, this.type);
   final String message;
   final DateTime timestamp;
-  final WebsocketMessageType type;
+  final WebSocketMessageType type;
 
   Map<String, dynamic> toJson() {
     return {
@@ -18,39 +18,39 @@ class WebsocketMessage {
     };
   }
 
-  factory WebsocketMessage.fromJson(Map<String, dynamic> data) {
+  factory WebSocketMessage.fromJson(Map<String, dynamic> data) {
     final message = data["message"] as String;
     final timestamp = DateTime.parse(data["timestamp"] as String);
-    final type = WebsocketMessageType.values.byName(data["type"] as String);
+    final type = WebSocketMessageType.values.byName(data["type"] as String);
 
-    return WebsocketMessage(message, timestamp, type);
+    return WebSocketMessage(message, timestamp, type);
   }
 }
 
 class WebSocketManager {
   IOWebSocketChannel? channel;
-  final void Function(String, WebsocketMessageType) addMessage;
+  final void Function(String, WebSocketMessageType) addMessage;
 
   WebSocketManager({required this.addMessage});
 
   Future<void> connect(String url) async {
-    addMessage("WebSocket channel connecting: $url", WebsocketMessageType.info);
+    addMessage("WebSocket channel connecting: $url", WebSocketMessageType.info);
     channel = IOWebSocketChannel.connect(url);
 
     await channel?.ready.then((value) {
       addMessage(
-          "WebSocket channel connected: $url", WebsocketMessageType.info);
+          "WebSocket channel connected: $url", WebSocketMessageType.info);
     });
 
     channel?.stream.listen(
       (message) {
-        addMessage(message, WebsocketMessageType.server);
+        addMessage(message, WebSocketMessageType.server);
       },
       onError: (error) {
-        addMessage("WebSocket channel error: $url", WebsocketMessageType.error);
+        addMessage("WebSocket channel error: $url", WebSocketMessageType.error);
       },
       onDone: () {
-        addMessage("WebSocket channel closed: $url", WebsocketMessageType.info);
+        addMessage("WebSocket channel closed: $url", WebSocketMessageType.info);
       },
     );
   }
@@ -64,7 +64,7 @@ class WebSocketManager {
   void disconnect(String url) {
     if (channel != null) {
       addMessage(
-          "WebSocket channel disconnecting: $url", WebsocketMessageType.info);
+          "WebSocket channel disconnecting: $url", WebSocketMessageType.info);
       channel!.sink.close();
       channel = null;
     }

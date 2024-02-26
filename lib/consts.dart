@@ -234,7 +234,7 @@ final kColorStatusCode500 = Colors.amber.shade900;
 const kOpacityDarkModeBlend = 0.4;
 
 final kColorProtocolHttp = Colors.blue.shade800;
-final kColorProtocolWebsocket = Colors.red.shade800;
+final kColorProtocolWebSocket = Colors.red.shade800;
 
 final kColorHttpMethodGet = Colors.green.shade800;
 final kColorHttpMethodHead = kColorHttpMethodGet;
@@ -501,7 +501,7 @@ const kRaiseIssue =
 
 const kHintTextHTTPUrlCard =
     "Enter API endpoint like api.foss42.com/country/codes";
-const kHintTextWebsocketUrlCard =
+const kHintTextWebSocketUrlCard =
     "Enter WebSocket server like wss://echo.websocket.org";
 const kLabelPlusNew = "+ New";
 const kLabelSend = "Send";

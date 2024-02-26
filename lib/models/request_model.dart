@@ -54,7 +54,7 @@ class RequestModel {
   final int? responseStatus;
   final String? message;
   final ResponseModel? responseModel;
-  final List<WebsocketMessage>? webSocketMessages;
+  final List<WebSocketMessage>? webSocketMessages;
 
   List<NameValueModel>? get enabledRequestHeaders =>
       getEnabledRows(requestHeaders, isHeaderEnabledList);
@@ -119,7 +119,7 @@ class RequestModel {
     int? responseStatus,
     String? message,
     ResponseModel? responseModel,
-    List<WebsocketMessage>? webSocketMessages,
+    List<WebSocketMessage>? webSocketMessages,
     WebSocketManager? webSocketManager,
   }) {
     var headers = requestHeaders ?? this.requestHeaders;
@@ -154,7 +154,7 @@ class RequestModel {
     Protocol protocol;
     HTTPVerb method;
     ContentType requestBodyContentType;
-    List<WebsocketMessage>? webSocketMessages;
+    List<WebSocketMessage>? webSocketMessages;
     ResponseModel? responseModel;
 
     final id = data["id"] as String;
@@ -188,7 +188,7 @@ class RequestModel {
 
     if (data["webSocketMessages"] != null) {
       webSocketMessages = (data["webSocketMessages"] as List)
-          .map((e) => WebsocketMessage.fromJson(Map<String, dynamic>.from(e)))
+          .map((e) => WebSocketMessage.fromJson(Map<String, dynamic>.from(e)))
           .toList();
     }
     final responseModelJson = data["responseModel"];

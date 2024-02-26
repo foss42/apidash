@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../consts.dart';
 
 Color getResponseStatusCodeColor(int? statusCode,
@@ -32,7 +33,7 @@ Color getProtocolColor(Protocol protocol,
       col = kColorProtocolHttp;
       break;
     case Protocol.websocket:
-      col = kColorProtocolWebsocket;
+      col = kColorProtocolWebSocket;
       break;
   }
   if (brightness == Brightness.dark) {

@@ -30,7 +30,7 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
               ),
               child: protocol == Protocol.http
                   ? const _HTTPURLInput()
-                  : const _WebsocketURLInput(),
+                  : const _WebSocketURLInput(),
             ),
           ),
         ),
@@ -39,8 +39,8 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
   }
 }
 
-class _WebsocketURLInput extends StatelessWidget {
-  const _WebsocketURLInput();
+class _WebSocketURLInput extends StatelessWidget {
+  const _WebSocketURLInput();
 
   @override
   Widget build(BuildContext context) {
@@ -154,9 +154,9 @@ class ConnectButton extends ConsumerWidget {
     final selectedId = ref.watch(selectedIdStateProvider);
     final sentRequestId = ref.watch(sentRequestIdStateProvider);
     final collection = ref.watch(collectionStateNotifierProvider.notifier);
-    final connected = collection.isWebsocketConnected();
+    final connected = collection.isWebSocketConnected();
 
-    return ConnectWebsocketButton(
+    return ConnectWebSocketButton(
       selectedId: selectedId,
       sentRequestId: sentRequestId,
       connected: connected,
@@ -164,10 +164,10 @@ class ConnectButton extends ConsumerWidget {
         connected
             ? ref
                 .read(collectionStateNotifierProvider.notifier)
-                .disconnectWebsocket(selectedId!)
+                .disconnectWebSocket(selectedId!)
             : ref
                 .read(collectionStateNotifierProvider.notifier)
-                .connectWebsocket(selectedId!);
+                .connectWebSocket(selectedId!);
       },
     );
   }

@@ -1,12 +1,13 @@
 import 'package:apidash/consts.dart';
+import 'package:apidash/providers/providers.dart';
 import 'package:apidash/screens/home_page/editor_pane/details_card/request_pane/websocket_request_pane.dart';
+import 'package:apidash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:apidash/providers/providers.dart';
-import 'package:apidash/widgets/widgets.dart';
+
+import 'code_pane.dart';
 import 'request_pane/http_request_pane.dart';
 import 'response_pane.dart';
-import 'code_pane.dart';
 
 class EditorPaneRequestDetailsCard extends ConsumerWidget {
   const EditorPaneRequestDetailsCard({super.key});
@@ -26,7 +27,7 @@ class EditorPaneRequestDetailsCard extends ConsumerWidget {
           )
         : RequestDetailsCard(
             child: EqualSplitView(
-              leftWidget: const EditWebsocketRequestPane(),
+              leftWidget: const EditWebSocketRequestPane(),
               rightWidget:
                   codePaneVisible ? const CodePane() : const ResponsePane(),
             ),

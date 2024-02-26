@@ -32,28 +32,28 @@ class ResponsePane extends ConsumerWidget {
   }
 }
 
-IconData _getIconForMessageType(WebsocketMessageType messageType) {
+IconData _getIconForMessageType(WebSocketMessageType messageType) {
   switch (messageType) {
-    case WebsocketMessageType.info:
+    case WebSocketMessageType.info:
       return Icons.info;
-    case WebsocketMessageType.server:
+    case WebSocketMessageType.server:
       return Icons.arrow_downward;
-    case WebsocketMessageType.client:
+    case WebSocketMessageType.client:
       return Icons.arrow_upward;
-    case WebsocketMessageType.error:
+    case WebSocketMessageType.error:
       return Icons.error;
   }
 }
 
-Color _getColorForMessageType(WebsocketMessageType messageType) {
+Color _getColorForMessageType(WebSocketMessageType messageType) {
   switch (messageType) {
-    case WebsocketMessageType.info:
+    case WebSocketMessageType.info:
       return Colors.blue;
-    case WebsocketMessageType.server:
+    case WebSocketMessageType.server:
       return Colors.orange;
-    case WebsocketMessageType.client:
+    case WebSocketMessageType.client:
       return Colors.lightGreen;
-    case WebsocketMessageType.error:
+    case WebSocketMessageType.error:
       return Colors.red;
   }
 }
@@ -102,7 +102,7 @@ class ResponseDetails extends ConsumerWidget {
               Positioned(
                 right: 0,
                 child: DeleteMessagesButton(
-                  onTap: collection.deleteWebsocketMessages,
+                  onTap: collection.deleteWebSocketMessages,
                 ),
               ),
             ],

@@ -162,7 +162,7 @@ class CollectionStateNotifier
   WebSocketManager createWebSocketManager(
       {required String url, required String id}) {
     final webSocketManager = WebSocketManager(
-      addMessage: (String message, WebsocketMessageType type) {
+      addMessage: (String message, WebSocketMessageType type) {
         ref
             .read(collectionStateNotifierProvider.notifier)
             .addWebSocketMessage(message, type, id);
@@ -173,7 +173,7 @@ class CollectionStateNotifier
     return webSocketManager;
   }
 
-  Future<void> connectWebsocket(String id) async {
+  Future<void> connectWebSocket(String id) async {
     ref.read(sentRequestIdStateProvider.notifier).state = id;
     ref.read(codePaneVisibleStateProvider.notifier).state = false;
 
@@ -190,7 +190,7 @@ class CollectionStateNotifier
     state = map;
   }
 
-  Future<void> disconnectWebsocket(String id) async {
+  Future<void> disconnectWebSocket(String id) async {
     ref.read(sentRequestIdStateProvider.notifier).state = id;
     ref.read(codePaneVisibleStateProvider.notifier).state = false;
 
@@ -208,24 +208,24 @@ class CollectionStateNotifier
     RequestModel requestModel = state![id]!;
 
     if (requestModel.webSocketManager == null) {
-      await connectWebsocket(id);
+      await connectWebSocket(id);
       requestModel = state![id]!;
     }
 
     ref.read(collectionStateNotifierProvider.notifier).addWebSocketMessage(
-        requestModel.message!, WebsocketMessageType.client, id);
+        requestModel.message!, WebSocketMessageType.client, id);
     requestModel.webSocketManager!.sendMessage(requestModel.message!);
 
     ref.read(sentRequestIdStateProvider.notifier).state = null;
   }
 
   void addWebSocketMessage(
-      String message, WebsocketMessageType type, String id) {
+      String message, WebSocketMessageType type, String id) {
     var map = {...state!};
     if (state?[id] != null) {
       map[id] = state![id]!.copyWith(
         webSocketMessages: [
-          WebsocketMessage(message, DateTime.now(), type),
+          WebSocketMessage(message, DateTime.now(), type),
           ...?state![id]!.webSocketMessages,
         ],
       );
@@ -233,7 +233,7 @@ class CollectionStateNotifier
     state = map;
   }
 
-  void deleteWebsocketMessages() {
+  void deleteWebSocketMessages() {
     final selectedId = ref.read(selectedIdStateProvider.notifier).state;
 
     var map = {...state!};
@@ -243,7 +243,7 @@ class CollectionStateNotifier
     state = map;
   }
 
-  bool isWebsocketConnected() {
+  bool isWebSocketConnected() {
     final selectedId = ref.read(selectedIdStateProvider.notifier).state;
     RequestModel requestModel = state![selectedId]!;
 
