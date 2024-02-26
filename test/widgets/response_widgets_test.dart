@@ -512,10 +512,10 @@ void main() async {
 
     await tester.pump(const Duration(seconds: 1));
 
-    expect(find.text('Time elapsed: 100 ms'), findsOneWidget);
+    expect(find.text('Time elapsed: 1000 ms'), findsOneWidget);
 
     await tester.pump(const Duration(seconds: 1));
 
-    expect(find.text('Time elapsed: 200 ms'), findsOneWidget);
+    expect(find.text('Time elapsed: 2000 ms'), findsOneWidget);
   });
 }
