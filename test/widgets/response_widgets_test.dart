@@ -489,33 +489,33 @@ void main() async {
       ),
     );
 
-    testWidgets('SendingWidget displays timer and Lottie animation',
-        (tester) async {
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: SendingWidget(),
-          ),
-        ),
-      );
-
-      expect(find.text('Time elapsed: 0 ms'), findsOneWidget);
-      expect(find.byType(Lottie), findsOneWidget);
-
-      await tester.pump(const Duration(seconds: 1));
-
-      expect(find.text('Time elapsed: 100 s'), findsOneWidget);
-
-      await tester.pump(const Duration(seconds: 1));
-
-      expect(find.text('Time elapsed: 200 s'), findsOneWidget);
-    });
-
     await tester.pumpAndSettle();
     expect(find.text('Raw Hello from API Dash'), findsOneWidget);
 
     await tester.tap(find.text('Raw'));
     await tester.pumpAndSettle();
     expect(find.text('Raw Hello from API Dash'), findsOneWidget);
+  });
+
+  testWidgets('SendingWidget displays timer and Lottie animation',
+      (tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(
+          body: SendingWidget(),
+        ),
+      ),
+    );
+
+    expect(find.text('Time elapsed: 0 ms'), findsOneWidget);
+    expect(find.byType(Lottie), findsOneWidget);
+
+    await tester.pump(const Duration(seconds: 1));
+
+    expect(find.text('Time elapsed: 100 ms'), findsOneWidget);
+
+    await tester.pump(const Duration(seconds: 1));
+
+    expect(find.text('Time elapsed: 200 ms'), findsOneWidget);
   });
 }
