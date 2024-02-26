@@ -26,30 +26,6 @@ final requestSequenceProvider = StateProvider<List<String>>((ref) {
   return ids ?? [];
 });
 
-class WebSocketManagerConfig {
-  final String id;
-  final String url;
-
-  WebSocketManagerConfig({required this.id, required this.url});
-
-  @override
-  bool operator ==(Object other) {
-    return other is WebSocketManagerConfig &&
-        other.runtimeType == runtimeType &&
-        other.id == id &&
-        other.url == url;
-  }
-
-  @override
-  int get hashCode {
-    return Object.hash(
-      runtimeType,
-      id,
-      url,
-    );
-  }
-}
-
 final StateNotifierProvider<CollectionStateNotifier, Map<String, RequestModel>?>
     collectionStateNotifierProvider =
     StateNotifierProvider((ref) => CollectionStateNotifier(ref, hiveHandler));
