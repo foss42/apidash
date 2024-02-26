@@ -75,6 +75,25 @@ class _HeaderFieldState extends State<HeaderField> {
       decorationBuilder: (context, child) =>
           suggestionBoxDecorations(context, child, colorScheme),
       constraints: const BoxConstraints(maxHeight: 400),
+      listBuilder: (context, children) => Theme(
+        data: ThemeData(
+          scrollbarTheme: ScrollbarThemeData(
+            thumbColor: MaterialStateProperty.all(colorScheme.inverseSurface),
+            trackColor: MaterialStateProperty.all(
+                colorScheme.inverseSurface.withOpacity(0.3)),
+          ),
+        ),
+        child: ListView.builder(
+          shrinkWrap: true,
+          itemCount: children.length,
+          itemBuilder: (context, index) {
+            return Container(
+              margin: const EdgeInsets.all(8),
+              child: children[index],
+            );
+          },
+        ),
+      ),
       builder: (context, controller, focusNode) => TextField(
         onChanged: widget.onChanged,
         controller: controller,
