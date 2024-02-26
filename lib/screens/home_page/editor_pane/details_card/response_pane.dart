@@ -80,23 +80,25 @@ class ResponseDetails extends ConsumerWidget {
 
           return Stack(
             children: [
-              ListView.builder(
-                itemCount: messages?.length,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text(
-                      messages![index].message,
-                      style: TextStyle(
-                          color: _getColorForMessageType(messages[index].type)),
-                    ),
-                    subtitle: Text(messages[index].timestamp.toString()),
-                    leading: Icon(
-                      _getIconForMessageType(messages[index].type),
-                      color: _getColorForMessageType(messages[index].type),
-                    ),
-                  );
-                },
-              ),
+              if (messages != null)
+                ListView.builder(
+                  itemCount: messages.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      title: Text(
+                        messages[index].message,
+                        style: TextStyle(
+                            color:
+                                _getColorForMessageType(messages[index].type)),
+                      ),
+                      subtitle: Text(messages[index].timestamp.toString()),
+                      leading: Icon(
+                        _getIconForMessageType(messages[index].type),
+                        color: _getColorForMessageType(messages[index].type),
+                      ),
+                    );
+                  },
+                ),
               Positioned(
                 right: 0,
                 child: DeleteMessagesButton(
