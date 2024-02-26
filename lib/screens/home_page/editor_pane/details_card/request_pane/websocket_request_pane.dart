@@ -23,8 +23,6 @@ class EditWebSocketRequestPane extends ConsumerWidget {
         .select((value) => value?.headersMap.length));
     final paramLength = ref.watch(selectedRequestModelProvider
         .select((value) => value?.paramsMap.length));
-    final bodyLength = ref.watch(selectedRequestModelProvider
-        .select((value) => value?.requestBody?.length));
 
     return RequestPane(
       selectedId: selectedId,
