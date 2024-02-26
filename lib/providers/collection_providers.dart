@@ -26,42 +26,29 @@ final requestSequenceProvider = StateProvider<List<String>>((ref) {
   return ids ?? [];
 });
 
-final webSocketManagerProvider =
-    Provider.family<WebSocketManager, String>((ref, url) {
-  final webSocketManager = WebSocketManager(
-    addMessage: (String message, WebsocketMessageType type) {
-      ref
-          .read(collectionStateNotifierProvider.notifier)
-          .addWebSocketMessage(message, type);
-    },
-    toggleConnect: () {
-      final requestModel = ref.read(selectedRequestModelProvider.notifier);
-      print("toggle connection");
-      if (requestModel.state != null) {
-        // print("current: ${requestModel.state!.webSocketConnected}");
-        // print("new: ${!(requestModel.state!.webSocketConnected ?? false)}");
-        // final newRequestModel = requestModel.state!.copyWith(
-        //   webSocketConnected:
-        //       !(requestModel.state!.webSocketConnected ?? false),
-        // );
-        // requestModel.update((state) => newRequestModel);
-        // print("saved: ${requestModel.state?.webSocketConnected}");
-      }
-    },
-  );
-  ref.onDispose(() => webSocketManager.disconnect(url));
+class WebSocketManagerConfig {
+  final String id;
+  final String url;
 
-  return webSocketManager;
-});
+  WebSocketManagerConfig({required this.id, required this.url});
 
-final webSocketProvider =
-    StreamProvider.autoDispose.family<dynamic, String>((ref, url) async* {
-  final webSocketManager = ref.watch(webSocketManagerProvider(url));
-
-  await for (final value in webSocketManager.channel!.stream) {
-    yield value.toString();
+  @override
+  bool operator ==(Object other) {
+    return other is WebSocketManagerConfig &&
+        other.runtimeType == runtimeType &&
+        other.id == id &&
+        other.url == url;
   }
-});
+
+  @override
+  int get hashCode {
+    return Object.hash(
+      runtimeType,
+      id,
+      url,
+    );
+  }
+}
 
 final StateNotifierProvider<CollectionStateNotifier, Map<String, RequestModel>?>
     collectionStateNotifierProvider =
@@ -196,19 +183,30 @@ class CollectionStateNotifier
     state = map;
   }
 
+  WebSocketManager createWebSocketManager(
+      {required String url, required String id}) {
+    final webSocketManager = WebSocketManager(
+      addMessage: (String message, WebsocketMessageType type) {
+        ref
+            .read(collectionStateNotifierProvider.notifier)
+            .addWebSocketMessage(message, type, id);
+      },
+    );
+    ref.onDispose(() => webSocketManager.disconnect(url));
+
+    return webSocketManager;
+  }
+
   Future<void> connectWebsocket(String id) async {
     ref.read(sentRequestIdStateProvider.notifier).state = id;
     ref.read(codePaneVisibleStateProvider.notifier).state = false;
 
     RequestModel requestModel = state![id]!;
 
-    final webSocketManager =
-        ref.watch(webSocketManagerProvider(requestModel.url));
-    webSocketManager.connect(requestModel.url);
-
-    late final RequestModel newRequestModel;
-
-    newRequestModel = requestModel.copyWith(responseStatus: 200, message: "ok");
+    final newRequestModel = requestModel.copyWith(
+        webSocketManager:
+            createWebSocketManager(url: requestModel.url, id: id));
+    newRequestModel.webSocketManager!.connect(requestModel.url);
 
     ref.read(sentRequestIdStateProvider.notifier).state = null;
     var map = {...state!};
@@ -222,19 +220,9 @@ class CollectionStateNotifier
 
     RequestModel requestModel = state![id]!;
 
-    final webSocketManager =
-        ref.watch(webSocketManagerProvider(requestModel.url));
-
-    webSocketManager.disconnect(requestModel.url);
-
-    late final RequestModel newRequestModel;
-
-    newRequestModel = requestModel.copyWith(responseStatus: 200, message: "ok");
+    requestModel.webSocketManager?.disconnect(requestModel.url);
 
     ref.read(sentRequestIdStateProvider.notifier).state = null;
-    var map = {...state!};
-    map[id] = newRequestModel;
-    state = map;
   }
 
   Future<void> sendWebSocketRequest(String id) async {
@@ -243,30 +231,29 @@ class CollectionStateNotifier
 
     RequestModel requestModel = state![id]!;
 
-    final webSocketManager =
-        ref.watch(webSocketManagerProvider(state![id]!.url));
-
-    if (webSocketManager.channel == null) {
-      await webSocketManager.connect(requestModel.url);
+    if (requestModel.webSocketManager == null) {
+      await connectWebsocket(id);
+      requestModel = state![id]!;
     }
 
     ref.read(collectionStateNotifierProvider.notifier).addWebSocketMessage(
-        requestModel.message!, WebsocketMessageType.client);
-    webSocketManager.sendMessage(requestModel.message!);
+        requestModel.message!, WebsocketMessageType.client, id);
+    requestModel.webSocketManager!.sendMessage(requestModel.message!);
 
     ref.read(sentRequestIdStateProvider.notifier).state = null;
   }
 
-  void addWebSocketMessage(String message, WebsocketMessageType type) {
-    final selectedId = ref.read(selectedIdStateProvider.notifier).state;
-
+  void addWebSocketMessage(
+      String message, WebsocketMessageType type, String id) {
     var map = {...state!};
-    map[selectedId!] = state![selectedId]!.copyWith(
-      webSocketMessages: [
-        WebsocketMessage(message, DateTime.now(), type),
-        ...state![selectedId]!.webSocketMessages,
-      ],
-    );
+    if (state?[id] != null) {
+      map[id] = state![id]!.copyWith(
+        webSocketMessages: [
+          WebsocketMessage(message, DateTime.now(), type),
+          ...state![id]!.webSocketMessages,
+        ],
+      );
+    }
     state = map;
   }
 
@@ -282,11 +269,9 @@ class CollectionStateNotifier
 
   bool isWebsocketConnected() {
     final selectedId = ref.read(selectedIdStateProvider.notifier).state;
+    RequestModel requestModel = state![selectedId]!;
 
-    final webSocketManager =
-        ref.watch(webSocketManagerProvider(state![selectedId]!.url));
-
-    return webSocketManager.channel != null;
+    return requestModel.webSocketManager?.channel != null;
   }
 
   Future<void> sendRequest(String id) async {

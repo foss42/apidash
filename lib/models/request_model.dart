@@ -33,8 +33,8 @@ class RequestModel {
     this.responseStatus,
     this.message,
     this.responseModel,
-    // this.webSocketConnected,
     this.webSocketMessages = const [],
+    this.webSocketManager,
   });
 
   final String id;
@@ -54,7 +54,6 @@ class RequestModel {
   final int? responseStatus;
   final String? message;
   final ResponseModel? responseModel;
-  // final bool? webSocketConnected;
   final List<WebsocketMessage> webSocketMessages;
 
   List<NameValueModel>? get enabledRequestHeaders =>
@@ -76,6 +75,8 @@ class RequestModel {
   bool get hasContentTypeHeader => enabledHeadersMap.keys
       .any((k) => k.toLowerCase() == HttpHeaders.contentTypeHeader);
 
+  final WebSocketManager? webSocketManager;
+
   RequestModel duplicate({
     required String id,
   }) {
@@ -96,7 +97,6 @@ class RequestModel {
       requestBody: requestBody,
       requestFormDataList:
           requestFormDataList != null ? [...requestFormDataList!] : null,
-      // webSocketConnected: webSocketConnected,
       webSocketMessages: webSocketMessages,
     );
   }
@@ -119,8 +119,8 @@ class RequestModel {
     int? responseStatus,
     String? message,
     ResponseModel? responseModel,
-    bool? webSocketConnected,
     List<WebsocketMessage>? webSocketMessages,
+    WebSocketManager? webSocketManager,
   }) {
     var headers = requestHeaders ?? this.requestHeaders;
     var params = requestParams ?? this.requestParams;
@@ -145,8 +145,8 @@ class RequestModel {
       responseStatus: responseStatus ?? this.responseStatus,
       message: message ?? this.message,
       responseModel: responseModel ?? this.responseModel,
-      // webSocketConnected: webSocketConnected ?? this.webSocketConnected,
       webSocketMessages: webSocketMessages ?? this.webSocketMessages,
+      webSocketManager: webSocketManager ?? this.webSocketManager,
     );
   }
 

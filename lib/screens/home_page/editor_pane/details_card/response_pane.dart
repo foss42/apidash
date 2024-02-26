@@ -16,10 +16,12 @@ class ResponsePane extends ConsumerWidget {
         selectedRequestModelProvider.select((value) => value?.responseStatus));
     final message = ref
         .watch(selectedRequestModelProvider.select((value) => value?.message));
+    final requestModel = ref.watch(selectedRequestModelProvider);
     if (sentRequestId != null && sentRequestId == selectedId) {
       return const SendingWidget();
     }
-    if (responseStatus == null) {
+    if (responseStatus == null &&
+        requestModel?.protocol != Protocol.websocket) {
       return const NotSentWidget();
     }
     if (responseStatus == -1) {

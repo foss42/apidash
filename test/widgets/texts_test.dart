@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_test/flutter_test.dart';
+import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart' show getDarkModeColor;
 import 'package:apidash/widgets/texts.dart';
-import 'package:apidash/consts.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Testing when method is GET', (tester) async {
@@ -12,7 +12,10 @@ void main() {
         title: 'Texts',
         theme: ThemeData(brightness: Brightness.light),
         home: Scaffold(
-          body: MethodBox(method: methodGet),
+          body: MethodBox(
+            method: methodGet,
+            protocol: Protocol.http,
+          ),
         ),
       ),
     );
@@ -31,7 +34,10 @@ void main() {
         title: 'Texts',
         theme: ThemeData(brightness: Brightness.dark),
         home: Scaffold(
-          body: MethodBox(method: methodDel),
+          body: MethodBox(
+            method: methodDel,
+            protocol: Protocol.http,
+          ),
         ),
       ),
     );

@@ -1,5 +1,5 @@
-import 'package:apidash/models/models.dart' show NameValueModel, RequestModel;
 import 'package:apidash/consts.dart';
+import 'package:apidash/models/models.dart' show NameValueModel, RequestModel;
 
 /// Basic GET request model
 const requestModelGet1 = RequestModel(

@@ -1,7 +1,8 @@
+import 'package:apidash/consts.dart';
+import 'package:apidash/widgets/cards.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:apidash/widgets/cards.dart';
-import 'package:apidash/consts.dart';
+
 import '../test_consts.dart';
 
 void main() {
@@ -19,6 +20,7 @@ void main() {
                 selectedId: '2',
                 url: 'https://api.foss42.com',
                 method: HTTPVerb.get,
+                protocol: Protocol.http,
                 onTap: () {
                   changedValue = 'Single Tapped';
                 },
@@ -65,6 +67,7 @@ void main() {
                 editRequestId: '2',
                 url: 'https://api.foss42.com',
                 method: HTTPVerb.get,
+                protocol: Protocol.http,
                 onTapOutsideNameEditor: () {
                   changedValue = 'Tapped Outside';
                 },

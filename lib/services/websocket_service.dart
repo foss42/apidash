@@ -30,16 +30,14 @@ class WebsocketMessage {
 class WebSocketManager {
   IOWebSocketChannel? channel;
   final void Function(String, WebsocketMessageType) addMessage;
-  final void Function() toggleConnect;
 
-  WebSocketManager({required this.addMessage, required this.toggleConnect});
+  WebSocketManager({required this.addMessage});
 
   Future<void> connect(String url) async {
     addMessage("WebSocket channel connecting: $url", WebsocketMessageType.info);
     channel = IOWebSocketChannel.connect(url);
 
     await channel?.ready.then((value) {
-      toggleConnect();
       addMessage(
           "WebSocket channel connected: $url", WebsocketMessageType.info);
     });
@@ -65,7 +63,6 @@ class WebSocketManager {
 
   void disconnect(String url) {
     if (channel != null) {
-      toggleConnect();
       addMessage(
           "WebSocket channel disconnecting: $url", WebsocketMessageType.info);
       channel!.sink.close();

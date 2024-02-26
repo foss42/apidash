@@ -1,7 +1,8 @@
 import 'dart:typed_data';
-import 'package:test/test.dart';
-import 'package:apidash/models/models.dart';
+
 import 'package:apidash/consts.dart';
+import 'package:apidash/models/models.dart';
+import 'package:test/test.dart';
 
 void main() {
   int statusCode = 200;
