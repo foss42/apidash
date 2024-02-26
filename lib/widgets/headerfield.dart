@@ -65,35 +65,13 @@ class _HeaderFieldState extends State<HeaderField> {
       itemBuilder: (context, String suggestion) {
         return ListTile(
           dense: true,
-          title: Text(
-            suggestion,
-            style: TextStyle(color: colorScheme.inverseSurface),
-          ),
+          title: Text(suggestion),
         );
       },
       suggestionsCallback: headerSuggestionCallback,
       decorationBuilder: (context, child) =>
           suggestionBoxDecorations(context, child, colorScheme),
       constraints: const BoxConstraints(maxHeight: 400),
-      listBuilder: (context, children) => Theme(
-        data: ThemeData(
-          scrollbarTheme: ScrollbarThemeData(
-            thumbColor: MaterialStateProperty.all(colorScheme.inverseSurface),
-            trackColor: MaterialStateProperty.all(
-                colorScheme.inverseSurface.withOpacity(0.3)),
-          ),
-        ),
-        child: ListView.builder(
-          shrinkWrap: true,
-          itemCount: children.length,
-          itemBuilder: (context, index) {
-            return Container(
-              margin: const EdgeInsets.all(8),
-              child: children[index],
-            );
-          },
-        ),
-      ),
       builder: (context, controller, focusNode) => TextField(
         onChanged: widget.onChanged,
         controller: controller,
@@ -120,17 +98,19 @@ class _HeaderFieldState extends State<HeaderField> {
     );
   }
 
-  Material suggestionBoxDecorations(
+  Theme suggestionBoxDecorations(
       BuildContext context, Widget child, ColorScheme colorScheme) {
-    return Material(
-      elevation: 4,
-      color: colorScheme.surface,
-      shape: RoundedRectangleBorder(
-        side: BorderSide(color: Theme.of(context).dividerColor, width: 1.2),
-        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(8)),
+    return Theme(
+      data: ThemeData(colorScheme: colorScheme),
+      child: Material(
+        elevation: 4,
+        shape: RoundedRectangleBorder(
+          side: BorderSide(color: Theme.of(context).dividerColor, width: 1.2),
+          borderRadius: const BorderRadius.vertical(bottom: Radius.circular(8)),
+        ),
+        clipBehavior: Clip.hardEdge,
+        child: child,
       ),
-      clipBehavior: Clip.hardEdge,
-      child: child,
     );
   }
 
