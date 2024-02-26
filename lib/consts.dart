@@ -502,7 +502,7 @@ const kRaiseIssue =
 const kHintTextHTTPUrlCard =
     "Enter API endpoint like api.foss42.com/country/codes";
 const kHintTextWebsocketUrlCard =
-    "Enter Websocket server like wss://echo.websocket.org";
+    "Enter WebSocket server like wss://echo.websocket.org";
 const kLabelPlusNew = "+ New";
 const kLabelSend = "Send";
 const kLabelSending = "Sending..";
