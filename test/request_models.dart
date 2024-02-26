@@ -1,4 +1,4 @@
-import 'package:apidash/models/models.dart' show NameValueModel, RequestModel;
+import 'package:apidash/models/models.dart' show NameValueModel, RequestModel, FormDataModel;
 import 'package:apidash/consts.dart';
 
 /// Basic GET request model
@@ -221,6 +221,18 @@ const requestModelPost3 = RequestModel(
 "text": "I LOVE Flutter"
 }""",
   requestBodyContentType: ContentType.json,
+  requestHeaders: [
+    NameValueModel(name: 'User-Agent', value: 'Test Agent'),
+  ],
+);
+
+/// POST request model with FormData
+const requestModelPost4 = RequestModel(
+  id: 'post3',
+  url: 'https://api.foss42.com/case/lower',
+  method: HTTPVerb.post,
+  requestFormDataList: [FormDataModel(name: "text", value: "I LOVE Flutter", type: FormDataType.text)],
+  requestBodyContentType: ContentType.formdata,
   requestHeaders: [
     NameValueModel(name: 'User-Agent', value: 'Test Agent'),
   ],
