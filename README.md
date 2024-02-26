@@ -118,6 +118,7 @@ API Dash currently supports API integration code generation for the following la
 | cURL                   |               |
 | HAR                    |               |
 | Dart                   | `http`        |
+| Swift                  | `urlsession`  |
 | JavaScript             | `axios`       |
 | JavaScript             | `fetch`       |
 | JavaScript (`node.js`) | `axios`       |
