@@ -80,6 +80,15 @@ class URLTextField extends ConsumerWidget {
       onChanged: (value) {
         final Uri uri = Uri.parse(value);
         final Map<String, String> urlParams = uri.queryParameters;
+        if (urlParams.isEmpty) {
+          ref.read(collectionStateNotifierProvider.notifier).update(
+                selectedId,
+                url: value,
+                requestParams: [],
+                isParamEnabledList: null,
+              );
+          return;
+        }
         List<NameValueModel> requestParams = [];
 
         urlParams.forEach((key, value) {
@@ -88,11 +97,14 @@ class URLTextField extends ConsumerWidget {
           );
         });
 
-        ref.read(collectionStateNotifierProvider.notifier).update(
-              selectedId,
-              url: value,
-              requestParams: requestParams,
-            );
+        ref.read(collectionStateNotifierProvider.notifier).update(selectedId,
+            url: value,
+            requestParams: requestParams,
+            isParamEnabledList: List.generate(
+              requestParams.length,
+              (index) => true,
+              growable: true,
+            ));
       },
     );
   }

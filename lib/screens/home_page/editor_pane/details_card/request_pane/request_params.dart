@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:davi/davi.dart';
 import 'package:apidash/providers/providers.dart';
@@ -28,7 +29,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
   }
 
   void _onFieldChange(String selectedId) {
-    ref.watch(collectionStateNotifierProvider.notifier).update(
+    ref.read(collectionStateNotifierProvider.notifier).update(
           selectedId,
           requestParams: rows,
           isParamEnabledList: isRowEnabledList,
@@ -79,6 +80,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
           cellBuilder: (_, row) {
             int idx = row.index;
             return CellField(
+              key: UniqueKey(),
               keyId: "$selectedId-$idx-params-k-$seed",
               initialValue: rows[idx].name,
               hintText: "Add URL Parameter",
@@ -106,6 +108,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
           cellBuilder: (_, row) {
             int idx = row.index;
             return CellField(
+              key: UniqueKey(),
               keyId: "$selectedId-$idx-params-v-$seed",
               initialValue: rows[idx].value,
               hintText: "Add Value",
