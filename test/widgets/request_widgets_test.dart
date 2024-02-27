@@ -11,6 +11,7 @@ void main() {
         theme: kThemeDataLight,
         home: Scaffold(
           body: RequestPane(
+            tabs: ['URL Params', 'Headers', 'Body'],
             selectedId: '1',
             codePaneVisible: true,
             children: const [Text('abc'), Text('xyz'), Text('mno')],
@@ -41,6 +42,7 @@ void main() {
         theme: kThemeDataLight,
         home: Scaffold(
           body: RequestPane(
+            tabs: const ['URL Params', 'Headers', 'Body'],
             selectedId: '1',
             codePaneVisible: true,
             onPressedCodeButton: () {},
@@ -72,6 +74,7 @@ void main() {
         theme: kThemeDataLight,
         home: Scaffold(
           body: RequestPane(
+            tabs: const ['URL Params', 'Headers', 'Body'],
             selectedId: '1',
             codePaneVisible: false,
             onPressedCodeButton: () {},
@@ -104,6 +107,7 @@ void main() {
         theme: kThemeDataLight,
         home: Scaffold(
           body: RequestPane(
+            tabs: const ['URL Params', 'Headers', 'Body'],
             selectedId: '1',
             codePaneVisible: false,
             onPressedCodeButton: () {},
