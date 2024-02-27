@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:riverpod/src/state_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:apidash/utils/utils.dart';
 import 'package:apidash/consts.dart';
@@ -76,6 +77,49 @@ class SendRequestButton extends StatelessWidget {
               size: 16,
               Icons.send,
             ),
+        ],
+      ),
+    );
+  }
+}
+
+class ConnectButton extends StatelessWidget {
+  const ConnectButton({
+    super.key,
+    required this.selectedId,
+    required this.sentRequestId,
+    required this.websocketStatus,
+    required this.onConnect,
+    required this.onDisconnect,
+  });
+
+  final String? selectedId;
+  final String? sentRequestId;
+  final String websocketStatus;
+  final void Function() onConnect;
+  final void Function() onDisconnect;
+
+  @override
+  Widget build(BuildContext context) {
+    bool disable = sentRequestId != null;
+    bool isBusy = selectedId == sentRequestId;
+
+    return FilledButton(
+      onPressed: websocketStatus == 'connected' ? onDisconnect : onConnect,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          if (disable)
+            Text(
+              (isBusy ? kLabelSending : kLabelBusy),
+              style: kTextStyleButton,
+            )
+          else ...[
+            Text(
+              websocketStatus == 'connected' ? kLabelDisconnect : kLabelConnect,
+              style: kTextStyleButton,
+            ),
+          ]
         ],
       ),
     );

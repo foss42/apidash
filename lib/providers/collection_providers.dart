@@ -2,13 +2,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'settings_providers.dart';
 import 'ui_providers.dart';
 import '../models/models.dart';
-import '../services/services.dart' show hiveHandler, HiveHandler, request;
+import '../services/services.dart'
+    show hiveHandler, HiveHandler, request, WebSocketService;
 import '../utils/utils.dart' show uuid, collectionToHAR;
 import '../consts.dart';
 import 'package:http/http.dart' as http;
 
 final selectedIdStateProvider = StateProvider<String?>((ref) => null);
 
+final websocketStateProvider = StateProvider<String?>((ref) => 'disconnected');
+final websocketHistoryStateProvider =
+    StateProvider<List<Map<String, String>>>((ref) => []);
 final selectedRequestModelProvider = StateProvider<RequestModel?>((ref) {
   final selectedId = ref.watch(selectedIdStateProvider);
   final collection = ref.watch(collectionStateNotifierProvider);
@@ -46,6 +50,8 @@ class CollectionStateNotifier
   final Ref ref;
   final HiveHandler hiveHandler;
   final baseResponseModel = const ResponseModel();
+
+  final websocketService = WebSocketService();
 
   bool hasId(String id) => state?.keys.contains(id) ?? false;
 
@@ -117,6 +123,7 @@ class CollectionStateNotifier
 
   void update(
     String id, {
+    ProtocolType? protocol,
     HTTPVerb? method,
     String? url,
     String? name,
@@ -131,10 +138,12 @@ class CollectionStateNotifier
     List<FormDataModel>? requestFormDataList,
     int? responseStatus,
     String? message,
+    String? websocketMessageBody,
     ResponseModel? responseModel,
   }) {
     final newModel = state![id]!.copyWith(
         method: method,
+        protocol: protocol,
         url: url,
         name: name,
         description: description,
@@ -148,8 +157,8 @@ class CollectionStateNotifier
         requestFormDataList: requestFormDataList,
         responseStatus: responseStatus,
         message: message,
+        websocketMessageBody: websocketMessageBody,
         responseModel: responseModel);
-    //print(newModel);
     var map = {...state!};
     map[id] = newModel;
     state = map;
@@ -188,6 +197,86 @@ class CollectionStateNotifier
     ref.read(sentRequestIdStateProvider.notifier).state = null;
     var map = {...state!};
     map[id] = newRequestModel;
+    state = map;
+  }
+
+  Future<void> initiateWebSocketConnection(String id) async {
+    // ref.read(sentRequestIdStateProvider.notifier).state = id;
+    ref.read(codePaneVisibleStateProvider.notifier).state = false;
+    //Delete the previous history
+    ref.read(websocketHistoryStateProvider.notifier).state = [];
+    RequestModel requestModel = state![id]!;
+    (String?, Duration?) responseRec =
+        await websocketService.connect(requestModel.url, (receivedMessage) {
+      ref.read(websocketHistoryStateProvider.notifier).state = [
+        {
+          "direction": 'receive',
+          "message": receivedMessage,
+        },
+        ...ref.read(websocketHistoryStateProvider),
+      ];
+    });
+    ref.read(websocketStateProvider.notifier).state = 'connected';
+    late final RequestModel newRequestModel;
+    newRequestModel = requestModel.copyWith(
+      responseStatus: 101,
+      message: "Connected",
+      requestHeaders: List.empty(),
+      responseModel: ResponseModel(
+        statusCode: 101,
+        time: responseRec.$2,
+        body: responseRec.$1,
+      ),
+    );
+
+    var map = {...state!};
+    map[id] = newRequestModel;
+    state = map;
+  }
+
+  Future<void> sendWebSocketMessage(String id, String message) async {
+    ref.read(codePaneVisibleStateProvider.notifier).state = false;
+    RequestModel requestModel = state![id]!;
+    String? message = requestModel.websocketMessageBody;
+
+    // Connect to the WebSocket server if not already connected
+    if (!websocketService.isInitialized()) {
+      await websocketService.connect(requestModel.url, (receivedMessage) {
+        ref.read(websocketHistoryStateProvider.notifier).state = [
+          {
+            "direction": 'receive',
+            "message": receivedMessage,
+          },
+          ...ref.read(websocketHistoryStateProvider),
+        ];
+      });
+    }
+
+    // Send the message
+    websocketService.send(message!);
+
+    // Add the sent message to the history
+    ref.read(websocketHistoryStateProvider.notifier).state = [
+      {
+        "direction": 'send',
+        "message": message,
+      },
+      ...ref.read(websocketHistoryStateProvider),
+    ];
+  }
+
+  Future<void> closeWebSocketConnection(String id) async {
+    ref.read(websocketStateProvider.notifier).state = 'disconnected';
+    ref.read(codePaneVisibleStateProvider.notifier).state = false;
+    websocketService.disconnect();
+    ref.read(websocketHistoryStateProvider.notifier).state = [
+      {
+        "direction": 'info',
+        "message": 'Connection was closed successfully.',
+      },
+      ...ref.read(websocketHistoryStateProvider),
+    ];
+    var map = {...state!};
     state = map;
   }
 

@@ -241,11 +241,13 @@ final kColorHttpMethodDelete = Colors.red.shade800;
 
 enum RequestItemMenuOption { edit, delete, duplicate }
 
+enum ProtocolType { http, websocket }
+
 enum HTTPVerb { get, head, post, put, patch, delete }
 
 enum FormDataType { text, file }
 
-const kSupportedUriSchemes = ["https", "http"];
+const kSupportedUriSchemes = ["https", "http", "ws", "wss"];
 const kDefaultUriScheme = "https";
 const kMethodsWithBody = [
   HTTPVerb.post,
@@ -254,7 +256,9 @@ const kMethodsWithBody = [
   HTTPVerb.delete,
 ];
 
+const kDefaultProtocolType = ProtocolType.http;
 const kDefaultHttpMethod = HTTPVerb.get;
+
 const kDefaultContentType = ContentType.json;
 
 enum CodegenLanguage {
@@ -497,6 +501,10 @@ const kLabelPlusNew = "+ New";
 const kLabelSend = "Send";
 const kLabelSending = "Sending..";
 const kLabelBusy = "Busy";
+const kLabelConnect = "Connect";
+const kLabelConnecting = "Connecting..";
+const kLabelDisconnect = "Disconnect";
+
 const kLabelCopy = "Copy";
 const kLabelSave = "Save";
 const kLabelDownload = "Download";

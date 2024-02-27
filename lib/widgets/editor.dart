@@ -19,7 +19,7 @@ class TextFieldEditor extends StatefulWidget {
 }
 
 class _TextFieldEditorState extends State<TextFieldEditor> {
-  final TextEditingController controller = TextEditingController();
+  TextEditingController controller = TextEditingController();
   late final FocusNode editorFocusNode;
 
   void insertTab() {
@@ -43,6 +43,15 @@ class _TextFieldEditorState extends State<TextFieldEditor> {
   void initState() {
     super.initState();
     editorFocusNode = FocusNode(debugLabel: "Editor Focus Node");
+
+    // Initialize the TextEditingController with the initial value
+    controller = TextEditingController();
+
+    // Add a listener to the TextEditingController
+    controller.addListener(() {
+      // Call the onChanged callback whenever the text changes
+      widget.onChanged?.call(controller.text);
+    });
   }
 
   @override

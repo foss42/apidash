@@ -46,7 +46,7 @@ class EditRequestBody extends ConsumerWidget {
                   initialValue: requestModel?.requestBody,
                   onChanged: (String value) {
                     ref
-                        .read(collectionStateNotifierProvider.notifier)
+                        .watch(collectionStateNotifierProvider.notifier)
                         .update(selectedId, requestBody: value);
                   },
                 ),
@@ -56,12 +56,16 @@ class EditRequestBody extends ConsumerWidget {
                   initialValue: requestModel?.requestBody,
                   onChanged: (String value) {
                     ref
-                        .read(collectionStateNotifierProvider.notifier)
+                        .watch(collectionStateNotifierProvider.notifier)
                         .update(selectedId, requestBody: value);
                   },
                 ),
             },
-          )
+          ),
+          ref.read(selectedRequestModelProvider)?.protocol ==
+                  ProtocolType.websocket
+              ? const SendWebsocketMessageButton()
+              : const SizedBox()
         ],
       ),
     );
@@ -84,6 +88,31 @@ class DropdownButtonBodyContentType extends ConsumerWidget {
         ref
             .read(collectionStateNotifierProvider.notifier)
             .update(selectedId!, requestBodyContentType: value);
+      },
+    );
+  }
+}
+
+class SendWebsocketMessageButton extends ConsumerWidget {
+  const SendWebsocketMessageButton({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selectedId = ref.watch(selectedIdStateProvider);
+    final sentRequestId = ref.watch(sentRequestIdStateProvider);
+    final message = ref
+        .watch(collectionStateNotifierProvider.notifier)
+        .getRequestModel(selectedId!)
+        ?.websocketMessageBody;
+    return SendRequestButton(
+      selectedId: selectedId,
+      sentRequestId: sentRequestId,
+      onTap: () {
+        ref
+            .read(collectionStateNotifierProvider.notifier)
+            .sendWebSocketMessage(selectedId, message!);
       },
     );
   }

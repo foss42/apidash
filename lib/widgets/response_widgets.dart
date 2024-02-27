@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:apidash/providers/providers.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:lottie/lottie.dart';
 import 'package:apidash/utils/utils.dart';
@@ -315,7 +317,7 @@ class ResponseBody extends StatelessWidget {
       );
     }
 
-    var mediaType = responseModel.mediaType;
+    MediaType? mediaType = responseModel.mediaType;
     if (mediaType == null) {
       return ErrorMessage(
           message:
@@ -481,6 +483,37 @@ class _BodySuccessState extends State<BodySuccess> {
               }
             ],
           ),
+        );
+      },
+    );
+  }
+}
+
+class WebsocketResponseView extends ConsumerWidget {
+  const WebsocketResponseView({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final data = ref.watch(websocketHistoryStateProvider);
+    return ListView.builder(
+      itemCount: data.length,
+      itemBuilder: (context, index) {
+        return ListTile(
+          leading: data[index]['direction'] == 'receive'
+              ? const Icon(
+                  Icons.arrow_downward,
+                  color: Colors.green,
+                )
+              : data[index]['direction'] == 'send'
+                  ? const Icon(
+                      Icons.arrow_upward,
+                      color: Colors.blue,
+                    )
+                  : const Icon(
+                      Icons.info,
+                      color: Colors.white,
+                    ),
+          title: Text(data[index]['message'] ?? ''),
         );
       },
     );

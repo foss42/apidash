@@ -39,6 +39,8 @@ class ResponseDetails extends ConsumerWidget {
         .watch(selectedRequestModelProvider.select((value) => value?.message));
     final responseModel = ref.watch(
         selectedRequestModelProvider.select((value) => value?.responseModel));
+    final protocol = ref
+        .watch(selectedRequestModelProvider.select((value) => value?.protocol));
     return Column(
       children: [
         ResponsePaneHeader(
@@ -76,6 +78,11 @@ class ResponseBodyTab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedRequestModel = ref.watch(selectedRequestModelProvider);
+    final protocol = ref
+        .watch(selectedRequestModelProvider.select((value) => value?.protocol));
+    if (protocol == ProtocolType.websocket) {
+      return const WebsocketResponseView();
+    }
     return ResponseBody(
       selectedRequestModel: selectedRequestModel,
     );
