@@ -1,3 +1,4 @@
+import 'package:apidash/models/models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
@@ -72,14 +73,26 @@ class URLTextField extends ConsumerWidget {
     final selectedId = ref.watch(selectedIdStateProvider);
     return URLField(
       selectedId: selectedId!,
-      initialValue: ref
-          .read(collectionStateNotifierProvider.notifier)
-          .getRequestModel(selectedId)
-          ?.url,
+      initialValue: ref.watch(selectedRequestModelProvider)?.url,
       onChanged: (value) {
-        ref
-            .read(collectionStateNotifierProvider.notifier)
-            .update(selectedId, url: value);
+        final uri = Uri.parse(value);
+        // Update requestParams if query parameters exist
+        if (uri.queryParameters.isNotEmpty) {
+          final updatedParams = uri.queryParametersAll.entries
+              .map((entry) => NameValueModel(
+                  name: entry.key,
+                  value: entry.value.isNotEmpty ? entry.value.join(',') : ""))
+              .toList();
+
+          ref
+              .read(collectionStateNotifierProvider.notifier)
+              .update(selectedId, url: value, requestParams: updatedParams);
+        } else {
+          ref.read(collectionStateNotifierProvider.notifier).update(
+                selectedId,
+                url: value,
+              );
+        }
       },
     );
   }
