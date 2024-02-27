@@ -1,11 +1,12 @@
 import 'dart:math';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:davi/davi.dart';
+
+import 'package:apidash/consts.dart';
+import 'package:apidash/models/models.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
-import 'package:apidash/models/models.dart';
-import 'package:apidash/consts.dart';
+import 'package:davi/davi.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class EditRequestURLParams extends ConsumerStatefulWidget {
   const EditRequestURLParams({super.key});
@@ -28,11 +29,16 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
   }
 
   void _onFieldChange(String selectedId) {
-    ref.read(collectionStateNotifierProvider.notifier).update(
-          selectedId,
-          requestParams: rows,
-          isParamEnabledList: isRowEnabledList,
-        );
+    final collection = ref.read(collectionStateNotifierProvider.notifier);
+    collection.update(
+      selectedId,
+      requestParams: rows,
+      isParamEnabledList: isRowEnabledList,
+    );
+
+    if (collection.isWebSocketConnected()) {
+      collection.disconnectWebSocket(selectedId);
+    }
   }
 
   @override

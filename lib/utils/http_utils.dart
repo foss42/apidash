@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:collection/collection.dart' show mergeMaps;
 import 'package:http_parser/http_parser.dart';
 import 'package:xml/xml.dart';
+
+import '../consts.dart';
 import '../models/models.dart';
 import 'convert_utils.dart' show rowsToMap;
-import '../consts.dart';
 
 String getRequestTitleFromUrl(String? url) {
   if (url == null || url.trim() == "") {
@@ -45,7 +47,7 @@ MediaType? getMediaTypeFromHeaders(Map? headers) {
 
 (String?, bool) getUriScheme(Uri uri) {
   if (uri.hasScheme) {
-    if (kSupportedUriSchemes.contains(uri.scheme)) {
+    if (kSupportedHTTPUriSchemes.contains(uri.scheme)) {
       return (uri.scheme, true);
     }
     return (uri.scheme, false);
@@ -64,7 +66,7 @@ String stripUrlParams(String url) {
 
 (Uri?, String?) getValidRequestUri(
     String? url, List<NameValueModel>? requestParams,
-    {String defaultUriScheme = kDefaultUriScheme}) {
+    {String defaultUriScheme = kDefaultHTTPUriScheme}) {
   url = url?.trim();
   if (url == null || url == "") {
     return (null, "URL is missing!");

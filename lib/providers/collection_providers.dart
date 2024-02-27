@@ -1,4 +1,5 @@
 import 'package:apidash/services/websocket_service.dart';
+import 'package:apidash/utils/web_socket_utils.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 
@@ -160,15 +161,16 @@ class CollectionStateNotifier
   }
 
   WebSocketManager createWebSocketManager(
-      {required String url, required String id}) {
+      {required Uri uri, required String id}) {
     final webSocketManager = WebSocketManager(
       addMessage: (String message, WebSocketMessageType type) {
         ref
             .read(collectionStateNotifierProvider.notifier)
             .addWebSocketMessage(message, type, id);
       },
+      uri: uri,
     );
-    ref.onDispose(() => webSocketManager.disconnect(url));
+    ref.onDispose(() => webSocketManager.disconnect());
 
     return webSocketManager;
   }
@@ -179,10 +181,17 @@ class CollectionStateNotifier
 
     RequestModel requestModel = state![id]!;
 
+    final (consolidatedUri, _) = getValidWebSocketRequestUri(
+        requestModel.url, requestModel.requestParams);
+
+    if (consolidatedUri == null) {
+      // TODO error handling for invalid uri
+      return;
+    }
     final newRequestModel = requestModel.copyWith(
-        webSocketManager:
-            createWebSocketManager(url: requestModel.url, id: id));
-    newRequestModel.webSocketManager!.connect(requestModel.url);
+      webSocketManager: createWebSocketManager(uri: consolidatedUri, id: id),
+    );
+    newRequestModel.webSocketManager!.connect();
 
     ref.read(sentRequestIdStateProvider.notifier).state = null;
     var map = {...state!};
@@ -196,7 +205,7 @@ class CollectionStateNotifier
 
     RequestModel requestModel = state![id]!;
 
-    requestModel.webSocketManager?.disconnect(requestModel.url);
+    requestModel.webSocketManager?.disconnect();
 
     ref.read(sentRequestIdStateProvider.notifier).state = null;
   }

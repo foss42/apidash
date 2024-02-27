@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../providers/providers.dart';
-import '../widgets/widgets.dart';
+
 import '../common/utils.dart';
 import '../consts.dart';
+import '../providers/providers.dart';
+import '../widgets/widgets.dart';
 
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
@@ -73,7 +74,7 @@ class SettingsPage extends ConsumerWidget {
                           .update(defaultUriScheme: value);
                     },
                     initialSelection: settings.defaultUriScheme,
-                    dropdownMenuEntries: kSupportedUriSchemes
+                    dropdownMenuEntries: kSupportedHTTPUriSchemes
                         .map<DropdownMenuEntry<String>>((value) {
                       return DropdownMenuEntry<String>(
                         value: value,

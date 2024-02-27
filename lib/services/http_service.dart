@@ -1,14 +1,15 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:http/http.dart' as http;
-import 'package:apidash/utils/utils.dart';
-import 'package:apidash/models/models.dart';
+
 import 'package:apidash/consts.dart';
+import 'package:apidash/models/models.dart';
+import 'package:apidash/utils/utils.dart';
+import 'package:http/http.dart' as http;
 
 Future<(http.Response?, Duration?, String?)> request(
   RequestModel requestModel, {
-  String defaultUriScheme = kDefaultUriScheme,
+  String defaultUriScheme = kDefaultHTTPUriScheme,
   bool isMultiPartRequest = false,
 }) async {
   (Uri?, String?) uriRec = getValidRequestUri(

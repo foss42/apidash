@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
+import 'package:flutter/material.dart';
 
 @immutable
 class SettingsModel {
@@ -8,7 +8,7 @@ class SettingsModel {
     this.alwaysShowCollectionPaneScrollbar = true,
     this.size,
     this.offset,
-    this.defaultUriScheme = kDefaultUriScheme,
+    this.defaultUriScheme = kDefaultHTTPUriScheme,
     this.defaultCodeGenLang = CodegenLanguage.curl,
     this.saveResponses = true,
     this.promptBeforeClosing = true,

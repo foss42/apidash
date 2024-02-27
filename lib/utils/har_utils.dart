@@ -1,7 +1,8 @@
 import 'dart:convert';
+
 import 'package:apidash/consts.dart';
-import 'package:apidash/utils/utils.dart' show getValidRequestUri;
 import 'package:apidash/models/models.dart' show RequestModel;
+import 'package:apidash/utils/utils.dart' show getValidRequestUri;
 import 'package:package_info_plus/package_info_plus.dart';
 
 Future<Map<String, dynamic>> collectionToHAR(
@@ -72,7 +73,7 @@ Map<String, dynamic> entryToHAR(RequestModel requestModel) {
 
 Map<String, dynamic> requestModelToHARJsonRequest(
   RequestModel requestModel, {
-  defaultUriScheme = kDefaultUriScheme,
+  defaultUriScheme = kDefaultHTTPUriScheme,
   bool exportMode = false,
   bool useEnabled = false,
 }) {

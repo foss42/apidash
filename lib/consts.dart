@@ -251,8 +251,10 @@ enum Protocol { http, websocket }
 
 enum FormDataType { text, file }
 
-const kSupportedUriSchemes = ["https", "http"];
-const kDefaultUriScheme = "https";
+const kSupportedHTTPUriSchemes = ["https", "http"];
+const kSupportedWebSocketUriSchemes = ["ws", "wss"];
+const kDefaultHTTPUriScheme = "https";
+const kDefaultWebSocketUriScheme = "wss";
 const kMethodsWithBody = [
   HTTPVerb.post,
   HTTPVerb.put,

@@ -28,18 +28,18 @@ class WebSocketMessage {
 }
 
 class WebSocketManager {
+  WebSocketManager({required this.addMessage, required this.uri});
   IOWebSocketChannel? channel;
+  Uri uri;
   final void Function(String, WebSocketMessageType) addMessage;
 
-  WebSocketManager({required this.addMessage});
-
-  Future<void> connect(String url) async {
-    addMessage("WebSocket channel connecting: $url", WebSocketMessageType.info);
-    channel = IOWebSocketChannel.connect(url);
+  Future<void> connect() async {
+    addMessage("WebSocket channel connecting: $uri", WebSocketMessageType.info);
+    channel = IOWebSocketChannel.connect(uri);
 
     await channel?.ready.then((value) {
       addMessage(
-          "WebSocket channel connected: $url", WebSocketMessageType.info);
+          "WebSocket channel connected: $uri", WebSocketMessageType.info);
     });
 
     channel?.stream.listen(
@@ -47,10 +47,10 @@ class WebSocketManager {
         addMessage(message, WebSocketMessageType.server);
       },
       onError: (error) {
-        addMessage("WebSocket channel error: $url", WebSocketMessageType.error);
+        addMessage("WebSocket channel error: $uri", WebSocketMessageType.error);
       },
       onDone: () {
-        addMessage("WebSocket channel closed: $url", WebSocketMessageType.info);
+        addMessage("WebSocket channel closed: $uri", WebSocketMessageType.info);
       },
     );
   }
@@ -61,10 +61,10 @@ class WebSocketManager {
     } else {}
   }
 
-  void disconnect(String url) {
+  void disconnect() {
     if (channel != null) {
       addMessage(
-          "WebSocket channel disconnecting: $url", WebSocketMessageType.info);
+          "WebSocket channel disconnecting: $uri", WebSocketMessageType.info);
       channel!.sink.close();
       channel = null;
     }
