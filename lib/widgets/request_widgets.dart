@@ -7,6 +7,7 @@ class RequestPane extends StatefulWidget {
     super.key,
     required this.selectedId,
     required this.codePaneVisible,
+    required this.tabs,
     this.tabIndex,
     this.onPressedCodeButton,
     this.onTapTabBar,
@@ -16,6 +17,7 @@ class RequestPane extends StatefulWidget {
 
   final String? selectedId;
   final bool codePaneVisible;
+  final List<String>? tabs;
   final int? tabIndex;
   final void Function()? onPressedCodeButton;
   final void Function(int)? onTapTabBar;
@@ -82,15 +84,15 @@ class _RequestPaneState extends State<RequestPane>
           onTap: widget.onTapTabBar,
           tabs: [
             TabLabel(
-              text: 'URL Params',
+              text: widget.tabs![0],
               showIndicator: widget.showIndicators[0],
             ),
             TabLabel(
-              text: 'Headers',
+              text: widget.tabs![1],
               showIndicator: widget.showIndicators[1],
             ),
             TabLabel(
-              text: 'Body',
+              text: widget.tabs![2],
               showIndicator: widget.showIndicators[2],
             ),
           ],

@@ -2,6 +2,49 @@ import 'package:flutter/material.dart';
 import 'package:apidash/utils/utils.dart';
 import 'package:apidash/consts.dart';
 
+class DropdownButtonProtocolType extends StatelessWidget {
+  const DropdownButtonProtocolType({
+    super.key,
+    this.protocol,
+    this.onChanged,
+  });
+
+  final ProtocolType? protocol;
+  final void Function(ProtocolType? value)? onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final surfaceColor = Theme.of(context).colorScheme.surface;
+    return DropdownButton<ProtocolType>(
+      focusColor: surfaceColor,
+      value: protocol,
+      icon: const Icon(Icons.unfold_more_rounded),
+      elevation: 4,
+      underline: Container(
+        height: 0,
+      ),
+      borderRadius: kBorderRadius12,
+      onChanged: onChanged,
+      items: ProtocolType.values
+          .map<DropdownMenuItem<ProtocolType>>((ProtocolType value) {
+        return DropdownMenuItem<ProtocolType>(
+          value: value,
+          child: Padding(
+            padding: const EdgeInsets.only(left: 16),
+            child: Text(
+              value.name.toUpperCase(),
+              style: kCodeStyle.copyWith(
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
+}
+
 class DropdownButtonHttpMethod extends StatelessWidget {
   const DropdownButtonHttpMethod({
     super.key,

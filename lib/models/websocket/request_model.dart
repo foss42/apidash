@@ -1,18 +1,18 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
-import '../utils/utils.dart'
+import 'package:apidash/utils/utils.dart'
     show
         mapListToFormDataModelRows,
         rowsToFormDataMapList,
         mapToRows,
         rowsToMap,
         getEnabledRows;
-import '../consts.dart';
-import 'models.dart';
+import 'package:apidash/consts.dart';
+import '../models.dart';
 
 @immutable
-class RequestModel {
-  const RequestModel({
+class WebsocketRequestModel {
+  const WebsocketRequestModel({
     required this.id,
     this.method = HTTPVerb.get,
     this.protocol = ProtocolType.http,
@@ -29,7 +29,6 @@ class RequestModel {
     this.requestFormDataList,
     this.responseStatus,
     this.message,
-    this.websocketMessageBody,
     this.responseModel,
   });
 
@@ -49,7 +48,6 @@ class RequestModel {
   final List<FormDataModel>? requestFormDataList;
   final int? responseStatus;
   final String? message;
-  final String? websocketMessageBody;
   final ResponseModel? responseModel;
 
   List<NameValueModel>? get enabledRequestHeaders =>
@@ -71,10 +69,10 @@ class RequestModel {
   bool get hasContentTypeHeader => enabledHeadersMap.keys
       .any((k) => k.toLowerCase() == HttpHeaders.contentTypeHeader);
 
-  RequestModel duplicate({
+  WebsocketRequestModel duplicate({
     required String id,
   }) {
-    return RequestModel(
+    return WebsocketRequestModel(
       id: id,
       protocol: protocol,
       method: method,
@@ -94,7 +92,7 @@ class RequestModel {
     );
   }
 
-  RequestModel copyWith({
+  WebsocketRequestModel copyWith({
     String? id,
     ProtocolType? protocol,
     HTTPVerb? method,
@@ -111,14 +109,13 @@ class RequestModel {
     List<FormDataModel>? requestFormDataList,
     int? responseStatus,
     String? message,
-    String? websocketMessageBody,
     ResponseModel? responseModel,
   }) {
     var headers = requestHeaders ?? this.requestHeaders;
     var params = requestParams ?? this.requestParams;
     var enabledHeaders = isHeaderEnabledList ?? this.isHeaderEnabledList;
     var enabledParams = isParamEnabledList ?? this.isParamEnabledList;
-    return RequestModel(
+    return WebsocketRequestModel(
       id: id ?? this.id,
       protocol: protocol ?? this.protocol,
       method: method ?? this.method,
@@ -136,12 +133,11 @@ class RequestModel {
       requestFormDataList: requestFormDataList ?? this.requestFormDataList,
       responseStatus: responseStatus ?? this.responseStatus,
       message: message ?? this.message,
-      websocketMessageBody: websocketMessageBody ?? this.websocketMessageBody,
       responseModel: responseModel ?? this.responseModel,
     );
   }
 
-  factory RequestModel.fromJson(Map<String, dynamic> data) {
+  factory WebsocketRequestModel.fromJson(Map<String, dynamic> data) {
     ProtocolType protocol;
     HTTPVerb method;
     ContentType requestBodyContentType;
@@ -175,7 +171,6 @@ class RequestModel {
     final requestFormDataList = data["requestFormDataList"];
     final responseStatus = data["responseStatus"] as int?;
     final message = data["message"] as String?;
-    final websocketMessageBody = data["websocketMessageBody"] as String?;
     final responseModelJson = data["responseModel"];
 
     if (responseModelJson != null) {
@@ -185,7 +180,7 @@ class RequestModel {
       responseModel = null;
     }
 
-    return RequestModel(
+    return WebsocketRequestModel(
       id: id,
       protocol: protocol,
       method: method,
@@ -208,7 +203,6 @@ class RequestModel {
           : null,
       responseStatus: responseStatus,
       message: message,
-      websocketMessageBody: websocketMessageBody,
       responseModel: responseModel,
     );
   }
@@ -230,7 +224,6 @@ class RequestModel {
       "requestFormDataList": rowsToFormDataMapList(requestFormDataList),
       "responseStatus": includeResponse ? responseStatus : null,
       "message": includeResponse ? message : null,
-      "websocketMessageBody": includeResponse ? websocketMessageBody : null,
       "responseModel": includeResponse ? responseModel?.toJson() : null,
     };
   }
@@ -254,14 +247,13 @@ class RequestModel {
       "Request FormData: ${requestFormDataList.toString()}",
       "Response Status: $responseStatus",
       "Response Message: $message",
-      "Websocket Message Body: $websocketMessageBody"
-          "Response: ${responseModel.toString()}"
+      "Response: ${responseModel.toString()}"
     ].join("\n");
   }
 
   @override
   bool operator ==(Object other) {
-    return other is RequestModel &&
+    return other is WebsocketRequestModel &&
         other.runtimeType == runtimeType &&
         other.id == id &&
         other.protocol == protocol &&
@@ -279,7 +271,6 @@ class RequestModel {
         other.requestFormDataList == requestFormDataList &&
         other.responseStatus == responseStatus &&
         other.message == message &&
-        other.websocketMessageBody == websocketMessageBody &&
         other.responseModel == responseModel;
   }
 
@@ -303,7 +294,6 @@ class RequestModel {
       requestFormDataList,
       responseStatus,
       message,
-      websocketMessageBody,
       responseModel,
     );
   }
