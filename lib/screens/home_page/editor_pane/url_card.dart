@@ -73,6 +73,7 @@ class URLTextField extends ConsumerWidget {
     final selectedId = ref.watch(selectedIdStateProvider);
     return URLField(
       selectedId: selectedId!,
+      requestParams: ref.watch(selectedRequestModelProvider)?.requestParams,
       initialValue: ref.watch(selectedRequestModelProvider)?.url,
       onChanged: (value) {
         final uri = Uri.parse(value);
@@ -84,14 +85,16 @@ class URLTextField extends ConsumerWidget {
                   value: entry.value.isNotEmpty ? entry.value.join(',') : ""))
               .toList();
 
-          ref
-              .read(collectionStateNotifierProvider.notifier)
-              .update(selectedId, url: value, requestParams: updatedParams);
+          ref.read(collectionStateNotifierProvider.notifier).update(selectedId,
+              url: value,
+              requestParams: updatedParams,
+              isParamEnabledList:
+                  List.filled(updatedParams.length, true, growable: true));
         } else {
-          ref.read(collectionStateNotifierProvider.notifier).update(
-                selectedId,
-                url: value,
-              );
+          ref.read(collectionStateNotifierProvider.notifier).update(selectedId,
+              url: value,
+              requestParams: [kNameValueEmptyModel],
+              isParamEnabledList: List.filled(1, true, growable: true));
         }
       },
     );

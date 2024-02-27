@@ -28,8 +28,18 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
   }
 
   void _onFieldChange(String selectedId) {
+    final collection = ref.watch(selectedRequestModelProvider);
+    final uri = Uri.parse(collection!.url);
+
+    final queryMap = {
+      for (var i = 0; i < rows.length; i++)
+        if (isRowEnabledList[i]) rows[i].name: rows[i].value
+    };
+    var updatedUri =
+        uri.replace(queryParameters: rows.isEmpty ? null : queryMap);
     ref.read(collectionStateNotifierProvider.notifier).update(
           selectedId,
+          url: updatedUri.toString(),
           requestParams: rows,
           isParamEnabledList: isRowEnabledList,
         );
@@ -40,7 +50,8 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
     final selectedId = ref.watch(selectedIdStateProvider);
     final length = ref.watch(selectedRequestModelProvider
         .select((value) => value?.requestParams?.length));
-    var rP = ref.read(selectedRequestModelProvider)?.requestParams;
+    var rP = ref.watch(selectedRequestModelProvider)?.requestParams;
+    var url = ref.watch(selectedRequestModelProvider)?.url;
     rows = (rP == null || rP.isEmpty)
         ? [
             kNameValueEmptyModel,
@@ -59,7 +70,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
           cellBuilder: (_, row) {
             int idx = row.index;
             return CheckBox(
-              keyId: "$selectedId-$idx-params-c-$seed",
+              keyId: "$selectedId-$idx-params-c-$seed-$url",
               value: isRowEnabledList[idx],
               onChanged: (value) {
                 setState(() {
@@ -78,7 +89,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
           cellBuilder: (_, row) {
             int idx = row.index;
             return CellField(
-              keyId: "$selectedId-$idx-params-k-$seed",
+              keyId: "$selectedId-$idx-params-k-$seed-$url",
               initialValue: rows[idx].name,
               hintText: "Add URL Parameter",
               onChanged: (value) {
@@ -105,7 +116,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
           cellBuilder: (_, row) {
             int idx = row.index;
             return CellField(
-              keyId: "$selectedId-$idx-params-v-$seed",
+              keyId: "$selectedId-$idx-params-v-$seed-$url",
               initialValue: rows[idx].value,
               hintText: "Add Value",
               onChanged: (value) {

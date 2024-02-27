@@ -1,3 +1,4 @@
+import 'package:apidash/models/name_value_model.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
 
@@ -7,16 +8,18 @@ class URLField extends StatelessWidget {
     required this.selectedId,
     this.initialValue,
     this.onChanged,
+    this.requestParams,
   });
 
   final String selectedId;
   final String? initialValue;
   final void Function(String)? onChanged;
+  final List<NameValueModel>? requestParams;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      key: Key("url-$selectedId"),
+      key: Key("url-$selectedId-$requestParams"),
       initialValue: initialValue,
       style: kCodeStyle,
       decoration: InputDecoration(
