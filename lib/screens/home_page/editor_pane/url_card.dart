@@ -1,3 +1,4 @@
+import 'package:apidash/models/name_value_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
@@ -48,15 +49,12 @@ class DropdownButtonHTTPMethod extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final method = ref
-        .watch(selectedRequestModelProvider.select((value) => value?.method));
+    final method = ref.watch(selectedRequestModelProvider.select((value) => value?.method));
     return DropdownButtonHttpMethod(
       method: method,
       onChanged: (HTTPVerb? value) {
         final selectedId = ref.read(selectedRequestModelProvider)!.id;
-        ref
-            .read(collectionStateNotifierProvider.notifier)
-            .update(selectedId, method: value);
+        ref.read(collectionStateNotifierProvider.notifier).update(selectedId, method: value);
       },
     );
   }
@@ -72,14 +70,26 @@ class URLTextField extends ConsumerWidget {
     final selectedId = ref.watch(selectedIdStateProvider);
     return URLField(
       selectedId: selectedId!,
-      initialValue: ref
-          .read(collectionStateNotifierProvider.notifier)
-          .getRequestModel(selectedId)
-          ?.url,
+      initialValue:
+          ref.read(collectionStateNotifierProvider.notifier).getRequestModel(selectedId)?.url,
       onChanged: (value) {
-        ref
-            .read(collectionStateNotifierProvider.notifier)
-            .update(selectedId, url: value);
+        List<NameValueModel>? requestParams;
+        final params = Uri.parse(value).queryParameters;
+        if (params.isNotEmpty) {
+          requestParams = params.entries
+              .map(
+                (e) => NameValueModel(
+                  name: e.key,
+                  value: e.value.isEmpty ? '' : e.value,
+                ),
+              )
+              .toList();
+        }
+        ref.read(collectionStateNotifierProvider.notifier).update(
+              selectedId,
+              url: value,
+              requestParams: requestParams,
+            );
       },
     );
   }
@@ -98,9 +108,7 @@ class SendButton extends ConsumerWidget {
       selectedId: selectedId,
       sentRequestId: sentRequestId,
       onTap: () {
-        ref
-            .read(collectionStateNotifierProvider.notifier)
-            .sendRequest(selectedId!);
+        ref.read(collectionStateNotifierProvider.notifier).sendRequest(selectedId!);
       },
     );
   }
