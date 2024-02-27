@@ -90,6 +90,9 @@ const kP8CollectionPane = EdgeInsets.only(
   //right: 4.0,
   // bottom: 8.0,
 );
+const kPb10 = EdgeInsets.only(
+  bottom: 10,
+);
 const kPr8CollectionPane = EdgeInsets.only(right: 8.0);
 const kpsV5 = EdgeInsets.symmetric(vertical: 2);
 const kHSpacer4 = SizedBox(width: 4);

@@ -61,7 +61,7 @@ class SettingsPage extends ConsumerWidget {
                 },
               ),
               ListTile(
-                contentPadding: EdgeInsets.zero,
+                contentPadding: kPb10,
                 hoverColor: kColorTransparent,
                 title: const Text('Default URI Scheme'),
                 subtitle: Text(
@@ -82,7 +82,7 @@ class SettingsPage extends ConsumerWidget {
                     }).toList()),
               ),
               ListTile(
-                contentPadding: EdgeInsets.zero,
+                contentPadding: kPb10,
                 hoverColor: kColorTransparent,
                 title: const Text('Default Code Generator'),
                 trailing: DropdownMenu(
