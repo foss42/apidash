@@ -1,6 +1,36 @@
 import 'package:apidash/utils/header_utils.dart';
 import 'package:test/test.dart';
 
+// new headers 
+// X-DNS-Proxy-Authenticate
+// Proxy-Authorization
+// WWW-Authenticate
+// Age
+// Clear-Site-Data
+// Pragma
+// Warnings
+// Accept-CH
+// Accept-CH-Lifetime
+// Content-DPR
+// DPR
+// Device-Memory
+// Early-Data
+// Save-Data
+// Viewport-Width
+// Width
+// Last-Modified
+// ETag
+// Vary
+// Keep-Alive
+// Accept-charset
+// Timing-Allow-Origin
+// TK
+// Alt-Svc
+// Large-Allocation
+// Link
+// Server-Timing
+// SourceMap
+// X-DNS-Prefetch-Control
 void main() {
   group("Testing getHeaderSuggestions function", () {
     test("Testing using Allow-Headers", () {
@@ -17,7 +47,7 @@ void main() {
 
     test("Testing using Allow-Origin", () {
       String pattern = "Allow-Origin";
-      List<String> expected = ["Access-Control-Allow-Origin"];
+      List<String> expected = ["Access-Control-Allow-Origin", "Timing-Allow-Origin"];
       expect(getHeaderSuggestions(pattern), expected);
     });
 
@@ -93,7 +123,8 @@ void main() {
       List<String> expected = [
         "Access-Control-Allow-Headers",
         "Access-Control-Allow-Methods",
-        "Access-Control-Allow-Origin"
+        "Access-Control-Allow-Origin",
+        "Timing-Allow-Origin"
       ];
       expect(getHeaderSuggestions(pattern), expected);
     });
@@ -106,6 +137,7 @@ void main() {
         'Content-Length',
         'Content-Security-Policy',
         'Content-Type',
+        "Content-DPR",
         'X-Content-Type-Options'
       ];
       expect(getHeaderSuggestions(pattern), expected);
@@ -121,7 +153,8 @@ void main() {
         "X-Forwarded-For",
         "X-Frame-Options",
         "X-Requested-With",
-        "X-XSS-Protection"
+        "X-XSS-Protection",
+        "X-DNS-Prefetch-Control",
       ];
       expect(getHeaderSuggestions(pattern), expected);
     });
@@ -133,7 +166,8 @@ void main() {
         'Cross-Origin-Embedder-Policy',
         'Cross-Origin-Opener-Policy',
         'Cross-Origin-Resource-Policy',
-        'Origin'
+        'Origin',
+        'Timing-Allow-Origin'
       ];
       expect(getHeaderSuggestions(pattern), expected);
     });
