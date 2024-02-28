@@ -10,9 +10,6 @@ jobs:
   tests:
     name: Unit Tests
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./base
     steps:
       - name: Checkout the code
         uses: actions/checkout@v4
