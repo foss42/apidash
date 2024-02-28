@@ -1,0 +1,40 @@
+name: Unit Tests
+
+on:
+  push:
+
+env:
+  flutter_version: "3.16.3"
+
+jobs:
+  tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./base
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v4
+      - name: Cache Flutter dependencies
+        uses: actions/cache@v3
+        with:
+          path: /opt/hostedtoolcache/flutter
+          key: ${{ runner.OS }}-flutter-install-cache-${{ env.flutter_version }}
+      - name: Install flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.flutter_version}}
+          channel: stable
+      - name: Install base dependencies
+        run: flutter pub get
+      - name: Analyze
+        run: flutter analyze
+      - name: Run base tests
+        run: flutter test --coverage
+      # TODO add a codecov account and register token in secrets
+      # - name: Upload coverage to Codecov
+      #   uses: codecov/codecov-action@v3
+      #   with:
+      #     token: ${{ secrets.CODECOV_TOKEN }}
+      #     files: coverage/lcov.info
