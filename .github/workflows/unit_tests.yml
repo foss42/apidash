@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        flutter-version: ["3.16.3", "3.16.8"]
+        flutter-version: ["3.16.9", "3.x"]
         os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
       - name: Checkout the code
