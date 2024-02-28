@@ -9,8 +9,7 @@ void main() {
   group('Test various Code generators', () {
     test('cURL', () {
       const expectedCode = r"""curl --url 'https://api.foss42.com'""";
-      expect(codeGen.getCode(CodegenLanguage.curl, requestModelGet1, "https"),
-          expectedCode);
+      expect(codeGen.getCode(CodegenLanguage.curl, requestModelGet1, "https"), expectedCode);
     });
 
     test('Dart Dio', () {
@@ -31,9 +30,7 @@ void main() async {
   }
 }
 """;
-      expect(
-          codeGen.getCode(CodegenLanguage.dartDio, requestModelGet1, "https"),
-          expectedCode);
+      expect(codeGen.getCode(CodegenLanguage.dartDio, requestModelGet1, "https"), expectedCode);
     });
 
     test('Dart HTTP', () {
@@ -54,9 +51,7 @@ void main() async {
   }
 }
 """;
-      expect(
-          codeGen.getCode(CodegenLanguage.dartHttp, requestModelGet1, "https"),
-          expectedCode);
+      expect(codeGen.getCode(CodegenLanguage.dartHttp, requestModelGet1, "https"), expectedCode);
     });
 
     test('HAR', () {
@@ -67,8 +62,7 @@ void main() async {
   "queryString": [],
   "headers": []
 }""";
-      expect(codeGen.getCode(CodegenLanguage.har, requestModelGet1, "https"),
-          expectedCode);
+      expect(codeGen.getCode(CodegenLanguage.har, requestModelGet1, "https"), expectedCode);
     });
 
     test('JS Axios', () {
@@ -89,9 +83,7 @@ axios(config)
         console.log(error);
     });
 """;
-      expect(
-          codeGen.getCode(CodegenLanguage.jsAxios, requestModelGet1, "https"),
-          expectedCode);
+      expect(codeGen.getCode(CodegenLanguage.jsAxios, requestModelGet1, "https"), expectedCode);
     });
 
     test('JS Fetch', () {
@@ -116,9 +108,7 @@ fetch(url, options)
         console.error('error:' + err);
     });
 """;
-      expect(
-          codeGen.getCode(CodegenLanguage.jsFetch, requestModelGet1, "https"),
-          expectedCode);
+      expect(codeGen.getCode(CodegenLanguage.jsFetch, requestModelGet1, "https"), expectedCode);
     });
 
     test('Kotlin OkHttp', () {
@@ -142,9 +132,7 @@ fun main() {
 }
 """;
       expect(
-          codeGen.getCode(
-              CodegenLanguage.kotlinOkHttp, requestModelGet1, "https"),
-          expectedCode);
+          codeGen.getCode(CodegenLanguage.kotlinOkHttp, requestModelGet1, "https"), expectedCode);
     });
 
     test('NodeJs Axios', () {
@@ -167,10 +155,7 @@ axios(config)
         console.log(error);
     });
 """;
-      expect(
-          codeGen.getCode(
-              CodegenLanguage.nodejsAxios, requestModelGet1, "https"),
-          expectedCode);
+      expect(codeGen.getCode(CodegenLanguage.nodejsAxios, requestModelGet1, "https"), expectedCode);
     });
 
     test('Nodejs Fetch', () {
@@ -197,10 +182,7 @@ fetch(url, options)
         console.error('error:' + err);
     });
 """;
-      expect(
-          codeGen.getCode(
-              CodegenLanguage.nodejsFetch, requestModelGet1, "https"),
-          expectedCode);
+      expect(codeGen.getCode(CodegenLanguage.nodejsFetch, requestModelGet1, "https"), expectedCode);
     });
 
     test('Python http.client', () {
@@ -214,9 +196,7 @@ data = res.read()
 
 print(data.decode("utf-8"))
 """;
-      expect(
-          codeGen.getCode(
-              CodegenLanguage.pythonHttpClient, requestModelGet1, "https"),
+      expect(codeGen.getCode(CodegenLanguage.pythonHttpClient, requestModelGet1, "https"),
           expectedCode);
     });
 
@@ -231,9 +211,40 @@ print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
       expect(
-          codeGen.getCode(
-              CodegenLanguage.pythonRequests, requestModelGet1, "https"),
-          expectedCode);
+          codeGen.getCode(CodegenLanguage.pythonRequests, requestModelGet1, "https"), expectedCode);
+    });
+
+    test('C Libcurl', () {
+      const expectedCode = """#include <stdio.h>
+#include <stdlib.h>
+#include <curl/curl.h>
+
+/*
+Compiling with libcurl
+\$ gcc <filename>.c -lcurl -o <executable-name>
+*/
+
+int main() {
+  CURL *curl;
+  CURLcode res;
+  curl = curl_easy_init();
+
+  if(curl) {
+    curl_easy_setopt(curl, CURLOPT_URL, "https://api.foss42.com");
+    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "HTTPVerb.get");
+
+    res = curl_easy_perform(curl);
+    if(res != CURLE_OK) {
+      fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+    }
+
+    curl_easy_cleanup(curl);
+  }
+
+  return 0;
+}
+""";
+      expect(codeGen.getCode(CodegenLanguage.cLibcurl, requestModelGet1, "https"), expectedCode);
     });
   });
 }

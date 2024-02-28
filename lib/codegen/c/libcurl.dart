@@ -56,7 +56,7 @@ class CLibcurlCodeGen {
       result.writeln('    res = curl_easy_perform(curl);');
       result.writeln('    if(res != CURLE_OK) {');
       result.writeln(
-          '      fprintf(stderr, "curl_easy_perform() failed: %s\\n", curl_easy_strerror(res));');
+          '      fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));');
       result.writeln('    }\n');
 
       // Cleanup libcurl resources
