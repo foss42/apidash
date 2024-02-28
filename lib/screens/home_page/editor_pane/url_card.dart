@@ -1,3 +1,4 @@
+import 'package:apidash/models/models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
@@ -69,17 +70,30 @@ class URLTextField extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final isParamEnabledList = ref.watch(selectedRequestModelProvider)?.isParamEnabledList;
     final selectedId = ref.watch(selectedIdStateProvider);
+    final controller = ref.read(urlController.notifier).state;
     return URLField(
       selectedId: selectedId!,
-      initialValue: ref
-          .read(collectionStateNotifierProvider.notifier)
-          .getRequestModel(selectedId)
-          ?.url,
+      controller: controller,
+      // initialValue: ref
+      //     .read(collectionStateNotifierProvider.notifier)
+      //     .getRequestModel(selectedId)
+      //     ?.url,
       onChanged: (value) {
         ref
             .read(collectionStateNotifierProvider.notifier)
             .update(selectedId, url: value);
+
+        var urlParaList = <NameValueModel>[];
+        Uri.parse(controller.text).queryParameters.forEach((key, value) {
+          urlParaList.add(NameValueModel(name: key, value: value));
+        });
+        ref.read(collectionStateNotifierProvider.notifier).update(
+          selectedId,
+          requestParams: urlParaList,
+          isParamEnabledList: isParamEnabledList,
+        );
       },
     );
   }

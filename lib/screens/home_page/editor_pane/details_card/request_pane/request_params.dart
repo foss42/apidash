@@ -20,6 +20,8 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
   late List<NameValueModel> rows;
   late List<bool> isRowEnabledList;
   late int seed;
+  List<TextEditingController> names = [];
+  List<TextEditingController> value = [];
 
   @override
   void initState() {
@@ -33,6 +35,29 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
           requestParams: rows,
           isParamEnabledList: isRowEnabledList,
         );
+
+    var urlParams = '';
+    rows.forEach(
+      (value) {
+        if (isRowEnabledList[rows.indexOf(value)]) {
+          if (value.name.isNotEmpty) {
+            if (value.name == rows[isRowEnabledList.indexOf(true)].name) {
+              urlParams += '?';
+            } else {
+              urlParams += '&';
+            }
+            urlParams = urlParams + value.name;
+            if (value.value.isNotEmpty) {
+              urlParams = urlParams + '=' + value.value;
+            }
+          }
+        }
+      },
+    );
+
+    var urlField = ref.watch(urlController).text;
+    ref.read(urlController.notifier).state.text =
+        urlField.split('?')[0] + urlParams;
   }
 
   @override
@@ -40,16 +65,29 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
     final selectedId = ref.watch(selectedIdStateProvider);
     final length = ref.watch(selectedRequestModelProvider
         .select((value) => value?.requestParams?.length));
-    var rP = ref.read(selectedRequestModelProvider)?.requestParams;
+    var rP = ref.watch(selectedRequestModelProvider)?.requestParams;
     rows = (rP == null || rP.isEmpty)
         ? [
             kNameValueEmptyModel,
           ]
         : rP;
+
     isRowEnabledList =
-        ref.read(selectedRequestModelProvider)?.isParamEnabledList ??
+        ref.watch(selectedRequestModelProvider)?.isParamEnabledList ??
             List.filled(rows.length, true, growable: true);
 
+    int i = 0;
+    rows.forEach((element) {
+      setState(() {
+        names.add(TextEditingController());
+        value.add(TextEditingController());
+        names[i].text = element.name;
+        value[i].text = element.value;
+        i++;
+      });
+    });
+
+    // print(names.length);
     DaviModel<NameValueModel> model = DaviModel<NameValueModel>(
       rows: rows,
       columns: [
@@ -79,7 +117,8 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
             int idx = row.index;
             return CellField(
               keyId: "$selectedId-$idx-params-k-$seed",
-              initialValue: rows[idx].name,
+              // initialValue: rows[idx].name,
+              controller: names[idx],
               hintText: "Add URL Parameter",
               onChanged: (value) {
                 rows[idx] = rows[idx].copyWith(name: value);
@@ -106,7 +145,8 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
             int idx = row.index;
             return CellField(
               keyId: "$selectedId-$idx-params-v-$seed",
-              initialValue: rows[idx].value,
+              // initialValue: rows[idx].value,
+              controller: value[idx],
               hintText: "Add Value",
               onChanged: (value) {
                 rows[idx] = rows[idx].copyWith(value: value);
@@ -136,7 +176,8 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
                   });
                 } else {
                   rows.removeAt(row.index);
-                  isRowEnabledList.removeAt(row.index);
+                  names.removeAt(row.index);
+                  value.removeAt(row.index);
                 }
                 _onFieldChange(selectedId!);
               },

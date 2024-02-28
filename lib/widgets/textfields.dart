@@ -2,22 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
 
 class URLField extends StatelessWidget {
-  const URLField({
-    super.key,
-    required this.selectedId,
-    this.initialValue,
-    this.onChanged,
-  });
+  const URLField(
+      {super.key,
+      required this.selectedId,
+      this.initialValue,
+      this.onChanged,
+      this.controller});
 
   final String selectedId;
   final String? initialValue;
+  final TextEditingController? controller;
   final void Function(String)? onChanged;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      controller: controller,
       key: Key("url-$selectedId"),
-      initialValue: initialValue,
+      // initialValue: initialValue,
       style: kCodeStyle,
       decoration: InputDecoration(
         hintText: kHintTextUrlCard,
@@ -41,11 +43,13 @@ class CellField extends StatelessWidget {
     this.hintText,
     this.onChanged,
     this.colorScheme,
+    this.controller,
   });
 
   final String keyId;
   final String? initialValue;
   final String? hintText;
+  final TextEditingController? controller;
   final void Function(String)? onChanged;
   final ColorScheme? colorScheme;
 
@@ -54,7 +58,8 @@ class CellField extends StatelessWidget {
     var clrScheme = colorScheme ?? Theme.of(context).colorScheme;
     return TextFormField(
       key: Key(keyId),
-      initialValue: initialValue,
+      controller: controller,
+      // initialValue: initialValue,
       style: kCodeStyle.copyWith(
         color: clrScheme.onSurface,
       ),

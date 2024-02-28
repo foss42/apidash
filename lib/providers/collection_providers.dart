@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'settings_providers.dart';
 import 'ui_providers.dart';
@@ -18,6 +19,9 @@ final selectedRequestModelProvider = StateProvider<RequestModel?>((ref) {
     return collection[selectedId];
   }
 });
+
+final urlController =
+    StateProvider<TextEditingController>((ref) => TextEditingController());
 
 final requestSequenceProvider = StateProvider<List<String>>((ref) {
   var ids = hiveHandler.getIds();
@@ -149,7 +153,6 @@ class CollectionStateNotifier
         responseStatus: responseStatus,
         message: message,
         responseModel: responseModel);
-    //print(newModel);
     var map = {...state!};
     map[id] = newModel;
     state = map;
