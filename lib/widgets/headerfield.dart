@@ -1,6 +1,7 @@
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/header_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 
 class HeaderField extends StatefulWidget {
@@ -24,6 +25,9 @@ class HeaderField extends StatefulWidget {
 
 class _HeaderFieldState extends State<HeaderField> {
   final TextEditingController controller = TextEditingController();
+  final SuggestionsController suggestionsController = SuggestionsController();
+  bool isKeyPressed = false;
+  bool isInputFocused = false;
 
   @override
   void initState() {
@@ -31,11 +35,13 @@ class _HeaderFieldState extends State<HeaderField> {
     controller.text = widget.initialValue ?? "";
     controller.selection =
         TextSelection.collapsed(offset: controller.text.length);
+    HardwareKeyboard.instance.addHandler((event) => _handleKeyDown(event));
   }
 
   @override
   void dispose() {
     controller.dispose();
+    HardwareKeyboard.instance.removeHandler(_handleKeyDown);
     super.dispose();
   }
 
@@ -62,17 +68,24 @@ class _HeaderFieldState extends State<HeaderField> {
         });
         widget.onChanged!.call(value);
       },
-      itemBuilder: (context, String suggestion) {
+      itemBuilder: (context, dynamic suggestion) {
         return ListTile(
           dense: true,
           title: Text(suggestion),
         );
       },
       suggestionsCallback: headerSuggestionCallback,
+      suggestionsController: suggestionsController,
       decorationBuilder: (context, child) =>
           suggestionBoxDecorations(context, child, colorScheme),
       constraints: const BoxConstraints(maxHeight: 400),
-      builder: (context, controller, focusNode) => TextField(
+      builder: (context, controller, focusNode) => Focus(
+        onFocusChange: (hasFocus) {
+          setState(() {
+            isInputFocused = hasFocus;
+          });
+        },
+        child:  TextField(
         onChanged: widget.onChanged,
         controller: controller,
         focusNode: focusNode,
@@ -95,6 +108,7 @@ class _HeaderFieldState extends State<HeaderField> {
           ),
         ),
       ),
+      ),
     );
   }
 
@@ -114,9 +128,23 @@ class _HeaderFieldState extends State<HeaderField> {
     );
   }
 
+    bool _handleKeyDown(KeyEvent event) {
+    if (event is KeyDownEvent) {
+      if( isInputFocused && HardwareKeyboard.instance.isControlPressed && event.logicalKey == LogicalKeyboardKey.space) {
+        isKeyPressed = true;
+        suggestionsController.refresh();
+        return true;
+      }
+    }
+    return false;
+  }
+
   Future<List<String>?> headerSuggestionCallback(String pattern) async {
-    if (pattern.isEmpty) {
+    if (pattern.isEmpty && !isKeyPressed) {
       return null;
+    }else if (pattern.isEmpty && isKeyPressed ) {
+      isKeyPressed = false;
+      return getHeaderSuggestions("");
     }
     return getHeaderSuggestions(pattern);
   }
