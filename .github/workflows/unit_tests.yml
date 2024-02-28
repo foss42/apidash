@@ -16,16 +16,13 @@ jobs:
     steps:
       - name: Checkout the code
         uses: actions/checkout@v4
-      - name: Cache Flutter dependencies
-        uses: actions/cache@v3
-        with:
-          path: /opt/hostedtoolcache/flutter
-          key: ${{ runner.OS }}-flutter-install-cache-${{ matrix.flutter-version }}
       - name: Install flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ matrix.flutter-version}}
           channel: stable
+          cache: true
+      - run: flutter --version
       - name: Install dependencies
         run: flutter pub get
       - name: Analyze
