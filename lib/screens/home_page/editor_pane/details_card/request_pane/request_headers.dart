@@ -19,6 +19,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
   late List<NameValueModel> rows;
   late List<bool> isRowEnabledList;
   late int seed;
+  final FocusNode headerValueFocus = FocusNode();
 
   @override
   void initState() {
@@ -76,15 +77,23 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
           grow: 1,
           cellBuilder: (_, row) {
             int idx = row.index;
-            return HeaderField(
-              keyId: "$selectedId-$idx-headers-k-$seed",
-              initialValue: rows[idx].name,
-              hintText: "Add Header Name",
-              onChanged: (value) {
-                rows[idx] = rows[idx].copyWith(name: value);
-                _onFieldChange(selectedId!);
+            return KeyboardListener(
+              focusNode: FocusNode(),
+              onKeyEvent: (KeyEvent event) {
+                if (event.logicalKey.keyId == 4294967309) {
+                  headerValueFocus.requestFocus();
+                }
               },
-              colorScheme: Theme.of(context).colorScheme,
+              child: HeaderField(
+                keyId: "$selectedId-$idx-headers-k-$seed",
+                initialValue: rows[idx].name,
+                hintText: "Add Header Name",
+                onChanged: (value) {
+                  rows[idx] = rows[idx].copyWith(name: value);
+                  _onFieldChange(selectedId!);
+                },
+                colorScheme: Theme.of(context).colorScheme,
+              ),
             );
           },
           sortable: false,
@@ -107,6 +116,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
               keyId: "$selectedId-$idx-headers-v-$seed",
               initialValue: rows[idx].value,
               hintText: " Add Header Value",
+              focusNode: headerValueFocus,
               onChanged: (value) {
                 rows[idx] = rows[idx].copyWith(value: value);
                 _onFieldChange(selectedId!);

@@ -1,7 +1,9 @@
 import 'package:apidash/utils/header_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:provider/provider.dart';
 
 class HeaderField extends StatefulWidget {
   const HeaderField({
@@ -24,7 +26,9 @@ class HeaderField extends StatefulWidget {
 
 class _HeaderFieldState extends State<HeaderField> {
   final TextEditingController controller = TextEditingController();
-
+  final SuggestionsController suggestionsController = SuggestionsController();
+  final ScrollController scrollController = ScrollController();
+  final FocusNode focusNode = FocusNode();
   @override
   void initState() {
     super.initState();
@@ -52,66 +56,70 @@ class _HeaderFieldState extends State<HeaderField> {
   Widget build(BuildContext context) {
     var colorScheme = widget.colorScheme ?? Theme.of(context).colorScheme;
     return TypeAheadField(
-      key: Key(widget.keyId),
-      hideOnEmpty: true,
-      minCharsForSuggestions: 1,
-      onSuggestionSelected: (value) {
-        setState(() {
-          controller.text = value;
-        });
-        widget.onChanged!.call(value);
-      },
-      itemBuilder: (context, String suggestion) {
-        return ListTile(
-          dense: true,
-          title: Text(suggestion),
-        );
-      },
-      suggestionsCallback: headerSuggestionCallback,
-      suggestionsBoxDecoration: suggestionBoxDecorations(context),
-      textFieldConfiguration: TextFieldConfiguration(
-        onChanged: widget.onChanged,
         controller: controller,
-        style: kCodeStyle.copyWith(
-          color: colorScheme.onSurface,
-        ),
-        decoration: InputDecoration(
-          hintStyle: kCodeStyle.copyWith(
-            color: colorScheme.outline.withOpacity(
-              kHintOpacity,
+        suggestionsController: suggestionsController,
+        key: Key(widget.keyId),
+        hideOnEmpty: true,
+        onSelected: (value) {
+          setState(() {
+            controller.text = value;
+          });
+          widget.onChanged!.call(value);
+        },
+        itemBuilder: (context, suggestion) {
+          return ListTile(
+            dense: true,
+            title: Text(suggestion),
+          );
+        },
+        suggestionsCallback: headerSuggestionCallback,
+        constraints: const BoxConstraints(maxHeight: 400),
+        decorationBuilder: (context, child) {
+          return Material(
+            elevation: 4,
+            shape: RoundedRectangleBorder(
+              side: BorderSide(
+                color: Theme.of(context).dividerColor,
+                width: 1.2,
+              ),
+              borderRadius:
+                  const BorderRadius.vertical(bottom: Radius.circular(8)),
             ),
-          ),
-          hintText: widget.hintText,
-          focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(
-              color: colorScheme.primary.withOpacity(
-                kHintOpacity,
+            clipBehavior: Clip.hardEdge,
+            child: child,
+          );
+        },
+        direction: VerticalDirection.down,
+        builder: (context, controller, focusNode) {
+          return TextField(
+            onChanged: widget.onChanged,
+            controller: controller,
+            focusNode: focusNode,
+            style: kCodeStyle.copyWith(
+              color: colorScheme.onSurface,
+            ),
+            decoration: InputDecoration(
+              hintStyle: kCodeStyle.copyWith(
+                color: colorScheme.outline.withOpacity(
+                  kHintOpacity,
+                ),
+              ),
+              hintText: widget.hintText,
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(
+                  color: colorScheme.primary.withOpacity(
+                    kHintOpacity,
+                  ),
+                ),
+              ),
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(
+                  color: colorScheme.surfaceVariant,
+                ),
               ),
             ),
-          ),
-          enabledBorder: UnderlineInputBorder(
-            borderSide: BorderSide(
-              color: colorScheme.surfaceVariant,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  SuggestionsBoxDecoration suggestionBoxDecorations(BuildContext context) {
-    return SuggestionsBoxDecoration(
-      elevation: 4,
-      constraints: const BoxConstraints(maxHeight: 400),
-      shape: RoundedRectangleBorder(
-        side: BorderSide(
-          color: Theme.of(context).dividerColor,
-          width: 1.2,
-        ),
-        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(8)),
-      ),
-      clipBehavior: Clip.hardEdge,
-    );
+          );
+        });
   }
 
   Future<List<String>> headerSuggestionCallback(String pattern) async {

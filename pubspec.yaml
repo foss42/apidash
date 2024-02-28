@@ -41,7 +41,7 @@ dependencies:
   json_annotation: ^4.8.1
   printing: ^5.11.1
   package_info_plus: ^4.1.0
-  flutter_typeahead: ^4.8.0
+  flutter_typeahead: ^5.2.0
   provider: ^6.0.5
   json_data_explorer:
     git:

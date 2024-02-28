@@ -41,6 +41,7 @@ class CellField extends StatelessWidget {
     this.hintText,
     this.onChanged,
     this.colorScheme,
+    this.focusNode,
   });
 
   final String keyId;
@@ -48,11 +49,13 @@ class CellField extends StatelessWidget {
   final String? hintText;
   final void Function(String)? onChanged;
   final ColorScheme? colorScheme;
+  final FocusNode? focusNode;
 
   @override
   Widget build(BuildContext context) {
     var clrScheme = colorScheme ?? Theme.of(context).colorScheme;
     return TextFormField(
+      focusNode: focusNode,
       key: Key(keyId),
       initialValue: initialValue,
       style: kCodeStyle.copyWith(
