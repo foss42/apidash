@@ -29,10 +29,11 @@ class DropdownButtonHttpMethod extends StatelessWidget {
         return DropdownMenuItem<HTTPVerb>(
           value: value,
           child: Padding(
-            padding: const EdgeInsets.only(left: 16),
+            padding: EdgeInsets.only(left: kIsMobile ? 4 : 16),
             child: Text(
               value.name.toUpperCase(),
               style: kCodeStyle.copyWith(
+                fontSize: kIsMobile ? 13 : null,
                 fontWeight: FontWeight.bold,
                 color: getHTTPMethodColor(
                   value,

@@ -16,13 +16,15 @@ class SettingsPage extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: kPh20t40,
-          child: kIsDesktop
-              ? Text("Settings",
-                  style: Theme.of(context).textTheme.headlineLarge)
-              : const SizedBox.shrink(),
-        ),
+        !kIsMobile
+            ? Padding(
+                padding: kPh20t40,
+                child: kIsDesktop
+                    ? Text("Settings",
+                        style: Theme.of(context).textTheme.headlineLarge)
+                    : const SizedBox.shrink(),
+              )
+            : const SizedBox.shrink(),
         kIsDesktop
             ? const Padding(
                 padding: kPh20,

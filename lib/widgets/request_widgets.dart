@@ -47,34 +47,37 @@ class _RequestPaneState extends State<RequestPane>
     }
     return Column(
       children: [
-        Padding(
-          padding: kPh20v10,
-          child: SizedBox(
-            height: kHeaderHeight,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Request",
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                FilledButton.tonalIcon(
-                  onPressed: widget.onPressedCodeButton,
-                  icon: Icon(
-                    widget.codePaneVisible
-                        ? Icons.code_off_rounded
-                        : Icons.code_rounded,
+        (kIsMobile
+            ? const SizedBox.shrink()
+            : Padding(
+                padding: kPh20v10,
+                child: SizedBox(
+                  height: kHeaderHeight,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Request",
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      FilledButton.tonalIcon(
+                        onPressed: widget.onPressedCodeButton,
+                        icon: Icon(
+                          widget.codePaneVisible
+                              ? Icons.code_off_rounded
+                              : Icons.code_rounded,
+                        ),
+                        label: SizedBox(
+                          width: 75,
+                          child: Text(widget.codePaneVisible
+                              ? "Hide Code"
+                              : "View Code"),
+                        ),
+                      ),
+                    ],
                   ),
-                  label: SizedBox(
-                    width: 75,
-                    child: Text(
-                        widget.codePaneVisible ? "Hide Code" : "View Code"),
-                  ),
                 ),
-              ],
-            ),
-          ),
-        ),
+              )),
         TabBar(
           key: Key(widget.selectedId!),
           controller: _controller,
@@ -110,5 +113,14 @@ class _RequestPaneState extends State<RequestPane>
   void dispose() {
     _controller.dispose();
     super.dispose();
+  }
+}
+
+class ViewCodeButton extends StatelessWidget {
+  const ViewCodeButton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container();
   }
 }
