@@ -1,15 +1,18 @@
 name: Unit Tests
 
 on:
+  pull_request:
   push:
-
-env:
-  flutter_version: "3.16.3"
 
 jobs:
   tests:
     name: Unit Tests
-    runs-on: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        flutter-version: ["3.16.3", "3.16.8"]
+        os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
       - name: Checkout the code
         uses: actions/checkout@v4
@@ -17,17 +20,16 @@ jobs:
         uses: actions/cache@v3
         with:
           path: /opt/hostedtoolcache/flutter
-          key: ${{ runner.OS }}-flutter-install-cache-${{ env.flutter_version }}
+          key: ${{ runner.OS }}-flutter-install-cache-${{ matrix.flutter-version }}
       - name: Install flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: ${{ env.flutter_version}}
+          flutter-version: ${{ matrix.flutter-version}}
           channel: stable
       - name: Install base dependencies
         run: flutter pub get
-      # TODO fix the analyze results first
-      # - name: Analyze
-      #   run: flutter analyze
+      - name: Analyze
+        run: flutter analyze
       - name: Run base tests
         run: flutter test --coverage
       # TODO add a codecov account and register token in secrets
