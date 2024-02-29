@@ -11,36 +11,40 @@ class CsvPreviewer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     try {
-      final List<List<dynamic>> csvData = const CsvToListConverter().convert(body, eol: '\n');
-      return SingleChildScrollView( 
+      final List<List<dynamic>> csvData =
+          const CsvToListConverter().convert(body, eol: '\n');
+      return SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: DataTable(
             columns: csvData[0]
-              .map(
-                (item) => DataColumn(
-                  label: Text(
-                    item.toString(),
+                .map(
+                  (item) => DataColumn(
+                    label: Text(
+                      item.toString(),
+                    ),
                   ),
-                ),
-              )
-              .toList(),
+                )
+                .toList(),
             rows: csvData
-              .skip(1)
-              .map(
-                (csvrow) => DataRow(
-                  cells: csvrow
-                    .map(
-                      (csvItem) => DataCell(
-                        Text(
-                          csvItem.toString(),
-                        ),
-                      ),
-                    )
-                    .toList(),
-                ),
-              )
-              .toList(),
+                .skip(1)
+                .map(
+                  (csvrow) => DataRow(
+                    cells: csvrow
+                        .map(
+                          (csvItem) => DataCell(
+                            Text(
+                              csvItem.toString(),
+                            ),
+                          ),
+                        )
+                        .toList(),
+                  ),
+                )
+                .toList(),
           ),
+        ),
       );
     } catch (e) {
       return const ErrorMessage(message: kCsvError);
