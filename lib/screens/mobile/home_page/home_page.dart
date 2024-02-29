@@ -1,6 +1,7 @@
 import 'package:apidash/consts.dart';
 import 'package:apidash/providers/collection_providers.dart';
 import 'package:apidash/screens/home_page/editor_pane/details_card/request_pane/request_pane.dart';
+import 'package:apidash/screens/home_page/editor_pane/details_card/response_pane.dart';
 import 'package:apidash/screens/home_page/editor_pane/url_card.dart';
 import 'package:apidash/screens/mobile/drawer.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +16,11 @@ class MobileHomePage extends StatefulWidget {
 
 class _MobileHomePageState extends State<MobileHomePage> {
   int navIndex = 0;
+  final navPages = const [
+    EditRequestPane(),
+    ResponsePane(),
+    Text("code"),
+  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,7 +38,7 @@ class _MobileHomePageState extends State<MobileHomePage> {
         children: [
           SizedBox(
             height: MediaQuery.of(context).size.height * 0.73,
-            child: const EditRequestPane(),
+            child: navPages[navIndex],
           ),
           SizedBox(
             height: MediaQuery.of(context).size.height * 0.1,
