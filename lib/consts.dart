@@ -13,15 +13,13 @@ final kIsMacOS = !kIsWeb && Platform.isMacOS;
 final kIsWindows = !kIsWeb && Platform.isWindows;
 final kIsLinux = !kIsWeb && Platform.isLinux;
 final kIsApple = !kIsWeb && (Platform.isIOS || Platform.isMacOS);
-final kIsDesktop =
-    !kIsWeb && (Platform.isMacOS || Platform.isWindows || Platform.isLinux);
+final kIsDesktop = !kIsWeb && (Platform.isMacOS || Platform.isWindows || Platform.isLinux);
 
 final kIsIOS = !kIsWeb && Platform.isIOS;
 final kIsAndroid = !kIsWeb && Platform.isAndroid;
 final kIsMobile = !kIsWeb && (Platform.isIOS || Platform.isAndroid);
 
-final kColorTransparentState =
-    MaterialStateProperty.all<Color>(Colors.transparent);
+final kColorTransparentState = MaterialStateProperty.all<Color>(Colors.transparent);
 const kColorTransparent = Colors.transparent;
 const kColorWhite = Colors.white;
 const kColorRed = Colors.red;
@@ -36,8 +34,7 @@ const kMinRequestEditorDetailsCardPaneSize = 300.0;
 
 const kColorSchemeSeed = Colors.blue;
 final kFontFamily = GoogleFonts.openSans().fontFamily;
-final kFontFamilyFallback =
-    kIsApple ? null : <String>[GoogleFonts.notoColorEmoji().fontFamily!];
+final kFontFamilyFallback = kIsApple ? null : <String>[GoogleFonts.notoColorEmoji().fontFamily!];
 
 final kCodeStyle = TextStyle(
   fontFamily: GoogleFonts.sourceCodePro().fontFamily,
@@ -67,8 +64,7 @@ const kPh20v5 = EdgeInsets.symmetric(horizontal: 20, vertical: 5);
 const kPh20v10 = EdgeInsets.symmetric(horizontal: 20, vertical: 10);
 const kP10 = EdgeInsets.all(10);
 const kPt24o8 = EdgeInsets.only(top: 24, left: 8.0, right: 8.0, bottom: 8.0);
-const kPt5o10 =
-    EdgeInsets.only(left: 10.0, right: 10.0, top: 5.0, bottom: 10.0);
+const kPt5o10 = EdgeInsets.only(left: 10.0, right: 10.0, top: 5.0, bottom: 10.0);
 const kPh20 = EdgeInsets.symmetric(
   horizontal: 20,
 );
@@ -142,8 +138,7 @@ const kCodePreviewLinesLimit = 500;
 const kCodeCharsPerLineLimit = 200;
 
 const kLightCodeTheme = {
-  'root':
-      TextStyle(backgroundColor: Color(0xffffffff), color: Color(0xff000000)),
+  'root': TextStyle(backgroundColor: Color(0xffffffff), color: Color(0xff000000)),
   'addition': TextStyle(backgroundColor: Color(0xffbaeeba)),
   'attr': TextStyle(color: Color(0xff836C28)),
   'attribute': TextStyle(color: Color(0xffaa0d91)),
@@ -155,8 +150,7 @@ const kLightCodeTheme = {
   'deletion': TextStyle(backgroundColor: Color(0xffffc8bd)),
   'doctag': TextStyle(fontWeight: FontWeight.bold),
   'emphasis': TextStyle(fontStyle: FontStyle.italic),
-  'formula': TextStyle(
-      backgroundColor: Color(0xffeeeeee), fontStyle: FontStyle.italic),
+  'formula': TextStyle(backgroundColor: Color(0xffeeeeee), fontStyle: FontStyle.italic),
   'keyword': TextStyle(color: Color(0xffaa0d91)),
   'link': TextStyle(color: Color(0xff0E0EFF)),
   'literal': TextStyle(color: Color(0xffaa0d91)),
@@ -183,8 +177,7 @@ const kLightCodeTheme = {
 };
 
 const kDarkCodeTheme = {
-  'root':
-      TextStyle(backgroundColor: Color(0xff011627), color: Color(0xffd6deeb)),
+  'root': TextStyle(backgroundColor: Color(0xff011627), color: Color(0xffd6deeb)),
   'addition': TextStyle(color: Color(0xffaddb67)),
   'attr': TextStyle(color: Color(0xff7fdbca)),
   'attribute': TextStyle(color: Color(0xff80cbc4)),
@@ -271,7 +264,8 @@ enum CodegenLanguage {
   nodejsFetch("node.js (fetch)", "javascript", "js"),
   kotlinOkHttp("Kotlin (okhttp3)", "java", "kt"),
   pythonHttpClient("Python (http.client)", "python", "py"),
-  pythonRequests("Python (requests)", "python", "py");
+  pythonRequests("Python (requests)", "python", "py"),
+  csharpHttpClient("C# (HttpClient)", "csharp", "cs");
 
   const CodegenLanguage(this.label, this.codeHighlightLang, this.ext);
   final String label;
@@ -341,18 +335,14 @@ const kCodeRawBodyViewOptions = [ResponseBodyView.code, ResponseBodyView.raw];
 const kPreviewBodyViewOptions = [
   ResponseBodyView.preview,
 ];
-const kPreviewRawBodyViewOptions = [
-  ResponseBodyView.preview,
-  ResponseBodyView.raw
-];
+const kPreviewRawBodyViewOptions = [ResponseBodyView.preview, ResponseBodyView.raw];
 const kPreviewCodeRawBodyViewOptions = [
   ResponseBodyView.preview,
   ResponseBodyView.code,
   ResponseBodyView.raw
 ];
 
-const Map<String, Map<String, List<ResponseBodyView>>>
-    kResponseBodyViewOptions = {
+const Map<String, Map<String, List<ResponseBodyView>>> kResponseBodyViewOptions = {
   kTypeApplication: {
     kSubTypeDefaultViewOptions: kNoRawBodyViewOptions,
     kSubTypeJson: kPreviewRawBodyViewOptions,
@@ -492,8 +482,7 @@ const kPdfError =
 const kAudioError =
     "There seems to be an issue playing this audio. Please raise an issue in API Dash GitHub repo so that we can resolve it.";
 
-const kRaiseIssue =
-    "\nPlease raise an issue in API Dash GitHub repo so that we can resolve it.";
+const kRaiseIssue = "\nPlease raise an issue in API Dash GitHub repo so that we can resolve it.";
 
 const kHintTextUrlCard = "Enter API endpoint like api.foss42.com/country/codes";
 const kLabelPlusNew = "+ New";
