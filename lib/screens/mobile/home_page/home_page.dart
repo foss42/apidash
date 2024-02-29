@@ -6,35 +6,32 @@ import 'package:apidash/screens/mobile/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class MobileHomePage extends ConsumerWidget {
+class MobileHomePage extends StatefulWidget {
   const MobileHomePage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final requestItem = ref.watch(selectedRequestModelProvider)!;
-    String name =
-        requestItem.name.trim().isNotEmpty ? requestItem.name : "untitled";
+  State<MobileHomePage> createState() => _MobileHomePageState();
+}
+
+class _MobileHomePageState extends State<MobileHomePage> {
+  int navIndex = 0;
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Padding(
-          padding: const EdgeInsets.symmetric(
+        title: const Padding(
+          padding: EdgeInsets.symmetric(
             vertical: 5,
             horizontal: 20,
           ),
-          child: Row(
-            children: [
-              const DropdownButtonHTTPMethod(),
-              const SizedBox(width: 10),
-              Text(name),
-            ],
-          ),
+          child: MobileAppBarRequestTile(),
         ),
       ),
       drawer: const MobileAppDrawer(),
       body: ListView(
         children: [
           SizedBox(
-            height: MediaQuery.of(context).size.height * 0.8,
+            height: MediaQuery.of(context).size.height * 0.73,
             child: const EditRequestPane(),
           ),
           SizedBox(
@@ -43,6 +40,46 @@ class MobileHomePage extends ConsumerWidget {
           ),
         ],
       ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.auto_awesome_mosaic_outlined),
+            label: "request",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.north_east_rounded),
+            label: "response",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.code),
+            label: "code",
+          ),
+        ],
+        currentIndex: navIndex,
+        onTap: (value) {
+          setState(() {
+            navIndex = value;
+          });
+        },
+      ),
+    );
+  }
+}
+
+class MobileAppBarRequestTile extends ConsumerWidget {
+  const MobileAppBarRequestTile({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final requestItem = ref.watch(selectedRequestModelProvider)!;
+    String name =
+        requestItem.name.trim().isNotEmpty ? requestItem.name : "untitled";
+    return Row(
+      children: [
+        const DropdownButtonHTTPMethod(),
+        const SizedBox(width: 10),
+        Text(name),
+      ],
     );
   }
 }
