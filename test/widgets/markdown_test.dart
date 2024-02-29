@@ -4,13 +4,43 @@ import 'package:apidash/widgets/markdown.dart';
 
 void main() {
   testWidgets('Testing CustomMarkdown', (tester) async {
-    const markdown = CustomMarkdown(data: """Is a markdown ~`star on github`~ 
+    const markdown = CustomMarkdown(
+      data: """Is a markdown ~`star on github`~ 
               
               #br
               #br
 
-              ~`github repo`~ ~`Discord Server`~""");
-    await tester.pumpWidget(markdown);
-    //expectTextStrings(tester.allWidgets, <String>['Data1']);
+              ~`github repo`~ ~`Discord Server`~""",
+    );
+    await tester.pumpWidget(const MaterialApp(home: markdown));
   }, skip: true);
+
+  group('CustomMarkdown Widget Tests', () {
+    testWidgets('CustomMarkdown renders correctly',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(const MaterialApp(
+        home: CustomMarkdown(
+          data: '# Hello World\nThis is some *markdown* text.',
+        ),
+      ));
+
+      final headlineTextFinder = find.text('Hello World');
+      final markdownTextFinder = find.text('This is some markdown text.');
+
+      expect(headlineTextFinder, findsOneWidget);
+      expect(markdownTextFinder, findsOneWidget);
+    });
+
+    testWidgets('CustomMarkdown onTapLink callback works',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(const MaterialApp(
+        home: CustomMarkdown(
+          data: '[Link Text](https://apidash.dev/)',
+        ),
+      ));
+
+      await tester.tap(find.text('Link Text'));
+      await tester.pump();
+    });
+  });
 }
