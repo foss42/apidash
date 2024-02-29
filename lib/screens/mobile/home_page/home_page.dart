@@ -1,5 +1,6 @@
 import 'package:apidash/consts.dart';
 import 'package:apidash/providers/collection_providers.dart';
+import 'package:apidash/screens/home_page/editor_pane/details_card/code_pane.dart';
 import 'package:apidash/screens/home_page/editor_pane/details_card/request_pane/request_pane.dart';
 import 'package:apidash/screens/home_page/editor_pane/details_card/response_pane.dart';
 import 'package:apidash/screens/home_page/editor_pane/url_card.dart';
@@ -19,7 +20,7 @@ class _MobileHomePageState extends State<MobileHomePage> {
   final navPages = const [
     EditRequestPane(),
     ResponsePane(),
-    Text("code"),
+    CodePane(),
   ];
   @override
   Widget build(BuildContext context) {

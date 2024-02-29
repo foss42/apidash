@@ -1,3 +1,4 @@
+import 'package:apidash/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
@@ -25,7 +26,7 @@ class EditRequestPane extends ConsumerWidget {
 
     return RequestPane(
       selectedId: selectedId,
-      codePaneVisible: codePaneVisible,
+      codePaneVisible: kIsMobile ? true : codePaneVisible,
       tabIndex: tabIndex,
       onPressedCodeButton: () {
         ref.read(codePaneVisibleStateProvider.notifier).state =

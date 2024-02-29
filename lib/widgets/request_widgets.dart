@@ -58,19 +58,22 @@ class _RequestPaneState extends State<RequestPane>
                   "Request",
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
-                FilledButton.tonalIcon(
-                  onPressed: widget.onPressedCodeButton,
-                  icon: Icon(
-                    widget.codePaneVisible
-                        ? Icons.code_off_rounded
-                        : Icons.code_rounded,
-                  ),
-                  label: SizedBox(
-                    width: 75,
-                    child: Text(
-                        widget.codePaneVisible ? "Hide Code" : "View Code"),
-                  ),
-                ),
+                kIsMobile
+                    ? const Text("")
+                    : FilledButton.tonalIcon(
+                        onPressed: widget.onPressedCodeButton,
+                        icon: Icon(
+                          widget.codePaneVisible
+                              ? Icons.code_off_rounded
+                              : Icons.code_rounded,
+                        ),
+                        label: SizedBox(
+                          width: 75,
+                          child: Text(widget.codePaneVisible
+                              ? "Hide Code"
+                              : "View Code"),
+                        ),
+                      ),
               ],
             ),
           ),
