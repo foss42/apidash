@@ -103,14 +103,9 @@ List<String> getHeaderSuggestions(String pattern) {
 }
 
 List<String> getFuzzyHeaderSuggestions(String pattern) {
-
   final keys = headers.keys.toList();
-
   final fuse = Fuzzy(keys);
-
   final results = fuse.search(pattern);
-
   final suggestions = results.map((result) => result.item).toList();
-
   return suggestions;
 }
