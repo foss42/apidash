@@ -378,7 +378,7 @@ const Map<String, Map<String, List<ResponseBodyView>>>
     kSubTypeDefaultViewOptions: kRawBodyViewOptions,
     kSubTypeCss: kCodeRawBodyViewOptions,
     kSubTypeHtml: kCodeRawBodyViewOptions,
-    kSubTypeCsv: kPreviewCodeRawBodyViewOptions,
+    kSubTypeCsv: kPreviewRawBodyViewOptions,
     kSubTypeJavascript: kCodeRawBodyViewOptions,
     kSubTypeMarkdown: kCodeRawBodyViewOptions,
     kSubTypeTextXml: kCodeRawBodyViewOptions,
@@ -498,7 +498,6 @@ const kRaiseIssue =
 
 const kCsvError =
     "There seems to be an issue rendering this CSV. Please raise an issue in API Dash GitHub repo so that we can resolve it.";
-
 
 const kHintTextUrlCard = "Enter API endpoint like api.foss42.com/country/codes";
 const kLabelPlusNew = "+ New";

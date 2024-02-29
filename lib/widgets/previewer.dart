@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:apidash/widgets/csv_previewer.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:printing/printing.dart';
@@ -8,6 +7,7 @@ import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 import 'error_message.dart';
 import 'uint8_audio_player.dart';
 import 'json_previewer.dart';
+import 'csv_previewer.dart';
 import '../consts.dart';
 
 class Previewer extends StatefulWidget {
@@ -83,11 +83,7 @@ class _PreviewerState extends State<Previewer> {
       );
     }
     if (widget.type == kTypeText && widget.subtype == kSubTypeCsv) {
-      try {
-        return CsvPreviewer(body: widget.body);
-      } catch (e) {
-        return const ErrorMessage(message: kCsvError);
-      }
+      return CsvPreviewer(body: widget.body);
     }
     if (widget.type == kTypeVideo) {
       // TODO: Video Player
@@ -97,5 +93,4 @@ class _PreviewerState extends State<Previewer> {
         : "$kMimeTypeRaiseIssueStart${widget.type}/${widget.subtype}$kMimeTypeRaiseIssue";
     return ErrorMessage(message: message);
   }
-  
 }

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:csv/csv.dart';
-import 'package:apidash/consts.dart';
-import 'package:apidash/widgets/widgets.dart';
+import 'error_message.dart';
+import '../consts.dart';
 
 class CsvPreviewer extends StatelessWidget {
-  const CsvPreviewer({Key? key, required this.body}) : super(key: key);
+  const CsvPreviewer({super.key, required this.body});
 
   final String body;
 
