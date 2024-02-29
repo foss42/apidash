@@ -95,6 +95,14 @@ Map<String, String> headers = {
 
 
 List<String> getHeaderSuggestions(String pattern) {
+  return headers.keys
+      .where(
+        (element) => element.toLowerCase().contains(pattern.toLowerCase()),
+      )
+      .toList();
+}
+
+List<String> getFuzzyHeaderSuggestions(String pattern) {
 
   final keys = headers.keys.toList();
 
