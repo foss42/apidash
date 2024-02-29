@@ -235,5 +235,26 @@ print('Response Body:', response.text)
               CodegenLanguage.pythonRequests, requestModelGet1, "https"),
           expectedCode);
     });
+
+    test('Ruby Faraday', () {
+      const expectedCode = r"""require 'faraday'
+require 'json'
+url = "https://api.foss42.com"
+
+conn = Faraday.new(url: url) do |faraday|
+  faraday.adapter Faraday.default_adapter
+end
+
+response = conn.get do |req|
+  req.headers['Content-Type'] = 'application/json'
+end
+
+puts response.body
+""";
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.nodejsFetch, requestModelGet1, "https"),
+          expectedCode);
+    });
   });
 }

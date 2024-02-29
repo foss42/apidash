@@ -1,21 +1,22 @@
+import 'dart:convert';
 import 'package:jinja/jinja.dart' as jj;
-import 'package:apidash/utils/utils.dart' show getValidRequestUri, stripUriParams;
-import '../../models/request_model.dart';
-import 'package:apidash/consts.dart';
+import 'package:apidash/utils/utils.dart' show padMultilineString;
+import 'package:apidash/models/models.dart' show RequestModel;
 
 class RubyFaradayCodeGen {
-  final String kTemplateStart = '''
-require 'faraday'
+  RubyFaradayCodeGen();
+
+  String kTemplateStart = '''require 'faraday'
 require 'json'
 ''';
 
-  final String kTemplateUrl = '''
+  String kTemplateUrl = '''
 
 url = "{{url}}"
 
 ''';
 
-  final String kTemplateUrlQuery = '''
+  String kTemplateUrlQuery = '''
 
 url = "{{url}}"
 {{params}}
@@ -27,14 +28,15 @@ body = "{{body}}"
 
 ''';
 
-  final String kStringRequestStart = '''
+  String kStringRequestStart = '''
 
 conn = Faraday.new(url: url) do |faraday|
   faraday.adapter Faraday.default_adapter
 end
 
-response = conn.get do |req|
+response = conn.{{method}} do |req|
   req.headers['Content-Type'] = 'application/json'
+{{body}}
 end
 
 puts response.body
@@ -46,59 +48,43 @@ puts response.body
   ) {
     try {
       String result = "";
-      bool hasQuery = false;
 
       String url = requestModel.url;
       if (!url.contains("://") && url.isNotEmpty) {
         url = "$defaultUriScheme://$url";
       }
 
-      var rec = getValidRequestUri(
-        url,
-        requestModel.enabledRequestParams,
-      );
-      Uri? uri = rec.$1;
+      var rec = Uri.parse(url);
 
-      if (uri != null) {
-        String url = stripUriParams(uri);
-
-        if (uri.hasQuery) {
-          var params = uri.queryParameters;
+      if (rec != null) {
+        String url = rec.toString();
+        if (rec.hasQuery) {
+          var params = rec.queryParameters;
           if (params.isNotEmpty) {
-            hasQuery = true;
             var templateParams = jj.Template(kTemplateUrlQuery);
-            result += templateParams
-                .render({"url": url, "params": getQueryParams(params)});
+            var paramsString = params.entries.map((e) => '${e.key}=${e.value}').join('&');
+            result += templateParams.render({"url": url, "params": paramsString});
           }
-        }
-        if (!hasQuery) {
+        } else {
           var templateUrl = jj.Template(kTemplateUrl);
           result += templateUrl.render({"url": url});
         }
 
-        var method = requestModel.method;
         var requestBody = requestModel.requestBody;
-        if (kMethodsWithBody.contains(method) && requestBody != null) {
+        if (['POST', 'PUT', 'PATCH', 'DELETE'].contains(requestModel.method.toString().toUpperCase()) && requestBody != null) {
           var templateBody = jj.Template(kTemplateRequestBody);
           result += templateBody.render({"body": requestBody});
         }
 
         var templateStart = jj.Template(kTemplateStart);
         result = templateStart.render({}) + result;
-
-        result += kStringRequestStart;
+        var method = requestModel.method;
+        var templateMethod = jj.Template(kStringRequestStart);
+        result += templateMethod.render({"method": method.name.toLowerCase(), "body": requestBody != null ? "\n  req.body = body" : ""});
       }
       return result;
     } catch (e) {
       return null;
     }
-  }
-
-  String getQueryParams(Map<String, String> params) {
-    String result = "";
-    for (final k in params.keys) {
-      result += """url += "?$k=${params[k]}\"\n""";
-    }
-    return result;
   }
 }
