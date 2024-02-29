@@ -61,23 +61,39 @@ class SendRequestButton extends StatelessWidget {
     bool disable = sentRequestId != null;
     return FilledButton(
       onPressed: disable ? null : onTap,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            disable
-                ? (selectedId == sentRequestId ? kLabelSending : kLabelBusy)
-                : kLabelSend,
-            style: kTextStyleButton,
-          ),
-          if (!disable) kHSpacer10,
-          if (!disable)
-            const Icon(
-              size: 16,
-              Icons.send,
+      child: kIsMobile
+          ? Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  disable
+                      ? (selectedId == sentRequestId
+                          ? kLabelSending
+                          : kLabelBusy)
+                      : kLabelSend,
+                  style: kTextStyleButton,
+                ),
+              ],
+            )
+          : Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  disable
+                      ? (selectedId == sentRequestId
+                          ? kLabelSending
+                          : kLabelBusy)
+                      : kLabelSend,
+                  style: kTextStyleButton,
+                ),
+                if (!disable) kHSpacer10,
+                if (!disable)
+                  const Icon(
+                    size: 16,
+                    Icons.send,
+                  ),
+              ],
             ),
-        ],
-      ),
     );
   }
 }

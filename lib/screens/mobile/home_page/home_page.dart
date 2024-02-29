@@ -1,3 +1,4 @@
+import 'package:apidash/consts.dart';
 import 'package:apidash/providers/collection_providers.dart';
 import 'package:apidash/screens/home_page/editor_pane/details_card/request_pane/request_pane.dart';
 import 'package:apidash/screens/home_page/editor_pane/url_card.dart';
@@ -30,7 +31,53 @@ class MobileHomePage extends ConsumerWidget {
         ),
       ),
       drawer: const MobileAppDrawer(),
-      body: const EditRequestPane(),
+      body: ListView(
+        children: [
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.8,
+            child: const EditRequestPane(),
+          ),
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.1,
+            child: const MobileRequestEditor(),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class MobileRequestEditor extends StatelessWidget {
+  const MobileRequestEditor({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        kHSpacer10,
+        Expanded(
+          child: Card(
+            shape: RoundedRectangleBorder(
+              side: BorderSide(
+                color: Theme.of(context).colorScheme.onBackground,
+              ),
+              borderRadius: kBorderRadius12,
+            ),
+            child: const Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: 10,
+              ),
+              child: URLTextField(),
+            ),
+          ),
+        ),
+        kHSpacer10,
+        SizedBox(
+          height: MediaQuery.of(context).size.height * 0.1 / 2,
+          child: const SendButton(),
+        ),
+        kHSpacer10,
+      ],
     );
   }
 }
