@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:apidash/screens/mobile/home_page/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:window_manager/window_manager.dart' hide WindowCaption;
@@ -124,10 +125,7 @@ class DashApp extends ConsumerWidget {
       ),
       themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
       home: kIsMobile
-          ? const MobileDashboard(
-              title: 'Requests',
-              scaffoldBody: CollectionPane(),
-            )
+          ? const MobileHomePage()
           : Stack(
               children: [
                 kIsLinux ? const Dashboard() : const App(),
