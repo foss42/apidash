@@ -215,13 +215,14 @@ print('Response Body:', response.text)
     });
 
     test('C Libcurl', () {
-      const expectedCode = """#include <stdio.h>
+      const expectedCode = r"""
+#include <stdio.h>
 #include <stdlib.h>
 #include <curl/curl.h>
 
 /*
 Compiling with libcurl
-\$ gcc <filename>.c -lcurl -o <executable-name>
+$ gcc <filename>.c -lcurl -o <executable-name>
 */
 
 int main() {
@@ -231,7 +232,11 @@ int main() {
 
   if(curl) {
     curl_easy_setopt(curl, CURLOPT_URL, "https://api.foss42.com");
-    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "HTTPVerb.get");
+    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "GET");
+
+    struct curl_slist *headers = NULL;
+    headers = curl_slist_append(headers, "Content-Type: application/json");
+    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
     res = curl_easy_perform(curl);
     if(res != CURLE_OK) {

@@ -1,6 +1,33 @@
+import 'dart:convert';
+
+import 'package:apidash/consts.dart';
+
 import '../../models/request_model.dart';
 
 class CLibcurlCodeGen {
+  String getCustomRequestLiteral(HTTPVerb method) {
+    switch (method) {
+      case HTTPVerb.get:
+        return "GET";
+      case HTTPVerb.post:
+        return "POST";
+      case HTTPVerb.put:
+        return "PUT";
+      case HTTPVerb.head:
+        return "HEAD";
+      case HTTPVerb.patch:
+        return "PATCH";
+      case HTTPVerb.delete:
+        return "DELETE";
+      default:
+        return "GET";
+    }
+  }
+
+  bool postableMethod(HTTPVerb method) {
+    return method == HTTPVerb.post || method == HTTPVerb.put || method == HTTPVerb.patch;
+  }
+
   String getCode(RequestModel requestModel, String defaultUriScheme) {
     try {
       StringBuffer result = StringBuffer();
@@ -32,31 +59,36 @@ class CLibcurlCodeGen {
 
       // Set request method
       result.writeln(
-          '    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "${requestModel.method}");\n');
+          '    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "${getCustomRequestLiteral(requestModel.method)}");\n');
 
       // Set request headers
+      result.writeln('    struct curl_slist *headers = NULL;');
+      result.writeln('    headers = curl_slist_append(headers, "Content-Type: application/json");');
       var headersList = requestModel.enabledRequestHeaders;
       if (headersList != null && headersList.isNotEmpty) {
-        result.writeln('    struct curl_slist *headers = NULL;');
         for (var header in headersList) {
+          if (header.name == "Content-Type" && header.value == "application/json") continue;
           result.writeln(
               '    headers = curl_slist_append(headers, "${header.name}: ${header.value}");');
         }
-        result.writeln('    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);\n');
       }
+      result.writeln('    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);\n');
 
       // Set request body if exists
       var requestBody = requestModel.requestBody;
-      if (requestBody != null && requestBody.isNotEmpty) {
+      if (postableMethod(requestModel.method) && requestBody != null && requestBody.isNotEmpty) {
+        Map postFields = jsonDecode(requestBody);
+
+        result.writeln('    curl_easy_setopt(curl, CURLOPT_POST, 1L);');
         result.writeln(
-            '    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, "${Uri.encodeComponent(requestBody)}");\n');
+            '    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, "${jsonEncode(postFields).replaceAll('"', '\\"')}");\n');
       }
 
       // Perform the request
       result.writeln('    res = curl_easy_perform(curl);');
       result.writeln('    if(res != CURLE_OK) {');
       result.writeln(
-          '      fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));');
+          '      fprintf(stderr, "curl_easy_perform() failed: %s\\n", curl_easy_strerror(res));');
       result.writeln('    }\n');
 
       // Cleanup libcurl resources
