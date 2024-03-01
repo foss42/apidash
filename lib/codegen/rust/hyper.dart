@@ -33,7 +33,7 @@ fn main() {
 
   final String kStringRequestStart = '''
 
-    let mut response = client.get(url)
+    let mut response = client.{{method}}(url)
         .send()
         .unwrap();
 
@@ -86,12 +86,18 @@ fn main() {
         if (kMethodsWithBody.contains(method) && requestBody != null) {
           var templateBody = jj.Template(kTemplateRequestBody);
           result += templateBody.render({"body": requestBody});
+
+          // Only add kStringRequestStart if request method requires a body
+          var additional = jj.Template(kStringRequestStart);
+          result += additional.render({"method": method.name.toLowerCase()});
+        } else {
+          // If no request body required, directly render kStringRequestStart
+          var additional = jj.Template(kStringRequestStart);
+          result += additional.render({"method": method.name.toLowerCase()});
         }
 
         var templateStart = jj.Template(kTemplateStart);
         result = templateStart.render({}) + result;
-
-        result += kStringRequestStart;
       }
       return result;
     } catch (e) {
