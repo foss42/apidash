@@ -4,7 +4,8 @@ analyzer:
   errors:
     invalid_annotation_target: ignore
   exclude:
-    - "**/*.*.dart" # Exclude generated files
+    - "**/*.freezed.dart"
+    - "**/*.g.dart"
 
 linter:
   rules:
