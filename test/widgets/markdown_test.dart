@@ -13,7 +13,7 @@ void main() {
               ~`github repo`~ ~`Discord Server`~""",
     );
     await tester.pumpWidget(const MaterialApp(home: markdown));
-  }, skip: true);
+  });
 
   group('CustomMarkdown Widget Tests', () {
     testWidgets('CustomMarkdown renders correctly',
