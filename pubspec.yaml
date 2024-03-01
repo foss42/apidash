@@ -54,6 +54,7 @@ dependencies:
   code_builder: ^4.9.0
   dart_style: ^2.3.4
   json_text_field: ^1.1.0
+  csv: ^5.1.1
   inner_drawer: ^1.0.0+1
   flex_color_scheme: ^7.3.1
 
