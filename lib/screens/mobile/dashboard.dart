@@ -1,3 +1,4 @@
+import 'package:apidash/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../intro_page.dart';
@@ -22,57 +23,10 @@ class _MobileDashboardState extends ConsumerState<MobileDashboard> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            const SizedBox(
-              height: 70,
-            ),
-            ListTile(
-              title: const Text('Home'),
-              leading: const Icon(Icons.home_outlined),
-              onTap: () {
-                Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(
-                      builder: (context) => const MobileDashboard(
-                        title: 'Home',
-                        scaffoldBody: IntroPage(),
-                      ),
-                    ),
-                    (Route<dynamic> route) => false);
-              },
-            ),
-            ListTile(
-              title: const Text('Requests'),
-              leading: const Icon(Icons.auto_awesome_mosaic_outlined),
-              onTap: () {
-                Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(
-                      builder: (context) => const MobileDashboard(
-                        title: 'Requests',
-                        scaffoldBody: CollectionPane(),
-                      ),
-                    ),
-                    (Route<dynamic> route) => false);
-              },
-            ),
-            ListTile(
-              title: const Text('Settings'),
-              leading: const Icon(Icons.settings_outlined),
-              onTap: () {
-                Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(
-                      builder: (context) => const MobileDashboard(
-                        title: 'Settings',
-                        scaffoldBody: SettingsPage(),
-                      ),
-                    ),
-                    (Route<dynamic> route) => false);
-              },
-            ),
-            const Divider(),
-          ],
+      drawer: const Drawer(
+        child: Padding(
+          padding: EdgeInsets.only(top: kTabHeight),
+          child: CollectionPane(),
         ),
       ),
       body: SafeArea(
