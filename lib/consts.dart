@@ -91,6 +91,9 @@ const kP8CollectionPane = EdgeInsets.only(
   //right: 4.0,
   // bottom: 8.0,
 );
+const kPb10 = EdgeInsets.only(
+  bottom: 10,
+);
 const kPr8CollectionPane = EdgeInsets.only(right: 8.0);
 const kpsV5 = EdgeInsets.symmetric(vertical: 2);
 const kHSpacer4 = SizedBox(width: 4);
@@ -384,6 +387,7 @@ const Map<String, Map<String, List<ResponseBodyView>>>
     kSubTypeDefaultViewOptions: kRawBodyViewOptions,
     kSubTypeCss: kCodeRawBodyViewOptions,
     kSubTypeHtml: kCodeRawBodyViewOptions,
+    kSubTypeCsv: kPreviewRawBodyViewOptions,
     kSubTypeJavascript: kCodeRawBodyViewOptions,
     kSubTypeMarkdown: kCodeRawBodyViewOptions,
     kSubTypeTextXml: kCodeRawBodyViewOptions,
@@ -500,11 +504,14 @@ const kAudioError =
 
 const kRaiseIssue =
     "\nPlease raise an issue in API Dash GitHub repo so that we can resolve it.";
+const kCsvError =
+    "There seems to be an issue rendering this CSV. Please raise an issue in API Dash GitHub repo so that we can resolve it.";
 
 const kHintTextHTTPUrlCard =
     "Enter API endpoint like api.foss42.com/country/codes";
 const kHintTextWebSocketUrlCard =
     "Enter WebSocket server like wss://echo.websocket.org";
+
 const kLabelPlusNew = "+ New";
 const kLabelSend = "Send";
 const kLabelSending = "Sending..";

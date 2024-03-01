@@ -3,8 +3,9 @@ include: package:flutter_lints/flutter.yaml
 analyzer:
   errors:
     invalid_annotation_target: ignore
-  enable-experiment:
-    - records
+  exclude:
+    - "**/*.freezed.dart"
+    - "**/*.g.dart"
 
 linter:
   rules:

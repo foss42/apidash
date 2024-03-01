@@ -92,7 +92,7 @@ const requestModelGet8 = RequestModel(
 
 /// GET request model with some params enabled
 const requestModelGet9 = RequestModel(
-  id: 'enabledParams',
+  id: 'get9',
   url: 'https://api.foss42.com/humanize/social',
   method: HTTPVerb.get,
   requestParams: [
@@ -111,7 +111,7 @@ const requestModelGet9 = RequestModel(
 
 /// GET Request model with some headers enabled
 const requestModelGet10 = RequestModel(
-  id: 'enabledParams',
+  id: 'get10',
   url: 'https://api.foss42.com/humanize/social',
   method: HTTPVerb.get,
   requestHeaders: [
@@ -126,7 +126,7 @@ const requestModelGet10 = RequestModel(
 
 /// GET Request model with some headers & URL parameters enabled
 const requestModelGet11 = RequestModel(
-  id: 'enabledRows',
+  id: 'get11',
   url: 'https://api.foss42.com/humanize/social',
   method: HTTPVerb.get,
   requestParams: [
@@ -153,7 +153,7 @@ const requestModelGet11 = RequestModel(
 
 /// Request model with all headers & URL parameters disabled
 const requestModelGet12 = RequestModel(
-  id: 'disabledRows',
+  id: 'get12',
   url: 'https://api.foss42.com/humanize/social',
   method: HTTPVerb.get,
   requestParams: [
