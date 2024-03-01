@@ -2,11 +2,16 @@ import 'package:jinja/jinja.dart' as jj;
 import 'package:apidash/utils/utils.dart' show getValidRequestUri, stripUriParams;
 import '../../models/request_model.dart';
 import 'package:apidash/consts.dart';
+import 'dart:io';
+import 'dart:convert';
+// import 'package:hyper/hyper.dart' as hyper;
+// import 'package:hyper/http.dart' as http;
 
 class RustHyperCodeGen {
   final String kTemplateStart = '''
 use std::io::Read;
 use hyper::Client;
+use hyper::header::{HeaderMap, HeaderValue};
 
 fn main() {
     let client = Client::new();
@@ -31,11 +36,20 @@ fn main() {
 
 ''';
 
+  String kTemplateHeader = '''
+    headers.insert("{{key}}", HeaderValue::from_static("{{value}}"));
+''';
+
   final String kStringRequestStart = '''
 
-    let mut response = client.{{method}}(url)
-        .send()
-        .unwrap();
+    let mut request = client.{{method}}(url);
+
+
+    let mut headers = HeaderMap::new();
+{{headers}}
+    *request.headers_mut() = headers;
+
+    let mut response = request.send().unwrap();
 
     let mut body = String::new();
     response.read_to_string(&mut body).unwrap();
@@ -81,21 +95,20 @@ fn main() {
           result += templateUrl.render({"url": url});
         }
 
+        // Render headers
         var method = requestModel.method;
-        var requestBody = requestModel.requestBody;
-        if (kMethodsWithBody.contains(method) && requestBody != null) {
-          var templateBody = jj.Template(kTemplateRequestBody);
-          result += templateBody.render({"body": requestBody});
-
-          // Only add kStringRequestStart if request method requires a body
-          var additional = jj.Template(kStringRequestStart);
-          result += additional.render({"method": method.name.toLowerCase()});
-        } else {
-          // If no request body required, directly render kStringRequestStart
-          var additional = jj.Template(kStringRequestStart);
-          result += additional.render({"method": method.name.toLowerCase()});
-        }
-
+        var headers = requestModel.enabledHeadersMap;
+if (headers.isNotEmpty) {
+    var headerCode = headers.entries.map((entry) {
+        var templateHeader = jj.Template(kTemplateHeader);
+        return templateHeader.render({"key": entry.key, "value": entry.value});
+    }).join('\n');
+    var additional = jj.Template(kStringRequestStart);
+    result += additional.render({"method": method.name.toLowerCase(), "headers": headerCode});
+} else {
+    var additional = jj.Template(kStringRequestStart);
+    result += additional.render({"method": method.name.toLowerCase(), "headers": ""});
+}
         var templateStart = jj.Template(kTemplateStart);
         result = templateStart.render({}) + result;
       }
