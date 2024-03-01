@@ -129,7 +129,7 @@ class _RequestListState extends ConsumerState<RequestList> {
             key: ValueKey(id),
             index: index,
             child: Padding(
-              padding: kP1,
+              padding: kIsMobile ? kP8 : kP1,
               child: RequestItem(
                 id: id,
                 requestModel: requestItems[id]!,

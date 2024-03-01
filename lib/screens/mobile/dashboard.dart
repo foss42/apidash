@@ -1,10 +1,7 @@
 import 'package:apidash/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../intro_page.dart';
-import '../settings_page.dart';
 import '../home_page/collection_pane.dart';
-
 class MobileDashboard extends ConsumerStatefulWidget {
   const MobileDashboard(
       {required this.scaffoldBody, required this.title, super.key});
