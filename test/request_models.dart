@@ -1,4 +1,5 @@
-import 'package:apidash/models/models.dart' show NameValueModel, RequestModel;
+import 'package:apidash/models/models.dart'
+    show FormDataModel, NameValueModel, RequestModel;
 import 'package:apidash/consts.dart';
 
 /// Basic GET request model
@@ -224,6 +225,105 @@ const requestModelPost3 = RequestModel(
   requestHeaders: [
     NameValueModel(name: 'User-Agent', value: 'Test Agent'),
   ],
+);
+
+/// POST request model with multipart body(text)
+const requestModelPost4 = RequestModel(
+  id: 'post4',
+  url: 'https://oshi.at',
+  method: HTTPVerb.post,
+  requestFormDataList: [
+    FormDataModel(
+        name: "text", value: "some textual string", type: FormDataType.file)
+  ],
+  requestBodyContentType: ContentType.formdata,
+);
+
+/// POST request model with multipart body and headers
+const requestModelPost5 = RequestModel(
+  id: 'post5',
+  url: 'https://oshi.at',
+  method: HTTPVerb.post,
+  requestFormDataList: [
+    FormDataModel(
+        name: "text", value: "some textual string", type: FormDataType.text)
+  ],
+  requestHeaders: [
+    NameValueModel(name: 'User-Agent', value: 'Test Agent'),
+  ],
+  requestBodyContentType: ContentType.formdata,
+);
+
+/// POST request model with multipart body(file)
+const requestModelPost6 = RequestModel(
+  id: 'post6',
+  url: 'https://oshi.at',
+  method: HTTPVerb.post,
+  requestFormDataList: [
+    FormDataModel(name: "f", value: "/path/to/file", type: FormDataType.file)
+  ],
+  requestBodyContentType: ContentType.formdata,
+);
+
+/// POST request model with multipart body and requestBody (the requestBody shouldn't be in codegen)
+const requestModelPost7 = RequestModel(
+  id: 'post7',
+  url: 'https://oshi.at',
+  method: HTTPVerb.post,
+  requestBody: r"""{
+"text": "I LOVE Flutter"
+}""",
+  requestFormDataList: [
+    FormDataModel(
+        name: "text", value: "some textual string", type: FormDataType.text)
+  ],
+  requestBodyContentType: ContentType.formdata,
+);
+
+/// POST request model with multipart body and requestParams
+const requestModelPost8 = RequestModel(
+  id: 'post8',
+  url: 'https://oshi.at',
+  method: HTTPVerb.post,
+  requestFormDataList: [
+    FormDataModel(
+        name: "text", value: "some textual string", type: FormDataType.text)
+  ],
+  requestParams: [
+    NameValueModel(name: 'num', value: '8700000'),
+    NameValueModel(name: 'digits', value: '3'),
+    NameValueModel(name: 'system', value: 'SS'),
+    NameValueModel(name: 'add_space', value: 'true'),
+    NameValueModel(name: 'trailing_zeros', value: 'true'),
+  ],
+  requestBodyContentType: ContentType.formdata,
+);
+
+/// POST request model with multipart body(file and text), requestParams, requestHeaders and requestBody
+const requestModelPost9 = RequestModel(
+  id: 'post9',
+  url: 'https://oshi.at',
+  method: HTTPVerb.post,
+  requestBody: r"""{
+"text": "I LOVE Flutter"
+}""",
+  requestFormDataList: [
+    FormDataModel(
+        name: "text", value: "some textual string", type: FormDataType.text),
+    FormDataModel(name: "f", value: "/path/to/file", type: FormDataType.file)
+  ],
+  requestParams: [
+    NameValueModel(name: 'num', value: '8700000'),
+    NameValueModel(name: 'digits', value: '3'),
+    NameValueModel(name: 'system', value: 'SS'),
+    NameValueModel(name: 'add_space', value: 'true'),
+    NameValueModel(name: 'trailing_zeros', value: 'true'),
+  ],
+  requestHeaders: [
+    NameValueModel(name: 'User-Agent', value: 'Test Agent'),
+    NameValueModel(name: 'Content-Type', value: 'multipart/form-data'),
+  ],
+  requestBodyContentType: ContentType.formdata,
 );
 
 /// PUT request model
