@@ -244,12 +244,15 @@ final kColorHttpMethodDelete = Colors.red.shade800;
 
 enum RequestItemMenuOption { edit, delete, duplicate }
 
+enum ProtocolType { http, mqttv3, mqttv5 }
+
 enum HTTPVerb { get, head, post, put, patch, delete }
 
 enum FormDataType { text, file }
 
-const kSupportedUriSchemes = ["https", "http"];
+const kSupportedUriSchemes = ["https", "http", "mqtt", "mqtts", "ws", "wss"];
 const kDefaultUriScheme = "https";
+
 const kMethodsWithBody = [
   HTTPVerb.post,
   HTTPVerb.put,
@@ -257,6 +260,7 @@ const kMethodsWithBody = [
   HTTPVerb.delete,
 ];
 
+const kDefaultProtocolType = ProtocolType.http;
 const kDefaultHttpMethod = HTTPVerb.get;
 const kDefaultContentType = ContentType.json;
 
