@@ -33,14 +33,22 @@ void main() {
 
     testWidgets('CustomMarkdown onTapLink callback works',
         (WidgetTester tester) async {
-      await tester.pumpWidget(const MaterialApp(
-        home: CustomMarkdown(
-          data: '[Link Text](https://apidash.dev/)',
+      bool linkTapped = false;
+      await tester.pumpWidget(MaterialApp(
+        home: GestureDetector(
+          onTap: () {
+            linkTapped = true;
+          },
+          child: const CustomMarkdown(
+            data: '[Link Text](https://apidash.dev/)',
+          ),
         ),
       ));
 
       await tester.tap(find.text('Link Text'));
       await tester.pump();
+
+      expect(linkTapped, true);
     });
   });
 }
