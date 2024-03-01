@@ -17,7 +17,12 @@ class BottomNavBar extends ConsumerWidget {
       width: MediaQuery.of(context).size.width,
       padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.onInverseSurface,
+        border: Border(
+          top: BorderSide(
+            color: Theme.of(context).colorScheme.onInverseSurface,
+          ),
+        ),
+        color: Theme.of(context).colorScheme.surface,
       ),
       child: Material(
         type: MaterialType.transparency,
@@ -121,7 +126,7 @@ Widget customNavigationDestination(
                       onTap?.call();
                     },
               child: Icon(
-                icon,
+                isSelected ? selectedIcon : icon,
                 color: isSelected
                     ? Theme.of(context).colorScheme.onSecondaryContainer
                     : Theme.of(context).colorScheme.onSurface.withOpacity(0.65),

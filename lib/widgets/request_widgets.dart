@@ -115,12 +115,3 @@ class _RequestPaneState extends State<RequestPane>
     super.dispose();
   }
 }
-
-class ViewCodeButton extends StatelessWidget {
-  const ViewCodeButton({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container();
-  }
-}

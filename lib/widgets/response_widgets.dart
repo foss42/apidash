@@ -73,8 +73,8 @@ class ResponsePaneHeader extends StatelessWidget {
             Text.rich(
               TextSpan(
                 children: [
-                  const TextSpan(
-                    text: "Response (",
+                  TextSpan(
+                    text: !kIsMobile ? "Response (" : "",
                   ),
                   TextSpan(
                     text: "$responseStatus",
@@ -86,8 +86,8 @@ class ResponsePaneHeader extends StatelessWidget {
                       fontFamily: kCodeStyle.fontFamily,
                     ),
                   ),
-                  const TextSpan(
-                    text: ")",
+                  TextSpan(
+                    text: !kIsMobile ? ")" : "",
                   ),
                 ],
                 style: Theme.of(context).textTheme.titleMedium,

@@ -117,6 +117,7 @@ class _MobileDashboardState extends ConsumerState<MobileDashboard> {
             right: 0,
             height: 70 + MediaQuery.of(context).padding.bottom,
             duration: const Duration(milliseconds: 200),
+            curve: Curves.easeOut,
             child: const BottomNavBar(),
           ),
         ],
