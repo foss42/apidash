@@ -13,7 +13,7 @@ void main() {
       ),
     );
 
-    await tester.pumpAndSettle();
+    await tester.pump();
     expect(find.text('Welcome to API Dash ⚡️'), findsOneWidget);
 
     expect(find.byType(RichText), findsAtLeastNWidgets(1));
