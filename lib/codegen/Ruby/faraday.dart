@@ -19,7 +19,6 @@ url = "{{url}}"
   String kTemplateUrlQuery = '''
 
 url = "{{url}}"
-{{params}}
 ''';
 
   String kTemplateRequestBody = '''
