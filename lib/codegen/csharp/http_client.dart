@@ -44,7 +44,11 @@ class CSharpHttpClientCodeGen {
       result.writeln('using System.Threading.Tasks;\n');
 
       // Set request URL
-      result.writeln('string url = "${requestModel.url}";');
+      String url = requestModel.url;
+      if (!url.contains("://")) {
+        url = "$defaultUriScheme://$url";
+      }
+      result.writeln('string url = "$url";');
 
       // Set request method
       result.writeln('HttpMethod method = ${getCustomRequestLiteral(requestModel.method)};\n');
