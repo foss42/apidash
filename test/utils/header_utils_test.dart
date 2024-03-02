@@ -115,6 +115,7 @@ void main() {
       String pattern = "x-";
       List<String> expected = [
         "Access-Control-Max-Age",
+        "Max-Forwards",
         "X-Api-Key",
         "X-Content-Type-Options",
         "X-CSRF-Token",
