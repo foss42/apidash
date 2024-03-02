@@ -1,3 +1,4 @@
+import 'package:apidash/widgets/html_previewer.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http_parser/http_parser.dart';
@@ -388,52 +389,25 @@ class _BodySuccessState extends State<BodySuccess> {
           widget.options.length,
           constraints.maxWidth,
         );
-        if (widget.mediaType.subtype == kSubTypeHtml) {
+        if (widget.mediaType.subtype == kSubTypeHtml &&
+            widget.mediaType.type == kTypeText) {
           return Padding(
             padding: kP10,
             child: Column(
               children: [
                 switch (currentSeg) {
-                  ResponseBodyView.preview || ResponseBodyView.none => Expanded(
-                      child: Container(
-                        width: double.maxFinite,
-                        padding: kP8,
-                        decoration: textContainerdecoration,
-                        child: Previewer(
-                          bytes: widget.bytes,
-                          body: widget.body,
-                          type: widget.mediaType.type,
-                          subtype: widget.mediaType.subtype,
-                          hasRaw: widget.options.contains(ResponseBodyView.raw),
-                        ),
-                      ),
-                    ),
+                  ResponseBodyView.preview ||
+                  ResponseBodyView.none =>
+                    Container(),
                   ResponseBodyView.code => Expanded(
                       child: Container(
-                        width: double.maxFinite,
-                        padding: kP8,
-                        decoration: textContainerdecoration,
-                        child: CodePreviewer(
-                          code: widget.formattedBody ?? widget.body,
-                          theme: codeTheme,
-                          language: widget.highlightLanguage,
-                          textStyle: kCodeStyle,
-                        ),
-                      ),
+                          width: double.maxFinite,
+                          padding: kP8,
+                          decoration: textContainerdecoration,
+                          child: const HtmlPreviewer(
+                              url: "https://fluttergems.dev/")),
                     ),
-                  ResponseBodyView.raw => Expanded(
-                      child: Container(
-                        width: double.maxFinite,
-                        padding: kP8,
-                        decoration: textContainerdecoration,
-                        child: SingleChildScrollView(
-                          child: SelectableText(
-                            widget.formattedBody ?? widget.body,
-                            style: kCodeStyle,
-                          ),
-                        ),
-                      ),
-                    ),
+                  ResponseBodyView.raw => Container()
                 }
               ],
             ),
