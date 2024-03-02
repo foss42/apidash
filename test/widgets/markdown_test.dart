@@ -31,5 +31,24 @@ void main() {
       expect(headlineTextFinder, findsOneWidget);
       expect(markdownTextFinder, findsOneWidget);
     });
+
+    testWidgets('CustomMarkdown onTapLink callback works',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(MaterialApp(
+        home: GestureDetector(
+          child: const CustomMarkdown(
+            data: '[Link Text](https://apidash.dev/)',
+          ),
+        ),
+      ));
+
+      await tester.tap(find.text('Link Text'));
+      await tester.pump();
+
+
+      expect(find.text('Link Text'), findsOneWidget);
+
+      expect(find.text('https://apidash.dev/'), findsNothing);
+    });
   });
 }
