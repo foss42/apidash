@@ -1,3 +1,5 @@
+import 'package:apidash/screens/home_page/editor_pane/details_card/response_pane.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
@@ -17,20 +19,22 @@ class EditorPaneRequestURLCard extends StatelessWidget {
         ),
         borderRadius: kBorderRadius12,
       ),
-      child: const Padding(
-        padding: EdgeInsets.symmetric(
+      child:  Padding(
+        padding: const EdgeInsets.symmetric(
           vertical: 5,
           horizontal: 20,
         ),
         child: Row(
           children: [
-            DropdownButtonHTTPMethod(),
+            const DropdownButtonHTTPMethod(),
             kHSpacer20,
-            Expanded(
+            const Expanded(
               child: URLTextField(),
             ),
-            kHSpacer20,
-            SizedBox(
+            if (!kIsMobile)
+              kHSpacer20,
+            if (!kIsMobile)
+              const SizedBox(
               height: 36,
               child: SendButton(),
             ),
@@ -101,6 +105,14 @@ class SendButton extends ConsumerWidget {
         ref
             .read(collectionStateNotifierProvider.notifier)
             .sendRequest(selectedId!);
+        if (kIsMobile) {
+          showModalBottomSheet(
+              context: context,
+              builder: (context){
+                return const ResponsePane();
+              }
+              );
+        }
       },
     );
   }

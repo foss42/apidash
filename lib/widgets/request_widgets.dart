@@ -1,3 +1,4 @@
+import 'package:apidash/screens/home_page/editor_pane/details_card/code_pane.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
 import 'tabs.dart';
@@ -59,7 +60,17 @@ class _RequestPaneState extends State<RequestPane>
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 FilledButton.tonalIcon(
-                  onPressed: widget.onPressedCodeButton,
+                  onPressed: (){
+                    widget.onPressedCodeButton;
+                    if (kIsMobile) {
+                      showModalBottomSheet(
+                          context: context,
+                          builder: (context){
+                            return const CodePane();
+                          }
+                      );
+                    }
+                  },
                   icon: Icon(
                     widget.codePaneVisible
                         ? Icons.code_off_rounded
