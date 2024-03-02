@@ -1,5 +1,7 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:apidash/widgets/markdown.dart';
 
@@ -32,7 +34,7 @@ void main() {
       expect(markdownTextFinder, findsOneWidget);
     });
 
-    testWidgets('CustomMarkdown onTapLink callback works',
+    testWidgets('CustomMarkdown has proper text rendered',
         (WidgetTester tester) async {
       await tester.pumpWidget(MaterialApp(
         home: GestureDetector(
@@ -45,10 +47,29 @@ void main() {
       await tester.tap(find.text('Link Text'));
       await tester.pump();
 
-
       expect(find.text('Link Text'), findsOneWidget);
 
       expect(find.text('https://apidash.dev/'), findsNothing);
+    });
+
+    testWidgets('CustomMarkdown creates hyperlink',
+        (WidgetTester tester) async {
+      bool linkTapped = false;
+      await tester.pumpWidget(MaterialApp(
+        home: CustomMarkdown(
+          data: '[Link Text](https://apidash.dev/)',
+          onTapLink: (text, href, title) {
+            linkTapped = true;
+            expect(text, 'Link Text'); 
+            expect(href, 'https://apidash.dev/'); 
+          },
+        ),
+      ));
+      expect(find.byType(Markdown), findsOneWidget);
+      final markdownWidget = tester.widget<Markdown>(find.byType(Markdown));
+      expect(markdownWidget.data, '[Link Text](https://apidash.dev/)');
+      await tester.tap(find.text('Link Text'));
+      expect(linkTapped, true);
     });
   });
 }
