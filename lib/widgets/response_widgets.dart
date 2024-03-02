@@ -388,12 +388,11 @@ class _BodySuccessState extends State<BodySuccess> {
           widget.options.length,
           constraints.maxWidth,
         );
-        if (widget.mediaType == MediaType(kTypeText, kSubTypeHtml)) {
+        if (widget.mediaType.subtype == kSubTypeHtml) {
           return Padding(
             padding: kP10,
             child: Column(
               children: [
-                kVSpacer10,
                 switch (currentSeg) {
                   ResponseBodyView.preview || ResponseBodyView.none => Expanded(
                       child: Container(

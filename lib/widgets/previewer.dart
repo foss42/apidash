@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:apidash/widgets/html_previewer.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:printing/printing.dart';
@@ -87,6 +88,9 @@ class _PreviewerState extends State<Previewer> {
     }
     if (widget.type == kTypeVideo) {
       // TODO: Video Player
+    }
+    if (widget.subtype == kSubTypeHtml) {
+      return HtmlPreviewer(htmlContent: widget.body);
     }
     String message = widget.hasRaw
         ? "$kMimeTypeRawRaiseIssueStart${widget.type}/${widget.subtype}$kMimeTypeRaiseIssue"
