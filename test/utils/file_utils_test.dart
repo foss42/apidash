@@ -18,7 +18,8 @@ void main() {
         // Default windows separator (\) causes issue with
         // hardcoded default with separator for Linux/MacOS (/)
         if (context.separator == '\\') {
-          shortPath = shortPath.replaceAll('\\', '/');
+          expect(shortPath, ".../C\\D.csv");
+          return;
         }
 
         expect(shortPath, ".../C/D.csv");
