@@ -74,4 +74,130 @@ public class Main {
 \n
 """;
 
+  String? getCode(
+    RequestModel requestModel,
+    String defaultUriScheme,
+  ) {
+    try {
+      String result = "";
+      bool hasBody = false;
+      bool hasJsonBody = false;
+
+      String url = requestModel.url;
+      if (!url.contains("://") && url.isNotEmpty) {
+        url = "$defaultUriScheme://$url";
+      }
+
+      var rec = getValidRequestUri(
+        url,
+        requestModel.enabledRequestParams,
+      );
+      Uri? uri = rec.$1;
+
+      if (uri == null) {
+        return "";
+      }
+
+      url = stripUriParams(uri);
+
+      // contains the HTTP method associated with the request
+      var method = requestModel.method;
+
+      // contains the entire request body as a string if body is present
+      var requestBody = requestModel.requestBody;
+
+      // generating the URL to which the request has to be submitted
+      var templateUrl = jj.Template(kTemplateUrl);
+      result += templateUrl.render({"url": url});
+
+      // creating request body if available
+      var rM = requestModel.copyWith(url: url);
+      var harJson = requestModelToHARJsonRequest(rM, useEnabled: true);
+
+      // if request type is not form data, the request method can include
+      // a body, and the body of the request is not null, in that case
+      // we need to parse the body as it is, and write it to the body
+      if (!requestModel.isFormDataRequest &&
+          kMethodsWithBody.contains(method) &&
+          requestBody != null) {
+        var contentLength = utf8.encode(requestBody).length;
+        if (contentLength > 0) {
+          var templateBodyContent = jj.Template(kTemplateRequestBodyContent);
+          hasBody = true;
+
+          // every JSON should be enclosed within a pair of curly braces
+          // very simple check for JSON, for stronger check, we may validate
+          // the JSON in the JSON editor itself
+          hasJsonBody =
+              requestBody.startsWith("{") && requestBody.endsWith("}");
+
+          if (harJson["postData"]?["text"] != null) {
+            result += templateBodyContent.render({
+              "body": kEncoder.convert(harJson["postData"]["text"]).substring(
+                  1, kEncoder.convert(harJson["postData"]["text"]).length - 1)
+            });
+          }
+        }
+      }
+
+      var templateRequestCreation = jj.Template(kTemplateRequestCreation);
+      result +=
+          templateRequestCreation.render({"method": method.name.toUpperCase()});
+
+      // setting up query parameters
+      if (uri.hasQuery) {
+        var params = uri.queryParameters;
+        var templateUrlQueryParam = jj.Template(kTemplateUrlQueryParam);
+        params.forEach((name, value) {
+          result +=
+              templateUrlQueryParam.render({"name": name, "value": value});
+        });
+      }
+
+      result = kTemplateStart + result;
+
+      var contentType = requestModel.requestBodyContentType.header;
+      var templateRequestHeader = jj.Template(kTemplateRequestHeader);
+
+      // especially sets up Content-Type header if the request has a body
+      // and Content-Type is not explicitely set by the developer
+      if (hasBody &&
+          !requestModel.enabledHeadersMap.containsKey('Content-Type')) {
+        result += templateRequestHeader
+            .render({"name": 'Content-Type', "value": contentType});
+      }
+
+      // setting up rest of the request headers
+      var headers = requestModel.enabledHeadersMap;
+      headers.forEach((name, value) {
+        result += templateRequestHeader.render({"name": name, "value": value});
+      });
+
+      // handling form data
+      if (requestModel.isFormDataRequest &&
+          requestModel.formDataMapList.isNotEmpty &&
+          kMethodsWithBody.contains(method)) {
+        // including form data into the request
+        var formDataList = requestModel.formDataMapList;
+        var templateRequestFormData = jj.Template(kTemplateRequestFormData);
+        for (var formDataMap in formDataList) {
+          result += templateRequestFormData.render(
+              {"name": formDataMap['name'], "value": formDataMap['value']});
+        }
+        hasBody = true;
+      }
+
+      var templateRequestBodySetup = jj.Template(kTemplateRequestBodySetup);
+      if (kMethodsWithBody.contains(method) && hasBody) {
+        result += templateRequestBodySetup.render();
+      }
+
+      var templateRequestBodyEnd = jj.Template(kTemplateRequestEnd);
+      result += templateRequestBodyEnd.render();
+
+      return result;
+    } catch (e) {
+      return null;
+    }
+  }
 }
