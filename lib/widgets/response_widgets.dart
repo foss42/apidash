@@ -388,6 +388,58 @@ class _BodySuccessState extends State<BodySuccess> {
           widget.options.length,
           constraints.maxWidth,
         );
+        if (widget.mediaType.mimeType == "text/html") {
+          return Padding(
+            padding: kP10,
+            child: Column(
+              children: [
+                kVSpacer10,
+                switch (currentSeg) {
+                  ResponseBodyView.preview || ResponseBodyView.none => Expanded(
+                      child: Container(
+                        width: double.maxFinite,
+                        padding: kP8,
+                        decoration: textContainerdecoration,
+                        child: Previewer(
+                          bytes: widget.bytes,
+                          body: widget.body,
+                          type: widget.mediaType.type,
+                          subtype: widget.mediaType.subtype,
+                          hasRaw: widget.options.contains(ResponseBodyView.raw),
+                        ),
+                      ),
+                    ),
+                  ResponseBodyView.code => Expanded(
+                      child: Container(
+                        width: double.maxFinite,
+                        padding: kP8,
+                        decoration: textContainerdecoration,
+                        child: CodePreviewer(
+                          code: widget.formattedBody ?? widget.body,
+                          theme: codeTheme,
+                          language: widget.highlightLanguage,
+                          textStyle: kCodeStyle,
+                        ),
+                      ),
+                    ),
+                  ResponseBodyView.raw => Expanded(
+                      child: Container(
+                        width: double.maxFinite,
+                        padding: kP8,
+                        decoration: textContainerdecoration,
+                        child: SingleChildScrollView(
+                          child: SelectableText(
+                            widget.formattedBody ?? widget.body,
+                            style: kCodeStyle,
+                          ),
+                        ),
+                      ),
+                    ),
+                }
+              ],
+            ),
+          );
+        }
         return Padding(
           padding: kP10,
           child: Column(
