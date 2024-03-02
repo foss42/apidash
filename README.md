@@ -185,10 +185,7 @@ Here is the complete list of mimetypes that are syntax highlighted in API Dash:
 | `text/html`        | `.html`   | Only syntax highlighting, no web preview.                                                                          |
 | `text/javascript`  | `.js`     |                                                                                                                    |
 | `text/markdown`    | `.md`     |                                                                                                                    |
-| `text/csv`         | `.
-csv`    | 
-Renders CSV in table format. 
-      |
+| `text/csv`         | `.csv`   | Renders CSV in tabular form                                                                 |
 
 ## What's new in v0.3.0?
 
