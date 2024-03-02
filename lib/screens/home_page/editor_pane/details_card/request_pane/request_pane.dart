@@ -24,6 +24,7 @@ class EditRequestPane extends ConsumerWidget {
         .select((value) => value?.requestBody?.length));
 
     return RequestPane(
+      ref: ref,
       selectedId: selectedId,
       codePaneVisible: codePaneVisible,
       tabIndex: tabIndex,

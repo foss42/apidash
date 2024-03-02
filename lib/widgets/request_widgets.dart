@@ -1,5 +1,7 @@
+import 'package:apidash/providers/collection_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'tabs.dart';
 
 class RequestPane extends StatefulWidget {
@@ -11,6 +13,7 @@ class RequestPane extends StatefulWidget {
     this.onPressedCodeButton,
     this.onTapTabBar,
     required this.children,
+    required this.ref,
     this.showIndicators = const [false, false, false],
   });
 
@@ -21,6 +24,7 @@ class RequestPane extends StatefulWidget {
   final void Function(int)? onTapTabBar;
   final List<Widget> children;
   final List<bool> showIndicators;
+  final WidgetRef ref;
 
   @override
   State<RequestPane> createState() => _RequestPaneState();
@@ -45,6 +49,10 @@ class _RequestPaneState extends State<RequestPane>
     if (widget.tabIndex != null) {
       _controller.index = widget.tabIndex!;
     }
+    final selectedId = widget.ref.watch(selectedIdStateProvider);
+    final requestModel = widget.ref
+        .read(collectionStateNotifierProvider.notifier)
+        .getRequestModel(selectedId!);
     return Column(
       children: [
         Padding(
@@ -90,7 +98,8 @@ class _RequestPaneState extends State<RequestPane>
               showIndicator: widget.showIndicators[1],
             ),
             TabLabel(
-              text: 'Body',
+              text:requestModel?.method == HTTPVerb
+              .graphql ?'Query':'Body',
               showIndicator: widget.showIndicators[2],
             ),
           ],

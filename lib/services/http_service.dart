@@ -81,6 +81,15 @@ Future<(http.Response?, Duration?, String?)> request(
           response =
               await http.delete(requestUrl, headers: headers, body: body);
           break;
+        case HTTPVerb.graphql:
+          String requestBody =
+              '{"query": "${body!.trim()}"}';
+          final int contentLength = utf8.encode(requestBody).length;
+          headers[HttpHeaders.contentTypeHeader] = 'application/json';
+          headers[HttpHeaders.contentLengthHeader] = contentLength.toString();
+          response =
+              await http.post(requestUrl, headers: headers, body: requestBody);
+          break;
       }
       stopwatch.stop();
       return (response, stopwatch.elapsed, null);

@@ -241,10 +241,11 @@ final kColorHttpMethodPost = Colors.blue.shade800;
 final kColorHttpMethodPut = Colors.amber.shade900;
 final kColorHttpMethodPatch = kColorHttpMethodPut;
 final kColorHttpMethodDelete = Colors.red.shade800;
+final kColorHttpMethodGraphQL = Colors.green.shade800;
 
 enum RequestItemMenuOption { edit, delete, duplicate }
 
-enum HTTPVerb { get, head, post, put, patch, delete }
+enum HTTPVerb { get, head, post, put, patch, delete , graphql }
 
 enum FormDataType { text, file }
 
@@ -255,6 +256,7 @@ const kMethodsWithBody = [
   HTTPVerb.put,
   HTTPVerb.patch,
   HTTPVerb.delete,
+  HTTPVerb.graphql,
 ];
 
 const kDefaultHttpMethod = HTTPVerb.get;

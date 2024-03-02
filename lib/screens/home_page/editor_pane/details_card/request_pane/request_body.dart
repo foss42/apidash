@@ -24,18 +24,19 @@ class EditRequestBody extends ConsumerWidget {
       margin: kPt5o10,
       child: Column(
         children: [
-          const SizedBox(
-            height: kHeaderHeight,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "Select Content Type:",
-                ),
-                DropdownButtonBodyContentType(),
-              ],
-            ),
-          ),
+          SizedBox(
+              height: kHeaderHeight,
+              child: requestModel!.method != HTTPVerb.graphql
+                  ? const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Select Content Type:",
+                        ),
+                        DropdownButtonBodyContentType(),
+                      ],
+                    )
+                  : const Text("Enter the query")),
           Expanded(
             child: switch (contentType) {
               ContentType.formdata => const FormDataWidget(),
@@ -43,7 +44,7 @@ class EditRequestBody extends ConsumerWidget {
               ContentType.json => TextFieldEditor(
                   key: Key("$selectedId-json-body"),
                   fieldKey: "$selectedId-json-body-editor",
-                  initialValue: requestModel?.requestBody,
+                  initialValue: requestModel.requestBody,
                   onChanged: (String value) {
                     ref
                         .read(collectionStateNotifierProvider.notifier)
@@ -53,7 +54,7 @@ class EditRequestBody extends ConsumerWidget {
               _ => TextFieldEditor(
                   key: Key("$selectedId-body"),
                   fieldKey: "$selectedId-body-editor",
-                  initialValue: requestModel?.requestBody,
+                  initialValue: requestModel.requestBody,
                   onChanged: (String value) {
                     ref
                         .read(collectionStateNotifierProvider.notifier)

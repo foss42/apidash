@@ -46,6 +46,9 @@ Color getHTTPMethodColor(HTTPVerb method,
     case HTTPVerb.delete:
       col = kColorHttpMethodDelete;
       break;
+    case HTTPVerb.graphql:
+      col = kColorHttpMethodGraphQL;
+      break;
   }
   if (brightness == Brightness.dark) {
     col = getDarkModeColor(col);
