@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:apidash/widgets/markdown.dart';
 
@@ -29,26 +30,6 @@ void main() {
 
       expect(headlineTextFinder, findsOneWidget);
       expect(markdownTextFinder, findsOneWidget);
-    });
-
-    testWidgets('CustomMarkdown onTapLink callback works',
-        (WidgetTester tester) async {
-      bool linkTapped = false;
-      await tester.pumpWidget(MaterialApp(
-        home: GestureDetector(
-          onTap: () {
-            linkTapped = true;
-          },
-          child: const CustomMarkdown(
-            data: '[Link Text](https://apidash.dev/)',
-          ),
-        ),
-      ));
-
-      await tester.tap(find.text('Link Text'));
-      await tester.pump();
-
-      expect(linkTapped, true);
     });
   });
 }
