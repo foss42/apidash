@@ -388,7 +388,7 @@ class _BodySuccessState extends State<BodySuccess> {
           widget.options.length,
           constraints.maxWidth,
         );
-        if (widget.mediaType.mimeType == "text/html") {
+        if (widget.mediaType == MediaType(kTypeText, kSubTypeHtml)) {
           return Padding(
             padding: kP10,
             child: Column(
