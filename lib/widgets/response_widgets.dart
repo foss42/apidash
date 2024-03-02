@@ -1,12 +1,16 @@
+import 'package:apidash/providers/collection_providers.dart';
+import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/html_previewer.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:lottie/lottie.dart';
 import 'package:apidash/utils/utils.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
+import 'package:provider/provider.dart';
 
 class NotSentWidget extends StatelessWidget {
   const NotSentWidget({super.key});
@@ -344,7 +348,7 @@ class ResponseBody extends StatelessWidget {
   }
 }
 
-class BodySuccess extends StatefulWidget {
+class BodySuccess extends ConsumerStatefulWidget {
   const BodySuccess(
       {super.key,
       required this.mediaType,
@@ -360,14 +364,20 @@ class BodySuccess extends StatefulWidget {
   final String? formattedBody;
   final String? highlightLanguage;
   @override
-  State<BodySuccess> createState() => _BodySuccessState();
+  ConsumerState<BodySuccess> createState() => _BodySuccessState();
 }
 
-class _BodySuccessState extends State<BodySuccess> {
+class _BodySuccessState extends ConsumerState<BodySuccess> {
   int segmentIdx = 0;
+  @override
+  void initState() {
+    super.initState();
+    ref.read(selectedRequestModelProvider);
+  }
 
   @override
   Widget build(BuildContext context) {
+    final String url = ref.watch(selectedRequestModelProvider)!.url;
     var currentSeg = widget.options[segmentIdx];
     var codeTheme = Theme.of(context).brightness == Brightness.light
         ? kLightCodeTheme
@@ -389,79 +399,64 @@ class _BodySuccessState extends State<BodySuccess> {
           widget.options.length,
           constraints.maxWidth,
         );
-        if (widget.mediaType.subtype == kSubTypeHtml &&
-            widget.mediaType.type == kTypeText) {
-          return Padding(
-            padding: kP10,
-            child: Column(
-              children: [
-                switch (currentSeg) {
-                  ResponseBodyView.preview ||
-                  ResponseBodyView.none =>
-                    Container(),
-                  ResponseBodyView.code => Expanded(
-                      child: Container(
-                          width: double.maxFinite,
-                          padding: kP8,
-                          decoration: textContainerdecoration,
-                          child: const HtmlPreviewer(
-                              url: "https://fluttergems.dev/")),
-                    ),
-                  ResponseBodyView.raw => Container()
-                }
-              ],
-            ),
-          );
-        }
+        final isHtmlResponse = widget.mediaType.type == kTypeText &&
+            widget.mediaType.subtype == kSubTypeHtml;
         return Padding(
           padding: kP10,
           child: Column(
             children: [
-              Row(
-                children: [
-                  (widget.options == kRawBodyViewOptions)
-                      ? const SizedBox()
-                      : SegmentedButton<ResponseBodyView>(
-                          style: const ButtonStyle(
-                            padding: MaterialStatePropertyAll(
-                              EdgeInsets.symmetric(
-                                horizontal: 8,
-                              ),
+              !isHtmlResponse
+                  ? Column(
+                      children: [
+                        Row(
+                          children: [
+                            (widget.options == kRawBodyViewOptions)
+                                ? const SizedBox()
+                                : SegmentedButton<ResponseBodyView>(
+                                    style: const ButtonStyle(
+                                      padding: MaterialStatePropertyAll(
+                                        EdgeInsets.symmetric(
+                                          horizontal: 8,
+                                        ),
+                                      ),
+                                    ),
+                                    selectedIcon: Icon(currentSeg.icon),
+                                    segments: widget.options
+                                        .map<ButtonSegment<ResponseBodyView>>(
+                                          (e) =>
+                                              ButtonSegment<ResponseBodyView>(
+                                            value: e,
+                                            label: Text(e.label),
+                                            icon: Icon(e.icon),
+                                          ),
+                                        )
+                                        .toList(),
+                                    selected: {currentSeg},
+                                    onSelectionChanged: (newSelection) {
+                                      setState(() {
+                                        segmentIdx = widget.options
+                                            .indexOf(newSelection.first);
+                                      });
+                                    },
+                                  ),
+                            const Spacer(),
+                            kCodeRawBodyViewOptions.contains(currentSeg)
+                                ? CopyButton(
+                                    toCopy: widget.formattedBody ?? widget.body,
+                                    showLabel: showLabel,
+                                  )
+                                : const SizedBox(),
+                            SaveInDownloadsButton(
+                              content: widget.bytes,
+                              mimeType: widget.mediaType.mimeType,
+                              showLabel: showLabel,
                             ),
-                          ),
-                          selectedIcon: Icon(currentSeg.icon),
-                          segments: widget.options
-                              .map<ButtonSegment<ResponseBodyView>>(
-                                (e) => ButtonSegment<ResponseBodyView>(
-                                  value: e,
-                                  label: Text(e.label),
-                                  icon: Icon(e.icon),
-                                ),
-                              )
-                              .toList(),
-                          selected: {currentSeg},
-                          onSelectionChanged: (newSelection) {
-                            setState(() {
-                              segmentIdx =
-                                  widget.options.indexOf(newSelection.first);
-                            });
-                          },
+                          ],
                         ),
-                  const Spacer(),
-                  kCodeRawBodyViewOptions.contains(currentSeg)
-                      ? CopyButton(
-                          toCopy: widget.formattedBody ?? widget.body,
-                          showLabel: showLabel,
-                        )
-                      : const SizedBox(),
-                  SaveInDownloadsButton(
-                    content: widget.bytes,
-                    mimeType: widget.mediaType.mimeType,
-                    showLabel: showLabel,
-                  ),
-                ],
-              ),
-              kVSpacer10,
+                        kVSpacer10
+                      ],
+                    )
+                  : Container(),
               switch (currentSeg) {
                 ResponseBodyView.preview || ResponseBodyView.none => Expanded(
                     child: Container(
@@ -482,12 +477,14 @@ class _BodySuccessState extends State<BodySuccess> {
                       width: double.maxFinite,
                       padding: kP8,
                       decoration: textContainerdecoration,
-                      child: CodePreviewer(
-                        code: widget.formattedBody ?? widget.body,
-                        theme: codeTheme,
-                        language: widget.highlightLanguage,
-                        textStyle: kCodeStyle,
-                      ),
+                      child: !isHtmlResponse
+                          ? CodePreviewer(
+                              code: widget.formattedBody ?? widget.body,
+                              theme: codeTheme,
+                              language: widget.highlightLanguage,
+                              textStyle: kCodeStyle,
+                            )
+                          : HtmlPreviewer(url: url),
                     ),
                   ),
                 ResponseBodyView.raw => Expanded(

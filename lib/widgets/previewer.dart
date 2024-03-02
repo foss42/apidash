@@ -89,9 +89,6 @@ class _PreviewerState extends State<Previewer> {
     if (widget.type == kTypeVideo) {
       // TODO: Video Player
     }
-    if (widget.subtype == kSubTypeHtml) {
-      return HtmlPreviewer(url: widget.body);
-    }
     String message = widget.hasRaw
         ? "$kMimeTypeRawRaiseIssueStart${widget.type}/${widget.subtype}$kMimeTypeRaiseIssue"
         : "$kMimeTypeRaiseIssueStart${widget.type}/${widget.subtype}$kMimeTypeRaiseIssue";
