@@ -1,3 +1,4 @@
+import 'package:apidash/codegen/cpp/libcurl.dart';
 import 'package:apidash/models/models.dart' show RequestModel;
 import 'package:apidash/consts.dart';
 import 'dart/http.dart';
@@ -30,18 +31,17 @@ class Codegen {
       case CodegenLanguage.jsFetch:
         return FetchCodeGen().getCode(requestModel, defaultUriScheme);
       case CodegenLanguage.nodejsAxios:
-        return AxiosCodeGen(isNodeJs: true)
-            .getCode(requestModel, defaultUriScheme);
+        return AxiosCodeGen(isNodeJs: true).getCode(requestModel, defaultUriScheme);
       case CodegenLanguage.nodejsFetch:
-        return FetchCodeGen(isNodeJs: true)
-            .getCode(requestModel, defaultUriScheme);
+        return FetchCodeGen(isNodeJs: true).getCode(requestModel, defaultUriScheme);
       case CodegenLanguage.kotlinOkHttp:
         return KotlinOkHttpCodeGen().getCode(requestModel, defaultUriScheme);
       case CodegenLanguage.pythonHttpClient:
-        return PythonHttpClientCodeGen()
-            .getCode(requestModel, defaultUriScheme);
+        return PythonHttpClientCodeGen().getCode(requestModel, defaultUriScheme);
       case CodegenLanguage.pythonRequests:
         return PythonRequestsCodeGen().getCode(requestModel, defaultUriScheme);
+      case CodegenLanguage.cppLibcurl:
+        return CppLibcurlCodeGen().getCode(requestModel, defaultUriScheme);
     }
   }
 }
