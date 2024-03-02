@@ -1,5 +1,6 @@
 import 'package:apidash/codegen/codegen.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash/screens/home_page/editor_pane/details_card/code_pane.dart';
 import '../request_models.dart';
 import 'package:test/test.dart';
 
@@ -9,8 +10,7 @@ void main() {
   group('Test various Code generators', () {
     test('cURL', () {
       const expectedCode = r"""curl --url 'https://api.foss42.com'""";
-      expect(codeGen.getCode(CodegenLanguage.curl, requestModelGet1, "https"),
-          expectedCode);
+      expect(codeGen.getCode(CodegenLanguage.curl, requestModelGet1, "https"), expectedCode);
     });
 
     test('Dart Dio', () {
@@ -31,9 +31,7 @@ void main() async {
   }
 }
 """;
-      expect(
-          codeGen.getCode(CodegenLanguage.dartDio, requestModelGet1, "https"),
-          expectedCode);
+      expect(codeGen.getCode(CodegenLanguage.dartDio, requestModelGet1, "https"), expectedCode);
     });
 
     test('Dart HTTP', () {
@@ -54,9 +52,7 @@ void main() async {
   }
 }
 """;
-      expect(
-          codeGen.getCode(CodegenLanguage.dartHttp, requestModelGet1, "https"),
-          expectedCode);
+      expect(codeGen.getCode(CodegenLanguage.dartHttp, requestModelGet1, "https"), expectedCode);
     });
 
     test('HAR', () {
@@ -67,8 +63,7 @@ void main() async {
   "queryString": [],
   "headers": []
 }""";
-      expect(codeGen.getCode(CodegenLanguage.har, requestModelGet1, "https"),
-          expectedCode);
+      expect(codeGen.getCode(CodegenLanguage.har, requestModelGet1, "https"), expectedCode);
     });
 
     test('JS Axios', () {
@@ -89,9 +84,7 @@ axios(config)
         console.log(error);
     });
 """;
-      expect(
-          codeGen.getCode(CodegenLanguage.jsAxios, requestModelGet1, "https"),
-          expectedCode);
+      expect(codeGen.getCode(CodegenLanguage.jsAxios, requestModelGet1, "https"), expectedCode);
     });
 
     test('JS Fetch', () {
@@ -116,9 +109,7 @@ fetch(url, options)
         console.error('error:' + err);
     });
 """;
-      expect(
-          codeGen.getCode(CodegenLanguage.jsFetch, requestModelGet1, "https"),
-          expectedCode);
+      expect(codeGen.getCode(CodegenLanguage.jsFetch, requestModelGet1, "https"), expectedCode);
     });
 
     test('Kotlin OkHttp', () {
@@ -142,9 +133,7 @@ fun main() {
 }
 """;
       expect(
-          codeGen.getCode(
-              CodegenLanguage.kotlinOkHttp, requestModelGet1, "https"),
-          expectedCode);
+          codeGen.getCode(CodegenLanguage.kotlinOkHttp, requestModelGet1, "https"), expectedCode);
     });
 
     test('NodeJs Axios', () {
@@ -167,10 +156,7 @@ axios(config)
         console.log(error);
     });
 """;
-      expect(
-          codeGen.getCode(
-              CodegenLanguage.nodejsAxios, requestModelGet1, "https"),
-          expectedCode);
+      expect(codeGen.getCode(CodegenLanguage.nodejsAxios, requestModelGet1, "https"), expectedCode);
     });
 
     test('Nodejs Fetch', () {
@@ -197,10 +183,7 @@ fetch(url, options)
         console.error('error:' + err);
     });
 """;
-      expect(
-          codeGen.getCode(
-              CodegenLanguage.nodejsFetch, requestModelGet1, "https"),
-          expectedCode);
+      expect(codeGen.getCode(CodegenLanguage.nodejsFetch, requestModelGet1, "https"), expectedCode);
     });
 
     test('Python http.client', () {
@@ -214,9 +197,7 @@ data = res.read()
 
 print(data.decode("utf-8"))
 """;
-      expect(
-          codeGen.getCode(
-              CodegenLanguage.pythonHttpClient, requestModelGet1, "https"),
+      expect(codeGen.getCode(CodegenLanguage.pythonHttpClient, requestModelGet1, "https"),
           expectedCode);
     });
 
@@ -231,8 +212,30 @@ print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
       expect(
-          codeGen.getCode(
-              CodegenLanguage.pythonRequests, requestModelGet1, "https"),
+          codeGen.getCode(CodegenLanguage.pythonRequests, requestModelGet1, "https"), expectedCode);
+    });
+
+    test('C# requests', () {
+      const expectedCode = r"""
+using System;
+using System.Text;
+using System.Net.Http;
+using System.Threading.Tasks;
+
+string url = "https://api.foss42.com";
+HttpMethod method = HttpMethod.Get;
+
+using (HttpClient client = new HttpClient())
+{
+    HttpRequestMessage request = new HttpRequestMessage(method, url);
+
+    HttpResponseMessage response = await client.SendAsync(request);
+    string responseBody = await response.Content.ReadAsStringAsync();
+
+    Console.WriteLine(responseBody);
+}
+""";
+      expect(codegen.getCode(CodegenLanguage.csharpHttpClient, requestModelGet1, "https"),
           expectedCode);
     });
   });

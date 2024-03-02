@@ -1,5 +1,4 @@
 import 'package:apidash/codegen/csharp/http_client.dart';
-import 'package:apidash/codegen/python/http_client.dart';
 import '../request_models.dart';
 import 'package:test/test.dart';
 
