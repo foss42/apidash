@@ -7,7 +7,11 @@ import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 import 'error_message.dart';
 import 'uint8_audio_player.dart';
 import 'json_previewer.dart';
+<<<<<<< HEAD
 import 'video_previewer.dart';
+=======
+import 'csv_previewer.dart';
+>>>>>>> origin/main
 import '../consts.dart';
 
 class Previewer extends StatefulWidget {
@@ -84,7 +88,13 @@ class _PreviewerState extends State<Previewer> {
         },
       );
     }
+<<<<<<< HEAD
 
+=======
+    if (widget.type == kTypeText && widget.subtype == kSubTypeCsv) {
+      return CsvPreviewer(body: widget.body);
+    }
+>>>>>>> origin/main
     if (widget.type == kTypeVideo) {
       if(widget.videoUrl == null) return const ErrorMessage(message: kVideoError);
       String videoUrl = widget.videoUrl!;
