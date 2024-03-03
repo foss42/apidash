@@ -1,3 +1,4 @@
+import 'package:apidash/codegen/kotlin/retrofit.dart';
 import 'package:apidash/models/models.dart' show RequestModel;
 import 'package:apidash/consts.dart';
 import 'dart/http.dart';
@@ -37,6 +38,8 @@ class Codegen {
             .getCode(requestModel, defaultUriScheme);
       case CodegenLanguage.kotlinOkHttp:
         return KotlinOkHttpCodeGen().getCode(requestModel, defaultUriScheme);
+      case CodegenLanguage.kotlinRetrofit:
+        return KotlinRetrofitCodeGen().getCode(requestModel, defaultUriScheme);
       case CodegenLanguage.pythonHttpClient:
         return PythonHttpClientCodeGen()
             .getCode(requestModel, defaultUriScheme);
