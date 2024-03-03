@@ -7,6 +7,7 @@ import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 import 'error_message.dart';
 import 'uint8_audio_player.dart';
 import 'json_previewer.dart';
+import 'video_previewer.dart';
 import '../consts.dart';
 
 class Previewer extends StatefulWidget {
@@ -17,6 +18,7 @@ class Previewer extends StatefulWidget {
     this.type,
     this.subtype,
     this.hasRaw = false,
+    this.videoUrl
   });
 
   final Uint8List bytes;
@@ -24,6 +26,7 @@ class Previewer extends StatefulWidget {
   final String? type;
   final String? subtype;
   final bool hasRaw;
+  final String? videoUrl;
 
   @override
   State<Previewer> createState() => _PreviewerState();
@@ -81,9 +84,18 @@ class _PreviewerState extends State<Previewer> {
         },
       );
     }
+
     if (widget.type == kTypeVideo) {
-      // TODO: Video Player
+      if(widget.videoUrl == null) return const ErrorMessage(message: kVideoError);
+      String videoUrl = widget.videoUrl!;
+      try {
+        var preview = VideoPreviewer(videoUrl: videoUrl);
+        return preview;
+      } catch (e) {
+        return const ErrorMessage(message: kVideoError);
+      }
     }
+
     String message = widget.hasRaw
         ? "$kMimeTypeRawRaiseIssueStart${widget.type}/${widget.subtype}$kMimeTypeRaiseIssue"
         : "$kMimeTypeRaiseIssueStart${widget.type}/${widget.subtype}$kMimeTypeRaiseIssue";

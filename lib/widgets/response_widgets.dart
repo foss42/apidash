@@ -339,6 +339,7 @@ class ResponseBody extends StatelessWidget {
       body: body,
       formattedBody: formattedBody,
       highlightLanguage: highlightLanguage,
+      videoUrl: selectedRequestModel!.url,
     );
   }
 }
@@ -351,13 +352,15 @@ class BodySuccess extends StatefulWidget {
       required this.options,
       required this.bytes,
       this.formattedBody,
-      this.highlightLanguage});
+      this.highlightLanguage,
+      this.videoUrl});
   final MediaType mediaType;
   final List<ResponseBodyView> options;
   final String body;
   final Uint8List bytes;
   final String? formattedBody;
   final String? highlightLanguage;
+  final String? videoUrl; 
   @override
   State<BodySuccess> createState() => _BodySuccessState();
 }
@@ -448,6 +451,7 @@ class _BodySuccessState extends State<BodySuccess> {
                         body: widget.body,
                         type: widget.mediaType.type,
                         subtype: widget.mediaType.subtype,
+                        videoUrl: widget.videoUrl, // Pass the videoUrl here
                         hasRaw: widget.options.contains(ResponseBodyView.raw),
                       ),
                     ),

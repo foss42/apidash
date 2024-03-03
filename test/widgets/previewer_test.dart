@@ -1,3 +1,4 @@
+import 'package:apidash/widgets/video_previewer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:apidash/widgets/widgets.dart';
@@ -59,14 +60,12 @@ void main() {
             subtype: 'H264',
             bytes: bytes1,
             body: "",
+            videoUrl: "www.example.com/video.mp4",
           ),
         ),
       ),
     );
-
-    expect(
-        find.text("${kMimeTypeRaiseIssueStart}video/H264$kMimeTypeRaiseIssue"),
-        findsOneWidget);
+    expect(find.byType(VideoPreviewer), findsOneWidget); 
   });
 
   testWidgets('Testing when type/subtype is model/step+xml', (tester) async {
