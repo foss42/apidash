@@ -137,6 +137,7 @@ Here is the complete list of mimetypes that can be directly previewed in API Das
 | File Type | Mimetype                   | Extension         | Comment  |
 | --------- | -------------------------- | ----------------- | -------- |
 | PDF       | `application/pdf`          | `.pdf`            |          |
+| CSV       | `text/csv`                 | `.csv`            | Can be improved |
 | Image     | `image/apng`               | `.apng`           | Animated |
 | Image     | `image/avif`               | `.avif`           |          |
 | Image     | `image/bmp`                | `.bmp`            |          |
@@ -177,15 +178,14 @@ Here is the complete list of mimetypes that are syntax highlighted in API Dash:
 | ------------------ | --------- | ------------------------------------------------------------------------------------------------------------------ |
 | `application/json` | `.json`   | Other mimetypes like `application/geo+json`, `application/vcard+json` that are based on `json` are also supported. |
 | `application/xml`  | `.xml`    | Other mimetypes like `application/xhtml+xml`, `application/vcard+xml` that are based on `xml` are also supported.  |
-| `text/xml`         | `.xml`    |                                                                                                                    |
-| `application/yaml` | `.yaml`   | Others - `application/x-yaml` or `application/x-yml`                                                               |
-| `text/yaml`        | `.yaml`   | Others - `text/yml`                                                                                                |
-| `application/sql`  | `.sql`    |                                                                                                                    |
-| `text/css`         | `.css`    |                                                                                                                    |
-| `text/html`        | `.html`   | Only syntax highlighting, no web preview.                                                                          |
-| `text/javascript`  | `.js`     |                                                                                                                    |
-| `text/markdown`    | `.md`     |                                                                                                                    |
-| `text/csv`         | `.csv`   | Renders CSV in tabular format                                                              |
+| `text/xml`         | `.xml`    |  |
+| `application/yaml` | `.yaml`   | Others - `application/x-yaml` or `application/x-yml` |
+| `text/yaml`        | `.yaml`   | Others - `text/yml` |
+| `application/sql`  | `.sql`    |  |
+| `text/css`         | `.css`    |  |
+| `text/html`        | `.html`   | Only syntax highlighting, no web preview. |
+| `text/javascript`  | `.js`     |  |
+| `text/markdown`    | `.md`     |  |
 
 ## What's new in v0.3.0?
 
