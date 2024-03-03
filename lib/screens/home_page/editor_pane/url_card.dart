@@ -81,6 +81,11 @@ class URLTextField extends ConsumerWidget {
             .read(collectionStateNotifierProvider.notifier)
             .update(selectedId, url: value);
       },
+      onFieldSubmitted: (value) {
+        ref
+            .read(collectionStateNotifierProvider.notifier)
+            .sendRequest(selectedId);
+      },
     );
   }
 }

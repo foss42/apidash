@@ -7,11 +7,13 @@ class URLField extends StatelessWidget {
     required this.selectedId,
     this.initialValue,
     this.onChanged,
+    this.onFieldSubmitted,
   });
 
   final String selectedId;
   final String? initialValue;
   final void Function(String)? onChanged;
+  final void Function(String)? onFieldSubmitted;
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +31,7 @@ class URLField extends StatelessWidget {
         border: InputBorder.none,
       ),
       onChanged: onChanged,
+      onFieldSubmitted: onFieldSubmitted,
     );
   }
 }
