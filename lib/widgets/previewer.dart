@@ -85,13 +85,10 @@ class _PreviewerState extends State<Previewer> {
         },
       );
     }
-<<<<<<< HEAD
 
-=======
     if (widget.type == kTypeText && widget.subtype == kSubTypeCsv) {
       return CsvPreviewer(body: widget.body);
     }
->>>>>>> origin/main
     if (widget.type == kTypeVideo) {
       if(widget.videoUrl == null) return const ErrorMessage(message: kVideoError);
       String videoUrl = widget.videoUrl!;
