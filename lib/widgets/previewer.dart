@@ -7,11 +7,8 @@ import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 import 'error_message.dart';
 import 'uint8_audio_player.dart';
 import 'json_previewer.dart';
-<<<<<<< HEAD
 import 'video_previewer.dart';
-=======
 import 'csv_previewer.dart';
->>>>>>> origin/main
 import '../consts.dart';
 
 class Previewer extends StatefulWidget {
