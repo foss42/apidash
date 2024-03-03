@@ -4,19 +4,21 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:apidash/widgets/markdown.dart';
 
 void main() {
-  testWidgets('Testing CustomMarkdown', (tester) async {
-    const markdown = CustomMarkdown(
-      data: """Is a markdown ~`star on github`~ 
+  group('CustomMarkdown Widget Tests', () {
+    testWidgets('Testing CustomMarkdown buttons and tags renders', (tester) async {
+      const markdown = CustomMarkdown(
+        data: """Is a markdown ~`star on github`~ 
               
               #br
               #br
 
               ~`github repo`~ ~`Discord Server`~""",
-    );
-    await tester.pumpWidget(const MaterialApp(home: markdown));
-  });
+      );
+      await tester.pumpWidget(const MaterialApp(home: markdown));
 
-  group('CustomMarkdown Widget Tests', () {
+      expect(find.byType(InlineButton), findsNWidgets(3));
+      expect(find.text('#br'), findsNothing);
+    });
     testWidgets('CustomMarkdown renders correctly',
         (WidgetTester tester) async {
       await tester.pumpWidget(const MaterialApp(
@@ -58,8 +60,8 @@ void main() {
           data: '[Link Text](https://apidash.dev/)',
           onTapLink: (text, href, title) {
             linkTapped = true;
-            expect(text, 'Link Text'); 
-            expect(href, 'https://apidash.dev/'); 
+            expect(text, 'Link Text');
+            expect(href, 'https://apidash.dev/');
           },
         ),
       ));
