@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
-import 'tabs.dart';
+import '../tabs.dart';
 
-class RequestPane extends StatefulWidget {
-  const RequestPane({
+class MQTTRequestPane extends StatefulWidget {
+  const MQTTRequestPane({
     super.key,
     required this.selectedId,
-    required this.codePaneVisible,
     this.tabIndex,
-    this.onPressedCodeButton,
     this.onTapTabBar,
     required this.children,
     this.showIndicators = const [false, false, false],
@@ -17,18 +15,16 @@ class RequestPane extends StatefulWidget {
 
   final List<String> tabLabels;
   final String? selectedId;
-  final bool codePaneVisible;
   final int? tabIndex;
-  final void Function()? onPressedCodeButton;
   final void Function(int)? onTapTabBar;
   final List<Widget> children;
   final List<bool> showIndicators;
 
   @override
-  State<RequestPane> createState() => _RequestPaneState();
+  State<MQTTRequestPane> createState() => _MQTTRequestPaneState();
 }
 
-class _RequestPaneState extends State<RequestPane>
+class _MQTTRequestPaneState extends State<MQTTRequestPane>
     with TickerProviderStateMixin {
   late final TabController _controller;
 
@@ -60,19 +56,19 @@ class _RequestPaneState extends State<RequestPane>
                   "Request",
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
-                FilledButton.tonalIcon(
-                  onPressed: widget.onPressedCodeButton,
-                  icon: Icon(
-                    widget.codePaneVisible
-                        ? Icons.code_off_rounded
-                        : Icons.code_rounded,
-                  ),
-                  label: SizedBox(
-                    width: 75,
-                    child: Text(
-                        widget.codePaneVisible ? "Hide Code" : "View Code"),
-                  ),
-                ),
+                // FilledButton.tonalIcon(
+                //   onPressed: widget.onPressedCodeButton,
+                //   icon: Icon(
+                //     widget.codePaneVisible
+                //         ? Icons.code_off_rounded
+                //         : Icons.code_rounded,
+                //   ),
+                //   label: SizedBox(
+                //     width: 75,
+                //     child: Text(
+                //         widget.codePaneVisible ? "Hide Code" : "View Code"),
+                //   ),
+                // ),
               ],
             ),
           ),

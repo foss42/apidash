@@ -1,13 +1,23 @@
+import 'package:apidash/models/mqtt/mqtt_topic_model.dart';
+import 'package:apidash/services/mqtt_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mqtt_client/mqtt_client.dart';
+import 'package:mqtt_client/mqtt_server_client.dart';
 import 'settings_providers.dart';
 import 'ui_providers.dart';
 import '../models/models.dart';
-import '../services/services.dart' show hiveHandler, HiveHandler, request;
+import '../services/services.dart'
+    show HiveHandler, connectToMqttServer, hiveHandler, request;
 import '../utils/utils.dart' show uuid, collectionToHAR;
 import '../consts.dart';
 import 'package:http/http.dart' as http;
 
 final selectedIdStateProvider = StateProvider<String?>((ref) => null);
+
+final realtimeConnectionStateProvider = StateProvider<RealtimeConnectionState?>(
+    (ref) => RealtimeConnectionState.disconnected);
+final realtimeHistoryStateProvider =
+    StateProvider<List<Map<String, String>>>((ref) => []);
 
 final selectedRequestModelProvider = StateProvider<RequestModel?>((ref) {
   final selectedId = ref.watch(selectedIdStateProvider);
@@ -27,6 +37,9 @@ final requestSequenceProvider = StateProvider<List<String>>((ref) {
 final StateNotifierProvider<CollectionStateNotifier, Map<String, RequestModel>?>
     collectionStateNotifierProvider =
     StateNotifierProvider((ref) => CollectionStateNotifier(ref, hiveHandler));
+final subscribedTopicsStateProvider =
+    StateProvider<List<MQTTTopicModel>>((ref) => []);
+late MqttServerClient mqttClient;
 
 class CollectionStateNotifier
     extends StateNotifier<Map<String, RequestModel>?> {
@@ -117,6 +130,7 @@ class CollectionStateNotifier
 
   void update(
     String id, {
+    ProtocolType? protocol,
     HTTPVerb? method,
     String? url,
     String? name,
@@ -134,6 +148,7 @@ class CollectionStateNotifier
     ResponseModel? responseModel,
   }) {
     final newModel = state![id]!.copyWith(
+        protocol: protocol,
         method: method,
         url: url,
         name: name,
@@ -153,6 +168,85 @@ class CollectionStateNotifier
     var map = {...state!};
     map[id] = newModel;
     state = map;
+  }
+
+  Future<void> connectToBroker(String id) async {
+    ref.read(realtimeConnectionStateProvider.notifier).state =
+        RealtimeConnectionState.connecting;
+    ref.read(subscribedTopicsStateProvider.notifier).state = [];
+    ref.read(selectedIdStateProvider.notifier).state = id;
+    ref.read(realtimeHistoryStateProvider.notifier).state = [];
+    ref.read(sentRequestIdStateProvider.notifier).state = id;
+    ref.read(codePaneVisibleStateProvider.notifier).state = false;
+    RequestModel requestModel = state![id]!;
+    mqttClient =
+        await connectToMqttServer(broker: requestModel.url, clientId: 'mohit');
+    ref.read(realtimeHistoryStateProvider.notifier).state = [
+      {
+        "direction": 'info',
+        "message": 'Connected to broker',
+      },
+      ...ref.read(realtimeHistoryStateProvider)
+    ];
+    mqttClient.updates?.listen(
+      (List<MqttReceivedMessage<MqttMessage>> c) {
+        final MqttPublishMessage recMess = c[0].payload as MqttPublishMessage;
+        final String pt =
+            MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
+
+        // Update the history
+        ref.read(realtimeHistoryStateProvider.notifier).state = [
+          {
+            "direction": 'receive',
+            "message": pt,
+          },
+          ...ref.read(realtimeHistoryStateProvider),
+        ];
+        print('Received message: $pt from topic: ${c[0].topic}');
+      },
+    );
+    ref.read(realtimeConnectionStateProvider.notifier).state =
+        RealtimeConnectionState.connected;
+
+    var map = {...state!};
+    state = map;
+  }
+
+  Future<void> sendMessage(String id) async {
+    ref.read(subscribedTopicsStateProvider.notifier).state = [];
+    ref.read(codePaneVisibleStateProvider.notifier).state = false;
+    RequestModel requestModel = state![id]!;
+    publishMessage(
+        client: mqttClient,
+        topic: 'helloWorld',
+        message: requestModel.requestBody!,
+        qos: MqttQos.atLeastOnce);
+    // Update the history
+    ref.read(realtimeHistoryStateProvider.notifier).state = [
+      {
+        "direction": 'send',
+        "message": requestModel.requestBody!,
+      },
+      ...ref.read(realtimeHistoryStateProvider),
+    ];
+  }
+
+  Future<void> disconnectFromBroker(String id) async {
+    ref.read(realtimeConnectionStateProvider.notifier).state =
+        RealtimeConnectionState.disconnecting;
+    ref.read(subscribedTopicsStateProvider.notifier).state = [];
+    ref.read(selectedIdStateProvider.notifier).state = id;
+    ref.read(codePaneVisibleStateProvider.notifier).state = false;
+    await disconnectFromMqttServer(mqttClient);
+    ref.read(realtimeHistoryStateProvider.notifier).state = [
+      {
+        "direction": 'info',
+        "message": 'Disconneted from broker',
+      },
+      ...ref.read(realtimeHistoryStateProvider)
+    ];
+    ref.read(realtimeConnectionStateProvider.notifier).state =
+        RealtimeConnectionState.disconnected;
   }
 
   Future<void> sendRequest(String id) async {

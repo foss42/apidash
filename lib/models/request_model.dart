@@ -14,6 +14,7 @@ import 'models.dart';
 class RequestModel {
   const RequestModel({
     required this.id,
+    this.protocol = kDefaultProtocolType,
     this.method = HTTPVerb.get,
     this.url = "",
     this.name = "",
@@ -32,6 +33,7 @@ class RequestModel {
   });
 
   final String id;
+  final ProtocolType protocol;
   final HTTPVerb method;
   final String url;
   final String name;
@@ -75,6 +77,7 @@ class RequestModel {
       method: method,
       url: url,
       name: "$name (copy)",
+      protocol: protocol,
       description: description,
       requestHeaders: requestHeaders != null ? [...requestHeaders!] : null,
       requestParams: requestParams != null ? [...requestParams!] : null,
@@ -91,6 +94,7 @@ class RequestModel {
 
   RequestModel copyWith({
     String? id,
+    ProtocolType? protocol,
     HTTPVerb? method,
     String? url,
     String? name,
@@ -113,6 +117,7 @@ class RequestModel {
     var enabledParams = isParamEnabledList ?? this.isParamEnabledList;
     return RequestModel(
       id: id ?? this.id,
+      protocol: protocol ?? this.protocol,
       method: method ?? this.method,
       url: url ?? this.url,
       name: name ?? this.name,
@@ -133,11 +138,17 @@ class RequestModel {
   }
 
   factory RequestModel.fromJson(Map<String, dynamic> data) {
+    ProtocolType protocol;
     HTTPVerb method;
     ContentType requestBodyContentType;
     ResponseModel? responseModel;
 
     final id = data["id"] as String;
+    try {
+      protocol = ProtocolType.values.byName(data["protocol"] as String);
+    } catch (e) {
+      protocol = kDefaultProtocolType;
+    }
     try {
       method = HTTPVerb.values.byName(data["method"] as String);
     } catch (e) {
@@ -171,6 +182,7 @@ class RequestModel {
 
     return RequestModel(
       id: id,
+      protocol: protocol,
       method: method,
       url: url,
       name: name ?? "",
@@ -198,6 +210,7 @@ class RequestModel {
   Map<String, dynamic> toJson({bool includeResponse = true}) {
     return {
       "id": id,
+      "protocol": protocol.name,
       "method": method.name,
       "url": url,
       "name": name,
@@ -219,6 +232,7 @@ class RequestModel {
   String toString() {
     return [
       "Request Id: $id",
+      "Request Protocol: ${protocol.name}",
       "Request Method: ${method.name}",
       "Request URL: $url",
       "Request Name: $name",
@@ -242,6 +256,7 @@ class RequestModel {
     return other is RequestModel &&
         other.runtimeType == runtimeType &&
         other.id == id &&
+        other.protocol == protocol &&
         other.method == method &&
         other.url == url &&
         other.name == name &&
@@ -264,6 +279,7 @@ class RequestModel {
     return Object.hash(
       runtimeType,
       id,
+      protocol,
       method,
       url,
       name,

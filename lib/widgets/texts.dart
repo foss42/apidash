@@ -32,3 +32,27 @@ class MethodBox extends StatelessWidget {
     );
   }
 }
+
+class ProtocolBox extends StatelessWidget {
+  const ProtocolBox({super.key, required this.protocol});
+  final ProtocolType protocol;
+
+  @override
+  Widget build(BuildContext context) {
+    String text = protocol.name.toUpperCase();
+    return SizedBox(
+      width: 24,
+      child: Text(
+        text,
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontSize: 8,
+          fontWeight: FontWeight.bold,
+          color: Theme.of(context).brightness == Brightness.dark
+              ? getDarkModeColor(Colors.white)
+              : Colors.white,
+        ),
+      ),
+    );
+  }
+}

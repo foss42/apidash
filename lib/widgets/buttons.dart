@@ -82,6 +82,105 @@ class SendRequestButton extends StatelessWidget {
   }
 }
 
+class SendMessageButton extends StatelessWidget {
+  const SendMessageButton({
+    super.key,
+    required this.selectedId,
+    required this.sentRequestId,
+    required this.onTap,
+  });
+
+  final String? selectedId;
+  final String? sentRequestId;
+  final void Function() onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    bool disable = sentRequestId == null;
+    return FilledButton(
+      onPressed: disable ? null : onTap,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            disable
+                ? (sentRequestId != null ? kLabelSending : kLabelBusy)
+                : kLabelSend,
+            style: kTextStyleButton,
+          ),
+          if (!disable) kHSpacer10,
+          if (!disable)
+            const Icon(
+              size: 16,
+              Icons.send,
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class ConnectRequestButton extends StatelessWidget {
+  const ConnectRequestButton({
+    super.key,
+    required this.selectedId,
+    required this.sentRequestId,
+    required this.onConnect,
+    required this.onDisconnect,
+    required this.connectionState,
+  });
+
+  final String? selectedId;
+  final String? sentRequestId;
+  final void Function() onConnect;
+  final void Function() onDisconnect;
+  final RealtimeConnectionState connectionState;
+
+  @override
+  Widget build(BuildContext context) {
+    bool disable = connectionState == RealtimeConnectionState.connecting ||
+        connectionState == RealtimeConnectionState.disconnecting;
+    String label;
+    void Function()? onTap;
+
+    switch (connectionState) {
+      case RealtimeConnectionState.disconnected:
+        label = kLabelConnect;
+        onTap = onConnect;
+        break;
+      case RealtimeConnectionState.connecting:
+        label = kLabelConnecting;
+        break;
+      case RealtimeConnectionState.connected:
+        label = kLabelDisconnect;
+        onTap = onDisconnect;
+        break;
+      case RealtimeConnectionState.disconnecting:
+        label = kLabelDisconnecting;
+        break;
+    }
+
+    return FilledButton(
+      onPressed: disable ? null : onTap,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            label,
+            style: kTextStyleButton,
+          ),
+          if (!disable) kHSpacer10,
+          if (!disable)
+            const Icon(
+              size: 16,
+              Icons.send,
+            ),
+        ],
+      ),
+    );
+  }
+}
+
 class SaveInDownloadsButton extends StatelessWidget {
   const SaveInDownloadsButton({
     super.key,

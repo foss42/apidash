@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:apidash/utils/utils.dart';
 import 'package:apidash/consts.dart';
+import 'package:mqtt_client/mqtt_client.dart';
 
 class DropdownButtonHttpMethod extends StatelessWidget {
   const DropdownButtonHttpMethod({
@@ -38,6 +39,51 @@ class DropdownButtonHttpMethod extends StatelessWidget {
                   value,
                   brightness: Theme.of(context).brightness,
                 ),
+              ),
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
+}
+
+class DropdownButtonProtocolType extends StatelessWidget {
+  const DropdownButtonProtocolType({
+    super.key,
+    this.protocolType,
+    this.onChanged,
+  });
+
+  final ProtocolType? protocolType;
+  final void Function(ProtocolType? value)? onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final surfaceColor = Theme.of(context).colorScheme.surface;
+    return DropdownButton<ProtocolType>(
+      focusColor: surfaceColor,
+      value: protocolType,
+      icon: const Icon(Icons.unfold_more_rounded),
+      elevation: 4,
+      underline: Container(
+        height: 0,
+      ),
+      borderRadius: kBorderRadius12,
+      onChanged: onChanged,
+      items: ProtocolType.values
+          .map<DropdownMenuItem<ProtocolType>>((ProtocolType value) {
+        return DropdownMenuItem<ProtocolType>(
+          value: value,
+          child: Padding(
+            padding: const EdgeInsets.only(left: 16),
+            child: Text(
+              value.name.toUpperCase(),
+              style: kCodeStyle.copyWith(
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? getDarkModeColor(Colors.white)
+                    : Colors.white,
               ),
             ),
           ),
@@ -181,6 +227,54 @@ class DropdownButtonCodegenLanguage extends StatelessWidget {
             child: Text(
               value.label,
               style: kTextStyleButton,
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
+}
+
+class DropdownButtonQos extends StatelessWidget {
+  const DropdownButtonQos({
+    super.key,
+    this.qos,
+    this.onChanged,
+  });
+
+  final int? qos;
+  final void Function(int?)? onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final surfaceColor = Theme.of(context).colorScheme.surface;
+    return DropdownButton<int>(
+      // dropdownColor: Theme.of(context).colorScheme.surfaceVariant,
+      focusColor: surfaceColor,
+      value: qos,
+      icon: const Icon(
+        Icons.unfold_more_rounded,
+        size: 16,
+      ),
+      elevation: 4,
+      style: kCodeStyle.copyWith(
+        color: Theme.of(context).colorScheme.primary,
+      ),
+      underline: Container(
+        height: 0,
+      ),
+      onChanged: onChanged,
+      borderRadius: kBorderRadius12,
+      items: [0, 1, 2].map<DropdownMenuItem<int>>((int value) {
+        return DropdownMenuItem<int>(
+          value: value,
+          child: Padding(
+            padding: kPs8,
+            child: Text(
+              value.toString(),
+              style: kCodeStyle.copyWith(
+                color: kTextStyleButton.color,
+              ),
             ),
           ),
         );

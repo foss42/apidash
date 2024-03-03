@@ -13,6 +13,7 @@ class MQTTRequestModel {
     required this.lwQos,
     required this.lwRetain,
     required this.id,
+    required this.clientId,
     this.url = "",
     this.name = "",
     this.description = "",
@@ -23,6 +24,7 @@ class MQTTRequestModel {
   });
 
   final String id;
+  final String clientId;
   final String url;
   final String name;
   final String description;
@@ -45,7 +47,7 @@ class MQTTRequestModel {
     return MQTTRequestModel(
       id: id,
       url: "",
-      name: "",
+      name: "$name (copy)",
       description: "",
       requestTabIndex: 0,
       responseStatus: null,
@@ -58,6 +60,7 @@ class MQTTRequestModel {
       lwQos: 0,
       lwRetain: false,
       responseModel: null,
+      clientId: "",
     );
   }
 
@@ -78,6 +81,7 @@ class MQTTRequestModel {
     String? lwMessage,
     int? lwQos,
     bool? lwRetain,
+    String? clientId,
   }) {
     return MQTTRequestModel(
       id: id ?? this.id,
@@ -95,6 +99,7 @@ class MQTTRequestModel {
       lwMessage: lwMessage ?? this.lwMessage,
       lwQos: lwQos ?? this.lwQos,
       lwRetain: lwRetain ?? this.lwRetain,
+      clientId: clientId ?? this.clientId,
     );
   }
 
@@ -114,6 +119,7 @@ class MQTTRequestModel {
     final lwRetain = data["lwRetain"] as bool;
     final responseStatus = data["responseStatus"] as int?;
     final message = data["message"] as String?;
+    final clientId = data["clientId"] as String;
     final responseModelJson = data["responseModel"];
 
     if (responseModelJson != null) {
@@ -126,6 +132,7 @@ class MQTTRequestModel {
     return MQTTRequestModel(
       id: id,
       url: url,
+      clientId: clientId,
       name: name ?? "",
       description: description ?? "",
       requestTabIndex: 0,
@@ -148,6 +155,7 @@ class MQTTRequestModel {
       "url": url,
       "name": name,
       "description": description,
+      "clientId": clientId,
       "username": username,
       "password": password,
       "keepAlive": keepAlive,
@@ -168,6 +176,7 @@ class MQTTRequestModel {
       "Request URL: $url",
       "Request Name: $name",
       "Request Description: $description",
+      "Client ID: $clientId",
       "Username: $username",
       "Password: $password",
       "Keep Alive: ${keepAlive.toString()}",
@@ -188,6 +197,7 @@ class MQTTRequestModel {
         other.runtimeType == runtimeType &&
         other.id == id &&
         other.url == url &&
+        clientId == other.clientId &&
         other.name == name &&
         other.description == description &&
         other.username == username &&
@@ -209,6 +219,7 @@ class MQTTRequestModel {
       runtimeType,
       id,
       url,
+      clientId,
       name,
       description,
       username,

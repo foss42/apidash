@@ -244,7 +244,14 @@ final kColorHttpMethodDelete = Colors.red.shade800;
 
 enum RequestItemMenuOption { edit, delete, duplicate }
 
-enum ProtocolType { http, mqttv3, mqttv5 }
+enum ProtocolType { http, mqttv3 }
+
+enum RealtimeConnectionState {
+  connected,
+  connecting,
+  disconnected,
+  disconnecting
+}
 
 enum HTTPVerb { get, head, post, put, patch, delete }
 
@@ -504,10 +511,15 @@ const kCsvError =
     "There seems to be an issue rendering this CSV. Please raise an issue in API Dash GitHub repo so that we can resolve it.";
 
 const kHintTextUrlCard = "Enter API endpoint like api.foss42.com/country/codes";
+const kHintTextClientIdCard = "Enter Client ID";
 const kLabelPlusNew = "+ New";
 const kLabelSend = "Send";
 const kLabelSending = "Sending..";
 const kLabelBusy = "Busy";
+const kLabelConnect = "Connect";
+const kLabelDisconnect = "Disconnect";
+const kLabelConnecting = "Connecting..";
+const kLabelDisconnecting = "Disconnecting..";
 const kLabelCopy = "Copy";
 const kLabelSave = "Save";
 const kLabelDownload = "Download";

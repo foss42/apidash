@@ -41,6 +41,7 @@ class EditRequestPane extends ConsumerWidget {
         headerLength != null && headerLength > 0,
         bodyLength != null && bodyLength > 0,
       ],
+      tabLabels: const ['URL Params', 'Headers', 'Body'],
       children: const [
         EditRequestURLParams(),
         EditRequestHeaders(),
