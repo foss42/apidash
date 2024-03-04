@@ -1,7 +1,6 @@
 import 'package:test/test.dart';
 import 'package:apidash/utils/file_utils.dart';
 import 'package:path/path.dart' as p;
-
 void main() {
   group(
     "Testing File Utils",
@@ -13,7 +12,7 @@ void main() {
 
       test('Test getShortPath', () {
         String path = "A/B/C/D.csv";
-        expect(getShortPath(path), p.join("...", "C", "D.csv"));
+        expect(getShortPath(path), ".../C/D.csv");
       });
 
       test('Test getTempFileName', () {

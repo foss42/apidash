@@ -6,6 +6,8 @@ import 'package:apidash/consts.dart';
 import 'package:flutter/foundation.dart';
 import 'package:printing/printing.dart' show PdfPreview;
 import 'package:flutter_svg/flutter_svg.dart' show SvgPicture;
+import 'package:video_player_platform_interface/video_player_platform_interface.dart';
+import '../mock_utilities.dart';
 import '../test_consts.dart';
 
 void main() {
@@ -51,6 +53,8 @@ void main() {
   });
 
   testWidgets('Testing when type/subtype is video/H264', (tester) async {
+    final mockVideoPlayerPlatform = MockVideoPlayerPlatform();
+    VideoPlayerPlatform.instance = mockVideoPlayerPlatform;
     await tester.pumpWidget(
       MaterialApp(
         title: 'Previewer',
@@ -60,12 +64,14 @@ void main() {
             subtype: 'H264',
             bytes: bytes1,
             body: "",
-            videoUrl: "www.example.com/video.mp4",
+            videoUrl: 'www.example.com/video.mp4'
           ),
         ),
       ),
     );
-    expect(find.byType(VideoPreviewer), findsOneWidget); 
+    await tester.pumpAndSettle(); 
+    expect(find.byType(VideoPreviewer), findsOneWidget);
+    expect(mockVideoPlayerPlatform.calls.contains('init'), isTrue);
   });
 
   testWidgets('Testing when type/subtype is model/step+xml', (tester) async {

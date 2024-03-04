@@ -43,7 +43,7 @@ String getShortPath(String path) {
   var f = p.split(path);
   if (f.length > 2) {
     f = f.sublist(f.length - 2);
-    return p.join("...", p.joinAll(f));
+    return ".../${p.joinAll(f)}";
   }
   return path;
 }

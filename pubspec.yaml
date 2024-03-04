@@ -41,6 +41,7 @@ dependencies:
   video_player: ^2.3.2
   fvp: ^0.14.0
   media_kit: ^1.1.10+1
+  video_player_platform_interface: ^6.2.2
   freezed_annotation: ^2.4.1
   json_annotation: ^4.8.1
   printing: ^5.11.1

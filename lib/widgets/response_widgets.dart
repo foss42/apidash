@@ -451,7 +451,7 @@ class _BodySuccessState extends State<BodySuccess> {
                         body: widget.body,
                         type: widget.mediaType.type,
                         subtype: widget.mediaType.subtype,
-                        videoUrl: widget.videoUrl, // Pass the videoUrl here
+                        videoUrl: widget.videoUrl,
                         hasRaw: widget.options.contains(ResponseBodyView.raw),
                       ),
                     ),
