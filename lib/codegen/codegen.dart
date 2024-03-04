@@ -3,6 +3,7 @@ import 'package:apidash/consts.dart';
 import 'dart/http.dart';
 import 'dart/dio.dart';
 import 'kotlin/okhttp.dart';
+import 'php/guzzle.dart';
 import 'python/http_client.dart';
 import 'python/requests.dart';
 import 'js/axios.dart';
@@ -37,6 +38,8 @@ class Codegen {
             .getCode(requestModel, defaultUriScheme);
       case CodegenLanguage.kotlinOkHttp:
         return KotlinOkHttpCodeGen().getCode(requestModel, defaultUriScheme);
+      case CodegenLanguage.phpGuzzle:
+        return PhpGuzzleCodeGen().getCode(requestModel, defaultUriScheme);
       case CodegenLanguage.pythonHttpClient:
         return PythonHttpClientCodeGen()
             .getCode(requestModel, defaultUriScheme);
