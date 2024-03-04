@@ -40,7 +40,7 @@ dependencies:
   json_annotation: ^4.8.1
   printing: ^5.11.1
   package_info_plus: ^4.1.0
-  flutter_typeahead: ^4.8.0
+  flutter_typeahead: ^5.2.0
   provider: ^6.0.5
   json_data_explorer:
     git:
@@ -53,6 +53,7 @@ dependencies:
   code_builder: ^4.9.0
   dart_style: ^2.3.4
   json_text_field: ^1.1.0
+  csv: ^5.1.1
   dio: ^5.4.0
 
 dev_dependencies:

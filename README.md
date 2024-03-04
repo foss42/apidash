@@ -2,6 +2,8 @@
 
 [![Discord Server Invite](https://img.shields.io/badge/DISCORD-JOIN%20SERVER-5663F7?style=for-the-badge&logo=discord&logoColor=white)](https://bit.ly/heyfoss)
 
+We are participating in GSoC 2024 🎉 [More Details ...](https://summerofcode.withgoogle.com/programs/2024/organizations/api-dash)
+
 ### Please support this initiative by giving this project a Star ⭐️
 
 API Dash is a beautiful open-source cross-platform API Client that can help you easily create & customize your API requests, visually inspect responses ([full list of supported mime-types](https://github.com/foss42/apidash?tab=readme-ov-file#mime-types-supported-by-api-dash-response-previewer)) and generate API integration code ([full list](https://github.com/foss42/apidash?tab=readme-ov-file#code-generators)) on the go.
@@ -90,7 +92,7 @@ API Dash can be downloaded from the links below:
 
 **👩🏻‍💻 Code Generation**
 
-- We started out as the **only** open source API client that supports advanced Dart code generation so that you can easily integrate APIs in your Dart/Flutter project or directly run it on DartPad. But, now API Dash supports generation of well-tested integration codes for **JavaScript**, **Python**, **Kotlin** & various other languages. You can check out the [full list of supported languages/libraries](https://github.com/foss42/apidash?tab=readme-ov-file#code-generators).
+- We started out as the **only** open source API client which supported advanced Dart code generation to easily integrate APIs in Dart/Flutter projects or to directly run it on DartPad. With time we have added more code-gens and currently API Dash supports generation of well-tested integration codes for **JavaScript**, **Python**, **Kotlin** & various other languages. You can check out the [full list of supported languages/libraries](https://github.com/foss42/apidash?tab=readme-ov-file#code-generators).
 
 **🌙 Full Dark Mode Support**
 
@@ -135,6 +137,7 @@ Here is the complete list of mimetypes that can be directly previewed in API Das
 | File Type | Mimetype                   | Extension         | Comment  |
 | --------- | -------------------------- | ----------------- | -------- |
 | PDF       | `application/pdf`          | `.pdf`            |          |
+| CSV       | `text/csv`                 | `.csv`            | Can be improved |
 | Image     | `image/apng`               | `.apng`           | Animated |
 | Image     | `image/avif`               | `.avif`           |          |
 | Image     | `image/bmp`                | `.bmp`            |          |
@@ -175,14 +178,14 @@ Here is the complete list of mimetypes that are syntax highlighted in API Dash:
 | ------------------ | --------- | ------------------------------------------------------------------------------------------------------------------ |
 | `application/json` | `.json`   | Other mimetypes like `application/geo+json`, `application/vcard+json` that are based on `json` are also supported. |
 | `application/xml`  | `.xml`    | Other mimetypes like `application/xhtml+xml`, `application/vcard+xml` that are based on `xml` are also supported.  |
-| `text/xml`         | `.xml`    |                                                                                                                    |
-| `application/yaml` | `.yaml`   | Others - `application/x-yaml` or `application/x-yml`                                                               |
-| `text/yaml`        | `.yaml`   | Others - `text/yml`                                                                                                |
-| `application/sql`  | `.sql`    |                                                                                                                    |
-| `text/css`         | `.css`    |                                                                                                                    |
-| `text/html`        | `.html`   | Only syntax highlighting, no web preview.                                                                          |
-| `text/javascript`  | `.js`     |                                                                                                                    |
-| `text/markdown`    | `.md`     |                                                                                                                    |
+| `text/xml`         | `.xml`    |  |
+| `application/yaml` | `.yaml`   | Others - `application/x-yaml` or `application/x-yml` |
+| `text/yaml`        | `.yaml`   | Others - `text/yml` |
+| `application/sql`  | `.sql`    |  |
+| `text/css`         | `.css`    |  |
+| `text/html`        | `.html`   | Only syntax highlighting, no web preview. |
+| `text/javascript`  | `.js`     |  |
+| `text/markdown`    | `.md`     |  |
 
 ## What's new in v0.3.0?
 
@@ -199,6 +202,7 @@ You can contribute to API Dash in any or all of the following ways:
 - [Ask a question](https://github.com/foss42/apidash/discussions)
 - [Submit a bug report](https://github.com/foss42/apidash/issues/new/choose)
 - [Request a new feature](https://github.com/foss42/apidash/issues/new/choose)
+- [Choose from our existing list of ideas](https://github.com/foss42/apidash/discussions/112)
 - [Suggest ways to improve the developer experience of an existing feature](https://github.com/foss42/apidash/issues/new/choose)
 - Add documentation
 - To add a new feature, resolve an existing issue or add a new test to the project, check out our [Contribution Guidelines](CONTRIBUTING.md).
