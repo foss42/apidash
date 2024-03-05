@@ -8,13 +8,6 @@ Future<MqttServerClient> connectToMqttServer({
   final client = MqttServerClient(broker, clientId);
   client.setProtocolV311();
 
-  // Set up handlers
-  client.onConnected = onConnected;
-  client.onUnsubscribed = onUnsubscribed;
-  client.onSubscribed = onSubscribed;
-  client.onSubscribeFail = onSubscribeFail;
-  client.pongCallback = pong;
-
   try {
     await client.connect();
   } catch (e) {
@@ -44,30 +37,4 @@ Future<void> subscribeToTopic(
 
 Future<void> disconnectFromMqttServer(MqttServerClient client) async {
   client.disconnect();
-}
-
-// Callback functions
-
-void onConnected() {
-  print('Connected');
-}
-
-void onDisconnected() {
-  print('Disconnected');
-}
-
-void onSubscribed(String topic) {
-  print('Subscribed topic: $topic');
-}
-
-void onSubscribeFail(String topic) {
-  print('Failed to subscribe $topic');
-}
-
-void onUnsubscribed(String? topic) {
-  print('Unsubscribed topic: $topic');
-}
-
-void pong() {
-  print('Ping response client callback invoked');
 }

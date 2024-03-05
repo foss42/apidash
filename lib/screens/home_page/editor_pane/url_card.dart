@@ -11,6 +11,7 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final protocol = ref
         .watch(selectedRequestModelProvider.select((value) => value?.protocol));
+    ref.read(realtimeConnectionStateProvider);
     return Card(
       elevation: 0,
       shape: RoundedRectangleBorder(
@@ -46,6 +47,7 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
         child: SendButton(),
       ),
     ];
+
     final List<Widget> mqttv3URLWidgets = [
       const DropdownButtonProtocol(),
       kHSpacer20,
@@ -53,12 +55,12 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
         child: URLTextField(),
       ),
       kHSpacer20,
-      VerticalDivider(
+      const VerticalDivider(
         thickness: 1,
         width: 1,
         color: Colors.white,
       ),
-      Expanded(child: ClientIdField()),
+      const Expanded(child: ClientIdField()),
       const SizedBox(
         height: 36,
         child: ConnectButton(),
@@ -122,11 +124,12 @@ class URLTextField extends ConsumerWidget {
   const URLTextField({
     super.key,
   });
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedId = ref.watch(selectedIdStateProvider);
     return URLField(
+      enabled: ref.watch(realtimeConnectionStateProvider) ==
+          RealtimeConnectionState.disconnected,
       selectedId: selectedId!,
       initialValue: ref
           .read(collectionStateNotifierProvider.notifier)
@@ -195,22 +198,22 @@ class ConnectButton extends ConsumerWidget {
   }
 }
 
-class ClientIdField extends StatelessWidget {
+class ClientIdField extends ConsumerWidget {
   const ClientIdField({
     super.key,
     this.selectedId,
     this.initialValue,
-    this.onChanged,
   });
 
   final String? selectedId;
   final String? initialValue;
-  final void Function(String)? onChanged;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return TextFormField(
       key: Key("url-$selectedId"),
+      enabled: ref.watch(realtimeConnectionStateProvider) ==
+          RealtimeConnectionState.disconnected,
       initialValue: initialValue,
       style: kCodeStyle,
       decoration: InputDecoration(
@@ -222,7 +225,9 @@ class ClientIdField extends StatelessWidget {
         ),
         border: InputBorder.none,
       ),
-      onChanged: onChanged,
+      onChanged: (value) {
+        ref.read(clientIdStateProvider.notifier).state = value;
+      },
     );
   }
 }

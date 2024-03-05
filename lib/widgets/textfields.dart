@@ -5,17 +5,20 @@ class URLField extends StatelessWidget {
   const URLField({
     super.key,
     required this.selectedId,
+    required this.enabled,
     this.initialValue,
     this.onChanged,
   });
 
   final String selectedId;
+  final bool enabled;
   final String? initialValue;
   final void Function(String)? onChanged;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      enabled: enabled,
       key: Key("url-$selectedId"),
       initialValue: initialValue,
       style: kCodeStyle,

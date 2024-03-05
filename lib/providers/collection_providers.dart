@@ -1,6 +1,5 @@
 import 'package:apidash/models/mqtt/mqtt_topic_model.dart';
 import 'package:apidash/services/mqtt_service.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
@@ -19,6 +18,7 @@ final realtimeConnectionStateProvider = StateProvider<RealtimeConnectionState?>(
     (ref) => RealtimeConnectionState.disconnected);
 final realtimeHistoryStateProvider =
     StateProvider<List<Map<String, String>>>((ref) => []);
+final clientIdStateProvider = StateProvider<String?>((ref) => null);
 
 final selectedRequestModelProvider = StateProvider<RequestModel?>((ref) {
   final selectedId = ref.watch(selectedIdStateProvider);
@@ -180,9 +180,10 @@ class CollectionStateNotifier
     ref.read(realtimeHistoryStateProvider.notifier).state = [];
     ref.read(sentRequestIdStateProvider.notifier).state = id;
     ref.read(codePaneVisibleStateProvider.notifier).state = false;
+    String? clientId = ref.read(clientIdStateProvider.notifier).state;
     RequestModel requestModel = state![id]!;
-    mqttClient =
-        await connectToMqttServer(broker: requestModel.url, clientId: id);
+    mqttClient = await connectToMqttServer(
+        broker: requestModel.url, clientId: clientId!);
     ref.read(realtimeHistoryStateProvider.notifier).state = [
       {
         "direction": 'info',
