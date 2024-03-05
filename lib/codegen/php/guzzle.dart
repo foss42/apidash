@@ -8,7 +8,7 @@ class PhpGuzzleCodeGen {
   String kStringImportNode = """use GuzzleHttp\\Client;
 use GuzzleHttp\\Psr7\\Request;
 {% if isFormDataRequest %}use GuzzleHttp\\Psr7\\MultipartStream;{% endif %}
-\
+
 
 """;
 
@@ -16,7 +16,7 @@ use GuzzleHttp\\Psr7\\Request;
 \$multipart = [
 {{fields_list}}
 ];
-\
+
 
 """;
 
@@ -25,7 +25,7 @@ use GuzzleHttp\\Psr7\\Request;
 {{params}}
 ];
 \$queryParamsStr = '?' . http_build_query(\$queryParams);
-\
+
 
 """;
 
@@ -33,19 +33,19 @@ use GuzzleHttp\\Psr7\\Request;
 \$headers = [
 {{headers}}
 ];
-\
+
 
 """;
 
   String kTemplateBody = """
 \$body = {{body}};
-\
+
 
 """;
 
   String kStringRequest = """
 \$client = new Client();
-\
+
 \$request = new Request('{{method}}', '{{url}}'{{queryParams}} {{headers}} {{body}});
 \$res = \$client->sendAsync(\$request)->wait();
 echo \$res->getBody();
