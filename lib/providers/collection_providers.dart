@@ -277,6 +277,7 @@ class CollectionStateNotifier
 
     ref.read(realtimeConnectionStateProvider.notifier).state =
         RealtimeConnectionState.disconnected;
+    ref.read(sentRequestIdStateProvider.notifier).state = null;
   }
 
   Future<void> sendRequest(String id) async {

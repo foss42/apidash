@@ -41,9 +41,7 @@ class MQTTTopicsPaneState extends ConsumerState<MQTTTopicsPane> {
   @override
   Widget build(BuildContext context) {
     final selectedId = ref.watch(selectedIdStateProvider);
-    final length = ref.watch(selectedRequestModelProvider
-        .select((value) => value?.requestHeaders?.length));
-    var rH = ref.read(selectedRequestModelProvider)?.requestHeaders;
+    final realtimeConnectionState = ref.watch(realtimeConnectionStateProvider);
     // isRowEnabledList =
     //     ref.read(selectedRequestModelProvider)?.isHeaderEnabledList ??
     //         List.filled(rows.length, true, growable: true);
@@ -64,7 +62,7 @@ class MQTTTopicsPaneState extends ConsumerState<MQTTTopicsPane> {
                 onChanged: (value) {
                   setState(() {
                     rows[idx] = rows[idx].copyWith(name: value);
-                    print(rows);
+                    // print(rows);
                   });
                 },
                 colorScheme: Theme.of(context).colorScheme);
@@ -104,16 +102,20 @@ class MQTTTopicsPaneState extends ConsumerState<MQTTTopicsPane> {
                           : MqttQos.exactlyOnce;
                   String topicName = rows[idx].name;
                   setState(() {
-                    rows[idx] = rows[idx].copyWith(subscribe: value);
-                    _onFieldChange(selectedId!);
-                    if (value) {
-                      ref
-                          .read(collectionStateNotifierProvider.notifier)
-                          .subscribeTopic(topicName, qos);
-                    } else {
-                      ref
-                          .read(collectionStateNotifierProvider.notifier)
-                          .unsubscribeTopic(topicName);
+                    if (realtimeConnectionState ==
+                            RealtimeConnectionState.connected &&
+                        topicName.isNotEmpty) {
+                      rows[idx] = rows[idx].copyWith(subscribe: value);
+                      _onFieldChange(selectedId!);
+                      if (value) {
+                        ref
+                            .read(collectionStateNotifierProvider.notifier)
+                            .subscribeTopic(topicName, qos);
+                      } else {
+                        ref
+                            .read(collectionStateNotifierProvider.notifier)
+                            .unsubscribeTopic(topicName);
+                      }
                     }
                   });
                 },
