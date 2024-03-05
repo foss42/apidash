@@ -7,14 +7,7 @@ Future<MqttServerClient> connectToMqttServer({
 }) async {
   final client = MqttServerClient(broker, clientId);
   client.setProtocolV311();
-
-  try {
-    await client.connect();
-  } catch (e) {
-    print('Exception: $e');
-    client.disconnect();
-  }
-
+  await client.connect();
   return client;
 }
 
