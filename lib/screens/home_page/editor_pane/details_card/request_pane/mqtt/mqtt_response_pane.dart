@@ -17,8 +17,6 @@ class MQTTResponsePane extends ConsumerWidget {
         selectedRequestModelProvider.select((value) => value?.responseStatus));
     final message = ref
         .watch(selectedRequestModelProvider.select((value) => value?.message));
-    debugPrint(
-        "Connection State: $connectionState\nsentRequestId: $sentRequestId\nresponseStatus: $responseStatus\nmessage: $message");
     if (responseStatus == -1) {
       return ErrorMessage(message: '$message. $kUnexpectedRaiseIssue');
     }
