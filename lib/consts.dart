@@ -107,6 +107,7 @@ const kVSpacer20 = SizedBox(height: 20);
 const kTabAnimationDuration = Duration(milliseconds: 200);
 const kTabHeight = 45.0;
 const kHeaderHeight = 32.0;
+const kTopicHeaderHeight = 48.0;
 const kSegmentHeight = 24.0;
 const kTextButtonMinWidth = 44.0;
 
@@ -123,6 +124,20 @@ const kTableThemeData = DaviThemeData(
   ),
   header: HeaderThemeData(
     visible: false,
+  ),
+);
+const kMQTTTableThemeData = DaviThemeData(
+  columnDividerColor: kColorTransparent,
+  row: RowThemeData(
+    dividerColor: kColorTransparent,
+  ),
+  decoration: BoxDecoration(
+    border: Border(),
+  ),
+  header: HeaderThemeData(
+    columnDividerColor: kColorTransparent,
+    bottomBorderColor: kColorTransparent,
+    visible: true,
   ),
 );
 

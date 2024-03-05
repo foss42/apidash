@@ -1,17 +1,15 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
-import 'package:apidash/providers/collection_providers.dart';
 
 Future<MqttServerClient> connectToMqttServer({
   required String broker,
   required String clientId,
 }) async {
   final client = MqttServerClient(broker, clientId);
+  client.setProtocolV311();
 
   // Set up handlers
   client.onConnected = onConnected;
-  client.onDisconnected = onDisconnected;
   client.onUnsubscribed = onUnsubscribed;
   client.onSubscribed = onSubscribed;
   client.onSubscribeFail = onSubscribeFail;
@@ -23,8 +21,6 @@ Future<MqttServerClient> connectToMqttServer({
     print('Exception: $e');
     client.disconnect();
   }
-  subscribeToTopic(
-      client: client, topic: 'helloWorld', qos: MqttQos.atLeastOnce);
 
   return client;
 }
@@ -39,20 +35,11 @@ Future<void> publishMessage({
   builder.addString(message);
 
   client.publishMessage(topic, qos, builder.payload!);
-  // Access the provider
-  final container = ProviderContainer();
-  final realtimeHistoryState = container.read(realtimeHistoryStateProvider);
-
-  // Update the state
-  realtimeHistoryState.add({'direction': 'send', 'message': message});
 }
 
-Future<void> subscribeToTopic({
-  required MqttServerClient client,
-  required String topic,
-  required MqttQos qos,
-}) async {
-  client.subscribe(topic, qos);
+Future<void> subscribeToTopic(
+    MqttServerClient client, String topic, MqttQos qosLevel) async {
+  client.subscribe(topic, qosLevel);
 }
 
 Future<void> disconnectFromMqttServer(MqttServerClient client) async {

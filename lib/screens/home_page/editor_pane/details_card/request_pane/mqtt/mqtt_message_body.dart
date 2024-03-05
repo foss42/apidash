@@ -24,15 +24,28 @@ class EditMessageBody extends ConsumerWidget {
       margin: kPt5o10,
       child: Column(
         children: [
-          const SizedBox(
-            height: kHeaderHeight,
+          SizedBox(
+            height: kTopicHeaderHeight,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
+                const Text(
                   "Select Content Type:",
                 ),
-                DropdownButtonBodyContentType(),
+                const DropdownButtonBodyContentType(),
+                kHSpacer20,
+                Expanded(
+                  child: Padding(
+                    padding: kMaterialListPadding,
+                    child: TopicField(
+                      hintText: "Topic",
+                      onChanged: (String value) {
+                        ref.read(messageTopicStateProvider.notifier).state =
+                            value;
+                      },
+                    ),
+                  ),
+                )
               ],
             ),
           ),
@@ -65,8 +78,9 @@ class EditMessageBody extends ConsumerWidget {
           const Align(
             alignment: Alignment.bottomCenter,
             child: Padding(
-                padding: EdgeInsets.only(top: 20, bottom: 20),
-                child: SendButton()),
+              padding: EdgeInsets.only(top: 20, bottom: 20),
+              child: SendButton(),
+            ),
           ),
           Divider(
             color: Theme.of(context).colorScheme.surfaceVariant,
@@ -117,6 +131,50 @@ class SendButton extends ConsumerWidget {
             .read(collectionStateNotifierProvider.notifier)
             .sendMessage(selectedId!);
       },
+    );
+  }
+}
+
+class TopicField extends StatelessWidget {
+  const TopicField({
+    super.key,
+    this.hintText,
+    this.onChanged,
+    this.colorScheme,
+  });
+
+  final String? hintText;
+  final void Function(String)? onChanged;
+  final ColorScheme? colorScheme;
+
+  @override
+  Widget build(BuildContext context) {
+    var clrScheme = colorScheme ?? Theme.of(context).colorScheme;
+    return TextFormField(
+      style: kCodeStyle.copyWith(
+        color: clrScheme.onSurface,
+      ),
+      decoration: InputDecoration(
+        hintStyle: kCodeStyle.copyWith(
+          color: clrScheme.outline.withOpacity(
+            kHintOpacity,
+          ),
+        ),
+        hintText: hintText,
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(
+            color: clrScheme.primary.withOpacity(
+              kHintOpacity,
+            ),
+          ),
+        ),
+        enabledBorder: UnderlineInputBorder(
+          borderSide: BorderSide(
+            color: clrScheme.surfaceVariant,
+          ),
+        ),
+      ),
+      onChanged: onChanged,
     );
   }
 }

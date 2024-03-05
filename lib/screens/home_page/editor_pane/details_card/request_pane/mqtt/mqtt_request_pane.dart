@@ -53,34 +53,6 @@ class MQTTEditRequestPane extends ConsumerWidget {
             ],
           ),
         ),
-        Padding(
-          padding: kPh20v10,
-          child: SizedBox(
-            height: kHeaderHeight,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Topics",
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                // FilledButton.tonalIcon(
-                //   onPressed: widget.onPressedCodeButton,
-                //   icon: Icon(
-                //     widget.codePaneVisible
-                //         ? Icons.code_off_rounded
-                //         : Icons.code_rounded,
-                //   ),
-                //   label: SizedBox(
-                //     width: 75,
-                //     child: Text(
-                //         widget.codePaneVisible ? "Hide Code" : "View Code"),
-                //   ),
-                // ),
-              ],
-            ),
-          ),
-        ),
         Expanded(
           child: Container(
             decoration: BoxDecoration(

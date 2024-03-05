@@ -17,8 +17,6 @@ class MQTTResponsePane extends ConsumerWidget {
         selectedRequestModelProvider.select((value) => value?.responseStatus));
     final message = ref
         .watch(selectedRequestModelProvider.select((value) => value?.message));
-    print(
-        "Current connection State: $connectionState\nCurrent sentRequestID: $sentRequestId");
     if (connectionState == RealtimeConnectionState.connecting ||
         connectionState == RealtimeConnectionState.disconnecting) {
       return const SendingWidget();

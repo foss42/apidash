@@ -1,5 +1,6 @@
 import 'package:apidash/models/mqtt/mqtt_topic_model.dart';
 import 'package:apidash/services/mqtt_service.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
@@ -39,6 +40,7 @@ final StateNotifierProvider<CollectionStateNotifier, Map<String, RequestModel>?>
     StateNotifierProvider((ref) => CollectionStateNotifier(ref, hiveHandler));
 final subscribedTopicsStateProvider =
     StateProvider<List<MQTTTopicModel>>((ref) => []);
+final messageTopicStateProvider = StateProvider<String?>((ref) => null);
 late MqttServerClient mqttClient;
 
 class CollectionStateNotifier
@@ -180,7 +182,7 @@ class CollectionStateNotifier
     ref.read(codePaneVisibleStateProvider.notifier).state = false;
     RequestModel requestModel = state![id]!;
     mqttClient =
-        await connectToMqttServer(broker: requestModel.url, clientId: 'mohit');
+        await connectToMqttServer(broker: requestModel.url, clientId: id);
     ref.read(realtimeHistoryStateProvider.notifier).state = [
       {
         "direction": 'info',
@@ -188,6 +190,17 @@ class CollectionStateNotifier
       },
       ...ref.read(realtimeHistoryStateProvider)
     ];
+    mqttClient.onDisconnected = () {
+      ref.read(realtimeHistoryStateProvider.notifier).state = [
+        {
+          "direction": 'info',
+          "message": 'Disconnected from broker',
+        },
+        ...ref.read(realtimeHistoryStateProvider)
+      ];
+      ref.read(realtimeConnectionStateProvider.notifier).state =
+          RealtimeConnectionState.disconnected;
+    };
     mqttClient.updates?.listen(
       (List<MqttReceivedMessage<MqttMessage>> c) {
         final MqttPublishMessage recMess = c[0].payload as MqttPublishMessage;
@@ -198,11 +211,10 @@ class CollectionStateNotifier
         ref.read(realtimeHistoryStateProvider.notifier).state = [
           {
             "direction": 'receive',
-            "message": pt,
+            "message": "${c[0].topic}: $pt",
           },
           ...ref.read(realtimeHistoryStateProvider),
         ];
-        print('Received message: $pt from topic: ${c[0].topic}');
       },
     );
     ref.read(realtimeConnectionStateProvider.notifier).state =
@@ -215,19 +227,42 @@ class CollectionStateNotifier
   Future<void> sendMessage(String id) async {
     ref.read(subscribedTopicsStateProvider.notifier).state = [];
     ref.read(codePaneVisibleStateProvider.notifier).state = false;
+    String? topic = ref.watch(messageTopicStateProvider.notifier).state;
     RequestModel requestModel = state![id]!;
     publishMessage(
         client: mqttClient,
-        topic: 'helloWorld',
+        topic: topic!,
         message: requestModel.requestBody!,
         qos: MqttQos.atLeastOnce);
     // Update the history
     ref.read(realtimeHistoryStateProvider.notifier).state = [
       {
         "direction": 'send',
-        "message": requestModel.requestBody!,
+        "message": '$topic: ${requestModel.requestBody!}',
       },
       ...ref.read(realtimeHistoryStateProvider),
+    ];
+  }
+
+  Future<void> subscribeTopic(String topic, MqttQos qosLevel) async {
+    subscribeToTopic(mqttClient, topic, qosLevel);
+    ref.read(realtimeHistoryStateProvider.notifier).state = [
+      {
+        "direction": 'info',
+        "message": 'Subscribed to the topic $topic from broker',
+      },
+      ...ref.read(realtimeHistoryStateProvider)
+    ];
+  }
+
+  Future<void> unsubscribeTopic(String topic) async {
+    mqttClient.unsubscribe(topic);
+    ref.read(realtimeHistoryStateProvider.notifier).state = [
+      {
+        "direction": 'info',
+        "message": 'Unsubscribed to the topic $topic from broker',
+      },
+      ...ref.read(realtimeHistoryStateProvider)
     ];
   }
 
@@ -238,13 +273,7 @@ class CollectionStateNotifier
     ref.read(selectedIdStateProvider.notifier).state = id;
     ref.read(codePaneVisibleStateProvider.notifier).state = false;
     await disconnectFromMqttServer(mqttClient);
-    ref.read(realtimeHistoryStateProvider.notifier).state = [
-      {
-        "direction": 'info',
-        "message": 'Disconneted from broker',
-      },
-      ...ref.read(realtimeHistoryStateProvider)
-    ];
+
     ref.read(realtimeConnectionStateProvider.notifier).state =
         RealtimeConnectionState.disconnected;
   }

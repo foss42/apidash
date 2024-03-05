@@ -257,9 +257,7 @@ class DropdownButtonQos extends StatelessWidget {
         size: 16,
       ),
       elevation: 4,
-      style: kCodeStyle.copyWith(
-        color: Theme.of(context).colorScheme.primary,
-      ),
+      style: kCodeStyle,
       underline: Container(
         height: 0,
       ),
@@ -273,7 +271,7 @@ class DropdownButtonQos extends StatelessWidget {
             child: Text(
               value.toString(),
               style: kCodeStyle.copyWith(
-                color: kTextStyleButton.color,
+                color: Theme.of(context).colorScheme.primary,
               ),
             ),
           ),

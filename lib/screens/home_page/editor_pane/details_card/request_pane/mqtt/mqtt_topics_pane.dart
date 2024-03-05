@@ -6,6 +6,7 @@ import 'package:davi/davi.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
+import 'package:mqtt_client/mqtt_client.dart';
 
 class MQTTTopicsPane extends ConsumerStatefulWidget {
   const MQTTTopicsPane({super.key});
@@ -16,11 +17,10 @@ class MQTTTopicsPane extends ConsumerStatefulWidget {
 
 class MQTTTopicsPaneState extends ConsumerState<MQTTTopicsPane> {
   final random = Random.secure();
-  late List<MQTTTopicModel> rows = [
+  List<MQTTTopicModel> rows = [
     const MQTTTopicModel(name: '', qos: 0, subscribe: false, description: ''),
     // Add more topics as needed
   ];
-  late List<bool> isRowEnabledList;
   late int seed;
 
   @override
@@ -44,9 +44,9 @@ class MQTTTopicsPaneState extends ConsumerState<MQTTTopicsPane> {
     final length = ref.watch(selectedRequestModelProvider
         .select((value) => value?.requestHeaders?.length));
     var rH = ref.read(selectedRequestModelProvider)?.requestHeaders;
-    isRowEnabledList =
-        ref.read(selectedRequestModelProvider)?.isHeaderEnabledList ??
-            List.filled(rows.length, true, growable: true);
+    // isRowEnabledList =
+    //     ref.read(selectedRequestModelProvider)?.isHeaderEnabledList ??
+    //         List.filled(rows.length, true, growable: true);
 
     DaviModel<MQTTTopicModel> model = DaviModel<MQTTTopicModel>(
       rows: rows,
@@ -63,7 +63,8 @@ class MQTTTopicsPaneState extends ConsumerState<MQTTTopicsPane> {
                 hintText: "Add Topic Name",
                 onChanged: (value) {
                   setState(() {
-                    rows[idx] = rows[idx].copyWith(description: value);
+                    rows[idx] = rows[idx].copyWith(name: value);
+                    print(rows);
                   });
                 },
                 colorScheme: Theme.of(context).colorScheme);
@@ -71,6 +72,7 @@ class MQTTTopicsPaneState extends ConsumerState<MQTTTopicsPane> {
           sortable: false,
         ),
         DaviColumn(
+          resizable: false,
           name: 'QoS',
           width: 50,
           cellBuilder: (_, row) {
@@ -87,19 +89,44 @@ class MQTTTopicsPaneState extends ConsumerState<MQTTTopicsPane> {
           },
         ),
         DaviColumn(
+            resizable: false,
             name: 'Subscribe',
-            width: 50,
+            width: 100,
             cellBuilder: (_, row) {
               int idx = row.index;
-              return CheckBox(
-                keyId: "$selectedId-$idx-subscribe-c-$seed",
-                value: isRowEnabledList[idx],
+              return Switch(
+                value: rows[idx].subscribe,
                 onChanged: (value) {
-                  isRowEnabledList[idx] = value!;
-                  _onFieldChange(selectedId!);
+                  MqttQos qos = rows[idx].qos == 0
+                      ? MqttQos.atMostOnce
+                      : rows[idx].qos == 1
+                          ? MqttQos.atLeastOnce
+                          : MqttQos.exactlyOnce;
+                  String topicName = rows[idx].name;
+                  setState(() {
+                    rows[idx] = rows[idx].copyWith(subscribe: value);
+                    _onFieldChange(selectedId!);
+                    if (value) {
+                      ref
+                          .read(collectionStateNotifierProvider.notifier)
+                          .subscribeTopic(topicName, qos);
+                    } else {
+                      ref
+                          .read(collectionStateNotifierProvider.notifier)
+                          .unsubscribeTopic(topicName);
+                    }
+                  });
                 },
-                colorScheme: Theme.of(context).colorScheme,
               );
+              // return CheckBox(
+              //   keyId: "$selectedId-$idx-subscribe-c-$seed",
+              //   value: isRowEnabledList[idx],
+              //   onChanged: (value) {
+              //     isRowEnabledList[idx] = value!;
+              //     _onFieldChange(selectedId!);
+              //   },
+              //   colorScheme: Theme.of(context).colorScheme,
+              // );
             }),
         DaviColumn(
           name: 'Description',
@@ -133,7 +160,7 @@ class MQTTTopicsPaneState extends ConsumerState<MQTTTopicsPane> {
             children: [
               Expanded(
                 child: DaviTheme(
-                  data: kTableThemeData,
+                  data: kMQTTTableThemeData,
                   child: Davi<MQTTTopicModel>(model),
                 ),
               ),
@@ -148,7 +175,6 @@ class MQTTTopicsPaneState extends ConsumerState<MQTTTopicsPane> {
               onPressed: () {
                 setState(() {
                   rows.add(kMQTTTopicEmptyModel);
-                  isRowEnabledList.add(false);
                   _onFieldChange(selectedId!);
                 });
               },
