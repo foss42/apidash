@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
@@ -103,18 +104,31 @@ class _URLTextFieldState extends ConsumerState<URLTextField> {
   @override
   Widget build(BuildContext context) {
     final activeId = ref.watch(activeIdStateProvider);
-    return URLField(
-      activeId: activeId!,
-      initialValue: ref
-          .read(collectionStateNotifierProvider.notifier)
-          .getRequestModel(activeId)
-          ?.url,
-      onChanged: (value) {
-        ref
-            .read(collectionStateNotifierProvider.notifier)
-            .update(activeId, url: value);
-      },
-    );
+    return Focus(
+        autofocus: true,
+        child: KeyboardListener(
+          focusNode: FocusNode(),
+          onKeyEvent: (KeyEvent event) {
+            if (event is KeyDownEvent &&
+                event.logicalKey == LogicalKeyboardKey.enter) {
+              ref
+                  .read(collectionStateNotifierProvider.notifier)
+                  .sendRequest(activeId);
+            }
+          },
+          child: URLField(
+            activeId: activeId!,
+            initialValue: ref
+                .read(collectionStateNotifierProvider.notifier)
+                .getRequestModel(activeId)
+                ?.url,
+            onChanged: (value) {
+              ref
+                  .read(collectionStateNotifierProvider.notifier)
+                  .update(activeId, url: value);
+            },
+          ),
+        ));
   }
 }
 
