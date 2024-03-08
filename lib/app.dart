@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:multi_trigger_autocomplete/multi_trigger_autocomplete.dart';
 import 'package:window_manager/window_manager.dart' hide WindowCaption;
 import 'widgets/widgets.dart' show WindowCaption;
 import 'providers/providers.dart';
@@ -104,44 +105,46 @@ class DashApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isDarkMode =
         ref.watch(settingsProvider.select((value) => value.isDark));
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        fontFamily: kFontFamily,
-        fontFamilyFallback: kFontFamilyFallback,
-        colorSchemeSeed: kColorSchemeSeed,
-        useMaterial3: true,
-        brightness: Brightness.light,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      darkTheme: ThemeData(
-        fontFamily: kFontFamily,
-        fontFamilyFallback: kFontFamilyFallback,
-        colorSchemeSeed: kColorSchemeSeed,
-        useMaterial3: true,
-        brightness: Brightness.dark,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
-      home: kIsMobile
-          ? const MobileDashboard(
-              title: 'Requests',
-              scaffoldBody: CollectionPane(),
-            )
-          : Stack(
-              children: [
-                kIsLinux ? const Dashboard() : const App(),
-                if (kIsWindows)
-                  SizedBox(
-                    height: 29,
-                    child: WindowCaption(
-                      backgroundColor: Colors.transparent,
-                      brightness:
-                          isDarkMode ? Brightness.dark : Brightness.light,
+    return Portal(
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          fontFamily: kFontFamily,
+          fontFamilyFallback: kFontFamilyFallback,
+          colorSchemeSeed: kColorSchemeSeed,
+          useMaterial3: true,
+          brightness: Brightness.light,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+        ),
+        darkTheme: ThemeData(
+          fontFamily: kFontFamily,
+          fontFamilyFallback: kFontFamilyFallback,
+          colorSchemeSeed: kColorSchemeSeed,
+          useMaterial3: true,
+          brightness: Brightness.dark,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+        ),
+        themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
+        home: kIsMobile
+            ? const MobileDashboard(
+                title: 'Requests',
+                scaffoldBody: CollectionPane(),
+              )
+            : Stack(
+                children: [
+                  kIsLinux ? const Dashboard() : const App(),
+                  if (kIsWindows)
+                    SizedBox(
+                      height: 29,
+                      child: WindowCaption(
+                        backgroundColor: Colors.transparent,
+                        brightness:
+                            isDarkMode ? Brightness.dark : Brightness.light,
+                      ),
                     ),
-                  ),
-              ],
-            ),
+                ],
+              ),
+      ),
     );
   }
 }

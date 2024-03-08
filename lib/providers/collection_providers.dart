@@ -1,3 +1,5 @@
+import 'package:apidash/models/environments_list_model.dart';
+import 'package:apidash/providers/environment_collection_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'settings_providers.dart';
 import 'ui_providers.dart';
@@ -158,6 +160,20 @@ class CollectionStateNotifier
   Future<void> sendRequest(String id) async {
     ref.read(sentRequestIdStateProvider.notifier).state = id;
     ref.read(codePaneVisibleStateProvider.notifier).state = false;
+
+    String? activeEnvironmentId = ref.watch(activeEnvironmentIdProvider);
+    Map<String, EnvironmentModel>? environments =
+        ref.watch(environmentsStateNotifierProvider);
+
+    List<EnvironmentVariableModel> activeEnvironmentVariables =
+        environments?.keys.first == activeEnvironmentId
+            ? []
+            : (environments?[activeEnvironmentId]?.variables.values ?? [])
+                .toList();
+    List<EnvironmentVariableModel> globalEnvironment =
+        (environments?.values.first.variables.values ?? []).toList();
+    List<EnvironmentVariableModel> environmentVariableNames =
+        ([...globalEnvironment, ...activeEnvironmentVariables]);
     final defaultUriScheme =
         ref.read(settingsProvider.select((value) => value.defaultUriScheme));
     RequestModel requestModel = state![id]!;
@@ -166,6 +182,7 @@ class CollectionStateNotifier
       defaultUriScheme: defaultUriScheme,
       isMultiPartRequest:
           requestModel.requestBodyContentType == ContentType.formdata,
+      environmentVariables: environmentVariableNames,
     );
     late final RequestModel newRequestModel;
     if (responseRec.$1 == null) {
@@ -228,14 +245,24 @@ class CollectionStateNotifier
   Future<void> saveData() async {
     ref.read(saveDataStateProvider.notifier).state = true;
     final saveResponse = ref.read(settingsProvider).saveResponses;
+    Map<String, EnvironmentModel>? environmentsList =
+        (ref.read(environmentsStateNotifierProvider));
     final ids = ref.read(requestSequenceProvider);
+    final envIds = ref.read(getEnvironmentsIdsProvider);
     await hiveHandler.setIds(ids);
+    await hiveHandler.setEnvironmentIds(envIds);
     for (var id in ids) {
       await hiveHandler.setRequestModel(
         id,
         state?[id]?.toJson(includeResponse: saveResponse),
       );
     }
+    environmentsList?.forEach((key, value) async {
+      await hiveHandler.setEnvironment(
+        key,
+        value.toJson(),
+      );
+    });
     await hiveHandler.removeUnused();
     ref.read(saveDataStateProvider.notifier).state = false;
   }

@@ -1,3 +1,6 @@
+import 'package:apidash/models/environments_list_model.dart';
+import 'package:apidash/providers/environment_collection_providers.dart';
+import 'package:apidash/screens/home_page/editor_pane/environment_auto_suggestion_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
@@ -34,6 +37,8 @@ class EditorPaneRequestURLCard extends StatelessWidget {
               height: 36,
               child: SendButton(),
             ),
+            kHSpacer20,
+            EnvironmentChangeDropDown(),
           ],
         ),
       ),
@@ -62,6 +67,29 @@ class DropdownButtonHTTPMethod extends ConsumerWidget {
   }
 }
 
+class EnvironmentChangeDropDown extends ConsumerWidget {
+  const EnvironmentChangeDropDown({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    Map<String, EnvironmentModel>? environments =
+        ref.watch(environmentsStateNotifierProvider);
+    String? activeEnvironmentId =
+        ref.watch(activeEnvironmentIdProvider) ?? environments?.keys.first;
+
+    return DropdownButtonEnvironment(
+      method: environments?[activeEnvironmentId],
+      onChanged: (EnvironmentModel? value) {
+        ref
+            .read(activeEnvironmentIdProvider.notifier)
+            .update((state) => value?.id);
+      },
+    );
+  }
+}
+
 class URLTextField extends ConsumerWidget {
   const URLTextField({
     super.key,
@@ -70,17 +98,31 @@ class URLTextField extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedId = ref.watch(selectedIdStateProvider);
-    return URLField(
-      selectedId: selectedId!,
-      initialValue: ref
-          .read(collectionStateNotifierProvider.notifier)
-          .getRequestModel(selectedId)
-          ?.url,
-      onChanged: (value) {
-        ref
-            .read(collectionStateNotifierProvider.notifier)
-            .update(selectedId, url: value);
+
+    return EnvironmentAutoSuggestionWidget(
+      builder: (context, textEditingController, focusNode) {
+        return URLField(
+          selectedId: selectedId,
+          onChanged: (value) {
+            ref
+                .read(collectionStateNotifierProvider.notifier)
+                .update(selectedId, url: value);
+          },
+          focusNode: focusNode,
+          controller: textEditingController,
+        );
       },
+      onEnvironmentVariableTap: (updatedText) {
+        ref.read(collectionStateNotifierProvider.notifier).update(
+              selectedId,
+              url: updatedText,
+            );
+      },
+      initialValue: ref
+              .read(collectionStateNotifierProvider.notifier)
+              .getRequestModel(selectedId!)
+              ?.url ??
+          '',
     );
   }
 }

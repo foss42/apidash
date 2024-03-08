@@ -7,11 +7,15 @@ class URLField extends StatelessWidget {
     required this.selectedId,
     this.initialValue,
     this.onChanged,
+    this.focusNode,
+    this.controller,
   });
 
   final String selectedId;
   final String? initialValue;
   final void Function(String)? onChanged;
+  final FocusNode? focusNode;
+  final TextEditingController? controller;
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +33,8 @@ class URLField extends StatelessWidget {
         border: InputBorder.none,
       ),
       onChanged: onChanged,
+      focusNode: focusNode,
+      controller: controller,
     );
   }
 }
@@ -101,6 +107,56 @@ class JsonSearchField extends StatelessWidget {
         border: InputBorder.none,
         hintText: 'Search..',
       ),
+    );
+  }
+}
+
+class EnvironmentEditField extends StatelessWidget {
+  const EnvironmentEditField({
+    super.key,
+    required this.keyId,
+    this.initialValue,
+    this.hintText,
+    this.onChanged,
+    this.colorScheme,
+  });
+
+  final String keyId;
+  final String? initialValue;
+  final String? hintText;
+  final void Function(String)? onChanged;
+  final ColorScheme? colorScheme;
+
+  @override
+  Widget build(BuildContext context) {
+    var clrScheme = colorScheme ?? Theme.of(context).colorScheme;
+    return TextFormField(
+      key: Key(keyId),
+      initialValue: initialValue,
+      style: kCodeStyle.copyWith(
+        color: clrScheme.onSurface,
+      ),
+      decoration: InputDecoration(
+        hintStyle: kCodeStyle.copyWith(
+          color: clrScheme.outline.withOpacity(
+            kHintOpacity,
+          ),
+        ),
+        hintText: hintText,
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(
+            color: clrScheme.primary.withOpacity(
+              kHintOpacity,
+            ),
+          ),
+        ),
+        enabledBorder: UnderlineInputBorder(
+          borderSide: BorderSide(
+            color: clrScheme.surfaceVariant,
+          ),
+        ),
+      ),
+      onChanged: onChanged,
     );
   }
 }
