@@ -8,6 +8,7 @@ import '../consts.dart';
 import '../utils/ui_utils.dart';
 import "snackbars.dart";
 import 'textfields.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class JsonPreviewerColor {
   const JsonPreviewerColor._();
@@ -163,6 +164,7 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     var sm = ScaffoldMessenger.of(context);
     return ChangeNotifierProvider.value(
       value: store,
@@ -182,24 +184,24 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
                         onPressed: () async {
                           await _copy(kEncoder.convert(widget.code), sm);
                         },
-                        child: const Text(
-                          'Copy',
+                        child: Text(
+                          l10n!.kLabelCopy,
                           style: kTextStyleButtonSmall,
                         ),
                       ),
                       TextButton(
                         onPressed:
                             state.areAllExpanded() ? null : state.expandAll,
-                        child: const Text(
-                          'Expand All',
+                        child: Text(
+                          l10n.kLabelExpandAll,
                           style: kTextStyleButtonSmall,
                         ),
                       ),
                       TextButton(
                         onPressed:
                             state.areAllCollapsed() ? null : state.collapseAll,
-                        child: const Text(
-                          'Collapse All',
+                        child: Text(
+                          l10n.kLabelCollapseAll,
                           style: kTextStyleButtonSmall,
                         ),
                       ),

@@ -8,6 +8,7 @@ import 'widgets/widgets.dart' show WindowCaption;
 import 'providers/providers.dart';
 import 'screens/screens.dart';
 import 'consts.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class App extends ConsumerStatefulWidget {
   const App({super.key});
@@ -55,6 +56,7 @@ class _AppState extends ConsumerState<App> with WindowListener {
 
   @override
   void onWindowClose() async {
+    final l10n = AppLocalizations.of(context);
     bool isPreventClose = await windowManager.isPreventClose();
     if (isPreventClose) {
       if (ref.watch(
@@ -62,18 +64,18 @@ class _AppState extends ConsumerState<App> with WindowListener {
         showDialog(
           context: context,
           builder: (_) => AlertDialog(
-            title: const Text(kSaveChanges),
-            content: const Text(kSaveChangesSubtitle),
+            title: Text(l10n!.kSaveChanges),
+            content: Text(l10n.kSaveChangesSubtitle),
             actions: [
               OutlinedButton(
-                child: const Text(kLabelNo),
+                child: Text(l10n.kLabelNo),
                 onPressed: () async {
                   Navigator.of(context).pop();
                   await windowManager.destroy();
                 },
               ),
               FilledButton(
-                child: const Text(kLabelSave),
+                child: Text(l10n.kLabelSave),
                 onPressed: () async {
                   await ref
                       .read(collectionStateNotifierProvider.notifier)

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class URLField extends StatelessWidget {
   const URLField({
@@ -15,12 +16,13 @@ class URLField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return TextFormField(
       key: Key("url-$selectedId"),
       initialValue: initialValue,
       style: kCodeStyle,
       decoration: InputDecoration(
-        hintText: kHintTextUrlCard,
+        hintText: l10n!.kHintTextUrlCard,
         hintStyle: kCodeStyle.copyWith(
           color: Theme.of(context).colorScheme.outline.withOpacity(
                 kHintOpacity,
@@ -91,15 +93,16 @@ class JsonSearchField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return TextField(
       controller: controller,
       onChanged: onChanged,
       style: kCodeStyle,
       cursorHeight: 18,
-      decoration: const InputDecoration(
+      decoration: InputDecoration(
         isDense: true,
         border: InputBorder.none,
-        hintText: 'Search..',
+        hintText: l10n!.kLabelSearch,
       ),
     );
   }

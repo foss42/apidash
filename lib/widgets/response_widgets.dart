@@ -6,12 +6,14 @@ import 'package:apidash/utils/utils.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class NotSentWidget extends StatelessWidget {
   const NotSentWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final color = Theme.of(context).colorScheme.secondary;
     return Center(
       child: Column(
@@ -23,7 +25,7 @@ class NotSentWidget extends StatelessWidget {
             color: color,
           ),
           Text(
-            'Not Sent',
+            l10n!.kLabelNotSent,
             style:
                 Theme.of(context).textTheme.titleMedium?.copyWith(color: color),
           ),
@@ -63,6 +65,7 @@ class ResponsePaneHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Padding(
       padding: kPh20v10,
       child: SizedBox(
@@ -73,8 +76,8 @@ class ResponsePaneHeader extends StatelessWidget {
             Text.rich(
               TextSpan(
                 children: [
-                  const TextSpan(
-                    text: "Response (",
+                  TextSpan(
+                    text: "${l10n!.kLabelResponse} (",
                   ),
                   TextSpan(
                     text: "$responseStatus",
@@ -152,6 +155,7 @@ class _ResponseTabViewState extends State<ResponseTabView>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Column(
       children: [
         TabBar(
@@ -159,12 +163,12 @@ class _ResponseTabViewState extends State<ResponseTabView>
           controller: _controller,
           overlayColor: kColorTransparentState,
           onTap: (index) {},
-          tabs: const [
+          tabs: [
             SizedBox(
               height: kTabHeight,
               child: Center(
                 child: Text(
-                  'Body',
+                  l10n!.kLabelBody,
                   textAlign: TextAlign.center,
                   overflow: TextOverflow.fade,
                   softWrap: false,
@@ -176,7 +180,7 @@ class _ResponseTabViewState extends State<ResponseTabView>
               height: kTabHeight,
               child: Center(
                 child: Text(
-                  'Headers',
+                  l10n.kLabelHeaders,
                   textAlign: TextAlign.center,
                   overflow: TextOverflow.fade,
                   style: kTextStyleButton,
@@ -215,13 +219,14 @@ class ResponseHeadersHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return SizedBox(
       height: kHeaderHeight,
       child: Row(
         children: [
           Expanded(
             child: Text(
-              "$name (${map.length} items)",
+              "$name (${map.length} ${l10n!.kLabelItems})",
               style: Theme.of(context).textTheme.labelLarge!.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -237,8 +242,6 @@ class ResponseHeadersHeader extends StatelessWidget {
   }
 }
 
-const kHeaderRow = ["Header Name", "Header Value"];
-
 class ResponseHeaders extends StatelessWidget {
   const ResponseHeaders({
     super.key,
@@ -251,13 +254,15 @@ class ResponseHeaders extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final kHeaderRow = [l10n!.kLabelAPIHeaderName, l10n.kLabelAPIHeaderValue];
     return Padding(
       padding: kPh20v5,
       child: ListView(
         children: [
           ResponseHeadersHeader(
             map: responseHeaders,
-            name: "Response Headers",
+            name: l10n.kLabelResponseHeaders,
           ),
           if (responseHeaders.isNotEmpty) kVSpacer5,
           if (responseHeaders.isNotEmpty)
@@ -269,7 +274,7 @@ class ResponseHeaders extends StatelessWidget {
           kVSpacer10,
           ResponseHeadersHeader(
             map: requestHeaders,
-            name: "Request Headers",
+            name: l10n.kLabelRequestHeaders,
           ),
           if (requestHeaders.isNotEmpty) kVSpacer5,
           if (requestHeaders.isNotEmpty)
@@ -294,22 +299,24 @@ class ResponseBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final responseModel = selectedRequestModel?.responseModel;
     if (responseModel == null) {
-      return const ErrorMessage(
+      return ErrorMessage(
           message:
-              'Error: Response data does not exist. $kUnexpectedRaiseIssue');
+              '${l10n!.kLabelResponseBodyDoesntExist} ${l10n.kUnexpectedRaiseIssue}');
     }
 
     var body = responseModel.body;
     var formattedBody = responseModel.formattedBody;
     if (body == null) {
-      return const ErrorMessage(
-          message: 'Response body is missing (null). $kUnexpectedRaiseIssue');
+      return ErrorMessage(
+          message:
+              '${l10n!.kLabelResponseBodyNull} ${l10n.kUnexpectedRaiseIssue}');
     }
     if (body.isEmpty) {
-      return const ErrorMessage(
-        message: 'No content',
+      return ErrorMessage(
+        message: l10n!.kLabelNoContent,
         showIcon: false,
         showIssueButton: false,
       );
@@ -319,7 +326,7 @@ class ResponseBody extends StatelessWidget {
     if (mediaType == null) {
       return ErrorMessage(
           message:
-              'Unknown Response Content-Type - ${responseModel.contentType}. $kUnexpectedRaiseIssue');
+              '${l10n!.kLabelResponseUnknownContentType} - ${responseModel.contentType}. ${l10n.kUnexpectedRaiseIssue}');
     }
 
     var responseBodyView = getResponseBodyViewOptions(mediaType);

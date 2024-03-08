@@ -9,6 +9,7 @@ import 'uint8_audio_player.dart';
 import 'json_previewer.dart';
 import 'csv_previewer.dart';
 import '../consts.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Previewer extends StatefulWidget {
   const Previewer({
@@ -33,6 +34,7 @@ class Previewer extends StatefulWidget {
 class _PreviewerState extends State<Previewer> {
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     if (widget.type == kTypeApplication && widget.subtype == kSubTypeJson) {
       try {
         var preview = JsonPreviewer(
@@ -52,14 +54,14 @@ class _PreviewerState extends State<Previewer> {
         );
         return svgImg;
       } catch (e) {
-        return const ErrorMessage(message: kSvgError);
+        return ErrorMessage(message: l10n!.kSvgError);
       }
     }
     if (widget.type == kTypeImage) {
       return Image.memory(
         widget.bytes,
         errorBuilder: (context, _, stackTrace) {
-          return const ErrorMessage(message: kImageError);
+          return ErrorMessage(message: l10n!.kImageError);
         },
       );
     }
@@ -68,7 +70,7 @@ class _PreviewerState extends State<Previewer> {
         build: (_) => widget.bytes,
         useActions: false,
         onError: (context, error) {
-          return const ErrorMessage(message: kPdfError);
+          return ErrorMessage(message: l10n!.kPdfError);
         },
       );
     }
@@ -78,7 +80,7 @@ class _PreviewerState extends State<Previewer> {
         type: widget.type!,
         subtype: widget.subtype!,
         errorBuilder: (context, error, stacktrace) {
-          return const ErrorMessage(message: kAudioError);
+          return ErrorMessage(message: l10n!.kAudioError);
         },
       );
     }
@@ -89,8 +91,8 @@ class _PreviewerState extends State<Previewer> {
       // TODO: Video Player
     }
     String message = widget.hasRaw
-        ? "$kMimeTypeRawRaiseIssueStart${widget.type}/${widget.subtype}$kMimeTypeRaiseIssue"
-        : "$kMimeTypeRaiseIssueStart${widget.type}/${widget.subtype}$kMimeTypeRaiseIssue";
+        ? "${l10n!.kMimeTypeRawRaiseIssueStart}${widget.type}/${widget.subtype}${l10n.kMimeTypeRaiseIssue}"
+        : "${l10n!.kMimeTypeRaiseIssueStart}${widget.type}/${widget.subtype}${l10n.kMimeTypeRaiseIssue}";
     return ErrorMessage(message: message);
   }
 }

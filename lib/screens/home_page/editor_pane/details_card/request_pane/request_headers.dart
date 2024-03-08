@@ -6,6 +6,7 @@ import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class EditRequestHeaders extends ConsumerStatefulWidget {
   const EditRequestHeaders({super.key});
@@ -36,6 +37,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final selectedId = ref.watch(selectedIdStateProvider);
     final length = ref.watch(selectedRequestModelProvider
         .select((value) => value?.requestHeaders?.length));
@@ -79,7 +81,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
             return HeaderField(
               keyId: "$selectedId-$idx-headers-k-$seed",
               initialValue: rows[idx].name,
-              hintText: "Add Header Name",
+              hintText: l10n!.kLabelAPIHeaderName,
               onChanged: (value) {
                 rows[idx] = rows[idx].copyWith(name: value);
                 _onFieldChange(selectedId!);
@@ -106,7 +108,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
             return CellField(
               keyId: "$selectedId-$idx-headers-v-$seed",
               initialValue: rows[idx].value,
-              hintText: " Add Header Value",
+              hintText: l10n!.kLabelAPIHeaderValue,
               onChanged: (value) {
                 rows[idx] = rows[idx].copyWith(value: value);
                 _onFieldChange(selectedId!);
@@ -174,8 +176,8 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
                 _onFieldChange(selectedId!);
               },
               icon: const Icon(Icons.add),
-              label: const Text(
-                "Add Header",
+              label: Text(
+                l10n!.kLabelAddHeader,
                 style: kTextStyleButton,
               ),
             ),

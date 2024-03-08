@@ -4,12 +4,15 @@ import '../providers/providers.dart';
 import '../widgets/widgets.dart';
 import '../common/utils.dart';
 import '../consts.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+
     final settings = ref.watch(settingsProvider);
     final clearingData = ref.watch(clearDataStateProvider);
     var sm = ScaffoldMessenger.of(context);
@@ -19,7 +22,7 @@ class SettingsPage extends ConsumerWidget {
         Padding(
           padding: kPh20t40,
           child: kIsDesktop
-              ? Text(kLabelSettings,
+              ? Text(l10n!.kLabelSettings,
                   style: Theme.of(context).textTheme.headlineLarge)
               : const SizedBox.shrink(),
         ),
@@ -39,9 +42,9 @@ class SettingsPage extends ConsumerWidget {
               SwitchListTile(
                 contentPadding: EdgeInsets.zero,
                 hoverColor: kColorTransparent,
-                title: const Text(kLabelSwitchThemeMode),
+                title: Text(l10n!.kLabelSwitchThemeMode),
                 subtitle: Text(
-                    '$kLabelCurrentSelection ${settings.isDark ? kLabelDarkMode : kLabelLightMode}'),
+                    '${l10n.kLabelCurrentSelection} ${settings.isDark ? l10n.kLabelDarkMode : l10n.kLabelLightMode}'),
                 value: settings.isDark,
                 onChanged: (bool? value) {
                   ref.read(settingsProvider.notifier).update(isDark: value);
@@ -50,9 +53,9 @@ class SettingsPage extends ConsumerWidget {
               SwitchListTile(
                 contentPadding: EdgeInsets.zero,
                 hoverColor: kColorTransparent,
-                title: const Text(kLabelPaneScrollbarVisibility),
+                title: Text(l10n.kLabelPaneScrollbarVisibility),
                 subtitle: Text(
-                    '$kLabelCurrentSelection ${settings.alwaysShowCollectionPaneScrollbar ? kLabelAlwaysShow : kLabelShowWhenScrolling}'),
+                    '${l10n.kLabelCurrentSelection} ${settings.alwaysShowCollectionPaneScrollbar ? l10n.kLabelAlwaysShow : l10n.kLabelShowWhenScrolling}'),
                 value: settings.alwaysShowCollectionPaneScrollbar,
                 onChanged: (bool? value) {
                   ref
@@ -63,7 +66,7 @@ class SettingsPage extends ConsumerWidget {
               ListTile(
                 contentPadding: kPb10,
                 hoverColor: kColorTransparent,
-                title: const Text(kLabelDefaultURIScheme),
+                title: Text(l10n.kLabelDefaultURIScheme),
                 subtitle: Text(
                     'api.apidash.dev → ${settings.defaultUriScheme}://api.apidash.dev'),
                 trailing: DropdownMenu(
@@ -84,7 +87,7 @@ class SettingsPage extends ConsumerWidget {
               ListTile(
                 contentPadding: kPb10,
                 hoverColor: kColorTransparent,
-                title: const Text(kLabelDefaultCodeGenerator),
+                title: Text(l10n.kLabelDefaultCodeGenerator),
                 trailing: DropdownMenu(
                     onSelected: (value) {
                       ref
@@ -102,8 +105,8 @@ class SettingsPage extends ConsumerWidget {
               ),
               CheckboxListTile(
                 contentPadding: EdgeInsets.zero,
-                title: const Text(kLabelSaveResponses),
-                subtitle: const Text(kLabelSaveResponsesSubtitle),
+                title: Text(l10n.kLabelSaveResponses),
+                subtitle: Text(l10n.kLabelSaveResponsesSubtitle),
                 value: settings.saveResponses,
                 onChanged: (value) {
                   ref
@@ -113,8 +116,8 @@ class SettingsPage extends ConsumerWidget {
               ),
               CheckboxListTile(
                 contentPadding: EdgeInsets.zero,
-                title: const Text(kLabelSaveAlertOnClose),
-                subtitle: const Text(kLabelSaveAlertOnCloseSubtitle),
+                title: Text(l10n.kLabelSaveAlertOnClose),
+                subtitle: Text(l10n.kLabelSaveAlertOnCloseSubtitle),
                 value: settings.promptBeforeClosing,
                 onChanged: (value) {
                   ref
@@ -125,9 +128,8 @@ class SettingsPage extends ConsumerWidget {
               ListTile(
                 contentPadding: EdgeInsets.zero,
                 hoverColor: kColorTransparent,
-                title: const Text(kLabelExportData),
-                subtitle: const Text(
-                    'Export your collection to HAR (HTTP Archive format).\nVersion control this file or import in other API clients.'),
+                title: Text(l10n.kLabelExportData),
+                subtitle: Text(l10n.kLabelHARExport),
                 trailing: FilledButton.icon(
                   onPressed: () async {
                     var data = await ref
@@ -135,7 +137,7 @@ class SettingsPage extends ConsumerWidget {
                         .exportDataToHAR();
                     await saveCollection(data, sm);
                   },
-                  label: const Text(kLabelExport),
+                  label: Text(l10n.kLabelExport),
                   icon: const Icon(
                     Icons.arrow_outward_rounded,
                     size: 20,
@@ -145,8 +147,8 @@ class SettingsPage extends ConsumerWidget {
               ListTile(
                 contentPadding: EdgeInsets.zero,
                 hoverColor: kColorTransparent,
-                title: const Text(kLabelClearData),
-                subtitle: const Text(kLabelClearDataSubtitle),
+                title: Text(l10n.kLabelClearData),
+                subtitle: Text(l10n.kLabelClearDataSubtitle),
                 trailing: FilledButton.tonalIcon(
                   style: FilledButton.styleFrom(
                       backgroundColor: settings.isDark
@@ -159,13 +161,13 @@ class SettingsPage extends ConsumerWidget {
                       : () => showDialog<String>(
                             context: context,
                             builder: (BuildContext context) => AlertDialog(
-                              title: const Text(kLabelClearData),
-                              content: const Text(kLabelClearDataConfirm),
+                              title: Text(l10n.kLabelClearData),
+                              content: Text(l10n.kLabelClearDataConfirm),
                               actions: <Widget>[
                                 TextButton(
                                   onPressed: () =>
                                       Navigator.pop(context, 'Cancel'),
-                                  child: const Text(kLabelCancel),
+                                  child: Text(l10n.kLabelCancel),
                                 ),
                                 TextButton(
                                   onPressed: () async {
@@ -190,7 +192,7 @@ class SettingsPage extends ConsumerWidget {
                               ],
                             ),
                           ),
-                  label: const Text(kLabelClear),
+                  label: Text(l10n.kLabelClear),
                   icon: const Icon(
                     Icons.delete_forever_rounded,
                     size: 20,

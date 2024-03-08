@@ -4,6 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:apidash/utils/utils.dart';
 import 'package:apidash/consts.dart';
 import "snackbars.dart";
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CopyButton extends StatelessWidget {
   const CopyButton({
@@ -18,8 +19,9 @@ class CopyButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var sm = ScaffoldMessenger.of(context);
+    final l10n = AppLocalizations.of(context);
     return Tooltip(
-      message: showLabel ? '' : kLabelCopy,
+      message: showLabel ? '' : l10n!.kLabelCopy,
       child: SizedBox(
         width: showLabel ? null : kTextButtonMinWidth,
         child: TextButton(
@@ -35,7 +37,7 @@ class CopyButton extends StatelessWidget {
                 Icons.content_copy,
                 size: 20,
               ),
-              if (showLabel) const Text(kLabelCopy)
+              if (showLabel) Text(l10n!.kLabelCopy)
             ],
           ),
         ),
@@ -58,6 +60,7 @@ class SendRequestButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     bool disable = sentRequestId != null;
     return FilledButton(
       onPressed: disable ? null : onTap,
@@ -66,8 +69,10 @@ class SendRequestButton extends StatelessWidget {
         children: [
           Text(
             disable
-                ? (selectedId == sentRequestId ? kLabelSending : kLabelBusy)
-                : kLabelSend,
+                ? (selectedId == sentRequestId
+                    ? l10n!.kLabelSending
+                    : l10n!.kLabelBusy)
+                : l10n!.kLabelSend,
             style: kTextStyleButton,
           ),
           if (!disable) kHSpacer10,
@@ -101,8 +106,9 @@ class SaveInDownloadsButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var sm = ScaffoldMessenger.of(context);
+    final l10n = AppLocalizations.of(context);
     return Tooltip(
-      message: showLabel ? '' : kLabelDownload,
+      message: showLabel ? '' : l10n!.kLabelDownload,
       child: SizedBox(
         width: showLabel ? null : kTextButtonMinWidth,
         child: TextButton(
@@ -135,7 +141,7 @@ class SaveInDownloadsButton extends StatelessWidget {
                 Icons.download,
                 size: 20,
               ),
-              if (showLabel) const Text(kLabelDownload)
+              if (showLabel) Text(l10n!.kLabelDownload)
             ],
           ),
         ),
@@ -221,14 +227,15 @@ class SaveButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return TextButton.icon(
       onPressed: onPressed,
       icon: const Icon(
         Icons.save,
         size: 20,
       ),
-      label: const Text(
-        kLabelSave,
+      label: Text(
+        l10n!.kLabelSave,
         style: kTextStyleButton,
       ),
     );

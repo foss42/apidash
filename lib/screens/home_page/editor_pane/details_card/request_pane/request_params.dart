@@ -6,6 +6,7 @@ import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class EditRequestURLParams extends ConsumerStatefulWidget {
   const EditRequestURLParams({super.key});
@@ -37,6 +38,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final selectedId = ref.watch(selectedIdStateProvider);
     final length = ref.watch(selectedRequestModelProvider
         .select((value) => value?.requestParams?.length));
@@ -80,7 +82,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
             return CellField(
               keyId: "$selectedId-$idx-params-k-$seed",
               initialValue: rows[idx].name,
-              hintText: "Add URL Parameter",
+              hintText: l10n!.kLabelAddURLParameters,
               onChanged: (value) {
                 rows[idx] = rows[idx].copyWith(name: value);
                 _onFieldChange(selectedId!);
@@ -107,7 +109,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
             return CellField(
               keyId: "$selectedId-$idx-params-v-$seed",
               initialValue: rows[idx].value,
-              hintText: "Add Value",
+              hintText: l10n!.kLabelAddValue,
               onChanged: (value) {
                 rows[idx] = rows[idx].copyWith(value: value);
                 _onFieldChange(selectedId!);
@@ -175,8 +177,8 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
                 _onFieldChange(selectedId!);
               },
               icon: const Icon(Icons.add),
-              label: const Text(
-                "Add Param",
+              label: Text(
+                l10n!.kLabelAddURLParams,
                 style: kTextStyleButton,
               ),
             ),

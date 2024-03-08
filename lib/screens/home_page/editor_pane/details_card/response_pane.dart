@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
-import 'package:apidash/consts.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ResponsePane extends ConsumerWidget {
   const ResponsePane({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final selectedId = ref.watch(selectedIdStateProvider);
     final sentRequestId = ref.watch(sentRequestIdStateProvider);
     final responseStatus = ref.watch(
@@ -22,7 +23,7 @@ class ResponsePane extends ConsumerWidget {
       return const NotSentWidget();
     }
     if (responseStatus == -1) {
-      return ErrorMessage(message: '$message. $kUnexpectedRaiseIssue');
+      return ErrorMessage(message: '$message. ${l10n!.kUnexpectedRaiseIssue}');
     }
     return const ResponseDetails();
   }

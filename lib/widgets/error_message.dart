@@ -1,6 +1,7 @@
 import 'package:apidash/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ErrorMessage extends StatelessWidget {
   const ErrorMessage({
@@ -17,6 +18,7 @@ class ErrorMessage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = Theme.of(context).colorScheme.secondary;
+    final l10n = AppLocalizations.of(context);
     return Padding(
       padding: kPh20v10,
       child: Center(
@@ -31,7 +33,8 @@ class ErrorMessage extends StatelessWidget {
                   )
                 : const SizedBox(),
             SelectableText(
-              message ?? 'An error occurred. $kUnexpectedRaiseIssue',
+              message ??
+                  '${l10n!.kLabelErrorOccoured} ${l10n.kUnexpectedRaiseIssue}',
               textAlign: TextAlign.center,
               style: Theme.of(context)
                   .textTheme
@@ -46,7 +49,7 @@ class ErrorMessage extends StatelessWidget {
                     },
                     icon: const Icon(Icons.arrow_outward_rounded),
                     label: Text(
-                      'Raise Issue',
+                      l10n!.kLabelRaiseIssue,
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                   )

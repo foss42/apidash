@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:apidash/consts.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class TextFieldEditor extends StatefulWidget {
   const TextFieldEditor({
@@ -53,6 +54,7 @@ class _TextFieldEditorState extends State<TextFieldEditor> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     if (widget.initialValue != null) {
       controller.text = widget.initialValue!;
     }
@@ -73,7 +75,7 @@ class _TextFieldEditorState extends State<TextFieldEditor> {
         textAlignVertical: TextAlignVertical.top,
         onChanged: widget.onChanged,
         decoration: InputDecoration(
-          hintText: "Enter content (body)",
+          hintText: l10n!.kLabelEnterContent,
           hintStyle: TextStyle(
             color: Theme.of(context).colorScheme.outline.withOpacity(
                   kHintOpacity,

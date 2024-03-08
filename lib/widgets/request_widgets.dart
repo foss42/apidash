@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
 import 'tabs.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class RequestPane extends StatefulWidget {
   const RequestPane({
@@ -42,6 +43,7 @@ class _RequestPaneState extends State<RequestPane>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     if (widget.tabIndex != null) {
       _controller.index = widget.tabIndex!;
     }
@@ -55,7 +57,7 @@ class _RequestPaneState extends State<RequestPane>
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "Request",
+                  l10n!.kLabelRequests,
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 FilledButton.tonalIcon(
@@ -66,9 +68,11 @@ class _RequestPaneState extends State<RequestPane>
                         : Icons.code_rounded,
                   ),
                   label: SizedBox(
-                    width: 75,
-                    child: Text(
-                        widget.codePaneVisible ? "Hide Code" : "View Code"),
+                    //TODO : Verify if okay
+                    // width: 75,
+                    child: Text(widget.codePaneVisible
+                        ? l10n.kLabelHideCode
+                        : l10n.kLabelShowCode),
                   ),
                 ),
               ],
@@ -82,15 +86,15 @@ class _RequestPaneState extends State<RequestPane>
           onTap: widget.onTapTabBar,
           tabs: [
             TabLabel(
-              text: 'URL Params',
+              text: l10n.kLabelURLParams,
               showIndicator: widget.showIndicators[0],
             ),
             TabLabel(
-              text: 'Headers',
+              text: l10n.kLabelHeaders,
               showIndicator: widget.showIndicators[1],
             ),
             TabLabel(
-              text: 'Body',
+              text: l10n.kLabelBody,
               showIndicator: widget.showIndicators[2],
             ),
           ],

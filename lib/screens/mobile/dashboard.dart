@@ -1,4 +1,4 @@
-import 'package:apidash/consts.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../intro_page.dart';
@@ -19,6 +19,8 @@ class MobileDashboard extends ConsumerStatefulWidget {
 class _MobileDashboardState extends ConsumerState<MobileDashboard> {
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -31,42 +33,42 @@ class _MobileDashboardState extends ConsumerState<MobileDashboard> {
               height: 70,
             ),
             ListTile(
-              title: const Text(kLabelHome),
+              title: Text(l10n!.kLabelHome),
               leading: const Icon(Icons.home_outlined),
               onTap: () {
                 Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(
-                      builder: (context) => const MobileDashboard(
-                        title: kLabelHome,
-                        scaffoldBody: IntroPage(),
+                      builder: (context) => MobileDashboard(
+                        title: l10n.kLabelHome,
+                        scaffoldBody: const IntroPage(),
                       ),
                     ),
                     (Route<dynamic> route) => false);
               },
             ),
             ListTile(
-              title: const Text(kLabelRequests),
+              title: Text(l10n.kLabelRequests),
               leading: const Icon(Icons.auto_awesome_mosaic_outlined),
               onTap: () {
                 Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(
-                      builder: (context) => const MobileDashboard(
-                        title: kLabelRequests,
-                        scaffoldBody: CollectionPane(),
+                      builder: (context) => MobileDashboard(
+                        title: l10n.kLabelRequests,
+                        scaffoldBody: const CollectionPane(),
                       ),
                     ),
                     (Route<dynamic> route) => false);
               },
             ),
             ListTile(
-              title: const Text(kLabelSettings),
+              title: Text(l10n.kLabelSettings),
               leading: const Icon(Icons.settings_outlined),
               onTap: () {
                 Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(
-                      builder: (context) => const MobileDashboard(
-                        title: kLabelSettings,
-                        scaffoldBody: SettingsPage(),
+                      builder: (context) => MobileDashboard(
+                        title: l10n.kLabelSettings,
+                        scaffoldBody: const SettingsPage(),
                       ),
                     ),
                     (Route<dynamic> route) => false);

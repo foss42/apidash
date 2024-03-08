@@ -7,6 +7,7 @@ import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/utils/utils.dart';
 import 'package:apidash/consts.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class FormDataWidget extends ConsumerStatefulWidget {
   const FormDataWidget({super.key});
@@ -26,6 +27,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final selectedId = ref.watch(selectedIdStateProvider);
     var formRows = ref.read(selectedRequestModelProvider)?.requestFormDataList;
     rows =
@@ -45,7 +47,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
               child: FormDataField(
                 keyId: "$selectedId-$idx-form-v-$seed",
                 initialValue: rows[idx].name,
-                hintText: " Add Key",
+                hintText: l10n!.kLabelAddKey,
                 onChanged: (value) {
                   rows[idx] = rows[idx].copyWith(
                     name: value,
@@ -120,7 +122,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                                 (rows[idx].type == FormDataType.file &&
                                         rows[idx].value.isNotEmpty)
                                     ? rows[idx].value.toString()
-                                    : "Select File",
+                                    : l10n!.kLabelSelectFile,
                                 textAlign: TextAlign.center,
                                 overflow: TextOverflow.ellipsis,
                                 style: kFormDataButtonLabelTextStyle,
@@ -134,7 +136,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                 : CellField(
                     keyId: "$selectedId-$idx-form-v-$seed",
                     initialValue: rows[idx].value,
-                    hintText: " Add Value",
+                    hintText: l10n!.kLabelAddValue,
                     onChanged: (value) {
                       rows[idx] = rows[idx].copyWith(value: value);
                       _onFieldChange(selectedId!);
@@ -200,8 +202,8 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                 _onFieldChange(selectedId!);
               },
               icon: const Icon(Icons.add),
-              label: const Text(
-                "Add Form Data",
+              label: Text(
+                l10n!.kLabelAddFormData,
                 style: kTextStyleButton,
               ),
             ),

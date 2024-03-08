@@ -5,6 +5,7 @@ import 'package:apidash/consts.dart';
 import 'home_page/home_page.dart';
 import 'intro_page.dart';
 import 'settings_page.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Dashboard extends ConsumerWidget {
   const Dashboard({super.key});
@@ -12,6 +13,7 @@ class Dashboard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final railIdx = ref.watch(navRailIndexStateProvider);
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       body: SafeArea(
         child: Row(
@@ -34,7 +36,7 @@ class Dashboard extends ConsumerWidget {
                       selectedIcon: const Icon(Icons.auto_awesome_mosaic),
                     ),
                     Text(
-                      'Requests',
+                      l10n!.kLabelRequests,
                       style: Theme.of(context).textTheme.labelSmall,
                     ),
                   ],

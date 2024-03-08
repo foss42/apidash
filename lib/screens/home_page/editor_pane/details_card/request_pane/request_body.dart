@@ -4,12 +4,14 @@ import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
 import 'request_form_data.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class EditRequestBody extends ConsumerWidget {
   const EditRequestBody({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final selectedId = ref.watch(selectedIdStateProvider);
     final requestModel = ref
         .read(collectionStateNotifierProvider.notifier)
@@ -24,15 +26,15 @@ class EditRequestBody extends ConsumerWidget {
       margin: kPt5o10,
       child: Column(
         children: [
-          const SizedBox(
+          SizedBox(
             height: kHeaderHeight,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  "Select Content Type:",
+                  l10n!.kLabelSelectContentType,
                 ),
-                DropdownButtonBodyContentType(),
+                const DropdownButtonBodyContentType(),
               ],
             ),
           ),

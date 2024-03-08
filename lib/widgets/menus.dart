@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class RequestCardMenu extends StatelessWidget {
   const RequestCardMenu({
@@ -11,6 +12,7 @@ class RequestCardMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return PopupMenuButton<RequestItemMenuOption>(
       padding: EdgeInsets.zero,
       splashRadius: 14,
@@ -18,17 +20,17 @@ class RequestCardMenu extends StatelessWidget {
       onSelected: onSelected,
       itemBuilder: (BuildContext context) =>
           <PopupMenuEntry<RequestItemMenuOption>>[
-        const PopupMenuItem<RequestItemMenuOption>(
+        PopupMenuItem<RequestItemMenuOption>(
           value: RequestItemMenuOption.edit,
-          child: Text(kLabelRename),
+          child: Text(l10n!.kLabelRename),
         ),
-        const PopupMenuItem<RequestItemMenuOption>(
+        PopupMenuItem<RequestItemMenuOption>(
           value: RequestItemMenuOption.delete,
-          child: Text(kLabelDelete),
+          child: Text(l10n.kLabelDelete),
         ),
-        const PopupMenuItem<RequestItemMenuOption>(
+        PopupMenuItem<RequestItemMenuOption>(
           value: RequestItemMenuOption.duplicate,
-          child: Text(kLabelDuplicate),
+          child: Text(l10n.kLabelDuplicate),
         ),
       ],
     );

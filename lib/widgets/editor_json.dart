@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:json_text_field/json_text_field.dart';
 import 'package:apidash/consts.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class JsonTextFieldEditor extends StatefulWidget {
   const JsonTextFieldEditor({
@@ -55,6 +56,7 @@ class _JsonTextFieldEditorState extends State<JsonTextFieldEditor> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     if (widget.initialValue != null) {
       controller.text = widget.initialValue!;
     }
@@ -93,7 +95,7 @@ class _JsonTextFieldEditorState extends State<JsonTextFieldEditor> {
           widget.onChanged?.call(value);
         },
         decoration: InputDecoration(
-          hintText: "Enter content (body)",
+          hintText: l10n!.kLabelEnterContent,
           hintStyle: TextStyle(
             color: Theme.of(context).colorScheme.outline.withOpacity(
                   kHintOpacity,
