@@ -1,0 +1,21 @@
+{
+    "@@locale": "es",
+    "kMimeTypeRawRaiseIssueStart": "Haga clic en 'Sin procesar' para ver los resultados sin procesar como una vista previa de la respuesta para 'Content-Type'",
+    "kMimeTypeRaiseIssueStart": "Vista previa de respuesta para Content-Type",
+    "kMimeTypeRaiseIssue": "actualmente no es compatible.\nPor favor, plantee un problema en el repositorio API Dash GitHub para que podamos agregar una vista previa para este Content-type.",
+    "kUnexpectedRaiseIssue": "\nSi el comportamiento es inesperado, plantee un problema en el repositorio API Dash GitHub para que podamos resolverlo.",
+    "kImageError": "Parece haber un problema al renderizar esta imagen. Plantee un problema en el repositorio API Dash GitHub para que podamos resolverlo.",
+    "kSvgError": "Parece haber un problema al renderizar la imagen SVG. Plantee un problema en el repositorio API Dash GitHub para que podamos resolverlo.",
+    "kPdfError": "Parece haber un problema al procesar este pdf. Plantee un problema en el repositorio API Dash GitHub para que podamos resolverlo.",
+    "kAudioError": "Parece haber un problema al reproducir este audio. Plantee un problema en el repositorio API Dash GitHub para que podamos resolverlo.",
+    "kRaiseIssue": "\nPor favor, plantee un problema en el repositorio API Dash GitHub para que podamos resolverlo.",
+    "kCsvError": "Parece haber un problema al renderizar este CSV. Plantee un problema en el repositorio API Dash GitHub para que podamos resolverlo.",
+    "kHintTextUrlCard": "Ingrese el punto final de API como api.apidash.dev/country/codes",
+    "kLabelPlusNew": "+ Nuevo",
+    "kLabelSend": "Enviar",
+    "kLabelSending": "Enviando..",
+    "kLabelBusy": "Ocupado",
+    "kLabelCopy": "Copiar",
+    "kLabelSave": "Ahorrar",
+    "kLabelDownload": "Descargar"
+}

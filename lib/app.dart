@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:apidash/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:window_manager/window_manager.dart' hide WindowCaption;
@@ -106,6 +107,9 @@ class DashApp extends ConsumerWidget {
         ref.watch(settingsProvider.select((value) => value.isDark));
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      localizationsDelegates: L10n.delegates,
+      supportedLocales: L10n.supportedLocales,
+      locale: L10n.fallbackLocale,
       theme: ThemeData(
         fontFamily: kFontFamily,
         fontFamilyFallback: kFontFamilyFallback,

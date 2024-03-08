@@ -1,0 +1,27 @@
+{
+    "@@locale": "en",
+    "kMimeTypeRawRaiseIssueStart": "Please click on 'Raw' to view the unformatted raw results as the response preview for Content-Type ",
+    "kMimeTypeRaiseIssueStart": "Response preview for Content-Type ",
+    "kMimeTypeRaiseIssue": "is currently not supported.\nPlease raise an issue in API Dash GitHub repo so that we can add a Previewer for this content-type.",
+    "kUnexpectedRaiseIssue": "\nIf the behaviour is unexpected, please raise an issue in API Dash GitHub repo so that we can resolve it.",
+    "kImageError": "There seems to be an issue rendering this image. Please raise an issue in API Dash GitHub repo so that we can resolve it.",
+    "kSvgError": "There seems to be an issue rendering this SVG image. Please raise an issue in API Dash GitHub repo so that we can resolve it.",
+    "kPdfError": "There seems to be an issue rendering this pdf. Please raise an issue in API Dash GitHub repo so that we can resolve it.",
+    "kAudioError": "There seems to be an issue playing this audio. Please raise an issue in API Dash GitHub repo so that we can resolve it.",
+    "kRaiseIssue": "\nPlease raise an issue in API Dash GitHub repo so that we can resolve it.",
+    "kCsvError": "There seems to be an issue rendering this CSV. Please raise an issue in API Dash GitHub repo so that we can resolve it.",
+    "kHintTextUrlCard": "Enter API endpoint like api.apidash.dev/country/codes",
+    "kLabelPlusNew": "+ New",
+    "kLabelSend": "Send",
+    "kLabelSending": "Sending..",
+    "kLabelBusy": "Busy",
+    "kLabelCopy": "Copy",
+    "@kLabelCopy": {
+        "description": "Copy Contents"
+    },
+    "kLabelSave": "Save",
+    "@kLabelSave": {
+        "description": "Save All API Requests"
+    },
+    "kLabelDownload": "Download"
+}

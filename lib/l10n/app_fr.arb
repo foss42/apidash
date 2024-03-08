@@ -1,0 +1,21 @@
+{
+    "@@locale": "fr",
+    "kMimeTypeRawRaiseIssueStart": "Veuillez cliquer sur 'Raw' pour afficher les résultats bruts non formatés comme aperçu de la réponse pour 'Content-Type' ",
+    "kMimeTypeRaiseIssueStart": "Aperçu de la réponse pour Content-Type ",
+    "kMimeTypeRaiseIssue": "n'est actuellement pas pris en charge.\nVeuillez signaler un problème dans le dépôt API Dash GitHub afin que nous puissions ajouter un outil de prévisualisation pour cela 'Content-Type'.",
+    "kUnexpectedRaiseIssue": "\nSi le comportement est inattendu, veuillez signaler un problème dans le dépôt API Dash GitHub afin que nous puissions le résoudre.",
+    "kImageError": "Il semble y avoir un problème lors du rendu de cette image. Veuillez signaler un problème dans le dépôt API Dash GitHub afin que nous puissions le résoudre.",
+    "kSvgError": "Il semble y avoir un problème lors du rendu de cette image SVG. Veuillez signaler un problème dans le dépôt API Dash GitHub afin que nous puissions le résoudre.",
+    "kPdfError": "Il semble y avoir un problème lors du rendu de ce pdf. Veuillez signaler un problème dans le référentiel API Dash GitHub afin que nous puissions le résoudre.",
+    "kAudioError": "Il semble y avoir un problème lors de la lecture de cet audio. Veuillez signaler un problème dans le référentiel API Dash GitHub afin que nous puissions le résoudre.",
+    "kRaiseIssue": "\nVeuillez signaler un problème dans le dépôt API Dash GitHub afin que nous puissions le résoudre.",
+    "kCsvError": "Il semble y avoir un problème lors du rendu de ce CSV. Veuillez signaler un problème dans le dépôt API Dash GitHub afin que nous puissions le résoudre.",
+    "kHintTextUrlCard": "Entrez le point de terminaison de l'API comme api.apidash.dev/country/codes",
+    "kLabelPlusNew": "+ Nouveau",
+    "kLabelSend": "Envoyer",
+    "kLabelSending": "Envoi en cours..",
+    "kLabelBusy": "Occupé",
+    "kLabelCopy": "Copie",
+    "kLabelSave": "Sauvegarder",
+    "kLabelDownload": "Télécharger"
+}
