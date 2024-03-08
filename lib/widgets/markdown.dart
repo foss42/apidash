@@ -9,9 +9,12 @@ class CustomMarkdown extends StatelessWidget {
     super.key,
     required this.data,
     this.padding = const EdgeInsets.all(16.0),
+    this.onTapLink,
   });
+
   final String data;
   final EdgeInsets padding;
+  final void Function(String text, String? href, String title)? onTapLink;
 
   @override
   Widget build(BuildContext context) {
@@ -25,9 +28,10 @@ class CustomMarkdown extends StatelessWidget {
       data: data,
       selectable: true,
       extensionSet: md.ExtensionSet.gitHubFlavored,
-      onTapLink: (text, href, title) {
-        launchUrl(Uri.parse(href ?? ""));
-      },
+      onTapLink: onTapLink ??
+          (text, href, title) {
+            launchUrl(Uri.parse(href ?? ""));
+          },
       builders: {
         "inlineButton": InlineButton(),
       },
