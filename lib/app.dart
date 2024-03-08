@@ -62,19 +62,18 @@ class _AppState extends ConsumerState<App> with WindowListener {
         showDialog(
           context: context,
           builder: (_) => AlertDialog(
-            title: const Text('Save Changes'),
-            content:
-                const Text('Want to save changes before you close API Dash?'),
+            title: const Text(kSaveChanges),
+            content: const Text(kSaveChangesSubtitle),
             actions: [
               OutlinedButton(
-                child: const Text('No'),
+                child: const Text(kLabelNo),
                 onPressed: () async {
                   Navigator.of(context).pop();
                   await windowManager.destroy();
                 },
               ),
               FilledButton(
-                child: const Text('Save'),
+                child: const Text(kLabelSave),
                 onPressed: () async {
                   await ref
                       .read(collectionStateNotifierProvider.notifier)

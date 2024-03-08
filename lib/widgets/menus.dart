@@ -20,15 +20,15 @@ class RequestCardMenu extends StatelessWidget {
           <PopupMenuEntry<RequestItemMenuOption>>[
         const PopupMenuItem<RequestItemMenuOption>(
           value: RequestItemMenuOption.edit,
-          child: Text('Rename'),
+          child: Text(kLabelRename),
         ),
         const PopupMenuItem<RequestItemMenuOption>(
           value: RequestItemMenuOption.delete,
-          child: Text('Delete'),
+          child: Text(kLabelDelete),
         ),
         const PopupMenuItem<RequestItemMenuOption>(
           value: RequestItemMenuOption.duplicate,
-          child: Text('Duplicate'),
+          child: Text(kLabelDuplicate),
         ),
       ],
     );

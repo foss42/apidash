@@ -19,7 +19,7 @@ class SettingsPage extends ConsumerWidget {
         Padding(
           padding: kPh20t40,
           child: kIsDesktop
-              ? Text("Settings",
+              ? Text(kLabelSettings,
                   style: Theme.of(context).textTheme.headlineLarge)
               : const SizedBox.shrink(),
         ),
@@ -39,9 +39,9 @@ class SettingsPage extends ConsumerWidget {
               SwitchListTile(
                 contentPadding: EdgeInsets.zero,
                 hoverColor: kColorTransparent,
-                title: const Text('Switch Theme Mode'),
+                title: const Text(kLabelSwitchThemeMode),
                 subtitle: Text(
-                    'Current selection: ${settings.isDark ? "Dark Mode" : "Light mode"}'),
+                    '$kLabelCurrentSelection ${settings.isDark ? kLabelDarkMode : kLabelLightMode}'),
                 value: settings.isDark,
                 onChanged: (bool? value) {
                   ref.read(settingsProvider.notifier).update(isDark: value);
@@ -50,9 +50,9 @@ class SettingsPage extends ConsumerWidget {
               SwitchListTile(
                 contentPadding: EdgeInsets.zero,
                 hoverColor: kColorTransparent,
-                title: const Text('Collection Pane Scrollbar Visiblity'),
+                title: const Text(kLabelPaneScrollbarVisibility),
                 subtitle: Text(
-                    'Current selection: ${settings.alwaysShowCollectionPaneScrollbar ? "Always show" : "Show only when scrolling"}'),
+                    '$kLabelCurrentSelection ${settings.alwaysShowCollectionPaneScrollbar ? kLabelAlwaysShow : kLabelShowWhenScrolling}'),
                 value: settings.alwaysShowCollectionPaneScrollbar,
                 onChanged: (bool? value) {
                   ref
@@ -63,7 +63,7 @@ class SettingsPage extends ConsumerWidget {
               ListTile(
                 contentPadding: kPb10,
                 hoverColor: kColorTransparent,
-                title: const Text('Default URI Scheme'),
+                title: const Text(kLabelDefaultURIScheme),
                 subtitle: Text(
                     'api.apidash.dev → ${settings.defaultUriScheme}://api.apidash.dev'),
                 trailing: DropdownMenu(
@@ -84,7 +84,7 @@ class SettingsPage extends ConsumerWidget {
               ListTile(
                 contentPadding: kPb10,
                 hoverColor: kColorTransparent,
-                title: const Text('Default Code Generator'),
+                title: const Text(kLabelDefaultCodeGenerator),
                 trailing: DropdownMenu(
                     onSelected: (value) {
                       ref
@@ -102,9 +102,8 @@ class SettingsPage extends ConsumerWidget {
               ),
               CheckboxListTile(
                 contentPadding: EdgeInsets.zero,
-                title: const Text("Save Responses"),
-                subtitle:
-                    const Text("Save disk space by not storing API responses"),
+                title: const Text(kLabelSaveResponses),
+                subtitle: const Text(kLabelSaveResponsesSubtitle),
                 value: settings.saveResponses,
                 onChanged: (value) {
                   ref
@@ -114,9 +113,8 @@ class SettingsPage extends ConsumerWidget {
               ),
               CheckboxListTile(
                 contentPadding: EdgeInsets.zero,
-                title: const Text("Show Save Alert on App Close"),
-                subtitle: const Text(
-                    "Show a confirmation dialog to save workspace when the user closes the app"),
+                title: const Text(kLabelSaveAlertOnClose),
+                subtitle: const Text(kLabelSaveAlertOnCloseSubtitle),
                 value: settings.promptBeforeClosing,
                 onChanged: (value) {
                   ref
@@ -127,7 +125,7 @@ class SettingsPage extends ConsumerWidget {
               ListTile(
                 contentPadding: EdgeInsets.zero,
                 hoverColor: kColorTransparent,
-                title: const Text('Export Data'),
+                title: const Text(kLabelExportData),
                 subtitle: const Text(
                     'Export your collection to HAR (HTTP Archive format).\nVersion control this file or import in other API clients.'),
                 trailing: FilledButton.icon(
@@ -137,7 +135,7 @@ class SettingsPage extends ConsumerWidget {
                         .exportDataToHAR();
                     await saveCollection(data, sm);
                   },
-                  label: const Text("Export"),
+                  label: const Text(kLabelExport),
                   icon: const Icon(
                     Icons.arrow_outward_rounded,
                     size: 20,
@@ -147,8 +145,8 @@ class SettingsPage extends ConsumerWidget {
               ListTile(
                 contentPadding: EdgeInsets.zero,
                 hoverColor: kColorTransparent,
-                title: const Text('Clear Data'),
-                subtitle: const Text('Delete all requests data from the disk'),
+                title: const Text(kLabelClearData),
+                subtitle: const Text(kLabelClearDataSubtitle),
                 trailing: FilledButton.tonalIcon(
                   style: FilledButton.styleFrom(
                       backgroundColor: settings.isDark
@@ -161,14 +159,13 @@ class SettingsPage extends ConsumerWidget {
                       : () => showDialog<String>(
                             context: context,
                             builder: (BuildContext context) => AlertDialog(
-                              title: const Text('Clear Data'),
-                              content: const Text(
-                                  'This action will clear all the requests data from the disk and is irreversible. Do you want to proceed?'),
+                              title: const Text(kLabelClearData),
+                              content: const Text(kLabelClearDataConfirm),
                               actions: <Widget>[
                                 TextButton(
                                   onPressed: () =>
                                       Navigator.pop(context, 'Cancel'),
-                                  child: const Text('Cancel'),
+                                  child: const Text(kLabelCancel),
                                 ),
                                 TextButton(
                                   onPressed: () async {
@@ -193,7 +190,7 @@ class SettingsPage extends ConsumerWidget {
                               ],
                             ),
                           ),
-                  label: const Text("Clear"),
+                  label: const Text(kLabelClear),
                   icon: const Icon(
                     Icons.delete_forever_rounded,
                     size: 20,

@@ -1,3 +1,4 @@
+import 'package:apidash/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../intro_page.dart';
@@ -30,13 +31,13 @@ class _MobileDashboardState extends ConsumerState<MobileDashboard> {
               height: 70,
             ),
             ListTile(
-              title: const Text('Home'),
+              title: const Text(kLabelHome),
               leading: const Icon(Icons.home_outlined),
               onTap: () {
                 Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(
                       builder: (context) => const MobileDashboard(
-                        title: 'Home',
+                        title: kLabelHome,
                         scaffoldBody: IntroPage(),
                       ),
                     ),
@@ -44,13 +45,13 @@ class _MobileDashboardState extends ConsumerState<MobileDashboard> {
               },
             ),
             ListTile(
-              title: const Text('Requests'),
+              title: const Text(kLabelRequests),
               leading: const Icon(Icons.auto_awesome_mosaic_outlined),
               onTap: () {
                 Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(
                       builder: (context) => const MobileDashboard(
-                        title: 'Requests',
+                        title: kLabelRequests,
                         scaffoldBody: CollectionPane(),
                       ),
                     ),
@@ -58,13 +59,13 @@ class _MobileDashboardState extends ConsumerState<MobileDashboard> {
               },
             ),
             ListTile(
-              title: const Text('Settings'),
+              title: const Text(kLabelSettings),
               leading: const Icon(Icons.settings_outlined),
               onTap: () {
                 Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(
                       builder: (context) => const MobileDashboard(
-                        title: 'Settings',
+                        title: kLabelSettings,
                         scaffoldBody: SettingsPage(),
                       ),
                     ),
