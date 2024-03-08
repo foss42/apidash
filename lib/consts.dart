@@ -470,6 +470,7 @@ const kResponseCodeReasons = {
   511: 'Network Authentication Required',
 };
 
+// TODO: depends tests on l10n then remove all consts
 const kMimeTypeRawRaiseIssueStart =
     "Please click on 'Raw' to view the unformatted raw results as the response preview for Content-Type ";
 
@@ -508,36 +509,3 @@ const kLabelBusy = "Busy";
 const kLabelCopy = "Copy";
 const kLabelSave = "Save";
 const kLabelDownload = "Download";
-
-const kSaveChanges = 'Save Changes';
-const kSaveChangesSubtitle = 'Want to save changes before you close API Dash?';
-const kLabelNo = 'No';
-const kLabelSwitchThemeMode = 'Switch Theme Mode';
-const kLabelDarkMode = "Dark Mode";
-const kLabelLightMode = "Light Mode";
-const kLabelCurrentSelection = "Current selection:";
-const kLabelAlwaysShow = "Always show";
-const kLabelShowWhenScrolling = "Show only when scrolling";
-const kLabelDefaultURIScheme = 'Default URI Scheme';
-const kLabelDefaultCodeGenerator = 'Default Code Generator';
-const kLabelExportData = 'Export Data';
-const kLabelExport = 'Export';
-const kLabelClearData = 'Clear Data';
-const kLabelClear = 'Clear';
-const kLabelClearDataConfirm =
-    'This action will clear all the requests data from the disk and is irreversible. Do you want to proceed?';
-const kLabelClearDataSubtitle = 'Delete all requests data from the disk';
-const kLabelCancel = 'Cancel';
-const kLabelHome = 'Home';
-const kLabelRequests = 'Requests';
-const kLabelSettings = 'Settings';
-const kLabelRename = 'Rename';
-const kLabelDelete = 'Delete';
-const kLabelDuplicate = 'Duplicate';
-const kLabelPaneScrollbarVisibility = 'Collection Pane Scrollbar Visiblity';
-const kLabelSaveResponses = "Save Responses";
-const kLabelSaveResponsesSubtitle =
-    "Save disk space by not storing API responses";
-const kLabelSaveAlertOnClose = "Show Save Alert on App Close";
-const kLabelSaveAlertOnCloseSubtitle =
-    "Show a confirmation dialog to save workspace when the user closes the app";
