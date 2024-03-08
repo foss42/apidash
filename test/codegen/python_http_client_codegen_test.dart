@@ -9,7 +9,7 @@ void main() {
     test('GET 1', () {
       const expectedCode = r"""import http.client
 
-conn = http.client.HTTPSConnection("api.foss42.com")
+conn = http.client.HTTPSConnection("api.apidash.dev")
 conn.request("GET", "")
 
 res = conn.getresponse()
@@ -30,7 +30,7 @@ queryParams = {
               }
 queryParamsStr = '?' + urlencode(queryParams)
 
-conn = http.client.HTTPSConnection("api.foss42.com")
+conn = http.client.HTTPSConnection("api.apidash.dev")
 conn.request("GET", "/country/data" + queryParamsStr)
 
 res = conn.getresponse()
@@ -51,7 +51,7 @@ queryParams = {
               }
 queryParamsStr = '?' + urlencode(queryParams)
 
-conn = http.client.HTTPSConnection("api.foss42.com")
+conn = http.client.HTTPSConnection("api.apidash.dev")
 conn.request("GET", "/country/data" + queryParamsStr)
 
 res = conn.getresponse()
@@ -76,7 +76,7 @@ queryParams = {
               }
 queryParamsStr = '?' + urlencode(queryParams)
 
-conn = http.client.HTTPSConnection("api.foss42.com")
+conn = http.client.HTTPSConnection("api.apidash.dev")
 conn.request("GET", "/humanize/social" + queryParamsStr)
 
 res = conn.getresponse()
@@ -137,7 +137,7 @@ print(data.decode("utf-8"))
     test('GET 7', () {
       const expectedCode = r"""import http.client
 
-conn = http.client.HTTPSConnection("api.foss42.com")
+conn = http.client.HTTPSConnection("api.apidash.dev")
 conn.request("GET", "")
 
 res = conn.getresponse()
@@ -185,7 +185,7 @@ queryParams = {
               }
 queryParamsStr = '?' + urlencode(queryParams)
 
-conn = http.client.HTTPSConnection("api.foss42.com")
+conn = http.client.HTTPSConnection("api.apidash.dev")
 conn.request("GET", "/humanize/social" + queryParamsStr)
 
 res = conn.getresponse()
@@ -204,7 +204,7 @@ headers = {
             "User-Agent": "Test Agent"
           }
 
-conn = http.client.HTTPSConnection("api.foss42.com")
+conn = http.client.HTTPSConnection("api.apidash.dev")
 conn.request("GET", "/humanize/social",
               headers= headers)
 
@@ -235,7 +235,7 @@ headers = {
             "User-Agent": "Test Agent"
           }
 
-conn = http.client.HTTPSConnection("api.foss42.com")
+conn = http.client.HTTPSConnection("api.apidash.dev")
 conn.request("GET", "/humanize/social" + queryParamsStr,
               headers= headers)
 
@@ -251,7 +251,7 @@ print(data.decode("utf-8"))
     test('GET 12', () {
       const expectedCode = r"""import http.client
 
-conn = http.client.HTTPSConnection("api.foss42.com")
+conn = http.client.HTTPSConnection("api.apidash.dev")
 conn.request("GET", "/humanize/social")
 
 res = conn.getresponse()
@@ -268,7 +268,7 @@ print(data.decode("utf-8"))
     test('HEAD 1', () {
       const expectedCode = r"""import http.client
 
-conn = http.client.HTTPSConnection("api.foss42.com")
+conn = http.client.HTTPSConnection("api.apidash.dev")
 conn.request("HEAD", "")
 
 res = conn.getresponse()
@@ -283,7 +283,7 @@ print(data.decode("utf-8"))
     test('HEAD 2', () {
       const expectedCode = r"""import http.client
 
-conn = http.client.HTTPConnection("api.foss42.com")
+conn = http.client.HTTPConnection("api.apidash.dev")
 conn.request("HEAD", "")
 
 res = conn.getresponse()
@@ -308,7 +308,7 @@ headers = {
             "content-type": "text/plain"
           }
 
-conn = http.client.HTTPSConnection("api.foss42.com")
+conn = http.client.HTTPSConnection("api.apidash.dev")
 conn.request("POST", "/case/lower",
               body= body,
               headers= headers)
@@ -333,7 +333,7 @@ headers = {
             "content-type": "application/json"
           }
 
-conn = http.client.HTTPSConnection("api.foss42.com")
+conn = http.client.HTTPSConnection("api.apidash.dev")
 conn.request("POST", "/case/lower",
               body= body,
               headers= headers)
@@ -359,7 +359,7 @@ headers = {
             "content-type": "application/json"
           }
 
-conn = http.client.HTTPSConnection("api.foss42.com")
+conn = http.client.HTTPSConnection("api.apidash.dev")
 conn.request("POST", "/case/lower",
               body= body,
               headers= headers)
