@@ -5,20 +5,30 @@ import 'package:apidash/widgets/markdown.dart';
 
 void main() {
   group('CustomMarkdown Widget Tests', () {
-    testWidgets('Testing CustomMarkdown buttons and tags renders', (tester) async {
+    testWidgets('Testing CustomMarkdown buttons and tags renders',
+        (tester) async {
       const markdown = CustomMarkdown(
         data: """Is a markdown ~`star on github`~ 
               
-              #br
-              #br
+#br
+#br
 
-              ~`github repo`~ ~`Discord Server`~""",
+~`github repo`~ ~`Discord Server`~""",
       );
       await tester.pumpWidget(const MaterialApp(home: markdown));
 
-      expect(find.byType(InlineButton), findsNWidgets(3));
+      expect(find.byIcon(Icons.star), findsOneWidget);
+      expect(find.text("star on github"), findsOneWidget);
+
+      expect(find.byIcon(Icons.discord), findsOneWidget);
+      expect(find.text("Discord Server"), findsOneWidget);
+
+      expect(find.byIcon(Icons.code_rounded), findsOneWidget);
+      expect(find.text("github repo"), findsOneWidget);
+
       expect(find.text('#br'), findsNothing);
     });
+
     testWidgets('CustomMarkdown renders correctly',
         (WidgetTester tester) async {
       await tester.pumpWidget(const MaterialApp(
