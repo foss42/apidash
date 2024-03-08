@@ -23,5 +23,36 @@
     "@kLabelSave": {
         "description": "Save All API Requests"
     },
-    "kLabelDownload": "Download"
+    "kLabelDownload": "Download",
+
+
+    "kSaveChanges": "Save Changes",
+    "kSaveChangesSubtitle": "Want to save changes before you close API Dash?",
+    "kLabelNo": "No",
+    "kLabelSwitchThemeMode": "Switch Theme Mode", 
+    "kLabelDarkMode" : "Dark Mode",
+    "kLabelLightMode": "Light Mode",
+    "kLabelCurrentSelection": "Current selection:",
+    "kLabelAlwaysShow": "Always show",
+    "kLabelShowWhenScrolling": "Show only when scrolling",
+    "kLabelDefaultURIScheme": "Default URI Scheme",
+    "kLabelDefaultCodeGenerator": "Default Code Generator",
+    "kLabelExportData": "Export Data",
+    "kLabelExport": "Export",
+    "kLabelClearData": "Clear Data",
+    "kLabelClear": "Clear",
+    "kLabelClearDataConfirm": "This action will clear all the requests data from the disk and is irreversible. Do you want to proceed?",
+    "kLabelClearDataSubtitle": "Delete all requests data from the disk",
+    "kLabelCancel": "Cancel",
+    "kLabelHome": "Home",
+    "kLabelRequests": "Requests",
+    "kLabelSettings": "Settings",
+    "kLabelRename": "Rename",
+    "kLabelDelete": "Delete",
+    "kLabelDuplicate": "Duplicate",
+    "kLabelPaneScrollbarVisibility": "Collection Pane Scrollbar Visiblity",
+    "kLabelSaveResponses": "Save Responses",
+    "kLabelSaveResponsesSubtitle": "Save disk space by not storing API responses",
+    "kLabelSaveAlertOnClose": "Show Save Alert on App Close",
+    "kLabelSaveAlertOnCloseSubtitle": "Show a confirmation dialog to save workspace when the user closes the app"
 }
