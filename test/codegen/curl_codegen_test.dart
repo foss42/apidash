@@ -7,25 +7,25 @@ void main() {
 
   group('GET Request', () {
     test('GET 1', () {
-      const expectedCode = r"""curl --url 'https://api.foss42.com'""";
+      const expectedCode = r"""curl --url 'https://api.apidash.dev'""";
       expect(curlCodeGen.getCode(requestModelGet1, "https"), expectedCode);
     });
 
     test('GET 2', () {
       const expectedCode =
-          r"""curl --url 'https://api.foss42.com/country/data?code=US'""";
+          r"""curl --url 'https://api.apidash.dev/country/data?code=US'""";
       expect(curlCodeGen.getCode(requestModelGet2, "https"), expectedCode);
     });
 
     test('GET 3', () {
       const expectedCode =
-          r"""curl --url 'https://api.foss42.com/country/data?code=IND'""";
+          r"""curl --url 'https://api.apidash.dev/country/data?code=IND'""";
       expect(curlCodeGen.getCode(requestModelGet3, "https"), expectedCode);
     });
 
     test('GET 4', () {
       const expectedCode =
-          r"""curl --url 'https://api.foss42.com/humanize/social?num=8700000&digits=3&system=SS&add_space=true&trailing_zeros=true'""";
+          r"""curl --url 'https://api.apidash.dev/humanize/social?num=8700000&digits=3&system=SS&add_space=true&trailing_zeros=true'""";
       expect(curlCodeGen.getCode(requestModelGet4, "https"), expectedCode);
     });
 
@@ -44,7 +44,7 @@ void main() {
     });
 
     test('GET 7', () {
-      const expectedCode = r"""curl --url 'https://api.foss42.com'""";
+      const expectedCode = r"""curl --url 'https://api.apidash.dev'""";
       expect(curlCodeGen.getCode(requestModelGet7, "https"), expectedCode);
     });
 
@@ -57,13 +57,13 @@ void main() {
 
     test('GET 9', () {
       const expectedCode =
-          r"""curl --url 'https://api.foss42.com/humanize/social?num=8700000&add_space=true'""";
+          r"""curl --url 'https://api.apidash.dev/humanize/social?num=8700000&add_space=true'""";
       expect(curlCodeGen.getCode(requestModelGet9, "https"), expectedCode);
     });
 
     test('GET 10', () {
       const expectedCode =
-          r"""curl --url 'https://api.foss42.com/humanize/social' \
+          r"""curl --url 'https://api.apidash.dev/humanize/social' \
   --header 'User-Agent: Test Agent'""";
       expect(
           curlCodeGen.getCode(
@@ -75,26 +75,26 @@ void main() {
 
     test('GET 11', () {
       const expectedCode =
-          r"""curl --url 'https://api.foss42.com/humanize/social?num=8700000&digits=3' \
+          r"""curl --url 'https://api.apidash.dev/humanize/social?num=8700000&digits=3' \
   --header 'User-Agent: Test Agent'""";
       expect(curlCodeGen.getCode(requestModelGet11, "https"), expectedCode);
     });
 
     test('GET 12', () {
       const expectedCode =
-          r"""curl --url 'https://api.foss42.com/humanize/social'""";
+          r"""curl --url 'https://api.apidash.dev/humanize/social'""";
       expect(curlCodeGen.getCode(requestModelGet12, "https"), expectedCode);
     });
   });
 
   group('HEAD Request', () {
     test('HEAD 1', () {
-      const expectedCode = r"""curl --head --url 'https://api.foss42.com'""";
+      const expectedCode = r"""curl --head --url 'https://api.apidash.dev'""";
       expect(curlCodeGen.getCode(requestModelHead1, "https"), expectedCode);
     });
 
     test('HEAD 2', () {
-      const expectedCode = r"""curl --head --url 'http://api.foss42.com'""";
+      const expectedCode = r"""curl --head --url 'http://api.apidash.dev'""";
       expect(curlCodeGen.getCode(requestModelHead2, "http"), expectedCode);
     });
   });
@@ -102,7 +102,7 @@ void main() {
   group('POST Request', () {
     test('POST 1', () {
       const expectedCode = r"""curl --request POST \
- --url 'https://api.foss42.com/case/lower' \
+ --url 'https://api.apidash.dev/case/lower' \
   --header 'Content-Type: text/plain' \
   --data '{
 "text": "I LOVE Flutter"
@@ -112,7 +112,7 @@ void main() {
 
     test('POST 2', () {
       const expectedCode = r"""curl --request POST \
- --url 'https://api.foss42.com/case/lower' \
+ --url 'https://api.apidash.dev/case/lower' \
   --header 'Content-Type: application/json' \
   --data '{
 "text": "I LOVE Flutter"
@@ -122,7 +122,7 @@ void main() {
 
     test('POST 3', () {
       const expectedCode = r"""curl --request POST \
- --url 'https://api.foss42.com/case/lower' \
+ --url 'https://api.apidash.dev/case/lower' \
   --header 'Content-Type: application/json' \
   --header 'User-Agent: Test Agent' \
   --data '{

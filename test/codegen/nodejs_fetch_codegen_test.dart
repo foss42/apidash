@@ -9,7 +9,7 @@ void main() {
     test('GET 1', () {
       const expectedCode = r"""import fetch from 'node-fetch';
 
-let url = 'https://api.foss42.com';
+let url = 'https://api.apidash.dev';
 
 let options = {
   method: 'GET'
@@ -36,7 +36,7 @@ fetch(url, options)
     test('GET 2', () {
       const expectedCode = r"""import fetch from 'node-fetch';
 
-let url = 'https://api.foss42.com/country/data?code=US';
+let url = 'https://api.apidash.dev/country/data?code=US';
 
 let options = {
   method: 'GET'
@@ -63,7 +63,7 @@ fetch(url, options)
     test('GET 3', () {
       const expectedCode = r"""import fetch from 'node-fetch';
 
-let url = 'https://api.foss42.com/country/data?code=IND';
+let url = 'https://api.apidash.dev/country/data?code=IND';
 
 let options = {
   method: 'GET'
@@ -90,7 +90,7 @@ fetch(url, options)
     test('GET 4', () {
       const expectedCode = r"""import fetch from 'node-fetch';
 
-let url = 'https://api.foss42.com/humanize/social?num=8700000&digits=3&system=SS&add_space=true&trailing_zeros=true';
+let url = 'https://api.apidash.dev/humanize/social?num=8700000&digits=3&system=SS&add_space=true&trailing_zeros=true';
 
 let options = {
   method: 'GET'
@@ -177,7 +177,7 @@ fetch(url, options)
     test('GET 7', () {
       const expectedCode = r"""import fetch from 'node-fetch';
 
-let url = 'https://api.foss42.com';
+let url = 'https://api.apidash.dev';
 
 let options = {
   method: 'GET'
@@ -234,7 +234,7 @@ fetch(url, options)
     test('GET 9', () {
       const expectedCode = r"""import fetch from 'node-fetch';
 
-let url = 'https://api.foss42.com/humanize/social?num=8700000&add_space=true';
+let url = 'https://api.apidash.dev/humanize/social?num=8700000&add_space=true';
 
 let options = {
   method: 'GET'
@@ -261,7 +261,7 @@ fetch(url, options)
     test('GET 10', () {
       const expectedCode = r"""import fetch from 'node-fetch';
 
-let url = 'https://api.foss42.com/humanize/social';
+let url = 'https://api.apidash.dev/humanize/social';
 
 let options = {
   method: 'GET',
@@ -296,7 +296,7 @@ fetch(url, options)
     test('GET 11', () {
       const expectedCode = r"""import fetch from 'node-fetch';
 
-let url = 'https://api.foss42.com/humanize/social?num=8700000&digits=3';
+let url = 'https://api.apidash.dev/humanize/social?num=8700000&digits=3';
 
 let options = {
   method: 'GET',
@@ -326,7 +326,7 @@ fetch(url, options)
     test('GET 12', () {
       const expectedCode = r"""import fetch from 'node-fetch';
 
-let url = 'https://api.foss42.com/humanize/social';
+let url = 'https://api.apidash.dev/humanize/social';
 
 let options = {
   method: 'GET'
@@ -355,7 +355,7 @@ fetch(url, options)
     test('HEAD 1', () {
       const expectedCode = r"""import fetch from 'node-fetch';
 
-let url = 'https://api.foss42.com';
+let url = 'https://api.apidash.dev';
 
 let options = {
   method: 'HEAD'
@@ -382,7 +382,7 @@ fetch(url, options)
     test('HEAD 2', () {
       const expectedCode = r"""import fetch from 'node-fetch';
 
-let url = 'http://api.foss42.com';
+let url = 'http://api.apidash.dev';
 
 let options = {
   method: 'HEAD'
@@ -411,7 +411,7 @@ fetch(url, options)
     test('POST 1', () {
       const expectedCode = r"""import fetch from 'node-fetch';
 
-let url = 'https://api.foss42.com/case/lower';
+let url = 'https://api.apidash.dev/case/lower';
 
 let options = {
   method: 'POST',
@@ -443,7 +443,7 @@ fetch(url, options)
     test('POST 2', () {
       const expectedCode = r"""import fetch from 'node-fetch';
 
-let url = 'https://api.foss42.com/case/lower';
+let url = 'https://api.apidash.dev/case/lower';
 
 let options = {
   method: 'POST',
@@ -475,7 +475,7 @@ fetch(url, options)
     test('POST 3', () {
       const expectedCode = r"""import fetch from 'node-fetch';
 
-let url = 'https://api.foss42.com/case/lower';
+let url = 'https://api.apidash.dev/case/lower';
 
 let options = {
   method: 'POST',
