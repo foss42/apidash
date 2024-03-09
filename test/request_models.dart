@@ -230,11 +230,12 @@ const requestModelPost3 = RequestModel(
 /// POST request model with multipart body(text)
 const requestModelPost4 = RequestModel(
   id: 'post4',
-  url: 'https://oshi.at',
+  url: 'https://api.apidash.dev/io/form',
   method: HTTPVerb.post,
   requestFormDataList: [
-    FormDataModel(
-        name: "text", value: "some textual string", type: FormDataType.file)
+    FormDataModel(name: "text", value: "API", type: FormDataType.text),
+    FormDataModel(name: "sep", value: "|", type: FormDataType.text),
+    FormDataModel(name: "times", value: "3", type: FormDataType.text),
   ],
   requestBodyContentType: ContentType.formdata,
 );
@@ -242,11 +243,12 @@ const requestModelPost4 = RequestModel(
 /// POST request model with multipart body and headers
 const requestModelPost5 = RequestModel(
   id: 'post5',
-  url: 'https://oshi.at',
+  url: 'https://api.apidash.dev/io/form',
   method: HTTPVerb.post,
   requestFormDataList: [
-    FormDataModel(
-        name: "text", value: "some textual string", type: FormDataType.text)
+    FormDataModel(name: "text", value: "API", type: FormDataType.text),
+    FormDataModel(name: "sep", value: "|", type: FormDataType.text),
+    FormDataModel(name: "times", value: "3", type: FormDataType.text),
   ],
   requestHeaders: [
     NameValueModel(name: 'User-Agent', value: 'Test Agent'),
@@ -254,13 +256,15 @@ const requestModelPost5 = RequestModel(
   requestBodyContentType: ContentType.formdata,
 );
 
-/// POST request model with multipart body(file)
+/// POST request model with multipart body(text, file)
 const requestModelPost6 = RequestModel(
   id: 'post6',
-  url: 'https://oshi.at',
+  url: 'https://api.apidash.dev/io/img',
   method: HTTPVerb.post,
   requestFormDataList: [
-    FormDataModel(name: "f", value: "/path/to/file", type: FormDataType.file)
+    FormDataModel(name: "token", value: "xyz", type: FormDataType.text),
+    FormDataModel(
+        name: "imfile", value: "/Documents/up/1.png", type: FormDataType.file),
   ],
   requestBodyContentType: ContentType.formdata,
 );
@@ -268,14 +272,15 @@ const requestModelPost6 = RequestModel(
 /// POST request model with multipart body and requestBody (the requestBody shouldn't be in codegen)
 const requestModelPost7 = RequestModel(
   id: 'post7',
-  url: 'https://oshi.at',
+  url: 'https://api.apidash.dev/io/img',
   method: HTTPVerb.post,
   requestBody: r"""{
 "text": "I LOVE Flutter"
 }""",
   requestFormDataList: [
+    FormDataModel(name: "token", value: "xyz", type: FormDataType.text),
     FormDataModel(
-        name: "text", value: "some textual string", type: FormDataType.text)
+        name: "imfile", value: "/Documents/up/1.png", type: FormDataType.file),
   ],
   requestBodyContentType: ContentType.formdata,
 );
@@ -283,18 +288,16 @@ const requestModelPost7 = RequestModel(
 /// POST request model with multipart body and requestParams
 const requestModelPost8 = RequestModel(
   id: 'post8',
-  url: 'https://oshi.at',
+  url: 'https://api.apidash.dev/io/form',
   method: HTTPVerb.post,
   requestFormDataList: [
-    FormDataModel(
-        name: "text", value: "some textual string", type: FormDataType.text)
+    FormDataModel(name: "text", value: "API", type: FormDataType.text),
+    FormDataModel(name: "sep", value: "|", type: FormDataType.text),
+    FormDataModel(name: "times", value: "3", type: FormDataType.text),
   ],
   requestParams: [
-    NameValueModel(name: 'num', value: '8700000'),
-    NameValueModel(name: 'digits', value: '3'),
-    NameValueModel(name: 'system', value: 'SS'),
-    NameValueModel(name: 'add_space', value: 'true'),
-    NameValueModel(name: 'trailing_zeros', value: 'true'),
+    NameValueModel(name: 'size', value: '2'),
+    NameValueModel(name: 'len', value: '3'),
   ],
   requestBodyContentType: ContentType.formdata,
 );
@@ -302,26 +305,23 @@ const requestModelPost8 = RequestModel(
 /// POST request model with multipart body(file and text), requestParams, requestHeaders and requestBody
 const requestModelPost9 = RequestModel(
   id: 'post9',
-  url: 'https://oshi.at',
+  url: 'https://api.apidash.dev/io/img',
   method: HTTPVerb.post,
   requestBody: r"""{
 "text": "I LOVE Flutter"
 }""",
   requestFormDataList: [
+    FormDataModel(name: "token", value: "xyz", type: FormDataType.text),
     FormDataModel(
-        name: "text", value: "some textual string", type: FormDataType.text),
-    FormDataModel(name: "f", value: "/path/to/file", type: FormDataType.file)
+        name: "imfile", value: "/Documents/up/1.png", type: FormDataType.file),
   ],
   requestParams: [
-    NameValueModel(name: 'num', value: '8700000'),
-    NameValueModel(name: 'digits', value: '3'),
-    NameValueModel(name: 'system', value: 'SS'),
-    NameValueModel(name: 'add_space', value: 'true'),
-    NameValueModel(name: 'trailing_zeros', value: 'true'),
+    NameValueModel(name: 'size', value: '2'),
+    NameValueModel(name: 'len', value: '3'),
   ],
   requestHeaders: [
     NameValueModel(name: 'User-Agent', value: 'Test Agent'),
-    NameValueModel(name: 'Content-Type', value: 'multipart/form-data'),
+    NameValueModel(name: 'Keep-Alive', value: 'true'),
   ],
   requestBodyContentType: ContentType.formdata,
 );
