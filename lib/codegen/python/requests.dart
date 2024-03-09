@@ -30,7 +30,7 @@ payload = r'''{{body}}'''
 
   String kTemplateJson = """
 
-payload = {{body}}
+payload = '{{body}}'
 
 """;
 
@@ -81,7 +81,7 @@ payload = b'\r\n'.join(dataList)
 
   String kStringRequestBody = """, data=payload""";
 
-  String kStringRequestJson = """, json=payload""";
+  String kStringRequestJson = """, json=json.loads(payload)""";
 
   String kStringRequestHeaders = """, headers=headers""";
 
