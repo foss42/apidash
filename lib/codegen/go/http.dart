@@ -33,7 +33,7 @@ func main() {
 """;
 
   String kTemplateRawBody = """
-  {% if body %}body := strings.NewReader(`{{body}}`){% endif %}
+  {% if body %}body := bytes.NewBuffer([]byte(`{{body}}`)){% endif %}
 
 """;
 
@@ -108,8 +108,7 @@ func main() {
     return
   }
   fmt.Println(string(res))
-}
-""";
+}""";
 
   String? getCode(
     RequestModel requestModel,
