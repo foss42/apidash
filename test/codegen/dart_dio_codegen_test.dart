@@ -12,7 +12,7 @@ void main() {
 
 void main() async {
   try {
-    final response = await dio.Dio.get('https://api.foss42.com');
+    final response = await dio.Dio.get('https://api.apidash.dev');
     print(response.statusCode);
     print(response.data);
   } on DioException catch (e, s) {
@@ -35,7 +35,7 @@ void main() async {
   try {
     final queryParams = {'code': 'US'};
     final response = await dio.Dio.get(
-      'https://api.foss42.com/country/data',
+      'https://api.apidash.dev/country/data',
       queryParameters: queryParams,
     );
     print(response.statusCode);
@@ -60,7 +60,7 @@ void main() async {
   try {
     final queryParams = {'code': 'IND'};
     final response = await dio.Dio.get(
-      'https://api.foss42.com/country/data?code=US',
+      'https://api.apidash.dev/country/data?code=US',
       queryParameters: queryParams,
     );
     print(response.statusCode);
@@ -91,7 +91,7 @@ void main() async {
       'trailing_zeros': 'true',
     };
     final response = await dio.Dio.get(
-      'https://api.foss42.com/humanize/social',
+      'https://api.apidash.dev/humanize/social',
       queryParameters: queryParams,
     );
     print(response.statusCode);
@@ -166,7 +166,7 @@ void main() async {
 
 void main() async {
   try {
-    final response = await dio.Dio.get('https://api.foss42.com');
+    final response = await dio.Dio.get('https://api.apidash.dev');
     print(response.statusCode);
     print(response.data);
   } on DioException catch (e, s) {
@@ -219,7 +219,7 @@ void main() async {
       'add_space': 'true',
     };
     final response = await dio.Dio.get(
-      'https://api.foss42.com/humanize/social',
+      'https://api.apidash.dev/humanize/social',
       queryParameters: queryParams,
     );
     print(response.statusCode);
@@ -244,7 +244,7 @@ void main() async {
   try {
     final headers = {'User-Agent': 'Test Agent'};
     final response = await dio.Dio.get(
-      'https://api.foss42.com/humanize/social',
+      'https://api.apidash.dev/humanize/social',
       options: Options(headers: headers),
     );
     print(response.statusCode);
@@ -278,7 +278,7 @@ void main() async {
     };
     final headers = {'User-Agent': 'Test Agent'};
     final response = await dio.Dio.get(
-      'https://api.foss42.com/humanize/social',
+      'https://api.apidash.dev/humanize/social',
       queryParameters: queryParams,
       options: Options(headers: headers),
     );
@@ -302,7 +302,7 @@ void main() async {
 
 void main() async {
   try {
-    final response = await dio.Dio.get('https://api.foss42.com/humanize/social');
+    final response = await dio.Dio.get('https://api.apidash.dev/humanize/social');
     print(response.statusCode);
     print(response.data);
   } on DioException catch (e, s) {
@@ -325,7 +325,7 @@ void main() async {
 
 void main() async {
   try {
-    final response = await dio.Dio.head('https://api.foss42.com');
+    final response = await dio.Dio.head('https://api.apidash.dev');
     print(response.statusCode);
     print(response.data);
   } on DioException catch (e, s) {
@@ -346,7 +346,7 @@ void main() async {
 
 void main() async {
   try {
-    final response = await dio.Dio.head('http://api.foss42.com');
+    final response = await dio.Dio.head('http://api.apidash.dev');
     print(response.statusCode);
     print(response.data);
   } on DioException catch (e, s) {
@@ -373,7 +373,7 @@ void main() async {
 "text": "I LOVE Flutter"
 }''';
     final response = await dio.Dio.post(
-      'https://api.foss42.com/case/lower',
+      'https://api.apidash.dev/case/lower',
       data: data,
     );
     print(response.statusCode);
@@ -401,7 +401,7 @@ void main() async {
 "text": "I LOVE Flutter"
 }''');
     final response = await dio.Dio.post(
-      'https://api.foss42.com/case/lower',
+      'https://api.apidash.dev/case/lower',
       data: data,
     );
     print(response.statusCode);
@@ -430,7 +430,7 @@ void main() async {
 "text": "I LOVE Flutter"
 }''');
     final response = await dio.Dio.post(
-      'https://api.foss42.com/case/lower',
+      'https://api.apidash.dev/case/lower',
       options: Options(headers: headers),
       data: data,
     );

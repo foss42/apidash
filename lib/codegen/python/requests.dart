@@ -140,7 +140,7 @@ print('Response Body:', response.text)
               hasJsonBody = true;
               var templateBody = jj.Template(kTemplateJson);
               result += templateBody.render({"body": requestBody});
-            } else {
+            } else if (!requestModel.isFormDataRequest) {
               hasBody = true;
               var templateBody = jj.Template(kTemplateBody);
               result += templateBody.render({"body": requestBody});

@@ -11,7 +11,7 @@ void main() {
       const expectedCode = r"""import 'package:http/http.dart' as http;
 
 void main() async {
-  var uri = Uri.parse('https://api.foss42.com');
+  var uri = Uri.parse('https://api.apidash.dev');
 
   final response = await http.get(uri);
 
@@ -32,7 +32,7 @@ void main() async {
       const expectedCode = r"""import 'package:http/http.dart' as http;
 
 void main() async {
-  var uri = Uri.parse('https://api.foss42.com/country/data');
+  var uri = Uri.parse('https://api.apidash.dev/country/data');
 
   var queryParams = {'code': 'US'};
   uri = uri.replace(queryParameters: queryParams);
@@ -57,7 +57,7 @@ void main() async {
       const expectedCode = r"""import 'package:http/http.dart' as http;
 
 void main() async {
-  var uri = Uri.parse('https://api.foss42.com/country/data?code=US');
+  var uri = Uri.parse('https://api.apidash.dev/country/data?code=US');
 
   var queryParams = {'code': 'IND'};
   var urlQueryParams = Map<String, String>.from(uri.queryParameters);
@@ -83,7 +83,7 @@ void main() async {
       const expectedCode = r"""import 'package:http/http.dart' as http;
 
 void main() async {
-  var uri = Uri.parse('https://api.foss42.com/humanize/social');
+  var uri = Uri.parse('https://api.apidash.dev/humanize/social');
 
   var queryParams = {
     'num': '8700000',
@@ -168,7 +168,7 @@ void main() async {
       const expectedCode = r"""import 'package:http/http.dart' as http;
 
 void main() async {
-  var uri = Uri.parse('https://api.foss42.com');
+  var uri = Uri.parse('https://api.apidash.dev');
 
   final response = await http.get(uri);
 
@@ -218,7 +218,7 @@ void main() async {
       const expectedCode = r"""import 'package:http/http.dart' as http;
 
 void main() async {
-  var uri = Uri.parse('https://api.foss42.com/humanize/social');
+  var uri = Uri.parse('https://api.apidash.dev/humanize/social');
 
   var queryParams = {
     'num': '8700000',
@@ -245,7 +245,7 @@ void main() async {
       const expectedCode = r"""import 'package:http/http.dart' as http;
 
 void main() async {
-  var uri = Uri.parse('https://api.foss42.com/humanize/social');
+  var uri = Uri.parse('https://api.apidash.dev/humanize/social');
 
   var headers = {'User-Agent': 'Test Agent'};
 
@@ -276,7 +276,7 @@ void main() async {
       const expectedCode = r"""import 'package:http/http.dart' as http;
 
 void main() async {
-  var uri = Uri.parse('https://api.foss42.com/humanize/social');
+  var uri = Uri.parse('https://api.apidash.dev/humanize/social');
 
   var queryParams = {
     'num': '8700000',
@@ -308,7 +308,7 @@ void main() async {
       const expectedCode = r"""import 'package:http/http.dart' as http;
 
 void main() async {
-  var uri = Uri.parse('https://api.foss42.com/humanize/social');
+  var uri = Uri.parse('https://api.apidash.dev/humanize/social');
 
   final response = await http.get(uri);
 
@@ -331,7 +331,7 @@ void main() async {
       const expectedCode = r"""import 'package:http/http.dart' as http;
 
 void main() async {
-  var uri = Uri.parse('https://api.foss42.com');
+  var uri = Uri.parse('https://api.apidash.dev');
 
   final response = await http.head(uri);
 
@@ -352,7 +352,7 @@ void main() async {
       const expectedCode = r"""import 'package:http/http.dart' as http;
 
 void main() async {
-  var uri = Uri.parse('http://api.foss42.com');
+  var uri = Uri.parse('http://api.apidash.dev');
 
   final response = await http.head(uri);
 
@@ -375,7 +375,7 @@ void main() async {
       const expectedCode = r"""import 'package:http/http.dart' as http;
 
 void main() async {
-  var uri = Uri.parse('https://api.foss42.com/case/lower');
+  var uri = Uri.parse('https://api.apidash.dev/case/lower');
 
   String body = r'''{
 "text": "I LOVE Flutter"
@@ -406,7 +406,7 @@ void main() async {
       const expectedCode = r"""import 'package:http/http.dart' as http;
 
 void main() async {
-  var uri = Uri.parse('https://api.foss42.com/case/lower');
+  var uri = Uri.parse('https://api.apidash.dev/case/lower');
 
   String body = r'''{
 "text": "I LOVE Flutter"
@@ -437,7 +437,7 @@ void main() async {
       const expectedCode = r"""import 'package:http/http.dart' as http;
 
 void main() async {
-  var uri = Uri.parse('https://api.foss42.com/case/lower');
+  var uri = Uri.parse('https://api.apidash.dev/case/lower');
 
   String body = r'''{
 "text": "I LOVE Flutter"

@@ -13,7 +13,7 @@ import okhttp3.Request
 fun main() {
     val client = OkHttpClient()
 
-    val url = "https://api.foss42.com"
+    val url = "https://api.apidash.dev"
 
     val request = Request.Builder()
         .url(url)
@@ -38,7 +38,7 @@ import okhttp3.HttpUrl.Companion.toHttpUrl
 fun main() {
     val client = OkHttpClient()
 
-    val url = "https://api.foss42.com/country/data".toHttpUrl().newBuilder()
+    val url = "https://api.apidash.dev/country/data".toHttpUrl().newBuilder()
         .addQueryParameter("code", "US")
         .build()
 
@@ -65,7 +65,7 @@ import okhttp3.HttpUrl.Companion.toHttpUrl
 fun main() {
     val client = OkHttpClient()
 
-    val url = "https://api.foss42.com/country/data".toHttpUrl().newBuilder()
+    val url = "https://api.apidash.dev/country/data".toHttpUrl().newBuilder()
         .addQueryParameter("code", "IND")
         .build()
 
@@ -92,7 +92,7 @@ import okhttp3.HttpUrl.Companion.toHttpUrl
 fun main() {
     val client = OkHttpClient()
 
-    val url = "https://api.foss42.com/humanize/social".toHttpUrl().newBuilder()
+    val url = "https://api.apidash.dev/humanize/social".toHttpUrl().newBuilder()
         .addQueryParameter("num", "8700000")
         .addQueryParameter("digits", "3")
         .addQueryParameter("system", "SS")
@@ -175,7 +175,7 @@ import okhttp3.Request
 fun main() {
     val client = OkHttpClient()
 
-    val url = "https://api.foss42.com"
+    val url = "https://api.apidash.dev"
 
     val request = Request.Builder()
         .url(url)
@@ -228,7 +228,7 @@ import okhttp3.HttpUrl.Companion.toHttpUrl
 fun main() {
     val client = OkHttpClient()
 
-    val url = "https://api.foss42.com/humanize/social".toHttpUrl().newBuilder()
+    val url = "https://api.apidash.dev/humanize/social".toHttpUrl().newBuilder()
         .addQueryParameter("num", "8700000")
         .addQueryParameter("add_space", "true")
         .build()
@@ -255,7 +255,7 @@ import okhttp3.Request
 fun main() {
     val client = OkHttpClient()
 
-    val url = "https://api.foss42.com/humanize/social"
+    val url = "https://api.apidash.dev/humanize/social"
 
     val request = Request.Builder()
         .url(url)
@@ -285,7 +285,7 @@ import okhttp3.HttpUrl.Companion.toHttpUrl
 fun main() {
     val client = OkHttpClient()
 
-    val url = "https://api.foss42.com/humanize/social".toHttpUrl().newBuilder()
+    val url = "https://api.apidash.dev/humanize/social".toHttpUrl().newBuilder()
         .addQueryParameter("num", "8700000")
         .addQueryParameter("digits", "3")
         .build()
@@ -313,7 +313,7 @@ import okhttp3.Request
 fun main() {
     val client = OkHttpClient()
 
-    val url = "https://api.foss42.com/humanize/social"
+    val url = "https://api.apidash.dev/humanize/social"
 
     val request = Request.Builder()
         .url(url)
@@ -339,7 +339,7 @@ import okhttp3.Request
 fun main() {
     val client = OkHttpClient()
 
-    val url = "https://api.foss42.com"
+    val url = "https://api.apidash.dev"
 
     val request = Request.Builder()
         .url(url)
@@ -363,7 +363,7 @@ import okhttp3.Request
 fun main() {
     val client = OkHttpClient()
 
-    val url = "http://api.foss42.com"
+    val url = "http://api.apidash.dev"
 
     val request = Request.Builder()
         .url(url)
@@ -391,7 +391,7 @@ import okhttp3.MediaType.Companion.toMediaType
 fun main() {
     val client = OkHttpClient()
 
-    val url = "https://api.foss42.com/case/lower"
+    val url = "https://api.apidash.dev/case/lower"
 
     val mediaType = "text/plain".toMediaType()
 
@@ -423,7 +423,7 @@ import okhttp3.MediaType.Companion.toMediaType
 fun main() {
     val client = OkHttpClient()
 
-    val url = "https://api.foss42.com/case/lower"
+    val url = "https://api.apidash.dev/case/lower"
 
     val mediaType = "application/json".toMediaType()
 
@@ -455,7 +455,7 @@ import okhttp3.MediaType.Companion.toMediaType
 fun main() {
     val client = OkHttpClient()
 
-    val url = "https://api.foss42.com/case/lower"
+    val url = "https://api.apidash.dev/case/lower"
 
     val mediaType = "application/json".toMediaType()
 
@@ -476,6 +476,35 @@ fun main() {
 }
 ''';
       expect(kotlinOkHttpCodeGen.getCode(requestModelPost3, "https"),
+          expectedCode);
+    });
+
+    test('POST 5', () {
+      const expectedCode = r'''import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.MultipartBody
+
+fun main() {
+    val client = OkHttpClient()
+
+    val url = "https://api.apidash.dev/io/form"
+    val body = MultipartBody.Builder().setType(MultipartBody.FORM).addFormDataPart("text","API")
+          .addFormDataPart("sep","|")
+          .addFormDataPart("times","3")
+          .build()
+    val request = Request.Builder()
+        .url(url)
+        .addHeader("User-Agent", "Test Agent")
+        .post(body)
+        .build()
+
+    val response = client.newCall(request).execute()
+
+    println(response.code)
+    println(response.body?.string())
+}
+''';
+      expect(kotlinOkHttpCodeGen.getCode(requestModelPost5, "https"),
           expectedCode);
     });
   });

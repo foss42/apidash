@@ -7,7 +7,7 @@ import 'package:apidash/consts.dart';
 
 class KotlinOkHttpCodeGen {
   final String kTemplateStart = """import okhttp3.OkHttpClient
-import okhttp3.Request{{importForQuery}}{{importForBody}}
+import okhttp3.Request{{importForQuery}}{{importForBody}}{{importForFormData}}
 
 fun main() {
     val client = OkHttpClient()
@@ -22,6 +22,10 @@ import okhttp3.HttpUrl.Companion.toHttpUrl""";
 
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.MediaType.Companion.toMediaType""";
+
+  final String kStringImportForFormData = """
+
+import okhttp3.MultipartBody""";
 
   final String kTemplateUrl = '''
 
@@ -77,6 +81,7 @@ import okhttp3.MediaType.Companion.toMediaType""";
       String result = "";
       bool hasQuery = false;
       bool hasBody = false;
+      bool hasFormData = false;
 
       String url = requestModel.url;
       if (!url.contains("://") && url.isNotEmpty) {
@@ -109,6 +114,7 @@ import okhttp3.MediaType.Companion.toMediaType""";
         var method = requestModel.method;
         var requestBody = requestModel.requestBody;
         if (requestModel.isFormDataRequest) {
+          hasFormData = true;
           var formDataTemplate = jj.Template(kFormDataBody);
 
           result += formDataTemplate.render({
@@ -128,7 +134,8 @@ import okhttp3.MediaType.Companion.toMediaType""";
         var templateStart = jj.Template(kTemplateStart);
         var stringStart = templateStart.render({
           "importForQuery": hasQuery ? kStringImportForQuery : "",
-          "importForBody": hasBody ? kStringImportForBody : ""
+          "importForBody": hasBody ? kStringImportForBody : "",
+          "importForFormData": hasFormData ? kStringImportForFormData : ""
         });
 
         result = stringStart + result;
