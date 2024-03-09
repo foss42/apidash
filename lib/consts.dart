@@ -271,7 +271,9 @@ enum CodegenLanguage {
   nodejsFetch("node.js (fetch)", "javascript", "js"),
   kotlinOkHttp("Kotlin (okhttp3)", "java", "kt"),
   pythonHttpClient("Python (http.client)", "python", "py"),
-  pythonRequests("Python (requests)", "python", "py");
+  pythonRequests("Python (requests)", "python", "py"),
+  rustCurl("Rust (curl-rust)", "rust", "rs");
+
 
   const CodegenLanguage(this.label, this.codeHighlightLang, this.ext);
   final String label;
