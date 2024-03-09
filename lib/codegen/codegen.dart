@@ -1,3 +1,4 @@
+import 'package:apidash/codegen/go/http.dart';
 import 'package:apidash/models/models.dart' show RequestModel;
 import 'package:apidash/consts.dart';
 import 'dart/http.dart';
@@ -42,6 +43,8 @@ class Codegen {
             .getCode(requestModel, defaultUriScheme);
       case CodegenLanguage.pythonRequests:
         return PythonRequestsCodeGen().getCode(requestModel, defaultUriScheme);
+      case CodegenLanguage.goHttp:
+        return GoHttpCodeGen().getCode(requestModel, defaultUriScheme);
     }
   }
 }
