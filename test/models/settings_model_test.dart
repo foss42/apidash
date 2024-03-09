@@ -13,6 +13,7 @@ void main() {
     defaultCodeGenLang: CodegenLanguage.curl,
     saveResponses: true,
     promptBeforeClosing: true,
+    defaultLocale: 'en',
   );
 
   test('Testing toJson()', () {
@@ -26,7 +27,8 @@ void main() {
       "defaultUriScheme": "http",
       "defaultCodeGenLang": "curl",
       "saveResponses": true,
-      "promptBeforeClosing": true
+      "promptBeforeClosing": true,
+      "defaultLocale": "en",
     };
     expect(sm.toJson(), expectedResult);
   });
@@ -42,7 +44,8 @@ void main() {
       "defaultUriScheme": "http",
       "defaultCodeGenLang": "curl",
       "saveResponses": true,
-      "promptBeforeClosing": true
+      "promptBeforeClosing": true,
+      "defaultLocal": "en",
     };
     expect(SettingsModel.fromJson(input), sm);
   });
@@ -57,6 +60,7 @@ void main() {
       defaultCodeGenLang: CodegenLanguage.curl,
       saveResponses: false,
       promptBeforeClosing: true,
+      defaultLocale: 'en',
     );
     expect(
         sm.copyWith(
@@ -68,7 +72,7 @@ void main() {
 
   test('Testing toString()', () {
     const expectedResult =
-        "{isDark: false, alwaysShowCollectionPaneScrollbar: true, width: 300.0, height: 200.0, dx: 100.0, dy: 150.0, defaultUriScheme: http, defaultCodeGenLang: curl, saveResponses: true, promptBeforeClosing: true}";
+        "{isDark: false, alwaysShowCollectionPaneScrollbar: true, width: 300.0, height: 200.0, dx: 100.0, dy: 150.0, defaultUriScheme: http, defaultCodeGenLang: curl, saveResponses: true, promptBeforeClosing: true, defaultLocale: en}";
     expect(sm.toString(), expectedResult);
   });
 

@@ -9,7 +9,7 @@ class L10n {
     const Locale('fr'), // French
   ];
 
-  static const fallbackLocale = Locale('es');
+  static const fallbackLocale = Locale('en');
 
   static String getLanguageFromLocale(Locale locale) {
     switch (locale.languageCode) {

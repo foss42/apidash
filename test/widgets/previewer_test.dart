@@ -6,27 +6,35 @@ import 'package:flutter/foundation.dart';
 import 'package:printing/printing.dart' show PdfPreview;
 import 'package:flutter_svg/flutter_svg.dart' show SvgPicture;
 import '../test_consts.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:apidash/l10n/l10n.dart';
 
 void main() {
   Uint8List bytes1 = Uint8List.fromList([20, 8]);
   testWidgets('Testing when type/subtype is application/pdf', (tester) async {
+    late AppLocalizations l10n;
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: L10n.delegates,
+        locale: L10n.fallbackLocale,
         title: 'Previewer',
-        home: Scaffold(
-          body: Previewer(
-            type: 'application',
-            subtype: 'pdf',
-            bytes: bytes1,
-            body: "",
-          ),
-        ),
+        home: Builder(builder: (context) {
+          l10n = AppLocalizations.of(context)!;
+          return Scaffold(
+            body: Previewer(
+              type: 'application',
+              subtype: 'pdf',
+              bytes: bytes1,
+              body: "",
+            ),
+          );
+        }),
       ),
     );
 
     expect(
         find.text(
-            "${kMimeTypeRaiseIssueStart}application/pdf$kMimeTypeRaiseIssue"),
+            "${l10n.kMimeTypeRaiseIssueStart}application/pdf${l10n.kMimeTypeRaiseIssue}"),
         findsNothing);
     expect(find.byType(PdfPreview), findsOneWidget);
   });
@@ -34,6 +42,8 @@ void main() {
   testWidgets('Testing when type/subtype is audio/mpeg', (tester) async {
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: L10n.delegates,
+        locale: L10n.fallbackLocale,
         title: 'Previewer',
         home: Scaffold(
           body: Previewer(
@@ -50,49 +60,64 @@ void main() {
   });
 
   testWidgets('Testing when type/subtype is video/H264', (tester) async {
+    late AppLocalizations l10n;
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: L10n.delegates,
+        locale: L10n.fallbackLocale,
         title: 'Previewer',
-        home: Scaffold(
-          body: Previewer(
-            type: 'video',
-            subtype: 'H264',
-            bytes: bytes1,
-            body: "",
-          ),
-        ),
-      ),
-    );
-
-    expect(
-        find.text("${kMimeTypeRaiseIssueStart}video/H264$kMimeTypeRaiseIssue"),
-        findsOneWidget);
-  });
-
-  testWidgets('Testing when type/subtype is model/step+xml', (tester) async {
-    await tester.pumpWidget(
-      MaterialApp(
-        title: 'Previewer',
-        home: Scaffold(
-          body: Previewer(
-            type: 'model',
-            subtype: 'step+xml',
-            bytes: bytes1,
-            body: "",
-          ),
-        ),
+        home: Builder(builder: (context) {
+          l10n = AppLocalizations.of(context)!;
+          return Scaffold(
+            body: Previewer(
+              type: 'video',
+              subtype: 'H264',
+              bytes: bytes1,
+              body: "",
+            ),
+          );
+        }),
       ),
     );
 
     expect(
         find.text(
-            "${kMimeTypeRaiseIssueStart}model/step+xml$kMimeTypeRaiseIssue"),
+            "${l10n.kMimeTypeRaiseIssueStart}video/H264${l10n.kMimeTypeRaiseIssue}"),
+        findsOneWidget);
+  });
+
+  testWidgets('Testing when type/subtype is model/step+xml', (tester) async {
+    late AppLocalizations l10n;
+    await tester.pumpWidget(
+      MaterialApp(
+        localizationsDelegates: L10n.delegates,
+        locale: L10n.fallbackLocale,
+        title: 'Previewer',
+        home: Builder(builder: (context) {
+          l10n = AppLocalizations.of(context)!;
+          return Scaffold(
+            body: Previewer(
+              type: 'model',
+              subtype: 'step+xml',
+              bytes: bytes1,
+              body: "",
+            ),
+          );
+        }),
+      ),
+    );
+
+    expect(
+        find.text(
+            "${l10n.kMimeTypeRaiseIssueStart}model/step+xml${l10n.kMimeTypeRaiseIssue}"),
         findsOneWidget);
   });
 
   testWidgets('Testing when type/subtype is image/jpeg', (tester) async {
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: L10n.delegates,
+        locale: L10n.fallbackLocale,
         title: 'Previewer',
         home: Scaffold(
           body: Previewer(
@@ -133,42 +158,54 @@ void main() {
       255,
       217
     ]);
+    late AppLocalizations l10n;
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: L10n.delegates,
+        locale: L10n.fallbackLocale,
         title: 'Previewer',
-        home: Scaffold(
-          body: Previewer(
-            type: 'image',
-            subtype: 'jpeg',
-            bytes: bytesJpegCorrupt,
-            body: "",
-          ),
-        ),
+        home: Builder(builder: (context) {
+          l10n = AppLocalizations.of(context)!;
+          return Scaffold(
+            body: Previewer(
+              type: 'image',
+              subtype: 'jpeg',
+              bytes: bytesJpegCorrupt,
+              body: "",
+            ),
+          );
+        }),
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.text(kImageError), findsOneWidget);
+    expect(find.text(l10n.kImageError), findsOneWidget);
   });
 
   testWidgets('Testing when type/subtype is audio/mpeg corrupted',
       (tester) async {
     Uint8List bytesAudioCorrupt =
         Uint8List.fromList(List.generate(100, (index) => index));
+    late AppLocalizations l10n;
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: L10n.delegates,
+        locale: L10n.fallbackLocale,
         title: 'Previewer',
-        home: Scaffold(
-          body: Previewer(
-            type: 'audio',
-            subtype: 'mpeg',
-            bytes: bytesAudioCorrupt,
-            body: "",
-          ),
-        ),
+        home: Builder(builder: (context) {
+          l10n = AppLocalizations.of(context)!;
+          return Scaffold(
+            body: Previewer(
+              type: 'audio',
+              subtype: 'mpeg',
+              bytes: bytesAudioCorrupt,
+              body: "",
+            ),
+          );
+        }),
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.text(kAudioError), findsOneWidget);
+    expect(find.text(l10n.kAudioError), findsOneWidget);
   });
 
   testWidgets('Testing when type/subtype is image/svg+xml', (tester) async {
@@ -194,42 +231,54 @@ void main() {
     <path d="M79.5 170.7 120.9 156.4 107.4 142.8" fill="url(#triangleGradient)" />
 </svg>""";
 
+    late AppLocalizations l10n;
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: L10n.delegates,
+        locale: L10n.fallbackLocale,
         title: 'Previewer',
-        home: Scaffold(
-          body: Previewer(
-            type: 'image',
-            subtype: 'svg+xml',
-            bytes: Uint8List.fromList([]),
-            body: rawSvg,
-          ),
-        ),
+        home: Builder(builder: (context) {
+          l10n = AppLocalizations.of(context)!;
+          return Scaffold(
+            body: Previewer(
+              type: 'image',
+              subtype: 'svg+xml',
+              bytes: Uint8List.fromList([]),
+              body: rawSvg,
+            ),
+          );
+        }),
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.text(kSvgError), findsNothing);
+    expect(find.text(l10n.kSvgError), findsNothing);
     expect(find.byType(SvgPicture), findsOneWidget);
   });
 
   testWidgets('Testing when type/subtype is image/svg+xml corrupted',
       (tester) async {
     String rawSvg = "rwsjhdws";
+    late AppLocalizations l10n;
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: L10n.delegates,
+        locale: L10n.fallbackLocale,
         title: 'Previewer',
-        home: Scaffold(
-          body: Previewer(
-            type: 'image',
-            subtype: 'svg+xml',
-            bytes: Uint8List.fromList([]),
-            body: rawSvg,
-          ),
-        ),
+        home: Builder(builder: (context) {
+          l10n = AppLocalizations.of(context)!;
+          return Scaffold(
+            body: Previewer(
+              type: 'image',
+              subtype: 'svg+xml',
+              bytes: Uint8List.fromList([]),
+              body: rawSvg,
+            ),
+          );
+        }),
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.text(kSvgError), findsOneWidget);
+    expect(find.text(l10n.kSvgError), findsOneWidget);
   });
 
   testWidgets('Testing when type/subtype is text/csv', (tester) async {
@@ -238,6 +287,8 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: L10n.delegates,
+        locale: L10n.fallbackLocale,
         home: Scaffold(
           body: Previewer(
             type: kTypeText,

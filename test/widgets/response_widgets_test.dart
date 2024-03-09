@@ -1,3 +1,4 @@
+import 'package:apidash/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http_parser/http_parser.dart';
@@ -8,6 +9,7 @@ import 'package:apidash/utils/utils.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/models/models.dart';
 import '../test_consts.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() {
   testWidgets('Testing Sending Widget', (tester) async {
@@ -25,36 +27,49 @@ void main() {
   });
 
   testWidgets('Testing Not Sent Widget', (tester) async {
+    late AppLocalizations l10n;
     await tester.pumpWidget(
-      const MaterialApp(
+      MaterialApp(
+        localizationsDelegates: L10n.delegates,
+        locale: L10n.fallbackLocale,
         title: 'Not Sent',
-        home: Scaffold(
-          body: NotSentWidget(),
-        ),
+        home: Builder(builder: (context) {
+          l10n = AppLocalizations.of(context)!;
+          return const Scaffold(
+            body: NotSentWidget(),
+          );
+        }),
       ),
     );
 
     expect(find.byIcon(Icons.north_east_rounded), findsOneWidget);
-    expect(find.text('Not Sent'), findsOneWidget);
+    expect(find.text(l10n.kLabelNotSent), findsOneWidget);
   });
 
   testWidgets('Testing Response Pane Header', (tester) async {
+    late AppLocalizations l10n;
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: L10n.delegates,
+        locale: L10n.fallbackLocale,
         title: 'Response Pane Header',
         theme: kThemeDataLight,
-        home: const Scaffold(
-          body: ResponsePaneHeader(
+        home: Builder(builder: (context) {
+          l10n = AppLocalizations.of(context)!;
+          return const Scaffold(
+            body: ResponsePaneHeader(
               responseStatus: 200,
               message: 'Hi',
-              time: Duration(microseconds: 23)),
-        ),
+              time: Duration(microseconds: 23),
+            ),
+          );
+        }),
       ),
     );
 
     expect(find.byType(RichText), findsAtLeastNWidgets(1));
-    expect(
-        find.textContaining("Response (", findRichText: true), findsOneWidget);
+    expect(find.textContaining("${l10n.kLabelResponse} (", findRichText: true),
+        findsOneWidget);
     expect(find.text('Hi'), findsOneWidget);
     expect(find.textContaining("200", findRichText: true), findsOneWidget);
     expect(find.text(humanizeDuration(const Duration(microseconds: 23))),
@@ -62,26 +77,32 @@ void main() {
   });
 
   testWidgets('Testing Response Tab View', (tester) async {
+    late AppLocalizations l10n;
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: L10n.delegates,
+        locale: L10n.fallbackLocale,
         title: 'Response Tab View',
         theme: kThemeDataLight,
-        home: const Scaffold(
-          body: ResponseTabView(
-              selectedId: '1', children: [Text('first'), Text('second')]),
-        ),
+        home: Builder(builder: (context) {
+          l10n = AppLocalizations.of(context)!;
+          return const Scaffold(
+            body: ResponseTabView(
+                selectedId: '1', children: [Text('first'), Text('second')]),
+          );
+        }),
       ),
     );
 
-    expect(find.text('Body'), findsOneWidget);
-    expect(find.text('Headers'), findsOneWidget);
+    expect(find.text(l10n.kLabelBody), findsOneWidget);
+    expect(find.text(l10n.kLabelHeaders), findsOneWidget);
 
     await tester.tap(find.text('Headers'));
     await tester.pumpAndSettle();
 
     expect(find.text('first'), findsNothing);
     expect(find.text('second'), findsOneWidget);
-    await tester.tap(find.text('Body'));
+    await tester.tap(find.text(l10n.kLabelBody));
     await tester.pumpAndSettle();
 
     expect(find.text('first'), findsOneWidget);
@@ -89,21 +110,27 @@ void main() {
   });
 
   testWidgets('Testing ResponseHeadersHeader', (tester) async {
+    late AppLocalizations l10n;
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: L10n.delegates,
+        locale: L10n.fallbackLocale,
         title: 'Response Headers Header',
         theme: kThemeDataLight,
-        home: const Scaffold(
-          body: ResponseHeadersHeader(
-              map: {'text': 'a', 'value': '1'}, name: 'xyz'),
-        ),
+        home: Builder(builder: (context) {
+          l10n = AppLocalizations.of(context)!;
+          return const Scaffold(
+            body: ResponseHeadersHeader(
+                map: {'text': 'a', 'value': '1'}, name: 'xyz'),
+          );
+        }),
       ),
     );
 
     expect(find.text('xyz (2 items)'), findsOneWidget);
 
     expect(find.byIcon(Icons.content_copy), findsOneWidget);
-    expect(find.text(kLabelCopy), findsOneWidget);
+    expect(find.text(l10n.kLabelCopy), findsOneWidget);
 
     final textButton1 = find.byType(TextButton);
     expect(textButton1, findsOneWidget);
@@ -111,55 +138,68 @@ void main() {
   });
 
   testWidgets('Testing Response Headers', (tester) async {
+    late AppLocalizations l10n;
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: L10n.delegates,
+        locale: L10n.fallbackLocale,
         title: 'Response Headers',
         theme: kThemeDataLight,
-        home: const Scaffold(
-          body: ResponseHeaders(
-            responseHeaders: {
-              "Content-Length": "4506",
-              "Cache-Control": "private",
-              "Content-Type": "application/json",
-            },
-            requestHeaders: {
-              'Host': 'developer',
-              'user-agent':
-                  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.9; rv:50.0) Gecko/20100101 Firefox/50.0',
-              'accept': 'text/html',
-            },
-          ),
-        ),
+        home: Builder(builder: (context) {
+          l10n = AppLocalizations.of(context)!;
+          return const Scaffold(
+            body: ResponseHeaders(
+              responseHeaders: {
+                "Content-Length": "4506",
+                "Cache-Control": "private",
+                "Content-Type": "application/json",
+              },
+              requestHeaders: {
+                'Host': 'developer',
+                'user-agent':
+                    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.9; rv:50.0) Gecko/20100101 Firefox/50.0',
+                'accept': 'text/html',
+              },
+            ),
+          );
+        }),
       ),
     );
 
     expect(find.byType(ListView), findsOneWidget);
-    expect(find.text('Response Headers (3 items)'), findsOneWidget);
+    expect(
+        find.text('${l10n.kLabelResponseHeaders} (3 items)'), findsOneWidget);
     expect(find.text("Content-Length"), findsOneWidget);
     expect(find.text("4506"), findsOneWidget);
 
-    expect(find.text('Request Headers (3 items)'), findsOneWidget);
+    expect(find.text('${l10n.kLabelRequestHeaders} (3 items)'), findsOneWidget);
     expect(find.text("Accept"), findsOneWidget);
     expect(find.text("User-Agent"), findsOneWidget);
     expect(find.text("developer"), findsOneWidget);
 
     expect(find.byIcon(Icons.content_copy), findsNWidgets(2));
-    expect(find.text(kLabelCopy), findsNWidgets(2));
+    expect(find.text(l10n.kLabelCopy), findsNWidgets(2));
   });
 
   testWidgets('Testing Response Body, no data sent', (tester) async {
+    late AppLocalizations l10n;
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: L10n.delegates,
+        locale: L10n.fallbackLocale,
         title: 'Response Body',
         theme: kThemeDataLight,
-        home: const Scaffold(body: ResponseBody()),
+        home: Builder(builder: (context) {
+          l10n = AppLocalizations.of(context)!;
+          return const Scaffold(body: ResponseBody());
+        }),
       ),
     );
 
     expect(
-        find.text(
-            'Error: Response data does not exist. $kUnexpectedRaiseIssue'),
-        findsOneWidget);
+      find.text('${l10n.kLabelResponseBodyDoesntExist} $kUnexpectedRaiseIssue'),
+      findsOneWidget,
+    );
   });
 
   int statusCode = 200;
@@ -224,89 +264,119 @@ void main() {
         time: time);
     var requestModelNoResponseBody =
         requestModel.copyWith(responseModel: responseModelNoBody);
+    late AppLocalizations l10n;
+
     await tester.pumpWidget(
       MaterialApp(
         title: 'Response Body',
         theme: kThemeDataLight,
-        home: Scaffold(
-          body: ResponseBody(selectedRequestModel: requestModelNoResponseBody),
-        ),
+        home: Builder(builder: (context) {
+          l10n = AppLocalizations.of(context)!;
+
+          return Scaffold(
+            body:
+                ResponseBody(selectedRequestModel: requestModelNoResponseBody),
+          );
+        }),
       ),
     );
 
-    expect(find.text('Response body is missing (null). $kUnexpectedRaiseIssue'),
-        findsOneWidget);
+    expect(
+      find.text('${l10n.kLabelResponseBodyNull} $kUnexpectedRaiseIssue'),
+      findsOneWidget,
+    );
   });
 
   testWidgets('Testing Response Body, no mediaType', (tester) async {
     ResponseModel responseModelNoHeaders = ResponseModel(
-        statusCode: statusCode,
-        body: responseBody,
-        requestHeaders: requestHeaders,
-        formattedBody: formattedBody,
-        bodyBytes: bodyBytes,
-        time: time);
-    var requestModelNoResponseHeaders =
-        requestModel.copyWith(responseModel: responseModelNoHeaders);
-
+      statusCode: statusCode,
+      body: responseBody,
+      requestHeaders: requestHeaders,
+      formattedBody: formattedBody,
+      bodyBytes: bodyBytes,
+      time: time,
+    );
+    var requestModelNoResponseHeaders = requestModel.copyWith(
+      responseModel: responseModelNoHeaders,
+    );
+    late AppLocalizations l10n;
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: L10n.delegates,
+        locale: L10n.fallbackLocale,
         title: 'Response Body',
         theme: kThemeDataLight,
-        home: Scaffold(
-          body:
-              ResponseBody(selectedRequestModel: requestModelNoResponseHeaders),
-        ),
+        home: Builder(builder: (context) {
+          l10n = AppLocalizations.of(context)!;
+          return Scaffold(
+            body: ResponseBody(
+              selectedRequestModel: requestModelNoResponseHeaders,
+            ),
+          );
+        }),
       ),
     );
 
     expect(
-        find.text(
-            'Unknown Response Content-Type - ${responseModelNoHeaders.contentType}. $kUnexpectedRaiseIssue'),
-        findsOneWidget);
+      find.text(
+          '${l10n.kLabelResponseUnknownContentType} - ${responseModelNoHeaders.contentType}. $kUnexpectedRaiseIssue'),
+      findsOneWidget,
+    );
   });
 
   testWidgets('Testing Response Body for No body view', (tester) async {
     ResponseModel responseModelOctet = ResponseModel(
-        statusCode: statusCode,
-        body: responseBody,
-        headers: const {"content-type": "application/octet-stream"},
-        requestHeaders: requestHeaders,
-        formattedBody: formattedBody,
-        bodyBytes: bodyBytes,
-        time: time);
-    var requestModelNoResponseHeaders =
-        requestModel.copyWith(responseModel: responseModelOctet);
+      statusCode: statusCode,
+      body: responseBody,
+      headers: const {"content-type": "application/octet-stream"},
+      requestHeaders: requestHeaders,
+      formattedBody: formattedBody,
+      bodyBytes: bodyBytes,
+      time: time,
+    );
+    var requestModelNoResponseHeaders = requestModel.copyWith(
+      responseModel: responseModelOctet,
+    );
+    late AppLocalizations l10n;
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: L10n.delegates,
+        locale: L10n.fallbackLocale,
         title: 'Response Body',
         theme: kThemeDataLight,
-        home: Scaffold(
-          body:
-              ResponseBody(selectedRequestModel: requestModelNoResponseHeaders),
-        ),
+        home: Builder(builder: (context) {
+          l10n = AppLocalizations.of(context)!;
+          return Scaffold(
+            body: ResponseBody(
+                selectedRequestModel: requestModelNoResponseHeaders),
+          );
+        }),
       ),
     );
-    //await Future.delayed(const Duration(seconds: 5));
+
     expect(
-        find.text(
-            "${kMimeTypeRaiseIssueStart}application/octet-stream$kMimeTypeRaiseIssue"),
-        findsOneWidget);
+      find.text(
+          "${l10n.kMimeTypeRaiseIssueStart}application/octet-stream${l10n.kMimeTypeRaiseIssue}"),
+      findsOneWidget,
+    );
     expect(find.byIcon(Icons.download), findsOneWidget);
   });
 
   testWidgets('Testing Response Body for no formatted body', (tester) async {
     ResponseModel responseModel = ResponseModel(
-        statusCode: statusCode,
-        body: responseBody,
-        headers: responseHeaders,
-        requestHeaders: requestHeaders,
-        bodyBytes: bodyBytes,
-        time: time);
+      statusCode: statusCode,
+      body: responseBody,
+      headers: responseHeaders,
+      requestHeaders: requestHeaders,
+      bodyBytes: bodyBytes,
+      time: time,
+    );
     var requestModelNoResponseHeaders =
         requestModel.copyWith(responseModel: responseModel);
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: L10n.delegates,
+        locale: L10n.fallbackLocale,
         title: 'Response Body',
         theme: kThemeDataLight,
         home: Scaffold(
@@ -320,35 +390,44 @@ void main() {
   });
 
   testWidgets('Testing Body Success for ResponseBodyView.none', (tester) async {
+    late AppLocalizations l10n;
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: L10n.delegates,
+        locale: L10n.fallbackLocale,
         title: 'Body Success',
         theme: kThemeDataDark,
-        home: Scaffold(
-          body: BodySuccess(
-              body: 'Hello from API Dash',
-              mediaType: MediaType("application", "json"),
-              options: const [
-                ResponseBodyView.none,
-                ResponseBodyView.code,
-                ResponseBodyView.raw,
-              ],
-              bytes: Uint8List.fromList([20, 8])),
-        ),
+        home: Builder(builder: (context) {
+          l10n = AppLocalizations.of(context)!;
+          return Scaffold(
+            body: BodySuccess(
+                body: 'Hello from API Dash',
+                mediaType: MediaType("application", "json"),
+                options: const [
+                  ResponseBodyView.none,
+                  ResponseBodyView.code,
+                  ResponseBodyView.raw,
+                ],
+                bytes: Uint8List.fromList([20, 8])),
+          );
+        }),
       ),
     );
     await tester.pumpAndSettle();
 
     expect(
-        find.text(
-            "${kMimeTypeRawRaiseIssueStart}application/json$kMimeTypeRaiseIssue"),
-        findsOneWidget);
+      find.text(
+          "${l10n.kMimeTypeRawRaiseIssueStart}application/json${l10n.kMimeTypeRaiseIssue}"),
+      findsOneWidget,
+    );
     expect(find.byIcon(Icons.download), findsOneWidget);
   });
 
   testWidgets('Testing Body Success for ResponseBodyView.raw', (tester) async {
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: L10n.delegates,
+        locale: L10n.fallbackLocale,
         title: 'Body Success',
         theme: kThemeDataDark,
         home: Scaffold(
@@ -369,6 +448,7 @@ void main() {
   });
 
   testWidgets('Testing Body Success for ResponseBodyView.code', (tester) async {
+    late AppLocalizations l10n;
     String code = r'''import 'package:http/http.dart' as http;
 
 void main() async {
@@ -387,34 +467,43 @@ void main() async {
 ''';
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: L10n.delegates,
+        locale: L10n.fallbackLocale,
         title: 'Body Success',
         theme: kThemeDataLight,
-        home: Scaffold(
-          body: BodySuccess(
-            body: 'Hello',
-            formattedBody: code,
-            mediaType: MediaType("application", "json"),
-            options: const [
-              ResponseBodyView.code,
-            ],
-            bytes: Uint8List.fromList([20, 8]),
-            highlightLanguage: 'dart',
-          ),
-        ),
+        home: Builder(builder: (context) {
+          l10n = AppLocalizations.of(context)!;
+          return Scaffold(
+            body: BodySuccess(
+              body: 'Hello',
+              formattedBody: code,
+              mediaType: MediaType("application", "json"),
+              options: const [
+                ResponseBodyView.code,
+              ],
+              bytes: Uint8List.fromList([20, 8]),
+              highlightLanguage: 'dart',
+            ),
+          );
+        }),
       ),
     );
 
     await tester.pumpAndSettle();
 
-    expect(find.text('Copy'), findsOneWidget);
-    expect(find.textContaining('Error Status Code', findRichText: true),
-        findsOneWidget);
+    expect(find.text(l10n.kLabelCopy), findsOneWidget);
+    expect(
+      find.textContaining('Error Status Code', findRichText: true),
+      findsOneWidget,
+    );
   });
 
   testWidgets('Testing Body Success for ResponseBodyView.preview',
       (tester) async {
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: L10n.delegates,
+        locale: L10n.fallbackLocale,
         title: 'Body Success',
         theme: kThemeDataDark,
         home: Scaffold(
@@ -439,6 +528,8 @@ void main() async {
       (tester) async {
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: L10n.delegates,
+        locale: L10n.fallbackLocale,
         title: 'Body Success',
         theme: kThemeDataLight,
         home: Scaffold(
@@ -471,6 +562,8 @@ void main() async {
       (tester) async {
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: L10n.delegates,
+        locale: L10n.fallbackLocale,
         title: 'Body Success',
         theme: kThemeDataLight,
         home: Scaffold(

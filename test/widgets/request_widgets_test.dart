@@ -1,32 +1,40 @@
+import 'package:apidash/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:apidash/widgets/request_widgets.dart';
 import '../test_consts.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() {
   testWidgets('Testing Request Pane for 1st tab', (tester) async {
+    late AppLocalizations l10n;
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: L10n.delegates,
+        locale: L10n.fallbackLocale,
         title: 'Request Pane',
         theme: kThemeDataLight,
         home: Scaffold(
-          body: RequestPane(
-            selectedId: '1',
-            codePaneVisible: true,
-            children: const [Text('abc'), Text('xyz'), Text('mno')],
-            onPressedCodeButton: () {},
-          ),
+          body: Builder(builder: (context) {
+            l10n = AppLocalizations.of(context)!;
+            return RequestPane(
+              selectedId: '1',
+              codePaneVisible: true,
+              children: const [Text('abc'), Text('xyz'), Text('mno')],
+              onPressedCodeButton: () {},
+            );
+          }),
         ),
       ),
     );
 
     expect(find.byType(Center), findsAtLeastNWidgets(1));
-    expect(find.text('Request'), findsOneWidget);
-    expect(find.text('Hide Code'), findsOneWidget);
-    expect(find.text('View Code'), findsNothing);
-    expect(find.text('URL Params'), findsOneWidget);
-    expect(find.text('Headers'), findsOneWidget);
-    expect(find.text('Body'), findsOneWidget);
+    expect(find.text(l10n.kLabelRequests), findsOneWidget);
+    expect(find.text(l10n.kLabelHideCode), findsOneWidget);
+    expect(find.text(l10n.kLabelShowCode), findsNothing);
+    expect(find.text(l10n.kLabelURLParams), findsOneWidget);
+    expect(find.text(l10n.kLabelHeaders), findsOneWidget);
+    expect(find.text(l10n.kLabelBody), findsOneWidget);
     expect(find.text('abc'), findsOneWidget);
     expect(find.text('mno'), findsNothing);
     expect(find.text('xyz'), findsNothing);
@@ -35,29 +43,35 @@ void main() {
     expect(find.byIcon(Icons.code_rounded), findsNothing);
   });
   testWidgets('Testing Request Pane for 2nd tab', (tester) async {
+    late AppLocalizations l10n;
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: L10n.delegates,
+        locale: L10n.fallbackLocale,
         title: 'Request Pane',
         theme: kThemeDataLight,
-        home: Scaffold(
-          body: RequestPane(
-            selectedId: '1',
-            codePaneVisible: true,
-            onPressedCodeButton: () {},
-            tabIndex: 1,
-            children: const [Text('abc'), Text('xyz'), Text('mno')],
-          ),
-        ),
+        home: Builder(builder: (context) {
+          l10n = AppLocalizations.of(context)!;
+          return Scaffold(
+            body: RequestPane(
+              selectedId: '1',
+              codePaneVisible: true,
+              onPressedCodeButton: () {},
+              tabIndex: 1,
+              children: const [Text('abc'), Text('xyz'), Text('mno')],
+            ),
+          );
+        }),
       ),
     );
 
     expect(find.byType(Center), findsAtLeastNWidgets(1));
-    expect(find.text('Request'), findsOneWidget);
-    expect(find.text('Hide Code'), findsOneWidget);
-    expect(find.text('View Code'), findsNothing);
-    expect(find.text('URL Params'), findsOneWidget);
-    expect(find.text('Headers'), findsOneWidget);
-    expect(find.text('Body'), findsOneWidget);
+    expect(find.text(l10n.kLabelRequests), findsOneWidget);
+    expect(find.text(l10n.kLabelHideCode), findsOneWidget);
+    expect(find.text(l10n.kLabelShowCode), findsNothing);
+    expect(find.text(l10n.kLabelURLParams), findsOneWidget);
+    expect(find.text(l10n.kLabelHeaders), findsOneWidget);
+    expect(find.text(l10n.kLabelBody), findsOneWidget);
     expect(find.text('abc'), findsNothing);
     expect(find.text('mno'), findsNothing);
     expect(find.text('xyz'), findsOneWidget);
@@ -66,29 +80,35 @@ void main() {
     expect(find.byIcon(Icons.code_rounded), findsNothing);
   });
   testWidgets('Testing Request Pane for 3rd tab', (tester) async {
+    late AppLocalizations l10n;
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: L10n.delegates,
+        locale: L10n.fallbackLocale,
         title: 'Request Pane',
         theme: kThemeDataLight,
-        home: Scaffold(
-          body: RequestPane(
-            selectedId: '1',
-            codePaneVisible: false,
-            onPressedCodeButton: () {},
-            tabIndex: 2,
-            children: const [Text('abc'), Text('xyz'), Text('mno')],
-          ),
-        ),
+        home: Builder(builder: (context) {
+          l10n = AppLocalizations.of(context)!;
+          return Scaffold(
+            body: RequestPane(
+              selectedId: '1',
+              codePaneVisible: false,
+              onPressedCodeButton: () {},
+              tabIndex: 2,
+              children: const [Text('abc'), Text('xyz'), Text('mno')],
+            ),
+          );
+        }),
       ),
     );
 
     expect(find.byType(Center), findsAtLeastNWidgets(1));
-    expect(find.text('Request'), findsOneWidget);
-    expect(find.text('Hide Code'), findsNothing);
-    expect(find.text('View Code'), findsOneWidget);
-    expect(find.text('URL Params'), findsOneWidget);
-    expect(find.text('Headers'), findsOneWidget);
-    expect(find.text('Body'), findsOneWidget);
+    expect(find.text(l10n.kLabelRequests), findsOneWidget);
+    expect(find.text(l10n.kLabelHideCode), findsNothing);
+    expect(find.text(l10n.kLabelShowCode), findsOneWidget);
+    expect(find.text(l10n.kLabelURLParams), findsOneWidget);
+    expect(find.text(l10n.kLabelHeaders), findsOneWidget);
+    expect(find.text(l10n.kLabelBody), findsOneWidget);
     expect(find.text('abc'), findsNothing);
     expect(find.text('mno'), findsOneWidget);
     expect(find.text('xyz'), findsNothing);
@@ -97,30 +117,36 @@ void main() {
     expect(find.byIcon(Icons.code_rounded), findsOneWidget);
   });
   testWidgets('Testing Request Pane for tapping tabs', (tester) async {
+    late AppLocalizations l10n;
     dynamic computedTabIndex;
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: L10n.delegates,
+        locale: L10n.fallbackLocale,
         title: 'Request Pane',
         theme: kThemeDataLight,
-        home: Scaffold(
-          body: RequestPane(
-            selectedId: '1',
-            codePaneVisible: false,
-            onPressedCodeButton: () {},
-            onTapTabBar: (value) {
-              computedTabIndex = value;
-            },
-            children: const [Text('abc'), Text('xyz'), Text('mno')],
-          ),
-        ),
+        home: Builder(builder: (context) {
+          l10n = AppLocalizations.of(context)!;
+          return Scaffold(
+            body: RequestPane(
+              selectedId: '1',
+              codePaneVisible: false,
+              onPressedCodeButton: () {},
+              onTapTabBar: (value) {
+                computedTabIndex = value;
+              },
+              children: const [Text('abc'), Text('xyz'), Text('mno')],
+            ),
+          );
+        }),
       ),
     );
 
     expect(find.byType(Center), findsAtLeastNWidgets(1));
-    expect(find.text('Request'), findsOneWidget);
-    expect(find.text('URL Params'), findsOneWidget);
-    expect(find.text('Headers'), findsOneWidget);
-    expect(find.text('Body'), findsOneWidget);
+    expect(find.text(l10n.kLabelRequests), findsOneWidget);
+    expect(find.text(l10n.kLabelURLParams), findsOneWidget);
+    expect(find.text(l10n.kLabelHeaders), findsOneWidget);
+    expect(find.text(l10n.kLabelBody), findsOneWidget);
 
     await tester.tap(find.text('Headers'));
     await tester.pumpAndSettle();
