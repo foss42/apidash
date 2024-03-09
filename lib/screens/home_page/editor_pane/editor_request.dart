@@ -13,8 +13,8 @@ class RequestEditor extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        RequestEditorTopBar(),
-        EditorPaneRequestURLCard(),
+        const RequestEditorTopBar(),
+        const EditorPaneRequestURLCard(),
         kVSpacer10,
         Expanded(
           child: kIsMobile

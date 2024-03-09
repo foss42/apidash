@@ -11,67 +11,72 @@ class BottomNavBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final railIdx = ref.watch(navRailIndexStateProvider);
-    return Container(
-      alignment: Alignment.topCenter,
-      height: 70 + MediaQuery.of(context).padding.bottom,
-      width: MediaQuery.of(context).size.width,
-      padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
-      decoration: BoxDecoration(
-        border: Border(
-          top: BorderSide(
-            color: Theme.of(context).colorScheme.onInverseSurface,
+    return Wrap(
+      children: [
+        Container(
+          alignment: Alignment.topCenter,
+          height: 70 + MediaQuery.of(context).padding.bottom,
+          width: MediaQuery.of(context).size.width,
+          padding:
+              EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
+          decoration: BoxDecoration(
+            border: Border(
+              top: BorderSide(
+                color: Theme.of(context).colorScheme.onInverseSurface,
+              ),
+            ),
+            color: Theme.of(context).colorScheme.surface,
+          ),
+          child: Material(
+            type: MaterialType.transparency,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Expanded(
+                  child: customNavigationDestination(context, ref, railIdx, 0,
+                      Icons.dashboard, Icons.dashboard_outlined, 'Requests'),
+                ),
+                Expanded(
+                  child: customNavigationDestination(
+                      context,
+                      ref,
+                      railIdx,
+                      1,
+                      Icons.laptop_windows,
+                      Icons.laptop_windows_outlined,
+                      'Variables'),
+                ),
+                Expanded(
+                  child: customNavigationDestination(context, ref, railIdx, 2,
+                      Icons.help, Icons.help_outline, 'About',
+                      isNavigator: true, onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (context) => const PageBase(
+                                title: 'About',
+                                scaffoldBody: IntroPage(),
+                              )),
+                    );
+                  }),
+                ),
+                Expanded(
+                  child: customNavigationDestination(context, ref, railIdx, 3,
+                      Icons.settings, Icons.settings_outlined, 'Settings',
+                      isNavigator: true, onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (context) => const PageBase(
+                                title: 'Settings',
+                                scaffoldBody: SettingsPage(),
+                              )),
+                    );
+                  }),
+                ),
+              ],
+            ),
           ),
         ),
-        color: Theme.of(context).colorScheme.surface,
-      ),
-      child: Material(
-        type: MaterialType.transparency,
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Expanded(
-              child: customNavigationDestination(context, ref, railIdx, 0,
-                  Icons.dashboard, Icons.dashboard_outlined, 'Requests'),
-            ),
-            Expanded(
-              child: customNavigationDestination(
-                  context,
-                  ref,
-                  railIdx,
-                  1,
-                  Icons.laptop_windows,
-                  Icons.laptop_windows_outlined,
-                  'Variables'),
-            ),
-            Expanded(
-              child: customNavigationDestination(context, ref, railIdx, 2,
-                  Icons.help, Icons.help_outline, 'About', isNavigator: true,
-                  onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                      builder: (context) => const PageBase(
-                            title: 'About',
-                            scaffoldBody: IntroPage(),
-                          )),
-                );
-              }),
-            ),
-            Expanded(
-              child: customNavigationDestination(context, ref, railIdx, 3,
-                  Icons.settings, Icons.settings_outlined, 'Settings',
-                  isNavigator: true, onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                      builder: (context) => const PageBase(
-                            title: 'Settings',
-                            scaffoldBody: SettingsPage(),
-                          )),
-                );
-              }),
-            ),
-          ],
-        ),
-      ),
+      ],
     );
   }
 }

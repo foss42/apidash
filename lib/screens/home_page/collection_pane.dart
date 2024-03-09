@@ -109,7 +109,9 @@ class _RequestListState extends ConsumerState<RequestList> {
       thumbVisibility: alwaysShowCollectionPaneScrollbar ? true : null,
       radius: const Radius.circular(12),
       child: ReorderableListView.builder(
-        padding: kIsMobile ? kPr8b90CollectionPane : kPr8CollectionPane,
+        padding: kIsMobile
+            ? EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom)
+            : kPr8CollectionPane,
         scrollController: controller,
         buildDefaultDragHandles: false,
         itemCount: requestSequence.length,
