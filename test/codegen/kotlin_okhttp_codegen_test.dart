@@ -479,7 +479,7 @@ fun main() {
           expectedCode);
     });
 
-    test('POST 4', () {
+    test('POST 5', () {
       const expectedCode = r'''import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.MultipartBody
@@ -487,8 +487,10 @@ import okhttp3.MultipartBody
 fun main() {
     val client = OkHttpClient()
 
-    val url = "https://api.foss42.com/case/lower"
-    val body = MultipartBody.Builder().setType(MultipartBody.FORM).addFormDataPart("text","I LOVE Flutter")
+    val url = "https://api.apidash.dev/io/form"
+    val body = MultipartBody.Builder().setType(MultipartBody.FORM).addFormDataPart("text","API")
+          .addFormDataPart("sep","|")
+          .addFormDataPart("times","3")
           .build()
     val request = Request.Builder()
         .url(url)
@@ -502,7 +504,7 @@ fun main() {
     println(response.body?.string())
 }
 ''';
-      expect(kotlinOkHttpCodeGen.getCode(requestModelPost4, "https"),
+      expect(kotlinOkHttpCodeGen.getCode(requestModelPost5, "https"),
           expectedCode);
     });
   });
