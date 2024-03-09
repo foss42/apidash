@@ -46,32 +46,34 @@ class _FormDataFieldState extends State<FormDataField> {
               color: colorScheme.onSurface,
             ),
             decoration: InputDecoration(
-                hintStyle: kCodeStyle.copyWith(
-                  color: colorScheme.outline.withOpacity(
+              hintStyle: kCodeStyle.copyWith(
+                color: colorScheme.outline.withOpacity(
+                  kHintOpacity,
+                ),
+              ),
+              hintText: widget.hintText,
+              contentPadding: const EdgeInsets.only(bottom: 16),
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(
+                  color: colorScheme.primary.withOpacity(
                     kHintOpacity,
                   ),
                 ),
-                hintText: widget.hintText,
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(
-                    color: colorScheme.primary.withOpacity(
-                      kHintOpacity,
-                    ),
-                  ),
+              ),
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(
+                  color: colorScheme.surfaceVariant,
                 ),
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(
-                    color: colorScheme.surfaceVariant,
-                  ),
-                ),
-                suffixIcon: DropdownButtonFormData(
-                  formDataType: widget.formDataType,
-                  onChanged: (p0) {
-                    if (widget.onFormDataTypeChanged != null) {
-                      widget.onFormDataTypeChanged!(p0);
-                    }
-                  },
-                )),
+              ),
+              suffixIcon: DropdownButtonFormData(
+                formDataType: widget.formDataType,
+                onChanged: (p0) {
+                  if (widget.onFormDataTypeChanged != null) {
+                    widget.onFormDataTypeChanged!(p0);
+                  }
+                },
+              ),
+            ),
             onChanged: widget.onChanged,
           ),
         ),
