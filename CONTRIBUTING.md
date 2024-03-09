@@ -128,3 +128,23 @@ flutter test test/widgets/codegen_previewer_test.dart
 ### How to add a new package to pubspec.yaml?
 
 Instead of copy pasting from pub.dev, it is recommended that you use `flutter pub add package_name` to add a new package to `pubspec.yaml`. You can read more [here](https://docs.flutter.dev/packages-and-plugins/using-packages#adding-a-package-dependency-to-an-app-using-flutter-pub-add).
+
+## Troubleshooting Common Issues
+
+### Network Connection Issues on macOS
+
+If you encounter a network connection error similar to the following while running your Flutter app on macOS:
+
+```
+ClientException with SocketException: Connection failed (OS Error: Operation not permitted, errno = 1)
+```
+Add below key to `macos/Runner/DebugProfile.entitlements` and `macos/Runner/Release.entitlements`.
+
+```
+ <key>com.apple.security.network.client</key>
+ <true/>
+```
+
+You can read more [here](https://docs.flutter.dev/platform-integration/macos/building#setting-up-entitlements)
+
+

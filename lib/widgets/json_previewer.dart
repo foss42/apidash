@@ -154,6 +154,7 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
 
   @override
   void didUpdateWidget(JsonPreviewer oldWidget) {
+    super.didUpdateWidget(oldWidget);
     if (oldWidget.code != widget.code) {
       store.buildNodes(widget.code, areAllCollapsed: true);
       store.expandAll();

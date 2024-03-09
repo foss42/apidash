@@ -9,7 +9,7 @@ void main() {
     test('GET 1', () {
       const expectedCode = r"""import requests
 
-url = 'https://api.foss42.com'
+url = 'https://api.apidash.dev'
 
 response = requests.get(url)
 
@@ -23,7 +23,7 @@ print('Response Body:', response.text)
     test('GET 2', () {
       const expectedCode = r"""import requests
 
-url = 'https://api.foss42.com/country/data'
+url = 'https://api.apidash.dev/country/data'
 
 params = {
            "code": "US"
@@ -41,7 +41,7 @@ print('Response Body:', response.text)
     test('GET 3', () {
       const expectedCode = r"""import requests
 
-url = 'https://api.foss42.com/country/data'
+url = 'https://api.apidash.dev/country/data'
 
 params = {
            "code": "IND"
@@ -59,7 +59,7 @@ print('Response Body:', response.text)
     test('GET 4', () {
       const expectedCode = r"""import requests
 
-url = 'https://api.foss42.com/humanize/social'
+url = 'https://api.apidash.dev/humanize/social'
 
 params = {
            "num": "8700000",
@@ -121,7 +121,7 @@ print('Response Body:', response.text)
     test('GET 7', () {
       const expectedCode = r"""import requests
 
-url = 'https://api.foss42.com'
+url = 'https://api.apidash.dev'
 
 response = requests.get(url)
 
@@ -157,7 +157,7 @@ print('Response Body:', response.text)
     test('GET 9', () {
       const expectedCode = r"""import requests
 
-url = 'https://api.foss42.com/humanize/social'
+url = 'https://api.apidash.dev/humanize/social'
 
 params = {
            "num": "8700000",
@@ -176,7 +176,7 @@ print('Response Body:', response.text)
     test('GET 10', () {
       const expectedCode = r"""import requests
 
-url = 'https://api.foss42.com/humanize/social'
+url = 'https://api.apidash.dev/humanize/social'
 
 headers = {
             "User-Agent": "Test Agent"
@@ -198,7 +198,7 @@ print('Response Body:', response.text)
     test('GET 11', () {
       const expectedCode = r"""import requests
 
-url = 'https://api.foss42.com/humanize/social'
+url = 'https://api.apidash.dev/humanize/social'
 
 params = {
            "num": "8700000",
@@ -221,7 +221,7 @@ print('Response Body:', response.text)
     test('GET 12', () {
       const expectedCode = r"""import requests
 
-url = 'https://api.foss42.com/humanize/social'
+url = 'https://api.apidash.dev/humanize/social'
 
 response = requests.get(url)
 
@@ -237,7 +237,7 @@ print('Response Body:', response.text)
     test('HEAD 1', () {
       const expectedCode = r"""import requests
 
-url = 'https://api.foss42.com'
+url = 'https://api.apidash.dev'
 
 response = requests.head(url)
 
@@ -251,7 +251,7 @@ print('Response Body:', response.text)
     test('HEAD 2', () {
       const expectedCode = r"""import requests
 
-url = 'http://api.foss42.com'
+url = 'http://api.apidash.dev'
 
 response = requests.head(url)
 
@@ -267,7 +267,7 @@ print('Response Body:', response.text)
     test('POST 1', () {
       const expectedCode = r"""import requests
 
-url = 'https://api.foss42.com/case/lower'
+url = 'https://api.apidash.dev/case/lower'
 
 payload = r'''{
 "text": "I LOVE Flutter"
@@ -289,7 +289,7 @@ print('Response Body:', response.text)
     test('POST 2', () {
       const expectedCode = r"""import requests
 
-url = 'https://api.foss42.com/case/lower'
+url = 'https://api.apidash.dev/case/lower'
 
 payload = {
 "text": "I LOVE Flutter"
@@ -307,7 +307,7 @@ print('Response Body:', response.text)
     test('POST 3', () {
       const expectedCode = r"""import requests
 
-url = 'https://api.foss42.com/case/lower'
+url = 'https://api.apidash.dev/case/lower'
 
 payload = {
 "text": "I LOVE Flutter"

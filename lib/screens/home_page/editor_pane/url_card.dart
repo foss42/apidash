@@ -95,6 +95,11 @@ class URLTextField extends ConsumerWidget {
           isParamEnabledList: isParamEnabledList,
         );
       },
+      onFieldSubmitted: (value) {
+        ref
+            .read(collectionStateNotifierProvider.notifier)
+            .sendRequest(selectedId);
+      },
     );
   }
 }

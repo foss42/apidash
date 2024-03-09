@@ -2,17 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
 
 class URLField extends StatelessWidget {
-  const URLField(
-      {super.key,
-      required this.selectedId,
-      this.initialValue,
-      this.onChanged,
-      this.controller});
+
+  const URLField({
+    super.key,
+    required this.selectedId,
+    this.initialValue,
+    this.onChanged,
+    this.onFieldSubmitted,
+    this.controller,
+  });
+
 
   final String selectedId;
   final String? initialValue;
   final TextEditingController? controller;
   final void Function(String)? onChanged;
+  final void Function(String)? onFieldSubmitted;
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +36,7 @@ class URLField extends StatelessWidget {
         border: InputBorder.none,
       ),
       onChanged: onChanged,
+      onFieldSubmitted: onFieldSubmitted,
     );
   }
 }
@@ -100,7 +106,6 @@ class JsonSearchField extends StatelessWidget {
       controller: controller,
       onChanged: onChanged,
       style: kCodeStyle,
-      cursorHeight: 18,
       decoration: const InputDecoration(
         isDense: true,
         border: InputBorder.none,
