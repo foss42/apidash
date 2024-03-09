@@ -29,6 +29,7 @@ class RequestModel {
     this.responseStatus,
     this.message,
     this.responseModel,
+    this.isWorking = false,
   });
 
   final String id;
@@ -47,6 +48,7 @@ class RequestModel {
   final int? responseStatus;
   final String? message;
   final ResponseModel? responseModel;
+  final bool isWorking;
 
   List<NameValueModel>? get enabledRequestHeaders =>
       getEnabledRows(requestHeaders, isHeaderEnabledList);
@@ -106,6 +108,7 @@ class RequestModel {
     int? responseStatus,
     String? message,
     ResponseModel? responseModel,
+    bool? isWorking,
   }) {
     var headers = requestHeaders ?? this.requestHeaders;
     var params = requestParams ?? this.requestParams;
@@ -129,6 +132,7 @@ class RequestModel {
       responseStatus: responseStatus ?? this.responseStatus,
       message: message ?? this.message,
       responseModel: responseModel ?? this.responseModel,
+      isWorking: isWorking ?? this.isWorking,
     );
   }
 

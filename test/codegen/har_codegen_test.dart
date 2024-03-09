@@ -9,7 +9,7 @@ void main() {
     test('GET 1', () {
       const expectedCode = r"""{
   "method": "GET",
-  "url": "https://api.foss42.com",
+  "url": "https://api.apidash.dev",
   "httpVersion": "HTTP/1.1",
   "queryString": [],
   "headers": []
@@ -20,7 +20,7 @@ void main() {
     test('GET 2', () {
       const expectedCode = r"""{
   "method": "GET",
-  "url": "https://api.foss42.com/country/data?code=US",
+  "url": "https://api.apidash.dev/country/data?code=US",
   "httpVersion": "HTTP/1.1",
   "queryString": [
     {
@@ -36,7 +36,7 @@ void main() {
     test('GET 3', () {
       const expectedCode = r"""{
   "method": "GET",
-  "url": "https://api.foss42.com/country/data?code=IND",
+  "url": "https://api.apidash.dev/country/data?code=IND",
   "httpVersion": "HTTP/1.1",
   "queryString": [
     {
@@ -52,7 +52,7 @@ void main() {
     test('GET 4', () {
       const expectedCode = r"""{
   "method": "GET",
-  "url": "https://api.foss42.com/humanize/social?num=8700000&digits=3&system=SS&add_space=true&trailing_zeros=true",
+  "url": "https://api.apidash.dev/humanize/social?num=8700000&digits=3&system=SS&add_space=true&trailing_zeros=true",
   "httpVersion": "HTTP/1.1",
   "queryString": [
     {
@@ -121,7 +121,7 @@ void main() {
     test('GET 7', () {
       const expectedCode = r"""{
   "method": "GET",
-  "url": "https://api.foss42.com",
+  "url": "https://api.apidash.dev",
   "httpVersion": "HTTP/1.1",
   "queryString": [],
   "headers": []
@@ -153,7 +153,7 @@ void main() {
     test('GET 9', () {
       const expectedCode = r"""{
   "method": "GET",
-  "url": "https://api.foss42.com/humanize/social?num=8700000&add_space=true",
+  "url": "https://api.apidash.dev/humanize/social?num=8700000&add_space=true",
   "httpVersion": "HTTP/1.1",
   "queryString": [
     {
@@ -173,7 +173,7 @@ void main() {
     test('GET 10', () {
       const expectedCode = r"""{
   "method": "GET",
-  "url": "https://api.foss42.com/humanize/social",
+  "url": "https://api.apidash.dev/humanize/social",
   "httpVersion": "HTTP/1.1",
   "queryString": [],
   "headers": [
@@ -194,7 +194,7 @@ void main() {
     test('GET 11', () {
       const expectedCode = r"""{
   "method": "GET",
-  "url": "https://api.foss42.com/humanize/social?num=8700000&digits=3",
+  "url": "https://api.apidash.dev/humanize/social?num=8700000&digits=3",
   "httpVersion": "HTTP/1.1",
   "queryString": [
     {
@@ -219,7 +219,7 @@ void main() {
     test('GET 12', () {
       const expectedCode = r"""{
   "method": "GET",
-  "url": "https://api.foss42.com/humanize/social",
+  "url": "https://api.apidash.dev/humanize/social",
   "httpVersion": "HTTP/1.1",
   "queryString": [],
   "headers": []
@@ -232,7 +232,7 @@ void main() {
     test('HEAD 1', () {
       const expectedCode = r"""{
   "method": "HEAD",
-  "url": "https://api.foss42.com",
+  "url": "https://api.apidash.dev",
   "httpVersion": "HTTP/1.1",
   "queryString": [],
   "headers": []
@@ -243,7 +243,7 @@ void main() {
     test('HEAD 2', () {
       const expectedCode = r"""{
   "method": "HEAD",
-  "url": "http://api.foss42.com",
+  "url": "http://api.apidash.dev",
   "httpVersion": "HTTP/1.1",
   "queryString": [],
   "headers": []
@@ -256,7 +256,7 @@ void main() {
     test('POST 1', () {
       const expectedCode = r"""{
   "method": "POST",
-  "url": "https://api.foss42.com/case/lower",
+  "url": "https://api.apidash.dev/case/lower",
   "httpVersion": "HTTP/1.1",
   "queryString": [],
   "headers": [
@@ -276,7 +276,7 @@ void main() {
     test('POST 2', () {
       const expectedCode = r"""{
   "method": "POST",
-  "url": "https://api.foss42.com/case/lower",
+  "url": "https://api.apidash.dev/case/lower",
   "httpVersion": "HTTP/1.1",
   "queryString": [],
   "headers": [
@@ -296,7 +296,7 @@ void main() {
     test('POST 3', () {
       const expectedCode = r"""{
   "method": "POST",
-  "url": "https://api.foss42.com/case/lower",
+  "url": "https://api.apidash.dev/case/lower",
   "httpVersion": "HTTP/1.1",
   "queryString": [],
   "headers": [
