@@ -51,27 +51,33 @@ class SendRequestButton extends StatelessWidget {
     required this.onTap,
   });
 
-  final bool? isWorking;
+  final bool isWorking;
   final void Function() onTap;
 
   @override
   Widget build(BuildContext context) {
     return FilledButton(
-      onPressed: isWorking == true ? null : onTap,
+      onPressed: isWorking ? null : onTap,
       child: Row(
         mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            isWorking == true ? kLabelSending : kLabelSend,
-            style: kTextStyleButton,
-          ),
-          if (isWorking == false) kHSpacer10,
-          if (isWorking == false)
-            const Icon(
-              size: 16,
-              Icons.send,
-            ),
-        ],
+        children: isWorking
+            ? const [
+                Text(
+                  kLabelSending,
+                  style: kTextStyleButton,
+                ),
+              ]
+            : const [
+                Text(
+                  kLabelSend,
+                  style: kTextStyleButton,
+                ),
+                kHSpacer10,
+                Icon(
+                  size: 16,
+                  Icons.send,
+                ),
+              ],
       ),
     );
   }
