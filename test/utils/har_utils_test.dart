@@ -101,7 +101,7 @@ void main() {
                 'request': {
                   'method': 'GET',
                   'url':
-                      'https://api.foss42.com/humanize/social?num=8700000&digits=3&system=SS&add_space=true',
+                      'https://api.apidash.dev/humanize/social?num=8700000&digits=3&system=SS&add_space=true',
                   'httpVersion': 'HTTP/1.1',
                   'queryString': [
                     {'name': 'num', 'value': '8700000', 'comment': ''},
@@ -162,7 +162,7 @@ void main() {
                 },
                 'request': {
                   'method': 'POST',
-                  'url': 'https://api.foss42.com/case/lower',
+                  'url': 'https://api.apidash.dev/case/lower',
                   'httpVersion': 'HTTP/1.1',
                   'queryString': [],
                   'headers': [
@@ -252,7 +252,7 @@ void main() {
       test('Test requestModelToHARJsonRequest exportMode=true', () {
         Map<String, dynamic> expectedResult = {
           'method': 'POST',
-          'url': 'https://api.foss42.com/case/lower',
+          'url': 'https://api.apidash.dev/case/lower',
           'httpVersion': 'HTTP/1.1',
           'queryString': [],
           'headers': [
@@ -282,7 +282,7 @@ void main() {
         Map<String, dynamic> expectedResult = {
           'method': 'GET',
           'url':
-              'https://api.foss42.com/humanize/social?num=8700000&digits=3&system=SS&add_space=true',
+              'https://api.apidash.dev/humanize/social?num=8700000&digits=3&system=SS&add_space=true',
           'httpVersion': 'HTTP/1.1',
           'queryString': [
             {'name': 'num', 'value': '8700000'},
@@ -301,7 +301,7 @@ void main() {
       test('Test requestModelToHARJsonRequest useEnabled=true', () {
         Map<String, dynamic> expectedResult = {
           'method': 'GET',
-          'url': 'https://api.foss42.com/humanize/social?num=8700000&digits=3',
+          'url': 'https://api.apidash.dev/humanize/social?num=8700000&digits=3',
           'httpVersion': 'HTTP/1.1',
           'queryString': [
             {'name': 'num', 'value': '8700000'},

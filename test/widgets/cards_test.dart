@@ -17,7 +17,7 @@ void main() {
               SidebarRequestCard(
                 id: '23',
                 selectedId: '2',
-                url: 'https://api.foss42.com',
+                url: 'https://api.apidash.dev',
                 method: HTTPVerb.get,
                 onTap: () {
                   changedValue = 'Single Tapped';
@@ -34,11 +34,11 @@ void main() {
 
     expect(find.byType(InkWell), findsOneWidget);
 
-    expect(find.text('api.foss42.com'), findsOneWidget);
-    expect(find.widgetWithText(SizedBox, 'api.foss42.com'), findsOneWidget);
-    expect(find.widgetWithText(Card, 'api.foss42.com'), findsOneWidget);
+    expect(find.text('api.apidash.dev'), findsOneWidget);
+    expect(find.widgetWithText(SizedBox, 'api.apidash.dev'), findsOneWidget);
+    expect(find.widgetWithText(Card, 'api.apidash.dev'), findsOneWidget);
     await tester.pumpAndSettle();
-    var tappable = find.widgetWithText(Card, 'api.foss42.com');
+    var tappable = find.widgetWithText(Card, 'api.apidash.dev');
     await tester.tap(tappable);
     await tester.pumpAndSettle(const Duration(seconds: 2));
     expect(changedValue, 'Single Tapped');
@@ -63,7 +63,7 @@ void main() {
                 id: '2',
                 selectedId: '2',
                 editRequestId: '2',
-                url: 'https://api.foss42.com',
+                url: 'https://api.apidash.dev',
                 method: HTTPVerb.get,
                 onTapOutsideNameEditor: () {
                   changedValue = 'Tapped Outside';

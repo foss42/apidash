@@ -501,7 +501,8 @@ const kRaiseIssue =
 const kCsvError =
     "There seems to be an issue rendering this CSV. Please raise an issue in API Dash GitHub repo so that we can resolve it.";
 
-const kHintTextUrlCard = "Enter API endpoint like api.foss42.com/country/codes";
+const kHintTextUrlCard =
+    "Enter API endpoint like api.apidash.dev/country/codes";
 const kLabelPlusNew = "+ New";
 const kLabelSend = "Send";
 const kLabelSending = "Sending..";

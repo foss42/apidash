@@ -9,13 +9,14 @@ class ResponsePane extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedId = ref.watch(selectedIdStateProvider);
-    final sentRequestId = ref.watch(sentRequestIdStateProvider);
+    final isWorking = ref.watch(
+            selectedRequestModelProvider.select((value) => value?.isWorking)) ??
+        false;
     final responseStatus = ref.watch(
         selectedRequestModelProvider.select((value) => value?.responseStatus));
     final message = ref
         .watch(selectedRequestModelProvider.select((value) => value?.message));
-    if (sentRequestId != null && sentRequestId == selectedId) {
+    if (isWorking) {
       return const SendingWidget();
     }
     if (responseStatus == null) {
