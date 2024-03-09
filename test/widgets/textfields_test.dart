@@ -57,4 +57,41 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('entering 123 for cell field'), findsOneWidget);
   });
+
+  testWidgets('URL Field sends request on enter keystroke', (tester) async {
+    bool wasSubmitCalled = false;
+
+    void testSubmit(String val) {
+      wasSubmitCalled = true;
+    }
+
+    await tester.pumpWidget(
+      MaterialApp(
+        title: 'URL Field',
+        theme: kThemeDataDark,
+        home: Scaffold(
+          body: Column(children: [
+            URLField(
+              selectedId: '2',
+              onFieldSubmitted: testSubmit,
+            )
+          ]),
+        ),
+      ),
+    );
+
+    // ensure URLField is blank
+    expect(find.byType(TextFormField), findsOneWidget);
+    expect(find.textContaining('Enter API endpoint '), findsOneWidget);
+    expect(wasSubmitCalled, false);
+
+    // modify value and press enter
+    var txtForm = find.byKey(const Key("url-2"));
+    await tester.enterText(txtForm, 'entering 123');
+    await tester.testTextInput.receiveAction(TextInputAction.done);
+    await tester.pump();
+
+    // check if value was updated
+    expect(wasSubmitCalled, true);
+  });
 }
