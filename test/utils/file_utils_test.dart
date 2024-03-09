@@ -1,3 +1,4 @@
+import 'package:apidash/consts.dart';
 import 'package:test/test.dart';
 import 'package:apidash/utils/file_utils.dart';
 
@@ -11,8 +12,13 @@ void main() {
       });
 
       test('Test getShortPath', () {
-        String path = "A/B/C/D.csv";
-        expect(getShortPath(path), ".../C/D.csv");
+        if (kIsWindows) {
+          String path = r"A\B\C\D.csv";
+          expect(getShortPath(path), r"...\C\D.csv");
+        } else {
+          String path = "A/B/C/D.csv";
+          expect(getShortPath(path), ".../C/D.csv");
+        }
       });
 
       test('Test getTempFileName', () {

@@ -8,7 +8,7 @@ void main() {
 
   group('Test various Code generators', () {
     test('cURL', () {
-      const expectedCode = r"""curl --url 'https://api.foss42.com'""";
+      const expectedCode = r"""curl --url 'https://api.apidash.dev'""";
       expect(codeGen.getCode(CodegenLanguage.curl, requestModelGet1, "https"),
           expectedCode);
     });
@@ -18,7 +18,7 @@ void main() {
 
 void main() async {
   try {
-    final response = await dio.Dio.get('https://api.foss42.com');
+    final response = await dio.Dio.get('https://api.apidash.dev');
     print(response.statusCode);
     print(response.data);
   } on DioException catch (e, s) {
@@ -40,7 +40,7 @@ void main() async {
       const expectedCode = r"""import 'package:http/http.dart' as http;
 
 void main() async {
-  var uri = Uri.parse('https://api.foss42.com');
+  var uri = Uri.parse('https://api.apidash.dev');
 
   final response = await http.get(uri);
 
@@ -62,7 +62,7 @@ void main() async {
     test('HAR', () {
       const expectedCode = r"""{
   "method": "GET",
-  "url": "https://api.foss42.com",
+  "url": "https://api.apidash.dev",
   "httpVersion": "HTTP/1.1",
   "queryString": [],
   "headers": []
@@ -73,7 +73,7 @@ void main() async {
 
     test('JS Axios', () {
       const expectedCode = r"""let config = {
-  url: 'https://api.foss42.com',
+  url: 'https://api.apidash.dev',
   method: 'get'
 };
 
@@ -95,7 +95,7 @@ axios(config)
     });
 
     test('JS Fetch', () {
-      const expectedCode = r"""let url = 'https://api.foss42.com';
+      const expectedCode = r"""let url = 'https://api.apidash.dev';
 
 let options = {
   method: 'GET'
@@ -128,7 +128,7 @@ import okhttp3.Request
 fun main() {
     val client = OkHttpClient()
 
-    val url = "https://api.foss42.com"
+    val url = "https://api.apidash.dev"
 
     val request = Request.Builder()
         .url(url)
@@ -151,7 +151,7 @@ fun main() {
       const expectedCode = r"""import axios from 'axios';
 
 let config = {
-  url: 'https://api.foss42.com',
+  url: 'https://api.apidash.dev',
   method: 'get'
 };
 
@@ -176,7 +176,7 @@ axios(config)
     test('Nodejs Fetch', () {
       const expectedCode = r"""import fetch from 'node-fetch';
 
-let url = 'https://api.foss42.com';
+let url = 'https://api.apidash.dev';
 
 let options = {
   method: 'GET'
@@ -206,7 +206,7 @@ fetch(url, options)
     test('Python http.client', () {
       const expectedCode = r"""import http.client
 
-conn = http.client.HTTPSConnection("api.foss42.com")
+conn = http.client.HTTPSConnection("api.apidash.dev")
 conn.request("GET", "")
 
 res = conn.getresponse()
@@ -223,7 +223,7 @@ print(data.decode("utf-8"))
     test('Python requests', () {
       const expectedCode = r"""import requests
 
-url = 'https://api.foss42.com'
+url = 'https://api.apidash.dev'
 
 response = requests.get(url)
 
