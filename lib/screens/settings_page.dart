@@ -1,3 +1,4 @@
+import 'package:apidash/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/providers.dart';
@@ -102,6 +103,34 @@ class SettingsPage extends ConsumerWidget {
                         label: value.label,
                       );
                     }).toList()),
+              ),
+              ListTile(
+                contentPadding: kPb10,
+                hoverColor: kColorTransparent,
+                title: Text(l10n.kLabelDefaultLocale),
+                trailing: DropdownMenu(
+                  onSelected: (value) {
+                    ref
+                        .read(settingsProvider.notifier)
+                        .update(defaultLocale: value);
+                  },
+                  initialSelection: AppLocalizations.of(context)?.localeName,
+                  dropdownMenuEntries: L10n.supportedLocales
+                      .map(
+                        (locale) => DropdownMenuEntry(
+                          value: locale.languageCode,
+                          label: L10n.getLanguageFromLocale(locale),
+                        ),
+                      )
+                      .toList(),
+                  // dropdownMenuEntries: CodegenLanguage.values
+                  //     .map<DropdownMenuEntry<CodegenLanguage>>((value) {
+                  //   return DropdownMenuEntry<CodegenLanguage>(
+                  //     value: value,
+                  //     label: value.label,
+                  //   );
+                  // }).toList(),
+                ),
               ),
               CheckboxListTile(
                 contentPadding: EdgeInsets.zero,

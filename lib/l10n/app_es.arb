@@ -80,5 +80,6 @@
     "kLabelAddFormData": "Agregar datos del formulario",
     "kLabelURLMissing": "¡Falta la URL!",
     "kLabelErrorOccoured": "Ocurrió un error.",
-    "kLabelRaiseIssue": "Plantear cuestión"
+    "kLabelRaiseIssue": "Plantear cuestión",
+    "kLabelDefaultLocale": "Idioma de interfaz predeterminado"
 }

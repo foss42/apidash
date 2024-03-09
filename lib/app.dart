@@ -110,7 +110,7 @@ class DashApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       localizationsDelegates: L10n.delegates,
       supportedLocales: L10n.supportedLocales,
-      locale: L10n.fallbackLocale,
+      locale: Locale(ref.watch(defaultLocaleStateProvider)),
       theme: ThemeData(
         fontFamily: kFontFamily,
         fontFamilyFallback: kFontFamilyFallback,

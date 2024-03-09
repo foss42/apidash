@@ -9,7 +9,20 @@ class L10n {
     const Locale('fr'), // French
   ];
 
-  static const fallbackLocale = Locale('en');
+  static const fallbackLocale = Locale('es');
+
+  static String getLanguageFromLocale(Locale locale) {
+    switch (locale.languageCode) {
+      case 'en':
+        return 'English';
+      case 'es':
+        return "Spanish";
+      case 'fr':
+        return "French";
+      default:
+        return 'Unknown';
+    }
+  }
 
   static final delegates = [
     AppLocalizations.delegate,
