@@ -70,7 +70,7 @@ class URLTextField extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final activeId = ref.watch(activeIdStateProvider);
+    final selectedId = ref.watch(selectedIdStateProvider);
     return Focus(
         autofocus: true,
         child: KeyboardListener(
@@ -80,19 +80,19 @@ class URLTextField extends ConsumerWidget {
                 event.logicalKey == LogicalKeyboardKey.enter) {
               ref
                   .read(collectionStateNotifierProvider.notifier)
-                  .sendRequest(activeId);
+                  .sendRequest(selectedId);
             }
           },
           child: URLField(
-            activeId: activeId!,
+            selectedId: selectedId!,
             initialValue: ref
                 .read(collectionStateNotifierProvider.notifier)
-                .getRequestModel(activeId)
+                .getRequestModel(selectedId)
                 ?.url,
             onChanged: (value) {
               ref
                   .read(collectionStateNotifierProvider.notifier)
-                  .update(activeId, url: value);
+                  .update(selectedId, url: value);
             },
           ),
         ));
