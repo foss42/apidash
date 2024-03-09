@@ -98,9 +98,6 @@ class SidebarRequestCard extends StatelessWidget {
                               //FocusScope.of(context).unfocus();
                             },
                             onFieldSubmitted: (value) {
-                              // As new name is being contantly updated by
-                              // [onChangedNameEditor], stop editing by
-                              // calling this fn
                               onTapOutsideNameEditor?.call();
                             },
                             onChanged: onChangedNameEditor,
