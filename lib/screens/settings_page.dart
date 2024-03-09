@@ -88,25 +88,6 @@ class SettingsPage extends ConsumerWidget {
               ListTile(
                 contentPadding: kPb10,
                 hoverColor: kColorTransparent,
-                title: Text(l10n.kLabelDefaultCodeGenerator),
-                trailing: DropdownMenu(
-                    onSelected: (value) {
-                      ref
-                          .read(settingsProvider.notifier)
-                          .update(defaultCodeGenLang: value);
-                    },
-                    initialSelection: settings.defaultCodeGenLang,
-                    dropdownMenuEntries: CodegenLanguage.values
-                        .map<DropdownMenuEntry<CodegenLanguage>>((value) {
-                      return DropdownMenuEntry<CodegenLanguage>(
-                        value: value,
-                        label: value.label,
-                      );
-                    }).toList()),
-              ),
-              ListTile(
-                contentPadding: kPb10,
-                hoverColor: kColorTransparent,
                 title: Text(l10n.kLabelDefaultLocale),
                 trailing: DropdownMenu(
                   onSelected: (value) {
@@ -123,14 +104,26 @@ class SettingsPage extends ConsumerWidget {
                         ),
                       )
                       .toList(),
-                  // dropdownMenuEntries: CodegenLanguage.values
-                  //     .map<DropdownMenuEntry<CodegenLanguage>>((value) {
-                  //   return DropdownMenuEntry<CodegenLanguage>(
-                  //     value: value,
-                  //     label: value.label,
-                  //   );
-                  // }).toList(),
                 ),
+              ),
+              ListTile(
+                contentPadding: kPb10,
+                hoverColor: kColorTransparent,
+                title: Text(l10n.kLabelDefaultCodeGenerator),
+                trailing: DropdownMenu(
+                    onSelected: (value) {
+                      ref
+                          .read(settingsProvider.notifier)
+                          .update(defaultCodeGenLang: value);
+                    },
+                    initialSelection: settings.defaultCodeGenLang,
+                    dropdownMenuEntries: CodegenLanguage.values
+                        .map<DropdownMenuEntry<CodegenLanguage>>((value) {
+                      return DropdownMenuEntry<CodegenLanguage>(
+                        value: value,
+                        label: value.label,
+                      );
+                    }).toList()),
               ),
               CheckboxListTile(
                 contentPadding: EdgeInsets.zero,
