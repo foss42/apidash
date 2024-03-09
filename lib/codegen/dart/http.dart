@@ -53,7 +53,9 @@ class DartHttpCodeGen {
         declareVar('uri').assign(refer('Uri.parse').call([literalString(url)]));
 
     Expression? dataExp;
-    if (kMethodsWithBody.contains(method) && (body?.isNotEmpty ?? false)) {
+    if (kMethodsWithBody.contains(method) &&
+        (body?.isNotEmpty ?? false) &&
+        contentType != ContentType.formdata) {
       final strContent = CodeExpression(Code('r\'\'\'$body\'\'\''));
       dataExp = declareVar('body', type: refer('String')).assign(strContent);
       if (!hasContentTypeHeader) {
