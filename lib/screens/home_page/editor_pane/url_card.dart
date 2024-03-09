@@ -69,7 +69,7 @@ class URLTextField extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final activeId = ref.watch(activeIdStateProvider);
     return Focus(
         autofocus: true,
