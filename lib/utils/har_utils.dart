@@ -74,13 +74,14 @@ Map<String, dynamic> requestModelToHARJsonRequest(
   RequestModel requestModel, {
   defaultUriScheme = kDefaultUriScheme,
   bool exportMode = false,
+  bool useEnabled = false,
 }) {
   Map<String, dynamic> json = {};
   bool hasBody = false;
 
   var rec = getValidRequestUri(
     requestModel.url,
-    requestModel.requestParams,
+    useEnabled ? requestModel.enabledRequestParams : requestModel.requestParams,
     defaultUriScheme: defaultUriScheme,
   );
 
@@ -117,7 +118,7 @@ Map<String, dynamic> requestModelToHARJsonRequest(
         hasBody = true;
         json["postData"] = {};
         json["postData"]["mimeType"] =
-            kContentTypeMap[requestModel.requestBodyContentType] ?? "";
+            requestModel.requestBodyContentType.header;
         json["postData"]["text"] = requestBody;
         if (exportMode) {
           json["postData"]["comment"] = "";
@@ -125,14 +126,17 @@ Map<String, dynamic> requestModelToHARJsonRequest(
       }
     }
 
-    var headersList = requestModel.requestHeaders;
+    var headersList = useEnabled
+        ? requestModel.enabledRequestHeaders
+        : requestModel.requestHeaders;
     if (headersList != null || hasBody) {
-      var headers = requestModel.headersMap;
+      var headers =
+          useEnabled ? requestModel.enabledHeadersMap : requestModel.headersMap;
       if (headers.isNotEmpty || hasBody) {
-        if (hasBody) {
+        if (hasBody && !requestModel.hasContentTypeHeader) {
           var m = {
             "name": "Content-Type",
-            "value": kContentTypeMap[requestModel.requestBodyContentType] ?? ""
+            "value": requestModel.requestBodyContentType.header
           };
           if (exportMode) {
             m["comment"] = "";
@@ -148,7 +152,9 @@ Map<String, dynamic> requestModelToHARJsonRequest(
         }
       }
     }
-
+    if (requestModel.isFormDataRequest) {
+      json["formData"] = requestModel.formDataMapList;
+    }
     if (exportMode) {
       json["comment"] = "";
       json["cookies"] = [];

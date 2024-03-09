@@ -3,14 +3,16 @@ import 'package:apidash/consts.dart';
 
 @immutable
 class SettingsModel {
-  const SettingsModel(
-      {this.isDark = false,
-      this.alwaysShowCollectionPaneScrollbar = true,
-      this.size,
-      this.offset,
-      this.defaultUriScheme = kDefaultUriScheme,
-      this.defaultCodeGenLang = CodegenLanguage.curl,
-      this.saveResponses = true});
+  const SettingsModel({
+    this.isDark = false,
+    this.alwaysShowCollectionPaneScrollbar = true,
+    this.size,
+    this.offset,
+    this.defaultUriScheme = kDefaultUriScheme,
+    this.defaultCodeGenLang = CodegenLanguage.curl,
+    this.saveResponses = true,
+    this.promptBeforeClosing = true,
+  });
 
   final bool isDark;
   final bool alwaysShowCollectionPaneScrollbar;
@@ -19,6 +21,7 @@ class SettingsModel {
   final String defaultUriScheme;
   final CodegenLanguage defaultCodeGenLang;
   final bool saveResponses;
+  final bool promptBeforeClosing;
 
   SettingsModel copyWith({
     bool? isDark,
@@ -28,6 +31,7 @@ class SettingsModel {
     String? defaultUriScheme,
     CodegenLanguage? defaultCodeGenLang,
     bool? saveResponses,
+    bool? promptBeforeClosing,
   }) {
     return SettingsModel(
       isDark: isDark ?? this.isDark,
@@ -38,6 +42,7 @@ class SettingsModel {
       defaultCodeGenLang: defaultCodeGenLang ?? this.defaultCodeGenLang,
       offset: offset ?? this.offset,
       saveResponses: saveResponses ?? this.saveResponses,
+      promptBeforeClosing: promptBeforeClosing ?? this.promptBeforeClosing,
     );
   }
 
@@ -69,18 +74,19 @@ class SettingsModel {
       }
     }
     final saveResponses = data["saveResponses"] as bool?;
+    final promptBeforeClosing = data["promptBeforeClosing"] as bool?;
 
     const sm = SettingsModel();
 
     return sm.copyWith(
-      isDark: isDark,
-      alwaysShowCollectionPaneScrollbar: alwaysShowCollectionPaneScrollbar,
-      size: size,
-      offset: offset,
-      defaultUriScheme: defaultUriScheme,
-      defaultCodeGenLang: defaultCodeGenLang,
-      saveResponses: saveResponses,
-    );
+        isDark: isDark,
+        alwaysShowCollectionPaneScrollbar: alwaysShowCollectionPaneScrollbar,
+        size: size,
+        offset: offset,
+        defaultUriScheme: defaultUriScheme,
+        defaultCodeGenLang: defaultCodeGenLang,
+        saveResponses: saveResponses,
+        promptBeforeClosing: promptBeforeClosing);
   }
 
   Map<String, dynamic> toJson() {
@@ -94,11 +100,42 @@ class SettingsModel {
       "defaultUriScheme": defaultUriScheme,
       "defaultCodeGenLang": defaultCodeGenLang.name,
       "saveResponses": saveResponses,
+      "promptBeforeClosing": promptBeforeClosing,
     };
   }
 
   @override
   String toString() {
     return toJson().toString();
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is SettingsModel &&
+        other.runtimeType == runtimeType &&
+        other.isDark == isDark &&
+        other.alwaysShowCollectionPaneScrollbar ==
+            alwaysShowCollectionPaneScrollbar &&
+        other.size == size &&
+        other.offset == offset &&
+        other.defaultUriScheme == defaultUriScheme &&
+        other.defaultCodeGenLang == defaultCodeGenLang &&
+        other.saveResponses == saveResponses &&
+        other.promptBeforeClosing == promptBeforeClosing;
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(
+      runtimeType,
+      isDark,
+      alwaysShowCollectionPaneScrollbar,
+      size,
+      offset,
+      defaultUriScheme,
+      defaultCodeGenLang,
+      saveResponses,
+      promptBeforeClosing,
+    );
   }
 }

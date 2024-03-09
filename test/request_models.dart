@@ -4,14 +4,14 @@ import 'package:apidash/consts.dart';
 /// Basic GET request model
 const requestModelGet1 = RequestModel(
   id: 'get1',
-  url: 'https://api.foss42.com',
+  url: 'https://api.apidash.dev',
   method: HTTPVerb.get,
 );
 
 /// GET request model with query params
 const requestModelGet2 = RequestModel(
   id: 'get2',
-  url: 'https://api.foss42.com/country/data',
+  url: 'https://api.apidash.dev/country/data',
   method: HTTPVerb.get,
   requestParams: [
     NameValueModel(name: 'code', value: 'US'),
@@ -21,7 +21,7 @@ const requestModelGet2 = RequestModel(
 /// GET request model with override query params
 const requestModelGet3 = RequestModel(
   id: 'get3',
-  url: 'https://api.foss42.com/country/data?code=US',
+  url: 'https://api.apidash.dev/country/data?code=US',
   method: HTTPVerb.get,
   requestParams: [
     NameValueModel(name: 'code', value: 'IND'),
@@ -31,7 +31,7 @@ const requestModelGet3 = RequestModel(
 /// GET request model with different types of query params
 const requestModelGet4 = RequestModel(
   id: 'get4',
-  url: 'https://api.foss42.com/humanize/social',
+  url: 'https://api.apidash.dev/humanize/social',
   method: HTTPVerb.get,
   requestParams: [
     NameValueModel(name: 'num', value: '8700000'),
@@ -68,7 +68,7 @@ const requestModelGet6 = RequestModel(
 /// GET request model with body
 const requestModelGet7 = RequestModel(
   id: 'get7',
-  url: 'https://api.foss42.com',
+  url: 'https://api.apidash.dev',
   method: HTTPVerb.get,
   requestBodyContentType: ContentType.text,
   requestBody:
@@ -90,24 +90,112 @@ const requestModelGet8 = RequestModel(
   ],
 );
 
+/// GET request model with some params enabled
+const requestModelGet9 = RequestModel(
+  id: 'get9',
+  url: 'https://api.apidash.dev/humanize/social',
+  method: HTTPVerb.get,
+  requestParams: [
+    NameValueModel(name: 'num', value: '8700000'),
+    NameValueModel(name: 'digits', value: '3'),
+    NameValueModel(name: 'system', value: 'SS'),
+    NameValueModel(name: 'add_space', value: 'true'),
+  ],
+  isParamEnabledList: [
+    true,
+    false,
+    false,
+    true,
+  ],
+);
+
+/// GET Request model with some headers enabled
+const requestModelGet10 = RequestModel(
+  id: 'get10',
+  url: 'https://api.apidash.dev/humanize/social',
+  method: HTTPVerb.get,
+  requestHeaders: [
+    NameValueModel(name: 'User-Agent', value: 'Test Agent'),
+    NameValueModel(name: 'Content-Type', value: 'application/json'),
+  ],
+  isHeaderEnabledList: [
+    true,
+    false,
+  ],
+);
+
+/// GET Request model with some headers & URL parameters enabled
+const requestModelGet11 = RequestModel(
+  id: 'get11',
+  url: 'https://api.apidash.dev/humanize/social',
+  method: HTTPVerb.get,
+  requestParams: [
+    NameValueModel(name: 'num', value: '8700000'),
+    NameValueModel(name: 'digits', value: '3'),
+    NameValueModel(name: 'system', value: 'SS'),
+    NameValueModel(name: 'add_space', value: 'true'),
+  ],
+  requestHeaders: [
+    NameValueModel(name: 'User-Agent', value: 'Test Agent'),
+    NameValueModel(name: 'Content-Type', value: 'application/json'),
+  ],
+  isParamEnabledList: [
+    true,
+    true,
+    false,
+    false,
+  ],
+  isHeaderEnabledList: [
+    true,
+    false,
+  ],
+);
+
+/// Request model with all headers & URL parameters disabled
+const requestModelGet12 = RequestModel(
+  id: 'get12',
+  url: 'https://api.apidash.dev/humanize/social',
+  method: HTTPVerb.get,
+  requestParams: [
+    NameValueModel(name: 'num', value: '8700000'),
+    NameValueModel(name: 'digits', value: '3'),
+    NameValueModel(name: 'system', value: 'SS'),
+    NameValueModel(name: 'add_space', value: 'true'),
+  ],
+  requestHeaders: [
+    NameValueModel(name: 'User-Agent', value: 'Test Agent'),
+    NameValueModel(name: 'Content-Type', value: 'application/json'),
+  ],
+  isParamEnabledList: [
+    false,
+    false,
+    false,
+    false,
+  ],
+  isHeaderEnabledList: [
+    false,
+    false,
+  ],
+);
+
 /// Basic HEAD request model
 const requestModelHead1 = RequestModel(
   id: 'head1',
-  url: 'https://api.foss42.com',
+  url: 'https://api.apidash.dev',
   method: HTTPVerb.head,
 );
 
 /// Without URI Scheme (pass default as http)
 const requestModelHead2 = RequestModel(
   id: 'head2',
-  url: 'api.foss42.com',
+  url: 'api.apidash.dev',
   method: HTTPVerb.head,
 );
 
 /// Basic POST request model (txt body)
 const requestModelPost1 = RequestModel(
     id: 'post1',
-    url: 'https://api.foss42.com/case/lower',
+    url: 'https://api.apidash.dev/case/lower',
     method: HTTPVerb.post,
     requestBody: r"""{
 "text": "I LOVE Flutter"
@@ -117,7 +205,7 @@ const requestModelPost1 = RequestModel(
 /// POST request model with JSON body
 const requestModelPost2 = RequestModel(
   id: 'post2',
-  url: 'https://api.foss42.com/case/lower',
+  url: 'https://api.apidash.dev/case/lower',
   method: HTTPVerb.post,
   requestBody: r"""{
 "text": "I LOVE Flutter"
@@ -127,7 +215,7 @@ const requestModelPost2 = RequestModel(
 /// POST request model with headers
 const requestModelPost3 = RequestModel(
   id: 'post3',
-  url: 'https://api.foss42.com/case/lower',
+  url: 'https://api.apidash.dev/case/lower',
   method: HTTPVerb.post,
   requestBody: r"""{
 "text": "I LOVE Flutter"

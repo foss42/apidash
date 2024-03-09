@@ -6,18 +6,11 @@ import 'request_pane/request_pane.dart';
 import 'response_pane.dart';
 import 'code_pane.dart';
 
-class EditorPaneRequestDetailsCard extends ConsumerStatefulWidget {
+class EditorPaneRequestDetailsCard extends ConsumerWidget {
   const EditorPaneRequestDetailsCard({super.key});
 
   @override
-  ConsumerState<EditorPaneRequestDetailsCard> createState() =>
-      _EditorPaneRequestDetailsCardState();
-}
-
-class _EditorPaneRequestDetailsCardState
-    extends ConsumerState<EditorPaneRequestDetailsCard> {
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final codePaneVisible = ref.watch(codePaneVisibleStateProvider);
     return RequestDetailsCard(
       child: EqualSplitView(

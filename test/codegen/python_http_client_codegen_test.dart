@@ -9,7 +9,7 @@ void main() {
     test('GET 1', () {
       const expectedCode = r"""import http.client
 
-conn = http.client.HTTPSConnection("api.foss42.com")
+conn = http.client.HTTPSConnection("api.apidash.dev")
 conn.request("GET", "")
 
 res = conn.getresponse()
@@ -30,7 +30,7 @@ queryParams = {
               }
 queryParamsStr = '?' + urlencode(queryParams)
 
-conn = http.client.HTTPSConnection("api.foss42.com")
+conn = http.client.HTTPSConnection("api.apidash.dev")
 conn.request("GET", "/country/data" + queryParamsStr)
 
 res = conn.getresponse()
@@ -51,7 +51,7 @@ queryParams = {
               }
 queryParamsStr = '?' + urlencode(queryParams)
 
-conn = http.client.HTTPSConnection("api.foss42.com")
+conn = http.client.HTTPSConnection("api.apidash.dev")
 conn.request("GET", "/country/data" + queryParamsStr)
 
 res = conn.getresponse()
@@ -76,7 +76,7 @@ queryParams = {
               }
 queryParamsStr = '?' + urlencode(queryParams)
 
-conn = http.client.HTTPSConnection("api.foss42.com")
+conn = http.client.HTTPSConnection("api.apidash.dev")
 conn.request("GET", "/humanize/social" + queryParamsStr)
 
 res = conn.getresponse()
@@ -137,7 +137,7 @@ print(data.decode("utf-8"))
     test('GET 7', () {
       const expectedCode = r"""import http.client
 
-conn = http.client.HTTPSConnection("api.foss42.com")
+conn = http.client.HTTPSConnection("api.apidash.dev")
 conn.request("GET", "")
 
 res = conn.getresponse()
@@ -174,13 +174,101 @@ print(data.decode("utf-8"))
       expect(pythonHttpClientCodeGen.getCode(requestModelGet8, "https"),
           expectedCode);
     });
+
+    test('GET 9', () {
+      const expectedCode = r"""import http.client
+from urllib.parse import urlencode
+
+queryParams = {
+                "num": "8700000",
+                "add_space": "true"
+              }
+queryParamsStr = '?' + urlencode(queryParams)
+
+conn = http.client.HTTPSConnection("api.apidash.dev")
+conn.request("GET", "/humanize/social" + queryParamsStr)
+
+res = conn.getresponse()
+data = res.read()
+
+print(data.decode("utf-8"))
+""";
+      expect(pythonHttpClientCodeGen.getCode(requestModelGet9, "https"),
+          expectedCode);
+    });
+
+    test('GET 10', () {
+      const expectedCode = r"""import http.client
+
+headers = {
+            "User-Agent": "Test Agent"
+          }
+
+conn = http.client.HTTPSConnection("api.apidash.dev")
+conn.request("GET", "/humanize/social",
+              headers= headers)
+
+res = conn.getresponse()
+data = res.read()
+
+print(data.decode("utf-8"))
+""";
+      expect(
+          pythonHttpClientCodeGen.getCode(
+            requestModelGet10,
+            "https",
+          ),
+          expectedCode);
+    });
+
+    test('GET 11', () {
+      const expectedCode = r"""import http.client
+from urllib.parse import urlencode
+
+queryParams = {
+                "num": "8700000",
+                "digits": "3"
+              }
+queryParamsStr = '?' + urlencode(queryParams)
+
+headers = {
+            "User-Agent": "Test Agent"
+          }
+
+conn = http.client.HTTPSConnection("api.apidash.dev")
+conn.request("GET", "/humanize/social" + queryParamsStr,
+              headers= headers)
+
+res = conn.getresponse()
+data = res.read()
+
+print(data.decode("utf-8"))
+""";
+      expect(pythonHttpClientCodeGen.getCode(requestModelGet11, "https"),
+          expectedCode);
+    });
+
+    test('GET 12', () {
+      const expectedCode = r"""import http.client
+
+conn = http.client.HTTPSConnection("api.apidash.dev")
+conn.request("GET", "/humanize/social")
+
+res = conn.getresponse()
+data = res.read()
+
+print(data.decode("utf-8"))
+""";
+      expect(pythonHttpClientCodeGen.getCode(requestModelGet12, "https"),
+          expectedCode);
+    });
   });
 
   group('HEAD Request', () {
     test('HEAD 1', () {
       const expectedCode = r"""import http.client
 
-conn = http.client.HTTPSConnection("api.foss42.com")
+conn = http.client.HTTPSConnection("api.apidash.dev")
 conn.request("HEAD", "")
 
 res = conn.getresponse()
@@ -195,7 +283,7 @@ print(data.decode("utf-8"))
     test('HEAD 2', () {
       const expectedCode = r"""import http.client
 
-conn = http.client.HTTPConnection("api.foss42.com")
+conn = http.client.HTTPConnection("api.apidash.dev")
 conn.request("HEAD", "")
 
 res = conn.getresponse()
@@ -220,7 +308,7 @@ headers = {
             "content-type": "text/plain"
           }
 
-conn = http.client.HTTPSConnection("api.foss42.com")
+conn = http.client.HTTPSConnection("api.apidash.dev")
 conn.request("POST", "/case/lower",
               body= body,
               headers= headers)
@@ -245,7 +333,7 @@ headers = {
             "content-type": "application/json"
           }
 
-conn = http.client.HTTPSConnection("api.foss42.com")
+conn = http.client.HTTPSConnection("api.apidash.dev")
 conn.request("POST", "/case/lower",
               body= body,
               headers= headers)
@@ -271,7 +359,7 @@ headers = {
             "content-type": "application/json"
           }
 
-conn = http.client.HTTPSConnection("api.foss42.com")
+conn = http.client.HTTPSConnection("api.apidash.dev")
 conn.request("POST", "/case/lower",
               body= body,
               headers= headers)
@@ -285,6 +373,7 @@ print(data.decode("utf-8"))
           expectedCode);
     });
   });
+
   group('PUT Request', () {
     test('PUT 1', () {
       const expectedCode = r"""import http.client

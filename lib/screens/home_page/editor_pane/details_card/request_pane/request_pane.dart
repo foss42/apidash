@@ -6,30 +6,25 @@ import 'request_headers.dart';
 import 'request_params.dart';
 import 'request_body.dart';
 
-class EditRequestPane extends ConsumerStatefulWidget {
+class EditRequestPane extends ConsumerWidget {
   const EditRequestPane({super.key});
 
   @override
-  ConsumerState<EditRequestPane> createState() => _EditRequestPaneState();
-}
-
-class _EditRequestPaneState extends ConsumerState<EditRequestPane> {
-  @override
-  Widget build(BuildContext context) {
-    final activeId = ref.watch(activeIdStateProvider);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selectedId = ref.watch(selectedIdStateProvider);
     final codePaneVisible = ref.watch(codePaneVisibleStateProvider);
     final tabIndex = ref.watch(
-        activeRequestModelProvider.select((value) => value?.requestTabIndex));
+        selectedRequestModelProvider.select((value) => value?.requestTabIndex));
 
-    final headerLength = ref.watch(
-        activeRequestModelProvider.select((value) => value?.headersMap.length));
-    final paramLength = ref.watch(
-        activeRequestModelProvider.select((value) => value?.paramsMap.length));
-    final bodyLength = ref.watch(activeRequestModelProvider
+    final headerLength = ref.watch(selectedRequestModelProvider
+        .select((value) => value?.headersMap.length));
+    final paramLength = ref.watch(selectedRequestModelProvider
+        .select((value) => value?.paramsMap.length));
+    final bodyLength = ref.watch(selectedRequestModelProvider
         .select((value) => value?.requestBody?.length));
 
     return RequestPane(
-      activeId: activeId,
+      selectedId: selectedId,
       codePaneVisible: codePaneVisible,
       tabIndex: tabIndex,
       onPressedCodeButton: () {
@@ -39,7 +34,7 @@ class _EditRequestPaneState extends ConsumerState<EditRequestPane> {
       onTapTabBar: (index) {
         ref
             .read(collectionStateNotifierProvider.notifier)
-            .update(activeId!, requestTabIndex: index);
+            .update(selectedId!, requestTabIndex: index);
       },
       showIndicators: [
         paramLength != null && paramLength > 0,

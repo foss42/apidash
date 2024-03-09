@@ -5,19 +5,8 @@ import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
 
-class EditorPaneRequestURLCard extends StatefulWidget {
+class EditorPaneRequestURLCard extends StatelessWidget {
   const EditorPaneRequestURLCard({super.key});
-
-  @override
-  State<EditorPaneRequestURLCard> createState() =>
-      _EditorPaneRequestURLCardState();
-}
-
-class _EditorPaneRequestURLCardState extends State<EditorPaneRequestURLCard> {
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,53 +42,31 @@ class _EditorPaneRequestURLCardState extends State<EditorPaneRequestURLCard> {
   }
 }
 
-class DropdownButtonHTTPMethod extends ConsumerStatefulWidget {
+class DropdownButtonHTTPMethod extends ConsumerWidget {
   const DropdownButtonHTTPMethod({
     super.key,
   });
 
   @override
-  ConsumerState<DropdownButtonHTTPMethod> createState() =>
-      _DropdownButtonHTTPMethodState();
-}
-
-class _DropdownButtonHTTPMethodState
-    extends ConsumerState<DropdownButtonHTTPMethod> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final method =
-        ref.watch(activeRequestModelProvider.select((value) => value?.method));
+  Widget build(BuildContext context, WidgetRef ref) {
+    final method = ref
+        .watch(selectedRequestModelProvider.select((value) => value?.method));
     return DropdownButtonHttpMethod(
       method: method,
       onChanged: (HTTPVerb? value) {
-        final activeId = ref.read(activeRequestModelProvider)!.id;
+        final selectedId = ref.read(selectedRequestModelProvider)!.id;
         ref
             .read(collectionStateNotifierProvider.notifier)
-            .update(activeId, method: value);
+            .update(selectedId, method: value);
       },
     );
   }
 }
 
-class URLTextField extends ConsumerStatefulWidget {
+class URLTextField extends ConsumerWidget {
   const URLTextField({
     super.key,
   });
-
-  @override
-  ConsumerState<URLTextField> createState() => _URLTextFieldState();
-}
-
-class _URLTextFieldState extends ConsumerState<URLTextField> {
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -132,32 +99,22 @@ class _URLTextFieldState extends ConsumerState<URLTextField> {
   }
 }
 
-class SendButton extends ConsumerStatefulWidget {
+class SendButton extends ConsumerWidget {
   const SendButton({
     super.key,
   });
 
   @override
-  ConsumerState<SendButton> createState() => _SendButtonState();
-}
-
-class _SendButtonState extends ConsumerState<SendButton> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final activeId = ref.watch(activeIdStateProvider);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selectedId = ref.watch(selectedIdStateProvider);
     final sentRequestId = ref.watch(sentRequestIdStateProvider);
     return SendRequestButton(
-      activeId: activeId,
+      selectedId: selectedId,
       sentRequestId: sentRequestId,
       onTap: () {
         ref
             .read(collectionStateNotifierProvider.notifier)
-            .sendRequest(activeId!);
+            .sendRequest(selectedId!);
       },
     );
   }

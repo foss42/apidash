@@ -5,16 +5,17 @@ import '../models/models.dart';
 import '../services/services.dart' show hiveHandler, HiveHandler, request;
 import '../utils/utils.dart' show uuid, collectionToHAR;
 import '../consts.dart';
+import 'package:http/http.dart' as http;
 
-final activeIdStateProvider = StateProvider<String?>((ref) => null);
+final selectedIdStateProvider = StateProvider<String?>((ref) => null);
 
-final activeRequestModelProvider = StateProvider<RequestModel?>((ref) {
-  final activeId = ref.watch(activeIdStateProvider);
+final selectedRequestModelProvider = StateProvider<RequestModel?>((ref) {
+  final selectedId = ref.watch(selectedIdStateProvider);
   final collection = ref.watch(collectionStateNotifierProvider);
-  if (activeId == null || collection == null) {
+  if (selectedId == null || collection == null) {
     return null;
   } else {
-    return collection[activeId];
+    return collection[selectedId];
   }
 });
 
@@ -37,7 +38,7 @@ class CollectionStateNotifier
           state!.keys.first,
         ];
       }
-      ref.read(activeIdStateProvider.notifier).state =
+      ref.read(selectedIdStateProvider.notifier).state =
           ref.read(requestSequenceProvider)[0];
     });
   }
@@ -63,7 +64,7 @@ class CollectionStateNotifier
     ref
         .read(requestSequenceProvider.notifier)
         .update((state) => [id, ...state]);
-    ref.read(activeIdStateProvider.notifier).state = newRequestModel.id;
+    ref.read(selectedIdStateProvider.notifier).state = newRequestModel.id;
   }
 
   void reorder(int oldIdx, int newIdx) {
@@ -88,7 +89,7 @@ class CollectionStateNotifier
       newId = null;
     }
 
-    ref.read(activeIdStateProvider.notifier).state = newId;
+    ref.read(selectedIdStateProvider.notifier).state = newId;
 
     var map = {...state!};
     map.remove(id);
@@ -111,7 +112,7 @@ class CollectionStateNotifier
     state = map;
 
     ref.read(requestSequenceProvider.notifier).state = [...itemIds];
-    ref.read(activeIdStateProvider.notifier).state = newId;
+    ref.read(selectedIdStateProvider.notifier).state = newId;
   }
 
   void update(
@@ -123,8 +124,11 @@ class CollectionStateNotifier
     int? requestTabIndex,
     List<NameValueModel>? requestHeaders,
     List<NameValueModel>? requestParams,
+    List<bool>? isHeaderEnabledList,
+    List<bool>? isParamEnabledList,
     ContentType? requestBodyContentType,
     String? requestBody,
+    List<FormDataModel>? requestFormDataList,
     int? responseStatus,
     String? message,
     ResponseModel? responseModel,
@@ -137,8 +141,11 @@ class CollectionStateNotifier
         requestTabIndex: requestTabIndex,
         requestHeaders: requestHeaders,
         requestParams: requestParams,
+        isHeaderEnabledList: isHeaderEnabledList,
+        isParamEnabledList: isParamEnabledList,
         requestBodyContentType: requestBodyContentType,
         requestBody: requestBody,
+        requestFormDataList: requestFormDataList,
         responseStatus: responseStatus,
         message: message,
         responseModel: responseModel);
@@ -153,10 +160,13 @@ class CollectionStateNotifier
     ref.read(codePaneVisibleStateProvider.notifier).state = false;
     final defaultUriScheme =
         ref.read(settingsProvider.select((value) => value.defaultUriScheme));
-
     RequestModel requestModel = state![id]!;
-    var responseRec =
-        await request(requestModel, defaultUriScheme: defaultUriScheme);
+    (http.Response?, Duration?, String?)? responseRec = await request(
+      requestModel,
+      defaultUriScheme: defaultUriScheme,
+      isMultiPartRequest:
+          requestModel.requestBodyContentType == ContentType.formdata,
+    );
     late final RequestModel newRequestModel;
     if (responseRec.$1 == null) {
       newRequestModel = requestModel.copyWith(
@@ -175,7 +185,6 @@ class CollectionStateNotifier
         responseModel: responseModel,
       );
     }
-    //print(newRequestModel);
     ref.read(sentRequestIdStateProvider.notifier).state = null;
     var map = {...state!};
     map[id] = newRequestModel;
@@ -184,7 +193,7 @@ class CollectionStateNotifier
 
   Future<void> clearData() async {
     ref.read(clearDataStateProvider.notifier).state = true;
-    ref.read(activeIdStateProvider.notifier).state = null;
+    ref.read(selectedIdStateProvider.notifier).state = null;
     await hiveHandler.clear();
     ref.read(clearDataStateProvider.notifier).state = false;
     ref.read(requestSequenceProvider.notifier).state = [];

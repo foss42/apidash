@@ -4,8 +4,13 @@ import 'package:path/path.dart' as p;
 import 'package:mime_dart/mime_dart.dart';
 import 'package:uuid/uuid.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:file_picker/file_picker.dart';
 
 const uuid = Uuid();
+
+String getNewUuid() {
+  return uuid.v1();
+}
 
 String? getFileExtension(String? mimeType) {
   if (mimeType == null) {
@@ -38,11 +43,16 @@ String getShortPath(String path) {
   var f = p.split(path);
   if (f.length > 2) {
     f = f.sublist(f.length - 2);
-    return ".../${p.joinAll(f)}";
+    return p.join("...", p.joinAll(f));
   }
   return path;
 }
 
 String getTempFileName() {
   return uuid.v1();
+}
+
+Future<FilePickerResult?> pickFile() async {
+  FilePickerResult? pickedResult = await FilePicker.platform.pickFiles();
+  return pickedResult;
 }

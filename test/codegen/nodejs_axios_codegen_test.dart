@@ -10,7 +10,7 @@ void main() {
       const expectedCode = r"""import axios from 'axios';
 
 let config = {
-  url: 'https://api.foss42.com',
+  url: 'https://api.apidash.dev',
   method: 'get'
 };
 
@@ -33,7 +33,7 @@ axios(config)
       const expectedCode = r"""import axios from 'axios';
 
 let config = {
-  url: 'https://api.foss42.com/country/data',
+  url: 'https://api.apidash.dev/country/data',
   method: 'get',
   params: {
     "code": "US"
@@ -59,7 +59,7 @@ axios(config)
       const expectedCode = r"""import axios from 'axios';
 
 let config = {
-  url: 'https://api.foss42.com/country/data',
+  url: 'https://api.apidash.dev/country/data',
   method: 'get',
   params: {
     "code": "IND"
@@ -85,7 +85,7 @@ axios(config)
       const expectedCode = r"""import axios from 'axios';
 
 let config = {
-  url: 'https://api.foss42.com/humanize/social',
+  url: 'https://api.apidash.dev/humanize/social',
   method: 'get',
   params: {
     "num": "8700000",
@@ -170,7 +170,7 @@ axios(config)
       const expectedCode = r"""import axios from 'axios';
 
 let config = {
-  url: 'https://api.foss42.com',
+  url: 'https://api.apidash.dev',
   method: 'get'
 };
 
@@ -217,6 +217,117 @@ axios(config)
 """;
       expect(axiosCodeGen.getCode(requestModelGet8, "https"), expectedCode);
     });
+
+    test('GET 9', () {
+      const expectedCode = r"""import axios from 'axios';
+
+let config = {
+  url: 'https://api.apidash.dev/humanize/social',
+  method: 'get',
+  params: {
+    "num": "8700000",
+    "add_space": "true"
+  }
+};
+
+axios(config)
+    .then(function (response) {
+        // handle success
+        console.log(response.status);
+        console.log(response.data);
+    })
+    .catch(function (error) {
+        // handle error
+        console.log(error.response.status);
+        console.log(error);
+    });
+""";
+      expect(axiosCodeGen.getCode(requestModelGet9, "https"), expectedCode);
+    });
+
+    test('GET 10', () {
+      const expectedCode = r"""import axios from 'axios';
+
+let config = {
+  url: 'https://api.apidash.dev/humanize/social',
+  method: 'get',
+  headers: {
+    "User-Agent": "Test Agent"
+  }
+};
+
+axios(config)
+    .then(function (response) {
+        // handle success
+        console.log(response.status);
+        console.log(response.data);
+    })
+    .catch(function (error) {
+        // handle error
+        console.log(error.response.status);
+        console.log(error);
+    });
+""";
+      expect(
+          axiosCodeGen.getCode(
+            requestModelGet10,
+            "https",
+          ),
+          expectedCode);
+    });
+
+    test('GET 11', () {
+      const expectedCode = r"""import axios from 'axios';
+
+let config = {
+  url: 'https://api.apidash.dev/humanize/social',
+  method: 'get',
+  params: {
+    "num": "8700000",
+    "digits": "3"
+  },
+  headers: {
+    "User-Agent": "Test Agent"
+  }
+};
+
+axios(config)
+    .then(function (response) {
+        // handle success
+        console.log(response.status);
+        console.log(response.data);
+    })
+    .catch(function (error) {
+        // handle error
+        console.log(error.response.status);
+        console.log(error);
+    });
+""";
+      expect(axiosCodeGen.getCode(requestModelGet11, "https"), expectedCode);
+    });
+
+    test('GET 12', () {
+      const expectedCode = r"""import axios from 'axios';
+
+let config = {
+  url: 'https://api.apidash.dev/humanize/social',
+  method: 'get'
+};
+
+axios(config)
+    .then(function (response) {
+        // handle success
+        console.log(response.status);
+        console.log(response.data);
+    })
+    .catch(function (error) {
+        // handle error
+        console.log(error.response.status);
+        console.log(error);
+    });
+""";
+      expect(axiosCodeGen.getCode(requestModelGet12, "https"), expectedCode);
+    });
   });
 
   group('HEAD Request', () {
@@ -224,7 +335,7 @@ axios(config)
       const expectedCode = r"""import axios from 'axios';
 
 let config = {
-  url: 'https://api.foss42.com',
+  url: 'https://api.apidash.dev',
   method: 'head'
 };
 
@@ -247,7 +358,7 @@ axios(config)
       const expectedCode = r"""import axios from 'axios';
 
 let config = {
-  url: 'http://api.foss42.com',
+  url: 'http://api.apidash.dev',
   method: 'head'
 };
 
@@ -272,7 +383,7 @@ axios(config)
       const expectedCode = r"""import axios from 'axios';
 
 let config = {
-  url: 'https://api.foss42.com/case/lower',
+  url: 'https://api.apidash.dev/case/lower',
   method: 'post',
   headers: {
     "Content-Type": "text/plain"
@@ -299,7 +410,7 @@ axios(config)
       const expectedCode = r"""import axios from 'axios';
 
 let config = {
-  url: 'https://api.foss42.com/case/lower',
+  url: 'https://api.apidash.dev/case/lower',
   method: 'post',
   headers: {
     "Content-Type": "application/json"
@@ -326,7 +437,7 @@ axios(config)
       const expectedCode = r"""import axios from 'axios';
 
 let config = {
-  url: 'https://api.foss42.com/case/lower',
+  url: 'https://api.apidash.dev/case/lower',
   method: 'post',
   headers: {
     "Content-Type": "application/json",
@@ -350,6 +461,7 @@ axios(config)
       expect(axiosCodeGen.getCode(requestModelPost3, "https"), expectedCode);
     });
   });
+
   group('PUT Request', () {
     test('PUT 1', () {
       const expectedCode = r"""import axios from 'axios';

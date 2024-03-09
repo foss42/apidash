@@ -5,32 +5,22 @@ import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/codegen/codegen.dart';
 import 'package:apidash/consts.dart';
 
-class CodePane extends ConsumerStatefulWidget {
+final Codegen codegen = Codegen();
+
+class CodePane extends ConsumerWidget {
   const CodePane({super.key});
 
   @override
-  ConsumerState<CodePane> createState() => _CodePaneState();
-}
-
-class _CodePaneState extends ConsumerState<CodePane> {
-  final Codegen codegen = Codegen();
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final CodegenLanguage codegenLanguage =
         ref.watch(codegenLanguageStateProvider);
 
-    final activeRequestModel = ref.watch(activeRequestModelProvider);
+    final selectedRequestModel = ref.watch(selectedRequestModelProvider);
     final defaultUriScheme =
         ref.watch(settingsProvider.select((value) => value.defaultUriScheme));
 
-    final code =
-        codegen.getCode(codegenLanguage, activeRequestModel!, defaultUriScheme);
+    final code = codegen.getCode(
+        codegenLanguage, selectedRequestModel!, defaultUriScheme);
     if (code == null) {
       return const ErrorMessage(
         message: "An error was encountered while generating code. $kRaiseIssue",

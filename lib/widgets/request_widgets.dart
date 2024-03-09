@@ -5,7 +5,7 @@ import 'tabs.dart';
 class RequestPane extends StatefulWidget {
   const RequestPane({
     super.key,
-    required this.activeId,
+    required this.selectedId,
     required this.codePaneVisible,
     this.tabIndex,
     this.onPressedCodeButton,
@@ -14,7 +14,7 @@ class RequestPane extends StatefulWidget {
     this.showIndicators = const [false, false, false],
   });
 
-  final String? activeId;
+  final String? selectedId;
   final bool codePaneVisible;
   final int? tabIndex;
   final void Function()? onPressedCodeButton;
@@ -76,7 +76,7 @@ class _RequestPaneState extends State<RequestPane>
           ),
         ),
         TabBar(
-          key: Key(widget.activeId!),
+          key: Key(widget.selectedId!),
           controller: _controller,
           overlayColor: kColorTransparentState,
           onTap: widget.onTapTabBar,

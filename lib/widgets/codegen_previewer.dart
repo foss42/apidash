@@ -97,7 +97,7 @@ List<TextSpan> generateSpans(
   return spans;
 }
 
-class ViewCodePane extends StatefulWidget {
+class ViewCodePane extends StatelessWidget {
   const ViewCodePane({
     super.key,
     required this.code,
@@ -109,11 +109,6 @@ class ViewCodePane extends StatefulWidget {
   final CodegenLanguage codegenLanguage;
   final Function(CodegenLanguage?) onChangedCodegenLanguage;
 
-  @override
-  State<ViewCodePane> createState() => _ViewCodePaneState();
-}
-
-class _ViewCodePaneState extends State<ViewCodePane> {
   @override
   Widget build(BuildContext context) {
     var codeTheme = Theme.of(context).brightness == Brightness.light
@@ -145,17 +140,17 @@ class _ViewCodePaneState extends State<ViewCodePane> {
                   children: [
                     Expanded(
                       child: DropdownButtonCodegenLanguage(
-                        codegenLanguage: widget.codegenLanguage,
-                        onChanged: widget.onChangedCodegenLanguage,
+                        codegenLanguage: codegenLanguage,
+                        onChanged: onChangedCodegenLanguage,
                       ),
                     ),
                     CopyButton(
-                      toCopy: widget.code,
+                      toCopy: code,
                       showLabel: showLabel,
                     ),
                     SaveInDownloadsButton(
-                      content: stringToBytes(widget.code),
-                      ext: widget.codegenLanguage.ext,
+                      content: stringToBytes(code),
+                      ext: codegenLanguage.ext,
                       showLabel: showLabel,
                     )
                   ],
@@ -168,9 +163,9 @@ class _ViewCodePaneState extends State<ViewCodePane> {
                   padding: kP8,
                   decoration: textContainerdecoration,
                   child: CodeGenPreviewer(
-                    code: widget.code,
+                    code: code,
                     theme: codeTheme,
-                    language: widget.codegenLanguage.codeHighlightLang,
+                    language: codegenLanguage.codeHighlightLang,
                     textStyle: kCodeStyle,
                   ),
                 ),

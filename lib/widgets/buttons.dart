@@ -5,7 +5,7 @@ import 'package:apidash/utils/utils.dart';
 import 'package:apidash/consts.dart';
 import "snackbars.dart";
 
-class CopyButton extends StatefulWidget {
+class CopyButton extends StatelessWidget {
   const CopyButton({
     super.key,
     required this.toCopy,
@@ -16,20 +16,15 @@ class CopyButton extends StatefulWidget {
   final bool showLabel;
 
   @override
-  State<CopyButton> createState() => _CopyButtonState();
-}
-
-class _CopyButtonState extends State<CopyButton> {
-  @override
   Widget build(BuildContext context) {
     var sm = ScaffoldMessenger.of(context);
     return Tooltip(
-      message: widget.showLabel ? '' : kLabelCopy,
+      message: showLabel ? '' : kLabelCopy,
       child: SizedBox(
-        width: widget.showLabel ? null : kTextButtonMinWidth,
+        width: showLabel ? null : kTextButtonMinWidth,
         child: TextButton(
           onPressed: () async {
-            await Clipboard.setData(ClipboardData(text: widget.toCopy));
+            await Clipboard.setData(ClipboardData(text: toCopy));
             sm.hideCurrentSnackBar();
             sm.showSnackBar(getSnackBar("Copied"));
           },
@@ -40,7 +35,7 @@ class _CopyButtonState extends State<CopyButton> {
                 Icons.content_copy,
                 size: 20,
               ),
-              if (widget.showLabel) const Text(kLabelCopy)
+              if (showLabel) const Text(kLabelCopy)
             ],
           ),
         ),
@@ -49,41 +44,29 @@ class _CopyButtonState extends State<CopyButton> {
   }
 }
 
-class SendRequestButton extends StatefulWidget {
+class SendRequestButton extends StatelessWidget {
   const SendRequestButton({
     super.key,
-    required this.activeId,
+    required this.selectedId,
     required this.sentRequestId,
     required this.onTap,
   });
 
-  final String? activeId;
+  final String? selectedId;
   final String? sentRequestId;
   final void Function() onTap;
 
   @override
-  State<SendRequestButton> createState() => _SendRequestButtonState();
-}
-
-class _SendRequestButtonState extends State<SendRequestButton> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    bool disable = widget.sentRequestId != null;
+    bool disable = sentRequestId != null;
     return FilledButton(
-      onPressed: disable ? null : widget.onTap,
+      onPressed: disable ? null : onTap,
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
             disable
-                ? (widget.activeId == widget.sentRequestId
-                    ? kLabelSending
-                    : kLabelBusy)
+                ? (selectedId == sentRequestId ? kLabelSending : kLabelBusy)
                 : kLabelSend,
             style: kTextStyleButton,
           ),
@@ -99,7 +82,7 @@ class _SendRequestButtonState extends State<SendRequestButton> {
   }
 }
 
-class SaveInDownloadsButton extends StatefulWidget {
+class SaveInDownloadsButton extends StatelessWidget {
   const SaveInDownloadsButton({
     super.key,
     this.content,
@@ -116,28 +99,23 @@ class SaveInDownloadsButton extends StatefulWidget {
   final bool showLabel;
 
   @override
-  State<SaveInDownloadsButton> createState() => _SaveInDownloadsButtonState();
-}
-
-class _SaveInDownloadsButtonState extends State<SaveInDownloadsButton> {
-  @override
   Widget build(BuildContext context) {
     var sm = ScaffoldMessenger.of(context);
     return Tooltip(
-      message: widget.showLabel ? '' : kLabelDownload,
+      message: showLabel ? '' : kLabelDownload,
       child: SizedBox(
-        width: widget.showLabel ? null : kTextButtonMinWidth,
+        width: showLabel ? null : kTextButtonMinWidth,
         child: TextButton(
-          onPressed: (widget.content != null)
+          onPressed: (content != null)
               ? () async {
                   var message = "";
                   var path = await getFileDownloadpath(
-                    widget.name,
-                    widget.ext ?? getFileExtension(widget.mimeType),
+                    name,
+                    ext ?? getFileExtension(mimeType),
                   );
                   if (path != null) {
                     try {
-                      await saveFile(path, widget.content!);
+                      await saveFile(path, content!);
                       var sp = getShortPath(path);
                       message = 'Saved to $sp';
                     } catch (e) {
@@ -157,7 +135,7 @@ class _SaveInDownloadsButtonState extends State<SaveInDownloadsButton> {
                 Icons.download,
                 size: 20,
               ),
-              if (widget.showLabel) const Text(kLabelDownload)
+              if (showLabel) const Text(kLabelDownload)
             ],
           ),
         ),
@@ -166,7 +144,7 @@ class _SaveInDownloadsButtonState extends State<SaveInDownloadsButton> {
   }
 }
 
-class RepoButton extends StatefulWidget {
+class RepoButton extends StatelessWidget {
   const RepoButton({
     super.key,
     this.text,
@@ -177,14 +155,9 @@ class RepoButton extends StatefulWidget {
   final IconData? icon;
 
   @override
-  State<RepoButton> createState() => _RepoButtonState();
-}
-
-class _RepoButtonState extends State<RepoButton> {
-  @override
   Widget build(BuildContext context) {
-    var label = widget.text ?? "GitHub";
-    if (widget.icon == null) {
+    var label = text ?? "GitHub";
+    if (icon == null) {
       return FilledButton(
         onPressed: () {
           launchUrl(Uri.parse(kGitUrl));
@@ -200,7 +173,7 @@ class _RepoButtonState extends State<RepoButton> {
         launchUrl(Uri.parse(kGitUrl));
       },
       icon: Icon(
-        widget.icon,
+        icon,
         size: 20.0,
       ),
       label: Text(
@@ -211,7 +184,7 @@ class _RepoButtonState extends State<RepoButton> {
   }
 }
 
-class DiscordButton extends StatefulWidget {
+class DiscordButton extends StatelessWidget {
   const DiscordButton({
     super.key,
     this.text,
@@ -220,13 +193,8 @@ class DiscordButton extends StatefulWidget {
   final String? text;
 
   @override
-  State<DiscordButton> createState() => _DiscordButtonState();
-}
-
-class _DiscordButtonState extends State<DiscordButton> {
-  @override
   Widget build(BuildContext context) {
-    var label = widget.text ?? 'Discord Server';
+    var label = text ?? 'Discord Server';
     return FilledButton.icon(
       onPressed: () {
         launchUrl(Uri.parse(kDiscordUrl));
@@ -237,6 +205,30 @@ class _DiscordButtonState extends State<DiscordButton> {
       ),
       label: Text(
         label,
+        style: kTextStyleButton,
+      ),
+    );
+  }
+}
+
+class SaveButton extends StatelessWidget {
+  const SaveButton({
+    super.key,
+    this.onPressed,
+  });
+
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton.icon(
+      onPressed: onPressed,
+      icon: const Icon(
+        Icons.save,
+        size: 20,
+      ),
+      label: const Text(
+        kLabelSave,
         style: kTextStyleButton,
       ),
     );
