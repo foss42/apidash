@@ -52,7 +52,7 @@ class _FormDataFieldState extends State<FormDataField> {
                 ),
               ),
               hintText: widget.hintText,
-              contentPadding: const EdgeInsets.only(bottom: 16),
+              contentPadding: const EdgeInsets.only(bottom: 12),
               focusedBorder: UnderlineInputBorder(
                 borderSide: BorderSide(
                   color: colorScheme.primary.withOpacity(
@@ -65,7 +65,7 @@ class _FormDataFieldState extends State<FormDataField> {
                   color: colorScheme.surfaceVariant,
                 ),
               ),
-              suffixIcon: DropdownButtonFormData(
+              suffix: DropdownButtonFormData(
                 formDataType: widget.formDataType,
                 onChanged: (p0) {
                   if (widget.onFormDataTypeChanged != null) {
