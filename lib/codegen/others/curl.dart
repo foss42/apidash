@@ -1,6 +1,7 @@
 import 'package:jinja/jinja.dart' as jj;
 import 'package:apidash/utils/utils.dart' show requestModelToHARJsonRequest;
 import 'package:apidash/models/models.dart' show RequestModel;
+import 'package:apidash/consts.dart';
 
 // ignore: camel_case_types
 class cURLCodeGen {
@@ -11,7 +12,7 @@ class cURLCodeGen {
   --header '{{name}}: {{value}}'
 """;
   String kTemplateFormData = """ \\
-  --form '{{name}}: {{value}}'
+  --form '{{name}}={{value}}'
 """;
 
   String kTemplateBody = """ \\
@@ -38,7 +39,7 @@ class cURLCodeGen {
         "method": switch (harJson["method"]) {
           "GET" => "",
           "HEAD" => " --head",
-          _ => " --request ${harJson["method"]} \\\n"
+          _ => " --request ${harJson["method"]} \\\n "
         },
         "url": harJson["url"],
       });
@@ -51,27 +52,31 @@ class cURLCodeGen {
               .render({"name": item["name"], "value": item["value"]});
         }
       }
-      if (harJson['formData'] != null) {
-        var formDataList = harJson['formData'] as List<Map<String, dynamic>>;
-        for (var formData in formDataList) {
-          var templateFormData = jj.Template(kTemplateFormData);
-          if (formData['type'] != null &&
-              formData['name'] != null &&
-              formData['value'] != null &&
-              formData['name']!.isNotEmpty &&
-              formData['value']!.isNotEmpty) {
-            result += templateFormData.render({
-              "name": formData["name"],
-              "value":
-                  "${formData['type'] == 'file' ? '@' : ''}${formData["value"]}",
-            });
+
+      var method = requestModel.method;
+      if (kMethodsWithBody.contains(method)) {
+        if (harJson['formData'] != null) {
+          var formDataList = harJson['formData'] as List<Map<String, dynamic>>;
+          for (var formData in formDataList) {
+            var templateFormData = jj.Template(kTemplateFormData);
+            if (formData['type'] != null &&
+                formData['name'] != null &&
+                formData['value'] != null &&
+                formData['name']!.isNotEmpty &&
+                formData['value']!.isNotEmpty) {
+              result += templateFormData.render({
+                "name": formData["name"],
+                "value":
+                    "${formData['type'] == 'file' ? '@' : ''}${formData["value"]}",
+              });
+            }
           }
         }
-      }
 
-      if (harJson["postData"]?["text"] != null) {
-        var templateBody = jj.Template(kTemplateBody);
-        result += templateBody.render({"body": harJson["postData"]["text"]});
+        if (harJson["postData"]?["text"] != null) {
+          var templateBody = jj.Template(kTemplateBody);
+          result += templateBody.render({"body": harJson["postData"]["text"]});
+        }
       }
       return result;
     } catch (e) {

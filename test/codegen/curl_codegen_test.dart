@@ -102,7 +102,7 @@ void main() {
   group('POST Request', () {
     test('POST 1', () {
       const expectedCode = r"""curl --request POST \
- --url 'https://api.apidash.dev/case/lower' \
+  --url 'https://api.apidash.dev/case/lower' \
   --header 'Content-Type: text/plain' \
   --data '{
 "text": "I LOVE Flutter"
@@ -112,7 +112,7 @@ void main() {
 
     test('POST 2', () {
       const expectedCode = r"""curl --request POST \
- --url 'https://api.apidash.dev/case/lower' \
+  --url 'https://api.apidash.dev/case/lower' \
   --header 'Content-Type: application/json' \
   --data '{
 "text": "I LOVE Flutter"
@@ -122,7 +122,7 @@ void main() {
 
     test('POST 3', () {
       const expectedCode = r"""curl --request POST \
- --url 'https://api.apidash.dev/case/lower' \
+  --url 'https://api.apidash.dev/case/lower' \
   --header 'Content-Type: application/json' \
   --header 'User-Agent: Test Agent' \
   --data '{
@@ -130,12 +130,66 @@ void main() {
 }'""";
       expect(curlCodeGen.getCode(requestModelPost3, "https"), expectedCode);
     });
+
+    test('POST 4', () {
+      const expectedCode = r"""curl --request POST \
+  --url 'https://api.apidash.dev/io/form' \
+  --form 'text=API' \
+  --form 'sep=|' \
+  --form 'times=3'""";
+      expect(curlCodeGen.getCode(requestModelPost4, "https"), expectedCode);
+    });
+
+    test('POST 5', () {
+      const expectedCode = r"""curl --request POST \
+  --url 'https://api.apidash.dev/io/form' \
+  --header 'User-Agent: Test Agent' \
+  --form 'text=API' \
+  --form 'sep=|' \
+  --form 'times=3'""";
+      expect(curlCodeGen.getCode(requestModelPost5, "https"), expectedCode);
+    });
+
+    test('POST 6', () {
+      const expectedCode = r"""curl --request POST \
+  --url 'https://api.apidash.dev/io/img' \
+  --form 'token=xyz' \
+  --form 'imfile=@/Documents/up/1.png'""";
+      expect(curlCodeGen.getCode(requestModelPost6, "https"), expectedCode);
+    });
+
+    test('POST 7', () {
+      const expectedCode = r"""curl --request POST \
+  --url 'https://api.apidash.dev/io/img' \
+  --form 'token=xyz' \
+  --form 'imfile=@/Documents/up/1.png'""";
+      expect(curlCodeGen.getCode(requestModelPost7, "https"), expectedCode);
+    });
+
+    test('POST 8', () {
+      const expectedCode = r"""curl --request POST \
+  --url 'https://api.apidash.dev/io/form?size=2&len=3' \
+  --form 'text=API' \
+  --form 'sep=|' \
+  --form 'times=3'""";
+      expect(curlCodeGen.getCode(requestModelPost8, "https"), expectedCode);
+    });
+
+    test('POST 9', () {
+      const expectedCode = r"""curl --request POST \
+  --url 'https://api.apidash.dev/io/img?size=2&len=3' \
+  --header 'User-Agent: Test Agent' \
+  --header 'Keep-Alive: true' \
+  --form 'token=xyz' \
+  --form 'imfile=@/Documents/up/1.png'""";
+      expect(curlCodeGen.getCode(requestModelPost9, "https"), expectedCode);
+    });
   });
 
   group('PUT Request', () {
     test('PUT 1', () {
       const expectedCode = r"""curl --request PUT \
- --url 'https://reqres.in/api/users/2' \
+  --url 'https://reqres.in/api/users/2' \
   --header 'Content-Type: application/json' \
   --data '{
 "name": "morpheus",
@@ -148,7 +202,7 @@ void main() {
   group('PATCH Request', () {
     test('PATCH 1', () {
       const expectedCode = r"""curl --request PATCH \
- --url 'https://reqres.in/api/users/2' \
+  --url 'https://reqres.in/api/users/2' \
   --header 'Content-Type: application/json' \
   --data '{
 "name": "marfeus",
@@ -161,13 +215,13 @@ void main() {
   group('DELETE Request', () {
     test('DELETE 1', () {
       const expectedCode = r"""curl --request DELETE \
- --url 'https://reqres.in/api/users/2'""";
+  --url 'https://reqres.in/api/users/2'""";
       expect(curlCodeGen.getCode(requestModelDelete1, "https"), expectedCode);
     });
 
     test('DELETE 2', () {
       const expectedCode = r"""curl --request DELETE \
- --url 'https://reqres.in/api/users/2' \
+  --url 'https://reqres.in/api/users/2' \
   --header 'Content-Type: application/json' \
   --data '{
 "name": "marfeus",
