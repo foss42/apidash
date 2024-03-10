@@ -66,10 +66,12 @@ def build_data_list(fields):
             dataList.append(encode(''))
             dataList.append(encode(value))
         elif type_ == 'file':
+            with open(value, 'rb') as f:
+                file_content = f.read()
             dataList.append(encode(f'Content-Disposition: form-data; name="{name}"; filename="{value}"'))
             dataList.append(encode(f'Content-Type: {mimetypes.guess_type(value)[0] or "application/octet-stream"}'))
             dataList.append(encode(''))
-            dataList.append(open(value, 'rb').read())
+            dataList.append(file_content)
     dataList.append(encode('--{{boundary}}--'))
     dataList.append(encode(''))
     return dataList
@@ -82,7 +84,7 @@ payload = b'\r\n'.join(dataList)
 
   String kStringRequestBody = """, data=payload""";
 
-  // String kStringRequestJson = """, json=json.loads(payload)""";
+  String kStringRequestJson = """, json=json.loads(payload)""";
 
   String kStringRequestHeaders = """, headers=headers""";
 
@@ -193,9 +195,9 @@ print('Response Body:', response.text)
           result += kStringRequestBody;
         }
 
-        // if (hasJsonBody || requestModel.isFormDataRequest) {
-        //   result += kStringRequestJson;
-        // }
+        if (hasJsonBody || requestModel.isFormDataRequest) {
+          result += kStringRequestJson;
+        }
 
         if (hasHeaders || requestModel.isFormDataRequest) {
           result += kStringRequestHeaders;
