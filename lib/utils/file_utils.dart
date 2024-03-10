@@ -49,7 +49,7 @@ String getShortPath(String path) {
 }
 
 String getTempFileName() {
-  return uuid.v1();
+  return getNewUuid();
 }
 
 Future<FilePickerResult?> pickFile() async {
