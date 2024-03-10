@@ -1,7 +1,6 @@
-import 'package:apidash/models/models.dart' show RequestModel;
 import 'package:jinja/jinja.dart' as jj;
-
-import '../../consts.dart';
+import 'package:apidash/utils/utils.dart' show requestModelToHARJsonRequest;
+import 'package:apidash/models/models.dart' show RequestModel;
 
 // ignore: camel_case_types
 class cURLCodeGen {
@@ -30,48 +29,30 @@ class cURLCodeGen {
       if (!url.contains("://") && url.isNotEmpty) {
         url = "$defaultUriScheme://$url";
       }
-      if (requestModel.enabledParamsMap.isNotEmpty) {
-        if (!url.contains('?')) {
-          url += "?";
-        } else {
-          url += "&";
-        }
-        for (MapEntry<String, String> entry
-            in requestModel.enabledParamsMap.entries) {
-          url += "${Uri.encodeFull(entry.key)}=${Uri.encodeFull(entry.value)}&";
-        }
-        url = url.substring(0, url.length - 1);
-      }
       var rM = requestModel.copyWith(url: url);
+
+      var harJson = requestModelToHARJsonRequest(rM, useEnabled: true);
+
       var templateStart = jj.Template(kTemplateStart);
       result += templateStart.render({
-        "method": switch (rM.method.name.toUpperCase()) {
+        "method": switch (harJson["method"]) {
           "GET" => "",
           "HEAD" => " --head",
-          _ => " --request ${rM.method.name.toUpperCase()} \\\n"
+          _ => " --request ${harJson["method"]} \\\n"
         },
-        "url": rM.url,
+        "url": harJson["url"],
       });
 
-      Map<String, String> headers = rM.enabledHeadersMap;
-      if (rM.requestBody != null &&
-          rM.requestBody!.isNotEmpty &&
-          rM.method != HTTPVerb.get &&
-          rM.requestBodyContentType != ContentType.formdata) {
-        var templateHeader = jj.Template(kTemplateHeader);
-        result += templateHeader.render({
-          "name": "Content-Type",
-          "value": rM.requestBodyContentType.header
-        });
+      var headers = harJson["headers"];
+      if (headers.isNotEmpty) {
+        for (var item in headers) {
+          var templateHeader = jj.Template(kTemplateHeader);
+          result += templateHeader
+              .render({"name": item["name"], "value": item["value"]});
+        }
       }
-      for (MapEntry<String, String> header in headers.entries) {
-        var templateHeader = jj.Template(kTemplateHeader);
-        result +=
-            templateHeader.render({"name": header.key, "value": header.value});
-      }
-
-      if (rM.requestBodyContentType == ContentType.formdata) {
-        List<Map<String, dynamic>> formDataList = rM.formDataMapList;
+      if (harJson['formData'] != null) {
+        var formDataList = harJson['formData'] as List<Map<String, dynamic>>;
         for (var formData in formDataList) {
           var templateFormData = jj.Template(kTemplateFormData);
           if (formData['type'] != null &&
@@ -86,13 +67,11 @@ class cURLCodeGen {
             });
           }
         }
-      } else {
-        if (rM.requestBody != null &&
-            rM.requestBody!.isNotEmpty &&
-            rM.method != HTTPVerb.get) {
-          var templateBody = jj.Template(kTemplateBody);
-          result += templateBody.render({"body": rM.requestBody});
-        }
+      }
+
+      if (harJson["postData"]?["text"] != null) {
+        var templateBody = jj.Template(kTemplateBody);
+        result += templateBody.render({"body": harJson["postData"]["text"]});
       }
       return result;
     } catch (e) {
