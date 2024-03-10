@@ -4,7 +4,7 @@ import 'package:collection/collection.dart' show mergeMaps;
 import 'package:http_parser/http_parser.dart';
 import 'package:xml/xml.dart';
 import '../models/models.dart';
-import 'convert_utils.dart' show rowsToMap;
+import 'convert_utils.dart' show rowsToRequestMap;
 import '../consts.dart';
 
 String getRequestTitleFromUrl(String? url) {
@@ -88,12 +88,16 @@ String stripUrlParams(String url) {
     uri = uri.removeFragment();
   }
 
-  Map<String, String>? queryParams = rowsToMap(requestParams);
-  if (queryParams != null) {
-    if (uri.hasQuery) {
-      Map<String, String> urlQueryParams = uri.queryParameters;
-      queryParams = mergeMaps(urlQueryParams, queryParams);
-    }
+  Map<String, List<String>> queryParams = uri.queryParametersAll;
+
+  Map<String, dynamic>? requestQueryParams = rowsToRequestMap(requestParams);
+  if (requestQueryParams != null) {
+    Map<String, List<String>> queryParamsList = requestQueryParams.map((key, value) {
+      return MapEntry(key, List<String>.from(value is String ? [value] : value));
+    });
+    queryParams = mergeMaps(queryParams, queryParamsList, value: (v1, v2) => v1 + v2);
+  }
+  if (queryParams.isNotEmpty) {
     uri = uri.replace(queryParameters: queryParams);
   }
   return (uri, null);
