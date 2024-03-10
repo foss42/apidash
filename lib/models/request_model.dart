@@ -6,6 +6,8 @@ import '../utils/utils.dart'
         rowsToFormDataMapList,
         mapToRows,
         rowsToMap,
+        requestMapToRows,
+        rowsToRequestMap,
         getEnabledRows;
 import '../consts.dart';
 import 'models.dart';
@@ -57,10 +59,10 @@ class RequestModel {
 
   Map<String, String> get enabledHeadersMap =>
       rowsToMap(enabledRequestHeaders) ?? {};
-  Map<String, String> get enabledParamsMap =>
-      rowsToMap(enabledRequestParams) ?? {};
+  Map<String, dynamic> get enabledParamsMap =>
+      rowsToRequestMap(enabledRequestParams) ?? {};
   Map<String, String> get headersMap => rowsToMap(requestHeaders) ?? {};
-  Map<String, String> get paramsMap => rowsToMap(requestParams) ?? {};
+  Map<String, dynamic> get paramsMap => rowsToRequestMap(requestParams) ?? {};
 
   List<Map<String, dynamic>> get formDataMapList =>
       rowsToFormDataMapList(requestFormDataList) ?? [];
@@ -184,7 +186,7 @@ class RequestModel {
           ? mapToRows(Map<String, String>.from(requestHeaders))
           : null,
       requestParams: requestParams != null
-          ? mapToRows(Map<String, String>.from(requestParams))
+          ? requestMapToRows(Map<String, dynamic>.from(requestParams))
           : null,
       isHeaderEnabledList: isHeaderEnabledList,
       isParamEnabledList: isParamEnabledList,
@@ -207,7 +209,7 @@ class RequestModel {
       "name": name,
       "description": description,
       "requestHeaders": rowsToMap(requestHeaders),
-      "requestParams": rowsToMap(requestParams),
+      "requestParams": rowsToRequestMap(requestParams),
       "isHeaderEnabledList": isHeaderEnabledList,
       "isParamEnabledList": isParamEnabledList,
       "requestBodyContentType": requestBodyContentType.name,
