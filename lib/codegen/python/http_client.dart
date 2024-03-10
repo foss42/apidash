@@ -2,7 +2,7 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:jinja/jinja.dart' as jj;
 import 'package:apidash/utils/utils.dart'
-    show getNewUuid, getValidRequestUri, padMultilineString;
+    show getValidRequestUri, padMultilineString;
 import 'package:apidash/models/models.dart' show RequestModel;
 import 'package:apidash/consts.dart';
 
@@ -89,9 +89,8 @@ body = b'\r\n'.join(dataList)
   String? getCode(
     RequestModel requestModel,
     String defaultUriScheme,
+    String? boundary,
   ) {
-    String uuid = getNewUuid();
-
     try {
       String result = "";
       bool hasHeaders = false;
@@ -148,7 +147,7 @@ body = b'\r\n'.join(dataList)
             var formHeaderTemplate =
                 jj.Template(kTemplateFormHeaderContentType);
             headers[HttpHeaders.contentTypeHeader] = formHeaderTemplate.render({
-              "boundary": uuid,
+              "boundary": boundary,
             });
           }
 
@@ -169,7 +168,7 @@ body = b'\r\n'.join(dataList)
           result += formDataBodyData.render(
             {
               "fields_list": json.encode(requestModel.formDataMapList),
-              "boundary": uuid,
+              "boundary": boundary,
             },
           );
         }

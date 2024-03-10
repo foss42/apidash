@@ -1,5 +1,6 @@
 import 'package:apidash/models/models.dart' show RequestModel;
 import 'package:apidash/consts.dart';
+import 'package:apidash/utils/utils.dart' show getNewUuid;
 import 'dart/http.dart';
 import 'dart/dio.dart';
 import 'kotlin/okhttp.dart';
@@ -14,8 +15,12 @@ class Codegen {
   String? getCode(
     CodegenLanguage codegenLanguage,
     RequestModel requestModel,
-    String defaultUriScheme,
-  ) {
+    String defaultUriScheme, {
+    String? boundary,
+  }) {
+    if (requestModel.isFormDataRequest) {
+      boundary = boundary ?? getNewUuid();
+    }
     switch (codegenLanguage) {
       case CodegenLanguage.curl:
         return cURLCodeGen().getCode(requestModel, defaultUriScheme);
@@ -39,9 +44,10 @@ class Codegen {
         return KotlinOkHttpCodeGen().getCode(requestModel, defaultUriScheme);
       case CodegenLanguage.pythonHttpClient:
         return PythonHttpClientCodeGen()
-            .getCode(requestModel, defaultUriScheme);
+            .getCode(requestModel, defaultUriScheme, boundary);
       case CodegenLanguage.pythonRequests:
-        return PythonRequestsCodeGen().getCode(requestModel, defaultUriScheme);
+        return PythonRequestsCodeGen()
+            .getCode(requestModel, defaultUriScheme, boundary);
     }
   }
 }

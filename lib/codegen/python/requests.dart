@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:jinja/jinja.dart' as jj;
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart'
-    show getNewUuid, getValidRequestUri, padMultilineString, stripUriParams;
+    show getValidRequestUri, padMultilineString, stripUriParams;
 import 'package:apidash/models/models.dart' show RequestModel;
 
 class PythonRequestsCodeGen {
@@ -94,6 +94,7 @@ print('Response Body:', response.text)
   String? getCode(
     RequestModel requestModel,
     String defaultUriScheme,
+    String? boundary,
   ) {
     try {
       String result = "";
@@ -101,7 +102,6 @@ print('Response Body:', response.text)
       bool hasHeaders = false;
       bool hasBody = false;
       bool hasJsonBody = false;
-      String uuid = getNewUuid();
 
       String url = requestModel.url;
       if (!url.contains("://") && url.isNotEmpty) {
@@ -155,7 +155,7 @@ print('Response Body:', response.text)
             var formHeaderTemplate =
                 jj.Template(kTemplateFormHeaderContentType);
             headers[HttpHeaders.contentTypeHeader] = formHeaderTemplate.render({
-              "boundary": uuid,
+              "boundary": boundary,
             });
           }
           if (headers.isNotEmpty || hasBody) {
@@ -175,7 +175,7 @@ print('Response Body:', response.text)
           result += formDataBodyData.render(
             {
               "fields_list": json.encode(requestModel.formDataMapList),
-              "boundary": uuid,
+              "boundary": boundary,
             },
           );
         }
