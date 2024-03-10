@@ -1,6 +1,6 @@
+import 'package:test/test.dart';
 import 'package:apidash/codegen/others/curl.dart';
 import '../request_models.dart';
-import 'package:test/test.dart';
 
 void main() {
   final curlCodeGen = cURLCodeGen();
