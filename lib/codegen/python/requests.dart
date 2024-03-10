@@ -9,6 +9,7 @@ import 'package:apidash/models/models.dart' show RequestModel;
 class PythonRequestsCodeGen {
   final String kTemplateStart = """import requests
 {% if isFormDataRequest %}import mimetypes
+import json
 from codecs import encode
 {% endif %}
 url = '{{url}}'
@@ -81,7 +82,7 @@ payload = b'\r\n'.join(dataList)
 
   String kStringRequestBody = """, data=payload""";
 
-  String kStringRequestJson = """, json=json.loads(payload)""";
+  // String kStringRequestJson = """, json=json.loads(payload)""";
 
   String kStringRequestHeaders = """, headers=headers""";
 
@@ -192,9 +193,9 @@ print('Response Body:', response.text)
           result += kStringRequestBody;
         }
 
-        if (hasJsonBody || requestModel.isFormDataRequest) {
-          result += kStringRequestJson;
-        }
+        // if (hasJsonBody || requestModel.isFormDataRequest) {
+        //   result += kStringRequestJson;
+        // }
 
         if (hasHeaders || requestModel.isFormDataRequest) {
           result += kStringRequestHeaders;
