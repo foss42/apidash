@@ -326,7 +326,12 @@ print(data.decode("utf-8"))
       const expectedCode = r"""import http.client
 
 body = r'''{
-"text": "I LOVE Flutter"
+"text": "I LOVE Flutter",
+"flag": null,
+"male": true,
+"female": false,
+"no": 1.2,
+"arr": ["null", "true", "false", null]
 }'''
 
 headers = {

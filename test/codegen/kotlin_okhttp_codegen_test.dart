@@ -428,7 +428,12 @@ fun main() {
     val mediaType = "application/json".toMediaType()
 
     val body = """{
-"text": "I LOVE Flutter"
+"text": "I LOVE Flutter",
+"flag": null,
+"male": true,
+"female": false,
+"no": 1.2,
+"arr": ["null", "true", "false", null]
 }""".toRequestBody(mediaType)
 
     val request = Request.Builder()

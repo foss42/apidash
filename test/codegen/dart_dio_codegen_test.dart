@@ -398,7 +398,12 @@ import 'dart:convert' as convert;
 void main() async {
   try {
     final data = convert.json.decode(r'''{
-"text": "I LOVE Flutter"
+"text": "I LOVE Flutter",
+"flag": null,
+"male": true,
+"female": false,
+"no": 1.2,
+"arr": ["null", "true", "false", null]
 }''');
     final response = await dio.Dio.post(
       'https://api.apidash.dev/case/lower',
