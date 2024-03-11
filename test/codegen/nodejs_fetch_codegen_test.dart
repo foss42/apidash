@@ -451,7 +451,7 @@ let options = {
     "Content-Type": "application/json"
   },
   body: 
-"{\n\"text\": \"I LOVE Flutter\"\n}"
+"{\n\"text\": \"I LOVE Flutter\",\n\"flag\": null,\n\"male\": true,\n\"female\": false,\n\"no\": 1.2,\n\"arr\": [\"null\", \"true\", \"false\", null]\n}"
 };
 
 let status;

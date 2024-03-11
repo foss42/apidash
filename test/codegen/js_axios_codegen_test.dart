@@ -383,7 +383,7 @@ axios(config)
   headers: {
     "Content-Type": "application/json"
   },
-  data: "{\n\"text\": \"I LOVE Flutter\"\n}"
+  data: "{\n\"text\": \"I LOVE Flutter\",\n\"flag\": null,\n\"male\": true,\n\"female\": false,\n\"no\": 1.2,\n\"arr\": [\"null\", \"true\", \"false\", null]\n}"
 };
 
 axios(config)

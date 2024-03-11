@@ -409,7 +409,12 @@ void main() async {
   var uri = Uri.parse('https://api.apidash.dev/case/lower');
 
   String body = r'''{
-"text": "I LOVE Flutter"
+"text": "I LOVE Flutter",
+"flag": null,
+"male": true,
+"female": false,
+"no": 1.2,
+"arr": ["null", "true", "false", null]
 }''';
 
   var headers = {'content-type': 'application/json'};

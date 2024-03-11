@@ -115,7 +115,12 @@ void main() {
   --url 'https://api.apidash.dev/case/lower' \
   --header 'Content-Type: application/json' \
   --data '{
-"text": "I LOVE Flutter"
+"text": "I LOVE Flutter",
+"flag": null,
+"male": true,
+"female": false,
+"no": 1.2,
+"arr": ["null", "true", "false", null]
 }'""";
       expect(curlCodeGen.getCode(requestModelPost2, "https"), expectedCode);
     });
