@@ -52,7 +52,7 @@ void main() {
   RequestModel requestModel = RequestModel(
       id: '1',
       method: HTTPVerb.post,
-      url: 'api.foss42.com/case/lower',
+      url: 'api.apidash.dev/case/lower',
       name: 'foss42 api',
       requestHeaders: const [
         NameValueModel(name: 'content-length', value: '18'),
@@ -69,7 +69,7 @@ void main() {
   RequestModel requestModelDup = const RequestModel(
       id: '1',
       method: HTTPVerb.post,
-      url: 'api.foss42.com/case/lower',
+      url: 'api.apidash.dev/case/lower',
       name: 'foss42 api',
       requestHeaders: [
         NameValueModel(name: 'content-length', value: '18'),
@@ -84,7 +84,7 @@ void main() {
   RequestModel requestModelCopy = const RequestModel(
       id: '1',
       method: HTTPVerb.post,
-      url: 'api.foss42.com/case/lower',
+      url: 'api.apidash.dev/case/lower',
       name: 'foss42 api (copy)',
       requestHeaders: [
         NameValueModel(name: 'content-length', value: '18'),
@@ -99,7 +99,7 @@ void main() {
   Map<String, dynamic> requestModelAsJson = {
     "id": '1',
     "method": 'post',
-    "url": 'api.foss42.com/case/lower',
+    "url": 'api.apidash.dev/case/lower',
     "name": 'foss42 api',
     'description': '',
     "requestHeaders": {
@@ -138,7 +138,7 @@ void main() {
   final requestModeDupString = [
     "Request Id: 1",
     "Request Method: post",
-    "Request URL: api.foss42.com/case/lower",
+    "Request URL: api.apidash.dev/case/lower",
     "Request Name: foss42 api",
     "Request Description: ",
     "Request Tab Index: 0",

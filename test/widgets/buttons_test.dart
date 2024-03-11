@@ -36,8 +36,7 @@ void main() {
         theme: kThemeDataLight,
         home: Scaffold(
           body: SendRequestButton(
-            selectedId: '1',
-            sentRequestId: null,
+            isWorking: false,
             onTap: () {
               changedValue = 'Send';
             },
@@ -56,35 +55,8 @@ void main() {
     expect(changedValue, 'Send');
   });
 
-  testWidgets('Testing for Send Request Button when request cancelled', (tester) async {
-    dynamic changedValue;
-    await tester.pumpWidget(
-      MaterialApp(
-        title: 'Send Request button',
-        theme: kThemeDataLight,
-        home: Scaffold(
-          body: SendRequestButton(
-            selectedId: '1',
-            sentRequestId: '1',
-            onTap: () {},
-            cancel: (){
-              changedValue = 'Cancel';
-            },
-          ),
-        ),
-      ),
-    );
-
-    expect(find.byIcon(Icons.send), findsNothing);
-    expect(find.text(kLabelCancel), findsOneWidget);
-    final button1 = find.byType(FilledButton);
-    expect(button1, findsOneWidget);
-
-    await tester.tap(button1);
-    expect(changedValue, 'Cancel');
-  });
-
-  testWidgets('Testing for Send Request button when sentRequestId is not null',
+  testWidgets(
+      'Testing for Send Request button when RequestModel is viewed and is waiting for response',
       (tester) async {
     await tester.pumpWidget(
       MaterialApp(
@@ -92,33 +64,7 @@ void main() {
         theme: kThemeDataLight,
         home: Scaffold(
           body: SendRequestButton(
-            selectedId: '1',
-            sentRequestId: '2',
-            onTap: () {},
-            cancel: (){},
-          ),
-        ),
-      ),
-    );
-
-    expect(find.byIcon(Icons.send), findsNothing);
-    expect(find.text(kLabelBusy), findsOneWidget);
-    final button1 = find.byType(FilledButton);
-    expect(button1, findsOneWidget);
-
-    expect(tester.widget<FilledButton>(button1).enabled, isFalse);
-  });
-
-  testWidgets('Testing for Send Request button when sentRequestId = selectedId',
-      (tester) async {
-    await tester.pumpWidget(
-      MaterialApp(
-        title: 'Send Request button',
-        theme: kThemeDataLight,
-        home: Scaffold(
-          body: SendRequestButton(
-            selectedId: '1',
-            sentRequestId: '1',
+            isWorking: true,
             onTap: () {},
             cancel: (){},
           ),

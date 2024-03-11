@@ -10,8 +10,6 @@ import 'package:dio/dio.dart';
 Future<(Response?, Duration?, String?)> request(
   RequestModel requestModel, {
   String defaultUriScheme = kDefaultUriScheme,
-  bool isMultiPartRequest = false,
-  required CancelToken cancelToken,
 }) async {
   (Uri?, String?) uriRec = getValidRequestUri(
     requestModel.url,
@@ -26,41 +24,48 @@ Future<(Response?, Duration?, String?)> request(
     Response response;
     String? body;
     try {
-      var requestBody = requestModel.requestBody;
-      if (kMethodsWithBody.contains(requestModel.method) &&
-          requestBody != null) {
-        var contentLength = utf8.encode(requestBody).length;
-        if (contentLength > 0) {
-          body = requestBody;
-          headers[HttpHeaders.contentLengthHeader] = contentLength.toString();
-          if (!requestModel.hasContentTypeHeader) {
-            headers[HttpHeaders.contentTypeHeader] =
-                requestModel.requestBodyContentType.header;
-          }
-        }
-      }
       Stopwatch stopwatch = Stopwatch()..start();
-      if (isMultiPartRequest) {
-        final formData = FormData();
-        for (FormDataModel data in (requestModel.requestFormDataList ?? [])) {
-          if (data.type == FormDataType.text) {
-            formData.fields.add(MapEntry(data.name, data.value));
-          } else {
-            formData.files.add(MapEntry(data.name,
-                await MultipartFile.fromFile(data.value, filename: data.name)));
+      var isMultiPartRequest =
+          requestModel.requestBodyContentType == ContentType.formdata;
+      if (kMethodsWithBody.contains(requestModel.method)) {
+        var requestBody = requestModel.requestBody;
+        if (requestBody != null && !isMultiPartRequest) {
+          var contentLength = utf8.encode(requestBody).length;
+          if (contentLength > 0) {
+            body = requestBody;
+            headers[HttpHeaders.contentLengthHeader] = contentLength.toString();
+            if (!requestModel.hasContentTypeHeader) {
+              headers[HttpHeaders.contentTypeHeader] =
+                  requestModel.requestBodyContentType.header;
+            }
           }
         }
-        Response multiPartResponse = await dio.request(
-          requestUrl,
-          data: formData,
-          options: Options(
-            method: requestModel.method.name.toUpperCase(),
-            headers: headers,
-          ),
-          cancelToken: cancelToken,
-        );
-        dio.close();
-        return (multiPartResponse, stopwatch.elapsed, null);
+        if (isMultiPartRequest) {
+          var multiPartRequest = http.MultipartRequest(
+            requestModel.method.name.toUpperCase(),
+            requestUrl,
+          );
+          multiPartRequest.headers.addAll(headers);
+          for (var formData
+              in (requestModel.requestFormDataList ?? <FormDataModel>[])) {
+            if (formData.type == FormDataType.text) {
+              multiPartRequest.fields.addAll({formData.name: formData.value});
+            } else {
+              multiPartRequest.files.add(
+                await http.MultipartFile.fromPath(
+                  formData.name,
+                  formData.value,
+                ),
+              );
+            }
+          }
+          http.StreamedResponse multiPartResponse =
+              await multiPartRequest.send();
+          stopwatch.stop();
+          http.Response convertedMultiPartResponse =
+              await convertStreamedResponse(multiPartResponse);
+          return (convertedMultiPartResponse, stopwatch.elapsed, null);
+        }
       }
       switch (requestModel.method) {
         case HTTPVerb.get:

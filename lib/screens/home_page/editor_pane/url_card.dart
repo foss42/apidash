@@ -81,6 +81,11 @@ class URLTextField extends ConsumerWidget {
             .read(collectionStateNotifierProvider.notifier)
             .update(selectedId, url: value);
       },
+      onFieldSubmitted: (value) {
+        ref
+            .read(collectionStateNotifierProvider.notifier)
+            .sendRequest(selectedId);
+      },
     );
   }
 }
@@ -93,10 +98,11 @@ class SendButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedId = ref.watch(selectedIdStateProvider);
-    final sentRequestId = ref.watch(sentRequestIdStateProvider);
+    final isWorking = ref.watch(
+        selectedRequestModelProvider.select((value) => value?.isWorking));
+
     return SendRequestButton(
-      selectedId: selectedId,
-      sentRequestId: sentRequestId,
+      isWorking: isWorking ?? false,
       onTap: () {
         ref
             .read(collectionStateNotifierProvider.notifier)

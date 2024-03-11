@@ -80,20 +80,20 @@ void main() {
   });
 
   test('Testing fromResponse', () async {
-    final response = await Dio().get(
-      'https://api.foss42.com/',
+    final response = await http.get(
+      Uri.parse('https://api.apidash.dev/'),
     );
     final responseData = responseModel.fromResponse(response: response);
     expect(responseData.statusCode, 200);
     expect(responseData.body,
-        '{"message":"Check out https://foss42.com for API docs to get started."}');
+        '{"data":"Check out https://api.apidash.dev/docs to get started."}');
     expect(responseData.formattedBody, '''{
-  "message": "Check out https://foss42.com for API docs to get started."
+  "data": "Check out https://api.apidash.dev/docs to get started."
 }''');
   });
   test('Testing fromResponse for contentType not Json', () async {
-    final response = await Dio().get(
-      'https://foss42.com/',
+    final response = await http.get(
+      Uri.parse('https://apidash.dev/'),
     );
     final responseData = responseModel.fromResponse(response: response);
     expect(responseData.statusCode, 200);
