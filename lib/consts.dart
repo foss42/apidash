@@ -8,6 +8,7 @@ import 'package:davi/davi.dart';
 const kDiscordUrl = "https://bit.ly/heyfoss";
 const kGitUrl = "https://github.com/foss42/apidash";
 const kIssueUrl = "$kGitUrl/issues";
+const kDefaultUri = "api.apidash.dev";
 
 final kIsMacOS = !kIsWeb && Platform.isMacOS;
 final kIsWindows = !kIsWeb && Platform.isWindows;
@@ -282,6 +283,8 @@ enum CodegenLanguage {
 const JsonEncoder kEncoder = JsonEncoder.withIndent('  ');
 const LineSplitter kSplitter = LineSplitter();
 
+const kHeaderContentType = "Content-Type";
+
 const kTypeApplication = 'application';
 // application
 const kSubTypeJson = 'json';
@@ -312,12 +315,15 @@ const kSubTypeSvg = 'svg+xml';
 const kTypeAudio = 'audio';
 const kTypeVideo = 'video';
 
+const kTypeMultipart = "multipart";
+const kSubTypeFormData = "form-data";
+
 const kSubTypeDefaultViewOptions = 'all';
 
 enum ContentType {
   json("$kTypeApplication/$kSubTypeJson"),
   text("$kTypeText/$kSubTypePlain"),
-  formdata("multipart/form-data");
+  formdata("$kTypeMultipart/$kSubTypeFormData");
 
   const ContentType(this.header);
   final String header;
@@ -499,8 +505,7 @@ const kRaiseIssue =
 const kCsvError =
     "There seems to be an issue rendering this CSV. Please raise an issue in API Dash GitHub repo so that we can resolve it.";
 
-const kHintTextUrlCard =
-    "Enter API endpoint like api.apidash.dev/country/codes";
+const kHintTextUrlCard = "Enter API endpoint like https://$kDefaultUri/";
 const kLabelPlusNew = "+ New";
 const kLabelSend = "Send";
 const kLabelSending = "Sending..";
