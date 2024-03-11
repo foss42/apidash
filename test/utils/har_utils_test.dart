@@ -318,6 +318,21 @@ void main() {
             ),
             expectedResult);
       });
+      test('Test requestModelToHARJsonRequest with duplicate query parameters', () {
+        Map<String, dynamic> expectedResult = {
+          'method': 'GET',
+          'url': 'https://api.apidash.dev/country/data?code=US&code=UK&code=IN&code=JP',
+          'httpVersion': 'HTTP/1.1',
+          'queryString': [
+            {'name': 'code', 'value': 'US'},
+            {'name': 'code', 'value': 'UK'},
+            {'name': 'code', 'value': 'IN'},
+            {'name': 'code', 'value': 'JP'},
+          ],
+          'headers': []
+        };
+        expect(requestModelToHARJsonRequest(requestModelGet3), expectedResult);
+      });
     },
   );
 }
