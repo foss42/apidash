@@ -19,7 +19,7 @@ void main() {
 
     test('GET 3', () {
       const expectedCode =
-          r"""curl --url 'https://api.apidash.dev/country/data?code=IND'""";
+          r"""curl --url 'https://api.apidash.dev/country/data?code=US&code=UK&code=IN&code=JP'""";
       expect(curlCodeGen.getCode(requestModelGet3, "https"), expectedCode);
     });
 
