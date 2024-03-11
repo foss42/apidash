@@ -1,8 +1,9 @@
+import 'package:apidash/consts.dart';
+import 'package:apidash/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:apidash/utils/utils.dart';
-import 'package:apidash/consts.dart';
+
 import "snackbars.dart";
 
 class CopyButton extends StatelessWidget {
@@ -230,6 +231,26 @@ class SaveButton extends StatelessWidget {
       ),
       label: const Text(
         kLabelSave,
+        style: kTextStyleButton,
+      ),
+    );
+  }
+}
+
+class RetryButton extends StatelessWidget {
+  const RetryButton({super.key, required this.onPressed});
+  final Function() onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton.icon(
+      onPressed: onPressed,
+      icon: const Icon(
+        Icons.refresh_sharp,
+        size: 20,
+      ),
+      label: const Text(
+        kLabelRetry,
         style: kTextStyleButton,
       ),
     );

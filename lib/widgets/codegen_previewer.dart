@@ -1,10 +1,16 @@
-import 'package:flutter/material.dart';
-import 'package:highlighter/highlighter.dart' show highlight;
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart';
+import 'package:flutter/material.dart';
+import 'package:highlighter/highlighter.dart' show highlight;
+
 import 'code_previewer.dart';
 import 'widgets.dart'
-    show CopyButton, DropdownButtonCodegenLanguage, SaveInDownloadsButton;
+    show
+        CopyButton,
+        DropdownButtonCodegenLanguage,
+        ErrorMessage,
+        RetryButton,
+        SaveInDownloadsButton;
 
 class CodeGenPreviewer extends StatefulWidget {
   const CodeGenPreviewer({
@@ -105,7 +111,7 @@ class ViewCodePane extends StatelessWidget {
     required this.onChangedCodegenLanguage,
   });
 
-  final String code;
+  final String? code;
   final CodegenLanguage codegenLanguage;
   final Function(CodegenLanguage?) onChangedCodegenLanguage;
 
@@ -130,6 +136,42 @@ class ViewCodePane extends StatelessWidget {
         var showLabel = showButtonLabelsInViewCodePane(
           constraints.maxWidth,
         );
+        if (code == null) {
+          return Padding(
+            padding: kP10,
+            child: Column(
+              children: [
+                SizedBox(
+                  height: kHeaderHeight,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: DropdownButtonCodegenLanguage(
+                          codegenLanguage: codegenLanguage,
+                          onChanged: onChangedCodegenLanguage,
+                        ),
+                      ),
+                      RetryButton(onPressed: () {
+                        onChangedCodegenLanguage;
+                      })
+                    ],
+                  ),
+                ),
+                kVSpacer10,
+                Expanded(
+                  child: Container(
+                      width: double.maxFinite,
+                      padding: kP8,
+                      decoration: textContainerdecoration,
+                      child: const ErrorMessage(
+                        message:
+                            "An error was encountered while generating code. $kRaiseIssue",
+                      )),
+                ),
+              ],
+            ),
+          );
+        }
         return Padding(
           padding: kP10,
           child: Column(
@@ -145,7 +187,7 @@ class ViewCodePane extends StatelessWidget {
                       ),
                     ),
                     CopyButton(
-                      toCopy: code,
+                      toCopy: code!,
                       showLabel: showLabel,
                     ),
                     SaveInDownloadsButton(
@@ -163,7 +205,7 @@ class ViewCodePane extends StatelessWidget {
                   padding: kP8,
                   decoration: textContainerdecoration,
                   child: CodeGenPreviewer(
-                    code: code,
+                    code: code!,
                     theme: codeTheme,
                     language: codegenLanguage.codeHighlightLang,
                     textStyle: kCodeStyle,

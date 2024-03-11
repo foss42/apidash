@@ -1,8 +1,10 @@
 import 'dart:typed_data';
+
+import 'package:apidash/consts.dart';
+import 'package:apidash/widgets/buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:apidash/widgets/buttons.dart';
-import 'package:apidash/consts.dart';
+
 import '../test_consts.dart';
 
 void main() {
@@ -185,5 +187,22 @@ void main() {
 
     expect(find.byIcon(Icons.save), findsOneWidget);
     expect(find.text("Save"), findsOneWidget);
+  });
+  testWidgets('Testing for Retry button', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        title: 'Retry button',
+        theme: kThemeDataLight,
+        home: Scaffold(
+          body: RetryButton(
+            onPressed: () {},
+          ),
+        ),
+      ),
+    );
+    final labelFinder = find.text(kLabelRetry);
+    final iconFinder = find.byIcon(Icons.refresh_sharp);
+    expect(iconFinder, findsOneWidget);
+    expect(labelFinder, findsOneWidget);
   });
 }
