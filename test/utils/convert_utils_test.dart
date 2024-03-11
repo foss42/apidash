@@ -70,6 +70,49 @@ void main() {
       expect(formatHeaderCase(headerText2), headerText2Expected);
     });
   });
+
+  group("Testing rowsToRequestMap", () {
+    test('Testing for null', () {
+      expect(rowsToRequestMap(null), null);
+    });
+    test('Testing for string KVRow values', () {
+      const kvRow1 = NameValueModel(name: "code", value: "IN");
+      expect(rowsToRequestMap([kvRow1]), {"code": "IN"});
+    });
+    test('Testing when header is false and key is in upper case', () {
+      const kvRow3 = <NameValueModel>[
+        NameValueModel(name: "TEXT", value: "ABC"),
+        NameValueModel(name: "version", value: 0.1),
+        NameValueModel(name: "month", value: 4),
+      ];
+      expect(
+          rowsToRequestMap(kvRow3), {"TEXT": "ABC", "version": "0.1", "month": "4"});
+    });
+    test('Testing for duplicate search params', () {
+      const kvRow4 = <NameValueModel>[
+        NameValueModel(name: "TEXT", value: "ABC"),
+        NameValueModel(name: "TEXT", value: "DEF"),
+      ];
+      expect(rowsToRequestMap(kvRow4), {"TEXT": ["ABC", "DEF"]});
+    });
+  });
+
+  group("Testing requestMapToRows", () {
+    test('Testing for null', () {
+      expect(requestMapToRows(null), null);
+    });
+    test('Testing with a map value', () {
+      Map<String, dynamic> value1 = {"text": ["abc", "def"], "lang": "eng", "code": "1"};
+      const result1Expected = <NameValueModel>[
+        NameValueModel(name: "text", value: "abc"),
+        NameValueModel(name: "text", value: "def"),
+        NameValueModel(name: "lang", value: "eng"),
+        NameValueModel(name: "code", value: "1")
+      ];
+      expect(requestMapToRows(value1), result1Expected);
+    });
+  });
+
   group("Testing rowsToMap", () {
     test('Testing for null', () {
       expect(rowsToMap(null), null);

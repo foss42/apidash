@@ -99,14 +99,16 @@ Map<String, dynamic> requestModelToHARJsonRequest(
     json["queryString"] = [];
     json["headers"] = [];
 
-    var params = uri.queryParameters;
+    Map<String, List<String>> params = uri.queryParametersAll;
     if (params.isNotEmpty) {
       for (final k in params.keys) {
-        var m = {"name": k, "value": params[k]};
-        if (exportMode) {
-          m["comment"] = "";
+        for (final val in params[k]!) {
+          var m = {"name": k, "value": val};
+          if (exportMode) {
+            m["comment"] = "";
+          }
+          json["queryString"].add(m);
         }
-        json["queryString"].add(m);
       }
     }
 

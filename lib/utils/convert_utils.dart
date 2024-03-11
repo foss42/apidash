@@ -61,6 +61,37 @@ String padMultilineString(String text, int padding,
   return lines.join("\n");
 }
 
+Map<String, dynamic>? rowsToRequestMap(List<NameValueModel>? kvRows) {
+  if (kvRows == null) {
+    return null;
+  }
+  Map<String, List<String>> finalMap = {};
+  for (var row in kvRows) {
+    if (row.name.trim() != "") {
+      String key = row.name;
+      if (!finalMap.containsKey(key)) {
+        finalMap[key] = [];
+      }
+      finalMap[key]!.add(row.value.toString());
+    }
+  }
+  return finalMap.map((key, valueList) => MapEntry(key, valueList.length == 1 ? valueList[0] : valueList));
+}
+
+List<NameValueModel>? requestMapToRows(Map<String, dynamic>? requestMap) {
+  if (requestMap == null) {
+    return null;
+  }
+  List<NameValueModel> finalRows = [];
+  for (var key in requestMap.keys) {
+    List<String> elementList = requestMap[key] is List<String> ? requestMap[key] : [requestMap[key]];
+    for (var element in elementList) {
+      finalRows.add(NameValueModel(name: key, value: element));
+    }
+  }
+  return finalRows;
+}
+
 Map<String, String>? rowsToMap(List<NameValueModel>? kvRows,
     {bool isHeader = false}) {
   if (kvRows == null) {

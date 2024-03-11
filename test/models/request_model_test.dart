@@ -59,6 +59,9 @@ void main() {
         NameValueModel(
             name: 'content-type', value: 'application/json; charset=utf-8')
       ],
+      requestParams: const [
+        NameValueModel(name: 'TEXT', value: 'abc')
+      ],
       requestBodyContentType: ContentType.json,
       requestBody: '''{
 "text":"WORLD"
@@ -76,6 +79,9 @@ void main() {
         NameValueModel(
             name: 'content-type', value: 'application/json; charset=utf-8')
       ],
+      requestParams: [
+        NameValueModel(name: 'TEXT', value: 'abc')
+      ],
       requestBodyContentType: ContentType.json,
       requestBody: '''{
 "text":"WORLD"
@@ -90,6 +96,9 @@ void main() {
         NameValueModel(name: 'content-length', value: '18'),
         NameValueModel(
             name: 'content-type', value: 'application/json; charset=utf-8')
+      ],
+      requestParams: [
+        NameValueModel(name: 'TEXT', value: 'abc')
       ],
       requestBodyContentType: ContentType.json,
       requestBody: '''{
@@ -107,7 +116,9 @@ void main() {
       'content-type': 'application/json; charset=utf-8'
     },
     'isHeaderEnabledList': null,
-    'requestParams': null,
+    'requestParams': {
+      'TEXT': 'abc',
+    },
     'isParamEnabledList': null,
     "requestBodyContentType": 'json',
     "requestBody": '''{
@@ -144,7 +155,7 @@ void main() {
     "Request Tab Index: 0",
     "Request Headers: [NameValueModel(name: content-length, value: 18), NameValueModel(name: content-type, value: application/json; charset=utf-8)]",
     "Enabled Headers: null",
-    "Request Params: null",
+    "Request Params: [NameValueModel(name: TEXT, value: abc)]",
     "Enabled Params: null",
     "Request Body Content Type: ContentType.json",
     'Request Body: {\n"text":"WORLD"\n}',
@@ -163,17 +174,23 @@ void main() {
       NameValueModel(
           name: 'content-type', value: 'application/json; charset=utf-8')
     ]);
-    expect(requestModel.enabledRequestParams, null);
+    expect(requestModel.enabledRequestParams, const [
+      NameValueModel(name: 'TEXT', value: 'abc')
+    ]);
     expect(requestModel.enabledHeadersMap, {
       'content-length': '18',
       'content-type': 'application/json; charset=utf-8'
     });
-    expect(requestModel.enabledParamsMap, {});
+    expect(requestModel.enabledParamsMap, {
+      'TEXT': 'abc'
+    });
     expect(requestModel.headersMap, {
       'content-length': '18',
       'content-type': 'application/json; charset=utf-8'
     });
-    expect(requestModel.paramsMap, {});
+    expect(requestModel.paramsMap, {
+      'TEXT': 'abc'
+    });
     expect(requestModel.formDataMapList, []);
     expect(requestModel.isFormDataRequest, false);
     expect(requestModel.hasContentTypeHeader, true);

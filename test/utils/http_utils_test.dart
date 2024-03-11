@@ -223,7 +223,7 @@ void main() {
           scheme: 'https',
           host: 'api.apidash.dev',
           path: 'country/data',
-          queryParameters: {'code': 'US'});
+          queryParameters: {'code': ['IND', 'US']});
       expect(getValidRequestUri(url6, [kvRow6]), (uri6Expected, null));
     });
     test('Testing getValidRequestUri when kvrow is null', () {
@@ -234,6 +234,15 @@ void main() {
           path: 'country/data',
           queryParameters: {'code': 'US'});
       expect(getValidRequestUri(url7, null), (uri7Expected, null));
+    });
+    test('Testing getValidRequestUri when passing duplicate search parameters in url as comma separated', () {
+      String url9 = "api.apidash.dev/country/data?code=US,IND";
+      Uri uri9Expected = Uri(
+          scheme: 'https',
+          host: 'api.apidash.dev',
+          path: 'country/data',
+          queryParameters: {'code': 'US,IND'});
+      expect(getValidRequestUri(url9, null), (uri9Expected, null));
     });
   });
 
