@@ -18,36 +18,64 @@ class Codegen {
     String defaultUriScheme, {
     String? boundary,
   }) {
-    if (requestModel.isFormDataRequest) {
-      boundary = boundary ?? getNewUuid();
-    }
     switch (codegenLanguage) {
       case CodegenLanguage.curl:
-        return cURLCodeGen().getCode(requestModel, defaultUriScheme);
+        return cURLCodeGen().getCode(
+          requestModel,
+          defaultUriScheme,
+        );
       case CodegenLanguage.har:
-        return HARCodeGen().getCode(requestModel, defaultUriScheme);
+        return HARCodeGen().getCode(
+          requestModel,
+          defaultUriScheme,
+        );
       case CodegenLanguage.dartHttp:
-        return DartHttpCodeGen().getCode(requestModel, defaultUriScheme);
+        return DartHttpCodeGen().getCode(
+          requestModel,
+          defaultUriScheme,
+        );
       case CodegenLanguage.dartDio:
-        return DartDioCodeGen().getCode(requestModel, defaultUriScheme);
+        return DartDioCodeGen().getCode(
+          requestModel,
+          defaultUriScheme,
+        );
       case CodegenLanguage.jsAxios:
-        return AxiosCodeGen().getCode(requestModel, defaultUriScheme);
+        return AxiosCodeGen().getCode(
+          requestModel,
+          defaultUriScheme,
+        );
       case CodegenLanguage.jsFetch:
-        return FetchCodeGen().getCode(requestModel, defaultUriScheme);
+        return FetchCodeGen().getCode(
+          requestModel,
+          defaultUriScheme,
+        );
       case CodegenLanguage.nodejsAxios:
-        return AxiosCodeGen(isNodeJs: true)
-            .getCode(requestModel, defaultUriScheme);
+        return AxiosCodeGen(isNodeJs: true).getCode(
+          requestModel,
+          defaultUriScheme,
+        );
       case CodegenLanguage.nodejsFetch:
-        return FetchCodeGen(isNodeJs: true)
-            .getCode(requestModel, defaultUriScheme);
+        return FetchCodeGen(isNodeJs: true).getCode(
+          requestModel,
+          defaultUriScheme,
+        );
       case CodegenLanguage.kotlinOkHttp:
-        return KotlinOkHttpCodeGen().getCode(requestModel, defaultUriScheme);
+        return KotlinOkHttpCodeGen().getCode(
+          requestModel,
+          defaultUriScheme,
+        );
       case CodegenLanguage.pythonHttpClient:
-        return PythonHttpClientCodeGen()
-            .getCode(requestModel, defaultUriScheme, boundary);
+        return PythonHttpClientCodeGen().getCode(
+          requestModel,
+          defaultUriScheme,
+          boundary: boundary ?? getNewUuid(),
+        );
       case CodegenLanguage.pythonRequests:
-        return PythonRequestsCodeGen()
-            .getCode(requestModel, defaultUriScheme, boundary);
+        return PythonRequestsCodeGen().getCode(
+          requestModel,
+          defaultUriScheme,
+          boundary: boundary,
+        );
     }
   }
 }
