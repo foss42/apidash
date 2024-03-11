@@ -1,10 +1,10 @@
-import 'package:apidash/codegen/dart/http.dart';
+import 'package:apidash/codegen/codegen.dart';
+import 'package:apidash/consts.dart';
 import 'package:test/test.dart';
-
 import '../request_models.dart';
 
 void main() {
-  final dartHttpCodeGen = DartHttpCodeGen();
+  final codeGen = Codegen();
 
   group('GET Request', () {
     test('GET 1', () {
@@ -25,7 +25,9 @@ void main() async {
   }
 }
 """;
-      expect(dartHttpCodeGen.getCode(requestModelGet1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.dartHttp, requestModelGet1, "https"),
+          expectedCode);
     });
 
     test('GET 2', () {
@@ -50,7 +52,9 @@ void main() async {
 }
 """;
 
-      expect(dartHttpCodeGen.getCode(requestModelGet2, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.dartHttp, requestModelGet2, "https"),
+          expectedCode);
     });
 
     test('GET 3', () {
@@ -76,7 +80,9 @@ void main() async {
   }
 }
 """;
-      expect(dartHttpCodeGen.getCode(requestModelGet3, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.dartHttp, requestModelGet3, "https"),
+          expectedCode);
     });
 
     test('GET 4', () {
@@ -106,7 +112,9 @@ void main() async {
   }
 }
 """;
-      expect(dartHttpCodeGen.getCode(requestModelGet4, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.dartHttp, requestModelGet4, "https"),
+          expectedCode);
     });
 
     test('GET 5', () {
@@ -132,7 +140,9 @@ void main() async {
   }
 }
 """;
-      expect(dartHttpCodeGen.getCode(requestModelGet5, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.dartHttp, requestModelGet5, "https"),
+          expectedCode);
     });
 
     test('GET 6', () {
@@ -161,7 +171,9 @@ void main() async {
   }
 }
 """;
-      expect(dartHttpCodeGen.getCode(requestModelGet6, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.dartHttp, requestModelGet6, "https"),
+          expectedCode);
     });
 
     test('GET 7', () {
@@ -182,7 +194,9 @@ void main() async {
   }
 }
 """;
-      expect(dartHttpCodeGen.getCode(requestModelGet7, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.dartHttp, requestModelGet7, "https"),
+          expectedCode);
     });
 
     test('GET 8', () {
@@ -211,7 +225,9 @@ void main() async {
   }
 }
 """;
-      expect(dartHttpCodeGen.getCode(requestModelGet8, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.dartHttp, requestModelGet8, "https"),
+          expectedCode);
     });
 
     test('GET 9', () {
@@ -238,7 +254,9 @@ void main() async {
   }
 }
 """;
-      expect(dartHttpCodeGen.getCode(requestModelGet9, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.dartHttp, requestModelGet9, "https"),
+          expectedCode);
     });
 
     test('GET 10', () {
@@ -265,7 +283,8 @@ void main() async {
 }
 """;
       expect(
-          dartHttpCodeGen.getCode(
+          codeGen.getCode(
+            CodegenLanguage.dartHttp,
             requestModelGet10,
             "https",
           ),
@@ -301,7 +320,9 @@ void main() async {
   }
 }
 """;
-      expect(dartHttpCodeGen.getCode(requestModelGet11, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.dartHttp, requestModelGet11, "https"),
+          expectedCode);
     });
 
     test('GET 12', () {
@@ -322,7 +343,9 @@ void main() async {
   }
 }
 """;
-      expect(dartHttpCodeGen.getCode(requestModelGet12, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.dartHttp, requestModelGet12, "https"),
+          expectedCode);
     });
   });
 
@@ -345,7 +368,9 @@ void main() async {
   }
 }
 """;
-      expect(dartHttpCodeGen.getCode(requestModelHead1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.dartHttp, requestModelHead1, "https"),
+          expectedCode);
     });
 
     test('HEAD 2', () {
@@ -366,7 +391,9 @@ void main() async {
   }
 }
 """;
-      expect(dartHttpCodeGen.getCode(requestModelHead2, "http"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.dartHttp, requestModelHead2, "http"),
+          expectedCode);
     });
   });
 
@@ -399,7 +426,9 @@ void main() async {
   }
 }
 """;
-      expect(dartHttpCodeGen.getCode(requestModelPost1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.dartHttp, requestModelPost1, "https"),
+          expectedCode);
     });
 
     test('POST 2', () {
@@ -435,7 +464,9 @@ void main() async {
   }
 }
 """;
-      expect(dartHttpCodeGen.getCode(requestModelPost2, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.dartHttp, requestModelPost2, "https"),
+          expectedCode);
     });
 
     test('POST 3', () {
@@ -469,7 +500,9 @@ void main() async {
   }
 }
 """;
-      expect(dartHttpCodeGen.getCode(requestModelPost3, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.dartHttp, requestModelPost3, "https"),
+          expectedCode);
     });
   });
 
@@ -503,7 +536,9 @@ void main() async {
   }
 }
 """;
-      expect(dartHttpCodeGen.getCode(requestModelPut1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.dartHttp, requestModelPut1, "https"),
+          expectedCode);
     });
   });
 
@@ -538,7 +573,9 @@ void main() async {
 }
 """;
       expect(
-          dartHttpCodeGen.getCode(requestModelPatch1, "https"), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.dartHttp, requestModelPatch1, "https"),
+          expectedCode);
     });
   });
 
@@ -562,7 +599,9 @@ void main() async {
 }
 """;
       expect(
-          dartHttpCodeGen.getCode(requestModelDelete1, "https"), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.dartHttp, requestModelDelete1, "https"),
+          expectedCode);
     });
 
     test('DELETE 2', () {
@@ -595,7 +634,9 @@ void main() async {
 }
 """;
       expect(
-          dartHttpCodeGen.getCode(requestModelDelete2, "https"), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.dartHttp, requestModelDelete2, "https"),
+          expectedCode);
     });
   });
 }

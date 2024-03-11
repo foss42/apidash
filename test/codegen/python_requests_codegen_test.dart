@@ -1,9 +1,10 @@
-import 'package:apidash/codegen/python/requests.dart';
-import '../request_models.dart';
+import 'package:apidash/codegen/codegen.dart';
+import 'package:apidash/consts.dart';
 import 'package:test/test.dart';
+import '../request_models.dart';
 
 void main() {
-  final pythonRequestsCodeGen = PythonRequestsCodeGen();
+  final codeGen = Codegen();
 
   group('GET Request', () {
     test('GET 1', () {
@@ -16,7 +17,9 @@ response = requests.get(url)
 print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
-      expect(pythonRequestsCodeGen.getCode(requestModelGet1, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonRequests, requestModelGet1, "https"),
           expectedCode);
     });
 
@@ -34,7 +37,9 @@ response = requests.get(url, params=params)
 print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
-      expect(pythonRequestsCodeGen.getCode(requestModelGet2, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonRequests, requestModelGet2, "https"),
           expectedCode);
     });
 
@@ -52,7 +57,9 @@ response = requests.get(url, params=params)
 print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
-      expect(pythonRequestsCodeGen.getCode(requestModelGet3, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonRequests, requestModelGet3, "https"),
           expectedCode);
     });
 
@@ -74,7 +81,9 @@ response = requests.get(url, params=params)
 print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
-      expect(pythonRequestsCodeGen.getCode(requestModelGet4, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonRequests, requestModelGet4, "https"),
           expectedCode);
     });
 
@@ -92,7 +101,9 @@ response = requests.get(url, headers=headers)
 print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
-      expect(pythonRequestsCodeGen.getCode(requestModelGet5, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonRequests, requestModelGet5, "https"),
           expectedCode);
     });
 
@@ -114,7 +125,9 @@ response = requests.get(url, params=params, headers=headers)
 print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
-      expect(pythonRequestsCodeGen.getCode(requestModelGet6, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonRequests, requestModelGet6, "https"),
           expectedCode);
     });
 
@@ -128,7 +141,9 @@ response = requests.get(url)
 print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
-      expect(pythonRequestsCodeGen.getCode(requestModelGet7, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonRequests, requestModelGet7, "https"),
           expectedCode);
     });
 
@@ -150,7 +165,9 @@ response = requests.get(url, params=params, headers=headers)
 print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
-      expect(pythonRequestsCodeGen.getCode(requestModelGet8, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonRequests, requestModelGet8, "https"),
           expectedCode);
     });
 
@@ -169,7 +186,9 @@ response = requests.get(url, params=params)
 print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
-      expect(pythonRequestsCodeGen.getCode(requestModelGet9, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonRequests, requestModelGet9, "https"),
           expectedCode);
     });
 
@@ -188,7 +207,8 @@ print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
       expect(
-          pythonRequestsCodeGen.getCode(
+          codeGen.getCode(
+            CodegenLanguage.pythonRequests,
             requestModelGet10,
             "https",
           ),
@@ -214,7 +234,9 @@ response = requests.get(url, params=params, headers=headers)
 print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
-      expect(pythonRequestsCodeGen.getCode(requestModelGet11, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonRequests, requestModelGet11, "https"),
           expectedCode);
     });
 
@@ -228,7 +250,9 @@ response = requests.get(url)
 print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
-      expect(pythonRequestsCodeGen.getCode(requestModelGet12, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonRequests, requestModelGet12, "https"),
           expectedCode);
     });
   });
@@ -244,7 +268,9 @@ response = requests.head(url)
 print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
-      expect(pythonRequestsCodeGen.getCode(requestModelHead1, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonRequests, requestModelHead1, "https"),
           expectedCode);
     });
 
@@ -258,7 +284,9 @@ response = requests.head(url)
 print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
-      expect(pythonRequestsCodeGen.getCode(requestModelHead2, "http"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonRequests, requestModelHead2, "http"),
           expectedCode);
     });
   });
@@ -282,7 +310,9 @@ response = requests.post(url, data=payload, headers=headers)
 print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
-      expect(pythonRequestsCodeGen.getCode(requestModelPost1, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonRequests, requestModelPost1, "https"),
           expectedCode);
     });
 
@@ -305,7 +335,9 @@ response = requests.post(url, json=payload)
 print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
-      expect(pythonRequestsCodeGen.getCode(requestModelPost2, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonRequests, requestModelPost2, "https"),
           expectedCode);
     });
 
@@ -327,7 +359,9 @@ response = requests.post(url, json=payload, headers=headers)
 print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
-      expect(pythonRequestsCodeGen.getCode(requestModelPost3, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonRequests, requestModelPost3, "https"),
           expectedCode);
     });
 
@@ -352,7 +386,9 @@ response = requests.post(url, data=payload, headers=headers)
 print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
-      expect(pythonRequestsCodeGen.getCode(requestModelPost4, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonRequests, requestModelPost4, "https"),
           expectedCode);
     });
 
@@ -378,7 +414,9 @@ response = requests.post(url, data=payload, headers=headers)
 print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
-      expect(pythonRequestsCodeGen.getCode(requestModelPost5, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonRequests, requestModelPost5, "https"),
           expectedCode);
     });
 
@@ -402,7 +440,9 @@ response = requests.post(url, data=payload, headers=headers)
 print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
-      expect(pythonRequestsCodeGen.getCode(requestModelPost6, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonRequests, requestModelPost6, "https"),
           expectedCode);
     });
 
@@ -426,7 +466,9 @@ response = requests.post(url, data=payload, headers=headers)
 print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
-      expect(pythonRequestsCodeGen.getCode(requestModelPost7, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonRequests, requestModelPost7, "https"),
           expectedCode);
     });
 
@@ -456,7 +498,9 @@ response = requests.post(url, params=params, data=payload, headers=headers)
 print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
-      expect(pythonRequestsCodeGen.getCode(requestModelPost8, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonRequests, requestModelPost8, "https"),
           expectedCode);
     });
 
@@ -487,7 +531,9 @@ response = requests.post(url, params=params, data=payload, headers=headers)
 print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
-      expect(pythonRequestsCodeGen.getCode(requestModelPost9, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonRequests, requestModelPost9, "https"),
           expectedCode);
     });
   });
@@ -508,7 +554,9 @@ response = requests.put(url, json=payload)
 print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
-      expect(pythonRequestsCodeGen.getCode(requestModelPut1, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonRequests, requestModelPut1, "https"),
           expectedCode);
     });
   });
@@ -529,7 +577,9 @@ response = requests.patch(url, json=payload)
 print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
-      expect(pythonRequestsCodeGen.getCode(requestModelPatch1, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonRequests, requestModelPatch1, "https"),
           expectedCode);
     });
   });
@@ -545,7 +595,9 @@ response = requests.delete(url)
 print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
-      expect(pythonRequestsCodeGen.getCode(requestModelDelete1, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonRequests, requestModelDelete1, "https"),
           expectedCode);
     });
 
@@ -564,7 +616,9 @@ response = requests.delete(url, json=payload)
 print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
-      expect(pythonRequestsCodeGen.getCode(requestModelDelete2, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonRequests, requestModelDelete2, "https"),
           expectedCode);
     });
   });

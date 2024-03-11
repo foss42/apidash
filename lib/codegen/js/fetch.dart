@@ -73,7 +73,6 @@ fetch(url, options)
 
   String? getCode(
     RequestModel requestModel,
-    String defaultUriScheme,
   ) {
     try {
       jj.Template kNodejsImportTemplate = jj.Template(kStringImportNode);
@@ -89,13 +88,11 @@ fetch(url, options)
           "fields_list": json.encode(requestModel.formDataMapList),
         });
       }
-      String url = requestModel.url;
-      if (!url.contains("://") && url.isNotEmpty) {
-        url = "$defaultUriScheme://$url";
-      }
-      var rM = requestModel.copyWith(url: url);
 
-      var harJson = requestModelToHARJsonRequest(rM, useEnabled: true);
+      var harJson = requestModelToHARJsonRequest(
+        requestModel,
+        useEnabled: true,
+      );
 
       var templateStart = jj.Template(kTemplateStart);
       result += templateStart.render({
@@ -109,7 +106,7 @@ fetch(url, options)
         var templateHeader = jj.Template(kTemplateHeader);
         var m = {};
         if (requestModel.hasFormData) {
-          m["Content-Type"] = "multipart/form-data";
+          m[kHeaderContentType] = "multipart/form-data";
         }
         for (var i in headers) {
           m[i["name"]] = i["value"];

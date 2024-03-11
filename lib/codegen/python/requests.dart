@@ -80,8 +80,7 @@ print('Response Body:', response.text)
   }
 
   String? getCode(
-    RequestModel requestModel,
-    String defaultUriScheme, {
+    RequestModel requestModel, {
     String? boundary,
   }) {
     try {
@@ -91,13 +90,8 @@ print('Response Body:', response.text)
       bool hasBody = false;
       bool hasJsonBody = false;
 
-      String url = requestModel.url;
-      if (!url.contains("://") && url.isNotEmpty) {
-        url = "$defaultUriScheme://$url";
-      }
-
       var rec = getValidRequestUri(
-        url,
+        requestModel.url,
         requestModel.enabledRequestParams,
       );
       Uri? uri = rec.$1;

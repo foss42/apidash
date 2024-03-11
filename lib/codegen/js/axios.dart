@@ -73,7 +73,6 @@ async function buildFormData(fields) {
 ''';
   String? getCode(
     RequestModel requestModel,
-    String defaultUriScheme,
   ) {
     try {
       jj.Template kNodejsImportTemplate = jj.Template(kStringImportNode);
@@ -91,17 +90,14 @@ async function buildFormData(fields) {
         result += renderedMultiPartBody;
       }
 
-      String url = requestModel.url;
-      if (!url.contains("://") && url.isNotEmpty) {
-        url = "$defaultUriScheme://$url";
-      }
-      var rM = requestModel.copyWith(url: url);
-
-      var harJson = requestModelToHARJsonRequest(rM, useEnabled: true);
+      var harJson = requestModelToHARJsonRequest(
+        requestModel,
+        useEnabled: true,
+      );
 
       var templateStart = jj.Template(kTemplateStart);
       result += templateStart.render({
-        "url": stripUrlParams(url),
+        "url": stripUrlParams(requestModel.url),
         "method": harJson["method"].toLowerCase(),
       });
 
@@ -124,7 +120,7 @@ async function buildFormData(fields) {
           m[i["name"]] = i["value"];
         }
         if (requestModel.hasFormData) {
-          m['Content-Type'] = 'multipart/form-data';
+          m[kHeaderContentType] = 'multipart/form-data';
         }
         result += templateHeader
             .render({"headers": padMultilineString(kEncoder.convert(m), 2)});

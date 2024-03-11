@@ -1,9 +1,10 @@
-import 'package:apidash/codegen/js/axios.dart';
-import '../request_models.dart';
+import 'package:apidash/codegen/codegen.dart';
+import 'package:apidash/consts.dart';
 import 'package:test/test.dart';
+import '../request_models.dart';
 
 void main() {
-  final axiosCodeGen = AxiosCodeGen();
+  final codeGen = Codegen();
 
   group('GET Request', () {
     test('GET 1', () {
@@ -24,7 +25,9 @@ axios(config)
         console.log(error);
     });
 """;
-      expect(axiosCodeGen.getCode(requestModelGet1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.jsAxios, requestModelGet1, "https"),
+          expectedCode);
     });
 
     test('GET 2', () {
@@ -48,7 +51,9 @@ axios(config)
         console.log(error);
     });
 """;
-      expect(axiosCodeGen.getCode(requestModelGet2, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.jsAxios, requestModelGet2, "https"),
+          expectedCode);
     });
 
     test('GET 3', () {
@@ -72,7 +77,9 @@ axios(config)
         console.log(error);
     });
 """;
-      expect(axiosCodeGen.getCode(requestModelGet3, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.jsAxios, requestModelGet3, "https"),
+          expectedCode);
     });
 
     test('GET 4', () {
@@ -100,7 +107,9 @@ axios(config)
         console.log(error);
     });
 """;
-      expect(axiosCodeGen.getCode(requestModelGet4, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.jsAxios, requestModelGet4, "https"),
+          expectedCode);
     });
 
     test('GET 5', () {
@@ -124,7 +133,9 @@ axios(config)
         console.log(error);
     });
 """;
-      expect(axiosCodeGen.getCode(requestModelGet5, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.jsAxios, requestModelGet5, "https"),
+          expectedCode);
     });
 
     test('GET 6', () {
@@ -151,7 +162,9 @@ axios(config)
         console.log(error);
     });
 """;
-      expect(axiosCodeGen.getCode(requestModelGet6, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.jsAxios, requestModelGet6, "https"),
+          expectedCode);
     });
 
     test('GET 7', () {
@@ -172,7 +185,9 @@ axios(config)
         console.log(error);
     });
 """;
-      expect(axiosCodeGen.getCode(requestModelGet7, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.jsAxios, requestModelGet7, "https"),
+          expectedCode);
     });
 
     test('GET 8', () {
@@ -199,7 +214,9 @@ axios(config)
         console.log(error);
     });
 """;
-      expect(axiosCodeGen.getCode(requestModelGet8, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.jsAxios, requestModelGet8, "https"),
+          expectedCode);
     });
 
     test('GET 9', () {
@@ -224,7 +241,9 @@ axios(config)
         console.log(error);
     });
 """;
-      expect(axiosCodeGen.getCode(requestModelGet9, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.jsAxios, requestModelGet9, "https"),
+          expectedCode);
     });
 
     test('GET 10', () {
@@ -249,7 +268,8 @@ axios(config)
     });
 """;
       expect(
-          axiosCodeGen.getCode(
+          codeGen.getCode(
+            CodegenLanguage.jsAxios,
             requestModelGet10,
             "https",
           ),
@@ -281,7 +301,9 @@ axios(config)
         console.log(error);
     });
 """;
-      expect(axiosCodeGen.getCode(requestModelGet11, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.jsAxios, requestModelGet11, "https"),
+          expectedCode);
     });
 
     test('GET 12', () {
@@ -302,7 +324,9 @@ axios(config)
         console.log(error);
     });
 """;
-      expect(axiosCodeGen.getCode(requestModelGet12, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.jsAxios, requestModelGet12, "https"),
+          expectedCode);
     });
   });
 
@@ -325,7 +349,9 @@ axios(config)
         console.log(error);
     });
 """;
-      expect(axiosCodeGen.getCode(requestModelHead1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.jsAxios, requestModelHead1, "https"),
+          expectedCode);
     });
 
     test('HEAD 2', () {
@@ -346,7 +372,9 @@ axios(config)
         console.log(error);
     });
 """;
-      expect(axiosCodeGen.getCode(requestModelHead2, "http"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.jsAxios, requestModelHead2, "http"),
+          expectedCode);
     });
   });
 
@@ -373,7 +401,9 @@ axios(config)
         console.log(error);
     });
 """;
-      expect(axiosCodeGen.getCode(requestModelPost1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.jsAxios, requestModelPost1, "https"),
+          expectedCode);
     });
 
     test('POST 2', () {
@@ -398,7 +428,9 @@ axios(config)
         console.log(error);
     });
 """;
-      expect(axiosCodeGen.getCode(requestModelPost2, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.jsAxios, requestModelPost2, "https"),
+          expectedCode);
     });
 
     test('POST 3', () {
@@ -424,7 +456,9 @@ axios(config)
         console.log(error);
     });
 """;
-      expect(axiosCodeGen.getCode(requestModelPost3, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.jsAxios, requestModelPost3, "https"),
+          expectedCode);
     });
   });
 
@@ -451,7 +485,9 @@ axios(config)
         console.log(error);
     });
 """;
-      expect(axiosCodeGen.getCode(requestModelPut1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.jsAxios, requestModelPut1, "https"),
+          expectedCode);
     });
   });
 
@@ -478,7 +514,9 @@ axios(config)
         console.log(error);
     });
 """;
-      expect(axiosCodeGen.getCode(requestModelPatch1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.jsAxios, requestModelPatch1, "https"),
+          expectedCode);
     });
   });
 
@@ -501,7 +539,10 @@ axios(config)
         console.log(error);
     });
 """;
-      expect(axiosCodeGen.getCode(requestModelDelete1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.jsAxios, requestModelDelete1, "https"),
+          expectedCode);
     });
 
     test('DELETE 2', () {
@@ -526,7 +567,10 @@ axios(config)
         console.log(error);
     });
 """;
-      expect(axiosCodeGen.getCode(requestModelDelete2, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.jsAxios, requestModelDelete2, "https"),
+          expectedCode);
     });
   });
 }

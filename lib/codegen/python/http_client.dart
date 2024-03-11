@@ -87,8 +87,7 @@ dataList = build_data_list({{fields_list}})
 body = b'\r\n'.join(dataList)
 ''';
   String? getCode(
-    RequestModel requestModel,
-    String defaultUriScheme, {
+    RequestModel requestModel, {
     String? boundary,
   }) {
     try {
@@ -97,11 +96,6 @@ body = b'\r\n'.join(dataList)
       bool hasQuery = false;
       bool hasBody = false;
 
-      String url = requestModel.url;
-      if (!url.contains("://") && url.isNotEmpty) {
-        url = "$defaultUriScheme://$url";
-      }
-
       var templateStartUrl = jj.Template(kTemplateStart);
       result += templateStartUrl.render(
         {
@@ -109,7 +103,7 @@ body = b'\r\n'.join(dataList)
         },
       );
       var rec = getValidRequestUri(
-        url,
+        requestModel.url,
         requestModel.enabledRequestParams,
       );
 

@@ -1,9 +1,10 @@
-import 'package:apidash/codegen/js/fetch.dart';
-import '../request_models.dart';
+import 'package:apidash/codegen/codegen.dart';
+import 'package:apidash/consts.dart';
 import 'package:test/test.dart';
+import '../request_models.dart';
 
 void main() {
-  final fetchCodeGen = FetchCodeGen(isNodeJs: true);
+  final codeGen = Codegen();
 
   group('GET Request', () {
     test('GET 1', () {
@@ -30,7 +31,10 @@ fetch(url, options)
         console.error('error:' + err);
     });
 """;
-      expect(fetchCodeGen.getCode(requestModelGet1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.nodejsFetch, requestModelGet1, "https"),
+          expectedCode);
     });
 
     test('GET 2', () {
@@ -57,7 +61,10 @@ fetch(url, options)
         console.error('error:' + err);
     });
 """;
-      expect(fetchCodeGen.getCode(requestModelGet2, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.nodejsFetch, requestModelGet2, "https"),
+          expectedCode);
     });
 
     test('GET 3', () {
@@ -84,7 +91,10 @@ fetch(url, options)
         console.error('error:' + err);
     });
 """;
-      expect(fetchCodeGen.getCode(requestModelGet3, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.nodejsFetch, requestModelGet3, "https"),
+          expectedCode);
     });
 
     test('GET 4', () {
@@ -111,7 +121,10 @@ fetch(url, options)
         console.error('error:' + err);
     });
 """;
-      expect(fetchCodeGen.getCode(requestModelGet4, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.nodejsFetch, requestModelGet4, "https"),
+          expectedCode);
     });
 
     test('GET 5', () {
@@ -141,7 +154,10 @@ fetch(url, options)
         console.error('error:' + err);
     });
 """;
-      expect(fetchCodeGen.getCode(requestModelGet5, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.nodejsFetch, requestModelGet5, "https"),
+          expectedCode);
     });
 
     test('GET 6', () {
@@ -171,7 +187,10 @@ fetch(url, options)
         console.error('error:' + err);
     });
 """;
-      expect(fetchCodeGen.getCode(requestModelGet6, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.nodejsFetch, requestModelGet6, "https"),
+          expectedCode);
     });
 
     test('GET 7', () {
@@ -198,7 +217,10 @@ fetch(url, options)
         console.error('error:' + err);
     });
 """;
-      expect(fetchCodeGen.getCode(requestModelGet7, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.nodejsFetch, requestModelGet7, "https"),
+          expectedCode);
     });
 
     test('GET 8', () {
@@ -228,7 +250,10 @@ fetch(url, options)
         console.error('error:' + err);
     });
 """;
-      expect(fetchCodeGen.getCode(requestModelGet8, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.nodejsFetch, requestModelGet8, "https"),
+          expectedCode);
     });
 
     test('GET 9', () {
@@ -255,7 +280,10 @@ fetch(url, options)
         console.error('error:' + err);
     });
 """;
-      expect(fetchCodeGen.getCode(requestModelGet9, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.nodejsFetch, requestModelGet9, "https"),
+          expectedCode);
     });
 
     test('GET 10', () {
@@ -286,7 +314,8 @@ fetch(url, options)
     });
 """;
       expect(
-          fetchCodeGen.getCode(
+          codeGen.getCode(
+            CodegenLanguage.nodejsFetch,
             requestModelGet10,
             "https",
           ),
@@ -320,7 +349,10 @@ fetch(url, options)
         console.error('error:' + err);
     });
 """;
-      expect(fetchCodeGen.getCode(requestModelGet11, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.nodejsFetch, requestModelGet11, "https"),
+          expectedCode);
     });
 
     test('GET 12', () {
@@ -347,7 +379,10 @@ fetch(url, options)
         console.error('error:' + err);
     });
 """;
-      expect(fetchCodeGen.getCode(requestModelGet12, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.nodejsFetch, requestModelGet12, "https"),
+          expectedCode);
     });
   });
 
@@ -376,7 +411,10 @@ fetch(url, options)
         console.error('error:' + err);
     });
 """;
-      expect(fetchCodeGen.getCode(requestModelHead1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.nodejsFetch, requestModelHead1, "https"),
+          expectedCode);
     });
 
     test('HEAD 2', () {
@@ -403,7 +441,10 @@ fetch(url, options)
         console.error('error:' + err);
     });
 """;
-      expect(fetchCodeGen.getCode(requestModelHead2, "http"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.nodejsFetch, requestModelHead2, "http"),
+          expectedCode);
     });
   });
 
@@ -437,7 +478,10 @@ fetch(url, options)
         console.error('error:' + err);
     });
 """;
-      expect(fetchCodeGen.getCode(requestModelPost1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.nodejsFetch, requestModelPost1, "https"),
+          expectedCode);
     });
 
     test('POST 2', () {
@@ -469,7 +513,10 @@ fetch(url, options)
         console.error('error:' + err);
     });
 """;
-      expect(fetchCodeGen.getCode(requestModelPost2, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.nodejsFetch, requestModelPost2, "https"),
+          expectedCode);
     });
 
     test('POST 3', () {
@@ -502,7 +549,10 @@ fetch(url, options)
         console.error('error:' + err);
     });
 """;
-      expect(fetchCodeGen.getCode(requestModelPost3, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.nodejsFetch, requestModelPost3, "https"),
+          expectedCode);
     });
   });
 
@@ -536,7 +586,10 @@ fetch(url, options)
         console.error('error:' + err);
     });
 """;
-      expect(fetchCodeGen.getCode(requestModelPut1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.nodejsFetch, requestModelPut1, "https"),
+          expectedCode);
     });
   });
 
@@ -570,7 +623,10 @@ fetch(url, options)
         console.error('error:' + err);
     });
 """;
-      expect(fetchCodeGen.getCode(requestModelPatch1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.nodejsFetch, requestModelPatch1, "https"),
+          expectedCode);
     });
   });
 
@@ -599,7 +655,10 @@ fetch(url, options)
         console.error('error:' + err);
     });
 """;
-      expect(fetchCodeGen.getCode(requestModelDelete1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.nodejsFetch, requestModelDelete1, "https"),
+          expectedCode);
     });
 
     test('DELETE 2', () {
@@ -631,7 +690,10 @@ fetch(url, options)
         console.error('error:' + err);
     });
 """;
-      expect(fetchCodeGen.getCode(requestModelDelete2, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.nodejsFetch, requestModelDelete2, "https"),
+          expectedCode);
     });
   });
 }

@@ -75,7 +75,6 @@ import okhttp3.MultipartBody""";
 
   String? getCode(
     RequestModel requestModel,
-    String defaultUriScheme,
   ) {
     try {
       String result = "";
@@ -83,13 +82,8 @@ import okhttp3.MultipartBody""";
       bool hasBody = false;
       bool hasFormData = false;
 
-      String url = requestModel.url;
-      if (!url.contains("://") && url.isNotEmpty) {
-        url = "$defaultUriScheme://$url";
-      }
-
       var rec = getValidRequestUri(
-        url,
+        requestModel.url,
         requestModel.enabledRequestParams,
       );
       Uri? uri = rec.$1;
