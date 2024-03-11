@@ -48,6 +48,11 @@ String getShortPath(String path) {
   return path;
 }
 
+String getFilenameFromPath(String path) {
+  var f = p.split(path);
+  return f.last;
+}
+
 String getTempFileName() {
   return getNewUuid();
 }
