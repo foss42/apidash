@@ -19,13 +19,14 @@ const requestModelGet2 = RequestModel(
   ],
 );
 
-/// GET request model with override query params
+/// GET request model with duplicate query params
 const requestModelGet3 = RequestModel(
   id: 'get3',
-  url: 'https://api.apidash.dev/country/data?code=US',
+  url: 'https://api.apidash.dev/country/data?code=US&code=UK',
   method: HTTPVerb.get,
   requestParams: [
-    NameValueModel(name: 'code', value: 'IND'),
+    NameValueModel(name: 'code', value: 'IN'),
+    NameValueModel(name: 'code', value: 'JP'),
   ],
 );
 
