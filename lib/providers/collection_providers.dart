@@ -46,13 +46,6 @@ class CollectionStateNotifier
   final Ref ref;
   final HiveHandler hiveHandler;
   final baseResponseModel = const ResponseModel();
-  CancelToken _cancelToken = CancelToken();
-
-  @override
-  void dispose() {
-    _cancelToken.cancel();
-    super.dispose();
-  }
 
   bool hasId(String id) => state?.keys.contains(id) ?? false;
 
@@ -162,11 +155,6 @@ class CollectionStateNotifier
     state = map;
   }
 
-  Future<void> cancelRequest() async{
-    _cancelToken.cancel();
-    _cancelToken = CancelToken();
-  }
-
   Future<void> sendRequest(String id) async {
     ref.read(codePaneVisibleStateProvider.notifier).state = false;
     final defaultUriScheme = ref.read(
@@ -179,32 +167,43 @@ class CollectionStateNotifier
 
     // set current model's isWorking to true and update state
     var map = {...state!};
-    map[id] = requestModel.copyWith(isWorking: true);
+    map[id] = requestModel.copyWith(isWorking: true, cancelToken: CancelToken(),);
     state = map;
 
-    (http.Response?, Duration?, String?)? responseRec = await request(
-      requestModel,
-      cancelToken: _cancelToken,
+    (Response?, Duration?, String?)? responseRec = await request(
+      map[id]!,
       defaultUriScheme: defaultUriScheme,
     );
     late final RequestModel newRequestModel;
     if (responseRec.$1 == null) {
-      newRequestModel = requestModel.copyWith(
-        responseStatus: -1,
-        message: responseRec.$3,
-        isWorking: false,
-      );
+      if(responseRec.$3=='DioExceptionType.cancel'){
+        newRequestModel = requestModel.copyWith(
+          responseStatus: -2,
+        );
+      }else{
+        newRequestModel = requestModel.copyWith(
+          responseStatus: -1,
+          message: responseRec.$3,
+          isWorking: false,
+        );
+      }
     } else {
       final responseModel = baseResponseModel.fromResponse(
         response: responseRec.$1!,
         time: responseRec.$2!,
       );
+
+      if(!(requestModel.cancelToken?.isCancelled ?? true)){
+        requestModel.cancelToken?.cancel();
+      }
+
       int statusCode = responseRec.$1!.statusCode!;
       newRequestModel = requestModel.copyWith(
         responseStatus: statusCode,
         message: kResponseCodeReasons[statusCode],
         responseModel: responseModel,
         isWorking: false,
+        cancelToken: null,
       );
     }
 

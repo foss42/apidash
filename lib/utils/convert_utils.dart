@@ -1,8 +1,8 @@
-import 'dart:convert';
 import 'dart:typed_data';
-
-import '../consts.dart';
+import 'dart:convert';
 import '../models/models.dart';
+import '../consts.dart';
+import 'package:http/http.dart' as http;
 
 String humanizeDuration(Duration? duration) {
   if (duration == null) {
@@ -147,24 +147,6 @@ Uint8List jsonMapToBytes(Map<String, dynamic>? map) {
     return bytes;
   }
 }
-
-// Not Required for Dio Package
-// Future<http.Response> convertStreamedResponse(
-//   http.StreamedResponse streamedResponse,
-// ) async {
-//   Uint8List bodyBytes = await streamedResponse.stream.toBytes();
-//
-//   http.Response response = http.Response.bytes(
-//     bodyBytes,
-//     streamedResponse.statusCode,
-//     headers: streamedResponse.headers,
-//     persistentConnection: streamedResponse.persistentConnection,
-//     reasonPhrase: streamedResponse.reasonPhrase,
-//     request: streamedResponse.request,
-//   );
-//
-//   return response;
-// }
 
 List<NameValueModel>? getEnabledRows(
     List<NameValueModel>? rows, List<bool>? isRowEnabledList) {

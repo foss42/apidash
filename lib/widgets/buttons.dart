@@ -1,9 +1,8 @@
-import 'package:apidash/consts.dart';
-import 'package:apidash/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
-
+import 'package:apidash/utils/utils.dart';
+import 'package:apidash/consts.dart';
 import "snackbars.dart";
 
 class CopyButton extends StatelessWidget {
@@ -60,13 +59,19 @@ class SendRequestButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FilledButton(
-      onPressed: isWorking ? null : onTap,
+      onPressed: isWorking ? cancel : onTap,
+      style: ButtonStyle(
+        backgroundColor: getBackgroundColor(
+          context,
+          isWorking,
+        ),
+      ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: isWorking
             ? const [
                 Text(
-                  kLabelSending,
+                  kLabelCancel,
                   style: kTextStyleButton,
                 ),
               ]
@@ -86,7 +91,7 @@ class SendRequestButton extends StatelessWidget {
   }
 
   MaterialStateProperty<Color>? getBackgroundColor(
-      BuildContext context, bool disableSend) {
+      BuildContext context, bool isWorking) {
     final cancel = Theme.of(context).brightness == Brightness.dark
         ? kColorDarkDanger
         : kColorLightDanger;
@@ -94,7 +99,7 @@ class SendRequestButton extends StatelessWidget {
 
     return MaterialStateProperty.resolveWith((states) {
       if (!states.contains(MaterialState.disabled)) {
-        return disableSend ? cancel : send;
+        return isWorking ? cancel : send;
       }
       return Theme.of(context).disabledColor;
     });

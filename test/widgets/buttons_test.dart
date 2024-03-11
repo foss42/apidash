@@ -55,6 +55,33 @@ void main() {
     expect(changedValue, 'Send');
   });
 
+  testWidgets('Testing for Send Request Button when request cancelled', (tester) async {
+    dynamic changedValue;
+    await tester.pumpWidget(
+      MaterialApp(
+        title: 'Send Request button',
+        theme: kThemeDataLight,
+        home: Scaffold(
+          body: SendRequestButton(
+            isWorking: true,
+            onTap: () {},
+            cancel: (){
+              changedValue = 'Cancel';
+            },
+          ),
+        ),
+      ),
+    );
+
+    expect(find.byIcon(Icons.send), findsNothing);
+    expect(find.text(kLabelCancel), findsOneWidget);
+    final button1 = find.byType(FilledButton);
+    expect(button1, findsOneWidget);
+
+    await tester.tap(button1);
+    expect(changedValue, 'Cancel');
+  });
+
   testWidgets(
       'Testing for Send Request button when RequestModel is viewed and is waiting for response',
       (tester) async {
@@ -73,11 +100,12 @@ void main() {
     );
 
     expect(find.byIcon(Icons.send), findsNothing);
-    expect(find.text(kLabelSending), findsOneWidget);
+    expect(find.text(kLabelCancel), findsOneWidget);
     final button1 = find.byType(FilledButton);
     expect(button1, findsOneWidget);
 
-    expect(tester.widget<FilledButton>(button1).enabled, isFalse);
+    // Enabled true to execute cancel function
+    expect(tester.widget<FilledButton>(button1).enabled, true);
   });
 
   testWidgets('Testing for Save in Downloads button', (tester) async {

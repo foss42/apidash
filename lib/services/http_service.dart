@@ -1,11 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-
-import 'package:apidash/consts.dart';
-import 'package:apidash/models/models.dart';
-import 'package:apidash/utils/utils.dart';
 import 'package:dio/dio.dart';
+import 'package:apidash/utils/utils.dart';
+import 'package:apidash/models/models.dart';
+import 'package:apidash/consts.dart';
 
 Future<(Response?, Duration?, String?)> request(
   RequestModel requestModel, {
@@ -17,12 +16,11 @@ Future<(Response?, Duration?, String?)> request(
     defaultUriScheme: defaultUriScheme,
   );
   if (uriRec.$1 != null) {
-    Dio dio = Dio();
-
-    String requestUrl = uriRec.$1!.toString();
+    Uri requestUrl = uriRec.$1!;
     Map<String, String> headers = requestModel.enabledHeadersMap;
     Response response;
     String? body;
+    Dio dio = Dio();
     try {
       Stopwatch stopwatch = Stopwatch()..start();
       var isMultiPartRequest =
@@ -41,96 +39,92 @@ Future<(Response?, Duration?, String?)> request(
           }
         }
         if (isMultiPartRequest) {
-          var multiPartRequest = http.MultipartRequest(
-            requestModel.method.name.toUpperCase(),
-            requestUrl,
-          );
-          multiPartRequest.headers.addAll(headers);
-          for (var formData
-              in (requestModel.requestFormDataList ?? <FormDataModel>[])) {
-            if (formData.type == FormDataType.text) {
-              multiPartRequest.fields.addAll({formData.name: formData.value});
+          final formData = FormData();
+          for (FormDataModel data in (requestModel.requestFormDataList ?? [])) {
+            if (data.type == FormDataType.text) {
+              formData.fields.add(MapEntry(data.name, data.value));
             } else {
-              multiPartRequest.files.add(
-                await http.MultipartFile.fromPath(
-                  formData.name,
-                  formData.value,
-                ),
-              );
+              formData.files.add(MapEntry(data.name,
+                  await MultipartFile.fromFile(data.value, filename: data.name)));
             }
           }
-          http.StreamedResponse multiPartResponse =
-              await multiPartRequest.send();
-          stopwatch.stop();
-          http.Response convertedMultiPartResponse =
-              await convertStreamedResponse(multiPartResponse);
-          return (convertedMultiPartResponse, stopwatch.elapsed, null);
+          Response multiPartResponse = await dio.request(
+            requestUrl.toString(),
+            data: formData,
+            options: Options(
+              method: requestModel.method.name.toUpperCase(),
+              headers: headers,
+            ),
+            cancelToken: requestModel.cancelToken,
+          );
+          dio.close();
+          return (multiPartResponse, stopwatch.elapsed, null);
         }
       }
       switch (requestModel.method) {
         case HTTPVerb.get:
           response = await dio.get(
-            requestUrl,
+            requestUrl.toString(),
             options: Options(
               headers: headers,
             ),
-            cancelToken: cancelToken,
+            cancelToken: requestModel.cancelToken,
           );
           break;
         case HTTPVerb.head:
           response = await dio.head(
-            requestUrl,
+            requestUrl.toString(),
             options: Options(
               headers: headers,
             ),
-            cancelToken: cancelToken,
+            cancelToken: requestModel.cancelToken,
           );
           break;
         case HTTPVerb.post:
           response = await dio.post(
-            requestUrl,
+            requestUrl.toString(),
             options: Options(
               headers: headers,
             ),
             data: body,
-            cancelToken: cancelToken,
+            cancelToken: requestModel.cancelToken,
           );
           break;
         case HTTPVerb.put:
           response = await dio.put(
-            requestUrl,
+            requestUrl.toString(),
             options: Options(
               headers: headers,
             ),
             data: body,
-            cancelToken: cancelToken,
+            cancelToken: requestModel.cancelToken,
           );
           break;
         case HTTPVerb.patch:
           response = await dio.patch(
-            requestUrl,
+            requestUrl.toString(),
             options: Options(
               headers: headers,
             ),
             data: body,
-            cancelToken: cancelToken,
+            cancelToken: requestModel.cancelToken,
           );
           break;
         case HTTPVerb.delete:
           response = await dio.delete(
-            requestUrl,
+            requestUrl.toString(),
             options: Options(
               headers: headers,
             ),
             data: body,
-            cancelToken: cancelToken,
+            cancelToken: requestModel.cancelToken,
           );
           break;
       }
       dio.close();
       stopwatch.stop();
       return (response, stopwatch.elapsed, null);
-    } on DioException catch(e){
+    }on DioException catch(e){
       dio.close();
       if(e.type == DioExceptionType.cancel){
         return (null, null, e.type.toString());

@@ -1,8 +1,8 @@
-import 'package:apidash/consts.dart';
-import 'package:apidash/providers/providers.dart';
-import 'package:apidash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:apidash/providers/providers.dart';
+import 'package:apidash/widgets/widgets.dart';
+import 'package:apidash/consts.dart';
 
 class EditorPaneRequestURLCard extends StatelessWidget {
   const EditorPaneRequestURLCard({super.key});
@@ -108,8 +108,8 @@ class SendButton extends ConsumerWidget {
             .read(collectionStateNotifierProvider.notifier)
             .sendRequest(selectedId!);
       },
-      cancel: () {
-        ref.read(collectionStateNotifierProvider.notifier).cancelRequest();
+      cancel: (){
+        ref.read(selectedRequestModelProvider.select((value) => value?.cancelToken))?.cancel();
       },
     );
   }

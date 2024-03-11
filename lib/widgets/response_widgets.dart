@@ -33,32 +33,6 @@ class NotSentWidget extends StatelessWidget {
   }
 }
 
-class CancelledWidget extends StatelessWidget {
-  const CancelledWidget({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final color = Theme.of(context).colorScheme.secondary;
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.cancel_outlined,
-            size: 40,
-            color: color,
-          ),
-          Text(
-            'Cancelled',
-            style:
-            Theme.of(context).textTheme.titleMedium?.copyWith(color: color),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class SendingWidget extends StatelessWidget {
   const SendingWidget({super.key});
 
@@ -509,6 +483,32 @@ class _BodySuccessState extends State<BodySuccess> {
           ),
         );
       },
+    );
+  }
+}
+
+class CancelledWidget extends StatelessWidget {
+  const CancelledWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final color = Theme.of(context).colorScheme.secondary;
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.cancel_outlined,
+            size: 40,
+            color: color,
+          ),
+          Text(
+            'Cancelled',
+            style:
+            Theme.of(context).textTheme.titleMedium?.copyWith(color: color),
+          ),
+        ],
+      ),
     );
   }
 }

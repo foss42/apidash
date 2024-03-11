@@ -503,7 +503,6 @@ const kHintTextUrlCard =
     "Enter API endpoint like api.apidash.dev/country/codes";
 const kLabelPlusNew = "+ New";
 const kLabelSend = "Send";
-const kLabelSending = "Sending..";
 const kLabelCancel = "Cancel";
 const kLabelBusy = "Busy";
 const kLabelCopy = "Copy";

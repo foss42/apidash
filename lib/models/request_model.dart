@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import '../utils/utils.dart'
     show
@@ -30,6 +31,7 @@ class RequestModel {
     this.message,
     this.responseModel,
     this.isWorking = false,
+    this.cancelToken,
   });
 
   final String id;
@@ -49,6 +51,7 @@ class RequestModel {
   final String? message;
   final ResponseModel? responseModel;
   final bool isWorking;
+  final CancelToken? cancelToken;
 
   List<NameValueModel>? get enabledRequestHeaders =>
       getEnabledRows(requestHeaders, isHeaderEnabledList);
@@ -109,6 +112,7 @@ class RequestModel {
     String? message,
     ResponseModel? responseModel,
     bool? isWorking,
+    CancelToken? cancelToken,
   }) {
     var headers = requestHeaders ?? this.requestHeaders;
     var params = requestParams ?? this.requestParams;
@@ -133,6 +137,7 @@ class RequestModel {
       message: message ?? this.message,
       responseModel: responseModel ?? this.responseModel,
       isWorking: isWorking ?? this.isWorking,
+      cancelToken: cancelToken,
     );
   }
 
