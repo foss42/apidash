@@ -12,7 +12,7 @@ class FetchCodeGen {
 
   String kStringImportNode = """
 import fetch from 'node-fetch';
-{% if isFormDataRequest %}const fs = require('fs');{% endif %}
+{% if hasFormData %}const fs = require('fs');{% endif %}
 
 """;
 
@@ -78,11 +78,11 @@ fetch(url, options)
     try {
       jj.Template kNodejsImportTemplate = jj.Template(kStringImportNode);
       String importsData = kNodejsImportTemplate.render({
-        "isFormDataRequest": requestModel.isFormDataRequest,
+        "hasFormData": requestModel.hasFormData,
       });
 
       String result = isNodeJs ? importsData : "";
-      if (requestModel.isFormDataRequest) {
+      if (requestModel.hasFormData) {
         var templateMultiPartBody = jj.Template(kMultiPartBodyTemplate);
         result += templateMultiPartBody.render({
           "isNodeJs": isNodeJs,
@@ -108,7 +108,7 @@ fetch(url, options)
       if (headers.isNotEmpty) {
         var templateHeader = jj.Template(kTemplateHeader);
         var m = {};
-        if (requestModel.isFormDataRequest) {
+        if (requestModel.hasFormData) {
           m["Content-Type"] = "multipart/form-data";
         }
         for (var i in headers) {
@@ -124,7 +124,7 @@ fetch(url, options)
         result += templateBody.render({
           "body": kEncoder.convert(harJson["postData"]["text"]),
         });
-      } else if (requestModel.isFormDataRequest) {
+      } else if (requestModel.hasFormData) {
         var templateBody = jj.Template(kTemplateBody);
         result += templateBody.render({
           "body": 'payload',

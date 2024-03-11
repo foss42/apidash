@@ -12,7 +12,7 @@ class AxiosCodeGen {
 
   String kStringImportNode = """{% if isNodeJs %}import axios from 'axios';
 
-{% endif %}{% if isFormDataRequest and isNodeJs %}const fs = require('fs');{% endif %}
+{% endif %}{% if hasFormData and isNodeJs %}const fs = require('fs');{% endif %}
 """;
 
   String kTemplateStart = """let config = {
@@ -78,13 +78,12 @@ async function buildFormData(fields) {
     try {
       jj.Template kNodejsImportTemplate = jj.Template(kStringImportNode);
       String importsData = kNodejsImportTemplate.render({
-        "isFormDataRequest": requestModel.isFormDataRequest,
+        "hasFormData": requestModel.hasFormData,
         "isNodeJs": isNodeJs,
       });
 
       String result = importsData;
-      if (requestModel.isFormDataRequest &&
-          requestModel.formDataMapList.isNotEmpty) {
+      if (requestModel.hasFormData && requestModel.formDataMapList.isNotEmpty) {
         var templateMultiPartBody = jj.Template(kMultiPartBodyTemplate);
         var renderedMultiPartBody = templateMultiPartBody.render({
           "isNodeJs": isNodeJs,
@@ -118,13 +117,13 @@ async function buildFormData(fields) {
       }
 
       var headers = harJson["headers"];
-      if (headers.isNotEmpty || requestModel.isFormDataRequest) {
+      if (headers.isNotEmpty || requestModel.hasFormData) {
         var templateHeader = jj.Template(kTemplateHeader);
         var m = {};
         for (var i in headers) {
           m[i["name"]] = i["value"];
         }
-        if (requestModel.isFormDataRequest) {
+        if (requestModel.hasFormData) {
           m['Content-Type'] = 'multipart/form-data';
         }
         result += templateHeader
@@ -132,8 +131,7 @@ async function buildFormData(fields) {
       }
       var templateBody = jj.Template(kTemplateBody);
 
-      if (requestModel.isFormDataRequest &&
-          requestModel.formDataMapList.isNotEmpty) {
+      if (requestModel.hasFormData && requestModel.formDataMapList.isNotEmpty) {
         var getFieldDataTemplate = jj.Template(kGetFormDataTemplate);
 
         result += templateBody.render({

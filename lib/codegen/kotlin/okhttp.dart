@@ -113,7 +113,7 @@ import okhttp3.MultipartBody""";
 
         var method = requestModel.method;
         var requestBody = requestModel.requestBody;
-        if (requestModel.isFormDataRequest) {
+        if (requestModel.hasFormData) {
           hasFormData = true;
           var formDataTemplate = jj.Template(kFormDataBody);
 
@@ -152,7 +152,7 @@ import okhttp3.MultipartBody""";
         var templateRequestEnd = jj.Template(kTemplateRequestEnd);
         result += templateRequestEnd.render({
           "method": method.name.toLowerCase(),
-          "hasBody": (hasBody || requestModel.isFormDataRequest) ? "body" : "",
+          "hasBody": (hasBody || requestModel.hasFormData) ? "body" : "",
         });
       }
       return result;

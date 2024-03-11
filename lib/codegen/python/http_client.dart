@@ -8,7 +8,7 @@ import 'package:apidash/consts.dart';
 
 class PythonHttpClientCodeGen {
   final String kTemplateStart = """import http.client
-{% if isFormDataRequest %}import mimetypes
+{% if hasFormData %}import mimetypes
 from codecs import encode
 {% endif %}
 """;
@@ -88,9 +88,9 @@ body = b'\r\n'.join(dataList)
 ''';
   String? getCode(
     RequestModel requestModel,
-    String defaultUriScheme,
+    String defaultUriScheme, {
     String? boundary,
-  ) {
+  }) {
     try {
       String result = "";
       bool hasHeaders = false;
@@ -105,7 +105,7 @@ body = b'\r\n'.join(dataList)
       var templateStartUrl = jj.Template(kTemplateStart);
       result += templateStartUrl.render(
         {
-          "isFormDataRequest": requestModel.isFormDataRequest,
+          "hasFormData": requestModel.hasFormData,
         },
       );
       var rec = getValidRequestUri(
@@ -131,7 +131,7 @@ body = b'\r\n'.join(dataList)
         var requestBody = requestModel.requestBody;
         if (kMethodsWithBody.contains(method) &&
             requestBody != null &&
-            !requestModel.isFormDataRequest) {
+            !requestModel.hasFormData) {
           var contentLength = utf8.encode(requestBody).length;
           if (contentLength > 0) {
             hasBody = true;
@@ -143,7 +143,7 @@ body = b'\r\n'.join(dataList)
         var headersList = requestModel.enabledRequestHeaders;
         if (headersList != null || hasBody) {
           var headers = requestModel.enabledHeadersMap;
-          if (requestModel.isFormDataRequest) {
+          if (requestModel.hasFormData) {
             var formHeaderTemplate =
                 jj.Template(kTemplateFormHeaderContentType);
             headers[HttpHeaders.contentTypeHeader] = formHeaderTemplate.render({
@@ -163,7 +163,7 @@ body = b'\r\n'.join(dataList)
             result += templateHeaders.render({"headers": headersString});
           }
         }
-        if (requestModel.isFormDataRequest) {
+        if (requestModel.hasFormData) {
           var formDataBodyData = jj.Template(kStringFormDataBody);
           result += formDataBodyData.render(
             {
@@ -185,11 +185,11 @@ body = b'\r\n'.join(dataList)
           "queryParamsStr": hasQuery ? " + queryParamsStr" : "",
         });
 
-        if (hasBody || requestModel.isFormDataRequest) {
+        if (hasBody || requestModel.hasFormData) {
           result += kStringRequestBody;
         }
 
-        if (hasHeaders || requestModel.isFormDataRequest) {
+        if (hasHeaders || requestModel.hasFormData) {
           result += kStringRequestHeaders;
         }
 
