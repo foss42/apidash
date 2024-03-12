@@ -1,15 +1,16 @@
-import 'package:apidash/codegen/python/http_client.dart';
-import '../request_models.dart';
+import 'package:apidash/codegen/codegen.dart';
+import 'package:apidash/consts.dart';
 import 'package:test/test.dart';
+import '../request_models.dart';
 
 void main() {
-  final pythonHttpClientCodeGen = PythonHttpClientCodeGen();
+  final codeGen = Codegen();
 
   group('GET Request', () {
     test('GET 1', () {
       const expectedCode = r"""import http.client
 
-conn = http.client.HTTPSConnection("api.foss42.com")
+conn = http.client.HTTPSConnection("api.apidash.dev")
 conn.request("GET", "")
 
 res = conn.getresponse()
@@ -17,7 +18,9 @@ data = res.read()
 
 print(data.decode("utf-8"))
 """;
-      expect(pythonHttpClientCodeGen.getCode(requestModelGet1, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonHttpClient, requestModelGet1, "https"),
           expectedCode);
     });
 
@@ -30,7 +33,7 @@ queryParams = {
               }
 queryParamsStr = '?' + urlencode(queryParams)
 
-conn = http.client.HTTPSConnection("api.foss42.com")
+conn = http.client.HTTPSConnection("api.apidash.dev")
 conn.request("GET", "/country/data" + queryParamsStr)
 
 res = conn.getresponse()
@@ -38,7 +41,9 @@ data = res.read()
 
 print(data.decode("utf-8"))
 """;
-      expect(pythonHttpClientCodeGen.getCode(requestModelGet2, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonHttpClient, requestModelGet2, "https"),
           expectedCode);
     });
 
@@ -51,7 +56,7 @@ queryParams = {
               }
 queryParamsStr = '?' + urlencode(queryParams)
 
-conn = http.client.HTTPSConnection("api.foss42.com")
+conn = http.client.HTTPSConnection("api.apidash.dev")
 conn.request("GET", "/country/data" + queryParamsStr)
 
 res = conn.getresponse()
@@ -59,7 +64,9 @@ data = res.read()
 
 print(data.decode("utf-8"))
 """;
-      expect(pythonHttpClientCodeGen.getCode(requestModelGet3, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonHttpClient, requestModelGet3, "https"),
           expectedCode);
     });
 
@@ -76,7 +83,7 @@ queryParams = {
               }
 queryParamsStr = '?' + urlencode(queryParams)
 
-conn = http.client.HTTPSConnection("api.foss42.com")
+conn = http.client.HTTPSConnection("api.apidash.dev")
 conn.request("GET", "/humanize/social" + queryParamsStr)
 
 res = conn.getresponse()
@@ -84,7 +91,9 @@ data = res.read()
 
 print(data.decode("utf-8"))
 """;
-      expect(pythonHttpClientCodeGen.getCode(requestModelGet4, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonHttpClient, requestModelGet4, "https"),
           expectedCode);
     });
 
@@ -104,7 +113,9 @@ data = res.read()
 
 print(data.decode("utf-8"))
 """;
-      expect(pythonHttpClientCodeGen.getCode(requestModelGet5, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonHttpClient, requestModelGet5, "https"),
           expectedCode);
     });
 
@@ -130,14 +141,16 @@ data = res.read()
 
 print(data.decode("utf-8"))
 """;
-      expect(pythonHttpClientCodeGen.getCode(requestModelGet6, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonHttpClient, requestModelGet6, "https"),
           expectedCode);
     });
 
     test('GET 7', () {
       const expectedCode = r"""import http.client
 
-conn = http.client.HTTPSConnection("api.foss42.com")
+conn = http.client.HTTPSConnection("api.apidash.dev")
 conn.request("GET", "")
 
 res = conn.getresponse()
@@ -145,7 +158,9 @@ data = res.read()
 
 print(data.decode("utf-8"))
 """;
-      expect(pythonHttpClientCodeGen.getCode(requestModelGet7, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonHttpClient, requestModelGet7, "https"),
           expectedCode);
     });
 
@@ -171,7 +186,9 @@ data = res.read()
 
 print(data.decode("utf-8"))
 """;
-      expect(pythonHttpClientCodeGen.getCode(requestModelGet8, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonHttpClient, requestModelGet8, "https"),
           expectedCode);
     });
 
@@ -185,7 +202,7 @@ queryParams = {
               }
 queryParamsStr = '?' + urlencode(queryParams)
 
-conn = http.client.HTTPSConnection("api.foss42.com")
+conn = http.client.HTTPSConnection("api.apidash.dev")
 conn.request("GET", "/humanize/social" + queryParamsStr)
 
 res = conn.getresponse()
@@ -193,7 +210,9 @@ data = res.read()
 
 print(data.decode("utf-8"))
 """;
-      expect(pythonHttpClientCodeGen.getCode(requestModelGet9, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonHttpClient, requestModelGet9, "https"),
           expectedCode);
     });
 
@@ -204,7 +223,7 @@ headers = {
             "User-Agent": "Test Agent"
           }
 
-conn = http.client.HTTPSConnection("api.foss42.com")
+conn = http.client.HTTPSConnection("api.apidash.dev")
 conn.request("GET", "/humanize/social",
               headers= headers)
 
@@ -214,7 +233,8 @@ data = res.read()
 print(data.decode("utf-8"))
 """;
       expect(
-          pythonHttpClientCodeGen.getCode(
+          codeGen.getCode(
+            CodegenLanguage.pythonHttpClient,
             requestModelGet10,
             "https",
           ),
@@ -235,7 +255,7 @@ headers = {
             "User-Agent": "Test Agent"
           }
 
-conn = http.client.HTTPSConnection("api.foss42.com")
+conn = http.client.HTTPSConnection("api.apidash.dev")
 conn.request("GET", "/humanize/social" + queryParamsStr,
               headers= headers)
 
@@ -244,14 +264,16 @@ data = res.read()
 
 print(data.decode("utf-8"))
 """;
-      expect(pythonHttpClientCodeGen.getCode(requestModelGet11, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonHttpClient, requestModelGet11, "https"),
           expectedCode);
     });
 
     test('GET 12', () {
       const expectedCode = r"""import http.client
 
-conn = http.client.HTTPSConnection("api.foss42.com")
+conn = http.client.HTTPSConnection("api.apidash.dev")
 conn.request("GET", "/humanize/social")
 
 res = conn.getresponse()
@@ -259,7 +281,9 @@ data = res.read()
 
 print(data.decode("utf-8"))
 """;
-      expect(pythonHttpClientCodeGen.getCode(requestModelGet12, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonHttpClient, requestModelGet12, "https"),
           expectedCode);
     });
   });
@@ -268,7 +292,7 @@ print(data.decode("utf-8"))
     test('HEAD 1', () {
       const expectedCode = r"""import http.client
 
-conn = http.client.HTTPSConnection("api.foss42.com")
+conn = http.client.HTTPSConnection("api.apidash.dev")
 conn.request("HEAD", "")
 
 res = conn.getresponse()
@@ -276,14 +300,16 @@ data = res.read()
 
 print(data.decode("utf-8"))
 """;
-      expect(pythonHttpClientCodeGen.getCode(requestModelHead1, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonHttpClient, requestModelHead1, "https"),
           expectedCode);
     });
 
     test('HEAD 2', () {
       const expectedCode = r"""import http.client
 
-conn = http.client.HTTPConnection("api.foss42.com")
+conn = http.client.HTTPConnection("api.apidash.dev")
 conn.request("HEAD", "")
 
 res = conn.getresponse()
@@ -291,7 +317,9 @@ data = res.read()
 
 print(data.decode("utf-8"))
 """;
-      expect(pythonHttpClientCodeGen.getCode(requestModelHead2, "http"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonHttpClient, requestModelHead2, "http"),
           expectedCode);
     });
   });
@@ -308,7 +336,7 @@ headers = {
             "content-type": "text/plain"
           }
 
-conn = http.client.HTTPSConnection("api.foss42.com")
+conn = http.client.HTTPSConnection("api.apidash.dev")
 conn.request("POST", "/case/lower",
               body= body,
               headers= headers)
@@ -318,7 +346,9 @@ data = res.read()
 
 print(data.decode("utf-8"))
 """;
-      expect(pythonHttpClientCodeGen.getCode(requestModelPost1, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonHttpClient, requestModelPost1, "https"),
           expectedCode);
     });
 
@@ -326,14 +356,19 @@ print(data.decode("utf-8"))
       const expectedCode = r"""import http.client
 
 body = r'''{
-"text": "I LOVE Flutter"
+"text": "I LOVE Flutter",
+"flag": null,
+"male": true,
+"female": false,
+"no": 1.2,
+"arr": ["null", "true", "false", null]
 }'''
 
 headers = {
             "content-type": "application/json"
           }
 
-conn = http.client.HTTPSConnection("api.foss42.com")
+conn = http.client.HTTPSConnection("api.apidash.dev")
 conn.request("POST", "/case/lower",
               body= body,
               headers= headers)
@@ -343,7 +378,9 @@ data = res.read()
 
 print(data.decode("utf-8"))
 """;
-      expect(pythonHttpClientCodeGen.getCode(requestModelPost2, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonHttpClient, requestModelPost2, "https"),
           expectedCode);
     });
 
@@ -359,7 +396,7 @@ headers = {
             "content-type": "application/json"
           }
 
-conn = http.client.HTTPSConnection("api.foss42.com")
+conn = http.client.HTTPSConnection("api.apidash.dev")
 conn.request("POST", "/case/lower",
               body= body,
               headers= headers)
@@ -369,7 +406,9 @@ data = res.read()
 
 print(data.decode("utf-8"))
 """;
-      expect(pythonHttpClientCodeGen.getCode(requestModelPost3, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonHttpClient, requestModelPost3, "https"),
           expectedCode);
     });
   });
@@ -397,7 +436,9 @@ data = res.read()
 
 print(data.decode("utf-8"))
 """;
-      expect(pythonHttpClientCodeGen.getCode(requestModelPut1, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonHttpClient, requestModelPut1, "https"),
           expectedCode);
     });
   });
@@ -425,7 +466,9 @@ data = res.read()
 
 print(data.decode("utf-8"))
 """;
-      expect(pythonHttpClientCodeGen.getCode(requestModelPatch1, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonHttpClient, requestModelPatch1, "https"),
           expectedCode);
     });
   });
@@ -442,7 +485,9 @@ data = res.read()
 
 print(data.decode("utf-8"))
 """;
-      expect(pythonHttpClientCodeGen.getCode(requestModelDelete1, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonHttpClient, requestModelDelete1, "https"),
           expectedCode);
     });
 
@@ -468,7 +513,9 @@ data = res.read()
 
 print(data.decode("utf-8"))
 """;
-      expect(pythonHttpClientCodeGen.getCode(requestModelDelete2, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonHttpClient, requestModelDelete2, "https"),
           expectedCode);
     });
   });

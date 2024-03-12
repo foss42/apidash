@@ -112,19 +112,15 @@ multipart/form-data; boundary={{boundary}}''';
 """;
 
   String? getCode(
-    RequestModel requestModel,
-    String defaultUriScheme,
-  ) {
+    RequestModel requestModel, {
+    String? boundary,
+  }) {
     try {
       String result = "";
       bool hasBody = false;
       bool hasJsonBody = false;
-      String uuid = getNewUuid();
 
       String url = requestModel.url;
-      if (!url.contains("://") && url.isNotEmpty) {
-        url = "$defaultUriScheme://$url";
-      }
 
       var rec = getValidRequestUri(
         url,
@@ -135,7 +131,7 @@ multipart/form-data; boundary={{boundary}}''';
         var templateStartUrl = jj.Template(kTemplateStart);
         result += templateStartUrl.render({
           "url": stripUriParams(uri),
-          'isFormDataRequest': requestModel.isFormDataRequest,
+          'isFormDataRequest': requestModel.hasFormData,
           "method": requestModel.method.name.toLowerCase()
         });
 
@@ -148,7 +144,7 @@ multipart/form-data; boundary={{boundary}}''';
               hasJsonBody = true;
               var templateBody = jj.Template(kTemplateJson);
               result += templateBody.render({"body": requestBody});
-            } else if (!requestModel.isFormDataRequest) {
+            } else if (!requestModel.hasFormData) {
               hasBody = true;
               var templateBody = jj.Template(kTemplateBody);
               result += templateBody.render({"body": requestBody});
@@ -156,12 +152,12 @@ multipart/form-data; boundary={{boundary}}''';
           }
         }
 
-        if (requestModel.isFormDataRequest) {
+        if (requestModel.hasFormData) {
           var formDataBodyData = jj.Template(kStringFormDataBody);
           result += formDataBodyData.render(
             {
               "fields_list": requestModel.formDataMapList,
-              "boundary": uuid,
+              "boundary": boundary ?? getNewUuid(),
             },
           );
         }
@@ -183,13 +179,13 @@ multipart/form-data; boundary={{boundary}}''';
         }
 
         var headersList = requestModel.enabledRequestHeaders;
-        if (headersList != null || hasBody || requestModel.isFormDataRequest) {
+        if (headersList != null || hasBody || requestModel.hasTextData) {
           var headers = requestModel.enabledHeadersMap;
-          if (requestModel.isFormDataRequest) {
+          if (requestModel.hasFormData) {
             var formHeaderTemplate =
                 jj.Template(kTemplateFormHeaderContentType);
             headers[HttpHeaders.contentTypeHeader] = formHeaderTemplate.render({
-              "boundary": uuid,
+              "boundary": boundary ?? getNewUuid(),
             });
           } else if (hasBody) {
             headers[HttpHeaders.contentTypeHeader] =
@@ -202,7 +198,7 @@ multipart/form-data; boundary={{boundary}}''';
           }
         }
 
-        if (hasBody || requestModel.isFormDataRequest) {
+        if (hasBody || requestModel.hasFormData) {
           result += kStringRequestBody;
         } else if (hasJsonBody) {
           result += kStringRequestJson;

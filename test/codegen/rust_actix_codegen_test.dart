@@ -1,15 +1,16 @@
-import 'package:apidash/codegen/rust/actix.dart';
-import '../request_models.dart';
+import 'package:apidash/codegen/codegen.dart';
+import 'package:apidash/consts.dart';
 import 'package:test/test.dart';
+import '../request_models.dart';
 
 void main() {
-  final rustActixCodeGen = RustActixCodeGen();
+  final codeGen = Codegen();
 
   group('GET Request', () {
     test('GET 1', () {
       const expectedCode = r"""#[actix_rt::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let url = "https://api.foss42.com";
+    let url = "https://api.apidash.dev";
     let client = awc::Client::default();
 
     let mut response = client
@@ -26,13 +27,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 """;
-      expect(rustActixCodeGen.getCode(requestModelGet1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.rustActix, requestModelGet1, "https"),
+          expectedCode);
     });
 
     test('GET 2', () {
       const expectedCode = r"""#[actix_rt::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let url = "https://api.foss42.com/country/data";
+    let url = "https://api.apidash.dev/country/data";
     let client = awc::Client::default();
 
     let mut response = client
@@ -51,13 +54,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 """;
-      expect(rustActixCodeGen.getCode(requestModelGet2, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.rustActix, requestModelGet2, "https"),
+          expectedCode);
     });
 
     test('GET 3', () {
       const expectedCode = r"""#[actix_rt::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let url = "https://api.foss42.com/country/data";
+    let url = "https://api.apidash.dev/country/data";
     let client = awc::Client::default();
 
     let mut response = client
@@ -76,13 +81,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 """;
-      expect(rustActixCodeGen.getCode(requestModelGet3, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.rustActix, requestModelGet3, "https"),
+          expectedCode);
     });
 
     test('GET 4', () {
       const expectedCode = r"""#[actix_rt::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let url = "https://api.foss42.com/humanize/social";
+    let url = "https://api.apidash.dev/humanize/social";
     let client = awc::Client::default();
 
     let mut response = client
@@ -101,7 +108,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 """;
-      expect(rustActixCodeGen.getCode(requestModelGet4, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.rustActix, requestModelGet4, "https"),
+          expectedCode);
     });
 
     test('GET 5', () {
@@ -125,7 +134,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 """;
-      expect(rustActixCodeGen.getCode(requestModelGet5, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.rustActix, requestModelGet5, "https"),
+          expectedCode);
     });
 
     test('GET 6', () {
@@ -151,13 +162,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 """;
-      expect(rustActixCodeGen.getCode(requestModelGet6, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.rustActix, requestModelGet6, "https"),
+          expectedCode);
     });
 
     test('GET 7', () {
       const expectedCode = r"""#[actix_rt::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let url = "https://api.foss42.com";
+    let url = "https://api.apidash.dev";
     let client = awc::Client::default();
 
     let mut response = client
@@ -174,7 +187,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 """;
-      expect(rustActixCodeGen.getCode(requestModelGet7, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.rustActix, requestModelGet7, "https"),
+          expectedCode);
     });
 
     test('GET 8', () {
@@ -200,13 +215,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 """;
-      expect(rustActixCodeGen.getCode(requestModelGet8, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.rustActix, requestModelGet8, "https"),
+          expectedCode);
     });
 
     test('GET 9', () {
       const expectedCode = r"""#[actix_rt::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let url = "https://api.foss42.com/humanize/social";
+    let url = "https://api.apidash.dev/humanize/social";
     let client = awc::Client::default();
 
     let mut response = client
@@ -225,13 +242,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 """;
-      expect(rustActixCodeGen.getCode(requestModelGet9, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.rustActix, requestModelGet9, "https"),
+          expectedCode);
     });
 
     test('GET 10', () {
       const expectedCode = r"""#[actix_rt::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let url = "https://api.foss42.com/humanize/social";
+    let url = "https://api.apidash.dev/humanize/social";
     let client = awc::Client::default();
 
     let mut response = client
@@ -250,7 +269,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 """;
       expect(
-          rustActixCodeGen.getCode(
+          codeGen.getCode(
+            CodegenLanguage.rustActix,
             requestModelGet10,
             "https",
           ),
@@ -260,7 +280,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     test('GET 11', () {
       const expectedCode = r"""#[actix_rt::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let url = "https://api.foss42.com/humanize/social";
+    let url = "https://api.apidash.dev/humanize/social";
     let client = awc::Client::default();
 
     let mut response = client
@@ -281,13 +301,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 """;
       expect(
-          rustActixCodeGen.getCode(requestModelGet11, "https"), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.rustActix, requestModelGet11, "https"),
+          expectedCode);
     });
 
     test('GET 12', () {
       const expectedCode = r"""#[actix_rt::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let url = "https://api.foss42.com/humanize/social";
+    let url = "https://api.apidash.dev/humanize/social";
     let client = awc::Client::default();
 
     let mut response = client
@@ -305,7 +327,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 """;
       expect(
-          rustActixCodeGen.getCode(requestModelGet12, "https"), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.rustActix, requestModelGet12, "https"),
+          expectedCode);
     });
   });
 
@@ -313,7 +337,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     test('HEAD 1', () {
       const expectedCode = r"""#[actix_rt::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let url = "https://api.foss42.com";
+    let url = "https://api.apidash.dev";
     let client = awc::Client::default();
 
     let mut response = client
@@ -331,13 +355,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 """;
       expect(
-          rustActixCodeGen.getCode(requestModelHead1, "https"), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.rustActix, requestModelHead1, "https"),
+          expectedCode);
     });
 
     test('HEAD 2', () {
       const expectedCode = r"""#[actix_rt::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let url = "http://api.foss42.com";
+    let url = "http://api.apidash.dev";
     let client = awc::Client::default();
 
     let mut response = client
@@ -354,7 +380,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 """;
-      expect(rustActixCodeGen.getCode(requestModelHead2, "http"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.rustActix, requestModelHead2, "http"),
+          expectedCode);
     });
   });
 
@@ -362,7 +390,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     test('POST 1', () {
       const expectedCode = r"""#[actix_rt::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let url = "https://api.foss42.com/case/lower";
+    let url = "https://api.apidash.dev/case/lower";
     let client = awc::Client::default();
 
     let payload = r#"{
@@ -385,17 +413,24 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 """;
       expect(
-          rustActixCodeGen.getCode(requestModelPost1, "https"), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.rustActix, requestModelPost1, "https"),
+          expectedCode);
     });
 
     test('POST 2', () {
       const expectedCode = r"""#[actix_rt::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let url = "https://api.foss42.com/case/lower";
+    let url = "https://api.apidash.dev/case/lower";
     let client = awc::Client::default();
 
     let payload = serde_json::json!({
-"text": "I LOVE Flutter"
+"text": "I LOVE Flutter",
+"flag": null,
+"male": true,
+"female": false,
+"no": 1.2,
+"arr": ["null", "true", "false", null]
 });
 
     let mut response = client
@@ -413,13 +448,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 """;
       expect(
-          rustActixCodeGen.getCode(requestModelPost2, "https"), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.rustActix, requestModelPost2, "https"),
+          expectedCode);
     });
 
     test('POST 3', () {
       const expectedCode = r"""#[actix_rt::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let url = "https://api.foss42.com/case/lower";
+    let url = "https://api.apidash.dev/case/lower";
     let client = awc::Client::default();
 
     let payload = serde_json::json!({
@@ -442,7 +479,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 """;
       expect(
-          rustActixCodeGen.getCode(requestModelPost3, "https"), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.rustActix, requestModelPost3, "https"),
+          expectedCode);
     });
   });
 
@@ -472,7 +511,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 """;
-      expect(rustActixCodeGen.getCode(requestModelPut1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.rustActix, requestModelPut1, "https"),
+          expectedCode);
     });
   });
 
@@ -503,7 +544,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 """;
       expect(
-          rustActixCodeGen.getCode(requestModelPatch1, "https"), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.rustActix, requestModelPatch1, "https"),
+          expectedCode);
     });
   });
 
@@ -529,7 +572,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 """;
       expect(
-          rustActixCodeGen.getCode(requestModelDelete1, "https"), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.rustActix, requestModelDelete1, "https"),
+          expectedCode);
     });
 
     test('DELETE 2', () {
@@ -558,7 +603,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 """;
       expect(
-          rustActixCodeGen.getCode(requestModelDelete2, "https"), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.rustActix, requestModelDelete2, "https"),
+          expectedCode);
     });
   });
 }
