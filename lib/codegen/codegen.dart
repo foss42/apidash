@@ -3,10 +3,13 @@ import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart' show getNewUuid;
 import 'dart/http.dart';
 import 'dart/dio.dart';
+import 'go/http.dart';
 import 'kotlin/okhttp.dart';
 import 'python/http_client.dart';
 import 'python/requests.dart';
+import 'rust/actix.dart';
 import 'rust/reqwest.dart';
+import 'rust/ureq.dart';
 import 'js/axios.dart';
 import 'js/fetch.dart';
 import 'others/har.dart';
@@ -53,8 +56,14 @@ class Codegen {
             .getCode(rM, boundary: boundary ?? getNewUuid());
       case CodegenLanguage.pythonRequests:
         return PythonRequestsCodeGen().getCode(rM, boundary: boundary);
+      case CodegenLanguage.rustActix:
+        return RustActixCodeGen().getCode(rM, boundary: boundary); 
       case CodegenLanguage.rustReqwest:
         return RustReqwestCodeGen().getCode(rM);
+      case CodegenLanguage.rustUreq:
+        return RustUreqCodeGen().getCode(rM, boundary: boundary); 
+      case CodegenLanguage.goHttp:
+        return GoHttpCodeGen().getCode(rM);
     }
   }
 }

@@ -266,6 +266,7 @@ enum CodegenLanguage {
   har("HAR", "json", "har"),
   dartHttp("Dart (http)", "dart", "dart"),
   dartDio("Dart (dio)", "dart", "dart"),
+  goHttp("Go (http)", "go", "go"),
   jsAxios("JavaScript (axios)", "javascript", "js"),
   jsFetch("JavaScript (fetch)", "javascript", "js"),
   nodejsAxios("node.js (axios)", "javascript", "js"),
@@ -273,7 +274,9 @@ enum CodegenLanguage {
   kotlinOkHttp("Kotlin (okhttp3)", "java", "kt"),
   pythonHttpClient("Python (http.client)", "python", "py"),
   pythonRequests("Python (requests)", "python", "py"),
-  rustReqwest("Rust (reqwest)", "rust", "rs");
+  rustActix("Rust (Actix Client)", "rust", "rs"),
+  rustReqwest("Rust (reqwest)", "rust", "rs"),
+  rustUreq("Rust (ureq)", "rust", "rs");
 
   const CodegenLanguage(this.label, this.codeHighlightLang, this.ext);
   final String label;
