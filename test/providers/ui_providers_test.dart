@@ -91,7 +91,7 @@ void main() {
     });
 
     testWidgets(
-        'Navigation Rail index should update when icon button is pressed',
+        'navRailIndexStateProvider should update when icon button is pressed',
         (tester) async {
       await tester.pumpWidget(
         const ProviderScope(
@@ -111,7 +111,8 @@ void main() {
       expect(container.read(navRailIndexStateProvider), 1);
     });
 
-    testWidgets('Navigation Rail index should persist across widget rebuilds',
+    testWidgets(
+        'navRailIndexStateProvider should persist across widget rebuilds',
         (tester) async {
       // Pump the initial widget tree
       await tester.pumpWidget(
@@ -146,7 +147,8 @@ void main() {
       expect(find.byType(HomePage), findsNothing);
     });
 
-    testWidgets('UI should update correctly when Navigation Rail index changes',
+    testWidgets(
+        'UI should update correctly when navRailIndexStateProvider changes',
         (tester) async {
       await tester.pumpWidget(
         const ProviderScope(
@@ -177,6 +179,39 @@ void main() {
       expect(find.byType(SettingsPage), findsOneWidget);
       // Verify that the selected icon is the filled version (selectedIcon)
       expect(find.byIcon(Icons.settings), findsOneWidget);
+    });
+
+    testWidgets(
+        'navRailIndexStateProvider should be disposed when Dashboard is removed',
+        (tester) async {
+      await tester.pumpWidget(
+        const ProviderScope(
+          child: MaterialApp(
+            home: Dashboard(),
+          ),
+        ),
+      );
+
+      // Grab the Dashboard widget and its ProviderContainer
+      final dashboard = tester.element(find.byType(Dashboard));
+      final container = ProviderScope.containerOf(dashboard);
+
+      // Pumping a different widget to remove the Dashboard from the widget tree
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(body: Text('Different Widget')),
+        ),
+      );
+
+      // Verify that the ProviderContainer has been disposed
+      // by trying to read from disposed container
+      bool isDisposed = false;
+      try {
+        container.read(navRailIndexStateProvider);
+      } catch (e) {
+        isDisposed = true;
+      }
+      expect(isDisposed, true);
     });
   });
 }
