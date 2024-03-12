@@ -518,6 +518,36 @@ fun main() {
           expectedCode);
     });
 
+    test('POST 4', () {
+      const expectedCode = r'''import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.MultipartBody
+
+fun main() {
+    val client = OkHttpClient()
+
+    val url = "https://api.apidash.dev/io/form"
+    val body = MultipartBody.Builder().setType(MultipartBody.FORM).addFormDataPart("text","API")
+          .addFormDataPart("sep","|")
+          .addFormDataPart("times","3")
+          .build()
+    val request = Request.Builder()
+        .url(url)
+        .post(body)
+        .build()
+
+    val response = client.newCall(request).execute()
+
+    println(response.code)
+    println(response.body?.string())
+}
+''';
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.kotlinOkHttp, requestModelPost4, "https"),
+          expectedCode);
+    });
+
     test('POST 5', () {
       const expectedCode = r'''import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -546,6 +576,136 @@ fun main() {
       expect(
           codeGen.getCode(
               CodegenLanguage.kotlinOkHttp, requestModelPost5, "https"),
+          expectedCode);
+    });
+
+    test('POST 6', () {
+      const expectedCode = r'''import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.MultipartBody
+
+fun main() {
+    val client = OkHttpClient()
+
+    val url = "https://api.apidash.dev/io/img"
+    val body = MultipartBody.Builder().setType(MultipartBody.FORM).addFormDataPart("token","xyz")
+          
+          .addFormDataPart("imfile",null,File("/Documents/up/1.png").asRequestBody("application/octet-stream".toMediaType()))
+          .build()
+    val request = Request.Builder()
+        .url(url)
+        .post(body)
+        .build()
+
+    val response = client.newCall(request).execute()
+
+    println(response.code)
+    println(response.body?.string())
+}
+''';
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.kotlinOkHttp, requestModelPost6, "https"),
+          expectedCode);
+    });
+
+    test('POST 7', () {
+      const expectedCode = r'''import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.MultipartBody
+
+fun main() {
+    val client = OkHttpClient()
+
+    val url = "https://api.apidash.dev/io/img"
+    val body = MultipartBody.Builder().setType(MultipartBody.FORM).addFormDataPart("token","xyz")
+          
+          .addFormDataPart("imfile",null,File("/Documents/up/1.png").asRequestBody("application/octet-stream".toMediaType()))
+          .build()
+    val request = Request.Builder()
+        .url(url)
+        .post(body)
+        .build()
+
+    val response = client.newCall(request).execute()
+
+    println(response.code)
+    println(response.body?.string())
+}
+''';
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.kotlinOkHttp, requestModelPost7, "https"),
+          expectedCode);
+    });
+
+    test('POST 8', () {
+      const expectedCode = r'''import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.HttpUrl.Companion.toHttpUrl
+import okhttp3.MultipartBody
+
+fun main() {
+    val client = OkHttpClient()
+
+    val url = "https://api.apidash.dev/io/form".toHttpUrl().newBuilder()
+        .addQueryParameter("size", "2")
+        .addQueryParameter("len", "3")
+        .build()
+    val body = MultipartBody.Builder().setType(MultipartBody.FORM).addFormDataPart("text","API")
+          .addFormDataPart("sep","|")
+          .addFormDataPart("times","3")
+          .build()
+    val request = Request.Builder()
+        .url(url)
+        .post(body)
+        .build()
+
+    val response = client.newCall(request).execute()
+
+    println(response.code)
+    println(response.body?.string())
+}
+''';
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.kotlinOkHttp, requestModelPost8, "https"),
+          expectedCode);
+    });
+
+    test('POST 9', () {
+      const expectedCode = r'''import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.HttpUrl.Companion.toHttpUrl
+import okhttp3.MultipartBody
+
+fun main() {
+    val client = OkHttpClient()
+
+    val url = "https://api.apidash.dev/io/img".toHttpUrl().newBuilder()
+        .addQueryParameter("size", "2")
+        .addQueryParameter("len", "3")
+        .build()
+    val body = MultipartBody.Builder().setType(MultipartBody.FORM).addFormDataPart("token","xyz")
+          
+          .addFormDataPart("imfile",null,File("/Documents/up/1.png").asRequestBody("application/octet-stream".toMediaType()))
+          .build()
+    val request = Request.Builder()
+        .url(url)
+        .addHeader("User-Agent", "Test Agent")
+        .addHeader("Keep-Alive", "true")
+        .post(body)
+        .build()
+
+    val response = client.newCall(request).execute()
+
+    println(response.code)
+    println(response.body?.string())
+}
+''';
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.kotlinOkHttp, requestModelPost9, "https"),
           expectedCode);
     });
   });
