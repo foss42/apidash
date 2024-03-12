@@ -1,15 +1,16 @@
-import 'package:apidash/codegen/js/fetch.dart';
-import '../request_models.dart';
+import 'package:apidash/codegen/codegen.dart';
+import 'package:apidash/consts.dart';
 import 'package:test/test.dart';
+import '../request_models.dart';
 
 void main() {
-  final fetchCodeGen = FetchCodeGen(isNodeJs: true);
+  final codeGen = Codegen();
 
   group('GET Request', () {
     test('GET 1', () {
       const expectedCode = r"""import fetch from 'node-fetch';
 
-let url = 'https://api.foss42.com';
+let url = 'https://api.apidash.dev';
 
 let options = {
   method: 'GET'
@@ -30,13 +31,16 @@ fetch(url, options)
         console.error('error:' + err);
     });
 """;
-      expect(fetchCodeGen.getCode(requestModelGet1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.nodejsFetch, requestModelGet1, "https"),
+          expectedCode);
     });
 
     test('GET 2', () {
       const expectedCode = r"""import fetch from 'node-fetch';
 
-let url = 'https://api.foss42.com/country/data?code=US';
+let url = 'https://api.apidash.dev/country/data?code=US';
 
 let options = {
   method: 'GET'
@@ -57,13 +61,16 @@ fetch(url, options)
         console.error('error:' + err);
     });
 """;
-      expect(fetchCodeGen.getCode(requestModelGet2, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.nodejsFetch, requestModelGet2, "https"),
+          expectedCode);
     });
 
     test('GET 3', () {
       const expectedCode = r"""import fetch from 'node-fetch';
 
-let url = 'https://api.foss42.com/country/data?code=IND';
+let url = 'https://api.apidash.dev/country/data?code=IND';
 
 let options = {
   method: 'GET'
@@ -84,13 +91,16 @@ fetch(url, options)
         console.error('error:' + err);
     });
 """;
-      expect(fetchCodeGen.getCode(requestModelGet3, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.nodejsFetch, requestModelGet3, "https"),
+          expectedCode);
     });
 
     test('GET 4', () {
       const expectedCode = r"""import fetch from 'node-fetch';
 
-let url = 'https://api.foss42.com/humanize/social?num=8700000&digits=3&system=SS&add_space=true&trailing_zeros=true';
+let url = 'https://api.apidash.dev/humanize/social?num=8700000&digits=3&system=SS&add_space=true&trailing_zeros=true';
 
 let options = {
   method: 'GET'
@@ -111,7 +121,10 @@ fetch(url, options)
         console.error('error:' + err);
     });
 """;
-      expect(fetchCodeGen.getCode(requestModelGet4, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.nodejsFetch, requestModelGet4, "https"),
+          expectedCode);
     });
 
     test('GET 5', () {
@@ -141,7 +154,10 @@ fetch(url, options)
         console.error('error:' + err);
     });
 """;
-      expect(fetchCodeGen.getCode(requestModelGet5, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.nodejsFetch, requestModelGet5, "https"),
+          expectedCode);
     });
 
     test('GET 6', () {
@@ -171,13 +187,16 @@ fetch(url, options)
         console.error('error:' + err);
     });
 """;
-      expect(fetchCodeGen.getCode(requestModelGet6, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.nodejsFetch, requestModelGet6, "https"),
+          expectedCode);
     });
 
     test('GET 7', () {
       const expectedCode = r"""import fetch from 'node-fetch';
 
-let url = 'https://api.foss42.com';
+let url = 'https://api.apidash.dev';
 
 let options = {
   method: 'GET'
@@ -198,7 +217,10 @@ fetch(url, options)
         console.error('error:' + err);
     });
 """;
-      expect(fetchCodeGen.getCode(requestModelGet7, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.nodejsFetch, requestModelGet7, "https"),
+          expectedCode);
     });
 
     test('GET 8', () {
@@ -228,13 +250,16 @@ fetch(url, options)
         console.error('error:' + err);
     });
 """;
-      expect(fetchCodeGen.getCode(requestModelGet8, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.nodejsFetch, requestModelGet8, "https"),
+          expectedCode);
     });
 
     test('GET 9', () {
       const expectedCode = r"""import fetch from 'node-fetch';
 
-let url = 'https://api.foss42.com/humanize/social?num=8700000&add_space=true';
+let url = 'https://api.apidash.dev/humanize/social?num=8700000&add_space=true';
 
 let options = {
   method: 'GET'
@@ -255,13 +280,16 @@ fetch(url, options)
         console.error('error:' + err);
     });
 """;
-      expect(fetchCodeGen.getCode(requestModelGet9, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.nodejsFetch, requestModelGet9, "https"),
+          expectedCode);
     });
 
     test('GET 10', () {
       const expectedCode = r"""import fetch from 'node-fetch';
 
-let url = 'https://api.foss42.com/humanize/social';
+let url = 'https://api.apidash.dev/humanize/social';
 
 let options = {
   method: 'GET',
@@ -286,7 +314,8 @@ fetch(url, options)
     });
 """;
       expect(
-          fetchCodeGen.getCode(
+          codeGen.getCode(
+            CodegenLanguage.nodejsFetch,
             requestModelGet10,
             "https",
           ),
@@ -296,7 +325,7 @@ fetch(url, options)
     test('GET 11', () {
       const expectedCode = r"""import fetch from 'node-fetch';
 
-let url = 'https://api.foss42.com/humanize/social?num=8700000&digits=3';
+let url = 'https://api.apidash.dev/humanize/social?num=8700000&digits=3';
 
 let options = {
   method: 'GET',
@@ -320,13 +349,16 @@ fetch(url, options)
         console.error('error:' + err);
     });
 """;
-      expect(fetchCodeGen.getCode(requestModelGet11, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.nodejsFetch, requestModelGet11, "https"),
+          expectedCode);
     });
 
     test('GET 12', () {
       const expectedCode = r"""import fetch from 'node-fetch';
 
-let url = 'https://api.foss42.com/humanize/social';
+let url = 'https://api.apidash.dev/humanize/social';
 
 let options = {
   method: 'GET'
@@ -347,7 +379,10 @@ fetch(url, options)
         console.error('error:' + err);
     });
 """;
-      expect(fetchCodeGen.getCode(requestModelGet12, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.nodejsFetch, requestModelGet12, "https"),
+          expectedCode);
     });
   });
 
@@ -355,7 +390,7 @@ fetch(url, options)
     test('HEAD 1', () {
       const expectedCode = r"""import fetch from 'node-fetch';
 
-let url = 'https://api.foss42.com';
+let url = 'https://api.apidash.dev';
 
 let options = {
   method: 'HEAD'
@@ -376,13 +411,16 @@ fetch(url, options)
         console.error('error:' + err);
     });
 """;
-      expect(fetchCodeGen.getCode(requestModelHead1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.nodejsFetch, requestModelHead1, "https"),
+          expectedCode);
     });
 
     test('HEAD 2', () {
       const expectedCode = r"""import fetch from 'node-fetch';
 
-let url = 'http://api.foss42.com';
+let url = 'http://api.apidash.dev';
 
 let options = {
   method: 'HEAD'
@@ -403,7 +441,10 @@ fetch(url, options)
         console.error('error:' + err);
     });
 """;
-      expect(fetchCodeGen.getCode(requestModelHead2, "http"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.nodejsFetch, requestModelHead2, "http"),
+          expectedCode);
     });
   });
 
@@ -411,7 +452,7 @@ fetch(url, options)
     test('POST 1', () {
       const expectedCode = r"""import fetch from 'node-fetch';
 
-let url = 'https://api.foss42.com/case/lower';
+let url = 'https://api.apidash.dev/case/lower';
 
 let options = {
   method: 'POST',
@@ -437,13 +478,16 @@ fetch(url, options)
         console.error('error:' + err);
     });
 """;
-      expect(fetchCodeGen.getCode(requestModelPost1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.nodejsFetch, requestModelPost1, "https"),
+          expectedCode);
     });
 
     test('POST 2', () {
       const expectedCode = r"""import fetch from 'node-fetch';
 
-let url = 'https://api.foss42.com/case/lower';
+let url = 'https://api.apidash.dev/case/lower';
 
 let options = {
   method: 'POST',
@@ -451,7 +495,7 @@ let options = {
     "Content-Type": "application/json"
   },
   body: 
-"{\n\"text\": \"I LOVE Flutter\"\n}"
+"{\n\"text\": \"I LOVE Flutter\",\n\"flag\": null,\n\"male\": true,\n\"female\": false,\n\"no\": 1.2,\n\"arr\": [\"null\", \"true\", \"false\", null]\n}"
 };
 
 let status;
@@ -469,13 +513,16 @@ fetch(url, options)
         console.error('error:' + err);
     });
 """;
-      expect(fetchCodeGen.getCode(requestModelPost2, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.nodejsFetch, requestModelPost2, "https"),
+          expectedCode);
     });
 
     test('POST 3', () {
       const expectedCode = r"""import fetch from 'node-fetch';
 
-let url = 'https://api.foss42.com/case/lower';
+let url = 'https://api.apidash.dev/case/lower';
 
 let options = {
   method: 'POST',
@@ -502,7 +549,10 @@ fetch(url, options)
         console.error('error:' + err);
     });
 """;
-      expect(fetchCodeGen.getCode(requestModelPost3, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.nodejsFetch, requestModelPost3, "https"),
+          expectedCode);
     });
   });
 
@@ -536,7 +586,10 @@ fetch(url, options)
         console.error('error:' + err);
     });
 """;
-      expect(fetchCodeGen.getCode(requestModelPut1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.nodejsFetch, requestModelPut1, "https"),
+          expectedCode);
     });
   });
 
@@ -570,7 +623,10 @@ fetch(url, options)
         console.error('error:' + err);
     });
 """;
-      expect(fetchCodeGen.getCode(requestModelPatch1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.nodejsFetch, requestModelPatch1, "https"),
+          expectedCode);
     });
   });
 
@@ -599,7 +655,10 @@ fetch(url, options)
         console.error('error:' + err);
     });
 """;
-      expect(fetchCodeGen.getCode(requestModelDelete1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.nodejsFetch, requestModelDelete1, "https"),
+          expectedCode);
     });
 
     test('DELETE 2', () {
@@ -631,7 +690,10 @@ fetch(url, options)
         console.error('error:' + err);
     });
 """;
-      expect(fetchCodeGen.getCode(requestModelDelete2, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.nodejsFetch, requestModelDelete2, "https"),
+          expectedCode);
     });
   });
 }

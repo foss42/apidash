@@ -1,6 +1,10 @@
+// http://www.softwareishard.com/blog/har-12-spec/
+// https://github.com/ahmadnassri/har-spec/blob/master/versions/1.2.md
+
 import 'dart:convert';
 import 'package:apidash/consts.dart';
-import 'package:apidash/utils/utils.dart' show getValidRequestUri;
+import 'package:apidash/utils/utils.dart'
+    show getValidRequestUri, getNewUuid, getFilenameFromPath;
 import 'package:apidash/models/models.dart' show RequestModel;
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -75,6 +79,7 @@ Map<String, dynamic> requestModelToHARJsonRequest(
   defaultUriScheme = kDefaultUriScheme,
   bool exportMode = false,
   bool useEnabled = false,
+  String? boundary,
 }) {
   Map<String, dynamic> json = {};
   bool hasBody = false;
@@ -110,19 +115,37 @@ Map<String, dynamic> requestModelToHARJsonRequest(
       }
     }
 
-    var method = requestModel.method;
-    var requestBody = requestModel.requestBody;
-    if (kMethodsWithBody.contains(method) && requestBody != null) {
-      var contentLength = utf8.encode(requestBody).length;
-      if (contentLength > 0) {
-        hasBody = true;
-        json["postData"] = {};
-        json["postData"]["mimeType"] =
-            requestModel.requestBodyContentType.header;
-        json["postData"]["text"] = requestBody;
-        if (exportMode) {
-          json["postData"]["comment"] = "";
+    if (requestModel.hasJsonData || requestModel.hasTextData) {
+      hasBody = true;
+      json["postData"] = {};
+      json["postData"]["mimeType"] = requestModel.requestBodyContentType.header;
+      json["postData"]["text"] = requestModel.requestBody;
+      if (exportMode) {
+        json["postData"]["comment"] = "";
+      }
+    }
+
+    if (requestModel.hasFormData) {
+      boundary = boundary ?? getNewUuid();
+      hasBody = true;
+      json["postData"] = {};
+      json["postData"]["mimeType"] =
+          "${requestModel.requestBodyContentType.header}; boundary=$boundary";
+      json["postData"]["params"] = [];
+      for (var item in requestModel.formDataList) {
+        Map<String, String> d = exportMode ? {"comment": ""} : {};
+        if (item.type == FormDataType.text) {
+          d["name"] = item.name;
+          d["value"] = item.value;
         }
+        if (item.type == FormDataType.file) {
+          d["name"] = item.name;
+          d["fileName"] = getFilenameFromPath(item.value);
+        }
+        json["postData"]["params"].add(d);
+      }
+      if (exportMode) {
+        json["postData"]["comment"] = "";
       }
     }
 
@@ -135,8 +158,8 @@ Map<String, dynamic> requestModelToHARJsonRequest(
       if (headers.isNotEmpty || hasBody) {
         if (hasBody && !requestModel.hasContentTypeHeader) {
           var m = {
-            "name": "Content-Type",
-            "value": requestModel.requestBodyContentType.header
+            "name": kHeaderContentType,
+            "value": json["postData"]["mimeType"]
           };
           if (exportMode) {
             m["comment"] = "";
@@ -152,14 +175,12 @@ Map<String, dynamic> requestModelToHARJsonRequest(
         }
       }
     }
-    if (requestModel.isFormDataRequest) {
-      json["formData"] = requestModel.formDataMapList;
-    }
     if (exportMode) {
       json["comment"] = "";
       json["cookies"] = [];
       json["headersSize"] = -1;
-      json["bodySize"] = hasBody ? utf8.encode(requestBody!).length : 0;
+      json["bodySize"] =
+          hasBody ? utf8.encode(json["postData"]["text"] ?? "").length : 0;
     }
   }
   return json;

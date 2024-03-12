@@ -1,6 +1,7 @@
 import 'package:apidash/codegen/rust/ureq.dart';
 import 'package:apidash/models/models.dart' show RequestModel;
 import 'package:apidash/consts.dart';
+import 'package:apidash/utils/utils.dart' show getNewUuid;
 import 'dart/http.dart';
 import 'dart/dio.dart';
 import 'kotlin/okhttp.dart';
@@ -15,36 +16,45 @@ class Codegen {
   String? getCode(
     CodegenLanguage codegenLanguage,
     RequestModel requestModel,
-    String defaultUriScheme,
-  ) {
+    String defaultUriScheme, {
+    String? boundary,
+  }) {
+    String url = requestModel.url;
+
+    if (url.isEmpty) {
+      url = kDefaultUri;
+    }
+    if (!url.contains("://") && url.isNotEmpty) {
+      url = "$defaultUriScheme://$url";
+    }
+    var rM = requestModel.copyWith(url: url);
+
     switch (codegenLanguage) {
       case CodegenLanguage.curl:
-        return cURLCodeGen().getCode(requestModel, defaultUriScheme);
+        return cURLCodeGen().getCode(rM);
       case CodegenLanguage.har:
-        return HARCodeGen().getCode(requestModel, defaultUriScheme);
+        return HARCodeGen().getCode(rM, defaultUriScheme, boundary: boundary);
       case CodegenLanguage.dartHttp:
-        return DartHttpCodeGen().getCode(requestModel, defaultUriScheme);
+        return DartHttpCodeGen().getCode(rM);
       case CodegenLanguage.dartDio:
-        return DartDioCodeGen().getCode(requestModel, defaultUriScheme);
+        return DartDioCodeGen().getCode(rM);
       case CodegenLanguage.jsAxios:
-        return AxiosCodeGen().getCode(requestModel, defaultUriScheme);
+        return AxiosCodeGen().getCode(rM);
       case CodegenLanguage.jsFetch:
-        return FetchCodeGen().getCode(requestModel, defaultUriScheme);
+        return FetchCodeGen().getCode(rM);
       case CodegenLanguage.nodejsAxios:
-        return AxiosCodeGen(isNodeJs: true)
-            .getCode(requestModel, defaultUriScheme);
+        return AxiosCodeGen(isNodeJs: true).getCode(rM);
       case CodegenLanguage.nodejsFetch:
-        return FetchCodeGen(isNodeJs: true)
-            .getCode(requestModel, defaultUriScheme);
+        return FetchCodeGen(isNodeJs: true).getCode(rM);
       case CodegenLanguage.kotlinOkHttp:
-        return KotlinOkHttpCodeGen().getCode(requestModel, defaultUriScheme);
+        return KotlinOkHttpCodeGen().getCode(rM);
       case CodegenLanguage.pythonHttpClient:
         return PythonHttpClientCodeGen()
-            .getCode(requestModel, defaultUriScheme);
+            .getCode(rM, boundary: boundary ?? getNewUuid());
       case CodegenLanguage.pythonRequests:
-        return PythonRequestsCodeGen().getCode(requestModel, defaultUriScheme);
+        return PythonRequestsCodeGen().getCode(rM, boundary: boundary);
       case CodegenLanguage.rustUreq:
-        return RustUreqCodeGen().getCode(requestModel, defaultUriScheme);
+        return RustUreqCodeGen().getCode(rM, boundary: boundary);
     }
   }
 }

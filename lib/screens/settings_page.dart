@@ -61,11 +61,11 @@ class SettingsPage extends ConsumerWidget {
                 },
               ),
               ListTile(
-                contentPadding: EdgeInsets.zero,
+                contentPadding: kPb10,
                 hoverColor: kColorTransparent,
                 title: const Text('Default URI Scheme'),
                 subtitle: Text(
-                    'api.foss42.com → ${settings.defaultUriScheme}://api.foss42.com'),
+                    '$kDefaultUri → ${settings.defaultUriScheme}://$kDefaultUri'),
                 trailing: DropdownMenu(
                     onSelected: (value) {
                       ref
@@ -82,7 +82,7 @@ class SettingsPage extends ConsumerWidget {
                     }).toList()),
               ),
               ListTile(
-                contentPadding: EdgeInsets.zero,
+                contentPadding: kPb10,
                 hoverColor: kColorTransparent,
                 title: const Text('Default Code Generator'),
                 trailing: DropdownMenu(

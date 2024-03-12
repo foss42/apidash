@@ -1,14 +1,15 @@
-import 'package:apidash/codegen/rust/ureq.dart';
+import 'package:apidash/codegen/codegen.dart';
+import 'package:apidash/consts.dart';
 import 'package:test/test.dart';
 import '../request_models.dart';
 
 void main() {
-  final rustUreqCodeGen = RustUreqCodeGen();
+  final codeGen = Codegen();
 
   group('GET Request', () {
     test('GET 1', () {
       const expectedCode = r"""fn main() -> Result<(), ureq::Error> {
-    let url = "https://api.foss42.com";
+    let url = "https://api.apidash.dev";
     let response = ureq::get(url)
         .call()?;
 
@@ -18,12 +19,14 @@ void main() {
     Ok(())
 }
 """;
-      expect(rustUreqCodeGen.getCode(requestModelGet1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.rustUreq, requestModelGet1, "https"),
+          expectedCode);
     });
 
     test('GET 2', () {
       const expectedCode = r"""fn main() -> Result<(), ureq::Error> {
-    let url = "https://api.foss42.com/country/data";
+    let url = "https://api.apidash.dev/country/data";
     let response = ureq::get(url)
         .query("code", "US")
         .call()?;
@@ -34,12 +37,14 @@ void main() {
     Ok(())
 }
 """;
-      expect(rustUreqCodeGen.getCode(requestModelGet2, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.rustUreq, requestModelGet2, "https"),
+          expectedCode);
     });
 
     test('GET 3', () {
       const expectedCode = r"""fn main() -> Result<(), ureq::Error> {
-    let url = "https://api.foss42.com/country/data";
+    let url = "https://api.apidash.dev/country/data";
     let response = ureq::get(url)
         .query("code", "IND")
         .call()?;
@@ -50,12 +55,14 @@ void main() {
     Ok(())
 }
 """;
-      expect(rustUreqCodeGen.getCode(requestModelGet3, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.rustUreq, requestModelGet3, "https"),
+          expectedCode);
     });
 
     test('GET 4', () {
       const expectedCode = r"""fn main() -> Result<(), ureq::Error> {
-    let url = "https://api.foss42.com/humanize/social";
+    let url = "https://api.apidash.dev/humanize/social";
     let response = ureq::get(url)
         .query("num", "8700000")
         .query("digits", "3")
@@ -70,7 +77,9 @@ void main() {
     Ok(())
 }
 """;
-      expect(rustUreqCodeGen.getCode(requestModelGet4, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.rustUreq, requestModelGet4, "https"),
+          expectedCode);
     });
 
     test('GET 5', () {
@@ -86,7 +95,9 @@ void main() {
     Ok(())
 }
 """;
-      expect(rustUreqCodeGen.getCode(requestModelGet5, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.rustUreq, requestModelGet5, "https"),
+          expectedCode);
     });
 
     test('GET 6', () {
@@ -103,12 +114,14 @@ void main() {
     Ok(())
 }
 """;
-      expect(rustUreqCodeGen.getCode(requestModelGet6, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.rustUreq, requestModelGet6, "https"),
+          expectedCode);
     });
 
     test('GET 7', () {
       const expectedCode = r"""fn main() -> Result<(), ureq::Error> {
-    let url = "https://api.foss42.com";
+    let url = "https://api.apidash.dev";
     let response = ureq::get(url)
         .call()?;
 
@@ -118,7 +131,9 @@ void main() {
     Ok(())
 }
 """;
-      expect(rustUreqCodeGen.getCode(requestModelGet7, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.rustUreq, requestModelGet7, "https"),
+          expectedCode);
     });
 
     test('GET 8', () {
@@ -135,12 +150,14 @@ void main() {
     Ok(())
 }
 """;
-      expect(rustUreqCodeGen.getCode(requestModelGet8, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.rustUreq, requestModelGet8, "https"),
+          expectedCode);
     });
 
     test('GET 9', () {
       const expectedCode = r"""fn main() -> Result<(), ureq::Error> {
-    let url = "https://api.foss42.com/humanize/social";
+    let url = "https://api.apidash.dev/humanize/social";
     let response = ureq::get(url)
         .query("num", "8700000")
         .query("add_space", "true")
@@ -152,12 +169,14 @@ void main() {
     Ok(())
 }
 """;
-      expect(rustUreqCodeGen.getCode(requestModelGet9, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.rustUreq, requestModelGet9, "https"),
+          expectedCode);
     });
 
     test('GET 10', () {
       const expectedCode = r"""fn main() -> Result<(), ureq::Error> {
-    let url = "https://api.foss42.com/humanize/social";
+    let url = "https://api.apidash.dev/humanize/social";
     let response = ureq::get(url)
         .set("User-Agent", "Test Agent")
         .call()?;
@@ -169,7 +188,8 @@ void main() {
 }
 """;
       expect(
-          rustUreqCodeGen.getCode(
+          codeGen.getCode(
+            CodegenLanguage.rustUreq,
             requestModelGet10,
             "https",
           ),
@@ -178,7 +198,7 @@ void main() {
 
     test('GET 11', () {
       const expectedCode = r"""fn main() -> Result<(), ureq::Error> {
-    let url = "https://api.foss42.com/humanize/social";
+    let url = "https://api.apidash.dev/humanize/social";
     let response = ureq::get(url)
         .query("num", "8700000")
         .query("digits", "3")
@@ -191,12 +211,14 @@ void main() {
     Ok(())
 }
 """;
-      expect(rustUreqCodeGen.getCode(requestModelGet11, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.rustUreq, requestModelGet11, "https"),
+          expectedCode);
     });
 
     test('GET 12', () {
       const expectedCode = r"""fn main() -> Result<(), ureq::Error> {
-    let url = "https://api.foss42.com/humanize/social";
+    let url = "https://api.apidash.dev/humanize/social";
     let response = ureq::get(url)
         .call()?;
 
@@ -206,14 +228,16 @@ void main() {
     Ok(())
 }
 """;
-      expect(rustUreqCodeGen.getCode(requestModelGet12, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.rustUreq, requestModelGet12, "https"),
+          expectedCode);
     });
   });
 
   group('HEAD Request', () {
     test('HEAD 1', () {
       const expectedCode = r"""fn main() -> Result<(), ureq::Error> {
-    let url = "https://api.foss42.com";
+    let url = "https://api.apidash.dev";
     let response = ureq::head(url)
         .call()?;
 
@@ -223,12 +247,14 @@ void main() {
     Ok(())
 }
 """;
-      expect(rustUreqCodeGen.getCode(requestModelHead1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.rustUreq, requestModelHead1, "https"),
+          expectedCode);
     });
 
     test('HEAD 2', () {
       const expectedCode = r"""fn main() -> Result<(), ureq::Error> {
-    let url = "http://api.foss42.com";
+    let url = "http://api.apidash.dev";
     let response = ureq::head(url)
         .call()?;
 
@@ -238,14 +264,16 @@ void main() {
     Ok(())
 }
 """;
-      expect(rustUreqCodeGen.getCode(requestModelHead2, "http"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.rustUreq, requestModelHead2, "http"),
+          expectedCode);
     });
   });
 
   group('POST Request', () {
     test('POST 1', () {
       const expectedCode = r'''fn main() -> Result<(), ureq::Error> {
-    let url = "https://api.foss42.com/case/lower";
+    let url = "https://api.apidash.dev/case/lower";
     let payload = r#"{
 "text": "I LOVE Flutter"
 }"#;
@@ -260,14 +288,21 @@ void main() {
     Ok(())
 }
 ''';
-      expect(rustUreqCodeGen.getCode(requestModelPost1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.rustUreq, requestModelPost1, "https"),
+          expectedCode);
     });
 
     test('POST 2', () {
       const expectedCode = r'''fn main() -> Result<(), ureq::Error> {
-    let url = "https://api.foss42.com/case/lower";
+    let url = "https://api.apidash.dev/case/lower";
     let payload = ureq::json!({
-"text": "I LOVE Flutter"
+"text": "I LOVE Flutter",
+"flag": null,
+"male": true,
+"female": false,
+"no": 1.2,
+"arr": ["null", "true", "false", null]
 });
 
     let response = ureq::post(url)
@@ -279,12 +314,14 @@ void main() {
     Ok(())
 }
 ''';
-      expect(rustUreqCodeGen.getCode(requestModelPost2, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.rustUreq, requestModelPost2, "https"),
+          expectedCode);
     });
 
     test('POST 3', () {
       const expectedCode = r'''fn main() -> Result<(), ureq::Error> {
-    let url = "https://api.foss42.com/case/lower";
+    let url = "https://api.apidash.dev/case/lower";
     let payload = ureq::json!({
 "text": "I LOVE Flutter"
 });
@@ -299,7 +336,9 @@ void main() {
     Ok(())
 }
 ''';
-      expect(rustUreqCodeGen.getCode(requestModelPost3, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.rustUreq, requestModelPost3, "https"),
+          expectedCode);
     });
   });
 
@@ -321,7 +360,9 @@ void main() {
     Ok(())
 }
 ''';
-      expect(rustUreqCodeGen.getCode(requestModelPut1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.rustUreq, requestModelPut1, "https"),
+          expectedCode);
     });
   });
 
@@ -344,7 +385,9 @@ void main() {
 }
 ''';
       expect(
-          rustUreqCodeGen.getCode(requestModelPatch1, "https"), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.rustUreq, requestModelPatch1, "https"),
+          expectedCode);
     });
   });
 
@@ -362,7 +405,9 @@ void main() {
 }
 """;
       expect(
-          rustUreqCodeGen.getCode(requestModelDelete1, "https"), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.rustUreq, requestModelDelete1, "https"),
+          expectedCode);
     });
 
     test('DELETE 2', () {
@@ -383,7 +428,9 @@ void main() {
 }
 ''';
       expect(
-          rustUreqCodeGen.getCode(requestModelDelete2, "https"), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.rustUreq, requestModelDelete2, "https"),
+          expectedCode);
     });
   });
 }
