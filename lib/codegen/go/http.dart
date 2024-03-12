@@ -1,9 +1,7 @@
-import 'dart:convert';
-
+import 'package:apidash/consts.dart';
 import 'package:jinja/jinja.dart' as jj;
 import 'package:apidash/utils/utils.dart' show getValidRequestUri;
 import 'package:apidash/models/models.dart' show RequestModel;
-import 'package:apidash/consts.dart';
 
 class GoHttpCodeGen {
   final String kTemplateStart = """package main
@@ -12,10 +10,10 @@ import (
   "fmt"
   "io"
   "net/http"
-  "net/url"
-  {% if isBody %}"bytes"
-  {% if isFormDataRequest %}"mime/multipart"
-  "os"{% endif %}{% endif %}
+  "net/url"{% if hasBody %}
+  "bytes"{% if hasFormData %}
+  "mime/multipart"{% if hasFileInFormData %}
+  "os"{% endif %}{% endif %}{% endif %}
 )
 
 func main() {
@@ -24,44 +22,26 @@ func main() {
 """;
 
   String kTemplateUrl = """
-  url, err := url.Parse("{{url}}")
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
+  url, _ := url.Parse("{{url}}")
 
 """;
 
-  String kTemplateRawBody = """
-  {% if body %}body := bytes.NewBuffer([]byte(`{{body}}`)){% endif %}
-
-""";
-
-  String kTemplateJsonBody = """
-  {% if body %}body := bytes.NewBuffer([]byte(`{{body}}`)){% endif %}
+  String kTemplateBody = """
+  {% if body %}payload := bytes.NewBuffer([]byte(`{{body}}`)){% endif %}
 
 """;
 
   String kTemplateFormData = """
-  body := &bytes.Buffer{}
-  writer := multipart.NewWriter(body)
+  payload := &bytes.Buffer{}
+  writer := multipart.NewWriter(payload){% if hasFileInFormData %}
   var (
     file *os.File
     part io.Writer
-  )
+  ){% endif %}
   {% for field in fields %}
-  {% if field.type == "file" %}file, err = os.Open("{{field.value}}")
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
+  {% if field.type == "file" %}file, _ = os.Open("{{field.value}}")
   defer file.Close()
-
-  part, err = writer.CreateFormFile("{{field.name}}", "{{field.value}}")
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
+  part, _ = writer.CreateFormFile("{{field.name}}", "{{field.value}}")
   io.Copy(part, file)
   {% else %}writer.WriteField("{{field.name}}", "{{field.value}}"){% endif %}{% endfor %}
   writer.Close()
@@ -71,43 +51,40 @@ func main() {
 
   String kTemplateHeader = """
 {% if headers %}{% for header, value in headers %}
-  req.Header.Set("{{header}}", "{{value}}")
-{% endfor %}
+  req.Header.Set("{{header}}", "{{value}}"){% endfor %}
 {% endif %}
+""";
+
+  String kStringFormDataHeader = """
+  req.Header.Set("Content-Type", writer.FormDataContentType())
 """;
 
   String kTemplateQueryParam = """
   query := url.Query()
   {% for key, value in params %}
-  query.Set("{{key}}", "{{value}}")
-  {% endfor %}
+  query.Set("{{key}}", "{{value}}"){% endfor %}
+
   url.RawQuery = query.Encode()
 
 """;
 
   String kTemplateRequest = """
-  req, err := http.NewRequest("{{method}}", url.String(), {% if hasBody %}body{% else %}nil{% endif %})
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
+  req, _ := http.NewRequest("{{method}}", url.String(), {% if hasBody %}payload{% else %}nil{% endif %})
 
 """;
 
   final String kTemplateEnd = """
-  resp, err := client.Do(req)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  defer resp.Body.Close()
 
-  res, err := io.ReadAll(resp.Body)
+  response, err := client.Do(req)
   if err != nil {
     fmt.Println(err)
     return
   }
-  fmt.Println(string(res))
+  defer response.Body.Close()
+
+  fmt.Println("Status Code:", response.StatusCode)
+  body, _ := io.ReadAll(response.Body)
+  fmt.Println("Response body:", string(body))
 }""";
 
   String? getCode(
@@ -122,9 +99,9 @@ func main() {
 
       var templateStart = jj.Template(kTemplateStart);
       result += templateStart.render({
-        "isBody": kMethodsWithBody.contains(requestModel.method) &&
-            requestBody != null,
-        "isFormDataRequest": requestModel.hasFormData,
+        "hasBody": requestModel.hasData,
+        "hasFormData": requestModel.hasFormData,
+        "hasFileInFormData": requestModel.hasFileInFormData,
       });
 
       var templateUrl = jj.Template(kTemplateUrl);
@@ -138,26 +115,17 @@ func main() {
       Uri? uri = rec.$1;
 
       if (uri != null) {
-        var method = requestModel.method.name.toUpperCase();
-        if (kMethodsWithBody.contains(requestModel.method) &&
-            requestBody != null) {
-          var contentLength = utf8.encode(requestBody).length;
-          if (contentLength > 0) {
-            hasBody = true;
-          }
-          if (requestModel.requestBodyContentType == ContentType.text) {
-            var templateRawBody = jj.Template(kTemplateRawBody);
-            result += templateRawBody.render({"body": requestBody});
-          } else if (requestModel.requestBodyContentType == ContentType.json) {
-            var templateJsonBody = jj.Template(kTemplateJsonBody);
-            result += templateJsonBody.render({"body": requestBody});
-          } else if (requestModel.hasFormData) {
-            hasBody = true;
-            var templateFormData = jj.Template(kTemplateFormData);
-            result += templateFormData.render({
-              "fields": requestModel.formDataMapList,
-            });
-          }
+        if (requestModel.hasTextData || requestModel.hasJsonData) {
+          hasBody = true;
+          var templateRawBody = jj.Template(kTemplateBody);
+          result += templateRawBody.render({"body": requestBody});
+        } else if (requestModel.hasFormData) {
+          hasBody = true;
+          var templateFormData = jj.Template(kTemplateFormData);
+          result += templateFormData.render({
+            "hasFileInFormData": requestModel.hasFileInFormData,
+            "fields": requestModel.formDataMapList,
+          });
         }
 
         if (uri.hasQuery) {
@@ -168,17 +136,29 @@ func main() {
           }
         }
 
+        var method = requestModel.method.name.toUpperCase();
         var templateRequest = jj.Template(kTemplateRequest);
-        result +=
-            templateRequest.render({"method": method, "hasBody": hasBody});
+        result += templateRequest.render({
+          "method": method,
+          "hasBody": hasBody,
+        });
 
         var headersList = requestModel.enabledRequestHeaders;
-        if (headersList != null) {
+        if (headersList != null || requestModel.hasData) {
           var headers = requestModel.enabledHeadersMap;
+          if (requestModel.hasJsonData || requestModel.hasTextData) {
+            headers.putIfAbsent(kHeaderContentType,
+                () => requestModel.requestBodyContentType.header);
+          }
           if (headers.isNotEmpty) {
             var templateHeader = jj.Template(kTemplateHeader);
-            result += templateHeader.render({"headers": headers});
+            result += templateHeader.render({
+              "headers": headers,
+            });
           }
+        }
+        if (requestModel.hasFormData) {
+          result += kStringFormDataHeader;
         }
 
         result += kTemplateEnd;

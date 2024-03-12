@@ -16,34 +16,23 @@ import (
   "io"
   "net/http"
   "net/url"
-  
 )
 
 func main() {
   client := &http.Client{}
-  url, err := url.Parse("https://api.apidash.dev")
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  req, err := http.NewRequest("GET", url.String(), nil)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  resp, err := client.Do(req)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  defer resp.Body.Close()
+  url, _ := url.Parse("https://api.apidash.dev")
+  req, _ := http.NewRequest("GET", url.String(), nil)
 
-  res, err := io.ReadAll(resp.Body)
+  response, err := client.Do(req)
   if err != nil {
     fmt.Println(err)
     return
   }
-  fmt.Println(string(res))
+  defer response.Body.Close()
+
+  fmt.Println("Status Code:", response.StatusCode)
+  body, _ := io.ReadAll(response.Body)
+  fmt.Println("Response body:", string(body))
 }""";
       expect(codeGen.getCode(CodegenLanguage.goHttp, requestModelGet1, "https"),
           expectedCode);
@@ -57,39 +46,28 @@ import (
   "io"
   "net/http"
   "net/url"
-  
 )
 
 func main() {
   client := &http.Client{}
-  url, err := url.Parse("https://api.apidash.dev/country/data")
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
+  url, _ := url.Parse("https://api.apidash.dev/country/data")
   query := url.Query()
   
   query.Set("code", "US")
-  
-  url.RawQuery = query.Encode()
-  req, err := http.NewRequest("GET", url.String(), nil)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  resp, err := client.Do(req)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  defer resp.Body.Close()
 
-  res, err := io.ReadAll(resp.Body)
+  url.RawQuery = query.Encode()
+  req, _ := http.NewRequest("GET", url.String(), nil)
+
+  response, err := client.Do(req)
   if err != nil {
     fmt.Println(err)
     return
   }
-  fmt.Println(string(res))
+  defer response.Body.Close()
+
+  fmt.Println("Status Code:", response.StatusCode)
+  body, _ := io.ReadAll(response.Body)
+  fmt.Println("Response body:", string(body))
 }""";
       expect(codeGen.getCode(CodegenLanguage.goHttp, requestModelGet2, "https"),
           expectedCode);
@@ -103,39 +81,28 @@ import (
   "io"
   "net/http"
   "net/url"
-  
 )
 
 func main() {
   client := &http.Client{}
-  url, err := url.Parse("https://api.apidash.dev/country/data?code=US")
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
+  url, _ := url.Parse("https://api.apidash.dev/country/data?code=US")
   query := url.Query()
   
   query.Set("code", "IND")
-  
-  url.RawQuery = query.Encode()
-  req, err := http.NewRequest("GET", url.String(), nil)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  resp, err := client.Do(req)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  defer resp.Body.Close()
 
-  res, err := io.ReadAll(resp.Body)
+  url.RawQuery = query.Encode()
+  req, _ := http.NewRequest("GET", url.String(), nil)
+
+  response, err := client.Do(req)
   if err != nil {
     fmt.Println(err)
     return
   }
-  fmt.Println(string(res))
+  defer response.Body.Close()
+
+  fmt.Println("Status Code:", response.StatusCode)
+  body, _ := io.ReadAll(response.Body)
+  fmt.Println("Response body:", string(body))
 }""";
       expect(codeGen.getCode(CodegenLanguage.goHttp, requestModelGet3, "https"),
           expectedCode);
@@ -149,47 +116,32 @@ import (
   "io"
   "net/http"
   "net/url"
-  
 )
 
 func main() {
   client := &http.Client{}
-  url, err := url.Parse("https://api.apidash.dev/humanize/social")
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
+  url, _ := url.Parse("https://api.apidash.dev/humanize/social")
   query := url.Query()
   
   query.Set("num", "8700000")
-  
   query.Set("digits", "3")
-  
   query.Set("system", "SS")
-  
   query.Set("add_space", "true")
-  
   query.Set("trailing_zeros", "true")
-  
-  url.RawQuery = query.Encode()
-  req, err := http.NewRequest("GET", url.String(), nil)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  resp, err := client.Do(req)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  defer resp.Body.Close()
 
-  res, err := io.ReadAll(resp.Body)
+  url.RawQuery = query.Encode()
+  req, _ := http.NewRequest("GET", url.String(), nil)
+
+  response, err := client.Do(req)
   if err != nil {
     fmt.Println(err)
     return
   }
-  fmt.Println(string(res))
+  defer response.Body.Close()
+
+  fmt.Println("Status Code:", response.StatusCode)
+  body, _ := io.ReadAll(response.Body)
+  fmt.Println("Response body:", string(body))
 }""";
       expect(codeGen.getCode(CodegenLanguage.goHttp, requestModelGet4, "https"),
           expectedCode);
@@ -203,37 +155,25 @@ import (
   "io"
   "net/http"
   "net/url"
-  
 )
 
 func main() {
   client := &http.Client{}
-  url, err := url.Parse("https://api.github.com/repos/foss42/apidash")
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  req, err := http.NewRequest("GET", url.String(), nil)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
+  url, _ := url.Parse("https://api.github.com/repos/foss42/apidash")
+  req, _ := http.NewRequest("GET", url.String(), nil)
 
   req.Header.Set("User-Agent", "Test Agent")
 
-  resp, err := client.Do(req)
+  response, err := client.Do(req)
   if err != nil {
     fmt.Println(err)
     return
   }
-  defer resp.Body.Close()
+  defer response.Body.Close()
 
-  res, err := io.ReadAll(resp.Body)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  fmt.Println(string(res))
+  fmt.Println("Status Code:", response.StatusCode)
+  body, _ := io.ReadAll(response.Body)
+  fmt.Println("Response body:", string(body))
 }""";
       expect(codeGen.getCode(CodegenLanguage.goHttp, requestModelGet5, "https"),
           expectedCode);
@@ -247,42 +187,30 @@ import (
   "io"
   "net/http"
   "net/url"
-  
 )
 
 func main() {
   client := &http.Client{}
-  url, err := url.Parse("https://api.github.com/repos/foss42/apidash")
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
+  url, _ := url.Parse("https://api.github.com/repos/foss42/apidash")
   query := url.Query()
   
   query.Set("raw", "true")
-  
+
   url.RawQuery = query.Encode()
-  req, err := http.NewRequest("GET", url.String(), nil)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
+  req, _ := http.NewRequest("GET", url.String(), nil)
 
   req.Header.Set("User-Agent", "Test Agent")
 
-  resp, err := client.Do(req)
+  response, err := client.Do(req)
   if err != nil {
     fmt.Println(err)
     return
   }
-  defer resp.Body.Close()
+  defer response.Body.Close()
 
-  res, err := io.ReadAll(resp.Body)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  fmt.Println(string(res))
+  fmt.Println("Status Code:", response.StatusCode)
+  body, _ := io.ReadAll(response.Body)
+  fmt.Println("Response body:", string(body))
 }""";
       expect(codeGen.getCode(CodegenLanguage.goHttp, requestModelGet6, "https"),
           expectedCode);
@@ -296,34 +224,23 @@ import (
   "io"
   "net/http"
   "net/url"
-  
 )
 
 func main() {
   client := &http.Client{}
-  url, err := url.Parse("https://api.apidash.dev")
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  req, err := http.NewRequest("GET", url.String(), nil)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  resp, err := client.Do(req)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  defer resp.Body.Close()
+  url, _ := url.Parse("https://api.apidash.dev")
+  req, _ := http.NewRequest("GET", url.String(), nil)
 
-  res, err := io.ReadAll(resp.Body)
+  response, err := client.Do(req)
   if err != nil {
     fmt.Println(err)
     return
   }
-  fmt.Println(string(res))
+  defer response.Body.Close()
+
+  fmt.Println("Status Code:", response.StatusCode)
+  body, _ := io.ReadAll(response.Body)
+  fmt.Println("Response body:", string(body))
 }""";
       expect(codeGen.getCode(CodegenLanguage.goHttp, requestModelGet7, "https"),
           expectedCode);
@@ -337,42 +254,30 @@ import (
   "io"
   "net/http"
   "net/url"
-  
 )
 
 func main() {
   client := &http.Client{}
-  url, err := url.Parse("https://api.github.com/repos/foss42/apidash")
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
+  url, _ := url.Parse("https://api.github.com/repos/foss42/apidash")
   query := url.Query()
   
   query.Set("raw", "true")
-  
+
   url.RawQuery = query.Encode()
-  req, err := http.NewRequest("GET", url.String(), nil)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
+  req, _ := http.NewRequest("GET", url.String(), nil)
 
   req.Header.Set("User-Agent", "Test Agent")
 
-  resp, err := client.Do(req)
+  response, err := client.Do(req)
   if err != nil {
     fmt.Println(err)
     return
   }
-  defer resp.Body.Close()
+  defer response.Body.Close()
 
-  res, err := io.ReadAll(resp.Body)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  fmt.Println(string(res))
+  fmt.Println("Status Code:", response.StatusCode)
+  body, _ := io.ReadAll(response.Body)
+  fmt.Println("Response body:", string(body))
 }""";
       expect(codeGen.getCode(CodegenLanguage.goHttp, requestModelGet8, "https"),
           expectedCode);
@@ -386,41 +291,29 @@ import (
   "io"
   "net/http"
   "net/url"
-  
 )
 
 func main() {
   client := &http.Client{}
-  url, err := url.Parse("https://api.apidash.dev/humanize/social")
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
+  url, _ := url.Parse("https://api.apidash.dev/humanize/social")
   query := url.Query()
   
   query.Set("num", "8700000")
-  
   query.Set("add_space", "true")
-  
-  url.RawQuery = query.Encode()
-  req, err := http.NewRequest("GET", url.String(), nil)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  resp, err := client.Do(req)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  defer resp.Body.Close()
 
-  res, err := io.ReadAll(resp.Body)
+  url.RawQuery = query.Encode()
+  req, _ := http.NewRequest("GET", url.String(), nil)
+
+  response, err := client.Do(req)
   if err != nil {
     fmt.Println(err)
     return
   }
-  fmt.Println(string(res))
+  defer response.Body.Close()
+
+  fmt.Println("Status Code:", response.StatusCode)
+  body, _ := io.ReadAll(response.Body)
+  fmt.Println("Response body:", string(body))
 }""";
       expect(codeGen.getCode(CodegenLanguage.goHttp, requestModelGet9, "https"),
           expectedCode);
@@ -434,37 +327,25 @@ import (
   "io"
   "net/http"
   "net/url"
-  
 )
 
 func main() {
   client := &http.Client{}
-  url, err := url.Parse("https://api.apidash.dev/humanize/social")
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  req, err := http.NewRequest("GET", url.String(), nil)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
+  url, _ := url.Parse("https://api.apidash.dev/humanize/social")
+  req, _ := http.NewRequest("GET", url.String(), nil)
 
   req.Header.Set("User-Agent", "Test Agent")
 
-  resp, err := client.Do(req)
+  response, err := client.Do(req)
   if err != nil {
     fmt.Println(err)
     return
   }
-  defer resp.Body.Close()
+  defer response.Body.Close()
 
-  res, err := io.ReadAll(resp.Body)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  fmt.Println(string(res))
+  fmt.Println("Status Code:", response.StatusCode)
+  body, _ := io.ReadAll(response.Body)
+  fmt.Println("Response body:", string(body))
 }""";
       expect(
           codegen.getCode(
@@ -483,44 +364,31 @@ import (
   "io"
   "net/http"
   "net/url"
-  
 )
 
 func main() {
   client := &http.Client{}
-  url, err := url.Parse("https://api.apidash.dev/humanize/social")
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
+  url, _ := url.Parse("https://api.apidash.dev/humanize/social")
   query := url.Query()
   
   query.Set("num", "8700000")
-  
   query.Set("digits", "3")
-  
+
   url.RawQuery = query.Encode()
-  req, err := http.NewRequest("GET", url.String(), nil)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
+  req, _ := http.NewRequest("GET", url.String(), nil)
 
   req.Header.Set("User-Agent", "Test Agent")
 
-  resp, err := client.Do(req)
+  response, err := client.Do(req)
   if err != nil {
     fmt.Println(err)
     return
   }
-  defer resp.Body.Close()
+  defer response.Body.Close()
 
-  res, err := io.ReadAll(resp.Body)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  fmt.Println(string(res))
+  fmt.Println("Status Code:", response.StatusCode)
+  body, _ := io.ReadAll(response.Body)
+  fmt.Println("Response body:", string(body))
 }""";
       expect(
           codeGen.getCode(CodegenLanguage.goHttp, requestModelGet11, "https"),
@@ -535,34 +403,23 @@ import (
   "io"
   "net/http"
   "net/url"
-  
 )
 
 func main() {
   client := &http.Client{}
-  url, err := url.Parse("https://api.apidash.dev/humanize/social")
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  req, err := http.NewRequest("GET", url.String(), nil)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  resp, err := client.Do(req)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  defer resp.Body.Close()
+  url, _ := url.Parse("https://api.apidash.dev/humanize/social")
+  req, _ := http.NewRequest("GET", url.String(), nil)
 
-  res, err := io.ReadAll(resp.Body)
+  response, err := client.Do(req)
   if err != nil {
     fmt.Println(err)
     return
   }
-  fmt.Println(string(res))
+  defer response.Body.Close()
+
+  fmt.Println("Status Code:", response.StatusCode)
+  body, _ := io.ReadAll(response.Body)
+  fmt.Println("Response body:", string(body))
 }""";
       expect(
           codeGen.getCode(CodegenLanguage.goHttp, requestModelGet12, "https"),
@@ -579,34 +436,23 @@ import (
   "io"
   "net/http"
   "net/url"
-  
 )
 
 func main() {
   client := &http.Client{}
-  url, err := url.Parse("https://api.apidash.dev")
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  req, err := http.NewRequest("HEAD", url.String(), nil)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  resp, err := client.Do(req)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  defer resp.Body.Close()
+  url, _ := url.Parse("https://api.apidash.dev")
+  req, _ := http.NewRequest("HEAD", url.String(), nil)
 
-  res, err := io.ReadAll(resp.Body)
+  response, err := client.Do(req)
   if err != nil {
     fmt.Println(err)
     return
   }
-  fmt.Println(string(res))
+  defer response.Body.Close()
+
+  fmt.Println("Status Code:", response.StatusCode)
+  body, _ := io.ReadAll(response.Body)
+  fmt.Println("Response body:", string(body))
 }""";
       expect(
           codeGen.getCode(CodegenLanguage.goHttp, requestModelHead1, "https"),
@@ -621,34 +467,23 @@ import (
   "io"
   "net/http"
   "net/url"
-  
 )
 
 func main() {
   client := &http.Client{}
-  url, err := url.Parse("http://api.apidash.dev")
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  req, err := http.NewRequest("HEAD", url.String(), nil)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  resp, err := client.Do(req)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  defer resp.Body.Close()
+  url, _ := url.Parse("http://api.apidash.dev")
+  req, _ := http.NewRequest("HEAD", url.String(), nil)
 
-  res, err := io.ReadAll(resp.Body)
+  response, err := client.Do(req)
   if err != nil {
     fmt.Println(err)
     return
   }
-  fmt.Println(string(res))
+  defer response.Body.Close()
+
+  fmt.Println("Status Code:", response.StatusCode)
+  body, _ := io.ReadAll(response.Body)
+  fmt.Println("Response body:", string(body))
 }""";
       expect(codeGen.getCode(CodegenLanguage.goHttp, requestModelHead2, "http"),
           expectedCode);
@@ -665,37 +500,28 @@ import (
   "net/http"
   "net/url"
   "bytes"
-  
 )
 
 func main() {
   client := &http.Client{}
-  url, err := url.Parse("https://api.apidash.dev/case/lower")
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  body := bytes.NewBuffer([]byte(`{
+  url, _ := url.Parse("https://api.apidash.dev/case/lower")
+  payload := bytes.NewBuffer([]byte(`{
 "text": "I LOVE Flutter"
 }`))
-  req, err := http.NewRequest("POST", url.String(), body)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  resp, err := client.Do(req)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  defer resp.Body.Close()
+  req, _ := http.NewRequest("POST", url.String(), payload)
 
-  res, err := io.ReadAll(resp.Body)
+  req.Header.Set("Content-Type", "text/plain")
+
+  response, err := client.Do(req)
   if err != nil {
     fmt.Println(err)
     return
   }
-  fmt.Println(string(res))
+  defer response.Body.Close()
+
+  fmt.Println("Status Code:", response.StatusCode)
+  body, _ := io.ReadAll(response.Body)
+  fmt.Println("Response body:", string(body))
 }''';
       expect(
           codeGen.getCode(CodegenLanguage.goHttp, requestModelPost1, "https"),
@@ -711,17 +537,12 @@ import (
   "net/http"
   "net/url"
   "bytes"
-  
 )
 
 func main() {
   client := &http.Client{}
-  url, err := url.Parse("https://api.apidash.dev/case/lower")
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  body := bytes.NewBuffer([]byte(`{
+  url, _ := url.Parse("https://api.apidash.dev/case/lower")
+  payload := bytes.NewBuffer([]byte(`{
 "text": "I LOVE Flutter",
 "flag": null,
 "male": true,
@@ -729,24 +550,20 @@ func main() {
 "no": 1.2,
 "arr": ["null", "true", "false", null]
 }`))
-  req, err := http.NewRequest("POST", url.String(), body)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  resp, err := client.Do(req)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  defer resp.Body.Close()
+  req, _ := http.NewRequest("POST", url.String(), payload)
 
-  res, err := io.ReadAll(resp.Body)
+  req.Header.Set("Content-Type", "application/json")
+
+  response, err := client.Do(req)
   if err != nil {
     fmt.Println(err)
     return
   }
-  fmt.Println(string(res))
+  defer response.Body.Close()
+
+  fmt.Println("Status Code:", response.StatusCode)
+  body, _ := io.ReadAll(response.Body)
+  fmt.Println("Response body:", string(body))
 }''';
       expect(
           codeGen.getCode(CodegenLanguage.goHttp, requestModelPost2, "https"),
@@ -762,40 +579,29 @@ import (
   "net/http"
   "net/url"
   "bytes"
-  
 )
 
 func main() {
   client := &http.Client{}
-  url, err := url.Parse("https://api.apidash.dev/case/lower")
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  body := bytes.NewBuffer([]byte(`{
+  url, _ := url.Parse("https://api.apidash.dev/case/lower")
+  payload := bytes.NewBuffer([]byte(`{
 "text": "I LOVE Flutter"
 }`))
-  req, err := http.NewRequest("POST", url.String(), body)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
+  req, _ := http.NewRequest("POST", url.String(), payload)
 
   req.Header.Set("User-Agent", "Test Agent")
+  req.Header.Set("Content-Type", "application/json")
 
-  resp, err := client.Do(req)
+  response, err := client.Do(req)
   if err != nil {
     fmt.Println(err)
     return
   }
-  defer resp.Body.Close()
+  defer response.Body.Close()
 
-  res, err := io.ReadAll(resp.Body)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  fmt.Println(string(res))
+  fmt.Println("Status Code:", response.StatusCode)
+  body, _ := io.ReadAll(response.Body)
+  fmt.Println("Response body:", string(body))
 }''';
       expect(
           codeGen.getCode(CodegenLanguage.goHttp, requestModelPost3, "https"),
@@ -810,34 +616,34 @@ import (
   "io"
   "net/http"
   "net/url"
-  
+  "bytes"
+  "mime/multipart"
 )
 
 func main() {
   client := &http.Client{}
-  url, err := url.Parse("https://api.apidash.dev/io/form")
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  req, err := http.NewRequest("POST", url.String(), nil)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  resp, err := client.Do(req)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  defer resp.Body.Close()
+  url, _ := url.Parse("https://api.apidash.dev/io/form")
+  payload := &bytes.Buffer{}
+  writer := multipart.NewWriter(payload)
+  
+  writer.WriteField("text", "API")
+  writer.WriteField("sep", "|")
+  writer.WriteField("times", "3")
+  writer.Close()
 
-  res, err := io.ReadAll(resp.Body)
+  req, _ := http.NewRequest("POST", url.String(), payload)
+  req.Header.Set("Content-Type", writer.FormDataContentType())
+
+  response, err := client.Do(req)
   if err != nil {
     fmt.Println(err)
     return
   }
-  fmt.Println(string(res))
+  defer response.Body.Close()
+
+  fmt.Println("Status Code:", response.StatusCode)
+  body, _ := io.ReadAll(response.Body)
+  fmt.Println("Response body:", string(body))
 }''';
       expect(
           codeGen.getCode(CodegenLanguage.goHttp, requestModelPost4, "https"),
@@ -852,37 +658,36 @@ import (
   "io"
   "net/http"
   "net/url"
-  
+  "bytes"
+  "mime/multipart"
 )
 
 func main() {
   client := &http.Client{}
-  url, err := url.Parse("https://api.apidash.dev/io/form")
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  req, err := http.NewRequest("POST", url.String(), nil)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
+  url, _ := url.Parse("https://api.apidash.dev/io/form")
+  payload := &bytes.Buffer{}
+  writer := multipart.NewWriter(payload)
+  
+  writer.WriteField("text", "API")
+  writer.WriteField("sep", "|")
+  writer.WriteField("times", "3")
+  writer.Close()
+
+  req, _ := http.NewRequest("POST", url.String(), payload)
 
   req.Header.Set("User-Agent", "Test Agent")
+  req.Header.Set("Content-Type", writer.FormDataContentType())
 
-  resp, err := client.Do(req)
+  response, err := client.Do(req)
   if err != nil {
     fmt.Println(err)
     return
   }
-  defer resp.Body.Close()
+  defer response.Body.Close()
 
-  res, err := io.ReadAll(resp.Body)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  fmt.Println(string(res))
+  fmt.Println("Status Code:", response.StatusCode)
+  body, _ := io.ReadAll(response.Body)
+  fmt.Println("Response body:", string(body))
 }''';
       expect(
           codeGen.getCode(CodegenLanguage.goHttp, requestModelPost5, "https"),
@@ -898,34 +703,42 @@ import (
   "io"
   "net/http"
   "net/url"
-  
+  "bytes"
+  "mime/multipart"
+  "os"
 )
 
 func main() {
   client := &http.Client{}
-  url, err := url.Parse("https://api.apidash.dev/io/img")
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  req, err := http.NewRequest("POST", url.String(), nil)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  resp, err := client.Do(req)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  defer resp.Body.Close()
+  url, _ := url.Parse("https://api.apidash.dev/io/img")
+  payload := &bytes.Buffer{}
+  writer := multipart.NewWriter(payload)
+  var (
+    file *os.File
+    part io.Writer
+  )
+  
+  writer.WriteField("token", "xyz")
+  file, _ = os.Open("/Documents/up/1.png")
+  defer file.Close()
+  part, _ = writer.CreateFormFile("imfile", "/Documents/up/1.png")
+  io.Copy(part, file)
+  
+  writer.Close()
 
-  res, err := io.ReadAll(resp.Body)
+  req, _ := http.NewRequest("POST", url.String(), payload)
+  req.Header.Set("Content-Type", writer.FormDataContentType())
+
+  response, err := client.Do(req)
   if err != nil {
     fmt.Println(err)
     return
   }
-  fmt.Println(string(res))
+  defer response.Body.Close()
+
+  fmt.Println("Status Code:", response.StatusCode)
+  body, _ := io.ReadAll(response.Body)
+  fmt.Println("Response body:", string(body))
 }''';
     expect(codeGen.getCode(CodegenLanguage.goHttp, requestModelPost6, "https"),
         expectedCode);
@@ -945,53 +758,35 @@ import (
 
 func main() {
   client := &http.Client{}
-  url, err := url.Parse("https://api.apidash.dev/io/img")
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  body := &bytes.Buffer{}
-  writer := multipart.NewWriter(body)
+  url, _ := url.Parse("https://api.apidash.dev/io/img")
+  payload := &bytes.Buffer{}
+  writer := multipart.NewWriter(payload)
   var (
     file *os.File
     part io.Writer
   )
   
   writer.WriteField("token", "xyz")
-  file, err = os.Open("/Documents/up/1.png")
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
+  file, _ = os.Open("/Documents/up/1.png")
   defer file.Close()
-
-  part, err = writer.CreateFormFile("imfile", "/Documents/up/1.png")
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
+  part, _ = writer.CreateFormFile("imfile", "/Documents/up/1.png")
   io.Copy(part, file)
   
   writer.Close()
 
-  req, err := http.NewRequest("POST", url.String(), body)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  resp, err := client.Do(req)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  defer resp.Body.Close()
+  req, _ := http.NewRequest("POST", url.String(), payload)
+  req.Header.Set("Content-Type", writer.FormDataContentType())
 
-  res, err := io.ReadAll(resp.Body)
+  response, err := client.Do(req)
   if err != nil {
     fmt.Println(err)
     return
   }
-  fmt.Println(string(res))
+  defer response.Body.Close()
+
+  fmt.Println("Status Code:", response.StatusCode)
+  body, _ := io.ReadAll(response.Body)
+  fmt.Println("Response body:", string(body))
 }''';
     expect(codeGen.getCode(CodegenLanguage.goHttp, requestModelPost7, "https"),
         expectedCode);
@@ -1004,41 +799,40 @@ import (
   "io"
   "net/http"
   "net/url"
-  
+  "bytes"
+  "mime/multipart"
 )
 
 func main() {
   client := &http.Client{}
-  url, err := url.Parse("https://api.apidash.dev/io/form")
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
+  url, _ := url.Parse("https://api.apidash.dev/io/form")
+  payload := &bytes.Buffer{}
+  writer := multipart.NewWriter(payload)
+  
+  writer.WriteField("text", "API")
+  writer.WriteField("sep", "|")
+  writer.WriteField("times", "3")
+  writer.Close()
+
   query := url.Query()
   
   query.Set("size", "2")
-  
   query.Set("len", "3")
-  
-  url.RawQuery = query.Encode()
-  req, err := http.NewRequest("POST", url.String(), nil)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  resp, err := client.Do(req)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  defer resp.Body.Close()
 
-  res, err := io.ReadAll(resp.Body)
+  url.RawQuery = query.Encode()
+  req, _ := http.NewRequest("POST", url.String(), payload)
+  req.Header.Set("Content-Type", writer.FormDataContentType())
+
+  response, err := client.Do(req)
   if err != nil {
     fmt.Println(err)
     return
   }
-  fmt.Println(string(res))
+  defer response.Body.Close()
+
+  fmt.Println("Status Code:", response.StatusCode)
+  body, _ := io.ReadAll(response.Body)
+  fmt.Println("Response body:", string(body))
 }''';
     expect(codeGen.getCode(CodegenLanguage.goHttp, requestModelPost8, "https"),
         expectedCode);
@@ -1058,31 +852,18 @@ import (
 
 func main() {
   client := &http.Client{}
-  url, err := url.Parse("https://api.apidash.dev/io/img")
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  body := &bytes.Buffer{}
-  writer := multipart.NewWriter(body)
+  url, _ := url.Parse("https://api.apidash.dev/io/img")
+  payload := &bytes.Buffer{}
+  writer := multipart.NewWriter(payload)
   var (
     file *os.File
     part io.Writer
   )
   
   writer.WriteField("token", "xyz")
-  file, err = os.Open("/Documents/up/1.png")
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
+  file, _ = os.Open("/Documents/up/1.png")
   defer file.Close()
-
-  part, err = writer.CreateFormFile("imfile", "/Documents/up/1.png")
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
+  part, _ = writer.CreateFormFile("imfile", "/Documents/up/1.png")
   io.Copy(part, file)
   
   writer.Close()
@@ -1090,33 +871,25 @@ func main() {
   query := url.Query()
   
   query.Set("size", "2")
-  
   query.Set("len", "3")
-  
+
   url.RawQuery = query.Encode()
-  req, err := http.NewRequest("POST", url.String(), body)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
+  req, _ := http.NewRequest("POST", url.String(), payload)
 
   req.Header.Set("User-Agent", "Test Agent")
-
   req.Header.Set("Keep-Alive", "true")
+  req.Header.Set("Content-Type", writer.FormDataContentType())
 
-  resp, err := client.Do(req)
+  response, err := client.Do(req)
   if err != nil {
     fmt.Println(err)
     return
   }
-  defer resp.Body.Close()
+  defer response.Body.Close()
 
-  res, err := io.ReadAll(resp.Body)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  fmt.Println(string(res))
+  fmt.Println("Status Code:", response.StatusCode)
+  body, _ := io.ReadAll(response.Body)
+  fmt.Println("Response body:", string(body))
 }''';
     expect(codeGen.getCode(CodegenLanguage.goHttp, requestModelPost9, "https"),
         expectedCode);
@@ -1132,38 +905,29 @@ import (
   "net/http"
   "net/url"
   "bytes"
-  
 )
 
 func main() {
   client := &http.Client{}
-  url, err := url.Parse("https://reqres.in/api/users/2")
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  body := bytes.NewBuffer([]byte(`{
+  url, _ := url.Parse("https://reqres.in/api/users/2")
+  payload := bytes.NewBuffer([]byte(`{
 "name": "morpheus",
 "job": "zion resident"
 }`))
-  req, err := http.NewRequest("PUT", url.String(), body)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  resp, err := client.Do(req)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  defer resp.Body.Close()
+  req, _ := http.NewRequest("PUT", url.String(), payload)
 
-  res, err := io.ReadAll(resp.Body)
+  req.Header.Set("Content-Type", "application/json")
+
+  response, err := client.Do(req)
   if err != nil {
     fmt.Println(err)
     return
   }
-  fmt.Println(string(res))
+  defer response.Body.Close()
+
+  fmt.Println("Status Code:", response.StatusCode)
+  body, _ := io.ReadAll(response.Body)
+  fmt.Println("Response body:", string(body))
 }''';
       expect(codeGen.getCode(CodegenLanguage.goHttp, requestModelPut1, "https"),
           expectedCode);
@@ -1180,38 +944,29 @@ import (
   "net/http"
   "net/url"
   "bytes"
-  
 )
 
 func main() {
   client := &http.Client{}
-  url, err := url.Parse("https://reqres.in/api/users/2")
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  body := bytes.NewBuffer([]byte(`{
+  url, _ := url.Parse("https://reqres.in/api/users/2")
+  payload := bytes.NewBuffer([]byte(`{
 "name": "marfeus",
 "job": "accountant"
 }`))
-  req, err := http.NewRequest("PATCH", url.String(), body)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  resp, err := client.Do(req)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  defer resp.Body.Close()
+  req, _ := http.NewRequest("PATCH", url.String(), payload)
 
-  res, err := io.ReadAll(resp.Body)
+  req.Header.Set("Content-Type", "application/json")
+
+  response, err := client.Do(req)
   if err != nil {
     fmt.Println(err)
     return
   }
-  fmt.Println(string(res))
+  defer response.Body.Close()
+
+  fmt.Println("Status Code:", response.StatusCode)
+  body, _ := io.ReadAll(response.Body)
+  fmt.Println("Response body:", string(body))
 }''';
       expect(
           codeGen.getCode(CodegenLanguage.goHttp, requestModelPatch1, "https"),
@@ -1228,34 +983,23 @@ import (
   "io"
   "net/http"
   "net/url"
-  
 )
 
 func main() {
   client := &http.Client{}
-  url, err := url.Parse("https://reqres.in/api/users/2")
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  req, err := http.NewRequest("DELETE", url.String(), nil)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  resp, err := client.Do(req)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  defer resp.Body.Close()
+  url, _ := url.Parse("https://reqres.in/api/users/2")
+  req, _ := http.NewRequest("DELETE", url.String(), nil)
 
-  res, err := io.ReadAll(resp.Body)
+  response, err := client.Do(req)
   if err != nil {
     fmt.Println(err)
     return
   }
-  fmt.Println(string(res))
+  defer response.Body.Close()
+
+  fmt.Println("Status Code:", response.StatusCode)
+  body, _ := io.ReadAll(response.Body)
+  fmt.Println("Response body:", string(body))
 }""";
       expect(
           codeGen.getCode(CodegenLanguage.goHttp, requestModelDelete1, "https"),
@@ -1271,38 +1015,29 @@ import (
   "net/http"
   "net/url"
   "bytes"
-  
 )
 
 func main() {
   client := &http.Client{}
-  url, err := url.Parse("https://reqres.in/api/users/2")
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  body := bytes.NewBuffer([]byte(`{
+  url, _ := url.Parse("https://reqres.in/api/users/2")
+  payload := bytes.NewBuffer([]byte(`{
 "name": "marfeus",
 "job": "accountant"
 }`))
-  req, err := http.NewRequest("DELETE", url.String(), body)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  resp, err := client.Do(req)
-  if err != nil {
-    fmt.Println(err)
-    return
-  }
-  defer resp.Body.Close()
+  req, _ := http.NewRequest("DELETE", url.String(), payload)
 
-  res, err := io.ReadAll(resp.Body)
+  req.Header.Set("Content-Type", "application/json")
+
+  response, err := client.Do(req)
   if err != nil {
     fmt.Println(err)
     return
   }
-  fmt.Println(string(res))
+  defer response.Body.Close()
+
+  fmt.Println("Status Code:", response.StatusCode)
+  body, _ := io.ReadAll(response.Body)
+  fmt.Println("Response body:", string(body))
 }''';
       expect(
           codeGen.getCode(CodegenLanguage.goHttp, requestModelDelete2, "https"),
