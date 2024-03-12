@@ -55,12 +55,12 @@ class DartDioCodeGen {
       final List<Map<String,String>> formDataList = ${json.encode(formData)};
       for (var formField in formDataList) {
         if (formField['type'] == 'file') {
-          formData.files.add(MapEntry(
+          data.files.add(MapEntry(
             formField['name'],
             await MultipartFile.fromFile(formField['value'], filename: formField['value']),
           ));
         } else {
-          formData.fields.add(MapEntry(formField['name'], formField['value']));
+          data.fields.add(MapEntry(formField['name'], formField['value']));
         }
       }
     ''');
@@ -79,11 +79,11 @@ class DartDioCodeGen {
           dataExp = declareFinal('data').assign(strContent);
         // when add new type of [ContentType], need update [dataExp].
         case ContentType.formdata:
-          dataExp = declareFinal('data').assign(refer('FormData()'));
+          dataExp = declareFinal('data').assign(refer('dio.FormData()'));
       }
     }
     final responseExp = declareFinal('response').assign(InvokeExpression.newOf(
-      refer('dio.Dio'),
+      refer('dio.Dio()'),
       [literalString(url)],
       {
         if (queryParamExp != null) 'queryParameters': refer('queryParams'),

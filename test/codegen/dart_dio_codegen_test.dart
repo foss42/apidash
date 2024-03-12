@@ -486,8 +486,342 @@ void main() async {
           codeGen.getCode(CodegenLanguage.dartDio, requestModelPost3, "https"),
           expectedCode);
     });
-  });
+    test('POST 4', () {
+      const expectedCode = r"""import 'package:dio/dio.dart' as dio;
 
+void main() async {
+  try {
+    final queryParams = {
+      'size': '2',
+      'len': '3',
+    };
+    final data = dio.FormData();
+    final List<Map<String, String>> formDataList = [
+      {"name": "token", "value": "xyz", "type": "text"},
+      {"name": "sep", "value": "|", "type": "text"},
+      {"name": "times", "value": "3", "type": "text"}
+    ];
+    for (var formField in formDataList) {
+      if (formField['type'] == 'file') {
+        data.files.add(MapEntry(
+          formField['name'],
+          await MultipartFile.fromFile(formField['value'],
+              filename: formField['value']),
+        ));
+      } else {
+        data.fields
+            .add(MapEntry(formField['name'], formField['value']));
+      }
+    }
+
+    final response = await dio.Dio().post(
+      'https://api.apidash.dev/io/form',
+      queryParameters: queryParams,
+      options: Options(headers: headers),
+      data: data,
+    );
+    print(response.statusCode);
+    print(response.data);
+  } on DioException catch (e, s) {
+    print(e.response?.statusCode);
+    print(e.response?.data);
+    print(s);
+  } catch (e, s) {
+    print(e);
+    print(s);
+  }
+}
+""";
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonRequests, requestModelPost4, "https"),
+          expectedCode);
+    });
+
+    test('POST 5', () {
+      const expectedCode = r"""import 'package:dio/dio.dart' as dio;
+
+void main() async {
+  try {
+    final queryParams = {
+      'size': '2',
+      'len': '3',
+    };
+    final headers = {
+      'User-Agent': 'Test Agent',
+      'Keep-Alive': 'true',
+    };
+    final data = dio.FormData();
+    final List<Map<String, String>> formDataList = [
+      {"name": "token", "value": "xyz", "type": "text"},
+      {"name": "sep", "value": "|", "type": "text"},
+      {"name": "times", "value": "3", "type": "text"}
+    ];
+    for (var formField in formDataList) {
+      if (formField['type'] == 'file') {
+        data.files.add(MapEntry(
+          formField['name'],
+          await MultipartFile.fromFile(formField['value'],
+              filename: formField['value']),
+        ));
+      } else {
+        data.fields
+            .add(MapEntry(formField['name'], formField['value']));
+      }
+    }
+
+    final response = await dio.Dio().post(
+      'https://api.apidash.dev/io/form',
+      queryParameters: queryParams,
+      options: Options(headers: headers),
+      data: data,
+    );
+    print(response.statusCode);
+    print(response.data);
+  } on DioException catch (e, s) {
+    print(e.response?.statusCode);
+    print(e.response?.data);
+    print(s);
+  } catch (e, s) {
+    print(e);
+    print(s);
+  }
+}
+""";
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonRequests, requestModelPost5, "https"),
+          expectedCode);
+    });
+
+    test('POST 6', () {
+      const expectedCode = r"""iimport 'package:dio/dio.dart' as dio;
+
+void main() async {
+  try {
+    final queryParams = {
+      'size': '2',
+      'len': '3',
+    };
+    final data = dio.FormData();
+    final List<Map<String, String>> formDataList = [
+      {"name": "token", "value": "xyz", "type": "text"},
+      {
+        "name": "imfile",
+        "value":
+            "/Desktop/mp.jpg",
+        "type": "file"
+      }
+    ];
+    for (var formField in formDataList) {
+      if (formField['type'] == 'file') {
+        data.files.add(MapEntry(
+          formField['name'],
+          await MultipartFile.fromFile(formField['value'],
+              filename: formField['value']),
+        ));
+      } else {
+        data.fields
+            .add(MapEntry(formField['name'], formField['value']));
+      }
+    }
+
+    final response = await dio.Dio().post(
+      'https://api.apidash.dev/io/img',
+      queryParameters: queryParams,
+      options: Options(headers: headers),
+      data: data,
+    );
+    print(response.statusCode);
+    print(response.data);
+  } on DioException catch (e, s) {
+    print(e.response?.statusCode);
+    print(e.response?.data);
+    print(s);
+  } catch (e, s) {
+    print(e);
+    print(s);
+  }
+}
+""";
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonRequests, requestModelPost6, "https"),
+          expectedCode);
+    });
+
+    test('POST 7', () {
+      const expectedCode = r"""import 'package:dio/dio.dart' as dio;
+
+void main() async {
+  try {
+    final queryParams = {
+      'size': '2',
+      'len': '3',
+    };
+    final data = dio.FormData();
+    final List<Map<String, String>> formDataList = [
+      {"name": "token", "value": "xyz", "type": "text"},
+      {
+        "name": "imfile",
+        "value":
+            "/Desktop/mp.jpg",
+        "type": "file"
+      }
+    ];
+    for (var formField in formDataList) {
+      if (formField['type'] == 'file') {
+        data.files.add(MapEntry(
+          formField['name'],
+          await MultipartFile.fromFile(formField['value'],
+              filename: formField['value']),
+        ));
+      } else {
+        data.fields
+            .add(MapEntry(formField['name'], formField['value']));
+      }
+    }
+
+    final response = await dio.Dio().post(
+      'https://api.apidash.dev/io/img',
+      queryParameters: queryParams,
+      options: Options(headers: headers),
+      data: data,
+    );
+    print(response.statusCode);
+    print(response.data);
+  } on DioException catch (e, s) {
+    print(e.response?.statusCode);
+    print(e.response?.data);
+    print(s);
+  } catch (e, s) {
+    print(e);
+    print(s);
+  }
+}
+""";
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonRequests, requestModelPost7, "https"),
+          expectedCode);
+    });
+
+    test('POST 8', () {
+      const expectedCode = r"""import 'package:dio/dio.dart' as dio;
+
+void main() async {
+  try {
+    final queryParams = {
+      'size': '2',
+      'len': '3',
+    };
+    final headers = {
+      'User-Agent': 'Test Agent',
+      'Keep-Alive': 'true',
+    };
+    final data = dio.FormData();
+    final List<Map<String, String>> formDataList = [
+      {"name": "token", "value": "xyz", "type": "text"},
+      {"name": "sep", "value": "|", "type": "text"},
+      {"name": "times", "value": "3", "type": "text"}
+    ];
+    for (var formField in formDataList) {
+      if (formField['type'] == 'file') {
+        data.files.add(MapEntry(
+          formField['name'],
+          await MultipartFile.fromFile(formField['value'],
+              filename: formField['value']),
+        ));
+      } else {
+        data.fields
+            .add(MapEntry(formField['name'], formField['value']));
+      }
+    }
+
+    final response = await dio.Dio().post(
+      'https://api.apidash.dev/io/form',
+      queryParameters: queryParams,
+      options: Options(headers: headers),
+      data: data,
+    );
+    print(response.statusCode);
+    print(response.data);
+  } on DioException catch (e, s) {
+    print(e.response?.statusCode);
+    print(e.response?.data);
+    print(s);
+  } catch (e, s) {
+    print(e);
+    print(s);
+  }
+}
+""";
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonRequests, requestModelPost8, "https"),
+          expectedCode);
+    });
+
+    test('POST 9', () {
+      const expectedCode = r"""import 'package:dio/dio.dart' as dio;
+
+void main() async {
+  try {
+    final queryParams = {
+      'size': '2',
+      'len': '3',
+    };
+    final headers = {
+      'User-Agent': 'Test Agent',
+      'Keep-Alive': 'true',
+    };
+    final data = dio.FormData();
+    final List<Map<String, String>> formDataList = [
+      {"name": "token", "value": "xyz", "type": "text"},
+      {
+        "name": "imfile",
+        "value":
+            "/Desktop/mp.jpg",
+        "type": "file"
+      }
+    ];
+    for (var formField in formDataList) {
+      if (formField['type'] == 'file') {
+        data.files.add(MapEntry(
+          formField['name'],
+          await MultipartFile.fromFile(formField['value'],
+              filename: formField['value']),
+        ));
+      } else {
+        data.fields
+            .add(MapEntry(formField['name'], formField['value']));
+      }
+    }
+
+    final response = await dio.Dio().post(
+      'https://api.apidash.dev/io/img',
+      queryParameters: queryParams,
+      options: Options(headers: headers),
+      data: data,
+    );
+    print(response.statusCode);
+    print(response.data);
+  } on DioException catch (e, s) {
+    print(e.response?.statusCode);
+    print(e.response?.data);
+    print(s);
+  } catch (e, s) {
+    print(e);
+    print(s);
+  }
+}
+""";
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonRequests, requestModelPost9, "https"),
+          expectedCode);
+    });
+  });
   group('PUT Request', () {
     test('PUT 1', () {
       const expectedCode = r"""import 'package:dio/dio.dart' as dio;
