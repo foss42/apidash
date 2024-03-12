@@ -2,13 +2,13 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:jinja/jinja.dart' as jj;
 import 'package:apidash/utils/utils.dart'
-    show getNewUuid, getValidRequestUri, padMultilineString;
+    show getValidRequestUri, padMultilineString;
 import 'package:apidash/models/models.dart' show RequestModel;
 import 'package:apidash/consts.dart';
 
 class PythonHttpClientCodeGen {
   final String kTemplateStart = """import http.client
-{% if isFormDataRequest %}import mimetypes
+{% if hasFormData %}import mimetypes
 from codecs import encode
 {% endif %}
 """;
@@ -87,30 +87,23 @@ dataList = build_data_list({{fields_list}})
 body = b'\r\n'.join(dataList)
 ''';
   String? getCode(
-    RequestModel requestModel,
-    String defaultUriScheme,
-  ) {
-    String uuid = getNewUuid();
-
+    RequestModel requestModel, {
+    String? boundary,
+  }) {
     try {
       String result = "";
       bool hasHeaders = false;
       bool hasQuery = false;
       bool hasBody = false;
 
-      String url = requestModel.url;
-      if (!url.contains("://") && url.isNotEmpty) {
-        url = "$defaultUriScheme://$url";
-      }
-
       var templateStartUrl = jj.Template(kTemplateStart);
       result += templateStartUrl.render(
         {
-          "isFormDataRequest": requestModel.isFormDataRequest,
+          "hasFormData": requestModel.hasFormData,
         },
       );
       var rec = getValidRequestUri(
-        url,
+        requestModel.url,
         requestModel.enabledRequestParams,
       );
 
@@ -132,7 +125,7 @@ body = b'\r\n'.join(dataList)
         var requestBody = requestModel.requestBody;
         if (kMethodsWithBody.contains(method) &&
             requestBody != null &&
-            !requestModel.isFormDataRequest) {
+            !requestModel.hasFormData) {
           var contentLength = utf8.encode(requestBody).length;
           if (contentLength > 0) {
             hasBody = true;
@@ -144,11 +137,11 @@ body = b'\r\n'.join(dataList)
         var headersList = requestModel.enabledRequestHeaders;
         if (headersList != null || hasBody) {
           var headers = requestModel.enabledHeadersMap;
-          if (requestModel.isFormDataRequest) {
+          if (requestModel.hasFormData) {
             var formHeaderTemplate =
                 jj.Template(kTemplateFormHeaderContentType);
             headers[HttpHeaders.contentTypeHeader] = formHeaderTemplate.render({
-              "boundary": uuid,
+              "boundary": boundary,
             });
           }
 
@@ -164,12 +157,12 @@ body = b'\r\n'.join(dataList)
             result += templateHeaders.render({"headers": headersString});
           }
         }
-        if (requestModel.isFormDataRequest) {
+        if (requestModel.hasFormData) {
           var formDataBodyData = jj.Template(kStringFormDataBody);
           result += formDataBodyData.render(
             {
               "fields_list": json.encode(requestModel.formDataMapList),
-              "boundary": uuid,
+              "boundary": boundary,
             },
           );
         }
@@ -186,11 +179,11 @@ body = b'\r\n'.join(dataList)
           "queryParamsStr": hasQuery ? " + queryParamsStr" : "",
         });
 
-        if (hasBody || requestModel.isFormDataRequest) {
+        if (hasBody || requestModel.hasFormData) {
           result += kStringRequestBody;
         }
 
-        if (hasHeaders || requestModel.isFormDataRequest) {
+        if (hasHeaders || requestModel.hasFormData) {
           result += kStringRequestHeaders;
         }
 

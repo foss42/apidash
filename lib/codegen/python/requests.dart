@@ -1,15 +1,14 @@
 import 'dart:io';
-import 'dart:convert';
 import 'package:jinja/jinja.dart' as jj;
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart'
-    show getNewUuid, getValidRequestUri, padMultilineString, stripUriParams;
+    show getValidRequestUri, stripUriParams, getFilenameFromPath;
 import 'package:apidash/models/models.dart' show RequestModel;
+import '../codegen_utils.dart';
 
 class PythonRequestsCodeGen {
   final String kTemplateStart = """import requests
-{% if isFormDataRequest %}import mimetypes
-from codecs import encode
+{% if hasFormData %}from requests_toolbelt.multipart.encoder import MultipartEncoder
 {% endif %}
 url = '{{url}}'
 
@@ -20,7 +19,6 @@ url = '{{url}}'
 params = {{params}}
 
 """;
-  int kParamsPadding = 9;
 
   String kTemplateBody = """
 
@@ -39,43 +37,26 @@ payload = {{body}}
 headers = {{headers}}
 
 """;
-  String kTemplateFormHeaderContentType = '''
-multipart/form-data; boundary={{boundary}}''';
-
-  int kHeadersPadding = 10;
 
   String kTemplateRequest = """
 
 response = requests.{{method}}(url
 """;
 
-  final String kStringFormDataBody = r'''
+  final String kTemplateFormDataBody = r'''
 
-def build_data_list(fields):
-    dataList = []
-    for field in fields:
-        name = field.get('name', '')
-        value = field.get('value', '')
-        type_ = field.get('type', 'text')
+payload = MultipartEncoder({
+{{formdata_payload}}
+}{% if boundary != '' %}, 
+    boundary="{{boundary}}"
+{% endif %})
 
-        dataList.append(encode('--{{boundary}}'))
-        if type_ == 'text':
-            dataList.append(encode(f'Content-Disposition: form-data; name="{name}"'))
-            dataList.append(encode('Content-Type: text/plain'))
-            dataList.append(encode(''))
-            dataList.append(encode(value))
-        elif type_ == 'file':
-            dataList.append(encode(f'Content-Disposition: form-data; name="{name}"; filename="{value}"'))
-            dataList.append(encode(f'Content-Type: {mimetypes.guess_type(value)[0] or "application/octet-stream"}'))
-            dataList.append(encode(''))
-            dataList.append(open(value, 'rb').read())
-    dataList.append(encode('--{{boundary}}--'))
-    dataList.append(encode(''))
-    return dataList
-
-dataList = build_data_list({{fields_list}})
-payload = b'\r\n'.join(dataList)
 ''';
+
+  String kTemplateFormDataRowText = r"""  "{{name}}": "{{value}}",""";
+
+  String kTemplateFormDataRowFile =
+      r"""  "{{name}}": ("{{filename}}", open("{{path}}", "rb")),""";
 
   String kStringRequestParams = """, params=params""";
 
@@ -91,25 +72,26 @@ print('Status Code:', response.status_code)
 print('Response Body:', response.text)
 """;
 
+  String kStringFormDataContentType = "payload.content_type";
+
+  String refactorHeaderString(String headerString) {
+    return headerString.replaceAll(
+        '"$kStringFormDataContentType"', kStringFormDataContentType);
+  }
+
   String? getCode(
-    RequestModel requestModel,
-    String defaultUriScheme,
-  ) {
+    RequestModel requestModel, {
+    String? boundary,
+  }) {
     try {
       String result = "";
       bool hasQuery = false;
       bool hasHeaders = false;
       bool hasBody = false;
       bool hasJsonBody = false;
-      String uuid = getNewUuid();
-
-      String url = requestModel.url;
-      if (!url.contains("://") && url.isNotEmpty) {
-        url = "$defaultUriScheme://$url";
-      }
 
       var rec = getValidRequestUri(
-        url,
+        requestModel.url,
         requestModel.enabledRequestParams,
       );
       Uri? uri = rec.$1;
@@ -117,7 +99,7 @@ print('Response Body:', response.text)
         var templateStartUrl = jj.Template(kTemplateStart);
         result += templateStartUrl.render({
           "url": stripUriParams(uri),
-          'isFormDataRequest': requestModel.isFormDataRequest
+          'hasFormData': requestModel.hasFormData
         });
 
         if (uri.hasQuery) {
@@ -126,77 +108,85 @@ print('Response Body:', response.text)
             hasQuery = true;
             var templateParams = jj.Template(kTemplateParams);
             var paramsString = kEncoder.convert(params);
-            paramsString = padMultilineString(paramsString, kParamsPadding);
             result += templateParams.render({"params": paramsString});
           }
         }
 
-        var method = requestModel.method;
-        var requestBody = requestModel.requestBody;
-        if (kMethodsWithBody.contains(method) && requestBody != null) {
-          var contentLength = utf8.encode(requestBody).length;
-          if (contentLength > 0) {
-            if (requestModel.requestBodyContentType == ContentType.json) {
-              hasJsonBody = true;
-              var templateBody = jj.Template(kTemplateJson);
-              result += templateBody.render({"body": requestBody});
-            } else if (!requestModel.isFormDataRequest) {
-              hasBody = true;
-              var templateBody = jj.Template(kTemplateBody);
-              result += templateBody.render({"body": requestBody});
+        if (requestModel.hasFormData) {
+          hasBody = true;
+          List<String> formdataPayload = [];
+          for (var item in requestModel.formDataList) {
+            if (item.type == FormDataType.text) {
+              formdataPayload.add(jj.Template(kTemplateFormDataRowText).render({
+                "name": item.name,
+                "value": item.value,
+              }));
+            }
+            if (item.type == FormDataType.file) {
+              formdataPayload.add(jj.Template(kTemplateFormDataRowFile).render({
+                "name": item.name,
+                "filename": getFilenameFromPath(item.value),
+                "path": item.value,
+              }));
             }
           }
+          var formDataBodyData = jj.Template(kTemplateFormDataBody);
+          result += formDataBodyData.render(
+            {
+              "formdata_payload": formdataPayload.join("\n"),
+              "boundary": boundary ?? '',
+            },
+          );
+        } else if (requestModel.hasJsonData) {
+          hasJsonBody = true;
+          var templateBody = jj.Template(kTemplateJson);
+          var pyDict = jsonToPyDict(requestModel.requestBody ?? "");
+          result += templateBody.render({"body": pyDict});
+        } else if (requestModel.hasTextData) {
+          hasBody = true;
+          var templateBody = jj.Template(kTemplateBody);
+          result += templateBody.render({"body": requestModel.requestBody});
         }
 
         var headersList = requestModel.enabledRequestHeaders;
         if (headersList != null || hasBody) {
           var headers = requestModel.enabledHeadersMap;
-          if (requestModel.isFormDataRequest) {
-            var formHeaderTemplate =
-                jj.Template(kTemplateFormHeaderContentType);
-            headers[HttpHeaders.contentTypeHeader] = formHeaderTemplate.render({
-              "boundary": uuid,
-            });
-          }
-          if (headers.isNotEmpty || hasBody) {
-            hasHeaders = true;
-            if (hasBody) {
+          if (hasBody) {
+            if (requestModel.hasFormData) {
+              headers[HttpHeaders.contentTypeHeader] =
+                  kStringFormDataContentType;
+            } else {
               headers[HttpHeaders.contentTypeHeader] =
                   requestModel.requestBodyContentType.header;
             }
+          }
+          if (headers.isNotEmpty) {
+            hasHeaders = true;
             var headersString = kEncoder.convert(headers);
-            headersString = padMultilineString(headersString, kHeadersPadding);
+            headersString = refactorHeaderString(headersString);
             var templateHeaders = jj.Template(kTemplateHeaders);
             result += templateHeaders.render({"headers": headersString});
           }
         }
-        if (requestModel.isFormDataRequest) {
-          var formDataBodyData = jj.Template(kStringFormDataBody);
-          result += formDataBodyData.render(
-            {
-              "fields_list": json.encode(requestModel.formDataMapList),
-              "boundary": uuid,
-            },
-          );
-        }
+
         var templateRequest = jj.Template(kTemplateRequest);
         result += templateRequest.render({
-          "method": method.name.toLowerCase(),
+          "method": requestModel.method.name.toLowerCase(),
         });
 
         if (hasQuery) {
           result += kStringRequestParams;
         }
 
-        if (hasBody || requestModel.isFormDataRequest) {
+        if (hasBody) {
           result += kStringRequestBody;
         }
 
-        if (hasJsonBody || requestModel.isFormDataRequest) {
+        if (hasJsonBody) {
           result += kStringRequestJson;
         }
 
-        if (hasHeaders || requestModel.isFormDataRequest) {
+        if (hasHeaders) {
           result += kStringRequestHeaders;
         }
 

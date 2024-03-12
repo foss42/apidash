@@ -75,7 +75,6 @@ import okhttp3.MultipartBody""";
 
   String? getCode(
     RequestModel requestModel,
-    String defaultUriScheme,
   ) {
     try {
       String result = "";
@@ -83,13 +82,8 @@ import okhttp3.MultipartBody""";
       bool hasBody = false;
       bool hasFormData = false;
 
-      String url = requestModel.url;
-      if (!url.contains("://") && url.isNotEmpty) {
-        url = "$defaultUriScheme://$url";
-      }
-
       var rec = getValidRequestUri(
-        url,
+        requestModel.url,
         requestModel.enabledRequestParams,
       );
       Uri? uri = rec.$1;
@@ -113,7 +107,7 @@ import okhttp3.MultipartBody""";
 
         var method = requestModel.method;
         var requestBody = requestModel.requestBody;
-        if (requestModel.isFormDataRequest) {
+        if (requestModel.hasFormData) {
           hasFormData = true;
           var formDataTemplate = jj.Template(kFormDataBody);
 
@@ -152,7 +146,7 @@ import okhttp3.MultipartBody""";
         var templateRequestEnd = jj.Template(kTemplateRequestEnd);
         result += templateRequestEnd.render({
           "method": method.name.toLowerCase(),
-          "hasBody": (hasBody || requestModel.isFormDataRequest) ? "body" : "",
+          "hasBody": (hasBody || requestModel.hasFormData) ? "body" : "",
         });
       }
       return result;

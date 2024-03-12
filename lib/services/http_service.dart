@@ -9,7 +9,6 @@ import 'package:apidash/consts.dart';
 Future<(http.Response?, Duration?, String?)> request(
   RequestModel requestModel, {
   String defaultUriScheme = kDefaultUriScheme,
-  bool isMultiPartRequest = false,
 }) async {
   (Uri?, String?) uriRec = getValidRequestUri(
     requestModel.url,
@@ -22,44 +21,48 @@ Future<(http.Response?, Duration?, String?)> request(
     http.Response response;
     String? body;
     try {
-      var requestBody = requestModel.requestBody;
-      if (kMethodsWithBody.contains(requestModel.method) &&
-          requestBody != null) {
-        var contentLength = utf8.encode(requestBody).length;
-        if (contentLength > 0) {
-          body = requestBody;
-          headers[HttpHeaders.contentLengthHeader] = contentLength.toString();
-          if (!requestModel.hasContentTypeHeader) {
-            headers[HttpHeaders.contentTypeHeader] =
-                requestModel.requestBodyContentType.header;
-          }
-        }
-      }
       Stopwatch stopwatch = Stopwatch()..start();
-      if (isMultiPartRequest) {
-        var multiPartRequest = http.MultipartRequest(
-          requestModel.method.name.toUpperCase(),
-          requestUrl,
-        );
-        multiPartRequest.headers.addAll(headers);
-        for (FormDataModel formData
-            in (requestModel.requestFormDataList ?? [])) {
-          if (formData.type == FormDataType.text) {
-            multiPartRequest.fields.addAll({formData.name: formData.value});
-          } else {
-            multiPartRequest.files.add(
-              await http.MultipartFile.fromPath(
-                formData.name,
-                formData.value,
-              ),
-            );
+      var isMultiPartRequest =
+          requestModel.requestBodyContentType == ContentType.formdata;
+      if (kMethodsWithBody.contains(requestModel.method)) {
+        var requestBody = requestModel.requestBody;
+        if (requestBody != null && !isMultiPartRequest) {
+          var contentLength = utf8.encode(requestBody).length;
+          if (contentLength > 0) {
+            body = requestBody;
+            headers[HttpHeaders.contentLengthHeader] = contentLength.toString();
+            if (!requestModel.hasContentTypeHeader) {
+              headers[HttpHeaders.contentTypeHeader] =
+                  requestModel.requestBodyContentType.header;
+            }
           }
         }
-        http.StreamedResponse multiPartResponse = await multiPartRequest.send();
-        stopwatch.stop();
-        http.Response convertedMultiPartResponse =
-            await convertStreamedResponse(multiPartResponse);
-        return (convertedMultiPartResponse, stopwatch.elapsed, null);
+        if (isMultiPartRequest) {
+          var multiPartRequest = http.MultipartRequest(
+            requestModel.method.name.toUpperCase(),
+            requestUrl,
+          );
+          multiPartRequest.headers.addAll(headers);
+          for (var formData
+              in (requestModel.requestFormDataList ?? <FormDataModel>[])) {
+            if (formData.type == FormDataType.text) {
+              multiPartRequest.fields.addAll({formData.name: formData.value});
+            } else {
+              multiPartRequest.files.add(
+                await http.MultipartFile.fromPath(
+                  formData.name,
+                  formData.value,
+                ),
+              );
+            }
+          }
+          http.StreamedResponse multiPartResponse =
+              await multiPartRequest.send();
+          stopwatch.stop();
+          http.Response convertedMultiPartResponse =
+              await convertStreamedResponse(multiPartResponse);
+          return (convertedMultiPartResponse, stopwatch.elapsed, null);
+        }
       }
       switch (requestModel.method) {
         case HTTPVerb.get:
