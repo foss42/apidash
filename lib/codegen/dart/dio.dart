@@ -57,7 +57,7 @@ class DartDioCodeGen {
         if (formField['type'] == 'file') {
           data.files.add(MapEntry(
             formField['name'],
-            await MultipartFile.fromFile(formField['value'], filename: formField['value']),
+            await dio.MultipartFile.fromFile(formField['value'], filename: formField['value']),
           ));
         } else {
           data.fields.add(MapEntry(formField['name'], formField['value']));
@@ -88,7 +88,7 @@ class DartDioCodeGen {
       {
         if (queryParamExp != null) 'queryParameters': refer('queryParams'),
         if (headerExp != null)
-          'options': refer('Options').newInstance(
+          'options': refer('dio.Options').newInstance(
             [],
             {'headers': refer('headers')},
           ),
@@ -112,7 +112,7 @@ class DartDioCodeGen {
           refer('print').call([refer('response').property('data')]),
         ],
         onError: {
-          'DioException': [
+          'dio.DioException': [
             refer('print').call([
               refer('e').property('response').nullSafeProperty('statusCode'),
             ]),
