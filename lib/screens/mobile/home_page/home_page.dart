@@ -1,22 +1,22 @@
 import 'package:apidash/consts.dart';
-import 'package:apidash/providers/collection_providers.dart';
+import 'package:apidash/providers/providers.dart';
 import 'package:apidash/screens/home_page/editor_pane/details_card/code_pane.dart';
 import 'package:apidash/screens/home_page/editor_pane/details_card/request_pane/request_pane.dart';
 import 'package:apidash/screens/home_page/editor_pane/details_card/response_pane.dart';
 import 'package:apidash/screens/home_page/editor_pane/url_card.dart';
 import 'package:apidash/screens/mobile/drawer.dart';
+import 'package:apidash/widgets/mobile_bottom_navbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class MobileHomePage extends StatefulWidget {
+class MobileHomePage extends ConsumerStatefulWidget {
   const MobileHomePage({super.key});
 
   @override
-  State<MobileHomePage> createState() => _MobileHomePageState();
+  ConsumerState<MobileHomePage> createState() => _MobileHomePageState();
 }
 
-class _MobileHomePageState extends State<MobileHomePage> {
-  int navIndex = 0;
+class _MobileHomePageState extends ConsumerState<MobileHomePage> {
   final navPages = const [
     EditRequestPane(),
     ResponsePane(),
@@ -39,7 +39,7 @@ class _MobileHomePageState extends State<MobileHomePage> {
         children: [
           SizedBox(
             height: MediaQuery.of(context).size.height * 0.73,
-            child: navPages[navIndex],
+            child: navPages[ref.watch(mobileBottomNavIndexStateProvider)],
           ),
           SizedBox(
             height: MediaQuery.of(context).size.height * 0.1,
@@ -47,28 +47,7 @@ class _MobileHomePageState extends State<MobileHomePage> {
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.auto_awesome_mosaic_outlined),
-            label: "request",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.north_east_rounded),
-            label: "response",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.code),
-            label: "code",
-          ),
-        ],
-        currentIndex: navIndex,
-        onTap: (value) {
-          setState(() {
-            navIndex = value;
-          });
-        },
-      ),
+      bottomNavigationBar: const MobileBottomNavBar(),
     );
   }
 }

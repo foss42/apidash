@@ -24,3 +24,4 @@ final nameTextFieldFocusNodeProvider =
   });
   return focusNode;
 });
+final mobileBottomNavIndexStateProvider = StateProvider<int>((ref) => 0);
