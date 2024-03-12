@@ -89,5 +89,26 @@ void main() {
       expect(find.byType(IntroPage), findsNothing);
       expect(find.byType(HomePage), findsNothing);
     });
+
+    testWidgets(
+        'Navigation Rail index should update when icon button is pressed',
+        (tester) async {
+      await tester.pumpWidget(
+        const ProviderScope(
+          child: MaterialApp(
+            home: Dashboard(),
+          ),
+        ),
+      );
+
+      // Tap on the Intro icon
+      await tester.tap(find.byIcon(Icons.help_outline));
+      await tester.pump();
+
+      // Verify that the navRailIndexStateProvider is updated
+      final dashboard = tester.element(find.byType(Dashboard));
+      final container = ProviderScope.containerOf(dashboard);
+      expect(container.read(navRailIndexStateProvider), 1);
+    });
   });
 }
