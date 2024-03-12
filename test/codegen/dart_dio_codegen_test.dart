@@ -1,10 +1,10 @@
-import 'package:apidash/codegen/dart/dio.dart';
+import 'package:apidash/codegen/codegen.dart';
+import 'package:apidash/consts.dart';
 import 'package:test/test.dart';
-
 import '../request_models.dart';
 
 void main() {
-  final dartDioCodeGen = DartDioCodeGen();
+  final codeGen = Codegen();
 
   group('GET Request', () {
     test('GET 1', () {
@@ -12,7 +12,7 @@ void main() {
 
 void main() async {
   try {
-    final response = await dio.Dio.get('https://api.foss42.com');
+    final response = await dio.Dio.get('https://api.apidash.dev');
     print(response.statusCode);
     print(response.data);
   } on DioException catch (e, s) {
@@ -25,7 +25,9 @@ void main() async {
   }
 }
 """;
-      expect(dartDioCodeGen.getCode(requestModelGet1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.dartDio, requestModelGet1, "https"),
+          expectedCode);
     });
 
     test('GET 2', () {
@@ -35,7 +37,7 @@ void main() async {
   try {
     final queryParams = {'code': 'US'};
     final response = await dio.Dio.get(
-      'https://api.foss42.com/country/data',
+      'https://api.apidash.dev/country/data',
       queryParameters: queryParams,
     );
     print(response.statusCode);
@@ -50,7 +52,9 @@ void main() async {
   }
 }
 """;
-      expect(dartDioCodeGen.getCode(requestModelGet2, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.dartDio, requestModelGet2, "https"),
+          expectedCode);
     });
 
     test('GET 3', () {
@@ -60,7 +64,7 @@ void main() async {
   try {
     final queryParams = {'code': 'IND'};
     final response = await dio.Dio.get(
-      'https://api.foss42.com/country/data?code=US',
+      'https://api.apidash.dev/country/data?code=US',
       queryParameters: queryParams,
     );
     print(response.statusCode);
@@ -75,7 +79,9 @@ void main() async {
   }
 }
 """;
-      expect(dartDioCodeGen.getCode(requestModelGet3, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.dartDio, requestModelGet3, "https"),
+          expectedCode);
     });
 
     test('GET 4', () {
@@ -91,7 +97,7 @@ void main() async {
       'trailing_zeros': 'true',
     };
     final response = await dio.Dio.get(
-      'https://api.foss42.com/humanize/social',
+      'https://api.apidash.dev/humanize/social',
       queryParameters: queryParams,
     );
     print(response.statusCode);
@@ -106,7 +112,9 @@ void main() async {
   }
 }
 """;
-      expect(dartDioCodeGen.getCode(requestModelGet4, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.dartDio, requestModelGet4, "https"),
+          expectedCode);
     });
 
     test('GET 5', () {
@@ -131,7 +139,9 @@ void main() async {
   }
 }
 """;
-      expect(dartDioCodeGen.getCode(requestModelGet5, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.dartDio, requestModelGet5, "https"),
+          expectedCode);
     });
 
     test('GET 6', () {
@@ -158,7 +168,9 @@ void main() async {
   }
 }
 """;
-      expect(dartDioCodeGen.getCode(requestModelGet6, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.dartDio, requestModelGet6, "https"),
+          expectedCode);
     });
 
     test('GET 7', () {
@@ -166,7 +178,7 @@ void main() async {
 
 void main() async {
   try {
-    final response = await dio.Dio.get('https://api.foss42.com');
+    final response = await dio.Dio.get('https://api.apidash.dev');
     print(response.statusCode);
     print(response.data);
   } on DioException catch (e, s) {
@@ -179,7 +191,9 @@ void main() async {
   }
 }
 """;
-      expect(dartDioCodeGen.getCode(requestModelGet7, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.dartDio, requestModelGet7, "https"),
+          expectedCode);
     });
 
     test('GET 8', () {
@@ -206,7 +220,9 @@ void main() async {
   }
 }
 """;
-      expect(dartDioCodeGen.getCode(requestModelGet8, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.dartDio, requestModelGet8, "https"),
+          expectedCode);
     });
 
     test('GET 9', () {
@@ -219,7 +235,7 @@ void main() async {
       'add_space': 'true',
     };
     final response = await dio.Dio.get(
-      'https://api.foss42.com/humanize/social',
+      'https://api.apidash.dev/humanize/social',
       queryParameters: queryParams,
     );
     print(response.statusCode);
@@ -234,7 +250,9 @@ void main() async {
   }
 }
 """;
-      expect(dartDioCodeGen.getCode(requestModelGet9, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.dartDio, requestModelGet9, "https"),
+          expectedCode);
     });
 
     test('GET 10', () {
@@ -244,7 +262,7 @@ void main() async {
   try {
     final headers = {'User-Agent': 'Test Agent'};
     final response = await dio.Dio.get(
-      'https://api.foss42.com/humanize/social',
+      'https://api.apidash.dev/humanize/social',
       options: Options(headers: headers),
     );
     print(response.statusCode);
@@ -260,7 +278,8 @@ void main() async {
 }
 """;
       expect(
-          dartDioCodeGen.getCode(
+          codeGen.getCode(
+            CodegenLanguage.dartDio,
             requestModelGet10,
             "https",
           ),
@@ -278,7 +297,7 @@ void main() async {
     };
     final headers = {'User-Agent': 'Test Agent'};
     final response = await dio.Dio.get(
-      'https://api.foss42.com/humanize/social',
+      'https://api.apidash.dev/humanize/social',
       queryParameters: queryParams,
       options: Options(headers: headers),
     );
@@ -294,7 +313,9 @@ void main() async {
   }
 }
 """;
-      expect(dartDioCodeGen.getCode(requestModelGet11, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.dartDio, requestModelGet11, "https"),
+          expectedCode);
     });
 
     test('GET 12', () {
@@ -302,7 +323,7 @@ void main() async {
 
 void main() async {
   try {
-    final response = await dio.Dio.get('https://api.foss42.com/humanize/social');
+    final response = await dio.Dio.get('https://api.apidash.dev/humanize/social');
     print(response.statusCode);
     print(response.data);
   } on DioException catch (e, s) {
@@ -315,7 +336,9 @@ void main() async {
   }
 }
 """;
-      expect(dartDioCodeGen.getCode(requestModelGet12, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.dartDio, requestModelGet12, "https"),
+          expectedCode);
     });
   });
 
@@ -325,7 +348,7 @@ void main() async {
 
 void main() async {
   try {
-    final response = await dio.Dio.head('https://api.foss42.com');
+    final response = await dio.Dio.head('https://api.apidash.dev');
     print(response.statusCode);
     print(response.data);
   } on DioException catch (e, s) {
@@ -338,7 +361,9 @@ void main() async {
   }
 }
 """;
-      expect(dartDioCodeGen.getCode(requestModelHead1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.dartDio, requestModelHead1, "https"),
+          expectedCode);
     });
 
     test('HEAD 2', () {
@@ -346,7 +371,7 @@ void main() async {
 
 void main() async {
   try {
-    final response = await dio.Dio.head('http://api.foss42.com');
+    final response = await dio.Dio.head('http://api.apidash.dev');
     print(response.statusCode);
     print(response.data);
   } on DioException catch (e, s) {
@@ -359,7 +384,9 @@ void main() async {
   }
 }
 """;
-      expect(dartDioCodeGen.getCode(requestModelHead2, "http"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.dartDio, requestModelHead2, "http"),
+          expectedCode);
     });
   });
 
@@ -373,7 +400,7 @@ void main() async {
 "text": "I LOVE Flutter"
 }''';
     final response = await dio.Dio.post(
-      'https://api.foss42.com/case/lower',
+      'https://api.apidash.dev/case/lower',
       data: data,
     );
     print(response.statusCode);
@@ -388,7 +415,9 @@ void main() async {
   }
 }
 """;
-      expect(dartDioCodeGen.getCode(requestModelPost1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.dartDio, requestModelPost1, "https"),
+          expectedCode);
     });
 
     test('POST 2', () {
@@ -398,10 +427,15 @@ import 'dart:convert' as convert;
 void main() async {
   try {
     final data = convert.json.decode(r'''{
-"text": "I LOVE Flutter"
+"text": "I LOVE Flutter",
+"flag": null,
+"male": true,
+"female": false,
+"no": 1.2,
+"arr": ["null", "true", "false", null]
 }''');
     final response = await dio.Dio.post(
-      'https://api.foss42.com/case/lower',
+      'https://api.apidash.dev/case/lower',
       data: data,
     );
     print(response.statusCode);
@@ -416,7 +450,9 @@ void main() async {
   }
 }
 """;
-      expect(dartDioCodeGen.getCode(requestModelPost2, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.dartDio, requestModelPost2, "https"),
+          expectedCode);
     });
 
     test('POST 3', () {
@@ -430,7 +466,7 @@ void main() async {
 "text": "I LOVE Flutter"
 }''');
     final response = await dio.Dio.post(
-      'https://api.foss42.com/case/lower',
+      'https://api.apidash.dev/case/lower',
       options: Options(headers: headers),
       data: data,
     );
@@ -446,7 +482,9 @@ void main() async {
   }
 }
 """;
-      expect(dartDioCodeGen.getCode(requestModelPost3, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.dartDio, requestModelPost3, "https"),
+          expectedCode);
     });
   });
 
@@ -477,7 +515,9 @@ void main() async {
   }
 }
 """;
-      expect(dartDioCodeGen.getCode(requestModelPut1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.dartDio, requestModelPut1, "https"),
+          expectedCode);
     });
   });
 
@@ -508,7 +548,9 @@ void main() async {
   }
 }
 """;
-      expect(dartDioCodeGen.getCode(requestModelPatch1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.dartDio, requestModelPatch1, "https"),
+          expectedCode);
     });
   });
 
@@ -532,7 +574,9 @@ void main() async {
 }
 """;
       expect(
-          dartDioCodeGen.getCode(requestModelDelete1, "https"), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.dartDio, requestModelDelete1, "https"),
+          expectedCode);
     });
 
     test('DELETE 2', () {
@@ -562,7 +606,9 @@ void main() async {
 }
 """;
       expect(
-          dartDioCodeGen.getCode(requestModelDelete2, "https"), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.dartDio, requestModelDelete2, "https"),
+          expectedCode);
     });
   });
 }

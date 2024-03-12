@@ -47,53 +47,38 @@ class CopyButton extends StatelessWidget {
 class SendRequestButton extends StatelessWidget {
   const SendRequestButton({
     super.key,
-    required this.selectedId,
-    required this.sentRequestId,
+    required this.isWorking,
     required this.onTap,
   });
 
-  final String? selectedId;
-  final String? sentRequestId;
+  final bool isWorking;
   final void Function() onTap;
 
   @override
   Widget build(BuildContext context) {
-    bool disable = sentRequestId != null;
     return FilledButton(
-      onPressed: disable ? null : onTap,
-      child: kIsMobile
-          ? Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
+      onPressed: isWorking ? null : onTap,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: isWorking
+            ? const [
                 Text(
-                  disable
-                      ? (selectedId == sentRequestId
-                          ? kLabelSending
-                          : kLabelBusy)
-                      : kLabelSend,
+                  kLabelSending,
                   style: kTextStyleButton,
                 ),
-              ],
-            )
-          : Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
+              ]
+            : const [
                 Text(
-                  disable
-                      ? (selectedId == sentRequestId
-                          ? kLabelSending
-                          : kLabelBusy)
-                      : kLabelSend,
+                  kLabelSend,
                   style: kTextStyleButton,
                 ),
-                if (!disable) kHSpacer10,
-                if (!disable)
-                  const Icon(
-                    size: 16,
-                    Icons.send,
-                  ),
+                kHSpacer10,
+                Icon(
+                  size: 16,
+                  Icons.send,
+                ),
               ],
-            ),
+      ),
     );
   }
 }

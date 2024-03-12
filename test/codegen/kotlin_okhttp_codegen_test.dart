@@ -1,9 +1,10 @@
-import 'package:apidash/codegen/kotlin/okhttp.dart';
+import 'package:apidash/codegen/codegen.dart';
+import 'package:apidash/consts.dart';
 import 'package:test/test.dart';
 import '../request_models.dart';
 
 void main() {
-  final kotlinOkHttpCodeGen = KotlinOkHttpCodeGen();
+  final codeGen = Codegen();
 
   group('GET Request', () {
     test('GET 1', () {
@@ -13,7 +14,7 @@ import okhttp3.Request
 fun main() {
     val client = OkHttpClient()
 
-    val url = "https://api.foss42.com"
+    val url = "https://api.apidash.dev"
 
     val request = Request.Builder()
         .url(url)
@@ -27,7 +28,9 @@ fun main() {
 }
 """;
       expect(
-          kotlinOkHttpCodeGen.getCode(requestModelGet1, "https"), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.kotlinOkHttp, requestModelGet1, "https"),
+          expectedCode);
     });
 
     test('GET 2', () {
@@ -38,7 +41,7 @@ import okhttp3.HttpUrl.Companion.toHttpUrl
 fun main() {
     val client = OkHttpClient()
 
-    val url = "https://api.foss42.com/country/data".toHttpUrl().newBuilder()
+    val url = "https://api.apidash.dev/country/data".toHttpUrl().newBuilder()
         .addQueryParameter("code", "US")
         .build()
 
@@ -54,7 +57,9 @@ fun main() {
 }
 """;
       expect(
-          kotlinOkHttpCodeGen.getCode(requestModelGet2, "https"), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.kotlinOkHttp, requestModelGet2, "https"),
+          expectedCode);
     });
 
     test('GET 3', () {
@@ -65,7 +70,7 @@ import okhttp3.HttpUrl.Companion.toHttpUrl
 fun main() {
     val client = OkHttpClient()
 
-    val url = "https://api.foss42.com/country/data".toHttpUrl().newBuilder()
+    val url = "https://api.apidash.dev/country/data".toHttpUrl().newBuilder()
         .addQueryParameter("code", "IND")
         .build()
 
@@ -81,7 +86,9 @@ fun main() {
 }
 """;
       expect(
-          kotlinOkHttpCodeGen.getCode(requestModelGet3, "https"), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.kotlinOkHttp, requestModelGet3, "https"),
+          expectedCode);
     });
 
     test('GET 4', () {
@@ -92,7 +99,7 @@ import okhttp3.HttpUrl.Companion.toHttpUrl
 fun main() {
     val client = OkHttpClient()
 
-    val url = "https://api.foss42.com/humanize/social".toHttpUrl().newBuilder()
+    val url = "https://api.apidash.dev/humanize/social".toHttpUrl().newBuilder()
         .addQueryParameter("num", "8700000")
         .addQueryParameter("digits", "3")
         .addQueryParameter("system", "SS")
@@ -112,7 +119,9 @@ fun main() {
 }
 """;
       expect(
-          kotlinOkHttpCodeGen.getCode(requestModelGet4, "https"), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.kotlinOkHttp, requestModelGet4, "https"),
+          expectedCode);
     });
 
     test('GET 5', () {
@@ -137,7 +146,9 @@ fun main() {
 }
 """;
       expect(
-          kotlinOkHttpCodeGen.getCode(requestModelGet5, "https"), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.kotlinOkHttp, requestModelGet5, "https"),
+          expectedCode);
     });
 
     test('GET 6', () {
@@ -165,7 +176,9 @@ fun main() {
 }
 """;
       expect(
-          kotlinOkHttpCodeGen.getCode(requestModelGet6, "https"), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.kotlinOkHttp, requestModelGet6, "https"),
+          expectedCode);
     });
 
     test('GET 7', () {
@@ -175,7 +188,7 @@ import okhttp3.Request
 fun main() {
     val client = OkHttpClient()
 
-    val url = "https://api.foss42.com"
+    val url = "https://api.apidash.dev"
 
     val request = Request.Builder()
         .url(url)
@@ -189,7 +202,9 @@ fun main() {
 }
 """;
       expect(
-          kotlinOkHttpCodeGen.getCode(requestModelGet7, "https"), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.kotlinOkHttp, requestModelGet7, "https"),
+          expectedCode);
     });
 
     test('GET 8', () {
@@ -217,7 +232,9 @@ fun main() {
 }
 """;
       expect(
-          kotlinOkHttpCodeGen.getCode(requestModelGet8, "https"), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.kotlinOkHttp, requestModelGet8, "https"),
+          expectedCode);
     });
 
     test('GET 9', () {
@@ -228,7 +245,7 @@ import okhttp3.HttpUrl.Companion.toHttpUrl
 fun main() {
     val client = OkHttpClient()
 
-    val url = "https://api.foss42.com/humanize/social".toHttpUrl().newBuilder()
+    val url = "https://api.apidash.dev/humanize/social".toHttpUrl().newBuilder()
         .addQueryParameter("num", "8700000")
         .addQueryParameter("add_space", "true")
         .build()
@@ -245,7 +262,9 @@ fun main() {
 }
 """;
       expect(
-          kotlinOkHttpCodeGen.getCode(requestModelGet9, "https"), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.kotlinOkHttp, requestModelGet9, "https"),
+          expectedCode);
     });
 
     test('GET 10', () {
@@ -255,7 +274,7 @@ import okhttp3.Request
 fun main() {
     val client = OkHttpClient()
 
-    val url = "https://api.foss42.com/humanize/social"
+    val url = "https://api.apidash.dev/humanize/social"
 
     val request = Request.Builder()
         .url(url)
@@ -270,7 +289,8 @@ fun main() {
 }
 """;
       expect(
-          kotlinOkHttpCodeGen.getCode(
+          codeGen.getCode(
+            CodegenLanguage.kotlinOkHttp,
             requestModelGet10,
             "https",
           ),
@@ -285,7 +305,7 @@ import okhttp3.HttpUrl.Companion.toHttpUrl
 fun main() {
     val client = OkHttpClient()
 
-    val url = "https://api.foss42.com/humanize/social".toHttpUrl().newBuilder()
+    val url = "https://api.apidash.dev/humanize/social".toHttpUrl().newBuilder()
         .addQueryParameter("num", "8700000")
         .addQueryParameter("digits", "3")
         .build()
@@ -302,7 +322,9 @@ fun main() {
     println(response.body?.string())
 }
 """;
-      expect(kotlinOkHttpCodeGen.getCode(requestModelGet11, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.kotlinOkHttp, requestModelGet11, "https"),
           expectedCode);
     });
 
@@ -313,7 +335,7 @@ import okhttp3.Request
 fun main() {
     val client = OkHttpClient()
 
-    val url = "https://api.foss42.com/humanize/social"
+    val url = "https://api.apidash.dev/humanize/social"
 
     val request = Request.Builder()
         .url(url)
@@ -326,7 +348,9 @@ fun main() {
     println(response.body?.string())
 }
 """;
-      expect(kotlinOkHttpCodeGen.getCode(requestModelGet12, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.kotlinOkHttp, requestModelGet12, "https"),
           expectedCode);
     });
   });
@@ -339,31 +363,7 @@ import okhttp3.Request
 fun main() {
     val client = OkHttpClient()
 
-    val url = "https://api.foss42.com"
-
-    val request = Request.Builder()
-        .url(url)
-        .head()
-        .build()
-
-    val response = client.newCall(request).execute()
-
-    println(response.code)
-    println(response.body?.string())
-}
-""";
-      expect(kotlinOkHttpCodeGen.getCode(requestModelHead1, "https"),
-          expectedCode);
-    });
-
-    test('HEAD 2', () {
-      const expectedCode = r"""import okhttp3.OkHttpClient
-import okhttp3.Request
-
-fun main() {
-    val client = OkHttpClient()
-
-    val url = "http://api.foss42.com"
+    val url = "https://api.apidash.dev"
 
     val request = Request.Builder()
         .url(url)
@@ -377,7 +377,35 @@ fun main() {
 }
 """;
       expect(
-          kotlinOkHttpCodeGen.getCode(requestModelHead2, "http"), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.kotlinOkHttp, requestModelHead1, "https"),
+          expectedCode);
+    });
+
+    test('HEAD 2', () {
+      const expectedCode = r"""import okhttp3.OkHttpClient
+import okhttp3.Request
+
+fun main() {
+    val client = OkHttpClient()
+
+    val url = "http://api.apidash.dev"
+
+    val request = Request.Builder()
+        .url(url)
+        .head()
+        .build()
+
+    val response = client.newCall(request).execute()
+
+    println(response.code)
+    println(response.body?.string())
+}
+""";
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.kotlinOkHttp, requestModelHead2, "http"),
+          expectedCode);
     });
   });
 
@@ -391,7 +419,7 @@ import okhttp3.MediaType.Companion.toMediaType
 fun main() {
     val client = OkHttpClient()
 
-    val url = "https://api.foss42.com/case/lower"
+    val url = "https://api.apidash.dev/case/lower"
 
     val mediaType = "text/plain".toMediaType()
 
@@ -410,7 +438,9 @@ fun main() {
     println(response.body?.string())
 }
 ''';
-      expect(kotlinOkHttpCodeGen.getCode(requestModelPost1, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.kotlinOkHttp, requestModelPost1, "https"),
           expectedCode);
     });
 
@@ -423,12 +453,17 @@ import okhttp3.MediaType.Companion.toMediaType
 fun main() {
     val client = OkHttpClient()
 
-    val url = "https://api.foss42.com/case/lower"
+    val url = "https://api.apidash.dev/case/lower"
 
     val mediaType = "application/json".toMediaType()
 
     val body = """{
-"text": "I LOVE Flutter"
+"text": "I LOVE Flutter",
+"flag": null,
+"male": true,
+"female": false,
+"no": 1.2,
+"arr": ["null", "true", "false", null]
 }""".toRequestBody(mediaType)
 
     val request = Request.Builder()
@@ -442,7 +477,9 @@ fun main() {
     println(response.body?.string())
 }
 ''';
-      expect(kotlinOkHttpCodeGen.getCode(requestModelPost2, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.kotlinOkHttp, requestModelPost2, "https"),
           expectedCode);
     });
 
@@ -455,7 +492,7 @@ import okhttp3.MediaType.Companion.toMediaType
 fun main() {
     val client = OkHttpClient()
 
-    val url = "https://api.foss42.com/case/lower"
+    val url = "https://api.apidash.dev/case/lower"
 
     val mediaType = "application/json".toMediaType()
 
@@ -475,7 +512,40 @@ fun main() {
     println(response.body?.string())
 }
 ''';
-      expect(kotlinOkHttpCodeGen.getCode(requestModelPost3, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.kotlinOkHttp, requestModelPost3, "https"),
+          expectedCode);
+    });
+
+    test('POST 5', () {
+      const expectedCode = r'''import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.MultipartBody
+
+fun main() {
+    val client = OkHttpClient()
+
+    val url = "https://api.apidash.dev/io/form"
+    val body = MultipartBody.Builder().setType(MultipartBody.FORM).addFormDataPart("text","API")
+          .addFormDataPart("sep","|")
+          .addFormDataPart("times","3")
+          .build()
+    val request = Request.Builder()
+        .url(url)
+        .addHeader("User-Agent", "Test Agent")
+        .post(body)
+        .build()
+
+    val response = client.newCall(request).execute()
+
+    println(response.code)
+    println(response.body?.string())
+}
+''';
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.kotlinOkHttp, requestModelPost5, "https"),
           expectedCode);
     });
   });
@@ -511,7 +581,9 @@ fun main() {
 }
 ''';
       expect(
-          kotlinOkHttpCodeGen.getCode(requestModelPut1, "https"), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.kotlinOkHttp, requestModelPut1, "https"),
+          expectedCode);
     });
   });
 
@@ -545,7 +617,9 @@ fun main() {
     println(response.body?.string())
 }
 ''';
-      expect(kotlinOkHttpCodeGen.getCode(requestModelPatch1, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.kotlinOkHttp, requestModelPatch1, "https"),
           expectedCode);
     });
   });
@@ -571,7 +645,9 @@ fun main() {
     println(response.body?.string())
 }
 """;
-      expect(kotlinOkHttpCodeGen.getCode(requestModelDelete1, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.kotlinOkHttp, requestModelDelete1, "https"),
           expectedCode);
     });
 
@@ -604,7 +680,9 @@ fun main() {
     println(response.body?.string())
 }
 ''';
-      expect(kotlinOkHttpCodeGen.getCode(requestModelDelete2, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.kotlinOkHttp, requestModelDelete2, "https"),
           expectedCode);
     });
   });
