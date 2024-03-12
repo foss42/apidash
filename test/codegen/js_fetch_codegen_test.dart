@@ -514,6 +514,304 @@ fetch(url, options)
           codeGen.getCode(CodegenLanguage.jsFetch, requestModelPost3, "https"),
           expectedCode);
     });
+    test('POST 4', () {
+      const expectedCode = r"""async function buildDataList(fields) {
+  var formdata = new FormData();
+  for (const field of fields) {
+      const name = field.name || '';
+      const value = field.value || '';
+      const type = field.type || 'text';
+
+      if (type === 'text') {
+        formdata.append(name, value);
+      } else if (type === 'file') {
+        formdata.append(name, fileInput.files[0],value);
+      }
+    }
+  return formdata;
+}
+
+const payload = buildDataList([{"name":"text","value":"API","type":"text"},{"name":"sep","value":"|","type":"text"},{"name":"times","value":"3","type":"text"}]);
+let url = 'https://api.apidash.dev/io/form';
+
+let options = {
+  method: 'POST',
+  headers: {
+    "Content-Type": "multipart/form-data; boundary=test"
+  },
+  body: 
+payload
+};
+
+let status;
+fetch(url, options)
+    .then(res => {
+        status = res.status;
+        return res.json()
+    })
+    .then(body => {
+        console.log(status);
+        console.log(body);
+    })
+    .catch(err => {
+        console.log(status);
+        console.error('error:' + err);
+    });
+""";
+      expect(
+          codeGen.getCode(CodegenLanguage.jsFetch, requestModelPost4, "https",
+              boundary: "test"),
+          expectedCode);
+    });
+
+    test('POST 5', () {
+      const expectedCode = r"""async function buildDataList(fields) {
+  var formdata = new FormData();
+  for (const field of fields) {
+      const name = field.name || '';
+      const value = field.value || '';
+      const type = field.type || 'text';
+
+      if (type === 'text') {
+        formdata.append(name, value);
+      } else if (type === 'file') {
+        formdata.append(name, fileInput.files[0],value);
+      }
+    }
+  return formdata;
+}
+
+const payload = buildDataList([{"name":"text","value":"API","type":"text"},{"name":"sep","value":"|","type":"text"},{"name":"times","value":"3","type":"text"}]);
+let url = 'https://api.apidash.dev/io/form';
+
+let options = {
+  method: 'POST',
+  headers: {
+    "Content-Type": "multipart/form-data; boundary=test",
+    "User-Agent": "Test Agent"
+  },
+  body: 
+payload
+};
+
+let status;
+fetch(url, options)
+    .then(res => {
+        status = res.status;
+        return res.json()
+    })
+    .then(body => {
+        console.log(status);
+        console.log(body);
+    })
+    .catch(err => {
+        console.log(status);
+        console.error('error:' + err);
+    });
+""";
+      expect(
+          codeGen.getCode(CodegenLanguage.jsFetch, requestModelPost5, "https",
+              boundary: "test"),
+          expectedCode);
+    });
+    test('POST 6', () {
+      const expectedCode = r"""async function buildDataList(fields) {
+  var formdata = new FormData();
+  for (const field of fields) {
+      const name = field.name || '';
+      const value = field.value || '';
+      const type = field.type || 'text';
+
+      if (type === 'text') {
+        formdata.append(name, value);
+      } else if (type === 'file') {
+        formdata.append(name, fileInput.files[0],value);
+      }
+    }
+  return formdata;
+}
+
+const payload = buildDataList([{"name":"token","value":"xyz","type":"text"},{"name":"imfile","value":"/Documents/up/1.png","type":"file"}]);
+let url = 'https://api.apidash.dev/io/img';
+
+let options = {
+  method: 'POST',
+  headers: {
+    "Content-Type": "multipart/form-data; boundary=test"
+  },
+  body: 
+payload
+};
+
+let status;
+fetch(url, options)
+    .then(res => {
+        status = res.status;
+        return res.json()
+    })
+    .then(body => {
+        console.log(status);
+        console.log(body);
+    })
+    .catch(err => {
+        console.log(status);
+        console.error('error:' + err);
+    });
+""";
+      expect(
+          codeGen.getCode(CodegenLanguage.jsFetch, requestModelPost6, "https",
+              boundary: "test"),
+          expectedCode);
+    });
+    test('POST 7', () {
+      const expectedCode = r"""async function buildDataList(fields) {
+  var formdata = new FormData();
+  for (const field of fields) {
+      const name = field.name || '';
+      const value = field.value || '';
+      const type = field.type || 'text';
+
+      if (type === 'text') {
+        formdata.append(name, value);
+      } else if (type === 'file') {
+        formdata.append(name, fileInput.files[0],value);
+      }
+    }
+  return formdata;
+}
+
+const payload = buildDataList([{"name":"token","value":"xyz","type":"text"},{"name":"imfile","value":"/Documents/up/1.png","type":"file"}]);
+let url = 'https://api.apidash.dev/io/img';
+
+let options = {
+  method: 'POST',
+  headers: {
+    "Content-Type": "multipart/form-data; boundary=test"
+  },
+  body: 
+payload
+};
+
+let status;
+fetch(url, options)
+    .then(res => {
+        status = res.status;
+        return res.json()
+    })
+    .then(body => {
+        console.log(status);
+        console.log(body);
+    })
+    .catch(err => {
+        console.log(status);
+        console.error('error:' + err);
+    });
+""";
+      expect(
+          codeGen.getCode(CodegenLanguage.jsFetch, requestModelPost7, "https",
+              boundary: "test"),
+          expectedCode);
+    });
+    test('POST 8', () {
+      const expectedCode = r"""async function buildDataList(fields) {
+  var formdata = new FormData();
+  for (const field of fields) {
+      const name = field.name || '';
+      const value = field.value || '';
+      const type = field.type || 'text';
+
+      if (type === 'text') {
+        formdata.append(name, value);
+      } else if (type === 'file') {
+        formdata.append(name, fileInput.files[0],value);
+      }
+    }
+  return formdata;
+}
+
+const payload = buildDataList([{"name":"text","value":"API","type":"text"},{"name":"sep","value":"|","type":"text"},{"name":"times","value":"3","type":"text"}]);
+let url = 'https://api.apidash.dev/io/form?size=2&len=3';
+
+let options = {
+  method: 'POST',
+  headers: {
+    "Content-Type": "multipart/form-data; boundary=test"
+  },
+  body: 
+payload
+};
+
+let status;
+fetch(url, options)
+    .then(res => {
+        status = res.status;
+        return res.json()
+    })
+    .then(body => {
+        console.log(status);
+        console.log(body);
+    })
+    .catch(err => {
+        console.log(status);
+        console.error('error:' + err);
+    });
+""";
+      expect(
+          codeGen.getCode(CodegenLanguage.jsFetch, requestModelPost8, "https",
+              boundary: "test"),
+          expectedCode);
+    });
+    test('POST 9', () {
+      const expectedCode = r"""async function buildDataList(fields) {
+  var formdata = new FormData();
+  for (const field of fields) {
+      const name = field.name || '';
+      const value = field.value || '';
+      const type = field.type || 'text';
+
+      if (type === 'text') {
+        formdata.append(name, value);
+      } else if (type === 'file') {
+        formdata.append(name, fileInput.files[0],value);
+      }
+    }
+  return formdata;
+}
+
+const payload = buildDataList([{"name":"token","value":"xyz","type":"text"},{"name":"imfile","value":"/Documents/up/1.png","type":"file"}]);
+let url = 'https://api.apidash.dev/io/img?size=2&len=3';
+
+let options = {
+  method: 'POST',
+  headers: {
+    "Content-Type": "multipart/form-data; boundary=test",
+    "User-Agent": "Test Agent",
+    "Keep-Alive": "true"
+  },
+  body: 
+payload
+};
+
+let status;
+fetch(url, options)
+    .then(res => {
+        status = res.status;
+        return res.json()
+    })
+    .then(body => {
+        console.log(status);
+        console.log(body);
+    })
+    .catch(err => {
+        console.log(status);
+        console.error('error:' + err);
+    });
+""";
+      expect(
+          codeGen.getCode(CodegenLanguage.jsFetch, requestModelPost9, "https",
+              boundary: "test"),
+          expectedCode);
+    });
   });
 
   group('PUT Request', () {
