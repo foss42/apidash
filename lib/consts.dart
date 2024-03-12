@@ -274,7 +274,8 @@ enum CodegenLanguage {
   kotlinOkHttp("Kotlin (okhttp3)", "java", "kt"),
   rustActix("Rust (Actix Client)", "rust", "rs"),
   pythonHttpClient("Python (http.client)", "python", "py"),
-  pythonRequests("Python (requests)", "python", "py");
+  pythonRequests("Python (requests)", "python", "py"),
+  rustUreq("Rust (ureq)", "rust", "rs");
 
   const CodegenLanguage(this.label, this.codeHighlightLang, this.ext);
   final String label;
