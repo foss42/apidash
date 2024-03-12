@@ -460,6 +460,270 @@ axios(config)
           codeGen.getCode(CodegenLanguage.jsAxios, requestModelPost3, "https"),
           expectedCode);
     });
+    test('POST 4', () {
+      const expectedCode = r"""async function buildFormData(fields) {
+  var formdata = new FormData();
+  for (const field of fields) {
+      const name = field.name || '';
+      const value = field.value || '';
+      const type = field.type || 'text';
+
+      if (type === 'text') {
+        formdata.append(name, value);
+      } else if (type === 'file') {
+        formdata.append(name, fileInput.files[0],value);
+      }
+    }
+  return formdata;
+}
+
+let config = {
+  url: 'https://api.apidash.dev/io/form',
+  method: 'post',
+  headers: {
+    "Content-Type": "multipart/form-data"
+  },
+  data: buildFormData([{"name":"text","value":"API","type":"text"},{"name":"sep","value":"|","type":"text"},{"name":"times","value":"3","type":"text"}]);
+};
+
+axios(config)
+    .then(function (response) {
+        // handle success
+        console.log(response.status);
+        console.log(response.data);
+    })
+    .catch(function (error) {
+        // handle error
+        console.log(error.response.status);
+        console.log(error);
+    });
+""";
+      expect(
+          codeGen.getCode(CodegenLanguage.jsAxios, requestModelPost4, "https"),
+          expectedCode);
+    });
+
+    test('POST 5', () {
+      const expectedCode = r"""async function buildFormData(fields) {
+  var formdata = new FormData();
+  for (const field of fields) {
+      const name = field.name || '';
+      const value = field.value || '';
+      const type = field.type || 'text';
+
+      if (type === 'text') {
+        formdata.append(name, value);
+      } else if (type === 'file') {
+        formdata.append(name, fileInput.files[0],value);
+      }
+    }
+  return formdata;
+}
+
+let config = {
+  url: 'https://api.apidash.dev/io/form',
+  method: 'post',
+  headers: {
+    "Content-Type": "multipart/form-data",
+    "User-Agent": "Test Agent"
+  },
+  data: buildFormData([{"name":"text","value":"API","type":"text"},{"name":"sep","value":"|","type":"text"},{"name":"times","value":"3","type":"text"}]);
+};
+
+axios(config)
+    .then(function (response) {
+        // handle success
+        console.log(response.status);
+        console.log(response.data);
+    })
+    .catch(function (error) {
+        // handle error
+        console.log(error.response.status);
+        console.log(error);
+    });
+""";
+      expect(
+          codeGen.getCode(CodegenLanguage.jsAxios, requestModelPost5, "https"),
+          expectedCode);
+    });
+    test('POST 6', () {
+      const expectedCode = r"""async function buildFormData(fields) {
+  var formdata = new FormData();
+  for (const field of fields) {
+      const name = field.name || '';
+      const value = field.value || '';
+      const type = field.type || 'text';
+
+      if (type === 'text') {
+        formdata.append(name, value);
+      } else if (type === 'file') {
+        formdata.append(name, fileInput.files[0],value);
+      }
+    }
+  return formdata;
+}
+
+let config = {
+  url: 'https://api.apidash.dev/io/img',
+  method: 'post',
+  headers: {
+    "Content-Type": "multipart/form-data"
+  },
+  data: buildFormData([{"name":"token","value":"xyz","type":"text"},{"name":"imfile","value":"/Documents/up/1.png","type":"file"}]);
+};
+
+axios(config)
+    .then(function (response) {
+        // handle success
+        console.log(response.status);
+        console.log(response.data);
+    })
+    .catch(function (error) {
+        // handle error
+        console.log(error.response.status);
+        console.log(error);
+    });
+""";
+      expect(
+          codeGen.getCode(CodegenLanguage.jsAxios, requestModelPost6, "https"),
+          expectedCode);
+    });
+    test('POST 7', () {
+      const expectedCode = r"""async function buildFormData(fields) {
+  var formdata = new FormData();
+  for (const field of fields) {
+      const name = field.name || '';
+      const value = field.value || '';
+      const type = field.type || 'text';
+
+      if (type === 'text') {
+        formdata.append(name, value);
+      } else if (type === 'file') {
+        formdata.append(name, fileInput.files[0],value);
+      }
+    }
+  return formdata;
+}
+
+let config = {
+  url: 'https://api.apidash.dev/io/img',
+  method: 'post',
+  headers: {
+    "Content-Type": "multipart/form-data"
+  },
+  data: buildFormData([{"name":"token","value":"xyz","type":"text"},{"name":"imfile","value":"/Documents/up/1.png","type":"file"}]);
+};
+
+axios(config)
+    .then(function (response) {
+        // handle success
+        console.log(response.status);
+        console.log(response.data);
+    })
+    .catch(function (error) {
+        // handle error
+        console.log(error.response.status);
+        console.log(error);
+    });
+""";
+      expect(
+          codeGen.getCode(CodegenLanguage.jsAxios, requestModelPost7, "https"),
+          expectedCode);
+    });
+    test('POST 8', () {
+      const expectedCode = r"""async function buildFormData(fields) {
+  var formdata = new FormData();
+  for (const field of fields) {
+      const name = field.name || '';
+      const value = field.value || '';
+      const type = field.type || 'text';
+
+      if (type === 'text') {
+        formdata.append(name, value);
+      } else if (type === 'file') {
+        formdata.append(name, fileInput.files[0],value);
+      }
+    }
+  return formdata;
+}
+
+let config = {
+  url: 'https://api.apidash.dev/io/form',
+  method: 'post',
+  params: {
+    "size": "2",
+    "len": "3"
+  },
+  headers: {
+    "Content-Type": "multipart/form-data"
+  },
+  data: buildFormData([{"name":"text","value":"API","type":"text"},{"name":"sep","value":"|","type":"text"},{"name":"times","value":"3","type":"text"}]);
+};
+
+axios(config)
+    .then(function (response) {
+        // handle success
+        console.log(response.status);
+        console.log(response.data);
+    })
+    .catch(function (error) {
+        // handle error
+        console.log(error.response.status);
+        console.log(error);
+    });
+""";
+      expect(
+          codeGen.getCode(CodegenLanguage.jsAxios, requestModelPost8, "https"),
+          expectedCode);
+    });
+    test('POST 9', () {
+      const expectedCode = r"""async function buildFormData(fields) {
+  var formdata = new FormData();
+  for (const field of fields) {
+      const name = field.name || '';
+      const value = field.value || '';
+      const type = field.type || 'text';
+
+      if (type === 'text') {
+        formdata.append(name, value);
+      } else if (type === 'file') {
+        formdata.append(name, fileInput.files[0],value);
+      }
+    }
+  return formdata;
+}
+
+let config = {
+  url: 'https://api.apidash.dev/io/img',
+  method: 'post',
+  params: {
+    "size": "2",
+    "len": "3"
+  },
+  headers: {
+    "Content-Type": "multipart/form-data",
+    "User-Agent": "Test Agent",
+    "Keep-Alive": "true"
+  },
+  data: buildFormData([{"name":"token","value":"xyz","type":"text"},{"name":"imfile","value":"/Documents/up/1.png","type":"file"}]);
+};
+
+axios(config)
+    .then(function (response) {
+        // handle success
+        console.log(response.status);
+        console.log(response.data);
+    })
+    .catch(function (error) {
+        // handle error
+        console.log(error.response.status);
+        console.log(error);
+    });
+""";
+      expect(
+          codeGen.getCode(CodegenLanguage.jsAxios, requestModelPost9, "https"),
+          expectedCode);
+    });
   });
 
   group('PUT Request', () {
