@@ -4,7 +4,7 @@ import 'settings_providers.dart';
 import 'ui_providers.dart';
 import '../models/models.dart';
 import '../services/services.dart' show hiveHandler, HiveHandler, request;
-import '../utils/utils.dart' show uuid, collectionToHAR;
+import '../utils/utils.dart' show getNewUuid, collectionToHAR;
 import '../consts.dart';
 
 final selectedIdStateProvider = StateProvider<String?>((ref) => null);
@@ -54,7 +54,7 @@ class CollectionStateNotifier
   }
 
   void add() {
-    final id = uuid.v1();
+    final id = getNewUuid();
     final newRequestModel = RequestModel(
       id: id,
     );
@@ -97,7 +97,7 @@ class CollectionStateNotifier
   }
 
   void duplicate(String id) {
-    final newId = uuid.v1();
+    final newId = getNewUuid();
 
     var itemIds = ref.read(requestSequenceProvider);
     int idx = itemIds.indexOf(id);
@@ -225,7 +225,7 @@ class CollectionStateNotifier
   bool loadData() {
     var ids = hiveHandler.getIds();
     if (ids == null || ids.length == 0) {
-      String newId = uuid.v1();
+      String newId = getNewUuid();
       state = {
         newId: RequestModel(
           id: newId,

@@ -175,7 +175,7 @@ void main() {
     });
     expect(requestModel.paramsMap, {});
     expect(requestModel.formDataMapList, []);
-    expect(requestModel.isFormDataRequest, false);
+    expect(requestModel.hasFormData, false);
     expect(requestModel.hasContentTypeHeader, true);
   });
 

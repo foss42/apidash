@@ -209,7 +209,12 @@ const requestModelPost2 = RequestModel(
   url: 'https://api.apidash.dev/case/lower',
   method: HTTPVerb.post,
   requestBody: r"""{
-"text": "I LOVE Flutter"
+"text": "I LOVE Flutter",
+"flag": null,
+"male": true,
+"female": false,
+"no": 1.2,
+"arr": ["null", "true", "false", null]
 }""",
 );
 
