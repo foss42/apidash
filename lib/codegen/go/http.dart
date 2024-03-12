@@ -112,7 +112,6 @@ func main() {
 
   String? getCode(
     RequestModel requestModel,
-    String defaultUriScheme,
   ) {
     try {
       String result = "";
@@ -120,15 +119,12 @@ func main() {
       var requestBody = requestModel.requestBody;
 
       String url = requestModel.url;
-      if (!url.contains("://") && url.isNotEmpty) {
-        url = "$defaultUriScheme://$url";
-      }
 
       var templateStart = jj.Template(kTemplateStart);
       result += templateStart.render({
         "isBody": kMethodsWithBody.contains(requestModel.method) &&
             requestBody != null,
-        "isFormDataRequest": requestModel.isFormDataRequest
+        "isFormDataRequest": requestModel.hasFormData,
       });
 
       var templateUrl = jj.Template(kTemplateUrl);
@@ -155,7 +151,7 @@ func main() {
           } else if (requestModel.requestBodyContentType == ContentType.json) {
             var templateJsonBody = jj.Template(kTemplateJsonBody);
             result += templateJsonBody.render({"body": requestBody});
-          } else if (requestModel.isFormDataRequest) {
+          } else if (requestModel.hasFormData) {
             hasBody = true;
             var templateFormData = jj.Template(kTemplateFormData);
             result += templateFormData.render({

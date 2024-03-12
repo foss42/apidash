@@ -1,9 +1,11 @@
-import 'package:apidash/codegen/go/http.dart';
+import 'package:apidash/codegen/codegen.dart';
+import 'package:apidash/consts.dart';
+import 'package:apidash/screens/home_page/editor_pane/details_card/code_pane.dart';
 import 'package:test/test.dart';
 import '../request_models.dart';
 
 void main() {
-  final goHttpCodeGen = GoHttpCodeGen();
+  final codeGen = Codegen();
 
   group('GET Request', () {
     test('GET 1', () {
@@ -43,7 +45,8 @@ func main() {
   }
   fmt.Println(string(res))
 }""";
-      expect(goHttpCodeGen.getCode(requestModelGet1, "https"), expectedCode);
+      expect(codeGen.getCode(CodegenLanguage.goHttp, requestModelGet1, "https"),
+          expectedCode);
     });
 
     test('GET 2', () {
@@ -88,7 +91,8 @@ func main() {
   }
   fmt.Println(string(res))
 }""";
-      expect(goHttpCodeGen.getCode(requestModelGet2, "https"), expectedCode);
+      expect(codeGen.getCode(CodegenLanguage.goHttp, requestModelGet2, "https"),
+          expectedCode);
     });
 
     test('GET 3', () {
@@ -133,7 +137,8 @@ func main() {
   }
   fmt.Println(string(res))
 }""";
-      expect(goHttpCodeGen.getCode(requestModelGet3, "https"), expectedCode);
+      expect(codeGen.getCode(CodegenLanguage.goHttp, requestModelGet3, "https"),
+          expectedCode);
     });
 
     test('GET 4', () {
@@ -186,7 +191,8 @@ func main() {
   }
   fmt.Println(string(res))
 }""";
-      expect(goHttpCodeGen.getCode(requestModelGet4, "https"), expectedCode);
+      expect(codeGen.getCode(CodegenLanguage.goHttp, requestModelGet4, "https"),
+          expectedCode);
     });
 
     test('GET 5', () {
@@ -229,7 +235,8 @@ func main() {
   }
   fmt.Println(string(res))
 }""";
-      expect(goHttpCodeGen.getCode(requestModelGet5, "https"), expectedCode);
+      expect(codeGen.getCode(CodegenLanguage.goHttp, requestModelGet5, "https"),
+          expectedCode);
     });
 
     test('GET 6', () {
@@ -277,7 +284,8 @@ func main() {
   }
   fmt.Println(string(res))
 }""";
-      expect(goHttpCodeGen.getCode(requestModelGet6, "https"), expectedCode);
+      expect(codeGen.getCode(CodegenLanguage.goHttp, requestModelGet6, "https"),
+          expectedCode);
     });
 
     test('GET 7', () {
@@ -317,7 +325,8 @@ func main() {
   }
   fmt.Println(string(res))
 }""";
-      expect(goHttpCodeGen.getCode(requestModelGet7, "https"), expectedCode);
+      expect(codeGen.getCode(CodegenLanguage.goHttp, requestModelGet7, "https"),
+          expectedCode);
     });
 
     test('GET 8', () {
@@ -365,7 +374,8 @@ func main() {
   }
   fmt.Println(string(res))
 }""";
-      expect(goHttpCodeGen.getCode(requestModelGet8, "https"), expectedCode);
+      expect(codeGen.getCode(CodegenLanguage.goHttp, requestModelGet8, "https"),
+          expectedCode);
     });
 
     test('GET 9', () {
@@ -412,7 +422,8 @@ func main() {
   }
   fmt.Println(string(res))
 }""";
-      expect(goHttpCodeGen.getCode(requestModelGet9, "https"), expectedCode);
+      expect(codeGen.getCode(CodegenLanguage.goHttp, requestModelGet9, "https"),
+          expectedCode);
     });
 
     test('GET 10', () {
@@ -456,7 +467,8 @@ func main() {
   fmt.Println(string(res))
 }""";
       expect(
-          goHttpCodeGen.getCode(
+          codegen.getCode(
+            CodegenLanguage.goHttp,
             requestModelGet10,
             "https",
           ),
@@ -510,7 +522,9 @@ func main() {
   }
   fmt.Println(string(res))
 }""";
-      expect(goHttpCodeGen.getCode(requestModelGet11, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.goHttp, requestModelGet11, "https"),
+          expectedCode);
     });
 
     test('GET 12', () {
@@ -550,7 +564,9 @@ func main() {
   }
   fmt.Println(string(res))
 }""";
-      expect(goHttpCodeGen.getCode(requestModelGet12, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.goHttp, requestModelGet12, "https"),
+          expectedCode);
     });
   });
 
@@ -592,7 +608,9 @@ func main() {
   }
   fmt.Println(string(res))
 }""";
-      expect(goHttpCodeGen.getCode(requestModelHead1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.goHttp, requestModelHead1, "https"),
+          expectedCode);
     });
 
     test('HEAD 2', () {
@@ -632,7 +650,8 @@ func main() {
   }
   fmt.Println(string(res))
 }""";
-      expect(goHttpCodeGen.getCode(requestModelHead2, "http"), expectedCode);
+      expect(codeGen.getCode(CodegenLanguage.goHttp, requestModelHead2, "http"),
+          expectedCode);
     });
   });
 
@@ -678,7 +697,9 @@ func main() {
   }
   fmt.Println(string(res))
 }''';
-      expect(goHttpCodeGen.getCode(requestModelPost1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.goHttp, requestModelPost1, "https"),
+          expectedCode);
     });
 
     test('POST 2', () {
@@ -701,7 +722,12 @@ func main() {
     return
   }
   body := bytes.NewBuffer([]byte(`{
-"text": "I LOVE Flutter"
+"text": "I LOVE Flutter",
+"flag": null,
+"male": true,
+"female": false,
+"no": 1.2,
+"arr": ["null", "true", "false", null]
 }`))
   req, err := http.NewRequest("POST", url.String(), body)
   if err != nil {
@@ -722,7 +748,9 @@ func main() {
   }
   fmt.Println(string(res))
 }''';
-      expect(goHttpCodeGen.getCode(requestModelPost2, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.goHttp, requestModelPost2, "https"),
+          expectedCode);
     });
 
     test('POST 3', () {
@@ -769,7 +797,9 @@ func main() {
   }
   fmt.Println(string(res))
 }''';
-      expect(goHttpCodeGen.getCode(requestModelPost3, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.goHttp, requestModelPost3, "https"),
+          expectedCode);
     });
 
     test('POST 4', () {
@@ -809,7 +839,9 @@ func main() {
   }
   fmt.Println(string(res))
 }''';
-      expect(goHttpCodeGen.getCode(requestModelPost4, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.goHttp, requestModelPost4, "https"),
+          expectedCode);
     });
 
     test('POST 5', () {
@@ -852,7 +884,9 @@ func main() {
   }
   fmt.Println(string(res))
 }''';
-      expect(goHttpCodeGen.getCode(requestModelPost5, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.goHttp, requestModelPost5, "https"),
+          expectedCode);
     });
   });
 
@@ -893,7 +927,8 @@ func main() {
   }
   fmt.Println(string(res))
 }''';
-    expect(goHttpCodeGen.getCode(requestModelPost6, "https"), expectedCode);
+    expect(codeGen.getCode(CodegenLanguage.goHttp, requestModelPost6, "https"),
+        expectedCode);
   });
   test("POST 7", () {
     const expectedCode = r'''package main
@@ -958,7 +993,8 @@ func main() {
   }
   fmt.Println(string(res))
 }''';
-    expect(goHttpCodeGen.getCode(requestModelPost7, "https"), expectedCode);
+    expect(codeGen.getCode(CodegenLanguage.goHttp, requestModelPost7, "https"),
+        expectedCode);
   });
   test("POST 8", () {
     const expectedCode = r'''package main
@@ -1004,7 +1040,8 @@ func main() {
   }
   fmt.Println(string(res))
 }''';
-    expect(goHttpCodeGen.getCode(requestModelPost8, "https"), expectedCode);
+    expect(codeGen.getCode(CodegenLanguage.goHttp, requestModelPost8, "https"),
+        expectedCode);
   });
   test("POST 9", () {
     const expectedCode = r'''package main
@@ -1081,7 +1118,8 @@ func main() {
   }
   fmt.Println(string(res))
 }''';
-    expect(goHttpCodeGen.getCode(requestModelPost9, "https"), expectedCode);
+    expect(codeGen.getCode(CodegenLanguage.goHttp, requestModelPost9, "https"),
+        expectedCode);
   });
 
   group('PUT Request', () {
@@ -1127,7 +1165,8 @@ func main() {
   }
   fmt.Println(string(res))
 }''';
-      expect(goHttpCodeGen.getCode(requestModelPut1, "https"), expectedCode);
+      expect(codeGen.getCode(CodegenLanguage.goHttp, requestModelPut1, "https"),
+          expectedCode);
     });
   });
 
@@ -1174,7 +1213,9 @@ func main() {
   }
   fmt.Println(string(res))
 }''';
-      expect(goHttpCodeGen.getCode(requestModelPatch1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.goHttp, requestModelPatch1, "https"),
+          expectedCode);
     });
   });
 
@@ -1216,7 +1257,9 @@ func main() {
   }
   fmt.Println(string(res))
 }""";
-      expect(goHttpCodeGen.getCode(requestModelDelete1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.goHttp, requestModelDelete1, "https"),
+          expectedCode);
     });
 
     test('DELETE 2', () {
@@ -1261,7 +1304,9 @@ func main() {
   }
   fmt.Println(string(res))
 }''';
-      expect(goHttpCodeGen.getCode(requestModelDelete2, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.goHttp, requestModelDelete2, "https"),
+          expectedCode);
     });
   });
 }
