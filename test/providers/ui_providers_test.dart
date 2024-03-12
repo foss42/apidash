@@ -110,5 +110,40 @@ void main() {
       final container = ProviderScope.containerOf(dashboard);
       expect(container.read(navRailIndexStateProvider), 1);
     });
+
+    testWidgets('Navigation Rail index should persist across widget rebuilds',
+        (tester) async {
+      // Pump the initial widget tree
+      await tester.pumpWidget(
+        const ProviderScope(
+          child: MaterialApp(
+            home: Dashboard(),
+          ),
+        ),
+      );
+
+      // Tap on the Settings icon to change the index to 2
+      await tester.tap(find.byIcon(Icons.settings_outlined));
+      await tester.pump(); // Wait for the animations to complete
+
+      // Rebuild the widget tree with the same ProviderScope
+      await tester.pumpWidget(
+        const ProviderScope(
+          child: MaterialApp(
+            home: Dashboard(),
+          ),
+        ),
+      );
+
+      // Verify that the navRailIndexStateProvider still has the updated value
+      final dashboard = tester.element(find.byType(Dashboard));
+      final container = ProviderScope.containerOf(dashboard);
+      expect(container.read(navRailIndexStateProvider), 2);
+
+      // Verify that the SettingsPage is still displayed after the rebuild
+      expect(find.byType(SettingsPage), findsOneWidget);
+      expect(find.byType(IntroPage), findsNothing);
+      expect(find.byType(HomePage), findsNothing);
+    });
   });
 }
