@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/screens/dashboard.dart';
+import 'package:apidash/screens/home_page/collection_pane.dart';
 import 'package:apidash/screens/home_page/home_page.dart';
 import 'package:apidash/screens/intro_page.dart';
 import 'package:apidash/screens/settings_page.dart';
@@ -209,6 +210,25 @@ void main() {
         isDisposed = true;
       }
       expect(isDisposed, true);
+    });
+  });
+
+  group("Testing selectedIdEditStateProvider", () {
+    testWidgets(
+        'selectedIdEditStateProvider should have an initial value of null',
+        (tester) async {
+      await tester.pumpWidget(
+        const ProviderScope(
+          child: MaterialApp(
+            home: CollectionPane(),
+          ),
+        ),
+      );
+
+      // Verify that the initial value is null
+      final collectionPane = tester.element(find.byType(CollectionPane));
+      final container = ProviderScope.containerOf(collectionPane);
+      expect(container.read(selectedIdEditStateProvider), null);
     });
   });
 }
