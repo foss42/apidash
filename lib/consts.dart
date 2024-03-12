@@ -266,11 +266,13 @@ enum CodegenLanguage {
   har("HAR", "json", "har"),
   dartHttp("Dart (http)", "dart", "dart"),
   dartDio("Dart (dio)", "dart", "dart"),
+  goHttp("Go (http)", "go", "go"),
   jsAxios("JavaScript (axios)", "javascript", "js"),
   jsFetch("JavaScript (fetch)", "javascript", "js"),
   nodejsAxios("node.js (axios)", "javascript", "js"),
   nodejsFetch("node.js (fetch)", "javascript", "js"),
   kotlinOkHttp("Kotlin (okhttp3)", "java", "kt"),
+  rustActix("Rust (Actix Client)", "rust", "rs"),
   pythonHttpClient("Python (http.client)", "python", "py"),
   pythonRequests("Python (requests)", "python", "py"),
   rustUreq("Rust (ureq)", "rust", "rs");
