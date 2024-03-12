@@ -53,11 +53,11 @@ multipart/form-data; boundary={{boundary}}''';
     }
 
     let form_data_items: Vec<FormDataItem> = vec![
-    {%- for formitem in fields_list %}  
+    {%- for formitem in fields_list %}
         FormDataItem {
         {%- for key, val in formitem %}
             {% if key == "type" %}field_type: "{{ val }}".to_string(),{% else %}{{ key }}: "{{ val }}".to_string(),{% endif %}
-        {%- endfor %} 
+        {%- endfor %}
         },
     {%- endfor %}
     ]; 
@@ -116,6 +116,7 @@ multipart/form-data; boundary={{boundary}}''';
     String? boundary,
   }) {
     try {
+      String uuid = getNewUuid();
       String result = "";
       bool hasBody = false;
       bool hasJsonBody = false;
@@ -157,7 +158,7 @@ multipart/form-data; boundary={{boundary}}''';
           result += formDataBodyData.render(
             {
               "fields_list": requestModel.formDataMapList,
-              "boundary": boundary ?? getNewUuid(),
+              "boundary": boundary ?? uuid,
             },
           );
         }
@@ -179,13 +180,13 @@ multipart/form-data; boundary={{boundary}}''';
         }
 
         var headersList = requestModel.enabledRequestHeaders;
-        if (headersList != null || hasBody || requestModel.hasTextData) {
+        if (headersList != null || hasBody || requestModel.hasFormData) {
           var headers = requestModel.enabledHeadersMap;
           if (requestModel.hasFormData) {
             var formHeaderTemplate =
                 jj.Template(kTemplateFormHeaderContentType);
             headers[HttpHeaders.contentTypeHeader] = formHeaderTemplate.render({
-              "boundary": boundary ?? getNewUuid(),
+              "boundary": boundary ?? uuid,
             });
           } else if (hasBody) {
             headers[HttpHeaders.contentTypeHeader] =

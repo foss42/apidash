@@ -483,6 +483,489 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
               CodegenLanguage.rustActix, requestModelPost3, "https"),
           expectedCode);
     });
+
+    test('POST 4', () {
+      const expectedCode = r"""use std::io::Read;
+#[actix_rt::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let url = "https://api.apidash.dev/io/form";
+    let client = awc::Client::default();
+
+    struct FormDataItem {
+        name: String,
+        value: String,
+        field_type: String,
+    }
+
+    let form_data_items: Vec<FormDataItem> = vec![
+        FormDataItem {
+            name: "text".to_string(),
+            value: "API".to_string(),
+            field_type: "text".to_string(),
+        },
+        FormDataItem {
+            name: "sep".to_string(),
+            value: "|".to_string(),
+            field_type: "text".to_string(),
+        },
+        FormDataItem {
+            name: "times".to_string(),
+            value: "3".to_string(),
+            field_type: "text".to_string(),
+        },
+    ]; 
+
+    fn build_data_list(fields: Vec<FormDataItem>) -> Vec<u8> {
+        let mut data_list = Vec::new();
+  
+        for field in fields {
+            data_list.extend_from_slice(b"--test\r\n");
+  
+            if field.field_type == "text" {
+                data_list.extend_from_slice(format!("Content-Disposition: form-data; name=\"{}\"\r\n", field.name).as_bytes());
+                data_list.extend_from_slice(b"Content-Type: text/plain\r\n\r\n");
+                data_list.extend_from_slice(field.value.as_bytes());
+                data_list.extend_from_slice(b"\r\n");
+            } else if field.field_type == "file" {
+                data_list.extend_from_slice(format!("Content-Disposition: form-data; name=\"{}\"; filename=\"{}\"\r\n", field.name, field.value).as_bytes());
+  
+                let mime_type = mime_guess::from_path(&field.value).first_or(mime_guess::mime::APPLICATION_OCTET_STREAM);
+                data_list.extend_from_slice(format!("Content-Type: {}\r\n\r\n", mime_type).as_bytes());
+  
+                let mut file = std::fs::File::open(&field.value).unwrap();
+                let mut file_contents = Vec::new();
+                file.read_to_end(&mut file_contents).unwrap();
+                data_list.extend_from_slice(&file_contents);
+                data_list.extend_from_slice(b"\r\n");
+            }
+        }
+  
+        data_list.extend_from_slice(b"--test--\r\n");
+        data_list
+    }
+  
+    let payload = build_data_list(form_data_items);
+    let mut response = client
+        .post(url)
+        .insert_header(("content-type", "multipart/form-data; boundary=test"))
+        .send_body(payload)
+        .await
+        .unwrap();
+
+    let body_bytes = response.body().await.unwrap();
+    let body = std::str::from_utf8(&body_bytes).unwrap();
+    println!("Response Status: {}", response.status());
+    println!("Response: {:?}", body);
+
+    Ok(())
+}
+""";
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.rustActix,
+            requestModelPost4,
+            "https",
+            boundary: "test",
+          ),
+          expectedCode);
+    });
+    test('POST 5', () {
+      const expectedCode = r"""use std::io::Read;
+#[actix_rt::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let url = "https://api.apidash.dev/io/form";
+    let client = awc::Client::default();
+
+    struct FormDataItem {
+        name: String,
+        value: String,
+        field_type: String,
+    }
+
+    let form_data_items: Vec<FormDataItem> = vec![
+        FormDataItem {
+            name: "text".to_string(),
+            value: "API".to_string(),
+            field_type: "text".to_string(),
+        },
+        FormDataItem {
+            name: "sep".to_string(),
+            value: "|".to_string(),
+            field_type: "text".to_string(),
+        },
+        FormDataItem {
+            name: "times".to_string(),
+            value: "3".to_string(),
+            field_type: "text".to_string(),
+        },
+    ]; 
+
+    fn build_data_list(fields: Vec<FormDataItem>) -> Vec<u8> {
+        let mut data_list = Vec::new();
+  
+        for field in fields {
+            data_list.extend_from_slice(b"--test\r\n");
+  
+            if field.field_type == "text" {
+                data_list.extend_from_slice(format!("Content-Disposition: form-data; name=\"{}\"\r\n", field.name).as_bytes());
+                data_list.extend_from_slice(b"Content-Type: text/plain\r\n\r\n");
+                data_list.extend_from_slice(field.value.as_bytes());
+                data_list.extend_from_slice(b"\r\n");
+            } else if field.field_type == "file" {
+                data_list.extend_from_slice(format!("Content-Disposition: form-data; name=\"{}\"; filename=\"{}\"\r\n", field.name, field.value).as_bytes());
+  
+                let mime_type = mime_guess::from_path(&field.value).first_or(mime_guess::mime::APPLICATION_OCTET_STREAM);
+                data_list.extend_from_slice(format!("Content-Type: {}\r\n\r\n", mime_type).as_bytes());
+  
+                let mut file = std::fs::File::open(&field.value).unwrap();
+                let mut file_contents = Vec::new();
+                file.read_to_end(&mut file_contents).unwrap();
+                data_list.extend_from_slice(&file_contents);
+                data_list.extend_from_slice(b"\r\n");
+            }
+        }
+  
+        data_list.extend_from_slice(b"--test--\r\n");
+        data_list
+    }
+  
+    let payload = build_data_list(form_data_items);
+    let mut response = client
+        .post(url)
+        .insert_header(("User-Agent", "Test Agent"))
+        .insert_header(("content-type", "multipart/form-data; boundary=test"))
+        .send_body(payload)
+        .await
+        .unwrap();
+
+    let body_bytes = response.body().await.unwrap();
+    let body = std::str::from_utf8(&body_bytes).unwrap();
+    println!("Response Status: {}", response.status());
+    println!("Response: {:?}", body);
+
+    Ok(())
+}
+""";
+      expect(
+          codeGen.getCode(CodegenLanguage.rustActix, requestModelPost5, "https",
+              boundary: "test"),
+          expectedCode);
+    });
+    test('POST 6', () {
+      const expectedCode = r"""use std::io::Read;
+#[actix_rt::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let url = "https://api.apidash.dev/io/img";
+    let client = awc::Client::default();
+
+    struct FormDataItem {
+        name: String,
+        value: String,
+        field_type: String,
+    }
+
+    let form_data_items: Vec<FormDataItem> = vec![
+        FormDataItem {
+            name: "token".to_string(),
+            value: "xyz".to_string(),
+            field_type: "text".to_string(),
+        },
+        FormDataItem {
+            name: "imfile".to_string(),
+            value: "/Documents/up/1.png".to_string(),
+            field_type: "file".to_string(),
+        },
+    ]; 
+
+    fn build_data_list(fields: Vec<FormDataItem>) -> Vec<u8> {
+        let mut data_list = Vec::new();
+  
+        for field in fields {
+            data_list.extend_from_slice(b"--test\r\n");
+  
+            if field.field_type == "text" {
+                data_list.extend_from_slice(format!("Content-Disposition: form-data; name=\"{}\"\r\n", field.name).as_bytes());
+                data_list.extend_from_slice(b"Content-Type: text/plain\r\n\r\n");
+                data_list.extend_from_slice(field.value.as_bytes());
+                data_list.extend_from_slice(b"\r\n");
+            } else if field.field_type == "file" {
+                data_list.extend_from_slice(format!("Content-Disposition: form-data; name=\"{}\"; filename=\"{}\"\r\n", field.name, field.value).as_bytes());
+  
+                let mime_type = mime_guess::from_path(&field.value).first_or(mime_guess::mime::APPLICATION_OCTET_STREAM);
+                data_list.extend_from_slice(format!("Content-Type: {}\r\n\r\n", mime_type).as_bytes());
+  
+                let mut file = std::fs::File::open(&field.value).unwrap();
+                let mut file_contents = Vec::new();
+                file.read_to_end(&mut file_contents).unwrap();
+                data_list.extend_from_slice(&file_contents);
+                data_list.extend_from_slice(b"\r\n");
+            }
+        }
+  
+        data_list.extend_from_slice(b"--test--\r\n");
+        data_list
+    }
+  
+    let payload = build_data_list(form_data_items);
+    let mut response = client
+        .post(url)
+        .insert_header(("content-type", "multipart/form-data; boundary=test"))
+        .send_body(payload)
+        .await
+        .unwrap();
+
+    let body_bytes = response.body().await.unwrap();
+    let body = std::str::from_utf8(&body_bytes).unwrap();
+    println!("Response Status: {}", response.status());
+    println!("Response: {:?}", body);
+
+    Ok(())
+}
+""";
+      expect(
+          codeGen.getCode(CodegenLanguage.rustActix, requestModelPost6, "https",
+              boundary: "test"),
+          expectedCode);
+    });
+    test('POST 7', () {
+      const expectedCode = r"""use std::io::Read;
+#[actix_rt::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let url = "https://api.apidash.dev/io/img";
+    let client = awc::Client::default();
+
+    struct FormDataItem {
+        name: String,
+        value: String,
+        field_type: String,
+    }
+
+    let form_data_items: Vec<FormDataItem> = vec![
+        FormDataItem {
+            name: "token".to_string(),
+            value: "xyz".to_string(),
+            field_type: "text".to_string(),
+        },
+        FormDataItem {
+            name: "imfile".to_string(),
+            value: "/Documents/up/1.png".to_string(),
+            field_type: "file".to_string(),
+        },
+    ]; 
+
+    fn build_data_list(fields: Vec<FormDataItem>) -> Vec<u8> {
+        let mut data_list = Vec::new();
+  
+        for field in fields {
+            data_list.extend_from_slice(b"--test\r\n");
+  
+            if field.field_type == "text" {
+                data_list.extend_from_slice(format!("Content-Disposition: form-data; name=\"{}\"\r\n", field.name).as_bytes());
+                data_list.extend_from_slice(b"Content-Type: text/plain\r\n\r\n");
+                data_list.extend_from_slice(field.value.as_bytes());
+                data_list.extend_from_slice(b"\r\n");
+            } else if field.field_type == "file" {
+                data_list.extend_from_slice(format!("Content-Disposition: form-data; name=\"{}\"; filename=\"{}\"\r\n", field.name, field.value).as_bytes());
+  
+                let mime_type = mime_guess::from_path(&field.value).first_or(mime_guess::mime::APPLICATION_OCTET_STREAM);
+                data_list.extend_from_slice(format!("Content-Type: {}\r\n\r\n", mime_type).as_bytes());
+  
+                let mut file = std::fs::File::open(&field.value).unwrap();
+                let mut file_contents = Vec::new();
+                file.read_to_end(&mut file_contents).unwrap();
+                data_list.extend_from_slice(&file_contents);
+                data_list.extend_from_slice(b"\r\n");
+            }
+        }
+  
+        data_list.extend_from_slice(b"--test--\r\n");
+        data_list
+    }
+  
+    let payload = build_data_list(form_data_items);
+    let mut response = client
+        .post(url)
+        .insert_header(("content-type", "multipart/form-data; boundary=test"))
+        .send_body(payload)
+        .await
+        .unwrap();
+
+    let body_bytes = response.body().await.unwrap();
+    let body = std::str::from_utf8(&body_bytes).unwrap();
+    println!("Response Status: {}", response.status());
+    println!("Response: {:?}", body);
+
+    Ok(())
+}
+""";
+      expect(
+          codeGen.getCode(CodegenLanguage.rustActix, requestModelPost7, "https",
+              boundary: "test"),
+          expectedCode);
+    });
+    test('POST 8', () {
+      const expectedCode = r"""use std::io::Read;
+#[actix_rt::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let url = "https://api.apidash.dev/io/form";
+    let client = awc::Client::default();
+
+    struct FormDataItem {
+        name: String,
+        value: String,
+        field_type: String,
+    }
+
+    let form_data_items: Vec<FormDataItem> = vec![
+        FormDataItem {
+            name: "text".to_string(),
+            value: "API".to_string(),
+            field_type: "text".to_string(),
+        },
+        FormDataItem {
+            name: "sep".to_string(),
+            value: "|".to_string(),
+            field_type: "text".to_string(),
+        },
+        FormDataItem {
+            name: "times".to_string(),
+            value: "3".to_string(),
+            field_type: "text".to_string(),
+        },
+    ]; 
+
+    fn build_data_list(fields: Vec<FormDataItem>) -> Vec<u8> {
+        let mut data_list = Vec::new();
+  
+        for field in fields {
+            data_list.extend_from_slice(b"--test\r\n");
+  
+            if field.field_type == "text" {
+                data_list.extend_from_slice(format!("Content-Disposition: form-data; name=\"{}\"\r\n", field.name).as_bytes());
+                data_list.extend_from_slice(b"Content-Type: text/plain\r\n\r\n");
+                data_list.extend_from_slice(field.value.as_bytes());
+                data_list.extend_from_slice(b"\r\n");
+            } else if field.field_type == "file" {
+                data_list.extend_from_slice(format!("Content-Disposition: form-data; name=\"{}\"; filename=\"{}\"\r\n", field.name, field.value).as_bytes());
+  
+                let mime_type = mime_guess::from_path(&field.value).first_or(mime_guess::mime::APPLICATION_OCTET_STREAM);
+                data_list.extend_from_slice(format!("Content-Type: {}\r\n\r\n", mime_type).as_bytes());
+  
+                let mut file = std::fs::File::open(&field.value).unwrap();
+                let mut file_contents = Vec::new();
+                file.read_to_end(&mut file_contents).unwrap();
+                data_list.extend_from_slice(&file_contents);
+                data_list.extend_from_slice(b"\r\n");
+            }
+        }
+  
+        data_list.extend_from_slice(b"--test--\r\n");
+        data_list
+    }
+  
+    let payload = build_data_list(form_data_items);
+    let mut response = client
+        .post(url)
+        .query(&[("size", "2"), ("len", "3")])
+        .unwrap()
+        .insert_header(("content-type", "multipart/form-data; boundary=test"))
+        .send_body(payload)
+        .await
+        .unwrap();
+
+    let body_bytes = response.body().await.unwrap();
+    let body = std::str::from_utf8(&body_bytes).unwrap();
+    println!("Response Status: {}", response.status());
+    println!("Response: {:?}", body);
+
+    Ok(())
+}
+""";
+      expect(
+          codeGen.getCode(CodegenLanguage.rustActix, requestModelPost8, "https",
+              boundary: "test"),
+          expectedCode);
+    });
+    test('POST 9', () {
+      const expectedCode = r"""use std::io::Read;
+#[actix_rt::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let url = "https://api.apidash.dev/io/img";
+    let client = awc::Client::default();
+
+    struct FormDataItem {
+        name: String,
+        value: String,
+        field_type: String,
+    }
+
+    let form_data_items: Vec<FormDataItem> = vec![
+        FormDataItem {
+            name: "token".to_string(),
+            value: "xyz".to_string(),
+            field_type: "text".to_string(),
+        },
+        FormDataItem {
+            name: "imfile".to_string(),
+            value: "/Documents/up/1.png".to_string(),
+            field_type: "file".to_string(),
+        },
+    ]; 
+
+    fn build_data_list(fields: Vec<FormDataItem>) -> Vec<u8> {
+        let mut data_list = Vec::new();
+  
+        for field in fields {
+            data_list.extend_from_slice(b"--test\r\n");
+  
+            if field.field_type == "text" {
+                data_list.extend_from_slice(format!("Content-Disposition: form-data; name=\"{}\"\r\n", field.name).as_bytes());
+                data_list.extend_from_slice(b"Content-Type: text/plain\r\n\r\n");
+                data_list.extend_from_slice(field.value.as_bytes());
+                data_list.extend_from_slice(b"\r\n");
+            } else if field.field_type == "file" {
+                data_list.extend_from_slice(format!("Content-Disposition: form-data; name=\"{}\"; filename=\"{}\"\r\n", field.name, field.value).as_bytes());
+  
+                let mime_type = mime_guess::from_path(&field.value).first_or(mime_guess::mime::APPLICATION_OCTET_STREAM);
+                data_list.extend_from_slice(format!("Content-Type: {}\r\n\r\n", mime_type).as_bytes());
+  
+                let mut file = std::fs::File::open(&field.value).unwrap();
+                let mut file_contents = Vec::new();
+                file.read_to_end(&mut file_contents).unwrap();
+                data_list.extend_from_slice(&file_contents);
+                data_list.extend_from_slice(b"\r\n");
+            }
+        }
+  
+        data_list.extend_from_slice(b"--test--\r\n");
+        data_list
+    }
+  
+    let payload = build_data_list(form_data_items);
+    let mut response = client
+        .post(url)
+        .query(&[("size", "2"), ("len", "3")])
+        .unwrap()
+        .insert_header(("User-Agent", "Test Agent"))
+        .insert_header(("Keep-Alive", "true"))
+        .insert_header(("content-type", "multipart/form-data; boundary=test"))
+        .send_body(payload)
+        .await
+        .unwrap();
+
+    let body_bytes = response.body().await.unwrap();
+    let body = std::str::from_utf8(&body_bytes).unwrap();
+    println!("Response Status: {}", response.status());
+    println!("Response: {:?}", body);
+
+    Ok(())
+}
+""";
+      expect(
+          codeGen.getCode(CodegenLanguage.rustActix, requestModelPost9, "https",
+              boundary: "test"),
+          expectedCode);
+    });
   });
 
   group('PUT Request', () {
