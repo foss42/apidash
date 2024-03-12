@@ -421,6 +421,335 @@ void main() {
               CodegenLanguage.rustReqwest, requestModelPost3, "https"),
           expectedCode);
     });
+    test('POST 4', () {
+      const expectedCode =
+          r"""fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let client = reqwest::blocking::Client::new();
+    let url = "https://api.apidash.dev/io/form";
+
+    struct FormDataItem {
+        name: String,
+        value: String,
+        field_type: String,
+    }
+
+    let form_data_items: Vec<FormDataItem> = vec![  
+        FormDataItem {
+            name: "text".to_string(),
+            value: "API".to_string(),
+            field_type: "text".to_string(), 
+        },  
+        FormDataItem {
+            name: "sep".to_string(),
+            value: "|".to_string(),
+            field_type: "text".to_string(), 
+        },  
+        FormDataItem {
+            name: "times".to_string(),
+            value: "3".to_string(),
+            field_type: "text".to_string(), 
+        },
+    ]; 
+  
+    let mut form = reqwest::blocking::multipart::Form::new();
+    
+    for item in form_data_items {
+        if item.field_type == "text" {
+            form = form.text(item.name, item.value);
+        } else if item.field_type == "file" {
+            form = form.file(item.name, &item.value)?; 
+        }
+    }
+    let response = client
+        .post(url)
+        .multipart(form)
+        .send()?;
+
+    println!("Status Code: {}", response.status()); 
+    println!("Response Body: {}", response.text()?);
+
+    Ok(())
+}
+""";
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.rustReqwest,
+            requestModelPost4,
+            "https",
+            boundary: "test",
+          ),
+          expectedCode);
+    });
+    test('POST 5', () {
+      const expectedCode =
+          r"""fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let client = reqwest::blocking::Client::new();
+    let url = "https://api.apidash.dev/io/form";
+
+    struct FormDataItem {
+        name: String,
+        value: String,
+        field_type: String,
+    }
+
+    let form_data_items: Vec<FormDataItem> = vec![  
+        FormDataItem {
+            name: "text".to_string(),
+            value: "API".to_string(),
+            field_type: "text".to_string(), 
+        },  
+        FormDataItem {
+            name: "sep".to_string(),
+            value: "|".to_string(),
+            field_type: "text".to_string(), 
+        },  
+        FormDataItem {
+            name: "times".to_string(),
+            value: "3".to_string(),
+            field_type: "text".to_string(), 
+        },
+    ]; 
+  
+    let mut form = reqwest::blocking::multipart::Form::new();
+    
+    for item in form_data_items {
+        if item.field_type == "text" {
+            form = form.text(item.name, item.value);
+        } else if item.field_type == "file" {
+            form = form.file(item.name, &item.value)?; 
+        }
+    }
+    let response = client
+        .post(url)
+        .header("User-Agent", "Test Agent")
+        .multipart(form)
+        .send()?;
+
+    println!("Status Code: {}", response.status()); 
+    println!("Response Body: {}", response.text()?);
+
+    Ok(())
+}
+""";
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.rustReqwest, requestModelPost5, "https",
+              boundary: "test"),
+          expectedCode);
+    });
+    test('POST 6', () {
+      const expectedCode =
+          r"""fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let client = reqwest::blocking::Client::new();
+    let url = "https://api.apidash.dev/io/img";
+
+    struct FormDataItem {
+        name: String,
+        value: String,
+        field_type: String,
+    }
+
+    let form_data_items: Vec<FormDataItem> = vec![  
+        FormDataItem {
+            name: "token".to_string(),
+            value: "xyz".to_string(),
+            field_type: "text".to_string(), 
+        },  
+        FormDataItem {
+            name: "imfile".to_string(),
+            value: "/Documents/up/1.png".to_string(),
+            field_type: "file".to_string(), 
+        },
+    ]; 
+  
+    let mut form = reqwest::blocking::multipart::Form::new();
+    
+    for item in form_data_items {
+        if item.field_type == "text" {
+            form = form.text(item.name, item.value);
+        } else if item.field_type == "file" {
+            form = form.file(item.name, &item.value)?; 
+        }
+    }
+    let response = client
+        .post(url)
+        .multipart(form)
+        .send()?;
+
+    println!("Status Code: {}", response.status()); 
+    println!("Response Body: {}", response.text()?);
+
+    Ok(())
+}
+""";
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.rustReqwest, requestModelPost6, "https",
+              boundary: "test"),
+          expectedCode);
+    });
+    test('POST 7', () {
+      const expectedCode =
+          r"""fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let client = reqwest::blocking::Client::new();
+    let url = "https://api.apidash.dev/io/img";
+
+    struct FormDataItem {
+        name: String,
+        value: String,
+        field_type: String,
+    }
+
+    let form_data_items: Vec<FormDataItem> = vec![  
+        FormDataItem {
+            name: "token".to_string(),
+            value: "xyz".to_string(),
+            field_type: "text".to_string(), 
+        },  
+        FormDataItem {
+            name: "imfile".to_string(),
+            value: "/Documents/up/1.png".to_string(),
+            field_type: "file".to_string(), 
+        },
+    ]; 
+  
+    let mut form = reqwest::blocking::multipart::Form::new();
+    
+    for item in form_data_items {
+        if item.field_type == "text" {
+            form = form.text(item.name, item.value);
+        } else if item.field_type == "file" {
+            form = form.file(item.name, &item.value)?; 
+        }
+    }
+    let response = client
+        .post(url)
+        .multipart(form)
+        .send()?;
+
+    println!("Status Code: {}", response.status()); 
+    println!("Response Body: {}", response.text()?);
+
+    Ok(())
+}
+""";
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.rustReqwest, requestModelPost7, "https",
+              boundary: "test"),
+          expectedCode);
+    });
+    test('POST 8', () {
+      const expectedCode =
+          r"""fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let client = reqwest::blocking::Client::new();
+    let url = "https://api.apidash.dev/io/form";
+
+    struct FormDataItem {
+        name: String,
+        value: String,
+        field_type: String,
+    }
+
+    let form_data_items: Vec<FormDataItem> = vec![  
+        FormDataItem {
+            name: "text".to_string(),
+            value: "API".to_string(),
+            field_type: "text".to_string(), 
+        },  
+        FormDataItem {
+            name: "sep".to_string(),
+            value: "|".to_string(),
+            field_type: "text".to_string(), 
+        },  
+        FormDataItem {
+            name: "times".to_string(),
+            value: "3".to_string(),
+            field_type: "text".to_string(), 
+        },
+    ]; 
+  
+    let mut form = reqwest::blocking::multipart::Form::new();
+    
+    for item in form_data_items {
+        if item.field_type == "text" {
+            form = form.text(item.name, item.value);
+        } else if item.field_type == "file" {
+            form = form.file(item.name, &item.value)?; 
+        }
+    }
+    let response = client
+        .post(url)
+        .query(&[("size", "2"), ("len", "3")])
+        .multipart(form)
+        .send()?;
+
+    println!("Status Code: {}", response.status()); 
+    println!("Response Body: {}", response.text()?);
+
+    Ok(())
+}
+""";
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.rustReqwest, requestModelPost8, "https",
+              boundary: "test"),
+          expectedCode);
+    });
+    test('POST 9', () {
+      const expectedCode =
+          r"""fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let client = reqwest::blocking::Client::new();
+    let url = "https://api.apidash.dev/io/img";
+
+    struct FormDataItem {
+        name: String,
+        value: String,
+        field_type: String,
+    }
+
+    let form_data_items: Vec<FormDataItem> = vec![  
+        FormDataItem {
+            name: "token".to_string(),
+            value: "xyz".to_string(),
+            field_type: "text".to_string(), 
+        },  
+        FormDataItem {
+            name: "imfile".to_string(),
+            value: "/Documents/up/1.png".to_string(),
+            field_type: "file".to_string(), 
+        },
+    ]; 
+  
+    let mut form = reqwest::blocking::multipart::Form::new();
+    
+    for item in form_data_items {
+        if item.field_type == "text" {
+            form = form.text(item.name, item.value);
+        } else if item.field_type == "file" {
+            form = form.file(item.name, &item.value)?; 
+        }
+    }
+    let response = client
+        .post(url)
+        .query(&[("size", "2"), ("len", "3")])
+        .header("User-Agent", "Test Agent")
+        .header("Keep-Alive", "true")
+        .multipart(form)
+        .send()?;
+
+    println!("Status Code: {}", response.status()); 
+    println!("Response Body: {}", response.text()?);
+
+    Ok(())
+}
+""";
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.rustReqwest, requestModelPost9, "https",
+              boundary: "test"),
+          expectedCode);
+    });
   });
 
   group('PUT Request', () {
