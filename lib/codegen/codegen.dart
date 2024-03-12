@@ -1,3 +1,4 @@
+import 'package:apidash/codegen/go/http.dart';
 import 'package:apidash/models/models.dart' show RequestModel;
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart' show getNewUuid;
@@ -52,6 +53,8 @@ class Codegen {
             .getCode(rM, boundary: boundary ?? getNewUuid());
       case CodegenLanguage.pythonRequests:
         return PythonRequestsCodeGen().getCode(rM, boundary: boundary);
+      case CodegenLanguage.goHttp:
+        return GoHttpCodeGen().getCode(rM);
     }
   }
 }

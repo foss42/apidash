@@ -68,6 +68,7 @@ class RequestModel {
   bool get hasJsonContentType => requestBodyContentType == ContentType.json;
   bool get hasTextContentType => requestBodyContentType == ContentType.text;
   int get contentLength => utf8.encode(requestBody ?? "").length;
+  bool get hasData => hasJsonData || hasTextData || hasFormData;
   bool get hasJsonData =>
       kMethodsWithBody.contains(method) &&
       hasJsonContentType &&
@@ -84,6 +85,9 @@ class RequestModel {
       requestFormDataList ?? <FormDataModel>[];
   List<Map<String, dynamic>> get formDataMapList =>
       rowsToFormDataMapList(requestFormDataList) ?? [];
+  bool get hasFileInFormData => formDataList
+      .map((e) => e.type == FormDataType.file)
+      .any((element) => element);
 
   bool get hasContentTypeHeader => enabledHeadersMap.keys
       .any((k) => k.toLowerCase() == HttpHeaders.contentTypeHeader);

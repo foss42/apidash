@@ -266,6 +266,7 @@ enum CodegenLanguage {
   har("HAR", "json", "har"),
   dartHttp("Dart (http)", "dart", "dart"),
   dartDio("Dart (dio)", "dart", "dart"),
+  goHttp("Go (http)", "go", "go"),
   jsAxios("JavaScript (axios)", "javascript", "js"),
   jsFetch("JavaScript (fetch)", "javascript", "js"),
   nodejsAxios("node.js (axios)", "javascript", "js"),
