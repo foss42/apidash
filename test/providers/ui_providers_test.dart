@@ -10,9 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
-
-class MockPathProviderPlatform extends Mock implements MethodChannel {}
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -20,7 +17,6 @@ void main() {
   setUp(() async {
     const MethodChannel channel =
         MethodChannel('plugins.flutter.io/path_provider');
-    final MockPathProviderPlatform mock = MockPathProviderPlatform();
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       if (methodCall.method == 'getApplicationDocumentsDirectory') {
@@ -70,6 +66,7 @@ void main() {
       expect(find.byType(HomePage), findsNothing);
       expect(find.byType(SettingsPage), findsNothing);
     });
+
     testWidgets(
         "Dashboard should display SettingsPage when navRailIndexStateProvider is 2",
         (WidgetTester tester) async {
