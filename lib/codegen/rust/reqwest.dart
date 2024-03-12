@@ -82,7 +82,6 @@ class RustReqwestCodeGen {
 
   String? getCode(
     RequestModel requestModel,
-    String defaultUriScheme,
   ) {
     try {
       String result = "";
@@ -90,9 +89,6 @@ class RustReqwestCodeGen {
       bool hasJsonBody = false;
 
       String url = requestModel.url;
-      if (!url.contains("://") && url.isNotEmpty) {
-        url = "$defaultUriScheme://$url";
-      }
 
       var rec = getValidRequestUri(
         url,
@@ -103,7 +99,7 @@ class RustReqwestCodeGen {
         var templateStartUrl = jj.Template(kTemplateStart);
         result += templateStartUrl.render({
           "url": stripUriParams(uri),
-          'isFormDataRequest': requestModel.isFormDataRequest,
+          'isFormDataRequest': requestModel.hasFormData,
           'isJson': requestModel.requestBodyContentType == ContentType.json
         });
 
@@ -116,7 +112,7 @@ class RustReqwestCodeGen {
               hasJsonBody = true;
               var templateBody = jj.Template(kTemplateJson);
               result += templateBody.render({"body": requestBody});
-            } else if (!requestModel.isFormDataRequest) {
+            } else if (!requestModel.hasFormData) {
               hasBody = true;
               var templateBody = jj.Template(kTemplateBody);
               result += templateBody.render({"body": requestBody});
@@ -124,7 +120,7 @@ class RustReqwestCodeGen {
           }
         }
 
-        if (requestModel.isFormDataRequest) {
+        if (requestModel.hasFormData) {
           var formDataBodyData = jj.Template(kStringFormDataBody);
           result += formDataBodyData.render(
             {
@@ -162,7 +158,7 @@ class RustReqwestCodeGen {
           }
         }
 
-        if (hasBody && !requestModel.isFormDataRequest) {
+        if (hasBody && !requestModel.hasFormData) {
           result += kStringRequestBody;
         }
 
@@ -170,7 +166,7 @@ class RustReqwestCodeGen {
           result += kStringRequestJson;
         }
 
-        if (requestModel.isFormDataRequest) {
+        if (requestModel.hasFormData) {
           result += kStringRequestForm;
         }
 

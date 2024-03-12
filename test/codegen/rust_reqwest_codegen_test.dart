@@ -1,16 +1,17 @@
-import 'package:apidash/codegen/rust/reqwest.dart';
-import '../request_models.dart';
+import 'package:apidash/codegen/codegen.dart';
+import 'package:apidash/consts.dart';
 import 'package:test/test.dart';
+import '../request_models.dart';
 
 void main() {
-  final rustReqwestCodeGen = RustReqwestCodeGen();
+  final codeGen = Codegen();
 
   group('GET Request', () {
     test('GET 1', () {
       const expectedCode =
           r"""fn main() -> Result<(), Box<dyn std::error::Error>> {
     let client = reqwest::blocking::Client::new();
-    let url = "https://api.foss42.com";
+    let url = "https://api.apidash.dev";
 
     let response = client
         .get(url)
@@ -23,14 +24,16 @@ void main() {
 }
 """;
       expect(
-          rustReqwestCodeGen.getCode(requestModelGet1, "https"), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.rustReqwest, requestModelGet1, "https"),
+          expectedCode);
     });
 
     test('GET 2', () {
       const expectedCode =
           r"""fn main() -> Result<(), Box<dyn std::error::Error>> {
     let client = reqwest::blocking::Client::new();
-    let url = "https://api.foss42.com/country/data";
+    let url = "https://api.apidash.dev/country/data";
 
     let response = client
         .get(url)
@@ -44,14 +47,16 @@ void main() {
 }
 """;
       expect(
-          rustReqwestCodeGen.getCode(requestModelGet2, "https"), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.rustReqwest, requestModelGet2, "https"),
+          expectedCode);
     });
 
     test('GET 3', () {
       const expectedCode =
           r"""fn main() -> Result<(), Box<dyn std::error::Error>> {
     let client = reqwest::blocking::Client::new();
-    let url = "https://api.foss42.com/country/data";
+    let url = "https://api.apidash.dev/country/data";
 
     let response = client
         .get(url)
@@ -65,14 +70,16 @@ void main() {
 }
 """;
       expect(
-          rustReqwestCodeGen.getCode(requestModelGet3, "https"), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.rustReqwest, requestModelGet3, "https"),
+          expectedCode);
     });
 
     test('GET 4', () {
       const expectedCode =
           r"""fn main() -> Result<(), Box<dyn std::error::Error>> {
     let client = reqwest::blocking::Client::new();
-    let url = "https://api.foss42.com/humanize/social";
+    let url = "https://api.apidash.dev/humanize/social";
 
     let response = client
         .get(url)
@@ -86,7 +93,9 @@ void main() {
 }
 """;
       expect(
-          rustReqwestCodeGen.getCode(requestModelGet4, "https"), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.rustReqwest, requestModelGet4, "https"),
+          expectedCode);
     });
 
     test('GET 5', () {
@@ -107,7 +116,9 @@ void main() {
 }
 """;
       expect(
-          rustReqwestCodeGen.getCode(requestModelGet5, "https"), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.rustReqwest, requestModelGet5, "https"),
+          expectedCode);
     });
 
     test('GET 6', () {
@@ -129,14 +140,16 @@ void main() {
 }
 """;
       expect(
-          rustReqwestCodeGen.getCode(requestModelGet6, "https"), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.rustReqwest, requestModelGet6, "https"),
+          expectedCode);
     });
 
     test('GET 7', () {
       const expectedCode =
           r"""fn main() -> Result<(), Box<dyn std::error::Error>> {
     let client = reqwest::blocking::Client::new();
-    let url = "https://api.foss42.com";
+    let url = "https://api.apidash.dev";
 
     let response = client
         .get(url)
@@ -149,7 +162,9 @@ void main() {
 }
 """;
       expect(
-          rustReqwestCodeGen.getCode(requestModelGet7, "https"), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.rustReqwest, requestModelGet7, "https"),
+          expectedCode);
     });
 
     test('GET 8', () {
@@ -171,14 +186,16 @@ void main() {
 }
 """;
       expect(
-          rustReqwestCodeGen.getCode(requestModelGet8, "https"), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.rustReqwest, requestModelGet8, "https"),
+          expectedCode);
     });
 
     test('GET 9', () {
       const expectedCode =
           r"""fn main() -> Result<(), Box<dyn std::error::Error>> {
     let client = reqwest::blocking::Client::new();
-    let url = "https://api.foss42.com/humanize/social";
+    let url = "https://api.apidash.dev/humanize/social";
 
     let response = client
         .get(url)
@@ -192,14 +209,16 @@ void main() {
 }
 """;
       expect(
-          rustReqwestCodeGen.getCode(requestModelGet9, "https"), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.rustReqwest, requestModelGet9, "https"),
+          expectedCode);
     });
 
     test('GET 10', () {
       const expectedCode =
           r"""fn main() -> Result<(), Box<dyn std::error::Error>> {
     let client = reqwest::blocking::Client::new();
-    let url = "https://api.foss42.com/humanize/social";
+    let url = "https://api.apidash.dev/humanize/social";
 
     let response = client
         .get(url)
@@ -213,7 +232,8 @@ void main() {
 }
 """;
       expect(
-          rustReqwestCodeGen.getCode(
+          codeGen.getCode(
+            CodegenLanguage.rustReqwest,
             requestModelGet10,
             "https",
           ),
@@ -224,7 +244,7 @@ void main() {
       const expectedCode =
           r"""fn main() -> Result<(), Box<dyn std::error::Error>> {
     let client = reqwest::blocking::Client::new();
-    let url = "https://api.foss42.com/humanize/social";
+    let url = "https://api.apidash.dev/humanize/social";
 
     let response = client
         .get(url)
@@ -239,14 +259,16 @@ void main() {
 }
 """;
       expect(
-          rustReqwestCodeGen.getCode(requestModelGet11, "https"), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.rustReqwest, requestModelGet11, "https"),
+          expectedCode);
     });
 
     test('GET 12', () {
       const expectedCode =
           r"""fn main() -> Result<(), Box<dyn std::error::Error>> {
     let client = reqwest::blocking::Client::new();
-    let url = "https://api.foss42.com/humanize/social";
+    let url = "https://api.apidash.dev/humanize/social";
 
     let response = client
         .get(url)
@@ -259,7 +281,9 @@ void main() {
 }
 """;
       expect(
-          rustReqwestCodeGen.getCode(requestModelGet12, "https"), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.rustReqwest, requestModelGet12, "https"),
+          expectedCode);
     });
   });
 
@@ -268,7 +292,7 @@ void main() {
       const expectedCode =
           r"""fn main() -> Result<(), Box<dyn std::error::Error>> {
     let client = reqwest::blocking::Client::new();
-    let url = "https://api.foss42.com";
+    let url = "https://api.apidash.dev";
 
     let response = client
         .head(url)
@@ -281,14 +305,16 @@ void main() {
 }
 """;
       expect(
-          rustReqwestCodeGen.getCode(requestModelHead1, "https"), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.rustReqwest, requestModelHead1, "https"),
+          expectedCode);
     });
 
     test('HEAD 2', () {
       const expectedCode =
           r"""fn main() -> Result<(), Box<dyn std::error::Error>> {
     let client = reqwest::blocking::Client::new();
-    let url = "http://api.foss42.com";
+    let url = "http://api.apidash.dev";
 
     let response = client
         .head(url)
@@ -301,7 +327,9 @@ void main() {
 }
 """;
       expect(
-          rustReqwestCodeGen.getCode(requestModelHead2, "http"), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.rustReqwest, requestModelHead2, "http"),
+          expectedCode);
     });
   });
 
@@ -310,7 +338,7 @@ void main() {
       const expectedCode =
           r"""fn main() -> Result<(), Box<dyn std::error::Error>> {
     let client = reqwest::blocking::Client::new();
-    let url = "https://api.foss42.com/case/lower";
+    let url = "https://api.apidash.dev/case/lower";
 
     let payload = r#"{
 "text": "I LOVE Flutter"
@@ -329,17 +357,24 @@ void main() {
 }
 """;
       expect(
-          rustReqwestCodeGen.getCode(requestModelPost1, "https"), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.rustReqwest, requestModelPost1, "https"),
+          expectedCode);
     });
 
     test('POST 2', () {
       const expectedCode =
           r"""fn main() -> Result<(), Box<dyn std::error::Error>> {
     let client = reqwest::blocking::Client::new();
-    let url = "https://api.foss42.com/case/lower";
+    let url = "https://api.apidash.dev/case/lower";
 
     let payload = serde_json::json!({
-"text": "I LOVE Flutter"
+"text": "I LOVE Flutter",
+"flag": null,
+"male": true,
+"female": false,
+"no": 1.2,
+"arr": ["null", "true", "false", null]
 });
 
     let response = client
@@ -354,14 +389,16 @@ void main() {
 }
 """;
       expect(
-          rustReqwestCodeGen.getCode(requestModelPost2, "https"), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.rustReqwest, requestModelPost2, "https"),
+          expectedCode);
     });
 
     test('POST 3', () {
       const expectedCode =
           r"""fn main() -> Result<(), Box<dyn std::error::Error>> {
     let client = reqwest::blocking::Client::new();
-    let url = "https://api.foss42.com/case/lower";
+    let url = "https://api.apidash.dev/case/lower";
 
     let payload = serde_json::json!({
 "text": "I LOVE Flutter"
@@ -380,7 +417,9 @@ void main() {
 }
 """;
       expect(
-          rustReqwestCodeGen.getCode(requestModelPost3, "https"), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.rustReqwest, requestModelPost3, "https"),
+          expectedCode);
     });
   });
 
@@ -408,7 +447,9 @@ void main() {
 }
 """;
       expect(
-          rustReqwestCodeGen.getCode(requestModelPut1, "https"), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.rustReqwest, requestModelPut1, "https"),
+          expectedCode);
     });
   });
 
@@ -435,7 +476,9 @@ void main() {
     Ok(())
 }
 """;
-      expect(rustReqwestCodeGen.getCode(requestModelPatch1, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.rustReqwest, requestModelPatch1, "https"),
           expectedCode);
     });
   });
@@ -457,7 +500,9 @@ void main() {
     Ok(())
 }
 """;
-      expect(rustReqwestCodeGen.getCode(requestModelDelete1, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.rustReqwest, requestModelDelete1, "https"),
           expectedCode);
     });
 
@@ -483,7 +528,9 @@ void main() {
     Ok(())
 }
 """;
-      expect(rustReqwestCodeGen.getCode(requestModelDelete2, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.rustReqwest, requestModelDelete2, "https"),
           expectedCode);
     });
   });
