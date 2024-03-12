@@ -40,11 +40,11 @@ class Codegen {
       case CodegenLanguage.jsAxios:
         return AxiosCodeGen().getCode(rM);
       case CodegenLanguage.jsFetch:
-        return FetchCodeGen().getCode(rM);
+        return FetchCodeGen().getCode(rM, boundary: boundary);
       case CodegenLanguage.nodejsAxios:
         return AxiosCodeGen(isNodeJs: true).getCode(rM);
       case CodegenLanguage.nodejsFetch:
-        return FetchCodeGen(isNodeJs: true).getCode(rM);
+        return FetchCodeGen(isNodeJs: true).getCode(rM, boundary: boundary);
       case CodegenLanguage.kotlinOkHttp:
         return KotlinOkHttpCodeGen().getCode(rM);
       case CodegenLanguage.pythonHttpClient:

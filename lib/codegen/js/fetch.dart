@@ -72,8 +72,9 @@ fetch(url, options)
 """;
 
   String? getCode(
-    RequestModel requestModel,
-  ) {
+    RequestModel requestModel, {
+    String? boundary,
+  }) {
     try {
       jj.Template kNodejsImportTemplate = jj.Template(kStringImportNode);
       String importsData = kNodejsImportTemplate.render({
@@ -89,10 +90,8 @@ fetch(url, options)
         });
       }
 
-      var harJson = requestModelToHARJsonRequest(
-        requestModel,
-        useEnabled: true,
-      );
+      var harJson = requestModelToHARJsonRequest(requestModel,
+          useEnabled: true, boundary: boundary);
 
       var templateStart = jj.Template(kTemplateStart);
       result += templateStart.render({
