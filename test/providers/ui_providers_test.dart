@@ -124,7 +124,7 @@ void main() {
 
       // Tap on the Settings icon to change the index to 2
       await tester.tap(find.byIcon(Icons.settings_outlined));
-      await tester.pump(); // Wait for the animations to complete
+      await tester.pump();
 
       // Rebuild the widget tree with the same ProviderScope
       await tester.pumpWidget(
@@ -144,6 +144,39 @@ void main() {
       expect(find.byType(SettingsPage), findsOneWidget);
       expect(find.byType(IntroPage), findsNothing);
       expect(find.byType(HomePage), findsNothing);
+    });
+
+    testWidgets('UI should update correctly when Navigation Rail index changes',
+        (tester) async {
+      await tester.pumpWidget(
+        const ProviderScope(
+          child: MaterialApp(
+            home: Dashboard(),
+          ),
+        ),
+      );
+
+      // Grab the Dashboard widget and its ProviderContainer
+      final dashboard = tester.element(find.byType(Dashboard));
+      final container = ProviderScope.containerOf(dashboard);
+
+      // Go to IntroPage
+      container.read(navRailIndexStateProvider.notifier).state = 1;
+      await tester.pump();
+
+      // Verify that the IntroPage is displayed
+      expect(find.byType(IntroPage), findsOneWidget);
+      // Verify that the selected icon is the filled version (selectedIcon)
+      expect(find.byIcon(Icons.help), findsOneWidget);
+
+      // Go to SettingsPage
+      container.read(navRailIndexStateProvider.notifier).state = 2;
+      await tester.pump();
+
+      // Verify that the SettingsPage is displayed
+      expect(find.byType(SettingsPage), findsOneWidget);
+      // Verify that the selected icon is the filled version (selectedIcon)
+      expect(find.byIcon(Icons.settings), findsOneWidget);
     });
   });
 }
