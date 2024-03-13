@@ -276,7 +276,9 @@ enum CodegenLanguage {
   pythonRequests("Python (requests)", "python", "py"),
   rustActix("Rust (Actix Client)", "rust", "rs"),
   rustReqwest("Rust (reqwest)", "rust", "rs"),
-  rustUreq("Rust (ureq)", "rust", "rs");
+  rustUreq("Rust (ureq)", "rust", "rs"),
+  juliaHttp("Julia (HTTP)", "julia", "jl");
+
 
   const CodegenLanguage(this.label, this.codeHighlightLang, this.ext);
   final String label;
