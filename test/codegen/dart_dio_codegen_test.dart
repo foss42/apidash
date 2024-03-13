@@ -125,7 +125,7 @@ void main() async {
     final headers = {'User-Agent': 'Test Agent'};
     final response = await dio.Dio().get(
       'https://api.github.com/repos/foss42/apidash',
-      options: Options(headers: headers),
+      options: dio.Options(headers: headers),
     );
     print(response.statusCode);
     print(response.data);
@@ -467,7 +467,7 @@ void main() async {
 }''');
     final response = await dio.Dio().post(
       'https://api.apidash.dev/case/lower',
-      options: Options(headers: headers),
+      options: dio.Options(headers: headers),
       data: data,
     );
     print(response.statusCode);
@@ -491,13 +491,9 @@ void main() async {
 
 void main() async {
   try {
-    final queryParams = {
-      'size': '2',
-      'len': '3',
-    };
     final data = dio.FormData();
     final List<Map<String, String>> formDataList = [
-      {"name": "token", "value": "xyz", "type": "text"},
+      {"name": "text", "value": "xyz", "type": "text"},
       {"name": "sep", "value": "|", "type": "text"},
       {"name": "times", "value": "3", "type": "text"}
     ];
@@ -505,7 +501,7 @@ void main() async {
       if (formField['type'] == 'file') {
         data.files.add(MapEntry(
           formField['name'],
-          await MultipartFile.fromFile(formField['value'],
+          await dio.MultipartFile.fromFile(formField['value'],
               filename: formField['value']),
         ));
       } else {
@@ -533,8 +529,7 @@ void main() async {
 }
 """;
       expect(
-          codeGen.getCode(
-              CodegenLanguage.pythonRequests, requestModelPost4, "https"),
+          codeGen.getCode(CodegenLanguage.dartDio, requestModelPost4, "https"),
           expectedCode);
     });
 
@@ -543,17 +538,13 @@ void main() async {
 
 void main() async {
   try {
-    final queryParams = {
-      'size': '2',
-      'len': '3',
-    };
     final headers = {
       'User-Agent': 'Test Agent',
       'Keep-Alive': 'true',
     };
     final data = dio.FormData();
     final List<Map<String, String>> formDataList = [
-      {"name": "token", "value": "xyz", "type": "text"},
+      {"name": "text", "value": "xyz", "type": "text"},
       {"name": "sep", "value": "|", "type": "text"},
       {"name": "times", "value": "3", "type": "text"}
     ];
@@ -561,7 +552,7 @@ void main() async {
       if (formField['type'] == 'file') {
         data.files.add(MapEntry(
           formField['name'],
-          await MultipartFile.fromFile(formField['value'],
+          await dio.MultipartFile.fromFile(formField['value'],
               filename: formField['value']),
         ));
       } else {
@@ -589,27 +580,21 @@ void main() async {
 }
 """;
       expect(
-          codeGen.getCode(
-              CodegenLanguage.pythonRequests, requestModelPost5, "https"),
+          codeGen.getCode(CodegenLanguage.dartDio, requestModelPost5, "https"),
           expectedCode);
     });
 
     test('POST 6', () {
-      const expectedCode = r"""iimport 'package:dio/dio.dart' as dio;
+      const expectedCode = r"""import 'package:dio/dio.dart' as dio;
 
 void main() async {
   try {
-    final queryParams = {
-      'size': '2',
-      'len': '3',
-    };
     final data = dio.FormData();
     final List<Map<String, String>> formDataList = [
-      {"name": "token", "value": "xyz", "type": "text"},
+      {"name": "text", "value": "xyz", "type": "text"},
       {
         "name": "imfile",
-        "value":
-            "/Desktop/mp.jpg",
+        "value": "/Desktop/mp.jpg",
         "type": "file"
       }
     ];
@@ -617,7 +602,7 @@ void main() async {
       if (formField['type'] == 'file') {
         data.files.add(MapEntry(
           formField['name'],
-          await MultipartFile.fromFile(formField['value'],
+          await dio.MultipartFile.fromFile(formField['value'],
               filename: formField['value']),
         ));
       } else {
@@ -645,8 +630,7 @@ void main() async {
 }
 """;
       expect(
-          codeGen.getCode(
-              CodegenLanguage.pythonRequests, requestModelPost6, "https"),
+          codeGen.getCode(CodegenLanguage.dartDio, requestModelPost6, "https"),
           expectedCode);
     });
 
@@ -655,17 +639,12 @@ void main() async {
 
 void main() async {
   try {
-    final queryParams = {
-      'size': '2',
-      'len': '3',
-    };
     final data = dio.FormData();
     final List<Map<String, String>> formDataList = [
-      {"name": "token", "value": "xyz", "type": "text"},
+      {"name": "text", "value": "xyz", "type": "text"},
       {
         "name": "imfile",
-        "value":
-            "/Desktop/mp.jpg",
+        "value": "/Desktop/mp.jpg",
         "type": "file"
       }
     ];
@@ -673,7 +652,7 @@ void main() async {
       if (formField['type'] == 'file') {
         data.files.add(MapEntry(
           formField['name'],
-          await MultipartFile.fromFile(formField['value'],
+          await dio.MultipartFile.fromFile(formField['value'],
               filename: formField['value']),
         ));
       } else {
@@ -701,8 +680,7 @@ void main() async {
 }
 """;
       expect(
-          codeGen.getCode(
-              CodegenLanguage.pythonRequests, requestModelPost7, "https"),
+          codeGen.getCode(CodegenLanguage.dartDio, requestModelPost7, "https"),
           expectedCode);
     });
 
@@ -715,13 +693,9 @@ void main() async {
       'size': '2',
       'len': '3',
     };
-    final headers = {
-      'User-Agent': 'Test Agent',
-      'Keep-Alive': 'true',
-    };
     final data = dio.FormData();
     final List<Map<String, String>> formDataList = [
-      {"name": "token", "value": "xyz", "type": "text"},
+      {"name": "text", "value": "xyz", "type": "text"},
       {"name": "sep", "value": "|", "type": "text"},
       {"name": "times", "value": "3", "type": "text"}
     ];
@@ -729,7 +703,7 @@ void main() async {
       if (formField['type'] == 'file') {
         data.files.add(MapEntry(
           formField['name'],
-          await MultipartFile.fromFile(formField['value'],
+          await dio.MultipartFile.fromFile(formField['value'],
               filename: formField['value']),
         ));
       } else {
@@ -757,8 +731,7 @@ void main() async {
 }
 """;
       expect(
-          codeGen.getCode(
-              CodegenLanguage.pythonRequests, requestModelPost8, "https"),
+          codeGen.getCode(CodegenLanguage.dartDio, requestModelPost8, "https"),
           expectedCode);
     });
 
@@ -777,11 +750,10 @@ void main() async {
     };
     final data = dio.FormData();
     final List<Map<String, String>> formDataList = [
-      {"name": "token", "value": "xyz", "type": "text"},
+      {"name": "text", "value": "xyz", "type": "text"},
       {
         "name": "imfile",
-        "value":
-            "/Desktop/mp.jpg",
+        "value": "/Documents/up/1.png",
         "type": "file"
       }
     ];
@@ -789,7 +761,7 @@ void main() async {
       if (formField['type'] == 'file') {
         data.files.add(MapEntry(
           formField['name'],
-          await MultipartFile.fromFile(formField['value'],
+          await dio.MultipartFile.fromFile(formField['value'],
               filename: formField['value']),
         ));
       } else {
@@ -817,8 +789,7 @@ void main() async {
 }
 """;
       expect(
-          codeGen.getCode(
-              CodegenLanguage.pythonRequests, requestModelPost9, "https"),
+          codeGen.getCode(CodegenLanguage.dartDio, requestModelPost9, "https"),
           expectedCode);
     });
   });
