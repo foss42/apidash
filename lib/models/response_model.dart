@@ -43,16 +43,14 @@ class ResponseModel {
     MediaType? mediaType = getMediaTypeFromHeaders(responseHeaders);
     final body = (mediaType?.subtype == kSubTypeJson)
         ? jsonEncode(response.data)
-        : utf8.decode(response.data);
+        : response.data;
     return ResponseModel(
       statusCode: response.statusCode,
       headers: responseHeaders,
       requestHeaders: convertFromDynamic(response.requestOptions.headers),
       body: body,
       formattedBody: formatBody(body, mediaType),
-      bodyBytes: (mediaType?.subtype == kSubTypeJson)
-          ? utf8.encode(response.data.toString())
-          : response.data,
+      bodyBytes: utf8.encode(response.data.toString()),
       time: time,
     );
   }

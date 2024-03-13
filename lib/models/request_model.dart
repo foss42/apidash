@@ -91,8 +91,6 @@ class RequestModel {
   bool get hasFileInFormData => formDataList
       .map((e) => e.type == FormDataType.file)
       .any((element) => element);
-  bool get isFormDataRequest => requestBodyContentType == ContentType.formdata;
-
   bool get hasContentTypeHeader => enabledHeadersMap.keys
       .any((k) => k.toLowerCase() == HttpHeaders.contentTypeHeader);
 

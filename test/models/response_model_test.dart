@@ -2,7 +2,6 @@ import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:test/test.dart';
 import 'package:apidash/models/response_model.dart';
-import 'package:http/http.dart' as http;
 
 void main() {
   int statusCode = 200;
@@ -92,7 +91,7 @@ void main() {
   "data": "Check out https://api.apidash.dev/docs to get started."
 }''');
   });
-  test('Testing fromResponse for contentType not Json', () async {
+  test('Testing from Response for contentType not Json', () async {
     final response = await Dio().get(
       'https://apidash.dev/',
     );
