@@ -411,7 +411,169 @@ print(data.decode("utf-8"))
               CodegenLanguage.pythonHttpClient, requestModelPost3, "https"),
           expectedCode);
     });
-  });
+
+    test('POST 4', () {
+      const expectedCode = r"""import http.client
+
+body = r'''{
+"text": "I LOVE Flutter"
+}'''
+
+headers = {
+            "content-type": "text/plain"
+          }
+
+conn = http.client.HTTPSConnection("api.apidash.dev")
+conn.request("POST", "/case/lower",
+              body= body,
+              headers= headers)
+
+res = conn.getresponse()
+data = res.read()
+
+print(data.decode("utf-8"))
+""";
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonHttpClient, requestModelPost4, "https"),
+          expectedCode);
+    }, skip: true);
+
+    test('POST 5', () {
+      const expectedCode = r"""import http.client
+
+body = r'''{
+"text": "I LOVE Flutter"
+}'''
+
+headers = {
+            "content-type": "text/plain"
+          }
+
+conn = http.client.HTTPSConnection("api.apidash.dev")
+conn.request("POST", "/case/lower",
+              body= body,
+              headers= headers)
+
+res = conn.getresponse()
+data = res.read()
+
+print(data.decode("utf-8"))
+""";
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonHttpClient, requestModelPost5, "https"),
+          expectedCode);
+    }, skip: true);
+
+    test('POST 6', () {
+      const expectedCode = r"""import http.client
+
+body = r'''{
+"text": "I LOVE Flutter"
+}'''
+
+headers = {
+            "content-type": "text/plain"
+          }
+
+conn = http.client.HTTPSConnection("api.apidash.dev")
+conn.request("POST", "/case/lower",
+              body= body,
+              headers= headers)
+
+res = conn.getresponse()
+data = res.read()
+
+print(data.decode("utf-8"))
+""";
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonHttpClient, requestModelPost6, "https"),
+          expectedCode);
+    }, skip: true);
+
+    test('POST 7', () {
+      const expectedCode = r"""import http.client
+
+body = r'''{
+"text": "I LOVE Flutter"
+}'''
+
+headers = {
+            "content-type": "text/plain"
+          }
+
+conn = http.client.HTTPSConnection("api.apidash.dev")
+conn.request("POST", "/case/lower",
+              body= body,
+              headers= headers)
+
+res = conn.getresponse()
+data = res.read()
+
+print(data.decode("utf-8"))
+""";
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonHttpClient, requestModelPost7, "https"),
+          expectedCode);
+    }, skip: true);
+
+    test('POST 8', () {
+      const expectedCode = r"""import http.client
+
+body = r'''{
+"text": "I LOVE Flutter"
+}'''
+
+headers = {
+            "content-type": "text/plain"
+          }
+
+conn = http.client.HTTPSConnection("api.apidash.dev")
+conn.request("POST", "/case/lower",
+              body= body,
+              headers= headers)
+
+res = conn.getresponse()
+data = res.read()
+
+print(data.decode("utf-8"))
+""";
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonHttpClient, requestModelPost8, "https"),
+          expectedCode);
+    }, skip: true);
+
+    test('POST 9', () {
+      const expectedCode = r"""import http.client
+
+body = r'''{
+"text": "I LOVE Flutter"
+}'''
+
+headers = {
+            "content-type": "text/plain"
+          }
+
+conn = http.client.HTTPSConnection("api.apidash.dev")
+conn.request("POST", "/case/lower",
+              body= body,
+              headers= headers)
+
+res = conn.getresponse()
+data = res.read()
+
+print(data.decode("utf-8"))
+""";
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.pythonHttpClient, requestModelPost9, "https"),
+          expectedCode);
+    });
+  }, skip: true);
 
   group('PUT Request', () {
     test('PUT 1', () {
