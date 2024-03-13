@@ -493,7 +493,7 @@ void main() async {
   try {
     final data = dio.FormData();
     final List<Map<String, String>> formDataList = [
-      {"name": "token", "value": "xyz", "type": "text"},
+      {"name": "text", "value": "API", "type": "text"},
       {"name": "sep", "value": "|", "type": "text"},
       {"name": "times", "value": "3", "type": "text"}
     ];
@@ -512,8 +512,6 @@ void main() async {
 
     final response = await dio.Dio().post(
       'https://api.apidash.dev/io/form',
-      queryParameters: queryParams,
-      options: dio.Options(headers: headers),
       data: data,
     );
     print(response.statusCode);
@@ -538,13 +536,10 @@ void main() async {
 
 void main() async {
   try {
-    final headers = {
-      'User-Agent': 'Test Agent',
-      'Keep-Alive': 'true',
-    };
+    final headers = {'User-Agent': 'Test Agent'};
     final data = dio.FormData();
     final List<Map<String, String>> formDataList = [
-      {"name": "text", "value": "xyz", "type": "text"},
+      {"name": "text", "value": "API", "type": "text"},
       {"name": "sep", "value": "|", "type": "text"},
       {"name": "times", "value": "3", "type": "text"}
     ];
@@ -563,7 +558,6 @@ void main() async {
 
     final response = await dio.Dio().post(
       'https://api.apidash.dev/io/form',
-      queryParameters: queryParams,
       options: dio.Options(headers: headers),
       data: data,
     );
@@ -591,10 +585,10 @@ void main() async {
   try {
     final data = dio.FormData();
     final List<Map<String, String>> formDataList = [
-      {"name": "text", "value": "xyz", "type": "text"},
+      {"name": "token", "value": "xyz", "type": "text"},
       {
         "name": "imfile",
-        "value": "/Desktop/mp.jpg",
+        "value": "/Documents/up/1.png",
         "type": "file"
       }
     ];
@@ -613,8 +607,6 @@ void main() async {
 
     final response = await dio.Dio().post(
       'https://api.apidash.dev/io/img',
-      queryParameters: queryParams,
-      options: dio.Options(headers: headers),
       data: data,
     );
     print(response.statusCode);
@@ -641,10 +633,10 @@ void main() async {
   try {
     final data = dio.FormData();
     final List<Map<String, String>> formDataList = [
-      {"name": "text", "value": "xyz", "type": "text"},
+      {"name": "token", "value": "xyz", "type": "text"},
       {
         "name": "imfile",
-        "value": "/Desktop/mp.jpg",
+        "value": "/Documents/up/1.png",
         "type": "file"
       }
     ];
@@ -663,8 +655,6 @@ void main() async {
 
     final response = await dio.Dio().post(
       'https://api.apidash.dev/io/img',
-      queryParameters: queryParams,
-      options: dio.Options(headers: headers),
       data: data,
     );
     print(response.statusCode);
@@ -695,7 +685,7 @@ void main() async {
     };
     final data = dio.FormData();
     final List<Map<String, String>> formDataList = [
-      {"name": "text", "value": "xyz", "type": "text"},
+      {"name": "text", "value": "API", "type": "text"},
       {"name": "sep", "value": "|", "type": "text"},
       {"name": "times", "value": "3", "type": "text"}
     ];
@@ -715,7 +705,6 @@ void main() async {
     final response = await dio.Dio().post(
       'https://api.apidash.dev/io/form',
       queryParameters: queryParams,
-      options: dio.Options(headers: headers),
       data: data,
     );
     print(response.statusCode);
@@ -750,7 +739,7 @@ void main() async {
     };
     final data = dio.FormData();
     final List<Map<String, String>> formDataList = [
-      {"name": "text", "value": "xyz", "type": "text"},
+      {"name": "token", "value": "xyz", "type": "text"},
       {
         "name": "imfile",
         "value": "/Documents/up/1.png",
