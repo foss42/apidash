@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:jinja/jinja.dart' as jj;
 import 'package:apidash/utils/utils.dart'
     show padMultilineString, requestModelToHARJsonRequest;
@@ -11,14 +10,16 @@ class FetchCodeGen {
   final bool isNodeJs;
 
   String kStringImportNode = """
-import fetch from 'node-fetch';
-{% if hasFormData %}const fs = require('fs');{% endif %}
+import fetch from 'node-fetch'
+{% if hasFormData -%}
+import { fileFromSync, FormData } from 'node-fetch'
+{% endif %}
 
 """;
 
-  String kTemplateStart = """let url = '{{url}}';
+  String kTemplateStart = """const url = '{{url}}';
 
-let options = {
+const options = {
   method: '{{method}}'
 """;
 
@@ -27,72 +28,62 @@ let options = {
 """;
 
   String kTemplateBody = """,
-  body: 
-{{body}}
+  body: {{body}}
 """;
 
   String kMultiPartBodyTemplate = r'''
-async function buildDataList(fields) {
-  var formdata = new FormData();
-  for (const field of fields) {
-      const name = field.name || '';
-      const value = field.value || '';
-      const type = field.type || 'text';
-
-      if (type === 'text') {
-        formdata.append(name, value);
-      } else if (type === 'file') {
-        formdata.append(name,{% if isNodeJs %} fs.createReadStream(value){% else %} fileInput.files[0],value{% endif %});
-      }
-    }
-  return formdata;
-}
-
-const payload = buildDataList({{fields_list}});
+payload.append("{{name}}", {{value}})
 
 ''';
   String kStringRequest = """
 
 };
 
-let status;
 fetch(url, options)
-    .then(res => {
-        status = res.status;
-        return res.json()
-    })
-    .then(body => {
-        console.log(status);
-        console.log(body);
-    })
-    .catch(err => {
-        console.log(status);
-        console.error('error:' + err);
-    });
+  .then(res => {
+    console.log(res.status);
+    return res.text()
+  })
+  .then(body => {
+    console.log(body);
+  })
+  .catch(err => {
+    console.error(`error:\${err}`);
+  });
 """;
 
-  String? getCode(
-    RequestModel requestModel,
-  ) {
+  String? getCode(RequestModel requestModel) {
     try {
       jj.Template kNodejsImportTemplate = jj.Template(kStringImportNode);
       String importsData = kNodejsImportTemplate.render({
         "hasFormData": requestModel.hasFormData,
       });
 
-      String result = isNodeJs ? importsData : "";
+      String result = isNodeJs
+          ? importsData
+          : requestModel.hasFormData
+              ? "// refer https://github.com/foss42/apidash/issues/293#issuecomment-1995208098 for details regarding integration\n\n"
+              : "";
       if (requestModel.hasFormData) {
+        result += "const payload = new FormData();\n";
         var templateMultiPartBody = jj.Template(kMultiPartBodyTemplate);
-        result += templateMultiPartBody.render({
-          "isNodeJs": isNodeJs,
-          "fields_list": json.encode(requestModel.formDataMapList),
-        });
+        var formFileCounter = 1;
+        for (var element in requestModel.formDataMapList) {
+          result += templateMultiPartBody.render({
+            "name": element["name"],
+            "value": element["type"] == "text"
+                ? "\"${element["value"]}\""
+                : isNodeJs
+                    ? "fileFromSync(\"${element["value"]}\")"
+                    : "fileInput$formFileCounter.files[0]"
+          });
+          if (element["type"] != "text") formFileCounter++;
+        }
+        result += "\n";
       }
 
-      var harJson = requestModelToHARJsonRequest(
-        requestModel,
-        useEnabled: true,
-      );
+      var harJson =
+          requestModelToHARJsonRequest(requestModel, useEnabled: true);
 
       var templateStart = jj.Template(kTemplateStart);
       result += templateStart.render({
@@ -105,15 +96,18 @@ fetch(url, options)
       if (headers.isNotEmpty) {
         var templateHeader = jj.Template(kTemplateHeader);
         var m = {};
-        if (requestModel.hasFormData) {
-          m[kHeaderContentType] = "multipart/form-data";
-        }
         for (var i in headers) {
+          // fetch can automatically add the Content-Type header when FormData is passed as body
+          if (i["name"] == "Content-Type" && requestModel.hasFormData) {
+            continue;
+          }
           m[i["name"]] = i["value"];
         }
-        result += templateHeader.render({
-          "headers": padMultilineString(kEncoder.convert(m), 2),
-        });
+        if (m.isNotEmpty) {
+          result += templateHeader.render({
+            "headers": padMultilineString(kEncoder.convert(m), 2),
+          });
+        }
       }
 
       if (harJson["postData"]?["text"] != null) {
