@@ -499,14 +499,18 @@ void main() async {
     ];
     for (var formField in formDataList) {
       if (formField['type'] == 'file') {
-        data.files.add(MapEntry(
-          formField['name'],
-          await dio.MultipartFile.fromFile(formField['value'],
-              filename: formField['value']),
-        ));
+        if (formField['value'] != null) {
+          data.files.add(MapEntry(
+            formField['name']!,
+            await dio.MultipartFile.fromFile(formField['value']!,
+                filename: formField['value']!),
+          ));
+        }
       } else {
-        data.fields
-            .add(MapEntry(formField['name'], formField['value']));
+        if (formField['value'] != null) {
+          data.fields
+              .add(MapEntry(formField['name']!, formField['value']!));
+        }
       }
     }
 
@@ -545,14 +549,18 @@ void main() async {
     ];
     for (var formField in formDataList) {
       if (formField['type'] == 'file') {
-        data.files.add(MapEntry(
-          formField['name'],
-          await dio.MultipartFile.fromFile(formField['value'],
-              filename: formField['value']),
-        ));
+        if (formField['value'] != null) {
+          data.files.add(MapEntry(
+            formField['name']!,
+            await dio.MultipartFile.fromFile(formField['value']!,
+                filename: formField['value']!),
+          ));
+        }
       } else {
-        data.fields
-            .add(MapEntry(formField['name'], formField['value']));
+        if (formField['value'] != null) {
+          data.fields
+              .add(MapEntry(formField['name']!, formField['value']!));
+        }
       }
     }
 
@@ -594,14 +602,18 @@ void main() async {
     ];
     for (var formField in formDataList) {
       if (formField['type'] == 'file') {
-        data.files.add(MapEntry(
-          formField['name'],
-          await dio.MultipartFile.fromFile(formField['value'],
-              filename: formField['value']),
-        ));
+        if (formField['value'] != null) {
+          data.files.add(MapEntry(
+            formField['name']!,
+            await dio.MultipartFile.fromFile(formField['value']!,
+                filename: formField['value']!),
+          ));
+        }
       } else {
-        data.fields
-            .add(MapEntry(formField['name'], formField['value']));
+        if (formField['value'] != null) {
+          data.fields
+              .add(MapEntry(formField['name']!, formField['value']!));
+        }
       }
     }
 
@@ -642,14 +654,18 @@ void main() async {
     ];
     for (var formField in formDataList) {
       if (formField['type'] == 'file') {
-        data.files.add(MapEntry(
-          formField['name'],
-          await dio.MultipartFile.fromFile(formField['value'],
-              filename: formField['value']),
-        ));
+        if (formField['value'] != null) {
+          data.files.add(MapEntry(
+            formField['name']!,
+            await dio.MultipartFile.fromFile(formField['value']!,
+                filename: formField['value']!),
+          ));
+        }
       } else {
-        data.fields
-            .add(MapEntry(formField['name'], formField['value']));
+        if (formField['value'] != null) {
+          data.fields
+              .add(MapEntry(formField['name']!, formField['value']!));
+        }
       }
     }
 
@@ -691,14 +707,18 @@ void main() async {
     ];
     for (var formField in formDataList) {
       if (formField['type'] == 'file') {
-        data.files.add(MapEntry(
-          formField['name'],
-          await dio.MultipartFile.fromFile(formField['value'],
-              filename: formField['value']),
-        ));
+        if (formField['value'] != null) {
+          data.files.add(MapEntry(
+            formField['name']!,
+            await dio.MultipartFile.fromFile(formField['value']!,
+                filename: formField['value']!),
+          ));
+        }
       } else {
-        data.fields
-            .add(MapEntry(formField['name'], formField['value']));
+        if (formField['value'] != null) {
+          data.fields
+              .add(MapEntry(formField['name']!, formField['value']!));
+        }
       }
     }
 
@@ -748,14 +768,18 @@ void main() async {
     ];
     for (var formField in formDataList) {
       if (formField['type'] == 'file') {
-        data.files.add(MapEntry(
-          formField['name'],
-          await dio.MultipartFile.fromFile(formField['value'],
-              filename: formField['value']),
-        ));
+        if (formField['value'] != null) {
+          data.files.add(MapEntry(
+            formField['name']!,
+            await dio.MultipartFile.fromFile(formField['value']!,
+                filename: formField['value']!),
+          ));
+        }
       } else {
-        data.fields
-            .add(MapEntry(formField['name'], formField['value']));
+        if (formField['value'] != null) {
+          data.fields
+              .add(MapEntry(formField['name']!, formField['value']!));
+        }
       }
     }
 
