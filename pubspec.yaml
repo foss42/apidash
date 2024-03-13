@@ -10,7 +10,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  web: ^0.5.0
+  web: 0.3.0
   multi_split_view: ^2.4.0
   url_launcher: ^6.1.12
   flutter_riverpod: ^2.3.7

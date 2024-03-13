@@ -1,3 +1,4 @@
+import 'package:apidash/codegen/kotlin/retrofit.dart';
 import 'package:apidash/models/models.dart' show RequestModel;
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart' show getNewUuid;
@@ -51,17 +52,19 @@ class Codegen {
         return FetchCodeGen(isNodeJs: true).getCode(rM);
       case CodegenLanguage.kotlinOkHttp:
         return KotlinOkHttpCodeGen().getCode(rM);
+      case CodegenLanguage.kotlinRetrofit:
+        return KotlinRetrofitCodeGen().getCode(rM);
       case CodegenLanguage.pythonHttpClient:
         return PythonHttpClientCodeGen()
             .getCode(rM, boundary: boundary ?? getNewUuid());
       case CodegenLanguage.pythonRequests:
         return PythonRequestsCodeGen().getCode(rM, boundary: boundary);
       case CodegenLanguage.rustActix:
-        return RustActixCodeGen().getCode(rM, boundary: boundary); 
+        return RustActixCodeGen().getCode(rM, boundary: boundary);
       case CodegenLanguage.rustReqwest:
         return RustReqwestCodeGen().getCode(rM);
       case CodegenLanguage.rustUreq:
-        return RustUreqCodeGen().getCode(rM, boundary: boundary); 
+        return RustUreqCodeGen().getCode(rM, boundary: boundary);
       case CodegenLanguage.goHttp:
         return GoHttpCodeGen().getCode(rM);
     }
