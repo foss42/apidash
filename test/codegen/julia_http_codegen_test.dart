@@ -1,15 +1,16 @@
-import 'package:apidash/codegen/julia/http.dart';
-import '../request_models.dart';
+import 'package:apidash/codegen/codegen.dart';
+import 'package:apidash/consts.dart';
 import 'package:test/test.dart';
+import '../request_models.dart';
 
 void main() {
-  final juliaHttpClientCodeGen = JuliaHttpClientCodeGen();
+  final codeGen = Codegen();
 
   group('GET Request', () {
     test('GET 1', () {
       const expectedCode = r"""using HTTP,JSON
 
-url = "https://api.foss42.com"
+url = "https://api.apidash.dev"
 
 
 response = HTTP.get(url)
@@ -17,13 +18,14 @@ response = HTTP.get(url)
 println("Status Code:", response.status)
 println("Response Body:", String(response.body))
 """;
-      expect(juliaHttpClientCodeGen.getCode(requestModelGet1, "https"),
+      expect(
+          codeGen.getCode(CodegenLanguage.juliaHttp, requestModelGet1, "https"),
           expectedCode);
     });
     test('GET 2', () {
       const expectedCode = r"""using HTTP,JSON
 
-url = "https://api.foss42.com/country/data"
+url = "https://api.apidash.dev/country/data"
 
 
 params = Dict(
@@ -35,13 +37,14 @@ response = HTTP.get(url, query=params)
 println("Status Code:", response.status)
 println("Response Body:", String(response.body))
 """;
-      expect(juliaHttpClientCodeGen.getCode(requestModelGet2, "https"),
+      expect(
+          codeGen.getCode(CodegenLanguage.juliaHttp, requestModelGet2, "https"),
           expectedCode);
     });
     test('GET 3', () {
       const expectedCode = r"""using HTTP,JSON
 
-url = "https://api.foss42.com/country/data"
+url = "https://api.apidash.dev/country/data"
 
 
 params = Dict(
@@ -53,13 +56,14 @@ response = HTTP.get(url, query=params)
 println("Status Code:", response.status)
 println("Response Body:", String(response.body))
 """;
-      expect(juliaHttpClientCodeGen.getCode(requestModelGet3, "https"),
+      expect(
+          codeGen.getCode(CodegenLanguage.juliaHttp, requestModelGet3, "https"),
           expectedCode);
     });
     test('GET 4', () {
       const expectedCode = r"""using HTTP,JSON
 
-url = "https://api.foss42.com/humanize/social"
+url = "https://api.apidash.dev/humanize/social"
 
 
 params = Dict(
@@ -75,7 +79,8 @@ response = HTTP.get(url, query=params)
 println("Status Code:", response.status)
 println("Response Body:", String(response.body))
 """;
-      expect(juliaHttpClientCodeGen.getCode(requestModelGet4, "https"),
+      expect(
+          codeGen.getCode(CodegenLanguage.juliaHttp, requestModelGet4, "https"),
           expectedCode);
     });
 
@@ -94,7 +99,8 @@ response = HTTP.get(url, headers=headers)
 println("Status Code:", response.status)
 println("Response Body:", String(response.body))
 """;
-      expect(juliaHttpClientCodeGen.getCode(requestModelGet5, "https"),
+      expect(
+          codeGen.getCode(CodegenLanguage.juliaHttp, requestModelGet5, "https"),
           expectedCode);
     });
 
@@ -117,14 +123,15 @@ response = HTTP.get(url, query=params, headers=headers)
 println("Status Code:", response.status)
 println("Response Body:", String(response.body))
 """;
-      expect(juliaHttpClientCodeGen.getCode(requestModelGet6, "https"),
+      expect(
+          codeGen.getCode(CodegenLanguage.juliaHttp, requestModelGet6, "https"),
           expectedCode);
     });
 
     test('GET 7', () {
       const expectedCode = r"""using HTTP,JSON
 
-url = "https://api.foss42.com"
+url = "https://api.apidash.dev"
 
 
 response = HTTP.get(url)
@@ -132,7 +139,8 @@ response = HTTP.get(url)
 println("Status Code:", response.status)
 println("Response Body:", String(response.body))
 """;
-      expect(juliaHttpClientCodeGen.getCode(requestModelGet7, "https"),
+      expect(
+          codeGen.getCode(CodegenLanguage.juliaHttp, requestModelGet7, "https"),
           expectedCode);
     });
 
@@ -155,14 +163,15 @@ response = HTTP.get(url, query=params, headers=headers)
 println("Status Code:", response.status)
 println("Response Body:", String(response.body))
 """;
-      expect(juliaHttpClientCodeGen.getCode(requestModelGet8, "https"),
+      expect(
+          codeGen.getCode(CodegenLanguage.juliaHttp, requestModelGet8, "https"),
           expectedCode);
     });
 
     test('GET 9', () {
       const expectedCode = r"""using HTTP,JSON
 
-url = "https://api.foss42.com/humanize/social"
+url = "https://api.apidash.dev/humanize/social"
 
 
 params = Dict(
@@ -175,14 +184,15 @@ response = HTTP.get(url, query=params)
 println("Status Code:", response.status)
 println("Response Body:", String(response.body))
 """;
-      expect(juliaHttpClientCodeGen.getCode(requestModelGet9, "https"),
+      expect(
+          codeGen.getCode(CodegenLanguage.juliaHttp, requestModelGet9, "https"),
           expectedCode);
     });
 
     test('GET 10', () {
       const expectedCode = r"""using HTTP,JSON
 
-url = "https://api.foss42.com/humanize/social"
+url = "https://api.apidash.dev/humanize/social"
 
 
 headers = Dict(
@@ -194,14 +204,16 @@ response = HTTP.get(url, headers=headers)
 println("Status Code:", response.status)
 println("Response Body:", String(response.body))
 """;
-      expect(juliaHttpClientCodeGen.getCode(requestModelGet10, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.juliaHttp, requestModelGet10, "https"),
           expectedCode);
     });
 
     test('GET 11', () {
       const expectedCode = r"""using HTTP,JSON
 
-url = "https://api.foss42.com/humanize/social"
+url = "https://api.apidash.dev/humanize/social"
 
 
 params = Dict(
@@ -218,14 +230,16 @@ response = HTTP.get(url, query=params, headers=headers)
 println("Status Code:", response.status)
 println("Response Body:", String(response.body))
 """;
-      expect(juliaHttpClientCodeGen.getCode(requestModelGet11, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.juliaHttp, requestModelGet11, "https"),
           expectedCode);
     });
 
     test('GET 12', () {
       const expectedCode = r"""using HTTP,JSON
 
-url = "https://api.foss42.com/humanize/social"
+url = "https://api.apidash.dev/humanize/social"
 
 
 response = HTTP.get(url)
@@ -233,7 +247,9 @@ response = HTTP.get(url)
 println("Status Code:", response.status)
 println("Response Body:", String(response.body))
 """;
-      expect(juliaHttpClientCodeGen.getCode(requestModelGet12, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.juliaHttp, requestModelGet12, "https"),
           expectedCode);
     });
   });
@@ -242,7 +258,7 @@ println("Response Body:", String(response.body))
     test('HEAD 1', () {
       const expectedCode = r"""using HTTP,JSON
 
-url = "https://api.foss42.com"
+url = "https://api.apidash.dev"
 
 
 response = HTTP.head(url)
@@ -250,14 +266,16 @@ response = HTTP.head(url)
 println("Status Code:", response.status)
 println("Response Body:", String(response.body))
 """;
-      expect(juliaHttpClientCodeGen.getCode(requestModelHead1, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.juliaHttp, requestModelHead1, "https"),
           expectedCode);
     });
 
     test('HEAD 2', () {
       const expectedCode = r"""using HTTP,JSON
 
-url = "https://api.foss42.com"
+url = "https://api.apidash.dev"
 
 
 response = HTTP.head(url)
@@ -265,7 +283,9 @@ response = HTTP.head(url)
 println("Status Code:", response.status)
 println("Response Body:", String(response.body))
 """;
-      expect(juliaHttpClientCodeGen.getCode(requestModelHead2, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.juliaHttp, requestModelHead2, "https"),
           expectedCode);
     });
   });
@@ -274,7 +294,7 @@ println("Response Body:", String(response.body))
     test('POST 1', () {
       const expectedCode = r"""using HTTP,JSON
 
-url = "https://api.foss42.com/case/lower"
+url = "https://api.apidash.dev/case/lower"
 
 
 payload = Dict(
@@ -290,18 +310,25 @@ response = HTTP.post(url, payload=payload, headers=headers)
 println("Status Code:", response.status)
 println("Response Body:", String(response.body))
 """;
-      expect(juliaHttpClientCodeGen.getCode(requestModelPost1, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.juliaHttp, requestModelPost1, "https"),
           expectedCode);
     });
 
     test('POST 2', () {
       const expectedCode = r"""using HTTP,JSON
 
-url = "https://api.foss42.com/case/lower"
+url = "https://api.apidash.dev/case/lower"
 
 
 payload = Dict(
-"text"=> "I LOVE Flutter"
+"text"=> "I LOVE Flutter",
+"flag"=> null,
+"male"=> true,
+"female"=> false,
+"no"=> 1.2,
+"arr"=> ["null", "true", "false", null]
 )
 
 response = HTTP.post(url, JSON.json(payload))
@@ -309,13 +336,15 @@ response = HTTP.post(url, JSON.json(payload))
 println("Status Code:", response.status)
 println("Response Body:", String(response.body))
 """;
-      expect(juliaHttpClientCodeGen.getCode(requestModelPost2, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.juliaHttp, requestModelPost2, "https"),
           expectedCode);
     });
     test('POST 3', () {
       const expectedCode = r"""using HTTP,JSON
 
-url = "https://api.foss42.com/case/lower"
+url = "https://api.apidash.dev/case/lower"
 
 
 payload = Dict(
@@ -331,7 +360,9 @@ response = HTTP.post(url, JSON.json(payload), headers=headers)
 println("Status Code:", response.status)
 println("Response Body:", String(response.body))
 """;
-      expect(juliaHttpClientCodeGen.getCode(requestModelPost3, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.juliaHttp, requestModelPost3, "https"),
           expectedCode);
     });
   });
@@ -352,7 +383,8 @@ response = HTTP.put(url, JSON.json(payload))
 println("Status Code:", response.status)
 println("Response Body:", String(response.body))
 """;
-      expect(juliaHttpClientCodeGen.getCode(requestModelPut1, "https"),
+      expect(
+          codeGen.getCode(CodegenLanguage.juliaHttp, requestModelPut1, "https"),
           expectedCode);
     });
   });
@@ -373,7 +405,9 @@ response = HTTP.patch(url, JSON.json(payload))
 println("Status Code:", response.status)
 println("Response Body:", String(response.body))
 """;
-      expect(juliaHttpClientCodeGen.getCode(requestModelPatch1, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.juliaHttp, requestModelPatch1, "https"),
           expectedCode);
     });
   });
@@ -389,7 +423,9 @@ response = HTTP.delete(url)
 println("Status Code:", response.status)
 println("Response Body:", String(response.body))
 """;
-      expect(juliaHttpClientCodeGen.getCode(requestModelDelete1, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.juliaHttp, requestModelDelete1, "https"),
           expectedCode);
     });
     test('DELETE 2', () {
@@ -408,7 +444,9 @@ response = HTTP.delete(url, JSON.json(payload))
 println("Status Code:", response.status)
 println("Response Body:", String(response.body))
 """;
-      expect(juliaHttpClientCodeGen.getCode(requestModelDelete2, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.juliaHttp, requestModelDelete2, "https"),
           expectedCode);
     });
   });

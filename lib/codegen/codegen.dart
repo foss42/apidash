@@ -58,14 +58,14 @@ class Codegen {
       case CodegenLanguage.pythonRequests:
         return PythonRequestsCodeGen().getCode(rM, boundary: boundary);
       case CodegenLanguage.rustActix:
-        return RustActixCodeGen().getCode(rM, boundary: boundary); 
+        return RustActixCodeGen().getCode(rM, boundary: boundary);
       case CodegenLanguage.rustReqwest:
         return RustReqwestCodeGen().getCode(rM);
       case CodegenLanguage.rustUreq:
-        return RustUreqCodeGen().getCode(rM, boundary: boundary); 
+        return RustUreqCodeGen().getCode(rM, boundary: boundary);
       case CodegenLanguage.goHttp:
         return GoHttpCodeGen().getCode(rM);
-      case CodegenLanguage.juliaHttpRequests:
+      case CodegenLanguage.juliaHttp:
         return JuliaHttpClientCodeGen().getCode(rM);
     }
   }

@@ -9,7 +9,6 @@ import 'package:apidash/models/models.dart' show RequestModel;
 class JuliaHttpClientCodeGen {
   final String kTemplateStart = """using HTTP,JSON
 
-
 url = "{{url}}"
 
 """;
@@ -96,10 +95,7 @@ println("Status Code:", response.status)
 println("Response Body:", String(response.body))
 """;
 
-  String? getCode(
-    RequestModel requestModel,
-    String defaultUriScheme,
-  ) {
+  String? getCode(RequestModel requestModel) {
     try {
       String result = "";
       bool hasQuery = false;
@@ -108,13 +104,8 @@ println("Response Body:", String(response.body))
       bool hasJsonBody = false;
       String uuid = getNewUuid();
 
-      String url = requestModel.url;
-      if (!url.contains("://") && url.isNotEmpty) {
-        url = "$defaultUriScheme://$url";
-      }
-
       var rec = getValidRequestUri(
-        url,
+        requestModel.url,
         requestModel.enabledRequestParams,
       );
       Uri? uri = rec.$1;
@@ -122,7 +113,6 @@ println("Response Body:", String(response.body))
         var templateStartUrl = jj.Template(kTemplateStart);
         result += templateStartUrl.render({
           "url": stripUriParams(uri),
-          'isFormDataRequest': requestModel.isFormDataRequest
         });
 
         if (uri.hasQuery) {
@@ -136,27 +126,20 @@ println("Response Body:", String(response.body))
           }
         }
 
-        var method = requestModel.method;
-        var requestBody = requestModel.requestBody;
-        if (kMethodsWithBody.contains(method) && requestBody != null) {
-          var contentLength = utf8.encode(requestBody).length;
-          if (contentLength > 0) {
-            if (requestModel.requestBodyContentType == ContentType.json) {
-              hasJsonBody = true;
-              var templateBody = jj.Template(kTemplateJson);
-              result += templateBody.render({"body": requestBody});
-            } else {
-              hasBody = true;
-              var templateBody = jj.Template(kTemplateBody);
-              result += templateBody.render({"body": requestBody});
-            }
-          }
+        if (requestModel.hasJsonData) {
+          hasJsonBody = true;
+          var templateBody = jj.Template(kTemplateJson);
+          result += templateBody.render({"body": requestModel.requestBody});
+        } else if (requestModel.hasTextData) {
+          hasBody = true;
+          var templateBody = jj.Template(kTemplateBody);
+          result += templateBody.render({"body": requestModel.requestBody});
         }
 
         var headersList = requestModel.enabledRequestHeaders;
         if (headersList != null || hasBody) {
           var headers = requestModel.enabledHeadersMap;
-          if (requestModel.isFormDataRequest) {
+          if (requestModel.hasFormData) {
             var formHeaderTemplate =
                 jj.Template(kTemplateFormHeaderContentType);
             headers[HttpHeaders.contentTypeHeader] = formHeaderTemplate.render({
@@ -175,7 +158,7 @@ println("Response Body:", String(response.body))
             result += templateHeaders.render({"headers": headersString});
           }
         }
-        if (requestModel.isFormDataRequest) {
+        if (requestModel.hasFormData) {
           var formDataBodyData = jj.Template(kStringFormDataBody);
           result += formDataBodyData.render(
             {
@@ -186,22 +169,22 @@ println("Response Body:", String(response.body))
         }
         var templateRequest = jj.Template(kTemplateRequest);
         result += templateRequest.render({
-          "method": method.name.toLowerCase(),
+          "method": requestModel.method.name.toLowerCase(),
         });
 
         if (hasQuery) {
           result += kStringRequestParams;
         }
 
-        if (hasBody || requestModel.isFormDataRequest) {
+        if (hasBody || requestModel.hasFormData) {
           result += kStringRequestBody;
         }
 
-        if (hasJsonBody || requestModel.isFormDataRequest) {
+        if (hasJsonBody || requestModel.hasFormData) {
           result += kStringRequestJson;
         }
 
-        if (hasHeaders || requestModel.isFormDataRequest) {
+        if (hasHeaders || requestModel.hasFormData) {
           result += kStringRequestHeaders;
         }
 
