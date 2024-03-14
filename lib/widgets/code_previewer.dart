@@ -87,13 +87,13 @@ class _CodePreviewerState extends State<CodePreviewer> {
               snapshot.connectionState == ConnectionState.done) {
             var finalSpans = snapshot.data!;
             return Scrollbar(
-              thickness: 10,
+              thickness: kIsMobile ? 0.5 : 10,
               thumbVisibility: true,
               controller: controllerV,
               child: Scrollbar(
                 notificationPredicate: (notification) =>
                     notification.depth == 1,
-                thickness: 10,
+                thickness: kIsMobile ? 0.5 : 10,
                 thumbVisibility: true,
                 controller: controllerH,
                 child: SingleChildScrollView(
