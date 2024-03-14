@@ -110,7 +110,10 @@ class _RequestListState extends ConsumerState<RequestList> {
       radius: const Radius.circular(12),
       child: ReorderableListView.builder(
         padding: kIsMobile
-            ? EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom)
+            ? EdgeInsets.only(
+                bottom: MediaQuery.of(context).padding.bottom,
+                right: 8,
+              )
             : kPr8CollectionPane,
         scrollController: controller,
         buildDefaultDragHandles: false,
@@ -127,6 +130,19 @@ class _RequestListState extends ConsumerState<RequestList> {
         },
         itemBuilder: (context, index) {
           var id = requestSequence[index];
+          if (kIsMobile) {
+            return ReorderableDelayedDragStartListener(
+              key: ValueKey(id),
+              index: index,
+              child: Padding(
+                padding: kP1,
+                child: RequestItem(
+                  id: id,
+                  requestModel: requestItems[id]!,
+                ),
+              ),
+            );
+          }
           return ReorderableDragStartListener(
             key: ValueKey(id),
             index: index,
