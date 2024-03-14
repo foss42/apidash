@@ -67,7 +67,7 @@ class SettingsPage extends ConsumerWidget {
                 hoverColor: kColorTransparent,
                 title: const Text('Default URI Scheme'),
                 subtitle: Text(
-                    'api.apidash.dev → ${settings.defaultUriScheme}://api.apidash.dev'),
+                    '$kDefaultUri → ${settings.defaultUriScheme}://$kDefaultUri'),
                 trailing: DropdownMenu(
                     onSelected: (value) {
                       ref

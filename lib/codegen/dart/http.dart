@@ -9,15 +9,10 @@ import 'shared.dart';
 class DartHttpCodeGen {
   String? getCode(
     RequestModel requestModel,
-    String defaultUriScheme,
   ) {
     try {
-      String url = requestModel.url;
-      if (!url.contains("://") && url.isNotEmpty) {
-        url = "$defaultUriScheme://$url";
-      }
       final next = generatedDartCode(
-        url: url,
+        url: requestModel.url,
         method: requestModel.method,
         queryParams: requestModel.enabledParamsMap,
         headers: {...requestModel.enabledHeadersMap},
