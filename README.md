@@ -135,6 +135,7 @@ API Dash currently supports API integration code generation for the following la
 | Python                 | `http.client` |
 | Python                 | `requests`    |
 | Kotlin                 | `okhttp3`     |
+| Java                   | `okhttp3`     |
 
 We welcome contributions to support other programming languages/libraries/frameworks. Please check out more details [here](https://github.com/foss42/apidash/discussions/80).
 

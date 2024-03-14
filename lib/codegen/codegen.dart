@@ -15,6 +15,7 @@ import 'js/fetch.dart';
 import 'others/har.dart';
 import 'others/curl.dart';
 import 'julia/http.dart';
+import 'java/okhttp.dart';
 
 class Codegen {
   String? getCode(
@@ -52,6 +53,8 @@ class Codegen {
         return FetchCodeGen(isNodeJs: true).getCode(rM);
       case CodegenLanguage.kotlinOkHttp:
         return KotlinOkHttpCodeGen().getCode(rM);
+        case CodegenLanguage.javaOkHttp:
+        return JavaOkHttpCodeGen().getCode(rM);
       case CodegenLanguage.pythonHttpClient:
         return PythonHttpClientCodeGen()
             .getCode(rM, boundary: boundary ?? getNewUuid());
