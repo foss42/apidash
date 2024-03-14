@@ -122,17 +122,29 @@ class DartHttpCodeGen {
 
     final addHeaders = refer('request.headers.addAll').call([refer('headers')]);
     const multiPartList = Code('''
-    for (Map<String, String> formData in formDataList){
-          if (formData['type'] == 'text') {
-              request.fields.addAll({formData['name']: formData['value']});
-            } else {
-              request.files.add(
-                await http.MultipartFile.fromPath(
-                  formData['name'],
-                  formData['value'],
-                ),
-              );
-          }
+    for (var formData in formDataList) {
+    if (formData != null) {
+      final name = formData['name'];
+      final value = formData['value'];
+      final type = formData['type'];
+
+      if (name != null && value != null && type != null) {
+        if (type == 'text') {
+          request.fields.addAll({name: value});
+        } else {
+          request.files.add(
+            await http.MultipartFile.fromPath(
+              name,
+              value,
+            ),
+          );
+        }
+      } else {
+        print('Error: formData has null name, value, or type.');
+      }
+    } else {
+      print('Error: formData is null.');
+    }
   }
 ''');
     var multiPartRequestSend =
