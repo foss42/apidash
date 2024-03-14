@@ -1,9 +1,6 @@
-import 'dart:convert';
 import 'package:jinja/jinja.dart' as jj;
-import 'package:apidash/utils/utils.dart'
-    show getValidRequestUri, stripUriParams;
+import 'package:apidash/utils/utils.dart' show getValidRequestUri;
 import '../../models/request_model.dart';
-import 'package:apidash/consts.dart';
 
 class KotlinRetrofitCodeGen {
   final String kTemplateStart = """
@@ -77,8 +74,7 @@ fun main() {
 
         // Add annotations for HTTP method and possible body
         var hasBodyAnnotation = "";
-        var requestBody = requestModel.requestBody;
-        if (requestBody != null && !requestModel.hasFormData) {
+        if (requestModel.hasJsonData || requestModel.hasTextData) {
           hasBodyAnnotation = ", @Body requestBody: RequestBody";
         }
 
