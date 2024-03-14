@@ -107,9 +107,12 @@ class SendButton extends ConsumerWidget {
             .sendRequest(selectedId!);
         if (kIsMobile) {
           showModalBottomSheet(
+              isScrollControlled: true,
               context: context,
               builder: (context){
-                return const ResponsePane();
+                return SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.75,
+                    child: const ResponsePane());
               }
               );
         }

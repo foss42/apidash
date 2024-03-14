@@ -64,9 +64,13 @@ class _RequestPaneState extends State<RequestPane>
                     widget.onPressedCodeButton;
                     if (kIsMobile) {
                       showModalBottomSheet(
+                        isScrollControlled: true,
                           context: context,
                           builder: (context){
-                            return const CodePane();
+                            return SizedBox(
+                                height: MediaQuery.of(context).size.height * 0.75,
+                                child: const CodePane()
+                            );
                           }
                       );
                     }
