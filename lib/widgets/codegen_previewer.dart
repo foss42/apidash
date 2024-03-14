@@ -52,13 +52,13 @@ class _CodeGenPreviewerState extends State<CodeGenPreviewer> {
     return Padding(
       padding: widget.padding,
       child: Scrollbar(
-        thickness: 10,
-        thumbVisibility: true,
+        thickness: kIsMobile ? 0 : 10,
+        thumbVisibility: kIsMobile ? false : true,
         controller: controllerV,
         child: Scrollbar(
           notificationPredicate: (notification) => notification.depth == 1,
-          thickness: 10,
-          thumbVisibility: true,
+          thickness: kIsMobile ? 0 :  10,
+          thumbVisibility: kIsMobile ? false : true,
           controller: controllerH,
           child: SingleChildScrollView(
             controller: controllerV,
