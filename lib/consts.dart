@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:davi/davi.dart';
 
 const kDiscordUrl = "https://bit.ly/heyfoss";
 const kGitUrl = "https://github.com/foss42/apidash";
@@ -120,19 +119,6 @@ const kDataTableScrollbarTheme = ScrollbarThemeData(
 );
 const kDataTableBottomPadding = 80.0;
 const kDataRowHeight = 36.0;
-const kTableThemeData = DaviThemeData(
-  columnDividerThickness: 1,
-  columnDividerColor: kColorTransparent,
-  row: RowThemeData(
-    dividerColor: kColorTransparent,
-  ),
-  decoration: BoxDecoration(
-    border: Border(),
-  ),
-  header: HeaderThemeData(
-    visible: false,
-  ),
-);
 
 const kIconRemoveDark = Icon(
   Icons.remove_circle,
