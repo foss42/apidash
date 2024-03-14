@@ -81,6 +81,7 @@ class _HeaderFieldState extends State<HeaderField> {
           hintStyle: kCodeStyle.copyWith(
               color: colorScheme.outline.withOpacity(kHintOpacity)),
           hintText: widget.hintText,
+          contentPadding: const EdgeInsets.only(bottom: 12),
           focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(
               color: colorScheme.primary.withOpacity(

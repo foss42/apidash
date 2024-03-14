@@ -1,11 +1,11 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:davi/davi.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
+import 'package:data_table_2/data_table_2.dart';
 
 class EditRequestURLParams extends ConsumerStatefulWidget {
   const EditRequestURLParams({super.key});
@@ -50,101 +50,26 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
         ref.read(selectedRequestModelProvider)?.isParamEnabledList ??
             List.filled(rows.length, true, growable: true);
 
-    DaviModel<NameValueModel> model = DaviModel<NameValueModel>(
-      rows: rows,
-      columns: [
-        DaviColumn(
-          name: 'Checkbox',
-          width: 30,
-          cellBuilder: (_, row) {
-            int idx = row.index;
-            return CheckBox(
-              keyId: "$selectedId-$idx-params-c-$seed",
-              value: isRowEnabledList[idx],
-              onChanged: (value) {
-                setState(() {
-                  isRowEnabledList[idx] = value!;
-                });
-                _onFieldChange(selectedId!);
-              },
-              colorScheme: Theme.of(context).colorScheme,
-            );
-          },
-        ),
-        DaviColumn(
-          name: 'URL Parameter',
-          width: 70,
-          grow: 1,
-          cellBuilder: (_, row) {
-            int idx = row.index;
-            return CellField(
-              keyId: "$selectedId-$idx-params-k-$seed",
-              initialValue: rows[idx].name,
-              hintText: "Add URL Parameter",
-              onChanged: (value) {
-                rows[idx] = rows[idx].copyWith(name: value);
-                _onFieldChange(selectedId!);
-              },
-              colorScheme: Theme.of(context).colorScheme,
-            );
-          },
-          sortable: false,
-        ),
-        DaviColumn(
-          width: 30,
-          cellBuilder: (_, row) {
-            return Text(
-              "=",
-              style: kCodeStyle,
-            );
-          },
-        ),
-        DaviColumn(
-          name: 'Value',
-          grow: 1,
-          cellBuilder: (_, row) {
-            int idx = row.index;
-            return CellField(
-              keyId: "$selectedId-$idx-params-v-$seed",
-              initialValue: rows[idx].value,
-              hintText: "Add Value",
-              onChanged: (value) {
-                rows[idx] = rows[idx].copyWith(value: value);
-                _onFieldChange(selectedId!);
-              },
-              colorScheme: Theme.of(context).colorScheme,
-            );
-          },
-          sortable: false,
-        ),
-        DaviColumn(
-          pinStatus: PinStatus.none,
-          width: 30,
-          cellBuilder: (_, row) {
-            return InkWell(
-              child: Theme.of(context).brightness == Brightness.dark
-                  ? kIconRemoveDark
-                  : kIconRemoveLight,
-              onTap: () {
-                seed = random.nextInt(kRandMax);
-                if (rows.length == 1) {
-                  setState(() {
-                    rows = [
-                      kNameValueEmptyModel,
-                    ];
-                    isRowEnabledList = [true];
-                  });
-                } else {
-                  rows.removeAt(row.index);
-                  isRowEnabledList.removeAt(row.index);
-                }
-                _onFieldChange(selectedId!);
-              },
-            );
-          },
-        ),
-      ],
-    );
+    List<DataColumn> columns = const [
+      DataColumn2(
+        label: Text('Checkbox'),
+        fixedWidth: 30,
+      ),
+      DataColumn2(
+        label: Text('URL Parameter'),
+      ),
+      DataColumn2(
+        label: Text('='),
+        fixedWidth: 30,
+      ),
+      DataColumn2(
+        label: Text('Parameter Value'),
+      ),
+      DataColumn2(
+        label: Text('Remove'),
+        fixedWidth: 32,
+      ),
+    ];
     return Stack(
       children: [
         Container(
@@ -154,11 +79,100 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
           ),
           margin: kP10,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Expanded(
-                child: DaviTheme(
-                  data: kTableThemeData,
-                  child: Davi<NameValueModel>(model),
+                child: Theme(
+                  data: Theme.of(context)
+                      .copyWith(scrollbarTheme: kDataTableScrollbarTheme),
+                  child: DataTable2(
+                    columnSpacing: 12,
+                    dividerThickness: 0,
+                    horizontalMargin: 0,
+                    headingRowHeight: 0,
+                    dataRowHeight: kDataRowHeight,
+                    bottomMargin: kDataTableBottomPadding,
+                    isVerticalScrollBarVisible: true,
+                    columns: columns,
+                    rows: List<DataRow>.generate(
+                      rows.length,
+                      (index) {
+                        return DataRow(
+                          key: ValueKey("$selectedId-$index-params-row-$seed"),
+                          cells: <DataCell>[
+                            DataCell(
+                              CheckBox(
+                                keyId: "$selectedId-$index-params-c-$seed",
+                                value: isRowEnabledList[index],
+                                onChanged: (value) {
+                                  setState(() {
+                                    isRowEnabledList[index] = value!;
+                                  });
+                                  _onFieldChange(selectedId!);
+                                },
+                                colorScheme: Theme.of(context).colorScheme,
+                              ),
+                            ),
+                            DataCell(
+                              CellField(
+                                keyId: "$selectedId-$index-params-k-$seed",
+                                initialValue: rows[index].name,
+                                hintText: "Add URL Parameter",
+                                onChanged: (value) {
+                                  rows[index] =
+                                      rows[index].copyWith(name: value);
+                                  _onFieldChange(selectedId!);
+                                },
+                                colorScheme: Theme.of(context).colorScheme,
+                              ),
+                            ),
+                            DataCell(
+                              Text(
+                                "=",
+                                style: kCodeStyle,
+                              ),
+                            ),
+                            DataCell(
+                              CellField(
+                                keyId: "$selectedId-$index-params-v-$seed",
+                                initialValue: rows[index].value,
+                                hintText: "Add Value",
+                                onChanged: (value) {
+                                  rows[index] =
+                                      rows[index].copyWith(value: value);
+                                  _onFieldChange(selectedId!);
+                                },
+                                colorScheme: Theme.of(context).colorScheme,
+                              ),
+                            ),
+                            DataCell(
+                              InkWell(
+                                child: Theme.of(context).brightness ==
+                                        Brightness.dark
+                                    ? kIconRemoveDark
+                                    : kIconRemoveLight,
+                                onTap: () {
+                                  seed = random.nextInt(kRandMax);
+                                  if (rows.length == 1) {
+                                    setState(() {
+                                      rows = [
+                                        kNameValueEmptyModel,
+                                      ];
+                                      isRowEnabledList = [true];
+                                    });
+                                  } else {
+                                    rows.removeAt(index);
+                                    isRowEnabledList.removeAt(index);
+                                  }
+                                  _onFieldChange(selectedId!);
+                                },
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
                 ),
               ),
             ],

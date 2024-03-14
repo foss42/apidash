@@ -70,6 +70,8 @@ const kP10 = EdgeInsets.all(10);
 const kPt24o8 = EdgeInsets.only(top: 24, left: 8.0, right: 8.0, bottom: 8.0);
 const kPt5o10 =
     EdgeInsets.only(left: 10.0, right: 10.0, top: 5.0, bottom: 10.0);
+const kPh4 = EdgeInsets.symmetric(horizontal: 4);
+const kPh8 = EdgeInsets.symmetric(horizontal: 8);
 const kPh20 = EdgeInsets.symmetric(
   horizontal: 20,
 );
@@ -113,6 +115,11 @@ const kTextButtonMinWidth = 44.0;
 
 const kRandMax = 100000;
 
+const kDataTableScrollbarTheme = ScrollbarThemeData(
+  crossAxisMargin: -4,
+);
+const kDataTableBottomPadding = 80.0;
+const kDataRowHeight = 36.0;
 const kTableThemeData = DaviThemeData(
   columnDividerThickness: 1,
   columnDividerColor: kColorTransparent,
@@ -278,7 +285,6 @@ enum CodegenLanguage {
   rustReqwest("Rust (reqwest)", "rust", "rs"),
   rustUreq("Rust (ureq)", "rust", "rs"),
   juliaHttp("Julia (HTTP)", "julia", "jl");
-
 
   const CodegenLanguage(this.label, this.codeHighlightLang, this.ext);
   final String label;

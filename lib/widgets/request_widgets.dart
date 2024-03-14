@@ -95,6 +95,7 @@ class _RequestPaneState extends State<RequestPane>
             ),
           ],
         ),
+        kVSpacer5,
         Expanded(
           child: TabBarView(
             controller: _controller,

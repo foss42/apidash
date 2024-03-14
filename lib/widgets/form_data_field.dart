@@ -52,7 +52,7 @@ class _FormDataFieldState extends State<FormDataField> {
                 ),
               ),
               hintText: widget.hintText,
-              contentPadding: const EdgeInsets.only(bottom: 16),
+              contentPadding: const EdgeInsets.only(bottom: 13),
               focusedBorder: UnderlineInputBorder(
                 borderSide: BorderSide(
                   color: colorScheme.primary.withOpacity(
