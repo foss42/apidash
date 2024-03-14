@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:jinja/jinja.dart' as jj;
 import 'package:apidash/utils/utils.dart'
     show padMultilineString, requestModelToHARJsonRequest, stripUrlParams;
@@ -10,12 +9,14 @@ class AxiosCodeGen {
 
   final bool isNodeJs;
 
-  String kStringImportNode = """{% if isNodeJs %}import axios from 'axios';
+  String kStringImportNode = """import axios from 'axios';
+{%if hasFormData -%}
+import fs from 'fs'
+{% endif %}
 
-{% endif %}{% if hasFormData and isNodeJs %}const fs = require('fs');{% endif %}
 """;
 
-  String kTemplateStart = """let config = {
+  String kTemplateStart = """const config = {
   url: '{{url}}',
   method: '{{method}}'
 """;
@@ -37,40 +38,14 @@ class AxiosCodeGen {
 };
 
 axios(config)
-    .then(function (response) {
-        // handle success
-        console.log(response.status);
-        console.log(response.data);
-    })
-    .catch(function (error) {
-        // handle error
-        console.log(error.response.status);
-        console.log(error);
-    });
+  .then(res => {
+    console.log(res.status);
+    console.log(res.data);
+  })
+  .catch(err => {
+    console.log(err);
+  });
 """;
-  String kMultiPartBodyTemplate = r'''
-
-
-async function buildFormData(fields) {
-  var formdata = new FormData();
-  for (const field of fields) {
-      const name = field.name || '';
-      const value = field.value || '';
-      const type = field.type || 'text';
-
-      if (type === 'text') {
-        formdata.append(name, value);
-      } else if (type === 'file') {
-        formdata.append(name,{% if isNodeJs %} fs.createReadStream(value){% else %} fileInput.files[0],value{% endif %});
-      }
-    }
-  return formdata;
-}
-
-
-''';
-  var kGetFormDataTemplate = '''buildFormData({{fields_list}});
-''';
   String? getCode(
     RequestModel requestModel,
   ) {
@@ -78,18 +53,13 @@ async function buildFormData(fields) {
       jj.Template kNodejsImportTemplate = jj.Template(kStringImportNode);
       String importsData = kNodejsImportTemplate.render({
         "hasFormData": requestModel.hasFormData,
-        "isNodeJs": isNodeJs,
       });
 
-      String result = importsData;
-      if (requestModel.hasFormData && requestModel.formDataMapList.isNotEmpty) {
-        var templateMultiPartBody = jj.Template(kMultiPartBodyTemplate);
-        var renderedMultiPartBody = templateMultiPartBody.render({
-          "isNodeJs": isNodeJs,
-        });
-        result += renderedMultiPartBody;
-      }
-
+      String result = isNodeJs
+          ? importsData
+          : requestModel.hasFormData
+              ? "// refer https://github.com/foss42/apidash/issues/293#issuecomment-1997568083 for details regarding integration\n\n"
+              : "";
       var harJson = requestModelToHARJsonRequest(
         requestModel,
         useEnabled: true,
@@ -126,17 +96,22 @@ async function buildFormData(fields) {
             .render({"headers": padMultilineString(kEncoder.convert(m), 2)});
       }
       var templateBody = jj.Template(kTemplateBody);
-
       if (requestModel.hasFormData && requestModel.formDataMapList.isNotEmpty) {
-        var getFieldDataTemplate = jj.Template(kGetFormDataTemplate);
-
-        result += templateBody.render({
-          "body": getFieldDataTemplate.render({
-            "fields_list": json.encode(requestModel.formDataMapList),
-          })
-        });
-      }
-      if (harJson["postData"]?["text"] != null) {
+        // Manually Create a JS Object
+        Map<String, String> formParams = {};
+        int formFileCounter = 1;
+        for (var element in requestModel.formDataMapList) {
+          formParams["${element["name"]}"] = element["type"] == "text"
+              ? "${element["value"]}"
+              : isNodeJs
+                  ? "fs.createReadStream(${element["value"]})"
+                  : "fileInput$formFileCounter.files[0]";
+          if (element["type"] == "file") formFileCounter++;
+        }
+        var sanitizedJSObject = sanitzeJSObject(kEncoder.convert(formParams));
+        result += templateBody
+            .render({"body": padMultilineString(sanitizedJSObject, 2)});
+      } else if (harJson["postData"]?["text"] != null) {
         result += templateBody
             .render({"body": kEncoder.convert(harJson["postData"]["text"])});
       }
@@ -145,5 +120,19 @@ async function buildFormData(fields) {
     } catch (e) {
       return null;
     }
+  }
+
+  // escape function and variables in JS Object
+  String sanitzeJSObject(String jsObject) {
+    RegExp pattern = isNodeJs
+        ? RegExp(r'"fs\.createReadStream\((.*?)\)"')
+        : RegExp(r'"fileInput(\d+)\.files\[0\]"');
+
+    var sanitizedJSObject = jsObject.replaceAllMapped(pattern, (match) {
+      return isNodeJs
+          ? 'fs.createReadStream("${match.group(1)}")'
+          : 'fileInput${match.group(1)}.files[0]';
+    });
+    return sanitizedJSObject;
   }
 }
