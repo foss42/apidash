@@ -502,7 +502,7 @@ fetch(url, options)
     });
     test('POST 4', () {
       const expectedCode = r"""import fetch from 'node-fetch'
-import { fileFromSync, FormData } from 'node-fetch'
+import { FormData } from 'node-fetch'
 
 const payload = new FormData();
 payload.append("text", "API")
@@ -537,7 +537,7 @@ fetch(url, options)
 
     test('POST 5', () {
       const expectedCode = r"""import fetch from 'node-fetch'
-import { fileFromSync, FormData } from 'node-fetch'
+import { FormData } from 'node-fetch'
 
 const payload = new FormData();
 payload.append("text", "API")
@@ -640,7 +640,7 @@ fetch(url, options)
     });
     test('POST 8', () {
       const expectedCode = r"""import fetch from 'node-fetch'
-import { fileFromSync, FormData } from 'node-fetch'
+import { FormData } from 'node-fetch'
 
 const payload = new FormData();
 payload.append("text", "API")

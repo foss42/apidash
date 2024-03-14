@@ -12,7 +12,7 @@ class FetchCodeGen {
   String kStringImportNode = """
 import fetch from 'node-fetch'
 {% if hasFormData -%}
-import { fileFromSync, FormData } from 'node-fetch'
+import { {% if hasFileInFormData %}fileFromSync, {% endif %}FormData } from 'node-fetch'
 {% endif %}
 
 """;
@@ -57,6 +57,7 @@ fetch(url, options)
       jj.Template kNodejsImportTemplate = jj.Template(kStringImportNode);
       String importsData = kNodejsImportTemplate.render({
         "hasFormData": requestModel.hasFormData,
+        "hasFileInFormData": requestModel.hasFileInFormData,
       });
 
       String result = isNodeJs
