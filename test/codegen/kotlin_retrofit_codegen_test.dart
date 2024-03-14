@@ -102,7 +102,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 interface ApiService {
     @POST("/io/form")
-
     fun (@Field("API") text : String,@Field("|") sep : String,@Field("3") times : String): Call<ResponseBody>
 }
 
@@ -130,8 +129,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 interface ApiService {
-    @POST("/io/form")
-    @Header("Test Agent") User-Agent: String
+    @POST("/io/form")@Header("Test Agent") User-Agent: String
     fun (@Field("API") text : String,@Field("|") sep : String,@Field("3") times : String): Call<ResponseBody>
 }
 
@@ -160,7 +158,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 interface ApiService {
     @POST("/io/img")
-    
     fun (@Field("xyz") token : String,@Field("/Documents/up/1.png") imfile : String): Call<ResponseBody>
 }
 
@@ -189,7 +186,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 interface ApiService {
     @POST("/io/img")
-    
     fun (@Field("xyz") token : String,@Field("/Documents/up/1.png") imfile : String): Call<ResponseBody>
 }
 
@@ -218,7 +214,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 interface ApiService {
     @POST("/io/form", @Query("size") size: String, @Query("len") len: String)
-    
     fun (@Field("API") text : String,@Field("|") sep : String,@Field("3") times : String): Call<ResponseBody>
 }
 
@@ -246,8 +241,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 interface ApiService {
-    @POST("/io/img", @Query("size") size: String, @Query("len") len: String)
-    @Header("Test Agent") User-Agent: String
+    @POST("/io/img", @Query("size") size: String, @Query("len") len: String)@Header("Test Agent") User-Agent: String
     @Header("true") Keep-Alive: String
     fun (@Field("xyz") token : String,@Field("/Documents/up/1.png") imfile : String): Call<ResponseBody>
 }

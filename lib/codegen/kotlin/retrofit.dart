@@ -32,8 +32,7 @@ fun main() {
 """;
 
   String kMethodTemplate = '''
-    @{{method}}("{{endpoint}}"{{queryParameters}}{{hasBodyAnnotation}})
-    {{headers}}
+    @{{method}}("{{endpoint}}"{{queryParameters}}{{hasBodyAnnotation}}){{headers}}
     fun {{methodName}}({{parameters}}): Call<ResponseBody>
 ''';
 
