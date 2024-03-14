@@ -56,6 +56,9 @@ dependencies:
   dart_style: ^2.3.4
   json_text_field: ^1.1.0
   csv: ^5.1.1
+  media_kit: ^1.1.10+1
+  media_kit_video: ^1.2.4                       
+  media_kit_libs_video: ^1.0.4
 
 dev_dependencies:
   flutter_test:
