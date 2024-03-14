@@ -62,7 +62,7 @@ fetch(url, options)
 
       String result = isNodeJs
           ? importsData
-          : requestModel.hasFormData
+          : requestModel.hasFileInFormData
               ? "// refer https://github.com/foss42/apidash/issues/293#issuecomment-1995208098 for details regarding integration\n\n"
               : "";
       if (requestModel.hasFormData) {

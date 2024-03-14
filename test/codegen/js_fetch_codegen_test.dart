@@ -461,10 +461,7 @@ fetch(url, options)
           expectedCode);
     });
     test('POST 4', () {
-      const expectedCode =
-          r"""// refer https://github.com/foss42/apidash/issues/293#issuecomment-1995208098 for details regarding integration
-
-const payload = new FormData();
+      const expectedCode = r"""const payload = new FormData();
 payload.append("text", "API")
 payload.append("sep", "|")
 payload.append("times", "3")
@@ -498,10 +495,7 @@ fetch(url, options)
     });
 
     test('POST 5', () {
-      const expectedCode =
-          r"""// refer https://github.com/foss42/apidash/issues/293#issuecomment-1995208098 for details regarding integration
-
-const payload = new FormData();
+      const expectedCode = r"""const payload = new FormData();
 payload.append("text", "API")
 payload.append("sep", "|")
 payload.append("times", "3")
@@ -607,10 +601,7 @@ fetch(url, options)
           expectedCode);
     });
     test('POST 8', () {
-      const expectedCode =
-          r"""// refer https://github.com/foss42/apidash/issues/293#issuecomment-1995208098 for details regarding integration
-
-const payload = new FormData();
+      const expectedCode = r"""const payload = new FormData();
 payload.append("text", "API")
 payload.append("sep", "|")
 payload.append("times", "3")
