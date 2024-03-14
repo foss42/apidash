@@ -5,24 +5,19 @@ import 'package:inner_drawer/inner_drawer.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'bottom_navbar.dart';
 import 'left_drawer.dart';
-import 'requestspage/requests_page.dart';
-import 'requestspage/response_drawer.dart';
+import 'requests_page/requests_page.dart';
+import 'requests_page/response_drawer.dart';
 import '../home_page/collection_pane.dart';
+import '../../providers/ui_providers.dart';
 
 class MobileDashboard extends ConsumerStatefulWidget {
-  const MobileDashboard(
-      {required this.scaffoldBody, required this.title, super.key});
-
-  final Widget scaffoldBody;
-  final String title;
+  const MobileDashboard({super.key});
 
   @override
   ConsumerState<MobileDashboard> createState() => _MobileDashboardState();
 }
 
 class _MobileDashboardState extends ConsumerState<MobileDashboard> {
-  final GlobalKey<InnerDrawerState> _innerDrawerKey =
-      GlobalKey<InnerDrawerState>();
   late Color backgroundColor;
   bool isLeftDrawerOpen = false;
   ValueNotifier<double> dragPosition = ValueNotifier(0);
@@ -42,7 +37,11 @@ class _MobileDashboardState extends ConsumerState<MobileDashboard> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+    BuildContext context,
+  ) {
+    final GlobalKey<InnerDrawerState> innerDrawerKey =
+        ref.watch(mobileDrawerKeyProvider);
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: FlexColorScheme.themedSystemNavigationBar(
         context,
@@ -53,7 +52,7 @@ class _MobileDashboardState extends ConsumerState<MobileDashboard> {
         alignment: AlignmentDirectional.bottomCenter,
         children: [
           InnerDrawer(
-            key: _innerDrawerKey,
+            key: innerDrawerKey,
             swipe: true,
             swipeChild: true,
             onTapClose: true,
@@ -103,7 +102,7 @@ class _MobileDashboardState extends ConsumerState<MobileDashboard> {
                 child: SafeArea(
                   bottom: false,
                   child: RequestsPage(
-                    innerDrawerKey: _innerDrawerKey,
+                    innerDrawerKey: innerDrawerKey,
                   ),
                 ),
               ),

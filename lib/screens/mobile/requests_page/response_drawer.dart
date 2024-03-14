@@ -19,8 +19,8 @@ class ResponseDrawer extends StatelessWidget {
             Navigator.of(context).pop();
           },
         ),
-        title: const Text("Response"),
         centerTitle: true,
+        title: const Text("Response"),
       ),
       body: Padding(
         padding: EdgeInsets.only(
