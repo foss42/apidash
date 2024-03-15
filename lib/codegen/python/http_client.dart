@@ -1,14 +1,13 @@
 import 'dart:io';
 import 'dart:convert';
 import 'package:jinja/jinja.dart' as jj;
-import 'package:apidash/utils/utils.dart'
-    show getNewUuid, getValidRequestUri, padMultilineString;
+import 'package:apidash/utils/utils.dart' show getValidRequestUri;
 import 'package:apidash/models/models.dart' show RequestModel;
 import 'package:apidash/consts.dart';
 
 class PythonHttpClientCodeGen {
   final String kTemplateStart = """import http.client
-{% if isFormDataRequest %}import mimetypes
+{% if hasFormData %}import mimetypes
 from codecs import encode
 {% endif %}
 """;
@@ -20,7 +19,6 @@ queryParams = {{params}}
 queryParamsStr = '?' + urlencode(queryParams)
 
 """;
-  int kParamsPadding = 14;
 
   String kTemplateBody = """
 
@@ -35,8 +33,6 @@ headers = {{headers}}
 """;
   String kTemplateFormHeaderContentType = '''
 multipart/form-data; boundary={{boundary}}''';
-
-  int kHeadersPadding = 10;
 
   String kTemplateConnection = """
 
@@ -87,30 +83,23 @@ dataList = build_data_list({{fields_list}})
 body = b'\r\n'.join(dataList)
 ''';
   String? getCode(
-    RequestModel requestModel,
-    String defaultUriScheme,
-  ) {
-    String uuid = getNewUuid();
-
+    RequestModel requestModel, {
+    String? boundary,
+  }) {
     try {
       String result = "";
       bool hasHeaders = false;
       bool hasQuery = false;
       bool hasBody = false;
 
-      String url = requestModel.url;
-      if (!url.contains("://") && url.isNotEmpty) {
-        url = "$defaultUriScheme://$url";
-      }
-
       var templateStartUrl = jj.Template(kTemplateStart);
       result += templateStartUrl.render(
         {
-          "isFormDataRequest": requestModel.isFormDataRequest,
+          "hasFormData": requestModel.hasFormData,
         },
       );
       var rec = getValidRequestUri(
-        url,
+        requestModel.url,
         requestModel.enabledRequestParams,
       );
 
@@ -123,51 +112,48 @@ body = b'\r\n'.join(dataList)
             hasQuery = true;
             var templateParams = jj.Template(kTemplateParams);
             var paramsString = kEncoder.convert(params);
-            paramsString = padMultilineString(paramsString, kParamsPadding);
             result += templateParams.render({"params": paramsString});
           }
         }
 
-        var method = requestModel.method;
-        var requestBody = requestModel.requestBody;
-        if (kMethodsWithBody.contains(method) && requestBody != null) {
-          var contentLength = utf8.encode(requestBody).length;
-          if (contentLength > 0) {
-            hasBody = true;
+        if (requestModel.hasData) {
+          hasBody = true;
+          if (requestModel.hasJsonData || requestModel.hasTextData) {
             var templateBody = jj.Template(kTemplateBody);
-            result += templateBody.render({"body": requestBody});
+            result += templateBody.render({"body": requestModel.requestBody});
           }
         }
 
         var headersList = requestModel.enabledRequestHeaders;
         if (headersList != null || hasBody) {
           var headers = requestModel.enabledHeadersMap;
-          if (requestModel.isFormDataRequest) {
-            var formHeaderTemplate =
-                jj.Template(kTemplateFormHeaderContentType);
-            headers[HttpHeaders.contentTypeHeader] = formHeaderTemplate.render({
-              "boundary": uuid,
-            });
-          }
 
           if (headers.isNotEmpty || hasBody) {
             hasHeaders = true;
             if (hasBody && !requestModel.hasContentTypeHeader) {
-              headers[HttpHeaders.contentTypeHeader] =
-                  requestModel.requestBodyContentType.header;
+              if (requestModel.hasJsonData || requestModel.hasTextData) {
+                headers[HttpHeaders.contentTypeHeader] =
+                    requestModel.requestBodyContentType.header;
+              } else if (requestModel.hasFormData) {
+                var formHeaderTemplate =
+                    jj.Template(kTemplateFormHeaderContentType);
+                headers[HttpHeaders.contentTypeHeader] =
+                    formHeaderTemplate.render({
+                  "boundary": boundary,
+                });
+              }
             }
             var headersString = kEncoder.convert(headers);
-            headersString = padMultilineString(headersString, kHeadersPadding);
             var templateHeaders = jj.Template(kTemplateHeaders);
             result += templateHeaders.render({"headers": headersString});
           }
         }
-        if (requestModel.isFormDataRequest) {
+        if (requestModel.hasFormData) {
           var formDataBodyData = jj.Template(kStringFormDataBody);
           result += formDataBodyData.render(
             {
               "fields_list": json.encode(requestModel.formDataMapList),
-              "boundary": uuid,
+              "boundary": boundary,
             },
           );
         }
@@ -179,16 +165,16 @@ body = b'\r\n'.join(dataList)
 
         var templateRequest = jj.Template(kTemplateRequest);
         result += templateRequest.render({
-          "method": method.name.toUpperCase(),
+          "method": requestModel.method.name.toUpperCase(),
           "path": uri.path,
           "queryParamsStr": hasQuery ? " + queryParamsStr" : "",
         });
 
-        if (hasBody || requestModel.isFormDataRequest) {
+        if (hasBody || requestModel.hasFormData) {
           result += kStringRequestBody;
         }
 
-        if (hasHeaders || requestModel.isFormDataRequest) {
+        if (hasHeaders || requestModel.hasFormData) {
           result += kStringRequestHeaders;
         }
 
