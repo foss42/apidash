@@ -45,6 +45,8 @@ class Codegen {
         return DartHttpCodeGen().getCode(rM);
       case CodegenLanguage.dartDio:
         return DartDioCodeGen().getCode(rM);
+      case CodegenLanguage.goHttp:
+        return GoHttpCodeGen().getCode(rM);
       case CodegenLanguage.jsAxios:
         return AxiosCodeGen().getCode(rM);
       case CodegenLanguage.jsFetch:
@@ -53,10 +55,16 @@ class Codegen {
         return AxiosCodeGen(isNodeJs: true).getCode(rM);
       case CodegenLanguage.nodejsFetch:
         return FetchCodeGen(isNodeJs: true).getCode(rM);
+      case CodegenLanguage.javaAsyncHttpClient:
+        return JavaAsyncHttpClientGen().getCode(rM);
+      case CodegenLanguage.javaHttpClient:
+        return JavaHttpClientCodeGen().getCode(rM);
+      case CodegenLanguage.javaOkHttp:
+        return JavaOkHttpCodeGen().getCode(rM);
+      case CodegenLanguage.juliaHttp:
+        return JuliaHttpClientCodeGen().getCode(rM);
       case CodegenLanguage.kotlinOkHttp:
         return KotlinOkHttpCodeGen().getCode(rM);
-        case CodegenLanguage.javaOkHttp:
-        return JavaOkHttpCodeGen().getCode(rM);
       case CodegenLanguage.pythonHttpClient:
         return PythonHttpClientCodeGen()
             .getCode(rM, boundary: boundary ?? getNewUuid());
@@ -68,14 +76,6 @@ class Codegen {
         return RustReqwestCodeGen().getCode(rM);
       case CodegenLanguage.rustUreq:
         return RustUreqCodeGen().getCode(rM, boundary: boundary);
-      case CodegenLanguage.goHttp:
-        return GoHttpCodeGen().getCode(rM);
-      case CodegenLanguage.juliaHttp:
-        return JuliaHttpClientCodeGen().getCode(rM);
-      case CodegenLanguage.javaAsyncHttpClient:
-        return JavaAsyncHttpClientGen().getCode(rM);
-      case CodegenLanguage.javaHttpClient:
-        return JavaHttpClientCodeGen().getCode(rM);
     }
   }
 }
