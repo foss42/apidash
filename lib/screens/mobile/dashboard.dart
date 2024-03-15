@@ -70,6 +70,7 @@ class _MobileDashboardState extends ConsumerState<MobileDashboard> {
             backgroundDecoration:
                 BoxDecoration(color: Theme.of(context).colorScheme.surface),
             onDragUpdate: (value, direction) {
+              drawerDirection.value = direction;
               if (value > 0.98 && direction == InnerDrawerDirection.start) {
                 dragPosition.value = 1;
               } else {
