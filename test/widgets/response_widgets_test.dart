@@ -201,7 +201,7 @@ void main() {
   RequestModel requestModel = const RequestModel(
       id: '1',
       method: HTTPVerb.post,
-      url: 'api.foss42.com/case/lower',
+      url: 'api.apidash.dev/case/lower',
       name: 'foss42 api',
       requestHeaders: [
         NameValueModel(name: 'content-length', value: '18'),
@@ -372,7 +372,7 @@ void main() {
     String code = r'''import 'package:http/http.dart' as http;
 
 void main() async {
-  var uri = Uri.parse('https://api.foss42.com/country/codes');
+  var uri = Uri.parse('https://api.apidash.dev/country/codes');
 
   final response = await http.get(uri);
 
