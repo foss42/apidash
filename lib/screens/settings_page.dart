@@ -65,7 +65,7 @@ class SettingsPage extends ConsumerWidget {
                 hoverColor: kColorTransparent,
                 title: const Text('Default URI Scheme'),
                 subtitle: Text(
-                    'api.foss42.com → ${settings.defaultUriScheme}://api.foss42.com'),
+                    '$kDefaultUri → ${settings.defaultUriScheme}://$kDefaultUri'),
                 trailing: DropdownMenu(
                     onSelected: (value) {
                       ref
