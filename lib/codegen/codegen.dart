@@ -18,6 +18,7 @@ import 'julia/http.dart';
 import 'java/okhttp.dart';
 import 'java/async_http_client.dart';
 import 'java/httpclient.dart';
+import './Ruby/faraday.dart';
 
 class Codegen {
   String? getCode(
@@ -55,7 +56,7 @@ class Codegen {
         return FetchCodeGen(isNodeJs: true).getCode(rM);
       case CodegenLanguage.kotlinOkHttp:
         return KotlinOkHttpCodeGen().getCode(rM);
-        case CodegenLanguage.javaOkHttp:
+      case CodegenLanguage.javaOkHttp:
         return JavaOkHttpCodeGen().getCode(rM);
       case CodegenLanguage.pythonHttpClient:
         return PythonHttpClientCodeGen()
@@ -76,6 +77,8 @@ class Codegen {
         return JavaAsyncHttpClientGen().getCode(rM);
       case CodegenLanguage.javaHttpClient:
         return JavaHttpClientCodeGen().getCode(rM);
+      case CodegenLanguage.rubyFaraday:
+        return RubyFaradayCodeGen().getCode(rM, boundary: boundary ?? getNewUuid());
     }
   }
 }

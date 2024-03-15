@@ -280,7 +280,8 @@ enum CodegenLanguage {
   javaOkHttp("Java (okhttp3)", "java", 'java'),
   javaAsyncHttpClient("Java (async-http-client)", "java", "java"),
   javaHttpClient("Java (HttpClient)", "java", "java"),
-  juliaHttp("Julia (HTTP)", "julia", "jl");
+  juliaHttp("Julia (HTTP)", "julia", "jl"),
+  rubyFaraday("Ruby(Faraday)", "Ruby", "rb");
 
   const CodegenLanguage(this.label, this.codeHighlightLang, this.ext);
   final String label;
