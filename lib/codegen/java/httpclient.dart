@@ -1,7 +1,7 @@
-
 import 'dart:convert';
 import 'package:jinja/jinja.dart' as jj;
-import 'package:apidash/utils/utils.dart' show getValidRequestUri, requestModelToHARJsonRequest, stripUriParams;
+import 'package:apidash/utils/utils.dart'
+    show getValidRequestUri, requestModelToHARJsonRequest, stripUriParams;
 import '../../models/request_model.dart';
 import 'package:apidash/consts.dart';
 
@@ -66,7 +66,6 @@ public class JavaHttpClientExample {
 
   String? getCode(
     RequestModel requestModel,
-    String defaultUriScheme,
   ) {
     try {
       String result = "";
@@ -74,13 +73,8 @@ public class JavaHttpClientExample {
       bool hasBody = false;
       bool hasJsonBody = false;
 
-      String url = requestModel.url;
-      if (!url.contains("://") && url.isNotEmpty) {
-        url = "$defaultUriScheme://$url";
-      }
-
       var rec = getValidRequestUri(
-        url,
+        requestModel.url,
         requestModel.enabledRequestParams,
       );
       Uri? uri = rec.$1;
@@ -95,40 +89,46 @@ public class JavaHttpClientExample {
             var templateParams = jj.Template(kTemplateUrlQuery);
             result += templateParams.render({"url": url, "params": uri.query});
           }
-        } 
-        
-        if(!hasQuery) {
+        }
+
+        if (!hasQuery) {
           var templateUrl = jj.Template(kTemplateUrl);
           result += templateUrl.render({"url": url});
         }
         var rM = requestModel.copyWith(url: url);
 
-      var harJson = requestModelToHARJsonRequest(rM, useEnabled: true);
+        var harJson = requestModelToHARJsonRequest(rM, useEnabled: true);
 
         var method = requestModel.method;
         var requestBody = requestModel.requestBody;
-        if (requestModel.isFormDataRequest && requestModel.formDataMapList.isNotEmpty && kMethodsWithBody.contains(method)) {
-            var formDataList = requestModel.formDataMapList;
-            result += """
+        if (requestModel.hasFormData &&
+            requestModel.formDataMapList.isNotEmpty &&
+            kMethodsWithBody.contains(method)) {
+          var formDataList = requestModel.formDataMapList;
+          result += """
             StringBuilder formData = new StringBuilder();
             formData.append(""";
 
-            for (var formDataMap in formDataList) {
-              result += '"""${formDataMap['name']}=${formDataMap['value']}&""",';
-            }
+          for (var formDataMap in formDataList) {
+            result += '"""${formDataMap['name']}=${formDataMap['value']}&""",';
+          }
 
-            result = result.substring(0, result.length - 1);
-            result += ");\n";
-            hasBody = true;
+          result = result.substring(0, result.length - 1);
+          result += ");\n";
+          hasBody = true;
         } else if (kMethodsWithBody.contains(method) && requestBody != null) {
           var contentLength = utf8.encode(requestBody).length;
           if (contentLength > 0) {
-            var templateBody = jj.Template(kTemplateRequestBody);hasBody = true;
-            hasJsonBody = requestBody.startsWith("{") && requestBody.endsWith("}");
+            var templateBody = jj.Template(kTemplateRequestBody);
+            hasBody = true;
+            hasJsonBody =
+                requestBody.startsWith("{") && requestBody.endsWith("}");
             if (harJson["postData"]?["text"] != null) {
-        result += templateBody
-            .render({"body": kEncoder.convert(harJson["postData"]["text"]).substring(1, kEncoder.convert(harJson["postData"]["text"]).length - 1)});
-      }
+              result += templateBody.render({
+                "body": kEncoder.convert(harJson["postData"]["text"]).substring(
+                    1, kEncoder.convert(harJson["postData"]["text"]).length - 1)
+              });
+            }
           }
         }
 
@@ -137,28 +137,30 @@ public class JavaHttpClientExample {
 
         var headersList = requestModel.enabledRequestHeaders;
         var contentType = requestModel.requestBodyContentType.header;
-        if(hasBody && !requestModel.enabledHeadersMap.containsKey('Content-Type')){
-          result = """$result                .header("Content-Type", "$contentType")\n""";
+        if (hasBody &&
+            !requestModel.enabledHeadersMap.containsKey('Content-Type')) {
+          result =
+              """$result                .header("Content-Type", "$contentType")\n""";
         }
         if (headersList != null) {
           var headers = requestModel.enabledHeadersMap;
           if (headers.isNotEmpty) {
-            result += getHeaders(headers,hasJsonBody);
+            result += getHeaders(headers, hasJsonBody);
           }
         }
 
         var templateRequestEnd = jj.Template(kTemplateRequestEnd);
-        
-        if(kMethodsWithBody.contains(method)){
+
+        if (kMethodsWithBody.contains(method)) {
           result += templateRequestEnd.render({
-          "method": method.name.toUpperCase(),
-          "body": hasBody ? "BodyPublishers.ofString(body)" : "BodyPublishers.noBody()"
-        });
+            "method": method.name.toUpperCase(),
+            "body": hasBody
+                ? "BodyPublishers.ofString(body)"
+                : "BodyPublishers.noBody()"
+          });
         } else {
-          result += templateRequestEnd.render({
-          "method": method.name.toUpperCase(),
-          "body": ""
-        });
+          result += templateRequestEnd
+              .render({"method": method.name.toUpperCase(), "body": ""});
         }
       }
       return result;
@@ -167,10 +169,10 @@ public class JavaHttpClientExample {
     }
   }
 
-  String getHeaders(Map<String, String> headers,hasJsonBody) {
+  String getHeaders(Map<String, String> headers, hasJsonBody) {
     String result = "";
     for (final k in headers.keys) {
-      if(k.toLowerCase() == 'authorization') {
+      if (k.toLowerCase() == 'authorization') {
         result = """$result                .header("$k", "${headers[k]}")\n""";
       } else {
         result = """$result                .header("$k", "${headers[k]}")\n""";

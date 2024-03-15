@@ -279,7 +279,7 @@ enum CodegenLanguage {
   rustUreq("Rust (ureq)", "rust", "rs"),
   javaOkHttp("Java (okhttp3)", "java", 'java'),
   javaAsyncHttpClient("Java (async-http-client)", "java", "java"),
-  javaHttpClient("Java (HttpClient)", "java", "java")
+  javaHttpClient("Java (HttpClient)", "java", "java"),
   juliaHttp("Julia (HTTP)", "julia", "jl");
 
   const CodegenLanguage(this.label, this.codeHighlightLang, this.ext);
