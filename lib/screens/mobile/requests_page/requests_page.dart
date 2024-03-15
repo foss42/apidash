@@ -58,16 +58,11 @@ class RequestsPage extends StatelessWidget {
   }
 }
 
-class RequestTitle extends ConsumerStatefulWidget {
+class RequestTitle extends ConsumerWidget {
   const RequestTitle({super.key});
 
   @override
-  ConsumerState<RequestTitle> createState() => _RequestTitleState();
-}
-
-class _RequestTitleState extends ConsumerState<RequestTitle> {
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final id = ref.watch(selectedIdStateProvider);
     final name = getRequestTitleFromUrl(
         ref.watch(selectedRequestModelProvider.select((value) => value?.name)),

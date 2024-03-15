@@ -31,6 +31,13 @@ class _MobileDashboardState extends ConsumerState<MobileDashboard> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    dragPosition.dispose();
+    drawerDirection.dispose();
+  }
+
+  @override
   Widget build(
     BuildContext context,
   ) {
