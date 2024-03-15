@@ -123,19 +123,28 @@ API Dash can be downloaded from the links below:
 
 API Dash currently supports API integration code generation for the following languages/libraries.
 
-| Language               | Library       |
-| ---------------------- | ------------- |
-| cURL                   |               |
-| HAR                    |               |
-| Dart                   | `http`        |
-| JavaScript             | `axios`       |
-| JavaScript             | `fetch`       |
-| JavaScript (`node.js`) | `axios`       |
-| JavaScript (`node.js`) | `fetch`       |
-| Python                 | `http.client` |
-| Python                 | `requests`    |
-| Kotlin                 | `okhttp3`     |
-| Java                   | `okhttp3`     |
+| Language               | Library       | Comment/Issues |
+| ---------------------- | ------------- | ------- |
+| cURL                   |               |         |
+| HAR                    |               |         |
+| Dart                   | `http`        |         |
+| Dart                   | `dio`         |         |
+| Go                     | `net/http`    |         |
+| JavaScript             | `axios`       |         |
+| JavaScript             | `fetch`       |         |
+| JavaScript (`node.js`) | `axios`       |         |
+| JavaScript (`node.js`) | `fetch`       |         |
+| Python                 | `requests`    |         |
+| Python                 | `http.client` |         |
+| Kotlin                 | `okhttp3`     | https://github.com/foss42/apidash/issues/280 |
+| Rust                   | `reqwest`     |         |
+| Rust                   | `ureq`        |         |
+| Rust                   | `Actix Client` |         |
+| Java                   | `asynchttpclient` | https://github.com/foss42/apidash/issues/136 |
+| Java                   | `HttpClient`  | https://github.com/foss42/apidash/issues/137 |
+| Java                   | `okhttp3`     |         |
+| Julia                  | `HTTP`        | https://github.com/foss42/apidash/issues/154 |
+| PHP                    | `guzzle`      | https://github.com/foss42/apidash/issues/143 |
 
 We welcome contributions to support other programming languages/libraries/frameworks. Please check out more details [here](https://github.com/foss42/apidash/discussions/80).
 
