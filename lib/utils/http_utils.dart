@@ -7,14 +7,14 @@ import '../models/models.dart';
 import 'convert_utils.dart' show rowsToMap;
 import '../consts.dart';
 
-String getRequestTitleFromUrl(String? url) {
+String getRequestTitleFromUrl(String? url, {bool capitalize = false}) {
   if (url == null || url.trim() == "") {
-    return "untitled";
+    return !capitalize ? "untitled" : "Untitled";
   }
   if (url.contains("://")) {
     String rem = url.split("://")[1];
     if (rem.trim() == "") {
-      return "untitled";
+      return !capitalize ? "untitled" : "Untitled";
     }
     return rem;
   }

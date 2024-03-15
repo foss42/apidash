@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:inner_drawer/inner_drawer.dart';
+import 'package:apidash/providers/providers.dart';
+import 'package:apidash/utils/http_utils.dart';
+import 'package:apidash/consts.dart';
+import 'package:apidash/widgets/widgets.dart';
+import '../../home_page/editor_pane/editor_request.dart';
 import '../../home_page/editor_pane/editor_pane.dart';
 import '../../home_page/editor_pane/url_card.dart';
 import '../../home_page/editor_pane/details_card/code_pane.dart';
@@ -27,13 +33,14 @@ class RequestsPage extends StatelessWidget {
                 .open(direction: InnerDrawerDirection.start);
           },
         ),
-        title: const Text("Requests"),
-        centerTitle: true,
+        title: const RequestTitle(),
+        titleSpacing: 0,
         actions: [
           IconButton(
             icon: Icon(
-              Icons.mode_comment_outlined,
+              Icons.send_outlined,
               color: Theme.of(context).colorScheme.onBackground,
+              size: 20,
             ),
             onPressed: () {
               innerDrawerKey.currentState!
@@ -47,6 +54,68 @@ class RequestsPage extends StatelessWidget {
         child: const RequestEditorPane(),
       ),
       bottomNavigationBar: RequestPageBottombar(innerDrawerKey: innerDrawerKey),
+    );
+  }
+}
+
+class RequestTitle extends ConsumerStatefulWidget {
+  const RequestTitle({super.key});
+
+  @override
+  ConsumerState<RequestTitle> createState() => _RequestTitleState();
+}
+
+class _RequestTitleState extends ConsumerState<RequestTitle> {
+  @override
+  Widget build(BuildContext context) {
+    final id = ref.watch(selectedIdStateProvider);
+    final name = getRequestTitleFromUrl(
+        ref.watch(selectedRequestModelProvider.select((value) => value?.name)),
+        capitalize: true);
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(8),
+      child: Material(
+        color: Colors.transparent,
+        child: RequestCardMenu(
+          offset: const Offset(0, 48),
+          splashRadius: 0,
+          tooltip: name,
+          child: Ink(
+            padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    name,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.bodyLarge,
+                    maxLines: 1,
+                  ),
+                ),
+                const Icon(
+                  Icons.unfold_more_rounded,
+                  size: 20,
+                ),
+              ],
+            ),
+          ),
+          onSelected: (RequestItemMenuOption item) {
+            if (item == RequestItemMenuOption.edit) {
+              showRenameDialog(context, name, (val) {
+                ref
+                    .read(collectionStateNotifierProvider.notifier)
+                    .update(id!, name: val);
+              });
+            }
+            if (item == RequestItemMenuOption.delete) {
+              ref.read(collectionStateNotifierProvider.notifier).remove(id!);
+            }
+            if (item == RequestItemMenuOption.duplicate) {
+              ref.read(collectionStateNotifierProvider.notifier).duplicate(id!);
+            }
+          },
+        ),
+      ),
     );
   }
 }

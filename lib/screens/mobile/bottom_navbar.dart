@@ -90,6 +90,7 @@ Widget customNavigationDestination(
   IconData icon,
   String label, {
   bool isNavigator = false,
+  bool showLabel = true,
   Function()? onTap,
 }) {
   bool isSelected = railIdx == buttonIdx;
@@ -138,19 +139,21 @@ Widget customNavigationDestination(
               ),
             ),
           ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: Theme.of(context).textTheme.labelSmall!.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: isSelected
-                      ? Theme.of(context).colorScheme.onSecondaryContainer
-                      : Theme.of(context)
-                          .colorScheme
-                          .onSurface
-                          .withOpacity(0.65),
-                ),
-          ),
+          showLabel ? const SizedBox(height: 4) : const SizedBox.shrink(),
+          showLabel
+              ? Text(
+                  label,
+                  style: Theme.of(context).textTheme.labelSmall!.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: isSelected
+                            ? Theme.of(context).colorScheme.onSecondaryContainer
+                            : Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withOpacity(0.65),
+                      ),
+                )
+              : const SizedBox.shrink(),
         ],
       ),
     ),

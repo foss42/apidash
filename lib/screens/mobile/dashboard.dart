@@ -31,12 +31,6 @@ class _MobileDashboardState extends ConsumerState<MobileDashboard> {
   }
 
   @override
-  void didChangeDependencies() {
-    backgroundColor = Theme.of(context).colorScheme.surface;
-    super.didChangeDependencies();
-  }
-
-  @override
   Widget build(
     BuildContext context,
   ) {
