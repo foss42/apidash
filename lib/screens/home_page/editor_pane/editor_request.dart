@@ -100,7 +100,10 @@ class RequestEditorTopBar extends ConsumerWidget {
                                         .notifier)
                                     .update(id!, name: val);
                                 Navigator.pop(context);
-                                controller.dispose();
+                                Future.delayed(
+                                    const Duration(milliseconds: 100), () {
+                                  controller.dispose();
+                                });
                               },
                               child: const Text('OK')),
                         ],

@@ -18,7 +18,7 @@ class RequestsPage extends StatelessWidget {
         backgroundColor: Theme.of(context).colorScheme.surface,
         primary: true,
         shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
+          borderRadius: BorderRadius.only(topLeft: Radius.circular(8)),
         ),
         leading: IconButton(
           icon: const Icon(Icons.format_list_bulleted_rounded),

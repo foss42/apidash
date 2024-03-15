@@ -3,12 +3,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:inner_drawer/inner_drawer.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
+import '../../providers/providers.dart';
 import 'bottom_navbar.dart';
 import 'left_drawer.dart';
 import 'requests_page/requests_page.dart';
 import 'requests_page/response_drawer.dart';
 import '../home_page/collection_pane.dart';
-import '../../providers/ui_providers.dart';
 
 class MobileDashboard extends ConsumerStatefulWidget {
   const MobileDashboard({super.key});
@@ -70,8 +70,7 @@ class _MobileDashboardState extends ConsumerState<MobileDashboard> {
             backgroundDecoration:
                 BoxDecoration(color: Theme.of(context).colorScheme.surface),
             onDragUpdate: (value, direction) {
-              drawerDirection.value = direction;
-              if (value > 0.98) {
+              if (value > 0.98 && direction == InnerDrawerDirection.start) {
                 dragPosition.value = 1;
               } else {
                 dragPosition.value = 0;
@@ -98,7 +97,7 @@ class _MobileDashboardState extends ConsumerState<MobileDashboard> {
               },
               child: ClipRRect(
                 borderRadius:
-                    const BorderRadius.vertical(top: Radius.circular(8)),
+                    const BorderRadius.only(topLeft: Radius.circular(8)),
                 child: SafeArea(
                   bottom: false,
                   child: RequestsPage(
