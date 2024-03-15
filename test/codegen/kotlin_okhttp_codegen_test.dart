@@ -581,6 +581,9 @@ fun main() {
       const expectedCode = r'''import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.MultipartBody
+import java.io.File
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.MediaType.Companion.toMediaType
 
 fun main() {
     val client = OkHttpClient()
@@ -588,7 +591,7 @@ fun main() {
     val url = "https://api.apidash.dev/io/img"
     val body = MultipartBody.Builder().setType(MultipartBody.FORM).addFormDataPart("token","xyz")
           
-          .addFormDataPart("imfile",null,File("/Documents/up/1.png").asRequestBody("application/octet-stream".toMediaType()))
+          .addFormDataPart("imfile",File("Documents/up/1.png").name,File("Documents/up/1.png").asRequestBody("application/octet-stream".toMediaType()))
           .build()
     val request = Request.Builder()
         .url(url)
@@ -610,6 +613,9 @@ fun main() {
       const expectedCode = r'''import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.MultipartBody
+import java.io.File
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.MediaType.Companion.toMediaType
 
 fun main() {
     val client = OkHttpClient()
@@ -617,7 +623,7 @@ fun main() {
     val url = "https://api.apidash.dev/io/img"
     val body = MultipartBody.Builder().setType(MultipartBody.FORM).addFormDataPart("token","xyz")
           
-          .addFormDataPart("imfile",null,File("/Documents/up/1.png").asRequestBody("application/octet-stream".toMediaType()))
+          .addFormDataPart("imfile",File("Documents/up/1.png").name,File("Documents/up/1.png").asRequestBody("application/octet-stream".toMediaType()))
           .build()
     val request = Request.Builder()
         .url(url)
@@ -673,6 +679,9 @@ fun main() {
 import okhttp3.Request
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.MultipartBody
+import java.io.File
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.MediaType.Companion.toMediaType
 
 fun main() {
     val client = OkHttpClient()
@@ -683,7 +692,7 @@ fun main() {
         .build()
     val body = MultipartBody.Builder().setType(MultipartBody.FORM).addFormDataPart("token","xyz")
           
-          .addFormDataPart("imfile",null,File("/Documents/up/1.png").asRequestBody("application/octet-stream".toMediaType()))
+          .addFormDataPart("imfile",File("Documents/up/1.png").name,File("Documents/up/1.png").asRequestBody("application/octet-stream".toMediaType()))
           .build()
     val request = Request.Builder()
         .url(url)

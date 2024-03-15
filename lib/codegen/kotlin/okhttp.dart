@@ -7,7 +7,7 @@ import 'package:apidash/consts.dart';
 
 class KotlinOkHttpCodeGen {
   final String kTemplateStart = """import okhttp3.OkHttpClient
-import okhttp3.Request{{importForQuery}}{{importForBody}}{{importForFormData}}
+import okhttp3.Request{{importForQuery}}{{importForBody}}{{importForFormData}}{{importForFile}}
 
 fun main() {
     val client = OkHttpClient()
@@ -26,6 +26,12 @@ import okhttp3.MediaType.Companion.toMediaType""";
   final String kStringImportForFormData = """
 
 import okhttp3.MultipartBody""";
+
+  final String kStringImportForFile = """
+
+import java.io.File
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.MediaType.Companion.toMediaType""";
 
   final String kTemplateUrl = '''
 
@@ -68,7 +74,7 @@ import okhttp3.MultipartBody""";
 // Converting list of form data objects to kolin multi part data
   String kFormDataBody = '''
     val body = MultipartBody.Builder().setType(MultipartBody.FORM){% for item in formDataList %}{% if item.type == 'file' %}
-          .addFormDataPart("{{item.name}}",null,File("{{item.value}}").asRequestBody("application/octet-stream".toMediaType()))
+          .addFormDataPart("{{item.name}}",File("{{item.value}}").name,File("{{item.value}}").asRequestBody("application/octet-stream".toMediaType()))
           {% else %}.addFormDataPart("{{item.name}}","{{item.value}}")
           {% endif %}{% endfor %}.build()
 ''';
@@ -81,6 +87,7 @@ import okhttp3.MultipartBody""";
       bool hasQuery = false;
       bool hasBody = false;
       bool hasFormData = false;
+      bool hasFile = false;
 
       var rec = getValidRequestUri(
         requestModel.url,
@@ -111,8 +118,34 @@ import okhttp3.MultipartBody""";
           hasFormData = true;
           var formDataTemplate = jj.Template(kFormDataBody);
 
+          List<Map<String,String>> modifiedFormDataList = [];
+          for (var item in requestModel.formDataList) {
+            if (item.type == FormDataType.file ) {
+              if (item.value[0] == "/") {
+              modifiedFormDataList.add({
+                "name": item.name,
+                "value": item.value.substring(1),
+                "type": "file"
+              });
+              }else{
+                modifiedFormDataList.add({
+                "name": item.name,
+                "value": item.value,
+                "type": "file"
+              });
+              }
+              hasFile = true;
+            }else{
+              modifiedFormDataList.add({
+                "name": item.name,
+                "value": item.value,
+                "type": "text"
+              });
+            }
+          }
+
           result += formDataTemplate.render({
-            "formDataList": requestModel.formDataMapList,
+            "formDataList": modifiedFormDataList,
           });
         } else if (kMethodsWithBody.contains(method) && requestBody != null) {
           var contentLength = utf8.encode(requestBody).length;
@@ -129,7 +162,8 @@ import okhttp3.MultipartBody""";
         var stringStart = templateStart.render({
           "importForQuery": hasQuery ? kStringImportForQuery : "",
           "importForBody": hasBody ? kStringImportForBody : "",
-          "importForFormData": hasFormData ? kStringImportForFormData : ""
+          "importForFormData": hasFormData ? kStringImportForFormData : "",
+          "importForFile": hasFile ? kStringImportForFile : "",
         });
 
         result = stringStart + result;
