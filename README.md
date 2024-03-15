@@ -136,7 +136,7 @@ API Dash currently supports API integration code generation for the following la
 | JavaScript (`node.js`) | `fetch`       |         |
 | Python                 | `requests`    |         |
 | Python                 | `http.client` |         |
-| Kotlin                 | `okhttp3`     | https://github.com/foss42/apidash/issues/280 |
+| Kotlin                 | `okhttp3`     |         |
 | Rust                   | `reqwest`     |         |
 | Rust                   | `ureq`        |         |
 | Rust                   | `Actix Client` |         |
