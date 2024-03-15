@@ -10,22 +10,19 @@ void main() {
     test('GET 1', () {
       const expectedCode = r"""import axios from 'axios';
 
-let config = {
+const config = {
   url: 'https://api.apidash.dev',
   method: 'get'
 };
 
 axios(config)
-    .then(function (response) {
-        // handle success
-        console.log(response.status);
-        console.log(response.data);
-    })
-    .catch(function (error) {
-        // handle error
-        console.log(error.response.status);
-        console.log(error);
-    });
+  .then(res => {
+    console.log(res.status);
+    console.log(res.data);
+  })
+  .catch(err => {
+    console.log(err);
+  });
 """;
       expect(
           codeGen.getCode(
@@ -36,7 +33,7 @@ axios(config)
     test('GET 2', () {
       const expectedCode = r"""import axios from 'axios';
 
-let config = {
+const config = {
   url: 'https://api.apidash.dev/country/data',
   method: 'get',
   params: {
@@ -45,16 +42,13 @@ let config = {
 };
 
 axios(config)
-    .then(function (response) {
-        // handle success
-        console.log(response.status);
-        console.log(response.data);
-    })
-    .catch(function (error) {
-        // handle error
-        console.log(error.response.status);
-        console.log(error);
-    });
+  .then(res => {
+    console.log(res.status);
+    console.log(res.data);
+  })
+  .catch(err => {
+    console.log(err);
+  });
 """;
       expect(
           codeGen.getCode(
@@ -65,7 +59,7 @@ axios(config)
     test('GET 3', () {
       const expectedCode = r"""import axios from 'axios';
 
-let config = {
+const config = {
   url: 'https://api.apidash.dev/country/data',
   method: 'get',
   params: {
@@ -74,16 +68,13 @@ let config = {
 };
 
 axios(config)
-    .then(function (response) {
-        // handle success
-        console.log(response.status);
-        console.log(response.data);
-    })
-    .catch(function (error) {
-        // handle error
-        console.log(error.response.status);
-        console.log(error);
-    });
+  .then(res => {
+    console.log(res.status);
+    console.log(res.data);
+  })
+  .catch(err => {
+    console.log(err);
+  });
 """;
       expect(
           codeGen.getCode(
@@ -94,7 +85,7 @@ axios(config)
     test('GET 4', () {
       const expectedCode = r"""import axios from 'axios';
 
-let config = {
+const config = {
   url: 'https://api.apidash.dev/humanize/social',
   method: 'get',
   params: {
@@ -107,16 +98,13 @@ let config = {
 };
 
 axios(config)
-    .then(function (response) {
-        // handle success
-        console.log(response.status);
-        console.log(response.data);
-    })
-    .catch(function (error) {
-        // handle error
-        console.log(error.response.status);
-        console.log(error);
-    });
+  .then(res => {
+    console.log(res.status);
+    console.log(res.data);
+  })
+  .catch(err => {
+    console.log(err);
+  });
 """;
       expect(
           codeGen.getCode(
@@ -127,7 +115,7 @@ axios(config)
     test('GET 5', () {
       const expectedCode = r"""import axios from 'axios';
 
-let config = {
+const config = {
   url: 'https://api.github.com/repos/foss42/apidash',
   method: 'get',
   headers: {
@@ -136,16 +124,13 @@ let config = {
 };
 
 axios(config)
-    .then(function (response) {
-        // handle success
-        console.log(response.status);
-        console.log(response.data);
-    })
-    .catch(function (error) {
-        // handle error
-        console.log(error.response.status);
-        console.log(error);
-    });
+  .then(res => {
+    console.log(res.status);
+    console.log(res.data);
+  })
+  .catch(err => {
+    console.log(err);
+  });
 """;
       expect(
           codeGen.getCode(
@@ -156,7 +141,7 @@ axios(config)
     test('GET 6', () {
       const expectedCode = r"""import axios from 'axios';
 
-let config = {
+const config = {
   url: 'https://api.github.com/repos/foss42/apidash',
   method: 'get',
   params: {
@@ -168,16 +153,13 @@ let config = {
 };
 
 axios(config)
-    .then(function (response) {
-        // handle success
-        console.log(response.status);
-        console.log(response.data);
-    })
-    .catch(function (error) {
-        // handle error
-        console.log(error.response.status);
-        console.log(error);
-    });
+  .then(res => {
+    console.log(res.status);
+    console.log(res.data);
+  })
+  .catch(err => {
+    console.log(err);
+  });
 """;
       expect(
           codeGen.getCode(
@@ -188,22 +170,19 @@ axios(config)
     test('GET 7', () {
       const expectedCode = r"""import axios from 'axios';
 
-let config = {
+const config = {
   url: 'https://api.apidash.dev',
   method: 'get'
 };
 
 axios(config)
-    .then(function (response) {
-        // handle success
-        console.log(response.status);
-        console.log(response.data);
-    })
-    .catch(function (error) {
-        // handle error
-        console.log(error.response.status);
-        console.log(error);
-    });
+  .then(res => {
+    console.log(res.status);
+    console.log(res.data);
+  })
+  .catch(err => {
+    console.log(err);
+  });
 """;
       expect(
           codeGen.getCode(
@@ -214,7 +193,7 @@ axios(config)
     test('GET 8', () {
       const expectedCode = r"""import axios from 'axios';
 
-let config = {
+const config = {
   url: 'https://api.github.com/repos/foss42/apidash',
   method: 'get',
   params: {
@@ -226,16 +205,13 @@ let config = {
 };
 
 axios(config)
-    .then(function (response) {
-        // handle success
-        console.log(response.status);
-        console.log(response.data);
-    })
-    .catch(function (error) {
-        // handle error
-        console.log(error.response.status);
-        console.log(error);
-    });
+  .then(res => {
+    console.log(res.status);
+    console.log(res.data);
+  })
+  .catch(err => {
+    console.log(err);
+  });
 """;
       expect(
           codeGen.getCode(
@@ -246,7 +222,7 @@ axios(config)
     test('GET 9', () {
       const expectedCode = r"""import axios from 'axios';
 
-let config = {
+const config = {
   url: 'https://api.apidash.dev/humanize/social',
   method: 'get',
   params: {
@@ -256,16 +232,13 @@ let config = {
 };
 
 axios(config)
-    .then(function (response) {
-        // handle success
-        console.log(response.status);
-        console.log(response.data);
-    })
-    .catch(function (error) {
-        // handle error
-        console.log(error.response.status);
-        console.log(error);
-    });
+  .then(res => {
+    console.log(res.status);
+    console.log(res.data);
+  })
+  .catch(err => {
+    console.log(err);
+  });
 """;
       expect(
           codeGen.getCode(
@@ -276,7 +249,7 @@ axios(config)
     test('GET 10', () {
       const expectedCode = r"""import axios from 'axios';
 
-let config = {
+const config = {
   url: 'https://api.apidash.dev/humanize/social',
   method: 'get',
   headers: {
@@ -285,16 +258,13 @@ let config = {
 };
 
 axios(config)
-    .then(function (response) {
-        // handle success
-        console.log(response.status);
-        console.log(response.data);
-    })
-    .catch(function (error) {
-        // handle error
-        console.log(error.response.status);
-        console.log(error);
-    });
+  .then(res => {
+    console.log(res.status);
+    console.log(res.data);
+  })
+  .catch(err => {
+    console.log(err);
+  });
 """;
       expect(
           codeGen.getCode(
@@ -308,7 +278,7 @@ axios(config)
     test('GET 11', () {
       const expectedCode = r"""import axios from 'axios';
 
-let config = {
+const config = {
   url: 'https://api.apidash.dev/humanize/social',
   method: 'get',
   params: {
@@ -321,16 +291,13 @@ let config = {
 };
 
 axios(config)
-    .then(function (response) {
-        // handle success
-        console.log(response.status);
-        console.log(response.data);
-    })
-    .catch(function (error) {
-        // handle error
-        console.log(error.response.status);
-        console.log(error);
-    });
+  .then(res => {
+    console.log(res.status);
+    console.log(res.data);
+  })
+  .catch(err => {
+    console.log(err);
+  });
 """;
       expect(
           codeGen.getCode(
@@ -341,22 +308,19 @@ axios(config)
     test('GET 12', () {
       const expectedCode = r"""import axios from 'axios';
 
-let config = {
+const config = {
   url: 'https://api.apidash.dev/humanize/social',
   method: 'get'
 };
 
 axios(config)
-    .then(function (response) {
-        // handle success
-        console.log(response.status);
-        console.log(response.data);
-    })
-    .catch(function (error) {
-        // handle error
-        console.log(error.response.status);
-        console.log(error);
-    });
+  .then(res => {
+    console.log(res.status);
+    console.log(res.data);
+  })
+  .catch(err => {
+    console.log(err);
+  });
 """;
       expect(
           codeGen.getCode(
@@ -369,22 +333,19 @@ axios(config)
     test('HEAD 1', () {
       const expectedCode = r"""import axios from 'axios';
 
-let config = {
+const config = {
   url: 'https://api.apidash.dev',
   method: 'head'
 };
 
 axios(config)
-    .then(function (response) {
-        // handle success
-        console.log(response.status);
-        console.log(response.data);
-    })
-    .catch(function (error) {
-        // handle error
-        console.log(error.response.status);
-        console.log(error);
-    });
+  .then(res => {
+    console.log(res.status);
+    console.log(res.data);
+  })
+  .catch(err => {
+    console.log(err);
+  });
 """;
       expect(
           codeGen.getCode(
@@ -395,22 +356,19 @@ axios(config)
     test('HEAD 2', () {
       const expectedCode = r"""import axios from 'axios';
 
-let config = {
+const config = {
   url: 'http://api.apidash.dev',
   method: 'head'
 };
 
 axios(config)
-    .then(function (response) {
-        // handle success
-        console.log(response.status);
-        console.log(response.data);
-    })
-    .catch(function (error) {
-        // handle error
-        console.log(error.response.status);
-        console.log(error);
-    });
+  .then(res => {
+    console.log(res.status);
+    console.log(res.data);
+  })
+  .catch(err => {
+    console.log(err);
+  });
 """;
       expect(
           codeGen.getCode(
@@ -423,7 +381,7 @@ axios(config)
     test('POST 1', () {
       const expectedCode = r"""import axios from 'axios';
 
-let config = {
+const config = {
   url: 'https://api.apidash.dev/case/lower',
   method: 'post',
   headers: {
@@ -433,16 +391,13 @@ let config = {
 };
 
 axios(config)
-    .then(function (response) {
-        // handle success
-        console.log(response.status);
-        console.log(response.data);
-    })
-    .catch(function (error) {
-        // handle error
-        console.log(error.response.status);
-        console.log(error);
-    });
+  .then(res => {
+    console.log(res.status);
+    console.log(res.data);
+  })
+  .catch(err => {
+    console.log(err);
+  });
 """;
       expect(
           codeGen.getCode(
@@ -453,7 +408,7 @@ axios(config)
     test('POST 2', () {
       const expectedCode = r"""import axios from 'axios';
 
-let config = {
+const config = {
   url: 'https://api.apidash.dev/case/lower',
   method: 'post',
   headers: {
@@ -463,16 +418,13 @@ let config = {
 };
 
 axios(config)
-    .then(function (response) {
-        // handle success
-        console.log(response.status);
-        console.log(response.data);
-    })
-    .catch(function (error) {
-        // handle error
-        console.log(error.response.status);
-        console.log(error);
-    });
+  .then(res => {
+    console.log(res.status);
+    console.log(res.data);
+  })
+  .catch(err => {
+    console.log(err);
+  });
 """;
       expect(
           codeGen.getCode(
@@ -483,7 +435,7 @@ axios(config)
     test('POST 3', () {
       const expectedCode = r"""import axios from 'axios';
 
-let config = {
+const config = {
   url: 'https://api.apidash.dev/case/lower',
   method: 'post',
   headers: {
@@ -494,20 +446,227 @@ let config = {
 };
 
 axios(config)
-    .then(function (response) {
-        // handle success
-        console.log(response.status);
-        console.log(response.data);
-    })
-    .catch(function (error) {
-        // handle error
-        console.log(error.response.status);
-        console.log(error);
-    });
+  .then(res => {
+    console.log(res.status);
+    console.log(res.data);
+  })
+  .catch(err => {
+    console.log(err);
+  });
 """;
       expect(
           codeGen.getCode(
               CodegenLanguage.nodejsAxios, requestModelPost3, "https"),
+          expectedCode);
+    });
+    test('POST 4', () {
+      const expectedCode = r"""import axios from 'axios';
+
+const config = {
+  url: 'https://api.apidash.dev/io/form',
+  method: 'post',
+  headers: {
+    "Content-Type": "multipart/form-data"
+  },
+  data: {
+    "text": "API",
+    "sep": "|",
+    "times": "3"
+  }
+};
+
+axios(config)
+  .then(res => {
+    console.log(res.status);
+    console.log(res.data);
+  })
+  .catch(err => {
+    console.log(err);
+  });
+""";
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.nodejsAxios,
+            requestModelPost4,
+            "https",
+          ),
+          expectedCode);
+    });
+
+    test('POST 5', () {
+      const expectedCode = r"""import axios from 'axios';
+
+const config = {
+  url: 'https://api.apidash.dev/io/form',
+  method: 'post',
+  headers: {
+    "Content-Type": "multipart/form-data",
+    "User-Agent": "Test Agent"
+  },
+  data: {
+    "text": "API",
+    "sep": "|",
+    "times": "3"
+  }
+};
+
+axios(config)
+  .then(res => {
+    console.log(res.status);
+    console.log(res.data);
+  })
+  .catch(err => {
+    console.log(err);
+  });
+""";
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.nodejsAxios,
+            requestModelPost5,
+            "https",
+          ),
+          expectedCode);
+    });
+    test('POST 6', () {
+      const expectedCode = r"""import axios from 'axios';
+import fs from 'fs'
+
+const config = {
+  url: 'https://api.apidash.dev/io/img',
+  method: 'post',
+  headers: {
+    "Content-Type": "multipart/form-data"
+  },
+  data: {
+    "token": "xyz",
+    "imfile": fs.createReadStream("/Documents/up/1.png")
+  }
+};
+
+axios(config)
+  .then(res => {
+    console.log(res.status);
+    console.log(res.data);
+  })
+  .catch(err => {
+    console.log(err);
+  });
+""";
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.nodejsAxios,
+            requestModelPost6,
+            "https",
+          ),
+          expectedCode);
+    });
+    test('POST 7', () {
+      const expectedCode = r"""import axios from 'axios';
+import fs from 'fs'
+
+const config = {
+  url: 'https://api.apidash.dev/io/img',
+  method: 'post',
+  headers: {
+    "Content-Type": "multipart/form-data"
+  },
+  data: {
+    "token": "xyz",
+    "imfile": fs.createReadStream("/Documents/up/1.png")
+  }
+};
+
+axios(config)
+  .then(res => {
+    console.log(res.status);
+    console.log(res.data);
+  })
+  .catch(err => {
+    console.log(err);
+  });
+""";
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.nodejsAxios,
+            requestModelPost7,
+            "https",
+          ),
+          expectedCode);
+    });
+    test('POST 8', () {
+      const expectedCode = r"""import axios from 'axios';
+
+const config = {
+  url: 'https://api.apidash.dev/io/form',
+  method: 'post',
+  params: {
+    "size": "2",
+    "len": "3"
+  },
+  headers: {
+    "Content-Type": "multipart/form-data"
+  },
+  data: {
+    "text": "API",
+    "sep": "|",
+    "times": "3"
+  }
+};
+
+axios(config)
+  .then(res => {
+    console.log(res.status);
+    console.log(res.data);
+  })
+  .catch(err => {
+    console.log(err);
+  });
+""";
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.nodejsAxios,
+            requestModelPost8,
+            "https",
+          ),
+          expectedCode);
+    });
+    test('POST 9', () {
+      const expectedCode = r"""import axios from 'axios';
+import fs from 'fs'
+
+const config = {
+  url: 'https://api.apidash.dev/io/img',
+  method: 'post',
+  params: {
+    "size": "2",
+    "len": "3"
+  },
+  headers: {
+    "Content-Type": "multipart/form-data",
+    "User-Agent": "Test Agent",
+    "Keep-Alive": "true"
+  },
+  data: {
+    "token": "xyz",
+    "imfile": fs.createReadStream("/Documents/up/1.png")
+  }
+};
+
+axios(config)
+  .then(res => {
+    console.log(res.status);
+    console.log(res.data);
+  })
+  .catch(err => {
+    console.log(err);
+  });
+""";
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.nodejsAxios,
+            requestModelPost9,
+            "https",
+          ),
           expectedCode);
     });
   });
@@ -516,7 +675,7 @@ axios(config)
     test('PUT 1', () {
       const expectedCode = r"""import axios from 'axios';
 
-let config = {
+const config = {
   url: 'https://reqres.in/api/users/2',
   method: 'put',
   headers: {
@@ -526,16 +685,13 @@ let config = {
 };
 
 axios(config)
-    .then(function (response) {
-        // handle success
-        console.log(response.status);
-        console.log(response.data);
-    })
-    .catch(function (error) {
-        // handle error
-        console.log(error.response.status);
-        console.log(error);
-    });
+  .then(res => {
+    console.log(res.status);
+    console.log(res.data);
+  })
+  .catch(err => {
+    console.log(err);
+  });
 """;
       expect(
           codeGen.getCode(
@@ -548,7 +704,7 @@ axios(config)
     test('PATCH 1', () {
       const expectedCode = r"""import axios from 'axios';
 
-let config = {
+const config = {
   url: 'https://reqres.in/api/users/2',
   method: 'patch',
   headers: {
@@ -558,16 +714,13 @@ let config = {
 };
 
 axios(config)
-    .then(function (response) {
-        // handle success
-        console.log(response.status);
-        console.log(response.data);
-    })
-    .catch(function (error) {
-        // handle error
-        console.log(error.response.status);
-        console.log(error);
-    });
+  .then(res => {
+    console.log(res.status);
+    console.log(res.data);
+  })
+  .catch(err => {
+    console.log(err);
+  });
 """;
       expect(
           codeGen.getCode(
@@ -580,22 +733,19 @@ axios(config)
     test('DELETE 1', () {
       const expectedCode = r"""import axios from 'axios';
 
-let config = {
+const config = {
   url: 'https://reqres.in/api/users/2',
   method: 'delete'
 };
 
 axios(config)
-    .then(function (response) {
-        // handle success
-        console.log(response.status);
-        console.log(response.data);
-    })
-    .catch(function (error) {
-        // handle error
-        console.log(error.response.status);
-        console.log(error);
-    });
+  .then(res => {
+    console.log(res.status);
+    console.log(res.data);
+  })
+  .catch(err => {
+    console.log(err);
+  });
 """;
       expect(
           codeGen.getCode(
@@ -606,7 +756,7 @@ axios(config)
     test('DELETE 2', () {
       const expectedCode = r"""import axios from 'axios';
 
-let config = {
+const config = {
   url: 'https://reqres.in/api/users/2',
   method: 'delete',
   headers: {
@@ -616,16 +766,13 @@ let config = {
 };
 
 axios(config)
-    .then(function (response) {
-        // handle success
-        console.log(response.status);
-        console.log(response.data);
-    })
-    .catch(function (error) {
-        // handle error
-        console.log(error.response.status);
-        console.log(error);
-    });
+  .then(res => {
+    console.log(res.status);
+    console.log(res.data);
+  })
+  .catch(err => {
+    console.log(err);
+  });
 """;
       expect(
           codeGen.getCode(
