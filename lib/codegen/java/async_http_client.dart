@@ -76,20 +76,13 @@ public class Main {
 
   String? getCode(
     RequestModel requestModel,
-    String defaultUriScheme,
   ) {
     try {
       String result = "";
       bool hasBody = false;
-      bool hasJsonBody = false;
-
-      String url = requestModel.url;
-      if (!url.contains("://") && url.isNotEmpty) {
-        url = "$defaultUriScheme://$url";
-      }
 
       var rec = getValidRequestUri(
-        url,
+        requestModel.url,
         requestModel.enabledRequestParams,
       );
       Uri? uri = rec.$1;
@@ -98,7 +91,7 @@ public class Main {
         return "";
       }
 
-      url = stripUriParams(uri);
+      var url = stripUriParams(uri);
 
       // contains the HTTP method associated with the request
       var method = requestModel.method;
@@ -117,20 +110,13 @@ public class Main {
       // if request type is not form data, the request method can include
       // a body, and the body of the request is not null, in that case
       // we need to parse the body as it is, and write it to the body
-      if (!requestModel.isFormDataRequest &&
+      if (!requestModel.hasFormData &&
           kMethodsWithBody.contains(method) &&
           requestBody != null) {
         var contentLength = utf8.encode(requestBody).length;
         if (contentLength > 0) {
           var templateBodyContent = jj.Template(kTemplateRequestBodyContent);
           hasBody = true;
-
-          // every JSON should be enclosed within a pair of curly braces
-          // very simple check for JSON, for stronger check, we may validate
-          // the JSON in the JSON editor itself
-          hasJsonBody =
-              requestBody.startsWith("{") && requestBody.endsWith("}");
-
           if (harJson["postData"]?["text"] != null) {
             result += templateBodyContent.render({
               "body": kEncoder.convert(harJson["postData"]["text"]).substring(
@@ -174,7 +160,7 @@ public class Main {
       });
 
       // handling form data
-      if (requestModel.isFormDataRequest &&
+      if (requestModel.hasFormData &&
           requestModel.formDataMapList.isNotEmpty &&
           kMethodsWithBody.contains(method)) {
         // including form data into the request
