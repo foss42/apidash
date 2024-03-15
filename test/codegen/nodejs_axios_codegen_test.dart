@@ -461,7 +461,6 @@ axios(config)
     });
     test('POST 4', () {
       const expectedCode = r"""import axios from 'axios';
-import fs from 'fs'
 
 const config = {
   url: 'https://api.apidash.dev/io/form',
@@ -496,7 +495,6 @@ axios(config)
 
     test('POST 5', () {
       const expectedCode = r"""import axios from 'axios';
-import fs from 'fs'
 
 const config = {
   url: 'https://api.apidash.dev/io/form',
@@ -597,7 +595,6 @@ axios(config)
     });
     test('POST 8', () {
       const expectedCode = r"""import axios from 'axios';
-import fs from 'fs'
 
 const config = {
   url: 'https://api.apidash.dev/io/form',

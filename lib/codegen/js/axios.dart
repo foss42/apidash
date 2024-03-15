@@ -10,7 +10,7 @@ class AxiosCodeGen {
   final bool isNodeJs;
 
   String kStringImportNode = """import axios from 'axios';
-{%if hasFormData -%}
+{%if hasFileInFormData -%}
 import fs from 'fs'
 {% endif %}
 
@@ -52,12 +52,12 @@ axios(config)
     try {
       jj.Template kNodejsImportTemplate = jj.Template(kStringImportNode);
       String importsData = kNodejsImportTemplate.render({
-        "hasFormData": requestModel.hasFormData,
+        "hasFileInFormData": requestModel.hasFileInFormData,
       });
 
       String result = isNodeJs
           ? importsData
-          : requestModel.hasFormData
+          : requestModel.hasFileInFormData
               ? "// refer https://github.com/foss42/apidash/issues/293#issuecomment-1997568083 for details regarding integration\n\n"
               : "";
       var harJson = requestModelToHARJsonRequest(

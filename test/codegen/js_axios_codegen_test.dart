@@ -410,10 +410,7 @@ axios(config)
           expectedCode);
     });
     test('POST 4', () {
-      const expectedCode =
-          r"""// refer https://github.com/foss42/apidash/issues/293#issuecomment-1997568083 for details regarding integration
-
-const config = {
+      const expectedCode = r"""const config = {
   url: 'https://api.apidash.dev/io/form',
   method: 'post',
   headers: {
@@ -445,10 +442,7 @@ axios(config)
     });
 
     test('POST 5', () {
-      const expectedCode =
-          r"""// refer https://github.com/foss42/apidash/issues/293#issuecomment-1997568083 for details regarding integration
-
-const config = {
+      const expectedCode = r"""const config = {
   url: 'https://api.apidash.dev/io/form',
   method: 'post',
   headers: {
@@ -546,10 +540,7 @@ axios(config)
           expectedCode);
     });
     test('POST 8', () {
-      const expectedCode =
-          r"""// refer https://github.com/foss42/apidash/issues/293#issuecomment-1997568083 for details regarding integration
-
-const config = {
+      const expectedCode = r"""const config = {
   url: 'https://api.apidash.dev/io/form',
   method: 'post',
   params: {
