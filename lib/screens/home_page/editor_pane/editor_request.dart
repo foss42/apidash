@@ -19,7 +19,7 @@ class RequestEditor extends StatelessWidget {
               : kPb10,
       child: Column(
         children: [
-          !kIsMobile ? const RequestEditorTopBar() : const SizedBox.shrink(),
+          !kIsMobile ? const RequestEditorTopBar() : kVSpacer5,
           Padding(
               padding: !kIsMobile ? EdgeInsets.zero : kPh8,
               child: const EditorPaneRequestURLCard()),

@@ -9,7 +9,6 @@ class ResponseDrawer extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.surface,
-        primary: true,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
         ),
@@ -19,6 +18,7 @@ class ResponseDrawer extends StatelessWidget {
             Navigator.of(context).pop();
           },
         ),
+        scrolledUnderElevation: 0,
         centerTitle: true,
         title: const Text("Response"),
       ),

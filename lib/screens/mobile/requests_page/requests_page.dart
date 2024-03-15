@@ -22,7 +22,7 @@ class RequestsPage extends StatelessWidget {
       backgroundColor: Colors.transparent,
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.surface,
-        primary: true,
+        scrolledUnderElevation: 0,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(topLeft: Radius.circular(8)),
         ),
@@ -38,9 +38,8 @@ class RequestsPage extends StatelessWidget {
         actions: [
           IconButton(
             icon: Icon(
-              Icons.send_outlined,
+              Icons.quickreply_outlined,
               color: Theme.of(context).colorScheme.onBackground,
-              size: 20,
             ),
             onPressed: () {
               innerDrawerKey.currentState!
@@ -72,10 +71,15 @@ class RequestTitle extends ConsumerWidget {
       child: Material(
         color: Colors.transparent,
         child: RequestCardMenu(
-          offset: const Offset(0, 48),
+          offset: const Offset(0, 40),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           splashRadius: 0,
           tooltip: name,
           child: Ink(
+            color: Theme.of(context)
+                .colorScheme
+                .secondaryContainer
+                .withOpacity(0.3),
             padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6),
             child: Row(
               children: [

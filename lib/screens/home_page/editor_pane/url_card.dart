@@ -20,7 +20,7 @@ class EditorPaneRequestURLCard extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.symmetric(
           vertical: 5,
-          horizontal: !kIsMobile ? 20 : 10,
+          horizontal: !kIsMobile ? 20 : 6,
         ),
         child: Row(
           children: [

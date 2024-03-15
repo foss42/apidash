@@ -70,14 +70,9 @@ class ResponsePaneHeader extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text.rich(
-              TextSpan(
-                children: [
-                  TextSpan(
-                    text: !kIsMobile ? "Response (" : "",
-                  ),
-                  TextSpan(
-                    text: "$responseStatus",
+            kIsMobile
+                ? Text(
+                    "$responseStatus",
                     style: TextStyle(
                       color: getResponseStatusCodeColor(
                         responseStatus,
@@ -85,14 +80,30 @@ class ResponsePaneHeader extends StatelessWidget {
                       ),
                       fontFamily: kCodeStyle.fontFamily,
                     ),
+                  )
+                : Text.rich(
+                    TextSpan(
+                      children: [
+                        const TextSpan(
+                          text: "Response (",
+                        ),
+                        TextSpan(
+                          text: "$responseStatus",
+                          style: TextStyle(
+                            color: getResponseStatusCodeColor(
+                              responseStatus,
+                              brightness: Theme.of(context).brightness,
+                            ),
+                            fontFamily: kCodeStyle.fontFamily,
+                          ),
+                        ),
+                        const TextSpan(
+                          text: ")",
+                        ),
+                      ],
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
                   ),
-                  TextSpan(
-                    text: !kIsMobile ? ")" : "",
-                  ),
-                ],
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-            ),
             kHSpacer20,
             Expanded(
               child: Text(
