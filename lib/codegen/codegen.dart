@@ -16,6 +16,7 @@ import 'others/har.dart';
 import 'others/curl.dart';
 import 'julia/http.dart';
 import 'java/okhttp.dart';
+import 'java/async_http_client.dart';
 
 class Codegen {
   String? getCode(
@@ -70,6 +71,8 @@ class Codegen {
         return GoHttpCodeGen().getCode(rM);
       case CodegenLanguage.juliaHttp:
         return JuliaHttpClientCodeGen().getCode(rM);
+      case CodegenLanguage.javaAsyncHttpClient:
+        return JavaAsyncHttpClientGen().getCode(rM);
     }
   }
 }
