@@ -272,17 +272,17 @@ enum CodegenLanguage {
   nodejsAxios("node.js (axios)", "javascript", "js"),
   nodejsFetch("node.js (fetch)", "javascript", "js"),
   kotlinOkHttp("Kotlin (okhttp3)", "java", "kt"),
-  phpGuzzle("PHP (guzzle)", "php", "php"),
-  pythonHttpClient("Python (http.client)", "python", "py"),
   pythonRequests("Python (requests)", "python", "py"),
+  pythonHttpClient("Python (http.client)", "python", "py"),
   rustActix("Rust (Actix Client)", "rust", "rs"),
   rustReqwest("Rust (reqwest)", "rust", "rs"),
   rustUreq("Rust (ureq)", "rust", "rs"),
   javaOkHttp("Java (okhttp3)", "java", 'java'),
   javaAsyncHttpClient("Java (async-http-client)", "java", "java"),
   javaHttpClient("Java (HttpClient)", "java", "java"),
-  juliaHttp("Julia (HTTP)", "julia", "jl");
-
+  juliaHttp("Julia (HTTP)", "julia", "jl"),
+  phpGuzzle("PHP (guzzle)", "php", "php");
+  
   const CodegenLanguage(this.label, this.codeHighlightLang, this.ext);
   final String label;
   final String codeHighlightLang;
