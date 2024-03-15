@@ -2,6 +2,8 @@ import 'package:apidash/widgets/widgets.dart'
     show ViewCodePane, CodeGenPreviewer;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:apidash/l10n/l10n.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:apidash/consts.dart';
 import '../test_consts.dart';
 
@@ -52,6 +54,8 @@ void main() async {
     await tester.pumpWidget(
       MaterialApp(
         title: 'ViewCodePane',
+        localizationsDelegates: L10n.delegates,
+        locale: L10n.fallbackLocale,
         theme: kThemeDataDark,
         home: Scaffold(
             body: Column(
@@ -93,6 +97,8 @@ void main() async {
     await tester.pumpWidget(
       MaterialApp(
         title: 'ViewCodePane',
+        localizationsDelegates: L10n.delegates,
+        locale: L10n.fallbackLocale,
         theme: kThemeDataLight,
         home: Scaffold(
             body: Column(

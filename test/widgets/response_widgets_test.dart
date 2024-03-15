@@ -269,6 +269,8 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         title: 'Response Body',
+        localizationsDelegates: L10n.delegates,
+        locale: L10n.fallbackLocale,
         theme: kThemeDataLight,
         home: Builder(builder: (context) {
           l10n = AppLocalizations.of(context)!;
