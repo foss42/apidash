@@ -97,6 +97,9 @@ class SidebarRequestCard extends StatelessWidget {
                               onTapOutsideNameEditor?.call();
                               //FocusScope.of(context).unfocus();
                             },
+                            onFieldSubmitted: (value) {
+                              onTapOutsideNameEditor?.call();
+                            },
                             onChanged: onChangedNameEditor,
                             decoration: const InputDecoration(
                               isCollapsed: true,

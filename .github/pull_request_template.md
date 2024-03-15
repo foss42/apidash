@@ -16,4 +16,3 @@ _We encourage you to add relevant test cases._
 
 - [ ] Yes
 - [ ] No, and this is why: _please replace this line with details on why tests have not been included_
-- [ ] I need help with writing tests

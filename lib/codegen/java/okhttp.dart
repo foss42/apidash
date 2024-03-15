@@ -5,72 +5,90 @@ import 'package:apidash/utils/utils.dart'
 import '../../models/request_model.dart';
 import 'package:apidash/consts.dart';
 
-class KotlinOkHttpCodeGen {
-  final String kTemplateStart = """import okhttp3.OkHttpClient
-import okhttp3.Request{{importForQuery}}{{importForBody}}{{importForFormData}}
+class JavaOkHttpCodeGen {
+  final String kTemplateStart = """
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;{{importForQuery}}{{importForBody}}{{importForFormData}}
 
-fun main() {
-    val client = OkHttpClient()
+import java.io.IOException;
+
+public class Main {
+    public static void main(String[] args) {
+        OkHttpClient client = new OkHttpClient().newBuilder().build();
 
 """;
 
   final String kStringImportForQuery = """
 
-import okhttp3.HttpUrl.Companion.toHttpUrl""";
+import okhttp3.HttpUrl;""";
 
   final String kStringImportForBody = """
 
-import okhttp3.RequestBody.Companion.toRequestBody
-import okhttp3.MediaType.Companion.toMediaType""";
+import okhttp3.RequestBody;
+import okhttp3.MediaType;""";
 
   final String kStringImportForFormData = """
 
-import okhttp3.MultipartBody""";
+import okhttp3.RequestBody;
+import okhttp3.MultipartBody;""";
 
   final String kTemplateUrl = '''
 
-    val url = "{{url}}"
+        String url = "{{url}}";
 
 ''';
 
   final String kTemplateUrlQuery = '''
 
-    val url = "{{url}}".toHttpUrl().newBuilder()
-{{params}}        .build()
+        HttpUrl url = HttpUrl.parse("{{url}}").newBuilder()
+            {{params}}
+            .build();
 
 ''';
 
   String kTemplateRequestBody = '''
 
-    val mediaType = "{{contentType}}".toMediaType()
+        MediaType mediaType = MediaType.parse("{{contentType}}");
 
-    val body = """{{body}}""".toRequestBody(mediaType)
+        RequestBody body = RequestBody.create({{body}}, mediaType);
 
 ''';
 
   final String kStringRequestStart = """
 
-    val request = Request.Builder()
-        .url(url)
+        Request request = new Request.Builder()
+            .url(url)
 """;
 
   final String kTemplateRequestEnd = """
-        .{{method}}({{hasBody}})
-        .build()
+            .{{method}}({{hasBody}})
+            .build();
 
-    val response = client.newCall(request).execute()
-
-    println(response.code)
-    println(response.body?.string())
+        try (Response response = client.newCall(request).execute()) {
+            System.out.println(response.code());
+            if (response.body() != null) {
+                System.out.println(response.body().string());
+            }
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+    }
 }
 
 """;
 // Converting list of form data objects to kolin multi part data
   String kFormDataBody = '''
-    val body = MultipartBody.Builder().setType(MultipartBody.FORM){% for item in formDataList %}{% if item.type == 'file' %}
-          .addFormDataPart("{{item.name}}",null,File("{{item.value}}").asRequestBody("application/octet-stream".toMediaType()))
-          {% else %}.addFormDataPart("{{item.name}}","{{item.value}}")
-          {% endif %}{% endfor %}.build()
+        RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)
+            {%- for item in formDataList -%}
+              {% if item.type == 'file' %}
+            .addFormDataPart("{{ item.name }}",null,RequestBody.create(MediaType.parse("application/octet-stream"),new File("{{ item.value }}")))
+              {%- else %}
+            .addFormDataPart("{{ item.name }}","{{ item.value }}")
+              {%- endif %}
+            {%- endfor %}
+            .build();
+
 ''';
 
   String? getCode(
@@ -120,8 +138,10 @@ import okhttp3.MultipartBody""";
             hasBody = true;
             String contentType = requestModel.requestBodyContentType.header;
             var templateBody = jj.Template(kTemplateRequestBody);
-            result += templateBody
-                .render({"contentType": contentType, "body": requestBody});
+            result += templateBody.render({
+              "contentType": contentType,
+              "body": kEncoder.convert(requestBody)
+            });
           }
         }
 
@@ -156,17 +176,14 @@ import okhttp3.MultipartBody""";
   }
 
   String getQueryParams(Map<String, String> params) {
-    String result = "";
-    for (final k in params.keys) {
-      result = """$result        .addQueryParameter("$k", "${params[k]}")\n""";
-    }
-    return result;
+    final paramStrings = params.entries.map((entry) => '.addQueryParameter("${entry.key}", "${entry.value}")').toList();
+    return paramStrings.join('\n            ');
   }
 
   String getHeaders(Map<String, String> headers) {
     String result = "";
     for (final k in headers.keys) {
-      result = """$result        .addHeader("$k", "${headers[k]}")\n""";
+      result = """$result            .addHeader("$k", "${headers[k]}")\n""";
     }
     return result;
   }
