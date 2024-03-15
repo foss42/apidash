@@ -1,13 +1,13 @@
 import 'package:jinja/jinja.dart' as jj;
 import 'package:apidash/utils/utils.dart'
-    show padMultilineString, requestModelToHARJsonRequest, stripUrlParams;
+    show requestModelToHARJsonRequest, stripUrlParams;
 import 'package:apidash/models/models.dart' show RequestModel;
 import 'package:apidash/consts.dart';
 
 class PhpGuzzleCodeGen {
   String kStringImportNode = """use GuzzleHttp\\Client;
 use GuzzleHttp\\Psr7\\Request;
-{% if isFormDataRequest %}use GuzzleHttp\\Psr7\\MultipartStream;{% endif %}
+{% if hasFormData %}use GuzzleHttp\\Psr7\\MultipartStream;{% endif %}
 
 
 """;
@@ -51,20 +51,16 @@ use GuzzleHttp\\Psr7\\Request;
 echo \$res->getBody();
 """;
 
-  String? getCode(
-    RequestModel requestModel,
-    String defaultUriScheme,
-  ) {
+  String? getCode(RequestModel requestModel) {
     try {
       jj.Template kNodejsImportTemplate = jj.Template(kStringImportNode);
       String importsData = kNodejsImportTemplate.render({
-        "isFormDataRequest": requestModel.isFormDataRequest,
+        "hasFormData": requestModel.hasFormData,
       });
 
       String result = importsData;
 
-      if (requestModel.isFormDataRequest &&
-          requestModel.formDataMapList.isNotEmpty) {
+      if (requestModel.hasFormData && requestModel.formDataMapList.isNotEmpty) {
         var templateMultiPartBody = jj.Template(kMultiPartBodyTemplate);
         var renderedMultiPartBody = templateMultiPartBody.render({
           "fields_list": requestModel.formDataMapList.map((field) {
@@ -78,13 +74,8 @@ echo \$res->getBody();
         result += renderedMultiPartBody;
       }
 
-      String url = requestModel.url;
-      if (!url.contains("://") && url.isNotEmpty) {
-        url = "$defaultUriScheme://$url";
-      }
-      var rM = requestModel.copyWith(url: url);
-
-      var harJson = requestModelToHARJsonRequest(rM, useEnabled: true);
+      var harJson =
+          requestModelToHARJsonRequest(requestModel, useEnabled: true);
 
       var params = harJson["queryString"];
       if (params.isNotEmpty) {
@@ -105,7 +96,7 @@ echo \$res->getBody();
       }
 
       var headers = harJson["headers"];
-      if (headers.isNotEmpty || requestModel.isFormDataRequest) {
+      if (headers.isNotEmpty || requestModel.hasFormData) {
         var templateHeader = jj.Template(kTemplateHeader);
         var m = {};
         for (var i in headers) {
@@ -115,7 +106,7 @@ echo \$res->getBody();
         m.forEach((key, value) {
           headersString += "\t\t\t\t'$key' => '$value', \n";
         });
-        if (requestModel.isFormDataRequest) {
+        if (requestModel.hasFormData) {
           m['Content-Type'] = 'multipart/form-data';
         }
         headersString = headersString.substring(
@@ -126,8 +117,7 @@ echo \$res->getBody();
       }
 
       var templateBody = jj.Template(kTemplateBody);
-      if (requestModel.isFormDataRequest &&
-          requestModel.formDataMapList.isNotEmpty) {
+      if (requestModel.hasFormData && requestModel.formDataMapList.isNotEmpty) {
         result += templateBody.render({
           "body": "new MultipartStream(\$multipart)",
         });
@@ -155,7 +145,7 @@ echo \$res->getBody();
 
       var templateRequest = jj.Template(kStringRequest);
       result += templateRequest.render({
-        "url": stripUrlParams(url),
+        "url": stripUrlParams(requestModel.url),
         "method": harJson["method"].toLowerCase(),
         "queryParams":
             harJson["queryString"].isNotEmpty ? ". \$queryParamsStr," : "",
