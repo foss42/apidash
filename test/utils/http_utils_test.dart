@@ -19,14 +19,14 @@ void main() {
     });
 
     test('Testing getRequestTitleFromUrl using url3', () {
-      String url3 = "https://api.foss42.com/country/codes";
-      String title3Expected = "api.foss42.com/country/codes";
+      String url3 = "https://api.apidash.dev/country/codes";
+      String title3Expected = "api.apidash.dev/country/codes";
       expect(getRequestTitleFromUrl(url3), title3Expected);
     });
 
     test('Testing getRequestTitleFromUrl using url4', () {
-      String url4 = "api.foss42.com/country/data";
-      String title4Expected = "api.foss42.com/country/data";
+      String url4 = "api.apidash.dev/country/data";
+      String title4Expected = "api.apidash.dev/country/data";
       expect(getRequestTitleFromUrl(url4), title4Expected);
     });
 
@@ -175,11 +175,11 @@ void main() {
 
   group("Testing getValidRequestUri", () {
     test('Testing getValidRequestUri for normal values', () {
-      String url1 = "https://api.foss42.com/country/data";
+      String url1 = "https://api.apidash.dev/country/data";
       const kvRow1 = NameValueModel(name: "code", value: "US");
       Uri uri1Expected = Uri(
           scheme: 'https',
-          host: 'api.foss42.com',
+          host: 'api.apidash.dev',
           path: 'country/data',
           queryParameters: {'code': 'US'});
       expect(getValidRequestUri(url1, [kvRow1]), (uri1Expected, null));
@@ -193,11 +193,11 @@ void main() {
       expect(getValidRequestUri("", [kvRow3]), (null, "URL is missing!"));
     });
     test('Testing getValidRequestUri when https is not provided in url', () {
-      String url4 = "api.foss42.com/country/data";
+      String url4 = "api.apidash.dev/country/data";
       const kvRow4 = NameValueModel(name: "code", value: "US");
       Uri uri4Expected = Uri(
           scheme: 'https',
-          host: 'api.foss42.com',
+          host: 'api.apidash.dev',
           path: 'country/data',
           queryParameters: {'code': 'US'});
       expect(getValidRequestUri(url4, [kvRow4]), (uri4Expected, null));
@@ -217,20 +217,20 @@ void main() {
     });
     test('Testing getValidRequestUri when query params in both url and kvrow',
         () {
-      String url6 = "api.foss42.com/country/data?code=IND";
+      String url6 = "api.apidash.dev/country/data?code=IND";
       const kvRow6 = NameValueModel(name: "code", value: "US");
       Uri uri6Expected = Uri(
           scheme: 'https',
-          host: 'api.foss42.com',
+          host: 'api.apidash.dev',
           path: 'country/data',
           queryParameters: {'code': 'US'});
       expect(getValidRequestUri(url6, [kvRow6]), (uri6Expected, null));
     });
     test('Testing getValidRequestUri when kvrow is null', () {
-      String url7 = "api.foss42.com/country/data?code=US";
+      String url7 = "api.apidash.dev/country/data?code=US";
       Uri uri7Expected = Uri(
           scheme: 'https',
-          host: 'api.foss42.com',
+          host: 'api.apidash.dev',
           path: 'country/data',
           queryParameters: {'code': 'US'});
       expect(getValidRequestUri(url7, null), (uri7Expected, null));

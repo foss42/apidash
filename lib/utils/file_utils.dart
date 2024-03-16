@@ -43,13 +43,18 @@ String getShortPath(String path) {
   var f = p.split(path);
   if (f.length > 2) {
     f = f.sublist(f.length - 2);
-    return ".../${p.joinAll(f)}";
+    return p.join("...", p.joinAll(f));
   }
   return path;
 }
 
+String getFilenameFromPath(String path) {
+  var f = p.split(path);
+  return f.lastOrNull ?? "";
+}
+
 String getTempFileName() {
-  return uuid.v1();
+  return getNewUuid();
 }
 
 Future<FilePickerResult?> pickFile() async {

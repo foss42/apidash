@@ -65,7 +65,7 @@ class SettingsPage extends ConsumerWidget {
                 hoverColor: kColorTransparent,
                 title: const Text('Default URI Scheme'),
                 subtitle: Text(
-                    'api.foss42.com → ${settings.defaultUriScheme}://api.foss42.com'),
+                    '$kDefaultUri → ${settings.defaultUriScheme}://$kDefaultUri'),
                 trailing: Container(
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.grey, width: 2.0), // Adjust border width as needed

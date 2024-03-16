@@ -8,15 +8,10 @@ import 'shared.dart';
 class DartDioCodeGen {
   String? getCode(
     RequestModel requestModel,
-    String defaultUriScheme,
   ) {
     try {
-      String url = requestModel.url;
-      if (!url.contains("://") && url.isNotEmpty) {
-        url = "$defaultUriScheme://$url";
-      }
       final next = generatedDartCode(
-        url: url,
+        url: requestModel.url,
         method: requestModel.method,
         queryParams: requestModel.enabledParamsMap,
         headers: requestModel.enabledHeadersMap,
@@ -60,12 +55,17 @@ class DartDioCodeGen {
       final List<Map<String,String>> formDataList = ${json.encode(formData)};
       for (var formField in formDataList) {
         if (formField['type'] == 'file') {
-          formData.files.add(MapEntry(
-            formField['name'],
-            await MultipartFile.fromFile(formField['value'], filename: formField['value']),
+           if (formField['value'] != null) {
+          data.files.add(MapEntry(
+            formField['name']!,
+            await dio.MultipartFile.fromFile(formField['value']!,
+                filename: formField['value']!),
           ));
+        }
         } else {
-          formData.fields.add(MapEntry(formField['name'], formField['value']));
+          if (formField['value'] != null) {
+            data.fields.add(MapEntry(formField['name']!, formField['value']!));
+        }
         }
       }
     ''');
@@ -84,16 +84,16 @@ class DartDioCodeGen {
           dataExp = declareFinal('data').assign(strContent);
         // when add new type of [ContentType], need update [dataExp].
         case ContentType.formdata:
-          dataExp = declareFinal('data').assign(refer('FormData()'));
+          dataExp = declareFinal('data').assign(refer('dio.FormData()'));
       }
     }
     final responseExp = declareFinal('response').assign(InvokeExpression.newOf(
-      refer('dio.Dio'),
+      refer('dio.Dio()'),
       [literalString(url)],
       {
         if (queryParamExp != null) 'queryParameters': refer('queryParams'),
         if (headerExp != null)
-          'options': refer('Options').newInstance(
+          'options': refer('dio.Options').newInstance(
             [],
             {'headers': refer('headers')},
           ),
@@ -117,7 +117,7 @@ class DartDioCodeGen {
           refer('print').call([refer('response').property('data')]),
         ],
         onError: {
-          'DioException': [
+          'dio.DioException': [
             refer('print').call([
               refer('e').property('response').nullSafeProperty('statusCode'),
             ]),
