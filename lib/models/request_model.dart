@@ -80,10 +80,10 @@ class RequestModel {
   bool get hasFormData =>
       kMethodsWithBody.contains(method) &&
       hasFormDataContentType &&
-      (requestFormDataList ?? <FormDataModel>[]).isNotEmpty;
+      formDataMapList.isNotEmpty;
   List<FormDataModel> get formDataList =>
       requestFormDataList ?? <FormDataModel>[];
-  List<Map<String, dynamic>> get formDataMapList =>
+  List<Map<String, String>> get formDataMapList =>
       rowsToFormDataMapList(requestFormDataList) ?? [];
   bool get hasFileInFormData => formDataList
       .map((e) => e.type == FormDataType.file)
@@ -137,6 +137,7 @@ class RequestModel {
     var params = requestParams ?? this.requestParams;
     var enabledHeaders = isHeaderEnabledList ?? this.isHeaderEnabledList;
     var enabledParams = isParamEnabledList ?? this.isParamEnabledList;
+    var formDataList = requestFormDataList ?? this.requestFormDataList;
     return RequestModel(
       id: id ?? this.id,
       method: method ?? this.method,
@@ -151,7 +152,7 @@ class RequestModel {
       requestBodyContentType:
           requestBodyContentType ?? this.requestBodyContentType,
       requestBody: requestBody ?? this.requestBody,
-      requestFormDataList: requestFormDataList ?? this.requestFormDataList,
+      requestFormDataList: formDataList != null ? [...formDataList] : null,
       responseStatus: responseStatus ?? this.responseStatus,
       message: message ?? this.message,
       responseModel: responseModel ?? this.responseModel,
