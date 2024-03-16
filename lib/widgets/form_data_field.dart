@@ -43,12 +43,10 @@ class _FormDataFieldState extends State<FormDataField> {
             initialValue: widget.initialValue,
             key: Key(widget.keyId),
             style: kCodeStyle.copyWith(
-              height: 1.8,
               color: colorScheme.onSurface,
             ),
             decoration: InputDecoration(
               hintStyle: kCodeStyle.copyWith(
-                height: 1.8,
                 color: colorScheme.outline.withOpacity(
                   kHintOpacity,
                 ),

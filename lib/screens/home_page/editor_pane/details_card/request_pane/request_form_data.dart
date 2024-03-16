@@ -34,13 +34,19 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
     List<DataColumn> columns = const [
       DataColumn2(
         label: Text('Key'),
+        size: ColumnSize.M,
       ),
       DataColumn2(
         label: Text('='),
-        fixedWidth: 30,
+        fixedWidth: 20,
+      ),
+      DataColumn2(
+        label: Text('Type'),
+        fixedWidth: 70,
       ),
       DataColumn2(
         label: Text('Value'),
+        size: ColumnSize.L,
       ),
       DataColumn2(
         label: Text('Remove'),
@@ -78,30 +84,16 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                           key: ValueKey("$selectedId-$index-form-row-$seed"),
                           cells: <DataCell>[
                             DataCell(
-                              Theme(
-                                data: Theme.of(context),
-                                child: FormDataField(
-                                  keyId: "$selectedId-$index-form-k-$seed",
-                                  initialValue: rows[index].name,
-                                  hintText: " Add Key",
-                                  onChanged: (value) {
-                                    rows[index] = rows[index].copyWith(
-                                      name: value,
-                                    );
-                                    _onFieldChange(selectedId!);
-                                  },
-                                  colorScheme: Theme.of(context).colorScheme,
-                                  formDataType: rows[index].type,
-                                  onFormDataTypeChanged: (value) {
-                                    rows[index] = rows[index].copyWith(
-                                      type: value ?? FormDataType.text,
-                                    );
-                                    rows[index] =
-                                        rows[index].copyWith(value: "");
-                                    setState(() {});
-                                    _onFieldChange(selectedId!);
-                                  },
-                                ),
+                              CellField(
+                                keyId: "$selectedId-$index-form-k-$seed",
+                                initialValue: rows[index].name,
+                                hintText: " Add Key",
+                                onChanged: (value) {
+                                  rows[index] =
+                                      rows[index].copyWith(name: value);
+                                  _onFieldChange(selectedId!);
+                                },
+                                colorScheme: Theme.of(context).colorScheme,
                               ),
                             ),
                             DataCell(
@@ -111,68 +103,55 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                               ),
                             ),
                             DataCell(
+                              DropdownButtonFormData(
+                                formDataType: rows[index].type,
+                                onChanged: (value) {
+                                  rows[index] = rows[index].copyWith(
+                                    type: value ?? FormDataType.text,
+                                  );
+                                  rows[index] = rows[index].copyWith(value: "");
+                                  setState(() {});
+                                  _onFieldChange(selectedId!);
+                                },
+                              ),
+                            ),
+                            DataCell(
                               rows[index].type == FormDataType.file
-                                  ? Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Row(
-                                        children: [
-                                          Expanded(
-                                            child: Theme(
-                                              data: Theme.of(context),
-                                              child: ElevatedButton.icon(
-                                                icon: const Icon(
-                                                  Icons.snippet_folder_rounded,
-                                                  size: 20,
-                                                ),
-                                                style: ButtonStyle(
-                                                  shape:
-                                                      MaterialStatePropertyAll(
-                                                    RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              6),
-                                                    ),
-                                                  ),
-                                                ),
-                                                onPressed: () async {
-                                                  var pickedResult =
-                                                      await pickFile();
-                                                  if (pickedResult != null &&
-                                                      pickedResult
-                                                          .files.isNotEmpty &&
-                                                      pickedResult.files.first
-                                                              .path !=
-                                                          null) {
-                                                    rows[index] =
-                                                        rows[index].copyWith(
-                                                      value: pickedResult
-                                                          .files.first.path!,
-                                                    );
-                                                    setState(() {});
-                                                    _onFieldChange(selectedId!);
-                                                  }
-                                                },
-                                                label: Text(
-                                                  (rows[index].type ==
-                                                              FormDataType
-                                                                  .file &&
-                                                          rows[index]
-                                                              .value
-                                                              .isNotEmpty)
-                                                      ? rows[index]
-                                                          .value
-                                                          .toString()
-                                                      : "Select File",
-                                                  textAlign: TextAlign.center,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style:
-                                                      kFormDataButtonLabelTextStyle,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
+                                  ? ElevatedButton.icon(
+                                      icon: const Icon(
+                                        Icons.snippet_folder_rounded,
+                                        size: 20,
+                                      ),
+                                      style: ElevatedButton.styleFrom(
+                                        minimumSize: const Size.fromHeight(
+                                            kDataRowHeight),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(6),
+                                        ),
+                                      ),
+                                      onPressed: () async {
+                                        var pickedResult = await pickFile();
+                                        if (pickedResult != null &&
+                                            pickedResult.files.isNotEmpty &&
+                                            pickedResult.files.first.path !=
+                                                null) {
+                                          rows[index] = rows[index].copyWith(
+                                            value:
+                                                pickedResult.files.first.path!,
+                                          );
+                                          setState(() {});
+                                          _onFieldChange(selectedId!);
+                                        }
+                                      },
+                                      label: Text(
+                                        (rows[index].type ==
+                                                    FormDataType.file &&
+                                                rows[index].value.isNotEmpty)
+                                            ? rows[index].value.toString()
+                                            : "Select File",
+                                        overflow: TextOverflow.ellipsis,
+                                        style: kFormDataButtonLabelTextStyle,
                                       ),
                                     )
                                   : CellField(

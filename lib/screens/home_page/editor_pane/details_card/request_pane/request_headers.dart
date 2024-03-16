@@ -59,7 +59,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
       ),
       DataColumn2(
         label: Text('='),
-        fixedWidth: 30,
+        fixedWidth: 22,
       ),
       DataColumn2(
         label: Text('Header Value'),
