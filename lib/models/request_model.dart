@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import '../utils/utils.dart'
     show
@@ -62,9 +63,31 @@ class RequestModel {
   Map<String, String> get headersMap => rowsToMap(requestHeaders) ?? {};
   Map<String, String> get paramsMap => rowsToMap(requestParams) ?? {};
 
+  bool get hasFormDataContentType =>
+      requestBodyContentType == ContentType.formdata;
+  bool get hasJsonContentType => requestBodyContentType == ContentType.json;
+  bool get hasTextContentType => requestBodyContentType == ContentType.text;
+  int get contentLength => utf8.encode(requestBody ?? "").length;
+  bool get hasBody => hasJsonData || hasTextData || hasFormData;
+  bool get hasJsonData =>
+      kMethodsWithBody.contains(method) &&
+      hasJsonContentType &&
+      contentLength > 0;
+  bool get hasTextData =>
+      kMethodsWithBody.contains(method) &&
+      hasTextContentType &&
+      contentLength > 0;
+  bool get hasFormData =>
+      kMethodsWithBody.contains(method) &&
+      hasFormDataContentType &&
+      (requestFormDataList ?? <FormDataModel>[]).isNotEmpty;
+  List<FormDataModel> get formDataList =>
+      requestFormDataList ?? <FormDataModel>[];
   List<Map<String, dynamic>> get formDataMapList =>
       rowsToFormDataMapList(requestFormDataList) ?? [];
-  bool get isFormDataRequest => requestBodyContentType == ContentType.formdata;
+  bool get hasFileInFormData => formDataList
+      .map((e) => e.type == FormDataType.file)
+      .any((element) => element);
 
   bool get hasContentTypeHeader => enabledHeadersMap.keys
       .any((k) => k.toLowerCase() == HttpHeaders.contentTypeHeader);
