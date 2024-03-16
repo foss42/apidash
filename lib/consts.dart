@@ -16,7 +16,7 @@ final kIsLinux = !kIsWeb && Platform.isLinux;
 final kIsApple = !kIsWeb && (Platform.isIOS || Platform.isMacOS);
 final kIsDesktop =
     !kIsWeb && (Platform.isMacOS || Platform.isWindows || Platform.isLinux);
-
+final kIsRunningTests = Platform.environment.containsKey('FLUTTER_TEST');
 final kIsIOS = !kIsWeb && Platform.isIOS;
 final kIsAndroid = !kIsWeb && Platform.isAndroid;
 final kIsMobile = !kIsWeb && (Platform.isIOS || Platform.isAndroid);
@@ -495,6 +495,9 @@ const kMimeTypeRaiseIssue =
 
 const kUnexpectedRaiseIssue =
     "\nIf the behaviour is unexpected, please raise an issue in API Dash GitHub repo so that we can resolve it.";
+
+const kVideoError =
+    "There seems to be an issue playing this video. Please raise an issue in API Dash GitHub repo so that we can resolve it.";
 
 const kImageError =
     "There seems to be an issue rendering this image. Please raise an issue in API Dash GitHub repo so that we can resolve it.";
