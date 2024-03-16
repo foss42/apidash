@@ -200,6 +200,26 @@ class SettingsPage extends ConsumerWidget {
                   ),
                 ),
               ),
+              ListTile(
+                contentPadding: kPb10,
+                hoverColor: kColorTransparent,
+                title: const Text('Connection Timeout (seconds)'),
+                subtitle: Text(
+                    'Current value: ${settings.connectionTimeout} seconds'),
+                trailing: SizedBox(
+                  width: 100, // Adjust width as needed
+                  child: TextFormField(
+                    initialValue: settings.connectionTimeout.toString(),
+                    keyboardType: TextInputType.number,
+                    onChanged: (value) {
+                      ref.read(settingsProvider.notifier).update(
+                            connectionTimeout: int.tryParse(value) ??
+                                30, // Default to 30 seconds if parsing fails
+                          );
+                    },
+                  ),
+                ),
+              )
             ],
           ),
         ),

@@ -12,6 +12,7 @@ class SettingsModel {
     this.defaultCodeGenLang = CodegenLanguage.curl,
     this.saveResponses = true,
     this.promptBeforeClosing = true,
+    this.connectionTimeout,
   });
 
   final bool isDark;
@@ -22,6 +23,7 @@ class SettingsModel {
   final CodegenLanguage defaultCodeGenLang;
   final bool saveResponses;
   final bool promptBeforeClosing;
+  final int? connectionTimeout;
 
   SettingsModel copyWith({
     bool? isDark,
@@ -32,6 +34,7 @@ class SettingsModel {
     CodegenLanguage? defaultCodeGenLang,
     bool? saveResponses,
     bool? promptBeforeClosing,
+    int? connectionTimeout,
   }) {
     return SettingsModel(
       isDark: isDark ?? this.isDark,
@@ -43,6 +46,7 @@ class SettingsModel {
       offset: offset ?? this.offset,
       saveResponses: saveResponses ?? this.saveResponses,
       promptBeforeClosing: promptBeforeClosing ?? this.promptBeforeClosing,
+      connectionTimeout: connectionTimeout ?? this.connectionTimeout,
     );
   }
 
@@ -54,6 +58,7 @@ class SettingsModel {
     final height = data["height"] as double?;
     final dx = data["dx"] as double?;
     final dy = data["dy"] as double?;
+    final connectionTimeout = data["connectionTimeout"] as int? ?? 10;
     Size? size;
     if (width != null && height != null) {
       size = Size(width, height);
@@ -86,6 +91,7 @@ class SettingsModel {
         defaultUriScheme: defaultUriScheme,
         defaultCodeGenLang: defaultCodeGenLang,
         saveResponses: saveResponses,
+        connectionTimeout: connectionTimeout,
         promptBeforeClosing: promptBeforeClosing);
   }
 
@@ -101,6 +107,7 @@ class SettingsModel {
       "defaultCodeGenLang": defaultCodeGenLang.name,
       "saveResponses": saveResponses,
       "promptBeforeClosing": promptBeforeClosing,
+      "connectionTimeout": connectionTimeout,
     };
   }
 
@@ -136,6 +143,7 @@ class SettingsModel {
       defaultCodeGenLang,
       saveResponses,
       promptBeforeClosing,
+      connectionTimeout,
     );
   }
 }

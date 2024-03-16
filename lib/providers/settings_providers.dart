@@ -12,7 +12,7 @@ final StateNotifierProvider<ThemeStateNotifier, SettingsModel>
     StateNotifierProvider((ref) => ThemeStateNotifier(hiveHandler));
 
 class ThemeStateNotifier extends StateNotifier<SettingsModel> {
-  ThemeStateNotifier(this.hiveHandler) : super(const SettingsModel()) {
+  ThemeStateNotifier(this.hiveHandler) : super(SettingsModel()) {
     state = SettingsModel.fromJson(hiveHandler.settings);
   }
   final HiveHandler hiveHandler;
@@ -26,6 +26,7 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
     CodegenLanguage? defaultCodeGenLang,
     bool? saveResponses,
     bool? promptBeforeClosing,
+    int? connectionTimeout = 10,
   }) async {
     state = state.copyWith(
       isDark: isDark,
@@ -36,6 +37,7 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
       defaultCodeGenLang: defaultCodeGenLang,
       saveResponses: saveResponses,
       promptBeforeClosing: promptBeforeClosing,
+      connectionTimeout: connectionTimeout ?? state.connectionTimeout,
     );
     await hiveHandler.saveSettings(state.toJson());
   }
