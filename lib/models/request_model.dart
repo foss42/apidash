@@ -68,7 +68,7 @@ class RequestModel {
   bool get hasJsonContentType => requestBodyContentType == ContentType.json;
   bool get hasTextContentType => requestBodyContentType == ContentType.text;
   int get contentLength => utf8.encode(requestBody ?? "").length;
-  bool get hasData => hasJsonData || hasTextData || hasFormData;
+  bool get hasBody => hasJsonData || hasTextData || hasFormData;
   bool get hasJsonData =>
       kMethodsWithBody.contains(method) &&
       hasJsonContentType &&
