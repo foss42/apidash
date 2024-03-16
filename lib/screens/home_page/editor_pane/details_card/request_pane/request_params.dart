@@ -83,6 +83,10 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
               hintText: "Add URL Parameter",
               onChanged: (value) {
                 rows[idx] = rows[idx].copyWith(name: value);
+                if (idx == rows.length - 1) {
+                  rows.add(kNameValueEmptyModel);
+                  isRowEnabledList.add(true);
+                }
                 _onFieldChange(selectedId!);
               },
               colorScheme: Theme.of(context).colorScheme,
@@ -110,6 +114,10 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
               hintText: "Add Value",
               onChanged: (value) {
                 rows[idx] = rows[idx].copyWith(value: value);
+                if (idx == rows.length - 1) {
+                  rows.add(kNameValueEmptyModel);
+                  isRowEnabledList.add(true);
+                }
                 _onFieldChange(selectedId!);
               },
               colorScheme: Theme.of(context).colorScheme,
@@ -145,44 +153,22 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
         ),
       ],
     );
-    return Stack(
-      children: [
-        Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.background,
-            borderRadius: kBorderRadius12,
-          ),
-          margin: kP10,
-          child: Column(
-            children: [
-              Expanded(
-                child: DaviTheme(
-                  data: kTableThemeData,
-                  child: Davi<NameValueModel>(model),
-                ),
-              ),
-            ],
-          ),
-        ),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 30),
-            child: ElevatedButton.icon(
-              onPressed: () {
-                rows.add(kNameValueEmptyModel);
-                isRowEnabledList.add(true);
-                _onFieldChange(selectedId!);
-              },
-              icon: const Icon(Icons.add),
-              label: const Text(
-                "Add Param",
-                style: kTextStyleButton,
-              ),
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.background,
+        borderRadius: kBorderRadius12,
+      ),
+      margin: kP10,
+      child: Column(
+        children: [
+          Expanded(
+            child: DaviTheme(
+              data: kTableThemeData,
+              child: Davi<NameValueModel>(model),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

@@ -27,6 +27,8 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
   @override
   Widget build(BuildContext context) {
     final selectedId = ref.watch(selectedIdStateProvider);
+    ref.watch(selectedRequestModelProvider
+        .select((value) => value?.requestFormDataList?.length));
     var formRows = ref.read(selectedRequestModelProvider)?.requestFormDataList;
     rows =
         formRows == null || formRows.isEmpty ? [kFormDataEmptyModel] : formRows;
@@ -47,18 +49,21 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                 initialValue: rows[idx].name,
                 hintText: " Add Key",
                 onChanged: (value) {
-                  rows[idx] = rows[idx].copyWith(
-                    name: value,
-                  );
+                  rows[idx] = rows[idx].copyWith(name: value);
+                  if (idx == rows.length - 1) rows.add(kFormDataEmptyModel);
                   _onFieldChange(selectedId!);
                 },
                 colorScheme: Theme.of(context).colorScheme,
                 formDataType: rows[idx].type,
                 onFormDataTypeChanged: (value) {
+                  bool hasChanged = rows[idx].type != value;
                   rows[idx] = rows[idx].copyWith(
                     type: value ?? FormDataType.text,
                   );
                   rows[idx] = rows[idx].copyWith(value: "");
+                  if (idx == rows.length - 1 && hasChanged) {
+                    rows.add(kFormDataEmptyModel);
+                  }
                   setState(() {});
                   _onFieldChange(selectedId!);
                 },
@@ -137,6 +142,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                     hintText: " Add Value",
                     onChanged: (value) {
                       rows[idx] = rows[idx].copyWith(value: value);
+                      if (idx == rows.length - 1) rows.add(kFormDataEmptyModel);
                       _onFieldChange(selectedId!);
                     },
                     colorScheme: Theme.of(context).colorScheme,
@@ -169,45 +175,22 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
         ),
       ],
     );
-    return Stack(
-      children: [
-        Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.background,
-            borderRadius: kBorderRadius12,
-          ),
-          margin: kP10,
-          child: Column(
-            children: [
-              Expanded(
-                child: DaviTheme(
-                  data: kTableThemeData,
-                  child: Davi<FormDataModel>(daviModelRows),
-                ),
-              ),
-            ],
-          ),
-        ),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 30),
-            child: ElevatedButton.icon(
-              onPressed: () {
-                setState(() {
-                  rows.add(kFormDataEmptyModel);
-                });
-                _onFieldChange(selectedId!);
-              },
-              icon: const Icon(Icons.add),
-              label: const Text(
-                "Add Form Data",
-                style: kTextStyleButton,
-              ),
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.background,
+        borderRadius: kBorderRadius12,
+      ),
+      margin: kP10,
+      child: Column(
+        children: [
+          Expanded(
+            child: DaviTheme(
+              data: kTableThemeData,
+              child: Davi<FormDataModel>(daviModelRows),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
