@@ -41,14 +41,16 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
     ref.watch(selectedRequestModelProvider
         .select((value) => value?.requestParams?.length));
     var rP = ref.read(selectedRequestModelProvider)?.requestParams;
-    rows = (rP == null || rP.isEmpty)
+    bool isParamsEmpty = rP == null || rP.isEmpty;
+    rows = (isParamsEmpty)
         ? [
             kNameValueEmptyModel,
           ]
         : rP;
-    isRowEnabledList =
-        ref.read(selectedRequestModelProvider)?.isParamEnabledList ??
-            List.filled(rows.length, true, growable: true);
+    isRowEnabledList = ref
+            .read(selectedRequestModelProvider)
+            ?.isParamEnabledList ??
+        List.filled(rows.length, isParamsEmpty ? false : true, growable: true);
 
     DaviModel<NameValueModel> model = DaviModel<NameValueModel>(
       rows: rows,
@@ -61,12 +63,16 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
             return CheckBox(
               keyId: "$selectedId-$idx-params-c-$seed",
               value: isRowEnabledList[idx],
-              onChanged: (value) {
-                setState(() {
-                  isRowEnabledList[idx] = value!;
-                });
-                _onFieldChange(selectedId!);
-              },
+              onChanged: idx + 1 == rows.length &&
+                      rows[idx].name.isEmpty &&
+                      rows[idx].value.isEmpty
+                  ? null
+                  : (value) {
+                      setState(() {
+                        isRowEnabledList[idx] = value!;
+                      });
+                      _onFieldChange(selectedId!);
+                    },
               colorScheme: Theme.of(context).colorScheme,
             );
           },
@@ -84,8 +90,9 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
               onChanged: (value) {
                 rows[idx] = rows[idx].copyWith(name: value);
                 if (idx == rows.length - 1) {
+                  isRowEnabledList[idx] = true;
                   rows.add(kNameValueEmptyModel);
-                  isRowEnabledList.add(true);
+                  isRowEnabledList.add(false);
                 }
                 _onFieldChange(selectedId!);
               },
@@ -115,8 +122,9 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
               onChanged: (value) {
                 rows[idx] = rows[idx].copyWith(value: value);
                 if (idx == rows.length - 1) {
+                  isRowEnabledList[idx] = true;
                   rows.add(kNameValueEmptyModel);
-                  isRowEnabledList.add(true);
+                  isRowEnabledList.add(false);
                 }
                 _onFieldChange(selectedId!);
               },
@@ -140,7 +148,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
                     rows = [
                       kNameValueEmptyModel,
                     ];
-                    isRowEnabledList = [true];
+                    isRowEnabledList = [false];
                   });
                 } else {
                   rows.removeAt(row.index);

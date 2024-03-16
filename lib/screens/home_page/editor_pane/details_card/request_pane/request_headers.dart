@@ -40,14 +40,16 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
     ref.watch(selectedRequestModelProvider
         .select((value) => value?.requestHeaders?.length));
     var rH = ref.read(selectedRequestModelProvider)?.requestHeaders;
-    rows = (rH == null || rH.isEmpty)
+    bool isHeadersEmpty = rH == null || rH.isEmpty;
+    rows = (isHeadersEmpty)
         ? [
             kNameValueEmptyModel,
           ]
         : rH;
-    isRowEnabledList =
-        ref.read(selectedRequestModelProvider)?.isHeaderEnabledList ??
-            List.filled(rows.length, true, growable: true);
+    isRowEnabledList = ref
+            .read(selectedRequestModelProvider)
+            ?.isHeaderEnabledList ??
+        List.filled(rows.length, isHeadersEmpty ? false : true, growable: true);
 
     DaviModel<NameValueModel> model = DaviModel<NameValueModel>(
       rows: rows,
@@ -60,12 +62,17 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
             return CheckBox(
               keyId: "$selectedId-$idx-headers-c-$seed",
               value: isRowEnabledList[idx],
-              onChanged: (value) {
-                setState(() {
-                  isRowEnabledList[idx] = value!;
-                });
-                _onFieldChange(selectedId!);
-              },
+              onChanged: rows.length == 1 &&
+                      idx == 0 &&
+                      rows[idx].name.isEmpty &&
+                      rows[idx].value.isEmpty
+                  ? null
+                  : (value) {
+                      setState(() {
+                        isRowEnabledList[idx] = value!;
+                      });
+                      _onFieldChange(selectedId!);
+                    },
               colorScheme: Theme.of(context).colorScheme,
             );
           },
@@ -85,7 +92,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
                 rows[idx] = rows[idx].copyWith(name: value);
                 if (idx == rows.length - 1) {
                   rows.add(kNameValueEmptyModel);
-                  isRowEnabledList.add(true);
+                  isRowEnabledList.add(false);
                 }
                 _onFieldChange(selectedId!);
               },
@@ -116,7 +123,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
                 rows[idx] = rows[idx].copyWith(value: value);
                 if (idx == rows.length - 1) {
                   rows.add(kNameValueEmptyModel);
-                  isRowEnabledList.add(true);
+                  isRowEnabledList.add(false);
                 }
                 _onFieldChange(selectedId!);
               },
@@ -140,7 +147,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
                     rows = [
                       kNameValueEmptyModel,
                     ];
-                    isRowEnabledList = [true];
+                    isRowEnabledList = [false];
                   });
                 } else {
                   rows.removeAt(row.index);
