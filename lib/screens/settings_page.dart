@@ -66,40 +66,63 @@ class SettingsPage extends ConsumerWidget {
                 title: const Text('Default URI Scheme'),
                 subtitle: Text(
                     'api.foss42.com → ${settings.defaultUriScheme}://api.foss42.com'),
-                trailing: DropdownMenu(
-                    onSelected: (value) {
+                trailing: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey, width: 2.0), // Adjust border width as needed
+                    borderRadius: BorderRadius.circular(8.0), // Adjust border radius as needed
+                  ),
+                  child: DropdownButton<String>(
+                    onChanged: (value) {
                       ref
-                          .read(settingsProvider.notifier)
-                          .update(defaultUriScheme: value);
+                           .read(settingsProvider.notifier)
+                           .update(defaultUriScheme: value);
                     },
-                    initialSelection: settings.defaultUriScheme,
-                    dropdownMenuEntries: kSupportedUriSchemes
-                        .map<DropdownMenuEntry<String>>((value) {
-                      return DropdownMenuEntry<String>(
+                    value: settings.defaultUriScheme,
+                    items: kSupportedUriSchemes.map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
                         value: value,
-                        label: value,
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), // Adjust padding to increase size
+                          child: Text(value),
+                        ),
                       );
-                    }).toList()),
+                    }).toList(),
+                    underline: Container(), 
+                    iconSize: 30, 
+     
+                  ),
+                ),
               ),
+
               ListTile(
                 contentPadding: kPb10,
                 hoverColor: kColorTransparent,
                 title: const Text('Default Code Generator'),
-                trailing: DropdownMenu(
-                    onSelected: (value) {
-                      ref
-                          .read(settingsProvider.notifier)
-                          .update(defaultCodeGenLang: value);
-                    },
-                    initialSelection: settings.defaultCodeGenLang,
-                    dropdownMenuEntries: CodegenLanguage.values
-                        .map<DropdownMenuEntry<CodegenLanguage>>((value) {
-                      return DropdownMenuEntry<CodegenLanguage>(
-                        value: value,
-                        label: value.label,
-                      );
-                    }).toList()),
+                trailing: Container(
+                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 15), // Adjust padding to increase size
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey, width: 2.0), // Add border styling
+                    borderRadius: BorderRadius.circular(5), // Optional: Add border radius
+                  ),
+                  child: DropdownButtonHideUnderline( // Hide the default underline
+                    child: DropdownButton<CodegenLanguage>(
+                      value: settings.defaultCodeGenLang,
+                      onChanged: (value) {
+                        ref
+                            .read(settingsProvider.notifier)
+                            .update(defaultCodeGenLang: value);
+                      },
+                      items: CodegenLanguage.values.map((value) {
+                        return DropdownMenuItem<CodegenLanguage>(
+                          value: value,
+                          child: Text(value.label),
+                        );
+                      }).toList(),
+                      onTap: () {}, // Prevent dropdown from opening on tap
+                   ),
+                ),
               ),
+            ),
               CheckboxListTile(
                 contentPadding: EdgeInsets.zero,
                 title: const Text("Save Responses"),
