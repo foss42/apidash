@@ -37,7 +37,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
   @override
   Widget build(BuildContext context) {
     final selectedId = ref.watch(selectedIdStateProvider);
-    final length = ref.watch(selectedRequestModelProvider
+    ref.watch(selectedRequestModelProvider
         .select((value) => value?.requestHeaders?.length));
     var rH = ref.read(selectedRequestModelProvider)?.requestHeaders;
     rows = (rH == null || rH.isEmpty)
@@ -135,7 +135,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
                               CellField(
                                 keyId: "$selectedId-$index-headers-v-$seed",
                                 initialValue: rows[index].value,
-                                hintText: "Add Header Value",
+                                hintText: " Add Header Value",
                                 onChanged: (value) {
                                   rows[index] =
                                       rows[index].copyWith(value: value);

@@ -59,10 +59,12 @@ class CellField extends StatelessWidget {
       key: Key(keyId),
       initialValue: initialValue,
       style: kCodeStyle.copyWith(
+        height: 1.6,
         color: clrScheme.onSurface,
       ),
       decoration: InputDecoration(
         hintStyle: kCodeStyle.copyWith(
+          height: 1.6,
           color: clrScheme.outline.withOpacity(
             kHintOpacity,
           ),

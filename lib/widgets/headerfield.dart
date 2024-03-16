@@ -76,9 +76,13 @@ class _HeaderFieldState extends State<HeaderField> {
         onChanged: widget.onChanged,
         controller: controller,
         focusNode: focusNode,
-        style: kCodeStyle.copyWith(color: colorScheme.onSurface),
+        style: kCodeStyle.copyWith(
+          height: 1.6,
+          color: colorScheme.onSurface,
+        ),
         decoration: InputDecoration(
           hintStyle: kCodeStyle.copyWith(
+              height: 1.6,
               color: colorScheme.outline.withOpacity(kHintOpacity)),
           hintText: widget.hintText,
           contentPadding: const EdgeInsets.only(bottom: 12),

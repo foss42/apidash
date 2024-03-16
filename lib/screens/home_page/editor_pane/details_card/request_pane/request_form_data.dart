@@ -81,9 +81,9 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                               Theme(
                                 data: Theme.of(context),
                                 child: FormDataField(
-                                  keyId: "$selectedId-$index-form-v-$seed",
+                                  keyId: "$selectedId-$index-form-k-$seed",
                                   initialValue: rows[index].name,
-                                  hintText: "Add Key",
+                                  hintText: " Add Key",
                                   onChanged: (value) {
                                     rows[index] = rows[index].copyWith(
                                       name: value,
@@ -178,7 +178,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                                   : CellField(
                                       keyId: "$selectedId-$index-form-v-$seed",
                                       initialValue: rows[index].value,
-                                      hintText: "Add Value",
+                                      hintText: " Add Value",
                                       onChanged: (value) {
                                         rows[index] =
                                             rows[index].copyWith(value: value);
