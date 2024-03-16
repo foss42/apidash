@@ -1,4 +1,4 @@
-import 'package:apidash/codegen/rust/curl-rust.dart';
+import 'package:apidash/codegen/rust/curl_rust.dart';
 import 'package:apidash/models/models.dart' show RequestModel;
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart' show getNewUuid;
