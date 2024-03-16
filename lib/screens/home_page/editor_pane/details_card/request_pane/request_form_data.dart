@@ -54,6 +54,112 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
       ),
     ];
 
+    List<DataRow> dataRows = List<DataRow>.generate(
+      rows.length,
+      (index) {
+        return DataRow(
+          key: ValueKey("$selectedId-$index-form-row-$seed"),
+          cells: <DataCell>[
+            DataCell(
+              CellField(
+                keyId: "$selectedId-$index-form-k-$seed",
+                initialValue: rows[index].name,
+                hintText: " Add Key",
+                onChanged: (value) {
+                  rows[index] = rows[index].copyWith(name: value);
+                  _onFieldChange(selectedId!);
+                },
+                colorScheme: Theme.of(context).colorScheme,
+              ),
+            ),
+            DataCell(
+              Text(
+                "=",
+                style: kCodeStyle,
+              ),
+            ),
+            DataCell(
+              DropdownButtonFormData(
+                formDataType: rows[index].type,
+                onChanged: (value) {
+                  rows[index] = rows[index].copyWith(
+                    type: value ?? FormDataType.text,
+                  );
+                  rows[index] = rows[index].copyWith(value: "");
+                  setState(() {});
+                  _onFieldChange(selectedId!);
+                },
+              ),
+            ),
+            DataCell(
+              rows[index].type == FormDataType.file
+                  ? ElevatedButton.icon(
+                      icon: const Icon(
+                        Icons.snippet_folder_rounded,
+                        size: 20,
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size.fromHeight(kDataTableRowHeight),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                      ),
+                      onPressed: () async {
+                        var pickedResult = await pickFile();
+                        if (pickedResult != null &&
+                            pickedResult.files.isNotEmpty &&
+                            pickedResult.files.first.path != null) {
+                          rows[index] = rows[index].copyWith(
+                            value: pickedResult.files.first.path!,
+                          );
+                          setState(() {});
+                          _onFieldChange(selectedId!);
+                        }
+                      },
+                      label: Text(
+                        (rows[index].type == FormDataType.file &&
+                                rows[index].value.isNotEmpty)
+                            ? rows[index].value.toString()
+                            : "Select File",
+                        overflow: TextOverflow.ellipsis,
+                        style: kFormDataButtonLabelTextStyle,
+                      ),
+                    )
+                  : CellField(
+                      keyId: "$selectedId-$index-form-v-$seed",
+                      initialValue: rows[index].value,
+                      hintText: " Add Value",
+                      onChanged: (value) {
+                        rows[index] = rows[index].copyWith(value: value);
+                        _onFieldChange(selectedId!);
+                      },
+                      colorScheme: Theme.of(context).colorScheme,
+                    ),
+            ),
+            DataCell(
+              InkWell(
+                child: Theme.of(context).brightness == Brightness.dark
+                    ? kIconRemoveDark
+                    : kIconRemoveLight,
+                onTap: () {
+                  seed = random.nextInt(kRandMax);
+                  if (rows.length == 1) {
+                    setState(() {
+                      rows = [kFormDataEmptyModel];
+                    });
+                  } else {
+                    rows.removeAt(index);
+                  }
+                  _onFieldChange(selectedId!);
+                  setState(() {});
+                },
+              ),
+            ),
+          ],
+        );
+      },
+    );
+
     return Stack(
       children: [
         Container(
@@ -73,124 +179,11 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                     dividerThickness: 0,
                     horizontalMargin: 0,
                     headingRowHeight: 0,
-                    dataRowHeight: kDataRowHeight,
+                    dataRowHeight: kDataTableRowHeight,
                     bottomMargin: kDataTableBottomPadding,
                     isVerticalScrollBarVisible: true,
                     columns: columns,
-                    rows: List<DataRow>.generate(
-                      rows.length,
-                      (index) {
-                        return DataRow(
-                          key: ValueKey("$selectedId-$index-form-row-$seed"),
-                          cells: <DataCell>[
-                            DataCell(
-                              CellField(
-                                keyId: "$selectedId-$index-form-k-$seed",
-                                initialValue: rows[index].name,
-                                hintText: " Add Key",
-                                onChanged: (value) {
-                                  rows[index] =
-                                      rows[index].copyWith(name: value);
-                                  _onFieldChange(selectedId!);
-                                },
-                                colorScheme: Theme.of(context).colorScheme,
-                              ),
-                            ),
-                            DataCell(
-                              Text(
-                                "=",
-                                style: kCodeStyle,
-                              ),
-                            ),
-                            DataCell(
-                              DropdownButtonFormData(
-                                formDataType: rows[index].type,
-                                onChanged: (value) {
-                                  rows[index] = rows[index].copyWith(
-                                    type: value ?? FormDataType.text,
-                                  );
-                                  rows[index] = rows[index].copyWith(value: "");
-                                  setState(() {});
-                                  _onFieldChange(selectedId!);
-                                },
-                              ),
-                            ),
-                            DataCell(
-                              rows[index].type == FormDataType.file
-                                  ? ElevatedButton.icon(
-                                      icon: const Icon(
-                                        Icons.snippet_folder_rounded,
-                                        size: 20,
-                                      ),
-                                      style: ElevatedButton.styleFrom(
-                                        minimumSize: const Size.fromHeight(
-                                            kDataRowHeight),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(6),
-                                        ),
-                                      ),
-                                      onPressed: () async {
-                                        var pickedResult = await pickFile();
-                                        if (pickedResult != null &&
-                                            pickedResult.files.isNotEmpty &&
-                                            pickedResult.files.first.path !=
-                                                null) {
-                                          rows[index] = rows[index].copyWith(
-                                            value:
-                                                pickedResult.files.first.path!,
-                                          );
-                                          setState(() {});
-                                          _onFieldChange(selectedId!);
-                                        }
-                                      },
-                                      label: Text(
-                                        (rows[index].type ==
-                                                    FormDataType.file &&
-                                                rows[index].value.isNotEmpty)
-                                            ? rows[index].value.toString()
-                                            : "Select File",
-                                        overflow: TextOverflow.ellipsis,
-                                        style: kFormDataButtonLabelTextStyle,
-                                      ),
-                                    )
-                                  : CellField(
-                                      keyId: "$selectedId-$index-form-v-$seed",
-                                      initialValue: rows[index].value,
-                                      hintText: " Add Value",
-                                      onChanged: (value) {
-                                        rows[index] =
-                                            rows[index].copyWith(value: value);
-                                        _onFieldChange(selectedId!);
-                                      },
-                                      colorScheme:
-                                          Theme.of(context).colorScheme,
-                                    ),
-                            ),
-                            DataCell(
-                              InkWell(
-                                child: Theme.of(context).brightness ==
-                                        Brightness.dark
-                                    ? kIconRemoveDark
-                                    : kIconRemoveLight,
-                                onTap: () {
-                                  seed = random.nextInt(kRandMax);
-                                  if (rows.length == 1) {
-                                    setState(() {
-                                      rows = [kFormDataEmptyModel];
-                                    });
-                                  } else {
-                                    rows.removeAt(index);
-                                  }
-                                  _onFieldChange(selectedId!);
-                                  setState(() {});
-                                },
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                    ),
+                    rows: dataRows,
                   ),
                 ),
               ),

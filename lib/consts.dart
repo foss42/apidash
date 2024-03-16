@@ -118,7 +118,7 @@ const kDataTableScrollbarTheme = ScrollbarThemeData(
   crossAxisMargin: -4,
 );
 const kDataTableBottomPadding = 80.0;
-const kDataRowHeight = 36.0;
+const kDataTableRowHeight = 36.0;
 
 const kIconRemoveDark = Icon(
   Icons.remove_circle,

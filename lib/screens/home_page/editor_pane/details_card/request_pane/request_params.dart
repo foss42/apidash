@@ -70,6 +70,83 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
         fixedWidth: 32,
       ),
     ];
+
+    List<DataRow> dataRows = List<DataRow>.generate(
+      rows.length,
+      (index) {
+        return DataRow(
+          key: ValueKey("$selectedId-$index-params-row-$seed"),
+          cells: <DataCell>[
+            DataCell(
+              CheckBox(
+                keyId: "$selectedId-$index-params-c-$seed",
+                value: isRowEnabledList[index],
+                onChanged: (value) {
+                  setState(() {
+                    isRowEnabledList[index] = value!;
+                  });
+                  _onFieldChange(selectedId!);
+                },
+                colorScheme: Theme.of(context).colorScheme,
+              ),
+            ),
+            DataCell(
+              CellField(
+                keyId: "$selectedId-$index-params-k-$seed",
+                initialValue: rows[index].name,
+                hintText: "Add URL Parameter",
+                onChanged: (value) {
+                  rows[index] = rows[index].copyWith(name: value);
+                  _onFieldChange(selectedId!);
+                },
+                colorScheme: Theme.of(context).colorScheme,
+              ),
+            ),
+            DataCell(
+              Text(
+                "=",
+                style: kCodeStyle,
+              ),
+            ),
+            DataCell(
+              CellField(
+                keyId: "$selectedId-$index-params-v-$seed",
+                initialValue: rows[index].value,
+                hintText: "Add Value",
+                onChanged: (value) {
+                  rows[index] = rows[index].copyWith(value: value);
+                  _onFieldChange(selectedId!);
+                },
+                colorScheme: Theme.of(context).colorScheme,
+              ),
+            ),
+            DataCell(
+              InkWell(
+                child: Theme.of(context).brightness == Brightness.dark
+                    ? kIconRemoveDark
+                    : kIconRemoveLight,
+                onTap: () {
+                  seed = random.nextInt(kRandMax);
+                  if (rows.length == 1) {
+                    setState(() {
+                      rows = [
+                        kNameValueEmptyModel,
+                      ];
+                      isRowEnabledList = [true];
+                    });
+                  } else {
+                    rows.removeAt(index);
+                    isRowEnabledList.removeAt(index);
+                  }
+                  _onFieldChange(selectedId!);
+                },
+              ),
+            ),
+          ],
+        );
+      },
+    );
+
     return Stack(
       children: [
         Container(
@@ -90,88 +167,11 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
                     dividerThickness: 0,
                     horizontalMargin: 0,
                     headingRowHeight: 0,
-                    dataRowHeight: kDataRowHeight,
+                    dataRowHeight: kDataTableRowHeight,
                     bottomMargin: kDataTableBottomPadding,
                     isVerticalScrollBarVisible: true,
                     columns: columns,
-                    rows: List<DataRow>.generate(
-                      rows.length,
-                      (index) {
-                        return DataRow(
-                          key: ValueKey("$selectedId-$index-params-row-$seed"),
-                          cells: <DataCell>[
-                            DataCell(
-                              CheckBox(
-                                keyId: "$selectedId-$index-params-c-$seed",
-                                value: isRowEnabledList[index],
-                                onChanged: (value) {
-                                  setState(() {
-                                    isRowEnabledList[index] = value!;
-                                  });
-                                  _onFieldChange(selectedId!);
-                                },
-                                colorScheme: Theme.of(context).colorScheme,
-                              ),
-                            ),
-                            DataCell(
-                              CellField(
-                                keyId: "$selectedId-$index-params-k-$seed",
-                                initialValue: rows[index].name,
-                                hintText: "Add URL Parameter",
-                                onChanged: (value) {
-                                  rows[index] =
-                                      rows[index].copyWith(name: value);
-                                  _onFieldChange(selectedId!);
-                                },
-                                colorScheme: Theme.of(context).colorScheme,
-                              ),
-                            ),
-                            DataCell(
-                              Text(
-                                "=",
-                                style: kCodeStyle,
-                              ),
-                            ),
-                            DataCell(
-                              CellField(
-                                keyId: "$selectedId-$index-params-v-$seed",
-                                initialValue: rows[index].value,
-                                hintText: "Add Value",
-                                onChanged: (value) {
-                                  rows[index] =
-                                      rows[index].copyWith(value: value);
-                                  _onFieldChange(selectedId!);
-                                },
-                                colorScheme: Theme.of(context).colorScheme,
-                              ),
-                            ),
-                            DataCell(
-                              InkWell(
-                                child: Theme.of(context).brightness ==
-                                        Brightness.dark
-                                    ? kIconRemoveDark
-                                    : kIconRemoveLight,
-                                onTap: () {
-                                  seed = random.nextInt(kRandMax);
-                                  if (rows.length == 1) {
-                                    setState(() {
-                                      rows = [
-                                        kNameValueEmptyModel,
-                                      ];
-                                      isRowEnabledList = [true];
-                                    });
-                                  } else {
-                                    rows.removeAt(index);
-                                    isRowEnabledList.removeAt(index);
-                                  }
-                                  _onFieldChange(selectedId!);
-                                },
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                    ),
+                    rows: dataRows,
                   ),
                 ),
               ),
