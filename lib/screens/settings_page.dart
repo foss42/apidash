@@ -68,44 +68,48 @@ class SettingsPage extends ConsumerWidget {
                     '$kDefaultUri → ${settings.defaultUriScheme}://$kDefaultUri'),
                 trailing: Container(
                   decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey, width: 2.0), // Adjust border width as needed
-                    borderRadius: BorderRadius.circular(8.0), // Adjust border radius as needed
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                    borderRadius: kBorderRadius8,
                   ),
-                  child: DropdownButton<String>(
-                    onChanged: (value) {
-                      ref
-                           .read(settingsProvider.notifier)
-                           .update(defaultUriScheme: value);
-                    },
-                    value: settings.defaultUriScheme,
-                    items: kSupportedUriSchemes.map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16), // Adjust padding to increase size
-                          child: Text(value),
-                        ),
-                      );
-                    }).toList(),
-                    underline: Container(), 
-                    iconSize: 30, 
-     
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      borderRadius: kBorderRadius8,
+                      onChanged: (value) {
+                        ref
+                            .read(settingsProvider.notifier)
+                            .update(defaultUriScheme: value);
+                      },
+                      value: settings.defaultUriScheme,
+                      items: kSupportedUriSchemes
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Padding(
+                            padding: kP10,
+                            child: Text(value),
+                          ),
+                        );
+                      }).toList(),
+                    ),
                   ),
                 ),
               ),
-
               ListTile(
                 contentPadding: kPb10,
                 hoverColor: kColorTransparent,
                 title: const Text('Default Code Generator'),
                 trailing: Container(
-                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 15), // Adjust padding to increase size
                   decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey, width: 2.0), // Add border styling
-                    borderRadius: BorderRadius.circular(5), // Optional: Add border radius
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                    borderRadius: kBorderRadius8,
                   ),
-                  child: DropdownButtonHideUnderline( // Hide the default underline
+                  child: DropdownButtonHideUnderline(
                     child: DropdownButton<CodegenLanguage>(
+                      borderRadius: kBorderRadius8,
                       value: settings.defaultCodeGenLang,
                       onChanged: (value) {
                         ref
@@ -115,14 +119,16 @@ class SettingsPage extends ConsumerWidget {
                       items: CodegenLanguage.values.map((value) {
                         return DropdownMenuItem<CodegenLanguage>(
                           value: value,
-                          child: Text(value.label),
+                          child: Padding(
+                            padding: kP10,
+                            child: Text(value.label),
+                          ),
                         );
                       }).toList(),
-                      onTap: () {}, // Prevent dropdown from opening on tap
-                   ),
+                    ),
+                  ),
                 ),
               ),
-            ),
               CheckboxListTile(
                 contentPadding: EdgeInsets.zero,
                 title: const Text("Save Responses"),
