@@ -203,7 +203,7 @@ class SettingsPage extends ConsumerWidget {
               ListTile(
                 contentPadding: kPb10,
                 hoverColor: kColorTransparent,
-                title: const Text('Connection Timeout (seconds)'),
+                title: const Text('Connection Timeout (milliseconds)'),
                 subtitle: Text(
                     'Current value: ${settings.connectionTimeout} milliseconds'),
                 trailing: SizedBox(
