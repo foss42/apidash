@@ -116,6 +116,8 @@ class ResponsePaneHeader extends StatelessWidget {
                     color: Theme.of(context).colorScheme.secondary,
                   ),
             ),
+            kHSpacer10,
+            const ClearResponseButton()
           ],
         ),
       ),
