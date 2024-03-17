@@ -171,4 +171,48 @@ void main() {
 
     expect(changedValue, CodegenLanguage.dartDio);
   });
+  testWidgets('Testing Dropdown for ProtocolType', (tester) async {
+    ProtocolType? changedValue;
+    await tester.pumpWidget(
+      MaterialApp(
+        title: 'Dropdown ProtocolType testing',
+        theme: ThemeData.light(),
+        home: Scaffold(
+          body: Center(
+            child: Column(
+              children: [
+                DropdownButtonProtocolType(
+                  protocolType: ProtocolType.values.first,
+                  onChanged: (value) {
+                    changedValue = value;
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+
+    expect(find.byIcon(Icons.unfold_more_rounded), findsOneWidget);
+    expect(find.byType(DropdownButton<ProtocolType>), findsOneWidget);
+    expect(
+        (tester.widget(find.byType(DropdownButton<ProtocolType>))
+                as DropdownButton)
+            .value,
+        equals(ProtocolType.values.first));
+
+    if (ProtocolType.values.length > 1) {
+      await tester.tap(find.text(ProtocolType.values.first.name.toUpperCase()));
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
+
+      await tester
+          .tap(find.text(ProtocolType.values[1].name.toUpperCase()).last);
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
+
+      expect(changedValue, ProtocolType.values[1]);
+    }
+  });
 }
