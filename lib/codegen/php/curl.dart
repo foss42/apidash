@@ -35,6 +35,13 @@ if (count(\$queryParams) > 0) {
 
 """;
 
+  String kTemplateBody = """
+
+\$request_body = <<<EOF
+{{body}}
+EOF;
+
+""";
   //specifying headers
   String kTemplateHeaders = """
 
@@ -43,7 +50,9 @@ curl_setopt(\$request, CURLOPT_HTTPHEADER, \$headers);
 
 """;
 
-  //request template
+  String kTemplateFormHeaderContentType = '''
+multipart/form-data; boundary={{boundary}}''';
+
   String kTemplateRequest = """
 
 curl_setopt(\$request, CURLOPT_RETURNTRANSFER, 1);
@@ -51,6 +60,11 @@ curl_setopt(\$request, {{method}}, 1);
 
 """;
 
+  //passing the request body
+  String kStringRequestBody = """
+curl_setopt(\$request, CURLOPT_POSTFIELDS, \$request_body);
+
+""";
 
   //ending template
   final String kStringRequestEnd = """
@@ -86,10 +100,57 @@ class File
 
 """;
 
+  //function to build formdata without 'file' type
+  String kBuildFormDataFunctionWithoutFilesString = """
+function build_data(\$boundary, \$fields)
+{
+    \$data = '';
+    \$eol = "\\r\\n";
+
+    \$delimiter = '-------------' . \$boundary;
+
+    foreach (\$fields as \$name => \$content) {
+        \$data .= "--" . \$delimiter . \$eol
+            . 'Content-Disposition: form-data; name="' . \$name . "\\"" . \$eol . \$eol
+            . \$content . \$eol;
+    }
+    \$data .= "--" . \$delimiter . "--" . \$eol;
+    return \$data;
+}
+""";
+
+  //function to build formdata with 'file' type
+  String kBuildFormDataFunctionWithFilesString = """
+function build_data_files(\$boundary, \$fields, \$files)
+{
+    \$data = '';
+    \$eol = "\\r\\n";
+
+    \$delimiter = '-------------' . \$boundary;
+
+    foreach (\$fields as \$name => \$content) {
+        \$data .= "--" . \$delimiter . \$eol
+            . 'Content-Disposition: form-data; name="' . \$name . "\\"" . \$eol . \$eol
+            . \$content . \$eol;
+    }
+
+    foreach (\$files as \$uploaded_file) {
+        if (\$uploaded_file instanceof File) {
+            \$data .= "--" . \$delimiter . \$eol
+                . 'Content-Disposition: form-data; name="' . \$uploaded_file->name . '"; filename="' . \$uploaded_file->filename . '"' . \$eol
+                . 'Content-Transfer-Encoding: binary' . \$eol;
+
+            \$data .= \$eol;
+            \$data .= \$uploaded_file->content . \$eol;
+        }
+    }
+    \$data .= "--" . \$delimiter . "--" . \$eol;
+
+
+    return \$data;
 }
 
 """;
-
 
   //
   String kMultiPartBodyWithFiles = """
