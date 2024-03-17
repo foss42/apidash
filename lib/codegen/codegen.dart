@@ -1,3 +1,4 @@
+import 'package:apidash/codegen/c/libcurl.dart';
 import 'package:apidash/models/models.dart' show RequestModel;
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart' show getNewUuid;
@@ -67,8 +68,7 @@ class Codegen {
       case CodegenLanguage.kotlinOkHttp:
         return KotlinOkHttpCodeGen().getCode(rM);
       case CodegenLanguage.pythonHttpClient:
-        return PythonHttpClientCodeGen()
-            .getCode(rM, boundary: boundary ?? getNewUuid());
+        return PythonHttpClientCodeGen().getCode(rM, boundary: boundary ?? getNewUuid());
       case CodegenLanguage.pythonRequests:
         return PythonRequestsCodeGen().getCode(rM, boundary: boundary);
       case CodegenLanguage.rustActix:
@@ -79,6 +79,8 @@ class Codegen {
         return RustUreqCodeGen().getCode(rM, boundary: boundary);
       case CodegenLanguage.phpGuzzle:
         return PhpGuzzleCodeGen().getCode(rM);
+      case CodegenLanguage.cLibcurl:
+        return CLibcurlCodeGen().getCode(rM, defaultUriScheme);
     }
   }
 }
