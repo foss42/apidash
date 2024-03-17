@@ -33,11 +33,6 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
           requestParams: paramRows.sublist(0, paramRows.length - 1),
           isParamEnabledList: isRowEnabledList.sublist(0, paramRows.length - 1),
         );
-    debugPrint("URL Params Updated");
-    for (var i = 0; i < paramRows.length - 1; i++) {
-      debugPrint(
-          "URL Param $i: (${paramRows[i].name}=${paramRows[i].value})  ==> ${isRowEnabledList[i]}");
-    }
   }
 
   @override
