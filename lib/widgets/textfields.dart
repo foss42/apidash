@@ -8,12 +8,14 @@ class URLField extends StatelessWidget {
     required this.enabled,
     this.initialValue,
     this.onChanged,
+    this.onFieldSubmitted,
   });
 
   final String selectedId;
   final bool enabled;
   final String? initialValue;
   final void Function(String)? onChanged;
+  final void Function(String)? onFieldSubmitted;
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +34,7 @@ class URLField extends StatelessWidget {
         border: InputBorder.none,
       ),
       onChanged: onChanged,
+      onFieldSubmitted: onFieldSubmitted,
     );
   }
 }
@@ -98,7 +101,6 @@ class JsonSearchField extends StatelessWidget {
       controller: controller,
       onChanged: onChanged,
       style: kCodeStyle,
-      cursorHeight: 18,
       decoration: const InputDecoration(
         isDense: true,
         border: InputBorder.none,

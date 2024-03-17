@@ -9,7 +9,7 @@ import 'ui_providers.dart';
 import '../models/models.dart';
 import '../services/services.dart'
     show HiveHandler, connectToMqttServer, hiveHandler, request;
-import '../utils/utils.dart' show uuid, collectionToHAR;
+import '../utils/utils.dart' show getNewUuid, collectionToHAR;
 import '../consts.dart';
 import 'package:http/http.dart' as http;
 
@@ -70,7 +70,7 @@ class CollectionStateNotifier
   }
 
   void add() {
-    final id = uuid.v1();
+    final id = getNewUuid();
     final newRequestModel = RequestModel(
       id: id,
     );
@@ -113,7 +113,7 @@ class CollectionStateNotifier
   }
 
   void duplicate(String id) {
-    final newId = uuid.v1();
+    final newId = getNewUuid();
 
     var itemIds = ref.read(requestSequenceProvider);
     int idx = itemIds.indexOf(id);
@@ -306,23 +306,164 @@ class CollectionStateNotifier
     ref.read(sentRequestIdStateProvider.notifier).state = null;
   }
 
-  Future<void> sendRequest(String id) async {
+  Future<void> connectToBroker(String id) async {
+    RequestModel requestModel = state![id]!;
+    late final RequestModel newRequestModel;
+    ref.read(realtimeConnectionStateProvider.notifier).state =
+        RealtimeConnectionState.connecting;
+    ref.read(subscribedTopicsStateProvider.notifier).state = [];
+    ref.read(selectedIdStateProvider.notifier).state = id;
+    ref.read(realtimeHistoryStateProvider.notifier).state = [];
     ref.read(sentRequestIdStateProvider.notifier).state = id;
     ref.read(codePaneVisibleStateProvider.notifier).state = false;
-    final defaultUriScheme =
-        ref.read(settingsProvider.select((value) => value.defaultUriScheme));
+    String? clientId = ref.read(clientIdStateProvider.notifier).state;
+
+    try {
+      RequestModel requestModel = state![id]!;
+      mqttClient = await connectToMqttServer(
+          broker: requestModel.url, clientId: clientId!);
+
+      var map = {...state!};
+      state = map;
+    } catch (e) {
+      newRequestModel = requestModel.copyWith(
+        responseStatus: -1,
+        message: e.toString(),
+      );
+      var map = {...state!};
+      map[id] = newRequestModel;
+      state = map;
+      ref.read(sentRequestIdStateProvider.notifier).state = null;
+      ref.read(realtimeConnectionStateProvider.notifier).state =
+          RealtimeConnectionState.disconnected;
+    }
+    if (mqttClient.connectionStatus?.state == MqttConnectionState.connected) {
+      ref.read(realtimeHistoryStateProvider.notifier).state = [
+        {
+          "direction": 'info',
+          "message": 'Connected to broker',
+        },
+        ...ref.read(realtimeHistoryStateProvider)
+      ];
+      mqttClient.onDisconnected = () {
+        ref.read(realtimeHistoryStateProvider.notifier).state = [
+          {
+            "direction": 'info',
+            "message": 'Disconnected from broker',
+          },
+          ...ref.read(realtimeHistoryStateProvider)
+        ];
+        ref.read(realtimeConnectionStateProvider.notifier).state =
+            RealtimeConnectionState.disconnected;
+      };
+      mqttClient.updates?.listen(
+        (List<MqttReceivedMessage<MqttMessage>> c) {
+          final MqttPublishMessage recMess = c[0].payload as MqttPublishMessage;
+          final String pt =
+              MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
+
+          // Update the history
+          ref.read(realtimeHistoryStateProvider.notifier).state = [
+            {
+              "direction": 'receive',
+              "message": "${c[0].topic}: $pt",
+            },
+            ...ref.read(realtimeHistoryStateProvider),
+          ];
+        },
+      );
+      newRequestModel = requestModel.copyWith(
+        responseStatus: 1, // 1 is for connected
+        message: 'Connected',
+      );
+      var map = {...state!};
+      map[id] = newRequestModel;
+      state = map;
+      ref.read(realtimeConnectionStateProvider.notifier).state =
+          RealtimeConnectionState.connected;
+    }
+  }
+
+  Future<void> sendMessage(String id) async {
+    ref.read(subscribedTopicsStateProvider.notifier).state = [];
+    ref.read(codePaneVisibleStateProvider.notifier).state = false;
+    String? topic = ref.watch(messageTopicStateProvider.notifier).state;
     RequestModel requestModel = state![id]!;
+    publishMessage(
+        client: mqttClient,
+        topic: topic!,
+        message: requestModel.requestBody!,
+        qos: MqttQos.atLeastOnce);
+    // Update the history
+    ref.read(realtimeHistoryStateProvider.notifier).state = [
+      {
+        "direction": 'send',
+        "message": '$topic: ${requestModel.requestBody!}',
+      },
+      ...ref.read(realtimeHistoryStateProvider),
+    ];
+  }
+
+  Future<void> subscribeTopic(String topic, MqttQos qosLevel) async {
+    subscribeToTopic(mqttClient, topic, qosLevel);
+    ref.read(realtimeHistoryStateProvider.notifier).state = [
+      {
+        "direction": 'info',
+        "message": 'Subscribed to the topic $topic from broker',
+      },
+      ...ref.read(realtimeHistoryStateProvider)
+    ];
+  }
+
+  Future<void> unsubscribeTopic(String topic) async {
+    mqttClient.unsubscribe(topic);
+    ref.read(realtimeHistoryStateProvider.notifier).state = [
+      {
+        "direction": 'info',
+        "message": 'Unsubscribed to the topic $topic from broker',
+      },
+      ...ref.read(realtimeHistoryStateProvider)
+    ];
+  }
+
+  Future<void> disconnectFromBroker(String id) async {
+    ref.read(realtimeConnectionStateProvider.notifier).state =
+        RealtimeConnectionState.disconnecting;
+    ref.read(subscribedTopicsStateProvider.notifier).state = [];
+    ref.read(selectedIdStateProvider.notifier).state = id;
+    ref.read(codePaneVisibleStateProvider.notifier).state = false;
+    await disconnectFromMqttServer(mqttClient);
+
+    ref.read(realtimeConnectionStateProvider.notifier).state =
+        RealtimeConnectionState.disconnected;
+    ref.read(sentRequestIdStateProvider.notifier).state = null;
+  }
+
+  Future<void> sendRequest(String id) async {
+    ref.read(codePaneVisibleStateProvider.notifier).state = false;
+    final defaultUriScheme = ref.read(
+      settingsProvider.select(
+        (value) => value.defaultUriScheme,
+      ),
+    );
+
+    RequestModel requestModel = state![id]!;
+
+    // set current model's isWorking to true and update state
+    var map = {...state!};
+    map[id] = requestModel.copyWith(isWorking: true);
+    state = map;
+
     (http.Response?, Duration?, String?)? responseRec = await request(
       requestModel,
       defaultUriScheme: defaultUriScheme,
-      isMultiPartRequest:
-          requestModel.requestBodyContentType == ContentType.formdata,
     );
     late final RequestModel newRequestModel;
     if (responseRec.$1 == null) {
       newRequestModel = requestModel.copyWith(
         responseStatus: -1,
         message: responseRec.$3,
+        isWorking: false,
       );
     } else {
       final responseModel = baseResponseModel.fromResponse(
@@ -334,10 +475,12 @@ class CollectionStateNotifier
         responseStatus: statusCode,
         message: kResponseCodeReasons[statusCode],
         responseModel: responseModel,
+        isWorking: false,
       );
     }
-    ref.read(sentRequestIdStateProvider.notifier).state = null;
-    var map = {...state!};
+
+    // update state with response data
+    map = {...state!};
     map[id] = newRequestModel;
     state = map;
   }
@@ -354,7 +497,7 @@ class CollectionStateNotifier
   bool loadData() {
     var ids = hiveHandler.getIds();
     if (ids == null || ids.length == 0) {
-      String newId = uuid.v1();
+      String newId = getNewUuid();
       state = {
         newId: RequestModel(
           id: newId,
