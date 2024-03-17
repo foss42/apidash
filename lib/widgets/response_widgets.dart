@@ -55,11 +55,13 @@ class ResponsePaneHeader extends StatelessWidget {
     this.responseStatus,
     this.message,
     this.time,
+    this.onClearResponse,
   });
 
   final int? responseStatus;
   final String? message;
   final Duration? time;
+  final VoidCallback? onClearResponse;
 
   @override
   Widget build(BuildContext context) {
@@ -117,7 +119,9 @@ class ResponsePaneHeader extends StatelessWidget {
                   ),
             ),
             kHSpacer10,
-            const ClearResponseButton()
+            ClearResponseButton(
+              onPressed: onClearResponse,
+            )
           ],
         ),
       ),
