@@ -61,6 +61,18 @@ var_dump(\$response);
 """;
 
 
+  //
+  String kMultiPartBodyWithFiles = """
+\$request_body = build_data_files(\$boundary, \$fields, \$files);
+
+""";
+
+  //
+  String kMultiPartBodyWithoutFiles = """
+\$request_body = build_data(\$boundary, \$fields);
+
+""";
+
   //function for http verb to curl mapping
   String httpMethod(String methodName) {
     switch (methodName) {
