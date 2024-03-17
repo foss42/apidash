@@ -159,6 +159,7 @@ class RequestItem extends ConsumerWidget {
 
     return SidebarRequestCard(
       id: id,
+      protocol: requestModel.protocol,
       method: requestModel.method,
       name: requestModel.name,
       url: requestModel.url,

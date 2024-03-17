@@ -108,6 +108,7 @@ const kVSpacer20 = SizedBox(height: 20);
 const kTabAnimationDuration = Duration(milliseconds: 200);
 const kTabHeight = 45.0;
 const kHeaderHeight = 32.0;
+const kTopicHeaderHeight = 48.0;
 const kSegmentHeight = 24.0;
 const kTextButtonMinWidth = 44.0;
 
@@ -124,6 +125,20 @@ const kTableThemeData = DaviThemeData(
   ),
   header: HeaderThemeData(
     visible: false,
+  ),
+);
+const kMQTTTableThemeData = DaviThemeData(
+  columnDividerColor: kColorTransparent,
+  row: RowThemeData(
+    dividerColor: kColorTransparent,
+  ),
+  decoration: BoxDecoration(
+    border: Border(),
+  ),
+  header: HeaderThemeData(
+    columnDividerColor: kColorTransparent,
+    bottomBorderColor: kColorTransparent,
+    visible: true,
   ),
 );
 
@@ -245,12 +260,22 @@ final kColorHttpMethodDelete = Colors.red.shade800;
 
 enum RequestItemMenuOption { edit, delete, duplicate }
 
+enum ProtocolType { http, mqttv3 }
+
+enum RealtimeConnectionState {
+  connected,
+  connecting,
+  disconnected,
+  disconnecting
+}
+
 enum HTTPVerb { get, head, post, put, patch, delete }
 
 enum FormDataType { text, file }
 
-const kSupportedUriSchemes = ["https", "http"];
+const kSupportedUriSchemes = ["https", "http", "mqtt", "mqtts", "ws", "wss"];
 const kDefaultUriScheme = "https";
+
 const kMethodsWithBody = [
   HTTPVerb.post,
   HTTPVerb.put,
@@ -258,6 +283,7 @@ const kMethodsWithBody = [
   HTTPVerb.delete,
 ];
 
+const kDefaultProtocolType = ProtocolType.http;
 const kDefaultHttpMethod = HTTPVerb.get;
 const kDefaultContentType = ContentType.json;
 
@@ -515,10 +541,15 @@ const kCsvError =
     "There seems to be an issue rendering this CSV. Please raise an issue in API Dash GitHub repo so that we can resolve it.";
 
 const kHintTextUrlCard = "Enter API endpoint like https://$kDefaultUri/";
+const kHintTextClientIdCard = "Enter Client ID";
 const kLabelPlusNew = "+ New";
 const kLabelSend = "Send";
 const kLabelSending = "Sending..";
 const kLabelBusy = "Busy";
+const kLabelConnect = "Connect";
+const kLabelDisconnect = "Disconnect";
+const kLabelConnecting = "Connecting..";
+const kLabelDisconnecting = "Disconnecting..";
 const kLabelCopy = "Copy";
 const kLabelSave = "Save";
 const kLabelDownload = "Download";

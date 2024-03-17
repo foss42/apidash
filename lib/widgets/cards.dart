@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart';
 import 'menus.dart' show RequestCardMenu;
-import 'texts.dart' show MethodBox;
+import 'texts.dart' show MethodBox, ProtocolBox;
 
 class SidebarRequestCard extends StatelessWidget {
   const SidebarRequestCard({
     super.key,
     required this.id,
+    required this.protocol,
     required this.method,
     this.name,
     this.url,
@@ -24,6 +25,7 @@ class SidebarRequestCard extends StatelessWidget {
   });
 
   final String id;
+  final ProtocolType protocol;
   final String? name;
   final String? url;
   final HTTPVerb method;
@@ -82,7 +84,9 @@ class SidebarRequestCard extends StatelessWidget {
               height: 20,
               child: Row(
                 children: [
-                  MethodBox(method: method),
+                  protocol == ProtocolType.http
+                      ? MethodBox(method: method)
+                      : ProtocolBox(protocol: protocol),
                   kHSpacer4,
                   Expanded(
                     child: inEditMode
