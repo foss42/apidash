@@ -18,6 +18,22 @@ class PHPcURLCodeGen {
 
 """;
 
+  //specifying headers
+  String kTemplateHeaders = """
+
+\$headers = [{{headers}}];
+curl_setopt(\$request, CURLOPT_HTTPHEADER, \$headers);
+
+""";
+
+  //request template
+  String kTemplateRequest = """
+
+curl_setopt(\$request, CURLOPT_RETURNTRANSFER, 1);
+curl_setopt(\$request, {{method}}, 1);
+
+""";
+
 
   //ending template
   final String kStringRequestEnd = """
