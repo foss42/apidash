@@ -235,3 +235,27 @@ class SaveButton extends StatelessWidget {
     );
   }
 }
+
+class ClearResponseButton extends StatelessWidget {
+  const ClearResponseButton({
+    super.key,
+    this.onPressed,
+  });
+
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: 'Clear response',
+      child: TextButton(
+        style: TextButton.styleFrom(minimumSize: const Size(40, 40)),
+        onPressed: onPressed,
+        child: const Icon(
+          Icons.delete,
+          size: 20,
+        ),
+      ),
+    );
+  }
+}
