@@ -96,13 +96,14 @@ class RequestModel {
 
   RequestModel duplicate({
     required String id,
+    String? name,
   }) {
     return RequestModel(
       id: id,
+      protocol: protocol,
       method: method,
       url: url,
-      name: "$name (copy)",
-      protocol: protocol,
+      name: name ?? "${this.name} (copy)",
       description: description,
       requestHeaders: requestHeaders != null ? [...requestHeaders!] : null,
       requestParams: requestParams != null ? [...requestParams!] : null,
