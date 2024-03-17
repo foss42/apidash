@@ -34,8 +34,6 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
 
   List<Widget> getWidgets(ProtocolType protocol) {
     final List<Widget> httpURLWidgets = [
-      const DropdownButtonProtocol(),
-      kHSpacer20,
       const DropdownButtonHTTPMethod(),
       kHSpacer20,
       const Expanded(
@@ -49,8 +47,6 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
     ];
 
     final List<Widget> mqttv3URLWidgets = [
-      const DropdownButtonProtocol(),
-      kHSpacer20,
       const Expanded(
         child: URLTextField(),
       ),
