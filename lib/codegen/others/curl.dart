@@ -58,7 +58,7 @@ class cURLCodeGen {
       } else if (requestModel.hasFormData) {
         for (var formData in requestModel.formDataList) {
           var templateFormData = jj.Template(kTemplateFormData);
-          if (formData.name.isNotEmpty && formData.value.isNotEmpty) {
+          if (formData.name.isNotEmpty) {
             result += templateFormData.render({
               "name": formData.name,
               "value":
