@@ -260,5 +260,44 @@ void main() {
       expect(container.read(selectedIdEditStateProvider), isNotNull);
       expect((container.read(selectedIdEditStateProvider)).runtimeType, String);
     });
+
+    testWidgets(
+        'It should be set back to null when user taps outside name editor',
+        (tester) async {
+      await tester.pumpWidget(
+        const ProviderScope(
+          child: MaterialApp(
+            home: CollectionPane(),
+          ),
+        ),
+      );
+
+      // Grab the CollectionPane widget and its ProviderContainer
+      final collectionPane = tester.element(find.byType(CollectionPane));
+      final container = ProviderScope.containerOf(collectionPane);
+
+      // Tap on the three dots to open the request card menu
+      await tester.tap(find.byType(RequestList));
+      await tester.pump();
+      await tester.tap(find.byType(RequestItem));
+      await tester.pump();
+      await tester.tap(find.byIcon(Icons.more_vert).first);
+      await tester.pumpAndSettle();
+
+      // Tap on the "Rename" option in the menu
+      await tester.tap(find.text('Rename'));
+      await tester.pumpAndSettle();
+
+      // Verify that the selectedIdEditStateProvider is not null
+      expect(container.read(selectedIdEditStateProvider), isNotNull);
+      expect((container.read(selectedIdEditStateProvider)).runtimeType, String);
+
+      // Tap on the screen to simulate tapping outside the name editor
+      await tester.tap(find.byType(CollectionPane));
+      await tester.pumpAndSettle();
+
+      // Verify that the selectedIdEditStateProvider is null
+      expect(container.read(selectedIdEditStateProvider), null);
+    });
   });
 }
