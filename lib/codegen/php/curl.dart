@@ -11,6 +11,12 @@ class PHPcURLCodeGen {
 <?php
 
 """;
+
+  final String kTemplateUri = """
+\$uri = "{{uri}}";
+
+""";
+
   //initialising the request
   String kTemplateRequestInit = """
 
