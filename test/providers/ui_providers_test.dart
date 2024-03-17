@@ -230,5 +230,35 @@ void main() {
       final container = ProviderScope.containerOf(collectionPane);
       expect(container.read(selectedIdEditStateProvider), null);
     });
+
+    testWidgets(
+        'selectedIdEditStateProvider should not be null after rename button has been tapped',
+        (tester) async {
+      await tester.pumpWidget(
+        const ProviderScope(
+          child: MaterialApp(
+            home: CollectionPane(),
+          ),
+        ),
+      );
+
+      // Tap on the three dots to open the request card menu
+      await tester.tap(find.byType(RequestList));
+      await tester.pump();
+      await tester.tap(find.byType(RequestItem));
+      await tester.pump();
+      await tester.tap(find.byIcon(Icons.more_vert).first);
+      await tester.pumpAndSettle();
+
+      // Tap on the "Rename" option in the menu
+      await tester.tap(find.text('Rename'));
+      await tester.pumpAndSettle();
+
+      // Verify that the selectedIdEditStateProvider is not null
+      final collectionPane = tester.element(find.byType(CollectionPane));
+      final container = ProviderScope.containerOf(collectionPane);
+      expect(container.read(selectedIdEditStateProvider), isNotNull);
+      expect((container.read(selectedIdEditStateProvider)).runtimeType, String);
+    });
   });
 }
