@@ -60,6 +60,29 @@ var_dump(\$response);
 
 """;
 
+  String kFileClassString = """
+class File
+{
+    public string \$name;
+    public string \$filename;
+    public string \$content;
+
+    function __construct(\$name, \$filename)
+    {
+        \$this->name = \$name;
+        \$this->filename = \$filename;
+        \$available_content = file_get_contents(\$this->filename);
+        \$this->content = \$available_content ? \$available_content : "";
+    }
+}
+
+
+""";
+
+}
+
+""";
+
 
   //
   String kMultiPartBodyWithFiles = """
