@@ -205,16 +205,16 @@ class SettingsPage extends ConsumerWidget {
                 hoverColor: kColorTransparent,
                 title: const Text('Connection Timeout (seconds)'),
                 subtitle: Text(
-                    'Current value: ${settings.connectionTimeout} seconds'),
+                    'Current value: ${settings.connectionTimeout} milliseconds'),
                 trailing: SizedBox(
-                  width: 100, // Adjust width as needed
+                  width: 100,
                   child: TextFormField(
                     initialValue: settings.connectionTimeout.toString(),
                     keyboardType: TextInputType.number,
                     onChanged: (value) {
                       ref.read(settingsProvider.notifier).update(
                             connectionTimeout: int.tryParse(value) ??
-                                30, // Default to 30 seconds if parsing fails
+                                30,
                           );
                     },
                   ),

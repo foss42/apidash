@@ -164,14 +164,14 @@ class CollectionStateNotifier
     );
 
     RequestModel requestModel = state![id]!;
-
-    // set current model's isWorking to true and update state
+    SettingsModel settingsModel = ref.read(settingsProvider);
     var map = {...state!};
     map[id] = requestModel.copyWith(isWorking: true);
     state = map;
 
     (http.Response?, Duration?, String?)? responseRec = await request(
       requestModel,
+      settingsModel,
       defaultUriScheme: defaultUriScheme,
     );
     late final RequestModel newRequestModel;
