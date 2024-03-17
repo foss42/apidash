@@ -60,6 +60,13 @@ var_dump(\$response);
 
 """;
 
+  //template for generating unique boundary
+  String kBoundaryUniqueIdTemplate = """
+\$boundary = "{{uuid}}";
+
+""";
+
+  //
   String kFileClassString = """
 class File
 {
