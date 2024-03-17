@@ -1,5 +1,7 @@
+import 'package:apidash/providers/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:apidash/utils/utils.dart';
 import 'package:apidash/consts.dart';
@@ -231,6 +233,37 @@ class SaveButton extends StatelessWidget {
       label: const Text(
         kLabelSave,
         style: kTextStyleButton,
+      ),
+    );
+  }
+}
+
+class ClearResponseButton extends ConsumerWidget {
+  const ClearResponseButton({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    var sm = ScaffoldMessenger.of(context);
+    return Tooltip(
+      message: 'Clear response',
+      child: TextButton(
+        style: TextButton.styleFrom(minimumSize: const Size(40, 40)),
+        onPressed: () {
+          final selectedId = ref.watch(selectedIdStateProvider);
+          ref
+              .read(collectionStateNotifierProvider.notifier)
+              .clearResponse(selectedId!);
+          sm.hideCurrentSnackBar();
+          sm.showSnackBar(
+            const SnackBar(
+              content: Text('Response cleared'),
+            ),
+          );
+        },
+        child: const Icon(
+          Icons.delete,
+          size: 20,
+        ),
       ),
     );
   }

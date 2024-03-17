@@ -96,6 +96,29 @@ class CollectionStateNotifier
     state = map;
   }
 
+  void clearResponse(String id) {
+    var map = {...state!};
+    map[id] = RequestModel(
+      id: id,
+      method: state![id]!.method,
+      url: state![id]!.url,
+      name: state![id]!.name,
+      description: state![id]!.description,
+      requestTabIndex: state![id]!.requestTabIndex,
+      requestHeaders: state![id]!.requestHeaders,
+      requestParams: state![id]!.requestParams,
+      isHeaderEnabledList: state![id]!.isHeaderEnabledList,
+      isParamEnabledList: state![id]!.isParamEnabledList,
+      requestBodyContentType: state![id]!.requestBodyContentType,
+      requestBody: state![id]!.requestBody,
+      requestFormDataList: state![id]!.requestFormDataList,
+      responseStatus: null,
+      message: null,
+      responseModel: null,
+    );
+    state = map;
+  }
+
   void duplicate(String id) {
     final newId = getNewUuid();
 
