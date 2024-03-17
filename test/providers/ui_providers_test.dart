@@ -299,5 +299,35 @@ void main() {
       // Verify that the selectedIdEditStateProvider is null
       expect(container.read(selectedIdEditStateProvider), null);
     });
+    testWidgets("It should be properly disposed", (tester) async {
+      await tester.pumpWidget(
+        const ProviderScope(
+          child: MaterialApp(
+            home: CollectionPane(),
+          ),
+        ),
+      );
+
+      // Grab the Dashboard widget and its ProviderContainer
+      final collectionPane = tester.element(find.byType(CollectionPane));
+      final container = ProviderScope.containerOf(collectionPane);
+
+      // Pumping a different widget to remove the CollectionPane from the widget tree
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(body: Text('Foo')),
+        ),
+      );
+
+      // Verify that the ProviderContainer has been disposed
+      // by trying to read from disposed container
+      bool isDisposed = false;
+      try {
+        container.read(selectedIdEditStateProvider);
+      } catch (e) {
+        isDisposed = true;
+      }
+      expect(isDisposed, true);
+    });
   });
 }
