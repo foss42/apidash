@@ -18,10 +18,18 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
   late int seed;
   final random = Random.secure();
   late List<FormDataModel> rows;
+
   @override
   void initState() {
     super.initState();
     seed = random.nextInt(kRandMax);
+  }
+
+  void _onFieldChange(String selectedId) {
+    ref.read(collectionStateNotifierProvider.notifier).update(
+          selectedId,
+          requestFormDataList: rows,
+        );
   }
 
   @override
@@ -168,36 +176,49 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                   rows.removeAt(row.index);
                 }
                 _onFieldChange(selectedId!);
-                setState(() {});
               },
             );
           },
         ),
       ],
     );
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.background,
-        borderRadius: kBorderRadius12,
-      ),
-      margin: kP10,
-      child: Column(
-        children: [
-          Expanded(
-            child: DaviTheme(
-              data: kTableThemeData,
-              child: Davi<FormDataModel>(daviModelRows),
+    return Stack(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.background,
+            borderRadius: kBorderRadius12,
+          ),
+          margin: kP10,
+          child: Column(
+            children: [
+              Expanded(
+                child: DaviTheme(
+                  data: kTableThemeData,
+                  child: Davi<FormDataModel>(daviModelRows),
+                ),
+              ),
+            ],
+          ),
+        ),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 30),
+            child: ElevatedButton.icon(
+              onPressed: () {
+                rows.add(kFormDataEmptyModel);
+                _onFieldChange(selectedId!);
+              },
+              icon: const Icon(Icons.add),
+              label: const Text(
+                "Add Form Data",
+                style: kTextStyleButton,
+              ),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
-  }
-
-  void _onFieldChange(String selectedId) {
-    ref.read(collectionStateNotifierProvider.notifier).update(
-          selectedId,
-          requestFormDataList: rows,
-        );
   }
 }

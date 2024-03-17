@@ -160,22 +160,44 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
         ),
       ],
     );
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.background,
-        borderRadius: kBorderRadius12,
-      ),
-      margin: kP10,
-      child: Column(
-        children: [
-          Expanded(
-            child: DaviTheme(
-              data: kTableThemeData,
-              child: Davi<NameValueModel>(model),
+    return Stack(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.background,
+            borderRadius: kBorderRadius12,
+          ),
+          margin: kP10,
+          child: Column(
+            children: [
+              Expanded(
+                child: DaviTheme(
+                  data: kTableThemeData,
+                  child: Davi<NameValueModel>(model),
+                ),
+              ),
+            ],
+          ),
+        ),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 30),
+            child: ElevatedButton.icon(
+              onPressed: () {
+                rows.add(kNameValueEmptyModel);
+                isRowEnabledList.add(false);
+                _onFieldChange(selectedId!);
+              },
+              icon: const Icon(Icons.add),
+              label: const Text(
+                "Add Header",
+                style: kTextStyleButton,
+              ),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
