@@ -12,7 +12,7 @@ final StateNotifierProvider<ThemeStateNotifier, SettingsModel>
     StateNotifierProvider((ref) => ThemeStateNotifier(hiveHandler));
 
 class ThemeStateNotifier extends StateNotifier<SettingsModel> {
-  ThemeStateNotifier(this.hiveHandler) : super(SettingsModel()) {
+  ThemeStateNotifier(this.hiveHandler) : super(const SettingsModel()) {
     state = SettingsModel.fromJson(hiveHandler.settings);
   }
   final HiveHandler hiveHandler;
