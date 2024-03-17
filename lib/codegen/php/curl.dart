@@ -17,6 +17,17 @@ class PHPcURLCodeGen {
 
 """;
 
+  //defining query parameters
+  String kTemplateParams = """
+
+\$queryParams = [{{params}}];
+\$queryString = "?" . http_build_query(\$queryParams);
+if (count(\$queryParams) > 0) {
+    \$uri .= \$queryString;
+}
+
+""";
+
   //initialising the request
   String kTemplateRequestInit = """
 
