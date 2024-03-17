@@ -6,6 +6,28 @@ import 'package:apidash/models/models.dart' show RequestModel;
 import 'package:apidash/consts.dart';
 
 class PHPcURLCodeGen {
+  //starting template
+  final String kTemplateStart = """
+<?php
+
+""";
+  //initialising the request
+  String kTemplateRequestInit = """
+
+\$request = curl_init(\$uri);
+
+""";
+
+
+  //ending template
+  final String kStringRequestEnd = """
+\$response = curl_exec(\$request);
+curl_close(\$request);
+var_dump(\$response);
+
+""";
+
+
   //function for http verb to curl mapping
   String httpMethod(String methodName) {
     switch (methodName) {
