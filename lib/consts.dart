@@ -245,6 +245,8 @@ final kColorHttpMethodDelete = Colors.red.shade800;
 
 enum RequestItemMenuOption { edit, delete, duplicate }
 
+enum ProtocolType { http }
+
 enum HTTPVerb { get, head, post, put, patch, delete }
 
 enum FormDataType { text, file }
@@ -258,6 +260,7 @@ const kMethodsWithBody = [
   HTTPVerb.delete,
 ];
 
+const kDefaultProtocolType = ProtocolType.http;
 const kDefaultHttpMethod = HTTPVerb.get;
 const kDefaultContentType = ContentType.json;
 

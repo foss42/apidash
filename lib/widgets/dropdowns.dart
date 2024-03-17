@@ -47,6 +47,51 @@ class DropdownButtonHttpMethod extends StatelessWidget {
   }
 }
 
+class DropdownButtonProtocolType extends StatelessWidget {
+  const DropdownButtonProtocolType({
+    super.key,
+    this.protocolType,
+    this.onChanged,
+  });
+
+  final ProtocolType? protocolType;
+  final void Function(ProtocolType? value)? onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final surfaceColor = Theme.of(context).colorScheme.surface;
+    return DropdownButton<ProtocolType>(
+      focusColor: surfaceColor,
+      value: protocolType,
+      icon: const Icon(Icons.unfold_more_rounded),
+      elevation: 4,
+      underline: Container(
+        height: 0,
+      ),
+      borderRadius: kBorderRadius12,
+      onChanged: onChanged,
+      items: ProtocolType.values
+          .map<DropdownMenuItem<ProtocolType>>((ProtocolType value) {
+        return DropdownMenuItem<ProtocolType>(
+          value: value,
+          child: Padding(
+            padding: const EdgeInsets.only(left: 16),
+            child: Text(
+              value.name.toUpperCase(),
+              style: kCodeStyle.copyWith(
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? getDarkModeColor(Colors.white)
+                    : Colors.white,
+              ),
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
+}
+
 class DropdownButtonContentType extends StatelessWidget {
   const DropdownButtonContentType({
     super.key,
