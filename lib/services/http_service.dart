@@ -8,7 +8,7 @@ import 'package:apidash/consts.dart';
 
 Future<(http.Response?, Duration?, String?)> request(
   RequestModel requestModel,
-  SettingsModel settingsModel, // Pass SettingsModel instance
+  SettingsModel settingsModel,
   {
   String defaultUriScheme = kDefaultUriScheme,
 }) async {
