@@ -104,8 +104,8 @@ class _MobileDashboardState extends ConsumerState<MobileHome> {
         child: RequestEditorDefault(),
       ):
       SlidingUpPanel(
-        minHeight: MediaQuery.sizeOf(context).height * 0.05,
-        maxHeight: MediaQuery.sizeOf(context).height * 0.75,
+        minHeight: 42,
+        maxHeight: MediaQuery.sizeOf(context).height * 0.72,
         borderRadius: const BorderRadius.vertical(
             top: Radius.circular(20)
         ),
@@ -124,9 +124,8 @@ class _MobileDashboardState extends ConsumerState<MobileHome> {
                 child:
                 EditRequestPane(panelController: panelController,)
             ),
-            SendButton(panelController: panelController,),
-            const SizedBox(
-              height: 200,
+             const SizedBox(
+              height: 150,
             ),
           ],
         ),

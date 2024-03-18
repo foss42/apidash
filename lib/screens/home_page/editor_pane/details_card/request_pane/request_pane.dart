@@ -30,6 +30,7 @@ class EditRequestPane extends ConsumerWidget {
         false;
 
     return RequestPane(
+      panelController: panelController,
       selectedId: selectedId,
       codePaneVisible: codePaneVisible,
       tabIndex: tabIndex,

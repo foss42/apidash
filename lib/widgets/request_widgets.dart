@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
+import '../screens/home_page/editor_pane/url_card.dart';
 import 'tabs.dart';
 
 class RequestPane extends StatefulWidget {
@@ -12,6 +14,7 @@ class RequestPane extends StatefulWidget {
     this.onTapTabBar,
     required this.children,
     this.showIndicators = const [false, false, false],
+    this.panelController,
   });
 
   final String? selectedId;
@@ -21,6 +24,7 @@ class RequestPane extends StatefulWidget {
   final void Function(int)? onTapTabBar;
   final List<Widget> children;
   final List<bool> showIndicators;
+  final PanelController? panelController;
 
   @override
   State<RequestPane> createState() => _RequestPaneState();
@@ -54,7 +58,8 @@ class _RequestPaneState extends State<RequestPane>
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
+                if (!kIsMobile)
+                  Text(
                   "Request",
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
@@ -71,6 +76,8 @@ class _RequestPaneState extends State<RequestPane>
                         widget.codePaneVisible ? "Hide Code" : "View Code"),
                   ),
                 ),
+                if (kIsMobile)
+                  SendButton(panelController: widget.panelController,),
               ],
             ),
           ),
