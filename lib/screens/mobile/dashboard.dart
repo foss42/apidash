@@ -49,7 +49,7 @@ class _MobileDashboardState extends ConsumerState<MobileDashboard> {
               onTap: () {
                 Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(
-                      builder: (context) =>  MobileDashboard(
+                      builder: (context) => const MobileDashboard(
                         title: 'Requests',
                         scaffoldBody: CollectionPane(),
                       ),
