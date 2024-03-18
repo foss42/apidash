@@ -12,7 +12,7 @@ class FetchCodeGen {
 
   String kStringImportNode = """
 import fetch from 'node-fetch';
-{% if isFormDataRequest %}const fs = require('fs');{% endif %}
+{% if hasFormData %}const fs = require('fs');{% endif %}
 
 """;
 
@@ -73,29 +73,26 @@ fetch(url, options)
 
   String? getCode(
     RequestModel requestModel,
-    String defaultUriScheme,
   ) {
     try {
       jj.Template kNodejsImportTemplate = jj.Template(kStringImportNode);
       String importsData = kNodejsImportTemplate.render({
-        "isFormDataRequest": requestModel.isFormDataRequest,
+        "hasFormData": requestModel.hasFormData,
       });
 
       String result = isNodeJs ? importsData : "";
-      if (requestModel.isFormDataRequest) {
+      if (requestModel.hasFormData) {
         var templateMultiPartBody = jj.Template(kMultiPartBodyTemplate);
         result += templateMultiPartBody.render({
           "isNodeJs": isNodeJs,
           "fields_list": json.encode(requestModel.formDataMapList),
         });
       }
-      String url = requestModel.url;
-      if (!url.contains("://") && url.isNotEmpty) {
-        url = "$defaultUriScheme://$url";
-      }
-      var rM = requestModel.copyWith(url: url);
 
-      var harJson = requestModelToHARJsonRequest(rM, useEnabled: true);
+      var harJson = requestModelToHARJsonRequest(
+        requestModel,
+        useEnabled: true,
+      );
 
       var templateStart = jj.Template(kTemplateStart);
       result += templateStart.render({
@@ -108,8 +105,8 @@ fetch(url, options)
       if (headers.isNotEmpty) {
         var templateHeader = jj.Template(kTemplateHeader);
         var m = {};
-        if (requestModel.isFormDataRequest) {
-          m["Content-Type"] = "multipart/form-data";
+        if (requestModel.hasFormData) {
+          m[kHeaderContentType] = "multipart/form-data";
         }
         for (var i in headers) {
           m[i["name"]] = i["value"];
@@ -124,7 +121,7 @@ fetch(url, options)
         result += templateBody.render({
           "body": kEncoder.convert(harJson["postData"]["text"]),
         });
-      } else if (requestModel.isFormDataRequest) {
+      } else if (requestModel.hasFormData) {
         var templateBody = jj.Template(kTemplateBody);
         result += templateBody.render({
           "body": 'payload',

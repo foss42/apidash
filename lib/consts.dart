@@ -8,6 +8,7 @@ import 'package:davi/davi.dart';
 const kDiscordUrl = "https://bit.ly/heyfoss";
 const kGitUrl = "https://github.com/foss42/apidash";
 const kIssueUrl = "$kGitUrl/issues";
+const kDefaultUri = "api.apidash.dev";
 
 final kIsMacOS = !kIsWeb && Platform.isMacOS;
 final kIsWindows = !kIsWeb && Platform.isWindows;
@@ -265,13 +266,17 @@ enum CodegenLanguage {
   har("HAR", "json", "har"),
   dartHttp("Dart (http)", "dart", "dart"),
   dartDio("Dart (dio)", "dart", "dart"),
+  goHttp("Go (http)", "go", "go"),
   jsAxios("JavaScript (axios)", "javascript", "js"),
   jsFetch("JavaScript (fetch)", "javascript", "js"),
   nodejsAxios("node.js (axios)", "javascript", "js"),
   nodejsFetch("node.js (fetch)", "javascript", "js"),
   kotlinOkHttp("Kotlin (okhttp3)", "java", "kt"),
   pythonHttpClient("Python (http.client)", "python", "py"),
-  pythonRequests("Python (requests)", "python", "py");
+  pythonRequests("Python (requests)", "python", "py"),
+  rustActix("Rust (Actix Client)", "rust", "rs"),
+  rustReqwest("Rust (reqwest)", "rust", "rs"),
+  rustUreq("Rust (ureq)", "rust", "rs");
 
   const CodegenLanguage(this.label, this.codeHighlightLang, this.ext);
   final String label;
@@ -281,6 +286,8 @@ enum CodegenLanguage {
 
 const JsonEncoder kEncoder = JsonEncoder.withIndent('  ');
 const LineSplitter kSplitter = LineSplitter();
+
+const kHeaderContentType = "Content-Type";
 
 const kTypeApplication = 'application';
 // application
@@ -312,12 +319,15 @@ const kSubTypeSvg = 'svg+xml';
 const kTypeAudio = 'audio';
 const kTypeVideo = 'video';
 
+const kTypeMultipart = "multipart";
+const kSubTypeFormData = "form-data";
+
 const kSubTypeDefaultViewOptions = 'all';
 
 enum ContentType {
   json("$kTypeApplication/$kSubTypeJson"),
   text("$kTypeText/$kSubTypePlain"),
-  formdata("multipart/form-data");
+  formdata("$kTypeMultipart/$kSubTypeFormData");
 
   const ContentType(this.header);
   final String header;
@@ -378,6 +388,7 @@ const Map<String, Map<String, List<ResponseBodyView>>>
     kSubTypeDefaultViewOptions: kRawBodyViewOptions,
     kSubTypeCss: kCodeRawBodyViewOptions,
     kSubTypeHtml: kCodeRawBodyViewOptions,
+    kSubTypeCsv: kPreviewRawBodyViewOptions,
     kSubTypeJavascript: kCodeRawBodyViewOptions,
     kSubTypeMarkdown: kCodeRawBodyViewOptions,
     kSubTypeTextXml: kCodeRawBodyViewOptions,
@@ -495,7 +506,10 @@ const kAudioError =
 const kRaiseIssue =
     "\nPlease raise an issue in API Dash GitHub repo so that we can resolve it.";
 
-const kHintTextUrlCard = "Enter API endpoint like api.foss42.com/country/codes";
+const kCsvError =
+    "There seems to be an issue rendering this CSV. Please raise an issue in API Dash GitHub repo so that we can resolve it.";
+
+const kHintTextUrlCard = "Enter API endpoint like https://$kDefaultUri/";
 const kLabelPlusNew = "+ New";
 const kLabelSend = "Send";
 const kLabelSending = "Sending..";

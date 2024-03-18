@@ -231,4 +231,26 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text(kSvgError), findsOneWidget);
   });
+
+  testWidgets('Testing when type/subtype is text/csv', (tester) async {
+    String csvDataString =
+        'Id,Name,Age\n1,John Doe,40\n2,Dbestech,41\n3,Voldermort,71\n4,Joe Biden,80\n5,Ryo Hanamura,35';
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Previewer(
+            type: kTypeText,
+            subtype: kSubTypeCsv,
+            bytes: Uint8List.fromList([]),
+            body: csvDataString,
+          ),
+        ),
+      ),
+    );
+
+    expect(find.byType(DataTable), findsOneWidget);
+    expect(find.text('John Doe'), findsOneWidget);
+    expect(find.text('41'), findsOneWidget);
+  });
 }
