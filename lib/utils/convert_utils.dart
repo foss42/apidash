@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'dart:convert';
+import 'package:collection/collection.dart';
 import '../models/models.dart';
 import '../consts.dart';
 import 'package:http/http.dart' as http;
@@ -90,18 +91,22 @@ List<NameValueModel>? mapToRows(Map<String, String>? kvMap) {
   return finalRows;
 }
 
-List<Map<String, dynamic>>? rowsToFormDataMapList(
+List<Map<String, String>>? rowsToFormDataMapList(
   List<FormDataModel>? kvRows,
 ) {
   if (kvRows == null) {
     return null;
   }
-  List<Map<String, dynamic>> finalMap = kvRows
-      .map((FormDataModel formData) => {
-            "name": formData.name,
-            "value": formData.value,
-            "type": formData.type.name,
-          })
+  List<Map<String, String>> finalMap = kvRows
+      .map((FormDataModel formData) =>
+          (formData.name.trim().isEmpty && formData.value.trim().isEmpty)
+              ? null
+              : {
+                  "name": formData.name,
+                  "value": formData.value,
+                  "type": formData.type.name,
+                })
+      .whereNotNull()
       .toList();
   return finalMap;
 }

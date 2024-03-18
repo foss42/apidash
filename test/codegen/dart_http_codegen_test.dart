@@ -504,6 +504,373 @@ void main() async {
           codeGen.getCode(CodegenLanguage.dartHttp, requestModelPost3, "https"),
           expectedCode);
     });
+    test('POST 4', () {
+      const expectedCode = r"""import 'package:http/http.dart' as http;
+
+void main() async {
+  var uri = Uri.parse('https://api.apidash.dev/io/form');
+
+  final formDataList = [
+    {"name": "text", "value": "API", "type": "text"},
+    {"name": "sep", "value": "|", "type": "text"},
+    {"name": "times", "value": "3", "type": "text"}
+  ];
+  final request = http.MultipartRequest(
+    "POST",
+    uri,
+  );
+  for (var formData in formDataList) {
+    if (formData != null) {
+      final name = formData['name'];
+      final value = formData['value'];
+      final type = formData['type'];
+
+      if (name != null && value != null && type != null) {
+        if (type == 'text') {
+          request.fields.addAll({name: value});
+        } else {
+          request.files.add(
+            await http.MultipartFile.fromPath(
+              name,
+              value,
+            ),
+          );
+        }
+      } else {
+        print('Error: formData has null name, value, or type.');
+      }
+    } else {
+      print('Error: formData is null.');
+    }
+  }
+
+  final response = await request.send();
+  final responseBody = await response.stream.bytesToString();
+  int statusCode = response.statusCode;
+
+  if (statusCode >= 200 && statusCode < 300) {
+    print('Status Code: $statusCode');
+    print('Response Body: :$responseBody');
+  } else {
+    print('Error Status Code: $statusCode');
+    print('Error Response Body: :$responseBody');
+  }
+}
+""";
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.dartHttp, requestModelPost4, "https"),
+          expectedCode);
+    });
+    test('POST 5', () {
+      const expectedCode = r"""import 'package:http/http.dart' as http;
+
+void main() async {
+  var uri = Uri.parse('https://api.apidash.dev/io/form');
+
+  var headers = {'User-Agent': 'Test Agent'};
+
+  final formDataList = [
+    {"name": "text", "value": "API", "type": "text"},
+    {"name": "sep", "value": "|", "type": "text"},
+    {"name": "times", "value": "3", "type": "text"}
+  ];
+  final request = http.MultipartRequest(
+    "POST",
+    uri,
+  );
+  for (var formData in formDataList) {
+    if (formData != null) {
+      final name = formData['name'];
+      final value = formData['value'];
+      final type = formData['type'];
+
+      if (name != null && value != null && type != null) {
+        if (type == 'text') {
+          request.fields.addAll({name: value});
+        } else {
+          request.files.add(
+            await http.MultipartFile.fromPath(
+              name,
+              value,
+            ),
+          );
+        }
+      } else {
+        print('Error: formData has null name, value, or type.');
+      }
+    } else {
+      print('Error: formData is null.');
+    }
+  }
+
+  request.headers.addAll(headers);
+  final response = await request.send();
+  final responseBody = await response.stream.bytesToString();
+  int statusCode = response.statusCode;
+
+  if (statusCode >= 200 && statusCode < 300) {
+    print('Status Code: $statusCode');
+    print('Response Body: :$responseBody');
+  } else {
+    print('Error Status Code: $statusCode');
+    print('Error Response Body: :$responseBody');
+  }
+}
+""";
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.dartHttp, requestModelPost5, "https"),
+          expectedCode);
+    });
+    test('POST 6', () {
+      const expectedCode = r"""import 'package:http/http.dart' as http;
+
+void main() async {
+  var uri = Uri.parse('https://api.apidash.dev/io/img');
+
+  final formDataList = [
+    {"name": "token", "value": "xyz", "type": "text"},
+    {"name": "imfile", "value": "/Documents/up/1.png", "type": "file"}
+  ];
+  final request = http.MultipartRequest(
+    "POST",
+    uri,
+  );
+  for (var formData in formDataList) {
+    if (formData != null) {
+      final name = formData['name'];
+      final value = formData['value'];
+      final type = formData['type'];
+
+      if (name != null && value != null && type != null) {
+        if (type == 'text') {
+          request.fields.addAll({name: value});
+        } else {
+          request.files.add(
+            await http.MultipartFile.fromPath(
+              name,
+              value,
+            ),
+          );
+        }
+      } else {
+        print('Error: formData has null name, value, or type.');
+      }
+    } else {
+      print('Error: formData is null.');
+    }
+  }
+
+  final response = await request.send();
+  final responseBody = await response.stream.bytesToString();
+  int statusCode = response.statusCode;
+
+  if (statusCode >= 200 && statusCode < 300) {
+    print('Status Code: $statusCode');
+    print('Response Body: :$responseBody');
+  } else {
+    print('Error Status Code: $statusCode');
+    print('Error Response Body: :$responseBody');
+  }
+}
+""";
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.dartHttp, requestModelPost6, "https"),
+          expectedCode);
+    });
+    test('POST 7', () {
+      const expectedCode = r"""import 'package:http/http.dart' as http;
+
+void main() async {
+  var uri = Uri.parse('https://api.apidash.dev/io/img');
+
+  final formDataList = [
+    {"name": "token", "value": "xyz", "type": "text"},
+    {"name": "imfile", "value": "/Documents/up/1.png", "type": "file"}
+  ];
+  final request = http.MultipartRequest(
+    "POST",
+    uri,
+  );
+  for (var formData in formDataList) {
+    if (formData != null) {
+      final name = formData['name'];
+      final value = formData['value'];
+      final type = formData['type'];
+
+      if (name != null && value != null && type != null) {
+        if (type == 'text') {
+          request.fields.addAll({name: value});
+        } else {
+          request.files.add(
+            await http.MultipartFile.fromPath(
+              name,
+              value,
+            ),
+          );
+        }
+      } else {
+        print('Error: formData has null name, value, or type.');
+      }
+    } else {
+      print('Error: formData is null.');
+    }
+  }
+
+  final response = await request.send();
+  final responseBody = await response.stream.bytesToString();
+  int statusCode = response.statusCode;
+
+  if (statusCode >= 200 && statusCode < 300) {
+    print('Status Code: $statusCode');
+    print('Response Body: :$responseBody');
+  } else {
+    print('Error Status Code: $statusCode');
+    print('Error Response Body: :$responseBody');
+  }
+}
+""";
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.dartHttp, requestModelPost7, "https"),
+          expectedCode);
+    });
+    test('POST 8', () {
+      const expectedCode = r"""import 'package:http/http.dart' as http;
+
+void main() async {
+  var uri = Uri.parse('https://api.apidash.dev/io/form');
+
+  var queryParams = {
+    'size': '2',
+    'len': '3',
+  };
+  uri = uri.replace(queryParameters: queryParams);
+
+  final formDataList = [
+    {"name": "text", "value": "API", "type": "text"},
+    {"name": "sep", "value": "|", "type": "text"},
+    {"name": "times", "value": "3", "type": "text"}
+  ];
+  final request = http.MultipartRequest(
+    "POST",
+    uri,
+  );
+  for (var formData in formDataList) {
+    if (formData != null) {
+      final name = formData['name'];
+      final value = formData['value'];
+      final type = formData['type'];
+
+      if (name != null && value != null && type != null) {
+        if (type == 'text') {
+          request.fields.addAll({name: value});
+        } else {
+          request.files.add(
+            await http.MultipartFile.fromPath(
+              name,
+              value,
+            ),
+          );
+        }
+      } else {
+        print('Error: formData has null name, value, or type.');
+      }
+    } else {
+      print('Error: formData is null.');
+    }
+  }
+
+  final response = await request.send();
+  final responseBody = await response.stream.bytesToString();
+  int statusCode = response.statusCode;
+
+  if (statusCode >= 200 && statusCode < 300) {
+    print('Status Code: $statusCode');
+    print('Response Body: :$responseBody');
+  } else {
+    print('Error Status Code: $statusCode');
+    print('Error Response Body: :$responseBody');
+  }
+}
+""";
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.dartHttp, requestModelPost8, "https"),
+          expectedCode);
+    });
+    test('POST 9', () {
+      const expectedCode = r"""import 'package:http/http.dart' as http;
+
+void main() async {
+  var uri = Uri.parse('https://api.apidash.dev/io/img');
+
+  var queryParams = {
+    'size': '2',
+    'len': '3',
+  };
+  uri = uri.replace(queryParameters: queryParams);
+
+  var headers = {
+    'User-Agent': 'Test Agent',
+    'Keep-Alive': 'true',
+  };
+
+  final formDataList = [
+    {"name": "token", "value": "xyz", "type": "text"},
+    {"name": "imfile", "value": "/Documents/up/1.png", "type": "file"}
+  ];
+  final request = http.MultipartRequest(
+    "POST",
+    uri,
+  );
+  for (var formData in formDataList) {
+    if (formData != null) {
+      final name = formData['name'];
+      final value = formData['value'];
+      final type = formData['type'];
+
+      if (name != null && value != null && type != null) {
+        if (type == 'text') {
+          request.fields.addAll({name: value});
+        } else {
+          request.files.add(
+            await http.MultipartFile.fromPath(
+              name,
+              value,
+            ),
+          );
+        }
+      } else {
+        print('Error: formData has null name, value, or type.');
+      }
+    } else {
+      print('Error: formData is null.');
+    }
+  }
+
+  request.headers.addAll(headers);
+  final response = await request.send();
+  final responseBody = await response.stream.bytesToString();
+  int statusCode = response.statusCode;
+
+  if (statusCode >= 200 && statusCode < 300) {
+    print('Status Code: $statusCode');
+    print('Response Body: :$responseBody');
+  } else {
+    print('Error Status Code: $statusCode');
+    print('Error Response Body: :$responseBody');
+  }
+}
+""";
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.dartHttp, requestModelPost9, "https"),
+          expectedCode);
+    });
+
   });
 
   group('PUT Request', () {
