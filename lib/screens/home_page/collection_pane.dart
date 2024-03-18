@@ -34,10 +34,11 @@ class CollectionPane extends ConsumerWidget {
                   onPressed: savingData
                       ? null
                       : () async {
+                          sm.hideCurrentSnackBar();
+                          sm.showSnackBar(getSnackBar("Saving"));
                           await ref
                               .read(collectionStateNotifierProvider.notifier)
                               .saveData();
-
                           sm.hideCurrentSnackBar();
                           sm.showSnackBar(getSnackBar("Saved"));
                         },
