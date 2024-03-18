@@ -21,6 +21,8 @@ class SidebarRequestCard extends StatelessWidget {
     this.focusNode,
     this.onTapOutsideNameEditor,
     this.onMenuSelected,
+    this.onLongPress,
+    this.disableMenu = false,
   });
 
   final String id;
@@ -37,6 +39,8 @@ class SidebarRequestCard extends StatelessWidget {
   final FocusNode? focusNode;
   final Function()? onTapOutsideNameEditor;
   final Function(RequestItemMenuOption)? onMenuSelected;
+  final void Function()? onLongPress;
+  final bool disableMenu;
 
   @override
   Widget build(BuildContext context) {
@@ -69,6 +73,7 @@ class SidebarRequestCard extends StatelessWidget {
           hoverColor: colorVariant,
           focusColor: colorVariant.withOpacity(0.5),
           onTap: inEditMode ? null : onTap,
+          onLongPress: inEditMode ? null : onLongPress,
           // onDoubleTap: inEditMode ? null : onDoubleTap,
           onSecondaryTap: onSecondaryTap,
           child: Padding(
@@ -113,6 +118,7 @@ class SidebarRequestCard extends StatelessWidget {
                             overflow: TextOverflow.fade,
                           ),
                   ),
+                  if(!disableMenu)
                   Visibility(
                     visible: isSelected && !inEditMode,
                     child: SizedBox(
