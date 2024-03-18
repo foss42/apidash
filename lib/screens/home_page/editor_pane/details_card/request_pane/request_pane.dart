@@ -17,11 +17,14 @@ class EditRequestPane extends ConsumerWidget {
         selectedRequestModelProvider.select((value) => value?.requestTabIndex));
 
     final headerLength = ref.watch(selectedRequestModelProvider
-        .select((value) => value?.headersMap.length));
+            .select((value) => value?.headersMap.length)) ??
+        0;
     final paramLength = ref.watch(selectedRequestModelProvider
-        .select((value) => value?.paramsMap.length));
-    final bodyLength = ref.watch(selectedRequestModelProvider
-        .select((value) => value?.requestBody?.length));
+            .select((value) => value?.paramsMap.length)) ??
+        0;
+    final hasBody = ref.watch(
+            selectedRequestModelProvider.select((value) => value?.hasBody)) ??
+        false;
 
     return RequestPane(
       selectedId: selectedId,
@@ -37,9 +40,9 @@ class EditRequestPane extends ConsumerWidget {
             .update(selectedId!, requestTabIndex: index);
       },
       showIndicators: [
-        paramLength != null && paramLength > 0,
-        headerLength != null && headerLength > 0,
-        bodyLength != null && bodyLength > 0,
+        paramLength > 0,
+        headerLength > 0,
+        hasBody,
       ],
       children: const [
         EditRequestURLParams(),

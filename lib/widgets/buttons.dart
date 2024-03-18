@@ -47,36 +47,37 @@ class CopyButton extends StatelessWidget {
 class SendRequestButton extends StatelessWidget {
   const SendRequestButton({
     super.key,
-    required this.selectedId,
-    required this.sentRequestId,
+    required this.isWorking,
     required this.onTap,
   });
 
-  final String? selectedId;
-  final String? sentRequestId;
+  final bool isWorking;
   final void Function() onTap;
 
   @override
   Widget build(BuildContext context) {
-    bool disable = sentRequestId != null;
     return FilledButton(
-      onPressed: disable ? null : onTap,
+      onPressed: isWorking ? null : onTap,
       child: Row(
         mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            disable
-                ? (selectedId == sentRequestId ? kLabelSending : kLabelBusy)
-                : kLabelSend,
-            style: kTextStyleButton,
-          ),
-          if (!disable) kHSpacer10,
-          if (!disable)
-            const Icon(
-              size: 16,
-              Icons.send,
-            ),
-        ],
+        children: isWorking
+            ? const [
+                Text(
+                  kLabelSending,
+                  style: kTextStyleButton,
+                ),
+              ]
+            : const [
+                Text(
+                  kLabelSend,
+                  style: kTextStyleButton,
+                ),
+                kHSpacer10,
+                Icon(
+                  size: 16,
+                  Icons.send,
+                ),
+              ],
       ),
     );
   }
@@ -230,6 +231,30 @@ class SaveButton extends StatelessWidget {
       label: const Text(
         kLabelSave,
         style: kTextStyleButton,
+      ),
+    );
+  }
+}
+
+class ClearResponseButton extends StatelessWidget {
+  const ClearResponseButton({
+    super.key,
+    this.onPressed,
+  });
+
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: 'Clear response',
+      child: TextButton(
+        style: TextButton.styleFrom(minimumSize: const Size(40, 40)),
+        onPressed: onPressed,
+        child: const Icon(
+          Icons.delete,
+          size: 20,
+        ),
       ),
     );
   }

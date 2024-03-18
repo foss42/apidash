@@ -65,40 +65,69 @@ class SettingsPage extends ConsumerWidget {
                 hoverColor: kColorTransparent,
                 title: const Text('Default URI Scheme'),
                 subtitle: Text(
-                    'api.foss42.com → ${settings.defaultUriScheme}://api.foss42.com'),
-                trailing: DropdownMenu(
-                    onSelected: (value) {
-                      ref
-                          .read(settingsProvider.notifier)
-                          .update(defaultUriScheme: value);
-                    },
-                    initialSelection: settings.defaultUriScheme,
-                    dropdownMenuEntries: kSupportedUriSchemes
-                        .map<DropdownMenuEntry<String>>((value) {
-                      return DropdownMenuEntry<String>(
-                        value: value,
-                        label: value,
-                      );
-                    }).toList()),
+                    '$kDefaultUri → ${settings.defaultUriScheme}://$kDefaultUri'),
+                trailing: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                    borderRadius: kBorderRadius8,
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      borderRadius: kBorderRadius8,
+                      onChanged: (value) {
+                        ref
+                            .read(settingsProvider.notifier)
+                            .update(defaultUriScheme: value);
+                      },
+                      value: settings.defaultUriScheme,
+                      items: kSupportedUriSchemes
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Padding(
+                            padding: kP10,
+                            child: Text(value),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ),
               ),
               ListTile(
                 contentPadding: kPb10,
                 hoverColor: kColorTransparent,
                 title: const Text('Default Code Generator'),
-                trailing: DropdownMenu(
-                    onSelected: (value) {
-                      ref
-                          .read(settingsProvider.notifier)
-                          .update(defaultCodeGenLang: value);
-                    },
-                    initialSelection: settings.defaultCodeGenLang,
-                    dropdownMenuEntries: CodegenLanguage.values
-                        .map<DropdownMenuEntry<CodegenLanguage>>((value) {
-                      return DropdownMenuEntry<CodegenLanguage>(
-                        value: value,
-                        label: value.label,
-                      );
-                    }).toList()),
+                trailing: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                    borderRadius: kBorderRadius8,
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<CodegenLanguage>(
+                      borderRadius: kBorderRadius8,
+                      value: settings.defaultCodeGenLang,
+                      onChanged: (value) {
+                        ref
+                            .read(settingsProvider.notifier)
+                            .update(defaultCodeGenLang: value);
+                      },
+                      items: CodegenLanguage.values.map((value) {
+                        return DropdownMenuItem<CodegenLanguage>(
+                          value: value,
+                          child: Padding(
+                            padding: kP10,
+                            child: Text(value.label),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ),
               ),
               CheckboxListTile(
                 contentPadding: EdgeInsets.zero,
