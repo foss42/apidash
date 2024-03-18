@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:apidash/consts.dart';
+import 'package:apidash/models/form_data_model.dart';
 
 import '../../models/request_model.dart';
 
@@ -28,6 +29,19 @@ class CLibcurlCodeGen {
     return method == HTTPVerb.post || method == HTTPVerb.put || method == HTTPVerb.patch;
   }
 
+  String getPostFieldsFromFormData(List<FormDataModel> formDataList) {
+    StringBuffer postFields = StringBuffer();
+    for (var formData in formDataList) {
+      if (formData.type == FormDataType.text) {
+        postFields.write("${formData.name}=${Uri.encodeComponent(formData.value)}&");
+      } else if (formData.type == FormDataType.file) {
+        // Handle file upload
+        postFields.write("${formData.name}=${Uri.encodeComponent(formData.value)}&");
+      }
+    }
+    return postFields.toString();
+  }
+
   String getCode(RequestModel requestModel, String defaultUriScheme) {
     try {
       StringBuffer result = StringBuffer();
@@ -36,10 +50,6 @@ class CLibcurlCodeGen {
       result.writeln('#include <stdio.h>');
       result.writeln('#include <stdlib.h>');
       result.writeln('#include <curl/curl.h>\n');
-
-      // Compiling instructions
-      result.writeln('/*\nCompiling with libcurl');
-      result.writeln('\$ gcc <filename>.c -lcurl -o <executable-name>\n*/\n');
 
       // Main function
       result.writeln('int main() {');
@@ -74,10 +84,13 @@ class CLibcurlCodeGen {
       }
       result.writeln('    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);\n');
 
-      // Set request body if exists
-      var requestBody = requestModel.requestBody;
-      if (postableMethod(requestModel.method) && requestBody != null && requestBody.isNotEmpty) {
-        Map postFields = jsonDecode(requestBody);
+      if (postableMethod(requestModel.method)) {
+        String postFields = "";
+        if (requestModel.hasJsonData) {
+          postFields = jsonDecode(requestModel.requestBody!);
+        } else if (requestModel.hasFormData) {
+          postFields = getPostFieldsFromFormData(requestModel.formDataList);
+        }
 
         result.writeln('    curl_easy_setopt(curl, CURLOPT_POST, 1L);');
         result.writeln(
