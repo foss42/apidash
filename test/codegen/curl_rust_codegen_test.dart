@@ -135,7 +135,7 @@ fn main() {
   easy.get(true).unwrap();
 
   let mut list = List::new();
-  list.append("User-Agent: Test Agent");
+  list.append("User-Agent: Test Agent").unwrap();
   easy.http_headers(list).unwrap();
   
   {
@@ -169,7 +169,7 @@ fn main() {
   easy.get(true).unwrap();
 
   let mut list = List::new();
-  list.append("User-Agent: Test Agent");
+  list.append("User-Agent: Test Agent").unwrap();
   easy.http_headers(list).unwrap();
   
   {
@@ -232,7 +232,7 @@ fn main() {
   easy.get(true).unwrap();
 
   let mut list = List::new();
-  list.append("User-Agent: Test Agent");
+  list.append("User-Agent: Test Agent").unwrap();
   easy.http_headers(list).unwrap();
   
   {
@@ -295,7 +295,7 @@ fn main() {
   easy.get(true).unwrap();
 
   let mut list = List::new();
-  list.append("User-Agent: Test Agent");
+  list.append("User-Agent: Test Agent").unwrap();
   easy.http_headers(list).unwrap();
   
   {
@@ -329,7 +329,7 @@ fn main() {
   easy.get(true).unwrap();
 
   let mut list = List::new();
-  list.append("User-Agent: Test Agent");
+  list.append("User-Agent: Test Agent").unwrap();
   easy.http_headers(list).unwrap();
   
   {
@@ -354,7 +354,6 @@ fn main() {
     test('GET12', () {
       const expectedCode = r"""
 use curl::easy::Easy;
-use curl::easy::List;
 
 fn main() {
   let mut easy = Easy::new();
@@ -461,7 +460,7 @@ fn main() {
 }"#.as_bytes()).unwrap();
 
   let mut list = List::new();
-  list.append("Content-Type: text/plain");
+  list.append("Content-Type: text/plain").unwrap();
   easy.http_headers(list).unwrap();
   
   {
@@ -505,7 +504,7 @@ fn main() {
 }).to_string().as_bytes()).unwrap();
 
   let mut list = List::new();
-  list.append("Content-Type: application/json");
+  list.append("Content-Type: application/json").unwrap();
   easy.http_headers(list).unwrap();
   
   {
@@ -544,8 +543,8 @@ fn main() {
 }).to_string().as_bytes()).unwrap();
 
   let mut list = List::new();
-  list.append("User-Agent: Test Agent");
-  list.append("Content-Type: application/json");
+  list.append("User-Agent: Test Agent").unwrap();
+  list.append("Content-Type: application/json").unwrap();
   easy.http_headers(list).unwrap();
   
   {
@@ -582,17 +581,17 @@ fn main() {
   
   form.part("text")
     .contents(b"API")
-    .add();
+    .add().unwrap();
   
   form.part("sep")
     .contents(b"|")
-    .add();
+    .add().unwrap();
   
   form.part("times")
     .contents(b"3")
-    .add();
+    .add().unwrap();
   
-  easy.httppost(form);
+  easy.httppost(form).unwrap();
     {
     let mut transfer = easy.transfer();
     transfer.write_function(|new_data| {
@@ -627,19 +626,19 @@ fn main() {
   
   form.part("text")
     .contents(b"API")
-    .add();
+    .add().unwrap();
   
   form.part("sep")
     .contents(b"|")
-    .add();
+    .add().unwrap();
   
   form.part("times")
     .contents(b"3")
-    .add();
+    .add().unwrap();
   
-  easy.httppost(form);
+  easy.httppost(form).unwrap();
     let mut list = List::new();
-  list.append("User-Agent: Test Agent");
+  list.append("User-Agent: Test Agent").unwrap();
   easy.http_headers(list).unwrap();
   
   {
@@ -676,13 +675,13 @@ fn main() {
   
   form.part("token")
     .contents(b"xyz")
-    .add();
+    .add().unwrap();
   
   form.part("imfile")
     .file("/Documents/up/1.png")
-    .add();
+    .add().unwrap();
   
-  easy.httppost(form);
+  easy.httppost(form).unwrap();
     {
     let mut transfer = easy.transfer();
     transfer.write_function(|new_data| {
@@ -717,13 +716,13 @@ fn main() {
   
   form.part("token")
     .contents(b"xyz")
-    .add();
+    .add().unwrap();
   
   form.part("imfile")
     .file("/Documents/up/1.png")
-    .add();
+    .add().unwrap();
   
-  easy.httppost(form);
+  easy.httppost(form).unwrap();
     {
     let mut transfer = easy.transfer();
     transfer.write_function(|new_data| {
@@ -758,17 +757,17 @@ fn main() {
   
   form.part("text")
     .contents(b"API")
-    .add();
+    .add().unwrap();
   
   form.part("sep")
     .contents(b"|")
-    .add();
+    .add().unwrap();
   
   form.part("times")
     .contents(b"3")
-    .add();
+    .add().unwrap();
   
-  easy.httppost(form);
+  easy.httppost(form).unwrap();
     {
     let mut transfer = easy.transfer();
     transfer.write_function(|new_data| {
@@ -803,16 +802,16 @@ fn main() {
   
   form.part("token")
     .contents(b"xyz")
-    .add();
+    .add().unwrap();
   
   form.part("imfile")
     .file("/Documents/up/1.png")
-    .add();
+    .add().unwrap();
   
-  easy.httppost(form);
+  easy.httppost(form).unwrap();
     let mut list = List::new();
-  list.append("User-Agent: Test Agent");
-  list.append("Keep-Alive: true");
+  list.append("User-Agent: Test Agent").unwrap();
+  list.append("Keep-Alive: true").unwrap();
   easy.http_headers(list).unwrap();
   
   {
@@ -855,7 +854,7 @@ fn main() {
 }).to_string().as_bytes()).unwrap();
 
   let mut list = List::new();
-  list.append("Content-Type: application/json");
+  list.append("Content-Type: application/json").unwrap();
   easy.http_headers(list).unwrap();
   
   {
@@ -898,7 +897,7 @@ fn main() {
 }).to_string().as_bytes()).unwrap();
 
   let mut list = List::new();
-  list.append("Content-Type: application/json");
+  list.append("Content-Type: application/json").unwrap();
   easy.http_headers(list).unwrap();
   
   {
@@ -970,7 +969,7 @@ fn main() {
 }).to_string().as_bytes()).unwrap();
 
   let mut list = List::new();
-  list.append("Content-Type: application/json");
+  list.append("Content-Type: application/json").unwrap();
   easy.http_headers(list).unwrap();
   
   {

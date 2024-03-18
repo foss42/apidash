@@ -1,5 +1,6 @@
 import 'package:jinja/jinja.dart' as jj;
-import 'package:apidash/utils/utils.dart' show getValidRequestUri, requestModelToHARJsonRequest;
+import 'package:apidash/utils/utils.dart'
+    show getValidRequestUri, requestModelToHARJsonRequest;
 import 'package:apidash/models/models.dart' show RequestModel;
 import 'package:apidash/consts.dart';
 
@@ -31,13 +32,13 @@ fn main() {
 
 """;
 
-  String kTemplateRawBody ="""
+  String kTemplateRawBody = """
   easy.post_fields_copy(r#"{{body}}"#.as_bytes()).unwrap();
 
 
 """;
 
-  String kTemplateJsonBody ="""
+  String kTemplateJsonBody = """
   easy.post_fields_copy(json!({{body}}).to_string().as_bytes()).unwrap();
 
 
@@ -48,14 +49,14 @@ fn main() {
   {% for field in fields %}
   form.part("{{field.name}}")
     {% if field.type == "file" %}.file("{{field.value}}"){% else %}.contents(b"{{field.value}}"){% endif %}
-    .add();
+    .add().unwrap();
   {% endfor %}
-  easy.httppost(form);
+  easy.httppost(form).unwrap();
   """;
 
   String kTemplateHeader = """
   {% if headers %}let mut list = List::new();{% for header, value in headers %}
-  list.append("{{header}}: {{value}}");{% endfor %}
+  list.append("{{header}}: {{value}}").unwrap();{% endfor %}
   easy.http_headers(list).unwrap();
   {% endif %}
 
@@ -86,7 +87,9 @@ fn main() {
 
       result += jj.Template(kTemplateStart).render({
         "hasJsonBody": requestModel.hasJsonData,
-        "hasHeaders": requestModel.enabledRequestHeaders != null || requestModel.hasBody
+        "hasHeaders": (requestModel.enabledRequestHeaders != null &&
+                requestModel.enabledRequestHeaders!.isNotEmpty) ||
+            requestModel.hasBody
       });
 
       var rec = getValidRequestUri(
