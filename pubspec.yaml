@@ -16,7 +16,6 @@ dependencies:
   riverpod: ^2.5.1  
   uuid: ^4.3.3
   davi: ^3.4.1
-  http: ^1.2.1
   http_parser: ^4.0.2
   collection: ^1.17.2
   google_fonts: ^6.2.1
@@ -56,6 +55,7 @@ dependencies:
   dart_style: ^2.3.6
   json_text_field: ^1.1.0
   csv: ^6.0.0
+  dio: ^5.4.1
 
 dependency_overrides:
   web: ^0.5.0
