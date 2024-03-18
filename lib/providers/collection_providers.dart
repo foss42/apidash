@@ -7,6 +7,8 @@ import '../utils/utils.dart' show getNewUuid, collectionToHAR;
 import '../consts.dart';
 import 'package:http/http.dart' as http;
 
+final deleteMultipleRequestsProvider = StateProvider<List<String>>((ref) => <String>[]);
+
 final selectedIdStateProvider = StateProvider<String?>((ref) => null);
 
 final selectedRequestModelProvider = StateProvider<RequestModel?>((ref) {
@@ -72,6 +74,25 @@ class CollectionStateNotifier
     final itemId = itemIds.removeAt(oldIdx);
     itemIds.insert(newIdx, itemId);
     ref.read(requestSequenceProvider.notifier).state = [...itemIds];
+  }
+
+  void deleteSelected(){
+    final deleteItems = ref.read(deleteMultipleRequestsProvider);
+    final itemIds = ref.read(requestSequenceProvider);
+    final selected = ref.read(selectedIdStateProvider);
+
+    itemIds.removeWhere((element) => deleteItems.contains(element));
+
+    ref.read(requestSequenceProvider.notifier).state = [...itemIds];
+    ref.read(deleteMultipleRequestsProvider.notifier).state = [];
+
+    if(!itemIds.contains(selected)){
+      ref.read(selectedIdStateProvider.notifier).state = itemIds.first;
+    }
+
+    var map = {...state!};
+    map.removeWhere((key, value) => deleteItems.contains(key));
+    state = map;
   }
 
   void remove(String id) {
