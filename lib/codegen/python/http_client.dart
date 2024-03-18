@@ -116,7 +116,7 @@ body = b'\r\n'.join(dataList)
           }
         }
 
-        if (requestModel.hasData) {
+        if (requestModel.hasBody) {
           hasBody = true;
           if (requestModel.hasJsonData || requestModel.hasTextData) {
             var templateBody = jj.Template(kTemplateBody);

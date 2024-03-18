@@ -99,7 +99,7 @@ func main() {
 
       var templateStart = jj.Template(kTemplateStart);
       result += templateStart.render({
-        "hasBody": requestModel.hasData,
+        "hasBody": requestModel.hasBody,
         "hasFormData": requestModel.hasFormData,
         "hasFileInFormData": requestModel.hasFileInFormData,
       });
@@ -144,7 +144,7 @@ func main() {
         });
 
         var headersList = requestModel.enabledRequestHeaders;
-        if (headersList != null || requestModel.hasData) {
+        if (headersList != null || requestModel.hasBody) {
           var headers = requestModel.enabledHeadersMap;
           if (requestModel.hasJsonData || requestModel.hasTextData) {
             headers.putIfAbsent(kHeaderContentType,
