@@ -1,11 +1,14 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'settings_providers.dart';
-import 'ui_providers.dart';
+import 'package:http/http.dart' as http;
+
+import '../consts.dart';
 import '../models/models.dart';
 import '../services/services.dart' show hiveHandler, HiveHandler, request;
 import '../utils/utils.dart' show getNewUuid, collectionToHAR;
-import '../consts.dart';
-import 'package:http/http.dart' as http;
+import 'settings_providers.dart';
+import 'ui_providers.dart';
 
 final selectedIdStateProvider = StateProvider<String?>((ref) => null);
 
@@ -51,6 +54,27 @@ class CollectionStateNotifier
 
   RequestModel? getRequestModel(String id) {
     return state?[id];
+  }
+
+  void filter(String query) {
+    ref.read(searchRequestsProvider.notifier).update((state) => true);
+
+    if (query == '') {
+      loadData();
+      ref.read(requestSequenceProvider.notifier).state = [
+        ...state!.keys,
+      ];
+    } else {
+      final map = {...state!};
+      map.removeWhere((key, value) =>
+          !(value.name.toLowerCase().contains(query.toLowerCase()) ||
+              value.url.toLowerCase().contains(query.toLowerCase())));
+      ref
+          .read(requestSequenceProvider.notifier).state = [...map.keys];
+      state = map;
+    }
+
+    ref.read(searchRequestsProvider.notifier).update((state) => false);
   }
 
   void add() {

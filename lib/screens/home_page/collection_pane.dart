@@ -1,30 +1,105 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:apidash/consts.dart';
+import 'package:apidash/models/models.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
-import 'package:apidash/models/models.dart';
-import 'package:apidash/consts.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class CollectionPane extends ConsumerWidget {
-  const CollectionPane({
+  CollectionPane({
     super.key,
   });
+
+  final textEditController = TextEditingController();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var sm = ScaffoldMessenger.of(context);
     final collection = ref.watch(collectionStateNotifierProvider);
     final savingData = ref.watch(saveDataStateProvider);
+
     if (collection == null) {
       return const Center(
         child: CircularProgressIndicator(),
       );
     }
+
     return Padding(
       padding: kIsMacOS ? kP24CollectionPane : kP8CollectionPane,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          Container(
+            height: 35,
+            margin: const EdgeInsets.symmetric(horizontal: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 5),
+            decoration: BoxDecoration(
+              borderRadius: kBorderRadius8,
+              border: Border.all(
+                color: Theme.of(context).colorScheme.surfaceVariant,
+                width: 1,
+              ),
+            ),
+            alignment: Alignment.center,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                const Icon(
+                  Icons.search_rounded,
+                  size: 18,
+                ),
+                kHSpacer5,
+                Expanded(
+                  child: SizedBox(
+                    height: 35,
+                    child: TextField(
+                      onChanged: (value) => ref
+                          .read(collectionStateNotifierProvider.notifier)
+                          .filter(value.trim()),
+                      controller: textEditController,
+                      decoration: const InputDecoration(
+                        constraints: BoxConstraints(
+                          maxHeight: 35,
+                          minHeight: 35,
+                        ),
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.only(
+                          bottom: 16,
+                          right: 5,
+                          left: 5,
+                        ),
+                        counterText: '',
+                      ),
+                      // cursorHeight: 12,
+                      maxLines: 1,
+                      maxLength: 150,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        // height: 0.1,
+                      ),
+                    ),
+                  ),
+                ),
+                kHSpacer5,
+                if (textEditController.text != '')
+                  GestureDetector(
+                    onTap: () {
+                      textEditController.text = '';
+                      ref
+                          .read(collectionStateNotifierProvider.notifier)
+                          .filter('');
+                      },
+                    child: const Icon(
+                      Icons.close,
+                      size: 18,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          kVSpacer8,
           Padding(
             padding: kPr8CollectionPane,
             child: Wrap(
