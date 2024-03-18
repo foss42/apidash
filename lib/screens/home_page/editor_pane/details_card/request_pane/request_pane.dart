@@ -1,14 +1,17 @@
+import 'package:apidash/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'request_headers.dart';
 import 'request_params.dart';
 import 'request_body.dart';
 
 class EditRequestPane extends ConsumerWidget {
-  const EditRequestPane({super.key});
+  const EditRequestPane({super.key,this.panelController});
 
+  final PanelController? panelController;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedId = ref.watch(selectedIdStateProvider);
@@ -31,8 +34,14 @@ class EditRequestPane extends ConsumerWidget {
       codePaneVisible: codePaneVisible,
       tabIndex: tabIndex,
       onPressedCodeButton: () {
-        ref.read(codePaneVisibleStateProvider.notifier).state =
-            !codePaneVisible;
+        if (kIsMobile) {
+          ref.read(sliderViewProvider.notifier).state = false;
+          panelController!.open();
+        }
+        else{
+          ref.read(codePaneVisibleStateProvider.notifier).state =
+          !codePaneVisible;
+        }
       },
       onTapTabBar: (index) {
         ref

@@ -9,7 +9,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import '../../providers/collection_providers.dart';
 import '../../providers/settings_providers.dart';
+import '../../providers/ui_providers.dart';
 import '../home_page/collection_pane.dart';
+import '../home_page/editor_pane/details_card/code_pane.dart';
 import '../home_page/editor_pane/details_card/response_pane.dart';
 import '../home_page/editor_pane/editor_default.dart';
 class MobileHome extends ConsumerStatefulWidget {
@@ -37,6 +39,7 @@ class _MobileDashboardState extends ConsumerState<MobileHome> {
     var selectedId = ref.watch(selectedIdStateProvider);
     final isDarkMode =
     ref.watch(settingsProvider.select((value) => value.isDark));
+    final sliderView = ref.watch(sliderViewProvider);
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
@@ -117,9 +120,9 @@ class _MobileDashboardState extends ConsumerState<MobileHome> {
             const SizedBox(
               height: 5,
             ),
-            const Flexible(
+             Flexible(
                 child:
-                EditRequestPane()
+                EditRequestPane(panelController: panelController,)
             ),
             SendButton(panelController: panelController,),
             const SizedBox(
@@ -140,8 +143,8 @@ class _MobileDashboardState extends ConsumerState<MobileHome> {
                   height: 5,
               ),
             ),
-            const Flexible(
-                child: ResponsePane()
+             Flexible(
+                child: sliderView ?  const ResponsePane() : const CodePane(),
             ),
           ],
         ),

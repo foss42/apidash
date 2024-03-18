@@ -114,9 +114,8 @@ class SendButton extends ConsumerWidget {
             .read(collectionStateNotifierProvider.notifier)
             .sendRequest(selectedId!);
         // Mobile Sliding Controller
-        if (panelController!.isPanelClosed) {
-          panelController!.open();
-        }
+        ref.read(sliderViewProvider.notifier).state = true;
+        panelController!.open();
       },
     );
   }
