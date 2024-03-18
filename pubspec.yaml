@@ -54,6 +54,7 @@ dependencies:
   code_builder: ^4.9.0
   dart_style: ^2.3.4
   json_text_field: ^1.1.0
+  sliding_up_panel: ^2.0.0+1
 
 dev_dependencies:
   flutter_test:

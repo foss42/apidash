@@ -6,8 +6,11 @@ import 'package:apidash/screens/settings_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 import '../../providers/collection_providers.dart';
+import '../../providers/settings_providers.dart';
 import '../home_page/collection_pane.dart';
+import '../home_page/editor_pane/details_card/response_pane.dart';
 import '../home_page/editor_pane/editor_default.dart';
 class MobileHome extends ConsumerStatefulWidget {
   const MobileHome(
@@ -20,6 +23,7 @@ class MobileHome extends ConsumerStatefulWidget {
 
 class _MobileDashboardState extends ConsumerState<MobileHome> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final PanelController panelController = PanelController();
   @override
   void initState() {
     // TODO: implement initState
@@ -31,6 +35,8 @@ class _MobileDashboardState extends ConsumerState<MobileHome> {
   @override
   Widget build(BuildContext context) {
     var selectedId = ref.watch(selectedIdStateProvider);
+    final isDarkMode =
+    ref.watch(settingsProvider.select((value) => value.isDark));
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
@@ -94,29 +100,55 @@ class _MobileDashboardState extends ConsumerState<MobileHome> {
         padding: kP10,
         child: RequestEditorDefault(),
       ):
-      const Column(
-        children: [
-          SizedBox(
-            height: 5,
-          ),
-          EditorPaneRequestURLCard(),
-          SizedBox(
-            height: 5,
-          ),
-          Expanded(
-              child:
-              EditRequestPane()
-          ),
-          SendButton(),
-          SizedBox(
-            height: kHeaderHeight,
-          ),
-        ],
+      SlidingUpPanel(
+        minHeight: MediaQuery.sizeOf(context).height * 0.05,
+        maxHeight: MediaQuery.sizeOf(context).height * 0.75,
+        borderRadius: const BorderRadius.vertical(
+            top: Radius.circular(20)
+        ),
+        color: isDarkMode ? Colors.black87 : Colors.white,
+        controller: panelController,
+        body:   Column(
+          children: [
+            const SizedBox(
+              height: 5,
+            ),
+            const EditorPaneRequestURLCard(),
+            const SizedBox(
+              height: 5,
+            ),
+            const Flexible(
+                child:
+                EditRequestPane()
+            ),
+            SendButton(panelController: panelController,),
+            const SizedBox(
+              height: 200,
+            ),
+          ],
+        ),
+        panel:  Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: Colors.grey,
+                ),
+                  width: 40,
+                  height: 5,
+              ),
+            ),
+            const Flexible(
+                child: ResponsePane()
+            ),
+          ],
+        ),
       ),
     );
   }
 }
-
 
 class MobileDashboard extends StatelessWidget {
   const MobileDashboard({super.key, required this.page, required this.title});

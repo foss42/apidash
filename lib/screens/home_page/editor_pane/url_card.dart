@@ -1,10 +1,10 @@
-import 'package:apidash/screens/home_page/editor_pane/details_card/response_pane.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class EditorPaneRequestURLCard extends StatelessWidget {
   const EditorPaneRequestURLCard({super.key});
@@ -92,8 +92,10 @@ class URLTextField extends ConsumerWidget {
 class SendButton extends ConsumerWidget {
   const SendButton({
     super.key,
+    this.panelController
   });
 
+  final PanelController? panelController;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedId = ref.watch(selectedIdStateProvider);
@@ -105,16 +107,9 @@ class SendButton extends ConsumerWidget {
         ref
             .read(collectionStateNotifierProvider.notifier)
             .sendRequest(selectedId!);
-        if (kIsMobile) {
-          showModalBottomSheet(
-              isScrollControlled: true,
-              context: context,
-              builder: (context){
-                return SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.75,
-                    child: const ResponsePane());
-              }
-              );
+        // Mobile Sliding Controller
+        if (panelController!.isPanelClosed) {
+          panelController!.open();
         }
       },
     );
