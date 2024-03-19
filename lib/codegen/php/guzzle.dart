@@ -68,7 +68,7 @@ echo \$res->getBody();
     [
         'name'     => '${field['name']}',
         'contents' => '${field['value']}'
-    ],''';
+    ],\n''';
           }).join(),
         });
         result += renderedMultiPartBody;
@@ -86,7 +86,7 @@ echo \$res->getBody();
         }
         var jsonString = '';
         m.forEach((key, value) {
-          jsonString += "\t\t\t\t'$key' => '$value', \n";
+          jsonString += "\t\t\t\t'$key' => '$value',\n";
         });
         jsonString = jsonString.substring(
             0, jsonString.length - 2); // Removing trailing comma and space
@@ -104,7 +104,7 @@ echo \$res->getBody();
         }
         var headersString = '';
         m.forEach((key, value) {
-          headersString += "\t\t\t\t'$key' => '$value', \n";
+          headersString += "\t\t\t\t'$key' => '$value',\n";
         });
         if (requestModel.hasFormData) {
           m['Content-Type'] = 'multipart/form-data';
@@ -148,8 +148,8 @@ echo \$res->getBody();
         "url": stripUrlParams(requestModel.url),
         "method": harJson["method"].toLowerCase(),
         "queryParams":
-            harJson["queryString"].isNotEmpty ? ". \$queryParamsStr," : "",
-        "headers": harJson["headers"].isNotEmpty ? " \$headers," : "",
+            harJson["queryString"].isNotEmpty ? ". \$queryParamsStr" : "",
+        "headers": harJson["headers"].isNotEmpty ? ", \$headers," : "",
         "body": getRequestBody(harJson),
       });
 
