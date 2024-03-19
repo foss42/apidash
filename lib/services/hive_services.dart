@@ -3,6 +3,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 const String kDataBox = "apidash-data";
 const String kKeyDataBoxIds = "ids";
+const String kKeyDataBoxTabIds = "tabs";
 
 const String kSettingsBox = "apidash-settings";
 
@@ -41,12 +42,20 @@ class HiveHandler {
   }
 
   Map get settings => settingsBox.toMap();
+
   Future<void> saveSettings(Map data) => settingsBox.putAll(data);
 
   dynamic getIds() => dataBox.get(kKeyDataBoxIds);
+
   Future<void> setIds(List<String>? ids) => dataBox.put(kKeyDataBoxIds, ids);
 
+  dynamic getTabIds() => dataBox.get(kKeyDataBoxTabIds);
+
+  Future<void> setTabIds(List<String>? ids) =>
+      dataBox.put(kKeyDataBoxTabIds, ids);
+
   dynamic getRequestModel(String id) => dataBox.get(id);
+
   Future<void> setRequestModel(
           String id, Map<String, dynamic>? requestModelJson) =>
       dataBox.put(id, requestModelJson);
@@ -60,7 +69,9 @@ class HiveHandler {
     if (ids != null) {
       ids = ids as List;
       for (var key in dataBox.keys.toList()) {
-        if (key != kKeyDataBoxIds && !ids.contains(key)) {
+        if (key != kKeyDataBoxIds &&
+            key != kKeyDataBoxTabIds &&
+            !ids.contains(key)) {
           await dataBox.delete(key);
         }
       }
