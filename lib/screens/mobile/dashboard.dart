@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import '../../providers/collection_providers.dart';
-import '../../providers/settings_providers.dart';
 import '../../providers/ui_providers.dart';
 import '../home_page/collection_pane.dart';
 import '../home_page/editor_pane/details_card/code_pane.dart';
@@ -37,8 +36,6 @@ class _MobileDashboardState extends ConsumerState<MobileHome> {
   @override
   Widget build(BuildContext context) {
     var selectedId = ref.watch(selectedIdStateProvider);
-    final isDarkMode =
-    ref.watch(settingsProvider.select((value) => value.isDark));
     final sliderView = ref.watch(sliderViewProvider);
     return Scaffold(
       key: _scaffoldKey,
@@ -109,7 +106,7 @@ class _MobileDashboardState extends ConsumerState<MobileHome> {
         borderRadius: const BorderRadius.vertical(
             top: Radius.circular(20)
         ),
-        color: isDarkMode ? Colors.black87 : Colors.white,
+        color: Theme.of(context).colorScheme.background,
         controller: panelController,
         body:   Column(
           children: [
