@@ -24,6 +24,11 @@ final requestSequenceProvider = StateProvider<List<String>>((ref) {
   return ids ?? [];
 });
 
+final requestTabSequenceProvider = StateProvider<List<String>>((ref) {
+  var ids = hiveHandler.getTabIds();
+  return ids ?? [];
+});
+
 final StateNotifierProvider<CollectionStateNotifier, Map<String, RequestModel>?>
     collectionStateNotifierProvider =
     StateNotifierProvider((ref) => CollectionStateNotifier(ref, hiveHandler));
@@ -35,6 +40,9 @@ class CollectionStateNotifier
     Future.microtask(() {
       if (status) {
         ref.read(requestSequenceProvider.notifier).state = [
+          state!.keys.first,
+        ];
+        ref.read(requestTabSequenceProvider.notifier).state = [
           state!.keys.first,
         ];
       }
@@ -64,7 +72,18 @@ class CollectionStateNotifier
     ref
         .read(requestSequenceProvider.notifier)
         .update((state) => [id, ...state]);
+    ref
+        .read(requestTabSequenceProvider.notifier)
+        .update((state) => [id, ...state]);
+
     ref.read(selectedIdStateProvider.notifier).state = newRequestModel.id;
+  }
+
+  void reorderTab(int oldIdx, int newIdx){
+    var itemIds = ref.read(requestTabSequenceProvider);
+    final itemId = itemIds.removeAt(oldIdx);
+    itemIds.insert(newIdx, itemId);
+    ref.read(requestTabSequenceProvider.notifier).state = [...itemIds];
   }
 
   void reorder(int oldIdx, int newIdx) {
@@ -88,6 +107,10 @@ class CollectionStateNotifier
     } else {
       newId = null;
     }
+
+    final tabs = ref.read(requestTabSequenceProvider);
+    tabs.remove(id);
+    ref.read(requestTabSequenceProvider.notifier).state = [...tabs];
 
     ref.read(selectedIdStateProvider.notifier).state = newId;
 
@@ -252,7 +275,9 @@ class CollectionStateNotifier
     ref.read(saveDataStateProvider.notifier).state = true;
     final saveResponse = ref.read(settingsProvider).saveResponses;
     final ids = ref.read(requestSequenceProvider);
+    final tabIds = ref.read(requestTabSequenceProvider);
     await hiveHandler.setIds(ids);
+    await hiveHandler.setTabIds(tabIds);
     for (var id in ids) {
       await hiveHandler.setRequestModel(
         id,
