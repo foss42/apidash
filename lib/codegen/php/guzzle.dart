@@ -13,9 +13,9 @@ use GuzzleHttp\\Psr7\\Request;
 """;
 
   String kMultiPartBodyTemplate = """
-\$multipart = [
+\$multipart = new MultipartStream([
 {{fields_list}}
-];
+]);
 
 
 """;
@@ -103,11 +103,20 @@ echo \$res->getBody();
           m[i["name"]] = i["value"];
         }
         var headersString = '';
+        var contentTypeAdded = false;
+
         m.forEach((key, value) {
-          headersString += "\t\t\t\t'$key' => '$value',\n";
+          if (key == 'Content-Type' && value.contains('multipart/form-data')) {
+            contentTypeAdded = false;
+          } else {
+            headersString += "\t\t\t\t'$key' => '$value',\n";
+          }
         });
-        if (requestModel.hasFormData) {
-          m['Content-Type'] = 'multipart/form-data';
+
+        if (requestModel.hasFormData && !contentTypeAdded) {
+          // Add Content-Type header for multipart form-data only if it's present and not already added
+          headersString +=
+              "\t\t\t\t'Content-Type' => 'multipart/form-data; boundary=' . \$multipart->getBoundary(), \n";
         }
         headersString = headersString.substring(
             0, headersString.length - 2); // Removing trailing comma and space
@@ -117,11 +126,11 @@ echo \$res->getBody();
       }
 
       var templateBody = jj.Template(kTemplateBody);
-      if (requestModel.hasFormData && requestModel.formDataMapList.isNotEmpty) {
-        result += templateBody.render({
-          "body": "new MultipartStream(\$multipart)",
-        });
-      }
+      // if (requestModel.hasFormData && requestModel.formDataMapList.isNotEmpty) {
+      //   result += templateBody.render({
+      //     "body": "new MultipartStream(\$multipart)",
+      //   });
+      // }
 
       if (harJson["postData"]?["text"] != null) {
         result += templateBody
@@ -135,8 +144,8 @@ echo \$res->getBody();
             var mimeType = postData["mimeType"];
             if (mimeType == "text/plain" || mimeType == "application/json") {
               return " \$body";
-            } else if (mimeType == "multipart/form-data") {
-              return " new MultipartStream(\$multipart)";
+            } else if (mimeType.contains("multipart/form-data")) {
+              return " \$multipart";
             }
           }
         }
