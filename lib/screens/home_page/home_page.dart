@@ -8,12 +8,12 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
+    return Column(
       children: [
         Expanded(
           child: DashboardSplitView(
             sidebarWidget: CollectionPane(),
-            mainWidget: RequestEditorPane(),
+            mainWidget: const RequestEditorPane(),
           ),
         ),
       ],
