@@ -6,11 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class CollectionPane extends ConsumerWidget {
-  CollectionPane({
+  const CollectionPane({
     super.key,
   });
-
-  final textEditController = TextEditingController();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -58,7 +56,6 @@ class CollectionPane extends ConsumerWidget {
                       onChanged: (value) => ref
                           .read(collectionStateNotifierProvider.notifier)
                           .filter(value.trim()),
-                      controller: textEditController,
                       decoration: const InputDecoration(
                         constraints: BoxConstraints(
                           maxHeight: 35,
@@ -82,20 +79,6 @@ class CollectionPane extends ConsumerWidget {
                     ),
                   ),
                 ),
-                kHSpacer5,
-                if (textEditController.text != '')
-                  GestureDetector(
-                    onTap: () {
-                      textEditController.text = '';
-                      ref
-                          .read(collectionStateNotifierProvider.notifier)
-                          .filter('');
-                      },
-                    child: const Icon(
-                      Icons.close,
-                      size: 18,
-                    ),
-                  ),
               ],
             ),
           ),
@@ -178,6 +161,15 @@ class _RequestListState extends ConsumerState<RequestList> {
     final requestItems = ref.watch(collectionStateNotifierProvider)!;
     final alwaysShowCollectionPaneScrollbar = ref.watch(settingsProvider
         .select((value) => value.alwaysShowCollectionPaneScrollbar));
+
+    if (requestItems.isNotEmpty && requestSequence.isEmpty) {
+      return Center(
+        child: Text(
+          'Request not found!',
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+      );
+    }
 
     return Scrollbar(
       controller: controller,

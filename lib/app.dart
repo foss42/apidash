@@ -124,7 +124,7 @@ class DashApp extends ConsumerWidget {
       ),
       themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
       home: kIsMobile
-          ? MobileDashboard(
+          ? const MobileDashboard(
               title: 'Requests',
               scaffoldBody: CollectionPane(),
             )

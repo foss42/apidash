@@ -60,7 +60,6 @@ class CollectionStateNotifier
     ref.read(searchRequestsProvider.notifier).update((state) => true);
 
     if (query == '') {
-      loadData();
       ref.read(requestSequenceProvider.notifier).state = [
         ...state!.keys,
       ];
@@ -71,7 +70,6 @@ class CollectionStateNotifier
               value.url.toLowerCase().contains(query.toLowerCase())));
       ref
           .read(requestSequenceProvider.notifier).state = [...map.keys];
-      state = map;
     }
 
     ref.read(searchRequestsProvider.notifier).update((state) => false);
