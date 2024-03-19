@@ -158,6 +158,7 @@ class DropdownButtonCodegenLanguage extends StatelessWidget {
     final surfaceColor = Theme.of(context).colorScheme.surface;
     return DropdownButton<CodegenLanguage>(
       focusColor: surfaceColor,
+      isExpanded: true,
       value: codegenLanguage,
       icon: const Icon(
         Icons.unfold_more_rounded,
