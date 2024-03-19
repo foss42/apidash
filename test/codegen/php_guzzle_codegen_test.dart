@@ -355,6 +355,225 @@ echo $res->getBody();""";
               CodegenLanguage.phpGuzzle, requestModelPost3, "https"),
           expectedCode);
     });
+
+    test('POST 4', () {
+      const expectedCode = r"""use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7\MultipartStream;
+
+$multipart = new MultipartStream([
+    [
+        'name'     => 'text',
+        'contents' => 'API'
+    ],
+    [
+        'name'     => 'sep',
+        'contents' => '|'
+    ],
+    [
+        'name'     => 'times',
+        'contents' => '3'
+    ],
+
+]);
+
+$headers = [
+				'Content-Type' => 'multipart/form-data; boundary=' . $multipart->getBoundary(),
+];
+
+$client = new Client();
+
+$request = new Request('post', 'https://api.apidash.dev/io/form' , $headers,  $multipart);
+$res = $client->sendAsync($request)->wait();
+echo $res->getBody();""";
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.phpGuzzle, requestModelPost4, "https"),
+          expectedCode);
+    });
+
+    test('POST 5', () {
+      const expectedCode = r"""use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7\MultipartStream;
+
+$multipart = new MultipartStream([
+    [
+        'name'     => 'text',
+        'contents' => 'API'
+    ],
+    [
+        'name'     => 'sep',
+        'contents' => '|'
+    ],
+    [
+        'name'     => 'times',
+        'contents' => '3'
+    ],
+
+]);
+
+$headers = [
+				'User-Agent' => 'Test Agent',
+				'Content-Type' => 'multipart/form-data; boundary=' . $multipart->getBoundary(),
+];
+
+$client = new Client();
+
+$request = new Request('post', 'https://api.apidash.dev/io/form' , $headers,  $multipart);
+$res = $client->sendAsync($request)->wait();
+echo $res->getBody();""";
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.phpGuzzle, requestModelPost5, "https"),
+          expectedCode);
+    });
+
+    test('POST 6', () {
+      const expectedCode = r"""use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7\MultipartStream;
+
+$multipart = new MultipartStream([
+    [
+        'name'     => 'token',
+        'contents' => 'xyz'
+    ],
+    [
+        'name'     => 'imfile',
+        'contents' => '/Documents/up/1.png'
+    ],
+
+]);
+
+$headers = [
+				'Content-Type' => 'multipart/form-data; boundary=' . $multipart->getBoundary(),
+];
+
+$client = new Client();
+
+$request = new Request('post', 'https://api.apidash.dev/io/img' , $headers,  $multipart);
+$res = $client->sendAsync($request)->wait();
+echo $res->getBody();""";
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.phpGuzzle, requestModelPost6, "https"),
+          expectedCode);
+    });
+
+    test('POST 7', () {
+      const expectedCode = r"""use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7\MultipartStream;
+
+$multipart = new MultipartStream([
+    [
+        'name'     => 'token',
+        'contents' => 'xyz'
+    ],
+    [
+        'name'     => 'imfile',
+        'contents' => '/Documents/up/1.png'
+    ],
+
+]);
+
+$headers = [
+				'Content-Type' => 'multipart/form-data; boundary=' . $multipart->getBoundary(),
+];
+
+$client = new Client();
+
+$request = new Request('post', 'https://api.apidash.dev/io/img' , $headers,  $multipart);
+$res = $client->sendAsync($request)->wait();
+echo $res->getBody();""";
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.phpGuzzle, requestModelPost7, "https"),
+          expectedCode);
+    });
+
+    test('POST 8', () {
+      const expectedCode = r"""use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7\MultipartStream;
+
+$multipart = new MultipartStream([
+    [
+        'name'     => 'text',
+        'contents' => 'API'
+    ],
+    [
+        'name'     => 'sep',
+        'contents' => '|'
+    ],
+    [
+        'name'     => 'times',
+        'contents' => '3'
+    ],
+
+]);
+
+$queryParams = [
+				'size' => '2',
+				'len' => '3'
+];
+$queryParamsStr = '?' . http_build_query($queryParams);
+
+$headers = [
+				'Content-Type' => 'multipart/form-data; boundary=' . $multipart->getBoundary(),
+];
+
+$client = new Client();
+
+$request = new Request('post', 'https://api.apidash.dev/io/form'. $queryParamsStr , $headers,  $multipart);
+$res = $client->sendAsync($request)->wait();
+echo $res->getBody();""";
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.phpGuzzle, requestModelPost8, "https"),
+          expectedCode);
+    });
+
+    test('POST 9', () {
+      const expectedCode = r"""use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7\MultipartStream;
+
+$multipart = new MultipartStream([
+    [
+        'name'     => 'token',
+        'contents' => 'xyz'
+    ],
+    [
+        'name'     => 'imfile',
+        'contents' => '/Documents/up/1.png'
+    ],
+
+]);
+
+$queryParams = [
+				'size' => '2',
+				'len' => '3'
+];
+$queryParamsStr = '?' . http_build_query($queryParams);
+
+$headers = [
+				'User-Agent' => 'Test Agent',
+				'Keep-Alive' => 'true',
+				'Content-Type' => 'multipart/form-data; boundary=' . $multipart->getBoundary(),
+];
+
+$client = new Client();
+
+$request = new Request('post', 'https://api.apidash.dev/io/img'. $queryParamsStr , $headers,  $multipart);
+$res = $client->sendAsync($request)->wait();
+echo $res->getBody();""";
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.phpGuzzle, requestModelPost9, "https"),
+          expectedCode);
+    });
   });
 
   group('PUT Request', () {
