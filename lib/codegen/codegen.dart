@@ -1,3 +1,4 @@
+import 'package:apidash/codegen/C/curl.dart';
 import 'package:apidash/models/models.dart' show RequestModel;
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart' show getNewUuid;
@@ -79,6 +80,8 @@ class Codegen {
         return RustUreqCodeGen().getCode(rM, boundary: boundary);
       case CodegenLanguage.phpGuzzle:
         return PhpGuzzleCodeGen().getCode(rM);
+      case CodegenLanguage.cCurlCodeGen:
+        return cCurlCodeGen().getCode(rM);
     }
   }
 }
