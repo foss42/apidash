@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:apidash/consts.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
-import 'package:apidash/consts.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class EditorPaneRequestURLCard extends StatelessWidget {
   const EditorPaneRequestURLCard({super.key});
@@ -16,6 +16,10 @@ class EditorPaneRequestURLCard extends StatelessWidget {
           color: Theme.of(context).colorScheme.surfaceVariant,
         ),
         borderRadius: kBorderRadius12,
+      ),
+      margin: const EdgeInsets.symmetric(
+        vertical: 0,
+        horizontal: 3,
       ),
       child: const Padding(
         padding: EdgeInsets.symmetric(

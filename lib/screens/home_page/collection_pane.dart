@@ -166,6 +166,11 @@ class RequestItem extends ConsumerWidget {
       editRequestId: editRequestId,
       onTap: () {
         ref.read(selectedIdStateProvider.notifier).state = id;
+        final tabs = ref.read(requestTabSequenceProvider);
+        if(!tabs.contains(id)){
+          tabs.add(id);
+          ref.read(requestTabSequenceProvider.notifier).state = [...tabs];
+        }
       },
       // onDoubleTap: () {
       //   ref.read(selectedIdStateProvider.notifier).state = id;

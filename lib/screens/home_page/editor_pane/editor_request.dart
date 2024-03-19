@@ -1,7 +1,11 @@
+import 'package:apidash/consts.dart';
+import 'package:apidash/models/request_model.dart';
+import 'package:apidash/providers/collection_providers.dart';
+import 'package:apidash/providers/ui_providers.dart';
+import 'package:apidash/widgets/cards.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:apidash/providers/collection_providers.dart';
-import 'package:apidash/consts.dart';
+
 import 'details_card/details_card.dart';
 import 'url_card.dart';
 
@@ -11,14 +15,122 @@ class RequestEditor extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        RequestEditorTopBar(),
+        RequestTabView(),
+        // RequestEditorTopBar(),
         EditorPaneRequestURLCard(),
         kVSpacer10,
         Expanded(
           child: EditorPaneRequestDetailsCard(),
         ),
       ],
+    );
+  }
+}
+
+class RequestTabView extends ConsumerWidget {
+  const RequestTabView({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final tabSequence = ref.watch(requestTabSequenceProvider);
+    final requestItems = ref.watch(collectionStateNotifierProvider)!;
+
+    return Container(
+      // color: Colors.blue,
+      margin: const EdgeInsets.symmetric(horizontal: 15),
+      constraints: const BoxConstraints(
+        maxHeight: 30,
+        minHeight: 30,
+      ),
+      child: ReorderableListView.builder(
+        physics: const NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        scrollDirection: Axis.horizontal,
+        buildDefaultDragHandles: false,
+        itemCount: tabSequence.length,
+        onReorder: (int oldIndex, int newIndex) {
+          if (oldIndex < newIndex) {
+            newIndex -= 1;
+          }
+          if (oldIndex != newIndex) {
+            ref
+                .read(collectionStateNotifierProvider.notifier)
+                .reorderTab(oldIndex, newIndex);
+          }
+        },
+        itemExtentBuilder: (index, dimensions) {
+          final length = dimensions.viewportMainAxisExtent / tabSequence.length;
+          if (length > dimensions.viewportMainAxisExtent / 6) {
+            return dimensions.viewportMainAxisExtent / 6;
+          } else if (length < dimensions.viewportMainAxisExtent / 12) {
+            return dimensions.viewportMainAxisExtent / 12;
+          } else {
+            return length;
+          }
+        },
+        itemBuilder: (context, index) {
+          var id = tabSequence[index];
+          return ReorderableDragStartListener(
+            key: ValueKey(id),
+            index: index,
+            child: Padding(
+              padding: kP1,
+              child: TabItem(
+                id: id,
+                requestModel: requestItems[id]!,
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class TabItem extends ConsumerWidget {
+  const TabItem({
+    super.key,
+    required this.id,
+    required this.requestModel,
+  });
+
+  final String id;
+  final RequestModel requestModel;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selectedId = ref.watch(selectedIdStateProvider);
+    final editRequestId = ref.watch(selectedIdEditStateProvider);
+
+    return TabRequestCard(
+      id: id,
+      method: requestModel.method,
+      name: requestModel.name,
+      url: requestModel.url,
+      selectedId: selectedId,
+      editRequestId: editRequestId,
+      onTap: () {
+        ref.read(selectedIdStateProvider.notifier).state = id;
+      },
+      onClose: () {
+        final tabs = ref.read(requestTabSequenceProvider);
+        final idx = tabs.indexOf(id);
+        tabs.remove(id);
+        ref.read(requestTabSequenceProvider.notifier).state = [...tabs];
+
+        String? newId;
+        if (idx > 0) {
+          newId = tabs[idx - 1];
+        } else if (tabs.isNotEmpty) {
+          newId = tabs.first;
+        } else {
+          newId = null;
+        }
+
+        ref.read(selectedIdStateProvider.notifier).state = newId;
+      },
     );
   }
 }
