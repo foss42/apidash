@@ -56,13 +56,16 @@ class CollectionStateNotifier
     return state?[id];
   }
 
+  List<String> tempSequence = [];
+
   void filter(String query) {
-    ref.read(searchRequestsProvider.notifier).update((state) => true);
+    if(tempSequence.isEmpty){
+      tempSequence = ref.read(requestSequenceProvider);
+    }
 
     if (query == '') {
-      ref.read(requestSequenceProvider.notifier).state = [
-        ...state!.keys,
-      ];
+      ref.read(requestSequenceProvider.notifier).state = [...tempSequence];
+      tempSequence.clear();
     } else {
       final map = {...state!};
       map.removeWhere((key, value) =>
@@ -71,8 +74,6 @@ class CollectionStateNotifier
       ref
           .read(requestSequenceProvider.notifier).state = [...map.keys];
     }
-
-    ref.read(searchRequestsProvider.notifier).update((state) => false);
   }
 
   void add() {
