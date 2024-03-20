@@ -13,6 +13,7 @@ export 'intro_message.dart';
 export 'json_previewer.dart';
 export 'markdown.dart';
 export 'menus.dart';
+export 'overlay_widget.dart';
 export 'previewer.dart';
 export 'request_widgets.dart';
 export 'response_widgets.dart';

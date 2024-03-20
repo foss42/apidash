@@ -3,7 +3,7 @@ import 'settings_providers.dart';
 import 'ui_providers.dart';
 import '../models/models.dart';
 import '../services/services.dart' show hiveHandler, HiveHandler, request;
-import '../utils/utils.dart' show uuid, collectionToHAR;
+import '../utils/utils.dart' show getNewUuid, collectionToHAR;
 import '../consts.dart';
 import 'package:http/http.dart' as http;
 
@@ -54,7 +54,7 @@ class CollectionStateNotifier
   }
 
   void add() {
-    final id = uuid.v1();
+    final id = getNewUuid();
     final newRequestModel = RequestModel(
       id: id,
     );
@@ -96,8 +96,20 @@ class CollectionStateNotifier
     state = map;
   }
 
+  void clearResponse(String? id) {
+    if (id == null || state?[id] == null) return;
+    var currentModel = state![id]!;
+    final newModel = currentModel.duplicate(
+      id: id,
+      name: currentModel.name,
+    );
+    var map = {...state!};
+    map[id] = newModel;
+    state = map;
+  }
+
   void duplicate(String id) {
-    final newId = uuid.v1();
+    final newId = getNewUuid();
 
     var itemIds = ref.read(requestSequenceProvider);
     int idx = itemIds.indexOf(id);
@@ -159,29 +171,37 @@ class CollectionStateNotifier
       message: message,
       responseModel: responseModel,
     );
-
+    //print(newModel);
     var map = {...state!};
     map[id] = newModel;
     state = map;
   }
 
   Future<void> sendRequest(String id) async {
-    ref.read(sentRequestIdStateProvider.notifier).state = id;
     ref.read(codePaneVisibleStateProvider.notifier).state = false;
-    final defaultUriScheme =
-        ref.read(settingsProvider.select((value) => value.defaultUriScheme));
+    final defaultUriScheme = ref.read(
+      settingsProvider.select(
+        (value) => value.defaultUriScheme,
+      ),
+    );
+
     RequestModel requestModel = state![id]!;
+
+    // set current model's isWorking to true and update state
+    var map = {...state!};
+    map[id] = requestModel.copyWith(isWorking: true);
+    state = map;
+
     (http.Response?, Duration?, String?)? responseRec = await request(
       requestModel,
       defaultUriScheme: defaultUriScheme,
-      isMultiPartRequest:
-          requestModel.requestBodyContentType == ContentType.formdata,
     );
     late final RequestModel newRequestModel;
     if (responseRec.$1 == null) {
       newRequestModel = requestModel.copyWith(
         responseStatus: -1,
         message: responseRec.$3,
+        isWorking: false,
       );
     } else {
       final responseModel = baseResponseModel.fromResponse(
@@ -193,10 +213,12 @@ class CollectionStateNotifier
         responseStatus: statusCode,
         message: kResponseCodeReasons[statusCode],
         responseModel: responseModel,
+        isWorking: false,
       );
     }
-    ref.read(sentRequestIdStateProvider.notifier).state = null;
-    var map = {...state!};
+
+    // update state with response data
+    map = {...state!};
     map[id] = newRequestModel;
     state = map;
   }
@@ -213,7 +235,7 @@ class CollectionStateNotifier
   bool loadData() {
     var ids = hiveHandler.getIds();
     if (ids == null || ids.length == 0) {
-      String newId = uuid.v1();
+      String newId = getNewUuid();
       state = {
         newId: RequestModel(
           id: newId,

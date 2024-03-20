@@ -16,13 +16,16 @@ class IntroMessage extends StatelessWidget {
     late final String version;
 
     Future<void> introData() async {
-      text = await rootBundle.loadString('assets/intro.md');
+      text = await rootBundle.loadString(kAssetIntroMd);
       version = (await PackageInfo.fromPlatform()).version;
     }
 
     return FutureBuilder(
       future: introData(),
       builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+        if (snapshot.hasError) {
+          return const ErrorMessage(message: "An error occured");
+        }
         if (snapshot.connectionState == ConnectionState.done) {
           if (Theme.of(context).brightness == Brightness.dark) {
             text = text.replaceAll("{{mode}}", "dark");
@@ -36,9 +39,6 @@ class IntroMessage extends StatelessWidget {
             data: text,
             padding: kPh60,
           );
-        }
-        if (snapshot.hasError) {
-          return const ErrorMessage(message: "An error occured");
         }
         return const Center(child: CircularProgressIndicator());
       },
