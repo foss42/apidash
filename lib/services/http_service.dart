@@ -8,7 +8,7 @@ import 'package:apidash/consts.dart';
 
 Future<(http.Response?, Duration?, String?)> request(
   RequestModel requestModel,
-  SettingsModel settingsModel, // Pass SettingsModel instance
+  SettingsModel settingsModel,
   {
   String defaultUriScheme = kDefaultUriScheme,
 }) async {
@@ -26,6 +26,7 @@ Future<(http.Response?, Duration?, String?)> request(
       Stopwatch stopwatch = Stopwatch()..start();
       var isMultiPartRequest =
           requestModel.requestBodyContentType == ContentType.formdata;
+          final timeOut = settingsModel.connectionTimeout ?? 30;
       if (kMethodsWithBody.contains(requestModel.method)) {
         var requestBody = requestModel.requestBody;
         if (requestBody != null && !isMultiPartRequest) {
@@ -61,8 +62,7 @@ Future<(http.Response?, Duration?, String?)> request(
           http.StreamedResponse multiPartResponse = await multiPartRequest
               .send()
               .timeout(Duration(
-                  milliseconds: settingsModel.connectionTimeout ??
-                      30));
+                  milliseconds: timeOut));
           stopwatch.stop();
           http.Response convertedMultiPartResponse =
               await convertStreamedResponse(multiPartResponse);
@@ -72,43 +72,35 @@ Future<(http.Response?, Duration?, String?)> request(
       switch (requestModel.method) {
         case HTTPVerb.get:
           response = await http.get(requestUrl, headers: headers).timeout(
-              Duration(
-                  milliseconds: settingsModel.connectionTimeout ??
-                      30));
+              Duration(milliseconds: timeOut));
           break;
         case HTTPVerb.head:
           response = await http.head(requestUrl, headers: headers).timeout(
-              Duration(
-                  milliseconds: settingsModel.connectionTimeout ??
-                      30));
+              Duration(milliseconds: timeOut));
           break;
         case HTTPVerb.post:
           response = await http
               .post(requestUrl, headers: headers, body: body)
               .timeout(Duration(
-                  milliseconds: settingsModel.connectionTimeout ??
-                      30));
+                  milliseconds: timeOut));
           break;
         case HTTPVerb.put:
           response = await http
               .put(requestUrl, headers: headers, body: body)
               .timeout(Duration(
-                  milliseconds: settingsModel.connectionTimeout ??
-                      30));
+                  milliseconds: timeOut));
           break;
         case HTTPVerb.patch:
           response = await http
               .patch(requestUrl, headers: headers, body: body)
               .timeout(Duration(
-                  milliseconds: settingsModel.connectionTimeout ??
-                      30)); 
+                  milliseconds: timeOut));
           break;
         case HTTPVerb.delete:
           response = await http
               .delete(requestUrl, headers: headers, body: body)
               .timeout(Duration(
-                  milliseconds: settingsModel.connectionTimeout ??
-                      30));
+                  milliseconds: timeOut));
           break;
       }
       stopwatch.stop();
