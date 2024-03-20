@@ -12,7 +12,7 @@ class ResponsePane extends ConsumerWidget {
     final isWorking = ref.watch(
             selectedRequestModelProvider.select((value) => value?.isWorking)) ??
         false;
-    final startSendingDate = ref.watch(
+    final startSendingTime = ref.watch(
         selectedRequestModelProvider.select((value) => value?.sendingTime));
     final responseStatus = ref.watch(
         selectedRequestModelProvider.select((value) => value?.responseStatus));
@@ -21,7 +21,7 @@ class ResponsePane extends ConsumerWidget {
 
     if (isWorking) {
       return SendingWidget(
-        startSendingTime: startSendingDate,
+        startSendingTime: startSendingTime,
       );
     }
     if (responseStatus == null) {
