@@ -89,7 +89,7 @@ fn main() {
         "hasJsonBody": requestModel.hasJsonData,
         "hasHeaders": (requestModel.enabledRequestHeaders != null &&
                 requestModel.enabledRequestHeaders!.isNotEmpty) ||
-            requestModel.hasBody
+            (requestModel.hasJsonData || requestModel.hasTextData)
       });
 
       var rec = getValidRequestUri(
@@ -124,7 +124,7 @@ fn main() {
         var headersList = requestModel.enabledRequestHeaders;
         if (headersList != null || requestModel.hasBody) {
           var headers = requestModel.enabledHeadersMap;
-          if (requestModel.hasJsonData || requestModel.hasTextData || requestModel.hasFormData) {
+          if (requestModel.hasJsonData || requestModel.hasTextData) {
             headers.putIfAbsent(kHeaderContentType,
                 () => requestModel.requestBodyContentType.header);
           }

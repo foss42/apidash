@@ -569,7 +569,6 @@ fn main() {
     test('POST4', () {
       const expectedCode = r"""
 use curl::easy::Easy;
-use curl::easy::List;
 
 fn main() {
   let mut easy = Easy::new();
@@ -592,11 +591,7 @@ fn main() {
     .add().unwrap();
   
   easy.httppost(form).unwrap();
-    let mut list = List::new();
-  list.append("Content-Type: multipart/form-data").unwrap();
-  easy.http_headers(list).unwrap();
-  
-  {
+    {
     let mut transfer = easy.transfer();
     transfer.write_function(|new_data| {
         data.extend_from_slice(new_data);
@@ -643,7 +638,6 @@ fn main() {
   easy.httppost(form).unwrap();
     let mut list = List::new();
   list.append("User-Agent: Test Agent").unwrap();
-  list.append("Content-Type: multipart/form-data").unwrap();
   easy.http_headers(list).unwrap();
   
   {
@@ -668,7 +662,6 @@ fn main() {
     test('POST6', () {
       const expectedCode = r"""
 use curl::easy::Easy;
-use curl::easy::List;
 
 fn main() {
   let mut easy = Easy::new();
@@ -687,11 +680,7 @@ fn main() {
     .add().unwrap();
   
   easy.httppost(form).unwrap();
-    let mut list = List::new();
-  list.append("Content-Type: multipart/form-data").unwrap();
-  easy.http_headers(list).unwrap();
-  
-  {
+    {
     let mut transfer = easy.transfer();
     transfer.write_function(|new_data| {
         data.extend_from_slice(new_data);
@@ -713,7 +702,6 @@ fn main() {
     test('POST7', () {
       const expectedCode = r"""
 use curl::easy::Easy;
-use curl::easy::List;
 
 fn main() {
   let mut easy = Easy::new();
@@ -732,11 +720,7 @@ fn main() {
     .add().unwrap();
   
   easy.httppost(form).unwrap();
-    let mut list = List::new();
-  list.append("Content-Type: multipart/form-data").unwrap();
-  easy.http_headers(list).unwrap();
-  
-  {
+    {
     let mut transfer = easy.transfer();
     transfer.write_function(|new_data| {
         data.extend_from_slice(new_data);
@@ -758,7 +742,6 @@ fn main() {
     test('POST8', () {
       const expectedCode = r"""
 use curl::easy::Easy;
-use curl::easy::List;
 
 fn main() {
   let mut easy = Easy::new();
@@ -781,11 +764,7 @@ fn main() {
     .add().unwrap();
   
   easy.httppost(form).unwrap();
-    let mut list = List::new();
-  list.append("Content-Type: multipart/form-data").unwrap();
-  easy.http_headers(list).unwrap();
-  
-  {
+    {
     let mut transfer = easy.transfer();
     transfer.write_function(|new_data| {
         data.extend_from_slice(new_data);
@@ -829,7 +808,6 @@ fn main() {
     let mut list = List::new();
   list.append("User-Agent: Test Agent").unwrap();
   list.append("Keep-Alive: true").unwrap();
-  list.append("Content-Type: multipart/form-data").unwrap();
   easy.http_headers(list).unwrap();
   
   {
