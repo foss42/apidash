@@ -1,9 +1,10 @@
-import 'dart:io';
 import 'dart:convert';
+import 'dart:io';
+
+import 'package:davi/davi.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:davi/davi.dart';
 
 const kDiscordUrl = "https://bit.ly/heyfoss";
 const kGitUrl = "https://github.com/foss42/apidash";
@@ -25,6 +26,7 @@ final kColorTransparentState =
     MaterialStateProperty.all<Color>(Colors.transparent);
 const kColorTransparent = Colors.transparent;
 const kColorWhite = Colors.white;
+const kColorBlack = Colors.black;
 const kColorRed = Colors.red;
 final kColorLightDanger = Colors.red.withOpacity(0.9);
 const kColorDarkDanger = Color(0xffcf6679);
@@ -47,6 +49,7 @@ final kCodeStyle = TextStyle(
 
 const kHintOpacity = 0.6;
 const kForegroundOpacity = 0.05;
+const kOverlayBackgroundOpacity = 0.5;
 
 const kTextStyleButton = TextStyle(fontWeight: FontWeight.bold);
 const kTextStyleButtonSmall = TextStyle(fontSize: 12);
@@ -79,6 +82,7 @@ const kPh20t40 = EdgeInsets.only(
   top: 40,
 );
 const kPh60 = EdgeInsets.symmetric(horizontal: 60);
+const kPh60v60 = EdgeInsets.symmetric(vertical: 60, horizontal: 60);
 const kP24CollectionPane = EdgeInsets.only(
   top: 24,
   left: 4.0,
@@ -522,3 +526,5 @@ const kLabelBusy = "Busy";
 const kLabelCopy = "Copy";
 const kLabelSave = "Save";
 const kLabelDownload = "Download";
+const kLabelSaving = "Saving";
+const kLabelSaved = "Saved";

@@ -1,9 +1,10 @@
+import 'package:apidash/consts.dart';
+import 'package:apidash/models/models.dart';
+import 'package:apidash/providers/providers.dart';
+import 'package:apidash/widgets/overlay_widget.dart';
+import 'package:apidash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:apidash/providers/providers.dart';
-import 'package:apidash/widgets/widgets.dart';
-import 'package:apidash/models/models.dart';
-import 'package:apidash/consts.dart';
 
 class CollectionPane extends ConsumerWidget {
   const CollectionPane({
@@ -12,7 +13,7 @@ class CollectionPane extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var sm = ScaffoldMessenger.of(context);
+    final overlayWidget = OverlayWidgetTemplate(context: context);
     final collection = ref.watch(collectionStateNotifierProvider);
     final savingData = ref.watch(saveDataStateProvider);
     if (collection == null) {
@@ -34,12 +35,16 @@ class CollectionPane extends ConsumerWidget {
                   onPressed: savingData
                       ? null
                       : () async {
+                          overlayWidget.show(widget: const SavingOverlay());
+
                           await ref
                               .read(collectionStateNotifierProvider.notifier)
                               .saveData();
 
-                          sm.hideCurrentSnackBar();
-                          sm.showSnackBar(getSnackBar("Saved"));
+                          overlayWidget.hide();
+                          overlayWidget.show(widget: const CompletedOverlay());
+                          await Future.delayed(const Duration(seconds: 1));
+                          overlayWidget.hide();
                         },
                   icon: const Icon(
                     Icons.save,
