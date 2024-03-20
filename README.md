@@ -145,6 +145,69 @@ API Dash currently supports API integration code generation for the following la
 | Java                   | `okhttp3`     |         |
 | Julia                  | `HTTP`        | https://github.com/foss42/apidash/issues/154 |
 | PHP                    | `guzzle`      | https://github.com/foss42/apidash/issues/143 |
+| C                      | `libcurl`     |         |
+
+## How to run C libCurl code on the machine ?
+You have to ensure that you have installed the curl lib in your machine
+
+### macOS
+
+### Step 1: 
+You can install libcurl using Homebrew, a popular package manager for macOS. Open Terminal and run the following command:
+``` brew install curl ```
+
+### Step 2: 
+Write your C code using libcurl. You can use any text editor or an integrated development environment (IDE) like Xcode or Visual Studio Code.
+
+### Step 3: 
+Assuming you have a C file named main.c containing your libcurl code, you can compile it using `gcc` . Open Terminal and navigate to the directory containing your C file.
+``` cd /path/to/your/project```
+``` gcc -o my_program main.c -lcurl ```
+
+This command compiles your `main.c` file and links it with the libcurl library (`-lcurl`). The resulting executable will be named `my_program.`
+
+### Step 4:
+Once compiled successfully, you can run your program from the Terminal:
+``` ./my_program ```
+
+### Windows
+
+### Step 1:
+Download the libcurl pre-built binaries for Windows from the [official libcurl website](https://curl.se/).
+Extract the downloaded archive to a directory on your system (e.g., C:\curl).
+
+### Step 2:
+Write your C code using libcurl. You can use any text editor or an integrated development environment (IDE) like Visual Studio or Code::Blocks.
+
+### Step 3:
+Ensure you have a C compiler installed. You can use MinGW (Minimalist GNU for Windows) or Visual Studio's C/C++ compiler.
+Add libcurl's include and library directories to your project settings. For MinGW, you can do this by adding -IC:\curl\include to your compiler's command line options and -LC:\curl\lib to your linker's command line options.
+
+## Step 4:
+Compile your C code using your chosen compiler. Here's an example command using MinGW:
+``` gcc -o my_program main.c -IC:\curl\include -LC:\curl\lib -lcurl ```
+
+### Step 5:
+Once compiled successfully, you can run your program from the command prompt:
+``` my_program.exe ```
+
+### Linux
+
+### Step 1:
+Most Linux distributions come with libcurl pre-installed. If it's not installed, you can install it using your package manager. For example, on Debian-based systems like Ubuntu, you can use:
+``` sudo apt-get update ```
+``` sudo apt-get install libcurl4-openssl-dev```
+
+### Step 2: 
+Write your C code using libcurl. You can use any text editor or an integrated development environment (IDE) like Visual Studio Code or Sublime Text.
+
+## Step 3:
+Compile your C code using GCC (GNU Compiler Collection) or any other C compiler available on your system. Here's an example using GCC:
+``` gcc -o my_program main.c -lcurl ```
+
+### Step 4:
+Once compiled successfully, you can run your program from the terminal:
+``` ./my_program ```
 
 We welcome contributions to support other programming languages/libraries/frameworks. Please check out more details [here](https://github.com/foss42/apidash/discussions/80).
 
