@@ -34,12 +34,17 @@ void main() {
         home: Scaffold(
           body: SendingWidget(
             startSendingTime: DateTime.now(),
+            isTest: true,
           ),
         ),
       ),
     );
-
+    expect(find.text('Time elapsed: 0 ms'), findsOneWidget);
     expect(find.byType(Lottie), findsOneWidget);
+
+    await tester.pump(const Duration(seconds: 1));
+
+    expect(find.text('Time elapsed: 1.00 s'), findsOneWidget);
   });
 
   testWidgets('Testing Not Sent Widget', (tester) async {

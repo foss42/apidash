@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http_parser/http_parser.dart';
@@ -40,7 +39,8 @@ class NotSentWidget extends StatelessWidget {
 
 class SendingWidget extends StatefulWidget {
   final DateTime? startSendingTime;
-  const SendingWidget({super.key, required this.startSendingTime});
+  final bool isTest;
+  const SendingWidget({super.key, required this.startSendingTime, this.isTest=false});
 
   @override
   State<SendingWidget> createState() => _SendingWidgetState();
@@ -54,15 +54,15 @@ class _SendingWidgetState extends State<SendingWidget> {
   void initState() {
     super.initState();
     if (widget.startSendingTime != null) {
-      _millisecondsElapsed =
+      _millisecondsElapsed = widget.isTest ? 0 :
           DateTime.now().difference(widget.startSendingTime!).inMilliseconds;
-      _timer = Timer.periodic(const Duration(milliseconds: 10), _updateTimer);
+      _timer = Timer.periodic(const Duration(milliseconds: 100), _updateTimer);
     }
   }
 
   void _updateTimer(Timer timer) {
     setState(() {
-      _millisecondsElapsed += 10;
+      _millisecondsElapsed += 100;
     });
   }
 
@@ -80,7 +80,7 @@ class _SendingWidgetState extends State<SendingWidget> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Visibility(
-              visible: _millisecondsElapsed > 0,
+              visible: _millisecondsElapsed >= 0,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
