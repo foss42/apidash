@@ -63,6 +63,18 @@ void main() {
       expect(getHeaderSuggestions(pattern), expected);
     });
 
+    test("Testing using Proxy-Authenticate", () {
+      String pattern = "Proxy-Authenticate";
+      List<String> expected = ["Proxy-Authenticate"];
+      expect(getHeaderSuggestions(pattern), expected);
+    });
+
+    test("Testing using ETag", () {
+      String pattern = "ETag";
+      List<String> expected = ["ETag"];
+      expect(getHeaderSuggestions(pattern), expected);
+    });
+
     test("Testing using Content-Type", () {
       String pattern = "Content-Type";
       List<String> expected = ['Content-Type', 'X-Content-Type-Options'];
@@ -81,9 +93,11 @@ void main() {
         "Access-Control-Allow-Headers",
         "Access-Control-Allow-Methods",
         "Access-Control-Allow-Origin",
+        "Access-Control-Allow-Credentials",
         "Access-Control-Max-Age",
         "Access-Control-Request-Headers",
-        "Access-Control-Request-Method"
+        "Access-Control-Request-Method",
+        "Access-Control-Expose-Headers"
       ];
       expect(getHeaderSuggestions(pattern), expected);
     });
@@ -91,6 +105,7 @@ void main() {
     test("Testing using 'allow-' pattern", () {
       String pattern = 'allow-';
       List<String> expected = [
+        "Allow",
         "Access-Control-Allow-Headers",
         "Access-Control-Allow-Methods",
         "Access-Control-Allow-Origin"
@@ -106,7 +121,11 @@ void main() {
         'Content-Length',
         'Content-Security-Policy',
         'Content-Type',
-        'X-Content-Type-Options'
+        "Content-Language",
+        "Content-Location",
+        "Content-Range",
+        'X-Content-Type-Options',
+        "Content-Security-Policy-Report-Only"
       ];
       expect(getHeaderSuggestions(pattern), expected);
     });
