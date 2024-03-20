@@ -124,7 +124,7 @@ fn main() {
         var headersList = requestModel.enabledRequestHeaders;
         if (headersList != null || requestModel.hasBody) {
           var headers = requestModel.enabledHeadersMap;
-          if (requestModel.hasJsonData || requestModel.hasTextData) {
+          if (requestModel.hasJsonData || requestModel.hasTextData || requestModel.hasFormData) {
             headers.putIfAbsent(kHeaderContentType,
                 () => requestModel.requestBodyContentType.header);
           }
