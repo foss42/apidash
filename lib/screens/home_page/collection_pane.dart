@@ -1,10 +1,10 @@
-import 'package:apidash/consts.dart';
-import 'package:apidash/models/models.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/overlay_widget.dart';
 import 'package:apidash/widgets/widgets.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:apidash/models/models.dart';
+import 'package:apidash/consts.dart';
 
 class CollectionPane extends ConsumerWidget {
   const CollectionPane({
@@ -35,14 +35,16 @@ class CollectionPane extends ConsumerWidget {
                   onPressed: savingData
                       ? null
                       : () async {
-                          overlayWidget.show(widget: const SavingOverlay());
+                          overlayWidget.show(
+                              widget:
+                                  const SavingOverlay(saveCompleted: false));
 
                           await ref
                               .read(collectionStateNotifierProvider.notifier)
                               .saveData();
-
                           overlayWidget.hide();
-                          overlayWidget.show(widget: const CompletedOverlay());
+                          overlayWidget.show(
+                              widget: const SavingOverlay(saveCompleted: true));
                           await Future.delayed(const Duration(seconds: 1));
                           overlayWidget.hide();
                         },

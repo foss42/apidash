@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-
 import '../consts.dart';
 
 class OverlayWidgetTemplate {
@@ -32,7 +31,8 @@ class OverlayWidgetTemplate {
 }
 
 class SavingOverlay extends StatelessWidget {
-  const SavingOverlay({super.key});
+  final bool saveCompleted;
+  const SavingOverlay({super.key, required this.saveCompleted});
 
   @override
   Widget build(BuildContext context) {
@@ -43,40 +43,18 @@ class SavingOverlay extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Lottie.asset("assets/saving.json", width: 100, height: 100),
+              Lottie.asset(
+                  saveCompleted
+                      ? "assets/completed.json"
+                      : "assets/saving.json",
+                  width: 100,
+                  height: 100),
               kHSpacer20,
-              const Text(
-                kLabelSaving,
-                style: TextStyle(
+              Text(
+                saveCompleted ? kLabelSaved : kLabelSaving,
+                style: const TextStyle(
                   fontSize: kDefaultFontSize,
                 ),
-              )
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class CompletedOverlay extends StatelessWidget {
-  const CompletedOverlay({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Card(
-        child: Padding(
-          padding: kPh60v60,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Lottie.asset("assets/completed.json",
-                  width: 100, height: 100, repeat: false),
-              kHSpacer20,
-              const Text(
-                kLabelSaved,
-                style: TextStyle(fontSize: kDefaultFontSize),
               )
             ],
           ),

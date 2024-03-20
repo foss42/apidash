@@ -32,25 +32,25 @@ void main() {
     await tester.pumpWidget(
       const MaterialApp(
         home: Scaffold(
-          body: SavingOverlay(),
+          body: SavingOverlay(
+            saveCompleted: false,
+          ),
         ),
       ),
     );
-
     expect(find.byType(Card), findsOneWidget);
     expect(find.byType(Lottie), findsOneWidget);
     expect(find.text(kLabelSaving), findsOneWidget);
-  });
 
-  testWidgets('CompletedOverlay Test', (WidgetTester tester) async {
     await tester.pumpWidget(
       const MaterialApp(
         home: Scaffold(
-          body: CompletedOverlay(),
+          body: SavingOverlay(
+            saveCompleted: true,
+          ),
         ),
       ),
     );
-
     expect(find.byType(Card), findsOneWidget);
     expect(find.byType(Lottie), findsOneWidget);
     expect(find.text(kLabelSaved), findsOneWidget);
