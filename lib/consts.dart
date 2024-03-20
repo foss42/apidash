@@ -10,6 +10,11 @@ const kGitUrl = "https://github.com/foss42/apidash";
 const kIssueUrl = "$kGitUrl/issues";
 const kDefaultUri = "api.apidash.dev";
 
+const kAssetIntroMd = "assets/intro.md";
+const kAssetSendingLottie = "assets/sending.json";
+const kAssetSavingLottie = "assets/saving.json";
+const kAssetSavedLottie = "assets/completed.json";
+
 final kIsMacOS = !kIsWeb && Platform.isMacOS;
 final kIsWindows = !kIsWeb && Platform.isWindows;
 final kIsLinux = !kIsWeb && Platform.isLinux;

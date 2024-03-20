@@ -44,9 +44,7 @@ class SavingOverlay extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Lottie.asset(
-                  saveCompleted
-                      ? "assets/completed.json"
-                      : "assets/saving.json",
+                  saveCompleted ? kAssetSavedLottie : kAssetSavingLottie,
                   width: 100,
                   height: 100),
               kHSpacer20,
