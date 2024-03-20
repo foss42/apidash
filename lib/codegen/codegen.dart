@@ -5,6 +5,7 @@ import 'dart/http.dart';
 import 'dart/dio.dart';
 import 'go/http.dart';
 import 'kotlin/okhttp.dart';
+import 'php/guzzle.dart';
 import 'python/http_client.dart';
 import 'python/requests.dart';
 import 'rust/actix.dart';
@@ -45,6 +46,8 @@ class Codegen {
         return DartHttpCodeGen().getCode(rM);
       case CodegenLanguage.dartDio:
         return DartDioCodeGen().getCode(rM);
+      case CodegenLanguage.goHttp:
+        return GoHttpCodeGen().getCode(rM);
       case CodegenLanguage.jsAxios:
         return AxiosCodeGen().getCode(rM);
       case CodegenLanguage.jsFetch:
@@ -53,10 +56,16 @@ class Codegen {
         return AxiosCodeGen(isNodeJs: true).getCode(rM);
       case CodegenLanguage.nodejsFetch:
         return FetchCodeGen(isNodeJs: true).getCode(rM);
+      case CodegenLanguage.javaAsyncHttpClient:
+        return JavaAsyncHttpClientGen().getCode(rM);
+      case CodegenLanguage.javaHttpClient:
+        return JavaHttpClientCodeGen().getCode(rM);
+      case CodegenLanguage.javaOkHttp:
+        return JavaOkHttpCodeGen().getCode(rM);
+      case CodegenLanguage.juliaHttp:
+        return JuliaHttpClientCodeGen().getCode(rM);
       case CodegenLanguage.kotlinOkHttp:
         return KotlinOkHttpCodeGen().getCode(rM);
-        case CodegenLanguage.javaOkHttp:
-        return JavaOkHttpCodeGen().getCode(rM);
       case CodegenLanguage.pythonHttpClient:
         return PythonHttpClientCodeGen()
             .getCode(rM, boundary: boundary ?? getNewUuid());
@@ -68,14 +77,8 @@ class Codegen {
         return RustReqwestCodeGen().getCode(rM);
       case CodegenLanguage.rustUreq:
         return RustUreqCodeGen().getCode(rM, boundary: boundary);
-      case CodegenLanguage.goHttp:
-        return GoHttpCodeGen().getCode(rM);
-      case CodegenLanguage.juliaHttp:
-        return JuliaHttpClientCodeGen().getCode(rM);
-      case CodegenLanguage.javaAsyncHttpClient:
-        return JavaAsyncHttpClientGen().getCode(rM);
-      case CodegenLanguage.javaHttpClient:
-        return JavaHttpClientCodeGen().getCode(rM);
+      case CodegenLanguage.phpGuzzle:
+        return PhpGuzzleCodeGen().getCode(rM);
     }
   }
 }

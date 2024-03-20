@@ -96,6 +96,18 @@ class CollectionStateNotifier
     state = map;
   }
 
+  void clearResponse(String? id) {
+    if (id == null || state?[id] == null) return;
+    var currentModel = state![id]!;
+    final newModel = currentModel.duplicate(
+      id: id,
+      name: currentModel.name,
+    );
+    var map = {...state!};
+    map[id] = newModel;
+    state = map;
+  }
+
   void duplicate(String id) {
     final newId = getNewUuid();
 
@@ -134,21 +146,22 @@ class CollectionStateNotifier
     ResponseModel? responseModel,
   }) {
     final newModel = state![id]!.copyWith(
-        method: method,
-        url: url,
-        name: name,
-        description: description,
-        requestTabIndex: requestTabIndex,
-        requestHeaders: requestHeaders,
-        requestParams: requestParams,
-        isHeaderEnabledList: isHeaderEnabledList,
-        isParamEnabledList: isParamEnabledList,
-        requestBodyContentType: requestBodyContentType,
-        requestBody: requestBody,
-        requestFormDataList: requestFormDataList,
-        responseStatus: responseStatus,
-        message: message,
-        responseModel: responseModel);
+      method: method,
+      url: url,
+      name: name,
+      description: description,
+      requestTabIndex: requestTabIndex,
+      requestHeaders: requestHeaders,
+      requestParams: requestParams,
+      isHeaderEnabledList: isHeaderEnabledList,
+      isParamEnabledList: isParamEnabledList,
+      requestBodyContentType: requestBodyContentType,
+      requestBody: requestBody,
+      requestFormDataList: requestFormDataList,
+      responseStatus: responseStatus,
+      message: message,
+      responseModel: responseModel,
+    );
     //print(newModel);
     var map = {...state!};
     map[id] = newModel;
