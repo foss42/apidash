@@ -1,9 +1,7 @@
 import 'dart:convert';
-import 'dart:ffi';
 
 import 'package:apidash/consts.dart';
 import 'package:apidash/models/form_data_model.dart';
-import 'package:http/http.dart';
 
 import '../../models/request_model.dart';
 
@@ -97,11 +95,6 @@ class CLibcurlCodeGen {
       var headersList = requestModel.enabledRequestHeaders;
       if (headersList != null && headersList.isNotEmpty) {
         result.writeln('    struct curl_slist *headers = NULL;');
-        // if (headersList
-        //     .every((e) => !(e.name == 'Content-Type' && e.value == 'application/json'))) {
-        //   result.writeln(
-        //       '    headers = curl_slist_append(headers, "Content-Type: application/json");');
-        // }
         for (var header in headersList) {
           result.writeln(
               '    headers = curl_slist_append(headers, "${header.name}: ${header.value}");');
