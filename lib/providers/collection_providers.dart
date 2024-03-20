@@ -194,7 +194,6 @@ class CollectionStateNotifier
         responseStatus: -1,
         message: responseRec.$3,
         isWorking: false,
-        sendingTime: null,
       );
     } else {
       final responseModel = baseResponseModel.fromResponse(
@@ -207,7 +206,6 @@ class CollectionStateNotifier
         message: kResponseCodeReasons[statusCode],
         responseModel: responseModel,
         isWorking: false,
-        sendingTime: null,
       );
     }
 
