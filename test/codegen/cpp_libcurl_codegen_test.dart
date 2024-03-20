@@ -22,7 +22,7 @@ int main() {
 
     res = curl_easy_perform(curl);
     if(res != CURLE_OK) {
-      fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+      std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
     }
 
     curl_easy_cleanup(curl);
@@ -50,7 +50,7 @@ int main() {
 
     res = curl_easy_perform(curl);
     if(res != CURLE_OK) {
-      fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+      std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
     }
 
     curl_easy_cleanup(curl);
@@ -78,7 +78,7 @@ int main() {
 
     res = curl_easy_perform(curl);
     if(res != CURLE_OK) {
-      fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+      std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
     }
 
     curl_easy_cleanup(curl);
@@ -106,7 +106,7 @@ int main() {
 
     res = curl_easy_perform(curl);
     if(res != CURLE_OK) {
-      fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+      std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
     }
 
     curl_easy_cleanup(curl);
@@ -138,7 +138,7 @@ int main() {
 
     res = curl_easy_perform(curl);
     if(res != CURLE_OK) {
-      fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+      std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
     }
 
     curl_easy_cleanup(curl);
@@ -171,7 +171,7 @@ int main() {
 
     res = curl_easy_perform(curl);
     if(res != CURLE_OK) {
-      fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+      std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
     }
 
     curl_easy_cleanup(curl);
@@ -200,7 +200,7 @@ int main() {
 
     res = curl_easy_perform(curl);
     if(res != CURLE_OK) {
-      fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+      std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
     }
 
     curl_easy_cleanup(curl);
@@ -233,7 +233,7 @@ int main() {
 
     res = curl_easy_perform(curl);
     if(res != CURLE_OK) {
-      fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+      std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
     }
 
     curl_easy_cleanup(curl);
@@ -262,7 +262,7 @@ int main() {
 
     res = curl_easy_perform(curl);
     if(res != CURLE_OK) {
-      fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+      std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
     }
 
     curl_easy_cleanup(curl);
@@ -294,7 +294,7 @@ int main() {
 
     res = curl_easy_perform(curl);
     if(res != CURLE_OK) {
-      fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+      std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
     }
 
     curl_easy_cleanup(curl);
@@ -327,7 +327,7 @@ int main() {
 
     res = curl_easy_perform(curl);
     if(res != CURLE_OK) {
-      fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+      std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
     }
 
     curl_easy_cleanup(curl);
@@ -356,7 +356,7 @@ int main() {
 
     res = curl_easy_perform(curl);
     if(res != CURLE_OK) {
-      fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+      std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
     }
 
     curl_easy_cleanup(curl);
@@ -386,7 +386,7 @@ int main() {
 
     res = curl_easy_perform(curl);
     if(res != CURLE_OK) {
-      fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+      std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
     }
 
     curl_easy_cleanup(curl);
@@ -414,7 +414,7 @@ int main() {
 
     res = curl_easy_perform(curl);
     if(res != CURLE_OK) {
-      fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+      std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
     }
 
     curl_easy_cleanup(curl);
@@ -447,7 +447,7 @@ int main() {
 
     res = curl_easy_perform(curl);
     if(res != CURLE_OK) {
-      fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+      std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
     }
 
     curl_easy_cleanup(curl);
@@ -478,7 +478,7 @@ int main() {
 
     res = curl_easy_perform(curl);
     if(res != CURLE_OK) {
-      fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+      std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
     }
 
     curl_easy_cleanup(curl);
@@ -513,7 +513,7 @@ int main() {
 
     res = curl_easy_perform(curl);
     if(res != CURLE_OK) {
-      fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+      std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
     }
 
     curl_easy_cleanup(curl);
@@ -549,7 +549,7 @@ int main() {
 
     res = curl_easy_perform(curl);
     if(res != CURLE_OK) {
-      fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+      std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
     }
 
     curl_easy_cleanup(curl);
@@ -564,6 +564,7 @@ int main() {
     test('POST 5', () {
       const expectedCode = r"""
 #include <iostream>
+#include <curl/curl.h>
 
 int main() {
   CURL *curl;
@@ -587,7 +588,7 @@ int main() {
 
     res = curl_easy_perform(curl);
     if(res != CURLE_OK) {
-      fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+      std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
     }
 
     curl_easy_cleanup(curl);
@@ -622,7 +623,7 @@ int main() {
 
     res = curl_easy_perform(curl);
     if(res != CURLE_OK) {
-      fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+      std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
     }
 
     curl_easy_cleanup(curl);
@@ -659,7 +660,7 @@ int main() {
 
     res = curl_easy_perform(curl);
     if(res != CURLE_OK) {
-      fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+      std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
     }
 
     curl_easy_cleanup(curl);
@@ -694,7 +695,7 @@ int main() {
 
     res = curl_easy_perform(curl);
     if(res != CURLE_OK) {
-      fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+      std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
     }
 
     curl_easy_cleanup(curl);
@@ -736,7 +737,7 @@ int main() {
 
     res = curl_easy_perform(curl);
     if(res != CURLE_OK) {
-      fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+      std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
     }
 
     curl_easy_cleanup(curl);
@@ -770,7 +771,7 @@ int main() {
 
     res = curl_easy_perform(curl);
     if(res != CURLE_OK) {
-      fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+      std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
     }
 
     curl_easy_cleanup(curl);
@@ -803,7 +804,7 @@ int main() {
 
     res = curl_easy_perform(curl);
     if(res != CURLE_OK) {
-      fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+      std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
     }
 
     curl_easy_cleanup(curl);
@@ -833,7 +834,7 @@ int main() {
 
     res = curl_easy_perform(curl);
     if(res != CURLE_OK) {
-      fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+      std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
     }
 
     curl_easy_cleanup(curl);
@@ -861,7 +862,7 @@ int main() {
 
     res = curl_easy_perform(curl);
     if(res != CURLE_OK) {
-      fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+      std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
     }
 
     curl_easy_cleanup(curl);
