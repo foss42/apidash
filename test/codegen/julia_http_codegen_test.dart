@@ -365,6 +365,150 @@ println("Response Body:", String(response.body))
               CodegenLanguage.juliaHttp, requestModelPost3, "https"),
           expectedCode);
     });
+    test('POST 4', () {
+      const expectedCode = r"""using HTTP,JSON
+
+url = "https://api.apidash.dev/case/lower"
+
+
+payload = Dict(
+"text"=> "I LOVE Flutter"
+)
+
+headers = Dict(
+            "User-Agent"=> "Test Agent"
+          )
+
+response = HTTP.post(url, JSON.json(payload), headers=headers)
+
+println("Status Code:", response.status)
+println("Response Body:", String(response.body))
+""";
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.juliaHttp, requestModelPost3, "https"),
+          expectedCode);
+    });
+    test('POST 5', () {
+      const expectedCode = r"""using HTTP,JSON
+
+url = "https://api.apidash.dev/case/lower"
+
+
+payload = Dict(
+"text"=> "I LOVE Flutter"
+)
+
+headers = Dict(
+            "User-Agent"=> "Test Agent"
+          )
+
+response = HTTP.post(url, JSON.json(payload), headers=headers)
+
+println("Status Code:", response.status)
+println("Response Body:", String(response.body))
+""";
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.juliaHttp, requestModelPost3, "https"),
+          expectedCode);
+    });
+    test('POST 5', () {
+      const expectedCode = r"""using HTTP,JSON
+
+url = "https://api.apidash.dev/case/lower"
+
+
+payload = Dict(
+"text"=> "I LOVE Flutter"
+)
+
+headers = Dict(
+            "User-Agent"=> "Test Agent"
+          )
+
+response = HTTP.post(url, JSON.json(payload), headers=headers)
+
+println("Status Code:", response.status)
+println("Response Body:", String(response.body))
+""";
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.juliaHttp, requestModelPost3, "https"),
+          expectedCode);
+    });
+    test('POST 7', () {
+      const expectedCode = r"""using HTTP,JSON
+
+url = "https://api.apidash.dev/case/lower"
+
+
+payload = Dict(
+"text"=> "I LOVE Flutter"
+)
+
+headers = Dict(
+            "User-Agent"=> "Test Agent"
+          )
+
+response = HTTP.post(url, JSON.json(payload), headers=headers)
+
+println("Status Code:", response.status)
+println("Response Body:", String(response.body))
+""";
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.juliaHttp, requestModelPost3, "https"),
+          expectedCode);
+    });
+    test('POST 8', () {
+      const expectedCode = r"""using HTTP,JSON
+
+url = "https://api.apidash.dev/case/lower"
+
+
+payload = Dict(
+"text"=> "I LOVE Flutter"
+)
+
+headers = Dict(
+            "User-Agent"=> "Test Agent"
+          )
+
+response = HTTP.post(url, JSON.json(payload), headers=headers)
+
+println("Status Code:", response.status)
+println("Response Body:", String(response.body))
+""";
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.juliaHttp, requestModelPost3, "https"),
+          expectedCode);
+    });
+    test('POST 9', () {
+      const expectedCode = r"""using HTTP,JSON
+
+url = "https://api.apidash.dev/case/lower"
+
+
+payload = Dict(
+"text"=> "I LOVE Flutter"
+)
+
+headers = Dict(
+            "User-Agent"=> "Test Agent"
+          )
+
+response = HTTP.post(url, JSON.json(payload), headers=headers)
+
+println("Status Code:", response.status)
+println("Response Body:", String(response.body))
+""";
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.juliaHttp, requestModelPost3, "https"),
+          expectedCode);
+    });
   });
   group('PUT Request', () {
     test('PUT 1', () {
