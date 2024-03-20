@@ -10,13 +10,31 @@ import 'package:apidash/models/models.dart';
 import '../test_consts.dart';
 
 void main() {
-  testWidgets('Testing Sending Widget', (tester) async {
+  testWidgets('Testing Sending Widget Without Timer', (tester) async {
     await tester.pumpWidget(
       MaterialApp(
         title: 'Send',
         theme: kThemeDataDark,
         home: const Scaffold(
-          body: SendingWidget(),
+          body: SendingWidget(
+            startSendingTime: null,
+          ),
+        ),
+      ),
+    );
+
+    expect(find.byType(Lottie), findsOneWidget);
+  });
+
+  testWidgets('Testing Sending Widget With Timer', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        title: 'Send',
+        theme: kThemeDataDark,
+        home: Scaffold(
+          body: SendingWidget(
+            startSendingTime: DateTime.now(),
+          ),
         ),
       ),
     );
