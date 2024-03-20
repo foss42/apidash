@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'dart:ffi';
 
 import 'package:apidash/consts.dart';
 import 'package:apidash/models/form_data_model.dart';
+import 'package:http/http.dart';
 
 import '../../models/request_model.dart';
 
@@ -29,17 +31,37 @@ class CLibcurlCodeGen {
     return method == HTTPVerb.post || method == HTTPVerb.put || method == HTTPVerb.patch;
   }
 
+  String getPostFieldsFromRequestBody(String requestBody) {
+    StringBuffer result = StringBuffer();
+    var postFields = jsonEncode(jsonDecode(requestBody));
+    result.writeln('    curl_easy_setopt(curl, CURLOPT_POST, 1L);');
+    result.writeln(
+        '    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, "${postFields.replaceAll('"', '\\"')}");');
+
+    return result.toString();
+  }
+
   String getPostFieldsFromFormData(List<FormDataModel> formDataList) {
-    StringBuffer postFields = StringBuffer();
+    StringBuffer result = StringBuffer();
+
+    // Initialize curl_httppost pointers
+    result.writeln('  struct curl_httppost *formpost = NULL;');
+    result.writeln('  struct curl_httppost *lastptr = NULL;');
+
     for (var formData in formDataList) {
       if (formData.type == FormDataType.text) {
-        postFields.write("${formData.name}=${Uri.encodeComponent(formData.value)}&");
+        result.writeln(
+            '  curl_formadd(&formpost, &lastptr, CURLFORM_COPYNAME, "${formData.name}", CURLFORM_COPYCONTENTS, "${formData.value}", CURLFORM_END);');
       } else if (formData.type == FormDataType.file) {
-        // Handle file upload
-        postFields.write("${formData.name}=${Uri.encodeComponent(formData.value)}&");
+        result.writeln(
+            '  curl_formadd(&formpost, &lastptr, CURLFORM_COPYNAME, "${formData.name}", CURLFORM_FILE, "${formData.value}", CURLFORM_END);');
       }
     }
-    return postFields.toString();
+
+    // Finalize form data setup
+    result.writeln('  curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);');
+
+    return result.toString();
   }
 
   String getCode(RequestModel requestModel, String defaultUriScheme) {
@@ -72,29 +94,30 @@ class CLibcurlCodeGen {
           '    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "${getCustomRequestLiteral(requestModel.method)}");\n');
 
       // Set request headers
-      result.writeln('    struct curl_slist *headers = NULL;');
-      result.writeln('    headers = curl_slist_append(headers, "Content-Type: application/json");');
       var headersList = requestModel.enabledRequestHeaders;
       if (headersList != null && headersList.isNotEmpty) {
+        result.writeln('    struct curl_slist *headers = NULL;');
+        // if (headersList
+        //     .every((e) => !(e.name == 'Content-Type' && e.value == 'application/json'))) {
+        //   result.writeln(
+        //       '    headers = curl_slist_append(headers, "Content-Type: application/json");');
+        // }
         for (var header in headersList) {
-          if (header.name == "Content-Type" && header.value == "application/json") continue;
           result.writeln(
               '    headers = curl_slist_append(headers, "${header.name}: ${header.value}");');
         }
+        result.writeln('    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);\n');
       }
-      result.writeln('    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);\n');
 
       if (postableMethod(requestModel.method)) {
-        String postFields = "";
-        if (requestModel.hasJsonData) {
-          postFields = jsonDecode(requestModel.requestBody!);
-        } else if (requestModel.hasFormData) {
-          postFields = getPostFieldsFromFormData(requestModel.formDataList);
+        var requestBody = requestModel.requestBody;
+        var formDataList = requestModel.formDataList;
+        if (requestBody != null && requestBody.isNotEmpty) {
+          result.writeln(getPostFieldsFromRequestBody(requestBody));
         }
-
-        result.writeln('    curl_easy_setopt(curl, CURLOPT_POST, 1L);');
-        result.writeln(
-            '    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, "${jsonEncode(postFields).replaceAll('"', '\\"')}");\n');
+        if (formDataList.isNotEmpty) {
+          result.writeln(getPostFieldsFromFormData(formDataList));
+        }
       }
 
       // Perform the request

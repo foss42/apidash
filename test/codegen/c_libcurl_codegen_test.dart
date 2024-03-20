@@ -21,10 +21,6 @@ int main() {
     curl_easy_setopt(curl, CURLOPT_URL, "https://api.apidash.dev");
     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "GET");
 
-    struct curl_slist *headers = NULL;
-    headers = curl_slist_append(headers, "Content-Type: application/json");
-    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-
     res = curl_easy_perform(curl);
     if(res != CURLE_OK) {
       fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
@@ -53,10 +49,6 @@ int main() {
   if(curl) {
     curl_easy_setopt(curl, CURLOPT_URL, "https://api.apidash.dev/country/data");
     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "GET");
-
-    struct curl_slist *headers = NULL;
-    headers = curl_slist_append(headers, "Content-Type: application/json");
-    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
     res = curl_easy_perform(curl);
     if(res != CURLE_OK) {
@@ -87,10 +79,6 @@ int main() {
     curl_easy_setopt(curl, CURLOPT_URL, "https://api.apidash.dev/country/data?code=US");
     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "GET");
 
-    struct curl_slist *headers = NULL;
-    headers = curl_slist_append(headers, "Content-Type: application/json");
-    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-
     res = curl_easy_perform(curl);
     if(res != CURLE_OK) {
       fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
@@ -119,10 +107,6 @@ int main() {
   if(curl) {
     curl_easy_setopt(curl, CURLOPT_URL, "https://api.apidash.dev/humanize/social");
     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "GET");
-
-    struct curl_slist *headers = NULL;
-    headers = curl_slist_append(headers, "Content-Type: application/json");
-    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
     res = curl_easy_perform(curl);
     if(res != CURLE_OK) {
@@ -154,7 +138,6 @@ int main() {
     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "GET");
 
     struct curl_slist *headers = NULL;
-    headers = curl_slist_append(headers, "Content-Type: application/json");
     headers = curl_slist_append(headers, "User-Agent: Test Agent");
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
@@ -189,7 +172,6 @@ int main() {
     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "GET");
 
     struct curl_slist *headers = NULL;
-    headers = curl_slist_append(headers, "Content-Type: application/json");
     headers = curl_slist_append(headers, "User-Agent: Test Agent");
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
@@ -223,10 +205,6 @@ int main() {
     curl_easy_setopt(curl, CURLOPT_URL, "https://api.apidash.dev");
     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "GET");
 
-    struct curl_slist *headers = NULL;
-    headers = curl_slist_append(headers, "Content-Type: application/json");
-    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-
     res = curl_easy_perform(curl);
     if(res != CURLE_OK) {
       fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
@@ -257,7 +235,6 @@ int main() {
     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "GET");
 
     struct curl_slist *headers = NULL;
-    headers = curl_slist_append(headers, "Content-Type: application/json");
     headers = curl_slist_append(headers, "User-Agent: Test Agent");
     headers = curl_slist_append(headers, ": Bearer XYZ");
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
@@ -292,10 +269,6 @@ int main() {
     curl_easy_setopt(curl, CURLOPT_URL, "https://api.apidash.dev/humanize/social");
     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "GET");
 
-    struct curl_slist *headers = NULL;
-    headers = curl_slist_append(headers, "Content-Type: application/json");
-    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-
     res = curl_easy_perform(curl);
     if(res != CURLE_OK) {
       fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
@@ -326,7 +299,6 @@ int main() {
     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "GET");
 
     struct curl_slist *headers = NULL;
-    headers = curl_slist_append(headers, "Content-Type: application/json");
     headers = curl_slist_append(headers, "User-Agent: Test Agent");
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
@@ -361,7 +333,6 @@ int main() {
     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "GET");
 
     struct curl_slist *headers = NULL;
-    headers = curl_slist_append(headers, "Content-Type: application/json");
     headers = curl_slist_append(headers, "User-Agent: Test Agent");
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
@@ -395,10 +366,6 @@ int main() {
     curl_easy_setopt(curl, CURLOPT_URL, "https://api.apidash.dev/humanize/social");
     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "GET");
 
-    struct curl_slist *headers = NULL;
-    headers = curl_slist_append(headers, "Content-Type: application/json");
-    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-
     res = curl_easy_perform(curl);
     if(res != CURLE_OK) {
       fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
@@ -430,10 +397,6 @@ int main() {
     curl_easy_setopt(curl, CURLOPT_URL, "https://api.apidash.dev");
     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "HEAD");
 
-    struct curl_slist *headers = NULL;
-    headers = curl_slist_append(headers, "Content-Type: application/json");
-    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-
     res = curl_easy_perform(curl);
     if(res != CURLE_OK) {
       fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
@@ -462,10 +425,6 @@ int main() {
   if(curl) {
     curl_easy_setopt(curl, CURLOPT_URL, "http://api.apidash.dev");
     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "HEAD");
-
-    struct curl_slist *headers = NULL;
-    headers = curl_slist_append(headers, "Content-Type: application/json");
-    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
     res = curl_easy_perform(curl);
     if(res != CURLE_OK) {
@@ -497,10 +456,6 @@ int main() {
   if(curl) {
     curl_easy_setopt(curl, CURLOPT_URL, "https://api.apidash.dev/case/lower");
     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
-
-    struct curl_slist *headers = NULL;
-    headers = curl_slist_append(headers, "Content-Type: application/json");
-    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
     curl_easy_setopt(curl, CURLOPT_POST, 1L);
     curl_easy_setopt(curl, CURLOPT_POSTFIELDS, "{\"text\":\"I LOVE Flutter\"}");
@@ -534,12 +489,8 @@ int main() {
     curl_easy_setopt(curl, CURLOPT_URL, "https://api.apidash.dev/case/lower");
     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
 
-    struct curl_slist *headers = NULL;
-    headers = curl_slist_append(headers, "Content-Type: application/json");
-    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-
     curl_easy_setopt(curl, CURLOPT_POST, 1L);
-    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, "{\"text\":\"I LOVE Flutter\"}");
+    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, "{\"text\":\"I LOVE Flutter\",\"flag\":null,\"male\":true,\"female\":false,\"no\":1.2,\"arr\":[\"null\",\"true\",\"false\",null]}");
 
     res = curl_easy_perform(curl);
     if(res != CURLE_OK) {
@@ -571,7 +522,6 @@ int main() {
     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
 
     struct curl_slist *headers = NULL;
-    headers = curl_slist_append(headers, "Content-Type: application/json");
     headers = curl_slist_append(headers, "User-Agent: Test Agent");
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
@@ -593,128 +543,303 @@ int main() {
       expect(cLibcurlCodeGen.getCode(requestModelPost3, "https"), expectedCode);
     });
 
-//     test('POST 4', () {
-//       const expectedCode = r"""
+    test('POST 4', () {
+      const expectedCode = r"""
+#include <stdio.h>
+#include <stdlib.h>
+#include <curl/curl.h>
 
-// """;
-//       expect(cLibcurlCodeGen.getCode(requestModelPost4, "https"), expectedCode);
-//     });
+int main() {
+  CURL *curl;
+  CURLcode res;
+  curl = curl_easy_init();
 
-//     test('POST 5', () {
-//       const expectedCode = r"""
+  if(curl) {
+    curl_easy_setopt(curl, CURLOPT_URL, "https://api.apidash.dev/io/form");
+    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
 
-// """;
-//       print(cLibcurlCodeGen.getCode(requestModelPost5, "https"));
-//       expect(cLibcurlCodeGen.getCode(requestModelPost5, "https"), expectedCode);
-//     });
+  struct curl_httppost *formpost = NULL;
+  struct curl_httppost *lastptr = NULL;
+  curl_formadd(&formpost, &lastptr, CURLFORM_COPYNAME, "text", CURLFORM_COPYCONTENTS, "API", CURLFORM_END);
+  curl_formadd(&formpost, &lastptr, CURLFORM_COPYNAME, "sep", CURLFORM_COPYCONTENTS, "|", CURLFORM_END);
+  curl_formadd(&formpost, &lastptr, CURLFORM_COPYNAME, "times", CURLFORM_COPYCONTENTS, "3", CURLFORM_END);
+  curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
 
-//     test('POST 6', () {
-//       const expectedCode = r"""
+    res = curl_easy_perform(curl);
+    if(res != CURLE_OK) {
+      fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+    }
 
-// """;
-//       print(cLibcurlCodeGen.getCode(requestModelPost6, "https"));
-//       expect(cLibcurlCodeGen.getCode(requestModelPost6, "https"), expectedCode);
-//     });
+    curl_easy_cleanup(curl);
+  }
 
-//     test('POST 7', () {
-//       const expectedCode = r"""
+  return 0;
+}
+""";
+      expect(cLibcurlCodeGen.getCode(requestModelPost4, "https"), expectedCode);
+    });
 
-// """;
-//       print(cLibcurlCodeGen.getCode(requestModelPost7, "https"));
-//       expect(cLibcurlCodeGen.getCode(requestModelPost7, "https"), expectedCode);
-//     });
+    test('POST 5', () {
+      const expectedCode = r"""
+#include <stdio.h>
+#include <stdlib.h>
+#include <curl/curl.h>
 
-//     test('POST 8', () {
-//       const expectedCode = r"""
+int main() {
+  CURL *curl;
+  CURLcode res;
+  curl = curl_easy_init();
 
-// """;
-//       print(cLibcurlCodeGen.getCode(requestModelPost8, "https"));
-//       expect(cLibcurlCodeGen.getCode(requestModelPost8, "https"), expectedCode);
-//     });
+  if(curl) {
+    curl_easy_setopt(curl, CURLOPT_URL, "https://api.apidash.dev/io/form");
+    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
 
-//     test('POST 9', () {
-//       const expectedCode = r"""
+    struct curl_slist *headers = NULL;
+    headers = curl_slist_append(headers, "User-Agent: Test Agent");
+    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
-// """;
-//       print(cLibcurlCodeGen.getCode(requestModelPost9, "https"));
-//       expect(cLibcurlCodeGen.getCode(requestModelPost9, "https"), expectedCode);
-//     });
-//   });
+  struct curl_httppost *formpost = NULL;
+  struct curl_httppost *lastptr = NULL;
+  curl_formadd(&formpost, &lastptr, CURLFORM_COPYNAME, "text", CURLFORM_COPYCONTENTS, "API", CURLFORM_END);
+  curl_formadd(&formpost, &lastptr, CURLFORM_COPYNAME, "sep", CURLFORM_COPYCONTENTS, "|", CURLFORM_END);
+  curl_formadd(&formpost, &lastptr, CURLFORM_COPYNAME, "times", CURLFORM_COPYCONTENTS, "3", CURLFORM_END);
+  curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
 
-//   group('PUT Request', () {
-//     test('PUT 1', () {
-//       const expectedCode = r"""
-// #include <stdio.h>
-// #include <stdlib.h>
-// #include <curl/curl.h>
+    res = curl_easy_perform(curl);
+    if(res != CURLE_OK) {
+      fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+    }
 
-// int main() {
-//   CURL *curl;
-//   CURLcode res;
-//   curl = curl_easy_init();
+    curl_easy_cleanup(curl);
+    curl_slist_free_all(headers);
+  }
 
-//   if(curl) {
-//     curl_easy_setopt(curl, CURLOPT_URL, "https://reqres.in/api/users/2");
-//     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "PUT");
+  return 0;
+}
+""";
+      expect(cLibcurlCodeGen.getCode(requestModelPost5, "https"), expectedCode);
+    });
 
-//     struct curl_slist *headers = NULL;
-//     headers = curl_slist_append(headers, "Content-Type: application/json");
-//     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+    test('POST 6', () {
+      const expectedCode = r"""
+#include <stdio.h>
+#include <stdlib.h>
+#include <curl/curl.h>
 
-//     curl_easy_setopt(curl, CURLOPT_POST, 1L);
-//     curl_easy_setopt(curl, CURLOPT_POSTFIELDS, "{\"name\":\"morpheus\",\"job\":\"zion resident\"}");
+int main() {
+  CURL *curl;
+  CURLcode res;
+  curl = curl_easy_init();
 
-//     res = curl_easy_perform(curl);
-//     if(res != CURLE_OK) {
-//       fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
-//     }
+  if(curl) {
+    curl_easy_setopt(curl, CURLOPT_URL, "https://api.apidash.dev/io/img");
+    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
 
-//     curl_easy_cleanup(curl);
-//   }
+  struct curl_httppost *formpost = NULL;
+  struct curl_httppost *lastptr = NULL;
+  curl_formadd(&formpost, &lastptr, CURLFORM_COPYNAME, "token", CURLFORM_COPYCONTENTS, "xyz", CURLFORM_END);
+  curl_formadd(&formpost, &lastptr, CURLFORM_COPYNAME, "imfile", CURLFORM_FILE, "/Documents/up/1.png", CURLFORM_END);
+  curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
 
-//   return 0;
-// }
-// """;
-//       expect(cLibcurlCodeGen.getCode(requestModelPut1, "https"), expectedCode);
-//     });
-//   });
+    res = curl_easy_perform(curl);
+    if(res != CURLE_OK) {
+      fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+    }
 
-//   group('PATCH Request', () {
-//     test('PATCH 1', () {
-//       const expectedCode = r"""
-// #include <stdio.h>
-// #include <stdlib.h>
-// #include <curl/curl.h>
+    curl_easy_cleanup(curl);
+  }
 
-// int main() {
-//   CURL *curl;
-//   CURLcode res;
-//   curl = curl_easy_init();
+  return 0;
+}
+""";
+      expect(cLibcurlCodeGen.getCode(requestModelPost6, "https"), expectedCode);
+    });
 
-//   if(curl) {
-//     curl_easy_setopt(curl, CURLOPT_URL, "https://reqres.in/api/users/2");
-//     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "PATCH");
+    test('POST 7', () {
+      const expectedCode = r"""
+#include <stdio.h>
+#include <stdlib.h>
+#include <curl/curl.h>
 
-//     struct curl_slist *headers = NULL;
-//     headers = curl_slist_append(headers, "Content-Type: application/json");
-//     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+int main() {
+  CURL *curl;
+  CURLcode res;
+  curl = curl_easy_init();
 
-//     curl_easy_setopt(curl, CURLOPT_POST, 1L);
-//     curl_easy_setopt(curl, CURLOPT_POSTFIELDS, "{\"name\":\"marfeus\",\"job\":\"accountant\"}");
+  if(curl) {
+    curl_easy_setopt(curl, CURLOPT_URL, "https://api.apidash.dev/io/img");
+    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
 
-//     res = curl_easy_perform(curl);
-//     if(res != CURLE_OK) {
-//       fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
-//     }
+    curl_easy_setopt(curl, CURLOPT_POST, 1L);
+    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, "{\"text\":\"I LOVE Flutter\"}");
 
-//     curl_easy_cleanup(curl);
-//   }
+  struct curl_httppost *formpost = NULL;
+  struct curl_httppost *lastptr = NULL;
+  curl_formadd(&formpost, &lastptr, CURLFORM_COPYNAME, "token", CURLFORM_COPYCONTENTS, "xyz", CURLFORM_END);
+  curl_formadd(&formpost, &lastptr, CURLFORM_COPYNAME, "imfile", CURLFORM_FILE, "/Documents/up/1.png", CURLFORM_END);
+  curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
 
-//   return 0;
-// }
-// """;
-//       expect(cLibcurlCodeGen.getCode(requestModelPatch1, "https"), expectedCode);
-//     });
+    res = curl_easy_perform(curl);
+    if(res != CURLE_OK) {
+      fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+    }
+
+    curl_easy_cleanup(curl);
+  }
+
+  return 0;
+}
+""";
+      expect(cLibcurlCodeGen.getCode(requestModelPost7, "https"), expectedCode);
+    });
+
+    test('POST 8', () {
+      const expectedCode = r"""
+#include <stdio.h>
+#include <stdlib.h>
+#include <curl/curl.h>
+
+int main() {
+  CURL *curl;
+  CURLcode res;
+  curl = curl_easy_init();
+
+  if(curl) {
+    curl_easy_setopt(curl, CURLOPT_URL, "https://api.apidash.dev/io/form");
+    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
+
+  struct curl_httppost *formpost = NULL;
+  struct curl_httppost *lastptr = NULL;
+  curl_formadd(&formpost, &lastptr, CURLFORM_COPYNAME, "text", CURLFORM_COPYCONTENTS, "API", CURLFORM_END);
+  curl_formadd(&formpost, &lastptr, CURLFORM_COPYNAME, "sep", CURLFORM_COPYCONTENTS, "|", CURLFORM_END);
+  curl_formadd(&formpost, &lastptr, CURLFORM_COPYNAME, "times", CURLFORM_COPYCONTENTS, "3", CURLFORM_END);
+  curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
+
+    res = curl_easy_perform(curl);
+    if(res != CURLE_OK) {
+      fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+    }
+
+    curl_easy_cleanup(curl);
+  }
+
+  return 0;
+}
+""";
+      expect(cLibcurlCodeGen.getCode(requestModelPost8, "https"), expectedCode);
+    });
+
+    test('POST 9', () {
+      const expectedCode = r"""
+#include <stdio.h>
+#include <stdlib.h>
+#include <curl/curl.h>
+
+int main() {
+  CURL *curl;
+  CURLcode res;
+  curl = curl_easy_init();
+
+  if(curl) {
+    curl_easy_setopt(curl, CURLOPT_URL, "https://api.apidash.dev/io/img");
+    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
+
+    struct curl_slist *headers = NULL;
+    headers = curl_slist_append(headers, "User-Agent: Test Agent");
+    headers = curl_slist_append(headers, "Keep-Alive: true");
+    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+
+    curl_easy_setopt(curl, CURLOPT_POST, 1L);
+    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, "{\"text\":\"I LOVE Flutter\"}");
+
+  struct curl_httppost *formpost = NULL;
+  struct curl_httppost *lastptr = NULL;
+  curl_formadd(&formpost, &lastptr, CURLFORM_COPYNAME, "token", CURLFORM_COPYCONTENTS, "xyz", CURLFORM_END);
+  curl_formadd(&formpost, &lastptr, CURLFORM_COPYNAME, "imfile", CURLFORM_FILE, "/Documents/up/1.png", CURLFORM_END);
+  curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
+
+    res = curl_easy_perform(curl);
+    if(res != CURLE_OK) {
+      fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+    }
+
+    curl_easy_cleanup(curl);
+    curl_slist_free_all(headers);
+  }
+
+  return 0;
+}
+""";
+      expect(cLibcurlCodeGen.getCode(requestModelPost9, "https"), expectedCode);
+    });
+  });
+
+  group('PUT Request', () {
+    test('PUT 1', () {
+      const expectedCode = r"""
+#include <stdio.h>
+#include <stdlib.h>
+#include <curl/curl.h>
+
+int main() {
+  CURL *curl;
+  CURLcode res;
+  curl = curl_easy_init();
+
+  if(curl) {
+    curl_easy_setopt(curl, CURLOPT_URL, "https://reqres.in/api/users/2");
+    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "PUT");
+
+    curl_easy_setopt(curl, CURLOPT_POST, 1L);
+    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, "{\"name\":\"morpheus\",\"job\":\"zion resident\"}");
+
+    res = curl_easy_perform(curl);
+    if(res != CURLE_OK) {
+      fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+    }
+
+    curl_easy_cleanup(curl);
+  }
+
+  return 0;
+}
+""";
+      expect(cLibcurlCodeGen.getCode(requestModelPut1, "https"), expectedCode);
+    });
+  });
+
+  group('PATCH Request', () {
+    test('PATCH 1', () {
+      const expectedCode = r"""
+#include <stdio.h>
+#include <stdlib.h>
+#include <curl/curl.h>
+
+int main() {
+  CURL *curl;
+  CURLcode res;
+  curl = curl_easy_init();
+
+  if(curl) {
+    curl_easy_setopt(curl, CURLOPT_URL, "https://reqres.in/api/users/2");
+    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "PATCH");
+
+    curl_easy_setopt(curl, CURLOPT_POST, 1L);
+    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, "{\"name\":\"marfeus\",\"job\":\"accountant\"}");
+
+    res = curl_easy_perform(curl);
+    if(res != CURLE_OK) {
+      fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+    }
+
+    curl_easy_cleanup(curl);
+  }
+
+  return 0;
+}
+""";
+      expect(cLibcurlCodeGen.getCode(requestModelPatch1, "https"), expectedCode);
+    });
   });
 
   group('DELETE Request', () {
@@ -732,10 +857,6 @@ int main() {
   if(curl) {
     curl_easy_setopt(curl, CURLOPT_URL, "https://reqres.in/api/users/2");
     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "DELETE");
-
-    struct curl_slist *headers = NULL;
-    headers = curl_slist_append(headers, "Content-Type: application/json");
-    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
     res = curl_easy_perform(curl);
     if(res != CURLE_OK) {
@@ -765,10 +886,6 @@ int main() {
   if(curl) {
     curl_easy_setopt(curl, CURLOPT_URL, "https://reqres.in/api/users/2");
     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "DELETE");
-
-    struct curl_slist *headers = NULL;
-    headers = curl_slist_append(headers, "Content-Type: application/json");
-    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
     res = curl_easy_perform(curl);
     if(res != CURLE_OK) {
