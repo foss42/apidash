@@ -50,7 +50,7 @@ String getShortPath(String path) {
 
 String getFilenameFromPath(String path) {
   var f = p.split(path);
-  return f.last;
+  return f.lastOrNull ?? "";
 }
 
 String getTempFileName() {
