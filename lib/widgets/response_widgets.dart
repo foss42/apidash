@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http_parser/http_parser.dart';
@@ -24,8 +27,10 @@ class NotSentWidget extends StatelessWidget {
           ),
           Text(
             'Not Sent',
-            style:
-                Theme.of(context).textTheme.titleMedium?.copyWith(color: color),
+            style: Theme.of(context)
+                .textTheme
+                .titleMedium
+                ?.copyWith(color: color),
           ),
         ],
       ),
@@ -33,17 +38,69 @@ class NotSentWidget extends StatelessWidget {
   }
 }
 
-class SendingWidget extends StatelessWidget {
-  const SendingWidget({super.key});
+class SendingWidget extends StatefulWidget {
+  final DateTime? startSendingTime;
+  const SendingWidget({super.key, required this.startSendingTime});
+
+  @override
+  State<SendingWidget> createState() => _SendingWidgetState();
+}
+
+class _SendingWidgetState extends State<SendingWidget> {
+  int _millisecondsElapsed = 0;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.startSendingTime != null) {
+      _millisecondsElapsed =
+          DateTime.now().difference(widget.startSendingTime!).inMilliseconds;
+      _timer = Timer.periodic(const Duration(milliseconds: 10), _updateTimer);
+    }
+  }
+
+  void _updateTimer(Timer timer) {
+    setState(() {
+      _millisecondsElapsed += 10;
+    });
+  }
+
+  @override
+  void dispose() {
+    if (_timer != null && _timer!.isActive) _timer?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Lottie.asset("assets/sending.json"),
-        ],
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Visibility(
+              visible: _millisecondsElapsed > 0,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.alarm),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Text(
+                    'Time elapsed: ${humanizeDuration(Duration(milliseconds: _millisecondsElapsed))}',
+                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.fade,
+                    softWrap: false,
+                    style: kTextStyleButton,
+                  ),
+                ],
+              ),
+            ),
+            Lottie.asset("assets/sending.json"),
+          ],
+        ),
       ),
     );
   }

@@ -180,7 +180,8 @@ class CollectionStateNotifier
 
     // set current model's isWorking to true and update state
     var map = {...state!};
-    map[id] = requestModel.copyWith(isWorking: true);
+    map[id] =
+        requestModel.copyWith(isWorking: true, sendingTime: DateTime.now());
     state = map;
 
     (http.Response?, Duration?, String?)? responseRec = await request(
@@ -193,6 +194,7 @@ class CollectionStateNotifier
         responseStatus: -1,
         message: responseRec.$3,
         isWorking: false,
+        sendingTime: null,
       );
     } else {
       final responseModel = baseResponseModel.fromResponse(
@@ -205,6 +207,7 @@ class CollectionStateNotifier
         message: kResponseCodeReasons[statusCode],
         responseModel: responseModel,
         isWorking: false,
+        sendingTime: null,
       );
     }
 
