@@ -5,7 +5,7 @@ import 'package:apidash/models/form_data_model.dart';
 
 import '../../models/request_model.dart';
 
-class CLibcurlCodeGen {
+class CppLibcurlCodeGen {
   String getCustomRequestLiteral(HTTPVerb method) {
     switch (method) {
       case HTTPVerb.get:
@@ -66,9 +66,8 @@ class CLibcurlCodeGen {
     try {
       StringBuffer result = StringBuffer();
 
-      // Include necessary C libraries
-      result.writeln('#include <stdio.h>');
-      result.writeln('#include <stdlib.h>');
+      // Include necessary C++ libraries
+      result.writeln('#include <iostream>');
       result.writeln('#include <curl/curl.h>\n');
 
       // Main function
@@ -117,7 +116,7 @@ class CLibcurlCodeGen {
       result.writeln('    res = curl_easy_perform(curl);');
       result.writeln('    if(res != CURLE_OK) {');
       result.writeln(
-          '      fprintf(stderr, "curl_easy_perform() failed: %s\\n", curl_easy_strerror(res));');
+          '      std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;');
       result.writeln('    }\n');
 
       // Cleanup libcurl resources

@@ -275,7 +275,7 @@ enum CodegenLanguage {
   javaHttpClient("Java (HttpClient)", "java", "java"),
   juliaHttp("Julia (HTTP)", "julia", "jl"),
   phpGuzzle("PHP (guzzle)", "php", "php"),
-  cLibcurl("C (libcurl)", "c", "c");
+  cppLibcurl("C++ (libcurl)", "cpp", "cpp");
 
   const CodegenLanguage(this.label, this.codeHighlightLang, this.ext);
   final String label;

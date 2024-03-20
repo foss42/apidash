@@ -1,15 +1,14 @@
-import 'package:apidash/codegen/c/libcurl.dart';
+import 'package:apidash/codegen/cpp/libcurl.dart';
 import '../request_models.dart';
 import 'package:test/test.dart';
 
 void main() {
-  final cLibcurlCodeGen = CLibcurlCodeGen();
+  final cppLibcurlCodeGen = CppLibcurlCodeGen();
 
   group('GET Request', () {
     test('GET 1', () {
       const expectedCode = r"""
-#include <stdio.h>
-#include <stdlib.h>
+#include <iostream>
 #include <curl/curl.h>
 
 int main() {
@@ -32,13 +31,12 @@ int main() {
   return 0;
 }
 """;
-      expect(cLibcurlCodeGen.getCode(requestModelGet1, "https"), expectedCode);
+      expect(cppLibcurlCodeGen.getCode(requestModelGet1, "https"), expectedCode);
     });
 
     test('GET 2', () {
       const expectedCode = r"""
-#include <stdio.h>
-#include <stdlib.h>
+#include <iostream>
 #include <curl/curl.h>
 
 int main() {
@@ -61,13 +59,12 @@ int main() {
   return 0;
 }
 """;
-      expect(cLibcurlCodeGen.getCode(requestModelGet2, "https"), expectedCode);
+      expect(cppLibcurlCodeGen.getCode(requestModelGet2, "https"), expectedCode);
     });
 
     test('GET 3', () {
       const expectedCode = r"""
-#include <stdio.h>
-#include <stdlib.h>
+#include <iostream>
 #include <curl/curl.h>
 
 int main() {
@@ -90,13 +87,12 @@ int main() {
   return 0;
 }
 """;
-      expect(cLibcurlCodeGen.getCode(requestModelGet3, "https"), expectedCode);
+      expect(cppLibcurlCodeGen.getCode(requestModelGet3, "https"), expectedCode);
     });
 
     test('GET 4', () {
       const expectedCode = r"""
-#include <stdio.h>
-#include <stdlib.h>
+#include <iostream>
 #include <curl/curl.h>
 
 int main() {
@@ -119,13 +115,12 @@ int main() {
   return 0;
 }
 """;
-      expect(cLibcurlCodeGen.getCode(requestModelGet4, "https"), expectedCode);
+      expect(cppLibcurlCodeGen.getCode(requestModelGet4, "https"), expectedCode);
     });
 
     test('GET 5', () {
       const expectedCode = r"""
-#include <stdio.h>
-#include <stdlib.h>
+#include <iostream>
 #include <curl/curl.h>
 
 int main() {
@@ -153,13 +148,12 @@ int main() {
   return 0;
 }
 """;
-      expect(cLibcurlCodeGen.getCode(requestModelGet5, "https"), expectedCode);
+      expect(cppLibcurlCodeGen.getCode(requestModelGet5, "https"), expectedCode);
     });
 
     test('GET 6', () {
       const expectedCode = r"""
-#include <stdio.h>
-#include <stdlib.h>
+#include <iostream>
 #include <curl/curl.h>
 
 int main() {
@@ -187,13 +181,12 @@ int main() {
   return 0;
 }
 """;
-      expect(cLibcurlCodeGen.getCode(requestModelGet6, "https"), expectedCode);
+      expect(cppLibcurlCodeGen.getCode(requestModelGet6, "https"), expectedCode);
     });
 
     test('GET 7', () {
       const expectedCode = r"""
-#include <stdio.h>
-#include <stdlib.h>
+#include <iostream>
 #include <curl/curl.h>
 
 int main() {
@@ -216,13 +209,12 @@ int main() {
   return 0;
 }
 """;
-      expect(cLibcurlCodeGen.getCode(requestModelGet7, "https"), expectedCode);
+      expect(cppLibcurlCodeGen.getCode(requestModelGet7, "https"), expectedCode);
     });
 
     test('GET 8', () {
       const expectedCode = r"""
-#include <stdio.h>
-#include <stdlib.h>
+#include <iostream>
 #include <curl/curl.h>
 
 int main() {
@@ -251,13 +243,12 @@ int main() {
   return 0;
 }
 """;
-      expect(cLibcurlCodeGen.getCode(requestModelGet8, "https"), expectedCode);
+      expect(cppLibcurlCodeGen.getCode(requestModelGet8, "https"), expectedCode);
     });
 
     test('GET 9', () {
       const expectedCode = r"""
-#include <stdio.h>
-#include <stdlib.h>
+#include <iostream>
 #include <curl/curl.h>
 
 int main() {
@@ -280,13 +271,12 @@ int main() {
   return 0;
 }
 """;
-      expect(cLibcurlCodeGen.getCode(requestModelGet9, "https"), expectedCode);
+      expect(cppLibcurlCodeGen.getCode(requestModelGet9, "https"), expectedCode);
     });
 
     test('GET 10', () {
       const expectedCode = r"""
-#include <stdio.h>
-#include <stdlib.h>
+#include <iostream>
 #include <curl/curl.h>
 
 int main() {
@@ -314,13 +304,12 @@ int main() {
   return 0;
 }
 """;
-      expect(cLibcurlCodeGen.getCode(requestModelGet10, "https"), expectedCode);
+      expect(cppLibcurlCodeGen.getCode(requestModelGet10, "https"), expectedCode);
     });
 
     test('GET 11', () {
       const expectedCode = r"""
-#include <stdio.h>
-#include <stdlib.h>
+#include <iostream>
 #include <curl/curl.h>
 
 int main() {
@@ -348,13 +337,12 @@ int main() {
   return 0;
 }
 """;
-      expect(cLibcurlCodeGen.getCode(requestModelGet11, "https"), expectedCode);
+      expect(cppLibcurlCodeGen.getCode(requestModelGet11, "https"), expectedCode);
     });
 
     test('GET 12', () {
       const expectedCode = r"""
-#include <stdio.h>
-#include <stdlib.h>
+#include <iostream>
 #include <curl/curl.h>
 
 int main() {
@@ -377,15 +365,14 @@ int main() {
   return 0;
 }
 """;
-      expect(cLibcurlCodeGen.getCode(requestModelGet12, "https"), expectedCode);
+      expect(cppLibcurlCodeGen.getCode(requestModelGet12, "https"), expectedCode);
     });
   });
 
   group('HEAD Request', () {
     test('HEAD 1', () {
       const expectedCode = r"""
-#include <stdio.h>
-#include <stdlib.h>
+#include <iostream>
 #include <curl/curl.h>
 
 int main() {
@@ -408,13 +395,12 @@ int main() {
   return 0;
 }
 """;
-      expect(cLibcurlCodeGen.getCode(requestModelHead1, "https"), expectedCode);
+      expect(cppLibcurlCodeGen.getCode(requestModelHead1, "https"), expectedCode);
     });
 
     test('HEAD 2', () {
       const expectedCode = r"""
-#include <stdio.h>
-#include <stdlib.h>
+#include <iostream>
 #include <curl/curl.h>
 
 int main() {
@@ -437,15 +423,14 @@ int main() {
   return 0;
 }
 """;
-      expect(cLibcurlCodeGen.getCode(requestModelHead2, "http"), expectedCode);
+      expect(cppLibcurlCodeGen.getCode(requestModelHead2, "http"), expectedCode);
     });
   });
 
   group('POST Request', () {
     test('POST 1', () {
       const expectedCode = r"""
-#include <stdio.h>
-#include <stdlib.h>
+#include <iostream>
 #include <curl/curl.h>
 
 int main() {
@@ -471,13 +456,12 @@ int main() {
   return 0;
 }
 """;
-      expect(cLibcurlCodeGen.getCode(requestModelPost1, "https"), expectedCode);
+      expect(cppLibcurlCodeGen.getCode(requestModelPost1, "https"), expectedCode);
     });
 
     test('POST 2', () {
       const expectedCode = r"""
-#include <stdio.h>
-#include <stdlib.h>
+#include <iostream>
 #include <curl/curl.h>
 
 int main() {
@@ -503,13 +487,12 @@ int main() {
   return 0;
 }
 """;
-      expect(cLibcurlCodeGen.getCode(requestModelPost2, "https"), expectedCode);
+      expect(cppLibcurlCodeGen.getCode(requestModelPost2, "https"), expectedCode);
     });
 
     test('POST 3', () {
       const expectedCode = r"""
-#include <stdio.h>
-#include <stdlib.h>
+#include <iostream>
 #include <curl/curl.h>
 
 int main() {
@@ -540,13 +523,12 @@ int main() {
   return 0;
 }
 """;
-      expect(cLibcurlCodeGen.getCode(requestModelPost3, "https"), expectedCode);
+      expect(cppLibcurlCodeGen.getCode(requestModelPost3, "https"), expectedCode);
     });
 
     test('POST 4', () {
       const expectedCode = r"""
-#include <stdio.h>
-#include <stdlib.h>
+#include <iostream>
 #include <curl/curl.h>
 
 int main() {
@@ -576,14 +558,12 @@ int main() {
   return 0;
 }
 """;
-      expect(cLibcurlCodeGen.getCode(requestModelPost4, "https"), expectedCode);
+      expect(cppLibcurlCodeGen.getCode(requestModelPost4, "https"), expectedCode);
     });
 
     test('POST 5', () {
       const expectedCode = r"""
-#include <stdio.h>
-#include <stdlib.h>
-#include <curl/curl.h>
+#include <iostream>
 
 int main() {
   CURL *curl;
@@ -617,13 +597,12 @@ int main() {
   return 0;
 }
 """;
-      expect(cLibcurlCodeGen.getCode(requestModelPost5, "https"), expectedCode);
+      expect(cppLibcurlCodeGen.getCode(requestModelPost5, "https"), expectedCode);
     });
 
     test('POST 6', () {
       const expectedCode = r"""
-#include <stdio.h>
-#include <stdlib.h>
+#include <iostream>
 #include <curl/curl.h>
 
 int main() {
@@ -652,13 +631,12 @@ int main() {
   return 0;
 }
 """;
-      expect(cLibcurlCodeGen.getCode(requestModelPost6, "https"), expectedCode);
+      expect(cppLibcurlCodeGen.getCode(requestModelPost6, "https"), expectedCode);
     });
 
     test('POST 7', () {
       const expectedCode = r"""
-#include <stdio.h>
-#include <stdlib.h>
+#include <iostream>
 #include <curl/curl.h>
 
 int main() {
@@ -690,13 +668,12 @@ int main() {
   return 0;
 }
 """;
-      expect(cLibcurlCodeGen.getCode(requestModelPost7, "https"), expectedCode);
+      expect(cppLibcurlCodeGen.getCode(requestModelPost7, "https"), expectedCode);
     });
 
     test('POST 8', () {
       const expectedCode = r"""
-#include <stdio.h>
-#include <stdlib.h>
+#include <iostream>
 #include <curl/curl.h>
 
 int main() {
@@ -726,13 +703,12 @@ int main() {
   return 0;
 }
 """;
-      expect(cLibcurlCodeGen.getCode(requestModelPost8, "https"), expectedCode);
+      expect(cppLibcurlCodeGen.getCode(requestModelPost8, "https"), expectedCode);
     });
 
     test('POST 9', () {
       const expectedCode = r"""
-#include <stdio.h>
-#include <stdlib.h>
+#include <iostream>
 #include <curl/curl.h>
 
 int main() {
@@ -770,15 +746,14 @@ int main() {
   return 0;
 }
 """;
-      expect(cLibcurlCodeGen.getCode(requestModelPost9, "https"), expectedCode);
+      expect(cppLibcurlCodeGen.getCode(requestModelPost9, "https"), expectedCode);
     });
   });
 
   group('PUT Request', () {
     test('PUT 1', () {
       const expectedCode = r"""
-#include <stdio.h>
-#include <stdlib.h>
+#include <iostream>
 #include <curl/curl.h>
 
 int main() {
@@ -804,15 +779,14 @@ int main() {
   return 0;
 }
 """;
-      expect(cLibcurlCodeGen.getCode(requestModelPut1, "https"), expectedCode);
+      expect(cppLibcurlCodeGen.getCode(requestModelPut1, "https"), expectedCode);
     });
   });
 
   group('PATCH Request', () {
     test('PATCH 1', () {
       const expectedCode = r"""
-#include <stdio.h>
-#include <stdlib.h>
+#include <iostream>
 #include <curl/curl.h>
 
 int main() {
@@ -838,15 +812,14 @@ int main() {
   return 0;
 }
 """;
-      expect(cLibcurlCodeGen.getCode(requestModelPatch1, "https"), expectedCode);
+      expect(cppLibcurlCodeGen.getCode(requestModelPatch1, "https"), expectedCode);
     });
   });
 
   group('DELETE Request', () {
     test('DELETE 1', () {
       const expectedCode = r"""
-#include <stdio.h>
-#include <stdlib.h>
+#include <iostream>
 #include <curl/curl.h>
 
 int main() {
@@ -869,13 +842,12 @@ int main() {
   return 0;
 }
 """;
-      expect(cLibcurlCodeGen.getCode(requestModelDelete1, "https"), expectedCode);
+      expect(cppLibcurlCodeGen.getCode(requestModelDelete1, "https"), expectedCode);
     });
 
     test('DELETE 2', () {
       const expectedCode = r"""
-#include <stdio.h>
-#include <stdlib.h>
+#include <iostream>
 #include <curl/curl.h>
 
 int main() {
@@ -898,7 +870,7 @@ int main() {
   return 0;
 }
 """;
-      expect(cLibcurlCodeGen.getCode(requestModelDelete2, "https"), expectedCode);
+      expect(cppLibcurlCodeGen.getCode(requestModelDelete2, "https"), expectedCode);
     });
   });
 }
