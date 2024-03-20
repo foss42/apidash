@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import '../utils/utils.dart'
     show
@@ -29,6 +30,7 @@ class RequestModel {
     this.responseStatus,
     this.message,
     this.responseModel,
+    this.isWorking = false,
   });
 
   final String id;
@@ -47,6 +49,7 @@ class RequestModel {
   final int? responseStatus;
   final String? message;
   final ResponseModel? responseModel;
+  final bool isWorking;
 
   List<NameValueModel>? get enabledRequestHeaders =>
       getEnabledRows(requestHeaders, isHeaderEnabledList);
@@ -60,21 +63,44 @@ class RequestModel {
   Map<String, String> get headersMap => rowsToMap(requestHeaders) ?? {};
   Map<String, String> get paramsMap => rowsToMap(requestParams) ?? {};
 
-  List<Map<String, dynamic>> get formDataMapList =>
+  bool get hasFormDataContentType =>
+      requestBodyContentType == ContentType.formdata;
+  bool get hasJsonContentType => requestBodyContentType == ContentType.json;
+  bool get hasTextContentType => requestBodyContentType == ContentType.text;
+  int get contentLength => utf8.encode(requestBody ?? "").length;
+  bool get hasBody => hasJsonData || hasTextData || hasFormData;
+  bool get hasJsonData =>
+      kMethodsWithBody.contains(method) &&
+      hasJsonContentType &&
+      contentLength > 0;
+  bool get hasTextData =>
+      kMethodsWithBody.contains(method) &&
+      hasTextContentType &&
+      contentLength > 0;
+  bool get hasFormData =>
+      kMethodsWithBody.contains(method) &&
+      hasFormDataContentType &&
+      formDataMapList.isNotEmpty;
+  List<FormDataModel> get formDataList =>
+      requestFormDataList ?? <FormDataModel>[];
+  List<Map<String, String>> get formDataMapList =>
       rowsToFormDataMapList(requestFormDataList) ?? [];
-  bool get isFormDataRequest => requestBodyContentType == ContentType.formdata;
+  bool get hasFileInFormData => formDataList
+      .map((e) => e.type == FormDataType.file)
+      .any((element) => element);
 
   bool get hasContentTypeHeader => enabledHeadersMap.keys
       .any((k) => k.toLowerCase() == HttpHeaders.contentTypeHeader);
 
   RequestModel duplicate({
     required String id,
+    String? name,
   }) {
     return RequestModel(
       id: id,
       method: method,
       url: url,
-      name: "$name (copy)",
+      name: name ?? "${this.name} (copy)",
       description: description,
       requestHeaders: requestHeaders != null ? [...requestHeaders!] : null,
       requestParams: requestParams != null ? [...requestParams!] : null,
@@ -106,11 +132,13 @@ class RequestModel {
     int? responseStatus,
     String? message,
     ResponseModel? responseModel,
+    bool? isWorking,
   }) {
     var headers = requestHeaders ?? this.requestHeaders;
     var params = requestParams ?? this.requestParams;
     var enabledHeaders = isHeaderEnabledList ?? this.isHeaderEnabledList;
     var enabledParams = isParamEnabledList ?? this.isParamEnabledList;
+    var formDataList = requestFormDataList ?? this.requestFormDataList;
     return RequestModel(
       id: id ?? this.id,
       method: method ?? this.method,
@@ -125,10 +153,11 @@ class RequestModel {
       requestBodyContentType:
           requestBodyContentType ?? this.requestBodyContentType,
       requestBody: requestBody ?? this.requestBody,
-      requestFormDataList: requestFormDataList ?? this.requestFormDataList,
+      requestFormDataList: formDataList != null ? [...formDataList] : null,
       responseStatus: responseStatus ?? this.responseStatus,
       message: message ?? this.message,
       responseModel: responseModel ?? this.responseModel,
+      isWorking: isWorking ?? this.isWorking,
     );
   }
 

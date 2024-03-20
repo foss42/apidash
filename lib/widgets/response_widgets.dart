@@ -42,7 +42,7 @@ class SendingWidget extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Lottie.asset("assets/sending.json"),
+          Lottie.asset(kAssetSendingLottie),
         ],
       ),
     );
@@ -55,11 +55,13 @@ class ResponsePaneHeader extends StatelessWidget {
     this.responseStatus,
     this.message,
     this.time,
+    this.onClearResponse,
   });
 
   final int? responseStatus;
   final String? message;
   final Duration? time;
+  final VoidCallback? onClearResponse;
 
   @override
   Widget build(BuildContext context) {
@@ -116,6 +118,10 @@ class ResponsePaneHeader extends StatelessWidget {
                     color: Theme.of(context).colorScheme.secondary,
                   ),
             ),
+            kHSpacer10,
+            ClearResponseButton(
+              onPressed: onClearResponse,
+            )
           ],
         ),
       ),
