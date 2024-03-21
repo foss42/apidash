@@ -200,6 +200,45 @@ public class Main {
 
       // ~~~~~~~~~~~~~~~~~~ query parameters end ~~~~~~~~~~~~~~~~~~
 
+      // handling form data
+      if (requestModel.hasFormData &&
+          requestModel.formDataMapList.isNotEmpty &&
+          kMethodsWithBody.contains(method)) {
+        // including form data into the request
+        var formDataList = requestModel.formDataMapList;
+        var templateRequestTextFormData =
+            jj.Template(kTemplateRequestTextFormData);
+        var templateRequestFileFormData =
+            jj.Template(kTemplateRequestFileFormData);
+        for (var formDataMap in formDataList) {
+          if (formDataMap["type"] == "text") {
+            result += templateRequestTextFormData.render({
+              "name": formDataMap['name'], //
+              "value": formDataMap['value'] //
+            });
+          } else if (formDataMap["type"] == "file") {
+            result += templateRequestFileFormData.render({
+              "name": formDataMap['name'], //
+              "value": formDataMap['value'] //
+            });
+          }
+        }
+
+        if (requestModel.hasFileInFormData) {
+          var templateBoundarySetup = jj.Template(kTemplateBoundarySetup);
+          result += templateBoundarySetup.render({"boundary": requestBoundary});
+        }
+
+        hasBody = true;
+      }
+
+      var templateRequestBodySetup = jj.Template(kTemplateRequestBodySetup);
+      if (kMethodsWithBody.contains(method) &&
+          hasBody &&
+          !requestModel.hasFormData) {
+        result += templateRequestBodySetup.render();
+      }
+
 
       return result;
     } catch (e) {
