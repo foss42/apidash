@@ -98,7 +98,7 @@ class _SendingWidgetState extends State<SendingWidget> {
                 ],
               ),
             ),
-            Lottie.asset("assets/sending.json"),
+            Lottie.asset(kAssetSendingLottie),
           ],
         ),
       ),
