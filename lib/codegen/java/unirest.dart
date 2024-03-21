@@ -21,4 +21,8 @@ public class Main {
     public static void main(String[] args) {
 ''';
 
+  final String kTemplateUrl = '''
+        final String requestURL = "{{url}}";\n
+''';
+
 }
