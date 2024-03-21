@@ -29,4 +29,9 @@ public class Main {
         final String requestBody = "{{body}}";\n
 ''';
 
+  final String kTemplateRequestCreation = '''
+        HttpResponse<JsonNode> response = Unirest
+                .{{method}}(requestURL)\n
+''';
+
 }
