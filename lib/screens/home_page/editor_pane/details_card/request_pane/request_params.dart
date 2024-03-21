@@ -16,10 +16,10 @@ class EditRequestURLParams extends ConsumerStatefulWidget {
 }
 
 class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
-  final random = Random.secure();
-  late List<NameValueModel> rows;
-  late List<bool> isRowEnabledList;
   late int seed;
+  final random = Random.secure();
+  late List<NameValueModel> paramRows;
+  late List<bool> isRowEnabledList;
 
   @override
   void initState() {
@@ -30,8 +30,8 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
   void _onFieldChange(String selectedId) {
     ref.read(collectionStateNotifierProvider.notifier).update(
           selectedId,
-          requestParams: rows,
-          isParamEnabledList: isRowEnabledList,
+          requestParams: paramRows.sublist(0, paramRows.length - 1),
+          isParamEnabledList: isRowEnabledList.sublist(0, paramRows.length - 1),
         );
   }
 
@@ -41,14 +41,16 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
     ref.watch(selectedRequestModelProvider
         .select((value) => value?.requestParams?.length));
     var rP = ref.read(selectedRequestModelProvider)?.requestParams;
-    rows = (rP == null || rP.isEmpty)
+    bool isParamsEmpty = rP == null || rP.isEmpty;
+    paramRows = isParamsEmpty
         ? [
             kNameValueEmptyModel,
           ]
-        : rP;
+        : rP + [kNameValueEmptyModel];
     isRowEnabledList =
         ref.read(selectedRequestModelProvider)?.isParamEnabledList ??
-            List.filled(rows.length, true, growable: true);
+            List.filled(rP?.length ?? 0, true, growable: true);
+    isRowEnabledList.add(false);
 
     List<DataColumn> columns = const [
       DataColumn2(
@@ -72,8 +74,9 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
     ];
 
     List<DataRow> dataRows = List<DataRow>.generate(
-      rows.length,
+      paramRows.length,
       (index) {
+        bool isLast = index + 1 == paramRows.length;
         return DataRow(
           key: ValueKey("$selectedId-$index-params-row-$seed"),
           cells: <DataCell>[
@@ -81,22 +84,29 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
               CheckBox(
                 keyId: "$selectedId-$index-params-c-$seed",
                 value: isRowEnabledList[index],
-                onChanged: (value) {
-                  setState(() {
-                    isRowEnabledList[index] = value!;
-                  });
-                  _onFieldChange(selectedId!);
-                },
+                onChanged: isLast
+                    ? null
+                    : (value) {
+                        setState(() {
+                          isRowEnabledList[index] = value!;
+                        });
+                        _onFieldChange(selectedId!);
+                      },
                 colorScheme: Theme.of(context).colorScheme,
               ),
             ),
             DataCell(
               CellField(
                 keyId: "$selectedId-$index-params-k-$seed",
-                initialValue: rows[index].name,
+                initialValue: paramRows[index].name,
                 hintText: "Add URL Parameter",
                 onChanged: (value) {
-                  rows[index] = rows[index].copyWith(name: value);
+                  paramRows[index] = paramRows[index].copyWith(name: value);
+                  if (isLast) {
+                    isRowEnabledList[index] = true;
+                    paramRows.add(kNameValueEmptyModel);
+                    isRowEnabledList.add(false);
+                  }
                   _onFieldChange(selectedId!);
                 },
                 colorScheme: Theme.of(context).colorScheme,
@@ -111,10 +121,15 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
             DataCell(
               CellField(
                 keyId: "$selectedId-$index-params-v-$seed",
-                initialValue: rows[index].value,
+                initialValue: paramRows[index].value,
                 hintText: "Add Value",
                 onChanged: (value) {
-                  rows[index] = rows[index].copyWith(value: value);
+                  paramRows[index] = paramRows[index].copyWith(value: value);
+                  if (isLast) {
+                    isRowEnabledList[index] = true;
+                    paramRows.add(kNameValueEmptyModel);
+                    isRowEnabledList.add(false);
+                  }
                   _onFieldChange(selectedId!);
                 },
                 colorScheme: Theme.of(context).colorScheme,
@@ -122,24 +137,26 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
             ),
             DataCell(
               InkWell(
+                onTap: isLast
+                    ? null
+                    : () {
+                        seed = random.nextInt(kRandMax);
+                        if (paramRows.length == 2) {
+                          setState(() {
+                            paramRows = [
+                              kNameValueEmptyModel,
+                            ];
+                            isRowEnabledList = [false];
+                          });
+                        } else {
+                          paramRows.removeAt(index);
+                          isRowEnabledList.removeAt(index);
+                        }
+                        _onFieldChange(selectedId!);
+                      },
                 child: Theme.of(context).brightness == Brightness.dark
                     ? kIconRemoveDark
                     : kIconRemoveLight,
-                onTap: () {
-                  seed = random.nextInt(kRandMax);
-                  if (rows.length == 1) {
-                    setState(() {
-                      rows = [
-                        kNameValueEmptyModel,
-                      ];
-                      isRowEnabledList = [true];
-                    });
-                  } else {
-                    rows.removeAt(index);
-                    isRowEnabledList.removeAt(index);
-                  }
-                  _onFieldChange(selectedId!);
-                },
               ),
             ),
           ],
@@ -184,8 +201,8 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
             padding: const EdgeInsets.only(bottom: 30),
             child: ElevatedButton.icon(
               onPressed: () {
-                rows.add(kNameValueEmptyModel);
-                isRowEnabledList.add(true);
+                paramRows.add(kNameValueEmptyModel);
+                isRowEnabledList.add(false);
                 _onFieldChange(selectedId!);
               },
               icon: const Icon(Icons.add),
