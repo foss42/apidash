@@ -54,4 +54,12 @@ public class Main {
                 .field("{{name}}", new File("{{value}}"))\n
 ''';
 
+  final String kTemplateRequestBodySetup = '''
+                .body(requestBody)\n
+''';
+
+  final String kTemplateBoundarySetup = '''
+                .boundary("{{boundary}}")\n
+''';
+
 }
