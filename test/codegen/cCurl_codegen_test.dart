@@ -34,7 +34,9 @@ int main() {
   curl_easy_cleanup(curl);
   return 0;
 }""";
-      expect(codeGen.getCode(CodegenLanguage.cCurlCodeGen, requestModelGet1, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.cCurlCodeGen, requestModelGet1, "https"),
           expectedCode);
     });
 
@@ -65,7 +67,9 @@ int main() {
   curl_easy_cleanup(curl);
   return 0;
 }""";
-      expect(codeGen.getCode(CodegenLanguage.cCurlCodeGen, requestModelGet2, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.cCurlCodeGen, requestModelGet2, "https"),
           expectedCode);
     });
 
@@ -96,7 +100,9 @@ int main() {
   curl_easy_cleanup(curl);
   return 0;
 }""";
-      expect(codeGen.getCode(CodegenLanguage.cCurlCodeGen, requestModelGet3, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.cCurlCodeGen, requestModelGet3, "https"),
           expectedCode);
     });
 
@@ -127,7 +133,9 @@ int main() {
   curl_easy_cleanup(curl);
   return 0;
 }""";
-      expect(codeGen.getCode(CodegenLanguage.cCurlCodeGen, requestModelGet4, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.cCurlCodeGen, requestModelGet4, "https"),
           expectedCode);
     });
 
@@ -148,7 +156,7 @@ int main() {
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
     curl_easy_setopt(curl, CURLOPT_DEFAULT_PROTOCOL, "https");
     struct curl_slist *headers = NULL;    
-    headers = curl_slist_append(headers,"User-Agent: Test Agent") 
+    headers = curl_slist_append(headers,"User-Agent: Test Agent"); 
    
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
       
@@ -160,7 +168,9 @@ int main() {
   curl_easy_cleanup(curl);
   return 0;
 }""";
-      expect(codeGen.getCode(CodegenLanguage.cCurlCodeGen, requestModelGet5, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.cCurlCodeGen, requestModelGet5, "https"),
           expectedCode);
     });
 
@@ -181,7 +191,7 @@ int main() {
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
     curl_easy_setopt(curl, CURLOPT_DEFAULT_PROTOCOL, "https");
     struct curl_slist *headers = NULL;    
-    headers = curl_slist_append(headers,"User-Agent: Test Agent") 
+    headers = curl_slist_append(headers,"User-Agent: Test Agent"); 
    
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
       
@@ -193,7 +203,9 @@ int main() {
   curl_easy_cleanup(curl);
   return 0;
 }""";
-      expect(codeGen.getCode(CodegenLanguage.cCurlCodeGen, requestModelGet6, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.cCurlCodeGen, requestModelGet6, "https"),
           expectedCode);
     });
 
@@ -224,7 +236,9 @@ int main() {
   curl_easy_cleanup(curl);
   return 0;
 }""";
-      expect(codeGen.getCode(CodegenLanguage.cCurlCodeGen, requestModelGet7, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.cCurlCodeGen, requestModelGet7, "https"),
           expectedCode);
     });
 
@@ -245,7 +259,7 @@ int main() {
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
     curl_easy_setopt(curl, CURLOPT_DEFAULT_PROTOCOL, "https");
     struct curl_slist *headers = NULL;    
-    headers = curl_slist_append(headers,"User-Agent: Test Agent") 
+    headers = curl_slist_append(headers,"User-Agent: Test Agent"); 
    
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
       
@@ -257,7 +271,9 @@ int main() {
   curl_easy_cleanup(curl);
   return 0;
 }""";
-      expect(codeGen.getCode(CodegenLanguage.cCurlCodeGen, requestModelGet8, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.cCurlCodeGen, requestModelGet8, "https"),
           expectedCode);
     });
 
@@ -288,7 +304,9 @@ int main() {
   curl_easy_cleanup(curl);
   return 0;
 }""";
-      expect(codeGen.getCode(CodegenLanguage.cCurlCodeGen, requestModelGet9, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.cCurlCodeGen, requestModelGet9, "https"),
           expectedCode);
     });
 
@@ -309,7 +327,7 @@ int main() {
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
     curl_easy_setopt(curl, CURLOPT_DEFAULT_PROTOCOL, "https");
     struct curl_slist *headers = NULL;    
-    headers = curl_slist_append(headers,"User-Agent: Test Agent") 
+    headers = curl_slist_append(headers,"User-Agent: Test Agent"); 
    
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
       
@@ -347,7 +365,7 @@ int main() {
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
     curl_easy_setopt(curl, CURLOPT_DEFAULT_PROTOCOL, "https");
     struct curl_slist *headers = NULL;    
-    headers = curl_slist_append(headers,"User-Agent: Test Agent") 
+    headers = curl_slist_append(headers,"User-Agent: Test Agent"); 
    
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
       
@@ -359,7 +377,9 @@ int main() {
   curl_easy_cleanup(curl);
   return 0;
 }""";
-      expect(codeGen.getCode(CodegenLanguage.cCurlCodeGen, requestModelGet11, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.cCurlCodeGen, requestModelGet11, "https"),
           expectedCode);
     });
 
@@ -390,7 +410,9 @@ int main() {
   curl_easy_cleanup(curl);
   return 0;
 }""";
-      expect(codeGen.getCode(CodegenLanguage.cCurlCodeGen, requestModelGet12, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.cCurlCodeGen, requestModelGet12, "https"),
           expectedCode);
     });
   });
@@ -423,7 +445,9 @@ int main() {
   curl_easy_cleanup(curl);
   return 0;
 }""";
-      expect(codeGen.getCode(CodegenLanguage.cCurlCodeGen, requestModelHead1, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.cCurlCodeGen, requestModelHead1, "https"),
           expectedCode);
     });
 
@@ -454,7 +478,9 @@ int main() {
   curl_easy_cleanup(curl);
   return 0;
 }""";
-      expect(codeGen.getCode(CodegenLanguage.cCurlCodeGen, requestModelHead2, "http"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.cCurlCodeGen, requestModelHead2, "http"),
           expectedCode);
     });
   });
@@ -477,7 +503,7 @@ int main() {
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
     curl_easy_setopt(curl, CURLOPT_DEFAULT_PROTOCOL, "https");
     struct curl_slist *headers = NULL;    
-    headers = curl_slist_append(headers,"Content-Type: text/plain") 
+    headers = curl_slist_append(headers,"Content-Type: text/plain"); 
    
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
     
@@ -495,7 +521,9 @@ int main() {
   curl_easy_cleanup(curl);
   return 0;
 }""";
-      expect(codeGen.getCode(CodegenLanguage.cCurlCodeGen, requestModelPost1, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.cCurlCodeGen, requestModelPost1, "https"),
           expectedCode);
     });
 
@@ -516,7 +544,7 @@ int main() {
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
     curl_easy_setopt(curl, CURLOPT_DEFAULT_PROTOCOL, "https");
     struct curl_slist *headers = NULL;    
-    headers = curl_slist_append(headers,"Content-Type: application/json") 
+    headers = curl_slist_append(headers,"Content-Type: application/json"); 
    
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
     
@@ -539,7 +567,9 @@ int main() {
   curl_easy_cleanup(curl);
   return 0;
 }""";
-      expect(codeGen.getCode(CodegenLanguage.cCurlCodeGen, requestModelPost2, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.cCurlCodeGen, requestModelPost2, "https"),
           expectedCode);
     });
 
@@ -560,8 +590,8 @@ int main() {
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
     curl_easy_setopt(curl, CURLOPT_DEFAULT_PROTOCOL, "https");
     struct curl_slist *headers = NULL;    
-    headers = curl_slist_append(headers,"User-Agent: Test Agent")   
-    headers = curl_slist_append(headers,"Content-Type: application/json") 
+    headers = curl_slist_append(headers,"User-Agent: Test Agent");   
+    headers = curl_slist_append(headers,"Content-Type: application/json"); 
    
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
     
@@ -579,7 +609,9 @@ int main() {
   curl_easy_cleanup(curl);
   return 0;
 }""";
-      expect(codeGen.getCode(CodegenLanguage.cCurlCodeGen, requestModelPost3, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.cCurlCodeGen, requestModelPost3, "https"),
           expectedCode);
     });
 
@@ -628,7 +660,9 @@ int main() {
   curl_easy_cleanup(curl);
   return 0;
 }""";
-      expect(codeGen.getCode(CodegenLanguage.cCurlCodeGen, requestModelPost4, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.cCurlCodeGen, requestModelPost4, "https"),
           expectedCode);
     });
 
@@ -649,7 +683,7 @@ int main() {
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
     curl_easy_setopt(curl, CURLOPT_DEFAULT_PROTOCOL, "https");
     struct curl_slist *headers = NULL;    
-    headers = curl_slist_append(headers,"User-Agent: Test Agent") 
+    headers = curl_slist_append(headers,"User-Agent: Test Agent"); 
    
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
     curl_mime *mime;
@@ -679,7 +713,9 @@ int main() {
   curl_easy_cleanup(curl);
   return 0;
 }""";
-      expect(codeGen.getCode(CodegenLanguage.cCurlCodeGen, requestModelPost5, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.cCurlCodeGen, requestModelPost5, "https"),
           expectedCode);
     });
 
@@ -723,7 +759,9 @@ int main() {
   curl_easy_cleanup(curl);
   return 0;
 }""";
-      expect(codeGen.getCode(CodegenLanguage.cCurlCodeGen, requestModelPost6, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.cCurlCodeGen, requestModelPost6, "https"),
           expectedCode);
     });
 
@@ -767,7 +805,9 @@ int main() {
   curl_easy_cleanup(curl);
   return 0;
 }""";
-      expect(codeGen.getCode(CodegenLanguage.cCurlCodeGen, requestModelPost7, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.cCurlCodeGen, requestModelPost7, "https"),
           expectedCode);
     });
 
@@ -816,7 +856,9 @@ int main() {
   curl_easy_cleanup(curl);
   return 0;
 }""";
-      expect(codeGen.getCode(CodegenLanguage.cCurlCodeGen, requestModelPost8, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.cCurlCodeGen, requestModelPost8, "https"),
           expectedCode);
     });
 
@@ -837,8 +879,8 @@ int main() {
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
     curl_easy_setopt(curl, CURLOPT_DEFAULT_PROTOCOL, "https");
     struct curl_slist *headers = NULL;    
-    headers = curl_slist_append(headers,"User-Agent: Test Agent")   
-    headers = curl_slist_append(headers,"Keep-Alive: true") 
+    headers = curl_slist_append(headers,"User-Agent: Test Agent");   
+    headers = curl_slist_append(headers,"Keep-Alive: true"); 
    
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
     curl_mime *mime;
@@ -863,7 +905,9 @@ int main() {
   curl_easy_cleanup(curl);
   return 0;
 }""";
-      expect(codeGen.getCode(CodegenLanguage.cCurlCodeGen, requestModelPost9, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.cCurlCodeGen, requestModelPost9, "https"),
           expectedCode);
     });
   });
@@ -886,7 +930,7 @@ int main() {
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
     curl_easy_setopt(curl, CURLOPT_DEFAULT_PROTOCOL, "https");
     struct curl_slist *headers = NULL;    
-    headers = curl_slist_append(headers,"Content-Type: application/json") 
+    headers = curl_slist_append(headers,"Content-Type: application/json"); 
    
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
     
@@ -905,7 +949,9 @@ int main() {
   curl_easy_cleanup(curl);
   return 0;
 }""";
-      expect(codeGen.getCode(CodegenLanguage.cCurlCodeGen, requestModelPut1, "https"),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.cCurlCodeGen, requestModelPut1, "https"),
           expectedCode);
     });
   });
@@ -928,7 +974,7 @@ int main() {
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
     curl_easy_setopt(curl, CURLOPT_DEFAULT_PROTOCOL, "https");
     struct curl_slist *headers = NULL;    
-    headers = curl_slist_append(headers,"Content-Type: application/json") 
+    headers = curl_slist_append(headers,"Content-Type: application/json"); 
    
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
     
@@ -948,7 +994,8 @@ int main() {
   return 0;
 }""";
       expect(
-          codeGen.getCode(CodegenLanguage.cCurlCodeGen, requestModelPatch1, "https"),
+          codeGen.getCode(
+              CodegenLanguage.cCurlCodeGen, requestModelPatch1, "https"),
           expectedCode);
     });
   });
@@ -982,7 +1029,8 @@ int main() {
   return 0;
 }""";
       expect(
-          codeGen.getCode(CodegenLanguage.cCurlCodeGen, requestModelDelete1, "https"),
+          codeGen.getCode(
+              CodegenLanguage.cCurlCodeGen, requestModelDelete1, "https"),
           expectedCode);
     });
 
@@ -1003,7 +1051,7 @@ int main() {
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
     curl_easy_setopt(curl, CURLOPT_DEFAULT_PROTOCOL, "https");
     struct curl_slist *headers = NULL;    
-    headers = curl_slist_append(headers,"Content-Type: application/json") 
+    headers = curl_slist_append(headers,"Content-Type: application/json"); 
    
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
     
@@ -1023,7 +1071,8 @@ int main() {
   return 0;
 }""";
       expect(
-          codeGen.getCode(CodegenLanguage.cCurlCodeGen, requestModelDelete2, "https"),
+          codeGen.getCode(
+              CodegenLanguage.cCurlCodeGen, requestModelDelete2, "https"),
           expectedCode);
     });
   });

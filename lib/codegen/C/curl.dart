@@ -53,7 +53,7 @@ int main() {
 
   String kTemplateHeader = """
   {% if headers %}{% for header, value in headers %}  
-    headers = curl_slist_append(headers,"{{header}}: {{value}}") {% endfor %}
+    headers = curl_slist_append(headers,"{{header}}: {{value}}"); {% endfor %}
   {% endif %} 
 """;
   String kTemplateHeaderEnd = """
@@ -147,9 +147,7 @@ int main() {
             "fields": requestModel.formDataMapList,
           });
         }
-        if(requestModel.hasTextData){
-
-        }
+        if (requestModel.hasTextData) {}
         if (uri.hasQuery) {
           var params = uri.queryParameters;
           if (params.isNotEmpty) {
