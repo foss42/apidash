@@ -187,6 +187,19 @@ public class Main {
 
       // ~~~~~~~~~~~~~~~~~~ request header ends ~~~~~~~~~~~~~~~~~~
 
+      // ~~~~~~~~~~~~~~~~~~ query parameters start ~~~~~~~~~~~~~~~~~~
+
+      if (uri.hasQuery) {
+        var params = uri.queryParameters;
+        var templateUrlQueryParam = jj.Template(kTemplateUrlQueryParam);
+        params.forEach((name, value) {
+          result +=
+              templateUrlQueryParam.render({"name": name, "value": value});
+        });
+      }
+
+      // ~~~~~~~~~~~~~~~~~~ query parameters end ~~~~~~~~~~~~~~~~~~
+
 
       return result;
     } catch (e) {
