@@ -74,6 +74,7 @@ public class Main {
     try {
       String result = '';
       bool hasBody = false;
+
       var rec = getValidRequestUri(
         requestModel.url,
         requestModel.enabledRequestParams,
@@ -139,6 +140,52 @@ public class Main {
       var templateRequestCreation = jj.Template(kTemplateRequestCreation);
       result +=
           templateRequestCreation.render({"method": method.name.toLowerCase()});
+
+      // ~~~~~~~~~~~~~~~~~~ request header start ~~~~~~~~~~~~~~~~~~
+
+      var m = <String, String>{};
+      for (var i in harJson["headers"]) {
+        m[i["name"]] = i["value"];
+      }
+
+      // especially sets up Content-Type header if the request has a body
+      // and Content-Type is not explicitely set by the developer
+      if (requestModel.hasBody &&
+          requestModel.hasFormData &&
+          !requestModel.hasFileInFormData) {
+        m["Content-Type"] = "application/x-www-form-urlencoded";
+      }
+
+      // we will use this request boundary to set boundary if multipart formdata is used
+      String requestBoundary = "";
+      String multipartTypePrefix = "multipart/form-data; boundary=";
+      if (m.containsKey("Content-Type") &&
+          m["Content-Type"] != null &&
+          m["Content-Type"]!.startsWith(RegExp(multipartTypePrefix))) {
+        String tmp = m["Content-Type"]!;
+        requestBoundary = tmp.substring(multipartTypePrefix.length);
+
+        // if a boundary is provided, we will use that as the default boundary
+        if (boundary != null) {
+          requestBoundary = boundary;
+          m["Content-Type"] = multipartTypePrefix + boundary;
+        }
+      }
+
+      var templateRequestHeader = jj.Template(kTemplateRequestHeader);
+
+      // setting up rest of the request headers
+      m.forEach((name, value) {
+        result += templateRequestHeader.render({"name": name, "value": value});
+      });
+
+      // if (hasBody && !m.containsKey("Content-Type")) {
+      //   var templateContentType = jj.Template(kTemplateContentType);
+      //   result += templateContentType.render(
+      //       {"contentType": requestModel.requestBodyContentType.header});
+      // }
+
+      // ~~~~~~~~~~~~~~~~~~ request header ends ~~~~~~~~~~~~~~~~~~
 
 
       return result;
