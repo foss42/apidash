@@ -41,4 +41,9 @@ public class Main {
   final String kTemplateContentType = '''
                 .contentType("{{contentType}}")\n
 ''';
+
+  final String kTemplateUrlQueryParam = '''
+                .queryString("{{name}}", "{{value}}")\n
+''';
+
 }
