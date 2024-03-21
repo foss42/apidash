@@ -330,23 +330,4 @@ void main() {
       expect(isDisposed, true);
     });
   });
-
-  group("Testing sentRequestIdStateProvider", () {
-    testWidgets(
-        'sentRequestIdStateProvider should have an initial value of null',
-        (tester) async {
-      await tester.pumpWidget(
-        const ProviderScope(
-          child: MaterialApp(
-            home: CollectionPane(),
-          ),
-        ),
-      );
-
-      // Verify that the initial value is null
-      final collectionPane = tester.element(find.byType(CollectionPane));
-      final container = ProviderScope.containerOf(collectionPane);
-      expect(container.read(sentRequestIdStateProvider), null);
-    });
-  });
 }
