@@ -38,4 +38,7 @@ public class Main {
                 .header("{{name}}", "{{value}}")\n
 ''';
 
+  final String kTemplateContentType = '''
+                .contentType("{{contentType}}")\n
+''';
 }
