@@ -16,4 +16,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;\n
 ''';
+  final String kTemplateStart = '''
+public class Main {
+    public static void main(String[] args) {
+''';
+
 }
