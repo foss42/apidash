@@ -507,9 +507,7 @@ int main() {
    
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
     
-    const char *data = "{
-"text": "I LOVE Flutter"
-}";
+    const char *data = "{\n\"text\": \"I LOVE Flutter\"\n}";
     curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
     
       
@@ -548,14 +546,7 @@ int main() {
    
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
     
-    const char *data = "{
-"text": "I LOVE Flutter",
-"flag": null,
-"male": true,
-"female": false,
-"no": 1.2,
-"arr": ["null", "true", "false", null]
-}";
+    const char *data = "{\n\"text\": \"I LOVE Flutter\",\n\"flag\": null,\n\"male\": true,\n\"female\": false,\n\"no\": 1.2,\n\"arr\": [\"null\", \"true\", \"false\", null]\n}";
     curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
     
       
@@ -595,9 +586,7 @@ int main() {
    
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
     
-    const char *data = "{
-"text": "I LOVE Flutter"
-}";
+    const char *data = "{\n\"text\": \"I LOVE Flutter\"\n}";
     curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
     
       
@@ -934,10 +923,7 @@ int main() {
    
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
     
-    const char *data = "{
-"name": "morpheus",
-"job": "zion resident"
-}";
+    const char *data = "{\n\"name\": \"morpheus\",\n\"job\": \"zion resident\"\n}";
     curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
     
       
@@ -978,10 +964,7 @@ int main() {
    
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
     
-    const char *data = "{
-"name": "marfeus",
-"job": "accountant"
-}";
+    const char *data = "{\n\"name\": \"marfeus\",\n\"job\": \"accountant\"\n}";
     curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
     
       
@@ -1055,10 +1038,7 @@ int main() {
    
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
     
-    const char *data = "{
-"name": "marfeus",
-"job": "accountant"
-}";
+    const char *data = "{\n\"name\": \"marfeus\",\n\"job\": \"accountant\"\n}";
     curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
     
       
