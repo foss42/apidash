@@ -24,7 +24,6 @@ int main() {
     curl_easy_setopt(curl, CURLOPT_URL, "{{url}}");
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
     curl_easy_setopt(curl, CURLOPT_DEFAULT_PROTOCOL, "https");
-    struct curl_slist *headers = NULL;
 """;
 
   String kTemplateBody = """
@@ -36,6 +35,7 @@ int main() {
 """;
 
   String kTemplateFormData = """
+    
     curl_mime *mime;
     curl_mimepart *part;
     mime = curl_mime_init(curl);
@@ -52,19 +52,14 @@ int main() {
 """;
 
   String kTemplateHeader = """
+  
+    struct curl_slist *headers = NULL;
   {% if headers %}{% for header, value in headers %}  
-    headers = curl_slist_append(headers,"{{header}}: {{value}}"); {% endfor %}
-  {% endif %} 
-""";
-  String kTemplateHeaderEnd = """
-
+    headers = curl_slist_append(headers,"{{header}}: {{value}}");{% endfor %}
+  {% endif %}
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 """;
-  String kStringFormDataHeader = """""";
-
-  String kTemplateQueryParam = """
-
-""";
+  String kTemplateQueryParam = """""";
 
   String kTemplateRequest = """
   
@@ -117,8 +112,11 @@ int main() {
       );
 
       var headersList = requestModel.enabledRequestHeaders;
-      if (headersList != null || requestModel.hasBody) {
+      if (headersList != null || requestModel.hasBody || requestModel.hasFormData) {
         var headers = requestModel.enabledHeadersMap;
+        if(requestModel.hasFormData){
+          headers.putIfAbsent("Content-Type", () => "multipart/form-data");
+        }
         if (requestModel.hasJsonData || requestModel.hasTextData) {
           headers.putIfAbsent(kHeaderContentType,
               () => requestModel.requestBodyContentType.header);
@@ -130,7 +128,6 @@ int main() {
           });
         }
       }
-      result += kTemplateHeaderEnd;
 
       Uri? uri = rec.$1;
 
@@ -160,8 +157,8 @@ int main() {
         }
         var headers = requestModel.enabledHeadersMap;
         bool allow = headers.isNotEmpty ||
-            requestModel.hasJsonData ||
-            requestModel.hasTextData;
+            requestModel.hasJsonData || 
+            requestModel.hasTextData || requestModel.hasFormData;
         var templateEnd = jj.Template(kTemplateEnd);
         result += templateEnd.render({
           "formdata": requestModel.hasFormData,
