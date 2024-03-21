@@ -88,8 +88,7 @@ echo \$res->getBody();
         m.forEach((key, value) {
           jsonString += "\t\t\t\t'$key' => '$value',\n";
         });
-        jsonString = jsonString.substring(
-            0, jsonString.length - 2); // Removing trailing comma and space
+        jsonString = jsonString.substring(0, jsonString.length - 2);
         result += templateParams.render({
           "params": jsonString,
         });
@@ -114,23 +113,16 @@ echo \$res->getBody();
         });
 
         if (requestModel.hasFormData && !contentTypeAdded) {
-          // Add Content-Type header for multipart form-data only if it's present and not already added
           headersString +=
               "\t\t\t\t'Content-Type' => 'multipart/form-data; boundary=' . \$multipart->getBoundary(), \n";
         }
-        headersString = headersString.substring(
-            0, headersString.length - 2); // Removing trailing comma and space
+        headersString = headersString.substring(0, headersString.length - 2);
         result += templateHeader.render({
           "headers": headersString,
         });
       }
 
       var templateBody = jj.Template(kTemplateBody);
-      // if (requestModel.hasFormData && requestModel.formDataMapList.isNotEmpty) {
-      //   result += templateBody.render({
-      //     "body": "new MultipartStream(\$multipart)",
-      //   });
-      // }
 
       if (harJson["postData"]?["text"] != null) {
         result += templateBody
@@ -149,7 +141,7 @@ echo \$res->getBody();
             }
           }
         }
-        return ""; // Return empty string if postData or formdata is not present
+        return "";
       }
 
       var templateRequest = jj.Template(kStringRequest);
