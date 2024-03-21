@@ -160,3 +160,13 @@ String? formatBody(String? body, MediaType? mediaType) {
   }
   return null;
 }
+
+String getBaseUrl(String url) {
+  Uri uri = Uri.parse(url);
+  return "${uri.scheme}://${uri.host}";
+}
+
+String getUrlPath(String url) {
+  Uri uri = Uri.parse(url);
+  return uri.path;
+}
