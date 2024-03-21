@@ -74,7 +74,7 @@ fn main() {
 
   let response_body = String::from_utf8_lossy(&data);
 
-  println!("Response body:{}", response_body);
+  println!("Response body: {}", response_body);
   println!("Response code: {}", easy.response_code().unwrap());
 }""";
 
