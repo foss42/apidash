@@ -239,6 +239,8 @@ public class Main {
         result += templateRequestBodySetup.render();
       }
 
+      var templateRequestBodyEnd = jj.Template(kTemplateRequestEnd);
+      result += templateRequestBodyEnd.render();
 
       return result;
     } catch (e) {
