@@ -1,3 +1,4 @@
+import 'package:apidash/codegen/java/unirest.dart';
 import 'package:apidash/models/models.dart' show RequestModel;
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart' show getNewUuid;
@@ -60,6 +61,8 @@ class Codegen {
         return JavaAsyncHttpClientGen().getCode(rM);
       case CodegenLanguage.javaHttpClient:
         return JavaHttpClientCodeGen().getCode(rM);
+      case CodegenLanguage.javaUnirest:
+        return JavaUnirestGen().getCode(rM, boundary);
       case CodegenLanguage.javaOkHttp:
         return JavaOkHttpCodeGen().getCode(rM);
       case CodegenLanguage.juliaHttp:
