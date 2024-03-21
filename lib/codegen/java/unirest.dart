@@ -25,4 +25,8 @@ public class Main {
         final String requestURL = "{{url}}";\n
 ''';
 
+  final String kTemplateRequestBodyContent = '''
+        final String requestBody = "{{body}}";\n
+''';
+
 }
