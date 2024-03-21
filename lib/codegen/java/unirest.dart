@@ -70,4 +70,14 @@ public class Main {
 }\n
 """;
 
+  String? getCode(RequestModel requestModel, String? boundary) {
+    try {
+      String result = '';
+      bool hasBody = false;
+
+      return result;
+    } catch (e) {
+      return null;
+    }
+  }
 }
