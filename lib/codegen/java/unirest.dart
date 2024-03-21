@@ -50,4 +50,8 @@ public class Main {
                 .field("{{name}}", "{{value}}")\n
 ''';
 
+  final String kTemplateRequestFileFormData = '''
+                .field("{{name}}", new File("{{value}}"))\n
+''';
+
 }
