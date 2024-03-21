@@ -10,4 +10,10 @@ class JavaUnirestGen {
 import kong.unirest.core.*;\n
 ''';
 
+  final String kTemplateFileIoImports = '''
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;\n
+''';
 }
