@@ -62,4 +62,12 @@ public class Main {
                 .boundary("{{boundary}}")\n
 ''';
 
+  final String kTemplateRequestEnd = """
+                .asJson();
+        System.out.println(response.getStatus());
+        System.out.println(response.getBody());
+    }
+}\n
+""";
+
 }
