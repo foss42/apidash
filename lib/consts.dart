@@ -288,6 +288,7 @@ enum CodegenLanguage {
   javaOkHttp("Java (okhttp3)", "java", 'java'),
   javaAsyncHttpClient("Java (asynchttpclient)", "java", "java"),
   javaHttpClient("Java (HttpClient)", "java", "java"),
+  javaUnirest("Java (Unirest)", "java", "java"),
   juliaHttp("Julia (HTTP)", "julia", "jl"),
   phpGuzzle("PHP (guzzle)", "php", "php");
 
@@ -312,6 +313,8 @@ const kSubTypeXml = 'xml';
 const kSubTypeYaml = 'yaml';
 const kSubTypeXYaml = 'x-yaml';
 const kSubTypeYml = 'x-yml';
+// in future need to add support for url-encoded form data
+const kSubTypeXWwwFormUrlencoded = 'x-www-form-urlencoded';
 
 const kTypeText = 'text';
 // text
