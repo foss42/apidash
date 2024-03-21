@@ -34,4 +34,8 @@ public class Main {
                 .{{method}}(requestURL)\n
 ''';
 
+  final String kTemplateRequestHeader = '''
+                .header("{{name}}", "{{value}}")\n
+''';
+
 }
