@@ -131,6 +131,19 @@ Instead of copy pasting from pub.dev, it is recommended that you use `flutter pu
 
 ## Platform-specific Additional Instructions
 
+### Android
+Add the `multiDexEnabled true` line to the `defaultConfig` section at `android/app/build.gradle file`
+
+```
+android {
+    ...
+    defaultConfig {
+        ...
+        multiDexEnabled true
+    }
+}
+```
+
 ### macOS
 
 Add below keys to `macos/Runner/DebugProfile.entitlements` and `macos/Runner/Release.entitlements`.
