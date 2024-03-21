@@ -42,7 +42,7 @@ class SendingWidget extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Lottie.asset("assets/sending.json"),
+          Lottie.asset(kAssetSendingLottie),
         ],
       ),
     );

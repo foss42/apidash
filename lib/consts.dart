@@ -10,6 +10,11 @@ const kGitUrl = "https://github.com/foss42/apidash";
 const kIssueUrl = "$kGitUrl/issues";
 const kDefaultUri = "api.apidash.dev";
 
+const kAssetIntroMd = "assets/intro.md";
+const kAssetSendingLottie = "assets/sending.json";
+const kAssetSavingLottie = "assets/saving.json";
+const kAssetSavedLottie = "assets/completed.json";
+
 final kIsMacOS = !kIsWeb && Platform.isMacOS;
 final kIsWindows = !kIsWeb && Platform.isWindows;
 final kIsLinux = !kIsWeb && Platform.isLinux;
@@ -25,6 +30,7 @@ final kColorTransparentState =
     MaterialStateProperty.all<Color>(Colors.transparent);
 const kColorTransparent = Colors.transparent;
 const kColorWhite = Colors.white;
+const kColorBlack = Colors.black;
 const kColorRed = Colors.red;
 final kColorLightDanger = Colors.red.withOpacity(0.9);
 const kColorDarkDanger = Color(0xffcf6679);
@@ -47,6 +53,7 @@ final kCodeStyle = TextStyle(
 
 const kHintOpacity = 0.6;
 const kForegroundOpacity = 0.05;
+const kOverlayBackgroundOpacity = 0.5;
 
 const kTextStyleButton = TextStyle(fontWeight: FontWeight.bold);
 const kTextStyleButtonSmall = TextStyle(fontSize: 12);
@@ -79,6 +86,7 @@ const kPh20t40 = EdgeInsets.only(
   top: 40,
 );
 const kPh60 = EdgeInsets.symmetric(horizontal: 60);
+const kPh60v60 = EdgeInsets.symmetric(vertical: 60, horizontal: 60);
 const kP24CollectionPane = EdgeInsets.only(
   top: 24,
   left: 4.0,
@@ -522,3 +530,5 @@ const kLabelBusy = "Busy";
 const kLabelCopy = "Copy";
 const kLabelSave = "Save";
 const kLabelDownload = "Download";
+const kLabelSaving = "Saving";
+const kLabelSaved = "Saved";
