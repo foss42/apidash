@@ -6,4 +6,8 @@ import 'package:apidash/models/models.dart' show RequestModel;
 import 'package:apidash/consts.dart';
 
 class JavaUnirestGen {
+  final String kTemplateUnirestImports = '''
+import kong.unirest.core.*;\n
+''';
+
 }
