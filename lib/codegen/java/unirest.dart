@@ -46,4 +46,8 @@ public class Main {
                 .queryString("{{name}}", "{{value}}")\n
 ''';
 
+  final String kTemplateRequestTextFormData = '''
+                .field("{{name}}", "{{value}}")\n
+''';
+
 }
