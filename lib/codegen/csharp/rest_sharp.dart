@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:jinja/jinja.dart' as jj;
 import '../../models/request_model.dart';
 import '../../utils/har_utils.dart';
@@ -31,7 +33,22 @@ class Program
 """;
 
   String kTemplateParams = """
-      request.AddParameter("{{param}}", "{{value}}");
+      request.AddQueryParameter("{{param}}", "{{value}}");
+""";
+  String kTemplateHeaders = """
+      request.AddHeader("{{header}}", "{{value}}");
+""";
+  String kTemplateFormData = """
+      request.AddFile("{{name}}", "{{value}}");
+
+""";
+  String kTemplateJsonData = """
+      var jsonBody = new {{jsonData}};
+      request.AddJsonBody(jsonBody);
+""";
+  String kTemplateTextData = """
+      var textBody = "{{textData}}";
+      request.AddStringBody(textBody);
 """;
 
   String kStringEnd = """
@@ -78,13 +95,64 @@ class Program
 
       var params = harJson["queryString"];
       if (params.isNotEmpty) {
-        var templateParams = jj.Template(kTemplateParams);
+        jj.Template templateParams = jj.Template(kTemplateParams);
         String paramsResult = "";
         for (var query in params) {
           paramsResult += templateParams
               .render({"param": query["name"], "value": query["value"]});
         }
         result += paramsResult;
+        result += kStringLineBreak;
+      }
+
+      var headers = harJson["headers"];
+      if (headers.isNotEmpty) {
+        jj.Template templateHeaders = jj.Template(kTemplateHeaders);
+        String headersResult = "";
+        for (var header in headers) {
+          headersResult += templateHeaders
+              .render({"header": header["name"], "value": header["value"]});
+        }
+        result += headersResult;
+        result += kStringLineBreak;
+      }
+      print(requestModel.formDataMapList);
+      print("hi");
+      print(requestModel.formDataList);
+      if (requestModel.hasFormData) {
+        jj.Template templateFormData = jj.Template(kTemplateFormData);
+        String formDataResult = "";
+        requestModel.formDataMapList.forEach((data) {
+          formDataResult += templateFormData.render({
+            "name": data["name"],
+            "value": data["value"],
+          });
+        });
+        result += formDataResult;
+        result += kStringLineBreak;
+      }
+
+      if (requestModel.hasJsonData) {
+        var templateJsonData = jj.Template(kTemplateJsonData);
+        Map<String, dynamic> bodyData = json.decode(requestModel.requestBody!);
+        String jsonDataResult = "{\n";
+
+        bodyData.forEach((key, value) {
+          jsonDataResult += "\t\t\t\t\t$key = \"$value\",\n";
+        });
+        jsonDataResult = jsonDataResult.length >= 3
+            ? jsonDataResult.substring(0, jsonDataResult.length - 2)
+            : jsonDataResult;
+        jsonDataResult += "\n\t\t\t\t\t}";
+
+        result += templateJsonData.render({"jsonData": jsonDataResult});
+        result += kStringLineBreak;
+      }
+
+      if (requestModel.hasTextData) {
+        jj.Template templateTextData = jj.Template(kTemplateTextData);
+        result +=
+            templateTextData.render({"textData": requestModel.requestBody});
         result += kStringLineBreak;
       }
 
