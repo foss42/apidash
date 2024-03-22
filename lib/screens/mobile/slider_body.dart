@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import '../home_page/editor_pane/details_card/request_pane/request_pane.dart';
+import '../home_page/editor_pane/editor_request.dart';
 import '../home_page/editor_pane/url_card.dart';
 
 class SliderBody extends StatelessWidget {
@@ -15,9 +16,7 @@ class SliderBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const SizedBox(
-          height: 5,
-        ),
+        const RequestEditorTopBar(),
         const EditorPaneRequestURLCard(),
         const SizedBox(
           height: 5,

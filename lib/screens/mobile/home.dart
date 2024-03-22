@@ -101,7 +101,7 @@ class _MobileDashboardState extends ConsumerState<MobileHome> {
       ):
       SlidingUpPanel(
         minHeight: 42,
-        maxHeight: MediaQuery.sizeOf(context).height * 0.72,
+        maxHeight: MediaQuery.sizeOf(context).height * 0.70,
         borderRadius: const BorderRadius.vertical(
             top: Radius.circular(20)
         ),
