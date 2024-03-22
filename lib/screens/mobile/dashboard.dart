@@ -1,3 +1,5 @@
+import 'package:apidash/screens/mobile/profile_page.dart';
+import 'package:apidash/screens/mobile/workflow_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../intro_page.dart';
@@ -29,6 +31,21 @@ class _MobileDashboardState extends ConsumerState<MobileDashboard> {
             const SizedBox(
               height: 70,
             ),
+
+            ListTile(
+              title: const Text('Profile'),
+              leading: const Icon(Icons.account_circle_sharp),
+              onTap: () {
+                Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(
+                      builder: (context) => const MobileDashboard(
+                        title: 'Profile',
+                        scaffoldBody: ProfilePage(),
+                      ),
+                    ),
+                        (Route<dynamic> route) => false);
+              },
+            ),
             ListTile(
               title: const Text('Home'),
               leading: const Icon(Icons.home_outlined),
@@ -57,6 +74,22 @@ class _MobileDashboardState extends ConsumerState<MobileDashboard> {
                     (Route<dynamic> route) => false);
               },
             ),
+
+            ListTile(
+              title: const Text('Workflow Builder'),
+              leading: const Icon(Icons.build_outlined),
+              onTap: () {
+                Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(
+                      builder: (context) => const MobileDashboard(
+                        title: 'Workflow Builder',
+                        scaffoldBody: WorkflowBuilder(),
+                      ),
+                    ),
+                        (Route<dynamic> route) => false);
+              },
+            ),
+
             ListTile(
               title: const Text('Settings'),
               leading: const Icon(Icons.settings_outlined),
@@ -71,6 +104,7 @@ class _MobileDashboardState extends ConsumerState<MobileDashboard> {
                     (Route<dynamic> route) => false);
               },
             ),
+
             const Divider(),
           ],
         ),
