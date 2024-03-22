@@ -11,7 +11,6 @@ class cCurlCodeGen {
 #include <string.h>
 #include <curl/curl.h>
 
-
 int main() {
   CURL *curl;
   CURLcode res;
@@ -19,11 +18,7 @@ int main() {
   if(curl) {
 """;
 
-  String kTemplateUrl = """
-
-    curl_easy_setopt(curl, CURLOPT_URL, "{{url}}");
-    curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
-    curl_easy_setopt(curl, CURLOPT_DEFAULT_PROTOCOL, "https");
+  String kTemplateUrl = """\n    curl_easy_setopt(curl, CURLOPT_URL, "{{url}}");
 """;
 
   String kTemplateBody = """
@@ -54,24 +49,16 @@ int main() {
   String kTemplateHeader = """
   
     struct curl_slist *headers = NULL;
-  {% if headers %}{% for header, value in headers %}  
-    headers = curl_slist_append(headers,"{{header}}: {{value}}");{% endfor %}
-  {% endif %}
-    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+  {% if headers %}{% for header, value in headers %}  headers = curl_slist_append(headers,"{{header}}: {{value}}");\n  {% endfor %}
+  {% endif %}  curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 """;
   String kTemplateQueryParam = """""";
 
-  String kTemplateRequest = """
-  
-    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "{{method}}");
-""";
+  String kTemplateRequest = """{% if method != "GET" and method != "POST" %}\n    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "{{method}}");{% endif %}""";
 
   final String kTemplateEnd = """
-      
-    {% if formdata %}curl_easy_setopt(curl, CURLOPT_MIMEPOST, mime);{% endif %}
-    res = curl_easy_perform(curl);
-    {% if formdata %}curl_mime_free(mime);{% endif %}
-    {% if headers %}curl_slist_free_all(headers);{% endif %}
+{% if formdata %}curl_easy_setopt(curl, CURLOPT_MIMEPOST, mime);{% endif %}
+    res = curl_easy_perform(curl);{% if formdata %}\n    curl_mime_free(mime);{% endif %}{% if headers %}\n    curl_slist_free_all(headers);{% endif %}
   }
   curl_easy_cleanup(curl);
   return 0;
@@ -112,12 +99,12 @@ int main() {
       );
 
       var headersList = requestModel.enabledRequestHeaders;
-      if (headersList != null || requestModel.hasBody || requestModel.hasFormData) {
+      if (headersList != null || requestModel.hasBody || requestModel.hasTextData || requestModel.hasJsonData) {
         var headers = requestModel.enabledHeadersMap;
-        if(requestModel.hasFormData){
-          headers.putIfAbsent("Content-Type", () => "multipart/form-data");
-        }
-        if (requestModel.hasJsonData || requestModel.hasTextData) {
+        // if (requestModel.hasFormData) {
+        //   headers.putIfAbsent("Content-Type", () => "multipart/form-data");
+        // }
+        if (requestModel.hasTextData || requestModel.hasJsonData) {
           headers.putIfAbsent(kHeaderContentType,
               () => requestModel.requestBodyContentType.header);
         }
@@ -136,9 +123,10 @@ int main() {
           hasBody = true;
           var templateRawBody = jj.Template(kTemplateBody);
           String Body = "";
-          if (requestBody != null) Body = requestBody.replaceAll('"', '\\"').replaceAll('\n', '\\n');
-          result += templateRawBody
-              .render({"body": Body});
+          if (requestBody != null) {
+            Body = requestBody.replaceAll('"', '\\"').replaceAll('\n', '\\n');
+          }
+          result += templateRawBody.render({"body": Body});
         } else if (requestModel.hasFormData) {
           hasBody = true;
           var templateFormData = jj.Template(kTemplateFormData);
@@ -156,9 +144,7 @@ int main() {
           }
         }
         var headers = requestModel.enabledHeadersMap;
-        bool allow = headers.isNotEmpty ||
-            requestModel.hasJsonData || 
-            requestModel.hasTextData || requestModel.hasFormData;
+        bool allow = headers.isNotEmpty || requestModel.hasTextData || requestModel.hasJsonData;
         var templateEnd = jj.Template(kTemplateEnd);
         result += templateEnd.render({
           "formdata": requestModel.hasFormData,
