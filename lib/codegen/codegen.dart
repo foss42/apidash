@@ -1,4 +1,3 @@
-import 'package:apidash/codegen/rust/curl_rust.dart';
 import 'package:apidash/models/models.dart' show RequestModel;
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart' show getNewUuid;
@@ -10,6 +9,7 @@ import 'php/guzzle.dart';
 import 'python/http_client.dart';
 import 'python/requests.dart';
 import 'rust/actix.dart';
+import 'rust/curl_rust.dart';
 import 'rust/reqwest.dart';
 import 'rust/ureq.dart';
 import 'js/axios.dart';
@@ -74,10 +74,10 @@ class Codegen {
         return PythonRequestsCodeGen().getCode(rM, boundary: boundary);
       case CodegenLanguage.rustActix:
         return RustActixCodeGen().getCode(rM, boundary: boundary);
-      case CodegenLanguage.rustReqwest:
-        return RustReqwestCodeGen().getCode(rM);
       case CodegenLanguage.rustCurl:
         return RustCurlCodeGen().getCode(rM);
+      case CodegenLanguage.rustReqwest:
+        return RustReqwestCodeGen().getCode(rM);
       case CodegenLanguage.rustUreq:
         return RustUreqCodeGen().getCode(rM, boundary: boundary);
       case CodegenLanguage.phpGuzzle:
