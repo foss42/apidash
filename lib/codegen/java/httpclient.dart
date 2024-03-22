@@ -108,7 +108,7 @@ public class JavaHttpClientExample {
                 .uri(URI.create(url))
 ''';
 
-  final String kTemplateRequestEnd = """
+  final String kTemplateRequestEndExceptPatchAndDelete = '''
                 .{{method}}({{body}})
                 .build();
 
@@ -117,8 +117,18 @@ public class JavaHttpClientExample {
         System.out.println(response.body());
     }
 }
-\n
-""";
+''';
+
+  final String kTemplateRequestEndForPatchAndDelete = '''
+                .method("{{method}}", {{body}})
+                .build();
+
+        HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
+        System.out.println(response.statusCode());
+        System.out.println(response.body());
+    }
+}
+''';
 
   String? getCode(
     RequestModel requestModel,
