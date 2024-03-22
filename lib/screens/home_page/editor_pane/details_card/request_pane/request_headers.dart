@@ -19,6 +19,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
   final random = Random.secure();
   late List<NameValueModel> headerRows;
   late List<bool> isRowEnabledList;
+  bool isAddingRow = false;
 
   @override
   void initState() {
@@ -52,6 +53,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
         ref.read(selectedRequestModelProvider)?.isHeaderEnabledList ??
             List.filled(rH?.length ?? 0, true, growable: true);
     isRowEnabledList.add(false);
+    isAddingRow = false;
 
     DaviModel<NameValueModel> model = DaviModel<NameValueModel>(
       rows: headerRows,
@@ -90,7 +92,8 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
               hintText: "Add Header Name",
               onChanged: (value) {
                 headerRows[idx] = headerRows[idx].copyWith(name: value);
-                if (isLast) {
+                if (isLast && !isAddingRow) {
+                  isAddingRow = true;
                   isRowEnabledList[idx] = true;
                   headerRows.add(kNameValueEmptyModel);
                   isRowEnabledList.add(false);
@@ -123,7 +126,8 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
               hintText: " Add Header Value",
               onChanged: (value) {
                 headerRows[idx] = headerRows[idx].copyWith(value: value);
-                if (isLast) {
+                if (isLast && !isAddingRow) {
+                  isAddingRow = true;
                   isRowEnabledList[idx] = true;
                   headerRows.add(kNameValueEmptyModel);
                   isRowEnabledList.add(false);
