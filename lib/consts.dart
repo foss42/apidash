@@ -284,6 +284,7 @@ enum CodegenLanguage {
   pythonHttpClient("Python (http.client)", "python", "py"),
   rustActix("Rust (Actix Client)", "rust", "rs"),
   rustReqwest("Rust (reqwest)", "rust", "rs"),
+  rustCurl("Rust (curl-rust)", "rust", "rs"),
   rustUreq("Rust (ureq)", "rust", "rs"),
   javaOkHttp("Java (okhttp3)", "java", 'java'),
   javaAsyncHttpClient("Java (asynchttpclient)", "java", "java"),
