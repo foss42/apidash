@@ -48,14 +48,14 @@ public class JavaHttpClientExample {
 
   final String kTemplateUrlQuery = '''
 
-        String url = "{{url}}";
-        try {
-            URI uri = new URI(url);
-            url = uri.resolve("{{params}}").toString();
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
+        url += "?" + "{{params}}";
 
+''';
+
+  final String kTemplateMultiPartBuilder = '''
+
+        var bldr = new HTTPRequestMultipartBody.Builder();
+''';
 ''';
 
   String kTemplateRequestBody = '''
