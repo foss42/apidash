@@ -56,6 +56,25 @@ public class JavaHttpClientExample {
 
         var bldr = new HTTPRequestMultipartBody.Builder();
 ''';
+
+  final String kTemplateFormdataFieldsStarter = '''
+        Map<String, String> mp = new HashMap<>() {
+            {
+''';
+
+  final String kTemplateFormdataFields = '''
+                put("{{name}}", "{{value}}");''';
+
+  final String kTemplateFormdataFieldsEnder = '''
+            }
+        };
+
+        for (String key : mp.keySet()) {
+            bldr.addPart(key, mp.get(key));
+        }
+
+''';
+
 ''';
 
   String kTemplateRequestBody = '''
