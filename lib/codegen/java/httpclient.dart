@@ -75,6 +75,22 @@ public class JavaHttpClientExample {
 
 ''';
 
+  final String kTemplateFormdataFilesStarter = '''
+        String[][] files = {''';
+
+  final String kTemplateFormdataFiles = '''
+                { "{{name}}", "{{value}}"}''';
+
+  final String kTemplateFormdataFilesEnder = '''
+        };
+
+        for (int i = 0; i < files.length; ++i) {
+            File f = new File(files[i][1]);
+            bldr.addPart(files[i][0], f, null, f.getName());
+        }
+
+''';
+
 ''';
 
   String kTemplateRequestBody = '''
