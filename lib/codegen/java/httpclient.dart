@@ -21,6 +21,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 ''';
 
+  final String kTemplatePackageImports = '''
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -30,12 +31,15 @@ import java.net.http.HttpResponse;
 import java.net.http.HttpHeaders;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse.BodyHandlers;
+''';
+
+  final String kTemplateStartClass = '''
 
 public class JavaHttpClientExample {
-
     public static void main(String[] args) throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
-""";
+''';
+
   final String kTemplateUrl = '''
 
         String url = "{{url}}";
