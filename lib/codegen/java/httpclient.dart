@@ -91,6 +91,9 @@ public class JavaHttpClientExample {
 
 ''';
 
+  final String kTemplateMultiPartBuildCaller = '''
+        HTTPRequestMultipartBody multipartBody = bldr.build();
+
 ''';
 
   String kTemplateRequestBody = '''
