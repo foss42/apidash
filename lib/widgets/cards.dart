@@ -51,6 +51,7 @@ class SidebarRequestCard extends StatelessWidget {
         : getRequestTitleFromUrl(url);
     return Tooltip(
       message: nm,
+      triggerMode: TooltipTriggerMode.manual,
       waitDuration: const Duration(seconds: 1),
       child: Card(
         shape: const RoundedRectangleBorder(

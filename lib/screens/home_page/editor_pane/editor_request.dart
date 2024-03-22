@@ -1,3 +1,4 @@
+import 'package:apidash/screens/home_page/editor_pane/details_card/request_pane/request_pane.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/collection_providers.dart';
@@ -10,15 +11,26 @@ class RequestEditor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
-      children: [
-        RequestEditorTopBar(),
-        EditorPaneRequestURLCard(),
-        kVSpacer10,
-        Expanded(
-          child: EditorPaneRequestDetailsCard(),
-        ),
-      ],
+    return Padding(
+      padding: kIsMacOS || kIsWindows
+          ? kPt24o8
+          : !kIsMobile
+              ? kP8
+              : kPb10,
+      child: Column(
+        children: [
+          !kIsMobile ? const RequestEditorTopBar() : kVSpacer5,
+          Padding(
+              padding: !kIsMobile ? EdgeInsets.zero : kPh8,
+              child: const EditorPaneRequestURLCard()),
+          kVSpacer10,
+          Expanded(
+            child: kIsMobile
+                ? const EditRequestPane()
+                : const EditorPaneRequestDetailsCard(),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -59,41 +71,11 @@ class RequestEditorTopBar extends ConsumerWidget {
                 padding: MaterialStatePropertyAll(EdgeInsets.zero),
               ),
               onPressed: () {
-                showDialog(
-                    context: context,
-                    builder: (context) {
-                      final controller =
-                          TextEditingController(text: name ?? "");
-                      controller.selection = TextSelection(
-                          baseOffset: 0, extentOffset: controller.text.length);
-                      return AlertDialog(
-                        title: const Text('Rename Request'),
-                        content: TextField(
-                          autofocus: true,
-                          controller: controller,
-                          decoration:
-                              const InputDecoration(hintText: "Enter new name"),
-                        ),
-                        actions: <Widget>[
-                          OutlinedButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: const Text('CANCEL')),
-                          FilledButton(
-                              onPressed: () {
-                                final val = controller.text.trim();
-                                ref
-                                    .read(collectionStateNotifierProvider
-                                        .notifier)
-                                    .update(id!, name: val);
-                                Navigator.pop(context);
-                                controller.dispose();
-                              },
-                              child: const Text('OK')),
-                        ],
-                      );
-                    });
+                showRenameDialog(context, name, (val) {
+                  ref
+                      .read(collectionStateNotifierProvider.notifier)
+                      .update(id!, name: val);
+                });
               },
               icon: const Icon(
                 Icons.edit,
@@ -109,4 +91,43 @@ class RequestEditorTopBar extends ConsumerWidget {
       ),
     );
   }
+}
+
+showRenameDialog(
+  BuildContext context,
+  String? name,
+  Function(String) onRename,
+) {
+  showDialog(
+      context: context,
+      builder: (context) {
+        final controller = TextEditingController(text: name ?? "");
+        controller.selection =
+            TextSelection(baseOffset: 0, extentOffset: controller.text.length);
+        return AlertDialog(
+          title: const Text('Rename Request'),
+          content: TextField(
+            autofocus: true,
+            controller: controller,
+            decoration: const InputDecoration(hintText: "Enter new name"),
+          ),
+          actions: <Widget>[
+            OutlinedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('CANCEL')),
+            FilledButton(
+                onPressed: () {
+                  final val = controller.text.trim();
+                  onRename(val);
+                  Navigator.pop(context);
+                  Future.delayed(const Duration(milliseconds: 100), () {
+                    controller.dispose();
+                  });
+                },
+                child: const Text('OK')),
+          ],
+        );
+      });
 }

@@ -72,6 +72,9 @@ class _TextFieldEditorState extends State<TextFieldEditor> {
         style: kCodeStyle,
         textAlignVertical: TextAlignVertical.top,
         onChanged: widget.onChanged,
+        onTapOutside: (PointerDownEvent event) {
+          editorFocusNode.unfocus();
+        },
         decoration: InputDecoration(
           hintText: "Enter content (body)",
           hintStyle: TextStyle(

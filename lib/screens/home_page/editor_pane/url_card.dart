@@ -17,23 +17,25 @@ class EditorPaneRequestURLCard extends StatelessWidget {
         ),
         borderRadius: kBorderRadius12,
       ),
-      child: const Padding(
+      child: Padding(
         padding: EdgeInsets.symmetric(
           vertical: 5,
-          horizontal: 20,
+          horizontal: !kIsMobile ? 20 : 6,
         ),
         child: Row(
           children: [
-            DropdownButtonHTTPMethod(),
-            kHSpacer20,
-            Expanded(
+            const DropdownButtonHTTPMethod(),
+            !kIsMobile ? kHSpacer20 : kHSpacer5,
+            const Expanded(
               child: URLTextField(),
             ),
-            kHSpacer20,
-            SizedBox(
-              height: 36,
-              child: SendButton(),
-            ),
+            !kIsMobile ? kHSpacer20 : const SizedBox.shrink(),
+            !kIsMobile
+                ? const SizedBox(
+                    height: 36,
+                    child: SendButton(),
+                  )
+                : const SizedBox.shrink(),
           ],
         ),
       ),
@@ -91,8 +93,10 @@ class URLTextField extends ConsumerWidget {
 }
 
 class SendButton extends ConsumerWidget {
+  final Function()? onTap;
   const SendButton({
     super.key,
+    this.onTap,
   });
 
   @override
@@ -104,6 +108,7 @@ class SendButton extends ConsumerWidget {
     return SendRequestButton(
       isWorking: isWorking ?? false,
       onTap: () {
+        onTap?.call();
         ref
             .read(collectionStateNotifierProvider.notifier)
             .sendRequest(selectedId!);
