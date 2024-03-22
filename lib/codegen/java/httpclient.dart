@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:jinja/jinja.dart' as jj;
 import 'package:apidash/utils/utils.dart'
     show getValidRequestUri, requestModelToHARJsonRequest, stripUriParams;
@@ -6,7 +7,20 @@ import '../../models/request_model.dart';
 import 'package:apidash/consts.dart';
 
 class JavaHttpClientCodeGen {
-  final String kTemplateStart = """
+  final String kTemplatePackageImportsForFormdata = '''
+import java.io.File;
+import java.util.List;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.math.BigInteger;
+import java.security.SecureRandom;
+import java.io.ObjectOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
+''';
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
