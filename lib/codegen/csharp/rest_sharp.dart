@@ -39,8 +39,12 @@ class Program
       request.AddHeader("{{header}}", "{{value}}");
 """;
   String kTemplateFormData = """
-      request.AddFile("{{name}}", "{{value}}");
-
+      {% if type == "text" -%}
+      request.AddParameter("{{name}}", "{{value}}", ParameterType.RequestBody);
+{% else -%}
+       request.AddFile("{{name}}", "{{value}}");
+{% endif -%}
+      
 """;
   String kTemplateJsonData = """
       var jsonBody = new {{jsonData}};
@@ -53,7 +57,8 @@ class Program
 
   String kStringEnd = """
       var response = await client.ExecuteAsync(request);
-      Console.WriteLine(response.Content);
+      Console.WriteLine("Status Code: " + response.StatusCode);
+      Console.WriteLine("Response Content: " + response.Content);
     }
     catch(Exception ex){
       Console.WriteLine("Error: " + ex);
@@ -110,24 +115,30 @@ class Program
         jj.Template templateHeaders = jj.Template(kTemplateHeaders);
         String headersResult = "";
         for (var header in headers) {
-          headersResult += templateHeaders
-              .render({"header": header["name"], "value": header["value"]});
+          headersResult += templateHeaders.render({
+            "header": header["name"],
+            "value": header["name"] == "Content-Type"
+                ? header["value"]
+                    .toString()
+                    .split(';')
+                    .first // boundary is removed
+                : header["value"]
+          });
         }
         result += headersResult;
         result += kStringLineBreak;
       }
-      print(requestModel.formDataMapList);
-      print("hi");
-      print(requestModel.formDataList);
+
       if (requestModel.hasFormData) {
         jj.Template templateFormData = jj.Template(kTemplateFormData);
         String formDataResult = "";
-        requestModel.formDataMapList.forEach((data) {
+        for (var data in requestModel.formDataMapList) {
           formDataResult += templateFormData.render({
             "name": data["name"],
             "value": data["value"],
+            "type": data["type"]
           });
-        });
+        }
         result += formDataResult;
         result += kStringLineBreak;
       }
