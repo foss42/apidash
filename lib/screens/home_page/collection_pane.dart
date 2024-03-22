@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
@@ -66,10 +67,33 @@ class CollectionPane extends ConsumerWidget {
                     style: kTextStyleButton,
                   ),
                 ),
+
               ],
             ),
           ),
-          kVSpacer8,
+          kVSpacer10,
+           SizedBox(
+            height:30,
+            child:SearchBar(
+
+              onChanged: (value){
+                  if(value.isNotEmpty){
+                  ref.read(searchQueryProvider.notifier).state = value;
+                  ref.read(collectionStateNotifierProvider.notifier)
+                      .filterRequests(value);
+                  }
+                  else{
+
+                  }
+
+              },
+              hintText: "search",
+              leading: Icon(Icons.search),
+              textStyle: MaterialStateTextStyle.resolveWith((states) => TextStyle(fontSize: 15.0)),
+              elevation: MaterialStateProperty.all(2.0),
+            )),
+          kVSpacer10,
+
           const Expanded(
             child: RequestList(),
           ),
@@ -110,7 +134,7 @@ class _RequestListState extends ConsumerState<RequestList> {
     final alwaysShowCollectionPaneScrollbar = ref.watch(settingsProvider
         .select((value) => value.alwaysShowCollectionPaneScrollbar));
 
-    return Scrollbar(
+    return requestItems.isNotEmpty?Scrollbar(
       controller: controller,
       thumbVisibility: alwaysShowCollectionPaneScrollbar ? true : null,
       radius: const Radius.circular(12),
@@ -118,7 +142,7 @@ class _RequestListState extends ConsumerState<RequestList> {
         padding: kPr8CollectionPane,
         scrollController: controller,
         buildDefaultDragHandles: false,
-        itemCount: requestSequence.length,
+        itemCount: requestItems.length,
         onReorder: (int oldIndex, int newIndex) {
           if (oldIndex < newIndex) {
             newIndex -= 1;
@@ -131,6 +155,8 @@ class _RequestListState extends ConsumerState<RequestList> {
         },
         itemBuilder: (context, index) {
           var id = requestSequence[index];
+          print(requestItems[id]!);
+
           return ReorderableDragStartListener(
             key: ValueKey(id),
             index: index,
@@ -144,7 +170,7 @@ class _RequestListState extends ConsumerState<RequestList> {
           );
         },
       ),
-    );
+    ):Text("data");
   }
 }
 

@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'settings_providers.dart';
 import 'ui_providers.dart';
@@ -8,6 +9,7 @@ import '../consts.dart';
 import 'package:http/http.dart' as http;
 
 final selectedIdStateProvider = StateProvider<String?>((ref) => null);
+final searchQueryProvider = StateProvider<String>((ref) => '');
 
 final selectedRequestModelProvider = StateProvider<RequestModel?>((ref) {
   final selectedId = ref.watch(selectedIdStateProvider);
@@ -31,7 +33,7 @@ final StateNotifierProvider<CollectionStateNotifier, Map<String, RequestModel>?>
 class CollectionStateNotifier
     extends StateNotifier<Map<String, RequestModel>?> {
   CollectionStateNotifier(this.ref, this.hiveHandler) : super(null) {
-    var status = loadData();
+    var status = filterRequests(ref.read(searchQueryProvider.notifier).state);
     Future.microtask(() {
       if (status) {
         ref.read(requestSequenceProvider.notifier).state = [
@@ -244,6 +246,37 @@ class CollectionStateNotifier
         }
       }
       state = data;
+      return false;
+    }
+  }
+
+  bool filterRequests(String query) {
+    if (query.isEmpty) {
+
+      loadData();
+      return true;
+    } else {
+      // Filter requests based on the query
+      final filteredRequests = state?.values.where((request) =>
+          request.name.toLowerCase().contains(query.toLowerCase())).toList();
+
+
+      if (filteredRequests != null && filteredRequests.isNotEmpty) {
+
+        Map<String, RequestModel> requestMap = {};
+
+        for (var request in filteredRequests) {
+          requestMap[request.id] = request;
+        }
+
+        state = requestMap;
+
+      } else {
+        print("No matching requests found");
+      }
+
+
+
       return false;
     }
   }
