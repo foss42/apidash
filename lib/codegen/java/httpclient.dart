@@ -102,11 +102,11 @@ public class JavaHttpClientExample {
 
 ''';
 
-  final String kStringRequestStart = """
+  final String kStringRequestStart = '''
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
-""";
+''';
 
   final String kTemplateRequestEnd = """
                 .{{method}}({{body}})
