@@ -290,7 +290,25 @@ class HTTPRequestMultipartBody {
       Uri? uri = rec.$1;
 
       if (uri != null) {
+        // importing the packages
+        if (requestModel.hasFormData) {
+          result += kTemplatePackageImportsForFormdata;
+        }
+        result += kTemplatePackageImports;
+
         String url = stripUriParams(uri);
+
+        var rM = requestModel.copyWith(url: url);
+        var harJson = requestModelToHARJsonRequest(rM, useEnabled: true);
+
+        // contains the HTTP method associated with the request
+        var method = requestModel.method;
+
+        // contains the entire request body as a string if body is present
+        var requestBody = requestModel.requestBody;
+
+        //adding the starting class for the generated code
+        result += kTemplateStartClass;
 
         if (uri.hasQuery) {
           var params = uri.queryParameters;
