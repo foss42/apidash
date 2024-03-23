@@ -1177,4 +1177,73 @@ public class JavaHttpClientExample {
     });
   });
 
+  group('DELETE Request', () {
+    test('DELETE 1', () {
+      const expectedCode = r"""import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.net.http.HttpHeaders;
+import java.net.http.HttpRequest.BodyPublishers;
+import java.net.http.HttpResponse.BodyHandlers;
+
+public class JavaHttpClientExample {
+    public static void main(String[] args) throws IOException, InterruptedException {
+        HttpClient client = HttpClient.newHttpClient();
+
+        String url = "https://reqres.in/api/users/2";
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .method("DELETE", BodyPublishers.noBody())
+                .build();
+
+        HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
+        System.out.println(response.statusCode());
+        System.out.println(response.body());
+    }
+}""";
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.javaHttpClient, requestModelDelete1, "https"),
+          expectedCode);
+    });
+
+    test('DELETE 2', () {
+      const expectedCode = r"""import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.net.http.HttpHeaders;
+import java.net.http.HttpRequest.BodyPublishers;
+import java.net.http.HttpResponse.BodyHandlers;
+
+public class JavaHttpClientExample {
+    public static void main(String[] args) throws IOException, InterruptedException {
+        HttpClient client = HttpClient.newHttpClient();
+
+        String url = "https://reqres.in/api/users/2";
+
+        String body = "{\n\"name\": \"marfeus\",\n\"job\": \"accountant\"\n}";
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .method("DELETE", BodyPublishers.ofString(body))
+                .build();
+
+        HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
+        System.out.println(response.statusCode());
+        System.out.println(response.body());
+    }
+}""";
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.javaHttpClient, requestModelDelete2, "https"),
+          expectedCode);
+    });
+  });
 }
