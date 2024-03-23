@@ -310,12 +310,20 @@ class HTTPRequestMultipartBody {
         //adding the starting class for the generated code
         result += kTemplateStartClass;
 
+        // generating the URL to which the request has to be submitted
+        if (!hasQuery) {
+          var templateUrl = jj.Template(kTemplateUrl);
+          result += templateUrl.render({"url": url});
+        }
+
+        //adding the query  params
         if (uri.hasQuery) {
           var params = uri.queryParameters;
+
           if (params.isNotEmpty) {
             hasQuery = true;
             var templateParams = jj.Template(kTemplateUrlQuery);
-            result += templateParams.render({"url": url, "params": uri.query});
+            result += templateParams.render({"params": uri.query});
           }
         }
 
