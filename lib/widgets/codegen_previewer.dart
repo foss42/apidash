@@ -135,7 +135,7 @@ class ViewCodePane extends StatelessWidget {
           child: Column(
             children: [
               SizedBox(
-                height: constraints.maxWidth > 340 ? kHeaderHeight : kTabHeight,
+                height: kHeaderHeight,
                 child: Row(
                   children: [
                     Expanded(

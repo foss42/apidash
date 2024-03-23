@@ -182,6 +182,8 @@ class DropdownButtonCodegenLanguage extends StatelessWidget {
             child: Text(
               value.label,
               style: kTextStyleButton,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
             ),
           ),
         );
