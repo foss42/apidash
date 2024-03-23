@@ -165,7 +165,6 @@ class _RequestListState extends ConsumerState<RequestList> {
         },
         itemBuilder: (context, index) {
           var id = requestSequence[index];
-
           return ReorderableDragStartListener(
             key: ValueKey(id),
             index: index,
