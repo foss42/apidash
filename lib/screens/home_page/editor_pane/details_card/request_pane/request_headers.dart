@@ -56,21 +56,21 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
 
     List<DataColumn> columns = const [
       DataColumn2(
-        label: Text('Checkbox'),
+        label: Text(kNameCheckbox),
         fixedWidth: 30,
       ),
       DataColumn2(
-        label: Text('Header Name'),
+        label: Text(kNameHeader),
       ),
       DataColumn2(
         label: Text('='),
-        fixedWidth: 22,
+        fixedWidth: 30,
       ),
       DataColumn2(
-        label: Text('Header Value'),
+        label: Text(kNameValue),
       ),
       DataColumn2(
-        label: Text('Remove'),
+        label: Text(''),
         fixedWidth: 32,
       ),
     ];
@@ -101,7 +101,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
               HeaderField(
                 keyId: "$selectedId-$index-headers-k-$seed",
                 initialValue: headerRows[index].name,
-                hintText: "Add Header Name",
+                hintText: kHintAddName,
                 onChanged: (value) {
                   headerRows[index] = headerRows[index].copyWith(name: value);
                   if (isLast && !isAddingRow) {
@@ -116,16 +116,18 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
               ),
             ),
             DataCell(
-              Text(
-                "=",
-                style: kCodeStyle,
+              Center(
+                child: Text(
+                  "=",
+                  style: kCodeStyle,
+                ),
               ),
             ),
             DataCell(
               CellField(
                 keyId: "$selectedId-$index-headers-v-$seed",
                 initialValue: headerRows[index].value,
-                hintText: " Add Header Value",
+                hintText: kHintAddValue,
                 onChanged: (value) {
                   headerRows[index] = headerRows[index].copyWith(value: value);
                   if (isLast && !isAddingRow) {
@@ -195,13 +197,14 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
                   ),
                 ),
               ),
+              kVSpacer40,
             ],
           ),
         ),
         Align(
           alignment: Alignment.bottomCenter,
           child: Padding(
-            padding: const EdgeInsets.only(bottom: 30),
+            padding: kPb15,
             child: ElevatedButton.icon(
               onPressed: () {
                 headerRows.add(kNameValueEmptyModel);
@@ -210,7 +213,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
               },
               icon: const Icon(Icons.add),
               label: const Text(
-                "Add Header",
+                kLabelAddHeader,
                 style: kTextStyleButton,
               ),
             ),

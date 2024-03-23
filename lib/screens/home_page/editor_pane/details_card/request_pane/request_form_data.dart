@@ -52,7 +52,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
 
     List<DataColumn> columns = const [
       DataColumn2(
-        label: Text('Key'),
+        label: Text(kNameField),
         size: ColumnSize.M,
       ),
       DataColumn2(
@@ -60,15 +60,15 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
         fixedWidth: 20,
       ),
       DataColumn2(
-        label: Text('Type'),
+        label: Text(''),
         fixedWidth: 70,
       ),
       DataColumn2(
-        label: Text('Value'),
+        label: Text(kNameValue),
         size: ColumnSize.L,
       ),
       DataColumn2(
-        label: Text('Remove'),
+        label: Text(''),
         fixedWidth: 32,
       ),
     ];
@@ -84,7 +84,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
               CellField(
                 keyId: "$selectedId-$index-form-k-$seed",
                 initialValue: formRows[index].name,
-                hintText: " Add Key",
+                hintText: kHintAddFieldName,
                 onChanged: (value) {
                   formRows[index] = formRows[index].copyWith(name: value);
                   if (isLast && !isAddingRow) {
@@ -97,9 +97,11 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
               ),
             ),
             DataCell(
-              Text(
-                "=",
-                style: kCodeStyle,
+              Center(
+                child: Text(
+                  "=",
+                  style: kCodeStyle,
+                ),
               ),
             ),
             DataCell(
@@ -148,7 +150,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                         (formRows[index].type == FormDataType.file &&
                                 formRows[index].value.isNotEmpty)
                             ? formRows[index].value.toString()
-                            : "Select File",
+                            : kLabelSelectFile,
                         overflow: TextOverflow.ellipsis,
                         style: kFormDataButtonLabelTextStyle,
                       ),
@@ -156,7 +158,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                   : CellField(
                       keyId: "$selectedId-$index-form-v-$seed",
                       initialValue: formRows[index].value,
-                      hintText: " Add Value",
+                      hintText: kHintAddValue,
                       onChanged: (value) {
                         formRows[index] =
                             formRows[index].copyWith(value: value);
@@ -223,13 +225,14 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                   ),
                 ),
               ),
+              kVSpacer20,
             ],
           ),
         ),
         Align(
           alignment: Alignment.bottomCenter,
           child: Padding(
-            padding: const EdgeInsets.only(bottom: 30),
+            padding: const EdgeInsets.only(bottom: 5),
             child: ElevatedButton.icon(
               onPressed: () {
                 formRows.add(kFormDataEmptyModel);
@@ -237,7 +240,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
               },
               icon: const Icon(Icons.add),
               label: const Text(
-                "Add Form Data",
+                kLabelAddFormField,
                 style: kTextStyleButton,
               ),
             ),

@@ -132,7 +132,7 @@ const kRandMax = 100000;
 const kDataTableScrollbarTheme = ScrollbarThemeData(
   crossAxisMargin: -4,
 );
-const kDataTableBottomPadding = 80.0;
+const kDataTableBottomPadding = 12.0;
 const kDataTableRowHeight = 36.0;
 
 const kIconRemoveDark = Icon(

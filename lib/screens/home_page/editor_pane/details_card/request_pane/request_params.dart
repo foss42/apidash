@@ -56,21 +56,21 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
 
     List<DataColumn> columns = const [
       DataColumn2(
-        label: Text('Checkbox'),
+        label: Text(kNameCheckbox),
         fixedWidth: 30,
       ),
       DataColumn2(
-        label: Text('URL Parameter'),
+        label: Text(kNameURLParam),
       ),
       DataColumn2(
         label: Text('='),
-        fixedWidth: 22,
+        fixedWidth: 30,
       ),
       DataColumn2(
-        label: Text('Parameter Value'),
+        label: Text(kNameValue),
       ),
       DataColumn2(
-        label: Text('Remove'),
+        label: Text(''),
         fixedWidth: 32,
       ),
     ];
@@ -101,7 +101,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
               CellField(
                 keyId: "$selectedId-$index-params-k-$seed",
                 initialValue: paramRows[index].name,
-                hintText: "Add URL Parameter",
+                hintText: kHintAddURLParam,
                 onChanged: (value) {
                   paramRows[index] = paramRows[index].copyWith(name: value);
                   if (isLast && !isAddingRow) {
@@ -116,16 +116,18 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
               ),
             ),
             DataCell(
-              Text(
-                "=",
-                style: kCodeStyle,
+              Center(
+                child: Text(
+                  "=",
+                  style: kCodeStyle,
+                ),
               ),
             ),
             DataCell(
               CellField(
                 keyId: "$selectedId-$index-params-v-$seed",
                 initialValue: paramRows[index].value,
-                hintText: "Add Value",
+                hintText: kHintAddValue,
                 onChanged: (value) {
                   paramRows[index] = paramRows[index].copyWith(value: value);
                   if (isLast && !isAddingRow) {
@@ -196,13 +198,14 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
                   ),
                 ),
               ),
+              kVSpacer40,
             ],
           ),
         ),
         Align(
           alignment: Alignment.bottomCenter,
           child: Padding(
-            padding: const EdgeInsets.only(bottom: 30),
+            padding: kPb15,
             child: ElevatedButton.icon(
               onPressed: () {
                 paramRows.add(kNameValueEmptyModel);
@@ -211,7 +214,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
               },
               icon: const Icon(Icons.add),
               label: const Text(
-                "Add Param",
+                kLabelAddParam,
                 style: kTextStyleButton,
               ),
             ),
