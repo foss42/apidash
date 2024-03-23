@@ -428,4 +428,72 @@ public class JavaHttpClientExample {
     });
   });
 
+  group('HEAD Request', () {
+    test('HEAD 1', () {
+      const expectedCode = r"""import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.net.http.HttpHeaders;
+import java.net.http.HttpRequest.BodyPublishers;
+import java.net.http.HttpResponse.BodyHandlers;
+
+public class JavaHttpClientExample {
+    public static void main(String[] args) throws IOException, InterruptedException {
+        HttpClient client = HttpClient.newHttpClient();
+
+        String url = "https://api.apidash.dev";
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .HEAD()
+                .build();
+
+        HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
+        System.out.println(response.statusCode());
+        System.out.println(response.body());
+    }
+}""";
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.javaHttpClient, requestModelHead1, "https"),
+          expectedCode);
+    });
+
+    test('HEAD 2', () {
+      const expectedCode = r"""import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.net.http.HttpHeaders;
+import java.net.http.HttpRequest.BodyPublishers;
+import java.net.http.HttpResponse.BodyHandlers;
+
+public class JavaHttpClientExample {
+    public static void main(String[] args) throws IOException, InterruptedException {
+        HttpClient client = HttpClient.newHttpClient();
+
+        String url = "http://api.apidash.dev";
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .HEAD()
+                .build();
+
+        HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
+        System.out.println(response.statusCode());
+        System.out.println(response.body());
+    }
+}""";
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.javaHttpClient, requestModelHead2, "http"),
+          expectedCode);
+    });
+  });
+
 }
