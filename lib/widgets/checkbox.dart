@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class CheckBox extends StatelessWidget {
   final String keyId;
   final bool value;
-  final ValueChanged<bool?> onChanged;
+  final ValueChanged<bool?>? onChanged;
   final ColorScheme? colorScheme;
   const CheckBox({
     super.key,

@@ -17,22 +17,37 @@ class FormDataWidget extends ConsumerStatefulWidget {
 class _FormDataBodyState extends ConsumerState<FormDataWidget> {
   late int seed;
   final random = Random.secure();
-  late List<FormDataModel> rows;
+  late List<FormDataModel> formRows;
+
   @override
   void initState() {
     super.initState();
     seed = random.nextInt(kRandMax);
   }
 
+  void _onFieldChange(String selectedId) {
+    ref.read(collectionStateNotifierProvider.notifier).update(
+          selectedId,
+          requestFormDataList: formRows.sublist(0, formRows.length - 1),
+        );
+  }
+
   @override
   Widget build(BuildContext context) {
     final selectedId = ref.watch(selectedIdStateProvider);
-    var formRows = ref.read(selectedRequestModelProvider)?.requestFormDataList;
-    rows =
-        formRows == null || formRows.isEmpty ? [kFormDataEmptyModel] : formRows;
+    ref.watch(selectedRequestModelProvider
+        .select((value) => value?.requestFormDataList?.length));
+    var rF = ref.read(selectedRequestModelProvider)?.requestFormDataList;
+    bool isFormDataEmpty = rF == null || rF.isEmpty;
+    List<FormDataModel> rows = (isFormDataEmpty)
+        ? [
+            kFormDataEmptyModel,
+          ]
+        : rF;
+    formRows = isFormDataEmpty ? rows : rows + [kFormDataEmptyModel];
 
     DaviModel<FormDataModel> daviModelRows = DaviModel<FormDataModel>(
-      rows: rows,
+      rows: formRows,
       columns: [
         DaviColumn(
           cellPadding: kpsV5,
@@ -40,25 +55,29 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
           grow: 4,
           cellBuilder: (_, row) {
             int idx = row.index;
+            bool isLast = idx + 1 == formRows.length;
             return Theme(
               data: Theme.of(context),
               child: FormDataField(
                 keyId: "$selectedId-$idx-form-v-$seed",
-                initialValue: rows[idx].name,
+                initialValue: formRows[idx].name,
                 hintText: " Add Key",
                 onChanged: (value) {
-                  rows[idx] = rows[idx].copyWith(
-                    name: value,
-                  );
+                  formRows[idx] = formRows[idx].copyWith(name: value);
+                  if (isLast) formRows.add(kFormDataEmptyModel);
                   _onFieldChange(selectedId!);
                 },
                 colorScheme: Theme.of(context).colorScheme,
-                formDataType: rows[idx].type,
+                formDataType: formRows[idx].type,
                 onFormDataTypeChanged: (value) {
-                  rows[idx] = rows[idx].copyWith(
+                  bool hasChanged = formRows[idx].type != value;
+                  formRows[idx] = formRows[idx].copyWith(
                     type: value ?? FormDataType.text,
                   );
-                  rows[idx] = rows[idx].copyWith(value: "");
+                  formRows[idx] = formRows[idx].copyWith(value: "");
+                  if (idx == formRows.length - 1 && hasChanged) {
+                    formRows.add(kFormDataEmptyModel);
+                  }
                   setState(() {});
                   _onFieldChange(selectedId!);
                 },
@@ -84,7 +103,8 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
           cellPadding: kpsV5,
           cellBuilder: (_, row) {
             int idx = row.index;
-            return rows[idx].type == FormDataType.file
+            bool isLast = idx + 1 == formRows.length;
+            return formRows[idx].type == FormDataType.file
                 ? Align(
                     alignment: Alignment.centerLeft,
                     child: Row(
@@ -109,7 +129,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                                 if (pickedResult != null &&
                                     pickedResult.files.isNotEmpty &&
                                     pickedResult.files.first.path != null) {
-                                  rows[idx] = rows[idx].copyWith(
+                                  formRows[idx] = formRows[idx].copyWith(
                                     value: pickedResult.files.first.path!,
                                   );
                                   setState(() {});
@@ -117,9 +137,9 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                                 }
                               },
                               label: Text(
-                                (rows[idx].type == FormDataType.file &&
-                                        rows[idx].value.isNotEmpty)
-                                    ? rows[idx].value.toString()
+                                (formRows[idx].type == FormDataType.file &&
+                                        formRows[idx].value.isNotEmpty)
+                                    ? formRows[idx].value.toString()
                                     : "Select File",
                                 textAlign: TextAlign.center,
                                 overflow: TextOverflow.ellipsis,
@@ -133,10 +153,11 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                   )
                 : CellField(
                     keyId: "$selectedId-$idx-form-v-$seed",
-                    initialValue: rows[idx].value,
+                    initialValue: formRows[idx].value,
                     hintText: " Add Value",
                     onChanged: (value) {
-                      rows[idx] = rows[idx].copyWith(value: value);
+                      formRows[idx] = formRows[idx].copyWith(value: value);
+                      if (isLast) formRows.add(kFormDataEmptyModel);
                       _onFieldChange(selectedId!);
                     },
                     colorScheme: Theme.of(context).colorScheme,
@@ -148,22 +169,24 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
           pinStatus: PinStatus.none,
           width: 30,
           cellBuilder: (_, row) {
+            bool isLast = row.index + 1 == formRows.length;
             return InkWell(
+              onTap: isLast
+                  ? null
+                  : () {
+                      seed = random.nextInt(kRandMax);
+                      if (formRows.length == 2) {
+                        setState(() {
+                          formRows = [kFormDataEmptyModel];
+                        });
+                      } else {
+                        formRows.removeAt(row.index);
+                      }
+                      _onFieldChange(selectedId!);
+                    },
               child: Theme.of(context).brightness == Brightness.dark
                   ? kIconRemoveDark
                   : kIconRemoveLight,
-              onTap: () {
-                seed = random.nextInt(kRandMax);
-                if (rows.length == 1) {
-                  setState(() {
-                    rows = [kFormDataEmptyModel];
-                  });
-                } else {
-                  rows.removeAt(row.index);
-                }
-                _onFieldChange(selectedId!);
-                setState(() {});
-              },
             );
           },
         ),
@@ -194,9 +217,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
             padding: const EdgeInsets.only(bottom: 30),
             child: ElevatedButton.icon(
               onPressed: () {
-                setState(() {
-                  rows.add(kFormDataEmptyModel);
-                });
+                formRows.add(kFormDataEmptyModel);
                 _onFieldChange(selectedId!);
               },
               icon: const Icon(Icons.add),
@@ -209,12 +230,5 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
         ),
       ],
     );
-  }
-
-  void _onFieldChange(String selectedId) {
-    ref.read(collectionStateNotifierProvider.notifier).update(
-          selectedId,
-          requestFormDataList: rows,
-        );
   }
 }
