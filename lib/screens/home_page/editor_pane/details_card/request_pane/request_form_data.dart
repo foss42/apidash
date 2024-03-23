@@ -18,6 +18,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
   late int seed;
   final random = Random.secure();
   late List<FormDataModel> formRows;
+  bool isAddingRow = false;
 
   @override
   void initState() {
@@ -45,6 +46,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
           ]
         : rF;
     formRows = isFormDataEmpty ? rows : rows + [kFormDataEmptyModel];
+    isAddingRow = false;
 
     DaviModel<FormDataModel> daviModelRows = DaviModel<FormDataModel>(
       rows: formRows,
@@ -64,7 +66,10 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                 hintText: " Add Key",
                 onChanged: (value) {
                   formRows[idx] = formRows[idx].copyWith(name: value);
-                  if (isLast) formRows.add(kFormDataEmptyModel);
+                  if (isLast && !isAddingRow) {
+                    isAddingRow = true;
+                    formRows.add(kFormDataEmptyModel);
+                  }
                   _onFieldChange(selectedId!);
                 },
                 colorScheme: Theme.of(context).colorScheme,
@@ -75,7 +80,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                     type: value ?? FormDataType.text,
                   );
                   formRows[idx] = formRows[idx].copyWith(value: "");
-                  if (idx == formRows.length - 1 && hasChanged) {
+                  if (isLast && hasChanged) {
                     formRows.add(kFormDataEmptyModel);
                   }
                   setState(() {});
@@ -157,7 +162,10 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                     hintText: " Add Value",
                     onChanged: (value) {
                       formRows[idx] = formRows[idx].copyWith(value: value);
-                      if (isLast) formRows.add(kFormDataEmptyModel);
+                      if (isLast && !isAddingRow) {
+                        isAddingRow = true;
+                        formRows.add(kFormDataEmptyModel);
+                      }
                       _onFieldChange(selectedId!);
                     },
                     colorScheme: Theme.of(context).colorScheme,

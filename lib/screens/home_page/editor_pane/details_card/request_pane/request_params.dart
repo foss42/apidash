@@ -20,6 +20,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
   final random = Random.secure();
   late List<NameValueModel> paramRows;
   late List<bool> isRowEnabledList;
+  bool isAddingRow = false;
 
   @override
   void initState() {
@@ -52,6 +53,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
         ref.read(selectedRequestModelProvider)?.isParamEnabledList ??
             List.filled(rP?.length ?? 0, true, growable: true);
     isRowEnabledList.add(false);
+    isAddingRow = false;
 
     DaviModel<NameValueModel> model = DaviModel<NameValueModel>(
       rows: paramRows,
@@ -90,7 +92,8 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
               hintText: "Add URL Parameter",
               onChanged: (value) {
                 paramRows[idx] = paramRows[idx].copyWith(name: value);
-                if (isLast) {
+                if (isLast && !isAddingRow) {
+                  isAddingRow = true;
                   isRowEnabledList[idx] = true;
                   paramRows.add(kNameValueEmptyModel);
                   isRowEnabledList.add(false);
@@ -123,7 +126,8 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
               hintText: "Add Value",
               onChanged: (value) {
                 paramRows[idx] = paramRows[idx].copyWith(value: value);
-                if (isLast) {
+                if (isLast && !isAddingRow) {
+                  isAddingRow = true;
                   isRowEnabledList[idx] = true;
                   paramRows.add(kNameValueEmptyModel);
                   isRowEnabledList.add(false);
