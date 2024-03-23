@@ -59,7 +59,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
       rows: paramRows,
       columns: [
         DaviColumn(
-          name: 'Checkbox',
+          name: kNameCheckbox,
           width: 30,
           cellBuilder: (_, row) {
             int idx = row.index;
@@ -80,7 +80,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
           },
         ),
         DaviColumn(
-          name: 'URL Parameter',
+          name: kNameURLParam,
           width: 70,
           grow: 1,
           cellBuilder: (_, row) {
@@ -89,7 +89,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
             return CellField(
               keyId: "$selectedId-$idx-params-k-$seed",
               initialValue: paramRows[idx].name,
-              hintText: "Add URL Parameter",
+              hintText: kHintAddURLParam,
               onChanged: (value) {
                 paramRows[idx] = paramRows[idx].copyWith(name: value);
                 if (isLast && !isAddingRow) {
@@ -115,7 +115,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
           },
         ),
         DaviColumn(
-          name: 'Value',
+          name: kNameValue,
           grow: 1,
           cellBuilder: (_, row) {
             int idx = row.index;
@@ -123,7 +123,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
             return CellField(
               keyId: "$selectedId-$idx-params-v-$seed",
               initialValue: paramRows[idx].value,
-              hintText: "Add Value",
+              hintText: kHintAddValue,
               onChanged: (value) {
                 paramRows[idx] = paramRows[idx].copyWith(value: value);
                 if (isLast && !isAddingRow) {
@@ -202,7 +202,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
               },
               icon: const Icon(Icons.add),
               label: const Text(
-                "Add Param",
+                kLabelAddParam,
                 style: kTextStyleButton,
               ),
             ),

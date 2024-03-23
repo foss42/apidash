@@ -26,7 +26,7 @@ class CollectionPane extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Padding(
-            padding: kPr8CollectionPane,
+            padding: kPe8,
             child: Wrap(
               alignment: WrapAlignment.spaceBetween,
               children: [
@@ -115,7 +115,7 @@ class _RequestListState extends ConsumerState<RequestList> {
       thumbVisibility: alwaysShowCollectionPaneScrollbar ? true : null,
       radius: const Radius.circular(12),
       child: ReorderableListView.builder(
-        padding: kPr8CollectionPane,
+        padding: kPe8,
         scrollController: controller,
         buildDefaultDragHandles: false,
         itemCount: requestSequence.length,

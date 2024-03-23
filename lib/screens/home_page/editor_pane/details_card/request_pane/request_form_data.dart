@@ -52,8 +52,8 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
       rows: formRows,
       columns: [
         DaviColumn(
-          cellPadding: kpsV5,
-          name: 'Key',
+          cellPadding: kPv2,
+          name: kNameField,
           grow: 4,
           cellBuilder: (_, row) {
             int idx = row.index;
@@ -63,7 +63,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
               child: FormDataField(
                 keyId: "$selectedId-$idx-form-v-$seed",
                 initialValue: formRows[idx].name,
-                hintText: " Add Key",
+                hintText: kHintAddFieldName,
                 onChanged: (value) {
                   formRows[idx] = formRows[idx].copyWith(name: value);
                   if (isLast && !isAddingRow) {
@@ -93,7 +93,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
         ),
         DaviColumn(
           width: 40,
-          cellPadding: kpsV5,
+          cellPadding: kPv2,
           cellAlignment: Alignment.center,
           cellBuilder: (_, row) {
             return Text(
@@ -103,9 +103,9 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
           },
         ),
         DaviColumn(
-          name: 'Value',
+          name: kNameValue,
           grow: 4,
-          cellPadding: kpsV5,
+          cellPadding: kPv2,
           cellBuilder: (_, row) {
             int idx = row.index;
             bool isLast = idx + 1 == formRows.length;
@@ -145,7 +145,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                                 (formRows[idx].type == FormDataType.file &&
                                         formRows[idx].value.isNotEmpty)
                                     ? formRows[idx].value.toString()
-                                    : "Select File",
+                                    : kLabelSelectFile,
                                 textAlign: TextAlign.center,
                                 overflow: TextOverflow.ellipsis,
                                 style: kFormDataButtonLabelTextStyle,
@@ -159,7 +159,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                 : CellField(
                     keyId: "$selectedId-$idx-form-v-$seed",
                     initialValue: formRows[idx].value,
-                    hintText: " Add Value",
+                    hintText: kHintAddValue,
                     onChanged: (value) {
                       formRows[idx] = formRows[idx].copyWith(value: value);
                       if (isLast && !isAddingRow) {
@@ -231,7 +231,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
               },
               icon: const Icon(Icons.add),
               label: const Text(
-                "Add Form Data",
+                kLabelAddFormField,
                 style: kTextStyleButton,
               ),
             ),

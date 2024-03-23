@@ -56,6 +56,7 @@ const kForegroundOpacity = 0.05;
 const kOverlayBackgroundOpacity = 0.5;
 
 const kTextStyleButton = TextStyle(fontWeight: FontWeight.bold);
+const kTextStyleTab = TextStyle(fontSize: 14);
 const kTextStyleButtonSmall = TextStyle(fontSize: 12);
 const kFormDataButtonLabelTextStyle = TextStyle(
   fontSize: 12,
@@ -71,9 +72,13 @@ const kP5 = EdgeInsets.all(5);
 const kP8 = EdgeInsets.all(8);
 const kPs8 = EdgeInsets.only(left: 8);
 const kPs2 = EdgeInsets.only(left: 2);
+const kPe8 = EdgeInsets.only(right: 8.0);
 const kPh20v5 = EdgeInsets.symmetric(horizontal: 20, vertical: 5);
 const kPh20v10 = EdgeInsets.symmetric(horizontal: 20, vertical: 10);
 const kP10 = EdgeInsets.all(10);
+const kPv8 = EdgeInsets.symmetric(vertical: 8);
+const kPv2 = EdgeInsets.symmetric(vertical: 2);
+const kPh2 = EdgeInsets.symmetric(horizontal: 2);
 const kPt24o8 = EdgeInsets.only(top: 24, left: 8.0, right: 8.0, bottom: 8.0);
 const kPt5o10 =
     EdgeInsets.only(left: 10.0, right: 10.0, top: 5.0, bottom: 10.0);
@@ -105,8 +110,6 @@ const kPb10 = EdgeInsets.only(
 const kPb15 = EdgeInsets.only(
   bottom: 15,
 );
-const kPr8CollectionPane = EdgeInsets.only(right: 8.0);
-const kpsV5 = EdgeInsets.symmetric(vertical: 2);
 const kHSpacer4 = SizedBox(width: 4);
 const kHSpacer5 = SizedBox(width: 5);
 const kHSpacer10 = SizedBox(width: 10);
@@ -118,7 +121,7 @@ const kVSpacer20 = SizedBox(height: 20);
 const kVSpacer40 = SizedBox(height: 40);
 
 const kTabAnimationDuration = Duration(milliseconds: 200);
-const kTabHeight = 45.0;
+const kTabHeight = 32.0;
 const kHeaderHeight = 32.0;
 const kSegmentHeight = 24.0;
 const kTextButtonMinWidth = 44.0;
@@ -537,3 +540,36 @@ const kLabelSave = "Save";
 const kLabelDownload = "Download";
 const kLabelSaving = "Saving";
 const kLabelSaved = "Saved";
+// Request Pane
+const kLabelRequest = "Request";
+const kLabelHideCode = "Hide Code";
+const kLabelViewCode = "View Code";
+const kLabelURLParams = "URL Params";
+const kLabelHeaders = "Headers";
+const kLabelBody = "Body";
+const kNameCheckbox = "Checkbox";
+const kNameURLParam = "URL Parameter";
+const kNameHeader = "Header Name";
+const kNameValue = "Value";
+const kNameField = "Field";
+const kHintAddURLParam = "Add URL Parameter";
+const kHintAddValue = "Add Value";
+const kHintAddName = "Add Name";
+const kHintAddFieldName = "Add Field Name";
+const kLabelAddParam = "Add Param";
+const kLabelAddHeader = "Add Header";
+const kLabelSelectFile = "Select File";
+const kLabelAddFormField = "Add Form Field";
+// Response Pane
+const kLabelNotSent = "Not Sent";
+const kLabelResponse = "Response";
+const kLabelResponseBody = "Response Body";
+const kTooltipClearResponse = "Clear Response";
+const kHeaderRow = ["Header Name", "Header Value"];
+const kLabelRequestHeaders = "Request Headers";
+const kLabelResponseHeaders = "Response Headers";
+const kLabelItems = "items";
+const kMsgError = "Error: Response data does not exist.";
+const kMsgNullBody = "Response body is missing (null).";
+const kMsgNoContent = "No content";
+const kMsgUnknowContentType = "Unknown Response Content-Type";
