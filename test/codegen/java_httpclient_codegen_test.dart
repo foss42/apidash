@@ -1140,4 +1140,41 @@ public class JavaHttpClientExample {
     });
   });
 
+  group('PATCH Request', () {
+    test('PATCH 1', () {
+      const expectedCode = r"""import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.net.http.HttpHeaders;
+import java.net.http.HttpRequest.BodyPublishers;
+import java.net.http.HttpResponse.BodyHandlers;
+
+public class JavaHttpClientExample {
+    public static void main(String[] args) throws IOException, InterruptedException {
+        HttpClient client = HttpClient.newHttpClient();
+
+        String url = "https://reqres.in/api/users/2";
+
+        String body = "{\n\"name\": \"marfeus\",\n\"job\": \"accountant\"\n}";
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .method("PATCH", BodyPublishers.ofString(body))
+                .build();
+
+        HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
+        System.out.println(response.statusCode());
+        System.out.println(response.body());
+    }
+}""";
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.javaHttpClient, requestModelPatch1, "https"),
+          expectedCode);
+    });
+  });
+
 }
