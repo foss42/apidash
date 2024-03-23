@@ -17,8 +17,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;{% endif %}
-{% if hasJsonBody %}import com.google.gson.Gson;
-import java.nio.charset.StandardCharsets;{% endif %}
 
 public class Main {
   public static void main(String[] args) {
@@ -57,8 +55,8 @@ multipart/form-data; boundary={{boundary}}''';
 """;
 
   String kTemplateJsonBody = """
-      HttpRequest.BodyPublisher bodyPublisher = HttpRequest.BodyPublishers.ofString(new Gson().toJson(\"\"\"
-{{body}}\"\"\"), StandardCharsets.UTF_8);
+      HttpRequest.BodyPublisher bodyPublisher = HttpRequest.BodyPublishers.ofString(\"\"\"
+{{body}}\"\"\");
 """;
 
   String kTemplateFormData = """
@@ -121,7 +119,6 @@ multipart/form-data; boundary={{boundary}}''';
       String url = requestModel.url;
 
       result += jj.Template(kTemplateStart).render({
-        "hasJsonBody": requestModel.hasJsonData,
         "hasFormData": requestModel.hasFormData,
       });
 

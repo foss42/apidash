@@ -428,7 +428,7 @@ public class Main {
 }''';
       expect(
           codeGen.getCode(
-              CodegenLanguage.javaHttpClient, requestModelHead2, "https"),
+              CodegenLanguage.javaHttpClient, requestModelHead2, "http"),
           expectedCode);
     });
   });
@@ -477,15 +477,12 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.io.IOException;
 
-import com.google.gson.Gson;
-import java.nio.charset.StandardCharsets;
-
 public class Main {
   public static void main(String[] args) {
     try {
       HttpClient client = HttpClient.newHttpClient();
       URI uri = URI.create("https://api.apidash.dev/case/lower");
-      HttpRequest.BodyPublisher bodyPublisher = HttpRequest.BodyPublishers.ofString(new Gson().toJson("""
+      HttpRequest.BodyPublisher bodyPublisher = HttpRequest.BodyPublishers.ofString("""
 {
 "text": "I LOVE Flutter",
 "flag": null,
@@ -493,7 +490,7 @@ public class Main {
 "female": false,
 "no": 1.2,
 "arr": ["null", "true", "false", null]
-}"""), StandardCharsets.UTF_8);
+}""");
       HttpRequest.Builder requestBuilder = HttpRequest.newBuilder(uri).POST(bodyPublisher);
       requestBuilder = requestBuilder.headers(
         "Content-Type", "application/json"
@@ -520,18 +517,15 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.io.IOException;
 
-import com.google.gson.Gson;
-import java.nio.charset.StandardCharsets;
-
 public class Main {
   public static void main(String[] args) {
     try {
       HttpClient client = HttpClient.newHttpClient();
       URI uri = URI.create("https://api.apidash.dev/case/lower");
-      HttpRequest.BodyPublisher bodyPublisher = HttpRequest.BodyPublishers.ofString(new Gson().toJson("""
+      HttpRequest.BodyPublisher bodyPublisher = HttpRequest.BodyPublishers.ofString("""
 {
 "text": "I LOVE Flutter"
-}"""), StandardCharsets.UTF_8);
+}""");
       HttpRequest.Builder requestBuilder = HttpRequest.newBuilder(uri).POST(bodyPublisher);
       requestBuilder = requestBuilder.headers(
         "User-Agent", "Test Agent",
@@ -970,19 +964,16 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.io.IOException;
 
-import com.google.gson.Gson;
-import java.nio.charset.StandardCharsets;
-
 public class Main {
   public static void main(String[] args) {
     try {
       HttpClient client = HttpClient.newHttpClient();
       URI uri = URI.create("https://reqres.in/api/users/2");
-      HttpRequest.BodyPublisher bodyPublisher = HttpRequest.BodyPublishers.ofString(new Gson().toJson("""
+      HttpRequest.BodyPublisher bodyPublisher = HttpRequest.BodyPublishers.ofString("""
 {
 "name": "morpheus",
 "job": "zion resident"
-}"""), StandardCharsets.UTF_8);
+}""");
       HttpRequest.Builder requestBuilder = HttpRequest.newBuilder(uri).PUT(bodyPublisher);
       requestBuilder = requestBuilder.headers(
         "Content-Type", "application/json"
@@ -1012,19 +1003,16 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.io.IOException;
 
-import com.google.gson.Gson;
-import java.nio.charset.StandardCharsets;
-
 public class Main {
   public static void main(String[] args) {
     try {
       HttpClient client = HttpClient.newHttpClient();
       URI uri = URI.create("https://reqres.in/api/users/2");
-      HttpRequest.BodyPublisher bodyPublisher = HttpRequest.BodyPublishers.ofString(new Gson().toJson("""
+      HttpRequest.BodyPublisher bodyPublisher = HttpRequest.BodyPublishers.ofString("""
 {
 "name": "marfeus",
 "job": "accountant"
-}"""), StandardCharsets.UTF_8);
+}""");
       HttpRequest.Builder requestBuilder = HttpRequest.newBuilder(uri).method("PATCH", bodyPublisher);
       requestBuilder = requestBuilder.headers(
         "Content-Type", "application/json"
@@ -1083,19 +1071,16 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.io.IOException;
 
-import com.google.gson.Gson;
-import java.nio.charset.StandardCharsets;
-
 public class Main {
   public static void main(String[] args) {
     try {
       HttpClient client = HttpClient.newHttpClient();
       URI uri = URI.create("https://reqres.in/api/users/2");
-      HttpRequest.BodyPublisher bodyPublisher = HttpRequest.BodyPublishers.ofString(new Gson().toJson("""
+      HttpRequest.BodyPublisher bodyPublisher = HttpRequest.BodyPublishers.ofString("""
 {
 "name": "marfeus",
 "job": "accountant"
-}"""), StandardCharsets.UTF_8);
+}""");
       HttpRequest.Builder requestBuilder = HttpRequest.newBuilder(uri).method("DELETE", bodyPublisher);
       requestBuilder = requestBuilder.headers(
         "Content-Type", "application/json"
