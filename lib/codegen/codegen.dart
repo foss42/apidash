@@ -9,6 +9,7 @@ import 'php/guzzle.dart';
 import 'python/http_client.dart';
 import 'python/requests.dart';
 import 'rust/actix.dart';
+import 'rust/curl_rust.dart';
 import 'rust/reqwest.dart';
 import 'rust/ureq.dart';
 import 'js/axios.dart';
@@ -73,6 +74,8 @@ class Codegen {
         return PythonRequestsCodeGen().getCode(rM, boundary: boundary);
       case CodegenLanguage.rustActix:
         return RustActixCodeGen().getCode(rM, boundary: boundary);
+      case CodegenLanguage.rustCurl:
+        return RustCurlCodeGen().getCode(rM);
       case CodegenLanguage.rustReqwest:
         return RustReqwestCodeGen().getCode(rM);
       case CodegenLanguage.rustUreq:

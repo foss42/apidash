@@ -75,11 +75,8 @@ void main() {
       ),
     );
 
-    expect(find.byType(RichText), findsAtLeastNWidgets(1));
-    expect(
-        find.textContaining("Response (", findRichText: true), findsOneWidget);
-    expect(find.text('Hi'), findsOneWidget);
     expect(find.textContaining("200", findRichText: true), findsOneWidget);
+    expect(find.textContaining("Hi", findRichText: true), findsOneWidget);
     expect(find.text(humanizeDuration(const Duration(microseconds: 23))),
         findsOneWidget);
   });
@@ -96,7 +93,7 @@ void main() {
       ),
     );
 
-    expect(find.text('Body'), findsOneWidget);
+    expect(find.text('Response Body'), findsOneWidget);
     expect(find.text('Headers'), findsOneWidget);
 
     await tester.tap(find.text('Headers'));
@@ -104,7 +101,7 @@ void main() {
 
     expect(find.text('first'), findsNothing);
     expect(find.text('second'), findsOneWidget);
-    await tester.tap(find.text('Body'));
+    await tester.tap(find.text('Response Body'));
     await tester.pumpAndSettle();
 
     expect(find.text('first'), findsOneWidget);

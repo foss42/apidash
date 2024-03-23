@@ -154,4 +154,16 @@ ClientException with SocketException: Connection failed (OS Error: Operation not
 
 You can read more [here](https://docs.flutter.dev/platform-integration/macos/building#setting-up-entitlements)
 
+### Android (Work in Progress)
 
+Add the `multiDexEnabled true` line to the `defaultConfig` section at `android/app/build.gradle file`
+
+```
+android {
+    ...
+    defaultConfig {
+        ...
+        multiDexEnabled true
+    }
+}
+```
