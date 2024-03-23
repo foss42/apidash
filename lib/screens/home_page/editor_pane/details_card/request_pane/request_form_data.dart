@@ -18,6 +18,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
   late int seed;
   final random = Random.secure();
   late List<FormDataModel> formRows;
+  bool isAddingRow = false;
 
   @override
   void initState() {
@@ -45,13 +46,14 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
           ]
         : rF;
     formRows = isFormDataEmpty ? rows : rows + [kFormDataEmptyModel];
+    isAddingRow = false;
 
     DaviModel<FormDataModel> daviModelRows = DaviModel<FormDataModel>(
       rows: formRows,
       columns: [
         DaviColumn(
-          cellPadding: kpsV5,
-          name: 'Key',
+          cellPadding: kPv2,
+          name: kNameField,
           grow: 4,
           cellBuilder: (_, row) {
             int idx = row.index;
@@ -61,10 +63,13 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
               child: FormDataField(
                 keyId: "$selectedId-$idx-form-v-$seed",
                 initialValue: formRows[idx].name,
-                hintText: " Add Key",
+                hintText: kHintAddFieldName,
                 onChanged: (value) {
                   formRows[idx] = formRows[idx].copyWith(name: value);
-                  if (isLast) formRows.add(kFormDataEmptyModel);
+                  if (isLast && !isAddingRow) {
+                    isAddingRow = true;
+                    formRows.add(kFormDataEmptyModel);
+                  }
                   _onFieldChange(selectedId!);
                 },
                 colorScheme: Theme.of(context).colorScheme,
@@ -75,7 +80,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                     type: value ?? FormDataType.text,
                   );
                   formRows[idx] = formRows[idx].copyWith(value: "");
-                  if (idx == formRows.length - 1 && hasChanged) {
+                  if (isLast && hasChanged) {
                     formRows.add(kFormDataEmptyModel);
                   }
                   setState(() {});
@@ -88,7 +93,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
         ),
         DaviColumn(
           width: 40,
-          cellPadding: kpsV5,
+          cellPadding: kPv2,
           cellAlignment: Alignment.center,
           cellBuilder: (_, row) {
             return Text(
@@ -98,9 +103,9 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
           },
         ),
         DaviColumn(
-          name: 'Value',
+          name: kNameValue,
           grow: 4,
-          cellPadding: kpsV5,
+          cellPadding: kPv2,
           cellBuilder: (_, row) {
             int idx = row.index;
             bool isLast = idx + 1 == formRows.length;
@@ -140,7 +145,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                                 (formRows[idx].type == FormDataType.file &&
                                         formRows[idx].value.isNotEmpty)
                                     ? formRows[idx].value.toString()
-                                    : "Select File",
+                                    : kLabelSelectFile,
                                 textAlign: TextAlign.center,
                                 overflow: TextOverflow.ellipsis,
                                 style: kFormDataButtonLabelTextStyle,
@@ -154,10 +159,13 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                 : CellField(
                     keyId: "$selectedId-$idx-form-v-$seed",
                     initialValue: formRows[idx].value,
-                    hintText: " Add Value",
+                    hintText: kHintAddValue,
                     onChanged: (value) {
                       formRows[idx] = formRows[idx].copyWith(value: value);
-                      if (isLast) formRows.add(kFormDataEmptyModel);
+                      if (isLast && !isAddingRow) {
+                        isAddingRow = true;
+                        formRows.add(kFormDataEmptyModel);
+                      }
                       _onFieldChange(selectedId!);
                     },
                     colorScheme: Theme.of(context).colorScheme,
@@ -208,13 +216,14 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                   child: Davi<FormDataModel>(daviModelRows),
                 ),
               ),
+              kVSpacer20,
             ],
           ),
         ),
         Align(
           alignment: Alignment.bottomCenter,
           child: Padding(
-            padding: const EdgeInsets.only(bottom: 30),
+            padding: const EdgeInsets.only(bottom: 5),
             child: ElevatedButton.icon(
               onPressed: () {
                 formRows.add(kFormDataEmptyModel);
@@ -222,7 +231,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
               },
               icon: const Icon(Icons.add),
               label: const Text(
-                "Add Form Data",
+                kLabelAddFormField,
                 style: kTextStyleButton,
               ),
             ),

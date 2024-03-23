@@ -26,7 +26,7 @@ class CollectionPane extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Padding(
-            padding: kPr8CollectionPane,
+            padding: kPe8,
             child: Wrap(
               alignment: WrapAlignment.spaceBetween,
               children: [
@@ -148,10 +148,10 @@ class _RequestListState extends ConsumerState<RequestList> {
       radius: const Radius.circular(12),
       child: filterQuery.isEmpty
           ? ReorderableListView.builder(
-              padding: kPr8CollectionPane,
+              padding: kPe8,
               scrollController: controller,
               buildDefaultDragHandles: false,
-              itemCount: requestItems.length,
+              itemCount: requestSequence.length,
               onReorder: (int oldIndex, int newIndex) {
                 if (oldIndex < newIndex) {
                   newIndex -= 1;

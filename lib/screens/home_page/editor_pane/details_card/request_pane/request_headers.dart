@@ -19,6 +19,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
   final random = Random.secure();
   late List<NameValueModel> headerRows;
   late List<bool> isRowEnabledList;
+  bool isAddingRow = false;
 
   @override
   void initState() {
@@ -52,12 +53,13 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
         ref.read(selectedRequestModelProvider)?.isHeaderEnabledList ??
             List.filled(rH?.length ?? 0, true, growable: true);
     isRowEnabledList.add(false);
+    isAddingRow = false;
 
     DaviModel<NameValueModel> model = DaviModel<NameValueModel>(
       rows: headerRows,
       columns: [
         DaviColumn(
-          name: 'Checkbox',
+          name: kNameCheckbox,
           width: 30,
           cellBuilder: (_, row) {
             int idx = row.index;
@@ -78,7 +80,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
           },
         ),
         DaviColumn(
-          name: 'Header Name',
+          name: kNameHeader,
           width: 70,
           grow: 1,
           cellBuilder: (_, row) {
@@ -87,10 +89,11 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
             return HeaderField(
               keyId: "$selectedId-$idx-headers-k-$seed",
               initialValue: headerRows[idx].name,
-              hintText: "Add Header Name",
+              hintText: kHintAddName,
               onChanged: (value) {
                 headerRows[idx] = headerRows[idx].copyWith(name: value);
-                if (isLast) {
+                if (isLast && !isAddingRow) {
+                  isAddingRow = true;
                   isRowEnabledList[idx] = true;
                   headerRows.add(kNameValueEmptyModel);
                   isRowEnabledList.add(false);
@@ -112,7 +115,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
           },
         ),
         DaviColumn(
-          name: 'Header Value',
+          name: kNameValue,
           grow: 1,
           cellBuilder: (_, row) {
             int idx = row.index;
@@ -120,10 +123,11 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
             return CellField(
               keyId: "$selectedId-$idx-headers-v-$seed",
               initialValue: headerRows[idx].value,
-              hintText: " Add Header Value",
+              hintText: kHintAddValue,
               onChanged: (value) {
                 headerRows[idx] = headerRows[idx].copyWith(value: value);
-                if (isLast) {
+                if (isLast && !isAddingRow) {
+                  isAddingRow = true;
                   isRowEnabledList[idx] = true;
                   headerRows.add(kNameValueEmptyModel);
                   isRowEnabledList.add(false);
@@ -182,13 +186,14 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
                   child: Davi<NameValueModel>(model),
                 ),
               ),
+              kVSpacer40,
             ],
           ),
         ),
         Align(
           alignment: Alignment.bottomCenter,
           child: Padding(
-            padding: const EdgeInsets.only(bottom: 30),
+            padding: kPb15,
             child: ElevatedButton.icon(
               onPressed: () {
                 headerRows.add(kNameValueEmptyModel);
@@ -197,7 +202,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
               },
               icon: const Icon(Icons.add),
               label: const Text(
-                "Add Header",
+                kLabelAddHeader,
                 style: kTextStyleButton,
               ),
             ),

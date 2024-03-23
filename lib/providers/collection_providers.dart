@@ -102,6 +102,7 @@ class CollectionStateNotifier
     final newModel = currentModel.duplicate(
       id: id,
       name: currentModel.name,
+      requestTabIndex: currentModel.requestTabIndex,
     );
     var map = {...state!};
     map[id] = newModel;
