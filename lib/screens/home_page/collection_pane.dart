@@ -93,7 +93,8 @@ class CollectionPane extends ConsumerWidget {
                     style: Theme.of(context).textTheme.bodyMedium,
                     hintText: "Filter by name or URL",
                     onChanged: (value) {
-                      ref.read(searchQueryProvider.notifier).state = value;
+                      ref.read(searchQueryProvider.notifier).state =
+                          value.toLowerCase();
                     },
                   ),
                 ),
@@ -177,7 +178,24 @@ class _RequestListState extends ConsumerState<RequestList> {
                 );
               },
             )
-          : SizedBox(),
+          : ListView(
+              padding: kPe8,
+              controller: controller,
+              children: requestSequence.map((id) {
+                var item = requestItems[id]!;
+                if (item.url.toLowerCase().contains(filterQuery) ||
+                    item.name.toLowerCase().contains(filterQuery)) {
+                  return Padding(
+                    padding: kP1,
+                    child: RequestItem(
+                      id: id,
+                      requestModel: item,
+                    ),
+                  );
+                }
+                return const SizedBox();
+              }).toList(),
+            ),
     );
   }
 }
