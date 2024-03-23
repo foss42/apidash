@@ -445,6 +445,11 @@ class HTTPRequestMultipartBody {
               .render({"method": method.name.toUpperCase(), "body": ""});
         }
       }
+
+      //adding the template for HttpRequestMultiPartBody Class for handling Multipart requests.
+      if (requestModel.hasBody && requestModel.hasFormData) {
+        result += kTemplateMultiPartBodyClass;
+      }
       return result;
     } catch (e) {
       return null;
