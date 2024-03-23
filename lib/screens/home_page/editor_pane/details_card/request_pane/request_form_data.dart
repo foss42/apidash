@@ -114,6 +114,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                   if (isLast && hasChanged) {
                     formRows.add(kFormDataEmptyModel);
                   }
+                  setState(() {});
                   _onFieldChange(selectedId!);
                 },
               ),
