@@ -19,6 +19,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
   final random = Random.secure();
   late List<NameValueModel> headerRows;
   late List<bool> isRowEnabledList;
+  bool isAddingRow = false;
 
   @override
   void initState() {
@@ -51,6 +52,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
         ref.read(selectedRequestModelProvider)?.isHeaderEnabledList ??
             List.filled(rH?.length ?? 0, true, growable: true);
     isRowEnabledList.add(false);
+    isAddingRow = false;
 
     List<DataColumn> columns = const [
       DataColumn2(
@@ -102,7 +104,8 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
                 hintText: "Add Header Name",
                 onChanged: (value) {
                   headerRows[index] = headerRows[index].copyWith(name: value);
-                  if (isLast) {
+                  if (isLast && !isAddingRow) {
+                    isAddingRow = true;
                     isRowEnabledList[index] = true;
                     headerRows.add(kNameValueEmptyModel);
                     isRowEnabledList.add(false);
@@ -125,7 +128,8 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
                 hintText: " Add Header Value",
                 onChanged: (value) {
                   headerRows[index] = headerRows[index].copyWith(value: value);
-                  if (isLast) {
+                  if (isLast && !isAddingRow) {
+                    isAddingRow = true;
                     isRowEnabledList[index] = true;
                     headerRows.add(kNameValueEmptyModel);
                     isRowEnabledList.add(false);

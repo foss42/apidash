@@ -18,6 +18,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
   late int seed;
   final random = Random.secure();
   late List<FormDataModel> formRows;
+  bool isAddingRow = false;
 
   @override
   void initState() {
@@ -47,6 +48,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
             [
               kFormDataEmptyModel,
             ];
+    isAddingRow = false;
 
     List<DataColumn> columns = const [
       DataColumn2(
@@ -85,7 +87,10 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                 hintText: " Add Key",
                 onChanged: (value) {
                   formRows[index] = formRows[index].copyWith(name: value);
-                  if (isLast) formRows.add(kFormDataEmptyModel);
+                  if (isLast && !isAddingRow) {
+                    isAddingRow = true;
+                    formRows.add(kFormDataEmptyModel);
+                  }
                   _onFieldChange(selectedId!);
                 },
                 colorScheme: Theme.of(context).colorScheme,
@@ -154,7 +159,10 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                       onChanged: (value) {
                         formRows[index] =
                             formRows[index].copyWith(value: value);
-                        if (isLast) formRows.add(kFormDataEmptyModel);
+                        if (isLast && !isAddingRow) {
+                          isAddingRow = true;
+                          formRows.add(kFormDataEmptyModel);
+                        }
                         _onFieldChange(selectedId!);
                       },
                       colorScheme: Theme.of(context).colorScheme,

@@ -20,6 +20,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
   final random = Random.secure();
   late List<NameValueModel> paramRows;
   late List<bool> isRowEnabledList;
+  bool isAddingRow = false;
 
   @override
   void initState() {
@@ -51,6 +52,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
         ref.read(selectedRequestModelProvider)?.isParamEnabledList ??
             List.filled(rP?.length ?? 0, true, growable: true);
     isRowEnabledList.add(false);
+    isAddingRow = false;
 
     List<DataColumn> columns = const [
       DataColumn2(
@@ -102,7 +104,8 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
                 hintText: "Add URL Parameter",
                 onChanged: (value) {
                   paramRows[index] = paramRows[index].copyWith(name: value);
-                  if (isLast) {
+                  if (isLast && !isAddingRow) {
+                    isAddingRow = true;
                     isRowEnabledList[index] = true;
                     paramRows.add(kNameValueEmptyModel);
                     isRowEnabledList.add(false);
@@ -125,7 +128,8 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
                 hintText: "Add Value",
                 onChanged: (value) {
                   paramRows[index] = paramRows[index].copyWith(value: value);
-                  if (isLast) {
+                  if (isLast && !isAddingRow) {
+                    isAddingRow = true;
                     isRowEnabledList[index] = true;
                     paramRows.add(kNameValueEmptyModel);
                     isRowEnabledList.add(false);

@@ -34,7 +34,6 @@ class ResponseDetails extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var sm = ScaffoldMessenger.of(context);
     final responseStatus = ref.watch(
         selectedRequestModelProvider.select((value) => value?.responseStatus));
     final message = ref
@@ -52,8 +51,6 @@ class ResponseDetails extends ConsumerWidget {
             ref
                 .read(collectionStateNotifierProvider.notifier)
                 .clearResponse(selectedRequest?.id);
-            sm.hideCurrentSnackBar();
-            sm.showSnackBar(getSnackBar('Response cleared'));
           },
         ),
         const Expanded(
