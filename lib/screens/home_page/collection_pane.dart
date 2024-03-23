@@ -12,7 +12,7 @@ class CollectionPane extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var sm = ScaffoldMessenger.of(context);
+    final overlayWidget = OverlayWidgetTemplate(context: context);
     final collection = ref.watch(collectionStateNotifierProvider);
     final savingData = ref.watch(saveDataStateProvider);
     if (collection == null) {
@@ -26,7 +26,7 @@ class CollectionPane extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Padding(
-            padding: kPr8CollectionPane,
+            padding: kPe8,
             child: Wrap(
               alignment: WrapAlignment.spaceBetween,
               children: [
@@ -34,12 +34,18 @@ class CollectionPane extends ConsumerWidget {
                   onPressed: savingData
                       ? null
                       : () async {
+                          overlayWidget.show(
+                              widget:
+                                  const SavingOverlay(saveCompleted: false));
+
                           await ref
                               .read(collectionStateNotifierProvider.notifier)
                               .saveData();
-
-                          sm.hideCurrentSnackBar();
-                          sm.showSnackBar(getSnackBar("Saved"));
+                          overlayWidget.hide();
+                          overlayWidget.show(
+                              widget: const SavingOverlay(saveCompleted: true));
+                          await Future.delayed(const Duration(seconds: 1));
+                          overlayWidget.hide();
                         },
                   icon: const Icon(
                     Icons.save,
@@ -109,7 +115,7 @@ class _RequestListState extends ConsumerState<RequestList> {
       thumbVisibility: alwaysShowCollectionPaneScrollbar ? true : null,
       radius: const Radius.circular(12),
       child: ReorderableListView.builder(
-        padding: kPr8CollectionPane,
+        padding: kPe8,
         scrollController: controller,
         buildDefaultDragHandles: false,
         itemCount: requestSequence.length,
