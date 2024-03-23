@@ -225,14 +225,14 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                   ),
                 ),
               ),
-              kVSpacer20,
+              kVSpacer40,
             ],
           ),
         ),
         Align(
           alignment: Alignment.bottomCenter,
           child: Padding(
-            padding: const EdgeInsets.only(bottom: 5),
+            padding: kPb15,
             child: ElevatedButton.icon(
               onPressed: () {
                 formRows.add(kFormDataEmptyModel);
