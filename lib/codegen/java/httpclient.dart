@@ -327,30 +327,55 @@ class HTTPRequestMultipartBody {
           }
         }
 
-        if (!hasQuery) {
-          var templateUrl = jj.Template(kTemplateUrl);
-          result += templateUrl.render({"url": url});
-        }
-        var rM = requestModel.copyWith(url: url);
-
-        var harJson = requestModelToHARJsonRequest(rM, useEnabled: true);
-
-        var method = requestModel.method;
-        var requestBody = requestModel.requestBody;
+        //handling FormData
         if (requestModel.hasFormData &&
             requestModel.formDataMapList.isNotEmpty &&
             kMethodsWithBody.contains(method)) {
           var formDataList = requestModel.formDataMapList;
-          result += """
-            StringBuilder formData = new StringBuilder();
-            formData.append(""";
 
-          for (var formDataMap in formDataList) {
-            result += '"""${formDataMap['name']}=${formDataMap['value']}&""",';
+          result += kTemplateMultiPartBuilder;
+
+          //Adding formdata of type text
+          if (requestModel.hasFormData) {
+            result += kTemplateFormdataFieldsStarter;
+            var templateFormdataFields = jj.Template(kTemplateFormdataFields);
+            for (var i = 0; i < formDataList.length; i++) {
+              if (formDataList[i]["type"] == 'text') {
+                result += templateFormdataFields.render({
+                  "name": formDataList[i]["name"],
+                  "value": formDataList[i]["value"]
+                });
+                result += "\n";
+              }
+            }
+
+            result += kTemplateFormdataFieldsEnder;
           }
 
-          result = result.substring(0, result.length - 1);
-          result += ");\n";
+          //Adding formdata of type file
+          bool firstfile = true;
+          if (requestModel.hasFileInFormData) {
+            result += kTemplateFormdataFilesStarter;
+            var templateFormdataFiles = jj.Template(kTemplateFormdataFiles);
+            for (var i = 0; i < formDataList.length; i++) {
+              if (formDataList[i]["type"] != 'text') {
+                if (firstfile) {
+                  result += "\n";
+                  firstfile = false;
+                } else if (firstfile == false) {
+                  result += ",\n";
+                }
+
+                String path = formDataList[i]["value"] as String;
+                path = path.replaceAll('\\', '\\\\');
+                result += templateFormdataFiles
+                    .render({"name": formDataList[i]["name"], "value": path});
+              }
+            }
+            result += "\n";
+            result += kTemplateFormdataFilesEnder;
+          }
+          result += kTemplateMultiPartBuildCaller;
           hasBody = true;
         } else if (kMethodsWithBody.contains(method) && requestBody != null) {
           var contentLength = utf8.encode(requestBody).length;
