@@ -397,20 +397,37 @@ class HTTPRequestMultipartBody {
           }
         }
 
-        result = kTemplateStart + result;
+        //beginning of the request
         result += kStringRequestStart;
 
-        var headersList = requestModel.enabledRequestHeaders;
-        var contentType = requestModel.requestBodyContentType.header;
-        if (hasBody &&
-            !requestModel.enabledHeadersMap.containsKey('Content-Type')) {
-          result =
-              """$result                .header("Content-Type", "$contentType")\n""";
+        //setting up headers
+        var headers = harJson["headers"];
+        var m = {};
+        for (var i in headers) {
+          m[i["name"]] = i["value"];
         }
+
+        if (requestModel.hasBody &&
+            requestModel.hasFormData &&
+            !requestModel.hasFileInFormData) {
+          m['Content-Type'] = 'application/x-www-form-urlencoded';
+        } else if (requestModel.hasFormData) {
+          m['Content-Type'] = 'multipart/form-data';
+        }
+
+        if (hasBody &&
+            !requestModel.enabledHeadersMap.containsKey('Content-Type') &&
+            requestModel.hasFormData) {
+          result =
+              """$result                .header("Content-Type", multipartBody.getContentType())\n""";
+        } else {}
+
+        var headersList = requestModel.enabledRequestHeaders;
         if (headersList != null) {
           var headers = requestModel.enabledHeadersMap;
           if (headers.isNotEmpty) {
             result += getHeaders(headers, hasJsonBody);
+            //getHeaders method is defined at the end
           }
         }
 
@@ -434,6 +451,7 @@ class HTTPRequestMultipartBody {
     }
   }
 
+  //defining the getHeaders method for adding the headers to the request in the result
   String getHeaders(Map<String, String> headers, hasJsonBody) {
     String result = "";
     for (final k in headers.keys) {
