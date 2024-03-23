@@ -208,13 +208,14 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                   child: Davi<FormDataModel>(daviModelRows),
                 ),
               ),
+              kVSpacer20,
             ],
           ),
         ),
         Align(
           alignment: Alignment.bottomCenter,
           child: Padding(
-            padding: const EdgeInsets.only(bottom: 30),
+            padding: const EdgeInsets.only(bottom: 5),
             child: ElevatedButton.icon(
               onPressed: () {
                 formRows.add(kFormDataEmptyModel);

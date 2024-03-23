@@ -182,13 +182,14 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
                   child: Davi<NameValueModel>(model),
                 ),
               ),
+              kVSpacer40,
             ],
           ),
         ),
         Align(
           alignment: Alignment.bottomCenter,
           child: Padding(
-            padding: const EdgeInsets.only(bottom: 30),
+            padding: kPb15,
             child: ElevatedButton.icon(
               onPressed: () {
                 headerRows.add(kNameValueEmptyModel);

@@ -102,6 +102,9 @@ const kP8CollectionPane = EdgeInsets.only(
 const kPb10 = EdgeInsets.only(
   bottom: 10,
 );
+const kPb15 = EdgeInsets.only(
+  bottom: 15,
+);
 const kPr8CollectionPane = EdgeInsets.only(right: 8.0);
 const kpsV5 = EdgeInsets.symmetric(vertical: 2);
 const kHSpacer4 = SizedBox(width: 4);
@@ -112,6 +115,7 @@ const kVSpacer5 = SizedBox(height: 5);
 const kVSpacer8 = SizedBox(height: 8);
 const kVSpacer10 = SizedBox(height: 10);
 const kVSpacer20 = SizedBox(height: 20);
+const kVSpacer40 = SizedBox(height: 40);
 
 const kTabAnimationDuration = Duration(milliseconds: 200);
 const kTabHeight = 45.0;
