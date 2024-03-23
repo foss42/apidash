@@ -95,6 +95,7 @@ class RequestModel {
   RequestModel duplicate({
     required String id,
     String? name,
+    int? requestTabIndex,
   }) {
     return RequestModel(
       id: id,
@@ -102,6 +103,7 @@ class RequestModel {
       url: url,
       name: name ?? "${this.name} (copy)",
       description: description,
+      requestTabIndex: requestTabIndex ?? 0,
       requestHeaders: requestHeaders != null ? [...requestHeaders!] : null,
       requestParams: requestParams != null ? [...requestParams!] : null,
       isHeaderEnabledList:
