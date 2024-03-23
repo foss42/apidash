@@ -93,10 +93,7 @@ class CollectionPane extends ConsumerWidget {
                     style: Theme.of(context).textTheme.bodyMedium,
                     hintText: "Filter by name or URL",
                     onChanged: (value) {
-                      if (value.trim().isNotEmpty) {
-                        ref.read(searchQueryProvider.notifier).state = value;
-                        print(value);
-                      }
+                      ref.read(searchQueryProvider.notifier).state = value;
                     },
                   ),
                 ),
@@ -143,41 +140,44 @@ class _RequestListState extends ConsumerState<RequestList> {
     final requestItems = ref.watch(collectionStateNotifierProvider)!;
     final alwaysShowCollectionPaneScrollbar = ref.watch(settingsProvider
         .select((value) => value.alwaysShowCollectionPaneScrollbar));
+    final filterQuery = ref.watch(searchQueryProvider).trim();
 
     return Scrollbar(
       controller: controller,
       thumbVisibility: alwaysShowCollectionPaneScrollbar ? true : null,
       radius: const Radius.circular(12),
-      child: ReorderableListView.builder(
-        padding: kPr8CollectionPane,
-        scrollController: controller,
-        buildDefaultDragHandles: false,
-        itemCount: requestItems.length,
-        onReorder: (int oldIndex, int newIndex) {
-          if (oldIndex < newIndex) {
-            newIndex -= 1;
-          }
-          if (oldIndex != newIndex) {
-            ref
-                .read(collectionStateNotifierProvider.notifier)
-                .reorder(oldIndex, newIndex);
-          }
-        },
-        itemBuilder: (context, index) {
-          var id = requestSequence[index];
-          return ReorderableDragStartListener(
-            key: ValueKey(id),
-            index: index,
-            child: Padding(
-              padding: kP1,
-              child: RequestItem(
-                id: id,
-                requestModel: requestItems[id]!,
-              ),
-            ),
-          );
-        },
-      ),
+      child: filterQuery.isEmpty
+          ? ReorderableListView.builder(
+              padding: kPr8CollectionPane,
+              scrollController: controller,
+              buildDefaultDragHandles: false,
+              itemCount: requestItems.length,
+              onReorder: (int oldIndex, int newIndex) {
+                if (oldIndex < newIndex) {
+                  newIndex -= 1;
+                }
+                if (oldIndex != newIndex) {
+                  ref
+                      .read(collectionStateNotifierProvider.notifier)
+                      .reorder(oldIndex, newIndex);
+                }
+              },
+              itemBuilder: (context, index) {
+                var id = requestSequence[index];
+                return ReorderableDragStartListener(
+                  key: ValueKey(id),
+                  index: index,
+                  child: Padding(
+                    padding: kP1,
+                    child: RequestItem(
+                      id: id,
+                      requestModel: requestItems[id]!,
+                    ),
+                  ),
+                );
+              },
+            )
+          : SizedBox(),
     );
   }
 }
