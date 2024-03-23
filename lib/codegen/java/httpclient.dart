@@ -378,6 +378,10 @@ class HTTPRequestMultipartBody {
           result += kTemplateMultiPartBuildCaller;
           hasBody = true;
         } else if (kMethodsWithBody.contains(method) && requestBody != null) {
+          // if request type is not form data, the request method can include
+          // a body, and the body of the request is not null, in that case
+          // we need to parse the body as it is, and write it to the body
+
           var contentLength = utf8.encode(requestBody).length;
           if (contentLength > 0) {
             var templateBody = jj.Template(kTemplateRequestBody);
