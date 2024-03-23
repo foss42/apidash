@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
@@ -67,33 +66,44 @@ class CollectionPane extends ConsumerWidget {
                     style: kTextStyleButton,
                   ),
                 ),
-
               ],
             ),
           ),
           kVSpacer10,
-           SizedBox(
-            height:30,
-            child:SearchBar(
-
-              onChanged: (value){
-                  if(value.isNotEmpty){
-                  ref.read(searchQueryProvider.notifier).state = value;
-                  ref.read(collectionStateNotifierProvider.notifier)
-                      .filterRequests(value);
-                  }
-                  else{
-
-                  }
-
-              },
-              hintText: "search",
-              leading: Icon(Icons.search),
-              textStyle: MaterialStateTextStyle.resolveWith((states) => TextStyle(fontSize: 15.0)),
-              elevation: MaterialStateProperty.all(2.0),
-            )),
+          Container(
+            height: 30,
+            margin: const EdgeInsets.only(right: 8),
+            decoration: BoxDecoration(
+              borderRadius: kBorderRadius8,
+              border: Border.all(
+                color: Theme.of(context).colorScheme.surfaceVariant,
+              ),
+            ),
+            child: Row(
+              children: [
+                kHSpacer5,
+                Icon(
+                  Icons.filter_alt,
+                  size: 18,
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
+                kHSpacer5,
+                Expanded(
+                  child: RawTextField(
+                    style: Theme.of(context).textTheme.bodyMedium,
+                    hintText: "Filter by name or URL",
+                    onChanged: (value) {
+                      if (value.trim().isNotEmpty) {
+                        ref.read(searchQueryProvider.notifier).state = value;
+                        print(value);
+                      }
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
           kVSpacer10,
-
           const Expanded(
             child: RequestList(),
           ),
@@ -134,7 +144,7 @@ class _RequestListState extends ConsumerState<RequestList> {
     final alwaysShowCollectionPaneScrollbar = ref.watch(settingsProvider
         .select((value) => value.alwaysShowCollectionPaneScrollbar));
 
-    return requestItems.isNotEmpty?Scrollbar(
+    return Scrollbar(
       controller: controller,
       thumbVisibility: alwaysShowCollectionPaneScrollbar ? true : null,
       radius: const Radius.circular(12),
@@ -155,7 +165,6 @@ class _RequestListState extends ConsumerState<RequestList> {
         },
         itemBuilder: (context, index) {
           var id = requestSequence[index];
-          print(requestItems[id]!);
 
           return ReorderableDragStartListener(
             key: ValueKey(id),
@@ -170,7 +179,7 @@ class _RequestListState extends ConsumerState<RequestList> {
           );
         },
       ),
-    ):Text("data");
+    );
   }
 }
 
