@@ -33,6 +33,7 @@ class SettingsPage extends ConsumerWidget {
             : const SizedBox.shrink(),
         Expanded(
           child: ListView(
+            physics: kIsMobile ? const BouncingScrollPhysics() : const AlwaysScrollableScrollPhysics(),
             shrinkWrap: true,
             padding: kPh20,
             children: [

@@ -6,6 +6,7 @@ final selectedIdEditStateProvider = StateProvider<String?>((ref) => null);
 final codePaneVisibleStateProvider = StateProvider<bool>((ref) => false);
 final saveDataStateProvider = StateProvider<bool>((ref) => false);
 final clearDataStateProvider = StateProvider<bool>((ref) => false);
+final sliderViewProvider =  StateProvider<bool>((ref) => true);
 // final nameTextFieldControllerProvider =
 //     StateProvider.autoDispose<TextEditingController>((ref) {
 //   TextEditingController controller = TextEditingController(text: "");

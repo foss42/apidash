@@ -1,8 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class EditorPaneRequestURLCard extends StatelessWidget {
   const EditorPaneRequestURLCard({super.key});
@@ -17,20 +19,22 @@ class EditorPaneRequestURLCard extends StatelessWidget {
         ),
         borderRadius: kBorderRadius12,
       ),
-      child: const Padding(
-        padding: EdgeInsets.symmetric(
+      child:  Padding(
+        padding: const EdgeInsets.symmetric(
           vertical: 5,
           horizontal: 20,
         ),
         child: Row(
           children: [
-            DropdownButtonHTTPMethod(),
+            const DropdownButtonHTTPMethod(),
             kHSpacer20,
-            Expanded(
+            const Expanded(
               child: URLTextField(),
             ),
-            kHSpacer20,
-            SizedBox(
+            if (!kIsMobile)
+              kHSpacer20,
+            if (!kIsMobile)
+              const SizedBox(
               height: 36,
               child: SendButton(),
             ),
@@ -93,8 +97,10 @@ class URLTextField extends ConsumerWidget {
 class SendButton extends ConsumerWidget {
   const SendButton({
     super.key,
+    this.panelController
   });
 
+  final PanelController? panelController;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedId = ref.watch(selectedIdStateProvider);
@@ -107,6 +113,9 @@ class SendButton extends ConsumerWidget {
         ref
             .read(collectionStateNotifierProvider.notifier)
             .sendRequest(selectedId!);
+        // Mobile Sliding Controller
+        ref.read(sliderViewProvider.notifier).state = true;
+        panelController!.open();
       },
     );
   }

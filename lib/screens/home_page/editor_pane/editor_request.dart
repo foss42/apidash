@@ -88,7 +88,7 @@ class RequestEditorTopBar extends ConsumerWidget {
                                         .notifier)
                                     .update(id!, name: val);
                                 Navigator.pop(context);
-                                controller.dispose();
+                                // controller.dispose();
                               },
                               child: const Text('OK')),
                         ],
