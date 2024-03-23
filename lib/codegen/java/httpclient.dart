@@ -431,17 +431,36 @@ class HTTPRequestMultipartBody {
           }
         }
 
-        var templateRequestEnd = jj.Template(kTemplateRequestEnd);
+        //setting up the ending template for requests except patch and Delete
+        //ending templates are differenetly setup for other requests apart from PATCH and DELETE
+        //because PATCH and DELETE are not treated as dedicated methods
+        var templateRequestEndExceptPatchAndDelete =
+            jj.Template(kTemplateRequestEndExceptPatchAndDelete);
 
-        if (kMethodsWithBody.contains(method)) {
-          result += templateRequestEnd.render({
+        //setting up the ending template for requests for patch and Delete
+        var templateRequestEndForPatchAndDelete =
+            jj.Template(kTemplateRequestEndForPatchAndDelete);
+
+        String body = "BodyPublishers.ofString(body)";
+        if (requestModel.hasFormData) {
+          body =
+              "HttpRequest.BodyPublishers.ofByteArray(multipartBody.getBody())";
+        }
+        if (kMethodsWithBody.contains(method) &&
+            method.name.toUpperCase() != "PATCH" &&
+            method.name.toUpperCase() != "DELETE") {
+          result += templateRequestEndExceptPatchAndDelete.render({
             "method": method.name.toUpperCase(),
-            "body": hasBody
-                ? "BodyPublishers.ofString(body)"
-                : "BodyPublishers.noBody()"
+            "body": hasBody ? body : "BodyPublishers.noBody()"
+          });
+        } else if (method.name.toUpperCase() == "PATCH" ||
+            method.name.toUpperCase() == "DELETE") {
+          result += templateRequestEndForPatchAndDelete.render({
+            "method": method.name.toUpperCase(),
+            "body": hasBody ? body : "BodyPublishers.noBody()"
           });
         } else {
-          result += templateRequestEnd
+          result += templateRequestEndExceptPatchAndDelete
               .render({"method": method.name.toUpperCase(), "body": ""});
         }
       }
