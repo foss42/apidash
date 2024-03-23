@@ -20,7 +20,7 @@ using System.Threading.Tasks;
 class Program
 {
   static async Task Main(){
-    try{    
+    try{
 """;
 
   String kInitClientTemplate = """
@@ -44,7 +44,6 @@ class Program
 {% else -%}
        request.AddFile("{{name}}", "{{value}}");
 {% endif -%}
-      
 """;
   String kTemplateJsonData = """
       var jsonBody = new {{jsonData}};
@@ -64,7 +63,7 @@ class Program
       Console.WriteLine("Error: " + ex);
     }
   }
-} 
+}
 """;
 
   String? getCode(RequestModel requestModel) {
@@ -105,8 +104,9 @@ class Program
         for (var query in params) {
           paramsResult += templateParams
               .render({"param": query["name"], "value": query["value"]});
+          paramsResult += "\n";
         }
-        result += paramsResult;
+        result += paramsResult.substring(0, paramsResult.length - 1);
         result += kStringLineBreak;
       }
 
@@ -124,8 +124,9 @@ class Program
                     .first // boundary is removed
                 : header["value"]
           });
+          headersResult += '\n';
         }
-        result += headersResult;
+        result += headersResult.substring(0, headersResult.length - 1);
         result += kStringLineBreak;
       }
 
@@ -139,7 +140,7 @@ class Program
             "type": data["type"]
           });
         }
-        result += formDataResult;
+        result += formDataResult.substring(0, formDataResult.length - 1);
         result += kStringLineBreak;
       }
 
