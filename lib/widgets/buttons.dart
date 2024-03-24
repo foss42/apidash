@@ -269,15 +269,12 @@ class ClearResponseButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Tooltip(
-      message: 'Clear response',
-      child: TextButton(
-        style: TextButton.styleFrom(minimumSize: const Size(40, 40)),
-        onPressed: onPressed,
-        child: const Icon(
-          Icons.delete,
-          size: 20,
-        ),
+    return IconButton(
+      tooltip: kTooltipClearResponse,
+      onPressed: onPressed,
+      icon: const Icon(
+        Icons.delete,
+        size: 16,
       ),
     );
   }

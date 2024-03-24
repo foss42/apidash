@@ -13,7 +13,7 @@ dependencies:
   multi_split_view: ^2.4.0
   url_launcher: ^6.2.5
   flutter_riverpod: ^2.5.1
-  riverpod: ^2.5.1  
+  riverpod: ^2.5.1
   uuid: ^4.3.3
   davi: ^3.4.1
   http_parser: ^4.0.2
