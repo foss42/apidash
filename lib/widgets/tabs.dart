@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
 
 class TabLabel extends StatelessWidget {
-  const TabLabel({super.key, required this.text, this.showIndicator = false});
+  const TabLabel({
+    super.key,
+    required this.text,
+    this.showIndicator = false,
+  });
   final String text;
   final bool showIndicator;
 
@@ -18,14 +22,14 @@ class TabLabel extends StatelessWidget {
               textAlign: TextAlign.center,
               overflow: TextOverflow.fade,
               softWrap: false,
-              style: kTextStyleButton,
+              style: kTextStyleTab,
             ),
           ),
           if (showIndicator)
             const Align(
               alignment: Alignment.topCenter,
               child: Padding(
-                padding: EdgeInsets.only(top: 6),
+                padding: EdgeInsets.only(top: 1),
                 child: Icon(
                   Icons.circle,
                   size: 6,
