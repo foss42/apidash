@@ -177,8 +177,7 @@ public class Main {
       }
 
       var templateRequestCreation = jj.Template(kTemplateRequestCreation);
-      result +=
-          templateRequestCreation.render({"method": method.name.toUpperCase()});
+      result += templateRequestCreation.render({"method": method.name});
 
       // setting up query parameters
       var params = uri.queryParameters;
