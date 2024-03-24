@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http_parser/http_parser.dart';
@@ -74,36 +75,37 @@ class _SendingWidgetState extends State<SendingWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Visibility(
-              visible: _millisecondsElapsed >= 0,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.alarm),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Text(
-                    'Time elapsed: ${humanizeDuration(Duration(milliseconds: _millisecondsElapsed))}',
-                    textAlign: TextAlign.center,
-                    overflow: TextOverflow.fade,
-                    softWrap: false,
-                    style: kTextStyleButton,
-                  ),
-                ],
-              ),
-            ),
-            Lottie.asset(kAssetSendingLottie),
-          ],
+    return Stack(
+      children: [
+        Center(
+          child: Lottie.asset(kAssetSendingLottie),
         ),
-      ),
+        Padding(
+          padding: kPh20t40,
+          child: Visibility(
+            visible: _millisecondsElapsed >= 0,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.alarm),
+                const SizedBox(
+                  width: 10,
+                ),
+                Text(
+                  'Time elapsed: ${humanizeDuration(Duration(milliseconds: _millisecondsElapsed))}',
+                  textAlign: TextAlign.center,
+                  overflow: TextOverflow.fade,
+                  softWrap: false,
+                  style: kTextStyleButton,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
+
 }
 
 class ResponsePaneHeader extends StatelessWidget {
