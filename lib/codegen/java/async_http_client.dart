@@ -173,33 +173,51 @@ public class Main {
           templateRequestCreation.render({"method": method.name.toUpperCase()});
 
       // setting up query parameters
-      if (uri.hasQuery) {
-        var params = uri.queryParameters;
+      var params = uri.queryParameters;
+      if (params.isNotEmpty) {
         var templateUrlQueryParam = jj.Template(kTemplateUrlQueryParam);
-        params.forEach((name, value) {
-          result +=
-              templateUrlQueryParam.render({"name": name, "value": value});
-        });
+        result += templateUrlQueryParam.render({"queryParams": params});
       }
 
-      result = kTemplateStart + result;
-
-      var contentType = requestModel.requestBodyContentType.header;
-      var templateRequestHeader = jj.Template(kTemplateRequestHeader);
+      var headers = <String, String>{};
+      for (var i in harJson["headers"]) {
+        headers[i["name"]] = i["value"];
+      }
 
       // especially sets up Content-Type header if the request has a body
       // and Content-Type is not explicitely set by the developer
-      if (hasBody &&
-          !requestModel.enabledHeadersMap.containsKey('Content-Type')) {
-        result += templateRequestHeader
-            .render({"name": 'Content-Type', "value": contentType});
+      if (requestModel.hasBody && !headers.containsKey("Content-Type")) {
+        headers["Content-Type"] = requestModel.requestBodyContentType.header;
+      }
+
+      if (requestModel.hasBody &&
+          requestModel.hasFormData &&
+          !requestModel.hasFileInFormData) {
+        headers["Content-Type"] = "application/x-www-form-urlencoded";
+      }
+
+      // we will use this request boundary to set boundary if multipart formdata is used
+      // String requestBoundary = "";
+      String multipartTypePrefix = "multipart/form-data; boundary=";
+      if (headers.containsKey("Content-Type") &&
+          headers["Content-Type"]!.startsWith(RegExp(multipartTypePrefix))) {
+        // String tmp = headers["Content-Type"]!;
+        // requestBoundary = tmp.substring(multipartTypePrefix.length);
+
+        // if a boundary is provided, we will use that as the default boundary
+        if (boundary != null) {
+          // requestBoundary = boundary;
+          headers["Content-Type"] = multipartTypePrefix + boundary;
+        }
       }
 
       // setting up rest of the request headers
-      var headers = requestModel.enabledHeadersMap;
-      headers.forEach((name, value) {
-        result += templateRequestHeader.render({"name": name, "value": value});
-      });
+      if (headers.isNotEmpty) {
+        var templateRequestHeader = jj.Template(kTemplateRequestHeader);
+        result += templateRequestHeader.render({
+          "headers": headers //
+        });
+      }
 
       // handling form data
       if (requestModel.hasFormData &&
