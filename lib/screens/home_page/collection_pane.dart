@@ -71,38 +71,6 @@ class CollectionPane extends ConsumerWidget {
               ],
             ),
           ),
-          kVSpacer8,
-          if (deleteMultiple.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: Wrap(
-                crossAxisAlignment: WrapCrossAlignment.center,
-                alignment: WrapAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Selected(${deleteMultiple.length})',
-                  ),
-                  ElevatedButton(
-                    onPressed: (){
-                      ref.read(collectionStateNotifierProvider.notifier).deleteSelected();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.all(5),
-                        maximumSize: const Size(40, 40),
-                        minimumSize: const Size(40, 40),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50),
-                        )
-                    ),
-                    child: const Icon(
-                      Icons.delete_outline_rounded,
-                      size: 20,
-                      color: Colors.redAccent,
-                    ),
-                  ),
-                ],
-              ),
-            ),
           kVSpacer10,
           Container(
             height: 30,
@@ -135,7 +103,40 @@ class CollectionPane extends ConsumerWidget {
               ],
             ),
           ),
-          kVSpacer10,
+          kVSpacer8,
+          if (deleteMultiple.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: Wrap(
+                crossAxisAlignment: WrapCrossAlignment.center,
+                alignment: WrapAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Selected(${deleteMultiple.length})',
+                  ),
+                  ElevatedButton(
+                    onPressed: (){
+                      ref.read(collectionStateNotifierProvider.notifier).deleteSelected();
+                    },
+                    style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.all(5),
+                        maximumSize: const Size(40, 40),
+                        minimumSize: const Size(40, 40),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50),
+                        )
+                    ),
+                    child: const Icon(
+                      Icons.delete_outline_rounded,
+                      size: 20,
+                      color: Colors.redAccent,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          if(deleteMultiple.isNotEmpty)
+            kVSpacer8,
           const Expanded(
             child: RequestList(),
           ),
