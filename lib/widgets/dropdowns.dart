@@ -61,9 +61,13 @@ class DropdownButtonProtocolType extends StatelessWidget {
   Widget build(BuildContext context) {
     final surfaceColor = Theme.of(context).colorScheme.surface;
     return DropdownButton<ProtocolType>(
+      isDense: true,
       focusColor: surfaceColor,
       value: protocolType,
-      icon: const Icon(Icons.unfold_more_rounded),
+      icon: const Icon(
+        Icons.unfold_more_rounded,
+        size: 16,
+      ),
       elevation: 4,
       underline: Container(
         height: 0,
@@ -82,7 +86,8 @@ class DropdownButtonProtocolType extends StatelessWidget {
                 fontWeight: FontWeight.bold,
                 color: Theme.of(context).brightness == Brightness.dark
                     ? getDarkModeColor(Colors.white)
-                    : Colors.white,
+                    : Colors.black,
+                fontSize: 14,
               ),
             ),
           ),
