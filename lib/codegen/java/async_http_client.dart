@@ -9,15 +9,21 @@ class JavaAsyncHttpClientGen {
   final String kTemplateStart = '''
 import org.asynchttpclient.*;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
+''';
+
+  final String kTemplateMultipartImport = '''
+import java.util.Map;
+import java.util.HashMap;
+import org.asynchttpclient.request.body.multipart.FilePart;
+import org.asynchttpclient.request.body.multipart.StringPart;
+
+''';
 
   final String kTemplateMainClassMainMethodStart = '''
 public class Main {
