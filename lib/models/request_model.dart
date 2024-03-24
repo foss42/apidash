@@ -26,6 +26,7 @@ class RequestModel {
     this.isParamEnabledList,
     this.requestBodyContentType = ContentType.json,
     this.requestBody,
+    this.requestFile,
     this.requestFormDataList,
     this.responseStatus,
     this.message,
@@ -45,6 +46,7 @@ class RequestModel {
   final List<bool>? isParamEnabledList;
   final ContentType requestBodyContentType;
   final String? requestBody;
+  final String? requestFile;
   final List<FormDataModel>? requestFormDataList;
   final int? responseStatus;
   final String? message;
@@ -67,8 +69,11 @@ class RequestModel {
       requestBodyContentType == ContentType.formdata;
   bool get hasJsonContentType => requestBodyContentType == ContentType.json;
   bool get hasTextContentType => requestBodyContentType == ContentType.text;
+  bool get hasFileContentType => requestBodyContentType == ContentType.file;
   int get contentLength => utf8.encode(requestBody ?? "").length;
-  bool get hasBody => hasJsonData || hasTextData || hasFormData;
+  int get fileContentLength => utf8.encode(requestFile ?? "").length;
+  bool get hasBody =>
+      hasJsonData || hasTextData || hasFormData || hasFileContentType;
   bool get hasJsonData =>
       kMethodsWithBody.contains(method) &&
       hasJsonContentType &&
@@ -81,6 +86,10 @@ class RequestModel {
       kMethodsWithBody.contains(method) &&
       hasFormDataContentType &&
       formDataMapList.isNotEmpty;
+  bool get hasFileData =>
+      kMethodsWithBody.contains(method) &&
+      hasFileContentType &&
+      fileContentLength > 0;
   List<FormDataModel> get formDataList =>
       requestFormDataList ?? <FormDataModel>[];
   List<Map<String, String>> get formDataMapList =>
@@ -112,6 +121,7 @@ class RequestModel {
           isParamEnabledList != null ? [...isParamEnabledList!] : null,
       requestBodyContentType: requestBodyContentType,
       requestBody: requestBody,
+      requestFile: requestFile,
       requestFormDataList:
           requestFormDataList != null ? [...requestFormDataList!] : null,
     );
@@ -130,6 +140,7 @@ class RequestModel {
     List<bool>? isParamEnabledList,
     ContentType? requestBodyContentType,
     String? requestBody,
+    String? requestFile,
     List<FormDataModel>? requestFormDataList,
     int? responseStatus,
     String? message,
@@ -155,6 +166,7 @@ class RequestModel {
       requestBodyContentType:
           requestBodyContentType ?? this.requestBodyContentType,
       requestBody: requestBody ?? this.requestBody,
+      requestFile: requestFile ?? this.requestFile,
       requestFormDataList: formDataList != null ? [...formDataList] : null,
       responseStatus: responseStatus ?? this.responseStatus,
       message: message ?? this.message,
@@ -188,6 +200,7 @@ class RequestModel {
       requestBodyContentType = kDefaultContentType;
     }
     final requestBody = data["requestBody"] as String?;
+    final requestFile = data["requestFile"] as String?;
     final requestFormDataList = data["requestFormDataList"];
     final responseStatus = data["responseStatus"] as int?;
     final message = data["message"] as String?;
@@ -217,6 +230,7 @@ class RequestModel {
       isParamEnabledList: isParamEnabledList,
       requestBodyContentType: requestBodyContentType,
       requestBody: requestBody,
+      requestFile: requestFile,
       requestFormDataList: requestFormDataList != null
           ? mapListToFormDataModelRows(List<Map>.from(requestFormDataList))
           : null,
@@ -239,6 +253,7 @@ class RequestModel {
       "isParamEnabledList": isParamEnabledList,
       "requestBodyContentType": requestBodyContentType.name,
       "requestBody": requestBody,
+      "requestFile": requestFile,
       "requestFormDataList": rowsToFormDataMapList(requestFormDataList),
       "responseStatus": includeResponse ? responseStatus : null,
       "message": includeResponse ? message : null,
@@ -261,6 +276,7 @@ class RequestModel {
       "Enabled Params: ${isParamEnabledList.toString()}",
       "Request Body Content Type: ${requestBodyContentType.toString()}",
       "Request Body: ${requestBody.toString()}",
+      "Request File: ${requestFile.toString()}",
       "Request FormData: ${requestFormDataList.toString()}",
       "Response Status: $responseStatus",
       "Response Message: $message",
@@ -284,6 +300,7 @@ class RequestModel {
         listEquals(other.isParamEnabledList, isParamEnabledList) &&
         other.requestBodyContentType == requestBodyContentType &&
         other.requestBody == requestBody &&
+        other.requestFile == requestFile &&
         other.requestFormDataList == requestFormDataList &&
         other.responseStatus == responseStatus &&
         other.message == message &&
@@ -306,6 +323,7 @@ class RequestModel {
       isParamEnabledList,
       requestBodyContentType,
       requestBody,
+      requestFile,
       requestFormDataList,
       responseStatus,
       message,
