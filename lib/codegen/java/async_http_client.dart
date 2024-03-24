@@ -121,7 +121,7 @@ public class Main {
     String? boundary,
   }) {
     try {
-      String result = "";
+      String result = '';
       bool hasBody = false;
 
       var rec = getValidRequestUri(
@@ -133,6 +133,13 @@ public class Main {
       if (uri == null) {
         return "";
       }
+
+      result += kTemplateStart;
+      if (requestModel.hasBody && requestModel.hasFileInFormData) {
+        result += kTemplateMultipartImport;
+      }
+      result += kTemplateMainClassMainMethodStart;
+      result += kTemplateAsyncHttpClientTryBlockStart;
 
       var url = stripUriParams(uri);
 
