@@ -23,7 +23,7 @@ class NotSentWidget extends StatelessWidget {
             color: color,
           ),
           Text(
-            'Not Sent',
+            kLabelNotSent,
             style:
                 Theme.of(context).textTheme.titleMedium?.copyWith(color: color),
           ),
@@ -42,7 +42,7 @@ class SendingWidget extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Lottie.asset("assets/sending.json"),
+          Lottie.asset(kAssetSendingLottie),
         ],
       ),
     );
@@ -66,42 +66,19 @@ class ResponsePaneHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: kPh20v10,
+      padding: kPv8,
       child: SizedBox(
         height: kHeaderHeight,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text.rich(
-              TextSpan(
-                children: [
-                  const TextSpan(
-                    text: "Response (",
-                  ),
-                  TextSpan(
-                    text: "$responseStatus",
-                    style: TextStyle(
-                      color: getResponseStatusCodeColor(
-                        responseStatus,
-                        brightness: Theme.of(context).brightness,
-                      ),
-                      fontFamily: kCodeStyle.fontFamily,
-                    ),
-                  ),
-                  const TextSpan(
-                    text: ")",
-                  ),
-                ],
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-            ),
-            kHSpacer20,
+            kHSpacer10,
             Expanded(
               child: Text(
-                message ?? "",
+                "$responseStatus: ${message ?? '-'}",
                 softWrap: false,
                 overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       fontFamily: kCodeStyle.fontFamily,
                       color: getResponseStatusCodeColor(
                         responseStatus,
@@ -110,10 +87,10 @@ class ResponsePaneHeader extends StatelessWidget {
                     ),
               ),
             ),
-            kHSpacer20,
+            kHSpacer10,
             Text(
               humanizeDuration(time),
-              style: Theme.of(context).textTheme.titleMedium!.copyWith(
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     fontFamily: kCodeStyle.fontFamily,
                     color: Theme.of(context).colorScheme.secondary,
                   ),
@@ -163,31 +140,15 @@ class _ResponseTabViewState extends State<ResponseTabView>
         TabBar(
           key: Key(widget.selectedId!),
           controller: _controller,
+          labelPadding: kPh2,
           overlayColor: kColorTransparentState,
           onTap: (index) {},
           tabs: const [
-            SizedBox(
-              height: kTabHeight,
-              child: Center(
-                child: Text(
-                  'Body',
-                  textAlign: TextAlign.center,
-                  overflow: TextOverflow.fade,
-                  softWrap: false,
-                  style: kTextStyleButton,
-                ),
-              ),
+            TabLabel(
+              text: kLabelResponseBody,
             ),
-            SizedBox(
-              height: kTabHeight,
-              child: Center(
-                child: Text(
-                  'Headers',
-                  textAlign: TextAlign.center,
-                  overflow: TextOverflow.fade,
-                  style: kTextStyleButton,
-                ),
-              ),
+            TabLabel(
+              text: kLabelHeaders,
             ),
           ],
         ),
@@ -227,8 +188,8 @@ class ResponseHeadersHeader extends StatelessWidget {
         children: [
           Expanded(
             child: Text(
-              "$name (${map.length} items)",
-              style: Theme.of(context).textTheme.labelLarge!.copyWith(
+              "$name (${map.length} $kLabelItems)",
+              style: Theme.of(context).textTheme.labelMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
             ),
@@ -242,8 +203,6 @@ class ResponseHeadersHeader extends StatelessWidget {
     );
   }
 }
-
-const kHeaderRow = ["Header Name", "Header Value"];
 
 class ResponseHeaders extends StatelessWidget {
   const ResponseHeaders({
@@ -263,7 +222,7 @@ class ResponseHeaders extends StatelessWidget {
         children: [
           ResponseHeadersHeader(
             map: responseHeaders,
-            name: "Response Headers",
+            name: kLabelResponseHeaders,
           ),
           if (responseHeaders.isNotEmpty) kVSpacer5,
           if (responseHeaders.isNotEmpty)
@@ -275,7 +234,7 @@ class ResponseHeaders extends StatelessWidget {
           kVSpacer10,
           ResponseHeadersHeader(
             map: requestHeaders,
-            name: "Request Headers",
+            name: kLabelRequestHeaders,
           ),
           if (requestHeaders.isNotEmpty) kVSpacer5,
           if (requestHeaders.isNotEmpty)
@@ -302,20 +261,18 @@ class ResponseBody extends StatelessWidget {
   Widget build(BuildContext context) {
     final responseModel = selectedRequestModel?.responseModel;
     if (responseModel == null) {
-      return const ErrorMessage(
-          message:
-              'Error: Response data does not exist. $kUnexpectedRaiseIssue');
+      return const ErrorMessage(message: '$kMsgError $kUnexpectedRaiseIssue');
     }
 
     var body = responseModel.body;
     var formattedBody = responseModel.formattedBody;
     if (body == null) {
       return const ErrorMessage(
-          message: 'Response body is missing (null). $kUnexpectedRaiseIssue');
+          message: '$kMsgNullBody $kUnexpectedRaiseIssue');
     }
     if (body.isEmpty) {
       return const ErrorMessage(
-        message: 'No content',
+        message: kMsgNoContent,
         showIcon: false,
         showIssueButton: false,
       );
@@ -325,7 +282,7 @@ class ResponseBody extends StatelessWidget {
     if (mediaType == null) {
       return ErrorMessage(
           message:
-              'Unknown Response Content-Type - ${responseModel.contentType}. $kUnexpectedRaiseIssue');
+              '$kMsgUnknowContentType - ${responseModel.contentType}. $kUnexpectedRaiseIssue');
     }
 
     var responseBodyView = getResponseBodyViewOptions(mediaType);

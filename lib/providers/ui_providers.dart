@@ -23,3 +23,5 @@ final nameTextFieldFocusNodeProvider =
   });
   return focusNode;
 });
+
+final searchQueryProvider = StateProvider<String>((ref) => '');
