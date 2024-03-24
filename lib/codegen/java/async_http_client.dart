@@ -39,8 +39,47 @@ public class Main {
   final String kTemplateRequestHeader = '''
                 .addHeader("{{name}}", "{{value}}")\n
 ''';
-  final String kTemplateRequestFormData = '''
-                .addFormParam("{{name}}", "{{value}}")\n
+  final String kTemplateSimpleTextFormData = '''
+            requestBuilder{% for param in params if param.type == "text" %}
+                .addFormParam("{{ param.name }}", "{{ param.value }}"){% endfor %};\n
+''';
+
+  final String kTemplateMultipartTextFormData = '''
+
+            Map<String, String> params = new HashMap<>() {
+                { {% for param in params if param.type == "text" %}
+                    put("{{ param.name }}", "{{ param.value }}");{% endfor %}
+                }
+            };
+
+            for (String paramName : params.keySet()) {
+                requestBuilder.addBodyPart(new StringPart(
+                    paramName, params.get(paramName)
+                ));
+            }
+
+
+''';
+
+  final String kTemplateMultipartFileHandling = '''
+            Map<String, String> files = new HashMap<>() {
+                { {% for field in fields if field.type == "file" %}
+                    put("{{ field.name }}", "{{ field.value }}");{% endfor %}
+                }
+            };
+
+            for (String paramName : files.keySet()) {
+                File file = new File(files.get(paramName));
+                requestBuilder.addBodyPart(new FilePart(
+                        paramName,
+                        file,
+                        "application/octet-stream",
+                        StandardCharsets.UTF_8,
+                        file.getName()
+                ));
+            }
+
+
 ''';
 
   String kTemplateRequestBodyContent = '''
