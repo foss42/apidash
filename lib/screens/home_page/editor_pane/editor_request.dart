@@ -4,7 +4,6 @@ import 'package:apidash/providers/collection_providers.dart';
 import 'package:apidash/providers/settings_providers.dart';
 import 'package:apidash/providers/ui_providers.dart';
 import 'package:apidash/widgets/cards.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
