@@ -20,6 +20,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
   final random = Random.secure();
   late List<NameValueModel> paramRows;
   late List<bool> isRowEnabledList;
+  bool isAddingRow = false;
 
   @override
   void initState() {
@@ -52,12 +53,13 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
         ref.read(selectedRequestModelProvider)?.isParamEnabledList ??
             List.filled(rP?.length ?? 0, true, growable: true);
     isRowEnabledList.add(false);
+    isAddingRow = false;
 
     DaviModel<NameValueModel> model = DaviModel<NameValueModel>(
       rows: paramRows,
       columns: [
         DaviColumn(
-          name: 'Checkbox',
+          name: kNameCheckbox,
           width: 30,
           cellBuilder: (_, row) {
             int idx = row.index;
@@ -78,7 +80,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
           },
         ),
         DaviColumn(
-          name: 'URL Parameter',
+          name: kNameURLParam,
           width: 70,
           grow: 1,
           cellBuilder: (_, row) {
@@ -87,10 +89,11 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
             return CellField(
               keyId: "$selectedId-$idx-params-k-$seed",
               initialValue: paramRows[idx].name,
-              hintText: "Add URL Parameter",
+              hintText: kHintAddURLParam,
               onChanged: (value) {
                 paramRows[idx] = paramRows[idx].copyWith(name: value);
-                if (isLast) {
+                if (isLast && !isAddingRow) {
+                  isAddingRow = true;
                   isRowEnabledList[idx] = true;
                   paramRows.add(kNameValueEmptyModel);
                   isRowEnabledList.add(false);
@@ -112,7 +115,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
           },
         ),
         DaviColumn(
-          name: 'Value',
+          name: kNameValue,
           grow: 1,
           cellBuilder: (_, row) {
             int idx = row.index;
@@ -120,10 +123,11 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
             return CellField(
               keyId: "$selectedId-$idx-params-v-$seed",
               initialValue: paramRows[idx].value,
-              hintText: "Add Value",
+              hintText: kHintAddValue,
               onChanged: (value) {
                 paramRows[idx] = paramRows[idx].copyWith(value: value);
-                if (isLast) {
+                if (isLast && !isAddingRow) {
+                  isAddingRow = true;
                   isRowEnabledList[idx] = true;
                   paramRows.add(kNameValueEmptyModel);
                   isRowEnabledList.add(false);
@@ -182,13 +186,14 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
                   child: Davi<NameValueModel>(model),
                 ),
               ),
+              kVSpacer40,
             ],
           ),
         ),
         Align(
           alignment: Alignment.bottomCenter,
           child: Padding(
-            padding: const EdgeInsets.only(bottom: 30),
+            padding: kPb15,
             child: ElevatedButton.icon(
               onPressed: () {
                 paramRows.add(kNameValueEmptyModel);
@@ -197,7 +202,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
               },
               icon: const Icon(Icons.add),
               label: const Text(
-                "Add Param",
+                kLabelAddParam,
                 style: kTextStyleButton,
               ),
             ),
