@@ -230,18 +230,39 @@ public class Main {
       if (requestModel.hasFormData &&
           requestModel.formDataMapList.isNotEmpty &&
           kMethodsWithBody.contains(method)) {
-        // including form data into the request
         var formDataList = requestModel.formDataMapList;
-        var templateRequestFormData = jj.Template(kTemplateRequestFormData);
-        for (var formDataMap in formDataList) {
-          result += templateRequestFormData.render(
-              {"name": formDataMap['name'], "value": formDataMap['value']});
+
+        int textCount = 0;
+        for (var formData in formDataList) {
+          if (formData["type"] == "text") {
+            textCount++;
+          }
         }
-        hasBody = true;
+
+        if (textCount > 0) {
+          var templateRequestFormData = jj.Template(
+              (requestModel.hasFileInFormData)
+                  ? kTemplateMultipartTextFormData
+                  : kTemplateSimpleTextFormData);
+
+          result += templateRequestFormData.render({
+            "params": formDataList, //
+          });
+        }
+
+        if (requestModel.hasFileInFormData) {
+          var templateFileHandling =
+              jj.Template(kTemplateMultipartFileHandling);
+          result += templateFileHandling.render({
+            "fields": formDataList,
+          });
+        }
       }
 
       var templateRequestBodySetup = jj.Template(kTemplateRequestBodySetup);
-      if (kMethodsWithBody.contains(method) && hasBody) {
+      if (kMethodsWithBody.contains(method) &&
+          hasBody &&
+          !requestModel.hasFormData) {
         result += templateRequestBodySetup.render();
       }
 
