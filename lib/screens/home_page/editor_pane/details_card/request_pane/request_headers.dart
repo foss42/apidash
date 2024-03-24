@@ -15,10 +15,10 @@ class EditRequestHeaders extends ConsumerStatefulWidget {
 }
 
 class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
-  final random = Random.secure();
-  late List<NameValueModel> rows;
-  late List<bool> isRowEnabledList;
   late int seed;
+  final random = Random.secure();
+  late List<NameValueModel> headerRows;
+  late List<bool> isRowEnabledList;
 
   @override
   void initState() {
@@ -29,8 +29,9 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
   void _onFieldChange(String selectedId) {
     ref.read(collectionStateNotifierProvider.notifier).update(
           selectedId,
-          requestHeaders: rows,
-          isHeaderEnabledList: isRowEnabledList,
+          requestHeaders: headerRows.sublist(0, headerRows.length - 1),
+          isHeaderEnabledList:
+              isRowEnabledList.sublist(0, headerRows.length - 1),
         );
   }
 
@@ -40,32 +41,38 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
     ref.watch(selectedRequestModelProvider
         .select((value) => value?.requestHeaders?.length));
     var rH = ref.read(selectedRequestModelProvider)?.requestHeaders;
-    rows = (rH == null || rH.isEmpty)
+    bool isHeadersEmpty = rH == null || rH.isEmpty;
+    List<NameValueModel> rows = (isHeadersEmpty)
         ? [
             kNameValueEmptyModel,
           ]
         : rH;
+    headerRows = isHeadersEmpty ? rows : rows + [kNameValueEmptyModel];
     isRowEnabledList =
         ref.read(selectedRequestModelProvider)?.isHeaderEnabledList ??
-            List.filled(rows.length, true, growable: true);
+            List.filled(rH?.length ?? 0, true, growable: true);
+    isRowEnabledList.add(false);
 
     DaviModel<NameValueModel> model = DaviModel<NameValueModel>(
-      rows: rows,
+      rows: headerRows,
       columns: [
         DaviColumn(
           name: 'Checkbox',
           width: 30,
           cellBuilder: (_, row) {
             int idx = row.index;
+            bool isLast = idx + 1 == headerRows.length;
             return CheckBox(
               keyId: "$selectedId-$idx-headers-c-$seed",
               value: isRowEnabledList[idx],
-              onChanged: (value) {
-                setState(() {
-                  isRowEnabledList[idx] = value!;
-                });
-                _onFieldChange(selectedId!);
-              },
+              onChanged: isLast
+                  ? null
+                  : (value) {
+                      setState(() {
+                        isRowEnabledList[idx] = value!;
+                      });
+                      _onFieldChange(selectedId!);
+                    },
               colorScheme: Theme.of(context).colorScheme,
             );
           },
@@ -76,12 +83,18 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
           grow: 1,
           cellBuilder: (_, row) {
             int idx = row.index;
+            bool isLast = idx + 1 == headerRows.length;
             return HeaderField(
               keyId: "$selectedId-$idx-headers-k-$seed",
-              initialValue: rows[idx].name,
+              initialValue: headerRows[idx].name,
               hintText: "Add Header Name",
               onChanged: (value) {
-                rows[idx] = rows[idx].copyWith(name: value);
+                headerRows[idx] = headerRows[idx].copyWith(name: value);
+                if (isLast) {
+                  isRowEnabledList[idx] = true;
+                  headerRows.add(kNameValueEmptyModel);
+                  isRowEnabledList.add(false);
+                }
                 _onFieldChange(selectedId!);
               },
               colorScheme: Theme.of(context).colorScheme,
@@ -103,12 +116,18 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
           grow: 1,
           cellBuilder: (_, row) {
             int idx = row.index;
+            bool isLast = idx + 1 == headerRows.length;
             return CellField(
               keyId: "$selectedId-$idx-headers-v-$seed",
-              initialValue: rows[idx].value,
+              initialValue: headerRows[idx].value,
               hintText: " Add Header Value",
               onChanged: (value) {
-                rows[idx] = rows[idx].copyWith(value: value);
+                headerRows[idx] = headerRows[idx].copyWith(value: value);
+                if (isLast) {
+                  isRowEnabledList[idx] = true;
+                  headerRows.add(kNameValueEmptyModel);
+                  isRowEnabledList.add(false);
+                }
                 _onFieldChange(selectedId!);
               },
               colorScheme: Theme.of(context).colorScheme,
@@ -120,25 +139,28 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
           pinStatus: PinStatus.none,
           width: 30,
           cellBuilder: (_, row) {
+            bool isLast = row.index + 1 == headerRows.length;
             return InkWell(
+              onTap: isLast
+                  ? null
+                  : () {
+                      seed = random.nextInt(kRandMax);
+                      if (headerRows.length == 2) {
+                        setState(() {
+                          headerRows = [
+                            kNameValueEmptyModel,
+                          ];
+                          isRowEnabledList = [false];
+                        });
+                      } else {
+                        headerRows.removeAt(row.index);
+                        isRowEnabledList.removeAt(row.index);
+                      }
+                      _onFieldChange(selectedId!);
+                    },
               child: Theme.of(context).brightness == Brightness.dark
                   ? kIconRemoveDark
                   : kIconRemoveLight,
-              onTap: () {
-                seed = random.nextInt(kRandMax);
-                if (rows.length == 1) {
-                  setState(() {
-                    rows = [
-                      kNameValueEmptyModel,
-                    ];
-                    isRowEnabledList = [true];
-                  });
-                } else {
-                  rows.removeAt(row.index);
-                  isRowEnabledList.removeAt(row.index);
-                }
-                _onFieldChange(selectedId!);
-              },
             );
           },
         ),
@@ -169,8 +191,8 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
             padding: const EdgeInsets.only(bottom: 30),
             child: ElevatedButton.icon(
               onPressed: () {
-                rows.add(kNameValueEmptyModel);
-                isRowEnabledList.add(true);
+                headerRows.add(kNameValueEmptyModel);
+                isRowEnabledList.add(false);
                 _onFieldChange(selectedId!);
               },
               icon: const Icon(Icons.add),
