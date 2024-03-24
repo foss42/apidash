@@ -117,8 +117,9 @@ public class Main {
 ''';
 
   String? getCode(
-    RequestModel requestModel,
-  ) {
+    RequestModel requestModel, {
+    String? boundary,
+  }) {
     try {
       String result = "";
       bool hasBody = false;
