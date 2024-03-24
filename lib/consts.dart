@@ -67,7 +67,8 @@ const kPs2 = EdgeInsets.only(left: 2);
 const kPh20v5 = EdgeInsets.symmetric(horizontal: 20, vertical: 5);
 const kPh20v10 = EdgeInsets.symmetric(horizontal: 20, vertical: 10);
 const kP10 = EdgeInsets.all(10);
-const kPt24o8 = EdgeInsets.only(top: 24, left: 8.0, right: 8.0, bottom: 8.0);
+const kPt24 = EdgeInsets.only(top: 24);
+const kPt8 = EdgeInsets.only(top: 8);
 const kPt5o10 =
     EdgeInsets.only(left: 10.0, right: 10.0, top: 5.0, bottom: 10.0);
 const kPh20 = EdgeInsets.symmetric(

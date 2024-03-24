@@ -171,8 +171,14 @@ class TabRequestCard extends StatelessWidget {
       message: nm,
       waitDuration: const Duration(seconds: 1),
       child: Card(
+        // shape: const RoundedRectangleBorder(
+        //   borderRadius: BorderRadius.only(
+        //     topLeft: Radius.circular(8),
+        //     topRight: Radius.circular(8),
+        //   ),
+        // ),
         shape: const RoundedRectangleBorder(
-          borderRadius: kBorderRadius8,
+          borderRadius: BorderRadius.zero,
         ),
         elevation: isSelected ? 1 : 0,
         surfaceTintColor: isSelected ? surfaceTint : null,
@@ -183,11 +189,15 @@ class TabRequestCard extends StatelessWidget {
             : color,
         margin: EdgeInsets.zero,
         child: InkWell(
-          borderRadius: kBorderRadius8,
+          // borderRadius: const BorderRadius.only(
+          //   topLeft: Radius.circular(8),
+          //   topRight: Radius.circular(8),
+          // ),
+          borderRadius: BorderRadius.zero,
           hoverColor: colorVariant,
           focusColor: colorVariant.withOpacity(0.5),
           onTap: inEditMode ? null : onTap,
-          child: Padding(
+          child: Container(
             padding: EdgeInsets.only(
               left: 6,
               right: isSelected ? 6 : 10,
