@@ -18,8 +18,13 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
+
+  final String kTemplateMainClassMainMethodStart = '''
 public class Main {
     public static void main(String[] args) {
+''';
+
+  final String kTemplateAsyncHttpClientTryBlockStart = '''
         try (AsyncHttpClient asyncHttpClient = Dsl.asyncHttpClient()) {
 ''';
 
@@ -28,16 +33,17 @@ public class Main {
 ''';
 
   final String kTemplateRequestCreation = '''
-            Request request = asyncHttpClient
-                .prepare("{{method}}", url)\n
+            BoundRequestBuilder requestBuilder = asyncHttpClient.prepare("{{ method|upper }}", url);\n
 ''';
 
   final String kTemplateUrlQueryParam = '''
-                .addQueryParam("{{name}}", "{{value}}")\n
+            requestBuilder{% for name, value in queryParams %}
+                .addQueryParam("{{ name }}", "{{ value }}"){% endfor %};\n
 ''';
 
   final String kTemplateRequestHeader = '''
-                .addHeader("{{name}}", "{{value}}")\n
+            requestBuilder{% for name, value in headers %}
+                .addHeader("{{ name }}", "{{ value }}"){% endfor %};\n
 ''';
   final String kTemplateSimpleTextFormData = '''
             requestBuilder{% for param in params if param.type == "text" %}
@@ -86,7 +92,7 @@ public class Main {
             String bodyContent = "{{body}}";\n
 ''';
   String kTemplateRequestBodySetup = '''
-                .setBody(bodyContent)\n
+            requestBuilder.setBody(bodyContent);\n
 ''';
 
   final String kTemplateRequestEnd = '''
