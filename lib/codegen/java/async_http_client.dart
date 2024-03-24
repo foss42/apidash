@@ -50,29 +50,20 @@ public class Main {
                 .setBody(bodyContent)\n
 ''';
 
-  final String kTemplateRequestEnd = """
-                .build();
-            ListenableFuture<Response> listenableFuture = asyncHttpClient.executeRequest(request);
-            listenableFuture.addListener(() -> {
-                try {
-                    Response response = listenableFuture.get();
-                    InputStream is = response.getResponseBodyAsStream();
-                    BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
-                    String respBody = br.lines().collect(Collectors.joining("\\n"));
-                    System.out.println(response.getStatusCode());
-                    System.out.println(respBody);
-                } catch (InterruptedException | ExecutionException e) {
-                    e.printStackTrace();
-                }
-            }, Executors.newCachedThreadPool());
-            listenableFuture.get();
+  final String kTemplateRequestEnd = '''
+            Future<Response> whenResponse = requestBuilder.execute();
+            Response response = whenResponse.get();
+            InputStream is = response.getResponseBodyAsStream();
+            BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+            String respBody = br.lines().collect(Collectors.joining("\\n"));
+            System.out.println(response.getStatusCode());
+            System.out.println(respBody);
         } catch (InterruptedException | ExecutionException | IOException ignored) {
 
         }
     }
-}
-\n
-""";
+}\n
+''';
 
   String? getCode(
     RequestModel requestModel,
