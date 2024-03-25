@@ -59,6 +59,12 @@ dependencies:
   csv: ^6.0.0
   data_table_2: ^2.5.11
   file_selector: ^1.0.3
+  code_text_field:
+    git:
+      url: https://github.com/BertrandBev/code_field
+      ref: 990cde6153567bbbc8a93d89ca110c7a7555a4ab
+  highlight: ^0.7.0
+  flutter_highlight: ^0.7.0
 
 dependency_overrides:
   web: ^0.5.0

@@ -177,6 +177,15 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.10.0"
+  code_text_field:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: "990cde6153567bbbc8a93d89ca110c7a7555a4ab"
+      resolved-ref: "990cde6153567bbbc8a93d89ca110c7a7555a4ab"
+      url: "https://github.com/BertrandBev/code_field"
+    source: git
+    version: "1.1.1"
   collection:
     dependency: "direct main"
     description:
@@ -374,6 +383,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_highlight:
+    dependency: "direct main"
+    description:
+      name: flutter_highlight
+      sha256: "7b96333867aa07e122e245c033b8ad622e4e3a42a1a2372cbb098a2541d8782c"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.7.0"
   flutter_keyboard_visibility:
     dependency: transitive
     description:
@@ -536,6 +553,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.3.1"
+  highlight:
+    dependency: "direct main"
+    description:
+      name: highlight
+      sha256: "5353a83ffe3e3eca7df0abfb72dcf3fa66cc56b953728e7113ad4ad88497cf21"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.7.0"
   highlighter:
     dependency: "direct main"
     description:
@@ -729,6 +754,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.1"
+  linked_scroll_controller:
+    dependency: transitive
+    description:
+      name: linked_scroll_controller
+      sha256: e6020062bcf4ffc907ee7fd090fa971e65d8dfaac3c62baf601a3ced0b37986a
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.0"
   lints:
     dependency: transitive
     description:
