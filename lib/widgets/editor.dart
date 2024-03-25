@@ -61,7 +61,6 @@ class _TextFieldEditorState extends State<TextFieldEditor> {
               ? monokaiSublimeTheme
               : defaultTheme),
       child: CodeField(
-        key: Key(widget.fieldKey),
         controller: _codeController!,
         focusNode: editorFocusNode,
         keyboardType: TextInputType.multiline,
