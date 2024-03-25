@@ -20,6 +20,7 @@ import 'julia/http.dart';
 import 'java/okhttp.dart';
 import 'java/async_http_client.dart';
 import 'java/httpclient.dart';
+import 'ruby/net_http.dart';
 
 class Codegen {
   String? getCode(
@@ -82,6 +83,8 @@ class Codegen {
         return RustUreqCodeGen().getCode(rM, boundary: boundary);
       case CodegenLanguage.phpGuzzle:
         return PhpGuzzleCodeGen().getCode(rM);
+      case CodegenLanguage.rubyNetHttp:
+        return rubyCodeGen().getCode(rM);
     }
   }
 }
