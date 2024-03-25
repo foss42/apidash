@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:apidash/consts.dart';
 import 'package:apidash/models/form_data_model.dart';
+import 'package:apidash/utils/http_utils.dart';
 
 import '../../models/request_model.dart';
 
@@ -85,6 +86,26 @@ class CLibcurlCodeGen {
       if (!url.contains("://")) {
         url = "$defaultUriScheme://$url";
       }
+
+      // URL params
+      var rec = getValidRequestUri(
+        requestModel.url,
+        requestModel.enabledRequestParams,
+      );
+      Uri? uri = rec.$1;
+      if (uri != null && uri.hasQuery) {
+        var params = uri.queryParameters;
+        if (params.isNotEmpty) {
+          String queryParams = '';
+          params.forEach((key, value) {
+            queryParams += '${Uri.encodeQueryComponent(key)}=${Uri.encodeQueryComponent(value)}&';
+          });
+          queryParams =
+              ((url.contains('?')) ? '&' : '?') + queryParams.substring(0, queryParams.length - 1);
+          url += queryParams;
+        }
+      }
+
       result.writeln('    curl_easy_setopt(curl, CURLOPT_URL, "$url");');
 
       // Set request method
