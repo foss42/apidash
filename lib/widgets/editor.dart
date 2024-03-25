@@ -1,8 +1,6 @@
 import 'package:code_text_field/code_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
-import 'package:flutter_highlight/themes/default.dart';
-import 'package:flutter_highlight/themes/monokai-sublime.dart';
 import 'package:highlight/languages/plaintext.dart';
 
 class TextFieldEditor extends StatefulWidget {
@@ -58,8 +56,8 @@ class _TextFieldEditorState extends State<TextFieldEditor> {
       key: Key(widget.fieldKey),
       data: CodeThemeData(
           styles: Theme.of(context).brightness == Brightness.dark
-              ? monokaiSublimeTheme
-              : defaultTheme),
+              ? kDarkCodeTheme
+              : kLightCodeTheme),
       child: CodeField(
         controller: _codeController!,
         focusNode: editorFocusNode,
