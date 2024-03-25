@@ -45,7 +45,7 @@ int main() {
   curl = curl_easy_init();
 
   if(curl) {
-    curl_easy_setopt(curl, CURLOPT_URL, "https://api.apidash.dev/country/data");
+    curl_easy_setopt(curl, CURLOPT_URL, "https://api.apidash.dev/country/data?code=US");
     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "GET");
 
     res = curl_easy_perform(curl);
@@ -73,7 +73,7 @@ int main() {
   curl = curl_easy_init();
 
   if(curl) {
-    curl_easy_setopt(curl, CURLOPT_URL, "https://api.apidash.dev/country/data?code=US");
+    curl_easy_setopt(curl, CURLOPT_URL, "https://api.apidash.dev/country/data?code=US&code=IND");
     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "GET");
 
     res = curl_easy_perform(curl);
@@ -101,7 +101,7 @@ int main() {
   curl = curl_easy_init();
 
   if(curl) {
-    curl_easy_setopt(curl, CURLOPT_URL, "https://api.apidash.dev/humanize/social");
+    curl_easy_setopt(curl, CURLOPT_URL, "https://api.apidash.dev/humanize/social?num=8700000&digits=3&system=SS&add_space=true&trailing_zeros=true");
     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "GET");
 
     res = curl_easy_perform(curl);
@@ -162,7 +162,7 @@ int main() {
   curl = curl_easy_init();
 
   if(curl) {
-    curl_easy_setopt(curl, CURLOPT_URL, "https://api.github.com/repos/foss42/apidash");
+    curl_easy_setopt(curl, CURLOPT_URL, "https://api.github.com/repos/foss42/apidash?raw=true");
     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "GET");
 
     struct curl_slist *headers = NULL;
@@ -223,7 +223,7 @@ int main() {
   curl = curl_easy_init();
 
   if(curl) {
-    curl_easy_setopt(curl, CURLOPT_URL, "https://api.github.com/repos/foss42/apidash");
+    curl_easy_setopt(curl, CURLOPT_URL, "https://api.github.com/repos/foss42/apidash?raw=true");
     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "GET");
 
     struct curl_slist *headers = NULL;
@@ -257,7 +257,7 @@ int main() {
   curl = curl_easy_init();
 
   if(curl) {
-    curl_easy_setopt(curl, CURLOPT_URL, "https://api.apidash.dev/humanize/social");
+    curl_easy_setopt(curl, CURLOPT_URL, "https://api.apidash.dev/humanize/social?num=8700000&add_space=true");
     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "GET");
 
     res = curl_easy_perform(curl);
@@ -318,7 +318,7 @@ int main() {
   curl = curl_easy_init();
 
   if(curl) {
-    curl_easy_setopt(curl, CURLOPT_URL, "https://api.apidash.dev/humanize/social");
+    curl_easy_setopt(curl, CURLOPT_URL, "https://api.apidash.dev/humanize/social?num=8700000&digits=3");
     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "GET");
 
     struct curl_slist *headers = NULL;
@@ -683,7 +683,7 @@ int main() {
   curl = curl_easy_init();
 
   if(curl) {
-    curl_easy_setopt(curl, CURLOPT_URL, "https://api.apidash.dev/io/form");
+    curl_easy_setopt(curl, CURLOPT_URL, "https://api.apidash.dev/io/form?size=2&len=3");
     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
 
   struct curl_httppost *formpost = NULL;
@@ -718,7 +718,7 @@ int main() {
   curl = curl_easy_init();
 
   if(curl) {
-    curl_easy_setopt(curl, CURLOPT_URL, "https://api.apidash.dev/io/img");
+    curl_easy_setopt(curl, CURLOPT_URL, "https://api.apidash.dev/io/img?size=2&len=3");
     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
 
     struct curl_slist *headers = NULL;
