@@ -79,15 +79,19 @@ class Program
 
       result += kStringInit;
 
+      Uri uri =
+          getValidRequestUri(requestModel.url, requestModel.requestParams).$1!;
+      var baseUrl =
+          "${uri.scheme}://${uri.host}${uri.hasPort ? ":${uri.port}" : ""}${uri.hasFragment ? "#${uri.fragment}" : ""}";
+
       jj.Template templateInitClient = jj.Template(kInitClientTemplate);
-      String initClient =
-          templateInitClient.render({"baseUrl": getBaseUrl(requestModel.url)});
+      String initClient = templateInitClient.render({"baseUrl": baseUrl});
       result += initClient;
       result += kStringLineBreak;
 
       jj.Template templateMethodType = jj.Template(kMethodTypeTemplate);
       String methodType = templateMethodType.render({
-        "path": getUrlPath(requestModel.url),
+        "path": uri.path,
         "method": requestModel.method.name.replaceRange(
             0,
             1,
