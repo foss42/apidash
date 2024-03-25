@@ -1,8 +1,6 @@
 import 'package:code_text_field/code_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:highlight/languages/json.dart';
-import 'package:flutter_highlight/themes/monokai-sublime.dart';
-import 'package:flutter_highlight/themes/default.dart';
 import 'package:apidash/consts.dart';
 
 class JsonTextFieldEditor extends StatefulWidget {
@@ -57,8 +55,8 @@ class _JsonTextFieldEditorState extends State<JsonTextFieldEditor> {
     return CodeTheme(
       data: CodeThemeData(
           styles: Theme.of(context).brightness == Brightness.dark
-              ? monokaiSublimeTheme
-              : defaultTheme),
+              ? kDarkCodeTheme
+              : kLightCodeTheme),
       child: CodeField(
         key: Key(widget.fieldKey),
         controller: _codeController!,
