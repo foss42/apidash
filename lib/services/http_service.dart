@@ -19,17 +19,28 @@ Future<(http.Response?, Duration?, String?)> request(
     Uri requestUrl = uriRec.$1!;
     Map<String, String> headers = requestModel.enabledHeadersMap;
     http.Response response;
-    String? body;
+    Object? body;
     try {
       Stopwatch stopwatch = Stopwatch()..start();
       var isMultiPartRequest =
           requestModel.requestBodyContentType == ContentType.formdata;
       if (kMethodsWithBody.contains(requestModel.method)) {
         var requestBody = requestModel.requestBody;
-        if (requestBody != null && !isMultiPartRequest) {
-          var contentLength = utf8.encode(requestBody).length;
+        var requestFile = (requestModel.requestFile != null &&
+                requestModel.requestFile!.isNotEmpty)
+            ? File(requestModel.requestFile!)
+            : null;
+        if ((requestBody != null || requestFile != null) &&
+            !isMultiPartRequest) {
+          var requestFileBytes =
+              requestBody == null ? await requestFile!.readAsBytes() : null;
+
+          var contentLength = requestBody != null
+              ? utf8.encode(requestBody).length
+              : requestFileBytes!.length;
+
           if (contentLength > 0) {
-            body = requestBody;
+            body = requestBody ?? requestFileBytes;
             headers[HttpHeaders.contentLengthHeader] = contentLength.toString();
             if (!requestModel.hasContentTypeHeader) {
               headers[HttpHeaders.contentTypeHeader] =

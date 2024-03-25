@@ -1,3 +1,4 @@
+import 'package:apidash/utils/file_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
@@ -49,6 +50,52 @@ class EditRequestBody extends ConsumerWidget {
                         .read(collectionStateNotifierProvider.notifier)
                         .update(selectedId, requestBody: value);
                   },
+                ),
+              ContentType.file => Align(
+                  alignment: Alignment.centerLeft,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Theme(
+                          data: Theme.of(context),
+                          child: ElevatedButton.icon(
+                            icon: const Icon(
+                              Icons.snippet_folder_rounded,
+                              size: 20,
+                            ),
+                            style: ButtonStyle(
+                              shape: MaterialStatePropertyAll(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                              ),
+                            ),
+                            onPressed: () async {
+                              var pickedResult = await pickFile();
+                              if (pickedResult != null &&
+                                  pickedResult.files.isNotEmpty &&
+                                  pickedResult.files.first.path != null) {
+                                ref
+                                    .read(collectionStateNotifierProvider
+                                        .notifier)
+                                    .update(selectedId,
+                                        requestFile:
+                                            pickedResult.files.first.path!);
+                              }
+                            },
+                            label: Text(
+                              ref.watch(selectedRequestModelProvider
+                                      .select((value) => value?.requestFile)) ??
+                                  kLabelSelectFile,
+                              textAlign: TextAlign.center,
+                              overflow: TextOverflow.ellipsis,
+                              style: kFormDataButtonLabelTextStyle,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               _ => TextFieldEditor(
                   key: Key("$selectedId-body"),

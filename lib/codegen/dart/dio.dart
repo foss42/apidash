@@ -83,7 +83,7 @@ class DartDioCodeGen {
         case ContentType.text:
           dataExp = declareFinal('data').assign(strContent);
         // when add new type of [ContentType], need update [dataExp].
-        case ContentType.formdata:
+        default:
           dataExp = declareFinal('data').assign(refer('dio.FormData()'));
       }
     }

@@ -113,6 +113,7 @@ void main() {
     "requestBody": '''{
 "text":"WORLD"
 }''',
+    'requestFile': null,
     'requestFormDataList': null,
     'responseStatus': null,
     'message': null,
@@ -148,6 +149,7 @@ void main() {
     "Enabled Params: null",
     "Request Body Content Type: ContentType.json",
     'Request Body: {\n"text":"WORLD"\n}',
+    'Request File: null',
     'Request FormData: null',
     "Response Status: null",
     "Response Message: null",
