@@ -1,183 +1,197 @@
-import 'dart:convert';
 import 'package:jinja/jinja.dart' as jj;
 import 'package:apidash/utils/utils.dart'
-    show getValidRequestUri, requestModelToHARJsonRequest, stripUriParams;
-import '../../models/request_model.dart';
+    show getValidRequestUri, requestModelToHARJsonRequest;
+import 'package:apidash/models/models.dart' show RequestModel;
 import 'package:apidash/consts.dart';
 
 class JavaHttpClientCodeGen {
-  final String kTemplateStart = """
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
+  final String kTemplateStart = """import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.net.http.HttpHeaders;
-import java.net.http.HttpRequest.BodyPublishers;
-import java.net.http.HttpResponse.BodyHandlers;
+import java.io.IOException;
+{% if hasFormData %}import java.util.HashMap;
+import java.util.Map;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;{% endif %}
 
-public class JavaHttpClientExample {
+public class Main {
+  public static void main(String[] args) {
+    try {
+      HttpClient client = HttpClient.newHttpClient();
 
-    public static void main(String[] args) throws IOException, InterruptedException {
-        HttpClient client = HttpClient.newHttpClient();
-""";
-  final String kTemplateUrl = '''
-
-        String url = "{{url}}";
-
-''';
-
-  final String kTemplateUrlQuery = '''
-
-        String url = "{{url}}";
-        try {
-            URI uri = new URI(url);
-            url = uri.resolve("{{params}}").toString();
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
-
-''';
-
-  String kTemplateRequestBody = '''
-
-        String body = "{{body}}";
-
-''';
-
-  final String kStringRequestStart = """
-
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(url))
 """;
 
-  final String kTemplateRequestEnd = """
-                .{{method}}({{body}})
-                .build();
+  String kTemplateUrl = """
+      URI uri = URI.create("{{url}}");
 
-        HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
-        System.out.println(response.statusCode());
-        System.out.println(response.body());
+""";
+
+  String kTemplateFormHeaderContentType = '''
+multipart/form-data; boundary={{boundary}}''';
+
+  String kTemplateMethod = """
+{% if method == 'get' %}
+      HttpRequest.Builder requestBuilder = HttpRequest.newBuilder(uri).GET();
+{% elif method == 'post' %}
+      HttpRequest.Builder requestBuilder = HttpRequest.newBuilder(uri).POST({% if hasBody %}bodyPublisher{% else %}HttpRequest.BodyPublishers.noBody(){% endif %});
+{% elif method == 'put' %}
+      HttpRequest.Builder requestBuilder = HttpRequest.newBuilder(uri).PUT({% if hasBody %}bodyPublisher{% else %}HttpRequest.BodyPublishers.noBody(){% endif %});
+{% elif method == 'delete' %}
+      HttpRequest.Builder requestBuilder = HttpRequest.newBuilder(uri).method("DELETE", {% if hasBody %}bodyPublisher{% else %}HttpRequest.BodyPublishers.noBody(){% endif %});
+{% elif method == 'patch' %}
+      HttpRequest.Builder requestBuilder = HttpRequest.newBuilder(uri).method("PATCH", {% if hasBody %}bodyPublisher{% else %}HttpRequest.BodyPublishers.noBody(){% endif %});
+{% elif method == 'head' %}
+      HttpRequest.Builder requestBuilder = HttpRequest.newBuilder(uri).method("HEAD", HttpRequest.BodyPublishers.noBody());
+{% endif %}
+""";
+
+  String kTemplateRawBody = """
+      HttpRequest.BodyPublisher bodyPublisher = HttpRequest.BodyPublishers.ofString(\"\"\"
+      {{body}}\"\"\");
+""";
+
+  String kTemplateJsonBody = """
+      HttpRequest.BodyPublisher bodyPublisher = HttpRequest.BodyPublishers.ofString(\"\"\"
+{{body}}\"\"\");
+""";
+
+  String kTemplateFormData = """
+      String boundary = "{{boundary}}";
+      Map<Object, Object> data = new HashMap<>();
+      {% for field in fields %}
+      {% if field.type == "file" %}data.put("{{field.name}}", Paths.get("{{field.value}}"));{% else %}data.put("{{field.name}}", "{{field.value}}");{% endif %}{% endfor %}
+      HttpRequest.BodyPublisher bodyPublisher = buildMultipartFormData(data, boundary);
+""";
+
+  String kTemplateHeader = """
+      requestBuilder = requestBuilder.headers({% for header, value in headers %}
+        "{{header}}", "{{value}}"{% if not loop.last %},{% endif %}{% endfor %}
+      );
+
+""";
+
+  final String kTemplateEnd = """
+      HttpResponse<String> response = client.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofString());
+      System.out.println("Response body: " + response.body());
+      System.out.println("Response code: " + response.statusCode());
+    } catch (IOException | InterruptedException e) {
+      System.out.println("An error occurred: " + e.getMessage());
     }
+  }
+  {% if hasFormData %}
+  private static HttpRequest.BodyPublisher buildMultipartFormData(Map<Object, Object> data, String boundary) throws IOException {
+    var byteArrays = new ArrayList<byte[]>();
+    var CRLF = "\\r\\n".getBytes(StandardCharsets.UTF_8);
+
+    for (Map.Entry<Object, Object> entry : data.entrySet()) {
+        byteArrays.add(("--" + boundary + "\\r\\n").getBytes(StandardCharsets.UTF_8));
+        if (entry.getValue() instanceof Path) {
+            var file = (Path) entry.getValue();
+            var fileName = file.getFileName().toString();
+            byteArrays.add(("Content-Disposition: form-data; name=\\"" + entry.getKey() + "\\"; filename=\\"" + fileName + "\\"\\r\\n").getBytes(StandardCharsets.UTF_8));
+            byteArrays.add(("Content-Type: " + Files.probeContentType(file) + "\\r\\n\\r\\n").getBytes(StandardCharsets.UTF_8));
+            byteArrays.add(Files.readAllBytes(file));
+            byteArrays.add(CRLF);
+        } else {
+            byteArrays.add(("Content-Disposition: form-data; name=\\"" + entry.getKey() + "\\"\\r\\n\\r\\n").getBytes(StandardCharsets.UTF_8));
+            byteArrays.add(entry.getValue().toString().getBytes(StandardCharsets.UTF_8));
+            byteArrays.add(CRLF);
+        }
+    }
+    byteArrays.add(("--" + boundary + "--\\r\\n").getBytes(StandardCharsets.UTF_8));
+
+    return HttpRequest.BodyPublishers.ofByteArrays(byteArrays);
+  }{% endif %}
 }
-\n
 """;
 
   String? getCode(
-    RequestModel requestModel,
-  ) {
+    RequestModel requestModel, {
+    String? boundary,
+  }) {
     try {
       String result = "";
-      bool hasQuery = false;
-      bool hasBody = false;
-      bool hasJsonBody = false;
+      var requestBody = requestModel.requestBody;
+      String url = requestModel.url;
+
+      result += jj.Template(kTemplateStart).render({
+        "hasFormData": requestModel.hasFormData,
+      });
 
       var rec = getValidRequestUri(
-        requestModel.url,
+        url,
         requestModel.enabledRequestParams,
       );
+
       Uri? uri = rec.$1;
 
+      var harJson =
+          requestModelToHARJsonRequest(requestModel, useEnabled: true);
+
       if (uri != null) {
-        String url = stripUriParams(uri);
+        var templateUrl = jj.Template(kTemplateUrl);
+        result += templateUrl.render({"url": harJson["url"]});
 
-        if (uri.hasQuery) {
-          var params = uri.queryParameters;
-          if (params.isNotEmpty) {
-            hasQuery = true;
-            var templateParams = jj.Template(kTemplateUrlQuery);
-            result += templateParams.render({"url": url, "params": uri.query});
-          }
+        String? bodyPublisher = "";
+        if (requestModel.hasTextData) {
+          var templateBody = jj.Template(kTemplateRawBody);
+          bodyPublisher = templateBody.render({"body": requestBody});
+        } else if (requestModel.hasJsonData) {
+          var templateBody = jj.Template(kTemplateJsonBody);
+          bodyPublisher = templateBody.render({"body": requestBody});
+        } else if (requestModel.hasFormData) {
+          var templateFormData = jj.Template(kTemplateFormData);
+          bodyPublisher = templateFormData.render({
+            "fields": requestModel.formDataMapList,
+            "boundary": boundary,
+          });
         }
 
-        if (!hasQuery) {
-          var templateUrl = jj.Template(kTemplateUrl);
-          result += templateUrl.render({"url": url});
-        }
-        var rM = requestModel.copyWith(url: url);
+        result += bodyPublisher;
 
-        var harJson = requestModelToHARJsonRequest(rM, useEnabled: true);
-
-        var method = requestModel.method;
-        var requestBody = requestModel.requestBody;
-        if (requestModel.hasFormData &&
-            requestModel.formDataMapList.isNotEmpty &&
-            kMethodsWithBody.contains(method)) {
-          var formDataList = requestModel.formDataMapList;
-          result += """
-            StringBuilder formData = new StringBuilder();
-            formData.append(""";
-
-          for (var formDataMap in formDataList) {
-            result += '"""${formDataMap['name']}=${formDataMap['value']}&""",';
-          }
-
-          result = result.substring(0, result.length - 1);
-          result += ");\n";
-          hasBody = true;
-        } else if (kMethodsWithBody.contains(method) && requestBody != null) {
-          var contentLength = utf8.encode(requestBody).length;
-          if (contentLength > 0) {
-            var templateBody = jj.Template(kTemplateRequestBody);
-            hasBody = true;
-            hasJsonBody =
-                requestBody.startsWith("{") && requestBody.endsWith("}");
-            if (harJson["postData"]?["text"] != null) {
-              result += templateBody.render({
-                "body": kEncoder.convert(harJson["postData"]["text"]).substring(
-                    1, kEncoder.convert(harJson["postData"]["text"]).length - 1)
-              });
-            }
-          }
-        }
-
-        result = kTemplateStart + result;
-        result += kStringRequestStart;
+        var methodTemplate = jj.Template(kTemplateMethod);
+        result += methodTemplate.render({
+          "method": requestModel.method.name,
+          "hasBody": requestModel.hasBody,
+        });
 
         var headersList = requestModel.enabledRequestHeaders;
-        var contentType = requestModel.requestBodyContentType.header;
-        if (hasBody &&
-            !requestModel.enabledHeadersMap.containsKey('Content-Type')) {
-          result =
-              """$result                .header("Content-Type", "$contentType")\n""";
-        }
-        if (headersList != null) {
+        if (headersList != null || requestModel.hasBody) {
           var headers = requestModel.enabledHeadersMap;
+          if (requestModel.hasJsonData || requestModel.hasTextData) {
+            headers.putIfAbsent(kHeaderContentType,
+                () => requestModel.requestBodyContentType.header);
+          }
+          if (requestModel.hasFormData) {
+            var formDataHeader = jj.Template(kTemplateFormHeaderContentType);
+            headers.putIfAbsent(
+                kHeaderContentType,
+                () => formDataHeader.render({
+                      "boundary": boundary,
+                    }));
+          }
           if (headers.isNotEmpty) {
-            result += getHeaders(headers, hasJsonBody);
+            var templateHeader = jj.Template(kTemplateHeader);
+            result += templateHeader.render({
+              "headers": headers,
+            });
           }
         }
 
-        var templateRequestEnd = jj.Template(kTemplateRequestEnd);
-
-        if (kMethodsWithBody.contains(method)) {
-          result += templateRequestEnd.render({
-            "method": method.name.toUpperCase(),
-            "body": hasBody
-                ? "BodyPublishers.ofString(body)"
-                : "BodyPublishers.noBody()"
-          });
-        } else {
-          result += templateRequestEnd
-              .render({"method": method.name.toUpperCase(), "body": ""});
-        }
+        var templateEnd = jj.Template(kTemplateEnd);
+        result += templateEnd.render({
+          "hasFormData": requestModel.hasFormData,
+          "boundary": boundary,
+        });
       }
-      return result;
+
+      return result.replaceAll(RegExp('\\n\\n+'), '\n\n');
     } catch (e) {
       return null;
     }
-  }
-
-  String getHeaders(Map<String, String> headers, hasJsonBody) {
-    String result = "";
-    for (final k in headers.keys) {
-      if (k.toLowerCase() == 'authorization') {
-        result = """$result                .header("$k", "${headers[k]}")\n""";
-      } else {
-        result = """$result                .header("$k", "${headers[k]}")\n""";
-      }
-    }
-    return result;
   }
 }
