@@ -132,10 +132,9 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                               onPressed: () async {
                                 var pickedResult = await pickFile();
                                 if (pickedResult != null &&
-                                    pickedResult.files.isNotEmpty &&
-                                    pickedResult.files.first.path != null) {
+                                    pickedResult.path.isNotEmpty) {
                                   formRows[idx] = formRows[idx].copyWith(
-                                    value: pickedResult.files.first.path!,
+                                    value: pickedResult.path,
                                   );
                                   setState(() {});
                                   _onFieldChange(selectedId!);
