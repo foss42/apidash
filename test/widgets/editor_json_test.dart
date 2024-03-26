@@ -1,21 +1,21 @@
+import 'package:apidash/widgets/editor_json.dart';
 import 'package:code_text_field/code_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:apidash/widgets/editor.dart';
 import '../test_consts.dart';
 
 void main() {
-  testWidgets('Testing Editor', (tester) async {
+  testWidgets('Testing JSON Editor', (tester) async {
     dynamic changedValue;
     await tester.pumpWidget(
       MaterialApp(
-        title: 'Editor',
+        title: 'JSON Editor',
         theme: kThemeDataLight,
         home: Scaffold(
           body: Column(children: [
             Expanded(
-              child: TextFieldEditor(
+              child: JsonTextFieldEditor(
                 fieldKey: '2',
                 onChanged: (value) {
                   changedValue = value;
@@ -29,9 +29,20 @@ void main() {
 
     expect(find.byType(CodeField), findsOneWidget);
     expect(find.byKey(const Key("2")), findsOneWidget);
-    expect(find.text('Enter content (body)'), findsOneWidget);
+    expect(find.text('Enter content (json)'), findsOneWidget);
     var txtForm = find.byKey(const Key("2"));
-    await tester.enterText(txtForm, 'entering 123 for testing content body');
+    await tester.enterText(txtForm, r'''[
+  {
+    "title": "apples",
+    "count": [12000, 20000],
+    "description": {"text": "...", "sensitive": false}
+  },
+  {
+    "title": "oranges",
+    "count": [17500, null],
+    "description": {"text": "...", "sensitive": false}
+  }
+]''');
     await tester.pump();
     await tester.pumpAndSettle();
 
@@ -41,7 +52,18 @@ void main() {
 
     await tester.pump();
     await tester.pumpAndSettle();
-    expect(changedValue, 'entering 123 for testing content body');
+    expect(changedValue, r'''[
+  {
+    "title": "apples",
+    "count": [12000, 20000],
+    "description": {"text": "...", "sensitive": false}
+  },
+  {
+    "title": "oranges",
+    "count": [17500, null],
+    "description": {"text": "...", "sensitive": false}
+  }
+]''');
   });
   testWidgets('Testing Editor Dark theme', (tester) async {
     dynamic changedValue;
@@ -52,7 +74,7 @@ void main() {
         home: Scaffold(
           body: Column(children: [
             Expanded(
-              child: TextFieldEditor(
+              child: JsonTextFieldEditor(
                 fieldKey: '2',
                 onChanged: (value) {
                   changedValue = value;
@@ -67,9 +89,20 @@ void main() {
     expect(find.text('initial'), findsAtLeast(1));
     expect(find.byType(CodeField), findsOneWidget);
     expect(find.byKey(const Key("2")), findsOneWidget);
-    expect(find.text('Enter content (body)'), findsOneWidget);
+    expect(find.text('Enter content (json)'), findsOneWidget);
     var txtForm = find.byKey(const Key("2"));
-    await tester.enterText(txtForm, 'entering 123 for testing content body');
+    await tester.enterText(txtForm, r'''[
+  {
+    "title": "apples",
+    "count": [12000, 20000],
+    "description": {"text": "...", "sensitive": false}
+  },
+  {
+    "title": "oranges",
+    "count": [17500, null],
+    "description": {"text": "...", "sensitive": false}
+  }
+]''');
     await tester.pump();
     await tester.pumpAndSettle();
 
@@ -79,6 +112,17 @@ void main() {
 
     await tester.pump();
     await tester.pumpAndSettle();
-    expect(changedValue, 'entering 123 for testing content body');
+    expect(changedValue, r'''[
+  {
+    "title": "apples",
+    "count": [12000, 20000],
+    "description": {"text": "...", "sensitive": false}
+  },
+  {
+    "title": "oranges",
+    "count": [17500, null],
+    "description": {"text": "...", "sensitive": false}
+  }
+]''');
   });
 }

@@ -39,8 +39,7 @@ class EditRequestBody extends ConsumerWidget {
           Expanded(
             child: switch (contentType) {
               ContentType.formdata => const FormDataWidget(),
-              // TODO: Fix JsonTextFieldEditor & plug it here
-              ContentType.json => TextFieldEditor(
+              ContentType.json => JsonTextFieldEditor(
                   key: Key("$selectedId-json-body"),
                   fieldKey: "$selectedId-json-body-editor",
                   initialValue: requestModel?.requestBody,
