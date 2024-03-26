@@ -96,9 +96,7 @@ const kPh60 = EdgeInsets.symmetric(horizontal: 60);
 const kPh60v60 = EdgeInsets.symmetric(vertical: 60, horizontal: 60);
 const kP24CollectionPane = EdgeInsets.only(
   top: 24,
-  left: 4.0,
-  //right: 4.0,
-  // bottom: 8.0,
+  left: 8.0,
 );
 const kP8CollectionPane = EdgeInsets.only(
   top: 8.0,
