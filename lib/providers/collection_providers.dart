@@ -1,11 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'settings_providers.dart';
-import 'ui_providers.dart';
+import 'package:http/http.dart' as http;
+
+import '../consts.dart';
 import '../models/models.dart';
 import '../services/services.dart' show hiveHandler, HiveHandler, request;
 import '../utils/utils.dart' show getNewUuid, collectionToHAR;
-import '../consts.dart';
-import 'package:http/http.dart' as http;
+import 'settings_providers.dart';
+import 'ui_providers.dart';
 
 final selectedIdStateProvider = StateProvider<String?>((ref) => null);
 
@@ -24,13 +25,16 @@ final requestSequenceProvider = StateProvider<List<String>>((ref) {
   return ids ?? [];
 });
 
+final client = http.Client();
+
 final StateNotifierProvider<CollectionStateNotifier, Map<String, RequestModel>?>
-    collectionStateNotifierProvider =
-    StateNotifierProvider((ref) => CollectionStateNotifier(ref, hiveHandler));
+    collectionStateNotifierProvider = StateNotifierProvider(
+        (ref) => CollectionStateNotifier(ref, hiveHandler, client));
 
 class CollectionStateNotifier
     extends StateNotifier<Map<String, RequestModel>?> {
-  CollectionStateNotifier(this.ref, this.hiveHandler) : super(null) {
+  CollectionStateNotifier(this.ref, this.hiveHandler, this.httpClient)
+      : super(null) {
     var status = loadData();
     Future.microtask(() {
       if (status) {
@@ -46,6 +50,7 @@ class CollectionStateNotifier
   final Ref ref;
   final HiveHandler hiveHandler;
   final baseResponseModel = const ResponseModel();
+  final http.Client httpClient;
 
   bool hasId(String id) => state?.keys.contains(id) ?? false;
 
@@ -187,6 +192,7 @@ class CollectionStateNotifier
     (http.Response?, Duration?, String?)? responseRec = await request(
       requestModel,
       defaultUriScheme: defaultUriScheme,
+      client: httpClient,
     );
     late final RequestModel newRequestModel;
     if (responseRec.$1 == null) {

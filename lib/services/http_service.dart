@@ -1,14 +1,16 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:http/http.dart' as http;
-import 'package:apidash/utils/utils.dart';
-import 'package:apidash/models/models.dart';
+
 import 'package:apidash/consts.dart';
+import 'package:apidash/models/models.dart';
+import 'package:apidash/utils/utils.dart';
+import 'package:http/http.dart' as http;
 
 Future<(http.Response?, Duration?, String?)> request(
   RequestModel requestModel, {
   String defaultUriScheme = kDefaultUriScheme,
+  required http.Client client,
 }) async {
   (Uri?, String?) uriRec = getValidRequestUri(
     requestModel.url,
@@ -66,23 +68,25 @@ Future<(http.Response?, Duration?, String?)> request(
       }
       switch (requestModel.method) {
         case HTTPVerb.get:
-          response = await http.get(requestUrl, headers: headers);
+          response = await client.get(requestUrl, headers: headers);
           break;
         case HTTPVerb.head:
-          response = await http.head(requestUrl, headers: headers);
+          response = await client.head(requestUrl, headers: headers);
           break;
         case HTTPVerb.post:
-          response = await http.post(requestUrl, headers: headers, body: body);
+          response =
+              await client.post(requestUrl, headers: headers, body: body);
           break;
         case HTTPVerb.put:
-          response = await http.put(requestUrl, headers: headers, body: body);
+          response = await client.put(requestUrl, headers: headers, body: body);
           break;
         case HTTPVerb.patch:
-          response = await http.patch(requestUrl, headers: headers, body: body);
+          response =
+              await client.patch(requestUrl, headers: headers, body: body);
           break;
         case HTTPVerb.delete:
           response =
-              await http.delete(requestUrl, headers: headers, body: body);
+              await client.delete(requestUrl, headers: headers, body: body);
           break;
       }
       stopwatch.stop();
