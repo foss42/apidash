@@ -90,6 +90,27 @@ puts "Response Body: #{response.body}"
         boundary = "apidash_${boundary.replaceAll(RegExp("-"), "")}";
       }
 
+      var rec = getValidRequestUri(
+        requestModel.url,
+        requestModel.enabledRequestParams,
+      );
+
+      Uri? uri = rec.$1;
+
+      if (uri == null) {
+        return "";
+      }
+
+      var url = stripUriParams(uri);
+
+      result += kStringFaradayRequireStatement;
+      if (requestModel.hasFormDataContentType && requestModel.hasFileInFormData) {
+        result += kStringFaradayMultipartRequireStatement;
+      }
+
+      var templateRequestUrl = jj.Template(kTemplateRequestUrl);
+      result += templateRequestUrl.render({"url": url});
+
     } catch (e) {
       return null;
     }
