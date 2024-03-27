@@ -75,6 +75,7 @@ class CollectionStateNotifier
     final itemId = itemIds.removeAt(oldIdx);
     itemIds.insert(newIdx, itemId);
     ref.read(requestSequenceProvider.notifier).state = [...itemIds];
+    changed = true;
   }
 
   void remove(String id) {
