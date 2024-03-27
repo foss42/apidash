@@ -13,9 +13,9 @@ use GuzzleHttp\\Psr7\\Request;
 """;
 
   String kMultiPartBodyTemplate = """
-\$multipart = [
+\$multipart = new MultipartStream([
 {{fields_list}}
-];
+]);
 
 
 """;
@@ -68,7 +68,7 @@ echo \$res->getBody();
     [
         'name'     => '${field['name']}',
         'contents' => '${field['value']}'
-    ],''';
+    ],\n''';
           }).join(),
         });
         result += renderedMultiPartBody;
@@ -86,10 +86,9 @@ echo \$res->getBody();
         }
         var jsonString = '';
         m.forEach((key, value) {
-          jsonString += "\t\t\t\t'$key' => '$value', \n";
+          jsonString += "\t\t\t\t'$key' => '$value',\n";
         });
-        jsonString = jsonString.substring(
-            0, jsonString.length - 2); // Removing trailing comma and space
+        jsonString = jsonString.substring(0, jsonString.length - 2);
         result += templateParams.render({
           "params": jsonString,
         });
@@ -103,25 +102,27 @@ echo \$res->getBody();
           m[i["name"]] = i["value"];
         }
         var headersString = '';
+        var contentTypeAdded = false;
+
         m.forEach((key, value) {
-          headersString += "\t\t\t\t'$key' => '$value', \n";
+          if (key == 'Content-Type' && value.contains('multipart/form-data')) {
+            contentTypeAdded = false;
+          } else {
+            headersString += "\t\t\t\t'$key' => '$value',\n";
+          }
         });
-        if (requestModel.hasFormData) {
-          m['Content-Type'] = 'multipart/form-data';
+
+        if (requestModel.hasFormData && !contentTypeAdded) {
+          headersString +=
+              "\t\t\t\t'Content-Type' => 'multipart/form-data; boundary=' . \$multipart->getBoundary(), \n";
         }
-        headersString = headersString.substring(
-            0, headersString.length - 2); // Removing trailing comma and space
+        headersString = headersString.substring(0, headersString.length - 2);
         result += templateHeader.render({
           "headers": headersString,
         });
       }
 
       var templateBody = jj.Template(kTemplateBody);
-      if (requestModel.hasFormData && requestModel.formDataMapList.isNotEmpty) {
-        result += templateBody.render({
-          "body": "new MultipartStream(\$multipart)",
-        });
-      }
 
       if (harJson["postData"]?["text"] != null) {
         result += templateBody
@@ -135,12 +136,12 @@ echo \$res->getBody();
             var mimeType = postData["mimeType"];
             if (mimeType == "text/plain" || mimeType == "application/json") {
               return " \$body";
-            } else if (mimeType == "multipart/form-data") {
-              return " new MultipartStream(\$multipart)";
+            } else if (mimeType.contains("multipart/form-data")) {
+              return " \$multipart";
             }
           }
         }
-        return ""; // Return empty string if postData or formdata is not present
+        return "";
       }
 
       var templateRequest = jj.Template(kStringRequest);
@@ -148,8 +149,8 @@ echo \$res->getBody();
         "url": stripUrlParams(requestModel.url),
         "method": harJson["method"].toLowerCase(),
         "queryParams":
-            harJson["queryString"].isNotEmpty ? ". \$queryParamsStr," : "",
-        "headers": harJson["headers"].isNotEmpty ? " \$headers," : "",
+            harJson["queryString"].isNotEmpty ? ". \$queryParamsStr" : "",
+        "headers": harJson["headers"].isNotEmpty ? ", \$headers," : "",
         "body": getRequestBody(harJson),
       });
 
