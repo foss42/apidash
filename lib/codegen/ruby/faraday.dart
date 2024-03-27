@@ -72,4 +72,8 @@ response = conn.{{ method|lower }}(REQUEST_URL{% if doesMethodAcceptBody and con
 end\n
 """;
 
+  final String kStringResponse = """
+puts "Status Code: #{response.status}"
+puts "Response Body: #{response.body}"
+""";
 }
