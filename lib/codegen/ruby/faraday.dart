@@ -76,4 +76,10 @@ end\n
 puts "Status Code: #{response.status}"
 puts "Response Body: #{response.body}"
 """;
+
+  String? getCode(
+    RequestModel requestModel, {
+    String? boundary,
+  }) {
+  }
 }
