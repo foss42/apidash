@@ -147,6 +147,21 @@ puts "Response Body: #{response.body}"
         result += templateRequestOptionsBoundary.render({"boundary": boundary});
       }
 
+      var headers = requestModel.enabledHeadersMap;
+      if (requestModel.hasBody && !requestModel.hasContentTypeHeader) {
+        if (requestModel.hasJsonData || requestModel.hasTextData) {
+          headers["Content-Type"] = requestModel.requestBodyContentType.header;
+        } else if (requestModel.hasFormData) {
+          headers["Content-Type"] =
+              (requestModel.hasFileInFormData) ? "multipart/form-data" : "application/x-www-form-urlencoded";
+        }
+      }
+
+      if (headers.isNotEmpty) {
+        var templateRequestHeaders = jj.Template(kTemplateRequestHeaders);
+        result += templateRequestHeaders.render({"headers": headers});
+      }
+
     } catch (e) {
       return null;
     }
