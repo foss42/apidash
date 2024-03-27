@@ -1,11 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'settings_providers.dart';
-import 'ui_providers.dart';
+import 'package:http/http.dart' as http;
+
+import '../consts.dart';
 import '../models/models.dart';
 import '../services/services.dart' show hiveHandler, HiveHandler, request;
 import '../utils/utils.dart' show getNewUuid, collectionToHAR;
-import '../consts.dart';
-import 'package:http/http.dart' as http;
+import 'settings_providers.dart';
+import 'ui_providers.dart';
 
 final selectedIdStateProvider = StateProvider<String?>((ref) => null);
 
@@ -46,6 +47,7 @@ class CollectionStateNotifier
   final Ref ref;
   final HiveHandler hiveHandler;
   final baseResponseModel = const ResponseModel();
+  bool changed = false;
 
   bool hasId(String id) => state?.keys.contains(id) ?? false;
 
@@ -61,6 +63,7 @@ class CollectionStateNotifier
     var map = {...state!};
     map[id] = newRequestModel;
     state = map;
+    changed = true;
     ref
         .read(requestSequenceProvider.notifier)
         .update((state) => [id, ...state]);
@@ -94,6 +97,7 @@ class CollectionStateNotifier
     var map = {...state!};
     map.remove(id);
     state = map;
+    changed = true;
   }
 
   void clearResponse(String? id) {
@@ -107,6 +111,7 @@ class CollectionStateNotifier
     var map = {...state!};
     map[id] = newModel;
     state = map;
+    changed = true;
   }
 
   void duplicate(String id) {
@@ -123,6 +128,7 @@ class CollectionStateNotifier
     var map = {...state!};
     map[newId] = newModel;
     state = map;
+    changed = true;
 
     ref.read(requestSequenceProvider.notifier).state = [...itemIds];
     ref.read(selectedIdStateProvider.notifier).state = newId;
@@ -167,6 +173,7 @@ class CollectionStateNotifier
     var map = {...state!};
     map[id] = newModel;
     state = map;
+    changed = true;
   }
 
   Future<void> sendRequest(String id) async {
@@ -183,6 +190,7 @@ class CollectionStateNotifier
     var map = {...state!};
     map[id] = requestModel.copyWith(isWorking: true);
     state = map;
+    changed = true;
 
     (http.Response?, Duration?, String?)? responseRec = await request(
       requestModel,
@@ -213,6 +221,7 @@ class CollectionStateNotifier
     map = {...state!};
     map[id] = newRequestModel;
     state = map;
+    changed = true;
   }
 
   Future<void> clearData() async {
@@ -222,6 +231,7 @@ class CollectionStateNotifier
     ref.read(clearDataStateProvider.notifier).state = false;
     ref.read(requestSequenceProvider.notifier).state = [];
     state = {};
+    changed = true;
   }
 
   bool loadData() {
