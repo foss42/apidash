@@ -111,6 +111,22 @@ puts "Response Body: #{response.body}"
       var templateRequestUrl = jj.Template(kTemplateRequestUrl);
       result += templateRequestUrl.render({"url": url});
 
+      if (requestModel.hasFormData) {
+        jj.Template payload;
+        if (requestModel.hasFileInFormData) {
+          payload = jj.Template(kTemplateFormParamsWithFile);
+        } else {
+          payload = jj.Template(kTemplateFormParamsWithoutFile);
+        }
+        result += payload.render({"params": requestModel.formDataMapList});
+      } else if (requestModel.hasJsonData || requestModel.hasTextData) {
+        var templateBody = jj.Template(kTemplateBody);
+        result += templateBody.render({
+          "body": requestModel.requestBody, //
+          "boundary": boundary,
+        });
+      }
+
     } catch (e) {
       return null;
     }
