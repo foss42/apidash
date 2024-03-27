@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:path_provider/path_provider.dart';
 
 const String kDataBox = "apidash-data";
 const String kKeyDataBoxIds = "ids";
@@ -7,7 +8,8 @@ const String kKeyDataBoxIds = "ids";
 const String kSettingsBox = "apidash-settings";
 
 Future<void> openBoxes() async {
-  await Hive.initFlutter();
+  final supportDir = await getApplicationSupportDirectory();
+  await Hive.initFlutter(supportDir.path);
   await Hive.openBox(kDataBox);
   await Hive.openBox(kSettingsBox);
 }
