@@ -81,5 +81,10 @@ puts "Response Body: #{response.body}"
     RequestModel requestModel, {
     String? boundary,
   }) {
+    try {
+      String result = "";
+    } catch (e) {
+      return null;
+    }
   }
 }
