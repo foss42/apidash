@@ -20,4 +20,9 @@ require 'faraday'
   final String kStringFaradayMultipartRequireStatement = '''
 require 'faraday/multipart'
 ''';
+
+  final String kTemplateRequestUrl = """
+\nREQUEST_URL = URI("{{ url }}")\n\n
+""";
+
 }
