@@ -11,4 +11,13 @@ import 'package:apidash/models/models.dart' show RequestModel;
 //
 // Refer https://lostisland.github.io/faraday/#/getting-started/quick-start?id=get-head-delete-trace
 class RubyFaradayCodeGen {
+
+  final String kStringFaradayRequireStatement = """
+require 'uri'
+require 'faraday'
+""";
+
+  final String kStringFaradayMultipartRequireStatement = '''
+require 'faraday/multipart'
+''';
 }
