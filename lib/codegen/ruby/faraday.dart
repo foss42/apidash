@@ -25,4 +25,21 @@ require 'faraday/multipart'
 \nREQUEST_URL = URI("{{ url }}")\n\n
 """;
 
+  final String kTemplateBody = """
+PAYLOAD = <<-{{ boundary }}
+{{ body }}
+{{ boundary }}\n\n
+""";
+
+  final String kTemplateFormParamsWithFile = """
+PAYLOAD = {
+{% for param in params %}{% if param.type == "text" %}  "{{ param.name }}" => Faraday::Multipart::ParamPart.new("{{ param.value }}", "text/plain"),
+{% elif param.type == "file" %}  "{{ param.name }}" => Faraday::Multipart::FilePart.new("{{ param.value }}", "application/octet-stream"),{% endif %}{% endfor %}
+}\n\n
+""";
+
+  final String kTemplateFormParamsWithoutFile = """
+PAYLOAD = URI.encode_www_form({\n{% for param in params %}  "{{ param.name }}" => "{{ param.value }}",\n{% endfor %}})\n\n
+""";
+
 }
