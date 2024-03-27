@@ -127,6 +127,11 @@ puts "Response Body: #{response.body}"
         });
       }
 
+      // crreating faraday connection for request
+      var templateConnection = jj.Template(kTemplateConnection);
+      result += templateConnection.render({
+        "hasFile": requestModel.hasFormDataContentType && requestModel.hasFileInFormData //
+      });
     } catch (e) {
       return null;
     }
