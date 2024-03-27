@@ -42,4 +42,10 @@ PAYLOAD = {
 PAYLOAD = URI.encode_www_form({\n{% for param in params %}  "{{ param.name }}" => "{{ param.value }}",\n{% endfor %}})\n\n
 """;
 
+  final String kTemplateConnection = """
+conn = Faraday.new do |faraday|
+  faraday.adapter Faraday.default_adapter{% if hasFile %}\n  faraday.request :multipart{% endif %}
+end\n\n
+""";
+
 }
