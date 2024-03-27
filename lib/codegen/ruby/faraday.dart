@@ -48,4 +48,28 @@ conn = Faraday.new do |faraday|
 end\n\n
 """;
 
+  final String kTemplateRequestStart = """
+response = conn.{{ method|lower }}(REQUEST_URL{% if doesMethodAcceptBody and containsBody %}, PAYLOAD{% endif %}) do |req|\n
+""";
+
+  final String kTemplateRequestOptionsBoundary = """
+  req.options.boundary = "{{ boundary }}"\n
+""";
+
+  final String kTemplateRequestParams = """
+  req.params = {\n{% for key, val in params %}    "{{ key }}" => "{{ val }}",\n{% endfor %}  }\n
+""";
+
+  final String kTemplateRequestHeaders = """
+  req.headers = {\n{% for key, val in headers %}    "{{ key }}" => "{{ val }}",\n{% endfor %}  }\n
+""";
+
+  final String kStringDeleteRequestBody = """
+  req.body = PAYLOAD
+""";
+
+  final String kStringRequestEnd = """
+end\n
+""";
+
 }
