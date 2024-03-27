@@ -162,6 +162,21 @@ puts "Response Body: #{response.body}"
         result += templateRequestHeaders.render({"headers": headers});
       }
 
+      if (uri.hasQuery) {
+        var params = uri.queryParameters;
+        if (params.isNotEmpty) {
+          var templateRequestParams = jj.Template(kTemplateRequestParams);
+          result += templateRequestParams.render({"params": params});
+        }
+      }
+
+      if (requestModel.hasBody && requestModel.method == HTTPVerb.delete) {
+        result += kStringDeleteRequestBody;
+      }
+
+      result += kStringRequestEnd;
+      result += kStringResponse;
+      return result;
     } catch (e) {
       return null;
     }
