@@ -21,7 +21,7 @@ class CollectionPane extends ConsumerWidget {
       );
     }
     return Padding(
-      padding: kIsMacOS || kIsWindows ? kP24CollectionPane : kP8CollectionPane,
+      padding: kP8CollectionPane,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

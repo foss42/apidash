@@ -17,7 +17,7 @@ class SettingsPage extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: kPh20t40,
+          padding: kPh20t3,
           child: kIsDesktop
               ? Text("Settings",
                   style: Theme.of(context).textTheme.headlineLarge)

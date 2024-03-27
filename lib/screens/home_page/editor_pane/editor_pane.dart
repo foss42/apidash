@@ -18,19 +18,16 @@ class RequestEditorPane extends ConsumerWidget {
     if (selectedId == null) {
       return const RequestEditorDefault();
     } else {
-      return Padding(
-        padding: kIsMacOS || kIsWindows ? kPt24 : kPt8,
-        child: const Column(
-          children: [
-            RequestTabView(),
-            Expanded(
-              child: Padding(
-                padding: kP8,
-                child: RequestEditor(),
-              ),
+      return const Column(
+        children: [
+          RequestTabView(),
+          Expanded(
+            child: Padding(
+              padding: kP8,
+              child: RequestEditor(),
             ),
-          ],
-        ),
+          ),
+        ],
       );
     }
   }

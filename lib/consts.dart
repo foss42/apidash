@@ -87,10 +87,10 @@ const kPt5o10 =
 const kPh20 = EdgeInsets.symmetric(
   horizontal: 20,
 );
-const kPh20t40 = EdgeInsets.only(
+const kPh20t3 = EdgeInsets.only(
   left: 20,
   right: 20,
-  top: 40,
+  top: 3
 );
 const kPh60 = EdgeInsets.symmetric(horizontal: 60);
 const kPh60v60 = EdgeInsets.symmetric(vertical: 60, horizontal: 60);
