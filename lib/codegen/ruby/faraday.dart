@@ -132,6 +132,21 @@ puts "Response Body: #{response.body}"
       result += templateConnection.render({
         "hasFile": requestModel.hasFormDataContentType && requestModel.hasFileInFormData //
       });
+
+      // start of the request sending
+      var templateRequestStart = jj.Template(kTemplateRequestStart);
+      result += templateRequestStart.render({
+        "method": requestModel.method.name, //
+        "doesMethodAcceptBody":
+            kMethodsWithBody.contains(requestModel.method) && requestModel.method != HTTPVerb.delete, //
+        "containsBody": requestModel.hasBody, //
+      });
+
+      if (requestModel.hasFormDataContentType && requestModel.hasFileInFormData) {
+        var templateRequestOptionsBoundary = jj.Template(kTemplateRequestOptionsBoundary);
+        result += templateRequestOptionsBoundary.render({"boundary": boundary});
+      }
+
     } catch (e) {
       return null;
     }
