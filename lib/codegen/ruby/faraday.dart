@@ -83,6 +83,13 @@ puts "Response Body: #{response.body}"
   }) {
     try {
       String result = "";
+
+      if (boundary != null) {
+        // boundary needs to start with a character, hence we append apidash
+        // and remove hyphen characters from the existing boundary
+        boundary = "apidash_${boundary.replaceAll(RegExp("-"), "")}";
+      }
+
     } catch (e) {
       return null;
     }
