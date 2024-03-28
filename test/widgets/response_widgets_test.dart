@@ -34,7 +34,6 @@ void main() {
         home: Scaffold(
           body: SendingWidget(
             startSendingTime: DateTime.now(),
-            isTest: true,
           ),
         ),
       ),
