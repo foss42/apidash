@@ -1,6 +1,4 @@
 import 'dart:async';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http_parser/http_parser.dart';
@@ -38,8 +36,10 @@ class NotSentWidget extends StatelessWidget {
 
 class SendingWidget extends StatefulWidget {
   final DateTime? startSendingTime;
-  final bool isTest;
-  const SendingWidget({super.key, required this.startSendingTime, this.isTest=false});
+  const SendingWidget({
+    super.key,
+    required this.startSendingTime,
+  });
 
   @override
   State<SendingWidget> createState() => _SendingWidgetState();
@@ -53,8 +53,10 @@ class _SendingWidgetState extends State<SendingWidget> {
   void initState() {
     super.initState();
     if (widget.startSendingTime != null) {
-      _millisecondsElapsed = widget.isTest ? 0 :
-          DateTime.now().difference(widget.startSendingTime!).inMilliseconds;
+      _millisecondsElapsed =
+          (DateTime.now().difference(widget.startSendingTime!).inMilliseconds ~/
+                  100) *
+              100;
       _timer = Timer.periodic(const Duration(milliseconds: 100), _updateTimer);
     }
   }
@@ -85,7 +87,10 @@ class _SendingWidgetState extends State<SendingWidget> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.alarm),
+                Icon(
+                  Icons.alarm,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
                 const SizedBox(
                   width: 10,
                 ),
@@ -94,7 +99,9 @@ class _SendingWidgetState extends State<SendingWidget> {
                   textAlign: TextAlign.center,
                   overflow: TextOverflow.fade,
                   softWrap: false,
-                  style: kTextStyleButton,
+                  style: kTextStyleButton.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
                 ),
               ],
             ),
@@ -103,7 +110,6 @@ class _SendingWidgetState extends State<SendingWidget> {
       ],
     );
   }
-
 }
 
 class ResponsePaneHeader extends StatelessWidget {
