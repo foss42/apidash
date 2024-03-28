@@ -5,6 +5,7 @@ import 'package:apidash/consts.dart';
 import 'package:flutter/foundation.dart';
 import 'package:printing/printing.dart' show PdfPreview;
 import 'package:flutter_svg/flutter_svg.dart' show SvgPicture;
+import 'package:apidash/widgets/video_previewer.dart';
 import '../test_consts.dart';
 
 void main() {
@@ -63,10 +64,7 @@ void main() {
         ),
       ),
     );
-
-    expect(
-        find.text("${kMimeTypeRaiseIssueStart}video/H264$kMimeTypeRaiseIssue"),
-        findsOneWidget);
+    expect(find.byType(VideoPreviewer), findsOneWidget);
   });
 
   testWidgets('Testing when type/subtype is model/step+xml', (tester) async {

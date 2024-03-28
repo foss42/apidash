@@ -157,7 +157,16 @@ Here is the complete list of mimetypes that can be directly previewed in API Das
 | File Type | Mimetype                   | Extension         | Comment  |
 | --------- | -------------------------- | ----------------- | -------- |
 | PDF       | `application/pdf`          | `.pdf`            |          |
-| CSV       | `text/csv`                 | `.csv`            | Can be improved |
+| Video     | `video/mp4`                | `.mp4`            |          |
+| Video     | `video/webm`               | `.webm`           |          |
+| Video     | `video/x-ms-wmv`           | `.wmv`            |          |
+| Video     | `video/x-ms-asf`           | `.wmv`            |          |
+| Video     | `video/avi`                | `.avi`            |          |
+| Video     | `video/msvideo`            | `.avi`            |          |
+| Video     | `video/x-msvideo`          | `.avi`            |          |
+| Video     | `video/quicktime`          | `.mov`            |          |
+| Video     | `video/x-quicktime`        | `.mov`            |          |
+| Video     | `video/x-matroska`         | `.mkv`            |          |
 | Image     | `image/apng`               | `.apng`           | Animated |
 | Image     | `image/avif`               | `.avif`           |          |
 | Image     | `image/bmp`                | `.bmp`            |          |
@@ -188,6 +197,7 @@ Here is the complete list of mimetypes that can be directly previewed in API Das
 | Audio     | `audio/x-m4a`              | `.m4a`            |          |
 | Audio     | `audio/wav`                | `.wav`            |          |
 | Audio     | `audio/wave`               | `.wav`            |          |
+| CSV       | `text/csv`                 | `.csv`            | Can be improved |
 
 We welcome PRs to add support for previewing other multimedia mimetypes. Please go ahead and raise an issue so that we can discuss the approach.
 We are adding support for other mimetypes with each release. But, if you are looking for any particular mimetype support, please go ahead and open an issue. We will prioritize it's addition.
