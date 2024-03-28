@@ -19,6 +19,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../test_consts.dart';
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -389,8 +391,7 @@ void main() {
         of: find.byType(URLField),
         matching: find.byType(TextFormField),
       );
-      const url = 'https://api.foss42.com/country/codes';
-      await tester.enterText(field, url);
+      await tester.enterText(field, kTestUrl);
       await tester.pump();
 
       // Tap on the "Send" button
@@ -434,8 +435,7 @@ void main() {
         of: find.byType(URLField),
         matching: find.byType(TextFormField),
       );
-      const url = 'https://api.foss42.com/country/codes';
-      await tester.enterText(field, url);
+      await tester.enterText(field, kTestUrl);
       await tester.pump();
 
       // Tap on the "Send" button
@@ -483,8 +483,7 @@ void main() {
         of: find.byType(URLField),
         matching: find.byType(TextFormField),
       );
-      const url = 'https://api.foss42.com/country/codes';
-      await tester.enterText(field, url);
+      await tester.enterText(field, kTestUrl);
       await tester.pump();
 
       // Tap on the "Send" button
@@ -541,8 +540,7 @@ void main() {
         of: find.byType(URLField),
         matching: find.byType(TextFormField),
       );
-      const url = 'https://api.foss42.com/country/codes';
-      await tester.enterText(field, url);
+      await tester.enterText(field, kTestUrl);
       await tester.pump();
 
       // Tap on the "Send" button
