@@ -332,6 +332,15 @@ class RequestItem extends ConsumerWidget {
                     .read(collectionStateNotifierProvider.notifier)
                     .duplicate(id);
               }
+
+              if(item==RequestItemMenuOption.multiple){
+                if (!deleteMultiple.contains(requestModel.id)) {
+                  deleteMultiple.add(requestModel.id);
+                  ref.read(deleteMultipleRequestsProvider.notifier).state = [
+                    ...deleteMultiple
+                  ];
+                }
+              }
             },
           ),
         ),

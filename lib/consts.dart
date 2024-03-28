@@ -258,7 +258,7 @@ final kColorHttpMethodPut = Colors.amber.shade900;
 final kColorHttpMethodPatch = kColorHttpMethodPut;
 final kColorHttpMethodDelete = Colors.red.shade800;
 
-enum RequestItemMenuOption { edit, delete, duplicate }
+enum RequestItemMenuOption { edit, delete, duplicate, multiple }
 
 enum HTTPVerb { get, head, post, put, patch, delete }
 

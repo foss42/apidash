@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
+import 'package:flutter/material.dart';
 
 class RequestCardMenu extends StatelessWidget {
   const RequestCardMenu({
@@ -23,13 +23,17 @@ class RequestCardMenu extends StatelessWidget {
           child: Text('Rename'),
         ),
         const PopupMenuItem<RequestItemMenuOption>(
-          value: RequestItemMenuOption.delete,
-          child: Text('Delete'),
-        ),
-        const PopupMenuItem<RequestItemMenuOption>(
           value: RequestItemMenuOption.duplicate,
           child: Text('Duplicate'),
         ),
+        const PopupMenuItem<RequestItemMenuOption>(
+          value: RequestItemMenuOption.delete,
+          child: Text('Delete'),
+        ),
+        const PopupMenuItem(
+          value: RequestItemMenuOption.multiple,
+          child: Text('Delete Multiple'),
+        )
       ],
     );
   }
