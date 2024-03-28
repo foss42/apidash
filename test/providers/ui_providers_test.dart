@@ -453,5 +453,164 @@ void main() {
       expect(container.read(codePaneVisibleStateProvider), true);
       expect(find.byType(CodePane), findsOneWidget);
     });
+
+    testWidgets("Hide/View Code button toggles the state", (tester) async {
+      await tester.pumpWidget(
+        const ProviderScope(
+          child: MaterialApp(
+            home: Scaffold(
+              body: RequestEditorPane(),
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byType(RequestEditorDefault), findsOneWidget);
+
+      // Tap on the "Plus New" button
+      Finder plusNewButton = find.descendant(
+        of: find.byType(RequestEditorDefault),
+        matching: find.byType(ElevatedButton),
+      );
+      await tester.tap(plusNewButton);
+      await tester.pump();
+
+      // Verify that NotSentWidget is visible
+      expect(find.byType(NotSentWidget), findsOneWidget);
+
+      // Add some data in URLTextField
+      Finder field = find.descendant(
+        of: find.byType(URLField),
+        matching: find.byType(TextFormField),
+      );
+      const url = 'https://api.foss42.com/country/codes';
+      await tester.enterText(field, url);
+      await tester.pump();
+
+      // Tap on the "Send" button
+      Finder sendButton = find.byType(SendButton);
+      await tester.tap(sendButton);
+      await tester.pump();
+
+      final editorPane = tester.element(find.byType(RequestEditorPane));
+      final container = ProviderScope.containerOf(editorPane);
+      final bool currentValue = container.read(codePaneVisibleStateProvider);
+
+      // Click on View Code button
+      await tester.tap(find.byIcon(Icons.code_rounded));
+      await tester.pump();
+
+      // Verify that the state value has changed
+      expect(container.read(codePaneVisibleStateProvider), !currentValue);
+      final bool newValue = container.read(codePaneVisibleStateProvider);
+
+      // Click on Hide Code button
+      await tester.tap(find.byIcon(Icons.code_off_rounded));
+      await tester.pump();
+
+      // Verify that the state value has changed
+      expect(container.read(codePaneVisibleStateProvider), !newValue);
+    });
+
+    testWidgets("That state persists across widget rebuilds", (tester) async {
+      await tester.pumpWidget(
+        const ProviderScope(
+          child: MaterialApp(
+            home: Scaffold(
+              body: RequestEditorPane(),
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byType(RequestEditorDefault), findsOneWidget);
+
+      // Tap on the "Plus New" button
+      Finder plusNewButton = find.descendant(
+        of: find.byType(RequestEditorDefault),
+        matching: find.byType(ElevatedButton),
+      );
+      await tester.tap(plusNewButton);
+      await tester.pump();
+
+      // Verify that NotSentWidget is visible
+      expect(find.byType(NotSentWidget), findsOneWidget);
+
+      // Add some data in URLTextField
+      Finder field = find.descendant(
+        of: find.byType(URLField),
+        matching: find.byType(TextFormField),
+      );
+      const url = 'https://api.foss42.com/country/codes';
+      await tester.enterText(field, url);
+      await tester.pump();
+
+      // Tap on the "Send" button
+      Finder sendButton = find.byType(SendButton);
+      await tester.tap(sendButton);
+      await tester.pump();
+
+      final editorPane = tester.element(find.byType(RequestEditorPane));
+      final container = ProviderScope.containerOf(editorPane);
+      final bool currentValue = container.read(codePaneVisibleStateProvider);
+
+      // Click on View Code button
+      await tester.tap(find.byIcon(Icons.code_rounded));
+      await tester.pump();
+
+      // Verify that the state value has changed
+      expect(container.read(codePaneVisibleStateProvider), !currentValue);
+      bool matcher = !currentValue;
+
+      // Rebuild the widget tree
+      await tester.pumpWidget(
+        const ProviderScope(
+          child: MaterialApp(
+            home: Scaffold(
+              body: RequestEditorPane(),
+            ),
+          ),
+        ),
+      );
+
+      // Verify that the value of codePaneVisibleStateProvider is still true
+      final containerAfterRebuild = ProviderScope.containerOf(editorPane);
+      bool actual = containerAfterRebuild.read(codePaneVisibleStateProvider);
+      expect(actual, matcher);
+    });
+
+    testWidgets("That it is properly disposed", (tester) async {
+      await tester.pumpWidget(
+        const ProviderScope(
+          child: MaterialApp(
+            home: Scaffold(
+              body: RequestEditorPane(),
+            ),
+          ),
+        ),
+      );
+
+      // Verify that codePaneVisibleStateProvider is present
+      final editorPane = tester.element(find.byType(RequestEditorPane));
+      final container = ProviderScope.containerOf(editorPane);
+      expect(container.read(codePaneVisibleStateProvider).runtimeType, bool);
+
+      // Update the widget tree to dispose the provider
+      await tester.pumpWidget(const MaterialApp());
+
+      // Verify that the provider was disposed
+      expect(() => container.read(codePaneVisibleStateProvider),
+          throwsA(isA<StateError>()));
+      expect(
+        () => container.read(codePaneVisibleStateProvider),
+        throwsA(
+          isA<StateError>().having(
+            (e) => e.message,
+            'message',
+            contains('was already disposed'),
+          ),
+        ),
+      );
+    });
   });
 }
