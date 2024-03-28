@@ -8,7 +8,7 @@ const String kKeyDataBoxIds = "ids";
 const String kSettingsBox = "apidash-settings";
 
 Future<void> openBoxes() async {
-  final supportDir = await getApplicationSupportDirectory();
+  final supportDir = await getLibraryDirectory();
   await Hive.initFlutter(supportDir.path);
   await Hive.openBox(kDataBox);
   await Hive.openBox(kSettingsBox);
