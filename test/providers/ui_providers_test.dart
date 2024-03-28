@@ -214,13 +214,13 @@ void main() {
   });
 
   group("Testing selectedIdEditStateProvider", () {
-    testWidgets('It should have an initial value of null', (tester) async {
+    testWidgets(
+        'selectedIdEditStateProvider should have an initial value of null',
+        (tester) async {
       await tester.pumpWidget(
         const ProviderScope(
           child: MaterialApp(
-            home: Scaffold(
-              body: CollectionPane(),
-            ),
+            home: CollectionPane(),
           ),
         ),
       );
@@ -237,9 +237,7 @@ void main() {
       await tester.pumpWidget(
         const ProviderScope(
           child: MaterialApp(
-            home: Scaffold(
-              body: CollectionPane(),
-            ),
+            home: CollectionPane(),
           ),
         ),
       );
@@ -269,9 +267,7 @@ void main() {
       await tester.pumpWidget(
         const ProviderScope(
           child: MaterialApp(
-            home: Scaffold(
-              body: CollectionPane(),
-            ),
+            home: CollectionPane(),
           ),
         ),
       );
@@ -307,9 +303,7 @@ void main() {
       await tester.pumpWidget(
         const ProviderScope(
           child: MaterialApp(
-            home: Scaffold(
-              body: CollectionPane(),
-            ),
+            home: CollectionPane(),
           ),
         ),
       );
