@@ -62,6 +62,7 @@ class CellField extends StatelessWidget {
         color: clrScheme.onSurface,
       ),
       decoration: InputDecoration(
+        contentPadding: const EdgeInsets.only(bottom: 8),
         hintStyle: kCodeStyle.copyWith(
           color: clrScheme.outline.withOpacity(
             kHintOpacity,
