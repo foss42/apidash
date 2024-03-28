@@ -289,6 +289,7 @@ enum CodegenLanguage {
   kotlinOkHttp("Kotlin (okhttp3)", "java", "kt"),
   pythonRequests("Python (requests)", "python", "py"),
   pythonHttpClient("Python (http.client)", "python", "py"),
+  rubyFaraday("Ruby (faraday)", "ruby", "rb"),
   rustActix("Rust (Actix Client)", "rust", "rs"),
   rustReqwest("Rust (reqwest)", "rust", "rs"),
   rustCurl("Rust (curl-rust)", "rust", "rs"),
