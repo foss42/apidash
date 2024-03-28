@@ -1,3 +1,4 @@
+import 'package:apidash/codegen/kotlin/retrofit.dart';
 import 'package:apidash/models/models.dart' show RequestModel;
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart' show getNewUuid;
@@ -67,6 +68,8 @@ class Codegen {
         return JuliaHttpClientCodeGen().getCode(rM);
       case CodegenLanguage.kotlinOkHttp:
         return KotlinOkHttpCodeGen().getCode(rM);
+      case CodegenLanguage.kotlinRetrofit:
+        return KotlinRetrofitCodeGen().getCode(rM);
       case CodegenLanguage.pythonHttpClient:
         return PythonHttpClientCodeGen()
             .getCode(rM, boundary: boundary ?? getNewUuid());

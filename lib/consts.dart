@@ -287,6 +287,7 @@ enum CodegenLanguage {
   nodejsAxios("node.js (axios)", "javascript", "js"),
   nodejsFetch("node.js (fetch)", "javascript", "js"),
   kotlinOkHttp("Kotlin (okhttp3)", "java", "kt"),
+  kotlinRetrofit("Kotlin (Retrofit)", "java", "kt"),
   pythonRequests("Python (requests)", "python", "py"),
   pythonHttpClient("Python (http.client)", "python", "py"),
   rustActix("Rust (Actix Client)", "rust", "rs"),
