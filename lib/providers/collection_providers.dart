@@ -25,16 +25,13 @@ final requestSequenceProvider = StateProvider<List<String>>((ref) {
   return ids ?? [];
 });
 
-final client = http.Client();
-
 final StateNotifierProvider<CollectionStateNotifier, Map<String, RequestModel>?>
-    collectionStateNotifierProvider = StateNotifierProvider(
-        (ref) => CollectionStateNotifier(ref, hiveHandler, client));
+    collectionStateNotifierProvider =
+    StateNotifierProvider((ref) => CollectionStateNotifier(ref, hiveHandler));
 
 class CollectionStateNotifier
     extends StateNotifier<Map<String, RequestModel>?> {
-  CollectionStateNotifier(this.ref, this.hiveHandler, this.httpClient)
-      : super(null) {
+  CollectionStateNotifier(this.ref, this.hiveHandler) : super(null) {
     var status = loadData();
     Future.microtask(() {
       if (status) {
@@ -50,7 +47,6 @@ class CollectionStateNotifier
   final Ref ref;
   final HiveHandler hiveHandler;
   final baseResponseModel = const ResponseModel();
-  final http.Client httpClient;
 
   bool hasId(String id) => state?.keys.contains(id) ?? false;
 
@@ -192,7 +188,6 @@ class CollectionStateNotifier
     (http.Response?, Duration?, String?)? responseRec = await request(
       requestModel,
       defaultUriScheme: defaultUriScheme,
-      client: httpClient,
     );
     late final RequestModel newRequestModel;
     if (responseRec.$1 == null) {

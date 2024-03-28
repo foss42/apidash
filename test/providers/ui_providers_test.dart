@@ -18,8 +18,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:http/http.dart' as http;
-import 'package:http/testing.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -349,19 +347,9 @@ void main() {
   group('Testing codePaneVisibleStateProvider', () {
     testWidgets("It should have have an initial value of false",
         (tester) async {
-      // Mock the http client to return a 200 response
-      final mockClient = MockClient((request) async {
-        return http.Response('{"countries": "codes"}', 200);
-      });
-
       await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            collectionStateNotifierProvider.overrideWith(
-              (ref) => CollectionStateNotifier(ref, hiveHandler, mockClient),
-            )
-          ],
-          child: const MaterialApp(
+        const ProviderScope(
+          child: MaterialApp(
             home: RequestEditorPane(),
           ),
         ),
@@ -375,19 +363,9 @@ void main() {
 
     testWidgets("When state is false ResponsePane should be visible",
         (tester) async {
-      // Mock the http client to return a 200 response
-      final mockClient = MockClient((request) async {
-        return http.Response('{"countries": "codes"}', 200);
-      });
-
       await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            collectionStateNotifierProvider.overrideWith(
-              (ref) => CollectionStateNotifier(ref, hiveHandler, mockClient),
-            )
-          ],
-          child: const MaterialApp(
+        const ProviderScope(
+          child: MaterialApp(
             home: RequestEditorPane(),
           ),
         ),
@@ -428,19 +406,9 @@ void main() {
 
     testWidgets("When state is true CodePane should be visible",
         (tester) async {
-      // Mock the http client to return a 200 response
-      final mockClient = MockClient((request) async {
-        return http.Response('{"countries": "codes"}', 200);
-      });
-
       await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            collectionStateNotifierProvider.overrideWith(
-              (ref) => CollectionStateNotifier(ref, hiveHandler, mockClient),
-            )
-          ],
-          child: const MaterialApp(
+        const ProviderScope(
+          child: MaterialApp(
             home: Scaffold(
               body: RequestEditorPane(),
             ),
