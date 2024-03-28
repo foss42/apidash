@@ -1,11 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'settings_providers.dart';
-import 'ui_providers.dart';
+import 'package:http/http.dart' as http;
+
+import '../consts.dart';
 import '../models/models.dart';
 import '../services/services.dart' show hiveHandler, HiveHandler, request;
 import '../utils/utils.dart' show getNewUuid, collectionToHAR;
-import '../consts.dart';
-import 'package:http/http.dart' as http;
+import 'settings_providers.dart';
+import 'ui_providers.dart';
 
 final selectedIdStateProvider = StateProvider<String?>((ref) => null);
 
@@ -65,6 +66,7 @@ class CollectionStateNotifier
         .read(requestSequenceProvider.notifier)
         .update((state) => [id, ...state]);
     ref.read(selectedIdStateProvider.notifier).state = newRequestModel.id;
+    ref.read(hasUnsavedChangesProvider.notifier).state = true;
   }
 
   void reorder(int oldIdx, int newIdx) {
@@ -72,6 +74,7 @@ class CollectionStateNotifier
     final itemId = itemIds.removeAt(oldIdx);
     itemIds.insert(newIdx, itemId);
     ref.read(requestSequenceProvider.notifier).state = [...itemIds];
+    ref.read(hasUnsavedChangesProvider.notifier).state = true;
   }
 
   void remove(String id) {
@@ -94,6 +97,7 @@ class CollectionStateNotifier
     var map = {...state!};
     map.remove(id);
     state = map;
+    ref.read(hasUnsavedChangesProvider.notifier).state = true;
   }
 
   void clearResponse(String? id) {
@@ -107,6 +111,7 @@ class CollectionStateNotifier
     var map = {...state!};
     map[id] = newModel;
     state = map;
+    ref.read(hasUnsavedChangesProvider.notifier).state = true;
   }
 
   void duplicate(String id) {
@@ -126,6 +131,7 @@ class CollectionStateNotifier
 
     ref.read(requestSequenceProvider.notifier).state = [...itemIds];
     ref.read(selectedIdStateProvider.notifier).state = newId;
+    ref.read(hasUnsavedChangesProvider.notifier).state = true;
   }
 
   void update(
@@ -167,6 +173,7 @@ class CollectionStateNotifier
     var map = {...state!};
     map[id] = newModel;
     state = map;
+    ref.read(hasUnsavedChangesProvider.notifier).state = true;
   }
 
   Future<void> sendRequest(String id) async {
@@ -216,6 +223,7 @@ class CollectionStateNotifier
     map = {...state!};
     map[id] = newRequestModel;
     state = map;
+    ref.read(hasUnsavedChangesProvider.notifier).state = true;
   }
 
   Future<void> clearData() async {
@@ -225,6 +233,7 @@ class CollectionStateNotifier
     ref.read(clearDataStateProvider.notifier).state = false;
     ref.read(requestSequenceProvider.notifier).state = [];
     state = {};
+    ref.read(hasUnsavedChangesProvider.notifier).state = true;
   }
 
   bool loadData() {
@@ -265,6 +274,7 @@ class CollectionStateNotifier
     }
     await hiveHandler.removeUnused();
     ref.read(saveDataStateProvider.notifier).state = false;
+    ref.read(hasUnsavedChangesProvider.notifier).state = false;
   }
 
   Future<Map<String, dynamic>> exportDataToHAR() async {

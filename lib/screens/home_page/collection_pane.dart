@@ -15,6 +15,7 @@ class CollectionPane extends ConsumerWidget {
     final overlayWidget = OverlayWidgetTemplate(context: context);
     final collection = ref.watch(collectionStateNotifierProvider);
     final savingData = ref.watch(saveDataStateProvider);
+    final hasUnsavedChanges = ref.watch(hasUnsavedChangesProvider);
     if (collection == null) {
       return const Center(
         child: CircularProgressIndicator(),
@@ -31,7 +32,7 @@ class CollectionPane extends ConsumerWidget {
               alignment: WrapAlignment.spaceBetween,
               children: [
                 TextButton.icon(
-                  onPressed: savingData
+                  onPressed: (savingData || !hasUnsavedChanges)
                       ? null
                       : () async {
                           overlayWidget.show(
