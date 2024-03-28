@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:davi/davi.dart';
+import 'package:data_table_2/data_table_2.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/models/models.dart';
@@ -40,32 +40,53 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
         .select((value) => value?.requestFormDataList?.length));
     var rF = ref.read(selectedRequestModelProvider)?.requestFormDataList;
     bool isFormDataEmpty = rF == null || rF.isEmpty;
-    List<FormDataModel> rows = (isFormDataEmpty)
+    formRows = isFormDataEmpty
         ? [
             kFormDataEmptyModel,
           ]
-        : rF;
-    formRows = isFormDataEmpty ? rows : rows + [kFormDataEmptyModel];
+        : rF +
+            [
+              kFormDataEmptyModel,
+            ];
     isAddingRow = false;
 
-    DaviModel<FormDataModel> daviModelRows = DaviModel<FormDataModel>(
-      rows: formRows,
-      columns: [
-        DaviColumn(
-          cellPadding: kPv2,
-          name: kNameField,
-          grow: 4,
-          cellBuilder: (_, row) {
-            int idx = row.index;
-            bool isLast = idx + 1 == formRows.length;
-            return Theme(
-              data: Theme.of(context),
-              child: FormDataField(
-                keyId: "$selectedId-$idx-form-v-$seed",
-                initialValue: formRows[idx].name,
+    List<DataColumn> columns = const [
+      DataColumn2(
+        label: Text(kNameField),
+        size: ColumnSize.M,
+      ),
+      DataColumn2(
+        label: Text('='),
+        fixedWidth: 20,
+      ),
+      DataColumn2(
+        label: Text(''),
+        fixedWidth: 70,
+      ),
+      DataColumn2(
+        label: Text(kNameValue),
+        size: ColumnSize.L,
+      ),
+      DataColumn2(
+        label: Text(''),
+        fixedWidth: 32,
+      ),
+    ];
+
+    List<DataRow> dataRows = List<DataRow>.generate(
+      formRows.length,
+      (index) {
+        bool isLast = index + 1 == formRows.length;
+        return DataRow(
+          key: ValueKey("$selectedId-$index-form-row-$seed"),
+          cells: <DataCell>[
+            DataCell(
+              CellField(
+                keyId: "$selectedId-$index-form-k-$seed",
+                initialValue: formRows[index].name,
                 hintText: kHintAddFieldName,
                 onChanged: (value) {
-                  formRows[idx] = formRows[idx].copyWith(name: value);
+                  formRows[index] = formRows[index].copyWith(name: value);
                   if (isLast && !isAddingRow) {
                     isAddingRow = true;
                     formRows.add(kFormDataEmptyModel);
@@ -73,13 +94,25 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                   _onFieldChange(selectedId!);
                 },
                 colorScheme: Theme.of(context).colorScheme,
-                formDataType: formRows[idx].type,
-                onFormDataTypeChanged: (value) {
-                  bool hasChanged = formRows[idx].type != value;
-                  formRows[idx] = formRows[idx].copyWith(
+              ),
+            ),
+            DataCell(
+              Center(
+                child: Text(
+                  "=",
+                  style: kCodeStyle,
+                ),
+              ),
+            ),
+            DataCell(
+              DropdownButtonFormData(
+                formDataType: formRows[index].type,
+                onChanged: (value) {
+                  bool hasChanged = formRows[index].type != value;
+                  formRows[index] = formRows[index].copyWith(
                     type: value ?? FormDataType.text,
                   );
-                  formRows[idx] = formRows[idx].copyWith(value: "");
+                  formRows[index] = formRows[index].copyWith(value: "");
                   if (isLast && hasChanged) {
                     formRows.add(kFormDataEmptyModel);
                   }
@@ -87,118 +120,83 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                   _onFieldChange(selectedId!);
                 },
               ),
-            );
-          },
-          sortable: false,
-        ),
-        DaviColumn(
-          width: 40,
-          cellPadding: kPv2,
-          cellAlignment: Alignment.center,
-          cellBuilder: (_, row) {
-            return Text(
-              "=",
-              style: kCodeStyle,
-            );
-          },
-        ),
-        DaviColumn(
-          name: kNameValue,
-          grow: 4,
-          cellPadding: kPv2,
-          cellBuilder: (_, row) {
-            int idx = row.index;
-            bool isLast = idx + 1 == formRows.length;
-            return formRows[idx].type == FormDataType.file
-                ? Align(
-                    alignment: Alignment.centerLeft,
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Theme(
-                            data: Theme.of(context),
-                            child: ElevatedButton.icon(
-                              icon: const Icon(
-                                Icons.snippet_folder_rounded,
-                                size: 20,
-                              ),
-                              style: ButtonStyle(
-                                shape: MaterialStatePropertyAll(
-                                  RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(6),
-                                  ),
-                                ),
-                              ),
-                              onPressed: () async {
-                                var pickedResult = await pickFile();
-                                if (pickedResult != null &&
-                                    pickedResult.path.isNotEmpty) {
-                                  formRows[idx] = formRows[idx].copyWith(
-                                    value: pickedResult.path,
-                                  );
-                                  setState(() {});
-                                  _onFieldChange(selectedId!);
-                                }
-                              },
-                              label: Text(
-                                (formRows[idx].type == FormDataType.file &&
-                                        formRows[idx].value.isNotEmpty)
-                                    ? formRows[idx].value.toString()
-                                    : kLabelSelectFile,
-                                textAlign: TextAlign.center,
-                                overflow: TextOverflow.ellipsis,
-                                style: kFormDataButtonLabelTextStyle,
-                              ),
-                            ),
-                          ),
+            ),
+            DataCell(
+              formRows[index].type == FormDataType.file
+                  ? ElevatedButton.icon(
+                      icon: const Icon(
+                        Icons.snippet_folder_rounded,
+                        size: 20,
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size.fromHeight(kDataTableRowHeight),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(6),
                         ),
-                      ],
+                      ),
+                      onPressed: () async {
+                        var pickedResult = await pickFile();
+                        if (pickedResult != null &&
+                            pickedResult.path.isNotEmpty) {
+                          formRows[index] = formRows[index].copyWith(
+                            value: pickedResult.path,
+                          );
+                          setState(() {});
+                          _onFieldChange(selectedId!);
+                        }
+                      },
+                      label: Text(
+                        (formRows[index].type == FormDataType.file &&
+                                formRows[index].value.isNotEmpty)
+                            ? formRows[index].value.toString()
+                            : kLabelSelectFile,
+                        overflow: TextOverflow.ellipsis,
+                        style: kFormDataButtonLabelTextStyle,
+                      ),
+                    )
+                  : CellField(
+                      keyId: "$selectedId-$index-form-v-$seed",
+                      initialValue: formRows[index].value,
+                      hintText: kHintAddValue,
+                      onChanged: (value) {
+                        formRows[index] =
+                            formRows[index].copyWith(value: value);
+                        if (isLast && !isAddingRow) {
+                          isAddingRow = true;
+                          formRows.add(kFormDataEmptyModel);
+                        }
+                        _onFieldChange(selectedId!);
+                      },
+                      colorScheme: Theme.of(context).colorScheme,
                     ),
-                  )
-                : CellField(
-                    keyId: "$selectedId-$idx-form-v-$seed",
-                    initialValue: formRows[idx].value,
-                    hintText: kHintAddValue,
-                    onChanged: (value) {
-                      formRows[idx] = formRows[idx].copyWith(value: value);
-                      if (isLast && !isAddingRow) {
-                        isAddingRow = true;
-                        formRows.add(kFormDataEmptyModel);
-                      }
-                      _onFieldChange(selectedId!);
-                    },
-                    colorScheme: Theme.of(context).colorScheme,
-                  );
-          },
-          sortable: false,
-        ),
-        DaviColumn(
-          pinStatus: PinStatus.none,
-          width: 30,
-          cellBuilder: (_, row) {
-            bool isLast = row.index + 1 == formRows.length;
-            return InkWell(
-              onTap: isLast
-                  ? null
-                  : () {
-                      seed = random.nextInt(kRandMax);
-                      if (formRows.length == 2) {
-                        setState(() {
-                          formRows = [kFormDataEmptyModel];
-                        });
-                      } else {
-                        formRows.removeAt(row.index);
-                      }
-                      _onFieldChange(selectedId!);
-                    },
-              child: Theme.of(context).brightness == Brightness.dark
-                  ? kIconRemoveDark
-                  : kIconRemoveLight,
-            );
-          },
-        ),
-      ],
+            ),
+            DataCell(
+              InkWell(
+                onTap: isLast
+                    ? null
+                    : () {
+                        seed = random.nextInt(kRandMax);
+                        if (formRows.length == 2) {
+                          setState(() {
+                            formRows = [
+                              kFormDataEmptyModel,
+                            ];
+                          });
+                        } else {
+                          formRows.removeAt(index);
+                        }
+                        _onFieldChange(selectedId!);
+                      },
+                child: Theme.of(context).brightness == Brightness.dark
+                    ? kIconRemoveDark
+                    : kIconRemoveLight,
+              ),
+            ),
+          ],
+        );
+      },
     );
+
     return Stack(
       children: [
         Container(
@@ -210,19 +208,30 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
           child: Column(
             children: [
               Expanded(
-                child: DaviTheme(
-                  data: kTableThemeData,
-                  child: Davi<FormDataModel>(daviModelRows),
+                child: Theme(
+                  data: Theme.of(context)
+                      .copyWith(scrollbarTheme: kDataTableScrollbarTheme),
+                  child: DataTable2(
+                    columnSpacing: 12,
+                    dividerThickness: 0,
+                    horizontalMargin: 0,
+                    headingRowHeight: 0,
+                    dataRowHeight: kDataTableRowHeight,
+                    bottomMargin: kDataTableBottomPadding,
+                    isVerticalScrollBarVisible: true,
+                    columns: columns,
+                    rows: dataRows,
+                  ),
                 ),
               ),
-              kVSpacer20,
+              kVSpacer40,
             ],
           ),
         ),
         Align(
           alignment: Alignment.bottomCenter,
           child: Padding(
-            padding: const EdgeInsets.only(bottom: 5),
+            padding: kPb15,
             child: ElevatedButton.icon(
               onPressed: () {
                 formRows.add(kFormDataEmptyModel);

@@ -49,14 +49,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.1.18"
-  axis_layout:
-    dependency: transitive
-    description:
-      name: axis_layout
-      sha256: "9ba44f279f39121065d811e72da892de86f5613d68eb0b295f60d021ea8f2a59"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.1"
   barcode:
     dependency: transitive
     description:
@@ -249,14 +241,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.3.6"
-  davi:
+  data_table_2:
     dependency: "direct main"
     description:
-      name: davi
-      sha256: "4105870281c4c33e8e017e21e212b96fd2637b4c1a35b2a56f14aaa4acdf6f0d"
+      name: data_table_2
+      sha256: fdb0551f103f1daf837bddfde14619fd9e683408833a618c9afabeb533fce88c
       url: "https://pub.dev"
     source: hosted
-    version: "3.4.1"
+    version: "2.5.11"
   eventify:
     dependency: transitive
     description:

@@ -68,6 +68,7 @@ class CellField extends StatelessWidget {
           ),
         ),
         hintText: hintText,
+        contentPadding: const EdgeInsets.only(bottom: 12),
         focusedBorder: UnderlineInputBorder(
           borderSide: BorderSide(
             color: clrScheme.primary.withOpacity(
