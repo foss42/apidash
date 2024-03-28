@@ -43,7 +43,7 @@ class _VideoPreviewerState extends State<VideoPreviewer> {
   void _initializeVideoPlayer() async {
     final tempDir = await getTemporaryDirectory();
     _tempVideoFile = File(
-        '${tempDir.path}/temp_video_${DateTime.now().millisecondsSinceEpoch}.mp4');
+        '${tempDir.path}/temp_video_${DateTime.now().millisecondsSinceEpoch}');
     try {
       await _tempVideoFile?.writeAsBytes(widget.videoBytes);
       _videoController = VideoPlayerController.file(_tempVideoFile!)

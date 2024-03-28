@@ -387,7 +387,7 @@ const Map<String, Map<String, List<ResponseBodyView>>>
     kSubTypeDefaultViewOptions: kPreviewBodyViewOptions,
   },
   kTypeVideo: {
-    kSubTypeDefaultViewOptions: kNoBodyViewOptions,
+    kSubTypeDefaultViewOptions: kPreviewBodyViewOptions,
   },
   kTypeText: {
     kSubTypeDefaultViewOptions: kRawBodyViewOptions,
