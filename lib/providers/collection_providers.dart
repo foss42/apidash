@@ -181,8 +181,10 @@ class CollectionStateNotifier
 
     // set current model's isWorking to true and update state
     var map = {...state!};
-    map[id] =
-        requestModel.copyWith(isWorking: true, sendingTime: DateTime.now());
+    map[id] = requestModel.copyWith(
+      isWorking: true,
+      sendingTime: DateTime.now(),
+    );
     state = map;
 
     (http.Response?, Duration?, String?)? responseRec = await request(
