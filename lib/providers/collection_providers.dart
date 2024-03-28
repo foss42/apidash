@@ -62,11 +62,11 @@ class CollectionStateNotifier
     var map = {...state!};
     map[id] = newRequestModel;
     state = map;
-    ref.read(hasUnsavedChangesProvider.notifier).update((_) => true);
     ref
         .read(requestSequenceProvider.notifier)
         .update((state) => [id, ...state]);
     ref.read(selectedIdStateProvider.notifier).state = newRequestModel.id;
+    ref.read(hasUnsavedChangesProvider.notifier).state = true;
   }
 
   void reorder(int oldIdx, int newIdx) {
@@ -74,7 +74,7 @@ class CollectionStateNotifier
     final itemId = itemIds.removeAt(oldIdx);
     itemIds.insert(newIdx, itemId);
     ref.read(requestSequenceProvider.notifier).state = [...itemIds];
-    ref.read(hasUnsavedChangesProvider.notifier).update((_) => true);
+    ref.read(hasUnsavedChangesProvider.notifier).state = true;
   }
 
   void remove(String id) {
@@ -97,7 +97,7 @@ class CollectionStateNotifier
     var map = {...state!};
     map.remove(id);
     state = map;
-    ref.read(hasUnsavedChangesProvider.notifier).update((_) => true);
+    ref.read(hasUnsavedChangesProvider.notifier).state = true;
   }
 
   void clearResponse(String? id) {
@@ -111,7 +111,7 @@ class CollectionStateNotifier
     var map = {...state!};
     map[id] = newModel;
     state = map;
-    ref.read(hasUnsavedChangesProvider.notifier).update((_) => true);
+    ref.read(hasUnsavedChangesProvider.notifier).state = true;
   }
 
   void duplicate(String id) {
@@ -128,10 +128,10 @@ class CollectionStateNotifier
     var map = {...state!};
     map[newId] = newModel;
     state = map;
-    ref.read(hasUnsavedChangesProvider.notifier).update((_) => true);
 
     ref.read(requestSequenceProvider.notifier).state = [...itemIds];
     ref.read(selectedIdStateProvider.notifier).state = newId;
+    ref.read(hasUnsavedChangesProvider.notifier).state = true;
   }
 
   void update(
@@ -173,7 +173,7 @@ class CollectionStateNotifier
     var map = {...state!};
     map[id] = newModel;
     state = map;
-    ref.read(hasUnsavedChangesProvider.notifier).update((_) => true);
+    ref.read(hasUnsavedChangesProvider.notifier).state = true;
   }
 
   Future<void> sendRequest(String id) async {
@@ -190,7 +190,6 @@ class CollectionStateNotifier
     var map = {...state!};
     map[id] = requestModel.copyWith(isWorking: true);
     state = map;
-    ref.read(hasUnsavedChangesProvider.notifier).update((_) => true);
 
     (http.Response?, Duration?, String?)? responseRec = await request(
       requestModel,
@@ -221,7 +220,7 @@ class CollectionStateNotifier
     map = {...state!};
     map[id] = newRequestModel;
     state = map;
-    ref.read(hasUnsavedChangesProvider.notifier).update((_) => true);
+    ref.read(hasUnsavedChangesProvider.notifier).state = true;
   }
 
   Future<void> clearData() async {
@@ -231,7 +230,7 @@ class CollectionStateNotifier
     ref.read(clearDataStateProvider.notifier).state = false;
     ref.read(requestSequenceProvider.notifier).state = [];
     state = {};
-    ref.read(hasUnsavedChangesProvider.notifier).update((_) => false);
+    ref.read(hasUnsavedChangesProvider.notifier).state = true;
   }
 
   bool loadData() {
@@ -272,6 +271,7 @@ class CollectionStateNotifier
     }
     await hiveHandler.removeUnused();
     ref.read(saveDataStateProvider.notifier).state = false;
+    ref.read(hasUnsavedChangesProvider.notifier).state = false;
   }
 
   Future<Map<String, dynamic>> exportDataToHAR() async {
