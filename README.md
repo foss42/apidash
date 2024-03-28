@@ -145,6 +145,7 @@ API Dash currently supports API integration code generation for the following la
 | Java                   | `okhttp3`     |         |
 | Julia                  | `HTTP`        | https://github.com/foss42/apidash/issues/154 |
 | PHP                    | `guzzle`      | https://github.com/foss42/apidash/issues/143 |
+| C                      | `libcurl`     |         |
 
 We welcome contributions to support other programming languages/libraries/frameworks. Please check out more details [here](https://github.com/foss42/apidash/discussions/80).
 
