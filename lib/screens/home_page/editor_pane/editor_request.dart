@@ -40,6 +40,8 @@ class RequestEditorTopBar extends ConsumerWidget {
       ),
       child: Row(
         children: [
+          const DropdownButtonProtocol(),
+          kHSpacer20,
           Expanded(
             child: Text(
               name ?? "",

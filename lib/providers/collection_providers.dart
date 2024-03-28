@@ -136,6 +136,7 @@ class CollectionStateNotifier
 
   void update(
     String id, {
+    ProtocolType? protocol,
     HTTPVerb? method,
     String? url,
     String? name,
@@ -153,6 +154,7 @@ class CollectionStateNotifier
     ResponseModel? responseModel,
   }) {
     final newModel = state![id]!.copyWith(
+      protocol: protocol,
       method: method,
       url: url,
       name: name,

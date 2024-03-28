@@ -41,6 +41,28 @@ class EditorPaneRequestURLCard extends StatelessWidget {
   }
 }
 
+class DropdownButtonProtocol extends ConsumerWidget {
+  const DropdownButtonProtocol({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final protocol = ref
+        .watch(selectedRequestModelProvider.select((value) => value?.protocol));
+    return DropdownButtonProtocolType(
+      protocolType: protocol,
+      onChanged: (ProtocolType? value) {
+        final selectedId = ref.read(selectedRequestModelProvider)!.id;
+        ref
+            .read(collectionStateNotifierProvider.notifier)
+            .update(selectedId, protocol: protocol);
+        print('protocol: $value');
+      },
+    );
+  }
+}
+
 class DropdownButtonHTTPMethod extends ConsumerWidget {
   const DropdownButtonHTTPMethod({
     super.key,

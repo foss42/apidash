@@ -98,6 +98,7 @@ void main() {
 
   Map<String, dynamic> requestModelAsJson = {
     "id": '1',
+    "protocol": 'http',
     "method": 'post',
     "url": 'api.apidash.dev/case/lower',
     "name": 'foss42 api',
@@ -137,6 +138,7 @@ void main() {
 
   final requestModeDupString = [
     "Request Id: 1",
+    "Request Protocol: http",
     "Request Method: post",
     "Request URL: api.apidash.dev/case/lower",
     "Request Name: foss42 api",
