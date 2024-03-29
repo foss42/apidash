@@ -13,6 +13,8 @@ final kThemeDataLight = ThemeData(
   brightness: Brightness.light,
 );
 
+const kTestUrl = 'https://api.apidash.dev';
+
 Uint8List kBodyBytesJpeg = Uint8List.fromList([
   255,
   216,
@@ -570,5 +572,3 @@ Uint8List kBodyBytesJpeg = Uint8List.fromList([
   255,
   217
 ]);
-
-const kTestUrl = 'https://api.apidash.dev/country/codes';
