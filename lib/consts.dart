@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:davi/davi.dart';
 
 const kDiscordUrl = "https://bit.ly/heyfoss";
 const kGitUrl = "https://github.com/foss42/apidash";
@@ -82,6 +81,8 @@ const kPh2 = EdgeInsets.symmetric(horizontal: 2);
 const kPt24o8 = EdgeInsets.only(top: 24, left: 8.0, right: 8.0, bottom: 8.0);
 const kPt5o10 =
     EdgeInsets.only(left: 10.0, right: 10.0, top: 5.0, bottom: 10.0);
+const kPh4 = EdgeInsets.symmetric(horizontal: 4);
+const kPh8 = EdgeInsets.symmetric(horizontal: 8);
 const kPh20 = EdgeInsets.symmetric(
   horizontal: 20,
 );
@@ -128,19 +129,11 @@ const kTextButtonMinWidth = 44.0;
 
 const kRandMax = 100000;
 
-const kTableThemeData = DaviThemeData(
-  columnDividerThickness: 1,
-  columnDividerColor: kColorTransparent,
-  row: RowThemeData(
-    dividerColor: kColorTransparent,
-  ),
-  decoration: BoxDecoration(
-    border: Border(),
-  ),
-  header: HeaderThemeData(
-    visible: false,
-  ),
+const kDataTableScrollbarTheme = ScrollbarThemeData(
+  crossAxisMargin: -4,
 );
+const kDataTableBottomPadding = 12.0;
+const kDataTableRowHeight = 36.0;
 
 const kIconRemoveDark = Icon(
   Icons.remove_circle,
