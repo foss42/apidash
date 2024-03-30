@@ -161,27 +161,24 @@ println("Response Body: \n\n$(String(response.body))")
 
         var templateRequest = jj.Template(kTemplateRequest);
         result += templateRequest.render({
-          "method": requestModel.method.name.toLowerCase(),
+          "method": requestModel.method.name,
         });
 
-        if (hasQuery) {
-          result += kStringRequestParams;
+        if (hasHeaders || requestModel.hasFormData) {
+          result += kStringRequestHeaders;
         }
 
         if (hasBody || requestModel.hasFormData) {
           result += kStringRequestBody;
         }
 
-        if (hasJsonBody || requestModel.hasFormData) {
-          result += kStringRequestJson;
-        }
-
-        if (hasHeaders || requestModel.hasFormData) {
-          result += kStringRequestHeaders;
+        if (hasQuery) {
+          result += kStringRequestParams;
         }
 
         result += kStringRequestEnd;
       }
+
       return result;
     } catch (e) {
       return null;
