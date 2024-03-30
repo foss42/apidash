@@ -62,40 +62,8 @@ payload = \"\"\"{{ body }}\"\"\"
 """;
 
   String kTemplateRequest = """
-
-
-response = HTTP.{{method}}(url
+response = HTTP.request("{{ method | upper }}", url
 """;
-
-  final String kStringFormDataBody = r'''
-function build_data_list(fields)
-    dataList = []
-    for field in fields
-        name = field["name"]
-        value = field["value"]
-        type_ = get(field, "type", "text")
-
-        push!(dataList, b"--{{boundary}}")
-        if type_ == "text"
-            push!(dataList, b"Content-Disposition: form-data; name=\"$name\"")
-            push!(dataList, b"Content-Type: text/plain")
-            push!(dataList, b"")
-            push!(dataList, codeunits(value))
-        elseif type_ == "file"
-            push!(dataList, b"Content-Disposition: form-data; name=\"$name\"; filename=\"$value\"")
-            push!(dataList, b"Content-Type: $value")
-            push!(dataList, b"")
-            push!(dataList, String(read(value)))
-        end
-    end
-    push!(dataList, "--{{boundary}}--")
-    push!(dataList, b"")
-    return dataList
-end
-
-dataList = build_data_list({{fields_list}})
-payload = join(dataList, b"\r\n")
-''';
 
   String kStringRequestParams = """, query=params""";
 
