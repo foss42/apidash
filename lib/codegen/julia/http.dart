@@ -78,7 +78,7 @@ println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.
 println("Response Body: \n\n$(String(response.body))")
 """;
 
-  String? getCode(RequestModel requestModel) {
+  String? getCode(RequestModel requestModel, {String? boundary}) {
     try {
       String result = "";
       bool hasQuery = false;
