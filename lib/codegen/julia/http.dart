@@ -7,10 +7,18 @@ import 'package:apidash/utils/utils.dart'
 import 'package:apidash/models/models.dart' show RequestModel;
 
 class JuliaHttpClientCodeGen {
-  final String kTemplateStart = """using HTTP,JSON
+  final String kTemplateStart = """
+using HTTP{% if hasJson %}, JSON{% endif %}
+\n
+""";
 
+  final String kTemplateUrl = """
 url = "{{url}}"
-
+\n
+""";
+  final String kTemplateBoundary = """
+boundary = "{{boundary}}"
+\n
 """;
 
   String kTemplateParams = """
