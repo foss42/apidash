@@ -117,14 +117,23 @@ println("Response Body: \n\n$(String(response.body))")
           }
         }
 
-        if (requestModel.hasJsonData) {
-          hasJsonBody = true;
-          var templateBody = jj.Template(kTemplateJson);
-          result += templateBody.render({"body": requestModel.requestBody});
-        } else if (requestModel.hasTextData) {
+        if (requestModel.hasJsonData || requestModel.hasTextData) {
           hasBody = true;
-          var templateBody = jj.Template(kTemplateBody);
-          result += templateBody.render({"body": requestModel.requestBody});
+          final templateBody = jj.Template(kTemplateBody);
+          var bodyStr = requestModel.requestBody;
+          result += templateBody.render({"body": bodyStr});
+        }
+
+        if (requestModel.hasFormData) {
+          hasBody = true;
+          final formDataBodyData = jj.Template(kTemplateFormDataBody);
+          result += formDataBodyData.render(
+            {
+              "hasFile": requestModel.hasFileInFormData,
+              "formdata": requestModel.formDataMapList,
+              "boundary": boundary,
+            },
+          );
         }
 
         var headersList = requestModel.enabledRequestHeaders;
