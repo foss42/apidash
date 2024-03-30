@@ -67,17 +67,15 @@ response = HTTP.request("{{ method | upper }}", url
 
   String kStringRequestParams = """, query=params""";
 
-  String kStringRequestBody = """, payload=payload""";
-
-  String kStringRequestJson = """, JSON.json(payload)""";
+  String kStringRequestBody = """, body=payload""";
 
   String kStringRequestHeaders = """, headers=headers""";
 
-  final String kStringRequestEnd = """
-)
+  final String kStringRequestEnd = r"""
+, status_exception=false)
 
-println("Status Code:", response.status)
-println("Response Body:", String(response.body))
+println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
+println("Response Body: \n\n$(String(response.body))")
 """;
 
   String? getCode(RequestModel requestModel) {
