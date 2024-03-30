@@ -22,23 +22,12 @@ boundary = "{{boundary}}"
 """;
 
   String kTemplateParams = """
-{% set new_params = params | replace(":", "=>") | replace("{", "(") | replace("}", ")") %}
-
-params = Dict{{new_params}}
-""";
-
-  int kParamsPadding = 9;
-
-  String kTemplateBody = '''
-{% set new_params = body | replace(":", "=>") | replace("{", "(") | replace("}", ")") %}
-
-payload = Dict{{new_params}}
-''';
-
-  String kTemplateJson = """
-{% set new_params = body | replace(":", "=>") | replace("{", "(") | replace("}", ")") %}
-
-payload = Dict{{new_params}}
+params = Dict(
+{%- for name, value in params %}
+    "{{ name }}" => "{{ value }}",
+{%- endfor %}
+)
+\n
 """;
 
   String kTemplateHeaders = """
