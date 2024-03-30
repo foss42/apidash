@@ -1,9 +1,6 @@
 import 'dart:io';
-import 'dart:convert';
 import 'package:jinja/jinja.dart' as jj;
-import 'package:apidash/consts.dart';
-import 'package:apidash/utils/utils.dart'
-    show getNewUuid, getValidRequestUri, padMultilineString, stripUriParams;
+import 'package:apidash/utils/utils.dart' show getNewUuid, getValidRequestUri, stripUriParams;
 import 'package:apidash/models/models.dart' show RequestModel;
 
 class JuliaHttpClientCodeGen {
@@ -84,8 +81,6 @@ println("Response Body: \n\n$(String(response.body))")
       bool hasQuery = false;
       bool hasHeaders = false;
       bool hasBody = false;
-      bool hasJsonBody = false;
-      String uuid = getNewUuid();
 
       var rec = getValidRequestUri(
         requestModel.url,
