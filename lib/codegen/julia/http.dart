@@ -31,15 +31,14 @@ params = Dict(
 """;
 
   String kTemplateHeaders = """
-{% set new_params = headers | replace(":", "=>") | replace("{", "(") | replace("}", ")") %}
-
-headers = Dict{{new_params}}
+headers = Dict(
+{%- for name, value in headers %}
+    "{{ name }}" => "{{ value }}",
+{%- endfor %}
+)
+\n
 """;
 
-  String kTemplateFormHeaderContentType = '''
-multipart/form-data; boundary={{boundary}}''';
-
-  int kHeadersPadding = 10;
 
   String kTemplateRequest = """
 
