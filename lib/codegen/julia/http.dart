@@ -93,19 +93,27 @@ println("Response Body: \n\n$(String(response.body))")
       );
       Uri? uri = rec.$1;
       if (uri != null) {
-        var templateStartUrl = jj.Template(kTemplateStart);
-        result += templateStartUrl.render({
-          "url": stripUriParams(uri),
+        final templateStart = jj.Template(kTemplateStart);
+        result += templateStart.render({
+          // "hasJson": requestModel.hasBody && requestModel.hasJsonContentType && requestModel.hasJsonData,
+          "hasJson": false, // we manually send false because we do not require JSON package
         });
+
+        final templateUrl = jj.Template(kTemplateUrl);
+        result += templateUrl.render({"url": stripUriParams(uri)});
+
+        if (requestModel.hasFormData && requestModel.hasFileInFormData) {
+          boundary ??= getNewUuid();
+          final templateParams = jj.Template(kTemplateBoundary);
+          result += templateParams.render({"boundary": boundary});
+        }
 
         if (uri.hasQuery) {
           var params = uri.queryParameters;
           if (params.isNotEmpty) {
             hasQuery = true;
-            var templateParams = jj.Template(kTemplateParams);
-            var paramsString = kEncoder.convert(params);
-            paramsString = padMultilineString(paramsString, kParamsPadding);
-            result += templateParams.render({"params": paramsString});
+            final templateParams = jj.Template(kTemplateParams);
+            result += templateParams.render({"params": params});
           }
         }
 
