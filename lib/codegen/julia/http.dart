@@ -139,34 +139,26 @@ println("Response Body: \n\n$(String(response.body))")
         var headersList = requestModel.enabledRequestHeaders;
         if (headersList != null || hasBody) {
           var headers = requestModel.enabledHeadersMap;
-          if (requestModel.hasFormData) {
-            var formHeaderTemplate =
-                jj.Template(kTemplateFormHeaderContentType);
-            headers[HttpHeaders.contentTypeHeader] = formHeaderTemplate.render({
-              "boundary": uuid,
-            });
+
+          if (!requestModel.hasContentTypeHeader) {
+            if (hasBody) {
+              headers[HttpHeaders.contentTypeHeader] = requestModel.requestBodyContentType.header;
+            }
+
+            if (requestModel.hasFormData) {
+              headers[HttpHeaders.contentTypeHeader] = requestModel.hasFileInFormData
+                  ? "multipart/form-data; boundary=\$(boundary)"
+                  : "application/x-www-form-urlencoded";
+            }
           }
+
           if (headers.isNotEmpty || hasBody) {
             hasHeaders = true;
-            if (hasBody) {
-              headers[HttpHeaders.contentTypeHeader] =
-                  requestModel.requestBodyContentType.header;
-            }
-            var headersString = kEncoder.convert(headers);
-            headersString = padMultilineString(headersString, kHeadersPadding);
             var templateHeaders = jj.Template(kTemplateHeaders);
-            result += templateHeaders.render({"headers": headersString});
+            result += templateHeaders.render({"headers": headers});
           }
         }
-        if (requestModel.hasFormData) {
-          var formDataBodyData = jj.Template(kStringFormDataBody);
-          result += formDataBodyData.render(
-            {
-              "fields_list": json.encode(requestModel.formDataMapList),
-              "boundary": uuid,
-            },
-          );
-        }
+
         var templateRequest = jj.Template(kTemplateRequest);
         result += templateRequest.render({
           "method": requestModel.method.name.toLowerCase(),
