@@ -39,6 +39,27 @@ headers = Dict(
 \n
 """;
 
+  final String kTemplateFormDataBody = '''
+{{ 'data' if hasFile else 'payload' }} = Dict(
+{%- for data in formdata %}
+{%- if data.type == "text" %}
+    "{{ data.name }}" => "{{ data.value }}",
+{%- else %}
+    "{{ data.name }}" => open("{{ data.value }}"),
+{%- endif %}
+{%- endfor %}
+)
+{%- if hasFile %}
+
+payload = HTTP.Form(data{% if boundary is defined %}, boundary=boundary{% endif %})
+{%- endif %}
+\n
+''';
+
+  String kTemplateBody = """
+payload = \"\"\"{{ body }}\"\"\"
+\n
+""";
 
   String kTemplateRequest = """
 
