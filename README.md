@@ -141,7 +141,7 @@ API Dash currently supports API integration code generation for the following la
 | Rust                   | `ureq`        |         |
 | Rust                   | `Actix Client` |         |
 | Java                   | `asynchttpclient` | https://github.com/foss42/apidash/issues/136 |
-| Java                   | `HttpClient`  | https://github.com/foss42/apidash/issues/137 |
+| Java                   | `HttpClient`  |         |
 | Java                   | `okhttp3`     |         |
 | Julia                  | `HTTP`        |         |
 | PHP                    | `guzzle`      | https://github.com/foss42/apidash/issues/143 |
