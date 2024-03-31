@@ -15,9 +15,11 @@ url = "https://api.apidash.dev"
 response = HTTP.request("GET", url, status_exception=false)
 
 println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
-println("Response Body: \n\n$(String(response.body))")
+println("Response Body: \n$(String(response.body))")
 """;
-      expect(codeGen.getCode(CodegenLanguage.juliaHttp, requestModelGet1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.juliaHttp, requestModelGet1, "https"),
+          expectedCode);
     });
     test('GET 2', () {
       const expectedCode = r"""using HTTP
@@ -31,9 +33,11 @@ params = Dict(
 response = HTTP.request("GET", url, query=params, status_exception=false)
 
 println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
-println("Response Body: \n\n$(String(response.body))")
+println("Response Body: \n$(String(response.body))")
 """;
-      expect(codeGen.getCode(CodegenLanguage.juliaHttp, requestModelGet2, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.juliaHttp, requestModelGet2, "https"),
+          expectedCode);
     });
     test('GET 3', () {
       const expectedCode = r"""using HTTP
@@ -47,9 +51,11 @@ params = Dict(
 response = HTTP.request("GET", url, query=params, status_exception=false)
 
 println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
-println("Response Body: \n\n$(String(response.body))")
+println("Response Body: \n$(String(response.body))")
 """;
-      expect(codeGen.getCode(CodegenLanguage.juliaHttp, requestModelGet3, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.juliaHttp, requestModelGet3, "https"),
+          expectedCode);
     });
     test('GET 4', () {
       const expectedCode = r"""using HTTP
@@ -67,9 +73,11 @@ params = Dict(
 response = HTTP.request("GET", url, query=params, status_exception=false)
 
 println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
-println("Response Body: \n\n$(String(response.body))")
+println("Response Body: \n$(String(response.body))")
 """;
-      expect(codeGen.getCode(CodegenLanguage.juliaHttp, requestModelGet4, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.juliaHttp, requestModelGet4, "https"),
+          expectedCode);
     });
 
     test('GET 5', () {
@@ -84,9 +92,11 @@ headers = Dict(
 response = HTTP.request("GET", url, headers=headers, status_exception=false)
 
 println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
-println("Response Body: \n\n$(String(response.body))")
+println("Response Body: \n$(String(response.body))")
 """;
-      expect(codeGen.getCode(CodegenLanguage.juliaHttp, requestModelGet5, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.juliaHttp, requestModelGet5, "https"),
+          expectedCode);
     });
 
     test('GET 6', () {
@@ -105,9 +115,11 @@ headers = Dict(
 response = HTTP.request("GET", url, headers=headers, query=params, status_exception=false)
 
 println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
-println("Response Body: \n\n$(String(response.body))")
+println("Response Body: \n$(String(response.body))")
 """;
-      expect(codeGen.getCode(CodegenLanguage.juliaHttp, requestModelGet6, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.juliaHttp, requestModelGet6, "https"),
+          expectedCode);
     });
 
     test('GET 7', () {
@@ -118,9 +130,11 @@ url = "https://api.apidash.dev"
 response = HTTP.request("GET", url, status_exception=false)
 
 println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
-println("Response Body: \n\n$(String(response.body))")
+println("Response Body: \n$(String(response.body))")
 """;
-      expect(codeGen.getCode(CodegenLanguage.juliaHttp, requestModelGet7, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.juliaHttp, requestModelGet7, "https"),
+          expectedCode);
     });
 
     test('GET 8', () {
@@ -139,9 +153,11 @@ headers = Dict(
 response = HTTP.request("GET", url, headers=headers, query=params, status_exception=false)
 
 println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
-println("Response Body: \n\n$(String(response.body))")
+println("Response Body: \n$(String(response.body))")
 """;
-      expect(codeGen.getCode(CodegenLanguage.juliaHttp, requestModelGet8, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.juliaHttp, requestModelGet8, "https"),
+          expectedCode);
     });
 
     test('GET 9', () {
@@ -157,9 +173,11 @@ params = Dict(
 response = HTTP.request("GET", url, query=params, status_exception=false)
 
 println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
-println("Response Body: \n\n$(String(response.body))")
+println("Response Body: \n$(String(response.body))")
 """;
-      expect(codeGen.getCode(CodegenLanguage.juliaHttp, requestModelGet9, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.juliaHttp, requestModelGet9, "https"),
+          expectedCode);
     });
 
     test('GET 10', () {
@@ -174,9 +192,12 @@ headers = Dict(
 response = HTTP.request("GET", url, headers=headers, status_exception=false)
 
 println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
-println("Response Body: \n\n$(String(response.body))")
+println("Response Body: \n$(String(response.body))")
 """;
-      expect(codeGen.getCode(CodegenLanguage.juliaHttp, requestModelGet10, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.juliaHttp, requestModelGet10, "https"),
+          expectedCode);
     });
 
     test('GET 11', () {
@@ -196,9 +217,12 @@ headers = Dict(
 response = HTTP.request("GET", url, headers=headers, query=params, status_exception=false)
 
 println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
-println("Response Body: \n\n$(String(response.body))")
+println("Response Body: \n$(String(response.body))")
 """;
-      expect(codeGen.getCode(CodegenLanguage.juliaHttp, requestModelGet11, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.juliaHttp, requestModelGet11, "https"),
+          expectedCode);
     });
 
     test('GET 12', () {
@@ -209,9 +233,12 @@ url = "https://api.apidash.dev/humanize/social"
 response = HTTP.request("GET", url, status_exception=false)
 
 println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
-println("Response Body: \n\n$(String(response.body))")
+println("Response Body: \n$(String(response.body))")
 """;
-      expect(codeGen.getCode(CodegenLanguage.juliaHttp, requestModelGet12, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.juliaHttp, requestModelGet12, "https"),
+          expectedCode);
     });
   });
 
@@ -224,9 +251,12 @@ url = "https://api.apidash.dev"
 response = HTTP.request("HEAD", url, status_exception=false)
 
 println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
-println("Response Body: \n\n$(String(response.body))")
+println("Response Body: \n$(String(response.body))")
 """;
-      expect(codeGen.getCode(CodegenLanguage.juliaHttp, requestModelHead1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.juliaHttp, requestModelHead1, "https"),
+          expectedCode);
     });
 
     test('HEAD 2', () {
@@ -237,21 +267,23 @@ url = "http://api.apidash.dev"
 response = HTTP.request("HEAD", url, status_exception=false)
 
 println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
-println("Response Body: \n\n$(String(response.body))")
+println("Response Body: \n$(String(response.body))")
 """;
-      expect(codeGen.getCode(CodegenLanguage.juliaHttp, requestModelHead2, "http"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.juliaHttp, requestModelHead2, "http"),
+          expectedCode);
     });
   });
 
   group('POST Request', () {
     test('POST 1', () {
-      const expectedCode = """using HTTP
+      const expectedCode = r'''using HTTP
 
 url = "https://api.apidash.dev/case/lower"
 
-payload = \"\"\"{
+payload = """{
 "text": "I LOVE Flutter"
-}\"\"\"
+}"""
 
 headers = Dict(
     "content-type" => "text/plain",
@@ -259,25 +291,28 @@ headers = Dict(
 
 response = HTTP.request("POST", url, headers=headers, body=payload, status_exception=false)
 
-println("Status Code: \$(response.status) \$(HTTP.StatusCodes.statustext(response.status))")
-println("Response Body: \\n\\n\$(String(response.body))")
-""";
-      expect(codeGen.getCode(CodegenLanguage.juliaHttp, requestModelPost1, "https"), expectedCode);
+println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
+println("Response Body: \n$(String(response.body))")
+''';
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.juliaHttp, requestModelPost1, "https"),
+          expectedCode);
     });
 
     test('POST 2', () {
-      const expectedCode = """using HTTP
+      const expectedCode = r'''using HTTP
 
 url = "https://api.apidash.dev/case/lower"
 
-payload = \"\"\"{
+payload = """{
 "text": "I LOVE Flutter",
 "flag": null,
 "male": true,
 "female": false,
 "no": 1.2,
 "arr": ["null", "true", "false", null]
-}\"\"\"
+}"""
 
 headers = Dict(
     "content-type" => "application/json",
@@ -285,19 +320,22 @@ headers = Dict(
 
 response = HTTP.request("POST", url, headers=headers, body=payload, status_exception=false)
 
-println("Status Code: \$(response.status) \$(HTTP.StatusCodes.statustext(response.status))")
-println("Response Body: \\n\\n\$(String(response.body))")
-""";
-      expect(codeGen.getCode(CodegenLanguage.juliaHttp, requestModelPost2, "https"), expectedCode);
+println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
+println("Response Body: \n$(String(response.body))")
+''';
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.juliaHttp, requestModelPost2, "https"),
+          expectedCode);
     });
     test('POST 3', () {
-      const expectedCode = """using HTTP
+      const expectedCode = r'''using HTTP
 
 url = "https://api.apidash.dev/case/lower"
 
-payload = \"\"\"{
+payload = """{
 "text": "I LOVE Flutter"
-}\"\"\"
+}"""
 
 headers = Dict(
     "User-Agent" => "Test Agent",
@@ -306,10 +344,13 @@ headers = Dict(
 
 response = HTTP.request("POST", url, headers=headers, body=payload, status_exception=false)
 
-println("Status Code: \$(response.status) \$(HTTP.StatusCodes.statustext(response.status))")
-println("Response Body: \\n\\n\$(String(response.body))")
-""";
-      expect(codeGen.getCode(CodegenLanguage.juliaHttp, requestModelPost3, "https"), expectedCode);
+println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
+println("Response Body: \n$(String(response.body))")
+''';
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.juliaHttp, requestModelPost3, "https"),
+          expectedCode);
     });
 
     test('POST 4', () {
@@ -317,22 +358,23 @@ println("Response Body: \\n\\n\$(String(response.body))")
 
 url = "https://api.apidash.dev/io/form"
 
-payload = Dict(
+data = Dict(
     "text" => "API",
     "sep" => "|",
     "times" => "3",
 )
 
-headers = Dict(
-    "content-type" => "application/x-www-form-urlencoded",
-)
+payload = HTTP.Form(data)
 
-response = HTTP.request("POST", url, headers=headers, body=payload, status_exception=false)
+response = HTTP.request("POST", url, body=payload, status_exception=false)
 
 println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
-println("Response Body: \n\n$(String(response.body))")
+println("Response Body: \n$(String(response.body))")
 """;
-      expect(codeGen.getCode(CodegenLanguage.juliaHttp, requestModelPost4, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.juliaHttp, requestModelPost4, "https"),
+          expectedCode);
     });
 
     test('POST 5', () {
@@ -340,50 +382,48 @@ println("Response Body: \n\n$(String(response.body))")
 
 url = "https://api.apidash.dev/io/form"
 
-payload = Dict(
+data = Dict(
     "text" => "API",
     "sep" => "|",
     "times" => "3",
 )
 
+payload = HTTP.Form(data)
+
 headers = Dict(
     "User-Agent" => "Test Agent",
-    "content-type" => "application/x-www-form-urlencoded",
 )
 
 response = HTTP.request("POST", url, headers=headers, body=payload, status_exception=false)
 
 println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
-println("Response Body: \n\n$(String(response.body))")
+println("Response Body: \n$(String(response.body))")
 """;
-      expect(codeGen.getCode(CodegenLanguage.juliaHttp, requestModelPost5, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.juliaHttp, requestModelPost5, "https"),
+          expectedCode);
     });
     test('POST 6', () {
       const expectedCode = r"""using HTTP
 
 url = "https://api.apidash.dev/io/img"
 
-boundary = "467fbea0-c2dc-1f41-b12d-9d9923a5f7b8"
-
 data = Dict(
     "token" => "xyz",
     "imfile" => open("/Documents/up/1.png"),
 )
 
-payload = HTTP.Form(data, boundary=boundary)
+payload = HTTP.Form(data)
 
-headers = Dict(
-    "content-type" => "multipart/form-data; boundary=$(boundary)",
-)
-
-response = HTTP.request("POST", url, headers=headers, body=payload, status_exception=false)
+response = HTTP.request("POST", url, body=payload, status_exception=false)
 
 println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
-println("Response Body: \n\n$(String(response.body))")
+println("Response Body: \n$(String(response.body))")
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.juliaHttp, requestModelPost6, "https",
-              boundary: "467fbea0-c2dc-1f41-b12d-9d9923a5f7b8"),
+          codeGen.getCode(
+              CodegenLanguage.juliaHttp, requestModelPost6, "https"),
           expectedCode);
     });
     test('POST 7', () {
@@ -391,27 +431,21 @@ println("Response Body: \n\n$(String(response.body))")
 
 url = "https://api.apidash.dev/io/img"
 
-boundary = "9440cbe0-c433-1f41-b12d-9d9923a5f7b8"
-
 data = Dict(
     "token" => "xyz",
     "imfile" => open("/Documents/up/1.png"),
 )
 
-payload = HTTP.Form(data, boundary=boundary)
+payload = HTTP.Form(data)
 
-headers = Dict(
-    "content-type" => "multipart/form-data; boundary=$(boundary)",
-)
-
-response = HTTP.request("POST", url, headers=headers, body=payload, status_exception=false)
+response = HTTP.request("POST", url, body=payload, status_exception=false)
 
 println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
-println("Response Body: \n\n$(String(response.body))")
+println("Response Body: \n$(String(response.body))")
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.juliaHttp, requestModelPost7, "https",
-              boundary: "9440cbe0-c433-1f41-b12d-9d9923a5f7b8"),
+          codeGen.getCode(
+              CodegenLanguage.juliaHttp, requestModelPost7, "https"),
           expectedCode);
     });
     test('POST 8', () {
@@ -424,29 +458,28 @@ params = Dict(
     "len" => "3",
 )
 
-payload = Dict(
+data = Dict(
     "text" => "API",
     "sep" => "|",
     "times" => "3",
 )
 
-headers = Dict(
-    "content-type" => "application/x-www-form-urlencoded",
-)
+payload = HTTP.Form(data)
 
-response = HTTP.request("POST", url, headers=headers, body=payload, query=params, status_exception=false)
+response = HTTP.request("POST", url, body=payload, query=params, status_exception=false)
 
 println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
-println("Response Body: \n\n$(String(response.body))")
+println("Response Body: \n$(String(response.body))")
 """;
-      expect(codeGen.getCode(CodegenLanguage.juliaHttp, requestModelPost8, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.juliaHttp, requestModelPost8, "https"),
+          expectedCode);
     });
     test('POST 9', () {
       const expectedCode = r"""using HTTP
 
 url = "https://api.apidash.dev/io/img"
-
-boundary = "69573b00-c67f-1f41-b12d-9d9923a5f7b8"
 
 params = Dict(
     "size" => "2",
@@ -458,35 +491,34 @@ data = Dict(
     "imfile" => open("/Documents/up/1.png"),
 )
 
-payload = HTTP.Form(data, boundary=boundary)
+payload = HTTP.Form(data)
 
 headers = Dict(
     "User-Agent" => "Test Agent",
     "Keep-Alive" => "true",
-    "content-type" => "multipart/form-data; boundary=$(boundary)",
 )
 
 response = HTTP.request("POST", url, headers=headers, body=payload, query=params, status_exception=false)
 
 println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
-println("Response Body: \n\n$(String(response.body))")
+println("Response Body: \n$(String(response.body))")
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.juliaHttp, requestModelPost9, "https",
-              boundary: "69573b00-c67f-1f41-b12d-9d9923a5f7b8"),
+          codeGen.getCode(
+              CodegenLanguage.juliaHttp, requestModelPost9, "https"),
           expectedCode);
     });
   });
   group('PUT Request', () {
     test('PUT 1', () {
-      const expectedCode = """using HTTP
+      const expectedCode = r'''using HTTP
 
 url = "https://reqres.in/api/users/2"
 
-payload = \"\"\"{
+payload = """{
 "name": "morpheus",
 "job": "zion resident"
-}\"\"\"
+}"""
 
 headers = Dict(
     "content-type" => "application/json",
@@ -494,22 +526,24 @@ headers = Dict(
 
 response = HTTP.request("PUT", url, headers=headers, body=payload, status_exception=false)
 
-println("Status Code: \$(response.status) \$(HTTP.StatusCodes.statustext(response.status))")
-println("Response Body: \\n\\n\$(String(response.body))")
-""";
-      expect(codeGen.getCode(CodegenLanguage.juliaHttp, requestModelPut1, "https"), expectedCode);
+println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
+println("Response Body: \n$(String(response.body))")
+''';
+      expect(
+          codeGen.getCode(CodegenLanguage.juliaHttp, requestModelPut1, "https"),
+          expectedCode);
     });
   });
   group('PATCH Request', () {
     test('PATCH 1', () {
-      const expectedCode = """using HTTP
+      const expectedCode = r'''using HTTP
 
 url = "https://reqres.in/api/users/2"
 
-payload = \"\"\"{
+payload = """{
 "name": "marfeus",
 "job": "accountant"
-}\"\"\"
+}"""
 
 headers = Dict(
     "content-type" => "application/json",
@@ -517,10 +551,13 @@ headers = Dict(
 
 response = HTTP.request("PATCH", url, headers=headers, body=payload, status_exception=false)
 
-println("Status Code: \$(response.status) \$(HTTP.StatusCodes.statustext(response.status))")
-println("Response Body: \\n\\n\$(String(response.body))")
-""";
-      expect(codeGen.getCode(CodegenLanguage.juliaHttp, requestModelPatch1, "https"), expectedCode);
+println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
+println("Response Body: \n$(String(response.body))")
+''';
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.juliaHttp, requestModelPatch1, "https"),
+          expectedCode);
     });
   });
   group('DELETE Request', () {
@@ -532,19 +569,22 @@ url = "https://reqres.in/api/users/2"
 response = HTTP.request("DELETE", url, status_exception=false)
 
 println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
-println("Response Body: \n\n$(String(response.body))")
+println("Response Body: \n$(String(response.body))")
 """;
-      expect(codeGen.getCode(CodegenLanguage.juliaHttp, requestModelDelete1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.juliaHttp, requestModelDelete1, "https"),
+          expectedCode);
     });
     test('DELETE 2', () {
-      const expectedCode = """using HTTP
+      const expectedCode = r'''using HTTP
 
 url = "https://reqres.in/api/users/2"
 
-payload = \"\"\"{
+payload = """{
 "name": "marfeus",
 "job": "accountant"
-}\"\"\"
+}"""
 
 headers = Dict(
     "content-type" => "application/json",
@@ -552,10 +592,13 @@ headers = Dict(
 
 response = HTTP.request("DELETE", url, headers=headers, body=payload, status_exception=false)
 
-println("Status Code: \$(response.status) \$(HTTP.StatusCodes.statustext(response.status))")
-println("Response Body: \\n\\n\$(String(response.body))")
-""";
-      expect(codeGen.getCode(CodegenLanguage.juliaHttp, requestModelDelete2, "https"), expectedCode);
+println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
+println("Response Body: \n$(String(response.body))")
+''';
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.juliaHttp, requestModelDelete2, "https"),
+          expectedCode);
     });
   });
 }
