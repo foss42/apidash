@@ -163,10 +163,7 @@ function build_data_files(\$boundary, \$fields, \$files)
 
 """;
 
-  String? getCode(
-    RequestModel requestModel,
-    String defaultUriScheme,
-  ) {
+  String? getCode(RequestModel requestModel) {
     String uuid = getNewUuid();
     uuid = uuid.replaceAll(RegExp(r'-'), "");
 
@@ -176,13 +173,8 @@ function build_data_files(\$boundary, \$fields, \$files)
       bool hasQuery = false;
       bool hasBody = false;
 
-      String url = requestModel.url;
-      if (!url.contains("://") && url.isNotEmpty) {
-        url = "$defaultUriScheme://$url";
-      }
-
       var rec = getValidRequestUri(
-        url,
+        requestModel.url,
         requestModel.enabledRequestParams,
       );
 
@@ -207,7 +199,7 @@ function build_data_files(\$boundary, \$fields, \$files)
         }
 
         var templateUri = jj.Template(kTemplateUri);
-        result += templateUri.render({"uri": url});
+        result += templateUri.render({"uri": requestModel.url});
 
         //checking and adding query params
         if (uri.hasQuery) {

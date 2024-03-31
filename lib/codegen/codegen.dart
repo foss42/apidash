@@ -81,7 +81,7 @@ class Codegen {
       case CodegenLanguage.phpGuzzle:
         return PhpGuzzleCodeGen().getCode(rM);
       case CodegenLanguage.phpCurl:
-        return PHPcURLCodeGen().getCode(requestModel, defaultUriScheme);
+        return PHPcURLCodeGen().getCode(rM);
     }
   }
 }
