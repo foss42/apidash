@@ -56,7 +56,7 @@ class Program
 
   String kStringEnd = """
       var response = await client.ExecuteAsync(request);
-      Console.WriteLine("Status Code: " + response.StatusCode);
+      Console.WriteLine("Status Code: " + (int)response.StatusCode);
       Console.WriteLine("Response Content: " + response.Content);
     }
     catch(Exception ex){

@@ -22,7 +22,7 @@ class Program
       var request = new RestRequest("", Method.Get);
 
       var response = await client.ExecuteAsync(request);
-      Console.WriteLine("Status Code: " + response.StatusCode);
+      Console.WriteLine("Status Code: " + (int)response.StatusCode);
       Console.WriteLine("Response Content: " + response.Content);
     }
     catch(Exception ex){
@@ -55,7 +55,7 @@ class Program
       request.AddQueryParameter("code", "US");
 
       var response = await client.ExecuteAsync(request);
-      Console.WriteLine("Status Code: " + response.StatusCode);
+      Console.WriteLine("Status Code: " + (int)response.StatusCode);
       Console.WriteLine("Response Content: " + response.Content);
     }
     catch(Exception ex){
@@ -89,7 +89,7 @@ class Program
       request.AddQueryParameter("code", "IND");
 
       var response = await client.ExecuteAsync(request);
-      Console.WriteLine("Status Code: " + response.StatusCode);
+      Console.WriteLine("Status Code: " + (int)response.StatusCode);
       Console.WriteLine("Response Content: " + response.Content);
     }
     catch(Exception ex){
@@ -127,7 +127,7 @@ class Program
       request.AddQueryParameter("trailing_zeros", "true");
 
       var response = await client.ExecuteAsync(request);
-      Console.WriteLine("Status Code: " + response.StatusCode);
+      Console.WriteLine("Status Code: " + (int)response.StatusCode);
       Console.WriteLine("Response Content: " + response.Content);
     }
     catch(Exception ex){
@@ -161,7 +161,7 @@ class Program
       request.AddHeader("User-Agent", "Test Agent");
 
       var response = await client.ExecuteAsync(request);
-      Console.WriteLine("Status Code: " + response.StatusCode);
+      Console.WriteLine("Status Code: " + (int)response.StatusCode);
       Console.WriteLine("Response Content: " + response.Content);
     }
     catch(Exception ex){
@@ -197,7 +197,7 @@ class Program
       request.AddHeader("User-Agent", "Test Agent");
 
       var response = await client.ExecuteAsync(request);
-      Console.WriteLine("Status Code: " + response.StatusCode);
+      Console.WriteLine("Status Code: " + (int)response.StatusCode);
       Console.WriteLine("Response Content: " + response.Content);
     }
     catch(Exception ex){
@@ -229,7 +229,7 @@ class Program
       var request = new RestRequest("", Method.Get);
 
       var response = await client.ExecuteAsync(request);
-      Console.WriteLine("Status Code: " + response.StatusCode);
+      Console.WriteLine("Status Code: " + (int)response.StatusCode);
       Console.WriteLine("Response Content: " + response.Content);
     }
     catch(Exception ex){
@@ -265,7 +265,7 @@ class Program
       request.AddHeader("User-Agent", "Test Agent");
 
       var response = await client.ExecuteAsync(request);
-      Console.WriteLine("Status Code: " + response.StatusCode);
+      Console.WriteLine("Status Code: " + (int)response.StatusCode);
       Console.WriteLine("Response Content: " + response.Content);
     }
     catch(Exception ex){
@@ -299,7 +299,7 @@ class Program
       request.AddQueryParameter("add_space", "true");
 
       var response = await client.ExecuteAsync(request);
-      Console.WriteLine("Status Code: " + response.StatusCode);
+      Console.WriteLine("Status Code: " + (int)response.StatusCode);
       Console.WriteLine("Response Content: " + response.Content);
     }
     catch(Exception ex){
@@ -332,7 +332,7 @@ class Program
       request.AddHeader("User-Agent", "Test Agent");
 
       var response = await client.ExecuteAsync(request);
-      Console.WriteLine("Status Code: " + response.StatusCode);
+      Console.WriteLine("Status Code: " + (int)response.StatusCode);
       Console.WriteLine("Response Content: " + response.Content);
     }
     catch(Exception ex){
@@ -368,7 +368,7 @@ class Program
       request.AddHeader("User-Agent", "Test Agent");
 
       var response = await client.ExecuteAsync(request);
-      Console.WriteLine("Status Code: " + response.StatusCode);
+      Console.WriteLine("Status Code: " + (int)response.StatusCode);
       Console.WriteLine("Response Content: " + response.Content);
     }
     catch(Exception ex){
@@ -399,7 +399,7 @@ class Program
       var request = new RestRequest("/humanize/social", Method.Get);
 
       var response = await client.ExecuteAsync(request);
-      Console.WriteLine("Status Code: " + response.StatusCode);
+      Console.WriteLine("Status Code: " + (int)response.StatusCode);
       Console.WriteLine("Response Content: " + response.Content);
     }
     catch(Exception ex){
@@ -432,7 +432,7 @@ class Program
       var request = new RestRequest("", Method.Head);
 
       var response = await client.ExecuteAsync(request);
-      Console.WriteLine("Status Code: " + response.StatusCode);
+      Console.WriteLine("Status Code: " + (int)response.StatusCode);
       Console.WriteLine("Response Content: " + response.Content);
     }
     catch(Exception ex){
@@ -463,7 +463,7 @@ class Program
       var request = new RestRequest("", Method.Head);
 
       var response = await client.ExecuteAsync(request);
-      Console.WriteLine("Status Code: " + response.StatusCode);
+      Console.WriteLine("Status Code: " + (int)response.StatusCode);
       Console.WriteLine("Response Content: " + response.Content);
     }
     catch(Exception ex){
@@ -503,7 +503,7 @@ class Program
       request.AddStringBody(textBody);
 
       var response = await client.ExecuteAsync(request);
-      Console.WriteLine("Status Code: " + response.StatusCode);
+      Console.WriteLine("Status Code: " + (int)response.StatusCode);
       Console.WriteLine("Response Content: " + response.Content);
     }
     catch(Exception ex){
@@ -545,7 +545,7 @@ class Program
       request.AddJsonBody(jsonBody);
 
       var response = await client.ExecuteAsync(request);
-      Console.WriteLine("Status Code: " + response.StatusCode);
+      Console.WriteLine("Status Code: " + (int)response.StatusCode);
       Console.WriteLine("Response Content: " + response.Content);
     }
     catch(Exception ex){
@@ -583,7 +583,7 @@ class Program
       request.AddJsonBody(jsonBody);
 
       var response = await client.ExecuteAsync(request);
-      Console.WriteLine("Status Code: " + response.StatusCode);
+      Console.WriteLine("Status Code: " + (int)response.StatusCode);
       Console.WriteLine("Response Content: " + response.Content);
     }
     catch(Exception ex){
@@ -619,7 +619,7 @@ class Program
       request.AddParameter("times", "3", ParameterType.RequestBody);
 
       var response = await client.ExecuteAsync(request);
-      Console.WriteLine("Status Code: " + response.StatusCode);
+      Console.WriteLine("Status Code: " + (int)response.StatusCode);
       Console.WriteLine("Response Content: " + response.Content);
     }
     catch(Exception ex){
@@ -656,7 +656,7 @@ class Program
       request.AddParameter("times", "3", ParameterType.RequestBody);
 
       var response = await client.ExecuteAsync(request);
-      Console.WriteLine("Status Code: " + response.StatusCode);
+      Console.WriteLine("Status Code: " + (int)response.StatusCode);
       Console.WriteLine("Response Content: " + response.Content);
     }
     catch(Exception ex){
@@ -691,7 +691,7 @@ class Program
       request.AddFile("imfile", "/Documents/up/1.png");
 
       var response = await client.ExecuteAsync(request);
-      Console.WriteLine("Status Code: " + response.StatusCode);
+      Console.WriteLine("Status Code: " + (int)response.StatusCode);
       Console.WriteLine("Response Content: " + response.Content);
     }
     catch(Exception ex){
@@ -726,7 +726,7 @@ class Program
       request.AddFile("imfile", "/Documents/up/1.png");
 
       var response = await client.ExecuteAsync(request);
-      Console.WriteLine("Status Code: " + response.StatusCode);
+      Console.WriteLine("Status Code: " + (int)response.StatusCode);
       Console.WriteLine("Response Content: " + response.Content);
     }
     catch(Exception ex){
@@ -765,7 +765,7 @@ class Program
       request.AddParameter("times", "3", ParameterType.RequestBody);
 
       var response = await client.ExecuteAsync(request);
-      Console.WriteLine("Status Code: " + response.StatusCode);
+      Console.WriteLine("Status Code: " + (int)response.StatusCode);
       Console.WriteLine("Response Content: " + response.Content);
     }
     catch(Exception ex){
@@ -805,7 +805,7 @@ class Program
       request.AddFile("imfile", "/Documents/up/1.png");
 
       var response = await client.ExecuteAsync(request);
-      Console.WriteLine("Status Code: " + response.StatusCode);
+      Console.WriteLine("Status Code: " + (int)response.StatusCode);
       Console.WriteLine("Response Content: " + response.Content);
     }
     catch(Exception ex){
@@ -846,7 +846,7 @@ class Program
       request.AddJsonBody(jsonBody);
 
       var response = await client.ExecuteAsync(request);
-      Console.WriteLine("Status Code: " + response.StatusCode);
+      Console.WriteLine("Status Code: " + (int)response.StatusCode);
       Console.WriteLine("Response Content: " + response.Content);
     }
     catch(Exception ex){
@@ -887,7 +887,7 @@ class Program
       request.AddJsonBody(jsonBody);
 
       var response = await client.ExecuteAsync(request);
-      Console.WriteLine("Status Code: " + response.StatusCode);
+      Console.WriteLine("Status Code: " + (int)response.StatusCode);
       Console.WriteLine("Response Content: " + response.Content);
     }
     catch(Exception ex){
@@ -920,7 +920,7 @@ class Program
       var request = new RestRequest("/api/users/2", Method.Delete);
 
       var response = await client.ExecuteAsync(request);
-      Console.WriteLine("Status Code: " + response.StatusCode);
+      Console.WriteLine("Status Code: " + (int)response.StatusCode);
       Console.WriteLine("Response Content: " + response.Content);
     }
     catch(Exception ex){
@@ -958,7 +958,7 @@ class Program
       request.AddJsonBody(jsonBody);
 
       var response = await client.ExecuteAsync(request);
-      Console.WriteLine("Status Code: " + response.StatusCode);
+      Console.WriteLine("Status Code: " + (int)response.StatusCode);
       Console.WriteLine("Response Content: " + response.Content);
     }
     catch(Exception ex){
