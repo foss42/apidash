@@ -64,7 +64,7 @@ class Codegen {
       case CodegenLanguage.javaOkHttp:
         return JavaOkHttpCodeGen().getCode(rM);
       case CodegenLanguage.juliaHttp:
-        return JuliaHttpClientCodeGen().getCode(rM, boundary: boundary);
+        return JuliaHttpClientCodeGen().getCode(rM);
       case CodegenLanguage.kotlinOkHttp:
         return KotlinOkHttpCodeGen().getCode(rM);
       case CodegenLanguage.pythonHttpClient:
