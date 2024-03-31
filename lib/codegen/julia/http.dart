@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:jinja/jinja.dart' as jj;
-import 'package:apidash/utils/utils.dart' show getNewUuid, getValidRequestUri, stripUriParams;
+import 'package:apidash/utils/utils.dart'
+    show getValidRequestUri, stripUriParams;
 import 'package:apidash/models/models.dart' show RequestModel;
 
 class JuliaHttpClientCodeGen {
@@ -11,10 +12,6 @@ using HTTP{% if hasJson %}, JSON{% endif %}
 
   final String kTemplateUrl = """
 url = "{{url}}"
-\n
-""";
-  final String kTemplateBoundary = """
-boundary = "{{boundary}}"
 \n
 """;
 
@@ -37,7 +34,7 @@ headers = Dict(
 """;
 
   final String kTemplateFormDataBody = '''
-{{ 'data' if hasFile else 'payload' }} = Dict(
+data = Dict(
 {%- for data in formdata %}
 {%- if data.type == "text" %}
     "{{ data.name }}" => "{{ data.value }}",
@@ -46,17 +43,15 @@ headers = Dict(
 {%- endif %}
 {%- endfor %}
 )
-{%- if hasFile %}
 
-payload = HTTP.Form(data{% if boundary is defined %}, boundary=boundary{% endif %})
-{%- endif %}
+payload = HTTP.Form(data)
 \n
 ''';
 
-  String kTemplateBody = """
-payload = \"\"\"{{ body }}\"\"\"
+  String kTemplateBody = '''
+payload = """{{ body }}"""
 \n
-""";
+''';
 
   String kTemplateRequest = """
 response = HTTP.request("{{ method | upper }}", url
@@ -72,15 +67,15 @@ response = HTTP.request("{{ method | upper }}", url
 , status_exception=false)
 
 println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
-println("Response Body: \n\n$(String(response.body))")
+println("Response Body: \n$(String(response.body))")
 """;
 
-  String? getCode(RequestModel requestModel, {String? boundary}) {
+  String? getCode(RequestModel requestModel) {
     try {
       String result = "";
       bool hasQuery = false;
       bool hasHeaders = false;
-      bool hasBody = false;
+      bool addHeaderForBody = false;
 
       var rec = getValidRequestUri(
         requestModel.url,
@@ -91,17 +86,12 @@ println("Response Body: \n\n$(String(response.body))")
         final templateStart = jj.Template(kTemplateStart);
         result += templateStart.render({
           // "hasJson": requestModel.hasBody && requestModel.hasJsonContentType && requestModel.hasJsonData,
-          "hasJson": false, // we manually send false because we do not require JSON package
+          "hasJson":
+              false, // we manually send false because we do not require JSON package
         });
 
         final templateUrl = jj.Template(kTemplateUrl);
         result += templateUrl.render({"url": stripUriParams(uri)});
-
-        if (requestModel.hasFormData && requestModel.hasFileInFormData) {
-          boundary ??= getNewUuid();
-          final templateParams = jj.Template(kTemplateBoundary);
-          result += templateParams.render({"boundary": boundary});
-        }
 
         if (uri.hasQuery) {
           var params = uri.queryParameters;
@@ -113,41 +103,34 @@ println("Response Body: \n\n$(String(response.body))")
         }
 
         if (requestModel.hasJsonData || requestModel.hasTextData) {
-          hasBody = true;
+          addHeaderForBody = true;
           final templateBody = jj.Template(kTemplateBody);
           var bodyStr = requestModel.requestBody;
           result += templateBody.render({"body": bodyStr});
         }
 
         if (requestModel.hasFormData) {
-          hasBody = true;
           final formDataBodyData = jj.Template(kTemplateFormDataBody);
           result += formDataBodyData.render(
             {
               "hasFile": requestModel.hasFileInFormData,
               "formdata": requestModel.formDataMapList,
-              "boundary": boundary,
             },
           );
         }
 
         var headersList = requestModel.enabledRequestHeaders;
-        if (headersList != null || hasBody) {
+        if (headersList != null || addHeaderForBody) {
           var headers = requestModel.enabledHeadersMap;
 
           if (!requestModel.hasContentTypeHeader) {
-            if (hasBody) {
-              headers[HttpHeaders.contentTypeHeader] = requestModel.requestBodyContentType.header;
-            }
-
-            if (requestModel.hasFormData) {
-              headers[HttpHeaders.contentTypeHeader] = requestModel.hasFileInFormData
-                  ? "multipart/form-data; boundary=\$(boundary)"
-                  : "application/x-www-form-urlencoded";
+            if (addHeaderForBody) {
+              headers[HttpHeaders.contentTypeHeader] =
+                  requestModel.requestBodyContentType.header;
             }
           }
 
-          if (headers.isNotEmpty || hasBody) {
+          if (headers.isNotEmpty) {
             hasHeaders = true;
             var templateHeaders = jj.Template(kTemplateHeaders);
             result += templateHeaders.render({"headers": headers});
@@ -159,11 +142,11 @@ println("Response Body: \n\n$(String(response.body))")
           "method": requestModel.method.name,
         });
 
-        if (hasHeaders || requestModel.hasFormData) {
+        if (hasHeaders) {
           result += kStringRequestHeaders;
         }
 
-        if (hasBody || requestModel.hasFormData) {
+        if (requestModel.hasBody) {
           result += kStringRequestBody;
         }
 
