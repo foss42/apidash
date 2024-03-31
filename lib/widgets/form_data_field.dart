@@ -46,6 +46,7 @@ class _FormDataFieldState extends State<FormDataField> {
               color: colorScheme.onSurface,
             ),
             decoration: InputDecoration(
+                isDense: true,
                 hintStyle: kCodeStyle.copyWith(
                   color: colorScheme.outline.withOpacity(
                     kHintOpacity,
