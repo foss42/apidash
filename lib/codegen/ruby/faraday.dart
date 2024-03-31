@@ -76,4 +76,108 @@ puts "Status Code: #{response.status}"
 puts "Response Body: #{response.body}"
 """;
 
+  String? getCode(
+    RequestModel requestModel, {
+    String? boundary,
+  }) {
+    try {
+      String result = "";
+
+      if (boundary != null) {
+        // boundary needs to start with a character, hence we append apidash
+        // and remove hyphen characters from the existing boundary
+        boundary = "apidash_${boundary.replaceAll(RegExp("-"), "")}";
+      }
+
+      var rec = getValidRequestUri(
+        requestModel.url,
+        requestModel.enabledRequestParams,
+      );
+
+      Uri? uri = rec.$1;
+
+      if (uri == null) {
+        return "";
+      }
+
+      var url = stripUriParams(uri);
+
+      result += kStringFaradayRequireStatement;
+      if (requestModel.hasFormDataContentType && requestModel.hasFileInFormData) {
+        result += kStringFaradayMultipartRequireStatement;
+      }
+
+      var templateRequestUrl = jj.Template(kTemplateRequestUrl);
+      result += templateRequestUrl.render({"url": url});
+
+      if (requestModel.hasFormData) {
+        jj.Template payload;
+        if (requestModel.hasFileInFormData) {
+          payload = jj.Template(kTemplateFormParamsWithFile);
+        } else {
+          payload = jj.Template(kTemplateFormParamsWithoutFile);
+        }
+        result += payload.render({"params": requestModel.formDataMapList});
+      } else if (requestModel.hasJsonData || requestModel.hasTextData) {
+        var templateBody = jj.Template(kTemplateBody);
+        result += templateBody.render({
+          "body": requestModel.requestBody, //
+          "boundary": boundary,
+        });
+      }
+
+      // crreating faraday connection for request
+      var templateConnection = jj.Template(kTemplateConnection);
+      result += templateConnection.render({
+        "hasFile": requestModel.hasFormDataContentType && requestModel.hasFileInFormData //
+      });
+
+      // start of the request sending
+      var templateRequestStart = jj.Template(kTemplateRequestStart);
+      result += templateRequestStart.render({
+        "method": requestModel.method.name, //
+        "doesMethodAcceptBody":
+            kMethodsWithBody.contains(requestModel.method) && requestModel.method != HTTPVerb.delete, //
+        "containsBody": requestModel.hasBody, //
+      });
+
+      if (requestModel.hasFormDataContentType && requestModel.hasFileInFormData) {
+        var templateRequestOptionsBoundary = jj.Template(kTemplateRequestOptionsBoundary);
+        result += templateRequestOptionsBoundary.render({"boundary": boundary});
+      }
+
+      var headers = requestModel.enabledHeadersMap;
+      if (requestModel.hasBody && !requestModel.hasContentTypeHeader) {
+        if (requestModel.hasJsonData || requestModel.hasTextData) {
+          headers["Content-Type"] = requestModel.requestBodyContentType.header;
+        } else if (requestModel.hasFormData) {
+          headers["Content-Type"] =
+              (requestModel.hasFileInFormData) ? "multipart/form-data" : "application/x-www-form-urlencoded";
+        }
+      }
+
+      if (headers.isNotEmpty) {
+        var templateRequestHeaders = jj.Template(kTemplateRequestHeaders);
+        result += templateRequestHeaders.render({"headers": headers});
+      }
+
+      if (uri.hasQuery) {
+        var params = uri.queryParameters;
+        if (params.isNotEmpty) {
+          var templateRequestParams = jj.Template(kTemplateRequestParams);
+          result += templateRequestParams.render({"params": params});
+        }
+      }
+
+      if (requestModel.hasBody && requestModel.method == HTTPVerb.delete) {
+        result += kStringDeleteRequestBody;
+      }
+
+      result += kStringRequestEnd;
+      result += kStringResponse;
+      return result;
+    } catch (e) {
+      return null;
+    }
+  }
 }
