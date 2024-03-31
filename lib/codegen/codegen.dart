@@ -60,7 +60,7 @@ class Codegen {
       case CodegenLanguage.javaAsyncHttpClient:
         return JavaAsyncHttpClientGen().getCode(rM);
       case CodegenLanguage.javaHttpClient:
-        return JavaHttpClientCodeGen().getCode(rM);
+        return JavaHttpClientCodeGen().getCode(rM, boundary: boundary);
       case CodegenLanguage.javaOkHttp:
         return JavaOkHttpCodeGen().getCode(rM);
       case CodegenLanguage.juliaHttp:
