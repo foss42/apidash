@@ -6,6 +6,7 @@ import 'dart/dio.dart';
 import 'go/http.dart';
 import 'kotlin/okhttp.dart';
 import 'php/guzzle.dart';
+import 'php/curl.dart';
 import 'python/http_client.dart';
 import 'python/requests.dart';
 import 'rust/actix.dart';
@@ -82,6 +83,8 @@ class Codegen {
         return RustUreqCodeGen().getCode(rM, boundary: boundary);
       case CodegenLanguage.phpGuzzle:
         return PhpGuzzleCodeGen().getCode(rM);
+      case CodegenLanguage.phpCurl:
+        return PHPcURLCodeGen().getCode(rM);
     }
   }
 }
