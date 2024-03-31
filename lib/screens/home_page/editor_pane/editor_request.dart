@@ -42,7 +42,7 @@ class RequestEditorTopBar extends ConsumerWidget {
         children: [
           Expanded(
             child: Text(
-              name ?? "",
+              name!.isEmpty ? "untitled" : name,
               style: Theme.of(context).textTheme.bodyMedium,
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
