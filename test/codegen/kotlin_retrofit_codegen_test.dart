@@ -183,7 +183,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 interface ApiService {
-    @GET("", @Body requestBody: RequestBody)
+    @GET("")
     fun (): Call<ResponseBody>
 }
 
