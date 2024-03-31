@@ -414,7 +414,7 @@ public class Main {
   public static void main(String[] args) {
     try {
       HttpClient client = HttpClient.newHttpClient();
-      URI uri = URI.create("https://api.apidash.dev");
+      URI uri = URI.create("http://api.apidash.dev");
 
       HttpRequest.Builder requestBuilder = HttpRequest.newBuilder(uri).method("HEAD", HttpRequest.BodyPublishers.noBody());
       HttpResponse<String> response = client.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofString());
@@ -610,7 +610,8 @@ public class Main {
 }''';
       expect(
           codeGen.getCode(
-              CodegenLanguage.javaHttpClient, requestModelPost4, "https", boundary: "b9826c20-773c-1f0c-814d-a1b3d90cd6b3"),
+              CodegenLanguage.javaHttpClient, requestModelPost4, "https",
+              boundary: "b9826c20-773c-1f0c-814d-a1b3d90cd6b3"),
           expectedCode);
     });
     test('POST5', () {
@@ -679,7 +680,8 @@ public class Main {
 }''';
       expect(
           codeGen.getCode(
-              CodegenLanguage.javaHttpClient, requestModelPost5, "https", boundary: "b9826c20-773c-1f0c-814d-a1b3d90cd6b3"),
+              CodegenLanguage.javaHttpClient, requestModelPost5, "https",
+              boundary: "b9826c20-773c-1f0c-814d-a1b3d90cd6b3"),
           expectedCode);
     });
     test('POST6', () {
@@ -746,7 +748,8 @@ public class Main {
 }''';
       expect(
           codeGen.getCode(
-              CodegenLanguage.javaHttpClient, requestModelPost6, "https", boundary: "b9826c20-773c-1f0c-814d-a1b3d90cd6b3"),
+              CodegenLanguage.javaHttpClient, requestModelPost6, "https",
+              boundary: "b9826c20-773c-1f0c-814d-a1b3d90cd6b3"),
           expectedCode);
     });
     test('POST7', () {
@@ -813,7 +816,8 @@ public class Main {
 }''';
       expect(
           codeGen.getCode(
-              CodegenLanguage.javaHttpClient, requestModelPost7, "https", boundary: "b9826c20-773c-1f0c-814d-a1b3d90cd6b3"),
+              CodegenLanguage.javaHttpClient, requestModelPost7, "https",
+              boundary: "b9826c20-773c-1f0c-814d-a1b3d90cd6b3"),
           expectedCode);
     });
     test('POST8', () {
@@ -881,7 +885,8 @@ public class Main {
 }''';
       expect(
           codeGen.getCode(
-              CodegenLanguage.javaHttpClient, requestModelPost8, "https", boundary: "b9826c20-773c-1f0c-814d-a1b3d90cd6b3"),
+              CodegenLanguage.javaHttpClient, requestModelPost8, "https",
+              boundary: "b9826c20-773c-1f0c-814d-a1b3d90cd6b3"),
           expectedCode);
     });
     test('POST9', () {
@@ -950,7 +955,8 @@ public class Main {
 }''';
       expect(
           codeGen.getCode(
-              CodegenLanguage.javaHttpClient, requestModelPost9, "https", boundary: "b9826c20-773c-1f0c-814d-a1b3d90cd6b3"),
+              CodegenLanguage.javaHttpClient, requestModelPost9, "https",
+              boundary: "b9826c20-773c-1f0c-814d-a1b3d90cd6b3"),
           expectedCode);
     });
   });
@@ -1100,5 +1106,4 @@ public class Main {
           expectedCode);
     });
   });
-
 }
