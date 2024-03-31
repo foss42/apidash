@@ -1,4 +1,3 @@
-import 'package:apidash/codegen/kotlin/retrofit.dart';
 import 'package:apidash/models/models.dart' show RequestModel;
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart' show getNewUuid;
@@ -6,6 +5,7 @@ import 'dart/http.dart';
 import 'dart/dio.dart';
 import 'go/http.dart';
 import 'kotlin/okhttp.dart';
+import 'kotlin/retrofit.dart';
 import 'php/guzzle.dart';
 import 'python/http_client.dart';
 import 'python/requests.dart';
