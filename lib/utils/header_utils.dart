@@ -121,7 +121,10 @@ List<String> getFuzzyHeaderSuggestions(String pattern) {
   final keys = headers.keys.toList();
   final fuse = Fuzzy(keys,
       options: FuzzyOptions(
-        distance: 50,
+        distance: 40,
+        matchAllTokens: true,
+        isCaseSensitive: true,
+        tokenize: true,
         threshold: 0.4,
       ));
   final results = fuse.search(pattern);
