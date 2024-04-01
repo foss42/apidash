@@ -121,8 +121,8 @@ List<String> getFuzzyHeaderSuggestions(String pattern) {
   final keys = headers.keys.toList();
   final fuse = Fuzzy(keys,
       options: FuzzyOptions(
-        distance: 0,
-        threshold: 0.35,
+        distance: 50,
+        threshold: 0.4,
       ));
   final results = fuse.search(pattern);
   final suggestions = results.map((result) => result.item as String).toList();
