@@ -121,6 +121,6 @@ class _HeaderFieldState extends State<HeaderField> {
     if (pattern.isEmpty) {
       return null;
     }
-    return getHeaderSuggestions(pattern);
+    return getFuzzyHeaderSuggestions(pattern);
   }
 }

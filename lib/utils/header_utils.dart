@@ -1,3 +1,5 @@
+import 'package:fuzzy/fuzzy.dart';
+
 Map<String, String> headers = {
   "Accept": "Specifies the media types that are acceptable for the response.",
   "Accept-Encoding":
@@ -51,7 +53,8 @@ Map<String, String> headers = {
       "Contains the date/time after which the response is considered expired",
   "Forwarded":
       "Contains information from the client-facing side of proxy servers that is altered or lost when a proxy is involved in the path of the request.",
-  "From": "Contains an Internet email address for a human user who controls the requesting user agent.",
+  "From":
+      "Contains an Internet email address for a human user who controls the requesting user agent.",
   "Host": "Specifies the domain name of the server and the port number.",
   "If-Match":
       "Used for conditional requests, allows the server to respond based on certain conditions.",
@@ -80,8 +83,7 @@ Map<String, String> headers = {
       "Specifies how much information the browser should include in the Referer header when navigating to other pages.",
   "Retry-After":
       "Informs the client how long it should wait before making another request after a server has responded with a rate-limiting status code.",
-  "Save-Data":
-      "Indicates the client's preference for reduced data usage.",
+  "Save-Data": "Indicates the client's preference for reduced data usage.",
   "Server": "Indicates the software used by the origin server.",
   "Strict-Transport-Security":
       "Instructs the browser to always use HTTPS for the given domain.",
@@ -113,4 +115,16 @@ List<String> getHeaderSuggestions(String pattern) {
         (element) => element.toLowerCase().contains(pattern.toLowerCase()),
       )
       .toList();
+}
+
+List<String> getFuzzyHeaderSuggestions(String pattern) {
+  final keys = headers.keys.toList();
+  final fuse = Fuzzy(keys,
+      options: FuzzyOptions(
+        distance: 0,
+        threshold: 0.35,
+      ));
+  final results = fuse.search(pattern);
+  final suggestions = results.map((result) => result.item as String).toList();
+  return suggestions;
 }
