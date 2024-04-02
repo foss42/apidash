@@ -40,18 +40,21 @@ class Program
 """;
   String kTemplateFormData = """
       {% if type == "text" -%}
-      request.AddParameter("{{name}}", "{{value}}", ParameterType.RequestBody);
+      request.AddParameter("{{name}}", "{{value}}", ParameterType.GetOrPost);
 {% else -%}
        request.AddFile("{{name}}", "{{value}}");
 {% endif -%}
+""";
+  String kStringFormDataOption = """
+      request.AlwaysMultipartFormData = true;
 """;
   String kTemplateJsonData = """
       var jsonBody = new {{jsonData}};
       request.AddJsonBody(jsonBody);
 """;
   String kTemplateTextData = """
-      var textBody = "{{textData}}";
-      request.AddStringBody(textBody);
+      var textBody = {{textData}};
+      request.AddStringBody(textBody, ContentType.Plain);
 """;
 
   String kStringEnd = """
@@ -144,6 +147,7 @@ class Program
             "type": data["type"]
           });
         }
+        result += kStringFormDataOption;
         result += formDataResult.substring(0, formDataResult.length - 1);
         result += kStringLineBreak;
       }
@@ -167,8 +171,8 @@ class Program
 
       if (requestModel.hasTextData) {
         jj.Template templateTextData = jj.Template(kTemplateTextData);
-        result +=
-            templateTextData.render({"textData": requestModel.requestBody});
+        result += templateTextData
+            .render({"textData": jsonEncode(requestModel.requestBody)});
         result += kStringLineBreak;
       }
 

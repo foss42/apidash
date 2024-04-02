@@ -497,10 +497,8 @@ class Program
 
       request.AddHeader("Content-Type", "text/plain");
 
-      var textBody = "{
-"text": "I LOVE Flutter"
-}";
-      request.AddStringBody(textBody);
+      var textBody = "{\n\"text\": \"I LOVE Flutter\"\n}";
+      request.AddStringBody(textBody, ContentType.Plain);
 
       var response = await client.ExecuteAsync(request);
       Console.WriteLine("Status Code: " + (int)response.StatusCode);
@@ -614,9 +612,10 @@ class Program
 
       request.AddHeader("Content-Type", "multipart/form-data");
 
-      request.AddParameter("text", "API", ParameterType.RequestBody);
-      request.AddParameter("sep", "|", ParameterType.RequestBody);
-      request.AddParameter("times", "3", ParameterType.RequestBody);
+      request.AlwaysMultipartFormData = true;
+      request.AddParameter("text", "API", ParameterType.GetOrPost);
+      request.AddParameter("sep", "|", ParameterType.GetOrPost);
+      request.AddParameter("times", "3", ParameterType.GetOrPost);
 
       var response = await client.ExecuteAsync(request);
       Console.WriteLine("Status Code: " + (int)response.StatusCode);
@@ -651,9 +650,10 @@ class Program
       request.AddHeader("Content-Type", "multipart/form-data");
       request.AddHeader("User-Agent", "Test Agent");
 
-      request.AddParameter("text", "API", ParameterType.RequestBody);
-      request.AddParameter("sep", "|", ParameterType.RequestBody);
-      request.AddParameter("times", "3", ParameterType.RequestBody);
+      request.AlwaysMultipartFormData = true;
+      request.AddParameter("text", "API", ParameterType.GetOrPost);
+      request.AddParameter("sep", "|", ParameterType.GetOrPost);
+      request.AddParameter("times", "3", ParameterType.GetOrPost);
 
       var response = await client.ExecuteAsync(request);
       Console.WriteLine("Status Code: " + (int)response.StatusCode);
@@ -687,7 +687,8 @@ class Program
 
       request.AddHeader("Content-Type", "multipart/form-data");
 
-      request.AddParameter("token", "xyz", ParameterType.RequestBody);
+      request.AlwaysMultipartFormData = true;
+      request.AddParameter("token", "xyz", ParameterType.GetOrPost);
       request.AddFile("imfile", "/Documents/up/1.png");
 
       var response = await client.ExecuteAsync(request);
@@ -722,7 +723,8 @@ class Program
 
       request.AddHeader("Content-Type", "multipart/form-data");
 
-      request.AddParameter("token", "xyz", ParameterType.RequestBody);
+      request.AlwaysMultipartFormData = true;
+      request.AddParameter("token", "xyz", ParameterType.GetOrPost);
       request.AddFile("imfile", "/Documents/up/1.png");
 
       var response = await client.ExecuteAsync(request);
@@ -760,9 +762,10 @@ class Program
 
       request.AddHeader("Content-Type", "multipart/form-data");
 
-      request.AddParameter("text", "API", ParameterType.RequestBody);
-      request.AddParameter("sep", "|", ParameterType.RequestBody);
-      request.AddParameter("times", "3", ParameterType.RequestBody);
+      request.AlwaysMultipartFormData = true;
+      request.AddParameter("text", "API", ParameterType.GetOrPost);
+      request.AddParameter("sep", "|", ParameterType.GetOrPost);
+      request.AddParameter("times", "3", ParameterType.GetOrPost);
 
       var response = await client.ExecuteAsync(request);
       Console.WriteLine("Status Code: " + (int)response.StatusCode);
@@ -801,7 +804,8 @@ class Program
       request.AddHeader("User-Agent", "Test Agent");
       request.AddHeader("Keep-Alive", "true");
 
-      request.AddParameter("token", "xyz", ParameterType.RequestBody);
+      request.AlwaysMultipartFormData = true;
+      request.AddParameter("token", "xyz", ParameterType.GetOrPost);
       request.AddFile("imfile", "/Documents/up/1.png");
 
       var response = await client.ExecuteAsync(request);
