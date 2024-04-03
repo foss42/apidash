@@ -130,7 +130,16 @@ echo $response;
         }
 
         var templateUri = jj.Template(kTemplateUri);
-        result += templateUri.render({"uri": requestModel.url});
+
+        //renders the request body contains the HTTP method associated with the request
+        if (kMethodsWithBody.contains(requestModel.method) && requestModel.hasBody) {
+          hasBody = true;
+          // contains the entire request body as a string if body is present
+          var templateBody = jj.Template(kTemplateBody);
+          result += templateBody.render({
+            'body': requestModel.hasFormData ? requestModel.formDataMapList : requestModel.requestBody,
+          });
+        }
 
         //checking and adding query params
         if (uri.hasQuery) {
