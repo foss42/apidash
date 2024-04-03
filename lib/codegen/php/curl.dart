@@ -117,6 +117,7 @@ echo $response;
         result += templateStart.render();
 
         var templateUri = jj.Template(kTemplateUri);
+        result += templateUri.render({'uri': stripUriParams(uri)});
 
         //renders the request body contains the HTTP method associated with the request
         if (kMethodsWithBody.contains(requestModel.method) && requestModel.hasBody) {
