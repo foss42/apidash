@@ -11,10 +11,23 @@ class PHPcURLCodeGen {
 
 """;
 
-  final String kTemplateUri = """
-\$uri = "{{uri}}";
+  String kTemplateBody = r'''
+{%- if body is iterable -%}
+$request_body = [
+{%- for data in body %}
+{%- if data.type == 'text' %}
+    '{{ data.name }}' => '{{ data.value }}',
+{%- elif data.type == 'file' %}
+    '{{ data.name }}' => new CURLFILE('{{ data.value }}'),
+{%- endif %}
+{%- endfor %}
+];
+{%- else -%}
+$request_body = '{{body}}';
+{%- endif %}
 
-""";
+
+''';
 
   //defining query parameters
   String kTemplateParams = """
@@ -34,134 +47,37 @@ if (count(\$queryParams) > 0) {
 
 """;
 
-  String kTemplateBody = """
+  String kTemplateRequestOptsInit = r'''
+curl_setopt_array($request, [
+    CURLOPT_RETURNTRANSFER => 1,
+    CURLOPT_CUSTOMREQUEST => '{{ method|upper }}',
 
-\$request_body = <<<EOF
-{{body}}
-EOF;
-
-""";
-  //specifying headers
-  String kTemplateHeaders = """
-
-\$headers = [{{headers}}];
-curl_setopt(\$request, CURLOPT_HTTPHEADER, \$headers);
-
-""";
-
-  String kTemplateFormHeaderContentType = '''
-multipart/form-data; boundary={{boundary}}''';
-
-  String kTemplateRequest = """
-
-curl_setopt(\$request, CURLOPT_RETURNTRANSFER, 1);
-curl_setopt(\$request, {{method}}, 1);
-
-""";
-
+''';
+  String kStringHeaderOpt = r'''
+    CURLOPT_HTTPHEADER => $headers,
+''';
   //passing the request body
-  String kStringRequestBody = """
-curl_setopt(\$request, CURLOPT_POSTFIELDS, \$request_body);
-
-""";
+  String kStringRequestBodyOpt = r'''
+    CURLOPT_POSTFIELDS => $request_body,
+''';
 
   //ending template
-  final String kStringRequestEnd = """
-\$response = curl_exec(\$request);
-curl_close(\$request);
-var_dump(\$response);
+  final String kStringRequestEnd = r'''
+    CURLOPT_SSL_VERIFYPEER => 0,
+    CURLOPT_MAXREDIRS => 10,
+    CURLOPT_TIMEOUT => 0,
+    CURLOPT_FOLLOWLOCATION => true,
+    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+]);
 
-""";
+$response = curl_exec($request);
 
-  //template for generating unique boundary
-  String kBoundaryUniqueIdTemplate = """
-\$boundary = "{{uuid}}";
+curl_close($request);
 
-""";
-
-  //
-  String kFileClassString = """
-class File
-{
-    public string \$name;
-    public string \$filename;
-    public string \$content;
-
-    function __construct(\$name, \$filename)
-    {
-        \$this->name = \$name;
-        \$this->filename = \$filename;
-        \$available_content = file_get_contents(\$this->filename);
-        \$this->content = \$available_content ? \$available_content : "";
-    }
-}
-
-
-""";
-
-  //function to build formdata without 'file' type
-  String kBuildFormDataFunctionWithoutFilesString = """
-function build_data(\$boundary, \$fields)
-{
-    \$data = '';
-    \$eol = "\\r\\n";
-
-    \$delimiter = '-------------' . \$boundary;
-
-    foreach (\$fields as \$name => \$content) {
-        \$data .= "--" . \$delimiter . \$eol
-            . 'Content-Disposition: form-data; name="' . \$name . "\\"" . \$eol . \$eol
-            . \$content . \$eol;
-    }
-    \$data .= "--" . \$delimiter . "--" . \$eol;
-    return \$data;
-}
-""";
-
-  //function to build formdata with 'file' type
-  String kBuildFormDataFunctionWithFilesString = """
-function build_data_files(\$boundary, \$fields, \$files)
-{
-    \$data = '';
-    \$eol = "\\r\\n";
-
-    \$delimiter = '-------------' . \$boundary;
-
-    foreach (\$fields as \$name => \$content) {
-        \$data .= "--" . \$delimiter . \$eol
-            . 'Content-Disposition: form-data; name="' . \$name . "\\"" . \$eol . \$eol
-            . \$content . \$eol;
-    }
-
-    foreach (\$files as \$uploaded_file) {
-        if (\$uploaded_file instanceof File) {
-            \$data .= "--" . \$delimiter . \$eol
-                . 'Content-Disposition: form-data; name="' . \$uploaded_file->name . '"; filename="' . \$uploaded_file->filename . '"' . \$eol
-                . 'Content-Transfer-Encoding: binary' . \$eol;
-
-            \$data .= \$eol;
-            \$data .= \$uploaded_file->content . \$eol;
-        }
-    }
-    \$data .= "--" . \$delimiter . "--" . \$eol;
-
-
-    return \$data;
-}
-
-""";
-
-  //
-  String kMultiPartBodyWithFiles = """
-\$request_body = build_data_files(\$boundary, \$fields, \$files);
-
-""";
-
-  //
-  String kMultiPartBodyWithoutFiles = """
-\$request_body = build_data(\$boundary, \$fields);
-
-""";
+$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
+echo "Status Code: " . $httpCode . "\n";
+echo $response;
+''';
 
   String? getCode(RequestModel requestModel) {
     String uuid = getNewUuid();
