@@ -116,19 +116,6 @@ echo $response;
         var templateStart = jj.Template(kTemplateStart);
         result += templateStart.render();
 
-        // if the request does not contain any file uploads, we do not need
-        // to add the class for File in the request
-        if (requestModel.hasFileInFormData) {
-          result += kFileClassString;
-        }
-
-        //adds the function to build formdata with or without 'file' type
-        if (requestModel.hasFormData) {
-          result += requestModel.hasFileInFormData
-              ? kBuildFormDataFunctionWithFilesString
-              : kBuildFormDataFunctionWithoutFilesString;
-        }
-
         var templateUri = jj.Template(kTemplateUri);
 
         //renders the request body contains the HTTP method associated with the request
