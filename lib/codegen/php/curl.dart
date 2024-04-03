@@ -154,17 +154,15 @@ echo $response;
           result += templateHeader.render({'headers': headers});
         }
 
+        // renders the initial request init function call
         result += kStringRequestInit;
 
         //renders the request temlate
-        var templateRequest = jj.Template(kTemplateRequest);
-        result += templateRequest.render({
-          "authority": uri.authority,
-          "method": httpMethod(method.name.toUpperCase()),
-          "path": uri.path,
-          "queryParamsStr": hasQuery ? "queryParamsStr" : "",
-        });
-
+        var templateRequestOptsInit = jj.Template(kTemplateRequestOptsInit);
+        result += templateRequestOptsInit.render({'method': requestModel.method.name});
+        if (headers.isNotEmpty) {
+          result += kStringHeaderOpt;
+        }
         if (hasBody || requestModel.hasFormData) {
           result += kStringRequestBodyOpt;
         }
