@@ -30,15 +30,27 @@ $request_body = '{{body}}';
 ''';
 
   //defining query parameters
-  String kTemplateParams = """
+  String kTemplateParams = r'''
+$queryParams = [
+{%- for name, value in params %}
+    '{{ name }}' => '{{ value }}',
+{%- endfor %}
+];
+$uri .= '?' . http_build_query($queryParams);
 
-\$queryParams = [{{params}}];
-\$queryString = "?" . http_build_query(\$queryParams);
-if (count(\$queryParams) > 0) {
-    \$uri .= \$queryString;
-}
 
-""";
+''';
+
+  //specifying headers
+  String kTemplateHeaders = r'''
+$headers = [
+{%- for name, value in headers %}
+    '{{ name }}: {{ value }}',
+{%- endfor %}
+];
+
+
+''';
 
   //initialising the request
   String kTemplateRequestInit = """
