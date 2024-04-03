@@ -177,24 +177,4 @@ echo $response;
       return null;
     }
   }
-
-  //function for http verb to curl mapping
-  String httpMethod(String methodName) {
-    switch (methodName) {
-      case "POST":
-        return "CURLOPT_POST";
-      case "GET":
-        return "CURLOPT_HTTPGET";
-      case "PUT":
-        return "CURLOPT_PUT";
-      case "DELETE":
-        return "CURLOPT_CUSTOMREQUEST";
-      case "PATCH":
-        return "CURLOPT_CUSTOMREQUEST";
-      case "HEAD":
-        return "CURLOPT_NOBODY";
-      default:
-        return "";
-    }
-  }
 }
