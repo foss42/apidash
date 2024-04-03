@@ -6,10 +6,17 @@ import 'package:apidash/models/models.dart' show RequestModel;
 import 'package:apidash/consts.dart';
 
 class PHPcURLCodeGen {
-  final String kTemplateStart = """
+  final String kTemplateStart = r'''
 <?php
 
-""";
+
+''';
+
+  final String kTemplateUri = r'''
+$uri = '{{uri}}';
+
+
+''';
 
   String kTemplateBody = r'''
 {%- if body is iterable -%}
@@ -53,11 +60,10 @@ $headers = [
 ''';
 
   //initialising the request
-  String kTemplateRequestInit = """
+  String kStringRequestInit = r'''
+$request = curl_init($uri);
 
-\$request = curl_init(\$uri);
-
-""";
+''';
 
   String kTemplateRequestOptsInit = r'''
 curl_setopt_array($request, [
