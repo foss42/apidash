@@ -98,9 +98,6 @@ echo $response;
 ''';
 
   String? getCode(RequestModel requestModel) {
-    String uuid = getNewUuid();
-    uuid = uuid.replaceAll(RegExp(r'-'), "");
-
     try {
       String result = "";
       bool hasHeaders = false;
