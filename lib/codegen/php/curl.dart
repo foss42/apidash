@@ -131,20 +131,10 @@ echo $response;
 
         //checking and adding query params
         if (uri.hasQuery) {
-          var params = uri.queryParameters;
-          if (params.isNotEmpty) {
+          if (requestModel.enabledParamsMap.isNotEmpty) {
             hasQuery = true;
             var templateParams = jj.Template(kTemplateParams);
-
-            // generating the map of key and value for the query parameters
-            List<String> queryList = [];
-            for (MapEntry<String, String> entry in params.entries) {
-              String entryStr = "\"${entry.key}\" => \"${entry.value}\"";
-              queryList.add(entryStr);
-            }
-            String paramsString = "\n    ${queryList.join(",\n    ")}\n";
-
-            result += templateParams.render({"params": paramsString});
+            result += templateParams.render({"params": requestModel.enabledParamsMap});
           }
         }
 
