@@ -151,67 +151,20 @@ echo $response;
           }
         }
 
-        // renders the initial request init function call
-        var templateRequestInit = jj.Template(kTemplateRequestInit);
-        result += templateRequestInit.render();
+        var headers = requestModel.enabledHeadersMap;
+        if (requestModel.hasBody) {
+          if (!headers.containsKey('Content-Type')) {
+            if (requestModel.hasJsonData) {
+              headers['Content-Type'] = 'application/json';
+            } else if (requestModel.hasTextData) {
+              headers['Content-Type'] = 'text/plain';
+            }
+          }
+        }
 
-        var harJson =
-            requestModelToHARJsonRequest(requestModel, useEnabled: true);
-
-        var headers = harJson["headers"];
-
-        //parses and adds the headers
-        if (headers.isNotEmpty || requestModel.hasFormData) {
+        if (headers.isNotEmpty) {
           var templateHeader = jj.Template(kTemplateHeaders);
-          var m = {};
-          for (var i in headers) {
-            m[i["name"]] = i["value"];
-          }
-
-          if (requestModel.hasFormData) {
-            // we will override any existing boundary and use our own boundary
-            m['Content-Type'] =
-                "multipart/form-data; boundary=-------------$uuid";
-
-            var boundaryUniqueIdTemplate =
-                jj.Template(kBoundaryUniqueIdTemplate);
-            result += boundaryUniqueIdTemplate.render({"uuid": uuid});
-
-            var fieldsString = '\$fields = [\n';
-            var filesString = '\$files = [\n';
-
-            for (var formData in requestModel.formDataMapList) {
-              if (formData['type'] == 'text') {
-                // the four spaces on the left hand side are for indentation, hence do not remove
-                fieldsString +=
-                    '    "${formData['name']}" => "${formData['value']}",\n';
-              } else if (formData['type'] == 'file') {
-                filesString +=
-                    '    new File("${formData['name']}", "${formData['value']}"),\n';
-              }
-            }
-
-            fieldsString += '];\n';
-            filesString += '];\n';
-
-            result += fieldsString;
-            if (requestModel.hasFileInFormData) {
-              result += filesString;
-
-              result += kMultiPartBodyWithFiles;
-            } else {
-              result += kMultiPartBodyWithoutFiles;
-            }
-          }
-
-          var headersString = '\n';
-          m.forEach((key, value) {
-            headersString += "\t\t\t\t'$key: $value', \n";
-          });
-
-          result += templateHeader.render({
-            "headers": headersString,
-          });
+          result += templateHeader.render({'headers': headers});
         }
 
         // contains the HTTP method associated with the request
