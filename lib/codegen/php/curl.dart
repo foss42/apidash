@@ -154,21 +154,7 @@ echo $response;
           result += templateHeader.render({'headers': headers});
         }
 
-        // contains the HTTP method associated with the request
-        var method = requestModel.method;
-
-        // contains the entire request body as a string if body is present
-        var requestBody = requestModel.requestBody;
-
-        //renders the request body
-        if (kMethodsWithBody.contains(method) && requestBody != null) {
-          var contentLength = utf8.encode(requestBody).length;
-          if (contentLength > 0) {
-            hasBody = true;
-            var templateBody = jj.Template(kTemplateBody);
-            result += templateBody.render({"body": requestBody});
-          }
-        }
+        result += kStringRequestInit;
 
         //renders the request temlate
         var templateRequest = jj.Template(kTemplateRequest);
@@ -180,7 +166,7 @@ echo $response;
         });
 
         if (hasBody || requestModel.hasFormData) {
-          result += kStringRequestBody;
+          result += kStringRequestBodyOpt;
         }
 
         //and of the request
