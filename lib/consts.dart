@@ -272,7 +272,7 @@ const kDefaultContentType = ContentType.json;
 enum CodegenLanguage {
   curl("cURL", "bash", "curl"),
   har("HAR", "json", "har"),
-  cSharpRestSharp("C# (Rest Sharp)", "cs", "cs");
+  cSharpRestSharp("C# (Rest Sharp)", "cs", "cs"),
   dartHttp("Dart (http)", "dart", "dart"),
   dartDio("Dart (dio)", "dart", "dart"),
   goHttp("Go (http)", "go", "go"),
