@@ -169,7 +169,6 @@ function build_data_files(\$boundary, \$fields, \$files)
 
     try {
       String result = "";
-      bool hasHeaders = false;
       bool hasQuery = false;
       bool hasBody = false;
 
