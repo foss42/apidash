@@ -457,7 +457,7 @@ class Program
 {
   static async Task Main(){
     try{
-      const String _baseUrl = "https://api.apidash.dev";
+      const String _baseUrl = "http://api.apidash.dev";
       var client = new RestClient(_baseUrl);
 
       var request = new RestRequest("", Method.Head);
@@ -474,7 +474,7 @@ class Program
 """;
       expect(
           codegen.getCode(
-              CodegenLanguage.cSharpRestSharp, requestModelHead2, "https"),
+              CodegenLanguage.cSharpRestSharp, requestModelHead2, "http"),
           expectedCode);
     });
   });
@@ -533,13 +533,13 @@ class Program
       request.AddHeader("Content-Type", "application/json");
 
       var jsonBody = new {
-\t\t\t\t\ttext = "I LOVE Flutter",
-\t\t\t\t\tflag = "null",
-\t\t\t\t\tmale = "true",
-\t\t\t\t\tfemale = "false",
-\t\t\t\t\tno = "1.2",
-\t\t\t\t\tarr = "[null, true, false, null]"
-\t\t\t\t\t};
+text = "I LOVE Flutter",
+flag = "null",
+male = "true",
+female = "false",
+no = "1.2",
+arr = "[null, true, false, null]"
+};
       request.AddJsonBody(jsonBody);
 
       var response = await client.ExecuteAsync(request);
@@ -572,12 +572,12 @@ class Program
 
       var request = new RestRequest("/case/lower", Method.Post);
 
-      request.AddHeader("Content-Type", "application/json");
       request.AddHeader("User-Agent", "Test Agent");
+      request.AddHeader("Content-Type", "application/json");
 
       var jsonBody = new {
-\t\t\t\t\ttext = "I LOVE Flutter"
-\t\t\t\t\t};
+text = "I LOVE Flutter"
+};
       request.AddJsonBody(jsonBody);
 
       var response = await client.ExecuteAsync(request);
@@ -609,8 +609,6 @@ class Program
       var client = new RestClient(_baseUrl);
 
       var request = new RestRequest("/io/form", Method.Post);
-
-      request.AddHeader("Content-Type", "multipart/form-data");
 
       request.AlwaysMultipartFormData = true;
       request.AddParameter("text", "API", ParameterType.GetOrPost);
@@ -647,7 +645,6 @@ class Program
 
       var request = new RestRequest("/io/form", Method.Post);
 
-      request.AddHeader("Content-Type", "multipart/form-data");
       request.AddHeader("User-Agent", "Test Agent");
 
       request.AlwaysMultipartFormData = true;
@@ -685,11 +682,13 @@ class Program
 
       var request = new RestRequest("/io/img", Method.Post);
 
-      request.AddHeader("Content-Type", "multipart/form-data");
-
       request.AlwaysMultipartFormData = true;
+      var options = new FileParameterOptions
+      {
+          DisableFilenameEncoding = true
+      };
       request.AddParameter("token", "xyz", ParameterType.GetOrPost);
-      request.AddFile("imfile", "/Documents/up/1.png");
+      request.AddFile("imfile", "/Documents/up/1.png", options: options);
 
       var response = await client.ExecuteAsync(request);
       Console.WriteLine("Status Code: " + (int)response.StatusCode);
@@ -721,11 +720,13 @@ class Program
 
       var request = new RestRequest("/io/img", Method.Post);
 
-      request.AddHeader("Content-Type", "multipart/form-data");
-
       request.AlwaysMultipartFormData = true;
+      var options = new FileParameterOptions
+      {
+          DisableFilenameEncoding = true
+      };
       request.AddParameter("token", "xyz", ParameterType.GetOrPost);
-      request.AddFile("imfile", "/Documents/up/1.png");
+      request.AddFile("imfile", "/Documents/up/1.png", options: options);
 
       var response = await client.ExecuteAsync(request);
       Console.WriteLine("Status Code: " + (int)response.StatusCode);
@@ -759,8 +760,6 @@ class Program
 
       request.AddQueryParameter("size", "2");
       request.AddQueryParameter("len", "3");
-
-      request.AddHeader("Content-Type", "multipart/form-data");
 
       request.AlwaysMultipartFormData = true;
       request.AddParameter("text", "API", ParameterType.GetOrPost);
@@ -800,13 +799,16 @@ class Program
       request.AddQueryParameter("size", "2");
       request.AddQueryParameter("len", "3");
 
-      request.AddHeader("Content-Type", "multipart/form-data");
       request.AddHeader("User-Agent", "Test Agent");
       request.AddHeader("Keep-Alive", "true");
 
       request.AlwaysMultipartFormData = true;
+      var options = new FileParameterOptions
+      {
+          DisableFilenameEncoding = true
+      };
       request.AddParameter("token", "xyz", ParameterType.GetOrPost);
-      request.AddFile("imfile", "/Documents/up/1.png");
+      request.AddFile("imfile", "/Documents/up/1.png", options: options);
 
       var response = await client.ExecuteAsync(request);
       Console.WriteLine("Status Code: " + (int)response.StatusCode);
@@ -844,9 +846,9 @@ class Program
       request.AddHeader("Content-Type", "application/json");
 
       var jsonBody = new {
-\t\t\t\t\tname = "morpheus",
-\t\t\t\t\tjob = "zion resident"
-\t\t\t\t\t};
+name = "morpheus",
+job = "zion resident"
+};
       request.AddJsonBody(jsonBody);
 
       var response = await client.ExecuteAsync(request);
@@ -885,9 +887,9 @@ class Program
       request.AddHeader("Content-Type", "application/json");
 
       var jsonBody = new {
-\t\t\t\t\tname = "marfeus",
-\t\t\t\t\tjob = "accountant"
-\t\t\t\t\t};
+name = "marfeus",
+job = "accountant"
+};
       request.AddJsonBody(jsonBody);
 
       var response = await client.ExecuteAsync(request);
@@ -956,9 +958,9 @@ class Program
       request.AddHeader("Content-Type", "application/json");
 
       var jsonBody = new {
-\t\t\t\t\tname = "marfeus",
-\t\t\t\t\tjob = "accountant"
-\t\t\t\t\t};
+name = "marfeus",
+job = "accountant"
+};
       request.AddJsonBody(jsonBody);
 
       var response = await client.ExecuteAsync(request);
