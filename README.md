@@ -127,6 +127,7 @@ API Dash currently supports API integration code generation for the following la
 | ---------------------- | ------------- | ------- |
 | cURL                   |               |         |
 | HAR                    |               |         |
+| C#                     | `RestSharp`   |         |
 | Dart                   | `http`        |         |
 | Dart                   | `dio`         |         |
 | Go                     | `net/http`    |         |
