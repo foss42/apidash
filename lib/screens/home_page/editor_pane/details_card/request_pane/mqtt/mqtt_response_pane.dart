@@ -17,12 +17,16 @@ class MQTTResponsePane extends ConsumerWidget {
         selectedRequestModelProvider.select((value) => value?.responseStatus));
     final message = ref
         .watch(selectedRequestModelProvider.select((value) => value?.message));
+    final startSendingTime = ref.watch(
+        selectedRequestModelProvider.select((value) => value?.sendingTime));
     if (responseStatus == -1) {
       return ErrorMessage(message: '$message. $kUnexpectedRaiseIssue');
     }
     if (connectionState == RealtimeConnectionState.connecting ||
         connectionState == RealtimeConnectionState.disconnecting) {
-      return const SendingWidget();
+      return SendingWidget(
+        startSendingTime: startSendingTime,
+      );
     }
     if (sentRequestId == null) {
       return const NotSentWidget();
