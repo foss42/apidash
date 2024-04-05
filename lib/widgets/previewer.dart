@@ -8,6 +8,7 @@ import 'error_message.dart';
 import 'uint8_audio_player.dart';
 import 'json_previewer.dart';
 import 'csv_previewer.dart';
+import 'video_previewer.dart';
 import '../consts.dart';
 
 class Previewer extends StatefulWidget {
@@ -86,7 +87,12 @@ class _PreviewerState extends State<Previewer> {
       return CsvPreviewer(body: widget.body);
     }
     if (widget.type == kTypeVideo) {
-      // TODO: Video Player
+      try {
+        var preview = VideoPreviewer(videoBytes: widget.bytes);
+        return preview;
+      } catch (e) {
+        return const ErrorMessage(message: kVideoError);
+      }
     }
     String message = widget.hasRaw
         ? "$kMimeTypeRawRaiseIssueStart${widget.type}/${widget.subtype}$kMimeTypeRaiseIssue"

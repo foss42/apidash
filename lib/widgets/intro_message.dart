@@ -16,7 +16,7 @@ class IntroMessage extends StatelessWidget {
     late final String version;
 
     Future<void> introData() async {
-      text = await rootBundle.loadString('assets/intro.md');
+      text = await rootBundle.loadString(kAssetIntroMd);
       version = (await PackageInfo.fromPlatform()).version;
     }
 

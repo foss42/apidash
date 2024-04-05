@@ -50,16 +50,12 @@ class _RequestPaneState extends State<RequestPane>
     return Column(
       children: [
         Padding(
-          padding: kPh20v10,
+          padding: kP8,
           child: SizedBox(
             height: kHeaderHeight,
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Text(
-                  "Request",
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
                 FilledButton.tonalIcon(
                   onPressed: widget.onPressedCodeButton,
                   icon: Icon(
@@ -70,7 +66,8 @@ class _RequestPaneState extends State<RequestPane>
                   label: SizedBox(
                     width: 75,
                     child: Text(
-                        widget.codePaneVisible ? "Hide Code" : "View Code"),
+                      widget.codePaneVisible ? kLabelHideCode : kLabelViewCode,
+                    ),
                   ),
                 ),
               ],
@@ -81,6 +78,7 @@ class _RequestPaneState extends State<RequestPane>
           key: Key(widget.selectedId!),
           controller: _controller,
           overlayColor: kColorTransparentState,
+          labelPadding: kPh2,
           onTap: widget.onTapTabBar,
           tabs: [
             TabLabel(
@@ -97,6 +95,7 @@ class _RequestPaneState extends State<RequestPane>
             ),
           ],
         ),
+        kVSpacer5,
         Expanded(
           child: TabBarView(
             controller: _controller,

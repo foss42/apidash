@@ -186,4 +186,18 @@ void main() {
     expect(find.byIcon(Icons.save), findsOneWidget);
     expect(find.text("Save"), findsOneWidget);
   });
+
+  testWidgets('Testing for ClearResponseButton', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        title: 'ClearResponseButton',
+        theme: kThemeDataLight,
+        home: const Scaffold(
+          body: ClearResponseButton(),
+        ),
+      ),
+    );
+
+    expect(find.byIcon(Icons.delete), findsOneWidget);
+  });
 }

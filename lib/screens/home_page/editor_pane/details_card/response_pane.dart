@@ -13,12 +13,17 @@ class ResponsePane extends ConsumerWidget {
     final isWorking = ref.watch(
             selectedRequestModelProvider.select((value) => value?.isWorking)) ??
         false;
+    final startSendingTime = ref.watch(
+        selectedRequestModelProvider.select((value) => value?.sendingTime));
     final responseStatus = ref.watch(
         selectedRequestModelProvider.select((value) => value?.responseStatus));
     final message = ref
         .watch(selectedRequestModelProvider.select((value) => value?.message));
+
     if (isWorking) {
-      return const SendingWidget();
+      return SendingWidget(
+        startSendingTime: startSendingTime,
+      );
     }
     if (responseStatus == null) {
       return const NotSentWidget();
@@ -47,6 +52,12 @@ class ResponseDetails extends ConsumerWidget {
           responseStatus: responseStatus,
           message: message,
           time: responseModel?.time,
+          onClearResponse: () {
+            final selectedRequest = ref.read(selectedRequestModelProvider);
+            ref
+                .read(collectionStateNotifierProvider.notifier)
+                .clearResponse(selectedRequest?.id);
+          },
         ),
         const Expanded(
           child: ResponseTabs(),
