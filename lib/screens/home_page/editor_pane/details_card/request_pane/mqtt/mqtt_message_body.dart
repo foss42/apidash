@@ -38,6 +38,9 @@ class EditMessageBody extends ConsumerWidget {
                   child: Padding(
                     padding: kMaterialListPadding,
                     child: TopicField(
+                      value:
+                          ref.watch(messageTopicStateProvider.notifier).state ??
+                              "",
                       hintText: "Topic",
                       onChanged: (String value) {
                         ref.read(messageTopicStateProvider.notifier).state =
@@ -138,12 +141,14 @@ class SendButton extends ConsumerWidget {
 class TopicField extends StatelessWidget {
   const TopicField({
     super.key,
+    required this.value,
     this.hintText,
     this.onChanged,
     this.colorScheme,
   });
 
   final String? hintText;
+  final String value;
   final void Function(String)? onChanged;
   final ColorScheme? colorScheme;
 
@@ -151,6 +156,7 @@ class TopicField extends StatelessWidget {
   Widget build(BuildContext context) {
     var clrScheme = colorScheme ?? Theme.of(context).colorScheme;
     return TextFormField(
+      initialValue: value,
       style: kCodeStyle.copyWith(
         color: clrScheme.onSurface,
       ),

@@ -89,7 +89,6 @@ class EditRequestURLParamsState
             onChanged: (value) {
               headerRows[index] = headerRows[index].copyWith(value: value);
               _onFieldChange(selectedId!);
-              debugPrint("headerRows: $headerRows");
             },
             colorScheme: Theme.of(context).colorScheme,
           ),

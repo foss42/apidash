@@ -25,7 +25,7 @@ class MQTTResponsePane extends ConsumerWidget {
     if (connectionState == RealtimeConnectionState.connecting ||
         connectionState == RealtimeConnectionState.disconnecting) {
       return SendingWidget(
-        startSendingTime: startSendingTime,
+        startSendingTime: DateTime.now(),
       );
     }
     if (sentRequestId == null) {
@@ -130,9 +130,11 @@ class MQTTResponseView extends ConsumerWidget {
                       Icons.arrow_upward,
                       color: Colors.blue,
                     )
-                  : const Icon(
+                  : Icon(
                       Icons.info,
-                      color: Colors.white,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white
+                          : Colors.black,
                     ),
           title: Text(history[index]['message'] ?? ''),
         );

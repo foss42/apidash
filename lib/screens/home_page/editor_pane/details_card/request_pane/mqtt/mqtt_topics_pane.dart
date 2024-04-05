@@ -106,7 +106,6 @@ class MQTTTopicsPaneState extends ConsumerState<MQTTTopicsPane> {
               onChanged: (value) {
                 setState(() {
                   rows[index] = rows[index].copyWith(qos: value!);
-                  print(rows);
                 });
                 _onFieldChange(selectedId!);
               },

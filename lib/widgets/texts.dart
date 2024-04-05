@@ -50,7 +50,7 @@ class ProtocolBox extends StatelessWidget {
           fontWeight: FontWeight.bold,
           color: Theme.of(context).brightness == Brightness.dark
               ? getDarkModeColor(Colors.white)
-              : Colors.white,
+              : Colors.black,
         ),
       ),
     );

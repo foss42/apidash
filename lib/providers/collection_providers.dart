@@ -210,7 +210,7 @@ class CollectionStateNotifier
     try {
       RequestModel requestModel = state![id]!;
       mqttClient = await connectToMqttServer(
-          broker: requestModel.url, clientId: clientId!);
+          broker: requestModel.url, clientId: clientId);
 
       var map = {...state!};
       state = map;

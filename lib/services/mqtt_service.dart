@@ -3,9 +3,9 @@ import 'package:mqtt_client/mqtt_server_client.dart';
 
 Future<MqttServerClient> connectToMqttServer({
   required String broker,
-  required String clientId,
+  String? clientId,
 }) async {
-  final client = MqttServerClient(broker, clientId);
+  final client = MqttServerClient(broker, clientId ?? '');
   client.setProtocolV311();
   await client.connect();
   return client;
