@@ -153,11 +153,11 @@ int main() {
         if (requestModel.hasTextData || requestModel.hasJsonData) {
           hasBody = true;
           var templateRawBody = jj.Template(kTemplateBody);
-          String Body = "";
+          String body = "";
           if (requestBody != null) {
-            Body = requestBody.replaceAll('"', '\\"').replaceAll('\n', '\\n');
+            body = requestBody.replaceAll('"', '\\"').replaceAll('\n', '\\n');
           }
-          result += templateRawBody.render({"body": Body});
+          result += templateRawBody.render({"body": body});
         } else if (requestModel.hasFormData) {
           hasBody = true;
           var templateFormData = jj.Template(kTemplateFormData);
