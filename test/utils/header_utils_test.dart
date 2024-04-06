@@ -248,6 +248,24 @@ void main() {
       expect(getHeaderSuggestions(pattern), expected);
     });
 
+    test("Testing using 'x-' pattern", () {
+      String pattern = "x-";
+      List<String> expected = [
+        'X-XSS-Protection',
+        'X-Api-Key',
+        'X-CSRF-Token',
+        'X-Forwarded-For',
+        'X-Frame-Options',
+        'X-Requested-With',
+        'X-Content-Type-Options',
+        'Max-Forwards',
+        'Expect',
+        'Expires',
+        'Access-Control-Max-Age'
+      ];
+      expect(getHeaderSuggestions(pattern), expected);
+    });
+
     test("Testing for 'origin' pattern", () {
       String pattern = "origin";
       List<String> expected = [
