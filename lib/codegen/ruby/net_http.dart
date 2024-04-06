@@ -1,7 +1,7 @@
 import 'package:jinja/jinja.dart' as jj;
-import 'package:apidash/utils/utils.dart'
-    show requestModelToHARJsonRequest;
+import 'package:apidash/utils/utils.dart' show getValidRequestUri;
 import 'package:apidash/models/models.dart' show RequestModel;
+import '../../extensions/extensions.dart';
 import 'package:apidash/consts.dart';
 
 class RubyNetHttpCodeGen {
@@ -15,9 +15,8 @@ request = Net::HTTP::{{method}}.new(url)
 """;
 
   String kTemplateHeader = """
-
-{% for header in headers %}
-{% if 'multipart' not in header['value'] %}request["{{ header['name'] }}"] = "{{ header['value'] }}"{% endif %}{% endfor %}
+{% for key, value in headers %}
+request["{{key}}"] = "{{value}}"{% endfor %}
 """;
 
   String kTemplateBody = """
@@ -35,7 +34,7 @@ HEREDOC
 response = https.request(request)
 
 puts "Response Code: #{response.code}"
-{% if method != "HEAD" %}puts "Response Body: #{response.body}"{% else %}puts "Response Body: #{response.to_hash}"{% endif %}
+{% if method != "head" %}puts "Response Body: #{response.body}"{% else %}puts "Response Body: #{response.to_hash}"{% endif %}
 
 """;
 
@@ -43,18 +42,33 @@ puts "Response Code: #{response.code}"
     try {
       String result = "";
 
-      var harJson =
-          requestModelToHARJsonRequest(requestModel, useEnabled: true);
+      var rec = getValidRequestUri(
+        requestModel.url,
+        requestModel.enabledRequestParams,
+      );
+
+      Uri? uri = rec.$1;
+
+      if (uri == null) {
+        return "";
+      }
 
       var templateStart = jj.Template(kTemplateStart);
       result += templateStart.render({
-        "url": harJson["url"],
-        "method": harJson["method"].toString().substring(0, 1).toUpperCase() +
-            harJson["method"].toString().substring(1).toLowerCase(),
-        "check": harJson["url"].toString().substring(0, 5),
+        "url": uri.query.isEmpty
+            ? uri.toString().replaceFirst("?", "", uri.toString().length - 1)
+            : uri,
+        "method": requestModel.method.name.capitalize(),
+        "check": uri.scheme,
       });
 
-      var headers = harJson["headers"];
+      var headers = requestModel.enabledHeadersMap;
+      if (!requestModel.hasContentTypeHeader &&
+          (requestModel.hasJsonData || requestModel.hasTextData)) {
+        headers[kHeaderContentType] =
+            requestModel.requestBodyContentType.header;
+      }
+
       if (headers.isNotEmpty) {
         var templateHeader = jj.Template(kTemplateHeader);
         result += templateHeader.render({
@@ -74,7 +88,7 @@ puts "Response Code: #{response.code}"
         result += "form_data = [";
         var templateMultiPartBody = jj.Template(kMultiPartBodyTemplate);
         int length = requestModel.formDataMapList.length;
-  
+
         for (var element in requestModel.formDataMapList) {
           result += "[";
           result += templateMultiPartBody.render({
@@ -89,13 +103,13 @@ puts "Response Code: #{response.code}"
             result += "],";
           }
         }
-        // result.substring(0,result.length - 1);
         result += "]\n";
-        result += "request.set_form form_data, 'multipart/form-data'";
+        result +=
+            "request.set_form form_data, '${ContentType.formdata.header}'";
       }
 
-      result +=
-          jj.Template(kStringRequest).render({"method": harJson["method"]});
+      result += jj.Template(kStringRequest)
+          .render({"method": requestModel.method.name});
       return result;
     } catch (e) {
       return null;
