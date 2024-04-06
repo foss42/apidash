@@ -114,15 +114,17 @@ void main() {
     test("Testing using 'x-' pattern", () {
       String pattern = "x-";
       List<String> expected = [
-        "Access-Control-Max-Age",
-        "Max-Forwards",
-        "X-Api-Key",
-        "X-Content-Type-Options",
-        "X-CSRF-Token",
-        "X-Forwarded-For",
-        "X-Frame-Options",
-        "X-Requested-With",
-        "X-XSS-Protection"
+        'X-XSS-Protection',
+        'X-Api-Key',
+        'X-CSRF-Token',
+        'X-Forwarded-For',
+        'X-Frame-Options',
+        'X-Requested-With',
+        'X-Content-Type-Options',
+        'Max-Forwards',
+        'Expect',
+        'Expires',
+        'Access-Control-Max-Age'
       ];
       expect(getFuzzyHeaderSuggestions(pattern), expected);
     });
@@ -251,17 +253,15 @@ void main() {
     test("Testing using 'x-' pattern", () {
       String pattern = "x-";
       List<String> expected = [
-        'X-XSS-Protection',
-        'X-Api-Key',
-        'X-CSRF-Token',
-        'X-Forwarded-For',
-        'X-Frame-Options',
-        'X-Requested-With',
-        'X-Content-Type-Options',
-        'Max-Forwards',
-        'Expect',
-        'Expires',
-        'Access-Control-Max-Age'
+        "Access-Control-Max-Age",
+        "Max-Forwards",
+        "X-Api-Key",
+        "X-Content-Type-Options",
+        "X-CSRF-Token",
+        "X-Forwarded-For",
+        "X-Frame-Options",
+        "X-Requested-With",
+        "X-XSS-Protection"
       ];
       expect(getHeaderSuggestions(pattern), expected);
     });
