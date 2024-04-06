@@ -1,13 +1,17 @@
 import 'package:apidash/models/models.dart' show RequestModel;
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart' show getNewUuid;
+import 'csharp/rest_sharp.dart';
 import 'dart/http.dart';
 import 'dart/dio.dart';
 import 'go/http.dart';
 import 'kotlin/okhttp.dart';
 import 'php/guzzle.dart';
+import 'php/curl.dart';
 import 'python/http_client.dart';
 import 'python/requests.dart';
+import 'ruby/faraday.dart';
+import 'ruby/net_http.dart';
 import 'rust/actix.dart';
 import 'rust/curl_rust.dart';
 import 'rust/reqwest.dart';
@@ -20,7 +24,6 @@ import 'julia/http.dart';
 import 'java/okhttp.dart';
 import 'java/async_http_client.dart';
 import 'java/httpclient.dart';
-import 'ruby/net_http.dart';
 
 class Codegen {
   String? getCode(
@@ -61,7 +64,7 @@ class Codegen {
       case CodegenLanguage.javaAsyncHttpClient:
         return JavaAsyncHttpClientGen().getCode(rM);
       case CodegenLanguage.javaHttpClient:
-        return JavaHttpClientCodeGen().getCode(rM);
+        return JavaHttpClientCodeGen().getCode(rM, boundary: boundary);
       case CodegenLanguage.javaOkHttp:
         return JavaOkHttpCodeGen().getCode(rM);
       case CodegenLanguage.juliaHttp:
@@ -73,6 +76,10 @@ class Codegen {
             .getCode(rM, boundary: boundary ?? getNewUuid());
       case CodegenLanguage.pythonRequests:
         return PythonRequestsCodeGen().getCode(rM, boundary: boundary);
+      case CodegenLanguage.rubyFaraday:
+        return RubyFaradayCodeGen().getCode(rM);
+      case CodegenLanguage.rubyNetHttp:
+        return rubyCodeGen().getCode(rM);
       case CodegenLanguage.rustActix:
         return RustActixCodeGen().getCode(rM, boundary: boundary);
       case CodegenLanguage.rustCurl:
@@ -83,8 +90,10 @@ class Codegen {
         return RustUreqCodeGen().getCode(rM, boundary: boundary);
       case CodegenLanguage.phpGuzzle:
         return PhpGuzzleCodeGen().getCode(rM);
-      case CodegenLanguage.rubyNetHttp:
-        return rubyCodeGen().getCode(rM);
+      case CodegenLanguage.phpCurl:
+        return PHPcURLCodeGen().getCode(rM);
+      case CodegenLanguage.cSharpRestSharp:
+        return CSharpRestSharp().getCode(rM);
     }
   }
 }

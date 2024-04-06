@@ -10,18 +10,40 @@ import 'package:apidash/models/models.dart';
 import '../test_consts.dart';
 
 void main() {
-  testWidgets('Testing Sending Widget', (tester) async {
+  testWidgets('Testing Sending Widget Without Timer', (tester) async {
     await tester.pumpWidget(
       MaterialApp(
         title: 'Send',
         theme: kThemeDataDark,
         home: const Scaffold(
-          body: SendingWidget(),
+          body: SendingWidget(
+            startSendingTime: null,
+          ),
         ),
       ),
     );
 
     expect(find.byType(Lottie), findsOneWidget);
+  });
+
+  testWidgets('Testing Sending Widget With Timer', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        title: 'Send',
+        theme: kThemeDataDark,
+        home: Scaffold(
+          body: SendingWidget(
+            startSendingTime: DateTime.now(),
+          ),
+        ),
+      ),
+    );
+    expect(find.text('Time elapsed: 0 ms'), findsOneWidget);
+    expect(find.byType(Lottie), findsOneWidget);
+
+    await tester.pump(const Duration(seconds: 1));
+
+    expect(find.text('Time elapsed: 1.00 s'), findsOneWidget);
   });
 
   testWidgets('Testing Not Sent Widget', (tester) async {
@@ -52,11 +74,8 @@ void main() {
       ),
     );
 
-    expect(find.byType(RichText), findsAtLeastNWidgets(1));
-    expect(
-        find.textContaining("Response (", findRichText: true), findsOneWidget);
-    expect(find.text('Hi'), findsOneWidget);
     expect(find.textContaining("200", findRichText: true), findsOneWidget);
+    expect(find.textContaining("Hi", findRichText: true), findsOneWidget);
     expect(find.text(humanizeDuration(const Duration(microseconds: 23))),
         findsOneWidget);
   });
@@ -73,7 +92,7 @@ void main() {
       ),
     );
 
-    expect(find.text('Body'), findsOneWidget);
+    expect(find.text('Response Body'), findsOneWidget);
     expect(find.text('Headers'), findsOneWidget);
 
     await tester.tap(find.text('Headers'));
@@ -81,7 +100,7 @@ void main() {
 
     expect(find.text('first'), findsNothing);
     expect(find.text('second'), findsOneWidget);
-    await tester.tap(find.text('Body'));
+    await tester.tap(find.text('Response Body'));
     await tester.pumpAndSettle();
 
     expect(find.text('first'), findsOneWidget);

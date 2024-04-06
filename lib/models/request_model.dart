@@ -31,6 +31,7 @@ class RequestModel {
     this.message,
     this.responseModel,
     this.isWorking = false,
+    this.sendingTime,
   });
 
   final String id;
@@ -50,6 +51,7 @@ class RequestModel {
   final String? message;
   final ResponseModel? responseModel;
   final bool isWorking;
+  final DateTime? sendingTime;
 
   List<NameValueModel>? get enabledRequestHeaders =>
       getEnabledRows(requestHeaders, isHeaderEnabledList);
@@ -95,6 +97,7 @@ class RequestModel {
   RequestModel duplicate({
     required String id,
     String? name,
+    int? requestTabIndex,
   }) {
     return RequestModel(
       id: id,
@@ -102,6 +105,7 @@ class RequestModel {
       url: url,
       name: name ?? "${this.name} (copy)",
       description: description,
+      requestTabIndex: requestTabIndex ?? 0,
       requestHeaders: requestHeaders != null ? [...requestHeaders!] : null,
       requestParams: requestParams != null ? [...requestParams!] : null,
       isHeaderEnabledList:
@@ -133,6 +137,7 @@ class RequestModel {
     String? message,
     ResponseModel? responseModel,
     bool? isWorking,
+    DateTime? sendingTime,
   }) {
     var headers = requestHeaders ?? this.requestHeaders;
     var params = requestParams ?? this.requestParams;
@@ -158,6 +163,7 @@ class RequestModel {
       message: message ?? this.message,
       responseModel: responseModel ?? this.responseModel,
       isWorking: isWorking ?? this.isWorking,
+      sendingTime: sendingTime ?? this.sendingTime,
     );
   }
 

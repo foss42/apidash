@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:davi/davi.dart';
 
 const kDiscordUrl = "https://bit.ly/heyfoss";
 const kGitUrl = "https://github.com/foss42/apidash";
@@ -21,7 +20,7 @@ final kIsLinux = !kIsWeb && Platform.isLinux;
 final kIsApple = !kIsWeb && (Platform.isIOS || Platform.isMacOS);
 final kIsDesktop =
     !kIsWeb && (Platform.isMacOS || Platform.isWindows || Platform.isLinux);
-
+final kIsRunningTests = Platform.environment.containsKey('FLUTTER_TEST');
 final kIsIOS = !kIsWeb && Platform.isIOS;
 final kIsAndroid = !kIsWeb && Platform.isAndroid;
 final kIsMobile = !kIsWeb && (Platform.isIOS || Platform.isAndroid);
@@ -56,6 +55,7 @@ const kForegroundOpacity = 0.05;
 const kOverlayBackgroundOpacity = 0.5;
 
 const kTextStyleButton = TextStyle(fontWeight: FontWeight.bold);
+const kTextStyleTab = TextStyle(fontSize: 14);
 const kTextStyleButtonSmall = TextStyle(fontSize: 12);
 const kFormDataButtonLabelTextStyle = TextStyle(
   fontSize: 12,
@@ -71,12 +71,18 @@ const kP5 = EdgeInsets.all(5);
 const kP8 = EdgeInsets.all(8);
 const kPs8 = EdgeInsets.only(left: 8);
 const kPs2 = EdgeInsets.only(left: 2);
+const kPe8 = EdgeInsets.only(right: 8.0);
 const kPh20v5 = EdgeInsets.symmetric(horizontal: 20, vertical: 5);
 const kPh20v10 = EdgeInsets.symmetric(horizontal: 20, vertical: 10);
 const kP10 = EdgeInsets.all(10);
+const kPv8 = EdgeInsets.symmetric(vertical: 8);
+const kPv2 = EdgeInsets.symmetric(vertical: 2);
+const kPh2 = EdgeInsets.symmetric(horizontal: 2);
 const kPt24o8 = EdgeInsets.only(top: 24, left: 8.0, right: 8.0, bottom: 8.0);
 const kPt5o10 =
     EdgeInsets.only(left: 10.0, right: 10.0, top: 5.0, bottom: 10.0);
+const kPh4 = EdgeInsets.symmetric(horizontal: 4);
+const kPh8 = EdgeInsets.symmetric(horizontal: 8);
 const kPh20 = EdgeInsets.symmetric(
   horizontal: 20,
 );
@@ -105,8 +111,6 @@ const kPb10 = EdgeInsets.only(
 const kPb15 = EdgeInsets.only(
   bottom: 15,
 );
-const kPr8CollectionPane = EdgeInsets.only(right: 8.0);
-const kpsV5 = EdgeInsets.symmetric(vertical: 2);
 const kHSpacer4 = SizedBox(width: 4);
 const kHSpacer5 = SizedBox(width: 5);
 const kHSpacer10 = SizedBox(width: 10);
@@ -118,26 +122,18 @@ const kVSpacer20 = SizedBox(height: 20);
 const kVSpacer40 = SizedBox(height: 40);
 
 const kTabAnimationDuration = Duration(milliseconds: 200);
-const kTabHeight = 45.0;
+const kTabHeight = 32.0;
 const kHeaderHeight = 32.0;
 const kSegmentHeight = 24.0;
 const kTextButtonMinWidth = 44.0;
 
 const kRandMax = 100000;
 
-const kTableThemeData = DaviThemeData(
-  columnDividerThickness: 1,
-  columnDividerColor: kColorTransparent,
-  row: RowThemeData(
-    dividerColor: kColorTransparent,
-  ),
-  decoration: BoxDecoration(
-    border: Border(),
-  ),
-  header: HeaderThemeData(
-    visible: false,
-  ),
+const kDataTableScrollbarTheme = ScrollbarThemeData(
+  crossAxisMargin: -4,
 );
+const kDataTableBottomPadding = 12.0;
+const kDataTableRowHeight = 36.0;
 
 const kIconRemoveDark = Icon(
   Icons.remove_circle,
@@ -276,6 +272,7 @@ const kDefaultContentType = ContentType.json;
 enum CodegenLanguage {
   curl("cURL", "bash", "curl"),
   har("HAR", "json", "har"),
+  cSharpRestSharp("C# (Rest Sharp)", "cs", "cs"),
   dartHttp("Dart (http)", "dart", "dart"),
   dartDio("Dart (dio)", "dart", "dart"),
   goHttp("Go (http)", "go", "go"),
@@ -286,6 +283,8 @@ enum CodegenLanguage {
   kotlinOkHttp("Kotlin (okhttp3)", "java", "kt"),
   pythonRequests("Python (requests)", "python", "py"),
   pythonHttpClient("Python (http.client)", "python", "py"),
+  rubyFaraday("Ruby (Faraday)", "ruby", "rb"),
+  rubyNetHttp("Ruby (Net::Http)", "Ruby", "rb"),
   rustActix("Rust (Actix Client)", "rust", "rs"),
   rustReqwest("Rust (reqwest)", "rust", "rs"),
   rustCurl("Rust (curl-rust)", "rust", "rs"),
@@ -295,7 +294,7 @@ enum CodegenLanguage {
   javaHttpClient("Java (HttpClient)", "java", "java"),
   juliaHttp("Julia (HTTP)", "julia", "jl"),
   phpGuzzle("PHP (guzzle)", "php", "php"),
-  rubyNetHttp("Ruby (Net::Http)", "Ruby", "rb");
+  phpCurl("PHP (curl)", "php", "php");
 
   const CodegenLanguage(this.label, this.codeHighlightLang, this.ext);
   final String label;
@@ -401,7 +400,7 @@ const Map<String, Map<String, List<ResponseBodyView>>>
     kSubTypeDefaultViewOptions: kPreviewBodyViewOptions,
   },
   kTypeVideo: {
-    kSubTypeDefaultViewOptions: kNoBodyViewOptions,
+    kSubTypeDefaultViewOptions: kPreviewBodyViewOptions,
   },
   kTypeText: {
     kSubTypeDefaultViewOptions: kRawBodyViewOptions,
@@ -510,6 +509,9 @@ const kMimeTypeRaiseIssue =
 const kUnexpectedRaiseIssue =
     "\nIf the behaviour is unexpected, please raise an issue in API Dash GitHub repo so that we can resolve it.";
 
+const kVideoError =
+    "There seems to be an issue playing this video. Please raise an issue in API Dash GitHub repo so that we can resolve it.";
+
 const kImageError =
     "There seems to be an issue rendering this image. Please raise an issue in API Dash GitHub repo so that we can resolve it.";
 
@@ -538,3 +540,36 @@ const kLabelSave = "Save";
 const kLabelDownload = "Download";
 const kLabelSaving = "Saving";
 const kLabelSaved = "Saved";
+// Request Pane
+const kLabelRequest = "Request";
+const kLabelHideCode = "Hide Code";
+const kLabelViewCode = "View Code";
+const kLabelURLParams = "URL Params";
+const kLabelHeaders = "Headers";
+const kLabelBody = "Body";
+const kNameCheckbox = "Checkbox";
+const kNameURLParam = "URL Parameter";
+const kNameHeader = "Header Name";
+const kNameValue = "Value";
+const kNameField = "Field";
+const kHintAddURLParam = "Add URL Parameter";
+const kHintAddValue = "Add Value";
+const kHintAddName = "Add Name";
+const kHintAddFieldName = "Add Field Name";
+const kLabelAddParam = "Add Param";
+const kLabelAddHeader = "Add Header";
+const kLabelSelectFile = "Select File";
+const kLabelAddFormField = "Add Form Field";
+// Response Pane
+const kLabelNotSent = "Not Sent";
+const kLabelResponse = "Response";
+const kLabelResponseBody = "Response Body";
+const kTooltipClearResponse = "Clear Response";
+const kHeaderRow = ["Header Name", "Header Value"];
+const kLabelRequestHeaders = "Request Headers";
+const kLabelResponseHeaders = "Response Headers";
+const kLabelItems = "items";
+const kMsgError = "Error: Response data does not exist.";
+const kMsgNullBody = "Response body is missing (null).";
+const kMsgNoContent = "No content";
+const kMsgUnknowContentType = "Unknown Response Content-Type";
