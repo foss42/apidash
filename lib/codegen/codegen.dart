@@ -1,4 +1,3 @@
-import 'package:apidash/codegen/php/http_plug.dart';
 import 'package:apidash/models/models.dart' show RequestModel;
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart' show getNewUuid;
@@ -8,8 +7,9 @@ import 'dart/http.dart';
 import 'dart/dio.dart';
 import 'go/http.dart';
 import 'kotlin/okhttp.dart';
-import 'php/guzzle.dart';
 import 'php/curl.dart';
+import 'php/guzzle.dart';
+import 'php/http_plug.dart';
 import 'python/http_client.dart';
 import 'python/requests.dart';
 import 'ruby/faraday.dart';
