@@ -21,13 +21,13 @@ puts "Response Code: #{response.code}"
 puts "Response Body: #{response.body}"
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rubyNetHttp, requestModelGet1, "https"),
+          codeGen.getCode(
+              CodegenLanguage.rubyNetHttp, requestModelGet1, "https"),
           expectedCode);
     });
 
     test('GET 2', () {
-      const expectedCode =
-          r"""require "uri"
+      const expectedCode = r"""require "uri"
 require "net/http"
 
 url = URI("https://api.apidash.dev/country/data?code=US")
@@ -40,13 +40,13 @@ puts "Response Code: #{response.code}"
 puts "Response Body: #{response.body}"
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rubyNetHttp, requestModelGet2, "https"),
+          codeGen.getCode(
+              CodegenLanguage.rubyNetHttp, requestModelGet2, "https"),
           expectedCode);
     });
 
     test('GET 3', () {
-      const expectedCode =
-          r"""require "uri"
+      const expectedCode = r"""require "uri"
 require "net/http"
 
 url = URI("https://api.apidash.dev/country/data?code=IND")
@@ -59,13 +59,13 @@ puts "Response Code: #{response.code}"
 puts "Response Body: #{response.body}"
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rubyNetHttp, requestModelGet3, "https"),
+          codeGen.getCode(
+              CodegenLanguage.rubyNetHttp, requestModelGet3, "https"),
           expectedCode);
     });
 
     test('GET 4', () {
-      const expectedCode =
-          r"""require "uri"
+      const expectedCode = r"""require "uri"
 require "net/http"
 
 url = URI("https://api.apidash.dev/humanize/social?num=8700000&digits=3&system=SS&add_space=true&trailing_zeros=true")
@@ -78,13 +78,13 @@ puts "Response Code: #{response.code}"
 puts "Response Body: #{response.body}"
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rubyNetHttp, requestModelGet4, "https"),
+          codeGen.getCode(
+              CodegenLanguage.rubyNetHttp, requestModelGet4, "https"),
           expectedCode);
     });
 
     test('GET 5', () {
-      const expectedCode =
-          r"""require "uri"
+      const expectedCode = r"""require "uri"
 require "net/http"
 
 url = URI("https://api.github.com/repos/foss42/apidash")
@@ -99,13 +99,13 @@ puts "Response Code: #{response.code}"
 puts "Response Body: #{response.body}"
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rubyNetHttp, requestModelGet5, "https"),
+          codeGen.getCode(
+              CodegenLanguage.rubyNetHttp, requestModelGet5, "https"),
           expectedCode);
     });
 
     test('GET 6', () {
-      const expectedCode =
-          r"""require "uri"
+      const expectedCode = r"""require "uri"
 require "net/http"
 
 url = URI("https://api.github.com/repos/foss42/apidash?raw=true")
@@ -120,7 +120,8 @@ puts "Response Code: #{response.code}"
 puts "Response Body: #{response.body}"
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rubyNetHttp, requestModelGet6, "https"),
+          codeGen.getCode(
+              CodegenLanguage.rubyNetHttp, requestModelGet6, "https"),
           expectedCode);
     });
 
@@ -138,13 +139,13 @@ puts "Response Code: #{response.code}"
 puts "Response Body: #{response.body}"
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rubyNetHttp, requestModelGet7, "https"),
+          codeGen.getCode(
+              CodegenLanguage.rubyNetHttp, requestModelGet7, "https"),
           expectedCode);
     });
 
     test('GET 8', () {
-      const expectedCode =
-          r"""require "uri"
+      const expectedCode = r"""require "uri"
 require "net/http"
 
 url = URI("https://api.github.com/repos/foss42/apidash?raw=true")
@@ -159,13 +160,13 @@ puts "Response Code: #{response.code}"
 puts "Response Body: #{response.body}"
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rubyNetHttp, requestModelGet8, "https"),
+          codeGen.getCode(
+              CodegenLanguage.rubyNetHttp, requestModelGet8, "https"),
           expectedCode);
     });
 
     test('GET 9', () {
-      const expectedCode =
-          r"""require "uri"
+      const expectedCode = r"""require "uri"
 require "net/http"
 
 url = URI("https://api.apidash.dev/humanize/social?num=8700000&add_space=true")
@@ -178,13 +179,13 @@ puts "Response Code: #{response.code}"
 puts "Response Body: #{response.body}"
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rubyNetHttp, requestModelGet9, "https"),
+          codeGen.getCode(
+              CodegenLanguage.rubyNetHttp, requestModelGet9, "https"),
           expectedCode);
     });
 
     test('GET 10', () {
-      const expectedCode =
-          r"""require "uri"
+      const expectedCode = r"""require "uri"
 require "net/http"
 
 url = URI("https://api.apidash.dev/humanize/social")
@@ -208,8 +209,7 @@ puts "Response Body: #{response.body}"
     });
 
     test('GET 11', () {
-      const expectedCode =
-          r"""require "uri"
+      const expectedCode = r"""require "uri"
 require "net/http"
 
 url = URI("https://api.apidash.dev/humanize/social?num=8700000&digits=3")
@@ -224,13 +224,13 @@ puts "Response Code: #{response.code}"
 puts "Response Body: #{response.body}"
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rubyNetHttp, requestModelGet11, "https"),
+          codeGen.getCode(
+              CodegenLanguage.rubyNetHttp, requestModelGet11, "https"),
           expectedCode);
     });
 
     test('GET 12', () {
-      const expectedCode =
-          r"""require "uri"
+      const expectedCode = r"""require "uri"
 require "net/http"
 
 url = URI("https://api.apidash.dev/humanize/social")
@@ -243,7 +243,8 @@ puts "Response Code: #{response.code}"
 puts "Response Body: #{response.body}"
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rubyNetHttp, requestModelGet12, "https"),
+          codeGen.getCode(
+              CodegenLanguage.rubyNetHttp, requestModelGet12, "https"),
           expectedCode);
     });
   });
@@ -263,7 +264,8 @@ puts "Response Code: #{response.code}"
 puts "Response Body: #{response.to_hash}"
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rubyNetHttp, requestModelHead1, "https"),
+          codeGen.getCode(
+              CodegenLanguage.rubyNetHttp, requestModelHead1, "https"),
           expectedCode);
     });
 
@@ -281,7 +283,8 @@ puts "Response Code: #{response.code}"
 puts "Response Body: #{response.to_hash}"
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rubyNetHttp, requestModelHead2, "http"),
+          codeGen.getCode(
+              CodegenLanguage.rubyNetHttp, requestModelHead2, "http"),
           expectedCode);
     });
   });
@@ -309,7 +312,8 @@ puts "Response Code: #{response.code}"
 puts "Response Body: #{response.body}"
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rubyNetHttp, requestModelPost1, "https"),
+          codeGen.getCode(
+              CodegenLanguage.rubyNetHttp, requestModelPost1, "https"),
           expectedCode);
     });
 
@@ -340,7 +344,8 @@ puts "Response Code: #{response.code}"
 puts "Response Body: #{response.body}"
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rubyNetHttp, requestModelPost2, "https"),
+          codeGen.getCode(
+              CodegenLanguage.rubyNetHttp, requestModelPost2, "https"),
           expectedCode);
     });
 
@@ -367,7 +372,8 @@ puts "Response Code: #{response.code}"
 puts "Response Body: #{response.body}"
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rubyNetHttp, requestModelPost3, "https"),
+          codeGen.getCode(
+              CodegenLanguage.rubyNetHttp, requestModelPost3, "https"),
           expectedCode);
     });
     test('POST 4', () {
@@ -423,8 +429,7 @@ puts "Response Body: #{response.body}"
           expectedCode);
     });
     test('POST 6', () {
-      const expectedCode =
-          r"""require "uri"
+      const expectedCode = r"""require "uri"
 require "net/http"
 
 url = URI("https://api.apidash.dev/io/img")
@@ -449,8 +454,7 @@ puts "Response Body: #{response.body}"
           expectedCode);
     });
     test('POST 7', () {
-      const expectedCode =
-          r"""require "uri"
+      const expectedCode = r"""require "uri"
 require "net/http"
 
 url = URI("https://api.apidash.dev/io/img")
@@ -500,8 +504,7 @@ puts "Response Body: #{response.body}"
           expectedCode);
     });
     test('POST 9', () {
-      const expectedCode =
-          r"""require "uri"
+      const expectedCode = r"""require "uri"
 require "net/http"
 
 url = URI("https://api.apidash.dev/io/img?size=2&len=3")
@@ -553,7 +556,8 @@ puts "Response Code: #{response.code}"
 puts "Response Body: #{response.body}"
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rubyNetHttp, requestModelPut1, "https"),
+          codeGen.getCode(
+              CodegenLanguage.rubyNetHttp, requestModelPut1, "https"),
           expectedCode);
     });
   });
@@ -582,7 +586,8 @@ puts "Response Code: #{response.code}"
 puts "Response Body: #{response.body}"
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rubyNetHttp, requestModelPatch1, "https"),
+          codeGen.getCode(
+              CodegenLanguage.rubyNetHttp, requestModelPatch1, "https"),
           expectedCode);
     });
   });
