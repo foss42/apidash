@@ -1,44 +1,44 @@
 import 'package:jinja/jinja.dart' as jj;
 import 'package:apidash/utils/utils.dart'
-    show padMultilineString, requestModelToHARJsonRequest;
+    show requestModelToHARJsonRequest;
 import 'package:apidash/models/models.dart' show RequestModel;
 import 'package:apidash/consts.dart';
 
-class rubyCodeGen {
-  String kTemplateStart = """  require "uri"
-  require "net/http"
-  {% if type == "application/json" %}require "json"{% endif %}
-  url = URI("{{url}}")
-  https = Net::HTTP.new(url.host, url.port)
-  {% if check == "https" %}https.use_ssl = true{% endif %}
-  request = Net::HTTP::{{method}}.new(url)
+class RubyNetHttpCodeGen {
+  String kTemplateStart = """require "uri"
+require "net/http"
+{% if type == "application/json" %}require "json"{% endif %}
+url = URI("{{url}}")
+https = Net::HTTP.new(url.host, url.port)
+{% if check == "https" %}https.use_ssl = true{% endif %}
+request = Net::HTTP::{{method}}.new(url)
 """;
 
   String kTemplateHeader = """
 
-  {% for header in headers %}
-  {% if 'multipart' not in header['value'] %}request["{{ header['name'] }}"] = "{{ header['value'] }}"{% endif %}{% endfor %}
+{% for header in headers %}
+{% if 'multipart' not in header['value'] %}request["{{ header['name'] }}"] = "{{ header['value'] }}"{% endif %}{% endfor %}
 """;
 
   String kTemplateBody = """
 
-  request.body = JSON.dump({{body}})
+request.body = JSON.dump({{body}})
 """;
 
   String kTemplateTextBody = """
 
-  request.body = {{body}};
+request.body = {{body}};
 """;
   String kMultiPartBodyTemplate = r'''
 {% if type == "file" %}"{{name}}", File.open("{{value}}"){% else %}"{{name}}", "{{value}}"{% endif %}
 ''';
   String kStringRequest = """
 
-  response = https.request(request)
+response = https.request(request)
 
-  puts "Response Code: #{response.code}"
-  {% if method != "HEAD" %}puts "Response Body: #{response.body}"{% else %}puts "Response Body: #{response.to_hash}"{% endif %}
-  
+puts "Response Code: #{response.code}"
+{% if method != "HEAD" %}puts "Response Body: #{response.body}"{% else %}puts "Response Body: #{response.to_hash}"{% endif %}
+
 """;
 
   String? getCode(RequestModel requestModel) {
@@ -86,7 +86,7 @@ class rubyCodeGen {
 
       if (requestModel.hasFormData) {
         result += "\n";
-        result += "  form_data = [";
+        result += "form_data = [";
         var templateMultiPartBody = jj.Template(kMultiPartBodyTemplate);
         int length = requestModel.formDataMapList.length;
   
@@ -106,7 +106,7 @@ class rubyCodeGen {
         }
         // result.substring(0,result.length - 1);
         result += "]\n";
-        result += "  request.set_form form_data, 'multipart/form-data'";
+        result += "request.set_form form_data, 'multipart/form-data'";
       }
 
       result +=

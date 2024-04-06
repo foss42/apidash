@@ -79,7 +79,7 @@ class Codegen {
       case CodegenLanguage.rubyFaraday:
         return RubyFaradayCodeGen().getCode(rM);
       case CodegenLanguage.rubyNetHttp:
-        return rubyCodeGen().getCode(rM);
+        return RubyNetHttpCodeGen().getCode(rM);
       case CodegenLanguage.rustActix:
         return RustActixCodeGen().getCode(rM, boundary: boundary);
       case CodegenLanguage.rustCurl:
