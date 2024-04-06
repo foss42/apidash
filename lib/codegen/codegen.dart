@@ -74,7 +74,7 @@ class Codegen {
       case CodegenLanguage.pythonRequests:
         return PythonRequestsCodeGen().getCode(rM, boundary: boundary);
       case CodegenLanguage.rubyFaraday:
-        return RubyFaradayCodeGen().getCode(rM, boundary: boundary ?? getNewUuid());
+        return RubyFaradayCodeGen().getCode(rM);
       case CodegenLanguage.rustActix:
         return RustActixCodeGen().getCode(rM, boundary: boundary);
       case CodegenLanguage.rustCurl:

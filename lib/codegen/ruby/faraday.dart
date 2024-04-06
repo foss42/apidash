@@ -21,20 +21,27 @@ require 'faraday/multipart'
 ''';
 
   final String kTemplateRequestUrl = """
-\nREQUEST_URL = URI("{{ url }}")\n\n
+
+REQUEST_URL = URI("{{ url }}")
+
+
 """;
 
   final String kTemplateBody = """
-PAYLOAD = <<-{{ boundary }}
+PAYLOAD = <<HEREDOC
 {{ body }}
-{{ boundary }}\n\n
+HEREDOC
+
+
 """;
 
   final String kTemplateFormParamsWithFile = """
 PAYLOAD = {
 {% for param in params %}{% if param.type == "text" %}  "{{ param.name }}" => Faraday::Multipart::ParamPart.new("{{ param.value }}", "text/plain"),
 {% elif param.type == "file" %}  "{{ param.name }}" => Faraday::Multipart::FilePart.new("{{ param.value }}", "application/octet-stream"),{% endif %}{% endfor %}
-}\n\n
+}
+
+
 """;
 
   final String kTemplateFormParamsWithoutFile = """
@@ -44,23 +51,26 @@ PAYLOAD = URI.encode_www_form({\n{% for param in params %}  "{{ param.name }}" =
   final String kTemplateConnection = """
 conn = Faraday.new do |faraday|
   faraday.adapter Faraday.default_adapter{% if hasFile %}\n  faraday.request :multipart{% endif %}
-end\n\n
+end
+
+
 """;
 
   final String kTemplateRequestStart = """
-response = conn.{{ method|lower }}(REQUEST_URL{% if doesMethodAcceptBody and containsBody %}, PAYLOAD{% endif %}) do |req|\n
-""";
+response = conn.{{ method|lower }}(REQUEST_URL{% if doesMethodAcceptBody and containsBody %}, PAYLOAD{% endif %}) do |req|
 
-  final String kTemplateRequestOptionsBoundary = """
-  req.options.boundary = "{{ boundary }}"\n
 """;
 
   final String kTemplateRequestParams = """
-  req.params = {\n{% for key, val in params %}    "{{ key }}" => "{{ val }}",\n{% endfor %}  }\n
+  req.params = {
+{% for key, val in params %}    "{{ key }}" => "{{ val }}",\n{% endfor %}  }
+
 """;
 
   final String kTemplateRequestHeaders = """
-  req.headers = {\n{% for key, val in headers %}    "{{ key }}" => "{{ val }}",\n{% endfor %}  }\n
+  req.headers = {
+{% for key, val in headers %}    "{{ key }}" => "{{ val }}",\n{% endfor %}  }
+
 """;
 
   final String kStringDeleteRequestBody = """
@@ -68,7 +78,8 @@ response = conn.{{ method|lower }}(REQUEST_URL{% if doesMethodAcceptBody and con
 """;
 
   final String kStringRequestEnd = """
-end\n
+end
+
 """;
 
   final String kStringResponse = """
@@ -77,17 +88,10 @@ puts "Response Body: #{response.body}"
 """;
 
   String? getCode(
-    RequestModel requestModel, {
-    String? boundary,
-  }) {
+    RequestModel requestModel,
+    ) {
     try {
       String result = "";
-
-      if (boundary != null) {
-        // boundary needs to start with a character, hence we append apidash
-        // and remove hyphen characters from the existing boundary
-        boundary = "apidash_${boundary.replaceAll(RegExp("-"), "")}";
-      }
 
       var rec = getValidRequestUri(
         requestModel.url,
@@ -121,8 +125,7 @@ puts "Response Body: #{response.body}"
       } else if (requestModel.hasJsonData || requestModel.hasTextData) {
         var templateBody = jj.Template(kTemplateBody);
         result += templateBody.render({
-          "body": requestModel.requestBody, //
-          "boundary": boundary,
+          "body": requestModel.requestBody,
         });
       }
 
@@ -135,24 +138,16 @@ puts "Response Body: #{response.body}"
       // start of the request sending
       var templateRequestStart = jj.Template(kTemplateRequestStart);
       result += templateRequestStart.render({
-        "method": requestModel.method.name, //
+        "method": requestModel.method.name, 
         "doesMethodAcceptBody":
             kMethodsWithBody.contains(requestModel.method) && requestModel.method != HTTPVerb.delete, //
-        "containsBody": requestModel.hasBody, //
+        "containsBody": requestModel.hasBody, 
       });
-
-      if (requestModel.hasFormDataContentType && requestModel.hasFileInFormData) {
-        var templateRequestOptionsBoundary = jj.Template(kTemplateRequestOptionsBoundary);
-        result += templateRequestOptionsBoundary.render({"boundary": boundary});
-      }
 
       var headers = requestModel.enabledHeadersMap;
       if (requestModel.hasBody && !requestModel.hasContentTypeHeader) {
         if (requestModel.hasJsonData || requestModel.hasTextData) {
           headers["Content-Type"] = requestModel.requestBodyContentType.header;
-        } else if (requestModel.hasFormData) {
-          headers["Content-Type"] =
-              (requestModel.hasFileInFormData) ? "multipart/form-data" : "application/x-www-form-urlencoded";
         }
       }
 
