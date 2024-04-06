@@ -130,11 +130,11 @@ puts "Response Body: #{response.body}"
         });
       }
 
-      // crreating faraday connection for request
+      // creating faraday connection for request
       var templateConnection = jj.Template(kTemplateConnection);
       result += templateConnection.render({
         "hasFile": requestModel.hasFormDataContentType &&
-            requestModel.hasFileInFormData //
+            requestModel.hasFileInFormData
       });
 
       // start of the request sending
@@ -143,7 +143,7 @@ puts "Response Body: #{response.body}"
         "method": requestModel.method.name,
         "doesMethodAcceptBody":
             kMethodsWithBody.contains(requestModel.method) &&
-                requestModel.method != HTTPVerb.delete, //
+                requestModel.method != HTTPVerb.delete,
         "containsBody": requestModel.hasBody,
       });
 
