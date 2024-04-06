@@ -11,6 +11,7 @@ require_once 'vendor/autoload.php';
 
 use Http\\Discovery\\Psr17FactoryDiscovery;
 use Http\\Discovery\\Psr18ClientDiscovery;
+{% if hasFormData %}use Http\\Message\\MultipartStream\\MultipartStreamBuilder;{% endif %}
 
 """;
 
@@ -35,6 +36,8 @@ use Http\\Discovery\\Psr18ClientDiscovery;
 {{body}}
 EOF;
 
+\$request = \$request->withBody(Psr17FactoryDiscovery::findStreamFactory()->createStream(\$body));
+
 """;
 
   String kTemplateHeaders = """
@@ -45,11 +48,22 @@ foreach (\$headers as \$name => \$value) {
 
 """;
 
-  String kTemplateFormHeaderContentType = '''
-multipart/form-data; boundary={{boundary}}''';
+  String kTemplateFormDataWithFiles = """
+\$boundary = '{{boundary}}';
+\$builder = new MultipartStreamBuilder();
+\$builder->setBoundary(\$boundary);
+{{formDataFields}}
+{{formDataFiles}}
+\$request = \$request->withBody(\$builder->build());
 
-  String kStringRequestBody = """
-\$request = \$request->withBody(Psr17FactoryDiscovery::findStreamFactory()->createStream(\$body));
+""";
+
+  String kTemplateFormDataWithoutFiles = """
+\$boundary = '{{boundary}}';
+\$builder = new MultipartStreamBuilder();
+\$builder->setBoundary(\$boundary);
+{{formDataFields}}
+\$request = \$request->withBody(\$builder->build());
 
 """;
 
@@ -62,98 +76,12 @@ echo \$response->getBody();
 
 """;
 
-  String kBoundaryUniqueIdTemplate = """
-\$boundary = "{{boundary}}";
-
-""";
-
-  String kFileClassString = """
-class File
-{
-    public string \$name;
-    public string \$filename;
-    public string \$content;
-
-    function __construct(\$name, \$filename)
-    {
-        \$this->name = \$name;
-        \$this->filename = \$filename;
-        \$available_content = file_get_contents(\$this->filename);
-        \$this->content = \$available_content ? \$available_content : "";
-    }
-}
-
-""";
-
-  String kBuildFormDataFunctionWithoutFilesString = """
-function build_data(\$boundary, \$fields)
-{
-    \$data = '';
-    \$eol = "\\r\\n";
-    \$delimiter = \$boundary;
-
-    foreach (\$fields as \$name => \$content) {
-        \$data .= "--" . \$delimiter . \$eol
-            . 'Content-Disposition: form-data; name="' . \$name . "\\"" . \$eol . \$eol
-            . \$content . \$eol;
-    }
-
-    \$data .= "--" . \$delimiter . "--" . \$eol;
-
-    return \$data;
-}
-
-""";
-
-  String kBuildFormDataFunctionWithFilesString = """
-function build_data_files(\$boundary, \$fields, \$files)
-{
-    \$data = '';
-    \$eol = "\\r\\n";
-    \$delimiter = \$boundary;
-
-    foreach (\$fields as \$name => \$content) {
-        \$data .= "--" . \$delimiter . \$eol
-            . 'Content-Disposition: form-data; name="' . \$name . "\\"" . \$eol . \$eol
-            . \$content . \$eol;
-    }
-
-    foreach (\$files as \$uploaded_file) {
-        if (\$uploaded_file instanceof File) {
-            \$data .= "--" . \$delimiter . \$eol
-                . 'Content-Disposition: form-data; name="' . \$uploaded_file->name . '"; filename="' . \$uploaded_file->filename . '"' . \$eol
-                . 'Content-Transfer-Encoding: binary' . \$eol;
-            \$data .= \$eol;
-            \$data .= \$uploaded_file->content . \$eol;
-        }
-    }
-
-    \$data .= "--" . \$delimiter . "--" . \$eol;
-
-    return \$data;
-}
-
-""";
-
-  String kMultiPartBodyWithFiles = """
-\$body = build_data_files(\$boundary, \$fields, \$files);
-
-""";
-
-  String kMultiPartBodyWithoutFiles = """
-\$body = build_data(\$boundary, \$fields);
-
-""";
-
   String? getCode(
     RequestModel requestModel, {
     String? boundary,
   }) {
     try {
       String result = "";
-      bool hasBody = false;
-      var requestBody = requestModel.requestBody;
-
 
       var rec = getValidRequestUri(
         requestModel.url,
@@ -163,17 +91,9 @@ function build_data_files(\$boundary, \$fields, \$files)
 
       if (uri != null) {
         var templateStart = jj.Template(kTemplateStart);
-        result += templateStart.render();
-
-        if (requestModel.hasFileInFormData) {
-          result += kFileClassString;
-        }
-
-        if (requestModel.hasFormData) {
-          result += requestModel.hasFileInFormData
-              ? kBuildFormDataFunctionWithFilesString
-              : kBuildFormDataFunctionWithoutFilesString;
-        }
+        result += templateStart.render({
+          "hasFormData": requestModel.hasFormData,
+        });
 
         var templateUri = jj.Template(kTemplateUri);
         result += templateUri.render({"uri": requestModel.url.split("?")[0]});
@@ -200,60 +120,64 @@ function build_data_files(\$boundary, \$fields, \$files)
             requestModelToHARJsonRequest(requestModel, useEnabled: true);
         var headers = harJson["headers"];
 
-        if (headers.isNotEmpty || requestModel.hasFormData) {
+        if (headers.isNotEmpty) {
           var templateHeader = jj.Template(kTemplateHeaders);
-          var m = {};
+          var headersString = '\n';
+
+          var headersObj = {};
           for (var i in headers) {
-            m[i["name"]] = i["value"];
+            headersObj[i["name"]] = i["value"];
           }
 
           if (requestModel.hasFormData) {
-            m['Content-Type'] = "multipart/form-data; boundary=$boundary";
-            var boundaryUniqueIdTemplate =
-                jj.Template(kBoundaryUniqueIdTemplate);
-            result += boundaryUniqueIdTemplate.render({"boundary": boundary});
+            headersObj['Content-Type'] =
+                "multipart/form-data; boundary=$boundary";
+          }
+          headersObj.forEach((key, value) {
+            headersString += "    '$key' => '$value',\n";
+          });
+          result += templateHeader.render({"headers": headersString});
+        }
 
-            var fieldsString = '\$fields = [\n';
-            var filesString = '\$files = [\n';
-            for (var formData in requestModel.formDataMapList) {
-              if (formData['type'] == 'text') {
-                fieldsString +=
-                    ' "${formData['name']}" => "${formData['value']}",\n';
-              } else if (formData['type'] == 'file') {
-                filesString +=
-                    ' new File("${formData['name']}", "${formData['value']}"),\n';
-              }
-            }
-            fieldsString += '];\n';
-            filesString += '];\n';
-            result += fieldsString;
+        var requestBody = requestModel.requestBody;
 
-            if (requestModel.hasFileInFormData) {
-              result += filesString;
-              result += kMultiPartBodyWithFiles;
-            } else {
-              result += kMultiPartBodyWithoutFiles;
-            }
-          } else if ((requestModel.hasTextData || requestModel.hasJsonData) && requestBody != null) {
-            var contentLength = utf8.encode(requestBody).length;
-            if (contentLength > 0) {
-              hasBody = true;
-              var templateBody = jj.Template(kTemplateBody);
-              result += templateBody.render({"body": requestBody});
+        if ((requestModel.hasTextData || requestModel.hasJsonData) &&
+            requestBody != null) {
+          var contentLength = utf8.encode(requestBody).length;
+          if (contentLength > 0) {
+            var templateBody = jj.Template(kTemplateBody);
+            result += templateBody.render({"body": requestBody});
+          }
+        } else if (requestModel.hasFormData) {
+          String formDataFields = "";
+          String formDataFiles = "";
+
+          for (var formData in requestModel.formDataMapList) {
+            if (formData['type'] == 'text') {
+              formDataFields +=
+                  "\$builder->addResource('${formData['name']}', '${formData['value']}');\n";
+            } else if (formData['type'] == 'file') {
+              formDataFiles +=
+                  "\$builder->addResource('${formData['name']}', fopen('${formData['value']}', 'r'), ['filename' => '${formData['value']}']);\n";
             }
           }
 
-          var headersString = '\n';
-          m.forEach((key, value) {
-            headersString += "\t\t\t\t'$key' => '$value', \n";
-          });
-          result += templateHeader.render({
-            "headers": headersString,
-          });
-        }
-
-        if (hasBody || requestModel.hasFormData) {
-          result += kStringRequestBody;
+          if (requestModel.hasFileInFormData) {
+            var templateFormDataWithFiles =
+                jj.Template(kTemplateFormDataWithFiles);
+            result += templateFormDataWithFiles.render({
+              "formDataFields": formDataFields,
+              "formDataFiles": formDataFiles,
+              "boundary": boundary,
+            });
+          } else {
+            var templateFormDataWithoutFiles =
+                jj.Template(kTemplateFormDataWithoutFiles);
+            result += templateFormDataWithoutFiles.render({
+              "formDataFields": formDataFields,
+              "boundary": boundary,
+            });
+          }
         }
 
         result += kStringRequestEnd;
