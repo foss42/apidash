@@ -1,6 +1,7 @@
 import 'package:apidash/models/models.dart' show RequestModel;
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart' show getNewUuid;
+import 'c/curl.dart';
 import 'csharp/rest_sharp.dart';
 import 'dart/http.dart';
 import 'dart/dio.dart';
@@ -92,6 +93,8 @@ class Codegen {
         return PhpGuzzleCodeGen().getCode(rM);
       case CodegenLanguage.phpCurl:
         return PHPcURLCodeGen().getCode(rM);
+      case CodegenLanguage.cCurlCodeGen:
+        return CCurlCodeGen().getCode(rM);
       case CodegenLanguage.cSharpRestSharp:
         return CSharpRestSharp().getCode(rM);
     }
