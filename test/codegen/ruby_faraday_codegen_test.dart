@@ -331,11 +331,11 @@ require 'faraday'
 
 REQUEST_URL = URI("https://api.apidash.dev/case/lower")
 
-PAYLOAD = <<-apidash_a5d7a5d09d721f398905c39274c7fa33
+PAYLOAD = <<HEREDOC
 {
 "text": "I LOVE Flutter"
 }
-apidash_a5d7a5d09d721f398905c39274c7fa33
+HEREDOC
 
 conn = Faraday.new do |faraday|
   faraday.adapter Faraday.default_adapter
@@ -351,8 +351,7 @@ puts "Status Code: #{response.status}"
 puts "Response Body: #{response.body}"
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rubyFaraday, requestModelPost1, "https",
-              boundary: "a5d7a5d09d721f398905c39274c7fa33"),
+          codeGen.getCode(CodegenLanguage.rubyFaraday, requestModelPost1, "https"),
           expectedCode);
     });
 
@@ -362,7 +361,7 @@ require 'faraday'
 
 REQUEST_URL = URI("https://api.apidash.dev/case/lower")
 
-PAYLOAD = <<-apidash_8b9b12a09dc81f398905c39274c7fa33
+PAYLOAD = <<HEREDOC
 {
 "text": "I LOVE Flutter",
 "flag": null,
@@ -371,7 +370,7 @@ PAYLOAD = <<-apidash_8b9b12a09dc81f398905c39274c7fa33
 "no": 1.2,
 "arr": ["null", "true", "false", null]
 }
-apidash_8b9b12a09dc81f398905c39274c7fa33
+HEREDOC
 
 conn = Faraday.new do |faraday|
   faraday.adapter Faraday.default_adapter
@@ -387,8 +386,7 @@ puts "Status Code: #{response.status}"
 puts "Response Body: #{response.body}"
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rubyFaraday, requestModelPost2, "https",
-              boundary: "8b9b12a09dc81f398905c39274c7fa33"),
+          codeGen.getCode(CodegenLanguage.rubyFaraday, requestModelPost2, "https"),
           expectedCode);
     });
 
@@ -398,11 +396,11 @@ require 'faraday'
 
 REQUEST_URL = URI("https://api.apidash.dev/case/lower")
 
-PAYLOAD = <<-apidash_5c3b98809e3c1f398905c39274c7fa33
+PAYLOAD = <<HEREDOC
 {
 "text": "I LOVE Flutter"
 }
-apidash_5c3b98809e3c1f398905c39274c7fa33
+HEREDOC
 
 conn = Faraday.new do |faraday|
   faraday.adapter Faraday.default_adapter
@@ -419,8 +417,7 @@ puts "Status Code: #{response.status}"
 puts "Response Body: #{response.body}"
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rubyFaraday, requestModelPost3, "https",
-              boundary: "5c3b98809e3c1f398905c39274c7fa33"),
+          codeGen.getCode(CodegenLanguage.rubyFaraday, requestModelPost3, "https"),
           expectedCode);
     });
 
@@ -441,9 +438,6 @@ conn = Faraday.new do |faraday|
 end
 
 response = conn.post(REQUEST_URL, PAYLOAD) do |req|
-  req.headers = {
-    "Content-Type" => "application/x-www-form-urlencoded",
-  }
 end
 
 puts "Status Code: #{response.status}"
@@ -476,14 +470,13 @@ end
 response = conn.post(REQUEST_URL, PAYLOAD) do |req|
   req.headers = {
     "User-Agent" => "Test Agent",
-    "Content-Type" => "application/x-www-form-urlencoded",
   }
 end
 
 puts "Status Code: #{response.status}"
 puts "Response Body: #{response.body}"
 """;
-      expect(codeGen.getCode(CodegenLanguage.rubyFaraday, requestModelPost5, "https", boundary: "test"), expectedCode);
+      expect(codeGen.getCode(CodegenLanguage.rubyFaraday, requestModelPost5, "https"), expectedCode);
     });
     test('POST 6', () {
       const expectedCode = r"""require 'uri'
@@ -503,18 +496,13 @@ conn = Faraday.new do |faraday|
 end
 
 response = conn.post(REQUEST_URL, PAYLOAD) do |req|
-  req.options.boundary = "apidash_6f6629609fb41f398905c39274c7fa33"
-  req.headers = {
-    "Content-Type" => "multipart/form-data",
-  }
 end
 
 puts "Status Code: #{response.status}"
 puts "Response Body: #{response.body}"
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rubyFaraday, requestModelPost6, "https",
-              boundary: "6f6629609fb41f398905c39274c7fa33"),
+          codeGen.getCode(CodegenLanguage.rubyFaraday, requestModelPost6, "https"),
           expectedCode);
     });
     test('POST 7', () {
@@ -535,18 +523,13 @@ conn = Faraday.new do |faraday|
 end
 
 response = conn.post(REQUEST_URL, PAYLOAD) do |req|
-  req.options.boundary = "apidash_3955fcc0a0b71f398905c39274c7fa33"
-  req.headers = {
-    "Content-Type" => "multipart/form-data",
-  }
 end
 
 puts "Status Code: #{response.status}"
 puts "Response Body: #{response.body}"
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rubyFaraday, requestModelPost7, "https",
-              boundary: "3955fcc0a0b71f398905c39274c7fa33"),
+          codeGen.getCode(CodegenLanguage.rubyFaraday, requestModelPost7, "https"),
           expectedCode);
     });
     test('POST 8', () {
@@ -566,9 +549,6 @@ conn = Faraday.new do |faraday|
 end
 
 response = conn.post(REQUEST_URL, PAYLOAD) do |req|
-  req.headers = {
-    "Content-Type" => "application/x-www-form-urlencoded",
-  }
   req.params = {
     "size" => "2",
     "len" => "3",
@@ -578,7 +558,7 @@ end
 puts "Status Code: #{response.status}"
 puts "Response Body: #{response.body}"
 """;
-      expect(codeGen.getCode(CodegenLanguage.rubyFaraday, requestModelPost8, "https", boundary: "test"), expectedCode);
+      expect(codeGen.getCode(CodegenLanguage.rubyFaraday, requestModelPost8, "https"), expectedCode);
     });
     test('POST 9', () {
       const expectedCode = r"""require 'uri'
@@ -598,11 +578,9 @@ conn = Faraday.new do |faraday|
 end
 
 response = conn.post(REQUEST_URL, PAYLOAD) do |req|
-  req.options.boundary = "apidash_599e5a20a1361f398905c39274c7fa33"
   req.headers = {
     "User-Agent" => "Test Agent",
     "Keep-Alive" => "true",
-    "Content-Type" => "multipart/form-data",
   }
   req.params = {
     "size" => "2",
@@ -614,8 +592,7 @@ puts "Status Code: #{response.status}"
 puts "Response Body: #{response.body}"
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rubyFaraday, requestModelPost9, "https",
-              boundary: "599e5a20a1361f398905c39274c7fa33"),
+          codeGen.getCode(CodegenLanguage.rubyFaraday, requestModelPost9, "https"),
           expectedCode);
     });
   });
@@ -627,12 +604,12 @@ require 'faraday'
 
 REQUEST_URL = URI("https://reqres.in/api/users/2")
 
-PAYLOAD = <<-apidash_b4e90990a34b1f398905c39274c7fa33
+PAYLOAD = <<HEREDOC
 {
 "name": "morpheus",
 "job": "zion resident"
 }
-apidash_b4e90990a34b1f398905c39274c7fa33
+HEREDOC
 
 conn = Faraday.new do |faraday|
   faraday.adapter Faraday.default_adapter
@@ -648,8 +625,7 @@ puts "Status Code: #{response.status}"
 puts "Response Body: #{response.body}"
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rubyFaraday, requestModelPut1, "https",
-              boundary: "b4e90990a34b1f398905c39274c7fa33"),
+          codeGen.getCode(CodegenLanguage.rubyFaraday, requestModelPut1, "https"),
           expectedCode);
     });
   });
@@ -661,12 +637,12 @@ require 'faraday'
 
 REQUEST_URL = URI("https://reqres.in/api/users/2")
 
-PAYLOAD = <<-apidash_b2e9a260a3931f398905c39274c7fa33
+PAYLOAD = <<HEREDOC
 {
 "name": "marfeus",
 "job": "accountant"
 }
-apidash_b2e9a260a3931f398905c39274c7fa33
+HEREDOC
 
 conn = Faraday.new do |faraday|
   faraday.adapter Faraday.default_adapter
@@ -682,8 +658,7 @@ puts "Status Code: #{response.status}"
 puts "Response Body: #{response.body}"
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rubyFaraday, requestModelPatch1, "https",
-              boundary: "b2e9a260a3931f398905c39274c7fa33"),
+          codeGen.getCode(CodegenLanguage.rubyFaraday, requestModelPatch1, "https"),
           expectedCode);
     });
   });
@@ -714,12 +689,12 @@ require 'faraday'
 
 REQUEST_URL = URI("https://reqres.in/api/users/2")
 
-PAYLOAD = <<-apidash_f2291be0a40b1f398905c39274c7fa33
+PAYLOAD = <<HEREDOC
 {
 "name": "marfeus",
 "job": "accountant"
 }
-apidash_f2291be0a40b1f398905c39274c7fa33
+HEREDOC
 
 conn = Faraday.new do |faraday|
   faraday.adapter Faraday.default_adapter
@@ -736,8 +711,7 @@ puts "Status Code: #{response.status}"
 puts "Response Body: #{response.body}"
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rubyFaraday, requestModelDelete2, "https",
-              boundary: "f2291be0a40b1f398905c39274c7fa33"),
+          codeGen.getCode(CodegenLanguage.rubyFaraday, requestModelDelete2, "https"),
           expectedCode);
     });
   });
