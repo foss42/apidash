@@ -104,8 +104,8 @@ void main() {
         'Content-Disposition',
         'Content-Encoding',
         'Content-Length',
-        'Content-Security-Policy',
         'Content-Type',
+        'Content-Security-Policy',
         'X-Content-Type-Options'
       ];
       expect(getFuzzyHeaderSuggestions(pattern), expected);
@@ -130,11 +130,11 @@ void main() {
     test("Testing for 'origin' pattern", () {
       String pattern = "origin";
       List<String> expected = [
+        'Origin',
         'Access-Control-Allow-Origin',
         'Cross-Origin-Embedder-Policy',
         'Cross-Origin-Opener-Policy',
-        'Cross-Origin-Resource-Policy',
-        'Origin'
+        'Cross-Origin-Resource-Policy'
       ];
       expect(getFuzzyHeaderSuggestions(pattern), expected);
     });

@@ -1,3 +1,4 @@
+import 'package:fuzzy/data/result.dart';
 import 'package:fuzzy/fuzzy.dart';
 
 Map<String, String> headers = {
@@ -121,13 +122,16 @@ List<String> getFuzzyHeaderSuggestions(String pattern) {
   final keys = headers.keys.toList();
   final fuse = Fuzzy(keys,
       options: FuzzyOptions(
-        distance: 40,
-        matchAllTokens: true,
-        isCaseSensitive: true,
+        distance: 10,
         tokenize: true,
-        threshold: 0.4,
+        matchAllTokens: true,
+        tokenSeparator: "-",
+        threshold: 0.2,
+        shouldSort: true,
+        minMatchCharLength: 1,
       ));
   final results = fuse.search(pattern);
-  final suggestions = results.map((result) => result.item as String).toList();
+  final List<String> suggestions =
+      results.map((result) => result.item as String).toList();
   return suggestions;
 }
