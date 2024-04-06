@@ -30,9 +30,11 @@ curl_close($request);
 
 $httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 echo "Status Code: " . $httpCode . "\n";
-echo $response;
+echo $response . "\n";
 ''';
-      expect(codeGen.getCode(CodegenLanguage.phpCurl, requestModelGet1, 'https'), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.phpCurl, requestModelGet1, 'https'),
+          expectedCode);
     });
     test('GET 2', () {
       const expectedCode = r'''<?php
@@ -62,9 +64,11 @@ curl_close($request);
 
 $httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 echo "Status Code: " . $httpCode . "\n";
-echo $response;
+echo $response . "\n";
 ''';
-      expect(codeGen.getCode(CodegenLanguage.phpCurl, requestModelGet2, 'https'), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.phpCurl, requestModelGet2, 'https'),
+          expectedCode);
     });
     test('GET 3', () {
       const expectedCode = r'''<?php
@@ -94,9 +98,11 @@ curl_close($request);
 
 $httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 echo "Status Code: " . $httpCode . "\n";
-echo $response;
+echo $response . "\n";
 ''';
-      expect(codeGen.getCode(CodegenLanguage.phpCurl, requestModelGet3, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.phpCurl, requestModelGet3, "https"),
+          expectedCode);
     });
     test('GET 4', () {
       const expectedCode = r'''<?php
@@ -130,9 +136,11 @@ curl_close($request);
 
 $httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 echo "Status Code: " . $httpCode . "\n";
-echo $response;
+echo $response . "\n";
 ''';
-      expect(codeGen.getCode(CodegenLanguage.phpCurl, requestModelGet4, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.phpCurl, requestModelGet4, "https"),
+          expectedCode);
     });
 
     test('GET 5', () {
@@ -163,9 +171,11 @@ curl_close($request);
 
 $httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 echo "Status Code: " . $httpCode . "\n";
-echo $response;
+echo $response . "\n";
 ''';
-      expect(codeGen.getCode(CodegenLanguage.phpCurl, requestModelGet5, 'https'), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.phpCurl, requestModelGet5, 'https'),
+          expectedCode);
     });
 
     test('GET 6', () {
@@ -201,9 +211,11 @@ curl_close($request);
 
 $httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 echo "Status Code: " . $httpCode . "\n";
-echo $response;
+echo $response . "\n";
 ''';
-      expect(codeGen.getCode(CodegenLanguage.phpCurl, requestModelGet6, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.phpCurl, requestModelGet6, "https"),
+          expectedCode);
     });
 
     test('GET 7', () {
@@ -229,9 +241,11 @@ curl_close($request);
 
 $httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 echo "Status Code: " . $httpCode . "\n";
-echo $response;
+echo $response . "\n";
 ''';
-      expect(codeGen.getCode(CodegenLanguage.phpCurl, requestModelGet7, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.phpCurl, requestModelGet7, "https"),
+          expectedCode);
     });
 
     test('GET 8', () {
@@ -267,9 +281,11 @@ curl_close($request);
 
 $httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 echo "Status Code: " . $httpCode . "\n";
-echo $response;
+echo $response . "\n";
 ''';
-      expect(codeGen.getCode(CodegenLanguage.phpCurl, requestModelGet8, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.phpCurl, requestModelGet8, "https"),
+          expectedCode);
     });
 
     test('GET 9', () {
@@ -301,9 +317,11 @@ curl_close($request);
 
 $httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 echo "Status Code: " . $httpCode . "\n";
-echo $response;
+echo $response . "\n";
 ''';
-      expect(codeGen.getCode(CodegenLanguage.phpCurl, requestModelGet9, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.phpCurl, requestModelGet9, "https"),
+          expectedCode);
     });
 
     test('GET 10', () {
@@ -334,9 +352,11 @@ curl_close($request);
 
 $httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 echo "Status Code: " . $httpCode . "\n";
-echo $response;
+echo $response . "\n";
 ''';
-      expect(codeGen.getCode(CodegenLanguage.phpCurl, requestModelGet10, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.phpCurl, requestModelGet10, "https"),
+          expectedCode);
     });
 
     test('GET 11', () {
@@ -373,9 +393,11 @@ curl_close($request);
 
 $httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 echo "Status Code: " . $httpCode . "\n";
-echo $response;
+echo $response . "\n";
 ''';
-      expect(codeGen.getCode(CodegenLanguage.phpCurl, requestModelGet11, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.phpCurl, requestModelGet11, "https"),
+          expectedCode);
     });
 
     test('GET 12', () {
@@ -401,9 +423,11 @@ curl_close($request);
 
 $httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 echo "Status Code: " . $httpCode . "\n";
-echo $response;
+echo $response . "\n";
 ''';
-      expect(codeGen.getCode(CodegenLanguage.phpCurl, requestModelGet12, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.phpCurl, requestModelGet12, "https"),
+          expectedCode);
     });
   });
 
@@ -431,9 +455,11 @@ curl_close($request);
 
 $httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 echo "Status Code: " . $httpCode . "\n";
-echo $response;
+echo $response . "\n";
 ''';
-      expect(codeGen.getCode(CodegenLanguage.phpCurl, requestModelHead1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.phpCurl, requestModelHead1, "https"),
+          expectedCode);
     });
 
     test('HEAD 2', () {
@@ -459,9 +485,11 @@ curl_close($request);
 
 $httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 echo "Status Code: " . $httpCode . "\n";
-echo $response;
+echo $response . "\n";
 ''';
-      expect(codeGen.getCode(CodegenLanguage.phpCurl, requestModelHead2, "http"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.phpCurl, requestModelHead2, "http"),
+          expectedCode);
     });
   });
 
@@ -499,9 +527,11 @@ curl_close($request);
 
 $httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 echo "Status Code: " . $httpCode . "\n";
-echo $response;
+echo $response . "\n";
 ''';
-      expect(codeGen.getCode(CodegenLanguage.phpCurl, requestModelPost1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.phpCurl, requestModelPost1, "https"),
+          expectedCode);
     });
 
     test('POST 2', () {
@@ -542,9 +572,11 @@ curl_close($request);
 
 $httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 echo "Status Code: " . $httpCode . "\n";
-echo $response;
+echo $response . "\n";
 ''';
-      expect(codeGen.getCode(CodegenLanguage.phpCurl, requestModelPost2, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.phpCurl, requestModelPost2, "https"),
+          expectedCode);
     });
     test('POST 3', () {
       const expectedCode = r'''<?php
@@ -580,9 +612,11 @@ curl_close($request);
 
 $httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 echo "Status Code: " . $httpCode . "\n";
-echo $response;
+echo $response . "\n";
 ''';
-      expect(codeGen.getCode(CodegenLanguage.phpCurl, requestModelPost3, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.phpCurl, requestModelPost3, "https"),
+          expectedCode);
     });
 
     test('POST 4', () {
@@ -615,9 +649,11 @@ curl_close($request);
 
 $httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 echo "Status Code: " . $httpCode . "\n";
-echo $response;
+echo $response . "\n";
 ''';
-      expect(codeGen.getCode(CodegenLanguage.phpCurl, requestModelPost4, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.phpCurl, requestModelPost4, "https"),
+          expectedCode);
     });
 
     test('POST 5', () {
@@ -655,9 +691,11 @@ curl_close($request);
 
 $httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 echo "Status Code: " . $httpCode . "\n";
-echo $response;
+echo $response . "\n";
 ''';
-      expect(codeGen.getCode(CodegenLanguage.phpCurl, requestModelPost5, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.phpCurl, requestModelPost5, "https"),
+          expectedCode);
     });
     test('POST 6', () {
       const expectedCode = r'''<?php
@@ -688,9 +726,11 @@ curl_close($request);
 
 $httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 echo "Status Code: " . $httpCode . "\n";
-echo $response;
+echo $response . "\n";
 ''';
-      expect(codeGen.getCode(CodegenLanguage.phpCurl, requestModelPost6, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.phpCurl, requestModelPost6, "https"),
+          expectedCode);
     });
     test('POST 7', () {
       const expectedCode = r'''<?php
@@ -721,9 +761,11 @@ curl_close($request);
 
 $httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 echo "Status Code: " . $httpCode . "\n";
-echo $response;
+echo $response . "\n";
 ''';
-      expect(codeGen.getCode(CodegenLanguage.phpCurl, requestModelPost7, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.phpCurl, requestModelPost7, "https"),
+          expectedCode);
     });
     test('POST 8', () {
       const expectedCode = r'''<?php
@@ -761,9 +803,11 @@ curl_close($request);
 
 $httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 echo "Status Code: " . $httpCode . "\n";
-echo $response;
+echo $response . "\n";
 ''';
-      expect(codeGen.getCode(CodegenLanguage.phpCurl, requestModelPost8, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.phpCurl, requestModelPost8, "https"),
+          expectedCode);
     });
     test('POST 9', () {
       const expectedCode = r'''<?php
@@ -806,9 +850,11 @@ curl_close($request);
 
 $httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 echo "Status Code: " . $httpCode . "\n";
-echo $response;
+echo $response . "\n";
 ''';
-      expect(codeGen.getCode(CodegenLanguage.phpCurl, requestModelPost9, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.phpCurl, requestModelPost9, "https"),
+          expectedCode);
     });
   });
   group('PUT Request', () {
@@ -846,9 +892,11 @@ curl_close($request);
 
 $httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 echo "Status Code: " . $httpCode . "\n";
-echo $response;
+echo $response . "\n";
 ''';
-      expect(codeGen.getCode(CodegenLanguage.phpCurl, requestModelPut1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.phpCurl, requestModelPut1, "https"),
+          expectedCode);
     });
   });
   group('PATCH Request', () {
@@ -886,9 +934,11 @@ curl_close($request);
 
 $httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 echo "Status Code: " . $httpCode . "\n";
-echo $response;
+echo $response . "\n";
 ''';
-      expect(codeGen.getCode(CodegenLanguage.phpCurl, requestModelPatch1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(CodegenLanguage.phpCurl, requestModelPatch1, "https"),
+          expectedCode);
     });
   });
   group('DELETE Request', () {
@@ -915,9 +965,12 @@ curl_close($request);
 
 $httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 echo "Status Code: " . $httpCode . "\n";
-echo $response;
+echo $response . "\n";
 ''';
-      expect(codeGen.getCode(CodegenLanguage.phpCurl, requestModelDelete1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.phpCurl, requestModelDelete1, "https"),
+          expectedCode);
     });
     test('DELETE 2', () {
       const expectedCode = r'''<?php
@@ -953,9 +1006,12 @@ curl_close($request);
 
 $httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 echo "Status Code: " . $httpCode . "\n";
-echo $response;
+echo $response . "\n";
 ''';
-      expect(codeGen.getCode(CodegenLanguage.phpCurl, requestModelDelete2, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.phpCurl, requestModelDelete2, "https"),
+          expectedCode);
     });
   });
 }

@@ -1,5 +1,6 @@
 import 'package:jinja/jinja.dart' as jj;
-import 'package:apidash/utils/utils.dart' show getValidRequestUri, stripUriParams;
+import 'package:apidash/utils/utils.dart'
+    show getValidRequestUri, stripUriParams;
 import 'package:apidash/models/models.dart' show RequestModel;
 import 'package:apidash/consts.dart';
 
@@ -92,7 +93,7 @@ curl_close($request);
 
 $httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 echo "Status Code: " . $httpCode . "\n";
-echo $response;
+echo $response . "\n";
 ''';
 
   String? getCode(RequestModel requestModel) {
@@ -117,12 +118,15 @@ echo $response;
         result += templateUri.render({'uri': stripUriParams(uri)});
 
         //renders the request body contains the HTTP method associated with the request
-        if (kMethodsWithBody.contains(requestModel.method) && requestModel.hasBody) {
+        if (kMethodsWithBody.contains(requestModel.method) &&
+            requestModel.hasBody) {
           hasBody = true;
           // contains the entire request body as a string if body is present
           var templateBody = jj.Template(kTemplateBody);
           result += templateBody.render({
-            'body': requestModel.hasFormData ? requestModel.formDataMapList : requestModel.requestBody,
+            'body': requestModel.hasFormData
+                ? requestModel.formDataMapList
+                : requestModel.requestBody,
           });
         }
 
@@ -131,7 +135,8 @@ echo $response;
           if (requestModel.enabledParamsMap.isNotEmpty) {
             hasQuery = true;
             var templateParams = jj.Template(kTemplateParams);
-            result += templateParams.render({"params": requestModel.enabledParamsMap});
+            result += templateParams
+                .render({"params": requestModel.enabledParamsMap});
           }
         }
 
@@ -156,7 +161,8 @@ echo $response;
 
         //renders the request temlate
         var templateRequestOptsInit = jj.Template(kTemplateRequestOptsInit);
-        result += templateRequestOptsInit.render({'method': requestModel.method.name});
+        result += templateRequestOptsInit
+            .render({'method': requestModel.method.name});
         if (headers.isNotEmpty) {
           result += kStringHeaderOpt;
         }
