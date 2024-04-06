@@ -7,7 +7,7 @@ import 'package:apidash/consts.dart';
 class RubyNetHttpCodeGen {
   String kTemplateStart = """require "uri"
 require "net/http"
-{% if type == "application/json" %}require "json"{% endif %}
+
 url = URI("{{url}}")
 https = Net::HTTP.new(url.host, url.port)
 {% if check == "https" %}https.use_ssl = true{% endif %}
@@ -22,12 +22,10 @@ request = Net::HTTP::{{method}}.new(url)
 
   String kTemplateBody = """
 
-request.body = JSON.dump({{body}})
-""";
+request.body = <<HEREDOC
+{{body}}
+HEREDOC
 
-  String kTemplateTextBody = """
-
-request.body = {{body}};
 """;
   String kMultiPartBodyTemplate = r'''
 {% if type == "file" %}"{{name}}", File.open("{{value}}"){% else %}"{{name}}", "{{value}}"{% endif %}
@@ -53,7 +51,6 @@ puts "Response Code: #{response.code}"
         "url": harJson["url"],
         "method": harJson["method"].toString().substring(0, 1).toUpperCase() +
             harJson["method"].toString().substring(1).toLowerCase(),
-        "type": harJson["postData"]?["mimeType"],
         "check": harJson["url"].toString().substring(0, 5),
       });
 
@@ -63,24 +60,12 @@ puts "Response Code: #{response.code}"
         result += templateHeader.render({
           "headers": headers,
         });
-        // if (harJson["postData"]?["mimeType"].toString().substring(0, 9) !=
-        //     "multipart") {
-        //   var templateHeader = jj.Template(kTemplateHeader);
-        //   result += templateHeader.render({
-        //     "headers": headers,
-        //   });
-        // }
       }
 
-      if (harJson["postData"]?["mimeType"] == "application/json") {
+      if (requestModel.hasTextData || requestModel.hasJsonData) {
         var templateBody = jj.Template(kTemplateBody);
         result += templateBody.render({
-          "body": kEncoder.convert(harJson["postData"]["text"]),
-        });
-      } else if (harJson["postData"]?["mimeType"] == "text/plain") {
-        var templateBody = jj.Template(kTemplateTextBody);
-        result += templateBody.render({
-          "body": kEncoder.convert(harJson["postData"]["text"]),
+          "body": requestModel.requestBody,
         });
       }
 

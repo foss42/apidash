@@ -297,7 +297,12 @@ https.use_ssl = true
 request = Net::HTTP::Post.new(url)
 
 request["Content-Type"] = "text/plain"
-request.body = "{\n\"text\": \"I LOVE Flutter\"\n}";
+request.body = <<HEREDOC
+{
+"text": "I LOVE Flutter"
+}
+HEREDOC
+
 response = https.request(request)
 
 puts "Response Code: #{response.code}"
@@ -311,14 +316,24 @@ puts "Response Body: #{response.body}"
     test('POST 2', () {
       const expectedCode = r"""require "uri"
 require "net/http"
-require "json"
+
 url = URI("https://api.apidash.dev/case/lower")
 https = Net::HTTP.new(url.host, url.port)
 https.use_ssl = true
 request = Net::HTTP::Post.new(url)
 
 request["Content-Type"] = "application/json"
-request.body = JSON.dump("{\n\"text\": \"I LOVE Flutter\",\n\"flag\": null,\n\"male\": true,\n\"female\": false,\n\"no\": 1.2,\n\"arr\": [\"null\", \"true\", \"false\", null]\n}")
+request.body = <<HEREDOC
+{
+"text": "I LOVE Flutter",
+"flag": null,
+"male": true,
+"female": false,
+"no": 1.2,
+"arr": ["null", "true", "false", null]
+}
+HEREDOC
+
 response = https.request(request)
 
 puts "Response Code: #{response.code}"
@@ -332,7 +347,7 @@ puts "Response Body: #{response.body}"
     test('POST 3', () {
       const expectedCode = r"""require "uri"
 require "net/http"
-require "json"
+
 url = URI("https://api.apidash.dev/case/lower")
 https = Net::HTTP.new(url.host, url.port)
 https.use_ssl = true
@@ -340,7 +355,12 @@ request = Net::HTTP::Post.new(url)
 
 request["Content-Type"] = "application/json"
 request["User-Agent"] = "Test Agent"
-request.body = JSON.dump("{\n\"text\": \"I LOVE Flutter\"\n}")
+request.body = <<HEREDOC
+{
+"text": "I LOVE Flutter"
+}
+HEREDOC
+
 response = https.request(request)
 
 puts "Response Code: #{response.code}"
@@ -513,14 +533,20 @@ puts "Response Body: #{response.body}"
     test('PUT 1', () {
       const expectedCode = r"""require "uri"
 require "net/http"
-require "json"
+
 url = URI("https://reqres.in/api/users/2")
 https = Net::HTTP.new(url.host, url.port)
 https.use_ssl = true
 request = Net::HTTP::Put.new(url)
 
 request["Content-Type"] = "application/json"
-request.body = JSON.dump("{\n\"name\": \"morpheus\",\n\"job\": \"zion resident\"\n}")
+request.body = <<HEREDOC
+{
+"name": "morpheus",
+"job": "zion resident"
+}
+HEREDOC
+
 response = https.request(request)
 
 puts "Response Code: #{response.code}"
@@ -536,14 +562,20 @@ puts "Response Body: #{response.body}"
     test('PATCH 1', () {
       const expectedCode = r"""require "uri"
 require "net/http"
-require "json"
+
 url = URI("https://reqres.in/api/users/2")
 https = Net::HTTP.new(url.host, url.port)
 https.use_ssl = true
 request = Net::HTTP::Patch.new(url)
 
 request["Content-Type"] = "application/json"
-request.body = JSON.dump("{\n\"name\": \"marfeus\",\n\"job\": \"accountant\"\n}")
+request.body = <<HEREDOC
+{
+"name": "marfeus",
+"job": "accountant"
+}
+HEREDOC
+
 response = https.request(request)
 
 puts "Response Code: #{response.code}"
@@ -578,14 +610,20 @@ puts "Response Body: #{response.body}"
     test('DELETE 2', () {
       const expectedCode = r"""require "uri"
 require "net/http"
-require "json"
+
 url = URI("https://reqres.in/api/users/2")
 https = Net::HTTP.new(url.host, url.port)
 https.use_ssl = true
 request = Net::HTTP::Delete.new(url)
 
 request["Content-Type"] = "application/json"
-request.body = JSON.dump("{\n\"name\": \"marfeus\",\n\"job\": \"accountant\"\n}")
+request.body = <<HEREDOC
+{
+"name": "marfeus",
+"job": "accountant"
+}
+HEREDOC
+
 response = https.request(request)
 
 puts "Response Code: #{response.code}"
