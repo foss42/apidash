@@ -148,9 +148,9 @@ public class Main {
       // especially sets up Content-Type header if the request has a body
       // and Content-Type is not explicitely set by the developer
       if (hasBody &&
-          !requestModel.enabledHeadersMap.containsKey('Content-Type')) {
+          !requestModel.enabledHeadersMap.containsKey(kHeaderContentType)) {
         result += templateRequestHeader
-            .render({"name": 'Content-Type', "value": contentType});
+            .render({"name": kHeaderContentType, "value": contentType});
       }
 
       // setting up rest of the request headers

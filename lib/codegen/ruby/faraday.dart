@@ -147,7 +147,7 @@ puts "Response Body: #{response.body}"
       var headers = requestModel.enabledHeadersMap;
       if (requestModel.hasBody && !requestModel.hasContentTypeHeader) {
         if (requestModel.hasJsonData || requestModel.hasTextData) {
-          headers["Content-Type"] = requestModel.requestBodyContentType.header;
+          headers[kHeaderContentType] = requestModel.requestBodyContentType.header;
         }
       }
 

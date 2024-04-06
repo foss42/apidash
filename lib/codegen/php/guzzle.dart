@@ -107,7 +107,7 @@ echo \$res->getBody();
           headersString += "\t\t\t\t'$key' => '$value', \n";
         });
         if (requestModel.hasFormData) {
-          m['Content-Type'] = 'multipart/form-data';
+          m[kHeaderContentType] = ContentType.formdata.header;
         }
         headersString = headersString.substring(
             0, headersString.length - 2); // Removing trailing comma and space

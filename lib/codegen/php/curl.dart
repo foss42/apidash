@@ -238,8 +238,8 @@ function build_data_files(\$boundary, \$fields, \$files)
 
           if (requestModel.hasFormData) {
             // we will override any existing boundary and use our own boundary
-            m['Content-Type'] =
-                "multipart/form-data; boundary=-------------$uuid";
+            m[kHeaderContentType] =
+                "${ContentType.formdata.header}; boundary=-------------$uuid";
 
             var boundaryUniqueIdTemplate =
                 jj.Template(kBoundaryUniqueIdTemplate);
