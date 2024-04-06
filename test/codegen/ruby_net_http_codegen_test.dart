@@ -91,7 +91,6 @@ url = URI("https://api.github.com/repos/foss42/apidash")
 https = Net::HTTP.new(url.host, url.port)
 https.use_ssl = true
 request = Net::HTTP::Get.new(url)
-
 request["User-Agent"] = "Test Agent"
 response = https.request(request)
 
@@ -112,7 +111,6 @@ url = URI("https://api.github.com/repos/foss42/apidash?raw=true")
 https = Net::HTTP.new(url.host, url.port)
 https.use_ssl = true
 request = Net::HTTP::Get.new(url)
-
 request["User-Agent"] = "Test Agent"
 response = https.request(request)
 
@@ -152,7 +150,6 @@ url = URI("https://api.github.com/repos/foss42/apidash?raw=true")
 https = Net::HTTP.new(url.host, url.port)
 https.use_ssl = true
 request = Net::HTTP::Get.new(url)
-
 request["User-Agent"] = "Test Agent"
 response = https.request(request)
 
@@ -192,7 +189,6 @@ url = URI("https://api.apidash.dev/humanize/social")
 https = Net::HTTP.new(url.host, url.port)
 https.use_ssl = true
 request = Net::HTTP::Get.new(url)
-
 request["User-Agent"] = "Test Agent"
 response = https.request(request)
 
@@ -216,7 +212,6 @@ url = URI("https://api.apidash.dev/humanize/social?num=8700000&digits=3")
 https = Net::HTTP.new(url.host, url.port)
 https.use_ssl = true
 request = Net::HTTP::Get.new(url)
-
 request["User-Agent"] = "Test Agent"
 response = https.request(request)
 
@@ -298,7 +293,6 @@ url = URI("https://api.apidash.dev/case/lower")
 https = Net::HTTP.new(url.host, url.port)
 https.use_ssl = true
 request = Net::HTTP::Post.new(url)
-
 request["Content-Type"] = "text/plain"
 request.body = <<HEREDOC
 {
@@ -325,7 +319,6 @@ url = URI("https://api.apidash.dev/case/lower")
 https = Net::HTTP.new(url.host, url.port)
 https.use_ssl = true
 request = Net::HTTP::Post.new(url)
-
 request["Content-Type"] = "application/json"
 request.body = <<HEREDOC
 {
@@ -357,9 +350,8 @@ url = URI("https://api.apidash.dev/case/lower")
 https = Net::HTTP.new(url.host, url.port)
 https.use_ssl = true
 request = Net::HTTP::Post.new(url)
-
-request["Content-Type"] = "application/json"
 request["User-Agent"] = "Test Agent"
+request["Content-Type"] = "application/json"
 request.body = <<HEREDOC
 {
 "text": "I LOVE Flutter"
@@ -384,8 +376,6 @@ url = URI("https://api.apidash.dev/io/form")
 https = Net::HTTP.new(url.host, url.port)
 https.use_ssl = true
 request = Net::HTTP::Post.new(url)
-
-
 form_data = [["text", "API"],["sep", "|"],["times", "3"]]
 request.set_form form_data, 'multipart/form-data'
 response = https.request(request)
@@ -410,8 +400,6 @@ url = URI("https://api.apidash.dev/io/form")
 https = Net::HTTP.new(url.host, url.port)
 https.use_ssl = true
 request = Net::HTTP::Post.new(url)
-
-
 request["User-Agent"] = "Test Agent"
 form_data = [["text", "API"],["sep", "|"],["times", "3"]]
 request.set_form form_data, 'multipart/form-data'
@@ -436,8 +424,6 @@ url = URI("https://api.apidash.dev/io/img")
 https = Net::HTTP.new(url.host, url.port)
 https.use_ssl = true
 request = Net::HTTP::Post.new(url)
-
-
 form_data = [["token", "xyz"],["imfile", File.open("/Documents/up/1.png")]]
 request.set_form form_data, 'multipart/form-data'
 response = https.request(request)
@@ -461,8 +447,6 @@ url = URI("https://api.apidash.dev/io/img")
 https = Net::HTTP.new(url.host, url.port)
 https.use_ssl = true
 request = Net::HTTP::Post.new(url)
-
-
 form_data = [["token", "xyz"],["imfile", File.open("/Documents/up/1.png")]]
 request.set_form form_data, 'multipart/form-data'
 response = https.request(request)
@@ -486,8 +470,6 @@ url = URI("https://api.apidash.dev/io/form?size=2&len=3")
 https = Net::HTTP.new(url.host, url.port)
 https.use_ssl = true
 request = Net::HTTP::Post.new(url)
-
-
 form_data = [["text", "API"],["sep", "|"],["times", "3"]]
 request.set_form form_data, 'multipart/form-data'
 response = https.request(request)
@@ -511,8 +493,6 @@ url = URI("https://api.apidash.dev/io/img?size=2&len=3")
 https = Net::HTTP.new(url.host, url.port)
 https.use_ssl = true
 request = Net::HTTP::Post.new(url)
-
-
 request["User-Agent"] = "Test Agent"
 request["Keep-Alive"] = "true"
 form_data = [["token", "xyz"],["imfile", File.open("/Documents/up/1.png")]]
@@ -541,7 +521,6 @@ url = URI("https://reqres.in/api/users/2")
 https = Net::HTTP.new(url.host, url.port)
 https.use_ssl = true
 request = Net::HTTP::Put.new(url)
-
 request["Content-Type"] = "application/json"
 request.body = <<HEREDOC
 {
@@ -571,7 +550,6 @@ url = URI("https://reqres.in/api/users/2")
 https = Net::HTTP.new(url.host, url.port)
 https.use_ssl = true
 request = Net::HTTP::Patch.new(url)
-
 request["Content-Type"] = "application/json"
 request.body = <<HEREDOC
 {
@@ -620,7 +598,6 @@ url = URI("https://reqres.in/api/users/2")
 https = Net::HTTP.new(url.host, url.port)
 https.use_ssl = true
 request = Net::HTTP::Delete.new(url)
-
 request["Content-Type"] = "application/json"
 request.body = <<HEREDOC
 {
