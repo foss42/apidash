@@ -1,3 +1,4 @@
+import 'package:apidash/codegen/php/http_plug.dart';
 import 'package:apidash/models/models.dart' show RequestModel;
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart' show getNewUuid;
@@ -88,6 +89,8 @@ class Codegen {
         return PHPcURLCodeGen().getCode(rM);
       case CodegenLanguage.cSharpRestSharp:
         return CSharpRestSharp().getCode(rM);
+      case CodegenLanguage.phpHttpPlug:
+        return PhpHttpPlugCodeGen().getCode(rM, boundary: boundary);
     }
   }
 }
