@@ -80,11 +80,7 @@ curl_setopt_array($request, [
 
   //ending template
   final String kStringRequestEnd = r'''
-    CURLOPT_SSL_VERIFYPEER => 0,
-    CURLOPT_MAXREDIRS => 10,
-    CURLOPT_TIMEOUT => 0,
     CURLOPT_FOLLOWLOCATION => true,
-    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 ]);
 
 $response = curl_exec($request);

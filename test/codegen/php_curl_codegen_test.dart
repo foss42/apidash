@@ -17,11 +17,7 @@ $request = curl_init($uri);
 curl_setopt_array($request, [
     CURLOPT_RETURNTRANSFER => 1,
     CURLOPT_CUSTOMREQUEST => 'GET',
-    CURLOPT_SSL_VERIFYPEER => 0,
-    CURLOPT_MAXREDIRS => 10,
-    CURLOPT_TIMEOUT => 0,
     CURLOPT_FOLLOWLOCATION => true,
-    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 ]);
 
 $response = curl_exec($request);
@@ -51,11 +47,7 @@ $request = curl_init($uri);
 curl_setopt_array($request, [
     CURLOPT_RETURNTRANSFER => 1,
     CURLOPT_CUSTOMREQUEST => 'GET',
-    CURLOPT_SSL_VERIFYPEER => 0,
-    CURLOPT_MAXREDIRS => 10,
-    CURLOPT_TIMEOUT => 0,
     CURLOPT_FOLLOWLOCATION => true,
-    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 ]);
 
 $response = curl_exec($request);
@@ -85,11 +77,7 @@ $request = curl_init($uri);
 curl_setopt_array($request, [
     CURLOPT_RETURNTRANSFER => 1,
     CURLOPT_CUSTOMREQUEST => 'GET',
-    CURLOPT_SSL_VERIFYPEER => 0,
-    CURLOPT_MAXREDIRS => 10,
-    CURLOPT_TIMEOUT => 0,
     CURLOPT_FOLLOWLOCATION => true,
-    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 ]);
 
 $response = curl_exec($request);
@@ -123,11 +111,7 @@ $request = curl_init($uri);
 curl_setopt_array($request, [
     CURLOPT_RETURNTRANSFER => 1,
     CURLOPT_CUSTOMREQUEST => 'GET',
-    CURLOPT_SSL_VERIFYPEER => 0,
-    CURLOPT_MAXREDIRS => 10,
-    CURLOPT_TIMEOUT => 0,
     CURLOPT_FOLLOWLOCATION => true,
-    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 ]);
 
 $response = curl_exec($request);
@@ -158,11 +142,7 @@ curl_setopt_array($request, [
     CURLOPT_RETURNTRANSFER => 1,
     CURLOPT_CUSTOMREQUEST => 'GET',
     CURLOPT_HTTPHEADER => $headers,
-    CURLOPT_SSL_VERIFYPEER => 0,
-    CURLOPT_MAXREDIRS => 10,
-    CURLOPT_TIMEOUT => 0,
     CURLOPT_FOLLOWLOCATION => true,
-    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 ]);
 
 $response = curl_exec($request);
@@ -198,11 +178,7 @@ curl_setopt_array($request, [
     CURLOPT_RETURNTRANSFER => 1,
     CURLOPT_CUSTOMREQUEST => 'GET',
     CURLOPT_HTTPHEADER => $headers,
-    CURLOPT_SSL_VERIFYPEER => 0,
-    CURLOPT_MAXREDIRS => 10,
-    CURLOPT_TIMEOUT => 0,
     CURLOPT_FOLLOWLOCATION => true,
-    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 ]);
 
 $response = curl_exec($request);
@@ -228,11 +204,7 @@ $request = curl_init($uri);
 curl_setopt_array($request, [
     CURLOPT_RETURNTRANSFER => 1,
     CURLOPT_CUSTOMREQUEST => 'GET',
-    CURLOPT_SSL_VERIFYPEER => 0,
-    CURLOPT_MAXREDIRS => 10,
-    CURLOPT_TIMEOUT => 0,
     CURLOPT_FOLLOWLOCATION => true,
-    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 ]);
 
 $response = curl_exec($request);
@@ -268,11 +240,7 @@ curl_setopt_array($request, [
     CURLOPT_RETURNTRANSFER => 1,
     CURLOPT_CUSTOMREQUEST => 'GET',
     CURLOPT_HTTPHEADER => $headers,
-    CURLOPT_SSL_VERIFYPEER => 0,
-    CURLOPT_MAXREDIRS => 10,
-    CURLOPT_TIMEOUT => 0,
     CURLOPT_FOLLOWLOCATION => true,
-    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 ]);
 
 $response = curl_exec($request);
@@ -304,11 +272,7 @@ $request = curl_init($uri);
 curl_setopt_array($request, [
     CURLOPT_RETURNTRANSFER => 1,
     CURLOPT_CUSTOMREQUEST => 'GET',
-    CURLOPT_SSL_VERIFYPEER => 0,
-    CURLOPT_MAXREDIRS => 10,
-    CURLOPT_TIMEOUT => 0,
     CURLOPT_FOLLOWLOCATION => true,
-    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 ]);
 
 $response = curl_exec($request);
@@ -339,11 +303,7 @@ curl_setopt_array($request, [
     CURLOPT_RETURNTRANSFER => 1,
     CURLOPT_CUSTOMREQUEST => 'GET',
     CURLOPT_HTTPHEADER => $headers,
-    CURLOPT_SSL_VERIFYPEER => 0,
-    CURLOPT_MAXREDIRS => 10,
-    CURLOPT_TIMEOUT => 0,
     CURLOPT_FOLLOWLOCATION => true,
-    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 ]);
 
 $response = curl_exec($request);
@@ -380,11 +340,7 @@ curl_setopt_array($request, [
     CURLOPT_RETURNTRANSFER => 1,
     CURLOPT_CUSTOMREQUEST => 'GET',
     CURLOPT_HTTPHEADER => $headers,
-    CURLOPT_SSL_VERIFYPEER => 0,
-    CURLOPT_MAXREDIRS => 10,
-    CURLOPT_TIMEOUT => 0,
     CURLOPT_FOLLOWLOCATION => true,
-    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 ]);
 
 $response = curl_exec($request);
@@ -410,11 +366,7 @@ $request = curl_init($uri);
 curl_setopt_array($request, [
     CURLOPT_RETURNTRANSFER => 1,
     CURLOPT_CUSTOMREQUEST => 'GET',
-    CURLOPT_SSL_VERIFYPEER => 0,
-    CURLOPT_MAXREDIRS => 10,
-    CURLOPT_TIMEOUT => 0,
     CURLOPT_FOLLOWLOCATION => true,
-    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 ]);
 
 $response = curl_exec($request);
@@ -442,11 +394,7 @@ $request = curl_init($uri);
 curl_setopt_array($request, [
     CURLOPT_RETURNTRANSFER => 1,
     CURLOPT_CUSTOMREQUEST => 'HEAD',
-    CURLOPT_SSL_VERIFYPEER => 0,
-    CURLOPT_MAXREDIRS => 10,
-    CURLOPT_TIMEOUT => 0,
     CURLOPT_FOLLOWLOCATION => true,
-    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 ]);
 
 $response = curl_exec($request);
@@ -472,11 +420,7 @@ $request = curl_init($uri);
 curl_setopt_array($request, [
     CURLOPT_RETURNTRANSFER => 1,
     CURLOPT_CUSTOMREQUEST => 'HEAD',
-    CURLOPT_SSL_VERIFYPEER => 0,
-    CURLOPT_MAXREDIRS => 10,
-    CURLOPT_TIMEOUT => 0,
     CURLOPT_FOLLOWLOCATION => true,
-    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 ]);
 
 $response = curl_exec($request);
@@ -514,11 +458,7 @@ curl_setopt_array($request, [
     CURLOPT_CUSTOMREQUEST => 'POST',
     CURLOPT_HTTPHEADER => $headers,
     CURLOPT_POSTFIELDS => $request_body,
-    CURLOPT_SSL_VERIFYPEER => 0,
-    CURLOPT_MAXREDIRS => 10,
-    CURLOPT_TIMEOUT => 0,
     CURLOPT_FOLLOWLOCATION => true,
-    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 ]);
 
 $response = curl_exec($request);
@@ -559,11 +499,7 @@ curl_setopt_array($request, [
     CURLOPT_CUSTOMREQUEST => 'POST',
     CURLOPT_HTTPHEADER => $headers,
     CURLOPT_POSTFIELDS => $request_body,
-    CURLOPT_SSL_VERIFYPEER => 0,
-    CURLOPT_MAXREDIRS => 10,
-    CURLOPT_TIMEOUT => 0,
     CURLOPT_FOLLOWLOCATION => true,
-    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 ]);
 
 $response = curl_exec($request);
@@ -599,11 +535,7 @@ curl_setopt_array($request, [
     CURLOPT_CUSTOMREQUEST => 'POST',
     CURLOPT_HTTPHEADER => $headers,
     CURLOPT_POSTFIELDS => $request_body,
-    CURLOPT_SSL_VERIFYPEER => 0,
-    CURLOPT_MAXREDIRS => 10,
-    CURLOPT_TIMEOUT => 0,
     CURLOPT_FOLLOWLOCATION => true,
-    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 ]);
 
 $response = curl_exec($request);
@@ -636,11 +568,7 @@ curl_setopt_array($request, [
     CURLOPT_RETURNTRANSFER => 1,
     CURLOPT_CUSTOMREQUEST => 'POST',
     CURLOPT_POSTFIELDS => $request_body,
-    CURLOPT_SSL_VERIFYPEER => 0,
-    CURLOPT_MAXREDIRS => 10,
-    CURLOPT_TIMEOUT => 0,
     CURLOPT_FOLLOWLOCATION => true,
-    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 ]);
 
 $response = curl_exec($request);
@@ -678,11 +606,7 @@ curl_setopt_array($request, [
     CURLOPT_CUSTOMREQUEST => 'POST',
     CURLOPT_HTTPHEADER => $headers,
     CURLOPT_POSTFIELDS => $request_body,
-    CURLOPT_SSL_VERIFYPEER => 0,
-    CURLOPT_MAXREDIRS => 10,
-    CURLOPT_TIMEOUT => 0,
     CURLOPT_FOLLOWLOCATION => true,
-    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 ]);
 
 $response = curl_exec($request);
@@ -713,11 +637,7 @@ curl_setopt_array($request, [
     CURLOPT_RETURNTRANSFER => 1,
     CURLOPT_CUSTOMREQUEST => 'POST',
     CURLOPT_POSTFIELDS => $request_body,
-    CURLOPT_SSL_VERIFYPEER => 0,
-    CURLOPT_MAXREDIRS => 10,
-    CURLOPT_TIMEOUT => 0,
     CURLOPT_FOLLOWLOCATION => true,
-    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 ]);
 
 $response = curl_exec($request);
@@ -748,11 +668,7 @@ curl_setopt_array($request, [
     CURLOPT_RETURNTRANSFER => 1,
     CURLOPT_CUSTOMREQUEST => 'POST',
     CURLOPT_POSTFIELDS => $request_body,
-    CURLOPT_SSL_VERIFYPEER => 0,
-    CURLOPT_MAXREDIRS => 10,
-    CURLOPT_TIMEOUT => 0,
     CURLOPT_FOLLOWLOCATION => true,
-    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 ]);
 
 $response = curl_exec($request);
@@ -790,11 +706,7 @@ curl_setopt_array($request, [
     CURLOPT_RETURNTRANSFER => 1,
     CURLOPT_CUSTOMREQUEST => 'POST',
     CURLOPT_POSTFIELDS => $request_body,
-    CURLOPT_SSL_VERIFYPEER => 0,
-    CURLOPT_MAXREDIRS => 10,
-    CURLOPT_TIMEOUT => 0,
     CURLOPT_FOLLOWLOCATION => true,
-    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 ]);
 
 $response = curl_exec($request);
@@ -837,11 +749,7 @@ curl_setopt_array($request, [
     CURLOPT_CUSTOMREQUEST => 'POST',
     CURLOPT_HTTPHEADER => $headers,
     CURLOPT_POSTFIELDS => $request_body,
-    CURLOPT_SSL_VERIFYPEER => 0,
-    CURLOPT_MAXREDIRS => 10,
-    CURLOPT_TIMEOUT => 0,
     CURLOPT_FOLLOWLOCATION => true,
-    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 ]);
 
 $response = curl_exec($request);
@@ -879,11 +787,7 @@ curl_setopt_array($request, [
     CURLOPT_CUSTOMREQUEST => 'PUT',
     CURLOPT_HTTPHEADER => $headers,
     CURLOPT_POSTFIELDS => $request_body,
-    CURLOPT_SSL_VERIFYPEER => 0,
-    CURLOPT_MAXREDIRS => 10,
-    CURLOPT_TIMEOUT => 0,
     CURLOPT_FOLLOWLOCATION => true,
-    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 ]);
 
 $response = curl_exec($request);
@@ -921,11 +825,7 @@ curl_setopt_array($request, [
     CURLOPT_CUSTOMREQUEST => 'PATCH',
     CURLOPT_HTTPHEADER => $headers,
     CURLOPT_POSTFIELDS => $request_body,
-    CURLOPT_SSL_VERIFYPEER => 0,
-    CURLOPT_MAXREDIRS => 10,
-    CURLOPT_TIMEOUT => 0,
     CURLOPT_FOLLOWLOCATION => true,
-    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 ]);
 
 $response = curl_exec($request);
@@ -952,11 +852,7 @@ $request = curl_init($uri);
 curl_setopt_array($request, [
     CURLOPT_RETURNTRANSFER => 1,
     CURLOPT_CUSTOMREQUEST => 'DELETE',
-    CURLOPT_SSL_VERIFYPEER => 0,
-    CURLOPT_MAXREDIRS => 10,
-    CURLOPT_TIMEOUT => 0,
     CURLOPT_FOLLOWLOCATION => true,
-    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 ]);
 
 $response = curl_exec($request);
@@ -993,11 +889,7 @@ curl_setopt_array($request, [
     CURLOPT_CUSTOMREQUEST => 'DELETE',
     CURLOPT_HTTPHEADER => $headers,
     CURLOPT_POSTFIELDS => $request_body,
-    CURLOPT_SSL_VERIFYPEER => 0,
-    CURLOPT_MAXREDIRS => 10,
-    CURLOPT_TIMEOUT => 0,
     CURLOPT_FOLLOWLOCATION => true,
-    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 ]);
 
 $response = curl_exec($request);
