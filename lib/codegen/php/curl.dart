@@ -95,7 +95,6 @@ echo $response . "\n";
   String? getCode(RequestModel requestModel) {
     try {
       String result = "";
-      bool hasQuery = false;
       bool hasBody = false;
 
       var rec = getValidRequestUri(
@@ -114,8 +113,7 @@ echo $response . "\n";
         result += templateUri.render({'uri': stripUriParams(uri)});
 
         //renders the request body contains the HTTP method associated with the request
-        if (kMethodsWithBody.contains(requestModel.method) &&
-            requestModel.hasBody) {
+        if (requestModel.hasBody) {
           hasBody = true;
           // contains the entire request body as a string if body is present
           var templateBody = jj.Template(kTemplateBody);
@@ -129,7 +127,6 @@ echo $response . "\n";
         //checking and adding query params
         if (uri.hasQuery) {
           if (requestModel.enabledParamsMap.isNotEmpty) {
-            hasQuery = true;
             var templateParams = jj.Template(kTemplateParams);
             result += templateParams
                 .render({"params": requestModel.enabledParamsMap});
@@ -137,13 +134,10 @@ echo $response . "\n";
         }
 
         var headers = requestModel.enabledHeadersMap;
-        if (requestModel.hasBody) {
-          if (!headers.containsKey('Content-Type')) {
-            if (requestModel.hasJsonData) {
-              headers['Content-Type'] = 'application/json';
-            } else if (requestModel.hasTextData) {
-              headers['Content-Type'] = 'text/plain';
-            }
+        if (requestModel.hasBody && !requestModel.hasContentTypeHeader) {
+          if (requestModel.hasJsonData || requestModel.hasTextData) {
+            headers[kHeaderContentType] =
+                requestModel.requestBodyContentType.header;
           }
         }
 
