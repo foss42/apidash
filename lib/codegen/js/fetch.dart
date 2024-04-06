@@ -99,7 +99,7 @@ fetch(url, options)
         var m = {};
         for (var i in headers) {
           // fetch can automatically add the Content-Type header when FormData is passed as body
-          if (i["name"] == "Content-Type" && requestModel.hasFormData) {
+          if (i["name"] == kHeaderContentType && requestModel.hasFormData) {
             continue;
           }
           m[i["name"]] = i["value"];

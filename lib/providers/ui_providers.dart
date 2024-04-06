@@ -6,6 +6,8 @@ final selectedIdEditStateProvider = StateProvider<String?>((ref) => null);
 final codePaneVisibleStateProvider = StateProvider<bool>((ref) => false);
 final saveDataStateProvider = StateProvider<bool>((ref) => false);
 final clearDataStateProvider = StateProvider<bool>((ref) => false);
+final hasUnsavedChangesProvider = StateProvider<bool>((ref) => false);
+
 // final nameTextFieldControllerProvider =
 //     StateProvider.autoDispose<TextEditingController>((ref) {
 //   TextEditingController controller = TextEditingController(text: "");
@@ -23,3 +25,5 @@ final nameTextFieldFocusNodeProvider =
   });
   return focusNode;
 });
+
+final searchQueryProvider = StateProvider<String>((ref) => '');

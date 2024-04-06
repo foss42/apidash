@@ -12,9 +12,10 @@ class CollectionPane extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var sm = ScaffoldMessenger.of(context);
+    final overlayWidget = OverlayWidgetTemplate(context: context);
     final collection = ref.watch(collectionStateNotifierProvider);
     final savingData = ref.watch(saveDataStateProvider);
+    final hasUnsavedChanges = ref.watch(hasUnsavedChangesProvider);
     if (collection == null) {
       return const Center(
         child: CircularProgressIndicator(),
@@ -26,20 +27,26 @@ class CollectionPane extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Padding(
-            padding: kPr8CollectionPane,
+            padding: kPe8,
             child: Wrap(
               alignment: WrapAlignment.spaceBetween,
               children: [
                 TextButton.icon(
-                  onPressed: savingData
+                  onPressed: (savingData || !hasUnsavedChanges)
                       ? null
                       : () async {
+                          overlayWidget.show(
+                              widget:
+                                  const SavingOverlay(saveCompleted: false));
+
                           await ref
                               .read(collectionStateNotifierProvider.notifier)
                               .saveData();
-
-                          sm.hideCurrentSnackBar();
-                          sm.showSnackBar(getSnackBar("Saved"));
+                          overlayWidget.hide();
+                          overlayWidget.show(
+                              widget: const SavingOverlay(saveCompleted: true));
+                          await Future.delayed(const Duration(seconds: 1));
+                          overlayWidget.hide();
                         },
                   icon: const Icon(
                     Icons.save,
@@ -63,7 +70,39 @@ class CollectionPane extends ConsumerWidget {
               ],
             ),
           ),
-          kVSpacer8,
+          kVSpacer10,
+          Container(
+            height: 30,
+            margin: const EdgeInsets.only(right: 8),
+            decoration: BoxDecoration(
+              borderRadius: kBorderRadius8,
+              border: Border.all(
+                color: Theme.of(context).colorScheme.surfaceVariant,
+              ),
+            ),
+            child: Row(
+              children: [
+                kHSpacer5,
+                Icon(
+                  Icons.filter_alt,
+                  size: 18,
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
+                kHSpacer5,
+                Expanded(
+                  child: RawTextField(
+                    style: Theme.of(context).textTheme.bodyMedium,
+                    hintText: "Filter by name or URL",
+                    onChanged: (value) {
+                      ref.read(searchQueryProvider.notifier).state =
+                          value.toLowerCase();
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+          kVSpacer10,
           const Expanded(
             child: RequestList(),
           ),
@@ -103,41 +142,61 @@ class _RequestListState extends ConsumerState<RequestList> {
     final requestItems = ref.watch(collectionStateNotifierProvider)!;
     final alwaysShowCollectionPaneScrollbar = ref.watch(settingsProvider
         .select((value) => value.alwaysShowCollectionPaneScrollbar));
+    final filterQuery = ref.watch(searchQueryProvider).trim();
 
     return Scrollbar(
       controller: controller,
       thumbVisibility: alwaysShowCollectionPaneScrollbar ? true : null,
       radius: const Radius.circular(12),
-      child: ReorderableListView.builder(
-        padding: kPr8CollectionPane,
-        scrollController: controller,
-        buildDefaultDragHandles: false,
-        itemCount: requestSequence.length,
-        onReorder: (int oldIndex, int newIndex) {
-          if (oldIndex < newIndex) {
-            newIndex -= 1;
-          }
-          if (oldIndex != newIndex) {
-            ref
-                .read(collectionStateNotifierProvider.notifier)
-                .reorder(oldIndex, newIndex);
-          }
-        },
-        itemBuilder: (context, index) {
-          var id = requestSequence[index];
-          return ReorderableDragStartListener(
-            key: ValueKey(id),
-            index: index,
-            child: Padding(
-              padding: kP1,
-              child: RequestItem(
-                id: id,
-                requestModel: requestItems[id]!,
-              ),
+      child: filterQuery.isEmpty
+          ? ReorderableListView.builder(
+              padding: kPe8,
+              scrollController: controller,
+              buildDefaultDragHandles: false,
+              itemCount: requestSequence.length,
+              onReorder: (int oldIndex, int newIndex) {
+                if (oldIndex < newIndex) {
+                  newIndex -= 1;
+                }
+                if (oldIndex != newIndex) {
+                  ref
+                      .read(collectionStateNotifierProvider.notifier)
+                      .reorder(oldIndex, newIndex);
+                }
+              },
+              itemBuilder: (context, index) {
+                var id = requestSequence[index];
+                return ReorderableDragStartListener(
+                  key: ValueKey(id),
+                  index: index,
+                  child: Padding(
+                    padding: kP1,
+                    child: RequestItem(
+                      id: id,
+                      requestModel: requestItems[id]!,
+                    ),
+                  ),
+                );
+              },
+            )
+          : ListView(
+              padding: kPe8,
+              controller: controller,
+              children: requestSequence.map((id) {
+                var item = requestItems[id]!;
+                if (item.url.toLowerCase().contains(filterQuery) ||
+                    item.name.toLowerCase().contains(filterQuery)) {
+                  return Padding(
+                    padding: kP1,
+                    child: RequestItem(
+                      id: id,
+                      requestModel: item,
+                    ),
+                  );
+                }
+                return const SizedBox();
+              }).toList(),
             ),
-          );
-        },
-      ),
     );
   }
 }
