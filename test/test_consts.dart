@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 final kThemeDataDark = ThemeData(
   useMaterial3: true,
@@ -12,6 +12,8 @@ final kThemeDataLight = ThemeData(
   colorSchemeSeed: Colors.blue,
   brightness: Brightness.light,
 );
+
+const kTestUrl = 'https://api.apidash.dev';
 
 Uint8List kBodyBytesJpeg = Uint8List.fromList([
   255,
