@@ -11,6 +11,7 @@ import 'php/curl.dart';
 import 'python/http_client.dart';
 import 'python/requests.dart';
 import 'ruby/faraday.dart';
+import 'ruby/net_http.dart';
 import 'rust/actix.dart';
 import 'rust/curl_rust.dart';
 import 'rust/reqwest.dart';
@@ -77,6 +78,8 @@ class Codegen {
         return PythonRequestsCodeGen().getCode(rM, boundary: boundary);
       case CodegenLanguage.rubyFaraday:
         return RubyFaradayCodeGen().getCode(rM);
+      case CodegenLanguage.rubyNetHttp:
+        return RubyNetHttpCodeGen().getCode(rM);
       case CodegenLanguage.rustActix:
         return RustActixCodeGen().getCode(rM, boundary: boundary);
       case CodegenLanguage.rustCurl:

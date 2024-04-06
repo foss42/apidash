@@ -284,6 +284,7 @@ enum CodegenLanguage {
   pythonRequests("Python (requests)", "python", "py"),
   pythonHttpClient("Python (http.client)", "python", "py"),
   rubyFaraday("Ruby (Faraday)", "ruby", "rb"),
+  rubyNetHttp("Ruby (Net::Http)", "Ruby", "rb"),
   rustActix("Rust (Actix Client)", "rust", "rs"),
   rustReqwest("Rust (reqwest)", "rust", "rs"),
   rustCurl("Rust (curl-rust)", "rust", "rs"),
