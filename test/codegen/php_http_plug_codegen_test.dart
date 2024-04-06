@@ -14,6 +14,7 @@ require_once 'vendor/autoload.php';
 
 use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Discovery\Psr18ClientDiscovery;
+
 $uri = "https://api.apidash.dev";
 $request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('GET', $uri);
 $client = Psr18ClientDiscovery::find();
@@ -35,6 +36,7 @@ require_once 'vendor/autoload.php';
 
 use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Discovery\Psr18ClientDiscovery;
+
 $uri = "https://api.apidash.dev/country/data";
 $queryParams = [
  "code" => "US"
@@ -60,6 +62,7 @@ require_once 'vendor/autoload.php';
 
 use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Discovery\Psr18ClientDiscovery;
+
 $uri = "https://api.apidash.dev/country/data";
 $queryParams = [
  "code" => "IND"
@@ -85,6 +88,7 @@ require_once 'vendor/autoload.php';
 
 use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Discovery\Psr18ClientDiscovery;
+
 $uri = "https://api.apidash.dev/humanize/social";
 $queryParams = [
  "num" => "8700000",
@@ -114,10 +118,11 @@ require_once 'vendor/autoload.php';
 
 use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Discovery\Psr18ClientDiscovery;
+
 $uri = "https://api.github.com/repos/foss42/apidash";
 $request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('GET', $uri);
 $headers = [
-				'User-Agent' => 'Test Agent', 
+    'User-Agent' => 'Test Agent',
 ];
 foreach ($headers as $name => $value) {
     $request = $request->withHeader($name, $value);
@@ -141,6 +146,7 @@ require_once 'vendor/autoload.php';
 
 use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Discovery\Psr18ClientDiscovery;
+
 $uri = "https://api.github.com/repos/foss42/apidash";
 $queryParams = [
  "raw" => "true"
@@ -148,7 +154,7 @@ $queryParams = [
 $uri .= '?' . http_build_query($queryParams);
 $request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('GET', $uri);
 $headers = [
-				'User-Agent' => 'Test Agent', 
+    'User-Agent' => 'Test Agent',
 ];
 foreach ($headers as $name => $value) {
     $request = $request->withHeader($name, $value);
@@ -172,6 +178,7 @@ require_once 'vendor/autoload.php';
 
 use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Discovery\Psr18ClientDiscovery;
+
 $uri = "https://api.apidash.dev";
 $request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('GET', $uri);
 $client = Psr18ClientDiscovery::find();
@@ -193,6 +200,7 @@ require_once 'vendor/autoload.php';
 
 use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Discovery\Psr18ClientDiscovery;
+
 $uri = "https://api.github.com/repos/foss42/apidash";
 $queryParams = [
  "raw" => "true"
@@ -200,7 +208,7 @@ $queryParams = [
 $uri .= '?' . http_build_query($queryParams);
 $request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('GET', $uri);
 $headers = [
-				'User-Agent' => 'Test Agent', 
+    'User-Agent' => 'Test Agent',
 ];
 foreach ($headers as $name => $value) {
     $request = $request->withHeader($name, $value);
@@ -224,6 +232,7 @@ require_once 'vendor/autoload.php';
 
 use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Discovery\Psr18ClientDiscovery;
+
 $uri = "https://api.apidash.dev/humanize/social";
 $queryParams = [
  "num" => "8700000",
@@ -250,10 +259,11 @@ require_once 'vendor/autoload.php';
 
 use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Discovery\Psr18ClientDiscovery;
+
 $uri = "https://api.apidash.dev/humanize/social";
 $request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('GET', $uri);
 $headers = [
-				'User-Agent' => 'Test Agent', 
+    'User-Agent' => 'Test Agent',
 ];
 foreach ($headers as $name => $value) {
     $request = $request->withHeader($name, $value);
@@ -277,6 +287,7 @@ require_once 'vendor/autoload.php';
 
 use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Discovery\Psr18ClientDiscovery;
+
 $uri = "https://api.apidash.dev/humanize/social";
 $queryParams = [
  "num" => "8700000",
@@ -285,7 +296,7 @@ $queryParams = [
 $uri .= '?' . http_build_query($queryParams);
 $request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('GET', $uri);
 $headers = [
-				'User-Agent' => 'Test Agent', 
+    'User-Agent' => 'Test Agent',
 ];
 foreach ($headers as $name => $value) {
     $request = $request->withHeader($name, $value);
@@ -309,6 +320,7 @@ require_once 'vendor/autoload.php';
 
 use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Discovery\Psr18ClientDiscovery;
+
 $uri = "https://api.apidash.dev/humanize/social";
 $request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('GET', $uri);
 $client = Psr18ClientDiscovery::find();
@@ -333,6 +345,7 @@ require_once 'vendor/autoload.php';
 
 use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Discovery\Psr18ClientDiscovery;
+
 $uri = "https://api.apidash.dev";
 $request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('HEAD', $uri);
 $client = Psr18ClientDiscovery::find();
@@ -354,6 +367,7 @@ require_once 'vendor/autoload.php';
 
 use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Discovery\Psr18ClientDiscovery;
+
 $uri = "http://api.apidash.dev";
 $request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('HEAD', $uri);
 $client = Psr18ClientDiscovery::find();
@@ -378,21 +392,22 @@ require_once 'vendor/autoload.php';
 
 use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Discovery\Psr18ClientDiscovery;
+
 $uri = "https://api.apidash.dev/case/lower";
 $request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('POST', $uri);
+$headers = [
+    'Content-Type' => 'text/plain',
+];
+foreach ($headers as $name => $value) {
+    $request = $request->withHeader($name, $value);
+}
 $body = <<<'EOF'
 {
 "text": "I LOVE Flutter"
 }
 EOF;
-$headers = [
-				'Content-Type' => 'text/plain', 
-];
-foreach ($headers as $name => $value) {
-    $request = $request->withHeader($name, $value);
-}
-$request = $request->withBody(Psr17FactoryDiscovery::findStreamFactory()->createStream($body));
 
+$request = $request->withBody(Psr17FactoryDiscovery::findStreamFactory()->createStream($body));
 $client = Psr18ClientDiscovery::find();
 $response = $client->sendRequest($request);
 
@@ -412,8 +427,15 @@ require_once 'vendor/autoload.php';
 
 use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Discovery\Psr18ClientDiscovery;
+
 $uri = "https://api.apidash.dev/case/lower";
 $request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('POST', $uri);
+$headers = [
+    'Content-Type' => 'application/json',
+];
+foreach ($headers as $name => $value) {
+    $request = $request->withHeader($name, $value);
+}
 $body = <<<'EOF'
 {
 "text": "I LOVE Flutter",
@@ -424,14 +446,8 @@ $body = <<<'EOF'
 "arr": ["null", "true", "false", null]
 }
 EOF;
-$headers = [
-				'Content-Type' => 'application/json', 
-];
-foreach ($headers as $name => $value) {
-    $request = $request->withHeader($name, $value);
-}
-$request = $request->withBody(Psr17FactoryDiscovery::findStreamFactory()->createStream($body));
 
+$request = $request->withBody(Psr17FactoryDiscovery::findStreamFactory()->createStream($body));
 $client = Psr18ClientDiscovery::find();
 $response = $client->sendRequest($request);
 
@@ -451,22 +467,23 @@ require_once 'vendor/autoload.php';
 
 use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Discovery\Psr18ClientDiscovery;
+
 $uri = "https://api.apidash.dev/case/lower";
 $request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('POST', $uri);
+$headers = [
+    'Content-Type' => 'application/json',
+    'User-Agent' => 'Test Agent',
+];
+foreach ($headers as $name => $value) {
+    $request = $request->withHeader($name, $value);
+}
 $body = <<<'EOF'
 {
 "text": "I LOVE Flutter"
 }
 EOF;
-$headers = [
-				'Content-Type' => 'application/json', 
-				'User-Agent' => 'Test Agent', 
-];
-foreach ($headers as $name => $value) {
-    $request = $request->withHeader($name, $value);
-}
-$request = $request->withBody(Psr17FactoryDiscovery::findStreamFactory()->createStream($body));
 
+$request = $request->withBody(Psr17FactoryDiscovery::findStreamFactory()->createStream($body));
 $client = Psr18ClientDiscovery::find();
 $response = $client->sendRequest($request);
 
@@ -486,41 +503,23 @@ require_once 'vendor/autoload.php';
 
 use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Discovery\Psr18ClientDiscovery;
-function build_data($boundary, $fields)
-{
-    $data = '';
-    $eol = "\r\n";
-    $delimiter = $boundary;
-
-    foreach ($fields as $name => $content) {
-        $data .= "--" . $delimiter . $eol
-            . 'Content-Disposition: form-data; name="' . $name . "\"" . $eol . $eol
-            . $content . $eol;
-    }
-
-    $data .= "--" . $delimiter . "--" . $eol;
-
-    return $data;
-}
-
+use Http\Message\MultipartStream\MultipartStreamBuilder;
 $uri = "https://api.apidash.dev/io/form";
 $request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('POST', $uri);
-$boundary = "b9826c20-773c-1f0c-814d-a1b3d90cd6b3";
-$fields = [
- "text" => "API",
- "sep" => "|",
- "times" => "3",
-];
-$body = build_data($boundary, $fields);
-
 $headers = [
-				'Content-Type' => 'multipart/form-data; boundary=b9826c20-773c-1f0c-814d-a1b3d90cd6b3', 
+    'Content-Type' => 'multipart/form-data; boundary=b9826c20-773c-1f0c-814d-a1b3d90cd6b3',
 ];
 foreach ($headers as $name => $value) {
     $request = $request->withHeader($name, $value);
 }
-$request = $request->withBody(Psr17FactoryDiscovery::findStreamFactory()->createStream($body));
+$boundary = 'b9826c20-773c-1f0c-814d-a1b3d90cd6b3';
+$builder = new MultipartStreamBuilder();
+$builder->setBoundary($boundary);
+$builder->addResource('text', 'API');
+$builder->addResource('sep', '|');
+$builder->addResource('times', '3');
 
+$request = $request->withBody($builder->build());
 $client = Psr18ClientDiscovery::find();
 $response = $client->sendRequest($request);
 
@@ -540,42 +539,24 @@ require_once 'vendor/autoload.php';
 
 use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Discovery\Psr18ClientDiscovery;
-function build_data($boundary, $fields)
-{
-    $data = '';
-    $eol = "\r\n";
-    $delimiter = $boundary;
-
-    foreach ($fields as $name => $content) {
-        $data .= "--" . $delimiter . $eol
-            . 'Content-Disposition: form-data; name="' . $name . "\"" . $eol . $eol
-            . $content . $eol;
-    }
-
-    $data .= "--" . $delimiter . "--" . $eol;
-
-    return $data;
-}
-
+use Http\Message\MultipartStream\MultipartStreamBuilder;
 $uri = "https://api.apidash.dev/io/form";
 $request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('POST', $uri);
-$boundary = "b9826c20-773c-1f0c-814d-a1b3d90cd6b3";
-$fields = [
- "text" => "API",
- "sep" => "|",
- "times" => "3",
-];
-$body = build_data($boundary, $fields);
-
 $headers = [
-				'Content-Type' => 'multipart/form-data; boundary=b9826c20-773c-1f0c-814d-a1b3d90cd6b3', 
-				'User-Agent' => 'Test Agent', 
+    'Content-Type' => 'multipart/form-data; boundary=b9826c20-773c-1f0c-814d-a1b3d90cd6b3',
+    'User-Agent' => 'Test Agent',
 ];
 foreach ($headers as $name => $value) {
     $request = $request->withHeader($name, $value);
 }
-$request = $request->withBody(Psr17FactoryDiscovery::findStreamFactory()->createStream($body));
+$boundary = 'b9826c20-773c-1f0c-814d-a1b3d90cd6b3';
+$builder = new MultipartStreamBuilder();
+$builder->setBoundary($boundary);
+$builder->addResource('text', 'API');
+$builder->addResource('sep', '|');
+$builder->addResource('times', '3');
 
+$request = $request->withBody($builder->build());
 $client = Psr18ClientDiscovery::find();
 $response = $client->sendRequest($request);
 
@@ -595,67 +576,23 @@ require_once 'vendor/autoload.php';
 
 use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Discovery\Psr18ClientDiscovery;
-class File
-{
-    public string $name;
-    public string $filename;
-    public string $content;
-
-    function __construct($name, $filename)
-    {
-        $this->name = $name;
-        $this->filename = $filename;
-        $available_content = file_get_contents($this->filename);
-        $this->content = $available_content ? $available_content : "";
-    }
-}
-
-function build_data_files($boundary, $fields, $files)
-{
-    $data = '';
-    $eol = "\r\n";
-    $delimiter = $boundary;
-
-    foreach ($fields as $name => $content) {
-        $data .= "--" . $delimiter . $eol
-            . 'Content-Disposition: form-data; name="' . $name . "\"" . $eol . $eol
-            . $content . $eol;
-    }
-
-    foreach ($files as $uploaded_file) {
-        if ($uploaded_file instanceof File) {
-            $data .= "--" . $delimiter . $eol
-                . 'Content-Disposition: form-data; name="' . $uploaded_file->name . '"; filename="' . $uploaded_file->filename . '"' . $eol
-                . 'Content-Transfer-Encoding: binary' . $eol;
-            $data .= $eol;
-            $data .= $uploaded_file->content . $eol;
-        }
-    }
-
-    $data .= "--" . $delimiter . "--" . $eol;
-
-    return $data;
-}
-
+use Http\Message\MultipartStream\MultipartStreamBuilder;
 $uri = "https://api.apidash.dev/io/img";
 $request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('POST', $uri);
-$boundary = "b9826c20-773c-1f0c-814d-a1b3d90cd6b3";
-$fields = [
- "token" => "xyz",
-];
-$files = [
- new File("imfile", "/Documents/up/1.png"),
-];
-$body = build_data_files($boundary, $fields, $files);
-
 $headers = [
-				'Content-Type' => 'multipart/form-data; boundary=b9826c20-773c-1f0c-814d-a1b3d90cd6b3', 
+    'Content-Type' => 'multipart/form-data; boundary=b9826c20-773c-1f0c-814d-a1b3d90cd6b3',
 ];
 foreach ($headers as $name => $value) {
     $request = $request->withHeader($name, $value);
 }
-$request = $request->withBody(Psr17FactoryDiscovery::findStreamFactory()->createStream($body));
+$boundary = 'b9826c20-773c-1f0c-814d-a1b3d90cd6b3';
+$builder = new MultipartStreamBuilder();
+$builder->setBoundary($boundary);
+$builder->addResource('token', 'xyz');
 
+$builder->addResource('imfile', fopen('/Documents/up/1.png', 'r'), ['filename' => '/Documents/up/1.png']);
+
+$request = $request->withBody($builder->build());
 $client = Psr18ClientDiscovery::find();
 $response = $client->sendRequest($request);
 
@@ -675,67 +612,23 @@ require_once 'vendor/autoload.php';
 
 use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Discovery\Psr18ClientDiscovery;
-class File
-{
-    public string $name;
-    public string $filename;
-    public string $content;
-
-    function __construct($name, $filename)
-    {
-        $this->name = $name;
-        $this->filename = $filename;
-        $available_content = file_get_contents($this->filename);
-        $this->content = $available_content ? $available_content : "";
-    }
-}
-
-function build_data_files($boundary, $fields, $files)
-{
-    $data = '';
-    $eol = "\r\n";
-    $delimiter = $boundary;
-
-    foreach ($fields as $name => $content) {
-        $data .= "--" . $delimiter . $eol
-            . 'Content-Disposition: form-data; name="' . $name . "\"" . $eol . $eol
-            . $content . $eol;
-    }
-
-    foreach ($files as $uploaded_file) {
-        if ($uploaded_file instanceof File) {
-            $data .= "--" . $delimiter . $eol
-                . 'Content-Disposition: form-data; name="' . $uploaded_file->name . '"; filename="' . $uploaded_file->filename . '"' . $eol
-                . 'Content-Transfer-Encoding: binary' . $eol;
-            $data .= $eol;
-            $data .= $uploaded_file->content . $eol;
-        }
-    }
-
-    $data .= "--" . $delimiter . "--" . $eol;
-
-    return $data;
-}
-
+use Http\Message\MultipartStream\MultipartStreamBuilder;
 $uri = "https://api.apidash.dev/io/img";
 $request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('POST', $uri);
-$boundary = "b9826c20-773c-1f0c-814d-a1b3d90cd6b3";
-$fields = [
- "token" => "xyz",
-];
-$files = [
- new File("imfile", "/Documents/up/1.png"),
-];
-$body = build_data_files($boundary, $fields, $files);
-
 $headers = [
-				'Content-Type' => 'multipart/form-data; boundary=b9826c20-773c-1f0c-814d-a1b3d90cd6b3', 
+    'Content-Type' => 'multipart/form-data; boundary=b9826c20-773c-1f0c-814d-a1b3d90cd6b3',
 ];
 foreach ($headers as $name => $value) {
     $request = $request->withHeader($name, $value);
 }
-$request = $request->withBody(Psr17FactoryDiscovery::findStreamFactory()->createStream($body));
+$boundary = 'b9826c20-773c-1f0c-814d-a1b3d90cd6b3';
+$builder = new MultipartStreamBuilder();
+$builder->setBoundary($boundary);
+$builder->addResource('token', 'xyz');
 
+$builder->addResource('imfile', fopen('/Documents/up/1.png', 'r'), ['filename' => '/Documents/up/1.png']);
+
+$request = $request->withBody($builder->build());
 $client = Psr18ClientDiscovery::find();
 $response = $client->sendRequest($request);
 
@@ -755,23 +648,7 @@ require_once 'vendor/autoload.php';
 
 use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Discovery\Psr18ClientDiscovery;
-function build_data($boundary, $fields)
-{
-    $data = '';
-    $eol = "\r\n";
-    $delimiter = $boundary;
-
-    foreach ($fields as $name => $content) {
-        $data .= "--" . $delimiter . $eol
-            . 'Content-Disposition: form-data; name="' . $name . "\"" . $eol . $eol
-            . $content . $eol;
-    }
-
-    $data .= "--" . $delimiter . "--" . $eol;
-
-    return $data;
-}
-
+use Http\Message\MultipartStream\MultipartStreamBuilder;
 $uri = "https://api.apidash.dev/io/form";
 $queryParams = [
  "size" => "2",
@@ -779,22 +656,20 @@ $queryParams = [
 ];
 $uri .= '?' . http_build_query($queryParams);
 $request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('POST', $uri);
-$boundary = "b9826c20-773c-1f0c-814d-a1b3d90cd6b3";
-$fields = [
- "text" => "API",
- "sep" => "|",
- "times" => "3",
-];
-$body = build_data($boundary, $fields);
-
 $headers = [
-				'Content-Type' => 'multipart/form-data; boundary=b9826c20-773c-1f0c-814d-a1b3d90cd6b3', 
+    'Content-Type' => 'multipart/form-data; boundary=b9826c20-773c-1f0c-814d-a1b3d90cd6b3',
 ];
 foreach ($headers as $name => $value) {
     $request = $request->withHeader($name, $value);
 }
-$request = $request->withBody(Psr17FactoryDiscovery::findStreamFactory()->createStream($body));
+$boundary = 'b9826c20-773c-1f0c-814d-a1b3d90cd6b3';
+$builder = new MultipartStreamBuilder();
+$builder->setBoundary($boundary);
+$builder->addResource('text', 'API');
+$builder->addResource('sep', '|');
+$builder->addResource('times', '3');
 
+$request = $request->withBody($builder->build());
 $client = Psr18ClientDiscovery::find();
 $response = $client->sendRequest($request);
 
@@ -814,48 +689,7 @@ require_once 'vendor/autoload.php';
 
 use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Discovery\Psr18ClientDiscovery;
-class File
-{
-    public string $name;
-    public string $filename;
-    public string $content;
-
-    function __construct($name, $filename)
-    {
-        $this->name = $name;
-        $this->filename = $filename;
-        $available_content = file_get_contents($this->filename);
-        $this->content = $available_content ? $available_content : "";
-    }
-}
-
-function build_data_files($boundary, $fields, $files)
-{
-    $data = '';
-    $eol = "\r\n";
-    $delimiter = $boundary;
-
-    foreach ($fields as $name => $content) {
-        $data .= "--" . $delimiter . $eol
-            . 'Content-Disposition: form-data; name="' . $name . "\"" . $eol . $eol
-            . $content . $eol;
-    }
-
-    foreach ($files as $uploaded_file) {
-        if ($uploaded_file instanceof File) {
-            $data .= "--" . $delimiter . $eol
-                . 'Content-Disposition: form-data; name="' . $uploaded_file->name . '"; filename="' . $uploaded_file->filename . '"' . $eol
-                . 'Content-Transfer-Encoding: binary' . $eol;
-            $data .= $eol;
-            $data .= $uploaded_file->content . $eol;
-        }
-    }
-
-    $data .= "--" . $delimiter . "--" . $eol;
-
-    return $data;
-}
-
+use Http\Message\MultipartStream\MultipartStreamBuilder;
 $uri = "https://api.apidash.dev/io/img";
 $queryParams = [
  "size" => "2",
@@ -863,25 +697,22 @@ $queryParams = [
 ];
 $uri .= '?' . http_build_query($queryParams);
 $request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('POST', $uri);
-$boundary = "b9826c20-773c-1f0c-814d-a1b3d90cd6b3";
-$fields = [
- "token" => "xyz",
-];
-$files = [
- new File("imfile", "/Documents/up/1.png"),
-];
-$body = build_data_files($boundary, $fields, $files);
-
 $headers = [
-				'Content-Type' => 'multipart/form-data; boundary=b9826c20-773c-1f0c-814d-a1b3d90cd6b3', 
-				'User-Agent' => 'Test Agent', 
-				'Keep-Alive' => 'true', 
+    'Content-Type' => 'multipart/form-data; boundary=b9826c20-773c-1f0c-814d-a1b3d90cd6b3',
+    'User-Agent' => 'Test Agent',
+    'Keep-Alive' => 'true',
 ];
 foreach ($headers as $name => $value) {
     $request = $request->withHeader($name, $value);
 }
-$request = $request->withBody(Psr17FactoryDiscovery::findStreamFactory()->createStream($body));
+$boundary = 'b9826c20-773c-1f0c-814d-a1b3d90cd6b3';
+$builder = new MultipartStreamBuilder();
+$builder->setBoundary($boundary);
+$builder->addResource('token', 'xyz');
 
+$builder->addResource('imfile', fopen('/Documents/up/1.png', 'r'), ['filename' => '/Documents/up/1.png']);
+
+$request = $request->withBody($builder->build());
 $client = Psr18ClientDiscovery::find();
 $response = $client->sendRequest($request);
 
@@ -904,22 +735,23 @@ require_once 'vendor/autoload.php';
 
 use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Discovery\Psr18ClientDiscovery;
+
 $uri = "https://reqres.in/api/users/2";
 $request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('PUT', $uri);
+$headers = [
+    'Content-Type' => 'application/json',
+];
+foreach ($headers as $name => $value) {
+    $request = $request->withHeader($name, $value);
+}
 $body = <<<'EOF'
 {
 "name": "morpheus",
 "job": "zion resident"
 }
 EOF;
-$headers = [
-				'Content-Type' => 'application/json', 
-];
-foreach ($headers as $name => $value) {
-    $request = $request->withHeader($name, $value);
-}
-$request = $request->withBody(Psr17FactoryDiscovery::findStreamFactory()->createStream($body));
 
+$request = $request->withBody(Psr17FactoryDiscovery::findStreamFactory()->createStream($body));
 $client = Psr18ClientDiscovery::find();
 $response = $client->sendRequest($request);
 
@@ -942,22 +774,23 @@ require_once 'vendor/autoload.php';
 
 use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Discovery\Psr18ClientDiscovery;
+
 $uri = "https://reqres.in/api/users/2";
 $request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('PATCH', $uri);
+$headers = [
+    'Content-Type' => 'application/json',
+];
+foreach ($headers as $name => $value) {
+    $request = $request->withHeader($name, $value);
+}
 $body = <<<'EOF'
 {
 "name": "marfeus",
 "job": "accountant"
 }
 EOF;
-$headers = [
-				'Content-Type' => 'application/json', 
-];
-foreach ($headers as $name => $value) {
-    $request = $request->withHeader($name, $value);
-}
-$request = $request->withBody(Psr17FactoryDiscovery::findStreamFactory()->createStream($body));
 
+$request = $request->withBody(Psr17FactoryDiscovery::findStreamFactory()->createStream($body));
 $client = Psr18ClientDiscovery::find();
 $response = $client->sendRequest($request);
 
@@ -980,6 +813,7 @@ require_once 'vendor/autoload.php';
 
 use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Discovery\Psr18ClientDiscovery;
+
 $uri = "https://reqres.in/api/users/2";
 $request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('DELETE', $uri);
 $client = Psr18ClientDiscovery::find();
@@ -1001,22 +835,23 @@ require_once 'vendor/autoload.php';
 
 use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Discovery\Psr18ClientDiscovery;
+
 $uri = "https://reqres.in/api/users/2";
 $request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('DELETE', $uri);
+$headers = [
+    'Content-Type' => 'application/json',
+];
+foreach ($headers as $name => $value) {
+    $request = $request->withHeader($name, $value);
+}
 $body = <<<'EOF'
 {
 "name": "marfeus",
 "job": "accountant"
 }
 EOF;
-$headers = [
-				'Content-Type' => 'application/json', 
-];
-foreach ($headers as $name => $value) {
-    $request = $request->withHeader($name, $value);
-}
-$request = $request->withBody(Psr17FactoryDiscovery::findStreamFactory()->createStream($body));
 
+$request = $request->withBody(Psr17FactoryDiscovery::findStreamFactory()->createStream($body));
 $client = Psr18ClientDiscovery::find();
 $response = $client->sendRequest($request);
 
