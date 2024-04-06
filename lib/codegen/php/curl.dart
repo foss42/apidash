@@ -98,7 +98,6 @@ echo $response;
   String? getCode(RequestModel requestModel) {
     try {
       String result = "";
-      bool hasHeaders = false;
       bool hasQuery = false;
       bool hasBody = false;
 

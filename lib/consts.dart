@@ -272,6 +272,7 @@ const kDefaultContentType = ContentType.json;
 enum CodegenLanguage {
   curl("cURL", "bash", "curl"),
   har("HAR", "json", "har"),
+  cSharpRestSharp("C# (Rest Sharp)", "cs", "cs"),
   dartHttp("Dart (http)", "dart", "dart"),
   dartDio("Dart (dio)", "dart", "dart"),
   goHttp("Go (http)", "go", "go"),
@@ -282,6 +283,8 @@ enum CodegenLanguage {
   kotlinOkHttp("Kotlin (okhttp3)", "java", "kt"),
   pythonRequests("Python (requests)", "python", "py"),
   pythonHttpClient("Python (http.client)", "python", "py"),
+  rubyFaraday("Ruby (Faraday)", "ruby", "rb"),
+  rubyNetHttp("Ruby (Net::Http)", "Ruby", "rb"),
   rustActix("Rust (Actix Client)", "rust", "rs"),
   rustReqwest("Rust (reqwest)", "rust", "rs"),
   rustCurl("Rust (curl-rust)", "rust", "rs"),
