@@ -1,11 +1,10 @@
 import 'package:apidash/consts.dart';
-import 'package:apidash/utils/header_utils.dart';
 import 'package:jinja/jinja.dart' as jj;
 import 'package:apidash/utils/utils.dart'
     show getValidRequestUri, requestModelToHARJsonRequest;
 import 'package:apidash/models/models.dart' show RequestModel;
 
-class cCurlCodeGen {
+class CCurlCodeGen {
   final String kTemplateStart = """#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -21,7 +20,7 @@ size_t write_callback(char *ptr, size_t size, size_t nmemb, void *userdata) {
 
     response_data->data = realloc(response_data->data, response_data->size + real_size + 1);
     if (response_data->data == NULL) {
-        fprintf(stderr, "Memory allocation failed\\n\");
+        fprintf(stderr, "Memory allocation failed\\n");
         return 0;
     }
 
@@ -85,8 +84,8 @@ int main() {
     res = curl_easy_perform(curl);
     long response_code;
     curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &response_code);
-    printf("Response code: %ld\\n\", response_code);
-    printf("Response body: %s\\n\", response_data.data);
+    printf("Response code: %ld\\n", response_code);
+    printf("Response body: %s\\n", response_data.data);
     free(response_data.data);{% if formdata %}\n    curl_mime_free(mime);{% endif %}{% if headers %}\n    curl_slist_free_all(headers);{% endif %}
   }
   curl_easy_cleanup(curl);
