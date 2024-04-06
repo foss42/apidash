@@ -1,5 +1,6 @@
 import 'package:jinja/jinja.dart' as jj;
-import 'package:apidash/utils/utils.dart' show getValidRequestUri;
+import 'package:apidash/utils/utils.dart'
+    show getValidRequestUri, stripUriParams;
 import 'package:apidash/models/models.dart' show RequestModel;
 import '../../extensions/extensions.dart';
 import 'package:apidash/consts.dart';
@@ -55,9 +56,7 @@ puts "Response Code: #{response.code}"
 
       var templateStart = jj.Template(kTemplateStart);
       result += templateStart.render({
-        "url": uri.query.isEmpty
-            ? uri.toString().replaceFirst("?", "", uri.toString().length - 1)
-            : uri,
+        "url": uri.query.isEmpty ? stripUriParams(uri) : uri,
         "method": requestModel.method.name.capitalize(),
         "check": uri.scheme,
       });
