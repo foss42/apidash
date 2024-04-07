@@ -55,8 +55,8 @@ public class Main {
   final String kTemplateMultipartTextFormData = '''
 
             Map<String, String> params = new HashMap<>() {
-                { {% for param in params if param.type == "text" %}
-                    put("{{ param.name }}", "{{ param.value }}");{% endfor %}
+                { {% for key, value in textFields %}
+                    put("{{ key }}", "{{ value }}");{% endfor %}
                 }
             };
 
@@ -71,8 +71,8 @@ public class Main {
 
   final String kTemplateMultipartFileHandling = '''
             Map<String, String> files = new HashMap<>() {
-                { {% for field in fields if field.type == "file" %}
-                    put("{{ field.name }}", "{{ field.value }}");{% endfor %}
+                { {% for key, value in fileFields %}
+                    put("{{ key }}", "{{ value }}");{% endfor %}
                 }
             };
 
@@ -181,24 +181,26 @@ public class Main {
       }
 
       // handling form data
-      if (requestModel.hasFormData &&
-          requestModel.formDataMapList.isNotEmpty &&
-          kMethodsWithBody.contains(method)) {
-        var formDataList = requestModel.formDataMapList;
+      if (requestModel.hasFormData) {
+        var formDataList = requestModel.formDataList;
 
-        int textCount = 0;
-        for (var formData in formDataList) {
-          if (formData["type"] == "text") {
-            textCount++;
+        Map<String, String> textFieldMap = {};
+        Map<String, String> fileFieldMap = {};
+        for (var field in formDataList) {
+          if (field.type == FormDataType.text) {
+            textFieldMap[field.name] = field.value;
+          }
+          if (field.type == FormDataType.file) {
+            fileFieldMap[field.name] = field.value;
           }
         }
 
-        if (textCount > 0) {
+        if (textFieldMap.isNotEmpty) {
           var templateRequestFormData =
               jj.Template(kTemplateMultipartTextFormData);
 
           result += templateRequestFormData.render({
-            "params": formDataList,
+            "textFields": textFieldMap,
           });
         }
 
@@ -206,7 +208,7 @@ public class Main {
           var templateFileHandling =
               jj.Template(kTemplateMultipartFileHandling);
           result += templateFileHandling.render({
-            "fields": formDataList,
+            "fileFields": fileFieldMap,
           });
         }
       }
