@@ -89,7 +89,7 @@ puts "Response Body: #{response.body}"
 
   String? getCode(
     RequestModel requestModel,
-    ) {
+  ) {
     try {
       String result = "";
 
@@ -107,7 +107,8 @@ puts "Response Body: #{response.body}"
       var url = stripUriParams(uri);
 
       result += kStringFaradayRequireStatement;
-      if (requestModel.hasFormDataContentType && requestModel.hasFileInFormData) {
+      if (requestModel.hasFormDataContentType &&
+          requestModel.hasFileInFormData) {
         result += kStringFaradayMultipartRequireStatement;
       }
 
@@ -129,25 +130,28 @@ puts "Response Body: #{response.body}"
         });
       }
 
-      // crreating faraday connection for request
+      // creating faraday connection for request
       var templateConnection = jj.Template(kTemplateConnection);
       result += templateConnection.render({
-        "hasFile": requestModel.hasFormDataContentType && requestModel.hasFileInFormData //
+        "hasFile": requestModel.hasFormDataContentType &&
+            requestModel.hasFileInFormData
       });
 
       // start of the request sending
       var templateRequestStart = jj.Template(kTemplateRequestStart);
       result += templateRequestStart.render({
-        "method": requestModel.method.name, 
+        "method": requestModel.method.name,
         "doesMethodAcceptBody":
-            kMethodsWithBody.contains(requestModel.method) && requestModel.method != HTTPVerb.delete, //
-        "containsBody": requestModel.hasBody, 
+            kMethodsWithBody.contains(requestModel.method) &&
+                requestModel.method != HTTPVerb.delete,
+        "containsBody": requestModel.hasBody,
       });
 
       var headers = requestModel.enabledHeadersMap;
       if (requestModel.hasBody && !requestModel.hasContentTypeHeader) {
         if (requestModel.hasJsonData || requestModel.hasTextData) {
-          headers[kHeaderContentType] = requestModel.requestBodyContentType.header;
+          headers[kHeaderContentType] =
+              requestModel.requestBodyContentType.header;
         }
       }
 

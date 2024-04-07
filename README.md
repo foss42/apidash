@@ -127,6 +127,7 @@ API Dash currently supports API integration code generation for the following la
 | ---------------------- | ------------- | ------- |
 | cURL                   |               |         |
 | HAR                    |               |         |
+| C                      | `libcurl`     |         |
 | C#                     | `RestSharp`   |         |
 | Dart                   | `http`        |         |
 | Dart                   | `dio`         |         |
@@ -138,15 +139,19 @@ API Dash currently supports API integration code generation for the following la
 | Python                 | `requests`    |         |
 | Python                 | `http.client` |         |
 | Kotlin                 | `okhttp3`     |         |
+| Ruby                   | `faraday`     |         |
+| Ruby                   | `net/http`    |         |
 | Rust                   | `reqwest`     |         |
 | Rust                   | `ureq`        |         |
 | Rust                   | `Actix Client` |         |
 | Java                   | `asynchttpclient` | https://github.com/foss42/apidash/issues/136 |
 | Java                   | `HttpClient`  |         |
 | Java                   | `okhttp3`     |         |
+| Java                   | `Unirest`     |         |
 | Julia                  | `HTTP`        |         |
-| PHP                    | `curl`        | https://github.com/foss42/apidash/issues/375 |
+| PHP                    | `curl`        |         |
 | PHP                    | `guzzle`      | https://github.com/foss42/apidash/issues/143 |
+| PHP                    | `HTTPlug`     |         |
 
 We welcome contributions to support other programming languages/libraries/frameworks. Please check out more details [here](https://github.com/foss42/apidash/discussions/80).
 
