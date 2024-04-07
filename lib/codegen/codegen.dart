@@ -70,7 +70,7 @@ class Codegen {
       case CodegenLanguage.javaOkHttp:
         return JavaOkHttpCodeGen().getCode(rM);
       case CodegenLanguage.javaUnirest:
-        return JavaUnirestGen().getCode(rM, boundary);
+        return JavaUnirestGen().getCode(rM);
       case CodegenLanguage.juliaHttp:
         return JuliaHttpClientCodeGen().getCode(rM);
       case CodegenLanguage.kotlinOkHttp:

@@ -313,12 +313,15 @@ public class Main {
 
   group('POST Request', () {
     test('POST 1', () {
-      const expectedCode = r"""import kong.unirest.core.*;
+      const expectedCode = r'''import kong.unirest.core.*;
 
 public class Main {
     public static void main(String[] args) {
         final String requestURL = "https://api.apidash.dev/case/lower";
-        final String requestBody = "{\n\"text\": \"I LOVE Flutter\"\n}";
+        final String requestBody = """
+{
+"text": "I LOVE Flutter"
+}""";
         HttpResponse<JsonNode> response = Unirest
                 .post(requestURL)
                 .header("Content-Type", "text/plain")
@@ -328,7 +331,7 @@ public class Main {
         System.out.println(response.getBody());
     }
 }
-""";
+''';
       expect(
           codeGen.getCode(
               CodegenLanguage.javaUnirest, requestModelPost1, "https"),
@@ -336,12 +339,20 @@ public class Main {
     });
 
     test('POST 2', () {
-      const expectedCode = r"""import kong.unirest.core.*;
+      const expectedCode = r'''import kong.unirest.core.*;
 
 public class Main {
     public static void main(String[] args) {
         final String requestURL = "https://api.apidash.dev/case/lower";
-        final String requestBody = "{\n\"text\": \"I LOVE Flutter\",\n\"flag\": null,\n\"male\": true,\n\"female\": false,\n\"no\": 1.2,\n\"arr\": [\"null\", \"true\", \"false\", null]\n}";
+        final String requestBody = """
+{
+"text": "I LOVE Flutter",
+"flag": null,
+"male": true,
+"female": false,
+"no": 1.2,
+"arr": ["null", "true", "false", null]
+}""";
         HttpResponse<JsonNode> response = Unirest
                 .post(requestURL)
                 .header("Content-Type", "application/json")
@@ -351,7 +362,7 @@ public class Main {
         System.out.println(response.getBody());
     }
 }
-""";
+''';
       expect(
           codeGen.getCode(
               CodegenLanguage.javaUnirest, requestModelPost2, "https"),
@@ -359,23 +370,26 @@ public class Main {
     });
 
     test('POST 3', () {
-      const expectedCode = r"""import kong.unirest.core.*;
+      const expectedCode = r'''import kong.unirest.core.*;
 
 public class Main {
     public static void main(String[] args) {
         final String requestURL = "https://api.apidash.dev/case/lower";
-        final String requestBody = "{\n\"text\": \"I LOVE Flutter\"\n}";
+        final String requestBody = """
+{
+"text": "I LOVE Flutter"
+}""";
         HttpResponse<JsonNode> response = Unirest
                 .post(requestURL)
-                .header("Content-Type", "application/json")
                 .header("User-Agent", "Test Agent")
+                .header("Content-Type", "application/json")
                 .body(requestBody)
                 .asJson();
         System.out.println(response.getStatus());
         System.out.println(response.getBody());
     }
 }
-""";
+''';
       expect(
           codeGen.getCode(
               CodegenLanguage.javaUnirest, requestModelPost3, "https"),
@@ -389,7 +403,6 @@ public class Main {
         final String requestURL = "https://api.apidash.dev/io/form";
         HttpResponse<JsonNode> response = Unirest
                 .post(requestURL)
-                .header("Content-Type", "application/x-www-form-urlencoded")
                 .field("text", "API")
                 .field("sep", "|")
                 .field("times", "3")
@@ -416,7 +429,6 @@ public class Main {
         final String requestURL = "https://api.apidash.dev/io/form";
         HttpResponse<JsonNode> response = Unirest
                 .post(requestURL)
-                .header("Content-Type", "application/x-www-form-urlencoded")
                 .header("User-Agent", "Test Agent")
                 .field("text", "API")
                 .field("sep", "|")
@@ -439,19 +451,14 @@ public class Main {
       const expectedCode = r"""import kong.unirest.core.*;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 
 public class Main {
     public static void main(String[] args) {
         final String requestURL = "https://api.apidash.dev/io/img";
         HttpResponse<JsonNode> response = Unirest
                 .post(requestURL)
-                .header("Content-Type", "multipart/form-data; boundary=9b0411e0-aac7-1f25-8ba0-9f99ae8c34fc")
                 .field("token", "xyz")
                 .field("imfile", new File("/Documents/up/1.png"))
-                .boundary("9b0411e0-aac7-1f25-8ba0-9f99ae8c34fc")
                 .asJson();
         System.out.println(response.getStatus());
         System.out.println(response.getBody());
@@ -460,27 +467,21 @@ public class Main {
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.javaUnirest, requestModelPost6, "https",
-              boundary: "9b0411e0-aac7-1f25-8ba0-9f99ae8c34fc"),
+              CodegenLanguage.javaUnirest, requestModelPost6, "https"),
           expectedCode);
     });
     test('POST 7', () {
       const expectedCode = r"""import kong.unirest.core.*;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 
 public class Main {
     public static void main(String[] args) {
         final String requestURL = "https://api.apidash.dev/io/img";
         HttpResponse<JsonNode> response = Unirest
                 .post(requestURL)
-                .header("Content-Type", "multipart/form-data; boundary=ef90cc20-c166-1f25-b663-29f0c584d89a")
                 .field("token", "xyz")
                 .field("imfile", new File("/Documents/up/1.png"))
-                .boundary("ef90cc20-c166-1f25-b663-29f0c584d89a")
                 .asJson();
         System.out.println(response.getStatus());
         System.out.println(response.getBody());
@@ -489,8 +490,7 @@ public class Main {
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.javaUnirest, requestModelPost7, "https",
-              boundary: "ef90cc20-c166-1f25-b663-29f0c584d89a"),
+              CodegenLanguage.javaUnirest, requestModelPost7, "https"),
           expectedCode);
     });
     test('POST 8', () {
@@ -501,7 +501,6 @@ public class Main {
         final String requestURL = "https://api.apidash.dev/io/form";
         HttpResponse<JsonNode> response = Unirest
                 .post(requestURL)
-                .header("Content-Type", "application/x-www-form-urlencoded")
                 .queryString("size", "2")
                 .queryString("len", "3")
                 .field("text", "API")
@@ -525,23 +524,18 @@ public class Main {
       const expectedCode = r"""import kong.unirest.core.*;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 
 public class Main {
     public static void main(String[] args) {
         final String requestURL = "https://api.apidash.dev/io/img";
         HttpResponse<JsonNode> response = Unirest
                 .post(requestURL)
-                .header("Content-Type", "multipart/form-data; boundary=62bd1880-c57b-1f25-b663-29f0c584d89a")
                 .header("User-Agent", "Test Agent")
                 .header("Keep-Alive", "true")
                 .queryString("size", "2")
                 .queryString("len", "3")
                 .field("token", "xyz")
                 .field("imfile", new File("/Documents/up/1.png"))
-                .boundary("62bd1880-c57b-1f25-b663-29f0c584d89a")
                 .asJson();
         System.out.println(response.getStatus());
         System.out.println(response.getBody());
@@ -550,23 +544,23 @@ public class Main {
 """;
       expect(
           codeGen.getCode(
-            CodegenLanguage.javaUnirest,
-            requestModelPost9,
-            "https",
-            boundary: "62bd1880-c57b-1f25-b663-29f0c584d89a",
-          ),
+              CodegenLanguage.javaUnirest, requestModelPost9, "https"),
           expectedCode);
     });
   });
 
   group('PUT Request', () {
     test('PUT 1', () {
-      const expectedCode = r"""import kong.unirest.core.*;
+      const expectedCode = r'''import kong.unirest.core.*;
 
 public class Main {
     public static void main(String[] args) {
         final String requestURL = "https://reqres.in/api/users/2";
-        final String requestBody = "{\n\"name\": \"morpheus\",\n\"job\": \"zion resident\"\n}";
+        final String requestBody = """
+{
+"name": "morpheus",
+"job": "zion resident"
+}""";
         HttpResponse<JsonNode> response = Unirest
                 .put(requestURL)
                 .header("Content-Type", "application/json")
@@ -576,7 +570,7 @@ public class Main {
         System.out.println(response.getBody());
     }
 }
-""";
+''';
       expect(
           codeGen.getCode(
               CodegenLanguage.javaUnirest, requestModelPut1, "https"),
@@ -586,12 +580,16 @@ public class Main {
 
   group('PATCH Request', () {
     test('PATCH 1', () {
-      const expectedCode = r"""import kong.unirest.core.*;
+      const expectedCode = r'''import kong.unirest.core.*;
 
 public class Main {
     public static void main(String[] args) {
         final String requestURL = "https://reqres.in/api/users/2";
-        final String requestBody = "{\n\"name\": \"marfeus\",\n\"job\": \"accountant\"\n}";
+        final String requestBody = """
+{
+"name": "marfeus",
+"job": "accountant"
+}""";
         HttpResponse<JsonNode> response = Unirest
                 .patch(requestURL)
                 .header("Content-Type", "application/json")
@@ -601,7 +599,7 @@ public class Main {
         System.out.println(response.getBody());
     }
 }
-""";
+''';
       expect(
           codeGen.getCode(
               CodegenLanguage.javaUnirest, requestModelPatch1, "https"),
@@ -631,12 +629,16 @@ public class Main {
     });
 
     test('DELETE 2', () {
-      const expectedCode = r"""import kong.unirest.core.*;
+      const expectedCode = r'''import kong.unirest.core.*;
 
 public class Main {
     public static void main(String[] args) {
         final String requestURL = "https://reqres.in/api/users/2";
-        final String requestBody = "{\n\"name\": \"marfeus\",\n\"job\": \"accountant\"\n}";
+        final String requestBody = """
+{
+"name": "marfeus",
+"job": "accountant"
+}""";
         HttpResponse<JsonNode> response = Unirest
                 .delete(requestURL)
                 .header("Content-Type", "application/json")
@@ -646,7 +648,7 @@ public class Main {
         System.out.println(response.getBody());
     }
 }
-""";
+''';
       expect(
           codeGen.getCode(
               CodegenLanguage.javaUnirest, requestModelDelete2, "https"),
