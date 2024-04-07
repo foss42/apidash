@@ -1,8 +1,9 @@
 import 'dart:convert';
 import 'package:jinja/jinja.dart' as jj;
 import 'package:apidash/utils/utils.dart'
-    show getValidRequestUri, requestModelToHARJsonRequest;
+    show getValidRequestUri, stripUriParams;
 import 'package:apidash/models/models.dart' show RequestModel;
+import 'package:apidash/consts.dart';
 
 class PhpHttpPlugCodeGen {
   final String kTemplateStart = """
@@ -72,8 +73,7 @@ echo \$response->getBody();
 
 """;
 
-  String? getCode(
-    RequestModel requestModel) {
+  String? getCode(RequestModel requestModel) {
     try {
       String result = "";
 
@@ -90,7 +90,7 @@ echo \$response->getBody();
         });
 
         var templateUri = jj.Template(kTemplateUri);
-        result += templateUri.render({"uri": requestModel.url.split("?")[0]});
+        result += templateUri.render({"uri": stripUriParams(uri)});
 
         if (uri.hasQuery) {
           var params = uri.queryParameters;
@@ -149,25 +149,27 @@ echo \$response->getBody();
           }
         }
 
-        var harJson =
-            requestModelToHARJsonRequest(requestModel, useEnabled: true);
-        var headers = harJson["headers"];
+        var headers = requestModel.enabledHeadersMap;
+        if (requestModel.hasBody && !requestModel.hasContentTypeHeader) {
+          if (requestModel.hasJsonData || requestModel.hasTextData) {
+            headers[kHeaderContentType] =
+                "'${requestModel.requestBodyContentType.header}'";
+          }
+          if (requestModel.hasFormData) {
+            headers[kHeaderContentType] =
+                "'${ContentType.formdata.header}; boundary=' . \$builder->getBoundary()";
+          }
+        }
 
         if (headers.isNotEmpty) {
           var templateHeader = jj.Template(kTemplateHeaders);
           var headersString = '\n';
-
-          var headersObj = {};
-          for (var i in headers) {
-            headersObj[i["name"]] = "'${i["value"]}'";
-          }
-
-          if (requestModel.hasFormData) {
-            headersObj['Content-Type'] =
-                "'multipart/form-data; boundary=' . \$builder->getBoundary()";
-          }
-          headersObj.forEach((key, value) {
-            headersString += "    '$key' => $value,\n";
+          headers.forEach((key, value) {
+            if (key == kHeaderContentType) {
+              headersString += "    '$key' => $value,\n";
+            } else {
+              headersString += "    '$key' => '$value',\n";
+            }
           });
           result += templateHeader.render({"headers": headersString});
         }
