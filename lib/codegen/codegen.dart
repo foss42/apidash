@@ -58,8 +58,7 @@ class Codegen {
       case CodegenLanguage.nodejsFetch:
         return FetchCodeGen(isNodeJs: true).getCode(rM);
       case CodegenLanguage.javaAsyncHttpClient:
-        return JavaAsyncHttpClientGen()
-            .getCode(rM, boundary: boundary ?? getNewUuid());
+        return JavaAsyncHttpClientGen().getCode(rM);
       case CodegenLanguage.javaHttpClient:
         return JavaHttpClientCodeGen().getCode(rM);
       case CodegenLanguage.javaOkHttp:

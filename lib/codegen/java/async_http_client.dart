@@ -1,12 +1,11 @@
-import 'dart:convert';
-import 'package:apidash/utils/har_utils.dart';
-import 'package:apidash/utils/http_utils.dart';
 import 'package:jinja/jinja.dart' as jj;
+import 'package:apidash/utils/utils.dart'
+    show getValidRequestUri, stripUriParams;
 import 'package:apidash/models/models.dart' show RequestModel;
 import 'package:apidash/consts.dart';
 
 class JavaAsyncHttpClientGen {
-  final String kTemplateStart = '''
+  final String kStringStart = '''
 import org.asynchttpclient.*;
 
 import java.io.*;
@@ -20,17 +19,18 @@ import java.util.stream.Collectors;
   final String kTemplateMultipartImport = '''
 import java.util.Map;
 import java.util.HashMap;
-import org.asynchttpclient.request.body.multipart.FilePart;
 import org.asynchttpclient.request.body.multipart.StringPart;
+{% if hasFileInFormData %}import org.asynchttpclient.request.body.multipart.FilePart;
+{% endif %}
 
 ''';
 
-  final String kTemplateMainClassMainMethodStart = '''
+  final String kStringMainClassMainMethodStart = '''
 public class Main {
     public static void main(String[] args) {
 ''';
 
-  final String kTemplateAsyncHttpClientTryBlockStart = '''
+  final String kStringAsyncHttpClientTryBlockStart = '''
         try (AsyncHttpClient asyncHttpClient = Dsl.asyncHttpClient()) {
 ''';
 
@@ -50,10 +50,6 @@ public class Main {
   final String kTemplateRequestHeader = '''
             requestBuilder{% for name, value in headers %}
                 .addHeader("{{ name }}", "{{ value }}"){% endfor %};\n
-''';
-  final String kTemplateSimpleTextFormData = '''
-            requestBuilder{% for param in params if param.type == "text" %}
-                .addFormParam("{{ param.name }}", "{{ param.value }}"){% endfor %};\n
 ''';
 
   final String kTemplateMultipartTextFormData = '''
@@ -95,13 +91,14 @@ public class Main {
 ''';
 
   String kTemplateRequestBodyContent = '''
-            String bodyContent = "{{body}}";\n
+            String bodyContent = """
+{{body}}""";\n
 ''';
-  String kTemplateRequestBodySetup = '''
-            requestBuilder.setBody(bodyContent);\n
+  String kStringRequestBodySetup = '''
+            requestBuilder.setBody(bodyContent);
 ''';
 
-  final String kTemplateRequestEnd = '''
+  final String kStringRequestEnd = '''
             Future<Response> whenResponse = requestBuilder.execute();
             Response response = whenResponse.get();
             InputStream is = response.getResponseBodyAsStream();
@@ -113,13 +110,12 @@ public class Main {
 
         }
     }
-}\n
+}
 ''';
 
   String? getCode(
-    RequestModel requestModel, {
-    String? boundary,
-  }) {
+    RequestModel requestModel,
+  ) {
     try {
       String result = '';
       bool hasBody = false;
@@ -134,46 +130,33 @@ public class Main {
         return "";
       }
 
-      result += kTemplateStart;
-      if (requestModel.hasBody && requestModel.hasFileInFormData) {
-        result += kTemplateMultipartImport;
+      result += kStringStart;
+      if (requestModel.hasFormData) {
+        var templateMultipartImport = jj.Template(kTemplateMultipartImport);
+        result += templateMultipartImport
+            .render({"hasFileInFormData": requestModel.hasFileInFormData});
+        ;
       }
-      result += kTemplateMainClassMainMethodStart;
-      result += kTemplateAsyncHttpClientTryBlockStart;
+      result += kStringMainClassMainMethodStart;
+      result += kStringAsyncHttpClientTryBlockStart;
 
       var url = stripUriParams(uri);
 
       // contains the HTTP method associated with the request
       var method = requestModel.method;
 
-      // contains the entire request body as a string if body is present
-      var requestBody = requestModel.requestBody;
-
       // generating the URL to which the request has to be submitted
       var templateUrl = jj.Template(kTemplateUrl);
       result += templateUrl.render({"url": url});
 
-      // creating request body if available
-      var rM = requestModel.copyWith(url: url);
-      var harJson = requestModelToHARJsonRequest(rM, useEnabled: true);
-
       // if request type is not form data, the request method can include
       // a body, and the body of the request is not null, in that case
       // we need to parse the body as it is, and write it to the body
-      if (!requestModel.hasFormData &&
-          kMethodsWithBody.contains(method) &&
-          requestBody != null) {
-        var contentLength = utf8.encode(requestBody).length;
-        if (contentLength > 0) {
-          var templateBodyContent = jj.Template(kTemplateRequestBodyContent);
-          hasBody = true;
-          if (harJson["postData"]?["text"] != null) {
-            result += templateBodyContent.render({
-              "body": kEncoder.convert(harJson["postData"]["text"]).substring(
-                  1, kEncoder.convert(harJson["postData"]["text"]).length - 1)
-            });
-          }
-        }
+      if (requestModel.hasTextData || requestModel.hasJsonData) {
+        var templateBodyContent = jj.Template(kTemplateRequestBodyContent);
+        result +=
+            templateBodyContent.render({"body": requestModel.requestBody});
+        hasBody = true;
       }
 
       var templateRequestCreation = jj.Template(kTemplateRequestCreation);
@@ -186,44 +169,16 @@ public class Main {
         result += templateUrlQueryParam.render({"queryParams": params});
       }
 
-      var headers = <String, String>{};
-      for (var i in harJson["headers"]) {
-        headers[i["name"]] = i["value"];
-      }
-
-      // especially sets up Content-Type header if the request has a body
-      // and Content-Type is not explicitely set by the developer
-      if (requestModel.hasBody && !headers.containsKey("Content-Type")) {
-        headers["Content-Type"] = requestModel.requestBodyContentType.header;
-      }
-
-      if (requestModel.hasBody &&
-          requestModel.hasFormData &&
-          !requestModel.hasFileInFormData) {
-        headers["Content-Type"] = "application/x-www-form-urlencoded";
-      }
-
-      // we will use this request boundary to set boundary if multipart formdata is used
-      // String requestBoundary = "";
-      String multipartTypePrefix = "multipart/form-data; boundary=";
-      if (headers.containsKey("Content-Type") &&
-          headers["Content-Type"]!.startsWith(RegExp(multipartTypePrefix))) {
-        // String tmp = headers["Content-Type"]!;
-        // requestBoundary = tmp.substring(multipartTypePrefix.length);
-
-        // if a boundary is provided, we will use that as the default boundary
-        if (boundary != null) {
-          // requestBoundary = boundary;
-          headers["Content-Type"] = multipartTypePrefix + boundary;
-        }
+      var headers = requestModel.enabledHeadersMap;
+      if (hasBody && !requestModel.hasContentTypeHeader) {
+        headers[kHeaderContentType] =
+            requestModel.requestBodyContentType.header;
       }
 
       // setting up rest of the request headers
       if (headers.isNotEmpty) {
         var templateRequestHeader = jj.Template(kTemplateRequestHeader);
-        result += templateRequestHeader.render({
-          "headers": headers //
-        });
+        result += templateRequestHeader.render({"headers": headers});
       }
 
       // handling form data
@@ -240,13 +195,11 @@ public class Main {
         }
 
         if (textCount > 0) {
-          var templateRequestFormData = jj.Template(
-              (requestModel.hasFileInFormData)
-                  ? kTemplateMultipartTextFormData
-                  : kTemplateSimpleTextFormData);
+          var templateRequestFormData =
+              jj.Template(kTemplateMultipartTextFormData);
 
           result += templateRequestFormData.render({
-            "params": formDataList, //
+            "params": formDataList,
           });
         }
 
@@ -259,15 +212,11 @@ public class Main {
         }
       }
 
-      var templateRequestBodySetup = jj.Template(kTemplateRequestBodySetup);
-      if (kMethodsWithBody.contains(method) &&
-          hasBody &&
-          !requestModel.hasFormData) {
-        result += templateRequestBodySetup.render();
+      if (hasBody) {
+        result += kStringRequestBodySetup;
       }
 
-      var templateRequestBodyEnd = jj.Template(kTemplateRequestEnd);
-      result += templateRequestBodyEnd.render();
+      result += kStringRequestEnd;
 
       return result;
     } catch (e) {

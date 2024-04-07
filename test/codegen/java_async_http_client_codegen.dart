@@ -516,7 +516,10 @@ public class Main {
     public static void main(String[] args) {
         try (AsyncHttpClient asyncHttpClient = Dsl.asyncHttpClient()) {
             String url = "https://api.apidash.dev/case/lower";
-            String bodyContent = "{\n\"text\": \"I LOVE Flutter\"\n}";
+            String bodyContent = """
+{
+"text": "I LOVE Flutter"
+}""";
             BoundRequestBuilder requestBuilder = asyncHttpClient.prepare("POST", url);
             requestBuilder
                 .addHeader("Content-Type", "text/plain");
@@ -553,7 +556,15 @@ public class Main {
     public static void main(String[] args) {
         try (AsyncHttpClient asyncHttpClient = Dsl.asyncHttpClient()) {
             String url = "https://api.apidash.dev/case/lower";
-            String bodyContent = "{\n\"text\": \"I LOVE Flutter\",\n\"flag\": null,\n\"male\": true,\n\"female\": false,\n\"no\": 1.2,\n\"arr\": [\"null\", \"true\", \"false\", null]\n}";
+            String bodyContent = """
+{
+"text": "I LOVE Flutter",
+"flag": null,
+"male": true,
+"female": false,
+"no": 1.2,
+"arr": ["null", "true", "false", null]
+}""";
             BoundRequestBuilder requestBuilder = asyncHttpClient.prepare("POST", url);
             requestBuilder
                 .addHeader("Content-Type", "application/json");
@@ -590,11 +601,14 @@ public class Main {
     public static void main(String[] args) {
         try (AsyncHttpClient asyncHttpClient = Dsl.asyncHttpClient()) {
             String url = "https://api.apidash.dev/case/lower";
-            String bodyContent = "{\n\"text\": \"I LOVE Flutter\"\n}";
+            String bodyContent = """
+{
+"text": "I LOVE Flutter"
+}""";
             BoundRequestBuilder requestBuilder = asyncHttpClient.prepare("POST", url);
             requestBuilder
-                .addHeader("Content-Type", "application/json")
-                .addHeader("User-Agent", "Test Agent");
+                .addHeader("User-Agent", "Test Agent")
+                .addHeader("Content-Type", "application/json");
             requestBuilder.setBody(bodyContent);
             Future<Response> whenResponse = requestBuilder.execute();
             Response response = whenResponse.get();
@@ -624,17 +638,30 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
+import java.util.Map;
+import java.util.HashMap;
+import org.asynchttpclient.request.body.multipart.StringPart;
+
 public class Main {
     public static void main(String[] args) {
         try (AsyncHttpClient asyncHttpClient = Dsl.asyncHttpClient()) {
             String url = "https://api.apidash.dev/io/form";
             BoundRequestBuilder requestBuilder = asyncHttpClient.prepare("POST", url);
-            requestBuilder
-                .addHeader("Content-Type", "application/x-www-form-urlencoded");
-            requestBuilder
-                .addFormParam("text", "API")
-                .addFormParam("sep", "|")
-                .addFormParam("times", "3");
+
+            Map<String, String> params = new HashMap<>() {
+                { 
+                    put("text", "API");
+                    put("sep", "|");
+                    put("times", "3");
+                }
+            };
+
+            for (String paramName : params.keySet()) {
+                requestBuilder.addBodyPart(new StringPart(
+                    paramName, params.get(paramName)
+                ));
+            }
+
             Future<Response> whenResponse = requestBuilder.execute();
             Response response = whenResponse.get();
             InputStream is = response.getResponseBodyAsStream();
@@ -663,18 +690,32 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
+import java.util.Map;
+import java.util.HashMap;
+import org.asynchttpclient.request.body.multipart.StringPart;
+
 public class Main {
     public static void main(String[] args) {
         try (AsyncHttpClient asyncHttpClient = Dsl.asyncHttpClient()) {
             String url = "https://api.apidash.dev/io/form";
             BoundRequestBuilder requestBuilder = asyncHttpClient.prepare("POST", url);
             requestBuilder
-                .addHeader("Content-Type", "application/x-www-form-urlencoded")
                 .addHeader("User-Agent", "Test Agent");
-            requestBuilder
-                .addFormParam("text", "API")
-                .addFormParam("sep", "|")
-                .addFormParam("times", "3");
+
+            Map<String, String> params = new HashMap<>() {
+                { 
+                    put("text", "API");
+                    put("sep", "|");
+                    put("times", "3");
+                }
+            };
+
+            for (String paramName : params.keySet()) {
+                requestBuilder.addBodyPart(new StringPart(
+                    paramName, params.get(paramName)
+                ));
+            }
+
             Future<Response> whenResponse = requestBuilder.execute();
             Response response = whenResponse.get();
             InputStream is = response.getResponseBodyAsStream();
@@ -705,16 +746,14 @@ import java.util.stream.Collectors;
 
 import java.util.Map;
 import java.util.HashMap;
-import org.asynchttpclient.request.body.multipart.FilePart;
 import org.asynchttpclient.request.body.multipart.StringPart;
+import org.asynchttpclient.request.body.multipart.FilePart;
 
 public class Main {
     public static void main(String[] args) {
         try (AsyncHttpClient asyncHttpClient = Dsl.asyncHttpClient()) {
             String url = "https://api.apidash.dev/io/img";
             BoundRequestBuilder requestBuilder = asyncHttpClient.prepare("POST", url);
-            requestBuilder
-                .addHeader("Content-Type", "multipart/form-data; boundary=12b3ea10-3711-1f2f-ae52-0d40a793d870");
 
             Map<String, String> params = new HashMap<>() {
                 { 
@@ -760,8 +799,7 @@ public class Main {
 ''';
       expect(
           codeGen.getCode(
-              CodegenLanguage.javaAsyncHttpClient, requestModelPost6, "https",
-              boundary: "12b3ea10-3711-1f2f-ae52-0d40a793d870"),
+              CodegenLanguage.javaAsyncHttpClient, requestModelPost6, "https"),
           expectedCode);
     });
 
@@ -776,16 +814,14 @@ import java.util.stream.Collectors;
 
 import java.util.Map;
 import java.util.HashMap;
-import org.asynchttpclient.request.body.multipart.FilePart;
 import org.asynchttpclient.request.body.multipart.StringPart;
+import org.asynchttpclient.request.body.multipart.FilePart;
 
 public class Main {
     public static void main(String[] args) {
         try (AsyncHttpClient asyncHttpClient = Dsl.asyncHttpClient()) {
             String url = "https://api.apidash.dev/io/img";
             BoundRequestBuilder requestBuilder = asyncHttpClient.prepare("POST", url);
-            requestBuilder
-                .addHeader("Content-Type", "multipart/form-data; boundary=12b3ea10-3711-1f2f-ae52-0d40a793d870");
 
             Map<String, String> params = new HashMap<>() {
                 { 
@@ -831,8 +867,7 @@ public class Main {
 ''';
       expect(
           codeGen.getCode(
-              CodegenLanguage.javaAsyncHttpClient, requestModelPost7, "https",
-              boundary: "12b3ea10-3711-1f2f-ae52-0d40a793d870"),
+              CodegenLanguage.javaAsyncHttpClient, requestModelPost7, "https"),
           expectedCode);
     });
 
@@ -845,6 +880,10 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
+import java.util.Map;
+import java.util.HashMap;
+import org.asynchttpclient.request.body.multipart.StringPart;
+
 public class Main {
     public static void main(String[] args) {
         try (AsyncHttpClient asyncHttpClient = Dsl.asyncHttpClient()) {
@@ -853,12 +892,21 @@ public class Main {
             requestBuilder
                 .addQueryParam("size", "2")
                 .addQueryParam("len", "3");
-            requestBuilder
-                .addHeader("Content-Type", "application/x-www-form-urlencoded");
-            requestBuilder
-                .addFormParam("text", "API")
-                .addFormParam("sep", "|")
-                .addFormParam("times", "3");
+
+            Map<String, String> params = new HashMap<>() {
+                { 
+                    put("text", "API");
+                    put("sep", "|");
+                    put("times", "3");
+                }
+            };
+
+            for (String paramName : params.keySet()) {
+                requestBuilder.addBodyPart(new StringPart(
+                    paramName, params.get(paramName)
+                ));
+            }
+
             Future<Response> whenResponse = requestBuilder.execute();
             Response response = whenResponse.get();
             InputStream is = response.getResponseBodyAsStream();
@@ -889,8 +937,8 @@ import java.util.stream.Collectors;
 
 import java.util.Map;
 import java.util.HashMap;
-import org.asynchttpclient.request.body.multipart.FilePart;
 import org.asynchttpclient.request.body.multipart.StringPart;
+import org.asynchttpclient.request.body.multipart.FilePart;
 
 public class Main {
     public static void main(String[] args) {
@@ -901,7 +949,6 @@ public class Main {
                 .addQueryParam("size", "2")
                 .addQueryParam("len", "3");
             requestBuilder
-                .addHeader("Content-Type", "multipart/form-data; boundary=1556b1e0-1406-1f2f-ae52-0d40a793d870")
                 .addHeader("User-Agent", "Test Agent")
                 .addHeader("Keep-Alive", "true");
 
@@ -949,8 +996,7 @@ public class Main {
 ''';
       expect(
           codeGen.getCode(
-              CodegenLanguage.javaAsyncHttpClient, requestModelPost9, "https",
-              boundary: "1556b1e0-1406-1f2f-ae52-0d40a793d870"),
+              CodegenLanguage.javaAsyncHttpClient, requestModelPost9, "https"),
           expectedCode);
     });
   });
@@ -969,7 +1015,11 @@ public class Main {
     public static void main(String[] args) {
         try (AsyncHttpClient asyncHttpClient = Dsl.asyncHttpClient()) {
             String url = "https://reqres.in/api/users/2";
-            String bodyContent = "{\n\"name\": \"morpheus\",\n\"job\": \"zion resident\"\n}";
+            String bodyContent = """
+{
+"name": "morpheus",
+"job": "zion resident"
+}""";
             BoundRequestBuilder requestBuilder = asyncHttpClient.prepare("PUT", url);
             requestBuilder
                 .addHeader("Content-Type", "application/json");
@@ -1008,7 +1058,11 @@ public class Main {
     public static void main(String[] args) {
         try (AsyncHttpClient asyncHttpClient = Dsl.asyncHttpClient()) {
             String url = "https://reqres.in/api/users/2";
-            String bodyContent = "{\n\"name\": \"marfeus\",\n\"job\": \"accountant\"\n}";
+            String bodyContent = """
+{
+"name": "marfeus",
+"job": "accountant"
+}""";
             BoundRequestBuilder requestBuilder = asyncHttpClient.prepare("PATCH", url);
             requestBuilder
                 .addHeader("Content-Type", "application/json");
@@ -1080,7 +1134,11 @@ public class Main {
     public static void main(String[] args) {
         try (AsyncHttpClient asyncHttpClient = Dsl.asyncHttpClient()) {
             String url = "https://reqres.in/api/users/2";
-            String bodyContent = "{\n\"name\": \"marfeus\",\n\"job\": \"accountant\"\n}";
+            String bodyContent = """
+{
+"name": "marfeus",
+"job": "accountant"
+}""";
             BoundRequestBuilder requestBuilder = asyncHttpClient.prepare("DELETE", url);
             requestBuilder
                 .addHeader("Content-Type", "application/json");
