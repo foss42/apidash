@@ -1,5 +1,6 @@
 import 'package:fuzzy/data/result.dart';
 import 'package:fuzzy/fuzzy.dart';
+import 'package:xml/xml.dart';
 
 Map<String, String> headers = {
   "Accept": "Specifies the media types that are acceptable for the response.",
@@ -133,5 +134,14 @@ List<String> getFuzzyHeaderSuggestions(String pattern) {
   final results = fuse.search(pattern);
   final List<String> suggestions =
       results.map((result) => result.item as String).toList();
-  return suggestions;
+  final List<String> predictions = [];
+  final List<String> recommendations = [];
+  for (String s in suggestions) {
+    if (s.toLowerCase().contains(pattern.toLowerCase())) {
+      predictions.add(s);
+    } else {
+      recommendations.add(s);
+    }
+  }
+  return predictions.isEmpty ? recommendations : predictions;
 }

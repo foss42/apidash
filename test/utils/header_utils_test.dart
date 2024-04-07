@@ -122,8 +122,6 @@ void main() {
         'X-Requested-With',
         'X-Content-Type-Options',
         'Max-Forwards',
-        'Expect',
-        'Expires',
         'Access-Control-Max-Age'
       ];
       expect(getFuzzyHeaderSuggestions(pattern), expected);
