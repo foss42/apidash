@@ -49,9 +49,7 @@ foreach (\$headers as \$name => \$value) {
 """;
 
   String kTemplateFormDataWithFiles = """
-\$boundary = '{{boundary}}';
 \$builder = new MultipartStreamBuilder();
-\$builder->setBoundary(\$boundary);
 {{formDataFields}}
 {{formDataFiles}}
 \$request = \$request->withBody(\$builder->build());
@@ -59,9 +57,7 @@ foreach (\$headers as \$name => \$value) {
 """;
 
   String kTemplateFormDataWithoutFiles = """
-\$boundary = '{{boundary}}';
 \$builder = new MultipartStreamBuilder();
-\$builder->setBoundary(\$boundary);
 {{formDataFields}}
 \$request = \$request->withBody(\$builder->build());
 
@@ -77,9 +73,7 @@ echo \$response->getBody();
 """;
 
   String? getCode(
-    RequestModel requestModel, {
-    String? boundary,
-  }) {
+    RequestModel requestModel) {
     try {
       String result = "";
 
@@ -116,29 +110,6 @@ echo \$response->getBody();
         result += templateRequestInit
             .render({"method": requestModel.method.name.toUpperCase()});
 
-        var harJson =
-            requestModelToHARJsonRequest(requestModel, useEnabled: true);
-        var headers = harJson["headers"];
-
-        if (headers.isNotEmpty) {
-          var templateHeader = jj.Template(kTemplateHeaders);
-          var headersString = '\n';
-
-          var headersObj = {};
-          for (var i in headers) {
-            headersObj[i["name"]] = i["value"];
-          }
-
-          if (requestModel.hasFormData) {
-            headersObj['Content-Type'] =
-                "multipart/form-data; boundary=$boundary";
-          }
-          headersObj.forEach((key, value) {
-            headersString += "    '$key' => '$value',\n";
-          });
-          result += templateHeader.render({"headers": headersString});
-        }
-
         var requestBody = requestModel.requestBody;
 
         if ((requestModel.hasTextData || requestModel.hasJsonData) &&
@@ -168,16 +139,37 @@ echo \$response->getBody();
             result += templateFormDataWithFiles.render({
               "formDataFields": formDataFields,
               "formDataFiles": formDataFiles,
-              "boundary": boundary,
             });
           } else {
             var templateFormDataWithoutFiles =
                 jj.Template(kTemplateFormDataWithoutFiles);
             result += templateFormDataWithoutFiles.render({
               "formDataFields": formDataFields,
-              "boundary": boundary,
             });
           }
+        }
+
+        var harJson =
+            requestModelToHARJsonRequest(requestModel, useEnabled: true);
+        var headers = harJson["headers"];
+
+        if (headers.isNotEmpty) {
+          var templateHeader = jj.Template(kTemplateHeaders);
+          var headersString = '\n';
+
+          var headersObj = {};
+          for (var i in headers) {
+            headersObj[i["name"]] = "'${i["value"]}'";
+          }
+
+          if (requestModel.hasFormData) {
+            headersObj['Content-Type'] =
+                "'multipart/form-data; boundary=' . \$builder->getBoundary()";
+          }
+          headersObj.forEach((key, value) {
+            headersString += "    '$key' => $value,\n";
+          });
+          result += templateHeader.render({"headers": headersString});
         }
 
         result += kStringRequestEnd;

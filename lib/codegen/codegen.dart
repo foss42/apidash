@@ -99,7 +99,7 @@ class Codegen {
       case CodegenLanguage.cSharpRestSharp:
         return CSharpRestSharp().getCode(rM);
       case CodegenLanguage.phpHttpPlug:
-        return PhpHttpPlugCodeGen().getCode(rM, boundary: boundary);
+        return PhpHttpPlugCodeGen().getCode(rM);
     }
   }
 }
