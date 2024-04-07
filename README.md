@@ -146,6 +146,7 @@ API Dash currently supports API integration code generation for the following la
 | Java                   | `asynchttpclient` | https://github.com/foss42/apidash/issues/136 |
 | Java                   | `HttpClient`  |         |
 | Java                   | `okhttp3`     |         |
+| Java                   | `Unirest`     |         |
 | Julia                  | `HTTP`        |         |
 | PHP                    | `curl`        | https://github.com/foss42/apidash/issues/375 |
 | PHP                    | `guzzle`      | https://github.com/foss42/apidash/issues/143 |
