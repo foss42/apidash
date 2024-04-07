@@ -268,6 +268,7 @@ const kMethodsWithBody = [
 
 const kDefaultHttpMethod = HTTPVerb.get;
 const kDefaultContentType = ContentType.json;
+const kDefaultConnectionTimeout = 300000;
 
 enum CodegenLanguage {
   curl("cURL", "bash", "curl"),

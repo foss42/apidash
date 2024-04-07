@@ -229,6 +229,24 @@ class SettingsPage extends ConsumerWidget {
                   ),
                 ),
               ),
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                hoverColor: kColorTransparent,
+                title: const Text('Connection Timeout (ms)'),
+                subtitle: const Text(
+                    'Set the duration after which the request will timeout'),
+                trailing: Container(
+                  width: 100,
+                  child: TextFormField(
+                    keyboardType: TextInputType.number,
+                    onChanged: (value) {
+                      ref
+                          .read(settingsProvider.notifier)
+                          .update(connectionTimeout: int.parse(value));
+                    },
+                  ),
+                ),
+              ),
             ],
           ),
         ),

@@ -26,6 +26,7 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
     CodegenLanguage? defaultCodeGenLang,
     bool? saveResponses,
     bool? promptBeforeClosing,
+    int? connectionTimeout
   }) async {
     state = state.copyWith(
       isDark: isDark,
@@ -36,6 +37,7 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
       defaultCodeGenLang: defaultCodeGenLang,
       saveResponses: saveResponses,
       promptBeforeClosing: promptBeforeClosing,
+      connectionTimeout: connectionTimeout
     );
     await hiveHandler.saveSettings(state.toJson());
   }

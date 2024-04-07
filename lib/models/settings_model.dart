@@ -12,6 +12,7 @@ class SettingsModel {
     this.defaultCodeGenLang = CodegenLanguage.curl,
     this.saveResponses = true,
     this.promptBeforeClosing = true,
+    this.connectionTimeout = kDefaultConnectionTimeout
   });
 
   final bool isDark;
@@ -22,6 +23,7 @@ class SettingsModel {
   final CodegenLanguage defaultCodeGenLang;
   final bool saveResponses;
   final bool promptBeforeClosing;
+  final int connectionTimeout;
 
   SettingsModel copyWith({
     bool? isDark,
@@ -32,6 +34,7 @@ class SettingsModel {
     CodegenLanguage? defaultCodeGenLang,
     bool? saveResponses,
     bool? promptBeforeClosing,
+    int? connectionTimeout
   }) {
     return SettingsModel(
       isDark: isDark ?? this.isDark,
@@ -43,6 +46,7 @@ class SettingsModel {
       offset: offset ?? this.offset,
       saveResponses: saveResponses ?? this.saveResponses,
       promptBeforeClosing: promptBeforeClosing ?? this.promptBeforeClosing,
+      connectionTimeout: connectionTimeout ?? this.connectionTimeout
     );
   }
 
@@ -75,6 +79,11 @@ class SettingsModel {
     }
     final saveResponses = data["saveResponses"] as bool?;
     final promptBeforeClosing = data["promptBeforeClosing"] as bool?;
+    final connectionTimeoutVal = data["connectionTimeout"] as int?;
+    int? connectionTimeout;
+    if(connectionTimeoutVal != null) {
+      connectionTimeout = connectionTimeoutVal;
+    }
 
     const sm = SettingsModel();
 
@@ -86,7 +95,9 @@ class SettingsModel {
         defaultUriScheme: defaultUriScheme,
         defaultCodeGenLang: defaultCodeGenLang,
         saveResponses: saveResponses,
-        promptBeforeClosing: promptBeforeClosing);
+        promptBeforeClosing: promptBeforeClosing,
+        connectionTimeout: connectionTimeout
+    );
   }
 
   Map<String, dynamic> toJson() {
@@ -101,6 +112,7 @@ class SettingsModel {
       "defaultCodeGenLang": defaultCodeGenLang.name,
       "saveResponses": saveResponses,
       "promptBeforeClosing": promptBeforeClosing,
+      "connectionTimeout": connectionTimeout
     };
   }
 
@@ -121,7 +133,8 @@ class SettingsModel {
         other.defaultUriScheme == defaultUriScheme &&
         other.defaultCodeGenLang == defaultCodeGenLang &&
         other.saveResponses == saveResponses &&
-        other.promptBeforeClosing == promptBeforeClosing;
+        other.promptBeforeClosing == promptBeforeClosing &&
+        other.connectionTimeout == connectionTimeout;
   }
 
   @override
@@ -136,6 +149,7 @@ class SettingsModel {
       defaultCodeGenLang,
       saveResponses,
       promptBeforeClosing,
+      connectionTimeout
     );
   }
 }

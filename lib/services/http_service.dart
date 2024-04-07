@@ -9,11 +9,14 @@ import 'package:apidash/consts.dart';
 Future<(http.Response?, Duration?, String?)> request(
   RequestModel requestModel, {
   String defaultUriScheme = kDefaultUriScheme,
+  int connectionTimeoutVal  = kDefaultConnectionTimeout,
 }) async {
+  final Duration connectionTimeout = Duration(milliseconds: connectionTimeoutVal);
   (Uri?, String?) uriRec = getValidRequestUri(
     requestModel.url,
     requestModel.enabledRequestParams,
     defaultUriScheme: defaultUriScheme,
+    timeoutDuration: connectionTimeoutVal,
   );
   if (uriRec.$1 != null) {
     Uri requestUrl = uriRec.$1!;
@@ -57,7 +60,7 @@ Future<(http.Response?, Duration?, String?)> request(
             }
           }
           http.StreamedResponse multiPartResponse =
-              await multiPartRequest.send();
+              await multiPartRequest.send().timeout(connectionTimeout);
           stopwatch.stop();
           http.Response convertedMultiPartResponse =
               await convertStreamedResponse(multiPartResponse);
@@ -66,23 +69,23 @@ Future<(http.Response?, Duration?, String?)> request(
       }
       switch (requestModel.method) {
         case HTTPVerb.get:
-          response = await http.get(requestUrl, headers: headers);
+          response = await http.get(requestUrl, headers: headers).timeout(connectionTimeout);
           break;
         case HTTPVerb.head:
-          response = await http.head(requestUrl, headers: headers);
+          response = await http.head(requestUrl, headers: headers).timeout(connectionTimeout);
           break;
         case HTTPVerb.post:
-          response = await http.post(requestUrl, headers: headers, body: body);
+          response = await http.post(requestUrl, headers: headers, body: body).timeout(connectionTimeout);
           break;
         case HTTPVerb.put:
-          response = await http.put(requestUrl, headers: headers, body: body);
+          response = await http.put(requestUrl, headers: headers, body: body).timeout(connectionTimeout);
           break;
         case HTTPVerb.patch:
-          response = await http.patch(requestUrl, headers: headers, body: body);
+          response = await http.patch(requestUrl, headers: headers, body: body).timeout(connectionTimeout);
           break;
         case HTTPVerb.delete:
           response =
-              await http.delete(requestUrl, headers: headers, body: body);
+              await http.delete(requestUrl, headers: headers, body: body).timeout(connectionTimeout);
           break;
       }
       stopwatch.stop();

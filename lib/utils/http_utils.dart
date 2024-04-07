@@ -64,7 +64,7 @@ String stripUrlParams(String url) {
 
 (Uri?, String?) getValidRequestUri(
     String? url, List<NameValueModel>? requestParams,
-    {String defaultUriScheme = kDefaultUriScheme}) {
+    {String defaultUriScheme = kDefaultUriScheme, int? timeoutDuration = kDefaultConnectionTimeout}) {
   url = url?.trim();
   if (url == null || url == "") {
     return (null, "URL is missing!");

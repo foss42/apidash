@@ -183,6 +183,11 @@ class CollectionStateNotifier
         (value) => value.defaultUriScheme,
       ),
     );
+    final connectionTimeout = ref.read(
+      settingsProvider.select(
+        (value) => value.connectionTimeout,
+      ),
+    );
 
     RequestModel requestModel = state![id]!;
 
@@ -197,6 +202,7 @@ class CollectionStateNotifier
     (http.Response?, Duration?, String?)? responseRec = await request(
       requestModel,
       defaultUriScheme: defaultUriScheme,
+      connectionTimeoutVal: connectionTimeout
     );
     late final RequestModel newRequestModel;
     if (responseRec.$1 == null) {
