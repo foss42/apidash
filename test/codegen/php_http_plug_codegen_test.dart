@@ -395,12 +395,6 @@ use Http\Discovery\Psr18ClientDiscovery;
 
 $uri = "https://api.apidash.dev/case/lower";
 $request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('POST', $uri);
-$headers = [
-    'Content-Type' => 'text/plain',
-];
-foreach ($headers as $name => $value) {
-    $request = $request->withHeader($name, $value);
-}
 $body = <<<'EOF'
 {
 "text": "I LOVE Flutter"
@@ -408,6 +402,12 @@ $body = <<<'EOF'
 EOF;
 
 $request = $request->withBody(Psr17FactoryDiscovery::findStreamFactory()->createStream($body));
+$headers = [
+    'Content-Type' => 'text/plain',
+];
+foreach ($headers as $name => $value) {
+    $request = $request->withHeader($name, $value);
+}
 $client = Psr18ClientDiscovery::find();
 $response = $client->sendRequest($request);
 
@@ -430,12 +430,6 @@ use Http\Discovery\Psr18ClientDiscovery;
 
 $uri = "https://api.apidash.dev/case/lower";
 $request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('POST', $uri);
-$headers = [
-    'Content-Type' => 'application/json',
-];
-foreach ($headers as $name => $value) {
-    $request = $request->withHeader($name, $value);
-}
 $body = <<<'EOF'
 {
 "text": "I LOVE Flutter",
@@ -448,6 +442,12 @@ $body = <<<'EOF'
 EOF;
 
 $request = $request->withBody(Psr17FactoryDiscovery::findStreamFactory()->createStream($body));
+$headers = [
+    'Content-Type' => 'application/json',
+];
+foreach ($headers as $name => $value) {
+    $request = $request->withHeader($name, $value);
+}
 $client = Psr18ClientDiscovery::find();
 $response = $client->sendRequest($request);
 
@@ -470,13 +470,6 @@ use Http\Discovery\Psr18ClientDiscovery;
 
 $uri = "https://api.apidash.dev/case/lower";
 $request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('POST', $uri);
-$headers = [
-    'Content-Type' => 'application/json',
-    'User-Agent' => 'Test Agent',
-];
-foreach ($headers as $name => $value) {
-    $request = $request->withHeader($name, $value);
-}
 $body = <<<'EOF'
 {
 "text": "I LOVE Flutter"
@@ -484,6 +477,13 @@ $body = <<<'EOF'
 EOF;
 
 $request = $request->withBody(Psr17FactoryDiscovery::findStreamFactory()->createStream($body));
+$headers = [
+    'Content-Type' => 'application/json',
+    'User-Agent' => 'Test Agent',
+];
+foreach ($headers as $name => $value) {
+    $request = $request->withHeader($name, $value);
+}
 $client = Psr18ClientDiscovery::find();
 $response = $client->sendRequest($request);
 
@@ -506,20 +506,18 @@ use Http\Discovery\Psr18ClientDiscovery;
 use Http\Message\MultipartStream\MultipartStreamBuilder;
 $uri = "https://api.apidash.dev/io/form";
 $request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('POST', $uri);
-$headers = [
-    'Content-Type' => 'multipart/form-data; boundary=b9826c20-773c-1f0c-814d-a1b3d90cd6b3',
-];
-foreach ($headers as $name => $value) {
-    $request = $request->withHeader($name, $value);
-}
-$boundary = 'b9826c20-773c-1f0c-814d-a1b3d90cd6b3';
 $builder = new MultipartStreamBuilder();
-$builder->setBoundary($boundary);
 $builder->addResource('text', 'API');
 $builder->addResource('sep', '|');
 $builder->addResource('times', '3');
 
 $request = $request->withBody($builder->build());
+$headers = [
+    'Content-Type' => 'multipart/form-data; boundary=' . $builder->getBoundary(),
+];
+foreach ($headers as $name => $value) {
+    $request = $request->withHeader($name, $value);
+}
 $client = Psr18ClientDiscovery::find();
 $response = $client->sendRequest($request);
 
@@ -529,7 +527,7 @@ echo $response->getBody();
 ''';
       expect(
           codeGen.getCode(
-              CodegenLanguage.phpHttpPlug, requestModelPost4, "https", boundary: "b9826c20-773c-1f0c-814d-a1b3d90cd6b3"),
+              CodegenLanguage.phpHttpPlug, requestModelPost4, "https"),
           expectedCode);
     });
     test('POST5', () {
@@ -542,21 +540,19 @@ use Http\Discovery\Psr18ClientDiscovery;
 use Http\Message\MultipartStream\MultipartStreamBuilder;
 $uri = "https://api.apidash.dev/io/form";
 $request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('POST', $uri);
-$headers = [
-    'Content-Type' => 'multipart/form-data; boundary=b9826c20-773c-1f0c-814d-a1b3d90cd6b3',
-    'User-Agent' => 'Test Agent',
-];
-foreach ($headers as $name => $value) {
-    $request = $request->withHeader($name, $value);
-}
-$boundary = 'b9826c20-773c-1f0c-814d-a1b3d90cd6b3';
 $builder = new MultipartStreamBuilder();
-$builder->setBoundary($boundary);
 $builder->addResource('text', 'API');
 $builder->addResource('sep', '|');
 $builder->addResource('times', '3');
 
 $request = $request->withBody($builder->build());
+$headers = [
+    'Content-Type' => 'multipart/form-data; boundary=' . $builder->getBoundary(),
+    'User-Agent' => 'Test Agent',
+];
+foreach ($headers as $name => $value) {
+    $request = $request->withHeader($name, $value);
+}
 $client = Psr18ClientDiscovery::find();
 $response = $client->sendRequest($request);
 
@@ -566,7 +562,7 @@ echo $response->getBody();
 ''';
       expect(
           codeGen.getCode(
-              CodegenLanguage.phpHttpPlug, requestModelPost5, "https", boundary: "b9826c20-773c-1f0c-814d-a1b3d90cd6b3"),
+              CodegenLanguage.phpHttpPlug, requestModelPost5, "https"),
           expectedCode);
     });
     test('POST6', () {
@@ -579,20 +575,18 @@ use Http\Discovery\Psr18ClientDiscovery;
 use Http\Message\MultipartStream\MultipartStreamBuilder;
 $uri = "https://api.apidash.dev/io/img";
 $request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('POST', $uri);
-$headers = [
-    'Content-Type' => 'multipart/form-data; boundary=b9826c20-773c-1f0c-814d-a1b3d90cd6b3',
-];
-foreach ($headers as $name => $value) {
-    $request = $request->withHeader($name, $value);
-}
-$boundary = 'b9826c20-773c-1f0c-814d-a1b3d90cd6b3';
 $builder = new MultipartStreamBuilder();
-$builder->setBoundary($boundary);
 $builder->addResource('token', 'xyz');
 
 $builder->addResource('imfile', fopen('/Documents/up/1.png', 'r'), ['filename' => '/Documents/up/1.png']);
 
 $request = $request->withBody($builder->build());
+$headers = [
+    'Content-Type' => 'multipart/form-data; boundary=' . $builder->getBoundary(),
+];
+foreach ($headers as $name => $value) {
+    $request = $request->withHeader($name, $value);
+}
 $client = Psr18ClientDiscovery::find();
 $response = $client->sendRequest($request);
 
@@ -602,7 +596,7 @@ echo $response->getBody();
 ''';
       expect(
           codeGen.getCode(
-              CodegenLanguage.phpHttpPlug, requestModelPost6, "https", boundary: "b9826c20-773c-1f0c-814d-a1b3d90cd6b3"),
+              CodegenLanguage.phpHttpPlug, requestModelPost6, "https"),
           expectedCode);
     });
     test('POST7', () {
@@ -615,20 +609,18 @@ use Http\Discovery\Psr18ClientDiscovery;
 use Http\Message\MultipartStream\MultipartStreamBuilder;
 $uri = "https://api.apidash.dev/io/img";
 $request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('POST', $uri);
-$headers = [
-    'Content-Type' => 'multipart/form-data; boundary=b9826c20-773c-1f0c-814d-a1b3d90cd6b3',
-];
-foreach ($headers as $name => $value) {
-    $request = $request->withHeader($name, $value);
-}
-$boundary = 'b9826c20-773c-1f0c-814d-a1b3d90cd6b3';
 $builder = new MultipartStreamBuilder();
-$builder->setBoundary($boundary);
 $builder->addResource('token', 'xyz');
 
 $builder->addResource('imfile', fopen('/Documents/up/1.png', 'r'), ['filename' => '/Documents/up/1.png']);
 
 $request = $request->withBody($builder->build());
+$headers = [
+    'Content-Type' => 'multipart/form-data; boundary=' . $builder->getBoundary(),
+];
+foreach ($headers as $name => $value) {
+    $request = $request->withHeader($name, $value);
+}
 $client = Psr18ClientDiscovery::find();
 $response = $client->sendRequest($request);
 
@@ -638,7 +630,7 @@ echo $response->getBody();
 ''';
       expect(
           codeGen.getCode(
-              CodegenLanguage.phpHttpPlug, requestModelPost7, "https", boundary: "b9826c20-773c-1f0c-814d-a1b3d90cd6b3"),
+              CodegenLanguage.phpHttpPlug, requestModelPost7, "https"),
           expectedCode);
     });
     test('POST8', () {
@@ -656,20 +648,18 @@ $queryParams = [
 ];
 $uri .= '?' . http_build_query($queryParams);
 $request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('POST', $uri);
-$headers = [
-    'Content-Type' => 'multipart/form-data; boundary=b9826c20-773c-1f0c-814d-a1b3d90cd6b3',
-];
-foreach ($headers as $name => $value) {
-    $request = $request->withHeader($name, $value);
-}
-$boundary = 'b9826c20-773c-1f0c-814d-a1b3d90cd6b3';
 $builder = new MultipartStreamBuilder();
-$builder->setBoundary($boundary);
 $builder->addResource('text', 'API');
 $builder->addResource('sep', '|');
 $builder->addResource('times', '3');
 
 $request = $request->withBody($builder->build());
+$headers = [
+    'Content-Type' => 'multipart/form-data; boundary=' . $builder->getBoundary(),
+];
+foreach ($headers as $name => $value) {
+    $request = $request->withHeader($name, $value);
+}
 $client = Psr18ClientDiscovery::find();
 $response = $client->sendRequest($request);
 
@@ -679,7 +669,7 @@ echo $response->getBody();
 ''';
       expect(
           codeGen.getCode(
-              CodegenLanguage.phpHttpPlug, requestModelPost8, "https", boundary: "b9826c20-773c-1f0c-814d-a1b3d90cd6b3"),
+              CodegenLanguage.phpHttpPlug, requestModelPost8, "https"),
           expectedCode);
     });
     test('POST9', () {
@@ -697,22 +687,20 @@ $queryParams = [
 ];
 $uri .= '?' . http_build_query($queryParams);
 $request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('POST', $uri);
+$builder = new MultipartStreamBuilder();
+$builder->addResource('token', 'xyz');
+
+$builder->addResource('imfile', fopen('/Documents/up/1.png', 'r'), ['filename' => '/Documents/up/1.png']);
+
+$request = $request->withBody($builder->build());
 $headers = [
-    'Content-Type' => 'multipart/form-data; boundary=b9826c20-773c-1f0c-814d-a1b3d90cd6b3',
+    'Content-Type' => 'multipart/form-data; boundary=' . $builder->getBoundary(),
     'User-Agent' => 'Test Agent',
     'Keep-Alive' => 'true',
 ];
 foreach ($headers as $name => $value) {
     $request = $request->withHeader($name, $value);
 }
-$boundary = 'b9826c20-773c-1f0c-814d-a1b3d90cd6b3';
-$builder = new MultipartStreamBuilder();
-$builder->setBoundary($boundary);
-$builder->addResource('token', 'xyz');
-
-$builder->addResource('imfile', fopen('/Documents/up/1.png', 'r'), ['filename' => '/Documents/up/1.png']);
-
-$request = $request->withBody($builder->build());
 $client = Psr18ClientDiscovery::find();
 $response = $client->sendRequest($request);
 
@@ -722,7 +710,7 @@ echo $response->getBody();
 ''';
       expect(
           codeGen.getCode(
-              CodegenLanguage.phpHttpPlug, requestModelPost9, "https", boundary: "b9826c20-773c-1f0c-814d-a1b3d90cd6b3"),
+              CodegenLanguage.phpHttpPlug, requestModelPost9, "https"),
           expectedCode);
     });
   });
@@ -738,12 +726,6 @@ use Http\Discovery\Psr18ClientDiscovery;
 
 $uri = "https://reqres.in/api/users/2";
 $request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('PUT', $uri);
-$headers = [
-    'Content-Type' => 'application/json',
-];
-foreach ($headers as $name => $value) {
-    $request = $request->withHeader($name, $value);
-}
 $body = <<<'EOF'
 {
 "name": "morpheus",
@@ -752,6 +734,12 @@ $body = <<<'EOF'
 EOF;
 
 $request = $request->withBody(Psr17FactoryDiscovery::findStreamFactory()->createStream($body));
+$headers = [
+    'Content-Type' => 'application/json',
+];
+foreach ($headers as $name => $value) {
+    $request = $request->withHeader($name, $value);
+}
 $client = Psr18ClientDiscovery::find();
 $response = $client->sendRequest($request);
 
@@ -777,12 +765,6 @@ use Http\Discovery\Psr18ClientDiscovery;
 
 $uri = "https://reqres.in/api/users/2";
 $request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('PATCH', $uri);
-$headers = [
-    'Content-Type' => 'application/json',
-];
-foreach ($headers as $name => $value) {
-    $request = $request->withHeader($name, $value);
-}
 $body = <<<'EOF'
 {
 "name": "marfeus",
@@ -791,6 +773,12 @@ $body = <<<'EOF'
 EOF;
 
 $request = $request->withBody(Psr17FactoryDiscovery::findStreamFactory()->createStream($body));
+$headers = [
+    'Content-Type' => 'application/json',
+];
+foreach ($headers as $name => $value) {
+    $request = $request->withHeader($name, $value);
+}
 $client = Psr18ClientDiscovery::find();
 $response = $client->sendRequest($request);
 
@@ -838,12 +826,6 @@ use Http\Discovery\Psr18ClientDiscovery;
 
 $uri = "https://reqres.in/api/users/2";
 $request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('DELETE', $uri);
-$headers = [
-    'Content-Type' => 'application/json',
-];
-foreach ($headers as $name => $value) {
-    $request = $request->withHeader($name, $value);
-}
 $body = <<<'EOF'
 {
 "name": "marfeus",
@@ -852,6 +834,12 @@ $body = <<<'EOF'
 EOF;
 
 $request = $request->withBody(Psr17FactoryDiscovery::findStreamFactory()->createStream($body));
+$headers = [
+    'Content-Type' => 'application/json',
+];
+foreach ($headers as $name => $value) {
+    $request = $request->withHeader($name, $value);
+}
 $client = Psr18ClientDiscovery::find();
 $response = $client->sendRequest($request);
 
