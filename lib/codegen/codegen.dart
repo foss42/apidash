@@ -22,6 +22,7 @@ import 'js/fetch.dart';
 import 'others/har.dart';
 import 'others/curl.dart';
 import 'julia/http.dart';
+import 'java/unirest.dart';
 import 'java/okhttp.dart';
 import 'java/async_http_client.dart';
 import 'java/httpclient.dart';
@@ -68,6 +69,8 @@ class Codegen {
         return JavaHttpClientCodeGen().getCode(rM, boundary: boundary);
       case CodegenLanguage.javaOkHttp:
         return JavaOkHttpCodeGen().getCode(rM);
+      case CodegenLanguage.javaUnirest:
+        return JavaUnirestGen().getCode(rM);
       case CodegenLanguage.juliaHttp:
         return JuliaHttpClientCodeGen().getCode(rM);
       case CodegenLanguage.kotlinOkHttp:
