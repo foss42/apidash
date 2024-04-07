@@ -7,8 +7,9 @@ import 'dart/http.dart';
 import 'dart/dio.dart';
 import 'go/http.dart';
 import 'kotlin/okhttp.dart';
-import 'php/guzzle.dart';
 import 'php/curl.dart';
+import 'php/guzzle.dart';
+import 'php/http_plug.dart';
 import 'python/http_client.dart';
 import 'python/requests.dart';
 import 'ruby/faraday.dart';
@@ -100,6 +101,8 @@ class Codegen {
         return CCurlCodeGen().getCode(rM);
       case CodegenLanguage.cSharpRestSharp:
         return CSharpRestSharp().getCode(rM);
+      case CodegenLanguage.phpHttpPlug:
+        return PhpHttpPlugCodeGen().getCode(rM);
     }
   }
 }

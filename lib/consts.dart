@@ -296,7 +296,8 @@ enum CodegenLanguage {
   javaUnirest("Java (Unirest)", "java", "java"),
   juliaHttp("Julia (HTTP)", "julia", "jl"),
   phpCurl("PHP (cURL)", "php", "php"),
-  phpGuzzle("PHP (guzzle)", "php", "php");
+  phpGuzzle("PHP (guzzle)", "php", "php"),
+  phpHttpPlug("PHP (httpPlug)", "php", "php");
 
   const CodegenLanguage(this.label, this.codeHighlightLang, this.ext);
   final String label;
