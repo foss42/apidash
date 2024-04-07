@@ -478,8 +478,8 @@ EOF;
 
 $request = $request->withBody(Psr17FactoryDiscovery::findStreamFactory()->createStream($body));
 $headers = [
-    'Content-Type' => 'application/json',
     'User-Agent' => 'Test Agent',
+    'Content-Type' => 'application/json',
 ];
 foreach ($headers as $name => $value) {
     $request = $request->withHeader($name, $value);
@@ -547,8 +547,8 @@ $builder->addResource('times', '3');
 
 $request = $request->withBody($builder->build());
 $headers = [
-    'Content-Type' => 'multipart/form-data; boundary=' . $builder->getBoundary(),
     'User-Agent' => 'Test Agent',
+    'Content-Type' => 'multipart/form-data; boundary=' . $builder->getBoundary(),
 ];
 foreach ($headers as $name => $value) {
     $request = $request->withHeader($name, $value);
@@ -694,9 +694,9 @@ $builder->addResource('imfile', fopen('/Documents/up/1.png', 'r'), ['filename' =
 
 $request = $request->withBody($builder->build());
 $headers = [
-    'Content-Type' => 'multipart/form-data; boundary=' . $builder->getBoundary(),
     'User-Agent' => 'Test Agent',
     'Keep-Alive' => 'true',
+    'Content-Type' => 'multipart/form-data; boundary=' . $builder->getBoundary(),
 ];
 foreach ($headers as $name => $value) {
     $request = $request->withHeader($name, $value);
@@ -853,5 +853,4 @@ echo $response->getBody();
           expectedCode);
     });
   });
-
 }
