@@ -135,7 +135,6 @@ public class Main {
         var templateMultipartImport = jj.Template(kTemplateMultipartImport);
         result += templateMultipartImport
             .render({"hasFileInFormData": requestModel.hasFileInFormData});
-        ;
       }
       result += kStringMainClassMainMethodStart;
       result += kStringAsyncHttpClientTryBlockStart;
