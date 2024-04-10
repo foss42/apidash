@@ -502,37 +502,14 @@ const kResponseCodeReasons = {
   511: 'Network Authentication Required',
 };
 
-const kMimeTypeRawRaiseIssueStart =
-    "Please click on 'Raw' to view the unformatted raw results as the response preview for Content-Type ";
-
-const kMimeTypeRaiseIssueStart = "Response preview for Content-Type ";
-
 const kMimeTypeRaiseIssue =
-    " is currently not supported.\nPlease raise an issue in API Dash GitHub repo so that we can add a Previewer for this content-type.";
+    "{% if showRaw %}Please click on 'Raw' to view the unformatted raw results as we{% else %}We{% endif %} encountered an error rendering this {% if showContentType %}Content-Type {% endif %}{{type}}.\nPlease raise an issue in API Dash GitHub repo so that we can look into this issue.";
 
 const kUnexpectedRaiseIssue =
     "\nIf the behaviour is unexpected, please raise an issue in API Dash GitHub repo so that we can resolve it.";
 
-const kVideoError =
-    "There seems to be an issue playing this video. Please raise an issue in API Dash GitHub repo so that we can resolve it.";
-
-const kImageError =
-    "There seems to be an issue rendering this image. Please raise an issue in API Dash GitHub repo so that we can resolve it.";
-
-const kSvgError =
-    "There seems to be an issue rendering this SVG image. Please raise an issue in API Dash GitHub repo so that we can resolve it.";
-
-const kPdfError =
-    "There seems to be an issue rendering this pdf. Please raise an issue in API Dash GitHub repo so that we can resolve it.";
-
-const kAudioError =
-    "There seems to be an issue playing this audio. Please raise an issue in API Dash GitHub repo so that we can resolve it.";
-
 const kRaiseIssue =
     "\nPlease raise an issue in API Dash GitHub repo so that we can resolve it.";
-
-const kCsvError =
-    "There seems to be an issue rendering this CSV. Please raise an issue in API Dash GitHub repo so that we can resolve it.";
 
 const kHintTextUrlCard = "Enter API endpoint like https://$kDefaultUri/";
 const kLabelPlusNew = "+ New";
