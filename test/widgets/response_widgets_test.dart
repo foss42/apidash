@@ -286,6 +286,8 @@ void main() {
   });
 
   testWidgets('Testing Response Body for No body view', (tester) async {
+    String expected =
+        "We encountered an error rendering this Content-Type application/octet-stream.\nPlease raise an issue in API Dash GitHub repo so that we can look into this issue.";
     ResponseModel responseModelOctet = ResponseModel(
         statusCode: statusCode,
         body: responseBody,
@@ -307,10 +309,7 @@ void main() {
       ),
     );
     //await Future.delayed(const Duration(seconds: 5));
-    expect(
-        find.text(
-            "${kMimeTypeRaiseIssueStart}application/octet-stream$kMimeTypeRaiseIssue"),
-        findsOneWidget);
+    expect(find.text(expected), findsOneWidget);
     expect(find.byIcon(Icons.download), findsOneWidget);
   });
 
@@ -339,6 +338,9 @@ void main() {
   });
 
   testWidgets('Testing Body Success for ResponseBodyView.none', (tester) async {
+    String expected =
+        "Please click on 'Raw' to view the unformatted raw results as we encountered an error rendering this Content-Type application/json.\nPlease raise an issue in API Dash GitHub repo so that we can look into this issue.";
+
     await tester.pumpWidget(
       MaterialApp(
         title: 'Body Success',
@@ -358,10 +360,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(
-        find.text(
-            "${kMimeTypeRawRaiseIssueStart}application/json$kMimeTypeRaiseIssue"),
-        findsOneWidget);
+    expect(find.text(expected), findsOneWidget);
     expect(find.byIcon(Icons.download), findsOneWidget);
   });
 
