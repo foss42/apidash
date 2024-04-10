@@ -6,7 +6,8 @@ import 'package:apidash/providers/ui_providers.dart';
 import 'package:apidash/widgets/cards.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import 'package:apidash/providers/providers.dart';
+import 'package:apidash/consts.dart';
 import 'details_card/details_card.dart';
 import 'url_card.dart';
 

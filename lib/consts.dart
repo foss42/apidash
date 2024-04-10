@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:davi/davi.dart';
 
 const kDiscordUrl = "https://bit.ly/heyfoss";
 const kGitUrl = "https://github.com/foss42/apidash";
@@ -21,7 +20,7 @@ final kIsLinux = !kIsWeb && Platform.isLinux;
 final kIsApple = !kIsWeb && (Platform.isIOS || Platform.isMacOS);
 final kIsDesktop =
     !kIsWeb && (Platform.isMacOS || Platform.isWindows || Platform.isLinux);
-
+final kIsRunningTests = Platform.environment.containsKey('FLUTTER_TEST');
 final kIsIOS = !kIsWeb && Platform.isIOS;
 final kIsAndroid = !kIsWeb && Platform.isAndroid;
 final kIsMobile = !kIsWeb && (Platform.isIOS || Platform.isAndroid);
@@ -84,6 +83,8 @@ const kPt24 = EdgeInsets.only(top: 24);
 const kPt8 = EdgeInsets.only(top: 8);
 const kPt5o10 =
     EdgeInsets.only(left: 10.0, right: 10.0, top: 5.0, bottom: 10.0);
+const kPh4 = EdgeInsets.symmetric(horizontal: 4);
+const kPh8 = EdgeInsets.symmetric(horizontal: 8);
 const kPh20 = EdgeInsets.symmetric(
   horizontal: 20,
 );
@@ -128,19 +129,11 @@ const kTextButtonMinWidth = 44.0;
 
 const kRandMax = 100000;
 
-const kTableThemeData = DaviThemeData(
-  columnDividerThickness: 1,
-  columnDividerColor: kColorTransparent,
-  row: RowThemeData(
-    dividerColor: kColorTransparent,
-  ),
-  decoration: BoxDecoration(
-    border: Border(),
-  ),
-  header: HeaderThemeData(
-    visible: false,
-  ),
+const kDataTableScrollbarTheme = ScrollbarThemeData(
+  crossAxisMargin: -4,
 );
+const kDataTableBottomPadding = 12.0;
+const kDataTableRowHeight = 36.0;
 
 const kIconRemoveDark = Icon(
   Icons.remove_circle,
@@ -279,6 +272,8 @@ const kDefaultContentType = ContentType.json;
 enum CodegenLanguage {
   curl("cURL", "bash", "curl"),
   har("HAR", "json", "har"),
+  cCurlCodeGen("C (Curl)", "cpp", "c"),
+  cSharpRestSharp("C# (Rest Sharp)", "cs", "cs"),
   dartHttp("Dart (http)", "dart", "dart"),
   dartDio("Dart (dio)", "dart", "dart"),
   goHttp("Go (http)", "go", "go"),
@@ -286,9 +281,11 @@ enum CodegenLanguage {
   jsFetch("JavaScript (fetch)", "javascript", "js"),
   nodejsAxios("node.js (axios)", "javascript", "js"),
   nodejsFetch("node.js (fetch)", "javascript", "js"),
-  kotlinOkHttp("Kotlin (okhttp3)", "java", "kt"),
+  kotlinOkHttp("Kotlin (okhttp3)", "kotlin", "kt"),
   pythonRequests("Python (requests)", "python", "py"),
   pythonHttpClient("Python (http.client)", "python", "py"),
+  rubyFaraday("Ruby (Faraday)", "ruby", "rb"),
+  rubyNetHttp("Ruby (Net::Http)", "ruby", "rb"),
   rustActix("Rust (Actix Client)", "rust", "rs"),
   rustReqwest("Rust (reqwest)", "rust", "rs"),
   rustCurl("Rust (curl-rust)", "rust", "rs"),
@@ -296,8 +293,11 @@ enum CodegenLanguage {
   javaOkHttp("Java (okhttp3)", "java", 'java'),
   javaAsyncHttpClient("Java (asynchttpclient)", "java", "java"),
   javaHttpClient("Java (HttpClient)", "java", "java"),
+  javaUnirest("Java (Unirest)", "java", "java"),
   juliaHttp("Julia (HTTP)", "julia", "jl"),
-  phpGuzzle("PHP (guzzle)", "php", "php");
+  phpCurl("PHP (cURL)", "php", "php"),
+  phpGuzzle("PHP (guzzle)", "php", "php"),
+  phpHttpPlug("PHP (httpPlug)", "php", "php");
 
   const CodegenLanguage(this.label, this.codeHighlightLang, this.ext);
   final String label;
@@ -320,6 +320,7 @@ const kSubTypeXml = 'xml';
 const kSubTypeYaml = 'yaml';
 const kSubTypeXYaml = 'x-yaml';
 const kSubTypeYml = 'x-yml';
+const kSubTypeXWwwFormUrlencoded = 'x-www-form-urlencoded';
 
 const kTypeText = 'text';
 // text
@@ -403,7 +404,7 @@ const Map<String, Map<String, List<ResponseBodyView>>>
     kSubTypeDefaultViewOptions: kPreviewBodyViewOptions,
   },
   kTypeVideo: {
-    kSubTypeDefaultViewOptions: kNoBodyViewOptions,
+    kSubTypeDefaultViewOptions: kPreviewBodyViewOptions,
   },
   kTypeText: {
     kSubTypeDefaultViewOptions: kRawBodyViewOptions,
@@ -501,34 +502,14 @@ const kResponseCodeReasons = {
   511: 'Network Authentication Required',
 };
 
-const kMimeTypeRawRaiseIssueStart =
-    "Please click on 'Raw' to view the unformatted raw results as the response preview for Content-Type ";
-
-const kMimeTypeRaiseIssueStart = "Response preview for Content-Type ";
-
 const kMimeTypeRaiseIssue =
-    " is currently not supported.\nPlease raise an issue in API Dash GitHub repo so that we can add a Previewer for this content-type.";
+    "{% if showRaw %}Please click on 'Raw' to view the unformatted raw results as we{% else %}We{% endif %} encountered an error rendering this {% if showContentType %}Content-Type {% endif %}{{type}}.\nPlease raise an issue in API Dash GitHub repo so that we can look into this issue.";
 
 const kUnexpectedRaiseIssue =
     "\nIf the behaviour is unexpected, please raise an issue in API Dash GitHub repo so that we can resolve it.";
 
-const kImageError =
-    "There seems to be an issue rendering this image. Please raise an issue in API Dash GitHub repo so that we can resolve it.";
-
-const kSvgError =
-    "There seems to be an issue rendering this SVG image. Please raise an issue in API Dash GitHub repo so that we can resolve it.";
-
-const kPdfError =
-    "There seems to be an issue rendering this pdf. Please raise an issue in API Dash GitHub repo so that we can resolve it.";
-
-const kAudioError =
-    "There seems to be an issue playing this audio. Please raise an issue in API Dash GitHub repo so that we can resolve it.";
-
 const kRaiseIssue =
     "\nPlease raise an issue in API Dash GitHub repo so that we can resolve it.";
-
-const kCsvError =
-    "There seems to be an issue rendering this CSV. Please raise an issue in API Dash GitHub repo so that we can resolve it.";
 
 const kHintTextUrlCard = "Enter API endpoint like https://$kDefaultUri/";
 const kLabelPlusNew = "+ New";
