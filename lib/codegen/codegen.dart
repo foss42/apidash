@@ -1,13 +1,19 @@
 import 'package:apidash/models/models.dart' show RequestModel;
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart' show getNewUuid;
+import 'c/curl.dart';
+import 'csharp/rest_sharp.dart';
 import 'dart/http.dart';
 import 'dart/dio.dart';
 import 'go/http.dart';
 import 'kotlin/okhttp.dart';
+import 'php/curl.dart';
 import 'php/guzzle.dart';
+import 'php/http_plug.dart';
 import 'python/http_client.dart';
 import 'python/requests.dart';
+import 'ruby/faraday.dart';
+import 'ruby/net_http.dart';
 import 'rust/actix.dart';
 import 'rust/curl_rust.dart';
 import 'rust/reqwest.dart';
@@ -17,6 +23,7 @@ import 'js/fetch.dart';
 import 'others/har.dart';
 import 'others/curl.dart';
 import 'julia/http.dart';
+import 'java/unirest.dart';
 import 'java/okhttp.dart';
 import 'java/async_http_client.dart';
 import 'java/httpclient.dart';
@@ -60,9 +67,11 @@ class Codegen {
       case CodegenLanguage.javaAsyncHttpClient:
         return JavaAsyncHttpClientGen().getCode(rM);
       case CodegenLanguage.javaHttpClient:
-        return JavaHttpClientCodeGen().getCode(rM);
+        return JavaHttpClientCodeGen().getCode(rM, boundary: boundary);
       case CodegenLanguage.javaOkHttp:
         return JavaOkHttpCodeGen().getCode(rM);
+      case CodegenLanguage.javaUnirest:
+        return JavaUnirestGen().getCode(rM);
       case CodegenLanguage.juliaHttp:
         return JuliaHttpClientCodeGen().getCode(rM);
       case CodegenLanguage.kotlinOkHttp:
@@ -72,6 +81,10 @@ class Codegen {
             .getCode(rM, boundary: boundary ?? getNewUuid());
       case CodegenLanguage.pythonRequests:
         return PythonRequestsCodeGen().getCode(rM, boundary: boundary);
+      case CodegenLanguage.rubyFaraday:
+        return RubyFaradayCodeGen().getCode(rM);
+      case CodegenLanguage.rubyNetHttp:
+        return RubyNetHttpCodeGen().getCode(rM);
       case CodegenLanguage.rustActix:
         return RustActixCodeGen().getCode(rM, boundary: boundary);
       case CodegenLanguage.rustCurl:
@@ -82,6 +95,14 @@ class Codegen {
         return RustUreqCodeGen().getCode(rM, boundary: boundary);
       case CodegenLanguage.phpGuzzle:
         return PhpGuzzleCodeGen().getCode(rM);
+      case CodegenLanguage.phpCurl:
+        return PHPcURLCodeGen().getCode(rM);
+      case CodegenLanguage.cCurlCodeGen:
+        return CCurlCodeGen().getCode(rM);
+      case CodegenLanguage.cSharpRestSharp:
+        return CSharpRestSharp().getCode(rM);
+      case CodegenLanguage.phpHttpPlug:
+        return PhpHttpPlugCodeGen().getCode(rM);
     }
   }
 }
