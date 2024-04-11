@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:csv/csv.dart';
-import 'error_message.dart';
-import '../consts.dart';
 
 class CsvPreviewer extends StatelessWidget {
-  const CsvPreviewer({super.key, required this.body});
+  const CsvPreviewer({
+    super.key,
+    required this.body,
+    required this.errorWidget,
+  });
 
   final String body;
+  final Widget errorWidget;
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +50,7 @@ class CsvPreviewer extends StatelessWidget {
         ),
       );
     } catch (e) {
-      return const ErrorMessage(message: kCsvError);
+      return errorWidget;
     }
   }
 }

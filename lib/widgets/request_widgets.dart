@@ -47,19 +47,15 @@ class _RequestPaneState extends State<RequestPane>
     }
     return Column(
       children: [
-        (kIsMobile
+        kIsMobile
             ? const SizedBox.shrink()
             : Padding(
-                padding: kPh20v10,
+                padding: kP8,
                 child: SizedBox(
                   height: kHeaderHeight,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        "Request",
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
                       FilledButton.tonalIcon(
                         onPressed: widget.onPressedCodeButton,
                         icon: Icon(
@@ -69,35 +65,39 @@ class _RequestPaneState extends State<RequestPane>
                         ),
                         label: SizedBox(
                           width: 75,
-                          child: Text(widget.codePaneVisible
-                              ? "Hide Code"
-                              : "View Code"),
+                          child: Text(
+                            widget.codePaneVisible
+                                ? kLabelHideCode
+                                : kLabelViewCode,
+                          ),
                         ),
                       ),
                     ],
                   ),
                 ),
-              )),
+              ),
         TabBar(
           key: Key(widget.selectedId!),
           controller: _controller,
           overlayColor: kColorTransparentState,
+          labelPadding: kPh2,
           onTap: widget.onTapTabBar,
           tabs: [
             TabLabel(
-              text: 'URL Params',
+              text: kLabelURLParams,
               showIndicator: widget.showIndicators[0],
             ),
             TabLabel(
-              text: 'Headers',
+              text: kLabelHeaders,
               showIndicator: widget.showIndicators[1],
             ),
             TabLabel(
-              text: 'Body',
+              text: kLabelBody,
               showIndicator: widget.showIndicators[2],
             ),
           ],
         ),
+        kVSpacer5,
         Expanded(
           child: TabBarView(
             controller: _controller,

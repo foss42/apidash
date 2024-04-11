@@ -21,7 +21,6 @@ void main() {
     );
 
     expect(find.byType(Center), findsAtLeastNWidgets(1));
-    expect(find.text('Request'), findsOneWidget);
     expect(find.text('Hide Code'), findsOneWidget);
     expect(find.text('View Code'), findsNothing);
     expect(find.text('URL Params'), findsOneWidget);
@@ -52,7 +51,6 @@ void main() {
     );
 
     expect(find.byType(Center), findsAtLeastNWidgets(1));
-    expect(find.text('Request'), findsOneWidget);
     expect(find.text('Hide Code'), findsOneWidget);
     expect(find.text('View Code'), findsNothing);
     expect(find.text('URL Params'), findsOneWidget);
@@ -83,7 +81,6 @@ void main() {
     );
 
     expect(find.byType(Center), findsAtLeastNWidgets(1));
-    expect(find.text('Request'), findsOneWidget);
     expect(find.text('Hide Code'), findsNothing);
     expect(find.text('View Code'), findsOneWidget);
     expect(find.text('URL Params'), findsOneWidget);
@@ -117,7 +114,6 @@ void main() {
     );
 
     expect(find.byType(Center), findsAtLeastNWidgets(1));
-    expect(find.text('Request'), findsOneWidget);
     expect(find.text('URL Params'), findsOneWidget);
     expect(find.text('Headers'), findsOneWidget);
     expect(find.text('Body'), findsOneWidget);

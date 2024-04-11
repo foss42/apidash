@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:davi/davi.dart';
+import 'package:data_table_2/data_table_2.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/models/models.dart';
@@ -19,6 +19,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
   final random = Random.secure();
   late List<NameValueModel> headerRows;
   late List<bool> isRowEnabledList;
+  bool isAddingRow = false;
 
   @override
   void initState() {
@@ -42,130 +43,133 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
         .select((value) => value?.requestHeaders?.length));
     var rH = ref.read(selectedRequestModelProvider)?.requestHeaders;
     bool isHeadersEmpty = rH == null || rH.isEmpty;
-    List<NameValueModel> rows = (isHeadersEmpty)
+    headerRows = isHeadersEmpty
         ? [
             kNameValueEmptyModel,
           ]
-        : rH;
-    headerRows = isHeadersEmpty ? rows : rows + [kNameValueEmptyModel];
+        : rH + [kNameValueEmptyModel];
     isRowEnabledList =
         ref.read(selectedRequestModelProvider)?.isHeaderEnabledList ??
             List.filled(rH?.length ?? 0, true, growable: true);
     isRowEnabledList.add(false);
+    isAddingRow = false;
 
-    DaviModel<NameValueModel> model = DaviModel<NameValueModel>(
-      rows: headerRows,
-      columns: [
-        DaviColumn(
-          name: 'Checkbox',
-          width: 30,
-          cellBuilder: (_, row) {
-            int idx = row.index;
-            bool isLast = idx + 1 == headerRows.length;
-            return CheckBox(
-              keyId: "$selectedId-$idx-headers-c-$seed",
-              value: isRowEnabledList[idx],
-              onChanged: isLast
-                  ? null
-                  : (value) {
-                      setState(() {
-                        isRowEnabledList[idx] = value!;
-                      });
-                      _onFieldChange(selectedId!);
-                    },
-              colorScheme: Theme.of(context).colorScheme,
-            );
-          },
-        ),
-        DaviColumn(
-          name: 'Header Name',
-          width: 70,
-          grow: 1,
-          cellBuilder: (_, row) {
-            int idx = row.index;
-            bool isLast = idx + 1 == headerRows.length;
-            return HeaderField(
-              keyId: "$selectedId-$idx-headers-k-$seed",
-              initialValue: headerRows[idx].name,
-              hintText: "Add Header Name",
-              onChanged: (value) {
-                headerRows[idx] = headerRows[idx].copyWith(name: value);
-                if (isLast) {
-                  isRowEnabledList[idx] = true;
-                  headerRows.add(kNameValueEmptyModel);
-                  isRowEnabledList.add(false);
-                }
-                _onFieldChange(selectedId!);
-              },
-              colorScheme: Theme.of(context).colorScheme,
-            );
-          },
-          sortable: false,
-        ),
-        DaviColumn(
-          width: 30,
-          cellBuilder: (_, row) {
-            return Text(
-              "=",
-              style: kCodeStyle,
-            );
-          },
-        ),
-        DaviColumn(
-          name: 'Header Value',
-          grow: 1,
-          cellBuilder: (_, row) {
-            int idx = row.index;
-            bool isLast = idx + 1 == headerRows.length;
-            return CellField(
-              keyId: "$selectedId-$idx-headers-v-$seed",
-              initialValue: headerRows[idx].value,
-              hintText: " Add Header Value",
-              onChanged: (value) {
-                headerRows[idx] = headerRows[idx].copyWith(value: value);
-                if (isLast) {
-                  isRowEnabledList[idx] = true;
-                  headerRows.add(kNameValueEmptyModel);
-                  isRowEnabledList.add(false);
-                }
-                _onFieldChange(selectedId!);
-              },
-              colorScheme: Theme.of(context).colorScheme,
-            );
-          },
-          sortable: false,
-        ),
-        DaviColumn(
-          pinStatus: PinStatus.none,
-          width: 30,
-          cellBuilder: (_, row) {
-            bool isLast = row.index + 1 == headerRows.length;
-            return InkWell(
-              onTap: isLast
-                  ? null
-                  : () {
-                      seed = random.nextInt(kRandMax);
-                      if (headerRows.length == 2) {
+    List<DataColumn> columns = const [
+      DataColumn2(
+        label: Text(kNameCheckbox),
+        fixedWidth: 30,
+      ),
+      DataColumn2(
+        label: Text(kNameHeader),
+      ),
+      DataColumn2(
+        label: Text('='),
+        fixedWidth: 30,
+      ),
+      DataColumn2(
+        label: Text(kNameValue),
+      ),
+      DataColumn2(
+        label: Text(''),
+        fixedWidth: 32,
+      ),
+    ];
+
+    List<DataRow> dataRows = List<DataRow>.generate(
+      headerRows.length,
+      (index) {
+        bool isLast = index + 1 == headerRows.length;
+        return DataRow(
+          key: ValueKey("$selectedId-$index-headers-row-$seed"),
+          cells: <DataCell>[
+            DataCell(
+              CheckBox(
+                keyId: "$selectedId-$index-headers-c-$seed",
+                value: isRowEnabledList[index],
+                onChanged: isLast
+                    ? null
+                    : (value) {
                         setState(() {
-                          headerRows = [
-                            kNameValueEmptyModel,
-                          ];
-                          isRowEnabledList = [false];
+                          isRowEnabledList[index] = value!;
                         });
-                      } else {
-                        headerRows.removeAt(row.index);
-                        isRowEnabledList.removeAt(row.index);
-                      }
-                      _onFieldChange(selectedId!);
-                    },
-              child: Theme.of(context).brightness == Brightness.dark
-                  ? kIconRemoveDark
-                  : kIconRemoveLight,
-            );
-          },
-        ),
-      ],
+                        _onFieldChange(selectedId!);
+                      },
+                colorScheme: Theme.of(context).colorScheme,
+              ),
+            ),
+            DataCell(
+              HeaderField(
+                keyId: "$selectedId-$index-headers-k-$seed",
+                initialValue: headerRows[index].name,
+                hintText: kHintAddName,
+                onChanged: (value) {
+                  headerRows[index] = headerRows[index].copyWith(name: value);
+                  if (isLast && !isAddingRow) {
+                    isAddingRow = true;
+                    isRowEnabledList[index] = true;
+                    headerRows.add(kNameValueEmptyModel);
+                    isRowEnabledList.add(false);
+                  }
+                  _onFieldChange(selectedId!);
+                },
+                colorScheme: Theme.of(context).colorScheme,
+              ),
+            ),
+            DataCell(
+              Center(
+                child: Text(
+                  "=",
+                  style: kCodeStyle,
+                ),
+              ),
+            ),
+            DataCell(
+              CellField(
+                keyId: "$selectedId-$index-headers-v-$seed",
+                initialValue: headerRows[index].value,
+                hintText: kHintAddValue,
+                onChanged: (value) {
+                  headerRows[index] = headerRows[index].copyWith(value: value);
+                  if (isLast && !isAddingRow) {
+                    isAddingRow = true;
+                    isRowEnabledList[index] = true;
+                    headerRows.add(kNameValueEmptyModel);
+                    isRowEnabledList.add(false);
+                  }
+                  _onFieldChange(selectedId!);
+                },
+                colorScheme: Theme.of(context).colorScheme,
+              ),
+            ),
+            DataCell(
+              InkWell(
+                onTap: isLast
+                    ? null
+                    : () {
+                        seed = random.nextInt(kRandMax);
+                        if (headerRows.length == 2) {
+                          setState(() {
+                            headerRows = [
+                              kNameValueEmptyModel,
+                            ];
+                            isRowEnabledList = [false];
+                          });
+                        } else {
+                          headerRows.removeAt(index);
+                          isRowEnabledList.removeAt(index);
+                        }
+                        _onFieldChange(selectedId!);
+                      },
+                child: Theme.of(context).brightness == Brightness.dark
+                    ? kIconRemoveDark
+                    : kIconRemoveLight,
+              ),
+            ),
+          ],
+        );
+      },
     );
+
     return Stack(
       children: [
         Container(
@@ -177,18 +181,30 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
           child: Column(
             children: [
               Expanded(
-                child: DaviTheme(
-                  data: kTableThemeData,
-                  child: Davi<NameValueModel>(model),
+                child: Theme(
+                  data: Theme.of(context)
+                      .copyWith(scrollbarTheme: kDataTableScrollbarTheme),
+                  child: DataTable2(
+                    columnSpacing: 12,
+                    dividerThickness: 0,
+                    horizontalMargin: 0,
+                    headingRowHeight: 0,
+                    dataRowHeight: kDataTableRowHeight,
+                    bottomMargin: kDataTableBottomPadding,
+                    isVerticalScrollBarVisible: true,
+                    columns: columns,
+                    rows: dataRows,
+                  ),
                 ),
               ),
+              kVSpacer40,
             ],
           ),
         ),
         Align(
           alignment: Alignment.bottomCenter,
           child: Padding(
-            padding: const EdgeInsets.only(bottom: 30),
+            padding: kPb15,
             child: ElevatedButton.icon(
               onPressed: () {
                 headerRows.add(kNameValueEmptyModel);
@@ -197,7 +213,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
               },
               icon: const Icon(Icons.add),
               label: const Text(
-                "Add Header",
+                kLabelAddHeader,
                 style: kTextStyleButton,
               ),
             ),

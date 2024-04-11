@@ -5,11 +5,15 @@ import 'package:apidash/consts.dart';
 import 'package:flutter/foundation.dart';
 import 'package:printing/printing.dart' show PdfPreview;
 import 'package:flutter_svg/flutter_svg.dart' show SvgPicture;
+import 'package:apidash/widgets/video_previewer.dart';
 import '../test_consts.dart';
 
 void main() {
   Uint8List bytes1 = Uint8List.fromList([20, 8]);
   testWidgets('Testing when type/subtype is application/pdf', (tester) async {
+    String expected =
+        "We encountered an error rendering this pdf.\nPlease raise an issue in API Dash GitHub repo so that we can look into this issue.";
+
     await tester.pumpWidget(
       MaterialApp(
         title: 'Previewer',
@@ -24,10 +28,7 @@ void main() {
       ),
     );
 
-    expect(
-        find.text(
-            "${kMimeTypeRaiseIssueStart}application/pdf$kMimeTypeRaiseIssue"),
-        findsNothing);
+    expect(find.text(expected), findsNothing);
     expect(find.byType(PdfPreview), findsOneWidget);
   });
 
@@ -63,13 +64,13 @@ void main() {
         ),
       ),
     );
-
-    expect(
-        find.text("${kMimeTypeRaiseIssueStart}video/H264$kMimeTypeRaiseIssue"),
-        findsOneWidget);
+    expect(find.byType(VideoPreviewer), findsOneWidget);
   });
 
   testWidgets('Testing when type/subtype is model/step+xml', (tester) async {
+    String expected =
+        "Please click on 'Raw' to view the unformatted raw results as we encountered an error rendering this Content-Type model/step+xml.\nPlease raise an issue in API Dash GitHub repo so that we can look into this issue.";
+
     await tester.pumpWidget(
       MaterialApp(
         title: 'Previewer',
@@ -79,15 +80,13 @@ void main() {
             subtype: 'step+xml',
             bytes: bytes1,
             body: "",
+            hasRaw: true,
           ),
         ),
       ),
     );
 
-    expect(
-        find.text(
-            "${kMimeTypeRaiseIssueStart}model/step+xml$kMimeTypeRaiseIssue"),
-        findsOneWidget);
+    expect(find.text(expected), findsOneWidget);
   });
 
   testWidgets('Testing when type/subtype is image/jpeg', (tester) async {
@@ -112,6 +111,8 @@ void main() {
 
   testWidgets('Testing when type/subtype is image/jpeg corrupted',
       (tester) async {
+    String expected =
+        "We encountered an error rendering this image.\nPlease raise an issue in API Dash GitHub repo so that we can look into this issue.";
     Uint8List bytesJpegCorrupt = Uint8List.fromList([
       255,
       216,
@@ -147,11 +148,13 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.text(kImageError), findsOneWidget);
+    expect(find.text(expected), findsOneWidget);
   });
 
   testWidgets('Testing when type/subtype is audio/mpeg corrupted',
       (tester) async {
+    String expected =
+        "We encountered an error rendering this audio.\nPlease raise an issue in API Dash GitHub repo so that we can look into this issue.";
     Uint8List bytesAudioCorrupt =
         Uint8List.fromList(List.generate(100, (index) => index));
     await tester.pumpWidget(
@@ -168,10 +171,12 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.text(kAudioError), findsOneWidget);
+    expect(find.text(expected), findsOneWidget);
   });
 
   testWidgets('Testing when type/subtype is image/svg+xml', (tester) async {
+    String expected =
+        "Please click on 'Raw' to view the unformatted raw results as we encountered an error rendering this svg.\nPlease raise an issue in API Dash GitHub repo so that we can look into this issue.";
     String rawSvg =
         """<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 166 202">
     <defs>
@@ -208,12 +213,14 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.text(kSvgError), findsNothing);
+    expect(find.text(expected), findsNothing);
     expect(find.byType(SvgPicture), findsOneWidget);
   });
 
   testWidgets('Testing when type/subtype is image/svg+xml corrupted',
       (tester) async {
+    String expected =
+        "Please click on 'Raw' to view the unformatted raw results as we encountered an error rendering this svg.\nPlease raise an issue in API Dash GitHub repo so that we can look into this issue.";
     String rawSvg = "rwsjhdws";
     await tester.pumpWidget(
       MaterialApp(
@@ -229,7 +236,7 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.text(kSvgError), findsOneWidget);
+    expect(find.text(expected), findsOneWidget);
   });
 
   testWidgets('Testing when type/subtype is text/csv', (tester) async {

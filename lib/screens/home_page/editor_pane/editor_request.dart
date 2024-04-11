@@ -1,7 +1,7 @@
 import 'package:apidash/screens/home_page/editor_pane/details_card/request_pane/request_pane.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:apidash/providers/collection_providers.dart';
+import 'package:apidash/providers/providers.dart';
 import 'package:apidash/consts.dart';
 import 'details_card/details_card.dart';
 import 'url_card.dart';
