@@ -78,6 +78,8 @@ class _RequestPaneState extends State<RequestPane>
                   ),
                 ),
                 if (kIsMobile)
+                  const Spacer(),
+                if (kIsMobile)
                   SendButton(panelController: widget.panelController,),
               ],
             ),
