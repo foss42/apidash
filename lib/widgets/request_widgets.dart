@@ -54,7 +54,7 @@ class _RequestPaneState extends State<RequestPane>
                 child: SizedBox(
                   height: kHeaderHeight,
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       FilledButton.tonalIcon(
                         onPressed: widget.onPressedCodeButton,

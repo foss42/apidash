@@ -132,6 +132,9 @@ class RawTextField extends StatelessWidget {
         border: InputBorder.none,
         hintText: hintText,
       ),
+      onTapOutside: (PointerDownEvent event) {
+        FocusManager.instance.primaryFocus?.unfocus();
+      },
     );
   }
 }

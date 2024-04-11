@@ -72,7 +72,6 @@ class CollectionPane extends ConsumerWidget {
           ),
           kVSpacer10,
           Container(
-            height: 30,
             margin: const EdgeInsets.only(right: 8),
             decoration: BoxDecoration(
               borderRadius: kBorderRadius8,
