@@ -56,7 +56,7 @@ using (var request = new HttpRequestMessage(HttpMethod.{{ method | capitalize }}
         },
 {%- endif %}
 {%- endfor %}
-    }
+    };
 ''';
 
   final String kTemplateRawBody = '''
