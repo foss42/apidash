@@ -2,6 +2,7 @@ import 'package:apidash/models/models.dart' show RequestModel;
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart' show getNewUuid;
 import 'c/curl.dart';
+import 'csharp/http_client.dart';
 import 'csharp/rest_sharp.dart';
 import 'dart/http.dart';
 import 'dart/dio.dart';
@@ -99,6 +100,8 @@ class Codegen {
         return PHPcURLCodeGen().getCode(rM);
       case CodegenLanguage.cCurlCodeGen:
         return CCurlCodeGen().getCode(rM);
+      case CodegenLanguage.cSharpHttpClient:
+        return CSharpHttpClientCodeGen().getCode(rM, boundary: boundary);
       case CodegenLanguage.cSharpRestSharp:
         return CSharpRestSharp().getCode(rM);
       case CodegenLanguage.phpHttpPlug:
