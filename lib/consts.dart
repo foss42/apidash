@@ -273,6 +273,7 @@ enum CodegenLanguage {
   curl("cURL", "bash", "curl"),
   har("HAR", "json", "har"),
   cCurlCodeGen("C (Curl)", "cpp", "c"),
+  cSharpHttpClient("C# (Http Client)", "cs", "cs"),
   cSharpRestSharp("C# (Rest Sharp)", "cs", "cs"),
   dartHttp("Dart (http)", "dart", "dart"),
   dartDio("Dart (dio)", "dart", "dart"),
