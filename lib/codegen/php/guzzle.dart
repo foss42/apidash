@@ -5,7 +5,7 @@ import 'package:apidash/models/models.dart' show RequestModel;
 import 'package:apidash/consts.dart';
 
 class PhpGuzzleCodeGen {
-  String kStringImportNode = """<?php
+  String kTemplateImport = """<?php
 require_once 'vendor/autoload.php';
 
 use GuzzleHttp\\Client;
@@ -15,7 +15,7 @@ use GuzzleHttp\\Psr7\\Request;
 
 """;
 
-  String kMultiPartBodyTemplate = """
+  String kTemplateMultiPartBody = """
 \$body = new MultipartStream([
 {{fields_list}}
 ]);
@@ -48,7 +48,7 @@ END;
 
 """;
 
-  String kStringRequest = r"""
+  String kTemplateRequest = r"""
 $client = new Client();
 
 $request = new Request('{{method}}', '{{url}}'{{queryParams}}{{headers}}{{body}});
@@ -61,15 +61,15 @@ echo $res->getBody();
 
   String? getCode(RequestModel requestModel) {
     try {
-      jj.Template kNodejsImportTemplate = jj.Template(kStringImportNode);
-      String importsData = kNodejsImportTemplate.render({
+      var templateImport = jj.Template(kTemplateImport);
+      String importsData = templateImport.render({
         "hasFormData": requestModel.hasFormData,
       });
 
       String result = importsData;
 
-      if (requestModel.hasFormData && requestModel.formDataMapList.isNotEmpty) {
-        var templateMultiPartBody = jj.Template(kMultiPartBodyTemplate);
+      if (requestModel.hasFormData) {
+        var templateMultiPartBody = jj.Template(kTemplateMultiPartBody);
         var renderedMultiPartBody = templateMultiPartBody.render({
           "fields_list": requestModel.formDataMapList.map((field) {
             var row = '''
@@ -123,7 +123,7 @@ echo $res->getBody();
             .render({"body": requestModel.requestBody});
       }
 
-      var templateRequest = jj.Template(kStringRequest);
+      var templateRequest = jj.Template(kTemplateRequest);
       result += templateRequest.render({
         "url": stripUrlParams(requestModel.url),
         "method": requestModel.method.name.toLowerCase(),
