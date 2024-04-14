@@ -71,11 +71,11 @@ echo $res->getBody();
       if (requestModel.hasFormData) {
         var templateMultiPartBody = jj.Template(kTemplateMultiPartBody);
         var renderedMultiPartBody = templateMultiPartBody.render({
-          "fields_list": requestModel.formDataMapList.map((field) {
+          "fields_list": requestModel.formDataList.map((field) {
             var row = '''
     [
-        'name'     => '${field['name']}',
-        'contents' => '${field['value']}'
+        'name'     => '${field.name}',
+        'contents' => ${field.type == FormDataType.file? "fopen('${field.value}', 'r')":"'${field.value}'"}
     ]''';
             return row;
           }).join(",\n"),

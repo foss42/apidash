@@ -573,7 +573,7 @@ $body = new MultipartStream([
     ],
     [
         'name'     => 'imfile',
-        'contents' => '/Documents/up/1.png'
+        'contents' => fopen('/Documents/up/1.png', 'r')
     ]
 ]);
 
@@ -610,7 +610,7 @@ $body = new MultipartStream([
     ],
     [
         'name'     => 'imfile',
-        'contents' => '/Documents/up/1.png'
+        'contents' => fopen('/Documents/up/1.png', 'r')
     ]
 ]);
 
@@ -694,7 +694,7 @@ $body = new MultipartStream([
     ],
     [
         'name'     => 'imfile',
-        'contents' => '/Documents/up/1.png'
+        'contents' => fopen('/Documents/up/1.png', 'r')
     ]
 ]);
 
