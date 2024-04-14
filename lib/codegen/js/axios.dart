@@ -90,7 +90,7 @@ axios(config)
           m[i["name"]] = i["value"];
         }
         if (requestModel.hasFormData) {
-          m[kHeaderContentType] = 'multipart/form-data';
+          m[kHeaderContentType] = ContentType.formdata.header;
         }
         result += templateHeader
             .render({"headers": padMultilineString(kEncoder.convert(m), 2)});

@@ -89,7 +89,7 @@ String stripUrlParams(String url) {
   }
 
   Map<String, String>? queryParams = rowsToMap(requestParams);
-  if (queryParams != null) {
+  if (queryParams != null && queryParams.isNotEmpty) {
     if (uri.hasQuery) {
       Map<String, String> urlQueryParams = uri.queryParameters;
       queryParams = mergeMaps(urlQueryParams, queryParams);
