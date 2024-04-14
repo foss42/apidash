@@ -73,7 +73,7 @@ using (var request = new HttpRequestMessage(HttpMethod.{{ method | capitalize }}
   final kStringEnd = '''
     HttpResponseMessage response = await client.SendAsync(request);
 
-    Console.WriteLine(response.StatusCode);
+    Console.WriteLine((int)response.StatusCode);
     Console.WriteLine(await response.Content.ReadAsStringAsync());
 }
 ''';

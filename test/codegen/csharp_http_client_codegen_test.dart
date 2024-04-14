@@ -18,7 +18,7 @@ using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
 {
     HttpResponseMessage response = await client.SendAsync(request);
 
-    Console.WriteLine(response.StatusCode);
+    Console.WriteLine((int)response.StatusCode);
     Console.WriteLine(await response.Content.ReadAsStringAsync());
 }
 ''';
@@ -36,7 +36,7 @@ using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
 {
     HttpResponseMessage response = await client.SendAsync(request);
 
-    Console.WriteLine(response.StatusCode);
+    Console.WriteLine((int)response.StatusCode);
     Console.WriteLine(await response.Content.ReadAsStringAsync());
 }
 ''';
@@ -54,7 +54,7 @@ using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
 {
     HttpResponseMessage response = await client.SendAsync(request);
 
-    Console.WriteLine(response.StatusCode);
+    Console.WriteLine((int)response.StatusCode);
     Console.WriteLine(await response.Content.ReadAsStringAsync());
 }
 ''';
@@ -72,7 +72,7 @@ using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
 {
     HttpResponseMessage response = await client.SendAsync(request);
 
-    Console.WriteLine(response.StatusCode);
+    Console.WriteLine((int)response.StatusCode);
     Console.WriteLine(await response.Content.ReadAsStringAsync());
 }
 ''';
@@ -92,7 +92,7 @@ using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
     
     HttpResponseMessage response = await client.SendAsync(request);
 
-    Console.WriteLine(response.StatusCode);
+    Console.WriteLine((int)response.StatusCode);
     Console.WriteLine(await response.Content.ReadAsStringAsync());
 }
 ''';
@@ -112,7 +112,7 @@ using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
     
     HttpResponseMessage response = await client.SendAsync(request);
 
-    Console.WriteLine(response.StatusCode);
+    Console.WriteLine((int)response.StatusCode);
     Console.WriteLine(await response.Content.ReadAsStringAsync());
 }
 ''';
@@ -130,7 +130,7 @@ using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
 {
     HttpResponseMessage response = await client.SendAsync(request);
 
-    Console.WriteLine(response.StatusCode);
+    Console.WriteLine((int)response.StatusCode);
     Console.WriteLine(await response.Content.ReadAsStringAsync());
 }
 ''';
@@ -150,7 +150,7 @@ using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
     
     HttpResponseMessage response = await client.SendAsync(request);
 
-    Console.WriteLine(response.StatusCode);
+    Console.WriteLine((int)response.StatusCode);
     Console.WriteLine(await response.Content.ReadAsStringAsync());
 }
 ''';
@@ -168,7 +168,7 @@ using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
 {
     HttpResponseMessage response = await client.SendAsync(request);
 
-    Console.WriteLine(response.StatusCode);
+    Console.WriteLine((int)response.StatusCode);
     Console.WriteLine(await response.Content.ReadAsStringAsync());
 }
 ''';
@@ -188,7 +188,7 @@ using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
     
     HttpResponseMessage response = await client.SendAsync(request);
 
-    Console.WriteLine(response.StatusCode);
+    Console.WriteLine((int)response.StatusCode);
     Console.WriteLine(await response.Content.ReadAsStringAsync());
 }
 ''';
@@ -208,7 +208,7 @@ using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
     
     HttpResponseMessage response = await client.SendAsync(request);
 
-    Console.WriteLine(response.StatusCode);
+    Console.WriteLine((int)response.StatusCode);
     Console.WriteLine(await response.Content.ReadAsStringAsync());
 }
 ''';
@@ -226,7 +226,7 @@ using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
 {
     HttpResponseMessage response = await client.SendAsync(request);
 
-    Console.WriteLine(response.StatusCode);
+    Console.WriteLine((int)response.StatusCode);
     Console.WriteLine(await response.Content.ReadAsStringAsync());
 }
 ''';
@@ -246,7 +246,7 @@ using (var request = new HttpRequestMessage(HttpMethod.Head, uri))
 {
     HttpResponseMessage response = await client.SendAsync(request);
 
-    Console.WriteLine(response.StatusCode);
+    Console.WriteLine((int)response.StatusCode);
     Console.WriteLine(await response.Content.ReadAsStringAsync());
 }
 ''';
@@ -264,7 +264,7 @@ using (var request = new HttpRequestMessage(HttpMethod.Head, uri))
 {
     HttpResponseMessage response = await client.SendAsync(request);
 
-    Console.WriteLine(response.StatusCode);
+    Console.WriteLine((int)response.StatusCode);
     Console.WriteLine(await response.Content.ReadAsStringAsync());
 }
 ''';
@@ -292,7 +292,7 @@ using (var request = new HttpRequestMessage(HttpMethod.Post, uri))
 
     HttpResponseMessage response = await client.SendAsync(request);
 
-    Console.WriteLine(response.StatusCode);
+    Console.WriteLine((int)response.StatusCode);
     Console.WriteLine(await response.Content.ReadAsStringAsync());
 }
 ''';
@@ -323,7 +323,7 @@ using (var request = new HttpRequestMessage(HttpMethod.Post, uri))
 
     HttpResponseMessage response = await client.SendAsync(request);
 
-    Console.WriteLine(response.StatusCode);
+    Console.WriteLine((int)response.StatusCode);
     Console.WriteLine(await response.Content.ReadAsStringAsync());
 }
 ''';
@@ -351,7 +351,7 @@ using (var request = new HttpRequestMessage(HttpMethod.Post, uri))
 
     HttpResponseMessage response = await client.SendAsync(request);
 
-    Console.WriteLine(response.StatusCode);
+    Console.WriteLine((int)response.StatusCode);
     Console.WriteLine(await response.Content.ReadAsStringAsync());
 }
 ''';
@@ -378,7 +378,7 @@ using (var request = new HttpRequestMessage(HttpMethod.Post, uri))
 
     HttpResponseMessage response = await client.SendAsync(request);
 
-    Console.WriteLine(response.StatusCode);
+    Console.WriteLine((int)response.StatusCode);
     Console.WriteLine(await response.Content.ReadAsStringAsync());
 }
 ''';
@@ -407,7 +407,7 @@ using (var request = new HttpRequestMessage(HttpMethod.Post, uri))
 
     HttpResponseMessage response = await client.SendAsync(request);
 
-    Console.WriteLine(response.StatusCode);
+    Console.WriteLine((int)response.StatusCode);
     Console.WriteLine(await response.Content.ReadAsStringAsync());
 }
 ''';
@@ -437,7 +437,7 @@ using (var request = new HttpRequestMessage(HttpMethod.Post, uri))
 
     HttpResponseMessage response = await client.SendAsync(request);
 
-    Console.WriteLine(response.StatusCode);
+    Console.WriteLine((int)response.StatusCode);
     Console.WriteLine(await response.Content.ReadAsStringAsync());
 }
 ''';
@@ -467,7 +467,7 @@ using (var request = new HttpRequestMessage(HttpMethod.Post, uri))
 
     HttpResponseMessage response = await client.SendAsync(request);
 
-    Console.WriteLine(response.StatusCode);
+    Console.WriteLine((int)response.StatusCode);
     Console.WriteLine(await response.Content.ReadAsStringAsync());
 }
 ''';
@@ -494,7 +494,7 @@ using (var request = new HttpRequestMessage(HttpMethod.Post, uri))
 
     HttpResponseMessage response = await client.SendAsync(request);
 
-    Console.WriteLine(response.StatusCode);
+    Console.WriteLine((int)response.StatusCode);
     Console.WriteLine(await response.Content.ReadAsStringAsync());
 }
 ''';
@@ -527,7 +527,7 @@ using (var request = new HttpRequestMessage(HttpMethod.Post, uri))
 
     HttpResponseMessage response = await client.SendAsync(request);
 
-    Console.WriteLine(response.StatusCode);
+    Console.WriteLine((int)response.StatusCode);
     Console.WriteLine(await response.Content.ReadAsStringAsync());
 }
 ''';
@@ -556,7 +556,7 @@ using (var request = new HttpRequestMessage(HttpMethod.Put, uri))
 
     HttpResponseMessage response = await client.SendAsync(request);
 
-    Console.WriteLine(response.StatusCode);
+    Console.WriteLine((int)response.StatusCode);
     Console.WriteLine(await response.Content.ReadAsStringAsync());
 }
 ''';
@@ -585,7 +585,7 @@ using (var request = new HttpRequestMessage(HttpMethod.Patch, uri))
 
     HttpResponseMessage response = await client.SendAsync(request);
 
-    Console.WriteLine(response.StatusCode);
+    Console.WriteLine((int)response.StatusCode);
     Console.WriteLine(await response.Content.ReadAsStringAsync());
 }
 ''';
@@ -605,7 +605,7 @@ using (var request = new HttpRequestMessage(HttpMethod.Delete, uri))
 {
     HttpResponseMessage response = await client.SendAsync(request);
 
-    Console.WriteLine(response.StatusCode);
+    Console.WriteLine((int)response.StatusCode);
     Console.WriteLine(await response.Content.ReadAsStringAsync());
 }
 ''';
@@ -632,7 +632,7 @@ using (var request = new HttpRequestMessage(HttpMethod.Delete, uri))
 
     HttpResponseMessage response = await client.SendAsync(request);
 
-    Console.WriteLine(response.StatusCode);
+    Console.WriteLine((int)response.StatusCode);
     Console.WriteLine(await response.Content.ReadAsStringAsync());
 }
 ''';
