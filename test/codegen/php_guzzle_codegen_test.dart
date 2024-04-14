@@ -495,8 +495,7 @@ $body = new MultipartStream([
     [
         'name'     => 'times',
         'contents' => '3'
-    ],
-
+    ]
 ]);
 
 $headers = [
@@ -537,8 +536,7 @@ $body = new MultipartStream([
     [
         'name'     => 'times',
         'contents' => '3'
-    ],
-
+    ]
 ]);
 
 $headers = [
@@ -576,8 +574,7 @@ $body = new MultipartStream([
     [
         'name'     => 'imfile',
         'contents' => '/Documents/up/1.png'
-    ],
-
+    ]
 ]);
 
 $headers = [
@@ -614,8 +611,7 @@ $body = new MultipartStream([
     [
         'name'     => 'imfile',
         'contents' => '/Documents/up/1.png'
-    ],
-
+    ]
 ]);
 
 $headers = [
@@ -656,8 +652,7 @@ $body = new MultipartStream([
     [
         'name'     => 'times',
         'contents' => '3'
-    ],
-
+    ]
 ]);
 
 $queryParams = [
@@ -700,8 +695,7 @@ $body = new MultipartStream([
     [
         'name'     => 'imfile',
         'contents' => '/Documents/up/1.png'
-    ],
-
+    ]
 ]);
 
 $queryParams = [

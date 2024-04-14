@@ -72,12 +72,13 @@ echo $res->getBody();
         var templateMultiPartBody = jj.Template(kMultiPartBodyTemplate);
         var renderedMultiPartBody = templateMultiPartBody.render({
           "fields_list": requestModel.formDataMapList.map((field) {
-            return '''
+            var row = '''
     [
         'name'     => '${field['name']}',
         'contents' => '${field['value']}'
-    ],\n''';
-          }).join(),
+    ]''';
+            return row;
+          }).join(",\n"),
         });
         result += renderedMultiPartBody;
       }
