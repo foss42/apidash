@@ -8,7 +8,10 @@ void main() {
 
   group('GET Request', () {
     test('GET 1', () {
-      const expectedCode = r"""use GuzzleHttp\Client;
+      const expectedCode = r"""<?php
+require_once 'vendor/autoload.php';
+
+use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 
 
@@ -23,7 +26,10 @@ echo $res->getBody();""";
     });
 
     test('GET 2', () {
-      const expectedCode = r"""use GuzzleHttp\Client;
+      const expectedCode = r"""<?php
+require_once 'vendor/autoload.php';
+
+use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 
 
@@ -43,7 +49,10 @@ echo $res->getBody();""";
     });
 
     test('GET 3', () {
-      const expectedCode = r"""use GuzzleHttp\Client;
+      const expectedCode = r"""<?php
+require_once 'vendor/autoload.php';
+
+use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 
 
@@ -63,7 +72,10 @@ echo $res->getBody();""";
     });
 
     test('GET 4', () {
-      const expectedCode = r"""use GuzzleHttp\Client;
+      const expectedCode = r"""<?php
+require_once 'vendor/autoload.php';
+
+use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 
 
@@ -87,7 +99,10 @@ echo $res->getBody();""";
     });
 
     test('GET 5', () {
-      const expectedCode = r"""use GuzzleHttp\Client;
+      const expectedCode = r"""<?php
+require_once 'vendor/autoload.php';
+
+use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 
 
@@ -106,7 +121,10 @@ echo $res->getBody();""";
     });
 
     test('GET 6', () {
-      const expectedCode = r"""use GuzzleHttp\Client;
+      const expectedCode = r"""<?php
+require_once 'vendor/autoload.php';
+
+use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 
 
@@ -130,7 +148,10 @@ echo $res->getBody();""";
     });
 
     test('GET 7', () {
-      const expectedCode = r"""use GuzzleHttp\Client;
+      const expectedCode = r"""<?php
+require_once 'vendor/autoload.php';
+
+use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 
 
@@ -145,7 +166,10 @@ echo $res->getBody();""";
     });
 
     test('GET 8', () {
-      const expectedCode = r"""use GuzzleHttp\Client;
+      const expectedCode = r"""<?php
+require_once 'vendor/autoload.php';
+
+use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 
 
@@ -169,7 +193,10 @@ echo $res->getBody();""";
     });
 
     test('GET 9', () {
-      const expectedCode = r"""use GuzzleHttp\Client;
+      const expectedCode = r"""<?php
+require_once 'vendor/autoload.php';
+
+use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 
 
@@ -190,7 +217,10 @@ echo $res->getBody();""";
     });
 
     test('GET 10', () {
-      const expectedCode = r"""use GuzzleHttp\Client;
+      const expectedCode = r"""<?php
+require_once 'vendor/autoload.php';
+
+use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 
 
@@ -213,7 +243,10 @@ echo $res->getBody();""";
     });
 
     test('GET 11', () {
-      const expectedCode = r"""use GuzzleHttp\Client;
+      const expectedCode = r"""<?php
+require_once 'vendor/autoload.php';
+
+use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 
 
@@ -239,7 +272,10 @@ echo $res->getBody();""";
     });
 
     test('GET 12', () {
-      const expectedCode = r"""use GuzzleHttp\Client;
+      const expectedCode = r"""<?php
+require_once 'vendor/autoload.php';
+
+use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 
 
@@ -257,7 +293,10 @@ echo $res->getBody();""";
 
   group('HEAD Request', () {
     test('HEAD 1', () {
-      const expectedCode = r"""use GuzzleHttp\Client;
+      const expectedCode = r"""<?php
+require_once 'vendor/autoload.php';
+
+use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 
 
@@ -273,7 +312,10 @@ echo $res->getBody();""";
     });
 
     test('HEAD 2', () {
-      const expectedCode = r"""use GuzzleHttp\Client;
+      const expectedCode = r"""<?php
+require_once 'vendor/autoload.php';
+
+use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 
 
@@ -290,7 +332,10 @@ echo $res->getBody();""";
 
   group('POST Request', () {
     test('POST 1', () {
-      const expectedCode = r"""use GuzzleHttp\Client;
+      const expectedCode = r"""<?php
+require_once 'vendor/autoload.php';
+
+use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 
 
@@ -312,7 +357,10 @@ echo $res->getBody();""";
     });
 
     test('POST 2', () {
-      const expectedCode = r"""use GuzzleHttp\Client;
+      const expectedCode = r"""<?php
+require_once 'vendor/autoload.php';
+
+use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 
 
@@ -334,7 +382,10 @@ echo $res->getBody();""";
     });
 
     test('POST 3', () {
-      const expectedCode = r"""use GuzzleHttp\Client;
+      const expectedCode = r"""<?php
+require_once 'vendor/autoload.php';
+
+use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 
 
@@ -357,7 +408,10 @@ echo $res->getBody();""";
     });
 
     test('POST 4', () {
-      const expectedCode = r"""use GuzzleHttp\Client;
+      const expectedCode = r"""<?php
+require_once 'vendor/autoload.php';
+
+use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\MultipartStream;
 
@@ -393,7 +447,10 @@ echo $res->getBody();""";
     });
 
     test('POST 5', () {
-      const expectedCode = r"""use GuzzleHttp\Client;
+      const expectedCode = r"""<?php
+require_once 'vendor/autoload.php';
+
+use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\MultipartStream;
 
@@ -430,7 +487,10 @@ echo $res->getBody();""";
     });
 
     test('POST 6', () {
-      const expectedCode = r"""use GuzzleHttp\Client;
+      const expectedCode = r"""<?php
+require_once 'vendor/autoload.php';
+
+use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\MultipartStream;
 
@@ -462,7 +522,10 @@ echo $res->getBody();""";
     });
 
     test('POST 7', () {
-      const expectedCode = r"""use GuzzleHttp\Client;
+      const expectedCode = r"""<?php
+require_once 'vendor/autoload.php';
+
+use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\MultipartStream;
 
@@ -494,7 +557,10 @@ echo $res->getBody();""";
     });
 
     test('POST 8', () {
-      const expectedCode = r"""use GuzzleHttp\Client;
+      const expectedCode = r"""<?php
+require_once 'vendor/autoload.php';
+
+use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\MultipartStream;
 
@@ -536,7 +602,10 @@ echo $res->getBody();""";
     });
 
     test('POST 9', () {
-      const expectedCode = r"""use GuzzleHttp\Client;
+      const expectedCode = r"""<?php
+require_once 'vendor/autoload.php';
+
+use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\MultipartStream;
 
@@ -578,7 +647,10 @@ echo $res->getBody();""";
 
   group('PUT Request', () {
     test('PUT 1', () {
-      const expectedCode = r"""use GuzzleHttp\Client;
+      const expectedCode = r"""<?php
+require_once 'vendor/autoload.php';
+
+use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 
 
@@ -601,7 +673,10 @@ echo $res->getBody();""";
 
   group('PATCH Request', () {
     test('PATCH 1', () {
-      const expectedCode = r"""use GuzzleHttp\Client;
+      const expectedCode = r"""<?php
+require_once 'vendor/autoload.php';
+
+use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 
 
@@ -625,7 +700,10 @@ echo $res->getBody();""";
 
   group('DELETE Request', () {
     test('DELETE 1', () {
-      const expectedCode = r"""use GuzzleHttp\Client;
+      const expectedCode = r"""<?php
+require_once 'vendor/autoload.php';
+
+use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 
 
@@ -641,7 +719,10 @@ echo $res->getBody();""";
     });
 
     test('DELETE 2', () {
-      const expectedCode = r"""use GuzzleHttp\Client;
+      const expectedCode = r"""<?php
+require_once 'vendor/autoload.php';
+
+use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 
 

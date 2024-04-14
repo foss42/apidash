@@ -5,7 +5,10 @@ import 'package:apidash/models/models.dart' show RequestModel;
 import 'package:apidash/consts.dart';
 
 class PhpGuzzleCodeGen {
-  String kStringImportNode = """use GuzzleHttp\\Client;
+  String kStringImportNode = """<?php
+require_once 'vendor/autoload.php';
+
+use GuzzleHttp\\Client;
 use GuzzleHttp\\Psr7\\Request;
 {% if hasFormData %}use GuzzleHttp\\Psr7\\MultipartStream;{% endif %}
 
