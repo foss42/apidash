@@ -17,7 +17,7 @@ use GuzzleHttp\Psr7\Request;
 
 $client = new Client();
 
-$request = new Request('get', 'https://api.apidash.dev'  );
+$request = new Request('get', 'https://api.apidash.dev');
 $res = $client->sendAsync($request)->wait();
 
 echo $res->getStatusCode() . "\n";
@@ -43,7 +43,7 @@ $queryParamsStr = '?' . http_build_query($queryParams);
 
 $client = new Client();
 
-$request = new Request('get', 'https://api.apidash.dev/country/data'. $queryParamsStr  );
+$request = new Request('get', 'https://api.apidash.dev/country/data'. $queryParamsStr);
 $res = $client->sendAsync($request)->wait();
 
 echo $res->getStatusCode() . "\n";
@@ -69,7 +69,7 @@ $queryParamsStr = '?' . http_build_query($queryParams);
 
 $client = new Client();
 
-$request = new Request('get', 'https://api.apidash.dev/country/data'. $queryParamsStr  );
+$request = new Request('get', 'https://api.apidash.dev/country/data'. $queryParamsStr);
 $res = $client->sendAsync($request)->wait();
 
 echo $res->getStatusCode() . "\n";
@@ -99,7 +99,7 @@ $queryParamsStr = '?' . http_build_query($queryParams);
 
 $client = new Client();
 
-$request = new Request('get', 'https://api.apidash.dev/humanize/social'. $queryParamsStr  );
+$request = new Request('get', 'https://api.apidash.dev/humanize/social'. $queryParamsStr);
 $res = $client->sendAsync($request)->wait();
 
 echo $res->getStatusCode() . "\n";
@@ -124,7 +124,7 @@ $headers = [
 
 $client = new Client();
 
-$request = new Request('get', 'https://api.github.com/repos/foss42/apidash' , $headers, );
+$request = new Request('get', 'https://api.github.com/repos/foss42/apidash', $headers);
 $res = $client->sendAsync($request)->wait();
 
 echo $res->getStatusCode() . "\n";
@@ -154,7 +154,7 @@ $headers = [
 
 $client = new Client();
 
-$request = new Request('get', 'https://api.github.com/repos/foss42/apidash'. $queryParamsStr , $headers, );
+$request = new Request('get', 'https://api.github.com/repos/foss42/apidash'. $queryParamsStr, $headers);
 $res = $client->sendAsync($request)->wait();
 
 echo $res->getStatusCode() . "\n";
@@ -175,7 +175,7 @@ use GuzzleHttp\Psr7\Request;
 
 $client = new Client();
 
-$request = new Request('get', 'https://api.apidash.dev'  );
+$request = new Request('get', 'https://api.apidash.dev');
 $res = $client->sendAsync($request)->wait();
 
 echo $res->getStatusCode() . "\n";
@@ -205,7 +205,7 @@ $headers = [
 
 $client = new Client();
 
-$request = new Request('get', 'https://api.github.com/repos/foss42/apidash'. $queryParamsStr , $headers, );
+$request = new Request('get', 'https://api.github.com/repos/foss42/apidash'. $queryParamsStr, $headers);
 $res = $client->sendAsync($request)->wait();
 
 echo $res->getStatusCode() . "\n";
@@ -232,7 +232,7 @@ $queryParamsStr = '?' . http_build_query($queryParams);
 
 $client = new Client();
 
-$request = new Request('get', 'https://api.apidash.dev/humanize/social'. $queryParamsStr  );
+$request = new Request('get', 'https://api.apidash.dev/humanize/social'. $queryParamsStr);
 $res = $client->sendAsync($request)->wait();
 
 echo $res->getStatusCode() . "\n";
@@ -257,7 +257,7 @@ $headers = [
 
 $client = new Client();
 
-$request = new Request('get', 'https://api.apidash.dev/humanize/social' , $headers, );
+$request = new Request('get', 'https://api.apidash.dev/humanize/social', $headers);
 $res = $client->sendAsync($request)->wait();
 
 echo $res->getStatusCode() . "\n";
@@ -292,7 +292,7 @@ $headers = [
 
 $client = new Client();
 
-$request = new Request('get', 'https://api.apidash.dev/humanize/social'. $queryParamsStr , $headers, );
+$request = new Request('get', 'https://api.apidash.dev/humanize/social'. $queryParamsStr, $headers);
 $res = $client->sendAsync($request)->wait();
 
 echo $res->getStatusCode() . "\n";
@@ -314,7 +314,7 @@ use GuzzleHttp\Psr7\Request;
 
 $client = new Client();
 
-$request = new Request('get', 'https://api.apidash.dev/humanize/social'  );
+$request = new Request('get', 'https://api.apidash.dev/humanize/social');
 $res = $client->sendAsync($request)->wait();
 
 echo $res->getStatusCode() . "\n";
@@ -338,7 +338,7 @@ use GuzzleHttp\Psr7\Request;
 
 $client = new Client();
 
-$request = new Request('head', 'https://api.apidash.dev'  );
+$request = new Request('head', 'https://api.apidash.dev');
 $res = $client->sendAsync($request)->wait();
 
 echo $res->getStatusCode() . "\n";
@@ -360,7 +360,7 @@ use GuzzleHttp\Psr7\Request;
 
 $client = new Client();
 
-$request = new Request('head', 'http://api.apidash.dev'  );
+$request = new Request('head', 'http://api.apidash.dev');
 $res = $client->sendAsync($request)->wait();
 
 echo $res->getStatusCode() . "\n";
@@ -385,11 +385,15 @@ $headers = [
 'Content-Type' => 'text/plain'
 ];
 
-$body = "{\n\"text\": \"I LOVE Flutter\"\n}";
+$body = <<<END
+{
+"text": "I LOVE Flutter"
+}
+END;
 
 $client = new Client();
 
-$request = new Request('post', 'https://api.apidash.dev/case/lower' , $headers,  $body);
+$request = new Request('post', 'https://api.apidash.dev/case/lower', $headers, $body);
 $res = $client->sendAsync($request)->wait();
 
 echo $res->getStatusCode() . "\n";
@@ -413,11 +417,20 @@ $headers = [
 'Content-Type' => 'application/json'
 ];
 
-$body = "{\n\"text\": \"I LOVE Flutter\",\n\"flag\": null,\n\"male\": true,\n\"female\": false,\n\"no\": 1.2,\n\"arr\": [\"null\", \"true\", \"false\", null]\n}";
+$body = <<<END
+{
+"text": "I LOVE Flutter",
+"flag": null,
+"male": true,
+"female": false,
+"no": 1.2,
+"arr": ["null", "true", "false", null]
+}
+END;
 
 $client = new Client();
 
-$request = new Request('post', 'https://api.apidash.dev/case/lower' , $headers,  $body);
+$request = new Request('post', 'https://api.apidash.dev/case/lower', $headers, $body);
 $res = $client->sendAsync($request)->wait();
 
 echo $res->getStatusCode() . "\n";
@@ -438,15 +451,19 @@ use GuzzleHttp\Psr7\Request;
 
 
 $headers = [
-'Content-Type' => 'application/json',
-'User-Agent' => 'Test Agent'
+'User-Agent' => 'Test Agent',
+'Content-Type' => 'application/json'
 ];
 
-$body = "{\n\"text\": \"I LOVE Flutter\"\n}";
+$body = <<<END
+{
+"text": "I LOVE Flutter"
+}
+END;
 
 $client = new Client();
 
-$request = new Request('post', 'https://api.apidash.dev/case/lower' , $headers,  $body);
+$request = new Request('post', 'https://api.apidash.dev/case/lower', $headers, $body);
 $res = $client->sendAsync($request)->wait();
 
 echo $res->getStatusCode() . "\n";
@@ -466,7 +483,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\MultipartStream;
 
-$multipart = new MultipartStream([
+$body = new MultipartStream([
     [
         'name'     => 'text',
         'contents' => 'API'
@@ -483,12 +500,12 @@ $multipart = new MultipartStream([
 ]);
 
 $headers = [
-'Content-Type' => 'multipart/form-data; boundary=' . $multipart->getBoundary(),
+'Content-Type' => 'multipart/form-data; boundary=' . $body->getBoundary()
 ];
 
 $client = new Client();
 
-$request = new Request('post', 'https://api.apidash.dev/io/form' , $headers,  $multipart);
+$request = new Request('post', 'https://api.apidash.dev/io/form', $headers, $body);
 $res = $client->sendAsync($request)->wait();
 
 echo $res->getStatusCode() . "\n";
@@ -508,7 +525,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\MultipartStream;
 
-$multipart = new MultipartStream([
+$body = new MultipartStream([
     [
         'name'     => 'text',
         'contents' => 'API'
@@ -526,12 +543,12 @@ $multipart = new MultipartStream([
 
 $headers = [
 'User-Agent' => 'Test Agent',
-'Content-Type' => 'multipart/form-data; boundary=' . $multipart->getBoundary(),
+'Content-Type' => 'multipart/form-data; boundary=' . $body->getBoundary()
 ];
 
 $client = new Client();
 
-$request = new Request('post', 'https://api.apidash.dev/io/form' , $headers,  $multipart);
+$request = new Request('post', 'https://api.apidash.dev/io/form', $headers, $body);
 $res = $client->sendAsync($request)->wait();
 
 echo $res->getStatusCode() . "\n";
@@ -551,7 +568,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\MultipartStream;
 
-$multipart = new MultipartStream([
+$body = new MultipartStream([
     [
         'name'     => 'token',
         'contents' => 'xyz'
@@ -564,12 +581,12 @@ $multipart = new MultipartStream([
 ]);
 
 $headers = [
-'Content-Type' => 'multipart/form-data; boundary=' . $multipart->getBoundary(),
+'Content-Type' => 'multipart/form-data; boundary=' . $body->getBoundary()
 ];
 
 $client = new Client();
 
-$request = new Request('post', 'https://api.apidash.dev/io/img' , $headers,  $multipart);
+$request = new Request('post', 'https://api.apidash.dev/io/img', $headers, $body);
 $res = $client->sendAsync($request)->wait();
 
 echo $res->getStatusCode() . "\n";
@@ -589,7 +606,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\MultipartStream;
 
-$multipart = new MultipartStream([
+$body = new MultipartStream([
     [
         'name'     => 'token',
         'contents' => 'xyz'
@@ -602,12 +619,12 @@ $multipart = new MultipartStream([
 ]);
 
 $headers = [
-'Content-Type' => 'multipart/form-data; boundary=' . $multipart->getBoundary(),
+'Content-Type' => 'multipart/form-data; boundary=' . $body->getBoundary()
 ];
 
 $client = new Client();
 
-$request = new Request('post', 'https://api.apidash.dev/io/img' , $headers,  $multipart);
+$request = new Request('post', 'https://api.apidash.dev/io/img', $headers, $body);
 $res = $client->sendAsync($request)->wait();
 
 echo $res->getStatusCode() . "\n";
@@ -627,7 +644,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\MultipartStream;
 
-$multipart = new MultipartStream([
+$body = new MultipartStream([
     [
         'name'     => 'text',
         'contents' => 'API'
@@ -650,12 +667,12 @@ $queryParams = [
 $queryParamsStr = '?' . http_build_query($queryParams);
 
 $headers = [
-'Content-Type' => 'multipart/form-data; boundary=' . $multipart->getBoundary(),
+'Content-Type' => 'multipart/form-data; boundary=' . $body->getBoundary()
 ];
 
 $client = new Client();
 
-$request = new Request('post', 'https://api.apidash.dev/io/form'. $queryParamsStr , $headers,  $multipart);
+$request = new Request('post', 'https://api.apidash.dev/io/form'. $queryParamsStr, $headers, $body);
 $res = $client->sendAsync($request)->wait();
 
 echo $res->getStatusCode() . "\n";
@@ -675,7 +692,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\MultipartStream;
 
-$multipart = new MultipartStream([
+$body = new MultipartStream([
     [
         'name'     => 'token',
         'contents' => 'xyz'
@@ -696,12 +713,12 @@ $queryParamsStr = '?' . http_build_query($queryParams);
 $headers = [
 'User-Agent' => 'Test Agent',
 'Keep-Alive' => 'true',
-'Content-Type' => 'multipart/form-data; boundary=' . $multipart->getBoundary(),
+'Content-Type' => 'multipart/form-data; boundary=' . $body->getBoundary()
 ];
 
 $client = new Client();
 
-$request = new Request('post', 'https://api.apidash.dev/io/img'. $queryParamsStr , $headers,  $multipart);
+$request = new Request('post', 'https://api.apidash.dev/io/img'. $queryParamsStr, $headers, $body);
 $res = $client->sendAsync($request)->wait();
 
 echo $res->getStatusCode() . "\n";
@@ -727,11 +744,16 @@ $headers = [
 'Content-Type' => 'application/json'
 ];
 
-$body = "{\n\"name\": \"morpheus\",\n\"job\": \"zion resident\"\n}";
+$body = <<<END
+{
+"name": "morpheus",
+"job": "zion resident"
+}
+END;
 
 $client = new Client();
 
-$request = new Request('put', 'https://reqres.in/api/users/2' , $headers,  $body);
+$request = new Request('put', 'https://reqres.in/api/users/2', $headers, $body);
 $res = $client->sendAsync($request)->wait();
 
 echo $res->getStatusCode() . "\n";
@@ -756,11 +778,16 @@ $headers = [
 'Content-Type' => 'application/json'
 ];
 
-$body = "{\n\"name\": \"marfeus\",\n\"job\": \"accountant\"\n}";
+$body = <<<END
+{
+"name": "marfeus",
+"job": "accountant"
+}
+END;
 
 $client = new Client();
 
-$request = new Request('patch', 'https://reqres.in/api/users/2' , $headers,  $body);
+$request = new Request('patch', 'https://reqres.in/api/users/2', $headers, $body);
 $res = $client->sendAsync($request)->wait();
 
 echo $res->getStatusCode() . "\n";
@@ -784,7 +811,7 @@ use GuzzleHttp\Psr7\Request;
 
 $client = new Client();
 
-$request = new Request('delete', 'https://reqres.in/api/users/2'  );
+$request = new Request('delete', 'https://reqres.in/api/users/2');
 $res = $client->sendAsync($request)->wait();
 
 echo $res->getStatusCode() . "\n";
@@ -808,11 +835,16 @@ $headers = [
 'Content-Type' => 'application/json'
 ];
 
-$body = "{\n\"name\": \"marfeus\",\n\"job\": \"accountant\"\n}";
+$body = <<<END
+{
+"name": "marfeus",
+"job": "accountant"
+}
+END;
 
 $client = new Client();
 
-$request = new Request('delete', 'https://reqres.in/api/users/2' , $headers,  $body);
+$request = new Request('delete', 'https://reqres.in/api/users/2', $headers, $body);
 $res = $client->sendAsync($request)->wait();
 
 echo $res->getStatusCode() . "\n";
