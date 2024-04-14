@@ -101,7 +101,7 @@ class Codegen {
       case CodegenLanguage.cCurlCodeGen:
         return CCurlCodeGen().getCode(rM);
       case CodegenLanguage.cSharpHttpClient:
-        return CSharpHttpClientCodeGen().getCode(rM, boundary: boundary);
+        return CSharpHttpClientCodeGen().getCode(rM);
       case CodegenLanguage.cSharpRestSharp:
         return CSharpRestSharp().getCode(rM);
       case CodegenLanguage.phpHttpPlug:

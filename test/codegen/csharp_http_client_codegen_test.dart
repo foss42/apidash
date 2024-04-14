@@ -361,20 +361,19 @@ using (var request = new HttpRequestMessage(HttpMethod.Post, uri))
     test('POST 4', () {
       const expectedCode = r'''using System;
 using System.Net.Http;
-using System.Collections.Generic;
+using System.IO;
 
 string uri = "https://api.apidash.dev/io/form";
 
 using (var client = new HttpClient())
 using (var request = new HttpRequestMessage(HttpMethod.Post, uri))
 {
-    var payload = new Dictionary<string, string>
+    var content = new MultipartFormDataContent
     {
-        { "text", "API" },
-        { "sep", "|" },
-        { "times", "3" },
+        { new StringContent("API"), "text" },
+        { new StringContent("|"), "sep" },
+        { new StringContent("3"), "times" },
     };
-    var content = new FormUrlEncodedContent(payload);
     request.Content = content;
 
     HttpResponseMessage response = await client.SendAsync(request);
@@ -389,7 +388,7 @@ using (var request = new HttpRequestMessage(HttpMethod.Post, uri))
     test('POST 5', () {
       const expectedCode = r'''using System;
 using System.Net.Http;
-using System.Collections.Generic;
+using System.IO;
 
 string uri = "https://api.apidash.dev/io/form";
 
@@ -398,13 +397,12 @@ using (var request = new HttpRequestMessage(HttpMethod.Post, uri))
 {
     request.Headers.Add("User-Agent", "Test Agent");
     
-    var payload = new Dictionary<string, string>
+    var content = new MultipartFormDataContent
     {
-        { "text", "API" },
-        { "sep", "|" },
-        { "times", "3" },
+        { new StringContent("API"), "text" },
+        { new StringContent("|"), "sep" },
+        { new StringContent("3"), "times" },
     };
-    var content = new FormUrlEncodedContent(payload);
     request.Content = content;
 
     HttpResponseMessage response = await client.SendAsync(request);
@@ -479,20 +477,19 @@ using (var request = new HttpRequestMessage(HttpMethod.Post, uri))
     test('POST 8', () {
       const expectedCode = r'''using System;
 using System.Net.Http;
-using System.Collections.Generic;
+using System.IO;
 
 string uri = "https://api.apidash.dev/io/form?size=2&len=3";
 
 using (var client = new HttpClient())
 using (var request = new HttpRequestMessage(HttpMethod.Post, uri))
 {
-    var payload = new Dictionary<string, string>
+    var content = new MultipartFormDataContent
     {
-        { "text", "API" },
-        { "sep", "|" },
-        { "times", "3" },
+        { new StringContent("API"), "text" },
+        { new StringContent("|"), "sep" },
+        { new StringContent("3"), "times" },
     };
-    var content = new FormUrlEncodedContent(payload);
     request.Content = content;
 
     HttpResponseMessage response = await client.SendAsync(request);

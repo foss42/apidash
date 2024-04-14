@@ -78,13 +78,13 @@ using (var request = new HttpRequestMessage(HttpMethod.{{ method | capitalize }}
 }
 ''';
 
-  String? getCode(RequestModel requestModel, {String? boundary}) {
+  String? getCode(RequestModel requestModel) {
     try {
       StringBuffer result = StringBuffer();
 
       // Include necessary C# namespace
-      String formdataImport = requestModel.hasFormData //
-          ? (requestModel.hasFileInFormData ? "multipart" : "urlencoded")
+      String formdataImport = requestModel.hasFormData
+          ? "multipart" //(requestModel.hasFileInFormData ? "multipart" : "urlencoded")
           : "nodata";
       result.writeln(jj.Template(kTemplateNamespaces).render({"formdata": formdataImport}));
 
@@ -116,10 +116,11 @@ using (var request = new HttpRequestMessage(HttpMethod.{{ method | capitalize }}
             "mediaType": requestModel.requestBodyContentType.header,
           }));
         } else if (requestModel.hasFormData) {
-          final String renderingTemplate = requestModel.hasFileInFormData
-              ? kTemplateMultipartFormDataContent //
-              : kTemplateFormUrlEncodedContent;
+          // final String renderingTemplate = requestModel.hasFileInFormData
+          //     ? kTemplateMultipartFormDataContent 
+          //     : kTemplateFormUrlEncodedContent;
 
+          final String renderingTemplate = kTemplateMultipartFormDataContent;
           result.writeln(jj.Template(renderingTemplate).render({
             "formdata": requestModel.formDataMapList,
           }));
