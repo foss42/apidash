@@ -46,12 +46,15 @@ use GuzzleHttp\\Psr7\\Request;
 
 """;
 
-  String kStringRequest = """
-\$client = new Client();
+  String kStringRequest = r"""
+$client = new Client();
 
-\$request = new Request('{{method}}', '{{url}}'{{queryParams}} {{headers}} {{body}});
-\$res = \$client->sendAsync(\$request)->wait();
-echo \$res->getBody();
+$request = new Request('{{method}}', '{{url}}'{{queryParams}} {{headers}} {{body}});
+$res = $client->sendAsync($request)->wait();
+
+echo $res->getStatusCode() . "\n";
+echo $res->getBody();
+
 """;
 
   String? getCode(RequestModel requestModel) {
@@ -89,7 +92,7 @@ echo \$res->getBody();
         }
         var jsonString = '';
         m.forEach((key, value) {
-          jsonString += "\t\t\t\t'$key' => '$value',\n";
+          jsonString += "'$key' => '$value',\n";
         });
         jsonString = jsonString.substring(0, jsonString.length - 2);
         result += templateParams.render({
@@ -111,13 +114,13 @@ echo \$res->getBody();
           if (key == 'Content-Type' && value.contains('multipart/form-data')) {
             contentTypeAdded = false;
           } else {
-            headersString += "\t\t\t\t'$key' => '$value',\n";
+            headersString += "'$key' => '$value',\n";
           }
         });
 
         if (requestModel.hasFormData && !contentTypeAdded) {
           headersString +=
-              "\t\t\t\t'Content-Type' => 'multipart/form-data; boundary=' . \$multipart->getBoundary(), \n";
+              "'Content-Type' => 'multipart/form-data; boundary=' . \$multipart->getBoundary(), \n";
         }
         headersString = headersString.substring(0, headersString.length - 2);
         result += templateHeader.render({
