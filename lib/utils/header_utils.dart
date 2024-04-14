@@ -144,11 +144,13 @@ List<String> getFuzzyHeaderSuggestions(String pattern) {
       recommendations.add(s);
     }
   }
+  int currentIndex = 0;
   // sort the predictions based on first character match
   for (int i = 0; i < predictions.length; i++) {
     if (predictions[i][0].toLowerCase() == pattern[0].toLowerCase()) {
       final String temp = predictions.removeAt(i);
-      predictions.insert(0, temp); //push to front
+      predictions.insert(currentIndex, temp); //push to front
+      currentIndex++;
     }
   }
 
