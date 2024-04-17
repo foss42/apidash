@@ -96,4 +96,15 @@ void main() {
     ]);
     expect(httpRequestModel.hasFileInFormData, true);
   });
+
+  test('Testing immutability', () {
+    var httpRequestModel = requestModelPost10;
+    var httpRequestModel2 =
+        httpRequestModel.copyWith(headers: httpRequestModel.headers);
+    expect(httpRequestModel.headers, httpRequestModel2.headers);
+    expect(
+        identical(httpRequestModel.headers, httpRequestModel2.headers), false);
+    var httpRequestModel3 = httpRequestModel.copyWith(headers: null);
+    expect(httpRequestModel3.headers, null);
+  });
 }
