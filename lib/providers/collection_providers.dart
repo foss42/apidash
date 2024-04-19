@@ -108,6 +108,8 @@ class CollectionStateNotifier
       responseStatus: null,
       message: null,
       httpResponseModel: null,
+      isWorking: false,
+      sendingTime: null,
     );
     var map = {...state!};
     map[id] = newModel;
@@ -180,11 +182,11 @@ class CollectionStateNotifier
         body: body ?? currentHttpRequestModel.body,
         formData: formData ?? currentHttpRequestModel.formData,
       ),
-      responseStatus: responseStatus,
-      message: message,
-      httpResponseModel: httpResponseModel,
+      responseStatus: responseStatus ?? currentModel.responseStatus,
+      message: message ?? currentModel.message,
+      httpResponseModel: httpResponseModel ?? currentModel.httpResponseModel,
     );
-    //print(newModel);
+
     var map = {...state!};
     map[id] = newModel;
     state = map;
