@@ -5,7 +5,7 @@ import 'dart:convert';
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart'
     show getValidRequestUri, getNewUuid, getFilenameFromPath;
-import 'package:apidash/models/models.dart' show RequestModel;
+import 'package:apidash/models/models.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 Future<Map<String, dynamic>> collectionToHAR(
@@ -65,17 +65,19 @@ Map<String, dynamic> entryToHAR(RequestModel requestModel) {
       "bodySize": 0,
       "comment": ""
     },
-    "request": requestModelToHARJsonRequest(
-      requestModel,
-      exportMode: true,
-    ),
+    "request": requestModel.httpRequestModel != null
+        ? requestModelToHARJsonRequest(
+            requestModel.httpRequestModel!,
+            exportMode: true,
+          )
+        : {},
     "cache": {}
   };
   return entryJson;
 }
 
 Map<String, dynamic> requestModelToHARJsonRequest(
-  RequestModel requestModel, {
+  HttpRequestModel? requestModel, {
   defaultUriScheme = kDefaultUriScheme,
   bool exportMode = false,
   bool useEnabled = false,
@@ -84,9 +86,13 @@ Map<String, dynamic> requestModelToHARJsonRequest(
   Map<String, dynamic> json = {};
   bool hasBody = false;
 
+  if (requestModel == null) {
+    return json;
+  }
+
   var rec = getValidRequestUri(
     requestModel.url,
-    useEnabled ? requestModel.enabledRequestParams : requestModel.requestParams,
+    useEnabled ? requestModel.enabledParams : requestModel.params,
     defaultUriScheme: defaultUriScheme,
   );
 
@@ -118,8 +124,8 @@ Map<String, dynamic> requestModelToHARJsonRequest(
     if (requestModel.hasJsonData || requestModel.hasTextData) {
       hasBody = true;
       json["postData"] = {};
-      json["postData"]["mimeType"] = requestModel.requestBodyContentType.header;
-      json["postData"]["text"] = requestModel.requestBody;
+      json["postData"]["mimeType"] = requestModel.bodyContentType.header;
+      json["postData"]["text"] = requestModel.body;
       if (exportMode) {
         json["postData"]["comment"] = "";
       }
@@ -130,7 +136,7 @@ Map<String, dynamic> requestModelToHARJsonRequest(
       hasBody = true;
       json["postData"] = {};
       json["postData"]["mimeType"] =
-          "${requestModel.requestBodyContentType.header}; boundary=$boundary";
+          "${requestModel.bodyContentType.header}; boundary=$boundary";
       json["postData"]["params"] = [];
       for (var item in requestModel.formDataList) {
         Map<String, String> d = exportMode ? {"comment": ""} : {};
@@ -149,9 +155,8 @@ Map<String, dynamic> requestModelToHARJsonRequest(
       }
     }
 
-    var headersList = useEnabled
-        ? requestModel.enabledRequestHeaders
-        : requestModel.requestHeaders;
+    var headersList =
+        useEnabled ? requestModel.enabledHeaders : requestModel.headers;
     if (headersList != null || hasBody) {
       var headers =
           useEnabled ? requestModel.enabledHeadersMap : requestModel.headersMap;

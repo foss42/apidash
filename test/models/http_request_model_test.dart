@@ -4,31 +4,8 @@ import 'package:apidash/consts.dart';
 import 'http_request_models.dart';
 
 void main() {
-  Map<String, dynamic> requestModelAsJson = {
-    "method": 'post',
-    "url": 'https://api.apidash.dev/case/lower',
-    "headers": [
-      {'name': 'User-Agent', 'value': 'Test Agent'},
-      {'name': 'Content-Type', 'value': 'application/json; charset=utf-8'}
-    ],
-    'params': [
-      {'name': 'size', 'value': '2'},
-      {'name': 'len', 'value': '3'}
-    ],
-    'isHeaderEnabledList': [false, true],
-    'isParamEnabledList': null,
-    "bodyContentType": 'json',
-    "body": '''{
-"text": "I LOVE Flutter"
-}''',
-    'formData': [
-      {'name': 'token', 'value': 'xyz', 'type': 'text'},
-      {'name': 'imfile', 'value': '/Documents/up/1.png', 'type': 'file'}
-    ],
-  };
-
   test('Testing copyWith', () {
-    var httpRequestModel = requestModelPost10;
+    var httpRequestModel = httpRequestModelPost10;
     final httpRequestModelcopyWith =
         httpRequestModel.copyWith(url: 'https://apidash.dev');
     expect(httpRequestModelcopyWith.url, 'https://apidash.dev');
@@ -37,13 +14,13 @@ void main() {
   });
 
   test('Testing toJson', () {
-    var httpRequestModel = requestModelPost10;
-    expect(httpRequestModel.toJson(), requestModelAsJson);
+    var httpRequestModel = httpRequestModelPost10;
+    expect(httpRequestModel.toJson(), httpRequestModelPost10Json);
   });
 
   test('Testing fromJson', () {
-    var httpRequestModel = requestModelPost10;
-    final modelFromJson = HttpRequestModel.fromJson(requestModelAsJson);
+    var httpRequestModel = httpRequestModelPost10;
+    final modelFromJson = HttpRequestModel.fromJson(httpRequestModelPost10Json);
     expect(modelFromJson, httpRequestModel);
     expect(modelFromJson.params, const [
       NameValueModel(name: 'size', value: '2'),
@@ -52,7 +29,7 @@ void main() {
   });
 
   test('Testing getters', () {
-    var httpRequestModel = requestModelPost10;
+    var httpRequestModel = httpRequestModelPost10;
     expect(httpRequestModel.headersMap, {
       'User-Agent': 'Test Agent',
       'Content-Type': 'application/json; charset=utf-8'
@@ -98,7 +75,7 @@ void main() {
   });
 
   test('Testing immutability', () {
-    var httpRequestModel = requestModelPost10;
+    var httpRequestModel = httpRequestModelPost10;
     var httpRequestModel2 =
         httpRequestModel.copyWith(headers: httpRequestModel.headers);
     expect(httpRequestModel.headers, httpRequestModel2.headers);

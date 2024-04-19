@@ -6,17 +6,18 @@ part of 'http_request_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$HttpRequestModelImpl _$$HttpRequestModelImplFromJson(
-        Map<String, dynamic> json) =>
+_$HttpRequestModelImpl _$$HttpRequestModelImplFromJson(Map json) =>
     _$HttpRequestModelImpl(
       method: $enumDecodeNullable(_$HTTPVerbEnumMap, json['method']) ??
           HTTPVerb.get,
       url: json['url'] as String? ?? "",
       headers: (json['headers'] as List<dynamic>?)
-          ?.map((e) => NameValueModel.fromJson(e as Map<String, dynamic>))
+          ?.map((e) =>
+              NameValueModel.fromJson(Map<String, Object?>.from(e as Map)))
           .toList(),
       params: (json['params'] as List<dynamic>?)
-          ?.map((e) => NameValueModel.fromJson(e as Map<String, dynamic>))
+          ?.map((e) =>
+              NameValueModel.fromJson(Map<String, Object?>.from(e as Map)))
           .toList(),
       isHeaderEnabledList: (json['isHeaderEnabledList'] as List<dynamic>?)
           ?.map((e) => e as bool)
@@ -29,7 +30,8 @@ _$HttpRequestModelImpl _$$HttpRequestModelImplFromJson(
               ContentType.json,
       body: json['body'] as String?,
       formData: (json['formData'] as List<dynamic>?)
-          ?.map((e) => FormDataModel.fromJson(e as Map<String, dynamic>))
+          ?.map((e) =>
+              FormDataModel.fromJson(Map<String, Object?>.from(e as Map)))
           .toList(),
     );
 

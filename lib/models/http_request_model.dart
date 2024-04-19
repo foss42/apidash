@@ -14,7 +14,10 @@ part 'http_request_model.g.dart';
 class HttpRequestModel with _$HttpRequestModel {
   const HttpRequestModel._();
 
-  @JsonSerializable(explicitToJson: true)
+  @JsonSerializable(
+    explicitToJson: true,
+    anyMap: true,
+  )
   const factory HttpRequestModel({
     @Default(HTTPVerb.get) HTTPVerb method,
     @Default("") String url,

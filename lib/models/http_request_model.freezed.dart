@@ -202,7 +202,7 @@ class __$$HttpRequestModelImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-@JsonSerializable(explicitToJson: true)
+@JsonSerializable(explicitToJson: true, anyMap: true)
 class _$HttpRequestModelImpl extends _HttpRequestModel {
   const _$HttpRequestModelImpl(
       {this.method = HTTPVerb.get,

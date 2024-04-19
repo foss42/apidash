@@ -31,7 +31,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
   void _onFieldChange(String selectedId) {
     ref.read(collectionStateNotifierProvider.notifier).update(
           selectedId,
-          requestParams: paramRows.sublist(0, paramRows.length - 1),
+          params: paramRows.sublist(0, paramRows.length - 1),
           isParamEnabledList: isRowEnabledList.sublist(0, paramRows.length - 1),
         );
   }
@@ -40,17 +40,19 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
   Widget build(BuildContext context) {
     final selectedId = ref.watch(selectedIdStateProvider);
     ref.watch(selectedRequestModelProvider
-        .select((value) => value?.requestParams?.length));
-    var rP = ref.read(selectedRequestModelProvider)?.requestParams;
+        .select((value) => value?.httpRequestModel?.params?.length));
+    var rP = ref.read(selectedRequestModelProvider)?.httpRequestModel?.params;
     bool isParamsEmpty = rP == null || rP.isEmpty;
     paramRows = isParamsEmpty
         ? [
             kNameValueEmptyModel,
           ]
         : rP + [kNameValueEmptyModel];
-    isRowEnabledList =
-        ref.read(selectedRequestModelProvider)?.isParamEnabledList ??
-            List.filled(rP?.length ?? 0, true, growable: true);
+    isRowEnabledList = ref
+            .read(selectedRequestModelProvider)
+            ?.httpRequestModel
+            ?.isParamEnabledList ??
+        List.filled(rP?.length ?? 0, true, growable: true);
     isRowEnabledList.add(false);
     isAddingRow = false;
 
