@@ -57,7 +57,8 @@ class _AppState extends ConsumerState<App> with WindowListener {
     bool isPreventClose = await windowManager.isPreventClose();
     if (isPreventClose) {
       if (ref.watch(
-          settingsProvider.select((value) => value.promptBeforeClosing)) && ref.watch(hasUnsavedChangesProvider)) {
+              settingsProvider.select((value) => value.promptBeforeClosing)) &&
+          ref.watch(hasUnsavedChangesProvider)) {
         showDialog(
           context: context,
           builder: (_) => AlertDialog(
