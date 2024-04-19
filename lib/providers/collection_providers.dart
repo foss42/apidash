@@ -46,7 +46,7 @@ class CollectionStateNotifier
 
   final Ref ref;
   final HiveHandler hiveHandler;
-  final baseResponseModel = const ResponseModel();
+  final baseResponseModel = const HttpResponseModel();
 
   bool hasId(String id) => state?.keys.contains(id) ?? false;
 
@@ -58,6 +58,7 @@ class CollectionStateNotifier
     final id = getNewUuid();
     final newRequestModel = RequestModel(
       id: id,
+      httpRequestModel: const HttpRequestModel(),
     );
     var map = {...state!};
     map[id] = newRequestModel;
@@ -103,10 +104,10 @@ class CollectionStateNotifier
   void clearResponse(String? id) {
     if (id == null || state?[id] == null) return;
     var currentModel = state![id]!;
-    final newModel = currentModel.duplicate(
-      id: id,
-      name: currentModel.name,
-      requestTabIndex: currentModel.requestTabIndex,
+    final newModel = currentModel.copyWith(
+      responseStatus: null,
+      message: null,
+      httpResponseModel: null,
     );
     var map = {...state!};
     map[id] = newModel;
@@ -119,9 +120,16 @@ class CollectionStateNotifier
 
     var itemIds = ref.read(requestSequenceProvider);
     int idx = itemIds.indexOf(id);
-
-    final newModel = state![id]!.duplicate(
+    var currentModel = state![id]!;
+    final newModel = currentModel.copyWith(
       id: newId,
+      name: "${currentModel.name} (copy)",
+      requestTabIndex: 0,
+      responseStatus: null,
+      message: null,
+      httpResponseModel: null,
+      isWorking: false,
+      sendingTime: null,
     );
 
     itemIds.insert(idx + 1, newId);
@@ -141,33 +149,40 @@ class CollectionStateNotifier
     String? name,
     String? description,
     int? requestTabIndex,
-    List<NameValueModel>? requestHeaders,
-    List<NameValueModel>? requestParams,
+    List<NameValueModel>? headers,
+    List<NameValueModel>? params,
     List<bool>? isHeaderEnabledList,
     List<bool>? isParamEnabledList,
-    ContentType? requestBodyContentType,
-    String? requestBody,
-    List<FormDataModel>? requestFormDataList,
+    ContentType? bodyContentType,
+    String? body,
+    List<FormDataModel>? formData,
     int? responseStatus,
     String? message,
-    ResponseModel? responseModel,
+    HttpResponseModel? httpResponseModel,
   }) {
-    final newModel = state![id]!.copyWith(
-      method: method,
-      url: url,
-      name: name,
-      description: description,
-      requestTabIndex: requestTabIndex,
-      requestHeaders: requestHeaders,
-      requestParams: requestParams,
-      isHeaderEnabledList: isHeaderEnabledList,
-      isParamEnabledList: isParamEnabledList,
-      requestBodyContentType: requestBodyContentType,
-      requestBody: requestBody,
-      requestFormDataList: requestFormDataList,
+    var currentModel = state![id]!;
+    var currentHttpRequestModel = currentModel.httpRequestModel;
+    final newModel = currentModel.copyWith(
+      name: name ?? currentModel.name,
+      description: description ?? currentModel.description,
+      requestTabIndex: requestTabIndex ?? currentModel.requestTabIndex,
+      httpRequestModel: currentHttpRequestModel?.copyWith(
+        method: method ?? currentHttpRequestModel.method,
+        url: url ?? currentHttpRequestModel.url,
+        headers: headers ?? currentHttpRequestModel.headers,
+        params: params ?? currentHttpRequestModel.params,
+        isHeaderEnabledList:
+            isHeaderEnabledList ?? currentHttpRequestModel.isHeaderEnabledList,
+        isParamEnabledList:
+            isParamEnabledList ?? currentHttpRequestModel.isParamEnabledList,
+        bodyContentType:
+            bodyContentType ?? currentHttpRequestModel.bodyContentType,
+        body: body ?? currentHttpRequestModel.body,
+        formData: formData ?? currentHttpRequestModel.formData,
+      ),
       responseStatus: responseStatus,
       message: message,
-      responseModel: responseModel,
+      httpResponseModel: httpResponseModel,
     );
     //print(newModel);
     var map = {...state!};
@@ -194,8 +209,12 @@ class CollectionStateNotifier
     );
     state = map;
 
+    if (requestModel.httpRequestModel == null) {
+      return;
+    }
+
     (http.Response?, Duration?, String?)? responseRec = await request(
-      requestModel,
+      requestModel.httpRequestModel!,
       defaultUriScheme: defaultUriScheme,
     );
     late final RequestModel newRequestModel;
@@ -214,7 +233,7 @@ class CollectionStateNotifier
       newRequestModel = requestModel.copyWith(
         responseStatus: statusCode,
         message: kResponseCodeReasons[statusCode],
-        responseModel: responseModel,
+        httpResponseModel: responseModel,
         isWorking: false,
       );
     }
@@ -243,6 +262,7 @@ class CollectionStateNotifier
       state = {
         newId: RequestModel(
           id: newId,
+          httpRequestModel: const HttpRequestModel(),
         ),
       };
       return true;
@@ -251,8 +271,13 @@ class CollectionStateNotifier
       for (var id in ids) {
         var jsonModel = hiveHandler.getRequestModel(id);
         if (jsonModel != null) {
-          var requestModel =
-              RequestModel.fromJson(Map<String, dynamic>.from(jsonModel));
+          var jsonMap = Map<String, Object?>.from(jsonModel);
+          var requestModel = RequestModel.fromJson(jsonMap);
+          if (requestModel.httpRequestModel == null) {
+            requestModel = requestModel.copyWith(
+              httpRequestModel: const HttpRequestModel(),
+            );
+          }
           data[id] = requestModel;
         }
       }
@@ -269,7 +294,9 @@ class CollectionStateNotifier
     for (var id in ids) {
       await hiveHandler.setRequestModel(
         id,
-        state?[id]?.toJson(includeResponse: saveResponse),
+        saveResponse
+            ? (state?[id])?.toJson()
+            : (state?[id]?.copyWith(httpResponseModel: null))?.toJson(),
       );
     }
     await hiveHandler.removeUnused();
