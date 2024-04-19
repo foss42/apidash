@@ -1,9 +1,10 @@
-import 'package:apidash/codegen/java/okhttp.dart';
+import 'package:apidash/codegen/codegen.dart';
+import 'package:apidash/consts.dart';
 import 'package:test/test.dart';
-import '../request_models.dart';
+import '../models/request_models.dart';
 
 void main() {
-  final javaOkHttpCodeGen = JavaOkHttpCodeGen();
+  final codeGen = Codegen();
 
   group('GET Request', () {
     test('GET 1', () {
@@ -36,7 +37,9 @@ public class Main {
 }
 """;
       expect(
-          javaOkHttpCodeGen.getCode(requestModelGet1), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.javaOkHttp, requestModelGet1, "https"),
+          expectedCode);
     });
 
     test('GET 2', () {
@@ -72,7 +75,9 @@ public class Main {
 }
 """;
       expect(
-          javaOkHttpCodeGen.getCode(requestModelGet2), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.javaOkHttp, requestModelGet2, "https"),
+          expectedCode);
     });
 
     test('GET 3', () {
@@ -108,7 +113,9 @@ public class Main {
 }
 """;
       expect(
-          javaOkHttpCodeGen.getCode(requestModelGet3), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.javaOkHttp, requestModelGet3, "https"),
+          expectedCode);
     });
 
     test('GET 4', () {
@@ -148,7 +155,9 @@ public class Main {
 }
 """;
       expect(
-          javaOkHttpCodeGen.getCode(requestModelGet4), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.javaOkHttp, requestModelGet4, "https"),
+          expectedCode);
     });
 
     test('GET 5', () {
@@ -182,7 +191,9 @@ public class Main {
 }
 """;
       expect(
-          javaOkHttpCodeGen.getCode(requestModelGet5), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.javaOkHttp, requestModelGet5, "https"),
+          expectedCode);
     });
 
     test('GET 6', () {
@@ -219,7 +230,9 @@ public class Main {
 }
 """;
       expect(
-          javaOkHttpCodeGen.getCode(requestModelGet6), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.javaOkHttp, requestModelGet6, "https"),
+          expectedCode);
     });
 
     test('GET 7', () {
@@ -252,7 +265,9 @@ public class Main {
 }
 """;
       expect(
-          javaOkHttpCodeGen.getCode(requestModelGet7), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.javaOkHttp, requestModelGet7, "https"),
+          expectedCode);
     });
 
     test('GET 8', () {
@@ -289,7 +304,9 @@ public class Main {
 }
 """;
       expect(
-          javaOkHttpCodeGen.getCode(requestModelGet8), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.javaOkHttp, requestModelGet8, "https"),
+          expectedCode);
     });
 
     test('GET 9', () {
@@ -326,7 +343,9 @@ public class Main {
 }
 """;
       expect(
-          javaOkHttpCodeGen.getCode(requestModelGet9), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.javaOkHttp, requestModelGet9, "https"),
+          expectedCode);
     });
 
     test('GET 10', () {
@@ -360,9 +379,8 @@ public class Main {
 }
 """;
       expect(
-          javaOkHttpCodeGen.getCode(
-            requestModelGet10,
-          ),
+          codeGen.getCode(
+              CodegenLanguage.javaOkHttp, requestModelGet10, "https"),
           expectedCode);
     });
 
@@ -401,7 +419,9 @@ public class Main {
 }
 """;
       expect(
-          javaOkHttpCodeGen.getCode(requestModelGet11), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.javaOkHttp, requestModelGet11, "https"),
+          expectedCode);
     });
 
     test('GET 12', () {
@@ -434,7 +454,9 @@ public class Main {
 }
 """;
       expect(
-          javaOkHttpCodeGen.getCode(requestModelGet12), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.javaOkHttp, requestModelGet12, "https"),
+          expectedCode);
     });
   });
 
@@ -469,7 +491,9 @@ public class Main {
 }
 """;
       expect(
-          javaOkHttpCodeGen.getCode(requestModelHead1), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.javaOkHttp, requestModelHead1, "https"),
+          expectedCode);
     });
 
     test('HEAD 2', () {
@@ -483,7 +507,7 @@ public class Main {
     public static void main(String[] args) {
         OkHttpClient client = new OkHttpClient().newBuilder().build();
 
-        String url = "https://api.apidash.dev";
+        String url = "http://api.apidash.dev";
 
         Request request = new Request.Builder()
             .url(url)
@@ -502,7 +526,9 @@ public class Main {
 }
 """;
       expect(
-          javaOkHttpCodeGen.getCode(requestModelHead2), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.javaOkHttp, requestModelHead2, "http"),
+          expectedCode);
     });
   });
 
@@ -543,7 +569,9 @@ public class Main {
 }
 ''';
       expect(
-          javaOkHttpCodeGen.getCode(requestModelPost1), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.javaOkHttp, requestModelPost1, "https"),
+          expectedCode);
     });
 
     test('POST 2', () {
@@ -582,7 +610,9 @@ public class Main {
 }
 ''';
       expect(
-          javaOkHttpCodeGen.getCode(requestModelPost2), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.javaOkHttp, requestModelPost2, "https"),
+          expectedCode);
     });
 
     test('POST 3', () {
@@ -622,7 +652,9 @@ public class Main {
 }
 ''';
       expect(
-          javaOkHttpCodeGen.getCode(requestModelPost3), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.javaOkHttp, requestModelPost3, "https"),
+          expectedCode);
     });
 
     test('POST 4', () {
@@ -662,7 +694,9 @@ public class Main {
 }
 ''';
       expect(
-          javaOkHttpCodeGen.getCode(requestModelPost4), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.javaOkHttp, requestModelPost4, "https"),
+          expectedCode);
     });
 
     test('POST 5', () {
@@ -703,7 +737,9 @@ public class Main {
 }
 ''';
       expect(
-          javaOkHttpCodeGen.getCode(requestModelPost5), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.javaOkHttp, requestModelPost5, "https"),
+          expectedCode);
     });
 
     test('POST 6', () {
@@ -742,7 +778,9 @@ public class Main {
 }
 ''';
       expect(
-          javaOkHttpCodeGen.getCode(requestModelPost6), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.javaOkHttp, requestModelPost6, "https"),
+          expectedCode);
     });
 
     test('POST 7', () {
@@ -781,7 +819,9 @@ public class Main {
 }
 ''';
       expect(
-          javaOkHttpCodeGen.getCode(requestModelPost7), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.javaOkHttp, requestModelPost7, "https"),
+          expectedCode);
     });
 
     test('POST 8', () {
@@ -825,7 +865,9 @@ public class Main {
 }
 ''';
       expect(
-          javaOkHttpCodeGen.getCode(requestModelPost8), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.javaOkHttp, requestModelPost8, "https"),
+          expectedCode);
     });
 
     test('POST 9', () {
@@ -870,7 +912,9 @@ public class Main {
 }
 ''';
       expect(
-          javaOkHttpCodeGen.getCode(requestModelPost9), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.javaOkHttp, requestModelPost9, "https"),
+          expectedCode);
     });
   });
 
@@ -911,7 +955,9 @@ public class Main {
 }
 ''';
       expect(
-          javaOkHttpCodeGen.getCode(requestModelPut1), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.javaOkHttp, requestModelPut1, "https"),
+          expectedCode);
     });
   });
 
@@ -952,7 +998,9 @@ public class Main {
 }
 ''';
       expect(
-          javaOkHttpCodeGen.getCode(requestModelPatch1), expectedCode);
+          codeGen.getCode(
+              CodegenLanguage.javaOkHttp, requestModelPatch1, "https"),
+          expectedCode);
     });
   });
 
@@ -986,7 +1034,9 @@ public class Main {
     }
 }
 """;
-      expect(javaOkHttpCodeGen.getCode(requestModelDelete1),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.javaOkHttp, requestModelDelete1, "https"),
           expectedCode);
     });
 
@@ -1025,7 +1075,9 @@ public class Main {
     }
 }
 ''';
-      expect(javaOkHttpCodeGen.getCode(requestModelDelete2),
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.javaOkHttp, requestModelDelete2, "https"),
           expectedCode);
     });
   });

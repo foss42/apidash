@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:jinja/jinja.dart' as jj;
 import 'package:apidash/utils/utils.dart'
     show getValidRequestUri, stripUriParams;
-import '../../models/request_model.dart';
+import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
 
 class JavaOkHttpCodeGen {
@@ -92,7 +92,7 @@ import okhttp3.MultipartBody;""";
 ''';
 
   String? getCode(
-    RequestModel requestModel,
+    HttpRequestModel requestModel,
   ) {
     try {
       String result = "";
@@ -102,7 +102,7 @@ import okhttp3.MultipartBody;""";
 
       var rec = getValidRequestUri(
         requestModel.url,
-        requestModel.enabledRequestParams,
+        requestModel.enabledParams,
       );
       Uri? uri = rec.$1;
 
@@ -124,7 +124,7 @@ import okhttp3.MultipartBody;""";
         }
 
         var method = requestModel.method;
-        var requestBody = requestModel.requestBody;
+        var requestBody = requestModel.body;
         if (requestModel.hasFormData) {
           hasFormData = true;
           var formDataTemplate = jj.Template(kFormDataBody);
@@ -136,7 +136,7 @@ import okhttp3.MultipartBody;""";
           var contentLength = utf8.encode(requestBody).length;
           if (contentLength > 0) {
             hasBody = true;
-            String contentType = requestModel.requestBodyContentType.header;
+            String contentType = requestModel.bodyContentType.header;
             var templateBody = jj.Template(kTemplateRequestBody);
             result += templateBody.render({
               "contentType": contentType,
@@ -155,7 +155,7 @@ import okhttp3.MultipartBody;""";
         result = stringStart + result;
         result += kStringRequestStart;
 
-        var headersList = requestModel.enabledRequestHeaders;
+        var headersList = requestModel.enabledHeaders;
         if (headersList != null) {
           var headers = requestModel.enabledHeadersMap;
           if (headers.isNotEmpty) {
@@ -176,7 +176,9 @@ import okhttp3.MultipartBody;""";
   }
 
   String getQueryParams(Map<String, String> params) {
-    final paramStrings = params.entries.map((entry) => '.addQueryParameter("${entry.key}", "${entry.value}")').toList();
+    final paramStrings = params.entries
+        .map((entry) => '.addQueryParameter("${entry.key}", "${entry.value}")')
+        .toList();
     return paramStrings.join('\n            ');
   }
 

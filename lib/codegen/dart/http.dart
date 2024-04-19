@@ -2,13 +2,13 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
-import 'package:apidash/models/models.dart' show RequestModel;
+import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
 import 'shared.dart';
 
 class DartHttpCodeGen {
   String? getCode(
-    RequestModel requestModel,
+    HttpRequestModel requestModel,
   ) {
     try {
       final next = generatedDartCode(
@@ -16,9 +16,9 @@ class DartHttpCodeGen {
         method: requestModel.method,
         queryParams: requestModel.enabledParamsMap,
         headers: {...requestModel.enabledHeadersMap},
-        contentType: requestModel.requestBodyContentType,
+        contentType: requestModel.bodyContentType,
         hasContentTypeHeader: requestModel.hasContentTypeHeader,
-        body: requestModel.requestBody,
+        body: requestModel.body,
         formData: requestModel.formDataMapList,
       );
       return next;

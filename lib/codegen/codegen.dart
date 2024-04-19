@@ -1,4 +1,4 @@
-import 'package:apidash/models/models.dart' show RequestModel;
+import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart' show getNewUuid;
 import 'c/curl.dart';
@@ -36,7 +36,11 @@ class Codegen {
     String defaultUriScheme, {
     String? boundary,
   }) {
-    String url = requestModel.url;
+    var httpRequestModel = requestModel.httpRequestModel;
+    if (httpRequestModel == null) {
+      return "";
+    }
+    String url = httpRequestModel.url;
 
     if (url.isEmpty) {
       url = kDefaultUri;
@@ -44,7 +48,7 @@ class Codegen {
     if (!url.contains("://") && url.isNotEmpty) {
       url = "$defaultUriScheme://$url";
     }
-    var rM = requestModel.copyWith(url: url);
+    var rM = httpRequestModel.copyWith(url: url);
 
     switch (codegenLanguage) {
       case CodegenLanguage.curl:

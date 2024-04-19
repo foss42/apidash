@@ -1,7 +1,6 @@
 import 'package:jinja/jinja.dart' as jj;
-import 'package:apidash/utils/utils.dart'
-    show stripUrlParams;
-import 'package:apidash/models/models.dart' show RequestModel;
+import 'package:apidash/utils/utils.dart' show stripUrlParams;
+import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
 
 class PhpGuzzleCodeGen {
@@ -59,7 +58,7 @@ echo $res->getBody();
 
 """;
 
-  String? getCode(RequestModel requestModel) {
+  String? getCode(HttpRequestModel requestModel) {
     try {
       var templateImport = jj.Template(kTemplateImport);
       String importsData = templateImport.render({
@@ -75,7 +74,7 @@ echo $res->getBody();
             var row = '''
     [
         'name'     => '${field.name}',
-        'contents' => ${field.type == FormDataType.file? "fopen('${field.value}', 'r')":"'${field.value}'"}
+        'contents' => ${field.type == FormDataType.file ? "fopen('${field.value}', 'r')" : "'${field.value}'"}
     ]''';
             return row;
           }).join(",\n"),
@@ -103,12 +102,14 @@ echo $res->getBody();
           headerList.add("'$key' => '$value'");
         });
 
-        if(!requestModel.hasContentTypeHeader && requestModel.hasBody){
-          if(requestModel.hasJsonData || requestModel.hasTextData){
-            headerList.add("'$kHeaderContentType' => '${requestModel.requestBodyContentType.header}'");
+        if (!requestModel.hasContentTypeHeader && requestModel.hasBody) {
+          if (requestModel.hasJsonData || requestModel.hasTextData) {
+            headerList.add(
+                "'$kHeaderContentType' => '${requestModel.bodyContentType.header}'");
           }
-          if(requestModel.hasFormData){
-            headerList.add("'$kHeaderContentType' => '${requestModel.requestBodyContentType.header}; boundary=' . \$body->getBoundary()");
+          if (requestModel.hasFormData) {
+            headerList.add(
+                "'$kHeaderContentType' => '${requestModel.bodyContentType.header}; boundary=' . \$body->getBoundary()");
           }
         }
         result += templateHeader.render({
@@ -119,18 +120,16 @@ echo $res->getBody();
       var templateBody = jj.Template(kTemplateBody);
 
       if (requestModel.hasJsonData || requestModel.hasTextData) {
-        result += templateBody
-            .render({"body": requestModel.requestBody});
+        result += templateBody.render({"body": requestModel.body});
       }
 
       var templateRequest = jj.Template(kTemplateRequest);
       result += templateRequest.render({
         "url": stripUrlParams(requestModel.url),
         "method": requestModel.method.name.toLowerCase(),
-        "queryParams":
-            params.isNotEmpty ? ". \$queryParamsStr" : "",
+        "queryParams": params.isNotEmpty ? ". \$queryParamsStr" : "",
         "headers": headerList.isNotEmpty ? ", \$headers" : "",
-        "body": requestModel.hasBody? ", \$body" : "",
+        "body": requestModel.hasBody ? ", \$body" : "",
       });
 
       return result;

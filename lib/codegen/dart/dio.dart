@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
-import 'package:apidash/models/request_model.dart' show RequestModel;
+import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
 import 'shared.dart';
 
 class DartDioCodeGen {
   String? getCode(
-    RequestModel requestModel,
+    HttpRequestModel requestModel,
   ) {
     try {
       final next = generatedDartCode(
@@ -15,8 +15,8 @@ class DartDioCodeGen {
         method: requestModel.method,
         queryParams: requestModel.enabledParamsMap,
         headers: requestModel.enabledHeadersMap,
-        body: requestModel.requestBody,
-        contentType: requestModel.requestBodyContentType,
+        body: requestModel.body,
+        contentType: requestModel.bodyContentType,
         formData: requestModel.formDataMapList,
       );
       return next;

@@ -1,5 +1,5 @@
 import 'package:jinja/jinja.dart' as jj;
-import 'package:apidash/models/models.dart' show RequestModel;
+import 'package:apidash/models/models.dart';
 import 'package:apidash/utils/http_utils.dart';
 import 'package:apidash/consts.dart';
 
@@ -61,14 +61,14 @@ public class Main {
 }
 """;
 
-  String? getCode(RequestModel requestModel) {
+  String? getCode(HttpRequestModel requestModel) {
     try {
       String result = '';
       bool hasBody = false;
 
       var rec = getValidRequestUri(
         requestModel.url,
-        requestModel.enabledRequestParams,
+        requestModel.enabledParams,
       );
 
       // uri is already generated based on url and enabled request params
@@ -101,7 +101,7 @@ public class Main {
       if (requestModel.hasTextData || requestModel.hasJsonData) {
         var templateBodyContent = jj.Template(kTemplateRequestBodyContent);
         result += templateBodyContent.render({
-          "body": requestModel.requestBody,
+          "body": requestModel.body,
         });
         hasBody = true;
       }
@@ -114,8 +114,7 @@ public class Main {
 
       var headers = requestModel.enabledHeadersMap;
       if (hasBody && !requestModel.hasContentTypeHeader) {
-        headers[kHeaderContentType] =
-            requestModel.requestBodyContentType.header;
+        headers[kHeaderContentType] = requestModel.bodyContentType.header;
       }
 
       var templateRequestHeader = jj.Template(kTemplateRequestHeader);

@@ -1,6 +1,6 @@
 import 'package:jinja/jinja.dart' as jj;
 import 'package:apidash/utils/utils.dart' show requestModelToHARJsonRequest;
-import 'package:apidash/models/models.dart' show RequestModel;
+import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
 
 // ignore: camel_case_types
@@ -20,7 +20,7 @@ class cURLCodeGen {
 """;
 
   String? getCode(
-    RequestModel requestModel,
+    HttpRequestModel requestModel,
   ) {
     try {
       String result = "";
@@ -54,7 +54,7 @@ class cURLCodeGen {
 
       if (requestModel.hasJsonData || requestModel.hasTextData) {
         var templateBody = jj.Template(kTemplateBody);
-        result += templateBody.render({"body": requestModel.requestBody});
+        result += templateBody.render({"body": requestModel.body});
       } else if (requestModel.hasFormData) {
         for (var formData in requestModel.formDataList) {
           var templateFormData = jj.Template(kTemplateFormData);

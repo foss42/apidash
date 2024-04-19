@@ -1,6 +1,6 @@
 import 'package:apidash/consts.dart';
 import 'package:jinja/jinja.dart' as jj;
-import 'package:apidash/models/models.dart' show RequestModel;
+import 'package:apidash/models/models.dart';
 import 'package:apidash/utils/http_utils.dart';
 
 class CSharpHttpClientCodeGen {
@@ -78,7 +78,7 @@ using (var request = new HttpRequestMessage(HttpMethod.{{ method | capitalize }}
 }
 ''';
 
-  String? getCode(RequestModel requestModel) {
+  String? getCode(HttpRequestModel requestModel) {
     try {
       StringBuffer result = StringBuffer();
 
@@ -86,10 +86,12 @@ using (var request = new HttpRequestMessage(HttpMethod.{{ method | capitalize }}
       String formdataImport = requestModel.hasFormData
           ? "multipart" //(requestModel.hasFileInFormData ? "multipart" : "urlencoded")
           : "nodata";
-      result.writeln(jj.Template(kTemplateNamespaces).render({"formdata": formdataImport}));
+      result.writeln(jj.Template(kTemplateNamespaces)
+          .render({"formdata": formdataImport}));
 
       // Set request URL
-      var (uri, _) = getValidRequestUri(requestModel.url, requestModel.enabledRequestParams);
+      var (uri, _) =
+          getValidRequestUri(requestModel.url, requestModel.enabledParams);
       if (uri != null) {
         result.writeln(jj.Template(kTemplateUri).render({"uri": uri}));
       }
@@ -102,22 +104,26 @@ using (var request = new HttpRequestMessage(HttpMethod.{{ method | capitalize }}
       // Set request headers
       var headers = requestModel.enabledHeadersMap;
       if (headers.isNotEmpty) {
-        result.writeln(jj.Template(kTemplateHeaders).render({"headers": headers}));
+        result.writeln(
+            jj.Template(kTemplateHeaders).render({"headers": headers}));
       }
 
       // Set request body if exists
-      if (kMethodsWithBody.contains(requestModel.method) && requestModel.hasBody) {
-        var requestBody = requestModel.requestBody;
+      if (kMethodsWithBody.contains(requestModel.method) &&
+          requestModel.hasBody) {
+        var requestBody = requestModel.body;
 
-        if (!requestModel.hasFormData && requestBody != null && requestBody.isNotEmpty) {
+        if (!requestModel.hasFormData &&
+            requestBody != null &&
+            requestBody.isNotEmpty) {
           // if the request body is not formdata then render raw text body
           result.writeln(jj.Template(kTemplateRawBody).render({
             "body": requestBody,
-            "mediaType": requestModel.requestBodyContentType.header,
+            "mediaType": requestModel.bodyContentType.header,
           }));
         } else if (requestModel.hasFormData) {
           // final String renderingTemplate = requestModel.hasFileInFormData
-          //     ? kTemplateMultipartFormDataContent 
+          //     ? kTemplateMultipartFormDataContent
           //     : kTemplateFormUrlEncodedContent;
 
           final String renderingTemplate = kTemplateMultipartFormDataContent;

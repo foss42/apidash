@@ -1,7 +1,7 @@
 import 'package:apidash/codegen/codegen.dart';
 import 'package:apidash/consts.dart';
 import 'package:test/test.dart';
-import '../request_models.dart';
+import '../models/request_models.dart';
 
 void main() {
   final codeGen = Codegen();
@@ -22,7 +22,10 @@ using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
     Console.WriteLine(await response.Content.ReadAsStringAsync());
 }
 ''';
-      expect(codeGen.getCode(CodegenLanguage.cSharpHttpClient, requestModelGet1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.cSharpHttpClient, requestModelGet1, "https"),
+          expectedCode);
     });
 
     test('GET 2', () {
@@ -40,7 +43,10 @@ using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
     Console.WriteLine(await response.Content.ReadAsStringAsync());
 }
 ''';
-      expect(codeGen.getCode(CodegenLanguage.cSharpHttpClient, requestModelGet2, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.cSharpHttpClient, requestModelGet2, "https"),
+          expectedCode);
     });
 
     test('GET 3', () {
@@ -58,7 +64,10 @@ using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
     Console.WriteLine(await response.Content.ReadAsStringAsync());
 }
 ''';
-      expect(codeGen.getCode(CodegenLanguage.cSharpHttpClient, requestModelGet3, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.cSharpHttpClient, requestModelGet3, "https"),
+          expectedCode);
     });
 
     test('GET 4', () {
@@ -76,7 +85,10 @@ using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
     Console.WriteLine(await response.Content.ReadAsStringAsync());
 }
 ''';
-      expect(codeGen.getCode(CodegenLanguage.cSharpHttpClient, requestModelGet4, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.cSharpHttpClient, requestModelGet4, "https"),
+          expectedCode);
     });
 
     test('GET 5', () {
@@ -96,7 +108,10 @@ using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
     Console.WriteLine(await response.Content.ReadAsStringAsync());
 }
 ''';
-      expect(codeGen.getCode(CodegenLanguage.cSharpHttpClient, requestModelGet5, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.cSharpHttpClient, requestModelGet5, "https"),
+          expectedCode);
     });
 
     test('GET 6', () {
@@ -116,7 +131,10 @@ using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
     Console.WriteLine(await response.Content.ReadAsStringAsync());
 }
 ''';
-      expect(codeGen.getCode(CodegenLanguage.cSharpHttpClient, requestModelGet6, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.cSharpHttpClient, requestModelGet6, "https"),
+          expectedCode);
     });
 
     test('GET 7', () {
@@ -134,7 +152,10 @@ using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
     Console.WriteLine(await response.Content.ReadAsStringAsync());
 }
 ''';
-      expect(codeGen.getCode(CodegenLanguage.cSharpHttpClient, requestModelGet7, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.cSharpHttpClient, requestModelGet7, "https"),
+          expectedCode);
     });
 
     test('GET 8', () {
@@ -154,7 +175,10 @@ using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
     Console.WriteLine(await response.Content.ReadAsStringAsync());
 }
 ''';
-      expect(codeGen.getCode(CodegenLanguage.cSharpHttpClient, requestModelGet8, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.cSharpHttpClient, requestModelGet8, "https"),
+          expectedCode);
     });
 
     test('GET 9', () {
@@ -172,7 +196,10 @@ using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
     Console.WriteLine(await response.Content.ReadAsStringAsync());
 }
 ''';
-      expect(codeGen.getCode(CodegenLanguage.cSharpHttpClient, requestModelGet9, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.cSharpHttpClient, requestModelGet9, "https"),
+          expectedCode);
     });
 
     test('GET 10', () {
@@ -192,7 +219,10 @@ using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
     Console.WriteLine(await response.Content.ReadAsStringAsync());
 }
 ''';
-      expect(codeGen.getCode(CodegenLanguage.cSharpHttpClient, requestModelGet10, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.cSharpHttpClient, requestModelGet10, "https"),
+          expectedCode);
     });
 
     test('GET 11', () {
@@ -212,7 +242,10 @@ using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
     Console.WriteLine(await response.Content.ReadAsStringAsync());
 }
 ''';
-      expect(codeGen.getCode(CodegenLanguage.cSharpHttpClient, requestModelGet11, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.cSharpHttpClient, requestModelGet11, "https"),
+          expectedCode);
     });
 
     test('GET 12', () {
@@ -230,7 +263,10 @@ using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
     Console.WriteLine(await response.Content.ReadAsStringAsync());
 }
 ''';
-      expect(codeGen.getCode(CodegenLanguage.cSharpHttpClient, requestModelGet12, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.cSharpHttpClient, requestModelGet12, "https"),
+          expectedCode);
     });
   });
 
@@ -250,7 +286,10 @@ using (var request = new HttpRequestMessage(HttpMethod.Head, uri))
     Console.WriteLine(await response.Content.ReadAsStringAsync());
 }
 ''';
-      expect(codeGen.getCode(CodegenLanguage.cSharpHttpClient, requestModelHead1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.cSharpHttpClient, requestModelHead1, "https"),
+          expectedCode);
     });
 
     test('HEAD 2', () {
@@ -268,7 +307,10 @@ using (var request = new HttpRequestMessage(HttpMethod.Head, uri))
     Console.WriteLine(await response.Content.ReadAsStringAsync());
 }
 ''';
-      expect(codeGen.getCode(CodegenLanguage.cSharpHttpClient, requestModelHead2, "http"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.cSharpHttpClient, requestModelHead2, "http"),
+          expectedCode);
     });
   });
 
@@ -296,7 +338,10 @@ using (var request = new HttpRequestMessage(HttpMethod.Post, uri))
     Console.WriteLine(await response.Content.ReadAsStringAsync());
 }
 ''';
-      expect(codeGen.getCode(CodegenLanguage.cSharpHttpClient, requestModelPost1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.cSharpHttpClient, requestModelPost1, "https"),
+          expectedCode);
     });
 
     test('POST 2', () {
@@ -327,7 +372,10 @@ using (var request = new HttpRequestMessage(HttpMethod.Post, uri))
     Console.WriteLine(await response.Content.ReadAsStringAsync());
 }
 ''';
-      expect(codeGen.getCode(CodegenLanguage.cSharpHttpClient, requestModelPost2, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.cSharpHttpClient, requestModelPost2, "https"),
+          expectedCode);
     });
 
     test('POST 3', () {
@@ -355,7 +403,10 @@ using (var request = new HttpRequestMessage(HttpMethod.Post, uri))
     Console.WriteLine(await response.Content.ReadAsStringAsync());
 }
 ''';
-      expect(codeGen.getCode(CodegenLanguage.cSharpHttpClient, requestModelPost3, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.cSharpHttpClient, requestModelPost3, "https"),
+          expectedCode);
     });
 
     test('POST 4', () {
@@ -382,7 +433,10 @@ using (var request = new HttpRequestMessage(HttpMethod.Post, uri))
     Console.WriteLine(await response.Content.ReadAsStringAsync());
 }
 ''';
-      expect(codeGen.getCode(CodegenLanguage.cSharpHttpClient, requestModelPost4, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.cSharpHttpClient, requestModelPost4, "https"),
+          expectedCode);
     });
 
     test('POST 5', () {
@@ -411,7 +465,10 @@ using (var request = new HttpRequestMessage(HttpMethod.Post, uri))
     Console.WriteLine(await response.Content.ReadAsStringAsync());
 }
 ''';
-      expect(codeGen.getCode(CodegenLanguage.cSharpHttpClient, requestModelPost5, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.cSharpHttpClient, requestModelPost5, "https"),
+          expectedCode);
     });
 
     test('POST 6', () {
@@ -441,7 +498,10 @@ using (var request = new HttpRequestMessage(HttpMethod.Post, uri))
     Console.WriteLine(await response.Content.ReadAsStringAsync());
 }
 ''';
-      expect(codeGen.getCode(CodegenLanguage.cSharpHttpClient, requestModelPost6, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.cSharpHttpClient, requestModelPost6, "https"),
+          expectedCode);
     });
 
     test('POST 7', () {
@@ -471,7 +531,10 @@ using (var request = new HttpRequestMessage(HttpMethod.Post, uri))
     Console.WriteLine(await response.Content.ReadAsStringAsync());
 }
 ''';
-      expect(codeGen.getCode(CodegenLanguage.cSharpHttpClient, requestModelPost7, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.cSharpHttpClient, requestModelPost7, "https"),
+          expectedCode);
     });
 
     test('POST 8', () {
@@ -498,7 +561,10 @@ using (var request = new HttpRequestMessage(HttpMethod.Post, uri))
     Console.WriteLine(await response.Content.ReadAsStringAsync());
 }
 ''';
-      expect(codeGen.getCode(CodegenLanguage.cSharpHttpClient, requestModelPost8, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.cSharpHttpClient, requestModelPost8, "https"),
+          expectedCode);
     });
 
     test('POST 9', () {
@@ -531,7 +597,10 @@ using (var request = new HttpRequestMessage(HttpMethod.Post, uri))
     Console.WriteLine(await response.Content.ReadAsStringAsync());
 }
 ''';
-      expect(codeGen.getCode(CodegenLanguage.cSharpHttpClient, requestModelPost9, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.cSharpHttpClient, requestModelPost9, "https"),
+          expectedCode);
     });
   });
 
@@ -560,7 +629,10 @@ using (var request = new HttpRequestMessage(HttpMethod.Put, uri))
     Console.WriteLine(await response.Content.ReadAsStringAsync());
 }
 ''';
-      expect(codeGen.getCode(CodegenLanguage.cSharpHttpClient, requestModelPut1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.cSharpHttpClient, requestModelPut1, "https"),
+          expectedCode);
     });
   });
 
@@ -589,7 +661,10 @@ using (var request = new HttpRequestMessage(HttpMethod.Patch, uri))
     Console.WriteLine(await response.Content.ReadAsStringAsync());
 }
 ''';
-      expect(codeGen.getCode(CodegenLanguage.cSharpHttpClient, requestModelPatch1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.cSharpHttpClient, requestModelPatch1, "https"),
+          expectedCode);
     });
   });
 
@@ -609,7 +684,10 @@ using (var request = new HttpRequestMessage(HttpMethod.Delete, uri))
     Console.WriteLine(await response.Content.ReadAsStringAsync());
 }
 ''';
-      expect(codeGen.getCode(CodegenLanguage.cSharpHttpClient, requestModelDelete1, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.cSharpHttpClient, requestModelDelete1, "https"),
+          expectedCode);
     });
 
     test('DELETE 2', () {
@@ -636,7 +714,10 @@ using (var request = new HttpRequestMessage(HttpMethod.Delete, uri))
     Console.WriteLine(await response.Content.ReadAsStringAsync());
 }
 ''';
-      expect(codeGen.getCode(CodegenLanguage.cSharpHttpClient, requestModelDelete2, "https"), expectedCode);
+      expect(
+          codeGen.getCode(
+              CodegenLanguage.cSharpHttpClient, requestModelDelete2, "https"),
+          expectedCode);
     });
   });
 }

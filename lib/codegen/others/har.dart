@@ -1,10 +1,10 @@
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart' show requestModelToHARJsonRequest;
-import 'package:apidash/models/models.dart' show RequestModel;
+import 'package:apidash/models/models.dart';
 
 class HARCodeGen {
   String? getCode(
-    RequestModel requestModel,
+    HttpRequestModel requestModel,
     String defaultUriScheme, {
     String? boundary,
   }) {

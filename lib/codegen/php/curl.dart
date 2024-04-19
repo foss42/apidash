@@ -1,7 +1,7 @@
 import 'package:jinja/jinja.dart' as jj;
 import 'package:apidash/utils/utils.dart'
     show getValidRequestUri, stripUriParams;
-import 'package:apidash/models/models.dart' show RequestModel;
+import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
 
 class PHPcURLCodeGen {
@@ -92,14 +92,14 @@ echo "Status Code: " . $httpCode . "\n";
 echo $response . "\n";
 ''';
 
-  String? getCode(RequestModel requestModel) {
+  String? getCode(HttpRequestModel requestModel) {
     try {
       String result = "";
       bool hasBody = false;
 
       var rec = getValidRequestUri(
         requestModel.url,
-        requestModel.enabledRequestParams,
+        requestModel.enabledParams,
       );
 
       Uri? uri = rec.$1;
@@ -120,7 +120,7 @@ echo $response . "\n";
           result += templateBody.render({
             'body': requestModel.hasFormData
                 ? requestModel.formDataMapList
-                : requestModel.requestBody,
+                : requestModel.body,
           });
         }
 
@@ -136,8 +136,7 @@ echo $response . "\n";
         var headers = requestModel.enabledHeadersMap;
         if (requestModel.hasBody && !requestModel.hasContentTypeHeader) {
           if (requestModel.hasJsonData || requestModel.hasTextData) {
-            headers[kHeaderContentType] =
-                requestModel.requestBodyContentType.header;
+            headers[kHeaderContentType] = requestModel.bodyContentType.header;
           }
         }
 
