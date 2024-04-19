@@ -203,6 +203,10 @@ class CollectionStateNotifier
 
     RequestModel requestModel = state![id]!;
 
+    if (requestModel.httpRequestModel == null) {
+      return;
+    }
+
     // set current model's isWorking to true and update state
     var map = {...state!};
     map[id] = requestModel.copyWith(
@@ -210,10 +214,6 @@ class CollectionStateNotifier
       sendingTime: DateTime.now(),
     );
     state = map;
-
-    if (requestModel.httpRequestModel == null) {
-      return;
-    }
 
     (http.Response?, Duration?, String?)? responseRec = await request(
       requestModel.httpRequestModel!,
