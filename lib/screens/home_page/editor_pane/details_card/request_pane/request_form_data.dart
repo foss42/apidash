@@ -35,6 +35,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
 
   @override
   Widget build(BuildContext context) {
+    dataTableShowLogs = false;
     final selectedId = ref.watch(selectedIdStateProvider);
     ref.watch(selectedRequestModelProvider
         .select((value) => value?.httpRequestModel?.formData?.length));
