@@ -49,11 +49,13 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
             kNameValueEmptyModel,
           ]
         : rH + [kNameValueEmptyModel];
-    isRowEnabledList = ref
-            .read(selectedRequestModelProvider)
-            ?.httpRequestModel
-            ?.isHeaderEnabledList ??
-        List.filled(rH?.length ?? 0, true, growable: true);
+    isRowEnabledList = [
+      ...(ref
+              .read(selectedRequestModelProvider)
+              ?.httpRequestModel
+              ?.isHeaderEnabledList ??
+          List.filled(rH?.length ?? 0, true, growable: true))
+    ];
     isRowEnabledList.add(false);
     isAddingRow = false;
 

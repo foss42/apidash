@@ -49,11 +49,13 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
             kNameValueEmptyModel,
           ]
         : rP + [kNameValueEmptyModel];
-    isRowEnabledList = ref
-            .read(selectedRequestModelProvider)
-            ?.httpRequestModel
-            ?.isParamEnabledList ??
-        List.filled(rP?.length ?? 0, true, growable: true);
+    isRowEnabledList = [
+      ...(ref
+              .read(selectedRequestModelProvider)
+              ?.httpRequestModel
+              ?.isParamEnabledList ??
+          List.filled(rP?.length ?? 0, true, growable: true))
+    ];
     isRowEnabledList.add(false);
     isAddingRow = false;
 
