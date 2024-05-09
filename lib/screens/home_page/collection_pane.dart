@@ -206,7 +206,9 @@ class _RequestListState extends ConsumerState<RequestList> {
               controller: controller,
               children: requestSequence.map((id) {
                 var item = requestItems[id]!;
-                if (item.url.toLowerCase().contains(filterQuery) ||
+                if (item.httpRequestModel!.url
+                        .toLowerCase()
+                        .contains(filterQuery) ||
                     item.name.toLowerCase().contains(filterQuery)) {
                   return Padding(
                     padding: kP1,
@@ -241,9 +243,9 @@ class RequestItem extends ConsumerWidget {
 
     return SidebarRequestCard(
       id: id,
-      method: requestModel.method,
+      method: requestModel.httpRequestModel!.method,
       name: requestModel.name,
-      url: requestModel.url,
+      url: requestModel.httpRequestModel?.url,
       selectedId: selectedId,
       editRequestId: editRequestId,
       onTap: () {

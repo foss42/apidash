@@ -1,8 +1,7 @@
 import 'package:apidash/consts.dart';
 import 'package:jinja/jinja.dart' as jj;
-import 'package:apidash/utils/utils.dart'
-    show getValidRequestUri, requestModelToHARJsonRequest;
-import 'package:apidash/models/models.dart' show RequestModel;
+import 'package:apidash/utils/utils.dart' show getValidRequestUri;
+import 'package:apidash/models/models.dart';
 
 class CCurlCodeGen {
   final String kTemplateStart = """#include <stdio.h>
@@ -93,14 +92,22 @@ int main() {
 }""";
 
   String? getCode(
-    RequestModel requestModel,
+    HttpRequestModel requestModel,
   ) {
     try {
       String result = "";
       var hasBody = false;
-      var requestBody = requestModel.requestBody;
 
-      String url = requestModel.url;
+      var rec = getValidRequestUri(
+        requestModel.url,
+        requestModel.enabledParams,
+      );
+
+      Uri? uri = rec.$1;
+
+      if (uri == null) {
+        return result;
+      }
 
       var templateStart = jj.Template(kTemplateStart);
       result += templateStart.render({
@@ -115,18 +122,10 @@ int main() {
         "hasBody": hasBody,
       });
 
-      var harJson =
-          requestModelToHARJsonRequest(requestModel, useEnabled: true);
       var templateUrl = jj.Template(kTemplateUrl);
-      String correctUrl = harJson["url"];
-      result += templateUrl.render({"url": correctUrl});
+      result += templateUrl.render({"url": uri});
 
-      var rec = getValidRequestUri(
-        url,
-        requestModel.enabledRequestParams,
-      );
-
-      var headersList = requestModel.enabledRequestHeaders;
+      var headersList = requestModel.enabledHeaders;
       if (headersList != null ||
           requestModel.hasBody ||
           requestModel.hasTextData ||
@@ -136,8 +135,8 @@ int main() {
         //   headers.putIfAbsent("Content-Type", () => "multipart/form-data");
         // }
         if (requestModel.hasTextData || requestModel.hasJsonData) {
-          headers.putIfAbsent(kHeaderContentType,
-              () => requestModel.requestBodyContentType.header);
+          headers.putIfAbsent(
+              kHeaderContentType, () => requestModel.bodyContentType.header);
         }
         if (headers.isNotEmpty) {
           var templateHeader = jj.Template(kTemplateHeader);
@@ -147,43 +146,40 @@ int main() {
         }
       }
 
-      Uri? uri = rec.$1;
-
-      if (uri != null) {
-        if (requestModel.hasTextData || requestModel.hasJsonData) {
-          hasBody = true;
-          var templateRawBody = jj.Template(kTemplateBody);
-          String body = "";
-          if (requestBody != null) {
-            body = requestBody.replaceAll('"', '\\"').replaceAll('\n', '\\n');
-          }
-          result += templateRawBody.render({"body": body});
-        } else if (requestModel.hasFormData) {
-          hasBody = true;
-          var templateFormData = jj.Template(kTemplateFormData);
-          result += templateFormData.render({
-            "hasFileInFormData": requestModel.hasFileInFormData,
-            "fields": requestModel.formDataMapList,
-          });
+      if (requestModel.hasTextData || requestModel.hasJsonData) {
+        hasBody = true;
+        var templateRawBody = jj.Template(kTemplateBody);
+        String body = "";
+        if (requestModel.body != null) {
+          body =
+              requestModel.body!.replaceAll('"', '\\"').replaceAll('\n', '\\n');
         }
-        if (requestModel.hasTextData) {}
-        if (uri.hasQuery) {
-          var params = uri.queryParameters;
-          if (params.isNotEmpty) {
-            var templateQueryParam = jj.Template(kTemplateQueryParam);
-            result += templateQueryParam.render({"params": params});
-          }
-        }
-        var headers = requestModel.enabledHeadersMap;
-        bool allow = headers.isNotEmpty ||
-            requestModel.hasTextData ||
-            requestModel.hasJsonData;
-        var templateEnd = jj.Template(kTemplateEnd);
-        result += templateEnd.render({
-          "formdata": requestModel.hasFormData,
-          "headers": allow,
+        result += templateRawBody.render({"body": body});
+      } else if (requestModel.hasFormData) {
+        hasBody = true;
+        var templateFormData = jj.Template(kTemplateFormData);
+        result += templateFormData.render({
+          "hasFileInFormData": requestModel.hasFileInFormData,
+          "fields": requestModel.formDataMapList,
         });
       }
+      if (requestModel.hasTextData) {}
+      if (uri.hasQuery) {
+        var params = uri.queryParameters;
+        if (params.isNotEmpty) {
+          var templateQueryParam = jj.Template(kTemplateQueryParam);
+          result += templateQueryParam.render({"params": params});
+        }
+      }
+      var headers = requestModel.enabledHeadersMap;
+      bool allow = headers.isNotEmpty ||
+          requestModel.hasTextData ||
+          requestModel.hasJsonData;
+      var templateEnd = jj.Template(kTemplateEnd);
+      result += templateEnd.render({
+        "formdata": requestModel.hasFormData,
+        "headers": allow,
+      });
 
       return result;
     } catch (e) {

@@ -1,7 +1,8 @@
-import 'package:apidash/models/models.dart' show RequestModel;
+import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart' show getNewUuid;
 import 'c/curl.dart';
+import 'csharp/http_client.dart';
 import 'csharp/rest_sharp.dart';
 import 'dart/http.dart';
 import 'dart/dio.dart';
@@ -35,7 +36,11 @@ class Codegen {
     String defaultUriScheme, {
     String? boundary,
   }) {
-    String url = requestModel.url;
+    var httpRequestModel = requestModel.httpRequestModel;
+    if (httpRequestModel == null) {
+      return "";
+    }
+    String url = httpRequestModel.url;
 
     if (url.isEmpty) {
       url = kDefaultUri;
@@ -43,7 +48,7 @@ class Codegen {
     if (!url.contains("://") && url.isNotEmpty) {
       url = "$defaultUriScheme://$url";
     }
-    var rM = requestModel.copyWith(url: url);
+    var rM = httpRequestModel.copyWith(url: url);
 
     switch (codegenLanguage) {
       case CodegenLanguage.curl:
@@ -99,6 +104,8 @@ class Codegen {
         return PHPcURLCodeGen().getCode(rM);
       case CodegenLanguage.cCurlCodeGen:
         return CCurlCodeGen().getCode(rM);
+      case CodegenLanguage.cSharpHttpClient:
+        return CSharpHttpClientCodeGen().getCode(rM);
       case CodegenLanguage.cSharpRestSharp:
         return CSharpRestSharp().getCode(rM);
       case CodegenLanguage.phpHttpPlug:

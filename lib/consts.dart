@@ -273,6 +273,7 @@ enum CodegenLanguage {
   curl("cURL", "bash", "curl"),
   har("HAR", "json", "har"),
   cCurlCodeGen("C (Curl)", "cpp", "c"),
+  cSharpHttpClient("C# (Http Client)", "cs", "cs"),
   cSharpRestSharp("C# (Rest Sharp)", "cs", "cs"),
   dartHttp("Dart (http)", "dart", "dart"),
   dartDio("Dart (dio)", "dart", "dart"),
@@ -550,7 +551,7 @@ const kHeaderRow = ["Header Name", "Header Value"];
 const kLabelRequestHeaders = "Request Headers";
 const kLabelResponseHeaders = "Response Headers";
 const kLabelItems = "items";
-const kMsgError = "Error: Response data does not exist.";
+const kNullResponseModelError = "Error: Response data does not exist.";
 const kMsgNullBody = "Response body is missing (null).";
 const kMsgNoContent = "No content";
 const kMsgUnknowContentType = "Unknown Response Content-Type";

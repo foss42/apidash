@@ -1,7 +1,7 @@
 import 'package:jinja/jinja.dart' as jj;
 import 'package:apidash/utils/utils.dart'
     show getValidRequestUri, requestModelToHARJsonRequest;
-import 'package:apidash/models/models.dart' show RequestModel;
+import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
 
 class JavaHttpClientCodeGen {
@@ -110,12 +110,12 @@ multipart/form-data; boundary={{boundary}}''';
 """;
 
   String? getCode(
-    RequestModel requestModel, {
+    HttpRequestModel requestModel, {
     String? boundary,
   }) {
     try {
       String result = "";
-      var requestBody = requestModel.requestBody;
+      var requestBody = requestModel.body;
       String url = requestModel.url;
 
       result += jj.Template(kTemplateStart).render({
@@ -124,7 +124,7 @@ multipart/form-data; boundary={{boundary}}''';
 
       var rec = getValidRequestUri(
         url,
-        requestModel.enabledRequestParams,
+        requestModel.enabledParams,
       );
 
       Uri? uri = rec.$1;
@@ -159,12 +159,12 @@ multipart/form-data; boundary={{boundary}}''';
           "hasBody": requestModel.hasBody,
         });
 
-        var headersList = requestModel.enabledRequestHeaders;
+        var headersList = requestModel.enabledHeaders;
         if (headersList != null || requestModel.hasBody) {
           var headers = requestModel.enabledHeadersMap;
           if (requestModel.hasJsonData || requestModel.hasTextData) {
-            headers.putIfAbsent(kHeaderContentType,
-                () => requestModel.requestBodyContentType.header);
+            headers.putIfAbsent(
+                kHeaderContentType, () => requestModel.bodyContentType.header);
           }
           if (requestModel.hasFormData) {
             var formDataHeader = jj.Template(kTemplateFormHeaderContentType);

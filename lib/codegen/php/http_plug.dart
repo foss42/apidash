@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:jinja/jinja.dart' as jj;
 import 'package:apidash/utils/utils.dart'
     show getValidRequestUri, stripUriParams;
-import 'package:apidash/models/models.dart' show RequestModel;
+import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
 
 class PhpHttpPlugCodeGen {
@@ -73,13 +73,13 @@ echo \$response->getBody();
 
 """;
 
-  String? getCode(RequestModel requestModel) {
+  String? getCode(HttpRequestModel requestModel) {
     try {
       String result = "";
 
       var rec = getValidRequestUri(
         requestModel.url,
-        requestModel.enabledRequestParams,
+        requestModel.enabledParams,
       );
       Uri? uri = rec.$1;
 
@@ -110,7 +110,7 @@ echo \$response->getBody();
         result += templateRequestInit
             .render({"method": requestModel.method.name.toUpperCase()});
 
-        var requestBody = requestModel.requestBody;
+        var requestBody = requestModel.body;
 
         if ((requestModel.hasTextData || requestModel.hasJsonData) &&
             requestBody != null) {
@@ -153,7 +153,7 @@ echo \$response->getBody();
         if (requestModel.hasBody && !requestModel.hasContentTypeHeader) {
           if (requestModel.hasJsonData || requestModel.hasTextData) {
             headers[kHeaderContentType] =
-                "'${requestModel.requestBodyContentType.header}'";
+                "'${requestModel.bodyContentType.header}'";
           }
           if (requestModel.hasFormData) {
             headers[kHeaderContentType] =

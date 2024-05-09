@@ -1,8 +1,8 @@
 import 'package:jinja/jinja.dart' as jj;
 import 'package:apidash/utils/utils.dart'
     show getValidRequestUri, stripUriParams;
-import 'package:apidash/models/models.dart' show RequestModel;
-import '../../extensions/extensions.dart';
+import 'package:apidash/models/models.dart';
+import 'package:apidash/extensions/extensions.dart';
 import 'package:apidash/consts.dart';
 
 class RubyNetHttpCodeGen {
@@ -39,13 +39,13 @@ puts "Response Code: #{response.code}"
 
 """;
 
-  String? getCode(RequestModel requestModel) {
+  String? getCode(HttpRequestModel requestModel) {
     try {
       String result = "";
 
       var rec = getValidRequestUri(
         requestModel.url,
-        requestModel.enabledRequestParams,
+        requestModel.enabledParams,
       );
 
       Uri? uri = rec.$1;
@@ -64,8 +64,7 @@ puts "Response Code: #{response.code}"
       var headers = requestModel.enabledHeadersMap;
       if (!requestModel.hasContentTypeHeader &&
           (requestModel.hasJsonData || requestModel.hasTextData)) {
-        headers[kHeaderContentType] =
-            requestModel.requestBodyContentType.header;
+        headers[kHeaderContentType] = requestModel.bodyContentType.header;
       }
 
       if (headers.isNotEmpty) {
@@ -78,7 +77,7 @@ puts "Response Code: #{response.code}"
       if (requestModel.hasTextData || requestModel.hasJsonData) {
         var templateBody = jj.Template(kTemplateBody);
         result += templateBody.render({
-          "body": requestModel.requestBody,
+          "body": requestModel.body,
         });
       }
 

@@ -2,8 +2,7 @@ import 'package:apidash/consts.dart';
 import 'package:jinja/jinja.dart' as jj;
 import 'package:apidash/utils/utils.dart' show getValidRequestUri;
 import 'package:apidash/utils/http_utils.dart' show stripUriParams;
-
-import 'package:apidash/models/models.dart' show RequestModel;
+import 'package:apidash/models/models.dart';
 
 // Note that delete is a special case in Faraday as API Dash supports request
 // body inside delete reqest, but Faraday does not. Hence we need to manually
@@ -88,14 +87,14 @@ puts "Response Body: #{response.body}"
 """;
 
   String? getCode(
-    RequestModel requestModel,
+    HttpRequestModel requestModel,
   ) {
     try {
       String result = "";
 
       var rec = getValidRequestUri(
         requestModel.url,
-        requestModel.enabledRequestParams,
+        requestModel.enabledParams,
       );
 
       Uri? uri = rec.$1;
@@ -126,7 +125,7 @@ puts "Response Body: #{response.body}"
       } else if (requestModel.hasJsonData || requestModel.hasTextData) {
         var templateBody = jj.Template(kTemplateBody);
         result += templateBody.render({
-          "body": requestModel.requestBody,
+          "body": requestModel.body,
         });
       }
 
@@ -150,8 +149,7 @@ puts "Response Body: #{response.body}"
       var headers = requestModel.enabledHeadersMap;
       if (requestModel.hasBody && !requestModel.hasContentTypeHeader) {
         if (requestModel.hasJsonData || requestModel.hasTextData) {
-          headers[kHeaderContentType] =
-              requestModel.requestBodyContentType.header;
+          headers[kHeaderContentType] = requestModel.bodyContentType.header;
         }
       }
 

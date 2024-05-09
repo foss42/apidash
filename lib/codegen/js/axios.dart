@@ -1,7 +1,7 @@
 import 'package:jinja/jinja.dart' as jj;
 import 'package:apidash/utils/utils.dart'
     show padMultilineString, requestModelToHARJsonRequest, stripUrlParams;
-import 'package:apidash/models/models.dart' show RequestModel;
+import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
 
 class AxiosCodeGen {
@@ -47,7 +47,7 @@ axios(config)
   });
 """;
   String? getCode(
-    RequestModel requestModel,
+    HttpRequestModel requestModel,
   ) {
     try {
       jj.Template kNodejsImportTemplate = jj.Template(kStringImportNode);

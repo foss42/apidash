@@ -4,7 +4,7 @@ import 'package:jinja/jinja.dart' as jj;
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart'
     show getNewUuid, getValidRequestUri, stripUriParams;
-import 'package:apidash/models/models.dart' show RequestModel;
+import 'package:apidash/models/models.dart';
 
 class RustUreqCodeGen {
   final String kTemplateStart = """
@@ -109,7 +109,7 @@ multipart/form-data; boundary={{boundary}}''';
 """;
 
   String? getCode(
-    RequestModel requestModel, {
+    HttpRequestModel requestModel, {
     String? boundary,
   }) {
     try {
@@ -122,7 +122,7 @@ multipart/form-data; boundary={{boundary}}''';
 
       var rec = getValidRequestUri(
         url,
-        requestModel.enabledRequestParams,
+        requestModel.enabledParams,
       );
       Uri? uri = rec.$1;
       if (uri != null) {
@@ -134,11 +134,11 @@ multipart/form-data; boundary={{boundary}}''';
         });
 
         var method = requestModel.method;
-        var requestBody = requestModel.requestBody;
+        var requestBody = requestModel.body;
         if (kMethodsWithBody.contains(method) && requestBody != null) {
           var contentLength = utf8.encode(requestBody).length;
           if (contentLength > 0) {
-            if (requestModel.requestBodyContentType == ContentType.json) {
+            if (requestModel.bodyContentType == ContentType.json) {
               hasJsonBody = true;
               var templateBody = jj.Template(kTemplateJson);
               result += templateBody.render({"body": requestBody});
@@ -172,7 +172,7 @@ multipart/form-data; boundary={{boundary}}''';
           }
         }
 
-        var headersList = requestModel.enabledRequestHeaders;
+        var headersList = requestModel.enabledHeaders;
         if (headersList != null || hasBody || requestModel.hasFormData) {
           var headers = requestModel.enabledHeadersMap;
           if (requestModel.hasFormData) {
@@ -183,7 +183,7 @@ multipart/form-data; boundary={{boundary}}''';
             });
           } else if (hasBody) {
             headers[HttpHeaders.contentTypeHeader] =
-                requestModel.requestBodyContentType.header;
+                requestModel.bodyContentType.header;
           }
 
           if (headers.isNotEmpty) {

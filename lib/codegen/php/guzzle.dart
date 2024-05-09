@@ -1,21 +1,23 @@
 import 'package:jinja/jinja.dart' as jj;
-import 'package:apidash/utils/utils.dart'
-    show requestModelToHARJsonRequest, stripUrlParams;
-import 'package:apidash/models/models.dart' show RequestModel;
+import 'package:apidash/utils/utils.dart' show stripUrlParams;
+import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
 
 class PhpGuzzleCodeGen {
-  String kStringImportNode = """use GuzzleHttp\\Client;
+  String kTemplateImport = """<?php
+require_once 'vendor/autoload.php';
+
+use GuzzleHttp\\Client;
 use GuzzleHttp\\Psr7\\Request;
 {% if hasFormData %}use GuzzleHttp\\Psr7\\MultipartStream;{% endif %}
 
 
 """;
 
-  String kMultiPartBodyTemplate = """
-\$multipart = [
+  String kTemplateMultiPartBody = """
+\$body = new MultipartStream([
 {{fields_list}}
-];
+]);
 
 
 """;
@@ -38,119 +40,96 @@ use GuzzleHttp\\Psr7\\Request;
 """;
 
   String kTemplateBody = """
-\$body = {{body}};
+\$body = <<<END
+{{body}}
+END;
 
 
 """;
 
-  String kStringRequest = """
-\$client = new Client();
+  String kTemplateRequest = r"""
+$client = new Client();
 
-\$request = new Request('{{method}}', '{{url}}'{{queryParams}} {{headers}} {{body}});
-\$res = \$client->sendAsync(\$request)->wait();
-echo \$res->getBody();
+$request = new Request('{{method}}', '{{url}}'{{queryParams}}{{headers}}{{body}});
+$res = $client->sendAsync($request)->wait();
+
+echo $res->getStatusCode() . "\n";
+echo $res->getBody();
+
 """;
 
-  String? getCode(RequestModel requestModel) {
+  String? getCode(HttpRequestModel requestModel) {
     try {
-      jj.Template kNodejsImportTemplate = jj.Template(kStringImportNode);
-      String importsData = kNodejsImportTemplate.render({
+      var templateImport = jj.Template(kTemplateImport);
+      String importsData = templateImport.render({
         "hasFormData": requestModel.hasFormData,
       });
 
       String result = importsData;
 
-      if (requestModel.hasFormData && requestModel.formDataMapList.isNotEmpty) {
-        var templateMultiPartBody = jj.Template(kMultiPartBodyTemplate);
+      if (requestModel.hasFormData) {
+        var templateMultiPartBody = jj.Template(kTemplateMultiPartBody);
         var renderedMultiPartBody = templateMultiPartBody.render({
-          "fields_list": requestModel.formDataMapList.map((field) {
-            return '''
+          "fields_list": requestModel.formDataList.map((field) {
+            var row = '''
     [
-        'name'     => '${field['name']}',
-        'contents' => '${field['value']}'
-    ],''';
-          }).join(),
+        'name'     => '${field.name}',
+        'contents' => ${field.type == FormDataType.file ? "fopen('${field.value}', 'r')" : "'${field.value}'"}
+    ]''';
+            return row;
+          }).join(",\n"),
         });
         result += renderedMultiPartBody;
       }
 
-      var harJson =
-          requestModelToHARJsonRequest(requestModel, useEnabled: true);
-
-      var params = harJson["queryString"];
+      var params = requestModel.enabledParamsMap;
       if (params.isNotEmpty) {
         var templateParams = jj.Template(kTemplateParams);
-        var m = {};
-        for (var i in params) {
-          m[i["name"]] = i["value"];
-        }
-        var jsonString = '';
-        m.forEach((key, value) {
-          jsonString += "\t\t\t\t'$key' => '$value', \n";
+        List<String> paramList = [];
+        params.forEach((key, value) {
+          paramList.add("'$key' => '$value'");
         });
-        jsonString = jsonString.substring(
-            0, jsonString.length - 2); // Removing trailing comma and space
         result += templateParams.render({
-          "params": jsonString,
+          "params": paramList.join(",\n"),
         });
       }
 
-      var headers = harJson["headers"];
-      if (headers.isNotEmpty || requestModel.hasFormData) {
+      var headers = requestModel.enabledHeadersMap;
+      List<String> headerList = [];
+      if (headers.isNotEmpty || requestModel.hasBody) {
         var templateHeader = jj.Template(kTemplateHeader);
-        var m = {};
-        for (var i in headers) {
-          m[i["name"]] = i["value"];
-        }
-        var headersString = '';
-        m.forEach((key, value) {
-          headersString += "\t\t\t\t'$key' => '$value', \n";
+        headers.forEach((key, value) {
+          headerList.add("'$key' => '$value'");
         });
-        if (requestModel.hasFormData) {
-          m[kHeaderContentType] = ContentType.formdata.header;
+
+        if (!requestModel.hasContentTypeHeader && requestModel.hasBody) {
+          if (requestModel.hasJsonData || requestModel.hasTextData) {
+            headerList.add(
+                "'$kHeaderContentType' => '${requestModel.bodyContentType.header}'");
+          }
+          if (requestModel.hasFormData) {
+            headerList.add(
+                "'$kHeaderContentType' => '${requestModel.bodyContentType.header}; boundary=' . \$body->getBoundary()");
+          }
         }
-        headersString = headersString.substring(
-            0, headersString.length - 2); // Removing trailing comma and space
         result += templateHeader.render({
-          "headers": headersString,
+          "headers": headerList.join(",\n"),
         });
       }
 
       var templateBody = jj.Template(kTemplateBody);
-      if (requestModel.hasFormData && requestModel.formDataMapList.isNotEmpty) {
-        result += templateBody.render({
-          "body": "new MultipartStream(\$multipart)",
-        });
+
+      if (requestModel.hasJsonData || requestModel.hasTextData) {
+        result += templateBody.render({"body": requestModel.body});
       }
 
-      if (harJson["postData"]?["text"] != null) {
-        result += templateBody
-            .render({"body": kEncoder.convert(harJson["postData"]["text"])});
-      }
-
-      String getRequestBody(Map harJson) {
-        if (harJson.containsKey("postData")) {
-          var postData = harJson["postData"];
-          if (postData.containsKey("mimeType")) {
-            var mimeType = postData["mimeType"];
-            if (mimeType == "text/plain" || mimeType == "application/json") {
-              return " \$body";
-            } else if (mimeType == "multipart/form-data") {
-              return " new MultipartStream(\$multipart)";
-            }
-          }
-        }
-        return ""; // Return empty string if postData or formdata is not present
-      }
-
-      var templateRequest = jj.Template(kStringRequest);
+      var templateRequest = jj.Template(kTemplateRequest);
       result += templateRequest.render({
         "url": stripUrlParams(requestModel.url),
-        "method": harJson["method"].toLowerCase(),
-        "queryParams":
-            harJson["queryString"].isNotEmpty ? ". \$queryParamsStr," : "",
-        "headers": harJson["headers"].isNotEmpty ? " \$headers," : "",
-        "body": getRequestBody(harJson),
+        "method": requestModel.method.name.toLowerCase(),
+        "queryParams": params.isNotEmpty ? ". \$queryParamsStr" : "",
+        "headers": headerList.isNotEmpty ? ", \$headers" : "",
+        "body": requestModel.hasBody ? ", \$body" : "",
       });
 
       return result;

@@ -3,7 +3,7 @@ import 'package:jinja/jinja.dart' as jj;
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart'
     show getValidRequestUri, stripUriParams, getFilenameFromPath;
-import 'package:apidash/models/models.dart' show RequestModel;
+import 'package:apidash/models/models.dart';
 import '../codegen_utils.dart';
 
 class PythonRequestsCodeGen {
@@ -80,7 +80,7 @@ print('Response Body:', response.text)
   }
 
   String? getCode(
-    RequestModel requestModel, {
+    HttpRequestModel requestModel, {
     String? boundary,
   }) {
     try {
@@ -92,7 +92,7 @@ print('Response Body:', response.text)
 
       var rec = getValidRequestUri(
         requestModel.url,
-        requestModel.enabledRequestParams,
+        requestModel.enabledParams,
       );
       Uri? uri = rec.$1;
       if (uri != null) {
@@ -140,15 +140,15 @@ print('Response Body:', response.text)
         } else if (requestModel.hasJsonData) {
           hasJsonBody = true;
           var templateBody = jj.Template(kTemplateJson);
-          var pyDict = jsonToPyDict(requestModel.requestBody ?? "");
+          var pyDict = jsonToPyDict(requestModel.body ?? "");
           result += templateBody.render({"body": pyDict});
         } else if (requestModel.hasTextData) {
           hasBody = true;
           var templateBody = jj.Template(kTemplateBody);
-          result += templateBody.render({"body": requestModel.requestBody});
+          result += templateBody.render({"body": requestModel.body});
         }
 
-        var headersList = requestModel.enabledRequestHeaders;
+        var headersList = requestModel.enabledHeaders;
         if (headersList != null || hasBody) {
           var headers = requestModel.enabledHeadersMap;
           if (hasBody) {
@@ -157,7 +157,7 @@ print('Response Body:', response.text)
                   kStringFormDataContentType;
             } else {
               headers[HttpHeaders.contentTypeHeader] =
-                  requestModel.requestBodyContentType.header;
+                  requestModel.bodyContentType.header;
             }
           }
           if (headers.isNotEmpty) {

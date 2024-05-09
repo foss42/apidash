@@ -15,7 +15,7 @@ class EditRequestBody extends ConsumerWidget {
         .read(collectionStateNotifierProvider.notifier)
         .getRequestModel(selectedId!);
     final contentType = ref.watch(selectedRequestModelProvider
-        .select((value) => value?.requestBodyContentType));
+        .select((value) => value?.httpRequestModel?.bodyContentType));
 
     return Container(
       decoration: BoxDecoration(
@@ -45,11 +45,11 @@ class EditRequestBody extends ConsumerWidget {
                   child: TextFieldEditor(
                     key: Key("$selectedId-json-body"),
                     fieldKey: "$selectedId-json-body-editor",
-                    initialValue: requestModel?.requestBody,
+                    initialValue: requestModel?.httpRequestModel?.body,
                     onChanged: (String value) {
                       ref
                           .read(collectionStateNotifierProvider.notifier)
-                          .update(selectedId, requestBody: value);
+                          .update(selectedId, body: value);
                     },
                   ),
                 ),
@@ -58,11 +58,11 @@ class EditRequestBody extends ConsumerWidget {
                   child: TextFieldEditor(
                     key: Key("$selectedId-body"),
                     fieldKey: "$selectedId-body-editor",
-                    initialValue: requestModel?.requestBody,
+                    initialValue: requestModel?.httpRequestModel?.body,
                     onChanged: (String value) {
                       ref
                           .read(collectionStateNotifierProvider.notifier)
-                          .update(selectedId, requestBody: value);
+                          .update(selectedId, body: value);
                     },
                   ),
                 ),
@@ -83,13 +83,13 @@ class DropdownButtonBodyContentType extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedId = ref.watch(selectedIdStateProvider);
     final requestBodyContentType = ref.watch(selectedRequestModelProvider
-        .select((value) => value?.requestBodyContentType));
+        .select((value) => value?.httpRequestModel?.bodyContentType));
     return DropdownButtonContentType(
       contentType: requestBodyContentType,
       onChanged: (ContentType? value) {
         ref
             .read(collectionStateNotifierProvider.notifier)
-            .update(selectedId!, requestBodyContentType: value);
+            .update(selectedId!, bodyContentType: value);
       },
     );
   }

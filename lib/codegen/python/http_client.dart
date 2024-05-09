@@ -2,7 +2,7 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:jinja/jinja.dart' as jj;
 import 'package:apidash/utils/utils.dart' show getValidRequestUri;
-import 'package:apidash/models/models.dart' show RequestModel;
+import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
 
 class PythonHttpClientCodeGen {
@@ -83,7 +83,7 @@ dataList = build_data_list({{fields_list}})
 body = b'\r\n'.join(dataList)
 ''';
   String? getCode(
-    RequestModel requestModel, {
+    HttpRequestModel requestModel, {
     String? boundary,
   }) {
     try {
@@ -100,7 +100,7 @@ body = b'\r\n'.join(dataList)
       );
       var rec = getValidRequestUri(
         requestModel.url,
-        requestModel.enabledRequestParams,
+        requestModel.enabledParams,
       );
 
       Uri? uri = rec.$1;
@@ -120,11 +120,11 @@ body = b'\r\n'.join(dataList)
           hasBody = true;
           if (requestModel.hasJsonData || requestModel.hasTextData) {
             var templateBody = jj.Template(kTemplateBody);
-            result += templateBody.render({"body": requestModel.requestBody});
+            result += templateBody.render({"body": requestModel.body});
           }
         }
 
-        var headersList = requestModel.enabledRequestHeaders;
+        var headersList = requestModel.enabledHeaders;
         if (headersList != null || hasBody) {
           var headers = requestModel.enabledHeadersMap;
 
@@ -133,7 +133,7 @@ body = b'\r\n'.join(dataList)
             if (hasBody && !requestModel.hasContentTypeHeader) {
               if (requestModel.hasJsonData || requestModel.hasTextData) {
                 headers[HttpHeaders.contentTypeHeader] =
-                    requestModel.requestBodyContentType.header;
+                    requestModel.bodyContentType.header;
               } else if (requestModel.hasFormData) {
                 var formHeaderTemplate =
                     jj.Template(kTemplateFormHeaderContentType);

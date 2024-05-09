@@ -29,16 +29,17 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
   void _onFieldChange(String selectedId) {
     ref.read(collectionStateNotifierProvider.notifier).update(
           selectedId,
-          requestFormDataList: formRows.sublist(0, formRows.length - 1),
+          formData: formRows.sublist(0, formRows.length - 1),
         );
   }
 
   @override
   Widget build(BuildContext context) {
+    dataTableShowLogs = false;
     final selectedId = ref.watch(selectedIdStateProvider);
     ref.watch(selectedRequestModelProvider
-        .select((value) => value?.requestFormDataList?.length));
-    var rF = ref.read(selectedRequestModelProvider)?.requestFormDataList;
+        .select((value) => value?.httpRequestModel?.formData?.length));
+    var rF = ref.read(selectedRequestModelProvider)?.httpRequestModel?.formData;
     bool isFormDataEmpty = rF == null || rF.isEmpty;
     formRows = isFormDataEmpty
         ? [

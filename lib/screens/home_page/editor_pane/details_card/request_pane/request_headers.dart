@@ -30,7 +30,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
   void _onFieldChange(String selectedId) {
     ref.read(collectionStateNotifierProvider.notifier).update(
           selectedId,
-          requestHeaders: headerRows.sublist(0, headerRows.length - 1),
+          headers: headerRows.sublist(0, headerRows.length - 1),
           isHeaderEnabledList:
               isRowEnabledList.sublist(0, headerRows.length - 1),
         );
@@ -38,19 +38,24 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
 
   @override
   Widget build(BuildContext context) {
+    dataTableShowLogs = false;
     final selectedId = ref.watch(selectedIdStateProvider);
     ref.watch(selectedRequestModelProvider
-        .select((value) => value?.requestHeaders?.length));
-    var rH = ref.read(selectedRequestModelProvider)?.requestHeaders;
+        .select((value) => value?.httpRequestModel?.headers?.length));
+    var rH = ref.read(selectedRequestModelProvider)?.httpRequestModel?.headers;
     bool isHeadersEmpty = rH == null || rH.isEmpty;
     headerRows = isHeadersEmpty
         ? [
             kNameValueEmptyModel,
           ]
         : rH + [kNameValueEmptyModel];
-    isRowEnabledList =
-        ref.read(selectedRequestModelProvider)?.isHeaderEnabledList ??
-            List.filled(rH?.length ?? 0, true, growable: true);
+    isRowEnabledList = [
+      ...(ref
+              .read(selectedRequestModelProvider)
+              ?.httpRequestModel
+              ?.isHeaderEnabledList ??
+          List.filled(rH?.length ?? 0, true, growable: true))
+    ];
     isRowEnabledList.add(false);
     isAddingRow = false;
 

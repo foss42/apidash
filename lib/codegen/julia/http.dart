@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:jinja/jinja.dart' as jj;
 import 'package:apidash/utils/utils.dart'
     show getValidRequestUri, stripUriParams;
-import 'package:apidash/models/models.dart' show RequestModel;
+import 'package:apidash/models/models.dart';
 
 class JuliaHttpClientCodeGen {
   final String kTemplateStart = """
@@ -70,7 +70,7 @@ println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.
 println("Response Body: \n$(String(response.body))")
 """;
 
-  String? getCode(RequestModel requestModel) {
+  String? getCode(HttpRequestModel requestModel) {
     try {
       String result = "";
       bool hasQuery = false;
@@ -79,7 +79,7 @@ println("Response Body: \n$(String(response.body))")
 
       var rec = getValidRequestUri(
         requestModel.url,
-        requestModel.enabledRequestParams,
+        requestModel.enabledParams,
       );
       Uri? uri = rec.$1;
       if (uri != null) {
@@ -105,7 +105,7 @@ println("Response Body: \n$(String(response.body))")
         if (requestModel.hasJsonData || requestModel.hasTextData) {
           addHeaderForBody = true;
           final templateBody = jj.Template(kTemplateBody);
-          var bodyStr = requestModel.requestBody;
+          var bodyStr = requestModel.body;
           result += templateBody.render({"body": bodyStr});
         }
 
@@ -119,14 +119,14 @@ println("Response Body: \n$(String(response.body))")
           );
         }
 
-        var headersList = requestModel.enabledRequestHeaders;
+        var headersList = requestModel.enabledHeaders;
         if (headersList != null || addHeaderForBody) {
           var headers = requestModel.enabledHeadersMap;
 
           if (!requestModel.hasContentTypeHeader) {
             if (addHeaderForBody) {
               headers[HttpHeaders.contentTypeHeader] =
-                  requestModel.requestBodyContentType.header;
+                  requestModel.bodyContentType.header;
             }
           }
 

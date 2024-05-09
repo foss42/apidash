@@ -1,7 +1,7 @@
 import 'package:jinja/jinja.dart' as jj;
 import 'package:apidash/utils/utils.dart'
     show padMultilineString, requestModelToHARJsonRequest;
-import 'package:apidash/models/models.dart' show RequestModel;
+import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
 
 class FetchCodeGen {
@@ -52,7 +52,7 @@ fetch(url, options)
   });
 """;
 
-  String? getCode(RequestModel requestModel) {
+  String? getCode(HttpRequestModel requestModel) {
     try {
       jj.Template kNodejsImportTemplate = jj.Template(kStringImportNode);
       String importsData = kNodejsImportTemplate.render({

@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:jinja/jinja.dart' as jj;
 import 'package:apidash/utils/utils.dart'
     show getValidRequestUri, stripUriParams;
-import '../../models/request_model.dart';
+import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
 
 class KotlinOkHttpCodeGen {
@@ -80,7 +80,7 @@ import okhttp3.MediaType.Companion.toMediaType""";
 ''';
 
   String? getCode(
-    RequestModel requestModel,
+    HttpRequestModel requestModel,
   ) {
     try {
       String result = "";
@@ -91,7 +91,7 @@ import okhttp3.MediaType.Companion.toMediaType""";
 
       var rec = getValidRequestUri(
         requestModel.url,
-        requestModel.enabledRequestParams,
+        requestModel.enabledParams,
       );
       Uri? uri = rec.$1;
 
@@ -113,34 +113,28 @@ import okhttp3.MediaType.Companion.toMediaType""";
         }
 
         var method = requestModel.method;
-        var requestBody = requestModel.requestBody;
+        var requestBody = requestModel.body;
         if (requestModel.hasFormData) {
           hasFormData = true;
           var formDataTemplate = jj.Template(kFormDataBody);
 
-          List<Map<String,String>> modifiedFormDataList = [];
+          List<Map<String, String>> modifiedFormDataList = [];
           for (var item in requestModel.formDataList) {
-            if (item.type == FormDataType.file ) {
+            if (item.type == FormDataType.file) {
               if (item.value[0] == "/") {
-              modifiedFormDataList.add({
-                "name": item.name,
-                "value": item.value.substring(1),
-                "type": "file"
-              });
-              }else{
                 modifiedFormDataList.add({
-                "name": item.name,
-                "value": item.value,
-                "type": "file"
-              });
+                  "name": item.name,
+                  "value": item.value.substring(1),
+                  "type": "file"
+                });
+              } else {
+                modifiedFormDataList.add(
+                    {"name": item.name, "value": item.value, "type": "file"});
               }
               hasFile = true;
-            }else{
-              modifiedFormDataList.add({
-                "name": item.name,
-                "value": item.value,
-                "type": "text"
-              });
+            } else {
+              modifiedFormDataList.add(
+                  {"name": item.name, "value": item.value, "type": "text"});
             }
           }
 
@@ -151,7 +145,7 @@ import okhttp3.MediaType.Companion.toMediaType""";
           var contentLength = utf8.encode(requestBody).length;
           if (contentLength > 0) {
             hasBody = true;
-            String contentType = requestModel.requestBodyContentType.header;
+            String contentType = requestModel.bodyContentType.header;
             var templateBody = jj.Template(kTemplateRequestBody);
             result += templateBody
                 .render({"contentType": contentType, "body": requestBody});
@@ -169,7 +163,7 @@ import okhttp3.MediaType.Companion.toMediaType""";
         result = stringStart + result;
         result += kStringRequestStart;
 
-        var headersList = requestModel.enabledRequestHeaders;
+        var headersList = requestModel.enabledHeaders;
         if (headersList != null) {
           var headers = requestModel.enabledHeadersMap;
           if (headers.isNotEmpty) {

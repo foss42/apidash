@@ -17,13 +17,13 @@ class EditRequestPane extends ConsumerWidget {
         selectedRequestModelProvider.select((value) => value?.requestTabIndex));
 
     final headerLength = ref.watch(selectedRequestModelProvider
-            .select((value) => value?.headersMap.length)) ??
+            .select((value) => value?.httpRequestModel?.headersMap.length)) ??
         0;
     final paramLength = ref.watch(selectedRequestModelProvider
-            .select((value) => value?.paramsMap.length)) ??
+            .select((value) => value?.httpRequestModel?.paramsMap.length)) ??
         0;
-    final hasBody = ref.watch(
-            selectedRequestModelProvider.select((value) => value?.hasBody)) ??
+    final hasBody = ref.watch(selectedRequestModelProvider
+            .select((value) => value?.httpRequestModel?.hasBody)) ??
         false;
 
     return RequestPane(
