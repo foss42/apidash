@@ -9,6 +9,8 @@ class EditorPaneRequestURLCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isMobile =
+        kIsMobile && MediaQuery.of(context).size.width < kMinWindowSize.width;
     return Card(
       elevation: 0,
       shape: RoundedRectangleBorder(
@@ -20,24 +22,33 @@ class EditorPaneRequestURLCard extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.symmetric(
           vertical: 5,
-          horizontal: !kIsMobile ? 20 : 6,
+          horizontal: !isMobile ? 20 : 6,
         ),
-        child: Row(
-          children: [
-            const DropdownButtonHTTPMethod(),
-            !kIsMobile ? kHSpacer20 : kHSpacer5,
-            const Expanded(
-              child: URLTextField(),
-            ),
-            !kIsMobile ? kHSpacer20 : const SizedBox.shrink(),
-            !kIsMobile
-                ? const SizedBox(
+        child: isMobile
+            ? const Row(
+                children: [
+                  DropdownButtonHTTPMethod(),
+                  kHSpacer5,
+                  Expanded(
+                    child: URLTextField(),
+                  ),
+                  SizedBox.shrink(),
+                ],
+              )
+            : const Row(
+                children: [
+                  DropdownButtonHTTPMethod(),
+                  kHSpacer20,
+                  Expanded(
+                    child: URLTextField(),
+                  ),
+                  kHSpacer20,
+                  SizedBox(
                     height: 36,
                     child: SendButton(),
                   )
-                : const SizedBox.shrink(),
-          ],
-        ),
+                ],
+              ),
       ),
     );
   }

@@ -11,27 +11,38 @@ class RequestEditor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: kIsMacOS || kIsWindows
-          ? kPt24o8
-          : !kIsMobile
-              ? kP8
-              : kPb10,
-      child: Column(
-        children: [
-          !kIsMobile ? const RequestEditorTopBar() : kVSpacer5,
-          Padding(
-              padding: !kIsMobile ? EdgeInsets.zero : kPh8,
-              child: const EditorPaneRequestURLCard()),
-          kVSpacer10,
-          Expanded(
-            child: kIsMobile
-                ? const EditRequestPane()
-                : const EditorPaneRequestDetailsCard(),
-          ),
-        ],
-      ),
-    );
+    final isMobile =
+        kIsMobile && MediaQuery.of(context).size.width < kMinWindowSize.width;
+    return isMobile
+        ? const Padding(
+            padding: kPb10,
+            child: Column(
+              children: [
+                kVSpacer5,
+                Padding(
+                  padding: kPh8,
+                  child: EditorPaneRequestURLCard(),
+                ),
+                kVSpacer10,
+                Expanded(
+                  child: EditRequestPane(),
+                ),
+              ],
+            ),
+          )
+        : Padding(
+            padding: kIsMacOS || kIsWindows ? kPt24o8 : kP8,
+            child: const Column(
+              children: [
+                RequestEditorTopBar(),
+                EditorPaneRequestURLCard(),
+                kVSpacer10,
+                Expanded(
+                  child: EditorPaneRequestDetailsCard(),
+                ),
+              ],
+            ),
+          );
   }
 }
 

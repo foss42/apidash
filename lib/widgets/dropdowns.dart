@@ -15,6 +15,8 @@ class DropdownButtonHttpMethod extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final surfaceColor = Theme.of(context).colorScheme.surface;
+    final isMobile =
+        kIsMobile && MediaQuery.of(context).size.width < kMinWindowSize.width;
     return DropdownButton<HTTPVerb>(
       focusColor: surfaceColor,
       value: method,
@@ -29,11 +31,11 @@ class DropdownButtonHttpMethod extends StatelessWidget {
         return DropdownMenuItem<HTTPVerb>(
           value: value,
           child: Padding(
-            padding: EdgeInsets.only(left: kIsMobile ? 8 : 16),
+            padding: EdgeInsets.only(left: isMobile ? 8 : 16),
             child: Text(
               value.name.toUpperCase(),
               style: kCodeStyle.copyWith(
-                fontSize: kIsMobile ? 13 : null,
+                fontSize: isMobile ? 13 : null,
                 fontWeight: FontWeight.bold,
                 color: getHTTPMethodColor(
                   value,

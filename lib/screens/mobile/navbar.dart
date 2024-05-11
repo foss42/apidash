@@ -81,6 +81,95 @@ class BottomNavBar extends ConsumerWidget {
   }
 }
 
+class NavRail extends ConsumerWidget {
+  const NavRail({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final railIdx = ref.watch(navRailIndexStateProvider);
+    return Material(
+      type: MaterialType.transparency,
+      child: Container(
+        width: 70,
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+        decoration: BoxDecoration(
+          border: Border(
+            right: BorderSide(
+              color: Theme.of(context).colorScheme.onInverseSurface,
+              width: 1,
+            ),
+          ),
+        ),
+        child: Column(
+          children: [
+            customNavigationDestination(
+              context,
+              ref,
+              railIdx,
+              0,
+              Icons.dashboard,
+              Icons.dashboard_outlined,
+              'Requests',
+            ),
+            const SizedBox(height: 16),
+            customNavigationDestination(
+              context,
+              ref,
+              railIdx,
+              1,
+              Icons.laptop_windows,
+              Icons.laptop_windows_outlined,
+              'Variables',
+            ),
+            const Expanded(child: SizedBox()),
+            customNavigationDestination(
+              context,
+              ref,
+              railIdx,
+              2,
+              Icons.help,
+              Icons.help_outline,
+              'About',
+              isNavigator: true,
+              showLabel: false,
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                      builder: (context) => const PageBase(
+                            title: 'About',
+                            scaffoldBody: IntroPage(),
+                          )),
+                );
+              },
+            ),
+            const SizedBox(height: 24),
+            customNavigationDestination(
+              context,
+              ref,
+              railIdx,
+              3,
+              Icons.settings,
+              Icons.settings_outlined,
+              'Settings',
+              isNavigator: true,
+              showLabel: false,
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                      builder: (context) => const PageBase(
+                            title: 'Settings',
+                            scaffoldBody: SettingsPage(),
+                          )),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 Widget customNavigationDestination(
   BuildContext context,
   WidgetRef ref,

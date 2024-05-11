@@ -45,9 +45,11 @@ class _RequestPaneState extends State<RequestPane>
     if (widget.tabIndex != null) {
       _controller.index = widget.tabIndex!;
     }
+    final isMobile =
+        kIsMobile && MediaQuery.of(context).size.width < kMinWindowSize.width;
     return Column(
       children: [
-        kIsMobile
+        isMobile
             ? const SizedBox.shrink()
             : Padding(
                 padding: kP8,

@@ -23,6 +23,8 @@ class IntroMessage extends StatelessWidget {
     return FutureBuilder(
       future: introData(),
       builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+        final isMobile = kIsMobile &&
+            MediaQuery.of(context).size.width < kMinWindowSize.width;
         if (snapshot.hasError) {
           return const ErrorMessage(message: "An error occured");
         }
@@ -37,7 +39,7 @@ class IntroMessage extends StatelessWidget {
 
           return CustomMarkdown(
             data: text,
-            padding: !kIsMobile ? kPh60 : kPh20,
+            padding: !isMobile ? kPh60 : kPh20,
           );
         }
         return const Center(child: CircularProgressIndicator());

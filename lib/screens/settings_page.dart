@@ -13,10 +13,12 @@ class SettingsPage extends ConsumerWidget {
     final settings = ref.watch(settingsProvider);
     final clearingData = ref.watch(clearDataStateProvider);
     var sm = ScaffoldMessenger.of(context);
+    final isMobile =
+        kIsMobile && MediaQuery.of(context).size.width < kMinWindowSize.width;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        !kIsMobile
+        !isMobile
             ? Padding(
                 padding: kPh20t40,
                 child: kIsDesktop

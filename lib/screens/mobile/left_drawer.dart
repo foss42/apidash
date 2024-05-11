@@ -1,3 +1,5 @@
+import 'package:apidash/consts.dart';
+import 'package:apidash/screens/mobile/navbar.dart';
 import 'package:flutter/material.dart';
 
 class LeftDrawer extends StatelessWidget {
@@ -6,6 +8,7 @@ class LeftDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isLargeMobile = MediaQuery.of(context).size.width > kLargeMobileWidth;
     return Container(
       padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
       color: Theme.of(context).colorScheme.onInverseSurface,
@@ -13,18 +16,26 @@ class LeftDrawer extends StatelessWidget {
         backgroundColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
         child: Padding(
-          padding:
-              EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.03),
+          padding: const EdgeInsets.only(right: 16),
           child: Container(
             padding: EdgeInsets.only(
-                bottom: 70 + MediaQuery.of(context).padding.bottom),
+                bottom: isLargeMobile
+                    ? MediaQuery.of(context).padding.bottom
+                    : 70 + MediaQuery.of(context).padding.bottom),
             clipBehavior: Clip.hardEdge,
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surface,
               borderRadius:
                   const BorderRadius.only(topRight: Radius.circular(8)),
             ),
-            child: drawerContent,
+            child: isLargeMobile
+                ? Row(
+                    children: [
+                      const NavRail(),
+                      Expanded(child: drawerContent),
+                    ],
+                  )
+                : drawerContent,
           ),
         ),
       ),

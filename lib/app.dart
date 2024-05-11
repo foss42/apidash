@@ -105,6 +105,8 @@ class DashApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isDarkMode =
         ref.watch(settingsProvider.select((value) => value.isDark));
+    final isLargeMobile =
+        MediaQuery.of(context).size.width > kMinWindowSize.width;
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -125,7 +127,9 @@ class DashApp extends ConsumerWidget {
       ),
       themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
       home: kIsMobile
-          ? const MobileDashboard()
+          ? isLargeMobile
+              ? const Dashboard()
+              : const MobileDashboard()
           : Stack(
               children: [
                 kIsLinux ? const Dashboard() : const App(),
