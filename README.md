@@ -83,26 +83,26 @@ API Dash can be downloaded from the links below:
 
 **↗️ Create & Customize API Requests**
 
-- Create different types of HTTP requests (`GET`, `HEAD`, `POST`, `PATCH`, `PUT` and `DELETE`).
-- Easily manipulate and play around with request inputs like `headers`, `query parameters` and `body`.
+- Create different types of HTTP requests (`GET`, `HEAD`, `POST`, `PATCH`, `PUT`, and `DELETE`).
+- Easily manipulate and play around with request inputs like `headers`, `query parameters`, and `body`.
 - Full support to send text content with 🥳 Unicode/Emoji and preview any API response containing Unicode/Emoji.
 
 **💼 Organize Requests in Collections & Folders**
 
 - Create collections and folders to organize your requests.
 - Press and Drag to Re-arrange requests.
-- Click and open popup menu to rename, duplicate and delete a request.
+- Click and open the popup menu to rename, duplicate, and delete a request.
 
 **🔎 Visually Preview and Download Data & Multimedia API Responses**
 
 - Inspect the API Response (HTTP status code, error message, headers, body, time taken).
 - View formatted code previews for responses of various content types like `JSON`, `XML`, `YAML`, `HTML`, `SQL`, etc.
-- API Dash helps explore, test & preview Multimedia API responses which is **not supported by any other API client**. You can directly test APIs that return images, PDF, audio & more. Check out the [full list of supported mimetypes/formats here](https://github.com/foss42/apidash?tab=readme-ov-file#mime-types-supported-by-api-dash-response-previewer).
+- API Dash helps explore, test & preview Multimedia API responses which is **not supported by any other API client**. You can directly test APIs that return images, PDFs, audio & more. Check out the [full list of supported mimetypes/formats here](https://github.com/foss42/apidash?tab=readme-ov-file#mime-types-supported-by-api-dash-response-previewer).
 - Save 💾 response body of any mimetype (`image`, `text`, etc.) directly in the `Downloads` folder of your system by clicking on the `Download` button.
 
 **👩🏻‍💻 Code Generation**
 
-- We started out as the **only** open source API client which supported advanced Dart code generation to easily integrate APIs in Dart/Flutter projects or to directly run it on DartPad. With time we have added more code-gens and currently API Dash supports generation of well-tested integration codes for **JavaScript**, **Python**, **Kotlin** & various other languages. You can check out the [full list of supported languages/libraries](https://github.com/foss42/apidash?tab=readme-ov-file#code-generators).
+- We started out as the **only** open-source API client that supported advanced Dart code generation to easily integrate APIs in Dart/Flutter projects or to directly run it on DartPad. With time we have added more code-gens and currently, API Dash supports the generation of well-tested integration codes for **JavaScript**, **Python**, **Kotlin** & various other languages. You can check out the [full list of supported languages/libraries](https://github.com/foss42/apidash?tab=readme-ov-file#code-generators).
 
 **🌙 Full Dark Mode Support**
 
@@ -111,8 +111,8 @@ API Dash can be downloaded from the links below:
 **💾 Data**
 
 - Data is persisted locally on the disk. To save the current snapshot, just press the **Save** button in the collection pane.
-- Click and open the collection/folder popup menu to export it as HAR. This can be version controlled & can be directly imported in other API Clients like Postman, Paw, etc.
-- Export your entire data into a HAR (HTTP Archive) file. To access this option goto `Settings > Export Data`.
+- Click and open the collection/folder popup menu to export it as HAR. This can be version-controlled & can be directly imported into other API Clients like Postman, Paw, etc.
+- Export your entire data into a HAR (HTTP Archive) file. To access this option go to `Settings > Export Data`.
 
 **⚙️ Settings & Other Options**
 
@@ -158,7 +158,7 @@ We welcome contributions to support other programming languages/libraries/framew
 
 ## MIME Types supported by API Dash Response Previewer
 
-API Dash is a next-gen API client that supports exploring, testing & previewing various data & multimedia API responses which is limited/not supported by other API clients. You can directly test APIs that return images, PDF, audio & more.
+API Dash is a next-gen API client that supports exploring, testing & previewing various data & multimedia API responses which is limited/not supported by other API clients. You can directly test APIs that return images, PDFs, audio & more.
 
 Here is the complete list of mimetypes that can be directly previewed in API Dash:
 
@@ -243,8 +243,8 @@ You can contribute to API Dash in any or all of the following ways:
 - [Choose from our existing list of ideas](https://github.com/foss42/apidash/discussions/112)
 - [Suggest ways to improve the developer experience of an existing feature](https://github.com/foss42/apidash/issues/new/choose)
 - Add documentation
-- To add a new feature, resolve an existing issue or add a new test to the project, check out our [Contribution Guidelines](CONTRIBUTING.md).
+- To add a new feature, resolve an existing issue, or add a new test to the project, check out our [Contribution Guidelines](CONTRIBUTING.md).
 
 ## Need Any Help?
 
-In case you need any help with API Dash or are encountering any issue while running the tool, please feel free to drop by our [Discord server](https://bit.ly/heyfoss) and we can have a chat in the **#foss-apidash** channel.
+In case you need any help with API Dash or are encountering any issues while running the tool, please feel free to drop by our [Discord server](https://bit.ly/heyfoss) and we can have a chat in the **#foss-apidash** channel.
