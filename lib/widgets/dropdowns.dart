@@ -16,7 +16,7 @@ class DropdownButtonHttpMethod extends StatelessWidget {
   Widget build(BuildContext context) {
     final surfaceColor = Theme.of(context).colorScheme.surface;
     final isMobile =
-        kIsMobile && MediaQuery.of(context).size.width < kMinWindowSize.width;
+        kIsMobile && MediaQuery.sizeOf(context).width < kMinWindowSize.width;
     return DropdownButton<HTTPVerb>(
       focusColor: surfaceColor,
       value: method,

@@ -24,7 +24,7 @@ class ResponseDrawer extends StatelessWidget {
       ),
       body: Padding(
         padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).padding.bottom,
+          bottom: MediaQuery.paddingOf(context).bottom,
         ),
         child: const ResponsePane(),
       ),

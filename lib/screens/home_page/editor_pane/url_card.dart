@@ -10,7 +10,7 @@ class EditorPaneRequestURLCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isMobile =
-        kIsMobile && MediaQuery.of(context).size.width < kMinWindowSize.width;
+        kIsMobile && MediaQuery.sizeOf(context).width < kMinWindowSize.width;
     return Card(
       elevation: 0,
       shape: RoundedRectangleBorder(

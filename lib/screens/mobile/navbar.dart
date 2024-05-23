@@ -15,10 +15,10 @@ class BottomNavBar extends ConsumerWidget {
       children: [
         Container(
           alignment: Alignment.topCenter,
-          height: 70 + MediaQuery.of(context).padding.bottom,
-          width: MediaQuery.of(context).size.width,
+          height: 70 + MediaQuery.paddingOf(context).bottom,
+          width: MediaQuery.sizeOf(context).width,
           padding:
-              EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
+              EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom),
           decoration: BoxDecoration(
             border: Border(
               top: BorderSide(

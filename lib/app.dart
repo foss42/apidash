@@ -106,7 +106,7 @@ class DashApp extends ConsumerWidget {
     final isDarkMode =
         ref.watch(settingsProvider.select((value) => value.isDark));
     final isLargeMobile =
-        MediaQuery.of(context).size.width > kMinWindowSize.width;
+        MediaQuery.sizeOf(context).width > kMinWindowSize.width;
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(

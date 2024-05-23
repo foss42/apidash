@@ -143,7 +143,7 @@ class _RequestListState extends ConsumerState<RequestList> {
         .select((value) => value.alwaysShowCollectionPaneScrollbar));
     final filterQuery = ref.watch(searchQueryProvider).trim();
     final isMobile =
-        kIsMobile && MediaQuery.of(context).size.width < kMinWindowSize.width;
+        kIsMobile && MediaQuery.sizeOf(context).width < kMinWindowSize.width;
 
     return Scrollbar(
       controller: controller,
@@ -153,7 +153,7 @@ class _RequestListState extends ConsumerState<RequestList> {
           ? ReorderableListView.builder(
               padding: isMobile
                   ? EdgeInsets.only(
-                      bottom: MediaQuery.of(context).padding.bottom,
+                      bottom: MediaQuery.paddingOf(context).bottom,
                       right: 8,
                     )
                   : kPe8,
@@ -201,7 +201,7 @@ class _RequestListState extends ConsumerState<RequestList> {
           : ListView(
               padding: kIsMobile
                   ? EdgeInsets.only(
-                      bottom: MediaQuery.of(context).padding.bottom,
+                      bottom: MediaQuery.paddingOf(context).bottom,
                       right: 8,
                     )
                   : kPe8,

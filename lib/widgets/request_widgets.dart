@@ -46,7 +46,7 @@ class _RequestPaneState extends State<RequestPane>
       _controller.index = widget.tabIndex!;
     }
     final isMobile =
-        kIsMobile && MediaQuery.of(context).size.width < kMinWindowSize.width;
+        kIsMobile && MediaQuery.sizeOf(context).width < kMinWindowSize.width;
     return Column(
       children: [
         isMobile

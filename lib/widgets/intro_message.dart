@@ -24,7 +24,7 @@ class IntroMessage extends StatelessWidget {
       future: introData(),
       builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
         final isMobile = kIsMobile &&
-            MediaQuery.of(context).size.width < kMinWindowSize.width;
+            MediaQuery.sizeOf(context).width < kMinWindowSize.width;
         if (snapshot.hasError) {
           return const ErrorMessage(message: "An error occured");
         }

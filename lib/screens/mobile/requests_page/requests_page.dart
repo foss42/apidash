@@ -130,10 +130,10 @@ class RequestPageBottombar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 60 + MediaQuery.of(context).padding.bottom,
-      width: MediaQuery.of(context).size.width,
+      height: 60 + MediaQuery.paddingOf(context).bottom,
+      width: MediaQuery.sizeOf(context).width,
       padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).padding.bottom,
+        bottom: MediaQuery.paddingOf(context).bottom,
         left: 16,
         right: 16,
       ),

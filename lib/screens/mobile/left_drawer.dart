@@ -8,9 +8,9 @@ class LeftDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isLargeMobile = MediaQuery.of(context).size.width > kLargeMobileWidth;
+    final isLargeMobile = MediaQuery.sizeOf(context).width > kLargeMobileWidth;
     return Container(
-      padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+      padding: EdgeInsets.only(top: MediaQuery.paddingOf(context).top),
       color: Theme.of(context).colorScheme.onInverseSurface,
       child: Drawer(
         backgroundColor: Colors.transparent,
@@ -19,9 +19,10 @@ class LeftDrawer extends StatelessWidget {
           padding: const EdgeInsets.only(right: 16),
           child: Container(
             padding: EdgeInsets.only(
+                left: MediaQuery.paddingOf(context).left,
                 bottom: isLargeMobile
-                    ? MediaQuery.of(context).padding.bottom
-                    : 70 + MediaQuery.of(context).padding.bottom),
+                    ? MediaQuery.paddingOf(context).bottom
+                    : 70 + MediaQuery.paddingOf(context).bottom),
             clipBehavior: Clip.hardEdge,
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surface,

@@ -13,7 +13,7 @@ class TabLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isMobile =
-        kIsMobile && MediaQuery.of(context).size.width < kMinWindowSize.width;
+        kIsMobile && MediaQuery.sizeOf(context).width < kMinWindowSize.width;
     return SizedBox(
       height: isMobile ? kMobileTabHeight : kTabHeight,
       child: Stack(
