@@ -4,6 +4,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import '../consts.dart';
 import 'markdown.dart';
 import 'error_message.dart';
+import 'package:apidash/extensions/extensions.dart' show MediaQueryExtension;
 
 class IntroMessage extends StatelessWidget {
   const IntroMessage({
@@ -23,8 +24,6 @@ class IntroMessage extends StatelessWidget {
     return FutureBuilder(
       future: introData(),
       builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-        final isMobile = kIsMobile &&
-            MediaQuery.sizeOf(context).width < kMinWindowSize.width;
         if (snapshot.hasError) {
           return const ErrorMessage(message: "An error occured");
         }
@@ -39,7 +38,7 @@ class IntroMessage extends StatelessWidget {
 
           return CustomMarkdown(
             data: text,
-            padding: !isMobile ? kPh60 : kPh20,
+            padding: !context.isMobile ? kPh60 : kPh20,
           );
         }
         return const Center(child: CircularProgressIndicator());
