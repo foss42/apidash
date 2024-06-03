@@ -2,7 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:inner_drawer/inner_drawer.dart';
 
-final mobileDrawerKeyProvider = Provider<GlobalKey<InnerDrawerState>>(
+final mobileDrawerKeyProvider = StateProvider<GlobalKey<InnerDrawerState>>(
     (ref) => GlobalKey<InnerDrawerState>());
 final navRailIndexStateProvider = StateProvider<int>((ref) => 0);
 final selectedIdEditStateProvider = StateProvider<String?>((ref) => null);

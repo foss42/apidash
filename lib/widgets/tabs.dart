@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash/extensions/extensions.dart' show MediaQueryExtension;
 
 class TabLabel extends StatelessWidget {
   const TabLabel({
@@ -12,10 +13,8 @@ class TabLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isMobile =
-        kIsMobile && MediaQuery.sizeOf(context).width < kMinWindowSize.width;
     return SizedBox(
-      height: isMobile ? kMobileTabHeight : kTabHeight,
+      height: context.isMobile ? kMobileTabHeight : kTabHeight,
       child: Stack(
         children: [
           Center(

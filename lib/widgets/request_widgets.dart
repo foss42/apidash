@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
 import 'tabs.dart';
+import 'package:apidash/extensions/extensions.dart' show MediaQueryExtension;
 
 class RequestPane extends StatefulWidget {
   const RequestPane({
@@ -45,11 +46,9 @@ class _RequestPaneState extends State<RequestPane>
     if (widget.tabIndex != null) {
       _controller.index = widget.tabIndex!;
     }
-    final isMobile =
-        kIsMobile && MediaQuery.sizeOf(context).width < kMinWindowSize.width;
     return Column(
       children: [
-        isMobile
+        context.isMobile
             ? const SizedBox.shrink()
             : Padding(
                 padding: kP8,

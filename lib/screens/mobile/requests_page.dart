@@ -5,11 +5,11 @@ import 'package:apidash/providers/providers.dart';
 import 'package:apidash/utils/http_utils.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/widgets/widgets.dart';
-import '../../home_page/editor_pane/editor_request.dart';
-import '../../home_page/editor_pane/editor_pane.dart';
-import '../../home_page/editor_pane/url_card.dart';
-import '../../home_page/editor_pane/details_card/code_pane.dart';
-import '../page_base.dart';
+import '../home_page/editor_pane/editor_request.dart';
+import '../home_page/editor_pane/editor_pane.dart';
+import '../home_page/editor_pane/url_card.dart';
+import '../home_page/editor_pane/details_card/code_pane.dart';
+import 'widgets/page_base.dart';
 
 class RequestsPage extends StatelessWidget {
   final GlobalKey<InnerDrawerState> innerDrawerKey;
@@ -64,8 +64,7 @@ class RequestTitle extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final id = ref.watch(selectedIdStateProvider);
     final name = getRequestTitleFromUrl(
-        ref.watch(selectedRequestModelProvider.select((value) => value?.name)),
-        capitalize: true);
+        ref.watch(selectedRequestModelProvider.select((value) => value?.name)));
     return ClipRRect(
       borderRadius: BorderRadius.circular(8),
       child: Material(

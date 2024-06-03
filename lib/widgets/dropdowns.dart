@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:apidash/utils/utils.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash/extensions/extensions.dart' show MediaQueryExtension;
 
 class DropdownButtonHttpMethod extends StatelessWidget {
   const DropdownButtonHttpMethod({
@@ -15,8 +16,6 @@ class DropdownButtonHttpMethod extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final surfaceColor = Theme.of(context).colorScheme.surface;
-    final isMobile =
-        kIsMobile && MediaQuery.sizeOf(context).width < kMinWindowSize.width;
     return DropdownButton<HTTPVerb>(
       focusColor: surfaceColor,
       value: method,
@@ -31,11 +30,10 @@ class DropdownButtonHttpMethod extends StatelessWidget {
         return DropdownMenuItem<HTTPVerb>(
           value: value,
           child: Padding(
-            padding: EdgeInsets.only(left: isMobile ? 8 : 16),
+            padding: EdgeInsets.only(left: context.isMobile ? 8 : 16),
             child: Text(
               value.name.toUpperCase(),
               style: kCodeStyle.copyWith(
-                fontSize: isMobile ? 13 : null,
                 fontWeight: FontWeight.bold,
                 color: getHTTPMethodColor(
                   value,

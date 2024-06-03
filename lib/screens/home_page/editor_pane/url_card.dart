@@ -3,14 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash/extensions/extensions.dart' show MediaQueryExtension;
 
 class EditorPaneRequestURLCard extends StatelessWidget {
   const EditorPaneRequestURLCard({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final isMobile =
-        kIsMobile && MediaQuery.sizeOf(context).width < kMinWindowSize.width;
     return Card(
       elevation: 0,
       shape: RoundedRectangleBorder(
@@ -22,9 +21,9 @@ class EditorPaneRequestURLCard extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.symmetric(
           vertical: 5,
-          horizontal: !isMobile ? 20 : 6,
+          horizontal: !context.isMobile ? 20 : 6,
         ),
-        child: isMobile
+        child: context.isMobile
             ? const Row(
                 children: [
                   DropdownButtonHTTPMethod(),

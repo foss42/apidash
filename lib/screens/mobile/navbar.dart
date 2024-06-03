@@ -1,5 +1,5 @@
 import 'package:apidash/providers/ui_providers.dart';
-import 'package:apidash/screens/mobile/page_base.dart';
+import 'package:apidash/screens/mobile/widgets/page_base.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../settings_page.dart';

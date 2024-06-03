@@ -4,6 +4,7 @@ import '../providers/providers.dart';
 import '../widgets/widgets.dart';
 import '../common/utils.dart';
 import '../consts.dart';
+import 'package:apidash/extensions/extensions.dart' show MediaQueryExtension;
 
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
@@ -13,12 +14,10 @@ class SettingsPage extends ConsumerWidget {
     final settings = ref.watch(settingsProvider);
     final clearingData = ref.watch(clearDataStateProvider);
     var sm = ScaffoldMessenger.of(context);
-    final isMobile =
-        kIsMobile && MediaQuery.sizeOf(context).width < kMinWindowSize.width;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        !isMobile
+        !context.isMobile
             ? Padding(
                 padding: kPh20t40,
                 child: kIsDesktop

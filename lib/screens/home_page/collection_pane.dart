@@ -4,6 +4,7 @@ import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash/extensions/extensions.dart' show MediaQueryExtension;
 
 class CollectionPane extends ConsumerWidget {
   const CollectionPane({
@@ -142,8 +143,6 @@ class _RequestListState extends ConsumerState<RequestList> {
     final alwaysShowCollectionPaneScrollbar = ref.watch(settingsProvider
         .select((value) => value.alwaysShowCollectionPaneScrollbar));
     final filterQuery = ref.watch(searchQueryProvider).trim();
-    final isMobile =
-        kIsMobile && MediaQuery.sizeOf(context).width < kMinWindowSize.width;
 
     return Scrollbar(
       controller: controller,
@@ -151,7 +150,7 @@ class _RequestListState extends ConsumerState<RequestList> {
       radius: const Radius.circular(12),
       child: filterQuery.isEmpty
           ? ReorderableListView.builder(
-              padding: isMobile
+              padding: context.isMobile
                   ? EdgeInsets.only(
                       bottom: MediaQuery.paddingOf(context).bottom,
                       right: 8,

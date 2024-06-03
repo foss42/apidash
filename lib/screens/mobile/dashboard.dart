@@ -6,9 +6,9 @@ import 'package:inner_drawer/inner_drawer.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import '../../providers/providers.dart';
 import 'navbar.dart';
-import 'left_drawer.dart';
-import 'requests_page/requests_page.dart';
-import 'requests_page/response_drawer.dart';
+import 'widgets/left_drawer.dart';
+import 'requests_page.dart';
+import 'response_drawer.dart';
 import '../home_page/collection_pane.dart';
 
 class MobileDashboard extends ConsumerStatefulWidget {

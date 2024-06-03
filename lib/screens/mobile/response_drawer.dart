@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../home_page/editor_pane/details_card/response_pane.dart';
+import '../home_page/editor_pane/details_card/response_pane.dart';
 
 class ResponseDrawer extends StatelessWidget {
   const ResponseDrawer({super.key});
