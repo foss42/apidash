@@ -22,7 +22,7 @@ class CollectionPane extends ConsumerWidget {
       );
     }
     return Padding(
-      padding: kIsMacOS ? kP24CollectionPane : kP8CollectionPane,
+      padding: kP8CollectionPane,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -227,6 +227,11 @@ class RequestItem extends ConsumerWidget {
       editRequestId: editRequestId,
       onTap: () {
         ref.read(selectedIdStateProvider.notifier).state = id;
+        final tabs = ref.read(requestTabSequenceProvider);
+        if(!tabs.contains(id)){
+          tabs.add(id);
+          ref.read(requestTabSequenceProvider.notifier).state = [...tabs];
+        }
       },
       // onDoubleTap: () {
       //   ref.read(selectedIdStateProvider.notifier).state = id;

@@ -8,15 +8,9 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
-      children: [
-        Expanded(
-          child: DashboardSplitView(
-            sidebarWidget: CollectionPane(),
-            mainWidget: RequestEditorPane(),
-          ),
-        ),
-      ],
+    return const DashboardSplitView(
+      sidebarWidget: CollectionPane(),
+      mainWidget: RequestEditorPane(),
     );
   }
 }
