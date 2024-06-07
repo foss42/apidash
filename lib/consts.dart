@@ -259,6 +259,8 @@ enum HTTPVerb { get, head, post, put, patch, delete }
 
 enum FormDataType { text, file }
 
+enum EnvironmentVariableType { variable, secret }
+
 const kSupportedUriSchemes = ["https", "http"];
 const kDefaultUriScheme = "https";
 const kMethodsWithBody = [
@@ -310,6 +312,8 @@ enum CodegenLanguage {
 
 const JsonEncoder kEncoder = JsonEncoder.withIndent('  ');
 const LineSplitter kSplitter = LineSplitter();
+
+const String kGlobalEnvironmentId = "global";
 
 const kHeaderContentType = "Content-Type";
 

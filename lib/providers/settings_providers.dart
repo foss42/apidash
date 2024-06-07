@@ -7,6 +7,9 @@ import '../consts.dart';
 final codegenLanguageStateProvider = StateProvider<CodegenLanguage>((ref) =>
     ref.watch(settingsProvider.select((value) => value.defaultCodeGenLang)));
 
+final activeEnvironmentIdStateProvider = StateProvider<String?>((ref) =>
+    ref.watch(settingsProvider.select((value) => value.activeEnvironmentId)));
+
 final StateNotifierProvider<ThemeStateNotifier, SettingsModel>
     settingsProvider =
     StateNotifierProvider((ref) => ThemeStateNotifier(hiveHandler));
@@ -26,6 +29,7 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
     CodegenLanguage? defaultCodeGenLang,
     bool? saveResponses,
     bool? promptBeforeClosing,
+    String? activeEnvironmentId,
   }) async {
     state = state.copyWith(
       isDark: isDark,
@@ -36,6 +40,7 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
       defaultCodeGenLang: defaultCodeGenLang,
       saveResponses: saveResponses,
       promptBeforeClosing: promptBeforeClosing,
+      activeEnvironmentId: activeEnvironmentId,
     );
     await hiveHandler.saveSettings(state.toJson());
   }
