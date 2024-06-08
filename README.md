@@ -233,6 +233,10 @@ Visit [CHANGELOG.md](CHANGELOG.md)
 
 Just click on the [Issue tab](https://github.com/foss42/apidash/issues) to raise a new issue in this repo.
 
+## Roadmap
+
+Please find the Roadmap for API Dash [here](https://github.com/foss42/apidash/blob/main/ROADMAP.md). 
+
 ## Contribute to API Dash
 
 You can contribute to API Dash in any or all of the following ways:
