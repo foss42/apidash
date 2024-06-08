@@ -4,7 +4,7 @@ import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
-import 'package:apidash/extensions/extensions.dart' show MediaQueryExtension;
+import 'package:apidash/extensions/extensions.dart';
 
 class CollectionPane extends ConsumerWidget {
   const CollectionPane({

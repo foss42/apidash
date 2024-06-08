@@ -4,7 +4,7 @@ import '../providers/providers.dart';
 import '../widgets/widgets.dart';
 import '../common/utils.dart';
 import '../consts.dart';
-import 'package:apidash/extensions/extensions.dart' show MediaQueryExtension;
+import 'package:apidash/extensions/extensions.dart';
 
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});

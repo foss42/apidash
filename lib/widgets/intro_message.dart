@@ -4,7 +4,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import '../consts.dart';
 import 'markdown.dart';
 import 'error_message.dart';
-import 'package:apidash/extensions/extensions.dart' show MediaQueryExtension;
+import 'package:apidash/extensions/extensions.dart';
 
 class IntroMessage extends StatelessWidget {
   const IntroMessage({
