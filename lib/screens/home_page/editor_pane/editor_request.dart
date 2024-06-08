@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/extensions/extensions.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash/extensions/extensions.dart';
 import 'details_card/details_card.dart';
 import 'details_card/request_pane/request_pane.dart';
 import 'url_card.dart';

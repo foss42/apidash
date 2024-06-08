@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:window_manager/window_manager.dart' hide WindowCaption;
 import 'widgets/widgets.dart' show WindowCaption;
 import 'providers/providers.dart';
+import 'extensions/extensions.dart';
 import 'screens/screens.dart';
 import 'extensions/extensions.dart';
 import 'consts.dart';
