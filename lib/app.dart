@@ -1,12 +1,12 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'package:apidash/extensions/context_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:window_manager/window_manager.dart' hide WindowCaption;
 import 'widgets/widgets.dart' show WindowCaption;
 import 'providers/providers.dart';
 import 'screens/screens.dart';
+import 'extensions/context_extensions.dart';
 import 'consts.dart';
 
 class App extends ConsumerStatefulWidget {
