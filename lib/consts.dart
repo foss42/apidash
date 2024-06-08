@@ -39,6 +39,7 @@ const kMinWindowSize = Size(900, 600);
 const kMinInitialWindowWidth = 1200.0;
 const kMinInitialWindowHeight = 800.0;
 const kMinRequestEditorDetailsCardPaneSize = 300.0;
+const kLargeMobileWidth = 600.0;
 
 const kColorSchemeSeed = Colors.blue;
 final kFontFamily = GoogleFonts.openSans().fontFamily;
@@ -123,6 +124,7 @@ const kVSpacer40 = SizedBox(height: 40);
 
 const kTabAnimationDuration = Duration(milliseconds: 200);
 const kTabHeight = 32.0;
+const kMobileTabHeight = 40.0;
 const kHeaderHeight = 32.0;
 const kSegmentHeight = 24.0;
 const kTextButtonMinWidth = 44.0;

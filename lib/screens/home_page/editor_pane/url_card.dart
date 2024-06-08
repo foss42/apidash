@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash/extensions/extensions.dart';
 
 class EditorPaneRequestURLCard extends StatelessWidget {
   const EditorPaneRequestURLCard({super.key});
@@ -17,25 +18,36 @@ class EditorPaneRequestURLCard extends StatelessWidget {
         ),
         borderRadius: kBorderRadius12,
       ),
-      child: const Padding(
+      child: Padding(
         padding: EdgeInsets.symmetric(
           vertical: 5,
-          horizontal: 20,
+          horizontal: !context.isMobile ? 20 : 6,
         ),
-        child: Row(
-          children: [
-            DropdownButtonHTTPMethod(),
-            kHSpacer20,
-            Expanded(
-              child: URLTextField(),
-            ),
-            kHSpacer20,
-            SizedBox(
-              height: 36,
-              child: SendButton(),
-            ),
-          ],
-        ),
+        child: context.isMobile
+            ? const Row(
+                children: [
+                  DropdownButtonHTTPMethod(),
+                  kHSpacer5,
+                  Expanded(
+                    child: URLTextField(),
+                  ),
+                  SizedBox.shrink(),
+                ],
+              )
+            : const Row(
+                children: [
+                  DropdownButtonHTTPMethod(),
+                  kHSpacer20,
+                  Expanded(
+                    child: URLTextField(),
+                  ),
+                  kHSpacer20,
+                  SizedBox(
+                    height: 36,
+                    child: SendButton(),
+                  )
+                ],
+              ),
       ),
     );
   }
@@ -92,8 +104,10 @@ class URLTextField extends ConsumerWidget {
 }
 
 class SendButton extends ConsumerWidget {
+  final Function()? onTap;
   const SendButton({
     super.key,
+    this.onTap,
   });
 
   @override
@@ -105,6 +119,7 @@ class SendButton extends ConsumerWidget {
     return SendRequestButton(
       isWorking: isWorking ?? false,
       onTap: () {
+        onTap?.call();
         ref
             .read(collectionStateNotifierProvider.notifier)
             .sendRequest(selectedId!);

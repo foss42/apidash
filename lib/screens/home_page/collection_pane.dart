@@ -4,6 +4,7 @@ import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash/extensions/extensions.dart';
 
 class CollectionPane extends ConsumerWidget {
   const CollectionPane({
@@ -72,7 +73,6 @@ class CollectionPane extends ConsumerWidget {
           ),
           kVSpacer10,
           Container(
-            height: 30,
             margin: const EdgeInsets.only(right: 8),
             decoration: BoxDecoration(
               borderRadius: kBorderRadius8,
@@ -150,7 +150,12 @@ class _RequestListState extends ConsumerState<RequestList> {
       radius: const Radius.circular(12),
       child: filterQuery.isEmpty
           ? ReorderableListView.builder(
-              padding: kPe8,
+              padding: context.isMobile
+                  ? EdgeInsets.only(
+                      bottom: MediaQuery.paddingOf(context).bottom,
+                      right: 8,
+                    )
+                  : kPe8,
               scrollController: controller,
               buildDefaultDragHandles: false,
               itemCount: requestSequence.length,
@@ -166,6 +171,19 @@ class _RequestListState extends ConsumerState<RequestList> {
               },
               itemBuilder: (context, index) {
                 var id = requestSequence[index];
+                if (kIsMobile) {
+                  return ReorderableDelayedDragStartListener(
+                    key: ValueKey(id),
+                    index: index,
+                    child: Padding(
+                      padding: kP1,
+                      child: RequestItem(
+                        id: id,
+                        requestModel: requestItems[id]!,
+                      ),
+                    ),
+                  );
+                }
                 return ReorderableDragStartListener(
                   key: ValueKey(id),
                   index: index,
@@ -180,7 +198,12 @@ class _RequestListState extends ConsumerState<RequestList> {
               },
             )
           : ListView(
-              padding: kPe8,
+              padding: kIsMobile
+                  ? EdgeInsets.only(
+                      bottom: MediaQuery.paddingOf(context).bottom,
+                      right: 8,
+                    )
+                  : kPe8,
               controller: controller,
               children: requestSequence.map((id) {
                 var item = requestItems[id]!;
@@ -217,6 +240,7 @@ class RequestItem extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedId = ref.watch(selectedIdStateProvider);
     final editRequestId = ref.watch(selectedIdEditStateProvider);
+    final mobileDrawerKey = ref.watch(mobileDrawerKeyProvider);
 
     return SidebarRequestCard(
       id: id,
@@ -226,6 +250,7 @@ class RequestItem extends ConsumerWidget {
       selectedId: selectedId,
       editRequestId: editRequestId,
       onTap: () {
+        mobileDrawerKey.currentState?.close();
         ref.read(selectedIdStateProvider.notifier).state = id;
       },
       // onDoubleTap: () {

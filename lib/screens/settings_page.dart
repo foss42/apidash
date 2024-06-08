@@ -4,6 +4,7 @@ import '../providers/providers.dart';
 import '../widgets/widgets.dart';
 import '../common/utils.dart';
 import '../consts.dart';
+import 'package:apidash/extensions/extensions.dart';
 
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
@@ -16,13 +17,15 @@ class SettingsPage extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: kPh20t40,
-          child: kIsDesktop
-              ? Text("Settings",
-                  style: Theme.of(context).textTheme.headlineLarge)
-              : const SizedBox.shrink(),
-        ),
+        !context.isMobile
+            ? Padding(
+                padding: kPh20t40,
+                child: kIsDesktop
+                    ? Text("Settings",
+                        style: Theme.of(context).textTheme.headlineLarge)
+                    : const SizedBox.shrink(),
+              )
+            : const SizedBox.shrink(),
         kIsDesktop
             ? const Padding(
                 padding: kPh20,

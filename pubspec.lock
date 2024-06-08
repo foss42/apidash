@@ -369,6 +369,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.0"
+  flex_color_scheme:
+    dependency: "direct main"
+    description:
+      name: flex_color_scheme
+      sha256: "32914024a4f404d90ff449f58d279191675b28e7c08824046baf06826e99d984"
+      url: "https://pub.dev"
+    source: hosted
+    version: "7.3.1"
+  flex_seed_scheme:
+    dependency: transitive
+    description:
+      name: flex_seed_scheme
+      sha256: "29c12aba221eb8a368a119685371381f8035011d18de5ba277ad11d7dfb8657f"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.4.0"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -608,6 +624,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.1.3"
+  inner_drawer:
+    dependency: "direct main"
+    description:
+      name: inner_drawer
+      sha256: "19df8813ccb6aa1b6db76f2f976c93befbbae67452d019f5267209b15deb0772"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0+1"
   io:
     dependency: transitive
     description:

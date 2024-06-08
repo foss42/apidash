@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:apidash/utils/utils.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash/extensions/extensions.dart';
 
 class DropdownButtonHttpMethod extends StatelessWidget {
   const DropdownButtonHttpMethod({
@@ -29,7 +30,7 @@ class DropdownButtonHttpMethod extends StatelessWidget {
         return DropdownMenuItem<HTTPVerb>(
           value: value,
           child: Padding(
-            padding: const EdgeInsets.only(left: 16),
+            padding: EdgeInsets.only(left: context.isMobile ? 8 : 16),
             child: Text(
               value.name.toUpperCase(),
               style: kCodeStyle.copyWith(

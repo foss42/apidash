@@ -6,6 +6,7 @@ import 'package:window_manager/window_manager.dart' hide WindowCaption;
 import 'widgets/widgets.dart' show WindowCaption;
 import 'providers/providers.dart';
 import 'screens/screens.dart';
+import 'extensions/extensions.dart';
 import 'consts.dart';
 
 class App extends ConsumerStatefulWidget {
@@ -125,10 +126,9 @@ class DashApp extends ConsumerWidget {
       ),
       themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
       home: kIsMobile
-          ? const MobileDashboard(
-              title: 'Requests',
-              scaffoldBody: CollectionPane(),
-            )
+          ? context.isLargeWidth
+              ? const Dashboard()
+              : const MobileDashboard()
           : Stack(
               children: [
                 kIsLinux ? const Dashboard() : const App(),

@@ -32,6 +32,9 @@ class URLField extends StatelessWidget {
       ),
       onChanged: onChanged,
       onFieldSubmitted: onFieldSubmitted,
+      onTapOutside: (PointerDownEvent event) {
+        FocusManager.instance.primaryFocus?.unfocus();
+      },
     );
   }
 }
@@ -129,6 +132,9 @@ class RawTextField extends StatelessWidget {
         border: InputBorder.none,
         hintText: hintText,
       ),
+      onTapOutside: (PointerDownEvent event) {
+        FocusManager.instance.primaryFocus?.unfocus();
+      },
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
 import 'tabs.dart';
+import 'package:apidash/extensions/extensions.dart';
 
 class RequestPane extends StatefulWidget {
   const RequestPane({
@@ -47,31 +48,35 @@ class _RequestPaneState extends State<RequestPane>
     }
     return Column(
       children: [
-        Padding(
-          padding: kP8,
-          child: SizedBox(
-            height: kHeaderHeight,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                FilledButton.tonalIcon(
-                  onPressed: widget.onPressedCodeButton,
-                  icon: Icon(
-                    widget.codePaneVisible
-                        ? Icons.code_off_rounded
-                        : Icons.code_rounded,
-                  ),
-                  label: SizedBox(
-                    width: 75,
-                    child: Text(
-                      widget.codePaneVisible ? kLabelHideCode : kLabelViewCode,
-                    ),
+        context.isMobile
+            ? const SizedBox.shrink()
+            : Padding(
+                padding: kP8,
+                child: SizedBox(
+                  height: kHeaderHeight,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      FilledButton.tonalIcon(
+                        onPressed: widget.onPressedCodeButton,
+                        icon: Icon(
+                          widget.codePaneVisible
+                              ? Icons.code_off_rounded
+                              : Icons.code_rounded,
+                        ),
+                        label: SizedBox(
+                          width: 75,
+                          child: Text(
+                            widget.codePaneVisible
+                                ? kLabelHideCode
+                                : kLabelViewCode,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
-          ),
-        ),
+              ),
         TabBar(
           key: Key(widget.selectedId!),
           controller: _controller,
