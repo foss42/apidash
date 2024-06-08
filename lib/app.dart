@@ -6,7 +6,7 @@ import 'package:window_manager/window_manager.dart' hide WindowCaption;
 import 'widgets/widgets.dart' show WindowCaption;
 import 'providers/providers.dart';
 import 'screens/screens.dart';
-import 'extensions/context_extensions.dart';
+import 'extensions/extensions.dart';
 import 'consts.dart';
 
 class App extends ConsumerStatefulWidget {
