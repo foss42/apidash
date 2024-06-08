@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:apidash/utils/utils.dart';
 import 'package:apidash/consts.dart';
-import 'package:apidash/extensions/extensions.dart' show MediaQueryExtension;
+import 'package:apidash/extensions/extensions.dart';
 
 class DropdownButtonHttpMethod extends StatelessWidget {
   const DropdownButtonHttpMethod({

@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:window_manager/window_manager.dart' hide WindowCaption;
 import 'widgets/widgets.dart' show WindowCaption;
 import 'providers/providers.dart';
+import 'extensions/extensions.dart';
 import 'screens/screens.dart';
 import 'consts.dart';
 
@@ -105,8 +106,6 @@ class DashApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isDarkMode =
         ref.watch(settingsProvider.select((value) => value.isDark));
-    final isLargeMobile =
-        MediaQuery.sizeOf(context).width > kMinWindowSize.width;
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -127,7 +126,7 @@ class DashApp extends ConsumerWidget {
       ),
       themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
       home: kIsMobile
-          ? isLargeMobile
+          ? context.isLargeWidth
               ? const Dashboard()
               : const MobileDashboard()
           : Stack(
