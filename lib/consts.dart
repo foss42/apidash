@@ -35,7 +35,7 @@ final kColorLightDanger = Colors.red.withOpacity(0.9);
 const kColorDarkDanger = Color(0xffcf6679);
 
 const kWindowTitle = "API Dash";
-const kMinWindowSize = Size(320, 640);
+const kMinWindowSize = Size(320, 600);
 const kMinInitialWindowWidth = 1200.0;
 const kMinInitialWindowHeight = 800.0;
 const kMinRequestEditorDetailsCardPaneSize = 300.0;
