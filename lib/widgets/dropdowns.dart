@@ -30,7 +30,7 @@ class DropdownButtonHttpMethod extends StatelessWidget {
         return DropdownMenuItem<HTTPVerb>(
           value: value,
           child: Padding(
-            padding: EdgeInsets.only(left: context.isMobile ? 8 : 16),
+            padding: EdgeInsets.only(left: context.isMediumWindow ? 8 : 16),
             child: Text(
               value.name.toUpperCase(),
               style: kCodeStyle.copyWith(

@@ -4,7 +4,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:inner_drawer/inner_drawer.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
-import '../../providers/providers.dart';
+import 'package:apidash/extensions/extensions.dart';
+import 'package:apidash/providers/providers.dart';
 import 'navbar.dart';
 import 'widgets/left_drawer.dart';
 import 'requests_page.dart';
@@ -44,7 +45,6 @@ class _MobileDashboardState extends ConsumerState<MobileDashboard> {
   ) {
     final GlobalKey<InnerDrawerState> innerDrawerKey =
         ref.watch(mobileDrawerKeyProvider);
-    final isLargeMobile = MediaQuery.sizeOf(context).width > kLargeMobileWidth;
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: FlexColorScheme.themedSystemNavigationBar(
         context,
@@ -59,7 +59,7 @@ class _MobileDashboardState extends ConsumerState<MobileDashboard> {
             swipe: true,
             swipeChild: true,
             onTapClose: true,
-            offset: isLargeMobile
+            offset: !context.isCompactWindow
                 ? const IDOffset.only(left: 0.1, right: 1)
                 : const IDOffset.only(left: 0.7, right: 1),
             boxShadow: [
@@ -72,8 +72,8 @@ class _MobileDashboardState extends ConsumerState<MobileDashboard> {
             colorTransitionChild: Colors.transparent,
             colorTransitionScaffold: Colors.transparent,
             rightAnimationType: InnerDrawerAnimation.linear,
-            backgroundDecoration:
-                BoxDecoration(color: Theme.of(context).colorScheme.surface),
+            backgroundDecoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.onInverseSurface),
             onDragUpdate: (value, direction) {
               drawerDirection.value = direction;
               if (value > 0.98 && direction == InnerDrawerDirection.start) {
@@ -105,6 +105,7 @@ class _MobileDashboardState extends ConsumerState<MobileDashboard> {
                 borderRadius:
                     const BorderRadius.only(topLeft: Radius.circular(8)),
                 child: SafeArea(
+                  minimum: kIsWindows || kIsMacOS ? kPt28 : EdgeInsets.zero,
                   bottom: false,
                   child: RequestsPage(
                     innerDrawerKey: innerDrawerKey,
@@ -113,7 +114,7 @@ class _MobileDashboardState extends ConsumerState<MobileDashboard> {
               ),
             ),
           ),
-          if (!isLargeMobile)
+          if (context.isCompactWindow)
             AnimatedPositioned(
               bottom: isLeftDrawerOpen
                   ? 0

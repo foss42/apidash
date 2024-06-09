@@ -150,7 +150,7 @@ class _RequestListState extends ConsumerState<RequestList> {
       radius: const Radius.circular(12),
       child: filterQuery.isEmpty
           ? ReorderableListView.builder(
-              padding: context.isMobile
+              padding: context.isMediumWindow
                   ? EdgeInsets.only(
                       bottom: MediaQuery.paddingOf(context).bottom,
                       right: 8,
@@ -198,7 +198,7 @@ class _RequestListState extends ConsumerState<RequestList> {
               },
             )
           : ListView(
-              padding: kIsMobile
+              padding: context.isMediumWindow
                   ? EdgeInsets.only(
                       bottom: MediaQuery.paddingOf(context).bottom,
                       right: 8,

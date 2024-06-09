@@ -1,7 +1,8 @@
-import 'package:apidash/providers/ui_providers.dart';
-import 'package:apidash/screens/mobile/widgets/page_base.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:apidash/extensions/context_extensions.dart';
+import 'package:apidash/providers/ui_providers.dart';
+import 'package:apidash/screens/mobile/widgets/page_base.dart';
 import '../settings_page.dart';
 import '../intro_page.dart';
 
@@ -183,67 +184,76 @@ Widget customNavigationDestination(
   Function()? onTap,
 }) {
   bool isSelected = railIdx == buttonIdx;
-  return Tooltip(
-    message: label,
-    triggerMode: TooltipTriggerMode.longPress,
-    verticalOffset: 42,
-    child: GestureDetector(
-      behavior: HitTestBehavior.translucent,
-      onTap: isSelected
-          ? null
-          : () {
-              if (!isNavigator) {
-                ref.read(navRailIndexStateProvider.notifier).state = buttonIdx;
-              }
-              onTap?.call();
-            },
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Ink(
-            width: 65,
-            height: 32,
-            decoration: BoxDecoration(
-              color: isSelected
-                  ? Theme.of(context).colorScheme.secondaryContainer
-                  : Colors.transparent,
-              borderRadius: BorderRadius.circular(30),
-            ),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(30),
-              onTap: isSelected
-                  ? null
-                  : () {
-                      if (!isNavigator) {
-                        ref.read(navRailIndexStateProvider.notifier).state =
-                            buttonIdx;
-                      }
-                      onTap?.call();
-                    },
-              child: Icon(
-                isSelected ? selectedIcon : icon,
+  return TooltipVisibility(
+    visible: context.isCompactWindow,
+    child: Tooltip(
+      message: label,
+      triggerMode: TooltipTriggerMode.longPress,
+      verticalOffset: 42,
+      child: GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onTap: isSelected
+            ? null
+            : () {
+                if (!isNavigator) {
+                  ref.read(navRailIndexStateProvider.notifier).state =
+                      buttonIdx;
+                }
+                onTap?.call();
+              },
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Ink(
+              width: 65,
+              height: 32,
+              decoration: BoxDecoration(
                 color: isSelected
-                    ? Theme.of(context).colorScheme.onSecondaryContainer
-                    : Theme.of(context).colorScheme.onSurface.withOpacity(0.65),
+                    ? Theme.of(context).colorScheme.secondaryContainer
+                    : Colors.transparent,
+                borderRadius: BorderRadius.circular(30),
+              ),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(30),
+                onTap: isSelected
+                    ? null
+                    : () {
+                        if (!isNavigator) {
+                          ref.read(navRailIndexStateProvider.notifier).state =
+                              buttonIdx;
+                        }
+                        onTap?.call();
+                      },
+                child: Icon(
+                  isSelected ? selectedIcon : icon,
+                  color: isSelected
+                      ? Theme.of(context).colorScheme.onSecondaryContainer
+                      : Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withOpacity(0.65),
+                ),
               ),
             ),
-          ),
-          showLabel ? const SizedBox(height: 4) : const SizedBox.shrink(),
-          showLabel
-              ? Text(
-                  label,
-                  style: Theme.of(context).textTheme.labelSmall!.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: isSelected
-                            ? Theme.of(context).colorScheme.onSecondaryContainer
-                            : Theme.of(context)
-                                .colorScheme
-                                .onSurface
-                                .withOpacity(0.65),
-                      ),
-                )
-              : const SizedBox.shrink(),
-        ],
+            showLabel ? const SizedBox(height: 4) : const SizedBox.shrink(),
+            showLabel
+                ? Text(
+                    label,
+                    style: Theme.of(context).textTheme.labelSmall!.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: isSelected
+                              ? Theme.of(context)
+                                  .colorScheme
+                                  .onSecondaryContainer
+                              : Theme.of(context)
+                                  .colorScheme
+                                  .onSurface
+                                  .withOpacity(0.65),
+                        ),
+                  )
+                : const SizedBox.shrink(),
+          ],
+        ),
       ),
     ),
   );

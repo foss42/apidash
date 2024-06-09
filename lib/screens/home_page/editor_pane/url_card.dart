@@ -21,9 +21,9 @@ class EditorPaneRequestURLCard extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.symmetric(
           vertical: 5,
-          horizontal: !context.isMobile ? 20 : 6,
+          horizontal: !context.isMediumWindow ? 20 : 6,
         ),
-        child: context.isMobile
+        child: context.isMediumWindow
             ? const Row(
                 children: [
                   DropdownButtonHTTPMethod(),

@@ -1,4 +1,5 @@
 import 'package:apidash/consts.dart';
+import 'package:apidash/extensions/extensions.dart';
 import 'package:apidash/screens/mobile/navbar.dart';
 import 'package:flutter/material.dart';
 
@@ -8,9 +9,9 @@ class LeftDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isLargeMobile = MediaQuery.sizeOf(context).width > kLargeMobileWidth;
     return Container(
-      padding: EdgeInsets.only(top: MediaQuery.paddingOf(context).top),
+      padding: EdgeInsets.only(top: MediaQuery.paddingOf(context).top) +
+          (kIsWindows || kIsMacOS ? kPt28 : EdgeInsets.zero),
       color: Theme.of(context).colorScheme.onInverseSurface,
       child: Drawer(
         backgroundColor: Colors.transparent,
@@ -20,7 +21,7 @@ class LeftDrawer extends StatelessWidget {
           child: Container(
             padding: EdgeInsets.only(
                 left: MediaQuery.paddingOf(context).left,
-                bottom: isLargeMobile
+                bottom: !context.isCompactWindow
                     ? MediaQuery.paddingOf(context).bottom
                     : 70 + MediaQuery.paddingOf(context).bottom),
             clipBehavior: Clip.hardEdge,
@@ -29,7 +30,7 @@ class LeftDrawer extends StatelessWidget {
               borderRadius:
                   const BorderRadius.only(topRight: Radius.circular(8)),
             ),
-            child: isLargeMobile
+            child: !context.isCompactWindow
                 ? Row(
                     children: [
                       const NavRail(),
