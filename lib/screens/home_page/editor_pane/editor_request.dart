@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/extensions/extensions.dart';
 import 'package:apidash/consts.dart';
-import 'package:apidash/extensions/extensions.dart';
 import 'details_card/details_card.dart';
 import 'details_card/request_pane/request_pane.dart';
 import 'url_card.dart';
@@ -13,7 +12,7 @@ class RequestEditor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return context.isMobile
+    return context.isMediumWindow
         ? const Padding(
             padding: kPb10,
             child: Column(

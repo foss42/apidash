@@ -7,7 +7,6 @@ import 'widgets/widgets.dart' show WindowCaption;
 import 'providers/providers.dart';
 import 'extensions/extensions.dart';
 import 'screens/screens.dart';
-import 'extensions/extensions.dart';
 import 'consts.dart';
 
 class App extends ConsumerStatefulWidget {
@@ -126,24 +125,23 @@ class DashApp extends ConsumerWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
-      home: kIsMobile
-          ? context.isLargeWidth
-              ? const Dashboard()
-              : const MobileDashboard()
-          : Stack(
-              children: [
-                kIsLinux ? const Dashboard() : const App(),
-                if (kIsWindows)
-                  SizedBox(
-                    height: 29,
-                    child: WindowCaption(
-                      backgroundColor: Colors.transparent,
-                      brightness:
-                          isDarkMode ? Brightness.dark : Brightness.light,
-                    ),
-                  ),
-              ],
+      home: Stack(
+        children: [
+          context.isMediumWindow
+              ? const MobileDashboard()
+              : !kIsLinux && !kIsMobile
+                  ? const App()
+                  : const Dashboard(),
+          if (kIsWindows)
+            SizedBox(
+              height: 29,
+              child: WindowCaption(
+                backgroundColor: Colors.transparent,
+                brightness: isDarkMode ? Brightness.dark : Brightness.light,
+              ),
             ),
+        ],
+      ),
     );
   }
 }
