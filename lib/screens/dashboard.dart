@@ -37,6 +37,19 @@ class Dashboard extends ConsumerWidget {
                       'Requests',
                       style: Theme.of(context).textTheme.labelSmall,
                     ),
+                    kVSpacer10,
+                    IconButton(
+                      isSelected: railIdx == 1,
+                      onPressed: () {
+                        ref.read(navRailIndexStateProvider.notifier).state = 1;
+                      },
+                      icon: const Icon(Icons.computer_outlined),
+                      selectedIcon: const Icon(Icons.computer_rounded),
+                    ),
+                    Text(
+                      'Variables',
+                      style: Theme.of(context).textTheme.labelSmall,
+                    ),
                   ],
                 ),
                 Expanded(
@@ -45,12 +58,12 @@ class Dashboard extends ConsumerWidget {
                     children: [
                       Padding(
                         padding: const EdgeInsets.only(bottom: 16.0),
-                        child: bottomButton(context, ref, railIdx, 1,
+                        child: bottomButton(context, ref, railIdx, 2,
                             Icons.help, Icons.help_outline),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(bottom: 16.0),
-                        child: bottomButton(context, ref, railIdx, 2,
+                        child: bottomButton(context, ref, railIdx, 3,
                             Icons.settings, Icons.settings_outlined),
                       ),
                     ],
@@ -81,6 +94,7 @@ class Dashboard extends ConsumerWidget {
                 index: railIdx,
                 children: const [
                   HomePage(),
+                  SizedBox(),
                   IntroPage(),
                   SettingsPage(),
                 ],
