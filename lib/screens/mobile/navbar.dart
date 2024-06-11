@@ -124,6 +124,7 @@ class NavRail extends ConsumerWidget {
               Icons.help,
               Icons.help_outline,
               'About',
+              showLabel: false,
             ),
             const SizedBox(height: 24),
             customNavigationDestination(
@@ -134,6 +135,7 @@ class NavRail extends ConsumerWidget {
               Icons.settings,
               Icons.settings_outlined,
               'Settings',
+              showLabel: false,
             ),
           ],
         ),
