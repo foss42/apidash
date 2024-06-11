@@ -94,7 +94,7 @@ class CollectionPane extends ConsumerWidget {
                     style: Theme.of(context).textTheme.bodyMedium,
                     hintText: "Filter by name or URL",
                     onChanged: (value) {
-                      ref.read(searchQueryProvider.notifier).state =
+                      ref.read(collectionSearchQueryProvider.notifier).state =
                           value.toLowerCase();
                     },
                   ),
@@ -142,7 +142,7 @@ class _RequestListState extends ConsumerState<RequestList> {
     final requestItems = ref.watch(collectionStateNotifierProvider)!;
     final alwaysShowCollectionPaneScrollbar = ref.watch(settingsProvider
         .select((value) => value.alwaysShowCollectionPaneScrollbar));
-    final filterQuery = ref.watch(searchQueryProvider).trim();
+    final filterQuery = ref.watch(collectionSearchQueryProvider).trim();
 
     return Scrollbar(
       controller: controller,

@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/extensions/context_extensions.dart';
 import 'package:apidash/providers/ui_providers.dart';
-import 'package:apidash/screens/mobile/widgets/page_base.dart';
-import '../settings_page.dart';
-import '../intro_page.dart';
 
 class BottomNavBar extends ConsumerWidget {
   const BottomNavBar({super.key});
@@ -48,30 +45,26 @@ class BottomNavBar extends ConsumerWidget {
                       'Variables'),
                 ),
                 Expanded(
-                  child: customNavigationDestination(context, ref, railIdx, 2,
-                      Icons.help, Icons.help_outline, 'About',
-                      isNavigator: true, onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                          builder: (context) => const PageBase(
-                                title: 'About',
-                                scaffoldBody: IntroPage(),
-                              )),
-                    );
-                  }),
+                  child: customNavigationDestination(
+                    context,
+                    ref,
+                    railIdx,
+                    2,
+                    Icons.help,
+                    Icons.help_outline,
+                    'About',
+                  ),
                 ),
                 Expanded(
-                  child: customNavigationDestination(context, ref, railIdx, 3,
-                      Icons.settings, Icons.settings_outlined, 'Settings',
-                      isNavigator: true, onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                          builder: (context) => const PageBase(
-                                title: 'Settings',
-                                scaffoldBody: SettingsPage(),
-                              )),
-                    );
-                  }),
+                  child: customNavigationDestination(
+                    context,
+                    ref,
+                    railIdx,
+                    3,
+                    Icons.settings,
+                    Icons.settings_outlined,
+                    'Settings',
+                  ),
                 ),
               ],
             ),
@@ -131,17 +124,6 @@ class NavRail extends ConsumerWidget {
               Icons.help,
               Icons.help_outline,
               'About',
-              isNavigator: true,
-              showLabel: false,
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                      builder: (context) => const PageBase(
-                            title: 'About',
-                            scaffoldBody: IntroPage(),
-                          )),
-                );
-              },
             ),
             const SizedBox(height: 24),
             customNavigationDestination(
@@ -152,17 +134,6 @@ class NavRail extends ConsumerWidget {
               Icons.settings,
               Icons.settings_outlined,
               'Settings',
-              isNavigator: true,
-              showLabel: false,
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                      builder: (context) => const PageBase(
-                            title: 'Settings',
-                            scaffoldBody: SettingsPage(),
-                          )),
-                );
-              },
             ),
           ],
         ),
@@ -179,7 +150,6 @@ Widget customNavigationDestination(
   IconData selectedIcon,
   IconData icon,
   String label, {
-  bool isNavigator = false,
   bool showLabel = true,
   Function()? onTap,
 }) {
@@ -195,9 +165,9 @@ Widget customNavigationDestination(
         onTap: isSelected
             ? null
             : () {
-                if (!isNavigator) {
-                  ref.read(navRailIndexStateProvider.notifier).state =
-                      buttonIdx;
+                ref.read(navRailIndexStateProvider.notifier).state = buttonIdx;
+                if (railIdx > 1 && buttonIdx <= 1) {
+                  ref.read(leftDrawerStateProvider.notifier).state = false;
                 }
                 onTap?.call();
               },
@@ -218,9 +188,11 @@ Widget customNavigationDestination(
                 onTap: isSelected
                     ? null
                     : () {
-                        if (!isNavigator) {
-                          ref.read(navRailIndexStateProvider.notifier).state =
-                              buttonIdx;
+                        ref.read(navRailIndexStateProvider.notifier).state =
+                            buttonIdx;
+                        if (railIdx > 1 && buttonIdx <= 1) {
+                          ref.read(leftDrawerStateProvider.notifier).state =
+                              false;
                         }
                         onTap?.call();
                       },

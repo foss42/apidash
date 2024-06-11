@@ -1,4 +1,4 @@
-import 'package:apidash/consts.dart';
+import 'package:apidash/widgets/splitviews.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -6,11 +6,13 @@ import 'package:inner_drawer/inner_drawer.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:apidash/extensions/extensions.dart';
 import 'package:apidash/providers/providers.dart';
+import '../intro_page.dart';
+import '../settings_page.dart';
 import 'navbar.dart';
-import 'widgets/left_drawer.dart';
 import 'requests_page.dart';
 import 'response_drawer.dart';
 import '../home_page/collection_pane.dart';
+import 'widgets/page_base.dart';
 
 class MobileDashboard extends ConsumerStatefulWidget {
   const MobileDashboard({super.key});
@@ -20,31 +22,14 @@ class MobileDashboard extends ConsumerStatefulWidget {
 }
 
 class _MobileDashboardState extends ConsumerState<MobileDashboard> {
-  late Color backgroundColor;
-  bool isLeftDrawerOpen = false;
-  ValueNotifier<double> dragPosition = ValueNotifier(0);
-  ValueNotifier<InnerDrawerDirection?> drawerDirection =
-      ValueNotifier(InnerDrawerDirection.start);
-
-  Color calculateBackgroundColor(double dragPosition) {
-    Color start = Theme.of(context).colorScheme.surface;
-    Color end = Theme.of(context).colorScheme.onInverseSurface;
-    return dragPosition == 0 ? start : end;
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    dragPosition.dispose();
-    drawerDirection.dispose();
-  }
-
   @override
   Widget build(
     BuildContext context,
   ) {
+    final railIdx = ref.watch(navRailIndexStateProvider);
     final GlobalKey<InnerDrawerState> innerDrawerKey =
         ref.watch(mobileDrawerKeyProvider);
+    final isLeftDrawerOpen = ref.watch(leftDrawerStateProvider);
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: FlexColorScheme.themedSystemNavigationBar(
         context,
@@ -54,65 +39,9 @@ class _MobileDashboardState extends ConsumerState<MobileDashboard> {
       child: Stack(
         alignment: AlignmentDirectional.bottomCenter,
         children: [
-          InnerDrawer(
-            key: innerDrawerKey,
-            swipe: true,
-            swipeChild: true,
-            onTapClose: true,
-            offset: !context.isCompactWindow
-                ? const IDOffset.only(left: 0.1, right: 1)
-                : const IDOffset.only(left: 0.7, right: 1),
-            boxShadow: [
-              BoxShadow(
-                offset: const Offset(1, 0),
-                color: Theme.of(context).colorScheme.onInverseSurface,
-                blurRadius: 0,
-              ),
-            ],
-            colorTransitionChild: Colors.transparent,
-            colorTransitionScaffold: Colors.transparent,
-            rightAnimationType: InnerDrawerAnimation.linear,
-            backgroundDecoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.onInverseSurface),
-            onDragUpdate: (value, direction) {
-              drawerDirection.value = direction;
-              if (value > 0.98 && direction == InnerDrawerDirection.start) {
-                dragPosition.value = 1;
-              } else {
-                dragPosition.value = 0;
-              }
-            },
-            innerDrawerCallback: (isOpened) {
-              if (drawerDirection.value == InnerDrawerDirection.start) {
-                setState(() {
-                  isLeftDrawerOpen = isOpened;
-                });
-              }
-            },
-            leftChild: const LeftDrawer(
-              drawerContent: CollectionPane(),
-            ),
-            rightChild: const ResponseDrawer(),
-            scaffold: ValueListenableBuilder<double>(
-              valueListenable: dragPosition,
-              builder: (context, value, child) {
-                return Container(
-                  color: calculateBackgroundColor(value),
-                  child: child,
-                );
-              },
-              child: ClipRRect(
-                borderRadius:
-                    const BorderRadius.only(topLeft: Radius.circular(8)),
-                child: SafeArea(
-                  minimum: kIsWindows || kIsMacOS ? kPt28 : EdgeInsets.zero,
-                  bottom: false,
-                  child: RequestsPage(
-                    innerDrawerKey: innerDrawerKey,
-                  ),
-                ),
-              ),
-            ),
+          PageBranch(
+            pageIndex: railIdx,
+            innerDrawerKey: innerDrawerKey,
           ),
           if (context.isCompactWindow)
             AnimatedPositioned(
@@ -129,5 +58,55 @@ class _MobileDashboardState extends ConsumerState<MobileDashboard> {
         ],
       ),
     );
+  }
+}
+
+class PageBranch extends StatelessWidget {
+  const PageBranch({
+    super.key,
+    required this.pageIndex,
+    required this.innerDrawerKey,
+  });
+
+  final int pageIndex;
+  final GlobalKey<InnerDrawerState> innerDrawerKey;
+
+  @override
+  Widget build(BuildContext context) {
+    switch (pageIndex) {
+      case 1:
+        return TwoDrawerSplitView(
+          key: const ValueKey('env'),
+          innerDrawerKey: innerDrawerKey,
+          offset: !context.isCompactWindow
+              ? const IDOffset.only(left: 0.1)
+              : const IDOffset.only(left: 0.7),
+          leftDrawerContent: const SizedBox(),
+          mainContent: const SizedBox(),
+        );
+      case 2:
+        return const PageBase(
+          title: 'About',
+          scaffoldBody: IntroPage(),
+        );
+      case 3:
+        return const PageBase(
+          title: 'Settings',
+          scaffoldBody: SettingsPage(),
+        );
+      default:
+        return TwoDrawerSplitView(
+          key: const ValueKey('home'),
+          innerDrawerKey: innerDrawerKey,
+          offset: !context.isCompactWindow
+              ? const IDOffset.only(left: 0.1, right: 1)
+              : const IDOffset.only(left: 0.7, right: 1),
+          leftDrawerContent: const CollectionPane(),
+          rightDrawerContent: const ResponseDrawer(),
+          mainContent: RequestsPage(
+            innerDrawerKey: innerDrawerKey,
+          ),
+        );
+    }
   }
 }
