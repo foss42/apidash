@@ -59,12 +59,10 @@ class Dashboard extends ConsumerWidget {
                       Padding(
                         padding: const EdgeInsets.only(bottom: 16.0),
                         child: bottomButton(context, ref, railIdx, 2,
-                        child: bottomButton(context, ref, railIdx, 2,
                             Icons.help, Icons.help_outline),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(bottom: 16.0),
-                        child: bottomButton(context, ref, railIdx, 3,
                         child: bottomButton(context, ref, railIdx, 3,
                             Icons.settings, Icons.settings_outlined),
                       ),
@@ -96,7 +94,6 @@ class Dashboard extends ConsumerWidget {
                 index: railIdx,
                 children: const [
                   HomePage(),
-                  SizedBox(),
                   SizedBox(),
                   IntroPage(),
                   SettingsPage(),
