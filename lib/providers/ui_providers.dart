@@ -29,5 +29,4 @@ final nameTextFieldFocusNodeProvider =
   return focusNode;
 });
 
-final collectionSearchQueryProvider = StateProvider<String>((ref) => '');
-final environmentSearchQueryProvider = StateProvider<String>((ref) => '');
+final searchQueryProvider = StateProvider<String>((ref) => '');

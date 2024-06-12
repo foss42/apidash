@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:apidash/extensions/context_extensions.dart';
-import 'package:apidash/providers/ui_providers.dart';
+import 'package:apidash/extensions/extensions.dart';
+import 'package:apidash/providers/providers.dart';
 
 class BottomNavBar extends ConsumerWidget {
   const BottomNavBar({super.key});
@@ -87,78 +87,68 @@ Widget customNavigationDestination(
   Function()? onTap,
 }) {
   bool isSelected = railIdx == buttonIdx;
-  return TooltipVisibility(
-    visible: context.isCompactWindow,
-    child: Tooltip(
-      message: label,
-      triggerMode: TooltipTriggerMode.longPress,
-      verticalOffset: 42,
-      child: GestureDetector(
-        behavior: HitTestBehavior.translucent,
-        onTap: isSelected
-            ? null
-            : () {
-                ref.read(navRailIndexStateProvider.notifier).state = buttonIdx;
-                if (railIdx > 1 && buttonIdx <= 1) {
-                  ref.read(leftDrawerStateProvider.notifier).state = false;
-                }
-                onTap?.call();
-              },
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Ink(
-              width: 65,
-              height: 32,
-              decoration: BoxDecoration(
+  return MouseRegion(
+    cursor: SystemMouseCursors.click,
+    child: GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      onTap: isSelected
+          ? null
+          : () {
+              ref.read(navRailIndexStateProvider.notifier).state = buttonIdx;
+              if (railIdx > 1 && buttonIdx <= 1) {
+                ref.read(leftDrawerStateProvider.notifier).state = false;
+              }
+              onTap?.call();
+            },
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Ink(
+            width: 65,
+            height: 32,
+            decoration: BoxDecoration(
+              color: isSelected
+                  ? Theme.of(context).colorScheme.secondaryContainer
+                  : Colors.transparent,
+              borderRadius: BorderRadius.circular(30),
+            ),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(30),
+              onTap: isSelected
+                  ? null
+                  : () {
+                      ref.read(navRailIndexStateProvider.notifier).state =
+                          buttonIdx;
+                      if (railIdx > 1 && buttonIdx <= 1) {
+                        ref.read(leftDrawerStateProvider.notifier).state =
+                            false;
+                      }
+                      onTap?.call();
+                    },
+              child: Icon(
+                isSelected ? selectedIcon : icon,
                 color: isSelected
-                    ? Theme.of(context).colorScheme.secondaryContainer
-                    : Colors.transparent,
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: InkWell(
-                borderRadius: BorderRadius.circular(30),
-                onTap: isSelected
-                    ? null
-                    : () {
-                        ref.read(navRailIndexStateProvider.notifier).state =
-                            buttonIdx;
-                        if (railIdx > 1 && buttonIdx <= 1) {
-                          ref.read(leftDrawerStateProvider.notifier).state =
-                              false;
-                        }
-                        onTap?.call();
-                      },
-                child: Icon(
-                  isSelected ? selectedIcon : icon,
-                  color: isSelected
-                      ? Theme.of(context).colorScheme.onSecondaryContainer
-                      : Theme.of(context)
-                          .colorScheme
-                          .onSurface
-                          .withOpacity(0.65),
-                ),
+                    ? Theme.of(context).colorScheme.onSecondaryContainer
+                    : Theme.of(context).colorScheme.onSurface.withOpacity(0.65),
               ),
             ),
-            showLabel ? const SizedBox(height: 4) : const SizedBox.shrink(),
-            showLabel
-                ? Text(
-                    label,
-                    style: Theme.of(context).textTheme.labelSmall!.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: isSelected
-                              ? Theme.of(context)
-                                  .colorScheme
-                                  .onSecondaryContainer
-                              : Theme.of(context)
-                                  .colorScheme
-                                  .onSurface
-                                  .withOpacity(0.65),
-                        ),
-                  )
-                : const SizedBox.shrink(),
-          ],
-        ),
+          ),
+          showLabel ? const SizedBox(height: 4) : const SizedBox.shrink(),
+          showLabel
+              ? Text(
+                  label,
+                  style: Theme.of(context).textTheme.labelSmall!.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: isSelected
+                            ? Theme.of(context).colorScheme.onSecondaryContainer
+                            : Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withOpacity(0.65),
+                      ),
+                )
+              : const SizedBox.shrink(),
+        ],
       ),
     ),
   );
