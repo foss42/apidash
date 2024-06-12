@@ -39,16 +39,12 @@ class PageBase extends ConsumerWidget {
     );
     return Stack(
       children: [
-        !context.isCompactWindow
-            ? Row(
-                children: [
-                  const NavRail(),
-                  Expanded(
-                    child: scaffold,
-                  ),
-                ],
-              )
-            : scaffold,
+        Container(
+          padding: (context.isMediumWindow ? kPb70 : EdgeInsets.zero) +
+              (kIsWindows || kIsMacOS ? kPt28 : EdgeInsets.zero),
+          color: Theme.of(context).colorScheme.surface,
+          child: scaffold,
+        ),
         if (kIsWindows)
           SizedBox(
             height: 29,
