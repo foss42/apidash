@@ -15,4 +15,8 @@ extension MediaQueryExtension on BuildContext {
 
   bool get isExtraLargeWindow =>
       MediaQuery.of(this).size.width > kLargeWindowWidth;
+
+  double get width => MediaQuery.of(this).size.width;
+
+  double get height => MediaQuery.of(this).size.height;
 }

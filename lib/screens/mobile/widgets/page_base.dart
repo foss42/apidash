@@ -4,7 +4,6 @@ import 'package:apidash/consts.dart';
 import 'package:apidash/extensions/extensions.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/window_caption.dart';
-import '../navbar.dart';
 
 class PageBase extends ConsumerWidget {
   final String title;
@@ -22,6 +21,7 @@ class PageBase extends ConsumerWidget {
         primary: true,
         title: Text(title),
         centerTitle: true,
+        scrolledUnderElevation: 0,
       ),
       body: Padding(
         padding: EdgeInsets.only(
@@ -33,21 +33,12 @@ class PageBase extends ConsumerWidget {
     return Stack(
       children: [
         Container(
-          padding: (context.isCompactWindow
+          padding: (context.isMediumWindow
                   ? const EdgeInsets.only(bottom: 70)
                   : EdgeInsets.zero) +
               (kIsWindows || kIsMacOS ? kPt28 : EdgeInsets.zero),
           color: Theme.of(context).colorScheme.surface,
-          child: !context.isCompactWindow
-              ? Row(
-                  children: [
-                    const NavRail(),
-                    Expanded(
-                      child: scaffold,
-                    ),
-                  ],
-                )
-              : scaffold,
+          child: scaffold,
         ),
         if (kIsWindows)
           SizedBox(

@@ -640,14 +640,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.2.0"
-  inner_drawer:
-    dependency: "direct main"
-    description:
-      name: inner_drawer
-      sha256: "19df8813ccb6aa1b6db76f2f976c93befbbae67452d019f5267209b15deb0772"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.0+1"
   io:
     dependency: transitive
     description:

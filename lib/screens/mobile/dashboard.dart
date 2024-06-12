@@ -1,8 +1,7 @@
-import 'package:apidash/widgets/splitviews.dart';
+import 'package:apidash/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:inner_drawer/inner_drawer.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:apidash/extensions/extensions.dart';
 import 'package:apidash/providers/providers.dart';
@@ -10,8 +9,6 @@ import '../intro_page.dart';
 import '../settings_page.dart';
 import 'navbar.dart';
 import 'requests_page.dart';
-import 'response_drawer.dart';
-import '../home_page/collection_pane.dart';
 import 'widgets/page_base.dart';
 
 class MobileDashboard extends ConsumerStatefulWidget {
@@ -27,9 +24,8 @@ class _MobileDashboardState extends ConsumerState<MobileDashboard> {
     BuildContext context,
   ) {
     final railIdx = ref.watch(navRailIndexStateProvider);
-    final GlobalKey<InnerDrawerState> innerDrawerKey =
-        ref.watch(mobileDrawerKeyProvider);
     final isLeftDrawerOpen = ref.watch(leftDrawerStateProvider);
+
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: FlexColorScheme.themedSystemNavigationBar(
         context,
@@ -41,9 +37,8 @@ class _MobileDashboardState extends ConsumerState<MobileDashboard> {
         children: [
           PageBranch(
             pageIndex: railIdx,
-            innerDrawerKey: innerDrawerKey,
           ),
-          if (context.isCompactWindow)
+          if (context.isMediumWindow)
             AnimatedPositioned(
               bottom: isLeftDrawerOpen
                   ? 0
@@ -61,28 +56,32 @@ class _MobileDashboardState extends ConsumerState<MobileDashboard> {
   }
 }
 
-class PageBranch extends StatelessWidget {
+class PageBranch extends ConsumerWidget {
   const PageBranch({
     super.key,
     required this.pageIndex,
-    required this.innerDrawerKey,
   });
 
   final int pageIndex;
-  final GlobalKey<InnerDrawerState> innerDrawerKey;
-
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final scaffoldKey = ref.watch(mobileScaffoldKeyStateProvider);
     switch (pageIndex) {
       case 1:
-        return TwoDrawerSplitView(
-          key: const ValueKey('env'),
-          innerDrawerKey: innerDrawerKey,
-          offset: !context.isCompactWindow
-              ? const IDOffset.only(left: 0.1)
-              : const IDOffset.only(left: 0.7),
-          leftDrawerContent: const SizedBox(),
-          mainContent: const SizedBox(),
+        // Temporary Environment Page
+        return Scaffold(
+          key: scaffoldKey,
+          appBar: AppBar(
+            title: const Text('Environments'),
+          ),
+          onDrawerChanged: (isOpened) {
+            ref.read(leftDrawerStateProvider.notifier).state = isOpened;
+          },
+          drawer: const Drawer(
+            surfaceTintColor: kColorTransparent,
+            shape: ContinuousRectangleBorder(),
+          ),
+          body: const SizedBox(),
         );
       case 2:
         return const PageBase(
@@ -95,17 +94,8 @@ class PageBranch extends StatelessWidget {
           scaffoldBody: SettingsPage(),
         );
       default:
-        return TwoDrawerSplitView(
-          key: const ValueKey('home'),
-          innerDrawerKey: innerDrawerKey,
-          offset: !context.isCompactWindow
-              ? const IDOffset.only(left: 0.1, right: 1)
-              : const IDOffset.only(left: 0.7, right: 1),
-          leftDrawerContent: const CollectionPane(),
-          rightDrawerContent: const ResponseDrawer(),
-          mainContent: RequestsPage(
-            innerDrawerKey: innerDrawerKey,
-          ),
+        return RequestsPage(
+          scaffoldKey: scaffoldKey,
         );
     }
   }

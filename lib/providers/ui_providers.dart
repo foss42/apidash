@@ -1,9 +1,8 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:inner_drawer/inner_drawer.dart';
 
-final mobileDrawerKeyProvider = StateProvider<GlobalKey<InnerDrawerState>>(
-    (ref) => GlobalKey<InnerDrawerState>());
+final mobileScaffoldKeyStateProvider = StateProvider<GlobalKey<ScaffoldState>>(
+    (ref) => GlobalKey<ScaffoldState>());
 final leftDrawerStateProvider = StateProvider<bool>((ref) => false);
 final navRailIndexStateProvider = StateProvider<int>((ref) => 0);
 final selectedIdEditStateProvider = StateProvider<String?>((ref) => null);
