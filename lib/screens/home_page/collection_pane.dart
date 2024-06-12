@@ -106,6 +106,7 @@ class CollectionPane extends ConsumerWidget {
           const Expanded(
             child: RequestList(),
           ),
+          kVSpacer5
         ],
       ),
     );
