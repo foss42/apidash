@@ -33,9 +33,7 @@ class PageBase extends ConsumerWidget {
     return Stack(
       children: [
         Container(
-          padding: (context.isMediumWindow
-                  ? const EdgeInsets.only(bottom: 70)
-                  : EdgeInsets.zero) +
+          padding: (context.isMediumWindow ? kPb70 : EdgeInsets.zero) +
               (kIsWindows || kIsMacOS ? kPt28 : EdgeInsets.zero),
           color: Theme.of(context).colorScheme.surface,
           child: scaffold,

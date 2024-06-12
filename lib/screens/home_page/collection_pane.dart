@@ -27,9 +27,10 @@ class CollectionPane extends ConsumerWidget {
       backgroundColor: Theme.of(context).colorScheme.surface,
       surfaceTintColor: kColorTransparent,
       child: Padding(
-        padding: !context.isMediumWindow && kIsMacOS
-            ? kP24CollectionPane
-            : kP8CollectionPane,
+        padding: (!context.isMediumWindow && kIsMacOS
+                ? kP24CollectionPane
+                : kP8CollectionPane) +
+            (context.isMediumWindow ? kPb70 : EdgeInsets.zero),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -113,6 +114,7 @@ class CollectionPane extends ConsumerWidget {
             const Expanded(
               child: RequestList(),
             ),
+            kVSpacer5
           ],
         ),
       ),

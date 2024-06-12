@@ -109,13 +109,20 @@ const kP8CollectionPane = EdgeInsets.only(
   //right: 4.0,
   // bottom: 8.0,
 );
-const kPt28 = EdgeInsets.only(top: 28);
-const kPt32 = EdgeInsets.only(top: 32);
+const kPt28 = EdgeInsets.only(
+  top: 28,
+);
+const kPt32 = EdgeInsets.only(
+  top: 32,
+);
 const kPb10 = EdgeInsets.only(
   bottom: 10,
 );
 const kPb15 = EdgeInsets.only(
   bottom: 15,
+);
+const kPb70 = EdgeInsets.only(
+  bottom: 70,
 );
 const kHSpacer4 = SizedBox(width: 4);
 const kHSpacer5 = SizedBox(width: 5);
