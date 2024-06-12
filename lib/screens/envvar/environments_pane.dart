@@ -153,7 +153,6 @@ class EnvironmentItem extends ConsumerWidget {
     final selectedId = ref.watch(selectedEnvironmentIdStateProvider);
     final activeEnvironmentId = ref.watch(activeEnvironmentIdStateProvider);
     final editRequestId = ref.watch(selectedIdEditStateProvider);
-    final mobileDrawerKey = ref.watch(mobileDrawerKeyProvider);
 
     return SidebarEnvironmentCard(
       id: id,
@@ -166,7 +165,7 @@ class EnvironmentItem extends ConsumerWidget {
         ref.read(activeEnvironmentIdStateProvider.notifier).state = id;
       },
       onTap: () {
-        mobileDrawerKey.currentState?.close();
+        ref.read(mobileScaffoldKeyStateProvider).currentState?.closeDrawer();
         ref.read(selectedEnvironmentIdStateProvider.notifier).state = id;
       },
       focusNode: ref.watch(nameTextFieldFocusNodeProvider),

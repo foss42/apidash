@@ -4,7 +4,6 @@ import 'package:apidash/consts.dart';
 import 'package:apidash/extensions/extensions.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/window_caption.dart';
-import '../navbar.dart';
 
 class PageBase extends ConsumerWidget {
   final String title;
@@ -15,32 +14,28 @@ class PageBase extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isDarkMode =
         ref.watch(settingsProvider.select((value) => value.isDark));
-    final scaffold = Container(
-      padding: (context.isCompactWindow
-              ? const EdgeInsets.only(bottom: 70)
-              : EdgeInsets.zero) +
-          (kIsWindows || kIsMacOS ? kPt28 : EdgeInsets.zero),
-      color: Theme.of(context).colorScheme.surface,
-      child: Scaffold(
+    final scaffold = Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
+      appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.background,
-        appBar: AppBar(
-          backgroundColor: Theme.of(context).colorScheme.background,
-          primary: true,
-          title: Text(title),
-          centerTitle: true,
+        primary: true,
+        title: Text(title),
+        centerTitle: true,
+        scrolledUnderElevation: 0,
+      ),
+      body: Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.paddingOf(context).bottom,
         ),
-        body: Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.paddingOf(context).bottom,
-          ),
-          child: scaffoldBody,
-        ),
+        child: scaffoldBody,
       ),
     );
     return Stack(
       children: [
         Container(
-          padding: (context.isMediumWindow ? kPb70 : EdgeInsets.zero) +
+          padding: (context.isMediumWindow
+                  ? const EdgeInsets.only(bottom: 70)
+                  : EdgeInsets.zero) +
               (kIsWindows || kIsMacOS ? kPt28 : EdgeInsets.zero),
           color: Theme.of(context).colorScheme.surface,
           child: scaffold,

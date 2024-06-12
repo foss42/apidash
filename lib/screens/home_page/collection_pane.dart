@@ -250,7 +250,6 @@ class RequestItem extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedId = ref.watch(selectedIdStateProvider);
     final editRequestId = ref.watch(selectedIdEditStateProvider);
-    final mobileDrawerKey = ref.watch(mobileDrawerKeyProvider);
 
     return SidebarRequestCard(
       id: id,
@@ -260,7 +259,7 @@ class RequestItem extends ConsumerWidget {
       selectedId: selectedId,
       editRequestId: editRequestId,
       onTap: () {
-        mobileDrawerKey.currentState?.close();
+        ref.read(mobileScaffoldKeyStateProvider).currentState?.closeDrawer();
         ref.read(selectedIdStateProvider.notifier).state = id;
       },
       // onDoubleTap: () {
