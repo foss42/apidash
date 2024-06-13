@@ -122,7 +122,7 @@ class __$$EnvironmentModelImplCopyWithImpl<$Res>
 class _$EnvironmentModelImpl implements _EnvironmentModel {
   const _$EnvironmentModelImpl(
       {required this.id,
-      this.name = "",
+      this.name = "New Environment",
       final List<EnvironmentVariableModel> values = const []})
       : _values = values;
 

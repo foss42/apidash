@@ -83,10 +83,11 @@ class NavRail extends ConsumerWidget {
     final railIdx = ref.watch(navRailIndexStateProvider);
     return Material(
       type: MaterialType.transparency,
-      child: Container(
+      child: Ink(
         width: 70,
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
         decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
           border: Border(
             right: BorderSide(
               color: Theme.of(context).colorScheme.onInverseSurface,
@@ -124,6 +125,7 @@ class NavRail extends ConsumerWidget {
               Icons.help,
               Icons.help_outline,
               'About',
+              showLabel: false,
             ),
             const SizedBox(height: 24),
             customNavigationDestination(
@@ -134,6 +136,7 @@ class NavRail extends ConsumerWidget {
               Icons.settings,
               Icons.settings_outlined,
               'Settings',
+              showLabel: false,
             ),
           ],
         ),

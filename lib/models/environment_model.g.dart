@@ -10,7 +10,7 @@ _$EnvironmentModelImpl _$$EnvironmentModelImplFromJson(
         Map<String, dynamic> json) =>
     _$EnvironmentModelImpl(
       id: json['id'] as String,
-      name: json['name'] as String? ?? "",
+      name: json['name'] as String? ?? "New Environment",
       values: (json['values'] as List<dynamic>?)
               ?.map((e) =>
                   EnvironmentVariableModel.fromJson(e as Map<String, dynamic>))

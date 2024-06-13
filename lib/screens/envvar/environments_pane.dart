@@ -2,6 +2,7 @@ import 'package:apidash/consts.dart';
 import 'package:apidash/extensions/extensions.dart';
 import 'package:apidash/models/environment_model.dart';
 import 'package:apidash/providers/providers.dart';
+import 'package:apidash/widgets/cards.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -13,7 +14,34 @@ class EnvironmentsPane extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return const SizedBox();
+    return Padding(
+      padding: kIsMacOS ? kP24CollectionPane : kP8CollectionPane,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Padding(
+            padding: kPe8,
+            child: Wrap(
+              alignment: WrapAlignment.spaceBetween,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    ref
+                        .read(environmentsStateNotifierProvider.notifier)
+                        .addEnvironment();
+                  },
+                  child: const Text(
+                    kLabelPlusNew,
+                    style: kTextStyleButton,
+                  ),
+                )
+              ],
+            ),
+          ),
+          const Expanded(child: EnvironmentsList()),
+        ],
+      ),
+    );
   }
 }
 
@@ -122,8 +150,35 @@ class EnvironmentItem extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedId = ref.watch(selectedEnvironmentIdProvider);
+    final selectedId = ref.watch(selectedEnvironmentIdStateProvider);
+    final activeEnvironmentId = ref.watch(activeEnvironmentIdStateProvider);
+    final editRequestId = ref.watch(selectedIdEditStateProvider);
+    final mobileDrawerKey = ref.watch(mobileDrawerKeyProvider);
 
-    return Text(environmentModel.name);
+    return SidebarEnvironmentCard(
+      id: id,
+      isActive: id == activeEnvironmentId,
+      isGlobal: id == kGlobalEnvironmentId,
+      name: environmentModel.name,
+      selectedId: selectedId,
+      editRequestId: editRequestId,
+      setActive: (value) {
+        ref.read(activeEnvironmentIdStateProvider.notifier).state = id;
+      },
+      onTap: () {
+        mobileDrawerKey.currentState?.close();
+        ref.read(selectedEnvironmentIdStateProvider.notifier).state = id;
+      },
+      focusNode: ref.watch(nameTextFieldFocusNodeProvider),
+      onChangedNameEditor: (value) {
+        value = value.trim();
+        ref
+            .read(environmentsStateNotifierProvider.notifier)
+            .updateEnvironment(editRequestId!, name: value);
+      },
+      onTapOutsideNameEditor: () {
+        ref.read(selectedEnvironmentIdStateProvider.notifier).state = null;
+      },
+    );
   }
 }

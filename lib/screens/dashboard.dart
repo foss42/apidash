@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/consts.dart';
+import 'envvar/environment_page.dart';
 import 'home_page/home_page.dart';
 import 'intro_page.dart';
 import 'settings_page.dart';
@@ -43,8 +44,8 @@ class Dashboard extends ConsumerWidget {
                       onPressed: () {
                         ref.read(navRailIndexStateProvider.notifier).state = 1;
                       },
-                      icon: const Icon(Icons.auto_awesome_mosaic_outlined),
-                      selectedIcon: const Icon(Icons.auto_awesome_mosaic),
+                      icon: const Icon(Icons.computer_outlined),
+                      selectedIcon: const Icon(Icons.computer_rounded),
                     ),
                     Text(
                       'Variables',
@@ -94,7 +95,7 @@ class Dashboard extends ConsumerWidget {
                 index: railIdx,
                 children: const [
                   HomePage(),
-                  SizedBox(),
+                  EnvironmentPage(),
                   IntroPage(),
                   SettingsPage(),
                 ],

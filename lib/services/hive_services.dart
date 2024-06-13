@@ -38,7 +38,6 @@ class HiveHandler {
   late final Box dataBox;
   late final Box settingsBox;
   late final Box environmentBox;
-  late final Box environmentIdsBox;
 
   HiveHandler() {
     dataBox = Hive.box(kDataBox);
@@ -59,9 +58,9 @@ class HiveHandler {
 
   void delete(String key) => dataBox.delete(key);
 
-  dynamic getEnvironmentIds() => environmentIdsBox.get(kKeyEnvironmentBoxIds);
+  dynamic getEnvironmentIds() => environmentBox.get(kKeyEnvironmentBoxIds);
   Future<void> setEnvironmentIds(List<String>? ids) =>
-      environmentIdsBox.put(kKeyEnvironmentBoxIds, ids);
+      environmentBox.put(kKeyEnvironmentBoxIds, ids);
 
   dynamic getEnvironment(String id) => environmentBox.get(id);
   Future<void> setEnvironment(

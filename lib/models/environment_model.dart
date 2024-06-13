@@ -9,7 +9,7 @@ part 'environment_model.g.dart';
 class EnvironmentModel with _$EnvironmentModel {
   const factory EnvironmentModel({
     required String id,
-    @Default("") String name,
+    @Default("New Environment") String name,
     @Default([]) List<EnvironmentVariableModel> values,
   }) = _EnvironmentModel;
 

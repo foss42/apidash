@@ -1,3 +1,4 @@
+import 'package:apidash/screens/envvar/environments_pane.dart';
 import 'package:apidash/widgets/splitviews.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -81,7 +82,7 @@ class PageBranch extends StatelessWidget {
           offset: !context.isCompactWindow
               ? const IDOffset.only(left: 0.1)
               : const IDOffset.only(left: 0.7),
-          leftDrawerContent: const SizedBox(),
+          leftDrawerContent: const EnvironmentsPane(),
           mainContent: const SizedBox(),
         );
       case 2:

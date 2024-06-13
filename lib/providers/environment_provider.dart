@@ -5,7 +5,8 @@ import 'package:apidash/utils/file_utils.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../services/services.dart' show hiveHandler, HiveHandler;
 
-final selectedEnvironmentIdProvider = StateProvider<String?>((ref) => null);
+final selectedEnvironmentIdStateProvider =
+    StateProvider<String?>((ref) => null);
 
 final environmentsStateNotifierProvider = StateNotifierProvider<
     EnvironmentsStateNotifier, Map<String, EnvironmentModel>?>((ref) {
@@ -27,8 +28,8 @@ class EnvironmentsStateNotifier
           state!.keys.first,
         ];
       }
-      ref.read(selectedEnvironmentIdProvider.notifier).state =
-          ref.read(environmentSequenceProvider)[0];
+      ref.read(selectedEnvironmentIdStateProvider.notifier).state =
+          kGlobalEnvironmentId;
     });
   }
 
@@ -80,7 +81,7 @@ class EnvironmentsStateNotifier
     ref
         .read(environmentSequenceProvider.notifier)
         .update((state) => [id, ...state]);
-    ref.read(selectedEnvironmentIdProvider.notifier).state =
+    ref.read(selectedEnvironmentIdStateProvider.notifier).state =
         newEnvironmentModel.id;
     ref.read(hasUnsavedChangesProvider.notifier).state = true;
   }
@@ -123,7 +124,7 @@ class EnvironmentsStateNotifier
     ref
         .read(environmentSequenceProvider.notifier)
         .update((state) => [...environmentIds]);
-    ref.read(selectedEnvironmentIdProvider.notifier).state = newId;
+    ref.read(selectedEnvironmentIdStateProvider.notifier).state = newId;
     ref.read(hasUnsavedChangesProvider.notifier).state = true;
   }
 
@@ -142,7 +143,7 @@ class EnvironmentsStateNotifier
       newId = kGlobalEnvironmentId;
     }
 
-    ref.read(selectedEnvironmentIdProvider.notifier).state = newId;
+    ref.read(selectedEnvironmentIdStateProvider.notifier).state = newId;
 
     state = {
       ...state!,
