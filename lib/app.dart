@@ -95,7 +95,7 @@ class _AppState extends ConsumerState<App> with WindowListener {
 
   @override
   Widget build(BuildContext context) {
-    return const Dashboard();
+    return context.isMediumWindow ? const MobileDashboard() : const Dashboard();
   }
 }
 
@@ -127,10 +127,10 @@ class DashApp extends ConsumerWidget {
       themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
       home: Stack(
         children: [
-          context.isMediumWindow
-              ? const MobileDashboard()
-              : !kIsLinux && !kIsMobile
-                  ? const App()
+          !kIsLinux && !kIsMobile
+              ? const App()
+              : context.isMediumWindow
+                  ? const MobileDashboard()
                   : const Dashboard(),
           if (kIsWindows)
             SizedBox(
