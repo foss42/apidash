@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:apidash/widgets/buttons.dart';
+import 'package:apidash/screens/common/sidebar_widgets.dart';
 import 'package:apidash/consts.dart';
 import '../test_consts.dart';
 

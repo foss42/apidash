@@ -1,12 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
-
-import '../consts.dart';
+import 'package:apidash/consts.dart';
+import 'providers.dart';
 import '../models/models.dart';
 import '../services/services.dart' show hiveHandler, HiveHandler, request;
 import '../utils/utils.dart' show getNewUuid, collectionToHAR;
-import 'settings_providers.dart';
-import 'ui_providers.dart';
 
 final selectedIdStateProvider = StateProvider<String?>((ref) => null);
 

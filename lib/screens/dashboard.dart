@@ -13,6 +13,7 @@ class Dashboard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final railIdx = ref.watch(navRailIndexStateProvider);
+    final mobileScaffoldKey = ref.watch(mobileScaffoldKeyStateProvider);
     return Scaffold(
       body: SafeArea(
         child: Row(
@@ -93,11 +94,13 @@ class Dashboard extends ConsumerWidget {
               child: IndexedStack(
                 alignment: AlignmentDirectional.topCenter,
                 index: railIdx,
-                children: const [
-                  HomePage(),
-                  EnvironmentPage(),
-                  IntroPage(),
-                  SettingsPage(),
+                children: [
+                  const HomePage(),
+                  EnvironmentPage(
+                    scaffoldKey: mobileScaffoldKey,
+                  ),
+                  const IntroPage(),
+                  const SettingsPage(),
                 ],
               ),
             )

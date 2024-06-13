@@ -4,3 +4,4 @@ export 'http_utils.dart';
 export 'file_utils.dart';
 export 'window_utils.dart';
 export 'har_utils.dart';
+export 'envvar_utils.dart';

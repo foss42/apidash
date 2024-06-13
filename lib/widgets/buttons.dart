@@ -212,30 +212,6 @@ class DiscordButton extends StatelessWidget {
   }
 }
 
-class SaveButton extends StatelessWidget {
-  const SaveButton({
-    super.key,
-    this.onPressed,
-  });
-
-  final VoidCallback? onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return TextButton.icon(
-      onPressed: onPressed,
-      icon: const Icon(
-        Icons.save,
-        size: 20,
-      ),
-      label: const Text(
-        kLabelSave,
-        style: kTextStyleButton,
-      ),
-    );
-  }
-}
-
 class ClearResponseButton extends StatelessWidget {
   const ClearResponseButton({
     super.key,

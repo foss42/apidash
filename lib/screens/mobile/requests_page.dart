@@ -47,7 +47,7 @@ class RequestTitle extends ConsumerWidget {
       borderRadius: BorderRadius.circular(8),
       child: Material(
         color: Colors.transparent,
-        child: RequestCardMenu(
+        child: ItemCardMenu(
           offset: const Offset(0, 40),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           splashRadius: 0,
@@ -75,18 +75,18 @@ class RequestTitle extends ConsumerWidget {
               ],
             ),
           ),
-          onSelected: (RequestItemMenuOption item) {
-            if (item == RequestItemMenuOption.edit) {
+          onSelected: (ItemMenuOption item) {
+            if (item == ItemMenuOption.edit) {
               showRenameDialog(context, name, (val) {
                 ref
                     .read(collectionStateNotifierProvider.notifier)
                     .update(id!, name: val);
               });
             }
-            if (item == RequestItemMenuOption.delete) {
+            if (item == ItemMenuOption.delete) {
               ref.read(collectionStateNotifierProvider.notifier).remove(id!);
             }
-            if (item == RequestItemMenuOption.duplicate) {
+            if (item == ItemMenuOption.duplicate) {
               ref.read(collectionStateNotifierProvider.notifier).duplicate(id!);
             }
           },

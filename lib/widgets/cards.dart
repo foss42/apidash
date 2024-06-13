@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart';
-import 'menus.dart' show RequestCardMenu;
+import 'menus.dart' show ItemCardMenu;
 import 'texts.dart' show MethodBox;
 
 class SidebarRequestCard extends StatelessWidget {
@@ -36,7 +36,7 @@ class SidebarRequestCard extends StatelessWidget {
   // final TextEditingController? controller;
   final FocusNode? focusNode;
   final Function()? onTapOutsideNameEditor;
-  final Function(RequestItemMenuOption)? onMenuSelected;
+  final Function(ItemMenuOption)? onMenuSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -118,7 +118,7 @@ class SidebarRequestCard extends StatelessWidget {
                     visible: isSelected && !inEditMode,
                     child: SizedBox(
                       width: 28,
-                      child: RequestCardMenu(
+                      child: ItemCardMenu(
                         onSelected: onMenuSelected,
                       ),
                     ),
@@ -185,19 +185,19 @@ class SidebarEnvironmentCard extends StatelessWidget {
   final Function(String)? onChangedNameEditor;
   final FocusNode? focusNode;
   final Function()? onTapOutsideNameEditor;
-  final Function(RequestItemMenuOption)? onMenuSelected;
+  final Function(ItemMenuOption)? onMenuSelected;
 
   @override
   Widget build(BuildContext context) {
-    final Color color = Theme.of(context).colorScheme.surface;
-    final Color colorVariant =
-        Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5);
-    final Color surfaceTint = Theme.of(context).colorScheme.primary;
+    final colorScheme = Theme.of(context).colorScheme;
+    final Color color = colorScheme.surface;
+    final Color colorVariant = colorScheme.surfaceVariant.withOpacity(0.5);
+    final Color surfaceTint = colorScheme.primary;
     bool isSelected = selectedId == id;
     bool inEditMode = editRequestId == id;
-    final colorScheme = Theme.of(context).colorScheme;
+    String nm = getEnvironmentTitle(name);
     return Tooltip(
-      message: name,
+      message: nm,
       triggerMode: TooltipTriggerMode.manual,
       waitDuration: const Duration(seconds: 1),
       child: Card(
@@ -230,22 +230,6 @@ class SidebarEnvironmentCard extends StatelessWidget {
               height: 20,
               child: Row(
                 children: [
-                  isGlobal
-                      ? const SizedBox.shrink()
-                      : Checkbox(
-                          value: isActive,
-                          onChanged: isActive ? null : setActive,
-                          shape: const CircleBorder(),
-                          checkColor: colorScheme.onPrimary,
-                          fillColor: MaterialStateProperty.resolveWith<Color?>(
-                            (Set<MaterialState> states) {
-                              if (states.contains(MaterialState.selected)) {
-                                return colorScheme.primary;
-                              }
-                              return null;
-                            },
-                          ),
-                        ),
                   kHSpacer4,
                   Expanded(
                     child: inEditMode
@@ -271,16 +255,16 @@ class SidebarEnvironmentCard extends StatelessWidget {
                             ),
                           )
                         : Text(
-                            name ?? "h",
+                            nm,
                             softWrap: false,
                             overflow: TextOverflow.fade,
                           ),
                   ),
                   Visibility(
-                    visible: isSelected && !inEditMode,
+                    visible: isSelected && !inEditMode && !isGlobal,
                     child: SizedBox(
                       width: 28,
-                      child: RequestCardMenu(
+                      child: ItemCardMenu(
                         onSelected: onMenuSelected,
                       ),
                     ),

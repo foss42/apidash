@@ -6,14 +6,13 @@ part of 'environment_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$EnvironmentModelImpl _$$EnvironmentModelImplFromJson(
-        Map<String, dynamic> json) =>
+_$EnvironmentModelImpl _$$EnvironmentModelImplFromJson(Map json) =>
     _$EnvironmentModelImpl(
       id: json['id'] as String,
-      name: json['name'] as String? ?? "New Environment",
+      name: json['name'] as String? ?? "",
       values: (json['values'] as List<dynamic>?)
-              ?.map((e) =>
-                  EnvironmentVariableModel.fromJson(e as Map<String, dynamic>))
+              ?.map((e) => EnvironmentVariableModel.fromJson(
+                  Map<String, Object?>.from(e as Map)))
               .toList() ??
           const [],
     );
@@ -23,11 +22,11 @@ Map<String, dynamic> _$$EnvironmentModelImplToJson(
     <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
-      'values': instance.values,
+      'values': instance.values.map((e) => e.toJson()).toList(),
     };
 
 _$EnvironmentVariableModelImpl _$$EnvironmentVariableModelImplFromJson(
-        Map<String, dynamic> json) =>
+        Map json) =>
     _$EnvironmentVariableModelImpl(
       key: json['key'] as String,
       value: json['value'] as String,

@@ -1,4 +1,4 @@
-import 'package:apidash/consts.dart';
+import 'package:apidash/screens/envvar/environment_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -69,19 +69,8 @@ class PageBranch extends ConsumerWidget {
     switch (pageIndex) {
       case 1:
         // Temporary Environment Page
-        return Scaffold(
-          key: scaffoldKey,
-          appBar: AppBar(
-            title: const Text('Environments'),
-          ),
-          onDrawerChanged: (isOpened) {
-            ref.read(leftDrawerStateProvider.notifier).state = isOpened;
-          },
-          drawer: const Drawer(
-            surfaceTintColor: kColorTransparent,
-            shape: ContinuousRectangleBorder(),
-          ),
-          body: const SizedBox(),
+        return EnvironmentPage(
+          scaffoldKey: scaffoldKey,
         );
       case 2:
         return const PageBase(

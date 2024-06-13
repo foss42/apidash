@@ -118,11 +118,12 @@ class __$$EnvironmentModelImplCopyWithImpl<$Res>
 }
 
 /// @nodoc
-@JsonSerializable()
+
+@JsonSerializable(explicitToJson: true, anyMap: true)
 class _$EnvironmentModelImpl implements _EnvironmentModel {
   const _$EnvironmentModelImpl(
       {required this.id,
-      this.name = "New Environment",
+      this.name = "",
       final List<EnvironmentVariableModel> values = const []})
       : _values = values;
 
@@ -320,7 +321,8 @@ class __$$EnvironmentVariableModelImplCopyWithImpl<$Res>
 }
 
 /// @nodoc
-@JsonSerializable()
+
+@JsonSerializable(explicitToJson: true, anyMap: true)
 class _$EnvironmentVariableModelImpl implements _EnvironmentVariableModel {
   const _$EnvironmentVariableModelImpl(
       {required this.key,

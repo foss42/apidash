@@ -8,14 +8,13 @@ import '../services/services.dart' show hiveHandler, HiveHandler;
 final selectedEnvironmentIdStateProvider =
     StateProvider<String?>((ref) => null);
 
-final environmentsStateNotifierProvider = StateNotifierProvider<
-    EnvironmentsStateNotifier, Map<String, EnvironmentModel>?>((ref) {
-  return EnvironmentsStateNotifier(ref, hiveHandler);
-});
+final StateNotifierProvider<EnvironmentsStateNotifier,
+        Map<String, EnvironmentModel>?> environmentsStateNotifierProvider =
+    StateNotifierProvider((ref) => EnvironmentsStateNotifier(ref, hiveHandler));
 
 final environmentSequenceProvider = StateProvider<List<String>>((ref) {
   var ids = hiveHandler.getEnvironmentIds();
-  return ids ?? [];
+  return ids ?? [kGlobalEnvironmentId];
 });
 
 class EnvironmentsStateNotifier
@@ -25,7 +24,7 @@ class EnvironmentsStateNotifier
     Future.microtask(() {
       if (status) {
         ref.read(environmentSequenceProvider.notifier).state = [
-          state!.keys.first,
+          ...state!.keys,
         ];
       }
       ref.read(selectedEnvironmentIdStateProvider.notifier).state =
@@ -52,16 +51,18 @@ class EnvironmentsStateNotifier
     } else {
       Map<String, EnvironmentModel> environmentsMap = {};
       for (var environmentId in environmentIds) {
-        var environment = hiveHandler.getEnvironment(environmentId);
-        EnvironmentModel environmentModelFromJson =
-            EnvironmentModel.fromJson(environment);
+        var jsonModel = hiveHandler.getEnvironment(environmentId);
+        if (jsonModel != null) {
+          var jsonMap = Map<String, Object?>.from(jsonModel);
+          var environmentModelFromJson = EnvironmentModel.fromJson(jsonMap);
 
-        EnvironmentModel environmentModel = EnvironmentModel(
-          id: environmentModelFromJson.id,
-          name: environmentModelFromJson.name,
-          values: environmentModelFromJson.values,
-        );
-        environmentsMap[environmentId] = environmentModel;
+          EnvironmentModel environmentModel = EnvironmentModel(
+            id: environmentModelFromJson.id,
+            name: environmentModelFromJson.name,
+            values: environmentModelFromJson.values,
+          );
+          environmentsMap[environmentId] = environmentModel;
+        }
       }
       state = environmentsMap;
       return true;
@@ -160,10 +161,10 @@ class EnvironmentsStateNotifier
     ref.read(hasUnsavedChangesProvider.notifier).state = true;
   }
 
-  void saveEnvironments() async {
+  Future<void> saveEnvironments() async {
     ref.read(saveDataStateProvider.notifier).state = true;
     final environmentIds = ref.read(environmentSequenceProvider);
-    hiveHandler.setEnvironmentIds(environmentIds);
+    await hiveHandler.setEnvironmentIds(environmentIds);
     for (var environmentId in environmentIds) {
       var environment = state![environmentId]!;
       await hiveHandler.setEnvironment(environmentId, environment.toJson());

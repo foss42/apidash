@@ -179,7 +179,12 @@ class TwoDrawerScaffold extends StatelessWidget {
                 : const SizedBox.shrink()),
           ],
         ),
-        drawer: leftDrawerContent,
+        drawer: Drawer(
+          shape: const ContinuousRectangleBorder(),
+          backgroundColor: Theme.of(context).colorScheme.surface,
+          surfaceTintColor: kColorTransparent,
+          child: leftDrawerContent,
+        ),
         endDrawer: rightDrawerContent,
         body: mainContent,
         bottomNavigationBar: bottomNavigationBar,

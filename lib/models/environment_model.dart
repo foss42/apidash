@@ -7,9 +7,13 @@ part 'environment_model.g.dart';
 
 @freezed
 class EnvironmentModel with _$EnvironmentModel {
+  @JsonSerializable(
+    explicitToJson: true,
+    anyMap: true,
+  )
   const factory EnvironmentModel({
     required String id,
-    @Default("New Environment") String name,
+    @Default("") String name,
     @Default([]) List<EnvironmentVariableModel> values,
   }) = _EnvironmentModel;
 
@@ -19,6 +23,10 @@ class EnvironmentModel with _$EnvironmentModel {
 
 @freezed
 class EnvironmentVariableModel with _$EnvironmentVariableModel {
+  @JsonSerializable(
+    explicitToJson: true,
+    anyMap: true,
+  )
   const factory EnvironmentVariableModel({
     required String key,
     required String value,
