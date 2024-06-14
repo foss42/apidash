@@ -232,3 +232,32 @@ class ClearResponseButton extends StatelessWidget {
     );
   }
 }
+
+class OutlinedIconButton extends StatelessWidget {
+  const OutlinedIconButton({
+    super.key,
+    required this.iconData,
+    this.onPressed,
+    this.size = 14,
+  });
+  final double size;
+  final IconData iconData;
+  final void Function()? onPressed;
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      style: IconButton.styleFrom(
+        padding: kP6,
+        side: BorderSide(
+          color: Theme.of(context).colorScheme.outlineVariant,
+        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      ),
+      icon: Icon(
+        iconData,
+        size: size,
+      ),
+      onPressed: onPressed,
+    );
+  }
+}

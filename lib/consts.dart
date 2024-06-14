@@ -72,6 +72,7 @@ const kBorderRadius12 = BorderRadius.all(Radius.circular(12));
 
 const kP1 = EdgeInsets.all(1);
 const kP5 = EdgeInsets.all(5);
+const kP6 = EdgeInsets.all(6);
 const kP8 = EdgeInsets.all(8);
 const kPs8 = EdgeInsets.only(left: 8);
 const kPs2 = EdgeInsets.only(left: 2);
@@ -94,6 +95,12 @@ const kPh20t40 = EdgeInsets.only(
   left: 20,
   right: 20,
   top: 40,
+);
+const kPs0o6 = EdgeInsets.only(
+  left: 0,
+  top: 6,
+  right: 6,
+  bottom: 6,
 );
 const kPh60 = EdgeInsets.symmetric(horizontal: 60);
 const kPh60v60 = EdgeInsets.symmetric(vertical: 60, horizontal: 60);

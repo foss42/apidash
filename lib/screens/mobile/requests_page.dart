@@ -5,10 +5,10 @@ import 'package:apidash/utils/http_utils.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/widgets/widgets.dart';
 import '../home_page/collection_pane.dart';
-import '../home_page/editor_pane/editor_request.dart';
 import '../home_page/editor_pane/editor_pane.dart';
 import '../home_page/editor_pane/url_card.dart';
 import '../home_page/editor_pane/details_card/code_pane.dart';
+import '../common/main_editor_widgets.dart';
 import 'response_drawer.dart';
 import 'widgets/page_base.dart';
 
@@ -22,76 +22,35 @@ class RequestsPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final id = ref.watch(selectedIdStateProvider);
+    final name = getRequestTitleFromUrl(
+        ref.watch(selectedRequestModelProvider.select((value) => value?.name)));
     return TwoDrawerScaffold(
       scaffoldKey: scaffoldKey,
-      title: const RequestTitle(),
+      title: ScaffoldTitle(
+        title: name,
+        onSelected: (ItemMenuOption item) {
+          if (item == ItemMenuOption.edit) {
+            showRenameDialog(context, "Rename Request", name, (val) {
+              ref
+                  .read(collectionStateNotifierProvider.notifier)
+                  .update(id!, name: val);
+            });
+          }
+          if (item == ItemMenuOption.delete) {
+            ref.read(collectionStateNotifierProvider.notifier).remove(id!);
+          }
+          if (item == ItemMenuOption.duplicate) {
+            ref.read(collectionStateNotifierProvider.notifier).duplicate(id!);
+          }
+        },
+      ),
       leftDrawerContent: const CollectionPane(),
       rightDrawerContent: const ResponseDrawer(),
       mainContent: const RequestEditorPane(),
       bottomNavigationBar: const RequestPageBottombar(),
       onDrawerChanged: (value) =>
           ref.read(leftDrawerStateProvider.notifier).state = value,
-    );
-  }
-}
-
-class RequestTitle extends ConsumerWidget {
-  const RequestTitle({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final id = ref.watch(selectedIdStateProvider);
-    final name = getRequestTitleFromUrl(
-        ref.watch(selectedRequestModelProvider.select((value) => value?.name)));
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(8),
-      child: Material(
-        color: Colors.transparent,
-        child: ItemCardMenu(
-          offset: const Offset(0, 40),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          splashRadius: 0,
-          tooltip: name,
-          child: Ink(
-            color: Theme.of(context)
-                .colorScheme
-                .secondaryContainer
-                .withOpacity(0.3),
-            padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    name,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.bodyLarge,
-                    maxLines: 1,
-                  ),
-                ),
-                const Icon(
-                  Icons.unfold_more_rounded,
-                  size: 20,
-                ),
-              ],
-            ),
-          ),
-          onSelected: (ItemMenuOption item) {
-            if (item == ItemMenuOption.edit) {
-              showRenameDialog(context, name, (val) {
-                ref
-                    .read(collectionStateNotifierProvider.notifier)
-                    .update(id!, name: val);
-              });
-            }
-            if (item == ItemMenuOption.delete) {
-              ref.read(collectionStateNotifierProvider.notifier).remove(id!);
-            }
-            if (item == ItemMenuOption.duplicate) {
-              ref.read(collectionStateNotifierProvider.notifier).duplicate(id!);
-            }
-          },
-        ),
-      ),
     );
   }
 }

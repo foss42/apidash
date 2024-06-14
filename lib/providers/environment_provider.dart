@@ -8,6 +8,13 @@ import '../services/services.dart' show hiveHandler, HiveHandler;
 final selectedEnvironmentIdStateProvider =
     StateProvider<String?>((ref) => null);
 
+final selectedEnvironmentModelProvider =
+    StateProvider<EnvironmentModel?>((ref) {
+  final selectedId = ref.watch(selectedEnvironmentIdStateProvider);
+  final environments = ref.watch(environmentsStateNotifierProvider);
+  return selectedId != null ? environments![selectedId] : null;
+});
+
 final StateNotifierProvider<EnvironmentsStateNotifier,
         Map<String, EnvironmentModel>?> environmentsStateNotifierProvider =
     StateNotifierProvider((ref) => EnvironmentsStateNotifier(ref, hiveHandler));

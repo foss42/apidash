@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:apidash/utils/utils.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/extensions/extensions.dart';
+import 'package:apidash/models/models.dart';
 
 class DropdownButtonHttpMethod extends StatelessWidget {
   const DropdownButtonHttpMethod({
@@ -94,7 +95,7 @@ class DropdownButtonContentType extends StatelessWidget {
   }
 }
 
-class DropdownButtonFormData extends StatefulWidget {
+class DropdownButtonFormData extends StatelessWidget {
   const DropdownButtonFormData({
     super.key,
     this.formDataType,
@@ -105,17 +106,12 @@ class DropdownButtonFormData extends StatefulWidget {
   final void Function(FormDataType?)? onChanged;
 
   @override
-  State<DropdownButtonFormData> createState() => _DropdownButtonFormData();
-}
-
-class _DropdownButtonFormData extends State<DropdownButtonFormData> {
-  @override
   Widget build(BuildContext context) {
     final surfaceColor = Theme.of(context).colorScheme.surface;
     return DropdownButton<FormDataType>(
       dropdownColor: surfaceColor,
       focusColor: surfaceColor,
-      value: widget.formDataType,
+      value: formDataType,
       icon: const Icon(
         Icons.unfold_more_rounded,
         size: 16,
@@ -125,7 +121,7 @@ class _DropdownButtonFormData extends State<DropdownButtonFormData> {
         color: Theme.of(context).colorScheme.primary,
       ),
       underline: const IgnorePointer(),
-      onChanged: widget.onChanged,
+      onChanged: onChanged,
       borderRadius: kBorderRadius12,
       items: FormDataType.values
           .map<DropdownMenuItem<FormDataType>>((FormDataType value) {
@@ -189,6 +185,70 @@ class DropdownButtonCodegenLanguage extends StatelessWidget {
           ),
         );
       }).toList(),
+    );
+  }
+}
+
+class DropdownButtonEnvironment extends StatelessWidget {
+  const DropdownButtonEnvironment({
+    super.key,
+    this.activeEnvironment,
+    this.onChanged,
+    this.environments,
+  });
+
+  final EnvironmentModel? activeEnvironment;
+  final void Function(EnvironmentModel? value)? onChanged;
+  final List<EnvironmentModel>? environments;
+  final EnvironmentModel? noneEnvironmentModel = null;
+  @override
+  Widget build(BuildContext context) {
+    final surfaceColor = Theme.of(context).colorScheme.surface;
+    final characterLimit = context.isCompactWindow ? 12 : 15;
+    return DropdownButton<EnvironmentModel>(
+      isDense: true,
+      padding: kPs0o6,
+      focusColor: surfaceColor,
+      value: activeEnvironment,
+      icon: const Icon(Icons.unfold_more_rounded),
+      elevation: 4,
+      underline: Container(
+        height: 0,
+      ),
+      borderRadius: kBorderRadius8,
+      onChanged: onChanged,
+      items: [
+        DropdownMenuItem<EnvironmentModel>(
+          value: noneEnvironmentModel,
+          child: Padding(
+            padding: EdgeInsets.only(left: context.isMediumWindow ? 8 : 16),
+            child: Text(
+              "No Environment",
+              style: kTextStyleButtonSmall.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+        ...environments?.map<DropdownMenuItem<EnvironmentModel>>(
+                (EnvironmentModel environmentModel) {
+              final name = getEnvironmentTitle(environmentModel.name);
+              return DropdownMenuItem<EnvironmentModel>(
+                value: environmentModel,
+                child: Padding(
+                  padding:
+                      EdgeInsets.only(left: context.isMediumWindow ? 8 : 16),
+                  child: Text(
+                    name.clip(characterLimit),
+                    style: kTextStyleButtonSmall.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              );
+            }).toList() ??
+            []
+      ],
     );
   }
 }
