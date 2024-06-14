@@ -217,7 +217,6 @@ class SidebarEnvironmentCard extends StatelessWidget {
           hoverColor: colorVariant,
           focusColor: colorVariant.withOpacity(0.5),
           onTap: inEditMode ? null : onTap,
-          // onDoubleTap: inEditMode ? null : onDoubleTap,
           onSecondaryTap: onSecondaryTap,
           child: Padding(
             padding: EdgeInsets.only(
@@ -236,13 +235,10 @@ class SidebarEnvironmentCard extends StatelessWidget {
                         ? TextFormField(
                             key: ValueKey("$id-name"),
                             initialValue: name,
-                            // controller: controller,
                             focusNode: focusNode,
-                            //autofocus: true,
                             style: Theme.of(context).textTheme.bodyMedium,
                             onTapOutside: (_) {
                               onTapOutsideNameEditor?.call();
-                              //FocusScope.of(context).unfocus();
                             },
                             onFieldSubmitted: (value) {
                               onTapOutsideNameEditor?.call();

@@ -328,7 +328,7 @@ class _$EnvironmentVariableModelImpl implements _EnvironmentVariableModel {
       {required this.key,
       required this.value,
       this.type = EnvironmentVariableType.variable,
-      this.enabled = true});
+      this.enabled = false});
 
   factory _$EnvironmentVariableModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$EnvironmentVariableModelImplFromJson(json);

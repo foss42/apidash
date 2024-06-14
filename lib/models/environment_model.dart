@@ -31,7 +31,7 @@ class EnvironmentVariableModel with _$EnvironmentVariableModel {
     required String key,
     required String value,
     @Default(EnvironmentVariableType.variable) EnvironmentVariableType type,
-    @Default(true) bool enabled,
+    @Default(false) bool enabled,
   }) = _EnvironmentVariableModel;
 
   factory EnvironmentVariableModel.fromJson(Map<String, Object?> json) =>
@@ -40,3 +40,5 @@ class EnvironmentVariableModel with _$EnvironmentVariableModel {
 
 const kEnvironmentVariableEmptyModel =
     EnvironmentVariableModel(key: "", value: "");
+const kEnvironmentSecretEmptyModel = EnvironmentVariableModel(
+    key: "", value: "", type: EnvironmentVariableType.secret);

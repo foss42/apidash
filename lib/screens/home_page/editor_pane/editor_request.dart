@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/extensions/extensions.dart';
-import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
 import 'details_card/details_card.dart';
 import 'details_card/request_pane/request_pane.dart';
@@ -75,24 +74,19 @@ class RequestEditorTopBar extends ConsumerWidget {
           const SizedBox(
             width: 6,
           ),
-          OutlinedIconButton(
-            iconData: Icons.edit,
-            onPressed: () {
+          TitleActionsArray(
+            onRenamePressed: () {
               showRenameDialog(context, "Rename Request", name, (val) {
                 ref
                     .read(collectionStateNotifierProvider.notifier)
                     .update(id!, name: val);
               });
             },
-          ),
-          kHSpacer4,
-          OutlinedIconButton(
-            onPressed: () {
-              ref
-                  .read(environmentsStateNotifierProvider.notifier)
-                  .duplicateEnvironment(id!);
-            },
-            iconData: Icons.copy_outlined,
+            onDuplicatePressed: () => ref
+                .read(collectionStateNotifierProvider.notifier)
+                .duplicate(id!),
+            onDeletePressed: () =>
+                ref.read(collectionStateNotifierProvider.notifier).remove(id!),
           ),
           kHSpacer10,
           const EnvironmentDropdown(),

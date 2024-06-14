@@ -69,8 +69,10 @@ const kFormDataButtonLabelTextStyle = TextStyle(
 const kBorderRadius8 = BorderRadius.all(Radius.circular(8));
 final kBorderRadius10 = BorderRadius.circular(10);
 const kBorderRadius12 = BorderRadius.all(Radius.circular(12));
+const kBorderRadius20 = BorderRadius.all(Radius.circular(20));
 
 const kP1 = EdgeInsets.all(1);
+const kP4 = EdgeInsets.all(4);
 const kP5 = EdgeInsets.all(5);
 const kP6 = EdgeInsets.all(6);
 const kP8 = EdgeInsets.all(8);
@@ -142,8 +144,7 @@ const kVSpacer20 = SizedBox(height: 20);
 const kVSpacer40 = SizedBox(height: 40);
 
 const kTabAnimationDuration = Duration(milliseconds: 200);
-const kTabHeight = 32.0;
-const kMobileTabHeight = 40.0;
+const kTabHeight = 40.0;
 const kHeaderHeight = 32.0;
 const kSegmentHeight = 24.0;
 const kTextButtonMinWidth = 44.0;

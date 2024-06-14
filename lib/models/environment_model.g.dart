@@ -33,7 +33,7 @@ _$EnvironmentVariableModelImpl _$$EnvironmentVariableModelImplFromJson(
       type:
           $enumDecodeNullable(_$EnvironmentVariableTypeEnumMap, json['type']) ??
               EnvironmentVariableType.variable,
-      enabled: json['enabled'] as bool? ?? true,
+      enabled: json['enabled'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$$EnvironmentVariableModelImplToJson(
