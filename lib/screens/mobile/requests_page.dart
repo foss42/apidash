@@ -94,7 +94,9 @@ class RequestPageBottombar extends ConsumerWidget {
                   builder: (context) => const PageBase(
                     title: 'View Code',
                     scaffoldBody: CodePane(),
+                    addBottomPadding: false,
                   ),
+                  fullscreenDialog: true,
                 ),
               );
             },
