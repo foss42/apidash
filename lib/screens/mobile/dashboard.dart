@@ -40,9 +40,11 @@ class _MobileDashboardState extends ConsumerState<MobileDashboard> {
           ),
           if (context.isMediumWindow)
             AnimatedPositioned(
-              bottom: isLeftDrawerOpen
+              bottom: railIdx > 1
                   ? 0
-                  : -(72 + MediaQuery.paddingOf(context).bottom),
+                  : isLeftDrawerOpen
+                      ? 0
+                      : -(72 + MediaQuery.paddingOf(context).bottom),
               left: 0,
               right: 0,
               height: 70 + MediaQuery.paddingOf(context).bottom,

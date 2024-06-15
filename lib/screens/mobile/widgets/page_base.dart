@@ -6,9 +6,15 @@ import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/window_caption.dart';
 
 class PageBase extends ConsumerWidget {
+  const PageBase({
+    super.key,
+    required this.title,
+    required this.scaffoldBody,
+    this.addBottomPadding = true,
+  });
   final String title;
   final Widget scaffoldBody;
-  const PageBase({super.key, required this.title, required this.scaffoldBody});
+  final bool addBottomPadding;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -33,7 +39,9 @@ class PageBase extends ConsumerWidget {
     return Stack(
       children: [
         Container(
-          padding: (context.isMediumWindow ? kPb70 : EdgeInsets.zero) +
+          padding: (addBottomPadding && context.isMediumWindow
+                  ? kPb70
+                  : EdgeInsets.zero) +
               (kIsWindows || kIsMacOS ? kPt28 : EdgeInsets.zero),
           color: Theme.of(context).colorScheme.surface,
           child: scaffold,
