@@ -1,3 +1,4 @@
+import 'package:apidash/hive_directory_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -8,7 +9,6 @@ import 'app.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   GoogleFonts.config.allowRuntimeFetching = false;
-  await openBoxes();
   if (kIsLinux) {
     await setupInitialWindow();
   }
@@ -16,9 +16,12 @@ void main() async {
     var win = getInitialSize();
     await setupWindow(sz: win.$1, off: win.$2);
   }
+
   runApp(
-    const ProviderScope(
-      child: DashApp(),
+    const HiveDirectorySelector(
+      child: ProviderScope(
+        child: DashApp(),
+      ),
     ),
   );
 }
