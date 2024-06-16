@@ -14,7 +14,7 @@ void main() async{
   });
 
   test('Saving Hive directory', () async {
-    setHiveSaveFolder(tempDir.path);
+    await setHiveSaveFolder(tempDir.path);
     expect(await getHiveSaveFolder(), tempDir.path);
   });
 }
