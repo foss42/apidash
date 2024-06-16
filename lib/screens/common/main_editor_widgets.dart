@@ -85,6 +85,7 @@ class EnvironmentDropdown extends ConsumerWidget {
         environments: environmentsList,
         onChanged: (value) {
           ref.read(activeEnvironmentIdStateProvider.notifier).state = value?.id;
+          ref.read(hasUnsavedChangesProvider.notifier).state = true;
         },
       ),
     );

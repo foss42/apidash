@@ -89,8 +89,10 @@ class EditEnvironmentSecretsState
                     ? null
                     : (value) {
                         if (value != null) {
-                          secretRows[index] =
-                              secretRows[index].copyWith(enabled: value);
+                          setState(() {
+                            secretRows[index] =
+                                secretRows[index].copyWith(enabled: value);
+                          });
                         }
                         _onFieldChange(selectedId!);
                       },

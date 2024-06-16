@@ -4,7 +4,8 @@ import 'package:apidash/consts.dart';
 import 'providers.dart';
 import '../models/models.dart';
 import '../services/services.dart' show hiveHandler, HiveHandler, request;
-import '../utils/utils.dart' show getNewUuid, collectionToHAR;
+import '../utils/utils.dart'
+    show getNewUuid, collectionToHAR, substituteHttpRequestModel;
 
 final selectedIdStateProvider = StateProvider<String?>((ref) => null);
 
@@ -205,6 +206,9 @@ class CollectionStateNotifier
       return;
     }
 
+    HttpRequestModel substitutedHttpRequestModel =
+        getSubstitutedHttpRequestModel(requestModel.httpRequestModel!);
+
     // set current model's isWorking to true and update state
     var map = {...state!};
     map[id] = requestModel.copyWith(
@@ -214,7 +218,7 @@ class CollectionStateNotifier
     state = map;
 
     (http.Response?, Duration?, String?)? responseRec = await request(
-      requestModel.httpRequestModel!,
+      substitutedHttpRequestModel,
       defaultUriScheme: defaultUriScheme,
     );
     late final RequestModel newRequestModel;
@@ -310,5 +314,17 @@ class CollectionStateNotifier
     // return {
     //   "data": state!.map((e) => e.toJson(includeResponse: false)).toList()
     // };
+  }
+
+  HttpRequestModel getSubstitutedHttpRequestModel(
+      HttpRequestModel httpRequestModel) {
+    var envMap = ref.read(availableEnvironmentVariablesStateProvider);
+    var activeEnvId = ref.read(activeEnvironmentIdStateProvider);
+
+    return substituteHttpRequestModel(
+      httpRequestModel,
+      envMap,
+      activeEnvId,
+    );
   }
 }

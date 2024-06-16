@@ -89,8 +89,10 @@ class EditEnvironmentVariablesState
                     ? null
                     : (value) {
                         if (value != null) {
-                          variableRows[index] =
-                              variableRows[index].copyWith(enabled: value);
+                          setState(() {
+                            variableRows[index] =
+                                variableRows[index].copyWith(enabled: value);
+                          });
                         }
                         _onFieldChange(selectedId!);
                       },
