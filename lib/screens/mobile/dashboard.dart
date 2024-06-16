@@ -70,7 +70,6 @@ class PageBranch extends ConsumerWidget {
     final scaffoldKey = ref.watch(mobileScaffoldKeyStateProvider);
     switch (pageIndex) {
       case 1:
-        // Temporary Environment Page
         return EnvironmentPage(
           scaffoldKey: scaffoldKey,
         );
