@@ -1,4 +1,5 @@
 import 'package:apidash/hive_directory_selector.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -18,8 +19,9 @@ void main() async {
   }
 
   runApp(
-    const HiveDirectorySelector(
-      child: ProviderScope(
+    HiveDirectorySelector(
+      getDirectoryPath: FilePicker.platform.getDirectoryPath,
+      child: const ProviderScope(
         child: DashApp(),
       ),
     ),

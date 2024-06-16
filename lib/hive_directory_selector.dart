@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 
 class HiveDirectorySelector extends StatefulWidget {
   final Widget child;
-  const HiveDirectorySelector({super.key, required this.child});
+  final Future<String?> Function() getDirectoryPath;
+  const HiveDirectorySelector({super.key, required this.child, required this.getDirectoryPath});
 
   @override
   HiveDirectorySelectorState createState() => HiveDirectorySelectorState();
@@ -17,7 +18,8 @@ class HiveDirectorySelectorState extends State<HiveDirectorySelector> {
     // ERROR: FilePicker requires zenity for picking files
 
     // Show the folder selection menu
-    String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
+    // String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
+    String? selectedDirectory = await widget.getDirectoryPath();
     // TODO: check if can write in current folder
     // If the selected selectedDirectory isn't null save it as hive save folder
     if (selectedDirectory != null) setHiveSaveFolder(selectedDirectory);
