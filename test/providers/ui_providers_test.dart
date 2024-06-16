@@ -15,7 +15,6 @@ import 'package:apidash/services/hive_services.dart';
 import 'package:apidash/widgets/response_widgets.dart';
 import 'package:apidash/widgets/textfields.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -25,19 +24,6 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   setUp(() async {
-    // const MethodChannel channel =
-    //     MethodChannel('plugins.flutter.io/path_provider');
-    // TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-    //     .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
-    //   if (methodCall.method == 'getApplicationDocumentsDirectory') {
-    //     // Create a mock app doc directory for testing
-    //     Directory tempDir =
-    //         await Directory.systemTemp.createTemp('mock_app_doc_dir');
-    //     return tempDir.path; // Return the path to the mock directory
-    //   }
-    //   return null;
-    // });
-
     Directory tempDir =
         await Directory.systemTemp.createTemp('mock_app_doc_dir');
     await openBoxes(tempDir.path);
