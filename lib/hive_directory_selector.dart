@@ -14,11 +14,7 @@ class HiveDirectorySelector extends StatefulWidget {
 
 class HiveDirectorySelectorState extends State<HiveDirectorySelector> {
   void selectFolder() async {
-    // Packages (4) appstream-1.0.3-1  libadwaita-1:1.5.1-1  libxmlb-0.3.19-1  zenity-4.0.1-1
-    // ERROR: FilePicker requires zenity for picking files
-
     // Show the folder selection menu
-    // String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
     String? selectedDirectory = await widget.getDirectoryPath();
     // TODO: check if can write in current folder
     // If the selected selectedDirectory isn't null save it as hive save folder

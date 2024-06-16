@@ -20,6 +20,8 @@ void main() async {
 
   runApp(
     HiveDirectorySelector(
+      // Packages (4) appstream-1.0.3-1  libadwaita-1:1.5.1-1  libxmlb-0.3.19-1  zenity-4.0.1-1
+      // ERROR: FilePicker requires zenity for picking files
       getDirectoryPath: FilePicker.platform.getDirectoryPath,
       child: const ProviderScope(
         child: DashApp(),
