@@ -22,91 +22,101 @@ class CollectionPane extends ConsumerWidget {
         child: CircularProgressIndicator(),
       );
     }
-    return Padding(
-      padding: kIsMacOS ? kP24CollectionPane : kP8CollectionPane,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Padding(
-            padding: kPe8,
-            child: Wrap(
-              alignment: WrapAlignment.spaceBetween,
-              children: [
-                TextButton.icon(
-                  onPressed: (savingData || !hasUnsavedChanges)
-                      ? null
-                      : () async {
-                          overlayWidget.show(
-                              widget:
-                                  const SavingOverlay(saveCompleted: false));
+    return Drawer(
+      shape: const ContinuousRectangleBorder(),
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      surfaceTintColor: kColorTransparent,
+      child: Padding(
+        padding: (!context.isMediumWindow && kIsMacOS
+                ? kP24CollectionPane
+                : kP8CollectionPane) +
+            (context.isMediumWindow ? kPb70 : EdgeInsets.zero),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Padding(
+              padding: kPe8,
+              child: Wrap(
+                alignment: WrapAlignment.spaceBetween,
+                children: [
+                  TextButton.icon(
+                    onPressed: (savingData || !hasUnsavedChanges)
+                        ? null
+                        : () async {
+                            overlayWidget.show(
+                                widget:
+                                    const SavingOverlay(saveCompleted: false));
 
-                          await ref
-                              .read(collectionStateNotifierProvider.notifier)
-                              .saveData();
-                          overlayWidget.hide();
-                          overlayWidget.show(
-                              widget: const SavingOverlay(saveCompleted: true));
-                          await Future.delayed(const Duration(seconds: 1));
-                          overlayWidget.hide();
-                        },
-                  icon: const Icon(
-                    Icons.save,
-                    size: 20,
+                            await ref
+                                .read(collectionStateNotifierProvider.notifier)
+                                .saveData();
+                            overlayWidget.hide();
+                            overlayWidget.show(
+                                widget:
+                                    const SavingOverlay(saveCompleted: true));
+                            await Future.delayed(const Duration(seconds: 1));
+                            overlayWidget.hide();
+                          },
+                    icon: const Icon(
+                      Icons.save,
+                      size: 20,
+                    ),
+                    label: const Text(
+                      kLabelSave,
+                      style: kTextStyleButton,
+                    ),
                   ),
-                  label: const Text(
-                    kLabelSave,
-                    style: kTextStyleButton,
+                  //const Spacer(),
+                  ElevatedButton(
+                    onPressed: () {
+                      ref.read(collectionStateNotifierProvider.notifier).add();
+                    },
+                    child: const Text(
+                      kLabelPlusNew,
+                      style: kTextStyleButton,
+                    ),
                   ),
-                ),
-                //const Spacer(),
-                ElevatedButton(
-                  onPressed: () {
-                    ref.read(collectionStateNotifierProvider.notifier).add();
-                  },
-                  child: const Text(
-                    kLabelPlusNew,
-                    style: kTextStyleButton,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          kVSpacer10,
-          Container(
-            margin: const EdgeInsets.only(right: 8),
-            decoration: BoxDecoration(
-              borderRadius: kBorderRadius8,
-              border: Border.all(
-                color: Theme.of(context).colorScheme.surfaceVariant,
+                ],
               ),
             ),
-            child: Row(
-              children: [
-                kHSpacer5,
-                Icon(
-                  Icons.filter_alt,
-                  size: 18,
-                  color: Theme.of(context).colorScheme.secondary,
+            kVSpacer10,
+            Container(
+              margin: const EdgeInsets.only(right: 8),
+              decoration: BoxDecoration(
+                borderRadius: kBorderRadius8,
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.surfaceVariant,
                 ),
-                kHSpacer5,
-                Expanded(
-                  child: RawTextField(
-                    style: Theme.of(context).textTheme.bodyMedium,
-                    hintText: "Filter by name or URL",
-                    onChanged: (value) {
-                      ref.read(searchQueryProvider.notifier).state =
-                          value.toLowerCase();
-                    },
+              ),
+              child: Row(
+                children: [
+                  kHSpacer5,
+                  Icon(
+                    Icons.filter_alt,
+                    size: 18,
+                    color: Theme.of(context).colorScheme.secondary,
                   ),
-                ),
-              ],
+                  kHSpacer5,
+                  Expanded(
+                    child: RawTextField(
+                      style: Theme.of(context).textTheme.bodyMedium,
+                      hintText: "Filter by name or URL",
+                      onChanged: (value) {
+                        ref.read(searchQueryProvider.notifier).state =
+                            value.toLowerCase();
+                      },
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          kVSpacer10,
-          const Expanded(
-            child: RequestList(),
-          ),
-        ],
+            kVSpacer10,
+            const Expanded(
+              child: RequestList(),
+            ),
+            kVSpacer5
+          ],
+        ),
       ),
     );
   }
@@ -150,7 +160,7 @@ class _RequestListState extends ConsumerState<RequestList> {
       radius: const Radius.circular(12),
       child: filterQuery.isEmpty
           ? ReorderableListView.builder(
-              padding: context.isMobile
+              padding: context.isMediumWindow
                   ? EdgeInsets.only(
                       bottom: MediaQuery.paddingOf(context).bottom,
                       right: 8,
@@ -198,7 +208,7 @@ class _RequestListState extends ConsumerState<RequestList> {
               },
             )
           : ListView(
-              padding: kIsMobile
+              padding: context.isMediumWindow
                   ? EdgeInsets.only(
                       bottom: MediaQuery.paddingOf(context).bottom,
                       right: 8,
@@ -240,7 +250,6 @@ class RequestItem extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedId = ref.watch(selectedIdStateProvider);
     final editRequestId = ref.watch(selectedIdEditStateProvider);
-    final mobileDrawerKey = ref.watch(mobileDrawerKeyProvider);
 
     return SidebarRequestCard(
       id: id,
@@ -250,7 +259,7 @@ class RequestItem extends ConsumerWidget {
       selectedId: selectedId,
       editRequestId: editRequestId,
       onTap: () {
-        mobileDrawerKey.currentState?.close();
+        ref.read(mobileScaffoldKeyStateProvider).currentState?.closeDrawer();
         ref.read(selectedIdStateProvider.notifier).state = id;
       },
       // onDoubleTap: () {

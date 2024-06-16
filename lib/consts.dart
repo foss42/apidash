@@ -35,11 +35,14 @@ final kColorLightDanger = Colors.red.withOpacity(0.9);
 const kColorDarkDanger = Color(0xffcf6679);
 
 const kWindowTitle = "API Dash";
-const kMinWindowSize = Size(900, 600);
+const kMinWindowSize = Size(320, 600);
 const kMinInitialWindowWidth = 1200.0;
 const kMinInitialWindowHeight = 800.0;
 const kMinRequestEditorDetailsCardPaneSize = 300.0;
-const kLargeMobileWidth = 600.0;
+const kCompactWindowWidth = 600.0;
+const kMediumWindowWidth = 840.0;
+const kExpandedWindowWidth = 1200.0;
+const kLargeWindowWidth = 1600.0;
 
 const kColorSchemeSeed = Colors.blue;
 final kFontFamily = GoogleFonts.openSans().fontFamily;
@@ -106,11 +109,20 @@ const kP8CollectionPane = EdgeInsets.only(
   //right: 4.0,
   // bottom: 8.0,
 );
+const kPt28 = EdgeInsets.only(
+  top: 28,
+);
+const kPt32 = EdgeInsets.only(
+  top: 32,
+);
 const kPb10 = EdgeInsets.only(
   bottom: 10,
 );
 const kPb15 = EdgeInsets.only(
   bottom: 15,
+);
+const kPb70 = EdgeInsets.only(
+  bottom: 70,
 );
 const kHSpacer4 = SizedBox(width: 4);
 const kHSpacer5 = SizedBox(width: 5);
