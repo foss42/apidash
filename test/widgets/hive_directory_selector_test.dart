@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:apidash/hive_directory_selector.dart';
+import 'package:apidash/widgets/hive_directory_selector.dart';
 import 'package:apidash/models/hive_storage_folder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
