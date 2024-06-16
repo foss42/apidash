@@ -1,58 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:inner_drawer/inner_drawer.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/utils/http_utils.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/widgets/widgets.dart';
+import '../home_page/collection_pane.dart';
 import '../home_page/editor_pane/editor_request.dart';
 import '../home_page/editor_pane/editor_pane.dart';
 import '../home_page/editor_pane/url_card.dart';
 import '../home_page/editor_pane/details_card/code_pane.dart';
+import 'response_drawer.dart';
 import 'widgets/page_base.dart';
 
-class RequestsPage extends StatelessWidget {
-  final GlobalKey<InnerDrawerState> innerDrawerKey;
+class RequestsPage extends ConsumerWidget {
+  const RequestsPage({
+    super.key,
+    required this.scaffoldKey,
+  });
 
-  const RequestsPage({super.key, required this.innerDrawerKey});
+  final GlobalKey<ScaffoldState> scaffoldKey;
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        scrolledUnderElevation: 0,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(topLeft: Radius.circular(8)),
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.format_list_bulleted_rounded),
-          onPressed: () {
-            innerDrawerKey.currentState!
-                .open(direction: InnerDrawerDirection.start);
-          },
-        ),
-        title: const RequestTitle(),
-        titleSpacing: 0,
-        actions: [
-          IconButton(
-            icon: Icon(
-              Icons.quickreply_outlined,
-              color: Theme.of(context).colorScheme.onBackground,
-            ),
-            onPressed: () {
-              innerDrawerKey.currentState!
-                  .open(direction: InnerDrawerDirection.end);
-            },
-          ),
-        ],
-      ),
-      body: Container(
-        color: Theme.of(context).colorScheme.surface,
-        child: const RequestEditorPane(),
-      ),
-      bottomNavigationBar: RequestPageBottombar(innerDrawerKey: innerDrawerKey),
+  Widget build(BuildContext context, WidgetRef ref) {
+    return TwoDrawerScaffold(
+      scaffoldKey: scaffoldKey,
+      title: const RequestTitle(),
+      leftDrawerContent: const CollectionPane(),
+      rightDrawerContent: const ResponseDrawer(),
+      mainContent: const RequestEditorPane(),
+      bottomNavigationBar: const RequestPageBottombar(),
+      onDrawerChanged: (value) =>
+          ref.read(leftDrawerStateProvider.notifier).state = value,
     );
   }
 }
@@ -118,16 +96,13 @@ class RequestTitle extends ConsumerWidget {
   }
 }
 
-class RequestPageBottombar extends StatelessWidget {
+class RequestPageBottombar extends ConsumerWidget {
   const RequestPageBottombar({
     super.key,
-    required this.innerDrawerKey,
   });
 
-  final GlobalKey<InnerDrawerState> innerDrawerKey;
-
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Container(
       height: 60 + MediaQuery.paddingOf(context).bottom,
       width: MediaQuery.sizeOf(context).width,
@@ -160,7 +135,9 @@ class RequestPageBottombar extends StatelessWidget {
                   builder: (context) => const PageBase(
                     title: 'View Code',
                     scaffoldBody: CodePane(),
+                    addBottomPadding: false,
                   ),
+                  fullscreenDialog: true,
                 ),
               );
             },
@@ -168,8 +145,10 @@ class RequestPageBottombar extends StatelessWidget {
           ),
           SendButton(
             onTap: () {
-              innerDrawerKey.currentState!
-                  .open(direction: InnerDrawerDirection.end);
+              ref
+                  .read(mobileScaffoldKeyStateProvider)
+                  .currentState!
+                  .openEndDrawer();
             },
           ),
         ],

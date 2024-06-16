@@ -5,8 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:window_manager/window_manager.dart' hide WindowCaption;
 import 'widgets/widgets.dart' show WindowCaption;
 import 'providers/providers.dart';
-import 'screens/screens.dart';
 import 'extensions/extensions.dart';
+import 'screens/screens.dart';
 import 'consts.dart';
 
 class App extends ConsumerStatefulWidget {
@@ -95,7 +95,7 @@ class _AppState extends ConsumerState<App> with WindowListener {
 
   @override
   Widget build(BuildContext context) {
-    return const Dashboard();
+    return context.isMediumWindow ? const MobileDashboard() : const Dashboard();
   }
 }
 
@@ -125,24 +125,23 @@ class DashApp extends ConsumerWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
-      home: kIsMobile
-          ? context.isLargeWidth
-              ? const Dashboard()
-              : const MobileDashboard()
-          : Stack(
-              children: [
-                kIsLinux ? const Dashboard() : const App(),
-                if (kIsWindows)
-                  SizedBox(
-                    height: 29,
-                    child: WindowCaption(
-                      backgroundColor: Colors.transparent,
-                      brightness:
-                          isDarkMode ? Brightness.dark : Brightness.light,
-                    ),
-                  ),
-              ],
+      home: Stack(
+        children: [
+          !kIsLinux && !kIsMobile
+              ? const App()
+              : context.isMediumWindow
+                  ? const MobileDashboard()
+                  : const Dashboard(),
+          if (kIsWindows)
+            SizedBox(
+              height: 29,
+              child: WindowCaption(
+                backgroundColor: Colors.transparent,
+                brightness: isDarkMode ? Brightness.dark : Brightness.light,
+              ),
             ),
+        ],
+      ),
     );
   }
 }

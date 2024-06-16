@@ -12,7 +12,7 @@ class RequestEditor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return context.isMobile
+    return context.isMediumWindow
         ? const Padding(
             padding: kPb10,
             child: Column(

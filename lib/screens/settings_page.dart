@@ -17,7 +17,7 @@ class SettingsPage extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        !context.isMobile
+        !context.isMediumWindow
             ? Padding(
                 padding: kPh20t40,
                 child: kIsDesktop

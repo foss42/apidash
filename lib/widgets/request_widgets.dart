@@ -48,7 +48,7 @@ class _RequestPaneState extends State<RequestPane>
     }
     return Column(
       children: [
-        context.isMobile
+        context.isMediumWindow
             ? const SizedBox.shrink()
             : Padding(
                 padding: kP8,
