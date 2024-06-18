@@ -25,7 +25,7 @@ class SidebarHeader extends ConsumerWidget {
               style: kTextStyleButton,
             ),
           ),
-          context.isCompactWindow
+          context.width <= kMinWindowSize.width
               ? IconButton(
                   style: IconButton.styleFrom(
                       padding: const EdgeInsets.all(4),

@@ -35,7 +35,7 @@ class EnvironmentPopupMenu extends StatelessWidget {
             child: const Text("None"),
           ),
           ...environments!.map((EnvironmentModel environment) {
-            final name = getEnvironmentTitle(environment.name);
+            final name = getEnvironmentTitle(environment.name).clip(30);
             return PopupMenuItem(
               value: environment,
               child: Text(
