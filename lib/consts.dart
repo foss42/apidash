@@ -83,6 +83,7 @@ const kPh20v5 = EdgeInsets.symmetric(horizontal: 20, vertical: 5);
 const kPh20v10 = EdgeInsets.symmetric(horizontal: 20, vertical: 10);
 const kP10 = EdgeInsets.all(10);
 const kPv8 = EdgeInsets.symmetric(vertical: 8);
+const kPv6 = EdgeInsets.symmetric(vertical: 6);
 const kPv2 = EdgeInsets.symmetric(vertical: 2);
 const kPh2 = EdgeInsets.symmetric(horizontal: 2);
 const kPt24o8 = EdgeInsets.only(top: 24, left: 8.0, right: 8.0, bottom: 8.0);
@@ -118,6 +119,9 @@ const kP8CollectionPane = EdgeInsets.only(
   //right: 4.0,
   // bottom: 8.0,
 );
+const kPt8 = EdgeInsets.only(
+  top: 8,
+);
 const kPt28 = EdgeInsets.only(
   top: 28,
 );
@@ -137,6 +141,7 @@ const kHSpacer4 = SizedBox(width: 4);
 const kHSpacer5 = SizedBox(width: 5);
 const kHSpacer10 = SizedBox(width: 10);
 const kHSpacer20 = SizedBox(width: 20);
+const kHSpacer40 = SizedBox(width: 40);
 const kVSpacer5 = SizedBox(height: 5);
 const kVSpacer8 = SizedBox(height: 8);
 const kVSpacer10 = SizedBox(height: 10);

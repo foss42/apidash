@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
+import 'package:apidash/extensions/extensions.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
 
-class SidebarHeader extends StatelessWidget {
+class SidebarHeader extends ConsumerWidget {
   const SidebarHeader({super.key, this.onAddNew});
   final Function()? onAddNew;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final mobileScaffoldKey = ref.read(mobileScaffoldKeyStateProvider);
     return Padding(
       padding: kPe8,
-      child: Wrap(
-        alignment: WrapAlignment.spaceBetween,
+      child: Row(
         children: [
           const SaveButton(),
-          //const Spacer(),
+          const Spacer(),
           ElevatedButton(
             onPressed: onAddNew,
             child: const Text(
@@ -24,6 +25,17 @@ class SidebarHeader extends StatelessWidget {
               style: kTextStyleButton,
             ),
           ),
+          context.isCompactWindow
+              ? IconButton(
+                  style: IconButton.styleFrom(
+                      padding: const EdgeInsets.all(4),
+                      minimumSize: const Size(30, 30)),
+                  onPressed: () {
+                    mobileScaffoldKey.currentState?.closeDrawer();
+                  },
+                  icon: const Icon(Icons.chevron_left),
+                )
+              : const SizedBox.shrink(),
         ],
       ),
     );

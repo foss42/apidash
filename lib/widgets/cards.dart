@@ -190,7 +190,8 @@ class SidebarEnvironmentCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final Color color = colorScheme.surface;
+    final Color color =
+        isGlobal ? colorScheme.secondaryContainer : colorScheme.surface;
     final Color colorVariant = colorScheme.surfaceVariant.withOpacity(0.5);
     final Color surfaceTint = colorScheme.primary;
     bool isSelected = selectedId == id;
@@ -206,7 +207,7 @@ class SidebarEnvironmentCard extends StatelessWidget {
         ),
         elevation: isSelected ? 1 : 0,
         surfaceTintColor: isSelected ? surfaceTint : null,
-        color: isSelected
+        color: isSelected && !isGlobal
             ? colorScheme.brightness == Brightness.dark
                 ? colorVariant
                 : color

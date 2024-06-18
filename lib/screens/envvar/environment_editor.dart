@@ -4,7 +4,7 @@ import 'package:apidash/providers/providers.dart';
 import 'package:apidash/extensions/extensions.dart';
 import 'package:apidash/consts.dart';
 import '../common/main_editor_widgets.dart';
-import 'editor_pane/variables_tabs.dart';
+import './editor_pane/variables_pane.dart';
 
 class EnvironmentEditor extends ConsumerWidget {
   const EnvironmentEditor({super.key});
@@ -57,28 +57,43 @@ class EnvironmentEditor extends ConsumerWidget {
                             .removeEnvironment(id!);
                       },
                     ),
-                    kHSpacer10,
-                    const EnvironmentDropdown(),
                     kHSpacer4,
                   ],
                 )
               : const SizedBox.shrink(),
           kVSpacer5,
           Expanded(
-            child: context.isMediumWindow
-                ? const VariablesTabs()
-                : Container(
-                    padding: kP6,
-                    margin: kP4,
-                    decoration: BoxDecoration(
+            child: Container(
+              padding: context.isMediumWindow ? null : kPv6,
+              margin: context.isMediumWindow ? null : kP4,
+              decoration: context.isMediumWindow
+                  ? null
+                  : BoxDecoration(
                       border: Border.all(
                         color: Theme.of(context).colorScheme.outlineVariant,
                         width: 1,
                       ),
                       borderRadius: kBorderRadius12,
                     ),
-                    child: const VariablesTabs(),
+              child: const Column(
+                children: [
+                  kHSpacer40,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      SizedBox(width: 30),
+                      Text("Variable"),
+                      SizedBox(width: 30),
+                      Text("Value"),
+                      SizedBox(width: 40),
+                    ],
                   ),
+                  kHSpacer40,
+                  Divider(),
+                  Expanded(child: EditEnvironmentVariables())
+                ],
+              ),
+            ),
           ),
         ],
       ),

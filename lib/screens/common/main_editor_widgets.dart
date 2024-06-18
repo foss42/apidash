@@ -74,21 +74,21 @@ class EnvironmentDropdown extends ConsumerWidget {
         ?.removeWhere((element) => element.id == kGlobalEnvironmentId);
     final activeEnvironment = ref.watch(activeEnvironmentIdStateProvider);
     return Container(
-      decoration: BoxDecoration(
-        border: Border.all(
-          color: Theme.of(context).colorScheme.outlineVariant,
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: Theme.of(context).colorScheme.outlineVariant,
+          ),
+          borderRadius: kBorderRadius8,
         ),
-        borderRadius: kBorderRadius8,
-      ),
-      child: DropdownButtonEnvironment(
-        activeEnvironment: environments?[activeEnvironment],
-        environments: environmentsList,
-        onChanged: (value) {
-          ref.read(activeEnvironmentIdStateProvider.notifier).state = value?.id;
-          ref.read(hasUnsavedChangesProvider.notifier).state = true;
-        },
-      ),
-    );
+        child: EnvironmentPopupMenu(
+          activeEnvironment: environments?[activeEnvironment],
+          environments: environmentsList,
+          onChanged: (value) {
+            ref.read(activeEnvironmentIdStateProvider.notifier).state =
+                value?.id;
+            ref.read(hasUnsavedChangesProvider.notifier).state = true;
+          },
+        ));
   }
 }
 
@@ -122,7 +122,7 @@ class TitleActionsArray extends StatelessWidget {
             borderRadius: kBorderRadius20,
           ),
           child: SizedBox(
-            height: 36,
+            height: 32,
             child: IntrinsicHeight(
               child: Row(
                 children: [

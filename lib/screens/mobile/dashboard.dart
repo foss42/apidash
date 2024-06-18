@@ -1,4 +1,3 @@
-import 'package:apidash/screens/envvar/environment_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,7 +7,8 @@ import 'package:apidash/providers/providers.dart';
 import '../intro_page.dart';
 import '../settings_page.dart';
 import 'navbar.dart';
-import 'requests_page.dart';
+import 'requests_page/requests_page.dart';
+import '../envvar/environment_page.dart';
 import 'widgets/page_base.dart';
 
 class MobileDashboard extends ConsumerStatefulWidget {
@@ -84,7 +84,7 @@ class PageBranch extends ConsumerWidget {
           scaffoldBody: SettingsPage(),
         );
       default:
-        return RequestsPage(
+        return RequestResponsePage(
           scaffoldKey: scaffoldKey,
         );
     }

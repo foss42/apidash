@@ -6,7 +6,7 @@ import 'package:apidash/models/environment_model.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
-import 'package:apidash/screens/common/sidebar_widgets.dart';
+import '../common/sidebar_widgets.dart';
 
 class EnvironmentsPane extends ConsumerWidget {
   const EnvironmentsPane({
@@ -70,7 +70,6 @@ class EnvironmentsList extends HookConsumerWidget {
             environmentModel: environmentItems[kGlobalEnvironmentId]!,
           ),
         ),
-        const Divider(endIndent: 4),
         Expanded(
           child: Scrollbar(
             controller: scrollController,

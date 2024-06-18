@@ -49,12 +49,7 @@ class EnvironmentPage extends ConsumerWidget {
           },
         ),
         leftDrawerContent: const EnvironmentsPane(),
-        actions: const [
-          Padding(
-            padding: kPh8,
-            child: EnvironmentDropdown(),
-          ),
-        ],
+        actions: const [SizedBox(width: 16)],
         onDrawerChanged: (value) =>
             ref.read(leftDrawerStateProvider.notifier).state = value,
       );

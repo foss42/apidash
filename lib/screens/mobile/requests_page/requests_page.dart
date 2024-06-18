@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/utils/http_utils.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/widgets/widgets.dart';
-import '../home_page/collection_pane.dart';
-import '../home_page/editor_pane/editor_pane.dart';
-import '../home_page/editor_pane/url_card.dart';
-import '../home_page/editor_pane/details_card/code_pane.dart';
-import '../common/main_editor_widgets.dart';
-import 'response_drawer.dart';
-import 'widgets/page_base.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import '../../home_page/collection_pane.dart';
+import '../../home_page/editor_pane/url_card.dart';
+import '../../home_page/editor_pane/details_card/code_pane.dart';
+import '../../common/main_editor_widgets.dart';
+import '../widgets/page_base.dart';
+import 'request_response_tabs.dart';
 
-class RequestsPage extends ConsumerWidget {
-  const RequestsPage({
+class RequestResponsePage extends StatefulHookConsumerWidget {
+  const RequestResponsePage({
     super.key,
     required this.scaffoldKey,
   });
@@ -21,12 +21,21 @@ class RequestsPage extends ConsumerWidget {
   final GlobalKey<ScaffoldState> scaffoldKey;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<RequestResponsePage> createState() =>
+      _RequestResponsePageState();
+}
+
+class _RequestResponsePageState extends ConsumerState<RequestResponsePage>
+    with TickerProviderStateMixin {
+  @override
+  Widget build(BuildContext context) {
     final id = ref.watch(selectedIdStateProvider);
     final name = getRequestTitleFromUrl(
         ref.watch(selectedRequestModelProvider.select((value) => value?.name)));
+    final TabController requestResponseTabController =
+        useTabController(initialLength: 2, vsync: this);
     return TwoDrawerScaffold(
-      scaffoldKey: scaffoldKey,
+      scaffoldKey: widget.scaffoldKey,
       title: ScaffoldTitle(
         title: name,
         onSelected: (ItemMenuOption item) {
@@ -46,19 +55,25 @@ class RequestsPage extends ConsumerWidget {
         },
       ),
       leftDrawerContent: const CollectionPane(),
-      rightDrawerContent: const ResponseDrawer(),
-      mainContent: const RequestEditorPane(),
-      bottomNavigationBar: const RequestPageBottombar(),
+      actions: const [Padding(padding: kPh8, child: EnvironmentDropdown())],
+      mainContent: RequestResponseTabs(
+        controller: requestResponseTabController,
+      ),
+      bottomNavigationBar: RequestResponsePageBottombar(
+        requestResponseTabController: requestResponseTabController,
+      ),
       onDrawerChanged: (value) =>
           ref.read(leftDrawerStateProvider.notifier).state = value,
     );
   }
 }
 
-class RequestPageBottombar extends ConsumerWidget {
-  const RequestPageBottombar({
+class RequestResponsePageBottombar extends ConsumerWidget {
+  const RequestResponsePageBottombar({
     super.key,
+    required this.requestResponseTabController,
   });
+  final TabController requestResponseTabController;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -104,10 +119,9 @@ class RequestPageBottombar extends ConsumerWidget {
           ),
           SendButton(
             onTap: () {
-              ref
-                  .read(mobileScaffoldKeyStateProvider)
-                  .currentState!
-                  .openEndDrawer();
+              if (requestResponseTabController.index != 1) {
+                requestResponseTabController.animateTo(1);
+              }
             },
           ),
         ],

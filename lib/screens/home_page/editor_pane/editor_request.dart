@@ -18,12 +18,7 @@ class RequestEditor extends StatelessWidget {
             padding: kPb10,
             child: Column(
               children: [
-                kVSpacer5,
-                Padding(
-                  padding: kPh8,
-                  child: EditorPaneRequestURLCard(),
-                ),
-                kVSpacer10,
+                kVSpacer20,
                 Expanded(
                   child: EditRequestPane(),
                 ),
