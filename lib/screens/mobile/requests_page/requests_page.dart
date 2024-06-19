@@ -8,6 +8,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../home_page/collection_pane.dart';
 import '../../home_page/editor_pane/url_card.dart';
 import '../../home_page/editor_pane/details_card/code_pane.dart';
+import '../../home_page/editor_pane/editor_default.dart';
 import '../../common/main_editor_widgets.dart';
 import '../widgets/page_base.dart';
 import 'request_response_tabs.dart';
@@ -56,9 +57,11 @@ class _RequestResponsePageState extends ConsumerState<RequestResponsePage>
       ),
       leftDrawerContent: const CollectionPane(),
       actions: const [Padding(padding: kPh8, child: EnvironmentDropdown())],
-      mainContent: RequestResponseTabs(
-        controller: requestResponseTabController,
-      ),
+      mainContent: id == null
+          ? const RequestEditorDefault()
+          : RequestResponseTabs(
+              controller: requestResponseTabController,
+            ),
       bottomNavigationBar: RequestResponsePageBottombar(
         requestResponseTabController: requestResponseTabController,
       ),
@@ -77,54 +80,60 @@ class RequestResponsePageBottombar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Container(
-      height: 60 + MediaQuery.paddingOf(context).bottom,
-      width: MediaQuery.sizeOf(context).width,
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.paddingOf(context).bottom,
-        left: 16,
-        right: 16,
-      ),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        border: Border(
-          top: BorderSide(
-            color: Theme.of(context).colorScheme.onInverseSurface,
-            width: 1,
+    final selecetdId = ref.watch(selectedIdStateProvider);
+    return Padding(
+      padding: MediaQuery.of(context).viewInsets,
+      child: Container(
+        height: 60 + MediaQuery.paddingOf(context).bottom,
+        width: MediaQuery.sizeOf(context).width,
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.paddingOf(context).bottom,
+          left: 16,
+          right: 16,
+        ),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          border: Border(
+            top: BorderSide(
+              color: Theme.of(context).colorScheme.onInverseSurface,
+              width: 1,
+            ),
           ),
         ),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          IconButton.filledTonal(
-            style: IconButton.styleFrom(
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(12)),
-              ),
-            ),
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const PageBase(
-                    title: 'View Code',
-                    scaffoldBody: CodePane(),
-                    addBottomPadding: false,
-                  ),
-                  fullscreenDialog: true,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            IconButton.filledTonal(
+              style: IconButton.styleFrom(
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(12)),
                 ),
-              );
-            },
-            icon: const Icon(Icons.code_rounded),
-          ),
-          SendButton(
-            onTap: () {
-              if (requestResponseTabController.index != 1) {
-                requestResponseTabController.animateTo(1);
-              }
-            },
-          ),
-        ],
+              ),
+              onPressed: selecetdId == null
+                  ? null
+                  : () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const PageBase(
+                            title: 'View Code',
+                            scaffoldBody: CodePane(),
+                            addBottomPadding: false,
+                          ),
+                          fullscreenDialog: true,
+                        ),
+                      );
+                    },
+              icon: const Icon(Icons.code_rounded),
+            ),
+            SendButton(
+              onTap: () {
+                if (requestResponseTabController.index != 1) {
+                  requestResponseTabController.animateTo(1);
+                }
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

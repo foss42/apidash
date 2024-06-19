@@ -143,51 +143,53 @@ class TwoDrawerScaffold extends StatelessWidget {
     return Container(
       padding: (kIsWindows || kIsMacOS) ? kPt28 : EdgeInsets.zero,
       color: Theme.of(context).colorScheme.surface,
-      child: Scaffold(
-        key: scaffoldKey,
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        onDrawerChanged: onDrawerChanged,
-        onEndDrawerChanged: onEndDrawerChanged,
-        drawerEdgeDragWidth: context.width,
-        appBar: AppBar(
+      child: SafeArea(
+        child: Scaffold(
+          key: scaffoldKey,
           backgroundColor: Theme.of(context).colorScheme.surface,
-          scrolledUnderElevation: 0,
-          shape: const ContinuousRectangleBorder(),
-          leading: IconButton(
-            icon: const Icon(Icons.format_list_bulleted_rounded),
-            onPressed: () {
-              scaffoldKey.currentState!.openDrawer();
-            },
-          ),
-          title: title,
-          titleSpacing: 0,
-          actions: [
-            ...actions ?? [],
-            (rightDrawerContent != null
-                ? Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: IconButton(
-                      icon: Icon(
-                        rightDrawerIcon ?? Icons.arrow_forward,
-                        color: Theme.of(context).colorScheme.onBackground,
+          onDrawerChanged: onDrawerChanged,
+          onEndDrawerChanged: onEndDrawerChanged,
+          drawerEdgeDragWidth: context.width,
+          appBar: AppBar(
+            backgroundColor: Theme.of(context).colorScheme.surface,
+            scrolledUnderElevation: 0,
+            shape: const ContinuousRectangleBorder(),
+            leading: IconButton(
+              icon: const Icon(Icons.format_list_bulleted_rounded),
+              onPressed: () {
+                scaffoldKey.currentState!.openDrawer();
+              },
+            ),
+            title: title,
+            titleSpacing: 0,
+            actions: [
+              ...actions ?? [],
+              (rightDrawerContent != null
+                  ? Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: IconButton(
+                        icon: Icon(
+                          rightDrawerIcon ?? Icons.arrow_forward,
+                          color: Theme.of(context).colorScheme.onBackground,
+                        ),
+                        onPressed: () {
+                          scaffoldKey.currentState!.openEndDrawer();
+                        },
                       ),
-                      onPressed: () {
-                        scaffoldKey.currentState!.openEndDrawer();
-                      },
-                    ),
-                  )
-                : const SizedBox.shrink()),
-          ],
+                    )
+                  : const SizedBox.shrink()),
+            ],
+          ),
+          drawer: Drawer(
+            shape: const ContinuousRectangleBorder(),
+            backgroundColor: Theme.of(context).colorScheme.surface,
+            surfaceTintColor: kColorTransparent,
+            child: leftDrawerContent,
+          ),
+          endDrawer: rightDrawerContent,
+          body: mainContent,
+          bottomNavigationBar: bottomNavigationBar,
         ),
-        drawer: Drawer(
-          shape: const ContinuousRectangleBorder(),
-          backgroundColor: Theme.of(context).colorScheme.surface,
-          surfaceTintColor: kColorTransparent,
-          child: leftDrawerContent,
-        ),
-        endDrawer: rightDrawerContent,
-        body: mainContent,
-        bottomNavigationBar: bottomNavigationBar,
       ),
     );
   }
