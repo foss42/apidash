@@ -66,6 +66,7 @@ const kFormDataButtonLabelTextStyle = TextStyle(
   fontWeight: FontWeight.w600,
 );
 
+const kBorderRadius4 = BorderRadius.all(Radius.circular(4));
 const kBorderRadius8 = BorderRadius.all(Radius.circular(8));
 final kBorderRadius10 = BorderRadius.circular(10);
 const kBorderRadius12 = BorderRadius.all(Radius.circular(12));
@@ -285,6 +286,8 @@ enum HTTPVerb { get, head, post, put, patch, delete }
 enum FormDataType { text, file }
 
 enum EnvironmentVariableType { variable, secret }
+
+final kEnvVarRegEx = RegExp(r'{{(.*?)}}');
 
 const kSupportedUriSchemes = ["https", "http"];
 const kDefaultUriScheme = "https";

@@ -4,6 +4,7 @@ import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/extensions/extensions.dart';
+import '../../common/environment_textfields.dart';
 
 class EditorPaneRequestURLCard extends StatelessWidget {
   const EditorPaneRequestURLCard({super.key});
@@ -82,7 +83,7 @@ class URLTextField extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedId = ref.watch(selectedIdStateProvider);
-    return URLField(
+    return EnvURLField(
       selectedId: selectedId!,
       initialValue: ref
           .read(collectionStateNotifierProvider.notifier)

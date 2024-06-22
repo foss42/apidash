@@ -42,3 +42,27 @@ const kEnvironmentVariableEmptyModel =
     EnvironmentVariableModel(key: "", value: "");
 const kEnvironmentSecretEmptyModel = EnvironmentVariableModel(
     key: "", value: "", type: EnvironmentVariableType.secret);
+
+class EnvironmentVariableSuggestion {
+  final String environmentId;
+  final EnvironmentVariableModel variable;
+  final bool isUnknown;
+
+  const EnvironmentVariableSuggestion({
+    required this.environmentId,
+    required this.variable,
+    this.isUnknown = false,
+  });
+
+  EnvironmentVariableSuggestion copyWith({
+    String? environmentId,
+    EnvironmentVariableModel? variable,
+    bool? isUnknown,
+  }) {
+    return EnvironmentVariableSuggestion(
+      environmentId: environmentId ?? this.environmentId,
+      variable: variable ?? this.variable,
+      isUnknown: isUnknown ?? this.isUnknown,
+    );
+  }
+}

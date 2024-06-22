@@ -470,6 +470,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.6.23"
+  flutter_portal:
+    dependency: "direct main"
+    description:
+      name: flutter_portal
+      sha256: "4601b3dc24f385b3761721bd852a3f6c09cddd4e943dd184ed58ee1f43006257"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.4"
   flutter_riverpod:
     dependency: "direct main"
     description:
@@ -809,6 +817,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.8.0"
+  mention_tag_text_field:
+    dependency: "direct main"
+    description:
+      name: mention_tag_text_field
+      sha256: b0e831f5fc8ca942a835916fd084e6f5054226715affc740c613cd320004b8a7
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.4"
   meta:
     dependency: transitive
     description:
@@ -1520,5 +1536,5 @@ packages:
     source: hosted
     version: "3.1.2"
 sdks:
-  dart: ">=3.3.0 <4.0.0"
+  dart: ">=3.3.4 <4.0.0"
   flutter: ">=3.19.2"

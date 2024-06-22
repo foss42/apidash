@@ -6,6 +6,7 @@ export 'codegen_previewer.dart';
 export 'dropdowns.dart';
 export 'editor_json.dart';
 export 'editor.dart';
+export 'environment_field.dart';
 export 'error_message.dart';
 export 'headerfield.dart';
 export 'intro_message.dart';
