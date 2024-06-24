@@ -42,16 +42,16 @@ class RequestResponseTabbar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Container(
-        width: 280,
-        height: 32,
+        width: kReqResTabWidth,
+        height: kReqResTabHeight,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(50),
+          borderRadius: kBorderRadius20,
           border: Border.all(
             color: Theme.of(context).colorScheme.outlineVariant,
           ),
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(50),
+          borderRadius: kBorderRadius20,
           child: TabBar(
             dividerColor: Colors.transparent,
             indicatorWeight: 0.0,
@@ -63,18 +63,18 @@ class RequestResponseTabbar extends StatelessWidget {
               color: Theme.of(context).colorScheme.onPrimary,
             ),
             unselectedLabelStyle: kTextStyleTab,
-            splashBorderRadius: BorderRadius.circular(50),
+            splashBorderRadius: kBorderRadius20,
             indicator: BoxDecoration(
-              borderRadius: BorderRadius.circular(50),
+              borderRadius: kBorderRadius20,
               color: Theme.of(context).colorScheme.primary,
             ),
             controller: controller,
             tabs: const <Widget>[
               Tab(
-                text: "Request",
+                text: kLabelRequest,
               ),
               Tab(
-                text: "Response",
+                text: kLabelResponse,
               ),
             ],
           ),

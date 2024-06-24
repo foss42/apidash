@@ -4,7 +4,7 @@ import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/extensions/extensions.dart';
-import '../../common/environment_textfields.dart';
+import '../../common_widgets/common_widgets.dart';
 
 class EditorPaneRequestURLCard extends StatelessWidget {
   const EditorPaneRequestURLCard({super.key});
@@ -45,7 +45,7 @@ class EditorPaneRequestURLCard extends StatelessWidget {
                   kHSpacer20,
                   SizedBox(
                     height: 36,
-                    child: SendButton(),
+                    child: SendRequestButton(),
                   )
                 ],
               ),
@@ -104,9 +104,9 @@ class URLTextField extends ConsumerWidget {
   }
 }
 
-class SendButton extends ConsumerWidget {
+class SendRequestButton extends ConsumerWidget {
   final Function()? onTap;
-  const SendButton({
+  const SendRequestButton({
     super.key,
     this.onTap,
   });
@@ -117,7 +117,7 @@ class SendButton extends ConsumerWidget {
     final isWorking = ref.watch(
         selectedRequestModelProvider.select((value) => value?.isWorking));
 
-    return SendRequestButton(
+    return SendButton(
       isWorking: isWorking ?? false,
       onTap: () {
         onTap?.call();

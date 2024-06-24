@@ -1,8 +1,8 @@
-import 'package:apidash/consts.dart';
-import 'package:apidash/models/models.dart';
-import 'package:apidash/screens/common/environment_autocomplete.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:apidash/consts.dart';
+import 'package:apidash/models/models.dart';
+import '../screens/common_widgets/common_widgets.dart';
 
 String getEnvironmentTitle(String? name) {
   if (name == null || name.trim() == "") {
@@ -126,7 +126,7 @@ List<(String, Object?, Widget?)> getMentions(
     mentions.add((
       '{{${variable?.key ?? variableName}}}',
       suggestion,
-      EnvironmentVariableSpan(suggestion: suggestion)
+      EnvVarSpan(suggestion: suggestion)
     ));
   }
 

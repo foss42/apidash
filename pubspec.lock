@@ -821,10 +821,10 @@ packages:
     dependency: "direct main"
     description:
       name: mention_tag_text_field
-      sha256: b0e831f5fc8ca942a835916fd084e6f5054226715affc740c613cd320004b8a7
+      sha256: "9768a0a6fe5771cb8eb98f94b26b4c595ca2487b0eb28b9d5624f8d71a2ac17a"
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.4"
+    version: "0.0.5"
   meta:
     dependency: transitive
     description:

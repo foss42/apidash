@@ -1,44 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
-import 'environment_autocomplete.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 
-class EnvURLField extends StatelessWidget {
-  const EnvURLField({
-    super.key,
-    required this.selectedId,
-    this.initialValue,
-    this.onChanged,
-    this.onFieldSubmitted,
-  });
-
-  final String selectedId;
-  final String? initialValue;
-  final void Function(String)? onChanged;
-  final void Function(String)? onFieldSubmitted;
-
-  @override
-  Widget build(BuildContext context) {
-    return EnvironmentAutocompleteField(
-      keyId: "url-$selectedId",
-      initialValue: initialValue,
-      style: kCodeStyle,
-      decoration: InputDecoration(
-        hintText: kHintTextUrlCard,
-        hintStyle: kCodeStyle.copyWith(
-          color: Theme.of(context).colorScheme.outline.withOpacity(
-                kHintOpacity,
-              ),
-        ),
-        border: InputBorder.none,
-      ),
-      onChanged: onChanged,
-      onFieldSubmitted: onFieldSubmitted,
-    );
-  }
-}
-
-class EnvCellField extends StatelessWidget {
-  const EnvCellField({
+class ObscurableCellField extends HookWidget {
+  const ObscurableCellField({
     super.key,
     required this.keyId,
     this.initialValue,
@@ -55,13 +20,15 @@ class EnvCellField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final obscureText = useState(true);
     var clrScheme = colorScheme ?? Theme.of(context).colorScheme;
-    return EnvironmentAutocompleteField(
-      keyId: keyId,
+    return TextFormField(
+      key: Key(keyId),
       initialValue: initialValue,
       style: kCodeStyle.copyWith(
         color: clrScheme.onSurface,
       ),
+      obscureText: obscureText.value,
       decoration: InputDecoration(
         hintStyle: kCodeStyle.copyWith(
           color: clrScheme.outline.withOpacity(
@@ -69,6 +36,17 @@ class EnvCellField extends StatelessWidget {
           ),
         ),
         hintText: hintText,
+        suffixIcon: IconButton(
+          padding: kP4,
+          icon: Icon(
+            obscureText.value ? Icons.visibility : Icons.visibility_off,
+            color: clrScheme.onSurface,
+            size: 14,
+          ),
+          onPressed: () {
+            obscureText.value = !obscureText.value;
+          },
+        ),
         contentPadding: const EdgeInsets.only(bottom: 12),
         focusedBorder: UnderlineInputBorder(
           borderSide: BorderSide(

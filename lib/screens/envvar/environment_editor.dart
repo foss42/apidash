@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/extensions/extensions.dart';
+import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
-import '../common/main_editor_widgets.dart';
+import '../common_widgets/common_widgets.dart';
 import './editor_pane/variables_pane.dart';
 
 class EnvironmentEditor extends ConsumerWidget {
@@ -39,7 +40,7 @@ class EnvironmentEditor extends ConsumerWidget {
                     const SizedBox(
                       width: 6,
                     ),
-                    TitleActionsArray(
+                    EditorTitleActions(
                       onRenamePressed: () {
                         showRenameDialog(context, "Rename Environment", name,
                             (val) {

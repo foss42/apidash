@@ -157,6 +157,12 @@ const kTextButtonMinWidth = 44.0;
 
 const kRandMax = 100000;
 
+const kSuggestionsMenuWidth = 300.0;
+const kSuggestionsMenuMaxHeight = 200.0;
+
+const kReqResTabWidth = 280.0;
+const kReqResTabHeight = 32.0;
+
 const kDataTableScrollbarTheme = ScrollbarThemeData(
   crossAxisMargin: -4,
 );

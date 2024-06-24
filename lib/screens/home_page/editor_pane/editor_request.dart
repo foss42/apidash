@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/extensions/extensions.dart';
+import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
 import 'details_card/details_card.dart';
 import 'details_card/request_pane/request_pane.dart';
-import '../../common/main_editor_widgets.dart';
+import '../../common_widgets/common_widgets.dart';
 import 'url_card.dart';
 
 class RequestEditor extends StatelessWidget {
@@ -69,7 +70,7 @@ class RequestEditorTopBar extends ConsumerWidget {
           const SizedBox(
             width: 6,
           ),
-          TitleActionsArray(
+          EditorTitleActions(
             onRenamePressed: () {
               showRenameDialog(context, "Rename Request", name, (val) {
                 ref

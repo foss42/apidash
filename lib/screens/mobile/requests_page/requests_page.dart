@@ -9,7 +9,7 @@ import '../../home_page/collection_pane.dart';
 import '../../home_page/editor_pane/url_card.dart';
 import '../../home_page/editor_pane/details_card/code_pane.dart';
 import '../../home_page/editor_pane/editor_default.dart';
-import '../../common/main_editor_widgets.dart';
+import '../../common_widgets/common_widgets.dart';
 import '../widgets/page_base.dart';
 import 'request_response_tabs.dart';
 
@@ -35,9 +35,9 @@ class _RequestResponsePageState extends ConsumerState<RequestResponsePage>
         ref.watch(selectedRequestModelProvider.select((value) => value?.name)));
     final TabController requestResponseTabController =
         useTabController(initialLength: 2, vsync: this);
-    return TwoDrawerScaffold(
+    return DrawerSplitView(
       scaffoldKey: widget.scaffoldKey,
-      title: ScaffoldTitle(
+      title: EditorTitle(
         title: name,
         onSelected: (ItemMenuOption item) {
           if (item == ItemMenuOption.edit) {
@@ -125,12 +125,15 @@ class RequestResponsePageBottombar extends ConsumerWidget {
                     },
               icon: const Icon(Icons.code_rounded),
             ),
-            SendButton(
-              onTap: () {
-                if (requestResponseTabController.index != 1) {
-                  requestResponseTabController.animateTo(1);
-                }
-              },
+            SizedBox(
+              height: 36,
+              child: SendRequestButton(
+                onTap: () {
+                  if (requestResponseTabController.index != 1) {
+                    requestResponseTabController.animateTo(1);
+                  }
+                },
+              ),
             ),
           ],
         ),

@@ -5,7 +5,7 @@ import 'package:apidash/extensions/extensions.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
-import 'package:apidash/screens/common/sidebar_widgets.dart';
+import '../common_widgets/common_widgets.dart';
 
 class CollectionPane extends ConsumerWidget {
   const CollectionPane({

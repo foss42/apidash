@@ -6,7 +6,7 @@ import 'package:apidash/models/environment_model.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
-import '../common/sidebar_widgets.dart';
+import '../common_widgets/common_widgets.dart';
 
 class EnvironmentsPane extends ConsumerWidget {
   const EnvironmentsPane({

@@ -15,6 +15,26 @@ final selectedEnvironmentModelProvider =
   return selectedId != null ? environments![selectedId] : null;
 });
 
+final availableEnvironmentVariablesStateProvider =
+    StateProvider<Map<String, List<EnvironmentVariableModel>>>((ref) {
+  Map<String, List<EnvironmentVariableModel>> result = {};
+  final environments = ref.watch(environmentsStateNotifierProvider);
+  final activeEnviormentId = ref.watch(activeEnvironmentIdStateProvider);
+  if (activeEnviormentId != null) {
+    result[activeEnviormentId] = environments?[activeEnviormentId]
+            ?.values
+            .where((element) => element.enabled)
+            .toList() ??
+        [];
+  }
+  result[kGlobalEnvironmentId] = environments?[kGlobalEnvironmentId]
+          ?.values
+          .where((element) => element.enabled)
+          .toList() ??
+      [];
+  return result;
+});
+
 final StateNotifierProvider<EnvironmentsStateNotifier,
         Map<String, EnvironmentModel>?> environmentsStateNotifierProvider =
     StateNotifierProvider((ref) => EnvironmentsStateNotifier(ref, hiveHandler));

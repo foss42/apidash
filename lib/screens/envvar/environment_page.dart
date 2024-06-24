@@ -5,7 +5,7 @@ import 'package:apidash/extensions/extensions.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/utils/utils.dart';
 import 'package:apidash/consts.dart';
-import '../common/main_editor_widgets.dart';
+import '../common_widgets/common_widgets.dart';
 import 'environments_pane.dart';
 import 'environment_editor.dart';
 
@@ -22,10 +22,10 @@ class EnvironmentPage extends ConsumerWidget {
     final name = getEnvironmentTitle(ref.watch(
         selectedEnvironmentModelProvider.select((value) => value?.name)));
     if (context.isMediumWindow) {
-      return TwoDrawerScaffold(
+      return DrawerSplitView(
         scaffoldKey: scaffoldKey,
         mainContent: const EnvironmentEditor(),
-        title: ScaffoldTitle(
+        title: EditorTitle(
           title: name,
           showMenu: id != kGlobalEnvironmentId,
           onSelected: (ItemMenuOption item) {
