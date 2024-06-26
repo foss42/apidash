@@ -1,6 +1,5 @@
 import 'package:apidash/models/hive_storage_folder.dart';
 import 'package:apidash/services/hive_services.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
 class HiveDirectorySelector extends StatefulWidget {
