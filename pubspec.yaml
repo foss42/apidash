@@ -61,7 +61,6 @@ dependencies:
   data_table_2: ^2.5.11
   file_selector: ^1.0.3
   shared_preferences: ^2.2.3
-  file_picker: 8.0.3
   hooks_riverpod: ^2.5.1
   flutter_hooks: ^0.20.5
 
