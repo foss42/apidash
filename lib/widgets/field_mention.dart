@@ -50,7 +50,7 @@ class MentionField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MentionTagTextFormField(
+    return MentionTagTextField(
       focusNode: focusNode,
       onTap: () {
         focusNode.requestFocus();
@@ -66,7 +66,8 @@ class MentionField extends StatelessWidget {
       onChanged: (value) {
         onChanged?.call(controller.text);
       },
-      onFieldSubmitted: (value) {
+      onEditingComplete: () {
+        focusNode.unfocus();
         onFieldSubmitted?.call(controller.text);
         isSuggestionsVisible.value = false;
       },
