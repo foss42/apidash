@@ -60,6 +60,7 @@ dependencies:
   flex_color_scheme: ^7.3.1
   data_table_2: ^2.5.15
   file_selector: ^1.0.3
+  shared_preferences: ^2.2.3
   hooks_riverpod: ^2.5.1
   flutter_hooks: ^0.20.5
   flutter_portal: ^1.1.4
