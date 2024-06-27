@@ -19,8 +19,8 @@ class EqualSplitView extends StatefulWidget {
 class _EqualSplitViewState extends State<EqualSplitView> {
   final MultiSplitViewController _controller = MultiSplitViewController(
     areas: [
-      Area(minimalSize: kMinRequestEditorDetailsCardPaneSize),
-      Area(minimalSize: kMinRequestEditorDetailsCardPaneSize),
+      Area(id: "left", min: kMinRequestEditorDetailsCardPaneSize),
+      Area(id: "right", min: kMinRequestEditorDetailsCardPaneSize),
     ],
   );
 
@@ -39,10 +39,13 @@ class _EqualSplitViewState extends State<EqualSplitView> {
       ),
       child: MultiSplitView(
         controller: _controller,
-        children: [
-          widget.leftWidget,
-          widget.rightWidget,
-        ],
+        builder: (context, area) {
+          return switch (area.id) {
+            "left" => widget.leftWidget,
+            "right" => widget.rightWidget,
+            _ => Container(),
+          };
+        },
       ),
     );
   }
