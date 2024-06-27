@@ -7,7 +7,7 @@ import 'package:url_launcher/url_launcher_string.dart';
 import '../consts.dart';
 import '../utils/ui_utils.dart';
 import "snackbars.dart";
-import 'textfields.dart';
+import 'field_json_search.dart';
 
 class JsonPreviewerColor {
   const JsonPreviewerColor._();

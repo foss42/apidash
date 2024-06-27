@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/codegen/codegen.dart';
+import 'package:apidash/utils/utils.dart';
 import 'package:apidash/consts.dart';
 
 final Codegen codegen = Codegen();
@@ -19,8 +20,15 @@ class CodePane extends ConsumerWidget {
     final defaultUriScheme =
         ref.watch(settingsProvider.select((value) => value.defaultUriScheme));
 
+    var envMap = ref.watch(availableEnvironmentVariablesStateProvider);
+    var activeEnvId = ref.watch(activeEnvironmentIdStateProvider);
+
+    final substitutedRequestModel = selectedRequestModel?.copyWith(
+        httpRequestModel: substituteHttpRequestModel(
+            selectedRequestModel.httpRequestModel!, envMap, activeEnvId));
+
     final code = codegen.getCode(
-        codegenLanguage, selectedRequestModel!, defaultUriScheme);
+        codegenLanguage, substitutedRequestModel!, defaultUriScheme);
     if (code == null) {
       return const ErrorMessage(
         message: "An error was encountered while generating code. $kRaiseIssue",

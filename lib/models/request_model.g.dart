@@ -15,7 +15,7 @@ _$RequestModelImpl _$$RequestModelImplFromJson(Map json) => _$RequestModelImpl(
           ? null
           : HttpRequestModel.fromJson(
               Map<String, Object?>.from(json['httpRequestModel'] as Map)),
-      responseStatus: json['responseStatus'] as int?,
+      responseStatus: (json['responseStatus'] as num?)?.toInt(),
       message: json['message'] as String?,
       httpResponseModel: json['httpResponseModel'] == null
           ? null

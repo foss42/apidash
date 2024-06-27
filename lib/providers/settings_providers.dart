@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/models.dart' show SettingsModel;
+import '../models/models.dart';
 import '../services/services.dart' show hiveHandler, HiveHandler;
 import '../consts.dart';
 
 final codegenLanguageStateProvider = StateProvider<CodegenLanguage>((ref) =>
     ref.watch(settingsProvider.select((value) => value.defaultCodeGenLang)));
+
+final activeEnvironmentIdStateProvider = StateProvider<String?>((ref) =>
+    ref.watch(settingsProvider.select((value) => value.activeEnvironmentId)));
 
 final StateNotifierProvider<ThemeStateNotifier, SettingsModel>
     settingsProvider =
@@ -26,6 +29,7 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
     CodegenLanguage? defaultCodeGenLang,
     bool? saveResponses,
     bool? promptBeforeClosing,
+    String? activeEnvironmentId,
   }) async {
     state = state.copyWith(
       isDark: isDark,
@@ -36,6 +40,7 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
       defaultCodeGenLang: defaultCodeGenLang,
       saveResponses: saveResponses,
       promptBeforeClosing: promptBeforeClosing,
+      activeEnvironmentId: activeEnvironmentId,
     );
     await hiveHandler.saveSettings(state.toJson());
   }

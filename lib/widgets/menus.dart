@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
 
-class RequestCardMenu extends StatelessWidget {
-  const RequestCardMenu({
+class ItemCardMenu extends StatelessWidget {
+  const ItemCardMenu({
     super.key,
     this.onSelected,
     this.child,
@@ -17,11 +17,11 @@ class RequestCardMenu extends StatelessWidget {
   final String? tooltip;
   final ShapeBorder? shape;
 
-  final Function(RequestItemMenuOption)? onSelected;
+  final Function(ItemMenuOption)? onSelected;
 
   @override
   Widget build(BuildContext context) {
-    return PopupMenuButton<RequestItemMenuOption>(
+    return PopupMenuButton<ItemMenuOption>(
       tooltip: tooltip,
       padding: EdgeInsets.zero,
       splashRadius: splashRadius,
@@ -29,18 +29,17 @@ class RequestCardMenu extends StatelessWidget {
       offset: offset,
       onSelected: onSelected,
       shape: shape,
-      itemBuilder: (BuildContext context) =>
-          <PopupMenuEntry<RequestItemMenuOption>>[
-        const PopupMenuItem<RequestItemMenuOption>(
-          value: RequestItemMenuOption.edit,
+      itemBuilder: (BuildContext context) => <PopupMenuEntry<ItemMenuOption>>[
+        const PopupMenuItem<ItemMenuOption>(
+          value: ItemMenuOption.edit,
           child: Text('Rename'),
         ),
-        const PopupMenuItem<RequestItemMenuOption>(
-          value: RequestItemMenuOption.delete,
+        const PopupMenuItem<ItemMenuOption>(
+          value: ItemMenuOption.delete,
           child: Text('Delete'),
         ),
-        const PopupMenuItem<RequestItemMenuOption>(
-          value: RequestItemMenuOption.duplicate,
+        const PopupMenuItem<ItemMenuOption>(
+          value: ItemMenuOption.duplicate,
           child: Text('Duplicate'),
         ),
       ],

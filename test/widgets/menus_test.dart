@@ -5,7 +5,7 @@ import 'package:apidash/consts.dart';
 import '../test_consts.dart';
 
 void main() {
-  testWidgets('Testing RequestCardMenu', (tester) async {
+  testWidgets('Testing ItemCardMenu', (tester) async {
     dynamic changedValue;
     await tester.pumpWidget(
       MaterialApp(
@@ -15,7 +15,7 @@ void main() {
           body: Center(
             child: Column(
               children: [
-                RequestCardMenu(
+                ItemCardMenu(
                   onSelected: (value) {
                     changedValue = value;
                   },
@@ -27,9 +27,9 @@ void main() {
       ),
     );
 
-    expect(find.byType(PopupMenuButton<RequestItemMenuOption>), findsOneWidget);
+    expect(find.byType(PopupMenuButton<ItemMenuOption>), findsOneWidget);
 
-    await tester.tap(find.byType(PopupMenuButton<RequestItemMenuOption>));
+    await tester.tap(find.byType(PopupMenuButton<ItemMenuOption>));
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
 
@@ -37,9 +37,9 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
 
-    expect(changedValue, RequestItemMenuOption.delete);
+    expect(changedValue, ItemMenuOption.delete);
 
-    await tester.tap(find.byType(PopupMenuButton<RequestItemMenuOption>));
+    await tester.tap(find.byType(PopupMenuButton<ItemMenuOption>));
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
 
@@ -47,6 +47,6 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
 
-    expect(changedValue, RequestItemMenuOption.duplicate);
+    expect(changedValue, ItemMenuOption.duplicate);
   });
 }

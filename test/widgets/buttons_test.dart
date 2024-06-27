@@ -1,7 +1,8 @@
 import 'dart:typed_data';
+import 'package:apidash/screens/common_widgets/sidebar_save_button.dart';
+import 'package:apidash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:apidash/widgets/buttons.dart';
 import 'package:apidash/consts.dart';
 import '../test_consts.dart';
 
@@ -35,7 +36,7 @@ void main() {
         title: 'Send Request button',
         theme: kThemeDataLight,
         home: Scaffold(
-          body: SendRequestButton(
+          body: SendButton(
             isWorking: false,
             onTap: () {
               changedValue = 'Send';
@@ -62,7 +63,7 @@ void main() {
         title: 'Send Request button',
         theme: kThemeDataLight,
         home: Scaffold(
-          body: SendRequestButton(
+          body: SendButton(
             isWorking: true,
             onTap: () {},
           ),

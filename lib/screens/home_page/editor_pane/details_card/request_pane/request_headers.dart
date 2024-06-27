@@ -6,6 +6,7 @@ import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash/screens/common_widgets/common_widgets.dart';
 
 class EditRequestHeaders extends ConsumerStatefulWidget {
   const EditRequestHeaders({super.key});
@@ -129,7 +130,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
               ),
             ),
             DataCell(
-              CellField(
+              EnvCellField(
                 keyId: "$selectedId-$index-headers-v-$seed",
                 initialValue: headerRows[index].value,
                 hintText: kHintAddValue,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart';
-import 'menus.dart' show RequestCardMenu;
+import 'menus.dart' show ItemCardMenu;
 import 'texts.dart' show MethodBox;
 
 class SidebarRequestCard extends StatelessWidget {
@@ -36,7 +36,7 @@ class SidebarRequestCard extends StatelessWidget {
   // final TextEditingController? controller;
   final FocusNode? focusNode;
   final Function()? onTapOutsideNameEditor;
-  final Function(RequestItemMenuOption)? onMenuSelected;
+  final Function(ItemMenuOption)? onMenuSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -118,7 +118,7 @@ class SidebarRequestCard extends StatelessWidget {
                     visible: isSelected && !inEditMode,
                     child: SizedBox(
                       width: 28,
-                      child: RequestCardMenu(
+                      child: ItemCardMenu(
                         onSelected: onMenuSelected,
                       ),
                     ),
@@ -129,26 +129,6 @@ class SidebarRequestCard extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-class RequestDetailsCard extends StatelessWidget {
-  const RequestDetailsCard({super.key, this.child});
-
-  final Widget? child;
-  @override
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(
-        side: BorderSide(
-          color: Theme.of(context).colorScheme.surfaceVariant,
-        ),
-        borderRadius: kBorderRadius12,
-      ),
-      elevation: 0,
-      child: child,
     );
   }
 }

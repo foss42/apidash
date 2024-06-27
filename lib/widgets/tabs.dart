@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
-import 'package:apidash/extensions/extensions.dart';
 
 class TabLabel extends StatelessWidget {
   const TabLabel({
@@ -14,7 +13,7 @@ class TabLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: context.isMediumWindow ? kMobileTabHeight : kTabHeight,
+      height: kTabHeight,
       child: Stack(
         children: [
           Center(

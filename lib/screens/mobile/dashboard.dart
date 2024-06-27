@@ -1,4 +1,3 @@
-import 'package:apidash/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,7 +7,8 @@ import 'package:apidash/providers/providers.dart';
 import '../intro_page.dart';
 import '../settings_page.dart';
 import 'navbar.dart';
-import 'requests_page.dart';
+import 'requests_page/requests_page.dart';
+import '../envvar/environment_page.dart';
 import 'widgets/page_base.dart';
 
 class MobileDashboard extends ConsumerStatefulWidget {
@@ -70,20 +70,8 @@ class PageBranch extends ConsumerWidget {
     final scaffoldKey = ref.watch(mobileScaffoldKeyStateProvider);
     switch (pageIndex) {
       case 1:
-        // Temporary Environment Page
-        return Scaffold(
-          key: scaffoldKey,
-          appBar: AppBar(
-            title: const Text('Environments'),
-          ),
-          onDrawerChanged: (isOpened) {
-            ref.read(leftDrawerStateProvider.notifier).state = isOpened;
-          },
-          drawer: const Drawer(
-            surfaceTintColor: kColorTransparent,
-            shape: ContinuousRectangleBorder(),
-          ),
-          body: const SizedBox(),
+        return EnvironmentPage(
+          scaffoldKey: scaffoldKey,
         );
       case 2:
         return const PageBase(
@@ -96,7 +84,7 @@ class PageBranch extends ConsumerWidget {
           scaffoldBody: SettingsPage(),
         );
       default:
-        return RequestsPage(
+        return RequestResponsePage(
           scaffoldKey: scaffoldKey,
         );
     }

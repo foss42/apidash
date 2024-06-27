@@ -12,8 +12,7 @@ import 'package:apidash/screens/home_page/home_page.dart';
 import 'package:apidash/screens/intro_page.dart';
 import 'package:apidash/screens/settings_page.dart';
 import 'package:apidash/services/hive_services.dart';
-import 'package:apidash/widgets/response_widgets.dart';
-import 'package:apidash/widgets/textfields.dart';
+import 'package:apidash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -395,7 +394,7 @@ void main() {
       await tester.pump();
 
       // Tap on the "Send" button
-      Finder sendButton = find.byType(SendButton);
+      Finder sendButton = find.byType(SendRequestButton);
       await tester.tap(sendButton);
       await tester.pump();
 
@@ -439,7 +438,7 @@ void main() {
       await tester.pump();
 
       // Tap on the "Send" button
-      Finder sendButton = find.byType(SendButton);
+      Finder sendButton = find.byType(SendRequestButton);
       await tester.tap(sendButton);
       await tester.pump();
 
@@ -487,7 +486,7 @@ void main() {
       await tester.pump();
 
       // Tap on the "Send" button
-      Finder sendButton = find.byType(SendButton);
+      Finder sendButton = find.byType(SendRequestButton);
       await tester.tap(sendButton);
       await tester.pump();
 
@@ -544,7 +543,7 @@ void main() {
       await tester.pump();
 
       // Tap on the "Send" button
-      Finder sendButton = find.byType(SendButton);
+      Finder sendButton = find.byType(SendRequestButton);
       await tester.tap(sendButton);
       await tester.pump();
 

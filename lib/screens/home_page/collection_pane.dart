@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
+import 'package:apidash/extensions/extensions.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
-import 'package:apidash/extensions/extensions.dart';
+import '../common_widgets/common_widgets.dart';
 
 class CollectionPane extends ConsumerWidget {
   const CollectionPane({
@@ -13,110 +14,39 @@ class CollectionPane extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final overlayWidget = OverlayWidgetTemplate(context: context);
     final collection = ref.watch(collectionStateNotifierProvider);
-    final savingData = ref.watch(saveDataStateProvider);
-    final hasUnsavedChanges = ref.watch(hasUnsavedChangesProvider);
     if (collection == null) {
       return const Center(
         child: CircularProgressIndicator(),
       );
     }
-    return Drawer(
-      shape: const ContinuousRectangleBorder(),
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      surfaceTintColor: kColorTransparent,
-      child: Padding(
-        padding: (!context.isMediumWindow && kIsMacOS
-                ? kP24CollectionPane
-                : kP8CollectionPane) +
-            (context.isMediumWindow ? kPb70 : EdgeInsets.zero),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Padding(
-              padding: kPe8,
-              child: Wrap(
-                alignment: WrapAlignment.spaceBetween,
-                children: [
-                  TextButton.icon(
-                    onPressed: (savingData || !hasUnsavedChanges)
-                        ? null
-                        : () async {
-                            overlayWidget.show(
-                                widget:
-                                    const SavingOverlay(saveCompleted: false));
-
-                            await ref
-                                .read(collectionStateNotifierProvider.notifier)
-                                .saveData();
-                            overlayWidget.hide();
-                            overlayWidget.show(
-                                widget:
-                                    const SavingOverlay(saveCompleted: true));
-                            await Future.delayed(const Duration(seconds: 1));
-                            overlayWidget.hide();
-                          },
-                    icon: const Icon(
-                      Icons.save,
-                      size: 20,
-                    ),
-                    label: const Text(
-                      kLabelSave,
-                      style: kTextStyleButton,
-                    ),
-                  ),
-                  //const Spacer(),
-                  ElevatedButton(
-                    onPressed: () {
-                      ref.read(collectionStateNotifierProvider.notifier).add();
-                    },
-                    child: const Text(
-                      kLabelPlusNew,
-                      style: kTextStyleButton,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            kVSpacer10,
-            Container(
-              margin: const EdgeInsets.only(right: 8),
-              decoration: BoxDecoration(
-                borderRadius: kBorderRadius8,
-                border: Border.all(
-                  color: Theme.of(context).colorScheme.surfaceVariant,
-                ),
-              ),
-              child: Row(
-                children: [
-                  kHSpacer5,
-                  Icon(
-                    Icons.filter_alt,
-                    size: 18,
-                    color: Theme.of(context).colorScheme.secondary,
-                  ),
-                  kHSpacer5,
-                  Expanded(
-                    child: RawTextField(
-                      style: Theme.of(context).textTheme.bodyMedium,
-                      hintText: "Filter by name or URL",
-                      onChanged: (value) {
-                        ref.read(searchQueryProvider.notifier).state =
-                            value.toLowerCase();
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            kVSpacer10,
-            const Expanded(
-              child: RequestList(),
-            ),
-            kVSpacer5
-          ],
-        ),
+    return Padding(
+      padding: (!context.isMediumWindow && kIsMacOS
+              ? kP24CollectionPane
+              : kP8CollectionPane) +
+          (context.isMediumWindow ? kPb70 : EdgeInsets.zero),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          SidebarHeader(
+            onAddNew: () {
+              ref.read(collectionStateNotifierProvider.notifier).add();
+            },
+          ),
+          kVSpacer10,
+          SidebarFilter(
+            filterHintText: "Filter by name  or url",
+            onFilterFieldChanged: (value) {
+              ref.read(collectionSearchQueryProvider.notifier).state =
+                  value.toLowerCase();
+            },
+          ),
+          kVSpacer10,
+          const Expanded(
+            child: RequestList(),
+          ),
+          kVSpacer5
+        ],
       ),
     );
   }
@@ -152,7 +82,7 @@ class _RequestListState extends ConsumerState<RequestList> {
     final requestItems = ref.watch(collectionStateNotifierProvider)!;
     final alwaysShowCollectionPaneScrollbar = ref.watch(settingsProvider
         .select((value) => value.alwaysShowCollectionPaneScrollbar));
-    final filterQuery = ref.watch(searchQueryProvider).trim();
+    final filterQuery = ref.watch(collectionSearchQueryProvider).trim();
 
     return Scrollbar(
       controller: controller,
@@ -277,8 +207,8 @@ class RequestItem extends ConsumerWidget {
       onTapOutsideNameEditor: () {
         ref.read(selectedIdEditStateProvider.notifier).state = null;
       },
-      onMenuSelected: (RequestItemMenuOption item) {
-        if (item == RequestItemMenuOption.edit) {
+      onMenuSelected: (ItemMenuOption item) {
+        if (item == ItemMenuOption.edit) {
           // var controller =
           //     ref.read(nameTextFieldControllerProvider.notifier).state;
           // controller.text = requestModel.name;
@@ -294,10 +224,10 @@ class RequestItem extends ConsumerWidget {
                 .requestFocus(),
           );
         }
-        if (item == RequestItemMenuOption.delete) {
+        if (item == ItemMenuOption.delete) {
           ref.read(collectionStateNotifierProvider.notifier).remove(id);
         }
-        if (item == RequestItemMenuOption.duplicate) {
+        if (item == ItemMenuOption.duplicate) {
           ref.read(collectionStateNotifierProvider.notifier).duplicate(id);
         }
       },

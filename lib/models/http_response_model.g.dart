@@ -8,7 +8,7 @@ part of 'http_response_model.dart';
 
 _$HttpResponseModelImpl _$$HttpResponseModelImplFromJson(Map json) =>
     _$HttpResponseModelImpl(
-      statusCode: json['statusCode'] as int?,
+      statusCode: (json['statusCode'] as num?)?.toInt(),
       headers: (json['headers'] as Map?)?.map(
         (k, e) => MapEntry(k as String, e as String),
       ),
@@ -19,7 +19,7 @@ _$HttpResponseModelImpl _$$HttpResponseModelImplFromJson(Map json) =>
       formattedBody: json['formattedBody'] as String?,
       bodyBytes:
           const Uint8ListConverter().fromJson(json['bodyBytes'] as List<int>?),
-      time: const DurationConverter().fromJson(json['time'] as int?),
+      time: const DurationConverter().fromJson((json['time'] as num?)?.toInt()),
     );
 
 Map<String, dynamic> _$$HttpResponseModelImplToJson(
