@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:apidash/consts.dart';
 
 class RawTextField extends StatelessWidget {
   const RawTextField({
@@ -24,6 +25,7 @@ class RawTextField extends StatelessWidget {
         isDense: true,
         border: InputBorder.none,
         hintText: hintText,
+        contentPadding: kPv8,
       ),
       onTapOutside: (PointerDownEvent event) {
         FocusManager.instance.primaryFocus?.unfocus();

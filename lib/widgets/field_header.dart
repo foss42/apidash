@@ -93,7 +93,7 @@ class _HeaderFieldState extends State<HeaderField> {
           ),
           enabledBorder: UnderlineInputBorder(
             borderSide: BorderSide(
-              color: colorScheme.surfaceVariant,
+              color: colorScheme.surfaceContainerHighest,
             ),
           ),
         ),

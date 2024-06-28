@@ -19,7 +19,7 @@ class SidebarFilter extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: kBorderRadius8,
         border: Border.all(
-          color: Theme.of(context).colorScheme.surfaceVariant,
+          color: Theme.of(context).colorScheme.surfaceContainerHighest,
         ),
       ),
       child: Row(

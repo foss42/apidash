@@ -12,10 +12,12 @@ class EditorPaneRequestURLCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: kColorTransparent,
+      surfaceTintColor: kColorTransparent,
       elevation: 0,
       shape: RoundedRectangleBorder(
         side: BorderSide(
-          color: Theme.of(context).colorScheme.surfaceVariant,
+          color: Theme.of(context).colorScheme.surfaceContainerHighest,
         ),
         borderRadius: kBorderRadius12,
       ),
@@ -32,7 +34,6 @@ class EditorPaneRequestURLCard extends StatelessWidget {
                   Expanded(
                     child: URLTextField(),
                   ),
-                  SizedBox.shrink(),
                 ],
               )
             : const Row(

@@ -60,7 +60,7 @@ class DrawerSplitView extends StatelessWidget {
                       child: IconButton(
                         icon: Icon(
                           rightDrawerIcon ?? Icons.arrow_forward,
-                          color: Theme.of(context).colorScheme.onBackground,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                         onPressed: () {
                           scaffoldKey.currentState!.openEndDrawer();

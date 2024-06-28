@@ -178,7 +178,7 @@ class EditEnvironmentVariablesState
       children: [
         Container(
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.background,
+            color: Theme.of(context).colorScheme.surface,
             borderRadius: kBorderRadius12,
           ),
           margin: kP10,

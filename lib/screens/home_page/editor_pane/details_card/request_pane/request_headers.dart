@@ -179,10 +179,6 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
     return Stack(
       children: [
         Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.background,
-            borderRadius: kBorderRadius12,
-          ),
           margin: kP10,
           child: Column(
             children: [

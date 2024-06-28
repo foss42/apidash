@@ -42,7 +42,7 @@ class SidebarRequestCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final Color color = Theme.of(context).colorScheme.surface;
     final Color colorVariant =
-        Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5);
+        Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.5);
     final Color surfaceTint = Theme.of(context).colorScheme.primary;
     bool isSelected = selectedId == id;
     bool inEditMode = editRequestId == id;
