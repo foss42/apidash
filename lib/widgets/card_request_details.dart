@@ -9,9 +9,11 @@ class RequestDetailsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: kColorTransparent,
+      surfaceTintColor: kColorTransparent,
       shape: RoundedRectangleBorder(
         side: BorderSide(
-          color: Theme.of(context).colorScheme.surfaceVariant,
+          color: Theme.of(context).colorScheme.surfaceContainerHighest,
         ),
         borderRadius: kBorderRadius12,
       ),

@@ -43,7 +43,7 @@ class CellField extends StatelessWidget {
         ),
         enabledBorder: UnderlineInputBorder(
           borderSide: BorderSide(
-            color: clrScheme.surfaceVariant,
+            color: clrScheme.surfaceContainerHighest,
           ),
         ),
       ),

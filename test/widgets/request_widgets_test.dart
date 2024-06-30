@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:apidash/widgets/request_widgets.dart';
+import '../extensions/widget_tester_extensions.dart';
 import '../test_consts.dart';
 
 void main() {
   testWidgets('Testing Request Pane for 1st tab', (tester) async {
+    await tester.setScreenSize(largeWidthDevice);
     await tester.pumpWidget(
       MaterialApp(
         title: 'Request Pane',
@@ -34,6 +36,7 @@ void main() {
     expect(find.byIcon(Icons.code_rounded), findsNothing);
   });
   testWidgets('Testing Request Pane for 2nd tab', (tester) async {
+    await tester.setScreenSize(largeWidthDevice);
     await tester.pumpWidget(
       MaterialApp(
         title: 'Request Pane',
@@ -64,6 +67,7 @@ void main() {
     expect(find.byIcon(Icons.code_rounded), findsNothing);
   });
   testWidgets('Testing Request Pane for 3rd tab', (tester) async {
+    await tester.setScreenSize(largeWidthDevice);
     await tester.pumpWidget(
       MaterialApp(
         title: 'Request Pane',

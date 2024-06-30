@@ -405,7 +405,8 @@ class _BodySuccessState extends State<BodySuccess> {
                   : Theme.of(context).colorScheme.primaryContainer)
               .withOpacity(kForegroundOpacity),
           Theme.of(context).colorScheme.surface),
-      border: Border.all(color: Theme.of(context).colorScheme.surfaceVariant),
+      border: Border.all(
+          color: Theme.of(context).colorScheme.surfaceContainerHighest),
       borderRadius: kBorderRadius8,
     );
 
@@ -425,7 +426,7 @@ class _BodySuccessState extends State<BodySuccess> {
                       ? const SizedBox()
                       : SegmentedButton<ResponseBodyView>(
                           style: const ButtonStyle(
-                            padding: MaterialStatePropertyAll(
+                            padding: WidgetStatePropertyAll(
                               EdgeInsets.symmetric(
                                 horizontal: 8,
                               ),

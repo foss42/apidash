@@ -18,7 +18,7 @@ class MapTable extends StatelessWidget {
     return Table(
       border: TableBorder(
         horizontalInside: BorderSide(
-          color: Theme.of(context).colorScheme.surfaceVariant,
+          color: Theme.of(context).colorScheme.surfaceContainerHighest,
         ),
       ),
       columnWidths: const <int, TableColumnWidth>{

@@ -42,7 +42,8 @@ class SidebarEnvironmentCard extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final Color color =
         isGlobal ? colorScheme.secondaryContainer : colorScheme.surface;
-    final Color colorVariant = colorScheme.surfaceVariant.withOpacity(0.5);
+    final Color colorVariant =
+        colorScheme.surfaceContainerHighest.withOpacity(0.5);
     final Color surfaceTint = colorScheme.primary;
     bool isSelected = selectedId == id;
     bool inEditMode = editRequestId == id;

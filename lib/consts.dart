@@ -26,7 +26,7 @@ final kIsAndroid = !kIsWeb && Platform.isAndroid;
 final kIsMobile = !kIsWeb && (Platform.isIOS || Platform.isAndroid);
 
 final kColorTransparentState =
-    MaterialStateProperty.all<Color>(Colors.transparent);
+    WidgetStateProperty.all<Color>(Colors.transparent);
 const kColorTransparent = Colors.transparent;
 const kColorWhite = Colors.white;
 const kColorBlack = Colors.black;
@@ -65,6 +65,7 @@ const kFormDataButtonLabelTextStyle = TextStyle(
   fontSize: 12,
   fontWeight: FontWeight.w600,
 );
+const kTextStylePopupMenuItem = TextStyle(fontSize: 16);
 
 const kBorderRadius4 = BorderRadius.all(Radius.circular(4));
 const kBorderRadius8 = BorderRadius.all(Radius.circular(8));

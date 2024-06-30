@@ -70,8 +70,8 @@ class EditorTitleActions extends StatelessWidget {
       message: tooltip,
       child: IconButton(
         style: ButtonStyle(
-          padding: MaterialStateProperty.all(const EdgeInsets.all(0) + padding),
-          shape: MaterialStateProperty.all(const ContinuousRectangleBorder()),
+          padding: WidgetStateProperty.all(const EdgeInsets.all(0) + padding),
+          shape: WidgetStateProperty.all(const ContinuousRectangleBorder()),
         ),
         onPressed: onPressed,
         icon: Icon(

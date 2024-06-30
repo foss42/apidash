@@ -57,7 +57,7 @@ class ObscurableCellField extends HookWidget {
         ),
         enabledBorder: UnderlineInputBorder(
           borderSide: BorderSide(
-            color: clrScheme.surfaceVariant,
+            color: clrScheme.surfaceContainerHighest,
           ),
         ),
       ),

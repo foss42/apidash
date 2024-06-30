@@ -246,9 +246,11 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
                   ),
                   Container(
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.background,
+                      color: Theme.of(context).colorScheme.surface,
                       border: Border.all(
-                          color: Theme.of(context).colorScheme.surfaceVariant),
+                          color: Theme.of(context)
+                              .colorScheme
+                              .surfaceContainerHighest),
                       borderRadius: kBorderRadius8,
                     ),
                     child: Row(

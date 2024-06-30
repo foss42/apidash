@@ -35,7 +35,7 @@ class DashboardSplitViewState extends State<DashboardSplitView> {
       data: MultiSplitViewThemeData(
         dividerThickness: 3,
         dividerPainter: DividerPainters.background(
-          color: Theme.of(context).colorScheme.surfaceVariant,
+          color: Theme.of(context).colorScheme.surfaceContainerHighest,
           highlightedColor: Theme.of(context).colorScheme.outline.withOpacity(
                 kHintOpacity,
               ),

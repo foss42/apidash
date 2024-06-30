@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'package:apidash/screens/common_widgets/sidebar_save_button.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:apidash/consts.dart';
 import '../test_consts.dart';
@@ -175,11 +176,13 @@ void main() {
 
   testWidgets('Testing for Save button', (tester) async {
     await tester.pumpWidget(
-      MaterialApp(
-        title: 'Save button',
-        theme: kThemeDataLight,
-        home: const Scaffold(
-          body: SaveButton(),
+      ProviderScope(
+        child: MaterialApp(
+          title: 'Save button',
+          theme: kThemeDataLight,
+          home: const Scaffold(
+            body: SaveButton(),
+          ),
         ),
       ),
     );

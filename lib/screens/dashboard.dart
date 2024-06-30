@@ -88,7 +88,7 @@ class Dashboard extends ConsumerWidget {
             VerticalDivider(
               thickness: 1,
               width: 1,
-              color: Theme.of(context).colorScheme.surfaceVariant,
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
             ),
             Expanded(
               child: IndexedStack(
