@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/consts.dart';
+import 'common_widgets/common_widgets.dart';
 import 'envvar/environment_page.dart';
 import 'home_page/home_page.dart';
-import 'intro_page.dart';
 import 'settings_page.dart';
 
 class Dashboard extends ConsumerWidget {
@@ -52,6 +52,19 @@ class Dashboard extends ConsumerWidget {
                       'Variables',
                       style: Theme.of(context).textTheme.labelSmall,
                     ),
+                    kVSpacer10,
+                    IconButton(
+                      isSelected: railIdx == 2,
+                      onPressed: () {
+                        ref.read(navRailIndexStateProvider.notifier).state = 2;
+                      },
+                      icon: const Icon(Icons.history_outlined),
+                      selectedIcon: const Icon(Icons.history),
+                    ),
+                    Text(
+                      'History',
+                      style: Theme.of(context).textTheme.labelSmall,
+                    ),
                   ],
                 ),
                 Expanded(
@@ -60,30 +73,31 @@ class Dashboard extends ConsumerWidget {
                     children: [
                       Padding(
                         padding: const EdgeInsets.only(bottom: 16.0),
-                        child: bottomButton(context, ref, railIdx, 2,
-                            Icons.help, Icons.help_outline),
+                        child: NavbarButton(
+                          railIdx: railIdx,
+                          selectedIcon: Icons.help,
+                          icon: Icons.help_outline,
+                          label: 'About',
+                          showLabel: false,
+                          isCompact: true,
+                        ),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(bottom: 16.0),
-                        child: bottomButton(context, ref, railIdx, 3,
-                            Icons.settings, Icons.settings_outlined),
+                        child: NavbarButton(
+                          railIdx: railIdx,
+                          buttonIdx: 3,
+                          selectedIcon: Icons.settings,
+                          icon: Icons.settings_outlined,
+                          label: 'Settings',
+                          showLabel: false,
+                          isCompact: true,
+                        ),
                       ),
                     ],
                   ),
                 ),
               ],
-              // destinations: const <NavigationRailDestination>[
-              //   // NavigationRailDestination(
-              //   //   icon: Icon(Icons.home_outlined),
-              //   //   selectedIcon: Icon(Icons.home),
-              //   //   label: Text('Home'),
-              //   // ),
-              //   NavigationRailDestination(
-              //     icon: Icon(Icons.auto_awesome_mosaic_outlined),
-              //     selectedIcon: Icon(Icons.auto_awesome_mosaic),
-              //     label: Text('Requests'),
-              //   ),
-              // ],
             ),
             VerticalDivider(
               thickness: 1,
@@ -99,40 +113,13 @@ class Dashboard extends ConsumerWidget {
                   EnvironmentPage(
                     scaffoldKey: mobileScaffoldKey,
                   ),
-                  const IntroPage(),
+                  const SizedBox(),
                   const SettingsPage(),
                 ],
               ),
             )
           ],
         ),
-      ),
-    );
-  }
-
-  TextButton bottomButton(
-    BuildContext context,
-    WidgetRef ref,
-    int railIdx,
-    int buttonIdx,
-    IconData selectedIcon,
-    IconData icon,
-  ) {
-    bool isSelected = railIdx == buttonIdx;
-    return TextButton(
-      style: isSelected
-          ? TextButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-            )
-          : null,
-      onPressed: isSelected
-          ? null
-          : () {
-              ref.read(navRailIndexStateProvider.notifier).state = buttonIdx;
-            },
-      child: Icon(
-        isSelected ? selectedIcon : icon,
-        color: Theme.of(context).colorScheme.onSurfaceVariant,
       ),
     );
   }

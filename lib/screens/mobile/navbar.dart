@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
+import '../common_widgets/common_widgets.dart';
 
 class BottomNavBar extends ConsumerWidget {
   const BottomNavBar({super.key});
@@ -30,39 +31,39 @@ class BottomNavBar extends ConsumerWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Expanded(
-                  child: customNavigationDestination(context, ref, railIdx, 0,
-                      Icons.dashboard, Icons.dashboard_outlined, 'Requests'),
-                ),
-                Expanded(
-                  child: customNavigationDestination(
-                      context,
-                      ref,
-                      railIdx,
-                      1,
-                      Icons.laptop_windows,
-                      Icons.laptop_windows_outlined,
-                      'Variables'),
-                ),
-                Expanded(
-                  child: customNavigationDestination(
-                    context,
-                    ref,
-                    railIdx,
-                    2,
-                    Icons.help,
-                    Icons.help_outline,
-                    'About',
+                  child: NavbarButton(
+                    railIdx: railIdx,
+                    buttonIdx: 0,
+                    selectedIcon: Icons.dashboard,
+                    icon: Icons.dashboard_outlined,
+                    label: 'Requests',
                   ),
                 ),
                 Expanded(
-                  child: customNavigationDestination(
-                    context,
-                    ref,
-                    railIdx,
-                    3,
-                    Icons.settings,
-                    Icons.settings_outlined,
-                    'Settings',
+                  child: NavbarButton(
+                    railIdx: railIdx,
+                    buttonIdx: 1,
+                    selectedIcon: Icons.laptop_windows,
+                    icon: Icons.laptop_windows_outlined,
+                    label: 'Variables',
+                  ),
+                ),
+                Expanded(
+                  child: NavbarButton(
+                    railIdx: railIdx,
+                    buttonIdx: 2,
+                    selectedIcon: Icons.history,
+                    icon: Icons.history_outlined,
+                    label: 'History',
+                  ),
+                ),
+                Expanded(
+                  child: NavbarButton(
+                    railIdx: railIdx,
+                    buttonIdx: 3,
+                    selectedIcon: Icons.settings,
+                    icon: Icons.settings_outlined,
+                    label: 'Settings',
                   ),
                 ),
               ],
@@ -72,83 +73,4 @@ class BottomNavBar extends ConsumerWidget {
       ],
     );
   }
-}
-
-Widget customNavigationDestination(
-  BuildContext context,
-  WidgetRef ref,
-  int railIdx,
-  int buttonIdx,
-  IconData selectedIcon,
-  IconData icon,
-  String label, {
-  bool showLabel = true,
-  Function()? onTap,
-}) {
-  bool isSelected = railIdx == buttonIdx;
-  return MouseRegion(
-    cursor: SystemMouseCursors.click,
-    child: GestureDetector(
-      behavior: HitTestBehavior.translucent,
-      onTap: isSelected
-          ? null
-          : () {
-              ref.read(navRailIndexStateProvider.notifier).state = buttonIdx;
-              if (railIdx > 1 && buttonIdx <= 1) {
-                ref.read(leftDrawerStateProvider.notifier).state = false;
-              }
-              onTap?.call();
-            },
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Ink(
-            width: 65,
-            height: 32,
-            decoration: BoxDecoration(
-              color: isSelected
-                  ? Theme.of(context).colorScheme.secondaryContainer
-                  : Colors.transparent,
-              borderRadius: BorderRadius.circular(30),
-            ),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(30),
-              onTap: isSelected
-                  ? null
-                  : () {
-                      ref.read(navRailIndexStateProvider.notifier).state =
-                          buttonIdx;
-                      if (railIdx > 1 && buttonIdx <= 1) {
-                        ref.read(leftDrawerStateProvider.notifier).state =
-                            false;
-                      }
-                      onTap?.call();
-                    },
-              child: Icon(
-                isSelected ? selectedIcon : icon,
-                color: isSelected
-                    ? Theme.of(context).colorScheme.onSecondaryContainer
-                    : Theme.of(context).colorScheme.onSurface.withOpacity(0.65),
-              ),
-            ),
-          ),
-          showLabel ? const SizedBox(height: 4) : const SizedBox.shrink(),
-          showLabel
-              ? Text(
-                  label,
-                  style: Theme.of(context).textTheme.labelSmall!.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: isSelected
-                            ? Theme.of(context).colorScheme.onSecondaryContainer
-                            : Theme.of(context)
-                                .colorScheme
-                                .onSurface
-                                .withOpacity(0.65),
-                      ),
-                )
-              : const SizedBox.shrink(),
-        ],
-      ),
-    ),
-  );
 }
