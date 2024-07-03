@@ -1,3 +1,4 @@
+import 'package:apidash/screens/about_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/providers.dart';
@@ -37,10 +38,8 @@ class SettingsPage extends ConsumerWidget {
         Expanded(
           child: ListView(
             shrinkWrap: true,
-            padding: kPh20,
             children: [
               SwitchListTile(
-                contentPadding: EdgeInsets.zero,
                 hoverColor: kColorTransparent,
                 title: const Text('Switch Theme Mode'),
                 subtitle: Text(
@@ -51,7 +50,6 @@ class SettingsPage extends ConsumerWidget {
                 },
               ),
               SwitchListTile(
-                contentPadding: EdgeInsets.zero,
                 hoverColor: kColorTransparent,
                 title: const Text('Collection Pane Scrollbar Visiblity'),
                 subtitle: Text(
@@ -64,7 +62,6 @@ class SettingsPage extends ConsumerWidget {
                 },
               ),
               ListTile(
-                contentPadding: kPb10,
                 hoverColor: kColorTransparent,
                 title: const Text('Default URI Scheme'),
                 subtitle: Text(
@@ -109,7 +106,6 @@ class SettingsPage extends ConsumerWidget {
                 ),
               ),
               ListTile(
-                contentPadding: kPb10,
                 hoverColor: kColorTransparent,
                 title: const Text('Default Code Generator'),
                 trailing: Container(
@@ -151,7 +147,6 @@ class SettingsPage extends ConsumerWidget {
                 ),
               ),
               CheckboxListTile(
-                contentPadding: EdgeInsets.zero,
                 title: const Text("Save Responses"),
                 subtitle:
                     const Text("Save disk space by not storing API responses"),
@@ -163,7 +158,6 @@ class SettingsPage extends ConsumerWidget {
                 },
               ),
               CheckboxListTile(
-                contentPadding: EdgeInsets.zero,
                 title: const Text("Show Save Alert on App Close"),
                 subtitle: const Text(
                     "Show a confirmation dialog to save workspace when the user closes the app"),
@@ -175,7 +169,6 @@ class SettingsPage extends ConsumerWidget {
                 },
               ),
               ListTile(
-                contentPadding: EdgeInsets.zero,
                 hoverColor: kColorTransparent,
                 title: const Text('Export Data'),
                 subtitle: const Text(
@@ -195,7 +188,6 @@ class SettingsPage extends ConsumerWidget {
                 ),
               ),
               ListTile(
-                contentPadding: EdgeInsets.zero,
                 hoverColor: kColorTransparent,
                 title: const Text('Clear Data'),
                 subtitle: const Text('Delete all requests data from the disk'),
@@ -250,6 +242,15 @@ class SettingsPage extends ConsumerWidget {
                   ),
                 ),
               ),
+              ListTile(
+                title: const Text('About'),
+                subtitle: const Text(
+                    'Release Details, Support Channel, Report Bug / Request New Feature'),
+                onTap: () {
+                  showAboutAppDialog(context);
+                },
+              ),
+              kVSpacer20,
             ],
           ),
         ),

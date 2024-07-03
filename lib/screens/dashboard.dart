@@ -1,3 +1,4 @@
+import 'package:apidash/screens/about_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
@@ -80,6 +81,9 @@ class Dashboard extends ConsumerWidget {
                           label: 'About',
                           showLabel: false,
                           isCompact: true,
+                          onTap: () {
+                            showAboutAppDialog(context);
+                          },
                         ),
                       ),
                       Padding(
