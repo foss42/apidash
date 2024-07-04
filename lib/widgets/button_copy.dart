@@ -16,28 +16,29 @@ class CopyButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var sm = ScaffoldMessenger.of(context);
-    return Tooltip(
-      message: showLabel ? '' : kLabelCopy,
-      child: SizedBox(
-        width: showLabel ? null : kTextButtonMinWidth,
-        child: TextButton(
-          onPressed: () async {
-            await Clipboard.setData(ClipboardData(text: toCopy));
-            sm.hideCurrentSnackBar();
-            sm.showSnackBar(getSnackBar("Copied"));
-          },
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(
-                Icons.content_copy,
-                size: 20,
-              ),
-              if (showLabel) const Text(kLabelCopy)
-            ],
-          ),
-        ),
-      ),
+    const icon = Icon(
+      Icons.content_copy,
+      size: 18,
     );
+    const label = kLabelCopy;
+    onPressed() async {
+      await Clipboard.setData(ClipboardData(text: toCopy));
+      sm.hideCurrentSnackBar();
+      sm.showSnackBar(getSnackBar("Copied"));
+    }
+
+    return showLabel
+        ? TextButton.icon(
+            onPressed: onPressed,
+            icon: icon,
+            label: const Text(label),
+          )
+        : IconButton(
+            tooltip: label,
+            color: Theme.of(context).colorScheme.primary,
+            visualDensity: VisualDensity.compact,
+            onPressed: onPressed,
+            icon: icon,
+          );
   }
 }
