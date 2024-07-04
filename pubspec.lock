@@ -233,6 +233,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.0.0"
+  curl_converter:
+    dependency: "direct main"
+    description:
+      name: curl_converter
+      sha256: "32c541b875c6ddea275dfb35ff58c95f0d997f51e92232ff8fa4431b96c62dab"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.4"
   dart_style:
     dependency: "direct main"
     description:
@@ -249,6 +257,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.5.15"
+  desktop_drop:
+    dependency: "direct main"
+    description:
+      name: desktop_drop
+      sha256: d55a010fe46c8e8fcff4ea4b451a9ff84a162217bdb3b2a0aa1479776205e15d
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.4.4"
+  equatable:
+    dependency: transitive
+    description:
+      name: equatable
+      sha256: c2b87cb7756efdf69892005af546c56c0b5037f54d2a88269b4f347a505e3ca2
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.5"
   eventify:
     dependency: transitive
     description:

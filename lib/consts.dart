@@ -664,6 +664,7 @@ const kRaiseIssue =
 
 const kHintTextUrlCard = "Enter API endpoint like https://$kDefaultUri/";
 const kLabelPlusNew = "+ New";
+const kLabelImport = "+ Import";
 const kLabelSend = "Send";
 const kLabelSending = "Sending..";
 const kLabelBusy = "Busy";

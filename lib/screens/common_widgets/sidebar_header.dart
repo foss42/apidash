@@ -6,12 +6,17 @@ import 'package:apidash/consts.dart';
 import 'sidebar_save_button.dart';
 
 class SidebarHeader extends ConsumerWidget {
-  const SidebarHeader({super.key, this.onAddNew});
+  const SidebarHeader({super.key, this.onAddNew, this.onImport});
   final Function()? onAddNew;
+  final Function()? onImport;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final mobileScaffoldKey = ref.read(mobileScaffoldKeyStateProvider);
+    final elevatedButtonStyle = ElevatedButton.styleFrom(
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+    );
+
     return Padding(
       padding: kPe8,
       child: Row(
@@ -20,9 +25,19 @@ class SidebarHeader extends ConsumerWidget {
           const Spacer(),
           ElevatedButton(
             onPressed: onAddNew,
+            style: elevatedButtonStyle,
             child: const Text(
               kLabelPlusNew,
-              style: kTextStyleButton,
+              style: kTextStyleButtonSmall,
+            ),
+          ),
+          const SizedBox(width: 12),
+          ElevatedButton(
+            onPressed: onImport,
+            style: elevatedButtonStyle,
+            child: const Text(
+              kLabelImport,
+              style: kTextStyleButtonSmall,
             ),
           ),
           context.width <= kMinWindowSize.width
