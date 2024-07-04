@@ -54,18 +54,18 @@ class Dashboard extends ConsumerWidget {
                       style: Theme.of(context).textTheme.labelSmall,
                     ),
                     kVSpacer10,
-                    IconButton(
-                      isSelected: railIdx == 2,
-                      onPressed: () {
-                        ref.read(navRailIndexStateProvider.notifier).state = 2;
-                      },
-                      icon: const Icon(Icons.history_outlined),
-                      selectedIcon: const Icon(Icons.history),
-                    ),
-                    Text(
-                      'History',
-                      style: Theme.of(context).textTheme.labelSmall,
-                    ),
+                    // IconButton(
+                    //   isSelected: railIdx == 2,
+                    //   onPressed: () {
+                    //     ref.read(navRailIndexStateProvider.notifier).state = 2;
+                    //   },
+                    //   icon: const Icon(Icons.history_outlined),
+                    //   selectedIcon: const Icon(Icons.history),
+                    // ),
+                    // Text(
+                    //   'History',
+                    //   style: Theme.of(context).textTheme.labelSmall,
+                    // ),
                   ],
                 ),
                 Expanded(
@@ -90,7 +90,7 @@ class Dashboard extends ConsumerWidget {
                         padding: const EdgeInsets.only(bottom: 16.0),
                         child: NavbarButton(
                           railIdx: railIdx,
-                          buttonIdx: 3,
+                          buttonIdx: 2,
                           selectedIcon: Icons.settings,
                           icon: Icons.settings_outlined,
                           label: 'Settings',
@@ -117,7 +117,6 @@ class Dashboard extends ConsumerWidget {
                   EnvironmentPage(
                     scaffoldKey: mobileScaffoldKey,
                   ),
-                  const SizedBox(),
                   const SettingsPage(),
                 ],
               ),

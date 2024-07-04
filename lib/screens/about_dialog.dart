@@ -9,7 +9,7 @@ showAboutAppDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          contentPadding: kPt20 + kPh20,
+          contentPadding: kPt20 + kPh20 + kPb10,
           content: Container(
             width: double.infinity,
             height: double.infinity,

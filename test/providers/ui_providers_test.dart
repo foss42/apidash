@@ -57,7 +57,6 @@ void main() {
       // Verify that the HomePage is displayed initially
       expect(find.byType(HomePage), findsOneWidget);
       expect(find.byType(EnvironmentPage), findsNothing);
-      // expect(find.byType(IntroPage), findsNothing);
       expect(find.byType(SettingsPage), findsNothing);
     });
 
@@ -78,40 +77,16 @@ void main() {
       // Verify that the EnvironmentPage is displayed
       expect(find.byType(HomePage), findsNothing);
       expect(find.byType(EnvironmentPage), findsOneWidget);
-      // expect(find.byType(IntroPage), findsNothing);
       expect(find.byType(SettingsPage), findsNothing);
     });
 
-    // testWidgets(
-    //     "Dashboard should display IntroPage when navRailIndexStateProvider is 2",
-    //     (WidgetTester tester) async {
-    //   await tester.pumpWidget(
-    //     ProviderScope(
-    //       overrides: [
-    //         navRailIndexStateProvider.overrideWith((ref) => 2),
-    //       ],
-    //       child: const Portal(
-    //         child: MaterialApp(
-    //           home: Dashboard(),
-    //         ),
-    //       ),
-    //     ),
-    //   );
-
-    //   // Verify that the IntroPage is displayed
-    //   expect(find.byType(HomePage), findsNothing);
-    //   expect(find.byType(EnvironmentPage), findsNothing);
-    //   expect(find.byType(IntroPage), findsOneWidget);
-    //   expect(find.byType(SettingsPage), findsNothing);
-    // });
-
     testWidgets(
-        "Dashboard should display SettingsPage when navRailIndexStateProvider is 3",
+        "Dashboard should display SettingsPage when navRailIndexStateProvider is 2",
         (WidgetTester tester) async {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            navRailIndexStateProvider.overrideWith((ref) => 3),
+            navRailIndexStateProvider.overrideWith((ref) => 2),
           ],
           child: const Portal(
             child: MaterialApp(
@@ -124,7 +99,6 @@ void main() {
       // Verify that the SettingsPage is displayed
       expect(find.byType(HomePage), findsNothing);
       expect(find.byType(EnvironmentPage), findsNothing);
-      // expect(find.byType(IntroPage), findsNothing);
       expect(find.byType(SettingsPage), findsOneWidget);
     });
 
@@ -148,7 +122,7 @@ void main() {
       // Verify that the navRailIndexStateProvider is updated
       final dashboard = tester.element(find.byType(Dashboard));
       final container = ProviderScope.containerOf(dashboard);
-      expect(container.read(navRailIndexStateProvider), 3);
+      expect(container.read(navRailIndexStateProvider), 2);
     });
 
     testWidgets(
@@ -183,11 +157,10 @@ void main() {
       // Verify that the navRailIndexStateProvider still has the updated value
       final dashboard = tester.element(find.byType(Dashboard));
       final container = ProviderScope.containerOf(dashboard);
-      expect(container.read(navRailIndexStateProvider), 3);
+      expect(container.read(navRailIndexStateProvider), 2);
 
       // Verify that the SettingsPage is still displayed after the rebuild
       expect(find.byType(SettingsPage), findsOneWidget);
-      // expect(find.byType(IntroPage), findsNothing);
       expect(find.byType(HomePage), findsNothing);
       expect(find.byType(EnvironmentPage), findsNothing);
     });
@@ -218,17 +191,8 @@ void main() {
       // Verify that the selected icon is the filled version (selectedIcon)
       expect(find.byIcon(Icons.computer_rounded), findsOneWidget);
 
-      // // Go to IntroPage
-      // container.read(navRailIndexStateProvider.notifier).state = 2;
-      // await tester.pump();
-
-      // // Verify that the IntroPage is displayed
-      // expect(find.byType(IntroPage), findsOneWidget);
-      // // Verify that the selected icon is the filled version (selectedIcon)
-      // expect(find.byIcon(Icons.help), findsOneWidget);
-
       // Go to SettingsPage
-      container.read(navRailIndexStateProvider.notifier).state = 3;
+      container.read(navRailIndexStateProvider.notifier).state = 2;
       await tester.pump();
 
       // Verify that the SettingsPage is displayed
