@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:apidash/utils/convert_utils.dart';
 import 'package:apidash/widgets/drag_and_drop_area.dart';
 import 'package:curl_converter/curl_converter.dart';
