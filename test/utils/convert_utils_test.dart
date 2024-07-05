@@ -282,4 +282,42 @@ Easily manipulate and play around with request inputs like headers, query parame
       expect(audioPosition(dur4), dur4Expected);
     });
   });
+
+  group('httpVerbFromString', () {
+    test('returns HTTPVerb.get for "GET"', () {
+      expect(httpVerbFromString("GET"), HTTPVerb.get);
+    });
+
+    test('returns HTTPVerb.post for "POST"', () {
+      expect(httpVerbFromString("POST"), HTTPVerb.post);
+    });
+
+    test('returns HTTPVerb.put for "PUT"', () {
+      expect(httpVerbFromString("PUT"), HTTPVerb.put);
+    });
+
+    test('returns HTTPVerb.delete for "DELETE"', () {
+      expect(httpVerbFromString("DELETE"), HTTPVerb.delete);
+    });
+
+    test('returns HTTPVerb.head for "HEAD"', () {
+      expect(httpVerbFromString("HEAD"), HTTPVerb.head);
+    });
+
+    test('returns HTTPVerb.patch for "PATCH"', () {
+      expect(httpVerbFromString("PATCH"), HTTPVerb.patch);
+    });
+
+    test('returns null for invalid verb', () {
+      expect(httpVerbFromString("INVALID"), isNull);
+    });
+
+    test('returns null for empty string', () {
+      expect(httpVerbFromString(""), isNull);
+    });
+
+    test('returns null for null', () {
+      expect(httpVerbFromString(null), isNull);
+    });
+  });
 }
