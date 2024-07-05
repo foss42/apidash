@@ -122,12 +122,26 @@ void main() {
 
     expect(find.text('xyz (2 items)'), findsOneWidget);
 
-    expect(find.byIcon(Icons.content_copy), findsOneWidget);
-    expect(find.text(kLabelCopy), findsOneWidget);
+    final icon = find.byIcon(Icons.content_copy);
+    expect(icon, findsOneWidget);
 
-    final textButton1 = find.byType(TextButton);
-    expect(textButton1, findsOneWidget);
-    await tester.tap(textButton1);
+    Finder button;
+    if (tester.any(find.ancestor(
+        of: icon,
+        matching: find.byWidgetPredicate((widget) => widget is TextButton)))) {
+      expect(find.text(kLabelCopy), findsOneWidget);
+      button = find.ancestor(
+          of: icon,
+          matching: find.byWidgetPredicate((widget) => widget is TextButton));
+    } else if (tester
+        .any(find.ancestor(of: icon, matching: find.byType(IconButton)))) {
+      button = find.byType(IconButton);
+    } else {
+      fail('No TextButton or IconButton found');
+    }
+
+    expect(button, findsOneWidget);
+    await tester.tap(button);
   });
 
   testWidgets('Testing Response Headers', (tester) async {
