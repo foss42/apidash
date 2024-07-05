@@ -176,35 +176,77 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton(
-                        onPressed: () async {
-                          await _copy(kEncoder.convert(widget.code), sm);
-                        },
-                        child: const Text(
-                          'Copy',
-                          style: kTextStyleButtonSmall,
-                        ),
-                      ),
-                      TextButton(
-                        onPressed:
-                            state.areAllExpanded() ? null : state.expandAll,
-                        child: const Text(
-                          'Expand All',
-                          style: kTextStyleButtonSmall,
-                        ),
-                      ),
-                      TextButton(
-                        onPressed:
-                            state.areAllCollapsed() ? null : state.collapseAll,
-                        child: const Text(
-                          'Collapse All',
-                          style: kTextStyleButtonSmall,
-                        ),
-                      ),
-                    ],
-                  ),
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: constraints.minWidth > kMinWindowSize.width
+                          ? [
+                              TextButton(
+                                onPressed: () async {
+                                  await _copy(
+                                      kEncoder.convert(widget.code), sm);
+                                },
+                                child: const Text(
+                                  'Copy',
+                                  style: kTextStyleButtonSmall,
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: state.areAllExpanded()
+                                    ? null
+                                    : state.expandAll,
+                                child: const Text(
+                                  'Expand All',
+                                  style: kTextStyleButtonSmall,
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: state.areAllCollapsed()
+                                    ? null
+                                    : state.collapseAll,
+                                child: const Text(
+                                  'Collapse All',
+                                  style: kTextStyleButtonSmall,
+                                ),
+                              ),
+                            ]
+                          : [
+                              IconButton(
+                                tooltip: "Copy",
+                                color: Theme.of(context).colorScheme.primary,
+                                visualDensity: VisualDensity.compact,
+                                onPressed: () async {
+                                  await _copy(
+                                      kEncoder.convert(widget.code), sm);
+                                },
+                                icon: const Icon(
+                                  Icons.copy,
+                                  size: 16,
+                                ),
+                              ),
+                              IconButton(
+                                tooltip: "Expand All",
+                                color: Theme.of(context).colorScheme.primary,
+                                visualDensity: VisualDensity.compact,
+                                onPressed: state.areAllExpanded()
+                                    ? null
+                                    : state.expandAll,
+                                icon: const Icon(
+                                  Icons.unfold_more,
+                                  size: 16,
+                                ),
+                              ),
+                              IconButton(
+                                tooltip: "Collapse All",
+                                color: Theme.of(context).colorScheme.primary,
+                                visualDensity: VisualDensity.compact,
+                                onPressed: state.areAllCollapsed()
+                                    ? null
+                                    : state.collapseAll,
+                                icon: const Icon(
+                                  Icons.unfold_less,
+                                  size: 16,
+                                ),
+                              ),
+                            ]),
                   Expanded(
                     child: JsonDataExplorer(
                       nodes: state.displayNodes,
