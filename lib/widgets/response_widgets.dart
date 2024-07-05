@@ -425,12 +425,8 @@ class _BodySuccessState extends State<BodySuccess> {
                   (widget.options == kRawBodyViewOptions)
                       ? const SizedBox()
                       : SegmentedButton<ResponseBodyView>(
-                          style: const ButtonStyle(
-                            padding: WidgetStatePropertyAll(
-                              EdgeInsets.symmetric(
-                                horizontal: 8,
-                              ),
-                            ),
+                          style: SegmentedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
                           ),
                           selectedIcon: Icon(currentSeg.icon),
                           segments: widget.options
@@ -438,7 +434,10 @@ class _BodySuccessState extends State<BodySuccess> {
                                 (e) => ButtonSegment<ResponseBodyView>(
                                   value: e,
                                   label: Text(e.label),
-                                  icon: Icon(e.icon),
+                                  icon: constraints.maxWidth >
+                                          kMinWindowSize.width
+                                      ? Icon(e.icon)
+                                      : null,
                                 ),
                               )
                               .toList(),
