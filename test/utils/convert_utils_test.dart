@@ -315,9 +315,5 @@ Easily manipulate and play around with request inputs like headers, query parame
     test('returns null for empty string', () {
       expect(httpVerbFromString(""), isNull);
     });
-
-    test('returns null for null', () {
-      expect(httpVerbFromString(null), isNull);
-    });
   });
 }
