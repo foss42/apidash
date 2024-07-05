@@ -19,7 +19,7 @@ class DashboardSplitView extends StatefulWidget {
 class DashboardSplitViewState extends State<DashboardSplitView> {
   final MultiSplitViewController _controller = MultiSplitViewController(
     areas: [
-      Area(id: "sidebar", size: 270, min: 250),
+      Area(id: "sidebar", size: 350, min: 300),
       Area(id: "main", min: 0.7),
     ],
   );
