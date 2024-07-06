@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:apidash/extensions/extensions.dart';
 import 'package:apidash/providers/providers.dart';
-import '../intro_page.dart';
 import '../settings_page.dart';
 import 'navbar.dart';
 import 'requests_page/requests_page.dart';
@@ -73,12 +72,13 @@ class PageBranch extends ConsumerWidget {
         return EnvironmentPage(
           scaffoldKey: scaffoldKey,
         );
+      // case 2:
+      //   // TODO: Implement history page
+      //   return const PageBase(
+      //     title: 'History',
+      //     scaffoldBody: SizedBox(),
+      //   );
       case 2:
-        return const PageBase(
-          title: 'About',
-          scaffoldBody: IntroPage(),
-        );
-      case 3:
         return const PageBase(
           title: 'Settings',
           scaffoldBody: SettingsPage(),

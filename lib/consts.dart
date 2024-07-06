@@ -124,6 +124,9 @@ const kP8CollectionPane = EdgeInsets.only(
 const kPt8 = EdgeInsets.only(
   top: 8,
 );
+const kPt20 = EdgeInsets.only(
+  top: 20,
+);
 const kPt28 = EdgeInsets.only(
   top: 28,
 );
