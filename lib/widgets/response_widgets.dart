@@ -324,7 +324,8 @@ class ResponseBody extends StatelessWidget {
   Widget build(BuildContext context) {
     final responseModel = selectedRequestModel?.httpResponseModel;
     if (responseModel == null) {
-      return const ErrorMessage(message: '$kNullResponseModelError $kUnexpectedRaiseIssue');
+      return const ErrorMessage(
+          message: '$kNullResponseModelError $kUnexpectedRaiseIssue');
     }
 
     var body = responseModel.body;
@@ -404,7 +405,8 @@ class _BodySuccessState extends State<BodySuccess> {
                   : Theme.of(context).colorScheme.primaryContainer)
               .withOpacity(kForegroundOpacity),
           Theme.of(context).colorScheme.surface),
-      border: Border.all(color: Theme.of(context).colorScheme.surfaceVariant),
+      border: Border.all(
+          color: Theme.of(context).colorScheme.surfaceContainerHighest),
       borderRadius: kBorderRadius8,
     );
 
@@ -423,12 +425,8 @@ class _BodySuccessState extends State<BodySuccess> {
                   (widget.options == kRawBodyViewOptions)
                       ? const SizedBox()
                       : SegmentedButton<ResponseBodyView>(
-                          style: const ButtonStyle(
-                            padding: MaterialStatePropertyAll(
-                              EdgeInsets.symmetric(
-                                horizontal: 8,
-                              ),
-                            ),
+                          style: SegmentedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
                           ),
                           selectedIcon: Icon(currentSeg.icon),
                           segments: widget.options
@@ -436,7 +434,10 @@ class _BodySuccessState extends State<BodySuccess> {
                                 (e) => ButtonSegment<ResponseBodyView>(
                                   value: e,
                                   label: Text(e.label),
-                                  icon: Icon(e.icon),
+                                  icon: constraints.maxWidth >
+                                          kMinWindowSize.width
+                                      ? Icon(e.icon)
+                                      : null,
                                 ),
                               )
                               .toList(),

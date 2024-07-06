@@ -1,54 +1,53 @@
 import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart';
-import 'menus.dart' show RequestCardMenu;
-import 'texts.dart' show MethodBox;
+import 'menus.dart' show ItemCardMenu;
 
-class SidebarRequestCard extends StatelessWidget {
-  const SidebarRequestCard({
+class SidebarEnvironmentCard extends StatelessWidget {
+  const SidebarEnvironmentCard({
     super.key,
     required this.id,
-    required this.method,
+    this.isGlobal = false,
+    this.isActive = false,
     this.name,
-    this.url,
     this.selectedId,
     this.editRequestId,
+    this.setActive,
     this.onTap,
     this.onDoubleTap,
     this.onSecondaryTap,
     this.onChangedNameEditor,
-    // this.controller,
     this.focusNode,
     this.onTapOutsideNameEditor,
     this.onMenuSelected,
   });
 
   final String id;
+  final bool isGlobal;
+  final bool isActive;
   final String? name;
-  final String? url;
-  final HTTPVerb method;
   final String? selectedId;
   final String? editRequestId;
+  final void Function(bool?)? setActive;
   final void Function()? onTap;
   final void Function()? onDoubleTap;
   final void Function()? onSecondaryTap;
   final Function(String)? onChangedNameEditor;
-  // final TextEditingController? controller;
   final FocusNode? focusNode;
   final Function()? onTapOutsideNameEditor;
-  final Function(RequestItemMenuOption)? onMenuSelected;
+  final Function(ItemMenuOption)? onMenuSelected;
 
   @override
   Widget build(BuildContext context) {
-    final Color color = Theme.of(context).colorScheme.surface;
+    final colorScheme = Theme.of(context).colorScheme;
+    final Color color =
+        isGlobal ? colorScheme.secondaryContainer : colorScheme.surface;
     final Color colorVariant =
-        Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5);
-    final Color surfaceTint = Theme.of(context).colorScheme.primary;
+        colorScheme.surfaceContainerHighest.withOpacity(0.5);
+    final Color surfaceTint = colorScheme.primary;
     bool isSelected = selectedId == id;
     bool inEditMode = editRequestId == id;
-    String nm = (name != null && name!.trim().isNotEmpty)
-        ? name!
-        : getRequestTitleFromUrl(url);
+    String nm = getEnvironmentTitle(name);
     return Tooltip(
       message: nm,
       triggerMode: TooltipTriggerMode.manual,
@@ -59,8 +58,8 @@ class SidebarRequestCard extends StatelessWidget {
         ),
         elevation: isSelected ? 1 : 0,
         surfaceTintColor: isSelected ? surfaceTint : null,
-        color: isSelected
-            ? Theme.of(context).colorScheme.brightness == Brightness.dark
+        color: isSelected && !isGlobal
+            ? colorScheme.brightness == Brightness.dark
                 ? colorVariant
                 : color
             : color,
@@ -70,7 +69,6 @@ class SidebarRequestCard extends StatelessWidget {
           hoverColor: colorVariant,
           focusColor: colorVariant.withOpacity(0.5),
           onTap: inEditMode ? null : onTap,
-          // onDoubleTap: inEditMode ? null : onDoubleTap,
           onSecondaryTap: onSecondaryTap,
           child: Padding(
             padding: EdgeInsets.only(
@@ -83,20 +81,16 @@ class SidebarRequestCard extends StatelessWidget {
               height: 20,
               child: Row(
                 children: [
-                  MethodBox(method: method),
                   kHSpacer4,
                   Expanded(
                     child: inEditMode
                         ? TextFormField(
                             key: ValueKey("$id-name"),
                             initialValue: name,
-                            // controller: controller,
                             focusNode: focusNode,
-                            //autofocus: true,
                             style: Theme.of(context).textTheme.bodyMedium,
                             onTapOutside: (_) {
                               onTapOutsideNameEditor?.call();
-                              //FocusScope.of(context).unfocus();
                             },
                             onFieldSubmitted: (value) {
                               onTapOutsideNameEditor?.call();
@@ -115,10 +109,10 @@ class SidebarRequestCard extends StatelessWidget {
                           ),
                   ),
                   Visibility(
-                    visible: isSelected && !inEditMode,
+                    visible: isSelected && !inEditMode && !isGlobal,
                     child: SizedBox(
                       width: 28,
-                      child: RequestCardMenu(
+                      child: ItemCardMenu(
                         onSelected: onMenuSelected,
                       ),
                     ),
@@ -129,26 +123,6 @@ class SidebarRequestCard extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-class RequestDetailsCard extends StatelessWidget {
-  const RequestDetailsCard({super.key, this.child});
-
-  final Widget? child;
-  @override
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(
-        side: BorderSide(
-          color: Theme.of(context).colorScheme.surfaceVariant,
-        ),
-        borderRadius: kBorderRadius12,
-      ),
-      elevation: 0,
-      child: child,
     );
   }
 }

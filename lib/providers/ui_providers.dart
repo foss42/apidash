@@ -6,6 +6,7 @@ final mobileScaffoldKeyStateProvider = StateProvider<GlobalKey<ScaffoldState>>(
 final leftDrawerStateProvider = StateProvider<bool>((ref) => false);
 final navRailIndexStateProvider = StateProvider<int>((ref) => 0);
 final selectedIdEditStateProvider = StateProvider<String?>((ref) => null);
+final environmentFieldEditStateProvider = StateProvider<String?>((ref) => null);
 final codePaneVisibleStateProvider = StateProvider<bool>((ref) => false);
 final saveDataStateProvider = StateProvider<bool>((ref) => false);
 final clearDataStateProvider = StateProvider<bool>((ref) => false);
@@ -29,4 +30,5 @@ final nameTextFieldFocusNodeProvider =
   return focusNode;
 });
 
-final searchQueryProvider = StateProvider<String>((ref) => '');
+final collectionSearchQueryProvider = StateProvider<String>((ref) => '');
+final environmentSearchQueryProvider = StateProvider<String>((ref) => '');

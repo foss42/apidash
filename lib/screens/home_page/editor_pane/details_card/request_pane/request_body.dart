@@ -17,59 +17,54 @@ class EditRequestBody extends ConsumerWidget {
     final contentType = ref.watch(selectedRequestModelProvider
         .select((value) => value?.httpRequestModel?.bodyContentType));
 
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.background,
-      ),
-      child: Column(
-        children: [
-          const SizedBox(
-            height: kHeaderHeight,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "Select Content Type:",
-                ),
-                DropdownButtonBodyContentType(),
-              ],
-            ),
+    return Column(
+      children: [
+        const SizedBox(
+          height: kHeaderHeight,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "Select Content Type:",
+              ),
+              DropdownButtonBodyContentType(),
+            ],
           ),
-          Expanded(
-            child: switch (contentType) {
-              ContentType.formdata =>
-                const Padding(padding: kPh4, child: FormDataWidget()),
-              // TODO: Fix JsonTextFieldEditor & plug it here
-              ContentType.json => Padding(
-                  padding: kPt5o10,
-                  child: TextFieldEditor(
-                    key: Key("$selectedId-json-body"),
-                    fieldKey: "$selectedId-json-body-editor",
-                    initialValue: requestModel?.httpRequestModel?.body,
-                    onChanged: (String value) {
-                      ref
-                          .read(collectionStateNotifierProvider.notifier)
-                          .update(selectedId, body: value);
-                    },
-                  ),
+        ),
+        Expanded(
+          child: switch (contentType) {
+            ContentType.formdata =>
+              const Padding(padding: kPh4, child: FormDataWidget()),
+            // TODO: Fix JsonTextFieldEditor & plug it here
+            ContentType.json => Padding(
+                padding: kPt5o10,
+                child: TextFieldEditor(
+                  key: Key("$selectedId-json-body"),
+                  fieldKey: "$selectedId-json-body-editor",
+                  initialValue: requestModel?.httpRequestModel?.body,
+                  onChanged: (String value) {
+                    ref
+                        .read(collectionStateNotifierProvider.notifier)
+                        .update(selectedId, body: value);
+                  },
                 ),
-              _ => Padding(
-                  padding: kPt5o10,
-                  child: TextFieldEditor(
-                    key: Key("$selectedId-body"),
-                    fieldKey: "$selectedId-body-editor",
-                    initialValue: requestModel?.httpRequestModel?.body,
-                    onChanged: (String value) {
-                      ref
-                          .read(collectionStateNotifierProvider.notifier)
-                          .update(selectedId, body: value);
-                    },
-                  ),
+              ),
+            _ => Padding(
+                padding: kPt5o10,
+                child: TextFieldEditor(
+                  key: Key("$selectedId-body"),
+                  fieldKey: "$selectedId-body-editor",
+                  initialValue: requestModel?.httpRequestModel?.body,
+                  onChanged: (String value) {
+                    ref
+                        .read(collectionStateNotifierProvider.notifier)
+                        .update(selectedId, body: value);
+                  },
                 ),
-            },
-          )
-        ],
-      ),
+              ),
+          },
+        )
+      ],
     );
   }
 }

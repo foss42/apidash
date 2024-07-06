@@ -4,7 +4,7 @@ import '../providers/providers.dart';
 import '../widgets/widgets.dart';
 import '../common/utils.dart';
 import '../consts.dart';
-import 'package:apidash/extensions/extensions.dart';
+import '../extensions/extensions.dart';
 
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
@@ -76,27 +76,36 @@ class SettingsPage extends ConsumerWidget {
                     ),
                     borderRadius: kBorderRadius8,
                   ),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                      borderRadius: kBorderRadius8,
-                      onChanged: (value) {
-                        ref
-                            .read(settingsProvider.notifier)
-                            .update(defaultUriScheme: value);
-                      },
-                      value: settings.defaultUriScheme,
-                      items: kSupportedUriSchemes
-                          .map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Padding(
-                            padding: kP10,
-                            child: Text(value),
-                          ),
-                        );
-                      }).toList(),
-                    ),
+                  child: URIPopupMenu(
+                    value: settings.defaultUriScheme,
+                    onChanged: (value) {
+                      ref
+                          .read(settingsProvider.notifier)
+                          .update(defaultUriScheme: value);
+                    },
+                    items: kSupportedUriSchemes,
                   ),
+                  // DropdownButtonHideUnderline(
+                  //   child: DropdownButton<String>(
+                  //     borderRadius: kBorderRadius8,
+                  //     onChanged: (value) {
+                  //       ref
+                  //           .read(settingsProvider.notifier)
+                  //           .update(defaultUriScheme: value);
+                  //     },
+                  //     value: settings.defaultUriScheme,
+                  //     items: kSupportedUriSchemes
+                  //         .map<DropdownMenuItem<String>>((String value) {
+                  //       return DropdownMenuItem<String>(
+                  //         value: value,
+                  //         child: Padding(
+                  //           padding: kP10,
+                  //           child: Text(value),
+                  //         ),
+                  //       );
+                  //     }).toList(),
+                  //   ),
+                  // ),
                 ),
               ),
               ListTile(
@@ -110,26 +119,35 @@ class SettingsPage extends ConsumerWidget {
                     ),
                     borderRadius: kBorderRadius8,
                   ),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<CodegenLanguage>(
-                      borderRadius: kBorderRadius8,
-                      value: settings.defaultCodeGenLang,
-                      onChanged: (value) {
-                        ref
-                            .read(settingsProvider.notifier)
-                            .update(defaultCodeGenLang: value);
-                      },
-                      items: CodegenLanguage.values.map((value) {
-                        return DropdownMenuItem<CodegenLanguage>(
-                          value: value,
-                          child: Padding(
-                            padding: kP10,
-                            child: Text(value.label),
-                          ),
-                        );
-                      }).toList(),
-                    ),
+                  child: CodegenPopupMenu(
+                    value: settings.defaultCodeGenLang,
+                    onChanged: (value) {
+                      ref
+                          .read(settingsProvider.notifier)
+                          .update(defaultCodeGenLang: value);
+                    },
+                    items: CodegenLanguage.values,
                   ),
+                  // DropdownButtonHideUnderline(
+                  //   child: DropdownButton<CodegenLanguage>(
+                  //     borderRadius: kBorderRadius8,
+                  //     value: settings.defaultCodeGenLang,
+                  //     onChanged: (value) {
+                  //       ref
+                  //           .read(settingsProvider.notifier)
+                  //           .update(defaultCodeGenLang: value);
+                  //     },
+                  //     items: CodegenLanguage.values.map((value) {
+                  //       return DropdownMenuItem<CodegenLanguage>(
+                  //         value: value,
+                  //         child: Padding(
+                  //           padding: kP10,
+                  //           child: Text(value.label),
+                  //         ),
+                  //       );
+                  //     }).toList(),
+                  //   ),
+                  // ),
                 ),
               ),
               CheckboxListTile(

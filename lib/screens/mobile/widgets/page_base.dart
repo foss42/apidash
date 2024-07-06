@@ -21,9 +21,9 @@ class PageBase extends ConsumerWidget {
     final isDarkMode =
         ref.watch(settingsProvider.select((value) => value.isDark));
     final scaffold = Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.background,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         primary: true,
         title: Text(title),
         centerTitle: true,

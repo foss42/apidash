@@ -93,7 +93,7 @@ class _TextFieldEditorState extends State<TextFieldEditor> {
           enabledBorder: OutlineInputBorder(
             borderRadius: kBorderRadius8,
             borderSide: BorderSide(
-              color: Theme.of(context).colorScheme.surfaceVariant,
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
             ),
           ),
           filled: true,

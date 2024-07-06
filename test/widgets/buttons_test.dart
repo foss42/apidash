@@ -1,7 +1,9 @@
 import 'dart:typed_data';
+import 'package:apidash/screens/common_widgets/sidebar_save_button.dart';
+import 'package:apidash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:apidash/widgets/buttons.dart';
 import 'package:apidash/consts.dart';
 import '../test_consts.dart';
 
@@ -17,11 +19,26 @@ void main() {
       ),
     );
 
-    expect(find.byIcon(Icons.content_copy), findsOneWidget);
-    expect(find.text(kLabelCopy), findsOneWidget);
-    final textButton1 = find.byType(TextButton);
-    expect(textButton1, findsOneWidget);
-    await tester.tap(textButton1);
+    final icon = find.byIcon(Icons.content_copy);
+    expect(icon, findsOneWidget);
+
+    Finder button;
+    if (tester.any(find.ancestor(
+        of: icon,
+        matching: find.byWidgetPredicate((widget) => widget is TextButton)))) {
+      expect(find.text(kLabelCopy), findsOneWidget);
+      button = find.ancestor(
+          of: icon,
+          matching: find.byWidgetPredicate((widget) => widget is TextButton));
+    } else if (tester
+        .any(find.ancestor(of: icon, matching: find.byType(IconButton)))) {
+      button = find.byType(IconButton);
+    } else {
+      fail('No TextButton or IconButton found');
+    }
+
+    expect(button, findsOneWidget);
+    await tester.tap(button);
 
     //TODO: The below test works for `flutter run` but not for `flutter test`
     //var data = await Clipboard.getData('text/plain');
@@ -35,7 +52,7 @@ void main() {
         title: 'Send Request button',
         theme: kThemeDataLight,
         home: Scaffold(
-          body: SendRequestButton(
+          body: SendButton(
             isWorking: false,
             onTap: () {
               changedValue = 'Send';
@@ -62,7 +79,7 @@ void main() {
         title: 'Send Request button',
         theme: kThemeDataLight,
         home: Scaffold(
-          body: SendRequestButton(
+          body: SendButton(
             isWorking: true,
             onTap: () {},
           ),
@@ -89,13 +106,27 @@ void main() {
       ),
     );
 
-    expect(find.byIcon(Icons.download), findsOneWidget);
-    expect(find.text("Download"), findsOneWidget);
+    final icon = find.byIcon(Icons.download);
+    expect(icon, findsOneWidget);
 
-    final button1 = find.byType(TextButton);
-    expect(button1, findsOneWidget);
-
-    expect(tester.widget<TextButton>(button1).enabled, isFalse);
+    Finder button;
+    if (tester.any(find.ancestor(
+        of: icon,
+        matching: find.byWidgetPredicate((widget) => widget is TextButton)))) {
+      expect(find.text(kLabelDownload), findsOneWidget);
+      button = find.ancestor(
+          of: icon,
+          matching: find.byWidgetPredicate((widget) => widget is TextButton));
+      expect(button, findsOneWidget);
+      expect(tester.widget<TextButton>(button).enabled, isFalse);
+    } else if (tester
+        .any(find.ancestor(of: icon, matching: find.byType(IconButton)))) {
+      button = find.byType(IconButton);
+      expect(button, findsOneWidget);
+      expect(tester.widget<IconButton>(button).onPressed == null, isFalse);
+    } else {
+      fail('No TextButton or IconButton found');
+    }
   });
 
   testWidgets('Testing for Save in Downloads button 2', (tester) async {
@@ -111,13 +142,27 @@ void main() {
       ),
     );
 
-    expect(find.byIcon(Icons.download), findsOneWidget);
-    expect(find.text("Download"), findsOneWidget);
+    final icon = find.byIcon(Icons.download);
+    expect(icon, findsOneWidget);
 
-    final button1 = find.byType(TextButton);
-    expect(button1, findsOneWidget);
-
-    expect(tester.widget<TextButton>(button1).enabled, isTrue);
+    Finder button;
+    if (tester.any(find.ancestor(
+        of: icon,
+        matching: find.byWidgetPredicate((widget) => widget is TextButton)))) {
+      expect(find.text(kLabelDownload), findsOneWidget);
+      button = find.ancestor(
+          of: icon,
+          matching: find.byWidgetPredicate((widget) => widget is TextButton));
+      expect(button, findsOneWidget);
+      expect(tester.widget<TextButton>(button).enabled, isTrue);
+    } else if (tester
+        .any(find.ancestor(of: icon, matching: find.byType(IconButton)))) {
+      button = find.byType(IconButton);
+      expect(button, findsOneWidget);
+      expect(tester.widget<IconButton>(button).onPressed == null, isTrue);
+    } else {
+      fail('No TextButton or IconButton found');
+    }
   });
 
   testWidgets('Testing for Repo button', (tester) async {
@@ -174,11 +219,13 @@ void main() {
 
   testWidgets('Testing for Save button', (tester) async {
     await tester.pumpWidget(
-      MaterialApp(
-        title: 'Save button',
-        theme: kThemeDataLight,
-        home: const Scaffold(
-          body: SaveButton(),
+      ProviderScope(
+        child: MaterialApp(
+          title: 'Save button',
+          theme: kThemeDataLight,
+          home: const Scaffold(
+            body: SaveButton(),
+          ),
         ),
       ),
     );

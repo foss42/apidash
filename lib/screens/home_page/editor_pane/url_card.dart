@@ -4,6 +4,7 @@ import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/extensions/extensions.dart';
+import '../../common_widgets/common_widgets.dart';
 
 class EditorPaneRequestURLCard extends StatelessWidget {
   const EditorPaneRequestURLCard({super.key});
@@ -11,10 +12,12 @@ class EditorPaneRequestURLCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: kColorTransparent,
+      surfaceTintColor: kColorTransparent,
       elevation: 0,
       shape: RoundedRectangleBorder(
         side: BorderSide(
-          color: Theme.of(context).colorScheme.surfaceVariant,
+          color: Theme.of(context).colorScheme.surfaceContainerHighest,
         ),
         borderRadius: kBorderRadius12,
       ),
@@ -31,7 +34,6 @@ class EditorPaneRequestURLCard extends StatelessWidget {
                   Expanded(
                     child: URLTextField(),
                   ),
-                  SizedBox.shrink(),
                 ],
               )
             : const Row(
@@ -44,7 +46,7 @@ class EditorPaneRequestURLCard extends StatelessWidget {
                   kHSpacer20,
                   SizedBox(
                     height: 36,
-                    child: SendButton(),
+                    child: SendRequestButton(),
                   )
                 ],
               ),
@@ -82,7 +84,7 @@ class URLTextField extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedId = ref.watch(selectedIdStateProvider);
-    return URLField(
+    return EnvURLField(
       selectedId: selectedId!,
       initialValue: ref
           .read(collectionStateNotifierProvider.notifier)
@@ -103,9 +105,9 @@ class URLTextField extends ConsumerWidget {
   }
 }
 
-class SendButton extends ConsumerWidget {
+class SendRequestButton extends ConsumerWidget {
   final Function()? onTap;
-  const SendButton({
+  const SendRequestButton({
     super.key,
     this.onTap,
   });
@@ -116,7 +118,7 @@ class SendButton extends ConsumerWidget {
     final isWorking = ref.watch(
         selectedRequestModelProvider.select((value) => value?.isWorking));
 
-    return SendRequestButton(
+    return SendButton(
       isWorking: isWorking ?? false,
       onTap: () {
         onTap?.call();

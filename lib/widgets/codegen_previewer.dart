@@ -121,7 +121,8 @@ class ViewCodePane extends StatelessWidget {
                   : Theme.of(context).colorScheme.primaryContainer)
               .withOpacity(kForegroundOpacity),
           Theme.of(context).colorScheme.surface),
-      border: Border.all(color: Theme.of(context).colorScheme.surfaceVariant),
+      border: Border.all(
+          color: Theme.of(context).colorScheme.surfaceContainerHighest),
       borderRadius: kBorderRadius8,
     );
 
