@@ -345,6 +345,10 @@ enum CodegenLanguage {
   final String ext;
 }
 
+enum FileType {
+  curl,
+}
+
 const JsonEncoder kEncoder = JsonEncoder.withIndent('  ');
 const LineSplitter kSplitter = LineSplitter();
 

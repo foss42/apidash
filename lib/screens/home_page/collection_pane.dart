@@ -1,6 +1,5 @@
-import 'package:apidash/utils/convert_utils.dart';
+import 'package:apidash/fileimport/fileimport.dart';
 import 'package:apidash/widgets/drag_and_drop_area.dart';
-import 'package:curl_converter/curl_converter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
@@ -9,6 +8,8 @@ import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
 import '../common_widgets/common_widgets.dart';
+
+final fileImport = FileImport();
 
 class CollectionPane extends ConsumerWidget {
   const CollectionPane({
@@ -42,53 +43,33 @@ class CollectionPane extends ConsumerWidget {
                   contentPadding: const EdgeInsets.all(12),
                   content: DragAndDropArea(
                     onFileDropped: (file) {
+                      ref.read(collectionStateNotifierProvider.notifier).add();
+                      final newId = ref.watch(selectedIdStateProvider)!;
                       final i = file.path.lastIndexOf('.') + 1;
                       final String ext = file.path.substring(i);
-                      switch (ext) {
-                        case 'curl':
-                          file.readAsString().then((value) {
-                            if (value.endsWith('\n')) {
-                              value = value.substring(0, value.length - 1);
-                            }
-                            try {
-                              final curl = Curl.parse(value);
-                              ref
-                                  .read(
-                                      collectionStateNotifierProvider.notifier)
-                                  .add();
-                              final selectedId =
-                                  ref.read(selectedIdStateProvider)!;
-                              ref
-                                  .read(
-                                      collectionStateNotifierProvider.notifier)
-                                  .update(
-                                    selectedId,
-                                    method: httpVerbFromString(curl.method),
-                                    url: curl.uri.toString().substring(0,
-                                        curl.uri.toString().lastIndexOf('?')),
-                                    headers: curl.headers?.entries
-                                        .map((entry) => NameValueModel(
-                                              name: entry.key,
-                                              value: entry.value,
-                                            ))
-                                        .toList(),
-                                    params: curl.uri.queryParameters.entries
-                                        .map((entry) => NameValueModel(
-                                              name: entry.key,
-                                              value: entry.value,
-                                            ))
-                                        .toList(),
-                                    body: curl.data,
-                                  );
-                            } catch (e) {
-                              throw Error();
-                            }
-                            Navigator.of(context).pop();
-                          });
-                          break;
-                        default:
-                          throw Error();
-                      }
+                      final fileType = FileType.values.byName(ext);
+                      file.readAsString().then((contents) {
+                        fileImport
+                            .getRequestModel(fileType, contents, newId)
+                            .then((importedRequestModel) {
+                          if (importedRequestModel == null) {
+                            // could not parse the file
+                            return;
+                          }
+                          final rM = importedRequestModel.httpRequestModel!;
+                          ref
+                              .read(collectionStateNotifierProvider.notifier)
+                              .update(
+                                newId,
+                                method: rM.method,
+                                url: rM.url,
+                                headers: rM.headers,
+                                params: rM.params,
+                                body: rM.body,
+                              );
+                        });
+                      });
+                      Navigator.of(context).pop();
                     },
                   ),
                 ),

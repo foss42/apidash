@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 import 'dart:convert';
 import 'package:collection/collection.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/models.dart';
 import '../consts.dart';
 import 'package:http/http.dart' as http;
@@ -179,23 +178,4 @@ List<NameValueModel>? getEnabledRows(
   List<NameValueModel> finalRows =
       rows.where((element) => isRowEnabledList[rows.indexOf(element)]).toList();
   return finalRows == [] ? null : finalRows;
-}
-
-HTTPVerb? httpVerbFromString(String value) {
-  switch (value) {
-      case "GET":
-        return HTTPVerb.get;
-      case "POST":
-        return HTTPVerb.post;
-      case "PUT":
-        return HTTPVerb.put;
-      case "DELETE":
-        return HTTPVerb.delete;
-      case "HEAD":
-        return HTTPVerb.head;
-      case "PATCH":
-        return HTTPVerb.patch;
-      default:
-        return null;
-    }
 }
