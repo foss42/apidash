@@ -19,8 +19,10 @@ class DashboardSplitView extends StatefulWidget {
 class DashboardSplitViewState extends State<DashboardSplitView> {
   final MultiSplitViewController _controller = MultiSplitViewController(
     areas: [
-      Area(id: "sidebar", size: 250, min: 200),
-      Area(id: "main", min: 0.7),
+      Area(id: "sidebar", min: 220, size: 250, max: 300), // Absolute values
+      Area(id: "main", min: 600),
+      // Area(id: "sidebar", flex: 0.3, min: 0.25), // Flex values
+      // Area(id: "main", flex: 0.7, min: 0.7),
     ],
   );
 
@@ -44,6 +46,8 @@ class DashboardSplitViewState extends State<DashboardSplitView> {
       ),
       child: MultiSplitView(
         controller: _controller,
+        sizeOverflowPolicy: SizeOverflowPolicy.shrinkFirst,
+        sizeUnderflowPolicy: SizeUnderflowPolicy.stretchLast,
         builder: (context, area) {
           return switch (area.id) {
             "sidebar" => widget.sidebarWidget,
