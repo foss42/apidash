@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:multi_split_view/multi_split_view.dart';
 import 'package:apidash/consts.dart';
 
-class EqualSplitView extends StatefulWidget {
+class EqualSplitView extends StatelessWidget {
   const EqualSplitView({
     super.key,
     required this.leftWidget,
@@ -12,17 +12,17 @@ class EqualSplitView extends StatefulWidget {
   final Widget leftWidget;
   final Widget rightWidget;
 
-  @override
-  State<EqualSplitView> createState() => _EqualSplitViewState();
-}
-
-class _EqualSplitViewState extends State<EqualSplitView> {
-  final MultiSplitViewController _controller = MultiSplitViewController(
-    areas: [
-      Area(id: "left", min: 0.8),
-      Area(id: "right", min: 0.95),
-    ],
-  );
+  getMinFractionWidth(double width) {
+    if (width < 900) {
+      return 0.9;
+    } else if (width < 1000) {
+      return 0.7;
+    } else if (width < 1200) {
+      return 0.5;
+    } else {
+      return 0.4;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,18 +39,18 @@ class _EqualSplitViewState extends State<EqualSplitView> {
       ),
       child: LayoutBuilder(
         builder: (context, constraints) {
+          final minWidth = getMinFractionWidth(constraints.maxWidth);
           return MultiSplitView(
-            controller: _controller,
-            // MultiSplitViewController(
-            //   areas: [
-            //     Area(id: "left", size: constraints.maxWidth / 2, min: 240),
-            //     Area(id: "right", size: constraints.maxWidth / 2, min: 260),
-            //   ],
-            // ),
+            controller: MultiSplitViewController(
+              areas: [
+                Area(id: "left", flex: 1, min: minWidth),
+                Area(id: "right", flex: 1, min: minWidth),
+              ],
+            ),
             builder: (context, area) {
               return switch (area.id) {
-                "left" => widget.leftWidget,
-                "right" => widget.rightWidget,
+                "left" => leftWidget,
+                "right" => rightWidget,
                 _ => Container(),
               };
             },
@@ -59,10 +59,4 @@ class _EqualSplitViewState extends State<EqualSplitView> {
       ),
     );
   }
-
-//   @override
-//   void dispose() {
-//     _controller.dispose();
-//     super.dispose();
-//   }
 }
