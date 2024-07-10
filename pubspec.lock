@@ -861,10 +861,10 @@ packages:
     dependency: "direct main"
     description:
       name: multi_split_view
-      sha256: "2ef6a7ff9d0957bf559075d2703507ea898c8b70e37ff5ac3636298370513b7a"
+      sha256: "1ee1974d9aae6bdc08e2abdead6066c914cefe4b0c5999cac1a2e4722fcf33ba"
       url: "https://pub.dev"
     source: hosted
-    version: "3.2.1"
+    version: "3.2.2"
   nested:
     dependency: transitive
     description:
