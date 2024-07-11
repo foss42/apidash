@@ -33,6 +33,7 @@ class EnvURLField extends StatelessWidget {
       ),
       onChanged: onChanged,
       onFieldSubmitted: onFieldSubmitted,
+      optionsWidthFactor: 1,
     );
   }
 }

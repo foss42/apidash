@@ -13,6 +13,7 @@ class EnvironmentTriggerField extends StatefulWidget {
     this.onFieldSubmitted,
     this.style,
     this.decoration,
+    this.optionsWidthFactor,
   });
 
   final String keyId;
@@ -21,6 +22,7 @@ class EnvironmentTriggerField extends StatefulWidget {
   final void Function(String)? onFieldSubmitted;
   final TextStyle? style;
   final InputDecoration? decoration;
+  final double? optionsWidthFactor;
 
   @override
   State<EnvironmentTriggerField> createState() =>
@@ -62,7 +64,7 @@ class _EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
       key: Key(widget.keyId),
       textEditingController: controller,
       focusNode: focusNode,
-      optionsWidthFactor: null,
+      optionsWidthFactor: widget.optionsWidthFactor,
       autocompleteTriggers: [
         AutocompleteTrigger(
             trigger: '{',
