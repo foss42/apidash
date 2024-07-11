@@ -1,3 +1,4 @@
+export 'button_navbar.dart';
 export 'editor_title.dart';
 export 'editor_title_actions.dart';
 export 'envfield_url.dart';

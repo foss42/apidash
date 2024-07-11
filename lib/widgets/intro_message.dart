@@ -4,7 +4,6 @@ import 'package:package_info_plus/package_info_plus.dart';
 import '../consts.dart';
 import 'markdown.dart';
 import 'error_message.dart';
-import 'package:apidash/extensions/extensions.dart';
 
 class IntroMessage extends StatelessWidget {
   const IntroMessage({
@@ -38,7 +37,7 @@ class IntroMessage extends StatelessWidget {
 
           return CustomMarkdown(
             data: text,
-            padding: !context.isMediumWindow ? kPh60 : kPh20,
+            padding: EdgeInsets.zero,
           );
         }
         return const Center(child: CircularProgressIndicator());
