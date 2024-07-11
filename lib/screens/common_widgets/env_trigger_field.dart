@@ -62,6 +62,7 @@ class _EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
       key: Key(widget.keyId),
       textEditingController: controller,
       focusNode: focusNode,
+      optionsWidthFactor: null,
       autocompleteTriggers: [
         AutocompleteTrigger(
             trigger: '{',
