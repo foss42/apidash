@@ -10,7 +10,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  multi_split_view: ^3.2.1
+  multi_split_view: ^3.2.2
   url_launcher: ^6.2.5
   flutter_riverpod: ^2.5.1
   riverpod: ^2.5.1
