@@ -258,7 +258,7 @@ packages:
     source: hosted
     version: "1.0.1"
   extended_text_field:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: extended_text_field
       sha256: "954c7eea1e82728a742f7ddf09b9a51cef087d4f52b716ba88cb3eb78ccd7c6e"
@@ -817,14 +817,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.8.0"
-  mention_tag_text_field:
-    dependency: "direct main"
-    description:
-      name: mention_tag_text_field
-      sha256: "9768a0a6fe5771cb8eb98f94b26b4c595ca2487b0eb28b9d5624f8d71a2ac17a"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.5"
   meta:
     dependency: transitive
     description:
@@ -865,6 +857,15 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.2.1"
+  multi_trigger_autocomplete:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: master
+      resolved-ref: "7ca8778e47f80c913cee33a3a01447039acc6936"
+      url: "https://github.com/DenserMeerkat/multi_trigger_autocomplete.git"
+    source: git
+    version: "1.0.1"
   nested:
     dependency: transitive
     description:

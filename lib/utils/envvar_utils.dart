@@ -1,8 +1,6 @@
 import 'package:collection/collection.dart';
-import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/models/models.dart';
-import '../screens/common_widgets/common_widgets.dart';
 
 String getEnvironmentTitle(String? name) {
   if (name == null || name.trim() == "") {
@@ -92,92 +90,16 @@ HttpRequestModel substituteHttpRequestModel(
   return newRequestModel;
 }
 
-List<(String, Object?, Widget?)> getMentions(
-    String? text,
-    Map<String, List<EnvironmentVariableModel>> envMap,
-    String? activeEnvironmentId) {
-  if (text == null) {
-    return [];
-  }
-  final mentions = <(String, Object?, Widget?)>[];
-
-  final matches = kEnvVarRegEx.allMatches(text);
-
-  for (final match in matches) {
-    final variableName = match.group(1);
-    EnvironmentVariableModel? variable;
-    String? environmentId;
-
-    for (final entry in envMap.entries) {
-      variable = entry.value.firstWhereOrNull((v) => v.key == variableName);
-      if (variable != null) {
-        environmentId = entry.key;
-        break;
-      }
-    }
-
-    final suggestion = EnvironmentVariableSuggestion(
-        environmentId: variable == null ? "unknown" : environmentId!,
-        variable: variable ??
-            kEnvironmentVariableEmptyModel.copyWith(
-              key: variableName ?? "",
-            ),
-        isUnknown: variable == null);
-    mentions.add((
-      '{{${variable?.key ?? variableName}}}',
-      suggestion,
-      EnvVarSpan(suggestion: suggestion)
-    ));
-  }
-
-  return mentions;
-}
-
-EnvironmentVariableSuggestion getCurrentVariableStatus(
-    EnvironmentVariableSuggestion currentSuggestion,
-    Map<String, List<EnvironmentVariableModel>> envMap,
-    String? activeEnvironmentId) {
-  if (activeEnvironmentId != null) {
-    final variable = envMap[activeEnvironmentId]!
-        .firstWhereOrNull((v) => v.key == currentSuggestion.variable.key);
-    if (variable != null) {
-      return currentSuggestion.copyWith(
-        environmentId: activeEnvironmentId,
-        variable: variable,
-        isUnknown: false,
-      );
-    }
-  }
-
-  final globalVariable = envMap[kGlobalEnvironmentId]
-      ?.firstWhereOrNull((v) => v.key == currentSuggestion.variable.key);
-  if (globalVariable != null) {
-    return currentSuggestion.copyWith(
-      environmentId: kGlobalEnvironmentId,
-      variable: globalVariable,
-      isUnknown: false,
-    );
-  }
-
-  return currentSuggestion.copyWith(
-      isUnknown: true,
-      variable: currentSuggestion.variable.copyWith(value: "unknown"));
-}
-
-List<EnvironmentVariableSuggestion>? getEnvironmentVariableSuggestions(
+List<EnvironmentVariableSuggestion>? getEnvironmentTriggerSuggestions(
     String? query,
     Map<String, List<EnvironmentVariableModel>> envMap,
     String? activeEnvironmentId) {
-  if (query == null || kEnvVarRegEx.hasMatch(query)) return null;
-
-  query = query.substring(1);
-
   final suggestions = <EnvironmentVariableSuggestion>[];
   final Set<String> addedVariableKeys = {};
 
   if (activeEnvironmentId != null && envMap[activeEnvironmentId] != null) {
     for (final variable in envMap[activeEnvironmentId]!) {
-      if ((query.isEmpty || variable.key.contains(query)) &&
+      if ((query!.isEmpty || variable.key.contains(query)) &&
           !addedVariableKeys.contains(variable.key)) {
         suggestions.add(EnvironmentVariableSuggestion(
             environmentId: activeEnvironmentId, variable: variable));
@@ -196,4 +118,37 @@ List<EnvironmentVariableSuggestion>? getEnvironmentVariableSuggestions(
   });
 
   return suggestions;
+}
+
+EnvironmentVariableSuggestion getVariableStatus(
+    String key,
+    Map<String, List<EnvironmentVariableModel>> envMap,
+    String? activeEnvironmentId) {
+  if (activeEnvironmentId != null) {
+    final variable =
+        envMap[activeEnvironmentId]!.firstWhereOrNull((v) => v.key == key);
+    if (variable != null) {
+      return EnvironmentVariableSuggestion(
+        environmentId: activeEnvironmentId,
+        variable: variable,
+        isUnknown: false,
+      );
+    }
+  }
+
+  final globalVariable =
+      envMap[kGlobalEnvironmentId]?.firstWhereOrNull((v) => v.key == key);
+  if (globalVariable != null) {
+    return EnvironmentVariableSuggestion(
+      environmentId: kGlobalEnvironmentId,
+      variable: globalVariable,
+      isUnknown: false,
+    );
+  }
+
+  return EnvironmentVariableSuggestion(
+      isUnknown: true,
+      environmentId: "unknown",
+      variable: EnvironmentVariableModel(
+          key: key, type: EnvironmentVariableType.variable, value: "unknown"));
 }
