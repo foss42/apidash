@@ -448,7 +448,8 @@ void main() {
         of: find.byType(EnvURLField),
         matching: find.byType(ExtendedTextField),
       );
-      await tester.enterText(field, kTestUrl);
+      await tester.tap(field);
+      tester.testTextInput.enterText(kTestUrl);
       await tester.pump();
 
       // Tap on the "Send" button
@@ -495,7 +496,8 @@ void main() {
         of: find.byType(EnvURLField),
         matching: find.byType(ExtendedTextField),
       );
-      await tester.enterText(field, kTestUrl);
+      await tester.tap(field);
+      tester.testTextInput.enterText(kTestUrl);
       await tester.pump();
 
       // Tap on the "Send" button
@@ -546,7 +548,8 @@ void main() {
         of: find.byType(EnvURLField),
         matching: find.byType(ExtendedTextField),
       );
-      await tester.enterText(field, kTestUrl);
+      await tester.tap(field);
+      tester.testTextInput.enterText(kTestUrl);
       await tester.pump();
 
       // Tap on the "Send" button
@@ -606,7 +609,8 @@ void main() {
         of: find.byType(EnvURLField),
         matching: find.byType(ExtendedTextField),
       );
-      await tester.enterText(field, kTestUrl);
+      await tester.tap(field);
+      tester.testTextInput.enterText(kTestUrl);
       await tester.pump();
 
       // Tap on the "Send" button
