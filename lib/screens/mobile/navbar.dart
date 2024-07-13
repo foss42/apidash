@@ -57,6 +57,15 @@ class BottomNavBar extends ConsumerWidget {
                     label: 'History',
                   ),
                 ),
+                // Expanded(
+                //   child: NavbarButton(
+                //     railIdx: railIdx,
+                //     buttonIdx: 2,
+                //     selectedIcon: Icons.history,
+                //     icon: Icons.history_outlined,
+                //     label: 'History',
+                //   ),
+                // ),
                 Expanded(
                   child: NavbarButton(
                     railIdx: railIdx,

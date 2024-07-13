@@ -72,6 +72,12 @@ class PageBranch extends ConsumerWidget {
         return EnvironmentPage(
           scaffoldKey: scaffoldKey,
         );
+      // case 2:
+      //   // TODO: Implement history page
+      //   return const PageBase(
+      //     title: 'History',
+      //     scaffoldBody: SizedBox(),
+      //   );
       case 2:
         // TODO: Implement history page
         return const PageBase(
