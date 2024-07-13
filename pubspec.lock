@@ -862,8 +862,8 @@ packages:
     description:
       path: "."
       ref: master
-      resolved-ref: "7ca8778e47f80c913cee33a3a01447039acc6936"
-      url: "https://github.com/DenserMeerkat/multi_trigger_autocomplete.git"
+      resolved-ref: cb22bab30dd14452d184bc6ad3bb41b612b22c70
+      url: "https://github.com/foss42/multi_trigger_autocomplete.git"
     source: git
     version: "1.0.1"
   nested:
