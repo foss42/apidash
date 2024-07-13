@@ -14,12 +14,12 @@ import 'package:apidash/screens/home_page/home_page.dart';
 import 'package:apidash/screens/settings_page.dart';
 import 'package:apidash/services/hive_services.dart';
 import 'package:apidash/widgets/widgets.dart';
+import 'package:extended_text_field/extended_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_portal/flutter_portal.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mention_tag_text_field/mention_tag_text_field.dart';
 
 import '../extensions/widget_tester_extensions.dart';
 import '../test_consts.dart';
@@ -409,9 +409,10 @@ void main() {
       // Add some data in URLTextField
       Finder field = find.descendant(
         of: find.byType(EnvURLField),
-        matching: find.byType(MentionTagTextField),
+        matching: find.byType(ExtendedTextField),
       );
-      await tester.enterText(field, kTestUrl);
+      await tester.tap(field);
+      tester.testTextInput.enterText(kTestUrl);
       await tester.pump();
 
       // Tap on the "Send" button
@@ -456,9 +457,10 @@ void main() {
       // Add some data in URLTextField
       Finder field = find.descendant(
         of: find.byType(EnvURLField),
-        matching: find.byType(MentionTagTextField),
+        matching: find.byType(ExtendedTextField),
       );
-      await tester.enterText(field, kTestUrl);
+      await tester.tap(field);
+      tester.testTextInput.enterText(kTestUrl);
       await tester.pump();
 
       // Tap on the "Send" button
@@ -507,9 +509,10 @@ void main() {
       // Add some data in URLTextField
       Finder field = find.descendant(
         of: find.byType(EnvURLField),
-        matching: find.byType(MentionTagTextField),
+        matching: find.byType(ExtendedTextField),
       );
-      await tester.enterText(field, kTestUrl);
+      await tester.tap(field);
+      tester.testTextInput.enterText(kTestUrl);
       await tester.pump();
 
       // Tap on the "Send" button
@@ -567,9 +570,10 @@ void main() {
       // Add some data in URLTextField
       Finder field = find.descendant(
         of: find.byType(EnvURLField),
-        matching: find.byType(MentionTagTextField),
+        matching: find.byType(ExtendedTextField),
       );
-      await tester.enterText(field, kTestUrl);
+      await tester.tap(field);
+      tester.testTextInput.enterText(kTestUrl);
       await tester.pump();
 
       // Tap on the "Send" button
