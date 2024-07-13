@@ -47,7 +47,7 @@ class CollectionPane extends ConsumerWidget {
                       final newId = ref.watch(selectedIdStateProvider)!;
                       final i = file.path.lastIndexOf('.') + 1;
                       final String ext = file.path.substring(i);
-                      final fileType = FileType.values.byName(ext);
+                      final fileType = ImportFormat.values.byName(ext);
                       file.readAsString().then((contents) {
                         fileImport
                             .getRequestModel(fileType, contents, newId)

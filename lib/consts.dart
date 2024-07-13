@@ -348,8 +348,11 @@ enum CodegenLanguage {
   final String ext;
 }
 
-enum FileType {
-  curl,
+enum ImportFormat {
+  curl("cURL");
+
+  const ImportFormat(this.label);
+  final String label;
 }
 
 const JsonEncoder kEncoder = JsonEncoder.withIndent('  ');
