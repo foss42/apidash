@@ -1,3 +1,4 @@
+import 'package:apidash/extensions/load_hive_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -8,8 +9,8 @@ const String kKeyEnvironmentBoxIds = "environmentIds";
 
 const String kSettingsBox = "apidash-settings";
 
-Future<void> openBoxes() async {
-  await Hive.initFlutter();
+Future<void> openBoxes(String hiveSaveFolder) async {
+  await Hive.initHiveWithRootFolder(hiveSaveFolder);
   await Hive.openBox(kDataBox);
   await Hive.openBox(kSettingsBox);
   await Hive.openBox(kEnvironmentBox);
