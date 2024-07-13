@@ -3,7 +3,6 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_portal/flutter_portal.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:apidash/consts.dart';
-import 'package:apidash/models/models.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/utils/utils.dart';
 import 'envvar_popover.dart';
@@ -11,10 +10,10 @@ import 'envvar_popover.dart';
 class EnvVarSpan extends HookConsumerWidget {
   const EnvVarSpan({
     super.key,
-    required this.suggestion,
+    required this.variableKey,
   });
 
-  final EnvironmentVariableSuggestion suggestion;
+  final String variableKey;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -22,20 +21,19 @@ class EnvVarSpan extends HookConsumerWidget {
     final envMap = ref.watch(availableEnvironmentVariablesStateProvider);
     final activeEnvironmentId = ref.watch(activeEnvironmentIdStateProvider);
 
-    final currentSuggestion =
-        getCurrentVariableStatus(suggestion, envMap, activeEnvironmentId);
+    final suggestion =
+        getVariableStatus(variableKey, envMap, activeEnvironmentId);
 
     final showPopover = useState(false);
 
-    final isMissingVariable = currentSuggestion.isUnknown;
+    final isMissingVariable = suggestion.isUnknown;
     final String scope = isMissingVariable
         ? 'unknown'
-        : getEnvironmentTitle(
-            environments?[currentSuggestion.environmentId]?.name);
+        : getEnvironmentTitle(environments?[suggestion.environmentId]?.name);
     final colorScheme = Theme.of(context).colorScheme;
 
     var text = Text(
-      '{{${currentSuggestion.variable.key}}}',
+      '{{${suggestion.variable.key}}}',
       style: TextStyle(
           color: isMissingVariable ? colorScheme.error : colorScheme.primary,
           fontWeight: FontWeight.w600),
@@ -50,7 +48,7 @@ class EnvVarSpan extends HookConsumerWidget {
         onExit: (_) {
           showPopover.value = false;
         },
-        child: EnvVarPopover(suggestion: currentSuggestion, scope: scope),
+        child: EnvVarPopover(suggestion: suggestion, scope: scope),
       ),
       anchor: const Aligned(
         follower: Alignment.bottomCenter,

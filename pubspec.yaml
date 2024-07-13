@@ -63,7 +63,11 @@ dependencies:
   hooks_riverpod: ^2.5.1
   flutter_hooks: ^0.20.5
   flutter_portal: ^1.1.4
-  mention_tag_text_field: ^0.0.5
+  multi_trigger_autocomplete:
+    git:
+      url: https://github.com/foss42/multi_trigger_autocomplete.git
+      ref: master
+  extended_text_field: ^15.0.0
   desktop_drop: ^0.4.4
   curl_converter: ^1.0.4
 

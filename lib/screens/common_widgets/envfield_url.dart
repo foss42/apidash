@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
-import 'environment_field.dart';
+import 'env_trigger_field.dart';
 
 class EnvURLField extends StatelessWidget {
   const EnvURLField({
@@ -18,7 +18,7 @@ class EnvURLField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return EnvironmentField(
+    return EnvironmentTriggerField(
       keyId: "url-$selectedId",
       initialValue: initialValue,
       style: kCodeStyle,
@@ -33,6 +33,7 @@ class EnvURLField extends StatelessWidget {
       ),
       onChanged: onChanged,
       onFieldSubmitted: onFieldSubmitted,
+      optionsWidthFactor: 1,
     );
   }
 }
