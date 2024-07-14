@@ -2,13 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/extensions/extensions.dart';
+import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
 import 'sidebar_save_button.dart';
 
 class SidebarHeader extends ConsumerWidget {
-  const SidebarHeader({super.key, this.onAddNew, this.onImport});
-  final Function()? onAddNew;
-  final Function()? onImport;
+  const SidebarHeader({
+    super.key,
+    this.onAddNew,
+    this.onImport,
+  });
+  final VoidCallback? onAddNew;
+  final VoidCallback? onImport;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -28,13 +33,14 @@ class SidebarHeader extends ConsumerWidget {
               style: kTextStyleButton,
             ),
           ),
-          kHSpacer12,
-          ElevatedButton(
-            onPressed: onImport,
-            style: kButtonSidebarStyle,
-            child: const Text(
-              kLabelImport,
-              style: kTextStyleButton,
+          kHSpacer4,
+          SizedBox(
+            width: 24,
+            child: SidebarTopMenu(
+              tooltip: kLabelMoreOptions,
+              onSelected: (option) => switch (option) {
+                SidebarMenuOption.import => onImport?.call(),
+              },
             ),
           ),
           context.width <= kMinWindowSize.width

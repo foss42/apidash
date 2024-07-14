@@ -302,6 +302,13 @@ enum ItemMenuOption {
   final String label;
 }
 
+enum SidebarMenuOption {
+  import("Import");
+
+  const SidebarMenuOption(this.label);
+  final String label;
+}
+
 enum HTTPVerb { get, head, post, put, patch, delete }
 
 enum FormDataType { text, file }
@@ -685,7 +692,7 @@ const kRaiseIssue =
 
 const kHintTextUrlCard = "Enter API endpoint like https://$kDefaultUri/";
 const kLabelPlusNew = "+ New";
-const kLabelImport = "Import";
+const kLabelMoreOptions = "More Options";
 const kLabelSend = "Send";
 const kLabelSending = "Sending..";
 const kLabelBusy = "Busy";

@@ -31,6 +31,7 @@ export 'intro_message.dart';
 export 'json_previewer.dart';
 export 'markdown.dart';
 export 'menu_item_card.dart';
+export 'menu_sidebar_top.dart';
 export 'overlay_widget.dart';
 export 'popup_menu_codegen.dart';
 export 'popup_menu_env.dart';
