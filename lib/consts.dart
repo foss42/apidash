@@ -293,7 +293,14 @@ final kColorHttpMethodPut = Colors.amber.shade900;
 final kColorHttpMethodPatch = kColorHttpMethodPut;
 final kColorHttpMethodDelete = Colors.red.shade800;
 
-enum ItemMenuOption { edit, delete, duplicate }
+enum ItemMenuOption {
+  edit("Rename"),
+  delete("Delete"),
+  duplicate("Duplicate");
+
+  const ItemMenuOption(this.label);
+  final String label;
+}
 
 enum HTTPVerb { get, head, post, put, patch, delete }
 
