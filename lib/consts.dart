@@ -67,6 +67,8 @@ const kFormDataButtonLabelTextStyle = TextStyle(
 );
 const kTextStylePopupMenuItem = TextStyle(fontSize: 16);
 
+final kButtonSidebarStyle = ElevatedButton.styleFrom(padding: kPh12);
+
 const kBorderRadius4 = BorderRadius.all(Radius.circular(4));
 const kBorderRadius8 = BorderRadius.all(Radius.circular(8));
 final kBorderRadius10 = BorderRadius.circular(10);
@@ -93,6 +95,7 @@ const kPt5o10 =
     EdgeInsets.only(left: 10.0, right: 10.0, top: 5.0, bottom: 10.0);
 const kPh4 = EdgeInsets.symmetric(horizontal: 4);
 const kPh8 = EdgeInsets.symmetric(horizontal: 8);
+const kPh12 = EdgeInsets.symmetric(horizontal: 12);
 const kPh20 = EdgeInsets.symmetric(
   horizontal: 20,
 );

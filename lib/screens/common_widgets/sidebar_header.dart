@@ -13,9 +13,6 @@ class SidebarHeader extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final mobileScaffoldKey = ref.read(mobileScaffoldKeyStateProvider);
-    final elevatedButtonStyle = ElevatedButton.styleFrom(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-    );
 
     return Padding(
       padding: kPe8,
@@ -25,7 +22,7 @@ class SidebarHeader extends ConsumerWidget {
           const Spacer(),
           ElevatedButton(
             onPressed: onAddNew,
-            style: elevatedButtonStyle,
+            style: kButtonSidebarStyle,
             child: const Text(
               kLabelPlusNew,
               style: kTextStyleButtonSmall,
@@ -34,7 +31,7 @@ class SidebarHeader extends ConsumerWidget {
           const SizedBox(width: 12),
           ElevatedButton(
             onPressed: onImport,
-            style: elevatedButtonStyle,
+            style: kButtonSidebarStyle,
             child: const Text(
               kLabelImport,
               style: kTextStyleButtonSmall,
