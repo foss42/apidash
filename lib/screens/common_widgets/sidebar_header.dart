@@ -28,7 +28,7 @@ class SidebarHeader extends ConsumerWidget {
               style: kTextStyleButton,
             ),
           ),
-          const SizedBox(width: 12),
+          kHSpacer12,
           ElevatedButton(
             onPressed: onImport,
             style: kButtonSidebarStyle,

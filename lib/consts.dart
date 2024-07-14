@@ -148,6 +148,7 @@ const kPb70 = EdgeInsets.only(
 const kHSpacer4 = SizedBox(width: 4);
 const kHSpacer5 = SizedBox(width: 5);
 const kHSpacer10 = SizedBox(width: 10);
+const kHSpacer12 = SizedBox(width: 12);
 const kHSpacer20 = SizedBox(width: 20);
 const kHSpacer40 = SizedBox(width: 40);
 const kVSpacer5 = SizedBox(height: 5);
