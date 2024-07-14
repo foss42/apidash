@@ -30,7 +30,7 @@ export 'field_url.dart';
 export 'intro_message.dart';
 export 'json_previewer.dart';
 export 'markdown.dart';
-export 'menus.dart';
+export 'menu_item_card.dart';
 export 'overlay_widget.dart';
 export 'popup_menu_codegen.dart';
 export 'popup_menu_env.dart';
