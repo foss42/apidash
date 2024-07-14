@@ -25,7 +25,7 @@ class SidebarHeader extends ConsumerWidget {
             style: kButtonSidebarStyle,
             child: const Text(
               kLabelPlusNew,
-              style: kTextStyleButtonSmall,
+              style: kTextStyleButton,
             ),
           ),
           const SizedBox(width: 12),
@@ -34,14 +34,15 @@ class SidebarHeader extends ConsumerWidget {
             style: kButtonSidebarStyle,
             child: const Text(
               kLabelImport,
-              style: kTextStyleButtonSmall,
+              style: kTextStyleButton,
             ),
           ),
           context.width <= kMinWindowSize.width
               ? IconButton(
                   style: IconButton.styleFrom(
-                      padding: const EdgeInsets.all(4),
-                      minimumSize: const Size(30, 30)),
+                    padding: const EdgeInsets.all(4),
+                    minimumSize: const Size(30, 30),
+                  ),
                   onPressed: () {
                     mobileScaffoldKey.currentState?.closeDrawer();
                   },
