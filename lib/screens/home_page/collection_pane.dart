@@ -1,5 +1,4 @@
-import 'package:apidash/fileimport/fileimport.dart';
-import 'package:apidash/widgets/drag_and_drop_area.dart';
+import 'package:apidash/importer/importer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
@@ -9,7 +8,7 @@ import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
 import '../common_widgets/common_widgets.dart';
 
-final fileImport = FileImport();
+final kImporter = Importer();
 
 class CollectionPane extends ConsumerWidget {
   const CollectionPane({
@@ -37,48 +36,31 @@ class CollectionPane extends ConsumerWidget {
               ref.read(collectionStateNotifierProvider.notifier).add();
             },
             onImport: () {
-              showDialog(
-                context: context,
-                builder: (context) => AlertDialog(
-                  contentPadding: const EdgeInsets.all(12),
-                  content: DragAndDropArea(
-                    onFileDropped: (file) {
-                      ref.read(collectionStateNotifierProvider.notifier).add();
-                      final newId = ref.watch(selectedIdStateProvider)!;
-                      final i = file.path.lastIndexOf('.') + 1;
-                      final String ext = file.path.substring(i);
-                      final fileType = ImportFormat.values.byName(ext);
-                      file.readAsString().then((contents) {
-                        fileImport
-                            .getRequestModel(fileType, contents, newId)
-                            .then((importedRequestModel) {
-                          if (importedRequestModel == null) {
-                            // could not parse the file
-                            return;
-                          }
-                          final rM = importedRequestModel.httpRequestModel!;
-                          ref
-                              .read(collectionStateNotifierProvider.notifier)
-                              .update(
-                                newId,
-                                method: rM.method,
-                                url: rM.url,
-                                headers: rM.headers,
-                                params: rM.params,
-                                body: rM.body,
-                              );
-                        });
-                      });
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ),
+              showImportDialog(
+                context,
+                (file) {
+                  final importFormatType = ref.read(importFormatStateProvider);
+                  file.readAsString().then((content) {
+                    kImporter
+                        .getHttpRequestModel(importFormatType, content)
+                        .then((importedRequestModel) {
+                      if (importedRequestModel != null) {
+                        ref
+                            .read(collectionStateNotifierProvider.notifier)
+                            .addRequestModel(importedRequestModel);
+                      } else {
+                        // TODO: Throw an error, unable to parse
+                      }
+                    });
+                  });
+                  Navigator.of(context).pop();
+                },
               );
             },
           ),
           kVSpacer10,
           SidebarFilter(
-            filterHintText: "Filter by name  or url",
+            filterHintText: "Filter by name or url",
             onFilterFieldChanged: (value) {
               ref.read(collectionSearchQueryProvider.notifier).state =
                   value.toLowerCase();
