@@ -1,4 +1,4 @@
-import 'package:apidash/screens/about_dialog.dart';
+import 'package:apidash/screens/history/history_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
@@ -118,7 +118,9 @@ class Dashboard extends ConsumerWidget {
                   EnvironmentPage(
                     scaffoldKey: mobileScaffoldKey,
                   ),
-                  const SizedBox(),
+                  HistoryPage(
+                    scaffoldKey: mobileScaffoldKey,
+                  ),
                   const SettingsPage(),
                 ],
               ),

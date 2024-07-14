@@ -1,3 +1,4 @@
+import 'package:apidash/screens/history/history_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -39,7 +40,7 @@ class _MobileDashboardState extends ConsumerState<MobileDashboard> {
           ),
           if (context.isMediumWindow)
             AnimatedPositioned(
-              bottom: railIdx > 1
+              bottom: railIdx > 2
                   ? 0
                   : isLeftDrawerOpen
                       ? 0
@@ -72,17 +73,9 @@ class PageBranch extends ConsumerWidget {
         return EnvironmentPage(
           scaffoldKey: scaffoldKey,
         );
-      // case 2:
-      //   // TODO: Implement history page
-      //   return const PageBase(
-      //     title: 'History',
-      //     scaffoldBody: SizedBox(),
-      //   );
       case 2:
-        // TODO: Implement history page
-        return const PageBase(
-          title: 'History',
-          scaffoldBody: SizedBox(),
+        return HistoryPage(
+          scaffoldKey: scaffoldKey,
         );
       case 3:
         return const PageBase(

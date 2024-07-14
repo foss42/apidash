@@ -68,6 +68,7 @@ const kFormDataButtonLabelTextStyle = TextStyle(
 const kTextStylePopupMenuItem = TextStyle(fontSize: 16);
 
 const kBorderRadius4 = BorderRadius.all(Radius.circular(4));
+const kBorderRadius6 = BorderRadius.all(Radius.circular(6));
 const kBorderRadius8 = BorderRadius.all(Radius.circular(8));
 final kBorderRadius10 = BorderRadius.circular(10);
 const kBorderRadius12 = BorderRadius.all(Radius.circular(12));
@@ -88,7 +89,7 @@ const kPv8 = EdgeInsets.symmetric(vertical: 8);
 const kPv6 = EdgeInsets.symmetric(vertical: 6);
 const kPv2 = EdgeInsets.symmetric(vertical: 2);
 const kPh2 = EdgeInsets.symmetric(horizontal: 2);
-const kPt24o8 = EdgeInsets.only(top: 24, left: 8.0, right: 8.0, bottom: 8.0);
+const kPt28o8 = EdgeInsets.only(top: 28, left: 8.0, right: 8.0, bottom: 8.0);
 const kPt5o10 =
     EdgeInsets.only(left: 10.0, right: 10.0, top: 5.0, bottom: 10.0);
 const kPh4 = EdgeInsets.symmetric(horizontal: 4);

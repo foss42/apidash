@@ -1,9 +1,17 @@
 import 'dart:typed_data';
 import 'dart:convert';
 import 'package:collection/collection.dart';
+import 'package:intl/intl.dart';
 import '../models/models.dart';
 import '../consts.dart';
 import 'package:http/http.dart' as http;
+
+String humanizeDate(DateTime? date) {
+  if (date == null) {
+    return "";
+  }
+  return DateFormat('MMMM d, yyyy').format(date);
+}
 
 String humanizeDuration(Duration? duration) {
   if (duration == null) {

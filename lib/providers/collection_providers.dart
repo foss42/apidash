@@ -240,12 +240,28 @@ class CollectionStateNotifier
         httpResponseModel: responseModel,
         isWorking: false,
       );
+      String newHistoryId = getNewUuid();
+      HistoryRequestModel model = HistoryRequestModel(
+        historyId: newHistoryId,
+        metaData: HistoryMetaModel(
+          historyId: newHistoryId,
+          name: requestModel.name,
+          url: substitutedHttpRequestModel.url,
+          method: substitutedHttpRequestModel.method,
+          responseStatus: statusCode,
+          timeStamp: DateTime.now(),
+        ),
+        httpRequestModel: substitutedHttpRequestModel,
+        httpResponseModel: responseModel,
+      );
+      ref.read(historyMetaStateNotifier.notifier).addHistoryRequest(model);
     }
 
     // update state with response data
     map = {...state!};
     map[id] = newRequestModel;
     state = map;
+
     ref.read(hasUnsavedChangesProvider.notifier).state = true;
   }
 
