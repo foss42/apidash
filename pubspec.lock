@@ -236,10 +236,11 @@ packages:
   curl_converter:
     dependency: "direct main"
     description:
-      name: curl_converter
-      sha256: "32c541b875c6ddea275dfb35ff58c95f0d997f51e92232ff8fa4431b96c62dab"
-      url: "https://pub.dev"
-    source: hosted
+      path: "."
+      ref: "726e8cd04aeb326211af27f75920be5b21c90bb4"
+      resolved-ref: "726e8cd04aeb326211af27f75920be5b21c90bb4"
+      url: "https://github.com/foss42/curl_converter.git"
+    source: git
     version: "1.0.4"
   dart_style:
     dependency: "direct main"
@@ -885,7 +886,7 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: master
+      ref: cb22bab30dd14452d184bc6ad3bb41b612b22c70
       resolved-ref: cb22bab30dd14452d184bc6ad3bb41b612b22c70
       url: "https://github.com/foss42/multi_trigger_autocomplete.git"
     source: git
@@ -1178,6 +1179,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.4"
+  shlex:
+    dependency: transitive
+    description:
+      name: shlex
+      sha256: "733dde67711b5a196ae753caa166f51ea8d0f3a8080ab5b8520172af2465f478"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.2"
   sky_engine:
     dependency: transitive
     description: flutter
