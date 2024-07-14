@@ -37,13 +37,17 @@ class _DragAndDropAreaState extends State<DragAndDropArea> {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(22),
-          color: _dragging ? Colors.blue.withOpacity(0.4) : Colors.black26,
-          border: Border.all(color: Colors.white24),
+          color: _dragging
+              ? Theme.of(context).colorScheme.primaryContainer
+              : Theme.of(context).colorScheme.surface,
+          border: Border.all(
+            color: Theme.of(context).colorScheme.primaryContainer,
+          ),
         ),
         width: 600,
         height: 400,
         child: _list.isEmpty
-            ? const Center(child: Text("Drop here"))
+            ? const Center(child: Text("Select or drop the file here"))
             : Text(_list.map((e) => e.path).join("\n")),
       ),
     );
