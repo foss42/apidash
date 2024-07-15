@@ -23,7 +23,7 @@ void main() {
     );
 
     // Verify initial state
-    expect(find.text("Drop here"), findsOneWidget);
+    expect(find.text("Select or drop the file here"), findsOneWidget);
 
     // Simulate dropping a file
     final testFile = XFile('test.curl');
