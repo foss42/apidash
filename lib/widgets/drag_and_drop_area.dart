@@ -1,11 +1,16 @@
+import 'package:flutter/material.dart';
 import 'package:desktop_drop/desktop_drop.dart';
 import 'package:file_selector/file_selector.dart';
-import 'package:flutter/material.dart';
+import 'package:apidash/utils/utils.dart';
+import 'package:apidash/consts.dart';
 
 class DragAndDropArea extends StatefulWidget {
-  final Function(XFile) onFileDropped;
+  final Function(XFile)? onFileDropped;
 
-  const DragAndDropArea({super.key, required this.onFileDropped});
+  const DragAndDropArea({
+    super.key,
+    this.onFileDropped,
+  });
 
   @override
   State<DragAndDropArea> createState() => _DragAndDropAreaState();
@@ -22,7 +27,7 @@ class _DragAndDropAreaState extends State<DragAndDropArea> {
         setState(() {
           _list.addAll(detail.files);
         });
-        widget.onFileDropped(detail.files[0]);
+        widget.onFileDropped?.call(detail.files[0]);
       },
       onDragEntered: (detail) {
         setState(() {
@@ -47,7 +52,41 @@ class _DragAndDropAreaState extends State<DragAndDropArea> {
         width: 600,
         height: 400,
         child: _list.isEmpty
-            ? const Center(child: Text("Select or drop the file here"))
+            ? Center(
+                child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(
+                    width: 150,
+                    child: ElevatedButton.icon(
+                      icon: const Icon(
+                        Icons.snippet_folder_rounded,
+                        size: 20,
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size.fromHeight(kDataTableRowHeight),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                      ),
+                      onPressed: () async {
+                        var pickedResult = await pickFile();
+                        if (pickedResult != null &&
+                            pickedResult.path.isNotEmpty) {
+                          widget.onFileDropped?.call(pickedResult);
+                        }
+                      },
+                      label: const Text(
+                        kLabelSelectFile,
+                        overflow: TextOverflow.ellipsis,
+                        style: kFormDataButtonLabelTextStyle,
+                      ),
+                    ),
+                  ),
+                  kVSpacer10,
+                  const Text("Select or drop the file here"),
+                ],
+              ))
             : Text(_list.map((e) => e.path).join("\n")),
       ),
     );

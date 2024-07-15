@@ -32,7 +32,7 @@ void main() {
 
     // Since we can't actually perform drag-and-drop in a unit test,
     // we'll call the onDragDone callback directly
-    dragAndDropArea.onFileDropped(testFile);
+    dragAndDropArea.onFileDropped?.call(testFile);
 
     await tester.pump();
 
@@ -42,4 +42,3 @@ void main() {
     expect(droppedFile?.path, 'test.curl');
   });
 }
-

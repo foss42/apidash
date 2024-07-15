@@ -37,8 +37,14 @@ class CollectionPane extends ConsumerWidget {
             },
             onImport: () {
               showImportDialog(
-                context,
-                (file) {
+                context: context,
+                importFormat: ref.watch(importFormatStateProvider),
+                onImportFormatChange: (format) {
+                  if (format != null) {
+                    ref.read(importFormatStateProvider.notifier).state = format;
+                  }
+                },
+                onFileDropped: (file) {
                   final importFormatType = ref.read(importFormatStateProvider);
                   file.readAsString().then((content) {
                     kImporter
