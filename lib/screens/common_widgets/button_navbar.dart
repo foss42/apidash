@@ -37,7 +37,7 @@ class NavbarButton extends ConsumerWidget {
                 if (buttonIdx != null) {
                   ref.read(navRailIndexStateProvider.notifier).state =
                       buttonIdx!;
-                  if (railIdx > 1 && buttonIdx! <= 1) {
+                  if (railIdx > 2 && buttonIdx! <= 2) {
                     ref.read(leftDrawerStateProvider.notifier).state = false;
                   }
                 }
@@ -62,7 +62,7 @@ class NavbarButton extends ConsumerWidget {
                       if (buttonIdx != null) {
                         ref.read(navRailIndexStateProvider.notifier).state =
                             buttonIdx!;
-                        if (railIdx > 1 && buttonIdx! <= 1) {
+                        if (railIdx > 2 && buttonIdx! <= 2) {
                           ref.read(leftDrawerStateProvider.notifier).state =
                               false;
                         }

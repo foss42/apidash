@@ -19,7 +19,7 @@ class HistorySplitView extends StatefulWidget {
 class HistorySplitViewState extends State<HistorySplitView> {
   final MultiSplitViewController _controller = MultiSplitViewController(
     areas: [
-      Area(id: "sidebar", min: 200, size: 220, max: 300),
+      Area(id: "sidebar", min: 200, size: 250, max: 300),
       Area(id: "main"),
     ],
   );

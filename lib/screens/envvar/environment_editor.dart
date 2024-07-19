@@ -70,13 +70,16 @@ class EnvironmentEditor extends ConsumerWidget {
                 margin: EdgeInsets.zero,
                 color: kColorTransparent,
                 surfaceTintColor: kColorTransparent,
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(
-                    color:
-                        Theme.of(context).colorScheme.surfaceContainerHighest,
-                  ),
-                  borderRadius: kBorderRadius12,
-                ),
+                shape: context.isMediumWindow
+                    ? null
+                    : RoundedRectangleBorder(
+                        side: BorderSide(
+                          color: Theme.of(context)
+                              .colorScheme
+                              .surfaceContainerHighest,
+                        ),
+                        borderRadius: kBorderRadius12,
+                      ),
                 elevation: 0,
                 child: const Padding(
                   padding: kPv6,

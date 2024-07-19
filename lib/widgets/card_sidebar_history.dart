@@ -10,7 +10,7 @@ class SidebarHistoryCard extends StatelessWidget {
     required this.id,
     required this.models,
     required this.method,
-    this.selectedId,
+    this.isSelected = false,
     this.requestGroupSize = 1,
     this.onTap,
   });
@@ -18,7 +18,7 @@ class SidebarHistoryCard extends StatelessWidget {
   final String id;
   final List<HistoryMetaModel> models;
   final HTTPVerb method;
-  final String? selectedId;
+  final bool isSelected;
   final int requestGroupSize;
   final Function()? onTap;
 
@@ -29,7 +29,6 @@ class SidebarHistoryCard extends StatelessWidget {
         Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.5);
     final model = models.first;
     final Color surfaceTint = Theme.of(context).colorScheme.primary;
-    bool isSelected = selectedId == getHistoryRequestKey(model);
     final String name = getHistoryRequestName(model);
     return Tooltip(
       message: name,
@@ -84,9 +83,9 @@ class SidebarHistoryCard extends StatelessWidget {
                       ),
                       child: Center(
                         child: Text(
-                            requestGroupSize == 2
-                                ? requestGroupSize.toString()
-                                : "9+",
+                            requestGroupSize > 9
+                                ? "9+"
+                                : requestGroupSize.toString(),
                             style: Theme.of(context)
                                 .textTheme
                                 .labelSmall

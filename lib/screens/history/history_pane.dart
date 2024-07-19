@@ -15,9 +15,7 @@ class HistoryPane extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Padding(
-      padding: (!context.isMediumWindow && kIsMacOS
-              ? kP24CollectionPane
-              : kP8CollectionPane) +
+      padding: (!context.isMediumWindow && kIsMacOS ? kPt24 : kPt8) +
           (context.isMediumWindow ? kPb70 : EdgeInsets.zero),
       child: const Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -34,6 +32,7 @@ class HistoryList extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final selectedGroupId = ref.watch(selectedRequestGroupIdStateProvider);
     final historySequence = ref.watch(historySequenceProvider);
     final alwaysShowHistoryPaneScrollbar = ref.watch(settingsProvider
         .select((value) => value.alwaysShowCollectionPaneScrollbar));
@@ -45,12 +44,7 @@ class HistoryList extends HookConsumerWidget {
       thumbVisibility: alwaysShowHistoryPaneScrollbar,
       radius: const Radius.circular(12),
       child: ListView(
-        padding: context.isMediumWindow
-            ? EdgeInsets.only(
-                bottom: MediaQuery.paddingOf(context).bottom,
-                right: 8,
-              )
-            : kPe8,
+        padding: EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom),
         controller: scrollController,
         children: sortedHistoryKeys != null
             ? sortedHistoryKeys.map((date) {
@@ -69,8 +63,8 @@ class HistoryList extends HookConsumerWidget {
                             id: item.first.historyId,
                             models: item,
                             method: item.first.method,
-                            selectedId:
-                                ref.watch(selectedRequestGroupStateProvider),
+                            isSelected: selectedGroupId ==
+                                getHistoryRequestKey(item.first),
                             requestGroupSize: item.length,
                             onTap: () {
                               ref

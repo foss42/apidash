@@ -84,3 +84,20 @@ Map<String, List<HistoryMetaModel>> getRequestGroups(
   });
   return historyGroups;
 }
+
+List<HistoryMetaModel> getRequestGroup(
+    List<HistoryMetaModel>? models, HistoryMetaModel? selectedModel) {
+  List<HistoryMetaModel> requestGroup = [];
+  if (selectedModel == null || (models?.isEmpty ?? true)) {
+    return requestGroup;
+  }
+  String selectedModelKey = getHistoryRequestKey(selectedModel);
+  for (HistoryMetaModel model in models!) {
+    String key = getHistoryRequestKey(model);
+    if (key == selectedModelKey) {
+      requestGroup.add(model);
+    }
+  }
+  requestGroup.sort((a, b) => b.timeStamp.compareTo(a.timeStamp));
+  return requestGroup;
+}

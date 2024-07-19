@@ -128,6 +128,9 @@ const kPt8 = EdgeInsets.only(
 const kPt20 = EdgeInsets.only(
   top: 20,
 );
+const kPt24 = EdgeInsets.only(
+  top: 24,
+);
 const kPt28 = EdgeInsets.only(
   top: 28,
 );

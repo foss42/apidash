@@ -5,12 +5,12 @@ import '../utils/history_utils.dart';
 
 final selectedHistoryIdStateProvider = StateProvider<String?>((ref) => null);
 
-final selectedRequestGroupStateProvider = StateProvider<String?>((ref) {
+final selectedRequestGroupIdStateProvider = StateProvider<String?>((ref) {
   final selectedHistoryId = ref.watch(selectedHistoryIdStateProvider);
+  final historyMetaState = ref.read(historyMetaStateNotifier);
   if (selectedHistoryId == null) {
     return null;
   }
-  final historyMetaState = ref.read(historyMetaStateNotifier);
   return getHistoryRequestKey(historyMetaState![selectedHistoryId]!);
 });
 
