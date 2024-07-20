@@ -1,3 +1,4 @@
+import 'package:apidash/codegen/r/httr.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart' show getNewUuid;
@@ -110,6 +111,8 @@ class Codegen {
         return CSharpRestSharp().getCode(rM);
       case CodegenLanguage.phpHttpPlug:
         return PhpHttpPlugCodeGen().getCode(rM);
+      case CodegenLanguage.rHttr:
+        return RhttrCodeGen().getCode(rM);
     }
   }
 }
