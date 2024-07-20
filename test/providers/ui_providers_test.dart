@@ -1,12 +1,9 @@
 import 'dart:io';
-import 'package:spot/spot.dart';
-import 'package:apidash/consts.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/screens/common_widgets/common_widgets.dart';
 import 'package:apidash/screens/dashboard.dart';
 import 'package:apidash/screens/envvar/environment_page.dart';
 import 'package:apidash/screens/home_page/collection_pane.dart';
-import 'package:apidash/screens/home_page/editor_pane/details_card/code_pane.dart';
 import 'package:apidash/screens/home_page/editor_pane/details_card/response_pane.dart';
 import 'package:apidash/screens/home_page/editor_pane/editor_default.dart';
 import 'package:apidash/screens/home_page/editor_pane/editor_pane.dart';

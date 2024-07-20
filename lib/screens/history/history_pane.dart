@@ -56,6 +56,7 @@ class HistoryList extends HookConsumerWidget {
                       title: Text(
                         humanizeDate(date),
                       ),
+                      initiallyExpanded: true,
                       children: requestGroups.values.map((item) {
                         return Padding(
                           padding: kPv2 + kPh4,
@@ -79,9 +80,11 @@ class HistoryList extends HookConsumerWidget {
                 );
               }).toList()
             : [
-                const Text(
-                  'No history',
-                  style: TextStyle(color: Colors.grey),
+                const Center(
+                  child: Text(
+                    'No history',
+                    style: TextStyle(color: Colors.grey),
+                  ),
                 )
               ],
       ),

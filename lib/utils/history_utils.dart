@@ -1,8 +1,20 @@
-import 'package:apidash/models/models.dart';
 import 'package:apidash/utils/convert_utils.dart';
+import 'package:apidash/models/models.dart';
+import 'package:apidash/consts.dart';
 
 DateTime stripTime(DateTime dateTime) {
   return DateTime(dateTime.year, dateTime.month, dateTime.day);
+}
+
+RequestModel getRequestModelFromHistoryModel(HistoryRequestModel model) {
+  return RequestModel(
+    id: model.historyId,
+    name: model.metaData.name,
+    responseStatus: model.httpResponseModel.statusCode,
+    message: kResponseCodeReasons[model.httpResponseModel.statusCode],
+    httpRequestModel: model.httpRequestModel,
+    httpResponseModel: model.httpResponseModel,
+  );
 }
 
 String getHistoryRequestName(HistoryMetaModel model) {

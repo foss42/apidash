@@ -13,6 +13,13 @@ String humanizeDate(DateTime? date) {
   return DateFormat('MMMM d, yyyy').format(date);
 }
 
+String humanizeTime(DateTime? time) {
+  if (time == null) {
+    return "";
+  }
+  return DateFormat('hh:mm:ss a').format(time);
+}
+
 String humanizeDuration(Duration? duration) {
   if (duration == null) {
     return "";

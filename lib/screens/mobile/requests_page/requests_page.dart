@@ -7,7 +7,6 @@ import 'package:apidash/widgets/widgets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../home_page/collection_pane.dart';
 import '../../home_page/editor_pane/url_card.dart';
-import '../../home_page/editor_pane/details_card/code_pane.dart';
 import '../../home_page/editor_pane/editor_default.dart';
 import '../../common_widgets/common_widgets.dart';
 import '../widgets/page_base.dart';

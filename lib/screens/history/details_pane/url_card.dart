@@ -49,9 +49,8 @@ class HistoryURLCard extends StatelessWidget {
               ),
               isCompact ? kHSpacer10 : kHSpacer20,
               Expanded(
-                child: RawTextField(
-                  readOnly: true,
-                  controller: TextEditingController(text: url),
+                child: ReadOnlyTextField(
+                  initialValue: url,
                   style: kCodeStyle.copyWith(
                     fontSize: fontSize,
                   ),

@@ -1,3 +1,4 @@
+import 'package:apidash/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash/providers/history_providers.dart';
 import 'package:apidash/utils/history_utils.dart';
@@ -10,23 +11,29 @@ class HistoryRequests extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedRequestId = ref.watch(selectedHistoryIdStateProvider);
-    final selectedRequest = ref.read(selectedHistoryRequestModelProvider);
-    final historyMetas = ref.read(historyMetaStateNotifier);
+    final selectedRequest = ref.watch(selectedHistoryRequestModelProvider);
+    final historyMetas = ref.watch(historyMetaStateNotifier);
     final requestGroup = getRequestGroup(
         historyMetas?.values.toList(), selectedRequest?.metaData);
     return Column(
-      children: requestGroup
-          .map((request) => SidebarHistoryCard(
+      children: [
+        kVSpacer20,
+        ...requestGroup.map((request) => Padding(
+              padding: kPv2 + kPh4,
+              child: HistoryRequestCard(
                 id: request.historyId,
-                method: request.method,
+                model: request,
                 isSelected: selectedRequestId == request.historyId,
                 onTap: () {
                   ref.read(selectedHistoryIdStateProvider.notifier).state =
                       request.historyId;
+                  ref
+                      .read(historyMetaStateNotifier.notifier)
+                      .loadHistoryRequest(request.historyId);
                 },
-                models: [request],
-              ))
-          .toList(),
+              ),
+            ))
+      ],
     );
   }
 }
