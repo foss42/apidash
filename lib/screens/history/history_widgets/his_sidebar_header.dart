@@ -1,46 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:apidash/providers/providers.dart';
 import 'package:apidash/extensions/extensions.dart';
-import 'package:apidash/widgets/widgets.dart';
+import 'package:apidash/providers/providers.dart';
 import 'package:apidash/consts.dart';
-import 'sidebar_save_button.dart';
 
-class SidebarHeader extends ConsumerWidget {
-  const SidebarHeader({
-    super.key,
-    this.onAddNew,
-    this.onImport,
-  });
-  final VoidCallback? onAddNew;
-  final VoidCallback? onImport;
+class HistorySidebarHeader extends ConsumerWidget {
+  const HistorySidebarHeader({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final mobileScaffoldKey = ref.read(mobileScaffoldKeyStateProvider);
-
     return Padding(
-      padding: kPe8,
+      padding: kPe4,
       child: Row(
         children: [
-          const SaveButton(),
-          const Spacer(),
-          ElevatedButton(
-            onPressed: onAddNew,
-            style: kButtonSidebarStyle,
-            child: const Text(
-              kLabelPlusNew,
-              style: kTextStyleButton,
-            ),
+          kHSpacer10,
+          Text(
+            "History",
+            style: Theme.of(context).textTheme.titleMedium,
           ),
-          kHSpacer4,
-          SizedBox(
-            width: 24,
-            child: SidebarTopMenu(
-              tooltip: kLabelMoreOptions,
-              onSelected: (option) => switch (option) {
-                SidebarMenuOption.import => onImport?.call(),
-              },
+          const Spacer(),
+          IconButton(
+            tooltip: "Auto Delete Settings",
+            style: IconButton.styleFrom(
+              foregroundColor: Theme.of(context).colorScheme.primary,
+            ),
+            onPressed: () {},
+            icon: const Icon(
+              Icons.auto_delete_outlined,
+              size: 20,
             ),
           ),
           context.width <= kMinWindowSize.width

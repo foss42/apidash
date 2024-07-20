@@ -4,8 +4,10 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:apidash/extensions/extensions.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
+import 'package:apidash/models/models.dart';
 import 'package:apidash/utils/utils.dart';
 import 'package:apidash/consts.dart';
+import 'history_widgets/history_widgets.dart';
 
 class HistoryPane extends ConsumerWidget {
   const HistoryPane({
@@ -19,7 +21,11 @@ class HistoryPane extends ConsumerWidget {
           (context.isMediumWindow ? kPb70 : EdgeInsets.zero),
       child: const Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [kVSpacer10, Expanded(child: HistoryList()), kVSpacer5],
+        children: [
+          HistorySidebarHeader(),
+          Expanded(child: HistoryList()),
+          kVSpacer5,
+        ],
       ),
     );
   }
@@ -32,7 +38,6 @@ class HistoryList extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedGroupId = ref.watch(selectedRequestGroupIdStateProvider);
     final historySequence = ref.watch(historySequenceProvider);
     final alwaysShowHistoryPaneScrollbar = ref.watch(settingsProvider
         .select((value) => value.alwaysShowCollectionPaneScrollbar));
@@ -43,51 +48,108 @@ class HistoryList extends HookConsumerWidget {
       controller: scrollController,
       thumbVisibility: alwaysShowHistoryPaneScrollbar,
       radius: const Radius.circular(12),
-      child: ListView(
+      child: ListView.separated(
         padding: EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom),
         controller: scrollController,
-        children: sortedHistoryKeys != null
-            ? sortedHistoryKeys.map((date) {
-                var items = historySequence![date]!;
-                final requestGroups = getRequestGroups(items);
-                return Column(
-                  children: [
-                    ExpansionTile(
-                      title: Text(
-                        humanizeDate(date),
-                      ),
-                      initiallyExpanded: true,
-                      children: requestGroups.values.map((item) {
-                        return Padding(
-                          padding: kPv2 + kPh4,
-                          child: SidebarHistoryCard(
-                            id: item.first.historyId,
-                            models: item,
-                            method: item.first.method,
-                            isSelected: selectedGroupId ==
-                                getHistoryRequestKey(item.first),
-                            requestGroupSize: item.length,
-                            onTap: () {
-                              ref
-                                  .read(historyMetaStateNotifier.notifier)
-                                  .loadHistoryRequest(item.first.historyId);
-                            },
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                  ],
-                );
-              }).toList()
-            : [
-                const Center(
-                  child: Text(
-                    'No history',
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                )
-              ],
+        itemCount: sortedHistoryKeys?.length ?? 0,
+        separatorBuilder: (context, index) => Divider(
+          height: 0,
+          thickness: 2,
+          color: Theme.of(context).colorScheme.surfaceContainerHigh,
+        ),
+        itemBuilder: (context, index) {
+          var items = historySequence![sortedHistoryKeys![index]]!;
+          final requestGroups = getRequestGroups(items);
+          return Padding(
+            padding: kPv2,
+            child: HistoryExpansionTile(
+              date: sortedHistoryKeys[index],
+              requestGroups: requestGroups,
+            ),
+          );
+        },
       ),
+    );
+  }
+}
+
+class HistoryExpansionTile extends StatefulHookConsumerWidget {
+  const HistoryExpansionTile({
+    super.key,
+    required this.requestGroups,
+    required this.date,
+  });
+
+  final Map<String, List<HistoryMetaModel>> requestGroups;
+  final DateTime date;
+
+  @override
+  ConsumerState<HistoryExpansionTile> createState() =>
+      _HistoryExpansionTileState();
+}
+
+class _HistoryExpansionTileState extends ConsumerState<HistoryExpansionTile>
+    with SingleTickerProviderStateMixin {
+  @override
+  Widget build(BuildContext context) {
+    final animationController = useAnimationController(
+      duration: const Duration(milliseconds: 200),
+      vsync: this,
+    );
+    final animation = Tween(begin: 0.25, end: 0.0).animate(animationController);
+    final colorScheme = Theme.of(context).colorScheme;
+    final selectedGroupId = ref.watch(selectedRequestGroupIdStateProvider);
+    return ExpansionTile(
+      dense: true,
+      title: Row(
+        children: [
+          RotationTransition(
+              turns: animation,
+              child: Icon(
+                Icons.chevron_right_rounded,
+                size: 20,
+                color: colorScheme.onSurface.withOpacity(0.6),
+              )),
+          kHSpacer5,
+          Text(
+            humanizeDate(widget.date),
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: colorScheme.onSurface.withOpacity(0.6),
+                ),
+          ),
+        ],
+      ),
+      onExpansionChanged: (value) {
+        if (value) {
+          animationController.reverse();
+        } else {
+          animationController.forward();
+        }
+      },
+      trailing: const SizedBox.shrink(),
+      tilePadding: kPh8,
+      shape: const RoundedRectangleBorder(),
+      collapsedBackgroundColor: colorScheme.surfaceContainerLow,
+      initiallyExpanded: true,
+      childrenPadding: kPv8 + kPe4,
+      children: widget.requestGroups.values.map((item) {
+        return Padding(
+          padding: kPv2 + kPh4,
+          child: SidebarHistoryCard(
+            id: item.first.historyId,
+            models: item,
+            method: item.first.method,
+            isSelected: selectedGroupId == getHistoryRequestKey(item.first),
+            requestGroupSize: item.length,
+            onTap: () {
+              ref
+                  .read(historyMetaStateNotifier.notifier)
+                  .loadHistoryRequest(item.first.historyId);
+            },
+          ),
+        );
+      }).toList(),
     );
   }
 }

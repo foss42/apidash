@@ -5,9 +5,7 @@ import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/screens/common_widgets/common_widgets.dart';
-import 'details_pane/url_card.dart';
-import 'details_pane/his_request_pane.dart';
-import 'details_pane/his_response_pane.dart';
+import 'history_widgets/history_widgets.dart';
 
 class HistoryDetails extends StatefulHookConsumerWidget {
   const HistoryDetails({super.key});
