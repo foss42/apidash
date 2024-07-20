@@ -1,3 +1,4 @@
+import 'package:apidash/importer/importer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
@@ -6,6 +7,8 @@ import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
 import '../common_widgets/common_widgets.dart';
+
+final kImporter = Importer();
 
 class CollectionPane extends ConsumerWidget {
   const CollectionPane({
@@ -32,10 +35,38 @@ class CollectionPane extends ConsumerWidget {
             onAddNew: () {
               ref.read(collectionStateNotifierProvider.notifier).add();
             },
+            onImport: () {
+              showImportDialog(
+                context: context,
+                importFormat: ref.watch(importFormatStateProvider),
+                onImportFormatChange: (format) {
+                  if (format != null) {
+                    ref.read(importFormatStateProvider.notifier).state = format;
+                  }
+                },
+                onFileDropped: (file) {
+                  final importFormatType = ref.read(importFormatStateProvider);
+                  file.readAsString().then((content) {
+                    kImporter
+                        .getHttpRequestModel(importFormatType, content)
+                        .then((importedRequestModel) {
+                      if (importedRequestModel != null) {
+                        ref
+                            .read(collectionStateNotifierProvider.notifier)
+                            .addRequestModel(importedRequestModel);
+                      } else {
+                        // TODO: Throw an error, unable to parse
+                      }
+                    });
+                  });
+                  Navigator.of(context).pop();
+                },
+              );
+            },
           ),
           kVSpacer10,
           SidebarFilter(
-            filterHintText: "Filter by name  or url",
+            filterHintText: "Filter by name or url",
             onFilterFieldChanged: (value) {
               ref.read(collectionSearchQueryProvider.notifier).state =
                   value.toLowerCase();

@@ -153,6 +153,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.3"
+  checks:
+    dependency: transitive
+    description:
+      name: checks
+      sha256: aad431b45a8ae2fa26db8c22e385b9cdec73f72986a1d9d9f2017f4c39ecf5c9
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.0"
   cli_util:
     dependency: transitive
     description:
@@ -233,6 +241,15 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.0.0"
+  curl_converter:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: "726e8cd04aeb326211af27f75920be5b21c90bb4"
+      resolved-ref: "726e8cd04aeb326211af27f75920be5b21c90bb4"
+      url: "https://github.com/foss42/curl_converter.git"
+    source: git
+    version: "1.0.4"
   dart_style:
     dependency: "direct main"
     description:
@@ -241,6 +258,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.3.6"
+  dartx:
+    dependency: transitive
+    description:
+      name: dartx
+      sha256: "8b25435617027257d43e6508b5fe061012880ddfdaa75a71d607c3de2a13d244"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.0"
   data_table_2:
     dependency: "direct main"
     description:
@@ -249,6 +274,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.5.15"
+  desktop_drop:
+    dependency: "direct main"
+    description:
+      name: desktop_drop
+      sha256: d55a010fe46c8e8fcff4ea4b451a9ff84a162217bdb3b2a0aa1479776205e15d
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.4.4"
+  equatable:
+    dependency: transitive
+    description:
+      name: equatable
+      sha256: c2b87cb7756efdf69892005af546c56c0b5037f54d2a88269b4f347a505e3ca2
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.5"
   eventify:
     dependency: transitive
     description:
@@ -258,7 +299,7 @@ packages:
     source: hosted
     version: "1.0.1"
   extended_text_field:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: extended_text_field
       sha256: "954c7eea1e82728a742f7ddf09b9a51cef087d4f52b716ba88cb3eb78ccd7c6e"
@@ -387,6 +428,11 @@ packages:
     version: "1.5.0"
   flutter:
     dependency: "direct main"
+    description: flutter
+    source: sdk
+    version: "0.0.0"
+  flutter_driver:
+    dependency: transitive
     description: flutter
     source: sdk
     version: "0.0.0"
@@ -536,6 +582,11 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.2.0"
+  fuchsia_remote_debug_protocol:
+    dependency: transitive
+    description: flutter
+    source: sdk
+    version: "0.0.0"
   fvp:
     dependency: "direct main"
     description:
@@ -648,6 +699,11 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.2.0"
+  integration_test:
+    dependency: transitive
+    description: flutter
+    source: sdk
+    version: "0.0.0"
   intl:
     dependency: "direct main"
     description:
@@ -825,14 +881,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.8.0"
-  mention_tag_text_field:
-    dependency: "direct main"
-    description:
-      name: mention_tag_text_field
-      sha256: "9768a0a6fe5771cb8eb98f94b26b4c595ca2487b0eb28b9d5624f8d71a2ac17a"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.5"
   meta:
     dependency: transitive
     description:
@@ -873,6 +921,23 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.2.2"
+  multi_trigger_autocomplete:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: cb22bab30dd14452d184bc6ad3bb41b612b22c70
+      resolved-ref: cb22bab30dd14452d184bc6ad3bb41b612b22c70
+      url: "https://github.com/foss42/multi_trigger_autocomplete.git"
+    source: git
+    version: "1.0.1"
+  nanoid2:
+    dependency: transitive
+    description:
+      name: nanoid2
+      sha256: "35b5048f836652a1d711db0d716bdee59fcaaa4c37792db8b3568da4f7feb2f9"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.1"
   nested:
     dependency: transitive
     description:
@@ -1065,6 +1130,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.12.0"
+  process:
+    dependency: transitive
+    description:
+      name: process
+      sha256: "21e54fd2faf1b5bdd5102afd25012184a6793927648ea81eea80552ac9405b32"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.0.2"
   provider:
     dependency: "direct main"
     description:
@@ -1161,6 +1234,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.4"
+  shlex:
+    dependency: transitive
+    description:
+      name: shlex
+      sha256: "733dde67711b5a196ae753caa166f51ea8d0f3a8080ab5b8520172af2465f478"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.2"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -1206,6 +1287,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.10.0"
+  spot:
+    dependency: "direct dev"
+    description:
+      name: spot
+      sha256: "648cd3e9f9b336d005a4dcde24538e44edc72b8d548e0416fa93c0541655f219"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.13.0"
   sprintf:
     dependency: transitive
     description:
@@ -1254,6 +1343,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.0"
+  sync_http:
+    dependency: transitive
+    description:
+      name: sync_http
+      sha256: "7f0cd72eca000d2e026bcd6f990b81d0ca06022ef4e32fb257b30d3d1014a961"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.1"
   term_glyph:
     dependency: transitive
     description:
@@ -1294,6 +1391,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.0"
+  time:
+    dependency: transitive
+    description:
+      name: time
+      sha256: ad8e018a6c9db36cb917a031853a1aae49467a93e0d464683e029537d848c221
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.4"
   timing:
     dependency: transitive
     description:
@@ -1486,6 +1591,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.4.5"
+  webdriver:
+    dependency: transitive
+    description:
+      name: webdriver
+      sha256: "003d7da9519e1e5f329422b36c4dcdf18d7d2978d1ba099ea4e45ba490ed845e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.3"
   webkit_inspection_protocol:
     dependency: transitive
     description:
@@ -1544,5 +1657,5 @@ packages:
     source: hosted
     version: "3.1.2"
 sdks:
-  dart: ">=3.4.0 <4.0.0"
+  dart: ">=3.4.0 <3.999.0"
   flutter: ">=3.22.0"

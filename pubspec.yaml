@@ -63,8 +63,17 @@ dependencies:
   hooks_riverpod: ^2.5.1
   flutter_hooks: ^0.20.5
   flutter_portal: ^1.1.4
-  mention_tag_text_field: ^0.0.5
   intl: ^0.19.0
+  multi_trigger_autocomplete:
+    git:
+      url: https://github.com/foss42/multi_trigger_autocomplete.git
+      ref: cb22bab30dd14452d184bc6ad3bb41b612b22c70
+  extended_text_field: ^15.0.0
+  desktop_drop: ^0.4.4
+  curl_converter:
+    git:
+      url: https://github.com/foss42/curl_converter.git
+      ref: 726e8cd04aeb326211af27f75920be5b21c90bb4
 
 dependency_overrides:
   web: ^0.5.0
@@ -79,6 +88,7 @@ dev_dependencies:
   build_runner: ^2.4.11
   freezed: ^2.5.2
   json_serializable: ^6.7.1
+  spot: ^0.13.0
 
 flutter:
   uses-material-design: true

@@ -29,20 +29,14 @@ class ItemCardMenu extends StatelessWidget {
       offset: offset,
       onSelected: onSelected,
       shape: shape,
-      itemBuilder: (BuildContext context) => <PopupMenuEntry<ItemMenuOption>>[
-        const PopupMenuItem<ItemMenuOption>(
-          value: ItemMenuOption.edit,
-          child: Text('Rename'),
-        ),
-        const PopupMenuItem<ItemMenuOption>(
-          value: ItemMenuOption.delete,
-          child: Text('Delete'),
-        ),
-        const PopupMenuItem<ItemMenuOption>(
-          value: ItemMenuOption.duplicate,
-          child: Text('Duplicate'),
-        ),
-      ],
+      itemBuilder: (BuildContext context) => ItemMenuOption.values
+          .map<PopupMenuEntry<ItemMenuOption>>(
+            (e) => PopupMenuItem<ItemMenuOption>(
+              value: e,
+              child: Text(e.label),
+            ),
+          )
+          .toList(),
       child: child,
     );
   }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
-import 'environment_field.dart';
+import 'env_trigger_field.dart';
 
 class EnvCellField extends StatelessWidget {
   const EnvCellField({
@@ -21,7 +21,7 @@ class EnvCellField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var clrScheme = colorScheme ?? Theme.of(context).colorScheme;
-    return EnvironmentField(
+    return EnvironmentTriggerField(
       keyId: keyId,
       initialValue: initialValue,
       style: kCodeStyle.copyWith(
