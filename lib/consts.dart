@@ -49,6 +49,23 @@ final kFontFamily = GoogleFonts.openSans().fontFamily;
 final kFontFamilyFallback =
     kIsApple ? null : <String>[GoogleFonts.notoColorEmoji().fontFamily!];
 
+final kLightMaterialAppTheme = ThemeData(
+  fontFamily: kFontFamily,
+  fontFamilyFallback: kFontFamilyFallback,
+  colorSchemeSeed: kColorSchemeSeed,
+  useMaterial3: true,
+  brightness: Brightness.light,
+  visualDensity: VisualDensity.adaptivePlatformDensity,
+);
+final kDarkMaterialAppTheme = ThemeData(
+  fontFamily: kFontFamily,
+  fontFamilyFallback: kFontFamilyFallback,
+  colorSchemeSeed: kColorSchemeSeed,
+  useMaterial3: true,
+  brightness: Brightness.dark,
+  visualDensity: VisualDensity.adaptivePlatformDensity,
+);
+
 final kCodeStyle = TextStyle(
   fontFamily: GoogleFonts.sourceCodePro().fontFamily,
   fontFamilyFallback: kFontFamilyFallback,
@@ -66,6 +83,8 @@ const kFormDataButtonLabelTextStyle = TextStyle(
   fontWeight: FontWeight.w600,
 );
 const kTextStylePopupMenuItem = TextStyle(fontSize: 16);
+
+final kButtonSidebarStyle = ElevatedButton.styleFrom(padding: kPh12);
 
 const kBorderRadius4 = BorderRadius.all(Radius.circular(4));
 const kBorderRadius8 = BorderRadius.all(Radius.circular(8));
@@ -93,6 +112,7 @@ const kPt5o10 =
     EdgeInsets.only(left: 10.0, right: 10.0, top: 5.0, bottom: 10.0);
 const kPh4 = EdgeInsets.symmetric(horizontal: 4);
 const kPh8 = EdgeInsets.symmetric(horizontal: 8);
+const kPh12 = EdgeInsets.symmetric(horizontal: 12);
 const kPh20 = EdgeInsets.symmetric(
   horizontal: 20,
 );
@@ -145,6 +165,7 @@ const kPb70 = EdgeInsets.only(
 const kHSpacer4 = SizedBox(width: 4);
 const kHSpacer5 = SizedBox(width: 5);
 const kHSpacer10 = SizedBox(width: 10);
+const kHSpacer12 = SizedBox(width: 12);
 const kHSpacer20 = SizedBox(width: 20);
 const kHSpacer40 = SizedBox(width: 40);
 const kVSpacer5 = SizedBox(height: 5);
@@ -289,7 +310,21 @@ final kColorHttpMethodPut = Colors.amber.shade900;
 final kColorHttpMethodPatch = kColorHttpMethodPut;
 final kColorHttpMethodDelete = Colors.red.shade800;
 
-enum ItemMenuOption { edit, delete, duplicate }
+enum ItemMenuOption {
+  edit("Rename"),
+  delete("Delete"),
+  duplicate("Duplicate");
+
+  const ItemMenuOption(this.label);
+  final String label;
+}
+
+enum SidebarMenuOption {
+  import("Import");
+
+  const SidebarMenuOption(this.label);
+  final String label;
+}
 
 enum HTTPVerb { get, head, post, put, patch, delete }
 
@@ -346,6 +381,13 @@ enum CodegenLanguage {
   final String label;
   final String codeHighlightLang;
   final String ext;
+}
+
+enum ImportFormat {
+  curl("cURL");
+
+  const ImportFormat(this.label);
+  final String label;
 }
 
 const JsonEncoder kEncoder = JsonEncoder.withIndent('  ');
@@ -667,6 +709,7 @@ const kRaiseIssue =
 
 const kHintTextUrlCard = "Enter API endpoint like https://$kDefaultUri/";
 const kLabelPlusNew = "+ New";
+const kLabelMoreOptions = "More Options";
 const kLabelSend = "Send";
 const kLabelSending = "Sending..";
 const kLabelBusy = "Busy";

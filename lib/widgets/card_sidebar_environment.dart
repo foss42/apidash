@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart';
-import 'menus.dart' show ItemCardMenu;
+import 'menu_item_card.dart';
 
 class SidebarEnvironmentCard extends StatelessWidget {
   const SidebarEnvironmentCard({

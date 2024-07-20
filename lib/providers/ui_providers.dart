@@ -1,3 +1,4 @@
+import 'package:apidash/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -32,3 +33,5 @@ final nameTextFieldFocusNodeProvider =
 
 final collectionSearchQueryProvider = StateProvider<String>((ref) => '');
 final environmentSearchQueryProvider = StateProvider<String>((ref) => '');
+final importFormatStateProvider =
+    StateProvider<ImportFormat>((ref) => ImportFormat.curl);

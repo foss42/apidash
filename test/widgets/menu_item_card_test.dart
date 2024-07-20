@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:apidash/widgets/menus.dart';
+import 'package:apidash/widgets/menu_item_card.dart';
 import 'package:apidash/consts.dart';
 import '../test_consts.dart';
 
