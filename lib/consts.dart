@@ -49,6 +49,23 @@ final kFontFamily = GoogleFonts.openSans().fontFamily;
 final kFontFamilyFallback =
     kIsApple ? null : <String>[GoogleFonts.notoColorEmoji().fontFamily!];
 
+final kLightMaterialAppTheme = ThemeData(
+  fontFamily: kFontFamily,
+  fontFamilyFallback: kFontFamilyFallback,
+  colorSchemeSeed: kColorSchemeSeed,
+  useMaterial3: true,
+  brightness: Brightness.light,
+  visualDensity: VisualDensity.adaptivePlatformDensity,
+);
+final kDarkMaterialAppTheme = ThemeData(
+  fontFamily: kFontFamily,
+  fontFamilyFallback: kFontFamilyFallback,
+  colorSchemeSeed: kColorSchemeSeed,
+  useMaterial3: true,
+  brightness: Brightness.dark,
+  visualDensity: VisualDensity.adaptivePlatformDensity,
+);
+
 final kCodeStyle = TextStyle(
   fontFamily: GoogleFonts.sourceCodePro().fontFamily,
   fontFamilyFallback: kFontFamilyFallback,

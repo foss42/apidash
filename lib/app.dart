@@ -110,22 +110,8 @@ class DashApp extends ConsumerWidget {
     return Portal(
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          fontFamily: kFontFamily,
-          fontFamilyFallback: kFontFamilyFallback,
-          colorSchemeSeed: kColorSchemeSeed,
-          useMaterial3: true,
-          brightness: Brightness.light,
-          visualDensity: VisualDensity.adaptivePlatformDensity,
-        ),
-        darkTheme: ThemeData(
-          fontFamily: kFontFamily,
-          fontFamilyFallback: kFontFamilyFallback,
-          colorSchemeSeed: kColorSchemeSeed,
-          useMaterial3: true,
-          brightness: Brightness.dark,
-          visualDensity: VisualDensity.adaptivePlatformDensity,
-        ),
+        theme: kLightMaterialAppTheme,
+        darkTheme: kDarkMaterialAppTheme,
         themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
         home: Stack(
           children: [
