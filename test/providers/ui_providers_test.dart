@@ -1,5 +1,6 @@
 import 'dart:io';
-
+import 'package:spot/spot.dart';
+import 'package:apidash/consts.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/screens/common_widgets/common_widgets.dart';
 import 'package:apidash/screens/dashboard.dart';
@@ -20,7 +21,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_portal/flutter_portal.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-
 import '../extensions/widget_tester_extensions.dart';
 import '../test_consts.dart';
 
@@ -41,6 +41,9 @@ void main() {
       return null;
     });
     await openBoxes();
+    final flamante = rootBundle.load('google_fonts/OpenSans-Medium.ttf');
+    final fontLoader = FontLoader('OpenSans')..addFont(flamante);
+    await fontLoader.load();
   });
 
   group('Testing navRailIndexStateProvider', () {
@@ -259,32 +262,44 @@ void main() {
         'selectedIdEditStateProvider should not be null after rename button has been tapped',
         (tester) async {
       await tester.pumpWidget(
-        const ProviderScope(
+        ProviderScope(
           child: MaterialApp(
-            home: Scaffold(
+            theme: ThemeData(
+              fontFamily: 'OpenSans',
+            ),
+            home: const Scaffold(
               body: CollectionPane(),
             ),
           ),
         ),
       );
 
+      final collectionPane = tester.element(find.byType(CollectionPane));
+      final container = ProviderScope.containerOf(collectionPane);
+      var orig = container.read(selectedIdStateProvider);
+      expect(orig, isNotNull);
+
       // Tap on the three dots to open the request card menu
       await tester.tap(find.byType(RequestList));
       await tester.pump();
       await tester.tap(find.byType(RequestItem));
       await tester.pump();
-      await tester.tap(find.byIcon(Icons.more_vert).first);
+      await tester.tap(find.byIcon(Icons.more_vert).at(1));
       await tester.pumpAndSettle();
 
-      // Tap on the "Rename" option in the menu
-      await tester.tap(find.text('Rename'));
-      await tester.pumpAndSettle();
+      // Tap on the "Duplicate" option in the menu
+      var byType = find.text('Duplicate', findRichText: true);
+      expect(byType, findsOneWidget);
 
-      // Verify that the selectedIdEditStateProvider is not null
-      final collectionPane = tester.element(find.byType(CollectionPane));
-      final container = ProviderScope.containerOf(collectionPane);
-      expect(container.read(selectedIdEditStateProvider), isNotNull);
-      expect((container.read(selectedIdEditStateProvider)).runtimeType, String);
+      await tester.tap(byType);
+      await tester.pumpAndSettle();
+      // Screenshot
+      // await takeScreenshot();
+
+      var dupId = container.read(selectedIdStateProvider);
+      expect(dupId, isNotNull);
+      expect(dupId.runtimeType, String);
+      expect(dupId != orig, isTrue);
     });
 
     testWidgets(
@@ -309,7 +324,7 @@ void main() {
       await tester.pump();
       await tester.tap(find.byType(RequestItem));
       await tester.pump();
-      await tester.tap(find.byIcon(Icons.more_vert).first);
+      await tester.tap(find.byIcon(Icons.more_vert).at(1));
       await tester.pumpAndSettle();
 
       // Tap on the "Rename" option in the menu
