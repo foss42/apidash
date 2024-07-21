@@ -1,20 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
 
-class RequestResponseTabbar extends StatelessWidget {
-  const RequestResponseTabbar({
+class SegmentedTabbar extends StatelessWidget {
+  const SegmentedTabbar({
     super.key,
     required this.controller,
+    required this.tabs,
+    this.tabWidth = kSegmentedTabWidth,
+    this.tabHeight = kSegmentedTabHeight,
   });
 
   final TabController controller;
+  final List<Widget> tabs;
+  final double tabWidth;
+  final double tabHeight;
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Container(
-        width: kReqResTabWidth,
-        height: kReqResTabHeight,
+        margin: kPh4,
+        width: tabWidth * tabs.length,
+        height: tabHeight,
         decoration: BoxDecoration(
           borderRadius: kBorderRadius20,
           border: Border.all(
@@ -40,14 +47,7 @@ class RequestResponseTabbar extends StatelessWidget {
               color: Theme.of(context).colorScheme.primary,
             ),
             controller: controller,
-            tabs: const <Widget>[
-              Tab(
-                text: kLabelRequest,
-              ),
-              Tab(
-                text: kLabelResponse,
-              ),
-            ],
+            tabs: tabs,
           ),
         ),
       ),

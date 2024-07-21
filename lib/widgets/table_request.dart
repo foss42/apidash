@@ -20,6 +20,10 @@ class RequestDataTable extends StatelessWidget {
     final clrScheme = Theme.of(context).colorScheme;
 
     final List<DataColumn> columns = [
+      const DataColumn2(
+        label: Text(''),
+        fixedWidth: 8,
+      ),
       DataColumn2(
         label: Text(keyName ?? kNameField),
       ),
@@ -29,6 +33,10 @@ class RequestDataTable extends StatelessWidget {
       ),
       DataColumn2(
         label: Text(valueName ?? kNameValue),
+      ),
+      const DataColumn2(
+        label: Text(''),
+        fixedWidth: 8,
       ),
     ];
 
@@ -52,6 +60,7 @@ class RequestDataTable extends StatelessWidget {
         .map<DataRow>(
           (MapEntry<String, String> entry) => DataRow(
             cells: <DataCell>[
+              const DataCell(kHSpacer5),
               DataCell(
                 ReadOnlyTextField(
                   initialValue: entry.key,
@@ -67,6 +76,7 @@ class RequestDataTable extends StatelessWidget {
                   decoration: fieldDecoration,
                 ),
               ),
+              const DataCell(kHSpacer5),
             ],
           ),
         )

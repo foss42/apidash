@@ -25,7 +25,7 @@ class _HistoryDetailsState extends ConsumerState<HistoryDetails>
     final codePaneVisible = ref.watch(historyCodePaneVisibleStateProvider);
 
     final TabController controller =
-        useTabController(initialLength: 2, vsync: this);
+        useTabController(initialLength: 3, vsync: this);
 
     return selectedHistoryRequest != null
         ? LayoutBuilder(
@@ -42,28 +42,45 @@ class _HistoryDetailsState extends ConsumerState<HistoryDetails>
                       )),
                   kVSpacer10,
                   if (isCompact) ...[
-                    RequestResponseTabbar(
+                    SegmentedTabbar(
                       controller: controller,
+                      tabs: const [
+                        Tab(text: kLabelRequest),
+                        Tab(text: kLabelResponse),
+                        Tab(text: kLabelCode),
+                      ],
                     ),
                     kVSpacer10,
                     Expanded(
-                        child: TabBarView(
-                      controller: controller,
-                      children: [
-                        HistoryRequestPane(
-                          isCompact: isCompact,
-                        ),
-                        const HistoryResponsePane(),
-                      ],
-                    ))
+                      child: TabBarView(
+                        controller: controller,
+                        children: [
+                          HistoryRequestPane(
+                            isCompact: isCompact,
+                          ),
+                          const HistoryResponsePane(),
+                          const CodePane(
+                            isHistoryRequest: true,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const HistoryPageBottombar()
                   ] else ...[
                     Expanded(
                       child: Padding(
                         padding: kPh4,
                         child: RequestDetailsCard(
                           child: EqualSplitView(
-                            leftWidget: HistoryRequestPane(
-                              isCompact: isCompact,
+                            leftWidget: Column(
+                              children: [
+                                Expanded(
+                                  child: HistoryRequestPane(
+                                    isCompact: isCompact,
+                                  ),
+                                ),
+                                const HistoryPageBottombar(),
+                              ],
                             ),
                             rightWidget: codePaneVisible
                                 ? const CodePane(isHistoryRequest: true)

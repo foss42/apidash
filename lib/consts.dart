@@ -168,6 +168,7 @@ const kPb15 = EdgeInsets.only(
 const kPb70 = EdgeInsets.only(
   bottom: 70,
 );
+const kHSpacer2 = SizedBox(width: 2);
 const kHSpacer4 = SizedBox(width: 4);
 const kHSpacer5 = SizedBox(width: 5);
 const kHSpacer10 = SizedBox(width: 10);
@@ -191,8 +192,8 @@ const kRandMax = 100000;
 const kSuggestionsMenuWidth = 300.0;
 const kSuggestionsMenuMaxHeight = 200.0;
 
-const kReqResTabWidth = 280.0;
-const kReqResTabHeight = 32.0;
+const kSegmentedTabWidth = 140.0;
+const kSegmentedTabHeight = 32.0;
 
 const kDataTableScrollbarTheme = ScrollbarThemeData(
   crossAxisMargin: -4,
@@ -315,6 +316,20 @@ final kColorHttpMethodPost = Colors.blue.shade800;
 final kColorHttpMethodPut = Colors.amber.shade900;
 final kColorHttpMethodPatch = kColorHttpMethodPut;
 final kColorHttpMethodDelete = Colors.red.shade800;
+
+class ButtonData {
+  ButtonData({
+    required this.label,
+    required this.icon,
+    this.onPressed,
+    this.tooltip = "",
+  });
+
+  final String label;
+  final IconData icon;
+  final VoidCallback? onPressed;
+  final String tooltip;
+}
 
 enum ItemMenuOption {
   edit("Rename"),
@@ -724,6 +739,8 @@ const kLabelSave = "Save";
 const kLabelDownload = "Download";
 const kLabelSaving = "Saving";
 const kLabelSaved = "Saved";
+const kLabelCode = "Code";
+const kLabelDuplicate = "Duplicate";
 // Request Pane
 const kLabelRequest = "Request";
 const kLabelHideCode = "Hide Code";

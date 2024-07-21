@@ -1,6 +1,7 @@
 export 'button_clear_response.dart';
 export 'button_copy.dart';
 export 'button_discord.dart';
+export 'button_group_filled.dart';
 export 'button_repo.dart';
 export 'button_save_download.dart';
 export 'button_send.dart';
@@ -48,7 +49,7 @@ export 'splitview_drawer.dart';
 export 'splitview_dashboard.dart';
 export 'splitview_equal.dart';
 export 'splitview_history.dart';
-export 'tabbar_request_response.dart';
+export 'tabbar_segmented.dart';
 export 'table_map.dart';
 export 'table_request.dart';
 export 'tabs.dart';

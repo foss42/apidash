@@ -65,6 +65,7 @@ class HistoryList extends HookConsumerWidget {
             child: HistoryExpansionTile(
               date: sortedHistoryKeys[index],
               requestGroups: requestGroups,
+              initiallyExpanded: index == 0,
             ),
           );
         },
@@ -78,10 +79,12 @@ class HistoryExpansionTile extends StatefulHookConsumerWidget {
     super.key,
     required this.requestGroups,
     required this.date,
+    this.initiallyExpanded = false,
   });
 
   final Map<String, List<HistoryMetaModel>> requestGroups;
   final DateTime date;
+  final bool initiallyExpanded;
 
   @override
   ConsumerState<HistoryExpansionTile> createState() =>
@@ -95,8 +98,9 @@ class _HistoryExpansionTileState extends ConsumerState<HistoryExpansionTile>
     final animationController = useAnimationController(
       duration: const Duration(milliseconds: 200),
       vsync: this,
+      initialValue: widget.initiallyExpanded ? 1.0 : 0.0,
     );
-    final animation = Tween(begin: 0.25, end: 0.0).animate(animationController);
+    final animation = Tween(begin: 0.0, end: 0.25).animate(animationController);
     final colorScheme = Theme.of(context).colorScheme;
     final selectedGroupId = ref.watch(selectedRequestGroupIdStateProvider);
     return ExpansionTile(
@@ -122,16 +126,16 @@ class _HistoryExpansionTileState extends ConsumerState<HistoryExpansionTile>
       ),
       onExpansionChanged: (value) {
         if (value) {
-          animationController.reverse();
-        } else {
           animationController.forward();
+        } else {
+          animationController.reverse();
         }
       },
       trailing: const SizedBox.shrink(),
       tilePadding: kPh8,
       shape: const RoundedRectangleBorder(),
       collapsedBackgroundColor: colorScheme.surfaceContainerLow,
-      initiallyExpanded: true,
+      initiallyExpanded: widget.initiallyExpanded,
       childrenPadding: kPv8 + kPe4,
       children: widget.requestGroups.values.map((item) {
         return Padding(

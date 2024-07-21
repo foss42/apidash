@@ -10,6 +10,7 @@ _$HistoryMetaModelImpl _$$HistoryMetaModelImplFromJson(
         Map<String, dynamic> json) =>
     _$HistoryMetaModelImpl(
       historyId: json['historyId'] as String,
+      requestId: json['requestId'] as String,
       name: json['name'] as String? ?? "",
       url: json['url'] as String,
       method: $enumDecode(_$HTTPVerbEnumMap, json['method']),
@@ -21,6 +22,7 @@ Map<String, dynamic> _$$HistoryMetaModelImplToJson(
         _$HistoryMetaModelImpl instance) =>
     <String, dynamic>{
       'historyId': instance.historyId,
+      'requestId': instance.requestId,
       'name': instance.name,
       'url': instance.url,
       'method': _$HTTPVerbEnumMap[instance.method]!,

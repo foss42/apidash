@@ -27,22 +27,27 @@ class NavbarButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final bool isSelected = railIdx == buttonIdx;
     final Size size = isCompact ? const Size(56, 32) : const Size(65, 32);
+    var onPress = isSelected
+        ? null
+        : () {
+            if (buttonIdx != null) {
+              ref.read(navRailIndexStateProvider.notifier).state = buttonIdx!;
+              if ((railIdx > 2 && buttonIdx! <= 2) ||
+                  !(ref
+                          .read(mobileScaffoldKeyStateProvider)
+                          .currentState
+                          ?.isDrawerOpen ??
+                      true)) {
+                ref.read(leftDrawerStateProvider.notifier).state = false;
+              }
+            }
+            onTap?.call();
+          };
     return MouseRegion(
       cursor: SystemMouseCursors.click,
       child: GestureDetector(
         behavior: HitTestBehavior.translucent,
-        onTap: isSelected
-            ? null
-            : () {
-                if (buttonIdx != null) {
-                  ref.read(navRailIndexStateProvider.notifier).state =
-                      buttonIdx!;
-                  if (railIdx > 2 && buttonIdx! <= 2) {
-                    ref.read(leftDrawerStateProvider.notifier).state = false;
-                  }
-                }
-                onTap?.call();
-              },
+        onTap: onPress,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -56,19 +61,7 @@ class NavbarButton extends ConsumerWidget {
                   : TextButton.styleFrom(
                       fixedSize: size,
                     ),
-              onPressed: isSelected
-                  ? null
-                  : () {
-                      if (buttonIdx != null) {
-                        ref.read(navRailIndexStateProvider.notifier).state =
-                            buttonIdx!;
-                        if (railIdx > 2 && buttonIdx! <= 2) {
-                          ref.read(leftDrawerStateProvider.notifier).state =
-                              false;
-                        }
-                      }
-                      onTap?.call();
-                    },
+              onPressed: onPress,
               child: Icon(
                 isSelected ? selectedIcon : icon,
                 color: Theme.of(context).colorScheme.onSurfaceVariant,

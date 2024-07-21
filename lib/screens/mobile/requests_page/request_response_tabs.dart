@@ -19,13 +19,14 @@ class RequestResponseTabs extends StatelessWidget {
           child: EditorPaneRequestURLCard(),
         ),
         kVSpacer10,
-        RequestResponseTabbar(
+        SegmentedTabbar(
           controller: controller,
+          tabs: const [
+            Tab(text: kLabelRequest),
+            Tab(text: kLabelResponse),
+          ],
         ),
-        Expanded(
-            child: RequestResponseTabviews(
-          controller: controller,
-        ))
+        Expanded(child: RequestResponseTabviews(controller: controller))
       ],
     );
   }

@@ -159,6 +159,32 @@ class CollectionStateNotifier
     ref.read(hasUnsavedChangesProvider.notifier).state = true;
   }
 
+  void duplicateFromHistory(HistoryRequestModel historyRequestModel) {
+    final newId = getNewUuid();
+
+    var itemIds = ref.read(requestSequenceProvider);
+    var currentModel = historyRequestModel;
+    final newModel = RequestModel(
+      id: newId,
+      name: "${currentModel.metaData.name} (history)",
+      httpRequestModel: currentModel.httpRequestModel,
+      responseStatus: currentModel.metaData.responseStatus,
+      message: kResponseCodeReasons[currentModel.metaData.responseStatus],
+      httpResponseModel: currentModel.httpResponseModel,
+      isWorking: false,
+      sendingTime: null,
+    );
+
+    itemIds.insert(0, newId);
+    var map = {...state!};
+    map[newId] = newModel;
+    state = map;
+
+    ref.read(requestSequenceProvider.notifier).state = [...itemIds];
+    ref.read(selectedIdStateProvider.notifier).state = newId;
+    ref.read(hasUnsavedChangesProvider.notifier).state = true;
+  }
+
   void update(
     String id, {
     HTTPVerb? method,
@@ -261,6 +287,7 @@ class CollectionStateNotifier
         historyId: newHistoryId,
         metaData: HistoryMetaModel(
           historyId: newHistoryId,
+          requestId: id,
           name: requestModel.name,
           url: substitutedHttpRequestModel.url,
           method: substitutedHttpRequestModel.method,

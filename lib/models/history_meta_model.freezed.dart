@@ -21,6 +21,7 @@ HistoryMetaModel _$HistoryMetaModelFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$HistoryMetaModel {
   String get historyId => throw _privateConstructorUsedError;
+  String get requestId => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   String get url => throw _privateConstructorUsedError;
   HTTPVerb get method => throw _privateConstructorUsedError;
@@ -41,6 +42,7 @@ abstract class $HistoryMetaModelCopyWith<$Res> {
   @useResult
   $Res call(
       {String historyId,
+      String requestId,
       String name,
       String url,
       HTTPVerb method,
@@ -62,6 +64,7 @@ class _$HistoryMetaModelCopyWithImpl<$Res, $Val extends HistoryMetaModel>
   @override
   $Res call({
     Object? historyId = null,
+    Object? requestId = null,
     Object? name = null,
     Object? url = null,
     Object? method = null,
@@ -72,6 +75,10 @@ class _$HistoryMetaModelCopyWithImpl<$Res, $Val extends HistoryMetaModel>
       historyId: null == historyId
           ? _value.historyId
           : historyId // ignore: cast_nullable_to_non_nullable
+              as String,
+      requestId: null == requestId
+          ? _value.requestId
+          : requestId // ignore: cast_nullable_to_non_nullable
               as String,
       name: null == name
           ? _value.name
@@ -107,6 +114,7 @@ abstract class _$$HistoryMetaModelImplCopyWith<$Res>
   @useResult
   $Res call(
       {String historyId,
+      String requestId,
       String name,
       String url,
       HTTPVerb method,
@@ -126,6 +134,7 @@ class __$$HistoryMetaModelImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? historyId = null,
+    Object? requestId = null,
     Object? name = null,
     Object? url = null,
     Object? method = null,
@@ -136,6 +145,10 @@ class __$$HistoryMetaModelImplCopyWithImpl<$Res>
       historyId: null == historyId
           ? _value.historyId
           : historyId // ignore: cast_nullable_to_non_nullable
+              as String,
+      requestId: null == requestId
+          ? _value.requestId
+          : requestId // ignore: cast_nullable_to_non_nullable
               as String,
       name: null == name
           ? _value.name
@@ -166,6 +179,7 @@ class __$$HistoryMetaModelImplCopyWithImpl<$Res>
 class _$HistoryMetaModelImpl implements _HistoryMetaModel {
   const _$HistoryMetaModelImpl(
       {required this.historyId,
+      required this.requestId,
       this.name = "",
       required this.url,
       required this.method,
@@ -177,6 +191,8 @@ class _$HistoryMetaModelImpl implements _HistoryMetaModel {
 
   @override
   final String historyId;
+  @override
+  final String requestId;
   @override
   @JsonKey()
   final String name;
@@ -191,7 +207,7 @@ class _$HistoryMetaModelImpl implements _HistoryMetaModel {
 
   @override
   String toString() {
-    return 'HistoryMetaModel(historyId: $historyId, name: $name, url: $url, method: $method, responseStatus: $responseStatus, timeStamp: $timeStamp)';
+    return 'HistoryMetaModel(historyId: $historyId, requestId: $requestId, name: $name, url: $url, method: $method, responseStatus: $responseStatus, timeStamp: $timeStamp)';
   }
 
   @override
@@ -201,6 +217,8 @@ class _$HistoryMetaModelImpl implements _HistoryMetaModel {
             other is _$HistoryMetaModelImpl &&
             (identical(other.historyId, historyId) ||
                 other.historyId == historyId) &&
+            (identical(other.requestId, requestId) ||
+                other.requestId == requestId) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.url, url) || other.url == url) &&
             (identical(other.method, method) || other.method == method) &&
@@ -212,8 +230,8 @@ class _$HistoryMetaModelImpl implements _HistoryMetaModel {
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, historyId, name, url, method, responseStatus, timeStamp);
+  int get hashCode => Object.hash(runtimeType, historyId, requestId, name, url,
+      method, responseStatus, timeStamp);
 
   @JsonKey(ignore: true)
   @override
@@ -233,6 +251,7 @@ class _$HistoryMetaModelImpl implements _HistoryMetaModel {
 abstract class _HistoryMetaModel implements HistoryMetaModel {
   const factory _HistoryMetaModel(
       {required final String historyId,
+      required final String requestId,
       final String name,
       required final String url,
       required final HTTPVerb method,
@@ -244,6 +263,8 @@ abstract class _HistoryMetaModel implements HistoryMetaModel {
 
   @override
   String get historyId;
+  @override
+  String get requestId;
   @override
   String get name;
   @override
