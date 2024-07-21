@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:apidash/extensions/extensions.dart';
 import 'package:apidash/providers/providers.dart';
+import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
 
 class HistorySidebarHeader extends ConsumerWidget {
@@ -21,13 +22,22 @@ class HistorySidebarHeader extends ConsumerWidget {
           ),
           const Spacer(),
           IconButton(
-            tooltip: "Auto Delete Settings",
+            tooltip: "Manage History",
             style: IconButton.styleFrom(
               foregroundColor: Theme.of(context).colorScheme.primary,
             ),
-            onPressed: () {},
+            onPressed: () {
+              showHistoryRetentionDialog(
+                  context,
+                  ref.read(settingsProvider.select(
+                      (value) => value.historyRetentionPeriod)), (value) {
+                ref.read(settingsProvider.notifier).update(
+                      historyRetentionPeriod: value,
+                    );
+              });
+            },
             icon: const Icon(
-              Icons.auto_delete_outlined,
+              Icons.manage_history_rounded,
               size: 20,
             ),
           ),

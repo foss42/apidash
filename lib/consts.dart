@@ -109,6 +109,7 @@ const kPv2 = EdgeInsets.symmetric(vertical: 2);
 const kPv6 = EdgeInsets.symmetric(vertical: 6);
 const kPv8 = EdgeInsets.symmetric(vertical: 8);
 const kPv10 = EdgeInsets.symmetric(vertical: 10);
+const kPv20 = EdgeInsets.symmetric(vertical: 20);
 const kPh2 = EdgeInsets.symmetric(horizontal: 2);
 const kPt28o8 = EdgeInsets.only(top: 28, left: 8.0, right: 8.0, bottom: 8.0);
 const kPt5o10 =
@@ -116,9 +117,8 @@ const kPt5o10 =
 const kPh4 = EdgeInsets.symmetric(horizontal: 4);
 const kPh8 = EdgeInsets.symmetric(horizontal: 8);
 const kPh12 = EdgeInsets.symmetric(horizontal: 12);
-const kPh20 = EdgeInsets.symmetric(
-  horizontal: 20,
-);
+const kPh20 = EdgeInsets.symmetric(horizontal: 20);
+const kPh24 = EdgeInsets.symmetric(horizontal: 24);
 const kPh20t40 = EdgeInsets.only(
   left: 20,
   right: 20,
@@ -178,6 +178,7 @@ const kHSpacer40 = SizedBox(width: 40);
 const kVSpacer5 = SizedBox(height: 5);
 const kVSpacer8 = SizedBox(height: 8);
 const kVSpacer10 = SizedBox(height: 10);
+const kVSpacer16 = SizedBox(height: 16);
 const kVSpacer20 = SizedBox(height: 20);
 const kVSpacer40 = SizedBox(height: 40);
 
@@ -329,6 +330,17 @@ class ButtonData {
   final IconData icon;
   final VoidCallback? onPressed;
   final String tooltip;
+}
+
+enum HistoryRetentionPeriod {
+  oneWeek("1 Week", Icons.calendar_view_week_rounded),
+  oneMonth("1 Month", Icons.calendar_view_month_rounded),
+  threeMonths("3 Months", Icons.calendar_month_rounded),
+  forever("Forever", Icons.all_inclusive_rounded);
+
+  const HistoryRetentionPeriod(this.label, this.icon);
+  final String label;
+  final IconData icon;
 }
 
 enum ItemMenuOption {

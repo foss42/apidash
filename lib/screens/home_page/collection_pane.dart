@@ -220,8 +220,8 @@ class RequestItem extends ConsumerWidget {
       selectedId: selectedId,
       editRequestId: editRequestId,
       onTap: () {
-        ref.read(mobileScaffoldKeyStateProvider).currentState?.closeDrawer();
         ref.read(selectedIdStateProvider.notifier).state = id;
+        ref.read(mobileScaffoldKeyStateProvider).currentState?.closeDrawer();
       },
       // onDoubleTap: () {
       //   ref.read(selectedIdStateProvider.notifier).state = id;

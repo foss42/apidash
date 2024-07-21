@@ -15,6 +15,7 @@ export 'checkbox.dart';
 export 'code_previewer.dart';
 export 'codegen_previewer.dart';
 export 'dialog_about.dart';
+export 'dialog_history_retention.dart';
 export 'dialog_import.dart';
 export 'dialog_rename.dart';
 export 'drag_and_drop_area.dart';

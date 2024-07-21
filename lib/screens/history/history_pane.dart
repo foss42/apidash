@@ -150,6 +150,10 @@ class _HistoryExpansionTileState extends ConsumerState<HistoryExpansionTile>
               ref
                   .read(historyMetaStateNotifier.notifier)
                   .loadHistoryRequest(item.first.historyId);
+              ref
+                  .read(mobileScaffoldKeyStateProvider)
+                  .currentState
+                  ?.closeDrawer();
             },
           ),
         );

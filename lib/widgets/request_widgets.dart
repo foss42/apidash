@@ -52,6 +52,10 @@ class _RequestPaneState extends State<RequestPane>
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       FilledButton.tonalIcon(
+                        style: FilledButton.styleFrom(
+                          padding: kPh12,
+                          minimumSize: const Size(44, 44),
+                        ),
                         onPressed: widget.onPressedCodeButton,
                         icon: Icon(
                           widget.codePaneVisible

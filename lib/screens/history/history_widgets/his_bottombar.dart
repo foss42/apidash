@@ -82,7 +82,7 @@ class HistorySheetButton extends StatelessWidget {
                   isScrollControlled: true,
                   builder: (context) {
                     return ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 500),
+                        constraints: const BoxConstraints(maxWidth: 400),
                         child: const HistorRequestsScrollableSheet());
                   },
                 );
