@@ -53,7 +53,69 @@ class HistoryRequestPane extends ConsumerWidget {
           rows: headersMap,
           keyName: kNameHeader,
         ),
-        const SizedBox(),
+        const HisRequestBody(),
+      ],
+    );
+  }
+}
+
+class HisRequestBody extends ConsumerWidget {
+  const HisRequestBody({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selectedHistoryModel = ref.watch(selectedHistoryRequestModelProvider);
+    final requestModel = selectedHistoryModel?.httpRequestModel;
+    final contentType = requestModel?.bodyContentType;
+
+    return Column(
+      children: [
+        kVSpacer5,
+        RichText(
+          text: TextSpan(
+            style: Theme.of(context).textTheme.labelLarge,
+            children: [
+              const TextSpan(
+                text: "Content Type: ",
+              ),
+              TextSpan(
+                  text: contentType?.name ?? "text",
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        color: Theme.of(context).colorScheme.primary,
+                        fontWeight: FontWeight.bold,
+                      )),
+            ],
+          ),
+        ),
+        kVSpacer5,
+        Expanded(
+          child: switch (contentType) {
+            ContentType.formdata => Padding(
+                padding: kPh4,
+                child:
+                    RequestFormDataTable(rows: requestModel?.formData ?? [])),
+            // TODO: Fix JsonTextFieldEditor & plug it here
+            ContentType.json => Padding(
+                padding: kPt5o10,
+                child: TextFieldEditor(
+                  key: Key("${selectedHistoryModel?.historyId}-json-body"),
+                  fieldKey:
+                      "${selectedHistoryModel?.historyId}-json-body-viewer",
+                  initialValue: requestModel?.body,
+                  readOnly: true,
+                ),
+              ),
+            _ => Padding(
+                padding: kPt5o10,
+                child: TextFieldEditor(
+                  key: Key("${selectedHistoryModel?.historyId}-body"),
+                  fieldKey: "${selectedHistoryModel?.historyId}-body-viewer",
+                  initialValue: requestModel?.body,
+                  readOnly: true,
+                ),
+              ),
+          },
+        )
       ],
     );
   }

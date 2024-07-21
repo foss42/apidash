@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:data_table_2/data_table_2.dart';
 import 'package:apidash/widgets/widgets.dart';
+import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
 
-class RequestDataTable extends StatelessWidget {
-  const RequestDataTable({
+class RequestFormDataTable extends StatelessWidget {
+  const RequestFormDataTable({
     super.key,
     required this.rows,
     this.keyName,
     this.valueName,
   });
 
-  final Map<String, String> rows;
+  final List<FormDataModel> rows;
   final String? keyName;
   final String? valueName;
 
@@ -56,14 +57,14 @@ class RequestDataTable extends StatelessWidget {
       ),
     );
 
-    final List<DataRow> dataRows = rows.entries
+    final List<DataRow> dataRows = rows
         .map<DataRow>(
-          (MapEntry<String, String> entry) => DataRow(
+          (FormDataModel entry) => DataRow(
             cells: <DataCell>[
               const DataCell(kHSpacer5),
               DataCell(
                 ReadOnlyTextField(
-                  initialValue: entry.key,
+                  initialValue: entry.name,
                   decoration: fieldDecoration,
                 ),
               ),
@@ -71,10 +72,18 @@ class RequestDataTable extends StatelessWidget {
                 Text('='),
               ),
               DataCell(
-                ReadOnlyTextField(
-                  initialValue: entry.value,
-                  decoration: fieldDecoration,
-                ),
+                entry.type == FormDataType.file
+                    ? Tooltip(
+                        message: entry.value,
+                        child: FormDataFileButton(
+                          onPressed: () {},
+                          initialValue: entry.value,
+                        ),
+                      )
+                    : ReadOnlyTextField(
+                        initialValue: entry.value,
+                        decoration: fieldDecoration,
+                      ),
               ),
               const DataCell(kHSpacer5),
             ],
