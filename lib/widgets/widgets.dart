@@ -42,6 +42,7 @@ export 'menu_sidebar_top.dart';
 export 'overlay_widget.dart';
 export 'popup_menu_codegen.dart';
 export 'popup_menu_env.dart';
+export 'popup_menu_history.dart';
 export 'popup_menu_uri.dart';
 export 'previewer.dart';
 export 'request_widgets.dart';
