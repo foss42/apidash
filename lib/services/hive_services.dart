@@ -97,7 +97,7 @@ class HiveHandler {
           String id, Map<String, dynamic>? historyRequestJsoon) =>
       historyLazyBox.put(id, historyRequestJsoon);
 
-  Future<void> deleteHistoryReqyest(String id) => historyLazyBox.delete(id);
+  Future<void> deleteHistoryRequest(String id) => historyLazyBox.delete(id);
 
   Future clear() async {
     await dataBox.clear();

@@ -113,3 +113,19 @@ List<HistoryMetaModel> getRequestGroup(
   requestGroup.sort((a, b) => b.timeStamp.compareTo(a.timeStamp));
   return requestGroup;
 }
+
+DateTime? getRetentionDate(HistoryRetentionPeriod retentionPeriod) {
+  DateTime now = DateTime.now();
+  DateTime today = DateTime(now.year, now.month, now.day);
+
+  switch (retentionPeriod) {
+    case HistoryRetentionPeriod.oneWeek:
+      return today.subtract(const Duration(days: 7));
+    case HistoryRetentionPeriod.oneMonth:
+      return today.subtract(const Duration(days: 30));
+    case HistoryRetentionPeriod.threeMonths:
+      return today.subtract(const Duration(days: 90));
+    default:
+      return null;
+  }
+}
