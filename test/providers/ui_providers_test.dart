@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:spot/spot.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/providers/providers.dart';

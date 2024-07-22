@@ -1,6 +1,6 @@
-import 'package:apidash/utils/convert_utils.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
+import 'convert_utils.dart';
 
 DateTime stripTime(DateTime dateTime) {
   return DateTime(dateTime.year, dateTime.month, dateTime.day);
@@ -116,7 +116,7 @@ List<HistoryMetaModel> getRequestGroup(
 
 DateTime? getRetentionDate(HistoryRetentionPeriod retentionPeriod) {
   DateTime now = DateTime.now();
-  DateTime today = DateTime(now.year, now.month, now.day);
+  DateTime today = stripTime(now);
 
   switch (retentionPeriod) {
     case HistoryRetentionPeriod.oneWeek:

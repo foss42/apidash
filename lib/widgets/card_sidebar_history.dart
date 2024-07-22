@@ -1,7 +1,7 @@
-import 'package:apidash/models/history_meta_model.dart';
 import 'package:flutter/material.dart';
-import 'package:apidash/consts.dart';
+import 'package:apidash/models/models.dart';
 import 'package:apidash/utils/utils.dart';
+import 'package:apidash/consts.dart';
 import 'texts.dart' show MethodBox;
 
 class SidebarHistoryCard extends StatelessWidget {

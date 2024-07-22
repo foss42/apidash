@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:data_table_2/data_table_2.dart';
-import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
+import 'field_read_only.dart';
 
 class RequestDataTable extends StatelessWidget {
   const RequestDataTable({
