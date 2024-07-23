@@ -52,7 +52,7 @@ class BottomNavBar extends ConsumerWidget {
                   child: NavbarButton(
                     railIdx: railIdx,
                     buttonIdx: 2,
-                    selectedIcon: Icons.history,
+                    selectedIcon: Icons.history_rounded,
                     icon: Icons.history_outlined,
                     label: 'History',
                   ),

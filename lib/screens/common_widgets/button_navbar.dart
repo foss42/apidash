@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
+import 'package:apidash/utils/utils.dart';
 
 class NavbarButton extends ConsumerWidget {
   const NavbarButton({
@@ -25,19 +26,20 @@ class NavbarButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final mobileScaffoldKey = ref.watch(mobileScaffoldKeyStateProvider);
+    final mobileScaffoldKeyNotifier =
+        ref.watch(mobileScaffoldKeyStateProvider.notifier);
     final bool isSelected = railIdx == buttonIdx;
     final Size size = isCompact ? const Size(56, 32) : const Size(65, 32);
     var onPress = isSelected
         ? null
         : () {
             if (buttonIdx != null) {
-              ref.read(navRailIndexStateProvider.notifier).state = buttonIdx!;
+              final scaffoldKey = getScaffoldKey(buttonIdx!);
+              ref.watch(navRailIndexStateProvider.notifier).state = buttonIdx!;
+              mobileScaffoldKeyNotifier.state = scaffoldKey;
               if ((railIdx > 2 && buttonIdx! <= 2) ||
-                  !(ref
-                          .read(mobileScaffoldKeyStateProvider)
-                          .currentState
-                          ?.isDrawerOpen ??
-                      true)) {
+                  !(mobileScaffoldKey.currentState?.isDrawerOpen ?? true)) {
                 ref.read(leftDrawerStateProvider.notifier).state = false;
               }
             }

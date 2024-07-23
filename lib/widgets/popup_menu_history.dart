@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:apidash/extensions/extensions.dart';
 import 'package:apidash/consts.dart';
 
 class HistoryRetentionPopupMenu extends StatelessWidget {
@@ -15,11 +14,11 @@ class HistoryRetentionPopupMenu extends StatelessWidget {
   final List<HistoryRetentionPeriod>? items;
   @override
   Widget build(BuildContext context) {
-    final double boxLength = context.isCompactWindow ? 110 : 130;
+    const double boxLength = 120;
     return PopupMenuButton(
       tooltip: "Select retention period",
       surfaceTintColor: kColorTransparent,
-      constraints: BoxConstraints(minWidth: boxLength),
+      constraints: const BoxConstraints(minWidth: boxLength),
       itemBuilder: (BuildContext context) {
         return [
           ...items!.map((period) {
@@ -44,6 +43,7 @@ class HistoryRetentionPopupMenu extends StatelessWidget {
             Text(
               value.label,
               style: kTextStylePopupMenuItem,
+              overflow: TextOverflow.ellipsis,
             ),
             const Icon(
               Icons.unfold_more,

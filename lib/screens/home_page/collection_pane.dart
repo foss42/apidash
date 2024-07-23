@@ -1,7 +1,7 @@
-import 'package:apidash/importer/importer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
+import 'package:apidash/importer/importer.dart';
 import 'package:apidash/extensions/extensions.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/models/models.dart';
@@ -221,7 +221,7 @@ class RequestItem extends ConsumerWidget {
       editRequestId: editRequestId,
       onTap: () {
         ref.read(selectedIdStateProvider.notifier).state = id;
-        ref.read(mobileScaffoldKeyStateProvider).currentState?.closeDrawer();
+        kHomeScaffoldKey.currentState?.closeDrawer();
       },
       // onDoubleTap: () {
       //   ref.read(selectedIdStateProvider.notifier).state = id;

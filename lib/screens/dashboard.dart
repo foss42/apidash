@@ -1,4 +1,3 @@
-import 'package:apidash/screens/history/history_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
@@ -7,6 +6,7 @@ import 'package:apidash/consts.dart';
 import 'common_widgets/common_widgets.dart';
 import 'envvar/environment_page.dart';
 import 'home_page/home_page.dart';
+import 'history/history_page.dart';
 import 'settings_page.dart';
 
 class Dashboard extends ConsumerWidget {
@@ -15,7 +15,6 @@ class Dashboard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final railIdx = ref.watch(navRailIndexStateProvider);
-    final mobileScaffoldKey = ref.watch(mobileScaffoldKeyStateProvider);
     return Scaffold(
       body: SafeArea(
         child: Row(
@@ -61,7 +60,7 @@ class Dashboard extends ConsumerWidget {
                         ref.read(navRailIndexStateProvider.notifier).state = 2;
                       },
                       icon: const Icon(Icons.history_outlined),
-                      selectedIcon: const Icon(Icons.history),
+                      selectedIcon: const Icon(Icons.history_rounded),
                     ),
                     Text(
                       'History',
@@ -113,15 +112,11 @@ class Dashboard extends ConsumerWidget {
               child: IndexedStack(
                 alignment: AlignmentDirectional.topCenter,
                 index: railIdx,
-                children: [
-                  const HomePage(),
-                  EnvironmentPage(
-                    scaffoldKey: mobileScaffoldKey,
-                  ),
-                  HistoryPage(
-                    scaffoldKey: mobileScaffoldKey,
-                  ),
-                  const SettingsPage(),
+                children: const [
+                  HomePage(),
+                  EnvironmentPage(),
+                  HistoryPage(),
+                  SettingsPage(),
                 ],
               ),
             )

@@ -67,25 +67,18 @@ class PageBranch extends ConsumerWidget {
   final int pageIndex;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final scaffoldKey = ref.watch(mobileScaffoldKeyStateProvider);
     switch (pageIndex) {
       case 1:
-        return EnvironmentPage(
-          scaffoldKey: scaffoldKey,
-        );
+        return const EnvironmentPage();
       case 2:
-        return HistoryPage(
-          scaffoldKey: scaffoldKey,
-        );
+        return const HistoryPage();
       case 3:
         return const PageBase(
           title: 'Settings',
           scaffoldBody: SettingsPage(),
         );
       default:
-        return RequestResponsePage(
-          scaffoldKey: scaffoldKey,
-        );
+        return const RequestResponsePage();
     }
   }
 }

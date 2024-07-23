@@ -15,10 +15,7 @@ import 'request_response_tabs.dart';
 class RequestResponsePage extends StatefulHookConsumerWidget {
   const RequestResponsePage({
     super.key,
-    required this.scaffoldKey,
   });
-
-  final GlobalKey<ScaffoldState> scaffoldKey;
 
   @override
   ConsumerState<RequestResponsePage> createState() =>
@@ -35,7 +32,7 @@ class _RequestResponsePageState extends ConsumerState<RequestResponsePage>
     final TabController requestResponseTabController =
         useTabController(initialLength: 2, vsync: this);
     return DrawerSplitView(
-      scaffoldKey: widget.scaffoldKey,
+      scaffoldKey: kHomeScaffoldKey,
       title: EditorTitle(
         title: name,
         onSelected: (ItemMenuOption item) {

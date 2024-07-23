@@ -71,6 +71,10 @@ final kCodeStyle = TextStyle(
   fontFamilyFallback: kFontFamilyFallback,
 );
 
+final kHomeScaffoldKey = GlobalKey<ScaffoldState>();
+final kEnvScaffoldKey = GlobalKey<ScaffoldState>();
+final kHisScaffoldKey = GlobalKey<ScaffoldState>();
+
 const kHintOpacity = 0.6;
 const kForegroundOpacity = 0.05;
 const kOverlayBackgroundOpacity = 0.5;
@@ -82,7 +86,7 @@ const kFormDataButtonLabelTextStyle = TextStyle(
   fontSize: 12,
   fontWeight: FontWeight.w600,
 );
-const kTextStylePopupMenuItem = TextStyle(fontSize: 16);
+const kTextStylePopupMenuItem = TextStyle(fontSize: 14);
 
 final kButtonSidebarStyle = ElevatedButton.styleFrom(padding: kPh12);
 

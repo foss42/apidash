@@ -15,7 +15,7 @@ class URIPopupMenu extends StatelessWidget {
   final List<String>? items;
   @override
   Widget build(BuildContext context) {
-    final double boxLength = context.isCompactWindow ? 90 : 130;
+    final double boxLength = context.isCompactWindow ? 90 : 110;
     return PopupMenuButton(
       tooltip: "Select URI Scheme",
       surfaceTintColor: kColorTransparent,

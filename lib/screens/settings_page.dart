@@ -149,7 +149,7 @@ class SettingsPage extends ConsumerWidget {
                 hoverColor: kColorTransparent,
                 title: const Text('History Retention Period'),
                 subtitle: Text(
-                    'Your request history will be retained for ${settings.historyRetentionPeriod.label}'),
+                    'Your request history will be retained${settings.historyRetentionPeriod == HistoryRetentionPeriod.forever ? "" : " for"} ${settings.historyRetentionPeriod.label}'),
                 trailing: Container(
                   decoration: BoxDecoration(
                     border: Border.all(
