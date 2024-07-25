@@ -26,7 +26,6 @@ class NavbarButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final mobileScaffoldKey = ref.watch(mobileScaffoldKeyStateProvider);
     final mobileScaffoldKeyNotifier =
         ref.watch(mobileScaffoldKeyStateProvider.notifier);
     final bool isSelected = railIdx == buttonIdx;
@@ -38,10 +37,7 @@ class NavbarButton extends ConsumerWidget {
               final scaffoldKey = getScaffoldKey(buttonIdx!);
               ref.watch(navRailIndexStateProvider.notifier).state = buttonIdx!;
               mobileScaffoldKeyNotifier.state = scaffoldKey;
-              if ((railIdx > 2 && buttonIdx! <= 2) ||
-                  !(mobileScaffoldKey.currentState?.isDrawerOpen ?? true)) {
-                ref.read(leftDrawerStateProvider.notifier).state = false;
-              }
+              ref.read(leftDrawerStateProvider.notifier).state = false;
             }
             onTap?.call();
           };
