@@ -7,7 +7,6 @@ import 'package:apidash/widgets/widgets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../home_page/collection_pane.dart';
 import '../../home_page/editor_pane/url_card.dart';
-import '../../home_page/editor_pane/details_card/code_pane.dart';
 import '../../home_page/editor_pane/editor_default.dart';
 import '../../common_widgets/common_widgets.dart';
 import '../widgets/page_base.dart';
@@ -16,10 +15,7 @@ import 'request_response_tabs.dart';
 class RequestResponsePage extends StatefulHookConsumerWidget {
   const RequestResponsePage({
     super.key,
-    required this.scaffoldKey,
   });
-
-  final GlobalKey<ScaffoldState> scaffoldKey;
 
   @override
   ConsumerState<RequestResponsePage> createState() =>
@@ -36,7 +32,7 @@ class _RequestResponsePageState extends ConsumerState<RequestResponsePage>
     final TabController requestResponseTabController =
         useTabController(initialLength: 2, vsync: this);
     return DrawerSplitView(
-      scaffoldKey: widget.scaffoldKey,
+      scaffoldKey: kHomeScaffoldKey,
       title: EditorTitle(
         title: name,
         onSelected: (ItemMenuOption item) {
