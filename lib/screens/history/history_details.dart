@@ -20,10 +20,7 @@ class _HistoryDetailsState extends ConsumerState<HistoryDetails>
   Widget build(BuildContext context) {
     final selectedHistoryRequest =
         ref.watch(selectedHistoryRequestModelProvider);
-    final metaData = selectedHistoryRequest?.metaData;
-
     final codePaneVisible = ref.watch(historyCodePaneVisibleStateProvider);
-
     final TabController controller =
         useTabController(initialLength: 3, vsync: this);
 
@@ -37,8 +34,7 @@ class _HistoryDetailsState extends ConsumerState<HistoryDetails>
                   Padding(
                       padding: kPh4,
                       child: HistoryURLCard(
-                        method: metaData!.method,
-                        url: metaData.url,
+                        historyRequestModel: selectedHistoryRequest,
                       )),
                   kVSpacer10,
                   if (isCompact) ...[
@@ -72,16 +68,8 @@ class _HistoryDetailsState extends ConsumerState<HistoryDetails>
                         padding: kPh4,
                         child: RequestDetailsCard(
                           child: EqualSplitView(
-                            leftWidget: Column(
-                              children: [
-                                Expanded(
-                                  child: HistoryRequestPane(
-                                    isCompact: isCompact,
-                                  ),
-                                ),
-                                const HistoryPageBottombar(),
-                              ],
-                            ),
+                            leftWidget:
+                                HistoryRequestPane(isCompact: isCompact),
                             rightWidget: codePaneVisible
                                 ? const CodePane(isHistoryRequest: true)
                                 : const HistoryResponsePane(),

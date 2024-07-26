@@ -184,9 +184,19 @@ class SettingsPage extends ConsumerWidget {
                       : () => showDialog<String>(
                             context: context,
                             builder: (BuildContext context) => AlertDialog(
+                              icon: const Icon(Icons.manage_history_rounded),
+                              iconColor: settings.isDark
+                                  ? kColorDarkDanger
+                                  : kColorLightDanger,
                               title: const Text('Clear Data'),
-                              content: const Text(
-                                  'This action will clear all the requests data from the disk and is irreversible. Do you want to proceed?'),
+                              titleTextStyle:
+                                  Theme.of(context).textTheme.titleLarge,
+                              content: ConstrainedBox(
+                                constraints:
+                                    const BoxConstraints(maxWidth: 300),
+                                child: const Text(
+                                    'This action will clear all the requests data from the disk and is irreversible. Do you want to proceed?'),
+                              ),
                               actions: <Widget>[
                                 TextButton(
                                   onPressed: () =>

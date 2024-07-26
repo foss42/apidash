@@ -1,3 +1,4 @@
+import 'package:apidash/screens/common_widgets/common_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
@@ -5,8 +6,8 @@ import '../../home_page/editor_pane/details_card/response_pane.dart';
 import '../../home_page/editor_pane/editor_request.dart';
 import '../../home_page/editor_pane/url_card.dart';
 
-class RequestResponseTabs extends StatelessWidget {
-  const RequestResponseTabs({super.key, required this.controller});
+class RequestTabs extends StatelessWidget {
+  const RequestTabs({super.key, required this.controller});
   final TabController controller;
 
   @override
@@ -24,16 +25,17 @@ class RequestResponseTabs extends StatelessWidget {
           tabs: const [
             Tab(text: kLabelRequest),
             Tab(text: kLabelResponse),
+            Tab(text: kLabelCode),
           ],
         ),
-        Expanded(child: RequestResponseTabviews(controller: controller))
+        Expanded(child: RequestTabviews(controller: controller))
       ],
     );
   }
 }
 
-class RequestResponseTabviews extends StatelessWidget {
-  const RequestResponseTabviews({super.key, required this.controller});
+class RequestTabviews extends StatelessWidget {
+  const RequestTabviews({super.key, required this.controller});
   final TabController controller;
 
   @override
@@ -46,6 +48,7 @@ class RequestResponseTabviews extends StatelessWidget {
           padding: kPt8,
           child: ResponsePane(),
         ),
+        CodePane(),
       ],
     );
   }
