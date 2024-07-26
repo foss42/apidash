@@ -375,7 +375,8 @@ enum CodegenLanguage {
   juliaHttp("Julia (HTTP)", "julia", "jl"),
   phpCurl("PHP (cURL)", "php", "php"),
   phpGuzzle("PHP (guzzle)", "php", "php"),
-  phpHttpPlug("PHP (httpPlug)", "php", "php");
+  phpHttpPlug("PHP (httpPlug)", "php", "php"),
+  rHttr("R (httr)" , "r" , '"r');
 
   const CodegenLanguage(this.label, this.codeHighlightLang, this.ext);
   final String label;
