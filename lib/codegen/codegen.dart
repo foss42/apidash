@@ -112,7 +112,7 @@ class Codegen {
       case CodegenLanguage.phpHttpPlug:
         return PhpHttpPlugCodeGen().getCode(rM);
       case CodegenLanguage.rHttr:
-        return RhttrCodeGen().getCode(rM);
+        return RCodeGen().getCode(rM);
     }
   }
 }

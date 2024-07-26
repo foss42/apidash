@@ -1,104 +1,125 @@
-import 'package:apidash/utils/http_utils.dart';
 import 'package:jinja/jinja.dart' as jj;
+import 'package:apidash/utils/utils.dart'
+    show padMultilineString, requestModelToHARJsonRequest, stripUrlParams;
 import 'package:apidash/models/models.dart';
+import 'package:apidash/consts.dart';
 
-class RhttrCodeGen {
-  final String kTemplateStart = '''
-install.packages("httr")
+class RCodeGen {
+  RCodeGen();
+
+  String kStringImportR = """library(httr)
+{%if hasFileInFormData -%}
 library(httr)
-''';
+{% endif %}
 
-  final String kTemplateUrl = '''
-url <- "{{url}}"
-''';
+""";
 
-  final String kTemplateQueryParams = '''
-params <- list(
-{{params}}
-)
-''';
+  String kTemplateStart = """request <- httr::VERB(
+  '{{method}}',
+  url = '{{url}}'
+""";
 
-  final String kTemplateHeaders = '''
-headers <- c(
-{{headers}}
-)
-''';
+  String kTemplateParams = """,
+  query = list({{params}})
+""";
 
-  final String kTemplateBody = '''
-body <- "{{body}}"
-''';
+  String kTemplateHeader = """,
+  add_headers({{headers}})
+""";
 
-  final String kTemplateRequest = '''
-response <- {{method}}(
-  url,
-  query = params,
-  add_headers(.headers=headers),
-  body = body,
-  encode = "json"
-)
-print(content(response, "text"))
-''';
+  String kTemplateBody = """,
+  body = {{body}}
+""";
+
+  String kStringRequest = """)
+response <- request
+
+print(status_code(response))
+print(content(response))
+""";
 
   String? getCode(
     HttpRequestModel requestModel,
   ) {
     try {
-      String result = kTemplateStart;
+      jj.Template kRImportTemplate = jj.Template(kStringImportR);
+      String importsData = kRImportTemplate.render({
+        "hasFileInFormData": requestModel.hasFileInFormData,
+      });
 
-      // Validate and process the URL
-      String url = requestModel.url;
-      if (!url.contains("://") && url.isNotEmpty) {
-        url = "http://$url\n";
-      }
+      String result = importsData;
 
-      var rec = getValidRequestUri(
-        url,
-        requestModel.enabledParams,
+      var harJson = requestModelToHARJsonRequest(
+        requestModel,
+        useEnabled: true,
       );
-      Uri? uri = rec.$1;
 
-      if (uri != null) {
-        String strippedUrl = stripUrlParams(uri.toString());
+      var templateStart = jj.Template(kTemplateStart);
+      result += templateStart.render({
+        "url": stripUrlParams(requestModel.url),
+        "method": harJson["method"].toUpperCase(),
+      });
 
-        // Add URL to the result
-        var templateUrl = jj.Template(kTemplateUrl);
-        result += templateUrl.render({"url": strippedUrl});
-
-        // Handle query parameters
-        if (uri.hasQuery) {
-          var params = uri.queryParameters;
-          if (params.isNotEmpty) {
-            var queryParams = params.entries.map((entry) {
-              return """  "${entry.key}" = "${entry.value}" """;
-            }).join(",\n");
-            var templateQueryParams = jj.Template(kTemplateQueryParams);
-            result += templateQueryParams.render({"params": queryParams});
-          }
+      var params = harJson["queryString"];
+      if (params.isNotEmpty) {
+        var templateParams = jj.Template(kTemplateParams);
+        var m = {};
+        for (var i in params) {
+          m[i["name"]] = i["value"];
         }
-
-        // Handle headers
-        var headers = requestModel.enabledHeadersMap;
-        if (headers.isNotEmpty) {
-          var headerCode = headers.entries.map((entry) {
-            return """  "${entry.key}" = "${entry.value}" """;
-          }).join(",\n");
-          var templateHeaders = jj.Template(kTemplateHeaders);
-          result += templateHeaders.render({"headers": headerCode});
-        }
-
-        // Handle body
-        if (requestModel.body != null) {
-          var templateBody = jj.Template(kTemplateBody);
-          result += templateBody.render({"body": requestModel.body});
-        }
-        // Add request execution
-        var templateRequest = jj.Template(kTemplateRequest);
-        result += templateRequest
-            .render({"method": requestModel.method.name.toLowerCase()});
+        result += templateParams.render({
+          "params": padMultilineString(
+              m.entries.map((e) => '"${e.key}" = "${e.value}"').join(", "), 2)
+        });
       }
+
+      var headers = harJson["headers"];
+      if (headers.isNotEmpty || requestModel.hasFormData) {
+        var templateHeader = jj.Template(kTemplateHeader);
+        var m = {};
+        for (var i in headers) {
+          m[i["name"]] = i["value"];
+        }
+        if (requestModel.hasFormData) {
+          m[kHeaderContentType] = ContentType.formdata.header;
+        }
+        // Convert headers map to R named list format
+        var formattedHeaders =
+            m.entries.map((e) => '"${e.key}" = "${e.value}"').join(", ");
+        result += templateHeader.render({"headers": formattedHeaders});
+      }
+
+      var templateBody = jj.Template(kTemplateBody);
+      if (requestModel.hasFormData && requestModel.formDataMapList.isNotEmpty) {
+        // Manually Create a R Object
+        Map<String, String> formParams = {};
+        int formFileCounter = 1;
+        for (var element in requestModel.formDataMapList) {
+          formParams["${element["name"]}"] = element["type"] == "text"
+              ? '"${element["value"]}"'
+              : "fileInput$formFileCounter";
+          if (element["type"] == "file") formFileCounter++;
+        }
+        var sanitizedRObject = sanitzeRObject(formParams);
+        result += templateBody.render({"body": sanitizedRObject});
+      } else if (harJson["postData"]?["text"] != null) {
+        // Ensure proper escaping for JSON
+        String bodyContent =
+            '"${harJson["postData"]["text"].replaceAll('"', '\\"')}"';
+        result += templateBody.render({"body": bodyContent});
+      }
+      result += kStringRequest;
       return result;
     } catch (e) {
       return null;
     }
+  }
+
+  // Escape function and variables in R Object
+  String sanitzeRObject(Map<String, String> formParams) {
+    // Escape double quotes for R
+    return formParams.entries
+        .map((e) => '"${e.key}" = "${e.value}".replaceAll(' "', '\\" ')')
+        .join(", ");
   }
 }
