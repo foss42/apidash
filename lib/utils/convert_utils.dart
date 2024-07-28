@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'dart:convert';
+import 'package:apidash/extensions/extensions.dart';
 import 'package:collection/collection.dart';
 import 'package:intl/intl.dart';
 import '../models/models.dart';
@@ -49,21 +50,9 @@ String audioPosition(Duration? duration) {
   return "$min:$secondsPadding$secs";
 }
 
-String capitalizeFirstLetter(String? text) {
-  if (text == null || text == "") {
-    return "";
-  } else if (text.length == 1) {
-    return text.toUpperCase();
-  } else {
-    var first = text[0];
-    var rest = text.substring(1);
-    return first.toUpperCase() + rest;
-  }
-}
-
 String formatHeaderCase(String text) {
   var sp = text.split("-");
-  sp = sp.map((e) => capitalizeFirstLetter(e)).toList();
+  sp = sp.map((e) => e.capitalize()).toList();
   return sp.join("-");
 }
 
