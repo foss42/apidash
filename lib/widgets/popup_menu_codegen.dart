@@ -1,6 +1,6 @@
-import 'package:apidash/consts.dart';
-import 'package:apidash/extensions/extensions.dart';
 import 'package:flutter/material.dart';
+import 'package:apidash/extensions/extensions.dart';
+import 'package:apidash/consts.dart';
 
 class CodegenPopupMenu extends StatelessWidget {
   const CodegenPopupMenu({
