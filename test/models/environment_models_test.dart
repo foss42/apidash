@@ -128,17 +128,64 @@ void main() {
   group("Testing EnvironmentVariableSuggestionModel", () {
     test("Testing EnvironmentVariableSuggestionModel copyWith", () {
       var environmentVariableSuggestionModel = environmentVariableSuggestion1;
-      final environmentVariableSuggestionModelcopyWith =
+
+      // Test case where all fields are provided
+      final environmentVariableSuggestionModelCopyWithAllFields =
           environmentVariableSuggestionModel.copyWith(
               environmentId: 'environmentId2',
               variable: environmentVariableModel2,
               isUnknown: true);
-      expect(environmentVariableSuggestionModelcopyWith.environmentId,
+      expect(environmentVariableSuggestionModelCopyWithAllFields.environmentId,
           'environmentId2');
-      expect(environmentVariableSuggestionModelcopyWith.variable,
+      expect(environmentVariableSuggestionModelCopyWithAllFields.variable,
           environmentVariableModel2);
-      expect(environmentVariableSuggestionModelcopyWith.isUnknown, true);
-      // original model unchanged
+      expect(
+          environmentVariableSuggestionModelCopyWithAllFields.isUnknown, true);
+
+      // Test case where no fields are provided (should return the same object)
+      final environmentVariableSuggestionModelCopyWithNoFields =
+          environmentVariableSuggestionModel.copyWith();
+      expect(environmentVariableSuggestionModelCopyWithNoFields.environmentId,
+          environmentVariableSuggestionModel.environmentId);
+      expect(environmentVariableSuggestionModelCopyWithNoFields.variable,
+          environmentVariableSuggestionModel.variable);
+      expect(environmentVariableSuggestionModelCopyWithNoFields.isUnknown,
+          environmentVariableSuggestionModel.isUnknown);
+
+      // Test case where only environmentId is provided
+      final environmentVariableSuggestionModelCopyWithEnvironmentId =
+          environmentVariableSuggestionModel.copyWith(
+              environmentId: 'environmentId2');
+      expect(
+          environmentVariableSuggestionModelCopyWithEnvironmentId.environmentId,
+          'environmentId2');
+      expect(environmentVariableSuggestionModelCopyWithEnvironmentId.variable,
+          environmentVariableSuggestionModel.variable);
+      expect(environmentVariableSuggestionModelCopyWithEnvironmentId.isUnknown,
+          environmentVariableSuggestionModel.isUnknown);
+
+      // Test case where only variable is provided
+      final environmentVariableSuggestionModelCopyWithVariable =
+          environmentVariableSuggestionModel.copyWith(
+              variable: environmentVariableModel2);
+      expect(environmentVariableSuggestionModelCopyWithVariable.environmentId,
+          environmentVariableSuggestionModel.environmentId);
+      expect(environmentVariableSuggestionModelCopyWithVariable.variable,
+          environmentVariableModel2);
+      expect(environmentVariableSuggestionModelCopyWithVariable.isUnknown,
+          environmentVariableSuggestionModel.isUnknown);
+
+      // Test case where only isUnknown is provided
+      final environmentVariableSuggestionModelCopyWithIsUnknown =
+          environmentVariableSuggestionModel.copyWith(isUnknown: true);
+      expect(environmentVariableSuggestionModelCopyWithIsUnknown.environmentId,
+          environmentVariableSuggestionModel.environmentId);
+      expect(environmentVariableSuggestionModelCopyWithIsUnknown.variable,
+          environmentVariableSuggestionModel.variable);
+      expect(
+          environmentVariableSuggestionModelCopyWithIsUnknown.isUnknown, true);
+
+      // Ensure the original model remains unchanged
       expect(environmentVariableSuggestionModel.environmentId, 'environmentId');
       expect(environmentVariableSuggestionModel.variable,
           environmentVariableModel1);
