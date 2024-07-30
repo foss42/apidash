@@ -10,6 +10,9 @@ extension StringExtension on String {
   }
 
   String clip(int limit) {
+    if (limit < 0) {
+      return '...';
+    }
     if (length <= limit) {
       return this;
     }

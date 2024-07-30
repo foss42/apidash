@@ -299,7 +299,7 @@ void main() {
   });
 
   group("Testing getVariableStatus function", () {
-    test("Testing getVariableStatus with available variable", () {
+    test("Testing getVariableStatus with variable available in global", () {
       const query = "num";
       Map<String, List<EnvironmentVariableModel>> envMap = {
         kGlobalEnvironmentId: globalVars,
@@ -308,6 +308,19 @@ void main() {
           environmentId: kGlobalEnvironmentId,
           variable: EnvironmentVariableModel(key: "num", value: "5670000"));
       expect(getVariableStatus(query, envMap, null), expected);
+    });
+
+    test("Testing getVariableStatus with variable available in active", () {
+      const query = "num";
+      Map<String, List<EnvironmentVariableModel>> envMap = {
+        kGlobalEnvironmentId: globalVars,
+        "activeEnvId": activeEnvVars,
+      };
+      const activeEnvironmentId = "activeEnvId";
+      const expected = EnvironmentVariableSuggestion(
+          environmentId: activeEnvironmentId,
+          variable: EnvironmentVariableModel(key: "num", value: "8940000"));
+      expect(getVariableStatus(query, envMap, activeEnvironmentId), expected);
     });
 
     test("Testing getVariableStatus with unavailable variable", () {

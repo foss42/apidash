@@ -40,10 +40,13 @@ class HistoryRetentionPopupMenu extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              value.label,
-              style: kTextStylePopupMenuItem,
-              overflow: TextOverflow.ellipsis,
+            Expanded(
+              child: Text(
+                value.label,
+                style: kTextStylePopupMenuItem,
+                softWrap: false,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
             const Icon(
               Icons.unfold_more,
