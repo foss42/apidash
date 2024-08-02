@@ -89,7 +89,6 @@ dev_dependencies:
   freezed: ^2.5.2
   json_serializable: ^6.7.1
   spot: ^0.13.0
-  test_cov_console: ^0.2.2
 
 flutter:
   uses-material-design: true

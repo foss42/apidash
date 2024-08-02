@@ -7,8 +7,8 @@ import 'package:apidash/utils/utils.dart';
 
 import 'envvar_indicator.dart';
 
-class EnvironmentAutocompleteOptions extends ConsumerWidget {
-  const EnvironmentAutocompleteOptions({
+class EnvironmentTriggerOptions extends ConsumerWidget {
+  const EnvironmentTriggerOptions({
     super.key,
     required this.query,
     required this.onSuggestionTap,

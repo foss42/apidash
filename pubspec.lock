@@ -1383,14 +1383,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.6.0"
-  test_cov_console:
-    dependency: "direct dev"
-    description:
-      name: test_cov_console
-      sha256: "73519e8be3689d73f5cffb652c12c310acacf48379396d834da937094836e65e"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.2.2"
   textwrap:
     dependency: transitive
     description:

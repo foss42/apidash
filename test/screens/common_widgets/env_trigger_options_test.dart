@@ -37,7 +37,7 @@ void main() {
     ),
   ];
   testWidgets(
-      'EnvironmentAutocompleteOptions shows no suggestions when suggestions are empty',
+      'EnvironmentTriggerOptions shows no suggestions when suggestions are empty',
       (WidgetTester tester) async {
     await tester.pumpWidget(
       ProviderScope(
@@ -47,7 +47,7 @@ void main() {
         ],
         child: MaterialApp(
           home: Scaffold(
-            body: EnvironmentAutocompleteOptions(
+            body: EnvironmentTriggerOptions(
               query: 'test',
               onSuggestionTap: (suggestion) {},
             ),
@@ -61,7 +61,7 @@ void main() {
     expect(find.byType(ListView), findsNothing);
   });
 
-  testWidgets('EnvironmentAutocompleteOptions shows suggestions when available',
+  testWidgets('EnvironmentTriggerOptions shows suggestions when available',
       (WidgetTester tester) async {
     await tester.pumpWidget(
       ProviderScope(
@@ -72,7 +72,7 @@ void main() {
         ],
         child: MaterialApp(
           home: Scaffold(
-            body: EnvironmentAutocompleteOptions(
+            body: EnvironmentTriggerOptions(
               query: 'key',
               onSuggestionTap: (suggestion) {},
             ),
@@ -87,7 +87,7 @@ void main() {
   });
 
   testWidgets(
-      'EnvironmentAutocompleteOptions calls onSuggestionTap when a suggestion is tapped',
+      'EnvironmentTriggerOptions calls onSuggestionTap when a suggestion is tapped',
       (WidgetTester tester) async {
     EnvironmentVariableSuggestion? tappedSuggestion;
 
@@ -100,7 +100,7 @@ void main() {
         ],
         child: MaterialApp(
           home: Scaffold(
-            body: EnvironmentAutocompleteOptions(
+            body: EnvironmentTriggerOptions(
               query: 'key',
               onSuggestionTap: (suggestion) {
                 tappedSuggestion = suggestion;
