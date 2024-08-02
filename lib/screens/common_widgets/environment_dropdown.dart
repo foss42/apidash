@@ -22,8 +22,8 @@ class EnvironmentDropdown extends ConsumerWidget {
           borderRadius: kBorderRadius8,
         ),
         child: EnvironmentPopupMenu(
-          activeEnvironment: environments?[activeEnvironment],
-          environments: environmentsList,
+          value: environments?[activeEnvironment],
+          items: environmentsList,
           onChanged: (value) {
             ref.read(activeEnvironmentIdStateProvider.notifier).state =
                 value?.id;

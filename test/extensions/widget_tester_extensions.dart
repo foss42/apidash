@@ -1,15 +1,6 @@
 import 'dart:ui';
 import 'package:flutter_test/flutter_test.dart';
-
-class ScreenSize {
-  const ScreenSize(this.name, this.width, this.height, this.pixelDensity);
-  final String name;
-  final double width, height, pixelDensity;
-}
-
-const compactWidthDevice = ScreenSize('compact__width_device', 500, 600, 1);
-const mediumWidthDevice = ScreenSize('medium__width_device', 800, 800, 1);
-const largeWidthDevice = ScreenSize('large_width_device', 1300, 800, 1);
+import '../test_consts.dart';
 
 extension ScreenSizeManager on WidgetTester {
   Future<void> setScreenSize(ScreenSize screenSize) async {

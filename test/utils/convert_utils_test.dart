@@ -5,6 +5,58 @@ import 'package:apidash/models/name_value_model.dart';
 import 'package:apidash/models/form_data_model.dart';
 
 void main() {
+  group("Testing humanizeDate function", () {
+    test('Testing using date1', () {
+      DateTime date1 = DateTime(2024, 12, 31);
+      String date1Expected = "December 31, 2024";
+      expect(humanizeDate(date1), date1Expected);
+    });
+
+    test('Testing using date2', () {
+      DateTime date2 = DateTime(2024, 1, 1);
+      String date2Expected = "January 1, 2024";
+      expect(humanizeDate(date2), date2Expected);
+    });
+
+    test('Testing using date3', () {
+      DateTime date3 = DateTime(2024, 6, 15);
+      String date3Expected = "June 15, 2024";
+      expect(humanizeDate(date3), date3Expected);
+    });
+
+    test('Testing using date4', () {
+      DateTime date4 = DateTime(2024, 9, 30);
+      String date4Expected = "September 30, 2024";
+      expect(humanizeDate(date4), date4Expected);
+    });
+  });
+
+  group("Testing humanizeTime function", () {
+    test('Testing using time1', () {
+      DateTime time1 = DateTime(2024, 12, 31, 23, 59, 59);
+      String time1Expected = "11:59:59 PM";
+      expect(humanizeTime(time1), time1Expected);
+    });
+
+    test('Testing using time2', () {
+      DateTime time2 = DateTime(2024, 1, 1, 0, 0, 0);
+      String time2Expected = "12:00:00 AM";
+      expect(humanizeTime(time2), time2Expected);
+    });
+
+    test('Testing using time3', () {
+      DateTime time3 = DateTime(2024, 6, 15, 12, 0, 0);
+      String time3Expected = "12:00:00 PM";
+      expect(humanizeTime(time3), time3Expected);
+    });
+
+    test('Testing using time4', () {
+      DateTime time4 = DateTime(2024, 9, 30, 15, 30, 45);
+      String time4Expected = "03:30:45 PM";
+      expect(humanizeTime(time4), time4Expected);
+    });
+  });
+
   group("Testing humanizeDuration function", () {
     test('Testing using dur1', () {
       Duration dur1 = const Duration(minutes: 1, seconds: 3);
@@ -28,32 +80,6 @@ void main() {
       Duration dur4 = const Duration(seconds: 1, milliseconds: 200);
       String dur4Expected = "1.20 s";
       expect(humanizeDuration(dur4), dur4Expected);
-    });
-  });
-
-  group("Testing capitalizeFirstLetter function", () {
-    test('Testing using text1', () {
-      String text1 = "";
-      String text1Expected = "";
-      expect(capitalizeFirstLetter(text1), text1Expected);
-    });
-
-    test('Testing using text2', () {
-      String text2 = "a";
-      String text2Expected = "A";
-      expect(capitalizeFirstLetter(text2), text2Expected);
-    });
-
-    test('Testing using text3', () {
-      String text3 = "world";
-      String text3Expected = "World";
-      expect(capitalizeFirstLetter(text3), text3Expected);
-    });
-
-    test('Testing using text4', () {
-      String text4 = "worldly affairs";
-      String text4Expected = "Worldly affairs";
-      expect(capitalizeFirstLetter(text4), text4Expected);
     });
   });
 

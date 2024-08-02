@@ -9,6 +9,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   GoogleFonts.config.allowRuntimeFetching = false;
   await openBoxes();
+  await autoClearHistory();
   if (kIsLinux) {
     await setupInitialWindow();
   }

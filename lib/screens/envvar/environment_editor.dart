@@ -19,7 +19,7 @@ class EnvironmentEditor extends ConsumerWidget {
       padding: context.isMediumWindow
           ? kPb10
           : (kIsMacOS || kIsWindows)
-              ? kPt24o8
+              ? kPt28o8
               : kP8,
       child: Column(
         children: [
@@ -65,34 +65,43 @@ class EnvironmentEditor extends ConsumerWidget {
           kVSpacer5,
           Expanded(
             child: Container(
-              padding: context.isMediumWindow ? null : kPv6,
               margin: context.isMediumWindow ? null : kP4,
-              decoration: context.isMediumWindow
-                  ? null
-                  : BoxDecoration(
-                      border: Border.all(
-                        color: Theme.of(context).colorScheme.outlineVariant,
-                        width: 1,
+              child: Card(
+                margin: EdgeInsets.zero,
+                color: kColorTransparent,
+                surfaceTintColor: kColorTransparent,
+                shape: context.isMediumWindow
+                    ? null
+                    : RoundedRectangleBorder(
+                        side: BorderSide(
+                          color: Theme.of(context)
+                              .colorScheme
+                              .surfaceContainerHighest,
+                        ),
+                        borderRadius: kBorderRadius12,
                       ),
-                      borderRadius: kBorderRadius12,
-                    ),
-              child: const Column(
-                children: [
-                  kHSpacer40,
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                elevation: 0,
+                child: const Padding(
+                  padding: kPv6,
+                  child: Column(
                     children: [
-                      SizedBox(width: 30),
-                      Text("Variable"),
-                      SizedBox(width: 30),
-                      Text("Value"),
-                      SizedBox(width: 40),
+                      kHSpacer40,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          SizedBox(width: 30),
+                          Text("Variable"),
+                          SizedBox(width: 30),
+                          Text("Value"),
+                          SizedBox(width: 40),
+                        ],
+                      ),
+                      kHSpacer40,
+                      Divider(),
+                      Expanded(child: EditEnvironmentVariables())
                     ],
                   ),
-                  kHSpacer40,
-                  Divider(),
-                  Expanded(child: EditEnvironmentVariables())
-                ],
+                ),
               ),
             ),
           ),
