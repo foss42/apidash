@@ -374,6 +374,25 @@ const httpRequestModelDelete2 = HttpRequestModel(
 );
 
 // JSONs
+
+const httpRequestModelGet4Json = <String, dynamic>{
+  "method": 'get',
+  "url": 'https://api.apidash.dev/humanize/social',
+  "headers": null,
+  "params": [
+    {'name': 'num', 'value': '8700000'},
+    {'name': 'digits', 'value': '3'},
+    {'name': 'system', 'value': 'SS'},
+    {'name': 'add_space', 'value': 'true'},
+    {'name': 'trailing_zeros', 'value': 'true'}
+  ],
+  "isHeaderEnabledList": null,
+  "isParamEnabledList": null,
+  "bodyContentType": "json",
+  "body": null,
+  "formData": null
+};
+
 const httpRequestModelPost10Json = <String, dynamic>{
   "method": 'post',
   "url": 'https://api.apidash.dev/case/lower',
