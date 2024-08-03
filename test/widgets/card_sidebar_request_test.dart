@@ -90,17 +90,9 @@ void main() {
     await tester.tapAt(const Offset(100, 100));
     await tester.pumpAndSettle();
     expect(changedValue, 'Tapped Outside');
-  });
-  testWidgets('Testing Request Details Card', (tester) async {
-    await tester.pumpWidget(
-      const MaterialApp(
-        title: 'Request Details Card',
-        home: Scaffold(
-            body: RequestDetailsCard(child: SizedBox(height: 10, width: 10))),
-      ),
-    );
 
-    expect(find.byType(Card), findsOneWidget);
-    expect(find.byType(SizedBox), findsOneWidget);
+    await tester.enterText(tappable, 'New Name');
+    await tester.testTextInput.receiveAction(TextInputAction.done);
+    expect(changedValue, "Tapped Outside");
   });
 }

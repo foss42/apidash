@@ -9,11 +9,13 @@ class TextFieldEditor extends StatefulWidget {
     required this.fieldKey,
     this.onChanged,
     this.initialValue,
+    this.readOnly = false,
   });
 
   final String fieldKey;
   final Function(String)? onChanged;
   final String? initialValue;
+  final bool readOnly;
   @override
   State<TextFieldEditor> createState() => _TextFieldEditorState();
 }
@@ -69,6 +71,7 @@ class _TextFieldEditorState extends State<TextFieldEditor> {
         keyboardType: TextInputType.multiline,
         expands: true,
         maxLines: null,
+        readOnly: widget.readOnly,
         style: kCodeStyle,
         textAlignVertical: TextAlignVertical.top,
         onChanged: widget.onChanged,

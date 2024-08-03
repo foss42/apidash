@@ -13,6 +13,7 @@ class SettingsModel {
     this.saveResponses = true,
     this.promptBeforeClosing = true,
     this.activeEnvironmentId,
+    this.historyRetentionPeriod = HistoryRetentionPeriod.oneWeek,
   });
 
   final bool isDark;
@@ -24,6 +25,7 @@ class SettingsModel {
   final bool saveResponses;
   final bool promptBeforeClosing;
   final String? activeEnvironmentId;
+  final HistoryRetentionPeriod historyRetentionPeriod;
 
   SettingsModel copyWith({
     bool? isDark,
@@ -35,6 +37,7 @@ class SettingsModel {
     bool? saveResponses,
     bool? promptBeforeClosing,
     String? activeEnvironmentId,
+    HistoryRetentionPeriod? historyRetentionPeriod,
   }) {
     return SettingsModel(
       isDark: isDark ?? this.isDark,
@@ -47,6 +50,8 @@ class SettingsModel {
       saveResponses: saveResponses ?? this.saveResponses,
       promptBeforeClosing: promptBeforeClosing ?? this.promptBeforeClosing,
       activeEnvironmentId: activeEnvironmentId ?? this.activeEnvironmentId,
+      historyRetentionPeriod:
+          historyRetentionPeriod ?? this.historyRetentionPeriod,
     );
   }
 
@@ -80,6 +85,18 @@ class SettingsModel {
     final saveResponses = data["saveResponses"] as bool?;
     final promptBeforeClosing = data["promptBeforeClosing"] as bool?;
     final activeEnvironmentId = data["activeEnvironmentId"] as String?;
+    final historyRetentionPeriodStr = data["historyRetentionPeriod"] as String?;
+    HistoryRetentionPeriod historyRetentionPeriod =
+        HistoryRetentionPeriod.oneWeek;
+    if (historyRetentionPeriodStr != null) {
+      try {
+        historyRetentionPeriod =
+            HistoryRetentionPeriod.values.byName(historyRetentionPeriodStr);
+      } catch (e) {
+        // pass
+      }
+    }
+
     const sm = SettingsModel();
 
     return sm.copyWith(
@@ -92,6 +109,7 @@ class SettingsModel {
       saveResponses: saveResponses,
       promptBeforeClosing: promptBeforeClosing,
       activeEnvironmentId: activeEnvironmentId,
+      historyRetentionPeriod: historyRetentionPeriod,
     );
   }
 
@@ -108,6 +126,7 @@ class SettingsModel {
       "saveResponses": saveResponses,
       "promptBeforeClosing": promptBeforeClosing,
       "activeEnvironmentId": activeEnvironmentId,
+      "historyRetentionPeriod": historyRetentionPeriod.name,
     };
   }
 
@@ -129,7 +148,8 @@ class SettingsModel {
         other.defaultCodeGenLang == defaultCodeGenLang &&
         other.saveResponses == saveResponses &&
         other.promptBeforeClosing == promptBeforeClosing &&
-        other.activeEnvironmentId == activeEnvironmentId;
+        other.activeEnvironmentId == activeEnvironmentId &&
+        other.historyRetentionPeriod == historyRetentionPeriod;
   }
 
   @override
@@ -145,6 +165,7 @@ class SettingsModel {
       saveResponses,
       promptBeforeClosing,
       activeEnvironmentId,
+      historyRetentionPeriod,
     );
   }
 }

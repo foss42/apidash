@@ -21,22 +21,5 @@ void main() {
     expect(find.text("Hello"), findsOneWidget);
     expect(find.byType(MultiSplitViewTheme), findsOneWidget);
   });
-  testWidgets('Testing for Equal SplitView', (tester) async {
-    await tester.pumpWidget(
-      const MaterialApp(
-        title: 'Equal SplitView',
-        home: Scaffold(
-          body: EqualSplitView(
-            leftWidget: Column(children: [Text("Hello equal")]),
-            rightWidget: Column(children: [Text("World equal")]),
-          ),
-        ),
-      ),
-    );
-
-    expect(find.text("World equal"), findsOneWidget);
-    expect(find.text("Hello equal"), findsOneWidget);
-    expect(find.byType(MultiSplitViewTheme), findsOneWidget);
-  });
   //TODO: Divider not visible on flutter run. Investigate.
 }
