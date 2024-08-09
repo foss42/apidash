@@ -1,6 +1,6 @@
-import 'package:apidash/consts.dart';
-import 'package:apidash/extensions/extensions.dart';
 import 'package:flutter/material.dart';
+import 'package:apidash/extensions/extensions.dart';
+import 'package:apidash/consts.dart';
 
 class CodegenPopupMenu extends StatelessWidget {
   const CodegenPopupMenu({
@@ -15,7 +15,6 @@ class CodegenPopupMenu extends StatelessWidget {
   final List<CodegenLanguage>? items;
   @override
   Widget build(BuildContext context) {
-    final textClipLength = context.isCompactWindow ? 12 : 22;
     final double boxLength = context.isCompactWindow ? 150 : 220;
     return PopupMenuButton<CodegenLanguage>(
       tooltip: "Select Code Generation Language",
@@ -37,9 +36,13 @@ class CodegenPopupMenu extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              value.label.clip(textClipLength),
-              style: kTextStylePopupMenuItem,
+            Expanded(
+              child: Text(
+                value.label,
+                style: kTextStylePopupMenuItem,
+                softWrap: false,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
             const Icon(
               Icons.unfold_more,

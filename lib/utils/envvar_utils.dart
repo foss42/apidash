@@ -91,7 +91,7 @@ HttpRequestModel substituteHttpRequestModel(
 }
 
 List<EnvironmentVariableSuggestion>? getEnvironmentTriggerSuggestions(
-    String? query,
+    String query,
     Map<String, List<EnvironmentVariableModel>> envMap,
     String? activeEnvironmentId) {
   final suggestions = <EnvironmentVariableSuggestion>[];
@@ -99,7 +99,7 @@ List<EnvironmentVariableSuggestion>? getEnvironmentTriggerSuggestions(
 
   if (activeEnvironmentId != null && envMap[activeEnvironmentId] != null) {
     for (final variable in envMap[activeEnvironmentId]!) {
-      if ((query!.isEmpty || variable.key.contains(query)) &&
+      if ((query.isEmpty || variable.key.contains(query)) &&
           !addedVariableKeys.contains(variable.key)) {
         suggestions.add(EnvironmentVariableSuggestion(
             environmentId: activeEnvironmentId, variable: variable));
@@ -109,7 +109,7 @@ List<EnvironmentVariableSuggestion>? getEnvironmentTriggerSuggestions(
   }
 
   envMap[kGlobalEnvironmentId]?.forEach((variable) {
-    if ((query!.isEmpty || variable.key.contains(query)) &&
+    if ((query.isEmpty || variable.key.contains(query)) &&
         !addedVariableKeys.contains(variable.key)) {
       suggestions.add(EnvironmentVariableSuggestion(
           environmentId: kGlobalEnvironmentId, variable: variable));

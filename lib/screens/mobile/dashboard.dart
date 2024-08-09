@@ -4,11 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:apidash/extensions/extensions.dart';
 import 'package:apidash/providers/providers.dart';
-import '../settings_page.dart';
-import 'navbar.dart';
 import 'requests_page/requests_page.dart';
 import '../envvar/environment_page.dart';
+import '../history/history_page.dart';
+import '../settings_page.dart';
 import 'widgets/page_base.dart';
+import 'navbar.dart';
 
 class MobileDashboard extends ConsumerStatefulWidget {
   const MobileDashboard({super.key});
@@ -39,7 +40,7 @@ class _MobileDashboardState extends ConsumerState<MobileDashboard> {
           ),
           if (context.isMediumWindow)
             AnimatedPositioned(
-              bottom: railIdx > 1
+              bottom: railIdx > 2
                   ? 0
                   : isLeftDrawerOpen
                       ? 0
@@ -66,27 +67,18 @@ class PageBranch extends ConsumerWidget {
   final int pageIndex;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final scaffoldKey = ref.watch(mobileScaffoldKeyStateProvider);
     switch (pageIndex) {
       case 1:
-        return EnvironmentPage(
-          scaffoldKey: scaffoldKey,
-        );
-      // case 2:
-      //   // TODO: Implement history page
-      //   return const PageBase(
-      //     title: 'History',
-      //     scaffoldBody: SizedBox(),
-      //   );
+        return const EnvironmentPage();
       case 2:
+        return const HistoryPage();
+      case 3:
         return const PageBase(
           title: 'Settings',
           scaffoldBody: SettingsPage(),
         );
       default:
-        return RequestResponsePage(
-          scaffoldKey: scaffoldKey,
-        );
+        return const RequestResponsePage();
     }
   }
 }

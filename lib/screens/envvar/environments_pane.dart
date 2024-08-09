@@ -190,8 +190,8 @@ class EnvironmentItem extends ConsumerWidget {
         ref.read(activeEnvironmentIdStateProvider.notifier).state = id;
       },
       onTap: () {
-        ref.read(mobileScaffoldKeyStateProvider).currentState?.closeDrawer();
         ref.read(selectedEnvironmentIdStateProvider.notifier).state = id;
+        kEnvScaffoldKey.currentState?.closeDrawer();
       },
       focusNode: ref.watch(nameTextFieldFocusNodeProvider),
       onChangedNameEditor: (value) {

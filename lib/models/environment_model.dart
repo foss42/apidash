@@ -65,4 +65,18 @@ class EnvironmentVariableSuggestion {
       isUnknown: isUnknown ?? this.isUnknown,
     );
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is EnvironmentVariableSuggestion &&
+        other.environmentId == environmentId &&
+        other.variable == variable &&
+        other.isUnknown == isUnknown;
+  }
+
+  @override
+  int get hashCode =>
+      environmentId.hashCode ^ variable.hashCode ^ isUnknown.hashCode;
 }
