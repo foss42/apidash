@@ -1,6 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
 
+class ButtonData {
+  ButtonData({
+    required this.label,
+    required this.icon,
+    this.onPressed,
+    this.tooltip = "",
+  });
+
+  final String label;
+  final IconData icon;
+  final VoidCallback? onPressed;
+  final String tooltip;
+}
+
 class FilledButtonGroup extends StatelessWidget {
   const FilledButtonGroup({super.key, required this.buttons});
 

@@ -105,7 +105,7 @@ const kP8 = EdgeInsets.all(8);
 const kPs8 = EdgeInsets.only(left: 8);
 const kPs2 = EdgeInsets.only(left: 2);
 const kPe4 = EdgeInsets.only(right: 4);
-const kPe8 = EdgeInsets.only(right: 8.0);
+const kPe8 = EdgeInsets.only(right: 8);
 const kPh20v5 = EdgeInsets.symmetric(horizontal: 20, vertical: 5);
 const kPh20v10 = EdgeInsets.symmetric(horizontal: 20, vertical: 10);
 const kP10 = EdgeInsets.all(10);
@@ -321,20 +321,6 @@ final kColorHttpMethodPost = Colors.blue.shade800;
 final kColorHttpMethodPut = Colors.amber.shade900;
 final kColorHttpMethodPatch = kColorHttpMethodPut;
 final kColorHttpMethodDelete = Colors.red.shade800;
-
-class ButtonData {
-  ButtonData({
-    required this.label,
-    required this.icon,
-    this.onPressed,
-    this.tooltip = "",
-  });
-
-  final String label;
-  final IconData icon;
-  final VoidCallback? onPressed;
-  final String tooltip;
-}
 
 enum HistoryRetentionPeriod {
   oneWeek("1 Week", Icons.calendar_view_week_rounded),
