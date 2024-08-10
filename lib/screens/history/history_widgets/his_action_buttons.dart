@@ -17,6 +17,7 @@ class HistoryActionButtons extends ConsumerWidget {
             element.id == historyRequestModel?.metaData.requestId) ??
         false;
     final requestId = historyRequestModel?.metaData.requestId;
+
     return FilledButtonGroup(buttons: [
       ButtonData(
         icon: Icons.copy_rounded,

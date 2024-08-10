@@ -1,23 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:apidash/widgets/widgets.dart';
+import 'package:apidash/models/models.dart';
 import 'package:apidash/utils/utils.dart';
 import 'package:apidash/consts.dart';
+import 'his_action_buttons.dart';
 
 class HistoryURLCard extends StatelessWidget {
   const HistoryURLCard({
     super.key,
-    required this.method,
-    required this.url,
+    required this.historyRequestModel,
   });
 
-  final HTTPVerb method;
-  final String url;
+  final HistoryRequestModel? historyRequestModel;
 
   @override
   Widget build(BuildContext context) {
+    final method = historyRequestModel?.metaData.method;
+    final url = historyRequestModel?.metaData.url;
     final fontSize = Theme.of(context).textTheme.titleMedium?.fontSize;
+
     return LayoutBuilder(builder: (context, constraints) {
       final isCompact = constraints.maxWidth <= kMinWindowSize.width;
+      final isExpanded = constraints.maxWidth >= kMediumWindowWidth;
       return Card(
         color: kColorTransparent,
         surfaceTintColor: kColorTransparent,
@@ -37,7 +41,7 @@ class HistoryURLCard extends StatelessWidget {
             children: [
               isCompact ? const SizedBox.shrink() : kHSpacer10,
               Text(
-                method.name.toUpperCase(),
+                method!.name.toUpperCase(),
                 style: kCodeStyle.copyWith(
                   fontSize: fontSize,
                   fontWeight: FontWeight.bold,
@@ -55,7 +59,12 @@ class HistoryURLCard extends StatelessWidget {
                     fontSize: fontSize,
                   ),
                 ),
-              )
+              ),
+              isExpanded
+                  ? HistoryActionButtons(
+                      historyRequestModel: historyRequestModel,
+                    )
+                  : const SizedBox.shrink()
             ],
           ),
         ),
