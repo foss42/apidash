@@ -24,6 +24,7 @@ void main() {
         widget is Text && widget.style!.color == kColorHttpMethodGet);
     expect(getTextWithColor, findsOneWidget);
   });
+
   testWidgets('Testing when method is DELETE', (tester) async {
     var methodDel = HTTPVerb.delete;
     await tester.pumpWidget(
@@ -43,5 +44,26 @@ void main() {
     final delTextWithColor = find.byWidgetPredicate(
         (widget) => widget is Text && widget.style!.color == colDelDarkMode);
     expect(delTextWithColor, findsOneWidget);
+  });
+
+  testWidgets('Testing StatusCode', (WidgetTester tester) async {
+    const int testStatusCode = 200;
+    const TextStyle testStyle = TextStyle(fontSize: 20);
+
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(
+          body: StatusCode(
+            statusCode: testStatusCode,
+            style: testStyle,
+          ),
+        ),
+      ),
+    );
+
+    Finder code = find.text(testStatusCode.toString());
+    expect(code, findsOneWidget);
+    final Text textWidget = tester.widget(code);
+    expect(textWidget.style?.fontSize, testStyle.fontSize);
   });
 }

@@ -22,23 +22,12 @@ void main() {
     expect(icon, findsOneWidget);
 
     Finder button;
-    if (tester.any(find.ancestor(
+    expect(find.text(kLabelDownload), findsOneWidget);
+    button = find.ancestor(
         of: icon,
-        matching: find.byWidgetPredicate((widget) => widget is TextButton)))) {
-      expect(find.text(kLabelDownload), findsOneWidget);
-      button = find.ancestor(
-          of: icon,
-          matching: find.byWidgetPredicate((widget) => widget is TextButton));
-      expect(button, findsOneWidget);
-      expect(tester.widget<TextButton>(button).enabled, isFalse);
-    } else if (tester
-        .any(find.ancestor(of: icon, matching: find.byType(IconButton)))) {
-      button = find.byType(IconButton);
-      expect(button, findsOneWidget);
-      expect(tester.widget<IconButton>(button).onPressed == null, isFalse);
-    } else {
-      fail('No TextButton or IconButton found');
-    }
+        matching: find.byWidgetPredicate((widget) => widget is TextButton));
+    expect(button, findsOneWidget);
+    expect(tester.widget<TextButton>(button).enabled, isFalse);
   });
 
   testWidgets('Testing for Save in Downloads button 2', (tester) async {
@@ -48,6 +37,7 @@ void main() {
         theme: kThemeDataLight,
         home: Scaffold(
           body: SaveInDownloadsButton(
+            showLabel: false,
             content: Uint8List.fromList([1]),
           ),
         ),
@@ -58,22 +48,8 @@ void main() {
     expect(icon, findsOneWidget);
 
     Finder button;
-    if (tester.any(find.ancestor(
-        of: icon,
-        matching: find.byWidgetPredicate((widget) => widget is TextButton)))) {
-      expect(find.text(kLabelDownload), findsOneWidget);
-      button = find.ancestor(
-          of: icon,
-          matching: find.byWidgetPredicate((widget) => widget is TextButton));
-      expect(button, findsOneWidget);
-      expect(tester.widget<TextButton>(button).enabled, isTrue);
-    } else if (tester
-        .any(find.ancestor(of: icon, matching: find.byType(IconButton)))) {
-      button = find.byType(IconButton);
-      expect(button, findsOneWidget);
-      expect(tester.widget<IconButton>(button).onPressed == null, isTrue);
-    } else {
-      fail('No TextButton or IconButton found');
-    }
+    button = find.byType(IconButton);
+    expect(button, findsOneWidget);
+    expect(tester.widget<IconButton>(button).onPressed == null, isFalse);
   });
 }
