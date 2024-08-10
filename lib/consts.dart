@@ -322,20 +322,6 @@ final kColorHttpMethodPut = Colors.amber.shade900;
 final kColorHttpMethodPatch = kColorHttpMethodPut;
 final kColorHttpMethodDelete = Colors.red.shade800;
 
-class ButtonData {
-  ButtonData({
-    required this.label,
-    required this.icon,
-    this.onPressed,
-    this.tooltip = "",
-  });
-
-  final String label;
-  final IconData icon;
-  final VoidCallback? onPressed;
-  final String tooltip;
-}
-
 enum HistoryRetentionPeriod {
   oneWeek("1 Week", Icons.calendar_view_week_rounded),
   oneMonth("1 Month", Icons.calendar_view_month_rounded),
