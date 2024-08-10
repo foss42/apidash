@@ -2,13 +2,14 @@ import 'package:apidash/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final mobileScaffoldKeyStateProvider = StateProvider<GlobalKey<ScaffoldState>>(
-    (ref) => GlobalKey<ScaffoldState>());
+final mobileScaffoldKeyStateProvider =
+    StateProvider<GlobalKey<ScaffoldState>>((ref) => kHomeScaffoldKey);
 final leftDrawerStateProvider = StateProvider<bool>((ref) => false);
 final navRailIndexStateProvider = StateProvider<int>((ref) => 0);
 final selectedIdEditStateProvider = StateProvider<String?>((ref) => null);
 final environmentFieldEditStateProvider = StateProvider<String?>((ref) => null);
 final codePaneVisibleStateProvider = StateProvider<bool>((ref) => false);
+final historyCodePaneVisibleStateProvider = StateProvider<bool>((ref) => false);
 final saveDataStateProvider = StateProvider<bool>((ref) => false);
 final clearDataStateProvider = StateProvider<bool>((ref) => false);
 final hasUnsavedChangesProvider = StateProvider<bool>((ref) => false);

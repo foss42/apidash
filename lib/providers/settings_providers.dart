@@ -30,6 +30,7 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
     bool? saveResponses,
     bool? promptBeforeClosing,
     String? activeEnvironmentId,
+    HistoryRetentionPeriod? historyRetentionPeriod,
   }) async {
     state = state.copyWith(
       isDark: isDark,
@@ -41,6 +42,7 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
       saveResponses: saveResponses,
       promptBeforeClosing: promptBeforeClosing,
       activeEnvironmentId: activeEnvironmentId,
+      historyRetentionPeriod: historyRetentionPeriod,
     );
     await hiveHandler.saveSettings(state.toJson());
   }

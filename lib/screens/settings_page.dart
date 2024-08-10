@@ -81,27 +81,6 @@ class SettingsPage extends ConsumerWidget {
                     },
                     items: kSupportedUriSchemes,
                   ),
-                  // DropdownButtonHideUnderline(
-                  //   child: DropdownButton<String>(
-                  //     borderRadius: kBorderRadius8,
-                  //     onChanged: (value) {
-                  //       ref
-                  //           .read(settingsProvider.notifier)
-                  //           .update(defaultUriScheme: value);
-                  //     },
-                  //     value: settings.defaultUriScheme,
-                  //     items: kSupportedUriSchemes
-                  //         .map<DropdownMenuItem<String>>((String value) {
-                  //       return DropdownMenuItem<String>(
-                  //         value: value,
-                  //         child: Padding(
-                  //           padding: kP10,
-                  //           child: Text(value),
-                  //         ),
-                  //       );
-                  //     }).toList(),
-                  //   ),
-                  // ),
                 ),
               ),
               ListTile(
@@ -123,26 +102,6 @@ class SettingsPage extends ConsumerWidget {
                     },
                     items: CodegenLanguage.values,
                   ),
-                  // DropdownButtonHideUnderline(
-                  //   child: DropdownButton<CodegenLanguage>(
-                  //     borderRadius: kBorderRadius8,
-                  //     value: settings.defaultCodeGenLang,
-                  //     onChanged: (value) {
-                  //       ref
-                  //           .read(settingsProvider.notifier)
-                  //           .update(defaultCodeGenLang: value);
-                  //     },
-                  //     items: CodegenLanguage.values.map((value) {
-                  //       return DropdownMenuItem<CodegenLanguage>(
-                  //         value: value,
-                  //         child: Padding(
-                  //           padding: kP10,
-                  //           child: Text(value.label),
-                  //         ),
-                  //       );
-                  //     }).toList(),
-                  //   ),
-                  // ),
                 ),
               ),
               CheckboxListTile(
@@ -183,6 +142,29 @@ class SettingsPage extends ConsumerWidget {
                   icon: const Icon(
                     Icons.arrow_outward_rounded,
                     size: 20,
+                  ),
+                ),
+              ),
+              ListTile(
+                hoverColor: kColorTransparent,
+                title: const Text('History Retention Period'),
+                subtitle: Text(
+                    'Your request history will be retained${settings.historyRetentionPeriod == HistoryRetentionPeriod.forever ? "" : " for"} ${settings.historyRetentionPeriod.label}'),
+                trailing: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                    borderRadius: kBorderRadius8,
+                  ),
+                  child: HistoryRetentionPopupMenu(
+                    value: settings.historyRetentionPeriod,
+                    onChanged: (value) {
+                      ref
+                          .read(settingsProvider.notifier)
+                          .update(historyRetentionPeriod: value);
+                    },
+                    items: HistoryRetentionPeriod.values,
                   ),
                 ),
               ),
