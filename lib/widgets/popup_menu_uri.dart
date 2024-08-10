@@ -36,9 +36,13 @@ class URIPopupMenu extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              value,
-              style: kTextStylePopupMenuItem,
+            Expanded(
+              child: Text(
+                value,
+                style: kTextStylePopupMenuItem,
+                softWrap: false,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
             const Icon(
               Icons.unfold_more,

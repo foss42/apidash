@@ -26,10 +26,10 @@ class EnvironmentTriggerField extends StatefulWidget {
 
   @override
   State<EnvironmentTriggerField> createState() =>
-      _EnvironmentTriggerFieldState();
+      EnvironmentTriggerFieldState();
 }
 
-class _EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
+class EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
   final TextEditingController controller = TextEditingController();
   final FocusNode focusNode = FocusNode();
 
@@ -71,7 +71,7 @@ class _EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
             triggerEnd: "}}",
             triggerOnlyAfterSpace: false,
             optionsViewBuilder: (context, autocompleteQuery, controller) {
-              return EnvironmentAutocompleteOptions(
+              return EnvironmentTriggerOptions(
                   query: autocompleteQuery.query,
                   onSuggestionTap: (suggestion) {
                     final autocomplete = MultiTriggerAutocomplete.of(context);
@@ -86,7 +86,7 @@ class _EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
             triggerEnd: "}}",
             triggerOnlyAfterSpace: false,
             optionsViewBuilder: (context, autocompleteQuery, controller) {
-              return EnvironmentAutocompleteOptions(
+              return EnvironmentTriggerOptions(
                   query: autocompleteQuery.query,
                   onSuggestionTap: (suggestion) {
                     final autocomplete = MultiTriggerAutocomplete.of(context);

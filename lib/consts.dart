@@ -355,7 +355,7 @@ enum FormDataType { text, file }
 
 enum EnvironmentVariableType { variable, secret }
 
-final kEnvVarRegEx = RegExp(r'{{(.*?)}}');
+final kEnvVarRegEx = RegExp(r'{{([^{}]*)}}');
 
 const kSupportedUriSchemes = ["https", "http"];
 const kDefaultUriScheme = "https";

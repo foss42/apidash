@@ -19,7 +19,6 @@ class EnvironmentPopupMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final valueName = getEnvironmentTitle(value?.name);
-    final textClipLength = context.isCompactWindow ? 6 : 10;
     final double boxLength = context.isCompactWindow ? 100 : 130;
     return PopupMenuButton(
       tooltip: "Select Environment",
@@ -54,9 +53,12 @@ class EnvironmentPopupMenu extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              value == null ? "None" : valueName.clip(textClipLength),
-              softWrap: false,
+            Expanded(
+              child: Text(
+                value == null ? "None" : valueName,
+                softWrap: false,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
             const Icon(
               Icons.unfold_more,
