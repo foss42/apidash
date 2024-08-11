@@ -9,7 +9,8 @@ import 'package:apidash/utils/utils.dart';
 import 'package:apidash/consts.dart';
 
 class FormDataWidget extends ConsumerStatefulWidget {
-  const FormDataWidget({super.key});
+  final Function changeMethodToPost;
+  const FormDataWidget({required this.changeMethodToPost, super.key});
   @override
   ConsumerState<FormDataWidget> createState() => _FormDataBodyState();
 }
@@ -27,6 +28,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
   }
 
   void _onFieldChange(String selectedId) {
+    widget.changeMethodToPost();
     ref.read(collectionStateNotifierProvider.notifier).update(
           selectedId,
           formData: formRows.sublist(0, formRows.length - 1),
@@ -41,6 +43,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
         .select((value) => value?.httpRequestModel?.formData?.length));
     var rF = ref.read(selectedRequestModelProvider)?.httpRequestModel?.formData;
     bool isFormDataEmpty = rF == null || rF.isEmpty;
+
     formRows = isFormDataEmpty
         ? [
             kFormDataEmptyModel,

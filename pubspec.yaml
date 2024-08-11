@@ -73,6 +73,7 @@ dependencies:
     git:
       url: https://github.com/foss42/curl_converter.git
       ref: 726e8cd04aeb326211af27f75920be5b21c90bb4
+  
 
 dependency_overrides:
   web: ^0.5.0

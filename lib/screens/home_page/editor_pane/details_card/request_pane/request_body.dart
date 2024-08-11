@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:apidash/models/models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
@@ -17,6 +20,25 @@ class EditRequestBody extends ConsumerWidget {
     final contentType = ref.watch(selectedRequestModelProvider
         .select((value) => value?.httpRequestModel?.bodyContentType));
 
+    void changeToPostMethod() {
+      RequestModel? model = ref
+          .read(collectionStateNotifierProvider.notifier)
+          .getRequestModel(selectedId);
+
+      if (model!.httpRequestModel!.method == HTTPVerb.get) {
+        ref
+            .read(collectionStateNotifierProvider.notifier)
+            .update(selectedId, method: HTTPVerb.post);
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+            "Switched to POST method",
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.black,
+        ));
+      }
+    }
+
     return Column(
       children: [
         const SizedBox(
@@ -33,8 +55,11 @@ class EditRequestBody extends ConsumerWidget {
         ),
         Expanded(
           child: switch (contentType) {
-            ContentType.formdata =>
-              const Padding(padding: kPh4, child: FormDataWidget()),
+            ContentType.formdata => Padding(
+                padding: kPh4,
+                child: FormDataWidget(
+                  changeMethodToPost: changeToPostMethod,
+                )),
             // TODO: Fix JsonTextFieldEditor & plug it here
             ContentType.json => Padding(
                 padding: kPt5o10,
@@ -43,6 +68,7 @@ class EditRequestBody extends ConsumerWidget {
                   fieldKey: "$selectedId-json-body-editor",
                   initialValue: requestModel?.httpRequestModel?.body,
                   onChanged: (String value) {
+                    changeToPostMethod();
                     ref
                         .read(collectionStateNotifierProvider.notifier)
                         .update(selectedId, body: value);
@@ -56,6 +82,7 @@ class EditRequestBody extends ConsumerWidget {
                   fieldKey: "$selectedId-body-editor",
                   initialValue: requestModel?.httpRequestModel?.body,
                   onChanged: (String value) {
+                    changeToPostMethod();
                     ref
                         .read(collectionStateNotifierProvider.notifier)
                         .update(selectedId, body: value);

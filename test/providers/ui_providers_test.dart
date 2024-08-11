@@ -1,6 +1,4 @@
 import 'dart:io';
-import 'package:spot/spot.dart';
-import 'package:apidash/consts.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/screens/common_widgets/common_widgets.dart';
 import 'package:apidash/screens/dashboard.dart';
