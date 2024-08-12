@@ -46,8 +46,8 @@ class Dashboard extends ConsumerWidget {
                       onPressed: () {
                         ref.read(navRailIndexStateProvider.notifier).state = 1;
                       },
-                      icon: const Icon(Icons.computer_outlined),
-                      selectedIcon: const Icon(Icons.computer_rounded),
+                      icon: const Icon(Icons.laptop_windows_outlined),
+                      selectedIcon: const Icon(Icons.laptop_windows),
                     ),
                     Text(
                       'Variables',
