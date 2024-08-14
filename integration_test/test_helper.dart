@@ -1,6 +1,5 @@
-import 'dart:ui';
-
 import 'package:apidash/app.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -46,4 +45,9 @@ void apidashWidgetTest(
     },
     semanticsEnabled: false,
   );
+}
+
+Future<void> navigateByIcon(IconData icon, WidgetTester tester) async {
+  await tester.tap(find.byIcon(icon));
+  await tester.pumpAndSettle();
 }
