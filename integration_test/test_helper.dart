@@ -47,7 +47,7 @@ void apidashWidgetTest(
   );
 }
 
-Future<void> navigateByIcon(IconData icon, WidgetTester tester) async {
+Future<void> navigateByIcon(WidgetTester tester, IconData icon) async {
   await tester.tap(find.byIcon(icon));
   await tester.pumpAndSettle();
 }
