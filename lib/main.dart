@@ -29,7 +29,7 @@ Future<void> initWindow({Size? sz}) async {
     await setupInitialWindow(sz: sz);
   }
   if (kIsMacOS || kIsWindows) {
-    var win = sz == null ? (sz, null) : getInitialSize();
+    var win = sz != null ? (sz, const Offset(100, 100)) : getInitialSize();
     await setupWindow(sz: win.$1, off: win.$2);
   }
 }

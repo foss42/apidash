@@ -9,7 +9,6 @@ import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/screens/screens.dart';
 import 'package:apidash/screens/common_widgets/env_trigger_options.dart';
 import 'package:apidash/screens/envvar/editor_pane/variables_pane.dart';
-import 'package:apidash/screens/home_page/editor_pane/editor_request.dart';
 import 'package:apidash/screens/home_page/editor_pane/url_card.dart';
 import 'package:apidash/screens/envvar/environments_pane.dart';
 import '../../test/extensions/widget_tester_extensions.dart';
@@ -25,15 +24,22 @@ void main() async {
   const expectedCurlCode =
       "curl --url 'https://api.apidash.dev/humanize/social?num=8700000'";
 
-  await ApidashTestHelper.initialize();
+  await ApidashTestHelper.initialize(
+      size: Size(kCompactWindowWidth, kMinWindowSize.height));
   apidashWidgetTest("Testing Environment Manager in desktop end-to-end",
       (WidgetTester tester, helper) async {
     await tester.pumpUntilFound(find.byType(DashApp));
     await Future.delayed(const Duration(seconds: 1));
 
+    kHomeScaffoldKey.currentState!.openDrawer();
+    await tester.pumpAndSettle();
+
     /// Navigate to Environment Manager
     await navigateByIcon(tester, Icons.laptop_windows_outlined);
     await Future.delayed(const Duration(milliseconds: 500));
+
+    kEnvScaffoldKey.currentState!.openDrawer();
+    await tester.pumpAndSettle();
 
     /// Create New Environment
     final newEnvButton =
@@ -61,6 +67,9 @@ void main() async {
     await tester.pump();
     await Future.delayed(const Duration(milliseconds: 500));
 
+    kEnvScaffoldKey.currentState!.closeDrawer();
+    await tester.pumpAndSettle();
+
     /// Edit Environment Variables
     final envCells = find.descendant(
         of: find.byType(EditEnvironmentVariables),
@@ -69,13 +78,22 @@ void main() async {
     await tester.enterText(envCells.at(1), envVarValue);
     await Future.delayed(const Duration(milliseconds: 500));
 
+    kEnvScaffoldKey.currentState!.openDrawer();
+    await tester.pumpAndSettle();
+
     /// Navigate to Request Editor
     await navigateByIcon(tester, Icons.auto_awesome_mosaic_outlined);
     await Future.delayed(const Duration(milliseconds: 200));
 
+    kHomeScaffoldKey.currentState!.openDrawer();
+    await tester.pumpAndSettle();
+
     /// Create a new request
     await act.tap(
         spot<CollectionPane>().spot<ElevatedButton>().spotText(kLabelPlusNew));
+    await tester.pumpAndSettle();
+
+    kHomeScaffoldKey.currentState!.closeDrawer();
     await tester.pumpAndSettle();
 
     /// Set active environment
@@ -88,7 +106,7 @@ void main() async {
     await tester.pumpAndSettle();
 
     /// Check if environment suggestions are working
-    await act.tap(spot<RequestEditor>().spot<URLTextField>());
+    await act.tap(spot<URLTextField>());
     tester.testTextInput.enterText("$testEndpoint{{$envVarName");
     await tester.pumpAndSettle(
         const Duration(milliseconds: 500)); // wait for suggestions
@@ -108,7 +126,11 @@ void main() async {
         matching: find.text('{{$envVarName}}'))));
     await tester.pumpAndSettle();
     expect(find.text(envVarValue), findsOneWidget);
+    await gesture.moveBy(const Offset(0, 100));
     await Future.delayed(const Duration(milliseconds: 500));
+
+    kHomeScaffoldKey.currentState!.openDrawer();
+    await tester.pumpAndSettle();
 
     /// Change codegen language to curl
     await navigateByIcon(tester, Icons.settings_outlined);
@@ -123,13 +145,16 @@ void main() async {
     await Future.delayed(const Duration(milliseconds: 200));
 
     /// Check variable substitution in request
-    await act.tap(spot<RequestPane>().spotText(kLabelViewCode));
+    await act.tap(spot<SegmentedTabbar>().spotText(kLabelCode));
     await tester.pumpAndSettle();
     expect(
         find.descendant(
             of: find.byType(CodeGenPreviewer),
             matching: find.text(expectedCurlCode)),
         findsOneWidget);
+
+    kHomeScaffoldKey.currentState!.openDrawer();
+    await tester.pumpAndSettle();
 
     /// Navigate to Environment Manager
     await navigateByIcon(tester, Icons.laptop_windows_outlined);
@@ -141,6 +166,9 @@ void main() async {
         matching: find.byIcon(Icons.remove_circle));
     await tester.tap(delButtons.at(0));
     await Future.delayed(const Duration(milliseconds: 500));
+
+    kEnvScaffoldKey.currentState!.openDrawer();
+    await tester.pumpAndSettle();
 
     /// Navigate back to Request Editor
     await navigateByIcon(tester, Icons.auto_awesome_mosaic_outlined);
