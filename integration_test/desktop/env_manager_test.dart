@@ -6,12 +6,9 @@ import 'package:spot/spot.dart';
 import 'package:apidash/app.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/widgets/widgets.dart';
-import 'package:apidash/screens/screens.dart';
 import 'package:apidash/screens/common_widgets/env_trigger_options.dart';
-import 'package:apidash/screens/envvar/editor_pane/variables_pane.dart';
 import 'package:apidash/screens/home_page/editor_pane/editor_request.dart';
 import 'package:apidash/screens/home_page/editor_pane/url_card.dart';
-import 'package:apidash/screens/envvar/environments_pane.dart';
 import '../../test/extensions/widget_tester_extensions.dart';
 import '../test_helper.dart';
 
@@ -19,11 +16,9 @@ void main() async {
   const environmentName = "test-env-name";
   const envVarName = "test-env-var";
   const envVarValue = "8700000";
-  const testEndpoint = "api.apidash.dev/humanize/social?num=";
+  const testEndpoint = "https://api.apidash.dev/humanize/social?num=";
   const unknown = "unknown";
-  const untitled = "untitled";
-  const expectedCurlCode =
-      "curl --url 'https://api.apidash.dev/humanize/social?num=8700000'";
+  const expectedCurlCode = "curl --url '$testEndpoint$envVarValue'";
 
   await ApidashTestHelper.initialize(
       size: Size(kExpandedWindowWidth, kMinWindowSize.height));
@@ -33,60 +28,30 @@ void main() async {
     await Future.delayed(const Duration(seconds: 1));
 
     /// Navigate to Environment Manager
-    await navigateByIcon(tester, Icons.laptop_windows_outlined);
+    await helper.navigateToEnvironmentManager();
     await Future.delayed(const Duration(milliseconds: 500));
 
     /// Create New Environment
-    final newEnvButton =
-        spot<EnvironmentsPane>().spot<ElevatedButton>().spotText(kLabelPlusNew);
-    newEnvButton.existsOnce();
-    await act.tap(newEnvButton);
-    await tester.pumpAndSettle();
+    await helper.envHelper.addNewEnvironment();
     await Future.delayed(const Duration(milliseconds: 500));
-
-    /// Open ItemCardMenu of the new environment
-    Finder envItems = find.byType(EnvironmentItem);
-    Finder newEnvItem = envItems.at(1);
-    expect(find.descendant(of: newEnvItem, matching: find.text(untitled)),
-        findsOneWidget);
-    Finder itemCardMenu =
-        find.descendant(of: newEnvItem, matching: find.byType(ItemCardMenu));
-    await tester.tap(itemCardMenu);
-    await tester.pumpAndSettle();
 
     /// Rename the new environment
-    await tester.tap(find.text(ItemMenuOption.edit.label).last);
-    await tester.pump();
-    await tester.enterText(newEnvItem, environmentName);
-    await tester.testTextInput.receiveAction(TextInputAction.done);
-    await tester.pump();
+    await helper.envHelper.renameNewEnvironment(environmentName);
     await Future.delayed(const Duration(milliseconds: 500));
 
-    /// Edit Environment Variables
-    final envCells = find.descendant(
-        of: find.byType(EditEnvironmentVariables),
-        matching: find.byType(CellField));
-    await tester.enterText(envCells.at(0), envVarName);
-    await tester.enterText(envCells.at(1), envVarValue);
+    /// Add Environment Variables
+    await helper.envHelper.addEnvironmentVariables([(envVarName, envVarValue)]);
     await Future.delayed(const Duration(milliseconds: 500));
 
     /// Navigate to Request Editor
-    await navigateByIcon(tester, Icons.auto_awesome_mosaic_outlined);
+    await helper.navigateToRequestEditor();
     await Future.delayed(const Duration(milliseconds: 200));
 
     /// Create a new request
-    await act.tap(
-        spot<CollectionPane>().spot<ElevatedButton>().spotText(kLabelPlusNew));
-    await tester.pumpAndSettle();
+    await helper.reqHelper.addNewRequest();
 
     /// Set active environment
-    await tester.tap(find.descendant(
-        of: find.byType(EnvironmentPopupMenu),
-        matching: find.byIcon(Icons.unfold_more)));
-    await tester.pumpAndSettle();
-
-    await tester.tap(find.text(environmentName).last);
-    await tester.pumpAndSettle();
+    await helper.envHelper.setActiveEnvironment(environmentName);
 
     /// Check if environment suggestions are working
     await act.tap(spot<RequestEditor>().spot<URLTextField>());
@@ -111,16 +76,12 @@ void main() async {
     expect(find.text(envVarValue), findsOneWidget);
     await Future.delayed(const Duration(milliseconds: 500));
 
-    /// Change codegen language to curl
-    await navigateByIcon(tester, Icons.settings_outlined);
-    await tester.tap(find.descendant(
-        of: find.byType(CodegenPopupMenu),
-        matching: find.byIcon(Icons.unfold_more)));
-    await tester.pumpAndSettle();
+    await helper.navigateToSettings();
 
-    await tester.tap(find.text(CodegenLanguage.curl.label).last);
-    await tester.pumpAndSettle();
-    await navigateByIcon(tester, Icons.auto_awesome_mosaic_outlined);
+    /// Change codegen language to curl
+    await helper.changeCodegenLanguage(CodegenLanguage.curl);
+
+    await helper.navigateToRequestEditor();
     await Future.delayed(const Duration(milliseconds: 200));
 
     /// Check variable substitution in request
@@ -133,18 +94,15 @@ void main() async {
         findsOneWidget);
 
     /// Navigate to Environment Manager
-    await navigateByIcon(tester, Icons.laptop_windows_outlined);
+    await helper.navigateToEnvironmentManager();
     await Future.delayed(const Duration(milliseconds: 200));
 
     /// Delete the environment variable
-    final delButtons = find.descendant(
-        of: find.byType(EditEnvironmentVariables),
-        matching: find.byIcon(Icons.remove_circle));
-    await tester.tap(delButtons.at(0));
+    await helper.envHelper.deleteFirstEnvironmentVariable();
     await Future.delayed(const Duration(milliseconds: 500));
 
     /// Navigate back to Request Editor
-    await navigateByIcon(tester, Icons.auto_awesome_mosaic_outlined);
+    await helper.navigateToRequestEditor();
     await Future.delayed(const Duration(milliseconds: 200));
 
     /// Check if environment variable is now shown on hover
