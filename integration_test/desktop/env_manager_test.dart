@@ -25,7 +25,8 @@ void main() async {
   const expectedCurlCode =
       "curl --url 'https://api.apidash.dev/humanize/social?num=8700000'";
 
-  await ApidashTestHelper.initialize();
+  await ApidashTestHelper.initialize(
+      size: Size(kExpandedWindowWidth, kMinWindowSize.height));
   apidashWidgetTest("Testing Environment Manager in desktop end-to-end",
       (WidgetTester tester, helper) async {
     await tester.pumpUntilFound(find.byType(DashApp));
