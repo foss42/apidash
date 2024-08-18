@@ -7,7 +7,6 @@ import 'package:apidash/app.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/screens/common_widgets/env_trigger_options.dart';
-import 'package:apidash/screens/home_page/editor_pane/editor_request.dart';
 import 'package:apidash/screens/home_page/editor_pane/url_card.dart';
 import '../../test/extensions/widget_tester_extensions.dart';
 import '../test_helper.dart';
@@ -54,8 +53,7 @@ void main() async {
     await helper.envHelper.setActiveEnvironment(environmentName);
 
     /// Check if environment suggestions are working
-    await act.tap(spot<RequestEditor>().spot<URLTextField>());
-    tester.testTextInput.enterText("$testEndpoint{{$envVarName");
+    await helper.reqHelper.addRequestURL("$testEndpoint{{$envVarName");
     await tester.pumpAndSettle(
         const Duration(milliseconds: 500)); // wait for suggestions
     await act.tap(spot<EnvironmentTriggerOptions>()

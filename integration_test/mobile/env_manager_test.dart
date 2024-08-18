@@ -15,7 +15,8 @@ void main() async {
   const environmentName = "test-env-name";
   const envVarName = "test-env-var";
   const envVarValue = "8700000";
-  const testEndpoint = "https://api.apidash.dev/humanize/social?num=";
+  // TODO: Hover on variable doesn't work in test for long URLs
+  const testEndpoint = "https://api.apidash.dev?num=";
   const unknown = "unknown";
   const expectedCurlCode = "curl --url '$testEndpoint$envVarValue'";
 
@@ -59,8 +60,7 @@ void main() async {
     await helper.envHelper.setActiveEnvironment(environmentName);
 
     /// Check if environment suggestions are working
-    await act.tap(spot<URLTextField>());
-    tester.testTextInput.enterText("$testEndpoint{{$envVarName");
+    await helper.reqHelper.addRequestURL("$testEndpoint{{$envVarName");
     await tester.pumpAndSettle(
         const Duration(milliseconds: 500)); // wait for suggestions
     await act.tap(spot<EnvironmentTriggerOptions>()
