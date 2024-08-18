@@ -1,5 +1,6 @@
 import 'package:apidash/consts.dart';
 import 'package:apidash/screens/home_page/collection_pane.dart';
+import 'package:apidash/screens/home_page/editor_pane/url_card.dart';
 import 'package:apidash/widgets/menu_item_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -35,5 +36,10 @@ class ApidashTestRequestHelper {
     await tester.enterText(newReqItem, newReqName);
     await tester.testTextInput.receiveAction(TextInputAction.done);
     await tester.pump();
+  }
+
+  Future<void> addRequestURL(String url) async {
+    await act.tap(spot<URLTextField>());
+    tester.testTextInput.enterText(url);
   }
 }
