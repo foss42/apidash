@@ -87,5 +87,6 @@ class HistoryMetaStateNotifier
     hiveHandler.setHistoryIds(updatedHistoryKeys);
     hiveHandler.setHistoryMeta(id, model.metaData.toJson());
     await hiveHandler.setHistoryRequest(id, model.toJson());
+    await loadHistoryRequest(id);
   }
 }

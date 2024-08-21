@@ -120,8 +120,8 @@ class ApidashTestRequestHelper {
       await setRequestMethod(method);
     }
     await addRequestURL(url);
-    await addRequestParams(params);
-    await addRequestHeaders(headers);
+    if (params.isNotEmpty) await addRequestParams(params);
+    if (headers.isNotEmpty) await addRequestHeaders(headers);
   }
 
   Future<void> sendRequest(
