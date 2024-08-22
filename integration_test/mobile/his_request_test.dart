@@ -4,7 +4,6 @@ import 'package:spot/spot.dart';
 import 'package:apidash/app.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/widgets/widgets.dart';
-import 'package:apidash/screens/history/history_pane.dart';
 import 'package:apidash/screens/history/history_widgets/history_widgets.dart';
 import '../../test/extensions/widget_tester_extensions.dart';
 import '../test_helper.dart';
@@ -31,7 +30,7 @@ void main() async {
     /// Navigate to History
     await helper.navigateToHistory(scaffoldKey: kHomeScaffoldKey);
     kHisScaffoldKey.currentState!.openDrawer();
-    var sidebarCards = spot<HistoryPane>().spot<SidebarHistoryCard>().finder;
+    var sidebarCards = find.byType(SidebarHistoryCard, skipOffstage: false);
     final initSidebarCardCount =
         tester.widgetList<SidebarHistoryCard>(sidebarCards).length;
     kHisScaffoldKey.currentState!.closeDrawer();
@@ -58,8 +57,9 @@ void main() async {
     await helper.reqHelper.sendRequest();
 
     /// Check history Card counts
+    /// TODO: Having overflowing number of cards causes the test to fail
     await helper.navigateToHistory(scaffoldKey: kHomeScaffoldKey);
-    sidebarCards = spot<HistoryPane>().spot<SidebarHistoryCard>().finder;
+    sidebarCards = find.byType(SidebarHistoryCard, skipOffstage: false);
     final newSidebarCardCount =
         tester.widgetList<SidebarHistoryCard>(sidebarCards).length;
     kHisScaffoldKey.currentState!.closeDrawer();
