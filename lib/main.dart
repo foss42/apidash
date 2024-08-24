@@ -7,19 +7,29 @@ import 'app.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  GoogleFonts.config.allowRuntimeFetching = false;
-  await openBoxes();
-  await autoClearHistory();
-  if (kIsLinux) {
-    await setupInitialWindow();
-  }
-  if (kIsMacOS || kIsWindows) {
-    var win = getInitialSize();
-    await setupWindow(sz: win.$1, off: win.$2);
-  }
+
+  await initApp();
+  await initWindow();
+
   runApp(
     const ProviderScope(
       child: DashApp(),
     ),
   );
+}
+
+Future<void> initApp() async {
+  GoogleFonts.config.allowRuntimeFetching = false;
+  await openBoxes();
+  await autoClearHistory();
+}
+
+Future<void> initWindow({Size? sz}) async {
+  if (kIsLinux) {
+    await setupInitialWindow(sz: sz);
+  }
+  if (kIsMacOS || kIsWindows) {
+    var win = sz != null ? (sz, const Offset(100, 100)) : getInitialSize();
+    await setupWindow(sz: win.$1, off: win.$2);
+  }
 }

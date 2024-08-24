@@ -34,8 +34,8 @@ class BottomNavBar extends ConsumerWidget {
                   child: NavbarButton(
                     railIdx: railIdx,
                     buttonIdx: 0,
-                    selectedIcon: Icons.dashboard,
-                    icon: Icons.dashboard_outlined,
+                    selectedIcon: Icons.auto_awesome_mosaic_rounded,
+                    icon: Icons.auto_awesome_mosaic_outlined,
                     label: 'Requests',
                   ),
                 ),

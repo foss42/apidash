@@ -89,6 +89,8 @@ dev_dependencies:
   freezed: ^2.5.2
   json_serializable: ^6.7.1
   spot: ^0.13.0
+  integration_test:
+    sdk: flutter
 
 flutter:
   uses-material-design: true

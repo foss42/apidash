@@ -217,7 +217,7 @@ void main() {
       // Verify that the EnvironmentPage is displayed
       expect(find.byType(EnvironmentPage), findsOneWidget);
       // Verify that the selected icon is the filled version (selectedIcon)
-      expect(find.byIcon(Icons.computer_rounded), findsOneWidget);
+      expect(find.byIcon(Icons.laptop_windows), findsOneWidget);
 
       // Go to HistoryPage
       container.read(navRailIndexStateProvider.notifier).state = 2;
