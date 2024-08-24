@@ -20,8 +20,8 @@ void main() async {
 }''';
 
   await ApidashTestHelper.initialize(
-      size: Size(kExpandedWindowWidth, kMinWindowSize.height));
-  apidashWidgetTest("Testing Request Editor in desktop end-to-end",
+      size: Size(kCompactWindowWidth, kMinWindowSize.height));
+  apidashWidgetTest("Testing Request Editor in mobile end-to-end",
       (WidgetTester tester, helper) async {
     await tester.pumpUntilFound(find.byType(DashApp));
     await Future.delayed(const Duration(seconds: 1));
@@ -30,11 +30,14 @@ void main() async {
     await helper.reqHelper.addRequest(testEndpoint,
         name: reqName,
         params: [(paramKey, paramValue)],
-        headers: [(headerKey, headerValue)]);
+        headers: [(headerKey, headerValue)],
+        isMobile: true);
     await Future.delayed(const Duration(milliseconds: 200));
     await helper.reqHelper.sendRequest();
 
     /// Check if response is received
+    await act.tap(spot<SegmentedTabbar>().spotText(kLabelResponse));
+    await tester.pumpAndSettle();
     await act.tap(spotText(ResponseBodyView.raw.label));
     await tester.pumpAndSettle();
     spotText(expectedRawCode).existsOnce();
@@ -45,13 +48,19 @@ void main() async {
     spotText("$kLabelRequestHeaders (1 $kLabelItems)").existsOnce();
 
     /// Change codegen language to curl
-    await helper.navigateToSettings();
+    await helper.navigateToSettings(scaffoldKey: kHomeScaffoldKey);
     await helper.changeCodegenLanguage(CodegenLanguage.curl);
     await helper.navigateToRequestEditor();
 
-    /// Check generated code
+    /// Uncheck first header
+    await act.tap(spot<SegmentedTabbar>().spotText(kLabelRequest));
+    await tester.pumpAndSettle();
+    await act.tap(spot<RequestPane>().spot<TabBar>().spotText(kLabelHeaders));
+    await tester.pumpAndSettle();
     await helper.reqHelper.unCheckFirstHeader();
-    await act.tap(spot<RequestPane>().spotText(kLabelViewCode));
+
+    /// Check generated code
+    await act.tap(spot<SegmentedTabbar>().spotText(kLabelCode));
     await tester.pumpAndSettle();
     spot<CodeGenPreviewer>().spotText(expectedCurlCode).existsOnce();
   });
