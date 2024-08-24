@@ -217,7 +217,7 @@ class EditEnvironmentVariablesState
               },
               icon: const Icon(Icons.add),
               label: const Text(
-                "Add Variable",
+                kLabelAddVariable,
                 style: kTextStyleButton,
               ),
             ),

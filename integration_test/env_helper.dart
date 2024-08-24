@@ -42,12 +42,15 @@ class ApidashTestEnvHelper {
 
   Future<void> addEnvironmentVariables(
       List<(String, String)> keyValuePairs) async {
-    final envCells = find.descendant(
+    var envCells = find.descendant(
         of: find.byType(EditEnvironmentVariables),
         matching: find.byType(CellField));
     for (var i = 0; i < keyValuePairs.length; i++) {
-      await tester.enterText(envCells.at(i), keyValuePairs[i].$1);
-      await tester.enterText(envCells.at(i + 1), keyValuePairs[i].$2);
+      await tester.enterText(envCells.at(i * 2), keyValuePairs[i].$1);
+      await tester.enterText(envCells.at(i * 2 + 1), keyValuePairs[i].$2);
+      envCells = find.descendant(
+          of: find.byType(EditEnvironmentVariables),
+          matching: find.byType(CellField));
     }
   }
 

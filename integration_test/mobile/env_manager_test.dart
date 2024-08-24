@@ -22,7 +22,7 @@ void main() async {
 
   await ApidashTestHelper.initialize(
       size: Size(kCompactWindowWidth, kMinWindowSize.height));
-  apidashWidgetTest("Testing Environment Manager in desktop end-to-end",
+  apidashWidgetTest("Testing Environment Manager in mobile end-to-end",
       (WidgetTester tester, helper) async {
     await tester.pumpUntilFound(find.byType(DashApp));
     await Future.delayed(const Duration(seconds: 1));
