@@ -129,33 +129,34 @@ class Grabber extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (!isOnDesktopAndWeb) {
-      return const SizedBox.shrink();
-    }
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
-    return GestureDetector(
-      onVerticalDragUpdate: onVerticalDragUpdate,
-      child: Container(
-        width: double.infinity,
-        decoration: BoxDecoration(
-          color: colorScheme.surfaceContainerLow,
-          borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(16), topRight: Radius.circular(16)),
-        ),
-        child: Align(
-          alignment: Alignment.topCenter,
-          child: Container(
-            margin: kPv10,
-            width: 80.0,
-            height: 6.0,
-            decoration: BoxDecoration(
-              color: colorScheme.surfaceContainerHighest,
-              borderRadius: BorderRadius.circular(8.0),
-            ),
+    final handle = Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerLow,
+        borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(16), topRight: Radius.circular(16)),
+      ),
+      child: Align(
+        alignment: Alignment.topCenter,
+        child: Container(
+          margin: kPv10,
+          width: 80.0,
+          height: 6.0,
+          decoration: BoxDecoration(
+            color: colorScheme.surfaceContainerHighest,
+            borderRadius: BorderRadius.circular(8.0),
           ),
         ),
       ),
+    );
+    if (!isOnDesktopAndWeb) {
+      return handle;
+    }
+    return GestureDetector(
+      onVerticalDragUpdate: onVerticalDragUpdate,
+      child: handle,
     );
   }
 }
