@@ -8,7 +8,11 @@ import 'package:apidash/widgets/widgets.dart';
 import '../../test/extensions/widget_tester_extensions.dart';
 import '../test_helper.dart';
 
-void main() async {
+Future<void> main() async {
+  await runDesktopHisIntegrationTest();
+}
+
+Future<void> runDesktopHisIntegrationTest() async {
   await ApidashTestHelper.initialize(
       size: Size(kExpandedWindowWidth, kMinWindowSize.height));
   apidashWidgetTest("Testing History of Requests in desktop end-to-end",

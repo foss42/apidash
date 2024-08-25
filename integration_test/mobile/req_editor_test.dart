@@ -7,7 +7,11 @@ import 'package:apidash/widgets/widgets.dart';
 import '../../test/extensions/widget_tester_extensions.dart';
 import '../test_helper.dart';
 
-void main() async {
+Future<void> main() async {
+  await runMobileReqIntegrationTest();
+}
+
+Future<void> runMobileReqIntegrationTest() async {
   const reqName = "test-req-name";
   const testEndpoint = "https://api.apidash.dev/humanize/social";
   const paramKey = "num";

@@ -8,7 +8,11 @@ import 'package:apidash/screens/history/history_widgets/history_widgets.dart';
 import '../../test/extensions/widget_tester_extensions.dart';
 import '../test_helper.dart';
 
-void main() async {
+Future<void> main() async {
+  await runMobileHisIntegrationTest();
+}
+
+Future<void> runMobileHisIntegrationTest() async {
   await ApidashTestHelper.initialize(
       size: Size(kCompactWindowWidth, kMinWindowSize.height));
   apidashWidgetTest("Testing History of Requests in mobile end-to-end",
