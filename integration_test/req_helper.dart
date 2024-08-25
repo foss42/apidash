@@ -100,6 +100,13 @@ class ApidashTestRequestHelper {
     }
   }
 
+  Future<void> unCheckFirstHeader() async {
+    final headerCells = find.descendant(
+        of: find.byType(EditRequestHeaders), matching: find.byType(CheckBox));
+    await tester.tap(headerCells.at(0));
+    await tester.pumpAndSettle();
+  }
+
   Future<void> addRequest(
     String url, {
     String? name,
