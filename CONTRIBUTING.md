@@ -2,7 +2,7 @@
 
 We value your participation in this open source project. This page will give you a quick overview of how to get involved.
 
-You can contribute to the project in any or all of the following ways: 
+You can contribute to the project in any or all of the following ways:
 
 - [Ask a question](https://github.com/foss42/apidash/discussions)
 - [Submit a bug report](https://github.com/foss42/apidash/issues/new/choose)
@@ -22,12 +22,13 @@ In case you are new to the open source ecosystem, we would be more than happy to
 > PRs with precise changes (like adding a new test, resolving a bug/issue, adding a new feature) are always preferred over a single PR with a ton of file changes as they are easier to review and merge.
 
 We currently do not accept PRs that involve:
+
 - Code refactoring without any new feature addition/existing issue resolution.
 - Bumping of dependency versions (SDKs, Packages).
 
 ### Resolving an existing issue / Adding a requested feature
 
-You can find all existing issues [here](https://github.com/foss42/apidash/issues). A good place to start is to take a look at ["good first issues"](https://github.com/foss42/apidash/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22). 
+You can find all existing issues [here](https://github.com/foss42/apidash/issues). A good place to start is to take a look at ["good first issues"](https://github.com/foss42/apidash/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22).
 
 **Step 1** - Identify the issue you want to work on.  
 **Step 2** - Comment on the issue so that we can discuss how to approach and solve the problem.  
@@ -43,7 +44,7 @@ You can find all existing issues [here](https://github.com/foss42/apidash/issues
 
 **Step 1** - Open an [issue](https://github.com/foss42/apidash/issues/new/choose) so that we can discuss on the new feature.  
 **Step 2** - Fork the [`foss42/apidash`](https://github.com/foss42/apidash) repo to your account.  
-**Step 3** - Create a new branch in your fork and name it `add-feature-xyz`.   
+**Step 3** - Create a new branch in your fork and name it `add-feature-xyz`.  
 **Step 4** - Run API Dash locally (More details [here](#how-to-run-api-dash-locally)).  
 **Step 5** - Make the necessary code changes required to implement the feature in the branch.  
 **Step 6** - Once the feature is implemented. Make sure you add the relevant tests in the `test` folder and run tests (More details [here](#how-to-run-tests)).  
@@ -53,11 +54,12 @@ You can find all existing issues [here](https://github.com/foss42/apidash/issues
 ### Adding a new test
 
 You can contribute by adding missing/new tests for:
+
 - Widgets (`lib/widgets/`)
 - Models (`lib/models/`)
 - Utilities (`lib/utils/`)
 - Riverpod providers (`lib/providers/`)
-- Code generation (`lib/codegen/`) 
+- Code generation (`lib/codegen/`)
 - Services (`lib/services/`).
 
 **Step 1** - Identify the test you want to add or improve.  
@@ -68,11 +70,11 @@ You can contribute by adding missing/new tests for:
 **Step 6** - [Open a Pull Request](https://help.github.com/articles/using-pull-requests/) with a clear title and description of the tests you are adding.  
 **Step 7** - Wait for feedback and review. We will closely work with you on the Pull Request.
 
-## General Instructions 
+## General Instructions
 
 ### What is the supported Flutter/Dart version?
 
-This project supports the latest Dart 3 & Flutter version. If you are using older Flutter version that does not support Dart 3, you might get errors. 
+This project supports the latest Dart 3 & Flutter version. If you are using older Flutter version that does not support Dart 3, you might get errors.
 
 In case you are setting up Flutter for the first time, just go ahead and download the latest (Stable) SDK from the [Flutter SDK Archive](https://docs.flutter.dev/release/archive). Then proceed with the Flutter installation.
 
@@ -100,12 +102,12 @@ flutter test --coverage
 To generate coverage report as html execute:
 
 ```
-genhtml coverage/lcov.info -o coverage/html  
+genhtml coverage/lcov.info -o coverage/html
 ```
 
 **Note**: On macOS you need to have `lcov` installed on your system (`brew install lcov`) to run the above command.
 
-To view the coverage report in the browser for further analysis, execute: 
+To view the coverage report in the browser for further analysis, execute:
 
 ```
 open coverage/html/index.html
@@ -123,6 +125,20 @@ Example:
 
 ```
 flutter test test/widgets/codegen_previewer_test.dart
+```
+
+#### Running an Integration test
+
+To run an integration test, execute the following command:
+
+```
+flutter test integration_test/<file_path>.dart
+```
+
+Example:
+
+```
+flutter test integration_test/desktop/env_manager_test.dart
 ```
 
 ### How to add a new package to pubspec.yaml?
