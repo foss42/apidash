@@ -20,21 +20,21 @@ dependencies:
   data_table_2: ^2.5.15
   dart_style: ^2.3.6
   desktop_drop: ^0.4.4
-  extended_text_field: ^15.0.0
+  extended_text_field: ^16.0.0
   file_selector: ^1.0.3
   flex_color_scheme: ^7.3.1
   flutter_hooks: ^0.20.5
-  flutter_markdown: ^0.7.2+1
+  flutter_markdown: ^0.7.3+1
   flutter_portal: ^1.1.4
   flutter_riverpod: ^2.5.1
   flutter_svg: ^2.0.10+1
   flutter_typeahead: ^5.2.0
   freezed_annotation: ^2.4.1
-  fvp: ^0.17.0
+  fvp: ^0.24.1
   google_fonts: ^6.2.1
   highlighter: ^0.1.1
   hive_flutter: ^1.1.0
-  hooks_riverpod: ^2.5.1
+  hooks_riverpod: ^2.5.2
   http: ^1.2.1
   http_parser: ^4.0.2
   intl: ^0.19.0
@@ -56,10 +56,10 @@ dependencies:
     git:
       url: https://github.com/foss42/multi_trigger_autocomplete.git
       ref: cb22bab30dd14452d184bc6ad3bb41b612b22c70
-  package_info_plus: ^8.0.0
+  package_info_plus: ^8.0.2
   path: ^1.8.3
   path_provider: ^2.1.2
-  printing: ^5.12.0
+  printing: ^5.13.2
   provider: ^6.1.2
   riverpod: ^2.5.1
   scrollable_positioned_list: ^0.3.8
@@ -68,7 +68,7 @@ dependencies:
   vector_graphics_compiler: ^1.1.9+1
   video_player: ^2.8.7
   video_player_platform_interface: ^6.2.2
-  window_manager: ^0.3.8
+  window_manager: ^0.4.2
   window_size:
     git:
       url: https://github.com/google/flutter-desktop-embedding.git
@@ -76,16 +76,17 @@ dependencies:
   xml: ^6.3.0
 
 dependency_overrides:
+  extended_text_field: ^16.0.0
   pdf_widget_wrapper: ^1.0.4
   web: ^0.5.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  build_runner: ^2.4.11
+  build_runner: ^2.4.12
   flutter_launcher_icons: ^0.13.1
   flutter_lints: ^4.0.0
-  freezed: ^2.5.2
+  freezed: ^2.5.7
   json_serializable: ^6.7.1
   integration_test:
     sdk: flutter
