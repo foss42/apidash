@@ -37,7 +37,7 @@ class FilledButtonGroup extends StatelessWidget {
         }
       }
       return ClipRRect(
-        borderRadius: kBorderRadius20,
+        borderRadius: BorderRadius.circular(88),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: buttonsWithSpacers,
