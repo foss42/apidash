@@ -1,6 +1,5 @@
 import 'dart:io';
-import 'package:spot/spot.dart';
-import 'package:apidash/consts.dart';
+//import 'package:spot/spot.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/screens/common_widgets/common_widgets.dart';
 import 'package:apidash/screens/dashboard.dart';
@@ -327,7 +326,7 @@ void main() {
 
       await tester.tap(byType);
       await tester.pumpAndSettle();
-      // Screenshot
+      // Screenshot using spot
       // await takeScreenshot();
 
       var dupId = container.read(selectedIdStateProvider);

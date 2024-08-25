@@ -761,6 +761,7 @@ const kHintAddName = "Add Name";
 const kHintAddFieldName = "Add Field Name";
 const kLabelAddParam = "Add Param";
 const kLabelAddHeader = "Add Header";
+const kLabelAddVariable = "Add Variable";
 const kLabelSelectFile = "Select File";
 const kLabelAddFormField = "Add Form Field";
 // Response Pane

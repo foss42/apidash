@@ -18,6 +18,7 @@ class _HistoryDetailsState extends ConsumerState<HistoryDetails>
     with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
+    ref.watch(historySequenceProvider);
     final selectedHistoryRequest =
         ref.watch(selectedHistoryRequestModelProvider);
     final codePaneVisible = ref.watch(historyCodePaneVisibleStateProvider);
