@@ -8,10 +8,13 @@ import 'package:apidash/screens/history/history_widgets/history_widgets.dart';
 import '../../test/extensions/widget_tester_extensions.dart';
 import '../test_helper.dart';
 
-void main() async {
-  await ApidashTestHelper.initialize(
-      size: Size(kCompactWindowWidth, kMinWindowSize.height));
-  apidashWidgetTest("Testing History of Requests in mobile end-to-end",
+Future<void> main() async {
+  await runMobileHisIntegrationTest();
+}
+
+Future<void> runMobileHisIntegrationTest() async {
+  apidashWidgetTest(
+      "Testing History of Requests in mobile end-to-end", kCompactWindowWidth,
       (WidgetTester tester, helper) async {
     await tester.pumpUntilFound(find.byType(DashApp));
     await Future.delayed(const Duration(seconds: 1));
@@ -24,7 +27,6 @@ void main() async {
       isMobile: true,
     );
     await Future.delayed(const Duration(milliseconds: 200));
-    await helper.reqHelper.sendRequest();
     await helper.reqHelper.sendRequest();
 
     /// Navigate to History

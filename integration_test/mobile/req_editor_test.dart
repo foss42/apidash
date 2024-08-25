@@ -7,7 +7,11 @@ import 'package:apidash/widgets/widgets.dart';
 import '../../test/extensions/widget_tester_extensions.dart';
 import '../test_helper.dart';
 
-void main() async {
+Future<void> main() async {
+  await runMobileReqIntegrationTest();
+}
+
+Future<void> runMobileReqIntegrationTest() async {
   const reqName = "test-req-name";
   const testEndpoint = "https://api.apidash.dev/humanize/social";
   const paramKey = "num";
@@ -19,9 +23,8 @@ void main() async {
   "data": "870K"
 }''';
 
-  await ApidashTestHelper.initialize(
-      size: Size(kCompactWindowWidth, kMinWindowSize.height));
-  apidashWidgetTest("Testing Request Editor in mobile end-to-end",
+  apidashWidgetTest(
+      "Testing Request Editor in mobile end-to-end", kCompactWindowWidth,
       (WidgetTester tester, helper) async {
     await tester.pumpUntilFound(find.byType(DashApp));
     await Future.delayed(const Duration(seconds: 1));

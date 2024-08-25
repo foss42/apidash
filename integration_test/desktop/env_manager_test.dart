@@ -11,7 +11,11 @@ import 'package:apidash/screens/home_page/editor_pane/url_card.dart';
 import '../../test/extensions/widget_tester_extensions.dart';
 import '../test_helper.dart';
 
-void main() async {
+Future<void> main() async {
+  await runDesktopEnvIntegrationTest();
+}
+
+Future<void> runDesktopEnvIntegrationTest() async {
   const environmentName = "test-env-name";
   const envVarName = "test-env-var";
   const envVarValue = "8700000";
@@ -19,9 +23,8 @@ void main() async {
   const unknown = "unknown";
   const expectedCurlCode = "curl --url '$testEndpoint$envVarValue'";
 
-  await ApidashTestHelper.initialize(
-      size: Size(kExpandedWindowWidth, kMinWindowSize.height));
-  apidashWidgetTest("Testing Environment Manager in desktop end-to-end",
+  apidashWidgetTest(
+      "Testing Environment Manager in desktop end-to-end", kExpandedWindowWidth,
       (WidgetTester tester, helper) async {
     await tester.pumpUntilFound(find.byType(DashApp));
     await Future.delayed(const Duration(seconds: 1));
