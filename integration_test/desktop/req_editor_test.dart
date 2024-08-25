@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
 import 'package:apidash/app.dart';
@@ -23,9 +22,8 @@ Future<void> runDesktopReqIntegrationTest() async {
   "data": "870K"
 }''';
 
-  await ApidashTestHelper.initialize(
-      size: Size(kExpandedWindowWidth, kMinWindowSize.height));
-  apidashWidgetTest("Testing Request Editor in desktop end-to-end",
+  apidashWidgetTest(
+      "Testing Request Editor in desktop end-to-end", kExpandedWindowWidth,
       (WidgetTester tester, helper) async {
     await tester.pumpUntilFound(find.byType(DashApp));
     await Future.delayed(const Duration(seconds: 1));

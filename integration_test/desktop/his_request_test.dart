@@ -1,6 +1,3 @@
-import 'dart:ui';
-
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:apidash/app.dart';
 import 'package:apidash/consts.dart';
@@ -13,9 +10,8 @@ Future<void> main() async {
 }
 
 Future<void> runDesktopHisIntegrationTest() async {
-  await ApidashTestHelper.initialize(
-      size: Size(kExpandedWindowWidth, kMinWindowSize.height));
-  apidashWidgetTest("Testing History of Requests in desktop end-to-end",
+  apidashWidgetTest(
+      "Testing History of Requests in desktop end-to-end", kExpandedWindowWidth,
       (WidgetTester tester, helper) async {
     await tester.pumpUntilFound(find.byType(DashApp));
     await Future.delayed(const Duration(seconds: 1));

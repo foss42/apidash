@@ -23,9 +23,8 @@ Future<void> runMobileReqIntegrationTest() async {
   "data": "870K"
 }''';
 
-  await ApidashTestHelper.initialize(
-      size: Size(kCompactWindowWidth, kMinWindowSize.height));
-  apidashWidgetTest("Testing Request Editor in mobile end-to-end",
+  apidashWidgetTest(
+      "Testing Request Editor in mobile end-to-end", kCompactWindowWidth,
       (WidgetTester tester, helper) async {
     await tester.pumpUntilFound(find.byType(DashApp));
     await Future.delayed(const Duration(seconds: 1));

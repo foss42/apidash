@@ -13,9 +13,8 @@ Future<void> main() async {
 }
 
 Future<void> runMobileHisIntegrationTest() async {
-  await ApidashTestHelper.initialize(
-      size: Size(kCompactWindowWidth, kMinWindowSize.height));
-  apidashWidgetTest("Testing History of Requests in mobile end-to-end",
+  apidashWidgetTest(
+      "Testing History of Requests in mobile end-to-end", kCompactWindowWidth,
       (WidgetTester tester, helper) async {
     await tester.pumpUntilFound(find.byType(DashApp));
     await Future.delayed(const Duration(seconds: 1));
@@ -28,7 +27,6 @@ Future<void> runMobileHisIntegrationTest() async {
       isMobile: true,
     );
     await Future.delayed(const Duration(milliseconds: 200));
-    await helper.reqHelper.sendRequest();
     await helper.reqHelper.sendRequest();
 
     /// Navigate to History

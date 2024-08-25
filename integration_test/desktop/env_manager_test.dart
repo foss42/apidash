@@ -23,9 +23,8 @@ Future<void> runDesktopEnvIntegrationTest() async {
   const unknown = "unknown";
   const expectedCurlCode = "curl --url '$testEndpoint$envVarValue'";
 
-  await ApidashTestHelper.initialize(
-      size: Size(kExpandedWindowWidth, kMinWindowSize.height));
-  apidashWidgetTest("Testing Environment Manager in desktop end-to-end",
+  apidashWidgetTest(
+      "Testing Environment Manager in desktop end-to-end", kExpandedWindowWidth,
       (WidgetTester tester, helper) async {
     await tester.pumpUntilFound(find.byType(DashApp));
     await Future.delayed(const Duration(seconds: 1));

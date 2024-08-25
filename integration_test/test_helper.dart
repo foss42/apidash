@@ -113,11 +113,14 @@ class ApidashTestHelper {
 @isTest
 void apidashWidgetTest(
   String description,
+  double? width,
   Future<void> Function(WidgetTester, ApidashTestHelper) test,
 ) {
   testWidgets(
     description,
     (widgetTester) async {
+      await ApidashTestHelper.initialize(
+          size: width != null ? Size(width, kMinWindowSize.height) : null);
       await ApidashTestHelper.loadApp(widgetTester);
       await test(widgetTester, ApidashTestHelper(widgetTester));
     },
