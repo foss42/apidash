@@ -170,6 +170,14 @@ In addition to testing each model, utility and widget added with the new feature
             <a href="https://github.com/foss42/apidash/pull/454">Fix UI inconsistencies in mobile</a>
             </td>
         </tr>
+        <tr>
+            <td rowspan="2">Documentation</td>
+        </tr>
+        <tr>
+            <td>
+            <a href="https://github.com/foss42/apidash/pull/457">doc: added user guides</a>
+            </td>
+        </tr>
     </tbody>
 </table>
 
