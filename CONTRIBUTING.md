@@ -127,20 +127,6 @@ Example:
 flutter test test/widgets/codegen_previewer_test.dart
 ```
 
-#### Running an Integration test
-
-To run an integration test, execute the following command:
-
-```
-flutter test integration_test/<file_path>.dart
-```
-
-Example:
-
-```
-flutter test integration_test/desktop/env_manager_test.dart
-```
-
 ### How to add a new package to pubspec.yaml?
 
 Instead of copy pasting from pub.dev, it is recommended that you use `flutter pub add package_name` to add a new package to `pubspec.yaml`. You can read more [here](https://docs.flutter.dev/packages-and-plugins/using-packages#adding-a-package-dependency-to-an-app-using-flutter-pub-add).
