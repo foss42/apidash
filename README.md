@@ -111,36 +111,36 @@ API Dash can be downloaded from the links below:
 
 API Dash currently supports API integration code generation for the following languages/libraries.
 
-| Language               | Library           | Comment/Issues |
-| ---------------------- | ----------------- | -------------- |
-| cURL                   |                   |                |
-| HAR                    |                   |                |
-| C                      | `libcurl`         |                |
-| C#                     | `HttpClient`      |                |
-| C#                     | `RestSharp`       |                |
-| Dart                   | `http`            |                |
-| Dart                   | `dio`             |                |
-| Go                     | `net/http`        |                |
-| JavaScript             | `axios`           |                |
-| JavaScript             | `fetch`           |                |
-| JavaScript (`node.js`) | `axios`           |                |
-| JavaScript (`node.js`) | `fetch`           |                |
-| Python                 | `requests`        |                |
-| Python                 | `http.client`     |                |
-| Kotlin                 | `okhttp3`         |                |
-| Ruby                   | `faraday`         |                |
-| Ruby                   | `net/http`        |                |
-| Rust                   | `reqwest`         |                |
-| Rust                   | `ureq`            |                |
-| Rust                   | `Actix Client`    |                |
-| Java                   | `asynchttpclient` |                |
-| Java                   | `HttpClient`      |                |
-| Java                   | `okhttp3`         |                |
-| Java                   | `Unirest`         |                |
-| Julia                  | `HTTP`            |                |
-| PHP                    | `curl`            |                |
-| PHP                    | `guzzle`          |                |
-| PHP                    | `HTTPlug`         |                |
+| Language               | Library       | Comment/Issues |
+| ---------------------- | ------------- | ------- |
+| cURL                   |               |         |
+| HAR                    |               |         |
+| C                      | `libcurl`     |         |
+| C#                     | `HttpClient`  |         |
+| C#                     | `RestSharp`   |         |
+| Dart                   | `http`        |         |
+| Dart                   | `dio`         |         |
+| Go                     | `net/http`    |         |
+| JavaScript             | `axios`       |         |
+| JavaScript             | `fetch`       |         |
+| JavaScript (`node.js`) | `axios`       |         |
+| JavaScript (`node.js`) | `fetch`       |         |
+| Python                 | `requests`    |         |
+| Python                 | `http.client` |         |
+| Kotlin                 | `okhttp3`     |         |
+| Ruby                   | `faraday`     |         |
+| Ruby                   | `net/http`    |         |
+| Rust                   | `reqwest`     |         |
+| Rust                   | `ureq`        |         |
+| Rust                   | `Actix Client` |        |
+| Java                   | `asynchttpclient` |     |
+| Java                   | `HttpClient`  |         |
+| Java                   | `okhttp3`     |         |
+| Java                   | `Unirest`     |         |
+| Julia                  | `HTTP`        |         |
+| PHP                    | `curl`        |         |
+| PHP                    | `guzzle`      |         |
+| PHP                    | `HTTPlug`     |         |
 
 We welcome contributions to support other programming languages/libraries/frameworks. Please check out more details [here](https://github.com/foss42/apidash/discussions/80).
 
@@ -150,49 +150,49 @@ API Dash is a next-gen API client that supports exploring, testing & previewing 
 
 Here is the complete list of MIME types that can be directly previewed in API Dash:
 
-| File Type | Mimetype                   | Extension         | Comment         |
-| --------- | -------------------------- | ----------------- | --------------- |
-| PDF       | `application/pdf`          | `.pdf`            |                 |
-| Video     | `video/mp4`                | `.mp4`            |                 |
-| Video     | `video/webm`               | `.webm`           |                 |
-| Video     | `video/x-ms-wmv`           | `.wmv`            |                 |
-| Video     | `video/x-ms-asf`           | `.wmv`            |                 |
-| Video     | `video/avi`                | `.avi`            |                 |
-| Video     | `video/msvideo`            | `.avi`            |                 |
-| Video     | `video/x-msvideo`          | `.avi`            |                 |
-| Video     | `video/quicktime`          | `.mov`            |                 |
-| Video     | `video/x-quicktime`        | `.mov`            |                 |
-| Video     | `video/x-matroska`         | `.mkv`            |                 |
-| Image     | `image/apng`               | `.apng`           | Animated        |
-| Image     | `image/avif`               | `.avif`           |                 |
-| Image     | `image/bmp`                | `.bmp`            |                 |
-| Image     | `image/gif`                | `.gif`            | Animated        |
-| Image     | `image/jpeg`               | `.jpeg` or `.jpg` |                 |
-| Image     | `image/jp2`                | `.jp2`            |                 |
-| Image     | `image/jpx`                | `.jpf` or `.jpx`  |                 |
-| Image     | `image/pict`               | `.pct`            |                 |
-| Image     | `image/portable-anymap`    | `.pnm`            |                 |
-| Image     | `image/png`                | `.png`            |                 |
-| Image     | `image/sgi`                | `.sgi`            |                 |
-| Image     | `image/svg+xml`            | `.svg`            |                 |
-| Image     | `image/tiff`               | `.tiff`           |                 |
-| Image     | `image/targa`              | `.tga`            |                 |
-| Image     | `image/vnd.wap.wbmp`       | `.wbmp`           |                 |
-| Image     | `image/webp`               | `.webp`           |                 |
-| Image     | `image/xwindowdump`        | `.xwd`            |                 |
-| Image     | `image/x-icon`             | `.ico`            |                 |
-| Image     | `image/x-portable-anymap`  | `.pnm`            |                 |
-| Image     | `image/x-portable-bitmap`  | `.pbm`            |                 |
-| Image     | `image/x-portable-graymap` | `.pgm`            |                 |
-| Image     | `image/x-portable-pixmap`  | `.ppm`            |                 |
-| Image     | `image/x-tga`              | `.tga`            |                 |
-| Image     | `image/x-xwindowdump`      | `.xwd`            |                 |
-| Audio     | `audio/flac`               | `.flac`           |                 |
-| Audio     | `audio/mpeg`               | `.mp3`            |                 |
-| Audio     | `audio/mp4`                | `.m4a` or `.mp4a` |                 |
-| Audio     | `audio/x-m4a`              | `.m4a`            |                 |
-| Audio     | `audio/wav`                | `.wav`            |                 |
-| Audio     | `audio/wave`               | `.wav`            |                 |
+| File Type | Mimetype                   | Extension         | Comment  |
+| --------- | -------------------------- | ----------------- | -------- |
+| PDF       | `application/pdf`          | `.pdf`            |          |
+| Video     | `video/mp4`                | `.mp4`            |          |
+| Video     | `video/webm`               | `.webm`           |          |
+| Video     | `video/x-ms-wmv`           | `.wmv`            |          |
+| Video     | `video/x-ms-asf`           | `.wmv`            |          |
+| Video     | `video/avi`                | `.avi`            |          |
+| Video     | `video/msvideo`            | `.avi`            |          |
+| Video     | `video/x-msvideo`          | `.avi`            |          |
+| Video     | `video/quicktime`          | `.mov`            |          |
+| Video     | `video/x-quicktime`        | `.mov`            |          |
+| Video     | `video/x-matroska`         | `.mkv`            |          |
+| Image     | `image/apng`               | `.apng`           | Animated |
+| Image     | `image/avif`               | `.avif`           |          |
+| Image     | `image/bmp`                | `.bmp`            |          |
+| Image     | `image/gif`                | `.gif`            | Animated |
+| Image     | `image/jpeg`               | `.jpeg` or `.jpg` |          |
+| Image     | `image/jp2`                | `.jp2`            |          |
+| Image     | `image/jpx`                | `.jpf` or `.jpx`  |          |
+| Image     | `image/pict`               | `.pct`            |          |
+| Image     | `image/portable-anymap`    | `.pnm`            |          |
+| Image     | `image/png`                | `.png`            |          |
+| Image     | `image/sgi`                | `.sgi`            |          |
+| Image     | `image/svg+xml`            | `.svg`            |          |
+| Image     | `image/tiff`               | `.tiff`           |          |
+| Image     | `image/targa`              | `.tga`            |          |
+| Image     | `image/vnd.wap.wbmp`       | `.wbmp`           |          |
+| Image     | `image/webp`               | `.webp`           |          |
+| Image     | `image/xwindowdump`        | `.xwd`            |          |
+| Image     | `image/x-icon`             | `.ico`            |          |
+| Image     | `image/x-portable-anymap`  | `.pnm`            |          |
+| Image     | `image/x-portable-bitmap`  | `.pbm`            |          |
+| Image     | `image/x-portable-graymap` | `.pgm`            |          |
+| Image     | `image/x-portable-pixmap`  | `.ppm`            |          |
+| Image     | `image/x-tga`              | `.tga`            |          |
+| Image     | `image/x-xwindowdump`      | `.xwd`            |          |
+| Audio     | `audio/flac`               | `.flac`           |          |
+| Audio     | `audio/mpeg`               | `.mp3`            |          |
+| Audio     | `audio/mp4`                | `.m4a` or `.mp4a` |          |
+| Audio     | `audio/x-m4a`              | `.m4a`            |          |
+| Audio     | `audio/wav`                | `.wav`            |          |
+| Audio     | `audio/wave`               | `.wav`            |          |
 | CSV       | `text/csv`                 | `.csv`            | Can be improved |
 
 We welcome PRs to add support for previewing other multimedia MIME types. Please go ahead and raise an issue so that we can discuss the approach.
@@ -200,18 +200,18 @@ We are adding support for other MIME types with each release. But, if you are lo
 
 Here is the complete list of MIME types that are syntax highlighted in API Dash:
 
-| Mimetype           | Extension | Comment                                                                                                             |
-| ------------------ | --------- | ------------------------------------------------------------------------------------------------------------------- |
+| Mimetype           | Extension | Comment                                                                                                            |
+| ------------------ | --------- | ------------------------------------------------------------------------------------------------------------------ |
 | `application/json` | `.json`   | Other MIME types like `application/geo+json`, `application/vcard+json` that are based on `json` are also supported. |
 | `application/xml`  | `.xml`    | Other MIME types like `application/xhtml+xml`, `application/vcard+xml` that are based on `xml` are also supported.  |
-| `text/xml`         | `.xml`    |                                                                                                                     |
-| `application/yaml` | `.yaml`   | Others - `application/x-yaml` or `application/x-yml`                                                                |
-| `text/yaml`        | `.yaml`   | Others - `text/yml`                                                                                                 |
-| `application/sql`  | `.sql`    |                                                                                                                     |
-| `text/css`         | `.css`    |                                                                                                                     |
-| `text/html`        | `.html`   | Only syntax highlighting, no web preview.                                                                           |
-| `text/javascript`  | `.js`     |                                                                                                                     |
-| `text/markdown`    | `.md`     |                                                                                                                     |
+| `text/xml`         | `.xml`    |  |
+| `application/yaml` | `.yaml`   | Others - `application/x-yaml` or `application/x-yml` |
+| `text/yaml`        | `.yaml`   | Others - `text/yml` |
+| `application/sql`  | `.sql`    |  |
+| `text/css`         | `.css`    |  |
+| `text/html`        | `.html`   | Only syntax highlighting, no web preview. |
+| `text/javascript`  | `.js`     |  |
+| `text/markdown`    | `.md`     |  |
 
 ## What's new in v0.3.0?
 
@@ -223,7 +223,7 @@ Just click on the [Issue tab](https://github.com/foss42/apidash/issues) to raise
 
 ## Roadmap
 
-Please find the Roadmap for API Dash [here](https://github.com/foss42/apidash/blob/main/ROADMAP.md).
+Please find the Roadmap for API Dash [here](https://github.com/foss42/apidash/blob/main/ROADMAP.md). 
 
 ## Contribute to API Dash
 
