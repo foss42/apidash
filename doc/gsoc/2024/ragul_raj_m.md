@@ -1,6 +1,6 @@
 ---
 title: "GSoC'24 API Dash"
-publishedAt: "2024-08-25"
+publishedAt: "2024-08-26"
 summary: "Summarizing my GSoC'24 contributions to API Dash."
 ---
 
@@ -37,15 +37,21 @@ In addition, we aimed to add some important core features such as environment va
 
 ### Responsive & Adaptive Layout (Android & iOS)
 
+![Image](./images/responsive.png)
+
 Restructured the app layout with responsive breakpoints to automatically adjust based on available width. Adapted existing components to work with touch inputs, ensuring proper accessibility in Android & iOS. The UI compoents for all new features added are inherently written to be responsive.
 
 ### Environment Manager
+
+![Image](./images/env_manager.png)
 
 Added a way for users to manage variables with multiple environment support. Made existing fields support environment variables with custom highlighting indicating the status (availability) of the variable and popover to show current value and environment and trigger suggestions of available variables as user types a variable name. Added code to extend the feature to hold secret variables.
 
 Extended the package [multi_trigger_autocomplete](https://pub.dev/packages/multi_trigger_autocomplete) to support custom `triggerEnd` values and handling triggers that could be a substring of another like `{` and `{{`.
 
 ### History of Requests
+
+![Image](./images/his_of_requests.png)
 
 Implemented a comprehensive request history feature that enables users to review all the requests and responses they've sent and received in the past. The history is organized with proper grouping of similar requests and sorted by timestamps for easy navigation. Users have the ability to navigate to the original request or duplicate any request directly from the history, carrying over all specific configurations, allowing them to edit the request.
 
@@ -110,7 +116,7 @@ In addition to testing each model, utility and widget added with the new feature
             </td>
         </tr>
         <tr>
-            <td rowspan="4">Integration Tests</td>
+            <td rowspan="5">Integration Tests</td>
         </tr>
          </tr>
             <td>
@@ -128,7 +134,12 @@ In addition to testing each model, utility and widget added with the new feature
             </td>
         </tr>
         <tr>
-            <td rowspan="6">UI fixes</td>
+            <td>
+            <a href="https://github.com/foss42/apidash/pull/455">test: common runner file for integration test</a>
+            </td>
+        </tr>
+        <tr>
+            <td rowspan="7">UI fixes</td>
         </tr>
             <td>
             <a href="https://github.com/foss42/apidash/pull/417">fix: color, deprecations and tests</a>
@@ -152,6 +163,11 @@ In addition to testing each model, utility and widget added with the new feature
         <tr>
             <td>
             <a href="https://github.com/foss42/apidash/pull/433">fix: refactored ui</a>
+            </td>
+        </tr>
+        <tr>
+            <td>
+            <a href="https://github.com/foss42/apidash/pull/454">Fix UI inconsistencies in mobile</a>
             </td>
         </tr>
     </tbody>
@@ -201,6 +217,8 @@ I had to extend the [multi_trigger_autocomplete](https://pub.dev/packages/multi_
 The history of requests stores all instances of requests and responses sent by the user, so loading all instances into memory can cause significant overhead.
 
 #### Solution
+
+![Image](./images/his_model_schema.png)
 
 Use a normal [Box](https://pub.dev/documentation/hive/latest/hive/Box-class.html) to store metadata of all request history, while using a [LazyBox](https://pub.dev/documentation/hive/latest/hive/LazyBox-class.html) to load the full request and response data. Ensure proper concurrency between the history requests stored in both boxes.
 
