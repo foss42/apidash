@@ -106,6 +106,9 @@ class EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
           onChanged: widget.onChanged,
           onSubmitted: widget.onFieldSubmitted,
           specialTextSpanBuilder: EnvRegExpSpanBuilder(),
+          onTapOutside: (event) {
+            focusNode.unfocus();
+          },
         );
       },
     );

@@ -29,7 +29,6 @@ class NavbarButton extends ConsumerWidget {
     final mobileScaffoldKeyNotifier =
         ref.watch(mobileScaffoldKeyStateProvider.notifier);
     final bool isSelected = railIdx == buttonIdx;
-    final Size size = isCompact ? const Size(56, 32) : const Size(65, 32);
     var onPress = isSelected
         ? null
         : () {
@@ -49,20 +48,20 @@ class NavbarButton extends ConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            TextButton(
-              style: isSelected
-                  ? TextButton.styleFrom(
-                      fixedSize: size,
-                      backgroundColor:
-                          Theme.of(context).colorScheme.secondaryContainer,
-                    )
-                  : TextButton.styleFrom(
-                      fixedSize: size,
-                    ),
-              onPressed: onPress,
-              child: Icon(
-                isSelected ? selectedIcon : icon,
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
+            SizedBox(
+              height: isCompact ? 36 : 36,
+              child: TextButton(
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.zero,
+                  backgroundColor: isSelected
+                      ? Theme.of(context).colorScheme.secondaryContainer
+                      : null,
+                ),
+                onPressed: onPress,
+                child: Icon(
+                  isSelected ? selectedIcon : icon,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
             ),
             showLabel ? const SizedBox(height: 4) : const SizedBox.shrink(),
