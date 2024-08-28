@@ -52,9 +52,6 @@ task.resume()
           getValidRequestUri(requestModel.url, requestModel.enabledParams);
       Uri? uri = rec.$1;
 
-      // if (uri == null) {
-      //   throw Exception("Invalid URL");
-      // }
 
       if (requestModel.hasJsonData || requestModel.hasTextData) {
         var templateParameters = jj.Template(kTemplateParameters);
