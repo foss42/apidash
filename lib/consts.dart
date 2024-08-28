@@ -1,5 +1,6 @@
-import 'dart:io';
 import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -391,6 +392,7 @@ enum CodegenLanguage {
   rustReqwest("Rust (reqwest)", "rust", "rs"),
   rustCurl("Rust (curl-rust)", "rust", "rs"),
   rustUreq("Rust (ureq)", "rust", "rs"),
+  swiftUrlsession("Swift (urlsession)", "swift", "swift"),
   javaOkHttp("Java (okhttp3)", "java", 'java'),
   javaAsyncHttpClient("Java (asynchttpclient)", "java", "java"),
   javaHttpClient("Java (HttpClient)", "java", "java"),

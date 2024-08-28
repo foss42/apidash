@@ -1,13 +1,23 @@
-import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash/models/models.dart';
 import 'package:apidash/utils/utils.dart' show getNewUuid;
+
 import 'c/curl.dart';
 import 'csharp/http_client.dart';
 import 'csharp/rest_sharp.dart';
-import 'dart/http.dart';
 import 'dart/dio.dart';
+import 'dart/http.dart';
 import 'go/http.dart';
+import 'java/async_http_client.dart';
+import 'java/httpclient.dart';
+import 'java/okhttp.dart';
+import 'java/unirest.dart';
+import 'js/axios.dart';
+import 'js/fetch.dart';
+import 'julia/http.dart';
 import 'kotlin/okhttp.dart';
+import 'others/curl.dart';
+import 'others/har.dart';
 import 'php/curl.dart';
 import 'php/guzzle.dart';
 import 'php/http_plug.dart';
@@ -19,15 +29,7 @@ import 'rust/actix.dart';
 import 'rust/curl_rust.dart';
 import 'rust/reqwest.dart';
 import 'rust/ureq.dart';
-import 'js/axios.dart';
-import 'js/fetch.dart';
-import 'others/har.dart';
-import 'others/curl.dart';
-import 'julia/http.dart';
-import 'java/unirest.dart';
-import 'java/okhttp.dart';
-import 'java/async_http_client.dart';
-import 'java/httpclient.dart';
+import 'swift/urlsession.dart';
 
 class Codegen {
   String? getCode(
@@ -98,6 +100,8 @@ class Codegen {
         return RustReqwestCodeGen().getCode(rM);
       case CodegenLanguage.rustUreq:
         return RustUreqCodeGen().getCode(rM, boundary: boundary);
+      case CodegenLanguage.swiftUrlsession:
+        return SwiftURLSessionCodeGen().getCode(rM);
       case CodegenLanguage.phpGuzzle:
         return PhpGuzzleCodeGen().getCode(rM);
       case CodegenLanguage.phpCurl:

@@ -133,6 +133,7 @@ API Dash currently supports API integration code generation for the following la
 | Rust                   | `reqwest`     |         |
 | Rust                   | `ureq`        |         |
 | Rust                   | `Actix Client` |        |
+| Swift                  | `URLSession` |          |
 | Java                   | `asynchttpclient` |     |
 | Java                   | `HttpClient`  |         |
 | Java                   | `okhttp3`     |         |
