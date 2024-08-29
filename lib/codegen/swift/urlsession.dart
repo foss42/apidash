@@ -9,8 +9,56 @@ import Foundation
 
 """;
 
-  final String kTemplateParameters = '''
-let parameters = "{{parameters}}"
+  final String kTemplateFormData = '''
+let parameters = [
+{% for param in formData %}
+  [
+    "key": "{{param.name}}",
+    "value": "{{param.value}}",
+    "type": "{{param.type}}"{% if param.contentType %},
+    "contentType": "{{param.contentType}}"{% endif %}
+  ],
+{% endfor %}
+] as [[String: Any]]
+let boundary = "Boundary-\\(UUID().uuidString)"
+var body = Data()
+var error: Error? = nil
+for param in parameters {
+  if param["disabled"] as? Bool == true { continue }
+  let paramName = param["key"] as! String
+  body.append("--\\(boundary)\\r\\n".data(using: .utf8)!)
+  body.append("Content-Disposition:form-data; name=\\"\\(paramName)\\"".data(using: .utf8)!)
+  if let contentType = param["contentType"] as? String {
+    body.append("\\r\\nContent-Type: \\(contentType)".data(using: .utf8)!)
+  }
+  let paramType = param["type"] as! String
+  if paramType == "text" {
+    let paramValue = param["value"] as! String
+    body.append("\\r\\n\\r\\n\\(paramValue)\\r\\n".data(using: .utf8)!)
+  } else if paramType == "file" {
+    let paramSrc = param["value"] as! String
+    let fileURL = URL(fileURLWithPath: paramSrc)
+    if let fileContent = try? Data(contentsOf: fileURL) {
+      body.append("; filename=\\"\\(paramSrc)\\"\\r\\n".data(using: .utf8)!)
+      body.append("Content-Type: \\"content-type header\\"\\r\\n\\r\\n".data(using: .utf8)!)
+      body.append(fileContent)
+      body.append("\\r\\n".data(using: .utf8)!)
+    }
+  }
+}
+body.append("--\\(boundary)--\\r\\n".data(using: .utf8)!)
+let postData = body
+
+''';
+
+  final String kTemplateJsonData = '''
+let parameters = "{{jsonData}}"
+let postData = parameters.data(using: .utf8)
+
+''';
+
+  final String kTemplateTextData = '''
+let parameters = "{{textData}}"
 let postData = parameters.data(using: .utf8)
 
 ''';
@@ -52,12 +100,22 @@ task.resume()
           getValidRequestUri(requestModel.url, requestModel.enabledParams);
       Uri? uri = rec.$1;
 
-
-      if (requestModel.hasJsonData || requestModel.hasTextData) {
-        var templateParameters = jj.Template(kTemplateParameters);
-        result += templateParameters.render({
-          "parameters":
-              requestModel.body!.replaceAll('"', '\\"').replaceAll('\n', '\\n')
+      if (requestModel.hasFormData) {
+        var templateFormData = jj.Template(kTemplateFormData);
+        result += templateFormData.render({
+          "formData": requestModel.formDataMapList,
+        });
+      } else if (requestModel.hasJsonData) {
+        var templateJsonData = jj.Template(kTemplateJsonData);
+        result += templateJsonData.render({
+          "jsonData":
+              requestModel.body!.replaceAll('"', '\\"').replaceAll('\n', '\\n'),
+        });
+      } else if (requestModel.hasTextData) {
+        var templateTextData = jj.Template(kTemplateTextData);
+        result += templateTextData.render({
+          "textData":
+              requestModel.body!.replaceAll('"', '\\"').replaceAll('\n', '\\n'),
         });
       }
 
@@ -68,7 +126,10 @@ task.resume()
       });
 
       var headers = requestModel.enabledHeadersMap;
-      if (requestModel.hasJsonData || requestModel.hasTextData) {
+      if (requestModel.hasFormData) {
+        headers.putIfAbsent(kHeaderContentType,
+            () => "multipart/form-data; boundary=\\(boundary)");
+      } else if (requestModel.hasJsonData || requestModel.hasTextData) {
         headers.putIfAbsent(
             kHeaderContentType, () => requestModel.bodyContentType.header);
       }
@@ -77,7 +138,7 @@ task.resume()
         result += templateHeader.render({"headers": headers});
       }
 
-      if (requestModel.hasTextData || requestModel.hasJsonData) {
+      if (requestModel.hasBody) {
         result += kTemplateBody;
       }
 
