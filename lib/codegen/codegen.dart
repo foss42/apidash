@@ -1,4 +1,3 @@
-import 'package:apidash/codegen/r/httr.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart' show getNewUuid;
@@ -29,6 +28,7 @@ import 'java/unirest.dart';
 import 'java/okhttp.dart';
 import 'java/async_http_client.dart';
 import 'java/httpclient.dart';
+import 'r/httr.dart';
 
 class Codegen {
   String? getCode(
