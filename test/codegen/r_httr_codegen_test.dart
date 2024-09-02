@@ -221,13 +221,13 @@ print(content(response))
 
 request <- httr::VERB(
   'HEAD',
-  url = 'https://api.apidash.dev')
+  url = 'http://api.apidash.dev')
 response <- request
 
 print(status_code(response))
 print(content(response))
 """;
-      expect(codeGen.getCode(CodegenLanguage.rHttr, requestModelHead2, "https"),
+      expect(codeGen.getCode(CodegenLanguage.rHttr, requestModelHead2, "http"),
           expectedCode);
     });
   });
