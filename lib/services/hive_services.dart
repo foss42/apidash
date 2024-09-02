@@ -3,8 +3,13 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 const String kDataBox = "apidash-data";
 const String kKeyDataBoxIds = "ids";
+
 const String kEnvironmentBox = "apidash-environments";
 const String kKeyEnvironmentBoxIds = "environmentIds";
+
+const String kHistoryMetaBox = "apidash-history-meta";
+const String kHistoryBoxIds = "historyIds";
+const String kHistoryLazyBox = "apidash-history-lazy";
 
 const String kSettingsBox = "apidash-settings";
 
@@ -13,6 +18,8 @@ Future<void> openBoxes() async {
   await Hive.openBox(kDataBox);
   await Hive.openBox(kSettingsBox);
   await Hive.openBox(kEnvironmentBox);
+  await Hive.openBox(kHistoryMetaBox);
+  await Hive.openLazyBox(kHistoryLazyBox);
 }
 
 (Size?, Offset?) getInitialSize() {
@@ -38,11 +45,15 @@ class HiveHandler {
   late final Box dataBox;
   late final Box settingsBox;
   late final Box environmentBox;
+  late final Box historyMetaBox;
+  late final LazyBox historyLazyBox;
 
   HiveHandler() {
     dataBox = Hive.box(kDataBox);
     settingsBox = Hive.box(kSettingsBox);
     environmentBox = Hive.box(kEnvironmentBox);
+    historyMetaBox = Hive.box(kHistoryMetaBox);
+    historyLazyBox = Hive.lazyBox(kHistoryLazyBox);
   }
 
   Map get settings => settingsBox.toMap();
@@ -68,6 +79,25 @@ class HiveHandler {
       environmentBox.put(id, environmentJson);
 
   Future<void> deleteEnvironment(String id) => environmentBox.delete(id);
+
+  dynamic getHistoryIds() => historyMetaBox.get(kHistoryBoxIds);
+  Future<void> setHistoryIds(List<String>? ids) =>
+      historyMetaBox.put(kHistoryBoxIds, ids);
+
+  dynamic getHistoryMeta(String id) => historyMetaBox.get(id);
+  Future<void> setHistoryMeta(
+          String id, Map<String, dynamic>? historyMetaJson) =>
+      historyMetaBox.put(id, historyMetaJson);
+
+  Future<void> deleteHistoryMeta(String id) => historyMetaBox.delete(id);
+
+  Future<dynamic> getHistoryRequest(String id) async =>
+      await historyLazyBox.get(id);
+  Future<void> setHistoryRequest(
+          String id, Map<String, dynamic>? historyRequestJsoon) =>
+      historyLazyBox.put(id, historyRequestJsoon);
+
+  Future<void> deleteHistoryRequest(String id) => historyLazyBox.delete(id);
 
   Future clear() async {
     await dataBox.clear();

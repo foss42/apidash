@@ -6,6 +6,7 @@ import 'package:apidash/consts.dart';
 import 'common_widgets/common_widgets.dart';
 import 'envvar/environment_page.dart';
 import 'home_page/home_page.dart';
+import 'history/history_page.dart';
 import 'settings_page.dart';
 
 class Dashboard extends ConsumerWidget {
@@ -14,7 +15,6 @@ class Dashboard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final railIdx = ref.watch(navRailIndexStateProvider);
-    final mobileScaffoldKey = ref.watch(mobileScaffoldKeyStateProvider);
     return Scaffold(
       body: SafeArea(
         child: Row(
@@ -46,26 +46,26 @@ class Dashboard extends ConsumerWidget {
                       onPressed: () {
                         ref.read(navRailIndexStateProvider.notifier).state = 1;
                       },
-                      icon: const Icon(Icons.computer_outlined),
-                      selectedIcon: const Icon(Icons.computer_rounded),
+                      icon: const Icon(Icons.laptop_windows_outlined),
+                      selectedIcon: const Icon(Icons.laptop_windows),
                     ),
                     Text(
                       'Variables',
                       style: Theme.of(context).textTheme.labelSmall,
                     ),
                     kVSpacer10,
-                    // IconButton(
-                    //   isSelected: railIdx == 2,
-                    //   onPressed: () {
-                    //     ref.read(navRailIndexStateProvider.notifier).state = 2;
-                    //   },
-                    //   icon: const Icon(Icons.history_outlined),
-                    //   selectedIcon: const Icon(Icons.history),
-                    // ),
-                    // Text(
-                    //   'History',
-                    //   style: Theme.of(context).textTheme.labelSmall,
-                    // ),
+                    IconButton(
+                      isSelected: railIdx == 2,
+                      onPressed: () {
+                        ref.read(navRailIndexStateProvider.notifier).state = 2;
+                      },
+                      icon: const Icon(Icons.history_outlined),
+                      selectedIcon: const Icon(Icons.history_rounded),
+                    ),
+                    Text(
+                      'History',
+                      style: Theme.of(context).textTheme.labelSmall,
+                    ),
                   ],
                 ),
                 Expanded(
@@ -90,7 +90,7 @@ class Dashboard extends ConsumerWidget {
                         padding: const EdgeInsets.only(bottom: 16.0),
                         child: NavbarButton(
                           railIdx: railIdx,
-                          buttonIdx: 2,
+                          buttonIdx: 3,
                           selectedIcon: Icons.settings,
                           icon: Icons.settings_outlined,
                           label: 'Settings',
@@ -112,12 +112,11 @@ class Dashboard extends ConsumerWidget {
               child: IndexedStack(
                 alignment: AlignmentDirectional.topCenter,
                 index: railIdx,
-                children: [
-                  const HomePage(),
-                  EnvironmentPage(
-                    scaffoldKey: mobileScaffoldKey,
-                  ),
-                  const SettingsPage(),
+                children: const [
+                  HomePage(),
+                  EnvironmentPage(),
+                  HistoryPage(),
+                  SettingsPage(),
                 ],
               ),
             )

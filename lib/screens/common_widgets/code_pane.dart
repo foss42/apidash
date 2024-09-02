@@ -9,14 +9,24 @@ import 'package:apidash/consts.dart';
 final Codegen codegen = Codegen();
 
 class CodePane extends ConsumerWidget {
-  const CodePane({super.key});
+  const CodePane({
+    super.key,
+    this.isHistoryRequest = false,
+  });
+
+  final bool isHistoryRequest;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final CodegenLanguage codegenLanguage =
         ref.watch(codegenLanguageStateProvider);
 
-    final selectedRequestModel = ref.watch(selectedRequestModelProvider);
+    final selectedHistoryRequestModel =
+        ref.watch(selectedHistoryRequestModelProvider);
+
+    final selectedRequestModel = isHistoryRequest
+        ? getRequestModelFromHistoryModel(selectedHistoryRequestModel!)
+        : ref.watch(selectedRequestModelProvider);
     final defaultUriScheme =
         ref.watch(settingsProvider.select((value) => value.defaultUriScheme));
 

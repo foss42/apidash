@@ -47,7 +47,7 @@ class SidebarHeader extends ConsumerWidget {
               ? IconButton(
                   style: IconButton.styleFrom(
                     padding: const EdgeInsets.all(4),
-                    minimumSize: const Size(30, 30),
+                    minimumSize: const Size(36, 36),
                   ),
                   onPressed: () {
                     mobileScaffoldKey.currentState?.closeDrawer();

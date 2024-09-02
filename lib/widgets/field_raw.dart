@@ -8,16 +8,19 @@ class RawTextField extends StatelessWidget {
     this.controller,
     this.hintText,
     this.style,
+    this.readOnly = false,
   });
 
   final void Function(String)? onChanged;
   final TextEditingController? controller;
   final String? hintText;
   final TextStyle? style;
+  final bool readOnly;
 
   @override
   Widget build(BuildContext context) {
     return TextField(
+      readOnly: readOnly,
       controller: controller,
       onChanged: onChanged,
       style: style,

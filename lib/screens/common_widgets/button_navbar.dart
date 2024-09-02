@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
+import 'package:apidash/utils/utils.dart';
 
 class NavbarButton extends ConsumerWidget {
   const NavbarButton({
@@ -25,53 +26,42 @@ class NavbarButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final mobileScaffoldKeyNotifier =
+        ref.watch(mobileScaffoldKeyStateProvider.notifier);
     final bool isSelected = railIdx == buttonIdx;
-    final Size size = isCompact ? const Size(56, 32) : const Size(65, 32);
+    var onPress = isSelected
+        ? null
+        : () {
+            if (buttonIdx != null) {
+              final scaffoldKey = getScaffoldKey(buttonIdx!);
+              ref.watch(navRailIndexStateProvider.notifier).state = buttonIdx!;
+              mobileScaffoldKeyNotifier.state = scaffoldKey;
+              ref.read(leftDrawerStateProvider.notifier).state = false;
+            }
+            onTap?.call();
+          };
     return MouseRegion(
       cursor: SystemMouseCursors.click,
       child: GestureDetector(
         behavior: HitTestBehavior.translucent,
-        onTap: isSelected
-            ? null
-            : () {
-                if (buttonIdx != null) {
-                  ref.read(navRailIndexStateProvider.notifier).state =
-                      buttonIdx!;
-                  if (railIdx > 1 && buttonIdx! <= 1) {
-                    ref.read(leftDrawerStateProvider.notifier).state = false;
-                  }
-                }
-                onTap?.call();
-              },
+        onTap: onPress,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            TextButton(
-              style: isSelected
-                  ? TextButton.styleFrom(
-                      fixedSize: size,
-                      backgroundColor:
-                          Theme.of(context).colorScheme.secondaryContainer,
-                    )
-                  : TextButton.styleFrom(
-                      fixedSize: size,
-                    ),
-              onPressed: isSelected
-                  ? null
-                  : () {
-                      if (buttonIdx != null) {
-                        ref.read(navRailIndexStateProvider.notifier).state =
-                            buttonIdx!;
-                        if (railIdx > 1 && buttonIdx! <= 1) {
-                          ref.read(leftDrawerStateProvider.notifier).state =
-                              false;
-                        }
-                      }
-                      onTap?.call();
-                    },
-              child: Icon(
-                isSelected ? selectedIcon : icon,
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
+            SizedBox(
+              height: isCompact ? 36 : 36,
+              child: TextButton(
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.zero,
+                  backgroundColor: isSelected
+                      ? Theme.of(context).colorScheme.secondaryContainer
+                      : null,
+                ),
+                onPressed: onPress,
+                child: Icon(
+                  isSelected ? selectedIcon : icon,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
             ),
             showLabel ? const SizedBox(height: 4) : const SizedBox.shrink(),

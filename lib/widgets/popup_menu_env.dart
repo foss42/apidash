@@ -1,25 +1,24 @@
-import 'package:apidash/consts.dart';
-import 'package:apidash/extensions/extensions.dart';
 import 'package:flutter/material.dart';
+import 'package:apidash/extensions/extensions.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/utils/utils.dart';
+import 'package:apidash/consts.dart';
 
 class EnvironmentPopupMenu extends StatelessWidget {
   const EnvironmentPopupMenu({
     super.key,
-    this.activeEnvironment,
+    this.value,
     this.onChanged,
-    this.environments,
+    this.items,
   });
 
-  final EnvironmentModel? activeEnvironment;
+  final EnvironmentModel? value;
   final void Function(EnvironmentModel? value)? onChanged;
-  final List<EnvironmentModel>? environments;
+  final List<EnvironmentModel>? items;
   final EnvironmentModel? noneEnvironmentModel = null;
   @override
   Widget build(BuildContext context) {
-    final activeEnvironmentName = getEnvironmentTitle(activeEnvironment?.name);
-    final textClipLength = context.isCompactWindow ? 6 : 10;
+    final valueName = getEnvironmentTitle(value?.name);
     final double boxLength = context.isCompactWindow ? 100 : 130;
     return PopupMenuButton(
       tooltip: "Select Environment",
@@ -34,7 +33,7 @@ class EnvironmentPopupMenu extends StatelessWidget {
             },
             child: const Text("None"),
           ),
-          ...environments!.map((EnvironmentModel environment) {
+          ...items!.map((EnvironmentModel environment) {
             final name = getEnvironmentTitle(environment.name).clip(30);
             return PopupMenuItem(
               value: environment,
@@ -54,11 +53,12 @@ class EnvironmentPopupMenu extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              activeEnvironment == null
-                  ? "None"
-                  : activeEnvironmentName.clip(textClipLength),
-              softWrap: false,
+            Expanded(
+              child: Text(
+                value == null ? "None" : valueName,
+                softWrap: false,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
             const Icon(
               Icons.unfold_more,

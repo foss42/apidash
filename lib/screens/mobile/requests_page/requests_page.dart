@@ -7,19 +7,14 @@ import 'package:apidash/widgets/widgets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../home_page/collection_pane.dart';
 import '../../home_page/editor_pane/url_card.dart';
-import '../../home_page/editor_pane/details_card/code_pane.dart';
 import '../../home_page/editor_pane/editor_default.dart';
 import '../../common_widgets/common_widgets.dart';
-import '../widgets/page_base.dart';
-import 'request_response_tabs.dart';
+import 'request_tabs.dart';
 
 class RequestResponsePage extends StatefulHookConsumerWidget {
   const RequestResponsePage({
     super.key,
-    required this.scaffoldKey,
   });
-
-  final GlobalKey<ScaffoldState> scaffoldKey;
 
   @override
   ConsumerState<RequestResponsePage> createState() =>
@@ -33,10 +28,10 @@ class _RequestResponsePageState extends ConsumerState<RequestResponsePage>
     final id = ref.watch(selectedIdStateProvider);
     final name = getRequestTitleFromUrl(
         ref.watch(selectedRequestModelProvider.select((value) => value?.name)));
-    final TabController requestResponseTabController =
-        useTabController(initialLength: 2, vsync: this);
+    final TabController requestTabController =
+        useTabController(initialLength: 3, vsync: this);
     return DrawerSplitView(
-      scaffoldKey: widget.scaffoldKey,
+      scaffoldKey: kHomeScaffoldKey,
       title: EditorTitle(
         title: name,
         onSelected: (ItemMenuOption item) {
@@ -59,11 +54,11 @@ class _RequestResponsePageState extends ConsumerState<RequestResponsePage>
       actions: const [Padding(padding: kPh8, child: EnvironmentDropdown())],
       mainContent: id == null
           ? const RequestEditorDefault()
-          : RequestResponseTabs(
-              controller: requestResponseTabController,
+          : RequestTabs(
+              controller: requestTabController,
             ),
       bottomNavigationBar: RequestResponsePageBottombar(
-        requestResponseTabController: requestResponseTabController,
+        requestTabController: requestTabController,
       ),
       onDrawerChanged: (value) =>
           ref.read(leftDrawerStateProvider.notifier).state = value,
@@ -71,16 +66,15 @@ class _RequestResponsePageState extends ConsumerState<RequestResponsePage>
   }
 }
 
-class RequestResponsePageBottombar extends ConsumerWidget {
+class RequestResponsePageBottombar extends StatelessWidget {
   const RequestResponsePageBottombar({
     super.key,
-    required this.requestResponseTabController,
+    required this.requestTabController,
   });
-  final TabController requestResponseTabController;
+  final TabController requestTabController;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final selecetdId = ref.watch(selectedIdStateProvider);
+  Widget build(BuildContext context) {
     return Padding(
       padding: MediaQuery.of(context).viewInsets,
       child: Container(
@@ -101,36 +95,14 @@ class RequestResponsePageBottombar extends ConsumerWidget {
           ),
         ),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            IconButton.filledTonal(
-              style: IconButton.styleFrom(
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(12)),
-                ),
-              ),
-              onPressed: selecetdId == null
-                  ? null
-                  : () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => const PageBase(
-                            title: 'View Code',
-                            scaffoldBody: CodePane(),
-                            addBottomPadding: false,
-                          ),
-                          fullscreenDialog: true,
-                        ),
-                      );
-                    },
-              icon: const Icon(Icons.code_rounded),
-            ),
+            const Spacer(),
             SizedBox(
               height: 36,
               child: SendRequestButton(
                 onTap: () {
-                  if (requestResponseTabController.index != 1) {
-                    requestResponseTabController.animateTo(1);
+                  if (requestTabController.index != 1) {
+                    requestTabController.animateTo(1);
                   }
                 },
               ),
