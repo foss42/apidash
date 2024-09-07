@@ -262,7 +262,7 @@ class ResponseHeadersHeader extends StatelessWidget {
           ),
           if (map.isNotEmpty)
             CopyButton(
-              toCopy: kEncoder.convert(map),
+              toCopy: kJsonEncoder.convert(map),
             ),
         ],
       ),

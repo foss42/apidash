@@ -107,7 +107,7 @@ print('Response Body:', response.text)
           if (params.isNotEmpty) {
             hasQuery = true;
             var templateParams = jj.Template(kTemplateParams);
-            var paramsString = kEncoder.convert(params);
+            var paramsString = kJsonEncoder.convert(params);
             result += templateParams.render({"params": paramsString});
           }
         }
@@ -162,7 +162,7 @@ print('Response Body:', response.text)
           }
           if (headers.isNotEmpty) {
             hasHeaders = true;
-            var headersString = kEncoder.convert(headers);
+            var headersString = kJsonEncoder.convert(headers);
             headersString = refactorHeaderString(headersString);
             var templateHeaders = jj.Template(kTemplateHeaders);
             result += templateHeaders.render({"headers": headersString});

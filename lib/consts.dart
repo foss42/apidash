@@ -413,7 +413,8 @@ enum ImportFormat {
   final String label;
 }
 
-const JsonEncoder kEncoder = JsonEncoder.withIndent('  ');
+const JsonEncoder kJsonEncoder = JsonEncoder.withIndent('  ');
+const JsonDecoder kJsonDecoder = JsonDecoder();
 const LineSplitter kSplitter = LineSplitter();
 
 const String kGlobalEnvironmentId = "global";
