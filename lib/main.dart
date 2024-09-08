@@ -40,6 +40,8 @@ Future<bool> initApp(
 }) async {
   GoogleFonts.config.allowRuntimeFetching = false;
   try {
+    debugPrint("initializeUsingPath: $initializeUsingPath");
+    debugPrint("workspaceFolderPath: ${settingsModel?.workspaceFolderPath}");
     final openBoxesStatus = await openBoxes(
       initializeUsingPath,
       settingsModel?.workspaceFolderPath,
