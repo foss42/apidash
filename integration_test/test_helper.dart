@@ -1,5 +1,6 @@
 import 'package:apidash/models/settings_model.dart';
 import 'package:apidash/providers/providers.dart';
+import 'package:apidash/services/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -132,6 +133,7 @@ void apidashWidgetTest(
           size: width != null ? Size(width, kMinWindowSize.height) : null);
       await ApidashTestHelper.loadApp(widgetTester);
       await test(widgetTester, ApidashTestHelper(widgetTester));
+      await clearSharedPrefs();
     },
     semanticsEnabled: false,
   );

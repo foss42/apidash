@@ -21,3 +21,8 @@ Future<void> setSettingsToSharedPrefs(SettingsModel settingsModel) async {
   final prefs = await SharedPreferences.getInstance();
   await prefs.setString(kSharedPrefSettingsKey, settingsModel.toString());
 }
+
+Future<void> clearSharedPrefs() async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.remove(kSharedPrefSettingsKey);
+}
