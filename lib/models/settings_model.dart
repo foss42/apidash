@@ -59,6 +59,24 @@ class SettingsModel {
     );
   }
 
+  SettingsModel copyWithPath({
+    String? workspaceFolderPath,
+  }) {
+    return SettingsModel(
+      isDark: isDark,
+      alwaysShowCollectionPaneScrollbar: alwaysShowCollectionPaneScrollbar,
+      size: size,
+      defaultUriScheme: defaultUriScheme,
+      defaultCodeGenLang: defaultCodeGenLang,
+      offset: offset,
+      saveResponses: saveResponses,
+      promptBeforeClosing: promptBeforeClosing,
+      activeEnvironmentId: activeEnvironmentId,
+      historyRetentionPeriod: historyRetentionPeriod,
+      workspaceFolderPath: workspaceFolderPath,
+    );
+  }
+
   factory SettingsModel.fromJson(Map<dynamic, dynamic> data) {
     final isDark = data["isDark"] as bool?;
     final alwaysShowCollectionPaneScrollbar =

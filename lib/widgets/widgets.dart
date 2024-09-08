@@ -31,6 +31,7 @@ export 'field_cell_obscurable.dart';
 export 'field_cell.dart';
 export 'field_header.dart';
 export 'field_json_search.dart';
+export 'field_outlined.dart';
 export 'field_raw.dart';
 export 'field_read_only.dart';
 export 'field_url.dart';

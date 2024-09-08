@@ -10,19 +10,29 @@ const String kHistoryMetaBox = "apidash-history-meta";
 const String kHistoryBoxIds = "historyIds";
 const String kHistoryLazyBox = "apidash-history-lazy";
 
-Future<void> openBoxes(
+Future<bool> openBoxes(
   bool isDesktop,
   String? workspaceFolderPath,
 ) async {
-  if (isDesktop) {
-    Hive.init(workspaceFolderPath);
-  } else {
-    await Hive.initFlutter();
+  try {
+    if (isDesktop) {
+      if (workspaceFolderPath != null) {
+        Hive.init(workspaceFolderPath);
+      } else {
+        return false;
+      }
+    } else {
+      await Hive.initFlutter();
+    }
+
+    await Hive.openBox(kDataBox);
+    await Hive.openBox(kEnvironmentBox);
+    await Hive.openBox(kHistoryMetaBox);
+    await Hive.openLazyBox(kHistoryLazyBox);
+    return true;
+  } catch (e) {
+    return false;
   }
-  await Hive.openBox(kDataBox);
-  await Hive.openBox(kEnvironmentBox);
-  await Hive.openBox(kHistoryMetaBox);
-  await Hive.openLazyBox(kHistoryLazyBox);
 }
 
 final hiveHandler = HiveHandler();

@@ -10,10 +10,13 @@ import 'app.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final settingsModel = await getSettingsFromSharedPrefs();
-  await initApp(settingsModel: settingsModel);
+  var settingsModel = await getSettingsFromSharedPrefs();
+  final initStatus = await initApp(settingsModel: settingsModel);
   if (kIsDesktop) {
     await initWindow(settingsModel: settingsModel);
+  }
+  if (!initStatus) {
+    settingsModel = settingsModel?.copyWithPath(workspaceFolderPath: null);
   }
 
   runApp(
@@ -28,13 +31,22 @@ void main() async {
   );
 }
 
-Future<void> initApp({SettingsModel? settingsModel}) async {
+Future<bool> initApp({SettingsModel? settingsModel}) async {
   GoogleFonts.config.allowRuntimeFetching = false;
-  await openBoxes(
-    kIsDesktop,
-    settingsModel?.workspaceFolderPath,
-  );
-  await autoClearHistory(settingsModel: settingsModel);
+  try {
+    final openBoxesStatus = await openBoxes(
+      kIsDesktop,
+      settingsModel?.workspaceFolderPath,
+    );
+    debugPrint("openBoxesStatus: $openBoxesStatus");
+    if (openBoxesStatus) {
+      await autoClearHistory(settingsModel: settingsModel);
+    }
+    return openBoxesStatus;
+  } catch (e) {
+    debugPrint("initApp failed due to $e");
+    return false;
+  }
 }
 
 Future<void> initWindow({
