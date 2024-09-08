@@ -39,7 +39,7 @@ void main() {
       }
       return null;
     });
-    await openBoxes();
+    await openBoxes(false, null);
     final flamante = rootBundle.load('google_fonts/OpenSans-Medium.ttf');
     final fontLoader = FontLoader('OpenSans')..addFont(flamante);
     await fontLoader.load();

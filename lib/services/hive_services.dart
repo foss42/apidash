@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 const String kDataBox = "apidash-data";
@@ -11,53 +10,35 @@ const String kHistoryMetaBox = "apidash-history-meta";
 const String kHistoryBoxIds = "historyIds";
 const String kHistoryLazyBox = "apidash-history-lazy";
 
-const String kSettingsBox = "apidash-settings";
-
-Future<void> openBoxes() async {
-  await Hive.initFlutter();
+Future<void> openBoxes(
+  bool isDesktop,
+  String? workspaceFolderPath,
+) async {
+  if (isDesktop) {
+    Hive.init(workspaceFolderPath);
+  } else {
+    await Hive.initFlutter();
+  }
   await Hive.openBox(kDataBox);
-  await Hive.openBox(kSettingsBox);
   await Hive.openBox(kEnvironmentBox);
   await Hive.openBox(kHistoryMetaBox);
   await Hive.openLazyBox(kHistoryLazyBox);
-}
-
-(Size?, Offset?) getInitialSize() {
-  Size? sz;
-  Offset? off;
-  var settingsBox = Hive.box(kSettingsBox);
-  double? w = settingsBox.get("width") as double?;
-  double? h = settingsBox.get("height") as double?;
-  if (w != null && h != null) {
-    sz = Size(w, h);
-  }
-  double? dx = settingsBox.get("dx") as double?;
-  double? dy = settingsBox.get("dy") as double?;
-  if (dx != null && dy != null) {
-    off = Offset(dx, dy);
-  }
-  return (sz, off);
 }
 
 final hiveHandler = HiveHandler();
 
 class HiveHandler {
   late final Box dataBox;
-  late final Box settingsBox;
   late final Box environmentBox;
   late final Box historyMetaBox;
   late final LazyBox historyLazyBox;
 
   HiveHandler() {
     dataBox = Hive.box(kDataBox);
-    settingsBox = Hive.box(kSettingsBox);
     environmentBox = Hive.box(kEnvironmentBox);
     historyMetaBox = Hive.box(kHistoryMetaBox);
     historyLazyBox = Hive.lazyBox(kHistoryLazyBox);
   }
-
-  Map get settings => settingsBox.toMap();
-  Future<void> saveSettings(Map data) => settingsBox.putAll(data);
 
   dynamic getIds() => dataBox.get(kKeyDataBoxIds);
   Future<void> setIds(List<String>? ids) => dataBox.put(kKeyDataBoxIds, ids);

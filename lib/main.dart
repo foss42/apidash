@@ -1,35 +1,62 @@
+import 'package:apidash/providers/settings_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'models/models.dart';
+import 'providers/providers.dart';
 import 'services/services.dart';
-import 'consts.dart' show kIsLinux, kIsMacOS, kIsWindows;
+import 'consts.dart';
 import 'app.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  await initApp();
-  await initWindow();
+  final settingsModel = await getSettingsFromSharedPrefs();
+  await initApp(settingsModel: settingsModel);
+  if (kIsDesktop) {
+    await initWindow(settingsModel: settingsModel);
+  }
 
   runApp(
-    const ProviderScope(
-      child: DashApp(),
+    ProviderScope(
+      overrides: [
+        settingsProvider.overrideWith(
+          (ref) => ThemeStateNotifier(settingsModel: settingsModel),
+        )
+      ],
+      child: const DashApp(),
     ),
   );
 }
 
-Future<void> initApp() async {
+Future<void> initApp({SettingsModel? settingsModel}) async {
   GoogleFonts.config.allowRuntimeFetching = false;
-  await openBoxes();
-  await autoClearHistory();
+  await openBoxes(
+    kIsDesktop,
+    settingsModel?.workspaceFolderPath,
+  );
+  await autoClearHistory(settingsModel: settingsModel);
 }
 
-Future<void> initWindow({Size? sz}) async {
+Future<void> initWindow({
+  Size? sz,
+  SettingsModel? settingsModel,
+}) async {
   if (kIsLinux) {
-    await setupInitialWindow(sz: sz);
+    await setupInitialWindow(
+      sz: sz ?? settingsModel?.size,
+    );
   }
   if (kIsMacOS || kIsWindows) {
-    var win = sz != null ? (sz, const Offset(100, 100)) : getInitialSize();
-    await setupWindow(sz: win.$1, off: win.$2);
+    if (sz != null) {
+      await setupWindow(
+        sz: sz,
+        off: const Offset(100, 100),
+      );
+    } else {
+      await setupWindow(
+        sz: settingsModel?.size,
+        off: settingsModel?.offset,
+      );
+    }
   }
 }

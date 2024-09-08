@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_portal/flutter_portal.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:window_manager/window_manager.dart' hide WindowCaption;
-import 'widgets/widgets.dart' show WindowCaption;
+import 'widgets/widgets.dart' show WindowCaption, WorkspaceSelector;
 import 'providers/providers.dart';
 import 'extensions/extensions.dart';
 import 'screens/screens.dart';
