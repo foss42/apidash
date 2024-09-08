@@ -11,11 +11,11 @@ const String kHistoryBoxIds = "historyIds";
 const String kHistoryLazyBox = "apidash-history-lazy";
 
 Future<bool> openBoxes(
-  bool isDesktop,
+  bool initializeUsingPath,
   String? workspaceFolderPath,
 ) async {
   try {
-    if (isDesktop) {
+    if (initializeUsingPath) {
       if (workspaceFolderPath != null) {
         Hive.init(workspaceFolderPath);
       } else {

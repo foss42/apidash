@@ -11,7 +11,10 @@ import 'app.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   var settingsModel = await getSettingsFromSharedPrefs();
-  final initStatus = await initApp(settingsModel: settingsModel);
+  final initStatus = await initApp(
+    kIsDesktop,
+    settingsModel: settingsModel,
+  );
   if (kIsDesktop) {
     await initWindow(settingsModel: settingsModel);
   }
@@ -31,11 +34,14 @@ void main() async {
   );
 }
 
-Future<bool> initApp({SettingsModel? settingsModel}) async {
+Future<bool> initApp(
+  bool initializeUsingPath, {
+  SettingsModel? settingsModel,
+}) async {
   GoogleFonts.config.allowRuntimeFetching = false;
   try {
     final openBoxesStatus = await openBoxes(
-      kIsDesktop,
+      initializeUsingPath,
       settingsModel?.workspaceFolderPath,
     );
     debugPrint("openBoxesStatus: $openBoxesStatus");

@@ -1,3 +1,5 @@
+import 'package:apidash/models/settings_model.dart';
+import 'package:apidash/providers/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -34,17 +36,24 @@ class ApidashTestHelper {
     final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
     binding.framePolicy = LiveTestWidgetsFlutterBindingFramePolicy.fullyLive;
 
-    await app.initApp();
+    await app.initApp(false);
     await app.initWindow(sz: size);
 
     return binding;
   }
 
   static Future<void> loadApp(WidgetTester tester) async {
-    await app.initApp();
+    await app.initApp(false);
     await tester.pumpWidget(
-      const ProviderScope(
-        child: DashApp(),
+      ProviderScope(
+        overrides: [
+          settingsProvider.overrideWith(
+            (ref) => ThemeStateNotifier(
+                settingsModel: const SettingsModel()
+                    .copyWithPath(workspaceFolderPath: "test")),
+          )
+        ],
+        child: const DashApp(),
       ),
     );
   }
