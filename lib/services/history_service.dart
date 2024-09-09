@@ -1,18 +1,9 @@
 import 'package:apidash/models/models.dart';
 import 'package:apidash/utils/utils.dart';
-import 'package:apidash/consts.dart';
 import 'hive_services.dart';
 
-Future<void> autoClearHistory() async {
-  final settingsMap = hiveHandler.settings;
-  final retentionPeriod = settingsMap['historyRetentionPeriod'];
-
-  HistoryRetentionPeriod historyRetentionPeriod =
-      HistoryRetentionPeriod.oneWeek;
-  if (retentionPeriod != null) {
-    historyRetentionPeriod =
-        HistoryRetentionPeriod.values.byName(retentionPeriod);
-  }
+Future<void> autoClearHistory({SettingsModel? settingsModel}) async {
+  final historyRetentionPeriod = settingsModel?.historyRetentionPeriod;
   DateTime? retentionDate = getRetentionDate(historyRetentionPeriod);
 
   if (retentionDate == null) {

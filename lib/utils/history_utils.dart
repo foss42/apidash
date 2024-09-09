@@ -114,7 +114,7 @@ List<HistoryMetaModel> getRequestGroup(
   return requestGroup;
 }
 
-DateTime? getRetentionDate(HistoryRetentionPeriod retentionPeriod) {
+DateTime? getRetentionDate(HistoryRetentionPeriod? retentionPeriod) {
   DateTime now = DateTime.now();
   DateTime today = stripTime(now);
 

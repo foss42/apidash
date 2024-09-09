@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/providers.dart';
+import '../services/services.dart';
 import '../widgets/widgets.dart';
 import '../common/utils.dart';
 import '../consts.dart';
@@ -206,6 +207,7 @@ class SettingsPage extends ConsumerWidget {
                                 TextButton(
                                   onPressed: () async {
                                     Navigator.pop(context, 'Yes');
+                                    await clearSharedPrefs();
                                     await ref
                                         .read(collectionStateNotifierProvider
                                             .notifier)
