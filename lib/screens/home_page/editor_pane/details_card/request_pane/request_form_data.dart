@@ -43,7 +43,6 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
         .select((value) => value?.httpRequestModel?.formData?.length));
     var rF = ref.read(selectedRequestModelProvider)?.httpRequestModel?.formData;
     bool isFormDataEmpty = rF == null || rF.isEmpty;
-
     formRows = isFormDataEmpty
         ? [
             kFormDataEmptyModel,
