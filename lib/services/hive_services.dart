@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 const String kDataBox = "apidash-data";
@@ -32,6 +33,28 @@ Future<bool> openBoxes(
     return true;
   } catch (e) {
     return false;
+  }
+}
+
+Future<void> clearHiveBoxes() async {
+  try {
+    await Hive.box(kDataBox).clear();
+    await Hive.box(kEnvironmentBox).clear();
+    await Hive.box(kHistoryMetaBox).clear();
+    await Hive.lazyBox(kHistoryLazyBox).clear();
+  } catch (e) {
+    debugPrint("ERROR CLEAR HIVE BOXES: $e");
+  }
+}
+
+Future<void> deleteHiveBoxes() async {
+  try {
+    await Hive.box(kDataBox).deleteFromDisk();
+    await Hive.box(kEnvironmentBox).deleteFromDisk();
+    await Hive.box(kHistoryMetaBox).deleteFromDisk();
+    await Hive.lazyBox(kHistoryLazyBox).deleteFromDisk();
+  } catch (e) {
+    debugPrint("ERROR DELETE HIVE BOXES: $e");
   }
 }
 
@@ -93,6 +116,8 @@ class HiveHandler {
   Future clear() async {
     await dataBox.clear();
     await environmentBox.clear();
+    await historyMetaBox.clear();
+    await historyLazyBox.clear();
   }
 
   Future<void> removeUnused() async {
