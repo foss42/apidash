@@ -34,8 +34,8 @@ class BottomNavBar extends ConsumerWidget {
                   child: NavbarButton(
                     railIdx: railIdx,
                     buttonIdx: 0,
-                    selectedIcon: Icons.dashboard,
-                    icon: Icons.dashboard_outlined,
+                    selectedIcon: Icons.auto_awesome_mosaic_rounded,
+                    icon: Icons.auto_awesome_mosaic_outlined,
                     label: 'Requests',
                   ),
                 ),
@@ -48,19 +48,19 @@ class BottomNavBar extends ConsumerWidget {
                     label: 'Variables',
                   ),
                 ),
-                // Expanded(
-                //   child: NavbarButton(
-                //     railIdx: railIdx,
-                //     buttonIdx: 2,
-                //     selectedIcon: Icons.history,
-                //     icon: Icons.history_outlined,
-                //     label: 'History',
-                //   ),
-                // ),
                 Expanded(
                   child: NavbarButton(
                     railIdx: railIdx,
                     buttonIdx: 2,
+                    selectedIcon: Icons.history_rounded,
+                    icon: Icons.history_outlined,
+                    label: 'History',
+                  ),
+                ),
+                Expanded(
+                  child: NavbarButton(
+                    railIdx: railIdx,
+                    buttonIdx: 3,
                     selectedIcon: Icons.settings,
                     icon: Icons.settings_outlined,
                     label: 'Settings',

@@ -128,6 +128,7 @@ class ResponsePaneHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool showClearButton = onClearResponse != null;
     return Padding(
       padding: kPv8,
       child: SizedBox(
@@ -159,9 +160,11 @@ class ResponsePaneHeader extends StatelessWidget {
                   ),
             ),
             kHSpacer10,
-            ClearResponseButton(
-              onPressed: onClearResponse,
-            )
+            showClearButton
+                ? ClearResponseButton(
+                    onPressed: onClearResponse,
+                  )
+                : const SizedBox.shrink(),
           ],
         ),
       ),
@@ -259,7 +262,7 @@ class ResponseHeadersHeader extends StatelessWidget {
           ),
           if (map.isNotEmpty)
             CopyButton(
-              toCopy: kEncoder.convert(map),
+              toCopy: kJsonEncoder.convert(map),
             ),
         ],
       ),

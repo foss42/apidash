@@ -127,17 +127,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
             ),
             DataCell(
               formRows[index].type == FormDataType.file
-                  ? ElevatedButton.icon(
-                      icon: const Icon(
-                        Icons.snippet_folder_rounded,
-                        size: 20,
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: const Size.fromHeight(kDataTableRowHeight),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                      ),
+                  ? FormDataFileButton(
                       onPressed: () async {
                         var pickedResult = await pickFile();
                         if (pickedResult != null &&
@@ -149,14 +139,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                           _onFieldChange(selectedId!);
                         }
                       },
-                      label: Text(
-                        (formRows[index].type == FormDataType.file &&
-                                formRows[index].value.isNotEmpty)
-                            ? formRows[index].value.toString()
-                            : kLabelSelectFile,
-                        overflow: TextOverflow.ellipsis,
-                        style: kFormDataButtonLabelTextStyle,
-                      ),
+                      initialValue: formRows[index].value,
                     )
                   : CellField(
                       keyId: "$selectedId-$index-form-v-$seed",

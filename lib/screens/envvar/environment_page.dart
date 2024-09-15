@@ -12,10 +12,8 @@ import 'environment_editor.dart';
 class EnvironmentPage extends ConsumerWidget {
   const EnvironmentPage({
     super.key,
-    required this.scaffoldKey,
   });
 
-  final GlobalKey<ScaffoldState> scaffoldKey;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final id = ref.watch(selectedEnvironmentIdStateProvider);
@@ -23,7 +21,7 @@ class EnvironmentPage extends ConsumerWidget {
         selectedEnvironmentModelProvider.select((value) => value?.name)));
     if (context.isMediumWindow) {
       return DrawerSplitView(
-        scaffoldKey: scaffoldKey,
+        scaffoldKey: kEnvScaffoldKey,
         mainContent: const EnvironmentEditor(),
         title: EditorTitle(
           title: name,

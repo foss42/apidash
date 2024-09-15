@@ -13,6 +13,8 @@ class SettingsModel {
     this.saveResponses = true,
     this.promptBeforeClosing = true,
     this.activeEnvironmentId,
+    this.historyRetentionPeriod = HistoryRetentionPeriod.oneWeek,
+    this.workspaceFolderPath,
   });
 
   final bool isDark;
@@ -24,6 +26,8 @@ class SettingsModel {
   final bool saveResponses;
   final bool promptBeforeClosing;
   final String? activeEnvironmentId;
+  final HistoryRetentionPeriod historyRetentionPeriod;
+  final String? workspaceFolderPath;
 
   SettingsModel copyWith({
     bool? isDark,
@@ -35,6 +39,8 @@ class SettingsModel {
     bool? saveResponses,
     bool? promptBeforeClosing,
     String? activeEnvironmentId,
+    HistoryRetentionPeriod? historyRetentionPeriod,
+    String? workspaceFolderPath,
   }) {
     return SettingsModel(
       isDark: isDark ?? this.isDark,
@@ -47,6 +53,27 @@ class SettingsModel {
       saveResponses: saveResponses ?? this.saveResponses,
       promptBeforeClosing: promptBeforeClosing ?? this.promptBeforeClosing,
       activeEnvironmentId: activeEnvironmentId ?? this.activeEnvironmentId,
+      historyRetentionPeriod:
+          historyRetentionPeriod ?? this.historyRetentionPeriod,
+      workspaceFolderPath: workspaceFolderPath ?? this.workspaceFolderPath,
+    );
+  }
+
+  SettingsModel copyWithPath({
+    String? workspaceFolderPath,
+  }) {
+    return SettingsModel(
+      isDark: isDark,
+      alwaysShowCollectionPaneScrollbar: alwaysShowCollectionPaneScrollbar,
+      size: size,
+      defaultUriScheme: defaultUriScheme,
+      defaultCodeGenLang: defaultCodeGenLang,
+      offset: offset,
+      saveResponses: saveResponses,
+      promptBeforeClosing: promptBeforeClosing,
+      activeEnvironmentId: activeEnvironmentId,
+      historyRetentionPeriod: historyRetentionPeriod,
+      workspaceFolderPath: workspaceFolderPath,
     );
   }
 
@@ -80,6 +107,18 @@ class SettingsModel {
     final saveResponses = data["saveResponses"] as bool?;
     final promptBeforeClosing = data["promptBeforeClosing"] as bool?;
     final activeEnvironmentId = data["activeEnvironmentId"] as String?;
+    final historyRetentionPeriodStr = data["historyRetentionPeriod"] as String?;
+    HistoryRetentionPeriod? historyRetentionPeriod;
+    if (historyRetentionPeriodStr != null) {
+      try {
+        historyRetentionPeriod =
+            HistoryRetentionPeriod.values.byName(historyRetentionPeriodStr);
+      } catch (e) {
+        // pass
+      }
+    }
+    final workspaceFolderPath = data["workspaceFolderPath"] as String?;
+
     const sm = SettingsModel();
 
     return sm.copyWith(
@@ -92,6 +131,9 @@ class SettingsModel {
       saveResponses: saveResponses,
       promptBeforeClosing: promptBeforeClosing,
       activeEnvironmentId: activeEnvironmentId,
+      historyRetentionPeriod:
+          historyRetentionPeriod ?? HistoryRetentionPeriod.oneWeek,
+      workspaceFolderPath: workspaceFolderPath,
     );
   }
 
@@ -108,12 +150,14 @@ class SettingsModel {
       "saveResponses": saveResponses,
       "promptBeforeClosing": promptBeforeClosing,
       "activeEnvironmentId": activeEnvironmentId,
+      "historyRetentionPeriod": historyRetentionPeriod.name,
+      "workspaceFolderPath": workspaceFolderPath,
     };
   }
 
   @override
   String toString() {
-    return toJson().toString();
+    return kJsonEncoder.convert(toJson());
   }
 
   @override
@@ -129,7 +173,9 @@ class SettingsModel {
         other.defaultCodeGenLang == defaultCodeGenLang &&
         other.saveResponses == saveResponses &&
         other.promptBeforeClosing == promptBeforeClosing &&
-        other.activeEnvironmentId == activeEnvironmentId;
+        other.activeEnvironmentId == activeEnvironmentId &&
+        other.historyRetentionPeriod == historyRetentionPeriod &&
+        other.workspaceFolderPath == workspaceFolderPath;
   }
 
   @override
@@ -145,6 +191,8 @@ class SettingsModel {
       saveResponses,
       promptBeforeClosing,
       activeEnvironmentId,
+      historyRetentionPeriod,
+      workspaceFolderPath,
     );
   }
 }

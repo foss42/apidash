@@ -111,7 +111,7 @@ body = b'\r\n'.join(dataList)
           if (params.isNotEmpty) {
             hasQuery = true;
             var templateParams = jj.Template(kTemplateParams);
-            var paramsString = kEncoder.convert(params);
+            var paramsString = kJsonEncoder.convert(params);
             result += templateParams.render({"params": paramsString});
           }
         }
@@ -143,7 +143,7 @@ body = b'\r\n'.join(dataList)
                 });
               }
             }
-            var headersString = kEncoder.convert(headers);
+            var headersString = kJsonEncoder.convert(headers);
             var templateHeaders = jj.Template(kTemplateHeaders);
             result += templateHeaders.render({"headers": headersString});
           }

@@ -10,85 +10,89 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  multi_split_view: ^3.2.2
-  url_launcher: ^6.2.5
-  flutter_riverpod: ^2.5.1
-  riverpod: ^2.5.1
-  uuid: ^4.3.3
-  http: ^1.2.1
-  http_parser: ^4.0.2
-  collection: ^1.18.0
-  google_fonts: ^6.2.1
-  highlighter: ^0.1.1
-  xml: ^6.3.0
-  jinja: ^0.6.0
-  window_size:
-    git:
-      url: https://github.com/google/flutter-desktop-embedding.git
-      path: plugins/window_size
-  hive_flutter: ^1.1.0
-  lottie: ^3.1.0
-  mime_dart: ^3.0.0
-  path_provider: ^2.1.2
-  window_manager: ^0.3.8
-  path: ^1.8.3
-  flutter_markdown: ^0.7.2+1
-  markdown: ^7.2.2
-  just_audio: ^0.9.34
-  just_audio_mpv: ^0.1.7
-  just_audio_windows: ^0.2.0
-  freezed_annotation: ^2.4.1
-  json_annotation: ^4.8.1
-  printing: ^5.12.0
-  package_info_plus: ^8.0.0
-  flutter_typeahead: ^5.2.0
-  provider: ^6.1.2
-  fvp: ^0.17.0
-  video_player: ^2.8.7
-  video_player_platform_interface: ^6.2.2
-  json_data_explorer:
-    git:
-      url: https://github.com/foss42/json_data_explorer.git
-      ref: b7dde2f85dff4f482eed7eda4ef2a71344ef8b3a
-  scrollable_positioned_list: ^0.3.8
-  flutter_svg: ^2.0.10+1
-  vector_graphics_compiler: ^1.1.9+1
   code_builder: ^4.10.0
-  dart_style: ^2.3.6
-  json_text_field: ^1.2.0
+  collection: ^1.18.0
   csv: ^6.0.0
-  flex_color_scheme: ^7.3.1
-  data_table_2: ^2.5.15
-  file_selector: ^1.0.3
-  hooks_riverpod: ^2.5.1
-  flutter_hooks: ^0.20.5
-  flutter_portal: ^1.1.4
-  multi_trigger_autocomplete:
-    git:
-      url: https://github.com/foss42/multi_trigger_autocomplete.git
-      ref: cb22bab30dd14452d184bc6ad3bb41b612b22c70
-  extended_text_field: ^15.0.0
-  desktop_drop: ^0.4.4
   curl_converter:
     git:
       url: https://github.com/foss42/curl_converter.git
       ref: 726e8cd04aeb326211af27f75920be5b21c90bb4
-  
+  data_table_2: ^2.5.15
+  dart_style: ^2.3.6
+  desktop_drop: ^0.4.4
+  extended_text_field: ^16.0.0
+  file_selector: ^1.0.3
+  flex_color_scheme: ^7.3.1
+  flutter_hooks: ^0.20.5
+  flutter_markdown: ^0.7.3+1
+  flutter_portal: ^1.1.4
+  flutter_riverpod: ^2.5.1
+  flutter_svg: ^2.0.10+1
+  flutter_typeahead: ^5.2.0
+  freezed_annotation: ^2.4.1
+  fvp: ^0.24.1
+  google_fonts: ^6.2.1
+  highlighter: ^0.1.1
+  hive_flutter: ^1.1.0
+  hooks_riverpod: ^2.5.2
+  http: ^1.2.1
+  http_parser: ^4.0.2
+  intl: ^0.19.0
+  jinja: ^0.6.0
+  json_annotation: ^4.9.0
+  json_data_explorer:
+    git:
+      url: https://github.com/foss42/json_data_explorer.git
+      ref: b7dde2f85dff4f482eed7eda4ef2a71344ef8b3a
+  json_text_field: ^1.2.0
+  just_audio: ^0.9.34
+  just_audio_mpv: ^0.1.7
+  just_audio_windows: ^0.2.0
+  lottie: ^3.1.0
+  markdown: ^7.2.2
+  mime_dart: ^3.0.0
+  multi_split_view: ^3.2.2
+  multi_trigger_autocomplete:
+    git:
+      url: https://github.com/foss42/multi_trigger_autocomplete.git
+      ref: cb22bab30dd14452d184bc6ad3bb41b612b22c70
+  package_info_plus: ^8.0.2
+  path: ^1.8.3
+  path_provider: ^2.1.2
+  printing: ^5.13.2
+  provider: ^6.1.2
+  riverpod: ^2.5.1
+  scrollable_positioned_list: ^0.3.8
+  shared_preferences: ^2.3.2
+  url_launcher: ^6.2.5
+  uuid: ^4.3.3
+  vector_graphics_compiler: ^1.1.9+1
+  video_player: ^2.8.7
+  video_player_platform_interface: ^6.2.2
+  window_manager: ^0.4.2
+  window_size:
+    git:
+      url: https://github.com/google/flutter-desktop-embedding.git
+      path: plugins/window_size
+  xml: ^6.3.0
 
 dependency_overrides:
-  web: ^0.5.0
+  extended_text_field: ^16.0.0
   pdf_widget_wrapper: ^1.0.4
+  web: ^0.5.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^4.0.0
+  build_runner: ^2.4.12
   flutter_launcher_icons: ^0.13.1
-  test: ^1.25.2
-  build_runner: ^2.4.11
-  freezed: ^2.5.2
+  flutter_lints: ^4.0.0
+  freezed: ^2.5.7
   json_serializable: ^6.7.1
+  integration_test:
+    sdk: flutter
   spot: ^0.13.0
+  test: ^1.25.2
 
 flutter:
   uses-material-design: true

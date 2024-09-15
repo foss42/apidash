@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/providers.dart';
+import '../services/services.dart';
 import '../widgets/widgets.dart';
 import '../common/utils.dart';
 import '../consts.dart';
@@ -81,27 +82,6 @@ class SettingsPage extends ConsumerWidget {
                     },
                     items: kSupportedUriSchemes,
                   ),
-                  // DropdownButtonHideUnderline(
-                  //   child: DropdownButton<String>(
-                  //     borderRadius: kBorderRadius8,
-                  //     onChanged: (value) {
-                  //       ref
-                  //           .read(settingsProvider.notifier)
-                  //           .update(defaultUriScheme: value);
-                  //     },
-                  //     value: settings.defaultUriScheme,
-                  //     items: kSupportedUriSchemes
-                  //         .map<DropdownMenuItem<String>>((String value) {
-                  //       return DropdownMenuItem<String>(
-                  //         value: value,
-                  //         child: Padding(
-                  //           padding: kP10,
-                  //           child: Text(value),
-                  //         ),
-                  //       );
-                  //     }).toList(),
-                  //   ),
-                  // ),
                 ),
               ),
               ListTile(
@@ -123,26 +103,6 @@ class SettingsPage extends ConsumerWidget {
                     },
                     items: CodegenLanguage.values,
                   ),
-                  // DropdownButtonHideUnderline(
-                  //   child: DropdownButton<CodegenLanguage>(
-                  //     borderRadius: kBorderRadius8,
-                  //     value: settings.defaultCodeGenLang,
-                  //     onChanged: (value) {
-                  //       ref
-                  //           .read(settingsProvider.notifier)
-                  //           .update(defaultCodeGenLang: value);
-                  //     },
-                  //     items: CodegenLanguage.values.map((value) {
-                  //       return DropdownMenuItem<CodegenLanguage>(
-                  //         value: value,
-                  //         child: Padding(
-                  //           padding: kP10,
-                  //           child: Text(value.label),
-                  //         ),
-                  //       );
-                  //     }).toList(),
-                  //   ),
-                  // ),
                 ),
               ),
               CheckboxListTile(
@@ -188,6 +148,29 @@ class SettingsPage extends ConsumerWidget {
               ),
               ListTile(
                 hoverColor: kColorTransparent,
+                title: const Text('History Retention Period'),
+                subtitle: Text(
+                    'Your request history will be retained${settings.historyRetentionPeriod == HistoryRetentionPeriod.forever ? "" : " for"} ${settings.historyRetentionPeriod.label}'),
+                trailing: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                    borderRadius: kBorderRadius8,
+                  ),
+                  child: HistoryRetentionPopupMenu(
+                    value: settings.historyRetentionPeriod,
+                    onChanged: (value) {
+                      ref
+                          .read(settingsProvider.notifier)
+                          .update(historyRetentionPeriod: value);
+                    },
+                    items: HistoryRetentionPeriod.values,
+                  ),
+                ),
+              ),
+              ListTile(
+                hoverColor: kColorTransparent,
                 title: const Text('Clear Data'),
                 subtitle: const Text('Delete all requests data from the disk'),
                 trailing: FilledButton.tonalIcon(
@@ -202,9 +185,19 @@ class SettingsPage extends ConsumerWidget {
                       : () => showDialog<String>(
                             context: context,
                             builder: (BuildContext context) => AlertDialog(
+                              icon: const Icon(Icons.manage_history_rounded),
+                              iconColor: settings.isDark
+                                  ? kColorDarkDanger
+                                  : kColorLightDanger,
                               title: const Text('Clear Data'),
-                              content: const Text(
-                                  'This action will clear all the requests data from the disk and is irreversible. Do you want to proceed?'),
+                              titleTextStyle:
+                                  Theme.of(context).textTheme.titleLarge,
+                              content: ConstrainedBox(
+                                constraints:
+                                    const BoxConstraints(maxWidth: 300),
+                                child: const Text(
+                                    'This action will clear all the requests data from the disk and is irreversible. Do you want to proceed?'),
+                              ),
                               actions: <Widget>[
                                 TextButton(
                                   onPressed: () =>
@@ -214,6 +207,7 @@ class SettingsPage extends ConsumerWidget {
                                 TextButton(
                                   onPressed: () async {
                                     Navigator.pop(context, 'Yes');
+                                    await clearSharedPrefs();
                                     await ref
                                         .read(collectionStateNotifierProvider
                                             .notifier)

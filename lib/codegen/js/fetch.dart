@@ -106,7 +106,7 @@ fetch(url, options)
         }
         if (m.isNotEmpty) {
           result += templateHeader.render({
-            "headers": padMultilineString(kEncoder.convert(m), 2),
+            "headers": padMultilineString(kJsonEncoder.convert(m), 2),
           });
         }
       }
@@ -114,7 +114,7 @@ fetch(url, options)
       if (harJson["postData"]?["text"] != null) {
         var templateBody = jj.Template(kTemplateBody);
         result += templateBody.render({
-          "body": kEncoder.convert(harJson["postData"]["text"]),
+          "body": kJsonEncoder.convert(harJson["postData"]["text"]),
         });
       } else if (requestModel.hasFormData) {
         var templateBody = jj.Template(kTemplateBody);

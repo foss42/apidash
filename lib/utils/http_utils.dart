@@ -138,7 +138,7 @@ String? formatBody(String? body, MediaType? mediaType) {
     try {
       if (subtype.contains(kSubTypeJson)) {
         final tmp = jsonDecode(body);
-        String result = kEncoder.convert(tmp);
+        String result = kJsonEncoder.convert(tmp);
         return result;
       }
       if (subtype.contains(kSubTypeXml)) {

@@ -1,52 +1,54 @@
-import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 const String kDataBox = "apidash-data";
 const String kKeyDataBoxIds = "ids";
+
 const String kEnvironmentBox = "apidash-environments";
 const String kKeyEnvironmentBoxIds = "environmentIds";
 
-const String kSettingsBox = "apidash-settings";
+const String kHistoryMetaBox = "apidash-history-meta";
+const String kHistoryBoxIds = "historyIds";
+const String kHistoryLazyBox = "apidash-history-lazy";
 
-Future<void> openBoxes() async {
-  await Hive.initFlutter();
-  await Hive.openBox(kDataBox);
-  await Hive.openBox(kSettingsBox);
-  await Hive.openBox(kEnvironmentBox);
-}
+Future<bool> openBoxes(
+  bool initializeUsingPath,
+  String? workspaceFolderPath,
+) async {
+  try {
+    if (initializeUsingPath) {
+      if (workspaceFolderPath != null) {
+        Hive.init(workspaceFolderPath);
+      } else {
+        return false;
+      }
+    } else {
+      await Hive.initFlutter();
+    }
 
-(Size?, Offset?) getInitialSize() {
-  Size? sz;
-  Offset? off;
-  var settingsBox = Hive.box(kSettingsBox);
-  double? w = settingsBox.get("width") as double?;
-  double? h = settingsBox.get("height") as double?;
-  if (w != null && h != null) {
-    sz = Size(w, h);
+    await Hive.openBox(kDataBox);
+    await Hive.openBox(kEnvironmentBox);
+    await Hive.openBox(kHistoryMetaBox);
+    await Hive.openLazyBox(kHistoryLazyBox);
+    return true;
+  } catch (e) {
+    return false;
   }
-  double? dx = settingsBox.get("dx") as double?;
-  double? dy = settingsBox.get("dy") as double?;
-  if (dx != null && dy != null) {
-    off = Offset(dx, dy);
-  }
-  return (sz, off);
 }
 
 final hiveHandler = HiveHandler();
 
 class HiveHandler {
   late final Box dataBox;
-  late final Box settingsBox;
   late final Box environmentBox;
+  late final Box historyMetaBox;
+  late final LazyBox historyLazyBox;
 
   HiveHandler() {
     dataBox = Hive.box(kDataBox);
-    settingsBox = Hive.box(kSettingsBox);
     environmentBox = Hive.box(kEnvironmentBox);
+    historyMetaBox = Hive.box(kHistoryMetaBox);
+    historyLazyBox = Hive.lazyBox(kHistoryLazyBox);
   }
-
-  Map get settings => settingsBox.toMap();
-  Future<void> saveSettings(Map data) => settingsBox.putAll(data);
 
   dynamic getIds() => dataBox.get(kKeyDataBoxIds);
   Future<void> setIds(List<String>? ids) => dataBox.put(kKeyDataBoxIds, ids);
@@ -68,6 +70,25 @@ class HiveHandler {
       environmentBox.put(id, environmentJson);
 
   Future<void> deleteEnvironment(String id) => environmentBox.delete(id);
+
+  dynamic getHistoryIds() => historyMetaBox.get(kHistoryBoxIds);
+  Future<void> setHistoryIds(List<String>? ids) =>
+      historyMetaBox.put(kHistoryBoxIds, ids);
+
+  dynamic getHistoryMeta(String id) => historyMetaBox.get(id);
+  Future<void> setHistoryMeta(
+          String id, Map<String, dynamic>? historyMetaJson) =>
+      historyMetaBox.put(id, historyMetaJson);
+
+  Future<void> deleteHistoryMeta(String id) => historyMetaBox.delete(id);
+
+  Future<dynamic> getHistoryRequest(String id) async =>
+      await historyLazyBox.get(id);
+  Future<void> setHistoryRequest(
+          String id, Map<String, dynamic>? historyRequestJsoon) =>
+      historyLazyBox.put(id, historyRequestJsoon);
+
+  Future<void> deleteHistoryRequest(String id) => historyLazyBox.delete(id);
 
   Future clear() async {
     await dataBox.clear();

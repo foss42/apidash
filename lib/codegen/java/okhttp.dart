@@ -140,7 +140,7 @@ import okhttp3.MultipartBody;""";
             var templateBody = jj.Template(kTemplateRequestBody);
             result += templateBody.render({
               "contentType": contentType,
-              "body": kEncoder.convert(requestBody)
+              "body": kJsonEncoder.convert(requestBody)
             });
           }
         }

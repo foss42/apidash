@@ -1,6 +1,6 @@
-import 'package:apidash/consts.dart';
-import 'package:apidash/extensions/extensions.dart';
 import 'package:flutter/material.dart';
+import 'package:apidash/extensions/extensions.dart';
+import 'package:apidash/consts.dart';
 
 class URIPopupMenu extends StatelessWidget {
   const URIPopupMenu({
@@ -15,7 +15,7 @@ class URIPopupMenu extends StatelessWidget {
   final List<String>? items;
   @override
   Widget build(BuildContext context) {
-    final double boxLength = context.isCompactWindow ? 90 : 130;
+    final double boxLength = context.isCompactWindow ? 90 : 110;
     return PopupMenuButton(
       tooltip: "Select URI Scheme",
       surfaceTintColor: kColorTransparent,
@@ -36,9 +36,13 @@ class URIPopupMenu extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              value,
-              style: kTextStylePopupMenuItem,
+            Expanded(
+              child: Text(
+                value,
+                style: kTextStylePopupMenuItem,
+                softWrap: false,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
             const Icon(
               Icons.unfold_more,

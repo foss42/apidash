@@ -1,6 +1,6 @@
 import 'package:apidash/codegen/codegen.dart';
 import 'package:apidash/consts.dart';
-import 'package:apidash/screens/home_page/editor_pane/details_card/code_pane.dart';
+import 'package:apidash/screens/common_widgets/common_widgets.dart';
 import 'package:test/test.dart';
 import '../models/request_models.dart';
 
