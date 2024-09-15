@@ -2,7 +2,6 @@ import 'package:apidash/services/hive_services.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:test/test.dart';
 
 /// A testing utility which creates a [ProviderContainer] and automatically
 /// disposes it at the end of the test.
@@ -36,5 +35,5 @@ Future<void> testSetUp() async {
     return './test/unit-test-hive-storage/';
   });
 
-  await openBoxes();
+  await openBoxes(false, null);
 }
