@@ -8,7 +8,11 @@ import 'package:apidash/providers/providers.dart';
 import 'helpers.dart';
 
 void main() async {
-  setUp(() async => await testSetUp());
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  setUp(() async {
+    await testSetUpTempDirForHive();
+  });
 
   testWidgets(
       'Request method changes from GET to POST when body is added and Snackbar is shown',

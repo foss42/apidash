@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:apidash/services/hive_services.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -23,10 +24,9 @@ ProviderContainer createContainer({
   return container;
 }
 
-Future<void> testSetUp() async {
+Future<void> testSetUpForHive() async {
   // override path_provider methodCall to point
   // path to temporary location for all unit tests
-  TestWidgetsFlutterBinding.ensureInitialized();
   const MethodChannel channel =
       MethodChannel('plugins.flutter.io/path_provider');
 
@@ -35,7 +35,23 @@ Future<void> testSetUp() async {
     return './test-hive-storage/';
   });
 
-  await openBoxes(false, null);
-  await deleteHiveBoxes();
-  await openBoxes(false, null);
+  await initHiveBoxes(false, null);
+  // await deleteHiveBoxes();
+  // await openHiveBoxes();
+}
+
+Future<void> testSetUpTempDirForHive() async {
+  const MethodChannel channel =
+      MethodChannel('plugins.flutter.io/path_provider');
+  TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+      .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+    if (methodCall.method == 'getApplicationDocumentsDirectory') {
+      // Create a mock app doc directory for testing
+      Directory tempDir =
+          await Directory.systemTemp.createTemp('mock_app_doc_dir');
+      return tempDir.path; // Return the path to the mock directory
+    }
+    return null;
+  });
+  await initHiveBoxes(false, null);
 }

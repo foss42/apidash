@@ -42,7 +42,7 @@ Future<bool> initApp(
   try {
     debugPrint("initializeUsingPath: $initializeUsingPath");
     debugPrint("workspaceFolderPath: ${settingsModel?.workspaceFolderPath}");
-    final openBoxesStatus = await openBoxes(
+    final openBoxesStatus = await initHiveBoxes(
       initializeUsingPath,
       settingsModel?.workspaceFolderPath,
     );

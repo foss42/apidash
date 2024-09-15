@@ -11,7 +11,7 @@ const String kHistoryMetaBox = "apidash-history-meta";
 const String kHistoryBoxIds = "historyIds";
 const String kHistoryLazyBox = "apidash-history-lazy";
 
-Future<bool> openBoxes(
+Future<bool> initHiveBoxes(
   bool initializeUsingPath,
   String? workspaceFolderPath,
 ) async {
@@ -25,23 +25,38 @@ Future<bool> openBoxes(
     } else {
       await Hive.initFlutter();
     }
-
-    await Hive.openBox(kDataBox);
-    await Hive.openBox(kEnvironmentBox);
-    await Hive.openBox(kHistoryMetaBox);
-    await Hive.openLazyBox(kHistoryLazyBox);
+    await openHiveBoxes();
     return true;
   } catch (e) {
     return false;
   }
 }
 
+Future<void> openHiveBoxes() async {
+  try {
+    await Hive.openBox(kDataBox);
+    await Hive.openBox(kEnvironmentBox);
+    await Hive.openBox(kHistoryMetaBox);
+    await Hive.openLazyBox(kHistoryLazyBox);
+  } catch (e) {
+    debugPrint("ERROR OPEN HIVE BOXES: $e");
+  }
+}
+
 Future<void> clearHiveBoxes() async {
   try {
-    await Hive.box(kDataBox).clear();
-    await Hive.box(kEnvironmentBox).clear();
-    await Hive.box(kHistoryMetaBox).clear();
-    await Hive.lazyBox(kHistoryLazyBox).clear();
+    if (Hive.isBoxOpen(kDataBox)) {
+      await Hive.box(kDataBox).clear();
+    }
+    if (Hive.isBoxOpen(kEnvironmentBox)) {
+      await Hive.box(kEnvironmentBox).clear();
+    }
+    if (Hive.isBoxOpen(kHistoryMetaBox)) {
+      await Hive.box(kHistoryMetaBox).clear();
+    }
+    if (Hive.isBoxOpen(kHistoryLazyBox)) {
+      await Hive.lazyBox(kHistoryLazyBox).clear();
+    }
   } catch (e) {
     debugPrint("ERROR CLEAR HIVE BOXES: $e");
   }
@@ -49,10 +64,19 @@ Future<void> clearHiveBoxes() async {
 
 Future<void> deleteHiveBoxes() async {
   try {
-    await Hive.box(kDataBox).deleteFromDisk();
-    await Hive.box(kEnvironmentBox).deleteFromDisk();
-    await Hive.box(kHistoryMetaBox).deleteFromDisk();
-    await Hive.lazyBox(kHistoryLazyBox).deleteFromDisk();
+    if (Hive.isBoxOpen(kDataBox)) {
+      await Hive.box(kDataBox).deleteFromDisk();
+    }
+    if (Hive.isBoxOpen(kEnvironmentBox)) {
+      await Hive.box(kEnvironmentBox).deleteFromDisk();
+    }
+    if (Hive.isBoxOpen(kHistoryMetaBox)) {
+      await Hive.box(kHistoryMetaBox).deleteFromDisk();
+    }
+    if (Hive.isBoxOpen(kHistoryLazyBox)) {
+      await Hive.lazyBox(kHistoryLazyBox).deleteFromDisk();
+    }
+    await Hive.close();
   } catch (e) {
     debugPrint("ERROR DELETE HIVE BOXES: $e");
   }
