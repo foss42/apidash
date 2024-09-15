@@ -32,8 +32,10 @@ Future<void> testSetUp() async {
 
   TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
       .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
-    return './test/unit-test-hive-storage/';
+    return './test-hive-storage/';
   });
 
+  await openBoxes(false, null);
+  await deleteHiveBoxes();
   await openBoxes(false, null);
 }
