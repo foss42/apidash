@@ -18,21 +18,16 @@ class EditRequestBody extends ConsumerWidget {
     final contentType = ref.watch(selectedRequestModelProvider
         .select((value) => value?.httpRequestModel?.bodyContentType));
 
+    final sm = ScaffoldMessenger.of(context);
     void changeToPostMethod() {
-      RequestModel? model = ref
-          .read(collectionStateNotifierProvider.notifier)
-          .getRequestModel(selectedId);
-
-      if (model!.httpRequestModel!.method == HTTPVerb.get) {
+      if (requestModel?.httpRequestModel!.method == HTTPVerb.get) {
         ref
             .read(collectionStateNotifierProvider.notifier)
             .update(selectedId, method: HTTPVerb.post);
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text(
-            "Switched to POST method",
-            style: TextStyle(color: Colors.white),
-          ),
-          backgroundColor: Colors.black,
+        sm.hideCurrentSnackBar();
+        sm.showSnackBar(getSnackBar(
+          "Switched to POST method",
+          small: false,
         ));
       }
     }
