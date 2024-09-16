@@ -25,21 +25,23 @@ Future<bool> initHiveBoxes(
     } else {
       await Hive.initFlutter();
     }
-    await openHiveBoxes();
-    return true;
+    final openHiveBoxesStatus = await openHiveBoxes();
+    return openHiveBoxesStatus;
   } catch (e) {
     return false;
   }
 }
 
-Future<void> openHiveBoxes() async {
+Future<bool> openHiveBoxes() async {
   try {
     await Hive.openBox(kDataBox);
     await Hive.openBox(kEnvironmentBox);
     await Hive.openBox(kHistoryMetaBox);
     await Hive.openLazyBox(kHistoryLazyBox);
+    return true;
   } catch (e) {
     debugPrint("ERROR OPEN HIVE BOXES: $e");
+    return false;
   }
 }
 
