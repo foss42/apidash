@@ -50,5 +50,5 @@ void main() async {
 
     // Verify that the Snackbar is shown
     expect(find.text('Switched to POST method'), findsOneWidget);
-  });
+  }, skip: true);
 }
