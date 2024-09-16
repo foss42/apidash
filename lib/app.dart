@@ -120,7 +120,7 @@ class DashApp extends ConsumerWidget {
         home: showWorkspaceSelector
             ? WorkspaceSelector(
                 onContinue: (val) async {
-                  await openBoxes(kIsDesktop, val);
+                  await initHiveBoxes(kIsDesktop, val);
                   ref
                       .read(settingsProvider.notifier)
                       .update(workspaceFolderPath: val);
