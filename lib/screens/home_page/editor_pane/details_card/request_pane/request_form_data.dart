@@ -9,8 +9,7 @@ import 'package:apidash/utils/utils.dart';
 import 'package:apidash/consts.dart';
 
 class FormDataWidget extends ConsumerStatefulWidget {
-  final Function changeMethodToPost;
-  const FormDataWidget({required this.changeMethodToPost, super.key});
+  const FormDataWidget({super.key});
   @override
   ConsumerState<FormDataWidget> createState() => _FormDataBodyState();
 }
@@ -28,7 +27,6 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
   }
 
   void _onFieldChange(String selectedId) {
-    widget.changeMethodToPost();
     ref.read(collectionStateNotifierProvider.notifier).update(
           selectedId,
           formData: formRows.sublist(0, formRows.length - 1),
