@@ -6,6 +6,7 @@ import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
 
 void main() {
+  dataTableShowLogs = false;
   testWidgets('Testing RequestFormDataTable', (WidgetTester tester) async {
     const List<FormDataModel> sampleData = [
       FormDataModel(name: 'Key1', value: 'Value1', type: FormDataType.file),

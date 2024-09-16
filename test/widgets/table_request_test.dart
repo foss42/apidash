@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  dataTableShowLogs = false;
   testWidgets('Testing RequestDataTable', (WidgetTester tester) async {
     final Map<String, String> sampleData = {
       'Key1': 'Value1',

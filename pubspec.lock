@@ -259,10 +259,10 @@ packages:
     dependency: "direct main"
     description:
       name: dart_style
-      sha256: "99e066ce75c89d6b29903d788a7bb9369cf754f7b24bf70bf4b6d6d6b26853b9"
+      sha256: "7856d364b589d1f08986e140938578ed36ed948581fbc3bc9aef1805039ac5ab"
       url: "https://pub.dev"
     source: hosted
-    version: "2.3.6"
+    version: "2.3.7"
   dartx:
     dependency: transitive
     description:
@@ -596,10 +596,10 @@ packages:
     dependency: "direct main"
     description:
       name: fvp
-      sha256: "6462fd078de4478a0990d437463897036cff98aff3f0ac9efbbf817c99654c87"
+      sha256: "040aa12beccd5bc60631259f27a481c4abc11a389aa4f57a47b643f58fe0b060"
       url: "https://pub.dev"
     source: hosted
-    version: "0.24.1"
+    version: "0.26.1"
   glob:
     dependency: transitive
     description:
@@ -778,10 +778,10 @@ packages:
     dependency: "direct main"
     description:
       name: just_audio
-      sha256: ee50602364ba83fa6308f5512dd560c713ec3e1f2bc75f0db43618f0d82ef71a
+      sha256: d8e8aaf417d33e345299c17f6457f72bd4ba0c549dc34607abb5183a354edc4d
       url: "https://pub.dev"
     source: hosted
-    version: "0.9.39"
+    version: "0.9.40"
   just_audio_mpv:
     dependency: "direct main"
     description:
@@ -1552,10 +1552,10 @@ packages:
     dependency: "direct main"
     description:
       name: uuid
-      sha256: "83d37c7ad7aaf9aa8e275490669535c8080377cfa7a7004c24dfac53afffaa90"
+      sha256: f33d6bb662f0e4f79dcd7ada2e6170f3b3a2530c28fc41f49a411ddedd576a77
       url: "https://pub.dev"
     source: hosted
-    version: "4.4.2"
+    version: "4.5.0"
   vector_graphics:
     dependency: transitive
     description:
@@ -1727,4 +1727,4 @@ packages:
     version: "3.1.2"
 sdks:
   dart: ">=3.5.0-259.0.dev <3.999.0"
-  flutter: ">=3.22.0"
+  flutter: ">=3.24.3"

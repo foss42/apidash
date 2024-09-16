@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 const String kDataBox = "apidash-data";
@@ -10,7 +11,7 @@ const String kHistoryMetaBox = "apidash-history-meta";
 const String kHistoryBoxIds = "historyIds";
 const String kHistoryLazyBox = "apidash-history-lazy";
 
-Future<bool> openBoxes(
+Future<bool> initHiveBoxes(
   bool initializeUsingPath,
   String? workspaceFolderPath,
 ) async {
@@ -24,14 +25,62 @@ Future<bool> openBoxes(
     } else {
       await Hive.initFlutter();
     }
+    final openHiveBoxesStatus = await openHiveBoxes();
+    return openHiveBoxesStatus;
+  } catch (e) {
+    return false;
+  }
+}
 
+Future<bool> openHiveBoxes() async {
+  try {
     await Hive.openBox(kDataBox);
     await Hive.openBox(kEnvironmentBox);
     await Hive.openBox(kHistoryMetaBox);
     await Hive.openLazyBox(kHistoryLazyBox);
     return true;
   } catch (e) {
+    debugPrint("ERROR OPEN HIVE BOXES: $e");
     return false;
+  }
+}
+
+Future<void> clearHiveBoxes() async {
+  try {
+    if (Hive.isBoxOpen(kDataBox)) {
+      await Hive.box(kDataBox).clear();
+    }
+    if (Hive.isBoxOpen(kEnvironmentBox)) {
+      await Hive.box(kEnvironmentBox).clear();
+    }
+    if (Hive.isBoxOpen(kHistoryMetaBox)) {
+      await Hive.box(kHistoryMetaBox).clear();
+    }
+    if (Hive.isBoxOpen(kHistoryLazyBox)) {
+      await Hive.lazyBox(kHistoryLazyBox).clear();
+    }
+  } catch (e) {
+    debugPrint("ERROR CLEAR HIVE BOXES: $e");
+  }
+}
+
+Future<void> deleteHiveBoxes() async {
+  try {
+    if (Hive.isBoxOpen(kDataBox)) {
+      await Hive.box(kDataBox).deleteFromDisk();
+    }
+    if (Hive.isBoxOpen(kEnvironmentBox)) {
+      await Hive.box(kEnvironmentBox).deleteFromDisk();
+    }
+    if (Hive.isBoxOpen(kHistoryMetaBox)) {
+      await Hive.box(kHistoryMetaBox).deleteFromDisk();
+    }
+    if (Hive.isBoxOpen(kHistoryLazyBox)) {
+      await Hive.lazyBox(kHistoryLazyBox).deleteFromDisk();
+    }
+    await Hive.close();
+  } catch (e) {
+    debugPrint("ERROR DELETE HIVE BOXES: $e");
   }
 }
 
@@ -93,6 +142,8 @@ class HiveHandler {
   Future clear() async {
     await dataBox.clear();
     await environmentBox.clear();
+    await historyMetaBox.clear();
+    await historyLazyBox.clear();
   }
 
   Future<void> removeUnused() async {
