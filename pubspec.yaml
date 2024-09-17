@@ -87,6 +87,7 @@ dev_dependencies:
   build_runner: ^2.4.12
   flutter_launcher_icons: ^0.13.1
   flutter_lints: ^4.0.0
+  flutter_native_splash: ^2.4.1
   freezed: ^2.5.7
   json_serializable: ^6.7.1
   integration_test:
