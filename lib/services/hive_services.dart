@@ -93,6 +93,7 @@ class HiveHandler {
   late final LazyBox historyLazyBox;
 
   HiveHandler() {
+    debugPrint("Trying to open Hive boxes");
     dataBox = Hive.box(kDataBox);
     environmentBox = Hive.box(kEnvironmentBox);
     historyMetaBox = Hive.box(kHistoryMetaBox);
