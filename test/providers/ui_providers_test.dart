@@ -1,4 +1,3 @@
-import 'dart:io';
 //import 'package:spot/spot.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/screens/common_widgets/common_widgets.dart';
@@ -12,7 +11,6 @@ import 'package:apidash/screens/home_page/editor_pane/url_card.dart';
 import 'package:apidash/screens/home_page/home_page.dart';
 import 'package:apidash/screens/settings_page.dart';
 import 'package:apidash/screens/history/history_page.dart';
-import 'package:apidash/services/hive_services.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:extended_text_field/extended_text_field.dart';
 import 'package:flutter/material.dart';
@@ -22,24 +20,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import '../extensions/widget_tester_extensions.dart';
 import '../test_consts.dart';
+import 'helpers.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   setUp(() async {
-    const MethodChannel channel =
-        MethodChannel('plugins.flutter.io/path_provider');
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
-      if (methodCall.method == 'getApplicationDocumentsDirectory') {
-        // Create a mock app doc directory for testing
-        Directory tempDir =
-            await Directory.systemTemp.createTemp('mock_app_doc_dir');
-        return tempDir.path; // Return the path to the mock directory
-      }
-      return null;
-    });
-    await openBoxes();
+    await testSetUpTempDirForHive();
     final flamante = rootBundle.load('google_fonts/OpenSans-Medium.ttf');
     final fontLoader = FontLoader('OpenSans')..addFont(flamante);
     await fontLoader.load();

@@ -9,7 +9,7 @@ class HARCodeGen {
     String? boundary,
   }) {
     try {
-      var harString = kEncoder.convert(requestModelToHARJsonRequest(
+      var harString = kJsonEncoder.convert(requestModelToHARJsonRequest(
         requestModel,
         defaultUriScheme: defaultUriScheme,
         useEnabled: true,

@@ -5,7 +5,7 @@ version: 0.4.0+4
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
-  flutter: ">=3.19.0"
+  flutter: ">=3.24.2"
 
 dependencies:
   flutter:
@@ -18,7 +18,7 @@ dependencies:
       url: https://github.com/foss42/curl_converter.git
       ref: 726e8cd04aeb326211af27f75920be5b21c90bb4
   data_table_2: ^2.5.15
-  dart_style: ^2.3.6
+  dart_style: ^2.3.7
   desktop_drop: ^0.4.4
   extended_text_field: ^16.0.0
   file_selector: ^1.0.3
@@ -30,7 +30,7 @@ dependencies:
   flutter_svg: ^2.0.10+1
   flutter_typeahead: ^5.2.0
   freezed_annotation: ^2.4.1
-  fvp: ^0.24.1
+  fvp: ^0.26.1
   google_fonts: ^6.2.1
   highlighter: ^0.1.1
   hive_flutter: ^1.1.0
@@ -45,7 +45,7 @@ dependencies:
       url: https://github.com/foss42/json_data_explorer.git
       ref: b7dde2f85dff4f482eed7eda4ef2a71344ef8b3a
   json_text_field: ^1.2.0
-  just_audio: ^0.9.34
+  just_audio: ^0.9.40
   just_audio_mpv: ^0.1.7
   just_audio_windows: ^0.2.0
   lottie: ^3.1.0
@@ -63,8 +63,9 @@ dependencies:
   provider: ^6.1.2
   riverpod: ^2.5.1
   scrollable_positioned_list: ^0.3.8
+  shared_preferences: ^2.3.2
   url_launcher: ^6.2.5
-  uuid: ^4.3.3
+  uuid: ^4.5.0
   vector_graphics_compiler: ^1.1.9+1
   video_player: ^2.8.7
   video_player_platform_interface: ^6.2.2
@@ -86,6 +87,7 @@ dev_dependencies:
   build_runner: ^2.4.12
   flutter_launcher_icons: ^0.13.1
   flutter_lints: ^4.0.0
+  flutter_native_splash: ^2.4.1
   freezed: ^2.5.7
   json_serializable: ^6.7.1
   integration_test:

@@ -101,33 +101,34 @@ String stripUrlParams(String url) {
 
 (List<ResponseBodyView>, String?) getResponseBodyViewOptions(
     MediaType? mediaType) {
-  if (mediaType != null) {
-    var type = mediaType.type;
-    var subtype = mediaType.subtype;
-    if (kResponseBodyViewOptions.containsKey(type)) {
-      if (kResponseBodyViewOptions[type]!.containsKey(subtype)) {
-        return (
-          kResponseBodyViewOptions[type]![subtype]!,
-          kCodeHighlighterMap[subtype] ?? subtype
-        );
-      }
-      if (subtype.contains(kSubTypeJson)) {
-        subtype = kSubTypeJson;
-      }
-      if (subtype.contains(kSubTypeXml)) {
-        subtype = kSubTypeXml;
-      }
-      if (kResponseBodyViewOptions[type]!.containsKey(subtype)) {
-        return (
-          kResponseBodyViewOptions[type]![subtype]!,
-          kCodeHighlighterMap[subtype] ?? subtype
-        );
-      }
+  if (mediaType == null) {
+    return (kRawBodyViewOptions, null);
+  }
+  var type = mediaType.type;
+  var subtype = mediaType.subtype;
+  if (kResponseBodyViewOptions.containsKey(type)) {
+    if (kResponseBodyViewOptions[type]!.containsKey(subtype)) {
       return (
-        kResponseBodyViewOptions[type]![kSubTypeDefaultViewOptions]!,
-        subtype
+        kResponseBodyViewOptions[type]![subtype]!,
+        kCodeHighlighterMap[subtype] ?? subtype
       );
     }
+    if (subtype.contains(kSubTypeJson)) {
+      subtype = kSubTypeJson;
+    }
+    if (subtype.contains(kSubTypeXml)) {
+      subtype = kSubTypeXml;
+    }
+    if (kResponseBodyViewOptions[type]!.containsKey(subtype)) {
+      return (
+        kResponseBodyViewOptions[type]![subtype]!,
+        kCodeHighlighterMap[subtype] ?? subtype
+      );
+    }
+    return (
+      kResponseBodyViewOptions[type]![kSubTypeDefaultViewOptions]!,
+      subtype
+    );
   }
   return (kNoBodyViewOptions, null);
 }
@@ -138,7 +139,7 @@ String? formatBody(String? body, MediaType? mediaType) {
     try {
       if (subtype.contains(kSubTypeJson)) {
         final tmp = jsonDecode(body);
-        String result = kEncoder.convert(tmp);
+        String result = kJsonEncoder.convert(tmp);
         return result;
       }
       if (subtype.contains(kSubTypeXml)) {

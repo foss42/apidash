@@ -182,7 +182,7 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
                               TextButton(
                                 onPressed: () async {
                                   await _copy(
-                                      kEncoder.convert(widget.code), sm);
+                                      kJsonEncoder.convert(widget.code), sm);
                                 },
                                 child: const Text(
                                   'Copy',
@@ -215,7 +215,7 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
                                 visualDensity: VisualDensity.compact,
                                 onPressed: () async {
                                   await _copy(
-                                      kEncoder.convert(widget.code), sm);
+                                      kJsonEncoder.convert(widget.code), sm);
                                 },
                                 icon: const Icon(
                                   Icons.copy,
@@ -273,7 +273,7 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
                                 ),
                                 onPressed: () async {
                                   await _copy(
-                                      kEncoder.convert(toJson(node)), sm);
+                                      kJsonEncoder.convert(toJson(node)), sm);
                                 },
                               ),
                             )

@@ -415,7 +415,8 @@ enum ImportFormat {
   final String label;
 }
 
-const JsonEncoder kEncoder = JsonEncoder.withIndent('  ');
+const JsonEncoder kJsonEncoder = JsonEncoder.withIndent('  ');
+const JsonDecoder kJsonDecoder = JsonDecoder();
 const LineSplitter kSplitter = LineSplitter();
 
 const String kGlobalEnvironmentId = "global";
@@ -745,6 +746,9 @@ const kLabelSaving = "Saving";
 const kLabelSaved = "Saved";
 const kLabelCode = "Code";
 const kLabelDuplicate = "Duplicate";
+const kLabelSelect = "Select";
+const kLabelContinue = "Continue";
+const kLabelCancel = "Cancel";
 // Request Pane
 const kLabelRequest = "Request";
 const kLabelHideCode = "Hide Code";
@@ -779,3 +783,5 @@ const kNullResponseModelError = "Error: Response data does not exist.";
 const kMsgNullBody = "Response body is missing (null).";
 const kMsgNoContent = "No content";
 const kMsgUnknowContentType = "Unknown Response Content-Type";
+// Workspace Selector
+const kMsgSelectWorkspace = "Create your workspace";

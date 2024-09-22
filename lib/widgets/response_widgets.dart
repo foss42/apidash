@@ -262,7 +262,7 @@ class ResponseHeadersHeader extends StatelessWidget {
           ),
           if (map.isNotEmpty)
             CopyButton(
-              toCopy: kEncoder.convert(map),
+              toCopy: kJsonEncoder.convert(map),
             ),
         ],
       ),
@@ -345,12 +345,14 @@ class ResponseBody extends StatelessWidget {
       );
     }
 
-    var mediaType = responseModel.mediaType;
-    if (mediaType == null) {
-      return ErrorMessage(
-          message:
-              '$kMsgUnknowContentType - ${responseModel.contentType}. $kUnexpectedRaiseIssue');
-    }
+    final mediaType =
+        responseModel.mediaType ?? MediaType(kTypeText, kSubTypePlain);
+    // Fix #415: Treat null Content-type as plain text instead of Error message
+    // if (mediaType == null) {
+    //   return ErrorMessage(
+    //       message:
+    //           '$kMsgUnknowContentType - ${responseModel.contentType}. $kUnexpectedRaiseIssue');
+    // }
 
     var responseBodyView = getResponseBodyViewOptions(mediaType);
     var options = responseBodyView.$1;

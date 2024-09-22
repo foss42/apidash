@@ -150,7 +150,7 @@ Uint8List jsonMapToBytes(Map<String, dynamic>? map) {
   if (map == null) {
     return Uint8List.fromList([]);
   } else {
-    String text = kEncoder.convert(map);
+    String text = kJsonEncoder.convert(map);
     var l = utf8.encode(text);
     var bytes = Uint8List.fromList(l);
     return bytes;

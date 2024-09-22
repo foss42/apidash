@@ -57,3 +57,6 @@ coverage/*
 installers/*
 .metadata
 .fvm/
+
+# Testing Files & Folders
+test-hive-storage
