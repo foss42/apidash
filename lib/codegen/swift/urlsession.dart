@@ -2,6 +2,7 @@ import 'package:apidash/consts.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/utils/utils.dart' show getValidRequestUri;
 import 'package:jinja/jinja.dart' as jj;
+import 'package:path/path.dart' as path;
 
 class SwiftURLSessionCodeGen {
   final String kTemplateStart = """
@@ -9,45 +10,31 @@ import Foundation
 
 """;
 
+  final String kTemplateFormDataImport = """
+import MultipartFormData
+
+""";
+
   final String kTemplateFormData = '''
-let parameters = [
+let boundary = try! Boundary()
+let multipartFormData = try! MultipartFormData(boundary: boundary) {
 {% for param in formData %}
-  [
-    "key": "{{param.name}}",
-    "value": "{{param.value}}",
-    "type": "{{param.type}}"{% if param.contentType %},
-    "contentType": "{{param.contentType}}"{% endif %}
-  ],
-{% endfor %}
-] as [[String: Any]]
-let boundary = "Boundary-\\(UUID().uuidString)"
-var body = Data()
-var error: Error? = nil
-for param in parameters {
-  if param["disabled"] as? Bool == true { continue }
-  let paramName = param["key"] as! String
-  body.append("--\\(boundary)\\r\\n".data(using: .utf8)!)
-  body.append("Content-Disposition:form-data; name=\\"\\(paramName)\\"".data(using: .utf8)!)
-  if let contentType = param["contentType"] as? String {
-    body.append("\\r\\nContent-Type: \\(contentType)".data(using: .utf8)!)
-  }
-  let paramType = param["type"] as! String
-  if paramType == "text" {
-    let paramValue = param["value"] as! String
-    body.append("\\r\\n\\r\\n\\(paramValue)\\r\\n".data(using: .utf8)!)
-  } else if paramType == "file" {
-    let paramSrc = param["value"] as! String
-    let fileURL = URL(fileURLWithPath: paramSrc)
-    if let fileContent = try? Data(contentsOf: fileURL) {
-      body.append("; filename=\\"\\(paramSrc)\\"\\r\\n".data(using: .utf8)!)
-      body.append("Content-Type: \\"content-type header\\"\\r\\n\\r\\n".data(using: .utf8)!)
-      body.append(fileContent)
-      body.append("\\r\\n".data(using: .utf8)!)
+    {% if param.type == 'text' %}
+    Subpart {
+        ContentDisposition(name: "{{param.name}}")
+    } body: {
+        Data("{{param.value}}".utf8)
     }
-  }
+    {% elif param.type == 'file' %}
+    try Subpart {
+        ContentDisposition(name: "{{param.name}}", filename: "{{param.filename}}")
+        ContentType(mimeType: MimeType(pathExtension: "{{param.extension}}"))
+    } body: {
+        try Data(contentsOf: URL(fileURLWithPath: "{{param.filepath}}"))
+    }
+    {% endif %}
+{% endfor %}
 }
-body.append("--\\(boundary)--\\r\\n".data(using: .utf8)!)
-let postData = body
 
 ''';
 
@@ -64,7 +51,7 @@ let postData = parameters.data(using: .utf8)
 ''';
 
   final String kTemplateRequest = """
-var request = URLRequest(url: URL(string: "{{url}}")!,timeoutInterval: Double.infinity)
+var request = URLRequest(url: URL(string: "{{url}}")!)
 request.httpMethod = "{{method}}"
 
 """;
@@ -77,17 +64,23 @@ request.addValue("{{value}}", forHTTPHeaderField: "{{header}}")
 """;
 
   final String kTemplateBody = """
-request.httpBody = postData
+request.httpBody = try! multipartFormData.encode()
 
 """;
 
   final String kTemplateEnd = """
 let task = URLSession.shared.dataTask(with: request) { data, response, error in 
-  guard let data = data else {
-    print(String(describing: error))
-    return
-  }
-  print(String(data: data, encoding: .utf8)!)
+    if let error = error {
+        print("Error: (error.localizedDescription)")
+        return
+    }
+    guard let data = data else {
+        print("No data received")
+        return
+    }
+    if let responseString = String(data: data, encoding: .utf8) {
+        print("Response: (responseString)")
+    }
 }
 task.resume()
 """;
@@ -96,14 +89,40 @@ task.resume()
     try {
       String result = kTemplateStart;
 
+      if (requestModel.hasFormData) {
+        result += kTemplateFormDataImport;
+      }
+
       var rec =
           getValidRequestUri(requestModel.url, requestModel.enabledParams);
       Uri? uri = rec.$1;
 
       if (requestModel.hasFormData) {
+        var formDataList = requestModel.formDataMapList.map((param) {
+          if (param['type'] == 'file') {
+            final filePath = param['value'] as String;
+            final fileName = path.basename(filePath);
+            final fileExtension =
+                path.extension(fileName).toLowerCase().replaceFirst('.', '');
+            return {
+              'type': 'file',
+              'name': param['name'],
+              'filename': fileName,
+              'extension': fileExtension,
+              'filepath': filePath
+            };
+          } else {
+            return {
+              'type': 'text',
+              'name': param['name'],
+              'value': param['value']
+            };
+          }
+        }).toList();
+
         var templateFormData = jj.Template(kTemplateFormData);
         result += templateFormData.render({
-          "formData": requestModel.formDataMapList,
+          "formData": formDataList,
         });
       } else if (requestModel.hasJsonData) {
         var templateJsonData = jj.Template(kTemplateJsonData);
@@ -127,8 +146,8 @@ task.resume()
 
       var headers = requestModel.enabledHeadersMap;
       if (requestModel.hasFormData) {
-        headers.putIfAbsent(kHeaderContentType,
-            () => "multipart/form-data; boundary=\\(boundary)");
+        headers.putIfAbsent("Content-Type",
+            () => "multipart/form-data; boundary=(boundary.stringValue)");
       } else if (requestModel.hasJsonData || requestModel.hasTextData) {
         headers.putIfAbsent(
             kHeaderContentType, () => requestModel.bodyContentType.header);
@@ -138,7 +157,7 @@ task.resume()
         result += templateHeader.render({"headers": headers});
       }
 
-      if (requestModel.hasBody) {
+      if (requestModel.hasFormData || requestModel.hasBody) {
         result += kTemplateBody;
       }
 
