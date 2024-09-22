@@ -10,8 +10,6 @@ class Importer {
     switch (fileType) {
       case ImportFormat.curl:
         return CurlFileImport().getHttpRequestModel(content);
-      default:
-        return null;
     }
   }
 }
