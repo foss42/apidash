@@ -42,7 +42,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
   final String kTemplateHeadersFormData = """
         {% for key, val in headers %}
-              .header("{{ key }}", "{{ val }}"){% if not loop.last %};{% endif %}
+              .header("{{ key }}", "{{ val }}"){% if loop.last %};{% endif %}
         {% endfor %}
 """;
 
