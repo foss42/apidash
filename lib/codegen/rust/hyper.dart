@@ -8,11 +8,12 @@ import 'package:apidash/models/models.dart';
 
 class RustHyperCodeGen {
   final String kTemplateStart = """
+{% if hasForm %}extern crate hyper_multipart_rfc7578 as hyper_multipart;{% endif %}
 use hyper::{Body, Client, Request, Uri};
 use hyper::client::HttpConnector;
 use hyper_tls::HttpsConnector;
 use std::convert::TryInto;
-{% if hasForm %}use reqwest::multipart;{% endif %}
+{% if hasForm %}use hyper_multipart::client::multipart;{% endif %}
 {% if hasJsonBody %}use serde_json::json;{% endif %}
 use tokio;
 
@@ -26,7 +27,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 
   final String kTemplateMethod = """
-    let req = Request::builder()
+    let reqBuilder = Request::builder()
               .method("{{ method }}")
               .uri(url)
 """;
@@ -36,6 +37,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
   final String kTemplateHeaders = """
         {% for key, val in headers %}
               .header("{{ key }}", "{{ val }}")
+        {% endfor %}
+""";
+
+  final String kTemplateHeadersFormData = """
+        {% for key, val in headers %}
+              .header("{{ key }}", "{{ val }}"){% if not loop.last %};{% endif %}
         {% endfor %}
 """;
 
@@ -61,35 +68,47 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 final String kTemplateFormData = """
     
-    let form = reqwest::multipart::Form::new()
+    let mut form = multipart::Form::default();
     {%- for field in fields_list %}
         {%- if field.type == "file" %}
-        .part("{{ field.name }}", reqwest::multipart::Part::file(r"{{ field.value }}")?)
+    form.add_file("{{ field.name }}", "{{ field.value }}").unwrap();
         {%- else %}
-        .text("{{ field.name }}", "{{ field.value }}")
+    form.add_text("{{ field.name }}", "{{ field.value }}");
         {%- endif %}
-        {%- if not loop.last %}.and({%- endif %}
-    {%- endfor %};
+    {%- endfor %}
+
+    let req = form.set_body_convert::<Body, multipart::Body>(reqBuilder).unwrap();
     
   """;
 
-  final String kTemplateEndReqwest = """
-    let clientReqwest = reqwest::Client::new();
-    let responseReqwest = clientReqwest
-        .post("{{url}}")
-        .multipart(form)
-        .send()
-        .await?;
+//   final String kTemplateEndReqwest = """
+//     // let clientReqwest = reqwest::Client::new();
+//     // let responseReqwest = clientReqwest
+//     //     .post("{{url}}")
+//     //     .multipart(form)
+//     //     .send()
+//     //     .await?;
 
-    println!("Reqwest Status: {}", responseReqwest.status());
-    let bodyReqwest = responseReqwest.text().await?;
-    println!("Reqwest Body: {}", bodyReqwest);
+//     // println!("Reqwest Status: {}", responseReqwest.status());
+//     // let bodyReqwest = responseReqwest.text().await?;
+//     // println!("Reqwest Body: {}", bodyReqwest);
+    
+
+// """;
+   final String kTemplateEndForm = """
+  let res = client.request(req).await?;
+    let status = res.status();
+    let body_bytes = hyper::body::to_bytes(res).await?;
+    let body = String::from_utf8(body_bytes.to_vec())?;
+
+    println!("Response Status: {}", status);
+    println!("Response: {:?}", body);
     
 
 """;
 
   final String kTemplateRequestEnd = """
-    let res = client.request(req).await?;
+    let res = client.request(reqBuilder).await?;
     let status = res.status();
     let body_bytes = hyper::body::to_bytes(res).await?;
     let body = String::from_utf8(body_bytes.to_vec())?;
@@ -137,13 +156,18 @@ final String kTemplateFormData = """
         // Add headers if available
         var headers = requestModel.enabledHeadersMap;
         if (headers.isNotEmpty) {
-          result += jj.Template(kTemplateHeaders).render({"headers": headers});
+          if(requestModel.hasFormData){
+            result += jj.Template(kTemplateHeadersFormData).render({"headers": headers});
+          }else{
+            result += jj.Template(kTemplateHeaders).render({"headers": headers});
+          }
+          
         }
 
         // Handle body (JSON or raw)
         var requestBody = requestModel.body;
         if (requestModel.hasFormData) {
-          result += kTemplateEmptyBody;
+          
           result += jj.Template(kTemplateFormData).render({
             "fields_list": requestModel.formDataMapList,
           });
@@ -156,11 +180,12 @@ final String kTemplateFormData = """
           result += jj.Template(kTemplateBody).render({"body": requestBody});
         }
         // End request
-        result += kTemplateRequestEnd;
+        
         if(requestModel.hasFormData && requestModel.method!=HTTPVerb.get){
-          result+=jj.Template(kTemplateEndReqwest).render({
-          "url": uri,
-        });;
+          result+=kTemplateEndForm;
+        }else{
+          result+=kTemplateRequestEnd;
+
         }
         result+=kTemplateEnd;
       }
