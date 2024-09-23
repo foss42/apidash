@@ -81,20 +81,7 @@ final String kTemplateFormData = """
     
   """;
 
-//   final String kTemplateEndReqwest = """
-//     // let clientReqwest = reqwest::Client::new();
-//     // let responseReqwest = clientReqwest
-//     //     .post("{{url}}")
-//     //     .multipart(form)
-//     //     .send()
-//     //     .await?;
 
-//     // println!("Reqwest Status: {}", responseReqwest.status());
-//     // let bodyReqwest = responseReqwest.text().await?;
-//     // println!("Reqwest Body: {}", bodyReqwest);
-    
-
-// """;
    final String kTemplateEndForm = """
   let res = client.request(req).await?;
     let status = res.status();
