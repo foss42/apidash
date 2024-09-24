@@ -11,12 +11,14 @@ class HeaderField extends StatefulWidget {
     this.initialValue,
     this.onChanged,
     this.colorScheme,
+     this.scaleFactor=1, // Added scaleFactor parameter
   });
   final String keyId;
   final String? hintText;
   final String? initialValue;
   final void Function(String)? onChanged;
   final ColorScheme? colorScheme;
+  final double scaleFactor; // Added scaleFactor property
 
   @override
   State<HeaderField> createState() => _HeaderFieldState();
@@ -52,6 +54,7 @@ class _HeaderFieldState extends State<HeaderField> {
   @override
   Widget build(BuildContext context) {
     var colorScheme = widget.colorScheme ?? Theme.of(context).colorScheme;
+
     return TypeAheadField(
       key: Key(widget.keyId),
       hideOnEmpty: true,
@@ -60,7 +63,7 @@ class _HeaderFieldState extends State<HeaderField> {
         setState(() {
           controller.text = value;
         });
-        widget.onChanged!.call(value);
+        widget.onChanged?.call(value);
       },
       itemBuilder: (context, String suggestion) {
         return ListTile(
@@ -71,29 +74,33 @@ class _HeaderFieldState extends State<HeaderField> {
       suggestionsCallback: headerSuggestionCallback,
       decorationBuilder: (context, child) =>
           suggestionBoxDecorations(context, child, colorScheme),
-      constraints: const BoxConstraints(maxHeight: 400),
+      constraints: BoxConstraints(maxHeight: 400 * widget.scaleFactor), // Adjusted height
       builder: (context, controller, focusNode) => TextField(
         onChanged: widget.onChanged,
         controller: controller,
         focusNode: focusNode,
         style: kCodeStyle.copyWith(
           color: colorScheme.onSurface,
+          fontSize: 14 * widget.scaleFactor, // Scaled font size
         ),
         decoration: InputDecoration(
           hintStyle: kCodeStyle.copyWith(
-              color: colorScheme.outline.withOpacity(kHintOpacity)),
+              color: colorScheme.outline.withOpacity(kHintOpacity),
+              fontSize: 14 * widget.scaleFactor), // Scaled hint text
           hintText: widget.hintText,
-          contentPadding: const EdgeInsets.only(bottom: 12),
+          contentPadding: EdgeInsets.symmetric(vertical: 4*widget.scaleFactor), // Scaled padding
           focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(
               color: colorScheme.primary.withOpacity(
                 kHintOpacity,
               ),
+              width: 1 * widget.scaleFactor, // Scaled border width
             ),
           ),
           enabledBorder: UnderlineInputBorder(
             borderSide: BorderSide(
               color: colorScheme.surfaceContainerHighest,
+              width: 1 * widget.scaleFactor, // Scaled border width
             ),
           ),
         ),

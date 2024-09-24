@@ -57,17 +57,23 @@ class _RequestPaneState extends State<RequestPane>
                           minimumSize: const Size(44, 44),
                         ),
                         onPressed: widget.onPressedCodeButton,
-                        icon: Icon(
-                          widget.codePaneVisible
-                              ? Icons.code_off_rounded
-                              : Icons.code_rounded,
+                        icon: Align(
+                          alignment: Alignment.center,
+                          child: Icon(
+                            widget.codePaneVisible
+                                ? Icons.code_off_rounded
+                                : Icons.code_rounded,
+                          ),
                         ),
                         label: SizedBox(
-                          width: 75,
-                          child: Text(
-                            widget.codePaneVisible
-                                ? kLabelHideCode
-                                : kLabelViewCode,
+                          width: MediaQuery.of(context).size.width * 0.05,
+                          height: double.infinity,
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              widget.codePaneVisible ? kLabelHideCode : kLabelViewCode,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
                         ),
                       ),

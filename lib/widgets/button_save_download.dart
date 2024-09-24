@@ -12,6 +12,7 @@ class SaveInDownloadsButton extends StatelessWidget {
     this.ext,
     this.name,
     this.showLabel = true,
+     this.scaleFactor=1,
   });
 
   final Uint8List? content;
@@ -19,50 +20,64 @@ class SaveInDownloadsButton extends StatelessWidget {
   final String? ext;
   final String? name;
   final bool showLabel;
+  final double scaleFactor;
 
   @override
   Widget build(BuildContext context) {
     var sm = ScaffoldMessenger.of(context);
-    const icon = Icon(
+    final iconSize = 18 * scaleFactor;
+    final icon = Icon(
       Icons.download,
-      size: 18,
+      size: iconSize,
     );
-    const label = kLabelDownload;
+    final label = Text(
+      kLabelDownload,
+      style: TextStyle(fontSize: 14 * scaleFactor),
+    );
+
     final onPressed = (content != null)
         ? () async {
-            var message = "";
-            var path = await getFileDownloadpath(
-              name,
-              ext ?? getFileExtension(mimeType),
-            );
-            if (path != null) {
-              try {
-                await saveFile(path, content!);
-                var sp = getShortPath(path);
-                message = 'Saved to $sp';
-              } catch (e) {
-                message = "An error occurred while saving file.";
-              }
-            } else {
-              message = "Unable to determine the download path.";
-            }
-            sm.hideCurrentSnackBar();
-            sm.showSnackBar(getSnackBar(message, small: false));
-          }
+      var message = "";
+      var path = await getFileDownloadpath(
+        name,
+        ext ?? getFileExtension(mimeType),
+      );
+      if (path != null) {
+        try {
+          await saveFile(path, content!);
+          var sp = getShortPath(path);
+          message = 'Saved to $sp';
+        } catch (e) {
+          message = "An error occurred while saving file.";
+        }
+      } else {
+        message = "Unable to determine the download path.";
+      }
+      sm.hideCurrentSnackBar();
+      sm.showSnackBar(getSnackBar(message, small: false));
+    }
         : null;
 
     return showLabel
         ? TextButton.icon(
-            onPressed: onPressed,
-            icon: icon,
-            label: const Text(label),
-          )
+      onPressed: onPressed,
+      icon: icon,
+      label: label,
+      style: TextButton.styleFrom(
+        minimumSize: Size(64 * scaleFactor, 36 * scaleFactor),
+        padding: EdgeInsets.symmetric(
+          horizontal: 8.0 * scaleFactor,
+          vertical: 4.0 * scaleFactor,
+        ),
+      ),
+    )
         : IconButton(
-            tooltip: label,
-            color: Theme.of(context).colorScheme.primary,
-            visualDensity: VisualDensity.compact,
-            onPressed: onPressed,
-            icon: icon,
-          );
+      tooltip: kLabelDownload,
+      color: Theme.of(context).colorScheme.primary,
+      visualDensity: VisualDensity.compact,
+      onPressed: onPressed,
+      icon: icon,
+      iconSize: iconSize,
+    );
   }
 }

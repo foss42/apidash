@@ -14,6 +14,7 @@ class CodeGenPreviewer extends StatefulWidget {
     this.language,
     this.textStyle,
     this.padding = EdgeInsets.zero,
+    this.scaleFactor = 1.0,
   });
 
   final String code;
@@ -21,6 +22,7 @@ class CodeGenPreviewer extends StatefulWidget {
   final TextStyle? textStyle;
   final EdgeInsetsGeometry padding;
   final Map<String, TextStyle> theme;
+  final double scaleFactor;
 
   @override
   State<CodeGenPreviewer> createState() => _CodeGenPreviewerState();
@@ -52,12 +54,12 @@ class _CodeGenPreviewerState extends State<CodeGenPreviewer> {
     return Padding(
       padding: widget.padding,
       child: Scrollbar(
-        thickness: 10,
+        thickness: 10 * widget.scaleFactor,
         thumbVisibility: true,
         controller: controllerV,
         child: Scrollbar(
           notificationPredicate: (notification) => notification.depth == 1,
-          thickness: 10,
+          thickness: 10 * widget.scaleFactor,
           thumbVisibility: true,
           controller: controllerH,
           child: SingleChildScrollView(
@@ -73,7 +75,10 @@ class _CodeGenPreviewerState extends State<CodeGenPreviewer> {
                         child: Text.rich(
                           TextSpan(
                             children: spans,
-                            style: textStyle,
+                            style: textStyle.copyWith(
+                              fontSize: (textStyle.fontSize ?? 14.0) *
+                                  widget.scaleFactor,
+                            ),
                           ),
                           softWrap: false,
                         ),
@@ -103,11 +108,13 @@ class ViewCodePane extends StatelessWidget {
     required this.code,
     required this.codegenLanguage,
     required this.onChangedCodegenLanguage,
+    this.scaleFactor = 1.0,
   });
 
   final String code;
   final CodegenLanguage codegenLanguage;
   final Function(CodegenLanguage?) onChangedCodegenLanguage;
+  final double scaleFactor;
 
   @override
   Widget build(BuildContext context) {
@@ -117,13 +124,13 @@ class ViewCodePane extends StatelessWidget {
     final textContainerdecoration = BoxDecoration(
       color: Color.alphaBlend(
           (Theme.of(context).brightness == Brightness.dark
-                  ? Theme.of(context).colorScheme.onPrimaryContainer
-                  : Theme.of(context).colorScheme.primaryContainer)
+              ? Theme.of(context).colorScheme.onPrimaryContainer
+              : Theme.of(context).colorScheme.primaryContainer)
               .withOpacity(kForegroundOpacity),
           Theme.of(context).colorScheme.surface),
       border: Border.all(
           color: Theme.of(context).colorScheme.surfaceContainerHighest),
-      borderRadius: kBorderRadius8,
+      borderRadius: BorderRadius.circular(8 * scaleFactor),
     );
 
     return LayoutBuilder(
@@ -132,42 +139,48 @@ class ViewCodePane extends StatelessWidget {
           constraints.maxWidth,
         );
         return Padding(
-          padding: kP10,
+          padding: EdgeInsets.all(10 * scaleFactor),
           child: Column(
             children: [
               SizedBox(
-                height: kHeaderHeight,
+                height: kHeaderHeight * scaleFactor,
                 child: Row(
                   children: [
                     Expanded(
                       child: DropdownButtonCodegenLanguage(
                         codegenLanguage: codegenLanguage,
                         onChanged: onChangedCodegenLanguage,
+                        scaleFactor: scaleFactor,
                       ),
                     ),
                     CopyButton(
                       toCopy: code,
                       showLabel: showLabel,
+                      scaleFactor: scaleFactor,
                     ),
                     SaveInDownloadsButton(
                       content: stringToBytes(code),
                       ext: codegenLanguage.ext,
                       showLabel: showLabel,
-                    )
+                      scaleFactor: scaleFactor,
+                    ),
                   ],
                 ),
               ),
-              kVSpacer10,
+              SizedBox(height: 10 * scaleFactor),
               Expanded(
                 child: Container(
                   width: double.maxFinite,
-                  padding: kP8,
+                  padding: EdgeInsets.all(8 * scaleFactor),
                   decoration: textContainerdecoration,
                   child: CodeGenPreviewer(
                     code: code,
                     theme: codeTheme,
                     language: codegenLanguage.codeHighlightLang,
-                    textStyle: kCodeStyle,
+                    textStyle: kCodeStyle.copyWith(
+                      fontSize: 14 * scaleFactor,
+                    ),
+                    scaleFactor: scaleFactor,
                   ),
                 ),
               ),

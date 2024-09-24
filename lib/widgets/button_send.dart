@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:apidash/providers/providers.dart';
 
-class SendButton extends StatelessWidget {
+class SendButton extends ConsumerWidget {
   const SendButton({
     super.key,
     required this.isWorking,
@@ -12,29 +14,36 @@ class SendButton extends StatelessWidget {
   final void Function() onTap;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final settings = ref.watch(settingsProvider);
+    double scaleFactor = settings.scaleFactor;
+
     return FilledButton(
       onPressed: isWorking ? null : onTap,
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: isWorking
-            ? const [
-                Text(
-                  kLabelSending,
-                  style: kTextStyleButton,
-                ),
-              ]
-            : const [
-                Text(
-                  kLabelSend,
-                  style: kTextStyleButton,
-                ),
-                kHSpacer10,
-                Icon(
-                  size: 16,
-                  Icons.send,
-                ),
-              ],
+            ? [
+          Text(
+            kLabelSending,
+            style: kTextStyleButton.copyWith(
+              fontSize: 16 * scaleFactor, // Scale text size
+            ),
+          ),
+        ]
+            : [
+          Text(
+            kLabelSend,
+            style: kTextStyleButton.copyWith(
+              fontSize: 16 * scaleFactor, // Scale text size
+            ),
+          ),
+          SizedBox(width: 8 * scaleFactor), // Adjusted spacing
+          Icon(
+            Icons.send,
+            size: 20 * scaleFactor, // Adjusted icon size
+          ),
+        ],
       ),
     );
   }

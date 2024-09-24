@@ -18,7 +18,8 @@ class SidebarHeader extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final mobileScaffoldKey = ref.read(mobileScaffoldKeyStateProvider);
-
+    final settings = ref.watch(settingsProvider);
+    double scaleFactor = settings.scaleFactor;
     return Padding(
       padding: kPe8,
       child: Row(
@@ -28,9 +29,9 @@ class SidebarHeader extends ConsumerWidget {
           ElevatedButton(
             onPressed: onAddNew,
             style: kButtonSidebarStyle,
-            child: const Text(
+            child: Text(
               kLabelPlusNew,
-              style: kTextStyleButton,
+              style: kTextStyleButton.copyWith(fontSize: 14),
             ),
           ),
           kHSpacer4,

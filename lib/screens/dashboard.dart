@@ -15,6 +15,12 @@ class Dashboard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final railIdx = ref.watch(navRailIndexStateProvider);
+
+    final settings = ref.watch(settingsProvider);
+    double scale = settings.scaleFactor;
+    double scaledPadding = 16.0 * scale;
+    double scaledFontSize = 14.0 * scale;
+
     return Scaffold(
       body: SafeArea(
         child: Row(
@@ -22,8 +28,8 @@ class Dashboard extends ConsumerWidget {
             Column(
               children: [
                 SizedBox(
-                  height: kIsMacOS ? 32.0 : 16.0,
-                  width: 64,
+                  height: kIsMacOS ? 32.0 * scale : 16.0 * scale,
+                  width: 64 * scale,
                 ),
                 Column(
                   mainAxisSize: MainAxisSize.min,
@@ -38,9 +44,10 @@ class Dashboard extends ConsumerWidget {
                     ),
                     Text(
                       'Requests',
-                      style: Theme.of(context).textTheme.labelSmall,
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          fontSize: scaledFontSize*0.8),
                     ),
-                    kVSpacer10,
+                    SizedBox(height: 10.0 * scale),
                     IconButton(
                       isSelected: railIdx == 1,
                       onPressed: () {
@@ -51,20 +58,22 @@ class Dashboard extends ConsumerWidget {
                     ),
                     Text(
                       'Variables',
-                      style: Theme.of(context).textTheme.labelSmall,
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          fontSize: scaledFontSize*0.8),
                     ),
-                    kVSpacer10,
+                    SizedBox(height: 10.0 * scale),
                     IconButton(
                       isSelected: railIdx == 2,
                       onPressed: () {
                         ref.read(navRailIndexStateProvider.notifier).state = 2;
                       },
-                      icon: const Icon(Icons.history_outlined),
+                      icon:  const Icon(Icons.history_outlined),
                       selectedIcon: const Icon(Icons.history_rounded),
                     ),
                     Text(
                       'History',
-                      style: Theme.of(context).textTheme.labelSmall,
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          fontSize: scaledFontSize*0.8),
                     ),
                   ],
                 ),
@@ -73,7 +82,7 @@ class Dashboard extends ConsumerWidget {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(bottom: 16.0),
+                        padding: EdgeInsets.only(bottom: scaledPadding),
                         child: NavbarButton(
                           railIdx: railIdx,
                           selectedIcon: Icons.help,
@@ -87,7 +96,7 @@ class Dashboard extends ConsumerWidget {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(bottom: 16.0),
+                        padding: EdgeInsets.only(bottom: scaledPadding),
                         child: NavbarButton(
                           railIdx: railIdx,
                           buttonIdx: 3,
@@ -104,8 +113,8 @@ class Dashboard extends ConsumerWidget {
               ],
             ),
             VerticalDivider(
-              thickness: 1,
-              width: 1,
+              thickness: 1 * scale,
+              width: 1 * scale,
               color: Theme.of(context).colorScheme.surfaceContainerHighest,
             ),
             Expanded(
@@ -119,7 +128,7 @@ class Dashboard extends ConsumerWidget {
                   SettingsPage(),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),

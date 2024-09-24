@@ -14,6 +14,7 @@ class EnvironmentTriggerField extends StatefulWidget {
     this.style,
     this.decoration,
     this.optionsWidthFactor,
+    this.scaleFactor = 1,
   });
 
   final String keyId;
@@ -23,6 +24,7 @@ class EnvironmentTriggerField extends StatefulWidget {
   final TextStyle? style;
   final InputDecoration? decoration;
   final double? optionsWidthFactor;
+  final double scaleFactor; // Add scaleFactor property
 
   @override
   State<EnvironmentTriggerField> createState() =>
@@ -67,42 +69,50 @@ class EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
       optionsWidthFactor: widget.optionsWidthFactor,
       autocompleteTriggers: [
         AutocompleteTrigger(
-            trigger: '{',
-            triggerEnd: "}}",
-            triggerOnlyAfterSpace: false,
-            optionsViewBuilder: (context, autocompleteQuery, controller) {
-              return EnvironmentTriggerOptions(
-                  query: autocompleteQuery.query,
-                  onSuggestionTap: (suggestion) {
-                    final autocomplete = MultiTriggerAutocomplete.of(context);
-                    autocomplete.acceptAutocompleteOption(
-                      '{${suggestion.variable.key}',
-                    );
-                    widget.onChanged?.call(controller.text);
-                  });
-            }),
+          trigger: '{',
+          triggerEnd: "}}",
+          triggerOnlyAfterSpace: false,
+          optionsViewBuilder: (context, autocompleteQuery, controller) {
+            return EnvironmentTriggerOptions(
+              query: autocompleteQuery.query,
+              onSuggestionTap: (suggestion) {
+                final autocomplete = MultiTriggerAutocomplete.of(context);
+                autocomplete.acceptAutocompleteOption(
+                  '{${suggestion.variable.key}',
+                );
+                widget.onChanged?.call(controller.text);
+              },
+            );
+          },
+        ),
         AutocompleteTrigger(
-            trigger: '{{',
-            triggerEnd: "}}",
-            triggerOnlyAfterSpace: false,
-            optionsViewBuilder: (context, autocompleteQuery, controller) {
-              return EnvironmentTriggerOptions(
-                  query: autocompleteQuery.query,
-                  onSuggestionTap: (suggestion) {
-                    final autocomplete = MultiTriggerAutocomplete.of(context);
-                    autocomplete.acceptAutocompleteOption(
-                      suggestion.variable.key,
-                    );
-                    widget.onChanged?.call(controller.text);
-                  });
-            }),
+          trigger: '{{',
+          triggerEnd: "}}",
+          triggerOnlyAfterSpace: false,
+          optionsViewBuilder: (context, autocompleteQuery, controller) {
+            return EnvironmentTriggerOptions(
+              query: autocompleteQuery.query,
+              onSuggestionTap: (suggestion) {
+                final autocomplete = MultiTriggerAutocomplete.of(context);
+                autocomplete.acceptAutocompleteOption(
+                  suggestion.variable.key,
+                );
+                widget.onChanged?.call(controller.text);
+              },
+            );
+          },
+        ),
       ],
       fieldViewBuilder: (context, textEditingController, focusnode) {
         return ExtendedTextField(
           controller: textEditingController,
           focusNode: focusnode,
           decoration: widget.decoration,
-          style: widget.style,
+          style: widget.style?.copyWith(
+            fontSize: widget.style?.fontSize != null
+                ? widget.style!.fontSize! * widget.scaleFactor
+                : null,
+          ),
           onChanged: widget.onChanged,
           onSubmitted: widget.onFieldSubmitted,
           specialTextSpanBuilder: EnvRegExpSpanBuilder(),

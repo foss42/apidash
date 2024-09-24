@@ -20,18 +20,22 @@ class PageBase extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isDarkMode =
         ref.watch(settingsProvider.select((value) => value.isDark));
+    final settings = ref.watch(settingsProvider);
+    final double scaleFactor = settings.scaleFactor;
+
+
     final scaffold = Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.surface,
         primary: true,
-        title: Text(title),
+        title: Text(title, style: TextStyle(fontSize: 20 * scaleFactor)),
         centerTitle: true,
         scrolledUnderElevation: 0,
       ),
       body: Padding(
         padding: EdgeInsets.only(
-          bottom: MediaQuery.paddingOf(context).bottom,
+          bottom: MediaQuery.paddingOf(context).bottom*scaleFactor,
         ),
         child: scaffoldBody,
       ),
@@ -48,7 +52,7 @@ class PageBase extends ConsumerWidget {
         ),
         if (kIsWindows)
           SizedBox(
-            height: 29,
+            height: 29*scaleFactor,
             child: WindowCaption(
               backgroundColor: Colors.transparent,
               brightness: isDarkMode ? Brightness.dark : Brightness.light,

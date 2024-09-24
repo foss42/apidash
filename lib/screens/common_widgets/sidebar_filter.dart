@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class SidebarFilter extends StatelessWidget {
+import '../../providers/settings_providers.dart';
+
+class SidebarFilter extends ConsumerWidget {
   const SidebarFilter({
     super.key,
     this.onFilterFieldChanged,
@@ -13,9 +16,11 @@ class SidebarFilter extends StatelessWidget {
   final String? filterHintText;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context,WidgetRef ref) {
+    final settings = ref.watch(settingsProvider);
+    double scaleFactor = settings.scaleFactor;
     return Container(
-      margin: const EdgeInsets.only(right: 8),
+      margin: EdgeInsets.only(right: 8*scaleFactor),
       decoration: BoxDecoration(
         borderRadius: kBorderRadius8,
         border: Border.all(
@@ -27,7 +32,7 @@ class SidebarFilter extends StatelessWidget {
           kHSpacer5,
           Icon(
             Icons.filter_alt,
-            size: 18,
+            size: 18*scaleFactor,
             color: Theme.of(context).colorScheme.secondary,
           ),
           kHSpacer5,

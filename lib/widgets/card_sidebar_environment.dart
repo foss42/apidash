@@ -39,15 +39,17 @@ class SidebarEnvironmentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scaleFactor = MediaQuery.of(context).textScaleFactor;
     final colorScheme = Theme.of(context).colorScheme;
     final Color color =
-        isGlobal ? colorScheme.secondaryContainer : colorScheme.surface;
+    isGlobal ? colorScheme.secondaryContainer : colorScheme.surface;
     final Color colorVariant =
-        colorScheme.surfaceContainerHighest.withOpacity(0.5);
+    colorScheme.surfaceContainerHighest.withOpacity(0.5);
     final Color surfaceTint = colorScheme.primary;
     bool isSelected = selectedId == id;
     bool inEditMode = editRequestId == id;
     String nm = getEnvironmentTitle(name);
+
     return Tooltip(
       message: nm,
       triggerMode: TooltipTriggerMode.manual,
@@ -60,8 +62,8 @@ class SidebarEnvironmentCard extends StatelessWidget {
         surfaceTintColor: isSelected ? surfaceTint : null,
         color: isSelected && !isGlobal
             ? colorScheme.brightness == Brightness.dark
-                ? colorVariant
-                : color
+            ? colorVariant
+            : color
             : color,
         margin: EdgeInsets.zero,
         child: InkWell(
@@ -71,47 +73,50 @@ class SidebarEnvironmentCard extends StatelessWidget {
           onTap: inEditMode ? null : onTap,
           onSecondaryTap: onSecondaryTap,
           child: Padding(
-            padding: EdgeInsets.only(
-              left: 6,
-              right: isSelected ? 6 : 10,
-              top: 5,
-              bottom: 5,
+            padding: EdgeInsets.symmetric(
+              horizontal: 6 * scaleFactor, // Scale horizontal padding
+              vertical: 5 * scaleFactor,   // Scale vertical padding
             ),
             child: SizedBox(
-              height: 20,
+              height: 20 * scaleFactor,    // Scale height of the card
               child: Row(
                 children: [
-                  kHSpacer4,
+                  SizedBox(width: 4 * scaleFactor), // Scale spacer width
                   Expanded(
                     child: inEditMode
                         ? TextFormField(
-                            key: ValueKey("$id-name"),
-                            initialValue: name,
-                            focusNode: focusNode,
-                            style: Theme.of(context).textTheme.bodyMedium,
-                            onTapOutside: (_) {
-                              onTapOutsideNameEditor?.call();
-                            },
-                            onFieldSubmitted: (value) {
-                              onTapOutsideNameEditor?.call();
-                            },
-                            onChanged: onChangedNameEditor,
-                            decoration: const InputDecoration(
-                              isCollapsed: true,
-                              contentPadding: EdgeInsets.zero,
-                              border: InputBorder.none,
-                            ),
-                          )
+                      key: ValueKey("$id-name"),
+                      initialValue: name,
+                      focusNode: focusNode,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontSize: 14 * scaleFactor, // Scale text size
+                      ),
+                      onTapOutside: (_) {
+                        onTapOutsideNameEditor?.call();
+                      },
+                      onFieldSubmitted: (value) {
+                        onTapOutsideNameEditor?.call();
+                      },
+                      onChanged: onChangedNameEditor,
+                      decoration: const InputDecoration(
+                        isCollapsed: true,
+                        contentPadding: EdgeInsets.zero,
+                        border: InputBorder.none,
+                      ),
+                    )
                         : Text(
-                            nm,
-                            softWrap: false,
-                            overflow: TextOverflow.fade,
-                          ),
+                      nm,
+                      style: TextStyle(
+                        fontSize: 14 * scaleFactor, // Scale text size
+                      ),
+                      softWrap: false,
+                      overflow: TextOverflow.fade,
+                    ),
                   ),
                   Visibility(
                     visible: isSelected && !inEditMode && !isGlobal,
                     child: SizedBox(
-                      width: 28,
+                      width: 28 * scaleFactor, // Scale the width of the menu
                       child: ItemCardMenu(
                         onSelected: onMenuSelected,
                       ),

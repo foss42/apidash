@@ -8,6 +8,7 @@ import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
 import '../common_widgets/common_widgets.dart';
 
+
 class EnvironmentsPane extends ConsumerWidget {
   const EnvironmentsPane({
     super.key,
@@ -15,11 +16,14 @@ class EnvironmentsPane extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final settings = ref.watch(settingsProvider);
+    final scaleFactor = settings.scaleFactor;
+
     return Padding(
       padding: (!context.isMediumWindow && kIsMacOS
-              ? kP24CollectionPane
-              : kP8CollectionPane) +
-          (context.isMediumWindow ? kPb70 : EdgeInsets.zero),
+          ? kP24CollectionPane * scaleFactor
+          : kP8CollectionPane * scaleFactor) +
+          (context.isMediumWindow ? EdgeInsets.only(bottom: 70 * scaleFactor) : EdgeInsets.zero),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -30,7 +34,7 @@ class EnvironmentsPane extends ConsumerWidget {
                   .addEnvironment();
             },
           ),
-          kVSpacer10,
+          SizedBox(height: 10 * scaleFactor), // Scaling vertical spacing
           SidebarFilter(
             filterHintText: "Filter by name",
             onFilterFieldChanged: (value) {
@@ -38,9 +42,9 @@ class EnvironmentsPane extends ConsumerWidget {
                   value.toLowerCase();
             },
           ),
-          kVSpacer10,
+          SizedBox(height: 10 * scaleFactor), // Scaling vertical spacing
           const Expanded(child: EnvironmentsList()),
-          kVSpacer5
+          SizedBox(height: 5 * scaleFactor), // Scaling vertical spacing
         ],
       ),
     );
@@ -54,6 +58,9 @@ class EnvironmentsList extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final settings = ref.watch(settingsProvider);
+    final scaleFactor = settings.scaleFactor;
+
     final environmentSequence = ref.watch(environmentSequenceProvider);
     final environmentItems = ref.watch(environmentsStateNotifierProvider)!;
     final alwaysShowEnvironmentsPaneScrollbar = ref.watch(settingsProvider
@@ -62,9 +69,11 @@ class EnvironmentsList extends HookConsumerWidget {
 
     ScrollController scrollController = useScrollController();
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Padding(
-          padding: kP1 + kPe8,
+          padding: EdgeInsets.all(1 * scaleFactor) + EdgeInsets.symmetric(horizontal: 1 * scaleFactor),
           child: EnvironmentItem(
             id: kGlobalEnvironmentId,
             environmentModel: environmentItems[kGlobalEnvironmentId]!,
@@ -74,88 +83,75 @@ class EnvironmentsList extends HookConsumerWidget {
           child: Scrollbar(
             controller: scrollController,
             thumbVisibility: alwaysShowEnvironmentsPaneScrollbar,
-            radius: const Radius.circular(12),
+            radius: Radius.circular(12 * scaleFactor),
             child: filterQuery.isEmpty
                 ? ReorderableListView.builder(
-                    padding: context.isMediumWindow
-                        ? EdgeInsets.only(
-                            bottom: MediaQuery.paddingOf(context).bottom,
-                            right: 8,
-                          )
-                        : kPe8,
-                    scrollController: scrollController,
-                    buildDefaultDragHandles: false,
-                    itemCount: environmentSequence.length,
-                    onReorder: (int oldIndex, int newIndex) {
-                      if (oldIndex < newIndex) {
-                        newIndex -= 1;
-                      }
-                      if (oldIndex != newIndex) {
-                        ref
-                            .read(environmentsStateNotifierProvider.notifier)
-                            .reorder(oldIndex, newIndex);
-                      }
-                    },
-                    itemBuilder: (context, index) {
-                      var id = environmentSequence[index];
-                      if (id == kGlobalEnvironmentId) {
-                        return SizedBox.shrink(
-                          key: ValueKey(id),
-                        );
-                      }
-                      if (kIsMobile) {
-                        return ReorderableDelayedDragStartListener(
-                          key: ValueKey(id),
-                          index: index,
-                          child: Padding(
-                            padding: kP1,
-                            child: EnvironmentItem(
-                              id: id,
-                              environmentModel: environmentItems[id]!,
-                            ),
-                          ),
-                        );
-                      }
-                      return ReorderableDragStartListener(
-                        key: ValueKey(id),
-                        index: index,
-                        child: Padding(
-                          padding: kP1,
-                          child: EnvironmentItem(
-                            id: id,
-                            environmentModel: environmentItems[id]!,
-                          ),
-                        ),
-                      );
-                    },
-                  )
-                : ListView(
-                    padding: context.isMediumWindow
-                        ? EdgeInsets.only(
-                            bottom: MediaQuery.paddingOf(context).bottom,
-                            right: 8,
-                          )
-                        : kPe8,
-                    controller: scrollController,
-                    children: environmentSequence.map((id) {
-                      var item = environmentItems[id]!;
-                      if (id == kGlobalEnvironmentId) {
-                        return SizedBox.shrink(
-                          key: ValueKey(id),
-                        );
-                      }
-                      if (item.name.toLowerCase().contains(filterQuery)) {
-                        return Padding(
-                          padding: kP1,
-                          child: EnvironmentItem(
-                            id: id,
-                            environmentModel: item,
-                          ),
-                        );
-                      }
-                      return const SizedBox();
-                    }).toList(),
+              padding: context.isMediumWindow
+                  ? EdgeInsets.only(
+                bottom: MediaQuery.paddingOf(context).bottom,
+                right: 8 * scaleFactor,
+              )
+                  : EdgeInsets.symmetric(horizontal: 8 * scaleFactor),
+              scrollController: scrollController,
+              buildDefaultDragHandles: false,
+              itemCount: environmentSequence.length,
+              onReorder: (int oldIndex, int newIndex) {
+                if (oldIndex < newIndex) {
+                  newIndex -= 1;
+                }
+                if (oldIndex != newIndex) {
+                  ref
+                      .read(environmentsStateNotifierProvider.notifier)
+                      .reorder(oldIndex, newIndex);
+                }
+              },
+              itemBuilder: (context, index) {
+                var id = environmentSequence[index];
+                if (id == kGlobalEnvironmentId) {
+                  return SizedBox.shrink(
+                    key: ValueKey(id),
+                  );
+                }
+                return ReorderableDragStartListener(
+                  key: ValueKey(id),
+                  index: index,
+                  child: Padding(
+                    padding: EdgeInsets.all(1 * scaleFactor),
+                    child: EnvironmentItem(
+                      id: id,
+                      environmentModel: environmentItems[id]!,
+                    ),
                   ),
+                );
+              },
+            )
+                : ListView(
+              padding: context.isMediumWindow
+                  ? EdgeInsets.only(
+                bottom: MediaQuery.paddingOf(context).bottom,
+                right: 8 * scaleFactor,
+              )
+                  : EdgeInsets.symmetric(horizontal: 8 * scaleFactor),
+              controller: scrollController,
+              children: environmentSequence.map((id) {
+                var item = environmentItems[id]!;
+                if (id == kGlobalEnvironmentId) {
+                  return SizedBox.shrink(
+                    key: ValueKey(id),
+                  );
+                }
+                if (item.name.toLowerCase().contains(filterQuery)) {
+                  return Padding(
+                    padding: EdgeInsets.all(1 * scaleFactor),
+                    child: EnvironmentItem(
+                      id: id,
+                      environmentModel: item,
+                    ),
+                  );
+                }
+                return const SizedBox();
+              }).toList(),
+            ),
           ),
         ),
       ],
@@ -175,6 +171,7 @@ class EnvironmentItem extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+
     final selectedId = ref.watch(selectedEnvironmentIdStateProvider);
     final activeEnvironmentId = ref.watch(activeEnvironmentIdStateProvider);
     final editRequestId = ref.watch(selectedIdEditStateProvider);
@@ -208,7 +205,7 @@ class EnvironmentItem extends ConsumerWidget {
           ref.read(selectedIdEditStateProvider.notifier).state = id;
           Future.delayed(
             const Duration(milliseconds: 150),
-            () => ref
+                () => ref
                 .read(nameTextFieldFocusNodeProvider.notifier)
                 .state
                 .requestFocus(),

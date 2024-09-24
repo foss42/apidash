@@ -15,6 +15,7 @@ class SettingsModel {
     this.activeEnvironmentId,
     this.historyRetentionPeriod = HistoryRetentionPeriod.oneWeek,
     this.workspaceFolderPath,
+    this.scaleFactor = 1.0,
   });
 
   final bool isDark;
@@ -28,6 +29,7 @@ class SettingsModel {
   final String? activeEnvironmentId;
   final HistoryRetentionPeriod historyRetentionPeriod;
   final String? workspaceFolderPath;
+  final double scaleFactor;
 
   SettingsModel copyWith({
     bool? isDark,
@@ -41,6 +43,7 @@ class SettingsModel {
     String? activeEnvironmentId,
     HistoryRetentionPeriod? historyRetentionPeriod,
     String? workspaceFolderPath,
+    double? scaleFactor,
   }) {
     return SettingsModel(
       isDark: isDark ?? this.isDark,
@@ -56,6 +59,7 @@ class SettingsModel {
       historyRetentionPeriod:
           historyRetentionPeriod ?? this.historyRetentionPeriod,
       workspaceFolderPath: workspaceFolderPath ?? this.workspaceFolderPath,
+      scaleFactor: scaleFactor ?? this.scaleFactor,
     );
   }
 
@@ -63,18 +67,18 @@ class SettingsModel {
     String? workspaceFolderPath,
   }) {
     return SettingsModel(
-      isDark: isDark,
-      alwaysShowCollectionPaneScrollbar: alwaysShowCollectionPaneScrollbar,
-      size: size,
-      defaultUriScheme: defaultUriScheme,
-      defaultCodeGenLang: defaultCodeGenLang,
-      offset: offset,
-      saveResponses: saveResponses,
-      promptBeforeClosing: promptBeforeClosing,
-      activeEnvironmentId: activeEnvironmentId,
-      historyRetentionPeriod: historyRetentionPeriod,
-      workspaceFolderPath: workspaceFolderPath,
-    );
+        isDark: isDark,
+        alwaysShowCollectionPaneScrollbar: alwaysShowCollectionPaneScrollbar,
+        size: size,
+        defaultUriScheme: defaultUriScheme,
+        defaultCodeGenLang: defaultCodeGenLang,
+        offset: offset,
+        saveResponses: saveResponses,
+        promptBeforeClosing: promptBeforeClosing,
+        activeEnvironmentId: activeEnvironmentId,
+        historyRetentionPeriod: historyRetentionPeriod,
+        workspaceFolderPath: workspaceFolderPath,
+        scaleFactor: scaleFactor);
   }
 
   factory SettingsModel.fromJson(Map<dynamic, dynamic> data) {
@@ -118,6 +122,7 @@ class SettingsModel {
       }
     }
     final workspaceFolderPath = data["workspaceFolderPath"] as String?;
+    final scaleFactor = data['scaleFactor'] as double? ?? 1.0;
 
     const sm = SettingsModel();
 
@@ -134,6 +139,7 @@ class SettingsModel {
       historyRetentionPeriod:
           historyRetentionPeriod ?? HistoryRetentionPeriod.oneWeek,
       workspaceFolderPath: workspaceFolderPath,
+      scaleFactor: scaleFactor,
     );
   }
 
@@ -152,6 +158,7 @@ class SettingsModel {
       "activeEnvironmentId": activeEnvironmentId,
       "historyRetentionPeriod": historyRetentionPeriod.name,
       "workspaceFolderPath": workspaceFolderPath,
+      "scaleFactor": scaleFactor,
     };
   }
 
@@ -175,7 +182,8 @@ class SettingsModel {
         other.promptBeforeClosing == promptBeforeClosing &&
         other.activeEnvironmentId == activeEnvironmentId &&
         other.historyRetentionPeriod == historyRetentionPeriod &&
-        other.workspaceFolderPath == workspaceFolderPath;
+        other.workspaceFolderPath == workspaceFolderPath &&
+        other.scaleFactor == scaleFactor;
   }
 
   @override
@@ -193,6 +201,7 @@ class SettingsModel {
       activeEnvironmentId,
       historyRetentionPeriod,
       workspaceFolderPath,
+      scaleFactor,
     );
   }
 }

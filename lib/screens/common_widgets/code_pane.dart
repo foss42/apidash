@@ -18,17 +18,19 @@ class CodePane extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final settings = ref.watch(settingsProvider);
+    double scaleFactor = settings.scaleFactor;
     final CodegenLanguage codegenLanguage =
-        ref.watch(codegenLanguageStateProvider);
+    ref.watch(codegenLanguageStateProvider);
 
     final selectedHistoryRequestModel =
-        ref.watch(selectedHistoryRequestModelProvider);
+    ref.watch(selectedHistoryRequestModelProvider);
 
     final selectedRequestModel = isHistoryRequest
         ? getRequestModelFromHistoryModel(selectedHistoryRequestModel!)
         : ref.watch(selectedRequestModelProvider);
     final defaultUriScheme =
-        ref.watch(settingsProvider.select((value) => value.defaultUriScheme));
+    ref.watch(settingsProvider.select((value) => value.defaultUriScheme));
 
     var envMap = ref.watch(availableEnvironmentVariablesStateProvider);
     var activeEnvId = ref.watch(activeEnvironmentIdStateProvider);
@@ -39,17 +41,26 @@ class CodePane extends ConsumerWidget {
 
     final code = codegen.getCode(
         codegenLanguage, substitutedRequestModel!, defaultUriScheme);
+
     if (code == null) {
-      return const ErrorMessage(
-        message: "An error was encountered while generating code. $kRaiseIssue",
+      return Padding(
+        padding: EdgeInsets.all(8 * scaleFactor),
+        child: Text(
+          "An error was encountered while generating code. $kRaiseIssue",
+          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+            fontSize: 14 * scaleFactor,
+          ),
+        ),
       );
     }
+
     return ViewCodePane(
       code: code,
       codegenLanguage: codegenLanguage,
       onChangedCodegenLanguage: (CodegenLanguage? value) {
         ref.read(codegenLanguageStateProvider.notifier).state = value!;
       },
+      scaleFactor: scaleFactor,
     );
   }
 }

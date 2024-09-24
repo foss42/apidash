@@ -7,39 +7,46 @@ class EditorTitleActions extends StatelessWidget {
     this.onRenamePressed,
     this.onDuplicatePressed,
     this.onDeletePressed,
+    required this.scaleFactor,
   });
 
   final void Function()? onRenamePressed;
   final void Function()? onDuplicatePressed;
   final void Function()? onDeletePressed;
+  final double scaleFactor;
 
   @override
   Widget build(BuildContext context) {
     var verticalDivider = VerticalDivider(
-      width: 2,
+      width: 2 * scaleFactor, // Adjust vertical divider width with scaling
       color: Theme.of(context).colorScheme.outlineVariant,
     );
+
     return ClipRRect(
-      borderRadius: kBorderRadius20,
+      borderRadius: kBorderRadius20 * scaleFactor, // Scale the border radius
       child: Material(
         color: Colors.transparent,
         child: Ink(
           decoration: BoxDecoration(
             border: Border.all(
               color: Theme.of(context).colorScheme.outlineVariant,
+              width: 1 * scaleFactor, // Scale the border width
             ),
-            borderRadius: kBorderRadius20,
+            borderRadius: kBorderRadius20 * scaleFactor, // Scale the border radius
           ),
           child: SizedBox(
-            height: 32,
+            width: 144*scaleFactor,
+            height: 32 * scaleFactor, // Scale the height of the widget
             child: IntrinsicHeight(
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisSize: MainAxisSize.max,
                 children: [
                   iconButton(
                     "Rename",
                     Icons.edit_rounded,
                     onRenamePressed,
-                    padding: const EdgeInsets.only(left: 4),
+                    padding: EdgeInsets.only(left: 4 * scaleFactor),
                   ),
                   verticalDivider,
                   iconButton(
@@ -52,7 +59,7 @@ class EditorTitleActions extends StatelessWidget {
                     "Duplicate",
                     Icons.copy_rounded,
                     onDuplicatePressed,
-                    padding: const EdgeInsets.only(right: 4),
+                    padding: EdgeInsets.only(right: 4 * scaleFactor),
                   ),
                 ],
               ),
@@ -70,13 +77,20 @@ class EditorTitleActions extends StatelessWidget {
       message: tooltip,
       child: IconButton(
         style: ButtonStyle(
-          padding: WidgetStateProperty.all(const EdgeInsets.all(0) + padding),
-          shape: WidgetStateProperty.all(const ContinuousRectangleBorder()),
+          padding: MaterialStateProperty.all(
+            EdgeInsets.all(0) + padding, // Apply custom padding
+          ),
+          // Scale the shape
+          shape: MaterialStateProperty.all(
+            ContinuousRectangleBorder(
+              borderRadius: BorderRadius.circular(8 * scaleFactor),
+            ),
+          ),
         ),
         onPressed: onPressed,
         icon: Icon(
           iconData,
-          size: 16,
+          size: 16 * scaleFactor, // Scale the icon size
         ),
       ),
     );

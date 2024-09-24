@@ -16,9 +16,13 @@ class EnvironmentPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final settings = ref.watch(settingsProvider);
+    double scaleFactor = settings.scaleFactor;
+
     final id = ref.watch(selectedEnvironmentIdStateProvider);
     final name = getEnvironmentTitle(ref.watch(
         selectedEnvironmentModelProvider.select((value) => value?.name)));
+
     if (context.isMediumWindow) {
       return DrawerSplitView(
         scaffoldKey: kEnvScaffoldKey,
@@ -47,17 +51,21 @@ class EnvironmentPage extends ConsumerWidget {
           },
         ),
         leftDrawerContent: const EnvironmentsPane(),
-        actions: const [SizedBox(width: 16)],
+        actions: [
+          SizedBox(width: 16 * scaleFactor)
+        ],
         onDrawerChanged: (value) =>
-            ref.read(leftDrawerStateProvider.notifier).state = value,
+        ref.read(leftDrawerStateProvider.notifier).state = value,
       );
     }
-    return const Column(
+    return  Column(
       children: [
         Expanded(
           child: DashboardSplitView(
+            scaleFactor:scaleFactor,
             sidebarWidget: EnvironmentsPane(),
             mainWidget: EnvironmentEditor(),
+            // Apply scaling to padding or other dimensions if necessary here
           ),
         ),
       ],

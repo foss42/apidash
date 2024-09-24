@@ -3,8 +3,11 @@ import 'package:apidash/extensions/extensions.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/utils/utils.dart';
 import 'package:apidash/consts.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class EnvironmentPopupMenu extends StatelessWidget {
+import '../providers/settings_providers.dart';
+
+class EnvironmentPopupMenu extends ConsumerWidget {
   const EnvironmentPopupMenu({
     super.key,
     this.value,
@@ -16,10 +19,15 @@ class EnvironmentPopupMenu extends StatelessWidget {
   final void Function(EnvironmentModel? value)? onChanged;
   final List<EnvironmentModel>? items;
   final EnvironmentModel? noneEnvironmentModel = null;
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final settings = ref.watch(settingsProvider);
+    double scaleFactor = settings.scaleFactor;
+
     final valueName = getEnvironmentTitle(value?.name);
-    final double boxLength = context.isCompactWindow ? 100 : 130;
+    final double boxLength = context.isCompactWindow ? 100 * scaleFactor : 130 * scaleFactor;
+
     return PopupMenuButton(
       tooltip: "Select Environment",
       surfaceTintColor: kColorTransparent,
@@ -31,7 +39,10 @@ class EnvironmentPopupMenu extends StatelessWidget {
             onTap: () {
               onChanged?.call(null);
             },
-            child: const Text("None"),
+            child: Text(
+              "None",
+              style: TextStyle(fontSize: 14 * scaleFactor), // Scale font size
+            ),
           ),
           ...items!.map((EnvironmentModel environment) {
             final name = getEnvironmentTitle(environment.name).clip(30);
@@ -39,6 +50,7 @@ class EnvironmentPopupMenu extends StatelessWidget {
               value: environment,
               child: Text(
                 name,
+                style: TextStyle(fontSize: 14 * scaleFactor), // Scale font size
                 softWrap: false,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -49,20 +61,21 @@ class EnvironmentPopupMenu extends StatelessWidget {
       onSelected: onChanged,
       child: Container(
         width: boxLength,
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(8.0 ), // Scale padding
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Expanded(
               child: Text(
                 value == null ? "None" : valueName,
+                style: TextStyle(fontSize: 14 * scaleFactor), // Scale font size
                 softWrap: false,
                 overflow: TextOverflow.ellipsis,
               ),
             ),
-            const Icon(
+            Icon(
               Icons.unfold_more,
-              size: 16,
+              size: 16 * scaleFactor, // Scale icon size
             )
           ],
         ),

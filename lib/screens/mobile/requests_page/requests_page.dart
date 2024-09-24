@@ -25,11 +25,14 @@ class _RequestResponsePageState extends ConsumerState<RequestResponsePage>
     with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
+    final settings = ref.watch(settingsProvider);
+    double scaleFactor = settings.scaleFactor;
     final id = ref.watch(selectedIdStateProvider);
     final name = getRequestTitleFromUrl(
         ref.watch(selectedRequestModelProvider.select((value) => value?.name)));
     final TabController requestTabController =
-        useTabController(initialLength: 3, vsync: this);
+    useTabController(initialLength: 3, vsync: this);
+
     return DrawerSplitView(
       scaffoldKey: kHomeScaffoldKey,
       title: EditorTitle(
@@ -55,13 +58,14 @@ class _RequestResponsePageState extends ConsumerState<RequestResponsePage>
       mainContent: id == null
           ? const RequestEditorDefault()
           : RequestTabs(
-              controller: requestTabController,
-            ),
+        controller: requestTabController,
+      ),
       bottomNavigationBar: RequestResponsePageBottombar(
         requestTabController: requestTabController,
+        scaleFactor: scaleFactor,
       ),
       onDrawerChanged: (value) =>
-          ref.read(leftDrawerStateProvider.notifier).state = value,
+      ref.read(leftDrawerStateProvider.notifier).state = value,
     );
   }
 }
@@ -70,27 +74,30 @@ class RequestResponsePageBottombar extends StatelessWidget {
   const RequestResponsePageBottombar({
     super.key,
     required this.requestTabController,
+    required this.scaleFactor,
   });
+
   final TabController requestTabController;
+  final double scaleFactor;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: MediaQuery.of(context).viewInsets,
       child: Container(
-        height: 60 + MediaQuery.paddingOf(context).bottom,
+        height: (60 * scaleFactor) + MediaQuery.paddingOf(context).bottom, // Scale height
         width: MediaQuery.sizeOf(context).width,
         padding: EdgeInsets.only(
           bottom: MediaQuery.paddingOf(context).bottom,
-          left: 16,
-          right: 16,
+          left: 16 * scaleFactor,
+          right: 16 * scaleFactor,
         ),
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
           border: Border(
             top: BorderSide(
               color: Theme.of(context).colorScheme.onInverseSurface,
-              width: 1,
+              width: 1 * scaleFactor,
             ),
           ),
         ),
@@ -98,7 +105,7 @@ class RequestResponsePageBottombar extends StatelessWidget {
           children: [
             const Spacer(),
             SizedBox(
-              height: 36,
+              height: 36 * scaleFactor,
               child: SendRequestButton(
                 onTap: () {
                   if (requestTabController.index != 1) {

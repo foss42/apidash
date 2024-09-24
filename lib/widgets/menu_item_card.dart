@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ItemCardMenu extends StatelessWidget {
+import '../providers/settings_providers.dart';
+
+class ItemCardMenu extends ConsumerWidget {
   const ItemCardMenu({
     super.key,
     this.onSelected,
@@ -20,12 +23,15 @@ class ItemCardMenu extends StatelessWidget {
   final Function(ItemMenuOption)? onSelected;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context,WidgetRef ref) {
+    final settings = ref.watch(settingsProvider);
+    double scaleFactor = settings.scaleFactor;
+
     return PopupMenuButton<ItemMenuOption>(
       tooltip: tooltip,
       padding: EdgeInsets.zero,
       splashRadius: splashRadius,
-      iconSize: 14,
+      iconSize: 14*scaleFactor,
       offset: offset,
       onSelected: onSelected,
       shape: shape,

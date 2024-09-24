@@ -9,8 +9,9 @@ class RawTextField extends StatelessWidget {
     this.hintText,
     this.style,
     this.readOnly = false,
+    this.scaleFactor = 1
   });
-
+  final double scaleFactor;
   final void Function(String)? onChanged;
   final TextEditingController? controller;
   final String? hintText;
@@ -23,12 +24,12 @@ class RawTextField extends StatelessWidget {
       readOnly: readOnly,
       controller: controller,
       onChanged: onChanged,
-      style: style,
+      style: style?.copyWith(fontSize: 14*scaleFactor),
       decoration: InputDecoration(
         isDense: true,
         border: InputBorder.none,
         hintText: hintText,
-        contentPadding: kPv8,
+        contentPadding: kPv8*scaleFactor,
       ),
       onTapOutside: (PointerDownEvent event) {
         FocusManager.instance.primaryFocus?.unfocus();

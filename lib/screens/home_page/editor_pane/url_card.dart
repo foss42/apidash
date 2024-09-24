@@ -6,11 +6,13 @@ import 'package:apidash/consts.dart';
 import 'package:apidash/extensions/extensions.dart';
 import '../../common_widgets/common_widgets.dart';
 
-class EditorPaneRequestURLCard extends StatelessWidget {
+class EditorPaneRequestURLCard extends ConsumerWidget {
   const EditorPaneRequestURLCard({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context,WidgetRef ref) {
+    final settings = ref.watch(settingsProvider);
+    double scaleFactor = settings.scaleFactor;
     return Card(
       color: kColorTransparent,
       surfaceTintColor: kColorTransparent,
@@ -36,17 +38,17 @@ class EditorPaneRequestURLCard extends StatelessWidget {
                   ),
                 ],
               )
-            : const Row(
+            : Row(
                 children: [
-                  DropdownButtonHTTPMethod(),
+                  const DropdownButtonHTTPMethod(),
                   kHSpacer20,
-                  Expanded(
+                  const Expanded(
                     child: URLTextField(),
                   ),
                   kHSpacer20,
                   SizedBox(
-                    height: 36,
-                    child: SendRequestButton(),
+                    height: 36*scaleFactor,
+                    child: const SendRequestButton(),
                   )
                 ],
               ),

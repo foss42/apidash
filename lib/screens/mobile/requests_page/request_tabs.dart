@@ -2,50 +2,57 @@ import 'package:apidash/screens/common_widgets/common_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../../providers/settings_providers.dart';
 import '../../home_page/editor_pane/details_card/response_pane.dart';
 import '../../home_page/editor_pane/editor_request.dart';
 import '../../home_page/editor_pane/url_card.dart';
 
-class RequestTabs extends StatelessWidget {
+class RequestTabs extends ConsumerWidget {
   const RequestTabs({super.key, required this.controller});
   final TabController controller;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final settings = ref.watch(settingsProvider);
+    double scaleFactor = settings.scaleFactor;
+
     return Column(
       children: [
-        kVSpacer5,
-        const Padding(
-          padding: kPh4,
-          child: EditorPaneRequestURLCard(),
+        SizedBox(height: 5 * scaleFactor), // Scale vertical spacing
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 4 * scaleFactor), // Scale padding
+          child: const EditorPaneRequestURLCard(),
         ),
-        kVSpacer10,
+        SizedBox(height: 10 * scaleFactor), // Scale vertical spacing
         SegmentedTabbar(
           controller: controller,
-          tabs: const [
+          tabs: [
             Tab(text: kLabelRequest),
             Tab(text: kLabelResponse),
             Tab(text: kLabelCode),
-          ],
+          ].map((tab) => Tab(text: tab.text)).toList(),
         ),
-        Expanded(child: RequestTabviews(controller: controller))
+        Expanded(child: RequestTabviews(controller: controller, scaleFactor: scaleFactor))
       ],
     );
   }
 }
 
 class RequestTabviews extends StatelessWidget {
-  const RequestTabviews({super.key, required this.controller});
+  const RequestTabviews({super.key, required this.controller, required this.scaleFactor});
   final TabController controller;
+  final double scaleFactor;
 
   @override
   Widget build(BuildContext context) {
     return TabBarView(
       controller: controller,
-      children: const [
+      children: [
         RequestEditor(),
         Padding(
-          padding: kPt8,
+          padding: EdgeInsets.only(top: 8 * scaleFactor), // Scale padding
           child: ResponsePane(),
         ),
         CodePane(),

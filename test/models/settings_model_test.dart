@@ -33,6 +33,7 @@ void main() {
       "activeEnvironmentId": null,
       "historyRetentionPeriod": "oneWeek",
       "workspaceFolderPath": null,
+      "scaleFactor": 1.0
     };
     expect(sm.toJson(), expectedResult);
   });
@@ -91,7 +92,8 @@ void main() {
   "promptBeforeClosing": true,
   "activeEnvironmentId": null,
   "historyRetentionPeriod": "oneWeek",
-  "workspaceFolderPath": null
+  "workspaceFolderPath": null,
+  "scaleFactor": 1.0
 }''';
     expect(sm.toString(), expectedResult);
   });

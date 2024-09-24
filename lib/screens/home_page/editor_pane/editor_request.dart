@@ -9,68 +9,83 @@ import 'details_card/request_pane/request_pane.dart';
 import '../../common_widgets/common_widgets.dart';
 import 'url_card.dart';
 
-class RequestEditor extends StatelessWidget {
-  const RequestEditor({super.key});
+class RequestEditor extends ConsumerWidget {
+  const RequestEditor({
+    super.key,
+  });
+
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context,WidgetRef ref) {
+    final settings = ref.watch(settingsProvider);
+    double scaleFactor = settings.scaleFactor;
     return context.isMediumWindow
-        ? const Padding(
-            padding: kPb10,
-            child: Column(
-              children: [
-                kVSpacer20,
-                Expanded(
-                  child: EditRequestPane(),
-                ),
-              ],
-            ),
-          )
+        ? Padding(
+      padding: kPb10 * scaleFactor, // Apply scaling to padding
+      child: Column(
+        children: [
+          SizedBox(height: 20 * scaleFactor), // Scaled vertical space
+          const Expanded(
+            child: EditRequestPane(), // Pass scaleFactor to child
+          ),
+        ],
+      ),
+    )
         : Padding(
-            padding: kIsMacOS || kIsWindows ? kPt28o8 : kP8,
-            child: const Column(
-              children: [
-                RequestEditorTopBar(),
-                EditorPaneRequestURLCard(),
-                kVSpacer10,
-                Expanded(
-                  child: EditorPaneRequestDetailsCard(),
-                ),
-              ],
-            ),
-          );
+      padding: (kIsMacOS || kIsWindows ? kPt28o8 : kP8) * scaleFactor,
+      child: Column(
+        children: [
+          RequestEditorTopBar(scaleFactor: scaleFactor),
+          const EditorPaneRequestURLCard(),
+          SizedBox(height: 10 * scaleFactor), // Scaled vertical space
+          const Expanded(
+            child: EditorPaneRequestDetailsCard(),
+          ),
+        ],
+      ),
+    );
   }
 }
 
 class RequestEditorTopBar extends ConsumerWidget {
-  const RequestEditorTopBar({super.key});
+  const RequestEditorTopBar({
+    super.key,
+    required this.scaleFactor,
+  });
+
+  final double scaleFactor;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final id = ref.watch(selectedIdStateProvider);
-    final name =
-        ref.watch(selectedRequestModelProvider.select((value) => value?.name));
+    final name = ref.watch(
+      selectedRequestModelProvider.select((value) => value?.name),
+    );
+
     return Padding(
-      padding: const EdgeInsets.only(
-        left: 12.0,
-        top: 4.0,
-        right: 4.0,
-        bottom: 4.0,
+      padding: EdgeInsets.only(
+        left: 12.0 * scaleFactor,
+        top: 4.0 * scaleFactor,
+        right: 4.0 * scaleFactor,
+        bottom: 4.0 * scaleFactor,
       ),
       child: Row(
         children: [
           Expanded(
             child: Text(
               name ?? "",
-              style: Theme.of(context).textTheme.bodyMedium,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                fontSize: 14 * scaleFactor, // Apply scaled font size
+              ),
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
             ),
           ),
-          const SizedBox(
-            width: 6,
+          SizedBox(
+            width: 6 * scaleFactor, // Scaled horizontal space
           ),
           EditorTitleActions(
+            scaleFactor: scaleFactor, // Pass scaleFactor to EditorTitleActions
             onRenamePressed: () {
               showRenameDialog(context, "Rename Request", name, (val) {
                 ref
@@ -84,7 +99,7 @@ class RequestEditorTopBar extends ConsumerWidget {
             onDeletePressed: () =>
                 ref.read(collectionStateNotifierProvider.notifier).remove(id!),
           ),
-          kHSpacer10,
+          SizedBox(width: 10 * scaleFactor), // Scaled horizontal space
           const EnvironmentDropdown(),
         ],
       ),

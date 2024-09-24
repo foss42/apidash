@@ -7,38 +7,50 @@ class DashboardSplitView extends StatefulWidget {
     super.key,
     required this.sidebarWidget,
     required this.mainWidget,
+    this.scaleFactor = 1.0, // Added scale factor
   });
 
   final Widget sidebarWidget;
   final Widget mainWidget;
+  final double scaleFactor; // Scale factor to adjust the size dynamically
 
   @override
   DashboardSplitViewState createState() => DashboardSplitViewState();
 }
 
 class DashboardSplitViewState extends State<DashboardSplitView> {
-  final MultiSplitViewController _controller = MultiSplitViewController(
-    areas: [
-      Area(id: "sidebar", min: 220, size: 250, max: 350),
-      Area(id: "main", min: 400),
-    ],
-  );
+  late final MultiSplitViewController _controller;
 
   @override
   void initState() {
     super.initState();
+    // Initialize MultiSplitViewController with scaled sizes
+    _controller = MultiSplitViewController(
+      areas: [
+        Area(
+          id: "sidebar",
+          min: 220 * widget.scaleFactor, // Apply scaling
+          size: 250 * widget.scaleFactor, // Apply scaling
+          max: 350 * widget.scaleFactor, // Apply scaling
+        ),
+        Area(
+          id: "main",
+          min: 400 * widget.scaleFactor, // Apply scaling
+        ),
+      ],
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return MultiSplitViewTheme(
       data: MultiSplitViewThemeData(
-        dividerThickness: 3,
+        dividerThickness: 3 * widget.scaleFactor, // Scale divider thickness
         dividerPainter: DividerPainters.background(
           color: Theme.of(context).colorScheme.surfaceContainerHighest,
           highlightedColor: Theme.of(context).colorScheme.outline.withOpacity(
-                kHintOpacity,
-              ),
+            kHintOpacity,
+          ),
           animationEnabled: false,
         ),
       ),
@@ -48,8 +60,18 @@ class DashboardSplitViewState extends State<DashboardSplitView> {
         sizeUnderflowPolicy: SizeUnderflowPolicy.stretchLast,
         builder: (context, area) {
           return switch (area.id) {
-            "sidebar" => widget.sidebarWidget,
-            "main" => widget.mainWidget,
+            "sidebar" => Padding(
+              padding: EdgeInsets.only(
+                right: 10 * widget.scaleFactor, // Scale padding between sidebar and main widget
+              ),
+              child: widget.sidebarWidget,
+            ),
+            "main" => Padding(
+              padding: EdgeInsets.only(
+                left: 10 * widget.scaleFactor, // Scale padding between sidebar and main widget
+              ),
+              child: widget.mainWidget,
+            ),
             _ => Container(),
           };
         },

@@ -17,12 +17,14 @@ class EnvVarSpan extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final settings = ref.watch(settingsProvider);
+    double scaleFactor = settings.scaleFactor;
     final environments = ref.watch(environmentsStateNotifierProvider);
     final envMap = ref.watch(availableEnvironmentVariablesStateProvider);
     final activeEnvironmentId = ref.watch(activeEnvironmentIdStateProvider);
 
     final suggestion =
-        getVariableStatus(variableKey, envMap, activeEnvironmentId);
+    getVariableStatus(variableKey, envMap, activeEnvironmentId);
 
     final showPopover = useState(false);
 
@@ -35,8 +37,10 @@ class EnvVarSpan extends HookConsumerWidget {
     var text = Text(
       '{{${suggestion.variable.key}}}',
       style: TextStyle(
-          color: isMissingVariable ? colorScheme.error : colorScheme.primary,
-          fontWeight: FontWeight.w600),
+        color: isMissingVariable ? colorScheme.error : colorScheme.primary,
+        fontWeight: FontWeight.w600,
+        fontSize: 14 * scaleFactor, // Scale font size
+      ),
     );
 
     return PortalTarget(
@@ -60,23 +64,23 @@ class EnvVarSpan extends HookConsumerWidget {
       ),
       child: kIsMobile
           ? TapRegion(
-              onTapInside: (_) {
-                showPopover.value = true;
-              },
-              onTapOutside: (_) {
-                showPopover.value = false;
-              },
-              child: text,
-            )
+        onTapInside: (_) {
+          showPopover.value = true;
+        },
+        onTapOutside: (_) {
+          showPopover.value = false;
+        },
+        child: text,
+      )
           : MouseRegion(
-              onEnter: (_) {
-                showPopover.value = true;
-              },
-              onExit: (_) {
-                showPopover.value = false;
-              },
-              child: text,
-            ),
+        onEnter: (_) {
+          showPopover.value = true;
+        },
+        onExit: (_) {
+          showPopover.value = false;
+        },
+        child: text,
+      ),
     );
   }
 }
