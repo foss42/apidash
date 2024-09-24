@@ -25,11 +25,18 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 """;
 
+  
+
 
   final String kTemplateMethod = """
     let reqBuilder = Request::builder()
               .method("{{ method }}")
               .uri(url)
+""";
+  final String kTemplateMethodNoHeadersButForm = """
+    let reqBuilder = Request::builder()
+              .method("{{ method }}")
+              .uri(url);
 """;
 
 
@@ -37,8 +44,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
   final String kTemplateHeaders = """
         {% for key, val in headers %}
               .header("{{ key }}", "{{ val }}")
-        {% endfor %}
-""";
+        {% endfor %}""";
 
   final String kTemplateHeadersFormData = """
         {% for key, val in headers %}
@@ -71,7 +77,7 @@ final String kTemplateFormData = """
     let mut form = multipart::Form::default();
     {%- for field in fields_list %}
         {%- if field.type == "file" %}
-    form.add_file("{{ field.name }}", "{{ field.value }}").unwrap();
+    form.add_file("{{ field.name }}", r"{{ field.value }}").unwrap();
         {%- else %}
     form.add_text("{{ field.name }}", "{{ field.value }}");
         {%- endif %}
@@ -128,20 +134,28 @@ final String kTemplateFormData = """
 
       if (uri != null) {
 
-
+        var headers = requestModel.enabledHeadersMap;
         result += jj.Template(kTemplateStart).render({
           "url": uri,
           'hasJsonBody': requestModel.bodyContentType == ContentType.json,
           'hasForm': requestModel.hasFormData,
         });
         
-        
-        result += jj.Template(kTemplateMethod).render({
+        if(requestModel.hasFormData && headers.isEmpty){
+          print("hhh");
+          result += jj.Template(kTemplateMethodNoHeadersButForm).render({
+          "method": requestModel.method.name.toUpperCase(),
+        });
+        }else{
+          result += jj.Template(kTemplateMethod).render({
           "method": requestModel.method.name.toUpperCase(),
         });
 
+        }
+        
+
         // Add headers if available
-        var headers = requestModel.enabledHeadersMap;
+        
         if (headers.isNotEmpty) {
           if(requestModel.hasFormData){
             result += jj.Template(kTemplateHeadersFormData).render({"headers": headers});
@@ -158,7 +172,7 @@ final String kTemplateFormData = """
           result += jj.Template(kTemplateFormData).render({
             "fields_list": requestModel.formDataMapList,
           });
-        }else if (requestBody == "" || requestBody == null|| requestModel.method ==HTTPVerb.get) {
+        }else if (requestBody == "" || requestBody == null|| requestModel.method ==HTTPVerb.get || requestModel.method == HTTPVerb.head) {
           result += kTemplateEmptyBody;
         }else if(requestModel.hasJsonData){
           result += jj.Template(kTemplateJsonBody).render({"body": requestBody});
