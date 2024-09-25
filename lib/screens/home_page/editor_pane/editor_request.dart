@@ -1,18 +1,14 @@
 import 'package:apidash/consts.dart';
+import 'package:apidash/extensions/extensions.dart';
 import 'package:apidash/models/request_model.dart';
-import 'package:apidash/providers/collection_providers.dart';
-import 'package:apidash/providers/settings_providers.dart';
-import 'package:apidash/providers/ui_providers.dart';
-import 'package:apidash/widgets/cards.dart';
+import 'package:apidash/providers/providers.dart';
+import 'package:apidash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:apidash/providers/providers.dart';
-import 'package:apidash/extensions/extensions.dart';
-import 'package:apidash/widgets/widgets.dart';
-import 'package:apidash/consts.dart';
+
+import '../../common_widgets/common_widgets.dart';
 import 'details_card/details_card.dart';
 import 'details_card/request_pane/request_pane.dart';
-import '../../common_widgets/common_widgets.dart';
 import 'url_card.dart';
 
 class RequestEditor extends StatelessWidget {
@@ -71,7 +67,9 @@ class _RequestTabViewState extends ConsumerState<RequestTabView> {
   }
 
   @override
-  Widget build(BuildContext context, ) {
+  Widget build(
+    BuildContext context,
+  ) {
     final tabSequence = ref.watch(requestTabSequenceProvider);
     final requestItems = ref.watch(collectionStateNotifierProvider)!;
     final alwaysShowCollectionPaneScrollbar = ref.watch(settingsProvider
@@ -107,7 +105,8 @@ class _RequestTabViewState extends ConsumerState<RequestTabView> {
             }
           },
           itemExtentBuilder: (index, dimensions) {
-            final length = dimensions.viewportMainAxisExtent / tabSequence.length;
+            final length =
+                dimensions.viewportMainAxisExtent / tabSequence.length;
 
             if (length > dimensions.viewportMainAxisExtent / 6) {
               return dimensions.viewportMainAxisExtent / 6;
@@ -151,9 +150,9 @@ class TabItem extends ConsumerWidget {
 
     return TabRequestCard(
       id: id,
-      method: requestModel.method,
+      method: requestModel.httpRequestModel!.method,
       name: requestModel.name,
-      url: requestModel.url,
+      url: requestModel.httpRequestModel!.url,
       selectedId: selectedId,
       editRequestId: editRequestId,
       onTap: () {
@@ -193,7 +192,6 @@ class RequestEditorTopBar extends ConsumerWidget {
         left: 12.0,
         right: 8.0,
         top: 4.0,
-        right: 4.0,
         bottom: 4.0,
       ),
       child: Row(
