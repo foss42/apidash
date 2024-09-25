@@ -7,12 +7,12 @@ import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
 
 Future<(http.Response?, Duration?, String?)> request(
-  RequestModel requestModel, {
+  HttpRequestModel requestModel, {
   String defaultUriScheme = kDefaultUriScheme,
 }) async {
   (Uri?, String?) uriRec = getValidRequestUri(
     requestModel.url,
-    requestModel.enabledRequestParams,
+    requestModel.enabledParams,
     defaultUriScheme: defaultUriScheme,
   );
   if (uriRec.$1 != null) {
@@ -23,9 +23,9 @@ Future<(http.Response?, Duration?, String?)> request(
     try {
       Stopwatch stopwatch = Stopwatch()..start();
       var isMultiPartRequest =
-          requestModel.requestBodyContentType == ContentType.formdata;
+          requestModel.bodyContentType == ContentType.formdata;
       if (kMethodsWithBody.contains(requestModel.method)) {
-        var requestBody = requestModel.requestBody;
+        var requestBody = requestModel.body;
         if (requestBody != null && !isMultiPartRequest) {
           var contentLength = utf8.encode(requestBody).length;
           if (contentLength > 0) {
@@ -33,7 +33,7 @@ Future<(http.Response?, Duration?, String?)> request(
             headers[HttpHeaders.contentLengthHeader] = contentLength.toString();
             if (!requestModel.hasContentTypeHeader) {
               headers[HttpHeaders.contentTypeHeader] =
-                  requestModel.requestBodyContentType.header;
+                  requestModel.bodyContentType.header;
             }
           }
         }
@@ -43,8 +43,7 @@ Future<(http.Response?, Duration?, String?)> request(
             requestUrl,
           );
           multiPartRequest.headers.addAll(headers);
-          for (var formData
-              in (requestModel.requestFormDataList ?? <FormDataModel>[])) {
+          for (var formData in requestModel.formDataList) {
             if (formData.type == FormDataType.text) {
               multiPartRequest.fields.addAll({formData.name: formData.value});
             } else {

@@ -2,8 +2,13 @@ import 'package:apidash/providers/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:apidash/providers/providers.dart';
+import 'package:apidash/widgets/widgets.dart';
+import 'package:apidash/consts.dart';
+import 'common_widgets/common_widgets.dart';
+import 'envvar/environment_page.dart';
 import 'home_page/home_page.dart';
-import 'intro_page.dart';
+import 'history/history_page.dart';
 import 'settings_page.dart';
 
 class Dashboard extends ConsumerWidget {

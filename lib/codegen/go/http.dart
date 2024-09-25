@@ -1,7 +1,7 @@
 import 'package:apidash/consts.dart';
 import 'package:jinja/jinja.dart' as jj;
 import 'package:apidash/utils/utils.dart' show getValidRequestUri;
-import 'package:apidash/models/models.dart' show RequestModel;
+import 'package:apidash/models/models.dart';
 
 class GoHttpCodeGen {
   final String kTemplateStart = """package main
@@ -88,12 +88,11 @@ func main() {
 }""";
 
   String? getCode(
-    RequestModel requestModel,
+    HttpRequestModel requestModel,
   ) {
     try {
       String result = "";
       var hasBody = false;
-      var requestBody = requestModel.requestBody;
 
       String url = requestModel.url;
 
@@ -109,7 +108,7 @@ func main() {
 
       var rec = getValidRequestUri(
         url,
-        requestModel.enabledRequestParams,
+        requestModel.enabledParams,
       );
 
       Uri? uri = rec.$1;
@@ -118,7 +117,7 @@ func main() {
         if (requestModel.hasTextData || requestModel.hasJsonData) {
           hasBody = true;
           var templateRawBody = jj.Template(kTemplateBody);
-          result += templateRawBody.render({"body": requestBody});
+          result += templateRawBody.render({"body": requestModel.body});
         } else if (requestModel.hasFormData) {
           hasBody = true;
           var templateFormData = jj.Template(kTemplateFormData);
@@ -143,12 +142,12 @@ func main() {
           "hasBody": hasBody,
         });
 
-        var headersList = requestModel.enabledRequestHeaders;
+        var headersList = requestModel.enabledHeaders;
         if (headersList != null || requestModel.hasBody) {
           var headers = requestModel.enabledHeadersMap;
           if (requestModel.hasJsonData || requestModel.hasTextData) {
-            headers.putIfAbsent(kHeaderContentType,
-                () => requestModel.requestBodyContentType.header);
+            headers.putIfAbsent(
+                kHeaderContentType, () => requestModel.bodyContentType.header);
           }
           if (headers.isNotEmpty) {
             var templateHeader = jj.Template(kTemplateHeader);

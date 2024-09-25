@@ -2,18 +2,6 @@
 
 [![Discord Server Invite](https://img.shields.io/badge/DISCORD-JOIN%20SERVER-5663F7?style=for-the-badge&logo=discord&logoColor=white)](https://bit.ly/heyfoss)
 
-🚨 We are participating in GSoC 2024 🎉 
-
-<img src="https://github.com/foss42/apidash/assets/615622/493ce57f-06c3-4789-b7ae-9fa63bca8183" alt="GSoC" width="500">
-
-| | Link |
-|--|--|
-| Learn about GSoC | [Link](https://summerofcode.withgoogle.com) |
-| Organization page on GSoC | [Link](https://summerofcode.withgoogle.com/programs/2024/organizations/api-dash) |
-| Project Ideas List | [Link](https://github.com/foss42/apidash/discussions/112) |
-| Application Guide | [Link](https://github.com/foss42/apidash/discussions/111) |
-| Discord Channel | [Link](https://discord.com/invite/2s49SCNfyJ) |
-
 ### Please support this initiative by giving this project a Star ⭐️
 
 API Dash is a beautiful open-source cross-platform API Client that can help you easily create & customize your API requests, visually inspect responses ([full list of supported mime-types](https://github.com/foss42/apidash?tab=readme-ov-file#mime-types-supported-by-api-dash-response-previewer)) and generate API integration code ([full list](https://github.com/foss42/apidash?tab=readme-ov-file#code-generators)) on the go.
@@ -97,7 +85,7 @@ API Dash can be downloaded from the links below:
 
 - Inspect the API Response (HTTP status code, error message, headers, body, time taken).
 - View formatted code previews for responses of various content types like `JSON`, `XML`, `YAML`, `HTML`, `SQL`, etc.
-- API Dash helps explore, test & preview Multimedia API responses which is **not supported by any other API client**. You can directly test APIs that return images, PDF, audio & more. Check out the [full list of supported mimetypes/formats here](https://github.com/foss42/apidash?tab=readme-ov-file#mime-types-supported-by-api-dash-response-previewer).
+- API Dash helps explore, test & preview Multimedia API responses which is **not supported by any other API client**. You can directly test APIs that return images, PDF, audio & more. Check out the [full list of supported MIME types/formats here](https://github.com/foss42/apidash?tab=readme-ov-file#mime-types-supported-by-api-dash-response-previewer).
 - Save 💾 response body of any mimetype (`image`, `text`, etc.) directly in the `Downloads` folder of your system by clicking on the `Download` button.
 
 **👩🏻‍💻 Code Generation**
@@ -128,6 +116,7 @@ API Dash currently supports API integration code generation for the following la
 | cURL                   |               |         |
 | HAR                    |               |         |
 | C                      | `libcurl`     |         |
+| C#                     | `HttpClient`  |         |
 | C#                     | `RestSharp`   |         |
 | Dart                   | `http`        |         |
 | Dart                   | `dio`         |         |
@@ -150,7 +139,7 @@ API Dash currently supports API integration code generation for the following la
 | Java                   | `Unirest`     |         |
 | Julia                  | `HTTP`        |         |
 | PHP                    | `curl`        |         |
-| PHP                    | `guzzle`      | https://github.com/foss42/apidash/issues/143 |
+| PHP                    | `guzzle`      |         |
 | PHP                    | `HTTPlug`     |         |
 
 We welcome contributions to support other programming languages/libraries/frameworks. Please check out more details [here](https://github.com/foss42/apidash/discussions/80).
@@ -159,7 +148,7 @@ We welcome contributions to support other programming languages/libraries/framew
 
 API Dash is a next-gen API client that supports exploring, testing & previewing various data & multimedia API responses which is limited/not supported by other API clients. You can directly test APIs that return images, PDF, audio & more.
 
-Here is the complete list of mimetypes that can be directly previewed in API Dash:
+Here is the complete list of MIME types that can be directly previewed in API Dash:
 
 | File Type | Mimetype                   | Extension         | Comment  |
 | --------- | -------------------------- | ----------------- | -------- |
@@ -206,15 +195,15 @@ Here is the complete list of mimetypes that can be directly previewed in API Das
 | Audio     | `audio/wave`               | `.wav`            |          |
 | CSV       | `text/csv`                 | `.csv`            | Can be improved |
 
-We welcome PRs to add support for previewing other multimedia mimetypes. Please go ahead and raise an issue so that we can discuss the approach.
-We are adding support for other mimetypes with each release. But, if you are looking for any particular mimetype support, please go ahead and open an issue. We will prioritize it's addition.
+We welcome PRs to add support for previewing other multimedia MIME types. Please go ahead and raise an issue so that we can discuss the approach.
+We are adding support for other MIME types with each release. But, if you are looking for any particular mimetype support, please go ahead and open an issue. We will prioritize it's addition.
 
-Here is the complete list of mimetypes that are syntax highlighted in API Dash:
+Here is the complete list of MIME types that are syntax highlighted in API Dash:
 
 | Mimetype           | Extension | Comment                                                                                                            |
 | ------------------ | --------- | ------------------------------------------------------------------------------------------------------------------ |
-| `application/json` | `.json`   | Other mimetypes like `application/geo+json`, `application/vcard+json` that are based on `json` are also supported. |
-| `application/xml`  | `.xml`    | Other mimetypes like `application/xhtml+xml`, `application/vcard+xml` that are based on `xml` are also supported.  |
+| `application/json` | `.json`   | Other MIME types like `application/geo+json`, `application/vcard+json` that are based on `json` are also supported. |
+| `application/xml`  | `.xml`    | Other MIME types like `application/xhtml+xml`, `application/vcard+xml` that are based on `xml` are also supported.  |
 | `text/xml`         | `.xml`    |  |
 | `application/yaml` | `.yaml`   | Others - `application/x-yaml` or `application/x-yml` |
 | `text/yaml`        | `.yaml`   | Others - `text/yml` |
@@ -231,6 +220,10 @@ Visit [CHANGELOG.md](CHANGELOG.md)
 ## Provide Feedback, Report Bugs & Request New Features
 
 Just click on the [Issue tab](https://github.com/foss42/apidash/issues) to raise a new issue in this repo.
+
+## Roadmap
+
+Please find the Roadmap for API Dash [here](https://github.com/foss42/apidash/blob/main/ROADMAP.md). 
 
 ## Contribute to API Dash
 

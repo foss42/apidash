@@ -128,6 +128,7 @@ class ResponsePaneHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool showClearButton = onClearResponse != null;
     return Padding(
       padding: kPv8,
       child: SizedBox(
@@ -159,9 +160,11 @@ class ResponsePaneHeader extends StatelessWidget {
                   ),
             ),
             kHSpacer10,
-            ClearResponseButton(
-              onPressed: onClearResponse,
-            )
+            showClearButton
+                ? ClearResponseButton(
+                    onPressed: onClearResponse,
+                  )
+                : const SizedBox.shrink(),
           ],
         ),
       ),
@@ -259,7 +262,7 @@ class ResponseHeadersHeader extends StatelessWidget {
           ),
           if (map.isNotEmpty)
             CopyButton(
-              toCopy: kEncoder.convert(map),
+              toCopy: kJsonEncoder.convert(map),
             ),
         ],
       ),
@@ -322,9 +325,10 @@ class ResponseBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responseModel = selectedRequestModel?.responseModel;
+    final responseModel = selectedRequestModel?.httpResponseModel;
     if (responseModel == null) {
-      return const ErrorMessage(message: '$kMsgError $kUnexpectedRaiseIssue');
+      return const ErrorMessage(
+          message: '$kNullResponseModelError $kUnexpectedRaiseIssue');
     }
 
     var body = responseModel.body;
@@ -341,12 +345,14 @@ class ResponseBody extends StatelessWidget {
       );
     }
 
-    var mediaType = responseModel.mediaType;
-    if (mediaType == null) {
-      return ErrorMessage(
-          message:
-              '$kMsgUnknowContentType - ${responseModel.contentType}. $kUnexpectedRaiseIssue');
-    }
+    final mediaType =
+        responseModel.mediaType ?? MediaType(kTypeText, kSubTypePlain);
+    // Fix #415: Treat null Content-type as plain text instead of Error message
+    // if (mediaType == null) {
+    //   return ErrorMessage(
+    //       message:
+    //           '$kMsgUnknowContentType - ${responseModel.contentType}. $kUnexpectedRaiseIssue');
+    // }
 
     var responseBodyView = getResponseBodyViewOptions(mediaType);
     var options = responseBodyView.$1;
@@ -404,7 +410,8 @@ class _BodySuccessState extends State<BodySuccess> {
                   : Theme.of(context).colorScheme.primaryContainer)
               .withOpacity(kForegroundOpacity),
           Theme.of(context).colorScheme.surface),
-      border: Border.all(color: Theme.of(context).colorScheme.surfaceVariant),
+      border: Border.all(
+          color: Theme.of(context).colorScheme.surfaceContainerHighest),
       borderRadius: kBorderRadius8,
     );
 
@@ -423,12 +430,8 @@ class _BodySuccessState extends State<BodySuccess> {
                   (widget.options == kRawBodyViewOptions)
                       ? const SizedBox()
                       : SegmentedButton<ResponseBodyView>(
-                          style: const ButtonStyle(
-                            padding: MaterialStatePropertyAll(
-                              EdgeInsets.symmetric(
-                                horizontal: 8,
-                              ),
-                            ),
+                          style: SegmentedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
                           ),
                           selectedIcon: Icon(currentSeg.icon),
                           segments: widget.options
@@ -436,7 +439,10 @@ class _BodySuccessState extends State<BodySuccess> {
                                 (e) => ButtonSegment<ResponseBodyView>(
                                   value: e,
                                   label: Text(e.label),
-                                  icon: Icon(e.icon),
+                                  icon: constraints.maxWidth >
+                                          kMinWindowSize.width
+                                      ? Icon(e.icon)
+                                      : null,
                                 ),
                               )
                               .toList(),

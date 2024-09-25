@@ -141,4 +141,19 @@ void main() {
           colMethodDeleteDarkModeExpected);
     });
   });
+
+  group('Testing getScaffoldKey function', () {
+    test('Returns kEnvScaffoldKey for railIdx 1', () {
+      expect(getScaffoldKey(1), kEnvScaffoldKey);
+    });
+
+    test('Returns kHisScaffoldKey for railIdx 2', () {
+      expect(getScaffoldKey(2), kHisScaffoldKey);
+    });
+
+    test('Returns kHomeScaffoldKey for railIdx other than 1 or 2', () {
+      expect(getScaffoldKey(0), kHomeScaffoldKey);
+      expect(getScaffoldKey(3), kHomeScaffoldKey);
+    });
+  });
 }

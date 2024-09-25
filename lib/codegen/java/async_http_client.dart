@@ -1,7 +1,7 @@
 import 'package:jinja/jinja.dart' as jj;
 import 'package:apidash/utils/utils.dart'
     show getValidRequestUri, stripUriParams;
-import 'package:apidash/models/models.dart' show RequestModel;
+import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
 
 class JavaAsyncHttpClientGen {
@@ -114,7 +114,7 @@ public class Main {
 ''';
 
   String? getCode(
-    RequestModel requestModel,
+    HttpRequestModel requestModel,
   ) {
     try {
       String result = '';
@@ -122,7 +122,7 @@ public class Main {
 
       var rec = getValidRequestUri(
         requestModel.url,
-        requestModel.enabledRequestParams,
+        requestModel.enabledParams,
       );
       Uri? uri = rec.$1;
 
@@ -153,8 +153,7 @@ public class Main {
       // we need to parse the body as it is, and write it to the body
       if (requestModel.hasTextData || requestModel.hasJsonData) {
         var templateBodyContent = jj.Template(kTemplateRequestBodyContent);
-        result +=
-            templateBodyContent.render({"body": requestModel.requestBody});
+        result += templateBodyContent.render({"body": requestModel.body});
         hasBody = true;
       }
 
@@ -170,8 +169,7 @@ public class Main {
 
       var headers = requestModel.enabledHeadersMap;
       if (hasBody && !requestModel.hasContentTypeHeader) {
-        headers[kHeaderContentType] =
-            requestModel.requestBodyContentType.header;
+        headers[kHeaderContentType] = requestModel.bodyContentType.header;
       }
 
       // setting up rest of the request headers

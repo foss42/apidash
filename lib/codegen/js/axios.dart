@@ -1,7 +1,7 @@
 import 'package:jinja/jinja.dart' as jj;
 import 'package:apidash/utils/utils.dart'
     show padMultilineString, requestModelToHARJsonRequest, stripUrlParams;
-import 'package:apidash/models/models.dart' show RequestModel;
+import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
 
 class AxiosCodeGen {
@@ -47,7 +47,7 @@ axios(config)
   });
 """;
   String? getCode(
-    RequestModel requestModel,
+    HttpRequestModel requestModel,
   ) {
     try {
       jj.Template kNodejsImportTemplate = jj.Template(kStringImportNode);
@@ -79,7 +79,7 @@ axios(config)
           m[i["name"]] = i["value"];
         }
         result += templateParams
-            .render({"params": padMultilineString(kEncoder.convert(m), 2)});
+            .render({"params": padMultilineString(kJsonEncoder.convert(m), 2)});
       }
 
       var headers = harJson["headers"];
@@ -92,8 +92,8 @@ axios(config)
         if (requestModel.hasFormData) {
           m[kHeaderContentType] = ContentType.formdata.header;
         }
-        result += templateHeader
-            .render({"headers": padMultilineString(kEncoder.convert(m), 2)});
+        result += templateHeader.render(
+            {"headers": padMultilineString(kJsonEncoder.convert(m), 2)});
       }
       var templateBody = jj.Template(kTemplateBody);
       if (requestModel.hasFormData && requestModel.formDataMapList.isNotEmpty) {
@@ -108,12 +108,13 @@ axios(config)
                   : "fileInput$formFileCounter.files[0]";
           if (element["type"] == "file") formFileCounter++;
         }
-        var sanitizedJSObject = sanitzeJSObject(kEncoder.convert(formParams));
+        var sanitizedJSObject =
+            sanitzeJSObject(kJsonEncoder.convert(formParams));
         result += templateBody
             .render({"body": padMultilineString(sanitizedJSObject, 2)});
       } else if (harJson["postData"]?["text"] != null) {
-        result += templateBody
-            .render({"body": kEncoder.convert(harJson["postData"]["text"])});
+        result += templateBody.render(
+            {"body": kJsonEncoder.convert(harJson["postData"]["text"])});
       }
       result += kStringRequest;
       return result;

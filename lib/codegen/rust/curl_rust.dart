@@ -1,7 +1,7 @@
 import 'package:jinja/jinja.dart' as jj;
 import 'package:apidash/utils/utils.dart'
     show getValidRequestUri, requestModelToHARJsonRequest;
-import 'package:apidash/models/models.dart' show RequestModel;
+import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
 
 class RustCurlCodeGen {
@@ -78,23 +78,22 @@ fn main() {
   println!("Response code: {}", easy.response_code().unwrap());
 }""";
 
-  String? getCode(RequestModel requestModel) {
+  String? getCode(HttpRequestModel requestModel) {
     try {
       String result = "";
-      var requestBody = requestModel.requestBody;
 
       String url = requestModel.url;
 
       result += jj.Template(kTemplateStart).render({
         "hasJsonBody": requestModel.hasJsonData,
-        "hasHeaders": (requestModel.enabledRequestHeaders != null &&
-                requestModel.enabledRequestHeaders!.isNotEmpty) ||
+        "hasHeaders": (requestModel.enabledHeaders != null &&
+                requestModel.enabledHeaders!.isNotEmpty) ||
             (requestModel.hasJsonData || requestModel.hasTextData)
       });
 
       var rec = getValidRequestUri(
         url,
-        requestModel.enabledRequestParams,
+        requestModel.enabledParams,
       );
 
       Uri? uri = rec.$1;
@@ -110,10 +109,10 @@ fn main() {
       if (uri != null) {
         if (requestModel.hasTextData) {
           var templateBody = jj.Template(kTemplateRawBody);
-          result += templateBody.render({"body": requestBody});
+          result += templateBody.render({"body": requestModel.body});
         } else if (requestModel.hasJsonData) {
           var templateBody = jj.Template(kTemplateJsonBody);
-          result += templateBody.render({"body": requestBody});
+          result += templateBody.render({"body": requestModel.body});
         } else if (requestModel.hasFormData) {
           var templateFormData = jj.Template(kTemplateFormData);
           result += templateFormData.render({
@@ -121,12 +120,12 @@ fn main() {
           });
         }
 
-        var headersList = requestModel.enabledRequestHeaders;
+        var headersList = requestModel.enabledHeaders;
         if (headersList != null || requestModel.hasBody) {
           var headers = requestModel.enabledHeadersMap;
           if (requestModel.hasJsonData || requestModel.hasTextData) {
-            headers.putIfAbsent(kHeaderContentType,
-                () => requestModel.requestBodyContentType.header);
+            headers.putIfAbsent(
+                kHeaderContentType, () => requestModel.bodyContentType.header);
           }
           if (headers.isNotEmpty) {
             var templateHeader = jj.Template(kTemplateHeader);

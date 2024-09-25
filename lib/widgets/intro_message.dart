@@ -37,7 +37,7 @@ class IntroMessage extends StatelessWidget {
 
           return CustomMarkdown(
             data: text,
-            padding: kPh60,
+            padding: EdgeInsets.zero,
           );
         }
         return const Center(child: CircularProgressIndicator());

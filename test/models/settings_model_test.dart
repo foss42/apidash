@@ -13,6 +13,9 @@ void main() {
     defaultCodeGenLang: CodegenLanguage.curl,
     saveResponses: true,
     promptBeforeClosing: true,
+    activeEnvironmentId: null,
+    historyRetentionPeriod: HistoryRetentionPeriod.oneWeek,
+    workspaceFolderPath: null,
   );
 
   test('Testing toJson()', () {
@@ -26,7 +29,10 @@ void main() {
       "defaultUriScheme": "http",
       "defaultCodeGenLang": "curl",
       "saveResponses": true,
-      "promptBeforeClosing": true
+      "promptBeforeClosing": true,
+      "activeEnvironmentId": null,
+      "historyRetentionPeriod": "oneWeek",
+      "workspaceFolderPath": null,
     };
     expect(sm.toJson(), expectedResult);
   });
@@ -42,7 +48,10 @@ void main() {
       "defaultUriScheme": "http",
       "defaultCodeGenLang": "curl",
       "saveResponses": true,
-      "promptBeforeClosing": true
+      "promptBeforeClosing": true,
+      "activeEnvironmentId": null,
+      "historyRetentionPeriod": "oneWeek",
+      "workspaceFolderPath": null,
     };
     expect(SettingsModel.fromJson(input), sm);
   });
@@ -57,6 +66,8 @@ void main() {
       defaultCodeGenLang: CodegenLanguage.curl,
       saveResponses: false,
       promptBeforeClosing: true,
+      activeEnvironmentId: null,
+      historyRetentionPeriod: HistoryRetentionPeriod.oneWeek,
     );
     expect(
         sm.copyWith(
@@ -67,8 +78,21 @@ void main() {
   });
 
   test('Testing toString()', () {
-    const expectedResult =
-        "{isDark: false, alwaysShowCollectionPaneScrollbar: true, width: 300.0, height: 200.0, dx: 100.0, dy: 150.0, defaultUriScheme: http, defaultCodeGenLang: curl, saveResponses: true, promptBeforeClosing: true}";
+    const expectedResult = '''{
+  "isDark": false,
+  "alwaysShowCollectionPaneScrollbar": true,
+  "width": 300.0,
+  "height": 200.0,
+  "dx": 100.0,
+  "dy": 150.0,
+  "defaultUriScheme": "http",
+  "defaultCodeGenLang": "curl",
+  "saveResponses": true,
+  "promptBeforeClosing": true,
+  "activeEnvironmentId": null,
+  "historyRetentionPeriod": "oneWeek",
+  "workspaceFolderPath": null
+}''';
     expect(sm.toString(), expectedResult);
   });
 

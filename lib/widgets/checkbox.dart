@@ -22,16 +22,16 @@ class CheckBox extends StatelessWidget {
           borderRadius: BorderRadius.circular(3),
         ),
         side: BorderSide(
-          color: colorScheme.surfaceVariant,
+          color: colorScheme.surfaceContainerHighest,
           width: 1.5,
         ),
         splashRadius: 0,
         value: value,
         onChanged: onChanged,
         checkColor: colorScheme.onPrimary,
-        fillColor: MaterialStateProperty.resolveWith<Color?>(
-          (Set<MaterialState> states) {
-            if (states.contains(MaterialState.selected)) {
+        fillColor: WidgetStateProperty.resolveWith<Color?>(
+          (Set<WidgetState> states) {
+            if (states.contains(WidgetState.selected)) {
               return colorScheme.primary;
             }
             return null;

@@ -1,9 +1,25 @@
 import 'dart:typed_data';
 import 'dart:convert';
+import 'package:apidash/extensions/extensions.dart';
 import 'package:collection/collection.dart';
+import 'package:intl/intl.dart';
 import '../models/models.dart';
 import '../consts.dart';
 import 'package:http/http.dart' as http;
+
+String humanizeDate(DateTime? date) {
+  if (date == null) {
+    return "";
+  }
+  return DateFormat('MMMM d, yyyy').format(date);
+}
+
+String humanizeTime(DateTime? time) {
+  if (time == null) {
+    return "";
+  }
+  return DateFormat('hh:mm:ss a').format(time);
+}
 
 String humanizeDuration(Duration? duration) {
   if (duration == null) {
@@ -34,21 +50,9 @@ String audioPosition(Duration? duration) {
   return "$min:$secondsPadding$secs";
 }
 
-String capitalizeFirstLetter(String? text) {
-  if (text == null || text == "") {
-    return "";
-  } else if (text.length == 1) {
-    return text.toUpperCase();
-  } else {
-    var first = text[0];
-    var rest = text.substring(1);
-    return first.toUpperCase() + rest;
-  }
-}
-
 String formatHeaderCase(String text) {
   var sp = text.split("-");
-  sp = sp.map((e) => capitalizeFirstLetter(e)).toList();
+  sp = sp.map((e) => e.capitalize()).toList();
   return sp.join("-");
 }
 
@@ -146,7 +150,7 @@ Uint8List jsonMapToBytes(Map<String, dynamic>? map) {
   if (map == null) {
     return Uint8List.fromList([]);
   } else {
-    String text = kEncoder.convert(map);
+    String text = kJsonEncoder.convert(map);
     var l = utf8.encode(text);
     var bytes = Uint8List.fromList(l);
     return bytes;

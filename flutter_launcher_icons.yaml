@@ -1,14 +1,14 @@
-flutter_icons:
+flutter_launcher_icons:
   image_path: "icons/logo.png"
-  android: false #"ic_launcher"
+  android: true
   ios: false
   image_path_ios: "icons/logo_ios.png"
   min_sdk_android: 21
   web:
-    generate: true
+    generate: false
   windows:
-    generate: true
-    icon_size: 256 
+    generate: false
+    icon_size: 256
   macos:
-    generate: true
+    generate: false
     image_path: "icons/logo_macos.png"

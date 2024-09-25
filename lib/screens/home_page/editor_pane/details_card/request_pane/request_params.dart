@@ -1,11 +1,12 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:data_table_2/data_table_2.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
-import 'package:data_table_2/data_table_2.dart';
+import 'package:apidash/screens/common_widgets/common_widgets.dart';
 
 class EditRequestURLParams extends ConsumerStatefulWidget {
   const EditRequestURLParams({super.key});
@@ -31,26 +32,31 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
   void _onFieldChange(String selectedId) {
     ref.read(collectionStateNotifierProvider.notifier).update(
           selectedId,
-          requestParams: paramRows.sublist(0, paramRows.length - 1),
+          params: paramRows.sublist(0, paramRows.length - 1),
           isParamEnabledList: isRowEnabledList.sublist(0, paramRows.length - 1),
         );
   }
 
   @override
   Widget build(BuildContext context) {
+    dataTableShowLogs = false;
     final selectedId = ref.watch(selectedIdStateProvider);
     ref.watch(selectedRequestModelProvider
-        .select((value) => value?.requestParams?.length));
-    var rP = ref.read(selectedRequestModelProvider)?.requestParams;
+        .select((value) => value?.httpRequestModel?.params?.length));
+    var rP = ref.read(selectedRequestModelProvider)?.httpRequestModel?.params;
     bool isParamsEmpty = rP == null || rP.isEmpty;
     paramRows = isParamsEmpty
         ? [
             kNameValueEmptyModel,
           ]
         : rP + [kNameValueEmptyModel];
-    isRowEnabledList =
-        ref.read(selectedRequestModelProvider)?.isParamEnabledList ??
-            List.filled(rP?.length ?? 0, true, growable: true);
+    isRowEnabledList = [
+      ...(ref
+              .read(selectedRequestModelProvider)
+              ?.httpRequestModel
+              ?.isParamEnabledList ??
+          List.filled(rP?.length ?? 0, true, growable: true))
+    ];
     isRowEnabledList.add(false);
     isAddingRow = false;
 
@@ -98,7 +104,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
               ),
             ),
             DataCell(
-              CellField(
+              EnvCellField(
                 keyId: "$selectedId-$index-params-k-$seed",
                 initialValue: paramRows[index].name,
                 hintText: kHintAddURLParam,
@@ -124,7 +130,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
               ),
             ),
             DataCell(
-              CellField(
+              EnvCellField(
                 keyId: "$selectedId-$index-params-v-$seed",
                 initialValue: paramRows[index].value,
                 hintText: kHintAddValue,
@@ -173,10 +179,6 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
     return Stack(
       children: [
         Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.background,
-            borderRadius: kBorderRadius12,
-          ),
           margin: kP10,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,

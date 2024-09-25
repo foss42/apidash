@@ -69,3 +69,14 @@ double? getJsonPreviewerMaxRootNodeWidth(double w) {
   }
   return w - 150;
 }
+
+GlobalKey<ScaffoldState> getScaffoldKey(int railIdx) {
+  switch (railIdx) {
+    case 1:
+      return kEnvScaffoldKey;
+    case 2:
+      return kHisScaffoldKey;
+    default:
+      return kHomeScaffoldKey;
+  }
+}

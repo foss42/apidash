@@ -29,16 +29,17 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
   void _onFieldChange(String selectedId) {
     ref.read(collectionStateNotifierProvider.notifier).update(
           selectedId,
-          requestFormDataList: formRows.sublist(0, formRows.length - 1),
+          formData: formRows.sublist(0, formRows.length - 1),
         );
   }
 
   @override
   Widget build(BuildContext context) {
+    dataTableShowLogs = false;
     final selectedId = ref.watch(selectedIdStateProvider);
     ref.watch(selectedRequestModelProvider
-        .select((value) => value?.requestFormDataList?.length));
-    var rF = ref.read(selectedRequestModelProvider)?.requestFormDataList;
+        .select((value) => value?.httpRequestModel?.formData?.length));
+    var rF = ref.read(selectedRequestModelProvider)?.httpRequestModel?.formData;
     bool isFormDataEmpty = rF == null || rF.isEmpty;
     formRows = isFormDataEmpty
         ? [
@@ -123,17 +124,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
             ),
             DataCell(
               formRows[index].type == FormDataType.file
-                  ? ElevatedButton.icon(
-                      icon: const Icon(
-                        Icons.snippet_folder_rounded,
-                        size: 20,
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: const Size.fromHeight(kDataTableRowHeight),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                      ),
+                  ? FormDataFileButton(
                       onPressed: () async {
                         var pickedResult = await pickFile();
                         if (pickedResult != null &&
@@ -145,14 +136,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                           _onFieldChange(selectedId!);
                         }
                       },
-                      label: Text(
-                        (formRows[index].type == FormDataType.file &&
-                                formRows[index].value.isNotEmpty)
-                            ? formRows[index].value.toString()
-                            : kLabelSelectFile,
-                        overflow: TextOverflow.ellipsis,
-                        style: kFormDataButtonLabelTextStyle,
-                      ),
+                      initialValue: formRows[index].value,
                     )
                   : CellField(
                       keyId: "$selectedId-$index-form-v-$seed",
@@ -200,10 +184,6 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
     return Stack(
       children: [
         Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.background,
-            borderRadius: kBorderRadius12,
-          ),
           margin: kP10,
           child: Column(
             children: [

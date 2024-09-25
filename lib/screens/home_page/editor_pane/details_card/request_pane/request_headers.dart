@@ -6,6 +6,7 @@ import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash/screens/common_widgets/common_widgets.dart';
 
 class EditRequestHeaders extends ConsumerStatefulWidget {
   const EditRequestHeaders({super.key});
@@ -30,7 +31,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
   void _onFieldChange(String selectedId) {
     ref.read(collectionStateNotifierProvider.notifier).update(
           selectedId,
-          requestHeaders: headerRows.sublist(0, headerRows.length - 1),
+          headers: headerRows.sublist(0, headerRows.length - 1),
           isHeaderEnabledList:
               isRowEnabledList.sublist(0, headerRows.length - 1),
         );
@@ -38,19 +39,24 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
 
   @override
   Widget build(BuildContext context) {
+    dataTableShowLogs = false;
     final selectedId = ref.watch(selectedIdStateProvider);
     ref.watch(selectedRequestModelProvider
-        .select((value) => value?.requestHeaders?.length));
-    var rH = ref.read(selectedRequestModelProvider)?.requestHeaders;
+        .select((value) => value?.httpRequestModel?.headers?.length));
+    var rH = ref.read(selectedRequestModelProvider)?.httpRequestModel?.headers;
     bool isHeadersEmpty = rH == null || rH.isEmpty;
     headerRows = isHeadersEmpty
         ? [
             kNameValueEmptyModel,
           ]
         : rH + [kNameValueEmptyModel];
-    isRowEnabledList =
-        ref.read(selectedRequestModelProvider)?.isHeaderEnabledList ??
-            List.filled(rH?.length ?? 0, true, growable: true);
+    isRowEnabledList = [
+      ...(ref
+              .read(selectedRequestModelProvider)
+              ?.httpRequestModel
+              ?.isHeaderEnabledList ??
+          List.filled(rH?.length ?? 0, true, growable: true))
+    ];
     isRowEnabledList.add(false);
     isAddingRow = false;
 
@@ -124,7 +130,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
               ),
             ),
             DataCell(
-              CellField(
+              EnvCellField(
                 keyId: "$selectedId-$index-headers-v-$seed",
                 initialValue: headerRows[index].value,
                 hintText: kHintAddValue,
@@ -173,10 +179,6 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
     return Stack(
       children: [
         Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.background,
-            borderRadius: kBorderRadius12,
-          ),
           margin: kP10,
           child: Column(
             children: [

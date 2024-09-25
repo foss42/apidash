@@ -1,7 +1,7 @@
 import 'package:apidash/codegen/codegen.dart';
 import 'package:apidash/consts.dart';
 import 'package:test/test.dart';
-import '../request_models.dart';
+import '../models/request_models.dart';
 
 void main() {
   final codeGen = Codegen();
@@ -558,8 +558,7 @@ void main() async {
 }
 """;
       expect(
-          codeGen.getCode(
-              CodegenLanguage.dartHttp, requestModelPost4, "https"),
+          codeGen.getCode(CodegenLanguage.dartHttp, requestModelPost4, "https"),
           expectedCode);
     });
     test('POST 5', () {
@@ -619,8 +618,7 @@ void main() async {
 }
 """;
       expect(
-          codeGen.getCode(
-              CodegenLanguage.dartHttp, requestModelPost5, "https"),
+          codeGen.getCode(CodegenLanguage.dartHttp, requestModelPost5, "https"),
           expectedCode);
     });
     test('POST 6', () {
@@ -676,8 +674,7 @@ void main() async {
 }
 """;
       expect(
-          codeGen.getCode(
-              CodegenLanguage.dartHttp, requestModelPost6, "https"),
+          codeGen.getCode(CodegenLanguage.dartHttp, requestModelPost6, "https"),
           expectedCode);
     });
     test('POST 7', () {
@@ -733,8 +730,7 @@ void main() async {
 }
 """;
       expect(
-          codeGen.getCode(
-              CodegenLanguage.dartHttp, requestModelPost7, "https"),
+          codeGen.getCode(CodegenLanguage.dartHttp, requestModelPost7, "https"),
           expectedCode);
     });
     test('POST 8', () {
@@ -797,8 +793,7 @@ void main() async {
 }
 """;
       expect(
-          codeGen.getCode(
-              CodegenLanguage.dartHttp, requestModelPost8, "https"),
+          codeGen.getCode(CodegenLanguage.dartHttp, requestModelPost8, "https"),
           expectedCode);
     });
     test('POST 9', () {
@@ -866,11 +861,9 @@ void main() async {
 }
 """;
       expect(
-          codeGen.getCode(
-              CodegenLanguage.dartHttp, requestModelPost9, "https"),
+          codeGen.getCode(CodegenLanguage.dartHttp, requestModelPost9, "https"),
           expectedCode);
     });
-
   });
 
   group('PUT Request', () {

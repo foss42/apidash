@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:markdown/markdown.dart' as md;
 import 'package:url_launcher/url_launcher.dart';
-import 'buttons.dart';
+import 'button_discord.dart';
+import 'button_repo.dart';
 
 class CustomMarkdown extends StatelessWidget {
   const CustomMarkdown({

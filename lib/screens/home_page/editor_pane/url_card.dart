@@ -1,8 +1,10 @@
-import 'package:apidash/consts.dart';
-import 'package:apidash/providers/providers.dart';
-import 'package:apidash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:apidash/providers/providers.dart';
+import 'package:apidash/widgets/widgets.dart';
+import 'package:apidash/consts.dart';
+import 'package:apidash/extensions/extensions.dart';
+import '../../common_widgets/common_widgets.dart';
 
 class EditorPaneRequestURLCard extends StatelessWidget {
   const EditorPaneRequestURLCard({super.key});
@@ -10,36 +12,44 @@ class EditorPaneRequestURLCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: kColorTransparent,
+      surfaceTintColor: kColorTransparent,
       elevation: 0,
       shape: RoundedRectangleBorder(
         side: BorderSide(
-          color: Theme.of(context).colorScheme.surfaceVariant,
+          color: Theme.of(context).colorScheme.surfaceContainerHighest,
         ),
         borderRadius: kBorderRadius12,
       ),
-      margin: const EdgeInsets.symmetric(
-        vertical: 0,
-        horizontal: 3,
-      ),
-      child: const Padding(
+      child: Padding(
         padding: EdgeInsets.symmetric(
           vertical: 5,
-          horizontal: 20,
+          horizontal: !context.isMediumWindow ? 20 : 6,
         ),
-        child: Row(
-          children: [
-            DropdownButtonHTTPMethod(),
-            kHSpacer20,
-            Expanded(
-              child: URLTextField(),
-            ),
-            kHSpacer20,
-            SizedBox(
-              height: 36,
-              child: SendButton(),
-            ),
-          ],
-        ),
+        child: context.isMediumWindow
+            ? const Row(
+                children: [
+                  DropdownButtonHTTPMethod(),
+                  kHSpacer5,
+                  Expanded(
+                    child: URLTextField(),
+                  ),
+                ],
+              )
+            : const Row(
+                children: [
+                  DropdownButtonHTTPMethod(),
+                  kHSpacer20,
+                  Expanded(
+                    child: URLTextField(),
+                  ),
+                  kHSpacer20,
+                  SizedBox(
+                    height: 36,
+                    child: SendRequestButton(),
+                  )
+                ],
+              ),
       ),
     );
   }
@@ -52,8 +62,8 @@ class DropdownButtonHTTPMethod extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final method = ref
-        .watch(selectedRequestModelProvider.select((value) => value?.method));
+    final method = ref.watch(selectedRequestModelProvider
+        .select((value) => value?.httpRequestModel?.method));
     return DropdownButtonHttpMethod(
       method: method,
       onChanged: (HTTPVerb? value) {
@@ -74,11 +84,12 @@ class URLTextField extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedId = ref.watch(selectedIdStateProvider);
-    return URLField(
+    return EnvURLField(
       selectedId: selectedId!,
       initialValue: ref
           .read(collectionStateNotifierProvider.notifier)
           .getRequestModel(selectedId)
+          ?.httpRequestModel
           ?.url,
       onChanged: (value) {
         ref
@@ -94,9 +105,11 @@ class URLTextField extends ConsumerWidget {
   }
 }
 
-class SendButton extends ConsumerWidget {
-  const SendButton({
+class SendRequestButton extends ConsumerWidget {
+  final Function()? onTap;
+  const SendRequestButton({
     super.key,
+    this.onTap,
   });
 
   @override
@@ -105,9 +118,10 @@ class SendButton extends ConsumerWidget {
     final isWorking = ref.watch(
         selectedRequestModelProvider.select((value) => value?.isWorking));
 
-    return SendRequestButton(
+    return SendButton(
       isWorking: isWorking ?? false,
       onTap: () {
+        onTap?.call();
         ref
             .read(collectionStateNotifierProvider.notifier)
             .sendRequest(selectedId!);

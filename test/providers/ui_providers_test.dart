@@ -1,43 +1,35 @@
-import 'dart:io';
-
+//import 'package:spot/spot.dart';
 import 'package:apidash/providers/providers.dart';
+import 'package:apidash/screens/common_widgets/common_widgets.dart';
 import 'package:apidash/screens/dashboard.dart';
+import 'package:apidash/screens/envvar/environment_page.dart';
 import 'package:apidash/screens/home_page/collection_pane.dart';
-import 'package:apidash/screens/home_page/editor_pane/details_card/code_pane.dart';
 import 'package:apidash/screens/home_page/editor_pane/details_card/response_pane.dart';
 import 'package:apidash/screens/home_page/editor_pane/editor_default.dart';
 import 'package:apidash/screens/home_page/editor_pane/editor_pane.dart';
 import 'package:apidash/screens/home_page/editor_pane/url_card.dart';
 import 'package:apidash/screens/home_page/home_page.dart';
-import 'package:apidash/screens/intro_page.dart';
 import 'package:apidash/screens/settings_page.dart';
-import 'package:apidash/services/hive_services.dart';
-import 'package:apidash/widgets/response_widgets.dart';
-import 'package:apidash/widgets/textfields.dart';
+import 'package:apidash/screens/history/history_page.dart';
+import 'package:apidash/widgets/widgets.dart';
+import 'package:extended_text_field/extended_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_portal/flutter_portal.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-
+import '../extensions/widget_tester_extensions.dart';
 import '../test_consts.dart';
+import 'helpers.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   setUp(() async {
-    const MethodChannel channel =
-        MethodChannel('plugins.flutter.io/path_provider');
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
-      if (methodCall.method == 'getApplicationDocumentsDirectory') {
-        // Create a mock app doc directory for testing
-        Directory tempDir =
-            await Directory.systemTemp.createTemp('mock_app_doc_dir');
-        return tempDir.path; // Return the path to the mock directory
-      }
-      return null;
-    });
-    await openBoxes();
+    await testSetUpTempDirForHive();
+    final flamante = rootBundle.load('google_fonts/OpenSans-Medium.ttf');
+    final fontLoader = FontLoader('OpenSans')..addFont(flamante);
+    await fontLoader.load();
   });
 
   group('Testing navRailIndexStateProvider', () {
@@ -53,12 +45,13 @@ void main() {
 
       // Verify that the HomePage is displayed initially
       expect(find.byType(HomePage), findsOneWidget);
-      expect(find.byType(IntroPage), findsNothing);
+      expect(find.byType(EnvironmentPage), findsNothing);
+      expect(find.byType(HistoryPage), findsNothing);
       expect(find.byType(SettingsPage), findsNothing);
     });
 
     testWidgets(
-        "Dashboard should display IntroPage when navRailIndexStateProvider is 1",
+        "Dashboard should display EnvironmentPage when navRailIndexStateProvider is 1",
         (WidgetTester tester) async {
       await tester.pumpWidget(
         ProviderScope(
@@ -71,30 +64,56 @@ void main() {
         ),
       );
 
-      // Verify that the IntroPage is displayed
-      expect(find.byType(IntroPage), findsOneWidget);
+      // Verify that the EnvironmentPage is displayed
       expect(find.byType(HomePage), findsNothing);
+      expect(find.byType(EnvironmentPage), findsOneWidget);
+      expect(find.byType(HistoryPage), findsNothing);
       expect(find.byType(SettingsPage), findsNothing);
     });
 
     testWidgets(
-        "Dashboard should display SettingsPage when navRailIndexStateProvider is 2",
+        "Dashboard should display HistorPage when navRailIndexStateProvider is 2",
         (WidgetTester tester) async {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
             navRailIndexStateProvider.overrideWith((ref) => 2),
           ],
-          child: const MaterialApp(
-            home: Dashboard(),
+          child: const Portal(
+            child: MaterialApp(
+              home: Dashboard(),
+            ),
           ),
         ),
       );
 
       // Verify that the SettingsPage is displayed
-      expect(find.byType(SettingsPage), findsOneWidget);
-      expect(find.byType(IntroPage), findsNothing);
       expect(find.byType(HomePage), findsNothing);
+      expect(find.byType(EnvironmentPage), findsNothing);
+      expect(find.byType(HistoryPage), findsOneWidget);
+      expect(find.byType(SettingsPage), findsNothing);
+    });
+    testWidgets(
+        "Dashboard should display SettingsPage when navRailIndexStateProvider is 3",
+        (WidgetTester tester) async {
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            navRailIndexStateProvider.overrideWith((ref) => 3),
+          ],
+          child: const Portal(
+            child: MaterialApp(
+              home: Dashboard(),
+            ),
+          ),
+        ),
+      );
+
+      // Verify that the SettingsPage is displayed
+      expect(find.byType(HomePage), findsNothing);
+      expect(find.byType(EnvironmentPage), findsNothing);
+      expect(find.byType(HistoryPage), findsNothing);
+      expect(find.byType(SettingsPage), findsOneWidget);
     });
 
     testWidgets(
@@ -102,20 +121,22 @@ void main() {
         (tester) async {
       await tester.pumpWidget(
         const ProviderScope(
-          child: MaterialApp(
-            home: Dashboard(),
+          child: Portal(
+            child: MaterialApp(
+              home: Dashboard(),
+            ),
           ),
         ),
       );
 
-      // Tap on the Intro icon
-      await tester.tap(find.byIcon(Icons.help_outline));
+      // Tap on the Settings icon
+      await tester.tap(find.byIcon(Icons.settings_outlined));
       await tester.pump();
 
       // Verify that the navRailIndexStateProvider is updated
       final dashboard = tester.element(find.byType(Dashboard));
       final container = ProviderScope.containerOf(dashboard);
-      expect(container.read(navRailIndexStateProvider), 1);
+      expect(container.read(navRailIndexStateProvider), 3);
     });
 
     testWidgets(
@@ -124,21 +145,25 @@ void main() {
       // Pump the initial widget tree
       await tester.pumpWidget(
         const ProviderScope(
-          child: MaterialApp(
-            home: Dashboard(),
+          child: Portal(
+            child: MaterialApp(
+              home: Dashboard(),
+            ),
           ),
         ),
       );
 
-      // Tap on the Settings icon to change the index to 2
+      // Tap on the Settings icon to change the index to 3
       await tester.tap(find.byIcon(Icons.settings_outlined));
       await tester.pump();
 
       // Rebuild the widget tree with the same ProviderScope
       await tester.pumpWidget(
         const ProviderScope(
-          child: MaterialApp(
-            home: Dashboard(),
+          child: Portal(
+            child: MaterialApp(
+              home: Dashboard(),
+            ),
           ),
         ),
       );
@@ -146,12 +171,12 @@ void main() {
       // Verify that the navRailIndexStateProvider still has the updated value
       final dashboard = tester.element(find.byType(Dashboard));
       final container = ProviderScope.containerOf(dashboard);
-      expect(container.read(navRailIndexStateProvider), 2);
+      expect(container.read(navRailIndexStateProvider), 3);
 
       // Verify that the SettingsPage is still displayed after the rebuild
       expect(find.byType(SettingsPage), findsOneWidget);
-      expect(find.byType(IntroPage), findsNothing);
       expect(find.byType(HomePage), findsNothing);
+      expect(find.byType(EnvironmentPage), findsNothing);
     });
 
     testWidgets(
@@ -159,8 +184,10 @@ void main() {
         (tester) async {
       await tester.pumpWidget(
         const ProviderScope(
-          child: MaterialApp(
-            home: Dashboard(),
+          child: Portal(
+            child: MaterialApp(
+              home: Dashboard(),
+            ),
           ),
         ),
       );
@@ -169,17 +196,26 @@ void main() {
       final dashboard = tester.element(find.byType(Dashboard));
       final container = ProviderScope.containerOf(dashboard);
 
-      // Go to IntroPage
+      // Go to EnvironmentPage
       container.read(navRailIndexStateProvider.notifier).state = 1;
       await tester.pump();
 
-      // Verify that the IntroPage is displayed
-      expect(find.byType(IntroPage), findsOneWidget);
+      // Verify that the EnvironmentPage is displayed
+      expect(find.byType(EnvironmentPage), findsOneWidget);
       // Verify that the selected icon is the filled version (selectedIcon)
-      expect(find.byIcon(Icons.help), findsOneWidget);
+      expect(find.byIcon(Icons.laptop_windows), findsOneWidget);
+
+      // Go to HistoryPage
+      container.read(navRailIndexStateProvider.notifier).state = 2;
+      await tester.pump();
+
+      // Verify that the HistoryPage is displayed
+      expect(find.byType(HistoryPage), findsOneWidget);
+      // Verify that the selected icon is the filled version (selectedIcon)
+      expect(find.byIcon(Icons.history_rounded), findsOneWidget);
 
       // Go to SettingsPage
-      container.read(navRailIndexStateProvider.notifier).state = 2;
+      container.read(navRailIndexStateProvider.notifier).state = 3;
       await tester.pump();
 
       // Verify that the SettingsPage is displayed
@@ -193,8 +229,10 @@ void main() {
         (tester) async {
       await tester.pumpWidget(
         const ProviderScope(
-          child: MaterialApp(
-            home: Dashboard(),
+          child: Portal(
+            child: MaterialApp(
+              home: Dashboard(),
+            ),
           ),
         ),
       );
@@ -244,32 +282,44 @@ void main() {
         'selectedIdEditStateProvider should not be null after rename button has been tapped',
         (tester) async {
       await tester.pumpWidget(
-        const ProviderScope(
+        ProviderScope(
           child: MaterialApp(
-            home: Scaffold(
+            theme: ThemeData(
+              fontFamily: 'OpenSans',
+            ),
+            home: const Scaffold(
               body: CollectionPane(),
             ),
           ),
         ),
       );
 
+      final collectionPane = tester.element(find.byType(CollectionPane));
+      final container = ProviderScope.containerOf(collectionPane);
+      var orig = container.read(selectedIdStateProvider);
+      expect(orig, isNotNull);
+
       // Tap on the three dots to open the request card menu
       await tester.tap(find.byType(RequestList));
       await tester.pump();
       await tester.tap(find.byType(RequestItem));
       await tester.pump();
-      await tester.tap(find.byIcon(Icons.more_vert).first);
+      await tester.tap(find.byIcon(Icons.more_vert).at(1));
       await tester.pumpAndSettle();
 
-      // Tap on the "Rename" option in the menu
-      await tester.tap(find.text('Rename'));
-      await tester.pumpAndSettle();
+      // Tap on the "Duplicate" option in the menu
+      var byType = find.text('Duplicate', findRichText: true);
+      expect(byType, findsOneWidget);
 
-      // Verify that the selectedIdEditStateProvider is not null
-      final collectionPane = tester.element(find.byType(CollectionPane));
-      final container = ProviderScope.containerOf(collectionPane);
-      expect(container.read(selectedIdEditStateProvider), isNotNull);
-      expect((container.read(selectedIdEditStateProvider)).runtimeType, String);
+      await tester.tap(byType);
+      await tester.pumpAndSettle();
+      // Screenshot using spot
+      // await takeScreenshot();
+
+      var dupId = container.read(selectedIdStateProvider);
+      expect(dupId, isNotNull);
+      expect(dupId.runtimeType, String);
+      expect(dupId != orig, isTrue);
     });
 
     testWidgets(
@@ -294,7 +344,7 @@ void main() {
       await tester.pump();
       await tester.tap(find.byType(RequestItem));
       await tester.pump();
-      await tester.tap(find.byIcon(Icons.more_vert).first);
+      await tester.tap(find.byIcon(Icons.more_vert).at(1));
       await tester.pumpAndSettle();
 
       // Tap on the "Rename" option in the menu
@@ -365,53 +415,14 @@ void main() {
 
     testWidgets("When state is false ResponsePane should be visible",
         (tester) async {
+      await tester.setScreenSize(largeWidthDevice);
       await tester.pumpWidget(
         const ProviderScope(
-          child: MaterialApp(
-            home: RequestEditorPane(),
-          ),
-        ),
-      );
-
-      expect(find.byType(RequestEditorDefault), findsOneWidget);
-
-      // Tap on the "Plus New" button
-      Finder plusNewButton = find.descendant(
-        of: find.byType(RequestEditorDefault),
-        matching: find.byType(ElevatedButton),
-      );
-      await tester.tap(plusNewButton);
-      await tester.pump();
-
-      // Verify that NotSentWidget is visible
-      expect(find.byType(NotSentWidget), findsOneWidget);
-
-      // Add some data in URLTextField
-      Finder field = find.descendant(
-        of: find.byType(URLField),
-        matching: find.byType(TextFormField),
-      );
-      await tester.enterText(field, kTestUrl);
-      await tester.pump();
-
-      // Tap on the "Send" button
-      Finder sendButton = find.byType(SendButton);
-      await tester.tap(sendButton);
-      await tester.pump();
-
-      final editorPane = tester.element(find.byType(RequestEditorPane));
-      final container = ProviderScope.containerOf(editorPane);
-      expect(container.read(codePaneVisibleStateProvider), false);
-      expect(find.byType(ResponsePane), findsOneWidget);
-    });
-
-    testWidgets("When state is true CodePane should be visible",
-        (tester) async {
-      await tester.pumpWidget(
-        const ProviderScope(
-          child: MaterialApp(
-            home: Scaffold(
-              body: RequestEditorPane(),
+          child: Portal(
+            child: MaterialApp(
+              home: Material(
+                child: RequestEditorPane(),
+              ),
             ),
           ),
         ),
@@ -432,14 +443,63 @@ void main() {
 
       // Add some data in URLTextField
       Finder field = find.descendant(
-        of: find.byType(URLField),
-        matching: find.byType(TextFormField),
+        of: find.byType(EnvURLField),
+        matching: find.byType(ExtendedTextField),
       );
-      await tester.enterText(field, kTestUrl);
+      await tester.tap(field);
+      tester.testTextInput.enterText(kTestUrl);
       await tester.pump();
 
       // Tap on the "Send" button
-      Finder sendButton = find.byType(SendButton);
+      Finder sendButton = find.byType(SendRequestButton);
+      await tester.tap(sendButton);
+      await tester.pump();
+
+      final editorPane = tester.element(find.byType(RequestEditorPane));
+      final container = ProviderScope.containerOf(editorPane);
+      expect(container.read(codePaneVisibleStateProvider), false);
+      expect(find.byType(ResponsePane), findsOneWidget);
+    });
+
+    testWidgets("When state is true CodePane should be visible",
+        (tester) async {
+      await tester.setScreenSize(largeWidthDevice);
+      await tester.pumpWidget(
+        const ProviderScope(
+          child: Portal(
+            child: MaterialApp(
+              home: Scaffold(
+                body: RequestEditorPane(),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byType(RequestEditorDefault), findsOneWidget);
+
+      // Tap on the "Plus New" button
+      Finder plusNewButton = find.descendant(
+        of: find.byType(RequestEditorDefault),
+        matching: find.byType(ElevatedButton),
+      );
+      await tester.tap(plusNewButton);
+      await tester.pump();
+
+      // Verify that NotSentWidget is visible
+      expect(find.byType(NotSentWidget), findsOneWidget);
+
+      // Add some data in URLTextField
+      Finder field = find.descendant(
+        of: find.byType(EnvURLField),
+        matching: find.byType(ExtendedTextField),
+      );
+      await tester.tap(field);
+      tester.testTextInput.enterText(kTestUrl);
+      await tester.pump();
+
+      // Tap on the "Send" button
+      Finder sendButton = find.byType(SendRequestButton);
       await tester.tap(sendButton);
       await tester.pump();
 
@@ -455,11 +515,14 @@ void main() {
     });
 
     testWidgets("Hide/View Code button toggles the state", (tester) async {
+      await tester.setScreenSize(largeWidthDevice);
       await tester.pumpWidget(
         const ProviderScope(
-          child: MaterialApp(
-            home: Scaffold(
-              body: RequestEditorPane(),
+          child: Portal(
+            child: MaterialApp(
+              home: Scaffold(
+                body: RequestEditorPane(),
+              ),
             ),
           ),
         ),
@@ -480,14 +543,15 @@ void main() {
 
       // Add some data in URLTextField
       Finder field = find.descendant(
-        of: find.byType(URLField),
-        matching: find.byType(TextFormField),
+        of: find.byType(EnvURLField),
+        matching: find.byType(ExtendedTextField),
       );
-      await tester.enterText(field, kTestUrl);
+      await tester.tap(field);
+      tester.testTextInput.enterText(kTestUrl);
       await tester.pump();
 
       // Tap on the "Send" button
-      Finder sendButton = find.byType(SendButton);
+      Finder sendButton = find.byType(SendRequestButton);
       await tester.tap(sendButton);
       await tester.pump();
 
@@ -512,11 +576,14 @@ void main() {
     });
 
     testWidgets("That state persists across widget rebuilds", (tester) async {
+      await tester.setScreenSize(largeWidthDevice);
       await tester.pumpWidget(
         const ProviderScope(
-          child: MaterialApp(
-            home: Scaffold(
-              body: RequestEditorPane(),
+          child: Portal(
+            child: MaterialApp(
+              home: Scaffold(
+                body: RequestEditorPane(),
+              ),
             ),
           ),
         ),
@@ -537,14 +604,15 @@ void main() {
 
       // Add some data in URLTextField
       Finder field = find.descendant(
-        of: find.byType(URLField),
-        matching: find.byType(TextFormField),
+        of: find.byType(EnvURLField),
+        matching: find.byType(ExtendedTextField),
       );
-      await tester.enterText(field, kTestUrl);
+      await tester.tap(field);
+      tester.testTextInput.enterText(kTestUrl);
       await tester.pump();
 
       // Tap on the "Send" button
-      Finder sendButton = find.byType(SendButton);
+      Finder sendButton = find.byType(SendRequestButton);
       await tester.tap(sendButton);
       await tester.pump();
 
@@ -563,9 +631,11 @@ void main() {
       // Rebuild the widget tree
       await tester.pumpWidget(
         const ProviderScope(
-          child: MaterialApp(
-            home: Scaffold(
-              body: RequestEditorPane(),
+          child: Portal(
+            child: MaterialApp(
+              home: Scaffold(
+                body: RequestEditorPane(),
+              ),
             ),
           ),
         ),

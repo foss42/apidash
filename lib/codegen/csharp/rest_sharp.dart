@@ -1,10 +1,9 @@
 import 'dart:convert';
-
-import 'package:apidash/consts.dart';
 import 'package:jinja/jinja.dart' as jj;
-import '../../models/request_model.dart';
-import '../../extensions/extensions.dart';
-import '../../utils/http_utils.dart';
+import 'package:apidash/consts.dart';
+import 'package:apidash/models/models.dart';
+import 'package:apidash/extensions/extensions.dart';
+import 'package:apidash/utils/http_utils.dart';
 
 class CSharpRestSharp {
   String kStringImports = """
@@ -90,12 +89,12 @@ class Program
 }
 """;
 
-  String? getCode(RequestModel requestModel) {
+  String? getCode(HttpRequestModel requestModel) {
     try {
       String result = "";
       var rec = getValidRequestUri(
         requestModel.url,
-        requestModel.enabledRequestParams,
+        requestModel.enabledParams,
       );
       Uri? uri = rec.$1;
       if (uri != null) {
@@ -130,14 +129,13 @@ class Program
           }
         }
 
-        var headersList = requestModel.enabledRequestHeaders;
+        var headersList = requestModel.enabledHeaders;
         if (headersList != null ||
             requestModel.hasJsonData ||
             requestModel.hasTextData) {
           var headers = requestModel.enabledHeadersMap;
           if (requestModel.hasJsonData || requestModel.hasTextData) {
-            headers[kHeaderContentType] =
-                requestModel.requestBodyContentType.header;
+            headers[kHeaderContentType] = requestModel.bodyContentType.header;
           }
           if (headers.isNotEmpty) {
             jj.Template templateHeaders = jj.Template(kTemplateHeaders);
@@ -169,8 +167,7 @@ class Program
 
         if (requestModel.hasJsonData) {
           var templateJsonData = jj.Template(kTemplateJsonData);
-          Map<String, dynamic> bodyData =
-              json.decode(requestModel.requestBody!);
+          Map<String, dynamic> bodyData = json.decode(requestModel.body!);
           List<String> jsonArr = [];
 
           bodyData.forEach((key, value) {
@@ -184,7 +181,7 @@ class Program
         if (requestModel.hasTextData) {
           jj.Template templateTextData = jj.Template(kTemplateTextData);
           result += templateTextData
-              .render({"textData": jsonEncode(requestModel.requestBody)});
+              .render({"textData": jsonEncode(requestModel.body)});
         }
 
         result += kStringEnd;

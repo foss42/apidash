@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../intro_page.dart';
+import 'package:flex_color_scheme/flex_color_scheme.dart';
+import 'package:apidash/extensions/extensions.dart';
+import 'package:apidash/providers/providers.dart';
+import 'requests_page/requests_page.dart';
+import '../envvar/environment_page.dart';
+import '../history/history_page.dart';
 import '../settings_page.dart';
-import '../home_page/collection_pane.dart';
+import 'widgets/page_base.dart';
+import 'navbar.dart';
 
 class MobileDashboard extends ConsumerStatefulWidget {
-  const MobileDashboard(
-      {required this.scaffoldBody, required this.title, super.key});
-
-  final Widget scaffoldBody;
-  final String title;
+  const MobileDashboard({super.key});
 
   @override
   ConsumerState<MobileDashboard> createState() => _MobileDashboardState();
@@ -17,67 +20,65 @@ class MobileDashboard extends ConsumerStatefulWidget {
 
 class _MobileDashboardState extends ConsumerState<MobileDashboard> {
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
+  Widget build(
+    BuildContext context,
+  ) {
+    final railIdx = ref.watch(navRailIndexStateProvider);
+    final isLeftDrawerOpen = ref.watch(leftDrawerStateProvider);
+
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: FlexColorScheme.themedSystemNavigationBar(
+        context,
+        opacity: 0,
+        noAppBar: true,
       ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            const SizedBox(
-              height: 70,
+      child: Stack(
+        alignment: AlignmentDirectional.bottomCenter,
+        children: [
+          PageBranch(
+            pageIndex: railIdx,
+          ),
+          if (context.isMediumWindow)
+            AnimatedPositioned(
+              bottom: railIdx > 2
+                  ? 0
+                  : isLeftDrawerOpen
+                      ? 0
+                      : -(72 + MediaQuery.paddingOf(context).bottom),
+              left: 0,
+              right: 0,
+              height: 70 + MediaQuery.paddingOf(context).bottom,
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeOut,
+              child: const BottomNavBar(),
             ),
-            ListTile(
-              title: const Text('Home'),
-              leading: const Icon(Icons.home_outlined),
-              onTap: () {
-                Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(
-                      builder: (context) => const MobileDashboard(
-                        title: 'Home',
-                        scaffoldBody: IntroPage(),
-                      ),
-                    ),
-                    (Route<dynamic> route) => false);
-              },
-            ),
-            ListTile(
-              title: const Text('Requests'),
-              leading: const Icon(Icons.auto_awesome_mosaic_outlined),
-              onTap: () {
-                Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(
-                      builder: (context) => const MobileDashboard(
-                        title: 'Requests',
-                        scaffoldBody: CollectionPane(),
-                      ),
-                    ),
-                    (Route<dynamic> route) => false);
-              },
-            ),
-            ListTile(
-              title: const Text('Settings'),
-              leading: const Icon(Icons.settings_outlined),
-              onTap: () {
-                Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(
-                      builder: (context) => const MobileDashboard(
-                        title: 'Settings',
-                        scaffoldBody: SettingsPage(),
-                      ),
-                    ),
-                    (Route<dynamic> route) => false);
-              },
-            ),
-            const Divider(),
-          ],
-        ),
-      ),
-      body: SafeArea(
-        child: widget.scaffoldBody,
+        ],
       ),
     );
+  }
+}
+
+class PageBranch extends ConsumerWidget {
+  const PageBranch({
+    super.key,
+    required this.pageIndex,
+  });
+
+  final int pageIndex;
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    switch (pageIndex) {
+      case 1:
+        return const EnvironmentPage();
+      case 2:
+        return const HistoryPage();
+      case 3:
+        return const PageBase(
+          title: 'Settings',
+          scaffoldBody: SettingsPage(),
+        );
+      default:
+        return const RequestResponsePage();
+    }
   }
 }

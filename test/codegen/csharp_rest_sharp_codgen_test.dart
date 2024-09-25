@@ -1,8 +1,7 @@
 import 'package:apidash/consts.dart';
-import 'package:apidash/screens/home_page/editor_pane/details_card/code_pane.dart';
+import 'package:apidash/screens/common_widgets/common_widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import '../request_models.dart';
+import '../models/request_models.dart';
 
 void main() {
   group("Get Request Test", () {

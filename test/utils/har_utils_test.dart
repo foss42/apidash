@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:apidash/utils/har_utils.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import '../request_models.dart';
+import '../models/request_models.dart';
 
 void main() {
   group(
@@ -222,7 +222,8 @@ void main() {
             {'name': 'User-Agent', 'value': 'Test Agent'}
           ]
         };
-        expect(requestModelToHARJsonRequest(requestModelGet6), expectedResult);
+        expect(requestModelToHARJsonRequest(requestModelGet6.httpRequestModel),
+            expectedResult);
       });
 
       test('Test requestModelToHARJsonRequest exportMode=true', () {
@@ -243,7 +244,7 @@ void main() {
         };
         expect(
             requestModelToHARJsonRequest(
-              requestModelGet6,
+              requestModelGet6.httpRequestModel,
               exportMode: true,
             ),
             expectedResult);
@@ -277,7 +278,7 @@ void main() {
         };
         expect(
             requestModelToHARJsonRequest(
-              requestModelPost2,
+              requestModelPost2.httpRequestModel,
               exportMode: true,
             ),
             expectedResult);
@@ -300,7 +301,8 @@ void main() {
             {'name': 'Content-Type', 'value': 'application/json'}
           ]
         };
-        expect(requestModelToHARJsonRequest(requestModelGet11), expectedResult);
+        expect(requestModelToHARJsonRequest(requestModelGet11.httpRequestModel),
+            expectedResult);
       });
 
       test('Test requestModelToHARJsonRequest useEnabled=true', () {
@@ -318,7 +320,7 @@ void main() {
         };
         expect(
             requestModelToHARJsonRequest(
-              requestModelGet11,
+              requestModelGet11.httpRequestModel,
               useEnabled: true,
             ),
             expectedResult);

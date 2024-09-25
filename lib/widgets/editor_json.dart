@@ -110,7 +110,7 @@ class _JsonTextFieldEditorState extends State<JsonTextFieldEditor> {
           enabledBorder: OutlineInputBorder(
             borderRadius: kBorderRadius8,
             borderSide: BorderSide(
-              color: Theme.of(context).colorScheme.surfaceVariant,
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
             ),
           ),
           filled: true,

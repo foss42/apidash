@@ -4,7 +4,7 @@ import 'package:jinja/jinja.dart' as jj;
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart'
     show getValidRequestUri, stripUriParams;
-import 'package:apidash/models/models.dart' show RequestModel;
+import 'package:apidash/models/models.dart';
 
 class RustReqwestCodeGen {
   final String kTemplateStart =
@@ -81,7 +81,7 @@ class RustReqwestCodeGen {
 """;
 
   String? getCode(
-    RequestModel requestModel,
+    HttpRequestModel requestModel,
   ) {
     try {
       String result = "";
@@ -92,7 +92,7 @@ class RustReqwestCodeGen {
 
       var rec = getValidRequestUri(
         url,
-        requestModel.enabledRequestParams,
+        requestModel.enabledParams,
       );
       Uri? uri = rec.$1;
       if (uri != null) {
@@ -100,15 +100,15 @@ class RustReqwestCodeGen {
         result += templateStartUrl.render({
           "url": stripUriParams(uri),
           'isFormDataRequest': requestModel.hasFormData,
-          'isJson': requestModel.requestBodyContentType == ContentType.json
+          'isJson': requestModel.bodyContentType == ContentType.json
         });
 
         var method = requestModel.method;
-        var requestBody = requestModel.requestBody;
+        var requestBody = requestModel.body;
         if (kMethodsWithBody.contains(method) && requestBody != null) {
           var contentLength = utf8.encode(requestBody).length;
           if (contentLength > 0) {
-            if (requestModel.requestBodyContentType == ContentType.json) {
+            if (requestModel.bodyContentType == ContentType.json) {
               hasJsonBody = true;
               var templateBody = jj.Template(kTemplateJson);
               result += templateBody.render({"body": requestBody});
@@ -145,12 +145,12 @@ class RustReqwestCodeGen {
           }
         }
 
-        var headersList = requestModel.enabledRequestHeaders;
+        var headersList = requestModel.enabledHeaders;
         if (headersList != null || hasBody) {
           var headers = requestModel.enabledHeadersMap;
           if (hasBody) {
             headers[HttpHeaders.contentTypeHeader] =
-                requestModel.requestBodyContentType.header;
+                requestModel.bodyContentType.header;
           }
           if (headers.isNotEmpty) {
             var templateHeaders = jj.Template(kTemplateHeaders);
