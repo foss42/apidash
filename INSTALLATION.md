@@ -88,7 +88,7 @@ Launch API Dash via `apidash` command or by clicking on the API Dash app icon.
 
 ### Arch-based Linux Distributions (Manjaro, Arch Linux, etc.)
 
-Download the `.deb` file from the [latest release](https://github.com/foss42/apidash/releases/latest) corresponding to you CPU architecture (x64/amd64 or arm64).
+Download the `.deb` file from the [latest release](https://github.com/foss42/apidash/releases/latest) corresponding to your CPU architecture (x86_64/amd64 or arm64/aarch64).
 
 First we have to convert the .deb file to .tar.xz file using the following commands.
 
