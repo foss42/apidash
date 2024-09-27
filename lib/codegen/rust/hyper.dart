@@ -12,7 +12,6 @@ class RustHyperCodeGen {
 use hyper::{Body, Client, Request, Uri};
 use hyper::client::HttpConnector;
 use hyper_tls::HttpsConnector;
-use std::convert::TryInto;
 {% if hasForm %}use hyper_multipart::client::multipart;{% endif %}
 {% if hasJsonBody %}use serde_json::json;{% endif %}
 use tokio;
