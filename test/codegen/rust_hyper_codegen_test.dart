@@ -14,7 +14,6 @@ void main(){
 use hyper::{Body, Client, Request, Uri};
 use hyper::client::HttpConnector;
 use hyper_tls::HttpsConnector;
-use std::convert::TryInto;
 
 use serde_json::json;
 use tokio;
@@ -51,7 +50,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 use hyper::{Body, Client, Request, Uri};
 use hyper::client::HttpConnector;
 use hyper_tls::HttpsConnector;
-use std::convert::TryInto;
 
 use serde_json::json;
 use tokio;
@@ -89,7 +87,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 use hyper::{Body, Client, Request, Uri};
 use hyper::client::HttpConnector;
 use hyper_tls::HttpsConnector;
-use std::convert::TryInto;
 
 use serde_json::json;
 use tokio;
@@ -127,7 +124,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 use hyper::{Body, Client, Request, Uri};
 use hyper::client::HttpConnector;
 use hyper_tls::HttpsConnector;
-use std::convert::TryInto;
 
 use serde_json::json;
 use tokio;
@@ -166,7 +162,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 use hyper::{Body, Client, Request, Uri};
 use hyper::client::HttpConnector;
 use hyper_tls::HttpsConnector;
-use std::convert::TryInto;
 
 use serde_json::json;
 use tokio;
@@ -208,7 +203,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 use hyper::{Body, Client, Request, Uri};
 use hyper::client::HttpConnector;
 use hyper_tls::HttpsConnector;
-use std::convert::TryInto;
 
 use serde_json::json;
 use tokio;
@@ -251,7 +245,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 use hyper::{Body, Client, Request, Uri};
 use hyper::client::HttpConnector;
 use hyper_tls::HttpsConnector;
-use std::convert::TryInto;
 
 
 use tokio;
@@ -292,7 +285,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 use hyper::{Body, Client, Request, Uri};
 use hyper::client::HttpConnector;
 use hyper_tls::HttpsConnector;
-use std::convert::TryInto;
 
 use serde_json::json;
 use tokio;
@@ -331,7 +323,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 use hyper::{Body, Client, Request, Uri};
 use hyper::client::HttpConnector;
 use hyper_tls::HttpsConnector;
-use std::convert::TryInto;
 
 use serde_json::json;
 use tokio;
@@ -369,7 +360,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 use hyper::{Body, Client, Request, Uri};
 use hyper::client::HttpConnector;
 use hyper_tls::HttpsConnector;
-use std::convert::TryInto;
 
 use serde_json::json;
 use tokio;
@@ -411,7 +401,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 use hyper::{Body, Client, Request, Uri};
 use hyper::client::HttpConnector;
 use hyper_tls::HttpsConnector;
-use std::convert::TryInto;
 
 use serde_json::json;
 use tokio;
@@ -452,7 +441,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 use hyper::{Body, Client, Request, Uri};
 use hyper::client::HttpConnector;
 use hyper_tls::HttpsConnector;
-use std::convert::TryInto;
 
 use serde_json::json;
 use tokio;
@@ -494,7 +482,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 use hyper::{Body, Client, Request, Uri};
 use hyper::client::HttpConnector;
 use hyper_tls::HttpsConnector;
-use std::convert::TryInto;
 
 use serde_json::json;
 use tokio;
@@ -531,7 +518,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 use hyper::{Body, Client, Request, Uri};
 use hyper::client::HttpConnector;
 use hyper_tls::HttpsConnector;
-use std::convert::TryInto;
 
 use serde_json::json;
 use tokio;
@@ -574,7 +560,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 use hyper::{Body, Client, Request, Uri};
 use hyper::client::HttpConnector;
 use hyper_tls::HttpsConnector;
-use std::convert::TryInto;
 
 
 use tokio;
@@ -612,7 +597,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 use hyper::{Body, Client, Request, Uri};
 use hyper::client::HttpConnector;
 use hyper_tls::HttpsConnector;
-use std::convert::TryInto;
 
 use serde_json::json;
 use tokio;
@@ -651,41 +635,41 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     });
     test('POST3', () {
       const expectedCode = r"""
-use curl::easy::Easy;
+
+use hyper::{Body, Client, Request, Uri};
+use hyper::client::HttpConnector;
+use hyper_tls::HttpsConnector;
+
 use serde_json::json;
-use curl::easy::List;
+use tokio;
 
-fn main() {
-  let mut easy = Easy::new();
-  let mut data = Vec::new();
-  easy.url("https://api.apidash.dev/case/lower").unwrap();
-  easy.post(true).unwrap();
-
-  easy.post_fields_copy(json!({
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let https = HttpsConnector::new();
+    let client = Client::builder().build::<_, hyper::Body>(https);
+    let url = "https://api.apidash.dev/case/lower".parse::<Uri>().unwrap();
+    let reqBuilder = Request::builder()
+              .method("POST")
+              .uri(url)        
+              .header("User-Agent", "Test Agent")
+                
+              .body(Body::from(json!({
 "text": "I LOVE Flutter"
-}).to_string().as_bytes()).unwrap();
+}).to_string()))?;
+    let res = client.request(reqBuilder).await?;
+    let status = res.status();
+    let body_bytes = hyper::body::to_bytes(res).await?;
+    let body = String::from_utf8(body_bytes.to_vec())?;
 
-  let mut list = List::new();
-  list.append("User-Agent: Test Agent").unwrap();
-  list.append("Content-Type: application/json").unwrap();
-  easy.http_headers(list).unwrap();
-  
-  {
-    let mut transfer = easy.transfer();
-    transfer.write_function(|new_data| {
-        data.extend_from_slice(new_data);
-        Ok(new_data.len())
-    }).unwrap();
-    transfer.perform().unwrap();
-  }
+    println!("Response Status: {}", status);
+    println!("Response: {:?}", body);
 
-  let response_body = String::from_utf8_lossy(&data);
+    Ok(())
+}
 
-  println!("Response body: {}", response_body);
-  println!("Response code: {}", easy.response_code().unwrap());
-}""";
+""";
       expect(
-          codeGen.getCode(CodegenLanguage.rustCurl, requestModelPost3, "https"),
+          codeGen.getCode(CodegenLanguage.rustHyper, requestModelPost3, "https"),
           expectedCode);
     });
     test('POST4', () {
@@ -694,7 +678,6 @@ extern crate hyper_multipart_rfc7578 as hyper_multipart;
 use hyper::{Body, Client, Request, Uri};
 use hyper::client::HttpConnector;
 use hyper_tls::HttpsConnector;
-use std::convert::TryInto;
 use hyper_multipart::client::multipart;
 
 use tokio;
@@ -737,7 +720,6 @@ extern crate hyper_multipart_rfc7578 as hyper_multipart;
 use hyper::{Body, Client, Request, Uri};
 use hyper::client::HttpConnector;
 use hyper_tls::HttpsConnector;
-use std::convert::TryInto;
 use hyper_multipart::client::multipart;
 
 use tokio;
@@ -782,7 +764,6 @@ extern crate hyper_multipart_rfc7578 as hyper_multipart;
 use hyper::{Body, Client, Request, Uri};
 use hyper::client::HttpConnector;
 use hyper_tls::HttpsConnector;
-use std::convert::TryInto;
 use hyper_multipart::client::multipart;
 
 use tokio;
@@ -824,7 +805,6 @@ extern crate hyper_multipart_rfc7578 as hyper_multipart;
 use hyper::{Body, Client, Request, Uri};
 use hyper::client::HttpConnector;
 use hyper_tls::HttpsConnector;
-use std::convert::TryInto;
 use hyper_multipart::client::multipart;
 
 use tokio;
@@ -866,7 +846,6 @@ extern crate hyper_multipart_rfc7578 as hyper_multipart;
 use hyper::{Body, Client, Request, Uri};
 use hyper::client::HttpConnector;
 use hyper_tls::HttpsConnector;
-use std::convert::TryInto;
 use hyper_multipart::client::multipart;
 
 use tokio;
@@ -905,47 +884,47 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     });
     test('POST9', () {
       const expectedCode = r"""
-use curl::easy::Easy;
-use curl::easy::List;
+extern crate hyper_multipart_rfc7578 as hyper_multipart;
+use hyper::{Body, Client, Request, Uri};
+use hyper::client::HttpConnector;
+use hyper_tls::HttpsConnector;
+use hyper_multipart::client::multipart;
 
-fn main() {
-  let mut easy = Easy::new();
-  let mut data = Vec::new();
-  easy.url("https://api.apidash.dev/io/img?size=2&len=3").unwrap();
-  easy.post(true).unwrap();
+use tokio;
 
-  let mut form = curl::easy::Form::new();
-  
-  form.part("token")
-    .contents(b"xyz")
-    .add().unwrap();
-  
-  form.part("imfile")
-    .file("/Documents/up/1.png")
-    .add().unwrap();
-  
-  easy.httppost(form).unwrap();
-    let mut list = List::new();
-  list.append("User-Agent: Test Agent").unwrap();
-  list.append("Keep-Alive: true").unwrap();
-  easy.http_headers(list).unwrap();
-  
-  {
-    let mut transfer = easy.transfer();
-    transfer.write_function(|new_data| {
-        data.extend_from_slice(new_data);
-        Ok(new_data.len())
-    }).unwrap();
-    transfer.perform().unwrap();
-  }
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let https = HttpsConnector::new();
+    let client = Client::builder().build::<_, hyper::Body>(https);
+    let url = "https://api.apidash.dev/io/img?size=2&len=3".parse::<Uri>().unwrap();
+    let reqBuilder = Request::builder()
+              .method("POST")
+              .uri(url)        
+              .header("User-Agent", "Test Agent")
+        
+              .header("Keep-Alive", "true");
+            
+    let mut form = multipart::Form::default();
+    form.add_text("token", "xyz");
+    form.add_file("imfile", r"/Documents/up/1.png").unwrap();
 
-  let response_body = String::from_utf8_lossy(&data);
+    let req = form.set_body_convert::<Body, multipart::Body>(reqBuilder).unwrap();
+    
+    let res = client.request(req).await?;
+    let status = res.status();
+    let body_bytes = hyper::body::to_bytes(res).await?;
+    let body = String::from_utf8(body_bytes.to_vec())?;
 
-  println!("Response body: {}", response_body);
-  println!("Response code: {}", easy.response_code().unwrap());
-}""";
+    println!("Response Status: {}", status);
+    println!("Response: {:?}", body);
+    
+
+    Ok(())
+}
+
+""";
       expect(
-          codeGen.getCode(CodegenLanguage.rustCurl, requestModelPost9, "https"),
+          codeGen.getCode(CodegenLanguage.rustHyper, requestModelPost9, "https"),
           expectedCode);
     });
   });
@@ -958,7 +937,6 @@ fn main() {
 use hyper::{Body, Client, Request, Uri};
 use hyper::client::HttpConnector;
 use hyper_tls::HttpsConnector;
-use std::convert::TryInto;
 
 use serde_json::json;
 use tokio;
@@ -1002,7 +980,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 use hyper::{Body, Client, Request, Uri};
 use hyper::client::HttpConnector;
 use hyper_tls::HttpsConnector;
-use std::convert::TryInto;
 
 use serde_json::json;
 use tokio;
@@ -1043,7 +1020,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 use hyper::{Body, Client, Request, Uri};
 use hyper::client::HttpConnector;
 use hyper_tls::HttpsConnector;
-use std::convert::TryInto;
 
 use serde_json::json;
 use tokio;
@@ -1081,7 +1057,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 use hyper::{Body, Client, Request, Uri};
 use hyper::client::HttpConnector;
 use hyper_tls::HttpsConnector;
-use std::convert::TryInto;
 
 use serde_json::json;
 use tokio;
