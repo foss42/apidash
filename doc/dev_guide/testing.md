@@ -32,3 +32,4 @@ Example:
 
 ```
 flutter test test/widgets/codegen_previewer_test.dart
+```
