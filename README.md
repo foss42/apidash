@@ -130,6 +130,7 @@ API Dash currently supports API integration code generation for the following la
 | Kotlin                 | `okhttp3`     |         |
 | Ruby                   | `faraday`     |         |
 | Ruby                   | `net/http`    |         |
+| Rust                   | `hyper`       |         |
 | Rust                   | `reqwest`     |         |
 | Rust                   | `ureq`        |         |
 | Rust                   | `Actix Client` |        |
