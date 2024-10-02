@@ -388,6 +388,7 @@ enum CodegenLanguage {
   rubyFaraday("Ruby (Faraday)", "ruby", "rb"),
   rubyNetHttp("Ruby (Net::Http)", "ruby", "rb"),
   rustActix("Rust (Actix Client)", "rust", "rs"),
+  rustHyper("Rust (Hyper)", "rust", "rs"),
   rustReqwest("Rust (reqwest)", "rust", "rs"),
   rustCurl("Rust (curl-rust)", "rust", "rs"),
   rustUreq("Rust (ureq)", "rust", "rs"),
