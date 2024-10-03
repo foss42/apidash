@@ -70,6 +70,9 @@ multipart/form-data; boundary={{boundary}}''';
   String kTemplateHeader = """
       requestBuilder = requestBuilder.headers({% for header, value in headers %}
         "{{header}}", "{{value}}"{% if not loop.last %},{% endif %}{% endfor %}
+      {% if cookieHeader %}
+        , "Cookie", "{{cookieHeader}}"
+      {% endif %}
       );
 
 """;
@@ -122,6 +125,8 @@ multipart/form-data; boundary={{boundary}}''';
         "hasFormData": requestModel.hasFormData,
       });
 
+      String? cookieHeader = requestModel.cookie;
+
       var rec = getValidRequestUri(
         url,
         requestModel.enabledParams,
@@ -162,6 +167,9 @@ multipart/form-data; boundary={{boundary}}''';
         var headersList = requestModel.enabledHeaders;
         if (headersList != null || requestModel.hasBody) {
           var headers = requestModel.enabledHeadersMap;
+          if (cookieHeader != null) {
+            headers["Cookie"] = cookieHeader;
+          }
           if (requestModel.hasJsonData || requestModel.hasTextData) {
             headers.putIfAbsent(
                 kHeaderContentType, () => requestModel.bodyContentType.header);
@@ -178,6 +186,7 @@ multipart/form-data; boundary={{boundary}}''';
             var templateHeader = jj.Template(kTemplateHeader);
             result += templateHeader.render({
               "headers": headers,
+              "cookieHeader": cookieHeader,
             });
           }
         }

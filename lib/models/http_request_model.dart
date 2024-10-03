@@ -68,4 +68,11 @@ class HttpRequestModel with _$HttpRequestModel {
   bool get hasFileInFormData => formDataList
       .map((e) => e.type == FormDataType.file)
       .any((element) => element);
+
+  // New getter for cookie
+  String? get cookie {
+    // Retrieve the cookie from the enabled headers
+    final cookieHeader = enabledHeadersMap['Cookie'];
+    return cookieHeader; // Return the cookie value or null
+  }
 }
