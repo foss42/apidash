@@ -1,9 +1,7 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:apidash/widgets/menu_item_card.dart';
 import 'package:apidash/consts.dart';
-import 'package:path/path.dart';
 import '../test_consts.dart';
 
 void main() {
