@@ -1,7 +1,9 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:apidash/widgets/menu_item_card.dart';
 import 'package:apidash/consts.dart';
+import 'package:path/path.dart';
 import '../test_consts.dart';
 
 void main() {
@@ -48,5 +50,33 @@ void main() {
     await tester.pump(const Duration(seconds: 1));
 
     expect(changedValue, ItemMenuOption.duplicate);
+  });
+
+  testWidgets('showItemCardMenu shows the menu at the right position',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Builder(
+            builder: (BuildContext context) {
+              return GestureDetector(
+                onTapUp: (details) {
+                  showItemCardMenu(
+                      context, details, (ItemMenuOption option) {});
+                },
+                child: const Text('Show Menu'),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('Show Menu'));
+    await tester.pumpAndSettle();
+
+    for (var option in ItemMenuOption.values) {
+      expect(find.text(option.label), findsOneWidget);
+    }
   });
 }
