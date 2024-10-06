@@ -49,81 +49,86 @@ class SidebarRequestCard extends StatelessWidget {
     String nm = (name != null && name!.trim().isNotEmpty)
         ? name!
         : getRequestTitleFromUrl(url);
-    return Tooltip(
-      message: nm,
-      triggerMode: TooltipTriggerMode.manual,
-      waitDuration: const Duration(seconds: 1),
-      child: Card(
-        shape: const RoundedRectangleBorder(
-          borderRadius: kBorderRadius8,
-        ),
-        elevation: isSelected ? 1 : 0,
-        surfaceTintColor: isSelected ? surfaceTint : null,
-        color: isSelected
-            ? Theme.of(context).colorScheme.brightness == Brightness.dark
-                ? colorVariant
-                : color
-            : color,
-        margin: EdgeInsets.zero,
-        child: InkWell(
-          borderRadius: kBorderRadius8,
-          hoverColor: colorVariant,
-          focusColor: colorVariant.withOpacity(0.5),
-          onTap: inEditMode ? null : onTap,
-          // onDoubleTap: inEditMode ? null : onDoubleTap,
-          onSecondaryTap: onSecondaryTap,
-          child: Padding(
-            padding: EdgeInsets.only(
-              left: 6,
-              right: isSelected ? 6 : 10,
-              top: 5,
-              bottom: 5,
-            ),
-            child: SizedBox(
-              height: 20,
-              child: Row(
-                children: [
-                  MethodBox(method: method),
-                  kHSpacer4,
-                  Expanded(
-                    child: inEditMode
-                        ? TextFormField(
-                            key: ValueKey("$id-name"),
-                            initialValue: name,
-                            // controller: controller,
-                            focusNode: focusNode,
-                            //autofocus: true,
-                            style: Theme.of(context).textTheme.bodyMedium,
-                            onTapOutside: (_) {
-                              onTapOutsideNameEditor?.call();
-                              //FocusScope.of(context).unfocus();
-                            },
-                            onFieldSubmitted: (value) {
-                              onTapOutsideNameEditor?.call();
-                            },
-                            onChanged: onChangedNameEditor,
-                            decoration: const InputDecoration(
-                              isCollapsed: true,
-                              contentPadding: EdgeInsets.zero,
-                              border: InputBorder.none,
+    return GestureDetector(
+      onSecondaryTapUp: (details) {
+        showItemCardMenu(context, details, onMenuSelected);
+      },
+      child: Tooltip(
+        message: nm,
+        triggerMode: TooltipTriggerMode.manual,
+        waitDuration: const Duration(seconds: 1),
+        child: Card(
+          shape: const RoundedRectangleBorder(
+            borderRadius: kBorderRadius8,
+          ),
+          elevation: isSelected ? 1 : 0,
+          surfaceTintColor: isSelected ? surfaceTint : null,
+          color: isSelected
+              ? Theme.of(context).colorScheme.brightness == Brightness.dark
+                  ? colorVariant
+                  : color
+              : color,
+          margin: EdgeInsets.zero,
+          child: InkWell(
+            borderRadius: kBorderRadius8,
+            hoverColor: colorVariant,
+            focusColor: colorVariant.withOpacity(0.5),
+            onTap: inEditMode ? null : onTap,
+            // onDoubleTap: inEditMode ? null : onDoubleTap,
+            onSecondaryTap: onSecondaryTap,
+            child: Padding(
+              padding: EdgeInsets.only(
+                left: 6,
+                right: isSelected ? 6 : 10,
+                top: 5,
+                bottom: 5,
+              ),
+              child: SizedBox(
+                height: 20,
+                child: Row(
+                  children: [
+                    MethodBox(method: method),
+                    kHSpacer4,
+                    Expanded(
+                      child: inEditMode
+                          ? TextFormField(
+                              key: ValueKey("$id-name"),
+                              initialValue: name,
+                              // controller: controller,
+                              focusNode: focusNode,
+                              //autofocus: true,
+                              style: Theme.of(context).textTheme.bodyMedium,
+                              onTapOutside: (_) {
+                                onTapOutsideNameEditor?.call();
+                                //FocusScope.of(context).unfocus();
+                              },
+                              onFieldSubmitted: (value) {
+                                onTapOutsideNameEditor?.call();
+                              },
+                              onChanged: onChangedNameEditor,
+                              decoration: const InputDecoration(
+                                isCollapsed: true,
+                                contentPadding: EdgeInsets.zero,
+                                border: InputBorder.none,
+                              ),
+                            )
+                          : Text(
+                              nm,
+                              softWrap: false,
+                              overflow: TextOverflow.fade,
                             ),
-                          )
-                        : Text(
-                            nm,
-                            softWrap: false,
-                            overflow: TextOverflow.fade,
-                          ),
-                  ),
-                  Visibility(
-                    visible: isSelected && !inEditMode,
-                    child: SizedBox(
-                      width: 28,
-                      child: ItemCardMenu(
-                        onSelected: onMenuSelected,
+                    ),
+                    Visibility(
+                      visible: isSelected && !inEditMode,
+                      child: SizedBox(
+                        width: 28,
+                        child: ItemCardMenu(
+                          onSelected: onMenuSelected,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
