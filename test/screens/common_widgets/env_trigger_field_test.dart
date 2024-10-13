@@ -45,4 +45,46 @@ void main() {
 
     expect(fieldKey.currentState!.controller.text, updatedValue);
   });
+
+  testWidgets(
+      'Testing EnvironmentTriggerField with empty initialValue clears the controller text',
+      (WidgetTester tester) async {
+    final fieldKey = GlobalKey<EnvironmentTriggerFieldState>();
+    const initialValue = 'initial';
+    const emptyValue = '';
+
+    await tester.pumpWidget(
+      Portal(
+        child: MaterialApp(
+          home: Scaffold(
+            body: EnvironmentTriggerField(
+              key: fieldKey,
+              keyId: 'testKey',
+              initialValue: initialValue,
+            ),
+          ),
+        ),
+      ),
+    );
+
+    Finder field = find.byType(ExtendedTextField);
+    expect(field, findsOneWidget);
+    expect(fieldKey.currentState!.controller.text, initialValue);
+
+    await tester.pumpWidget(
+      Portal(
+        child: MaterialApp(
+          home: Scaffold(
+            body: EnvironmentTriggerField(
+              key: fieldKey,
+              keyId: 'testKey',
+              initialValue: emptyValue,
+            ),
+          ),
+        ),
+      ),
+    );
+
+    expect(fieldKey.currentState!.controller.text, emptyValue);
+  });
 }

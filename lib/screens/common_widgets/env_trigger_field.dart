@@ -51,6 +51,7 @@ class EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
   @override
   void didUpdateWidget(EnvironmentTriggerField oldWidget) {
     super.didUpdateWidget(oldWidget);
+    controller.clear();
     if (oldWidget.initialValue != widget.initialValue) {
       controller.text = widget.initialValue ?? "";
       controller.selection =
