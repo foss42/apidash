@@ -773,6 +773,7 @@ const kLabelAddFormField = "Add Form Field";
 const kLabelNotSent = "Not Sent";
 const kLabelResponse = "Response";
 const kLabelResponseBody = "Response Body";
+const kLabelPreview = "Preview";
 const kTooltipClearResponse = "Clear Response";
 const kHeaderRow = ["Header Name", "Header Value"];
 const kLabelRequestHeaders = "Request Headers";

@@ -7,6 +7,7 @@ import 'package:apidash/utils/utils.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class NotSentWidget extends StatelessWidget {
   const NotSentWidget({super.key});
@@ -193,7 +194,7 @@ class _ResponseTabViewState extends State<ResponseTabView>
   void initState() {
     super.initState();
     _controller = TabController(
-      length: 2,
+      length: 3,
       animationDuration: kTabAnimationDuration,
       vsync: this,
     );
@@ -215,6 +216,9 @@ class _ResponseTabViewState extends State<ResponseTabView>
             ),
             TabLabel(
               text: kLabelHeaders,
+            ),
+            TabLabel(
+              text: kLabelPreview,
             ),
           ],
         ),
@@ -515,6 +519,33 @@ class _BodySuccessState extends State<BodySuccess> {
           ),
         );
       },
+    );
+  }
+}
+
+class ResponsePreview extends StatelessWidget {
+  const ResponsePreview({super.key, required this.responseModel});
+  final responseModel;
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onWebResourceError: (WebResourceError error) {
+            ErrorMessage(message: error.description);
+          },
+        ),
+      );
+
+    // Load HTML content
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.loadHtmlString(responseModel!.body!);
+    });
+
+    return Scaffold(
+      body: WebViewWidget(controller: controller),
     );
   }
 }

@@ -77,6 +77,7 @@ class ResponseTabs extends ConsumerWidget {
       children: const [
         ResponseBodyTab(),
         ResponseHeadersTab(),
+        ResponsePreviewTab(),
       ],
     );
   }
@@ -108,6 +109,19 @@ class ResponseHeadersTab extends ConsumerWidget {
     return ResponseHeaders(
       responseHeaders: responseHeaders,
       requestHeaders: requestHeaders,
+    );
+  }
+}
+
+class ResponsePreviewTab extends ConsumerWidget {
+  const ResponsePreviewTab({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selectedRequestModel = ref.watch(selectedRequestModelProvider);
+    final responseModel = selectedRequestModel?.httpResponseModel;
+    return ResponsePreview(
+      responseModel: responseModel,
     );
   }
 }
