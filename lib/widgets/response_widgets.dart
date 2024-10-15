@@ -529,6 +529,13 @@ class ResponsePreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (responseModel == {} ||
+        responseModel == null ||
+        responseModel.body == null) {
+      return const ErrorMessage(
+          message: '$kNullResponseModelError $kUnexpectedRaiseIssue');
+    }
+
     final controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(
@@ -538,8 +545,13 @@ class ResponsePreview extends StatelessWidget {
           },
         ),
       );
-
-    // Load HTML content
+    controller.setNavigationDelegate(
+      NavigationDelegate(
+        onWebResourceError: (WebResourceError error) {
+          ErrorMessage(message: error.description);
+        },
+      ),
+    );
     WidgetsBinding.instance.addPostFrameCallback((_) {
       controller.loadHtmlString(responseModel!.body!);
     });

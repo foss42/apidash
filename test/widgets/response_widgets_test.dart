@@ -88,7 +88,8 @@ void main() {
         theme: kThemeDataLight,
         home: const Scaffold(
           body: ResponseTabView(
-              selectedId: '1', children: [Text('first'), Text('second')]),
+              selectedId: '1',
+              children: [Text('first'), Text('second'), Text('third')]),
         ),
       ),
     );

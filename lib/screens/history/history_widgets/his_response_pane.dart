@@ -37,6 +37,9 @@ class HistoryResponsePane extends ConsumerWidget {
                   requestHeaders:
                       historyHttpResponseModel?.requestHeaders ?? {},
                 ),
+                ResponsePreview(
+                  responseModel: historyHttpResponseModel ?? {},
+                ),
               ],
             ),
           ),
