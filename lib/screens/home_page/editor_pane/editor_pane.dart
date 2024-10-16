@@ -1,6 +1,9 @@
+import 'package:apidash/consts.dart';
+import 'package:apidash/providers/providers.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:apidash/providers/providers.dart';
+
 import 'editor_default.dart';
 import 'editor_request.dart';
 
@@ -15,7 +18,17 @@ class RequestEditorPane extends ConsumerWidget {
     if (selectedId == null) {
       return const RequestEditorDefault();
     } else {
-      return const RequestEditor();
+      return const Column(
+        children: [
+          RequestTabView(),
+          Expanded(
+            child: Padding(
+              padding: kP8,
+              child: RequestEditor(),
+            ),
+          ),
+        ],
+      );
     }
   }
 }

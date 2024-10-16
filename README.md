@@ -6,7 +6,9 @@
 
 API Dash is a beautiful open-source cross-platform API Client that can help you easily create & customize your API requests, visually inspect responses ([full list of supported mime-types](https://github.com/foss42/apidash?tab=readme-ov-file#mime-types-supported-by-api-dash-response-previewer)) and generate API integration code ([full list](https://github.com/foss42/apidash?tab=readme-ov-file#code-generators)) on the go.
 
-![Image](https://github.com/foss42/apidash/assets/615622/984b3c95-a6a1-48a5-a6ba-5a1e95802b5d)
+| Desktop (macOS, Windows, Linux) | Mobile (iOS, Android) |
+| -- | -- |
+|![Image](https://github.com/foss42/apidash/assets/615622/984b3c95-a6a1-48a5-a6ba-5a1e95802b5d) | ![iphone](https://github.com/user-attachments/assets/0bfdaa0b-b593-4189-8171-156b9941d139) |
 
 ## Download
 
@@ -23,6 +25,13 @@ API Dash can be downloaded from the links below:
         </tr>
     </thead>
     <tbody>
+        <tr>
+            <td>iOS/iPad</td>
+          <td>App Store</td>
+            <td></td>
+            <td></td>
+            <td><a href="https://apps.apple.com/us/app/api-dash-api-client-testing/id6711353348">Link</a></td>
+        </tr>
         <tr>
             <td>macOS</td>
           <td><code>.dmg</code></td>
@@ -130,6 +139,7 @@ API Dash currently supports API integration code generation for the following la
 | Kotlin                 | `okhttp3`     |         |
 | Ruby                   | `faraday`     |         |
 | Ruby                   | `net/http`    |         |
+| Rust                   | `hyper`       |         |
 | Rust                   | `reqwest`     |         |
 | Rust                   | `ureq`        |         |
 | Rust                   | `Actix Client` |        |

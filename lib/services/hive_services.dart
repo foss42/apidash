@@ -3,6 +3,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 const String kDataBox = "apidash-data";
 const String kKeyDataBoxIds = "ids";
+const String kKeyDataBoxTabIds = "tab-ids";
 
 const String kEnvironmentBox = "apidash-environments";
 const String kKeyEnvironmentBoxIds = "environmentIds";
@@ -93,6 +94,7 @@ class HiveHandler {
   late final LazyBox historyLazyBox;
 
   HiveHandler() {
+    debugPrint("Trying to open Hive boxes");
     dataBox = Hive.box(kDataBox);
     environmentBox = Hive.box(kEnvironmentBox);
     historyMetaBox = Hive.box(kHistoryMetaBox);
@@ -101,6 +103,9 @@ class HiveHandler {
 
   dynamic getIds() => dataBox.get(kKeyDataBoxIds);
   Future<void> setIds(List<String>? ids) => dataBox.put(kKeyDataBoxIds, ids);
+
+  dynamic getTabIds() => dataBox.get(kKeyDataBoxTabIds);
+  Future<void> setTabIds(List<String>? ids) => dataBox.put(kKeyDataBoxTabIds, ids);
 
   dynamic getRequestModel(String id) => dataBox.get(id);
   Future<void> setRequestModel(

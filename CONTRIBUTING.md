@@ -91,39 +91,7 @@ flutter run
 
 ### How to run tests?
 
-To run tests execute the following command:
-
-```
-flutter test --coverage
-```
-
-To generate coverage report as html execute:
-
-```
-genhtml coverage/lcov.info -o coverage/html  
-```
-
-**Note**: On macOS you need to have `lcov` installed on your system (`brew install lcov`) to run the above command.
-
-To view the coverage report in the browser for further analysis, execute: 
-
-```
-open coverage/html/index.html
-```
-
-#### Testing a single file
-
-To run tests specified in a single file, execute the following command:
-
-```
-flutter test <file_path>.dart
-```
-
-Example:
-
-```
-flutter test test/widgets/codegen_previewer_test.dart
-```
+Check out [here](https://github.com/foss42/apidash/blob/main/doc/dev_guide/testing.md)
 
 ### How to add a new package to pubspec.yaml?
 
@@ -131,39 +99,4 @@ Instead of copy pasting from pub.dev, it is recommended that you use `flutter pu
 
 ## Platform-specific Additional Instructions
 
-### macOS
-
-Add below keys to `macos/Runner/DebugProfile.entitlements` and `macos/Runner/Release.entitlements`.
-
-```
-	<key>com.apple.security.network.server</key>
-	<true/>
-	<key>com.apple.security.network.client</key>
-	<true/>
-	<key>com.apple.security.files.downloads.read-write</key>
-	<true/>
-	<key>com.apple.security.files.user-selected.read-write</key>
-	<true/>
-```
-
-If not added, you can encounter a network connection error similar to the following while running your Flutter app on macOS:
-
-```
-ClientException with SocketException: Connection failed (OS Error: Operation not permitted, errno = 1)
-```
-
-You can read more [here](https://docs.flutter.dev/platform-integration/macos/building#setting-up-entitlements)
-
-### Android (Work in Progress)
-
-Add the `multiDexEnabled true` line to the `defaultConfig` section at `android/app/build.gradle file`
-
-```
-android {
-    ...
-    defaultConfig {
-        ...
-        multiDexEnabled true
-    }
-}
-```
+Check out [here](https://github.com/foss42/apidash/blob/main/doc/dev_guide/platform_specific_instructions.md)

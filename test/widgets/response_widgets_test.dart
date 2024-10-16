@@ -214,8 +214,13 @@ void main() {
         findsOneWidget);
   });
 
-  testWidgets('Testing Response Body, no mediaType', (tester) async {
-    var responseModelNoHeaders = responseModel.copyWith(headers: null);
+  testWidgets(
+      'Testing Response Body, no mediaType; shoud be default plaintext preview',
+      (tester) async {
+    var responseModelNoHeaders = responseModel.copyWith(
+      headers: null,
+      formattedBody: null,
+    );
     var requestModelNoResponseHeaders =
         testRequestModel.copyWith(httpResponseModel: responseModelNoHeaders);
 
@@ -230,10 +235,8 @@ void main() {
       ),
     );
 
-    expect(
-        find.text(
-            'Unknown Response Content-Type - ${responseModelNoHeaders.contentType}. $kUnexpectedRaiseIssue'),
-        findsOneWidget);
+    expect(find.text("Raw"), findsOneWidget);
+    expect(find.text('{"data":"world"}'), findsOneWidget);
   });
 
   testWidgets('Testing Response Body for No body view', (tester) async {
