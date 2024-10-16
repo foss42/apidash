@@ -1,12 +1,15 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:lottie/lottie.dart';
 import 'package:apidash/utils/utils.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class NotSentWidget extends StatelessWidget {
   const NotSentWidget({super.key});
@@ -53,10 +56,7 @@ class _SendingWidgetState extends State<SendingWidget> {
   void initState() {
     super.initState();
     if (widget.startSendingTime != null) {
-      _millisecondsElapsed =
-          (DateTime.now().difference(widget.startSendingTime!).inMilliseconds ~/
-                  100) *
-              100;
+      _millisecondsElapsed = (DateTime.now().difference(widget.startSendingTime!).inMilliseconds ~/ 100) * 100;
       _timer = Timer.periodic(const Duration(milliseconds: 100), _updateTimer);
     }
   }
@@ -396,6 +396,89 @@ class BodySuccess extends StatefulWidget {
 
 class _BodySuccessState extends State<BodySuccess> {
   int segmentIdx = 0;
+  bool _ctrlPressed = false;
+  late FocusNode _focusNode;
+
+  @override
+  void initState() {
+    _focusNode = FocusNode();
+    _focusNode.requestFocus();
+    HardwareKeyboard.instance.addHandler(_handleKeyEvent);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    HardwareKeyboard.instance.removeHandler(_handleKeyEvent);
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  bool _handleKeyEvent(KeyEvent event) {
+    setState(() {
+      if (event is KeyDownEvent) {
+        _ctrlPressed = event.logicalKey == LogicalKeyboardKey.controlLeft ||
+            event.logicalKey == LogicalKeyboardKey.controlRight;
+      } else if (event is KeyUpEvent) {
+        _ctrlPressed = event.logicalKey != LogicalKeyboardKey.controlLeft &&
+            event.logicalKey != LogicalKeyboardKey.controlRight;
+      }
+    });
+    return true;
+  }
+
+  Future<void> _launchURL(String url) async {
+    Uri urll = Uri.parse(url);
+    if (await canLaunchUrl(urll)) {
+      await launchUrl(urll);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  Widget buildRichText(String text, bool ctrlPressed, void Function(String) launchURL) {
+    final RegExp urlRegExp = RegExp(
+      r'http[s]?:\/\/(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+',
+      caseSensitive: false,
+    );
+
+    final List<TextSpan> textSpans = [];
+
+    text.splitMapJoin(
+      urlRegExp,
+      onMatch: (match) {
+        final isMobile = !kIsWeb &&
+            (Theme.of(context).platform == TargetPlatform.android ||
+                Theme.of(context).platform == TargetPlatform.iOS);
+        textSpans.add(
+          TextSpan(
+            text: match.group(0),
+            style: TextStyle(
+              color: Colors.blue,
+              decoration: isMobile || ctrlPressed
+                  ? TextDecoration.underline
+                  : TextDecoration.none,
+            ),
+            recognizer: isMobile || ctrlPressed
+                ? (TapGestureRecognizer()..onTap = () => launchURL(match.group(0)!))
+                : null,
+          ),
+        );
+        return '';
+      },
+      onNonMatch: (nonMatch) {
+        textSpans.add(TextSpan(text: nonMatch, style: kCodeStyle));
+        return '';
+      },
+    );
+
+    return SelectableText.rich(
+      TextSpan(
+        style: kCodeStyle,
+        children: textSpans,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -403,11 +486,11 @@ class _BodySuccessState extends State<BodySuccess> {
     var codeTheme = Theme.of(context).brightness == Brightness.light
         ? kLightCodeTheme
         : kDarkCodeTheme;
-    final textContainerdecoration = BoxDecoration(
+    final textContainerDecoration = BoxDecoration(
       color: Color.alphaBlend(
           (Theme.of(context).brightness == Brightness.dark
-                  ? Theme.of(context).colorScheme.onPrimaryContainer
-                  : Theme.of(context).colorScheme.primaryContainer)
+              ? Theme.of(context).colorScheme.onPrimaryContainer
+              : Theme.of(context).colorScheme.primaryContainer)
               .withOpacity(kForegroundOpacity),
           Theme.of(context).colorScheme.surface),
       border: Border.all(
@@ -430,36 +513,36 @@ class _BodySuccessState extends State<BodySuccess> {
                   (widget.options == kRawBodyViewOptions)
                       ? const SizedBox()
                       : SegmentedButton<ResponseBodyView>(
-                          style: SegmentedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(horizontal: 8),
-                          ),
-                          selectedIcon: Icon(currentSeg.icon),
-                          segments: widget.options
-                              .map<ButtonSegment<ResponseBodyView>>(
-                                (e) => ButtonSegment<ResponseBodyView>(
-                                  value: e,
-                                  label: Text(e.label),
-                                  icon: constraints.maxWidth >
-                                          kMinWindowSize.width
-                                      ? Icon(e.icon)
-                                      : null,
-                                ),
-                              )
-                              .toList(),
-                          selected: {currentSeg},
-                          onSelectionChanged: (newSelection) {
-                            setState(() {
-                              segmentIdx =
-                                  widget.options.indexOf(newSelection.first);
-                            });
-                          },
-                        ),
+                    style: SegmentedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                    ),
+                    selectedIcon: Icon(currentSeg.icon),
+                    segments: widget.options
+                        .map<ButtonSegment<ResponseBodyView>>(
+                          (e) => ButtonSegment<ResponseBodyView>(
+                        value: e,
+                        label: Text(e.label),
+                        icon: constraints.maxWidth >
+                            kMinWindowSize.width
+                            ? Icon(e.icon)
+                            : null,
+                      ),
+                    )
+                        .toList(),
+                    selected: {currentSeg},
+                    onSelectionChanged: (newSelection) {
+                      setState(() {
+                        segmentIdx =
+                            widget.options.indexOf(newSelection.first);
+                      });
+                    },
+                  ),
                   const Spacer(),
                   kCodeRawBodyViewOptions.contains(currentSeg)
                       ? CopyButton(
-                          toCopy: widget.formattedBody ?? widget.body,
-                          showLabel: showLabel,
-                        )
+                    toCopy: widget.formattedBody ?? widget.body,
+                    showLabel: showLabel,
+                  )
                       : const SizedBox(),
                   SaveInDownloadsButton(
                     content: widget.bytes,
@@ -471,45 +554,59 @@ class _BodySuccessState extends State<BodySuccess> {
               kVSpacer10,
               switch (currentSeg) {
                 ResponseBodyView.preview || ResponseBodyView.none => Expanded(
-                    child: Container(
-                      width: double.maxFinite,
-                      padding: kP8,
-                      decoration: textContainerdecoration,
-                      child: Previewer(
-                        bytes: widget.bytes,
-                        body: widget.body,
-                        type: widget.mediaType.type,
-                        subtype: widget.mediaType.subtype,
-                        hasRaw: widget.options.contains(ResponseBodyView.raw),
-                      ),
+                  child: Container(
+                    width: double.maxFinite,
+                    padding: kP8,
+                    decoration: textContainerDecoration,
+                    child: Previewer(
+                      bytes: widget.bytes,
+                      body: widget.body,
+                      type: widget.mediaType.type,
+                      subtype: widget.mediaType.subtype,
+                      hasRaw: widget.options.contains(ResponseBodyView.raw),
                     ),
                   ),
+                ),
                 ResponseBodyView.code => Expanded(
-                    child: Container(
-                      width: double.maxFinite,
-                      padding: kP8,
-                      decoration: textContainerdecoration,
-                      child: CodePreviewer(
-                        code: widget.formattedBody ?? widget.body,
-                        theme: codeTheme,
-                        language: widget.highlightLanguage,
-                        textStyle: kCodeStyle,
-                      ),
+                  child: Container(
+                    width: double.maxFinite,
+                    padding: kP8,
+                    decoration: textContainerDecoration,
+                    child: CodePreviewer(
+                      code: widget.formattedBody ?? widget.body,
+                      theme: codeTheme,
+                      language: widget.highlightLanguage,
+                      textStyle: kCodeStyle,
                     ),
                   ),
+                ),
                 ResponseBodyView.raw => Expanded(
-                    child: Container(
-                      width: double.maxFinite,
-                      padding: kP8,
-                      decoration: textContainerdecoration,
-                      child: SingleChildScrollView(
-                        child: SelectableText(
-                          widget.formattedBody ?? widget.body,
-                          style: kCodeStyle,
+                  child: Container(
+                    width: double.maxFinite,
+                    padding: kP8,
+                    decoration: textContainerDecoration,
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.vertical,
+                      child: GestureDetector(
+                        onTap: () {
+                          if (!kIsWeb && (Theme.of(context).platform == TargetPlatform.android || Theme.of(context).platform == TargetPlatform.iOS)) {
+                            setState(() {
+                              _ctrlPressed = false;
+                            });
+                          }
+                        },
+                        child: Focus(
+                          focusNode: _focusNode,
+                          autofocus: true,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: buildRichText(widget.formattedBody ?? widget.body, _ctrlPressed, _launchURL),
+                          ),
                         ),
                       ),
                     ),
                   ),
+                ),
               }
             ],
           ),
