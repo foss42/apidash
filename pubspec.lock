@@ -1138,11 +1138,12 @@ packages:
   printing:
     dependency: "direct main"
     description:
-      name: printing
-      sha256: de1889f30b34029fc46e5de6a9841498850b23d32942a9ee810ca36b0cb1b234
-      url: "https://pub.dev"
-    source: hosted
-    version: "5.13.2"
+      path: printing
+      ref: "390a3f50805db272c0a4f475cbada2468a44f28f"
+      resolved-ref: "390a3f50805db272c0a4f475cbada2468a44f28f"
+      url: "https://github.com/hmbenhaim/dart_pdf.git"
+    source: git
+    version: "5.13.4"
   process:
     dependency: transitive
     description:
