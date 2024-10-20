@@ -223,6 +223,9 @@ class RequestItem extends ConsumerWidget {
         ref.read(selectedIdStateProvider.notifier).state = id;
         kHomeScaffoldKey.currentState?.closeDrawer();
       },
+      onSecondaryTap: () {
+        ref.read(selectedIdStateProvider.notifier).state = id;
+      },
       // onDoubleTap: () {
       //   ref.read(selectedIdStateProvider.notifier).state = id;
       //   ref.read(selectedIdEditStateProvider.notifier).state = id;
