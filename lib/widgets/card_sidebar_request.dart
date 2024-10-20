@@ -117,15 +117,17 @@ class SidebarRequestCard extends StatelessWidget {
                             overflow: TextOverflow.fade,
                           ),
                   ),
-                  Visibility(
-                    visible: isSelected && !inEditMode,
-                    child: SizedBox(
-                      width: 28,
-                      child: ItemCardMenu(
-                        onSelected: onMenuSelected,
-                      ),
-                    ),
-                  ),
+                  kIsMobile
+                      ? Visibility(
+                          visible: isSelected && !inEditMode,
+                          child: SizedBox(
+                            width: 28,
+                            child: ItemCardMenu(
+                              onSelected: onMenuSelected,
+                            ),
+                          ),
+                        )
+                      : kSizedBoxEmpty,
                 ],
               ),
             ),
