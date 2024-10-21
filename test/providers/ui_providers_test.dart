@@ -13,6 +13,7 @@ import 'package:apidash/screens/settings_page.dart';
 import 'package:apidash/screens/history/history_page.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:extended_text_field/extended_text_field.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_portal/flutter_portal.dart';
@@ -279,7 +280,7 @@ void main() {
     });
 
     testWidgets(
-        'selectedIdEditStateProvider should not be null after rename button has been tapped',
+        'selectedIdEditStateProvider should not be null after Duplicate button has been tapped',
         (tester) async {
       await tester.pumpWidget(
         ProviderScope(
@@ -304,7 +305,11 @@ void main() {
       await tester.pump();
       await tester.tap(find.byType(RequestItem));
       await tester.pump();
-      await tester.tap(find.byIcon(Icons.more_vert).at(1));
+      //await tester.tap(find.byIcon(Icons.more_vert).at(1));
+      await tester.tap(
+        find.byType(RequestItem),
+        buttons: kSecondaryButton,
+      );
       await tester.pumpAndSettle();
 
       // Tap on the "Duplicate" option in the menu
@@ -344,7 +349,11 @@ void main() {
       await tester.pump();
       await tester.tap(find.byType(RequestItem));
       await tester.pump();
-      await tester.tap(find.byIcon(Icons.more_vert).at(1));
+      // await tester.tap(find.byIcon(Icons.more_vert).at(1));
+      await tester.tap(
+        find.byType(RequestItem),
+        buttons: kSecondaryButton,
+      );
       await tester.pumpAndSettle();
 
       // Tap on the "Rename" option in the menu
