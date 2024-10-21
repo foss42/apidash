@@ -98,8 +98,8 @@ class SidebarRequestCard extends StatelessWidget {
                             //autofocus: true,
                             style: Theme.of(context).textTheme.bodyMedium,
                             onTapOutside: (_) {
+                              FocusScope.of(context).unfocus();
                               onTapOutsideNameEditor?.call();
-                              //FocusScope.of(context).unfocus();
                             },
                             onFieldSubmitted: (value) {
                               onTapOutsideNameEditor?.call();
