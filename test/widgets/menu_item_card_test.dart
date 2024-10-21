@@ -49,4 +49,32 @@ void main() {
 
     expect(changedValue, ItemMenuOption.duplicate);
   });
+
+  testWidgets('showItemCardMenu shows the menu at the right position',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Builder(
+            builder: (BuildContext context) {
+              return GestureDetector(
+                onTapUp: (details) {
+                  showItemCardMenu(
+                      context, details, (ItemMenuOption option) {});
+                },
+                child: const Text('Show Menu'),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('Show Menu'));
+    await tester.pumpAndSettle();
+
+    for (var option in ItemMenuOption.values) {
+      expect(find.text(option.label), findsOneWidget);
+    }
+  });
 }

@@ -172,6 +172,7 @@ const kPb15 = EdgeInsets.only(
 const kPb70 = EdgeInsets.only(
   bottom: 70,
 );
+const kSizedBoxEmpty = SizedBox();
 const kHSpacer2 = SizedBox(width: 2);
 const kHSpacer4 = SizedBox(width: 4);
 const kHSpacer5 = SizedBox(width: 5);

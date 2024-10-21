@@ -41,3 +41,29 @@ class ItemCardMenu extends StatelessWidget {
     );
   }
 }
+
+/// Open the item card menu where the right click has been released
+Future<void> showItemCardMenu(
+  BuildContext context,
+  TapUpDetails details,
+  Function(ItemMenuOption)? onSelected,
+) async {
+  showMenu(
+    context: context,
+    position: RelativeRect.fromLTRB(
+      details.globalPosition.dx,
+      details.globalPosition.dy,
+      details.globalPosition.dx,
+      details.globalPosition.dy,
+    ),
+    items: ItemMenuOption.values
+        .map<PopupMenuEntry<ItemMenuOption>>(
+          (e) => PopupMenuItem<ItemMenuOption>(
+            onTap: () => onSelected?.call(e),
+            value: e,
+            child: Text(e.label),
+          ),
+        )
+        .toList(),
+  );
+}
