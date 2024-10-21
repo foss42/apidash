@@ -190,7 +190,7 @@ class _RequestListState extends ConsumerState<RequestList> {
                     ),
                   );
                 }
-                return const SizedBox();
+                return kSizedBoxEmpty;
               }).toList(),
             ),
     );

@@ -153,7 +153,7 @@ class EnvironmentsList extends HookConsumerWidget {
                           ),
                         );
                       }
-                      return const SizedBox();
+                      return kSizedBoxEmpty;
                     }).toList(),
                   ),
           ),
