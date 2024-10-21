@@ -349,11 +349,7 @@ void main() {
       await tester.pump();
       await tester.tap(find.byType(RequestItem));
       await tester.pump();
-      // await tester.tap(find.byIcon(Icons.more_vert).at(1));
-      await tester.tap(
-        find.byType(RequestItem),
-        buttons: kSecondaryButton,
-      );
+      await tester.tap(find.byIcon(Icons.more_vert).at(1));
       await tester.pumpAndSettle();
 
       // Tap on the "Rename" option in the menu

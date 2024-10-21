@@ -96,6 +96,7 @@ class SidebarEnvironmentCard extends StatelessWidget {
                             focusNode: focusNode,
                             style: Theme.of(context).textTheme.bodyMedium,
                             onTapOutside: (_) {
+                              FocusScope.of(context).unfocus();
                               onTapOutsideNameEditor?.call();
                             },
                             onFieldSubmitted: (value) {
