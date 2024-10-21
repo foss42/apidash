@@ -115,18 +115,24 @@ const kPv8 = EdgeInsets.symmetric(vertical: 8);
 const kPv10 = EdgeInsets.symmetric(vertical: 10);
 const kPv20 = EdgeInsets.symmetric(vertical: 20);
 const kPh2 = EdgeInsets.symmetric(horizontal: 2);
+const kPt24o8 = EdgeInsets.only(top: 24, left: 8.0, right: 8.0, bottom: 8.0);
+const kPt24 = EdgeInsets.only(top: 24);
+const kPt8 = EdgeInsets.only(top: 8);
 const kPt28o8 = EdgeInsets.only(top: 28, left: 8.0, right: 8.0, bottom: 8.0);
 const kPt5o10 =
     EdgeInsets.only(left: 10.0, right: 10.0, top: 5.0, bottom: 10.0);
 const kPh4 = EdgeInsets.symmetric(horizontal: 4);
 const kPh8 = EdgeInsets.symmetric(horizontal: 8);
+const kPh20 = EdgeInsets.symmetric(
+  horizontal: 20,
+);
+// const kPh20t3 = EdgeInsets.only(
 const kPh12 = EdgeInsets.symmetric(horizontal: 12);
-const kPh20 = EdgeInsets.symmetric(horizontal: 20);
 const kPh24 = EdgeInsets.symmetric(horizontal: 24);
 const kPh20t40 = EdgeInsets.only(
   left: 20,
   right: 20,
-  top: 40,
+  top: 3
 );
 const kPs0o6 = EdgeInsets.only(
   left: 0,
@@ -138,9 +144,7 @@ const kPh60 = EdgeInsets.symmetric(horizontal: 60);
 const kPh60v60 = EdgeInsets.symmetric(vertical: 60, horizontal: 60);
 const kP24CollectionPane = EdgeInsets.only(
   top: 24,
-  left: 4.0,
-  //right: 4.0,
-  // bottom: 8.0,
+  left: 8.0,
 );
 const kP8CollectionPane = EdgeInsets.only(
   top: 8.0,
@@ -148,14 +152,8 @@ const kP8CollectionPane = EdgeInsets.only(
   //right: 4.0,
   // bottom: 8.0,
 );
-const kPt8 = EdgeInsets.only(
-  top: 8,
-);
 const kPt20 = EdgeInsets.only(
   top: 20,
-);
-const kPt24 = EdgeInsets.only(
-  top: 24,
 );
 const kPt28 = EdgeInsets.only(
   top: 28,
