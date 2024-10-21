@@ -10,6 +10,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  apidash_design_system:
+    path: packages/apidash_design_system
   code_builder: ^4.10.0
   collection: ^1.18.0
   csv: ^6.0.0
@@ -31,7 +33,6 @@ dependencies:
   flutter_typeahead: ^5.2.0
   freezed_annotation: ^2.4.1
   fvp: ^0.26.1
-  google_fonts: ^6.2.1
   highlighter: ^0.1.1
   hive_flutter: ^1.1.0
   hooks_riverpod: ^2.5.2
@@ -98,6 +99,4 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - google_fonts/
     - assets/
-    - assets/intro/
