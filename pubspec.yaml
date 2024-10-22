@@ -90,6 +90,7 @@ dev_dependencies:
   json_serializable: ^6.7.1
   integration_test:
     sdk: flutter
+  melos: ^6.2.0
   spot: ^0.13.0
   test: ^1.25.2
 
