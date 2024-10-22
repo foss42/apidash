@@ -1,7 +1,6 @@
+import 'package:apidash_core/apidash_core.dart';
 import 'package:test/test.dart';
 import 'package:apidash/models/models.dart';
-import 'package:apidash/consts.dart';
-
 import 'history_models.dart';
 import 'http_request_models.dart';
 import 'http_response_models.dart';

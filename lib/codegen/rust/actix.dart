@@ -1,10 +1,8 @@
 import 'dart:io';
 import 'dart:convert';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:jinja/jinja.dart' as jj;
-import 'package:apidash/consts.dart';
-import 'package:apidash/utils/utils.dart'
-    show getNewUuid, getValidRequestUri, stripUriParams;
-import 'package:apidash/models/models.dart';
+import '../../utils/utils.dart';
 
 class RustActixCodeGen {
   final String kTemplateStart = """

@@ -1,6 +1,5 @@
-import 'package:apidash/consts.dart';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:test/test.dart';
-import 'package:apidash/models/form_data_model.dart';
 
 void main() {
   const fdmRow1 = FormDataModel(

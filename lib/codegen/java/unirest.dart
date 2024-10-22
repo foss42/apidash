@@ -1,7 +1,5 @@
+import 'package:apidash_core/apidash_core.dart';
 import 'package:jinja/jinja.dart' as jj;
-import 'package:apidash/models/models.dart';
-import 'package:apidash/utils/http_utils.dart';
-import 'package:apidash/consts.dart';
 
 class JavaUnirestGen {
   final String kStringUnirestImports = '''

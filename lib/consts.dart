@@ -1,7 +1,6 @@
 import 'dart:io';
-import 'dart:convert';
 import 'package:apidash_design_system/apidash_design_system.dart';
-export 'package:apidash_design_system/apidash_design_system.dart';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -73,7 +72,6 @@ final kIconRemoveLight = Icon(
 );
 
 const kCodePreviewLinesLimit = 500;
-const kCodeCharsPerLineLimit = 200;
 
 enum HistoryRetentionPeriod {
   oneWeek("1 Week", Icons.calendar_view_week_rounded),
@@ -102,25 +100,9 @@ enum SidebarMenuOption {
   final String label;
 }
 
-enum HTTPVerb { get, head, post, put, patch, delete }
-
-enum FormDataType { text, file }
-
 enum EnvironmentVariableType { variable, secret }
 
 final kEnvVarRegEx = RegExp(r'{{([^{}]*)}}');
-
-const kSupportedUriSchemes = ["https", "http"];
-const kDefaultUriScheme = "https";
-const kMethodsWithBody = [
-  HTTPVerb.post,
-  HTTPVerb.put,
-  HTTPVerb.patch,
-  HTTPVerb.delete,
-];
-
-const kDefaultHttpMethod = HTTPVerb.get;
-const kDefaultContentType = ContentType.json;
 
 enum CodegenLanguage {
   curl("cURL", "bash", "curl"),
@@ -167,58 +149,7 @@ enum ImportFormat {
   final String label;
 }
 
-const JsonEncoder kJsonEncoder = JsonEncoder.withIndent('  ');
-const JsonDecoder kJsonDecoder = JsonDecoder();
-const LineSplitter kSplitter = LineSplitter();
-
 const String kGlobalEnvironmentId = "global";
-
-const kHeaderContentType = "Content-Type";
-
-const kTypeApplication = 'application';
-// application
-const kSubTypeJson = 'json';
-const kSubTypeOctetStream = 'octet-stream';
-const kSubTypePdf = 'pdf';
-const kSubTypeSql = 'sql';
-const kSubTypeXml = 'xml';
-const kSubTypeYaml = 'yaml';
-const kSubTypeXYaml = 'x-yaml';
-const kSubTypeYml = 'x-yml';
-const kSubTypeXWwwFormUrlencoded = 'x-www-form-urlencoded';
-
-const kTypeText = 'text';
-// text
-const kSubTypeCss = 'css';
-const kSubTypeCsv = 'csv';
-const kSubTypeHtml = 'html';
-const kSubTypeJavascript = 'javascript';
-const kSubTypeMarkdown = 'markdown';
-const kSubTypePlain = 'plain';
-const kSubTypeTextXml = 'xml';
-const kSubTypeTextYaml = 'yaml';
-const kSubTypeTextYml = 'yml';
-
-const kTypeImage = 'image';
-//image
-const kSubTypeSvg = 'svg+xml';
-
-const kTypeAudio = 'audio';
-const kTypeVideo = 'video';
-
-const kTypeMultipart = "multipart";
-const kSubTypeFormData = "form-data";
-
-const kSubTypeDefaultViewOptions = 'all';
-
-enum ContentType {
-  json("$kTypeApplication/$kSubTypeJson"),
-  text("$kTypeText/$kSubTypePlain"),
-  formdata("$kTypeMultipart/$kSubTypeFormData");
-
-  const ContentType(this.header);
-  final String header;
-}
 
 enum ResponseBodyView {
   preview("Preview", Icons.visibility_rounded),

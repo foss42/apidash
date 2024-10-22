@@ -1,8 +1,6 @@
+import 'package:apidash_core/apidash_core.dart';
 import 'package:jinja/jinja.dart' as jj;
-import 'package:apidash/utils/utils.dart'
-    show getValidRequestUri, requestModelToHARJsonRequest;
-import 'package:apidash/models/models.dart';
-import 'package:apidash/consts.dart';
+import '../../utils/har_utils.dart';
 
 class JavaHttpClientCodeGen {
   final String kTemplateStart = """import java.net.URI;

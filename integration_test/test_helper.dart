@@ -1,10 +1,10 @@
 import 'package:apidash/models/settings_model.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/services/services.dart';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:apidash/main.dart' as app;
 import 'package:apidash/app.dart';

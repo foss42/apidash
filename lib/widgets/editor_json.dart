@@ -1,8 +1,8 @@
 import 'dart:math' as math;
+import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:json_text_field/json_text_field.dart';
-import 'package:apidash/consts.dart';
 
 class JsonTextFieldEditor extends StatefulWidget {
   const JsonTextFieldEditor({

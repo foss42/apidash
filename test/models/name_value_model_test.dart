@@ -1,5 +1,5 @@
+import 'package:apidash_core/apidash_core.dart';
 import 'package:test/test.dart';
-import 'package:apidash/models/name_value_model.dart';
 
 void main() {
   const nmRow1 = NameValueModel(name: "harry", value: 23);

@@ -1,6 +1,6 @@
-import 'package:apidash/consts.dart';
 import 'package:apidash/screens/home_page/editor_pane/details_card/request_pane/request_body.dart';
 import 'package:apidash/widgets/editor.dart';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

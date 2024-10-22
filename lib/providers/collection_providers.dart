@@ -1,9 +1,9 @@
+import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:http/http.dart' as http;
 import 'package:apidash/consts.dart';
 import 'providers.dart';
 import '../models/models.dart';
-import '../services/services.dart' show hiveHandler, HiveHandler, request;
+import '../services/services.dart' show hiveHandler, HiveHandler;
 import '../utils/utils.dart'
     show getNewUuid, collectionToHAR, substituteHttpRequestModel;
 
@@ -259,7 +259,7 @@ class CollectionStateNotifier
     );
     state = map;
 
-    (http.Response?, Duration?, String?)? responseRec = await request(
+    (HttpResponse?, Duration?, String?)? responseRec = await request(
       substitutedHttpRequestModel,
       defaultUriScheme: defaultUriScheme,
     );

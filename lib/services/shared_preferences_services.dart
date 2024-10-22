@@ -1,6 +1,6 @@
-import 'package:apidash/consts.dart';
-import 'package:apidash/models/models.dart';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../models/models.dart';
 
 const String kSharedPrefSettingsKey = 'apidash-settings';
 

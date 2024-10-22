@@ -1,9 +1,7 @@
 import 'dart:io';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:jinja/jinja.dart' as jj;
-import 'package:apidash/consts.dart';
-import 'package:apidash/utils/utils.dart'
-    show getValidRequestUri, stripUriParams, getFilenameFromPath;
-import 'package:apidash/models/models.dart';
+import '../../utils/utils.dart';
 import '../codegen_utils.dart';
 
 class PythonRequestsCodeGen {

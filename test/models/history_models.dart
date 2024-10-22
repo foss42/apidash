@@ -1,6 +1,6 @@
-import 'package:apidash/consts.dart';
 import 'package:apidash/models/models.dart'
     show HistoryMetaModel, HistoryRequestModel;
+import 'package:apidash_core/apidash_core.dart';
 
 import 'http_request_models.dart';
 import 'http_response_models.dart';

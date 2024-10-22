@@ -1,9 +1,6 @@
 import 'dart:convert';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:jinja/jinja.dart' as jj;
-import 'package:apidash/consts.dart';
-import 'package:apidash/models/models.dart';
-import 'package:apidash/extensions/extensions.dart';
-import 'package:apidash/utils/http_utils.dart';
 
 class CSharpRestSharp {
   String kStringImports = """

@@ -3,9 +3,9 @@
 
 import 'dart:convert';
 import 'package:apidash/consts.dart';
-import 'package:apidash/utils/utils.dart'
-    show getValidRequestUri, getNewUuid, getFilenameFromPath;
+import 'package:apidash/utils/utils.dart' show getNewUuid, getFilenameFromPath;
 import 'package:apidash/models/models.dart';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 Future<Map<String, dynamic>> collectionToHAR(

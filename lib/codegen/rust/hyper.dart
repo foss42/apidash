@@ -1,8 +1,6 @@
 import 'dart:core';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:jinja/jinja.dart' as jj;
-import 'package:apidash/consts.dart';
-import 'package:apidash/utils/utils.dart' show getValidRequestUri;
-import 'package:apidash/models/models.dart';
 
 class RustHyperCodeGen {
   final String kTemplateStart = """

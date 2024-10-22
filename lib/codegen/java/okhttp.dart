@@ -1,9 +1,6 @@
 import 'dart:convert';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:jinja/jinja.dart' as jj;
-import 'package:apidash/utils/utils.dart'
-    show getValidRequestUri, stripUriParams;
-import 'package:apidash/models/models.dart';
-import 'package:apidash/consts.dart';
 
 class JavaOkHttpCodeGen {
   final String kTemplateStart = """

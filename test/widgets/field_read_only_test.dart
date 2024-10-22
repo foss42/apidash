@@ -1,7 +1,7 @@
 import 'package:apidash/widgets/field_read_only.dart';
+import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:apidash/consts.dart';
 
 void main() {
   testWidgets('Testing ReadOnlyTextField displays initial value and decoration',

@@ -1,7 +1,6 @@
+import 'package:apidash_core/apidash_core.dart';
 import 'package:test/test.dart';
-import 'package:http_parser/http_parser.dart';
 import 'package:apidash/utils/http_utils.dart';
-import 'package:apidash/models/name_value_model.dart';
 import 'package:apidash/consts.dart';
 import '../test_utilities.dart';
 

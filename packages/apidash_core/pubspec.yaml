@@ -2,6 +2,7 @@ name: apidash_core
 description: "API Dash Core"
 version: 0.0.1
 homepage:
+publish_to: none
 
 environment:
   sdk: ^3.5.3
@@ -10,7 +11,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  collection: ^1.18.0
   freezed_annotation: ^2.4.1
+  http: ^1.2.1
+  http_parser: ^4.0.2
+  xml: ^6.3.0
 
 dev_dependencies:
   flutter_test:
