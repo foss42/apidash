@@ -106,7 +106,7 @@ class _RequestListState extends ConsumerState<RequestList> {
 
   @override
   Widget build(BuildContext context) {
-    final requestSequence = ref.watch(requestSequenceProvider);
+    final requestSequence = ref.watch(requestSequenceProvider) as List<String>;
     final requestItems = ref.watch(collectionStateNotifierProvider)!;
     final alwaysShowCollectionPaneScrollbar = ref.watch(settingsProvider
         .select((value) => value.alwaysShowCollectionPaneScrollbar));
@@ -219,7 +219,7 @@ class RequestItem extends ConsumerWidget {
       onTap: () {
         ref.read(selectedIdStateProvider.notifier).state = id;
         final tabs = ref.read(requestTabSequenceProvider);
-        if(!tabs.contains(id)){
+        if (!tabs.contains(id)) {
           tabs.add(id);
           ref.read(requestTabSequenceProvider.notifier).state = [...tabs];
         }

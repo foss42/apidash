@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_portal/flutter_portal.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,14 +12,15 @@ import 'extensions/extensions.dart';
 import 'screens/screens.dart';
 import 'consts.dart';
 
-class App extends ConsumerStatefulWidget {
-  const App({super.key});
+class WindowManagerApp extends ConsumerStatefulWidget {
+  const WindowManagerApp({super.key});
 
   @override
-  ConsumerState<App> createState() => _AppState();
+  ConsumerState<WindowManagerApp> createState() => _WindowManagerAppState();
 }
 
-class _AppState extends ConsumerState<App> with WindowListener {
+class _WindowManagerAppState extends ConsumerState<WindowManagerApp>
+    with WindowListener {
   @override
   void initState() {
     super.initState();
@@ -98,6 +100,26 @@ class _AppState extends ConsumerState<App> with WindowListener {
   @override
   Widget build(BuildContext context) {
     return context.isMediumWindow ? const MobileDashboard() : const Dashboard();
+  }
+}
+
+class App extends ConsumerStatefulWidget {
+  const App({super.key});
+
+  @override
+  ConsumerState<App> createState() => _AppState();
+}
+
+class _AppState extends ConsumerState<App> {
+  @override
+  Widget build(BuildContext context) {
+    if (kIsWeb) {
+      return context.isMediumWindow
+          ? const MobileDashboard()
+          : const Dashboard();
+    }
+
+    return WindowManagerApp();
   }
 }
 

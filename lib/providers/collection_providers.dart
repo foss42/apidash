@@ -21,12 +21,12 @@ final selectedRequestModelProvider = StateProvider<RequestModel?>((ref) {
 
 final requestSequenceProvider = StateProvider<List<String>>((ref) {
   var ids = hiveHandler.getIds();
-  return ids ?? [];
+  return List<String>.from(ids);
 });
 
 final requestTabSequenceProvider = StateProvider<List<String>>((ref) {
   var ids = hiveHandler.getTabIds();
-  return ids ?? [];
+  return List<String>.from(ids is List<String> ? ids : []);
 });
 
 final StateNotifierProvider<CollectionStateNotifier, Map<String, RequestModel>?>
@@ -97,7 +97,7 @@ class CollectionStateNotifier
     ref.read(hasUnsavedChangesProvider.notifier).state = true;
   }
 
-  void reorderTab(int oldIdx, int newIdx){
+  void reorderTab(int oldIdx, int newIdx) {
     var itemIds = ref.read(requestTabSequenceProvider);
     final itemId = itemIds.removeAt(oldIdx);
     itemIds.insert(newIdx, itemId);

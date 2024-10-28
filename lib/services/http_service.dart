@@ -6,6 +6,9 @@ import 'package:apidash/utils/utils.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
 
+const String corsProxyUrl =
+    'https://cors-anywhere.herokuapp.com/'; // Example proxy URL
+
 Future<(http.Response?, Duration?, String?)> request(
   HttpRequestModel requestModel, {
   String defaultUriScheme = kDefaultUriScheme,
@@ -15,15 +18,25 @@ Future<(http.Response?, Duration?, String?)> request(
     requestModel.enabledParams,
     defaultUriScheme: defaultUriScheme,
   );
+
   if (uriRec.$1 != null) {
     Uri requestUrl = uriRec.$1!;
+
+    // Prepend CORS proxy URL for cross-origin requests
+    final isCrossOrigin = requestUrl.host != Uri.parse(defaultUriScheme).host;
+    if (isCrossOrigin) {
+      requestUrl = Uri.parse('$corsProxyUrl$requestUrl');
+    }
+
     Map<String, String> headers = requestModel.enabledHeadersMap;
     http.Response response;
     String? body;
+
     try {
       Stopwatch stopwatch = Stopwatch()..start();
       var isMultiPartRequest =
           requestModel.bodyContentType == ContentType.formdata;
+
       if (kMethodsWithBody.contains(requestModel.method)) {
         var requestBody = requestModel.body;
         if (requestBody != null && !isMultiPartRequest) {
@@ -37,6 +50,7 @@ Future<(http.Response?, Duration?, String?)> request(
             }
           }
         }
+
         if (isMultiPartRequest) {
           var multiPartRequest = http.MultipartRequest(
             requestModel.method.name.toUpperCase(),
@@ -63,6 +77,7 @@ Future<(http.Response?, Duration?, String?)> request(
           return (convertedMultiPartResponse, stopwatch.elapsed, null);
         }
       }
+
       switch (requestModel.method) {
         case HTTPVerb.get:
           response = await http.get(requestUrl, headers: headers);

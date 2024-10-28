@@ -41,7 +41,7 @@ final StateNotifierProvider<EnvironmentsStateNotifier,
 
 final environmentSequenceProvider = StateProvider<List<String>>((ref) {
   var ids = hiveHandler.getEnvironmentIds();
-  return ids ?? [kGlobalEnvironmentId];
+  return ids != null && ids is List<String> ? ids : [kGlobalEnvironmentId];
 });
 
 class EnvironmentsStateNotifier
@@ -63,7 +63,8 @@ class EnvironmentsStateNotifier
   final HiveHandler hiveHandler;
 
   bool loadEnvironments() {
-    List<String>? environmentIds = hiveHandler.getEnvironmentIds();
+    final envId = hiveHandler.getEnvironmentIds();
+    List<String>? environmentIds = envId is List<String> ? envId : null;
     if (environmentIds == null || environmentIds.isEmpty) {
       String globalId = kGlobalEnvironmentId;
       const globalEnvironment = EnvironmentModel(

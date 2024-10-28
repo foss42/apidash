@@ -1,0 +1,11 @@
+directories:
+  output: ../../dist
+  buildResources: build
+asar: true
+extraResources:
+  - filter:
+      - ./middleware/db/data.sqlite3
+linux:
+  category: Utility
+files: []
+electronVersion: 21.4.4
