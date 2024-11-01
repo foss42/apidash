@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart' show mergeMaps;
+import 'package:flutter/foundation.dart';
 import '../consts.dart';
 import '../models/name_value_model.dart';
 import 'http_request_utils.dart';
@@ -28,6 +29,10 @@ String stripUrlParams(String url) {
   url = url?.trim();
   if (url == null || url == "") {
     return (null, "URL is missing!");
+  }
+  final localhostRegex = RegExp(r'^localhost(:\d+)?(/.*)?$');
+  if (localhostRegex.hasMatch(url)) {
+    url = 'http://$url';
   }
   Uri? uri = Uri.tryParse(url);
   if (uri == null) {
