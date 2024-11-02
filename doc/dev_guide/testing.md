@@ -12,10 +12,15 @@ Bootstrap to initialize the workspace, link local packages together and install 
 melos bootstrap
 ```
 
-Get all dependencies
+Get all dependencies of packages
 
 ```
 melos pub-get
+```
+
+Get all dependencies of main app
+
+```
 flutter pub get
 ```
 
@@ -23,6 +28,11 @@ To run tests execute the following command:
 
 ```
 flutter test --coverage
+```
+
+followed by 
+
+```
 melos test
 ```
 
