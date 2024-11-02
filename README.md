@@ -235,6 +235,10 @@ Just click on the [Issue tab](https://github.com/foss42/apidash/issues) to raise
 
 Please find the Roadmap for API Dash [here](https://github.com/foss42/apidash/blob/main/ROADMAP.md). 
 
+## Documentation
+
+All docs are currently available in the [docs](https://github.com/foss42/apidash/blob/main/docs/) folder.
+
 ## Contribute to API Dash
 
 You can contribute to API Dash in any or all of the following ways:
