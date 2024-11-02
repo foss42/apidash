@@ -10,5 +10,5 @@
 - [ ] API Workflow Builder (https://github.com/foss42/apidash/issues/120)
 - [x] Integration Testing (https://github.com/foss42/apidash/issues/119)
 - [ ] Remaining Code Generators (https://github.com/foss42/apidash/discussions/80)
-- [ ] Embedded WebView in Response Previewer
+- [ ] Embedded WebView in Response Previewer (https://github.com/foss42/apidash/issues/155)
 - [ ] Figuring out how to build for various Linux packaging formats (https://github.com/foss42/apidash/discussions/240)
