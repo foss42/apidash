@@ -1,9 +1,29 @@
 # How to run tests?
 
+As API Dash is a monorepo with multi-package architecture we use [melos](https://pub.dev/packages/melos). 
+
+```
+dart pub global activate melos
+```
+
+Bootstrap to initialize the workspace, link local packages together and install remaining package dependencies. 
+
+```
+melos bootstrap
+```
+
+Get all dependencies
+
+```
+melos pub-get
+flutter pub get
+```
+
 To run tests execute the following command:
 
 ```
 flutter test --coverage
+melos test
 ```
 
 To generate coverage report as html execute:
