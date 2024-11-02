@@ -29,6 +29,39 @@ void main() {
   });
 
   group("Testing getValidRequestUri", () {
+    test('Testing getValidRequestUri with localhost URL without port or path',
+        () {
+      String url1 = "localhost";
+      Uri uri1Expected = Uri(scheme: 'http', host: 'localhost');
+      expect(getValidRequestUri(url1, []), (uri1Expected, null));
+    });
+
+    test('Testing getValidRequestUri with localhost URL with port', () {
+      String url1 = "localhost:8080";
+      Uri uri1Expected = Uri(scheme: 'http', host: 'localhost', port: 8080);
+      expect(getValidRequestUri(url1, []), (uri1Expected, null));
+    });
+
+    test('Testing getValidRequestUri with localhost URL with port and path',
+        () {
+      String url1 = "localhost:8080/hello";
+      Uri uri1Expected =
+          Uri(scheme: 'http', host: 'localhost', port: 8080, path: '/hello');
+      expect(getValidRequestUri(url1, []), (uri1Expected, null));
+    });
+
+    test('Testing getValidRequestUri with localhost URL with http prefix', () {
+      String url1 = "http://localhost:3080";
+      Uri uri1Expected = Uri(scheme: 'http', host: 'localhost', port: 3080);
+      expect(getValidRequestUri(url1, []), (uri1Expected, null));
+    });
+
+    test('Testing getValidRequestUri with localhost URL with https prefix', () {
+      String url1 = "https://localhost:8080";
+      Uri uri1Expected = Uri(scheme: 'https', host: 'localhost', port: 8080);
+      expect(getValidRequestUri(url1, []), (uri1Expected, null));
+    });
+
     test('Testing getValidRequestUri for normal values', () {
       String url1 = "https://api.apidash.dev/country/data";
       const kvRow1 = NameValueModel(name: "code", value: "US");
