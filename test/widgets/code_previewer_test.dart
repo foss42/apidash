@@ -1,9 +1,9 @@
+import 'package:apidash_core/apidash_core.dart' show RandomStringGenerator;
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:apidash/widgets/code_previewer.dart';
 import '../test_consts.dart';
-import '../test_utilities.dart';
 
 void main() {
   String code = r'''import 'package:http/http.dart' as http;
