@@ -183,23 +183,39 @@ void main() {
           queryParameters: {'code': 'US'});
       expect(getValidRequestUri(url1, [kvRow1]), (uri1Expected, null));
     });
-    test('Testing getValidRequestUri with localhost URL', () {
-      // Test case for localhost without port or path
+    test('Testing getValidRequestUri with localhost URL without port or path',
+        () {
       String url1 = "localhost";
       Uri uri1Expected = Uri(scheme: 'http', host: 'localhost');
       expect(getValidRequestUri(url1, []), (uri1Expected, null));
-
-      // Test case for localhost with port
-      String url2 = "localhost:8080";
-      Uri uri2Expected = Uri(scheme: 'http', host: 'localhost', port: 8080);
-      expect(getValidRequestUri(url2, []), (uri2Expected, null));
-
-      // Test case for localhost with port and path
-      String url3 = "localhost:8080/hello";
-      Uri uri3Expected =
-          Uri(scheme: 'http', host: 'localhost', port: 8080, path: '/hello');
-      expect(getValidRequestUri(url3, []), (uri3Expected, null));
     });
+
+    test('Testing getValidRequestUri with localhost URL with port', () {
+      String url1 = "localhost:8080";
+      Uri uri1Expected = Uri(scheme: 'http', host: 'localhost', port: 8080);
+      expect(getValidRequestUri(url1, []), (uri1Expected, null));
+    });
+
+    test('Testing getValidRequestUri with localhost URL with port and path',
+        () {
+      String url1 = "localhost:8080/hello";
+      Uri uri1Expected =
+          Uri(scheme: 'http', host: 'localhost', port: 8080, path: '/hello');
+      expect(getValidRequestUri(url1, []), (uri1Expected, null));
+    });
+
+    test('Testing getValidRequestUri with localhost URL with http prefix', () {
+      String url1 = "http://localhost:3080";
+      Uri uri1Expected = Uri(scheme: 'http', host: 'localhost', port: 3080);
+      expect(getValidRequestUri(url1, []), (uri1Expected, null));
+    });
+
+    test('Testing getValidRequestUri with localhost URL with https prefix', () {
+      String url1 = "https://localhost:8080";
+      Uri uri1Expected = Uri(scheme: 'https', host: 'localhost', port: 8080);
+      expect(getValidRequestUri(url1, []), (uri1Expected, null));
+    });
+
     test('Testing getValidRequestUri for null url value', () {
       const kvRow2 = NameValueModel(name: "code", value: "US");
       expect(getValidRequestUri(null, [kvRow2]), (null, "URL is missing!"));
