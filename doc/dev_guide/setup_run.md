@@ -18,10 +18,15 @@ Bootstrap to initialize the workspace, link local packages together and install 
 melos bootstrap
 ```
 
-Get all dependencies
+Get all dependencies of packages
 
 ```
 melos pub-get
+```
+
+Get all dependencies of app
+
+```
 flutter pub get
 ```
 
