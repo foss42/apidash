@@ -4,8 +4,13 @@ enum HTTPVerb { get, head, post, put, patch, delete }
 
 enum FormDataType { text, file }
 
-const kSupportedUriSchemes = ["https", "http"];
+enum SupportedUriSchemes { https, http }
+
+final kSupportedUriSchemes =
+    SupportedUriSchemes.values.map((i) => i.name).toList();
 const kDefaultUriScheme = "https";
+final kLocalhostRegex = RegExp(r'^localhost(:\d+)?(/.*)?$');
+
 const kMethodsWithBody = [
   HTTPVerb.post,
   HTTPVerb.put,

@@ -29,9 +29,9 @@ String stripUrlParams(String url) {
   if (url == null || url == "") {
     return (null, "URL is missing!");
   }
-  final localhostRegex = RegExp(r'^localhost(:\d+)?(/.*)?$');
-  if (localhostRegex.hasMatch(url)) {
-    url = 'http://$url';
+
+  if (kLocalhostRegex.hasMatch(url)) {
+    url = '${SupportedUriSchemes.http.name}://$url';
   }
   Uri? uri = Uri.tryParse(url);
   if (uri == null) {
