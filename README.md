@@ -237,7 +237,7 @@ Please find the Roadmap for API Dash [here](https://github.com/foss42/apidash/bl
 
 ## Documentation
 
-All docs are currently available in the [docs](https://github.com/foss42/apidash/blob/main/docs/) folder.
+All docs are currently available in the [doc](https://github.com/foss42/apidash/blob/main/doc/) folder.
 
 ## Contribute to API Dash
 
