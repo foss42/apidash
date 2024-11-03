@@ -8,7 +8,7 @@ API Dash is a beautiful open-source cross-platform API Client that can help you 
 
 | Desktop (macOS, Windows, Linux) | Mobile (iOS, Android) |
 | -- | -- |
-|![Image](https://github.com/foss42/apidash/assets/615622/984b3c95-a6a1-48a5-a6ba-5a1e95802b5d) | ![iphone](https://github.com/user-attachments/assets/0bfdaa0b-b593-4189-8171-156b9941d139) |
+|![Image](screenshots/apidash-desktop.png) | ![iphone](screenshots/apidash-mobile.png) |
 
 ## Download
 
