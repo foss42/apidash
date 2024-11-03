@@ -1,5 +1,4 @@
-import 'package:apidash/consts.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:apidash_core/apidash_core.dart';
 
 part 'history_meta_model.freezed.dart';
 

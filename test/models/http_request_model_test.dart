@@ -1,6 +1,5 @@
+import 'package:apidash_core/apidash_core.dart';
 import 'package:test/test.dart';
-import 'package:apidash/models/models.dart';
-import 'package:apidash/consts.dart';
 import 'http_request_models.dart';
 
 void main() {

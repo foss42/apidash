@@ -1,8 +1,6 @@
+import 'package:apidash_core/apidash_core.dart';
 import 'package:jinja/jinja.dart' as jj;
-import 'package:apidash/utils/utils.dart'
-    show padMultilineString, requestModelToHARJsonRequest;
-import 'package:apidash/models/models.dart';
-import 'package:apidash/consts.dart';
+import '../../utils/utils.dart';
 
 class FetchCodeGen {
   FetchCodeGen({this.isNodeJs = false});

@@ -1,7 +1,6 @@
+import 'package:apidash_core/apidash_core.dart';
 import 'package:jinja/jinja.dart' as jj;
-import 'package:apidash/utils/utils.dart' show requestModelToHARJsonRequest;
-import 'package:apidash/models/models.dart';
-import 'package:apidash/consts.dart';
+import '../../utils/utils.dart';
 
 // ignore: camel_case_types
 class cURLCodeGen {

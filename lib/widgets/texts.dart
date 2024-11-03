@@ -1,6 +1,7 @@
+import 'package:apidash_core/apidash_core.dart';
+import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash/utils/utils.dart';
-import 'package:apidash/consts.dart';
 
 class MethodBox extends StatelessWidget {
   const MethodBox({super.key, required this.method});

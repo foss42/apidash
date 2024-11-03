@@ -1,7 +1,5 @@
-import 'package:apidash/consts.dart';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:jinja/jinja.dart' as jj;
-import 'package:apidash/utils/utils.dart' show getValidRequestUri;
-import 'package:apidash/models/models.dart';
 
 class CCurlCodeGen {
   final String kTemplateStart = """#include <stdio.h>

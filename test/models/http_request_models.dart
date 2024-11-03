@@ -1,6 +1,4 @@
-import 'package:apidash/models/models.dart'
-    show FormDataModel, NameValueModel, HttpRequestModel;
-import 'package:apidash/consts.dart';
+import 'package:apidash_core/apidash_core.dart';
 
 /// Basic GET request model
 const httpRequestModelGet1 = HttpRequestModel(

@@ -1,5 +1,5 @@
 import 'dart:typed_data';
-import 'package:apidash/models/models.dart';
+import 'package:apidash_core/apidash_core.dart';
 
 const int statusCode = 200;
 const Map<String, String> headers = {

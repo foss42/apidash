@@ -1,4 +1,4 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:apidash_core/apidash_core.dart';
 import 'models.dart';
 
 part 'history_request_model.freezed.dart';

@@ -1,8 +1,6 @@
-import 'package:apidash/consts.dart';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:test/test.dart';
 import 'package:apidash/utils/convert_utils.dart';
-import 'package:apidash/models/name_value_model.dart';
-import 'package:apidash/models/form_data_model.dart';
 
 void main() {
   group("Testing humanizeDate function", () {

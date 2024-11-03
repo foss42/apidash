@@ -1,7 +1,8 @@
 import 'dart:async';
+import 'package:apidash_core/apidash_core.dart';
+import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:http_parser/http_parser.dart';
 import 'package:lottie/lottie.dart';
 import 'package:apidash/utils/utils.dart';
 import 'package:apidash/widgets/widgets.dart';

@@ -10,8 +10,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  apidash_core:
+    path: packages/apidash_core
+  apidash_design_system:
+    path: packages/apidash_design_system
   code_builder: ^4.10.0
-  collection: ^1.18.0
   csv: ^6.0.0
   curl_converter:
     git:
@@ -29,14 +32,10 @@ dependencies:
   flutter_riverpod: ^2.5.1
   flutter_svg: ^2.0.10+1
   flutter_typeahead: ^5.2.0
-  freezed_annotation: ^2.4.1
   fvp: ^0.26.1
-  google_fonts: ^6.2.1
   highlighter: ^0.1.1
   hive_flutter: ^1.1.0
   hooks_riverpod: ^2.5.2
-  http: ^1.2.1
-  http_parser: ^4.0.2
   intl: ^0.19.0
   jinja: ^0.6.0
   json_annotation: ^4.9.0
@@ -74,7 +73,6 @@ dependencies:
     git:
       url: https://github.com/google/flutter-desktop-embedding.git
       path: plugins/window_size
-  xml: ^6.3.0
 
 dependency_overrides:
   extended_text_field: ^16.0.0
@@ -92,12 +90,11 @@ dev_dependencies:
   json_serializable: ^6.7.1
   integration_test:
     sdk: flutter
+  melos: ^6.2.0
   spot: ^0.13.0
   test: ^1.25.2
 
 flutter:
   uses-material-design: true
   assets:
-    - google_fonts/
     - assets/
-    - assets/intro/

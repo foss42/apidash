@@ -1,4 +1,4 @@
-import 'package:collection/collection.dart';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/models/models.dart';
 

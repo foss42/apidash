@@ -1,7 +1,5 @@
+import 'package:apidash_core/apidash_core.dart';
 import 'package:jinja/jinja.dart' as jj;
-import 'package:apidash/utils/utils.dart' show stripUrlParams;
-import 'package:apidash/models/models.dart';
-import 'package:apidash/consts.dart';
 
 class PhpGuzzleCodeGen {
   String kTemplateImport = """<?php

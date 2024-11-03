@@ -1,5 +1,5 @@
-import 'package:apidash/consts.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import '../consts.dart';
 
 part 'form_data_model.freezed.dart';
 part 'form_data_model.g.dart';

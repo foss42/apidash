@@ -2,11 +2,13 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
-import 'package:apidash/utils/utils.dart';
-import 'package:apidash/models/models.dart';
-import 'package:apidash/consts.dart';
+import '../consts.dart';
+import '../models/models.dart';
+import '../utils/utils.dart';
 
-Future<(http.Response?, Duration?, String?)> request(
+typedef HttpResponse = http.Response;
+
+Future<(HttpResponse?, Duration?, String?)> request(
   HttpRequestModel requestModel, {
   String defaultUriScheme = kDefaultUriScheme,
 }) async {
@@ -18,7 +20,7 @@ Future<(http.Response?, Duration?, String?)> request(
   if (uriRec.$1 != null) {
     Uri requestUrl = uriRec.$1!;
     Map<String, String> headers = requestModel.enabledHeadersMap;
-    http.Response response;
+    HttpResponse response;
     String? body;
     try {
       Stopwatch stopwatch = Stopwatch()..start();

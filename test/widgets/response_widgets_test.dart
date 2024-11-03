@@ -1,6 +1,6 @@
+import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-import 'package:http_parser/http_parser.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:apidash/widgets/response_widgets.dart';
 import 'package:lottie/lottie.dart';

@@ -1,7 +1,6 @@
-import 'package:apidash/providers/settings_providers.dart';
+import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'models/models.dart';
 import 'providers/providers.dart';
 import 'services/services.dart';

@@ -13,8 +13,9 @@ import 'package:apidash/screens/settings_page.dart';
 import 'package:apidash/screens/history/history_page.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:extended_text_field/extended_text_field.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+// import 'package:flutter/services.dart';
 import 'package:flutter_portal/flutter_portal.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -27,9 +28,10 @@ void main() {
 
   setUp(() async {
     await testSetUpTempDirForHive();
-    final flamante = rootBundle.load('google_fonts/OpenSans-Medium.ttf');
-    final fontLoader = FontLoader('OpenSans')..addFont(flamante);
-    await fontLoader.load();
+    // FIXME: Font file moved to design system so this must be fixed if spot screenshot is used
+    // final flamante = rootBundle.load('google_fonts/OpenSans-Medium.ttf');
+    // final fontLoader = FontLoader('OpenSans')..addFont(flamante);
+    // await fontLoader.load();
   });
 
   group('Testing navRailIndexStateProvider', () {
@@ -279,7 +281,7 @@ void main() {
     });
 
     testWidgets(
-        'selectedIdEditStateProvider should not be null after rename button has been tapped',
+        'selectedIdEditStateProvider should not be null after Duplicate button has been tapped',
         (tester) async {
       await tester.pumpWidget(
         ProviderScope(
@@ -304,7 +306,11 @@ void main() {
       await tester.pump();
       await tester.tap(find.byType(RequestItem));
       await tester.pump();
-      await tester.tap(find.byIcon(Icons.more_vert).at(1));
+      //await tester.tap(find.byIcon(Icons.more_vert).at(1));
+      await tester.tap(
+        find.byType(RequestItem),
+        buttons: kSecondaryButton,
+      );
       await tester.pumpAndSettle();
 
       // Tap on the "Duplicate" option in the menu
@@ -313,7 +319,7 @@ void main() {
 
       await tester.tap(byType);
       await tester.pumpAndSettle();
-      // Screenshot using spot
+      // INFO: Screenshot using spot
       // await takeScreenshot();
 
       var dupId = container.read(selectedIdStateProvider);

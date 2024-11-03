@@ -1,5 +1,5 @@
+import 'package:apidash_core/apidash_core.dart';
 import 'package:test/test.dart';
-import 'package:apidash/extensions/string_extensions.dart';
 
 void main() {
   group('Testing StringExtensions', () {

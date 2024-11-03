@@ -1,5 +1,5 @@
+import 'package:apidash_core/apidash_core.dart';
 import 'package:test/test.dart';
-import 'package:apidash/models/models.dart';
 import 'package:http/http.dart' as http;
 import 'http_response_models.dart';
 

@@ -1,9 +1,8 @@
+import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:data_table_2/data_table_2.dart';
 import 'package:apidash/widgets/widgets.dart';
-import 'package:apidash/models/models.dart';
-import 'package:apidash/consts.dart';
 
 void main() {
   dataTableShowLogs = false;

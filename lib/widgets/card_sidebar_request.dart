@@ -1,3 +1,5 @@
+import 'package:apidash_core/apidash_core.dart';
+import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart';
@@ -71,7 +73,10 @@ class SidebarRequestCard extends StatelessWidget {
           focusColor: colorVariant.withOpacity(0.5),
           onTap: inEditMode ? null : onTap,
           // onDoubleTap: inEditMode ? null : onDoubleTap,
-          onSecondaryTap: onSecondaryTap,
+          onSecondaryTapUp: (details) {
+            onSecondaryTap?.call();
+            showItemCardMenu(context, details, onMenuSelected);
+          },
           child: Padding(
             padding: EdgeInsets.only(
               left: 6,
@@ -95,8 +100,8 @@ class SidebarRequestCard extends StatelessWidget {
                             //autofocus: true,
                             style: Theme.of(context).textTheme.bodyMedium,
                             onTapOutside: (_) {
+                              FocusScope.of(context).unfocus();
                               onTapOutsideNameEditor?.call();
-                              //FocusScope.of(context).unfocus();
                             },
                             onFieldSubmitted: (value) {
                               onTapOutsideNameEditor?.call();

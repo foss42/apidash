@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart';
@@ -69,7 +70,13 @@ class SidebarEnvironmentCard extends StatelessWidget {
           hoverColor: colorVariant,
           focusColor: colorVariant.withOpacity(0.5),
           onTap: inEditMode ? null : onTap,
-          onSecondaryTap: onSecondaryTap,
+          // onSecondaryTap: onSecondaryTap,
+          onSecondaryTapUp: (isGlobal)
+              ? null
+              : (details) {
+                  onSecondaryTap?.call();
+                  showItemCardMenu(context, details, onMenuSelected);
+                },
           child: Padding(
             padding: EdgeInsets.only(
               left: 6,
@@ -90,6 +97,7 @@ class SidebarEnvironmentCard extends StatelessWidget {
                             focusNode: focusNode,
                             style: Theme.of(context).textTheme.bodyMedium,
                             onTapOutside: (_) {
+                              FocusScope.of(context).unfocus();
                               onTapOutsideNameEditor?.call();
                             },
                             onFieldSubmitted: (value) {

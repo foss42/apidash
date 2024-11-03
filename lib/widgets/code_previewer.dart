@@ -1,3 +1,4 @@
+import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:highlighter/highlighter.dart' show highlight, Node;
 import 'package:apidash/consts.dart';

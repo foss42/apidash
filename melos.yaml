@@ -1,0 +1,17 @@
+name: apidash
+
+packages:
+  - packages/**
+
+scripts:
+  analyze:
+    run: melos exec -- "flutter analyze"
+    description: Analyze all packages
+
+  test:
+    run: melos exec --dir-exists=test -- "flutter test --coverage"
+    description: Run tests for all packages
+
+  pub-get:
+    run: melos exec -- "flutter pub get"
+    description: Run pub get for all packages

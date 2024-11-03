@@ -1,7 +1,7 @@
+import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:apidash/utils/utils.dart';
-import 'package:apidash/consts.dart';
 
 class HeaderField extends StatefulWidget {
   const HeaderField({

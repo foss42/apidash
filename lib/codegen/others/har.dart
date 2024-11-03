@@ -1,6 +1,5 @@
-import 'package:apidash/consts.dart';
-import 'package:apidash/utils/utils.dart' show requestModelToHARJsonRequest;
-import 'package:apidash/models/models.dart';
+import 'package:apidash_core/apidash_core.dart';
+import '../../utils/utils.dart';
 
 class HARCodeGen {
   String? getCode(

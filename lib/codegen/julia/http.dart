@@ -1,8 +1,6 @@
 import 'dart:io';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:jinja/jinja.dart' as jj;
-import 'package:apidash/utils/utils.dart'
-    show getValidRequestUri, stripUriParams;
-import 'package:apidash/models/models.dart';
 
 class JuliaHttpClientCodeGen {
   final String kTemplateStart = """

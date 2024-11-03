@@ -27,6 +27,7 @@ import 'ruby/faraday.dart';
 import 'ruby/net_http.dart';
 import 'rust/actix.dart';
 import 'rust/curl_rust.dart';
+import 'rust/hyper.dart';
 import 'rust/reqwest.dart';
 import 'rust/ureq.dart';
 import 'swift/urlsession.dart';
@@ -96,6 +97,8 @@ class Codegen {
         return RustActixCodeGen().getCode(rM, boundary: boundary);
       case CodegenLanguage.rustCurl:
         return RustCurlCodeGen().getCode(rM);
+      case CodegenLanguage.rustHyper:
+        return RustHyperCodeGen().getCode(rM);
       case CodegenLanguage.rustReqwest:
         return RustReqwestCodeGen().getCode(rM);
       case CodegenLanguage.rustUreq:
