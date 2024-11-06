@@ -131,7 +131,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
               ),
             ),
             DataCell(
-              EnvCellField(
+              HeaderField(
                 keyId: "$selectedId-$index-headers-v-$seed",
                 initialValue: headerRows[index].value,
                 hintText: kHintAddValue,

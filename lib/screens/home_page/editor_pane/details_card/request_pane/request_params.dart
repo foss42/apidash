@@ -105,7 +105,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
               ),
             ),
             DataCell(
-              EnvCellField(
+              HeaderField(
                 keyId: "$selectedId-$index-params-k-$seed",
                 initialValue: paramRows[index].name,
                 hintText: kHintAddURLParam,
@@ -131,7 +131,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
               ),
             ),
             DataCell(
-              EnvCellField(
+              HeaderField(
                 keyId: "$selectedId-$index-params-v-$seed",
                 initialValue: paramRows[index].value,
                 hintText: kHintAddValue,
