@@ -10,28 +10,9 @@ class SaveButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final overlayWidget = OverlayWidgetTemplate(context: context);
-    final savingData = ref.watch(saveDataStateProvider);
-    final hasUnsavedChanges = ref.watch(hasUnsavedChangesProvider);
-    return TextButton.icon(
-      onPressed: (savingData || !hasUnsavedChanges)
-          ? null
-          : () async {
-              overlayWidget.show(
-                  widget: const SavingOverlay(saveCompleted: false));
 
-              await ref
-                  .read(collectionStateNotifierProvider.notifier)
-                  .saveData();
-              await ref
-                  .read(environmentsStateNotifierProvider.notifier)
-                  .saveEnvironments();
-              overlayWidget.hide();
-              overlayWidget.show(
-                  widget: const SavingOverlay(saveCompleted: true));
-              await Future.delayed(const Duration(seconds: 1));
-              overlayWidget.hide();
-            },
+    return TextButton.icon(
+      onPressed: () {saveData(context, ref);} ,
       icon: const Icon(
         Icons.save,
         size: 20,
@@ -42,4 +23,30 @@ class SaveButton extends ConsumerWidget {
       ),
     );
   }
+
+  static void saveData(BuildContext context, WidgetRef ref) async {
+    final savingData = ref.watch(saveDataStateProvider);
+    final hasUnsavedChanges = ref.watch(hasUnsavedChangesProvider);
+    final overlayWidget = OverlayWidgetTemplate(context: context);
+    (savingData || !hasUnsavedChanges)
+        ? null
+        :{
+      overlayWidget.show(
+          widget: const SavingOverlay(saveCompleted: false)),
+
+      await ref
+          .read(collectionStateNotifierProvider.notifier)
+          .saveData(),
+      await ref
+          .read(environmentsStateNotifierProvider.notifier)
+          .saveEnvironments(),
+      overlayWidget.hide(),
+      overlayWidget.show(
+          widget: const SavingOverlay(saveCompleted: true)),
+      await Future.delayed(const Duration(seconds: 1)),
+      overlayWidget.hide(),
+    };
+  }
 }
+
+
