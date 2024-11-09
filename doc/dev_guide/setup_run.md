@@ -11,7 +11,7 @@ Choose any of the following platforms: `windows`, `macos`, `linux`, `android` or
 flutter create --platforms=<platform> .
 ```
 
-**Step 4 -** Check [Platform Specific Instructions](https://github.com/imukulgehlot/apidash/blob/setup-run-platform-guide/doc/dev_guide/platform_specific_instructions.md) to add required platform specific configurations.   
+**Step 4 -** Check [Platform Specific Instructions](https://github.com/foss42/apidash/blob/main/doc/dev_guide/platform_specific_instructions.md) to add required platform specific configurations.   
 
 **Step 5 -** Setup melos
 
