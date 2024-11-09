@@ -30,13 +30,13 @@ Get all dependencies of packages
 melos pub-get
 ```
 
-Get all dependencies of app
+#### 6. Get all dependencies of the app
 
 ```
 flutter pub get
 ```
 
-Run the project by executing the following command:
+#### 7. Run the project by executing the below command
 
 ```
 flutter run
