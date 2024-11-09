@@ -5,7 +5,7 @@
 #### 2. Create a clone of the forked project on your computer to run it locally.
 
 #### 3. Based on your desktop environment, enable Windows, macOS, or Linux for the project. Select the same target device.  
-Choose any of the following platforms: `windows`, `macos`, or `linux`.
+Choose any of the following platforms: `windows`, `macos`, `linux`, `android` or `ios`.
 
 ```bash
 flutter create --platforms=<platform> .
