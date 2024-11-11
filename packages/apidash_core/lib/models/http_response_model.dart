@@ -57,7 +57,13 @@ class HttpResponseModel with _$HttpResponseModel {
     @Uint8ListConverter() Uint8List? bodyBytes,
     @DurationConverter() Duration? time,
   }) = _HttpResponseModel;
+  
 
+  //made for testing purposes would be removed
+  void printHeaders(){
+      print("headers$headers");
+      print("requestHeaders$requestHeaders");
+    }
   factory HttpResponseModel.fromJson(Map<String, Object?> json) =>
       _$HttpResponseModelFromJson(json);
 
@@ -75,7 +81,7 @@ class HttpResponseModel with _$HttpResponseModel {
     final body = (mediaType?.subtype == kSubTypeJson)
         ? utf8.decode(response.bodyBytes)
         : response.body;
-    return HttpResponseModel(
+    final model = HttpResponseModel(
       statusCode: response.statusCode,
       headers: responseHeaders,
       requestHeaders: response.request?.headers,
@@ -84,5 +90,8 @@ class HttpResponseModel with _$HttpResponseModel {
       bodyBytes: response.bodyBytes,
       time: time,
     );
+    model.printHeaders();
+    
+    return model;
   }
 }

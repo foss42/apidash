@@ -57,6 +57,22 @@ class _RequestPaneState extends State<RequestPane>
                           padding: kPh12,
                           minimumSize: const Size(44, 44),
                         ),
+                        onPressed: () { // to be filled
+                        },
+                       
+                        label: SizedBox(
+                          width: 50,
+                          child: Text(
+                            kLabelCookie
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: kRowRequestTop,),
+                      FilledButton.tonalIcon(
+                        style: FilledButton.styleFrom(
+                          padding: kPh12,
+                          minimumSize: const Size(44, 44),
+                        ),
                         onPressed: widget.onPressedCodeButton,
                         icon: Icon(
                           widget.codePaneVisible

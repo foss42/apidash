@@ -47,6 +47,8 @@ const kTextButtonMinWidth = 44.0;
 
 const kRandMax = 100000;
 
+const kRowRequestTop = 30.0;
+
 const kSuggestionsMenuWidth = 300.0;
 const kSuggestionsMenuMaxHeight = 200.0;
 
@@ -468,3 +470,5 @@ const kMsgNoContent = "No content";
 const kMsgUnknowContentType = "Unknown Response Content-Type";
 // Workspace Selector
 const kMsgSelectWorkspace = "Create your workspace";
+
+const kLabelCookie = "Cookie";
