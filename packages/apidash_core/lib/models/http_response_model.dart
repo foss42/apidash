@@ -70,6 +70,29 @@ class HttpResponseModel with _$HttpResponseModel {
   String? get contentType => getContentTypeFromHeaders(headers);
   MediaType? get mediaType => getMediaTypeFromHeaders(headers);
 
+    Map<String, String> get cookies {
+    final cookieMap = <String, String>{};
+
+   
+    headers?.forEach((key, value) {
+      if (key.toLowerCase() == 'set-cookie') {
+        
+        final cookiesList = value.split(';');
+
+        for (var cookie in cookiesList) {
+          final cookieParts = cookie.split('=');
+          if (cookieParts.length == 2) {
+            final name = cookieParts[0].trim();
+            final cookieValue = cookieParts[1].trim();
+            cookieMap[name] = cookieValue;
+          }
+        }
+      }
+    });
+
+    return cookieMap;
+  }
+
   HttpResponseModel fromResponse({
     required Response response,
     Duration? time,
