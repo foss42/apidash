@@ -89,7 +89,3 @@ Check out [here](https://github.com/foss42/apidash/blob/main/doc/dev_guide/testi
 ### How to add a new package to pubspec.yaml?
 
 Instead of copy pasting from pub.dev, it is recommended that you use `flutter pub add package_name` to add a new package to `pubspec.yaml`. You can read more [here](https://docs.flutter.dev/packages-and-plugins/using-packages#adding-a-package-dependency-to-an-app-using-flutter-pub-add).
-
-## Platform-specific Additional Instructions
-
-Check out [here](https://github.com/foss42/apidash/blob/main/doc/dev_guide/platform_specific_instructions.md)
