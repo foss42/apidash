@@ -19,11 +19,11 @@ class Dashboard extends ConsumerWidget {
     final railIdx = ref.watch(navRailIndexStateProvider);
     return Shortcuts(
       shortcuts: {
-        LogicalKeySet(LogicalKeyboardKey.controlLeft, LogicalKeyboardKey.keyS): const SaveIntent(),
+        LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyS): const SaveIntent(),
       },
       child: Actions(
         actions: {
-          SaveIntent: CallbackAction(onInvoke: (intent) => saveData(context, ref))
+          SaveIntent : CallbackAction(onInvoke: (intent) => saveData(context, ref))
         },
         child: FocusScope(
           autofocus: true,
