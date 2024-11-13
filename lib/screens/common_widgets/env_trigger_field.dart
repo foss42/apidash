@@ -1,7 +1,6 @@
+import 'package:apidash/screens/common_widgets/env_text_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:multi_trigger_autocomplete/multi_trigger_autocomplete.dart';
-import 'package:extended_text_field/extended_text_field.dart';
-import 'env_regexp_span_builder.dart';
 import 'env_trigger_options.dart';
 
 class EnvironmentTriggerField extends StatefulWidget {
@@ -30,12 +29,17 @@ class EnvironmentTriggerField extends StatefulWidget {
 }
 
 class EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
-  final TextEditingController controller = TextEditingController();
+  late final VarTextEditingController controller;
   final FocusNode focusNode = FocusNode();
 
   @override
   void initState() {
     super.initState();
+    controller = VarTextEditingController(
+      normalStyle: widget.style ?? const TextStyle(color: Colors.black),
+      highlightStyle: const TextStyle(color: Colors.red),
+      text: widget.initialValue,
+    );
     controller.text = widget.initialValue ?? '';
     controller.selection =
         TextSelection.collapsed(offset: controller.text.length);
@@ -99,14 +103,13 @@ class EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
             }),
       ],
       fieldViewBuilder: (context, textEditingController, focusnode) {
-        return ExtendedTextField(
+        return TextField(
           controller: textEditingController,
           focusNode: focusnode,
           decoration: widget.decoration,
           style: widget.style,
           onChanged: widget.onChanged,
           onSubmitted: widget.onFieldSubmitted,
-          specialTextSpanBuilder: EnvRegExpSpanBuilder(),
           onTapOutside: (event) {
             focusNode.unfocus();
           },
