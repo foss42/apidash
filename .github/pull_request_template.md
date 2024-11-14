@@ -4,7 +4,6 @@ _Add your description_
 
 ## Related Issues
 
-- Related Issue #
 - Closes #
 
 ### Checklist
