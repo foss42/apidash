@@ -45,6 +45,84 @@ class _TextFieldEditorState extends State<TextFieldEditor> {
   void initState() {
     super.initState();
     editorFocusNode = FocusNode(debugLabel: "Editor Focus Node");
+    controller.addListener(() {
+      _processPlaceholders();
+    });
+  }
+
+  void _processPlaceholders() {
+    final placeholderRegex = RegExp(r'\{\{(.*?)\}\}');
+    final matches = placeholderRegex.allMatches(controller.text);
+
+    if (matches.isNotEmpty) {
+      String updatedText = controller.text;
+
+      for (final match in matches) {
+        final placeholder = match.group(1);
+        String replacement = "";
+
+        switch (placeholder) {
+          case 'username':
+            replacement = _generateRandomUsername();
+            break;
+          case 'email':
+            replacement = _generateRandomEmail();
+            break;
+          default:
+            replacement = "{{unknown}}";
+        }
+
+        updatedText = updatedText.replaceFirst(match.group(0)!, replacement);
+      }
+
+      controller.value = TextEditingValue(
+        text: updatedText,
+        selection: TextSelection.collapsed(offset: updatedText.length),
+      );
+
+      widget.onChanged?.call(updatedText);
+    }
+  }
+
+  String _generateRandomUsername() {
+    const adjectives = [
+      'Brave',
+      'Clever',
+      'Swift',
+      'Bright',
+      'Happy',
+      'Lively',
+      'Strong',
+      'Gentle',
+      'Kind',
+      'Bold'
+    ];
+    const nouns = [
+      'Lion',
+      'Eagle',
+      'Fox',
+      'Wolf',
+      'Bear',
+      'Tiger',
+      'Hawk',
+      'Dolphin',
+      'Panther',
+      'Dragon'
+    ];
+
+    final random = math.Random();
+    String adjective = adjectives[random.nextInt(adjectives.length)];
+    String noun = nouns[random.nextInt(nouns.length)];
+
+    return '$adjective$noun${random.nextInt(1000)}';
+  }
+
+  String _generateRandomEmail() {
+    const domains = ['example.com', 'test.com', 'mail.com'];
+    final random = math.Random();
+    final name = _generateRandomUsername().toLowerCase();
+    final domain = domains[random.nextInt(domains.length)];
+    return '$name@$domain';
   }
 
   @override
