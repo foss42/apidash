@@ -4,12 +4,12 @@ import 'package:curl_parser/src/models/curl.dart';
 import 'package:test/test.dart';
 
 const defaultTimeout = Timeout(Duration(seconds: 3));
-final exampleDotComUri = Uri.parse('https://www.example.com/');
+final exampleDotComUri = Uri.parse('https://api.apidash.dev/');
 
 void main() {
   test('parse an easy cURL', () async {
     expect(
-      Curl.parse('curl -X GET https://www.example.com/'),
+      Curl.parse('curl -X GET https://api.apidash.dev/'),
       Curl(
         method: 'GET',
         uri: exampleDotComUri,
@@ -19,7 +19,7 @@ void main() {
 
   test('compose an easy cURL', () async {
     expect(
-      Curl.parse('curl -X GET https://www.example.com/'),
+      Curl.parse('curl -X GET https://api.apidash.dev/'),
       Curl(
         method: 'GET',
         uri: exampleDotComUri,
@@ -29,7 +29,7 @@ void main() {
 
   test('Check quotes support for URL string', () async {
     expect(
-      Curl.parse('curl -X GET "https://www.example.com/"'),
+      Curl.parse('curl -X GET "https://api.apidash.dev/"'),
       Curl(
         method: 'GET',
         uri: exampleDotComUri,
@@ -40,7 +40,7 @@ void main() {
   test('parses two headers', () async {
     expect(
       Curl.parse(
-        'curl -X GET https://www.example.com/ -H "${HttpHeaders.contentTypeHeader}: ${ContentType.text}" -H "${HttpHeaders.authorizationHeader}: Bearer %token%"',
+        'curl -X GET https://api.apidash.dev/ -H "${HttpHeaders.contentTypeHeader}: ${ContentType.text}" -H "${HttpHeaders.authorizationHeader}: Bearer %token%"',
       ),
       Curl(
         method: 'GET',
@@ -102,7 +102,7 @@ void main() {
   test('tryParse success', () async {
     expect(
       Curl.tryParse(
-        'curl -X GET https://www.example.com/ -H "${HttpHeaders.contentTypeHeader}: ${ContentType.text}" -H "${HttpHeaders.authorizationHeader}: Bearer %token%"',
+        'curl -X GET https://api.apidash.dev/ -H "${HttpHeaders.contentTypeHeader}: ${ContentType.text}" -H "${HttpHeaders.authorizationHeader}: Bearer %token%"',
       ),
       Curl(
         method: 'GET',
