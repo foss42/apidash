@@ -1,5 +1,7 @@
 # curl_parser
 
+A well-tested and improved alternative to [curl_converter](https://pub.dev/packages/curl_converter).
+
 A Dart package that provides a `Curl` class for parsing and formatting cURL commands.
 
 ## Usage
