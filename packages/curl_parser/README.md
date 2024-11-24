@@ -11,7 +11,7 @@ A Dart package that provides a `Curl` class for parsing and formatting cURL comm
 2. Use the package:
 
 ```dart
-import 'package:curl_converter/curl_converter.dart';
+import 'package:curl_parser/curl_parser.dart';
 
 void main() {
   // Parse a cURL command
@@ -24,7 +24,7 @@ void main() {
 
   // Format Curl object to a cURL command
   final formattedCurlString = curl.toCurlString();
-  print(formattedCurlString); // curl -X GET https://www.example.com/
+  print(formattedCurlString); // curl "https://www.example.com/""
 }
 ```
 
