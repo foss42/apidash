@@ -1,5 +1,7 @@
 # curl Parser
 
+[![Pub Version](https://img.shields.io/pub/v/curl_parser)](https://pub.dev/packages/curl_parser)
+
 Easily parse a cURL command into a Dart object and generate cURL commands from Dart objects.  
 A well-tested and better alternative to [curl_converter](https://pub.dev/packages/curl_converter).
 
