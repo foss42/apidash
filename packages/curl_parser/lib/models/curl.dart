@@ -1,6 +1,8 @@
+import 'package:apidash_core/consts.dart';
+import 'package:apidash_core/models/form_data_model.dart';
 import 'package:args/args.dart';
+import 'package:curl_parser/utils/string.dart';
 import 'package:equatable/equatable.dart';
-import '../../utils/string.dart';
 
 /// A representation of a cURL command in Dart.
 ///
@@ -10,7 +12,7 @@ class Curl extends Equatable {
   /// Specifies the HTTP request method (e.g., GET, POST, PUT, DELETE).
   final String method;
 
-  /// Specifies the HTTP request URL
+  /// Specifies the HTTP request URL.
   final Uri uri;
 
   /// Adds custom HTTP headers to the request.
@@ -34,6 +36,10 @@ class Curl extends Equatable {
   /// Sends data as a multipart/form-data request.
   final bool form;
 
+  /// Form data list.
+  /// Currently, it is represented as a list of key-value pairs ([key, value]).
+  final List<FormDataModel>? formData;
+
   /// Allows insecure SSL connections.
   final bool insecure;
 
@@ -42,7 +48,7 @@ class Curl extends Equatable {
 
   /// Constructs a new Curl object with the specified parameters.
   ///
-  /// The uri parameter is required, while the remaining parameters are optional.
+  /// The `uri` parameter is required, while the remaining parameters are optional.
   Curl({
     required this.uri,
     this.method = 'GET',
@@ -52,12 +58,18 @@ class Curl extends Equatable {
     this.user,
     this.referer,
     this.userAgent,
+    this.formData,
     this.form = false,
     this.insecure = false,
     this.location = false,
-  });
+  }) {
+    assert(
+        ['GET', 'POST', 'PUT', 'DELETE', 'HEAD', 'OPTIONS'].contains(method));
+    assert(['http', 'https'].contains(uri.scheme));
+    assert(form ? formData != null : formData == null);
+  }
 
-  /// Parse [curlString] as a [Curl] class instance.
+  /// Parses [curlString] into a [Curl] class instance.
   ///
   /// Like [parse] except that this function returns `null` where a
   /// similar call to [parse] would throw a throwable.
@@ -70,8 +82,9 @@ class Curl extends Equatable {
   static Curl? tryParse(String curlString) {
     try {
       return Curl.parse(curlString);
-    } catch (_) {}
-    return null;
+    } catch (_) {
+      return null;
+    }
   }
 
   /// Parse [curlString] as a [Curl] class instance.
@@ -88,6 +101,8 @@ class Curl extends Equatable {
 
     final parser = ArgParser(allowTrailingOptions: true);
 
+    // TODO: Add more options
+    // https://gist.github.com/eneko/dc2d8edd9a4b25c5b0725dd123f98b10
     // Define the expected options
     parser.addOption('url');
     parser.addOption('request', abbr: 'X');
@@ -98,7 +113,7 @@ class Curl extends Equatable {
     parser.addOption('referer', abbr: 'e');
     parser.addOption('user-agent', abbr: 'A');
     parser.addFlag('head', abbr: 'I');
-    parser.addFlag('form', abbr: 'F');
+    parser.addMultiOption('form', abbr: 'F');
     parser.addFlag('insecure', abbr: 'k');
     parser.addFlag('location', abbr: 'L');
 
@@ -111,7 +126,15 @@ class Curl extends Equatable {
 
     final result = parser.parse(splittedCurlString);
 
-    final method = (result['request'] as String?)?.toUpperCase();
+    // A potential alternative to the above code
+    // final curlString = curlString.replaceAll("\\\n", " ");
+    // final tokens = shlex.split(curlString);
+    // final result = parser.parse(tokens);
+    // if (!result.arguments.contains('curl')) {
+    //   throw Exception('Invalid cURL command');
+    // }
+
+    String? method = (result['request'] as String?)?.toUpperCase();
 
     // Extract the request headers
     Map<String, String>? headers;
@@ -129,26 +152,57 @@ class Curl extends Equatable {
       }
     }
 
-    String? url = clean(result['url']);
+    // Parse form data
+    List<FormDataModel>? formData;
+    if (result['form'] is List<String> &&
+        (result['form'] as List<String>).isNotEmpty) {
+      formData = <FormDataModel>[];
+      for (final formEntry in result['form']) {
+        final pairs = formEntry.split('=');
+        if (pairs.length != 2) {
+          throw Exception('Form data is not in key=value format');
+        }
+
+        // Handling the file or text type
+        FormDataModel formDataModel = pairs[1].startsWith('@')
+            ? FormDataModel(
+                name: pairs[0],
+                value: pairs[1].substring(1),
+                type: FormDataType.file,
+              )
+            : FormDataModel(
+                name: pairs[0],
+                value: pairs[1],
+                type: FormDataType.text,
+              );
+
+        formData.add(formDataModel);
+      }
+      headers ??= <String, String>{};
+      headers['Content-Type'] = 'multipart/form-data';
+    }
+
+    // Handle URL and query parameters
+    String? url = clean(result['url']) ??
+        (result.rest.isNotEmpty ? clean(result.rest.first) : null);
+    if (url == null) {
+      throw Exception('URL is null');
+    }
+    final uri = Uri.parse(url);
+
+    method = result['head'] == true ? 'HEAD' : (method ?? 'GET');
     final String? data = result['data'];
     final String? cookie = result['cookie'];
     final String? user = result['user'];
     final String? referer = result['referer'];
     final String? userAgent = result['user-agent'];
-    final bool form = result['form'] ?? false;
-    final bool head = result['head'] ?? false;
+    final bool form = formData != null && formData.isNotEmpty;
     final bool insecure = result['insecure'] ?? false;
     final bool location = result['location'] ?? false;
 
     // Extract the request URL
-    url ??= result.rest.isNotEmpty ? clean(result.rest.first) : null;
-    if (url == null) {
-      throw Exception('url is null');
-    }
-    final uri = Uri.parse(url);
-
     return Curl(
-      method: head ? "HEAD" : (method ?? 'GET'),
+      method: method,
       uri: uri,
       headers: headers,
       data: data,
@@ -157,12 +211,13 @@ class Curl extends Equatable {
       referer: referer,
       userAgent: userAgent,
       form: form,
+      formData: formData,
       insecure: insecure,
       location: location,
     );
   }
 
-  // Formatted cURL command
+  /// Converts the Curl object to a formatted cURL command string.
   String toCurlString() {
     var cmd = 'curl ';
 
@@ -176,7 +231,6 @@ class Curl extends Equatable {
 
     // Add the URL
     cmd += '"${Uri.encodeFull(uri.toString())}" ';
-
     // Add the headers
     headers?.forEach((key, value) {
       cmd += '\\\n -H "$key: $value" ';
@@ -204,7 +258,10 @@ class Curl extends Equatable {
     }
     // Add the form flag
     if (form) {
-      cmd += " \\\n -F ";
+      for (final formEntry in formData!) {
+        cmd += '\\\n -F ';
+        cmd += '"${formEntry.name}=${formEntry.value}" ';
+      }
     }
     // Add the insecure flag
     if (insecure) {
@@ -229,6 +286,7 @@ class Curl extends Equatable {
         referer,
         userAgent,
         form,
+        formData,
         insecure,
         location,
       ];

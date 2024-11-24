@@ -1,6 +1,7 @@
 name: curl_parser
 description: Parse cURL command to Dart object and convert Dart object to cURL command.
 version: 0.1.0
+publish_to: none
 homepage: https://github.com/foss42/apidash/tree/main/packages/curl_parser
 repository: https://github.com/foss42/apidash/tree/main/packages/curl_parser
 issue_tracker: https://github.com/foss42/apidash/issues
@@ -20,6 +21,8 @@ dependencies:
   args: ^2.5.0
   equatable: ^2.0.5
   shlex: ^2.0.2
+  apidash_core:
+    path: ../apidash_core
 
 dev_dependencies:
   lints: ^2.1.0

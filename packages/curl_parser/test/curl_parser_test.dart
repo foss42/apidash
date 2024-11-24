@@ -1,6 +1,8 @@
 import 'dart:io';
 
-import 'package:curl_parser/models/curl.dart';
+import 'package:apidash_core/consts.dart';
+import 'package:apidash_core/models/form_data_model.dart';
+import 'package:curl_parser/curl_parser.dart';
 import 'package:test/test.dart';
 
 const defaultTimeout = Timeout(Duration(seconds: 3));
@@ -26,6 +28,104 @@ void main() {
       ),
     );
   }, timeout: defaultTimeout);
+
+  test('parse POST request with form-data', () {
+    const curl = r'''curl -X POST https://api.apidash.dev/upload \\
+      -F "file=@/path/to/image.jpg" \\
+      -F "username=john"
+      ''';
+
+    expect(
+      Curl.parse(curl),
+      Curl(
+        method: 'POST',
+        uri: Uri.parse('https://api.apidash.dev/upload'),
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        form: true,
+        formData: [
+          FormDataModel(
+              name: "file",
+              value: "/path/to/image.jpg",
+              type: FormDataType.file),
+          FormDataModel(
+              name: "username", value: "john", type: FormDataType.text)
+        ],
+      ),
+    );
+  });
+
+  test('parse POST request with form-data including a file and arrays', () {
+    const curl = r'''curl -X POST https://api.apidash.dev/upload \\
+        -F "file=@/path/to/image.jpg" \\
+        -F "username=john" \\
+        -F "tags=tag1" \\
+        -F "tags=tag2"
+      ''';
+
+    expect(
+      Curl.parse(curl),
+      Curl(
+        method: 'POST',
+        uri: Uri.parse('https://api.apidash.dev/upload'),
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        form: true,
+        formData: [
+          FormDataModel(
+              name: "file",
+              value: "/path/to/image.jpg",
+              type: FormDataType.file),
+          FormDataModel(
+              name: "username", value: "john", type: FormDataType.text),
+          FormDataModel(name: "tags", value: "tag1", type: FormDataType.text),
+          FormDataModel(name: "tags", value: "tag2", type: FormDataType.text),
+        ],
+      ),
+    );
+  });
+
+  test('should throw exception when form data is not in key=value format', () {
+    const curl = r'''curl -X POST https://api.apidash.dev/upload \\
+  -F "invalid_format" \\
+  -F "username=john"
+  ''';
+    expect(
+      () => Curl.parse(curl),
+      throwsException,
+    );
+  });
+
+  test('should not throw when form data entries are valid key-value pairs', () {
+    expect(
+      () => Curl(
+        uri: Uri.parse('https://api.apidash.dev/upload'),
+        method: 'POST',
+        form: true,
+        formData: [
+          FormDataModel(
+              name: "username", value: "john", type: FormDataType.text),
+          FormDataModel(
+              name: "password", value: "password", type: FormDataType.text),
+        ],
+      ),
+      returnsNormally,
+    );
+  });
+
+  test('should not throw when form data is null', () {
+    expect(
+      () => Curl(
+        uri: Uri.parse('https://api.apidash.dev/upload'),
+        method: 'POST',
+        form: false,
+        formData: null,
+      ),
+      returnsNormally,
+    );
+  });
 
   test('Check quotes support for URL string', () async {
     expect(
