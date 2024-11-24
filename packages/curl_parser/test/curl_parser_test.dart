@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:curl_parser/src/models/curl.dart';
+import 'package:curl_parser/models/curl.dart';
 import 'package:test/test.dart';
 
 const defaultTimeout = Timeout(Duration(seconds: 3));

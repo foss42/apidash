@@ -1,3 +1,3 @@
 library curl_parser;
 
-export 'src/models/curl.dart';
+export 'models/curl.dart';
