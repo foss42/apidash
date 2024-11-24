@@ -167,50 +167,53 @@ class Curl extends Equatable {
     var cmd = 'curl ';
 
     // Add the request method
-    if (method != 'GET') {
+    if (method != 'GET' && method != 'HEAD') {
       cmd += '-X $method ';
     }
+    if (method == 'HEAD') {
+      cmd += '-I ';
+    }
+
+    // Add the URL
+    cmd += '"${Uri.encodeFull(uri.toString())}" ';
 
     // Add the headers
     headers?.forEach((key, value) {
-      cmd += '-H "$key: $value" ';
+      cmd += '\\\n -H "$key: $value" ';
     });
 
     // Add the body
     if (data?.isNotEmpty == true) {
-      cmd += '-d \'$data\' ';
+      cmd += "\\\n -d '$data' ";
     }
     // Add the cookie
     if (cookie?.isNotEmpty == true) {
-      cmd += '-b \'$cookie\' ';
+      cmd += "\\\n -b '$cookie' ";
     }
     // Add the user
     if (user?.isNotEmpty == true) {
-      cmd += '-u \'$user\' ';
+      cmd += "\\\n -u '$user' ";
     }
     // Add the referer
     if (referer?.isNotEmpty == true) {
-      cmd += '-e \'$referer\' ';
+      cmd += "\\\n -e '$referer' ";
     }
     // Add the user-agent
     if (userAgent?.isNotEmpty == true) {
-      cmd += '-A \'$userAgent\' ';
+      cmd += "\\\n -A '$userAgent' ";
     }
     // Add the form flag
     if (form) {
-      cmd += '-F ';
+      cmd += " \\\n -F ";
     }
     // Add the insecure flag
     if (insecure) {
-      cmd += '-k ';
+      cmd += " \\\n -k ";
     }
     // Add the location flag
     if (location) {
-      cmd += '-L ';
+      cmd += " \\\n -L ";
     }
-
-    // Add the URL
-    cmd += '"${Uri.encodeFull(uri.toString())}"';
 
     return cmd.trim();
   }
