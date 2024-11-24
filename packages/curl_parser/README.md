@@ -1,4 +1,4 @@
-# curl_parser
+# curl Parser
 
 Easily parse a cURL command into a Dart object and generate cURL commands from Dart objects.  
 A well-tested and better alternative to [curl_converter](https://pub.dev/packages/curl_converter).
