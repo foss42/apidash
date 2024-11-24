@@ -300,15 +300,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.0.0"
-  curl_converter:
+  curl_parser:
     dependency: "direct main"
     description:
-      path: "."
-      ref: "726e8cd04aeb326211af27f75920be5b21c90bb4"
-      resolved-ref: "726e8cd04aeb326211af27f75920be5b21c90bb4"
-      url: "https://github.com/foss42/curl_converter.git"
-    source: git
-    version: "1.0.4"
+      path: "packages/curl_parser"
+      relative: true
+    source: path
+    version: "0.1.0"
   dart_style:
     dependency: "direct main"
     description:

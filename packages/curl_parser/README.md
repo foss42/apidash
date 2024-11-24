@@ -28,7 +28,7 @@ void main() {
 }
 ```
 
-Check out [test](https://github.com/foss42/curl_converter/tree/main/test/curl_parser_test.dart) for more examples.
+Check out [test](https://github.com/foss42/apidash/blob/main/packages/curl_parser/tree/main/test/curl_parser_test.dart) for more examples.
 
 ## Features
 
