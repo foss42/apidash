@@ -36,7 +36,10 @@ See [test](https://github.com/foss42/curl_converter/tree/main/test) folder for m
 - Format a `Curl` object back into a cURL command.
 - Supports various options such as request method, headers, data, cookies, user-agent, and more.
 
+## Maintainer
+
+- Ashita Prasad ([GitHub](https://github.com/ashitaprasad), [LinkedIn](https://www.linkedin.com/in/ashitaprasad/), [X](https://x.com/ashitaprasad))
+
 ## License
 
 This project is licensed under the [Apache License 2.0](https://github.com/foss42/apidash/blob/main/packages/curl_parser/LICENSE).
-Fork of [curl_converter](https://github.com/utopicnarwhal/curl_converter).
