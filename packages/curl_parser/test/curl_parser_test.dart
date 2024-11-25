@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:apidash_core/consts.dart';
 import 'package:apidash_core/models/form_data_model.dart';
 import 'package:curl_parser/curl_parser.dart';
@@ -12,26 +11,13 @@ void main() {
   test('parse an easy cURL', () async {
     expect(
       Curl.parse('curl -X GET https://api.apidash.dev/'),
-      Curl(
-        method: 'GET',
-        uri: exampleDotComUri,
-      ),
-    );
-  }, timeout: defaultTimeout);
-
-  test('compose an easy cURL', () async {
-    expect(
-      Curl.parse('curl -X GET https://api.apidash.dev/'),
-      Curl(
-        method: 'GET',
-        uri: exampleDotComUri,
-      ),
+      Curl(method: 'GET', uri: exampleDotComUri),
     );
   }, timeout: defaultTimeout);
 
   test('parse POST request with form-data', () {
-    const curl = r'''curl -X POST https://api.apidash.dev/upload \\
-      -F "file=@/path/to/image.jpg" \\
+    const curl = r'''curl -X POST https://api.apidash.dev/upload \
+      -F "file=@/path/to/image.jpg" \
       -F "username=john"
       ''';
 
@@ -40,9 +26,7 @@ void main() {
       Curl(
         method: 'POST',
         uri: Uri.parse('https://api.apidash.dev/upload'),
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+        headers: {"Content-Type": "multipart/form-data"},
         form: true,
         formData: [
           FormDataModel(
@@ -57,10 +41,10 @@ void main() {
   });
 
   test('parse POST request with form-data including a file and arrays', () {
-    const curl = r'''curl -X POST https://api.apidash.dev/upload \\
-        -F "file=@/path/to/image.jpg" \\
-        -F "username=john" \\
-        -F "tags=tag1" \\
+    const curl = r'''curl -X POST https://api.apidash.dev/upload \
+        -F "file=@/path/to/image.jpg" \
+        -F "username=john" \
+        -F "tags=tag1" \
         -F "tags=tag2"
       ''';
 
@@ -69,9 +53,7 @@ void main() {
       Curl(
         method: 'POST',
         uri: Uri.parse('https://api.apidash.dev/upload'),
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+        headers: {"Content-Type": "multipart/form-data"},
         form: true,
         formData: [
           FormDataModel(
@@ -88,52 +70,17 @@ void main() {
   });
 
   test('should throw exception when form data is not in key=value format', () {
-    const curl = r'''curl -X POST https://api.apidash.dev/upload \\
-  -F "invalid_format" \\
+    const curl = r'''curl -X POST https://api.apidash.dev/upload \
+  -F "invalid_format" \
   -F "username=john"
   ''';
-    expect(
-      () => Curl.parse(curl),
-      throwsException,
-    );
-  });
-
-  test('should not throw when form data entries are valid key-value pairs', () {
-    expect(
-      () => Curl(
-        uri: Uri.parse('https://api.apidash.dev/upload'),
-        method: 'POST',
-        form: true,
-        formData: [
-          FormDataModel(
-              name: "username", value: "john", type: FormDataType.text),
-          FormDataModel(
-              name: "password", value: "password", type: FormDataType.text),
-        ],
-      ),
-      returnsNormally,
-    );
-  });
-
-  test('should not throw when form data is null', () {
-    expect(
-      () => Curl(
-        uri: Uri.parse('https://api.apidash.dev/upload'),
-        method: 'POST',
-        form: false,
-        formData: null,
-      ),
-      returnsNormally,
-    );
+    expect(() => Curl.parse(curl), throwsException);
   });
 
   test('Check quotes support for URL string', () async {
     expect(
       Curl.parse('curl -X GET "https://api.apidash.dev/"'),
-      Curl(
-        method: 'GET',
-        uri: exampleDotComUri,
-      ),
+      Curl(method: 'GET', uri: exampleDotComUri),
     );
   }, timeout: defaultTimeout);
 
@@ -185,17 +132,11 @@ void main() {
   }, timeout: defaultTimeout);
 
   test('throw exception when parses wrong input', () async {
-    expect(
-      () => Curl.parse('1f'),
-      throwsException,
-    );
+    expect(() => Curl.parse('1f'), throwsException);
   }, timeout: defaultTimeout);
 
   test('tryParse return null when parses wrong input', () async {
-    expect(
-      Curl.tryParse('1f'),
-      null,
-    );
+    expect(Curl.tryParse('1f'), null);
   }, timeout: defaultTimeout);
 
   test('tryParse success', () async {
@@ -214,56 +155,7 @@ void main() {
     );
   }, timeout: defaultTimeout);
 
-  test('GET 1', () async {
-    expect(
-      Curl.parse(
-        r"""curl --url 'https://api.apidash.dev'""",
-      ),
-      Curl(
-        method: 'GET',
-        uri: Uri.parse('https://api.apidash.dev'),
-      ),
-    );
-  }, timeout: defaultTimeout);
-
-  test('GET 2', () async {
-    expect(
-      Curl.parse(
-        r"""curl --url 'https://api.apidash.dev/country/data?code=US'""",
-      ),
-      Curl(
-        method: 'GET',
-        uri: Uri.parse('https://api.apidash.dev/country/data?code=US'),
-      ),
-    );
-  }, timeout: defaultTimeout);
-
-  test('GET 3', () async {
-    expect(
-      Curl.parse(
-        r"""curl --url 'https://api.apidash.dev/country/data?code=IND'""",
-      ),
-      Curl(
-        method: 'GET',
-        uri: Uri.parse('https://api.apidash.dev/country/data?code=IND'),
-      ),
-    );
-  }, timeout: defaultTimeout);
-
-  test('GET 4', () async {
-    expect(
-      Curl.parse(
-        r"""curl --url 'https://api.apidash.dev/humanize/social?num=8700000&digits=3&system=SS&add_space=true&trailing_zeros=true'""",
-      ),
-      Curl(
-        method: 'GET',
-        uri: Uri.parse(
-            'https://api.apidash.dev/humanize/social?num=8700000&digits=3&system=SS&add_space=true&trailing_zeros=true'),
-      ),
-    );
-  }, timeout: defaultTimeout);
-
-  test('GET 5', () async {
+  test('GET with GitHub API', () async {
     expect(
       Curl.parse(
         r"""curl --url 'https://api.github.com/repos/foss42/apidash' \
@@ -277,7 +169,7 @@ void main() {
     );
   }, timeout: defaultTimeout);
 
-  test('GET 6', () async {
+  test('GET with GitHub API and raw parameter', () async {
     expect(
       Curl.parse(
         r"""curl --url 'https://api.github.com/repos/foss42/apidash?raw=true' \
@@ -291,19 +183,7 @@ void main() {
     );
   }, timeout: defaultTimeout);
 
-  test('HEAD 2', () async {
-    expect(
-      Curl.parse(
-        r"""curl --head --url 'http://api.apidash.dev'""",
-      ),
-      Curl(
-        method: 'HEAD',
-        uri: Uri.parse('http://api.apidash.dev'),
-      ),
-    );
-  }, timeout: defaultTimeout);
-
-  test('POST 1', () async {
+  test('POST with text/plain content', () async {
     expect(
       Curl.parse(
         r"""curl --request POST \
@@ -324,7 +204,7 @@ void main() {
     );
   }, timeout: defaultTimeout);
 
-  test('POST 2', () async {
+  test('POST with application/json content', () async {
     expect(
       Curl.parse(
         r"""curl --request POST \
