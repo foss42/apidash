@@ -155,6 +155,55 @@ void main() {
     );
   }, timeout: defaultTimeout);
 
+  test('GET 1', () async {
+    expect(
+      Curl.parse(
+        r"""curl --url 'https://api.apidash.dev'""",
+      ),
+      Curl(
+        method: 'GET',
+        uri: Uri.parse('https://api.apidash.dev'),
+      ),
+    );
+  }, timeout: defaultTimeout);
+
+  test('GET 2', () async {
+    expect(
+      Curl.parse(
+        r"""curl --url 'https://api.apidash.dev/country/data?code=US'""",
+      ),
+      Curl(
+        method: 'GET',
+        uri: Uri.parse('https://api.apidash.dev/country/data?code=US'),
+      ),
+    );
+  }, timeout: defaultTimeout);
+
+  test('GET 3', () async {
+    expect(
+      Curl.parse(
+        r"""curl --url 'https://api.apidash.dev/country/data?code=IND'""",
+      ),
+      Curl(
+        method: 'GET',
+        uri: Uri.parse('https://api.apidash.dev/country/data?code=IND'),
+      ),
+    );
+  }, timeout: defaultTimeout);
+
+  test('GET 4', () async {
+    expect(
+      Curl.parse(
+        r"""curl --url 'https://api.apidash.dev/humanize/social?num=8700000&digits=3&system=SS&add_space=true&trailing_zeros=true'""",
+      ),
+      Curl(
+        method: 'GET',
+        uri: Uri.parse(
+            'https://api.apidash.dev/humanize/social?num=8700000&digits=3&system=SS&add_space=true&trailing_zeros=true'),
+      ),
+    );
+  }, timeout: defaultTimeout);
+
   test('GET with GitHub API', () async {
     expect(
       Curl.parse(
