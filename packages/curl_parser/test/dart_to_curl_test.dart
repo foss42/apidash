@@ -51,9 +51,7 @@ void main() {
       );
       expect(
         curl.toCurlString(),
-        'curl "https://api.apidash.dev" \\\n'
-        ' -H "Content-Type: application/json" \\\n'
-        ' -H "Authorization: Bearer token123"',
+        'curl "https://api.apidash.dev" \\\n -H "Content-Type: application/json" \\\n -H "Authorization: Bearer token123"',
       );
     });
 
@@ -66,9 +64,7 @@ void main() {
       );
       expect(
         curl.toCurlString(),
-        'curl -X POST "https://api.apidash.dev/test" \\\n'
-        ' -H "Content-Type: application/json" \\\n'
-        ' -d \'{"key": "value"}\'',
+        """curl -X POST "https://api.apidash.dev/test" \\\n -H "Content-Type: application/json" \\\n -d '{"key": "value"}'""",
       );
     });
   });
@@ -95,10 +91,7 @@ void main() {
       );
       expect(
         curl.toCurlString(),
-        'curl -X POST "https://api.apidash.dev/upload" \\\n'
-        ' -H "Content-Type: multipart/form-data" \\\n'
-        ' -F "file=/path/to/file.txt" \\\n'
-        ' -F "name=test"',
+        'curl -X POST "https://api.apidash.dev/upload" \\\n -H "Content-Type: multipart/form-data" \\\n -F "file=@/path/to/file.txt" \\\n -F "name=test"',
       );
     });
   });
@@ -112,8 +105,7 @@ void main() {
       );
       expect(
         curl.toCurlString(),
-        'curl "https://api.apidash.dev" \\\n'
-        ' -b \'session=abc123\'',
+        """curl "https://api.apidash.dev" \\\n -b 'session=abc123'""",
       );
     });
 
@@ -125,8 +117,7 @@ void main() {
       );
       expect(
         curl.toCurlString(),
-        'curl "https://api.apidash.dev" \\\n'
-        ' -u \'username:password\'',
+        """curl "https://api.apidash.dev" \\\n -u 'username:password'""",
       );
     });
 
@@ -138,8 +129,7 @@ void main() {
       );
       expect(
         curl.toCurlString(),
-        'curl "https://api.apidash.dev" \\\n'
-        ' -e \'https://example.com\'',
+        """curl "https://api.apidash.dev" \\\n -e 'https://example.com'""",
       );
     });
 
@@ -151,8 +141,7 @@ void main() {
       );
       expect(
         curl.toCurlString(),
-        'curl "https://api.apidash.dev" \\\n'
-        ' -A \'MyApp/1.0\'',
+        """curl "https://api.apidash.dev" \\\n -A 'MyApp/1.0'""",
       );
     });
 
@@ -164,8 +153,7 @@ void main() {
       );
       expect(
         curl.toCurlString(),
-        'curl "https://api.apidash.dev"  \\\n'
-        ' -k',
+        """curl "https://api.apidash.dev"  \\\n -k""",
       );
     });
 
@@ -177,8 +165,7 @@ void main() {
       );
       expect(
         curl.toCurlString(),
-        'curl "https://api.apidash.dev"  \\\n'
-        ' -L',
+        """curl "https://api.apidash.dev"  \\\n -L""",
       );
     });
   });
@@ -202,16 +189,7 @@ void main() {
       );
       expect(
         curl.toCurlString(),
-        'curl -X POST "https://api.apidash.dev/test" \\\n'
-        ' -H "Content-Type: application/json" \\\n'
-        ' -H "Authorization: Bearer token123" \\\n'
-        ' -d \'{"key": "value"}\' \\\n'
-        ' -b \'session=abc123\' \\\n'
-        ' -u \'username:password\' \\\n'
-        ' -e \'https://example.com\' \\\n'
-        ' -A \'MyApp/1.0\'  \\\n'
-        ' -k  \\\n'
-        ' -L',
+        """curl -X POST "https://api.apidash.dev/test" \\\n -H "Content-Type: application/json" \\\n -H "Authorization: Bearer token123" \\\n -d '{"key": "value"}' \\\n -b 'session=abc123' \\\n -u 'username:password' \\\n -e 'https://example.com' \\\n -A 'MyApp/1.0'  \\\n -k  \\\n -L""",
       );
     });
   });

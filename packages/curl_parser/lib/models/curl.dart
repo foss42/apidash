@@ -260,7 +260,11 @@ class Curl extends Equatable {
     if (form) {
       for (final formEntry in formData!) {
         cmd += '\\\n -F ';
-        cmd += '"${formEntry.name}=${formEntry.value}" ';
+        if (formEntry.type == FormDataType.file) {
+          cmd += '"${formEntry.name}=@${formEntry.value}" ';
+        } else {
+          cmd += '"${formEntry.name}=${formEntry.value}" ';
+        }
       }
     }
     // Add the insecure flag
