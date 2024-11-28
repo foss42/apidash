@@ -1,0 +1,8 @@
+pubspec.lock
+melos_curl_parser.iml
+build/
+coverage/
+dart_test.yaml
+doc/
+test/
+example/pubspec_overrides.yaml
