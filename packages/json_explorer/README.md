@@ -1,5 +1,7 @@
 # JSON Explorer
 
+[![Pub Version](https://img.shields.io/pub/v/json_explorer)](https://pub.dev/packages/json_explorer)
+
 A highly customizable widget to render and interact with JSON objects.
 
 | Interact with JSON                                                                                              | Search capabilities                                                                                   |
@@ -292,3 +294,11 @@ ListView.builder(
   ),
 ),
 ```
+
+## Maintainer
+
+- Ashita Prasad ([GitHub](https://github.com/ashitaprasad), [LinkedIn](https://www.linkedin.com/in/ashitaprasad/), [X](https://x.com/ashitaprasad))
+
+## License
+
+This project is licensed under the [BSD 3-Clause License](https://github.com/foss42/apidash/blob/main/packages/json_explorer/LICENSE).
