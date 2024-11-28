@@ -809,14 +809,12 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.9.0"
-  json_data_explorer:
+  json_explorer:
     dependency: "direct main"
     description:
-      path: "."
-      ref: b7dde2f85dff4f482eed7eda4ef2a71344ef8b3a
-      resolved-ref: b7dde2f85dff4f482eed7eda4ef2a71344ef8b3a
-      url: "https://github.com/foss42/json_data_explorer.git"
-    source: git
+      path: "packages/json_explorer"
+      relative: true
+    source: path
     version: "0.1.2"
   json_serializable:
     dependency: "direct dev"
