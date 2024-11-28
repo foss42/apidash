@@ -16,12 +16,12 @@ A highly customizable widget to render and interact with JSON objects.
 
 ## Usage
 
-The data to be displayed is managed by a store, the `DataExplorerStore`.
+The data to be displayed is managed by a store, the `JsonExplorerStore`.
 In order to use all features from this package you need to register it in
 a [Provider](https://pub.dev/packages/provider).
 
 ```dart
-final DataExplorerStore store = DataExplorerStore();
+final JsonExplorerStore store = JsonExplorerStore();
 
 /// ...
 ChangeNotifierProvider.value(
@@ -30,15 +30,15 @@ ChangeNotifierProvider.value(
 /// ...
 ```
 
-To load a json object, use `DataExplorerStore.build` nodes method.
+To load a json object, use `JsonExplorerStore.build` nodes method.
 
 ```dart
 store.buildNodes(json.decode(myJson));
 ```
 
-To display the data explorer, you can use the `JsonDataExplorer` widget.
+To display the data explorer, you can use the `JsonExplorer` widget.
 The only required parameter is a list of node models, which you can take
-from the `DataExplorerStore` after a json was decoded.
+from the `JsonExplorerStore` after a json was decoded.
 
 ```dart
 Widget build(BuildContext context) {
@@ -50,8 +50,8 @@ Widget build(BuildContext context) {
       minimum: const EdgeInsets.all(16),
       child: ChangeNotifierProvider.value(
         value: store,
-        child: Consumer<DataExplorerStore>(
-          builder: (context, state, child) => JsonDataExplorer(
+        child: Consumer<JsonExplorerStore>(
+          builder: (context, state, child) => JsonExplorer(
             nodes: state.displayNodes,
           ),
         ),
@@ -64,20 +64,20 @@ Widget build(BuildContext context) {
 This will display a decoded json using a default theme.
 
 Check the `/example` app for more information on how to customize the
-look and feel of `JsonDataExplorer` widget.
+look and feel of `JsonExplorer` widget.
 
 ### Changing the look and feel
 
-The `JsonDataExplorer` can be customized to fit different visual requirements.
+The `JsonExplorer` can be customized to fit different visual requirements.
 
 #### Themes:
 
-To change fonts and colors, use a `DataExplorerTheme`:
+To change fonts and colors, use a `JsonExplorerTheme`:
 
 ```dart
-JsonDataExplorer(
+JsonExplorer(
   nodes: state.displayNodes,
-  theme: DataExplorerTheme(
+  theme: JsonExplorerTheme(
     rootKeyTextStyle: GoogleFonts.inconsolata(
       color: Colors.black,
       fontWeight: FontWeight.bold,
@@ -134,7 +134,7 @@ The default behavior to display json property names is `key:`, but this
 can be changed with a formatter:
 
 ```dart
-JsonDataExplorer(
+JsonExplorer(
   nodes: state.displayNodes,
   propertyNameFormatter: (name) => '$name ->',
 )
@@ -152,7 +152,7 @@ a `PropertyOverrides`.
 An example is adding interaction to values that contains links:
 
 ```dart
-JsonDataExplorer(
+JsonExplorer(
   nodes: state.displayNodes,
   valueStyleBuilder: (value, style) {
     final isUrl = _valueIsUrl(value);
@@ -172,7 +172,7 @@ Or, folowing the same principle, change how the value looks for specific
 value types:
 
 ```dart
-JsonDataExplorer(
+JsonExplorer(
   nodes: state.displayNodes,
   valueStyleBuilder: (value, style) {
     if (value is num) {
@@ -196,7 +196,7 @@ is displayed on root nodes to be changed.
 For example to use a simple implicitly animated widget:
 
 ```dart
-JsonDataExplorer(
+JsonExplorer(
   nodes: state.displayNodes,
   collapsableToggleBuilder: (context, node) =>
       AnimatedRotation(
@@ -213,7 +213,7 @@ As an example, this can be used to display some information about its
 children nodes.
 
 ```dart
-JsonDataExplorer(
+JsonExplorer(
   nodes: state.displayNodes,
   rootInformationBuilder: (context, node) => Text(
     node.isClass
@@ -229,7 +229,7 @@ To build a widget that appears only when a node is currently focused
 for example:
 
 ```dart
-JsonDataExplorer(
+JsonExplorer(
   nodes: state.displayNodes,
   trailingBuilder: (context, node) => node.isFocused
     ? Text("I'm focused :)")
@@ -239,9 +239,9 @@ JsonDataExplorer(
 
 ### Search
 
-`DataExplorerStore` provides search functionality using the `search` method.
-`JsonDataExplorer` widget already reacts to those state changes and highlights the search results.
-Refer to `DataExplorerTheme` to change the looks of search the results.
+`JsonExplorerStore` provides search functionality using the `search` method.
+`JsonExplorer` widget already reacts to those state changes and highlights the search results.
+Refer to `JsonExplorerTheme` to change the looks of search the results.
 
 The focused result can be changed by calling the `focusPreviousSearchResult` and `focusNextSearchResult` methods.
 
@@ -254,7 +254,7 @@ Row(
     Expanded(
       child: TextField(
         controller: searchController,
-        onChanged: (term) => dataExplorerStore.search(term),
+        onChanged: (term) => jsonExplorerStore.search(term),
         maxLines: 1,
         decoration: const InputDecoration(
           hintText: 'Search',
@@ -265,11 +265,11 @@ Row(
       width: 8,
     ),
     IconButton(
-      onPressed: dataExplorerStore.focusPreviousSearchResult,
+      onPressed: jsonExplorerStore.focusPreviousSearchResult,
       icon: const Icon(Icons.arrow_drop_up),
     ),
     IconButton(
-      onPressed: dataExplorerStore.focusNextSearchResult,
+      onPressed: jsonExplorerStore.focusNextSearchResult,
       icon: const Icon(Icons.arrow_drop_down),
     ),
   ],
@@ -288,7 +288,7 @@ ListView.builder(
   itemCount: state.displayNodes.length,
   itemBuilder: (context, index) => JsonAttribute(
     node: state.displayNodes.elementAt(index),
-    theme: DataExplorerTheme.defaultTheme,
+    theme: JsonExplorerTheme.defaultTheme,
   ),
 ),
 ```
