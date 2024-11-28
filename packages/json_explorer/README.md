@@ -2,7 +2,9 @@
 
 [![Pub Version](https://img.shields.io/pub/v/json_explorer)](https://pub.dev/packages/json_explorer)
 
-A highly customizable widget to render and interact with JSON objects.
+A Flutter widget to render, view and interact with JSON. It also includes interactive search/find capabilities.
+
+Maintained fork of [json_data_explorer](https://pub.dev/packages/json_data_explorer) with bug fixes & improvements.
 
 | Interact with JSON                                                                                              | Search capabilities                                                                                   |
 | --------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
