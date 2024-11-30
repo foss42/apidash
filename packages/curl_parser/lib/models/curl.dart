@@ -255,11 +255,11 @@ class Curl extends Equatable {
     }
     // Add the insecure flag
     if (insecure) {
-      cmd += " \\\n -k ";
+      cmd += "-k ";
     }
     // Add the location flag
     if (location) {
-      cmd += " \\\n -L ";
+      cmd += "-L ";
     }
 
     return cmd.trim();
