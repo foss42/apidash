@@ -102,8 +102,6 @@ class Codegen {
         return RustReqwestCodeGen().getCode(rM);
       case CodegenLanguage.rustUreq:
         return RustUreqCodeGen().getCode(rM, boundary: boundary);
-      case CodegenLanguage.swiftUrlSession:
-        return SwiftURLSessionCodeGen().getCode(rM);
       case CodegenLanguage.phpGuzzle:
         return PhpGuzzleCodeGen().getCode(rM);
       case CodegenLanguage.phpCurl:
@@ -116,6 +114,8 @@ class Codegen {
         return CSharpRestSharp().getCode(rM);
       case CodegenLanguage.phpHttpPlug:
         return PhpHttpPlugCodeGen().getCode(rM);
+      case CodegenLanguage.swiftUrlSession:
+        return SwiftURLSessionCodeGen().getCode(rM);
     }
   }
 }
