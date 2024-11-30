@@ -1,8 +1,7 @@
-import 'package:apidash_core/consts.dart';
-import 'package:apidash_core/models/form_data_model.dart';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:args/args.dart';
-import 'package:curl_parser/utils/string.dart';
 import 'package:equatable/equatable.dart';
+import '../utils/string.dart';
 
 /// A representation of a cURL command in Dart.
 ///
@@ -37,7 +36,6 @@ class Curl extends Equatable {
   final bool form;
 
   /// Form data list.
-  /// Currently, it is represented as a list of key-value pairs ([key, value]).
   final List<FormDataModel>? formData;
 
   /// Allows insecure SSL connections.
@@ -126,16 +124,6 @@ class Curl extends Equatable {
 
     final result = parser.parse(splittedCurlString);
 
-    // A potential alternative to the above code
-    // final curlString = curlString.replaceAll("\\\n", " ");
-    // final tokens = shlex.split(curlString);
-    // final result = parser.parse(tokens);
-    // if (!result.arguments.contains('curl')) {
-    //   throw Exception('Invalid cURL command');
-    // }
-
-    String? method = (result['request'] as String?)?.toUpperCase();
-
     // Extract the request headers
     Map<String, String>? headers;
     if (result['header'] != null) {
@@ -160,11 +148,12 @@ class Curl extends Equatable {
       for (final formEntry in result['form']) {
         final pairs = formEntry.split('=');
         if (pairs.length != 2) {
-          throw Exception('Form data is not in key=value format');
+          throw Exception(
+              'Form data entry $formEntry is not in key=value format');
         }
 
         // Handling the file or text type
-        FormDataModel formDataModel = pairs[1].startsWith('@')
+        var formDataModel = pairs[1].startsWith('@')
             ? FormDataModel(
                 name: pairs[0],
                 value: pairs[1].substring(1),
@@ -179,7 +168,7 @@ class Curl extends Equatable {
         formData.add(formDataModel);
       }
       headers ??= <String, String>{};
-      headers['Content-Type'] = 'multipart/form-data';
+      headers[kHeaderContentType] = ContentType.formdata.header;
     }
 
     // Handle URL and query parameters
@@ -190,7 +179,9 @@ class Curl extends Equatable {
     }
     final uri = Uri.parse(url);
 
-    method = result['head'] == true ? 'HEAD' : (method ?? 'GET');
+    final method = result['head']
+        ? 'HEAD'
+        : ((result['request'] as String?)?.toUpperCase() ?? 'GET');
     final String? data = result['data'];
     final String? cookie = result['cookie'];
     final String? user = result['user'];
