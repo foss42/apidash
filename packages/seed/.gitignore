@@ -6,3 +6,4 @@
 # https://dart.dev/guides/libraries/private-files#pubspeclock.
 pubspec.lock
 build/
+coverage/
