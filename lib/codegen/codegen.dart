@@ -1,5 +1,5 @@
-import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash/models/models.dart';
 import 'package:apidash/utils/utils.dart' show getNewUuid;
 import 'c/curl.dart';
 import 'csharp/http_client.dart';
@@ -29,6 +29,7 @@ import 'rust/curl_rust.dart';
 import 'rust/hyper.dart';
 import 'rust/reqwest.dart';
 import 'rust/ureq.dart';
+import 'swift/urlsession.dart';
 
 class Codegen {
   String? getCode(
@@ -113,6 +114,8 @@ class Codegen {
         return CSharpRestSharp().getCode(rM);
       case CodegenLanguage.phpHttpPlug:
         return PhpHttpPlugCodeGen().getCode(rM);
+      case CodegenLanguage.swiftUrlSession:
+        return SwiftURLSessionCodeGen().getCode(rM);
     }
   }
 }
