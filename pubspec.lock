@@ -300,15 +300,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.0.0"
-  curl_converter:
+  curl_parser:
     dependency: "direct main"
     description:
-      path: "."
-      ref: "726e8cd04aeb326211af27f75920be5b21c90bb4"
-      resolved-ref: "726e8cd04aeb326211af27f75920be5b21c90bb4"
-      url: "https://github.com/foss42/curl_converter.git"
-    source: git
-    version: "1.0.4"
+      path: "packages/curl_parser"
+      relative: true
+    source: path
+    version: "0.1.1"
   dart_style:
     dependency: "direct main"
     description:
@@ -811,14 +809,12 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.9.0"
-  json_data_explorer:
+  json_explorer:
     dependency: "direct main"
     description:
-      path: "."
-      ref: b7dde2f85dff4f482eed7eda4ef2a71344ef8b3a
-      resolved-ref: b7dde2f85dff4f482eed7eda4ef2a71344ef8b3a
-      url: "https://github.com/foss42/json_data_explorer.git"
-    source: git
+      path: "packages/json_explorer"
+      relative: true
+    source: path
     version: "0.1.2"
   json_serializable:
     dependency: "direct dev"

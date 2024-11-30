@@ -2,7 +2,7 @@ import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:json_data_explorer/json_data_explorer.dart';
+import 'package:json_explorer/json_explorer.dart';
 import 'package:provider/provider.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:url_launcher/url_launcher_string.dart';
@@ -56,7 +56,7 @@ class JsonPreviewerColor {
   static const Color darkHighlightColor = Color.fromARGB(255, 55, 55, 55);
 }
 
-final dataExplorerThemeLight = DataExplorerTheme(
+final jsonExplorerThemeLight = JsonExplorerTheme(
   rootKeyTextStyle: kCodeStyle.copyWith(
     color: JsonPreviewerColor.lightRootKeyText,
     fontWeight: FontWeight.bold,
@@ -94,7 +94,7 @@ final dataExplorerThemeLight = DataExplorerTheme(
   highlightColor: JsonPreviewerColor.lightHighlightColor,
 );
 
-final dataExplorerThemeDark = DataExplorerTheme(
+final jsonExplorerThemeDark = JsonExplorerTheme(
   rootKeyTextStyle: kCodeStyle.copyWith(
     color: JsonPreviewerColor.darkRootKeyText,
     fontWeight: FontWeight.bold,
@@ -145,7 +145,7 @@ class JsonPreviewer extends StatefulWidget {
 class _JsonPreviewerState extends State<JsonPreviewer> {
   final searchController = TextEditingController();
   final itemScrollController = ItemScrollController();
-  final DataExplorerStore store = DataExplorerStore();
+  final JsonExplorerStore store = JsonExplorerStore();
 
   @override
   void initState() {
@@ -168,7 +168,7 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
     var sm = ScaffoldMessenger.of(context);
     return ChangeNotifierProvider.value(
       value: store,
-      child: Consumer<DataExplorerStore>(
+      child: Consumer<JsonExplorerStore>(
         builder: (context, state, child) {
           return LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints) {
@@ -250,7 +250,7 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
                               ),
                             ]),
                   Expanded(
-                    child: JsonDataExplorer(
+                    child: JsonExplorer(
                       nodes: state.displayNodes,
                       itemScrollController: itemScrollController,
                       itemSpacing: 4,
@@ -283,8 +283,8 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
                       valueStyleBuilder: (value, style) =>
                           valueStyleOverride(context, value, style),
                       theme: (Theme.of(context).brightness == Brightness.light)
-                          ? dataExplorerThemeLight
-                          : dataExplorerThemeDark,
+                          ? jsonExplorerThemeLight
+                          : jsonExplorerThemeDark,
                       maxRootNodeWidth: maxRootNodeWidth,
                     ),
                   ),

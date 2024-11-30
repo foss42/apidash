@@ -16,10 +16,8 @@ dependencies:
     path: packages/apidash_design_system
   code_builder: ^4.10.0
   csv: ^6.0.0
-  curl_converter:
-    git:
-      url: https://github.com/foss42/curl_converter.git
-      ref: 726e8cd04aeb326211af27f75920be5b21c90bb4
+  curl_parser:
+    path: packages/curl_parser
   data_table_2: ^2.5.15
   dart_style: ^2.3.7
   desktop_drop: ^0.4.4
@@ -39,10 +37,8 @@ dependencies:
   intl: ^0.19.0
   jinja: ^0.6.0
   json_annotation: ^4.9.0
-  json_data_explorer:
-    git:
-      url: https://github.com/foss42/json_data_explorer.git
-      ref: b7dde2f85dff4f482eed7eda4ef2a71344ef8b3a
+  json_explorer:
+    path: packages/json_explorer
   json_text_field: ^1.2.0
   just_audio: ^0.9.40
   just_audio_mpv: ^0.1.7

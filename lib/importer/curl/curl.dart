@@ -1,5 +1,5 @@
 import 'package:apidash_core/apidash_core.dart';
-import 'package:curl_converter/curl_converter.dart';
+import 'package:curl_parser/curl_parser.dart';
 
 class CurlFileImport {
   HttpRequestModel? getHttpRequestModel(String content) {

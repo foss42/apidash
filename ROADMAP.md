@@ -1,6 +1,7 @@
 ## API Dash Roadmap
 
 - [x] Environment Variables (https://github.com/foss42/apidash/issues/25)
+- [ ] Git Support (https://github.com/foss42/apidash/issues/502)
 - [ ] WebSocket support (https://github.com/foss42/apidash/issues/15)
 - [ ] SSE support (https://github.com/foss42/apidash/issues/116)
 - [ ] MQTT support (https://github.com/foss42/apidash/issues/115)

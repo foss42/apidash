@@ -117,7 +117,15 @@ enum CodegenLanguage {
   jsFetch("JavaScript (fetch)", "javascript", "js"),
   nodejsAxios("node.js (axios)", "javascript", "js"),
   nodejsFetch("node.js (fetch)", "javascript", "js"),
+  javaAsyncHttpClient("Java (asynchttpclient)", "java", "java"),
+  javaHttpClient("Java (HttpClient)", "java", "java"),
+  javaOkHttp("Java (okhttp3)", "java", 'java'),
+  javaUnirest("Java (Unirest)", "java", "java"),
+  juliaHttp("Julia (HTTP)", "julia", "jl"),
   kotlinOkHttp("Kotlin (okhttp3)", "kotlin", "kt"),
+  phpCurl("PHP (cURL)", "php", "php"),
+  phpGuzzle("PHP (guzzle)", "php", "php"),
+  phpHttpPlug("PHP (httpPlug)", "php", "php"),
   pythonRequests("Python (requests)", "python", "py"),
   pythonHttpClient("Python (http.client)", "python", "py"),
   rubyFaraday("Ruby (Faraday)", "ruby", "rb"),
@@ -126,16 +134,7 @@ enum CodegenLanguage {
   rustHyper("Rust (Hyper)", "rust", "rs"),
   rustReqwest("Rust (reqwest)", "rust", "rs"),
   rustCurl("Rust (curl-rust)", "rust", "rs"),
-  rustUreq("Rust (ureq)", "rust", "rs"),
-  swiftUrlsession("Swift (urlsession)", "swift", "swift"),
-  javaOkHttp("Java (okhttp3)", "java", 'java'),
-  javaAsyncHttpClient("Java (asynchttpclient)", "java", "java"),
-  javaHttpClient("Java (HttpClient)", "java", "java"),
-  javaUnirest("Java (Unirest)", "java", "java"),
-  juliaHttp("Julia (HTTP)", "julia", "jl"),
-  phpCurl("PHP (cURL)", "php", "php"),
-  phpGuzzle("PHP (guzzle)", "php", "php"),
-  phpHttpPlug("PHP (httpPlug)", "php", "php");
+  rustUreq("Rust (ureq)", "rust", "rs");
 
   const CodegenLanguage(this.label, this.codeHighlightLang, this.ext);
   final String label;
