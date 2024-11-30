@@ -134,7 +134,8 @@ enum CodegenLanguage {
   rustHyper("Rust (Hyper)", "rust", "rs"),
   rustReqwest("Rust (reqwest)", "rust", "rs"),
   rustCurl("Rust (curl-rust)", "rust", "rs"),
-  rustUreq("Rust (ureq)", "rust", "rs");
+  rustUreq("Rust (ureq)", "rust", "rs"),
+  swiftUrlSession("Swift (URLSession)", "swift", "swift");
 
   const CodegenLanguage(this.label, this.codeHighlightLang, this.ext);
   final String label;
