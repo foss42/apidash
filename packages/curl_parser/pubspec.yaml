@@ -19,9 +19,8 @@ environment:
 dependencies:
   args: ^2.5.0
   equatable: ^2.0.5
+  seed: ^0.0.1
   shlex: ^2.0.2
-  apidash_core:
-    path: ../apidash_core
 
 dev_dependencies:
   lints: ^2.1.0

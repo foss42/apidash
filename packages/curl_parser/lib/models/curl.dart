@@ -1,7 +1,9 @@
-import 'package:apidash_core/apidash_core.dart';
 import 'package:args/args.dart';
 import 'package:equatable/equatable.dart';
+import 'package:seed/seed.dart';
 import '../utils/string.dart';
+
+const kHeaderContentType = "Content-Type";
 
 /// A representation of a cURL command in Dart.
 ///
@@ -164,7 +166,10 @@ class Curl extends Equatable {
         formData.add(formDataModel);
       }
       headers ??= <String, String>{};
-      headers[kHeaderContentType] = ContentType.formdata.header;
+      if (!(headers.containsKey(kHeaderContentType) ||
+          headers.containsKey(kHeaderContentType.toLowerCase()))) {
+        headers[kHeaderContentType] = "multipart/form-data";
+      }
     }
 
     // Handle URL and query parameters
