@@ -23,6 +23,7 @@ void main() async {
   }
 }
 ''';
+
   testWidgets('Testing for CodeGen Previewer', (tester) async {
     await tester.pumpWidget(
       MaterialApp(
@@ -49,6 +50,7 @@ void main() async {
     expect(find.textContaining('Error Status Code', findRichText: true),
         findsOneWidget);
   });
+
   testWidgets('Testing for View Code Pane', (tester) async {
     await tester.pumpWidget(
       MaterialApp(
@@ -90,6 +92,7 @@ void main() async {
     expect(find.byIcon(Icons.content_copy), findsOneWidget);
     expect(find.text('Copy'), findsOneWidget);
   });
+
   testWidgets('Testing for View Code Pane Light theme', (tester) async {
     await tester.pumpWidget(
       MaterialApp(
