@@ -93,10 +93,6 @@ class Curl extends Equatable {
   /// print(Curl.parse('1f')); // [Exception] is thrown
   /// ```
   static Curl parse(String curlString) {
-    String? clean(String? url) {
-      return url?.replaceAll('"', '').replaceAll("'", '');
-    }
-
     final parser = ArgParser(allowTrailingOptions: true);
 
     // TODO: Add more options
@@ -172,8 +168,7 @@ class Curl extends Equatable {
     }
 
     // Handle URL and query parameters
-    String? url = clean(result['url']) ??
-        (result.rest.isNotEmpty ? clean(result.rest.first) : null);
+    final url = clean(result['url']) ?? clean(result.rest.firstOrNull);
     if (url == null) {
       throw Exception('URL is null');
     }
