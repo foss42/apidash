@@ -23,16 +23,29 @@ class CurlFileImport {
               ))
           .toList();
 
-      // TODO: parse curl data to determine the type of body
       final body = curl.data;
+      final formData = curl.formData;
+
+      // Determine content type based on form data and headers
+      final bool hasJsonContentType = headers?.any((header) =>
+              header.name == "Content-Type" &&
+              header.value == "application/json") ??
+          false;
+
+      final ContentType contentType = curl.form
+          ? ContentType.formdata
+          : hasJsonContentType
+              ? ContentType.json
+              : ContentType.text;
 
       return HttpRequestModel(
-        method: method,
-        url: url,
-        headers: headers,
-        params: params,
-        body: body,
-      );
+          method: method,
+          url: url,
+          headers: headers,
+          params: params,
+          body: body,
+          bodyContentType: contentType,
+          formData: formData);
     } catch (e) {
       return null;
     }
