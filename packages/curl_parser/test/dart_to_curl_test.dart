@@ -73,15 +73,15 @@ void main() {
       test('POST request with data', () {
         final curl = Curl(
           method: 'POST',
-          uri: Uri.parse('https://api.apidash.dev/test'),
+          uri: Uri.parse('https://api.apidash.dev/case/lower'),
           headers: {'Content-Type': 'application/json'},
-          data: '{"key": "value"}',
+          data: '{"text": "Grass Is Green"}',
         );
         expect(
           curl.toCurlString(),
-          r"""curl -X POST "https://api.apidash.dev/test" \
+          r"""curl -X POST "https://api.apidash.dev/case/lower" \
  -H "Content-Type: application/json" \
- -d '{"key": "value"}'""",
+ -d '{"text": "Grass Is Green"}'""",
         );
       });
     },
@@ -93,28 +93,28 @@ void main() {
       test('request with form data', () {
         final curl = Curl(
           method: 'POST',
-          uri: Uri.parse('https://api.apidash.dev/upload'),
+          uri: Uri.parse('https://api.apidash.dev/io/img'),
           headers: {'Content-Type': 'multipart/form-data'},
           form: true,
           formData: [
             FormDataModel(
-              name: "file",
-              value: "/path/to/file.txt",
+              name: "imfile",
+              value: "/path/to/file.png",
               type: FormDataType.file,
             ),
             FormDataModel(
-              name: "name",
-              value: "test",
+              name: "token",
+              value: "123",
               type: FormDataType.text,
             ),
           ],
         );
         expect(
           curl.toCurlString(),
-          r'''curl -X POST "https://api.apidash.dev/upload" \
+          r'''curl -X POST "https://api.apidash.dev/io/img" \
  -H "Content-Type: multipart/form-data" \
- -F "file=@/path/to/file.txt" \
- -F "name=test"''',
+ -F "imfile=@/path/to/file.png" \
+ -F "token=123"''',
         );
       });
     },
