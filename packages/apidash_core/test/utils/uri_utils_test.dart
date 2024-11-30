@@ -1,5 +1,5 @@
-import 'package:apidash_core/models/models.dart';
 import 'package:apidash_core/utils/uri_utils.dart';
+import 'package:seed/seed.dart';
 import 'package:test/test.dart';
 
 void main() {

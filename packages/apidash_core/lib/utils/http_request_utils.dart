@@ -1,6 +1,5 @@
 import 'package:collection/collection.dart';
-import '../consts.dart';
-import '../models/models.dart';
+import 'package:seed/seed.dart';
 
 Map<String, String>? rowsToMap(List<NameValueModel>? kvRows,
     {bool isHeader = false}) {
