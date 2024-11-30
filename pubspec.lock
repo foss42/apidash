@@ -306,7 +306,7 @@ packages:
       path: "packages/curl_parser"
       relative: true
     source: path
-    version: "0.1.0"
+    version: "0.1.1"
   dart_style:
     dependency: "direct main"
     description:
