@@ -245,7 +245,7 @@ class Curl extends Equatable {
     // Add the form flag
     if (form) {
       for (final formEntry in formData!) {
-        cmd += '\\\n -F ';
+        cmd += "\\\n -F ";
         if (formEntry.type == FormDataType.file) {
           cmd += '"${formEntry.name}=@${formEntry.value}" ';
         } else {
