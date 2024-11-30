@@ -1,3 +1,7 @@
+## 0.1.1
+
+- Add formdata support and new test cases.
+
 ## 0.1.0
 
 - Added new test cases.
