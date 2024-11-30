@@ -132,23 +132,23 @@ API Dash currently supports API integration code generation for the following la
 | JavaScript             | `fetch`       |         |
 | JavaScript (`node.js`) | `axios`       |         |
 | JavaScript (`node.js`) | `fetch`       |         |
+| Java                   | `asynchttpclient` |     |
+| Java                   | `HttpClient`  |         |
+| Java                   | `okhttp3`     |         |
+| Java                   | `Unirest`     |         |
+| Julia                  | `HTTP`        |         |
+| Kotlin                 | `okhttp3`     |         |
+| PHP                    | `curl`        |         |
+| PHP                    | `guzzle`      |         |
+| PHP                    | `HTTPlug`     |         |
 | Python                 | `requests`    |         |
 | Python                 | `http.client` |         |
-| Kotlin                 | `okhttp3`     |         |
 | Ruby                   | `faraday`     |         |
 | Ruby                   | `net/http`    |         |
 | Rust                   | `hyper`       |         |
 | Rust                   | `reqwest`     |         |
 | Rust                   | `ureq`        |         |
 | Rust                   | `Actix Client` |        |
-| Java                   | `asynchttpclient` |     |
-| Java                   | `HttpClient`  |         |
-| Java                   | `okhttp3`     |         |
-| Java                   | `Unirest`     |         |
-| Julia                  | `HTTP`        |         |
-| PHP                    | `curl`        |         |
-| PHP                    | `guzzle`      |         |
-| PHP                    | `HTTPlug`     |         |
 
 We welcome contributions to support other programming languages/libraries/frameworks. Please check out more details [here](https://github.com/foss42/apidash/discussions/80).
 
