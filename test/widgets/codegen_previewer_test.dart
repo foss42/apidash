@@ -83,9 +83,9 @@ void main() async {
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
 
-    expect(find.text('Kotlin (okhttp3)'), findsWidgets);
-    expect(find.text('Python (http.client)'), findsWidgets);
-    expect(find.text('Python (requests)'), findsWidgets);
+    expect(find.text('Dart (dio)'), findsWidgets);
+    expect(find.text('Go (http)'), findsWidgets);
+    expect(find.text('JavaScript (axios)'), findsWidgets);
 
     expect(find.textContaining('Error Status Code', findRichText: true),
         findsOneWidget);
