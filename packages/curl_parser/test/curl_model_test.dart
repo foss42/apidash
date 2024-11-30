@@ -4,7 +4,7 @@ import 'package:curl_parser/curl_parser.dart';
 import 'package:test/test.dart';
 
 void main() {
-  test('should not throw when form data entries are valid key-value pairs', () {
+  test('should not throw when form data entries are provided', () {
     expect(
       () => Curl(
         uri: Uri.parse('https://api.apidash.dev/upload'),
