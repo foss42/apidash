@@ -127,6 +127,11 @@ class SendRequestButton extends ConsumerWidget {
             .read(collectionStateNotifierProvider.notifier)
             .sendRequest(selectedId!);
       },
+      onCancel: () {
+        ref
+            .read(collectionStateNotifierProvider.notifier)
+            .cancelRequest(selectedId!);
+      },
     );
   }
 }

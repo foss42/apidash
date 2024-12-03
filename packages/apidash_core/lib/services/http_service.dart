@@ -12,6 +12,7 @@ typedef HttpResponse = http.Response;
 Future<(HttpResponse?, Duration?, String?)> request(
   HttpRequestModel requestModel, {
   String defaultUriScheme = kDefaultUriScheme,
+  http.Client? client,
 }) async {
   (Uri?, String?) uriRec = getValidRequestUri(
     requestModel.url,
@@ -23,8 +24,13 @@ Future<(HttpResponse?, Duration?, String?)> request(
     Map<String, String> headers = requestModel.enabledHeadersMap;
     HttpResponse response;
     String? body;
+    bool shouldCloseClient = false;
     try {
       Stopwatch stopwatch = Stopwatch()..start();
+      if (client == null) {
+        client = http.Client();
+        shouldCloseClient = true;
+      }
       var isMultiPartRequest =
           requestModel.bodyContentType == ContentType.formdata;
       if (kMethodsWithBody.contains(requestModel.method)) {
@@ -68,29 +74,42 @@ Future<(HttpResponse?, Duration?, String?)> request(
       }
       switch (requestModel.method) {
         case HTTPVerb.get:
-          response = await http.get(requestUrl, headers: headers);
+          response = await client.get(requestUrl, headers: headers);
           break;
         case HTTPVerb.head:
-          response = await http.head(requestUrl, headers: headers);
+          response = await client.head(requestUrl, headers: headers);
           break;
         case HTTPVerb.post:
-          response = await http.post(requestUrl, headers: headers, body: body);
+          response =
+              await client.post(requestUrl, headers: headers, body: body);
           break;
         case HTTPVerb.put:
-          response = await http.put(requestUrl, headers: headers, body: body);
+          response = await client.put(requestUrl, headers: headers, body: body);
           break;
         case HTTPVerb.patch:
-          response = await http.patch(requestUrl, headers: headers, body: body);
+          response =
+              await client.patch(requestUrl, headers: headers, body: body);
           break;
         case HTTPVerb.delete:
           response =
-              await http.delete(requestUrl, headers: headers, body: body);
+              await client.delete(requestUrl, headers: headers, body: body);
           break;
       }
       stopwatch.stop();
       return (response, stopwatch.elapsed, null);
+    } on http.ClientException catch (e) {
+      if (e.message.contains('Connection closed') ||
+          e.message.contains('abort')) {
+        return (null, null, 'Request Cancelled');
+      } else {
+        return (null, null, e.toString());
+      }
     } catch (e) {
       return (null, null, e.toString());
+    } finally {
+      if (shouldCloseClient) {
+        client?.close();
+      }
     }
   } else {
     return (null, null, uriRec.$2);

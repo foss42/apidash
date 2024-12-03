@@ -1,6 +1,7 @@
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/consts.dart';
+import 'package:http/http.dart' as http;
 import 'providers.dart';
 import '../models/models.dart';
 import '../services/services.dart' show hiveHandler, HiveHandler;
@@ -46,6 +47,7 @@ class CollectionStateNotifier
   final Ref ref;
   final HiveHandler hiveHandler;
   final baseResponseModel = const HttpResponseModel();
+  final Map<String, http.Client> _clients = {};
 
   bool hasId(String id) => state?.keys.contains(id) ?? false;
 
@@ -259,9 +261,14 @@ class CollectionStateNotifier
     );
     state = map;
 
+    // Create an HTTP client and store it to allow cancellation
+    final client = http.Client();
+    _clients[id] = client;
+
     (HttpResponse?, Duration?, String?)? responseRec = await request(
       substitutedHttpRequestModel,
       defaultUriScheme: defaultUriScheme,
+      client: client,
     );
     late final RequestModel newRequestModel;
     if (responseRec.$1 == null) {
@@ -300,12 +307,34 @@ class CollectionStateNotifier
       ref.read(historyMetaStateNotifier.notifier).addHistoryRequest(model);
     }
 
+    // Close the client and remove it from the map
+    _clients[id]?.close();
+    _clients.remove(id);
+
     // update state with response data
     map = {...state!};
     map[id] = newRequestModel;
     state = map;
 
     ref.read(hasUnsavedChangesProvider.notifier).state = true;
+  }
+
+  void cancelRequest(String id) {
+    if (_clients.containsKey(id)) {
+      _clients[id]?.close();
+      _clients.remove(id);
+
+      var currentModel = state![id]!;
+      var map = {...state!};
+      map[id] = currentModel.copyWith(
+        isWorking: false,
+        message: 'Request Cancelled',
+        responseStatus: null,
+        httpResponseModel: null,
+      );
+      state = map;
+      ref.read(hasUnsavedChangesProvider.notifier).state = true;
+    }
   }
 
   Future<void> clearData() async {
