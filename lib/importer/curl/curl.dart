@@ -12,18 +12,10 @@ class CurlFileImport {
       final params = mapToRows(curl.uri.queryParameters);
       final body = curl.data;
       final formData = curl.formData;
-
       // Determine content type based on form data and headers
-      final bool hasJsonContentType = headers?.any((header) =>
-              header.name == "Content-Type" &&
-              header.value == "application/json") ??
-          false;
-
       final ContentType contentType = curl.form
           ? ContentType.formdata
-          : hasJsonContentType
-              ? ContentType.json
-              : ContentType.text;
+          : (getContentTypeFromHeadersMap(curl.headers) ?? ContentType.text);
 
       return HttpRequestModel(
           method: method,

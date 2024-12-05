@@ -6,8 +6,14 @@ ContentType? getContentTypeFromHeadersMap(
   Map<String, String>? kvMap,
 ) {
   if (kvMap != null && kvMap.hasKeyContentType()) {
-    var val = kvMap.getValueContentType();
+    var val = getMediaTypeFromHeaders(kvMap);
     if (val != null) {
+      if (val.subtype.contains(kSubTypeJson)) {
+        return ContentType.json;
+      } else if (val.type == kTypeMultipart &&
+          val.subtype == kSubTypeFormData) {
+        return ContentType.formdata;
+      }
       return ContentType.text;
     }
   }
