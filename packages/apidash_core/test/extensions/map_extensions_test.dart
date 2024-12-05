@@ -109,4 +109,21 @@ void main() {
       expect(mapEx.getValueContentType(), "y");
     });
   });
+
+  group("Testing ?.getValueContentType() function", () {
+    test('Testing ?.getValueContentType() for header1', () {
+      Map<String, String> header1 = {
+        "content-type": "application/json",
+      };
+      String contentType1Expected = "application/json";
+      expect(header1.getValueContentType(), contentType1Expected);
+    });
+    test('Testing ?.getValueContentType() when header keys are in header case',
+        () {
+      Map<String, String> header2 = {
+        "Content-Type": "application/json",
+      };
+      expect(header2.getValueContentType(), "application/json");
+    });
+  });
 }
