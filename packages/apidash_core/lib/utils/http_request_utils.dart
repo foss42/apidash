@@ -2,8 +2,10 @@ import 'package:collection/collection.dart';
 import '../consts.dart';
 import '../models/models.dart';
 
-Map<String, String>? rowsToMap(List<NameValueModel>? kvRows,
-    {bool isHeader = false}) {
+Map<String, String>? rowsToMap(
+  List<NameValueModel>? kvRows, {
+  bool isHeader = false,
+}) {
   if (kvRows == null) {
     return null;
   }
@@ -20,7 +22,9 @@ Map<String, String>? rowsToMap(List<NameValueModel>? kvRows,
   return finalMap;
 }
 
-List<NameValueModel>? mapToRows(Map<String, String>? kvMap) {
+List<NameValueModel>? mapToRows(
+  Map<String, String>? kvMap,
+) {
   if (kvMap == null) {
     return null;
   }
@@ -51,7 +55,9 @@ List<Map<String, String>>? rowsToFormDataMapList(
   return finalMap;
 }
 
-List<FormDataModel>? mapListToFormDataModelRows(List<Map>? kvMap) {
+List<FormDataModel>? mapListToFormDataModelRows(
+  List<Map>? kvMap,
+) {
   if (kvMap == null) {
     return null;
   }
@@ -73,7 +79,9 @@ FormDataType getFormDataType(String? type) {
 }
 
 List<NameValueModel>? getEnabledRows(
-    List<NameValueModel>? rows, List<bool>? isRowEnabledList) {
+  List<NameValueModel>? rows,
+  List<bool>? isRowEnabledList,
+) {
   if (rows == null || isRowEnabledList == null) {
     return rows;
   }
