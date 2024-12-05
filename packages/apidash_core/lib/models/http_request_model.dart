@@ -1,6 +1,6 @@
-import 'dart:io';
 import 'dart:convert';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import '../extensions/extensions.dart';
 import '../utils/utils.dart'
     show rowsToFormDataMapList, rowsToMap, getEnabledRows;
 import '../consts.dart';
@@ -43,8 +43,7 @@ class HttpRequestModel with _$HttpRequestModel {
   Map<String, String> get enabledHeadersMap => rowsToMap(enabledHeaders) ?? {};
   Map<String, String> get enabledParamsMap => rowsToMap(enabledParams) ?? {};
 
-  bool get hasContentTypeHeader => enabledHeadersMap.keys
-      .any((k) => k.toLowerCase() == HttpHeaders.contentTypeHeader);
+  bool get hasContentTypeHeader => enabledHeadersMap.hasKeyContentType();
   bool get hasFormDataContentType => bodyContentType == ContentType.formdata;
   bool get hasJsonContentType => bodyContentType == ContentType.json;
   bool get hasTextContentType => bodyContentType == ContentType.text;
