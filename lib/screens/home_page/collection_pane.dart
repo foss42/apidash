@@ -47,19 +47,26 @@ class CollectionPane extends ConsumerWidget {
                 },
                 onFileDropped: (file) {
                   final importFormatType = ref.read(importFormatStateProvider);
-                  file.readAsString().then((content) {
-                    kImporter
-                        .getHttpRequestModel(importFormatType, content)
-                        .then((importedRequestModel) {
-                      if (importedRequestModel != null) {
-                        ref
-                            .read(collectionStateNotifierProvider.notifier)
-                            .addRequestModel(importedRequestModel);
-                      } else {
-                        // TODO: Throw an error, unable to parse
-                      }
-                    });
-                  });
+                  file.readAsString().then(
+                    (content) {
+                      kImporter
+                          .getHttpRequestModel(importFormatType, content)
+                          .then((importedRequestModel) {
+                        if (importedRequestModel != null) {
+                          ref
+                              .read(collectionStateNotifierProvider.notifier)
+                              .addRequestModel(importedRequestModel);
+                        } else {
+                          // TODO: show in status bar
+                          debugPrint("Unable to parse ${file.name}");
+                        }
+                      });
+                    },
+                    onError: (e) {
+                      // TODO: show in status bar
+                      debugPrint("Unable to import ${file.name}");
+                    },
+                  );
                   Navigator.of(context).pop();
                 },
               );
