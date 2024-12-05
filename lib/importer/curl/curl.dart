@@ -8,21 +8,8 @@ class CurlFileImport {
       final curl = Curl.parse(content);
       final url = stripUriParams(curl.uri);
       final method = HTTPVerb.values.byName(curl.method.toLowerCase());
-
-      final headers = curl.headers?.entries
-          .map((entry) => NameValueModel(
-                name: entry.key,
-                value: entry.value,
-              ))
-          .toList();
-
-      final params = curl.uri.queryParameters.entries
-          .map((entry) => NameValueModel(
-                name: entry.key,
-                value: entry.value,
-              ))
-          .toList();
-
+      final headers = mapToRows(curl.headers);
+      final params = mapToRows(curl.uri.queryParameters);
       final body = curl.data;
       final formData = curl.formData;
 
