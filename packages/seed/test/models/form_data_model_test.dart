@@ -1,4 +1,4 @@
-import 'package:apidash_core/apidash_core.dart';
+import 'package:seed/seed.dart';
 import 'package:test/test.dart';
 
 void main() {

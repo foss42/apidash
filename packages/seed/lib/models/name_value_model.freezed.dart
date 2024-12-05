@@ -23,8 +23,12 @@ mixin _$NameValueModel {
   String get name => throw _privateConstructorUsedError;
   dynamic get value => throw _privateConstructorUsedError;
 
+  /// Serializes this NameValueModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of NameValueModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $NameValueModelCopyWith<NameValueModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -48,6 +52,8 @@ class _$NameValueModelCopyWithImpl<$Res, $Val extends NameValueModel>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of NameValueModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -86,6 +92,8 @@ class __$$NameValueModelImplCopyWithImpl<$Res>
       _$NameValueModelImpl _value, $Res Function(_$NameValueModelImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of NameValueModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -107,9 +115,7 @@ class __$$NameValueModelImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$NameValueModelImpl
-    with DiagnosticableTreeMixin
-    implements _NameValueModel {
+class _$NameValueModelImpl implements _NameValueModel {
   const _$NameValueModelImpl({required this.name, required this.value});
 
   factory _$NameValueModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -121,17 +127,8 @@ class _$NameValueModelImpl
   final dynamic value;
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+  String toString() {
     return 'NameValueModel(name: $name, value: $value)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'NameValueModel'))
-      ..add(DiagnosticsProperty('name', name))
-      ..add(DiagnosticsProperty('value', value));
   }
 
   @override
@@ -143,12 +140,14 @@ class _$NameValueModelImpl
             const DeepCollectionEquality().equals(other.value, value));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType, name, const DeepCollectionEquality().hash(value));
 
-  @JsonKey(ignore: true)
+  /// Create a copy of NameValueModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$NameValueModelImplCopyWith<_$NameValueModelImpl> get copyWith =>
@@ -175,8 +174,11 @@ abstract class _NameValueModel implements NameValueModel {
   String get name;
   @override
   dynamic get value;
+
+  /// Create a copy of NameValueModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$NameValueModelImplCopyWith<_$NameValueModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

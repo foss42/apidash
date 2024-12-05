@@ -11,3 +11,4 @@ export 'package:collection/collection.dart';
 export 'package:freezed_annotation/freezed_annotation.dart';
 export 'package:http/http.dart';
 export 'package:http_parser/http_parser.dart';
+export 'package:seed/seed.dart';

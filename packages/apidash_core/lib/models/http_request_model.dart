@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:seed/seed.dart';
 import '../extensions/extensions.dart';
 import '../utils/utils.dart'
     show rowsToFormDataMapList, rowsToMap, getEnabledRows;
 import '../consts.dart';
-import 'models.dart';
 
 part 'http_request_model.freezed.dart';
 

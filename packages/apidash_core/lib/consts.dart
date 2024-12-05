@@ -2,8 +2,6 @@ import 'dart:convert';
 
 enum HTTPVerb { get, head, post, put, patch, delete }
 
-enum FormDataType { text, file }
-
 enum SupportedUriSchemes { https, http }
 
 final kSupportedUriSchemes =

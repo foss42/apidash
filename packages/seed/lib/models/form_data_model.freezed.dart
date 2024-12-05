@@ -24,8 +24,12 @@ mixin _$FormDataModel {
   String get value => throw _privateConstructorUsedError;
   FormDataType get type => throw _privateConstructorUsedError;
 
+  /// Serializes this FormDataModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of FormDataModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $FormDataModelCopyWith<FormDataModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -49,6 +53,8 @@ class _$FormDataModelCopyWithImpl<$Res, $Val extends FormDataModel>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of FormDataModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -92,6 +98,8 @@ class __$$FormDataModelImplCopyWithImpl<$Res>
       _$FormDataModelImpl _value, $Res Function(_$FormDataModelImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of FormDataModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -147,11 +155,13 @@ class _$FormDataModelImpl implements _FormDataModel {
             (identical(other.type, type) || other.type == type));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, name, value, type);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of FormDataModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$FormDataModelImplCopyWith<_$FormDataModelImpl> get copyWith =>
@@ -180,8 +190,11 @@ abstract class _FormDataModel implements FormDataModel {
   String get value;
   @override
   FormDataType get type;
+
+  /// Create a copy of FormDataModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$FormDataModelImplCopyWith<_$FormDataModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

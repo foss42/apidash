@@ -1,6 +1,6 @@
 import 'dart:io';
-import 'package:apidash_core/apidash_core.dart';
 import 'package:curl_parser/curl_parser.dart';
+import 'package:seed/seed.dart';
 import 'package:test/test.dart';
 
 final apiUri = Uri.parse('https://api.apidash.dev');
@@ -32,6 +32,69 @@ void main() {
         method: 'POST',
         uri: Uri.parse('https://api.apidash.dev/io/img'),
         headers: {"Content-Type": "multipart/form-data"},
+        form: true,
+        formData: [
+          FormDataModel(
+            name: "imfile",
+            value: "/path/to/image.jpg",
+            type: FormDataType.file,
+          ),
+          FormDataModel(
+            name: "token",
+            value: "john",
+            type: FormDataType.text,
+          )
+        ],
+      ),
+    );
+  });
+
+  test(
+      'parse POST request with multipart/form-data if not specified in headers',
+      () {
+    const curl = r'''curl -X POST 'https://api.apidash.dev/io/img' \
+      -F "imfile=@/path/to/image.jpg" \
+      -F "token=john"
+      ''';
+
+    expect(
+      Curl.parse(curl),
+      Curl(
+        method: 'POST',
+        uri: Uri.parse('https://api.apidash.dev/io/img'),
+        headers: {"Content-Type": "multipart/form-data"},
+        form: true,
+        formData: [
+          FormDataModel(
+            name: "imfile",
+            value: "/path/to/image.jpg",
+            type: FormDataType.file,
+          ),
+          FormDataModel(
+            name: "token",
+            value: "john",
+            type: FormDataType.text,
+          )
+        ],
+      ),
+    );
+  });
+
+  test(
+      'parse POST request with multipart/form-data but some other content type provided by user',
+      () {
+    const curl = r'''curl -X POST 'https://api.apidash.dev/io/img' \
+      -H 'content-type: some-data' \
+      -F "imfile=@/path/to/image.jpg" \
+      -F "token=john"
+      ''';
+
+    expect(
+      Curl.parse(curl),
+      Curl(
+        method: 'POST',
+        uri: Uri.parse('https://api.apidash.dev/io/img'),
+        headers: {"content-type": "some-data"},
         form: true,
         formData: [
           FormDataModel(
