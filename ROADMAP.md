@@ -23,7 +23,7 @@
 
 - [ ] Embedded WebView in Response Previewer (https://github.com/foss42/apidash/issues/155)
 - [ ] Git Support (https://github.com/foss42/apidash/issues/502)
-- [ ] API Testing Suite (https://github.com/foss42/apidash/discussions/96, https://github.com/foss42/apidash/issues/100)  
+- [ ] API Testing Suite (https://github.com/foss42/apidash/discussions/96)  
   - [ ] Provide Mock Data (https://github.com/foss42/apidash/issues/496)
   - [ ] Ability to stress test APIs (https://github.com/foss42/apidash/issues/100)
 - [ ] API Workflow Builder (https://github.com/foss42/apidash/issues/120)
