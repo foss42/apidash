@@ -19,4 +19,8 @@ extension MapExtension on Map {
     }
     return null;
   }
+
+  String? getValueContentType() {
+    return this[getKeyContentType()];
+  }
 }

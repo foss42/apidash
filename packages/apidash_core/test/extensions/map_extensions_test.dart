@@ -41,7 +41,7 @@ void main() {
         expect(mapEx.getKeyContentType(), "Content-Type");
       });
 
-      test('content-Type present should return true', () {
+      test('content-Type present', () {
         Map<String, String> mapEx = {"Agent": "Test", "content-Type": "x"};
         expect(mapEx.getKeyContentType(), "content-Type");
       });
@@ -70,6 +70,43 @@ void main() {
         Map mapEx = {1: "Test", "content-Type": "y", "content-type": "x"};
         expect(mapEx.getKeyContentType(), "content-Type");
       });
+    });
+  });
+
+  group('Testing getValueContentType()', () {
+    test('Content-Type present', () {
+      Map<String, String> mapEx = {"Agent": "Test", "Content-Type": "x"};
+      expect(mapEx.getValueContentType(), "x");
+    });
+
+    test('content-Type present', () {
+      Map<String, String> mapEx = {"Agent": "Test", "content-Type": "x"};
+      expect(mapEx.getValueContentType(), "x");
+    });
+
+    test('empty should return null', () {
+      Map<String, String> mapEx = {};
+      expect(mapEx.getValueContentType(), null);
+    });
+
+    test('No content-type present should return null', () {
+      Map<String, String> mapEx = {"Agent": "Test"};
+      expect(mapEx.getValueContentType(), null);
+    });
+
+    test('Different datatype should return null', () {
+      Map mapEx = {1: "Test"};
+      expect(mapEx.getValueContentType(), null);
+    });
+
+    test('Mixed datatype but should return x', () {
+      Map mapEx = {1: "Test", "content-type": "x"};
+      expect(mapEx.getValueContentType(), "x");
+    });
+
+    test('Multiple occurence should return first', () {
+      Map mapEx = {1: "Test", "content-Type": "y", "content-type": "x"};
+      expect(mapEx.getValueContentType(), "y");
     });
   });
 }
