@@ -1,15 +1,13 @@
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:apidash/importer/import_dialog.dart';
 import 'package:apidash/providers/providers.dart';
-import 'package:apidash/importer/importer.dart';
 import 'package:apidash/extensions/extensions.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
 import '../common_widgets/common_widgets.dart';
-
-final kImporter = Importer();
 
 class CollectionPane extends ConsumerWidget {
   const CollectionPane({
@@ -38,40 +36,7 @@ class CollectionPane extends ConsumerWidget {
               ref.read(collectionStateNotifierProvider.notifier).add();
             },
             onImport: () {
-              showImportDialog(
-                context: context,
-                importFormat: ref.watch(importFormatStateProvider),
-                onImportFormatChange: (format) {
-                  if (format != null) {
-                    ref.read(importFormatStateProvider.notifier).state = format;
-                  }
-                },
-                onFileDropped: (file) {
-                  final importFormatType = ref.read(importFormatStateProvider);
-                  sm.hideCurrentSnackBar();
-                  file.readAsString().then(
-                    (content) {
-                      kImporter
-                          .getHttpRequestModel(importFormatType, content)
-                          .then((importedRequestModel) {
-                        if (importedRequestModel != null) {
-                          ref
-                              .read(collectionStateNotifierProvider.notifier)
-                              .addRequestModel(importedRequestModel);
-                        } else {
-                          var err = "Unable to parse ${file.name}";
-                          sm.showSnackBar(getSnackBar(err, small: false));
-                        }
-                      });
-                    },
-                    onError: (e) {
-                      var err = "Unable to import ${file.name}";
-                      sm.showSnackBar(getSnackBar(err, small: false));
-                    },
-                  );
-                  Navigator.of(context).pop();
-                },
-              );
+              importToCollectionPane(context, ref, sm);
             },
           ),
           kVSpacer10,

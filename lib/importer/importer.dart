@@ -13,3 +13,5 @@ class Importer {
     }
   }
 }
+
+final kImporter = Importer();
