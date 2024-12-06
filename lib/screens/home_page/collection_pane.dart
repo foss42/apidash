@@ -47,6 +47,7 @@ class CollectionPane extends ConsumerWidget {
                 },
                 onFileDropped: (file) {
                   final importFormatType = ref.read(importFormatStateProvider);
+                  String? msg;
                   file.readAsString().then(
                     (content) {
                       kImporter
@@ -57,17 +58,18 @@ class CollectionPane extends ConsumerWidget {
                               .read(collectionStateNotifierProvider.notifier)
                               .addRequestModel(importedRequestModel);
                         } else {
-                          // TODO: show in status bar
-                          debugPrint("Unable to parse ${file.name}");
+                          msg = "Unable to parse ${file.name}";
                         }
                       });
                     },
                     onError: (e) {
-                      // TODO: show in status bar
-                      debugPrint("Unable to import ${file.name}");
+                      msg = "Unable to import ${file.name}";
                     },
                   );
                   Navigator.of(context).pop();
+                  if (msg != null) {
+                    showTextDialog(context, content: msg);
+                  }
                 },
               );
             },
