@@ -19,6 +19,7 @@ class CollectionPane extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final collection = ref.watch(collectionStateNotifierProvider);
+    var sm = ScaffoldMessenger.of(context);
     if (collection == null) {
       return const Center(
         child: CircularProgressIndicator(),
@@ -47,7 +48,7 @@ class CollectionPane extends ConsumerWidget {
                 },
                 onFileDropped: (file) {
                   final importFormatType = ref.read(importFormatStateProvider);
-                  String? msg;
+                  sm.hideCurrentSnackBar();
                   file.readAsString().then(
                     (content) {
                       kImporter
@@ -58,18 +59,17 @@ class CollectionPane extends ConsumerWidget {
                               .read(collectionStateNotifierProvider.notifier)
                               .addRequestModel(importedRequestModel);
                         } else {
-                          msg = "Unable to parse ${file.name}";
+                          var err = "Unable to parse ${file.name}";
+                          sm.showSnackBar(getSnackBar(err, small: false));
                         }
                       });
                     },
                     onError: (e) {
-                      msg = "Unable to import ${file.name}";
+                      var err = "Unable to import ${file.name}";
+                      sm.showSnackBar(getSnackBar(err, small: false));
                     },
                   );
                   Navigator.of(context).pop();
-                  if (msg != null) {
-                    showTextDialog(context, content: msg);
-                  }
                 },
               );
             },
