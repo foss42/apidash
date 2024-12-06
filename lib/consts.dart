@@ -433,6 +433,7 @@ const kLabelDuplicate = "Duplicate";
 const kLabelSelect = "Select";
 const kLabelContinue = "Continue";
 const kLabelCancel = "Cancel";
+const kLabelOk = "Ok";
 // Request Pane
 const kLabelRequest = "Request";
 const kLabelHideCode = "Hide Code";
