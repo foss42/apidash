@@ -6,14 +6,22 @@ import 'package:seed/seed.dart';
 import '../consts.dart';
 import '../models/models.dart';
 import '../utils/utils.dart';
+import 'client_manager.dart';
 
 typedef HttpResponse = http.Response;
 
 Future<(HttpResponse?, Duration?, String?)> request(
   HttpRequestModel requestModel, {
   String defaultUriScheme = kDefaultUriScheme,
-  http.Client? client,
+  String? requestId,
 }) async {
+  final clientManager = HttpClientManager();
+  http.Client? client;
+
+  if (requestId != null) {
+    client = clientManager.createClient(requestId);
+  }
+
   (Uri?, String?) uriRec = getValidRequestUri(
     requestModel.url,
     requestModel.enabledParams,
@@ -109,6 +117,9 @@ Future<(HttpResponse?, Duration?, String?)> request(
     } finally {
       if (shouldCloseClient) {
         client?.close();
+      }
+      if (requestId != null) {
+        clientManager.closeClient(requestId);
       }
     }
   } else {

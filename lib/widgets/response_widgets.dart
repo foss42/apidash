@@ -140,9 +140,7 @@ class ResponsePaneHeader extends StatelessWidget {
             kHSpacer10,
             Expanded(
               child: Text(
-                message == 'Request Cancelled'
-                    ? 'Request Cancelled'
-                    : "$responseStatus: ${message ?? '-'}",
+                "$responseStatus: ${message ?? '-'}",
                 softWrap: false,
                 overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
