@@ -8,31 +8,25 @@ class CurlFileImport {
       final curl = Curl.parse(content);
       final url = stripUriParams(curl.uri);
       final method = HTTPVerb.values.byName(curl.method.toLowerCase());
-
-      final headers = curl.headers?.entries
-          .map((entry) => NameValueModel(
-                name: entry.key,
-                value: entry.value,
-              ))
-          .toList();
-
-      final params = curl.uri.queryParameters.entries
-          .map((entry) => NameValueModel(
-                name: entry.key,
-                value: entry.value,
-              ))
-          .toList();
-
-      // TODO: parse curl data to determine the type of body
+      final headers = mapToRows(curl.headers);
+      final params = mapToRows(curl.uri.queryParameters);
       final body = curl.data;
+      // TODO: formdata with file paths must be set to empty as
+      // there will be permission issue while trying to access the path
+      final formData = curl.formData;
+      // Determine content type based on form data and headers
+      final ContentType contentType = curl.form
+          ? ContentType.formdata
+          : (getContentTypeFromHeadersMap(curl.headers) ?? ContentType.text);
 
       return HttpRequestModel(
-        method: method,
-        url: url,
-        headers: headers,
-        params: params,
-        body: body,
-      );
+          method: method,
+          url: url,
+          headers: headers,
+          params: params,
+          body: body,
+          bodyContentType: contentType,
+          formData: formData);
     } catch (e) {
       return null;
     }

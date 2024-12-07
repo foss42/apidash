@@ -1,32 +1,9 @@
 import 'dart:convert';
-import 'dart:io';
 import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:xml/xml.dart';
 import '../consts.dart';
-
-String? getContentTypeFromHeaders(Map? headers) {
-  return headers?[HttpHeaders.contentTypeHeader];
-}
-
-MediaType? getMediaTypeFromHeaders(Map? headers) {
-  var contentType = getContentTypeFromHeaders(headers);
-  MediaType? mediaType = getMediaTypeFromContentType(contentType);
-  return mediaType;
-}
-
-MediaType? getMediaTypeFromContentType(String? contentType) {
-  if (contentType != null) {
-    try {
-      MediaType mediaType = MediaType.parse(contentType);
-      return mediaType;
-    } catch (e) {
-      return null;
-    }
-  }
-  return null;
-}
 
 String? formatBody(String? body, MediaType? mediaType) {
   if (mediaType != null && body != null) {

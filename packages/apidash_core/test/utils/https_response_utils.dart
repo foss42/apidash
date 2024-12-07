@@ -1,30 +1,8 @@
-import 'package:apidash_core/utils/http_response_utils.dart';
-import 'package:apidash_core/utils/string_utils.dart';
+import 'package:apidash_core/utils/utils.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group("Testing getContentTypeFromHeaders function", () {
-    test('Testing getContentTypeFromHeaders for header1', () {
-      Map<String, String> header1 = {
-        "content-type": "application/json",
-      };
-      String contentType1Expected = "application/json";
-      expect(getContentTypeFromHeaders(header1), contentType1Expected);
-    });
-    test('Testing getContentTypeFromHeaders for null headers', () {
-      expect(getContentTypeFromHeaders(null), null);
-    });
-    test(
-        'Testing getContentTypeFromHeaders when header keys are in header case',
-        () {
-      Map<String, String> header2 = {
-        "Content-Type": "application/json",
-      };
-      expect(getContentTypeFromHeaders(header2), null);
-    });
-  });
-
   group('Testing getMediaTypeFromContentType function', () {
     test('Testing getMediaTypeFromContentType for json type', () {
       String contentType1 = "application/json";
