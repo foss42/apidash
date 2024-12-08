@@ -140,7 +140,7 @@ class DashApp extends ConsumerWidget {
                       ? const App()
                       : context.isMediumWindow
                           ? const MobileDashboard()
-                          : const Dashboard(),
+                          : const DesktopDashboard(),
                   if (kIsWindows)
                     SizedBox(
                       height: 29,
