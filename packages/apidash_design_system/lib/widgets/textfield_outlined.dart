@@ -5,6 +5,7 @@ class ADOutlinedTextField extends StatelessWidget {
   const ADOutlinedTextField({
     super.key,
     this.keyId,
+    this.controller,
     this.readOnly = false,
     this.enabled,
     this.maxLines = 1,
@@ -25,6 +26,7 @@ class ADOutlinedTextField extends StatelessWidget {
   });
 
   final String? keyId;
+  final TextEditingController? controller;
   final bool readOnly;
   final bool? enabled;
   final int? maxLines;
@@ -48,6 +50,7 @@ class ADOutlinedTextField extends StatelessWidget {
     var clrScheme = colorScheme ?? Theme.of(context).colorScheme;
     return TextFormField(
       key: keyId != null ? Key(keyId!) : null,
+      controller: controller,
       readOnly: readOnly,
       enabled: enabled,
       maxLines: maxLines,
