@@ -21,18 +21,25 @@ final kFontFamilyFallback = !kIsWeb && (Platform.isIOS || Platform.isMacOS)
 final kLightMaterialAppTheme = ThemeData(
   fontFamily: kFontFamily,
   fontFamilyFallback: kFontFamilyFallback,
-  colorSchemeSeed: kColorSchemeSeed,
   useMaterial3: true,
-  brightness: Brightness.light,
   visualDensity: VisualDensity.adaptivePlatformDensity,
+  colorScheme: ColorScheme.fromSeed(
+    seedColor: kColorSchemeSeed,
+    brightness: Brightness.light,
+    dynamicSchemeVariant: DynamicSchemeVariant.fidelity,
+  ),
 );
+
 final kDarkMaterialAppTheme = ThemeData(
   fontFamily: kFontFamily,
   fontFamilyFallback: kFontFamilyFallback,
-  colorSchemeSeed: kColorSchemeSeed,
   useMaterial3: true,
-  brightness: Brightness.dark,
   visualDensity: VisualDensity.adaptivePlatformDensity,
+  colorScheme: ColorScheme.fromSeed(
+    seedColor: kColorSchemeSeed,
+    brightness: Brightness.dark,
+    dynamicSchemeVariant: DynamicSchemeVariant.fidelity,
+  ),
 );
 
 final kCodeStyle = TextStyle(
