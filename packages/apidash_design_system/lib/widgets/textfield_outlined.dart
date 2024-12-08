@@ -5,6 +5,10 @@ class ADOutlinedTextField extends StatelessWidget {
   const ADOutlinedTextField({
     super.key,
     this.keyId,
+    this.readOnly = false,
+    this.enabled,
+    this.maxLines = 1,
+    this.expands = false,
     this.initialValue,
     this.textStyle,
     this.textColor,
@@ -21,6 +25,11 @@ class ADOutlinedTextField extends StatelessWidget {
   });
 
   final String? keyId;
+  final bool readOnly;
+  final bool? enabled;
+  final int? maxLines;
+  final bool expands;
+  final bool? isDense;
   final String? initialValue;
   final TextStyle? textStyle;
   final Color? textColor;
@@ -31,7 +40,6 @@ class ADOutlinedTextField extends StatelessWidget {
   final Color? fillColor;
   final Color? focussedBorderColor;
   final Color? enabledBorderColor;
-  final bool? isDense;
   final void Function(String)? onChanged;
   final ColorScheme? colorScheme;
 
@@ -40,6 +48,10 @@ class ADOutlinedTextField extends StatelessWidget {
     var clrScheme = colorScheme ?? Theme.of(context).colorScheme;
     return TextFormField(
       key: keyId != null ? Key(keyId!) : null,
+      readOnly: readOnly,
+      enabled: enabled,
+      maxLines: maxLines,
+      expands: expands,
       initialValue: initialValue,
       style: textStyle ??
           kCodeStyle.copyWith(
