@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:path/path.dart' as p;
-import 'field_outlined.dart';
 
 class WorkspaceSelector extends HookWidget {
   const WorkspaceSelector({
@@ -85,12 +84,12 @@ class WorkspaceSelector extends HookWidget {
                 ],
               ),
               kVSpacer5,
-              OutlinedField(
+              ADOutlinedTextField(
                 keyId: "workspace-name",
                 onChanged: (value) {
                   workspaceName.value = value.trim();
                 },
-                colorScheme: Theme.of(context).colorScheme,
+                isDense: true,
               ),
               kVSpacer40,
               Row(
