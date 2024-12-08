@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/providers.dart';
 import '../services/services.dart';
+import '../utils/utils.dart';
 import '../widgets/widgets.dart';
-import '../common/utils.dart';
 import '../consts.dart';
 import '../extensions/extensions.dart';
 

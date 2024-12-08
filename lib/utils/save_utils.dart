@@ -3,7 +3,9 @@ import 'package:apidash/utils/utils.dart';
 import 'package:apidash/widgets/widgets.dart';
 
 Future<void> saveCollection(
-    Map<String, dynamic> data, ScaffoldMessengerState sm) async {
+  Map<String, dynamic> data,
+  ScaffoldMessengerState sm,
+) async {
   var message = "";
   try {
     var pth = await getFileDownloadpath(null, "har");
