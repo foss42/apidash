@@ -18,6 +18,7 @@ class WorkspaceSelector extends HookWidget {
   @override
   Widget build(BuildContext context) {
     var selectedDirectory = useState<String?>(null);
+    var selectedDirectoryTextController = useTextEditingController();
     var workspaceName = useState<String?>(null);
     return Scaffold(
       body: Center(
@@ -45,27 +46,21 @@ class WorkspaceSelector extends HookWidget {
               Row(
                 children: [
                   Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          width: 1,
-                          color: Theme.of(context).colorScheme.primaryContainer,
-                        ),
-                        borderRadius: kBorderRadius6,
-                      ),
-                      padding: kP4,
-                      child: Text(
-                        style: kTextStyleButtonSmall,
-                        selectedDirectory.value ?? "",
-                        maxLines: 4,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                    child: ADOutlinedTextField(
+                      keyId: "workspace-path",
+                      controller: selectedDirectoryTextController,
+                      textStyle: kTextStyleButtonSmall,
+                      readOnly: true,
+                      isDense: true,
+                      maxLines: null,
                     ),
                   ),
                   kHSpacer10,
                   FilledButton.tonalIcon(
                     onPressed: () async {
                       selectedDirectory.value = await getDirectoryPath();
+                      selectedDirectoryTextController.text =
+                          selectedDirectory.value ?? "";
                     },
                     label: const Text(kLabelSelect),
                     icon: const Icon(Icons.folder_rounded),
