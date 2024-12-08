@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:apidash/utils/utils.dart';
 import 'package:apidash/consts.dart';
-import "snackbars.dart";
 
 class SaveInDownloadsButton extends StatelessWidget {
   const SaveInDownloadsButton({
@@ -29,26 +28,13 @@ class SaveInDownloadsButton extends StatelessWidget {
     );
     const label = kLabelDownload;
     final onPressed = (content != null)
-        ? () async {
-            var message = "";
-            var path = await getFileDownloadpath(
-              name,
-              ext ?? getFileExtension(mimeType),
-            );
-            if (path != null) {
-              try {
-                await saveFile(path, content!);
-                var sp = getShortPath(path);
-                message = 'Saved to $sp';
-              } catch (e) {
-                message = "An error occurred while saving file.";
-              }
-            } else {
-              message = "Unable to determine the download path.";
-            }
-            sm.hideCurrentSnackBar();
-            sm.showSnackBar(getSnackBar(message, small: false));
-          }
+        ? () => saveToDownloads(
+              sm,
+              content: content,
+              mimeType: mimeType,
+              ext: ext,
+              name: name,
+            )
         : null;
 
     return showLabel
