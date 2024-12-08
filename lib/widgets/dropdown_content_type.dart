@@ -14,36 +14,11 @@ class DropdownButtonContentType extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final surfaceColor = Theme.of(context).colorScheme.surface;
-    return DropdownButton<ContentType>(
-      focusColor: surfaceColor,
+    return ADDropdownButton<ContentType>(
       value: contentType,
-      icon: const Icon(
-        Icons.unfold_more_rounded,
-        size: 16,
-      ),
-      elevation: 4,
-      style: kCodeStyle.copyWith(
-        color: Theme.of(context).colorScheme.primary,
-      ),
-      underline: Container(
-        height: 0,
-      ),
+      values: ContentType.values.map((e) => (e, e.name)),
       onChanged: onChanged,
-      borderRadius: kBorderRadius12,
-      items: ContentType.values
-          .map<DropdownMenuItem<ContentType>>((ContentType value) {
-        return DropdownMenuItem<ContentType>(
-          value: value,
-          child: Padding(
-            padding: kPs8,
-            child: Text(
-              value.name,
-              style: kTextStyleButton,
-            ),
-          ),
-        );
-      }).toList(),
+      iconSize: 16,
     );
   }
 }

@@ -14,39 +14,11 @@ class DropdownButtonImportFormat extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final surfaceColor = Theme.of(context).colorScheme.surface;
-    return DropdownButton<ImportFormat>(
-      isExpanded: false,
-      focusColor: surfaceColor,
+    return ADDropdownButton<ImportFormat>(
       value: importFormat,
-      icon: const Icon(
-        Icons.unfold_more_rounded,
-        size: 16,
-      ),
-      elevation: 4,
-      style: kCodeStyle.copyWith(
-        color: Theme.of(context).colorScheme.primary,
-      ),
-      underline: Container(
-        height: 0,
-      ),
+      values: ImportFormat.values.map((e) => (e, e.label)),
       onChanged: onChanged,
-      borderRadius: kBorderRadius12,
-      items: ImportFormat.values
-          .map<DropdownMenuItem<ImportFormat>>((ImportFormat value) {
-        return DropdownMenuItem<ImportFormat>(
-          value: value,
-          child: Padding(
-            padding: kPs8,
-            child: Text(
-              value.label,
-              style: kTextStyleButton,
-              overflow: TextOverflow.ellipsis,
-              maxLines: 1,
-            ),
-          ),
-        );
-      }).toList(),
+      iconSize: 16,
     );
   }
 }
