@@ -8,6 +8,8 @@ part of 'request_model.dart';
 
 _$RequestModelImpl _$$RequestModelImplFromJson(Map json) => _$RequestModelImpl(
       id: json['id'] as String,
+      apiType: $enumDecodeNullable(_$APITypeEnumMap, json['apiType']) ??
+          APIType.rest,
       name: json['name'] as String? ?? "",
       description: json['description'] as String? ?? "",
       requestTabIndex: json['requestTabIndex'] ?? 0,
@@ -30,6 +32,7 @@ _$RequestModelImpl _$$RequestModelImplFromJson(Map json) => _$RequestModelImpl(
 Map<String, dynamic> _$$RequestModelImplToJson(_$RequestModelImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
+      'apiType': _$APITypeEnumMap[instance.apiType]!,
       'name': instance.name,
       'description': instance.description,
       'httpRequestModel': instance.httpRequestModel?.toJson(),
@@ -37,3 +40,7 @@ Map<String, dynamic> _$$RequestModelImplToJson(_$RequestModelImpl instance) =>
       'message': instance.message,
       'httpResponseModel': instance.httpResponseModel?.toJson(),
     };
+
+const _$APITypeEnumMap = {
+  APIType.rest: 'rest',
+};
