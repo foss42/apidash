@@ -1,3 +1,4 @@
+import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -60,6 +61,11 @@ class RequestEditorTopBar extends ConsumerWidget {
       ),
       child: Row(
         children: [
+          DropdownButtonProtocol(
+            protocol: Protocol.http,
+            onChanged: (protocol) {},
+          ),
+          kHSpacer10,
           Expanded(
             child: Text(
               name ?? "",
@@ -68,9 +74,7 @@ class RequestEditorTopBar extends ConsumerWidget {
               maxLines: 1,
             ),
           ),
-          const SizedBox(
-            width: 6,
-          ),
+          kHSpacer10,
           EditorTitleActions(
             onRenamePressed: () {
               showRenameDialog(context, "Rename Request", name, (val) {

@@ -1,5 +1,12 @@
 import 'dart:convert';
 
+enum Protocol {
+  http("HTTP");
+
+  const Protocol(this.label);
+  final String label;
+}
+
 enum HTTPVerb { get, head, post, put, patch, delete }
 
 enum SupportedUriSchemes { https, http }

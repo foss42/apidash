@@ -8,6 +8,7 @@ class ADDropdownButton<T> extends StatelessWidget {
     required this.values,
     this.onChanged,
     this.isExpanded = false,
+    this.isDense = false,
     this.iconSize,
     this.dropdownMenuItemPadding = kPs8,
     this.dropdownMenuItemtextStyle,
@@ -17,6 +18,7 @@ class ADDropdownButton<T> extends StatelessWidget {
   final Iterable<(T, String?)> values;
   final void Function(T?)? onChanged;
   final bool isExpanded;
+  final bool isDense;
   final double? iconSize;
   final EdgeInsetsGeometry dropdownMenuItemPadding;
   final TextStyle? Function(T)? dropdownMenuItemtextStyle;
@@ -26,6 +28,7 @@ class ADDropdownButton<T> extends StatelessWidget {
     final surfaceColor = Theme.of(context).colorScheme.surface;
     return DropdownButton<T>(
       isExpanded: isExpanded,
+      isDense: isDense,
       focusColor: surfaceColor,
       value: value,
       icon: Icon(
