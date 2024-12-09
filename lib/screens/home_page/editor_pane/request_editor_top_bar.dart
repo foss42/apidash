@@ -24,7 +24,7 @@ class RequestEditorTopBar extends ConsumerWidget {
       child: Row(
         children: [
           DropdownButtonAPIType(
-            apiType: APIType.http,
+            apiType: APIType.rest,
             onChanged: (apiType) {},
           ),
           kHSpacer10,

@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 enum APIType {
-  http("HTTP");
+  rest("HTTP");
 
   const APIType(this.label);
   final String label;
