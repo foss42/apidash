@@ -35,8 +35,12 @@ mixin _$RequestModel {
   @JsonKey(includeToJson: false)
   DateTime? get sendingTime => throw _privateConstructorUsedError;
 
+  /// Serializes this RequestModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of RequestModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $RequestModelCopyWith<RequestModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -73,6 +77,8 @@ class _$RequestModelCopyWithImpl<$Res, $Val extends RequestModel>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of RequestModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -131,6 +137,8 @@ class _$RequestModelCopyWithImpl<$Res, $Val extends RequestModel>
     ) as $Val);
   }
 
+  /// Create a copy of RequestModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $HttpRequestModelCopyWith<$Res>? get httpRequestModel {
@@ -143,6 +151,8 @@ class _$RequestModelCopyWithImpl<$Res, $Val extends RequestModel>
     });
   }
 
+  /// Create a copy of RequestModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $HttpResponseModelCopyWith<$Res>? get httpResponseModel {
@@ -190,6 +200,8 @@ class __$$RequestModelImplCopyWithImpl<$Res>
       _$RequestModelImpl _value, $Res Function(_$RequestModelImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of RequestModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -322,7 +334,7 @@ class _$RequestModelImpl implements _RequestModel {
                 other.sendingTime == sendingTime));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -337,7 +349,9 @@ class _$RequestModelImpl implements _RequestModel {
       isWorking,
       sendingTime);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of RequestModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$RequestModelImplCopyWith<_$RequestModelImpl> get copyWith =>
@@ -391,8 +405,11 @@ abstract class _RequestModel implements RequestModel {
   @override
   @JsonKey(includeToJson: false)
   DateTime? get sendingTime;
+
+  /// Create a copy of RequestModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$RequestModelImplCopyWith<_$RequestModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
