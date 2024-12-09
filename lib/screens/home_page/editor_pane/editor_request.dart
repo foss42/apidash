@@ -61,9 +61,9 @@ class RequestEditorTopBar extends ConsumerWidget {
       ),
       child: Row(
         children: [
-          DropdownButtonProtocol(
-            protocol: Protocol.http,
-            onChanged: (protocol) {},
+          DropdownButtonAPIType(
+            apiType: APIType.http,
+            onChanged: (apiType) {},
           ),
           kHSpacer10,
           Expanded(

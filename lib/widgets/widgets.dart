@@ -25,7 +25,7 @@ export 'dropdown_content_type.dart';
 export 'dropdown_formdata.dart';
 export 'dropdown_http_method.dart';
 export 'dropdown_import_format.dart';
-export 'dropdown_protocol.dart';
+export 'dropdown_api_type.dart';
 export 'editor_json.dart';
 export 'editor.dart';
 export 'error_message.dart';

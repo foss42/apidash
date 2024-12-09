@@ -1,9 +1,9 @@
 import 'dart:convert';
 
-enum Protocol {
+enum APIType {
   http("HTTP");
 
-  const Protocol(this.label);
+  const APIType(this.label);
   final String label;
 }
 
