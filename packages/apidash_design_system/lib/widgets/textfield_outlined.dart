@@ -13,9 +13,11 @@ class ADOutlinedTextField extends StatelessWidget {
     this.initialValue,
     this.textStyle,
     this.textColor,
+    this.textFontSize,
     this.hintText,
     this.hintTextStyle,
     this.hintTextColor,
+    this.hintTextFontSize,
     this.contentPadding,
     this.fillColor,
     this.focussedBorderColor,
@@ -34,9 +36,11 @@ class ADOutlinedTextField extends StatelessWidget {
   final bool? isDense;
   final String? initialValue;
   final TextStyle? textStyle;
+  final double? textFontSize;
   final Color? textColor;
   final String? hintText;
   final TextStyle? hintTextStyle;
+  final double? hintTextFontSize;
   final Color? hintTextColor;
   final EdgeInsetsGeometry? contentPadding;
   final Color? fillColor;
@@ -58,6 +62,7 @@ class ADOutlinedTextField extends StatelessWidget {
       initialValue: initialValue,
       style: textStyle ??
           kCodeStyle.copyWith(
+            fontSize: textFontSize,
             color: textColor ?? clrScheme.onSurface,
           ),
       decoration: InputDecoration(
@@ -65,6 +70,7 @@ class ADOutlinedTextField extends StatelessWidget {
         fillColor: fillColor ?? clrScheme.surfaceContainerLowest,
         hintStyle: hintTextStyle ??
             kCodeStyle.copyWith(
+              fontSize: hintTextFontSize,
               color: hintTextColor ??
                   clrScheme.outline.withOpacity(
                     kHintOpacity,
