@@ -53,11 +53,14 @@ class EnvironmentEditor extends ConsumerWidget {
                       onDuplicatePressed: () => ref
                           .read(environmentsStateNotifierProvider.notifier)
                           .duplicateEnvironment(id!),
-                      onDeletePressed: () {
-                        ref
-                            .read(environmentsStateNotifierProvider.notifier)
-                            .removeEnvironment(id!);
-                      },
+                      onDeletePressed: id == kGlobalEnvironmentId
+                          ? null
+                          : () {
+                              ref
+                                  .read(environmentsStateNotifierProvider
+                                      .notifier)
+                                  .removeEnvironment(id!);
+                            },
                     ),
                     kHSpacer4,
                   ],
