@@ -1,8 +1,8 @@
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 
-class RawTextField extends StatelessWidget {
-  const RawTextField({
+class ADRawTextField extends StatelessWidget {
+  const ADRawTextField({
     super.key,
     this.onChanged,
     this.controller,
