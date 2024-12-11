@@ -1,7 +1,7 @@
+import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:apidash/utils/utils.dart';
-import 'package:apidash/widgets/widgets.dart';
 
 Future<void> saveCollection(
   Map<String, dynamic> data,
