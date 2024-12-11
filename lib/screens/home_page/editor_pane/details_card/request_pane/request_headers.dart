@@ -90,7 +90,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
           key: ValueKey("$selectedId-$index-headers-row-$seed"),
           cells: <DataCell>[
             DataCell(
-              CheckBox(
+              ADCheckBox(
                 keyId: "$selectedId-$index-headers-c-$seed",
                 value: isRowEnabledList[index],
                 onChanged: isLast
