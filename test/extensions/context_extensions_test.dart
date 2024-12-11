@@ -1,6 +1,6 @@
+import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:apidash/consts.dart';
 import 'package:apidash/extensions/context_extensions.dart';
 
 void main() {
@@ -9,7 +9,7 @@ void main() {
         (tester) async {
       await tester.pumpWidget(
         MediaQuery(
-          data: const MediaQueryData(size: Size(kCompactWindowWidth - 1, 800)),
+          data: MediaQueryData(size: Size(WindowWidth.compact.value - 1, 800)),
           child: Builder(
             builder: (context) {
               expect(context.isCompactWindow, isTrue);
@@ -24,7 +24,7 @@ void main() {
         (tester) async {
       await tester.pumpWidget(
         MediaQuery(
-          data: const MediaQueryData(size: Size(kMediumWindowWidth - 1, 800)),
+          data: MediaQueryData(size: Size(WindowWidth.medium.value - 1, 800)),
           child: Builder(
             builder: (context) {
               expect(context.isMediumWindow, isTrue);
@@ -39,7 +39,7 @@ void main() {
         (tester) async {
       await tester.pumpWidget(
         MediaQuery(
-          data: const MediaQueryData(size: Size(kExpandedWindowWidth - 1, 800)),
+          data: MediaQueryData(size: Size(WindowWidth.expanded.value - 1, 800)),
           child: Builder(
             builder: (context) {
               expect(context.isExpandedWindow, isTrue);
@@ -54,7 +54,7 @@ void main() {
         (tester) async {
       await tester.pumpWidget(
         MediaQuery(
-          data: const MediaQueryData(size: Size(kLargeWindowWidth - 1, 800)),
+          data: MediaQueryData(size: Size(WindowWidth.large.value - 1, 800)),
           child: Builder(
             builder: (context) {
               expect(context.isLargeWindow, isTrue);
@@ -69,7 +69,7 @@ void main() {
         (tester) async {
       await tester.pumpWidget(
         MediaQuery(
-          data: const MediaQueryData(size: Size(kLargeWindowWidth + 1, 800)),
+          data: MediaQueryData(size: Size(WindowWidth.large.value + 1, 800)),
           child: Builder(
             builder: (context) {
               expect(context.isExtraLargeWindow, isTrue);

@@ -29,7 +29,7 @@ class _HistoryDetailsState extends ConsumerState<HistoryDetails>
     return selectedHistoryRequest != null
         ? LayoutBuilder(
             builder: (context, constraints) {
-              final isCompact = constraints.maxWidth < kMediumWindowWidth;
+              final isCompact = constraints.maxWidth < WindowWidth.medium.value;
               return Column(
                 children: [
                   kVSpacer5,

@@ -17,9 +17,7 @@ class EnvironmentsPane extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Padding(
-      padding: (!context.isMediumWindow && kIsMacOS
-              ? kP24CollectionPane
-              : kP8CollectionPane) +
+      padding: (!context.isMediumWindow && kIsMacOS ? kPt24l4 : kPt8l4) +
           (context.isMediumWindow ? kPb70 : EdgeInsets.zero),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
