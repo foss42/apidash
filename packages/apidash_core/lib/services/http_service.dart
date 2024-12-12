@@ -105,13 +105,6 @@ Future<(HttpResponse?, Duration?, String?)> request(
       }
       stopwatch.stop();
       return (response, stopwatch.elapsed, null);
-    } on http.ClientException catch (e) {
-      if (e.message.contains('Connection closed') ||
-          e.message.contains('Connection attempt cancelled')) {
-        return (null, null, 'Request Cancelled');
-      } else {
-        return (null, null, e.toString());
-      }
     } catch (e) {
       return (null, null, e.toString());
     } finally {
