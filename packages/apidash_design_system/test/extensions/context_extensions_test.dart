@@ -1,7 +1,6 @@
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:apidash/extensions/context_extensions.dart';
 
 void main() {
   group('Testing MediaQueryExtension', () {
