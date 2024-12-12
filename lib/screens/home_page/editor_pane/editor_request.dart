@@ -1,6 +1,5 @@
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
-import 'package:apidash/extensions/extensions.dart';
 import 'package:apidash/consts.dart';
 import 'details_card/details_card.dart';
 import 'details_card/request_pane/request_pane.dart';

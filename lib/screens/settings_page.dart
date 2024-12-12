@@ -7,7 +7,6 @@ import '../services/services.dart';
 import '../utils/utils.dart';
 import '../widgets/widgets.dart';
 import '../consts.dart';
-import '../extensions/extensions.dart';
 
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});

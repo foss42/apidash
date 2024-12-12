@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/importer/import_dialog.dart';
 import 'package:apidash/providers/providers.dart';
-import 'package:apidash/extensions/extensions.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
