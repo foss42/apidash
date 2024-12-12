@@ -24,13 +24,16 @@ final requestSequenceProvider = StateProvider<List<String>>((ref) {
   return ids ?? [];
 });
 
+final httpClientManager = HttpClientManager();
+
 final StateNotifierProvider<CollectionStateNotifier, Map<String, RequestModel>?>
-    collectionStateNotifierProvider =
-    StateNotifierProvider((ref) => CollectionStateNotifier(ref, hiveHandler));
+    collectionStateNotifierProvider = StateNotifierProvider(
+        (ref) => CollectionStateNotifier(ref, hiveHandler, httpClientManager));
 
 class CollectionStateNotifier
     extends StateNotifier<Map<String, RequestModel>?> {
-  CollectionStateNotifier(this.ref, this.hiveHandler) : super(null) {
+  CollectionStateNotifier(this.ref, this.hiveHandler, this.httpClientManager)
+      : super(null) {
     var status = loadData();
     Future.microtask(() {
       if (status) {
@@ -46,6 +49,7 @@ class CollectionStateNotifier
   final Ref ref;
   final HiveHandler hiveHandler;
   final baseResponseModel = const HttpResponseModel();
+  final HttpClientManager httpClientManager;
 
   bool hasId(String id) => state?.keys.contains(id) ?? false;
 
@@ -243,7 +247,6 @@ class CollectionStateNotifier
     );
 
     RequestModel requestModel = state![id]!;
-
     if (requestModel.httpRequestModel == null) {
       return;
     }
@@ -251,7 +254,6 @@ class CollectionStateNotifier
     HttpRequestModel substitutedHttpRequestModel =
         getSubstitutedHttpRequestModel(requestModel.httpRequestModel!);
 
-    // set current model's isWorking to true and update state
     var map = {...state!};
     map[id] = requestModel.copyWith(
       isWorking: true,
@@ -262,14 +264,25 @@ class CollectionStateNotifier
     (HttpResponse?, Duration?, String?)? responseRec = await request(
       substitutedHttpRequestModel,
       defaultUriScheme: defaultUriScheme,
+      requestId: id,
     );
+
     late final RequestModel newRequestModel;
     if (responseRec.$1 == null) {
-      newRequestModel = requestModel.copyWith(
-        responseStatus: -1,
-        message: responseRec.$3,
-        isWorking: false,
-      );
+      if (responseRec.$3 == kMsgRequestCancelled) {
+        newRequestModel = requestModel.copyWith(
+          responseStatus: null,
+          message: kMsgRequestCancelled,
+          isWorking: false,
+          httpResponseModel: null,
+        );
+      } else {
+        newRequestModel = requestModel.copyWith(
+          responseStatus: -1,
+          message: responseRec.$3,
+          isWorking: false,
+        );
+      }
     } else {
       final responseModel = baseResponseModel.fromResponse(
         response: responseRec.$1!,
@@ -300,12 +313,15 @@ class CollectionStateNotifier
       ref.read(historyMetaStateNotifier.notifier).addHistoryRequest(model);
     }
 
-    // update state with response data
     map = {...state!};
     map[id] = newRequestModel;
     state = map;
 
     ref.read(hasUnsavedChangesProvider.notifier).state = true;
+  }
+
+  void cancelRequest(String id) {
+    httpClientManager.cancelRequest(id);
   }
 
   Future<void> clearData() async {
