@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
 
@@ -11,13 +12,10 @@ class ClearResponseButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-      tooltip: kTooltipClearResponse,
+    return ADIconButton(
+      icon: Icons.delete,
       onPressed: onPressed,
-      icon: const Icon(
-        Icons.delete,
-        size: 16,
-      ),
+      tooltip: kTooltipClearResponse,
     );
   }
 }

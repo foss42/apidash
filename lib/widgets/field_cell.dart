@@ -19,35 +19,13 @@ class CellField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var clrScheme = colorScheme ?? Theme.of(context).colorScheme;
-    return TextFormField(
-      key: Key(keyId),
+    return ADOutlinedTextField(
+      keyId: keyId,
       initialValue: initialValue,
-      style: kCodeStyle.copyWith(
-        color: clrScheme.onSurface,
-      ),
-      decoration: InputDecoration(
-        hintStyle: kCodeStyle.copyWith(
-          color: clrScheme.outline.withOpacity(
-            kHintOpacity,
-          ),
-        ),
-        hintText: hintText,
-        contentPadding: const EdgeInsets.only(bottom: 12),
-        focusedBorder: UnderlineInputBorder(
-          borderSide: BorderSide(
-            color: clrScheme.primary.withOpacity(
-              kHintOpacity,
-            ),
-          ),
-        ),
-        enabledBorder: UnderlineInputBorder(
-          borderSide: BorderSide(
-            color: clrScheme.surfaceContainerHighest,
-          ),
-        ),
-      ),
+      hintText: hintText,
+      hintTextFontSize: Theme.of(context).textTheme.bodySmall?.fontSize,
       onChanged: onChanged,
+      colorScheme: colorScheme,
     );
   }
 }

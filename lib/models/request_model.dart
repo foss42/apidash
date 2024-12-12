@@ -12,6 +12,7 @@ class RequestModel with _$RequestModel {
   )
   const factory RequestModel({
     required String id,
+    @Default(APIType.rest) APIType apiType,
     @Default("") String name,
     @Default("") String description,
     @JsonKey(includeToJson: false) @Default(0) requestTabIndex,

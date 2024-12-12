@@ -1,5 +1,12 @@
 import 'dart:convert';
 
+enum APIType {
+  rest("HTTP");
+
+  const APIType(this.label);
+  final String label;
+}
+
 enum HTTPVerb { get, head, post, put, patch, delete }
 
 enum SupportedUriSchemes { https, http }

@@ -1,6 +1,6 @@
+import 'package:apidash_design_system/widgets/checkbox.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:apidash/widgets/checkbox.dart';
 
 void main() {
   testWidgets('Testing for Checkbox', (tester) async {
@@ -9,7 +9,7 @@ void main() {
       MaterialApp(
         title: 'Checkbox Widget',
         home: Scaffold(
-          body: CheckBox(
+          body: ADCheckBox(
             keyId: "1",
             value: false,
             onChanged: (value) {

@@ -180,6 +180,7 @@ RequestModel testRequestModel = RequestModel(
 // JSON
 Map<String, dynamic> requestModelJson = {
   'id': '1',
+  'apiType': 'rest',
   'name': '',
   'description': '',
   'httpRequestModel': httpRequestModelPost10Json,

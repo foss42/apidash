@@ -14,39 +14,12 @@ class DropdownButtonCodegenLanguage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final surfaceColor = Theme.of(context).colorScheme.surface;
-    return DropdownButton<CodegenLanguage>(
-      isExpanded: true,
-      focusColor: surfaceColor,
+    return ADDropdownButton<CodegenLanguage>(
       value: codegenLanguage,
-      icon: const Icon(
-        Icons.unfold_more_rounded,
-        size: 16,
-      ),
-      elevation: 4,
-      style: kCodeStyle.copyWith(
-        color: Theme.of(context).colorScheme.primary,
-      ),
-      underline: Container(
-        height: 0,
-      ),
+      values: CodegenLanguage.values.map((e) => (e, e.label)),
       onChanged: onChanged,
-      borderRadius: kBorderRadius12,
-      items: CodegenLanguage.values
-          .map<DropdownMenuItem<CodegenLanguage>>((CodegenLanguage value) {
-        return DropdownMenuItem<CodegenLanguage>(
-          value: value,
-          child: Padding(
-            padding: kPs8,
-            child: Text(
-              value.label,
-              style: kTextStyleButton,
-              overflow: TextOverflow.ellipsis,
-              maxLines: 1,
-            ),
-          ),
-        );
-      }).toList(),
+      iconSize: 16,
+      isExpanded: true,
     );
   }
 }

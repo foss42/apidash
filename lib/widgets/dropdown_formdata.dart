@@ -14,35 +14,11 @@ class DropdownButtonFormData extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final surfaceColor = Theme.of(context).colorScheme.surface;
-    return DropdownButton<FormDataType>(
-      dropdownColor: surfaceColor,
-      focusColor: surfaceColor,
+    return ADDropdownButton<FormDataType>(
       value: formDataType,
-      icon: const Icon(
-        Icons.unfold_more_rounded,
-        size: 16,
-      ),
-      elevation: 4,
-      style: kCodeStyle.copyWith(
-        color: Theme.of(context).colorScheme.primary,
-      ),
-      underline: const IgnorePointer(),
+      values: FormDataType.values.map((e) => (e, e.name)),
       onChanged: onChanged,
-      borderRadius: kBorderRadius12,
-      items: FormDataType.values
-          .map<DropdownMenuItem<FormDataType>>((FormDataType value) {
-        return DropdownMenuItem<FormDataType>(
-          value: value,
-          child: Padding(
-            padding: kPs8,
-            child: Text(
-              value.name,
-              style: kTextStyleButton,
-            ),
-          ),
-        );
-      }).toList(),
+      iconSize: 16,
     );
   }
 }
