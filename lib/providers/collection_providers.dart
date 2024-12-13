@@ -269,20 +269,11 @@ class CollectionStateNotifier
 
     late final RequestModel newRequestModel;
     if (responseRec.$1 == null) {
-      if (responseRec.$3 == kMsgRequestCancelled) {
-        newRequestModel = requestModel.copyWith(
-          responseStatus: null,
-          message: kMsgRequestCancelled,
-          isWorking: false,
-          httpResponseModel: null,
-        );
-      } else {
-        newRequestModel = requestModel.copyWith(
-          responseStatus: -1,
-          message: responseRec.$3,
-          isWorking: false,
-        );
-      }
+      newRequestModel = requestModel.copyWith(
+        responseStatus: -1,
+        message: responseRec.$3,
+        isWorking: false,
+      );
     } else {
       final responseModel = baseResponseModel.fromResponse(
         response: responseRec.$1!,
