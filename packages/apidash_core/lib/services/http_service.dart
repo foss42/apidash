@@ -12,7 +12,7 @@ typedef HttpResponse = http.Response;
 
 Future<(HttpResponse?, Duration?, String?)> request(
   HttpRequestModel requestModel, {
-  String defaultUriScheme = kDefaultUriScheme,
+  SupportedUriSchemes defaultUriScheme = kDefaultUriScheme,
   String? requestId,
 }) async {
   final clientManager = HttpClientManager();

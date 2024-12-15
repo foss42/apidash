@@ -1,3 +1,4 @@
+import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/models.dart';
@@ -24,7 +25,7 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
     bool? alwaysShowCollectionPaneScrollbar,
     Size? size,
     Offset? offset,
-    String? defaultUriScheme,
+    SupportedUriSchemes? defaultUriScheme,
     CodegenLanguage? defaultCodeGenLang,
     bool? saveResponses,
     bool? promptBeforeClosing,

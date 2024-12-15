@@ -19,7 +19,6 @@ void main() {
             onChanged: (value) {
               selectedValue = value;
             },
-            items: const [historyPeriod1, historyPeriod2],
           ),
         ),
       ),

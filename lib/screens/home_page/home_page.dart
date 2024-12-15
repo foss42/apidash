@@ -1,6 +1,6 @@
+import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash/widgets/widgets.dart';
-import 'package:apidash/extensions/extensions.dart';
 import '../mobile/requests_page/requests_page.dart';
 import 'editor_pane/editor_pane.dart';
 import 'collection_pane.dart';

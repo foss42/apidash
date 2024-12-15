@@ -1,5 +1,6 @@
 import 'package:apidash/codegen/codegen.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:test/test.dart';
 
 import '../models/request_models.dart';
@@ -31,7 +32,7 @@ task.resume()
             codeGen.getCode(
               CodegenLanguage.swiftUrlSession,
               requestModelGet1,
-              "https",
+              SupportedUriSchemes.https,
             ),
             expectedCode);
       });
@@ -56,7 +57,7 @@ task.resume()
             codeGen.getCode(
               CodegenLanguage.swiftUrlSession,
               requestModelGet2,
-              "https",
+              SupportedUriSchemes.https,
             ),
             expectedCode);
       });
@@ -81,7 +82,7 @@ task.resume()
             codeGen.getCode(
               CodegenLanguage.swiftUrlSession,
               requestModelGet3,
-              "https",
+              SupportedUriSchemes.https,
             ),
             expectedCode);
       });
@@ -106,7 +107,7 @@ task.resume()
             codeGen.getCode(
               CodegenLanguage.swiftUrlSession,
               requestModelGet4,
-              "https",
+              SupportedUriSchemes.https,
             ),
             expectedCode);
       });
@@ -134,7 +135,7 @@ task.resume()
             codeGen.getCode(
               CodegenLanguage.swiftUrlSession,
               requestModelGet5,
-              "https",
+              SupportedUriSchemes.https,
             ),
             expectedCode);
       });
@@ -162,7 +163,7 @@ task.resume()
             codeGen.getCode(
               CodegenLanguage.swiftUrlSession,
               requestModelGet6,
-              "https",
+              SupportedUriSchemes.https,
             ),
             expectedCode);
       });
@@ -187,7 +188,7 @@ task.resume()
             codeGen.getCode(
               CodegenLanguage.swiftUrlSession,
               requestModelGet7,
-              "https",
+              SupportedUriSchemes.https,
             ),
             expectedCode);
       });
@@ -214,7 +215,7 @@ task.resume()
             codeGen.getCode(
               CodegenLanguage.swiftUrlSession,
               requestModelGet8,
-              "https",
+              SupportedUriSchemes.https,
             ),
             expectedCode);
       });
@@ -239,7 +240,7 @@ task.resume()
             codeGen.getCode(
               CodegenLanguage.swiftUrlSession,
               requestModelGet9,
-              "https",
+              SupportedUriSchemes.https,
             ),
             expectedCode);
       });
@@ -267,7 +268,7 @@ task.resume()
             codeGen.getCode(
               CodegenLanguage.swiftUrlSession,
               requestModelGet10,
-              "https",
+              SupportedUriSchemes.https,
             ),
             expectedCode);
       });
@@ -295,7 +296,7 @@ task.resume()
             codeGen.getCode(
               CodegenLanguage.swiftUrlSession,
               requestModelGet11,
-              "https",
+              SupportedUriSchemes.https,
             ),
             expectedCode);
       });
@@ -320,7 +321,7 @@ task.resume()
             codeGen.getCode(
               CodegenLanguage.swiftUrlSession,
               requestModelGet12,
-              "https",
+              SupportedUriSchemes.https,
             ),
             expectedCode);
       });
@@ -350,7 +351,7 @@ task.resume()
             codeGen.getCode(
               CodegenLanguage.swiftUrlSession,
               requestModelHead1,
-              "https",
+              SupportedUriSchemes.https,
             ),
             expectedCode);
       });
@@ -375,7 +376,7 @@ task.resume()
             codeGen.getCode(
               CodegenLanguage.swiftUrlSession,
               requestModelHead2,
-              "https",
+              SupportedUriSchemes.https,
             ),
             expectedCode);
       });
@@ -413,7 +414,7 @@ task.resume()
             codeGen.getCode(
               CodegenLanguage.swiftUrlSession,
               requestModelPost1,
-              "https",
+              SupportedUriSchemes.https,
             ),
             expectedCode);
       });
@@ -444,7 +445,7 @@ task.resume()
             codeGen.getCode(
               CodegenLanguage.swiftUrlSession,
               requestModelPost2,
-              "https",
+              SupportedUriSchemes.https,
             ),
             expectedCode);
       });
@@ -478,7 +479,7 @@ task.resume()
             codeGen.getCode(
               CodegenLanguage.swiftUrlSession,
               requestModelPost3,
-              "https",
+              SupportedUriSchemes.https,
             ),
             expectedCode);
       });
@@ -557,7 +558,7 @@ task.resume()
             codeGen.getCode(
               CodegenLanguage.swiftUrlSession,
               requestModelPost4,
-              "https",
+              SupportedUriSchemes.https,
             ),
             expectedCode);
       });
@@ -637,7 +638,7 @@ task.resume()
             codeGen.getCode(
               CodegenLanguage.swiftUrlSession,
               requestModelPost5,
-              "https",
+              SupportedUriSchemes.https,
             ),
             expectedCode);
       });
@@ -709,7 +710,7 @@ task.resume()
             codeGen.getCode(
               CodegenLanguage.swiftUrlSession,
               requestModelPost6,
-              "https",
+              SupportedUriSchemes.https,
             ),
             expectedCode);
       });
@@ -781,7 +782,7 @@ task.resume()
             codeGen.getCode(
               CodegenLanguage.swiftUrlSession,
               requestModelPost7,
-              "https",
+              SupportedUriSchemes.https,
             ),
             expectedCode);
       });
@@ -859,7 +860,7 @@ task.resume()
             codeGen.getCode(
               CodegenLanguage.swiftUrlSession,
               requestModelPost8,
-              "https",
+              SupportedUriSchemes.https,
             ),
             expectedCode);
       });
@@ -935,7 +936,7 @@ task.resume()
             codeGen.getCode(
               CodegenLanguage.swiftUrlSession,
               requestModelPost9,
-              "https",
+              SupportedUriSchemes.https,
             ),
             expectedCode);
       });
@@ -966,7 +967,7 @@ task.resume()
             codeGen.getCode(
               CodegenLanguage.swiftUrlSession,
               requestModelPost10,
-              "https",
+              SupportedUriSchemes.https,
             ),
             expectedCode);
       });
@@ -1004,7 +1005,7 @@ task.resume()
             codeGen.getCode(
               CodegenLanguage.swiftUrlSession,
               requestModelPut1,
-              "https",
+              SupportedUriSchemes.https,
             ),
             expectedCode);
       });
@@ -1042,7 +1043,7 @@ task.resume()
             codeGen.getCode(
               CodegenLanguage.swiftUrlSession,
               requestModelPatch1,
-              "https",
+              SupportedUriSchemes.https,
             ),
             expectedCode);
       });
@@ -1071,7 +1072,10 @@ task.resume()
 
         expect(
             codeGen.getCode(
-                CodegenLanguage.swiftUrlSession, requestModelDelete1, "https"),
+              CodegenLanguage.swiftUrlSession,
+              requestModelDelete1,
+              SupportedUriSchemes.https,
+            ),
             expectedCode);
       });
 
@@ -1102,7 +1106,7 @@ task.resume()
             codeGen.getCode(
               CodegenLanguage.swiftUrlSession,
               requestModelDelete2,
-              "https",
+              SupportedUriSchemes.https,
             ),
             expectedCode);
       });

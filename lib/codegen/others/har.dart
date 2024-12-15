@@ -3,14 +3,12 @@ import '../../utils/utils.dart';
 
 class HARCodeGen {
   String? getCode(
-    HttpRequestModel requestModel,
-    String defaultUriScheme, {
+    HttpRequestModel requestModel, {
     String? boundary,
   }) {
     try {
       var harString = kJsonEncoder.convert(requestModelToHARJsonRequest(
         requestModel,
-        defaultUriScheme: defaultUriScheme,
         useEnabled: true,
         boundary: boundary,
       ));

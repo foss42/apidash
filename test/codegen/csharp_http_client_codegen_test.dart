@@ -1,5 +1,6 @@
 import 'package:apidash/codegen/codegen.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:test/test.dart';
 import '../models/request_models.dart';
 
@@ -24,7 +25,10 @@ using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
 ''';
       expect(
           codeGen.getCode(
-              CodegenLanguage.cSharpHttpClient, requestModelGet1, "https"),
+            CodegenLanguage.cSharpHttpClient,
+            requestModelGet1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -45,7 +49,10 @@ using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
 ''';
       expect(
           codeGen.getCode(
-              CodegenLanguage.cSharpHttpClient, requestModelGet2, "https"),
+            CodegenLanguage.cSharpHttpClient,
+            requestModelGet2,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -66,7 +73,10 @@ using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
 ''';
       expect(
           codeGen.getCode(
-              CodegenLanguage.cSharpHttpClient, requestModelGet3, "https"),
+            CodegenLanguage.cSharpHttpClient,
+            requestModelGet3,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -87,7 +97,10 @@ using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
 ''';
       expect(
           codeGen.getCode(
-              CodegenLanguage.cSharpHttpClient, requestModelGet4, "https"),
+            CodegenLanguage.cSharpHttpClient,
+            requestModelGet4,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -110,7 +123,10 @@ using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
 ''';
       expect(
           codeGen.getCode(
-              CodegenLanguage.cSharpHttpClient, requestModelGet5, "https"),
+            CodegenLanguage.cSharpHttpClient,
+            requestModelGet5,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -133,7 +149,10 @@ using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
 ''';
       expect(
           codeGen.getCode(
-              CodegenLanguage.cSharpHttpClient, requestModelGet6, "https"),
+            CodegenLanguage.cSharpHttpClient,
+            requestModelGet6,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -154,7 +173,10 @@ using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
 ''';
       expect(
           codeGen.getCode(
-              CodegenLanguage.cSharpHttpClient, requestModelGet7, "https"),
+            CodegenLanguage.cSharpHttpClient,
+            requestModelGet7,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -177,7 +199,10 @@ using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
 ''';
       expect(
           codeGen.getCode(
-              CodegenLanguage.cSharpHttpClient, requestModelGet8, "https"),
+            CodegenLanguage.cSharpHttpClient,
+            requestModelGet8,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -198,7 +223,10 @@ using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
 ''';
       expect(
           codeGen.getCode(
-              CodegenLanguage.cSharpHttpClient, requestModelGet9, "https"),
+            CodegenLanguage.cSharpHttpClient,
+            requestModelGet9,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -221,7 +249,10 @@ using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
 ''';
       expect(
           codeGen.getCode(
-              CodegenLanguage.cSharpHttpClient, requestModelGet10, "https"),
+            CodegenLanguage.cSharpHttpClient,
+            requestModelGet10,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -244,7 +275,10 @@ using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
 ''';
       expect(
           codeGen.getCode(
-              CodegenLanguage.cSharpHttpClient, requestModelGet11, "https"),
+            CodegenLanguage.cSharpHttpClient,
+            requestModelGet11,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -265,7 +299,10 @@ using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
 ''';
       expect(
           codeGen.getCode(
-              CodegenLanguage.cSharpHttpClient, requestModelGet12, "https"),
+            CodegenLanguage.cSharpHttpClient,
+            requestModelGet12,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
   });
@@ -288,7 +325,10 @@ using (var request = new HttpRequestMessage(HttpMethod.Head, uri))
 ''';
       expect(
           codeGen.getCode(
-              CodegenLanguage.cSharpHttpClient, requestModelHead1, "https"),
+            CodegenLanguage.cSharpHttpClient,
+            requestModelHead1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -309,7 +349,10 @@ using (var request = new HttpRequestMessage(HttpMethod.Head, uri))
 ''';
       expect(
           codeGen.getCode(
-              CodegenLanguage.cSharpHttpClient, requestModelHead2, "http"),
+            CodegenLanguage.cSharpHttpClient,
+            requestModelHead2,
+            SupportedUriSchemes.http,
+          ),
           expectedCode);
     });
   });
@@ -340,7 +383,10 @@ using (var request = new HttpRequestMessage(HttpMethod.Post, uri))
 ''';
       expect(
           codeGen.getCode(
-              CodegenLanguage.cSharpHttpClient, requestModelPost1, "https"),
+            CodegenLanguage.cSharpHttpClient,
+            requestModelPost1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -374,7 +420,10 @@ using (var request = new HttpRequestMessage(HttpMethod.Post, uri))
 ''';
       expect(
           codeGen.getCode(
-              CodegenLanguage.cSharpHttpClient, requestModelPost2, "https"),
+            CodegenLanguage.cSharpHttpClient,
+            requestModelPost2,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -405,7 +454,10 @@ using (var request = new HttpRequestMessage(HttpMethod.Post, uri))
 ''';
       expect(
           codeGen.getCode(
-              CodegenLanguage.cSharpHttpClient, requestModelPost3, "https"),
+            CodegenLanguage.cSharpHttpClient,
+            requestModelPost3,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -435,7 +487,10 @@ using (var request = new HttpRequestMessage(HttpMethod.Post, uri))
 ''';
       expect(
           codeGen.getCode(
-              CodegenLanguage.cSharpHttpClient, requestModelPost4, "https"),
+            CodegenLanguage.cSharpHttpClient,
+            requestModelPost4,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -467,7 +522,10 @@ using (var request = new HttpRequestMessage(HttpMethod.Post, uri))
 ''';
       expect(
           codeGen.getCode(
-              CodegenLanguage.cSharpHttpClient, requestModelPost5, "https"),
+            CodegenLanguage.cSharpHttpClient,
+            requestModelPost5,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -500,7 +558,10 @@ using (var request = new HttpRequestMessage(HttpMethod.Post, uri))
 ''';
       expect(
           codeGen.getCode(
-              CodegenLanguage.cSharpHttpClient, requestModelPost6, "https"),
+            CodegenLanguage.cSharpHttpClient,
+            requestModelPost6,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -533,7 +594,10 @@ using (var request = new HttpRequestMessage(HttpMethod.Post, uri))
 ''';
       expect(
           codeGen.getCode(
-              CodegenLanguage.cSharpHttpClient, requestModelPost7, "https"),
+            CodegenLanguage.cSharpHttpClient,
+            requestModelPost7,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -563,7 +627,10 @@ using (var request = new HttpRequestMessage(HttpMethod.Post, uri))
 ''';
       expect(
           codeGen.getCode(
-              CodegenLanguage.cSharpHttpClient, requestModelPost8, "https"),
+            CodegenLanguage.cSharpHttpClient,
+            requestModelPost8,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -599,7 +666,10 @@ using (var request = new HttpRequestMessage(HttpMethod.Post, uri))
 ''';
       expect(
           codeGen.getCode(
-              CodegenLanguage.cSharpHttpClient, requestModelPost9, "https"),
+            CodegenLanguage.cSharpHttpClient,
+            requestModelPost9,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
   });
@@ -631,7 +701,10 @@ using (var request = new HttpRequestMessage(HttpMethod.Put, uri))
 ''';
       expect(
           codeGen.getCode(
-              CodegenLanguage.cSharpHttpClient, requestModelPut1, "https"),
+            CodegenLanguage.cSharpHttpClient,
+            requestModelPut1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
   });
@@ -663,7 +736,10 @@ using (var request = new HttpRequestMessage(HttpMethod.Patch, uri))
 ''';
       expect(
           codeGen.getCode(
-              CodegenLanguage.cSharpHttpClient, requestModelPatch1, "https"),
+            CodegenLanguage.cSharpHttpClient,
+            requestModelPatch1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
   });
@@ -686,7 +762,10 @@ using (var request = new HttpRequestMessage(HttpMethod.Delete, uri))
 ''';
       expect(
           codeGen.getCode(
-              CodegenLanguage.cSharpHttpClient, requestModelDelete1, "https"),
+            CodegenLanguage.cSharpHttpClient,
+            requestModelDelete1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -716,7 +795,10 @@ using (var request = new HttpRequestMessage(HttpMethod.Delete, uri))
 ''';
       expect(
           codeGen.getCode(
-              CodegenLanguage.cSharpHttpClient, requestModelDelete2, "https"),
+            CodegenLanguage.cSharpHttpClient,
+            requestModelDelete2,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
   });
