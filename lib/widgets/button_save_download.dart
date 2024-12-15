@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:apidash/utils/utils.dart';
@@ -22,11 +23,6 @@ class SaveInDownloadsButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var sm = ScaffoldMessenger.of(context);
-    const icon = Icon(
-      Icons.download,
-      size: 18,
-    );
-    const label = kLabelDownload;
     final onPressed = (content != null)
         ? () => saveToDownloads(
               sm,
@@ -38,17 +34,19 @@ class SaveInDownloadsButton extends StatelessWidget {
         : null;
 
     return showLabel
-        ? TextButton.icon(
+        ? ADTextButton(
+            icon: Icons.download,
+            iconSize: kButtonIconSizeLarge,
+            label: kLabelDownload,
             onPressed: onPressed,
-            icon: icon,
-            label: const Text(label),
           )
-        : IconButton(
-            tooltip: label,
+        : ADIconButton(
+            icon: Icons.download,
+            iconSize: kButtonIconSizeLarge,
+            onPressed: onPressed,
+            tooltip: kLabelDownload,
             color: Theme.of(context).colorScheme.primary,
             visualDensity: VisualDensity.compact,
-            onPressed: onPressed,
-            icon: icon,
           );
   }
 }

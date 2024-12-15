@@ -17,7 +17,7 @@ void main() {
     final icon = find.byIcon(Icons.snippet_folder_rounded);
     Finder button = find.ancestor(
         of: icon,
-        matching: find.byWidgetPredicate((widget) => widget is ElevatedButton));
+        matching: find.byWidgetPredicate((widget) => widget is FilledButton));
 
     expect(button, findsOneWidget);
     expect(find.text(kLabelSelectFile), findsOneWidget);
@@ -37,7 +37,7 @@ void main() {
     final icon = find.byIcon(Icons.snippet_folder_rounded);
     Finder button = find.ancestor(
         of: icon,
-        matching: find.byWidgetPredicate((widget) => widget is ElevatedButton));
+        matching: find.byWidgetPredicate((widget) => widget is FilledButton));
 
     expect(button, findsOneWidget);
     expect(find.text(testValue), findsOneWidget);
@@ -61,7 +61,7 @@ void main() {
     final icon = find.byIcon(Icons.snippet_folder_rounded);
     Finder button = find.ancestor(
         of: icon,
-        matching: find.byWidgetPredicate((widget) => widget is ElevatedButton));
+        matching: find.byWidgetPredicate((widget) => widget is FilledButton));
 
     await tester.tap(button);
     await tester.pump();

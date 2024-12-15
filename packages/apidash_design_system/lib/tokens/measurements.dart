@@ -10,6 +10,10 @@ enum WindowWidth {
   final double value;
 }
 
+const kButtonIconSizeSmall = 14.0;
+const kButtonIconSizeMedium = 16.0;
+const kButtonIconSizeLarge = 18.0;
+
 const kBorderRadius4 = BorderRadius.all(Radius.circular(4));
 const kBorderRadius6 = BorderRadius.all(Radius.circular(6));
 const kBorderRadius8 = BorderRadius.all(Radius.circular(8));
@@ -80,6 +84,8 @@ const kSizedBoxEmpty = SizedBox();
 const kHSpacer2 = SizedBox(width: 2);
 const kHSpacer4 = SizedBox(width: 4);
 const kHSpacer5 = SizedBox(width: 5);
+const kHSpacer6 = SizedBox(width: 6);
+const kHSpacer8 = SizedBox(width: 8);
 const kHSpacer10 = SizedBox(width: 10);
 const kHSpacer12 = SizedBox(width: 12);
 const kHSpacer20 = SizedBox(width: 20);
