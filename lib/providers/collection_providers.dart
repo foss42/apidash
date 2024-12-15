@@ -254,6 +254,7 @@ class CollectionStateNotifier
     );
 
     RequestModel requestModel = state![id]!;
+
     if (requestModel.httpRequestModel == null) {
       return;
     }
@@ -261,6 +262,7 @@ class CollectionStateNotifier
     HttpRequestModel substitutedHttpRequestModel =
         getSubstitutedHttpRequestModel(requestModel.httpRequestModel!);
 
+    // set current model's isWorking to true and update state
     var map = {...state!};
     map[id] = requestModel.copyWith(
       isWorking: true,
@@ -311,6 +313,7 @@ class CollectionStateNotifier
       ref.read(historyMetaStateNotifier.notifier).addHistoryRequest(model);
     }
 
+    // update state with response data
     map = {...state!};
     map[id] = newRequestModel;
     state = map;
