@@ -1,5 +1,6 @@
 import 'package:apidash/codegen/codegen.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:test/test.dart';
 import '../models/request_models.dart';
 
@@ -15,7 +16,12 @@ void main() {
   "queryString": [],
   "headers": []
 }""";
-      expect(codeGen.getCode(CodegenLanguage.har, requestModelGet1, "https"),
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.har,
+            requestModelGet1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -32,7 +38,12 @@ void main() {
   ],
   "headers": []
 }""";
-      expect(codeGen.getCode(CodegenLanguage.har, requestModelGet2, "https"),
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.har,
+            requestModelGet2,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -49,7 +60,12 @@ void main() {
   ],
   "headers": []
 }""";
-      expect(codeGen.getCode(CodegenLanguage.har, requestModelGet3, "https"),
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.har,
+            requestModelGet3,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -82,7 +98,12 @@ void main() {
   ],
   "headers": []
 }""";
-      expect(codeGen.getCode(CodegenLanguage.har, requestModelGet4, "https"),
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.har,
+            requestModelGet4,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -99,7 +120,12 @@ void main() {
     }
   ]
 }""";
-      expect(codeGen.getCode(CodegenLanguage.har, requestModelGet5, "https"),
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.har,
+            requestModelGet5,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -121,7 +147,12 @@ void main() {
     }
   ]
 }""";
-      expect(codeGen.getCode(CodegenLanguage.har, requestModelGet6, "https"),
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.har,
+            requestModelGet6,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -133,7 +164,12 @@ void main() {
   "queryString": [],
   "headers": []
 }""";
-      expect(codeGen.getCode(CodegenLanguage.har, requestModelGet7, "https"),
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.har,
+            requestModelGet7,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -155,7 +191,12 @@ void main() {
     }
   ]
 }""";
-      expect(codeGen.getCode(CodegenLanguage.har, requestModelGet8, "https"),
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.har,
+            requestModelGet8,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -176,7 +217,12 @@ void main() {
   ],
   "headers": []
 }""";
-      expect(codeGen.getCode(CodegenLanguage.har, requestModelGet9, "https"),
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.har,
+            requestModelGet9,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -197,7 +243,7 @@ void main() {
           codeGen.getCode(
             CodegenLanguage.har,
             requestModelGet10,
-            "https",
+            SupportedUriSchemes.https,
           ),
           expectedCode);
     });
@@ -224,7 +270,12 @@ void main() {
     }
   ]
 }""";
-      expect(codeGen.getCode(CodegenLanguage.har, requestModelGet11, "https"),
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.har,
+            requestModelGet11,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -236,7 +287,12 @@ void main() {
   "queryString": [],
   "headers": []
 }""";
-      expect(codeGen.getCode(CodegenLanguage.har, requestModelGet12, "https"),
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.har,
+            requestModelGet12,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
   });
@@ -250,7 +306,12 @@ void main() {
   "queryString": [],
   "headers": []
 }""";
-      expect(codeGen.getCode(CodegenLanguage.har, requestModelHead1, "https"),
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.har,
+            requestModelHead1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -262,7 +323,12 @@ void main() {
   "queryString": [],
   "headers": []
 }""";
-      expect(codeGen.getCode(CodegenLanguage.har, requestModelHead2, "http"),
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.har,
+            requestModelHead2,
+            SupportedUriSchemes.http,
+          ),
           expectedCode);
     });
   });
@@ -285,7 +351,12 @@ void main() {
     "text": "{\n\"text\": \"I LOVE Flutter\"\n}"
   }
 }""";
-      expect(codeGen.getCode(CodegenLanguage.har, requestModelPost1, "https"),
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.har,
+            requestModelPost1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -306,7 +377,12 @@ void main() {
     "text": "{\n\"text\": \"I LOVE Flutter\",\n\"flag\": null,\n\"male\": true,\n\"female\": false,\n\"no\": 1.2,\n\"arr\": [\"null\", \"true\", \"false\", null]\n}"
   }
 }""";
-      expect(codeGen.getCode(CodegenLanguage.har, requestModelPost2, "https"),
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.har,
+            requestModelPost2,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -331,7 +407,12 @@ void main() {
     "text": "{\n\"text\": \"I LOVE Flutter\"\n}"
   }
 }""";
-      expect(codeGen.getCode(CodegenLanguage.har, requestModelPost3, "https"),
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.har,
+            requestModelPost3,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -366,7 +447,8 @@ void main() {
   }
 }""";
       expect(
-          codeGen.getCode(CodegenLanguage.har, requestModelPost4, "https",
+          codeGen.getCode(
+              CodegenLanguage.har, requestModelPost4, SupportedUriSchemes.https,
               boundary: "d43e2510-a25e-1f08-b0a5-591aeb704467"),
           expectedCode);
     });
@@ -406,7 +488,8 @@ void main() {
   }
 }""";
       expect(
-          codeGen.getCode(CodegenLanguage.har, requestModelPost5, "https",
+          codeGen.getCode(
+              CodegenLanguage.har, requestModelPost5, SupportedUriSchemes.https,
               boundary: "ce268b20-a3e6-1f08-b0a5-591aeb704467"),
           expectedCode);
     });
@@ -438,7 +521,8 @@ void main() {
   }
 }""";
       expect(
-          codeGen.getCode(CodegenLanguage.har, requestModelPost6, "https",
+          codeGen.getCode(
+              CodegenLanguage.har, requestModelPost6, SupportedUriSchemes.https,
               boundary: "c90d21a0-a44d-1f08-b0a5-591aeb704467"),
           expectedCode);
     });
@@ -470,7 +554,8 @@ void main() {
   }
 }""";
       expect(
-          codeGen.getCode(CodegenLanguage.har, requestModelPost7, "https",
+          codeGen.getCode(
+              CodegenLanguage.har, requestModelPost7, SupportedUriSchemes.https,
               boundary: "4ac86770-a4dc-1f08-b0a5-591aeb704467"),
           expectedCode);
     });
@@ -515,7 +600,8 @@ void main() {
   }
 }""";
       expect(
-          codeGen.getCode(CodegenLanguage.har, requestModelPost8, "https",
+          codeGen.getCode(
+              CodegenLanguage.har, requestModelPost8, SupportedUriSchemes.https,
               boundary: "78403a20-a54a-1f08-b0a5-591aeb704467"),
           expectedCode);
     });
@@ -564,7 +650,8 @@ void main() {
   }
 }""";
       expect(
-          codeGen.getCode(CodegenLanguage.har, requestModelPost9, "https",
+          codeGen.getCode(
+              CodegenLanguage.har, requestModelPost9, SupportedUriSchemes.https,
               boundary: "2d9cd390-a593-1f08-b0a5-591aeb704467"),
           expectedCode);
     });
@@ -588,7 +675,12 @@ void main() {
     "text": "{\n\"name\": \"morpheus\",\n\"job\": \"zion resident\"\n}"
   }
 }""";
-      expect(codeGen.getCode(CodegenLanguage.har, requestModelPut1, "https"),
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.har,
+            requestModelPut1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
   });
@@ -611,7 +703,12 @@ void main() {
     "text": "{\n\"name\": \"marfeus\",\n\"job\": \"accountant\"\n}"
   }
 }""";
-      expect(codeGen.getCode(CodegenLanguage.har, requestModelPatch1, "https"),
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.har,
+            requestModelPatch1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
   });
@@ -625,7 +722,12 @@ void main() {
   "queryString": [],
   "headers": []
 }""";
-      expect(codeGen.getCode(CodegenLanguage.har, requestModelDelete1, "https"),
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.har,
+            requestModelDelete1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -646,7 +748,12 @@ void main() {
     "text": "{\n\"name\": \"marfeus\",\n\"job\": \"accountant\"\n}"
   }
 }""";
-      expect(codeGen.getCode(CodegenLanguage.har, requestModelDelete2, "https"),
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.har,
+            requestModelDelete2,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
   });

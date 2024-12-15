@@ -1,5 +1,6 @@
 import 'package:apidash/codegen/codegen.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:test/test.dart';
 import '../models/request_models.dart';
 
@@ -24,7 +25,11 @@ echo $res->getStatusCode() . "\n";
 echo $res->getBody();
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.phpGuzzle, requestModelGet1, "https"),
+          codeGen.getCode(
+            CodegenLanguage.phpGuzzle,
+            requestModelGet1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -50,7 +55,11 @@ echo $res->getStatusCode() . "\n";
 echo $res->getBody();
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.phpGuzzle, requestModelGet2, "https"),
+          codeGen.getCode(
+            CodegenLanguage.phpGuzzle,
+            requestModelGet2,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -76,7 +85,11 @@ echo $res->getStatusCode() . "\n";
 echo $res->getBody();
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.phpGuzzle, requestModelGet3, "https"),
+          codeGen.getCode(
+            CodegenLanguage.phpGuzzle,
+            requestModelGet3,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -106,7 +119,11 @@ echo $res->getStatusCode() . "\n";
 echo $res->getBody();
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.phpGuzzle, requestModelGet4, "https"),
+          codeGen.getCode(
+            CodegenLanguage.phpGuzzle,
+            requestModelGet4,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -131,7 +148,11 @@ echo $res->getStatusCode() . "\n";
 echo $res->getBody();
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.phpGuzzle, requestModelGet5, "https"),
+          codeGen.getCode(
+            CodegenLanguage.phpGuzzle,
+            requestModelGet5,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -161,7 +182,11 @@ echo $res->getStatusCode() . "\n";
 echo $res->getBody();
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.phpGuzzle, requestModelGet6, "https"),
+          codeGen.getCode(
+            CodegenLanguage.phpGuzzle,
+            requestModelGet6,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -182,7 +207,11 @@ echo $res->getStatusCode() . "\n";
 echo $res->getBody();
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.phpGuzzle, requestModelGet7, "https"),
+          codeGen.getCode(
+            CodegenLanguage.phpGuzzle,
+            requestModelGet7,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -212,7 +241,11 @@ echo $res->getStatusCode() . "\n";
 echo $res->getBody();
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.phpGuzzle, requestModelGet8, "https"),
+          codeGen.getCode(
+            CodegenLanguage.phpGuzzle,
+            requestModelGet8,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -239,7 +272,11 @@ echo $res->getStatusCode() . "\n";
 echo $res->getBody();
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.phpGuzzle, requestModelGet9, "https"),
+          codeGen.getCode(
+            CodegenLanguage.phpGuzzle,
+            requestModelGet9,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -267,7 +304,7 @@ echo $res->getBody();
           codeGen.getCode(
             CodegenLanguage.phpGuzzle,
             requestModelGet10,
-            "https",
+            SupportedUriSchemes.https,
           ),
           expectedCode);
     });
@@ -300,7 +337,10 @@ echo $res->getBody();
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.phpGuzzle, requestModelGet11, "https"),
+            CodegenLanguage.phpGuzzle,
+            requestModelGet11,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -322,7 +362,10 @@ echo $res->getBody();
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.phpGuzzle, requestModelGet12, "https"),
+            CodegenLanguage.phpGuzzle,
+            requestModelGet12,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
   });
@@ -346,7 +389,10 @@ echo $res->getBody();
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.phpGuzzle, requestModelHead1, "https"),
+            CodegenLanguage.phpGuzzle,
+            requestModelHead1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -367,7 +413,11 @@ echo $res->getStatusCode() . "\n";
 echo $res->getBody();
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.phpGuzzle, requestModelHead2, "http"),
+          codeGen.getCode(
+            CodegenLanguage.phpGuzzle,
+            requestModelHead2,
+            SupportedUriSchemes.http,
+          ),
           expectedCode);
     });
   });
@@ -401,7 +451,10 @@ echo $res->getBody();
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.phpGuzzle, requestModelPost1, "https"),
+            CodegenLanguage.phpGuzzle,
+            requestModelPost1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -438,7 +491,10 @@ echo $res->getBody();
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.phpGuzzle, requestModelPost2, "https"),
+            CodegenLanguage.phpGuzzle,
+            requestModelPost2,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -471,7 +527,10 @@ echo $res->getBody();
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.phpGuzzle, requestModelPost3, "https"),
+            CodegenLanguage.phpGuzzle,
+            requestModelPost3,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -512,7 +571,10 @@ echo $res->getBody();
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.phpGuzzle, requestModelPost4, "https"),
+            CodegenLanguage.phpGuzzle,
+            requestModelPost4,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -554,7 +616,10 @@ echo $res->getBody();
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.phpGuzzle, requestModelPost5, "https"),
+            CodegenLanguage.phpGuzzle,
+            requestModelPost5,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -591,7 +656,10 @@ echo $res->getBody();
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.phpGuzzle, requestModelPost6, "https"),
+            CodegenLanguage.phpGuzzle,
+            requestModelPost6,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -628,7 +696,10 @@ echo $res->getBody();
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.phpGuzzle, requestModelPost7, "https"),
+            CodegenLanguage.phpGuzzle,
+            requestModelPost7,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -675,7 +746,10 @@ echo $res->getBody();
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.phpGuzzle, requestModelPost8, "https"),
+            CodegenLanguage.phpGuzzle,
+            requestModelPost8,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -720,7 +794,10 @@ echo $res->getBody();
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.phpGuzzle, requestModelPost9, "https"),
+            CodegenLanguage.phpGuzzle,
+            requestModelPost9,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
   });
@@ -754,7 +831,11 @@ echo $res->getStatusCode() . "\n";
 echo $res->getBody();
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.phpGuzzle, requestModelPut1, "https"),
+          codeGen.getCode(
+            CodegenLanguage.phpGuzzle,
+            requestModelPut1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
   });
@@ -789,7 +870,10 @@ echo $res->getBody();
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.phpGuzzle, requestModelPatch1, "https"),
+            CodegenLanguage.phpGuzzle,
+            requestModelPatch1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
   });
@@ -813,7 +897,10 @@ echo $res->getBody();
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.phpGuzzle, requestModelDelete1, "https"),
+            CodegenLanguage.phpGuzzle,
+            requestModelDelete1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -846,7 +933,10 @@ echo $res->getBody();
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.phpGuzzle, requestModelDelete2, "https"),
+            CodegenLanguage.phpGuzzle,
+            requestModelDelete2,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
   });
