@@ -7,11 +7,13 @@ class ErrorMessage extends StatelessWidget {
   const ErrorMessage({
     super.key,
     required this.message,
+    this.icon = Icons.warning_rounded,
     this.showIcon = true,
     this.showIssueButton = true,
   });
 
   final String? message;
+  final IconData icon;
   final bool showIcon;
   final bool showIssueButton;
 
@@ -27,7 +29,7 @@ class ErrorMessage extends StatelessWidget {
             children: [
               showIcon
                   ? Icon(
-                      Icons.warning_rounded,
+                      icon,
                       size: 40,
                       color: color,
                     )
