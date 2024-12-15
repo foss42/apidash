@@ -56,7 +56,6 @@ void main() {
       // Verify initial cancel state
       expect(find.byIcon(Icons.send), findsNothing);
       expect(find.text(kLabelSend), findsNothing);
-      expect(find.byIcon(Icons.cancel), findsOneWidget);
       expect(find.text(kLabelCancel), findsOneWidget);
 
       // Tap and verify callback
@@ -94,7 +93,6 @@ void main() {
       await tester.pump();
 
       // Verify cancel state
-      expect(find.byIcon(Icons.cancel), findsOneWidget);
       expect(find.text(kLabelCancel), findsOneWidget);
 
       // Tap to cancel

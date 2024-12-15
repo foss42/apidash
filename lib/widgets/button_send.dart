@@ -18,17 +18,15 @@ class SendButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ADFilledButton(
       onPressed: isWorking ? onCancel : onTap,
+      isTonal: isWorking ? true : false,
       items: isWorking
           ? const [
+              kHSpacer8,
               Text(
                 kLabelCancel,
                 style: kTextStyleButton,
               ),
-              kHSpacer10,
-              Icon(
-                size: 16,
-                Icons.cancel,
-              )
+              kHSpacer6,
             ]
           : const [
               Text(
