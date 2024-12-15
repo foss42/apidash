@@ -249,35 +249,35 @@ class CollectionStateNotifier
     unsave();
   }
 
-  Future<void> sendRequest(String id) async {
+  Future<void> sendRequest() async {
+    final requestId = ref.read(selectedIdStateProvider);
     ref.read(codePaneVisibleStateProvider.notifier).state = false;
-    final defaultUriScheme = ref.read(
-      settingsProvider.select(
-        (value) => value.defaultUriScheme,
-      ),
-    );
+    final defaultUriScheme = ref.read(settingsProvider).defaultUriScheme;
 
-    RequestModel requestModel = state![id]!;
+    if (requestId == null || state == null) {
+      return;
+    }
+    RequestModel? requestModel = state![requestId];
 
-    if (requestModel.httpRequestModel == null) {
+    if (requestModel?.httpRequestModel == null) {
       return;
     }
 
     HttpRequestModel substitutedHttpRequestModel =
-        getSubstitutedHttpRequestModel(requestModel.httpRequestModel!);
+        getSubstitutedHttpRequestModel(requestModel!.httpRequestModel!);
 
     // set current model's isWorking to true and update state
     var map = {...state!};
-    map[id] = requestModel.copyWith(
+    map[requestId] = requestModel.copyWith(
       isWorking: true,
       sendingTime: DateTime.now(),
     );
     state = map;
 
     (HttpResponse?, Duration?, String?)? responseRec = await request(
+      requestId,
       substitutedHttpRequestModel,
       defaultUriScheme: defaultUriScheme,
-      requestId: id,
     );
 
     late final RequestModel newRequestModel;
@@ -304,7 +304,7 @@ class CollectionStateNotifier
         historyId: newHistoryId,
         metaData: HistoryMetaModel(
           historyId: newHistoryId,
-          requestId: id,
+          requestId: requestId,
           name: requestModel.name,
           url: substitutedHttpRequestModel.url,
           method: substitutedHttpRequestModel.method,
@@ -319,13 +319,14 @@ class CollectionStateNotifier
 
     // update state with response data
     map = {...state!};
-    map[id] = newRequestModel;
+    map[requestId] = newRequestModel;
     state = map;
 
     unsave();
   }
 
-  void cancelRequest(String id) {
+  void cancelRequest() {
+    final id = ref.read(selectedIdStateProvider);
     httpClientManager.cancelRequest(id);
     unsave();
   }

@@ -19,8 +19,8 @@ class HttpClientManager {
     return client;
   }
 
-  void cancelRequest(String requestId) {
-    if (_clients.containsKey(requestId)) {
+  void cancelRequest(String? requestId) {
+    if (requestId != null && _clients.containsKey(requestId)) {
       _clients[requestId]?.close();
       _clients.remove(requestId);
 

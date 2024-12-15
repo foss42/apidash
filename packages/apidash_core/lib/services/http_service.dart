@@ -11,9 +11,9 @@ import 'http_client_manager.dart';
 typedef HttpResponse = http.Response;
 
 Future<(HttpResponse?, Duration?, String?)> request(
+  String requestId,
   HttpRequestModel requestModel, {
   SupportedUriSchemes defaultUriScheme = kDefaultUriScheme,
-  String? requestId,
 }) async {
   final clientManager = HttpClientManager();
   http.Client? client;
