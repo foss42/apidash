@@ -6,7 +6,7 @@ import 'package:seed/seed.dart';
 import '../consts.dart';
 import '../models/models.dart';
 import '../utils/utils.dart';
-import 'client_manager.dart';
+import 'http_client_manager.dart';
 
 typedef HttpResponse = http.Response;
 
