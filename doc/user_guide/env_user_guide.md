@@ -7,7 +7,7 @@ The _Environment Variables Manager_ in API Dash allows you to store and reuse va
 API Dash provides two scopes of variables:
 
 - **Global variables :** Variables declared in this scope are available regardless of the current active environment.
-- **Environment cariables:** Variables declared in a particular environment are available only when that environment is set as active.
+- **Environment variables:** Variables declared in a particular environment are available only when that environment is set as active.
 
 ### Scope Hierarchy
 
@@ -22,7 +22,7 @@ If a variable with the same name exists in both the Global and Environment Scope
 Suppose you have a variable named `API_URL` defined in both the Global Scope and an Environment Scope (e.g., `Development`).
 
 - Global Scope:
-  - `API_UR`L = `https://api.foss42.com`
+  - `API_URL` = `https://api.foss42.com`
 - Development Environment Scope:
   - `API_URL` = `https://api.apidash.dev`
 
