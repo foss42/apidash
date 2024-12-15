@@ -55,7 +55,7 @@ class CollectionStateNotifier
 
   final Ref ref;
   final HiveHandler hiveHandler;
-  final baseResponseModel = const HttpResponseModel();
+  final baseHttpResponseModel = const HttpResponseModel();
   final HttpClientManager httpClientManager;
 
   bool hasId(String id) => state?.keys.contains(id) ?? false;
@@ -288,7 +288,7 @@ class CollectionStateNotifier
         isWorking: false,
       );
     } else {
-      final responseModel = baseResponseModel.fromResponse(
+      final httpResponseModel = baseHttpResponseModel.fromResponse(
         response: responseRec.$1!,
         time: responseRec.$2!,
       );
@@ -296,7 +296,7 @@ class CollectionStateNotifier
       newRequestModel = requestModel.copyWith(
         responseStatus: statusCode,
         message: kResponseCodeReasons[statusCode],
-        httpResponseModel: responseModel,
+        httpResponseModel: httpResponseModel,
         isWorking: false,
       );
       String newHistoryId = getNewUuid();
@@ -312,7 +312,7 @@ class CollectionStateNotifier
           timeStamp: DateTime.now(),
         ),
         httpRequestModel: substitutedHttpRequestModel,
-        httpResponseModel: responseModel,
+        httpResponseModel: httpResponseModel,
       );
       ref.read(historyMetaStateNotifier.notifier).addHistoryRequest(model);
     }
