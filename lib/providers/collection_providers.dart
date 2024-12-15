@@ -27,13 +27,20 @@ final requestSequenceProvider = StateProvider<List<String>>((ref) {
 final httpClientManager = HttpClientManager();
 
 final StateNotifierProvider<CollectionStateNotifier, Map<String, RequestModel>?>
-    collectionStateNotifierProvider = StateNotifierProvider(
-        (ref) => CollectionStateNotifier(ref, hiveHandler, httpClientManager));
+    collectionStateNotifierProvider =
+    StateNotifierProvider((ref) => CollectionStateNotifier(
+          ref,
+          hiveHandler,
+          httpClientManager,
+        ));
 
 class CollectionStateNotifier
     extends StateNotifier<Map<String, RequestModel>?> {
-  CollectionStateNotifier(this.ref, this.hiveHandler, this.httpClientManager)
-      : super(null) {
+  CollectionStateNotifier(
+    this.ref,
+    this.hiveHandler,
+    this.httpClientManager,
+  ) : super(null) {
     var status = loadData();
     Future.microtask(() {
       if (status) {
