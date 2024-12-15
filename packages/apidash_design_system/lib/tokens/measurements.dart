@@ -10,6 +10,10 @@ enum WindowWidth {
   final double value;
 }
 
+const kButtonIconSizeSmall = 14.0;
+const kButtonIconSizeMedium = 16.0;
+const kButtonIconSizeLarge = 18.0;
+
 const kBorderRadius4 = BorderRadius.all(Radius.circular(4));
 const kBorderRadius6 = BorderRadius.all(Radius.circular(6));
 const kBorderRadius8 = BorderRadius.all(Radius.circular(8));

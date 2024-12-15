@@ -16,34 +16,31 @@ class SendButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FilledButton(
+    return ADFilledButton(
       onPressed: isWorking ? onCancel : onTap,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: isWorking
-            ? const [
-                Text(
-                  kLabelCancel,
-                  style: kTextStyleButton,
-                ),
-                kHSpacer10,
-                Icon(
-                  size: 16,
-                  Icons.cancel,
-                )
-              ]
-            : const [
-                Text(
-                  kLabelSend,
-                  style: kTextStyleButton,
-                ),
-                kHSpacer10,
-                Icon(
-                  size: 16,
-                  Icons.send,
-                ),
-              ],
-      ),
+      items: isWorking
+          ? const [
+              Text(
+                kLabelCancel,
+                style: kTextStyleButton,
+              ),
+              kHSpacer10,
+              Icon(
+                size: 16,
+                Icons.cancel,
+              )
+            ]
+          : const [
+              Text(
+                kLabelSend,
+                style: kTextStyleButton,
+              ),
+              kHSpacer10,
+              Icon(
+                size: 16,
+                Icons.send,
+              ),
+            ],
     );
   }
 }

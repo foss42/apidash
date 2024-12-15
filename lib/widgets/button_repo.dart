@@ -16,29 +16,13 @@ class RepoButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var label = text ?? "GitHub";
-    if (icon == null) {
-      return FilledButton(
-        onPressed: () {
-          launchUrl(Uri.parse(kGitUrl));
-        },
-        child: Text(
-          label,
-          style: kTextStyleButton,
-        ),
-      );
-    }
-    return FilledButton.icon(
+    return ADFilledButton(
+      icon: icon,
+      iconSize: kButtonIconSizeLarge,
+      label: label,
       onPressed: () {
         launchUrl(Uri.parse(kGitUrl));
       },
-      icon: Icon(
-        icon,
-        size: 20.0,
-      ),
-      label: Text(
-        label,
-        style: kTextStyleButton,
-      ),
     );
   }
 }
