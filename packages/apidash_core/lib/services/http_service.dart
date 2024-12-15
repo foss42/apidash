@@ -16,11 +16,7 @@ Future<(HttpResponse?, Duration?, String?)> request(
   SupportedUriSchemes defaultUriScheme = kDefaultUriScheme,
 }) async {
   final clientManager = HttpClientManager();
-  http.Client? client;
-
-  if (requestId != null) {
-    client = clientManager.createClient(requestId);
-  }
+  final client = clientManager.createClient(requestId);
 
   (Uri?, String?) uriRec = getValidRequestUri(
     requestModel.url,
@@ -32,13 +28,8 @@ Future<(HttpResponse?, Duration?, String?)> request(
     Map<String, String> headers = requestModel.enabledHeadersMap;
     HttpResponse response;
     String? body;
-    bool shouldCloseClient = false;
     try {
       Stopwatch stopwatch = Stopwatch()..start();
-      if (client == null) {
-        client = http.Client();
-        shouldCloseClient = true;
-      }
       var isMultiPartRequest =
           requestModel.bodyContentType == ContentType.formdata;
       if (kMethodsWithBody.contains(requestModel.method)) {
@@ -106,19 +97,12 @@ Future<(HttpResponse?, Duration?, String?)> request(
       stopwatch.stop();
       return (response, stopwatch.elapsed, null);
     } catch (e) {
-      if (requestId != null) {
-        if (clientManager.wasRequestCancelled(requestId)) {
-          return (null, null, kMsgRequestCancelled);
-        }
+      if (clientManager.wasRequestCancelled(requestId)) {
+        return (null, null, kMsgRequestCancelled);
       }
       return (null, null, e.toString());
     } finally {
-      if (shouldCloseClient) {
-        client?.close();
-      }
-      if (requestId != null) {
-        clientManager.closeClient(requestId);
-      }
+      clientManager.closeClient(requestId);
     }
   } else {
     return (null, null, uriRec.$2);

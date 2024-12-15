@@ -36,7 +36,10 @@ class HttpClientManager {
   }
 
   void closeClient(String requestId) {
-    cancelRequest(requestId);
+    if (_clients.containsKey(requestId)) {
+      _clients[requestId]?.close();
+      _clients.remove(requestId);
+    }
   }
 
   bool hasActiveClient(String requestId) {
