@@ -11,7 +11,7 @@ typedef HttpResponse = http.Response;
 
 Future<(HttpResponse?, Duration?, String?)> request(
   HttpRequestModel requestModel, {
-  String defaultUriScheme = kDefaultUriScheme,
+  SupportedUriSchemes defaultUriScheme = kDefaultUriScheme,
 }) async {
   (Uri?, String?) uriRec = getValidRequestUri(
     requestModel.url,
