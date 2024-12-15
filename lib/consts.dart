@@ -464,6 +464,5 @@ const kNullResponseModelError = "Error: Response data does not exist.";
 const kMsgNullBody = "Response body is missing (null).";
 const kMsgNoContent = "No content";
 const kMsgUnknowContentType = "Unknown Response Content-Type";
-const kMsgRequestCancelled = 'Request Cancelled';
 // Workspace Selector
 const kMsgSelectWorkspace = "Create your workspace";

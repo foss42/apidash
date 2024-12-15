@@ -108,7 +108,7 @@ Future<(HttpResponse?, Duration?, String?)> request(
     } catch (e) {
       if (requestId != null) {
         if (clientManager.wasRequestCancelled(requestId)) {
-          return (null, null, "Request cancelled");
+          return (null, null, kMsgRequestCancelled);
         }
       }
       return (null, null, e.toString());

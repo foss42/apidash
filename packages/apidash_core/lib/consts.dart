@@ -78,3 +78,4 @@ const LineSplitter kSplitter = LineSplitter();
 const kCodeCharsPerLineLimit = 200;
 
 const kHeaderContentType = "Content-Type";
+const kMsgRequestCancelled = 'Request Cancelled';
