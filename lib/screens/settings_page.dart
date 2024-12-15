@@ -1,7 +1,6 @@
-import 'package:apidash_core/apidash_core.dart';
-import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:apidash_design_system/apidash_design_system.dart';
 import '../providers/providers.dart';
 import '../services/services.dart';
 import '../utils/utils.dart';
@@ -67,43 +66,25 @@ class SettingsPage extends ConsumerWidget {
                 title: const Text('Default URI Scheme'),
                 subtitle: Text(
                     '$kDefaultUri → ${settings.defaultUriScheme}://$kDefaultUri'),
-                trailing: Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
-                    borderRadius: kBorderRadius8,
-                  ),
-                  child: URIPopupMenu(
-                    value: settings.defaultUriScheme,
-                    onChanged: (value) {
-                      ref
-                          .read(settingsProvider.notifier)
-                          .update(defaultUriScheme: value);
-                    },
-                    items: kSupportedUriSchemes,
-                  ),
+                trailing: DefaultUriSchemePopupMenu(
+                  value: settings.defaultUriScheme,
+                  onChanged: (value) {
+                    ref
+                        .read(settingsProvider.notifier)
+                        .update(defaultUriScheme: value);
+                  },
                 ),
               ),
               ListTile(
                 hoverColor: kColorTransparent,
                 title: const Text('Default Code Generator'),
-                trailing: Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
-                    borderRadius: kBorderRadius8,
-                  ),
-                  child: CodegenPopupMenu(
-                    value: settings.defaultCodeGenLang,
-                    onChanged: (value) {
-                      ref
-                          .read(settingsProvider.notifier)
-                          .update(defaultCodeGenLang: value);
-                    },
-                    items: CodegenLanguage.values,
-                  ),
+                trailing: CodegenPopupMenu(
+                  value: settings.defaultCodeGenLang,
+                  onChanged: (value) {
+                    ref
+                        .read(settingsProvider.notifier)
+                        .update(defaultCodeGenLang: value);
+                  },
                 ),
               ),
               CheckboxListTile(
@@ -152,22 +133,13 @@ class SettingsPage extends ConsumerWidget {
                 title: const Text('History Retention Period'),
                 subtitle: Text(
                     'Your request history will be retained${settings.historyRetentionPeriod == HistoryRetentionPeriod.forever ? "" : " for"} ${settings.historyRetentionPeriod.label}'),
-                trailing: Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
-                    borderRadius: kBorderRadius8,
-                  ),
-                  child: HistoryRetentionPopupMenu(
-                    value: settings.historyRetentionPeriod,
-                    onChanged: (value) {
-                      ref
-                          .read(settingsProvider.notifier)
-                          .update(historyRetentionPeriod: value);
-                    },
-                    items: HistoryRetentionPeriod.values,
-                  ),
+                trailing: HistoryRetentionPopupMenu(
+                  value: settings.historyRetentionPeriod,
+                  onChanged: (value) {
+                    ref
+                        .read(settingsProvider.notifier)
+                        .update(historyRetentionPeriod: value);
+                  },
                 ),
               ),
               ListTile(
