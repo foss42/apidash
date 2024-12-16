@@ -17,6 +17,7 @@ dependencies:
   http_parser: ^4.0.2
   seed: ^0.0.2
   xml: ^6.3.0
+  graphql_flutter: ^5.2.0-beta.8
 
 dev_dependencies:
   flutter_test:

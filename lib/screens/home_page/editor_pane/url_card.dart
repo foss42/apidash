@@ -1,4 +1,5 @@
 import 'package:apidash_core/apidash_core.dart';
+import 'package:apidash_core/services/graphql.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -121,11 +122,13 @@ class SendRequestButton extends ConsumerWidget {
 
     return SendButton(
       isWorking: isWorking ?? false,
-      onTap: () {
+      onTap: () async{//comment out the async after ur done
         onTap?.call();
-        ref
-            .read(collectionStateNotifierProvider.notifier)
-            .sendRequest(selectedId!);
+        // ref
+        //     .read(collectionStateNotifierProvider.notifier)
+        //     .sendRequest(selectedId!);
+        //writing to test graphq
+       graphq();
       },
     );
   }
