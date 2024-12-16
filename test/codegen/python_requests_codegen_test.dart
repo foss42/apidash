@@ -1,5 +1,6 @@
 import 'package:apidash/codegen/codegen.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:test/test.dart';
 import '../models/request_models.dart';
 
@@ -19,7 +20,10 @@ print('Response Body:', response.text)
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.pythonRequests, requestModelGet1, "https"),
+            CodegenLanguage.pythonRequests,
+            requestModelGet1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -39,7 +43,10 @@ print('Response Body:', response.text)
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.pythonRequests, requestModelGet2, "https"),
+            CodegenLanguage.pythonRequests,
+            requestModelGet2,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -59,7 +66,10 @@ print('Response Body:', response.text)
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.pythonRequests, requestModelGet3, "https"),
+            CodegenLanguage.pythonRequests,
+            requestModelGet3,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -83,7 +93,10 @@ print('Response Body:', response.text)
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.pythonRequests, requestModelGet4, "https"),
+            CodegenLanguage.pythonRequests,
+            requestModelGet4,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -103,7 +116,10 @@ print('Response Body:', response.text)
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.pythonRequests, requestModelGet5, "https"),
+            CodegenLanguage.pythonRequests,
+            requestModelGet5,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -127,7 +143,10 @@ print('Response Body:', response.text)
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.pythonRequests, requestModelGet6, "https"),
+            CodegenLanguage.pythonRequests,
+            requestModelGet6,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -143,7 +162,10 @@ print('Response Body:', response.text)
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.pythonRequests, requestModelGet7, "https"),
+            CodegenLanguage.pythonRequests,
+            requestModelGet7,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -167,7 +189,10 @@ print('Response Body:', response.text)
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.pythonRequests, requestModelGet8, "https"),
+            CodegenLanguage.pythonRequests,
+            requestModelGet8,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -188,7 +213,10 @@ print('Response Body:', response.text)
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.pythonRequests, requestModelGet9, "https"),
+            CodegenLanguage.pythonRequests,
+            requestModelGet9,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -210,7 +238,7 @@ print('Response Body:', response.text)
           codeGen.getCode(
             CodegenLanguage.pythonRequests,
             requestModelGet10,
-            "https",
+            SupportedUriSchemes.https,
           ),
           expectedCode);
     });
@@ -236,7 +264,10 @@ print('Response Body:', response.text)
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.pythonRequests, requestModelGet11, "https"),
+            CodegenLanguage.pythonRequests,
+            requestModelGet11,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -252,7 +283,10 @@ print('Response Body:', response.text)
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.pythonRequests, requestModelGet12, "https"),
+            CodegenLanguage.pythonRequests,
+            requestModelGet12,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
   });
@@ -270,7 +304,10 @@ print('Response Body:', response.text)
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.pythonRequests, requestModelHead1, "https"),
+            CodegenLanguage.pythonRequests,
+            requestModelHead1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -286,7 +323,10 @@ print('Response Body:', response.text)
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.pythonRequests, requestModelHead2, "http"),
+            CodegenLanguage.pythonRequests,
+            requestModelHead2,
+            SupportedUriSchemes.http,
+          ),
           expectedCode);
     });
   });
@@ -312,7 +352,10 @@ print('Response Body:', response.text)
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.pythonRequests, requestModelPost1, "https"),
+            CodegenLanguage.pythonRequests,
+            requestModelPost1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -337,7 +380,10 @@ print('Response Body:', response.text)
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.pythonRequests, requestModelPost2, "https"),
+            CodegenLanguage.pythonRequests,
+            requestModelPost2,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -361,7 +407,10 @@ print('Response Body:', response.text)
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.pythonRequests, requestModelPost3, "https"),
+            CodegenLanguage.pythonRequests,
+            requestModelPost3,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -388,7 +437,10 @@ print('Response Body:', response.text)
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.pythonRequests, requestModelPost4, "https"),
+            CodegenLanguage.pythonRequests,
+            requestModelPost4,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -416,7 +468,10 @@ print('Response Body:', response.text)
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.pythonRequests, requestModelPost5, "https"),
+            CodegenLanguage.pythonRequests,
+            requestModelPost5,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -442,7 +497,10 @@ print('Response Body:', response.text)
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.pythonRequests, requestModelPost6, "https"),
+            CodegenLanguage.pythonRequests,
+            requestModelPost6,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -468,7 +526,10 @@ print('Response Body:', response.text)
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.pythonRequests, requestModelPost7, "https"),
+            CodegenLanguage.pythonRequests,
+            requestModelPost7,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -500,7 +561,10 @@ print('Response Body:', response.text)
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.pythonRequests, requestModelPost8, "https"),
+            CodegenLanguage.pythonRequests,
+            requestModelPost8,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -533,7 +597,10 @@ print('Response Body:', response.text)
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.pythonRequests, requestModelPost9, "https"),
+            CodegenLanguage.pythonRequests,
+            requestModelPost9,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
   });
@@ -556,7 +623,10 @@ print('Response Body:', response.text)
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.pythonRequests, requestModelPut1, "https"),
+            CodegenLanguage.pythonRequests,
+            requestModelPut1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
   });
@@ -579,7 +649,10 @@ print('Response Body:', response.text)
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.pythonRequests, requestModelPatch1, "https"),
+            CodegenLanguage.pythonRequests,
+            requestModelPatch1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
   });
@@ -597,7 +670,10 @@ print('Response Body:', response.text)
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.pythonRequests, requestModelDelete1, "https"),
+            CodegenLanguage.pythonRequests,
+            requestModelDelete1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -618,7 +694,10 @@ print('Response Body:', response.text)
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.pythonRequests, requestModelDelete2, "https"),
+            CodegenLanguage.pythonRequests,
+            requestModelDelete2,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
   });

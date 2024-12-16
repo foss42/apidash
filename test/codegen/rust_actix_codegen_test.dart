@@ -1,5 +1,6 @@
 import 'package:apidash/codegen/codegen.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:test/test.dart';
 import '../models/request_models.dart';
 
@@ -28,7 +29,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rustActix, requestModelGet1, "https"),
+          codeGen.getCode(
+            CodegenLanguage.rustActix,
+            requestModelGet1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -55,7 +60,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rustActix, requestModelGet2, "https"),
+          codeGen.getCode(
+            CodegenLanguage.rustActix,
+            requestModelGet2,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -82,7 +91,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rustActix, requestModelGet3, "https"),
+          codeGen.getCode(
+            CodegenLanguage.rustActix,
+            requestModelGet3,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -109,7 +122,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rustActix, requestModelGet4, "https"),
+          codeGen.getCode(
+            CodegenLanguage.rustActix,
+            requestModelGet4,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -135,7 +152,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rustActix, requestModelGet5, "https"),
+          codeGen.getCode(
+            CodegenLanguage.rustActix,
+            requestModelGet5,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -163,7 +184,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rustActix, requestModelGet6, "https"),
+          codeGen.getCode(
+            CodegenLanguage.rustActix,
+            requestModelGet6,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -188,7 +213,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rustActix, requestModelGet7, "https"),
+          codeGen.getCode(
+            CodegenLanguage.rustActix,
+            requestModelGet7,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -216,7 +245,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rustActix, requestModelGet8, "https"),
+          codeGen.getCode(
+            CodegenLanguage.rustActix,
+            requestModelGet8,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -243,7 +276,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rustActix, requestModelGet9, "https"),
+          codeGen.getCode(
+            CodegenLanguage.rustActix,
+            requestModelGet9,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -272,7 +309,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
           codeGen.getCode(
             CodegenLanguage.rustActix,
             requestModelGet10,
-            "https",
+            SupportedUriSchemes.https,
           ),
           expectedCode);
     });
@@ -302,7 +339,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.rustActix, requestModelGet11, "https"),
+            CodegenLanguage.rustActix,
+            requestModelGet11,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -328,7 +368,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.rustActix, requestModelGet12, "https"),
+            CodegenLanguage.rustActix,
+            requestModelGet12,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
   });
@@ -356,7 +399,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.rustActix, requestModelHead1, "https"),
+            CodegenLanguage.rustActix,
+            requestModelHead1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -381,7 +427,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rustActix, requestModelHead2, "http"),
+          codeGen.getCode(
+            CodegenLanguage.rustActix,
+            requestModelHead2,
+            SupportedUriSchemes.http,
+          ),
           expectedCode);
     });
   });
@@ -414,7 +464,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.rustActix, requestModelPost1, "https"),
+            CodegenLanguage.rustActix,
+            requestModelPost1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -449,7 +502,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.rustActix, requestModelPost2, "https"),
+            CodegenLanguage.rustActix,
+            requestModelPost2,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -480,7 +536,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.rustActix, requestModelPost3, "https"),
+            CodegenLanguage.rustActix,
+            requestModelPost3,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -564,7 +623,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
           codeGen.getCode(
             CodegenLanguage.rustActix,
             requestModelPost4,
-            "https",
+            SupportedUriSchemes.https,
             boundary: "test",
           ),
           expectedCode);
@@ -647,7 +706,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rustActix, requestModelPost5, "https",
+          codeGen.getCode(CodegenLanguage.rustActix, requestModelPost5,
+              SupportedUriSchemes.https,
               boundary: "test"),
           expectedCode);
     });
@@ -723,7 +783,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rustActix, requestModelPost6, "https",
+          codeGen.getCode(CodegenLanguage.rustActix, requestModelPost6,
+              SupportedUriSchemes.https,
               boundary: "test"),
           expectedCode);
     });
@@ -799,7 +860,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rustActix, requestModelPost7, "https",
+          codeGen.getCode(CodegenLanguage.rustActix, requestModelPost7,
+              SupportedUriSchemes.https,
               boundary: "test"),
           expectedCode);
     });
@@ -882,7 +944,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rustActix, requestModelPost8, "https",
+          codeGen.getCode(CodegenLanguage.rustActix, requestModelPost8,
+              SupportedUriSchemes.https,
               boundary: "test"),
           expectedCode);
     });
@@ -962,7 +1025,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rustActix, requestModelPost9, "https",
+          codeGen.getCode(CodegenLanguage.rustActix, requestModelPost9,
+              SupportedUriSchemes.https,
               boundary: "test"),
           expectedCode);
     });
@@ -995,7 +1059,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rustActix, requestModelPut1, "https"),
+          codeGen.getCode(
+            CodegenLanguage.rustActix,
+            requestModelPut1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
   });
@@ -1028,7 +1096,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.rustActix, requestModelPatch1, "https"),
+            CodegenLanguage.rustActix,
+            requestModelPatch1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
   });
@@ -1056,7 +1127,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.rustActix, requestModelDelete1, "https"),
+            CodegenLanguage.rustActix,
+            requestModelDelete1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -1087,7 +1161,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.rustActix, requestModelDelete2, "https"),
+            CodegenLanguage.rustActix,
+            requestModelDelete2,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
   });

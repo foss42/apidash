@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/importer/import_dialog.dart';
 import 'package:apidash/providers/providers.dart';
-import 'package:apidash/extensions/extensions.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
@@ -24,9 +23,7 @@ class CollectionPane extends ConsumerWidget {
       );
     }
     return Padding(
-      padding: (!context.isMediumWindow && kIsMacOS
-              ? kP24CollectionPane
-              : kP8CollectionPane) +
+      padding: (!context.isMediumWindow && kIsMacOS ? kPt24l4 : kPt8l4) +
           (context.isMediumWindow ? kPb70 : EdgeInsets.zero),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,

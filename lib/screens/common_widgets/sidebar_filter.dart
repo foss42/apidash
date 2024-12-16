@@ -1,6 +1,5 @@
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
-import 'package:apidash/widgets/widgets.dart';
 
 class SidebarFilter extends StatelessWidget {
   const SidebarFilter({
@@ -32,7 +31,7 @@ class SidebarFilter extends StatelessWidget {
           ),
           kHSpacer5,
           Expanded(
-            child: RawTextField(
+            child: ADRawTextField(
               style: Theme.of(context).textTheme.bodyMedium,
               hintText: filterHintText ?? "Filter by name",
               onChanged: onFilterFieldChanged,

@@ -22,7 +22,7 @@ class SettingsModel {
   final bool alwaysShowCollectionPaneScrollbar;
   final Size? size;
   final Offset? offset;
-  final String defaultUriScheme;
+  final SupportedUriSchemes defaultUriScheme;
   final CodegenLanguage defaultCodeGenLang;
   final bool saveResponses;
   final bool promptBeforeClosing;
@@ -35,7 +35,7 @@ class SettingsModel {
     bool? alwaysShowCollectionPaneScrollbar,
     Size? size,
     Offset? offset,
-    String? defaultUriScheme,
+    SupportedUriSchemes? defaultUriScheme,
     CodegenLanguage? defaultCodeGenLang,
     bool? saveResponses,
     bool? promptBeforeClosing,
@@ -94,7 +94,16 @@ class SettingsModel {
     if (dx != null && dy != null) {
       offset = Offset(dx, dy);
     }
-    final defaultUriScheme = data["defaultUriScheme"] as String?;
+    final defaultUriSchemeStr = data["defaultUriScheme"] as String?;
+    SupportedUriSchemes? defaultUriScheme;
+    if (defaultUriSchemeStr != null) {
+      try {
+        defaultUriScheme =
+            SupportedUriSchemes.values.byName(defaultUriSchemeStr);
+      } catch (e) {
+        // pass
+      }
+    }
     final defaultCodeGenLangStr = data["defaultCodeGenLang"] as String?;
     CodegenLanguage? defaultCodeGenLang;
     if (defaultCodeGenLangStr != null) {
@@ -146,7 +155,7 @@ class SettingsModel {
       "height": size?.height,
       "dx": offset?.dx,
       "dy": offset?.dy,
-      "defaultUriScheme": defaultUriScheme,
+      "defaultUriScheme": defaultUriScheme.name,
       "defaultCodeGenLang": defaultCodeGenLang.name,
       "saveResponses": saveResponses,
       "promptBeforeClosing": promptBeforeClosing,

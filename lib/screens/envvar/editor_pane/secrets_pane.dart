@@ -83,7 +83,7 @@ class EditEnvironmentSecretsState
           key: ValueKey("$selectedId-$index-secrets-row-$seed"),
           cells: <DataCell>[
             DataCell(
-              CheckBox(
+              ADCheckBox(
                 keyId: "$selectedId-$index-secrets-c-$seed",
                 value: secretRows[index].enabled,
                 onChanged: isLast

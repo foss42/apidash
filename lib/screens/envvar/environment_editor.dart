@@ -2,7 +2,6 @@ import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
-import 'package:apidash/extensions/extensions.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
 import '../common_widgets/common_widgets.dart';
@@ -53,11 +52,14 @@ class EnvironmentEditor extends ConsumerWidget {
                       onDuplicatePressed: () => ref
                           .read(environmentsStateNotifierProvider.notifier)
                           .duplicateEnvironment(id!),
-                      onDeletePressed: () {
-                        ref
-                            .read(environmentsStateNotifierProvider.notifier)
-                            .removeEnvironment(id!);
-                      },
+                      onDeletePressed: id == kGlobalEnvironmentId
+                          ? null
+                          : () {
+                              ref
+                                  .read(environmentsStateNotifierProvider
+                                      .notifier)
+                                  .removeEnvironment(id!);
+                            },
                     ),
                     kHSpacer4,
                   ],

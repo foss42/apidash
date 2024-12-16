@@ -1,3 +1,4 @@
+import 'package:apidash_core/apidash_core.dart';
 import 'package:test/test.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash/models/settings_model.dart';
@@ -9,7 +10,7 @@ void main() {
     alwaysShowCollectionPaneScrollbar: true,
     size: Size(300, 200),
     offset: Offset(100, 150),
-    defaultUriScheme: "http",
+    defaultUriScheme: SupportedUriSchemes.http,
     defaultCodeGenLang: CodegenLanguage.curl,
     saveResponses: true,
     promptBeforeClosing: true,
@@ -62,7 +63,7 @@ void main() {
       alwaysShowCollectionPaneScrollbar: true,
       size: Size(300, 200),
       offset: Offset(100, 150),
-      defaultUriScheme: "http",
+      defaultUriScheme: SupportedUriSchemes.http,
       defaultCodeGenLang: CodegenLanguage.curl,
       saveResponses: false,
       promptBeforeClosing: true,

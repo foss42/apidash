@@ -22,7 +22,7 @@ class HistoryURLCard extends StatelessWidget {
 
     return LayoutBuilder(builder: (context, constraints) {
       final isCompact = constraints.maxWidth <= kMinWindowSize.width;
-      final isExpanded = constraints.maxWidth >= kMediumWindowWidth - 8;
+      final isExpanded = constraints.maxWidth >= WindowWidth.medium.value - 8;
       return Card(
         color: kColorTransparent,
         surfaceTintColor: kColorTransparent,

@@ -14,18 +14,13 @@ class DiscordButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var label = text ?? 'Discord Server';
-    return FilledButton.icon(
+    return ADFilledButton(
+      icon: Icons.discord,
+      iconSize: kButtonIconSizeLarge,
+      label: label,
       onPressed: () {
         launchUrl(Uri.parse(kDiscordUrl));
       },
-      icon: const Icon(
-        Icons.discord,
-        size: 20.0,
-      ),
-      label: Text(
-        label,
-        style: kTextStyleButton,
-      ),
     );
   }
 }

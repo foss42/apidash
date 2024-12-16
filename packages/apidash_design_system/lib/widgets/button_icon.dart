@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../tokens/tokens.dart';
 
 class ADIconButton extends StatelessWidget {
   const ADIconButton({
@@ -24,7 +25,7 @@ class ADIconButton extends StatelessWidget {
       tooltip: tooltip,
       icon: Icon(
         icon,
-        size: iconSize ?? 16,
+        size: iconSize ?? kButtonIconSizeMedium,
       ),
       color: color,
       visualDensity: visualDensity,

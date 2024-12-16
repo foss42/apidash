@@ -5,7 +5,7 @@ import 'http_request_utils.dart';
 
 (String?, bool) getUriScheme(Uri uri) {
   if (uri.hasScheme) {
-    if (kSupportedUriSchemes.contains(uri.scheme)) {
+    if (kSupportedUriSchemes.contains(uri.scheme.toLowerCase())) {
       return (uri.scheme, true);
     }
     return (uri.scheme, false);
@@ -24,7 +24,7 @@ String stripUrlParams(String url) {
 
 (Uri?, String?) getValidRequestUri(
     String? url, List<NameValueModel>? requestParams,
-    {String defaultUriScheme = kDefaultUriScheme}) {
+    {SupportedUriSchemes defaultUriScheme = kDefaultUriScheme}) {
   url = url?.trim();
   if (url == null || url == "") {
     return (null, "URL is missing!");
@@ -44,7 +44,7 @@ String stripUrlParams(String url) {
       return (null, "Unsupported URL Scheme (${urlScheme.$1})");
     }
   } else {
-    url = "$defaultUriScheme://$url";
+    url = "${defaultUriScheme.name}://$url";
   }
 
   uri = Uri.parse(url);

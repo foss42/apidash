@@ -83,7 +83,7 @@ class EditEnvironmentVariablesState
           key: ValueKey("$selectedId-$index-variables-row-$seed"),
           cells: <DataCell>[
             DataCell(
-              CheckBox(
+              ADCheckBox(
                 keyId: "$selectedId-$index-variables-c-$seed",
                 value: variableRows[index].enabled,
                 onChanged: isLast

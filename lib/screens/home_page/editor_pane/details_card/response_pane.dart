@@ -1,3 +1,4 @@
+import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
@@ -28,7 +29,15 @@ class ResponsePane extends ConsumerWidget {
       return const NotSentWidget();
     }
     if (responseStatus == -1) {
-      return ErrorMessage(message: '$message. $kUnexpectedRaiseIssue');
+      return message == kMsgRequestCancelled
+          ? ErrorMessage(
+              message: message,
+              icon: Icons.cancel,
+              showIssueButton: false,
+            )
+          : ErrorMessage(
+              message: '$message. $kUnexpectedRaiseIssue',
+            );
     }
     return const ResponseDetails();
   }

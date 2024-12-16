@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
@@ -24,7 +25,7 @@ Future<void> runMobileReqIntegrationTest() async {
 }''';
 
   apidashWidgetTest(
-      "Testing Request Editor in mobile end-to-end", kCompactWindowWidth,
+      "Testing Request Editor in mobile end-to-end", WindowWidth.compact.value,
       (WidgetTester tester, helper) async {
     await tester.pumpUntilFound(find.byType(DashApp));
     await Future.delayed(const Duration(seconds: 1));
