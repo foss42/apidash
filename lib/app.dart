@@ -8,7 +8,6 @@ import 'package:window_manager/window_manager.dart' hide WindowCaption;
 import 'widgets/widgets.dart' show WindowCaption, WorkspaceSelector;
 import 'providers/providers.dart';
 import 'services/services.dart';
-import 'extensions/extensions.dart';
 import 'screens/screens.dart';
 import 'consts.dart';
 

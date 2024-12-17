@@ -1,6 +1,5 @@
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
-import 'field_raw.dart';
 
 class JsonSearchField extends StatelessWidget {
   const JsonSearchField({super.key, this.onChanged, this.controller});
@@ -10,7 +9,7 @@ class JsonSearchField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RawTextField(
+    return ADRawTextField(
       controller: controller,
       onChanged: onChanged,
       style: kCodeStyle,

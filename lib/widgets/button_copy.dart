@@ -1,7 +1,7 @@
+import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:apidash/consts.dart';
-import "snackbars.dart";
 
 class CopyButton extends StatelessWidget {
   const CopyButton({
@@ -16,11 +16,6 @@ class CopyButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var sm = ScaffoldMessenger.of(context);
-    const icon = Icon(
-      Icons.content_copy,
-      size: 18,
-    );
-    const label = kLabelCopy;
     onPressed() async {
       await Clipboard.setData(ClipboardData(text: toCopy));
       sm.hideCurrentSnackBar();
@@ -28,17 +23,19 @@ class CopyButton extends StatelessWidget {
     }
 
     return showLabel
-        ? TextButton.icon(
+        ? ADTextButton(
+            icon: Icons.content_copy,
+            iconSize: kButtonIconSizeLarge,
+            label: kLabelCopy,
             onPressed: onPressed,
-            icon: icon,
-            label: const Text(label),
           )
-        : IconButton(
-            tooltip: label,
+        : ADIconButton(
+            icon: Icons.content_copy,
+            iconSize: kButtonIconSizeLarge,
+            tooltip: kLabelCopy,
             color: Theme.of(context).colorScheme.primary,
             visualDensity: VisualDensity.compact,
             onPressed: onPressed,
-            icon: icon,
           );
   }
 }

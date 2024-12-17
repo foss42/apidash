@@ -1,5 +1,6 @@
 import 'package:apidash/codegen/codegen.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:test/test.dart';
 import '../models/request_models.dart';
 
@@ -9,28 +10,48 @@ void main() {
   group('GET Request', () {
     test('GET 1', () {
       const expectedCode = r"""curl --url 'https://api.apidash.dev'""";
-      expect(codeGen.getCode(CodegenLanguage.curl, requestModelGet1, "https"),
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.curl,
+            requestModelGet1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
     test('GET 2', () {
       const expectedCode =
           r"""curl --url 'https://api.apidash.dev/country/data?code=US'""";
-      expect(codeGen.getCode(CodegenLanguage.curl, requestModelGet2, "https"),
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.curl,
+            requestModelGet2,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
     test('GET 3', () {
       const expectedCode =
           r"""curl --url 'https://api.apidash.dev/country/data?code=IND'""";
-      expect(codeGen.getCode(CodegenLanguage.curl, requestModelGet3, "https"),
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.curl,
+            requestModelGet3,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
     test('GET 4', () {
       const expectedCode =
           r"""curl --url 'https://api.apidash.dev/humanize/social?num=8700000&digits=3&system=SS&add_space=true&trailing_zeros=true'""";
-      expect(codeGen.getCode(CodegenLanguage.curl, requestModelGet4, "https"),
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.curl,
+            requestModelGet4,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -38,7 +59,12 @@ void main() {
       const expectedCode =
           r"""curl --url 'https://api.github.com/repos/foss42/apidash' \
   --header 'User-Agent: Test Agent'""";
-      expect(codeGen.getCode(CodegenLanguage.curl, requestModelGet5, "https"),
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.curl,
+            requestModelGet5,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -46,13 +72,23 @@ void main() {
       const expectedCode =
           r"""curl --url 'https://api.github.com/repos/foss42/apidash?raw=true' \
   --header 'User-Agent: Test Agent'""";
-      expect(codeGen.getCode(CodegenLanguage.curl, requestModelGet6, "https"),
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.curl,
+            requestModelGet6,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
     test('GET 7', () {
       const expectedCode = r"""curl --url 'https://api.apidash.dev'""";
-      expect(codeGen.getCode(CodegenLanguage.curl, requestModelGet7, "https"),
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.curl,
+            requestModelGet7,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -60,14 +96,24 @@ void main() {
       const expectedCode =
           r"""curl --url 'https://api.github.com/repos/foss42/apidash?raw=true' \
   --header 'User-Agent: Test Agent'""";
-      expect(codeGen.getCode(CodegenLanguage.curl, requestModelGet8, "https"),
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.curl,
+            requestModelGet8,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
     test('GET 9', () {
       const expectedCode =
           r"""curl --url 'https://api.apidash.dev/humanize/social?num=8700000&add_space=true'""";
-      expect(codeGen.getCode(CodegenLanguage.curl, requestModelGet9, "https"),
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.curl,
+            requestModelGet9,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -79,7 +125,7 @@ void main() {
           codeGen.getCode(
             CodegenLanguage.curl,
             requestModelGet10,
-            "https",
+            SupportedUriSchemes.https,
           ),
           expectedCode);
     });
@@ -88,14 +134,24 @@ void main() {
       const expectedCode =
           r"""curl --url 'https://api.apidash.dev/humanize/social?num=8700000&digits=3' \
   --header 'User-Agent: Test Agent'""";
-      expect(codeGen.getCode(CodegenLanguage.curl, requestModelGet11, "https"),
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.curl,
+            requestModelGet11,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
     test('GET 12', () {
       const expectedCode =
           r"""curl --url 'https://api.apidash.dev/humanize/social'""";
-      expect(codeGen.getCode(CodegenLanguage.curl, requestModelGet12, "https"),
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.curl,
+            requestModelGet12,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
   });
@@ -103,13 +159,23 @@ void main() {
   group('HEAD Request', () {
     test('HEAD 1', () {
       const expectedCode = r"""curl --head --url 'https://api.apidash.dev'""";
-      expect(codeGen.getCode(CodegenLanguage.curl, requestModelHead1, "https"),
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.curl,
+            requestModelHead1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
     test('HEAD 2', () {
       const expectedCode = r"""curl --head --url 'http://api.apidash.dev'""";
-      expect(codeGen.getCode(CodegenLanguage.curl, requestModelHead2, "http"),
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.curl,
+            requestModelHead2,
+            SupportedUriSchemes.http,
+          ),
           expectedCode);
     });
   });
@@ -122,7 +188,12 @@ void main() {
   --data '{
 "text": "I LOVE Flutter"
 }'""";
-      expect(codeGen.getCode(CodegenLanguage.curl, requestModelPost1, "https"),
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.curl,
+            requestModelPost1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -138,7 +209,12 @@ void main() {
 "no": 1.2,
 "arr": ["null", "true", "false", null]
 }'""";
-      expect(codeGen.getCode(CodegenLanguage.curl, requestModelPost2, "https"),
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.curl,
+            requestModelPost2,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -150,7 +226,12 @@ void main() {
   --data '{
 "text": "I LOVE Flutter"
 }'""";
-      expect(codeGen.getCode(CodegenLanguage.curl, requestModelPost3, "https"),
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.curl,
+            requestModelPost3,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -160,7 +241,12 @@ void main() {
   --form 'text=API' \
   --form 'sep=|' \
   --form 'times=3'""";
-      expect(codeGen.getCode(CodegenLanguage.curl, requestModelPost4, "https"),
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.curl,
+            requestModelPost4,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -171,7 +257,12 @@ void main() {
   --form 'text=API' \
   --form 'sep=|' \
   --form 'times=3'""";
-      expect(codeGen.getCode(CodegenLanguage.curl, requestModelPost5, "https"),
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.curl,
+            requestModelPost5,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -180,7 +271,12 @@ void main() {
   --url 'https://api.apidash.dev/io/img' \
   --form 'token=xyz' \
   --form 'imfile=@/Documents/up/1.png'""";
-      expect(codeGen.getCode(CodegenLanguage.curl, requestModelPost6, "https"),
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.curl,
+            requestModelPost6,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -189,7 +285,12 @@ void main() {
   --url 'https://api.apidash.dev/io/img' \
   --form 'token=xyz' \
   --form 'imfile=@/Documents/up/1.png'""";
-      expect(codeGen.getCode(CodegenLanguage.curl, requestModelPost7, "https"),
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.curl,
+            requestModelPost7,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -199,7 +300,12 @@ void main() {
   --form 'text=API' \
   --form 'sep=|' \
   --form 'times=3'""";
-      expect(codeGen.getCode(CodegenLanguage.curl, requestModelPost8, "https"),
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.curl,
+            requestModelPost8,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -210,7 +316,12 @@ void main() {
   --header 'Keep-Alive: true' \
   --form 'token=xyz' \
   --form 'imfile=@/Documents/up/1.png'""";
-      expect(codeGen.getCode(CodegenLanguage.curl, requestModelPost9, "https"),
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.curl,
+            requestModelPost9,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
   });
@@ -224,7 +335,12 @@ void main() {
 "name": "morpheus",
 "job": "zion resident"
 }'""";
-      expect(codeGen.getCode(CodegenLanguage.curl, requestModelPut1, "https"),
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.curl,
+            requestModelPut1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
   });
@@ -238,7 +354,12 @@ void main() {
 "name": "marfeus",
 "job": "accountant"
 }'""";
-      expect(codeGen.getCode(CodegenLanguage.curl, requestModelPatch1, "https"),
+      expect(
+          codeGen.getCode(
+            CodegenLanguage.curl,
+            requestModelPatch1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
   });
@@ -248,7 +369,11 @@ void main() {
       const expectedCode = r"""curl --request DELETE \
   --url 'https://reqres.in/api/users/2'""";
       expect(
-          codeGen.getCode(CodegenLanguage.curl, requestModelDelete1, "https"),
+          codeGen.getCode(
+            CodegenLanguage.curl,
+            requestModelDelete1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -261,7 +386,11 @@ void main() {
 "job": "accountant"
 }'""";
       expect(
-          codeGen.getCode(CodegenLanguage.curl, requestModelDelete2, "https"),
+          codeGen.getCode(
+            CodegenLanguage.curl,
+            requestModelDelete2,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
   });

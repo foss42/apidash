@@ -1,4 +1,5 @@
 import 'package:apidash_core/apidash_core.dart';
+import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
@@ -103,7 +104,7 @@ class ApidashTestRequestHelper {
 
   Future<void> unCheckFirstHeader() async {
     final headerCells = find.descendant(
-        of: find.byType(EditRequestHeaders), matching: find.byType(CheckBox));
+        of: find.byType(EditRequestHeaders), matching: find.byType(ADCheckBox));
     await tester.tap(headerCells.at(0));
     await tester.pumpAndSettle();
   }

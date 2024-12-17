@@ -1,8 +1,8 @@
+import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:apidash/utils/utils.dart';
 import 'package:apidash/consts.dart';
-import "snackbars.dart";
 
 class SaveInDownloadsButton extends StatelessWidget {
   const SaveInDownloadsButton({
@@ -23,46 +23,30 @@ class SaveInDownloadsButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var sm = ScaffoldMessenger.of(context);
-    const icon = Icon(
-      Icons.download,
-      size: 18,
-    );
-    const label = kLabelDownload;
     final onPressed = (content != null)
-        ? () async {
-            var message = "";
-            var path = await getFileDownloadpath(
-              name,
-              ext ?? getFileExtension(mimeType),
-            );
-            if (path != null) {
-              try {
-                await saveFile(path, content!);
-                var sp = getShortPath(path);
-                message = 'Saved to $sp';
-              } catch (e) {
-                message = "An error occurred while saving file.";
-              }
-            } else {
-              message = "Unable to determine the download path.";
-            }
-            sm.hideCurrentSnackBar();
-            sm.showSnackBar(getSnackBar(message, small: false));
-          }
+        ? () => saveToDownloads(
+              sm,
+              content: content,
+              mimeType: mimeType,
+              ext: ext,
+              name: name,
+            )
         : null;
 
     return showLabel
-        ? TextButton.icon(
+        ? ADTextButton(
+            icon: Icons.download,
+            iconSize: kButtonIconSizeLarge,
+            label: kLabelDownload,
             onPressed: onPressed,
-            icon: icon,
-            label: const Text(label),
           )
-        : IconButton(
-            tooltip: label,
+        : ADIconButton(
+            icon: Icons.download,
+            iconSize: kButtonIconSizeLarge,
+            onPressed: onPressed,
+            tooltip: kLabelDownload,
             color: Theme.of(context).colorScheme.primary,
             visualDensity: VisualDensity.compact,
-            onPressed: onPressed,
-            icon: icon,
           );
   }
 }

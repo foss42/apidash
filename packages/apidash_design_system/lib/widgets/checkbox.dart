@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class CheckBox extends StatelessWidget {
+class ADCheckBox extends StatelessWidget {
   final String keyId;
   final bool value;
   final ValueChanged<bool?>? onChanged;
   final ColorScheme? colorScheme;
-  const CheckBox({
+  const ADCheckBox({
     super.key,
     required this.keyId,
     required this.value,

@@ -21,6 +21,7 @@ RequestModel _$RequestModelFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$RequestModel {
   String get id => throw _privateConstructorUsedError;
+  APIType get apiType => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   String get description => throw _privateConstructorUsedError;
   @JsonKey(includeToJson: false)
@@ -35,8 +36,12 @@ mixin _$RequestModel {
   @JsonKey(includeToJson: false)
   DateTime? get sendingTime => throw _privateConstructorUsedError;
 
+  /// Serializes this RequestModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of RequestModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $RequestModelCopyWith<RequestModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -49,6 +54,7 @@ abstract class $RequestModelCopyWith<$Res> {
   @useResult
   $Res call(
       {String id,
+      APIType apiType,
       String name,
       String description,
       @JsonKey(includeToJson: false) dynamic requestTabIndex,
@@ -73,10 +79,13 @@ class _$RequestModelCopyWithImpl<$Res, $Val extends RequestModel>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of RequestModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
     Object? id = null,
+    Object? apiType = null,
     Object? name = null,
     Object? description = null,
     Object? requestTabIndex = freezed,
@@ -92,6 +101,10 @@ class _$RequestModelCopyWithImpl<$Res, $Val extends RequestModel>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
+      apiType: null == apiType
+          ? _value.apiType
+          : apiType // ignore: cast_nullable_to_non_nullable
+              as APIType,
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -131,6 +144,8 @@ class _$RequestModelCopyWithImpl<$Res, $Val extends RequestModel>
     ) as $Val);
   }
 
+  /// Create a copy of RequestModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $HttpRequestModelCopyWith<$Res>? get httpRequestModel {
@@ -143,6 +158,8 @@ class _$RequestModelCopyWithImpl<$Res, $Val extends RequestModel>
     });
   }
 
+  /// Create a copy of RequestModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $HttpResponseModelCopyWith<$Res>? get httpResponseModel {
@@ -166,6 +183,7 @@ abstract class _$$RequestModelImplCopyWith<$Res>
   @useResult
   $Res call(
       {String id,
+      APIType apiType,
       String name,
       String description,
       @JsonKey(includeToJson: false) dynamic requestTabIndex,
@@ -190,10 +208,13 @@ class __$$RequestModelImplCopyWithImpl<$Res>
       _$RequestModelImpl _value, $Res Function(_$RequestModelImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of RequestModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
     Object? id = null,
+    Object? apiType = null,
     Object? name = null,
     Object? description = null,
     Object? requestTabIndex = freezed,
@@ -209,6 +230,10 @@ class __$$RequestModelImplCopyWithImpl<$Res>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
+      apiType: null == apiType
+          ? _value.apiType
+          : apiType // ignore: cast_nullable_to_non_nullable
+              as APIType,
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -254,6 +279,7 @@ class __$$RequestModelImplCopyWithImpl<$Res>
 class _$RequestModelImpl implements _RequestModel {
   const _$RequestModelImpl(
       {required this.id,
+      this.apiType = APIType.rest,
       this.name = "",
       this.description = "",
       @JsonKey(includeToJson: false) this.requestTabIndex = 0,
@@ -269,6 +295,9 @@ class _$RequestModelImpl implements _RequestModel {
 
   @override
   final String id;
+  @override
+  @JsonKey()
+  final APIType apiType;
   @override
   @JsonKey()
   final String name;
@@ -295,7 +324,7 @@ class _$RequestModelImpl implements _RequestModel {
 
   @override
   String toString() {
-    return 'RequestModel(id: $id, name: $name, description: $description, requestTabIndex: $requestTabIndex, httpRequestModel: $httpRequestModel, responseStatus: $responseStatus, message: $message, httpResponseModel: $httpResponseModel, isWorking: $isWorking, sendingTime: $sendingTime)';
+    return 'RequestModel(id: $id, apiType: $apiType, name: $name, description: $description, requestTabIndex: $requestTabIndex, httpRequestModel: $httpRequestModel, responseStatus: $responseStatus, message: $message, httpResponseModel: $httpResponseModel, isWorking: $isWorking, sendingTime: $sendingTime)';
   }
 
   @override
@@ -304,6 +333,7 @@ class _$RequestModelImpl implements _RequestModel {
         (other.runtimeType == runtimeType &&
             other is _$RequestModelImpl &&
             (identical(other.id, id) || other.id == id) &&
+            (identical(other.apiType, apiType) || other.apiType == apiType) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.description, description) ||
                 other.description == description) &&
@@ -322,11 +352,12 @@ class _$RequestModelImpl implements _RequestModel {
                 other.sendingTime == sendingTime));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
       id,
+      apiType,
       name,
       description,
       const DeepCollectionEquality().hash(requestTabIndex),
@@ -337,7 +368,9 @@ class _$RequestModelImpl implements _RequestModel {
       isWorking,
       sendingTime);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of RequestModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$RequestModelImplCopyWith<_$RequestModelImpl> get copyWith =>
@@ -354,6 +387,7 @@ class _$RequestModelImpl implements _RequestModel {
 abstract class _RequestModel implements RequestModel {
   const factory _RequestModel(
           {required final String id,
+          final APIType apiType,
           final String name,
           final String description,
           @JsonKey(includeToJson: false) final dynamic requestTabIndex,
@@ -370,6 +404,8 @@ abstract class _RequestModel implements RequestModel {
 
   @override
   String get id;
+  @override
+  APIType get apiType;
   @override
   String get name;
   @override
@@ -391,8 +427,11 @@ abstract class _RequestModel implements RequestModel {
   @override
   @JsonKey(includeToJson: false)
   DateTime? get sendingTime;
+
+  /// Create a copy of RequestModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$RequestModelImplCopyWith<_$RequestModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

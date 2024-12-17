@@ -1,12 +1,19 @@
 import 'dart:convert';
 
+enum APIType {
+  rest("HTTP");
+
+  const APIType(this.label);
+  final String label;
+}
+
 enum HTTPVerb { get, head, post, put, patch, delete }
 
 enum SupportedUriSchemes { https, http }
 
 final kSupportedUriSchemes =
     SupportedUriSchemes.values.map((i) => i.name).toList();
-const kDefaultUriScheme = "https";
+const kDefaultUriScheme = SupportedUriSchemes.https;
 final kLocalhostRegex = RegExp(r'^localhost(:\d+)?(/.*)?$');
 
 const kMethodsWithBody = [
@@ -71,3 +78,4 @@ const LineSplitter kSplitter = LineSplitter();
 const kCodeCharsPerLineLimit = 200;
 
 const kHeaderContentType = "Content-Type";
+const kMsgRequestCancelled = 'Request Cancelled';

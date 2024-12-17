@@ -1,5 +1,6 @@
 import 'package:apidash/codegen/codegen.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:test/test.dart';
 import '../models/request_models.dart';
 
@@ -22,7 +23,10 @@ puts "Response Body: #{response.body}"
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.rubyNetHttp, requestModelGet1, "https"),
+            CodegenLanguage.rubyNetHttp,
+            requestModelGet1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -41,7 +45,10 @@ puts "Response Body: #{response.body}"
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.rubyNetHttp, requestModelGet2, "https"),
+            CodegenLanguage.rubyNetHttp,
+            requestModelGet2,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -60,7 +67,10 @@ puts "Response Body: #{response.body}"
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.rubyNetHttp, requestModelGet3, "https"),
+            CodegenLanguage.rubyNetHttp,
+            requestModelGet3,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -79,7 +89,10 @@ puts "Response Body: #{response.body}"
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.rubyNetHttp, requestModelGet4, "https"),
+            CodegenLanguage.rubyNetHttp,
+            requestModelGet4,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -99,7 +112,10 @@ puts "Response Body: #{response.body}"
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.rubyNetHttp, requestModelGet5, "https"),
+            CodegenLanguage.rubyNetHttp,
+            requestModelGet5,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -119,7 +135,10 @@ puts "Response Body: #{response.body}"
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.rubyNetHttp, requestModelGet6, "https"),
+            CodegenLanguage.rubyNetHttp,
+            requestModelGet6,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -138,7 +157,10 @@ puts "Response Body: #{response.body}"
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.rubyNetHttp, requestModelGet7, "https"),
+            CodegenLanguage.rubyNetHttp,
+            requestModelGet7,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -158,7 +180,10 @@ puts "Response Body: #{response.body}"
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.rubyNetHttp, requestModelGet8, "https"),
+            CodegenLanguage.rubyNetHttp,
+            requestModelGet8,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -177,7 +202,10 @@ puts "Response Body: #{response.body}"
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.rubyNetHttp, requestModelGet9, "https"),
+            CodegenLanguage.rubyNetHttp,
+            requestModelGet9,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -199,7 +227,7 @@ puts "Response Body: #{response.body}"
           codeGen.getCode(
             CodegenLanguage.rubyNetHttp,
             requestModelGet10,
-            "https",
+            SupportedUriSchemes.https,
           ),
           expectedCode);
     });
@@ -220,7 +248,10 @@ puts "Response Body: #{response.body}"
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.rubyNetHttp, requestModelGet11, "https"),
+            CodegenLanguage.rubyNetHttp,
+            requestModelGet11,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -239,7 +270,10 @@ puts "Response Body: #{response.body}"
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.rubyNetHttp, requestModelGet12, "https"),
+            CodegenLanguage.rubyNetHttp,
+            requestModelGet12,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
   });
@@ -260,7 +294,10 @@ puts "Response Body: #{response.to_hash}"
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.rubyNetHttp, requestModelHead1, "https"),
+            CodegenLanguage.rubyNetHttp,
+            requestModelHead1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -279,7 +316,10 @@ puts "Response Body: #{response.to_hash}"
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.rubyNetHttp, requestModelHead2, "http"),
+            CodegenLanguage.rubyNetHttp,
+            requestModelHead2,
+            SupportedUriSchemes.http,
+          ),
           expectedCode);
     });
   });
@@ -307,7 +347,10 @@ puts "Response Body: #{response.body}"
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.rubyNetHttp, requestModelPost1, "https"),
+            CodegenLanguage.rubyNetHttp,
+            requestModelPost1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -338,7 +381,10 @@ puts "Response Body: #{response.body}"
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.rubyNetHttp, requestModelPost2, "https"),
+            CodegenLanguage.rubyNetHttp,
+            requestModelPost2,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -365,7 +411,10 @@ puts "Response Body: #{response.body}"
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.rubyNetHttp, requestModelPost3, "https"),
+            CodegenLanguage.rubyNetHttp,
+            requestModelPost3,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
     test('POST 4', () {
@@ -387,7 +436,7 @@ puts "Response Body: #{response.body}"
           codeGen.getCode(
             CodegenLanguage.rubyNetHttp,
             requestModelPost4,
-            "https",
+            SupportedUriSchemes.https,
           ),
           expectedCode);
     });
@@ -412,7 +461,7 @@ puts "Response Body: #{response.body}"
           codeGen.getCode(
             CodegenLanguage.rubyNetHttp,
             requestModelPost5,
-            "https",
+            SupportedUriSchemes.https,
           ),
           expectedCode);
     });
@@ -435,7 +484,7 @@ puts "Response Body: #{response.body}"
           codeGen.getCode(
             CodegenLanguage.rubyNetHttp,
             requestModelPost6,
-            "https",
+            SupportedUriSchemes.https,
           ),
           expectedCode);
     });
@@ -458,7 +507,7 @@ puts "Response Body: #{response.body}"
           codeGen.getCode(
             CodegenLanguage.rubyNetHttp,
             requestModelPost7,
-            "https",
+            SupportedUriSchemes.https,
           ),
           expectedCode);
     });
@@ -481,7 +530,7 @@ puts "Response Body: #{response.body}"
           codeGen.getCode(
             CodegenLanguage.rubyNetHttp,
             requestModelPost8,
-            "https",
+            SupportedUriSchemes.https,
           ),
           expectedCode);
     });
@@ -506,7 +555,7 @@ puts "Response Body: #{response.body}"
           codeGen.getCode(
             CodegenLanguage.rubyNetHttp,
             requestModelPost9,
-            "https",
+            SupportedUriSchemes.https,
           ),
           expectedCode);
     });
@@ -536,7 +585,10 @@ puts "Response Body: #{response.body}"
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.rubyNetHttp, requestModelPut1, "https"),
+            CodegenLanguage.rubyNetHttp,
+            requestModelPut1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
   });
@@ -565,7 +617,10 @@ puts "Response Body: #{response.body}"
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.rubyNetHttp, requestModelPatch1, "https"),
+            CodegenLanguage.rubyNetHttp,
+            requestModelPatch1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
   });
@@ -586,7 +641,10 @@ puts "Response Body: #{response.body}"
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.rubyNetHttp, requestModelDelete1, "https"),
+            CodegenLanguage.rubyNetHttp,
+            requestModelDelete1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -613,7 +671,10 @@ puts "Response Body: #{response.body}"
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.rubyNetHttp, requestModelDelete2, "https"),
+            CodegenLanguage.rubyNetHttp,
+            requestModelDelete2,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
   });

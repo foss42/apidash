@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
-import 'package:apidash/extensions/extensions.dart';
 import '../../common_widgets/common_widgets.dart';
 
 class EditorPaneRequestURLCard extends StatelessWidget {
@@ -98,9 +97,7 @@ class URLTextField extends ConsumerWidget {
             .update(selectedId, url: value);
       },
       onFieldSubmitted: (value) {
-        ref
-            .read(collectionStateNotifierProvider.notifier)
-            .sendRequest(selectedId);
+        ref.read(collectionStateNotifierProvider.notifier).sendRequest();
       },
     );
   }
@@ -115,7 +112,7 @@ class SendRequestButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedId = ref.watch(selectedIdStateProvider);
+    ref.watch(selectedIdStateProvider);
     final isWorking = ref.watch(
         selectedRequestModelProvider.select((value) => value?.isWorking));
 
@@ -123,9 +120,10 @@ class SendRequestButton extends ConsumerWidget {
       isWorking: isWorking ?? false,
       onTap: () {
         onTap?.call();
-        ref
-            .read(collectionStateNotifierProvider.notifier)
-            .sendRequest(selectedId!);
+        ref.read(collectionStateNotifierProvider.notifier).sendRequest();
+      },
+      onCancel: () {
+        ref.read(collectionStateNotifierProvider.notifier).cancelRequest();
       },
     );
   }

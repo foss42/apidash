@@ -25,8 +25,12 @@ mixin _$HistoryRequestModel {
   HttpRequestModel get httpRequestModel => throw _privateConstructorUsedError;
   HttpResponseModel get httpResponseModel => throw _privateConstructorUsedError;
 
+  /// Serializes this HistoryRequestModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of HistoryRequestModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $HistoryRequestModelCopyWith<HistoryRequestModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -58,6 +62,8 @@ class _$HistoryRequestModelCopyWithImpl<$Res, $Val extends HistoryRequestModel>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of HistoryRequestModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -86,6 +92,8 @@ class _$HistoryRequestModelCopyWithImpl<$Res, $Val extends HistoryRequestModel>
     ) as $Val);
   }
 
+  /// Create a copy of HistoryRequestModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $HistoryMetaModelCopyWith<$Res> get metaData {
@@ -94,6 +102,8 @@ class _$HistoryRequestModelCopyWithImpl<$Res, $Val extends HistoryRequestModel>
     });
   }
 
+  /// Create a copy of HistoryRequestModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $HttpRequestModelCopyWith<$Res> get httpRequestModel {
@@ -102,6 +112,8 @@ class _$HistoryRequestModelCopyWithImpl<$Res, $Val extends HistoryRequestModel>
     });
   }
 
+  /// Create a copy of HistoryRequestModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $HttpResponseModelCopyWith<$Res> get httpResponseModel {
@@ -141,6 +153,8 @@ class __$$HistoryRequestModelImplCopyWithImpl<$Res>
       $Res Function(_$HistoryRequestModelImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of HistoryRequestModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -212,12 +226,14 @@ class _$HistoryRequestModelImpl implements _HistoryRequestModel {
                 other.httpResponseModel == httpResponseModel));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType, historyId, metaData, httpRequestModel, httpResponseModel);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of HistoryRequestModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$HistoryRequestModelImplCopyWith<_$HistoryRequestModelImpl> get copyWith =>
@@ -251,8 +267,11 @@ abstract class _HistoryRequestModel implements HistoryRequestModel {
   HttpRequestModel get httpRequestModel;
   @override
   HttpResponseModel get httpResponseModel;
+
+  /// Create a copy of HistoryRequestModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$HistoryRequestModelImplCopyWith<_$HistoryRequestModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

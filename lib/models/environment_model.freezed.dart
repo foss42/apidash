@@ -25,8 +25,12 @@ mixin _$EnvironmentModel {
   List<EnvironmentVariableModel> get values =>
       throw _privateConstructorUsedError;
 
+  /// Serializes this EnvironmentModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of EnvironmentModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $EnvironmentModelCopyWith<EnvironmentModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -50,6 +54,8 @@ class _$EnvironmentModelCopyWithImpl<$Res, $Val extends EnvironmentModel>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of EnvironmentModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -93,6 +99,8 @@ class __$$EnvironmentModelImplCopyWithImpl<$Res>
       $Res Function(_$EnvironmentModelImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of EnvironmentModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -159,12 +167,14 @@ class _$EnvironmentModelImpl implements _EnvironmentModel {
             const DeepCollectionEquality().equals(other._values, _values));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType, id, name, const DeepCollectionEquality().hash(_values));
 
-  @JsonKey(ignore: true)
+  /// Create a copy of EnvironmentModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$EnvironmentModelImplCopyWith<_$EnvironmentModelImpl> get copyWith =>
@@ -194,8 +204,11 @@ abstract class _EnvironmentModel implements EnvironmentModel {
   String get name;
   @override
   List<EnvironmentVariableModel> get values;
+
+  /// Create a copy of EnvironmentModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$EnvironmentModelImplCopyWith<_$EnvironmentModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -212,8 +225,12 @@ mixin _$EnvironmentVariableModel {
   EnvironmentVariableType get type => throw _privateConstructorUsedError;
   bool get enabled => throw _privateConstructorUsedError;
 
+  /// Serializes this EnvironmentVariableModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of EnvironmentVariableModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $EnvironmentVariableModelCopyWith<EnvironmentVariableModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -239,6 +256,8 @@ class _$EnvironmentVariableModelCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of EnvironmentVariableModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -291,6 +310,8 @@ class __$$EnvironmentVariableModelImplCopyWithImpl<$Res>
       $Res Function(_$EnvironmentVariableModelImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of EnvironmentVariableModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -360,11 +381,13 @@ class _$EnvironmentVariableModelImpl implements _EnvironmentVariableModel {
             (identical(other.enabled, enabled) || other.enabled == enabled));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, key, value, type, enabled);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of EnvironmentVariableModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$EnvironmentVariableModelImplCopyWith<_$EnvironmentVariableModelImpl>
@@ -397,8 +420,11 @@ abstract class _EnvironmentVariableModel implements EnvironmentVariableModel {
   EnvironmentVariableType get type;
   @override
   bool get enabled;
+
+  /// Create a copy of EnvironmentVariableModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$EnvironmentVariableModelImplCopyWith<_$EnvironmentVariableModelImpl>
       get copyWith => throw _privateConstructorUsedError;
 }

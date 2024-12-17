@@ -24,13 +24,23 @@ final requestSequenceProvider = StateProvider<List<String>>((ref) {
   return ids ?? [];
 });
 
+final httpClientManager = HttpClientManager();
+
 final StateNotifierProvider<CollectionStateNotifier, Map<String, RequestModel>?>
     collectionStateNotifierProvider =
-    StateNotifierProvider((ref) => CollectionStateNotifier(ref, hiveHandler));
+    StateNotifierProvider((ref) => CollectionStateNotifier(
+          ref,
+          hiveHandler,
+          httpClientManager,
+        ));
 
 class CollectionStateNotifier
     extends StateNotifier<Map<String, RequestModel>?> {
-  CollectionStateNotifier(this.ref, this.hiveHandler) : super(null) {
+  CollectionStateNotifier(
+    this.ref,
+    this.hiveHandler,
+    this.httpClientManager,
+  ) : super(null) {
     var status = loadData();
     Future.microtask(() {
       if (status) {
@@ -45,12 +55,17 @@ class CollectionStateNotifier
 
   final Ref ref;
   final HiveHandler hiveHandler;
-  final baseResponseModel = const HttpResponseModel();
+  final baseHttpResponseModel = const HttpResponseModel();
+  final HttpClientManager httpClientManager;
 
   bool hasId(String id) => state?.keys.contains(id) ?? false;
 
   RequestModel? getRequestModel(String id) {
     return state?[id];
+  }
+
+  void unsave() {
+    ref.read(hasUnsavedChangesProvider.notifier).state = true;
   }
 
   void add() {
@@ -66,7 +81,7 @@ class CollectionStateNotifier
         .read(requestSequenceProvider.notifier)
         .update((state) => [id, ...state]);
     ref.read(selectedIdStateProvider.notifier).state = newRequestModel.id;
-    ref.read(hasUnsavedChangesProvider.notifier).state = true;
+    unsave();
   }
 
   void addRequestModel(HttpRequestModel httpRequestModel) {
@@ -82,7 +97,7 @@ class CollectionStateNotifier
         .read(requestSequenceProvider.notifier)
         .update((state) => [id, ...state]);
     ref.read(selectedIdStateProvider.notifier).state = newRequestModel.id;
-    ref.read(hasUnsavedChangesProvider.notifier).state = true;
+    unsave();
   }
 
   void reorder(int oldIdx, int newIdx) {
@@ -90,7 +105,7 @@ class CollectionStateNotifier
     final itemId = itemIds.removeAt(oldIdx);
     itemIds.insert(newIdx, itemId);
     ref.read(requestSequenceProvider.notifier).state = [...itemIds];
-    ref.read(hasUnsavedChangesProvider.notifier).state = true;
+    unsave();
   }
 
   void remove(String id) {
@@ -113,7 +128,7 @@ class CollectionStateNotifier
     var map = {...state!};
     map.remove(id);
     state = map;
-    ref.read(hasUnsavedChangesProvider.notifier).state = true;
+    unsave();
   }
 
   void clearResponse(String? id) {
@@ -129,7 +144,7 @@ class CollectionStateNotifier
     var map = {...state!};
     map[id] = newModel;
     state = map;
-    ref.read(hasUnsavedChangesProvider.notifier).state = true;
+    unsave();
   }
 
   void duplicate(String id) {
@@ -156,7 +171,7 @@ class CollectionStateNotifier
 
     ref.read(requestSequenceProvider.notifier).state = [...itemIds];
     ref.read(selectedIdStateProvider.notifier).state = newId;
-    ref.read(hasUnsavedChangesProvider.notifier).state = true;
+    unsave();
   }
 
   void duplicateFromHistory(HistoryRequestModel historyRequestModel) {
@@ -182,7 +197,7 @@ class CollectionStateNotifier
 
     ref.read(requestSequenceProvider.notifier).state = [...itemIds];
     ref.read(selectedIdStateProvider.notifier).state = newId;
-    ref.read(hasUnsavedChangesProvider.notifier).state = true;
+    unsave();
   }
 
   void update(
@@ -231,38 +246,40 @@ class CollectionStateNotifier
     var map = {...state!};
     map[id] = newModel;
     state = map;
-    ref.read(hasUnsavedChangesProvider.notifier).state = true;
+    unsave();
   }
 
-  Future<void> sendRequest(String id) async {
+  Future<void> sendRequest() async {
+    final requestId = ref.read(selectedIdStateProvider);
     ref.read(codePaneVisibleStateProvider.notifier).state = false;
-    final defaultUriScheme = ref.read(
-      settingsProvider.select(
-        (value) => value.defaultUriScheme,
-      ),
-    );
+    final defaultUriScheme = ref.read(settingsProvider).defaultUriScheme;
 
-    RequestModel requestModel = state![id]!;
+    if (requestId == null || state == null) {
+      return;
+    }
+    RequestModel? requestModel = state![requestId];
 
-    if (requestModel.httpRequestModel == null) {
+    if (requestModel?.httpRequestModel == null) {
       return;
     }
 
     HttpRequestModel substitutedHttpRequestModel =
-        getSubstitutedHttpRequestModel(requestModel.httpRequestModel!);
+        getSubstitutedHttpRequestModel(requestModel!.httpRequestModel!);
 
     // set current model's isWorking to true and update state
     var map = {...state!};
-    map[id] = requestModel.copyWith(
+    map[requestId] = requestModel.copyWith(
       isWorking: true,
       sendingTime: DateTime.now(),
     );
     state = map;
 
     (HttpResponse?, Duration?, String?)? responseRec = await request(
+      requestId,
       substitutedHttpRequestModel,
       defaultUriScheme: defaultUriScheme,
     );
+
     late final RequestModel newRequestModel;
     if (responseRec.$1 == null) {
       newRequestModel = requestModel.copyWith(
@@ -271,7 +288,7 @@ class CollectionStateNotifier
         isWorking: false,
       );
     } else {
-      final responseModel = baseResponseModel.fromResponse(
+      final httpResponseModel = baseHttpResponseModel.fromResponse(
         response: responseRec.$1!,
         time: responseRec.$2!,
       );
@@ -279,7 +296,7 @@ class CollectionStateNotifier
       newRequestModel = requestModel.copyWith(
         responseStatus: statusCode,
         message: kResponseCodeReasons[statusCode],
-        httpResponseModel: responseModel,
+        httpResponseModel: httpResponseModel,
         isWorking: false,
       );
       String newHistoryId = getNewUuid();
@@ -287,7 +304,7 @@ class CollectionStateNotifier
         historyId: newHistoryId,
         metaData: HistoryMetaModel(
           historyId: newHistoryId,
-          requestId: id,
+          requestId: requestId,
           name: requestModel.name,
           url: substitutedHttpRequestModel.url,
           method: substitutedHttpRequestModel.method,
@@ -295,17 +312,23 @@ class CollectionStateNotifier
           timeStamp: DateTime.now(),
         ),
         httpRequestModel: substitutedHttpRequestModel,
-        httpResponseModel: responseModel,
+        httpResponseModel: httpResponseModel,
       );
       ref.read(historyMetaStateNotifier.notifier).addHistoryRequest(model);
     }
 
     // update state with response data
     map = {...state!};
-    map[id] = newRequestModel;
+    map[requestId] = newRequestModel;
     state = map;
 
-    ref.read(hasUnsavedChangesProvider.notifier).state = true;
+    unsave();
+  }
+
+  void cancelRequest() {
+    final id = ref.read(selectedIdStateProvider);
+    httpClientManager.cancelRequest(id);
+    unsave();
   }
 
   Future<void> clearData() async {
@@ -315,7 +338,7 @@ class CollectionStateNotifier
     ref.read(clearDataStateProvider.notifier).state = false;
     ref.read(requestSequenceProvider.notifier).state = [];
     state = {};
-    ref.read(hasUnsavedChangesProvider.notifier).state = true;
+    unsave();
   }
 
   bool loadData() {
