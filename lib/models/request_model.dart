@@ -1,11 +1,13 @@
 import 'package:apidash_core/apidash_core.dart';
+import 'package:apidash_core/models/graphql_request_model.dart';
+import 'package:apidash_core/models/graphql_response_model.dart';
 
 part 'request_model.freezed.dart';
 
 part 'request_model.g.dart';
 
 @freezed
-class RequestModel with _$RequestModel {
+class RequestModel with _$RequestModel{
   @JsonSerializable(
     explicitToJson: true,
     anyMap: true,
@@ -17,9 +19,11 @@ class RequestModel with _$RequestModel {
     @Default("") String description,
     @JsonKey(includeToJson: false) @Default(0) requestTabIndex,
     HttpRequestModel? httpRequestModel,
+    GraphqlRequestModel? graphqlRequestModel,
     int? responseStatus,
     String? message,
     HttpResponseModel? httpResponseModel,
+    GraphqlRequestModel? graphqlResponsetModel,
     @JsonKey(includeToJson: false) @Default(false) bool isWorking,
     @JsonKey(includeToJson: false) DateTime? sendingTime,
   }) = _RequestModel;

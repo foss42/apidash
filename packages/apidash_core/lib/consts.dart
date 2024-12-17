@@ -1,7 +1,8 @@
 import 'dart:convert';
 
 enum APIType {
-  rest("HTTP");
+  rest("HTTP"),
+  graphql("GRAPHQL");
 
   const APIType(this.label);
   final String label;
