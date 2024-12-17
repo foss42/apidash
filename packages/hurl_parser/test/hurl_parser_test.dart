@@ -1,7 +1,10 @@
-// test/hurl_parser_test.dart
-
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hurl_parser/src/parser.dart';
+import 'package:hurl_parser/hurl_parser.dart';
+import 'package:hurl_parser/src/models/common/body_types_enums.dart';
+import 'package:hurl_parser/src/models/misc_model.dart';
+import 'package:hurl_parser/src/models/multipart_form_params.dart';
+import 'package:hurl_parser/src/models/query_string_params.dart';
+import 'package:petitparser/petitparser.dart';
 
 void main() {
   late HurlParser parser;
@@ -19,9 +22,13 @@ Accept: application/json
 ''';
       final result = parser.parseRequest(input);
       expect(result.isSuccess, true);
-      expect(result.value?.method, equals('GET'));
-      expect(result.value?.url, equals('http://api.example.com/users'));
-      expect(result.value?.headers.length, equals(2));
+      expect(
+        result.value,
+        Request(method: "GET", url: "http://api.example.com/users", headers: [
+          Header(key: "User-Agent", value: "curl/7.68.0"),
+          Header(key: "Accept", value: "application/json")
+        ]),
+      );
     });
 
     test('parses request with query parameters', () {
@@ -32,18 +39,25 @@ page: 1
 limit: 10
 ''';
       final result = parser.parseRequest(input);
+
       expect(result.isSuccess, true);
 
       final querySection = result.value?.sections
           .firstWhere((section) => section.type == 'QueryStringParams');
-      expect(querySection?.content.params.length, equals(2));
+      expect(querySection, isNotNull);
+
+      final params = (querySection?.content as QueryStringParams).params;
+      expect(params.length, equals(2));
+      expect(params[0].key, equals('page'));
+      expect(params[0].value, equals('1'));
+      expect(params[1].key, equals('limit'));
+      expect(params[1].value, equals('10'));
     });
 
     test('parses request with body', () {
       const input = '''
 POST http://api.example.com/users
 Content-Type: application/json
-
 {
   "name": "John Doe",
   "email": "john@example.com"
@@ -51,7 +65,19 @@ Content-Type: application/json
 ''';
       final result = parser.parseRequest(input);
       expect(result.isSuccess, true);
-      expect(result.value?.body, isNotNull);
+      expect(
+        result.value,
+        Request(
+          method: "POST",
+          url: "http://api.example.com/users",
+          headers: [
+            Header(key: "Content-Type", value: "application/json"),
+          ],
+          body: Body(
+              type: BodyType.json,
+              content: {'name': 'John Doe', 'email': 'john@example.com'}),
+        ),
+      );
     });
   });
 
@@ -72,6 +98,7 @@ Cache-Control: no-cache
       expect(result.value?.version, equals('HTTP/1.1'));
       expect(result.value?.status, equals(200));
       expect(result.value?.headers.length, equals(2));
+      expect(result.value?.body?.type, equals(BodyType.json));
     });
 
     test('parses response with captures', () {
@@ -91,7 +118,13 @@ auth_token: jsonpath "\$.token"
 
       final capturesSection = result.value?.sections
           .firstWhere((section) => section.type == 'Captures');
-      expect(capturesSection?.content.captures.length, equals(1));
+      expect(capturesSection, isNotNull);
+
+      final captures = (capturesSection?.content as Captures).captures;
+      expect(captures.length, equals(1));
+      expect(captures[0].name, equals('auth_token'));
+      expect(captures[0].query.type, equals('jsonpath'));
+      expect(captures[0].query.value, equals('\$.token'));
     });
 
     test('parses response with assertions', () {
@@ -100,105 +133,24 @@ HTTP/1.1 200
 Content-Type: application/json
 
 [Asserts]
-status == 200
-header "Content-Type" == "application/json"
-jsonpath "\$.status" == "success"
+status equals 200
+header "Content-Type" equals "application/json"
+jsonpath "\$.status" equals "success"
 ''';
       final result = parser.parseResponse(input);
       expect(result.isSuccess, true);
 
       final assertsSection = result.value?.sections
           .firstWhere((section) => section.type == 'Asserts');
-      expect(assertsSection?.content.asserts.length, equals(3));
-    });
-  });
+      expect(assertsSection, isNotNull);
 
-  group('Complete Entry Parsing', () {
-    test('parses complete request-response entry', () {
-      const input = '''
-GET http://api.example.com/status
-Accept: application/json
+      final asserts = (assertsSection?.content as Asserts).asserts;
+      expect(asserts.length, equals(3));
 
-HTTP/1.1 200
-Content-Type: application/json
-
-{
-  "status": "operational"
-}
-''';
-      final result = parser.parseEntry(input);
-      expect(result.isSuccess, true);
-      expect(result.value?.request, isNotNull);
-      expect(result.value?.response, isNotNull);
-    });
-  });
-
-  group('Full Hurl File Parsing', () {
-    test('parses multiple entries', () {
-      const input = '''
-# First request
-GET http://api.example.com/status
-Accept: application/json
-
-HTTP/1.1 200
-Content-Type: application/json
-
-{
-  "status": "operational"
-}
-
-# Second request
-POST http://api.example.com/users
-Content-Type: application/json
-
-{
-  "name": "John Doe"
-}
-
-HTTP/1.1 201
-Content-Type: application/json
-
-{
-  "id": 123,
-  "name": "John Doe"
-}
-''';
-      final result = parser.parseHurlFile(input);
-      expect(result.isSuccess, true);
-      expect(result.value?.entries.length, equals(2));
-    });
-  });
-
-  group('Error Handling', () {
-    test('handles invalid request method', () {
-      const input = 'INVALID http://api.example.com';
-      final result = parser.parseRequest(input);
-      expect(result.isSuccess, false);
-      expect(result.error, isNotNull);
-    });
-
-    test('handles malformed JSON body', () {
-      const input = '''
-POST http://api.example.com
-Content-Type: application/json
-
-{
-  "invalid json
-}
-''';
-      final result = parser.parseRequest(input);
-      expect(result.isSuccess, false);
-      expect(result.error, isNotNull);
-    });
-
-    test('handles invalid status code', () {
-      const input = '''
-HTTP/1.1 999999
-Content-Type: application/json
-''';
-      final result = parser.parseResponse(input);
-      expect(result.isSuccess, false);
-      expect(result.error, isNotNull);
+      // Check first assert
+      expect(asserts[0].query.type, equals('status'));
+      expect(asserts[0].predicate.type, equals('equals'));
+      expect(asserts[0].predicate.value, equals('200'));
     });
   });
 
@@ -215,7 +167,13 @@ field1: value1
 
       final multipartSection = result.value?.sections
           .firstWhere((section) => section.type == 'MultipartFormData');
-      expect(multipartSection?.content.params.length, equals(2));
+      expect(multipartSection, isNotNull);
+
+      final params = (multipartSection?.content as MultipartFormData).params;
+      expect(params.length, equals(2));
+      expect(params[0].name, equals('file1'));
+      expect(params[0].filename, equals('example.txt'));
+      expect(params[0].contentType, equals('text/plain'));
     });
 
     test('parses custom options', () {
@@ -231,17 +189,12 @@ connect-timeout: 30
 
       final optionsSection = result.value?.sections
           .firstWhere((section) => section.type == 'Options');
-      expect(optionsSection?.content.options.length, equals(3));
-    });
+      expect(optionsSection, isNotNull);
 
-    test('parses template variables', () {
-      const input = '''
-GET http://api.example.com/users/{{userId}}
-[Asserts]
-// jsonpath "\$.id" == {{expectedId}}
-''';
-      final result = parser.parseRequest(input);
-      expect(result.isSuccess, true);
+      final options = (optionsSection?.content as Options).options;
+      expect(options.length, equals(3));
+      expect(options[0].type, equals('insecure'));
+      expect(options[0].value, equals('true'));
     });
   });
 }

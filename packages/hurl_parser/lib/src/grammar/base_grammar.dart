@@ -1,3 +1,4 @@
+import 'package:hurl_parser/src/models/misc_model.dart';
 import 'package:petitparser/petitparser.dart';
 
 class HurlGrammar extends GrammarDefinition {
@@ -27,15 +28,22 @@ class HurlGrammar extends GrammarDefinition {
             'body': values[7],
           });
 
-  Parser response() =>
-      ref0(lineTerminator).star() &
-      ref0(version) &
-      ref0(space) &
-      ref0(status) &
-      ref0(lineTerminator) &
-      ref0(header).star() &
-      ref0(responseSection).star() &
-      ref0(body).optional();
+  Parser response() => SequenceParser([
+        ref0(lineTerminator).star(),
+        ref0(version),
+        ref0(space),
+        ref0(status),
+        ref0(lineTerminator),
+        ref0(header).star(),
+        ref0(responseSection).star(),
+        ref0(body).optional(),
+      ]).map((values) => {
+            'version': values[1],
+            'status': int.parse(values[3].toString()),
+            'headers': values[5] ?? [],
+            'sections': values[6] ?? [],
+            'body': values[7],
+          });
 
   // Sections
   Parser requestSection() =>
@@ -73,7 +81,10 @@ class HurlGrammar extends GrammarDefinition {
         (string('[QueryStringParams]') | string('[Query]')),
         ref0(lineTerminator),
         ref0(keyValue).star(),
-      ]);
+      ]).map((values) => {
+            'type': 'QueryStringParams',
+            'content': values[3] ?? [],
+          });
 
   Parser formParamsSection() => SequenceParser<dynamic>([
         ref0(lineTerminator).star(),
@@ -87,7 +98,20 @@ class HurlGrammar extends GrammarDefinition {
         (string('[MultipartFormData]') | string('[Multipart]')),
         ref0(lineTerminator),
         ref0(multipartFormDataParam).star(),
-      ]);
+      ]).map((values) {
+        if (values[3] is Map && values[3]['type'] == 'file') {
+          return {
+            'name': values[0],
+            'value': values[3]['filename'],
+            'filename': values[3]['filename'],
+            'contentType': values[3]['contentType'],
+          };
+        }
+        return {
+          'name': values[0],
+          'value': values[3],
+        };
+      });
   Parser cookiesSection() => SequenceParser([
         ref0(lineTerminator).star(),
         string('[Cookies]'),
@@ -215,27 +239,77 @@ class HurlGrammar extends GrammarDefinition {
 
   // JSON Support
   Parser jsonValue() =>
-      ref0(template) |
       ref0(jsonObject) |
+      ref0(template) |
       ref0(jsonArray) |
       ref0(jsonString) |
       ref0(jsonNumber) |
       ref0(boolean) |
       ref0(null_);
 
-  Parser jsonObject() =>
-      char('{') & ref0(jsonKeyValue).plusSeparated(char(',')) & char('}');
+  // Parser jsonObject() => seq3(
+  //             char('{'),
+  //             (ref0(space).star() & // Handle spaces after opening brace
+  //                     ref0(lineTerminator)
+  //                         .optional() & // Handle optional newline
+  //                     ref0(jsonKeyValue).plusSeparated(char(',')) &
+  //                     ref0(space).star() & // Handle spaces before closing brace
+  //                     ref0(lineTerminator).optional() // Handle optional newline
+  //                 )
+  //                 .optional(),
+  //             char('}'))
+  //         .map((values) {
+  //       final pairs = values as List? ?? [];
+  //       return Map.fromEntries(
+  //           pairs.map((p) => MapEntry(p['key'], p['value'])));
+  //     });
 
-  Parser jsonKeyValue() => ref0(jsonString) & char(':') & ref0(jsonValue);
+  Parser jsonObject() => SequenceParser([
+        char('{'),
+        ref0(jsonKeyValue).plusSeparated(char(',')).trim().optional(),
+        char('}')
+      ]).map((values) {
+        final keyValuePairs = (values[1] as SeparatedList?)?.elements;
+        if (keyValuePairs == null) return null;
+
+        final contentMap = {};
+        for (var pair in keyValuePairs) {
+          contentMap.addAll(pair);
+        }
+
+        return {'type': 'json', 'content': contentMap};
+      });
+
+  Parser jsonKeyValue() => SequenceParser(
+          [ref0(jsonString).trim(), char(':').trim(), ref0(jsonValue).trim()])
+      .map((values) => {values[0]: values[2]});
+
+  // Parser jsonObject() => SequenceParser([
+  //       char('{'),
+  //       ref0(jsonKeyValue),
+  //       char('}'),
+  //     ]).map((values) => {'type': 'json', 'content': values[1] ?? {}});
+
+  // Parser jsonKeyValue() => SequenceParser([
+  //       ref0(jsonString),
+  //       char(':').trim(),
+  //       ref0(jsonValue),
+  //     ]).map((values) => {values[0]: values[2]});
 
   Parser jsonArray() =>
       char('[') & ref0(jsonValue).plusSeparated(char(',')) & char(']');
 
-  Parser jsonString() =>
-      char('"') & (ref0(jsonStringContent) | ref0(template)).star() & char('"');
+  Parser jsonString() => SequenceParser([
+        char('"'),
+        (ref0(jsonStringContent) | ref0(template)).star().flatten(),
+        char('"'),
+      ]).map((values) => values[1]);
 
-  Parser jsonNumber() =>
-      ref0(integer) & ref0(fraction).optional() & ref0(exponent).optional();
+  Parser jsonNumber() => SequenceParser([
+        ref0(integer),
+        ref0(fraction).optional(),
+        ref0(exponent).optional(),
+      ]).flatten().map((value) => num.tryParse(value) ?? 0);
 
   // Basic Elements
   Parser method() => pattern('A-Z').plus().flatten();
@@ -309,13 +383,16 @@ class HurlGrammar extends GrammarDefinition {
       letter() & (letter() | digit() | char('_') | char('-')).star();
 
   // Body parser with all content types
-  Parser body() =>
-      ref0(lineTerminator).star() & ref0(bytes) & ref0(lineTerminator);
+  Parser body() => SequenceParser([
+        ref0(lineTerminator).star(),
+        ref0(bytes).trim(),
+        ref0(lineTerminator).optional(),
+      ]).map((values) => values[1]);
 
   Parser jsonStringContent() =>
       ref0(jsonStringText) | ref0(jsonStringEscapedChar);
 
-  Parser jsonStringText() => pattern('^"\\');
+  Parser jsonStringText() => pattern('"\\').neg();
 
   Parser jsonStringEscapedChar() =>
       char('\\') & pattern('"\\bfnrt') | (char('u') & ref0(hexDigit).times(4));
@@ -363,11 +440,17 @@ class HurlGrammar extends GrammarDefinition {
       ref0(fileValue) &
       ref0(lineTerminator);
 
-  Parser fileValue() =>
-      string('file,') &
-      ref0(filename) &
-      char(';') &
-      ref0(fileContenttype).optional();
+  Parser fileValue() => SequenceParser([
+        string('file,'),
+        ref0(filename),
+        char(';'),
+        ref0(space).optional(),
+        ref0(fileContenttype).optional(),
+      ]).map((values) => {
+            'type': 'file',
+            'filename': values[1],
+            'contentType': values[4],
+          });
 
   Parser fileContenttype() => pattern('a-zA-Z0-9/+-').plus();
 
@@ -416,9 +499,8 @@ class HurlGrammar extends GrammarDefinition {
   }
 
   Parser quotedString() =>
-      char('"') &
-      (ref0(quotedStringContent) | ref0(template)).star() &
-      char('"');
+      seq3(char('"'), pattern('"\\').neg().star().flatten(), char('"'))
+          .map((values) => values.$2);
 
   Parser quotedStringContent() =>
       (ref0(quotedStringText) | ref0(quotedStringEscapedChar)).star();
@@ -550,30 +632,33 @@ class HurlGrammar extends GrammarDefinition {
   // ... Add other query parsers as needed
 
   // Predicate Parser
-  Parser predicate() =>
-      (string('not') & ref0(space)).optional() & ref0(predicateFunc);
+  Parser predicate() => SequenceParser([
+        (string('not') & ref0(space)).optional(),
+        ref0(predicateFunc),
+      ]);
 
-  Parser predicateFunc() =>
-      ref0(equalPredicate) |
-      ref0(notEqualPredicate) |
-      ref0(greaterPredicate) |
-      ref0(greaterOrEqualPredicate) |
-      ref0(lessPredicate) |
-      ref0(lessOrEqualPredicate) |
-      ref0(startWithPredicate) |
-      ref0(endWithPredicate) |
-      ref0(containPredicate) |
-      ref0(matchPredicate) |
-      ref0(existPredicate) |
-      ref0(isEmptyPredicate) |
-      ref0(includePredicate) |
-      ref0(integerPredicate) |
-      ref0(floatPredicate) |
-      ref0(booleanPredicate) |
-      ref0(stringPredicate) |
-      ref0(collectionPredicate) |
-      ref0(datePredicate) |
-      ref0(isoDatePredicate);
+  Parser predicateFunc() => ChoiceParser([
+        ref0(equalPredicate),
+        ref0(notEqualPredicate),
+        ref0(greaterPredicate),
+        ref0(greaterOrEqualPredicate),
+        ref0(lessPredicate),
+        ref0(lessOrEqualPredicate),
+        ref0(startWithPredicate),
+        ref0(endWithPredicate),
+        ref0(containPredicate),
+        ref0(matchPredicate),
+        ref0(existPredicate),
+        ref0(isEmptyPredicate),
+        ref0(includePredicate),
+        ref0(integerPredicate),
+        ref0(floatPredicate),
+        ref0(booleanPredicate),
+        ref0(stringPredicate),
+        ref0(collectionPredicate),
+        ref0(datePredicate),
+        ref0(isoDatePredicate)
+      ]);
 
   Parser equalPredicate() => string('==') & ref0(space) & ref0(predicateValue);
   Parser notEqualPredicate() =>

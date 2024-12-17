@@ -24,7 +24,6 @@ void main() {
       testCaCertPath('cacert: ~/user/cert.pem\n', '~/user/cert.pem');
     });
 
-
     // TODO:
     // FIXME: Windows-style paths are not supported
     // test('Windows-style paths', () {
@@ -53,18 +52,24 @@ void main() {
     });
 
     test('As part of Options section', () {
-      final parser = trace( hurl.buildFrom(hurl.optionsSection()) );
+      final parser = hurl.buildFrom(hurl.optionsSection());
       const input = '''[Options]
 cacert: /path/to/cert.pem
 compressed: true
 ''';
-
       final result = parser.parse(input);
-      expect(result.isSuccess, isTrue);
+      expect(result is Success, isTrue,
+          reason: 'Failed to parse options section');
 
-      final options = result.value as List; // Direct access to options list
+      // Access the options list from the parsed result
+      // The structure is [lineTerminators, "[Options]", lineTerminator, options]
+      final options = result.value[3] as List;
+
+      expect(options, hasLength(2));
       expect(options[0]['type'], equals('cacert'));
       expect(options[0]['value'], equals('/path/to/cert.pem'));
+      expect(options[1]['type'], equals('compressed'));
+      expect(options[1]['value'], equals(true));
     });
 
     test('Multiple certificates in Options', () {
@@ -74,13 +79,18 @@ cacert: /path/to/cert1.pem
 compressed: true
 cacert: /path/to/cert2.pem
 ''';
-
       final result = parser.parse(input);
-      expect(result.isSuccess, isTrue);
+      expect(result is Success, isTrue,
+          reason: 'Failed to parse multiple options');
 
-      final options = result.value as List; // Direct access to options list
+      // Access the options list from the parsed result
+      final options = result.value[3] as List;
+
+      expect(options, hasLength(3));
       expect(options[0]['type'], equals('cacert'));
       expect(options[0]['value'], equals('/path/to/cert1.pem'));
+      expect(options[1]['type'], equals('compressed'));
+      expect(options[1]['value'], equals(true));
       expect(options[2]['type'], equals('cacert'));
       expect(options[2]['value'], equals('/path/to/cert2.pem'));
     });

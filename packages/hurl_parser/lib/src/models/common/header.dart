@@ -12,7 +12,18 @@ class Header {
   }
 
   Map<String, dynamic> toJson() => {
-    'key': key,
-    'value': value,
-  };
+        'key': key,
+        'value': value,
+      };
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Header && key == other.key && value == other.value;
+
+  @override
+  int get hashCode => key.hashCode ^ value.hashCode;
+
+  @override
+  String toString() => '{key: $key, value: $value}';
 }
