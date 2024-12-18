@@ -28,28 +28,28 @@ class EditorPaneRequestURLCard extends StatelessWidget {
         ),
         child: context.isMediumWindow
             ? const Row(
-                children: [
-                  DropdownButtonHTTPMethod(),
-                  kHSpacer5,
-                  Expanded(
-                    child: URLTextField(),
-                  ),
-                ],
-              )
+          children: [
+            DropdownButtonHTTPMethod(),
+            kHSpacer5,
+            Expanded(
+              child: URLTextField(),
+            ),
+          ],
+        )
             : const Row(
-                children: [
-                  DropdownButtonHTTPMethod(),
-                  kHSpacer20,
-                  Expanded(
-                    child: URLTextField(),
-                  ),
-                  kHSpacer20,
-                  SizedBox(
-                    height: 36,
-                    child: SendRequestButton(),
-                  )
-                ],
-              ),
+          children: [
+            DropdownButtonHTTPMethod(),
+            kHSpacer20,
+            Expanded(
+              child: URLTextField(),
+            ),
+            kHSpacer20,
+            SizedBox(
+              height: 36,
+              child: SendRequestButton(),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -70,7 +70,8 @@ class DropdownButtonHTTPMethod extends ConsumerWidget {
         final selectedId = ref.read(selectedRequestModelProvider)!.id;
         ref
             .read(collectionStateNotifierProvider.notifier)
-            .update(selectedId, method: value);
+            .update(selectedId, method: value, forcedGETRequestMethod: ref.read(collectionStateNotifierProvider.notifier).getRequestModel(selectedId)?.httpRequestModel?.method != HTTPVerb.get && value == HTTPVerb.get);
+
       },
     );
   }
@@ -97,7 +98,9 @@ class URLTextField extends ConsumerWidget {
             .update(selectedId, url: value);
       },
       onFieldSubmitted: (value) {
-        ref.read(collectionStateNotifierProvider.notifier).sendRequest();
+        ref
+            .read(collectionStateNotifierProvider.notifier)
+            .sendRequest(selectedId);
       },
     );
   }
@@ -112,7 +115,7 @@ class SendRequestButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.watch(selectedIdStateProvider);
+    final selectedId = ref.watch(selectedIdStateProvider);
     final isWorking = ref.watch(
         selectedRequestModelProvider.select((value) => value?.isWorking));
 
@@ -120,10 +123,9 @@ class SendRequestButton extends ConsumerWidget {
       isWorking: isWorking ?? false,
       onTap: () {
         onTap?.call();
-        ref.read(collectionStateNotifierProvider.notifier).sendRequest();
-      },
-      onCancel: () {
-        ref.read(collectionStateNotifierProvider.notifier).cancelRequest();
+        ref
+            .read(collectionStateNotifierProvider.notifier)
+            .sendRequest(selectedId!);
       },
     );
   }
