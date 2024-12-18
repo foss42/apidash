@@ -19,11 +19,13 @@ class RequestModel with _$RequestModel{
     @Default("") String description,
     @JsonKey(includeToJson: false) @Default(0) requestTabIndex,
     HttpRequestModel? httpRequestModel,
-    GraphqlRequestModel? graphqlRequestModel,
+   //  @JsonKey(fromJson: GraphqlRequestModelConverter().fromJson, toJson: GraphqlRequestModelConverter().toJson)
+   GraphqlRequestModel? graphqlRequestModel,
+ //   GraphqlRequestModel? graphqlRequestModel,
     int? responseStatus,
     String? message,
     HttpResponseModel? httpResponseModel,
-    GraphqlRequestModel? graphqlResponsetModel,
+   //GraphqlRequestModel? graphqlResponsetModel,
     @JsonKey(includeToJson: false) @Default(false) bool isWorking,
     @JsonKey(includeToJson: false) DateTime? sendingTime,
   }) = _RequestModel;

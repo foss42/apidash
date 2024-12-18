@@ -26,15 +26,14 @@ mixin _$RequestModel {
   String get description => throw _privateConstructorUsedError;
   @JsonKey(includeToJson: false)
   dynamic get requestTabIndex => throw _privateConstructorUsedError;
-  HttpRequestModel? get httpRequestModel => throw _privateConstructorUsedError;
+  HttpRequestModel? get httpRequestModel =>
+      throw _privateConstructorUsedError; //  @JsonKey(fromJson: GraphqlRequestModelConverter().fromJson, toJson: GraphqlRequestModelConverter().toJson)
   GraphqlRequestModel? get graphqlRequestModel =>
-      throw _privateConstructorUsedError;
+      throw _privateConstructorUsedError; //   GraphqlRequestModel? graphqlRequestModel,
   int? get responseStatus => throw _privateConstructorUsedError;
   String? get message => throw _privateConstructorUsedError;
   HttpResponseModel? get httpResponseModel =>
-      throw _privateConstructorUsedError;
-  GraphqlRequestModel? get graphqlResponsetModel =>
-      throw _privateConstructorUsedError;
+      throw _privateConstructorUsedError; //GraphqlRequestModel? graphqlResponsetModel,
   @JsonKey(includeToJson: false)
   bool get isWorking => throw _privateConstructorUsedError;
   @JsonKey(includeToJson: false)
@@ -67,14 +66,12 @@ abstract class $RequestModelCopyWith<$Res> {
       int? responseStatus,
       String? message,
       HttpResponseModel? httpResponseModel,
-      GraphqlRequestModel? graphqlResponsetModel,
       @JsonKey(includeToJson: false) bool isWorking,
       @JsonKey(includeToJson: false) DateTime? sendingTime});
 
   $HttpRequestModelCopyWith<$Res>? get httpRequestModel;
   $GraphqlRequestModelCopyWith<$Res>? get graphqlRequestModel;
   $HttpResponseModelCopyWith<$Res>? get httpResponseModel;
-  $GraphqlRequestModelCopyWith<$Res>? get graphqlResponsetModel;
 }
 
 /// @nodoc
@@ -102,7 +99,6 @@ class _$RequestModelCopyWithImpl<$Res, $Val extends RequestModel>
     Object? responseStatus = freezed,
     Object? message = freezed,
     Object? httpResponseModel = freezed,
-    Object? graphqlResponsetModel = freezed,
     Object? isWorking = null,
     Object? sendingTime = freezed,
   }) {
@@ -147,10 +143,6 @@ class _$RequestModelCopyWithImpl<$Res, $Val extends RequestModel>
           ? _value.httpResponseModel
           : httpResponseModel // ignore: cast_nullable_to_non_nullable
               as HttpResponseModel?,
-      graphqlResponsetModel: freezed == graphqlResponsetModel
-          ? _value.graphqlResponsetModel
-          : graphqlResponsetModel // ignore: cast_nullable_to_non_nullable
-              as GraphqlRequestModel?,
       isWorking: null == isWorking
           ? _value.isWorking
           : isWorking // ignore: cast_nullable_to_non_nullable
@@ -204,21 +196,6 @@ class _$RequestModelCopyWithImpl<$Res, $Val extends RequestModel>
       return _then(_value.copyWith(httpResponseModel: value) as $Val);
     });
   }
-
-  /// Create a copy of RequestModel
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $GraphqlRequestModelCopyWith<$Res>? get graphqlResponsetModel {
-    if (_value.graphqlResponsetModel == null) {
-      return null;
-    }
-
-    return $GraphqlRequestModelCopyWith<$Res>(_value.graphqlResponsetModel!,
-        (value) {
-      return _then(_value.copyWith(graphqlResponsetModel: value) as $Val);
-    });
-  }
 }
 
 /// @nodoc
@@ -240,7 +217,6 @@ abstract class _$$RequestModelImplCopyWith<$Res>
       int? responseStatus,
       String? message,
       HttpResponseModel? httpResponseModel,
-      GraphqlRequestModel? graphqlResponsetModel,
       @JsonKey(includeToJson: false) bool isWorking,
       @JsonKey(includeToJson: false) DateTime? sendingTime});
 
@@ -250,8 +226,6 @@ abstract class _$$RequestModelImplCopyWith<$Res>
   $GraphqlRequestModelCopyWith<$Res>? get graphqlRequestModel;
   @override
   $HttpResponseModelCopyWith<$Res>? get httpResponseModel;
-  @override
-  $GraphqlRequestModelCopyWith<$Res>? get graphqlResponsetModel;
 }
 
 /// @nodoc
@@ -277,7 +251,6 @@ class __$$RequestModelImplCopyWithImpl<$Res>
     Object? responseStatus = freezed,
     Object? message = freezed,
     Object? httpResponseModel = freezed,
-    Object? graphqlResponsetModel = freezed,
     Object? isWorking = null,
     Object? sendingTime = freezed,
   }) {
@@ -321,10 +294,6 @@ class __$$RequestModelImplCopyWithImpl<$Res>
           ? _value.httpResponseModel
           : httpResponseModel // ignore: cast_nullable_to_non_nullable
               as HttpResponseModel?,
-      graphqlResponsetModel: freezed == graphqlResponsetModel
-          ? _value.graphqlResponsetModel
-          : graphqlResponsetModel // ignore: cast_nullable_to_non_nullable
-              as GraphqlRequestModel?,
       isWorking: null == isWorking
           ? _value.isWorking
           : isWorking // ignore: cast_nullable_to_non_nullable
@@ -352,7 +321,6 @@ class _$RequestModelImpl implements _RequestModel {
       this.responseStatus,
       this.message,
       this.httpResponseModel,
-      this.graphqlResponsetModel,
       @JsonKey(includeToJson: false) this.isWorking = false,
       @JsonKey(includeToJson: false) this.sendingTime});
 
@@ -375,16 +343,17 @@ class _$RequestModelImpl implements _RequestModel {
   final dynamic requestTabIndex;
   @override
   final HttpRequestModel? httpRequestModel;
+//  @JsonKey(fromJson: GraphqlRequestModelConverter().fromJson, toJson: GraphqlRequestModelConverter().toJson)
   @override
   final GraphqlRequestModel? graphqlRequestModel;
+//   GraphqlRequestModel? graphqlRequestModel,
   @override
   final int? responseStatus;
   @override
   final String? message;
   @override
   final HttpResponseModel? httpResponseModel;
-  @override
-  final GraphqlRequestModel? graphqlResponsetModel;
+//GraphqlRequestModel? graphqlResponsetModel,
   @override
   @JsonKey(includeToJson: false)
   final bool isWorking;
@@ -394,7 +363,7 @@ class _$RequestModelImpl implements _RequestModel {
 
   @override
   String toString() {
-    return 'RequestModel(id: $id, apiType: $apiType, name: $name, description: $description, requestTabIndex: $requestTabIndex, httpRequestModel: $httpRequestModel, graphqlRequestModel: $graphqlRequestModel, responseStatus: $responseStatus, message: $message, httpResponseModel: $httpResponseModel, graphqlResponsetModel: $graphqlResponsetModel, isWorking: $isWorking, sendingTime: $sendingTime)';
+    return 'RequestModel(id: $id, apiType: $apiType, name: $name, description: $description, requestTabIndex: $requestTabIndex, httpRequestModel: $httpRequestModel, graphqlRequestModel: $graphqlRequestModel, responseStatus: $responseStatus, message: $message, httpResponseModel: $httpResponseModel, isWorking: $isWorking, sendingTime: $sendingTime)';
   }
 
   @override
@@ -418,8 +387,6 @@ class _$RequestModelImpl implements _RequestModel {
             (identical(other.message, message) || other.message == message) &&
             (identical(other.httpResponseModel, httpResponseModel) ||
                 other.httpResponseModel == httpResponseModel) &&
-            (identical(other.graphqlResponsetModel, graphqlResponsetModel) ||
-                other.graphqlResponsetModel == graphqlResponsetModel) &&
             (identical(other.isWorking, isWorking) ||
                 other.isWorking == isWorking) &&
             (identical(other.sendingTime, sendingTime) ||
@@ -440,7 +407,6 @@ class _$RequestModelImpl implements _RequestModel {
       responseStatus,
       message,
       httpResponseModel,
-      graphqlResponsetModel,
       isWorking,
       sendingTime);
 
@@ -472,7 +438,6 @@ abstract class _RequestModel implements RequestModel {
           final int? responseStatus,
           final String? message,
           final HttpResponseModel? httpResponseModel,
-          final GraphqlRequestModel? graphqlResponsetModel,
           @JsonKey(includeToJson: false) final bool isWorking,
           @JsonKey(includeToJson: false) final DateTime? sendingTime}) =
       _$RequestModelImpl;
@@ -492,17 +457,18 @@ abstract class _RequestModel implements RequestModel {
   @JsonKey(includeToJson: false)
   dynamic get requestTabIndex;
   @override
-  HttpRequestModel? get httpRequestModel;
+  HttpRequestModel?
+      get httpRequestModel; //  @JsonKey(fromJson: GraphqlRequestModelConverter().fromJson, toJson: GraphqlRequestModelConverter().toJson)
   @override
-  GraphqlRequestModel? get graphqlRequestModel;
+  GraphqlRequestModel?
+      get graphqlRequestModel; //   GraphqlRequestModel? graphqlRequestModel,
   @override
   int? get responseStatus;
   @override
   String? get message;
   @override
-  HttpResponseModel? get httpResponseModel;
-  @override
-  GraphqlRequestModel? get graphqlResponsetModel;
+  HttpResponseModel?
+      get httpResponseModel; //GraphqlRequestModel? graphqlResponsetModel,
   @override
   @JsonKey(includeToJson: false)
   bool get isWorking;
