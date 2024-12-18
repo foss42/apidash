@@ -43,10 +43,10 @@ class SettingsPage extends ConsumerWidget {
                 hoverColor: kColorTransparent,
                 title: const Text('Disabling SSL verification'),
                 subtitle: Text(
-                    'Current selection: ${settings.isDark ? "Dark Mode" : "Light mode"}'),
-                value: settings.isDark,
+                    'Current selection: ${settings.isSSLDisabled ? "SSL Verification Disabled" : "SSL Verification Enabled"}'),
+                value: settings.isSSLDisabled,
                 onChanged: (bool? value) {
-                  ref.read(settingsProvider.notifier).update(isDark: value);
+                  ref.read(settingsProvider.notifier).update(isSSLDisabled: value);
                 },
               ),
               SwitchListTile(

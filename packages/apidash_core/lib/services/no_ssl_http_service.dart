@@ -8,8 +8,9 @@ import '../consts.dart';
 import '../models/models.dart';
 import '../utils/utils.dart';
 import 'http_client_manager.dart';
+import 'http_service.dart';
 
-typedef HttpResponse = http.Response;
+
 
 /// Create a custom `HttpClient` with SSL verification disabled.
 http.Client createHttpClientWithNoSSL() {
@@ -19,7 +20,7 @@ http.Client createHttpClientWithNoSSL() {
   return IOClient(ioClient);
 }
 
-Future<(HttpResponse?, Duration?, String?)> request(
+Future<(HttpResponse?, Duration?, String?)> noSSLrequest(
   String requestId,
   HttpRequestModel requestModel, {
   SupportedUriSchemes defaultUriScheme = kDefaultUriScheme,
