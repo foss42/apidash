@@ -41,6 +41,16 @@ class SettingsPage extends ConsumerWidget {
             children: [
               SwitchListTile(
                 hoverColor: kColorTransparent,
+                title: const Text('Disabling SSL verification'),
+                subtitle: Text(
+                    'Current selection: ${settings.isDark ? "Dark Mode" : "Light mode"}'),
+                value: settings.isDark,
+                onChanged: (bool? value) {
+                  ref.read(settingsProvider.notifier).update(isDark: value);
+                },
+              ),
+              SwitchListTile(
+                hoverColor: kColorTransparent,
                 title: const Text('Switch Theme Mode'),
                 subtitle: Text(
                     'Current selection: ${settings.isDark ? "Dark Mode" : "Light mode"}'),
