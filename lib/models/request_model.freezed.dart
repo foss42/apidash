@@ -24,6 +24,7 @@ mixin _$RequestModel {
   APIType get apiType => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   String get description => throw _privateConstructorUsedError;
+  bool get forcedGETRequestMethod => throw _privateConstructorUsedError;
   @JsonKey(includeToJson: false)
   dynamic get requestTabIndex => throw _privateConstructorUsedError;
   HttpRequestModel? get httpRequestModel => throw _privateConstructorUsedError;
@@ -49,21 +50,22 @@ mixin _$RequestModel {
 /// @nodoc
 abstract class $RequestModelCopyWith<$Res> {
   factory $RequestModelCopyWith(
-          RequestModel value, $Res Function(RequestModel) then) =
-      _$RequestModelCopyWithImpl<$Res, RequestModel>;
+      RequestModel value, $Res Function(RequestModel) then) =
+  _$RequestModelCopyWithImpl<$Res, RequestModel>;
   @useResult
   $Res call(
       {String id,
-      APIType apiType,
-      String name,
-      String description,
-      @JsonKey(includeToJson: false) dynamic requestTabIndex,
-      HttpRequestModel? httpRequestModel,
-      int? responseStatus,
-      String? message,
-      HttpResponseModel? httpResponseModel,
-      @JsonKey(includeToJson: false) bool isWorking,
-      @JsonKey(includeToJson: false) DateTime? sendingTime});
+        APIType apiType,
+        String name,
+        String description,
+        bool forcedGETRequestMethod,
+        @JsonKey(includeToJson: false) dynamic requestTabIndex,
+        HttpRequestModel? httpRequestModel,
+        int? responseStatus,
+        String? message,
+        HttpResponseModel? httpResponseModel,
+        @JsonKey(includeToJson: false) bool isWorking,
+        @JsonKey(includeToJson: false) DateTime? sendingTime});
 
   $HttpRequestModelCopyWith<$Res>? get httpRequestModel;
   $HttpResponseModelCopyWith<$Res>? get httpResponseModel;
@@ -88,6 +90,7 @@ class _$RequestModelCopyWithImpl<$Res, $Val extends RequestModel>
     Object? apiType = null,
     Object? name = null,
     Object? description = null,
+    Object? forcedGETRequestMethod = null,
     Object? requestTabIndex = freezed,
     Object? httpRequestModel = freezed,
     Object? responseStatus = freezed,
@@ -100,47 +103,51 @@ class _$RequestModelCopyWithImpl<$Res, $Val extends RequestModel>
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String,
+      as String,
       apiType: null == apiType
           ? _value.apiType
           : apiType // ignore: cast_nullable_to_non_nullable
-              as APIType,
+      as APIType,
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
-              as String,
+      as String,
       description: null == description
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
-              as String,
+      as String,
+      forcedGETRequestMethod: null == forcedGETRequestMethod
+          ? _value.forcedGETRequestMethod
+          : forcedGETRequestMethod // ignore: cast_nullable_to_non_nullable
+      as bool,
       requestTabIndex: freezed == requestTabIndex
           ? _value.requestTabIndex
           : requestTabIndex // ignore: cast_nullable_to_non_nullable
-              as dynamic,
+      as dynamic,
       httpRequestModel: freezed == httpRequestModel
           ? _value.httpRequestModel
           : httpRequestModel // ignore: cast_nullable_to_non_nullable
-              as HttpRequestModel?,
+      as HttpRequestModel?,
       responseStatus: freezed == responseStatus
           ? _value.responseStatus
           : responseStatus // ignore: cast_nullable_to_non_nullable
-              as int?,
+      as int?,
       message: freezed == message
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
-              as String?,
+      as String?,
       httpResponseModel: freezed == httpResponseModel
           ? _value.httpResponseModel
           : httpResponseModel // ignore: cast_nullable_to_non_nullable
-              as HttpResponseModel?,
+      as HttpResponseModel?,
       isWorking: null == isWorking
           ? _value.isWorking
           : isWorking // ignore: cast_nullable_to_non_nullable
-              as bool,
+      as bool,
       sendingTime: freezed == sendingTime
           ? _value.sendingTime
           : sendingTime // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
+      as DateTime?,
     ) as $Val);
   }
 
@@ -177,22 +184,23 @@ class _$RequestModelCopyWithImpl<$Res, $Val extends RequestModel>
 abstract class _$$RequestModelImplCopyWith<$Res>
     implements $RequestModelCopyWith<$Res> {
   factory _$$RequestModelImplCopyWith(
-          _$RequestModelImpl value, $Res Function(_$RequestModelImpl) then) =
-      __$$RequestModelImplCopyWithImpl<$Res>;
+      _$RequestModelImpl value, $Res Function(_$RequestModelImpl) then) =
+  __$$RequestModelImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
       {String id,
-      APIType apiType,
-      String name,
-      String description,
-      @JsonKey(includeToJson: false) dynamic requestTabIndex,
-      HttpRequestModel? httpRequestModel,
-      int? responseStatus,
-      String? message,
-      HttpResponseModel? httpResponseModel,
-      @JsonKey(includeToJson: false) bool isWorking,
-      @JsonKey(includeToJson: false) DateTime? sendingTime});
+        APIType apiType,
+        String name,
+        String description,
+        bool forcedGETRequestMethod,
+        @JsonKey(includeToJson: false) dynamic requestTabIndex,
+        HttpRequestModel? httpRequestModel,
+        int? responseStatus,
+        String? message,
+        HttpResponseModel? httpResponseModel,
+        @JsonKey(includeToJson: false) bool isWorking,
+        @JsonKey(includeToJson: false) DateTime? sendingTime});
 
   @override
   $HttpRequestModelCopyWith<$Res>? get httpRequestModel;
@@ -217,6 +225,7 @@ class __$$RequestModelImplCopyWithImpl<$Res>
     Object? apiType = null,
     Object? name = null,
     Object? description = null,
+    Object? forcedGETRequestMethod = null,
     Object? requestTabIndex = freezed,
     Object? httpRequestModel = freezed,
     Object? responseStatus = freezed,
@@ -229,46 +238,50 @@ class __$$RequestModelImplCopyWithImpl<$Res>
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String,
+      as String,
       apiType: null == apiType
           ? _value.apiType
           : apiType // ignore: cast_nullable_to_non_nullable
-              as APIType,
+      as APIType,
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
-              as String,
+      as String,
       description: null == description
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
-              as String,
+      as String,
+      forcedGETRequestMethod: null == forcedGETRequestMethod
+          ? _value.forcedGETRequestMethod
+          : forcedGETRequestMethod // ignore: cast_nullable_to_non_nullable
+      as bool,
       requestTabIndex: freezed == requestTabIndex
           ? _value.requestTabIndex!
           : requestTabIndex,
       httpRequestModel: freezed == httpRequestModel
           ? _value.httpRequestModel
           : httpRequestModel // ignore: cast_nullable_to_non_nullable
-              as HttpRequestModel?,
+      as HttpRequestModel?,
       responseStatus: freezed == responseStatus
           ? _value.responseStatus
           : responseStatus // ignore: cast_nullable_to_non_nullable
-              as int?,
+      as int?,
       message: freezed == message
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
-              as String?,
+      as String?,
       httpResponseModel: freezed == httpResponseModel
           ? _value.httpResponseModel
           : httpResponseModel // ignore: cast_nullable_to_non_nullable
-              as HttpResponseModel?,
+      as HttpResponseModel?,
       isWorking: null == isWorking
           ? _value.isWorking
           : isWorking // ignore: cast_nullable_to_non_nullable
-              as bool,
+      as bool,
       sendingTime: freezed == sendingTime
           ? _value.sendingTime
           : sendingTime // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
+      as DateTime?,
     ));
   }
 }
@@ -279,16 +292,17 @@ class __$$RequestModelImplCopyWithImpl<$Res>
 class _$RequestModelImpl implements _RequestModel {
   const _$RequestModelImpl(
       {required this.id,
-      this.apiType = APIType.rest,
-      this.name = "",
-      this.description = "",
-      @JsonKey(includeToJson: false) this.requestTabIndex = 0,
-      this.httpRequestModel,
-      this.responseStatus,
-      this.message,
-      this.httpResponseModel,
-      @JsonKey(includeToJson: false) this.isWorking = false,
-      @JsonKey(includeToJson: false) this.sendingTime});
+        this.apiType = APIType.rest,
+        this.name = "",
+        this.description = "",
+        this.forcedGETRequestMethod = false,
+        @JsonKey(includeToJson: false) this.requestTabIndex = 0,
+        this.httpRequestModel,
+        this.responseStatus,
+        this.message,
+        this.httpResponseModel,
+        @JsonKey(includeToJson: false) this.isWorking = false,
+        @JsonKey(includeToJson: false) this.sendingTime});
 
   factory _$RequestModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$RequestModelImplFromJson(json);
@@ -304,6 +318,9 @@ class _$RequestModelImpl implements _RequestModel {
   @override
   @JsonKey()
   final String description;
+  @override
+  @JsonKey()
+  final bool forcedGETRequestMethod;
   @override
   @JsonKey(includeToJson: false)
   final dynamic requestTabIndex;
@@ -360,6 +377,7 @@ class _$RequestModelImpl implements _RequestModel {
       apiType,
       name,
       description,
+      forcedGETRequestMethod,
       const DeepCollectionEquality().hash(requestTabIndex),
       httpRequestModel,
       responseStatus,
@@ -386,21 +404,22 @@ class _$RequestModelImpl implements _RequestModel {
 
 abstract class _RequestModel implements RequestModel {
   const factory _RequestModel(
-          {required final String id,
-          final APIType apiType,
-          final String name,
-          final String description,
-          @JsonKey(includeToJson: false) final dynamic requestTabIndex,
-          final HttpRequestModel? httpRequestModel,
-          final int? responseStatus,
-          final String? message,
-          final HttpResponseModel? httpResponseModel,
-          @JsonKey(includeToJson: false) final bool isWorking,
-          @JsonKey(includeToJson: false) final DateTime? sendingTime}) =
-      _$RequestModelImpl;
+      {required final String id,
+        final APIType apiType,
+        final String name,
+        final String description,
+        final bool forcedGETRequestMethod,
+        @JsonKey(includeToJson: false) final dynamic requestTabIndex,
+        final HttpRequestModel? httpRequestModel,
+        final int? responseStatus,
+        final String? message,
+        final HttpResponseModel? httpResponseModel,
+        @JsonKey(includeToJson: false) final bool isWorking,
+        @JsonKey(includeToJson: false) final DateTime? sendingTime}) =
+  _$RequestModelImpl;
 
   factory _RequestModel.fromJson(Map<String, dynamic> json) =
-      _$RequestModelImpl.fromJson;
+  _$RequestModelImpl.fromJson;
 
   @override
   String get id;

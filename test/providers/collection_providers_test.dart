@@ -1,4 +1,5 @@
 import 'package:apidash/screens/home_page/editor_pane/details_card/request_pane/request_body.dart';
+import 'package:apidash/screens/home_page/editor_pane/url_card.dart';
 import 'package:apidash/widgets/editor.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
@@ -34,7 +35,7 @@ void main() async {
         parent: container,
         child: const MaterialApp(
           home: Scaffold(
-            body: EditRequestBody(),
+            body: EditRequestBody()
           ),
         ),
       ),
@@ -50,5 +51,44 @@ void main() async {
 
     // Verify that the Snackbar is shown
     expect(find.text('Switched to POST method'), findsOneWidget);
-  }, skip: true);
+
+    // Build the DropdownButtonHTTPMethod widget
+    await tester.pumpWidget(
+      ProviderScope(
+          // ignore: deprecated_member_use
+        parent: container,
+        child: const MaterialApp(
+          home: Scaffold(
+            body: DropdownButtonHTTPMethod(),
+          ),
+        ),
+      ),
+    );
+    expect(find.byType(DropdownButton<HTTPVerb>).hitTestable(), findsOneWidget);
+    await tester.tap(find.byType(DropdownButton<HTTPVerb>));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('GET').first);
+    await tester.pumpAndSettle();
+
+    // Build the EditRequestBody widget
+    await tester.pumpWidget(
+      ProviderScope(
+        // ignore: deprecated_member_use
+        parent: container,
+        child: const MaterialApp(
+          home: Scaffold(
+              body: EditRequestBody()
+          ),
+        ),
+      ),
+    );
+
+    // Add a body to the request, which should trigger the method change
+    await tester.enterText(find.byType(TextFieldEditor), 'new body added 2');
+    await tester.pump(); // Process the state change
+
+    // Verify that the request method does not change to POST
+    expect(notifier.getRequestModel(id)!.httpRequestModel!.method, HTTPVerb.get);
+
+  }, skip: false);
 }
