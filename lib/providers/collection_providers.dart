@@ -1,4 +1,5 @@
 import 'package:apidash_core/apidash_core.dart';
+//import 'package:apidash_core/services/no_ssl_http_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/consts.dart';
 import 'providers.dart';
@@ -274,10 +275,12 @@ class CollectionStateNotifier
     );
     state = map;
 
-    (HttpResponse?, Duration?, String?)? responseRec = await request(
+    bool noSSL = ref.read(settingsProvider).isSSLDisabled;
+   (HttpResponse?, Duration?, String?)? responseRec = await request(
       requestId,
       substitutedHttpRequestModel,
       defaultUriScheme: defaultUriScheme,
+      noSSL: noSSL
     );
 
     late final RequestModel newRequestModel;
