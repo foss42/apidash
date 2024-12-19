@@ -30,8 +30,12 @@ mixin _$HttpResponseModel {
   @DurationConverter()
   Duration? get time => throw _privateConstructorUsedError;
 
+  /// Serializes this HttpResponseModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of HttpResponseModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $HttpResponseModelCopyWith<HttpResponseModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -62,6 +66,8 @@ class _$HttpResponseModelCopyWithImpl<$Res, $Val extends HttpResponseModel>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of HttpResponseModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -132,6 +138,8 @@ class __$$HttpResponseModelImplCopyWithImpl<$Res>
       $Res Function(_$HttpResponseModelImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of HttpResponseModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -250,7 +258,7 @@ class _$HttpResponseModelImpl extends _HttpResponseModel {
             (identical(other.time, time) || other.time == time));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -262,7 +270,9 @@ class _$HttpResponseModelImpl extends _HttpResponseModel {
       const DeepCollectionEquality().hash(bodyBytes),
       time);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of HttpResponseModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$HttpResponseModelImplCopyWith<_$HttpResponseModelImpl> get copyWith =>
@@ -307,8 +317,11 @@ abstract class _HttpResponseModel extends HttpResponseModel {
   @override
   @DurationConverter()
   Duration? get time;
+
+  /// Create a copy of HttpResponseModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$HttpResponseModelImplCopyWith<_$HttpResponseModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
