@@ -30,8 +30,12 @@ mixin _$HttpRequestModel {
   String? get body => throw _privateConstructorUsedError;
   List<FormDataModel>? get formData => throw _privateConstructorUsedError;
 
+  /// Serializes this HttpRequestModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of HttpRequestModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $HttpRequestModelCopyWith<HttpRequestModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -64,6 +68,8 @@ class _$HttpRequestModelCopyWithImpl<$Res, $Val extends HttpRequestModel>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of HttpRequestModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -146,6 +152,8 @@ class __$$HttpRequestModelImplCopyWithImpl<$Res>
       $Res Function(_$HttpRequestModelImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of HttpRequestModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -311,7 +319,7 @@ class _$HttpRequestModelImpl extends _HttpRequestModel {
             const DeepCollectionEquality().equals(other._formData, _formData));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -325,7 +333,9 @@ class _$HttpRequestModelImpl extends _HttpRequestModel {
       body,
       const DeepCollectionEquality().hash(_formData));
 
-  @JsonKey(ignore: true)
+  /// Create a copy of HttpRequestModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$HttpRequestModelImplCopyWith<_$HttpRequestModelImpl> get copyWith =>
@@ -374,8 +384,11 @@ abstract class _HttpRequestModel extends HttpRequestModel {
   String? get body;
   @override
   List<FormDataModel>? get formData;
+
+  /// Create a copy of HttpRequestModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$HttpRequestModelImplCopyWith<_$HttpRequestModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
