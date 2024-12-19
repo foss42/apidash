@@ -274,21 +274,14 @@ class CollectionStateNotifier
       sendingTime: DateTime.now(),
     );
     state = map;
-    late (HttpResponse?, Duration?, String?)? responseRec;
-    if(!ref.watch(settingsProvider).isSSLDisabled){
-     responseRec = await request(
-      requestId,
-      substitutedHttpRequestModel,
-      defaultUriScheme: defaultUriScheme,
-    );
-    }else{
-     responseRec = await noSSLrequest(
-      requestId,
-      substitutedHttpRequestModel,
-      defaultUriScheme: defaultUriScheme,
-    );
 
-    }
+    bool noSSL = ref.read(settingsProvider).isSSLDisabled;
+   (HttpResponse?, Duration?, String?)? responseRec = await request(
+      requestId,
+      substitutedHttpRequestModel,
+      defaultUriScheme: defaultUriScheme,
+      noSSL: noSSL
+    );
 
     late final RequestModel newRequestModel;
     if (responseRec.$1 == null) {

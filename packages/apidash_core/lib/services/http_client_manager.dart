@@ -1,3 +1,4 @@
+import 'package:apidash_core/utils/http_request_utils.dart';
 import 'package:http/http.dart' as http;
 import 'dart:collection';
 
@@ -13,11 +14,13 @@ class HttpClientManager {
 
   HttpClientManager._internal();
 
-  http.Client createClient(String requestId) {
-    final client = http.Client();
+  http.Client createClient(String requestId,{bool noSSL = false}) {
+    final client = noSSL ? createHttpClientWithNoSSL() :http.Client();
     _clients[requestId] = client;
     return client;
   }
+
+ 
 
   void cancelRequest(String? requestId) {
     if (requestId != null && _clients.containsKey(requestId)) {
