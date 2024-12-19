@@ -36,3 +36,9 @@ android {
     }
 }
 ```
+
+## Web
+
+Running it on web requires the following modification in the local cached code of `printing` package.
+
+Read more about it here - https://github.com/DavBfr/dart_pdf/issues/1791
