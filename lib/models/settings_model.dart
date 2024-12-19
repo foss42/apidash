@@ -6,6 +6,7 @@ import 'package:apidash/consts.dart';
 class SettingsModel {
   const SettingsModel({
     this.isDark = false,
+    this.isSSLDisabled =false,
     this.alwaysShowCollectionPaneScrollbar = true,
     this.size,
     this.offset,
@@ -19,6 +20,7 @@ class SettingsModel {
   });
 
   final bool isDark;
+  final bool isSSLDisabled;
   final bool alwaysShowCollectionPaneScrollbar;
   final Size? size;
   final Offset? offset;
@@ -32,6 +34,7 @@ class SettingsModel {
 
   SettingsModel copyWith({
     bool? isDark,
+    bool? isSSLDisabled,
     bool? alwaysShowCollectionPaneScrollbar,
     Size? size,
     Offset? offset,
@@ -45,6 +48,7 @@ class SettingsModel {
   }) {
     return SettingsModel(
       isDark: isDark ?? this.isDark,
+      isSSLDisabled: isSSLDisabled ?? this.isSSLDisabled,
       alwaysShowCollectionPaneScrollbar: alwaysShowCollectionPaneScrollbar ??
           this.alwaysShowCollectionPaneScrollbar,
       size: size ?? this.size,
@@ -65,6 +69,7 @@ class SettingsModel {
   }) {
     return SettingsModel(
       isDark: isDark,
+      isSSLDisabled: isSSLDisabled,
       alwaysShowCollectionPaneScrollbar: alwaysShowCollectionPaneScrollbar,
       size: size,
       defaultUriScheme: defaultUriScheme,
@@ -80,6 +85,7 @@ class SettingsModel {
 
   factory SettingsModel.fromJson(Map<dynamic, dynamic> data) {
     final isDark = data["isDark"] as bool?;
+    final isSSLDisabled = data["isSSLDisabled"] as bool?;
     final alwaysShowCollectionPaneScrollbar =
         data["alwaysShowCollectionPaneScrollbar"] as bool?;
     final width = data["width"] as double?;
@@ -133,6 +139,7 @@ class SettingsModel {
 
     return sm.copyWith(
       isDark: isDark,
+      isSSLDisabled: isSSLDisabled,
       alwaysShowCollectionPaneScrollbar: alwaysShowCollectionPaneScrollbar,
       size: size,
       offset: offset,
@@ -150,6 +157,7 @@ class SettingsModel {
   Map<String, dynamic> toJson() {
     return {
       "isDark": isDark,
+      "isSSLDisabled":isSSLDisabled,
       "alwaysShowCollectionPaneScrollbar": alwaysShowCollectionPaneScrollbar,
       "width": size?.width,
       "height": size?.height,
@@ -175,6 +183,7 @@ class SettingsModel {
     return other is SettingsModel &&
         other.runtimeType == runtimeType &&
         other.isDark == isDark &&
+        other.isSSLDisabled == isSSLDisabled &&
         other.alwaysShowCollectionPaneScrollbar ==
             alwaysShowCollectionPaneScrollbar &&
         other.size == size &&
@@ -193,6 +202,7 @@ class SettingsModel {
     return Object.hash(
       runtimeType,
       isDark,
+      isSSLDisabled,
       alwaysShowCollectionPaneScrollbar,
       size,
       offset,

@@ -22,6 +22,7 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
 
   Future<void> update({
     bool? isDark,
+    bool? isSSLDisabled,
     bool? alwaysShowCollectionPaneScrollbar,
     Size? size,
     Offset? offset,
@@ -35,6 +36,7 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
   }) async {
     state = state.copyWith(
       isDark: isDark,
+      isSSLDisabled: isSSLDisabled,
       alwaysShowCollectionPaneScrollbar: alwaysShowCollectionPaneScrollbar,
       size: size,
       offset: offset,
