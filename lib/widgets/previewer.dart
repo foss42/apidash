@@ -3,7 +3,7 @@ import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:jinja/jinja.dart' as jj;
-//import 'package:printing/printing.dart';
+import 'package:printing/printing.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 import 'error_message.dart';
@@ -79,21 +79,21 @@ class _PreviewerState extends State<Previewer> {
         },
       );
     }
-    // if (widget.type == kTypeApplication && widget.subtype == kSubTypePdf) {
-    //   return PdfPreview(
-    //     build: (_) => widget.bytes,
-    //     useActions: false,
-    //     onError: (context, error) {
-    //       return ErrorMessage(
-    //         message: errorTemplate.render({
-    //           "showRaw": false,
-    //           "showContentType": false,
-    //           "type": kSubTypePdf,
-    //         }),
-    //       );
-    //     },
-    //   );
-    // }
+    if (widget.type == kTypeApplication && widget.subtype == kSubTypePdf) {
+      return PdfPreview(
+        build: (_) => widget.bytes,
+        useActions: false,
+        onError: (context, error) {
+          return ErrorMessage(
+            message: errorTemplate.render({
+              "showRaw": false,
+              "showContentType": false,
+              "type": kSubTypePdf,
+            }),
+          );
+        },
+      );
+    }
     if (widget.type == kTypeAudio) {
       return Uint8AudioPlayer(
         bytes: widget.bytes,

@@ -1,6 +1,8 @@
 import 'package:apidash_core/utils/http_request_utils.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'dart:collection';
+import '';
 
 class HttpClientManager {
   static final HttpClientManager _instance = HttpClientManager._internal();
@@ -15,7 +17,7 @@ class HttpClientManager {
   HttpClientManager._internal();
 
   http.Client createClient(String requestId,{bool noSSL = false}) {
-    final client = noSSL ? createHttpClientWithNoSSL() :http.Client();
+    final client = noSSL && !kIsWeb ? createHttpClientWithNoSSL() :http.Client();
     _clients[requestId] = client;
     return client;
   }

@@ -39,16 +39,19 @@ class SettingsPage extends ConsumerWidget {
           child: ListView(
             shrinkWrap: true,
             children: [
-              SwitchListTile(
-                hoverColor: kColorTransparent,
-                title: const Text('Disabling SSL verification'),
-                subtitle: Text(
-                    'Current selection: ${settings.isSSLDisabled ? "SSL Verification Disabled" : "SSL Verification Enabled"}'),
-                value: settings.isSSLDisabled,
-                onChanged: (bool? value) {
-                  ref.read(settingsProvider.notifier).update(isSSLDisabled: value);
-                },
-              ),
+          
+            !kIsBrowser ?SwitchListTile(
+                      hoverColor: kColorTransparent,
+                      title: const Text('Disabling SSL verification'),
+                      subtitle: Text(
+                          'Current selection: ${settings.isSSLDisabled ? "SSL Verification Disabled" : "SSL Verification Enabled"}',
+                       ),
+                      value: settings.isSSLDisabled,
+                      onChanged: (bool? value) {
+                          ref.read(settingsProvider.notifier).update(isSSLDisabled: value ?? false);
+                      },
+                ) :const  SizedBox.shrink(),
+       
               SwitchListTile(
                 hoverColor: kColorTransparent,
                 title: const Text('Switch Theme Mode'),
