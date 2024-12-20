@@ -25,7 +25,7 @@ class RequestModel with _$RequestModel{
     int? responseStatus,
     String? message,
     HttpResponseModel? httpResponseModel,
-    GraphqlRequestModel? graphqlResponsetModel,
+  //  GraphqlRequestModel? graphqlResponsetModel,
     @JsonKey(includeToJson: false) @Default(false) bool isWorking,
     @JsonKey(includeToJson: false) DateTime? sendingTime,
   }) = _RequestModel;
