@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
+import 'package:flutter/foundation.dart';
 import '../providers/providers.dart';
 import '../services/services.dart';
 import '../utils/utils.dart';
@@ -40,7 +41,7 @@ class SettingsPage extends ConsumerWidget {
             shrinkWrap: true,
             children: [
           
-            !kIsBrowser ?SwitchListTile(
+            !kIsWeb ?SwitchListTile(
                       hoverColor: kColorTransparent,
                       title: const Text('Disabling SSL verification'),
                       subtitle: Text(
