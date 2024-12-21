@@ -14,25 +14,21 @@ class FormDataFileButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FilledButton.tonalIcon(
-      icon: const Icon(
-        Icons.snippet_folder_rounded,
-        size: 20,
-      ),
-      style: ElevatedButton.styleFrom(
+    return ADFilledButton(
+      icon: Icons.snippet_folder_rounded,
+      iconSize: kButtonIconSizeLarge,
+      label: (initialValue == null || initialValue!.isEmpty)
+          ? kLabelSelectFile
+          : initialValue!,
+      labelTextStyle: kFormDataButtonLabelTextStyle,
+      buttonStyle: ElevatedButton.styleFrom(
         minimumSize: const Size.fromHeight(kDataTableRowHeight),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(6),
+        shape: const RoundedRectangleBorder(
+          borderRadius: kBorderRadius6,
         ),
       ),
+      isTonal: true,
       onPressed: onPressed,
-      label: Text(
-        (initialValue == null || initialValue!.isEmpty)
-            ? kLabelSelectFile
-            : initialValue!,
-        overflow: TextOverflow.ellipsis,
-        style: kFormDataButtonLabelTextStyle,
-      ),
     );
   }
 }
