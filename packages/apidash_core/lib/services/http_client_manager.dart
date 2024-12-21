@@ -1,5 +1,15 @@
-import 'package:http/http.dart' as http;
+import 'dart:io';
 import 'dart:collection';
+import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/io_client.dart';
+
+http.Client createHttpClientWithNoSSL() {
+  var ioClient = HttpClient()
+    ..badCertificateCallback =
+        (X509Certificate cert, String host, int port) => true;
+  return IOClient(ioClient);
+}
 
 class HttpClientManager {
   static final HttpClientManager _instance = HttpClientManager._internal();
@@ -13,8 +23,12 @@ class HttpClientManager {
 
   HttpClientManager._internal();
 
-  http.Client createClient(String requestId) {
-    final client = http.Client();
+  http.Client createClient(
+    String requestId, {
+    bool noSSL = false,
+  }) {
+    final client =
+        (noSSL && !kIsWeb) ? createHttpClientWithNoSSL() : http.Client();
     _clients[requestId] = client;
     return client;
   }

@@ -274,10 +274,12 @@ class CollectionStateNotifier
     );
     state = map;
 
+    bool noSSL = ref.read(settingsProvider).isSSLDisabled;
     (HttpResponse?, Duration?, String?)? responseRec = await request(
       requestId,
       substitutedHttpRequestModel,
       defaultUriScheme: defaultUriScheme,
+      noSSL: noSSL,
     );
 
     late final RequestModel newRequestModel;

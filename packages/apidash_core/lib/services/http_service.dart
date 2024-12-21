@@ -14,15 +14,17 @@ Future<(HttpResponse?, Duration?, String?)> request(
   String requestId,
   HttpRequestModel requestModel, {
   SupportedUriSchemes defaultUriScheme = kDefaultUriScheme,
+  bool noSSL = false,
 }) async {
   final clientManager = HttpClientManager();
-  final client = clientManager.createClient(requestId);
+  final client = clientManager.createClient(requestId, noSSL: noSSL);
 
   (Uri?, String?) uriRec = getValidRequestUri(
     requestModel.url,
     requestModel.enabledParams,
     defaultUriScheme: defaultUriScheme,
   );
+
   if (uriRec.$1 != null) {
     Uri requestUrl = uriRec.$1!;
     Map<String, String> headers = requestModel.enabledHeadersMap;
@@ -32,6 +34,7 @@ Future<(HttpResponse?, Duration?, String?)> request(
       Stopwatch stopwatch = Stopwatch()..start();
       var isMultiPartRequest =
           requestModel.bodyContentType == ContentType.formdata;
+
       if (kMethodsWithBody.contains(requestModel.method)) {
         var requestBody = requestModel.body;
         if (requestBody != null && !isMultiPartRequest) {
