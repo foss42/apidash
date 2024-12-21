@@ -7,10 +7,10 @@ class Importer {
     ImportFormat fileType,
     String content,
   ) async {
-    switch (fileType) {
-      case ImportFormat.curl:
-        return CurlFileImport().getHttpRequestModel(content);
-    }
+    return switch (fileType) {
+      ImportFormat.curl => CurlFileImport().getHttpRequestModel(content),
+      ImportFormat.postman => null
+    };
   }
 }
 
