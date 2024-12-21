@@ -40,21 +40,6 @@ class SettingsPage extends ConsumerWidget {
           child: ListView(
             shrinkWrap: true,
             children: [
-              !kIsWeb
-                  ? SwitchListTile(
-                      hoverColor: kColorTransparent,
-                      title: const Text('Disable SSL verification'),
-                      subtitle: Text(
-                        'Current selection: ${settings.isSSLDisabled ? "SSL Verification Disabled" : "SSL Verification Enabled"}',
-                      ),
-                      value: settings.isSSLDisabled,
-                      onChanged: (bool? value) {
-                        ref
-                            .read(settingsProvider.notifier)
-                            .update(isSSLDisabled: value ?? false);
-                      },
-                    )
-                  : kSizedBoxEmpty,
               SwitchListTile(
                 hoverColor: kColorTransparent,
                 title: const Text('Switch Theme Mode'),
@@ -91,6 +76,21 @@ class SettingsPage extends ConsumerWidget {
                   },
                 ),
               ),
+              !kIsWeb
+                  ? SwitchListTile(
+                      hoverColor: kColorTransparent,
+                      title: const Text('Disable SSL verification'),
+                      subtitle: Text(
+                        'Current selection: ${settings.isSSLDisabled ? "SSL Verification Disabled" : "SSL Verification Enabled"}',
+                      ),
+                      value: settings.isSSLDisabled,
+                      onChanged: (bool? value) {
+                        ref
+                            .read(settingsProvider.notifier)
+                            .update(isSSLDisabled: value ?? false);
+                      },
+                    )
+                  : kSizedBoxEmpty,
               ListTile(
                 hoverColor: kColorTransparent,
                 title: const Text('Default Code Generator'),
@@ -127,6 +127,20 @@ class SettingsPage extends ConsumerWidget {
               ),
               ListTile(
                 hoverColor: kColorTransparent,
+                title: const Text('History Retention Period'),
+                subtitle: Text(
+                    'Your request history will be retained${settings.historyRetentionPeriod == HistoryRetentionPeriod.forever ? "" : " for"} ${settings.historyRetentionPeriod.label}'),
+                trailing: HistoryRetentionPopupMenu(
+                  value: settings.historyRetentionPeriod,
+                  onChanged: (value) {
+                    ref
+                        .read(settingsProvider.notifier)
+                        .update(historyRetentionPeriod: value);
+                  },
+                ),
+              ),
+              ListTile(
+                hoverColor: kColorTransparent,
                 title: const Text('Export Data'),
                 subtitle: const Text(
                     'Export your collection to HAR (HTTP Archive format).\nVersion control this file or import in other API clients.'),
@@ -142,20 +156,6 @@ class SettingsPage extends ConsumerWidget {
                     Icons.arrow_outward_rounded,
                     size: 20,
                   ),
-                ),
-              ),
-              ListTile(
-                hoverColor: kColorTransparent,
-                title: const Text('History Retention Period'),
-                subtitle: Text(
-                    'Your request history will be retained${settings.historyRetentionPeriod == HistoryRetentionPeriod.forever ? "" : " for"} ${settings.historyRetentionPeriod.label}'),
-                trailing: HistoryRetentionPopupMenu(
-                  value: settings.historyRetentionPeriod,
-                  onChanged: (value) {
-                    ref
-                        .read(settingsProvider.notifier)
-                        .update(historyRetentionPeriod: value);
-                  },
                 ),
               ),
               ListTile(
