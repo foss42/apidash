@@ -1,17 +1,5 @@
-import 'dart:io';
-
 import 'package:collection/collection.dart';
-import 'package:http/http.dart' as http;
-import 'package:http/io_client.dart';
 import 'package:seed/seed.dart';
-
-
-http.Client createHttpClientWithNoSSL() {
-  var ioClient = HttpClient()
-    ..badCertificateCallback =
-        (X509Certificate cert, String host, int port) => true;
-  return IOClient(ioClient);
-}
 
 Map<String, String>? rowsToMap(
   List<NameValueModel>? kvRows, {

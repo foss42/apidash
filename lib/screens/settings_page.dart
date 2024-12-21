@@ -1,7 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
-import 'package:flutter/foundation.dart';
 import '../providers/providers.dart';
 import '../services/services.dart';
 import '../utils/utils.dart';
@@ -25,9 +25,9 @@ class SettingsPage extends ConsumerWidget {
                 child: kIsDesktop
                     ? Text("Settings",
                         style: Theme.of(context).textTheme.headlineLarge)
-                    : const SizedBox.shrink(),
+                    : kSizedBoxEmpty,
               )
-            : const SizedBox.shrink(),
+            : kSizedBoxEmpty,
         kIsDesktop
             ? const Padding(
                 padding: kPh20,
@@ -35,24 +35,26 @@ class SettingsPage extends ConsumerWidget {
                   height: 1,
                 ),
               )
-            : const SizedBox.shrink(),
+            : kSizedBoxEmpty,
         Expanded(
           child: ListView(
             shrinkWrap: true,
             children: [
-          
-            !kIsWeb ?SwitchListTile(
+              !kIsWeb
+                  ? SwitchListTile(
                       hoverColor: kColorTransparent,
-                      title: const Text('Disabling SSL verification'),
+                      title: const Text('Disable SSL verification'),
                       subtitle: Text(
-                          'Current selection: ${settings.isSSLDisabled ? "SSL Verification Disabled" : "SSL Verification Enabled"}',
-                       ),
+                        'Current selection: ${settings.isSSLDisabled ? "SSL Verification Disabled" : "SSL Verification Enabled"}',
+                      ),
                       value: settings.isSSLDisabled,
                       onChanged: (bool? value) {
-                          ref.read(settingsProvider.notifier).update(isSSLDisabled: value ?? false);
+                        ref
+                            .read(settingsProvider.notifier)
+                            .update(isSSLDisabled: value ?? false);
                       },
-                ) :const  SizedBox.shrink(),
-       
+                    )
+                  : kSizedBoxEmpty,
               SwitchListTile(
                 hoverColor: kColorTransparent,
                 title: const Text('Switch Theme Mode'),

@@ -9,11 +9,12 @@ import '../utils/utils.dart';
 import 'http_client_manager.dart';
 
 typedef HttpResponse = http.Response;
+
 Future<(HttpResponse?, Duration?, String?)> request(
   String requestId,
   HttpRequestModel requestModel, {
   SupportedUriSchemes defaultUriScheme = kDefaultUriScheme,
-  bool noSSL = false, // Add a parameter to specify SSL-bypass
+  bool noSSL = false,
 }) async {
   final clientManager = HttpClientManager();
   final client = clientManager.createClient(requestId, noSSL: noSSL);
@@ -73,7 +74,6 @@ Future<(HttpResponse?, Duration?, String?)> request(
           return (convertedMultiPartResponse, stopwatch.elapsed, null);
         }
       }
-
       switch (requestModel.method) {
         case HTTPVerb.get:
           response = await client.get(requestUrl, headers: headers);

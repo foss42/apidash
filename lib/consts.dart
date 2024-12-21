@@ -14,7 +14,6 @@ const kAssetSendingLottie = "assets/sending.json";
 const kAssetSavingLottie = "assets/saving.json";
 const kAssetSavedLottie = "assets/completed.json";
 
-
 final kIsMacOS = !kIsWeb && Platform.isMacOS;
 final kIsWindows = !kIsWeb && Platform.isWindows;
 final kIsLinux = !kIsWeb && Platform.isLinux;
