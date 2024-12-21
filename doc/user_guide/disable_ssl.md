@@ -6,7 +6,7 @@
 
 Make a GET request to https://expired-rsa-dv.ssl.com/
 
-![ssl-1](https://github.com/user-attachments/assets/2348e45e-2d8d-4f29-9994-31668f4cf828)
+![ssl-1](https://raw.githubusercontent.com/foss42/apidash/refs/heads/main/doc/user_guide/images/ssl/ssl-1.png)
 
 You will receive a certificate failed error.
 
@@ -14,14 +14,14 @@ You will receive a certificate failed error.
 
 Visit API Dash Settings & turn on the "Disable SSL verification" switch
 
-![ssl-2a](https://github.com/user-attachments/assets/6c86437a-7f6c-4d27-8de4-ea327d2fbe43)
+![ssl-2a](https://raw.githubusercontent.com/foss42/apidash/refs/heads/main/doc/user_guide/images/ssl/ssl-2a.png)
 
-![ssl-2b](https://github.com/user-attachments/assets/cf67c20e-c8b5-43be-ac78-75a72dd85303)
+![ssl-2b](https://raw.githubusercontent.com/foss42/apidash/refs/heads/main/doc/user_guide/images/ssl/ssl-2b.png)
 
 **Step 3**
 
 Now, Resend the request.
 
-![ssl-3](https://github.com/user-attachments/assets/2eb186f4-44b2-4478-9a34-e6324c441901)
+![ssl-3](https://raw.githubusercontent.com/foss42/apidash/refs/heads/main/doc/user_guide/images/ssl/ssl-3.png)
 
 You will receive a the response successfully.
