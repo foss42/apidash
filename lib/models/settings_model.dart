@@ -6,7 +6,6 @@ import 'package:apidash/consts.dart';
 class SettingsModel {
   const SettingsModel({
     this.isDark = false,
-    this.isSSLDisabled =false,
     this.alwaysShowCollectionPaneScrollbar = true,
     this.size,
     this.offset,
@@ -17,10 +16,10 @@ class SettingsModel {
     this.activeEnvironmentId,
     this.historyRetentionPeriod = HistoryRetentionPeriod.oneWeek,
     this.workspaceFolderPath,
+    this.isSSLDisabled = false,
   });
 
   final bool isDark;
-  final bool isSSLDisabled;
   final bool alwaysShowCollectionPaneScrollbar;
   final Size? size;
   final Offset? offset;
@@ -31,10 +30,10 @@ class SettingsModel {
   final String? activeEnvironmentId;
   final HistoryRetentionPeriod historyRetentionPeriod;
   final String? workspaceFolderPath;
+  final bool isSSLDisabled;
 
   SettingsModel copyWith({
     bool? isDark,
-    bool? isSSLDisabled,
     bool? alwaysShowCollectionPaneScrollbar,
     Size? size,
     Offset? offset,
@@ -45,10 +44,10 @@ class SettingsModel {
     String? activeEnvironmentId,
     HistoryRetentionPeriod? historyRetentionPeriod,
     String? workspaceFolderPath,
+    bool? isSSLDisabled,
   }) {
     return SettingsModel(
       isDark: isDark ?? this.isDark,
-      isSSLDisabled: isSSLDisabled ?? this.isSSLDisabled,
       alwaysShowCollectionPaneScrollbar: alwaysShowCollectionPaneScrollbar ??
           this.alwaysShowCollectionPaneScrollbar,
       size: size ?? this.size,
@@ -61,6 +60,7 @@ class SettingsModel {
       historyRetentionPeriod:
           historyRetentionPeriod ?? this.historyRetentionPeriod,
       workspaceFolderPath: workspaceFolderPath ?? this.workspaceFolderPath,
+      isSSLDisabled: isSSLDisabled ?? this.isSSLDisabled,
     );
   }
 
@@ -69,7 +69,6 @@ class SettingsModel {
   }) {
     return SettingsModel(
       isDark: isDark,
-      isSSLDisabled: isSSLDisabled,
       alwaysShowCollectionPaneScrollbar: alwaysShowCollectionPaneScrollbar,
       size: size,
       defaultUriScheme: defaultUriScheme,
@@ -80,12 +79,12 @@ class SettingsModel {
       activeEnvironmentId: activeEnvironmentId,
       historyRetentionPeriod: historyRetentionPeriod,
       workspaceFolderPath: workspaceFolderPath,
+      isSSLDisabled: isSSLDisabled,
     );
   }
 
   factory SettingsModel.fromJson(Map<dynamic, dynamic> data) {
     final isDark = data["isDark"] as bool?;
-    final isSSLDisabled = data["isSSLDisabled"] as bool?;
     final alwaysShowCollectionPaneScrollbar =
         data["alwaysShowCollectionPaneScrollbar"] as bool?;
     final width = data["width"] as double?;
@@ -134,12 +133,12 @@ class SettingsModel {
       }
     }
     final workspaceFolderPath = data["workspaceFolderPath"] as String?;
+    final isSSLDisabled = data["isSSLDisabled"] as bool?;
 
     const sm = SettingsModel();
 
     return sm.copyWith(
       isDark: isDark,
-      isSSLDisabled: isSSLDisabled,
       alwaysShowCollectionPaneScrollbar: alwaysShowCollectionPaneScrollbar,
       size: size,
       offset: offset,
@@ -151,13 +150,13 @@ class SettingsModel {
       historyRetentionPeriod:
           historyRetentionPeriod ?? HistoryRetentionPeriod.oneWeek,
       workspaceFolderPath: workspaceFolderPath,
+      isSSLDisabled: isSSLDisabled,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       "isDark": isDark,
-      "isSSLDisabled":isSSLDisabled,
       "alwaysShowCollectionPaneScrollbar": alwaysShowCollectionPaneScrollbar,
       "width": size?.width,
       "height": size?.height,
@@ -170,6 +169,7 @@ class SettingsModel {
       "activeEnvironmentId": activeEnvironmentId,
       "historyRetentionPeriod": historyRetentionPeriod.name,
       "workspaceFolderPath": workspaceFolderPath,
+      "isSSLDisabled": isSSLDisabled,
     };
   }
 
@@ -183,7 +183,6 @@ class SettingsModel {
     return other is SettingsModel &&
         other.runtimeType == runtimeType &&
         other.isDark == isDark &&
-        other.isSSLDisabled == isSSLDisabled &&
         other.alwaysShowCollectionPaneScrollbar ==
             alwaysShowCollectionPaneScrollbar &&
         other.size == size &&
@@ -194,7 +193,8 @@ class SettingsModel {
         other.promptBeforeClosing == promptBeforeClosing &&
         other.activeEnvironmentId == activeEnvironmentId &&
         other.historyRetentionPeriod == historyRetentionPeriod &&
-        other.workspaceFolderPath == workspaceFolderPath;
+        other.workspaceFolderPath == workspaceFolderPath &&
+        other.isSSLDisabled == isSSLDisabled;
   }
 
   @override
@@ -202,7 +202,6 @@ class SettingsModel {
     return Object.hash(
       runtimeType,
       isDark,
-      isSSLDisabled,
       alwaysShowCollectionPaneScrollbar,
       size,
       offset,
@@ -213,6 +212,7 @@ class SettingsModel {
       activeEnvironmentId,
       historyRetentionPeriod,
       workspaceFolderPath,
+      isSSLDisabled,
     );
   }
 }

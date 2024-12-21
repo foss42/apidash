@@ -22,7 +22,6 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
 
   Future<void> update({
     bool? isDark,
-    bool? isSSLDisabled,
     bool? alwaysShowCollectionPaneScrollbar,
     Size? size,
     Offset? offset,
@@ -33,10 +32,10 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
     String? activeEnvironmentId,
     HistoryRetentionPeriod? historyRetentionPeriod,
     String? workspaceFolderPath,
+    bool? isSSLDisabled,
   }) async {
     state = state.copyWith(
       isDark: isDark,
-      isSSLDisabled: isSSLDisabled,
       alwaysShowCollectionPaneScrollbar: alwaysShowCollectionPaneScrollbar,
       size: size,
       offset: offset,
@@ -47,6 +46,7 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
       activeEnvironmentId: activeEnvironmentId,
       historyRetentionPeriod: historyRetentionPeriod,
       workspaceFolderPath: workspaceFolderPath,
+      isSSLDisabled: isSSLDisabled,
     );
     await setSettingsToSharedPrefs(state);
   }
