@@ -41,6 +41,9 @@ Map<String, dynamic> _$$InfoImplToJson(_$InfoImpl instance) =>
 
 _$ItemImpl _$$ItemImplFromJson(Map<String, dynamic> json) => _$ItemImpl(
       name: json['name'] as String?,
+      item: (json['item'] as List<dynamic>?)
+          ?.map((e) => Item.fromJson(e as Map<String, dynamic>))
+          .toList(),
       request: json['request'] == null
           ? null
           : Request.fromJson(json['request'] as Map<String, dynamic>),
@@ -50,6 +53,7 @@ _$ItemImpl _$$ItemImplFromJson(Map<String, dynamic> json) => _$ItemImpl(
 Map<String, dynamic> _$$ItemImplToJson(_$ItemImpl instance) =>
     <String, dynamic>{
       'name': instance.name,
+      'item': instance.item,
       'request': instance.request,
       'response': instance.response,
     };

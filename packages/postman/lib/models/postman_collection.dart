@@ -40,6 +40,7 @@ class Info with _$Info {
 class Item with _$Item {
   const factory Item({
     String? name,
+    List<Item>? item,
     Request? request,
     List<dynamic>? response,
   }) = _Item;

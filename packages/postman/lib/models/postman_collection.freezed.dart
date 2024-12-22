@@ -433,6 +433,7 @@ Item _$ItemFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$Item {
   String? get name => throw _privateConstructorUsedError;
+  List<Item>? get item => throw _privateConstructorUsedError;
   Request? get request => throw _privateConstructorUsedError;
   List<dynamic>? get response => throw _privateConstructorUsedError;
 
@@ -450,7 +451,11 @@ abstract class $ItemCopyWith<$Res> {
   factory $ItemCopyWith(Item value, $Res Function(Item) then) =
       _$ItemCopyWithImpl<$Res, Item>;
   @useResult
-  $Res call({String? name, Request? request, List<dynamic>? response});
+  $Res call(
+      {String? name,
+      List<Item>? item,
+      Request? request,
+      List<dynamic>? response});
 
   $RequestCopyWith<$Res>? get request;
 }
@@ -471,6 +476,7 @@ class _$ItemCopyWithImpl<$Res, $Val extends Item>
   @override
   $Res call({
     Object? name = freezed,
+    Object? item = freezed,
     Object? request = freezed,
     Object? response = freezed,
   }) {
@@ -479,6 +485,10 @@ class _$ItemCopyWithImpl<$Res, $Val extends Item>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String?,
+      item: freezed == item
+          ? _value.item
+          : item // ignore: cast_nullable_to_non_nullable
+              as List<Item>?,
       request: freezed == request
           ? _value.request
           : request // ignore: cast_nullable_to_non_nullable
@@ -512,7 +522,11 @@ abstract class _$$ItemImplCopyWith<$Res> implements $ItemCopyWith<$Res> {
       __$$ItemImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String? name, Request? request, List<dynamic>? response});
+  $Res call(
+      {String? name,
+      List<Item>? item,
+      Request? request,
+      List<dynamic>? response});
 
   @override
   $RequestCopyWith<$Res>? get request;
@@ -531,6 +545,7 @@ class __$$ItemImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? name = freezed,
+    Object? item = freezed,
     Object? request = freezed,
     Object? response = freezed,
   }) {
@@ -539,6 +554,10 @@ class __$$ItemImplCopyWithImpl<$Res>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String?,
+      item: freezed == item
+          ? _value._item
+          : item // ignore: cast_nullable_to_non_nullable
+              as List<Item>?,
       request: freezed == request
           ? _value.request
           : request // ignore: cast_nullable_to_non_nullable
@@ -554,14 +573,29 @@ class __$$ItemImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$ItemImpl implements _Item {
-  const _$ItemImpl({this.name, this.request, final List<dynamic>? response})
-      : _response = response;
+  const _$ItemImpl(
+      {this.name,
+      final List<Item>? item,
+      this.request,
+      final List<dynamic>? response})
+      : _item = item,
+        _response = response;
 
   factory _$ItemImpl.fromJson(Map<String, dynamic> json) =>
       _$$ItemImplFromJson(json);
 
   @override
   final String? name;
+  final List<Item>? _item;
+  @override
+  List<Item>? get item {
+    final value = _item;
+    if (value == null) return null;
+    if (_item is EqualUnmodifiableListView) return _item;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
   @override
   final Request? request;
   final List<dynamic>? _response;
@@ -576,7 +610,7 @@ class _$ItemImpl implements _Item {
 
   @override
   String toString() {
-    return 'Item(name: $name, request: $request, response: $response)';
+    return 'Item(name: $name, item: $item, request: $request, response: $response)';
   }
 
   @override
@@ -585,13 +619,18 @@ class _$ItemImpl implements _Item {
         (other.runtimeType == runtimeType &&
             other is _$ItemImpl &&
             (identical(other.name, name) || other.name == name) &&
+            const DeepCollectionEquality().equals(other._item, _item) &&
             (identical(other.request, request) || other.request == request) &&
             const DeepCollectionEquality().equals(other._response, _response));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, name, request,
+  int get hashCode => Object.hash(
+      runtimeType,
+      name,
+      const DeepCollectionEquality().hash(_item),
+      request,
       const DeepCollectionEquality().hash(_response));
 
   /// Create a copy of Item
@@ -613,6 +652,7 @@ class _$ItemImpl implements _Item {
 abstract class _Item implements Item {
   const factory _Item(
       {final String? name,
+      final List<Item>? item,
       final Request? request,
       final List<dynamic>? response}) = _$ItemImpl;
 
@@ -620,6 +660,8 @@ abstract class _Item implements Item {
 
   @override
   String? get name;
+  @override
+  List<Item>? get item;
   @override
   Request? get request;
   @override
