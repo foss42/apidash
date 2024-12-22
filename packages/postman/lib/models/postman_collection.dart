@@ -27,10 +27,10 @@ class PostmanCollection with _$PostmanCollection {
 @freezed
 class Info with _$Info {
   const factory Info({
-    String? postmanId,
+    @JsonKey(name: '_postman_id') String? postmanId,
     String? name,
     String? schema,
-    String? exporterId,
+    @JsonKey(name: '_exporter_id') String? exporterId,
   }) = _Info;
 
   factory Info.fromJson(Map<String, dynamic> json) => _$InfoFromJson(json);

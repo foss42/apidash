@@ -215,9 +215,11 @@ Info _$InfoFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$Info {
+  @JsonKey(name: '_postman_id')
   String? get postmanId => throw _privateConstructorUsedError;
   String? get name => throw _privateConstructorUsedError;
   String? get schema => throw _privateConstructorUsedError;
+  @JsonKey(name: '_exporter_id')
   String? get exporterId => throw _privateConstructorUsedError;
 
   /// Serializes this Info to a JSON map.
@@ -235,7 +237,10 @@ abstract class $InfoCopyWith<$Res> {
       _$InfoCopyWithImpl<$Res, Info>;
   @useResult
   $Res call(
-      {String? postmanId, String? name, String? schema, String? exporterId});
+      {@JsonKey(name: '_postman_id') String? postmanId,
+      String? name,
+      String? schema,
+      @JsonKey(name: '_exporter_id') String? exporterId});
 }
 
 /// @nodoc
@@ -287,7 +292,10 @@ abstract class _$$InfoImplCopyWith<$Res> implements $InfoCopyWith<$Res> {
   @override
   @useResult
   $Res call(
-      {String? postmanId, String? name, String? schema, String? exporterId});
+      {@JsonKey(name: '_postman_id') String? postmanId,
+      String? name,
+      String? schema,
+      @JsonKey(name: '_exporter_id') String? exporterId});
 }
 
 /// @nodoc
@@ -331,18 +339,24 @@ class __$$InfoImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$InfoImpl implements _Info {
-  const _$InfoImpl({this.postmanId, this.name, this.schema, this.exporterId});
+  const _$InfoImpl(
+      {@JsonKey(name: '_postman_id') this.postmanId,
+      this.name,
+      this.schema,
+      @JsonKey(name: '_exporter_id') this.exporterId});
 
   factory _$InfoImpl.fromJson(Map<String, dynamic> json) =>
       _$$InfoImplFromJson(json);
 
   @override
+  @JsonKey(name: '_postman_id')
   final String? postmanId;
   @override
   final String? name;
   @override
   final String? schema;
   @override
+  @JsonKey(name: '_exporter_id')
   final String? exporterId;
 
   @override
@@ -386,20 +400,22 @@ class _$InfoImpl implements _Info {
 
 abstract class _Info implements Info {
   const factory _Info(
-      {final String? postmanId,
+      {@JsonKey(name: '_postman_id') final String? postmanId,
       final String? name,
       final String? schema,
-      final String? exporterId}) = _$InfoImpl;
+      @JsonKey(name: '_exporter_id') final String? exporterId}) = _$InfoImpl;
 
   factory _Info.fromJson(Map<String, dynamic> json) = _$InfoImpl.fromJson;
 
   @override
+  @JsonKey(name: '_postman_id')
   String? get postmanId;
   @override
   String? get name;
   @override
   String? get schema;
   @override
+  @JsonKey(name: '_exporter_id')
   String? get exporterId;
 
   /// Create a copy of Info

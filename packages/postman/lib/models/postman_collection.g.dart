@@ -25,18 +25,18 @@ Map<String, dynamic> _$$PostmanCollectionImplToJson(
     };
 
 _$InfoImpl _$$InfoImplFromJson(Map<String, dynamic> json) => _$InfoImpl(
-      postmanId: json['postmanId'] as String?,
+      postmanId: json['_postman_id'] as String?,
       name: json['name'] as String?,
       schema: json['schema'] as String?,
-      exporterId: json['exporterId'] as String?,
+      exporterId: json['_exporter_id'] as String?,
     );
 
 Map<String, dynamic> _$$InfoImplToJson(_$InfoImpl instance) =>
     <String, dynamic>{
-      'postmanId': instance.postmanId,
+      '_postman_id': instance.postmanId,
       'name': instance.name,
       'schema': instance.schema,
-      'exporterId': instance.exporterId,
+      '_exporter_id': instance.exporterId,
     };
 
 _$ItemImpl _$$ItemImplFromJson(Map<String, dynamic> json) => _$ItemImpl(
