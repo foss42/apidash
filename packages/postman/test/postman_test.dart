@@ -1,16 +1,28 @@
 import 'package:postman/postman.dart';
 import 'package:test/test.dart';
 
-void main() {
-  group('A group of tests', () {
-    final awesome = Awesome();
+import 'collection_examples/collection_apidash.dart';
+import 'models/collection_apidash_model.dart';
 
-    setUp(() {
-      // Additional setup goes here.
+void main() {
+  group('Postman tests', () {
+    test('API Dash Postman collection from Json String', () {
+      expect(postmanCollectionFromJsonStr(collectionApiDashJsonStr),
+          collectionApiDashModel);
     });
 
-    test('First Test', () {
-      expect(awesome.isAwesome, isTrue);
+    test('API Dash Postman collection from Json', () {
+      expect(PostmanCollection.fromJson(collectionApiDashJson),
+          collectionApiDashModel);
+    });
+
+    test('API Dash Postman collection to Json String', () {
+      expect(postmanCollectionToJsonStr(collectionApiDashModel),
+          collectionApiDashJsonStr);
+    });
+
+    test('API Dash Postman collection to Json', () {
+      expect(collectionApiDashModel.toJson(), collectionApiDashJson);
     });
   });
 }
