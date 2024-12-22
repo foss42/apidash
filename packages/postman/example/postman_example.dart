@@ -184,7 +184,7 @@ void main() {
     ]
   };
 
-  var collection2 = postmanCollectionFromJsonStr(collectionJsonStr);
+  var collection2 = PostmanCollection.fromJson(collectionJson);
 
   print(collection2.info?.name);
   // API Dash
