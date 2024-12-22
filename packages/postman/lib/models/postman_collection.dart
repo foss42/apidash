@@ -15,6 +15,10 @@ String postmanCollectionToJsonStr(PostmanCollection data) =>
 
 @freezed
 class PostmanCollection with _$PostmanCollection {
+  @JsonSerializable(
+    explicitToJson: true,
+    anyMap: true,
+  )
   const factory PostmanCollection({
     Info? info,
     List<Item>? item,
@@ -26,6 +30,10 @@ class PostmanCollection with _$PostmanCollection {
 
 @freezed
 class Info with _$Info {
+  @JsonSerializable(
+    explicitToJson: true,
+    anyMap: true,
+  )
   const factory Info({
     @JsonKey(name: '_postman_id') String? postmanId,
     String? name,
@@ -38,6 +46,10 @@ class Info with _$Info {
 
 @freezed
 class Item with _$Item {
+  @JsonSerializable(
+    explicitToJson: true,
+    anyMap: true,
+  )
   const factory Item({
     String? name,
     List<Item>? item,
@@ -50,6 +62,10 @@ class Item with _$Item {
 
 @freezed
 class Request with _$Request {
+  @JsonSerializable(
+    explicitToJson: true,
+    anyMap: true,
+  )
   const factory Request({
     String? method,
     List<Header>? header,
@@ -63,6 +79,10 @@ class Request with _$Request {
 
 @freezed
 class Header with _$Header {
+  @JsonSerializable(
+    explicitToJson: true,
+    anyMap: true,
+  )
   const factory Header({
     String? key,
     String? value,
@@ -75,6 +95,10 @@ class Header with _$Header {
 
 @freezed
 class Url with _$Url {
+  @JsonSerializable(
+    explicitToJson: true,
+    anyMap: true,
+  )
   const factory Url({
     String? raw,
     String? protocol,
@@ -88,6 +112,10 @@ class Url with _$Url {
 
 @freezed
 class Query with _$Query {
+  @JsonSerializable(
+    explicitToJson: true,
+    anyMap: true,
+  )
   const factory Query({
     String? key,
     String? value,
@@ -99,6 +127,10 @@ class Query with _$Query {
 
 @freezed
 class Body with _$Body {
+  @JsonSerializable(
+    explicitToJson: true,
+    anyMap: true,
+  )
   const factory Body({
     String? mode,
     String? raw,
@@ -111,6 +143,10 @@ class Body with _$Body {
 
 @freezed
 class Options with _$Options {
+  @JsonSerializable(
+    explicitToJson: true,
+    anyMap: true,
+  )
   const factory Options({
     Raw? raw,
   }) = _Options;
@@ -121,6 +157,10 @@ class Options with _$Options {
 
 @freezed
 class Raw with _$Raw {
+  @JsonSerializable(
+    explicitToJson: true,
+    anyMap: true,
+  )
   const factory Raw({
     String? language,
   }) = _Raw;
@@ -130,6 +170,10 @@ class Raw with _$Raw {
 
 @freezed
 class Formdatum with _$Formdatum {
+  @JsonSerializable(
+    explicitToJson: true,
+    anyMap: true,
+  )
   const factory Formdatum({
     String? key,
     String? value,
