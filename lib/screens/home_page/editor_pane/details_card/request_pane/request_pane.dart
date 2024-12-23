@@ -15,7 +15,7 @@ class EditRequestPane extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final apitype = ref.watch(selectedAPITypeProvider);
+    final apitype = ref.watch(selectedAPITypeProvider)!;
     final selectedId = ref.watch(selectedIdStateProvider);
     final codePaneVisible = ref.watch(codePaneVisibleStateProvider);
     final tabIndex = ref.watch(
@@ -34,6 +34,7 @@ class EditRequestPane extends ConsumerWidget {
     return RequestPane(
       selectedId: selectedId,
       codePaneVisible: codePaneVisible,
+      apiType: apitype,
       tabIndex: tabIndex,
       onPressedCodeButton: () {
         ref.read(codePaneVisibleStateProvider.notifier).state =
@@ -51,7 +52,7 @@ class EditRequestPane extends ConsumerWidget {
       ],
       children: [
         if(apitype == APIType.rest)...[
-            //EditRequestURLParams(),
+            EditRequestURLParams(),
             EditRequestHeaders(),
             EditRequestBody(),
         ]else if(apitype == APIType.graphql)...[
