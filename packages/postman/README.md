@@ -1,4 +1,4 @@
-## postman
+# postman
 
 Seamlessly convert Postman Collection Format v2.1 to Dart and vice versa.
 
@@ -6,13 +6,14 @@ Helps you bring your APIs stored in Postman to Dart and work with them.
 
 Currently, this package is being used by [API Dash](https://github.com/foss42/apidash), a beautiful open-source cross-platform (macOS, Windows, Linux, Android & iOS) API Client built using Flutter which can help you easily create & customize your API requests, visually inspect responses and generate API integration code. A lightweight alternative to postman & insomnia.
 
-### Usage
+## Usage
+
+### Example 1: Postman collection JSON string to Postman model
 
 ```dart
 import 'package:postman/postman.dart';
 
 void main() {
-  // Example 1: Postman collection JSON string to Postman model
   var collectionJsonStr = r'''
 {
 	"info": {
@@ -120,8 +121,15 @@ void main() {
   // https
   print(collection.item?[0].item?[0].request?.url?.raw);
   // https://api.apidash.dev
+}
+```
 
-  // Example 2: Postman collection from JSON
+### Example 2: Postman collection from JSON
+
+```dart
+import 'package:postman/postman.dart';
+
+void main() {
   var collectionJson = {
     "info": {
       "_postman_id": "a31e8a59-aa12-48c5-96a3-133822d7247e",
@@ -195,15 +203,15 @@ void main() {
     ]
   };
 
-  var collection2 = PostmanCollection.fromJson(collectionJson);
+  var collection = PostmanCollection.fromJson(collectionJson);
 
-  print(collection2.info?.name);
+  print(collection.info?.name);
   // API Dash
-  print(collection2.item?[0].name);
+  print(collection.item?[0].name);
   // GET Requests
-  print(collection2.item?[0].item?[0].request?.url?.protocol);
+  print(collection.item?[0].item?[0].request?.url?.protocol);
   // https
-  print(collection2.item?[0].item?[0].request?.url?.raw);
+  print(collection.item?[0].item?[0].request?.url?.raw);
   // https://api.apidash.dev
 }
 ```
