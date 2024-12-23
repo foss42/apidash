@@ -134,7 +134,7 @@ class __$$PostmanCollectionImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-@JsonSerializable(explicitToJson: true, anyMap: true)
+@JsonSerializable(explicitToJson: true, anyMap: true, includeIfNull: false)
 class _$PostmanCollectionImpl implements _PostmanCollection {
   const _$PostmanCollectionImpl({this.info, final List<Item>? item})
       : _item = item;
@@ -339,7 +339,7 @@ class __$$InfoImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-@JsonSerializable(explicitToJson: true, anyMap: true)
+@JsonSerializable(explicitToJson: true, anyMap: true, includeIfNull: false)
 class _$InfoImpl implements _Info {
   const _$InfoImpl(
       {@JsonKey(name: '_postman_id') this.postmanId,
@@ -574,7 +574,7 @@ class __$$ItemImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-@JsonSerializable(explicitToJson: true, anyMap: true)
+@JsonSerializable(explicitToJson: true, anyMap: true, includeIfNull: false)
 class _$ItemImpl implements _Item {
   const _$ItemImpl(
       {this.name,
@@ -834,7 +834,7 @@ class __$$RequestImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-@JsonSerializable(explicitToJson: true, anyMap: true)
+@JsonSerializable(explicitToJson: true, anyMap: true, includeIfNull: false)
 class _$RequestImpl implements _Request {
   const _$RequestImpl(
       {this.method, final List<Header>? header, this.body, this.url})
@@ -1043,7 +1043,7 @@ class __$$HeaderImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-@JsonSerializable(explicitToJson: true, anyMap: true)
+@JsonSerializable(explicitToJson: true, anyMap: true, includeIfNull: false)
 class _$HeaderImpl implements _Header {
   const _$HeaderImpl({this.key, this.value, this.type, this.disabled});
 
@@ -1259,7 +1259,7 @@ class __$$UrlImplCopyWithImpl<$Res> extends _$UrlCopyWithImpl<$Res, _$UrlImpl>
 
 /// @nodoc
 
-@JsonSerializable(explicitToJson: true, anyMap: true)
+@JsonSerializable(explicitToJson: true, anyMap: true, includeIfNull: false)
 class _$UrlImpl implements _Url {
   const _$UrlImpl(
       {this.raw,
@@ -1490,7 +1490,7 @@ class __$$QueryImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-@JsonSerializable(explicitToJson: true, anyMap: true)
+@JsonSerializable(explicitToJson: true, anyMap: true, includeIfNull: false)
 class _$QueryImpl implements _Query {
   const _$QueryImpl({this.key, this.value, this.disabled});
 
@@ -1703,7 +1703,7 @@ class __$$BodyImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-@JsonSerializable(explicitToJson: true, anyMap: true)
+@JsonSerializable(explicitToJson: true, anyMap: true, includeIfNull: false)
 class _$BodyImpl implements _Body {
   const _$BodyImpl(
       {this.mode, this.raw, this.options, final List<Formdatum>? formdata})
@@ -1897,7 +1897,7 @@ class __$$OptionsImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-@JsonSerializable(explicitToJson: true, anyMap: true)
+@JsonSerializable(explicitToJson: true, anyMap: true, includeIfNull: false)
 class _$OptionsImpl implements _Options {
   const _$OptionsImpl({this.raw});
 
@@ -2039,7 +2039,7 @@ class __$$RawImplCopyWithImpl<$Res> extends _$RawCopyWithImpl<$Res, _$RawImpl>
 
 /// @nodoc
 
-@JsonSerializable(explicitToJson: true, anyMap: true)
+@JsonSerializable(explicitToJson: true, anyMap: true, includeIfNull: false)
 class _$RawImpl implements _Raw {
   const _$RawImpl({this.language});
 
@@ -2221,7 +2221,7 @@ class __$$FormdatumImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-@JsonSerializable(explicitToJson: true, anyMap: true)
+@JsonSerializable(explicitToJson: true, anyMap: true, includeIfNull: false)
 class _$FormdatumImpl implements _Formdatum {
   const _$FormdatumImpl({this.key, this.value, this.type, this.src});
 

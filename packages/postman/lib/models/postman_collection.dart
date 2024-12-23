@@ -11,13 +11,14 @@ PostmanCollection postmanCollectionFromJsonStr(String str) =>
     PostmanCollection.fromJson(json.decode(str));
 
 String postmanCollectionToJsonStr(PostmanCollection data) =>
-    json.encode(data.toJson());
+    JsonEncoder.withIndent('\t').convert(data);
 
 @freezed
 class PostmanCollection with _$PostmanCollection {
   @JsonSerializable(
     explicitToJson: true,
     anyMap: true,
+    includeIfNull: false,
   )
   const factory PostmanCollection({
     Info? info,
@@ -33,6 +34,7 @@ class Info with _$Info {
   @JsonSerializable(
     explicitToJson: true,
     anyMap: true,
+    includeIfNull: false,
   )
   const factory Info({
     @JsonKey(name: '_postman_id') String? postmanId,
@@ -49,6 +51,7 @@ class Item with _$Item {
   @JsonSerializable(
     explicitToJson: true,
     anyMap: true,
+    includeIfNull: false,
   )
   const factory Item({
     String? name,
@@ -65,6 +68,7 @@ class Request with _$Request {
   @JsonSerializable(
     explicitToJson: true,
     anyMap: true,
+    includeIfNull: false,
   )
   const factory Request({
     String? method,
@@ -82,6 +86,7 @@ class Header with _$Header {
   @JsonSerializable(
     explicitToJson: true,
     anyMap: true,
+    includeIfNull: false,
   )
   const factory Header({
     String? key,
@@ -98,6 +103,7 @@ class Url with _$Url {
   @JsonSerializable(
     explicitToJson: true,
     anyMap: true,
+    includeIfNull: false,
   )
   const factory Url({
     String? raw,
@@ -115,6 +121,7 @@ class Query with _$Query {
   @JsonSerializable(
     explicitToJson: true,
     anyMap: true,
+    includeIfNull: false,
   )
   const factory Query({
     String? key,
@@ -130,6 +137,7 @@ class Body with _$Body {
   @JsonSerializable(
     explicitToJson: true,
     anyMap: true,
+    includeIfNull: false,
   )
   const factory Body({
     String? mode,
@@ -146,6 +154,7 @@ class Options with _$Options {
   @JsonSerializable(
     explicitToJson: true,
     anyMap: true,
+    includeIfNull: false,
   )
   const factory Options({
     Raw? raw,
@@ -160,6 +169,7 @@ class Raw with _$Raw {
   @JsonSerializable(
     explicitToJson: true,
     anyMap: true,
+    includeIfNull: false,
   )
   const factory Raw({
     String? language,
@@ -173,6 +183,7 @@ class Formdatum with _$Formdatum {
   @JsonSerializable(
     explicitToJson: true,
     anyMap: true,
+    includeIfNull: false,
   )
   const factory Formdatum({
     String? key,

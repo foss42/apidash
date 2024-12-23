@@ -19,8 +19,9 @@ _$PostmanCollectionImpl _$$PostmanCollectionImplFromJson(Map json) =>
 Map<String, dynamic> _$$PostmanCollectionImplToJson(
         _$PostmanCollectionImpl instance) =>
     <String, dynamic>{
-      'info': instance.info?.toJson(),
-      'item': instance.item?.map((e) => e.toJson()).toList(),
+      if (instance.info?.toJson() case final value?) 'info': value,
+      if (instance.item?.map((e) => e.toJson()).toList() case final value?)
+        'item': value,
     };
 
 _$InfoImpl _$$InfoImplFromJson(Map json) => _$InfoImpl(
@@ -32,10 +33,10 @@ _$InfoImpl _$$InfoImplFromJson(Map json) => _$InfoImpl(
 
 Map<String, dynamic> _$$InfoImplToJson(_$InfoImpl instance) =>
     <String, dynamic>{
-      '_postman_id': instance.postmanId,
-      'name': instance.name,
-      'schema': instance.schema,
-      '_exporter_id': instance.exporterId,
+      if (instance.postmanId case final value?) '_postman_id': value,
+      if (instance.name case final value?) 'name': value,
+      if (instance.schema case final value?) 'schema': value,
+      if (instance.exporterId case final value?) '_exporter_id': value,
     };
 
 _$ItemImpl _$$ItemImplFromJson(Map json) => _$ItemImpl(
@@ -51,10 +52,11 @@ _$ItemImpl _$$ItemImplFromJson(Map json) => _$ItemImpl(
 
 Map<String, dynamic> _$$ItemImplToJson(_$ItemImpl instance) =>
     <String, dynamic>{
-      'name': instance.name,
-      'item': instance.item?.map((e) => e.toJson()).toList(),
-      'request': instance.request?.toJson(),
-      'response': instance.response,
+      if (instance.name case final value?) 'name': value,
+      if (instance.item?.map((e) => e.toJson()).toList() case final value?)
+        'item': value,
+      if (instance.request?.toJson() case final value?) 'request': value,
+      if (instance.response case final value?) 'response': value,
     };
 
 _$RequestImpl _$$RequestImplFromJson(Map json) => _$RequestImpl(
@@ -72,10 +74,11 @@ _$RequestImpl _$$RequestImplFromJson(Map json) => _$RequestImpl(
 
 Map<String, dynamic> _$$RequestImplToJson(_$RequestImpl instance) =>
     <String, dynamic>{
-      'method': instance.method,
-      'header': instance.header?.map((e) => e.toJson()).toList(),
-      'body': instance.body?.toJson(),
-      'url': instance.url?.toJson(),
+      if (instance.method case final value?) 'method': value,
+      if (instance.header?.map((e) => e.toJson()).toList() case final value?)
+        'header': value,
+      if (instance.body?.toJson() case final value?) 'body': value,
+      if (instance.url?.toJson() case final value?) 'url': value,
     };
 
 _$HeaderImpl _$$HeaderImplFromJson(Map json) => _$HeaderImpl(
@@ -87,10 +90,10 @@ _$HeaderImpl _$$HeaderImplFromJson(Map json) => _$HeaderImpl(
 
 Map<String, dynamic> _$$HeaderImplToJson(_$HeaderImpl instance) =>
     <String, dynamic>{
-      'key': instance.key,
-      'value': instance.value,
-      'type': instance.type,
-      'disabled': instance.disabled,
+      if (instance.key case final value?) 'key': value,
+      if (instance.value case final value?) 'value': value,
+      if (instance.type case final value?) 'type': value,
+      if (instance.disabled case final value?) 'disabled': value,
     };
 
 _$UrlImpl _$$UrlImplFromJson(Map json) => _$UrlImpl(
@@ -104,11 +107,12 @@ _$UrlImpl _$$UrlImplFromJson(Map json) => _$UrlImpl(
     );
 
 Map<String, dynamic> _$$UrlImplToJson(_$UrlImpl instance) => <String, dynamic>{
-      'raw': instance.raw,
-      'protocol': instance.protocol,
-      'host': instance.host,
-      'path': instance.path,
-      'query': instance.query?.map((e) => e.toJson()).toList(),
+      if (instance.raw case final value?) 'raw': value,
+      if (instance.protocol case final value?) 'protocol': value,
+      if (instance.host case final value?) 'host': value,
+      if (instance.path case final value?) 'path': value,
+      if (instance.query?.map((e) => e.toJson()).toList() case final value?)
+        'query': value,
     };
 
 _$QueryImpl _$$QueryImplFromJson(Map json) => _$QueryImpl(
@@ -119,9 +123,9 @@ _$QueryImpl _$$QueryImplFromJson(Map json) => _$QueryImpl(
 
 Map<String, dynamic> _$$QueryImplToJson(_$QueryImpl instance) =>
     <String, dynamic>{
-      'key': instance.key,
-      'value': instance.value,
-      'disabled': instance.disabled,
+      if (instance.key case final value?) 'key': value,
+      if (instance.value case final value?) 'value': value,
+      if (instance.disabled case final value?) 'disabled': value,
     };
 
 _$BodyImpl _$$BodyImplFromJson(Map json) => _$BodyImpl(
@@ -137,10 +141,11 @@ _$BodyImpl _$$BodyImplFromJson(Map json) => _$BodyImpl(
 
 Map<String, dynamic> _$$BodyImplToJson(_$BodyImpl instance) =>
     <String, dynamic>{
-      'mode': instance.mode,
-      'raw': instance.raw,
-      'options': instance.options?.toJson(),
-      'formdata': instance.formdata?.map((e) => e.toJson()).toList(),
+      if (instance.mode case final value?) 'mode': value,
+      if (instance.raw case final value?) 'raw': value,
+      if (instance.options?.toJson() case final value?) 'options': value,
+      if (instance.formdata?.map((e) => e.toJson()).toList() case final value?)
+        'formdata': value,
     };
 
 _$OptionsImpl _$$OptionsImplFromJson(Map json) => _$OptionsImpl(
@@ -151,7 +156,7 @@ _$OptionsImpl _$$OptionsImplFromJson(Map json) => _$OptionsImpl(
 
 Map<String, dynamic> _$$OptionsImplToJson(_$OptionsImpl instance) =>
     <String, dynamic>{
-      'raw': instance.raw?.toJson(),
+      if (instance.raw?.toJson() case final value?) 'raw': value,
     };
 
 _$RawImpl _$$RawImplFromJson(Map json) => _$RawImpl(
@@ -159,7 +164,7 @@ _$RawImpl _$$RawImplFromJson(Map json) => _$RawImpl(
     );
 
 Map<String, dynamic> _$$RawImplToJson(_$RawImpl instance) => <String, dynamic>{
-      'language': instance.language,
+      if (instance.language case final value?) 'language': value,
     };
 
 _$FormdatumImpl _$$FormdatumImplFromJson(Map json) => _$FormdatumImpl(
@@ -171,8 +176,8 @@ _$FormdatumImpl _$$FormdatumImplFromJson(Map json) => _$FormdatumImpl(
 
 Map<String, dynamic> _$$FormdatumImplToJson(_$FormdatumImpl instance) =>
     <String, dynamic>{
-      'key': instance.key,
-      'value': instance.value,
-      'type': instance.type,
-      'src': instance.src,
+      if (instance.key case final value?) 'key': value,
+      if (instance.value case final value?) 'value': value,
+      if (instance.type case final value?) 'type': value,
+      if (instance.src case final value?) 'src': value,
     };
