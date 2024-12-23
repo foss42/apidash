@@ -1,19 +1,19 @@
-// import 'package:freezed_annotation/freezed_annotation.dart';
-// import 'package:json_annotation/json_annotation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:json_annotation/json_annotation.dart';
 
-// part 'graphql_request_model.freezed.dart';
-// part 'graphql_request_model.g.dart';
+part 'graphql_request_model.freezed.dart';
+part 'graphql_request_model.g.dart';
 
-// @freezed
-// class GraphqlRequestModel with _$GraphqlRequestModel {
-//   factory GraphqlRequestModel({
-//     required String query,
-//     Map<String, dynamic>? variables,
-//   }) = _GraphqlRequestModel;
+@freezed
+class GraphqlRequestModel with _$GraphqlRequestModel {
+  factory GraphqlRequestModel({
+    required String query,
+    Map<String, dynamic>? variables,
+  }) = _GraphqlRequestModel;
 
-//   factory GraphqlRequestModel.fromJson(Map<String, dynamic> json) =>
-//       _$GraphqlRequestModelFromJson(json);
-// }
+  factory GraphqlRequestModel.fromJson(Map<String, dynamic> json) =>
+      _$GraphqlRequestModelFromJson(json);
+}
 
 
 // // class GraphqlRequestModelConverter implements JsonConverter<GraphqlRequestModel, Map<String, dynamic>> {

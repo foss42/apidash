@@ -21,7 +21,7 @@ class RequestModel with _$RequestModel{
     HttpRequestModel? httpRequestModel,
    //  @JsonKey(fromJson: GraphqlRequestModelConverter().fromJson, toJson: GraphqlRequestModelConverter().toJson)
    //GraphqlRequestModel? graphqlRequestModel,
- //   GraphqlRequestModel? graphqlRequestModel,
+    GraphqlRequestModel? graphqlRequestModel,
     int? responseStatus,
     String? message,
     HttpResponseModel? httpResponseModel,

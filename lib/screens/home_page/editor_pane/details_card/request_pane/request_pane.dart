@@ -1,3 +1,6 @@
+import 'package:apidash/screens/home_page/editor_pane/details_card/request_pane/graphql/graphql_query.dart';
+import 'package:apidash/screens/home_page/editor_pane/details_card/request_pane/graphql/graphql_variables.dart';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
@@ -5,12 +8,14 @@ import 'package:apidash/widgets/widgets.dart';
 import 'request_headers.dart';
 import 'request_params.dart';
 import 'request_body.dart';
-
+import 'package:apidash/consts.dart';
 class EditRequestPane extends ConsumerWidget {
   const EditRequestPane({super.key});
+  
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final apitype = ref.watch(selectedAPITypeProvider);
     final selectedId = ref.watch(selectedIdStateProvider);
     final codePaneVisible = ref.watch(codePaneVisibleStateProvider);
     final tabIndex = ref.watch(
@@ -44,10 +49,19 @@ class EditRequestPane extends ConsumerWidget {
         headerLength > 0,
         hasBody,
       ],
-      children: const [
-        EditRequestURLParams(),
-        EditRequestHeaders(),
-        EditRequestBody(),
+      children: [
+        if(apitype == APIType.rest)...[
+            //EditRequestURLParams(),
+            EditRequestHeaders(),
+            EditRequestBody(),
+        ]else if(apitype == APIType.graphql)...[
+            EditRequestHeaders(),
+            EditGraphqlQuery(),
+            EditGraphqlVariable()
+        ]
+        
+        
+        
       ],
     );
   }

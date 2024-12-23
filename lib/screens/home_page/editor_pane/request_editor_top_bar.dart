@@ -14,6 +14,7 @@ class RequestEditorTopBar extends ConsumerWidget {
     final id = ref.watch(selectedIdStateProvider);
     final name =
         ref.watch(selectedRequestModelProvider.select((value) => value?.name));
+    final apiType = ref.watch(selectedAPITypeProvider);
     return Padding(
       padding: const EdgeInsets.only(
         left: 12.0,
@@ -23,9 +24,17 @@ class RequestEditorTopBar extends ConsumerWidget {
       ),
       child: Row(
         children: [
+          
           DropdownButtonAPIType(
-            apiType: APIType.rest,
-            onChanged: (apiType) {},
+            apiType: apiType,
+            onChanged: (newapiType) {
+              ref.read(selectedAPITypeProvider.notifier).state = newapiType;
+            ref.read(collectionStateNotifierProvider.notifier)
+            .update(id!,apiType: newapiType);
+            if(apiType == APIType.graphql){
+              print("graphql ready on dropdownbutton"); //for testing
+            }
+            },
           ),
           kHSpacer10,
           Expanded(
