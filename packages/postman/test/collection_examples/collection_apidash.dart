@@ -218,8 +218,7 @@ var collectionApiDashJsonStr = r'''
 			]
 		}
 	]
-}
-''';
+}''';
 
 var collectionApiDashJson = {
   "info": {
