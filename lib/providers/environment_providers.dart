@@ -35,14 +35,14 @@ final availableEnvironmentVariablesStateProvider =
   return result;
 });
 
-final StateNotifierProvider<EnvironmentsStateNotifier,
-        Map<String, EnvironmentModel>?> environmentsStateNotifierProvider =
-    StateNotifierProvider((ref) => EnvironmentsStateNotifier(ref, hiveHandler));
-
 final environmentSequenceProvider = StateProvider<List<String>>((ref) {
   var ids = hiveHandler.getEnvironmentIds();
   return ids ?? [kGlobalEnvironmentId];
 });
+
+final StateNotifierProvider<EnvironmentsStateNotifier,
+        Map<String, EnvironmentModel>?> environmentsStateNotifierProvider =
+    StateNotifierProvider((ref) => EnvironmentsStateNotifier(ref, hiveHandler));
 
 class EnvironmentsStateNotifier
     extends StateNotifier<Map<String, EnvironmentModel>?> {
@@ -65,14 +65,13 @@ class EnvironmentsStateNotifier
   bool loadEnvironments() {
     List<String>? environmentIds = hiveHandler.getEnvironmentIds();
     if (environmentIds == null || environmentIds.isEmpty) {
-      String globalId = kGlobalEnvironmentId;
       const globalEnvironment = EnvironmentModel(
         id: kGlobalEnvironmentId,
         name: "Global",
         values: [],
       );
       state = {
-        globalId: globalEnvironment,
+        kGlobalEnvironmentId: globalEnvironment,
       };
       return false;
     } else {
@@ -108,7 +107,7 @@ class EnvironmentsStateNotifier
     };
     ref
         .read(environmentSequenceProvider.notifier)
-        .update((state) => [id, ...state]);
+        .update((state) => [...state, id]);
     ref.read(selectedEnvironmentIdStateProvider.notifier).state =
         newEnvironmentModel.id;
     ref.read(hasUnsavedChangesProvider.notifier).state = true;

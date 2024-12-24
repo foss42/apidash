@@ -16,32 +16,35 @@ class SettingsModel {
     this.activeEnvironmentId,
     this.historyRetentionPeriod = HistoryRetentionPeriod.oneWeek,
     this.workspaceFolderPath,
+    this.isSSLDisabled = false,
   });
 
   final bool isDark;
   final bool alwaysShowCollectionPaneScrollbar;
   final Size? size;
   final Offset? offset;
-  final String defaultUriScheme;
+  final SupportedUriSchemes defaultUriScheme;
   final CodegenLanguage defaultCodeGenLang;
   final bool saveResponses;
   final bool promptBeforeClosing;
   final String? activeEnvironmentId;
   final HistoryRetentionPeriod historyRetentionPeriod;
   final String? workspaceFolderPath;
+  final bool isSSLDisabled;
 
   SettingsModel copyWith({
     bool? isDark,
     bool? alwaysShowCollectionPaneScrollbar,
     Size? size,
     Offset? offset,
-    String? defaultUriScheme,
+    SupportedUriSchemes? defaultUriScheme,
     CodegenLanguage? defaultCodeGenLang,
     bool? saveResponses,
     bool? promptBeforeClosing,
     String? activeEnvironmentId,
     HistoryRetentionPeriod? historyRetentionPeriod,
     String? workspaceFolderPath,
+    bool? isSSLDisabled,
   }) {
     return SettingsModel(
       isDark: isDark ?? this.isDark,
@@ -57,6 +60,7 @@ class SettingsModel {
       historyRetentionPeriod:
           historyRetentionPeriod ?? this.historyRetentionPeriod,
       workspaceFolderPath: workspaceFolderPath ?? this.workspaceFolderPath,
+      isSSLDisabled: isSSLDisabled ?? this.isSSLDisabled,
     );
   }
 
@@ -75,6 +79,7 @@ class SettingsModel {
       activeEnvironmentId: activeEnvironmentId,
       historyRetentionPeriod: historyRetentionPeriod,
       workspaceFolderPath: workspaceFolderPath,
+      isSSLDisabled: isSSLDisabled,
     );
   }
 
@@ -94,7 +99,16 @@ class SettingsModel {
     if (dx != null && dy != null) {
       offset = Offset(dx, dy);
     }
-    final defaultUriScheme = data["defaultUriScheme"] as String?;
+    final defaultUriSchemeStr = data["defaultUriScheme"] as String?;
+    SupportedUriSchemes? defaultUriScheme;
+    if (defaultUriSchemeStr != null) {
+      try {
+        defaultUriScheme =
+            SupportedUriSchemes.values.byName(defaultUriSchemeStr);
+      } catch (e) {
+        // pass
+      }
+    }
     final defaultCodeGenLangStr = data["defaultCodeGenLang"] as String?;
     CodegenLanguage? defaultCodeGenLang;
     if (defaultCodeGenLangStr != null) {
@@ -119,6 +133,7 @@ class SettingsModel {
       }
     }
     final workspaceFolderPath = data["workspaceFolderPath"] as String?;
+    final isSSLDisabled = data["isSSLDisabled"] as bool?;
 
     const sm = SettingsModel();
 
@@ -135,6 +150,7 @@ class SettingsModel {
       historyRetentionPeriod:
           historyRetentionPeriod ?? HistoryRetentionPeriod.oneWeek,
       workspaceFolderPath: workspaceFolderPath,
+      isSSLDisabled: isSSLDisabled,
     );
   }
 
@@ -146,13 +162,14 @@ class SettingsModel {
       "height": size?.height,
       "dx": offset?.dx,
       "dy": offset?.dy,
-      "defaultUriScheme": defaultUriScheme,
+      "defaultUriScheme": defaultUriScheme.name,
       "defaultCodeGenLang": defaultCodeGenLang.name,
       "saveResponses": saveResponses,
       "promptBeforeClosing": promptBeforeClosing,
       "activeEnvironmentId": activeEnvironmentId,
       "historyRetentionPeriod": historyRetentionPeriod.name,
       "workspaceFolderPath": workspaceFolderPath,
+      "isSSLDisabled": isSSLDisabled,
     };
   }
 
@@ -176,7 +193,8 @@ class SettingsModel {
         other.promptBeforeClosing == promptBeforeClosing &&
         other.activeEnvironmentId == activeEnvironmentId &&
         other.historyRetentionPeriod == historyRetentionPeriod &&
-        other.workspaceFolderPath == workspaceFolderPath;
+        other.workspaceFolderPath == workspaceFolderPath &&
+        other.isSSLDisabled == isSSLDisabled;
   }
 
   @override
@@ -194,6 +212,7 @@ class SettingsModel {
       activeEnvironmentId,
       historyRetentionPeriod,
       workspaceFolderPath,
+      isSSLDisabled,
     );
   }
 }

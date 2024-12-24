@@ -1,5 +1,6 @@
 import 'package:apidash/consts.dart';
 import 'package:apidash/screens/common_widgets/common_widgets.dart';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter_test/flutter_test.dart';
 import '../models/request_models.dart';
 
@@ -32,7 +33,10 @@ class Program
 """;
       expect(
           codegen.getCode(
-              CodegenLanguage.cSharpRestSharp, requestModelGet1, "https"),
+            CodegenLanguage.cSharpRestSharp,
+            requestModelGet1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -66,7 +70,10 @@ class Program
 
       expect(
           codegen.getCode(
-              CodegenLanguage.cSharpRestSharp, requestModelGet2, "https"),
+            CodegenLanguage.cSharpRestSharp,
+            requestModelGet2,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -100,7 +107,10 @@ class Program
 
       expect(
           codegen.getCode(
-              CodegenLanguage.cSharpRestSharp, requestModelGet3, "https"),
+            CodegenLanguage.cSharpRestSharp,
+            requestModelGet3,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -138,7 +148,10 @@ class Program
 
       expect(
           codegen.getCode(
-              CodegenLanguage.cSharpRestSharp, requestModelGet4, "https"),
+            CodegenLanguage.cSharpRestSharp,
+            requestModelGet4,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -172,7 +185,10 @@ class Program
 
       expect(
           codegen.getCode(
-              CodegenLanguage.cSharpRestSharp, requestModelGet5, "https"),
+            CodegenLanguage.cSharpRestSharp,
+            requestModelGet5,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -208,7 +224,10 @@ class Program
 
       expect(
           codegen.getCode(
-              CodegenLanguage.cSharpRestSharp, requestModelGet6, "https"),
+            CodegenLanguage.cSharpRestSharp,
+            requestModelGet6,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -240,7 +259,10 @@ class Program
 
       expect(
           codegen.getCode(
-              CodegenLanguage.cSharpRestSharp, requestModelGet7, "https"),
+            CodegenLanguage.cSharpRestSharp,
+            requestModelGet7,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -275,7 +297,10 @@ class Program
 """;
       expect(
           codegen.getCode(
-              CodegenLanguage.cSharpRestSharp, requestModelGet8, "https"),
+            CodegenLanguage.cSharpRestSharp,
+            requestModelGet8,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -309,7 +334,10 @@ class Program
 """;
       expect(
           codegen.getCode(
-              CodegenLanguage.cSharpRestSharp, requestModelGet9, "https"),
+            CodegenLanguage.cSharpRestSharp,
+            requestModelGet9,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -342,7 +370,10 @@ class Program
 """;
       expect(
           codegen.getCode(
-              CodegenLanguage.cSharpRestSharp, requestModelGet10, "https"),
+            CodegenLanguage.cSharpRestSharp,
+            requestModelGet10,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -378,7 +409,10 @@ class Program
 """;
       expect(
           codegen.getCode(
-              CodegenLanguage.cSharpRestSharp, requestModelGet11, "https"),
+            CodegenLanguage.cSharpRestSharp,
+            requestModelGet11,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -409,7 +443,10 @@ class Program
 """;
       expect(
           codegen.getCode(
-              CodegenLanguage.cSharpRestSharp, requestModelGet12, "https"),
+            CodegenLanguage.cSharpRestSharp,
+            requestModelGet12,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
   });
@@ -442,7 +479,10 @@ class Program
 """;
       expect(
           codegen.getCode(
-              CodegenLanguage.cSharpRestSharp, requestModelHead1, "https"),
+            CodegenLanguage.cSharpRestSharp,
+            requestModelHead1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -473,7 +513,10 @@ class Program
 """;
       expect(
           codegen.getCode(
-              CodegenLanguage.cSharpRestSharp, requestModelHead2, "http"),
+            CodegenLanguage.cSharpRestSharp,
+            requestModelHead2,
+            SupportedUriSchemes.http,
+          ),
           expectedCode);
     });
   });
@@ -511,7 +554,10 @@ class Program
 """;
       expect(
           codegen.getCode(
-              CodegenLanguage.cSharpRestSharp, requestModelPost1, "https"),
+            CodegenLanguage.cSharpRestSharp,
+            requestModelPost1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
     test("Post 2", () {
@@ -553,7 +599,10 @@ arr = "[null, true, false, null]"
 """;
       expect(
           codegen.getCode(
-              CodegenLanguage.cSharpRestSharp, requestModelPost2, "https"),
+            CodegenLanguage.cSharpRestSharp,
+            requestModelPost2,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
     test("Post 3", () {
@@ -591,7 +640,10 @@ text = "I LOVE Flutter"
 """;
       expect(
           codegen.getCode(
-              CodegenLanguage.cSharpRestSharp, requestModelPost3, "https"),
+            CodegenLanguage.cSharpRestSharp,
+            requestModelPost3,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
     test("Post 4", () {
@@ -626,7 +678,10 @@ class Program
 """;
       expect(
           codegen.getCode(
-              CodegenLanguage.cSharpRestSharp, requestModelPost4, "https"),
+            CodegenLanguage.cSharpRestSharp,
+            requestModelPost4,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
     test("Post 5", () {
@@ -663,7 +718,10 @@ class Program
 """;
       expect(
           codegen.getCode(
-              CodegenLanguage.cSharpRestSharp, requestModelPost5, "https"),
+            CodegenLanguage.cSharpRestSharp,
+            requestModelPost5,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
     test("Post 6", () {
@@ -701,7 +759,10 @@ class Program
 """;
       expect(
           codegen.getCode(
-              CodegenLanguage.cSharpRestSharp, requestModelPost6, "https"),
+            CodegenLanguage.cSharpRestSharp,
+            requestModelPost6,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
     test("Post 7", () {
@@ -739,7 +800,10 @@ class Program
 """;
       expect(
           codegen.getCode(
-              CodegenLanguage.cSharpRestSharp, requestModelPost7, "https"),
+            CodegenLanguage.cSharpRestSharp,
+            requestModelPost7,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
     test("Post 8", () {
@@ -777,7 +841,10 @@ class Program
 """;
       expect(
           codegen.getCode(
-              CodegenLanguage.cSharpRestSharp, requestModelPost8, "https"),
+            CodegenLanguage.cSharpRestSharp,
+            requestModelPost8,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
     test("Post 9", () {
@@ -821,7 +888,10 @@ class Program
 """;
       expect(
           codegen.getCode(
-              CodegenLanguage.cSharpRestSharp, requestModelPost9, "https"),
+            CodegenLanguage.cSharpRestSharp,
+            requestModelPost9,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
   });
@@ -862,7 +932,10 @@ job = "zion resident"
 """;
       expect(
           codegen.getCode(
-              CodegenLanguage.cSharpRestSharp, requestModelPut1, "https"),
+            CodegenLanguage.cSharpRestSharp,
+            requestModelPut1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
   });
@@ -903,7 +976,10 @@ job = "accountant"
 """;
       expect(
           codegen.getCode(
-              CodegenLanguage.cSharpRestSharp, requestModelPatch1, "https"),
+            CodegenLanguage.cSharpRestSharp,
+            requestModelPatch1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
   });
@@ -936,7 +1012,10 @@ class Program
 """;
       expect(
           codegen.getCode(
-              CodegenLanguage.cSharpRestSharp, requestModelDelete1, "https"),
+            CodegenLanguage.cSharpRestSharp,
+            requestModelDelete1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
     test("Delete 2", () {
@@ -974,7 +1053,10 @@ job = "accountant"
 """;
       expect(
           codegen.getCode(
-              CodegenLanguage.cSharpRestSharp, requestModelDelete2, "https"),
+            CodegenLanguage.cSharpRestSharp,
+            requestModelDelete2,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
   });

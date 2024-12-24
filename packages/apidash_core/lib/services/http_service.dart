@@ -6,18 +6,25 @@ import 'package:seed/seed.dart';
 import '../consts.dart';
 import '../models/models.dart';
 import '../utils/utils.dart';
+import 'http_client_manager.dart';
 
 typedef HttpResponse = http.Response;
 
 Future<(HttpResponse?, Duration?, String?)> request(
+  String requestId,
   HttpRequestModel requestModel, {
-  String defaultUriScheme = kDefaultUriScheme,
+  SupportedUriSchemes defaultUriScheme = kDefaultUriScheme,
+  bool noSSL = false,
 }) async {
+  final clientManager = HttpClientManager();
+  final client = clientManager.createClient(requestId, noSSL: noSSL);
+
   (Uri?, String?) uriRec = getValidRequestUri(
     requestModel.url,
     requestModel.enabledParams,
     defaultUriScheme: defaultUriScheme,
   );
+
   if (uriRec.$1 != null) {
     Uri requestUrl = uriRec.$1!;
     Map<String, String> headers = requestModel.enabledHeadersMap;
@@ -27,6 +34,7 @@ Future<(HttpResponse?, Duration?, String?)> request(
       Stopwatch stopwatch = Stopwatch()..start();
       var isMultiPartRequest =
           requestModel.bodyContentType == ContentType.formdata;
+
       if (kMethodsWithBody.contains(requestModel.method)) {
         var requestBody = requestModel.body;
         if (requestBody != null && !isMultiPartRequest) {
@@ -68,29 +76,36 @@ Future<(HttpResponse?, Duration?, String?)> request(
       }
       switch (requestModel.method) {
         case HTTPVerb.get:
-          response = await http.get(requestUrl, headers: headers);
+          response = await client.get(requestUrl, headers: headers);
           break;
         case HTTPVerb.head:
-          response = await http.head(requestUrl, headers: headers);
+          response = await client.head(requestUrl, headers: headers);
           break;
         case HTTPVerb.post:
-          response = await http.post(requestUrl, headers: headers, body: body);
+          response =
+              await client.post(requestUrl, headers: headers, body: body);
           break;
         case HTTPVerb.put:
-          response = await http.put(requestUrl, headers: headers, body: body);
+          response = await client.put(requestUrl, headers: headers, body: body);
           break;
         case HTTPVerb.patch:
-          response = await http.patch(requestUrl, headers: headers, body: body);
+          response =
+              await client.patch(requestUrl, headers: headers, body: body);
           break;
         case HTTPVerb.delete:
           response =
-              await http.delete(requestUrl, headers: headers, body: body);
+              await client.delete(requestUrl, headers: headers, body: body);
           break;
       }
       stopwatch.stop();
       return (response, stopwatch.elapsed, null);
     } catch (e) {
+      if (clientManager.wasRequestCancelled(requestId)) {
+        return (null, null, kMsgRequestCancelled);
+      }
       return (null, null, e.toString());
+    } finally {
+      clientManager.closeClient(requestId);
     }
   } else {
     return (null, null, uriRec.$2);

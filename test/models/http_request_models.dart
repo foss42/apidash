@@ -413,3 +413,15 @@ const httpRequestModelPost10Json = <String, dynamic>{
     {'name': 'imfile', 'value': '/Documents/up/1.png', 'type': 'file'}
   ],
 };
+
+/// Basic GET request model for apidash.dev
+const httpRequestModelGet13 = HttpRequestModel(
+  method: HTTPVerb.get,
+  url: 'https://apidash.dev',
+);
+
+/// Basic GET request model for Certificate expired site
+const httpRequestModelGetBadSSL = HttpRequestModel(
+  method: HTTPVerb.get,
+  url: 'https://expired.badssl.com/',
+);

@@ -1,3 +1,4 @@
+import 'package:apidash_core/apidash_core.dart';
 import 'package:test/test.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash/models/settings_model.dart';
@@ -9,13 +10,14 @@ void main() {
     alwaysShowCollectionPaneScrollbar: true,
     size: Size(300, 200),
     offset: Offset(100, 150),
-    defaultUriScheme: "http",
+    defaultUriScheme: SupportedUriSchemes.http,
     defaultCodeGenLang: CodegenLanguage.curl,
     saveResponses: true,
     promptBeforeClosing: true,
     activeEnvironmentId: null,
     historyRetentionPeriod: HistoryRetentionPeriod.oneWeek,
     workspaceFolderPath: null,
+    isSSLDisabled: true,
   );
 
   test('Testing toJson()', () {
@@ -33,6 +35,7 @@ void main() {
       "activeEnvironmentId": null,
       "historyRetentionPeriod": "oneWeek",
       "workspaceFolderPath": null,
+      "isSSLDisabled": true,
     };
     expect(sm.toJson(), expectedResult);
   });
@@ -52,6 +55,7 @@ void main() {
       "activeEnvironmentId": null,
       "historyRetentionPeriod": "oneWeek",
       "workspaceFolderPath": null,
+      "isSSLDisabled": true,
     };
     expect(SettingsModel.fromJson(input), sm);
   });
@@ -62,17 +66,19 @@ void main() {
       alwaysShowCollectionPaneScrollbar: true,
       size: Size(300, 200),
       offset: Offset(100, 150),
-      defaultUriScheme: "http",
+      defaultUriScheme: SupportedUriSchemes.http,
       defaultCodeGenLang: CodegenLanguage.curl,
       saveResponses: false,
       promptBeforeClosing: true,
       activeEnvironmentId: null,
       historyRetentionPeriod: HistoryRetentionPeriod.oneWeek,
+      isSSLDisabled: false,
     );
     expect(
         sm.copyWith(
           isDark: true,
           saveResponses: false,
+          isSSLDisabled: false,
         ),
         expectedResult);
   });
@@ -91,7 +97,8 @@ void main() {
   "promptBeforeClosing": true,
   "activeEnvironmentId": null,
   "historyRetentionPeriod": "oneWeek",
-  "workspaceFolderPath": null
+  "workspaceFolderPath": null,
+  "isSSLDisabled": true
 }''';
     expect(sm.toString(), expectedResult);
   });

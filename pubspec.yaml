@@ -18,7 +18,7 @@ dependencies:
   csv: ^6.0.0
   curl_parser:
     path: packages/curl_parser
-  data_table_2: ^2.5.15
+  data_table_2: 2.5.16
   dart_style: ^2.3.7
   desktop_drop: ^0.4.4
   extended_text_field: ^16.0.0
@@ -54,7 +54,7 @@ dependencies:
   package_info_plus: ^8.0.2
   path: ^1.8.3
   path_provider: ^2.1.2
-  printing: ^5.13.2
+  printing: ^5.13.4
   provider: ^6.1.2
   riverpod: ^2.5.1
   scrollable_positioned_list: ^0.3.8

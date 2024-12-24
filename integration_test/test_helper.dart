@@ -101,7 +101,7 @@ class ApidashTestHelper {
 
   Future<void> changeURIScheme(String scheme) async {
     await tester.tap(find.descendant(
-        of: find.byType(URIPopupMenu),
+        of: find.byType(DefaultUriSchemePopupMenu),
         matching: find.byIcon(Icons.unfold_more)));
     await tester.pumpAndSettle();
 

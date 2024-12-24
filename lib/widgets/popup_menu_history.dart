@@ -5,57 +5,23 @@ import 'package:apidash/consts.dart';
 class HistoryRetentionPopupMenu extends StatelessWidget {
   const HistoryRetentionPopupMenu({
     super.key,
-    required this.value,
-    required this.onChanged,
-    this.items,
+    this.value,
+    this.onChanged,
   });
 
-  final HistoryRetentionPeriod value;
-  final void Function(HistoryRetentionPeriod value) onChanged;
-  final List<HistoryRetentionPeriod>? items;
+  final HistoryRetentionPeriod? value;
+  final void Function(HistoryRetentionPeriod? value)? onChanged;
+
   @override
   Widget build(BuildContext context) {
-    const double boxLength = 120;
-    return PopupMenuButton(
+    const double width = 120;
+    return ADPopupMenu<HistoryRetentionPeriod>(
+      value: value?.label,
+      values: HistoryRetentionPeriod.values.map((e) => (e, e.label)),
+      width: width,
       tooltip: "Select retention period",
-      surfaceTintColor: kColorTransparent,
-      constraints: const BoxConstraints(minWidth: boxLength),
-      itemBuilder: (BuildContext context) {
-        return [
-          ...items!.map((period) {
-            return PopupMenuItem(
-              value: period,
-              child: Text(
-                period.label,
-                softWrap: false,
-                overflow: TextOverflow.ellipsis,
-              ),
-            );
-          })
-        ];
-      },
-      onSelected: onChanged,
-      child: Container(
-        width: boxLength,
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              child: Text(
-                value.label,
-                style: kTextStylePopupMenuItem,
-                softWrap: false,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-            const Icon(
-              Icons.unfold_more,
-              size: 16,
-            )
-          ],
-        ),
-      ),
+      onChanged: onChanged,
+      isOutlined: true,
     );
   }
 }

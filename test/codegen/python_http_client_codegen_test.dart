@@ -1,5 +1,6 @@
 import 'package:apidash/codegen/codegen.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:test/test.dart';
 import '../models/request_models.dart';
 
@@ -20,7 +21,10 @@ print(data.decode("utf-8"))
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.pythonHttpClient, requestModelGet1, "https"),
+            CodegenLanguage.pythonHttpClient,
+            requestModelGet1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -43,7 +47,10 @@ print(data.decode("utf-8"))
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.pythonHttpClient, requestModelGet2, "https"),
+            CodegenLanguage.pythonHttpClient,
+            requestModelGet2,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -66,7 +73,10 @@ print(data.decode("utf-8"))
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.pythonHttpClient, requestModelGet3, "https"),
+            CodegenLanguage.pythonHttpClient,
+            requestModelGet3,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -93,7 +103,10 @@ print(data.decode("utf-8"))
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.pythonHttpClient, requestModelGet4, "https"),
+            CodegenLanguage.pythonHttpClient,
+            requestModelGet4,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -115,7 +128,10 @@ print(data.decode("utf-8"))
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.pythonHttpClient, requestModelGet5, "https"),
+            CodegenLanguage.pythonHttpClient,
+            requestModelGet5,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -143,7 +159,10 @@ print(data.decode("utf-8"))
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.pythonHttpClient, requestModelGet6, "https"),
+            CodegenLanguage.pythonHttpClient,
+            requestModelGet6,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -160,7 +179,10 @@ print(data.decode("utf-8"))
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.pythonHttpClient, requestModelGet7, "https"),
+            CodegenLanguage.pythonHttpClient,
+            requestModelGet7,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -188,7 +210,10 @@ print(data.decode("utf-8"))
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.pythonHttpClient, requestModelGet8, "https"),
+            CodegenLanguage.pythonHttpClient,
+            requestModelGet8,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -212,7 +237,10 @@ print(data.decode("utf-8"))
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.pythonHttpClient, requestModelGet9, "https"),
+            CodegenLanguage.pythonHttpClient,
+            requestModelGet9,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -236,7 +264,7 @@ print(data.decode("utf-8"))
           codeGen.getCode(
             CodegenLanguage.pythonHttpClient,
             requestModelGet10,
-            "https",
+            SupportedUriSchemes.https,
           ),
           expectedCode);
     });
@@ -266,7 +294,10 @@ print(data.decode("utf-8"))
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.pythonHttpClient, requestModelGet11, "https"),
+            CodegenLanguage.pythonHttpClient,
+            requestModelGet11,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -283,7 +314,10 @@ print(data.decode("utf-8"))
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.pythonHttpClient, requestModelGet12, "https"),
+            CodegenLanguage.pythonHttpClient,
+            requestModelGet12,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
   });
@@ -302,7 +336,10 @@ print(data.decode("utf-8"))
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.pythonHttpClient, requestModelHead1, "https"),
+            CodegenLanguage.pythonHttpClient,
+            requestModelHead1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -319,7 +356,10 @@ print(data.decode("utf-8"))
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.pythonHttpClient, requestModelHead2, "http"),
+            CodegenLanguage.pythonHttpClient,
+            requestModelHead2,
+            SupportedUriSchemes.http,
+          ),
           expectedCode);
     });
   });
@@ -348,7 +388,10 @@ print(data.decode("utf-8"))
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.pythonHttpClient, requestModelPost1, "https"),
+            CodegenLanguage.pythonHttpClient,
+            requestModelPost1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -380,7 +423,10 @@ print(data.decode("utf-8"))
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.pythonHttpClient, requestModelPost2, "https"),
+            CodegenLanguage.pythonHttpClient,
+            requestModelPost2,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -408,7 +454,10 @@ print(data.decode("utf-8"))
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.pythonHttpClient, requestModelPost3, "https"),
+            CodegenLanguage.pythonHttpClient,
+            requestModelPost3,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -455,8 +504,8 @@ data = res.read()
 print(data.decode("utf-8"))
 """;
       expect(
-          codeGen.getCode(
-              CodegenLanguage.pythonHttpClient, requestModelPost4, "https",
+          codeGen.getCode(CodegenLanguage.pythonHttpClient, requestModelPost4,
+              SupportedUriSchemes.https,
               boundary: "b9826c20-773c-1f0c-814d-a1b3d90cd6b3"),
           expectedCode);
     });
@@ -505,8 +554,8 @@ data = res.read()
 print(data.decode("utf-8"))
 """;
       expect(
-          codeGen.getCode(
-              CodegenLanguage.pythonHttpClient, requestModelPost5, "https",
+          codeGen.getCode(CodegenLanguage.pythonHttpClient, requestModelPost5,
+              SupportedUriSchemes.https,
               boundary: "929dc910-7714-1f0c-814d-a1b3d90cd6b3"),
           expectedCode);
     });
@@ -554,8 +603,8 @@ data = res.read()
 print(data.decode("utf-8"))
 """;
       expect(
-          codeGen.getCode(
-              CodegenLanguage.pythonHttpClient, requestModelPost6, "https",
+          codeGen.getCode(CodegenLanguage.pythonHttpClient, requestModelPost6,
+              SupportedUriSchemes.https,
               boundary: "9b1374c0-76e0-1f0c-814d-a1b3d90cd6b3"),
           expectedCode);
     });
@@ -603,8 +652,8 @@ data = res.read()
 print(data.decode("utf-8"))
 """;
       expect(
-          codeGen.getCode(
-              CodegenLanguage.pythonHttpClient, requestModelPost7, "https",
+          codeGen.getCode(CodegenLanguage.pythonHttpClient, requestModelPost7,
+              SupportedUriSchemes.https,
               boundary: "defdf240-76b4-1f0c-814d-a1b3d90cd6b3"),
           expectedCode);
     });
@@ -659,8 +708,8 @@ data = res.read()
 print(data.decode("utf-8"))
 """;
       expect(
-          codeGen.getCode(
-              CodegenLanguage.pythonHttpClient, requestModelPost8, "https",
+          codeGen.getCode(CodegenLanguage.pythonHttpClient, requestModelPost8,
+              SupportedUriSchemes.https,
               boundary: "a990b150-7683-1f0c-814d-a1b3d90cd6b3"),
           expectedCode);
     });
@@ -717,8 +766,8 @@ data = res.read()
 print(data.decode("utf-8"))
 """;
       expect(
-          codeGen.getCode(
-              CodegenLanguage.pythonHttpClient, requestModelPost9, "https",
+          codeGen.getCode(CodegenLanguage.pythonHttpClient, requestModelPost9,
+              SupportedUriSchemes.https,
               boundary: "79088e00-75ec-1f0c-814d-a1b3d90cd6b3"),
           expectedCode);
     });
@@ -749,7 +798,10 @@ print(data.decode("utf-8"))
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.pythonHttpClient, requestModelPut1, "https"),
+            CodegenLanguage.pythonHttpClient,
+            requestModelPut1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
   });
@@ -779,7 +831,10 @@ print(data.decode("utf-8"))
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.pythonHttpClient, requestModelPatch1, "https"),
+            CodegenLanguage.pythonHttpClient,
+            requestModelPatch1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
   });
@@ -798,7 +853,10 @@ print(data.decode("utf-8"))
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.pythonHttpClient, requestModelDelete1, "https"),
+            CodegenLanguage.pythonHttpClient,
+            requestModelDelete1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -826,7 +884,10 @@ print(data.decode("utf-8"))
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.pythonHttpClient, requestModelDelete2, "https"),
+            CodegenLanguage.pythonHttpClient,
+            requestModelDelete2,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
   });

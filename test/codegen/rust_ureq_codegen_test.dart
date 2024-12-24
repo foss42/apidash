@@ -1,5 +1,6 @@
 import 'package:apidash/codegen/codegen.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:test/test.dart';
 import '../models/request_models.dart';
 
@@ -20,7 +21,11 @@ void main() {
 }
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rustUreq, requestModelGet1, "https"),
+          codeGen.getCode(
+            CodegenLanguage.rustUreq,
+            requestModelGet1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -38,7 +43,11 @@ void main() {
 }
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rustUreq, requestModelGet2, "https"),
+          codeGen.getCode(
+            CodegenLanguage.rustUreq,
+            requestModelGet2,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -56,7 +65,11 @@ void main() {
 }
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rustUreq, requestModelGet3, "https"),
+          codeGen.getCode(
+            CodegenLanguage.rustUreq,
+            requestModelGet3,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -78,7 +91,11 @@ void main() {
 }
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rustUreq, requestModelGet4, "https"),
+          codeGen.getCode(
+            CodegenLanguage.rustUreq,
+            requestModelGet4,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -96,7 +113,11 @@ void main() {
 }
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rustUreq, requestModelGet5, "https"),
+          codeGen.getCode(
+            CodegenLanguage.rustUreq,
+            requestModelGet5,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -115,7 +136,11 @@ void main() {
 }
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rustUreq, requestModelGet6, "https"),
+          codeGen.getCode(
+            CodegenLanguage.rustUreq,
+            requestModelGet6,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -132,7 +157,11 @@ void main() {
 }
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rustUreq, requestModelGet7, "https"),
+          codeGen.getCode(
+            CodegenLanguage.rustUreq,
+            requestModelGet7,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -151,7 +180,11 @@ void main() {
 }
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rustUreq, requestModelGet8, "https"),
+          codeGen.getCode(
+            CodegenLanguage.rustUreq,
+            requestModelGet8,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -170,7 +203,11 @@ void main() {
 }
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rustUreq, requestModelGet9, "https"),
+          codeGen.getCode(
+            CodegenLanguage.rustUreq,
+            requestModelGet9,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -191,7 +228,7 @@ void main() {
           codeGen.getCode(
             CodegenLanguage.rustUreq,
             requestModelGet10,
-            "https",
+            SupportedUriSchemes.https,
           ),
           expectedCode);
     });
@@ -212,7 +249,11 @@ void main() {
 }
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rustUreq, requestModelGet11, "https"),
+          codeGen.getCode(
+            CodegenLanguage.rustUreq,
+            requestModelGet11,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -229,7 +270,11 @@ void main() {
 }
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rustUreq, requestModelGet12, "https"),
+          codeGen.getCode(
+            CodegenLanguage.rustUreq,
+            requestModelGet12,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
   });
@@ -248,7 +293,11 @@ void main() {
 }
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rustUreq, requestModelHead1, "https"),
+          codeGen.getCode(
+            CodegenLanguage.rustUreq,
+            requestModelHead1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -265,7 +314,11 @@ void main() {
 }
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rustUreq, requestModelHead2, "http"),
+          codeGen.getCode(
+            CodegenLanguage.rustUreq,
+            requestModelHead2,
+            SupportedUriSchemes.http,
+          ),
           expectedCode);
     });
   });
@@ -289,7 +342,11 @@ void main() {
 }
 ''';
       expect(
-          codeGen.getCode(CodegenLanguage.rustUreq, requestModelPost1, "https"),
+          codeGen.getCode(
+            CodegenLanguage.rustUreq,
+            requestModelPost1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -315,7 +372,11 @@ void main() {
 }
 ''';
       expect(
-          codeGen.getCode(CodegenLanguage.rustUreq, requestModelPost2, "https"),
+          codeGen.getCode(
+            CodegenLanguage.rustUreq,
+            requestModelPost2,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -337,7 +398,11 @@ void main() {
 }
 ''';
       expect(
-          codeGen.getCode(CodegenLanguage.rustUreq, requestModelPost3, "https"),
+          codeGen.getCode(
+            CodegenLanguage.rustUreq,
+            requestModelPost3,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -413,7 +478,7 @@ fn main() -> Result<(), ureq::Error> {
           codeGen.getCode(
             CodegenLanguage.rustUreq,
             requestModelPost4,
-            "https",
+            SupportedUriSchemes.https,
             boundary: "test",
           ),
           expectedCode);
@@ -488,7 +553,8 @@ fn main() -> Result<(), ureq::Error> {
 }
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rustUreq, requestModelPost5, "https",
+          codeGen.getCode(CodegenLanguage.rustUreq, requestModelPost5,
+              SupportedUriSchemes.https,
               boundary: "test"),
           expectedCode);
     });
@@ -556,7 +622,8 @@ fn main() -> Result<(), ureq::Error> {
 }
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rustUreq, requestModelPost6, "https",
+          codeGen.getCode(CodegenLanguage.rustUreq, requestModelPost6,
+              SupportedUriSchemes.https,
               boundary: "test"),
           expectedCode);
     });
@@ -624,7 +691,8 @@ fn main() -> Result<(), ureq::Error> {
 }
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rustUreq, requestModelPost7, "https",
+          codeGen.getCode(CodegenLanguage.rustUreq, requestModelPost7,
+              SupportedUriSchemes.https,
               boundary: "test"),
           expectedCode);
     });
@@ -699,7 +767,8 @@ fn main() -> Result<(), ureq::Error> {
 }
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rustUreq, requestModelPost8, "https",
+          codeGen.getCode(CodegenLanguage.rustUreq, requestModelPost8,
+              SupportedUriSchemes.https,
               boundary: "test"),
           expectedCode);
     });
@@ -771,7 +840,8 @@ fn main() -> Result<(), ureq::Error> {
 }
 """;
       expect(
-          codeGen.getCode(CodegenLanguage.rustUreq, requestModelPost9, "https",
+          codeGen.getCode(CodegenLanguage.rustUreq, requestModelPost9,
+              SupportedUriSchemes.https,
               boundary: "test"),
           expectedCode);
     });
@@ -796,7 +866,11 @@ fn main() -> Result<(), ureq::Error> {
 }
 ''';
       expect(
-          codeGen.getCode(CodegenLanguage.rustUreq, requestModelPut1, "https"),
+          codeGen.getCode(
+            CodegenLanguage.rustUreq,
+            requestModelPut1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
   });
@@ -821,7 +895,10 @@ fn main() -> Result<(), ureq::Error> {
 ''';
       expect(
           codeGen.getCode(
-              CodegenLanguage.rustUreq, requestModelPatch1, "https"),
+            CodegenLanguage.rustUreq,
+            requestModelPatch1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
   });
@@ -841,7 +918,10 @@ fn main() -> Result<(), ureq::Error> {
 """;
       expect(
           codeGen.getCode(
-              CodegenLanguage.rustUreq, requestModelDelete1, "https"),
+            CodegenLanguage.rustUreq,
+            requestModelDelete1,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
 
@@ -864,7 +944,10 @@ fn main() -> Result<(), ureq::Error> {
 ''';
       expect(
           codeGen.getCode(
-              CodegenLanguage.rustUreq, requestModelDelete2, "https"),
+            CodegenLanguage.rustUreq,
+            requestModelDelete2,
+            SupportedUriSchemes.https,
+          ),
           expectedCode);
     });
   });

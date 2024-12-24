@@ -1,7 +1,7 @@
 import 'package:apidash_core/apidash_core.dart';
 import 'package:test/test.dart';
-import 'package:http/http.dart' as http;
 import 'http_response_models.dart';
+import 'request_models.dart';
 
 void main() {
   test('Testing toJSON', () {
@@ -14,10 +14,14 @@ void main() {
   });
 
   test('Testing fromResponse', () async {
-    final response = await http.get(
-      Uri.parse('https://api.apidash.dev/'),
+    (HttpResponse?, Duration?, String?)? responseRec = await request(
+      requestModelGet1.id,
+      requestModelGet1.httpRequestModel!,
+      defaultUriScheme: kDefaultUriScheme,
+      noSSL: false,
     );
-    final responseData = responseModel.fromResponse(response: response);
+
+    final responseData = responseModel.fromResponse(response: responseRec.$1!);
     expect(responseData.statusCode, 200);
     expect(responseData.body,
         '{"data":"Check out https://api.apidash.dev/docs to get started."}');
@@ -25,16 +29,48 @@ void main() {
   "data": "Check out https://api.apidash.dev/docs to get started."
 }''');
   });
+
   test('Testing fromResponse for contentType not Json', () async {
-    final response = await http.get(
-      Uri.parse('https://apidash.dev/'),
+    (HttpResponse?, Duration?, String?)? responseRec = await request(
+      requestModelGet13.id,
+      requestModelGet13.httpRequestModel!,
+      defaultUriScheme: kDefaultUriScheme,
+      noSSL: false,
     );
-    final responseData = responseModel.fromResponse(response: response);
+
+    final responseData = responseModel.fromResponse(response: responseRec.$1!);
     expect(responseData.statusCode, 200);
     expect(responseData.body!.length, greaterThan(1000));
     expect(responseData.contentType, 'text/html; charset=utf-8');
     expect(responseData.mediaType!.mimeType, 'text/html');
   });
+
+  test('Testing fromResponse for Bad SSL with certificate check', () async {
+    (HttpResponse?, Duration?, String?)? responseRec = await request(
+      requestModelGetBadSSL.id,
+      requestModelGetBadSSL.httpRequestModel!,
+      defaultUriScheme: kDefaultUriScheme,
+      noSSL: false,
+    );
+    expect(responseRec.$3?.contains("CERTIFICATE_VERIFY_FAILED"), true);
+    expect(responseRec.$1, isNull);
+  });
+
+  test('Testing fromResponse for Bad SSL with no certificate check', () async {
+    (HttpResponse?, Duration?, String?)? responseRec = await request(
+      requestModelGetBadSSL.id,
+      requestModelGetBadSSL.httpRequestModel!,
+      defaultUriScheme: kDefaultUriScheme,
+      noSSL: true,
+    );
+
+    final responseData = responseModel.fromResponse(response: responseRec.$1!);
+    expect(responseData.statusCode, 200);
+    expect(responseData.body!.length, greaterThan(400));
+    expect(responseData.contentType, 'text/html');
+    expect(responseData.mediaType!.mimeType, 'text/html');
+  });
+
   test('Testing hashcode', () {
     expect(responseModel.hashCode, greaterThan(0));
   });

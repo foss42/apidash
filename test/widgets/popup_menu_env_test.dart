@@ -1,3 +1,4 @@
+import 'package:apidash/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:apidash/models/models.dart';
@@ -13,7 +14,7 @@ void main() {
         home: Scaffold(
           body: EnvironmentPopupMenu(
             value: environment,
-            items: [environment],
+            options: [environment],
           ),
         ),
       ),
@@ -24,11 +25,16 @@ void main() {
 
   testWidgets('EnvironmentPopupMenu displays "None" when no value is provided',
       (WidgetTester tester) async {
+    const environment = EnvironmentModel(
+      name: 'Global',
+      id: kGlobalEnvironmentId,
+    );
     await tester.pumpWidget(
       const MaterialApp(
         home: Scaffold(
           body: EnvironmentPopupMenu(
-            items: [],
+            value: environment,
+            options: [environment],
           ),
         ),
       ),
@@ -39,14 +45,25 @@ void main() {
 
   testWidgets('EnvironmentPopupMenu displays popup menu items',
       (WidgetTester tester) async {
-    const environment1 = EnvironmentModel(name: 'Production', id: 'prod');
-    const environment2 = EnvironmentModel(name: 'Development', id: 'dev');
+    const environment = EnvironmentModel(
+      name: 'Global',
+      id: kGlobalEnvironmentId,
+    );
+    const environment1 = EnvironmentModel(
+      name: 'Production',
+      id: 'prod',
+    );
+    const environment2 = EnvironmentModel(
+      name: 'Development',
+      id: 'dev',
+    );
 
     await tester.pumpWidget(
       const MaterialApp(
         home: Scaffold(
           body: EnvironmentPopupMenu(
-            items: [environment1, environment2],
+            value: environment,
+            options: [environment, environment1, environment2],
           ),
         ),
       ),
@@ -70,7 +87,7 @@ void main() {
       MaterialApp(
         home: Scaffold(
           body: EnvironmentPopupMenu(
-            items: const [environment1, environment2],
+            options: const [environment1, environment2],
             onChanged: (value) {
               selectedEnvironment = value;
             },
@@ -91,14 +108,22 @@ void main() {
   testWidgets(
       'EnvironmentPopupMenu calls onChanged with null when "None" is selected',
       (WidgetTester tester) async {
-    const environment = EnvironmentModel(name: 'Production', id: 'prod');
-    EnvironmentModel? selectedEnvironment = environment;
+    const environment = EnvironmentModel(
+      name: 'Global',
+      id: kGlobalEnvironmentId,
+    );
+    const environment1 = EnvironmentModel(
+      name: 'Production',
+      id: 'prod',
+    );
+    EnvironmentModel? selectedEnvironment = environment1;
 
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
           body: EnvironmentPopupMenu(
-            items: const [environment],
+            value: environment1,
+            options: const [environment, environment1],
             onChanged: (value) {
               selectedEnvironment = value;
             },
@@ -113,6 +138,6 @@ void main() {
     await tester.tap(find.text('None').last);
     await tester.pumpAndSettle();
 
-    expect(selectedEnvironment, isNull);
+    expect(selectedEnvironment, environment);
   });
 }

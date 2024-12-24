@@ -1,6 +1,7 @@
 import 'package:apidash/consts.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/utils/utils.dart' show getNewUuid;
+import 'package:apidash_core/apidash_core.dart';
 import 'c/curl.dart';
 import 'csharp/http_client.dart';
 import 'csharp/rest_sharp.dart';
@@ -35,7 +36,7 @@ class Codegen {
   String? getCode(
     CodegenLanguage codegenLanguage,
     RequestModel requestModel,
-    String defaultUriScheme, {
+    SupportedUriSchemes defaultUriScheme, {
     String? boundary,
   }) {
     var httpRequestModel = requestModel.httpRequestModel;
@@ -48,7 +49,7 @@ class Codegen {
       url = kDefaultUri;
     }
     if (!url.contains("://") && url.isNotEmpty) {
-      url = "$defaultUriScheme://$url";
+      url = "${defaultUriScheme.name}://$url";
     }
     var rM = httpRequestModel.copyWith(url: url);
 
@@ -56,7 +57,7 @@ class Codegen {
       case CodegenLanguage.curl:
         return cURLCodeGen().getCode(rM);
       case CodegenLanguage.har:
-        return HARCodeGen().getCode(rM, defaultUriScheme, boundary: boundary);
+        return HARCodeGen().getCode(rM, boundary: boundary);
       case CodegenLanguage.dartHttp:
         return DartHttpCodeGen().getCode(rM);
       case CodegenLanguage.dartDio:

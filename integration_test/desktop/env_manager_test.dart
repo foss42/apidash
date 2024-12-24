@@ -1,5 +1,5 @@
 import 'dart:ui';
-
+import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:spot/spot.dart';
@@ -23,9 +23,8 @@ Future<void> runDesktopEnvIntegrationTest() async {
   const unknown = "unknown";
   const expectedCurlCode = "curl --url '$testEndpoint$envVarValue'";
 
-  apidashWidgetTest(
-      "Testing Environment Manager in desktop end-to-end", kExpandedWindowWidth,
-      (WidgetTester tester, helper) async {
+  apidashWidgetTest("Testing Environment Manager in desktop end-to-end",
+      WindowWidth.expanded.value, (WidgetTester tester, helper) async {
     await tester.pumpUntilFound(find.byType(DashApp));
     await Future.delayed(const Duration(seconds: 1));
 

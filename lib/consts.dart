@@ -30,10 +30,6 @@ const kMinWindowSize = Size(320, 640);
 const kMinInitialWindowWidth = 1200.0;
 const kMinInitialWindowHeight = 800.0;
 const kMinRequestEditorDetailsCardPaneSize = 300.0;
-const kCompactWindowWidth = 600.0;
-const kMediumWindowWidth = 840.0;
-const kExpandedWindowWidth = 1200.0;
-const kLargeWindowWidth = 1600.0;
 
 final kHomeScaffoldKey = GlobalKey<ScaffoldState>();
 final kEnvScaffoldKey = GlobalKey<ScaffoldState>();
@@ -144,7 +140,8 @@ enum CodegenLanguage {
 }
 
 enum ImportFormat {
-  curl("cURL");
+  curl("cURL"),
+  postman("Postman Collection v2.1");
 
   const ImportFormat(this.label);
   final String label;

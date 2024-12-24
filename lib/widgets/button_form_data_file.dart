@@ -3,30 +3,32 @@ import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
 
 class FormDataFileButton extends StatelessWidget {
-  const FormDataFileButton({super.key, this.onPressed, this.initialValue});
+  const FormDataFileButton({
+    super.key,
+    this.onPressed,
+    this.initialValue,
+  });
 
   final VoidCallback? onPressed;
   final String? initialValue;
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton.icon(
-      icon: const Icon(
-        Icons.snippet_folder_rounded,
-        size: 20,
-      ),
-      style: ElevatedButton.styleFrom(
+    return ADFilledButton(
+      icon: Icons.snippet_folder_rounded,
+      iconSize: kButtonIconSizeLarge,
+      label: (initialValue == null || initialValue!.isEmpty)
+          ? kLabelSelectFile
+          : initialValue!,
+      labelTextStyle: kFormDataButtonLabelTextStyle,
+      buttonStyle: ElevatedButton.styleFrom(
         minimumSize: const Size.fromHeight(kDataTableRowHeight),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(6),
+        shape: const RoundedRectangleBorder(
+          borderRadius: kBorderRadius6,
         ),
       ),
+      isTonal: true,
       onPressed: onPressed,
-      label: Text(
-        initialValue ?? kLabelSelectFile,
-        overflow: TextOverflow.ellipsis,
-        style: kFormDataButtonLabelTextStyle,
-      ),
     );
   }
 }

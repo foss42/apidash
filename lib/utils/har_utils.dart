@@ -78,7 +78,7 @@ Map<String, dynamic> entryToHAR(RequestModel requestModel) {
 
 Map<String, dynamic> requestModelToHARJsonRequest(
   HttpRequestModel? requestModel, {
-  defaultUriScheme = kDefaultUriScheme,
+  SupportedUriSchemes defaultUriScheme = kDefaultUriScheme,
   bool exportMode = false,
   bool useEnabled = false,
   String? boundary,

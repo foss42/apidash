@@ -188,3 +188,15 @@ Map<String, dynamic> requestModelJson = {
   'message': null,
   'httpResponseModel': responseModelJson,
 };
+
+/// Basic GET request model for apidash.dev
+const requestModelGet13 = RequestModel(
+  id: 'get13',
+  httpRequestModel: httpRequestModelGet13,
+);
+
+/// Basic GET request model for badSSL
+const requestModelGetBadSSL = RequestModel(
+  id: 'badSSL',
+  httpRequestModel: httpRequestModelGetBadSSL,
+);

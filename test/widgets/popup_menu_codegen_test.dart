@@ -13,7 +13,6 @@ void main() {
         home: Scaffold(
           body: CodegenPopupMenu(
             value: codegenLanguage,
-            items: [codegenLanguage],
           ),
         ),
       ),
@@ -31,7 +30,6 @@ void main() {
       const MaterialApp(
         home: Scaffold(
           body: CodegenPopupMenu(
-            items: [codegenLanguage1, codegenLanguage2],
             value: codegenLanguage1,
           ),
         ),
@@ -48,7 +46,7 @@ void main() {
   testWidgets('CodegenPopupMenu calls onChanged when an item is selected',
       (WidgetTester tester) async {
     const codegenLanguage1 = CodegenLanguage.dartDio;
-    const codegenLanguage2 = CodegenLanguage.pythonRequests;
+    const codegenLanguage2 = CodegenLanguage.cCurlCodeGen;
     CodegenLanguage? selectedLanguage;
 
     await tester.pumpWidget(
@@ -56,7 +54,6 @@ void main() {
         home: Scaffold(
           body: CodegenPopupMenu(
             value: codegenLanguage1,
-            items: const [codegenLanguage1, codegenLanguage2],
             onChanged: (value) {
               selectedLanguage = value;
             },
