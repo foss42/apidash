@@ -1,87 +1,44 @@
+import 'dart:convert';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:json_annotation/json_annotation.dart';
+import 'package:seed/seed.dart';
+import '../extensions/extensions.dart';
+import '../utils/utils.dart'
+    show rowsToFormDataMapList, rowsToMap, getEnabledRows;
+import '../consts.dart';
 
 part 'graphql_request_model.freezed.dart';
+
 part 'graphql_request_model.g.dart';
+
 
 @freezed
 class GraphqlRequestModel with _$GraphqlRequestModel {
-  factory GraphqlRequestModel({
-    required String query,
-    Map<String, dynamic>? variables,
-  }) = _GraphqlRequestModel;
+  const GraphqlRequestModel._();
 
-  factory GraphqlRequestModel.fromJson(Map<String, dynamic> json) =>
+  @JsonSerializable(
+    explicitToJson: true,
+    anyMap: true,
+  )
+  const factory GraphqlRequestModel({
+    @Default("") String url,
+    List<NameValueModel>? headers,
+    List<NameValueModel>? graphqlVariables,
+    List<bool>? isHeaderEnabledList,
+    List<bool>? isgraphqlVariablesEnabledList,
+    String? query,
+}) = _GraphqlRequestModel;
+
+  factory GraphqlRequestModel.fromJson(Map<String, Object?> json) =>
       _$GraphqlRequestModelFromJson(json);
+
+  Map<String, String> get headersMap => rowsToMap(headers) ?? {};
+  Map<String, String> get graphqlVariablesMap => rowsToMap(graphqlVariables) ?? {};
+  List<NameValueModel>? get enabledHeaders =>
+      getEnabledRows(headers, isHeaderEnabledList);
+  List<NameValueModel>? get enabledgraphqlVariables =>
+      getEnabledRows(graphqlVariables, isgraphqlVariablesEnabledList);
+
+  Map<String, String> get enabledHeadersMap => rowsToMap(enabledHeaders) ?? {};
+  Map<String, String> get enabledgraphqlVariablesMap => rowsToMap(enabledgraphqlVariables) ?? {};
+
 }
-
-
-// // class GraphqlRequestModelConverter implements JsonConverter<GraphqlRequestModel, Map<String, dynamic>> {
-// //   const GraphqlRequestModelConverter();
-
-// //   @override
-// //   GraphqlRequestModel fromJson(Map<String, dynamic> json) {
-// //     // Implement conversion from JSON to GraphqlRequestModel
-// //     return GraphqlRequestModel.fromJson(json);
-// //   }
-
-// //   @override
-// //   Map<String, dynamic> toJson(GraphqlRequestModel object) {
-// //     // Implement conversion from GraphqlRequestModel to JSON
-// //     return object.toJson();
-// //   }
-// // }
-// // class GraphqlRequestModel {
-// //   final String query;
-// //   final Map<String, dynamic>? variables;
-
-// //   GraphqlRequestModel({
-// //     required this.query,
-// //     this.variables,
-// //   });
-
-// //   // Factory constructor for JSON deserialization
-// //   factory GraphqlRequestModel.fromJson(Map<String, dynamic> json) {
-// //     return GraphqlRequestModel(
-// //       query: json['query'] as String,
-// //       variables: json['variables'] != null
-// //           ? Map<String, dynamic>.from(json['variables'] as Map)
-// //           : null,
-// //     );
-// //   }
-
-// //   // Method for JSON serialization
-// //   Map<String, dynamic> toJson() {
-// //     return {
-// //       'query': query,
-// //       if (variables != null) 'variables': variables,
-// //     };
-// //   }
-
-// //   // CopyWith method
-// //   GraphqlRequestModel copyWith({
-// //     String? query,
-// //     Map<String, dynamic>? variables,
-// //   }) {
-// //     return GraphqlRequestModel(
-// //       query: query ?? this.query,
-// //       variables: variables ?? this.variables,
-// //     );
-// //   }
-
-// //   @override
-// //   String toString() {
-// //     return 'GraphqlRequestModel(query: $query, variables: $variables)';
-// //   }
-
-// //   @override
-// //   bool operator ==(Object other) {
-// //     if (identical(this, other)) return true;
-// //     if (other is! GraphqlRequestModel) return false;
-// //     return query == other.query && 
-// //            variables == other.variables;
-// //   }
-
-// //   @override
-// //   int get hashCode => Object.hash(query, variables);
-// // }
