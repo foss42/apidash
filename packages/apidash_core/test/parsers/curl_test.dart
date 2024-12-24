@@ -1,4 +1,3 @@
-import 'package:apidash/importer/curl/curl.dart';
 import 'package:test/test.dart';
 import 'package:apidash_core/apidash_core.dart';
 
@@ -15,7 +14,7 @@ void main() {
       final result = curlImport.getHttpRequestModel(curl);
 
       expect(
-          result,
+          result?[0],
           const HttpRequestModel(
               method: HTTPVerb.get,
               url: 'https://api.apidash.dev/users',
@@ -37,7 +36,7 @@ void main() {
       final result = curlImport.getHttpRequestModel(curl);
 
       expect(
-        result,
+        result?[0],
         const HttpRequestModel(
           method: HTTPVerb.post,
           url: 'https://api.apidash.dev/users',
@@ -63,7 +62,7 @@ void main() {
       final result = curlImport.getHttpRequestModel(curl);
 
       expect(
-          result,
+          result?[0],
           const HttpRequestModel(
             method: HTTPVerb.post,
             url: 'https://api.apidash.dev/upload',
