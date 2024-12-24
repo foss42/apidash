@@ -1,9 +1,8 @@
 import 'package:apidash/consts.dart';
 import 'package:apidash_core/apidash_core.dart';
-import 'curl/curl.dart';
 
 class Importer {
-  Future<HttpRequestModel?> getHttpRequestModel(
+  Future<List<HttpRequestModel>?> getHttpRequestModel(
     ImportFormat fileType,
     String content,
   ) async {

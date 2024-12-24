@@ -28,11 +28,14 @@ void importToCollectionPane(
         (content) {
           kImporter
               .getHttpRequestModel(importFormatType, content)
-              .then((importedRequestModel) {
-            if (importedRequestModel != null) {
-              ref
-                  .read(collectionStateNotifierProvider.notifier)
-                  .addRequestModel(importedRequestModel);
+              .then((importedRequestModels) {
+            if (importedRequestModels != null) {
+              for (var model in importedRequestModels) {
+                ref
+                    .read(collectionStateNotifierProvider.notifier)
+                    .addRequestModel(model);
+              }
+
               // Solves - Do not use BuildContexts across async gaps
               if (!context.mounted) return;
               Navigator.of(context).pop();
