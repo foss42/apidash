@@ -3,10 +3,12 @@ import '../consts.dart';
 import '../models/models.dart';
 import '../utils/utils.dart';
 
-class CurlFileImport {
+class CurlIO {
   List<HttpRequestModel>? getHttpRequestModel(String content) {
     content = content.trim();
     try {
+      // TODO: Allow files with multiple curl commands and create
+      // a request model for each
       final curl = Curl.parse(content);
       final url = stripUriParams(curl.uri);
       final method = HTTPVerb.values.byName(curl.method.toLowerCase());

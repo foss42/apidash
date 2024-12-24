@@ -7,7 +7,7 @@ class Importer {
     String content,
   ) async {
     return switch (fileType) {
-      ImportFormat.curl => CurlFileImport().getHttpRequestModel(content),
+      ImportFormat.curl => CurlIO().getHttpRequestModel(content),
       ImportFormat.postman => null
     };
   }

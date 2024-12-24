@@ -3,10 +3,10 @@ import 'package:apidash_core/apidash_core.dart';
 
 void main() {
   group('CurlFileImport Tests', () {
-    late CurlFileImport curlImport;
+    late CurlIO curlImport;
 
     setUp(() {
-      curlImport = CurlFileImport();
+      curlImport = CurlIO();
     });
 
     test('should parse simple GET request', () {
