@@ -35,7 +35,8 @@ void importToCollectionPane(
                     .read(collectionStateNotifierProvider.notifier)
                     .addRequestModel(model);
               }
-
+              sm.showSnackBar(
+                  getSnackBar("Successfully imported", small: false));
               // Solves - Do not use BuildContexts across async gaps
               if (!context.mounted) return;
               Navigator.of(context).pop();
