@@ -27,7 +27,7 @@ void importToCollectionPane(
       file.readAsString().then(
         (content) {
           kImporter
-              .getHttpRequestModel(importFormatType, content)
+              .getHttpRequestModelList(importFormatType, content)
               .then((importedRequestModels) {
             if (importedRequestModels != null) {
               for (var model in importedRequestModels) {

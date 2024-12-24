@@ -4,7 +4,7 @@ import '../models/models.dart';
 import '../utils/utils.dart';
 
 class CurlIO {
-  List<HttpRequestModel>? getHttpRequestModel(String content) {
+  List<HttpRequestModel>? getHttpRequestModelList(String content) {
     content = content.trim();
     try {
       // TODO: Allow files with multiple curl commands and create

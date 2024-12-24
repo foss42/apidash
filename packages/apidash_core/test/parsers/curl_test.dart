@@ -11,7 +11,7 @@ void main() {
 
     test('should parse simple GET request', () {
       const curl = 'curl https://api.apidash.dev/users';
-      final result = curlImport.getHttpRequestModel(curl);
+      final result = curlImport.getHttpRequestModelList(curl);
 
       expect(
           result?[0],
@@ -33,7 +33,7 @@ void main() {
         -d '{"name": "John", "age": 30}'
       ''';
 
-      final result = curlImport.getHttpRequestModel(curl);
+      final result = curlImport.getHttpRequestModelList(curl);
 
       expect(
         result?[0],
@@ -59,7 +59,7 @@ void main() {
         -F "description=My Photo"
       ''';
 
-      final result = curlImport.getHttpRequestModel(curl);
+      final result = curlImport.getHttpRequestModelList(curl);
 
       expect(
           result?[0],
@@ -85,7 +85,7 @@ void main() {
 
     test('should return null for invalid curl command', () {
       const curl = 'invalid curl command';
-      final result = curlImport.getHttpRequestModel(curl);
+      final result = curlImport.getHttpRequestModelList(curl);
 
       expect(result, isNull);
     });
