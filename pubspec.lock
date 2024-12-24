@@ -301,7 +301,7 @@ packages:
     source: hosted
     version: "6.0.0"
   curl_parser:
-    dependency: "direct main"
+    dependency: transitive
     description:
       path: "packages/curl_parser"
       relative: true
