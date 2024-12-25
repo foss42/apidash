@@ -11,7 +11,7 @@ class Importer {
           .getHttpRequestModelList(content)
           ?.map((t) => (null, t))
           .toList(),
-      ImportFormat.postman => null
+      ImportFormat.postman => PostmanIO().getHttpRequestModelList(content),
     };
   }
 }

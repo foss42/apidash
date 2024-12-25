@@ -34,7 +34,7 @@ void importToCollectionPane(
                 sm.showSnackBar(
                     getSnackBar("No requests imported", small: false));
               } else {
-                for (var model in importedRequestModels) {
+                for (var model in importedRequestModels.reversed) {
                   ref
                       .read(collectionStateNotifierProvider.notifier)
                       .addRequestModel(
