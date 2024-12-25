@@ -17,6 +17,8 @@ dependencies:
   freezed_annotation: ^2.4.1
   http: ^1.2.1
   http_parser: ^4.0.2
+  postman:
+    path: ../postman
   seed: ^0.0.2
   xml: ^6.3.0
 
