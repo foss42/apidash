@@ -30,13 +30,19 @@ void importToCollectionPane(
               .getHttpRequestModelList(importFormatType, content)
               .then((importedRequestModels) {
             if (importedRequestModels != null) {
-              for (var model in importedRequestModels) {
-                ref
-                    .read(collectionStateNotifierProvider.notifier)
-                    .addRequestModel(model);
+              if (importedRequestModels.isEmpty) {
+                sm.showSnackBar(
+                    getSnackBar("No requests imported", small: false));
+              } else {
+                for (var model in importedRequestModels) {
+                  ref
+                      .read(collectionStateNotifierProvider.notifier)
+                      .addRequestModel(model);
+                }
+                sm.showSnackBar(getSnackBar(
+                    "Successfully imported ${importedRequestModels.length} requests",
+                    small: false));
               }
-              sm.showSnackBar(
-                  getSnackBar("Successfully imported", small: false));
               // Solves - Do not use BuildContexts across async gaps
               if (!context.mounted) return;
               Navigator.of(context).pop();
