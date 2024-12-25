@@ -84,10 +84,14 @@ class CollectionStateNotifier
     unsave();
   }
 
-  void addRequestModel(HttpRequestModel httpRequestModel) {
+  void addRequestModel(
+    HttpRequestModel httpRequestModel, {
+    String? name,
+  }) {
     final id = getNewUuid();
     final newRequestModel = RequestModel(
       id: id,
+      name: name ?? "",
       httpRequestModel: httpRequestModel,
     );
     var map = {...state!};
