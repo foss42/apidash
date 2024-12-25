@@ -37,7 +37,10 @@ void importToCollectionPane(
                 for (var model in importedRequestModels) {
                   ref
                       .read(collectionStateNotifierProvider.notifier)
-                      .addRequestModel(model);
+                      .addRequestModel(
+                        model.$2,
+                        name: model.$1,
+                      );
                 }
                 sm.showSnackBar(getSnackBar(
                     "Successfully imported ${importedRequestModels.length} requests",
