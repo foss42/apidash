@@ -8,6 +8,7 @@ import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/screens/common_widgets/common_widgets.dart';
+import '../../../../../widgets/oauth_header_config_widget.dart';
 
 class EditRequestHeaders extends ConsumerStatefulWidget {
   const EditRequestHeaders({super.key});
@@ -177,52 +178,88 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
       },
     );
 
-    return Stack(
-      children: [
-        Container(
-          margin: kP10,
-          child: Column(
-            children: [
-              Expanded(
-                child: Theme(
-                  data: Theme.of(context)
-                      .copyWith(scrollbarTheme: kDataTableScrollbarTheme),
-                  child: DataTable2(
-                    columnSpacing: 12,
-                    dividerThickness: 0,
-                    horizontalMargin: 0,
-                    headingRowHeight: 0,
-                    dataRowHeight: kDataTableRowHeight,
-                    bottomMargin: kDataTableBottomPadding,
-                    isVerticalScrollBarVisible: true,
-                    columns: columns,
-                    rows: dataRows,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              margin: kP10,
+              height: constraints.maxHeight * 0.6,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Expanded(
+                    child: Theme(
+                      data: Theme.of(context)
+                          .copyWith(scrollbarTheme: kDataTableScrollbarTheme),
+                      child: DataTable2(
+                        columnSpacing: 12,
+                        dividerThickness: 0,
+                        horizontalMargin: 0,
+                        headingRowHeight: 0,
+                        dataRowHeight: kDataTableRowHeight,
+                        bottomMargin: kDataTableBottomPadding,
+                        isVerticalScrollBarVisible: true,
+                        columns: columns,
+                        rows: dataRows,
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              kVSpacer40,
-            ],
-          ),
-        ),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: Padding(
-            padding: kPb15,
-            child: ElevatedButton.icon(
-              onPressed: () {
-                headerRows.add(kNameValueEmptyModel);
-                isRowEnabledList.add(false);
-                _onFieldChange(selectedId!);
-              },
-              icon: const Icon(Icons.add),
-              label: const Text(
-                kLabelAddHeader,
-                style: kTextStyleButton,
+                  Padding(
+                    padding: kPb15,
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        headerRows.add(kNameValueEmptyModel);
+                        isRowEnabledList.add(false);
+                        _onFieldChange(selectedId!);
+                      },
+                      icon: const Icon(Icons.add),
+                      label: const Text(
+                        kLabelAddHeader,
+                        style: kTextStyleButton,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ),
-        ),
-      ],
+            ExpansionTile(
+              title: const Text('OAuth Configuration'),
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: OAuthHeaderConfigWidget(
+                    initialHeaders: headerRows.isNotEmpty
+                        ? Map.fromEntries(headerRows.map((row) =>
+                            MapEntry(row.name, row.value)))
+                        : null,
+                    onHeadersUpdated: (updatedHeaders) {
+                      setState(() {
+                        headerRows = headerRows
+                            .where((row) =>
+                                row.name.toLowerCase() != 'authorization')
+                            .toList();
+
+                        if (updatedHeaders.containsKey('Authorization')) {
+                          headerRows.add(NameValueModel(
+                            name: 'Authorization',
+                            value: updatedHeaders['Authorization']!,
+                          ));
+                        }
+
+                        _onFieldChange(
+                          ref.read(selectedIdStateProvider) ?? '',
+                        );
+                      });
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
     );
   }
 }

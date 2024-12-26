@@ -1,3 +1,10 @@
+export 'package:apidash_design_system/widgets/widgets.dart';
+
+// OAuth Widgets
+export 'oauth_header_config_widget.dart';
+export 'oauth_token_acquisition_dialog.dart';
+
+// Existing widget exports
 export 'button_clear_response.dart';
 export 'button_copy.dart';
 export 'button_discord.dart';

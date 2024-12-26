@@ -19,7 +19,8 @@ environment:
 dependencies:
   args: ^2.5.0
   equatable: ^2.0.5
-  seed: ^0.0.1
+  seed: 
+    path: ../seed
   shlex: ^2.0.2
 
 dev_dependencies:

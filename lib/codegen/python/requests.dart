@@ -8,7 +8,6 @@ class PythonRequestsCodeGen {
   final String kTemplateStart = """import requests
 {% if hasFormData %}from requests_toolbelt.multipart.encoder import MultipartEncoder
 {% endif %}
-url = '{{url}}'
 
 """;
 
@@ -81,6 +80,39 @@ print('Response Body:', response.text)
     HttpRequestModel requestModel, {
     String? boundary,
   }) {
+    final url = requestModel.url;
+    final method = requestModel.method.name.toLowerCase();
+
+    // Handle headers with special attention to Authorization
+    String headersCode = '';
+    if (requestModel.headersMap.isNotEmpty) {
+      final headers = requestModel.headersMap;
+      headersCode = 'headers = {\n';
+      headers.forEach((key, value) {
+        // Properly escape header values
+        final escapedValue = value.replaceAll("'", "\\'");
+        headersCode += "    '$key': '$escapedValue',\n";
+      });
+      headersCode += '}\n\n';
+    }
+
+    // Rest of the code generation remains the same
+    String code = '''
+import requests
+
+$headersCode
+response = requests.${method}(
+    '$url',
+    ${headersCode.isNotEmpty ? 'headers=headers,\n    ' : ''}${_getBodyCode(requestModel, boundary)}
+)
+
+print(response.text)
+''';
+
+    return code;
+  }
+
+  String _getBodyCode(HttpRequestModel requestModel, String? boundary) {
     try {
       String result = "";
       bool hasQuery = false;
@@ -192,7 +224,7 @@ print('Response Body:', response.text)
       }
       return result;
     } catch (e) {
-      return null;
+      return '';
     }
   }
 }
