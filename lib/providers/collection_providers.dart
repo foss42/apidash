@@ -7,7 +7,7 @@ import 'providers.dart';
 import '../models/models.dart';
 import '../services/services.dart' show hiveHandler, HiveHandler;
 import '../utils/utils.dart'
-    show getNewUuid, collectionToHAR, substituteHttpRequestModel;
+    show collectionToHAR, getNewUuid, substituteHttpRequestModel, substitutegraphqlRequestModel;
 
 final selectedIdStateProvider = StateProvider<String?>((ref) => null);
 final selectedAPITypeProvider = StateProvider<APIType?>((ref) => APIType.rest);
@@ -59,6 +59,7 @@ class CollectionStateNotifier
   final Ref ref;
   final HiveHandler hiveHandler;
   final baseHttpResponseModel = const HttpResponseModel();
+  final basegraphqlResponseModel = const GraphqlResponseModel();
   final HttpClientManager httpClientManager;
 
   bool hasId(String id) => state?.keys.contains(id) ?? false;
@@ -293,6 +294,8 @@ class CollectionStateNotifier
     HttpRequestModel substitutedHttpRequestModel =
         getSubstitutedHttpRequestModel(requestModel!.httpRequestModel!);
 
+    GraphqlRequestModel substitutedgraphqlRequestModel =  getSubstitutedgraphqlRequestModel(requestModel!.graphqlRequestModel!);
+
     // set current model's isWorking to true and update state
     var map = {...state!};
     map[requestId] = requestModel.copyWith(
@@ -339,9 +342,9 @@ class CollectionStateNotifier
           timeStamp: DateTime.now(),
         ),
         httpRequestModel: substitutedHttpRequestModel,
-        graphqlRequestModel: grap,
+        graphqlRequestModel: substitutedgraphqlRequestModel,
         httpResponseModel: httpResponseModel,
-
+        graphqlResponseModel: grap
       );
       ref.read(historyMetaStateNotifier.notifier).addHistoryRequest(model);
     }
@@ -440,6 +443,17 @@ class CollectionStateNotifier
 
     return substituteHttpRequestModel(
       httpRequestModel,
+      envMap,
+      activeEnvId,
+    );
+  }
+  GraphqlRequestModel getSubstitutedgraphqlRequestModel(
+      GraphqlRequestModel graphqlRequestModel) {
+    var envMap = ref.read(availableEnvironmentVariablesStateProvider);
+    var activeEnvId = ref.read(activeEnvironmentIdStateProvider);
+
+    return substitutegraphqlRequestModel(
+      graphqlRequestModel,
       envMap,
       activeEnvId,
     );

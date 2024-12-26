@@ -90,6 +90,34 @@ HttpRequestModel substituteHttpRequestModel(
   return newRequestModel;
 }
 
+GraphqlRequestModel substitutegraphqlRequestModel(
+    GraphqlRequestModel graphqlRequestModel,
+    Map<String?, List<EnvironmentVariableModel>> envMap,
+    String? activeEnvironmentId) {
+  var newRequestModel = graphqlRequestModel.copyWith(
+    url: substituteVariables(
+      graphqlRequestModel.url,
+      envMap,
+      activeEnvironmentId,
+    )!,
+    headers: graphqlRequestModel.headers?.map((header) {
+      return header.copyWith(
+        name:
+            substituteVariables(header.name, envMap, activeEnvironmentId) ?? "",
+        value: substituteVariables(header.value, envMap, activeEnvironmentId),
+      );
+    }).toList(),
+    graphqlVariables: graphqlRequestModel.graphqlVariables?.map((graphqlVariable) {
+      return graphqlVariable.copyWith(
+        name:
+            substituteVariables(graphqlVariable.name, envMap, activeEnvironmentId) ?? "",
+        value: substituteVariables(graphqlVariable.value, envMap, activeEnvironmentId),
+      );
+    }).toList(),
+  );
+  return newRequestModel;
+}
+
 List<EnvironmentVariableSuggestion>? getEnvironmentTriggerSuggestions(
     String query,
     Map<String, List<EnvironmentVariableModel>> envMap,
@@ -146,33 +174,7 @@ EnvironmentVariableSuggestion getVariableStatus(
     );
   }
 
-  GraphqlRequestModel substitutegraphqlRequestModel(
-    GraphqlRequestModel graphqlRequestModel,
-    Map<String?, List<EnvironmentVariableModel>> envMap,
-    String? activeEnvironmentId) {
-  var newRequestModel = graphqlRequestModel.copyWith(
-    url: substituteVariables(
-      graphqlRequestModel.url,
-      envMap,
-      activeEnvironmentId,
-    )!,
-    headers: graphqlRequestModel.headers?.map((header) {
-      return header.copyWith(
-        name:
-            substituteVariables(header.name, envMap, activeEnvironmentId) ?? "",
-        value: substituteVariables(header.value, envMap, activeEnvironmentId),
-      );
-    }).toList(),
-    graphqlVariables: graphqlRequestModel.graphqlVariables?.map((graphqlVariable) {
-      return graphqlVariable.copyWith(
-        name:
-            substituteVariables(graphqlVariable.name, envMap, activeEnvironmentId) ?? "",
-        value: substituteVariables(graphqlVariable.value, envMap, activeEnvironmentId),
-      );
-    }).toList(),
-  );
-  return newRequestModel;
-}
+  
 
   return EnvironmentVariableSuggestion(
       isUnknown: true,
