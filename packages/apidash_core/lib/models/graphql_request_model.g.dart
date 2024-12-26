@@ -13,17 +13,18 @@ _$GraphqlRequestModelImpl _$$GraphqlRequestModelImplFromJson(Map json) =>
           ?.map((e) =>
               NameValueModel.fromJson(Map<String, Object?>.from(e as Map)))
           .toList(),
-      isHeaderEnabledList: (json['isHeaderEnabledList'] as List<dynamic>?)
-          ?.map((e) => e as bool)
-          .toList(),
-      bodyContentType:
-          $enumDecodeNullable(_$ContentTypeEnumMap, json['bodyContentType']) ??
-              ContentType.json,
-      query: json['query'] as String?,
-      graphql_variables: (json['graphql_variables'] as List<dynamic>?)
+      graphqlVariables: (json['graphqlVariables'] as List<dynamic>?)
           ?.map((e) =>
               NameValueModel.fromJson(Map<String, Object?>.from(e as Map)))
           .toList(),
+      isHeaderEnabledList: (json['isHeaderEnabledList'] as List<dynamic>?)
+          ?.map((e) => e as bool)
+          .toList(),
+      isgraphqlVariablesEnabledList:
+          (json['isgraphqlVariablesEnabledList'] as List<dynamic>?)
+              ?.map((e) => e as bool)
+              .toList(),
+      query: json['query'] as String?,
     );
 
 Map<String, dynamic> _$$GraphqlRequestModelImplToJson(
@@ -31,15 +32,9 @@ Map<String, dynamic> _$$GraphqlRequestModelImplToJson(
     <String, dynamic>{
       'url': instance.url,
       'headers': instance.headers?.map((e) => e.toJson()).toList(),
+      'graphqlVariables':
+          instance.graphqlVariables?.map((e) => e.toJson()).toList(),
       'isHeaderEnabledList': instance.isHeaderEnabledList,
-      'bodyContentType': _$ContentTypeEnumMap[instance.bodyContentType]!,
+      'isgraphqlVariablesEnabledList': instance.isgraphqlVariablesEnabledList,
       'query': instance.query,
-      'graphql_variables':
-          instance.graphql_variables?.map((e) => e.toJson()).toList(),
     };
-
-const _$ContentTypeEnumMap = {
-  ContentType.json: 'json',
-  ContentType.text: 'text',
-  ContentType.formdata: 'formdata',
-};

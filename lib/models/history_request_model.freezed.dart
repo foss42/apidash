@@ -24,6 +24,10 @@ mixin _$HistoryRequestModel {
   HistoryMetaModel get metaData => throw _privateConstructorUsedError;
   HttpRequestModel get httpRequestModel => throw _privateConstructorUsedError;
   HttpResponseModel get httpResponseModel => throw _privateConstructorUsedError;
+  GraphqlRequestModel get graphqlRequestModel =>
+      throw _privateConstructorUsedError;
+  GraphqlResponseModel get graphqlResponseModel =>
+      throw _privateConstructorUsedError;
 
   /// Serializes this HistoryRequestModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -45,11 +49,15 @@ abstract class $HistoryRequestModelCopyWith<$Res> {
       {String historyId,
       HistoryMetaModel metaData,
       HttpRequestModel httpRequestModel,
-      HttpResponseModel httpResponseModel});
+      HttpResponseModel httpResponseModel,
+      GraphqlRequestModel graphqlRequestModel,
+      GraphqlResponseModel graphqlResponseModel});
 
   $HistoryMetaModelCopyWith<$Res> get metaData;
   $HttpRequestModelCopyWith<$Res> get httpRequestModel;
   $HttpResponseModelCopyWith<$Res> get httpResponseModel;
+  $GraphqlRequestModelCopyWith<$Res> get graphqlRequestModel;
+  $GraphqlResponseModelCopyWith<$Res> get graphqlResponseModel;
 }
 
 /// @nodoc
@@ -71,6 +79,8 @@ class _$HistoryRequestModelCopyWithImpl<$Res, $Val extends HistoryRequestModel>
     Object? metaData = null,
     Object? httpRequestModel = null,
     Object? httpResponseModel = null,
+    Object? graphqlRequestModel = null,
+    Object? graphqlResponseModel = null,
   }) {
     return _then(_value.copyWith(
       historyId: null == historyId
@@ -89,6 +99,14 @@ class _$HistoryRequestModelCopyWithImpl<$Res, $Val extends HistoryRequestModel>
           ? _value.httpResponseModel
           : httpResponseModel // ignore: cast_nullable_to_non_nullable
               as HttpResponseModel,
+      graphqlRequestModel: null == graphqlRequestModel
+          ? _value.graphqlRequestModel
+          : graphqlRequestModel // ignore: cast_nullable_to_non_nullable
+              as GraphqlRequestModel,
+      graphqlResponseModel: null == graphqlResponseModel
+          ? _value.graphqlResponseModel
+          : graphqlResponseModel // ignore: cast_nullable_to_non_nullable
+              as GraphqlResponseModel,
     ) as $Val);
   }
 
@@ -121,6 +139,28 @@ class _$HistoryRequestModelCopyWithImpl<$Res, $Val extends HistoryRequestModel>
       return _then(_value.copyWith(httpResponseModel: value) as $Val);
     });
   }
+
+  /// Create a copy of HistoryRequestModel
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $GraphqlRequestModelCopyWith<$Res> get graphqlRequestModel {
+    return $GraphqlRequestModelCopyWith<$Res>(_value.graphqlRequestModel,
+        (value) {
+      return _then(_value.copyWith(graphqlRequestModel: value) as $Val);
+    });
+  }
+
+  /// Create a copy of HistoryRequestModel
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $GraphqlResponseModelCopyWith<$Res> get graphqlResponseModel {
+    return $GraphqlResponseModelCopyWith<$Res>(_value.graphqlResponseModel,
+        (value) {
+      return _then(_value.copyWith(graphqlResponseModel: value) as $Val);
+    });
+  }
 }
 
 /// @nodoc
@@ -135,7 +175,9 @@ abstract class _$$HistoryRequestModelImplCopyWith<$Res>
       {String historyId,
       HistoryMetaModel metaData,
       HttpRequestModel httpRequestModel,
-      HttpResponseModel httpResponseModel});
+      HttpResponseModel httpResponseModel,
+      GraphqlRequestModel graphqlRequestModel,
+      GraphqlResponseModel graphqlResponseModel});
 
   @override
   $HistoryMetaModelCopyWith<$Res> get metaData;
@@ -143,6 +185,10 @@ abstract class _$$HistoryRequestModelImplCopyWith<$Res>
   $HttpRequestModelCopyWith<$Res> get httpRequestModel;
   @override
   $HttpResponseModelCopyWith<$Res> get httpResponseModel;
+  @override
+  $GraphqlRequestModelCopyWith<$Res> get graphqlRequestModel;
+  @override
+  $GraphqlResponseModelCopyWith<$Res> get graphqlResponseModel;
 }
 
 /// @nodoc
@@ -162,6 +208,8 @@ class __$$HistoryRequestModelImplCopyWithImpl<$Res>
     Object? metaData = null,
     Object? httpRequestModel = null,
     Object? httpResponseModel = null,
+    Object? graphqlRequestModel = null,
+    Object? graphqlResponseModel = null,
   }) {
     return _then(_$HistoryRequestModelImpl(
       historyId: null == historyId
@@ -180,6 +228,14 @@ class __$$HistoryRequestModelImplCopyWithImpl<$Res>
           ? _value.httpResponseModel
           : httpResponseModel // ignore: cast_nullable_to_non_nullable
               as HttpResponseModel,
+      graphqlRequestModel: null == graphqlRequestModel
+          ? _value.graphqlRequestModel
+          : graphqlRequestModel // ignore: cast_nullable_to_non_nullable
+              as GraphqlRequestModel,
+      graphqlResponseModel: null == graphqlResponseModel
+          ? _value.graphqlResponseModel
+          : graphqlResponseModel // ignore: cast_nullable_to_non_nullable
+              as GraphqlResponseModel,
     ));
   }
 }
@@ -192,7 +248,9 @@ class _$HistoryRequestModelImpl implements _HistoryRequestModel {
       {required this.historyId,
       required this.metaData,
       required this.httpRequestModel,
-      required this.httpResponseModel});
+      required this.httpResponseModel,
+      required this.graphqlRequestModel,
+      required this.graphqlResponseModel});
 
   factory _$HistoryRequestModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$HistoryRequestModelImplFromJson(json);
@@ -205,10 +263,14 @@ class _$HistoryRequestModelImpl implements _HistoryRequestModel {
   final HttpRequestModel httpRequestModel;
   @override
   final HttpResponseModel httpResponseModel;
+  @override
+  final GraphqlRequestModel graphqlRequestModel;
+  @override
+  final GraphqlResponseModel graphqlResponseModel;
 
   @override
   String toString() {
-    return 'HistoryRequestModel(historyId: $historyId, metaData: $metaData, httpRequestModel: $httpRequestModel, httpResponseModel: $httpResponseModel)';
+    return 'HistoryRequestModel(historyId: $historyId, metaData: $metaData, httpRequestModel: $httpRequestModel, httpResponseModel: $httpResponseModel, graphqlRequestModel: $graphqlRequestModel, graphqlResponseModel: $graphqlResponseModel)';
   }
 
   @override
@@ -223,13 +285,23 @@ class _$HistoryRequestModelImpl implements _HistoryRequestModel {
             (identical(other.httpRequestModel, httpRequestModel) ||
                 other.httpRequestModel == httpRequestModel) &&
             (identical(other.httpResponseModel, httpResponseModel) ||
-                other.httpResponseModel == httpResponseModel));
+                other.httpResponseModel == httpResponseModel) &&
+            (identical(other.graphqlRequestModel, graphqlRequestModel) ||
+                other.graphqlRequestModel == graphqlRequestModel) &&
+            (identical(other.graphqlResponseModel, graphqlResponseModel) ||
+                other.graphqlResponseModel == graphqlResponseModel));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType, historyId, metaData, httpRequestModel, httpResponseModel);
+      runtimeType,
+      historyId,
+      metaData,
+      httpRequestModel,
+      httpResponseModel,
+      graphqlRequestModel,
+      graphqlResponseModel);
 
   /// Create a copy of HistoryRequestModel
   /// with the given fields replaced by the non-null parameter values.
@@ -253,7 +325,9 @@ abstract class _HistoryRequestModel implements HistoryRequestModel {
           {required final String historyId,
           required final HistoryMetaModel metaData,
           required final HttpRequestModel httpRequestModel,
-          required final HttpResponseModel httpResponseModel}) =
+          required final HttpResponseModel httpResponseModel,
+          required final GraphqlRequestModel graphqlRequestModel,
+          required final GraphqlResponseModel graphqlResponseModel}) =
       _$HistoryRequestModelImpl;
 
   factory _HistoryRequestModel.fromJson(Map<String, dynamic> json) =
@@ -267,6 +341,10 @@ abstract class _HistoryRequestModel implements HistoryRequestModel {
   HttpRequestModel get httpRequestModel;
   @override
   HttpResponseModel get httpResponseModel;
+  @override
+  GraphqlRequestModel get graphqlRequestModel;
+  @override
+  GraphqlResponseModel get graphqlResponseModel;
 
   /// Create a copy of HistoryRequestModel
   /// with the given fields replaced by the non-null parameter values.

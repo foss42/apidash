@@ -1,4 +1,5 @@
 import 'package:apidash_core/apidash_core.dart';
+import 'package:apidash_core/models/graphql_response_model.dart';
 import 'models.dart';
 
 part 'history_request_model.freezed.dart';
@@ -16,6 +17,8 @@ class HistoryRequestModel with _$HistoryRequestModel {
     required HistoryMetaModel metaData,
     required HttpRequestModel httpRequestModel,
     required HttpResponseModel httpResponseModel,
+    required GraphqlRequestModel graphqlRequestModel,
+    required GraphqlResponseModel graphqlResponseModel,
   }) = _HistoryRequestModel;
 
   factory HistoryRequestModel.fromJson(Map<String, Object?> json) =>

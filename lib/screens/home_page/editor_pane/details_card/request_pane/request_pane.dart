@@ -51,16 +51,18 @@ class EditRequestPane extends ConsumerWidget {
         hasBody,
       ],
       children: [
-        if(apitype == APIType.rest)...[
-            EditRequestURLParams(),
+        // if(apitype == APIType.rest)...[
+        //     EditRequestURLParams(),
+        //     EditRequestHeaders(),
+        //     EditRequestBody(),
+        // ]else if(apitype == APIType.graphql)...[
+        //     EditRequestHeaders(),
+        //     EditGraphqlQuery(),
+        //     EditGraphqlVariable()
+        // ]
+        EditRequestURLParams(),
             EditRequestHeaders(),
             EditRequestBody(),
-        ]else if(apitype == APIType.graphql)...[
-            EditRequestHeaders(),
-            EditGraphqlQuery(),
-            EditGraphqlVariable()
-        ]
-        
         
         
       ],

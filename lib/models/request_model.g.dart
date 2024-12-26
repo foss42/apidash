@@ -20,13 +20,17 @@ _$RequestModelImpl _$$RequestModelImplFromJson(Map json) => _$RequestModelImpl(
       graphqlRequestModel: json['graphqlRequestModel'] == null
           ? null
           : GraphqlRequestModel.fromJson(
-              Map<String, dynamic>.from(json['graphqlRequestModel'] as Map)),
+              Map<String, Object?>.from(json['graphqlRequestModel'] as Map)),
       responseStatus: (json['responseStatus'] as num?)?.toInt(),
       message: json['message'] as String?,
       httpResponseModel: json['httpResponseModel'] == null
           ? null
           : HttpResponseModel.fromJson(
               Map<String, Object?>.from(json['httpResponseModel'] as Map)),
+      graphqlResponseModel: json['graphqlResponseModel'] == null
+          ? null
+          : GraphqlResponseModel.fromJson(
+              Map<String, Object?>.from(json['graphqlResponseModel'] as Map)),
       isWorking: json['isWorking'] as bool? ?? false,
       sendingTime: json['sendingTime'] == null
           ? null
@@ -44,6 +48,7 @@ Map<String, dynamic> _$$RequestModelImplToJson(_$RequestModelImpl instance) =>
       'responseStatus': instance.responseStatus,
       'message': instance.message,
       'httpResponseModel': instance.httpResponseModel?.toJson(),
+      'graphqlResponseModel': instance.graphqlResponseModel?.toJson(),
     };
 
 const _$APITypeEnumMap = {

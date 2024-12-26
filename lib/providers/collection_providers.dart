@@ -1,6 +1,8 @@
 import 'package:apidash_core/apidash_core.dart';
+import 'package:apidash_core/models/graphql_response_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/consts.dart';
+import 'package:path/path.dart';
 import 'providers.dart';
 import '../models/models.dart';
 import '../services/services.dart' show hiveHandler, HiveHandler;
@@ -184,9 +186,11 @@ class CollectionStateNotifier
       id: newId,
       name: "${currentModel.metaData.name} (history)",
       httpRequestModel: currentModel.httpRequestModel,
+      graphqlRequestModel: currentModel.graphqlRequestModel,
       responseStatus: currentModel.metaData.responseStatus,
       message: kResponseCodeReasons[currentModel.metaData.responseStatus],
       httpResponseModel: currentModel.httpResponseModel,
+      graphqlResponseModel: currentModel.graphqlResponseModel,
       isWorking: false,
       sendingTime: null,
     );
@@ -216,18 +220,19 @@ class CollectionStateNotifier
     ContentType? bodyContentType,
     String? body,
     List<FormDataModel>? formData,
+    List<NameValueModel>? graphqlVariables,
+    List<bool>? isgraphqlVariablesEnabledList,
     int? responseStatus,
     String? message,
     HttpResponseModel? httpResponseModel,
-    GraphqlRequestModel? graphqlRequestModel
+    GraphqlResponseModel? graphqlResponseModel
   }) {
     var currentModel = state![id]!;
+    var currentHttpRequestModel = currentModel.httpRequestModel;
+    var currentGraphqlRequestModel = currentModel.graphqlRequestModel;
     if(apiType!=null){
-       if(currentModel.apiType == APIType.rest){
 
     //need to make changes when i change from http to rest and vice versa
-    
-    var currentHttpRequestModel = currentModel.httpRequestModel;
     final newModel = currentModel.copyWith(
       name: name ?? currentModel.name,
       description: description ?? currentModel.description,
@@ -247,9 +252,20 @@ class CollectionStateNotifier
         body: body ?? currentHttpRequestModel.body,
         formData: formData ?? currentHttpRequestModel.formData,
       ),
+      graphqlRequestModel: currentGraphqlRequestModel?.copyWith(
+        url: url ?? currentGraphqlRequestModel.url,
+        headers: headers ?? currentGraphqlRequestModel.headers,
+        graphqlVariables: graphqlVariables ?? currentGraphqlRequestModel.graphqlVariables,
+        isHeaderEnabledList:
+            isHeaderEnabledList ?? currentGraphqlRequestModel.isHeaderEnabledList,
+        isgraphqlVaraiblesEnabledList:
+            isParamEnabledList ?? currentGraphqlRequestModel.isgraphqlVariablesEnabledList,
+        
+      ),
       responseStatus: responseStatus ?? currentModel.responseStatus,
       message: message ?? currentModel.message,
       httpResponseModel: httpResponseModel ?? currentModel.httpResponseModel,
+      graphqlResponseModel: graphqlResponseModel ?? currentModel.graphqlResponseModel,
     );
 
     var map = {...state!};
@@ -257,34 +273,8 @@ class CollectionStateNotifier
     state = map;
     unsave();
     }
-    }else if(currentModel.apiType == APIType.graphql){
-      final newModel = currentModel.copyWith(
-      name: name ?? currentModel.name,
-      description: description ?? currentModel.description,
-      requestTabIndex: requestTabIndex ?? currentModel.requestTabIndex,
-      apiType: apiType ?? currentModel.apiType,
-      graphqlRequestModel: graphqlRequestModel?.copyWith(
-        // method: method ?? currentHttpRequestModel.method,
-        // url: url ?? currentHttpRequestModel.url,
-        // headers: headers ?? currentHttpRequestModel.headers,
-        // params: params ?? currentHttpRequestModel.params,
-        // isHeaderEnabledList:
-        //     isHeaderEnabledList ?? currentHttpRequestModel.isHeaderEnabledList,
-        // isParamEnabledList:
-        //     isParamEnabledList ?? currentHttpRequestModel.isParamEnabledList,
-        // bodyContentType:
-        //     bodyContentType ?? currentHttpRequestModel.bodyContentType,
-        // body: body ?? currentHttpRequestModel.body,
-        // formData: formData ?? currentHttpRequestModel.formData,
-      ),
-      responseStatus: responseStatus ?? currentModel.responseStatus,
-      message: message ?? currentModel.message,
-      httpResponseModel: httpResponseModel ?? currentModel.httpResponseModel,
-    );
-
-
-    }
   }
+  
 
   Future<void> sendRequest() async {
     final requestId = ref.read(selectedIdStateProvider);
@@ -349,7 +339,9 @@ class CollectionStateNotifier
           timeStamp: DateTime.now(),
         ),
         httpRequestModel: substitutedHttpRequestModel,
+        graphqlRequestModel: grap,
         httpResponseModel: httpResponseModel,
+
       );
       ref.read(historyMetaStateNotifier.notifier).addHistoryRequest(model);
     }
@@ -400,6 +392,12 @@ class CollectionStateNotifier
             requestModel = requestModel.copyWith(
               httpRequestModel: const HttpRequestModel(),
             );
+          }
+          if(requestModel.graphqlRequestModel == null){
+            requestModel=requestModel.copyWith(
+              graphqlRequestModel:const GraphqlRequestModel() 
+            );
+            
           }
           data[id] = requestModel;
         }

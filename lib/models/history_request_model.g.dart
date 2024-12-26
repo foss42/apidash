@@ -15,6 +15,10 @@ _$HistoryRequestModelImpl _$$HistoryRequestModelImplFromJson(Map json) =>
           Map<String, Object?>.from(json['httpRequestModel'] as Map)),
       httpResponseModel: HttpResponseModel.fromJson(
           Map<String, Object?>.from(json['httpResponseModel'] as Map)),
+      graphqlRequestModel: GraphqlRequestModel.fromJson(
+          Map<String, Object?>.from(json['graphqlRequestModel'] as Map)),
+      graphqlResponseModel: GraphqlResponseModel.fromJson(
+          Map<String, Object?>.from(json['graphqlResponseModel'] as Map)),
     );
 
 Map<String, dynamic> _$$HistoryRequestModelImplToJson(
@@ -24,4 +28,6 @@ Map<String, dynamic> _$$HistoryRequestModelImplToJson(
       'metaData': instance.metaData.toJson(),
       'httpRequestModel': instance.httpRequestModel.toJson(),
       'httpResponseModel': instance.httpResponseModel.toJson(),
+      'graphqlRequestModel': instance.graphqlRequestModel.toJson(),
+      'graphqlResponseModel': instance.graphqlResponseModel.toJson(),
     };
