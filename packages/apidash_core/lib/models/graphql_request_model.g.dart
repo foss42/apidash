@@ -13,6 +13,7 @@ _$GraphqlRequestModelImpl _$$GraphqlRequestModelImplFromJson(Map json) =>
           ?.map((e) =>
               NameValueModel.fromJson(Map<String, Object?>.from(e as Map)))
           .toList(),
+      query: json['query'] as String?,
       graphqlVariables: (json['graphqlVariables'] as List<dynamic>?)
           ?.map((e) =>
               NameValueModel.fromJson(Map<String, Object?>.from(e as Map)))
@@ -24,7 +25,6 @@ _$GraphqlRequestModelImpl _$$GraphqlRequestModelImplFromJson(Map json) =>
           (json['isgraphqlVariablesEnabledList'] as List<dynamic>?)
               ?.map((e) => e as bool)
               .toList(),
-      query: json['query'] as String?,
     );
 
 Map<String, dynamic> _$$GraphqlRequestModelImplToJson(
@@ -32,9 +32,9 @@ Map<String, dynamic> _$$GraphqlRequestModelImplToJson(
     <String, dynamic>{
       'url': instance.url,
       'headers': instance.headers?.map((e) => e.toJson()).toList(),
+      'query': instance.query,
       'graphqlVariables':
           instance.graphqlVariables?.map((e) => e.toJson()).toList(),
       'isHeaderEnabledList': instance.isHeaderEnabledList,
       'isgraphqlVariablesEnabledList': instance.isgraphqlVariablesEnabledList,
-      'query': instance.query,
     };

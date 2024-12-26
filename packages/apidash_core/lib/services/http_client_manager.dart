@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:collection';
 import 'package:flutter/foundation.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/io_client.dart';
 
@@ -31,6 +32,10 @@ class HttpClientManager {
         (noSSL && !kIsWeb) ? createHttpClientWithNoSSL() : http.Client();
     _clients[requestId] = client;
     return client;
+  }
+
+  void addGraphqlClient(String requestId,GraphQLClient client){
+    _clients[requestId] = client;
   }
 
   void cancelRequest(String? requestId) {

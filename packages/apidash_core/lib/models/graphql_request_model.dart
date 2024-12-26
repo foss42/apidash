@@ -22,10 +22,10 @@ class GraphqlRequestModel with _$GraphqlRequestModel {
   const factory GraphqlRequestModel({
     @Default("") String url,
     List<NameValueModel>? headers,
+    String? query,
     List<NameValueModel>? graphqlVariables,
     List<bool>? isHeaderEnabledList,
     List<bool>? isgraphqlVariablesEnabledList,
-    String? query,
 }) = _GraphqlRequestModel;
 
   factory GraphqlRequestModel.fromJson(Map<String, Object?> json) =>

@@ -22,12 +22,12 @@ GraphqlRequestModel _$GraphqlRequestModelFromJson(Map<String, dynamic> json) {
 mixin _$GraphqlRequestModel {
   String get url => throw _privateConstructorUsedError;
   List<NameValueModel>? get headers => throw _privateConstructorUsedError;
+  String? get query => throw _privateConstructorUsedError;
   List<NameValueModel>? get graphqlVariables =>
       throw _privateConstructorUsedError;
   List<bool>? get isHeaderEnabledList => throw _privateConstructorUsedError;
   List<bool>? get isgraphqlVariablesEnabledList =>
       throw _privateConstructorUsedError;
-  String? get query => throw _privateConstructorUsedError;
 
   /// Serializes this GraphqlRequestModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -48,10 +48,10 @@ abstract class $GraphqlRequestModelCopyWith<$Res> {
   $Res call(
       {String url,
       List<NameValueModel>? headers,
+      String? query,
       List<NameValueModel>? graphqlVariables,
       List<bool>? isHeaderEnabledList,
-      List<bool>? isgraphqlVariablesEnabledList,
-      String? query});
+      List<bool>? isgraphqlVariablesEnabledList});
 }
 
 /// @nodoc
@@ -71,10 +71,10 @@ class _$GraphqlRequestModelCopyWithImpl<$Res, $Val extends GraphqlRequestModel>
   $Res call({
     Object? url = null,
     Object? headers = freezed,
+    Object? query = freezed,
     Object? graphqlVariables = freezed,
     Object? isHeaderEnabledList = freezed,
     Object? isgraphqlVariablesEnabledList = freezed,
-    Object? query = freezed,
   }) {
     return _then(_value.copyWith(
       url: null == url
@@ -85,6 +85,10 @@ class _$GraphqlRequestModelCopyWithImpl<$Res, $Val extends GraphqlRequestModel>
           ? _value.headers
           : headers // ignore: cast_nullable_to_non_nullable
               as List<NameValueModel>?,
+      query: freezed == query
+          ? _value.query
+          : query // ignore: cast_nullable_to_non_nullable
+              as String?,
       graphqlVariables: freezed == graphqlVariables
           ? _value.graphqlVariables
           : graphqlVariables // ignore: cast_nullable_to_non_nullable
@@ -97,10 +101,6 @@ class _$GraphqlRequestModelCopyWithImpl<$Res, $Val extends GraphqlRequestModel>
           ? _value.isgraphqlVariablesEnabledList
           : isgraphqlVariablesEnabledList // ignore: cast_nullable_to_non_nullable
               as List<bool>?,
-      query: freezed == query
-          ? _value.query
-          : query // ignore: cast_nullable_to_non_nullable
-              as String?,
     ) as $Val);
   }
 }
@@ -116,10 +116,10 @@ abstract class _$$GraphqlRequestModelImplCopyWith<$Res>
   $Res call(
       {String url,
       List<NameValueModel>? headers,
+      String? query,
       List<NameValueModel>? graphqlVariables,
       List<bool>? isHeaderEnabledList,
-      List<bool>? isgraphqlVariablesEnabledList,
-      String? query});
+      List<bool>? isgraphqlVariablesEnabledList});
 }
 
 /// @nodoc
@@ -137,10 +137,10 @@ class __$$GraphqlRequestModelImplCopyWithImpl<$Res>
   $Res call({
     Object? url = null,
     Object? headers = freezed,
+    Object? query = freezed,
     Object? graphqlVariables = freezed,
     Object? isHeaderEnabledList = freezed,
     Object? isgraphqlVariablesEnabledList = freezed,
-    Object? query = freezed,
   }) {
     return _then(_$GraphqlRequestModelImpl(
       url: null == url
@@ -151,6 +151,10 @@ class __$$GraphqlRequestModelImplCopyWithImpl<$Res>
           ? _value._headers
           : headers // ignore: cast_nullable_to_non_nullable
               as List<NameValueModel>?,
+      query: freezed == query
+          ? _value.query
+          : query // ignore: cast_nullable_to_non_nullable
+              as String?,
       graphqlVariables: freezed == graphqlVariables
           ? _value._graphqlVariables
           : graphqlVariables // ignore: cast_nullable_to_non_nullable
@@ -163,10 +167,6 @@ class __$$GraphqlRequestModelImplCopyWithImpl<$Res>
           ? _value._isgraphqlVariablesEnabledList
           : isgraphqlVariablesEnabledList // ignore: cast_nullable_to_non_nullable
               as List<bool>?,
-      query: freezed == query
-          ? _value.query
-          : query // ignore: cast_nullable_to_non_nullable
-              as String?,
     ));
   }
 }
@@ -178,10 +178,10 @@ class _$GraphqlRequestModelImpl extends _GraphqlRequestModel {
   const _$GraphqlRequestModelImpl(
       {this.url = "",
       final List<NameValueModel>? headers,
+      this.query,
       final List<NameValueModel>? graphqlVariables,
       final List<bool>? isHeaderEnabledList,
-      final List<bool>? isgraphqlVariablesEnabledList,
-      this.query})
+      final List<bool>? isgraphqlVariablesEnabledList})
       : _headers = headers,
         _graphqlVariables = graphqlVariables,
         _isHeaderEnabledList = isHeaderEnabledList,
@@ -204,6 +204,8 @@ class _$GraphqlRequestModelImpl extends _GraphqlRequestModel {
     return EqualUnmodifiableListView(value);
   }
 
+  @override
+  final String? query;
   final List<NameValueModel>? _graphqlVariables;
   @override
   List<NameValueModel>? get graphqlVariables {
@@ -238,11 +240,8 @@ class _$GraphqlRequestModelImpl extends _GraphqlRequestModel {
   }
 
   @override
-  final String? query;
-
-  @override
   String toString() {
-    return 'GraphqlRequestModel(url: $url, headers: $headers, graphqlVariables: $graphqlVariables, isHeaderEnabledList: $isHeaderEnabledList, isgraphqlVariablesEnabledList: $isgraphqlVariablesEnabledList, query: $query)';
+    return 'GraphqlRequestModel(url: $url, headers: $headers, query: $query, graphqlVariables: $graphqlVariables, isHeaderEnabledList: $isHeaderEnabledList, isgraphqlVariablesEnabledList: $isgraphqlVariablesEnabledList)';
   }
 
   @override
@@ -252,14 +251,14 @@ class _$GraphqlRequestModelImpl extends _GraphqlRequestModel {
             other is _$GraphqlRequestModelImpl &&
             (identical(other.url, url) || other.url == url) &&
             const DeepCollectionEquality().equals(other._headers, _headers) &&
+            (identical(other.query, query) || other.query == query) &&
             const DeepCollectionEquality()
                 .equals(other._graphqlVariables, _graphqlVariables) &&
             const DeepCollectionEquality()
                 .equals(other._isHeaderEnabledList, _isHeaderEnabledList) &&
             const DeepCollectionEquality().equals(
                 other._isgraphqlVariablesEnabledList,
-                _isgraphqlVariablesEnabledList) &&
-            (identical(other.query, query) || other.query == query));
+                _isgraphqlVariablesEnabledList));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -268,10 +267,10 @@ class _$GraphqlRequestModelImpl extends _GraphqlRequestModel {
       runtimeType,
       url,
       const DeepCollectionEquality().hash(_headers),
+      query,
       const DeepCollectionEquality().hash(_graphqlVariables),
       const DeepCollectionEquality().hash(_isHeaderEnabledList),
-      const DeepCollectionEquality().hash(_isgraphqlVariablesEnabledList),
-      query);
+      const DeepCollectionEquality().hash(_isgraphqlVariablesEnabledList));
 
   /// Create a copy of GraphqlRequestModel
   /// with the given fields replaced by the non-null parameter values.
@@ -292,12 +291,13 @@ class _$GraphqlRequestModelImpl extends _GraphqlRequestModel {
 
 abstract class _GraphqlRequestModel extends GraphqlRequestModel {
   const factory _GraphqlRequestModel(
-      {final String url,
-      final List<NameValueModel>? headers,
-      final List<NameValueModel>? graphqlVariables,
-      final List<bool>? isHeaderEnabledList,
-      final List<bool>? isgraphqlVariablesEnabledList,
-      final String? query}) = _$GraphqlRequestModelImpl;
+          {final String url,
+          final List<NameValueModel>? headers,
+          final String? query,
+          final List<NameValueModel>? graphqlVariables,
+          final List<bool>? isHeaderEnabledList,
+          final List<bool>? isgraphqlVariablesEnabledList}) =
+      _$GraphqlRequestModelImpl;
   const _GraphqlRequestModel._() : super._();
 
   factory _GraphqlRequestModel.fromJson(Map<String, dynamic> json) =
@@ -308,13 +308,13 @@ abstract class _GraphqlRequestModel extends GraphqlRequestModel {
   @override
   List<NameValueModel>? get headers;
   @override
+  String? get query;
+  @override
   List<NameValueModel>? get graphqlVariables;
   @override
   List<bool>? get isHeaderEnabledList;
   @override
   List<bool>? get isgraphqlVariablesEnabledList;
-  @override
-  String? get query;
 
   /// Create a copy of GraphqlRequestModel
   /// with the given fields replaced by the non-null parameter values.

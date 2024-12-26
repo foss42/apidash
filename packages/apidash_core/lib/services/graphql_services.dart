@@ -34,7 +34,7 @@ Future<(QueryResult?, Duration?, String?)> graphRequest(
     Uri requestUrl = uriRec.$1!;
    
     QueryResult? response;
-    String? body;
+    
     try {
       Stopwatch stopwatch = Stopwatch()..start();
       
@@ -45,11 +45,12 @@ Future<(QueryResult?, Duration?, String?)> graphRequest(
 
 
       final QueryOptions options = QueryOptions(
-          document: gql(requestModel.query),
-          variables: ,
+          document: requestModel.query?.isNotEmpty == true ? gql(requestModel.query!) : gql(""),
+          variables: requestModel.graphqlVariablesMap,
       );
 
   final QueryResult result = await client.query(options);
+      print(result);
       
       stopwatch.stop();
       return (response, stopwatch.elapsed, null);
