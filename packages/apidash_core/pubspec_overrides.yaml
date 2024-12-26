@@ -1,0 +1,6 @@
+# melos_managed_dependency_overrides: seed,curl_parser
+dependency_overrides:
+  curl_parser:
+    path: ../curl_parser
+  seed:
+    path: ../seed

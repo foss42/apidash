@@ -1,15 +1,24 @@
 name: postman
-description: Seamlessly work with postman collections
-version: 0.0.1-dev.1
+description: Seamlessly convert Postman Collection Format v2.1 to Dart and vice versa.
+version: 0.1.2
 homepage: https://github.com/foss42/apidash
 
-environment:
-  sdk: ^3.5.3
+topics:
+  - postman
+  - api
+  - rest
+  - http
+  - network
 
-# Add regular dependencies here.
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
 dependencies:
-  # path: ^1.8.0
+  freezed_annotation: ^2.4.4
 
 dev_dependencies:
+  build_runner: ^2.4.12
+  freezed: ^2.5.7
+  json_serializable: ^6.7.1
   lints: ^4.0.0
   test: ^1.24.0

@@ -17,6 +17,7 @@ void main() {
     activeEnvironmentId: null,
     historyRetentionPeriod: HistoryRetentionPeriod.oneWeek,
     workspaceFolderPath: null,
+    isSSLDisabled: true,
   );
 
   test('Testing toJson()', () {
@@ -34,6 +35,7 @@ void main() {
       "activeEnvironmentId": null,
       "historyRetentionPeriod": "oneWeek",
       "workspaceFolderPath": null,
+      "isSSLDisabled": true,
     };
     expect(sm.toJson(), expectedResult);
   });
@@ -53,6 +55,7 @@ void main() {
       "activeEnvironmentId": null,
       "historyRetentionPeriod": "oneWeek",
       "workspaceFolderPath": null,
+      "isSSLDisabled": true,
     };
     expect(SettingsModel.fromJson(input), sm);
   });
@@ -69,11 +72,13 @@ void main() {
       promptBeforeClosing: true,
       activeEnvironmentId: null,
       historyRetentionPeriod: HistoryRetentionPeriod.oneWeek,
+      isSSLDisabled: false,
     );
     expect(
         sm.copyWith(
           isDark: true,
           saveResponses: false,
+          isSSLDisabled: false,
         ),
         expectedResult);
   });
@@ -92,7 +97,8 @@ void main() {
   "promptBeforeClosing": true,
   "activeEnvironmentId": null,
   "historyRetentionPeriod": "oneWeek",
-  "workspaceFolderPath": null
+  "workspaceFolderPath": null,
+  "isSSLDisabled": true
 }''';
     expect(sm.toString(), expectedResult);
   });

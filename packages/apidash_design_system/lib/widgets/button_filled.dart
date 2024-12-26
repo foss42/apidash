@@ -8,6 +8,8 @@ class ADFilledButton extends StatelessWidget {
     this.iconSize,
     this.label,
     this.items,
+    this.labelTextStyle,
+    this.buttonStyle,
     this.isTonal = false,
     this.visualDensity,
     this.onPressed,
@@ -16,7 +18,9 @@ class ADFilledButton extends StatelessWidget {
   final IconData? icon;
   final double? iconSize;
   final String? label;
+  final TextStyle? labelTextStyle;
   final List<Widget>? items;
+  final ButtonStyle? buttonStyle;
   final bool isTonal;
   final VisualDensity? visualDensity;
   final VoidCallback? onPressed;
@@ -25,7 +29,7 @@ class ADFilledButton extends StatelessWidget {
   Widget build(BuildContext context) {
     Widget child = Text(
       label ?? "",
-      style: kTextStyleButton,
+      style: labelTextStyle ?? kTextStyleButton,
     );
     if (items != null) {
       child = Row(
@@ -42,6 +46,7 @@ class ADFilledButton extends StatelessWidget {
                   size: iconSize ?? kButtonIconSizeMedium,
                 ),
                 label: child,
+                style: buttonStyle,
                 onPressed: onPressed,
               )
             : FilledButton.icon(
@@ -50,14 +55,17 @@ class ADFilledButton extends StatelessWidget {
                   size: iconSize ?? kButtonIconSizeMedium,
                 ),
                 label: child,
+                style: buttonStyle,
                 onPressed: onPressed,
               ))
         : (isTonal
             ? FilledButton.tonal(
+                style: buttonStyle,
                 onPressed: onPressed,
                 child: child,
               )
             : FilledButton(
+                style: buttonStyle,
                 onPressed: onPressed,
                 child: child,
               ));

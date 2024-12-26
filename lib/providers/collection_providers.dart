@@ -88,10 +88,14 @@ class CollectionStateNotifier
     unsave();
   }
 
-  void addRequestModel(HttpRequestModel httpRequestModel) {
+  void addRequestModel(
+    HttpRequestModel httpRequestModel, {
+    String? name,
+  }) {
     final id = getNewUuid();
     final newRequestModel = RequestModel(
       id: id,
+      name: name ?? "",
       httpRequestModel: httpRequestModel,
     );
     var map = {...state!};
@@ -304,10 +308,12 @@ class CollectionStateNotifier
     );
     state = map;
 
+    bool noSSL = ref.read(settingsProvider).isSSLDisabled;
     (HttpResponse?, Duration?, String?)? responseRec = await request(
       requestId,
       substitutedHttpRequestModel,
       defaultUriScheme: defaultUriScheme,
+      noSSL: noSSL,
     );
 
     late final RequestModel newRequestModel;

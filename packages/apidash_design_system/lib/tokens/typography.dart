@@ -19,5 +19,6 @@ const kTextStyleButtonSmall = TextStyle(fontSize: 12);
 const kFormDataButtonLabelTextStyle = TextStyle(
   fontSize: 12,
   fontWeight: FontWeight.w600,
+  overflow: TextOverflow.ellipsis,
 );
 const kTextStylePopupMenuItem = TextStyle(fontSize: 14);

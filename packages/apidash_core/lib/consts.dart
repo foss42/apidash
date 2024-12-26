@@ -8,7 +8,17 @@ enum APIType {
   final String label;
 }
 
-enum HTTPVerb { get, head, post, put, patch, delete }
+enum HTTPVerb {
+  get("GET"),
+  head("HEAD"),
+  post("POST"),
+  put("PUT"),
+  patch("PAT"),
+  delete("DEL");
+
+  const HTTPVerb(this.abbr);
+  final String abbr;
+}
 
 enum SupportedUriSchemes { https, http }
 

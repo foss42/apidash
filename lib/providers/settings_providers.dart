@@ -32,6 +32,7 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
     String? activeEnvironmentId,
     HistoryRetentionPeriod? historyRetentionPeriod,
     String? workspaceFolderPath,
+    bool? isSSLDisabled,
   }) async {
     state = state.copyWith(
       isDark: isDark,
@@ -45,6 +46,7 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
       activeEnvironmentId: activeEnvironmentId,
       historyRetentionPeriod: historyRetentionPeriod,
       workspaceFolderPath: workspaceFolderPath,
+      isSSLDisabled: isSSLDisabled,
     );
     await setSettingsToSharedPrefs(state);
   }

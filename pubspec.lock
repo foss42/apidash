@@ -144,18 +144,18 @@ packages:
     dependency: "direct dev"
     description:
       name: build_runner
-      sha256: "74691599a5bc750dc96a6b4bfd48f7d9d66453eab04c7f4063134800d6a5c573"
+      sha256: "028819cfb90051c6b5440c7e574d1896f8037e3c96cf17aaeb054c9311cfbf4d"
       url: "https://pub.dev"
     source: hosted
-    version: "2.4.14"
+    version: "2.4.13"
   build_runner_core:
     dependency: transitive
     description:
       name: build_runner_core
-      sha256: "22e3aa1c80e0ada3722fe5b63fd43d9c8990759d0a2cf489c8c5d7b2bdebc021"
+      sha256: f8126682b87a7282a339b871298cc12009cb67109cfa1614d6436fb0289193e0
       url: "https://pub.dev"
     source: hosted
-    version: "8.0.0"
+    version: "7.3.2"
   built_collection:
     dependency: transitive
     description:
@@ -317,7 +317,7 @@ packages:
     source: hosted
     version: "6.0.0"
   curl_parser:
-    dependency: "direct main"
+    dependency: transitive
     description:
       path: "packages/curl_parser"
       relative: true
@@ -343,18 +343,10 @@ packages:
     dependency: "direct main"
     description:
       name: data_table_2
-      sha256: "5a540a7b64809eb46b3809c67fc6faa29ca217864341294df66b1f0eb040c20e"
+      sha256: "3b4ffb66ab20f238bf5f89af37e3bedfc9bef456c1fe24a79487ec1864574c84"
       url: "https://pub.dev"
     source: hosted
-    version: "2.5.18"
-  dbus:
-    dependency: transitive
-    description:
-      name: dbus
-      sha256: "365c771ac3b0e58845f39ec6deebc76e3276aa9922b0cc60840712094d9047ac"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.7.10"
+    version: "2.5.16"
   desktop_drop:
     dependency: "direct main"
     description:
@@ -1321,6 +1313,21 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.5.1"
+  postman:
+    dependency: transitive
+    description:
+      path: "packages/postman"
+      relative: true
+    source: path
+    version: "0.1.2"
+  printing:
+    dependency: "direct main"
+    description:
+      name: printing
+      sha256: b535d177fc6e8f8908e19b0ff5c1d4a87e3c4d0bf675e05aa2562af1b7853906
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.13.4"
   process:
     dependency: transitive
     description:

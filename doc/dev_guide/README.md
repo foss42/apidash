@@ -4,3 +4,4 @@
 2. [Platform-specific Additional Instructions](https://github.com/foss42/apidash/blob/main/doc/dev_guide/platform_specific_instructions.md)
 3. [How to run tests?](https://github.com/foss42/apidash/blob/main/doc/dev_guide/testing.md)
 4. [Integration Testing](https://github.com/foss42/apidash/blob/main/doc/dev_guide/integration_testing.md)
+5. [List of API Endpoints for Testing](https://github.com/foss42/apidash/blob/main/doc/dev_guide/api_endpoints_for_testing.md)

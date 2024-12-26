@@ -23,6 +23,8 @@ ClientException with SocketException: Connection failed (OS Error: Operation not
 
 You can read more [here](https://docs.flutter.dev/platform-integration/macos/building#setting-up-entitlements)
 
+In case you are having a local build failure on macOS due to "audio_session" do check out issue https://github.com/foss42/apidash/issues/510 for solution.
+
 ## Android (Work in Progress)
 
 Add the `multiDexEnabled true` line to the `defaultConfig` section at `android/app/build.gradle file`
@@ -36,3 +38,9 @@ android {
     }
 }
 ```
+
+## Web
+
+Running it on web requires the following modification in the local cached code of `printing` package.
+
+Read more about it here - https://github.com/DavBfr/dart_pdf/issues/1791

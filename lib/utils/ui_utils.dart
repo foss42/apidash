@@ -28,27 +28,14 @@ Color getResponseStatusCodeColor(int? statusCode,
 
 Color getHTTPMethodColor(HTTPVerb method,
     {Brightness brightness = Brightness.light}) {
-  Color col;
-  switch (method) {
-    case HTTPVerb.get:
-      col = kColorHttpMethodGet;
-      break;
-    case HTTPVerb.head:
-      col = kColorHttpMethodHead;
-      break;
-    case HTTPVerb.post:
-      col = kColorHttpMethodPost;
-      break;
-    case HTTPVerb.put:
-      col = kColorHttpMethodPut;
-      break;
-    case HTTPVerb.patch:
-      col = kColorHttpMethodPatch;
-      break;
-    case HTTPVerb.delete:
-      col = kColorHttpMethodDelete;
-      break;
-  }
+  Color col = switch (method) {
+    HTTPVerb.get => kColorHttpMethodGet,
+    HTTPVerb.head => kColorHttpMethodHead,
+    HTTPVerb.post => kColorHttpMethodPost,
+    HTTPVerb.put => kColorHttpMethodPut,
+    HTTPVerb.patch => kColorHttpMethodPatch,
+    HTTPVerb.delete => kColorHttpMethodDelete,
+  };
   if (brightness == Brightness.dark) {
     col = getDarkModeColor(col);
   }
@@ -73,12 +60,9 @@ double? getJsonPreviewerMaxRootNodeWidth(double w) {
 }
 
 GlobalKey<ScaffoldState> getScaffoldKey(int railIdx) {
-  switch (railIdx) {
-    case 1:
-      return kEnvScaffoldKey;
-    case 2:
-      return kHisScaffoldKey;
-    default:
-      return kHomeScaffoldKey;
-  }
+  return switch (railIdx) {
+    1 => kEnvScaffoldKey,
+    2 => kHisScaffoldKey,
+    _ => kHomeScaffoldKey,
+  };
 }

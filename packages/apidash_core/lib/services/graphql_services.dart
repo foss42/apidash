@@ -26,7 +26,8 @@ Future<(QueryResult?, Duration?, String?)> graphRequest(
   
   final HttpLink httpLink = HttpLink(
         uriRec.$2!,
-        defaultHeaders: headers);
+        defaultHeaders: headers
+  );
 
 
   if (uriRec.$1 != null) {
@@ -37,7 +38,18 @@ Future<(QueryResult?, Duration?, String?)> graphRequest(
     try {
       Stopwatch stopwatch = Stopwatch()..start();
       
-        
+      final GraphQLClient client = GraphQLClient(
+            link: httpLink,
+            cache: GraphQLCache(),
+      );
+
+
+      final QueryOptions options = QueryOptions(
+          document: gql(requestModel.query),
+          variables: ,
+      );
+
+  final QueryResult result = await client.query(options);
       
       stopwatch.stop();
       return (response, stopwatch.elapsed, null);

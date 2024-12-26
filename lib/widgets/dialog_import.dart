@@ -13,26 +13,38 @@ showImportDialog({
   showDialog(
     context: context,
     builder: (context) {
-      return AlertDialog(
-        contentPadding: const EdgeInsets.all(12),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+      var fmt = importFormat;
+      return StatefulBuilder(
+        builder: (context, StateSetter setState) {
+          return AlertDialog(
+            contentPadding: const EdgeInsets.all(12),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                const Text("Import "),
-                DropdownButtonImportFormat(
-                  importFormat: importFormat,
-                  onChanged: onImportFormatChange,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text("Import "),
+                    DropdownButtonImportFormat(
+                      importFormat: fmt,
+                      onChanged: (format) {
+                        if (format != null) {
+                          onImportFormatChange?.call(format);
+                          setState(() {
+                            fmt = format;
+                          });
+                        }
+                      },
+                    ),
+                  ],
+                ),
+                DragAndDropArea(
+                  onFileDropped: onFileDropped,
                 ),
               ],
             ),
-            DragAndDropArea(
-              onFileDropped: onFileDropped,
-            ),
-          ],
-        ),
+          );
+        },
       );
     },
   );

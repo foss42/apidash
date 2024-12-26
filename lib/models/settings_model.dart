@@ -16,6 +16,7 @@ class SettingsModel {
     this.activeEnvironmentId,
     this.historyRetentionPeriod = HistoryRetentionPeriod.oneWeek,
     this.workspaceFolderPath,
+    this.isSSLDisabled = false,
   });
 
   final bool isDark;
@@ -29,6 +30,7 @@ class SettingsModel {
   final String? activeEnvironmentId;
   final HistoryRetentionPeriod historyRetentionPeriod;
   final String? workspaceFolderPath;
+  final bool isSSLDisabled;
 
   SettingsModel copyWith({
     bool? isDark,
@@ -42,6 +44,7 @@ class SettingsModel {
     String? activeEnvironmentId,
     HistoryRetentionPeriod? historyRetentionPeriod,
     String? workspaceFolderPath,
+    bool? isSSLDisabled,
   }) {
     return SettingsModel(
       isDark: isDark ?? this.isDark,
@@ -57,6 +60,7 @@ class SettingsModel {
       historyRetentionPeriod:
           historyRetentionPeriod ?? this.historyRetentionPeriod,
       workspaceFolderPath: workspaceFolderPath ?? this.workspaceFolderPath,
+      isSSLDisabled: isSSLDisabled ?? this.isSSLDisabled,
     );
   }
 
@@ -75,6 +79,7 @@ class SettingsModel {
       activeEnvironmentId: activeEnvironmentId,
       historyRetentionPeriod: historyRetentionPeriod,
       workspaceFolderPath: workspaceFolderPath,
+      isSSLDisabled: isSSLDisabled,
     );
   }
 
@@ -128,6 +133,7 @@ class SettingsModel {
       }
     }
     final workspaceFolderPath = data["workspaceFolderPath"] as String?;
+    final isSSLDisabled = data["isSSLDisabled"] as bool?;
 
     const sm = SettingsModel();
 
@@ -144,6 +150,7 @@ class SettingsModel {
       historyRetentionPeriod:
           historyRetentionPeriod ?? HistoryRetentionPeriod.oneWeek,
       workspaceFolderPath: workspaceFolderPath,
+      isSSLDisabled: isSSLDisabled,
     );
   }
 
@@ -162,6 +169,7 @@ class SettingsModel {
       "activeEnvironmentId": activeEnvironmentId,
       "historyRetentionPeriod": historyRetentionPeriod.name,
       "workspaceFolderPath": workspaceFolderPath,
+      "isSSLDisabled": isSSLDisabled,
     };
   }
 
@@ -185,7 +193,8 @@ class SettingsModel {
         other.promptBeforeClosing == promptBeforeClosing &&
         other.activeEnvironmentId == activeEnvironmentId &&
         other.historyRetentionPeriod == historyRetentionPeriod &&
-        other.workspaceFolderPath == workspaceFolderPath;
+        other.workspaceFolderPath == workspaceFolderPath &&
+        other.isSSLDisabled == isSSLDisabled;
   }
 
   @override
@@ -203,6 +212,7 @@ class SettingsModel {
       activeEnvironmentId,
       historyRetentionPeriod,
       workspaceFolderPath,
+      isSSLDisabled,
     );
   }
 }

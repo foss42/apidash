@@ -43,7 +43,7 @@ const String query = r'''
   );
 
   final QueryResult result = await client.query(options);
-
+  result.
   if (result.hasException) {
     print("ERROR");
     print('GraphQL Exception: ${result.exception.toString()}');
