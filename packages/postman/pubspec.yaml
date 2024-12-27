@@ -1,6 +1,6 @@
 name: postman
 description: Seamlessly convert Postman Collection Format v2.1 to Dart and vice versa.
-version: 0.1.1
+version: 0.1.2
 homepage: https://github.com/foss42/apidash
 
 topics:

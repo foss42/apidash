@@ -1,21 +1,20 @@
-import 'package:apidash/importer/curl/curl.dart';
 import 'package:test/test.dart';
 import 'package:apidash_core/apidash_core.dart';
 
 void main() {
   group('CurlFileImport Tests', () {
-    late CurlFileImport curlImport;
+    late CurlIO curlImport;
 
     setUp(() {
-      curlImport = CurlFileImport();
+      curlImport = CurlIO();
     });
 
     test('should parse simple GET request', () {
       const curl = 'curl https://api.apidash.dev/users';
-      final result = curlImport.getHttpRequestModel(curl);
+      final result = curlImport.getHttpRequestModelList(curl);
 
       expect(
-          result,
+          result?[0],
           const HttpRequestModel(
               method: HTTPVerb.get,
               url: 'https://api.apidash.dev/users',
@@ -34,10 +33,10 @@ void main() {
         -d '{"name": "John", "age": 30}'
       ''';
 
-      final result = curlImport.getHttpRequestModel(curl);
+      final result = curlImport.getHttpRequestModelList(curl);
 
       expect(
-        result,
+        result?[0],
         const HttpRequestModel(
           method: HTTPVerb.post,
           url: 'https://api.apidash.dev/users',
@@ -60,10 +59,10 @@ void main() {
         -F "description=My Photo"
       ''';
 
-      final result = curlImport.getHttpRequestModel(curl);
+      final result = curlImport.getHttpRequestModelList(curl);
 
       expect(
-          result,
+          result?[0],
           const HttpRequestModel(
             method: HTTPVerb.post,
             url: 'https://api.apidash.dev/upload',
@@ -86,7 +85,7 @@ void main() {
 
     test('should return null for invalid curl command', () {
       const curl = 'invalid curl command';
-      final result = curlImport.getHttpRequestModel(curl);
+      final result = curlImport.getHttpRequestModelList(curl);
 
       expect(result, isNull);
     });

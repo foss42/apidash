@@ -11,7 +11,7 @@ PostmanCollection postmanCollectionFromJsonStr(String str) =>
     PostmanCollection.fromJson(json.decode(str));
 
 String postmanCollectionToJsonStr(PostmanCollection data) =>
-    JsonEncoder.withIndent('\t').convert(data);
+    JsonEncoder.withIndent('  ').convert(data);
 
 @freezed
 class PostmanCollection with _$PostmanCollection {

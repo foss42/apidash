@@ -1,10 +1,14 @@
-import 'package:apidash_core/apidash_core.dart';
 import 'package:curl_parser/curl_parser.dart';
+import '../consts.dart';
+import '../models/models.dart';
+import '../utils/utils.dart';
 
-class CurlFileImport {
-  HttpRequestModel? getHttpRequestModel(String content) {
+class CurlIO {
+  List<HttpRequestModel>? getHttpRequestModelList(String content) {
     content = content.trim();
     try {
+      // TODO: Allow files with multiple curl commands and create
+      // a request model for each
       final curl = Curl.parse(content);
       final url = stripUriParams(curl.uri);
       final method = HTTPVerb.values.byName(curl.method.toLowerCase());
@@ -19,14 +23,17 @@ class CurlFileImport {
           ? ContentType.formdata
           : (getContentTypeFromHeadersMap(curl.headers) ?? ContentType.text);
 
-      return HttpRequestModel(
+      return [
+        HttpRequestModel(
           method: method,
           url: url,
           headers: headers,
           params: params,
           body: body,
           bodyContentType: contentType,
-          formData: formData);
+          formData: formData,
+        ),
+      ];
     } catch (e) {
       return null;
     }

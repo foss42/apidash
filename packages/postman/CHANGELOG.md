@@ -1,3 +1,7 @@
+## 0.1.2
+
+- Update postmanCollectionToJsonStr() encoder indentation from `\t` to `  `.
+
 ## 0.1.1
 
 - Reduce Dart SDK requirements.

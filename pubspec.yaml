@@ -16,8 +16,6 @@ dependencies:
     path: packages/apidash_design_system
   code_builder: ^4.10.0
   csv: ^6.0.0
-  curl_parser:
-    path: packages/curl_parser
   data_table_2: 2.5.16
   dart_style: ^2.3.7
   desktop_drop: ^0.4.4
