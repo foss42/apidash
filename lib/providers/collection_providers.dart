@@ -193,6 +193,7 @@ class CollectionStateNotifier
     final newModel = RequestModel(
       id: newId,
       name: "${currentModel.metaData.name} (history)",
+      apiType: currentModel.metaData.apiType,
       httpRequestModel: currentModel.httpRequestModel,
       graphqlRequestModel: currentModel.graphqlRequestModel,
       responseStatus: currentModel.metaData.responseStatus,
@@ -437,6 +438,7 @@ class CollectionStateNotifier
         newId: RequestModel(
           id: newId,
           httpRequestModel: const HttpRequestModel(),
+          graphqlRequestModel: const GraphqlRequestModel(),
           
         ),
       };
