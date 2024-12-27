@@ -34,7 +34,7 @@ class MethodBox extends StatelessWidget {
 
     }else{
       return SizedBox(
-      width: 24,
+      width: 30,
       child: Text(
         kLabelGraphql,
         textAlign: TextAlign.center,

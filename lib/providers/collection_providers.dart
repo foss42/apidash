@@ -369,7 +369,12 @@ class CollectionStateNotifier
           historyId: newHistoryId,
           requestId: requestId,
           name: requestModel.name,
-          url: substitutedHttpRequestModel.url,
+          apiType: requestModel.apiType,
+          url:  typeAPI == APIType.rest
+                  ? substitutedHttpRequestModel.url
+                  : typeAPI == APIType.graphql
+                   ? substitutedgraphqlRequestModel.url
+                   : ''  ,
           method: substitutedHttpRequestModel.method,
           responseStatus: statusCode,
           timeStamp: DateTime.now(),

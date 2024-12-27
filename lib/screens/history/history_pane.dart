@@ -143,7 +143,7 @@ class _HistoryExpansionTileState extends ConsumerState<HistoryExpansionTile>
           child: SidebarHistoryCard(
             id: item.first.historyId,
             models: item,
-            apiType: apiType,
+            apiType: item.first.apiType,
             method: item.first.method,
             isSelected: selectedGroupId == getHistoryRequestKey(item.first),
             requestGroupSize: item.length,

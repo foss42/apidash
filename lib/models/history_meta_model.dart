@@ -10,6 +10,7 @@ class HistoryMetaModel with _$HistoryMetaModel {
     required String historyId,
     required String requestId,
     @Default("") String name,
+    required APIType apiType,
     required String url,
     required HTTPVerb method,
     required int responseStatus,
