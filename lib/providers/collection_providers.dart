@@ -215,12 +215,13 @@ class CollectionStateNotifier
     String id, {
     HTTPVerb? method,
     APIType? apiType,
-    String? url,
+    String? httpUrl,
     String? name,
     String? description,
     int? requestTabIndex,
     List<NameValueModel>? headers,
     List<NameValueModel>? params,
+    String? graphqlUrl,
     List<bool>? isHeaderEnabledList,
     List<bool>? isParamEnabledList,
     ContentType? bodyContentType,
@@ -249,7 +250,7 @@ class CollectionStateNotifier
       apiType: apiType ?? currentModel.apiType,
       httpRequestModel: currentHttpRequestModel?.copyWith(
         method: method ?? currentHttpRequestModel.method,
-        url: url ?? currentHttpRequestModel.url,
+        url: httpUrl ?? currentHttpRequestModel.url,
         headers: headers ?? currentHttpRequestModel.headers,
         params: params ?? currentHttpRequestModel.params,
         isHeaderEnabledList:
@@ -262,7 +263,7 @@ class CollectionStateNotifier
         formData: formData ?? currentHttpRequestModel.formData,
       ),
       graphqlRequestModel: currentGraphqlRequestModel?.copyWith(
-        url: url ?? currentGraphqlRequestModel.url,
+        url: graphqlUrl ?? currentGraphqlRequestModel.url,
         headers: headers ?? currentGraphqlRequestModel.headers,
         graphqlVariables: graphqlVariables ?? currentGraphqlRequestModel.graphqlVariables,
         isHeaderEnabledList:

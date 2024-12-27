@@ -14,7 +14,7 @@ class RequestEditorTopBar extends ConsumerWidget {
     final id = ref.watch(selectedIdStateProvider);
     final name =
         ref.watch(selectedRequestModelProvider.select((value) => value?.name));
-    final apiType = ref.watch(selectedAPITypeProvider);
+    final apiType = ref.watch(selectedRequestModelProvider.select((value) => value?.apiType));;
     return Padding(
       padding: const EdgeInsets.only(
         left: 12.0,

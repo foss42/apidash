@@ -15,6 +15,7 @@ Future<(QueryResult?, Duration?, String?)> graphRequest(
   GraphqlRequestModel requestModel, {
   SupportedUriSchemes defaultUriScheme = kDefaultUriScheme,
 }) async {
+  print("entered graphRequest");
   
  
   (Uri?, String?) uriRec = getValidRequestUri(
@@ -23,7 +24,7 @@ Future<(QueryResult?, Duration?, String?)> graphRequest(
     defaultUriScheme: defaultUriScheme,
   );
   Map<String, String> headers = requestModel.enabledHeadersMap;
-  
+  print("headers:${headers}");
   final HttpLink httpLink = HttpLink(
         uriRec.$2!,
         defaultHeaders: headers
@@ -32,8 +33,8 @@ Future<(QueryResult?, Duration?, String?)> graphRequest(
 
   if (uriRec.$1 != null) {
     Uri requestUrl = uriRec.$1!;
-   
-    QueryResult? response;
+   print("requestUrl ${requestUrl}");
+    
     
     try {
       Stopwatch stopwatch = Stopwatch()..start();
@@ -42,10 +43,10 @@ Future<(QueryResult?, Duration?, String?)> graphRequest(
             link: httpLink,
             cache: GraphQLCache(),
       );
-
+      print("query: ${requestModel.query}");
 
       final QueryOptions options = QueryOptions(
-          document: requestModel.query?.isNotEmpty == true ? gql(requestModel.query!) : gql(""),
+          document: gql(requestModel.query?.isNotEmpty == true ? requestModel.query! : ""),
           variables: requestModel.graphqlVariablesMap,
       );
 
@@ -53,8 +54,9 @@ Future<(QueryResult?, Duration?, String?)> graphRequest(
       print(result);
       
       stopwatch.stop();
-      return (response, stopwatch.elapsed, null);
+      return (result, stopwatch.elapsed, null);
     } catch (e) {
+      print("entered catch ${e} ::: ${e.toString()}");
       
       return (null, null, e.toString());
     } 

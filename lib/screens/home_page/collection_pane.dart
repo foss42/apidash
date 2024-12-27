@@ -153,7 +153,9 @@ class _RequestListState extends ConsumerState<RequestList> {
                 if (item.httpRequestModel!.url
                         .toLowerCase()
                         .contains(filterQuery) ||
-                    item.name.toLowerCase().contains(filterQuery)) {
+                    item.name.toLowerCase().contains(filterQuery)||item.graphqlRequestModel!.url
+                        .toLowerCase()
+                        .contains(filterQuery)) {
                   return Padding(
                     padding: kP1,
                     child: RequestItem(
@@ -186,6 +188,7 @@ class RequestItem extends ConsumerWidget {
 
     return SidebarRequestCard(
       id: id,
+      apiType: requestModel.apiType,
       method: requestModel.httpRequestModel!.method,
       name: requestModel.name,
       url: requestModel.httpRequestModel?.url,

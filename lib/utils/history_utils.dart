@@ -10,10 +10,13 @@ RequestModel getRequestModelFromHistoryModel(HistoryRequestModel model) {
   return RequestModel(
     id: model.historyId,
     name: model.metaData.name,
+    apiType: model.,
     responseStatus: model.httpResponseModel.statusCode,
     message: kResponseCodeReasons[model.httpResponseModel.statusCode],
     httpRequestModel: model.httpRequestModel,
+    graphqlRequestModel: model.graphqlRequestModel,
     httpResponseModel: model.httpResponseModel,
+    graphqlResponseModel: model.graphqlResponseModel,
   );
 }
 

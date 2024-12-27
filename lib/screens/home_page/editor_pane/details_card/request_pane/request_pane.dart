@@ -15,12 +15,13 @@ class EditRequestPane extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final apitype = ref.watch(selectedAPITypeProvider)!;
+    //final apitype = ref.watch(selectedAPITypeProvider)!;
     final selectedId = ref.watch(selectedIdStateProvider);
     final codePaneVisible = ref.watch(codePaneVisibleStateProvider);
     final tabIndex = ref.watch(
         selectedRequestModelProvider.select((value) => value?.requestTabIndex));
-
+    final apitype = ref.watch(
+        selectedRequestModelProvider.select((value) => value?.apiType));
     final headerLength = ref.watch(selectedRequestModelProvider
             .select((value) => value?.httpRequestModel?.headersMap.length)) ??
         0;

@@ -85,17 +85,27 @@ class URLTextField extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedId = ref.watch(selectedIdStateProvider);
+    final selectedAPIType = ref.watch(selectedRequestModelProvider.select((value) => value?.apiType));;
     return EnvURLField(
       selectedId: selectedId!,
-      initialValue: ref
+      initialValue: selectedAPIType == APIType.rest ? 
+          ref
           .read(collectionStateNotifierProvider.notifier)
           .getRequestModel(selectedId)
           ?.httpRequestModel
+          ?.url : 
+          ref
+          .read(collectionStateNotifierProvider.notifier)
+          .getRequestModel(selectedId)
+          ?.graphqlRequestModel
           ?.url,
       onChanged: (value) {
+        selectedAPIType == APIType.rest ? 
         ref
             .read(collectionStateNotifierProvider.notifier)
-            .update(selectedId, url: value);
+            .update(selectedId, httpUrl: value) : ref
+            .read(collectionStateNotifierProvider.notifier)
+            .update(selectedId, graphqlUrl: value);
       },
       onFieldSubmitted: (value) {
         ref.read(collectionStateNotifierProvider.notifier).sendRequest();

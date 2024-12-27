@@ -19,6 +19,7 @@ class ResponsePane extends ConsumerWidget {
         selectedRequestModelProvider.select((value) => value?.responseStatus));
     final message = ref
         .watch(selectedRequestModelProvider.select((value) => value?.message));
+        
 
     if (isWorking) {
       return SendingWidget(

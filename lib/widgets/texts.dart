@@ -1,3 +1,4 @@
+import 'package:apidash/consts.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
@@ -7,12 +8,15 @@ class MethodBox extends StatelessWidget {
   const MethodBox({
     super.key,
     required this.method,
+    required this.apiType,
   });
   final HTTPVerb method;
+  final APIType apiType;
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    if(apiType == APIType.rest){
+       return SizedBox(
       width: 24,
       child: Text(
         method.abbr,
@@ -27,6 +31,23 @@ class MethodBox extends StatelessWidget {
         ),
       ),
     );
+
+    }else{
+      return SizedBox(
+      width: 24,
+      child: Text(
+        kLabelGraphql,
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontSize: 8,
+          fontWeight: FontWeight.bold,
+          color: Colors.cyan[50]
+        ),
+      ),
+    );
+
+    }
+    
   }
 }
 
