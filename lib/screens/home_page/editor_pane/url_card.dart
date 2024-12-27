@@ -116,11 +116,12 @@ class SendRequestButton extends ConsumerWidget {
     ref.watch(selectedIdStateProvider);
     final isWorking = ref.watch(
         selectedRequestModelProvider.select((value) => value?.isWorking));
-
+    print(isWorking);
     return SendButton(
       isWorking: isWorking ?? false,
       onTap: (){
         onTap?.call();
+        print("Send button tapped");
 
         ref.read(collectionStateNotifierProvider.notifier).sendRequest();
       },

@@ -106,6 +106,8 @@ class DropdownButtonBodyContentType extends ConsumerWidget {
     return DropdownButtonContentType(
       contentType: requestBodyContentType,
       onChanged: (ContentType? value) {
+        print("changed ${value}");
+        print(selectedId);
         ref
             .read(collectionStateNotifierProvider.notifier)
             .update(selectedId!, bodyContentType: value);

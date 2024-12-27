@@ -1,5 +1,6 @@
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_core/models/graphql_response_model.dart';
+import 'package:apidash_core/services/graphql_services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/consts.dart';
 import 'package:path/path.dart';
@@ -227,15 +228,18 @@ class CollectionStateNotifier
     List<FormDataModel>? formData,
     List<NameValueModel>? graphqlVariables,
     List<bool>? isgraphqlVariablesEnabledList,
+    String? query,
     int? responseStatus,
     String? message,
     HttpResponseModel? httpResponseModel,
     GraphqlResponseModel? graphqlResponseModel
   }) {
+    print("entered update");
+    print("inside update ${bodyContentType}");
     var currentModel = state![id]!;
     var currentHttpRequestModel = currentModel.httpRequestModel;
     var currentGraphqlRequestModel = currentModel.graphqlRequestModel;
-    if(apiType!=null){
+  
 
     //need to make changes when i change from http to rest and vice versa
     final newModel = currentModel.copyWith(
@@ -263,8 +267,9 @@ class CollectionStateNotifier
         graphqlVariables: graphqlVariables ?? currentGraphqlRequestModel.graphqlVariables,
         isHeaderEnabledList:
             isHeaderEnabledList ?? currentGraphqlRequestModel.isHeaderEnabledList,
-        isgraphqlVaraiblesEnabledList:
-            isParamEnabledList ?? currentGraphqlRequestModel.isgraphqlVariablesEnabledList,
+        isgraphqlVariablesEnabledList:
+            isgraphqlVariablesEnabledList ?? currentGraphqlRequestModel.isgraphqlVariablesEnabledList,
+        query: query ?? currentGraphqlRequestModel.query,
         
       ),
       responseStatus: responseStatus ?? currentModel.responseStatus,
@@ -272,16 +277,17 @@ class CollectionStateNotifier
       httpResponseModel: httpResponseModel ?? currentModel.httpResponseModel,
       graphqlResponseModel: graphqlResponseModel ?? currentModel.graphqlResponseModel,
     );
-
+    print("after copywith");
     var map = {...state!};
     map[id] = newModel;
     state = map;
     unsave();
-    }
+    
   }
   
 
   Future<void> sendRequest() async {
+    print("sending");
     final requestId = ref.read(selectedIdStateProvider);
     ref.read(codePaneVisibleStateProvider.notifier).state = false;
     final defaultUriScheme = ref.read(settingsProvider).defaultUriScheme;
@@ -298,7 +304,8 @@ class CollectionStateNotifier
     HttpRequestModel substitutedHttpRequestModel =
         getSubstitutedHttpRequestModel(requestModel!.httpRequestModel!);
 
-    GraphqlRequestModel substitutedgraphqlRequestModel =  getSubstitutedgraphqlRequestModel(requestModel!.graphqlRequestModel!);
+    GraphqlRequestModel substitutedgraphqlRequestModel = 
+         getSubstitutedgraphqlRequestModel(requestModel!.graphqlRequestModel!);
 
     // set current model's isWorking to true and update state
     var map = {...state!};
@@ -308,13 +315,24 @@ class CollectionStateNotifier
     );
     state = map;
 
-    bool noSSL = ref.read(settingsProvider).isSSLDisabled;
-    (HttpResponse?, Duration?, String?)? responseRec = await request(
+    var typeAPI = ref.read(selectedAPITypeProvider); 
+      
+    
+  bool noSSL = ref.read(settingsProvider).isSSLDisabled;
+
+  late  (dynamic?, Duration?, String?)? responseRec;
+   if(typeAPI == APIType.rest){
+    responseRec = await request(
       requestId,
       substitutedHttpRequestModel,
       defaultUriScheme: defaultUriScheme,
       noSSL: noSSL,
     );
+
+   }else{
+      responseRec = await graphRequest(requestId, substitutedgraphqlRequestModel);
+   }
+    
 
     late final RequestModel newRequestModel;
     if (responseRec.$1 == null) {
@@ -324,7 +342,13 @@ class CollectionStateNotifier
         isWorking: false,
       );
     } else {
+      
       final httpResponseModel = baseHttpResponseModel.fromResponse(
+        response: responseRec.$1!,
+        time: responseRec.$2!,
+      );
+
+      final graphqlResponseModel = basegraphqlResponseModel.fromResponse(
         response: responseRec.$1!,
         time: responseRec.$2!,
       );
@@ -332,9 +356,11 @@ class CollectionStateNotifier
       newRequestModel = requestModel.copyWith(
         responseStatus: statusCode,
         message: kResponseCodeReasons[statusCode],
-        httpResponseModel: httpResponseModel,
+        httpResponseModel: typeAPI == APIType.rest ? httpResponseModel : baseHttpResponseModel,
+        graphqlResponseModel: typeAPI == APIType.graphql ? graphqlResponseModel : basegraphqlResponseModel ,
         isWorking: false,
       );
+      
       String newHistoryId = getNewUuid();
       HistoryRequestModel model = HistoryRequestModel(
         historyId: newHistoryId,
@@ -349,10 +375,11 @@ class CollectionStateNotifier
         ),
         httpRequestModel: substitutedHttpRequestModel,
         graphqlRequestModel: substitutedgraphqlRequestModel,
-        httpResponseModel: httpResponseModel,
-        graphqlResponseModel: grap
+        httpResponseModel: typeAPI == APIType.rest ? httpResponseModel : baseHttpResponseModel,
+        graphqlResponseModel: typeAPI == APIType.graphql ? graphqlResponseModel : basegraphqlResponseModel,
       );
       ref.read(historyMetaStateNotifier.notifier).addHistoryRequest(model);
+      
     }
 
     // update state with response data
@@ -426,7 +453,7 @@ class CollectionStateNotifier
         id,
         saveResponse
             ? (state?[id])?.toJson()
-            : (state?[id]?.copyWith(httpResponseModel: null))?.toJson(),
+            : (state?[id]?.copyWith(httpResponseModel: null,graphqlRequestModel: null))?.toJson(),
       );
     }
     await hiveHandler.removeUnused();

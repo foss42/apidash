@@ -440,6 +440,7 @@ const kLabelHeaders = "Headers";
 const kLabelBody = "Body";
 const kLabelGraphql = "GRAPHQL";
 const kLabelGraphqlVariable = "GRAPHQL VARIABLES";
+const KLabelAddGraphqlVariable = "Add GraphQL Variables";
 const kNameCheckbox = "Checkbox";
 const kNameURLParam = "URL Parameter";
 const kNameHeader = "Header Name";

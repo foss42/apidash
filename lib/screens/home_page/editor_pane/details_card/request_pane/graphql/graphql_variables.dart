@@ -19,7 +19,7 @@ class EditGraphqlVariable extends ConsumerStatefulWidget {
 class EditGraphqlVariableState extends ConsumerState<EditGraphqlVariable> {
   late int seed;
   final random = Random.secure();
-  late List<NameValueModel> headerRows;
+  late List<NameValueModel> graphVariableRows;
   late List<bool> isRowEnabledList;
   bool isAddingRow = false;
 
@@ -32,9 +32,9 @@ class EditGraphqlVariableState extends ConsumerState<EditGraphqlVariable> {
   void _onFieldChange(String selectedId) {
     ref.read(collectionStateNotifierProvider.notifier).update(
           selectedId,
-          headers: headerRows.sublist(0, headerRows.length - 1),
-          isHeaderEnabledList:
-              isRowEnabledList.sublist(0, headerRows.length - 1),
+          graphqlVariables: graphVariableRows.sublist(0, graphVariableRows.length - 1),
+          isgraphqlVariablesEnabledList:
+              isRowEnabledList.sublist(0, graphVariableRows.length - 1),
         );
   }
 
@@ -43,20 +43,20 @@ class EditGraphqlVariableState extends ConsumerState<EditGraphqlVariable> {
     dataTableShowLogs = false;
     final selectedId = ref.watch(selectedIdStateProvider);
     ref.watch(selectedRequestModelProvider
-        .select((value) => value?.httpRequestModel?.headers?.length));
-    var rH = ref.read(selectedRequestModelProvider)?.httpRequestModel?.headers;
-    bool isHeadersEmpty = rH == null || rH.isEmpty;
-    headerRows = isHeadersEmpty
+        .select((value) => value?.graphqlRequestModel?.graphqlVariables?.length));
+    var rV = ref.read(selectedRequestModelProvider)?.graphqlRequestModel?.graphqlVariables;
+    bool isgraphqlVariablesEmpty = rV == null || rV.isEmpty;
+    graphVariableRows = isgraphqlVariablesEmpty
         ? [
             kNameValueEmptyModel,
           ]
-        : rH + [kNameValueEmptyModel];
+        : rV + [kNameValueEmptyModel];
     isRowEnabledList = [
       ...(ref
               .read(selectedRequestModelProvider)
-              ?.httpRequestModel
-              ?.isHeaderEnabledList ??
-          List.filled(rH?.length ?? 0, true, growable: true))
+              ?.graphqlRequestModel
+              ?.isgraphqlVariablesEnabledList ??
+          List.filled(rV?.length ?? 0, true, growable: true))
     ];
     isRowEnabledList.add(false);
     isAddingRow = false;
@@ -83,15 +83,15 @@ class EditGraphqlVariableState extends ConsumerState<EditGraphqlVariable> {
     ];
 
     List<DataRow> dataRows = List<DataRow>.generate(
-      headerRows.length,
+      graphVariableRows.length,
       (index) {
-        bool isLast = index + 1 == headerRows.length;
+        bool isLast = index + 1 == graphVariableRows.length;
         return DataRow(
-          key: ValueKey("$selectedId-$index-headers-row-$seed"),
+          key: ValueKey("$selectedId-$index-graphqlVariables-row-$seed"),
           cells: <DataCell>[
             DataCell(
               ADCheckBox(
-                keyId: "$selectedId-$index-headers-c-$seed",
+                keyId: "$selectedId-$index-graphqlVariables-c-$seed",
                 value: isRowEnabledList[index],
                 onChanged: isLast
                     ? null
@@ -106,15 +106,15 @@ class EditGraphqlVariableState extends ConsumerState<EditGraphqlVariable> {
             ),
             DataCell(
               HeaderField(
-                keyId: "$selectedId-$index-headers-k-$seed",
-                initialValue: headerRows[index].name,
+                keyId: "$selectedId-$index-graphqlVariables-k-$seed",
+                initialValue: graphVariableRows[index].name,
                 hintText: kHintAddName,
                 onChanged: (value) {
-                  headerRows[index] = headerRows[index].copyWith(name: value);
+                  graphVariableRows[index] = graphVariableRows[index].copyWith(name: value);
                   if (isLast && !isAddingRow) {
                     isAddingRow = true;
                     isRowEnabledList[index] = true;
-                    headerRows.add(kNameValueEmptyModel);
+                    graphVariableRows.add(kNameValueEmptyModel);
                     isRowEnabledList.add(false);
                   }
                   _onFieldChange(selectedId!);
@@ -132,15 +132,15 @@ class EditGraphqlVariableState extends ConsumerState<EditGraphqlVariable> {
             ),
             DataCell(
               EnvCellField(
-                keyId: "$selectedId-$index-headers-v-$seed",
-                initialValue: headerRows[index].value,
+                keyId: "$selectedId-$index-graphqlVariables-v-$seed",
+                initialValue: graphVariableRows[index].value,
                 hintText: kHintAddValue,
                 onChanged: (value) {
-                  headerRows[index] = headerRows[index].copyWith(value: value);
+                  graphVariableRows[index] = graphVariableRows[index].copyWith(value: value);
                   if (isLast && !isAddingRow) {
                     isAddingRow = true;
                     isRowEnabledList[index] = true;
-                    headerRows.add(kNameValueEmptyModel);
+                    graphVariableRows.add(kNameValueEmptyModel);
                     isRowEnabledList.add(false);
                   }
                   _onFieldChange(selectedId!);
@@ -154,15 +154,15 @@ class EditGraphqlVariableState extends ConsumerState<EditGraphqlVariable> {
                     ? null
                     : () {
                         seed = random.nextInt(kRandMax);
-                        if (headerRows.length == 2) {
+                        if (graphVariableRows.length == 2) {
                           setState(() {
-                            headerRows = [
+                            graphVariableRows = [
                               kNameValueEmptyModel,
                             ];
                             isRowEnabledList = [false];
                           });
                         } else {
-                          headerRows.removeAt(index);
+                          graphVariableRows.removeAt(index);
                           isRowEnabledList.removeAt(index);
                         }
                         _onFieldChange(selectedId!);
@@ -210,13 +210,13 @@ class EditGraphqlVariableState extends ConsumerState<EditGraphqlVariable> {
             padding: kPb15,
             child: ElevatedButton.icon(
               onPressed: () {
-                headerRows.add(kNameValueEmptyModel);
+                graphVariableRows.add(kNameValueEmptyModel);
                 isRowEnabledList.add(false);
                 _onFieldChange(selectedId!);
               },
               icon: const Icon(Icons.add),
               label: const Text(
-                kLabelAddHeader,
+                KLabelAddGraphqlVariable,
                 style: kTextStyleButton,
               ),
             ),

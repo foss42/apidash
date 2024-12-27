@@ -52,7 +52,7 @@ dependencies:
   package_info_plus: ^8.0.2
   path: ^1.8.3
   path_provider: ^2.1.2
-  #printing: ^5.13.4
+  printing: ^5.13.4
   provider: ^6.1.2
   riverpod: ^2.5.1
   scrollable_positioned_list: ^0.3.8
