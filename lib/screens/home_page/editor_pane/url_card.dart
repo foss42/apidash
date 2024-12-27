@@ -132,6 +132,7 @@ class SendRequestButton extends ConsumerWidget {
       onTap: (){
         onTap?.call();
         print("Send button tapped");
+        print("isWorking ${isWorking}");
 
         ref.read(collectionStateNotifierProvider.notifier).sendRequest();
       },

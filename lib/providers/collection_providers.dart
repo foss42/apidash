@@ -1,6 +1,7 @@
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_core/models/graphql_response_model.dart';
 import 'package:apidash_core/services/graphql_services.dart';
+import 'package:apidash_core/utils/graphql_response_utils.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/consts.dart';
 import 'package:path/path.dart';
@@ -78,6 +79,7 @@ class CollectionStateNotifier
     final newRequestModel = RequestModel(
       id: id,
       httpRequestModel: const HttpRequestModel(),
+      graphqlRequestModel: const GraphqlRequestModel(),
     );
     var map = {...state!};
     map[id] = newRequestModel;
@@ -294,20 +296,22 @@ class CollectionStateNotifier
     final defaultUriScheme = ref.read(settingsProvider).defaultUriScheme;
 
     if (requestId == null || state == null) {
+      print("entered null states for reqid and state");
       return;
     }
     RequestModel? requestModel = state![requestId];
 
-    if (requestModel?.httpRequestModel == null) {
+    if (requestModel?.httpRequestModel == null && requestModel?.graphqlRequestModel==null) {
+      print("entered http and graphql");
       return;
     }
 
     HttpRequestModel substitutedHttpRequestModel =
         getSubstitutedHttpRequestModel(requestModel!.httpRequestModel!);
-
+    print("after susbstituted http");
     GraphqlRequestModel substitutedgraphqlRequestModel = 
          getSubstitutedgraphqlRequestModel(requestModel!.graphqlRequestModel!);
-
+    print("After sustitution");
     // set current model's isWorking to true and update state
     var map = {...state!};
     map[requestId] = requestModel.copyWith(
@@ -323,6 +327,7 @@ class CollectionStateNotifier
 
   late  (dynamic?, Duration?, String?)? responseRec;
    if(typeAPI == APIType.rest){
+    print("entered typeApi rest");
     responseRec = await request(
       requestId,
       substitutedHttpRequestModel,
@@ -343,16 +348,28 @@ class CollectionStateNotifier
         isWorking: false,
       );
     } else {
+      print("entered else inside sendrequest");
       
-      final httpResponseModel = baseHttpResponseModel.fromResponse(
-        response: responseRec.$1!,
-        time: responseRec.$2!,
-      );
+        print("repsonserec2:${responseRec.$2}");
+        final httpResponseModel = typeAPI == APIType.rest
+        ? baseHttpResponseModel.fromResponse(
+            response: responseRec.$1!,
+            time: responseRec.$2!,
+          )
+        : baseHttpResponseModel;
+    print("after http ");
+    print(responseRec);
+    final graphqlResponseModel = typeAPI == APIType.graphql
+        ? basegraphqlResponseModel.fromResponse(
+            response: responseRec.$1,
+            time:responseRec.$2,
+          )
+        : basegraphqlResponseModel;
+      
+      print("after assigning");
 
-      final graphqlResponseModel = basegraphqlResponseModel.fromResponse(
-        response: responseRec.$1!,
-        time: responseRec.$2!,
-      );
+      
+      print("printing graphqlResponseModel ${graphqlResponseModel}");
       int statusCode = responseRec.$1!.statusCode;
       newRequestModel = requestModel.copyWith(
         responseStatus: statusCode,
@@ -420,6 +437,7 @@ class CollectionStateNotifier
         newId: RequestModel(
           id: newId,
           httpRequestModel: const HttpRequestModel(),
+          
         ),
       };
       return true;

@@ -25,8 +25,9 @@ Future<(QueryResult?, Duration?, String?)> graphRequest(
   );
   Map<String, String> headers = requestModel.enabledHeadersMap;
   print("headers:${headers}");
+  print(requestModel.url);
   final HttpLink httpLink = HttpLink(
-        uriRec.$2!,
+        requestModel.url,
         defaultHeaders: headers
   );
 
@@ -51,7 +52,7 @@ Future<(QueryResult?, Duration?, String?)> graphRequest(
       );
 
   final QueryResult result = await client.query(options);
-      print(result);
+      print("I am printing query inside grphqq ${result}");
       
       stopwatch.stop();
       return (result, stopwatch.elapsed, null);

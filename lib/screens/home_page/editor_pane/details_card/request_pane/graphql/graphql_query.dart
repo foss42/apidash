@@ -19,14 +19,14 @@ class EditGraphqlQuery extends ConsumerWidget {
     return Padding(
                 padding: kPt5o10,
                 child: TextFieldEditor(
-                  key: Key("$selectedId-json-body"),
-                  fieldKey: "$selectedId-json-body-editor",
-                  initialValue: requestModel?.httpRequestModel?.body,
+                  key: Key("$selectedId-query-body"),
+                  fieldKey: "$selectedId-query-body-editor",
+                  initialValue: requestModel?.graphqlRequestModel?.query,
                   onChanged: (String value) {
                     // changeToPostMethod();
                     ref
                         .read(collectionStateNotifierProvider.notifier)
-                        .update(selectedId, body: value);
+                        .update(selectedId, query: value);
                   },
                 ),
               );

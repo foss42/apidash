@@ -16,6 +16,7 @@ Future<(HttpResponse?, Duration?, String?)> request(
   SupportedUriSchemes defaultUriScheme = kDefaultUriScheme,
   bool noSSL = false,
 }) async {
+  print("entered http service");
   final clientManager = HttpClientManager();
   final client = clientManager.createClient(requestId, noSSL: noSSL);
 
