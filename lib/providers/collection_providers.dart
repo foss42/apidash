@@ -4,6 +4,7 @@ import 'package:apidash_core/services/graphql_services.dart';
 import 'package:apidash_core/utils/graphql_response_utils.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/consts.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:path/path.dart';
 import 'providers.dart';
 import '../models/models.dart';
@@ -359,11 +360,13 @@ class CollectionStateNotifier
           )
         : baseHttpResponseModel;
     print("after http ");
-    print(responseRec);
+    print("repsonserec1:${responseRec.$1}");
+   
     final graphqlResponseModel = typeAPI == APIType.graphql
         ? basegraphqlResponseModel.fromResponse(
-            response: responseRec.$1,
-            time:responseRec.$2,
+            response: responseRec.$1!,
+            time:responseRec.$2!,
+            graphqlRequestModel: substitutedgraphqlRequestModel,
           )
         : basegraphqlResponseModel;
       
@@ -371,7 +374,14 @@ class CollectionStateNotifier
 
       
       print("printing graphqlResponseModel ${graphqlResponseModel}");
-      int statusCode = responseRec.$1!.statusCode;
+      late int statusCode;
+      if(typeAPI == APIType.rest){
+          statusCode = responseRec.$1!.statusCode;
+      }else{
+        statusCode = responseRec.$1!.context.entry<HttpLinkResponseContext>()?.statusCode ;
+
+      }
+     
       newRequestModel = requestModel.copyWith(
         responseStatus: statusCode,
         message: kResponseCodeReasons[statusCode],
@@ -412,6 +422,7 @@ class CollectionStateNotifier
     state = map;
 
     unsave();
+    print("end of send request");
   }
 
   void cancelRequest() {

@@ -49,6 +49,7 @@ Future<(QueryResult?, Duration?, String?)> graphRequest(
       final QueryOptions options = QueryOptions(
           document: gql(requestModel.query?.isNotEmpty == true ? requestModel.query! : ""),
           variables: requestModel.graphqlVariablesMap,
+          fetchPolicy: FetchPolicy.networkOnly
       );
 
   final QueryResult result = await client.query(options);

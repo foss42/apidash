@@ -21,6 +21,8 @@ _$GraphqlResponseModelImpl _$$GraphqlResponseModelImplFromJson(Map json) =>
               Map<String, Object?>.from(json['graphqlRequestModel'] as Map)),
       body: json['body'] as String?,
       formattedBody: json['formattedBody'] as String?,
+      bodyBytes:
+          const Uint8ListConverter().fromJson(json['bodyBytes'] as List<int>?),
       time: const DurationConverter().fromJson((json['time'] as num?)?.toInt()),
     );
 
@@ -33,5 +35,6 @@ Map<String, dynamic> _$$GraphqlResponseModelImplToJson(
       'graphqlRequestModel': instance.graphqlRequestModel?.toJson(),
       'body': instance.body,
       'formattedBody': instance.formattedBody,
+      'bodyBytes': const Uint8ListConverter().toJson(instance.bodyBytes),
       'time': const DurationConverter().toJson(instance.time),
     };

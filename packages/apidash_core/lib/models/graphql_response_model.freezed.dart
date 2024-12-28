@@ -27,6 +27,8 @@ mixin _$GraphqlResponseModel {
       throw _privateConstructorUsedError;
   String? get body => throw _privateConstructorUsedError;
   String? get formattedBody => throw _privateConstructorUsedError;
+  @Uint8ListConverter()
+  Uint8List? get bodyBytes => throw _privateConstructorUsedError;
   @DurationConverter()
   Duration? get time => throw _privateConstructorUsedError;
 
@@ -53,6 +55,7 @@ abstract class $GraphqlResponseModelCopyWith<$Res> {
       GraphqlRequestModel? graphqlRequestModel,
       String? body,
       String? formattedBody,
+      @Uint8ListConverter() Uint8List? bodyBytes,
       @DurationConverter() Duration? time});
 
   $GraphqlRequestModelCopyWith<$Res>? get graphqlRequestModel;
@@ -80,6 +83,7 @@ class _$GraphqlResponseModelCopyWithImpl<$Res,
     Object? graphqlRequestModel = freezed,
     Object? body = freezed,
     Object? formattedBody = freezed,
+    Object? bodyBytes = freezed,
     Object? time = freezed,
   }) {
     return _then(_value.copyWith(
@@ -107,6 +111,10 @@ class _$GraphqlResponseModelCopyWithImpl<$Res,
           ? _value.formattedBody
           : formattedBody // ignore: cast_nullable_to_non_nullable
               as String?,
+      bodyBytes: freezed == bodyBytes
+          ? _value.bodyBytes
+          : bodyBytes // ignore: cast_nullable_to_non_nullable
+              as Uint8List?,
       time: freezed == time
           ? _value.time
           : time // ignore: cast_nullable_to_non_nullable
@@ -145,6 +153,7 @@ abstract class _$$GraphqlResponseModelImplCopyWith<$Res>
       GraphqlRequestModel? graphqlRequestModel,
       String? body,
       String? formattedBody,
+      @Uint8ListConverter() Uint8List? bodyBytes,
       @DurationConverter() Duration? time});
 
   @override
@@ -170,6 +179,7 @@ class __$$GraphqlResponseModelImplCopyWithImpl<$Res>
     Object? graphqlRequestModel = freezed,
     Object? body = freezed,
     Object? formattedBody = freezed,
+    Object? bodyBytes = freezed,
     Object? time = freezed,
   }) {
     return _then(_$GraphqlResponseModelImpl(
@@ -197,6 +207,10 @@ class __$$GraphqlResponseModelImplCopyWithImpl<$Res>
           ? _value.formattedBody
           : formattedBody // ignore: cast_nullable_to_non_nullable
               as String?,
+      bodyBytes: freezed == bodyBytes
+          ? _value.bodyBytes
+          : bodyBytes // ignore: cast_nullable_to_non_nullable
+              as Uint8List?,
       time: freezed == time
           ? _value.time
           : time // ignore: cast_nullable_to_non_nullable
@@ -216,6 +230,7 @@ class _$GraphqlResponseModelImpl extends _GraphqlResponseModel {
       this.graphqlRequestModel,
       this.body,
       this.formattedBody,
+      @Uint8ListConverter() this.bodyBytes,
       @DurationConverter() this.time})
       : _headers = headers,
         _requestHeaders = requestHeaders,
@@ -253,12 +268,15 @@ class _$GraphqlResponseModelImpl extends _GraphqlResponseModel {
   @override
   final String? formattedBody;
   @override
+  @Uint8ListConverter()
+  final Uint8List? bodyBytes;
+  @override
   @DurationConverter()
   final Duration? time;
 
   @override
   String toString() {
-    return 'GraphqlResponseModel(statusCode: $statusCode, headers: $headers, requestHeaders: $requestHeaders, graphqlRequestModel: $graphqlRequestModel, body: $body, formattedBody: $formattedBody, time: $time)';
+    return 'GraphqlResponseModel(statusCode: $statusCode, headers: $headers, requestHeaders: $requestHeaders, graphqlRequestModel: $graphqlRequestModel, body: $body, formattedBody: $formattedBody, bodyBytes: $bodyBytes, time: $time)';
   }
 
   @override
@@ -276,6 +294,7 @@ class _$GraphqlResponseModelImpl extends _GraphqlResponseModel {
             (identical(other.body, body) || other.body == body) &&
             (identical(other.formattedBody, formattedBody) ||
                 other.formattedBody == formattedBody) &&
+            const DeepCollectionEquality().equals(other.bodyBytes, bodyBytes) &&
             (identical(other.time, time) || other.time == time));
   }
 
@@ -289,6 +308,7 @@ class _$GraphqlResponseModelImpl extends _GraphqlResponseModel {
       graphqlRequestModel,
       body,
       formattedBody,
+      const DeepCollectionEquality().hash(bodyBytes),
       time);
 
   /// Create a copy of GraphqlResponseModel
@@ -317,6 +337,7 @@ abstract class _GraphqlResponseModel extends GraphqlResponseModel {
       final GraphqlRequestModel? graphqlRequestModel,
       final String? body,
       final String? formattedBody,
+      @Uint8ListConverter() final Uint8List? bodyBytes,
       @DurationConverter() final Duration? time}) = _$GraphqlResponseModelImpl;
   const _GraphqlResponseModel._() : super._();
 
@@ -335,6 +356,9 @@ abstract class _GraphqlResponseModel extends GraphqlResponseModel {
   String? get body;
   @override
   String? get formattedBody;
+  @override
+  @Uint8ListConverter()
+  Uint8List? get bodyBytes;
   @override
   @DurationConverter()
   Duration? get time;

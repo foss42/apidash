@@ -53,14 +53,23 @@ class ResponseDetails extends ConsumerWidget {
         selectedRequestModelProvider.select((value) => value?.responseStatus));
     final message = ref
         .watch(selectedRequestModelProvider.select((value) => value?.message));
-    final responseModel = ref.watch(selectedRequestModelProvider
-        .select((value) => value?.httpResponseModel));
+    final apiType = ref
+        .watch(selectedRequestModelProvider.select((value) => value?.apiType));
+    final httpresponseModel = ref.watch(selectedRequestModelProvider
+        .select((value) => 
+        value?.httpResponseModel
+        ));
+    final graphqlresponseModel = ref.watch(selectedRequestModelProvider
+        .select((value) => 
+        value?.graphqlResponseModel
+        ));
+    final responseModel = apiType == APIType.rest ? httpresponseModel : graphqlresponseModel;
     return Column(
       children: [
         ResponsePaneHeader(
           responseStatus: responseStatus,
           message: message,
-          time: responseModel?.time,
+          time: apiType == APIType.rest ? httpresponseModel?.time : graphqlresponseModel?.time,
           onClearResponse: () {
             final selectedRequest = ref.read(selectedRequestModelProvider);
             ref
@@ -109,15 +118,24 @@ class ResponseHeadersTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final requestHeaders = ref.watch(selectedRequestModelProvider
+    final apiType = ref.watch(selectedRequestModelProvider
+            .select((value) => value?.apiType)) ??
+        {};
+    final httpRequestHeaders = ref.watch(selectedRequestModelProvider
             .select((value) => value?.httpResponseModel?.requestHeaders)) ??
         {};
-    final responseHeaders = ref.watch(selectedRequestModelProvider
+    final httpResponseHeaders = ref.watch(selectedRequestModelProvider
             .select((value) => value?.httpResponseModel?.headers)) ??
         {};
+    final graphqlRequestHeaders = ref.watch(selectedRequestModelProvider
+            .select((value) => value?.graphqlResponseModel?.requestHeaders)) ??
+        {};
+    final graphqlResponseHeaders = ref.watch(selectedRequestModelProvider
+            .select((value) => value?.graphqlResponseModel?.headers)) ??
+        {};
     return ResponseHeaders(
-      responseHeaders: responseHeaders,
-      requestHeaders: requestHeaders,
+      responseHeaders:apiType == APIType.rest ? httpResponseHeaders : graphqlResponseHeaders,
+      requestHeaders: apiType == APIType.rest ? httpRequestHeaders : graphqlRequestHeaders,
     );
   }
 }

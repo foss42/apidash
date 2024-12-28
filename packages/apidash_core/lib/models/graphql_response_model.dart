@@ -35,6 +35,7 @@ class GraphqlResponseModel with _$GraphqlResponseModel {
     GraphqlRequestModel? graphqlRequestModel,
     String? body,
     String? formattedBody,
+     @Uint8ListConverter() Uint8List? bodyBytes,
     @DurationConverter() Duration? time,
   }) = _GraphqlResponseModel;
 
@@ -49,7 +50,7 @@ class GraphqlResponseModel with _$GraphqlResponseModel {
      GraphqlRequestModel? graphqlRequestModel,
   }) {
      final responseHeaders = response.context.entry<HttpLinkResponseContext>()?.headers ?? {};
-    MediaType mediaType = MediaType("application","json");
+     MediaType mediaType = MediaType("application","json");
     final body =  jsonEncode(response.data);
     return GraphqlResponseModel(
       statusCode: response.context.entry<HttpLinkResponseContext>()?.statusCode,
@@ -57,6 +58,7 @@ class GraphqlResponseModel with _$GraphqlResponseModel {
       requestHeaders: graphqlRequestModel!.headersMap,
       body: body,
       formattedBody: formatBody(body, mediaType),
+      bodyBytes: Uint8List.fromList(body.toString().codeUnits),
       time: time,
     );
   }
