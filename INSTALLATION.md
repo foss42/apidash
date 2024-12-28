@@ -21,7 +21,8 @@ Download the latest MacOS Installer (Universal - Intel and Apple Silicon) from [
 
 ![‎installation ‎003](https://github.com/foss42/apidash/assets/1382619/b07a5563-aeda-48b3-912f-578e50275579)
 
-Others may see a different dialog, other than the one shown below, [see here for more](#different-dialog)
+
+In case, you see a different dialog other than the one shown below, check out [this section](#open-via-settings)
 
 ![‎installation ‎004](https://github.com/foss42/apidash/assets/1382619/e09bc786-fada-4874-aa6f-8f104797472f)
 
@@ -35,22 +36,23 @@ Others may see a different dialog, other than the one shown below, [see here for
 
 ![‎installation ‎009](https://github.com/foss42/apidash/assets/1382619/3cf1d94b-0ec3-4ba8-b981-54d3f9dd0d2d)
 
-## Different dialog 
-When installing on MacOS, you may not get an option to open immediately, follow the following steps to get it installed.
-<img width="568" alt="dialog" src="https://github.com/user-attachments/assets/22f6c659-60c9-4332-85b5-6f6e6fffdffd" /> <br/>
-Go to Settings > Privacy and Security
-<br/>
-<img width="592" alt="bypass" src="https://github.com/user-attachments/assets/a8abc503-482e-4d19-bd73-79a5d79fc3c6" />
-
-<img width="628" alt="open" src="https://github.com/user-attachments/assets/c543b65e-745e-48b0-8af8-7eab60fe3463" /> <br/>
-Now drag to the `Applications` folder <br/>
-<img width="590" alt="drag" src="https://github.com/user-attachments/assets/82257ba1-1eeb-4618-b09a-ea2fd5bb3d36" />
-
-
-
-
-
 This process has to be followed only once and from the next time you can directly launch the API Dash App from the Launchpad.
+
+### Open via Settings
+
+In macOS, if you do not get an option to open immediately, follow the following steps to install API Dash:
+
+![‎installation ‎010](https://github.com/user-attachments/assets/22f6c659-60c9-4332-85b5-6f6e6fffdffd)
+
+Go to Settings > Privacy and Security
+
+![‎installation ‎011](https://github.com/user-attachments/assets/a8abc503-482e-4d19-bd73-79a5d79fc3c6)
+
+![‎installation ‎012](https://github.com/user-attachments/assets/c543b65e-745e-48b0-8af8-7eab60fe3463)
+
+Now drag to the `Applications` folder 
+
+![‎installation ‎012](https://github.com/user-attachments/assets/82257ba1-1eeb-4618-b09a-ea2fd5bb3d36)
 
 ##
 
