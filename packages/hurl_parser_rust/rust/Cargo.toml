@@ -1,0 +1,15 @@
+[package]
+name = "rust_lib_hurl_parser_rust"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "staticlib"]
+
+[dependencies]
+hurlfmt = "6.0.0"
+hurl_core = "6.0.0"
+flutter_rust_bridge = "=2.7.0"
+
+[build-dependencies]
+flutter_rust_bridge_codegen = "2.7.0"
