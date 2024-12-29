@@ -1,15 +1,18 @@
+// lib/src/hurl_parser.dart
+
+import 'dart:convert';
 import 'package:hurl_parser_rust/src/rust/frb_generated.dart';
 import 'package:hurl_parser_rust/src/rust/api/simple.dart';
+import 'models/hurl_file.dart';
 
-/// A Dart wrapper for the Rust-based Hurl parser
+/// Main class for parsing Hurl files
 class HurlParser {
   static HurlParser? _instance;
   static bool _initialized = false;
 
-  // Private constructor
   HurlParser._();
 
-  /// Gets the singleton instance of HurlParser, initializing if necessary
+  /// Gets the singleton instance of HurlParser
   static Future<HurlParser> getInstance() async {
     if (_instance == null) {
       _instance = HurlParser._();
@@ -21,21 +24,40 @@ class HurlParser {
     return _instance!;
   }
 
-  /// Parses a Hurl file content and returns its JSON representation
+  /// Parses a Hurl file content into a [HurlFile] object
   ///
   /// Args:
-  ///   input: String containing the Hurl file content
+  ///   content: The Hurl file content as a string
   ///
   /// Returns:
-  ///   A JSON string representing the parsed Hurl content
+  ///   A [HurlFile] object representing the parsed content
   ///
   /// Throws:
-  ///   StateError if parser is not initialized
-  ///   String if parsing fails
-  String parseHurl(String input) {
+  ///   [StateError] if parser is not initialized
+  ///   [FormatException] if parsing fails
+  HurlFile parse(String content) {
     if (!_initialized) {
       throw StateError('HurlParser not initialized. Call getInstance() first.');
     }
-    return parseHurlToJson(content: input);
+
+    final jsonString = parseHurlToJson(content: content);
+    return HurlFile.fromJson(jsonDecode(jsonString));
+  }
+
+  /// Parses a Hurl file content and returns the raw JSON string
+  ///
+  /// This is useful if you want to handle the JSON parsing yourself
+  ///
+  /// Args:
+  ///   content: The Hurl file content as a string
+  ///
+  /// Returns:
+  ///   A JSON string representing the parsed content
+  String parseToJson(String content) {
+    if (!_initialized) {
+      throw StateError('HurlParser not initialized. Call getInstance() first.');
+    }
+
+    return parseHurlToJson(content: content);
   }
 }

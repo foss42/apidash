@@ -1,39 +1,63 @@
-<!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+# hurl_parser_rust
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/tools/pub/writing-package-pages).
-
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/to/develop-packages).
--->
-
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+A Dart package that provides Hurl file parsing using a Rust backend for high performance.
 
 ## Features
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+- Parse Hurl files into structured Dart objects
+- High-performance Rust-based parsing
+- Support for all Hurl features:
+  - HTTP methods (GET, POST, PUT, DELETE, etc.)
+  - Headers
+  - Query parameters
+  - Form parameters
+  - Basic authentication
+  - Cookies
+  - Options
+  - Captures
+  - Assertions
+  - JSON/XML bodies
 
-## Getting started
+## Installation
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+```yaml
+dependencies:
+  hurl_parser_rust: ^0.1.0
+```
 
 ## Usage
 
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
-
 ```dart
-const like = 'sample';
+import 'package:hurl_parser_rust/hurl_parser_rust.dart';
+
+void main() async {
+  // Initialize the parser
+  final parser = await HurlParser.getInstance();
+
+  // Parse Hurl content
+  final hurlFile = parser.parse('''
+GET http://api.example.com/users
+Authorization: Bearer token123
+Accept: application/json
+
+HTTP/1.1 200
+[Captures]
+user_id: jsonpath "$.users[0].id"
+[Asserts]
+header "Content-Type" == "application/json"
+''');
+
+  // Access the parsed data
+  final request = hurlFile.entries.first.request;
+  print('Method: ${request.method}');
+  print('URL: ${request.url}');
+}
 ```
 
 ## Additional information
 
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
+- [Hurl Documentation](https://hurl.dev)
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.

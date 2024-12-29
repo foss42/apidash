@@ -1,5 +1,5 @@
 name: hurl_parser_rust
-description: "A new Flutter package project."
+description: A Dart package that provides Hurl file parsing using Rust backend for high performance
 version: 0.0.1
 homepage:
 
@@ -11,6 +11,8 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_rust_bridge: 2.7.0
+  freezed_annotation: ^2.4.4
+  json_annotation: ^4.9.0
   rust_lib_hurl_parser_rust:
     path: rust_builder
 
@@ -21,6 +23,8 @@ dev_dependencies:
   build_runner: ^2.4.14
   integration_test:
     sdk: flutter
+  json_serializable: ^6.7.1
+  freezed: ^2.4.1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
