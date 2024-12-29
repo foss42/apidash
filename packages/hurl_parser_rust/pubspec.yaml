@@ -2,6 +2,7 @@ name: hurl_parser_rust
 description: A Dart package that provides Hurl file parsing using Rust backend for high performance
 version: 0.0.1
 homepage:
+publish_to: none
 
 environment:
   sdk: ^3.6.0

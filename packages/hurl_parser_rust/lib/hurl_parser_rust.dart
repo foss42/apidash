@@ -1,4 +1,4 @@
-export 'package:hurl_parser_rust/src/hurl_parser.dart';
+export 'src/hurl_parser.dart';
 export 'src/models/basic_auth.dart';
 export 'src/models/capture.dart';
 export 'src/models/cookie.dart';

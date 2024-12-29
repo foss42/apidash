@@ -1,8 +1,8 @@
 // lib/src/hurl_parser.dart
 
 import 'dart:convert';
-import 'package:hurl_parser_rust/src/rust/frb_generated.dart';
-import 'package:hurl_parser_rust/src/rust/api/simple.dart';
+import '../src/rust/frb_generated.dart';
+import '../src/rust/api/simple.dart';
 import 'models/hurl_file.dart';
 
 /// Main class for parsing Hurl files
