@@ -1,5 +1,6 @@
 import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash_core/apidash_core.dart';
 import 'convert_utils.dart';
 
 DateTime stripTime(DateTime dateTime) {
@@ -10,6 +11,7 @@ RequestModel getRequestModelFromHistoryModel(HistoryRequestModel model) {
   return RequestModel(
     id: model.historyId,
     name: model.metaData.name,
+    apiType: model.metaData.apiType,
     responseStatus: model.httpResponseModel.statusCode,
     message: kResponseCodeReasons[model.httpResponseModel.statusCode],
     httpRequestModel: model.httpRequestModel,
@@ -27,12 +29,16 @@ String getHistoryRequestName(HistoryMetaModel model) {
 
 String getHistoryRequestKey(HistoryMetaModel model) {
   String timeStamp = humanizeDate(model.timeStamp);
-  if (model.name.isNotEmpty) {
+
+    if (model.name.isNotEmpty) {
     return model.name + model.method.name + timeStamp;
   } else {
     return model.url + model.method.name + timeStamp;
   }
+
 }
+  
+
 
 String? getLatestRequestId(
     Map<DateTime, List<HistoryMetaModel>> temporalGroups) {

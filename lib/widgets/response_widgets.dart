@@ -3,6 +3,7 @@ import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:highlighter/languages/graphql.dart';
 import 'package:lottie/lottie.dart';
 import 'package:apidash/utils/utils.dart';
 import 'package:apidash/widgets/widgets.dart';
@@ -326,14 +327,16 @@ class ResponseBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responseModel = selectedRequestModel?.httpResponseModel;
-    if (responseModel == null) {
+    final apiType = selectedRequestModel?.apiType;
+    final httpresponseModel = selectedRequestModel?.httpResponseModel;
+     final graphqlresponseModel = selectedRequestModel?.graphqlResponseModel;
+    if (apiType == APIType.rest ? httpresponseModel == null : graphqlresponseModel == null) {
       return const ErrorMessage(
           message: '$kNullResponseModelError $kUnexpectedRaiseIssue');
     }
 
-    var body = responseModel.body;
-    var formattedBody = responseModel.formattedBody;
+    var body = apiType == APIType.rest ? httpresponseModel?.body :graphqlresponseModel?.body;
+    var formattedBody = apiType == APIType.rest ? httpresponseModel?.formattedBody :graphqlresponseModel?.formattedBody;
     if (body == null) {
       return const ErrorMessage(
           message: '$kMsgNullBody $kUnexpectedRaiseIssue');
@@ -347,7 +350,8 @@ class ResponseBody extends StatelessWidget {
     }
 
     final mediaType =
-        responseModel.mediaType ?? MediaType(kTypeText, kSubTypePlain);
+        apiType == APIType.rest ?
+        httpresponseModel?.mediaType ?? MediaType(kTypeText, kSubTypePlain) :  MediaType(kTypeApplication, kSubTypeJson);
     // Fix #415: Treat null Content-type as plain text instead of Error message
     // if (mediaType == null) {
     //   return ErrorMessage(
@@ -368,7 +372,7 @@ class ResponseBody extends StatelessWidget {
       key: Key("${selectedRequestModel!.id}-response"),
       mediaType: mediaType,
       options: options,
-      bytes: responseModel.bodyBytes!,
+      bytes:apiType == APIType.rest ? httpresponseModel!.bodyBytes! : graphqlresponseModel!.bodyBytes! ,
       body: body,
       formattedBody: formattedBody,
       highlightLanguage: highlightLanguage,
@@ -519,3 +523,5 @@ class _BodySuccessState extends State<BodySuccess> {
     );
   }
 }
+
+

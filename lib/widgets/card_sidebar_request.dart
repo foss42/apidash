@@ -10,6 +10,7 @@ class SidebarRequestCard extends StatelessWidget {
   const SidebarRequestCard({
     super.key,
     required this.id,
+    required this.apiType,
     required this.method,
     this.name,
     this.url,
@@ -28,6 +29,7 @@ class SidebarRequestCard extends StatelessWidget {
   final String id;
   final String? name;
   final String? url;
+  final APIType apiType;
   final HTTPVerb method;
   final String? selectedId;
   final String? editRequestId;
@@ -88,7 +90,7 @@ class SidebarRequestCard extends StatelessWidget {
               height: 20,
               child: Row(
                 children: [
-                  MethodBox(method: method),
+                  MethodBox(method: method,apiType: apiType,),
                   kHSpacer4,
                   Expanded(
                     child: inEditMode

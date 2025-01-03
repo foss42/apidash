@@ -102,9 +102,12 @@ class DropdownButtonBodyContentType extends ConsumerWidget {
     final selectedId = ref.watch(selectedIdStateProvider);
     final requestBodyContentType = ref.watch(selectedRequestModelProvider
         .select((value) => value?.httpRequestModel?.bodyContentType));
+    print(requestBodyContentType);
     return DropdownButtonContentType(
       contentType: requestBodyContentType,
       onChanged: (ContentType? value) {
+        print("changed ${value}");
+        print(selectedId);
         ref
             .read(collectionStateNotifierProvider.notifier)
             .update(selectedId!, bodyContentType: value);

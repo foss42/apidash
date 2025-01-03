@@ -63,7 +63,7 @@ class SidebarHistoryCard extends StatelessWidget {
               height: 20,
               child: Row(
                 children: [
-                  MethodBox(method: method),
+                  MethodBox(method: method,apiType: APIType.rest,),
                   kHSpacer4,
                   Expanded(
                     child: Text(
