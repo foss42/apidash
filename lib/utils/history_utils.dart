@@ -15,9 +15,7 @@ RequestModel getRequestModelFromHistoryModel(HistoryRequestModel model) {
     responseStatus: model.httpResponseModel.statusCode,
     message: kResponseCodeReasons[model.httpResponseModel.statusCode],
     httpRequestModel: model.httpRequestModel,
-    graphqlRequestModel: model.graphqlRequestModel,
     httpResponseModel: model.httpResponseModel,
-    graphqlResponseModel: model.graphqlResponseModel,
   );
 }
 
@@ -31,23 +29,16 @@ String getHistoryRequestName(HistoryMetaModel model) {
 
 String getHistoryRequestKey(HistoryMetaModel model) {
   String timeStamp = humanizeDate(model.timeStamp);
-  if(model.apiType ==APIType.rest){
+
     if (model.name.isNotEmpty) {
     return model.name + model.method.name + timeStamp;
   } else {
     return model.url + model.method.name + timeStamp;
   }
 
-  }else{
-    if (model.name.isNotEmpty) {
-    return model.name + kLabelGraphql + timeStamp;
-  } else {
-    return model.url + kLabelGraphql + timeStamp;
-  }
-
-  }
-  
 }
+  
+
 
 String? getLatestRequestId(
     Map<DateTime, List<HistoryMetaModel>> temporalGroups) {

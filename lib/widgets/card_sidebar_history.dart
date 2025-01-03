@@ -10,7 +10,6 @@ class SidebarHistoryCard extends StatelessWidget {
     super.key,
     required this.id,
     required this.models,
-    required this.apiType,
     required this.method,
     this.isSelected = false,
     this.requestGroupSize = 1,
@@ -19,7 +18,6 @@ class SidebarHistoryCard extends StatelessWidget {
 
   final String id;
   final List<HistoryMetaModel> models;
-  final APIType apiType;
   final HTTPVerb method;
   final bool isSelected;
   final int requestGroupSize;
@@ -65,7 +63,7 @@ class SidebarHistoryCard extends StatelessWidget {
               height: 20,
               child: Row(
                 children: [
-                  MethodBox(method: method,apiType: apiType),
+                  MethodBox(method: method,apiType: APIType.rest,),
                   kHSpacer4,
                   Expanded(
                     child: Text(

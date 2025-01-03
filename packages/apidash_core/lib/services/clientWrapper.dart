@@ -11,6 +11,7 @@ class HttpClientWrapper extends clientWrapper {
   HttpClientWrapper(this.client);
    @override
   void close() {
+    print("cancelling under rest");
     client.close(); 
   }
 }
@@ -20,6 +21,7 @@ class GraphQLClientWrapper extends clientWrapper {
   GraphQLClientWrapper(this.client);
    @override
   void close() {
+    print("cancelling under graphql");
     client.cache.store.reset();; 
   }
 }

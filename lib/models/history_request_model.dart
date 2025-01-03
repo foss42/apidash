@@ -17,8 +17,6 @@ class HistoryRequestModel with _$HistoryRequestModel {
     required HistoryMetaModel metaData,
     required HttpRequestModel httpRequestModel,
     required HttpResponseModel httpResponseModel,
-    required GraphqlRequestModel graphqlRequestModel,
-    required GraphqlResponseModel graphqlResponseModel,
   }) = _HistoryRequestModel;
 
   factory HistoryRequestModel.fromJson(Map<String, Object?> json) =>

@@ -172,6 +172,7 @@ class CollectionStateNotifier
       responseStatus: null,
       message: null,
       httpResponseModel: null,
+      graphqlResponseModel: null,
       isWorking: false,
       sendingTime: null,
     );
@@ -196,11 +197,9 @@ class CollectionStateNotifier
       name: "${currentModel.metaData.name} (history)",
       apiType: currentModel.metaData.apiType,
       httpRequestModel: currentModel.httpRequestModel,
-      graphqlRequestModel: currentModel.graphqlRequestModel,
       responseStatus: currentModel.metaData.responseStatus,
       message: kResponseCodeReasons[currentModel.metaData.responseStatus],
       httpResponseModel: currentModel.httpResponseModel,
-      graphqlResponseModel: currentModel.graphqlResponseModel,
       isWorking: false,
       sendingTime: null,
     );
@@ -241,6 +240,7 @@ class CollectionStateNotifier
   }) {
     print("entered update");
     print("inside update ${bodyContentType}");
+     print("inside update graphqlvariable ${graphqlVariables}");
     var currentModel = state![id]!;
     var currentHttpRequestModel = currentModel.httpRequestModel;
     var currentGraphqlRequestModel = currentModel.graphqlRequestModel;
@@ -339,6 +339,7 @@ class CollectionStateNotifier
 
    }else{
       responseRec = await graphRequest(requestId, substitutedgraphqlRequestModel);
+      
    }
     
 
@@ -398,19 +399,15 @@ class CollectionStateNotifier
           requestId: requestId,
           name: requestModel.name,
           apiType: requestModel.apiType,
-          url:  typeAPI == APIType.rest
-                  ? substitutedHttpRequestModel.url
-                  : typeAPI == APIType.graphql
-                   ? substitutedgraphqlRequestModel.url
-                   : ''  ,
+          url: substitutedHttpRequestModel.url,
           method: substitutedHttpRequestModel.method,
           responseStatus: statusCode,
           timeStamp: DateTime.now(),
         ),
         httpRequestModel: substitutedHttpRequestModel,
-        graphqlRequestModel: substitutedgraphqlRequestModel,
+      
         httpResponseModel: typeAPI == APIType.rest ? httpResponseModel : baseHttpResponseModel,
-        graphqlResponseModel: typeAPI == APIType.graphql ? graphqlResponseModel : basegraphqlResponseModel,
+      
       );
       ref.read(historyMetaStateNotifier.notifier).addHistoryRequest(model);
       

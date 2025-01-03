@@ -45,6 +45,7 @@ Future<(QueryResult?, Duration?, String?)> graphRequest(
             cache: GraphQLCache(),
       );
       print("query: ${requestModel.query}");
+      print("graphqlvariables:${requestModel.graphqlVariablesMap}");
 
       final QueryOptions options = QueryOptions(
           document: gql(requestModel.query?.isNotEmpty == true ? requestModel.query! : ""),
@@ -56,7 +57,12 @@ Future<(QueryResult?, Duration?, String?)> graphRequest(
       print("I am printing query inside grphqq ${result}");
       
       stopwatch.stop();
-      return (result, stopwatch.elapsed, null);
+       if (result.hasException) {
+       return (null, null, result.exception.toString());
+    } else {
+          return (result, stopwatch.elapsed, null);
+    }
+    
     } catch (e) {
       print("entered catch ${e} ::: ${e.toString()}");
       

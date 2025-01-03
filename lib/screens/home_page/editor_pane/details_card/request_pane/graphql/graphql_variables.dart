@@ -30,7 +30,10 @@ class EditGraphqlVariableState extends ConsumerState<EditGraphqlVariable> {
   }
 
   void _onFieldChange(String selectedId) {
+    print("on field entered");
+    print(graphVariableRows);
     ref.read(collectionStateNotifierProvider.notifier).update(
+          
           selectedId,
           graphqlVariables: graphVariableRows.sublist(0, graphVariableRows.length - 1),
           isgraphqlVariablesEnabledList:
