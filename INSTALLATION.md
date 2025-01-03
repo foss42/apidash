@@ -21,6 +21,9 @@ Download the latest MacOS Installer (Universal - Intel and Apple Silicon) from [
 
 ![‎installation ‎003](https://github.com/foss42/apidash/assets/1382619/b07a5563-aeda-48b3-912f-578e50275579)
 
+
+In case, you see a different dialog other than the one shown below, check out [this section](#open-via-settings)
+
 ![‎installation ‎004](https://github.com/foss42/apidash/assets/1382619/e09bc786-fada-4874-aa6f-8f104797472f)
 
 ![‎installation ‎005](https://github.com/foss42/apidash/assets/1382619/a3a60cdb-e15b-4268-93e5-cc4b203bbe64)
@@ -33,8 +36,23 @@ Download the latest MacOS Installer (Universal - Intel and Apple Silicon) from [
 
 ![‎installation ‎009](https://github.com/foss42/apidash/assets/1382619/3cf1d94b-0ec3-4ba8-b981-54d3f9dd0d2d)
 
-
 This process has to be followed only once and from the next time you can directly launch the API Dash App from the Launchpad.
+
+### Open via Settings
+
+In macOS, if you do not get an option to open immediately, follow the following steps to install API Dash:
+
+![‎installation ‎010](https://github.com/user-attachments/assets/22f6c659-60c9-4332-85b5-6f6e6fffdffd)
+
+Go to Settings > Privacy and Security
+
+![‎installation ‎011](https://github.com/user-attachments/assets/a8abc503-482e-4d19-bd73-79a5d79fc3c6)
+
+![‎installation ‎012](https://github.com/user-attachments/assets/c543b65e-745e-48b0-8af8-7eab60fe3463)
+
+Now drag to the `Applications` folder 
+
+![‎installation ‎012](https://github.com/user-attachments/assets/82257ba1-1eeb-4618-b09a-ea2fd5bb3d36)
 
 ##
 
