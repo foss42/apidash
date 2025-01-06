@@ -141,7 +141,8 @@ enum CodegenLanguage {
 
 enum ImportFormat {
   curl("cURL"),
-  postman("Postman Collection v2.1");
+  postman("Postman Collection v2.1"),
+  insomia("Insomnia v4");
 
   const ImportFormat(this.label);
   final String label;
