@@ -152,7 +152,7 @@ class ViewCodePane extends StatelessWidget {
                       launchUrl(Uri.parse('https://github.com/foss42/apidash/tree/main/doc/user_guide/codegen_user_guide.md#${codegenLanguage.label.replaceAll(' ', '-').replaceAll('(',"").replaceAll(')',"")}'));
                     },
                     
-                      child: const Icon(Icons.help),
+                      child: const Icon(Icons.info),
                     ),
                     CopyButton(
                       toCopy: code,
