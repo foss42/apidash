@@ -193,3 +193,19 @@ HELLO
 
 ## c++
 HIIIII
+## V++
+SD
+## JavaScipt
+js
+## TypeScipt
+TS
+## Dart
+DART
+## Python
+python
+## Java
+Java
+## Kotlin
+Kotlin
+## Swift
+Swift
