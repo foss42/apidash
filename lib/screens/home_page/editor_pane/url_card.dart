@@ -40,6 +40,12 @@ class EditorPaneRequestURLCard extends StatelessWidget {
                 children: [
                   DropdownButtonHTTPMethod(),
                   kHSpacer20,
+                  Column(
+                    children: [
+                      
+                    ]
+
+                  ),
                   Expanded(
                     child: URLTextField(),
                   ),

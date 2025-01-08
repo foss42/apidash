@@ -29,6 +29,7 @@ class RequestEditor extends StatelessWidget {
               children: [
                 RequestEditorTopBar(),
                 EditorPaneRequestURLCard(),
+                EditorPaneRequestURLCard(),
                 kVSpacer10,
                 Expanded(
                   child: EditorPaneRequestDetailsCard(),
