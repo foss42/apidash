@@ -2,7 +2,19 @@
 Contains dependecy and language version that the developer used while developing the particular version.
 
 ## Rust (Hyper)
-Rust Hyper
+Rust Compiler Version: 1.76.0
+Cargo Version: 1.76.0
+Restup Version: 1.27.0
+[dependencies]
+hyper = { version = "0.14", features = ["client", "http1"] }
+hyper-tls = "0.5"
+hyper-rustls = "0.22"
+bytes = "1.2"
+serde_urlencoded = "0.7" 
+tokio = { version = "1", features = ["full"] }
+hyper-multipart-rfc7578 = "0.7"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
 
 
 
@@ -95,8 +107,6 @@ Rust Hyper
 
 
 
-## c
-HELLO
 
 
 
@@ -159,53 +169,3 @@ HELLO
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## c++
-HIIIII
-## V++
-SD
-## JavaScipt
-js
-## TypeScipt
-TS
-## Dart
-DART
-## Python
-python
-## Java
-Java
-## Kotlin
-Kotlin
-## Swift (URLSession)
-Swift
