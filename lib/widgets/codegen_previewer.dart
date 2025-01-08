@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:highlighter/highlighter.dart' show highlight;
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'code_previewer.dart';
 import 'widgets.dart'
     show CopyButton, DropdownButtonCodegenLanguage, SaveInDownloadsButton;
@@ -145,6 +146,13 @@ class ViewCodePane extends StatelessWidget {
                         codegenLanguage: codegenLanguage,
                         onChanged: onChangedCodegenLanguage,
                       ),
+                    ),
+                    ElevatedButton(
+                    onPressed: () {
+                      launchUrl(Uri.parse('https://github.com/foss42/apidash/tree/main/doc/user_guide/codegen_user_guide.md#${codegenLanguage.label.replaceAll(' ', '-')}'));
+                    },
+                    
+                      child: const Icon(Icons.help),
                     ),
                     CopyButton(
                       toCopy: code,
