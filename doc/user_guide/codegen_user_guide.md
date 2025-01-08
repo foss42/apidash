@@ -207,5 +207,5 @@ python
 Java
 ## Kotlin
 Kotlin
-## Swift
+## Swift (URLSession)
 Swift

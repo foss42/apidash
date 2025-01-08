@@ -149,7 +149,7 @@ class ViewCodePane extends StatelessWidget {
                     ),
                     ElevatedButton(
                     onPressed: () {
-                      launchUrl(Uri.parse('https://github.com/foss42/apidash/tree/main/doc/user_guide/codegen_user_guide.md#${codegenLanguage.label.replaceAll(' ', '-')}'));
+                      launchUrl(Uri.parse('https://github.com/Clasherzz/apidash/blob/Issue523/doc/user_guide/codegen_user_guide.md#${codegenLanguage.label.replaceAll(' ', '-')}'));
                     },
                     
                       child: const Icon(Icons.help),
