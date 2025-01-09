@@ -23,7 +23,7 @@ class OAuthCredentials with _$OAuthCredentials {
   /// Convert from oauth2 Credentials
   factory OAuthCredentials.fromOAuth2Credentials(oauth2.Credentials credentials) {
     return OAuthCredentials(
-      accessToken: credentials.accessToken ?? '',
+      accessToken: credentials.accessToken,
       refreshToken: credentials.refreshToken,
       tokenType: 'Bearer',
       );
