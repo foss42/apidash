@@ -1,4 +1,4 @@
-## API Dash User Guide
+# API Dash User Guide
 
 - [History of Requests](https://github.com/foss42/apidash/blob/main/doc/user_guide/his_user_guide.md)
 - [Environment Variables Manager](https://github.com/foss42/apidash/blob/main/doc/user_guide/env_user_guide.md)
