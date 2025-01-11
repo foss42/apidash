@@ -1,4 +1,0 @@
-# melos_managed_dependency_overrides: rust_lib_hurl_parser_rust
-dependency_overrides:
-  rust_lib_hurl_parser_rust:
-    path: rust_builder

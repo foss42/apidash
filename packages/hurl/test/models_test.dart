@@ -1,19 +1,19 @@
 // test/models_test.dart
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hurl_parser_rust/src/models/capture.dart';
-import 'package:hurl_parser_rust/src/models/header.dart';
-import 'package:hurl_parser_rust/src/models/hurl_assert.dart';
-import 'package:hurl_parser_rust/src/models/hurl_entry.dart';
-import 'package:hurl_parser_rust/src/models/hurl_file.dart';
-import 'package:hurl_parser_rust/src/models/hurl_request.dart';
-import 'package:hurl_parser_rust/src/models/hurl_response.dart';
-import 'package:hurl_parser_rust/src/models/predicate.dart';
-import 'package:hurl_parser_rust/src/models/query.dart';
-import 'package:hurl_parser_rust/src/models/request_body.dart';
-import 'package:hurl_parser_rust/src/models/request_option.dart';
-import 'package:hurl_parser_rust/src/rust/frb_generated.dart';
-import 'package:hurl_parser_rust/src/rust/api/simple.dart';
+import 'package:hurl/src/models/capture.dart';
+import 'package:hurl/src/models/header.dart';
+import 'package:hurl/src/models/hurl_assert.dart';
+import 'package:hurl/src/models/hurl_entry.dart';
+import 'package:hurl/src/models/hurl_file.dart';
+import 'package:hurl/src/models/hurl_request.dart';
+import 'package:hurl/src/models/hurl_response.dart';
+import 'package:hurl/src/models/predicate.dart';
+import 'package:hurl/src/models/query.dart';
+import 'package:hurl/src/models/request_body.dart';
+import 'package:hurl/src/models/request_option.dart';
+import 'package:hurl/src/rust/frb_generated.dart';
+import 'package:hurl/src/rust/api/simple.dart';
 import 'dart:convert';
 
 void main() {

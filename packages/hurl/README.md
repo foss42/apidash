@@ -1,4 +1,4 @@
-# hurl_parser_rust
+# hurl
 
 A Dart package that provides Hurl file parsing using a Rust backend for high performance.
 
@@ -22,13 +22,13 @@ A Dart package that provides Hurl file parsing using a Rust backend for high per
 
 ```yaml
 dependencies:
-  hurl_parser_rust: ^0.1.0
+  hurl: ^0.1.0
 ```
 
 ## Usage
 
 ```dart
-import 'package:hurl_parser_rust/hurl_parser_rust.dart';
+import 'package:hurl/hurl.dart';
 
 void main() async {
   // Initialize the parser

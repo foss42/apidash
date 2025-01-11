@@ -1,9 +1,9 @@
-// test/hurl_parser_rust_test.dart
+// test/hurl_test.dart
 
 import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hurl_parser_rust/src/rust/frb_generated.dart';
-import 'package:hurl_parser_rust/src/rust/api/simple.dart';
+import 'package:hurl/src/rust/frb_generated.dart';
+import 'package:hurl/src/rust/api/simple.dart';
 
 void main() {
   setUpAll(() async {

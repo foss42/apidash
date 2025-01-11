@@ -1,5 +1,5 @@
 [package]
-name = "rust_lib_hurl_parser_rust"
+name = "rust_lib_hurl"
 version = "0.1.0"
 edition = "2021"
 
