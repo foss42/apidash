@@ -1,3 +1,7 @@
+## 0.1.2
+
+- Bump dependencies.
+
 ## 0.1.1
 
 - Add formdata support and new test cases.
