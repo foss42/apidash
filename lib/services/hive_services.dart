@@ -1,5 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'dart:convert';
+import 'package:git/git.dart';
+import 'package:path_provider/path_provider.dart';
 
 const String kDataBox = "apidash-data";
 const String kKeyDataBoxIds = "ids";
@@ -165,6 +168,40 @@ class HiveHandler {
           await environmentBox.delete(key);
         }
       }
+    }
+  }
+
+  Future<void> pushDataToGit(String repositoryUrl, String token) async {
+    final directory = await getApplicationDocumentsDirectory();
+    final repoDir = '${directory.path}/apidash_repo';
+
+    final gitDir = await GitDir.fromExisting(repoDir, allowSubdirectory: true);
+    await gitDir.runCommand(['pull', 'origin', 'main']);
+
+    final data = dataBox.toMap();
+    final jsonData = jsonEncode(data);
+
+    final file = File('$repoDir/collections.json');
+    await file.writeAsString(jsonData);
+
+    await gitDir.runCommand(['add', 'collections.json']);
+    await gitDir.runCommand(['commit', '-m', 'Update collections']);
+    await gitDir.runCommand(['push', 'origin', 'main']);
+  }
+
+  Future<void> pullDataFromGit(String repositoryUrl, String token) async {
+    final directory = await getApplicationDocumentsDirectory();
+    final repoDir = '${directory.path}/apidash_repo';
+
+    final gitDir = await GitDir.fromExisting(repoDir, allowSubdirectory: true);
+    await gitDir.runCommand(['pull', 'origin', 'main']);
+
+    final file = File('$repoDir/collections.json');
+    if (await file.exists()) {
+      final jsonData = await file.readAsString();
+      final data = jsonDecode(jsonData);
+
+      await dataBox.putAll(data);
     }
   }
 }

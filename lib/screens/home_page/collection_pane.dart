@@ -7,6 +7,7 @@ import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
 import '../common_widgets/common_widgets.dart';
+import 'package:apidash/services/git_services.dart';
 
 class CollectionPane extends ConsumerWidget {
   const CollectionPane({
@@ -43,6 +44,28 @@ class CollectionPane extends ConsumerWidget {
               ref.read(collectionSearchQueryProvider.notifier).state =
                   value.toLowerCase();
             },
+          ),
+          kVSpacer10,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.cloud_upload),
+                onPressed: () async {
+                  await ref
+                      .read(collectionStateNotifierProvider.notifier)
+                      .pushToGit();
+                },
+              ),
+              IconButton(
+                icon: const Icon(Icons.cloud_download),
+                onPressed: () async {
+                  await ref
+                      .read(collectionStateNotifierProvider.notifier)
+                      .pullFromGit();
+                },
+              ),
+            ],
           ),
           kVSpacer10,
           const Expanded(

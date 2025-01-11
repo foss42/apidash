@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/consts.dart';
 import 'providers.dart';
 import '../models/models.dart';
-import '../services/services.dart' show hiveHandler, HiveHandler;
+import '../services/services.dart' show hiveHandler, HiveHandler, GitService;
 import '../utils/utils.dart'
     show getNewUuid, collectionToHAR, substituteHttpRequestModel;
 
@@ -414,5 +414,24 @@ class CollectionStateNotifier
       envMap,
       activeEnvId,
     );
+  }
+
+  Future<void> pushToGit() async {
+    final settings = ref.read(settingsProvider);
+    final gitService = GitService(
+      repositoryUrl: settings.gitRepository!,
+      token: settings.gitToken!,
+    );
+    await gitService.pushData();
+  }
+
+  Future<void> pullFromGit() async {
+    final settings = ref.read(settingsProvider);
+    final gitService = GitService(
+      repositoryUrl: settings.gitRepository!,
+      token: settings.gitToken!,
+    );
+    await gitService.pullData();
+    loadData();
   }
 }

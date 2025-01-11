@@ -467,3 +467,7 @@ const kMsgNoContent = "No content";
 const kMsgUnknowContentType = "Unknown Response Content-Type";
 // Workspace Selector
 const kMsgSelectWorkspace = "Create your workspace";
+
+// GIT settings constants
+const kGitToken = "gitToken";
+const kGitRepository = "gitRepository";

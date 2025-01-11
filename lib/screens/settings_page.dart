@@ -232,9 +232,82 @@ class SettingsPage extends ConsumerWidget {
                   showAboutAppDialog(context);
                 },
               ),
+              ListTile(
+                hoverColor: kColorTransparent,
+                title: const Text('GIT Configuration'),
+                subtitle: const Text(
+                    'Configure GIT settings to enable push/pull functionality.'),
+                trailing: IconButton(
+                  icon: const Icon(Icons.settings),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return GitSettingsDialog();
+                      },
+                    );
+                  },
+                ),
+              ),
               kVSpacer20,
             ],
           ),
+        ),
+      ],
+    );
+  }
+}
+
+class GitSettingsDialog extends ConsumerStatefulWidget {
+  @override
+  _GitSettingsDialogState createState() => _GitSettingsDialogState();
+}
+
+class _GitSettingsDialogState extends ConsumerState<GitSettingsDialog> {
+  final TextEditingController _tokenController = TextEditingController();
+  final TextEditingController _repositoryController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    final settings = ref.read(settingsProvider);
+    _tokenController.text = settings.gitToken ?? '';
+    _repositoryController.text = settings.gitRepository ?? '';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('GIT Settings'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TextField(
+            controller: _tokenController,
+            decoration: const InputDecoration(labelText: 'GIT Token'),
+          ),
+          TextField(
+            controller: _repositoryController,
+            decoration: const InputDecoration(labelText: 'GIT Repository'),
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: const Text('Cancel'),
+        ),
+        TextButton(
+          onPressed: () {
+            ref.read(settingsProvider.notifier).update(
+                  gitToken: _tokenController.text,
+                  gitRepository: _repositoryController.text,
+                );
+            Navigator.of(context).pop();
+          },
+          child: const Text('Save'),
         ),
       ],
     );
