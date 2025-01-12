@@ -3,12 +3,13 @@ import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/utils/utils.dart';
-import 'texts.dart' show MethodBox;
+import 'texts.dart';
 
 class SidebarHistoryCard extends StatelessWidget {
   const SidebarHistoryCard({
     super.key,
     required this.id,
+    required this.apiType,
     required this.models,
     required this.method,
     this.isSelected = false,
@@ -17,6 +18,7 @@ class SidebarHistoryCard extends StatelessWidget {
   });
 
   final String id;
+  final APIType apiType;
   final List<HistoryMetaModel> models;
   final HTTPVerb method;
   final bool isSelected;
@@ -63,7 +65,10 @@ class SidebarHistoryCard extends StatelessWidget {
               height: 20,
               child: Row(
                 children: [
-                  MethodBox(method: method),
+                  SidebarRequestCardTextBox(
+                    apiType: apiType,
+                    method: method,
+                  ),
                   kHSpacer4,
                   Expanded(
                     child: Text(
