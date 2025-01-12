@@ -46,6 +46,11 @@ class HistoryRequestPane extends ConsumerWidget {
         headerLength > 0,
         hasBody,
       ],
+      tabLabels: const [
+        kLabelURLParams,
+        kLabelHeaders,
+        kLabelBody,
+      ],
       children: [
         RequestDataTable(
           rows: paramsMap,

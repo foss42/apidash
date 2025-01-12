@@ -1,4 +1,5 @@
 import 'package:apidash_core/apidash_core.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/consts.dart';
 import 'providers.dart';
@@ -112,10 +113,11 @@ class CollectionStateNotifier
     unsave();
   }
 
-  void remove(String id) {
+  void remove({String? id}) {
+    final rId = id ?? ref.read(selectedIdStateProvider);
     var itemIds = ref.read(requestSequenceProvider);
-    int idx = itemIds.indexOf(id);
-    itemIds.remove(id);
+    int idx = itemIds.indexOf(rId!);
+    itemIds.remove(rId);
     ref.read(requestSequenceProvider.notifier).state = [...itemIds];
 
     String? newId;
@@ -130,14 +132,15 @@ class CollectionStateNotifier
     ref.read(selectedIdStateProvider.notifier).state = newId;
 
     var map = {...state!};
-    map.remove(id);
+    map.remove(rId);
     state = map;
     unsave();
   }
 
-  void clearResponse(String? id) {
-    if (id == null || state?[id] == null) return;
-    var currentModel = state![id]!;
+  void clearResponse({String? id}) {
+    final rId = id ?? ref.read(selectedIdStateProvider);
+    if (rId == null || state?[rId] == null) return;
+    var currentModel = state![rId]!;
     final newModel = currentModel.copyWith(
       responseStatus: null,
       message: null,
@@ -146,17 +149,18 @@ class CollectionStateNotifier
       sendingTime: null,
     );
     var map = {...state!};
-    map[id] = newModel;
+    map[rId] = newModel;
     state = map;
     unsave();
   }
 
-  void duplicate(String id) {
+  void duplicate({String? id}) {
+    final rId = id ?? ref.read(selectedIdStateProvider);
     final newId = getNewUuid();
 
     var itemIds = ref.read(requestSequenceProvider);
-    int idx = itemIds.indexOf(id);
-    var currentModel = state![id]!;
+    int idx = itemIds.indexOf(rId!);
+    var currentModel = state![rId]!;
     final newModel = currentModel.copyWith(
       id: newId,
       name: "${currentModel.name} (copy)",
@@ -204,9 +208,10 @@ class CollectionStateNotifier
     unsave();
   }
 
-  void update(
-    String id, {
+  void update({
+    String? id,
     HTTPVerb? method,
+    APIType? apiType,
     String? url,
     String? name,
     String? description,
@@ -217,14 +222,21 @@ class CollectionStateNotifier
     List<bool>? isParamEnabledList,
     ContentType? bodyContentType,
     String? body,
+    String? query,
     List<FormDataModel>? formData,
     int? responseStatus,
     String? message,
     HttpResponseModel? httpResponseModel,
   }) {
-    var currentModel = state![id]!;
+    final rId = id ?? ref.read(selectedIdStateProvider);
+    if (rId == null) {
+      debugPrint("Unable to update as Request Id is null");
+      return;
+    }
+    var currentModel = state![rId]!;
     var currentHttpRequestModel = currentModel.httpRequestModel;
     final newModel = currentModel.copyWith(
+      apiType: apiType ?? currentModel.apiType,
       name: name ?? currentModel.name,
       description: description ?? currentModel.description,
       requestTabIndex: requestTabIndex ?? currentModel.requestTabIndex,
@@ -240,6 +252,7 @@ class CollectionStateNotifier
         bodyContentType:
             bodyContentType ?? currentHttpRequestModel.bodyContentType,
         body: body ?? currentHttpRequestModel.body,
+        query: query ?? currentHttpRequestModel.query,
         formData: formData ?? currentHttpRequestModel.formData,
       ),
       responseStatus: responseStatus ?? currentModel.responseStatus,
@@ -248,7 +261,7 @@ class CollectionStateNotifier
     );
 
     var map = {...state!};
-    map[id] = newModel;
+    map[rId] = newModel;
     state = map;
     unsave();
   }
@@ -267,8 +280,9 @@ class CollectionStateNotifier
       return;
     }
 
+    APIType apiType = requestModel!.apiType;
     HttpRequestModel substitutedHttpRequestModel =
-        getSubstitutedHttpRequestModel(requestModel!.httpRequestModel!);
+        getSubstitutedHttpRequestModel(requestModel.httpRequestModel!);
 
     // set current model's isWorking to true and update state
     var map = {...state!};
@@ -281,6 +295,7 @@ class CollectionStateNotifier
     bool noSSL = ref.read(settingsProvider).isSSLDisabled;
     (HttpResponse?, Duration?, String?)? responseRec = await request(
       requestId,
+      apiType,
       substitutedHttpRequestModel,
       defaultUriScheme: defaultUriScheme,
       noSSL: noSSL,
