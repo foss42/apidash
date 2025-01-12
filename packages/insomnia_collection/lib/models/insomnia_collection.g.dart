@@ -128,10 +128,12 @@ Map<String, dynamic> _$$ParameterImplToJson(_$ParameterImpl instance) =>
 _$HeaderImpl _$$HeaderImplFromJson(Map json) => _$HeaderImpl(
       name: json['name'] as String?,
       value: json['value'] as String?,
+      disabled: json['disabled'] as bool?,
     );
 
 Map<String, dynamic> _$$HeaderImplToJson(_$HeaderImpl instance) =>
     <String, dynamic>{
       if (instance.name case final value?) 'name': value,
       if (instance.value case final value?) 'value': value,
+      if (instance.disabled case final value?) 'disabled': value,
     };

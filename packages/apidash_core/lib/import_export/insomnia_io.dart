@@ -38,8 +38,8 @@ class InsomniaIO {
 
     for (var header in request.headers ?? <ins.Header>[]) {
       var name = header.name ?? "";
-      var value = header.value;
-      var activeHeader = header.name?.isNotEmpty ?? false;
+      var value = header.value ?? "";
+      var activeHeader = header.disabled ?? false;
       headers.add(NameValueModel(name: name, value: value));
       isHeaderEnabledList.add(!activeHeader);
     }
@@ -47,7 +47,7 @@ class InsomniaIO {
     for (var query in request.parameters ?? <ins.Parameter>[]) {
       var name = query.name ?? "";
       var value = query.value;
-      var activeQuery = query.name?.isNotEmpty ?? false;
+      var activeQuery = query.disabled ?? false;
       params.add(NameValueModel(name: name, value: value));
       isParamEnabledList.add(!activeQuery);
     }

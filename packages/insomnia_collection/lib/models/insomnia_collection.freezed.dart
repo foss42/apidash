@@ -292,8 +292,7 @@ mixin _$Resource {
   String? get method => throw _privateConstructorUsedError;
   Body? get body => throw _privateConstructorUsedError;
   List<Parameter>? get parameters => throw _privateConstructorUsedError;
-  List<Header>? get headers =>
-      throw _privateConstructorUsedError; // List<Authentication>? authentication,
+  List<Header>? get headers => throw _privateConstructorUsedError;
   String? get preRequestScript => throw _privateConstructorUsedError;
   num? get metaSortKey => throw _privateConstructorUsedError;
   bool? get isPrivate => throw _privateConstructorUsedError;
@@ -735,7 +734,6 @@ class _$ResourceImpl implements _Resource {
     return EqualUnmodifiableListView(value);
   }
 
-// List<Authentication>? authentication,
   @override
   final String? preRequestScript;
   @override
@@ -905,7 +903,7 @@ abstract class _Resource implements Resource {
   @override
   List<Parameter>? get parameters;
   @override
-  List<Header>? get headers; // List<Authentication>? authentication,
+  List<Header>? get headers;
   @override
   String? get preRequestScript;
   @override
@@ -1341,6 +1339,7 @@ Header _$HeaderFromJson(Map<String, dynamic> json) {
 mixin _$Header {
   String? get name => throw _privateConstructorUsedError;
   String? get value => throw _privateConstructorUsedError;
+  bool? get disabled => throw _privateConstructorUsedError;
 
   /// Serializes this Header to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -1356,7 +1355,7 @@ abstract class $HeaderCopyWith<$Res> {
   factory $HeaderCopyWith(Header value, $Res Function(Header) then) =
       _$HeaderCopyWithImpl<$Res, Header>;
   @useResult
-  $Res call({String? name, String? value});
+  $Res call({String? name, String? value, bool? disabled});
 }
 
 /// @nodoc
@@ -1376,6 +1375,7 @@ class _$HeaderCopyWithImpl<$Res, $Val extends Header>
   $Res call({
     Object? name = freezed,
     Object? value = freezed,
+    Object? disabled = freezed,
   }) {
     return _then(_value.copyWith(
       name: freezed == name
@@ -1386,6 +1386,10 @@ class _$HeaderCopyWithImpl<$Res, $Val extends Header>
           ? _value.value
           : value // ignore: cast_nullable_to_non_nullable
               as String?,
+      disabled: freezed == disabled
+          ? _value.disabled
+          : disabled // ignore: cast_nullable_to_non_nullable
+              as bool?,
     ) as $Val);
   }
 }
@@ -1397,7 +1401,7 @@ abstract class _$$HeaderImplCopyWith<$Res> implements $HeaderCopyWith<$Res> {
       __$$HeaderImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String? name, String? value});
+  $Res call({String? name, String? value, bool? disabled});
 }
 
 /// @nodoc
@@ -1415,6 +1419,7 @@ class __$$HeaderImplCopyWithImpl<$Res>
   $Res call({
     Object? name = freezed,
     Object? value = freezed,
+    Object? disabled = freezed,
   }) {
     return _then(_$HeaderImpl(
       name: freezed == name
@@ -1425,6 +1430,10 @@ class __$$HeaderImplCopyWithImpl<$Res>
           ? _value.value
           : value // ignore: cast_nullable_to_non_nullable
               as String?,
+      disabled: freezed == disabled
+          ? _value.disabled
+          : disabled // ignore: cast_nullable_to_non_nullable
+              as bool?,
     ));
   }
 }
@@ -1433,7 +1442,7 @@ class __$$HeaderImplCopyWithImpl<$Res>
 
 @JsonSerializable(explicitToJson: true, anyMap: true, includeIfNull: false)
 class _$HeaderImpl implements _Header {
-  const _$HeaderImpl({this.name, this.value});
+  const _$HeaderImpl({this.name, this.value, this.disabled});
 
   factory _$HeaderImpl.fromJson(Map<String, dynamic> json) =>
       _$$HeaderImplFromJson(json);
@@ -1442,10 +1451,12 @@ class _$HeaderImpl implements _Header {
   final String? name;
   @override
   final String? value;
+  @override
+  final bool? disabled;
 
   @override
   String toString() {
-    return 'Header(name: $name, value: $value)';
+    return 'Header(name: $name, value: $value, disabled: $disabled)';
   }
 
   @override
@@ -1454,12 +1465,14 @@ class _$HeaderImpl implements _Header {
         (other.runtimeType == runtimeType &&
             other is _$HeaderImpl &&
             (identical(other.name, name) || other.name == name) &&
-            (identical(other.value, value) || other.value == value));
+            (identical(other.value, value) || other.value == value) &&
+            (identical(other.disabled, disabled) ||
+                other.disabled == disabled));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, name, value);
+  int get hashCode => Object.hash(runtimeType, name, value, disabled);
 
   /// Create a copy of Header
   /// with the given fields replaced by the non-null parameter values.
@@ -1478,8 +1491,10 @@ class _$HeaderImpl implements _Header {
 }
 
 abstract class _Header implements Header {
-  const factory _Header({final String? name, final String? value}) =
-      _$HeaderImpl;
+  const factory _Header(
+      {final String? name,
+      final String? value,
+      final bool? disabled}) = _$HeaderImpl;
 
   factory _Header.fromJson(Map<String, dynamic> json) = _$HeaderImpl.fromJson;
 
@@ -1487,6 +1502,8 @@ abstract class _Header implements Header {
   String? get name;
   @override
   String? get value;
+  @override
+  bool? get disabled;
 
   /// Create a copy of Header
   /// with the given fields replaced by the non-null parameter values.

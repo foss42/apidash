@@ -125,6 +125,7 @@ class Header with _$Header {
   const factory Header({
     String? name,
     String? value,
+    bool? disabled,
   }) = _Header;
 
   factory Header.fromJson(Map<String, dynamic> json) => _$HeaderFromJson(json);
