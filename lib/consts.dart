@@ -431,6 +431,7 @@ const kLabelSelect = "Select";
 const kLabelContinue = "Continue";
 const kLabelCancel = "Cancel";
 const kLabelOk = "Ok";
+const kUntitled = "untitled";
 // Request Pane
 const kLabelRequest = "Request";
 const kLabelHideCode = "Hide Code";

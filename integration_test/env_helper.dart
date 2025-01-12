@@ -26,7 +26,7 @@ class ApidashTestEnvHelper {
   Future<void> renameNewEnvironment(String newEnvName) async {
     Finder envItems = find.byType(EnvironmentItem);
     Finder newEnvItem = envItems.at(1);
-    expect(find.descendant(of: newEnvItem, matching: find.text("untitled")),
+    expect(find.descendant(of: newEnvItem, matching: find.text(kUntitled)),
         findsOneWidget);
     Finder itemCardMenu =
         find.descendant(of: newEnvItem, matching: find.byType(ItemCardMenu));

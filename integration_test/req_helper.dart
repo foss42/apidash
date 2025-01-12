@@ -29,7 +29,7 @@ class ApidashTestRequestHelper {
   Future<void> renameNewRequest(String newReqName) async {
     Finder reqItems = find.byType(RequestItem);
     Finder newReqItem = reqItems.at(0);
-    expect(find.descendant(of: newReqItem, matching: find.text("untitled")),
+    expect(find.descendant(of: newReqItem, matching: find.text(kUntitled)),
         findsOneWidget);
     Finder itemCardMenu =
         find.descendant(of: newReqItem, matching: find.byType(ItemCardMenu));
