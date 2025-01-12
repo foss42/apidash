@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
+import '../../../consts.dart';
 import '../../common_widgets/common_widgets.dart';
 
 class RequestEditorTopBar extends ConsumerWidget {
@@ -11,26 +12,18 @@ class RequestEditorTopBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final id = ref.watch(selectedIdStateProvider);
+    ref.watch(selectedIdStateProvider);
     final name =
         ref.watch(selectedRequestModelProvider.select((value) => value?.name));
     return Padding(
-      padding: const EdgeInsets.only(
-        left: 12.0,
-        top: 4.0,
-        right: 4.0,
-        bottom: 4.0,
-      ),
+      padding: kP4,
       child: Row(
         children: [
-          DropdownButtonAPIType(
-            apiType: APIType.rest,
-            onChanged: (apiType) {},
-          ),
+          const APITypeDropdown(),
           kHSpacer10,
           Expanded(
             child: Text(
-              name ?? "",
+              name.isNullOrEmpty() ? kUntitled : name!,
               style: Theme.of(context).textTheme.bodyMedium,
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
@@ -42,14 +35,13 @@ class RequestEditorTopBar extends ConsumerWidget {
               showRenameDialog(context, "Rename Request", name, (val) {
                 ref
                     .read(collectionStateNotifierProvider.notifier)
-                    .update(id!, name: val);
+                    .update(name: val);
               });
             },
-            onDuplicatePressed: () => ref
-                .read(collectionStateNotifierProvider.notifier)
-                .duplicate(id!),
+            onDuplicatePressed: () =>
+                ref.read(collectionStateNotifierProvider.notifier).duplicate(),
             onDeletePressed: () =>
-                ref.read(collectionStateNotifierProvider.notifier).remove(id!),
+                ref.read(collectionStateNotifierProvider.notifier).remove(),
           ),
           kHSpacer10,
           const EnvironmentDropdown(),

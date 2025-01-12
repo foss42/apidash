@@ -90,6 +90,7 @@ const kHSpacer10 = SizedBox(width: 10);
 const kHSpacer12 = SizedBox(width: 12);
 const kHSpacer20 = SizedBox(width: 20);
 const kHSpacer40 = SizedBox(width: 40);
+const kVSpacer3 = SizedBox(height: 3);
 const kVSpacer5 = SizedBox(height: 5);
 const kVSpacer8 = SizedBox(height: 8);
 const kVSpacer10 = SizedBox(height: 10);

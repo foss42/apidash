@@ -9,7 +9,7 @@
 - [ ] WebSocket support (https://github.com/foss42/apidash/issues/15)
 - [ ] SSE support (https://github.com/foss42/apidash/issues/116)
 - [ ] MQTT support (https://github.com/foss42/apidash/issues/115)
-- [ ] GraphQL support (https://github.com/foss42/apidash/issues/117)
+- [x] GraphQL support (https://github.com/foss42/apidash/issues/117)
 - [ ] gRPC support (https://github.com/foss42/apidash/issues/14)
 - [ ] Figuring out how to build for various Linux packaging formats (https://github.com/foss42/apidash/discussions/240) [Docs]
 - [ ] Save items in Response headers/body in an Environment variable to be used by other requests (https://github.com/foss42/apidash/issues/465)

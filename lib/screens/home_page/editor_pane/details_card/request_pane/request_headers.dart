@@ -29,9 +29,8 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
     seed = random.nextInt(kRandMax);
   }
 
-  void _onFieldChange(String selectedId) {
+  void _onFieldChange() {
     ref.read(collectionStateNotifierProvider.notifier).update(
-          selectedId,
           headers: headerRows.sublist(0, headerRows.length - 1),
           isHeaderEnabledList:
               isRowEnabledList.sublist(0, headerRows.length - 1),
@@ -99,7 +98,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
                         setState(() {
                           isRowEnabledList[index] = value!;
                         });
-                        _onFieldChange(selectedId!);
+                        _onFieldChange();
                       },
                 colorScheme: Theme.of(context).colorScheme,
               ),
@@ -117,7 +116,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
                     headerRows.add(kNameValueEmptyModel);
                     isRowEnabledList.add(false);
                   }
-                  _onFieldChange(selectedId!);
+                  _onFieldChange();
                 },
                 colorScheme: Theme.of(context).colorScheme,
               ),
@@ -143,7 +142,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
                     headerRows.add(kNameValueEmptyModel);
                     isRowEnabledList.add(false);
                   }
-                  _onFieldChange(selectedId!);
+                  _onFieldChange();
                 },
                 colorScheme: Theme.of(context).colorScheme,
               ),
@@ -165,7 +164,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
                           headerRows.removeAt(index);
                           isRowEnabledList.removeAt(index);
                         }
-                        _onFieldChange(selectedId!);
+                        _onFieldChange();
                       },
                 child: Theme.of(context).brightness == Brightness.dark
                     ? kIconRemoveDark
@@ -212,7 +211,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
               onPressed: () {
                 headerRows.add(kNameValueEmptyModel);
                 isRowEnabledList.add(false);
-                _onFieldChange(selectedId!);
+                _onFieldChange();
               },
               icon: const Icon(Icons.add),
               label: const Text(

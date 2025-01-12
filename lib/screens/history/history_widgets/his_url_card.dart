@@ -1,3 +1,4 @@
+import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash/widgets/widgets.dart';
@@ -16,6 +17,7 @@ class HistoryURLCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final apiType = historyRequestModel?.metaData.apiType;
     final method = historyRequestModel?.metaData.method;
     final url = historyRequestModel?.metaData.url;
     final fontSize = Theme.of(context).textTheme.titleMedium?.fontSize;
@@ -41,18 +43,20 @@ class HistoryURLCard extends StatelessWidget {
           child: Row(
             children: [
               isCompact ? const SizedBox.shrink() : kHSpacer10,
-              Text(
-                method!.name.toUpperCase(),
-                style: kCodeStyle.copyWith(
-                  fontSize: fontSize,
-                  fontWeight: FontWeight.bold,
-                  color: getHTTPMethodColor(
-                    method,
-                    brightness: Theme.of(context).brightness,
+              if (apiType == APIType.rest) ...[
+                Text(
+                  method!.name.toUpperCase(),
+                  style: kCodeStyle.copyWith(
+                    fontSize: fontSize,
+                    fontWeight: FontWeight.bold,
+                    color: getHTTPMethodColor(
+                      method,
+                      brightness: Theme.of(context).brightness,
+                    ),
                   ),
                 ),
-              ),
-              isCompact ? kHSpacer10 : kHSpacer20,
+                isCompact ? kHSpacer10 : kHSpacer20,
+              ],
               Expanded(
                 child: ReadOnlyTextField(
                   initialValue: url,

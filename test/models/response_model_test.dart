@@ -16,6 +16,7 @@ void main() {
   test('Testing fromResponse', () async {
     (HttpResponse?, Duration?, String?)? responseRec = await request(
       requestModelGet1.id,
+      requestModelGet1.apiType,
       requestModelGet1.httpRequestModel!,
       defaultUriScheme: kDefaultUriScheme,
       noSSL: false,
@@ -33,6 +34,7 @@ void main() {
   test('Testing fromResponse for contentType not Json', () async {
     (HttpResponse?, Duration?, String?)? responseRec = await request(
       requestModelGet13.id,
+      requestModelGet1.apiType,
       requestModelGet13.httpRequestModel!,
       defaultUriScheme: kDefaultUriScheme,
       noSSL: false,
@@ -48,6 +50,7 @@ void main() {
   test('Testing fromResponse for Bad SSL with certificate check', () async {
     (HttpResponse?, Duration?, String?)? responseRec = await request(
       requestModelGetBadSSL.id,
+      requestModelGet1.apiType,
       requestModelGetBadSSL.httpRequestModel!,
       defaultUriScheme: kDefaultUriScheme,
       noSSL: false,
@@ -59,6 +62,7 @@ void main() {
   test('Testing fromResponse for Bad SSL with no certificate check', () async {
     (HttpResponse?, Duration?, String?)? responseRec = await request(
       requestModelGetBadSSL.id,
+      requestModelGet1.apiType,
       requestModelGetBadSSL.httpRequestModel!,
       defaultUriScheme: kDefaultUriScheme,
       noSSL: true,
