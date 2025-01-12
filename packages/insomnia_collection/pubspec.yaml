@@ -1,5 +1,5 @@
-name: insomnia
-description: Seamlessly convert Insomnia Collection Format v4 to Dart and vice versa.
+name: insomnia_collection
+description: Seamlessly convert Insomnia Collection Format v4 to Dart.
 version: 0.0.1
 homepage: https://github.com/foss42/apidash
 

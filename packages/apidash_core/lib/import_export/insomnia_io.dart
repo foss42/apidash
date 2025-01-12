@@ -1,10 +1,13 @@
-import 'package:insomnia/insomnia.dart' as ins;
 import 'package:seed/seed.dart';
 import '../consts.dart';
 import '../models/models.dart';
 import '../utils/utils.dart';
+import 'package:insomnia_collection/insomnia_collection.dart' as ins;
 
-class InsomiaIO {
+
+
+
+class InsomniaIO {
   List<(String?, HttpRequestModel)>? getHttpRequestModelList(String content) {
     content = content.trim();
     try {

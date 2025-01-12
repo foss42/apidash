@@ -1,5 +1,5 @@
-import 'package:insomnia/insomnia.dart';
-import 'collection_examples.dart/collection_apidash.dart';
+import 'package:insomnia_collection/insomnia_collection.dart';
+import 'collection_examples/collection_apidash.dart';
 import 'models/collection_apidash_model.dart';
 import 'package:test/test.dart';
 

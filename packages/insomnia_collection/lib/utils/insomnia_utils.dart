@@ -1,6 +1,7 @@
 
 
-import 'package:insomnia/insomnia.dart';
+
+import 'package:insomnia_collection/models/insomnia_collection.dart';
 
 List<(String?, Resource)> getRequestsFromInsomniaCollection(
     InsomniaCollection? ic) {

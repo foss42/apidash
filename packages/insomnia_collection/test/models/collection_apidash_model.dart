@@ -1,4 +1,4 @@
-import 'package:insomnia/models/models.dart';
+import 'package:insomnia_collection/models/models.dart';
 
 var collectionApiDashModel = InsomniaCollection(
   type: "export",

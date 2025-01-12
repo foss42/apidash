@@ -772,10 +772,10 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.3.0"
-  insomnia:
+  insomnia_collection:
     dependency: transitive
     description:
-      path: "packages/insomnia"
+      path: "packages/insomnia_collection"
       relative: true
     source: path
     version: "0.0.1"

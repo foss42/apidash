@@ -12,7 +12,7 @@ class Importer {
           ?.map((t) => (null, t))
           .toList(),
       ImportFormat.postman => PostmanIO().getHttpRequestModelList(content),
-      ImportFormat.insomia => InsomiaIO().getHttpRequestModelList(content),
+      ImportFormat.insomnia => InsomniaIO().getHttpRequestModelList(content),
     };
   }
 }
