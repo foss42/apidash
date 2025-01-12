@@ -18,7 +18,8 @@ class HistoryRequestPane extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedId = ref.watch(selectedHistoryIdStateProvider);
     final codePaneVisible = ref.watch(historyCodePaneVisibleStateProvider);
-
+    final apiType = ref.watch(selectedHistoryRequestModelProvider
+        .select((value) => value?.metaData.apiType));
     final headersMap = ref.watch(selectedHistoryRequestModelProvider
             .select((value) => value?.httpRequestModel.headersMap)) ??
         {};
@@ -33,36 +34,69 @@ class HistoryRequestPane extends ConsumerWidget {
             .select((value) => value?.httpRequestModel.hasBody)) ??
         false;
 
-    return RequestPane(
-      selectedId: selectedId,
-      codePaneVisible: codePaneVisible,
-      onPressedCodeButton: () {
-        ref.read(historyCodePaneVisibleStateProvider.notifier).state =
-            !codePaneVisible;
-      },
-      showViewCodeButton: !isCompact,
-      showIndicators: [
-        paramLength > 0,
-        headerLength > 0,
-        hasBody,
-      ],
-      tabLabels: const [
-        kLabelURLParams,
-        kLabelHeaders,
-        kLabelBody,
-      ],
-      children: [
-        RequestDataTable(
-          rows: paramsMap,
-          keyName: kNameURLParam,
+    final hasQuery = ref.watch(selectedHistoryRequestModelProvider
+            .select((value) => value?.httpRequestModel.hasQuery)) ??
+        false;
+
+    return switch (apiType) {
+      APIType.rest => RequestPane(
+          key: const Key("history-request-pane-rest"),
+          selectedId: selectedId,
+          codePaneVisible: codePaneVisible,
+          onPressedCodeButton: () {
+            ref.read(historyCodePaneVisibleStateProvider.notifier).state =
+                !codePaneVisible;
+          },
+          showViewCodeButton: !isCompact,
+          showIndicators: [
+            paramLength > 0,
+            headerLength > 0,
+            hasBody,
+          ],
+          tabLabels: const [
+            kLabelURLParams,
+            kLabelHeaders,
+            kLabelBody,
+          ],
+          children: [
+            RequestDataTable(
+              rows: paramsMap,
+              keyName: kNameURLParam,
+            ),
+            RequestDataTable(
+              rows: headersMap,
+              keyName: kNameHeader,
+            ),
+            const HisRequestBody(),
+          ],
         ),
-        RequestDataTable(
-          rows: headersMap,
-          keyName: kNameHeader,
+      APIType.graphql => RequestPane(
+          key: const Key("history-request-pane-graphql"),
+          selectedId: selectedId,
+          codePaneVisible: codePaneVisible,
+          onPressedCodeButton: () {
+            ref.read(historyCodePaneVisibleStateProvider.notifier).state =
+                !codePaneVisible;
+          },
+          showViewCodeButton: !isCompact,
+          showIndicators: [
+            headerLength > 0,
+            hasQuery,
+          ],
+          tabLabels: const [
+            kLabelHeaders,
+            kLabelQuery,
+          ],
+          children: [
+            RequestDataTable(
+              rows: headersMap,
+              keyName: kNameHeader,
+            ),
+            const HisRequestBody(),
+          ],
         ),
-        const HisRequestBody(),
-      ],
-    );
+      _ => kSizedBoxEmpty,
+    };
   }
 }
 
@@ -72,58 +106,72 @@ class HisRequestBody extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedHistoryModel = ref.watch(selectedHistoryRequestModelProvider);
+    final apiType = selectedHistoryModel?.metaData.apiType;
     final requestModel = selectedHistoryModel?.httpRequestModel;
     final contentType = requestModel?.bodyContentType;
 
-    return Column(
-      children: [
-        kVSpacer5,
-        RichText(
-          text: TextSpan(
-            style: Theme.of(context).textTheme.labelLarge,
-            children: [
-              const TextSpan(
-                text: "Content Type: ",
+    return switch (apiType) {
+      APIType.rest => Column(
+          children: [
+            kVSpacer5,
+            RichText(
+              text: TextSpan(
+                style: Theme.of(context).textTheme.labelLarge,
+                children: [
+                  const TextSpan(
+                    text: "Content Type: ",
+                  ),
+                  TextSpan(
+                      text: contentType?.name ?? "text",
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                            color: Theme.of(context).colorScheme.primary,
+                            fontWeight: FontWeight.bold,
+                          )),
+                ],
               ),
-              TextSpan(
-                  text: contentType?.name ?? "text",
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        color: Theme.of(context).colorScheme.primary,
-                        fontWeight: FontWeight.bold,
-                      )),
-            ],
+            ),
+            kVSpacer5,
+            Expanded(
+              child: switch (contentType) {
+                ContentType.formdata => Padding(
+                    padding: kPh4,
+                    child: RequestFormDataTable(
+                        rows: requestModel?.formData ?? [])),
+                // TODO: Fix JsonTextFieldEditor & plug it here
+                ContentType.json => Padding(
+                    padding: kPt5o10,
+                    child: TextFieldEditor(
+                      key: Key("${selectedHistoryModel?.historyId}-json-body"),
+                      fieldKey:
+                          "${selectedHistoryModel?.historyId}-json-body-viewer",
+                      initialValue: requestModel?.body,
+                      readOnly: true,
+                    ),
+                  ),
+                _ => Padding(
+                    padding: kPt5o10,
+                    child: TextFieldEditor(
+                      key: Key("${selectedHistoryModel?.historyId}-body"),
+                      fieldKey:
+                          "${selectedHistoryModel?.historyId}-body-viewer",
+                      initialValue: requestModel?.body,
+                      readOnly: true,
+                    ),
+                  ),
+              },
+            )
+          ],
+        ),
+      APIType.graphql => Padding(
+          padding: kPt5o10,
+          child: TextFieldEditor(
+            key: Key("${selectedHistoryModel?.historyId}-query"),
+            fieldKey: "${selectedHistoryModel?.historyId}-query-viewer",
+            initialValue: requestModel?.query,
+            readOnly: true,
           ),
         ),
-        kVSpacer5,
-        Expanded(
-          child: switch (contentType) {
-            ContentType.formdata => Padding(
-                padding: kPh4,
-                child:
-                    RequestFormDataTable(rows: requestModel?.formData ?? [])),
-            // TODO: Fix JsonTextFieldEditor & plug it here
-            ContentType.json => Padding(
-                padding: kPt5o10,
-                child: TextFieldEditor(
-                  key: Key("${selectedHistoryModel?.historyId}-json-body"),
-                  fieldKey:
-                      "${selectedHistoryModel?.historyId}-json-body-viewer",
-                  initialValue: requestModel?.body,
-                  readOnly: true,
-                ),
-              ),
-            _ => Padding(
-                padding: kPt5o10,
-                child: TextFieldEditor(
-                  key: Key("${selectedHistoryModel?.historyId}-body"),
-                  fieldKey: "${selectedHistoryModel?.historyId}-body-viewer",
-                  initialValue: requestModel?.body,
-                  readOnly: true,
-                ),
-              ),
-          },
-        )
-      ],
-    );
+      _ => kSizedBoxEmpty,
+    };
   }
 }
