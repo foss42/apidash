@@ -74,7 +74,7 @@ class EditRequestBody extends ConsumerWidget {
                             .read(collectionStateNotifierProvider.notifier)
                             .update(body: value);
                       },
-                      hintText: "Enter JSON",
+                      hintText: kHintJson,
                     ),
                   ),
                 _ => Padding(
@@ -89,7 +89,7 @@ class EditRequestBody extends ConsumerWidget {
                             .read(collectionStateNotifierProvider.notifier)
                             .update(body: value);
                       },
-                      hintText: "Enter text",
+                      hintText: kHintText,
                     ),
                   ),
               },
@@ -106,7 +106,7 @@ class EditRequestBody extends ConsumerWidget {
                         .read(collectionStateNotifierProvider.notifier)
                         .update(query: value);
                   },
-                  hintText: "Enter Query",
+                  hintText: kHintQuery,
                 ),
               ),
             ),

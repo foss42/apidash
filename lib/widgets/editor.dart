@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'package:apidash/consts.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -83,7 +84,7 @@ class _TextFieldEditorState extends State<TextFieldEditor> {
           editorFocusNode.unfocus();
         },
         decoration: InputDecoration(
-          hintText: widget.hintText ?? "Enter content",
+          hintText: widget.hintText ?? kHintContent,
           hintStyle: TextStyle(
             color: Theme.of(context).colorScheme.outline.withOpacity(
                   kHintOpacity,

@@ -454,6 +454,10 @@ const kLabelAddHeader = "Add Header";
 const kLabelAddVariable = "Add Variable";
 const kLabelSelectFile = "Select File";
 const kLabelAddFormField = "Add Form Field";
+const kHintContent = "Enter content";
+const kHintText = "Enter text";
+const kHintJson = "Enter JSON";
+const kHintQuery = "Enter Query";
 // Response Pane
 const kLabelNotSent = "Not Sent";
 const kLabelResponse = "Response";
