@@ -76,11 +76,22 @@ API Dash can be downloaded from the links below:
 
 ## List of Features
 
+| API Type | Supported |
+| --- | --- |
+| HTTP | ✅ |
+| GraphQL | ✅ |
+| SSE | https://github.com/foss42/apidash/issues/116 | 
+| WebSocket | https://github.com/foss42/apidash/issues/15 |
+| MQTT | https://github.com/foss42/apidash/issues/115 |
+| gRPC | https://github.com/foss42/apidash/issues/14 |
+
+
 **↗️ Create & Customize API Requests**
 
 - Create different types of HTTP requests (`GET`, `HEAD`, `POST`, `PATCH`, `PUT` and `DELETE`).
 - Easily manipulate and play around with request inputs like `headers`, `query parameters` and `body`.
 - Full support to send text content with 🥳 Unicode/Emoji and preview any API response containing Unicode/Emoji.
+- Create GraphQL requests with `headers` and `query`.
 
 **💼 Organize Requests in Collections & Folders**
 
