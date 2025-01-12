@@ -85,6 +85,15 @@ API Dash can be downloaded from the links below:
 | MQTT | https://github.com/foss42/apidash/issues/115 |
 | gRPC | https://github.com/foss42/apidash/issues/14 |
 
+| Import Collection From | Supported |
+| --- | --- |
+| Postman | ✅ |
+| cURL | ✅ |
+| Insomnia | https://github.com/foss42/apidash/issues/125 | 
+| OpenAPI | https://github.com/foss42/apidash/issues/121 |
+| hurl | https://github.com/foss42/apidash/issues/123 |
+| HAR | https://github.com/foss42/apidash/issues/122 |
+
 
 **↗️ Create & Customize API Requests**
 
