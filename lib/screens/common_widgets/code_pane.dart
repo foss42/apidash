@@ -1,3 +1,4 @@
+import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
@@ -39,6 +40,13 @@ class CodePane extends ConsumerWidget {
 
     final code = codegen.getCode(
         codegenLanguage, substitutedRequestModel!, defaultUriScheme);
+
+    // TODO: Add GraphQL Codegen
+    if (substitutedRequestModel.apiType == APIType.graphql) {
+      return const ErrorMessage(
+        message: "Code generation for GraphQL is currently not available.",
+      );
+    }
     if (code == null) {
       return const ErrorMessage(
         message: "An error was encountered while generating code. $kRaiseIssue",

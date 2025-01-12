@@ -14,7 +14,7 @@ class EditGraphQLRequestPane extends ConsumerWidget {
     final selectedId = ref.watch(selectedIdStateProvider);
     var tabIndex = ref.watch(
         selectedRequestModelProvider.select((value) => value?.requestTabIndex));
-
+    final codePaneVisible = ref.watch(codePaneVisibleStateProvider);
     final headerLength = ref.watch(selectedRequestModelProvider
             .select((value) => value?.httpRequestModel?.headersMap.length)) ??
         0;
@@ -26,9 +26,12 @@ class EditGraphQLRequestPane extends ConsumerWidget {
     }
     return RequestPane(
       selectedId: selectedId,
-      codePaneVisible: false,
-      showViewCodeButton: false,
+      codePaneVisible: codePaneVisible,
       tabIndex: tabIndex,
+      onPressedCodeButton: () {
+        ref.read(codePaneVisibleStateProvider.notifier).state =
+            !codePaneVisible;
+      },
       onTapTabBar: (index) {
         ref
             .read(collectionStateNotifierProvider.notifier)
