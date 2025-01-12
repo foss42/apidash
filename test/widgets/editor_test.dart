@@ -1,3 +1,4 @@
+import 'package:apidash/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -28,7 +29,7 @@ void main() {
 
     expect(find.byType(TextFormField), findsOneWidget);
     expect(find.byKey(const Key("2")), findsOneWidget);
-    expect(find.text('Enter content (body)'), findsOneWidget);
+    expect(find.text(kHintContent), findsOneWidget);
     var txtForm = find.byKey(const Key("2"));
     await tester.enterText(txtForm, 'entering 123 for testing content body');
     await tester.pump();
@@ -40,7 +41,7 @@ void main() {
 
     await tester.pump();
     await tester.pumpAndSettle();
-    expect(changedValue, 'entering 123 for testing content body    ');
+    expect(changedValue, 'entering 123 for testing content body  ');
   });
   testWidgets('Testing Editor Dark theme', (tester) async {
     dynamic changedValue;
@@ -66,7 +67,7 @@ void main() {
     expect(find.text('initial'), findsOneWidget);
     expect(find.byType(TextFormField), findsOneWidget);
     expect(find.byKey(const Key("2")), findsOneWidget);
-    expect(find.text('Enter content (body)'), findsOneWidget);
+    expect(find.text(kHintContent), findsOneWidget);
     var txtForm = find.byKey(const Key("2"));
     await tester.enterText(txtForm, 'entering 123 for testing content body');
     await tester.pump();
@@ -78,6 +79,6 @@ void main() {
 
     await tester.pump();
     await tester.pumpAndSettle();
-    expect(changedValue, 'entering 123 for testing content body    ');
+    expect(changedValue, 'entering 123 for testing content body  ');
   });
 }
