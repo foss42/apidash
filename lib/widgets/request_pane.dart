@@ -12,6 +12,7 @@ class RequestPane extends StatefulHookWidget {
     this.tabIndex,
     this.onPressedCodeButton,
     this.onTapTabBar,
+    required this.tabLabels,
     required this.children,
     this.showIndicators = const [false, false, false],
     this.showViewCodeButton,
@@ -22,6 +23,7 @@ class RequestPane extends StatefulHookWidget {
   final int? tabIndex;
   final void Function()? onPressedCodeButton;
   final void Function(int)? onTapTabBar;
+  final List<String> tabLabels;
   final List<Widget> children;
   final List<bool> showIndicators;
   final bool? showViewCodeButton;
@@ -35,7 +37,7 @@ class _RequestPaneState extends State<RequestPane>
   @override
   Widget build(BuildContext context) {
     final TabController controller = useTabController(
-      initialLength: 3,
+      initialLength: widget.children.length,
       vsync: this,
     );
     if (widget.tabIndex != null) {
@@ -75,27 +77,21 @@ class _RequestPaneState extends State<RequestPane>
                   ),
                 ),
               )
-            : const SizedBox.shrink(),
+            : kVSpacer10,
         TabBar(
           key: Key(widget.selectedId!),
           controller: controller,
           overlayColor: kColorTransparentState,
           labelPadding: kPh2,
           onTap: widget.onTapTabBar,
-          tabs: [
-            TabLabel(
-              text: kLabelURLParams,
-              showIndicator: widget.showIndicators[0],
-            ),
-            TabLabel(
-              text: kLabelHeaders,
-              showIndicator: widget.showIndicators[1],
-            ),
-            TabLabel(
-              text: kLabelBody,
-              showIndicator: widget.showIndicators[2],
-            ),
-          ],
+          tabs: widget.tabLabels.indexed
+              .map<Widget>(
+                (e) => TabLabel(
+                  text: e.$2,
+                  showIndicator: widget.showIndicators[e.$1],
+                ),
+              )
+              .toList(),
         ),
         kVSpacer5,
         Expanded(
