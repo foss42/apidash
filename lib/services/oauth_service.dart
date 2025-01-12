@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:oauth2/oauth2.dart' as oauth2;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
@@ -20,7 +21,7 @@ class OAuthService {
       if (code != null && _completer != null && !_completer!.isCompleted) {
         request.response
           ..statusCode = 200
-          ..headers.contentType = const ContentType.html
+          ..headers.contentType =  ContentType('text', 'html')
           ..write('<html><body><h1>Authorization Successful!</h1><p>You can close this window now.</p></body></html>');
         await request.response.close();
         _completer!.complete(code);
