@@ -1,11 +1,12 @@
 import 'dart:convert';
 
 enum APIType {
-  rest("HTTP"),
-  graphql("GraphQL");
+  rest("HTTP", "HTTP"),
+  graphql("GraphQL", "GQL");
 
-  const APIType(this.label);
+  const APIType(this.label, this.abbr);
   final String label;
+  final String abbr;
 }
 
 enum HTTPVerb {
