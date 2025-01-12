@@ -40,19 +40,19 @@ class _RequestResponsePageState extends ConsumerState<RequestResponsePage>
             showRenameDialog(context, "Rename Request", name, (val) {
               ref
                   .read(collectionStateNotifierProvider.notifier)
-                  .update(id!, name: val);
+                  .update(name: val);
             });
           }
           if (item == ItemMenuOption.delete) {
-            ref.read(collectionStateNotifierProvider.notifier).remove(id!);
+            ref.read(collectionStateNotifierProvider.notifier).remove();
           }
           if (item == ItemMenuOption.duplicate) {
-            ref.read(collectionStateNotifierProvider.notifier).duplicate(id!);
+            ref.read(collectionStateNotifierProvider.notifier).duplicate();
           }
         },
       ),
       leftDrawerContent: const CollectionPane(),
-      actions: const [Padding(padding: kPh8, child: EnvironmentDropdown())],
+      actions: const [kVSpacer16],
       mainContent: id == null
           ? const RequestEditorDefault()
           : RequestTabs(

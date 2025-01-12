@@ -1,6 +1,21 @@
 # API Dash ⚡️ Changelog
 
-## v0.4.0 [WIP]
+## v0.5.0 [WIP]
+
+In this release, we have added the following features:
+
+1. Create workspace (directory) to persist your entire data locally in the provided file-system location
+2. Environment varibles
+3. GraphQL support
+4. Import requests from cURL & Postman Collection (v2.1)
+5. History of your requests & response
+6. Support for Request cancellation
+7. Disable SSL verification
+8. Codegen for Swift, hyper, etc.
+
+A big shout-out to all the contributors 🎉
+
+## v0.4.0 [iOS Release]
 
 In this release, we have added the following features:
 
@@ -15,7 +30,7 @@ In this release, we have added the following features:
 9. Dart http codegen has been rewritten using dart code builder
 10. Ability to override request contenttype
 11. More header suggestions
-    
+12. Mobile platform support
 
 ## v0.3.0 [29-11-2023]
 

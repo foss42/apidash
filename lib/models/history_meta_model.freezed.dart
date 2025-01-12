@@ -22,6 +22,7 @@ HistoryMetaModel _$HistoryMetaModelFromJson(Map<String, dynamic> json) {
 mixin _$HistoryMetaModel {
   String get historyId => throw _privateConstructorUsedError;
   String get requestId => throw _privateConstructorUsedError;
+  APIType get apiType => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   String get url => throw _privateConstructorUsedError;
   HTTPVerb get method => throw _privateConstructorUsedError;
@@ -47,6 +48,7 @@ abstract class $HistoryMetaModelCopyWith<$Res> {
   $Res call(
       {String historyId,
       String requestId,
+      APIType apiType,
       String name,
       String url,
       HTTPVerb method,
@@ -71,6 +73,7 @@ class _$HistoryMetaModelCopyWithImpl<$Res, $Val extends HistoryMetaModel>
   $Res call({
     Object? historyId = null,
     Object? requestId = null,
+    Object? apiType = null,
     Object? name = null,
     Object? url = null,
     Object? method = null,
@@ -86,6 +89,10 @@ class _$HistoryMetaModelCopyWithImpl<$Res, $Val extends HistoryMetaModel>
           ? _value.requestId
           : requestId // ignore: cast_nullable_to_non_nullable
               as String,
+      apiType: null == apiType
+          ? _value.apiType
+          : apiType // ignore: cast_nullable_to_non_nullable
+              as APIType,
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -121,6 +128,7 @@ abstract class _$$HistoryMetaModelImplCopyWith<$Res>
   $Res call(
       {String historyId,
       String requestId,
+      APIType apiType,
       String name,
       String url,
       HTTPVerb method,
@@ -143,6 +151,7 @@ class __$$HistoryMetaModelImplCopyWithImpl<$Res>
   $Res call({
     Object? historyId = null,
     Object? requestId = null,
+    Object? apiType = null,
     Object? name = null,
     Object? url = null,
     Object? method = null,
@@ -158,6 +167,10 @@ class __$$HistoryMetaModelImplCopyWithImpl<$Res>
           ? _value.requestId
           : requestId // ignore: cast_nullable_to_non_nullable
               as String,
+      apiType: null == apiType
+          ? _value.apiType
+          : apiType // ignore: cast_nullable_to_non_nullable
+              as APIType,
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -188,6 +201,7 @@ class _$HistoryMetaModelImpl implements _HistoryMetaModel {
   const _$HistoryMetaModelImpl(
       {required this.historyId,
       required this.requestId,
+      required this.apiType,
       this.name = "",
       required this.url,
       required this.method,
@@ -202,6 +216,8 @@ class _$HistoryMetaModelImpl implements _HistoryMetaModel {
   @override
   final String requestId;
   @override
+  final APIType apiType;
+  @override
   @JsonKey()
   final String name;
   @override
@@ -215,7 +231,7 @@ class _$HistoryMetaModelImpl implements _HistoryMetaModel {
 
   @override
   String toString() {
-    return 'HistoryMetaModel(historyId: $historyId, requestId: $requestId, name: $name, url: $url, method: $method, responseStatus: $responseStatus, timeStamp: $timeStamp)';
+    return 'HistoryMetaModel(historyId: $historyId, requestId: $requestId, apiType: $apiType, name: $name, url: $url, method: $method, responseStatus: $responseStatus, timeStamp: $timeStamp)';
   }
 
   @override
@@ -227,6 +243,7 @@ class _$HistoryMetaModelImpl implements _HistoryMetaModel {
                 other.historyId == historyId) &&
             (identical(other.requestId, requestId) ||
                 other.requestId == requestId) &&
+            (identical(other.apiType, apiType) || other.apiType == apiType) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.url, url) || other.url == url) &&
             (identical(other.method, method) || other.method == method) &&
@@ -238,8 +255,8 @@ class _$HistoryMetaModelImpl implements _HistoryMetaModel {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, historyId, requestId, name, url,
-      method, responseStatus, timeStamp);
+  int get hashCode => Object.hash(runtimeType, historyId, requestId, apiType,
+      name, url, method, responseStatus, timeStamp);
 
   /// Create a copy of HistoryMetaModel
   /// with the given fields replaced by the non-null parameter values.
@@ -262,6 +279,7 @@ abstract class _HistoryMetaModel implements HistoryMetaModel {
   const factory _HistoryMetaModel(
       {required final String historyId,
       required final String requestId,
+      required final APIType apiType,
       final String name,
       required final String url,
       required final HTTPVerb method,
@@ -275,6 +293,8 @@ abstract class _HistoryMetaModel implements HistoryMetaModel {
   String get historyId;
   @override
   String get requestId;
+  @override
+  APIType get apiType;
   @override
   String get name;
   @override

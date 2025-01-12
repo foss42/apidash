@@ -140,6 +140,11 @@ class HiveHandler {
 
   Future<void> deleteHistoryRequest(String id) => historyLazyBox.delete(id);
 
+  Future clearAllHistory() async {
+    await historyMetaBox.clear();
+    await historyLazyBox.clear();
+  }
+
   Future clear() async {
     await dataBox.clear();
     await environmentBox.clear();

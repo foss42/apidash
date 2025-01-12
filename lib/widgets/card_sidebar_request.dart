@@ -4,12 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart';
 import 'menu_item_card.dart';
-import 'texts.dart' show MethodBox;
+import 'texts.dart';
 
 class SidebarRequestCard extends StatelessWidget {
   const SidebarRequestCard({
     super.key,
     required this.id,
+    required this.apiType,
     required this.method,
     this.name,
     this.url,
@@ -26,6 +27,7 @@ class SidebarRequestCard extends StatelessWidget {
   });
 
   final String id;
+  final APIType apiType;
   final String? name;
   final String? url;
   final HTTPVerb method;
@@ -88,7 +90,10 @@ class SidebarRequestCard extends StatelessWidget {
               height: 20,
               child: Row(
                 children: [
-                  MethodBox(method: method),
+                  SidebarRequestCardTextBox(
+                    apiType: apiType,
+                    method: method,
+                  ),
                   kHSpacer4,
                   Expanded(
                     child: inEditMode

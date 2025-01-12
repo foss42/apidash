@@ -56,20 +56,19 @@ const activeEnvVars = [
 
 void main() {
   group("Testing getEnvironmentTitle function", () {
-    String titleUntitled = "untitled";
     test("Testing getEnvironmentTitle with null", () {
       String? envName1;
-      expect(getEnvironmentTitle(envName1), titleUntitled);
+      expect(getEnvironmentTitle(envName1), kUntitled);
     });
 
     test("Testing getEnvironmentTitle with empty string", () {
       String envName2 = "";
-      expect(getEnvironmentTitle(envName2), titleUntitled);
+      expect(getEnvironmentTitle(envName2), kUntitled);
     });
 
     test("Testing getEnvironmentTitle with trimmable string", () {
       String envName3 = "   ";
-      expect(getEnvironmentTitle(envName3), titleUntitled);
+      expect(getEnvironmentTitle(envName3), kUntitled);
     });
 
     test("Testing getEnvironmentTitle with non-empty string", () {

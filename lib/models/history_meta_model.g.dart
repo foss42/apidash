@@ -11,6 +11,7 @@ _$HistoryMetaModelImpl _$$HistoryMetaModelImplFromJson(
     _$HistoryMetaModelImpl(
       historyId: json['historyId'] as String,
       requestId: json['requestId'] as String,
+      apiType: $enumDecode(_$APITypeEnumMap, json['apiType']),
       name: json['name'] as String? ?? "",
       url: json['url'] as String,
       method: $enumDecode(_$HTTPVerbEnumMap, json['method']),
@@ -23,12 +24,18 @@ Map<String, dynamic> _$$HistoryMetaModelImplToJson(
     <String, dynamic>{
       'historyId': instance.historyId,
       'requestId': instance.requestId,
+      'apiType': _$APITypeEnumMap[instance.apiType]!,
       'name': instance.name,
       'url': instance.url,
       'method': _$HTTPVerbEnumMap[instance.method]!,
       'responseStatus': instance.responseStatus,
       'timeStamp': instance.timeStamp.toIso8601String(),
     };
+
+const _$APITypeEnumMap = {
+  APIType.rest: 'rest',
+  APIType.graphql: 'graphql',
+};
 
 const _$HTTPVerbEnumMap = {
   HTTPVerb.get: 'get',

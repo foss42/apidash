@@ -29,9 +29,8 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
     seed = random.nextInt(kRandMax);
   }
 
-  void _onFieldChange(String selectedId) {
+  void _onFieldChange() {
     ref.read(collectionStateNotifierProvider.notifier).update(
-          selectedId,
           params: paramRows.sublist(0, paramRows.length - 1),
           isParamEnabledList: isRowEnabledList.sublist(0, paramRows.length - 1),
         );
@@ -98,7 +97,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
                         setState(() {
                           isRowEnabledList[index] = value!;
                         });
-                        _onFieldChange(selectedId!);
+                        _onFieldChange();
                       },
                 colorScheme: Theme.of(context).colorScheme,
               ),
@@ -116,7 +115,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
                     paramRows.add(kNameValueEmptyModel);
                     isRowEnabledList.add(false);
                   }
-                  _onFieldChange(selectedId!);
+                  _onFieldChange();
                 },
                 colorScheme: Theme.of(context).colorScheme,
               ),
@@ -142,7 +141,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
                     paramRows.add(kNameValueEmptyModel);
                     isRowEnabledList.add(false);
                   }
-                  _onFieldChange(selectedId!);
+                  _onFieldChange();
                 },
                 colorScheme: Theme.of(context).colorScheme,
               ),
@@ -164,7 +163,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
                           paramRows.removeAt(index);
                           isRowEnabledList.removeAt(index);
                         }
-                        _onFieldChange(selectedId!);
+                        _onFieldChange();
                       },
                 child: Theme.of(context).brightness == Brightness.dark
                     ? kIconRemoveDark
@@ -212,7 +211,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
               onPressed: () {
                 paramRows.add(kNameValueEmptyModel);
                 isRowEnabledList.add(false);
-                _onFieldChange(selectedId!);
+                _onFieldChange();
               },
               icon: const Icon(Icons.add),
               label: const Text(

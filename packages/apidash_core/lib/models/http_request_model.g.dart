@@ -29,6 +29,7 @@ _$HttpRequestModelImpl _$$HttpRequestModelImplFromJson(Map json) =>
           $enumDecodeNullable(_$ContentTypeEnumMap, json['bodyContentType']) ??
               ContentType.json,
       body: json['body'] as String?,
+      query: json['query'] as String?,
       formData: (json['formData'] as List<dynamic>?)
           ?.map((e) =>
               FormDataModel.fromJson(Map<String, Object?>.from(e as Map)))
@@ -46,6 +47,7 @@ Map<String, dynamic> _$$HttpRequestModelImplToJson(
       'isParamEnabledList': instance.isParamEnabledList,
       'bodyContentType': _$ContentTypeEnumMap[instance.bodyContentType]!,
       'body': instance.body,
+      'query': instance.query,
       'formData': instance.formData?.map((e) => e.toJson()).toList(),
     };
 
