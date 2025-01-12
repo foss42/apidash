@@ -1,5 +1,8 @@
+import 'package:apidash_core/consts.dart';
 import 'package:collection/collection.dart';
 import 'package:seed/seed.dart';
+import '../models/models.dart';
+import 'graphql_utils.dart';
 
 Map<String, String>? rowsToMap(
   List<NameValueModel>? kvRows, {
@@ -87,4 +90,14 @@ List<NameValueModel>? getEnabledRows(
   List<NameValueModel> finalRows =
       rows.where((element) => isRowEnabledList[rows.indexOf(element)]).toList();
   return finalRows == [] ? null : finalRows;
+}
+
+String? getRequestBody(APIType type, HttpRequestModel httpRequestModel) {
+  return switch (type) {
+    APIType.rest =>
+      (httpRequestModel.hasJsonData || httpRequestModel.hasTextData)
+          ? httpRequestModel.body
+          : null,
+    APIType.graphql => getGraphQLBody(httpRequestModel),
+  };
 }
