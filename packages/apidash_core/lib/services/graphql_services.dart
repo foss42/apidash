@@ -16,6 +16,8 @@ Future<(QueryResult?, Duration?, String?)> graphRequest(
   SupportedUriSchemes defaultUriScheme = kDefaultUriScheme,
 }) async {
   print("entered graphRequest");
+  final clientManager = HttpClientManager();
+  
   
  
   (Uri?, String?) uriRec = getValidRequestUri(
@@ -23,13 +25,19 @@ Future<(QueryResult?, Duration?, String?)> graphRequest(
     null,
     defaultUriScheme: defaultUriScheme,
   );
+  print("uriRec:${uriRec}");
   Map<String, String> headers = requestModel.enabledHeadersMap;
   print("headers:${headers}");
   print(requestModel.url);
   final HttpLink httpLink = HttpLink(
-        requestModel.url,
+        requestModel.url.trim(),
         defaultHeaders: headers
   );
+
+  
+  final client = clientManager.createGraphqlClient(requestId,httpLink);
+
+  print("httpLink:${httpLink.uri}");
 
 
   if (uriRec.$1 != null) {
@@ -40,10 +48,7 @@ Future<(QueryResult?, Duration?, String?)> graphRequest(
     try {
       Stopwatch stopwatch = Stopwatch()..start();
       
-      final GraphQLClient client = GraphQLClient(
-            link: httpLink,
-            cache: GraphQLCache(),
-      );
+      
       print("query: ${requestModel.query}");
       print("graphqlvariables:${requestModel.graphqlVariablesMap}");
 
@@ -54,7 +59,7 @@ Future<(QueryResult?, Duration?, String?)> graphRequest(
       );
 
   final QueryResult result = await client.query(options);
-      print("I am printing query inside grphqq ${result}");
+  //    print("I am printing query inside grphqq $result");
       
       stopwatch.stop();
        if (result.hasException) {
@@ -64,10 +69,16 @@ Future<(QueryResult?, Duration?, String?)> graphRequest(
     }
     
     } catch (e) {
-      print("entered catch ${e} ::: ${e.toString()}");
+      if (clientManager.wasRequestCancelled(requestId)) {
+          print("entering catched of graphql");
+        return (null, null, kMsgRequestCancelled);
+      }
+      print("entered catch $e ::: ${e.toString()}");
       
       return (null, null, e.toString());
-    } 
+    }finally{
+      clientManager.closeClient(requestId);
+    }
   } else {
     return (null, null, uriRec.$2);
   }

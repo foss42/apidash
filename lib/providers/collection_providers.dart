@@ -1,11 +1,9 @@
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_core/models/graphql_response_model.dart';
 import 'package:apidash_core/services/graphql_services.dart';
-import 'package:apidash_core/utils/graphql_response_utils.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/consts.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:path/path.dart';
 import 'providers.dart';
 import '../models/models.dart';
 import '../services/services.dart' show hiveHandler, HiveHandler;
@@ -312,7 +310,7 @@ class CollectionStateNotifier
         getSubstitutedHttpRequestModel(requestModel!.httpRequestModel!);
     print("after susbstituted http");
     GraphqlRequestModel substitutedgraphqlRequestModel = 
-         getSubstitutedgraphqlRequestModel(requestModel!.graphqlRequestModel!);
+         getSubstitutedgraphqlRequestModel(requestModel.graphqlRequestModel!);
     print("After sustitution");
     // set current model's isWorking to true and update state
     var map = {...state!};
@@ -327,7 +325,7 @@ class CollectionStateNotifier
     
   bool noSSL = ref.read(settingsProvider).isSSLDisabled;
 
-  late  (dynamic?, Duration?, String?)? responseRec;
+  late  (dynamic, Duration?, String?)? responseRec;
    if(typeAPI == APIType.rest){
     print("entered typeApi rest");
     responseRec = await request(

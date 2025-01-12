@@ -22,6 +22,7 @@ class GraphQLClientWrapper extends clientWrapper {
    @override
   void close() {
     print("cancelling under graphql");
-    client.cache.store.reset();; 
+    client.cache.store.reset();
+     throw Exception("GraphQL client closed during request.");
   }
 }

@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'dart:collection';
 import 'package:apidash_core/services/clientWrapper.dart';
@@ -28,7 +29,9 @@ class HttpClientManager {
   HttpClientManager._internal();
 
   http.Client createClient(
-    String requestId, {
+    String requestId,
+
+     {
     bool noSSL = false,
   }) {
     final client =
@@ -37,21 +40,32 @@ class HttpClientManager {
     return client;
   }
 
-  void addGraphqlClient(String requestId,GraphQLClient client){
+  GraphQLClient createGraphqlClient(String requestId,HttpLink httpLink) {
+    final client = GraphQLClient(
+      link:httpLink,
+      cache: GraphQLCache(),
+    );
     _clients[requestId] = GraphQLClientWrapper(client);
+    print("added graphql to client manager");
+    return client;
   }
 
   void cancelRequest(String? requestId) {
     print("entering cancel request");
     if (requestId != null && _clients.containsKey(requestId)) {
+      print("closing client for $requestId");
       _clients[requestId]?.close();
       _clients.remove(requestId);
+      
+
 
       _cancelledRequests.addLast(requestId);
+      print("checking if its closed ${wasRequestCancelled(requestId)}");
       while (_cancelledRequests.length > _maxCancelledRequests) {
         _cancelledRequests.removeFirst();
       }
     }
+    print("cancel requesst have ended");
   }
 
   bool wasRequestCancelled(String requestId) {

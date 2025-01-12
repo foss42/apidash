@@ -102,6 +102,7 @@ Future<(HttpResponse?, Duration?, String?)> request(
       return (response, stopwatch.elapsed, null);
     } catch (e) {
       if (clientManager.wasRequestCancelled(requestId)) {
+        print("entering catched of http");
         return (null, null, kMsgRequestCancelled);
       }
       return (null, null, e.toString());
