@@ -4,9 +4,6 @@ import '../models/models.dart';
 import '../utils/utils.dart';
 import 'package:insomnia_collection/insomnia_collection.dart' as ins;
 
-
-
-
 class InsomniaIO {
   List<(String?, HttpRequestModel)>? getHttpRequestModelList(String content) {
     content = content.trim();
@@ -58,13 +55,41 @@ class InsomniaIO {
     if (request.body != null) {
       if (request.body?.mimeType != null) {
         try {
-          bodyContentType = ContentType.values
-              .byName(request.body?.mimeType ?? "");
+          if (request.body?.mimeType == 'text/plain') {
+            bodyContentType = ContentType.text;
+          } else if (request.body?.mimeType == 'application/json') {
+            bodyContentType = ContentType.json;
+          } else if (request.body?.mimeType == 'multipart/form-data') {
+            bodyContentType = ContentType.formdata;
+            formData = [];
+            for (var fd in request.body?.params ?? <ins.Formdatum>[]) {
+              var name = fd.name ?? "";
+              FormDataType formDataType;
+              try {
+                formDataType = FormDataType.values.byName(fd.type ?? "");
+              } catch (e) {
+                formDataType = FormDataType.text;
+              }
+              var value = switch (formDataType) {
+                FormDataType.text => fd.value ?? "",
+                FormDataType.file => fd.src ?? ""
+              };
+              formData.add(FormDataModel(
+                name: name,
+                value: value,
+                type: formDataType,
+              ));
+            }
+          } else {
+            bodyContentType =
+                ContentType.values.byName(request.body?.mimeType ?? "");
+          }
         } catch (e) {
           bodyContentType = kDefaultContentType;
         }
         body = request.body?.text;
       }
+
       /// TODO: Handle formdata and text
     }
 
@@ -80,5 +105,4 @@ class InsomniaIO {
       formData: formData,
     );
   }
-
 }

@@ -944,6 +944,7 @@ Body _$BodyFromJson(Map<String, dynamic> json) {
 mixin _$Body {
   String? get mimeType => throw _privateConstructorUsedError;
   String? get text => throw _privateConstructorUsedError;
+  List<Formdatum>? get params => throw _privateConstructorUsedError;
 
   /// Serializes this Body to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -959,7 +960,7 @@ abstract class $BodyCopyWith<$Res> {
   factory $BodyCopyWith(Body value, $Res Function(Body) then) =
       _$BodyCopyWithImpl<$Res, Body>;
   @useResult
-  $Res call({String? mimeType, String? text});
+  $Res call({String? mimeType, String? text, List<Formdatum>? params});
 }
 
 /// @nodoc
@@ -979,6 +980,7 @@ class _$BodyCopyWithImpl<$Res, $Val extends Body>
   $Res call({
     Object? mimeType = freezed,
     Object? text = freezed,
+    Object? params = freezed,
   }) {
     return _then(_value.copyWith(
       mimeType: freezed == mimeType
@@ -989,6 +991,10 @@ class _$BodyCopyWithImpl<$Res, $Val extends Body>
           ? _value.text
           : text // ignore: cast_nullable_to_non_nullable
               as String?,
+      params: freezed == params
+          ? _value.params
+          : params // ignore: cast_nullable_to_non_nullable
+              as List<Formdatum>?,
     ) as $Val);
   }
 }
@@ -1000,7 +1006,7 @@ abstract class _$$BodyImplCopyWith<$Res> implements $BodyCopyWith<$Res> {
       __$$BodyImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String? mimeType, String? text});
+  $Res call({String? mimeType, String? text, List<Formdatum>? params});
 }
 
 /// @nodoc
@@ -1017,6 +1023,7 @@ class __$$BodyImplCopyWithImpl<$Res>
   $Res call({
     Object? mimeType = freezed,
     Object? text = freezed,
+    Object? params = freezed,
   }) {
     return _then(_$BodyImpl(
       mimeType: freezed == mimeType
@@ -1027,6 +1034,10 @@ class __$$BodyImplCopyWithImpl<$Res>
           ? _value.text
           : text // ignore: cast_nullable_to_non_nullable
               as String?,
+      params: freezed == params
+          ? _value._params
+          : params // ignore: cast_nullable_to_non_nullable
+              as List<Formdatum>?,
     ));
   }
 }
@@ -1035,7 +1046,8 @@ class __$$BodyImplCopyWithImpl<$Res>
 
 @JsonSerializable(explicitToJson: true, anyMap: true, includeIfNull: false)
 class _$BodyImpl implements _Body {
-  const _$BodyImpl({this.mimeType, this.text});
+  const _$BodyImpl({this.mimeType, this.text, final List<Formdatum>? params})
+      : _params = params;
 
   factory _$BodyImpl.fromJson(Map<String, dynamic> json) =>
       _$$BodyImplFromJson(json);
@@ -1044,10 +1056,19 @@ class _$BodyImpl implements _Body {
   final String? mimeType;
   @override
   final String? text;
+  final List<Formdatum>? _params;
+  @override
+  List<Formdatum>? get params {
+    final value = _params;
+    if (value == null) return null;
+    if (_params is EqualUnmodifiableListView) return _params;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
 
   @override
   String toString() {
-    return 'Body(mimeType: $mimeType, text: $text)';
+    return 'Body(mimeType: $mimeType, text: $text, params: $params)';
   }
 
   @override
@@ -1057,12 +1078,14 @@ class _$BodyImpl implements _Body {
             other is _$BodyImpl &&
             (identical(other.mimeType, mimeType) ||
                 other.mimeType == mimeType) &&
-            (identical(other.text, text) || other.text == text));
+            (identical(other.text, text) || other.text == text) &&
+            const DeepCollectionEquality().equals(other._params, _params));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, mimeType, text);
+  int get hashCode => Object.hash(runtimeType, mimeType, text,
+      const DeepCollectionEquality().hash(_params));
 
   /// Create a copy of Body
   /// with the given fields replaced by the non-null parameter values.
@@ -1081,8 +1104,10 @@ class _$BodyImpl implements _Body {
 }
 
 abstract class _Body implements Body {
-  const factory _Body({final String? mimeType, final String? text}) =
-      _$BodyImpl;
+  const factory _Body(
+      {final String? mimeType,
+      final String? text,
+      final List<Formdatum>? params}) = _$BodyImpl;
 
   factory _Body.fromJson(Map<String, dynamic> json) = _$BodyImpl.fromJson;
 
@@ -1090,12 +1115,227 @@ abstract class _Body implements Body {
   String? get mimeType;
   @override
   String? get text;
+  @override
+  List<Formdatum>? get params;
 
   /// Create a copy of Body
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$BodyImplCopyWith<_$BodyImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+Formdatum _$FormdatumFromJson(Map<String, dynamic> json) {
+  return _Formdatum.fromJson(json);
+}
+
+/// @nodoc
+mixin _$Formdatum {
+  String? get name => throw _privateConstructorUsedError;
+  String? get value => throw _privateConstructorUsedError;
+  String? get type => throw _privateConstructorUsedError;
+  @JsonKey(name: 'fileName')
+  String? get src => throw _privateConstructorUsedError;
+
+  /// Serializes this Formdatum to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of Formdatum
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $FormdatumCopyWith<Formdatum> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $FormdatumCopyWith<$Res> {
+  factory $FormdatumCopyWith(Formdatum value, $Res Function(Formdatum) then) =
+      _$FormdatumCopyWithImpl<$Res, Formdatum>;
+  @useResult
+  $Res call(
+      {String? name,
+      String? value,
+      String? type,
+      @JsonKey(name: 'fileName') String? src});
+}
+
+/// @nodoc
+class _$FormdatumCopyWithImpl<$Res, $Val extends Formdatum>
+    implements $FormdatumCopyWith<$Res> {
+  _$FormdatumCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of Formdatum
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? name = freezed,
+    Object? value = freezed,
+    Object? type = freezed,
+    Object? src = freezed,
+  }) {
+    return _then(_value.copyWith(
+      name: freezed == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String?,
+      value: freezed == value
+          ? _value.value
+          : value // ignore: cast_nullable_to_non_nullable
+              as String?,
+      type: freezed == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
+              as String?,
+      src: freezed == src
+          ? _value.src
+          : src // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$FormdatumImplCopyWith<$Res>
+    implements $FormdatumCopyWith<$Res> {
+  factory _$$FormdatumImplCopyWith(
+          _$FormdatumImpl value, $Res Function(_$FormdatumImpl) then) =
+      __$$FormdatumImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String? name,
+      String? value,
+      String? type,
+      @JsonKey(name: 'fileName') String? src});
+}
+
+/// @nodoc
+class __$$FormdatumImplCopyWithImpl<$Res>
+    extends _$FormdatumCopyWithImpl<$Res, _$FormdatumImpl>
+    implements _$$FormdatumImplCopyWith<$Res> {
+  __$$FormdatumImplCopyWithImpl(
+      _$FormdatumImpl _value, $Res Function(_$FormdatumImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of Formdatum
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? name = freezed,
+    Object? value = freezed,
+    Object? type = freezed,
+    Object? src = freezed,
+  }) {
+    return _then(_$FormdatumImpl(
+      name: freezed == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String?,
+      value: freezed == value
+          ? _value.value
+          : value // ignore: cast_nullable_to_non_nullable
+              as String?,
+      type: freezed == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
+              as String?,
+      src: freezed == src
+          ? _value.src
+          : src // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+
+@JsonSerializable(explicitToJson: true, anyMap: true, includeIfNull: false)
+class _$FormdatumImpl implements _Formdatum {
+  const _$FormdatumImpl(
+      {this.name, this.value, this.type, @JsonKey(name: 'fileName') this.src});
+
+  factory _$FormdatumImpl.fromJson(Map<String, dynamic> json) =>
+      _$$FormdatumImplFromJson(json);
+
+  @override
+  final String? name;
+  @override
+  final String? value;
+  @override
+  final String? type;
+  @override
+  @JsonKey(name: 'fileName')
+  final String? src;
+
+  @override
+  String toString() {
+    return 'Formdatum(name: $name, value: $value, type: $type, src: $src)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$FormdatumImpl &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.value, value) || other.value == value) &&
+            (identical(other.type, type) || other.type == type) &&
+            (identical(other.src, src) || other.src == src));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, name, value, type, src);
+
+  /// Create a copy of Formdatum
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$FormdatumImplCopyWith<_$FormdatumImpl> get copyWith =>
+      __$$FormdatumImplCopyWithImpl<_$FormdatumImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$FormdatumImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _Formdatum implements Formdatum {
+  const factory _Formdatum(
+      {final String? name,
+      final String? value,
+      final String? type,
+      @JsonKey(name: 'fileName') final String? src}) = _$FormdatumImpl;
+
+  factory _Formdatum.fromJson(Map<String, dynamic> json) =
+      _$FormdatumImpl.fromJson;
+
+  @override
+  String? get name;
+  @override
+  String? get value;
+  @override
+  String? get type;
+  @override
+  @JsonKey(name: 'fileName')
+  String? get src;
+
+  /// Create a copy of Formdatum
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$FormdatumImplCopyWith<_$FormdatumImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 

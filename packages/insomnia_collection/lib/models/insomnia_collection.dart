@@ -91,9 +91,28 @@ class Body with _$Body {
   const factory Body({
     String? mimeType,
     String? text,
+    List<Formdatum>? params,
   }) = _Body;
 
   factory Body.fromJson(Map<String, dynamic> json) => _$BodyFromJson(json);
+}
+
+@freezed
+class Formdatum with _$Formdatum {
+  @JsonSerializable(
+    explicitToJson: true,
+    anyMap: true,
+    includeIfNull: false,
+  )
+  const factory Formdatum({
+    String? name,
+    String? value,
+    String? type,
+    @JsonKey(name: 'fileName') String? src,
+  }) = _Formdatum;
+
+  factory Formdatum.fromJson(Map<String, dynamic> json) =>
+      _$FormdatumFromJson(json);
 }
 
 @freezed

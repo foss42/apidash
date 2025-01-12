@@ -100,12 +100,32 @@ Map<String, dynamic> _$$ResourceImplToJson(_$ResourceImpl instance) =>
 _$BodyImpl _$$BodyImplFromJson(Map json) => _$BodyImpl(
       mimeType: json['mimeType'] as String?,
       text: json['text'] as String?,
+      params: (json['params'] as List<dynamic>?)
+          ?.map((e) => Formdatum.fromJson(Map<String, dynamic>.from(e as Map)))
+          .toList(),
     );
 
 Map<String, dynamic> _$$BodyImplToJson(_$BodyImpl instance) =>
     <String, dynamic>{
       if (instance.mimeType case final value?) 'mimeType': value,
       if (instance.text case final value?) 'text': value,
+      if (instance.params?.map((e) => e.toJson()).toList() case final value?)
+        'params': value,
+    };
+
+_$FormdatumImpl _$$FormdatumImplFromJson(Map json) => _$FormdatumImpl(
+      name: json['name'] as String?,
+      value: json['value'] as String?,
+      type: json['type'] as String?,
+      src: json['fileName'] as String?,
+    );
+
+Map<String, dynamic> _$$FormdatumImplToJson(_$FormdatumImpl instance) =>
+    <String, dynamic>{
+      if (instance.name case final value?) 'name': value,
+      if (instance.value case final value?) 'value': value,
+      if (instance.type case final value?) 'type': value,
+      if (instance.src case final value?) 'fileName': value,
     };
 
 _$ParameterImpl _$$ParameterImplFromJson(Map json) => _$ParameterImpl(
