@@ -28,7 +28,6 @@ class RequestEditorTopBar extends ConsumerWidget {
           DropdownButtonAPIType(
             apiType: apiType,
             onChanged: (newapiType) {
-              ref.read(selectedAPITypeProvider.notifier).state = newapiType;
             ref.read(collectionStateNotifierProvider.notifier)
             .update(id!,apiType: newapiType);
             if(apiType == APIType.graphql){

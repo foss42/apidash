@@ -15,7 +15,6 @@ class EditRequestPane extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    //final apitype = ref.watch(selectedAPITypeProvider)!;
     final selectedId = ref.watch(selectedIdStateProvider);
     final codePaneVisible = ref.watch(codePaneVisibleStateProvider);
     final tabIndex = ref.watch(

@@ -11,7 +11,7 @@ import '../utils/utils.dart'
     show collectionToHAR, getNewUuid, substituteHttpRequestModel, substitutegraphqlRequestModel;
 
 final selectedIdStateProvider = StateProvider<String?>((ref) => null);
-final selectedAPITypeProvider = StateProvider<APIType?>((ref) => APIType.rest);
+
 
 final selectedRequestModelProvider = StateProvider<RequestModel?>((ref) {
   final selectedId = ref.watch(selectedIdStateProvider);
@@ -320,7 +320,7 @@ class CollectionStateNotifier
     );
     state = map;
 
-    var typeAPI = ref.read(selectedAPITypeProvider); 
+    var typeAPI = requestModel.apiType; 
       
     
   bool noSSL = ref.read(settingsProvider).isSSLDisabled;
