@@ -326,6 +326,7 @@ class CollectionStateNotifier
         metaData: HistoryMetaModel(
           historyId: newHistoryId,
           requestId: requestId,
+          apiType: requestModel.apiType,
           name: requestModel.name,
           url: substitutedHttpRequestModel.url,
           method: substitutedHttpRequestModel.method,

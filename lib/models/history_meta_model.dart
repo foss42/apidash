@@ -9,6 +9,7 @@ class HistoryMetaModel with _$HistoryMetaModel {
   const factory HistoryMetaModel({
     required String historyId,
     required String requestId,
+    required APIType apiType,
     @Default("") String name,
     required String url,
     required HTTPVerb method,
