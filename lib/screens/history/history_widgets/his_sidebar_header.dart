@@ -1,3 +1,4 @@
+import 'package:apidash/services/services.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -21,11 +22,19 @@ class HistorySidebarHeader extends ConsumerWidget {
             style: Theme.of(context).textTheme.titleMedium,
           ),
           const Spacer(),
-          IconButton(
+          ADIconButton(
+            icon: Icons.delete_forever,
+            iconSize: kButtonIconSizeLarge,
+            tooltip: "Clear History",
+            color: Theme.of(context).brightness == Brightness.dark
+                ? kColorDarkDanger
+                : kColorLightDanger,
+            onPressed: () => hiveHandler.clearAllHistory(),
+          ),
+          ADIconButton(
+            icon: Icons.manage_history_rounded,
+            iconSize: kButtonIconSizeLarge,
             tooltip: "Manage History",
-            style: IconButton.styleFrom(
-              foregroundColor: Theme.of(context).colorScheme.primary,
-            ),
             onPressed: () {
               showHistoryRetentionDialog(
                   context,
@@ -36,10 +45,6 @@ class HistorySidebarHeader extends ConsumerWidget {
                     );
               });
             },
-            icon: const Icon(
-              Icons.manage_history_rounded,
-              size: 20,
-            ),
           ),
           context.width <= kMinWindowSize.width
               ? IconButton(
