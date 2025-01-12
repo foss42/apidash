@@ -8,6 +8,14 @@ scripts:
     run: melos exec -- "flutter analyze"
     description: Analyze all packages
 
+  clean:
+    run: melos exec -- "flutter clean"
+    description: Clean all packages
+
+  build-gen:
+    run: melos exec -- "dart run build_runner build --delete-conflicting-outputs"
+    description: Run build generator for all packages
+
   test:
     run: melos exec --dir-exists=test -- "flutter test --coverage"
     description: Run tests for all packages

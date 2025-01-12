@@ -8,12 +8,16 @@ import 'package:apidash/widgets/texts.dart';
 void main() {
   testWidgets('Testing when method is GET', (tester) async {
     var methodGet = HTTPVerb.get;
+    var apiType = APIType.rest;
     await tester.pumpWidget(
       MaterialApp(
         title: 'Texts',
         theme: ThemeData(brightness: Brightness.light),
         home: Scaffold(
-          body: MethodBox(method: methodGet),
+          body: SidebarRequestCardTextBox(
+            apiType: apiType,
+            method: methodGet,
+          ),
         ),
       ),
     );
@@ -28,12 +32,16 @@ void main() {
 
   testWidgets('Testing when method is DELETE', (tester) async {
     var methodDel = HTTPVerb.delete;
+    var apiType = APIType.rest;
     await tester.pumpWidget(
       MaterialApp(
         title: 'Texts',
         theme: ThemeData(brightness: Brightness.dark),
         home: Scaffold(
-          body: MethodBox(method: methodDel),
+          body: SidebarRequestCardTextBox(
+            apiType: apiType,
+            method: methodDel,
+          ),
         ),
       ),
     );

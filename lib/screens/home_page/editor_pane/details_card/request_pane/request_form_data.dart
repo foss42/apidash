@@ -27,9 +27,8 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
     seed = random.nextInt(kRandMax);
   }
 
-  void _onFieldChange(String selectedId) {
+  void _onFieldChange() {
     ref.read(collectionStateNotifierProvider.notifier).update(
-          selectedId,
           formData: formRows.sublist(0, formRows.length - 1),
         );
   }
@@ -93,7 +92,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                     isAddingRow = true;
                     formRows.add(kFormDataEmptyModel);
                   }
-                  _onFieldChange(selectedId!);
+                  _onFieldChange();
                 },
                 colorScheme: Theme.of(context).colorScheme,
               ),
@@ -119,7 +118,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                     formRows.add(kFormDataEmptyModel);
                   }
                   setState(() {});
-                  _onFieldChange(selectedId!);
+                  _onFieldChange();
                 },
               ),
             ),
@@ -134,7 +133,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                             value: pickedResult.path,
                           );
                           setState(() {});
-                          _onFieldChange(selectedId!);
+                          _onFieldChange();
                         }
                       },
                       initialValue: formRows[index].value,
@@ -150,7 +149,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                           isAddingRow = true;
                           formRows.add(kFormDataEmptyModel);
                         }
-                        _onFieldChange(selectedId!);
+                        _onFieldChange();
                       },
                       colorScheme: Theme.of(context).colorScheme,
                     ),
@@ -170,7 +169,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                         } else {
                           formRows.removeAt(index);
                         }
-                        _onFieldChange(selectedId!);
+                        _onFieldChange();
                       },
                 child: Theme.of(context).brightness == Brightness.dark
                     ? kIconRemoveDark
@@ -216,7 +215,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
             child: ElevatedButton.icon(
               onPressed: () {
                 formRows.add(kFormDataEmptyModel);
-                _onFieldChange(selectedId!);
+                _onFieldChange();
               },
               icon: const Icon(Icons.add),
               label: const Text(

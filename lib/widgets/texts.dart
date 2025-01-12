@@ -3,11 +3,13 @@ import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash/utils/utils.dart';
 
-class MethodBox extends StatelessWidget {
-  const MethodBox({
+class SidebarRequestCardTextBox extends StatelessWidget {
+  const SidebarRequestCardTextBox({
     super.key,
+    required this.apiType,
     required this.method,
   });
+  final APIType apiType;
   final HTTPVerb method;
 
   @override
@@ -15,15 +17,21 @@ class MethodBox extends StatelessWidget {
     return SizedBox(
       width: 24,
       child: Text(
-        method.abbr,
+        switch (apiType) {
+          APIType.rest => method.abbr,
+          APIType.graphql => apiType.abbr,
+        },
         textAlign: TextAlign.center,
         style: TextStyle(
           fontSize: 8,
           fontWeight: FontWeight.bold,
-          color: getHTTPMethodColor(
-            method,
-            brightness: Theme.of(context).brightness,
-          ),
+          color: switch (apiType) {
+            APIType.rest => getHTTPMethodColor(
+                method,
+                brightness: Theme.of(context).brightness,
+              ),
+            APIType.graphql => kColorGQL,
+          },
         ),
       ),
     );

@@ -1,3 +1,4 @@
+export 'api_type_dropdown.dart';
 export 'button_navbar.dart';
 export 'code_pane.dart';
 export 'editor_title.dart';

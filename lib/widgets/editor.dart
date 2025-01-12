@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'package:apidash/consts.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,12 +11,14 @@ class TextFieldEditor extends StatefulWidget {
     this.onChanged,
     this.initialValue,
     this.readOnly = false,
+    this.hintText,
   });
 
   final String fieldKey;
   final Function(String)? onChanged;
   final String? initialValue;
   final bool readOnly;
+  final String? hintText;
   @override
   State<TextFieldEditor> createState() => _TextFieldEditorState();
 }
@@ -25,7 +28,7 @@ class _TextFieldEditorState extends State<TextFieldEditor> {
   late final FocusNode editorFocusNode;
 
   void insertTab() {
-    String sp = "    ";
+    String sp = "  ";
     int offset = math.min(
         controller.selection.baseOffset, controller.selection.extentOffset);
     String text = controller.text.substring(0, offset) +
@@ -72,14 +75,16 @@ class _TextFieldEditorState extends State<TextFieldEditor> {
         expands: true,
         maxLines: null,
         readOnly: widget.readOnly,
-        style: kCodeStyle,
+        style: kCodeStyle.copyWith(
+          fontSize: Theme.of(context).textTheme.bodyMedium?.fontSize,
+        ),
         textAlignVertical: TextAlignVertical.top,
         onChanged: widget.onChanged,
         onTapOutside: (PointerDownEvent event) {
           editorFocusNode.unfocus();
         },
         decoration: InputDecoration(
-          hintText: "Enter content (body)",
+          hintText: widget.hintText ?? kHintContent,
           hintStyle: TextStyle(
             color: Theme.of(context).colorScheme.outline.withOpacity(
                   kHintOpacity,

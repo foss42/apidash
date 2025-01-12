@@ -431,6 +431,7 @@ const kLabelSelect = "Select";
 const kLabelContinue = "Continue";
 const kLabelCancel = "Cancel";
 const kLabelOk = "Ok";
+const kUntitled = "untitled";
 // Request Pane
 const kLabelRequest = "Request";
 const kLabelHideCode = "Hide Code";
@@ -438,6 +439,7 @@ const kLabelViewCode = "View Code";
 const kLabelURLParams = "URL Params";
 const kLabelHeaders = "Headers";
 const kLabelBody = "Body";
+const kLabelQuery = "Query";
 const kNameCheckbox = "Checkbox";
 const kNameURLParam = "URL Parameter";
 const kNameHeader = "Header Name";
@@ -452,6 +454,10 @@ const kLabelAddHeader = "Add Header";
 const kLabelAddVariable = "Add Variable";
 const kLabelSelectFile = "Select File";
 const kLabelAddFormField = "Add Form Field";
+const kHintContent = "Enter content";
+const kHintText = "Enter text";
+const kHintJson = "Enter JSON";
+const kHintQuery = "Enter Query";
 // Response Pane
 const kLabelNotSent = "Not Sent";
 const kLabelResponse = "Response";

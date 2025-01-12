@@ -5,7 +5,7 @@ import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/utils/utils.dart';
 import 'package:apidash/consts.dart';
-import 'history_pane.dart';
+import 'history_sidebar.dart';
 import 'history_viewer.dart';
 
 class HistoryPage extends ConsumerWidget {

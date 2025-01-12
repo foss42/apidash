@@ -19,7 +19,7 @@ dependencies:
   http_parser: ^4.0.2
   postman:
     path: ../postman
-  seed: ^0.0.2
+  seed: ^0.0.3
   xml: ^6.3.0
 
 dev_dependencies:
@@ -28,4 +28,5 @@ dev_dependencies:
   build_runner: ^2.4.12
   flutter_lints: ^4.0.0
   freezed: ^2.5.7
+  json_serializable: ^6.7.1
   test: ^1.25.2

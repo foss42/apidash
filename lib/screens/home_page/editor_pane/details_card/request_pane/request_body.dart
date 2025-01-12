@@ -18,6 +18,8 @@ class EditRequestBody extends ConsumerWidget {
         .getRequestModel(selectedId!);
     final contentType = ref.watch(selectedRequestModelProvider
         .select((value) => value?.httpRequestModel?.bodyContentType));
+    final apiType = ref
+        .watch(selectedRequestModelProvider.select((value) => value?.apiType));
 
     // TODO: #178 GET->POST Currently switches to POST everytime user edits body even if the user intentionally chooses GET
     // final sm = ScaffoldMessenger.of(context);
@@ -36,57 +38,80 @@ class EditRequestBody extends ConsumerWidget {
 
     return Column(
       children: [
-        const SizedBox(
-          height: kHeaderHeight,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                "Select Content Type:",
-              ),
-              DropdownButtonBodyContentType(),
-            ],
-          ),
-        ),
-        Expanded(
-          child: switch (contentType) {
-            ContentType.formdata => const Padding(
-                padding: kPh4,
-                child: FormDataWidget(
-                    // TODO: See changeToPostMethod above
-                    // changeMethodToPost: changeToPostMethod,
-                    )),
-            // TODO: Fix JsonTextFieldEditor & plug it here
-            ContentType.json => Padding(
+        (apiType == APIType.rest)
+            ? const SizedBox(
+                height: kHeaderHeight,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Select Content Type:",
+                    ),
+                    DropdownButtonBodyContentType(),
+                  ],
+                ),
+              )
+            : kSizedBoxEmpty,
+        switch (apiType) {
+          APIType.rest => Expanded(
+              child: switch (contentType) {
+                ContentType.formdata => const Padding(
+                    padding: kPh4,
+                    child: FormDataWidget(
+                        // TODO: See changeToPostMethod above
+                        // changeMethodToPost: changeToPostMethod,
+                        )),
+                // TODO: Fix JsonTextFieldEditor & plug it here
+                ContentType.json => Padding(
+                    padding: kPt5o10,
+                    child: TextFieldEditor(
+                      key: Key("$selectedId-json-body"),
+                      fieldKey: "$selectedId-json-body-editor",
+                      initialValue: requestModel?.httpRequestModel?.body,
+                      onChanged: (String value) {
+                        // changeToPostMethod();
+                        ref
+                            .read(collectionStateNotifierProvider.notifier)
+                            .update(body: value);
+                      },
+                      hintText: kHintJson,
+                    ),
+                  ),
+                _ => Padding(
+                    padding: kPt5o10,
+                    child: TextFieldEditor(
+                      key: Key("$selectedId-body"),
+                      fieldKey: "$selectedId-body-editor",
+                      initialValue: requestModel?.httpRequestModel?.body,
+                      onChanged: (String value) {
+                        // changeToPostMethod();
+                        ref
+                            .read(collectionStateNotifierProvider.notifier)
+                            .update(body: value);
+                      },
+                      hintText: kHintText,
+                    ),
+                  ),
+              },
+            ),
+          APIType.graphql => Expanded(
+              child: Padding(
                 padding: kPt5o10,
                 child: TextFieldEditor(
-                  key: Key("$selectedId-json-body"),
-                  fieldKey: "$selectedId-json-body-editor",
-                  initialValue: requestModel?.httpRequestModel?.body,
+                  key: Key("$selectedId-query"),
+                  fieldKey: "$selectedId-query-editor",
+                  initialValue: requestModel?.httpRequestModel?.query,
                   onChanged: (String value) {
-                    // changeToPostMethod();
                     ref
                         .read(collectionStateNotifierProvider.notifier)
-                        .update(selectedId, body: value);
+                        .update(query: value);
                   },
+                  hintText: kHintQuery,
                 ),
               ),
-            _ => Padding(
-                padding: kPt5o10,
-                child: TextFieldEditor(
-                  key: Key("$selectedId-body"),
-                  fieldKey: "$selectedId-body-editor",
-                  initialValue: requestModel?.httpRequestModel?.body,
-                  onChanged: (String value) {
-                    // changeToPostMethod();
-                    ref
-                        .read(collectionStateNotifierProvider.notifier)
-                        .update(selectedId, body: value);
-                  },
-                ),
-              ),
-          },
-        )
+            ),
+          _ => kSizedBoxEmpty,
+        }
       ],
     );
   }
@@ -99,7 +124,7 @@ class DropdownButtonBodyContentType extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedId = ref.watch(selectedIdStateProvider);
+    ref.watch(selectedIdStateProvider);
     final requestBodyContentType = ref.watch(selectedRequestModelProvider
         .select((value) => value?.httpRequestModel?.bodyContentType));
     return DropdownButtonContentType(
@@ -107,7 +132,7 @@ class DropdownButtonBodyContentType extends ConsumerWidget {
       onChanged: (ContentType? value) {
         ref
             .read(collectionStateNotifierProvider.notifier)
-            .update(selectedId!, bodyContentType: value);
+            .update(bodyContentType: value);
       },
     );
   }
