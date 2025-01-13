@@ -10,7 +10,6 @@ import '../utils/utils.dart';
 import '../consts.dart';
 
 part 'http_response_model.freezed.dart';
-
 part 'http_response_model.g.dart';
 
 class Uint8ListConverter implements JsonConverter<Uint8List?, List<int>?> {

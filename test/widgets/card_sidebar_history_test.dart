@@ -11,6 +11,7 @@ void main() {
     HistoryMetaModel(
       historyId: 'historyId',
       requestId: 'requestId',
+      apiType: APIType.rest,
       url: 'https://api.apidash.dev',
       method: HTTPVerb.get,
       timeStamp: DateTime.now(),
@@ -30,6 +31,7 @@ void main() {
               SidebarHistoryCard(
                 id: '1',
                 models: sampleModels,
+                apiType: APIType.rest,
                 method: HTTPVerb.get,
                 onTap: () {
                   changedValue = 'Tapped';
@@ -68,6 +70,7 @@ void main() {
             children: [
               SidebarHistoryCard(
                 id: '1',
+                apiType: APIType.rest,
                 models: sampleModels,
                 method: HTTPVerb.get,
                 onTap: () {

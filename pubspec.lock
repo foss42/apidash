@@ -306,7 +306,7 @@ packages:
       path: "packages/curl_parser"
       relative: true
     source: path
-    version: "0.1.1"
+    version: "0.1.2"
   dart_style:
     dependency: "direct main"
     description:
@@ -1372,10 +1372,10 @@ packages:
     dependency: transitive
     description:
       name: seed
-      sha256: "5c5ac5d73bf94e4b207d8c283903fc2b62ca8015e519b99949a8389605ee0eef"
+      sha256: "0d74a46abd169c96a73d9dec4739e6623021915661beadf265e885bb1eafd214"
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.2"
+    version: "0.0.3"
   shared_preferences:
     dependency: "direct main"
     description:

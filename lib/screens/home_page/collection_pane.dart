@@ -186,6 +186,7 @@ class RequestItem extends ConsumerWidget {
 
     return SidebarRequestCard(
       id: id,
+      apiType: requestModel.apiType,
       method: requestModel.httpRequestModel!.method,
       name: requestModel.name,
       url: requestModel.httpRequestModel?.url,
@@ -208,7 +209,7 @@ class RequestItem extends ConsumerWidget {
         value = value.trim();
         ref
             .read(collectionStateNotifierProvider.notifier)
-            .update(editRequestId!, name: value);
+            .update(id: editRequestId!, name: value);
       },
       onTapOutsideNameEditor: () {
         ref.read(selectedIdEditStateProvider.notifier).state = null;
@@ -231,10 +232,10 @@ class RequestItem extends ConsumerWidget {
           );
         }
         if (item == ItemMenuOption.delete) {
-          ref.read(collectionStateNotifierProvider.notifier).remove(id);
+          ref.read(collectionStateNotifierProvider.notifier).remove(id: id);
         }
         if (item == ItemMenuOption.duplicate) {
-          ref.read(collectionStateNotifierProvider.notifier).duplicate(id);
+          ref.read(collectionStateNotifierProvider.notifier).duplicate(id: id);
         }
       },
     );

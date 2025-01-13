@@ -10,6 +10,7 @@ class ADPopupMenu<T> extends StatelessWidget {
     this.tooltip,
     this.width,
     this.isOutlined = false,
+    this.borderColor,
   });
 
   final String? value;
@@ -18,6 +19,7 @@ class ADPopupMenu<T> extends StatelessWidget {
   final String? tooltip;
   final double? width;
   final bool isOutlined;
+  final Color? borderColor;
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +64,8 @@ class ADPopupMenu<T> extends StatelessWidget {
       return Container(
         decoration: BoxDecoration(
           border: Border.all(
-            color: Theme.of(context).colorScheme.onSurface,
+            color: borderColor ??
+                Theme.of(context).colorScheme.surfaceContainerHighest,
           ),
           borderRadius: kBorderRadius8,
         ),

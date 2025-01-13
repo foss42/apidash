@@ -13,6 +13,7 @@ void main() {
     final mockModel = HistoryMetaModel(
       historyId: 'historyId',
       requestId: 'requestId',
+      apiType: APIType.rest,
       url: 'https://api.apidash.dev',
       method: HTTPVerb.get,
       timeStamp: DateTime.now(),

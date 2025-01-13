@@ -7,7 +7,6 @@ import '../utils/utils.dart'
 import '../consts.dart';
 
 part 'http_request_model.freezed.dart';
-
 part 'http_request_model.g.dart';
 
 @freezed
@@ -27,6 +26,7 @@ class HttpRequestModel with _$HttpRequestModel {
     List<bool>? isParamEnabledList,
     @Default(ContentType.json) ContentType bodyContentType,
     String? body,
+    String? query,
     List<FormDataModel>? formData,
   }) = _HttpRequestModel;
 
@@ -61,6 +61,7 @@ class HttpRequestModel with _$HttpRequestModel {
       kMethodsWithBody.contains(method) &&
       hasFormDataContentType &&
       formDataMapList.isNotEmpty;
+  bool get hasQuery => query?.isNotEmpty ?? false;
   List<FormDataModel> get formDataList => formData ?? <FormDataModel>[];
   List<Map<String, String>> get formDataMapList =>
       rowsToFormDataMapList(formDataList) ?? [];

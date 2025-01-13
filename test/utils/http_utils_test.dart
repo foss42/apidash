@@ -5,15 +5,14 @@ import 'package:apidash/consts.dart';
 
 void main() {
   group("Testing getRequestTitleFromUrl function", () {
-    String titleUntitled = "untitled";
     test('Testing getRequestTitleFromUrl using url1', () {
       String url1 = "";
-      expect(getRequestTitleFromUrl(url1), titleUntitled);
+      expect(getRequestTitleFromUrl(url1), kUntitled);
     });
 
     test('Testing getRequestTitleFromUrl using url2', () {
       String url2 = " ";
-      expect(getRequestTitleFromUrl(url2), titleUntitled);
+      expect(getRequestTitleFromUrl(url2), kUntitled);
     });
 
     test('Testing getRequestTitleFromUrl using url3', () {
@@ -30,11 +29,11 @@ void main() {
 
     test('Testing getRequestTitleFromUrl using url5', () {
       String url5 = "http://";
-      expect(getRequestTitleFromUrl(url5), titleUntitled);
+      expect(getRequestTitleFromUrl(url5), kUntitled);
     });
 
     test('Testing getRequestTitleFromUrl for null value', () {
-      expect(getRequestTitleFromUrl(null), titleUntitled);
+      expect(getRequestTitleFromUrl(null), kUntitled);
     });
   });
 

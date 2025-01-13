@@ -5,14 +5,14 @@
 - [x] Remaining Code Generators (https://github.com/foss42/apidash/discussions/80)
 - [x] Environment Variables (https://github.com/foss42/apidash/issues/25)
 - [x] Integration Testing (https://github.com/foss42/apidash/issues/119)
-- [ ] Paste not working on iOS and desktop (Right Click -> Paste) (https://github.com/foss42/apidash/issues/490)
+- [x] Paste not working on iOS and desktop (Right Click -> Paste) (https://github.com/foss42/apidash/issues/490)
 - [ ] WebSocket support (https://github.com/foss42/apidash/issues/15)
 - [ ] SSE support (https://github.com/foss42/apidash/issues/116)
 - [ ] MQTT support (https://github.com/foss42/apidash/issues/115)
-- [ ] GraphQL support (https://github.com/foss42/apidash/issues/117)
+- [x] GraphQL support (https://github.com/foss42/apidash/issues/117)
 - [ ] gRPC support (https://github.com/foss42/apidash/issues/14)
 - [ ] Figuring out how to build for various Linux packaging formats (https://github.com/foss42/apidash/discussions/240) [Docs]
-- [ ] Save items in Response headers/body in an Environment variable to be used by other requests (https://github.com/foss42/apidash/issues/465)
+- [ ] Save items in Response headers/body in an Environment variable to be used by other requests. Something like a post-processing script. (https://github.com/foss42/apidash/issues/465)
 - [ ] Importers
   - [ ] OpenAPI (https://github.com/foss42/apidash/issues/121)
   - [ ] Insomnia (https://github.com/foss42/apidash/issues/125)
