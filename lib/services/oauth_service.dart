@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:oauth2/oauth2.dart' as oauth2;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
@@ -9,7 +8,6 @@ import '../models/oauth_config_model.dart';
 import '../models/oauth_credentials_model.dart';
 
 class OAuthService {
-  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
   static const _credentialsStorageKey = 'oauth_credentials_';
   Completer<String>? _completer;
   HttpServer? _server;
@@ -80,9 +78,7 @@ class OAuthService {
       }
       final responseJson = _parseTokenResponse(response);
       final tokenResponse = oauth2.Credentials.fromJson(jsonEncode(responseJson));
-      final oauthCredentials = OAuthCredentials.fromOAuth2Credentials(tokenResponse);
-      await _saveCredentials(config.id!, oauthCredentials);
-      return oauthCredentials;
+      return OAuthCredentials.fromOAuth2Credentials(tokenResponse);
     } catch (e, stack) {
       throw Exception('Failed to acquire client credentials token: $e');
     }
@@ -129,14 +125,12 @@ class OAuthService {
       );
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        final credentials = OAuthCredentials(
+        return OAuthCredentials(
           accessToken: data['access_token'],
           refreshToken: data['refresh_token'],
           tokenType: data['token_type'] ?? 'Bearer',
           configId: config.id,
         );
-        await _saveCredentials(config.id, credentials);
-        return credentials;
       } else {
         throw Exception('Failed to get access token: ${response.body}');
       }
@@ -153,32 +147,6 @@ class OAuthService {
     }
   }
 
-  /// Save credentials to secure storage
-  Future<void> _saveCredentials(String configId, OAuthCredentials credentials) async {
-    try {
-      await _secureStorage.write(
-        key: _credentialsStorageKey + configId,
-        value: credentials.accessToken,
-      );
-    } catch (e) {
-      throw Exception('Failed to save credentials: $e');
-    }
-  }
-
-  /// Retrieve saved credentials
-  Future<OAuthCredentials?> getCredentials(String configId) async {
-    try {
-      final storedToken = await _secureStorage.read(key: _credentialsStorageKey + configId);
-      if (storedToken == null) {
-        return null;
-      }
-      // TODO: Implement proper credentials retrieval
-      return null;
-    } catch (e) {
-      return null;
-    }
-  }
-
   /// Refresh an existing token
   Future<OAuthCredentials> refreshToken(OAuthCredentials credentials) async {
     if (credentials.refreshToken == null) {
@@ -190,8 +158,7 @@ class OAuthService {
         identifier: null, // Use existing client ID
         secret: null, // Use existing client secret
       );
-      final updatedCredentials = OAuthCredentials.fromOAuth2Credentials(refreshedCredentials);
-      return updatedCredentials;
+      return OAuthCredentials.fromOAuth2Credentials(refreshedCredentials);
     } catch (e, stack) {
       throw Exception('Failed to refresh token: $e');
     }
