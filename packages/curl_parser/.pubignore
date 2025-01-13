@@ -4,3 +4,4 @@ melos_curl_parser.iml
 build/
 coverage/
 test/
+pubspec_overrides.yaml

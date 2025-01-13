@@ -1,6 +1,6 @@
 name: seed
 description: Seed is a foundational package designed to provide reusable building blocks for API Dash projects.
-version: 0.0.2
+version: 0.0.3
 homepage: https://github.com/foss42/apidash/tree/main/packages/seed
 repository: https://github.com/foss42/apidash/tree/main/packages/seed
 issue_tracker: https://github.com/foss42/apidash/issues
@@ -15,5 +15,6 @@ dependencies:
 dev_dependencies:
   build_runner: ^2.4.12
   freezed: ^2.5.7
+  json_serializable: ^6.7.1
   lints: ^4.0.0
   test: ^1.24.0

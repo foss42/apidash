@@ -28,6 +28,7 @@ mixin _$HttpRequestModel {
   List<bool>? get isParamEnabledList => throw _privateConstructorUsedError;
   ContentType get bodyContentType => throw _privateConstructorUsedError;
   String? get body => throw _privateConstructorUsedError;
+  String? get query => throw _privateConstructorUsedError;
   List<FormDataModel>? get formData => throw _privateConstructorUsedError;
 
   /// Serializes this HttpRequestModel to a JSON map.
@@ -55,6 +56,7 @@ abstract class $HttpRequestModelCopyWith<$Res> {
       List<bool>? isParamEnabledList,
       ContentType bodyContentType,
       String? body,
+      String? query,
       List<FormDataModel>? formData});
 }
 
@@ -81,6 +83,7 @@ class _$HttpRequestModelCopyWithImpl<$Res, $Val extends HttpRequestModel>
     Object? isParamEnabledList = freezed,
     Object? bodyContentType = null,
     Object? body = freezed,
+    Object? query = freezed,
     Object? formData = freezed,
   }) {
     return _then(_value.copyWith(
@@ -116,6 +119,10 @@ class _$HttpRequestModelCopyWithImpl<$Res, $Val extends HttpRequestModel>
           ? _value.body
           : body // ignore: cast_nullable_to_non_nullable
               as String?,
+      query: freezed == query
+          ? _value.query
+          : query // ignore: cast_nullable_to_non_nullable
+              as String?,
       formData: freezed == formData
           ? _value.formData
           : formData // ignore: cast_nullable_to_non_nullable
@@ -141,6 +148,7 @@ abstract class _$$HttpRequestModelImplCopyWith<$Res>
       List<bool>? isParamEnabledList,
       ContentType bodyContentType,
       String? body,
+      String? query,
       List<FormDataModel>? formData});
 }
 
@@ -165,6 +173,7 @@ class __$$HttpRequestModelImplCopyWithImpl<$Res>
     Object? isParamEnabledList = freezed,
     Object? bodyContentType = null,
     Object? body = freezed,
+    Object? query = freezed,
     Object? formData = freezed,
   }) {
     return _then(_$HttpRequestModelImpl(
@@ -200,6 +209,10 @@ class __$$HttpRequestModelImplCopyWithImpl<$Res>
           ? _value.body
           : body // ignore: cast_nullable_to_non_nullable
               as String?,
+      query: freezed == query
+          ? _value.query
+          : query // ignore: cast_nullable_to_non_nullable
+              as String?,
       formData: freezed == formData
           ? _value._formData
           : formData // ignore: cast_nullable_to_non_nullable
@@ -221,6 +234,7 @@ class _$HttpRequestModelImpl extends _HttpRequestModel {
       final List<bool>? isParamEnabledList,
       this.bodyContentType = ContentType.json,
       this.body,
+      this.query,
       final List<FormDataModel>? formData})
       : _headers = headers,
         _params = params,
@@ -285,6 +299,8 @@ class _$HttpRequestModelImpl extends _HttpRequestModel {
   final ContentType bodyContentType;
   @override
   final String? body;
+  @override
+  final String? query;
   final List<FormDataModel>? _formData;
   @override
   List<FormDataModel>? get formData {
@@ -297,7 +313,7 @@ class _$HttpRequestModelImpl extends _HttpRequestModel {
 
   @override
   String toString() {
-    return 'HttpRequestModel(method: $method, url: $url, headers: $headers, params: $params, isHeaderEnabledList: $isHeaderEnabledList, isParamEnabledList: $isParamEnabledList, bodyContentType: $bodyContentType, body: $body, formData: $formData)';
+    return 'HttpRequestModel(method: $method, url: $url, headers: $headers, params: $params, isHeaderEnabledList: $isHeaderEnabledList, isParamEnabledList: $isParamEnabledList, bodyContentType: $bodyContentType, body: $body, query: $query, formData: $formData)';
   }
 
   @override
@@ -316,6 +332,7 @@ class _$HttpRequestModelImpl extends _HttpRequestModel {
             (identical(other.bodyContentType, bodyContentType) ||
                 other.bodyContentType == bodyContentType) &&
             (identical(other.body, body) || other.body == body) &&
+            (identical(other.query, query) || other.query == query) &&
             const DeepCollectionEquality().equals(other._formData, _formData));
   }
 
@@ -331,6 +348,7 @@ class _$HttpRequestModelImpl extends _HttpRequestModel {
       const DeepCollectionEquality().hash(_isParamEnabledList),
       bodyContentType,
       body,
+      query,
       const DeepCollectionEquality().hash(_formData));
 
   /// Create a copy of HttpRequestModel
@@ -360,6 +378,7 @@ abstract class _HttpRequestModel extends HttpRequestModel {
       final List<bool>? isParamEnabledList,
       final ContentType bodyContentType,
       final String? body,
+      final String? query,
       final List<FormDataModel>? formData}) = _$HttpRequestModelImpl;
   const _HttpRequestModel._() : super._();
 
@@ -382,6 +401,8 @@ abstract class _HttpRequestModel extends HttpRequestModel {
   ContentType get bodyContentType;
   @override
   String? get body;
+  @override
+  String? get query;
   @override
   List<FormDataModel>? get formData;
 

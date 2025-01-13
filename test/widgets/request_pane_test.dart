@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:apidash/widgets/request_widgets.dart';
+import 'package:apidash/widgets/request_pane.dart';
 import '../extensions/widget_tester_extensions.dart';
 import '../test_consts.dart';
 
@@ -15,8 +15,9 @@ void main() {
           body: RequestPane(
             selectedId: '1',
             codePaneVisible: true,
-            children: const [Text('abc'), Text('xyz'), Text('mno')],
+            tabLabels: const ['URL Params', 'Headers', 'Body'],
             onPressedCodeButton: () {},
+            children: const [Text('abc'), Text('xyz'), Text('mno')],
           ),
         ),
       ),
@@ -47,6 +48,7 @@ void main() {
             codePaneVisible: true,
             onPressedCodeButton: () {},
             tabIndex: 1,
+            tabLabels: const ['URL Params', 'Headers', 'Body'],
             children: const [Text('abc'), Text('xyz'), Text('mno')],
           ),
         ),
@@ -78,6 +80,7 @@ void main() {
             codePaneVisible: false,
             onPressedCodeButton: () {},
             tabIndex: 2,
+            tabLabels: const ['URL Params', 'Headers', 'Body'],
             children: const [Text('abc'), Text('xyz'), Text('mno')],
           ),
         ),
@@ -111,6 +114,7 @@ void main() {
             onTapTabBar: (value) {
               computedTabIndex = value;
             },
+            tabLabels: const ['URL Params', 'Headers', 'Body'],
             children: const [Text('abc'), Text('xyz'), Text('mno')],
           ),
         ),

@@ -19,3 +19,15 @@ extension StringExtension on String {
     return "${substring(0, limit)}...";
   }
 }
+
+extension StringOrNullExtension on String? {
+  bool isNullOrEmpty() {
+    if (this == null) {
+      return true;
+    }
+    if (this!.isEmpty) {
+      return true;
+    }
+    return false;
+  }
+}

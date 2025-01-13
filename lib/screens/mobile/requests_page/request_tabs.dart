@@ -1,21 +1,34 @@
-import 'package:apidash/screens/common_widgets/common_widgets.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash/widgets/widgets.dart';
-import 'package:apidash/consts.dart';
+import '../../../consts.dart';
+import '../../common_widgets/common_widgets.dart';
 import '../../home_page/editor_pane/details_card/response_pane.dart';
 import '../../home_page/editor_pane/editor_request.dart';
 import '../../home_page/editor_pane/url_card.dart';
 
 class RequestTabs extends StatelessWidget {
-  const RequestTabs({super.key, required this.controller});
+  const RequestTabs({
+    super.key,
+    required this.controller,
+  });
   final TabController controller;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        kVSpacer5,
+        const Padding(
+          padding: kPh8,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              APITypeDropdown(),
+              EnvironmentDropdown(),
+            ],
+          ),
+        ),
+        kVSpacer3,
         const Padding(
           padding: kPh4,
           child: EditorPaneRequestURLCard(),

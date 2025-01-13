@@ -6,11 +6,14 @@ import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import '../../common_widgets/common_widgets.dart';
 
-class EditorPaneRequestURLCard extends StatelessWidget {
+class EditorPaneRequestURLCard extends ConsumerWidget {
   const EditorPaneRequestURLCard({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(selectedIdStateProvider);
+    final apiType = ref
+        .watch(selectedRequestModelProvider.select((value) => value?.apiType));
     return Card(
       color: kColorTransparent,
       surfaceTintColor: kColorTransparent,
@@ -27,24 +30,38 @@ class EditorPaneRequestURLCard extends StatelessWidget {
           horizontal: !context.isMediumWindow ? 20 : 6,
         ),
         child: context.isMediumWindow
-            ? const Row(
+            ? Row(
                 children: [
-                  DropdownButtonHTTPMethod(),
-                  kHSpacer5,
-                  Expanded(
+                  switch (apiType) {
+                    APIType.rest => const DropdownButtonHTTPMethod(),
+                    APIType.graphql => kSizedBoxEmpty,
+                    null => kSizedBoxEmpty,
+                  },
+                  switch (apiType) {
+                    APIType.rest => kHSpacer5,
+                    _ => kHSpacer8,
+                  },
+                  const Expanded(
                     child: URLTextField(),
                   ),
                 ],
               )
-            : const Row(
+            : Row(
                 children: [
-                  DropdownButtonHTTPMethod(),
-                  kHSpacer20,
-                  Expanded(
+                  switch (apiType) {
+                    APIType.rest => const DropdownButtonHTTPMethod(),
+                    APIType.graphql => kSizedBoxEmpty,
+                    null => kSizedBoxEmpty,
+                  },
+                  switch (apiType) {
+                    APIType.rest => kHSpacer20,
+                    _ => kHSpacer8,
+                  },
+                  const Expanded(
                     child: URLTextField(),
                   ),
                   kHSpacer20,
-                  SizedBox(
+                  const SizedBox(
                     height: 36,
                     child: SendRequestButton(),
                   )
@@ -67,10 +84,9 @@ class DropdownButtonHTTPMethod extends ConsumerWidget {
     return DropdownButtonHttpMethod(
       method: method,
       onChanged: (HTTPVerb? value) {
-        final selectedId = ref.read(selectedRequestModelProvider)!.id;
         ref
             .read(collectionStateNotifierProvider.notifier)
-            .update(selectedId, method: value);
+            .update(method: value);
       },
     );
   }
@@ -92,9 +108,7 @@ class URLTextField extends ConsumerWidget {
           ?.httpRequestModel
           ?.url,
       onChanged: (value) {
-        ref
-            .read(collectionStateNotifierProvider.notifier)
-            .update(selectedId, url: value);
+        ref.read(collectionStateNotifierProvider.notifier).update(url: value);
       },
       onFieldSubmitted: (value) {
         ref.read(collectionStateNotifierProvider.notifier).sendRequest();

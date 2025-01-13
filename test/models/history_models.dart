@@ -9,6 +9,7 @@ import 'http_response_models.dart';
 final historyMetaModel1 = HistoryMetaModel(
   historyId: 'historyId1',
   requestId: 'requestId1',
+  apiType: APIType.rest,
   url: 'https://api.apidash.dev/humanize/social',
   method: HTTPVerb.get,
   timeStamp: DateTime(2024, 1, 1),
@@ -26,6 +27,7 @@ final historyRequestModel1 = HistoryRequestModel(
 final historyMetaModel2 = HistoryMetaModel(
   historyId: 'historyId2',
   requestId: 'requestId2',
+  apiType: APIType.rest,
   url: 'https://api.apidash.dev/case/lower',
   method: HTTPVerb.post,
   timeStamp: DateTime(2024, 1, 1),
@@ -43,6 +45,7 @@ final historyRequestModel2 = HistoryRequestModel(
 final Map<String, dynamic> historyMetaModelJson1 = {
   "historyId": "historyId1",
   "requestId": "requestId1",
+  "apiType": "rest",
   "name": "",
   "url": "https://api.apidash.dev/humanize/social",
   "method": "get",
@@ -60,6 +63,7 @@ final Map<String, dynamic> historyRequestModelJson1 = {
 final Map<String, dynamic> historyMetaModelJson2 = {
   "historyId": "historyId2",
   "requestId": "requestId2",
+  "apiType": "rest",
   "name": "",
   "url": "https://api.apidash.dev/case/lower",
   "method": "post",

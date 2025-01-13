@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'package:apidash/consts.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -93,7 +94,7 @@ class _JsonTextFieldEditorState extends State<JsonTextFieldEditor> {
           widget.onChanged?.call(value);
         },
         decoration: InputDecoration(
-          hintText: "Enter content (body)",
+          hintText: kHintJson,
           hintStyle: TextStyle(
             color: Theme.of(context).colorScheme.outline.withOpacity(
                   kHintOpacity,

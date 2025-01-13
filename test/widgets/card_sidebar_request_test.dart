@@ -16,6 +16,7 @@ void main() {
             children: [
               SidebarRequestCard(
                 id: '23',
+                apiType: APIType.rest,
                 selectedId: '2',
                 url: 'https://api.apidash.dev',
                 method: HTTPVerb.get,
@@ -61,6 +62,7 @@ void main() {
             children: [
               SidebarRequestCard(
                 id: '2',
+                apiType: APIType.rest,
                 selectedId: '2',
                 editRequestId: '2',
                 url: 'https://api.apidash.dev',

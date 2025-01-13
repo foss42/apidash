@@ -30,3 +30,4 @@ build/
 
 .vscode/
 coverage/
+pubspec_overrides.yaml
