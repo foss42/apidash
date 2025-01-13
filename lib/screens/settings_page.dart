@@ -1,3 +1,4 @@
+import 'package:apidash/screens/oauth_config_list_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -40,6 +41,11 @@ class SettingsPage extends ConsumerWidget {
           child: ListView(
             shrinkWrap: true,
             children: [
+              ListTile(
+                  title: const Text('OAuth Configurations'),
+                  subtitle: const Text('Manage OAuth 2.0 configurations'),
+                  onTap: () => _showOAuthConfigDialog(context),
+                ),
               SwitchListTile(
                 hoverColor: kColorTransparent,
                 title: const Text('Switch Theme Mode'),
@@ -237,6 +243,23 @@ class SettingsPage extends ConsumerWidget {
           ),
         ),
       ],
+    );
+  }
+   void _showOAuthConfigDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          child: Container(
+            width: MediaQuery.of(context).size.width * 0.8,
+            height: MediaQuery.of(context).size.width * 0.8 * 1.5,
+            child: OAuthConfigListScreen(),
+          ),
+        );
+      },
     );
   }
 }
