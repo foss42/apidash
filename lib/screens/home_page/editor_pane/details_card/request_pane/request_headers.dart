@@ -211,7 +211,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
                       onPressed: () {
                         headerRows.add(kNameValueEmptyModel);
                         isRowEnabledList.add(false);
-                        _onFieldChange(selectedId!);
+                        _onFieldChange();
                       },
                       icon: const Icon(Icons.add),
                       label: const Text(
@@ -245,9 +245,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
                             value: updatedHeaders['Authorization']!,
                           ));
                         }
-                        _onFieldChange(
-                          ref.read(selectedIdStateProvider) ?? '',
-                        );
+                        _onFieldChange();
                       });
                     },
                   ),
