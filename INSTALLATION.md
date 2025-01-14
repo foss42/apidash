@@ -1,13 +1,43 @@
 # Installation Instructions
 
+
 ## Windows 
-Download the latest Windows Installer (64 bit) from [here](https://github.com/foss42/apidash/releases/latest)
 
-To install it, simply double click on the installer.
+### Step 1: Download the Installer  
+1. Visit the [latest release page](https://github.com/foss42/apidash/releases/latest) on GitHub.  
+2. Download the **Windows Installer (64-bit)** file.
 
-If prompted by Windows that **Windows prevented an unrecognized app from running**, click on **Run anyway**. 
+---
 
-Now, follow the step by step installation wizard.
+### Step 2: Install the Application  
+1. Locate the downloaded installer file (usually found in your `Downloads` folder).  
+2. Double-click on the installer to begin the installation process.  
+
+---
+
+### Step 3: Handle Windows Security Warnings  
+- **Unrecognized App Warning**:  
+  If you see a message saying:  
+  > *Windows protected your PC*  
+  This occurs because the app is from an unrecognized publisher.  
+  - Click on **More info**.  
+  - Then, click on **Run anyway** to proceed.  
+
+---
+
+### Step 4: Follow the Installation Wizard  
+1. Follow the step-by-step instructions provided in the installation wizard.  
+2. Customize the installation location if required, or proceed with the default options.  
+3. Click **Install** to complete the process.  
+
+---
+
+### Step 5: Launch the Application  
+Once the installation is complete, you can:  
+- Launch the application directly from the final screen of the installer.  
+- Or, open it later from the Start Menu or Desktop shortcut.
+
+---
 
 ## MacOS
 
