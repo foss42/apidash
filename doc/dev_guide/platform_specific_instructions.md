@@ -41,8 +41,7 @@ android {
 
 For more information on multidex support, you can refer to the Android developer guide on [Configuring Multidex](https://developer.android.com/studio/build/multidex).  
 
-
-### Web  
+## Web  
 
 If you're building a Flutter app for the web, you may encounter a build error like:  
 
