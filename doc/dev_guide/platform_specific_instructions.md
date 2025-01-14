@@ -38,8 +38,6 @@ android {
     }
 }
 ```
-### Why is this necessary?  
-Android apps can encounter a **65k method limit** if you have many dependencies or a large app. Enabling `multiDex` allows your app to split into multiple DEX files, ensuring it can load and execute all required methods without any runtime errors.  
 
 For more information on multidex support, you can refer to the Android developer guide on [Configuring Multidex](https://developer.android.com/studio/build/multidex).  
 
