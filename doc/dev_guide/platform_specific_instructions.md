@@ -14,10 +14,6 @@ Add below keys to `macos/Runner/DebugProfile.entitlements` and `macos/Runner/Rel
 	<key>com.apple.security.files.user-selected.read-write</key>
 	<true/>
 ```
-### Why is this necessary?  
-macOS uses **App Sandbox** to protect user data and system resources by restricting an app's access to certain capabilities. These entitlements explicitly grant your app the necessary permissions to:  
-- Establish network connections (both as a client and server).  
-- Access files in the user's Downloads folder and files selected by the user.   
 
 If not added, you can encounter a network connection error similar to the following while running your Flutter app on macOS:
 
