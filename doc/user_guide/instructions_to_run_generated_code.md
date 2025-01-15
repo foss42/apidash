@@ -202,7 +202,16 @@ python api_test.py
 
 ## Python (http.client)
 
-TODO
+Here are the detailed instructions for running the generated API Dash code in Python using `http.client`:
+
+### 1. Install Python:
+Check out the instructions [here](#1-install-python) for detailed steps on how to install Python on macOS, Windows, or Linux.
+
+### 2. `http.client` is a built-in library:
+Unlike other Python libraries (like `requests`), `http.client` is part of Python's standard library. You can directly use it without any additional installation steps.
+
+### 3. Execute the generated code:
+Check out the instructions [here](#3-execute-the-generated-code) for detailed steps on how to run the code.
 
 ## Ruby (faraday)
 
