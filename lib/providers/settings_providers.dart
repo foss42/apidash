@@ -33,6 +33,11 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
     HistoryRetentionPeriod? historyRetentionPeriod,
     String? workspaceFolderPath,
     bool? isSSLDisabled,
+    bool? isProxyEnabled,
+    String? proxyHost,
+    String? proxyPort,
+    String? proxyUsername,
+    String? proxyPassword,
   }) async {
     state = state.copyWith(
       isDark: isDark,
@@ -47,6 +52,11 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
       historyRetentionPeriod: historyRetentionPeriod,
       workspaceFolderPath: workspaceFolderPath,
       isSSLDisabled: isSSLDisabled,
+      isProxyEnabled: isProxyEnabled,
+      proxyHost: proxyHost,
+      proxyPort: proxyPort,
+      proxyUsername: proxyUsername,
+      proxyPassword: proxyPassword,
     );
     await setSettingsToSharedPrefs(state);
   }

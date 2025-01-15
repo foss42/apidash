@@ -17,6 +17,11 @@ class SettingsModel {
     this.historyRetentionPeriod = HistoryRetentionPeriod.oneWeek,
     this.workspaceFolderPath,
     this.isSSLDisabled = false,
+    this.isProxyEnabled = false,
+    this.proxyHost = '',
+    this.proxyPort = '',
+    this.proxyUsername,
+    this.proxyPassword,
   });
 
   final bool isDark;
@@ -32,6 +37,13 @@ class SettingsModel {
   final String? workspaceFolderPath;
   final bool isSSLDisabled;
 
+  // Proxy settings
+  final bool isProxyEnabled;
+  final String proxyHost;
+  final String proxyPort;
+  final String? proxyUsername;
+  final String? proxyPassword;
+
   SettingsModel copyWith({
     bool? isDark,
     bool? alwaysShowCollectionPaneScrollbar,
@@ -45,6 +57,12 @@ class SettingsModel {
     HistoryRetentionPeriod? historyRetentionPeriod,
     String? workspaceFolderPath,
     bool? isSSLDisabled,
+    // Proxy settings
+    bool? isProxyEnabled,
+    String? proxyHost,
+    String? proxyPort,
+    String? proxyUsername,
+    String? proxyPassword,
   }) {
     return SettingsModel(
       isDark: isDark ?? this.isDark,

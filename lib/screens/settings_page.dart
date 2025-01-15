@@ -50,6 +50,65 @@ class SettingsPage extends ConsumerWidget {
                   ref.read(settingsProvider.notifier).update(isDark: value);
                 },
               ),
+              // Proxy Settings Section
+              SwitchListTile(
+                hoverColor: kColorTransparent,
+                title: const Text('Enable Proxy'),
+                subtitle: const Text('Configure HTTP proxy settings'),
+                value: settings.isProxyEnabled,
+                onChanged: (bool? value) {
+                  ref.read(settingsProvider.notifier).update(isProxyEnabled: value);
+                },
+              ),
+              if (settings.isProxyEnabled) ...[
+                ListTile(
+                  title: TextField(
+                    decoration: const InputDecoration(
+                      labelText: 'Proxy Host',
+                      hintText: 'e.g., localhost',
+                    ),
+                    controller: TextEditingController(text: settings.proxyHost),
+                    onChanged: (value) {
+                      ref.read(settingsProvider.notifier).update(proxyHost: value);
+                    },
+                  ),
+                ),
+                ListTile(
+                  title: TextField(
+                    decoration: const InputDecoration(
+                      labelText: 'Proxy Port',
+                      hintText: 'e.g., 8080',
+                    ),
+                    controller: TextEditingController(text: settings.proxyPort),
+                    onChanged: (value) {
+                      ref.read(settingsProvider.notifier).update(proxyPort: value);
+                    },
+                  ),
+                ),
+                ListTile(
+                  title: TextField(
+                    decoration: const InputDecoration(
+                      labelText: 'Username (Optional)',
+                    ),
+                    controller: TextEditingController(text: settings.proxyUsername),
+                    onChanged: (value) {
+                      ref.read(settingsProvider.notifier).update(proxyUsername: value);
+                    },
+                  ),
+                ),
+                ListTile(
+                  title: TextField(
+                    decoration: const InputDecoration(
+                      labelText: 'Password (Optional)',
+                    ),
+                    obscureText: true,
+                    controller: TextEditingController(text: settings.proxyPassword),
+                    onChanged: (value) {
+                      ref.read(settingsProvider.notifier).update(proxyPassword: value);
+                    },
+                  ),
+                ),
+              ],
               SwitchListTile(
                 hoverColor: kColorTransparent,
                 title: const Text('Collection Pane Scrollbar Visiblity'),
