@@ -7,6 +7,7 @@ import '../services/services.dart';
 import '../utils/utils.dart';
 import '../widgets/widgets.dart';
 import '../consts.dart';
+import 'dart:developer' as developer;
 
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
@@ -55,12 +56,22 @@ class SettingsPage extends ConsumerWidget {
                 hoverColor: kColorTransparent,
                 title: const Text('Enable Proxy'),
                 subtitle: const Text('Configure HTTP proxy settings'),
-                value: settings.isProxyEnabled,
+                value: ref.watch(settingsProvider.select((settings) => settings.isProxyEnabled)),
                 onChanged: (bool? value) {
-                  ref.read(settingsProvider.notifier).update(isProxyEnabled: value);
+                  if (value != null) {
+                    developer.log('Toggling proxy settings', name: 'settings_page', error: 'New value: $value');
+                    ref.read(settingsProvider.notifier).update(
+                      isProxyEnabled: value,
+                      proxyHost: value ? settings.proxyHost : '',
+                      proxyPort: value ? settings.proxyPort : '',
+                      proxyUsername: value ? settings.proxyUsername : null,
+                      proxyPassword: value ? settings.proxyPassword : null,
+                    );
+                    developer.log('Proxy settings updated', name: 'settings_page');
+                  }
                 },
               ),
-              if (settings.isProxyEnabled) ...[
+              if (ref.watch(settingsProvider.select((settings) => settings.isProxyEnabled))) ...[
                 ListTile(
                   title: TextField(
                     decoration: const InputDecoration(
