@@ -115,7 +115,90 @@ TODO
 
 ## Python (requests)
 
-TODO
+Here are the detailed instructions for running the generated API Dash code in Python (using `requests`) for macOS, Windows, and Linux:
+
+### 1. Install Python:
+#### macOS:
+- Go to the official Python website: [https://www.python.org/downloads/macos/](https://www.python.org/downloads/macos/)
+- Download the latest version for macOS and follow the installation instructions.
+
+#### Windows:
+- Go to the official Python website: [https://www.python.org/downloads/](https://www.python.org/downloads/)
+- Download the latest version for Windows and run the installer. During installation, make sure to check the box that says "Add Python to PATH."
+
+#### Linux:
+- Most Linux distributions come with Python pre-installed. To check if Python is already installed, open the terminal and type:
+
+```bash
+python3 --version
+```
+
+- If it's not installed, you can install it via your package manager:
+  - On Ubuntu/Debian-based systems:
+
+    ```bash
+    sudo apt update
+    sudo apt install python3
+    ```
+
+  - On Fedora/CentOS-based systems:
+
+    ```bash
+    sudo dnf install python3
+    ```
+
+### 2. Install the `requests` library:
+#### macOS and Linux:
+Open the terminal and type the following command to install the `requests` library using `pip`:
+
+```bash
+pip3 install requests
+```
+
+#### Windows:
+Open Command Prompt (or PowerShell) and type the following command to install the `requests` library using `pip`:
+
+```bash
+pip install requests
+```
+
+### 3. Execute the generated code:
+Once you have Python and `requests` installed, follow these steps to execute the generated code:
+
+1. **Open a text editor** ✍️ (like Notepad on Windows, TextEdit on macOS, or any code editor like Visual Studio Code).
+2. **Copy the generated code** 📋 from API Dash.
+3. **Paste the code** into the text editor 🔄.
+4. **Save the file** 💾 with a `.py` extension, such as `api_test.py`.
+
+This makes the steps a little more visual and fun!
+
+#### macOS and Linux:
+1. Open the **Terminal**.
+2. **Navigate to the directory** where you saved the `.py` file. For example:
+
+```bash
+cd /path/to/your/file
+```
+
+3. **Run the Python script** by typing the following command:
+
+```bash
+python3 api_test.py
+```
+
+#### Windows:
+1. Open **Command Prompt** (or PowerShell).
+2. **Navigate to the directory** where you saved the `.py` file. For example:
+
+```bash
+cd C:\path\to\your\file
+```
+
+3. **Run the Python script** by typing the following command:
+
+```bash
+python api_test.py
+```
 
 ## Python (http.client)
 
