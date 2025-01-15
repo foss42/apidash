@@ -242,7 +242,7 @@ Here is the complete list of MIME types that are syntax highlighted in API Dash:
 | `text/javascript`  | `.js`     |  |
 | `text/markdown`    | `.md`     |  |
 
-## What's new in v0.3.0?
+## What's new in v0.5.0?
 
 Visit [CHANGELOG.md](CHANGELOG.md)
 
