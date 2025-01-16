@@ -23,7 +23,7 @@ class WebSocketFrameModel with _$WebSocketFrameModel {
   factory WebSocketFrameModel.fromJson(Map<String, Object?> json) =>
       _$WebSocketFrameModelFromJson(json);
 
-  String formattedTime => DateFormat('HH:mm:ss').format(timeStamp ?? DateTime.now());
+  String formattedTime => DateFormat('HH:mm:ss').format(timeStamp);
   bool get isTextFrame => frameType.toLowerCase() == "text";
 
   
