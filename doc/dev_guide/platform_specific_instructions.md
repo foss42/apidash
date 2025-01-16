@@ -39,8 +39,36 @@ android {
 }
 ```
 
-## Web
+For more information on multidex support, you can refer to the Android developer guide on [Configuring Multidex](https://developer.android.com/studio/build/multidex).  
 
-Running it on web requires the following modification in the local cached code of `printing` package.
+## Web  
+
+If you're building a Flutter app for the web, you may encounter a build error like:  
+
+```
+Launching lib/main.dart on Chrome in debug mode...
+../../../.pub-cache/hosted/pub.dev/printing-5.13.4/lib/printing_web.dart:218:16: Error: 
+A value of type 'JSString' can't be assigned to a variable of type 'String'.
+              .toJS;
+               ^
+Failed to compile application.
+```
+
+This happens because `.toJS` is no longer required for converting Dart strings to JavaScript strings in recent Dart versions.  
+
+**Fix:**  
+Update the `printing_web.dart` file in the cached `printing` package by removing `.toJS` as done in the PR [here](https://github.com/DavBfr/dart_pdf/pull/1739/files)
+
+```dart
+script.innerHTML =
+    '''function ${_frameId}_print(){var f=document.getElementById('$_frameId');f.focus();f.contentWindow.print();}'''
+        .toJS;
+```
+
+Change it to:  
+```dart
+script.innerHTML =
+    '''function ${_frameId}_print(){var f=document.getElementById('$_frameId');f.focus();f.contentWindow.print();}''';
+```
 
 Read more about it here - https://github.com/DavBfr/dart_pdf/issues/1791
