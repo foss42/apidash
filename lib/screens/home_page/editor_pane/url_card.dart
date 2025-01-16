@@ -35,6 +35,7 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
                   switch (apiType) {
                     APIType.rest => const DropdownButtonHTTPMethod(),
                     APIType.graphql => kSizedBoxEmpty,
+                    APIType.webSocket => kSizedBoxEmpty,
                     null => kSizedBoxEmpty,
                   },
                   switch (apiType) {
@@ -51,6 +52,7 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
                   switch (apiType) {
                     APIType.rest => const DropdownButtonHTTPMethod(),
                     APIType.graphql => kSizedBoxEmpty,
+                    APIType.webSocket => kSizedBoxEmpty,
                     null => kSizedBoxEmpty,
                   },
                   switch (apiType) {

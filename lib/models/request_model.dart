@@ -17,6 +17,7 @@ class RequestModel with _$RequestModel {
     @Default("") String description,
     @JsonKey(includeToJson: false) @Default(0) requestTabIndex,
     HttpRequestModel? httpRequestModel,
+    WebSocketRequestModel webSocketRequestModel,
     int? responseStatus,
     String? message,
     HttpResponseModel? httpResponseModel,

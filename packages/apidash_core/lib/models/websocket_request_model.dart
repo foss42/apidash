@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:apidash_core/models/websocket_frame_model.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:seed/models/name_value_model.dart';
 import '../extensions/extensions.dart'; // Custom extensions for map/row handling
@@ -20,11 +21,11 @@ class WebSocketRequestModel with _$WebSocketRequestModel {
     @Default("") String url, 
     bool? isConnected,
     List<NameValueModel>? headers, 
-    List<bool>? isHeaderEnabledList, // Enabled state for headers
-    List<NameValueModel>? params, // List of parameters
-    List<bool>? isParamEnabledList, // Enabled state for parameters
-    String? initialMessage, // Optional message to send on connection
-    List<String>? receivedMessages, // Log of received messages
+    List<bool>? isHeaderEnabledList, 
+    List<NameValueModel>? params, 
+    List<bool>? isParamEnabledList,
+    @Default([]) List<WebSocketFrameModel> frames,
+    List<String>? receivedMessages, 
   }) = _WebSocketRequestModel;
 
   factory WebSocketRequestModel.fromJson(Map<String, Object?> json) =>
@@ -46,9 +47,6 @@ class WebSocketRequestModel with _$WebSocketRequestModel {
 
   
   bool get isValidUrl => url.startsWith("ws://") || url.startsWith("wss://");
-
-  
-  bool get hasReceivedMessages => receivedMessages?.isNotEmpty ?? false;
 
   /// Resets received messages
   List<String> resetReceivedMessages() {
