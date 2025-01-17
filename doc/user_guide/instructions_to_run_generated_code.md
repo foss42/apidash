@@ -51,11 +51,77 @@ TODO
 
 ## Dart (http)
 
-TODO
+Here are the detailed instructions for running the generated API Dash code in **Dart (using `http`)** for macOS, Windows, and Linux:
+
+### **1. Install Dart**
+
+- Visit the official **[Dart Installation Guide](https://dart.dev/get-dart)** for step-by-step installation instructions for macOS, Windows, and Linux.
+
+### **2. Add the `http` Package**
+
+- Add the `http` package as a dependency under the `dependencies` section of the `pubspec.yaml` file:  
+   ```yaml
+   dependencies:
+     http: ^1.2.2
+   ```  
+- Run the following command to fetch the dependency:  
+   ```bash
+   dart pub get
+   ```
+
+### **3. Run the Generated Code**
+
+#### **Using a Text Editor or IDE (e.g., Visual Studio Code):**
+1. Open a text editor or an IDE like Visual Studio Code.
+2. Create a new Dart file, such as `api_test.dart`.
+3. Copy the generated code from API Dash and paste it into this file.
+4. Save the file.
+5. Run the Dart file using the terminal or the IDE's built-in tools.
+
+#### **Using the Command Line:**
+1. Save the generated code to a Dart file, e.g., `api_test.dart`.
+2. Open a terminal and navigate to the directory containing the file.
+3. Run the Dart file with the following command:  
+   ```bash
+   dart run api_test.dart
+   ```
 
 ## Dart (dio)
 
-TODO
+Here are the detailed instructions for running the generated API Dash code in **Dart (using `dio`)** for macOS, Windows, and Linux:
+
+### **1. Install Dart**
+
+- Visit the official **[Dart Installation Guide](https://dart.dev/get-dart)** for step-by-step installation instructions for macOS, Windows, and Linux.
+
+### **2. Add the `dio` Package**
+
+- Add the `dio` package as a dependency under the `dependencies` section of the `pubspec.yaml` file:  
+   ```yaml
+   dependencies:
+     dio: ^5.7.0
+   ```  
+- Run the following command to fetch the dependency:  
+   ```bash
+   dart pub get
+   ```
+
+### **3. Run the Generated Code**  
+
+#### **Using a Text Editor or IDE (e.g., Visual Studio Code):**
+1. Open a text editor or an IDE like Visual Studio Code.
+2. Create a new Dart file, such as `api_test.dart`.
+3. Copy the generated code from API Dash and paste it into this file.
+4. Save the file.
+5. Run the Dart file using the terminal or the IDE's built-in tools.
+
+#### **Using the Command Line:**
+1. Save the generated code to a Dart file, e.g., `api_test.dart`.
+2. Open a terminal and navigate to the directory containing the file.
+3. Run the Dart file with the following command:  
+   ```bash
+   dart run api_test.dart
+   ```
 
 ## Go (net/http)
 
