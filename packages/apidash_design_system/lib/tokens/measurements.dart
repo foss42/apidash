@@ -60,6 +60,7 @@ const kPs0o6 = EdgeInsets.only(
 );
 const kPh60 = EdgeInsets.symmetric(horizontal: 60);
 const kPh60v60 = EdgeInsets.symmetric(vertical: 60, horizontal: 60);
+const kPh40v40 = EdgeInsets.symmetric(vertical: 40, horizontal: 40);
 const kPt24l4 = EdgeInsets.only(
   top: 24,
   left: 4.0,

@@ -7,17 +7,22 @@ class OverlayWidgetTemplate {
   OverlayEntry? _overlay;
   BuildContext context;
   OverlayState? _overlayState;
+
   OverlayWidgetTemplate({required this.context}) {
     _overlayState = Overlay.of(context);
   }
 
-  void show({required Widget widget}) {
+  void show({required Widget widget, Alignment alignment = Alignment.topRight, EdgeInsets? margin}) {
     if (_overlay == null) {
       _overlay = OverlayEntry(
-        // replace with your own layout
-        builder: (context) => ColoredBox(
-            color: kColorBlack.withOpacity(kOverlayBackgroundOpacity),
-            child: widget),
+        builder: (context) => Positioned(
+          top: margin?.top ?? 20,
+          right: margin?.right ?? 20,
+          child: Material(
+            color: Colors.transparent, // Ensure transparent background for the overlay
+            child: widget,
+          ),
+        ),
       );
       _overlayState!.insert(_overlay!);
     }
@@ -46,8 +51,8 @@ class SavingOverlay extends StatelessWidget {
             children: [
               Lottie.asset(
                   saveCompleted ? kAssetSavedLottie : kAssetSavingLottie,
-                  width: 100,
-                  height: 100),
+                  width: 40,
+                  height: 40),
               kHSpacer20,
               Text(
                 saveCompleted ? kLabelSaved : kLabelSaving,
