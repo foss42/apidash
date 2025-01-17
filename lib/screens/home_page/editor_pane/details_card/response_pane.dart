@@ -1,3 +1,4 @@
+import 'package:apidash/widgets/websocket_frame.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -117,3 +118,18 @@ class ResponseHeadersTab extends ConsumerWidget {
     );
   }
 }
+
+// class WebsocketResponseView extends ConsumerWidget {
+//   const WebsocketResponseView({super.key});
+
+//   @override
+//   Widget build(BuildContext context, WidgetRef ref) {
+    
+//     return ListView.builder(
+//       itemCount:,
+//       itemBuilder: (context, index) {
+//         return WebsocketFrame();
+//       },
+//     );
+//   }
+//   }

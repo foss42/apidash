@@ -24,6 +24,7 @@ class WebSocketRequestModel with _$WebSocketRequestModel {
     List<bool>? isHeaderEnabledList, 
     List<NameValueModel>? params, 
     List<bool>? isParamEnabledList,
+    String? message,
     @Default([]) List<WebSocketFrameModel> frames,
     List<String>? receivedMessages, 
   }) = _WebSocketRequestModel;

@@ -1,3 +1,4 @@
+import 'package:apidash/widgets/button_connection.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
@@ -63,10 +64,12 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
                     child: URLTextField(),
                   ),
                   kHSpacer20,
-                  const SizedBox(
-                    height: 36,
-                    child: SendRequestButton(),
-                  )
+                  switch (apiType) {
+                    APIType.rest => const SendRequestButton(),
+                    APIType.graphql =>const SendRequestButton(),
+                    APIType.webSocket =>const ConnectionRequestButton(),
+                    null => kSizedBoxEmpty,
+                  },
                 ],
               ),
       ),
@@ -140,6 +143,33 @@ class SendRequestButton extends ConsumerWidget {
       },
       onCancel: () {
         ref.read(collectionStateNotifierProvider.notifier).cancelRequest();
+      },
+    );
+  }
+}
+
+
+class ConnectionRequestButton extends ConsumerWidget {
+  final Function()? onTap;
+  const ConnectionRequestButton({
+    super.key,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(selectedIdStateProvider);
+    final isWorking = ref.watch(
+        selectedRequestModelProvider.select((value) => value?.isWorking));
+
+    return ConnectionButton(
+      isWorking: isWorking ?? false,
+      onTap: () {
+        onTap?.call();
+        ref.read(collectionStateNotifierProvider.notifier).connect();
+      },
+      onCancel: () {
+        ref.read(collectionStateNotifierProvider.notifier).connect();
       },
     );
   }

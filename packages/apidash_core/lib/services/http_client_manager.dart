@@ -2,10 +2,11 @@ import 'dart:io';
 import 'dart:collection';
 import 'package:apidash_core/consts.dart';
 import 'package:apidash_core/services/clientWrapper.dart';
+import 'package:apidash_core/services/websocket_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/io_client.dart';
-import ''
+
 
 http.Client createHttpClientWithNoSSL() {
   var ioClient = HttpClient()
@@ -26,21 +27,26 @@ class HttpClientManager {
 
   HttpClientManager._internal();
 
+  WebSocketClient createWebSocketClient(
+    String requestId, {
+    bool noSSL = false,
+  }) {
+    final client =  WebSocketClient();
+    _clients[requestId] = WebSocketClientWrapper(client);
+    return client;
+  }
+  
   http.Client createClient(
     String requestId, {
     bool noSSL = false,
   }) {
-    switch(getRequestModel(requestId).apiType){
-      case APIType.rest:
-       
-      case APIType.websocket:
-       
-    }
+
     final client =
         (noSSL && !kIsWeb) ? createHttpClientWithNoSSL() : http.Client();
-    _clients[requestId] = client;
+    _clients[requestId] = HttpClientWrapper(client);
     return client;
   }
+  
 
   void cancelRequest(String? requestId) {
     if (requestId != null && _clients.containsKey(requestId)) {

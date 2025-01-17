@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -431,4 +433,71 @@ class CollectionStateNotifier
       activeEnvId,
     );
   }
+  Future<void> connect() async {
+    print("connect fired");
+    final requestId = ref.read(selectedIdStateProvider);
+    ref.read(codePaneVisibleStateProvider.notifier).state = false;
+    if (requestId == null || state == null) {
+      print(requestId);
+      return;
+    }
+
+    RequestModel? requestModel = state![requestId];
+
+    // if (requestModel?.webSocketRequestModel == null) {
+    //   print("no web socket request model");
+    //   return;
+    // }
+
+    final client = httpClientManager.createWebSocketClient(requestId);
+    client.connect(requestModel!.httpRequestModel!);
+    client.listen(
+      (message) async{
+        // var map = {...state!};
+        // map[requestId] = requestModel.copyWith(
+        //   responseStatus: 200,
+        //   message: message,
+        //   isWorking: false,
+        // );
+        // state = map;
+      },
+      onError: (error) async{
+        // var map = {...state!};
+        // map[requestId] = requestModel.copyWith(
+        //   responseStatus: -1,
+        //   message: error.toString(),
+        //   isWorking: false,
+        // );
+        // state = map;
+      },
+      onDone: () async{
+        // var map = {...state!};
+        // map[requestId] = requestModel.copyWith(
+        //   responseStatus: 200,
+        //   message: "Connection closed",
+        //   isWorking: false,
+        // );
+        // state = map;
+      },
+    );
+
+    Future<void> disconnect() async {
+    print("connect fired");
+    final requestId = ref.read(selectedIdStateProvider);
+    ref.read(codePaneVisibleStateProvider.notifier).state = false;
+    if (requestId == null || state == null) {
+      print(requestId);
+      return;
+    }
+
+    RequestModel? requestModel = state![requestId];
+
+    // if (requestModel?.webSocketRequestModel == null) {
+    //   print("no web socket request model");
+    //   return;
+    // }
+
+    final client = httpClientManager.createWebSocketClient(requestId);
+    client.disconnect();
+    }
 }

@@ -110,6 +110,34 @@ class EditRequestBody extends ConsumerWidget {
                 ),
               ),
             ),
+          APIType.webSocket => Expanded(
+            
+              child: Padding(
+                padding: kPt5o10,
+                child: Stack(
+                  children: [
+                  TextFieldEditor(
+                    key: Key("$selectedId-websocket-body"),
+                    fieldKey: "$selectedId-websocket-body-editor",
+                  //  initialValue: requestModel?.websRequestModel?.body,
+                    onChanged: (String value) {
+                    ref
+                      .read(collectionStateNotifierProvider.notifier)
+                      .update(body: value);
+                    },
+                    hintText: kHintText,
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    child: SendButton(isWorking: true, onTap: () {
+                      
+                    }),
+                  ),
+                  ],
+                ),
+              ),
+            ),
           _ => kSizedBoxEmpty,
         }
       ],

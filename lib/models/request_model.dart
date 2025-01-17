@@ -1,4 +1,5 @@
 import 'package:apidash_core/apidash_core.dart';
+import 'package:apidash_core/models/websocket_request_model.dart';
 
 part 'request_model.freezed.dart';
 
@@ -17,7 +18,7 @@ class RequestModel with _$RequestModel {
     @Default("") String description,
     @JsonKey(includeToJson: false) @Default(0) requestTabIndex,
     HttpRequestModel? httpRequestModel,
-    WebSocketRequestModel webSocketRequestModel,
+    WebSocketRequestModel? webSocketRequestModel,
     int? responseStatus,
     String? message,
     HttpResponseModel? httpResponseModel,

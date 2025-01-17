@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:apidash_core/services/clientWrapper.dart' as http;
 import 'package:apidash_core/services/websocket_service.dart';
 import 'package:http/http.dart' as http;
@@ -11,7 +13,7 @@ class HttpClientWrapper extends clientWrapper {
   HttpClientWrapper(this.client);
    @override
   void close() {
-    print("cancelling under rest");
+    log("cancelling under rest");
     client.close(); 
   }
 }
@@ -21,7 +23,7 @@ class WebSocketClientWrapper extends clientWrapper {
   WebSocketClientWrapper(this.client);
   @override
   void close() {
-    print("cancelling under websocket");
+    log("cancelling under websocket");
     client.disconnect(); 
   }
   

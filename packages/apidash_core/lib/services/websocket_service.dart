@@ -1,61 +1,66 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:typed_data';
+import 'package:apidash_core/models/models.dart';
+import 'package:apidash_core/models/websocket_request_model.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/status.dart' as status;
 
 class WebSocketClient {
-  final String url;
   late WebSocketChannel _channel;
   StreamSubscription? _subscription;
 
-  WebSocketClient(this.url);
+  WebSocketClient();
 
   
-  Future<void> connect() async {
+  Future<(String?,DateTime?)> connect(HttpRequestModel websocketRequestModel) async {
+    print("inside client connect");
     try {
-      _channel = WebSocketChannel.connect(Uri.parse(url));
-      print('Connected to WebSocket server: $url');
-    } catch (e) {
+      _channel = WebSocketChannel.connect(Uri.parse("ws://localhost:3000"));
+      await _channel.ready;
+      print('Connected to WebSocket server: ${"ws://localhost:3000"}');
+      return ("Connected",DateTime.now());
+      } catch (e) {
       print('Failed to connect to WebSocket server: $e');
-      rethrow;
+      return (e.toString(),DateTime.now());
     }
   }
 
   
-  void sendText(String message) {
-    if (_channel != null) {
-      _channel.sink.add(message);
-      print('Sent text message: $message');
-    } else {
-      print('WebSocket connection is not open. Unable to send text message.');
-    }
-  }
+  // Future<(String?,DateTime?)> sendText(WebSocketRequestModel websocketRequestModel) {
+  //   if (_channel != null) {
+  //     _channel.sink.add(websocketRequestModel.message);
+  //     log('Sent text message: ${websocketRequestModel.message}');
+  //   } else {
+  //     log('WebSocket connection is not open. Unable to send text message.');
+  //   }
+  // }
 
   
-  void sendBinary(Uint8List data) {
-    if (_channel != null) {
-      _channel.sink.add(data);
-      print('Sent binary message: $data');
-    } else {
-      print('WebSocket connection is not open. Unable to send binary message.');
-    }
-  }
+  // Future<(String?,DateTime?)> sendBinary(Uint8List data) {
+  //   if (_channel != null) {
+  //     _channel.sink.add(data);
+  //     log('Sent binary message: $data');
+  //   } else {
+  //     log('WebSocket connection is not open. Unable to send binary message.');
+  //   }
+  // }
 
   
-  void listen(void Function(dynamic message) onMessage,
-      {void Function(dynamic error)? onError, void Function()? onDone}) {
+  Future<void> listen(Future<void> Function(dynamic message) onMessage,
+      {Future<void> Function(dynamic error)? onError, Future<void> Function()? onDone}) async{
     _subscription = _channel.stream.listen(
       (message) {
-        print('Received message: $message');
+        log('Received message: $message');
         onMessage(message);
       },
       onError: (error) {
-        print('Error: $error');
+        log('Error: $error');
         if (onError != null) onError(error);
       },
       onDone: () {
-        print('Connection closed.');
+        log('Connection closed.');
         if (onDone != null) onDone();
       },
       cancelOnError: true,
@@ -63,53 +68,53 @@ class WebSocketClient {
   }
 
   
-  void disconnect({int closeCode = status.normalClosure, String? reason}) {
+  Future<void> disconnect({int closeCode = status.normalClosure, String? reason})async {
     _subscription?.cancel();
     _channel.sink.close(closeCode, reason);
-    print('Disconnected from WebSocket server');
+    log('Disconnected from WebSocket server');
   }
 }
 
 
-void main() async {
-  const wsUrl = 'ws://localhost:3000';
+// Future<(String?,DateTime?)> main() async {
+//   const wsUrl = '"ws://localhost:3000"';
 
-  final wsClient = WebSocketClient(wsUrl);
+//   final wsClient = WebSocketClient(wsUrl);
 
-  try {
-    await wsClient.connect();
+//   try {
+//     await wsClient.connect();
 
-    wsClient.listen(
-      (message) {
-        // Handle incoming messages
-        if (message is String) {
-          print('Text message received: $message');
-        } else if (message is List<int>) {
-          print('Binary message received: $message');
-        }
-      },
-      onError: (error) {
-        print('Error occurred: $error');
-      },
-      onDone: () {
-        print('WebSocket connection closed.');
-      },
-    );
-
-    
-    wsClient.sendText('Hello, WebSocket!');
+//     wsClient.listen(
+//       (message) {
+//         // Handle incoming messages
+//         if (message is String) {
+//           log('Text message received: $message');
+//         } else if (message is List<int>) {
+//           log('Binary message received: $message');
+//         }
+//       },
+//       onError: (error) {
+//         log('Error occurred: $error');
+//       },
+//       onDone: () {
+//         log('WebSocket connection closed.');
+//       },
+//     );
 
     
-    final binaryData = Uint8List.fromList([0x68, 0x69]); // "hi" in binary
-    wsClient.sendBinary(binaryData);
+//     wsClient.sendText('Hello, WebSocket!');
 
     
-    await Future.delayed(Duration(seconds: 5));
-    while(True){
+//     final binaryData = Uint8List.fromList([0x68, 0x69]); // "hi" in binary
+//     wsClient.sendBinary(binaryData);
 
-    }
-    wsClient.disconnect(reason: 'Closing connection after demo.');
-  } catch (e) {
-    print('Error: $e');
-  }
-}
+    
+//     await Future.delayed(Duration(seconds: 5));
+//     while(True){
+
+//     }
+//     wsClient.disconnect(reason: 'Closing connection after demo.');
+//   } catch (e) {
+//     log('Error: $e');
+//   }
+// }

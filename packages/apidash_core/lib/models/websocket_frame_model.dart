@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'package:apidash_core/models/http_response_model.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:intl/intl.dart';
 part 'websocket_frame_model.freezed.dart';
@@ -14,7 +15,7 @@ class WebSocketFrameModel with _$WebSocketFrameModel {
     required String id,
     @Default("") String frameType, 
     @Default("") String message, 
-    Uint8List? binaryData, 
+    @Uint8ListConverter() Uint8List? binaryData, 
     Map<String, String>? metadata, 
     @Default(false) bool isFinalFrame, 
     DateTime? timeStamp, 
@@ -23,7 +24,7 @@ class WebSocketFrameModel with _$WebSocketFrameModel {
   factory WebSocketFrameModel.fromJson(Map<String, Object?> json) =>
       _$WebSocketFrameModelFromJson(json);
 
-  String formattedTime => DateFormat('HH:mm:ss').format(timeStamp);
+  String get formattedTime => DateFormat('HH:mm:ss').format(timeStamp ?? DateTime.now());
   bool get isTextFrame => frameType.toLowerCase() == "text";
 
   
@@ -38,6 +39,6 @@ class WebSocketFrameModel with _$WebSocketFrameModel {
         'binaryData: ${binaryData?.length ?? 0} bytes, '
         'metadata: $metadata, '
         'isFinalFrame: $isFinalFrame, '
-        'timestamp: $timestamp)';
+        'timestamp: $timeStamp)';
   }
 }
