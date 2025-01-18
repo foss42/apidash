@@ -79,6 +79,12 @@ class SettingsModel {
           historyRetentionPeriod ?? this.historyRetentionPeriod,
       workspaceFolderPath: workspaceFolderPath ?? this.workspaceFolderPath,
       isSSLDisabled: isSSLDisabled ?? this.isSSLDisabled,
+      // Proxy settings
+      isProxyEnabled: isProxyEnabled ?? this.isProxyEnabled,
+      proxyHost: proxyHost ?? this.proxyHost,
+      proxyPort: proxyPort ?? this.proxyPort,
+      proxyUsername: proxyUsername ?? this.proxyUsername,
+      proxyPassword: proxyPassword ?? this.proxyPassword,
     );
   }
 
@@ -152,6 +158,11 @@ class SettingsModel {
     }
     final workspaceFolderPath = data["workspaceFolderPath"] as String?;
     final isSSLDisabled = data["isSSLDisabled"] as bool?;
+    final isProxyEnabled = data["isProxyEnabled"] as bool?;
+    final proxyHost = data["proxyHost"] as String?;
+    final proxyPort = data["proxyPort"] as String?;
+    final proxyUsername = data["proxyUsername"] as String?;
+    final proxyPassword = data["proxyPassword"] as String?;
 
     const sm = SettingsModel();
 
@@ -169,6 +180,11 @@ class SettingsModel {
           historyRetentionPeriod ?? HistoryRetentionPeriod.oneWeek,
       workspaceFolderPath: workspaceFolderPath,
       isSSLDisabled: isSSLDisabled,
+      isProxyEnabled: isProxyEnabled,
+      proxyHost: proxyHost,
+      proxyPort: proxyPort,
+      proxyUsername: proxyUsername,
+      proxyPassword: proxyPassword,
     );
   }
 
@@ -188,6 +204,12 @@ class SettingsModel {
       "historyRetentionPeriod": historyRetentionPeriod.name,
       "workspaceFolderPath": workspaceFolderPath,
       "isSSLDisabled": isSSLDisabled,
+      // Proxy settings
+      "isProxyEnabled": isProxyEnabled,
+      "proxyHost": proxyHost,
+      "proxyPort": proxyPort,
+      "proxyUsername": proxyUsername,
+      "proxyPassword": proxyPassword,
     };
   }
 
@@ -212,7 +234,12 @@ class SettingsModel {
         other.activeEnvironmentId == activeEnvironmentId &&
         other.historyRetentionPeriod == historyRetentionPeriod &&
         other.workspaceFolderPath == workspaceFolderPath &&
-        other.isSSLDisabled == isSSLDisabled;
+        other.isSSLDisabled == isSSLDisabled &&
+        other.isProxyEnabled == isProxyEnabled &&
+        other.proxyHost == proxyHost &&
+        other.proxyPort == proxyPort &&
+        other.proxyUsername == proxyUsername &&
+        other.proxyPassword == proxyPassword;
   }
 
   @override
@@ -231,6 +258,11 @@ class SettingsModel {
       historyRetentionPeriod,
       workspaceFolderPath,
       isSSLDisabled,
+      isProxyEnabled,
+      proxyHost,
+      proxyPort,
+      proxyUsername,
+      proxyPassword,
     );
   }
 }
