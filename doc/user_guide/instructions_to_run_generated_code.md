@@ -45,7 +45,6 @@ TODO
 
 Here are the detailed instructions for running the generated API Dash code in C# (using `HttpClient`) for macOS, Windows, and Linux:
 
-
 ### 1. Setting Up the C# Development Environment
 #### macOS and Windows:
 1. **Install .NET SDK:**
@@ -56,7 +55,6 @@ Here are the detailed instructions for running the generated API Dash code in C#
      ```bash
      dotnet --version
      ```
-
 
 #### Linux:
 1. **Install .NET SDK:**
@@ -76,7 +74,7 @@ Here are the detailed instructions for running the generated API Dash code in C#
      dotnet --version
      ```
 
-### 2. Preparing HttpClient
+### 2. Preparing a Project
 
 #### In Visual Studio:
 1. **Create a New Project:**
@@ -105,9 +103,6 @@ Once you have .NET(C#) and `HttpClient` installed, follow these steps to execute
 2. **Copy the generated code** 📋 from API Dash.
 3. **Paste the code** into your project. ex) prgoram.cs
 
-
-### 4. Running the Project
-
 #### In Visual Studio:
 1. Click the **Start Debugging (F5)** button from the top menu to run the project.
 2. The output window will display the API response.
@@ -117,10 +112,6 @@ Once you have .NET(C#) and `HttpClient` installed, follow these steps to execute
    ```bash
    dotnet run
    ```
-
-
-
-
 
 ## C# (RestSharp)
 
