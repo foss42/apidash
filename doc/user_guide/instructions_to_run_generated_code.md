@@ -197,114 +197,55 @@ TODO
 
 ## JavaScript (axios)
 
-`Axios` is a promise-based HTTP client for the browser and Node.js.
-### 1. Installation:
--Ensure Node.js and npm are installed. Verify by running:
+TODO
+
+## JavaScript (fetch)
+
+TODO
+
+## node.js (JavaScript, axios)
+
+### 1.Install Node.js:
+Ensure Node.js and npm are installed. Verify by running:
 
 ```bash
 node --version
 npm --version
 ```
--If not, download from Node.js **[Official Website]((https://nodejs.org/en))**.
 
--Initialize a new Node.js project:
+If not, download from Node.js **[Official Website]((https://nodejs.org/en))**.
+
+Initialize a new Node.js project:
 
 ```bash
 npm init -y
 ```
 
--Install Axios:
+Install Axios:
 
 ```bash
 npm install axios
 ```
 
-### 2. Running the Generated Code::
--Create a new JavaScript file (`e.g., app.js`).
--Copy and paste the generated code into this file.
--Open a terminal and navigate to the project directory.
--Run the script:
-
-```bash
-node app.js
-```
-
-## JavaScript (fetch)
-
-macOS, Linux, and Windows:
-### 1. Node.js:
--Follow the same steps as above to install Node.js.
-
-### 2. Set Up a New Project:
--Create a new project folder and navigate into it
-```bash
-mkdir fetch-example
-cd fetch-example
-```
--Initialize the project:
-```bash
-npm init -y
-```
-
-### 3. Ensure Fetch API Support:
--Starting with Node.js 18, the Fetch API is built-in. Verify the version:
-
-```bash
-node --version
-```
-
--If you’re using an earlier version, install a Fetch polyfill:
-
-```bash
-npm install node-fetch
-```
-
-### 4. Create and Run the Code:
--Save the generated code in a file, e.g., fetch_example.js.
--If using node-fetch, add this line at the top of your file:
-
-```bash
-const fetch = require('node-fetch');
-```
-
--Run the code:
-
-```bash
-node fetch_example.js
-```
-
-## node.js (JavaScript, axios)
-
-macOS, Linux, and Windows:
-### 1.Install Node.js:
--Follow the installation steps above.
-
 ### 2.Set Up a New Project:
--Create a new project directory:
+Create a new project directory:
 
 ```bash
 mkdir node-axios-example
 cd node-axios-example
 ```
 
--Initialize the project:
+Initialize the project:
 
 ```bash
 npm init -y
 ```
 
-### 3.Install Axios:
+### 3.Create and Run the Code:
 
--Install the Axios library:
+Save the generated code in a file(e.g., `app.js`).
 
-```bash
-npm install axios
-```
-
-### 4.Create and Run the Code:
-
--Save the generated code in a file(` e.g., app.js`).
--Run the code:
+Run the code:
 
 ```bash
 node app.js
@@ -312,9 +253,29 @@ node app.js
 
 ## node.js (JavaScript, fetch)
 
-macOS, Linux, and Windows:
 ### 1. Install Node.js:
--Follow the installation steps above.
+Ensure Node.js and npm are installed. Verify by running:
+
+```bash
+node --version
+npm --version
+```
+
+If not, download from Node.js **[Official Website]((https://nodejs.org/en))**.
+
+Initialize a new Node.js project:
+
+```bash
+npm init -y
+```
+
+If using Node.js 18 or newer, the Fetch API is already built-in.
+
+For older versions, install the `node-fetch` package:
+
+```bash
+npm install node-fetch
+```
 
 ### 2. Set Up a New Project:
 Create a project directory:
@@ -324,29 +285,21 @@ mkdir node-fetch-example
 cd node-fetch-example
 ```
 
-### 3.Initialize the project:
+Initialize the project:
 
 ```bash
 npm init -y
 ```
 
-### 4.Ensure Fetch API Support:
--If using Node.js 18 or newer, the Fetch API is already built-in.
--For older versions, install the `node-fetch` package:
-
-```bash
-npm install node-fetch
-```
-
-### 5.Create and Run the Code:
--Save the generated code in a file( `e.g., app.js`).
--If using `node-fetch`, add the following line to the top of the file:
+### 3.Create and Run the Code:
+Save the generated code in a file( e.g., `app.js`).
+If using `node-fetch`, add the following line to the top of the file:
 
 ```javascript
 const fetch = require('node-fetch');
 ```
 
--Run the file:
+Run the file:
 
 ```bash
 node app.js
