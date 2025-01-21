@@ -81,24 +81,24 @@ TODO
 
 Here are the detailed instructions for running the generated API Dash code in **Java (using `AsyncHttpClient`)** for macOS, Windows, and Linux:
 
----
+### 1. Install Java
 
-### **1. Install Java**  
-To run Java code, you need to have Java Development Kit (JDK) installed on your system.  
+To run Java code, you need to have Java Development Kit (JDK) installed on your system.
 
-- Visit the official **[Java Downloads Page](https://www.oracle.com/in/java/technologies/downloads/#jdk23)** and follow the instructions to install the latest JDK on macOS, Windows, or Linux.  
+- Visit the official **[Java Downloads Page](https://www.oracle.com/in/java/technologies/downloads/#jdk23)** and follow the instructions to install the latest JDK on macOS, Windows, or Linux.
 
-After installation, verify it by running:  
+After installation, verify it by running:
+
 ```bash
 java -version
 ```
 
----
+### 2. Add the `AsyncHttpClient` Library
 
-### **2. Add the `AsyncHttpClient` Library**  
 To use the `AsyncHttpClient` library in Java, you need to add it as a dependency in your project.  
 
-#### Using **Maven**:  
+#### Using Maven
+
 1. Add the following dependency to your `pom.xml` file:  
    ```xml
     <dependencies>
@@ -109,12 +109,13 @@ To use the `AsyncHttpClient` library in Java, you need to add it as a dependency
       </dependency>
     </dependencies>
    ```
-3. Save the file and run:  
+2. Save the file and run:  
    ```bash
    mvn install
    ```
 
-#### Using **Gradle**:  
+#### Using Gradle
+
 1. Add the following line to the `dependencies` section in your `build.gradle` file:  
    ```gradle
     implementation 'org.asynchttpclient:async-http-client:3.0.1'
@@ -124,9 +125,8 @@ To use the `AsyncHttpClient` library in Java, you need to add it as a dependency
    gradle build
    ```
 
----
+### 3. Run the Generated Code
 
-### **3. Run the Generated Code**  
 After setting up Java and adding the `AsyncHttpClient` library, follow these steps to execute the generated code:  
 
 1. **Create a new Java file**: Save the generated code into a file with a `.java` extension, such as `ApiTest.java`.  
@@ -139,50 +139,68 @@ After setting up Java and adding the `AsyncHttpClient` library, follow these ste
    java ApiTest
    ```
 
----
-
 ## Java (HttpClient)
 
 Here are the detailed instructions for running the generated API Dash code in **Java (using `HttpClient`)** for macOS, Windows, and Linux:
 
----
+### 1. Install Java
 
-### **1. Install Java**  
-👉 Follow the instructions provided above under **Java (AsyncHttpClient)** for detailed steps on how to install the Java Development Kit (JDK) on macOS, Windows, or Linux.  
+To run Java code, you need to have Java Development Kit (JDK) installed on your system.
 
----
+- Visit the official **[Java Downloads Page](https://www.oracle.com/in/java/technologies/downloads/#jdk23)** and follow the instructions to install the latest JDK on macOS, Windows, or Linux.
 
-### **2. `HttpClient` Setup**  
+After installation, verify it by running:
+
+```bash
+java -version
+```
+
+### 2. `HttpClient` Setup
+
 The `HttpClient` library is included as part of the **Java SE 11** (or later) standard library.  
 - Ensure you have **Java 11** or a later version installed to use `HttpClient` without needing additional dependencies.
-   
 
 To confirm your Java version, run:  
 ```bash
 java -version
 ```  
----
 
-### **3. Run the Generated Code**  
-👉 Refer to the instructions above under **Java (AsyncHttpClient)** for steps to save, compile, and execute the Java code.  
+### 3. Run the Generated Code
 
----
+After setting up Java and checking the version, follow these steps to execute the generated code:  
+
+1. **Create a new Java file**: Save the generated code into a file with a `.java` extension, such as `ApiTest.java`.  
+2. **Compile the file**: Use the following command in the terminal:  
+   ```bash
+   javac ApiTest.java
+   ```  
+3. **Run the compiled program**:  
+   ```bash
+   java ApiTest
+   ```
 
 ## Java (okhttp3)
 
 Here are the detailed instructions for running the generated API Dash code in **Java (using `okhttp3`)** for macOS, Windows, and Linux:
 
----
+### 1. Install Java
 
-### **1. Install Java**  
-👉 Follow the instructions provided above under **Java (AsyncHttpClient)** for detailed steps on how to install the Java Development Kit (JDK) on macOS, Windows, or Linux.
+To run Java code, you need to have Java Development Kit (JDK) installed on your system.
 
----
+- Visit the official **[Java Downloads Page](https://www.oracle.com/in/java/technologies/downloads/#jdk23)** and follow the instructions to install the latest JDK on macOS, Windows, or Linux.
 
-### **2. Add the `okhttp3` Library**  
+After installation, verify it by running:
+
+```bash
+java -version
+```
+
+### 2. Add the `okhttp3` Library
+
 To use `okhttp3` in Java, you need to add it as a dependency in your project.  
 
-#### Using **Maven**:  
+#### Using Maven
+
 1. Add the following dependency to your `pom.xml` file:  
    ```xml
    <dependency>
@@ -196,7 +214,8 @@ To use `okhttp3` in Java, you need to add it as a dependency in your project.
    mvn install
    ```
 
-#### Using **Gradle**:  
+#### Using Gradle
+
 1. Add the following line to the `dependencies` section in your `build.gradle` file:  
    ```gradle
    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
@@ -206,28 +225,42 @@ To use `okhttp3` in Java, you need to add it as a dependency in your project.
    gradle build
    ```
 
----
+### 3. Run the Generated Code
 
-### **3. Run the Generated Code**  
-👉 Refer to the instructions provided above under **Java (AsyncHttpClient)** for steps to save, compile, and execute the Java code.
+After setting up Java and adding the `okhttp3` library, follow these steps to execute the generated code:  
 
----
+1. **Create a new Java file**: Save the generated code into a file with a `.java` extension, such as `ApiTest.java`.  
+2. **Compile the file**: Use the following command in the terminal:  
+   ```bash
+   javac ApiTest.java
+   ```  
+3. **Run the compiled program**:  
+   ```bash
+   java ApiTest
+   ```
 
 ## Java (Unirest)
 
 Here are the detailed instructions for running the generated API Dash code in **Java (using `Unirest`)** for macOS, Windows, and Linux:
 
----
+### 1. Install Java
 
-### **1. Install Java**  
-👉 Follow the instructions provided above under **Java (AsyncHttpClient)** for detailed steps on how to install the Java Development Kit (JDK) on macOS, Windows, or Linux.
+To run Java code, you need to have Java Development Kit (JDK) installed on your system.
 
----
+- Visit the official **[Java Downloads Page](https://www.oracle.com/in/java/technologies/downloads/#jdk23)** and follow the instructions to install the latest JDK on macOS, Windows, or Linux.
 
-### **2. Add the `Unirest` Library**  
+After installation, verify it by running:
+
+```bash
+java -version
+```
+
+### 2. Add the `Unirest` Library
+
 To use `Unirest` in Java, you need to add it as a dependency in your project.  
 
-#### Using **Maven**:  
+#### Using Maven
+
 1. Add the following dependency to your `pom.xml` file:  
    ```xml
    <dependency>
@@ -241,7 +274,8 @@ To use `Unirest` in Java, you need to add it as a dependency in your project.
    mvn install
    ```
 
-#### Using **Gradle**:  
+#### Using Gradle
+
 1. Add the following line to the `dependencies` section in your `build.gradle` file:  
    ```gradle
    implementation 'com.konghq:unirest-java:3.14.1'
@@ -251,12 +285,19 @@ To use `Unirest` in Java, you need to add it as a dependency in your project.
    gradle build
    ```
 
----
+### 3. Run the Generated Code
 
-### **3. Run the Generated Code**  
-👉 Refer to the instructions provided above under **Java (AsyncHttpClient)** for steps to save, compile, and execute the Java code.
+After setting up Java and adding the `Unirest` library, follow these steps to execute the generated code:  
 
----
+1. **Create a new Java file**: Save the generated code into a file with a `.java` extension, such as `ApiTest.java`.  
+2. **Compile the file**: Use the following command in the terminal:  
+   ```bash
+   javac ApiTest.java
+   ```  
+3. **Run the compiled program**:  
+   ```bash
+   java ApiTest
+   ```
 
 ## Julia (HTTP)
 
