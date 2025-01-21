@@ -115,7 +115,50 @@ Once you have .NET(C#) and `HttpClient` installed, follow these steps to execute
 
 ## C# (RestSharp)
 
-TODO
+Here are the detailed instructions for running the generated API Dash code in C# (using RestSharp) for macOS, Windows, and Linux:
+### 1. Setting Up the C# Development Environment
+
+Check out the instructions [here](#1-setting-up-the-c-development-environment) for detailed steps on how to set C# Development Environment on macOS, Windows, or Linux.
+
+### 2. Preparing a Project
+
+#### In Visual Studio:
+1. **Create a New Project:**
+   - Open Visual Studio and select **Create a new project**.
+   - Choose the **Console Application (.NET Core)** template and create the project.
+
+2. **Install `RestSharp`**
+   - Go to Tools > NuGet Package Manager > Manage NuGet Packages for Solution.
+   - Under the Browse tab, search for `RestSharp` and install it.
+
+#### Using the CLI:
+1. **Create a Project:**
+   ```bash
+   dotnet new console -n RestSharpExample
+   cd RestSharpExample
+   ```
+
+2. **Install the Package:**
+   ```bash
+   dotnet add package RestSharp
+   ```
+   
+### 3. Execute the generated code:
+Once you have .NET(C#) and `RestSharp` installed, follow these steps to execute the generated code:
+
+1. **Open a IDE/text editor** ✍️ (Visual Studio, VS Code or any other text editor).
+2. **Copy the generated code** 📋 from API Dash.
+3. **Paste the code** into your project. ex) prgoram.cs
+
+#### In Visual Studio:
+1. Click the **Start Debugging (F5)** button from the top menu to run the project.
+2. The output window will display the API response.
+
+#### Using the CLI:
+1. Open the terminal at the project root directory and run the following command:
+   ```bash
+   dotnet run
+   ```
 
 ## Dart (http)
 
