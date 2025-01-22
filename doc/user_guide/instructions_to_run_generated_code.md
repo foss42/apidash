@@ -98,17 +98,18 @@ TODO
 TODO
 
 ## Kotlin (okhttp3)
+
 Here are the detailed instructions for running the generated API Dash code in Kotlin (using okhttp3) for macOS, Windows, and Linux:
 
-### 1. Install Kotlin:
-To run Kotlin code, you need to install Kotlin first. You can install Kotlin from the official Kotlin website:
+### 1. Install Kotlin
+
+To run Kotlin code, you need to install Kotlin by following the below instructions:
 
 - Go to [Kotlin Installation Guide](https://kotlinlang.org/docs/getting-started.html#install-kotlin) for detailed steps.
-- Remember: `Kotlin is included in each IntelliJ IDEA and Android Studio release. Download and install one of these IDEs to start using Kotlin`. 
+- Kotlin is also included in IntelliJ IDEA and Android Studio. You can also download and install one of these IDEs to start using Kotlin. 
 
-Once Kotlin is installed, proceed with adding `okhttp` and running the generated code.
+### 2. Add `okhttp` library
 
-### 2. Add `okhttp` library:
 To use `okhttp3` in your Kotlin project, you need to include it as a dependency. If you're using **Gradle**, follow these steps:
 
 - Open the `build.gradle` file in your project.
@@ -120,24 +121,28 @@ implementation("com.squareup.okhttp3:okhttp:4.12.0")
 
 - Sync your project to apply the dependency.
 
-### 3. Execute the generated code:
+### 3. Execute the generated code
+
 After setting up Kotlin and `okhttp3`, follow these steps to run the generated code:
 
-1. **Open your IDE** ✍️ (like Android Studio).
-2. **Create a new Kotlin file** 📝 (or use an existing one).
-3. **Copy the generated code** 📋 from API Dash.
-4. **Paste the code** into the Kotlin file 🔄.
-5. **Run the Kotlin file** by clicking the "Run" button in your IDE or by using the command line.
+#### Using IDE
 
-#### If you're running from the command line:
-1. **Navigate to the project directory** using the terminal or command prompt.
-2. **Compile and run the Kotlin file** with these commands:
+1. Open the installed IDE like Android Studio.
+2. Create a new Kotlin file.
+3. Copy the generated code from API Dash and paste it in the Kotlin file.
+4. Run the Kotlin file by clicking the `Run` button in the IDE or by using the command line.
+
+#### Using command line
+
+1. Create a new Kotlin file.
+2. Copy the generated code from API Dash and paste it in the Kotlin file (`api_test.kt`).
+3. Navigate to the project directory using the terminal or command prompt.
+4. Compile and run the Kotlin file by executing:
 
 ```bash
 kotlinc api_test.kt -include-runtime -d api_test.jar
 java -jar api_test.jar
 ```
-
 
 ## PHP (curl)
 
