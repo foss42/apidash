@@ -299,6 +299,11 @@ class CollectionStateNotifier
       substitutedHttpRequestModel,
       defaultUriScheme: defaultUriScheme,
       noSSL: noSSL,
+      isProxyEnabled: ref.read(settingsProvider).isProxyEnabled,
+      proxyHost: ref.read(settingsProvider).proxyHost,
+      proxyPort: ref.read(settingsProvider).proxyPort,
+      proxyUsername: ref.read(settingsProvider).proxyUsername,
+      proxyPassword: ref.read(settingsProvider).proxyPassword,
     );
 
     late final RequestModel newRequestModel;

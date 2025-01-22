@@ -38,6 +38,8 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
     String? proxyPort,
     String? proxyUsername,
     String? proxyPassword,
+    bool? useSystemProxy,
+    String? proxyBypassRules,
   }) async {
     state = SettingsModel(
       isDark: isDark ?? state.isDark,

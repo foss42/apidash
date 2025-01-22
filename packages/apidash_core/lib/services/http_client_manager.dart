@@ -11,6 +11,36 @@ http.Client createHttpClientWithNoSSL() {
   return IOClient(ioClient);
 }
 
+http.Client createHttpClientWithProxy(
+  String proxyHost, 
+  String proxyPort, 
+  {String? proxyUsername, 
+  String? proxyPassword, 
+  bool noSSL = false}
+) {
+  var ioClient = HttpClient();
+  
+  // Configure proxy settings
+  ioClient.findProxy = (uri) {
+    return 'PROXY $proxyHost:$proxyPort';
+  };
+
+  // Configure proxy authentication if credentials are provided
+  if (proxyUsername != null && proxyPassword != null) {
+    ioClient.authenticate = (Uri url, String scheme, String? realm) async {
+      return true;
+    };
+  }
+
+  // Disable SSL verification if required
+  if (noSSL) {
+    ioClient.badCertificateCallback = 
+        (X509Certificate cert, String host, int port) => true;
+  }
+
+  return IOClient(ioClient);
+}
+
 class HttpClientManager {
   static final HttpClientManager _instance = HttpClientManager._internal();
   static const int _maxCancelledRequests = 100;
@@ -26,9 +56,23 @@ class HttpClientManager {
   http.Client createClient(
     String requestId, {
     bool noSSL = false,
+    String? proxyHost,
+    String? proxyPort,
+    String? proxyUsername,
+    String? proxyPassword,
   }) {
-    final client =
-        (noSSL && !kIsWeb) ? createHttpClientWithNoSSL() : http.Client();
+    final client = proxyHost != null && proxyPort != null
+        ? createHttpClientWithProxy(
+            proxyHost, 
+            proxyPort, 
+            proxyUsername: proxyUsername,
+            proxyPassword: proxyPassword,
+            noSSL: noSSL
+          )
+        : (noSSL && !kIsWeb) 
+            ? createHttpClientWithNoSSL() 
+            : http.Client();
+    
     _clients[requestId] = client;
     return client;
   }
