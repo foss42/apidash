@@ -116,14 +116,42 @@ Once you have .NET(C#) and `HttpClient` installed, follow these steps to execute
 ## C# (RestSharp)
 
 Here are the detailed instructions for running the generated API Dash code in C# (using RestSharp) for macOS, Windows, and Linux:
+
 ### 1. Setting Up the C# Development Environment
 
-Check out the instructions [here](#1-setting-up-the-c-development-environment) for detailed steps on how to set C# Development Environment on macOS, Windows, or Linux.
+#### macOS and Windows
+1. **Install .NET SDK**
+   - Visit the [official .NET download page](https://dotnet.microsoft.com/download).
+   - Download and install the latest .NET SDK for macOS.
+2. **Verify Installation**
+   - Open the terminal and run the following command to verify the installation:
+     ```bash
+     dotnet --version
+     ```
+
+#### Linux
+1. **Install .NET SDK**
+   - Run the following commands based on your distribution:
+     - For Ubuntu/Debian-based systems:
+       ```bash
+       sudo apt update
+       sudo apt install dotnet-sdk-7.0
+       ```
+     - For Fedora/CentOS-based systems:
+       ```bash
+       sudo dnf install dotnet-sdk-7.0
+       ```
+2. **Verify Installation**
+   - Open the terminal and run the following command to verify the installation:
+     ```bash
+     dotnet --version
+     ```
 
 ### 2. Preparing a Project
 
-#### In Visual Studio:
-1. **Create a New Project:**
+#### In Visual Studio
+
+1. **Create a New Project**
    - Open Visual Studio and select **Create a new project**.
    - Choose the **Console Application (.NET Core)** template and create the project.
 
@@ -131,30 +159,34 @@ Check out the instructions [here](#1-setting-up-the-c-development-environment) f
    - Go to Tools > NuGet Package Manager > Manage NuGet Packages for Solution.
    - Under the Browse tab, search for `RestSharp` and install it.
 
-#### Using the CLI:
-1. **Create a Project:**
+#### Using the CLI
+
+1. **Create a Project**
    ```bash
    dotnet new console -n RestSharpExample
    cd RestSharpExample
    ```
 
-2. **Install the Package:**
+2. **Install the Package**
    ```bash
    dotnet add package RestSharp
    ```
    
-### 3. Execute the generated code:
+### 3. Execute the generated code
+
 Once you have .NET(C#) and `RestSharp` installed, follow these steps to execute the generated code:
 
-1. **Open a IDE/text editor** ✍️ (Visual Studio, VS Code or any other text editor).
-2. **Copy the generated code** 📋 from API Dash.
-3. **Paste the code** into your project. ex) prgoram.cs
+1. Open a IDE/text editor (Visual Studio, VS Code or any other text editor).
+2. Copy the generated code from API Dash.
+3. Paste the code into your project like program.cs
 
-#### In Visual Studio:
+#### In Visual Studio
+
 1. Click the **Start Debugging (F5)** button from the top menu to run the project.
 2. The output window will display the API response.
 
-#### Using the CLI:
+#### Using the CLI
+
 1. Open the terminal at the project root directory and run the following command:
    ```bash
    dotnet run
