@@ -27,6 +27,10 @@ _$RequestModelImpl _$$RequestModelImplFromJson(Map json) => _$RequestModelImpl(
           ? null
           : HttpResponseModel.fromJson(
               Map<String, Object?>.from(json['httpResponseModel'] as Map)),
+      webSocketResponseModel: json['webSocketResponseModel'] == null
+          ? null
+          : WebSocketResponseModel.fromJson(
+              Map<String, Object?>.from(json['webSocketResponseModel'] as Map)),
       isWorking: json['isWorking'] as bool? ?? false,
       sendingTime: json['sendingTime'] == null
           ? null
@@ -44,6 +48,7 @@ Map<String, dynamic> _$$RequestModelImplToJson(_$RequestModelImpl instance) =>
       'responseStatus': instance.responseStatus,
       'message': instance.message,
       'httpResponseModel': instance.httpResponseModel?.toJson(),
+      'webSocketResponseModel': instance.webSocketResponseModel?.toJson(),
     };
 
 const _$APITypeEnumMap = {

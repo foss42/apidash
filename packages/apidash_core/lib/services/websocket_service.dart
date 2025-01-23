@@ -1,23 +1,33 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:developer';
-import 'dart:typed_data';
 import 'package:apidash_core/models/models.dart';
+import 'dart:io';
 import 'package:apidash_core/models/websocket_request_model.dart';
+import 'package:flutter/foundation.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/status.dart' as status;
+import 'package:web_socket_channel/io.dart';
 
 class WebSocketClient {
   late WebSocketChannel _channel;
   StreamSubscription? _subscription;
+  Duration? _pingDuration;
+ 
 
   WebSocketClient();
 
   
-  Future<(String?,DateTime?)> connect(HttpRequestModel websocketRequestModel) async {
+  Future<(String?,DateTime?)> connect(String url) async {
     print("inside client connect");
     try {
-      _channel = WebSocketChannel.connect(Uri.parse("ws://localhost:3000"));
+      if(!kIsWeb){
+        final WebSocket ioWebSocket = await WebSocket.connect(url);
+        _channel = IOWebSocketChannel(ioWebSocket);
+        ioWebSocket.pingInterval = _pingDuration;
+         
+      }else{
+        _channel = WebSocketChannel.connect(Uri.parse(url));
+      }
       await _channel.ready;
       print('Connected to WebSocket server: ${"ws://localhost:3000"}');
       return ("Connected",DateTime.now());
@@ -28,14 +38,19 @@ class WebSocketClient {
   }
 
   
-  // Future<(String?,DateTime?)> sendText(WebSocketRequestModel websocketRequestModel) {
-  //   if (_channel != null) {
-  //     _channel.sink.add(websocketRequestModel.message);
-  //     log('Sent text message: ${websocketRequestModel.message}');
-  //   } else {
-  //     log('WebSocket connection is not open. Unable to send text message.');
-  //   }
-  // }
+  Future<void> sendText(WebSocketRequestModel websocketRequestModel)async {
+    if (_channel != null) {
+      _channel.sink.add(websocketRequestModel.message);
+      // websocketRequestModel.frames.add(WebSocketFrameModel(
+      //   id: '1',
+      //   message: websocketRequestModel.message!,
+      //   timeStamp: DateTime.now(),
+      // ));
+      log('Sent text message: ${websocketRequestModel.message}');
+    } else {
+      log('WebSocket connection is not open. Unable to send text message.');
+    }
+  }
 
   
   // Future<(String?,DateTime?)> sendBinary(Uint8List data) {
@@ -75,6 +90,7 @@ class WebSocketClient {
   }
 }
 
+      
 
 // Future<(String?,DateTime?)> main() async {
 //   const wsUrl = '"ws://localhost:3000"';

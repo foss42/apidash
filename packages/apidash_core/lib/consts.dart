@@ -84,6 +84,16 @@ enum ContentType {
   final String header;
 }
 
+enum ContentTypeWebSocket {
+  
+  text("$kTypeText/$kSubTypePlain"),
+  binary("$kTypeApplication/$kSubTypeOctetStream");
+
+
+  const ContentTypeWebSocket(this.header);
+  final String header;
+}
+
 const JsonEncoder kJsonEncoder = JsonEncoder.withIndent('  ');
 const JsonDecoder kJsonDecoder = JsonDecoder();
 const LineSplitter kSplitter = LineSplitter();
@@ -92,3 +102,5 @@ const kCodeCharsPerLineLimit = 200;
 
 const kHeaderContentType = "Content-Type";
 const kMsgRequestCancelled = 'Request Cancelled';
+const kMsgConnected = 'Connected';
+const kMsgDisconnected = 'Disconnected';

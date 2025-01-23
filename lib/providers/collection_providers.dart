@@ -4,6 +4,7 @@ import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/consts.dart';
+import 'package:highlighter/languages/q.dart';
 import 'providers.dart';
 import '../models/models.dart';
 import '../services/services.dart' show hiveHandler, HiveHandler;
@@ -76,6 +77,7 @@ class CollectionStateNotifier
     final newRequestModel = RequestModel(
       id: id,
       httpRequestModel: const HttpRequestModel(),
+      webSocketRequestModel: const WebSocketRequestModel(),
     );
     var map = {...state!};
     map[id] = newRequestModel;
@@ -229,46 +231,68 @@ class CollectionStateNotifier
     int? responseStatus,
     String? message,
     HttpResponseModel? httpResponseModel,
-  }) {
+}) {
     final rId = id ?? ref.read(selectedIdStateProvider);
     if (rId == null) {
-      debugPrint("Unable to update as Request Id is null");
-      return;
+        debugPrint("Unable to update as Request Id is null");
+        return;
     }
+
     var currentModel = state![rId]!;
+    var currentApiType = apiType ?? currentModel.apiType;
     var currentHttpRequestModel = currentModel.httpRequestModel;
+    final newHttpRequestModel = currentApiType == APIType.rest ?
+    currentHttpRequestModel?.copyWith(
+            method: method ?? currentHttpRequestModel.method,
+            url: url ?? currentHttpRequestModel.url,
+            headers: headers ?? currentHttpRequestModel.headers,
+            params: params ?? currentHttpRequestModel.params,
+            isHeaderEnabledList: isHeaderEnabledList ??
+                currentHttpRequestModel.isHeaderEnabledList,
+            isParamEnabledList:
+                isParamEnabledList ?? currentHttpRequestModel.isParamEnabledList,
+            bodyContentType:
+                bodyContentType ?? currentHttpRequestModel.bodyContentType,
+            body: body ?? currentHttpRequestModel.body,
+            query: query ?? currentHttpRequestModel.query,
+            formData: formData ?? currentHttpRequestModel.formData,
+        ) : currentHttpRequestModel;
+
+    var currentWebSocketRequestModel = currentModel.webSocketRequestModel;
+    final newWebSocketRequestModel = currentApiType == APIType.webSocket
+        ? currentWebSocketRequestModel?.copyWith(
+            url: url ?? currentWebSocketRequestModel.url,
+            headers: headers ?? currentWebSocketRequestModel.headers,
+            params: params ?? currentWebSocketRequestModel.params,
+            isHeaderEnabledList: isHeaderEnabledList ??
+                currentWebSocketRequestModel.isHeaderEnabledList,
+            isParamEnabledList:
+                isParamEnabledList ?? currentWebSocketRequestModel.isParamEnabledList,
+            message: message ?? currentWebSocketRequestModel.message,
+        )
+        : currentWebSocketRequestModel;
+
     final newModel = currentModel.copyWith(
-      apiType: apiType ?? currentModel.apiType,
-      name: name ?? currentModel.name,
-      description: description ?? currentModel.description,
-      requestTabIndex: requestTabIndex ?? currentModel.requestTabIndex,
-      httpRequestModel: currentHttpRequestModel?.copyWith(
-        method: method ?? currentHttpRequestModel.method,
-        url: url ?? currentHttpRequestModel.url,
-        headers: headers ?? currentHttpRequestModel.headers,
-        params: params ?? currentHttpRequestModel.params,
-        isHeaderEnabledList:
-            isHeaderEnabledList ?? currentHttpRequestModel.isHeaderEnabledList,
-        isParamEnabledList:
-            isParamEnabledList ?? currentHttpRequestModel.isParamEnabledList,
-        bodyContentType:
-            bodyContentType ?? currentHttpRequestModel.bodyContentType,
-        body: body ?? currentHttpRequestModel.body,
-        query: query ?? currentHttpRequestModel.query,
-        formData: formData ?? currentHttpRequestModel.formData,
-      ),
-      responseStatus: responseStatus ?? currentModel.responseStatus,
-      message: message ?? currentModel.message,
-      httpResponseModel: httpResponseModel ?? currentModel.httpResponseModel,
+        apiType: apiType ?? currentModel.apiType,
+        name: name ?? currentModel.name,
+        description: description ?? currentModel.description,
+        requestTabIndex: requestTabIndex ?? currentModel.requestTabIndex,
+        httpRequestModel: newHttpRequestModel,
+        webSocketRequestModel: newWebSocketRequestModel,
+        responseStatus: responseStatus ?? currentModel.responseStatus,
+        message: message ?? currentModel.message,
+        httpResponseModel: httpResponseModel ?? currentModel.httpResponseModel,
     );
 
     var map = {...state!};
     map[rId] = newModel;
     state = map;
     unsave();
-  }
+}
+
 
   Future<void> sendRequest() async {
+    
     final requestId = ref.read(selectedIdStateProvider);
     ref.read(codePaneVisibleStateProvider.notifier).state = false;
     final defaultUriScheme = ref.read(settingsProvider).defaultUriScheme;
@@ -283,6 +307,7 @@ class CollectionStateNotifier
     }
 
     APIType apiType = requestModel!.apiType;
+
     HttpRequestModel substitutedHttpRequestModel =
         getSubstitutedHttpRequestModel(requestModel.httpRequestModel!);
 
@@ -337,6 +362,9 @@ class CollectionStateNotifier
         ),
         httpRequestModel: substitutedHttpRequestModel,
         httpResponseModel: httpResponseModel,
+        webSocketRequestModel: WebSocketRequestModel(), // still not set up but an error was occuring here so had to fill it with something
+        webSocketResponseModel: WebSocketResponseModel()
+
       );
       ref.read(historyMetaStateNotifier.notifier).addHistoryRequest(model);
     }
@@ -433,6 +461,51 @@ class CollectionStateNotifier
       activeEnvId,
     );
   }
+
+  Future<void> sendFrames() async {
+    final requestId = ref.read(selectedIdStateProvider);
+    ref.read(codePaneVisibleStateProvider.notifier).state = false;
+    final defaultUriScheme = ref.read(settingsProvider).defaultUriScheme;
+
+    if (requestId == null || state == null) {
+      return;
+    }
+    RequestModel? requestModel = state![requestId];
+
+    if (requestModel?.webSocketRequestModel== null) {
+      return;
+    }
+
+    
+    
+    // substituted websocket needs to be added here
+
+    // set current model's isWorking to true and update state
+    var map = {...state!};
+    map[requestId] = requestModel!.copyWith(
+      isWorking: true,
+    );
+    state = map;
+
+    
+    
+    final client = httpClientManager.createWebSocketClient(requestId);
+    await client.sendText(requestModel.webSocketRequestModel!);
+    
+
+    final newRequestModel = requestModel.copyWith(
+        webSocketRequestModel: requestModel.webSocketRequestModel,
+        isWorking: false,
+      );
+    // update state with response data
+    map = {...state!};
+    map[requestId] = newRequestModel;
+    state = map;
+
+    unsave();
+  }
+
+
   Future<void> connect() async {
     print("connect fired");
     final requestId = ref.read(selectedIdStateProvider);
@@ -448,18 +521,41 @@ class CollectionStateNotifier
     //   print("no web socket request model");
     //   return;
     // }
+    if (requestModel?.webSocketRequestModel == null) {
+      print("entered null");
+      return;
+    }
 
     final client = httpClientManager.createWebSocketClient(requestId);
-    client.connect(requestModel!.httpRequestModel!);
+    final url = requestModel!.webSocketRequestModel!.url;
+    (String?,DateTime?) result = await client.connect(url);
+
+     var map = {...state!};
+    map[requestId] = requestModel.copyWith(
+      isWorking: result.$1 == "Connected",  
+      sendingTime: result.$2,
+      webSocketResponseModel: WebSocketResponseModel(),
+    );
+    state = map;
+    
+    
     client.listen(
       (message) async{
-        // var map = {...state!};
-        // map[requestId] = requestModel.copyWith(
-        //   responseStatus: 200,
-        //   message: message,
-        //   isWorking: false,
-        // );
-        // state = map;
+        var map = {...state!};
+        RequestModel? requestModel = state![requestId];
+        WebSocketResponseModel webSocketResponseModel = requestModel!.webSocketResponseModel!;
+        WebSocketResponseModel newWebSocketResponseModel = webSocketResponseModel.copyWith(
+          frames: [...webSocketResponseModel.frames, WebSocketFrameModel(
+            id: '1',
+            message: message,
+            timeStamp: DateTime.now(),
+          )]
+        );
+        map[requestId] = requestModel.copyWith(
+          webSocketResponseModel: newWebSocketResponseModel,
+        );
+        state = map;
+        print(message);
       },
       onError: (error) async{
         // var map = {...state!};
@@ -480,24 +576,35 @@ class CollectionStateNotifier
         // state = map;
       },
     );
+  }
 
-    Future<void> disconnect() async {
-    print("connect fired");
-    final requestId = ref.read(selectedIdStateProvider);
-    ref.read(codePaneVisibleStateProvider.notifier).state = false;
-    if (requestId == null || state == null) {
-      print(requestId);
-      return;
-    }
-
-    RequestModel? requestModel = state![requestId];
-
-    // if (requestModel?.webSocketRequestModel == null) {
-    //   print("no web socket request model");
+    // ignore: unused_element
+    // Future<void> disconnect() async {
+    // print("connect fired");
+    // final requestId = ref.read(selectedIdStateProvider);
+    // ref.read(codePaneVisibleStateProvider.notifier).state = false;
+    // if (requestId == null || state == null) {
+    //   print(requestId);
     //   return;
     // }
 
-    final client = httpClientManager.createWebSocketClient(requestId);
-    client.disconnect();
-    }
+    
+    
+    
+    // RequestModel? requestModel = state![requestId];
+
+
+    // // if (requestModel?.webSocketRequestModel == null) {
+    // //   print("no web socket request model");
+    // //   return;
+    // // }
+
+    // final client = httpClientManager.(requestId);
+    
+    // var map = {...state!};
+    // map[requestId] = requestModel!.copyWith(
+    //   isWorking: false,
+    // );
+    // state = map;
+    // }
 }

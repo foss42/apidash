@@ -7,30 +7,30 @@ class ConnectionButton extends StatelessWidget {
     super.key,
     required this.isWorking,
     required this.onTap,
-    this.onCancel,
+    this.onDisconnect,
   });
 
   final bool isWorking;
   final void Function() onTap;
-  final void Function()? onCancel;
+  final void Function()? onDisconnect;
 
   @override
   Widget build(BuildContext context) {
     return ADFilledButton(
-      onPressed: isWorking ? onCancel : onTap,
+      onPressed: isWorking ? onDisconnect : onTap,
       isTonal: isWorking ? true : false,
       items: isWorking
           ? const [
               kHSpacer8,
               Text(
-                kLabelCancel,
+                kLabelDisconnect,
                 style: kTextStyleButton,
               ),
               kHSpacer6,
             ]
           : const [
               Text(
-                kLabelSend,
+                KLabelConnect,
                 style: kTextStyleButton,
               ),
               kHSpacer10,

@@ -43,7 +43,7 @@ class EditWebSocketRequestPane extends ConsumerWidget {
       ],
       tabLabels: const [
         kLabelHeaders,
-        kLabelQuery,
+        kLabelMessage,
       ],
       children: const [
         EditRequestHeaders(),

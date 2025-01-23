@@ -74,4 +74,8 @@ class HttpClientManager {
   bool hasActiveClient(String requestId) {
     return _clients.containsKey(requestId);
   }
+
+  clientWrapper? getClient(String requestId) {
+    return _clients[requestId];
+  }
 }

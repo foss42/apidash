@@ -432,6 +432,8 @@ const kLabelContinue = "Continue";
 const kLabelCancel = "Cancel";
 const kLabelOk = "Ok";
 const kUntitled = "untitled";
+const KLabelConnect = "Connect";
+const kLabelDisconnect = "Disconnect";
 // Request Pane
 const kLabelRequest = "Request";
 const kLabelHideCode = "Hide Code";
@@ -440,6 +442,7 @@ const kLabelURLParams = "URL Params";
 const kLabelHeaders = "Headers";
 const kLabelBody = "Body";
 const kLabelQuery = "Query";
+const kLabelMessage = "Message";
 const kNameCheckbox = "Checkbox";
 const kNameURLParam = "URL Parameter";
 const kNameHeader = "Header Name";
@@ -458,6 +461,7 @@ const kHintContent = "Enter content";
 const kHintText = "Enter text";
 const kHintJson = "Enter JSON";
 const kHintQuery = "Enter Query";
+const kHintMessage = "Enter message";
 // Response Pane
 const kLabelNotSent = "Not Sent";
 const kLabelResponse = "Response";

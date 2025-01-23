@@ -1,11 +1,9 @@
-import 'dart:convert';
+import 'package:apidash_core/consts.dart';
 import 'package:apidash_core/models/websocket_frame_model.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:seed/models/name_value_model.dart';
-import '../extensions/extensions.dart'; // Custom extensions for map/row handling
 import '../utils/utils.dart'
-    show rowsToMap, getEnabledRows; // Utility functions for row handling
-
+    show rowsToMap, getEnabledRows;
 part 'websocket_request_model.freezed.dart';
 part 'websocket_request_model.g.dart';
 
@@ -18,14 +16,14 @@ class WebSocketRequestModel with _$WebSocketRequestModel {
     anyMap: true,
   )
   const factory WebSocketRequestModel({
-    @Default("") String url, 
+    @Default("") String url,
+    @Default(ContentTypeWebSocket.text) ContentTypeWebSocket contentType,
     bool? isConnected,
     List<NameValueModel>? headers, 
     List<bool>? isHeaderEnabledList, 
     List<NameValueModel>? params, 
     List<bool>? isParamEnabledList,
     String? message,
-    @Default([]) List<WebSocketFrameModel> frames,
     List<String>? receivedMessages, 
   }) = _WebSocketRequestModel;
 

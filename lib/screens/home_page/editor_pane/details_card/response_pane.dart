@@ -1,12 +1,13 @@
 import 'package:apidash/widgets/websocket_frame.dart';
 import 'package:apidash_core/apidash_core.dart';
+import 'package:apidash_core/models/websocket_frame_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
 
-class ResponsePane extends ConsumerWidget {
+class ResponsePane extends ConsumerWidget{
   const ResponsePane({super.key});
 
   @override
@@ -20,11 +21,12 @@ class ResponsePane extends ConsumerWidget {
         selectedRequestModelProvider.select((value) => value?.responseStatus));
     final message = ref
         .watch(selectedRequestModelProvider.select((value) => value?.message));
-
+    
     if (isWorking) {
-      return SendingWidget(
-        startSendingTime: startSendingTime,
-      );
+      return const ResponseDetails();
+      // return SendingWidget(
+      //   startSendingTime: startSendingTime,
+      // );
     }
     if (responseStatus == null) {
       return const NotSentWidget();
@@ -79,11 +81,19 @@ class ResponseTabs extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedId = ref.watch(selectedIdStateProvider);
+    final apiType = ref
+        .watch(selectedRequestModelProvider.select((value) => value?.apiType));
     return ResponseTabView(
       selectedId: selectedId,
-      children: const [
-        ResponseBodyTab(),
-        ResponseHeadersTab(),
+      children: [
+        if (apiType == APIType.rest) ...const [
+          ResponseBodyTab(),
+          ResponseHeadersTab(),
+        ] else if (apiType == APIType.webSocket) ...const [
+          WebsocketResponseView(),
+          ResponseHeadersTab(),
+        ],
+      
       ],
     );
   }
@@ -119,17 +129,50 @@ class ResponseHeadersTab extends ConsumerWidget {
   }
 }
 
-// class WebsocketResponseView extends ConsumerWidget {
-//   const WebsocketResponseView({super.key});
 
-//   @override
-//   Widget build(BuildContext context, WidgetRef ref) {
-    
-//     return ListView.builder(
-//       itemCount:,
-//       itemBuilder: (context, index) {
-//         return WebsocketFrame();
-//       },
-//     );
-//   }
-//   }
+
+class WebsocketResponseView extends ConsumerStatefulWidget {
+  const WebsocketResponseView({super.key});
+
+  @override
+  ConsumerState<WebsocketResponseView> createState() => _WebsocketResponseViewState();
+}
+
+class _WebsocketResponseViewState extends ConsumerState<WebsocketResponseView> {
+  final ScrollController _controller = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.addListener(() {
+      if (_controller.position.atEdge && _controller.position.pixels != 0) {
+        setState(() {
+          _controller.jumpTo(_controller.position.maxScrollExtent);
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final frames = ref.watch(selectedRequestModelProvider
+            .select((value) => value?.webSocketResponseModel?.frames)) ??
+        <WebSocketFrameModel>[];  
+
+    return ListView.builder(
+      controller: _controller,
+      itemCount: frames.length,
+      itemBuilder: (context, index) {
+        return WebsocketFrame(
+          websocketFrame: frames[frames.length-index-1],
+        );
+      },
+    );
+  }
+}

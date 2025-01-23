@@ -22,13 +22,13 @@ WebSocketRequestModel _$WebSocketRequestModelFromJson(
 /// @nodoc
 mixin _$WebSocketRequestModel {
   String get url => throw _privateConstructorUsedError;
+  ContentTypeWebSocket get contentType => throw _privateConstructorUsedError;
   bool? get isConnected => throw _privateConstructorUsedError;
   List<NameValueModel>? get headers => throw _privateConstructorUsedError;
   List<bool>? get isHeaderEnabledList => throw _privateConstructorUsedError;
   List<NameValueModel>? get params => throw _privateConstructorUsedError;
   List<bool>? get isParamEnabledList => throw _privateConstructorUsedError;
   String? get message => throw _privateConstructorUsedError;
-  List<WebSocketFrameModel> get frames => throw _privateConstructorUsedError;
   List<String>? get receivedMessages => throw _privateConstructorUsedError;
 
   /// Serializes this WebSocketRequestModel to a JSON map.
@@ -49,13 +49,13 @@ abstract class $WebSocketRequestModelCopyWith<$Res> {
   @useResult
   $Res call(
       {String url,
+      ContentTypeWebSocket contentType,
       bool? isConnected,
       List<NameValueModel>? headers,
       List<bool>? isHeaderEnabledList,
       List<NameValueModel>? params,
       List<bool>? isParamEnabledList,
       String? message,
-      List<WebSocketFrameModel> frames,
       List<String>? receivedMessages});
 }
 
@@ -76,13 +76,13 @@ class _$WebSocketRequestModelCopyWithImpl<$Res,
   @override
   $Res call({
     Object? url = null,
+    Object? contentType = null,
     Object? isConnected = freezed,
     Object? headers = freezed,
     Object? isHeaderEnabledList = freezed,
     Object? params = freezed,
     Object? isParamEnabledList = freezed,
     Object? message = freezed,
-    Object? frames = null,
     Object? receivedMessages = freezed,
   }) {
     return _then(_value.copyWith(
@@ -90,6 +90,10 @@ class _$WebSocketRequestModelCopyWithImpl<$Res,
           ? _value.url
           : url // ignore: cast_nullable_to_non_nullable
               as String,
+      contentType: null == contentType
+          ? _value.contentType
+          : contentType // ignore: cast_nullable_to_non_nullable
+              as ContentTypeWebSocket,
       isConnected: freezed == isConnected
           ? _value.isConnected
           : isConnected // ignore: cast_nullable_to_non_nullable
@@ -114,10 +118,6 @@ class _$WebSocketRequestModelCopyWithImpl<$Res,
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
               as String?,
-      frames: null == frames
-          ? _value.frames
-          : frames // ignore: cast_nullable_to_non_nullable
-              as List<WebSocketFrameModel>,
       receivedMessages: freezed == receivedMessages
           ? _value.receivedMessages
           : receivedMessages // ignore: cast_nullable_to_non_nullable
@@ -137,13 +137,13 @@ abstract class _$$WebSocketRequestModelImplCopyWith<$Res>
   @useResult
   $Res call(
       {String url,
+      ContentTypeWebSocket contentType,
       bool? isConnected,
       List<NameValueModel>? headers,
       List<bool>? isHeaderEnabledList,
       List<NameValueModel>? params,
       List<bool>? isParamEnabledList,
       String? message,
-      List<WebSocketFrameModel> frames,
       List<String>? receivedMessages});
 }
 
@@ -162,13 +162,13 @@ class __$$WebSocketRequestModelImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? url = null,
+    Object? contentType = null,
     Object? isConnected = freezed,
     Object? headers = freezed,
     Object? isHeaderEnabledList = freezed,
     Object? params = freezed,
     Object? isParamEnabledList = freezed,
     Object? message = freezed,
-    Object? frames = null,
     Object? receivedMessages = freezed,
   }) {
     return _then(_$WebSocketRequestModelImpl(
@@ -176,6 +176,10 @@ class __$$WebSocketRequestModelImplCopyWithImpl<$Res>
           ? _value.url
           : url // ignore: cast_nullable_to_non_nullable
               as String,
+      contentType: null == contentType
+          ? _value.contentType
+          : contentType // ignore: cast_nullable_to_non_nullable
+              as ContentTypeWebSocket,
       isConnected: freezed == isConnected
           ? _value.isConnected
           : isConnected // ignore: cast_nullable_to_non_nullable
@@ -200,10 +204,6 @@ class __$$WebSocketRequestModelImplCopyWithImpl<$Res>
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
               as String?,
-      frames: null == frames
-          ? _value._frames
-          : frames // ignore: cast_nullable_to_non_nullable
-              as List<WebSocketFrameModel>,
       receivedMessages: freezed == receivedMessages
           ? _value._receivedMessages
           : receivedMessages // ignore: cast_nullable_to_non_nullable
@@ -218,19 +218,18 @@ class __$$WebSocketRequestModelImplCopyWithImpl<$Res>
 class _$WebSocketRequestModelImpl extends _WebSocketRequestModel {
   const _$WebSocketRequestModelImpl(
       {this.url = "",
+      this.contentType = ContentTypeWebSocket.text,
       this.isConnected,
       final List<NameValueModel>? headers,
       final List<bool>? isHeaderEnabledList,
       final List<NameValueModel>? params,
       final List<bool>? isParamEnabledList,
       this.message,
-      final List<WebSocketFrameModel> frames = const [],
       final List<String>? receivedMessages})
       : _headers = headers,
         _isHeaderEnabledList = isHeaderEnabledList,
         _params = params,
         _isParamEnabledList = isParamEnabledList,
-        _frames = frames,
         _receivedMessages = receivedMessages,
         super._();
 
@@ -240,6 +239,9 @@ class _$WebSocketRequestModelImpl extends _WebSocketRequestModel {
   @override
   @JsonKey()
   final String url;
+  @override
+  @JsonKey()
+  final ContentTypeWebSocket contentType;
   @override
   final bool? isConnected;
   final List<NameValueModel>? _headers;
@@ -286,15 +288,6 @@ class _$WebSocketRequestModelImpl extends _WebSocketRequestModel {
 
   @override
   final String? message;
-  final List<WebSocketFrameModel> _frames;
-  @override
-  @JsonKey()
-  List<WebSocketFrameModel> get frames {
-    if (_frames is EqualUnmodifiableListView) return _frames;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_frames);
-  }
-
   final List<String>? _receivedMessages;
   @override
   List<String>? get receivedMessages {
@@ -308,7 +301,7 @@ class _$WebSocketRequestModelImpl extends _WebSocketRequestModel {
 
   @override
   String toString() {
-    return 'WebSocketRequestModel(url: $url, isConnected: $isConnected, headers: $headers, isHeaderEnabledList: $isHeaderEnabledList, params: $params, isParamEnabledList: $isParamEnabledList, message: $message, frames: $frames, receivedMessages: $receivedMessages)';
+    return 'WebSocketRequestModel(url: $url, contentType: $contentType, isConnected: $isConnected, headers: $headers, isHeaderEnabledList: $isHeaderEnabledList, params: $params, isParamEnabledList: $isParamEnabledList, message: $message, receivedMessages: $receivedMessages)';
   }
 
   @override
@@ -317,6 +310,8 @@ class _$WebSocketRequestModelImpl extends _WebSocketRequestModel {
         (other.runtimeType == runtimeType &&
             other is _$WebSocketRequestModelImpl &&
             (identical(other.url, url) || other.url == url) &&
+            (identical(other.contentType, contentType) ||
+                other.contentType == contentType) &&
             (identical(other.isConnected, isConnected) ||
                 other.isConnected == isConnected) &&
             const DeepCollectionEquality().equals(other._headers, _headers) &&
@@ -326,7 +321,6 @@ class _$WebSocketRequestModelImpl extends _WebSocketRequestModel {
             const DeepCollectionEquality()
                 .equals(other._isParamEnabledList, _isParamEnabledList) &&
             (identical(other.message, message) || other.message == message) &&
-            const DeepCollectionEquality().equals(other._frames, _frames) &&
             const DeepCollectionEquality()
                 .equals(other._receivedMessages, _receivedMessages));
   }
@@ -336,13 +330,13 @@ class _$WebSocketRequestModelImpl extends _WebSocketRequestModel {
   int get hashCode => Object.hash(
       runtimeType,
       url,
+      contentType,
       isConnected,
       const DeepCollectionEquality().hash(_headers),
       const DeepCollectionEquality().hash(_isHeaderEnabledList),
       const DeepCollectionEquality().hash(_params),
       const DeepCollectionEquality().hash(_isParamEnabledList),
       message,
-      const DeepCollectionEquality().hash(_frames),
       const DeepCollectionEquality().hash(_receivedMessages));
 
   /// Create a copy of WebSocketRequestModel
@@ -365,13 +359,13 @@ class _$WebSocketRequestModelImpl extends _WebSocketRequestModel {
 abstract class _WebSocketRequestModel extends WebSocketRequestModel {
   const factory _WebSocketRequestModel(
       {final String url,
+      final ContentTypeWebSocket contentType,
       final bool? isConnected,
       final List<NameValueModel>? headers,
       final List<bool>? isHeaderEnabledList,
       final List<NameValueModel>? params,
       final List<bool>? isParamEnabledList,
       final String? message,
-      final List<WebSocketFrameModel> frames,
       final List<String>? receivedMessages}) = _$WebSocketRequestModelImpl;
   const _WebSocketRequestModel._() : super._();
 
@@ -380,6 +374,8 @@ abstract class _WebSocketRequestModel extends WebSocketRequestModel {
 
   @override
   String get url;
+  @override
+  ContentTypeWebSocket get contentType;
   @override
   bool? get isConnected;
   @override
@@ -392,8 +388,6 @@ abstract class _WebSocketRequestModel extends WebSocketRequestModel {
   List<bool>? get isParamEnabledList;
   @override
   String? get message;
-  @override
-  List<WebSocketFrameModel> get frames;
   @override
   List<String>? get receivedMessages;
 

@@ -65,8 +65,7 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
                   ),
                   kHSpacer20,
                   switch (apiType) {
-                    APIType.rest => const SendRequestButton(),
-                    APIType.graphql =>const SendRequestButton(),
+                    APIType.rest || APIType.graphql => const SendRequestButton(),
                     APIType.webSocket =>const ConnectionRequestButton(),
                     null => kSizedBoxEmpty,
                   },
@@ -105,14 +104,19 @@ class URLTextField extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedId = ref.watch(selectedIdStateProvider);
+    final apiType = ref
+        .watch(selectedRequestModelProvider.select((value) => value?.apiType));
     return EnvURLField(
       selectedId: selectedId!,
-      initialValue: ref
-          .read(collectionStateNotifierProvider.notifier)
-          .getRequestModel(selectedId)
-          ?.httpRequestModel
-          ?.url,
+      initialValue:switch (apiType) {
+        APIType.rest || APIType.graphql=> ref.watch(selectedRequestModelProvider
+            .select((value) => value?.httpRequestModel?.url)),
+        APIType.webSocket => ref.watch(selectedRequestModelProvider
+            .select((value) => value?.webSocketRequestModel?.url)),
+        null => '',
+      },
       onChanged: (value) {
+
         ref.read(collectionStateNotifierProvider.notifier).update(url: value);
       },
       onFieldSubmitted: (value) {
@@ -134,7 +138,6 @@ class SendRequestButton extends ConsumerWidget {
     ref.watch(selectedIdStateProvider);
     final isWorking = ref.watch(
         selectedRequestModelProvider.select((value) => value?.isWorking));
-
     return SendButton(
       isWorking: isWorking ?? false,
       onTap: () {
@@ -168,8 +171,10 @@ class ConnectionRequestButton extends ConsumerWidget {
         onTap?.call();
         ref.read(collectionStateNotifierProvider.notifier).connect();
       },
-      onCancel: () {
-        ref.read(collectionStateNotifierProvider.notifier).connect();
+      onDisconnect: () {
+        onTap?.call();
+        ref.read(collectionStateNotifierProvider.notifier).cancelRequest();
+        
       },
     );
   }

@@ -225,6 +225,20 @@ class SettingsPage extends ConsumerWidget {
                 ),
               ),
               ListTile(
+                hoverColor: kColorTransparent,
+                title: const Text('Maximum Reconnection Attempts'),
+                subtitle: Text(
+                    'Your request history will be retained${settings.historyRetentionPeriod == HistoryRetentionPeriod.forever ? "" : " for"} ${settings.historyRetentionPeriod.label}'),
+                trailing: HistoryRetentionPopupMenu(
+                  value: settings.historyRetentionPeriod,
+                  onChanged: (value) {
+                    ref
+                        .read(settingsProvider.notifier)
+                        .update(historyRetentionPeriod: value);
+                  },
+                ),
+              ),
+              ListTile(
                 title: const Text('About'),
                 subtitle: const Text(
                     'Release Details, Support Channel, Report Bug / Request New Feature'),

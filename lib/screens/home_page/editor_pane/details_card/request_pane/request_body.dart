@@ -1,3 +1,4 @@
+import 'package:apidash/widgets/dropdown_websocket_content_type.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
@@ -38,16 +39,28 @@ class EditRequestBody extends ConsumerWidget {
 
     return Column(
       children: [
-        (apiType == APIType.rest)
-            ? const SizedBox(
+        (apiType == APIType.webSocket) //dont forget to make it switch and put for rest
+            ? SizedBox(
                 height: kHeaderHeight,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const SizedBox(
+                      height: kHeaderHeight,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
+                     Text(
                       "Select Content Type:",
                     ),
-                    DropdownButtonBodyContentType(),
+                    
+                    DropdownButtonBodyContentWebSocketType(),
+                    
+                  ]),),
+                    
+                    SendButton(isWorking: false, onTap: (){
+                      ref.read(collectionStateNotifierProvider.notifier).sendFrames();
+                    }),
                   ],
                 ),
               )
@@ -100,11 +113,11 @@ class EditRequestBody extends ConsumerWidget {
                 child: TextFieldEditor(
                   key: Key("$selectedId-query"),
                   fieldKey: "$selectedId-query-editor",
-                  initialValue: requestModel?.httpRequestModel?.query,
+                  initialValue: requestModel?.webSocketRequestModel?.message,
                   onChanged: (String value) {
                     ref
                         .read(collectionStateNotifierProvider.notifier)
-                        .update(query: value);
+                        .update(message: value);
                   },
                   hintText: kHintQuery,
                 ),
@@ -123,19 +136,14 @@ class EditRequestBody extends ConsumerWidget {
                     onChanged: (String value) {
                     ref
                       .read(collectionStateNotifierProvider.notifier)
-                      .update(body: value);
+                      .update(message: value);
                     },
-                    hintText: kHintText,
+                    hintText: kHintMessage,
                   ),
-                  Positioned(
-                    bottom: 0,
-                    left: 0,
-                    child: SendButton(isWorking: true, onTap: () {
-                      
-                    }),
-                  ),
+  
                   ],
-                ),
+                 
+              ),
               ),
             ),
           _ => kSizedBoxEmpty,
@@ -161,6 +169,25 @@ class DropdownButtonBodyContentType extends ConsumerWidget {
         ref
             .read(collectionStateNotifierProvider.notifier)
             .update(bodyContentType: value);
+      },
+    );
+  }
+}
+
+class DropdownButtonBodyContentWebSocketType extends ConsumerWidget {
+  const DropdownButtonBodyContentWebSocketType({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(selectedIdStateProvider);
+    final requestBodyContentType = ref.watch(selectedRequestModelProvider
+        .select((value) => value?.webSocketRequestModel?.contentType));
+    return DropdownButtonContentTypeWebSocket(
+      contentType: requestBodyContentType,
+      onChanged: (ContentTypeWebSocket? value) {
+      
       },
     );
   }
