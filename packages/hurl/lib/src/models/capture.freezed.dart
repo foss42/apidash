@@ -137,8 +137,7 @@ class __$$CaptureImplCopyWithImpl<$Res>
 }
 
 /// @nodoc
-
-@JsonSerializable(explicitToJson: true, anyMap: true)
+@JsonSerializable()
 class _$CaptureImpl implements _Capture {
   const _$CaptureImpl(
       {required this.name, required this.query, final List<Filter>? filters})

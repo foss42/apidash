@@ -1,3 +1,8 @@
+library;
+
+export 'src/rust/api/simple.dart';
+export 'src/rust/frb_generated.dart' show RustLib;
+
 export 'src/hurl_parser.dart';
 export 'src/models/basic_auth.dart';
 export 'src/models/capture.dart';

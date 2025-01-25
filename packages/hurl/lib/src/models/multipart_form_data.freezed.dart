@@ -21,8 +21,9 @@ MultipartFormData _$MultipartFormDataFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$MultipartFormData {
   String get name => throw _privateConstructorUsedError;
-  String get value => throw _privateConstructorUsedError;
+  String? get value => throw _privateConstructorUsedError;
   String? get filename => throw _privateConstructorUsedError;
+  @JsonKey(name: "content_type")
   String? get contentType => throw _privateConstructorUsedError;
 
   /// Serializes this MultipartFormData to a JSON map.
@@ -41,7 +42,11 @@ abstract class $MultipartFormDataCopyWith<$Res> {
           MultipartFormData value, $Res Function(MultipartFormData) then) =
       _$MultipartFormDataCopyWithImpl<$Res, MultipartFormData>;
   @useResult
-  $Res call({String name, String value, String? filename, String? contentType});
+  $Res call(
+      {String name,
+      String? value,
+      String? filename,
+      @JsonKey(name: "content_type") String? contentType});
 }
 
 /// @nodoc
@@ -60,7 +65,7 @@ class _$MultipartFormDataCopyWithImpl<$Res, $Val extends MultipartFormData>
   @override
   $Res call({
     Object? name = null,
-    Object? value = null,
+    Object? value = freezed,
     Object? filename = freezed,
     Object? contentType = freezed,
   }) {
@@ -69,10 +74,10 @@ class _$MultipartFormDataCopyWithImpl<$Res, $Val extends MultipartFormData>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
-      value: null == value
+      value: freezed == value
           ? _value.value
           : value // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       filename: freezed == filename
           ? _value.filename
           : filename // ignore: cast_nullable_to_non_nullable
@@ -93,7 +98,11 @@ abstract class _$$MultipartFormDataImplCopyWith<$Res>
       __$$MultipartFormDataImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String name, String value, String? filename, String? contentType});
+  $Res call(
+      {String name,
+      String? value,
+      String? filename,
+      @JsonKey(name: "content_type") String? contentType});
 }
 
 /// @nodoc
@@ -110,7 +119,7 @@ class __$$MultipartFormDataImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? name = null,
-    Object? value = null,
+    Object? value = freezed,
     Object? filename = freezed,
     Object? contentType = freezed,
   }) {
@@ -119,10 +128,10 @@ class __$$MultipartFormDataImplCopyWithImpl<$Res>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
-      value: null == value
+      value: freezed == value
           ? _value.value
           : value // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       filename: freezed == filename
           ? _value.filename
           : filename // ignore: cast_nullable_to_non_nullable
@@ -140,9 +149,9 @@ class __$$MultipartFormDataImplCopyWithImpl<$Res>
 class _$MultipartFormDataImpl implements _MultipartFormData {
   const _$MultipartFormDataImpl(
       {required this.name,
-      required this.value,
+      this.value,
       this.filename,
-      this.contentType});
+      @JsonKey(name: "content_type") this.contentType});
 
   factory _$MultipartFormDataImpl.fromJson(Map<String, dynamic> json) =>
       _$$MultipartFormDataImplFromJson(json);
@@ -150,10 +159,11 @@ class _$MultipartFormDataImpl implements _MultipartFormData {
   @override
   final String name;
   @override
-  final String value;
+  final String? value;
   @override
   final String? filename;
   @override
+  @JsonKey(name: "content_type")
   final String? contentType;
 
   @override
@@ -198,10 +208,11 @@ class _$MultipartFormDataImpl implements _MultipartFormData {
 
 abstract class _MultipartFormData implements MultipartFormData {
   const factory _MultipartFormData(
-      {required final String name,
-      required final String value,
-      final String? filename,
-      final String? contentType}) = _$MultipartFormDataImpl;
+          {required final String name,
+          final String? value,
+          final String? filename,
+          @JsonKey(name: "content_type") final String? contentType}) =
+      _$MultipartFormDataImpl;
 
   factory _MultipartFormData.fromJson(Map<String, dynamic> json) =
       _$MultipartFormDataImpl.fromJson;
@@ -209,10 +220,11 @@ abstract class _MultipartFormData implements MultipartFormData {
   @override
   String get name;
   @override
-  String get value;
+  String? get value;
   @override
   String? get filename;
   @override
+  @JsonKey(name: "content_type")
   String? get contentType;
 
   /// Create a copy of MultipartFormData

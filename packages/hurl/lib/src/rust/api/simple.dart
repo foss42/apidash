@@ -9,9 +9,6 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 String greet({required String name}) =>
     RustLib.instance.api.crateApiSimpleGreet(name: name);
 
-Future<String> hello({required String a}) =>
-    RustLib.instance.api.crateApiSimpleHello(a: a);
-
 /// Parses a Hurl file content and returns its JSON representation
 String parseHurlToJson({required String content}) =>
     RustLib.instance.api.crateApiSimpleParseHurlToJson(content: content);

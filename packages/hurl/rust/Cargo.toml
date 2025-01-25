@@ -1,5 +1,5 @@
 [package]
-name = "rust_lib_hurl"
+name = "hurl"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,9 +7,10 @@ edition = "2021"
 crate-type = ["cdylib", "staticlib"]
 
 [dependencies]
+flutter_rust_bridge = "=2.7.0"
 hurlfmt = "6.0.0"
 hurl_core = "6.0.0"
-flutter_rust_bridge = "=2.7.0"
 
 [build-dependencies]
-flutter_rust_bridge_codegen = "2.7.0"
+cc = "1.0"
+libxml = "0.3.3"

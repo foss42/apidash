@@ -26,6 +26,9 @@ mixin _$HurlRequest {
   List<String>? get comments => throw _privateConstructorUsedError;
   List<RequestOption>? get options => throw _privateConstructorUsedError;
   RequestBody? get body => throw _privateConstructorUsedError;
+  @JsonKey(name: "multipart_form_data")
+  List<MultipartFormData>? get multiPartFormData =>
+      throw _privateConstructorUsedError;
 
   /// Serializes this HurlRequest to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -49,7 +52,9 @@ abstract class $HurlRequestCopyWith<$Res> {
       List<Header>? headers,
       List<String>? comments,
       List<RequestOption>? options,
-      RequestBody? body});
+      RequestBody? body,
+      @JsonKey(name: "multipart_form_data")
+      List<MultipartFormData>? multiPartFormData});
 
   $RequestBodyCopyWith<$Res>? get body;
 }
@@ -75,6 +80,7 @@ class _$HurlRequestCopyWithImpl<$Res, $Val extends HurlRequest>
     Object? comments = freezed,
     Object? options = freezed,
     Object? body = freezed,
+    Object? multiPartFormData = freezed,
   }) {
     return _then(_value.copyWith(
       method: null == method
@@ -101,6 +107,10 @@ class _$HurlRequestCopyWithImpl<$Res, $Val extends HurlRequest>
           ? _value.body
           : body // ignore: cast_nullable_to_non_nullable
               as RequestBody?,
+      multiPartFormData: freezed == multiPartFormData
+          ? _value.multiPartFormData
+          : multiPartFormData // ignore: cast_nullable_to_non_nullable
+              as List<MultipartFormData>?,
     ) as $Val);
   }
 
@@ -133,7 +143,9 @@ abstract class _$$HurlRequestImplCopyWith<$Res>
       List<Header>? headers,
       List<String>? comments,
       List<RequestOption>? options,
-      RequestBody? body});
+      RequestBody? body,
+      @JsonKey(name: "multipart_form_data")
+      List<MultipartFormData>? multiPartFormData});
 
   @override
   $RequestBodyCopyWith<$Res>? get body;
@@ -158,6 +170,7 @@ class __$$HurlRequestImplCopyWithImpl<$Res>
     Object? comments = freezed,
     Object? options = freezed,
     Object? body = freezed,
+    Object? multiPartFormData = freezed,
   }) {
     return _then(_$HurlRequestImpl(
       method: null == method
@@ -184,6 +197,10 @@ class __$$HurlRequestImplCopyWithImpl<$Res>
           ? _value.body
           : body // ignore: cast_nullable_to_non_nullable
               as RequestBody?,
+      multiPartFormData: freezed == multiPartFormData
+          ? _value._multiPartFormData
+          : multiPartFormData // ignore: cast_nullable_to_non_nullable
+              as List<MultipartFormData>?,
     ));
   }
 }
@@ -198,10 +215,13 @@ class _$HurlRequestImpl implements _HurlRequest {
       final List<Header>? headers,
       final List<String>? comments,
       final List<RequestOption>? options,
-      this.body})
+      this.body,
+      @JsonKey(name: "multipart_form_data")
+      final List<MultipartFormData>? multiPartFormData})
       : _headers = headers,
         _comments = comments,
-        _options = options;
+        _options = options,
+        _multiPartFormData = multiPartFormData;
 
   factory _$HurlRequestImpl.fromJson(Map<String, dynamic> json) =>
       _$$HurlRequestImplFromJson(json);
@@ -242,10 +262,21 @@ class _$HurlRequestImpl implements _HurlRequest {
 
   @override
   final RequestBody? body;
+  final List<MultipartFormData>? _multiPartFormData;
+  @override
+  @JsonKey(name: "multipart_form_data")
+  List<MultipartFormData>? get multiPartFormData {
+    final value = _multiPartFormData;
+    if (value == null) return null;
+    if (_multiPartFormData is EqualUnmodifiableListView)
+      return _multiPartFormData;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
 
   @override
   String toString() {
-    return 'HurlRequest(method: $method, url: $url, headers: $headers, comments: $comments, options: $options, body: $body)';
+    return 'HurlRequest(method: $method, url: $url, headers: $headers, comments: $comments, options: $options, body: $body, multiPartFormData: $multiPartFormData)';
   }
 
   @override
@@ -258,7 +289,9 @@ class _$HurlRequestImpl implements _HurlRequest {
             const DeepCollectionEquality().equals(other._headers, _headers) &&
             const DeepCollectionEquality().equals(other._comments, _comments) &&
             const DeepCollectionEquality().equals(other._options, _options) &&
-            (identical(other.body, body) || other.body == body));
+            (identical(other.body, body) || other.body == body) &&
+            const DeepCollectionEquality()
+                .equals(other._multiPartFormData, _multiPartFormData));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -270,7 +303,8 @@ class _$HurlRequestImpl implements _HurlRequest {
       const DeepCollectionEquality().hash(_headers),
       const DeepCollectionEquality().hash(_comments),
       const DeepCollectionEquality().hash(_options),
-      body);
+      body,
+      const DeepCollectionEquality().hash(_multiPartFormData));
 
   /// Create a copy of HurlRequest
   /// with the given fields replaced by the non-null parameter values.
@@ -295,7 +329,9 @@ abstract class _HurlRequest implements HurlRequest {
       final List<Header>? headers,
       final List<String>? comments,
       final List<RequestOption>? options,
-      final RequestBody? body}) = _$HurlRequestImpl;
+      final RequestBody? body,
+      @JsonKey(name: "multipart_form_data")
+      final List<MultipartFormData>? multiPartFormData}) = _$HurlRequestImpl;
 
   factory _HurlRequest.fromJson(Map<String, dynamic> json) =
       _$HurlRequestImpl.fromJson;
@@ -312,6 +348,9 @@ abstract class _HurlRequest implements HurlRequest {
   List<RequestOption>? get options;
   @override
   RequestBody? get body;
+  @override
+  @JsonKey(name: "multipart_form_data")
+  List<MultipartFormData>? get multiPartFormData;
 
   /// Create a copy of HurlRequest
   /// with the given fields replaced by the non-null parameter values.

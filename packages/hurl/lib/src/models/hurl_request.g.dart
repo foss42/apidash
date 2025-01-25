@@ -22,6 +22,9 @@ _$HurlRequestImpl _$$HurlRequestImplFromJson(Map<String, dynamic> json) =>
       body: json['body'] == null
           ? null
           : RequestBody.fromJson(json['body'] as Map<String, dynamic>),
+      multiPartFormData: (json['multipart_form_data'] as List<dynamic>?)
+          ?.map((e) => MultipartFormData.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$$HurlRequestImplToJson(_$HurlRequestImpl instance) =>
@@ -32,4 +35,6 @@ Map<String, dynamic> _$$HurlRequestImplToJson(_$HurlRequestImpl instance) =>
       'comments': instance.comments,
       'options': instance.options?.map((e) => e.toJson()).toList(),
       'body': instance.body?.toJson(),
+      'multipart_form_data':
+          instance.multiPartFormData?.map((e) => e.toJson()).toList(),
     };

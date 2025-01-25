@@ -21,10 +21,10 @@ HurlResponse _$HurlResponseFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$HurlResponse {
   /// HTTP status code
-  int get status => throw _privateConstructorUsedError;
+  int? get status => throw _privateConstructorUsedError;
 
   /// HTTP version (e.g., "HTTP/1.1", "HTTP/2")
-  String get version => throw _privateConstructorUsedError;
+  String? get version => throw _privateConstructorUsedError;
 
   /// Response headers
   List<Header>? get headers => throw _privateConstructorUsedError;
@@ -60,8 +60,8 @@ abstract class $HurlResponseCopyWith<$Res> {
       _$HurlResponseCopyWithImpl<$Res, HurlResponse>;
   @useResult
   $Res call(
-      {int status,
-      String version,
+      {int? status,
+      String? version,
       List<Header>? headers,
       List<Capture>? captures,
       List<HurlAssert>? asserts,
@@ -84,8 +84,8 @@ class _$HurlResponseCopyWithImpl<$Res, $Val extends HurlResponse>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? status = null,
-    Object? version = null,
+    Object? status = freezed,
+    Object? version = freezed,
     Object? headers = freezed,
     Object? captures = freezed,
     Object? asserts = freezed,
@@ -93,14 +93,14 @@ class _$HurlResponseCopyWithImpl<$Res, $Val extends HurlResponse>
     Object? bodyType = freezed,
   }) {
     return _then(_value.copyWith(
-      status: null == status
+      status: freezed == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
-              as int,
-      version: null == version
+              as int?,
+      version: freezed == version
           ? _value.version
           : version // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       headers: freezed == headers
           ? _value.headers
           : headers // ignore: cast_nullable_to_non_nullable
@@ -134,8 +134,8 @@ abstract class _$$HurlResponseImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {int status,
-      String version,
+      {int? status,
+      String? version,
       List<Header>? headers,
       List<Capture>? captures,
       List<HurlAssert>? asserts,
@@ -156,8 +156,8 @@ class __$$HurlResponseImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? status = null,
-    Object? version = null,
+    Object? status = freezed,
+    Object? version = freezed,
     Object? headers = freezed,
     Object? captures = freezed,
     Object? asserts = freezed,
@@ -165,14 +165,14 @@ class __$$HurlResponseImplCopyWithImpl<$Res>
     Object? bodyType = freezed,
   }) {
     return _then(_$HurlResponseImpl(
-      status: null == status
+      status: freezed == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
-              as int,
-      version: null == version
+              as int?,
+      version: freezed == version
           ? _value.version
           : version // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       headers: freezed == headers
           ? _value._headers
           : headers // ignore: cast_nullable_to_non_nullable
@@ -198,12 +198,11 @@ class __$$HurlResponseImplCopyWithImpl<$Res>
 }
 
 /// @nodoc
-
-@JsonSerializable(explicitToJson: true, anyMap: true)
+@JsonSerializable()
 class _$HurlResponseImpl implements _HurlResponse {
   const _$HurlResponseImpl(
-      {required this.status,
-      required this.version,
+      {this.status,
+      this.version,
       final List<Header>? headers,
       final List<Capture>? captures,
       final List<HurlAssert>? asserts,
@@ -218,11 +217,11 @@ class _$HurlResponseImpl implements _HurlResponse {
 
   /// HTTP status code
   @override
-  final int status;
+  final int? status;
 
   /// HTTP version (e.g., "HTTP/1.1", "HTTP/2")
   @override
-  final String version;
+  final String? version;
 
   /// Response headers
   final List<Header>? _headers;
@@ -323,8 +322,8 @@ class _$HurlResponseImpl implements _HurlResponse {
 
 abstract class _HurlResponse implements HurlResponse {
   const factory _HurlResponse(
-      {required final int status,
-      required final String version,
+      {final int? status,
+      final String? version,
       final List<Header>? headers,
       final List<Capture>? captures,
       final List<HurlAssert>? asserts,
@@ -336,11 +335,11 @@ abstract class _HurlResponse implements HurlResponse {
 
   /// HTTP status code
   @override
-  int get status;
+  int? get status;
 
   /// HTTP version (e.g., "HTTP/1.1", "HTTP/2")
   @override
-  String get version;
+  String? get version;
 
   /// Response headers
   @override

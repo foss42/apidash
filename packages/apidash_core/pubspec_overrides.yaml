@@ -1,8 +1,12 @@
-# melos_managed_dependency_overrides: curl_parser,postman,seed
+# melos_managed_dependency_overrides: curl_parser,postman,seed,hurl,rust_lib_hurl
 dependency_overrides:
   curl_parser:
     path: ../curl_parser
+  hurl:
+    path: ../hurl
   postman:
     path: ../postman
+  rust_lib_hurl:
+    path: ../hurl/rust_builder
   seed:
     path: ../seed

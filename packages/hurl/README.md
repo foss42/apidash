@@ -1,63 +1,92 @@
 # hurl
 
-A Dart package that provides Hurl file parsing using a Rust backend for high performance.
+A new Flutter FFI plugin project.
 
-## Features
+## Getting Started
 
-- Parse Hurl files into structured Dart objects
-- High-performance Rust-based parsing
-- Support for all Hurl features:
-  - HTTP methods (GET, POST, PUT, DELETE, etc.)
-  - Headers
-  - Query parameters
-  - Form parameters
-  - Basic authentication
-  - Cookies
-  - Options
-  - Captures
-  - Assertions
-  - JSON/XML bodies
+This project is a starting point for a Flutter
+[FFI plugin](https://flutter.dev/to/ffi-package),
+a specialized package that includes native code directly invoked with Dart FFI.
 
-## Installation
+## Project structure
+
+This template uses the following structure:
+
+* `src`: Contains the native source code, and a CmakeFile.txt file for building
+  that source code into a dynamic library.
+
+* `lib`: Contains the Dart code that defines the API of the plugin, and which
+  calls into the native code using `dart:ffi`.
+
+* platform folders (`android`, `ios`, `windows`, etc.): Contains the build files
+  for building and bundling the native code library with the platform application.
+
+## Building and bundling native code
+
+The `pubspec.yaml` specifies FFI plugins as follows:
 
 ```yaml
-dependencies:
-  hurl: ^0.1.0
+  plugin:
+    platforms:
+      some_platform:
+        ffiPlugin: true
 ```
 
-## Usage
+This configuration invokes the native build for the various target platforms
+and bundles the binaries in Flutter applications using these FFI plugins.
 
-```dart
-import 'package:hurl/hurl.dart';
+This can be combined with dartPluginClass, such as when FFI is used for the
+implementation of one platform in a federated plugin:
 
-void main() async {
-  // Initialize the parser
-  final parser = await HurlParser.getInstance();
-
-  // Parse Hurl content
-  final hurlFile = parser.parse('''
-GET http://api.example.com/users
-Authorization: Bearer token123
-Accept: application/json
-
-HTTP/1.1 200
-[Captures]
-user_id: jsonpath "$.users[0].id"
-[Asserts]
-header "Content-Type" == "application/json"
-''');
-
-  // Access the parsed data
-  final request = hurlFile.entries.first.request;
-  print('Method: ${request.method}');
-  print('URL: ${request.url}');
-}
+```yaml
+  plugin:
+    implements: some_other_plugin
+    platforms:
+      some_platform:
+        dartPluginClass: SomeClass
+        ffiPlugin: true
 ```
 
-## Additional information
+A plugin can have both FFI and method channels:
 
-- [Hurl Documentation](https://hurl.dev)
+```yaml
+  plugin:
+    platforms:
+      some_platform:
+        pluginClass: SomeName
+        ffiPlugin: true
+```
 
-## License
+The native build systems that are invoked by FFI (and method channel) plugins are:
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+* For Android: Gradle, which invokes the Android NDK for native builds.
+  * See the documentation in android/build.gradle.
+* For iOS and MacOS: Xcode, via CocoaPods.
+  * See the documentation in ios/hurl.podspec.
+  * See the documentation in macos/hurl.podspec.
+* For Linux and Windows: CMake.
+  * See the documentation in linux/CMakeLists.txt.
+  * See the documentation in windows/CMakeLists.txt.
+
+## Binding to native code
+
+To use the native code, bindings in Dart are needed.
+To avoid writing these by hand, they are generated from the header file
+(`src/hurl.h`) by `package:ffigen`.
+Regenerate the bindings by running `dart run ffigen --config ffigen.yaml`.
+
+## Invoking native code
+
+Very short-running native functions can be directly invoked from any isolate.
+For example, see `sum` in `lib/hurl.dart`.
+
+Longer-running functions should be invoked on a helper isolate to avoid
+dropping frames in Flutter applications.
+For example, see `sumAsync` in `lib/hurl.dart`.
+
+## Flutter help
+
+For help getting started with Flutter, view our
+[online documentation](https://docs.flutter.dev), which offers tutorials,
+samples, guidance on mobile development, and a full API reference.
+

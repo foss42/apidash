@@ -10,9 +10,9 @@ _$MultipartFormDataImpl _$$MultipartFormDataImplFromJson(
         Map<String, dynamic> json) =>
     _$MultipartFormDataImpl(
       name: json['name'] as String,
-      value: json['value'] as String,
+      value: json['value'] as String?,
       filename: json['filename'] as String?,
-      contentType: json['contentType'] as String?,
+      contentType: json['content_type'] as String?,
     );
 
 Map<String, dynamic> _$$MultipartFormDataImplToJson(
@@ -21,5 +21,5 @@ Map<String, dynamic> _$$MultipartFormDataImplToJson(
       'name': instance.name,
       'value': instance.value,
       'filename': instance.filename,
-      'contentType': instance.contentType,
+      'content_type': instance.contentType,
     };

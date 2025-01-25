@@ -1,15 +1,15 @@
-use hurlfmt::format::format_json;
 use hurl_core::parser::parse_hurl_file;
+use hurlfmt::format::format_json;
 use std::fmt::Write;
 
-#[flutter_rust_bridge::frb(sync)] 
+#[flutter_rust_bridge::frb(sync)] // Synchronous mode for simplicity of the demo
 pub fn greet(name: String) -> String {
     format!("Hello, {name}!")
 }
-pub fn hello(a: String) -> String { a.repeat(2) }
 
 #[flutter_rust_bridge::frb(init)]
 pub fn init_app() {
+    // Default utilities - feel free to customize
     flutter_rust_bridge::setup_default_user_utils();
 }
 

@@ -2,7 +2,28 @@ include: package:flutter_lints/flutter.yaml
 
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options
-
 analyzer:
-  errors:
-    invalid_annotation_target: ignore
+    # Exclude directories and files to improve analyzer performance.
+    exclude:
+        [
+            build/**,
+            lib/**.freezed.dart,
+            lib/**.g.dart,
+            build/**,
+            .dart_tool/**,
+            android/**/build/**,
+            ios/Pods/**,
+            ios/.symlinks/**,
+        ]
+
+linter:
+    # Enable the linter with only essential, quality-of-life rules.
+    rules:
+        - avoid_print # Suggests using a proper logger instead of print statements.
+        - prefer_final_locals # Helps reduce accidental variable reassignment.
+        - prefer_const_constructors # Improves performance with constant widgets.
+        - prefer_const_literals_to_create_immutables # Encourages const collections.
+        - avoid_unused_constructor_parameters # Reduces clutter in constructors.
+        - sized_box_for_whitespace # Simplifies widget layouts.
+        - use_key_in_widget_constructors # Flutter best practice for widgets.
+

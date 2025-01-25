@@ -9,16 +9,12 @@ part 'hurl_response.g.dart';
 
 @freezed
 class HurlResponse with _$HurlResponse {
-  @JsonSerializable(
-    explicitToJson: true,
-    anyMap: true,
-  )
   const factory HurlResponse({
     /// HTTP status code
-    required int status,
+    int? status,
 
     /// HTTP version (e.g., "HTTP/1.1", "HTTP/2")
-    required String version,
+    String? version,
 
     /// Response headers
     List<Header>? headers,

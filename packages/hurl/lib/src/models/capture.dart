@@ -7,10 +7,6 @@ part 'capture.g.dart';
 
 @freezed
 class Capture with _$Capture {
-  @JsonSerializable(
-    explicitToJson: true,
-    anyMap: true,
-  )
   const factory Capture({
     required String name,
     required Query query,

@@ -8,6 +8,7 @@ import 'package:hurl/src/models/hurl_entry.dart';
 import 'package:hurl/src/models/hurl_file.dart';
 import 'package:hurl/src/models/hurl_request.dart';
 import 'package:hurl/src/models/hurl_response.dart';
+import 'package:hurl/src/models/multipart_form_data.dart';
 import 'package:hurl/src/models/predicate.dart';
 import 'package:hurl/src/models/query.dart';
 import 'package:hurl/src/models/request_body.dart';
@@ -23,7 +24,7 @@ void main() {
 
   group('Hurl Model Tests', () {
     test('Should match basic request with headers', () {
-      final expected = HurlFile(entries: [
+      final expected = const HurlFile(entries: [
         HurlEntry(
           request: HurlRequest(
             method: 'GET',
@@ -43,14 +44,14 @@ Accept: */*
 ''');
 
       print('JSON output:');
-      print(JsonEncoder.withIndent('  ').convert(jsonDecode(jsonString)));
+      print(const JsonEncoder.withIndent('  ').convert(jsonDecode(jsonString)));
 
       final actual = HurlFile.fromJson(jsonDecode(jsonString));
       expect(actual, expected);
     });
 
     test('Should match request with body', () {
-      final expected = HurlFile(entries: [
+      final expected = const HurlFile(entries: [
         HurlEntry(
           request: HurlRequest(
             method: 'POST',
@@ -79,14 +80,14 @@ Content-Type: application/json
 ''');
 
       print('JSON output:');
-      print(JsonEncoder.withIndent('  ').convert(jsonDecode(jsonString)));
+      print(const JsonEncoder.withIndent('  ').convert(jsonDecode(jsonString)));
 
       final actual = HurlFile.fromJson(jsonDecode(jsonString));
       expect(actual, expected);
     });
 
     test('Should match request with options', () {
-      final expected = HurlFile(entries: [
+      final expected = const HurlFile(entries: [
         HurlEntry(
           request: HurlRequest(
             method: 'GET',
@@ -107,14 +108,14 @@ retry: 3
 ''');
 
       print('JSON output:');
-      print(JsonEncoder.withIndent('  ').convert(jsonDecode(jsonString)));
+      print(const JsonEncoder.withIndent('  ').convert(jsonDecode(jsonString)));
 
       final actual = HurlFile.fromJson(jsonDecode(jsonString));
       expect(actual, expected);
     });
 
     test('Should match response with captures and asserts', () {
-      final expected = HurlFile(entries: [
+      final expected = const HurlFile(entries: [
         HurlEntry(
           request: HurlRequest(
             method: 'GET',
@@ -168,15 +169,81 @@ jsonpath "\$.status" exists
 ''');
 
       print('JSON output:');
-      print(JsonEncoder.withIndent('  ').convert(jsonDecode(jsonString)));
+      print(const JsonEncoder.withIndent('  ').convert(jsonDecode(jsonString)));
 
       final actual = HurlFile.fromJson(jsonDecode(jsonString));
       expect(actual, expected);
     });
   });
 
+// Updated test file
+  test('Should match request with multipart form data', () {
+    final expected = const HurlFile(entries: [
+      HurlEntry(
+        request: HurlRequest(
+          method: 'POST',
+          url: 'http://api.example.com/upload',
+          multiPartFormData: [
+            MultipartFormData(
+              name: 'profile_image',
+              filename: '@file.jpg',
+              contentType: 'image/jpeg',
+            ),
+            MultipartFormData(
+              name: 'user_name',
+              value: 'John Doe',
+            ),
+            MultipartFormData(
+              name: 'description',
+              value: 'Profile update request',
+            ),
+            MultipartFormData(
+              name: 'document',
+              filename: '@doc.pdf',
+              contentType: 'application/pdf',
+            ),
+          ],
+        ),
+        response: HurlResponse(
+          version: 'HTTP/1.1',
+          status: 201,
+          asserts: [
+            HurlAssert(
+              query: Query(
+                type: 'jsonpath',
+                expr: r'$.success',
+              ),
+              predicate: Predicate(
+                type: 'equal',
+                value: true,
+              ),
+            ),
+          ],
+        ),
+      ),
+    ]);
+
+    final jsonString = parseHurlToJson(content: '''
+POST http://api.example.com/upload
+[MultipartFormData]
+profile_image: file,@file.jpg; image/jpeg
+user_name: John Doe
+description: Profile update request
+document: file,@doc.pdf; application/pdf
+HTTP/1.1 201
+[Asserts]
+jsonpath "\$.success" == true
+''');
+
+    print('Parsed JSON from HURL file object:');
+    print(const JsonEncoder.withIndent('  ').convert(jsonDecode(jsonString)));
+
+    final actual = HurlFile.fromJson(jsonDecode(jsonString));
+    expect(actual, expected);
+  });
+
   test('Should parse complete request sequence', () {
-    final expected = HurlFile(
+    final expected = const HurlFile(
       entries: [
         // First request - Get users
         HurlEntry(
@@ -376,7 +443,7 @@ HTTP/1.1 204''');
 
     // Print JSON for debugging
     print('Parsed JSON from HURL file object:');
-    print(JsonEncoder.withIndent('  ').convert(jsonDecode(jsonString)));
+    print(const JsonEncoder.withIndent('  ').convert(jsonDecode(jsonString)));
 
     final actual = HurlFile.fromJson(jsonDecode(jsonString));
 

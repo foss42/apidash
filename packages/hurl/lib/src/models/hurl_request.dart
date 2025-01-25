@@ -1,8 +1,6 @@
 // lib/src/models/hurl_request.dart
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'header.dart';
-import 'request_body.dart';
-import 'request_option.dart';
+import 'package:hurl/hurl.dart';
 
 part 'hurl_request.freezed.dart';
 part 'hurl_request.g.dart';
@@ -17,6 +15,8 @@ class HurlRequest with _$HurlRequest {
     List<String>? comments,
     List<RequestOption>? options,
     RequestBody? body,
+    @JsonKey(name: "multipart_form_data")
+    List<MultipartFormData>? multiPartFormData,
   }) = _HurlRequest;
 
   factory HurlRequest.fromJson(Map<String, dynamic> json) =>

@@ -1,5 +1,3 @@
-// lib/src/hurl_parser.dart
-
 import 'dart:convert';
 import '../src/rust/frb_generated.dart';
 import '../src/rust/api/simple.dart';
@@ -7,21 +5,29 @@ import 'models/hurl_file.dart';
 
 /// Main class for parsing Hurl files
 class HurlParser {
-  static HurlParser? _instance;
-  static bool _initialized = false;
+  /// Whether the Rust library has been initialized
+  static bool _isLibInitialized = false;
 
-  HurlParser._();
-
-  /// Gets the singleton instance of HurlParser
-  static Future<HurlParser> getInstance() async {
-    if (_instance == null) {
-      _instance = HurlParser._();
-      if (!_initialized) {
-        await RustLib.init();
-        _initialized = true;
-      }
+  /// Initializes the Rust library required for parsing
+  ///
+  /// This must be called before using any parsing functions
+  ///
+  /// Throws:
+  ///   [StateError] if already initialized
+  static Future<void> initialize() async {
+    if (_isLibInitialized) {
+      throw StateError('HurlParser is already initialized');
     }
-    return _instance!;
+    await RustLib.init();
+    _isLibInitialized = true;
+  }
+
+  /// Checks if the library is initialized and throws if not
+  static void _checkInitialization() {
+    if (!_isLibInitialized) {
+      throw StateError(
+          'HurlParser not initialized. Call HurlParser.initialize() first.');
+    }
   }
 
   /// Parses a Hurl file content into a [HurlFile] object
@@ -35,11 +41,8 @@ class HurlParser {
   /// Throws:
   ///   [StateError] if parser is not initialized
   ///   [FormatException] if parsing fails
-  HurlFile parse(String content) {
-    if (!_initialized) {
-      throw StateError('HurlParser not initialized. Call getInstance() first.');
-    }
-
+  static HurlFile parse(String content) {
+    _checkInitialization();
     final jsonString = parseHurlToJson(content: content);
     return HurlFile.fromJson(jsonDecode(jsonString));
   }
@@ -53,11 +56,11 @@ class HurlParser {
   ///
   /// Returns:
   ///   A JSON string representing the parsed content
-  String parseToJson(String content) {
-    if (!_initialized) {
-      throw StateError('HurlParser not initialized. Call getInstance() first.');
-    }
-
+  ///
+  /// Throws:
+  ///   [StateError] if parser is not initialized
+  static String parseToJson(String content) {
+    _checkInitialization();
     return parseHurlToJson(content: content);
   }
 }

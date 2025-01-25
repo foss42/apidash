@@ -1,12 +1,11 @@
 name: hurl
-description: A Dart package that provides Hurl file parsing using Rust backend for high performance
+description: "A new Flutter FFI plugin project."
 version: 0.0.1
 homepage:
-publish_to: none
 
 environment:
-    sdk: ^3.6.0
-    flutter: ">=1.17.0"
+    sdk: ^3.6.1
+    flutter: ">=3.3.0"
 
 dependencies:
     flutter:
@@ -14,17 +13,18 @@ dependencies:
     flutter_rust_bridge: 2.7.0
     freezed_annotation: ^2.4.4
     json_annotation: ^4.9.0
-    rust_lib_hurl:
-        path: rust_builder
+    plugin_platform_interface: ^2.0.2
 
 dev_dependencies:
+    ffi: ^2.1.3
+    ffigen: ^13.0.0
     flutter_test:
         sdk: flutter
     flutter_lints: ^5.0.0
     build_runner: ^2.4.14
     integration_test:
         sdk: flutter
-    json_serializable: ^6.7.1
+    json_serializable: ^6.9.3
     freezed: ^2.4.1
 
 # For information on the generic Dart part of this file, see the
@@ -32,34 +32,27 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-
-    # To add assets to your package, add an assets section, like this:
-    # assets:
-    #   - images/a_dot_burr.jpeg
-    #   - images/a_dot_ham.jpeg
+    # This section identifies this Flutter project as a plugin project.
+    # The 'pluginClass' specifies the class (in Java, Kotlin, Swift, Objective-C, etc.)
+    # which should be registered in the plugin registry. This is required for
+    # using method channels.
+    # The Android 'package' specifies package in which the registered class is.
+    # This is required for using method channels on Android.
+    # The 'ffiPlugin' specifies that native code should be built and bundled.
+    # This is required for using `dart:ffi`.
+    # All these are used by the tooling to maintain consistency when
+    # adding or updating assets for this project.
     #
-    # For details regarding assets in packages, see
-    # https://flutter.dev/to/asset-from-package
-    #
-    # An image asset can refer to one or more resolution-specific "variants", see
-    # https://flutter.dev/to/resolution-aware-images
-
-    # To add custom fonts to your package, add a fonts section here,
-    # in this "flutter" section. Each entry in this list should have a
-    # "family" key with the font family name, and a "fonts" key with a
-    # list giving the asset and other descriptors for the font. For
-    # example:
-    # fonts:
-    #   - family: Schyler
-    #     fonts:
-    #       - asset: fonts/Schyler-Regular.ttf
-    #       - asset: fonts/Schyler-Italic.ttf
-    #         style: italic
-    #   - family: Trajan Pro
-    #     fonts:
-    #       - asset: fonts/TrajanPro.ttf
-    #       - asset: fonts/TrajanPro_Bold.ttf
-    #         weight: 700
-    #
-    # For details regarding fonts in packages, see
-    # https://flutter.dev/to/font-from-package
+    # Please refer to README.md for a detailed explanation.
+    plugin:
+        platforms:
+            android:
+                ffiPlugin: true
+            ios:
+                ffiPlugin: true
+            linux:
+                ffiPlugin: true
+            macos:
+                ffiPlugin: true
+            windows:
+                ffiPlugin: true

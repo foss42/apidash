@@ -11,6 +11,7 @@ NEW_PATH=`echo $PATH | tr ":" "\n" | grep -v "Contents/Developer/" | tr "\n" ":"
 
 export PATH=${NEW_PATH%?} # remove trailing :
 
+
 env
 
 # Platform name (macosx, iphoneos, iphonesimulator)
