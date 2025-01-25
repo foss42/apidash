@@ -13,13 +13,29 @@ class UpdateDialog extends ConsumerWidget {
     String getPlatformAsset() {
       final assets = updateInfo['assets'] as List;
       String pattern = '';
+      
       if (Platform.isWindows) {
         pattern = 'windows-x86_64.exe';
       } else if (Platform.isLinux) {
         pattern = 'linux-amd64.deb';
       } else if (Platform.isMacOS) {
         pattern = 'macos-x86_64.dmg';
+      } else if (Platform.isAndroid) {
+        final playStoreUrl = updateInfo['playStoreUrl'];
+        if (playStoreUrl != null) {
+          return playStoreUrl;
+        }
+        // Fallback to .apk if Play Store URL not available
+        pattern = 'android-arm64.apk';
+      } else if (Platform.isIOS) {
+        final appStoreUrl = updateInfo['appStoreUrl'];
+        if (appStoreUrl != null) {
+          return appStoreUrl;
+        }
+        // Fallback to .ipa if App Store URL not available
+        pattern = 'ios-universal.ipa';
       }
+      
       final asset = assets.firstWhere(
         (asset) => asset['browser_download_url'].toString().contains(pattern),
         orElse: () => null,
