@@ -84,6 +84,14 @@ class DartDioCodeGen {
         // when add new type of [ContentType], need update [dataExp].
         case ContentType.formdata:
           dataExp = declareFinal('data').assign(refer('dio.FormData()'));
+        case ContentType.urlencoded:
+          // Convert form data to URL-encoded format
+          final urlEncodedData = formData.map((item) => 
+            '${Uri.encodeComponent(item['name'] ?? '')}'
+            '='
+            '${Uri.encodeComponent(item['value'] ?? '')}'
+          ).join('&');
+          dataExp = declareFinal('data').assign(literalString(urlEncodedData));
       }
     }
     final responseExp = declareFinal('response').assign(InvokeExpression.newOf(

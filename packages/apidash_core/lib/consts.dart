@@ -77,11 +77,19 @@ const kSubTypeDefaultViewOptions = 'all';
 enum ContentType {
   json("$kTypeApplication/$kSubTypeJson"),
   text("$kTypeText/$kSubTypePlain"),
-  formdata("$kTypeMultipart/$kSubTypeFormData");
+  formdata("$kTypeMultipart/$kSubTypeFormData"),
+  urlencoded("$kTypeApplication/$kSubTypeXWwwFormUrlencoded");
 
   const ContentType(this.header);
   final String header;
 }
+
+Map<ContentType, String> kContentTypeMap = {
+  ContentType.json: ContentType.json.header,
+  ContentType.text: ContentType.text.header,
+  ContentType.formdata: ContentType.formdata.header,
+  ContentType.urlencoded: ContentType.urlencoded.header,
+};
 
 const JsonEncoder kJsonEncoder = JsonEncoder.withIndent('  ');
 const JsonDecoder kJsonDecoder = JsonDecoder();

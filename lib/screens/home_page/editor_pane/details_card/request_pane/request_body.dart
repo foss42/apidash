@@ -6,6 +6,7 @@ import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
 import 'request_form_data.dart';
+import 'package:apidash/widgets/form_data_toggle.dart';
 
 class EditRequestBody extends ConsumerWidget {
   const EditRequestBody({super.key});
@@ -52,6 +53,8 @@ class EditRequestBody extends ConsumerWidget {
                 ),
               )
             : kSizedBoxEmpty,
+        const FormDataToggle(),
+        const SizedBox(height: 16),
         switch (apiType) {
           APIType.rest => Expanded(
               child: switch (contentType) {
