@@ -43,20 +43,40 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
     final selectedId = ref.watch(selectedIdStateProvider);
     ref.watch(selectedRequestModelProvider
         .select((value) => value?.httpRequestModel?.headers?.length));
-    var rH = ref.read(selectedRequestModelProvider)?.httpRequestModel?.headers;
+    var apiType = ref.read(selectedRequestModelProvider)?.apiType;
+    late List<NameValueModel>? rH;
+    if(apiType == APIType.webSocket){
+      rH = ref.read(selectedRequestModelProvider)?.webSocketRequestModel?.headers;
+    }else{
+     rH = ref.read(selectedRequestModelProvider)?.httpRequestModel?.headers;
+    }
     bool isHeadersEmpty = rH == null || rH.isEmpty;
     headerRows = isHeadersEmpty
         ? [
             kNameValueEmptyModel,
           ]
         : rH + [kNameValueEmptyModel];
-    isRowEnabledList = [
+    
+    if(apiType == APIType.webSocket){
+       isRowEnabledList = [
+      ...(ref
+              .read(selectedRequestModelProvider)
+              ?.webSocketRequestModel
+              ?.isHeaderEnabledList ??
+          List.filled(rH?.length ?? 0, true, growable: true))
+    ];
+
+    }else{
+       isRowEnabledList = [
       ...(ref
               .read(selectedRequestModelProvider)
               ?.httpRequestModel
               ?.isHeaderEnabledList ??
           List.filled(rH?.length ?? 0, true, growable: true))
     ];
+
+    }
+    
     isRowEnabledList.add(false);
     isAddingRow = false;
 

@@ -187,6 +187,10 @@ class DropdownButtonBodyContentWebSocketType extends ConsumerWidget {
     return DropdownButtonContentTypeWebSocket(
       contentType: requestBodyContentType,
       onChanged: (ContentTypeWebSocket? value) {
+        
+        // ref.read(collectionStateNotifierProvider.notifier).update(
+        //   contentType: value,
+        // );
       
       },
     );

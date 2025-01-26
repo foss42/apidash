@@ -75,6 +75,8 @@ const kSubTypeFormData = "form-data";
 
 const kSubTypeDefaultViewOptions = 'all';
 
+const kTypeBinary = 'binary';
+
 enum ContentType {
   json("$kTypeApplication/$kSubTypeJson"),
   text("$kTypeText/$kSubTypePlain"),
@@ -86,8 +88,8 @@ enum ContentType {
 
 enum ContentTypeWebSocket {
   
-  text("$kTypeText/$kSubTypePlain"),
-  binary("$kTypeApplication/$kSubTypeOctetStream");
+  text(kTypeText),
+  binary(kTypeBinary);
 
 
   const ContentTypeWebSocket(this.header);

@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
-import 'package:apidash_core/models/websocket_request_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/status.dart' as status;
@@ -11,7 +10,7 @@ import 'package:web_socket_channel/io.dart';
 class WebSocketClient {
   late WebSocketChannel _channel;
   StreamSubscription? _subscription;
-  Duration? pingDuration;
+  Duration? pingInterval;
  
 
   WebSocketClient();
@@ -23,7 +22,7 @@ class WebSocketClient {
       if(!kIsWeb){
         final WebSocket ioWebSocket = await WebSocket.connect(url);
         _channel = IOWebSocketChannel(ioWebSocket);
-        ioWebSocket.pingInterval = pingDuration;
+        ioWebSocket.pingInterval = pingInterval;
          
       }else{
         _channel = WebSocketChannel.connect(Uri.parse(url));
@@ -75,17 +74,6 @@ class WebSocketClient {
     }
     
   }
-
-  
-  // Future<(String?,DateTime?)> sendBinary(Uint8List data) {
-  //   if (_channel != null) {
-  //     _channel.sink.add(data);
-  //     log('Sent binary message: $data');
-  //   } else {
-  //     log('WebSocket connection is not open. Unable to send binary message.');
-  //   }
-  // }
-
   
   Future<void> listen(Future<void> Function(dynamic message) onMessage,
       {Future<void> Function(dynamic error)? onError, Future<void> Function()? onDone,bool? cancelOnError}) async{

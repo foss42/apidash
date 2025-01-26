@@ -43,6 +43,14 @@ Future<(String?,DateTime?)> connect(String requestId,String url) async {
     return (null,null,null);
   }
 
+  Future<(String?,DateTime?,String?)> sendBinary(String requestId,String message) async {
+    if (_clients.containsKey(requestId)) {
+      return _clients[requestId]!.sendBinary(message);
+    }
+    return (null,null,null);
+  }
+
+
   Future<void> listen(String requestId,Future<void> Function(dynamic message) onMessage,{Future<void> Function(dynamic error)? onError, Future<void> Function()? onDone,bool? cancelOnError}) async {
     if (_clients.containsKey(requestId)) {
       return _clients[requestId]!.listen(
@@ -51,6 +59,11 @@ Future<(String?,DateTime?)> connect(String requestId,String url) async {
         onDone: onDone,
         cancelOnError: cancelOnError,
       );
+    }
+  }
+  Future<void> setPingInterval(String requestId,Duration? interval) async {
+    if (_clients.containsKey(requestId)) {
+       _clients[requestId]!.pingInterval = interval;
     }
   }
 }

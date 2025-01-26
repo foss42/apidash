@@ -1,11 +1,7 @@
-import 'dart:developer';
-import 'dart:io';
-
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/consts.dart';
-import 'package:highlighter/languages/q.dart';
 import 'providers.dart';
 import '../models/models.dart';
 import '../services/services.dart' show hiveHandler, HiveHandler;
@@ -236,7 +232,9 @@ class CollectionStateNotifier
     List<FormDataModel>? formData,
     int? responseStatus,
     String? message,
+    ContentTypeWebSocket? contentType,
     HttpResponseModel? httpResponseModel,
+    WebSocketResponseModel? webSocketResponseModel,
 }) {
     final rId = id ?? ref.read(selectedIdStateProvider);
     if (rId == null) {
@@ -264,10 +262,12 @@ class CollectionStateNotifier
             formData: formData ?? currentHttpRequestModel.formData,
         ) : currentHttpRequestModel;
 
-    var currentWebSocketRequestModel = currentModel.webSocketRequestModel;
+    var currentWebSocketRequestModel = currentModel.webSocketRequestModel ?? const WebSocketRequestModel();
+
     final newWebSocketRequestModel = currentApiType == APIType.webSocket
         ? currentWebSocketRequestModel?.copyWith(
             url: url ?? currentWebSocketRequestModel.url,
+            contentType: contentType ?? currentWebSocketRequestModel.contentType,
             headers: headers ?? currentWebSocketRequestModel.headers,
             params: params ?? currentWebSocketRequestModel.params,
             isHeaderEnabledList: isHeaderEnabledList ??
@@ -471,7 +471,7 @@ class CollectionStateNotifier
   Future<void> sendFrames() async {
     final requestId = ref.read(selectedIdStateProvider);
     ref.read(codePaneVisibleStateProvider.notifier).state = false;
-    final defaultUriScheme = ref.read(settingsProvider).defaultUriScheme;
+   
 
     if (requestId == null || state == null) {
       return;
@@ -484,9 +484,7 @@ class CollectionStateNotifier
 
     
     
-    // substituted websocket needs to be added here
-
-    // set current model's isWorking to true and update state
+    
     var map = {...state!};
     map[requestId] = requestModel.copyWith(
       isWorking: true,
@@ -496,9 +494,14 @@ class CollectionStateNotifier
     
     
     String message = currentWebSocketRequestModel.message ?? '';
-    (String?,DateTime?,String?) frame = await webSocketManager.sendText(requestId,message);
+    late  (String?,DateTime?,String?) frame;
+    if(currentWebSocketRequestModel.contentType == ContentTypeWebSocket.text){
+      frame = await webSocketManager.sendText(requestId,message);
+    }else if(currentWebSocketRequestModel.contentType == ContentTypeWebSocket.binary){
+      frame = await webSocketManager.sendBinary(requestId,message);
+    }
     
-    var newWebSocketResponseModel;
+    late WebSocketResponseModel newWebSocketResponseModel;
     if(frame.$1 != null){
        newWebSocketResponseModel = requestModel.webSocketResponseModel!.copyWith(
       frames: [
@@ -563,14 +566,23 @@ class CollectionStateNotifier
       print("entered null");
       return;
     }
+
+    bool isPinging = ref.read(settingsProvider).isPinging;
+   
     webSocketManager.createWebSocketClient(requestId);
- // webSocketClient.pingDuration = Duration(seconds: 5);
+    if(isPinging){
+      Duration durationPinging = Duration(milliseconds: ref.read(settingsProvider).pingInterval!);
+      webSocketManager.setPingInterval(requestId,durationPinging);
+    }else{
+      webSocketManager.setPingInterval(requestId,null);
+    }
+
     final url = requestModel!.webSocketRequestModel!.url;
     (String?,DateTime?) result = await webSocketManager.connect(requestId,url);
 
      var map = {...state!};
     map[requestId] = requestModel.copyWith(
-      isWorking: result.$1 == "Connected",  
+      isWorking: result.$1 == KLabelConnect,  
       sendingTime: result.$2,
       webSocketResponseModel: const WebSocketResponseModel(),
     );
@@ -603,28 +615,10 @@ class CollectionStateNotifier
         print(message);
       },
       onError: (error) async{
-        print("error found");
-        
-        // var map = {...state!};
-        // map[requestId] = requestModel.copyWith(
-        //   responseStatus: -1,
-        //   message: error.toString(),
-        //   isWorking: false,
-        // );
-        // state = map;
         
       },
       onDone: () async{
         print("Connection done");
-
-    
-        // var map = {...state!};
-        // map[requestId] = requestModel.copyWith(
-        //   responseStatus: 200,
-        //   message: "Connection closed",
-        //   isWorking: false,
-        // );
-        // state = map;
       },
       cancelOnError: false,
     );

@@ -23,6 +23,7 @@ dependencies:
   xml: ^6.3.0
   intl: ^0.19.0
   json_serializable: ^6.9.0
+  web_socket_channel: ^3.0.1
 
 dev_dependencies:
   flutter_test:
