@@ -7,22 +7,19 @@ I initially started with the approach of writing my own parser using `petitparse
 Following the maintainer's suggestion, I began developing a wrapper for the Hurl parser using `flutter_rust_bridge`. Since the documentation for the library can be sparse, I’ve documented my steps for clarity:
 
 1. **Creating the Library:**
-    
+
     - I ran the command:
-        
-        `flutter_rust_bridge_codegen create hurl --template plugin`
-        
+      `flutter_rust_bridge_codegen create hurl --template plugin`
     - This initialized the project.
+
 2. **Adding the Parse Function:**
-    
+
     - I added the library code and the `parse_hurl` function in `rust/src/api/simple.rs`.
+
 3. **Generating the Flutter Side Code:**
-    
+
     - I ran:
-        
-        
-        `flutter_rust_bridge_codegen generate`
-        
+      `flutter_rust_bridge_codegen generate`
     - This generated all the necessary code for Flutter and all the targeted platforms.
 
 `flutter_rust_bridge` uses a tool called `cargokit` to manage dependencies, acting as a glue layer between Flutter and Rust. Unfortunately, `cargokit` is still experimental, with little documentation available. The [blog post by Matej Knopp](https://matejknopp.com/post/flutter_plugin_in_rust_with_no_prebuilt_binaries/) provided valuable insights. One crucial takeaway was avoiding the Homebrew installation of Rust and instead using `rustup`. This resolved platform compilation issues for me, though the project is still not compiling entirely.
@@ -31,8 +28,8 @@ Following the maintainer's suggestion, I began developing a wrapper for the Hurl
 
 I postponed multi-platform compilation issues to focus on writing the wrapper code. By reviewing the `hurl.dev` documentation and examples, I identified the required structure:
 
-- `HurlFile` → List of `Entries`
-- `Entries` → `Request` and `Response`
+-   `HurlFile` → List of `Entries`
+-   `Entries` → `Request` and `Response`
 
 Based on this, I created models in Dart using the `freezed` package. The goal was to convert the JSON output from the Hurl parser into Dart data models. I am confident this part turned out well.
 
@@ -63,3 +60,8 @@ At this point, I’ve committed all my code to the repository in a fork. Here ar
 3. **Revisit My Custom Parser**: Complete the parser I started building with `petitparser`.
 
 If anyone knows a solution to these challenges or has suggestions, I’d appreciate the help!
+
+Current Branches in my fork:
+
+-   [Hurl Parser with flutter_rust_bridge](https://github.com/WrathOP/apidash/tree/hurl-parser-rust)
+-   [Hurl Parser with petiteparser](https://github.com/WrathOP/apidash/tree/hurl-parser-added)
