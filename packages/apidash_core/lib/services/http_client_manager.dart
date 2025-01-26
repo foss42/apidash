@@ -17,7 +17,7 @@ http.Client createHttpClientWithNoSSL() {
 class HttpClientManager {
   static final HttpClientManager _instance = HttpClientManager._internal();
   static const int _maxCancelledRequests = 100;
-  final Map<String, clientWrapper> _clients = {};
+  final Map<String, http.Client> _clients = {};
   final Queue<String> _cancelledRequests = Queue();
 
   factory HttpClientManager() {
@@ -25,15 +25,6 @@ class HttpClientManager {
   }
 
   HttpClientManager._internal();
-
-  WebSocketClient createWebSocketClient(
-    String requestId, {
-    bool noSSL = false,
-  }) {
-    final client =  WebSocketClient();
-    _clients[requestId] = WebSocketClientWrapper(client);
-    return client;
-  }
   
   http.Client createClient(
     String requestId, {
@@ -42,7 +33,7 @@ class HttpClientManager {
 
     final client =
         (noSSL && !kIsWeb) ? createHttpClientWithNoSSL() : http.Client();
-    _clients[requestId] = HttpClientWrapper(client);
+    _clients[requestId] = client;
     return client;
   }
   
@@ -73,10 +64,4 @@ class HttpClientManager {
   bool hasActiveClient(String requestId) {
     return _clients.containsKey(requestId);
   }
-
-  clientWrapper? getClient(String requestId) {
-    return _clients[requestId];
-  }
-
-  
 }

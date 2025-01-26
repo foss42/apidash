@@ -1,7 +1,5 @@
-import 'dart:io';
-import 'dart:collection';
-import 'package:apidash_core/services/websocket_service.dart';
-import 'package:flutter/foundation.dart';
+
+import 'websocket_service.dart';
 
 class WebSocketManager {
   static final WebSocketManager _instance = WebSocketManager._internal();
