@@ -24,7 +24,6 @@ class WebSocketRequestModel with _$WebSocketRequestModel {
     List<NameValueModel>? params, 
     List<bool>? isParamEnabledList,
     String? message,
-    List<String>? receivedMessages, 
   }) = _WebSocketRequestModel;
 
   factory WebSocketRequestModel.fromJson(Map<String, Object?> json) =>

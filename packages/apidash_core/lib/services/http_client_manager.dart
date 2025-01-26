@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'dart:collection';
-import 'package:apidash_core/consts.dart';
 import 'package:apidash_core/services/clientWrapper.dart';
 import 'package:apidash_core/services/websocket_service.dart';
 import 'package:flutter/foundation.dart';
@@ -78,4 +77,6 @@ class HttpClientManager {
   clientWrapper? getClient(String requestId) {
     return _clients[requestId];
   }
+
+  
 }

@@ -17,7 +17,7 @@ class WebSocketFrameModel with _$WebSocketFrameModel {
     @Default("") String message, 
     @Uint8ListConverter() Uint8List? binaryData, 
     Map<String, String>? metadata, 
-    @Default(false) bool isFinalFrame, 
+    @Default(false) bool isSend, 
     DateTime? timeStamp, 
   }) = _WebSocketFrameModel;
 
@@ -30,15 +30,4 @@ class WebSocketFrameModel with _$WebSocketFrameModel {
   
   bool get isBinaryFrame => frameType.toLowerCase() == "binary";
 
- 
-  @override
-  String toString() {
-    return 'WebSocketFrameModel('
-        'frameType: $frameType, '
-        'message: $message, '
-        'binaryData: ${binaryData?.length ?? 0} bytes, '
-        'metadata: $metadata, '
-        'isFinalFrame: $isFinalFrame, '
-        'timestamp: $timeStamp)';
-  }
 }

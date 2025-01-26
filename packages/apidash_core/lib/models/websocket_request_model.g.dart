@@ -28,9 +28,6 @@ _$WebSocketRequestModelImpl _$$WebSocketRequestModelImplFromJson(Map json) =>
           ?.map((e) => e as bool)
           .toList(),
       message: json['message'] as String?,
-      receivedMessages: (json['receivedMessages'] as List<dynamic>?)
-          ?.map((e) => e as String)
-          .toList(),
     );
 
 Map<String, dynamic> _$$WebSocketRequestModelImplToJson(
@@ -44,7 +41,6 @@ Map<String, dynamic> _$$WebSocketRequestModelImplToJson(
       'params': instance.params?.map((e) => e.toJson()).toList(),
       'isParamEnabledList': instance.isParamEnabledList,
       'message': instance.message,
-      'receivedMessages': instance.receivedMessages,
     };
 
 const _$ContentTypeWebSocketEnumMap = {

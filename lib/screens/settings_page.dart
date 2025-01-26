@@ -224,20 +224,25 @@ class SettingsPage extends ConsumerWidget {
                   ),
                 ),
               ),
-              ListTile(
+              
+                ListTile(
                 hoverColor: kColorTransparent,
-                title: const Text('Maximum Reconnection Attempts'),
+                title: const Text('Interval Between Ping Requests'),
                 subtitle: Text(
-                    'Your request history will be retained${settings.historyRetentionPeriod == HistoryRetentionPeriod.forever ? "" : " for"} ${settings.historyRetentionPeriod.label}'),
-                trailing: HistoryRetentionPopupMenu(
-                  value: settings.historyRetentionPeriod,
+                  'Current interval:  seconds'),
+                trailing: SizedBox(
+                  width:  120,
+                  child: TextField(
+                  controller: TextEditingController(text: "22"),
+                  keyboardType: TextInputType.number,
                   onChanged: (value) {
-                    ref
-                        .read(settingsProvider.notifier)
-                        .update(historyRetentionPeriod: value);
+                    // ref
+                    //   .read(settingsProvider.notifier)
+                    //   .update(pingInterval: int.parse(value));
                   },
+                  ),
                 ),
-              ),
+                ),
               ListTile(
                 title: const Text('About'),
                 subtitle: const Text(

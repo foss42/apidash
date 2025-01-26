@@ -16,7 +16,7 @@ _$WebSocketFrameModelImpl _$$WebSocketFrameModelImplFromJson(Map json) =>
       metadata: (json['metadata'] as Map?)?.map(
         (k, e) => MapEntry(k as String, e as String),
       ),
-      isFinalFrame: json['isFinalFrame'] as bool? ?? false,
+      isSend: json['isSend'] as bool? ?? false,
       timeStamp: json['timeStamp'] == null
           ? null
           : DateTime.parse(json['timeStamp'] as String),
@@ -30,6 +30,6 @@ Map<String, dynamic> _$$WebSocketFrameModelImplToJson(
       'message': instance.message,
       'binaryData': const Uint8ListConverter().toJson(instance.binaryData),
       'metadata': instance.metadata,
-      'isFinalFrame': instance.isFinalFrame,
+      'isSend': instance.isSend,
       'timeStamp': instance.timeStamp?.toIso8601String(),
     };

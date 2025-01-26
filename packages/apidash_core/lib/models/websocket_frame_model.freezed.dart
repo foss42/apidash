@@ -26,7 +26,7 @@ mixin _$WebSocketFrameModel {
   @Uint8ListConverter()
   Uint8List? get binaryData => throw _privateConstructorUsedError;
   Map<String, String>? get metadata => throw _privateConstructorUsedError;
-  bool get isFinalFrame => throw _privateConstructorUsedError;
+  bool get isSend => throw _privateConstructorUsedError;
   DateTime? get timeStamp => throw _privateConstructorUsedError;
 
   /// Serializes this WebSocketFrameModel to a JSON map.
@@ -51,7 +51,7 @@ abstract class $WebSocketFrameModelCopyWith<$Res> {
       String message,
       @Uint8ListConverter() Uint8List? binaryData,
       Map<String, String>? metadata,
-      bool isFinalFrame,
+      bool isSend,
       DateTime? timeStamp});
 }
 
@@ -75,7 +75,7 @@ class _$WebSocketFrameModelCopyWithImpl<$Res, $Val extends WebSocketFrameModel>
     Object? message = null,
     Object? binaryData = freezed,
     Object? metadata = freezed,
-    Object? isFinalFrame = null,
+    Object? isSend = null,
     Object? timeStamp = freezed,
   }) {
     return _then(_value.copyWith(
@@ -99,9 +99,9 @@ class _$WebSocketFrameModelCopyWithImpl<$Res, $Val extends WebSocketFrameModel>
           ? _value.metadata
           : metadata // ignore: cast_nullable_to_non_nullable
               as Map<String, String>?,
-      isFinalFrame: null == isFinalFrame
-          ? _value.isFinalFrame
-          : isFinalFrame // ignore: cast_nullable_to_non_nullable
+      isSend: null == isSend
+          ? _value.isSend
+          : isSend // ignore: cast_nullable_to_non_nullable
               as bool,
       timeStamp: freezed == timeStamp
           ? _value.timeStamp
@@ -125,7 +125,7 @@ abstract class _$$WebSocketFrameModelImplCopyWith<$Res>
       String message,
       @Uint8ListConverter() Uint8List? binaryData,
       Map<String, String>? metadata,
-      bool isFinalFrame,
+      bool isSend,
       DateTime? timeStamp});
 }
 
@@ -147,7 +147,7 @@ class __$$WebSocketFrameModelImplCopyWithImpl<$Res>
     Object? message = null,
     Object? binaryData = freezed,
     Object? metadata = freezed,
-    Object? isFinalFrame = null,
+    Object? isSend = null,
     Object? timeStamp = freezed,
   }) {
     return _then(_$WebSocketFrameModelImpl(
@@ -171,9 +171,9 @@ class __$$WebSocketFrameModelImplCopyWithImpl<$Res>
           ? _value._metadata
           : metadata // ignore: cast_nullable_to_non_nullable
               as Map<String, String>?,
-      isFinalFrame: null == isFinalFrame
-          ? _value.isFinalFrame
-          : isFinalFrame // ignore: cast_nullable_to_non_nullable
+      isSend: null == isSend
+          ? _value.isSend
+          : isSend // ignore: cast_nullable_to_non_nullable
               as bool,
       timeStamp: freezed == timeStamp
           ? _value.timeStamp
@@ -193,7 +193,7 @@ class _$WebSocketFrameModelImpl extends _WebSocketFrameModel {
       this.message = "",
       @Uint8ListConverter() this.binaryData,
       final Map<String, String>? metadata,
-      this.isFinalFrame = false,
+      this.isSend = false,
       this.timeStamp})
       : _metadata = metadata,
         super._();
@@ -224,9 +224,14 @@ class _$WebSocketFrameModelImpl extends _WebSocketFrameModel {
 
   @override
   @JsonKey()
-  final bool isFinalFrame;
+  final bool isSend;
   @override
   final DateTime? timeStamp;
+
+  @override
+  String toString() {
+    return 'WebSocketFrameModel(id: $id, frameType: $frameType, message: $message, binaryData: $binaryData, metadata: $metadata, isSend: $isSend, timeStamp: $timeStamp)';
+  }
 
   @override
   bool operator ==(Object other) {
@@ -240,8 +245,7 @@ class _$WebSocketFrameModelImpl extends _WebSocketFrameModel {
             const DeepCollectionEquality()
                 .equals(other.binaryData, binaryData) &&
             const DeepCollectionEquality().equals(other._metadata, _metadata) &&
-            (identical(other.isFinalFrame, isFinalFrame) ||
-                other.isFinalFrame == isFinalFrame) &&
+            (identical(other.isSend, isSend) || other.isSend == isSend) &&
             (identical(other.timeStamp, timeStamp) ||
                 other.timeStamp == timeStamp));
   }
@@ -255,7 +259,7 @@ class _$WebSocketFrameModelImpl extends _WebSocketFrameModel {
       message,
       const DeepCollectionEquality().hash(binaryData),
       const DeepCollectionEquality().hash(_metadata),
-      isFinalFrame,
+      isSend,
       timeStamp);
 
   /// Create a copy of WebSocketFrameModel
@@ -282,7 +286,7 @@ abstract class _WebSocketFrameModel extends WebSocketFrameModel {
       final String message,
       @Uint8ListConverter() final Uint8List? binaryData,
       final Map<String, String>? metadata,
-      final bool isFinalFrame,
+      final bool isSend,
       final DateTime? timeStamp}) = _$WebSocketFrameModelImpl;
   const _WebSocketFrameModel._() : super._();
 
@@ -301,7 +305,7 @@ abstract class _WebSocketFrameModel extends WebSocketFrameModel {
   @override
   Map<String, String>? get metadata;
   @override
-  bool get isFinalFrame;
+  bool get isSend;
   @override
   DateTime? get timeStamp;
 

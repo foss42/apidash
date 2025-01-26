@@ -173,7 +173,8 @@ class ConnectionRequestButton extends ConsumerWidget {
       },
       onDisconnect: () {
         onTap?.call();
-        ref.read(collectionStateNotifierProvider.notifier).cancelRequest();
+        print("disconnected inside disconnect");
+        ref.read(collectionStateNotifierProvider.notifier).disconnect();
         
       },
     );

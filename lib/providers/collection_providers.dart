@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
@@ -29,6 +30,7 @@ final requestSequenceProvider = StateProvider<List<String>>((ref) {
 });
 
 final httpClientManager = HttpClientManager();
+final WebSocketManager webSocketManager = WebSocketManager();
 
 final StateNotifierProvider<CollectionStateNotifier, Map<String, RequestModel>?>
     collectionStateNotifierProvider =
@@ -36,7 +38,8 @@ final StateNotifierProvider<CollectionStateNotifier, Map<String, RequestModel>?>
           ref,
           hiveHandler,
           httpClientManager,
-        ));
+          webSocketManager
+  ));
 
 class CollectionStateNotifier
     extends StateNotifier<Map<String, RequestModel>?> {
@@ -44,6 +47,7 @@ class CollectionStateNotifier
     this.ref,
     this.hiveHandler,
     this.httpClientManager,
+    this.webSocketManager
   ) : super(null) {
     var status = loadData();
     Future.microtask(() {
@@ -61,6 +65,8 @@ class CollectionStateNotifier
   final HiveHandler hiveHandler;
   final baseHttpResponseModel = const HttpResponseModel();
   final HttpClientManager httpClientManager;
+  final WebSocketManager webSocketManager;
+  
 
   bool hasId(String id) => state?.keys.contains(id) ?? false;
 
@@ -471,8 +477,8 @@ class CollectionStateNotifier
       return;
     }
     RequestModel? requestModel = state![requestId];
-
-    if (requestModel?.webSocketRequestModel== null) {
+    var currentWebSocketRequestModel = requestModel!.webSocketRequestModel;
+    if (currentWebSocketRequestModel == null) {
       return;
     }
 
@@ -482,20 +488,51 @@ class CollectionStateNotifier
 
     // set current model's isWorking to true and update state
     var map = {...state!};
-    map[requestId] = requestModel!.copyWith(
+    map[requestId] = requestModel.copyWith(
       isWorking: true,
     );
     state = map;
 
     
     
-    final client = httpClientManager.createWebSocketClient(requestId);
-    await client.sendText(requestModel.webSocketRequestModel!);
+    String message = currentWebSocketRequestModel.message ?? '';
+    (String?,DateTime?,String?) frame = await webSocketManager.sendText(requestId,message);
+    
+    var newWebSocketResponseModel;
+    if(frame.$1 != null){
+       newWebSocketResponseModel = requestModel.webSocketResponseModel!.copyWith(
+      frames: [
+        ...?requestModel.webSocketResponseModel?.frames,
+        WebSocketFrameModel(
+          id: getNewUuid(),
+          message:frame.$1!,
+          timeStamp: frame.$2,
+          isSend: true
+        ),  
+      ],
+    );
+     
+    }else if(frame.$3 != null){
+      newWebSocketResponseModel = requestModel.webSocketResponseModel!.copyWith(
+      frames: [
+        ...?requestModel.webSocketResponseModel?.frames,
+        WebSocketFrameModel(
+          id: getNewUuid(),
+          message:frame.$3!,
+          timeStamp: null,
+          isSend: true
+        ),  
+      ],
+    );
+      
+
+    }
+
+    
     
 
     final newRequestModel = requestModel.copyWith(
-        webSocketRequestModel: requestModel.webSocketRequestModel,
-        isWorking: false,
+        webSocketResponseModel: newWebSocketResponseModel,
       );
     // update state with response data
     map = {...state!};
@@ -517,6 +554,7 @@ class CollectionStateNotifier
 
     RequestModel? requestModel = state![requestId];
 
+
     // if (requestModel?.webSocketRequestModel == null) {
     //   print("no web socket request model");
     //   return;
@@ -525,39 +563,48 @@ class CollectionStateNotifier
       print("entered null");
       return;
     }
-
-    final client = httpClientManager.createWebSocketClient(requestId);
+    webSocketManager.createWebSocketClient(requestId);
+ // webSocketClient.pingDuration = Duration(seconds: 5);
     final url = requestModel!.webSocketRequestModel!.url;
-    (String?,DateTime?) result = await client.connect(url);
+    (String?,DateTime?) result = await webSocketManager.connect(requestId,url);
 
      var map = {...state!};
     map[requestId] = requestModel.copyWith(
       isWorking: result.$1 == "Connected",  
       sendingTime: result.$2,
-      webSocketResponseModel: WebSocketResponseModel(),
+      webSocketResponseModel: const WebSocketResponseModel(),
     );
+    
     state = map;
     
     
-    client.listen(
+    webSocketManager.listen(
+      requestId,
       (message) async{
         var map = {...state!};
         RequestModel? requestModel = state![requestId];
         WebSocketResponseModel webSocketResponseModel = requestModel!.webSocketResponseModel!;
         WebSocketResponseModel newWebSocketResponseModel = webSocketResponseModel.copyWith(
           frames: [...webSocketResponseModel.frames, WebSocketFrameModel(
-            id: '1',
+            id: getNewUuid(),
             message: message,
             timeStamp: DateTime.now(),
+            isSend: false
           )]
         );
-        map[requestId] = requestModel.copyWith(
+        var newRequestModel = requestModel.copyWith(
           webSocketResponseModel: newWebSocketResponseModel,
         );
-        state = map;
+       
+
+    map = {...state!};
+    map[requestId] = newRequestModel;
+    state = map;
         print(message);
       },
       onError: (error) async{
+        print("error found");
+        
         // var map = {...state!};
         // map[requestId] = requestModel.copyWith(
         //   responseStatus: -1,
@@ -565,8 +612,12 @@ class CollectionStateNotifier
         //   isWorking: false,
         // );
         // state = map;
+        
       },
       onDone: () async{
+        print("Connection done");
+
+    
         // var map = {...state!};
         // map[requestId] = requestModel.copyWith(
         //   responseStatus: 200,
@@ -575,36 +626,85 @@ class CollectionStateNotifier
         // );
         // state = map;
       },
+      cancelOnError: false,
     );
   }
+  Future<void> disconnect() async {
+    final requestId = ref.read(selectedIdStateProvider);
+    if (requestId == null || state == null) {
+      print(requestId);
+      return;
+    }
 
-    // ignore: unused_element
-    // Future<void> disconnect() async {
-    // print("connect fired");
-    // final requestId = ref.read(selectedIdStateProvider);
-    // ref.read(codePaneVisibleStateProvider.notifier).state = false;
-    // if (requestId == null || state == null) {
-    //   print(requestId);
-    //   return;
-    // }
-
+    webSocketManager.disconnect(requestId);
     
     
     
-    // RequestModel? requestModel = state![requestId];
+      RequestModel? requestModel = state![requestId];
+       WebSocketRequestModel webSocketRequestModel = requestModel!.webSocketRequestModel!;
+        WebSocketRequestModel newWebSocketRequestModel = webSocketRequestModel.copyWith(
+          isConnected: false
+        );
+
+    var newRequestModel = requestModel.copyWith(
+          isWorking: false,
+          webSocketRequestModel: newWebSocketRequestModel,
+          
+        );
+       
+
+        var map = {...state!};
+    map[requestId] = newRequestModel;
+    state = map;
+
+  }
 
 
-    // // if (requestModel?.webSocketRequestModel == null) {
-    // //   print("no web socket request model");
-    // //   return;
-    // // }
+  void deleteAllFrames(){
+    final requestId = ref.read(selectedIdStateProvider);
+    if (requestId == null || state == null) {
+      print(requestId);
+      return;
+    }
+    RequestModel? requestModel = state![requestId];
+    WebSocketResponseModel webSocketResponseModel = requestModel!.webSocketResponseModel!;
+    WebSocketResponseModel newWebSocketResponseModel = webSocketResponseModel.copyWith(
+          frames: [],
+    );
 
-    // final client = httpClientManager.(requestId);
+    var newRequestModel = requestModel.copyWith(
+          webSocketResponseModel: newWebSocketResponseModel,
+    );
+     var map = {...state!};
+    map[requestId] = newRequestModel;
+    state = map;
+ }
+
+  void deleteFrame(String id){
+    final requestId = ref.read(selectedIdStateProvider);
+    if (requestId == null || state == null) {
+      print(requestId);
+      return;
+    }
+    RequestModel? requestModel = state![requestId];
+    if (requestModel == null || state == null) {
+      print(requestId);
+      return;
+    }
+    WebSocketResponseModel webSocketResponseModel = requestModel!.webSocketResponseModel!;
+    List<WebSocketFrameModel> newFrames = requestModel!.webSocketResponseModel!.frames.where((element) => element.id != id).toList();
+    WebSocketResponseModel newWebSocketResponseModel = webSocketResponseModel.copyWith(
+          frames: newFrames,
+    );
+
+    var newRequestModel = requestModel.copyWith(
+          webSocketResponseModel: newWebSocketResponseModel,
+    );
+     var map = {...state!};
+    map[requestId] = newRequestModel;
+    state = map;
+
+  }
     
-    // var map = {...state!};
-    // map[requestId] = requestModel!.copyWith(
-    //   isWorking: false,
-    // );
-    // state = map;
-    // }
+
 }

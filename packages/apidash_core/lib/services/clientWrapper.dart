@@ -10,6 +10,11 @@ abstract class clientWrapper {
   Future<void> sendText(WebSocketRequestModel websocketRequestModel )async{
     throw UnimplementedError('sendText is not implemented for this client type.');
   }
+
+  Future<(String?, DateTime?)> connect(String url) {
+    throw UnimplementedError('sendText is not implemented for this client type.');
+
+  }
 }
 
 class HttpClientWrapper extends clientWrapper {
@@ -30,8 +35,17 @@ class WebSocketClientWrapper extends clientWrapper {
     log("cancelling under websocket");
     client.disconnect(); 
   }
-  Future<void> sendText(WebSocketRequestModel websocketRequestModel) async{
-    client.sendText(websocketRequestModel);
+  @override
+   Future<void> sendText(WebSocketRequestModel websocketRequestModel) async{
+    client.sendText("");
   }
+
+  @override
+  Future<(String?, DateTime?)> connect(String url) {
+   return client.connect(url);
+
+  }
+
+  
   
 }

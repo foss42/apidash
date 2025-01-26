@@ -29,7 +29,6 @@ mixin _$WebSocketRequestModel {
   List<NameValueModel>? get params => throw _privateConstructorUsedError;
   List<bool>? get isParamEnabledList => throw _privateConstructorUsedError;
   String? get message => throw _privateConstructorUsedError;
-  List<String>? get receivedMessages => throw _privateConstructorUsedError;
 
   /// Serializes this WebSocketRequestModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -55,8 +54,7 @@ abstract class $WebSocketRequestModelCopyWith<$Res> {
       List<bool>? isHeaderEnabledList,
       List<NameValueModel>? params,
       List<bool>? isParamEnabledList,
-      String? message,
-      List<String>? receivedMessages});
+      String? message});
 }
 
 /// @nodoc
@@ -83,7 +81,6 @@ class _$WebSocketRequestModelCopyWithImpl<$Res,
     Object? params = freezed,
     Object? isParamEnabledList = freezed,
     Object? message = freezed,
-    Object? receivedMessages = freezed,
   }) {
     return _then(_value.copyWith(
       url: null == url
@@ -118,10 +115,6 @@ class _$WebSocketRequestModelCopyWithImpl<$Res,
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
               as String?,
-      receivedMessages: freezed == receivedMessages
-          ? _value.receivedMessages
-          : receivedMessages // ignore: cast_nullable_to_non_nullable
-              as List<String>?,
     ) as $Val);
   }
 }
@@ -143,8 +136,7 @@ abstract class _$$WebSocketRequestModelImplCopyWith<$Res>
       List<bool>? isHeaderEnabledList,
       List<NameValueModel>? params,
       List<bool>? isParamEnabledList,
-      String? message,
-      List<String>? receivedMessages});
+      String? message});
 }
 
 /// @nodoc
@@ -169,7 +161,6 @@ class __$$WebSocketRequestModelImplCopyWithImpl<$Res>
     Object? params = freezed,
     Object? isParamEnabledList = freezed,
     Object? message = freezed,
-    Object? receivedMessages = freezed,
   }) {
     return _then(_$WebSocketRequestModelImpl(
       url: null == url
@@ -204,10 +195,6 @@ class __$$WebSocketRequestModelImplCopyWithImpl<$Res>
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
               as String?,
-      receivedMessages: freezed == receivedMessages
-          ? _value._receivedMessages
-          : receivedMessages // ignore: cast_nullable_to_non_nullable
-              as List<String>?,
     ));
   }
 }
@@ -224,13 +211,11 @@ class _$WebSocketRequestModelImpl extends _WebSocketRequestModel {
       final List<bool>? isHeaderEnabledList,
       final List<NameValueModel>? params,
       final List<bool>? isParamEnabledList,
-      this.message,
-      final List<String>? receivedMessages})
+      this.message})
       : _headers = headers,
         _isHeaderEnabledList = isHeaderEnabledList,
         _params = params,
         _isParamEnabledList = isParamEnabledList,
-        _receivedMessages = receivedMessages,
         super._();
 
   factory _$WebSocketRequestModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -288,20 +273,10 @@ class _$WebSocketRequestModelImpl extends _WebSocketRequestModel {
 
   @override
   final String? message;
-  final List<String>? _receivedMessages;
-  @override
-  List<String>? get receivedMessages {
-    final value = _receivedMessages;
-    if (value == null) return null;
-    if (_receivedMessages is EqualUnmodifiableListView)
-      return _receivedMessages;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(value);
-  }
 
   @override
   String toString() {
-    return 'WebSocketRequestModel(url: $url, contentType: $contentType, isConnected: $isConnected, headers: $headers, isHeaderEnabledList: $isHeaderEnabledList, params: $params, isParamEnabledList: $isParamEnabledList, message: $message, receivedMessages: $receivedMessages)';
+    return 'WebSocketRequestModel(url: $url, contentType: $contentType, isConnected: $isConnected, headers: $headers, isHeaderEnabledList: $isHeaderEnabledList, params: $params, isParamEnabledList: $isParamEnabledList, message: $message)';
   }
 
   @override
@@ -320,9 +295,7 @@ class _$WebSocketRequestModelImpl extends _WebSocketRequestModel {
             const DeepCollectionEquality().equals(other._params, _params) &&
             const DeepCollectionEquality()
                 .equals(other._isParamEnabledList, _isParamEnabledList) &&
-            (identical(other.message, message) || other.message == message) &&
-            const DeepCollectionEquality()
-                .equals(other._receivedMessages, _receivedMessages));
+            (identical(other.message, message) || other.message == message));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -336,8 +309,7 @@ class _$WebSocketRequestModelImpl extends _WebSocketRequestModel {
       const DeepCollectionEquality().hash(_isHeaderEnabledList),
       const DeepCollectionEquality().hash(_params),
       const DeepCollectionEquality().hash(_isParamEnabledList),
-      message,
-      const DeepCollectionEquality().hash(_receivedMessages));
+      message);
 
   /// Create a copy of WebSocketRequestModel
   /// with the given fields replaced by the non-null parameter values.
@@ -365,8 +337,7 @@ abstract class _WebSocketRequestModel extends WebSocketRequestModel {
       final List<bool>? isHeaderEnabledList,
       final List<NameValueModel>? params,
       final List<bool>? isParamEnabledList,
-      final String? message,
-      final List<String>? receivedMessages}) = _$WebSocketRequestModelImpl;
+      final String? message}) = _$WebSocketRequestModelImpl;
   const _WebSocketRequestModel._() : super._();
 
   factory _WebSocketRequestModel.fromJson(Map<String, dynamic> json) =
@@ -388,8 +359,6 @@ abstract class _WebSocketRequestModel extends WebSocketRequestModel {
   List<bool>? get isParamEnabledList;
   @override
   String? get message;
-  @override
-  List<String>? get receivedMessages;
 
   /// Create a copy of WebSocketRequestModel
   /// with the given fields replaced by the non-null parameter values.

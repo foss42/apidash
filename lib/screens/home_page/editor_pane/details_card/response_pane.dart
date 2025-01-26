@@ -21,9 +21,18 @@ class ResponsePane extends ConsumerWidget{
         selectedRequestModelProvider.select((value) => value?.responseStatus));
     final message = ref
         .watch(selectedRequestModelProvider.select((value) => value?.message));
+    final apiType = ref
+        .watch(selectedRequestModelProvider.select((value) => value?.apiType));
     
     if (isWorking) {
-      return const ResponseDetails();
+      // if(apiType == APIType.webSocket ){
+      //   return const SendingWidget(
+      //     startSendingTime: null,
+      //   );
+      // }else{
+
+      // }
+     return const ResponseDetails();
       // return SendingWidget(
       //   startSendingTime: startSendingTime,
       // );
@@ -149,6 +158,10 @@ class _WebsocketResponseViewState extends ConsumerState<WebsocketResponseView> {
         setState(() {
           _controller.jumpTo(_controller.position.maxScrollExtent);
         });
+      }else{
+        setState(() {
+          _controller.jumpTo(_controller.offset);
+        });
       }
     });
   }
@@ -171,6 +184,7 @@ class _WebsocketResponseViewState extends ConsumerState<WebsocketResponseView> {
       itemBuilder: (context, index) {
         return WebsocketFrame(
           websocketFrame: frames[frames.length-index-1],
+          ref: ref,
         );
       },
     );
