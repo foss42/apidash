@@ -22,9 +22,8 @@ class EditWebSocketRequestPane extends ConsumerWidget {
     final paramLength = ref.watch(selectedRequestModelProvider
             .select((value) => value?.webSocketRequestModel?.paramsMap.length)) ??
       0;
-    final hasQuery = ref.watch(selectedRequestModelProvider
-            .select((value) => value?.httpRequestModel?.hasQuery)) ??
-        false;
+      
+   
     
     return RequestPane(
       selectedId: selectedId,
@@ -40,18 +39,18 @@ class EditWebSocketRequestPane extends ConsumerWidget {
             .update(requestTabIndex: index);
       },
       showIndicators: [
-        // paramLength > 0,
-        // headerLength > 0,
-        hasQuery,
+        paramLength > 0,
+        headerLength > 0,
+        true,
       ],
       tabLabels: const [
-        // kLabelURLParams,
-        // kLabelHeaders,
+        kLabelURLParams,
+        kLabelHeaders,
         kLabelMessage,
       ],
       children: const [
-        // EditRequestURLParams(),
-        // EditRequestHeaders(),
+        EditRequestURLParams(),
+        EditRequestHeaders(),
         EditRequestBody(),
       ],
     );

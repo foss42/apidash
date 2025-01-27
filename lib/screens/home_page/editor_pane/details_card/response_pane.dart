@@ -93,7 +93,7 @@ class ResponseTabs extends ConsumerWidget {
     return ResponseTabView(
       selectedId: selectedId,
       children: [
-        if (apiType == APIType.rest) ...const [
+        if (apiType == APIType.rest || apiType == APIType.webSocket) ...const [
           ResponseBodyTab(),
           ResponseHeadersTab(),
         ] else if (apiType == APIType.webSocket) ...const [

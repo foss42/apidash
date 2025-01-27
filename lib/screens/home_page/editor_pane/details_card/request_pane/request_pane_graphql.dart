@@ -5,6 +5,7 @@ import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'request_headers.dart';
 import 'request_body.dart';
+import 'request_params.dart';
 
 class EditGraphQLRequestPane extends ConsumerWidget {
   const EditGraphQLRequestPane({super.key});
@@ -17,6 +18,9 @@ class EditGraphQLRequestPane extends ConsumerWidget {
     final codePaneVisible = ref.watch(codePaneVisibleStateProvider);
     final headerLength = ref.watch(selectedRequestModelProvider
             .select((value) => value?.httpRequestModel?.headersMap.length)) ??
+        0;
+    final paramLength = ref.watch(selectedRequestModelProvider
+            .select((value) => value?.httpRequestModel?.paramsMap.length)) ??
         0;
     final hasQuery = ref.watch(selectedRequestModelProvider
             .select((value) => value?.httpRequestModel?.hasQuery)) ??
@@ -39,14 +43,17 @@ class EditGraphQLRequestPane extends ConsumerWidget {
       },
       showIndicators: [
         headerLength > 0,
+        paramLength > 0,
         hasQuery,
       ],
       tabLabels: const [
         kLabelHeaders,
+        kLabelURLParams,
         kLabelQuery,
       ],
       children: const [
         EditRequestHeaders(),
+        EditRequestURLParams(),
         EditRequestBody(),
       ],
     );
