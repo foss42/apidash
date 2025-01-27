@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/status.dart' as status;
@@ -22,6 +23,7 @@ class WebSocketClient {
       if(!kIsWeb){
         final WebSocket ioWebSocket = await WebSocket.connect(url);
         _channel = IOWebSocketChannel(ioWebSocket);
+        
         ioWebSocket.pingInterval = pingInterval;
          
       }else{
@@ -29,7 +31,7 @@ class WebSocketClient {
       }
       await _channel.ready;
       print('Connected to WebSocket server: ${url}');
-      return ("Connected",DateTime.now());
+      return (kMsgConnected,DateTime.now());
       } catch (e) {
       print('Failed to connect to WebSocket server: $e');
       return (e.toString(),DateTime.now());
@@ -107,3 +109,4 @@ class WebSocketClient {
     log('Disconnected from WebSocket server');
   }
 }
+

@@ -294,6 +294,11 @@ const kResponseCodeReasons = {
   508: 'Loop Detected',
   510: 'Not Extended',
   511: 'Network Authentication Required',
+  // 1000s - WebSocket Error
+  1000: 'Normal Closure',
+  1001: 'Going Away',
+  1002: 'Protocol Error',
+  1003: 'Unsupported Data',
 };
 
 Map<String, String> kHttpHeadersMap = {

@@ -249,7 +249,9 @@ class SettingsPage extends ConsumerWidget {
                 trailing: SizedBox(
                   width:  120,
                   child: TextField(
-                  controller: TextEditingController(text: settings.pingInterval.toString()),
+                  decoration: InputDecoration(
+                    hintText:  settings.pingInterval.toString()
+                  ),
                   keyboardType: TextInputType.number,
                   onChanged: (value) {
                     ref

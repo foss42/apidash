@@ -232,6 +232,7 @@ class CollectionStateNotifier
     List<FormDataModel>? formData,
     int? responseStatus,
     String? message,
+    String? webSocketMessage,
     ContentTypeWebSocket? contentType,
     HttpResponseModel? httpResponseModel,
     WebSocketResponseModel? webSocketResponseModel,
@@ -274,7 +275,7 @@ class CollectionStateNotifier
                 currentWebSocketRequestModel.isHeaderEnabledList,
             isParamEnabledList:
                 isParamEnabledList ?? currentWebSocketRequestModel.isParamEnabledList,
-            message: message ?? currentWebSocketRequestModel.message,
+            message: webSocketMessage ?? currentWebSocketRequestModel.message,
         )
         : currentWebSocketRequestModel;
 
@@ -578,18 +579,31 @@ class CollectionStateNotifier
     }
 
     final url = requestModel!.webSocketRequestModel!.url;
+    var map = {...state!};
+
+    map[requestId] = requestModel.copyWith(
+      isWorking: true, 
+     
+      webSocketResponseModel: const WebSocketResponseModel(),
+    );
+    
+    state = map;
     (String?,DateTime?) result = await webSocketManager.connect(requestId,url);
 
-     var map = {...state!};
+      map = {...state!};
+
     map[requestId] = requestModel.copyWith(
-      isWorking: result.$1 == KLabelConnect,  
+      isWorking: true,
+      responseStatus: 101,
+      message: kResponseCodeReasons[101],
       sendingTime: result.$2,
       webSocketResponseModel: const WebSocketResponseModel(),
     );
     
     state = map;
     
-    
+    if(result.$1 == kMsgConnected){
+    map = {...state!};
     webSocketManager.listen(
       requestId,
       (message) async{
@@ -609,12 +623,13 @@ class CollectionStateNotifier
         );
        
 
-    map = {...state!};
-    map[requestId] = newRequestModel;
-    state = map;
+      map = {...state!};
+      map[requestId] = newRequestModel;
+      state = map;
         print(message);
       },
       onError: (error) async{
+        print(error.statusCode);
         
       },
       onDone: () async{
@@ -622,6 +637,17 @@ class CollectionStateNotifier
       },
       cancelOnError: false,
     );
+  }else{
+    map = {...state!};
+    map[requestId] = requestModel.copyWith(
+      isWorking: false,
+      responseStatus: 1002,
+      message: result.$1,
+      sendingTime: result.$2,
+    );
+    
+    state = map;
+  }
   }
   Future<void> disconnect() async {
     final requestId = ref.read(selectedIdStateProvider);
@@ -643,6 +669,7 @@ class CollectionStateNotifier
     var newRequestModel = requestModel.copyWith(
           isWorking: false,
           webSocketRequestModel: newWebSocketRequestModel,
+
           
         );
        
