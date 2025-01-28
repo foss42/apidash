@@ -246,7 +246,7 @@ class CollectionStateNotifier
     var currentModel = state![rId]!;
     var currentApiType = apiType ?? currentModel.apiType;
     var currentHttpRequestModel = currentModel.httpRequestModel;
-    final newHttpRequestModel = currentApiType == APIType.rest ?
+    final newHttpRequestModel = currentApiType == APIType.rest ||  currentApiType ==APIType.graphql ?
     currentHttpRequestModel?.copyWith(
             method: method ?? currentHttpRequestModel.method,
             url: url ?? currentHttpRequestModel.url,

@@ -17,9 +17,11 @@ class WebSocketClient {
   WebSocketClient();
 
   
-  Future<(String?,DateTime?)> connect(String url) async {
+  Future<(String?,DateTime?)> connect(Uri uri,List<NameValueModel>? headers,List<NameValueModel>? params) async {
     print("inside client connect");
     try {
+      
+      String urlWithParams = getValidRequestUri(uri.urlWithParams, requestParams);
       if(!kIsWeb){
         final WebSocket ioWebSocket = await WebSocket.connect(url);
         _channel = IOWebSocketChannel(ioWebSocket);

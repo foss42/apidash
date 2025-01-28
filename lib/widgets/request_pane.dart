@@ -34,8 +34,11 @@ class RequestPane extends StatefulHookWidget {
 
 class _RequestPaneState extends State<RequestPane>
     with TickerProviderStateMixin {
+      
   @override
   Widget build(BuildContext context) {
+    print("Number of tabs (tabLabels): ${widget.tabLabels.length}");
+  print("Number of children (TabBarView): ${widget.children.length}");
     final TabController controller = useTabController(
       initialLength: widget.children.length,
       vsync: this,

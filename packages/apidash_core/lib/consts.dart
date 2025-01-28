@@ -22,7 +22,7 @@ enum HTTPVerb {
   final String abbr;
 }
 
-enum SupportedUriSchemes { https, http }
+enum SupportedUriSchemes { https, http , ws, wss}
 
 final kSupportedUriSchemes =
     SupportedUriSchemes.values.map((i) => i.name).toList();

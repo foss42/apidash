@@ -5,21 +5,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:data_table_2/data_table_2.dart';
 import 'package:apidash/providers/providers.dart';
+import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/screens/common_widgets/common_widgets.dart';
 
-class EditRequestURLParams extends ConsumerStatefulWidget {
-  const EditRequestURLParams({super.key});
+class EditWebSocketRequestHeaders extends ConsumerStatefulWidget {
+  const EditWebSocketRequestHeaders({super.key});
 
   @override
-  ConsumerState<EditRequestURLParams> createState() =>
-      EditRequestURLParamsState();
+  ConsumerState<EditWebSocketRequestHeaders> createState() => EditWebSocketRequestHeadersState();
 }
 
-class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
+class EditWebSocketRequestHeadersState extends ConsumerState<EditWebSocketRequestHeaders> {
   late int seed;
   final random = Random.secure();
-  late List<NameValueModel> paramRows;
+  late List<NameValueModel> headerRows;
   late List<bool> isRowEnabledList;
   bool isAddingRow = false;
 
@@ -31,8 +31,9 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
 
   void _onFieldChange() {
     ref.read(collectionStateNotifierProvider.notifier).update(
-          params: paramRows.sublist(0, paramRows.length - 1),
-          isParamEnabledList: isRowEnabledList.sublist(0, paramRows.length - 1),
+          headers: headerRows.sublist(0, headerRows.length - 1),
+          isHeaderEnabledList:
+              isRowEnabledList.sublist(0, headerRows.length - 1),
         );
   }
 
@@ -41,42 +42,21 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
     dataTableShowLogs = false;
     final selectedId = ref.watch(selectedIdStateProvider);
     ref.watch(selectedRequestModelProvider
-        .select((value) => value?.httpRequestModel?.params?.length));
-    ref.watch(selectedRequestModelProvider
-        .select((value) => value?.webSocketRequestModel?.params?.length));
-    var apiType = ref.watch(selectedRequestModelProvider
-        .select((value) => value?.apiType));
-    late List<NameValueModel>? rP;
-    
-    
-    if(apiType == APIType.webSocket){
-      rP= ref.read(selectedRequestModelProvider)?.webSocketRequestModel?.params;
-      isRowEnabledList = [
-      ...(ref
-              .read(selectedRequestModelProvider)
-              ?.webSocketRequestModel
-              ?.isParamEnabledList ??
-          List.filled(rP?.length ?? 0, true, growable: true))
-    ];
-
-    }else{
-       rP= ref.read(selectedRequestModelProvider)?.httpRequestModel?.params;
-      isRowEnabledList = [
-      ...(ref
-              .read(selectedRequestModelProvider)
-              ?.httpRequestModel
-              ?.isParamEnabledList ??
-          List.filled(rP?.length ?? 0, true, growable: true))
-    ];
-    }
-    bool isParamsEmpty = rP == null || rP.isEmpty;
-    paramRows = isParamsEmpty
+        .select((value) => value?.webSocketRequestModel?.headers?.length));
+    var rH = ref.read(selectedRequestModelProvider)?.webSocketRequestModel?.headers;
+    bool isHeadersEmpty = rH == null || rH.isEmpty;
+    headerRows = isHeadersEmpty
         ? [
             kNameValueEmptyModel,
           ]
-        : rP + [kNameValueEmptyModel];
-    
-    
+        : rH + [kNameValueEmptyModel];
+    isRowEnabledList = [
+      ...(ref
+              .read(selectedRequestModelProvider)
+              ?.webSocketRequestModel
+              ?.isHeaderEnabledList ??
+          List.filled(rH?.length ?? 0, true, growable: true))
+    ];
     isRowEnabledList.add(false);
     isAddingRow = false;
 
@@ -86,7 +66,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
         fixedWidth: 30,
       ),
       DataColumn2(
-        label: Text(kNameURLParam),
+        label: Text(kNameHeader),
       ),
       DataColumn2(
         label: Text('='),
@@ -102,15 +82,15 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
     ];
 
     List<DataRow> dataRows = List<DataRow>.generate(
-      paramRows.length,
+      headerRows.length,
       (index) {
-        bool isLast = index + 1 == paramRows.length;
+        bool isLast = index + 1 == headerRows.length;
         return DataRow(
-          key: ValueKey("$selectedId-$index-params-row-$seed"),
+          key: ValueKey("$selectedId-$index-headers-row-$seed"),
           cells: <DataCell>[
             DataCell(
               ADCheckBox(
-                keyId: "$selectedId-$index-params-c-$seed",
+                keyId: "$selectedId-$index-headers-c-$seed",
                 value: isRowEnabledList[index],
                 onChanged: isLast
                     ? null
@@ -124,16 +104,16 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
               ),
             ),
             DataCell(
-              EnvCellField(
-                keyId: "$selectedId-$index-params-k-$seed",
-                initialValue: paramRows[index].name,
-                hintText: kHintAddURLParam,
+              HeaderField(
+                keyId: "$selectedId-$index-headers-k-$seed",
+                initialValue: headerRows[index].name,
+                hintText: kHintAddName,
                 onChanged: (value) {
-                  paramRows[index] = paramRows[index].copyWith(name: value);
+                  headerRows[index] = headerRows[index].copyWith(name: value);
                   if (isLast && !isAddingRow) {
                     isAddingRow = true;
                     isRowEnabledList[index] = true;
-                    paramRows.add(kNameValueEmptyModel);
+                    headerRows.add(kNameValueEmptyModel);
                     isRowEnabledList.add(false);
                   }
                   _onFieldChange();
@@ -151,15 +131,15 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
             ),
             DataCell(
               EnvCellField(
-                keyId: "$selectedId-$index-params-v-$seed",
-                initialValue: paramRows[index].value,
+                keyId: "$selectedId-$index-headers-v-$seed",
+                initialValue: headerRows[index].value,
                 hintText: kHintAddValue,
                 onChanged: (value) {
-                  paramRows[index] = paramRows[index].copyWith(value: value);
+                  headerRows[index] = headerRows[index].copyWith(value: value);
                   if (isLast && !isAddingRow) {
                     isAddingRow = true;
                     isRowEnabledList[index] = true;
-                    paramRows.add(kNameValueEmptyModel);
+                    headerRows.add(kNameValueEmptyModel);
                     isRowEnabledList.add(false);
                   }
                   _onFieldChange();
@@ -173,15 +153,15 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
                     ? null
                     : () {
                         seed = random.nextInt(kRandMax);
-                        if (paramRows.length == 2) {
+                        if (headerRows.length == 2) {
                           setState(() {
-                            paramRows = [
+                            headerRows = [
                               kNameValueEmptyModel,
                             ];
                             isRowEnabledList = [false];
                           });
                         } else {
-                          paramRows.removeAt(index);
+                          headerRows.removeAt(index);
                           isRowEnabledList.removeAt(index);
                         }
                         _onFieldChange();
@@ -201,7 +181,6 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
         Container(
           margin: kP10,
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Expanded(
                 child: Theme(
@@ -230,13 +209,13 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
             padding: kPb15,
             child: ElevatedButton.icon(
               onPressed: () {
-                paramRows.add(kNameValueEmptyModel);
+                headerRows.add(kNameValueEmptyModel);
                 isRowEnabledList.add(false);
                 _onFieldChange();
               },
               icon: const Icon(Icons.add),
               label: const Text(
-                kLabelAddParam,
+                kLabelAddHeader,
                 style: kTextStyleButton,
               ),
             ),
