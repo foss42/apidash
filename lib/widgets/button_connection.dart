@@ -5,21 +5,21 @@ import 'package:apidash/consts.dart';
 class ConnectionButton extends StatelessWidget {
   const ConnectionButton({
     super.key,
-    required this.isWorking,
+    required this.isConnected,
     required this.onTap,
     this.onDisconnect,
   });
 
-  final bool isWorking;
+  final bool isConnected;
   final void Function() onTap;
   final void Function()? onDisconnect;
 
   @override
   Widget build(BuildContext context) {
     return ADFilledButton(
-      onPressed: isWorking ? onDisconnect : onTap,
-      isTonal: isWorking ? true : false,
-      items: isWorking
+      onPressed: isConnected ? onDisconnect : onTap,
+      isTonal: isConnected ? true : false,
+      items: isConnected
           ? const [
               kHSpacer8,
               Text(

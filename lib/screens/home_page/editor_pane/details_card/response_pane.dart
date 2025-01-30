@@ -23,18 +23,22 @@ class ResponsePane extends ConsumerWidget{
         .watch(selectedRequestModelProvider.select((value) => value?.apiType));
     
     if (isWorking) {
-      // if(apiType == APIType.webSocket ){
-      //   return const SendingWidget(
-      //     startSendingTime: null,
-      //   );
-      // }else{
-
-      // }
-     return const ResponseDetails();
-      // return SendingWidget(
+      // if(apiType == APIType.rest || apiType == APIType.graphql){
+      //   return SendingWidget(
       //   startSendingTime: startSendingTime,
       // );
+      // }else{
+      //   return const ResponseDetails();
+
+      // }
+      return SendingWidget(
+        startSendingTime: startSendingTime,
+      );
+
+    
+      
     }
+
     if (responseStatus == null) {
       return const NotSentWidget();
     }
@@ -90,10 +94,11 @@ class ResponseTabs extends ConsumerWidget {
     final selectedId = ref.watch(selectedIdStateProvider);
     final apiType = ref
         .watch(selectedRequestModelProvider.select((value) => value?.apiType));
+
     return ResponseTabView(
       selectedId: selectedId,
       children: [
-        if (apiType == APIType.rest || apiType == APIType.webSocket) ...const [
+        if (apiType == APIType.rest || apiType == APIType.graphql) ...const [
           ResponseBodyTab(),
           ResponseHeadersTab(),
         ] else if (apiType == APIType.webSocket) ...const [
@@ -123,16 +128,33 @@ class ResponseHeadersTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final requestHeaders = ref.watch(selectedRequestModelProvider
+    final requestHttpHeaders = ref.watch(selectedRequestModelProvider
             .select((value) => value?.httpResponseModel?.requestHeaders)) ??
         {};
-    final responseHeaders = ref.watch(selectedRequestModelProvider
+    final responseHttpHeaders = ref.watch(selectedRequestModelProvider
             .select((value) => value?.httpResponseModel?.headers)) ??
         {};
-    return ResponseHeaders(
-      responseHeaders: responseHeaders,
-      requestHeaders: requestHeaders,
-    );
+    final requestWebSocketHeaders = ref.watch(selectedRequestModelProvider
+            .select((value) => value?.webSocketResponseModel?.requestHeaders)) ??
+        {};
+    final responseWebSocketHeaders = ref.watch(selectedRequestModelProvider
+            .select((value) => value?.webSocketResponseModel?.headers)) ??
+        {};
+    final apiType = ref
+        .watch(selectedRequestModelProvider.select((value) => value?.apiType));
+    switch (apiType!) {
+      case APIType.rest || APIType.graphql:
+        return ResponseHeaders(
+          responseHeaders: responseHttpHeaders,
+          requestHeaders: requestHttpHeaders,
+        );
+      case APIType.webSocket:
+        return ResponseHeaders(
+          responseHeaders: responseWebSocketHeaders,
+          requestHeaders: requestWebSocketHeaders,
+        );
+    }
+      
   }
 }
 
@@ -151,17 +173,26 @@ class _WebsocketResponseViewState extends ConsumerState<WebsocketResponseView> {
   @override
   void initState() {
     super.initState();
-    _controller.addListener(() {
-      if (_controller.position.atEdge && _controller.position.pixels != 0) {
-        setState(() {
-          _controller.jumpTo(_controller.position.maxScrollExtent);
-        });
-      }else{
-        setState(() {
-          _controller.jumpTo(_controller.offset);
-        });
+     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_controller.hasClients) {
+        _controller.animateTo(
+          _controller.position.minScrollExtent,
+          duration: const Duration(milliseconds: 500), // Adjust for speed
+          curve: Curves.easeOut, // Smooth effect
+        );
       }
     });
+    // _controller.addListener(() {
+    //   if (_controller.position.atEdge && _controller.position.pixels != 0) {
+    //     setState(() {
+    //       _controller.jumpTo(_controller.position.maxScrollExtent);
+    //     });
+    //   }else{
+    //     setState(() {
+    //       _controller.jumpTo(_controller.offset);
+    //     });
+    //   }
+    // });
   }
 
   @override
@@ -172,12 +203,13 @@ class _WebsocketResponseViewState extends ConsumerState<WebsocketResponseView> {
 
   @override
   Widget build(BuildContext context) {
+   
     final frames = ref.watch(selectedRequestModelProvider
             .select((value) => value?.webSocketResponseModel?.frames)) ??
         <WebSocketFrameModel>[];  
-
     return ListView.builder(
       controller: _controller,
+      //physics: const BouncingScrollPhysics(),
       itemCount: frames.length,
       itemBuilder: (context, index) {
         return WebsocketFrame(

@@ -5,8 +5,7 @@ import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'request_headers.dart';
 import 'request_body.dart';
-import 'request_params.dart';
-import 'request_websocket_headers.dart';
+
 
 class EditGraphQLRequestPane extends ConsumerWidget {
   const EditGraphQLRequestPane({super.key});

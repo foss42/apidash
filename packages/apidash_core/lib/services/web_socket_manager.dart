@@ -1,5 +1,5 @@
 
-import 'websocket_service.dart';
+import 'package:apidash_core/apidash_core.dart';
 
 class WebSocketManager {
   static final WebSocketManager _instance = WebSocketManager._internal();
@@ -28,9 +28,9 @@ class WebSocketManager {
     await _clients[requestId]?.disconnect();
   }
   
-Future<(String?,DateTime?)> connect(String requestId,String url) async {
+Future<(String?,DateTime?)> connect(String requestId,String url,List<NameValueModel>? headers,List<NameValueModel>? params) async {
     if (_clients.containsKey(requestId)) {
-      return _clients[requestId]!.connect(url);
+      return _clients[requestId]!.connect(url,headers,params);
     }
     return (null,null);
 

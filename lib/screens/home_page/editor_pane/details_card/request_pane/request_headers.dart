@@ -30,9 +30,6 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
   }
 
   void _onFieldChange() {
-    print(headerRows.toList());
-    print(isRowEnabledList.toList());
-    print("entered field change");
     ref.read(collectionStateNotifierProvider.notifier).update(
           headers: headerRows.sublist(0, headerRows.length - 1),
           isHeaderEnabledList:
@@ -126,7 +123,6 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
                 onChanged: isLast
                     ? null
                     : (value) {
-                        print("entered isLast false");
                         setState(() {
                           isRowEnabledList[index] = value!;
                         });
@@ -241,11 +237,9 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
             padding: kPb15,
             child: ElevatedButton.icon(
               onPressed: () {
-                print("pressed header");
                 headerRows.add(kNameValueEmptyModel);
                 isRowEnabledList.add(false);
                 _onFieldChange();
-                print("pressed header");
               },
               icon: const Icon(Icons.add),
               label: const Text(

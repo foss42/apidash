@@ -162,11 +162,12 @@ class ConnectionRequestButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ref.watch(selectedIdStateProvider);
+    final isConnected = ref.watch(
+        selectedRequestModelProvider.select((value) => value?.webSocketRequestModel!.isConnected));
     final isWorking = ref.watch(
         selectedRequestModelProvider.select((value) => value?.isWorking));
-
     return ConnectionButton(
-      isWorking: isWorking ?? false,
+      isConnected:isConnected?? false,
       onTap: () {
         onTap?.call();
         ref.read(collectionStateNotifierProvider.notifier).connect();

@@ -45,22 +45,28 @@ class EditRequestBody extends ConsumerWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const SizedBox(
-                      height: kHeaderHeight,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                     Text(
-                      "Select Content Type:",
+                    const Padding(
+                      padding:EdgeInsets.only(left:10),
+                      child: const SizedBox(
+                          height: kHeaderHeight,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                                  Text(
+                                    "Select Content Type:",
+                                  ),
+                                  DropdownButtonBodyContentWebSocketType(),
+                            ]),),
+                     ),
+                    
+                    
+                    Padding(
+                      padding:const EdgeInsets.only(right:10),
+                      child: SendButton(isWorking: false, onTap: (){
+                          ref.read(collectionStateNotifierProvider.notifier).sendFrames();
+                        }),
+                      
                     ),
-                    
-                    DropdownButtonBodyContentWebSocketType(),
-                    
-                  ]),),
-                    
-                    SendButton(isWorking: false, onTap: (){
-                      ref.read(collectionStateNotifierProvider.notifier).sendFrames();
-                    }),
                   ],
                 ),
               )
@@ -132,11 +138,11 @@ class EditRequestBody extends ConsumerWidget {
                   TextFieldEditor(
                     key: Key("$selectedId-websocket-body"),
                     fieldKey: "$selectedId-websocket-body-editor",
-                  //  initialValue: requestModel?.websRequestModel?.body,
+                   initialValue: requestModel?.webSocketRequestModel?.message,
                     onChanged: (String value) {
                     ref
                       .read(collectionStateNotifierProvider.notifier)
-                      .update(message: value);
+                      .update(webSocketMessage: value);
                     },
                     hintText: kHintMessage,
                   ),

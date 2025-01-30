@@ -486,11 +486,7 @@ class CollectionStateNotifier
     
     
     
-    var map = {...state!};
-    map[requestId] = requestModel.copyWith(
-      isWorking: true,
-    );
-    state = map;
+   
 
     
     
@@ -539,7 +535,7 @@ class CollectionStateNotifier
         webSocketResponseModel: newWebSocketResponseModel,
       );
     // update state with response data
-    map = {...state!};
+    var map = {...state!};
     map[requestId] = newRequestModel;
     state = map;
 
@@ -578,55 +574,79 @@ class CollectionStateNotifier
       webSocketManager.setPingInterval(requestId,null);
     }
 
-    final url = requestModel!.webSocketRequestModel!.url;
+    
+    
+    final webSocketRequestModel = requestModel!.webSocketRequestModel!;
+    final url = webSocketRequestModel.url;
+    final headers = webSocketRequestModel.headers;
+    final params = webSocketRequestModel.params;
     var map = {...state!};
 
     map[requestId] = requestModel.copyWith(
-      isWorking: true, 
-     
-      webSocketResponseModel: const WebSocketResponseModel(),
-    );
-    
-    state = map;
-    (String?,DateTime?) result = await webSocketManager.connect(requestId,url);
-
-      map = {...state!};
-
-    map[requestId] = requestModel.copyWith(
       isWorking: true,
-      responseStatus: 101,
-      message: kResponseCodeReasons[101],
-      sendingTime: result.$2,
+      sendingTime: DateTime.now(),
       webSocketResponseModel: const WebSocketResponseModel(),
     );
+
+    requestModel = map[requestId];
     
     state = map;
+    (String?,DateTime?) result = await webSocketManager.connect(requestId,url,headers,params);  
+
+      
     
     if(result.$1 == kMsgConnected){
     map = {...state!};
+
+    map[requestId] = requestModel!.copyWith(
+      isWorking: false,
+      responseStatus: 101,
+      message: kResponseCodeReasons[101],
+      webSocketRequestModel: webSocketRequestModel.copyWith(
+        isConnected:true
+      ),
+      
+    );
+
+    
+    requestModel = map[requestId];  
+    state = map;
+    
     webSocketManager.listen(
       requestId,
       (message) async{
-        var map = {...state!};
-        RequestModel? requestModel = state![requestId];
+        map = {...state!};
+        requestModel = map[requestId];  
+
+        if(requestModel == null){
+          print("webSocketResponseModel is null");
+        }
+        
         WebSocketResponseModel webSocketResponseModel = requestModel!.webSocketResponseModel!;
+       
+        if(webSocketResponseModel == null){
+          print("webSocketResponseModel is null");
+        }
         WebSocketResponseModel newWebSocketResponseModel = webSocketResponseModel.copyWith(
           frames: [...webSocketResponseModel.frames, WebSocketFrameModel(
             id: getNewUuid(),
             message: message,
-            timeStamp: DateTime.now(),
+            timeStamp:DateTime.now(),
             isSend: false
           )]
         );
-        var newRequestModel = requestModel.copyWith(
+        var newRequestModel = requestModel!.copyWith(
+          isWorking: false,
+          responseStatus: 101,
           webSocketResponseModel: newWebSocketResponseModel,
         );
        
 
-      map = {...state!};
+     
       map[requestId] = newRequestModel;
+
       state = map;
-        print(message);
+      
       },
       onError: (error) async{
         print(error.statusCode);
@@ -639,11 +659,19 @@ class CollectionStateNotifier
     );
   }else{
     map = {...state!};
-    map[requestId] = requestModel.copyWith(
+    WebSocketResponseModel newWebSocketResponseModel = requestModel!.webSocketResponseModel!.copyWith(
+          frames: [...requestModel.webSocketResponseModel!.frames, WebSocketFrameModel(
+            id: getNewUuid(),
+            message: result.$1!,
+            timeStamp:DateTime.now(),
+            isSend: false
+    )]);
+    map[requestId] = requestModel!.copyWith(
       isWorking: false,
       responseStatus: 1002,
-      message: result.$1,
+      message: kResponseCodeReasons[1002],
       sendingTime: result.$2,
+      webSocketResponseModel: newWebSocketResponseModel,
     );
     
     state = map;
@@ -667,24 +695,20 @@ class CollectionStateNotifier
         );
 
     var newRequestModel = requestModel.copyWith(
-          isWorking: false,
-          webSocketRequestModel: newWebSocketRequestModel,
-
-          
-        );
+        webSocketRequestModel: newWebSocketRequestModel,
+    );
        
 
-        var map = {...state!};
+    var map = {...state!};
     map[requestId] = newRequestModel;
     state = map;
 
   }
 
 
-  void deleteAllFrames(){
+  void deleteAllFrames(){ 
     final requestId = ref.read(selectedIdStateProvider);
     if (requestId == null || state == null) {
-      print(requestId);
       return;
     }
     RequestModel? requestModel = state![requestId];

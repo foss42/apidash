@@ -17,19 +17,21 @@ class WebSocketClient {
   WebSocketClient();
 
   
-  Future<(String?,DateTime?)> connect(Uri uri,List<NameValueModel>? headers,List<NameValueModel>? params) async {
+  Future<(String?,DateTime?)> connect(String url,List<NameValueModel>? headers,List<NameValueModel>? params) async {
     print("inside client connect");
     try {
       
-      String urlWithParams = getValidRequestUri(uri.urlWithParams, requestParams);
+      String urlWithParams = getValidRequestUri(url,params,defaultUriScheme:SupportedUriSchemes.wss).$1.toString();
       if(!kIsWeb){
-        final WebSocket ioWebSocket = await WebSocket.connect(url);
+        final WebSocket ioWebSocket = await WebSocket.connect(
+          urlWithParams,
+          headers: headers != null ? rowsToMap(headers)! : null);
         _channel = IOWebSocketChannel(ioWebSocket);
         
         ioWebSocket.pingInterval = pingInterval;
          
       }else{
-        _channel = WebSocketChannel.connect(Uri.parse(url));
+        _channel = WebSocketChannel.connect(Uri.parse(urlWithParams));
       }
       await _channel.ready;
       print('Connected to WebSocket server: ${url}');

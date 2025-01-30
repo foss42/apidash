@@ -299,6 +299,14 @@ const kResponseCodeReasons = {
   1001: 'Going Away',
   1002: 'Protocol Error',
   1003: 'Unsupported Data',
+  1005: 'No Status Received',
+  1006: 'Abnormal Closure',
+  1007: 'Invalid Frame Payload Data',
+  1008: 'Policy Violation',
+  1009: 'Message Too Big',
+  1010: 'Missing Mandatory Extension',
+  1011: 'Internal Server Error (WebSocket)',
+  1015: 'TLS Handshake Failed',
 };
 
 Map<String, String> kHttpHeadersMap = {
