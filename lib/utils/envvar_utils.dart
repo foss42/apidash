@@ -1,6 +1,49 @@
+import 'package:apidash/providers/environment_providers.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/models/models.dart';
+import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:insomnia_collection/models/insomnia_environment.dart';
+
+List<EnvironmentVariableModel> createNewEnvironment(WidgetRef ref, InsomniaEnvironment environment) {
+  // Step 1: Add a new environment
+  ref.read(environmentsStateNotifierProvider.notifier).addEnvironment();
+
+  // Step 2: Get the ID of the newly created environment
+  final newEnvironmentId =
+      ref.read(selectedEnvironmentIdStateProvider.notifier).state;
+
+  debugPrint('New id is $newEnvironmentId');
+
+  // Step 3: Update the new environment with a name and variables
+  if (newEnvironmentId != null) {
+    if (environment.resources == null || environment.resources!.isEmpty) {
+      debugPrint('No env variables found');
+      return [];
+    }
+    List<EnvironmentVariableModel> variables = [];
+    for (var env in environment.resources!) {
+      variables.add(EnvironmentVariableModel(
+        key: env.key,
+        value: env.value,
+        enabled: env.enabled ?? true,
+        type: env.type == "secret"
+            ? EnvironmentVariableType.secret
+            : EnvironmentVariableType.variable,
+      ));
+    }
+    ref.read(environmentsStateNotifierProvider.notifier).updateEnvironment(
+          newEnvironmentId,
+          name: environment.name ?? "Untitled",
+          values: variables,
+        );
+    return variables;
+  } else {
+    debugPrint('No env id found');
+    return [];
+  }
+}
 
 String getEnvironmentTitle(String? name) {
   if (name == null || name.trim() == "") {

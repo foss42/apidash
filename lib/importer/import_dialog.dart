@@ -1,3 +1,4 @@
+import 'package:apidash/utils/envvar_utils.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,9 +11,6 @@ void importToCollectionPane(
   WidgetRef ref,
   ScaffoldMessengerState sm,
 ) {
-  // TODO: The dialog must have a feature to paste contents in a text field
-  // Also, a mechanism can be added where on importing a file it shows the
-  // contents in the text field and then the user presses ok to add it to collection
   showImportDialog(
     context: context,
     importFormat: ref.watch(importFormatStateProvider),
@@ -26,6 +24,26 @@ void importToCollectionPane(
       sm.hideCurrentSnackBar();
       file.readAsString().then(
         (content) {
+          kEnvImporter
+              .getInsomniaEnvironment(importFormatType, content)
+              .then((environment) {
+            debugPrint('Environment: $environment');
+            debugPrint('Environment values: ${environment?.resources}');
+
+            if (environment != null) {
+              if (environment.resources == null ||
+                  environment.resources!.isEmpty) {
+                sm.showSnackBar(getSnackBar("No environment variables imported",
+                    small: false));
+              } else {
+                var env = createNewEnvironment(ref, environment);
+
+                sm.showSnackBar(getSnackBar(
+                    "Successfully imported ${env.length} environment variables",
+                    small: false));
+              }
+            }
+          });
           kImporter
               .getHttpRequestModelList(importFormatType, content)
               .then((importedRequestModels) {
