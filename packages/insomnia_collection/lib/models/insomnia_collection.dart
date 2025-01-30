@@ -1,8 +1,29 @@
 import 'dart:convert';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:insomnia_collection/models/insomnia_environment.dart';
 
 part 'insomnia_collection.freezed.dart';
 part 'insomnia_collection.g.dart';
+
+InsomniaEnvironment insomniaEnvironmentFromJsonStr(String str) {
+  var InsomniaEnvjson = json.decode(str);
+  print(InsomniaEnvjson.toString());
+  InsomniaEnvjson['resources'] = (InsomniaEnvjson['resources'] as List)
+      .where((resource) => resource['_type'] == 'environment')
+      .toList();
+  print(InsomniaEnvjson['resources'].toString());
+
+  return InsomniaEnvironment.fromJson(InsomniaEnvjson['resources'][0]);
+}
+
+InsomniaEnvironment insomniaEnvironmentFromJson(Map<String, dynamic> json) {
+  // Remove all resources which are not requests
+  json['resources'] = (json['resources'] as List)
+      .where((resource) => resource['_type'] == 'environment')
+      .toList();
+
+  return InsomniaEnvironment.fromJson(json['resources'][0]);
+}
 
 InsomniaCollection insomniaCollectionFromJsonStr(String str) {
   var Insomniajson = json.decode(str);
@@ -13,7 +34,6 @@ InsomniaCollection insomniaCollectionFromJsonStr(String str) {
 
   return InsomniaCollection.fromJson(Insomniajson);
 }
-
 
 InsomniaCollection insomniaCollectionFromJson(Map<String, dynamic> json) {
   // Remove all resources which are not requests

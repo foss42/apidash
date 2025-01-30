@@ -2,6 +2,7 @@
 
 
 import 'package:insomnia_collection/models/insomnia_collection.dart';
+import 'package:insomnia_collection/models/insomnia_environment.dart';
 
 List<(String?, Resource)> getRequestsFromInsomniaCollection(
     InsomniaCollection? ic) {
@@ -17,6 +18,20 @@ List<(String?, Resource)> getRequestsFromInsomniaCollection(
   return requests;
 }
 
+List<EnvironmentVariable> getEnvironmentVariablesFromInsomniaEnvironment(
+    InsomniaEnvironment? ev) {
+  if (ev == null || ev.resources == null) {
+    return [];
+  }
+  List<EnvironmentVariable> envVariables = [];
+  if (ev.resources!.length > 0) {
+    for (var envvar in ev.resources!) {
+      envVariables.add(envvar);
+    }
+  }
+  return envVariables;
+}
+
 List<(String?, Resource)> getRequestsFromInsomniaResource(Resource? resource) {
   if (resource == null) {
     return [];
@@ -29,3 +44,4 @@ List<(String?, Resource)> getRequestsFromInsomniaResource(Resource? resource) {
   }
   return requests;
 }
+

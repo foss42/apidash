@@ -1,3 +1,4 @@
+import 'package:insomnia_collection/models/insomnia_environment.dart';
 import 'package:seed/seed.dart';
 import '../consts.dart';
 import '../models/models.dart';
@@ -10,9 +11,24 @@ class InsomniaIO {
     try {
       final ic = ins.insomniaCollectionFromJsonStr(content);
       final requests = ins.getRequestsFromInsomniaCollection(ic);
+
+      /// TODO; Get env from the insomnia collection
+      // final environmentVariables = ins.getEnvironmentVariablesFromInsomniaEnvironment(env);
+
       return requests
           .map((req) => (req.$1, insomniaRequestToHttpRequestModel(req.$2)))
           .toList();
+    } catch (e) {
+      return null;
+    }
+  }
+
+  InsomniaEnvironment? getInsomiaEnvironment(String content) {
+    content = content.trim();
+    try {
+      final env = ins.insomniaEnvironmentFromJsonStr(content);
+     
+      return env;
     } catch (e) {
       return null;
     }
@@ -89,8 +105,6 @@ class InsomniaIO {
         }
         body = request.body?.text;
       }
-
-      /// TODO: Handle formdata and text
     }
 
     return HttpRequestModel(

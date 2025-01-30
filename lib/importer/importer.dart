@@ -1,5 +1,6 @@
 import 'package:apidash/consts.dart';
 import 'package:apidash_core/apidash_core.dart';
+import 'package:insomnia_collection/models/insomnia_environment.dart';
 
 class Importer {
   Future<List<(String?, HttpRequestModel)>?> getHttpRequestModelList(
@@ -17,4 +18,15 @@ class Importer {
   }
 }
 
+class EnvImporter {
+  Future<InsomniaEnvironment?> getInsomniaEnvironment(
+      ImportFormat fileType, String content) async {
+    return switch (fileType) {
+      ImportFormat.insomnia => InsomniaIO().getInsomiaEnvironment(content),
+      _ => null
+    };
+  }
+}
+
 final kImporter = Importer();
+final kEnvImporter = EnvImporter();
