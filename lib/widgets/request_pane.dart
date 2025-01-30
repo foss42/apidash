@@ -37,8 +37,7 @@ class _RequestPaneState extends State<RequestPane>
       
   @override
   Widget build(BuildContext context) {
-    print("Number of tabs (tabLabels): ${widget.tabLabels.length}");
-  print("Number of children (TabBarView): ${widget.children.length}");
+   
     final TabController controller = useTabController(
       initialLength: widget.children.length,
       vsync: this,

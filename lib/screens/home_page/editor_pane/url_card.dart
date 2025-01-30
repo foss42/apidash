@@ -1,4 +1,3 @@
-import 'package:apidash/widgets/button_connection.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
@@ -164,8 +163,6 @@ class ConnectionRequestButton extends ConsumerWidget {
     ref.watch(selectedIdStateProvider);
     final isConnected = ref.watch(
         selectedRequestModelProvider.select((value) => value?.webSocketRequestModel!.isConnected));
-    final isWorking = ref.watch(
-        selectedRequestModelProvider.select((value) => value?.isWorking));
     return ConnectionButton(
       isConnected:isConnected?? false,
       onTap: () {
@@ -174,7 +171,6 @@ class ConnectionRequestButton extends ConsumerWidget {
       },
       onDisconnect: () {
         onTap?.call();
-        print("disconnected inside disconnect");
         ref.read(collectionStateNotifierProvider.notifier).disconnect();
         
       },

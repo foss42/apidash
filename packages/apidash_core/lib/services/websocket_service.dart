@@ -85,21 +85,12 @@ class WebSocketClient {
       {Future<void> Function(dynamic error)? onError, Future<void> Function()? onDone,bool? cancelOnError}) async{
     _subscription = _channel.stream.listen(
       (message) {
-        log('Received message: $message');
         onMessage(message);
       },
       onError: (error) {
-        log('Error: $error');
         if (onError != null) onError(error);
       },
       onDone: () {
-        log('Connection closed.');
-        if (_channel.closeCode != null) {
-      print('Close code: ${_channel.closeCode}');
-    }
-    if (_channel.closeReason != null) {
-      print('Close reason: ${_channel.closeReason}');
-    }
         if (onDone != null) onDone();
       },
       cancelOnError: cancelOnError ?? true,

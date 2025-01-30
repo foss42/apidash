@@ -47,7 +47,7 @@ class EditRequestBody extends ConsumerWidget {
                   children: [
                     const Padding(
                       padding:EdgeInsets.only(left:10),
-                      child: const SizedBox(
+                      child: SizedBox(
                           height: kHeaderHeight,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,

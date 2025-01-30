@@ -2,6 +2,7 @@ import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/consts.dart';
+import 'package:intl/intl.dart';
 import 'providers.dart';
 import '../models/models.dart';
 import '../services/services.dart' show hiveHandler, HiveHandler;
@@ -369,9 +370,8 @@ class CollectionStateNotifier
         ),
         httpRequestModel: substitutedHttpRequestModel,
         httpResponseModel: httpResponseModel,
-        webSocketRequestModel: WebSocketRequestModel(), // still not set up but an error was occuring here so had to fill it with something
-        webSocketResponseModel: WebSocketResponseModel()
-
+        webSocketRequestModel:  newRequestModel.webSocketRequestModel!,
+        webSocketResponseModel: newRequestModel.webSocketResponseModel!
       );
       ref.read(historyMetaStateNotifier.notifier).addHistoryRequest(model);
     }
@@ -544,7 +544,6 @@ class CollectionStateNotifier
 
 
   Future<void> connect() async {
-    print("connect fired");
     final requestId = ref.read(selectedIdStateProvider);
     ref.read(codePaneVisibleStateProvider.notifier).state = false;
     if (requestId == null || state == null) {
@@ -554,13 +553,8 @@ class CollectionStateNotifier
 
     RequestModel? requestModel = state![requestId];
 
-
-    // if (requestModel?.webSocketRequestModel == null) {
-    //   print("no web socket request model");
-    //   return;
-    // }
     if (requestModel?.webSocketRequestModel == null) {
-      print("entered null");
+      
       return;
     }
 
@@ -618,15 +612,9 @@ class CollectionStateNotifier
         map = {...state!};
         requestModel = map[requestId];  
 
-        if(requestModel == null){
-          print("webSocketResponseModel is null");
-        }
         
         WebSocketResponseModel webSocketResponseModel = requestModel!.webSocketResponseModel!;
        
-        if(webSocketResponseModel == null){
-          print("webSocketResponseModel is null");
-        }
         WebSocketResponseModel newWebSocketResponseModel = webSocketResponseModel.copyWith(
           frames: [...webSocketResponseModel.frames, WebSocketFrameModel(
             id: getNewUuid(),
@@ -649,11 +637,29 @@ class CollectionStateNotifier
       
       },
       onError: (error) async{
-        print(error.statusCode);
+        var statusCode = error.statusCode;
+        map = {...state!};
+        requestModel = map[requestId];  
+        WebSocketResponseModel webSocketResponseModel = requestModel!.webSocketResponseModel!;
+        WebSocketResponseModel newWebSocketResponseModel = webSocketResponseModel.copyWith(
+          frames: [...webSocketResponseModel.frames, WebSocketFrameModel(
+            id: getNewUuid(),
+            message: error.toString(),
+            timeStamp:DateTime.now(),
+            isSend: true
+          )]
+        );
+        var newRequestModel = requestModel!.copyWith(
+          responseStatus: statusCode,
+          message: kResponseCodeReasons[statusCode],
+          webSocketResponseModel: newWebSocketResponseModel,
+        );
+        map[requestId] = newRequestModel;
+        state = map;
         
       },
       onDone: () async{
-        print("Connection done");
+        
       },
       cancelOnError: false,
     );
@@ -677,6 +683,8 @@ class CollectionStateNotifier
     state = map;
   }
   }
+
+
   Future<void> disconnect() async {
     final requestId = ref.read(selectedIdStateProvider);
     if (requestId == null || state == null) {
