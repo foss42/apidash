@@ -1,5 +1,4 @@
 import 'package:apidash_core/consts.dart';
-import 'package:apidash_core/models/websocket_frame_model.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:seed/models/name_value_model.dart';
 import '../utils/utils.dart'

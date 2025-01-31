@@ -19,24 +19,14 @@ class ResponsePane extends ConsumerWidget{
         selectedRequestModelProvider.select((value) => value?.responseStatus));
     final message = ref
         .watch(selectedRequestModelProvider.select((value) => value?.message));
-    final apiType = ref
-        .watch(selectedRequestModelProvider.select((value) => value?.apiType));
+ 
+
     
     if (isWorking) {
-      // if(apiType == APIType.rest || apiType == APIType.graphql){
-      //   return SendingWidget(
-      //   startSendingTime: startSendingTime,
-      // );
-      // }else{
-      //   return const ResponseDetails();
-
-      // }
       return SendingWidget(
         startSendingTime: startSendingTime,
       );
 
-    
-      
     }
 
     if (responseStatus == null) {

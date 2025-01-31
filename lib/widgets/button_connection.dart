@@ -30,7 +30,7 @@ class ConnectionButton extends StatelessWidget {
             ]
           : const [
               Text(
-                KLabelConnect,
+                kLabelConnect,
                 style: kTextStyleButton,
               ),
               kHSpacer10,

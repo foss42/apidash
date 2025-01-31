@@ -1,9 +1,5 @@
 import 'package:apidash_core/apidash_core.dart';
-import 'package:apidash_core/models/websocket_request_model.dart';
-import 'package:apidash_core/models/websocket_response_model.dart';
-
 part 'request_model.freezed.dart';
-
 part 'request_model.g.dart';
 
 @freezed

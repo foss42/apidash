@@ -123,7 +123,7 @@ class EditRequestBody extends ConsumerWidget {
                   onChanged: (String value) {
                     ref
                         .read(collectionStateNotifierProvider.notifier)
-                        .update(message: value);
+                        .update(query: value);
                   },
                   hintText: kHintQuery,
                 ),

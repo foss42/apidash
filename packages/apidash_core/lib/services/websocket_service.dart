@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/foundation.dart';
@@ -34,10 +33,8 @@ class WebSocketClient {
         _channel = WebSocketChannel.connect(Uri.parse(urlWithParams));
       }
       await _channel.ready;
-      print('Connected to WebSocket server: ${url}');
       return (kMsgConnected,DateTime.now());
       } catch (e) {
-      print('Failed to connect to WebSocket server: $e');
       return (e.toString(),DateTime.now());
     }
   }
@@ -46,12 +43,6 @@ class WebSocketClient {
   Future<(String?,DateTime?,String?)> sendText(String message)async {
     try{
       _channel.sink.add(message);
-      // websocketRequestModel.frames.add(WebSocketFrameModel(
-      //   id: '1',
-      //   message: websocketRequestModel.message!,
-      //   timeStamp: DateTime.now(),
-      // ));
-      log('Sent text message: $message}');
       return (message,DateTime.now(),null);
 
     }catch(e){
@@ -66,12 +57,6 @@ class WebSocketClient {
       Uint8List binary = Uint8List.fromList(utf8.encode(message));
 
       _channel.sink.add(binary);
-      // websocketRequestModel.frames.add(WebSocketFrameModel(
-      //   id: '1',
-      //   message: websocketRequestModel.message!,
-      //   timeStamp: DateTime.now(),
-      // ));
-      log('Sent text message: $message}');
       return (message,DateTime.now(),null);
 
     }catch(e){
@@ -101,7 +86,6 @@ class WebSocketClient {
   Future<void> disconnect({int closeCode = status.normalClosure, String? reason})async {
     _subscription?.cancel();
     _channel.sink.close(closeCode, reason);
-    log('Disconnected from WebSocket server');
   }
 }
 

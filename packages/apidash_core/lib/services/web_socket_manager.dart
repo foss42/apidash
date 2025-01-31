@@ -1,6 +1,5 @@
-
-import 'package:apidash_core/apidash_core.dart';
-
+import 'package:seed/seed.dart';
+import './websocket_service.dart';
 class WebSocketManager {
   static final WebSocketManager _instance = WebSocketManager._internal();
   final Map<String, WebSocketClient> _clients = {};

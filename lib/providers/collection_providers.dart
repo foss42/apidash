@@ -2,7 +2,6 @@ import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/consts.dart';
-import 'package:intl/intl.dart';
 import 'providers.dart';
 import '../models/models.dart';
 import '../services/services.dart' show hiveHandler, HiveHandler;
@@ -267,7 +266,7 @@ class CollectionStateNotifier
     var currentWebSocketRequestModel = currentModel.webSocketRequestModel ?? const WebSocketRequestModel();
 
     final newWebSocketRequestModel = currentApiType == APIType.webSocket
-        ? currentWebSocketRequestModel?.copyWith(
+        ? currentWebSocketRequestModel.copyWith(
             url: url ?? currentWebSocketRequestModel.url,
             contentType: contentType ?? currentWebSocketRequestModel.contentType,
             headers: headers ?? currentWebSocketRequestModel.headers,
@@ -371,7 +370,7 @@ class CollectionStateNotifier
         httpRequestModel: substitutedHttpRequestModel,
         httpResponseModel: httpResponseModel,
         webSocketRequestModel:  newRequestModel.webSocketRequestModel!,
-        webSocketResponseModel: newRequestModel.webSocketResponseModel!
+        webSocketResponseModel: newRequestModel.webSocketResponseModel ??const  WebSocketResponseModel() //still working
       );
       ref.read(historyMetaStateNotifier.notifier).addHistoryRequest(model);
     }
@@ -484,12 +483,6 @@ class CollectionStateNotifier
     }
 
     
-    
-    
-   
-
-    
-    
     String message = currentWebSocketRequestModel.message ?? '';
     late  (String?,DateTime?,String?) frame;
     if(currentWebSocketRequestModel.contentType == ContentTypeWebSocket.text){
@@ -534,7 +527,7 @@ class CollectionStateNotifier
     final newRequestModel = requestModel.copyWith(
         webSocketResponseModel: newWebSocketResponseModel,
       );
-    // update state with response data
+   
     var map = {...state!};
     map[requestId] = newRequestModel;
     state = map;
@@ -547,14 +540,12 @@ class CollectionStateNotifier
     final requestId = ref.read(selectedIdStateProvider);
     ref.read(codePaneVisibleStateProvider.notifier).state = false;
     if (requestId == null || state == null) {
-      print(requestId);
       return;
     }
 
     RequestModel? requestModel = state![requestId];
 
     if (requestModel?.webSocketRequestModel == null) {
-      
       return;
     }
 
@@ -609,6 +600,7 @@ class CollectionStateNotifier
     webSocketManager.listen(
       requestId,
       (message) async{
+        
         map = {...state!};
         requestModel = map[requestId];  
 
@@ -659,6 +651,18 @@ class CollectionStateNotifier
         
       },
       onDone: () async{
+         map = {...state!};
+        requestModel = map[requestId];  
+        WebSocketRequestModel webSocketRequestModel = requestModel!.webSocketRequestModel!;
+        WebSocketRequestModel newWebSocketRequestModel = webSocketRequestModel.copyWith(
+          isConnected: false
+        );
+        var newRequestModel = requestModel!.copyWith(
+          webSocketRequestModel: newWebSocketRequestModel,
+        );
+        map[requestId] = newRequestModel;
+        state = map;
+        
         
       },
       cancelOnError: false,
@@ -672,7 +676,7 @@ class CollectionStateNotifier
             timeStamp:DateTime.now(),
             isSend: false
     )]);
-    map[requestId] = requestModel!.copyWith(
+    map[requestId] = requestModel.copyWith(
       isWorking: false,
       responseStatus: 1002,
       message: kResponseCodeReasons[1002],
@@ -736,12 +740,10 @@ class CollectionStateNotifier
   void deleteFrame(String id){
     final requestId = ref.read(selectedIdStateProvider);
     if (requestId == null || state == null) {
-      print(requestId);
       return;
     }
     RequestModel? requestModel = state![requestId];
     if (requestModel == null || state == null) {
-      print(requestId);
       return;
     }
     WebSocketResponseModel webSocketResponseModel = requestModel!.webSocketResponseModel!;

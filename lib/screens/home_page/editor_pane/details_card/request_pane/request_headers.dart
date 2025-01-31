@@ -50,6 +50,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
     late List<NameValueModel>? rH;
     late bool isHeadersEmpty;
     if (apiType == APIType.webSocket) {
+      print("inside header");
       rH = ref.read(selectedRequestModelProvider)?.webSocketRequestModel?.headers;
       isHeadersEmpty = rH == null || rH.isEmpty;
        isRowEnabledList = [
@@ -59,9 +60,28 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
               ?.isHeaderEnabledList ??
           List.filled(rH?.length ?? 0, true, growable: true))
     ];
+     headerRows = isHeadersEmpty
+        ? [
+            kNameValueEmptyModel,
+          ]
+        : rH + [kNameValueEmptyModel];
+    isRowEnabledList = [
+      ...(ref
+              .read(selectedRequestModelProvider)
+              ?.webSocketRequestModel
+              ?.isHeaderEnabledList ??
+          List.filled(rH?.length ?? 0, true, growable: true))
+    ];
+    
     }else{
+      print("inside http");
       rH = ref.read(selectedRequestModelProvider)?.httpRequestModel?.headers;
       isHeadersEmpty = rH == null || rH.isEmpty;
+      headerRows = isHeadersEmpty
+        ? [
+            kNameValueEmptyModel,
+          ]
+        : rH + [kNameValueEmptyModel];
       isRowEnabledList = [
       ...(ref
               .read(selectedRequestModelProvider)
@@ -71,21 +91,9 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
     ];
       
     }
-    headerRows = isHeadersEmpty
-        ? [
-            kNameValueEmptyModel,
-          ]
-        : rH! + [kNameValueEmptyModel];
-    isRowEnabledList = [
-      ...(ref
-              .read(selectedRequestModelProvider)
-              ?.httpRequestModel
-              ?.isHeaderEnabledList ??
-          List.filled(rH?.length ?? 0, true, growable: true))
-    ];
     isRowEnabledList.add(false);
     isAddingRow = false;
-
+    
     List<DataColumn> columns = const [
       DataColumn2(
         label: Text(kNameCheckbox),
@@ -112,7 +120,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
       (index) {
        
         bool isLast = index + 1 == headerRows.length;
-         print(isLast);
+         
         return DataRow(
           key: ValueKey("$selectedId-$index-headers-row-$seed"),
           cells: <DataCell>[

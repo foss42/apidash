@@ -445,7 +445,7 @@ const kLabelContinue = "Continue";
 const kLabelCancel = "Cancel";
 const kLabelOk = "Ok";
 const kUntitled = "untitled";
-const KLabelConnect = "Connect";
+const kLabelConnect = "Connect";
 const kLabelDisconnect = "Disconnect";
 // Request Pane
 const kLabelRequest = "Request";
