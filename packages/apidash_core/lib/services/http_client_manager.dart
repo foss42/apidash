@@ -3,39 +3,36 @@ import 'dart:collection';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/io_client.dart';
+import 'package:apidash_core/models/models.dart';
 
-http.Client createHttpClientWithNoSSL() {
-  var ioClient = HttpClient()
-    ..badCertificateCallback =
-        (X509Certificate cert, String host, int port) => true;
-  return IOClient(ioClient);
-}
-
-http.Client createHttpClientWithProxy(
-  String proxyHost, 
-  String proxyPort, 
-  {String? proxyUsername, 
-  String? proxyPassword, 
-  bool noSSL = false}
-) {
-  var ioClient = HttpClient();
-  
-  // Configure proxy settings
-  ioClient.findProxy = (uri) {
-    return 'PROXY $proxyHost:$proxyPort';
-  };
-
-  // Configure proxy authentication if credentials are provided
-  if (proxyUsername != null && proxyPassword != null) {
-    ioClient.authenticate = (Uri url, String scheme, String? realm) async {
-      return true;
-    };
+http.Client createCustomHttpClient({
+  bool noSSL = false,
+  ProxySettings? proxySettings,
+}) {
+  if (kIsWeb) {
+    return http.Client();
   }
 
-  // Disable SSL verification if required
+  var ioClient = HttpClient();
+
+  // Configure SSL
   if (noSSL) {
-    ioClient.badCertificateCallback = 
-        (X509Certificate cert, String host, int port) => true;
+    ioClient.badCertificateCallback = (X509Certificate cert, String host, int port) => true;
+  }
+
+  // Configure proxy if enabled
+  if (proxySettings != null) {
+    // Set proxy server
+    ioClient.findProxy = (uri) {
+      return 'PROXY ${proxySettings.host}:${proxySettings.port}';
+    };
+
+    // Configure proxy authentication if credentials are provided
+    if (proxySettings.username != null && proxySettings.password != null) {
+      ioClient.authenticate = (Uri url, String scheme, String? realm) async {
+        return true;
+      };
+    }
   }
 
   return IOClient(ioClient);
@@ -56,22 +53,12 @@ class HttpClientManager {
   http.Client createClient(
     String requestId, {
     bool noSSL = false,
-    String? proxyHost,
-    String? proxyPort,
-    String? proxyUsername,
-    String? proxyPassword,
+    ProxySettings? proxySettings,
   }) {
-    final client = proxyHost != null && proxyPort != null
-        ? createHttpClientWithProxy(
-            proxyHost, 
-            proxyPort, 
-            proxyUsername: proxyUsername,
-            proxyPassword: proxyPassword,
-            noSSL: noSSL
-          )
-        : (noSSL && !kIsWeb) 
-            ? createHttpClientWithNoSSL() 
-            : http.Client();
+    final client = createCustomHttpClient(
+      noSSL: noSSL,
+      proxySettings: proxySettings,
+    );
     
     _clients[requestId] = client;
     return client;
