@@ -17,6 +17,7 @@ class SettingsModel {
     this.historyRetentionPeriod = HistoryRetentionPeriod.oneWeek,
     this.workspaceFolderPath,
     this.isSSLDisabled = false,
+    this.proxySettings = const ProxySettings(),
   });
 
   final bool isDark;
@@ -32,6 +33,9 @@ class SettingsModel {
   final String? workspaceFolderPath;
   final bool isSSLDisabled;
 
+  // Proxy settings
+  final ProxySettings proxySettings;
+
   SettingsModel copyWith({
     bool? isDark,
     bool? alwaysShowCollectionPaneScrollbar,
@@ -45,15 +49,16 @@ class SettingsModel {
     HistoryRetentionPeriod? historyRetentionPeriod,
     String? workspaceFolderPath,
     bool? isSSLDisabled,
+    ProxySettings? proxySettings,
   }) {
     return SettingsModel(
       isDark: isDark ?? this.isDark,
       alwaysShowCollectionPaneScrollbar: alwaysShowCollectionPaneScrollbar ??
           this.alwaysShowCollectionPaneScrollbar,
       size: size ?? this.size,
+      offset: offset ?? this.offset,
       defaultUriScheme: defaultUriScheme ?? this.defaultUriScheme,
       defaultCodeGenLang: defaultCodeGenLang ?? this.defaultCodeGenLang,
-      offset: offset ?? this.offset,
       saveResponses: saveResponses ?? this.saveResponses,
       promptBeforeClosing: promptBeforeClosing ?? this.promptBeforeClosing,
       activeEnvironmentId: activeEnvironmentId ?? this.activeEnvironmentId,
@@ -61,6 +66,7 @@ class SettingsModel {
           historyRetentionPeriod ?? this.historyRetentionPeriod,
       workspaceFolderPath: workspaceFolderPath ?? this.workspaceFolderPath,
       isSSLDisabled: isSSLDisabled ?? this.isSSLDisabled,
+      proxySettings: proxySettings ?? this.proxySettings,
     );
   }
 
@@ -71,15 +77,16 @@ class SettingsModel {
       isDark: isDark,
       alwaysShowCollectionPaneScrollbar: alwaysShowCollectionPaneScrollbar,
       size: size,
+      offset: offset,
       defaultUriScheme: defaultUriScheme,
       defaultCodeGenLang: defaultCodeGenLang,
-      offset: offset,
       saveResponses: saveResponses,
       promptBeforeClosing: promptBeforeClosing,
       activeEnvironmentId: activeEnvironmentId,
       historyRetentionPeriod: historyRetentionPeriod,
       workspaceFolderPath: workspaceFolderPath,
       isSSLDisabled: isSSLDisabled,
+      proxySettings: proxySettings,
     );
   }
 
@@ -151,6 +158,7 @@ class SettingsModel {
           historyRetentionPeriod ?? HistoryRetentionPeriod.oneWeek,
       workspaceFolderPath: workspaceFolderPath,
       isSSLDisabled: isSSLDisabled,
+      proxySettings: ProxySettings.fromJson(data["proxySettings"]),
     );
   }
 
@@ -170,6 +178,7 @@ class SettingsModel {
       "historyRetentionPeriod": historyRetentionPeriod.name,
       "workspaceFolderPath": workspaceFolderPath,
       "isSSLDisabled": isSSLDisabled,
+      "proxySettings": proxySettings,
     };
   }
 
@@ -194,7 +203,8 @@ class SettingsModel {
         other.activeEnvironmentId == activeEnvironmentId &&
         other.historyRetentionPeriod == historyRetentionPeriod &&
         other.workspaceFolderPath == workspaceFolderPath &&
-        other.isSSLDisabled == isSSLDisabled;
+        other.isSSLDisabled == isSSLDisabled &&
+        other.proxySettings == proxySettings;
   }
 
   @override
@@ -213,6 +223,7 @@ class SettingsModel {
       historyRetentionPeriod,
       workspaceFolderPath,
       isSSLDisabled,
+      proxySettings,
     );
   }
 }
