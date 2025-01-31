@@ -18,10 +18,6 @@ class SettingsModel {
     this.workspaceFolderPath,
     this.isSSLDisabled = false,
     this.isProxyEnabled = false,
-    this.proxyHost = '',
-    this.proxyPort = '',
-    this.proxyUsername,
-    this.proxyPassword,
   });
 
   final bool isDark;
@@ -39,10 +35,6 @@ class SettingsModel {
 
   // Proxy settings
   final bool isProxyEnabled;
-  final String proxyHost;
-  final String proxyPort;
-  final String? proxyUsername;
-  final String? proxyPassword;
 
   SettingsModel copyWith({
     bool? isDark,
@@ -57,21 +49,16 @@ class SettingsModel {
     HistoryRetentionPeriod? historyRetentionPeriod,
     String? workspaceFolderPath,
     bool? isSSLDisabled,
-    // Proxy settings
     bool? isProxyEnabled,
-    String? proxyHost,
-    String? proxyPort,
-    String? proxyUsername,
-    String? proxyPassword,
   }) {
     return SettingsModel(
       isDark: isDark ?? this.isDark,
       alwaysShowCollectionPaneScrollbar: alwaysShowCollectionPaneScrollbar ??
           this.alwaysShowCollectionPaneScrollbar,
       size: size ?? this.size,
+      offset: offset ?? this.offset,
       defaultUriScheme: defaultUriScheme ?? this.defaultUriScheme,
       defaultCodeGenLang: defaultCodeGenLang ?? this.defaultCodeGenLang,
-      offset: offset ?? this.offset,
       saveResponses: saveResponses ?? this.saveResponses,
       promptBeforeClosing: promptBeforeClosing ?? this.promptBeforeClosing,
       activeEnvironmentId: activeEnvironmentId ?? this.activeEnvironmentId,
@@ -79,12 +66,7 @@ class SettingsModel {
           historyRetentionPeriod ?? this.historyRetentionPeriod,
       workspaceFolderPath: workspaceFolderPath ?? this.workspaceFolderPath,
       isSSLDisabled: isSSLDisabled ?? this.isSSLDisabled,
-      // Proxy settings
       isProxyEnabled: isProxyEnabled ?? this.isProxyEnabled,
-      proxyHost: proxyHost ?? this.proxyHost,
-      proxyPort: proxyPort ?? this.proxyPort,
-      proxyUsername: proxyUsername ?? this.proxyUsername,
-      proxyPassword: proxyPassword ?? this.proxyPassword,
     );
   }
 
@@ -95,15 +77,16 @@ class SettingsModel {
       isDark: isDark,
       alwaysShowCollectionPaneScrollbar: alwaysShowCollectionPaneScrollbar,
       size: size,
+      offset: offset,
       defaultUriScheme: defaultUriScheme,
       defaultCodeGenLang: defaultCodeGenLang,
-      offset: offset,
       saveResponses: saveResponses,
       promptBeforeClosing: promptBeforeClosing,
       activeEnvironmentId: activeEnvironmentId,
       historyRetentionPeriod: historyRetentionPeriod,
       workspaceFolderPath: workspaceFolderPath,
       isSSLDisabled: isSSLDisabled,
+      isProxyEnabled: isProxyEnabled,
     );
   }
 
@@ -159,10 +142,6 @@ class SettingsModel {
     final workspaceFolderPath = data["workspaceFolderPath"] as String?;
     final isSSLDisabled = data["isSSLDisabled"] as bool?;
     final isProxyEnabled = data["isProxyEnabled"] as bool?;
-    final proxyHost = data["proxyHost"] as String?;
-    final proxyPort = data["proxyPort"] as String?;
-    final proxyUsername = data["proxyUsername"] as String?;
-    final proxyPassword = data["proxyPassword"] as String?;
 
     const sm = SettingsModel();
 
@@ -181,10 +160,6 @@ class SettingsModel {
       workspaceFolderPath: workspaceFolderPath,
       isSSLDisabled: isSSLDisabled,
       isProxyEnabled: isProxyEnabled,
-      proxyHost: proxyHost,
-      proxyPort: proxyPort,
-      proxyUsername: proxyUsername,
-      proxyPassword: proxyPassword,
     );
   }
 
@@ -204,12 +179,7 @@ class SettingsModel {
       "historyRetentionPeriod": historyRetentionPeriod.name,
       "workspaceFolderPath": workspaceFolderPath,
       "isSSLDisabled": isSSLDisabled,
-      // Proxy settings
       "isProxyEnabled": isProxyEnabled,
-      "proxyHost": proxyHost,
-      "proxyPort": proxyPort,
-      "proxyUsername": proxyUsername,
-      "proxyPassword": proxyPassword,
     };
   }
 
@@ -235,11 +205,7 @@ class SettingsModel {
         other.historyRetentionPeriod == historyRetentionPeriod &&
         other.workspaceFolderPath == workspaceFolderPath &&
         other.isSSLDisabled == isSSLDisabled &&
-        other.isProxyEnabled == isProxyEnabled &&
-        other.proxyHost == proxyHost &&
-        other.proxyPort == proxyPort &&
-        other.proxyUsername == proxyUsername &&
-        other.proxyPassword == proxyPassword;
+        other.isProxyEnabled == isProxyEnabled;
   }
 
   @override
@@ -259,10 +225,6 @@ class SettingsModel {
       workspaceFolderPath,
       isSSLDisabled,
       isProxyEnabled,
-      proxyHost,
-      proxyPort,
-      proxyUsername,
-      proxyPassword,
     );
   }
 }
