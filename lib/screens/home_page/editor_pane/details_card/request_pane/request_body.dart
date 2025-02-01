@@ -134,7 +134,7 @@ class EditRequestBody extends ConsumerWidget {
                 child: TextFieldEditor(
                   key: Key("$selectedId-query"),
                   fieldKey: "$selectedId-query-editor",
-                  initialValue: requestModel?.webSocketRequestModel?.message,
+                  initialValue: requestModel?.httpRequestModel?.query,
                   onChanged: (String value) {
                     ref
                         .read(collectionStateNotifierProvider.notifier)

@@ -50,7 +50,6 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
     late List<NameValueModel>? rH;
     late bool isHeadersEmpty;
     if (apiType == APIType.webSocket) {
-      print("inside header");
       rH = ref.read(selectedRequestModelProvider)?.webSocketRequestModel?.headers;
       isHeadersEmpty = rH == null || rH.isEmpty;
        isRowEnabledList = [
@@ -74,7 +73,6 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
     ];
     
     }else{
-      print("inside http");
       rH = ref.read(selectedRequestModelProvider)?.httpRequestModel?.headers;
       isHeadersEmpty = rH == null || rH.isEmpty;
       headerRows = isHeadersEmpty
