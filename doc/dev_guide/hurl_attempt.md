@@ -1,67 +1,190 @@
-### Feature Implementation Writeup: HurlParser Wrapper for API Dash
+# Flutter Rust Bridge Experiment for Parsing Hurl
 
-I initially started with the approach of writing my own parser using `petitparser` and creating a custom implementation. However, after about a week, the maintainer recommended against this approach. They highlighted that building a custom parser would lack future-proofing if `hurl.dev` were to implement changes. While I abandoned this route, the code is still available in a branch. My custom parser had progressed to the point where requests and assertions were working, though it was far from complete.
+## Background and Initial Approach
 
-#### Transition to Hurl Parser Wrapper Using Flutter Rust Bridge
+When I first tackled this project, I started by writing a custom parser using `petitparser`. After spending about a week on this approach, I received valuable feedback from the maintainer who advised against it. Their main concern was future compatibility - if `hurl.dev` were to implement changes, my custom parser would quickly become outdated. While I ultimately moved away from this approach, the code remains available in a branch, where I had successfully implemented request and assertion parsing, though it wasn't complete.
 
-Following the maintainer's suggestion, I began developing a wrapper for the Hurl parser using `flutter_rust_bridge`. Since the documentation for the library can be sparse, I’ve documented my steps for clarity:
+## Understanding Flutter Rust Bridge
 
-1. **Creating the Library:**
+### What is Flutter Rust Bridge?
 
-    - I ran the command:
-      `flutter_rust_bridge_codegen create hurl --template plugin`
-    - This initialized the project.
+Flutter Rust Bridge serves as a powerful tool for developing Flutter plugins using Rust. It automatically generates all the necessary code for both Flutter and Rust, creating a seamless bridge between the two languages. This approach is particularly valuable when you want to harness Rust's performance and safety features within Flutter projects.
 
-2. **Adding the Parse Function:**
+The official documentation highlights three key features:
+1. Write standard Rust code, including complex features like arbitrary types, closures, mutable references, async functions, and traits
+2. Call Rust code from Flutter as if it were native Flutter code
+3. Automatic generation of all intermediate code required for communication
 
-    - I added the library code and the `parse_hurl` function in `rust/src/api/simple.rs`.
+### Why Choose Flutter Rust Bridge?
 
-3. **Generating the Flutter Side Code:**
+Two main factors drove my decision to use Flutter Rust Bridge:
 
-    - I ran:
-      `flutter_rust_bridge_codegen generate`
-    - This generated all the necessary code for Flutter and all the targeted platforms.
+1. **Automatic Updates with Upstream Changes**: By using the official Hurl Rust library, any changes made to the `hurl.dev` parser would automatically propagate to our plugin. This ensures long-term maintainability and compatibility.
 
-`flutter_rust_bridge` uses a tool called `cargokit` to manage dependencies, acting as a glue layer between Flutter and Rust. Unfortunately, `cargokit` is still experimental, with little documentation available. The [blog post by Matej Knopp](https://matejknopp.com/post/flutter_plugin_in_rust_with_no_prebuilt_binaries/) provided valuable insights. One crucial takeaway was avoiding the Homebrew installation of Rust and instead using `rustup`. This resolved platform compilation issues for me, though the project is still not compiling entirely.
+2. **Performance Benefits**: Rust's renowned performance characteristics and safety guarantees make it ideal for parsing large Hurl files efficiently.
 
-#### Implementing the Wrapper
+## Implementation Process
 
-I postponed multi-platform compilation issues to focus on writing the wrapper code. By reviewing the `hurl.dev` documentation and examples, I identified the required structure:
+### Setting Up the Flutter Rust Bridge Plugin
 
--   `HurlFile` → List of `Entries`
--   `Entries` → `Request` and `Response`
+While there are several examples of Flutter Rust Bridge usage available, such as [flutter smooth](https://github.com/fzyzcjy/flutter_smooth) and the [official documentation demo](https://cjycode.com/flutter_rust_bridge/demo/), I found that plugin-specific examples were scarce. Here's a detailed breakdown of my setup process:
 
-Based on this, I created models in Dart using the `freezed` package. The goal was to convert the JSON output from the Hurl parser into Dart data models. I am confident this part turned out well.
+1. **Project Initialization**
+Instead of using the standard Flutter plugin template (`flutter create --template=plugin hurl`), Flutter Rust Bridge provides its own initialization command. From the apidash/packages directory, I ran:
+```bash
+flutter_rust_bridge_codegen create hurl --template plugin
+```
 
-After writing tests for Hurl parsing and model generation, I shifted focus to building the project.
+This command generated three main directories:
 
-#### Compilation Challenges
+1. `cargokit/`: Contains build infrastructure
+   - build_tool/: Build system utilities
+   - cmake/: CMake configuration files
+   - Pod creation scripts for iOS
+   - Build scripts for various platforms
+   - Gradle configuration for Android
 
-During compilation, I encountered an issue, which I reported on the [Hurl repository](https://github.com/Orange-OpenSource/hurl/issues/3603). The Hurl parser depends on the `libxml2` crate for XML parsing. To resolve this, I had to add:
+2. `rust/`: The Rust project structure
+   - src/
+     - api/: Contains the core Rust implementation
+       - simple.rs: Main implementation file
+       - mod.rs: Module definitions
+     - frbgenerated.rs: Auto-generated bridge code
+     - lib.rs: Library entry point
+   - cargo.toml: Rust dependencies and configuration
+   - .gitignore
 
-`OTHER_LDFLAGS => -force_load ${BUILT_PRODUCTS_DIR}/libhurl.a -lxml2`
+3. `lib/`: Flutter code
+   - rust/: Generated Rust bindings
+   - hurl.dart: Package export file
 
-This fixed the macOS build.
+### Implementation Details
 
-However, testing on iOS and Android proved problematic, as I didn’t have access to Windows or Linux systems. For iOS, adding similar flags didn’t work. I tried various fixes, such as modifying the header search paths, linking frameworks, and changing build phases in Xcode, but none succeeded.
+The core parsing functionality was implemented in `rust/src/api/simple.rs`:
 
-#### Investigation into `libxml2`
+```rust
+/// Parses a Hurl file content and returns its JSON representation
+#[flutter_rust_bridge::frb(sync)]
+pub fn parse_hurl_to_json(content: String) -> Result<String, String> {
+    match parse_hurl_file(&content) {
+        Ok(hurl_file) => {
+            // Convert to JSON using hurlfmt's format_json
+            Ok(format_json(&hurl_file))
+        }
+        Err(errors) => {
+            let mut error_msg = String::new();
+            write!(error_msg, "Failed to parse Hurl file: {:?}", errors).unwrap();
+            Err(error_msg)
+        }
+    }
+}
+```
 
-I learned that `libxml2` is not a system library but a crate that wraps platform-specific libraries. Unfortunately, `libxml2` does not support Android or iOS, causing persistent errors. After consulting the maintainers of Hurl and `flutter_rust_bridge`, I received the following suggestion from the Hurl maintainer:
+For dependencies, I added hurlfmt to `cargo.toml`:
+
+```toml
+[package]
+name = "hurl"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "staticlib"]
+
+[dependencies]
+flutter_rust_bridge = "=2.7.0"
+hurlfmt = "6.0.0"
+hurl_core = "6.0.0"
+```
+
+### Dart Model Implementation
+
+Based on the Hurl documentation, I identified the core data structures:
+- HurlFile: Contains a list of Entries
+- Entries: Composed of Request and Response objects
+
+I implemented these models using the `freezed` package in Dart, creating a clean mapping between the JSON output from the Hurl parser and our Dart data structures. This part of the implementation proved particularly successful and robust.
+
+## Compilation Challenges and Platform Support
+
+### Build Process Overview
+
+The compilation process varies by platform, but generally follows these steps:
+
+1. For local testing in the `hurl/tests` directory, building the Rust component requires:
+```bash
+cd apidash/packages/hurl/rust
+cargo build --release
+```
+
+2. For actual deployment, cargokit manages the platform-specific build process during Flutter's standard build phase. The process involves:
+   - On iOS: Generating and building Pod files
+   - On Android: Creating platform-specific binaries
+   - On macOS/Linux: Building dynamic libraries
+   - On Windows: Generating appropriate DLLs
+
+### Understanding Flutter Rust Bridge on Mobile Platforms
+
+Flutter Rust Bridge generally works seamlessly across platforms as long as the Rust dependencies don't rely on platform-specific implementations. The bridge itself handles the complexity of cross-platform compilation through cargokit, which manages the build process for each target platform. However, when Rust crates depend on system libraries or have platform-specific requirements, complications can arise.
+
+For iOS and Android specifically, the build process involves:
+1. For iOS: Compiling Rust code to a static library that gets embedded in the iOS app bundle
+2. For Android: Creating platform-specific .so files for each supported architecture (arm64-v8a, armeabi-v7a, x86_64)
+
+The challenge comes when dependencies like `libxml2` expect certain system libraries to be available, which may not exist or behave differently on mobile platforms.
+
+### Platform-Specific Challenges
+
+#### macOS Implementation
+
+The main challenge on macOS involved the `libxml2` dependency. I reported this issue on the [Hurl repository](https://github.com/Orange-OpenSource/hurl/issues/3603). The solution required adding specific linker flags to the `apidash/packages/hurl/macos/hurl.podspec`:
+
+```ruby
+spec.pod_target_xcconfig = {
+  'OTHER_LDFLAGS' => '-force_load ${BUILT_PRODUCTS_DIR}/libhurl.a -lxml2'
+}
+```
+
+#### iOS and Android Challenges
+
+The iOS and Android implementations faced more significant hurdles, primarily due to `libxml2` compatibility issues. Unlike macOS, these platforms don't include `libxml2` as a system library, and the Rust crate wrapper doesn't support mobile platforms.
+
+The following approaches were attempted for iOS:
+1. Modifying header search paths
+2. Adding framework linkage
+3. Adjusting Xcode build phases
+4. Experimenting with different linking configurations
+
+None of these attempts proved successful, leading to a deeper investigation of the `libxml2` dependency.
+
+#### Maintainer Feedback and Investigation
+
+After reaching out to both the Hurl and Flutter Rust Bridge maintainers, I received valuable feedback from the Hurl maintainer:
 
 > _"I'm not an expert in iOS/Android, but what I would do is try to build something smaller, maybe just calling libxml through a Flutter component, then trying to build with libxml but with the Rust crate wrapper, etc."_ ([GitHub comment](https://github.com/Orange-OpenSource/hurl/issues/3603#issuecomment-2611159759))
 
-#### Current Status and Potential Solutions
+This suggestion highlighted a crucial debugging approach: isolating the `libxml2` integration from the rest of the Hurl parsing functionality. The idea is to:
 
-At this point, I’ve committed all my code to the repository in a fork. Here are some potential solutions I believe might work:
+1. First verify that we can call `libxml2` directly from Flutter
+2. Then attempt to use the Rust crate wrapper
+3. Finally integrate it with the full Hurl parser
 
-1. **Use Dart Native FFIs**: Currently under an experimental flag, as suggested by the `flutter_rust_bridge` maintainer.
-2. **Revert to an Older Version of Hurlfmt**: Use a version of the library from before it transitioned to `libxml` for performance improvements.
-3. **Revisit My Custom Parser**: Complete the parser I started building with `petitparser`.
+This systematic approach could help identify exactly where the build process breaks down on mobile platforms and potentially lead to a workable solution.
 
-If anyone knows a solution to these challenges or has suggestions, I’d appreciate the help!
+### Current Status and Potential Solutions
 
-Current Branches in my fork:
+After extensive testing and consultation with both the Hurl and Flutter Rust Bridge maintainers, I've identified several potential paths forward:
 
--   [Hurl Parser with flutter_rust_bridge](https://github.com/WrathOP/apidash/tree/hurl-parser-rust)
--   [Hurl Parser with petiteparser](https://github.com/WrathOP/apidash/tree/hurl-parser-added)
+1. **Dart Native FFIs**: This approach is currently experimental but shows promise. The Flutter Rust Bridge maintainer suggested this option in this [Github comment](https://github.com/fzyzcjy/flutter_rust_bridge/issues/2510#issuecomment-2608469143).
+
+2. **Legacy Hurlfmt Version**: We could use a version of the library from before the `libxml` transition. This would avoid the platform compatibility issues but might miss out on recent performance improvements.
+
+3. **Custom Parser Completion**: Returning to and completing the `petitparser`-based implementation could provide a more controlled, albeit maintenance-heavy solution.
+
+## Code Availability
+
+The current implementation is available in two branches of my fork:
+- [Hurl Parser with flutter_rust_bridge](https://github.com/WrathOP/apidash/tree/hurl-parser-rust)
+- [Hurl Parser with petiteparser](https://github.com/WrathOP/apidash/tree/hurl-parser-added)
+
+Feel free to contribute ideas or suggestions for addressing these challenges!
