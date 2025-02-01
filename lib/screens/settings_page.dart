@@ -240,7 +240,8 @@ class SettingsPage extends ConsumerWidget {
                       },
                     )
                   : kSizedBoxEmpty,
-              
+                !kIsWeb
+                  ?
                 ListTile(
                 hoverColor: kColorTransparent,
                 title: const Text('Interval Between Ping Requests'),
@@ -260,7 +261,7 @@ class SettingsPage extends ConsumerWidget {
                   },
                   ),
                 ),
-                ),
+                ) : kSizedBoxEmpty,
               ListTile(
                 title: const Text('About'),
                 subtitle: const Text(

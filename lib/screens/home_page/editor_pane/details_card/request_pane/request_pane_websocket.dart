@@ -6,7 +6,7 @@ import 'package:apidash/widgets/widgets.dart';
 import 'request_headers.dart';
 import 'request_body.dart';
 import 'request_params.dart';
-
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class EditWebSocketRequestPane extends ConsumerWidget {
   const EditWebSocketRequestPane({super.key});
@@ -22,10 +22,8 @@ class EditWebSocketRequestPane extends ConsumerWidget {
         0;
     final paramLength = ref.watch(selectedRequestModelProvider
             .select((value) => value?.webSocketRequestModel?.paramsMap.length)) ??
-      0;
-      
-   
-    
+        0;
+
     return RequestPane(
       selectedId: selectedId,
       codePaneVisible: codePaneVisible,
@@ -41,17 +39,17 @@ class EditWebSocketRequestPane extends ConsumerWidget {
       },
       showIndicators: [
         paramLength > 0,
-        headerLength > 0,
+        !kIsWeb && headerLength > 0,
         true,
       ],
       tabLabels: const [
         kLabelURLParams,
-        kLabelHeaders,
+        if(!kIsWeb) kLabelHeaders,
         kLabelMessage,
       ],
       children: const [
         EditRequestURLParams(),
-        EditRequestHeaders(),
+        if (!kIsWeb) EditRequestHeaders(),
         EditRequestBody(),
       ],
     );
