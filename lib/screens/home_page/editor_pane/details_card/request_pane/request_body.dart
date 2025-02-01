@@ -39,8 +39,21 @@ class EditRequestBody extends ConsumerWidget {
 
     return Column(
       children: [
-        (apiType == APIType.webSocket) //dont forget to make it switch and put for rest
-            ? SizedBox(
+        switch(apiType){
+        APIType.rest => const SizedBox(
+                height: kHeaderHeight,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Select Content Type:",
+                    ),
+                    DropdownButtonBodyContentType(),
+                  ],
+                ),
+        ),
+        APIType.webSocket => //dont forget to make it switch and put for rest
+             SizedBox(
                 height: kHeaderHeight,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -69,8 +82,10 @@ class EditRequestBody extends ConsumerWidget {
                     ),
                   ],
                 ),
-              )
-            : kSizedBoxEmpty,
+              ),
+         _=> kSizedBoxEmpty,
+            
+        },
         switch (apiType) {
           APIType.rest => Expanded(
               child: switch (contentType) {

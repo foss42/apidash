@@ -23,6 +23,9 @@ class EditWebSocketRequestPane extends ConsumerWidget {
     final paramLength = ref.watch(selectedRequestModelProvider
             .select((value) => value?.webSocketRequestModel?.paramsMap.length)) ??
         0;
+    final message = ref.watch(selectedRequestModelProvider
+            .select((value) => value?.webSocketRequestModel?.message)) ??
+        "";
 
     return RequestPane(
       selectedId: selectedId,
@@ -40,7 +43,7 @@ class EditWebSocketRequestPane extends ConsumerWidget {
       showIndicators: [
         paramLength > 0,
         !kIsWeb && headerLength > 0,
-        true,
+        message.isNotEmpty,
       ],
       tabLabels: const [
         kLabelURLParams,
