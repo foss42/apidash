@@ -26,6 +26,7 @@ final requestSequenceProvider = StateProvider<List<String>>((ref) {
 });
 
 final httpClientManager = HttpClientManager();
+final WebSocketManager webSocketManager = WebSocketManager();
 
 final StateNotifierProvider<CollectionStateNotifier, Map<String, RequestModel>?>
     collectionStateNotifierProvider =
@@ -33,7 +34,8 @@ final StateNotifierProvider<CollectionStateNotifier, Map<String, RequestModel>?>
           ref,
           hiveHandler,
           httpClientManager,
-        ));
+          webSocketManager
+  ));
 
 class CollectionStateNotifier
     extends StateNotifier<Map<String, RequestModel>?> {
@@ -41,6 +43,7 @@ class CollectionStateNotifier
     this.ref,
     this.hiveHandler,
     this.httpClientManager,
+    this.webSocketManager
   ) : super(null) {
     var status = loadData();
     Future.microtask(() {
@@ -58,6 +61,8 @@ class CollectionStateNotifier
   final HiveHandler hiveHandler;
   final baseHttpResponseModel = const HttpResponseModel();
   final HttpClientManager httpClientManager;
+  final WebSocketManager webSocketManager;
+  
 
   bool hasId(String id) => state?.keys.contains(id) ?? false;
 
@@ -74,6 +79,7 @@ class CollectionStateNotifier
     final newRequestModel = RequestModel(
       id: id,
       httpRequestModel: const HttpRequestModel(),
+      webSocketRequestModel: const WebSocketRequestModel(),
     );
     var map = {...state!};
     map[id] = newRequestModel;
@@ -226,47 +232,74 @@ class CollectionStateNotifier
     List<FormDataModel>? formData,
     int? responseStatus,
     String? message,
+    String? webSocketMessage,
+    ContentTypeWebSocket? contentType,
     HttpResponseModel? httpResponseModel,
-  }) {
+    WebSocketResponseModel? webSocketResponseModel,
+}) {
     final rId = id ?? ref.read(selectedIdStateProvider);
     if (rId == null) {
-      debugPrint("Unable to update as Request Id is null");
-      return;
+        debugPrint("Unable to update as Request Id is null");
+        return;
     }
+
     var currentModel = state![rId]!;
+    var currentApiType = apiType ?? currentModel.apiType;
     var currentHttpRequestModel = currentModel.httpRequestModel;
+    final newHttpRequestModel = currentApiType == APIType.rest ||  currentApiType ==APIType.graphql ?
+    currentHttpRequestModel?.copyWith(
+            method: method ?? currentHttpRequestModel.method,
+            url: url ?? currentHttpRequestModel.url,
+            headers: headers ?? currentHttpRequestModel.headers,
+            params: params ?? currentHttpRequestModel.params,
+            isHeaderEnabledList: isHeaderEnabledList ??
+                currentHttpRequestModel.isHeaderEnabledList,
+            isParamEnabledList:
+                isParamEnabledList ?? currentHttpRequestModel.isParamEnabledList,
+            bodyContentType:
+                bodyContentType ?? currentHttpRequestModel.bodyContentType,
+            body: body ?? currentHttpRequestModel.body,
+            query: query ?? currentHttpRequestModel.query,
+            formData: formData ?? currentHttpRequestModel.formData,
+        ) : currentHttpRequestModel;
+
+    var currentWebSocketRequestModel = currentModel.webSocketRequestModel ?? const WebSocketRequestModel();
+
+    final newWebSocketRequestModel = currentApiType == APIType.webSocket
+        ? currentWebSocketRequestModel.copyWith(
+            url: url ?? currentWebSocketRequestModel.url,
+            contentType: contentType ?? currentWebSocketRequestModel.contentType,
+            headers: headers ?? currentWebSocketRequestModel.headers,
+            params: params ?? currentWebSocketRequestModel.params,
+            isHeaderEnabledList: isHeaderEnabledList ??
+                currentWebSocketRequestModel.isHeaderEnabledList,
+            isParamEnabledList:
+                isParamEnabledList ?? currentWebSocketRequestModel.isParamEnabledList,
+            message: webSocketMessage ?? currentWebSocketRequestModel.message,
+        )
+        : currentWebSocketRequestModel;
+
     final newModel = currentModel.copyWith(
-      apiType: apiType ?? currentModel.apiType,
-      name: name ?? currentModel.name,
-      description: description ?? currentModel.description,
-      requestTabIndex: requestTabIndex ?? currentModel.requestTabIndex,
-      httpRequestModel: currentHttpRequestModel?.copyWith(
-        method: method ?? currentHttpRequestModel.method,
-        url: url ?? currentHttpRequestModel.url,
-        headers: headers ?? currentHttpRequestModel.headers,
-        params: params ?? currentHttpRequestModel.params,
-        isHeaderEnabledList:
-            isHeaderEnabledList ?? currentHttpRequestModel.isHeaderEnabledList,
-        isParamEnabledList:
-            isParamEnabledList ?? currentHttpRequestModel.isParamEnabledList,
-        bodyContentType:
-            bodyContentType ?? currentHttpRequestModel.bodyContentType,
-        body: body ?? currentHttpRequestModel.body,
-        query: query ?? currentHttpRequestModel.query,
-        formData: formData ?? currentHttpRequestModel.formData,
-      ),
-      responseStatus: responseStatus ?? currentModel.responseStatus,
-      message: message ?? currentModel.message,
-      httpResponseModel: httpResponseModel ?? currentModel.httpResponseModel,
+        apiType: apiType ?? currentModel.apiType,
+        name: name ?? currentModel.name,
+        description: description ?? currentModel.description,
+        requestTabIndex: requestTabIndex ?? currentModel.requestTabIndex,
+        httpRequestModel: newHttpRequestModel,
+        webSocketRequestModel: newWebSocketRequestModel,
+        responseStatus: responseStatus ?? currentModel.responseStatus,
+        message: message ?? currentModel.message,
+        httpResponseModel: httpResponseModel ?? currentModel.httpResponseModel,
     );
 
     var map = {...state!};
     map[rId] = newModel;
     state = map;
     unsave();
-  }
+}
+
 
   Future<void> sendRequest() async {
+    
     final requestId = ref.read(selectedIdStateProvider);
     ref.read(codePaneVisibleStateProvider.notifier).state = false;
     final defaultUriScheme = ref.read(settingsProvider).defaultUriScheme;
@@ -281,6 +314,7 @@ class CollectionStateNotifier
     }
 
     APIType apiType = requestModel!.apiType;
+
     HttpRequestModel substitutedHttpRequestModel =
         getSubstitutedHttpRequestModel(requestModel.httpRequestModel!);
 
@@ -335,6 +369,8 @@ class CollectionStateNotifier
         ),
         httpRequestModel: substitutedHttpRequestModel,
         httpResponseModel: httpResponseModel,
+        webSocketRequestModel:  newRequestModel.webSocketRequestModel!,
+        webSocketResponseModel: newRequestModel.webSocketResponseModel ??const  WebSocketResponseModel() //still working
       );
       ref.read(historyMetaStateNotifier.notifier).addHistoryRequest(model);
     }
@@ -431,4 +467,299 @@ class CollectionStateNotifier
       activeEnvId,
     );
   }
+
+  Future<void> sendFrames() async {
+    final requestId = ref.read(selectedIdStateProvider);
+    ref.read(codePaneVisibleStateProvider.notifier).state = false;
+   
+
+    if (requestId == null || state == null) {
+      return;
+    }
+    RequestModel? requestModel = state![requestId];
+    var currentWebSocketRequestModel = requestModel!.webSocketRequestModel;
+    if (currentWebSocketRequestModel == null) {
+      return;
+    }
+
+    
+    String message = currentWebSocketRequestModel.message ?? '';
+    late  (String?,DateTime?,String?) frame;
+    if(currentWebSocketRequestModel.contentType == ContentTypeWebSocket.text){
+      frame = await webSocketManager.sendText(requestId,message);
+    }else if(currentWebSocketRequestModel.contentType == ContentTypeWebSocket.binary){
+      frame = await webSocketManager.sendBinary(requestId,message);
+    }
+    
+    late WebSocketResponseModel newWebSocketResponseModel;
+    if(frame.$1 != null){
+       newWebSocketResponseModel = requestModel.webSocketResponseModel!.copyWith(
+      frames: [
+        ...?requestModel.webSocketResponseModel?.frames,
+        WebSocketFrameModel(
+          id: getNewUuid(),
+          message:frame.$1!,
+          timeStamp: frame.$2,
+          isSend: true
+        ),  
+      ],
+    );
+     
+    }else if(frame.$3 != null){
+      newWebSocketResponseModel = requestModel.webSocketResponseModel!.copyWith(
+      frames: [
+        ...?requestModel.webSocketResponseModel?.frames,
+        WebSocketFrameModel(
+          id: getNewUuid(),
+          message:frame.$3!,
+          timeStamp: null,
+          isSend: true
+        ),  
+      ],
+    );
+      
+
+    }
+
+    
+    
+
+    final newRequestModel = requestModel.copyWith(
+        webSocketResponseModel: newWebSocketResponseModel,
+      );
+   
+    var map = {...state!};
+    map[requestId] = newRequestModel;
+    state = map;
+
+    unsave();
+  }
+
+
+  Future<void> connect() async {
+    final requestId = ref.read(selectedIdStateProvider);
+    ref.read(codePaneVisibleStateProvider.notifier).state = false;
+    if (requestId == null || state == null) {
+      return;
+    }
+
+    RequestModel? requestModel = state![requestId];
+
+    if (requestModel?.webSocketRequestModel == null) {
+      return;
+    }
+
+    bool isPinging = ref.read(settingsProvider).isPinging;
+   
+    webSocketManager.createWebSocketClient(requestId);
+    if(isPinging){
+      Duration durationPinging = Duration(milliseconds: ref.read(settingsProvider).pingInterval!);
+      webSocketManager.setPingInterval(requestId,durationPinging);
+    }else{
+      webSocketManager.setPingInterval(requestId,null);
+    }
+
+    
+    
+    final webSocketRequestModel = requestModel!.webSocketRequestModel!;
+    final url = webSocketRequestModel.url;
+    final headers = webSocketRequestModel.headers;
+    final params = webSocketRequestModel.params;
+    var map = {...state!};
+
+    map[requestId] = requestModel.copyWith(
+      isWorking: true,
+      sendingTime: DateTime.now(),
+      webSocketResponseModel: const WebSocketResponseModel(),
+    );
+
+    requestModel = map[requestId];
+    
+    state = map;
+    (String?,DateTime?) result = await webSocketManager.connect(requestId,url,headers,params);  
+
+      
+    
+    if(result.$1 == kMsgConnected){
+    map = {...state!};
+
+    map[requestId] = requestModel!.copyWith(
+      isWorking: false,
+      responseStatus: 101,
+      message: kResponseCodeReasons[101],
+      webSocketRequestModel: webSocketRequestModel.copyWith(
+        isConnected:true
+      ),
+      
+    );
+
+    
+    requestModel = map[requestId];  
+    state = map;
+    
+    webSocketManager.listen(
+      requestId,
+      (message) async{
+        
+        map = {...state!};
+        requestModel = map[requestId];  
+
+        
+        WebSocketResponseModel webSocketResponseModel = requestModel!.webSocketResponseModel!;
+       
+        WebSocketResponseModel newWebSocketResponseModel = webSocketResponseModel.copyWith(
+          frames: [...webSocketResponseModel.frames, WebSocketFrameModel(
+            id: getNewUuid(),
+            message: message,
+            timeStamp:DateTime.now(),
+            isSend: false
+          )]
+        );
+        var newRequestModel = requestModel!.copyWith(
+          isWorking: false,
+          responseStatus: 101,
+          webSocketResponseModel: newWebSocketResponseModel,
+        );
+       
+
+     
+      map[requestId] = newRequestModel;
+
+      state = map;
+      
+      },
+      onError: (error) async{
+        var statusCode = error.statusCode;
+        map = {...state!};
+        requestModel = map[requestId];  
+        WebSocketResponseModel webSocketResponseModel = requestModel!.webSocketResponseModel!;
+        WebSocketResponseModel newWebSocketResponseModel = webSocketResponseModel.copyWith(
+          frames: [...webSocketResponseModel.frames, WebSocketFrameModel(
+            id: getNewUuid(),
+            message: error.toString(),
+            timeStamp:DateTime.now(),
+            isSend: true
+          )]
+        );
+        var newRequestModel = requestModel!.copyWith(
+          responseStatus: statusCode,
+          message: kResponseCodeReasons[statusCode],
+          webSocketResponseModel: newWebSocketResponseModel,
+        );
+        map[requestId] = newRequestModel;
+        state = map;
+        
+      },
+      onDone: () async{
+         map = {...state!};
+        requestModel = map[requestId];  
+        WebSocketRequestModel webSocketRequestModel = requestModel!.webSocketRequestModel!;
+        WebSocketRequestModel newWebSocketRequestModel = webSocketRequestModel.copyWith(
+          isConnected: false
+        );
+        var newRequestModel = requestModel!.copyWith(
+          webSocketRequestModel: newWebSocketRequestModel,
+        );
+        map[requestId] = newRequestModel;
+        state = map;
+        
+        
+      },
+      cancelOnError: false,
+    );
+  }else{
+    map = {...state!};
+    WebSocketResponseModel newWebSocketResponseModel = requestModel!.webSocketResponseModel!.copyWith(
+          frames: [...requestModel.webSocketResponseModel!.frames, WebSocketFrameModel(
+            id: getNewUuid(),
+            message: result.$1!,
+            timeStamp:DateTime.now(),
+            isSend: false
+    )]);
+    map[requestId] = requestModel.copyWith(
+      isWorking: false,
+      responseStatus: 1002,
+      message: kResponseCodeReasons[1002],
+      sendingTime: result.$2,
+      webSocketResponseModel: newWebSocketResponseModel,
+    );
+    
+    state = map;
+  }
+  }
+
+
+  Future<void> disconnect() async {
+    final requestId = ref.read(selectedIdStateProvider);
+    if (requestId == null || state == null) {
+      print(requestId);
+      return;
+    }
+
+    webSocketManager.disconnect(requestId);
+    
+    
+    
+      RequestModel? requestModel = state![requestId];
+       WebSocketRequestModel webSocketRequestModel = requestModel!.webSocketRequestModel!;
+        WebSocketRequestModel newWebSocketRequestModel = webSocketRequestModel.copyWith(
+          isConnected: false
+        );
+
+    var newRequestModel = requestModel.copyWith(
+        webSocketRequestModel: newWebSocketRequestModel,
+    );
+       
+
+    var map = {...state!};
+    map[requestId] = newRequestModel;
+    state = map;
+
+  }
+
+
+  void deleteAllFrames(){ 
+    final requestId = ref.read(selectedIdStateProvider);
+    if (requestId == null || state == null) {
+      return;
+    }
+    RequestModel? requestModel = state![requestId];
+    WebSocketResponseModel webSocketResponseModel = requestModel!.webSocketResponseModel!;
+    WebSocketResponseModel newWebSocketResponseModel = webSocketResponseModel.copyWith(
+          frames: [],
+    );
+
+    var newRequestModel = requestModel.copyWith(
+          webSocketResponseModel: newWebSocketResponseModel,
+    );
+     var map = {...state!};
+    map[requestId] = newRequestModel;
+    state = map;
+ }
+
+  void deleteFrame(String id){
+    final requestId = ref.read(selectedIdStateProvider);
+    if (requestId == null || state == null) {
+      return;
+    }
+    RequestModel? requestModel = state![requestId];
+    if (requestModel == null || state == null) {
+      return;
+    }
+    WebSocketResponseModel webSocketResponseModel = requestModel!.webSocketResponseModel!;
+    List<WebSocketFrameModel> newFrames = requestModel!.webSocketResponseModel!.frames.where((element) => element.id != id).toList();
+    WebSocketResponseModel newWebSocketResponseModel = webSocketResponseModel.copyWith(
+          frames: newFrames,
+    );
+
+    var newRequestModel = requestModel.copyWith(
+          webSocketResponseModel: newWebSocketResponseModel,
+    );
+     var map = {...state!};
+    map[requestId] = newRequestModel;
+    state = map;
+
+  }
+    
+
 }

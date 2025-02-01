@@ -5,10 +5,11 @@ import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'request_headers.dart';
 import 'request_body.dart';
+import 'request_params.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
-
-class EditGraphQLRequestPane extends ConsumerWidget {
-  const EditGraphQLRequestPane({super.key});
+class EditWebSocketRequestPane extends ConsumerWidget {
+  const EditWebSocketRequestPane({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -17,14 +18,15 @@ class EditGraphQLRequestPane extends ConsumerWidget {
         selectedRequestModelProvider.select((value) => value?.requestTabIndex));
     final codePaneVisible = ref.watch(codePaneVisibleStateProvider);
     final headerLength = ref.watch(selectedRequestModelProvider
-            .select((value) => value?.httpRequestModel?.headersMap.length)) ??
+            .select((value) => value?.webSocketRequestModel?.headersMap.length)) ??
         0;
-    final hasQuery = ref.watch(selectedRequestModelProvider
-            .select((value) => value?.httpRequestModel?.hasQuery)) ??
-        false;
-    if (tabIndex >= 2) {
-      tabIndex = 0;
-    }
+    final paramLength = ref.watch(selectedRequestModelProvider
+            .select((value) => value?.webSocketRequestModel?.paramsMap.length)) ??
+        0;
+    final message = ref.watch(selectedRequestModelProvider
+            .select((value) => value?.webSocketRequestModel?.message)) ??
+        "";
+
     return RequestPane(
       selectedId: selectedId,
       codePaneVisible: codePaneVisible,
@@ -39,15 +41,18 @@ class EditGraphQLRequestPane extends ConsumerWidget {
             .update(requestTabIndex: index);
       },
       showIndicators: [
-        headerLength > 0,
-        hasQuery,
+        paramLength > 0,
+        !kIsWeb && headerLength > 0,
+        message.isNotEmpty,
       ],
       tabLabels: const [
-        kLabelHeaders,
-        kLabelQuery,
+        kLabelURLParams,
+        if(!kIsWeb) kLabelHeaders,
+        kLabelMessage,
       ],
       children: const [
-        EditRequestHeaders(),
+        EditRequestURLParams(),
+        if (!kIsWeb) EditRequestHeaders(),
         EditRequestBody(),
       ],
     );

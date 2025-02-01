@@ -42,20 +42,41 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
     final selectedId = ref.watch(selectedIdStateProvider);
     ref.watch(selectedRequestModelProvider
         .select((value) => value?.httpRequestModel?.params?.length));
-    var rP = ref.read(selectedRequestModelProvider)?.httpRequestModel?.params;
-    bool isParamsEmpty = rP == null || rP.isEmpty;
-    paramRows = isParamsEmpty
-        ? [
-            kNameValueEmptyModel,
-          ]
-        : rP + [kNameValueEmptyModel];
-    isRowEnabledList = [
+    ref.watch(selectedRequestModelProvider
+        .select((value) => value?.webSocketRequestModel?.params?.length));
+    var apiType = ref.watch(selectedRequestModelProvider
+        .select((value) => value?.apiType));
+    late List<NameValueModel>? rP;
+    
+    
+    if(apiType == APIType.webSocket){
+      rP= ref.read(selectedRequestModelProvider)?.webSocketRequestModel?.params;
+      isRowEnabledList = [
+      ...(ref
+              .read(selectedRequestModelProvider)
+              ?.webSocketRequestModel
+              ?.isParamEnabledList ??
+          List.filled(rP?.length ?? 0, true, growable: true))
+    ];
+
+    }else{
+       rP= ref.read(selectedRequestModelProvider)?.httpRequestModel?.params;
+      isRowEnabledList = [
       ...(ref
               .read(selectedRequestModelProvider)
               ?.httpRequestModel
               ?.isParamEnabledList ??
           List.filled(rP?.length ?? 0, true, growable: true))
     ];
+    }
+    bool isParamsEmpty = rP == null || rP.isEmpty;
+    paramRows = isParamsEmpty
+        ? [
+            kNameValueEmptyModel,
+          ]
+        : rP + [kNameValueEmptyModel];
+    
+    
     isRowEnabledList.add(false);
     isAddingRow = false;
 
