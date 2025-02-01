@@ -1,8 +1,9 @@
 # Flutter Rust Bridge Experiment for Parsing Hurl
+*Author: [WrathOP](https://github.com/WrathOP)*
 
 ## Background and Initial Approach
 
-When I first tackled this project, I started by writing a custom parser using `petitparser`. After spending about a week on this approach, I received valuable feedback from the maintainer who advised against it. Their main concern was future compatibility - if `hurl.dev` were to implement changes, my custom parser would quickly become outdated. While I ultimately moved away from this approach, the code remains available in a branch, where I had successfully implemented request and assertion parsing, though it wasn't complete.
+When I first started adding hurl parser in API Dash, I wrote a custom parser using `petitparser` for the [hurl grammar](https://hurl.dev/docs/grammar.html). After spending about a week on this approach, I received some feedback from the maintainer to look into some approach of integrating the hurl Rust implementation directly rather than re-implementing the wheel. So that any future changes directly flow into the project.
 
 ## Understanding Flutter Rust Bridge
 
@@ -10,7 +11,7 @@ When I first tackled this project, I started by writing a custom parser using `p
 
 Flutter Rust Bridge serves as a powerful tool for developing Flutter plugins using Rust. It automatically generates all the necessary code for both Flutter and Rust, creating a seamless bridge between the two languages. This approach is particularly valuable when you want to harness Rust's performance and safety features within Flutter projects.
 
-The official documentation highlights three key features:
+The [official documentation](https://cjycode.com/flutter_rust_bridge/) highlights three key features:
 1. Write standard Rust code, including complex features like arbitrary types, closures, mutable references, async functions, and traits
 2. Call Rust code from Flutter as if it were native Flutter code
 3. Automatic generation of all intermediate code required for communication
@@ -30,7 +31,10 @@ Two main factors drove my decision to use Flutter Rust Bridge:
 While there are several examples of Flutter Rust Bridge usage available, such as [flutter smooth](https://github.com/fzyzcjy/flutter_smooth) and the [official documentation demo](https://cjycode.com/flutter_rust_bridge/demo/), I found that plugin-specific examples were scarce. Here's a detailed breakdown of my setup process:
 
 1. **Project Initialization**
-Instead of using the standard Flutter plugin template (`flutter create --template=plugin hurl`), Flutter Rust Bridge provides its own initialization command. From the apidash/packages directory, I ran:
+Instead of using the standard Flutter plugin template (`flutter create --template=plugin hurl`), Flutter Rust Bridge provides its own initialization command.
+
+Inside the `apidash/packages` directory, I executed:
+
 ```bash
 flutter_rust_bridge_codegen create hurl --template plugin
 ```
@@ -60,7 +64,7 @@ This command generated three main directories:
 
 ### Implementation Details
 
-The core parsing functionality was implemented in `rust/src/api/simple.rs`:
+The core parsing functionality was implemented in [`rust/src/api/simple.rs`](https://github.com/foss42/apidash/blob/9a201dd10af6e6804c7fd8fab8352701ab722fb2/packages/hurl/rust/src/api/simple.rs):
 
 ```rust
 /// Parses a Hurl file content and returns its JSON representation
