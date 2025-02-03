@@ -115,7 +115,82 @@ Once you have .NET(C#) and `HttpClient` installed, follow these steps to execute
 
 ## C# (RestSharp)
 
-TODO
+Here are the detailed instructions for running the generated API Dash code in C# (using RestSharp) for macOS, Windows, and Linux:
+
+### 1. Setting Up the C# Development Environment
+
+#### macOS and Windows
+1. **Install .NET SDK**
+   - Visit the [official .NET download page](https://dotnet.microsoft.com/download).
+   - Download and install the latest .NET SDK for macOS.
+2. **Verify Installation**
+   - Open the terminal and run the following command to verify the installation:
+     ```bash
+     dotnet --version
+     ```
+
+#### Linux
+1. **Install .NET SDK**
+   - Run the following commands based on your distribution:
+     - For Ubuntu/Debian-based systems:
+       ```bash
+       sudo apt update
+       sudo apt install dotnet-sdk-7.0
+       ```
+     - For Fedora/CentOS-based systems:
+       ```bash
+       sudo dnf install dotnet-sdk-7.0
+       ```
+2. **Verify Installation**
+   - Open the terminal and run the following command to verify the installation:
+     ```bash
+     dotnet --version
+     ```
+
+### 2. Preparing a Project
+
+#### In Visual Studio
+
+1. **Create a New Project**
+   - Open Visual Studio and select **Create a new project**.
+   - Choose the **Console Application (.NET Core)** template and create the project.
+
+2. **Install `RestSharp`**
+   - Go to Tools > NuGet Package Manager > Manage NuGet Packages for Solution.
+   - Under the Browse tab, search for `RestSharp` and install it.
+
+#### Using the CLI
+
+1. **Create a Project**
+   ```bash
+   dotnet new console -n RestSharpExample
+   cd RestSharpExample
+   ```
+
+2. **Install the Package**
+   ```bash
+   dotnet add package RestSharp
+   ```
+   
+### 3. Execute the generated code
+
+Once you have .NET(C#) and `RestSharp` installed, follow these steps to execute the generated code:
+
+1. Open a IDE/text editor (Visual Studio, VS Code or any other text editor).
+2. Copy the generated code from API Dash.
+3. Paste the code into your project like program.cs
+
+#### In Visual Studio
+
+1. Click the **Start Debugging (F5)** button from the top menu to run the project.
+2. The output window will display the API response.
+
+#### Using the CLI
+
+1. Open the terminal at the project root directory and run the following command:
+   ```bash
+   dotnet run
+   ```
 
 ## Dart (http)
 
@@ -533,7 +608,50 @@ TODO
 
 ## Kotlin (okhttp3)
 
-TODO
+Here are the detailed instructions for running the generated API Dash code in Kotlin (using okhttp3) for macOS, Windows, and Linux:
+
+### 1. Install Kotlin
+
+To run Kotlin code, you need to install Kotlin by following the below instructions:
+
+- Go to [Kotlin Installation Guide](https://kotlinlang.org/docs/getting-started.html#install-kotlin) for detailed steps.
+- Kotlin is also included in IntelliJ IDEA and Android Studio. You can also download and install one of these IDEs to start using Kotlin. 
+
+### 2. Add `okhttp` library
+
+To use `okhttp3` in your Kotlin project, you need to include it as a dependency. If you're using **Gradle**, follow these steps:
+
+- Open the `build.gradle` file in your project.
+- Add the following dependency in the `dependencies` section:
+
+```gradle
+implementation("com.squareup.okhttp3:okhttp:4.12.0")
+```
+
+- Sync your project to apply the dependency.
+
+### 3. Execute the generated code
+
+After setting up Kotlin and `okhttp3`, follow these steps to run the generated code:
+
+#### Using IDE
+
+1. Open the installed IDE like Android Studio.
+2. Create a new Kotlin file.
+3. Copy the generated code from API Dash and paste it in the Kotlin file.
+4. Run the Kotlin file by clicking the `Run` button in the IDE or by using the command line.
+
+#### Using command line
+
+1. Create a new Kotlin file.
+2. Copy the generated code from API Dash and paste it in the Kotlin file (`api_test.kt`).
+3. Navigate to the project directory using the terminal or command prompt.
+4. Compile and run the Kotlin file by executing:
+
+```bash
+kotlinc api_test.kt -include-runtime -d api_test.jar
+java -jar api_test.jar
+```
 
 ## PHP (curl)
 
