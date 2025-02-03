@@ -34,7 +34,7 @@ class SettingsModel {
   final bool isSSLDisabled;
 
   // Proxy settings
-  final ProxySettings proxySettings;
+  final ProxySettings? proxySettings;
 
   SettingsModel copyWith({
     bool? isDark,
@@ -66,7 +66,7 @@ class SettingsModel {
           historyRetentionPeriod ?? this.historyRetentionPeriod,
       workspaceFolderPath: workspaceFolderPath ?? this.workspaceFolderPath,
       isSSLDisabled: isSSLDisabled ?? this.isSSLDisabled,
-      proxySettings: proxySettings ?? this.proxySettings,
+      proxySettings: proxySettings,
     );
   }
 
@@ -99,13 +99,16 @@ class SettingsModel {
     final dx = data["dx"] as double?;
     final dy = data["dy"] as double?;
     Size? size;
+
     if (width != null && height != null) {
       size = Size(width, height);
     }
     Offset? offset;
+
     if (dx != null && dy != null) {
       offset = Offset(dx, dy);
     }
+
     final defaultUriSchemeStr = data["defaultUriScheme"] as String?;
     SupportedUriSchemes? defaultUriScheme;
     if (defaultUriSchemeStr != null) {
@@ -116,6 +119,7 @@ class SettingsModel {
         // pass
       }
     }
+
     final defaultCodeGenLangStr = data["defaultCodeGenLang"] as String?;
     CodegenLanguage? defaultCodeGenLang;
     if (defaultCodeGenLangStr != null) {
@@ -126,6 +130,7 @@ class SettingsModel {
         // pass
       }
     }
+
     final saveResponses = data["saveResponses"] as bool?;
     final promptBeforeClosing = data["promptBeforeClosing"] as bool?;
     final activeEnvironmentId = data["activeEnvironmentId"] as String?;
@@ -139,8 +144,18 @@ class SettingsModel {
         // pass
       }
     }
+
     final workspaceFolderPath = data["workspaceFolderPath"] as String?;
     final isSSLDisabled = data["isSSLDisabled"] as bool?;
+
+    ProxySettings? proxySettings;
+    if (data["proxySettings"] != null) {
+      try {
+        proxySettings = ProxySettings.fromJson(Map<String, dynamic>.from(data["proxySettings"]));
+      } catch (e) {
+        // pass
+      }
+    }
 
     const sm = SettingsModel();
 
@@ -158,7 +173,7 @@ class SettingsModel {
           historyRetentionPeriod ?? HistoryRetentionPeriod.oneWeek,
       workspaceFolderPath: workspaceFolderPath,
       isSSLDisabled: isSSLDisabled,
-      proxySettings: ProxySettings.fromJson(data["proxySettings"]),
+      proxySettings: proxySettings,
     );
   }
 
@@ -178,7 +193,7 @@ class SettingsModel {
       "historyRetentionPeriod": historyRetentionPeriod.name,
       "workspaceFolderPath": workspaceFolderPath,
       "isSSLDisabled": isSSLDisabled,
-      "proxySettings": proxySettings,
+      "proxySettings": proxySettings?.toJson(),
     };
   }
 

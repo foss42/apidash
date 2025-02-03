@@ -1,5 +1,4 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:json_annotation/json_annotation.dart';
 
 part 'proxy_settings_model.freezed.dart';
 part 'proxy_settings_model.g.dart';

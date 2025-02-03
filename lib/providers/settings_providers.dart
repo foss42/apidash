@@ -35,21 +35,26 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
     bool? isSSLDisabled,
     ProxySettings? proxySettings,
   }) async {
-    state = state.copyWith(
-      isDark: isDark ?? state.isDark,
-      alwaysShowCollectionPaneScrollbar: alwaysShowCollectionPaneScrollbar ?? state.alwaysShowCollectionPaneScrollbar,
-      size: size ?? state.size,
-      offset: offset ?? state.offset,
-      defaultUriScheme: defaultUriScheme ?? state.defaultUriScheme,
-      defaultCodeGenLang: defaultCodeGenLang ?? state.defaultCodeGenLang,
-      saveResponses: saveResponses ?? state.saveResponses,
-      promptBeforeClosing: promptBeforeClosing ?? state.promptBeforeClosing,
-      activeEnvironmentId: activeEnvironmentId ?? state.activeEnvironmentId,
-      historyRetentionPeriod: historyRetentionPeriod ?? state.historyRetentionPeriod,
-      workspaceFolderPath: workspaceFolderPath ?? state.workspaceFolderPath,
-      isSSLDisabled: isSSLDisabled ?? state.isSSLDisabled,
-      proxySettings: proxySettings ?? state.proxySettings,
+    
+    final newState = state.copyWith(
+      isDark: isDark,
+      alwaysShowCollectionPaneScrollbar: alwaysShowCollectionPaneScrollbar,
+      size: size,
+      offset: offset,
+      defaultUriScheme: defaultUriScheme,
+      defaultCodeGenLang: defaultCodeGenLang,
+      saveResponses: saveResponses,
+      promptBeforeClosing: promptBeforeClosing,
+      activeEnvironmentId: activeEnvironmentId,
+      historyRetentionPeriod: historyRetentionPeriod,
+      workspaceFolderPath: workspaceFolderPath,
+      isSSLDisabled: isSSLDisabled,
+      proxySettings: proxySettings,
     );
-    await setSettingsToSharedPrefs(state);
+        
+    if (newState != state) {
+      state = newState;
+      await setSettingsToSharedPrefs(state);
+    }
   }
 }

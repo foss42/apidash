@@ -1,3 +1,4 @@
+import 'package:apidash/widgets/proxy_settings_dialog.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,7 +8,6 @@ import '../services/services.dart';
 import '../utils/utils.dart';
 import '../widgets/widgets.dart';
 import '../consts.dart';
-import 'dart:developer' as developer;
 
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
@@ -51,75 +51,24 @@ class SettingsPage extends ConsumerWidget {
                   ref.read(settingsProvider.notifier).update(isDark: value);
                 },
               ),
-              // Proxy Settings Section
               SwitchListTile(
-                hoverColor: kColorTransparent,
-                title: const Text('Enable Proxy'),
-                subtitle: const Text('Configure HTTP proxy settings'),
-                value: ref.watch(settingsProvider.select((settings) => settings.isProxyEnabled)),
-                onChanged: (bool? value) {
-                  if (value != null) {
-                    developer.log('Toggling proxy settings', name: 'settings_page', error: 'New value: $value');
-                    ref.read(settingsProvider.notifier).update(
-                      isProxyEnabled: value,
-                      proxyHost: value ? settings.proxyHost : '',
-                      proxyPort: value ? settings.proxyPort : '',
-                      proxyUsername: value ? settings.proxyUsername : null,
-                      proxyPassword: value ? settings.proxyPassword : null,
+                title: const Text('Proxy Settings'),
+                subtitle: Text(ref.watch(settingsProvider).proxySettings != null 
+                  ? 'Enabled - ${ref.watch(settingsProvider).proxySettings!.host}:${ref.watch(settingsProvider).proxySettings!.port}' 
+                  : 'Disabled'
+                ),
+                value: ref.watch(settingsProvider).proxySettings != null,
+                onChanged: (bool value) {
+                  if (!value) {
+                    ref.read(settingsProvider.notifier).update(proxySettings: null);
+                  } else {
+                    showDialog(
+                      context: context,
+                      builder: (context) => const ProxySettingsDialog(),
                     );
-                    developer.log('Proxy settings updated', name: 'settings_page');
                   }
                 },
               ),
-              if (ref.watch(settingsProvider.select((settings) => settings.isProxyEnabled))) ...[
-                ListTile(
-                  title: TextField(
-                    decoration: const InputDecoration(
-                      labelText: 'Proxy Host',
-                      hintText: 'e.g., localhost',
-                    ),
-                    controller: TextEditingController(text: settings.proxyHost),
-                    onChanged: (value) {
-                      ref.read(settingsProvider.notifier).update(proxyHost: value);
-                    },
-                  ),
-                ),
-                ListTile(
-                  title: TextField(
-                    decoration: const InputDecoration(
-                      labelText: 'Proxy Port',
-                      hintText: 'e.g., 8080',
-                    ),
-                    controller: TextEditingController(text: settings.proxyPort),
-                    onChanged: (value) {
-                      ref.read(settingsProvider.notifier).update(proxyPort: value);
-                    },
-                  ),
-                ),
-                ListTile(
-                  title: TextField(
-                    decoration: const InputDecoration(
-                      labelText: 'Username (Optional)',
-                    ),
-                    controller: TextEditingController(text: settings.proxyUsername),
-                    onChanged: (value) {
-                      ref.read(settingsProvider.notifier).update(proxyUsername: value);
-                    },
-                  ),
-                ),
-                ListTile(
-                  title: TextField(
-                    decoration: const InputDecoration(
-                      labelText: 'Password (Optional)',
-                    ),
-                    obscureText: true,
-                    controller: TextEditingController(text: settings.proxyPassword),
-                    onChanged: (value) {
-                      ref.read(settingsProvider.notifier).update(proxyPassword: value);
-                    },
-                  ),
-                ),
-              ],
               SwitchListTile(
                 hoverColor: kColorTransparent,
                 title: const Text('Collection Pane Scrollbar Visiblity'),
