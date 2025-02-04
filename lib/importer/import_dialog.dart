@@ -11,6 +11,9 @@ void importToCollectionPane(
   WidgetRef ref,
   ScaffoldMessengerState sm,
 ) {
+  // TODO: The dialog must have a feature to paste contents in a text field
+  // Also, a mechanism can be added where on importing a file it shows the
+  // contents in the text field and then the user presses ok to add it to collection
   showImportDialog(
     context: context,
     importFormat: ref.watch(importFormatStateProvider),
