@@ -117,6 +117,7 @@ class CollectionStateNotifier
     final rId = id ?? ref.read(selectedIdStateProvider);
     var itemIds = ref.read(requestSequenceProvider);
     int idx = itemIds.indexOf(rId!);
+    httpClientManager.cancelRequest(rId);
     itemIds.remove(rId);
     ref.read(requestSequenceProvider.notifier).state = [...itemIds];
 
