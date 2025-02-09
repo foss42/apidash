@@ -1,0 +1,15 @@
+# to update changes use in terminal -->  dart run flutter_native_splash:create --path=splash.yaml
+flutter_native_splash:
+  color: "#FFFFFF"
+  color_dark: "#272727"
+  image: assets/splash1.jpg
+  image_dark: assets/splash1.jpg
+
+  android_12:
+    color: "#FFFFFF"
+    color_dark: "#272727"
+    image: assets/splash1.jpg
+    image_dark: assets/splash1.jpg
+
+  web: false
+
