@@ -1,5 +1,6 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/models/models.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../services/services.dart' show hiveHandler, HiveHandler;
 import '../utils/history_utils.dart';
 
@@ -88,5 +89,10 @@ class HistoryMetaStateNotifier
     hiveHandler.setHistoryMeta(id, model.metaData.toJson());
     await hiveHandler.setHistoryRequest(id, model.toJson());
     await loadHistoryRequest(id);
+  }
+
+  Future<void> clearAllHistory() async {
+    await hiveHandler.clearAllHistory();
+    loadHistoryMetas();
   }
 }
