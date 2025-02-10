@@ -8,3 +8,7 @@
 6. [Packaging API Dash](https://github.com/foss42/apidash/blob/main/doc/dev_guide/packaging.md)
 7. Other Topics
     - [Flutter Rust Bridge Experiment for Parsing Hurl](https://github.com/foss42/apidash/blob/main/doc/dev_guide/flutter_rust_bridge_experiment.md)
+
+## Code Walkthrough for New Contributors
+
+[Video](https://www.youtube.com/live/rIlwCTKNz-A?t=339)
