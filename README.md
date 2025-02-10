@@ -258,6 +258,10 @@ Please find the Roadmap for API Dash [here](https://github.com/foss42/apidash/bl
 
 All docs are currently available in the [doc](https://github.com/foss42/apidash/blob/main/doc/) folder.
 
+## Code Walkthrough for New Contributors
+
+[Video](https://www.youtube.com/live/rIlwCTKNz-A?si=iMxTxzkpY_ySo4Ow&t=339)
+
 ## Contribute to API Dash
 
 You can contribute to API Dash in any or all of the following ways:
