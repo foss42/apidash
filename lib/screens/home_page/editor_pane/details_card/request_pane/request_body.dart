@@ -6,6 +6,7 @@ import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
 import 'request_form_data.dart';
+import 'request_urlencoded.dart';
 
 class EditRequestBody extends ConsumerWidget {
   const EditRequestBody({super.key});
@@ -58,6 +59,12 @@ class EditRequestBody extends ConsumerWidget {
                 ContentType.formdata => const Padding(
                     padding: kPh4,
                     child: FormDataWidget(
+                        // TODO: See changeToPostMethod above
+                        // changeMethodToPost: changeToPostMethod,
+                        )),
+                ContentType.xwwwformurlencoded => const Padding(
+                    padding: kPh4,
+                    child: UrlEncodedFormDataWidget(
                         // TODO: See changeToPostMethod above
                         // changeMethodToPost: changeToPostMethod,
                         )),

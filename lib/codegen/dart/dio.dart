@@ -84,6 +84,8 @@ class DartDioCodeGen {
         // when add new type of [ContentType], need update [dataExp].
         case ContentType.formdata:
           dataExp = declareFinal('data').assign(refer('dio.FormData()'));
+        case ContentType.xwwwformurlencoded:
+          dataExp = declareFinal('data').assign(refer('dio.FormData()'));
       }
     }
     final responseExp = declareFinal('response').assign(InvokeExpression.newOf(
