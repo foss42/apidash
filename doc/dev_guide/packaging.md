@@ -76,6 +76,22 @@ brew install --build-from-source Formula/apidash.rb
 # Verify execution
 brew test apidash
 ```
+## 5. Custom Tap Submission
+```
+# Commit formula to your tap repo
+git add Formula/Apidash.rb
+git commit -m "added apidash formula"
+git push
+
+# Create release for tarball
+gh release create v1.0.0 apidash-v1.0.0.tar.gz
+```
+## 6. Installation
+```
+brew tap homebrew-tap/Formula
+brew install apidash
+
+```
 
 ## Chocolatey
 
