@@ -1,4 +1,6 @@
+import 'package:apidash/providers/history_providers.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 const String kDataBox = "apidash-data";
@@ -140,10 +142,27 @@ class HiveHandler {
 
   Future<void> deleteHistoryRequest(String id) => historyLazyBox.delete(id);
 
-  Future clearAllHistory() async {
+Future<void> clearAllHistory(WidgetRef ref) async {
+  try {
+    await historyMetaBox.put(kHistoryBoxIds, null);
     await historyMetaBox.clear();
     await historyLazyBox.clear();
+
+    // ✅ Now ref is passed correctly
+    ref.read(selectedHistoryIdStateProvider.notifier).state = null;
+    ref.read(selectedRequestGroupIdStateProvider.notifier).state = null;
+    ref.read(selectedHistoryRequestModelProvider.notifier).state = null;
+    ref.read(historySequenceProvider.notifier).state = null;
+    ref.read(historyMetaStateNotifier.notifier).state = null;
+
+  } catch (e) {
+    debugPrint("ERROR CLEARING HISTORY: $e");
+    rethrow;
   }
+}
+
+
+
 
   Future clear() async {
     await dataBox.clear();
