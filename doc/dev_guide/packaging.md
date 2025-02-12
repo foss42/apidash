@@ -21,9 +21,11 @@ TODO Instructions
 TODO Instructions
 
 ## Homebrew
-# apidash Homebrew Formula Submission
 
-## 1. Prepare Tap Repository
+Homebrew Formula Submission
+
+### 1. Prepare Tap Repository
+
 ```
 # Create Homebrew tap
 gh repo create homebrew-tap --public --clone
@@ -31,7 +33,8 @@ mkdir -p homebrew-tap/Formula
 cd homebrew-tap
 ```
 
-## 2. Package apidash
+### 2. Package apidash
+
 ```
 # Build macOS bundle
 flutter build macos
@@ -45,8 +48,10 @@ tar -czvf apidash-v1.0.0.tar.gz \
 shasum -a 256 apidash-v1.0.0.tar.gz
 ```
 
-## 3. Create Formula File
+### 3. Create Formula File
+
 `Formula/apidash.rb`:
+
 ```
 class Apidash < Formula
   desc "Modern API dashboard for developers"
@@ -65,7 +70,8 @@ class Apidash < Formula
 end
 ```
 
-## 4. Local Validation
+### 4. Local Validation
+
 ```
 # Check formula syntax
 brew audit --strict Formula/apidash.rb
@@ -76,7 +82,9 @@ brew install --build-from-source Formula/apidash.rb
 # Verify execution
 brew test apidash
 ```
-## 5. Custom Tap Submission
+
+### 5. Custom Tap Submission
+
 ```
 # Commit formula to your tap repo
 git add Formula/Apidash.rb
@@ -86,11 +94,12 @@ git push
 # Create release for tarball
 gh release create v1.0.0 apidash-v1.0.0.tar.gz
 ```
-## 6. Installation
+
+### 6. Installation
+
 ```
 brew tap homebrew-tap/Formula
 brew install apidash
-
 ```
 
 ## Chocolatey
