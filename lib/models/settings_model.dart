@@ -17,6 +17,8 @@ class SettingsModel {
     this.historyRetentionPeriod = HistoryRetentionPeriod.oneWeek,
     this.workspaceFolderPath,
     this.isSSLDisabled = false,
+    this.gitToken,
+    this.gitRepository,
   });
 
   final bool isDark;
@@ -31,6 +33,8 @@ class SettingsModel {
   final HistoryRetentionPeriod historyRetentionPeriod;
   final String? workspaceFolderPath;
   final bool isSSLDisabled;
+  final String? gitToken;
+  final String? gitRepository;
 
   SettingsModel copyWith({
     bool? isDark,
@@ -45,6 +49,8 @@ class SettingsModel {
     HistoryRetentionPeriod? historyRetentionPeriod,
     String? workspaceFolderPath,
     bool? isSSLDisabled,
+    String? gitToken,
+    String? gitRepository,
   }) {
     return SettingsModel(
       isDark: isDark ?? this.isDark,
@@ -61,6 +67,8 @@ class SettingsModel {
           historyRetentionPeriod ?? this.historyRetentionPeriod,
       workspaceFolderPath: workspaceFolderPath ?? this.workspaceFolderPath,
       isSSLDisabled: isSSLDisabled ?? this.isSSLDisabled,
+      gitToken: gitToken ?? this.gitToken,
+      gitRepository: gitRepository ?? this.gitRepository,
     );
   }
 
@@ -80,6 +88,8 @@ class SettingsModel {
       historyRetentionPeriod: historyRetentionPeriod,
       workspaceFolderPath: workspaceFolderPath,
       isSSLDisabled: isSSLDisabled,
+      gitToken: gitToken,
+      gitRepository: gitRepository,
     );
   }
 
@@ -134,6 +144,8 @@ class SettingsModel {
     }
     final workspaceFolderPath = data["workspaceFolderPath"] as String?;
     final isSSLDisabled = data["isSSLDisabled"] as bool?;
+    final gitToken = data["gitToken"] as String?;
+    final gitRepository = data["gitRepository"] as String?;
 
     const sm = SettingsModel();
 
@@ -151,6 +163,8 @@ class SettingsModel {
           historyRetentionPeriod ?? HistoryRetentionPeriod.oneWeek,
       workspaceFolderPath: workspaceFolderPath,
       isSSLDisabled: isSSLDisabled,
+      gitToken: gitToken,
+      gitRepository: gitRepository,
     );
   }
 
@@ -170,6 +184,8 @@ class SettingsModel {
       "historyRetentionPeriod": historyRetentionPeriod.name,
       "workspaceFolderPath": workspaceFolderPath,
       "isSSLDisabled": isSSLDisabled,
+      "gitToken": gitToken,
+      "gitRepository": gitRepository,
     };
   }
 
@@ -194,7 +210,9 @@ class SettingsModel {
         other.activeEnvironmentId == activeEnvironmentId &&
         other.historyRetentionPeriod == historyRetentionPeriod &&
         other.workspaceFolderPath == workspaceFolderPath &&
-        other.isSSLDisabled == isSSLDisabled;
+        other.isSSLDisabled == isSSLDisabled &&
+        other.gitToken == gitToken &&
+        other.gitRepository == gitRepository;
   }
 
   @override
@@ -213,6 +231,8 @@ class SettingsModel {
       historyRetentionPeriod,
       workspaceFolderPath,
       isSSLDisabled,
+      gitToken,
+      gitRepository,
     );
   }
 }
