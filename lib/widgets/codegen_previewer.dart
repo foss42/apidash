@@ -6,7 +6,7 @@ import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart';
 import 'code_previewer.dart';
 import 'widgets.dart'
-    show CopyButton, DropdownButtonCodegenLanguage, SaveInDownloadsButton;
+    show CopyButton,DropdownButtonCodegenLanguage, SaveInDownloadsButton;
 
 class CodeGenPreviewer extends StatefulWidget {
   const CodeGenPreviewer({
@@ -151,7 +151,13 @@ class ViewCodePane extends StatelessWidget {
                       toCopy: code,
                       showLabel: showLabel,
                     ),
-                    ShareButton(toShare: code),
+                    Visibility(
+                        visible: kIsMobile,
+                        child: ShareButton(
+                          toShare: code,
+                          showLabel: showLabel,
+                        )
+                      ),
                     SaveInDownloadsButton(
                       content: stringToBytes(code),
                       ext: codegenLanguage.ext,
