@@ -421,6 +421,7 @@ const kLabelSend = "Send";
 const kLabelSending = "Sending..";
 const kLabelBusy = "Busy";
 const kLabelCopy = "Copy";
+const kLabelShare = "Share";
 const kLabelSave = "Save";
 const kLabelDownload = "Download";
 const kLabelSaving = "Saving";

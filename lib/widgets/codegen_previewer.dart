@@ -1,3 +1,4 @@
+import 'package:apidash/widgets/button_share.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:highlighter/highlighter.dart' show highlight;
@@ -150,6 +151,7 @@ class ViewCodePane extends StatelessWidget {
                       toCopy: code,
                       showLabel: showLabel,
                     ),
+                    ShareButton(toShare: code),
                     SaveInDownloadsButton(
                       content: stringToBytes(code),
                       ext: codegenLanguage.ext,
