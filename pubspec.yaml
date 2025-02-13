@@ -27,7 +27,6 @@ dependencies:
   flutter_portal: ^1.1.4
   flutter_riverpod: ^2.5.1
   flutter_svg: ^2.0.10+1
-  flutter_typeahead: ^5.2.0
   fvp: ^0.26.1
   highlighter: ^0.1.1
   hive_flutter: ^1.1.0
@@ -47,8 +46,8 @@ dependencies:
   multi_split_view: ^3.2.2
   multi_trigger_autocomplete:
     git:
-      url: https://github.com/foss42/multi_trigger_autocomplete.git
-      ref: cb22bab30dd14452d184bc6ad3bb41b612b22c70
+      url: https://github.com/DenserMeerkat/multi_trigger_autocomplete.git
+      ref: feat-no-trigger-autocomplete
   package_info_plus: ^8.0.2
   path: ^1.8.3
   path_provider: ^2.1.2

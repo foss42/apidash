@@ -1,7 +1,9 @@
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:multi_trigger_autocomplete/multi_trigger_autocomplete.dart';
 import 'package:apidash/utils/utils.dart';
+import 'package:apidash/screens/common_widgets/common_widgets.dart';
+import 'package:apidash/consts.dart';
 
 class HeaderField extends StatefulWidget {
   const HeaderField({
@@ -23,97 +25,28 @@ class HeaderField extends StatefulWidget {
 }
 
 class _HeaderFieldState extends State<HeaderField> {
-  final TextEditingController controller = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    controller.text = widget.initialValue ?? "";
-    controller.selection =
-        TextSelection.collapsed(offset: controller.text.length);
-  }
-
-  @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  void didUpdateWidget(HeaderField oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.initialValue != widget.initialValue) {
-      controller.text = widget.initialValue ?? "";
-      controller.selection =
-          TextSelection.collapsed(offset: controller.text.length);
-    }
-  }
-
+  final FocusNode focusNode = FocusNode();
   @override
   Widget build(BuildContext context) {
     var colorScheme = widget.colorScheme ?? Theme.of(context).colorScheme;
-    return TypeAheadField(
-      key: Key(widget.keyId),
-      hideOnEmpty: true,
-      controller: controller,
-      onSelected: (value) {
-        setState(() {
-          controller.text = value;
-        });
-        widget.onChanged!.call(value);
-      },
-      itemBuilder: (context, String suggestion) {
-        return ListTile(
-          dense: true,
-          title: Text(suggestion),
-        );
-      },
-      suggestionsCallback: headerSuggestionCallback,
-      decorationBuilder: (context, child) =>
-          suggestionBoxDecorations(context, child, colorScheme),
-      constraints: const BoxConstraints(maxHeight: 400),
-      builder: (context, controller, focusNode) => TextField(
-        onChanged: widget.onChanged,
-        controller: controller,
-        focusNode: focusNode,
-        style: kCodeStyle.copyWith(
-          color: colorScheme.onSurface,
-        ),
-        decoration: InputDecoration(
-          hintStyle: kCodeStyle.copyWith(
-              color: colorScheme.outline.withOpacity(kHintOpacity)),
-          hintText: widget.hintText,
-          contentPadding: const EdgeInsets.only(bottom: 12),
-          focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(
-              color: colorScheme.primary.withOpacity(
-                kHintOpacity,
-              ),
-            ),
-          ),
-          enabledBorder: UnderlineInputBorder(
-            borderSide: BorderSide(
-              color: colorScheme.surfaceContainerHighest,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Theme suggestionBoxDecorations(
-      BuildContext context, Widget child, ColorScheme colorScheme) {
-    return Theme(
-      data: ThemeData(colorScheme: colorScheme),
-      child: Material(
-        elevation: 4,
-        shape: RoundedRectangleBorder(
-          side: BorderSide(color: Theme.of(context).dividerColor, width: 1.2),
-          borderRadius: const BorderRadius.vertical(bottom: Radius.circular(8)),
-        ),
-        clipBehavior: Clip.hardEdge,
-        child: child,
-      ),
+    return EnvCellField(
+      keyId: widget.keyId,
+      hintText: widget.hintText,
+      initialValue: widget.initialValue,
+      focusNode: focusNode,
+      onChanged: widget.onChanged,
+      colorScheme: colorScheme,
+      autocompleteNoTrigger: AutocompleteNoTrigger(
+          optionsViewBuilder: (context, autocompleteQuery, controller) {
+        return HeaderSuggestions(
+            suggestionsCallback: headerSuggestionCallback,
+            query: autocompleteQuery.query,
+            onSuggestionTap: (suggestion) {
+              controller.text = suggestion;
+              widget.onChanged?.call(controller.text);
+              focusNode.unfocus();
+            });
+      }),
     );
   }
 
@@ -121,6 +54,98 @@ class _HeaderFieldState extends State<HeaderField> {
     if (pattern.isEmpty) {
       return null;
     }
-    return getHeaderSuggestions(pattern);
+    return getHeaderSuggestions(pattern)
+        .where(
+            (suggestion) => suggestion.toLowerCase() != pattern.toLowerCase())
+        .toList();
+  }
+}
+
+class HeaderSuggestions extends StatefulWidget {
+  const HeaderSuggestions({
+    super.key,
+    required this.suggestionsCallback,
+    required this.query,
+    required this.onSuggestionTap,
+  });
+  final Future<List<String>?> Function(String) suggestionsCallback;
+  final String query;
+  final ValueSetter<String> onSuggestionTap;
+
+  @override
+  State<HeaderSuggestions> createState() => _HeaderSuggestionsState();
+}
+
+class _HeaderSuggestionsState extends State<HeaderSuggestions> {
+  List<String>? suggestions;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.suggestionsCallback(widget.query).then((value) {
+      if (mounted) {
+        setState(() {
+          suggestions = value;
+        });
+      }
+    });
+  }
+
+  @override
+  void didUpdateWidget(HeaderSuggestions oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.query != widget.query) {
+      widget.suggestionsCallback(widget.query).then((value) {
+        if (mounted) {
+          setState(() {
+            suggestions = value;
+          });
+        }
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (suggestions == null) {
+      return const SizedBox.shrink();
+    }
+    return suggestions!.isEmpty
+        ? const SizedBox.shrink()
+        : ClipRRect(
+            borderRadius: kBorderRadius8,
+            child: Material(
+              type: MaterialType.card,
+              elevation: 8,
+              child: ConstrainedBox(
+                constraints:
+                    const BoxConstraints(maxHeight: kSuggestionsMenuMaxHeight),
+                child: Ink(
+                  width: kSuggestionsMenuWidth,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.surface,
+                    borderRadius: kBorderRadius8,
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.outlineVariant,
+                    ),
+                  ),
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    itemCount: suggestions!.length,
+                    separatorBuilder: (context, index) =>
+                        const Divider(height: 2),
+                    itemBuilder: (context, index) {
+                      final suggestion = suggestions![index];
+                      return ListTile(
+                        dense: true,
+                        title: Text(suggestion),
+                        onTap: () => widget.onSuggestionTap(suggestion),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ),
+          );
   }
 }

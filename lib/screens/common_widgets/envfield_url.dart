@@ -3,25 +3,69 @@ import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
 import 'env_trigger_field.dart';
 
-class EnvURLField extends StatelessWidget {
+class EnvURLField extends StatefulWidget {
   const EnvURLField({
     super.key,
     required this.selectedId,
     this.initialValue,
     this.onChanged,
     this.onFieldSubmitted,
-  });
+    this.focusNode,
+    this.controller,
+  }) : assert(
+          !(controller != null && initialValue != null),
+          'controller and initialValue cannot be simultaneously defined.',
+        );
 
   final String selectedId;
   final String? initialValue;
   final void Function(String)? onChanged;
   final void Function(String)? onFieldSubmitted;
+  final FocusNode? focusNode;
+  final TextEditingController? controller;
+
+  @override
+  State<EnvURLField> createState() => _EnvURLFieldState();
+}
+
+class _EnvURLFieldState extends State<EnvURLField> {
+  late TextEditingController _controller;
+  late FocusNode _focusNode;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = widget.controller ??
+        TextEditingController.fromValue(widget.initialValue != null
+            ? TextEditingValue(text: widget.initialValue!)
+            : TextEditingValue.empty);
+    _focusNode = widget.focusNode ?? FocusNode();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(EnvURLField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if ((oldWidget.initialValue != widget.initialValue)) {
+      _controller = widget.controller ??
+          TextEditingController.fromValue(widget.initialValue != null
+              ? TextEditingValue(text: widget.initialValue!)
+              : TextEditingValue.empty);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return EnvironmentTriggerField(
-      keyId: "url-$selectedId",
-      initialValue: initialValue,
+      keyId: "url-${widget.selectedId}",
+      controller: _controller,
+      focusNode: _focusNode,
       style: kCodeStyle,
       decoration: InputDecoration(
         hintText: kHintTextUrlCard,
@@ -32,8 +76,8 @@ class EnvURLField extends StatelessWidget {
         ),
         border: InputBorder.none,
       ),
-      onChanged: onChanged,
-      onFieldSubmitted: onFieldSubmitted,
+      onChanged: widget.onChanged,
+      onFieldSubmitted: widget.onFieldSubmitted,
       optionsWidthFactor: 1,
     );
   }
