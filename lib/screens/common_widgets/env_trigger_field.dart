@@ -35,17 +35,17 @@ class EnvironmentTriggerField extends StatefulWidget {
 
   @override
   State<EnvironmentTriggerField> createState() =>
-      _EnvironmentTriggerFieldState();
+      EnvironmentTriggerFieldState();
 }
 
-class _EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
-  late TextEditingController _controller;
+class EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
+  late TextEditingController controller;
   late FocusNode _focusNode;
 
   @override
   void initState() {
     super.initState();
-    _controller = widget.controller ??
+    controller = widget.controller ??
         TextEditingController.fromValue(TextEditingValue(
             text: widget.initialValue!,
             selection:
@@ -55,7 +55,7 @@ class _EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
 
   @override
   void dispose() {
-    _controller.dispose();
+    controller.dispose();
     _focusNode.dispose();
     super.dispose();
   }
@@ -65,7 +65,7 @@ class _EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
     super.didUpdateWidget(oldWidget);
     if ((oldWidget.keyId != widget.keyId) ||
         (oldWidget.initialValue != widget.initialValue)) {
-      _controller = widget.controller ??
+      controller = widget.controller ??
           TextEditingController.fromValue(TextEditingValue(
               text: widget.initialValue!,
               selection: TextSelection.collapsed(
@@ -77,7 +77,7 @@ class _EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
   Widget build(BuildContext context) {
     return MultiTriggerAutocomplete(
       key: Key(widget.keyId),
-      textEditingController: _controller,
+      textEditingController: controller,
       focusNode: _focusNode,
       optionsWidthFactor: widget.optionsWidthFactor ?? 1,
       autocompleteTriggers: [
