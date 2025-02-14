@@ -1,90 +1,36 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_portal/flutter_portal.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:extended_text_field/extended_text_field.dart';
 import 'package:apidash/screens/common_widgets/env_trigger_field.dart';
+import 'package:multi_trigger_autocomplete/multi_trigger_autocomplete.dart';
 
 void main() {
-  testWidgets('Testing EnvironmentTriggerField updates the controller text',
-      (WidgetTester tester) async {
-    final fieldKey = GlobalKey<EnvironmentTriggerFieldState>();
-    const initialValue = 'initial';
-    const updatedValue = 'updated';
-
-    await tester.pumpWidget(
-      Portal(
-        child: MaterialApp(
-          home: Scaffold(
-            body: EnvironmentTriggerField(
-              key: fieldKey,
-              keyId: 'testKey',
-              initialValue: initialValue,
-            ),
-          ),
-        ),
-      ),
-    );
-
-    Finder field = find.byType(ExtendedTextField);
-    expect(field, findsOneWidget);
-    expect(fieldKey.currentState!.controller.text, initialValue);
-
-    await tester.pumpWidget(
-      Portal(
-        child: MaterialApp(
-          home: Scaffold(
-            body: EnvironmentTriggerField(
-              key: fieldKey,
-              keyId: 'testKey',
-              initialValue: updatedValue,
-            ),
-          ),
-        ),
-      ),
-    );
-
-    expect(fieldKey.currentState!.controller.text, updatedValue);
-  });
-
   testWidgets(
-      'Testing EnvironmentTriggerField with empty initialValue clears the controller text',
-      (WidgetTester tester) async {
-    final fieldKey = GlobalKey<EnvironmentTriggerFieldState>();
-    const initialValue = 'initial';
-    const emptyValue = '';
+      'EnvironmentTriggerField renders and displays MultiTriggerAutocomplete with triggers',
+      (tester) async {
+    final controller = TextEditingController();
+    final focusNode = FocusNode();
 
     await tester.pumpWidget(
       Portal(
         child: MaterialApp(
           home: Scaffold(
             body: EnvironmentTriggerField(
-              key: fieldKey,
               keyId: 'testKey',
-              initialValue: initialValue,
+              controller: controller,
+              focusNode: focusNode,
             ),
           ),
         ),
       ),
     );
 
-    Finder field = find.byType(ExtendedTextField);
-    expect(field, findsOneWidget);
-    expect(fieldKey.currentState!.controller.text, initialValue);
-
-    await tester.pumpWidget(
-      Portal(
-        child: MaterialApp(
-          home: Scaffold(
-            body: EnvironmentTriggerField(
-              key: fieldKey,
-              keyId: 'testKey',
-              initialValue: emptyValue,
-            ),
-          ),
-        ),
-      ),
-    );
-
-    expect(fieldKey.currentState!.controller.text, emptyValue);
+    final multiTriggerAutocomplete = find.byType(MultiTriggerAutocomplete);
+    expect(multiTriggerAutocomplete, findsOneWidget);
+    final triggers = tester
+        .widget<MultiTriggerAutocomplete>(multiTriggerAutocomplete)
+        .autocompleteTriggers;
+    expect(triggers.length, 2);
+    expect(triggers.first.trigger, '{');
+    expect(triggers.elementAt(1).trigger, '{{');
   });
 }

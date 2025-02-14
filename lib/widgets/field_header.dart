@@ -32,7 +32,7 @@ class _HeaderFieldState extends State<HeaderField> {
     return EnvCellField(
       keyId: widget.keyId,
       hintText: widget.hintText,
-      initialValue: widget.initialValue,
+      initialValue: widget.initialValue ?? "",
       focusNode: focusNode,
       onChanged: widget.onChanged,
       colorScheme: colorScheme,
