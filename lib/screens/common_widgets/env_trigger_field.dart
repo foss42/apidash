@@ -4,23 +4,28 @@ import 'package:extended_text_field/extended_text_field.dart';
 import 'env_regexp_span_builder.dart';
 import 'env_trigger_options.dart';
 
-class EnvironmentTriggerField extends StatelessWidget {
+class EnvironmentTriggerField extends StatefulWidget {
   const EnvironmentTriggerField({
     super.key,
     required this.keyId,
-    required this.controller,
-    required this.focusNode,
+    this.initialValue,
+    this.controller,
+    this.focusNode,
     this.onChanged,
     this.onFieldSubmitted,
     this.style,
     this.decoration,
     this.optionsWidthFactor,
     this.autocompleteNoTrigger,
-  });
+  }) : assert(
+          !(controller != null && initialValue != null),
+          'controller and initialValue cannot be simultaneously defined.',
+        );
 
   final String keyId;
-  final TextEditingController controller;
-  final FocusNode focusNode;
+  final String? initialValue;
+  final TextEditingController? controller;
+  final FocusNode? focusNode;
   final void Function(String)? onChanged;
   final void Function(String)? onFieldSubmitted;
   final TextStyle? style;
@@ -29,14 +34,54 @@ class EnvironmentTriggerField extends StatelessWidget {
   final AutocompleteNoTrigger? autocompleteNoTrigger;
 
   @override
+  State<EnvironmentTriggerField> createState() =>
+      _EnvironmentTriggerFieldState();
+}
+
+class _EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
+  late TextEditingController _controller;
+  late FocusNode _focusNode;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = widget.controller ??
+        TextEditingController.fromValue(TextEditingValue(
+            text: widget.initialValue!,
+            selection:
+                TextSelection.collapsed(offset: widget.initialValue!.length)));
+    _focusNode = widget.focusNode ?? FocusNode();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(EnvironmentTriggerField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if ((oldWidget.keyId != widget.keyId) ||
+        (oldWidget.initialValue != widget.initialValue)) {
+      _controller = widget.controller ??
+          TextEditingController.fromValue(TextEditingValue(
+              text: widget.initialValue!,
+              selection: TextSelection.collapsed(
+                  offset: widget.initialValue!.length)));
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MultiTriggerAutocomplete(
-      key: Key(keyId),
-      textEditingController: controller,
-      focusNode: focusNode,
-      optionsWidthFactor: optionsWidthFactor ?? 1,
+      key: Key(widget.keyId),
+      textEditingController: _controller,
+      focusNode: _focusNode,
+      optionsWidthFactor: widget.optionsWidthFactor ?? 1,
       autocompleteTriggers: [
-        if (autocompleteNoTrigger != null) autocompleteNoTrigger!,
+        if (widget.autocompleteNoTrigger != null) widget.autocompleteNoTrigger!,
         AutocompleteTrigger(
             trigger: '{',
             triggerEnd: "}}",
@@ -49,7 +94,7 @@ class EnvironmentTriggerField extends StatelessWidget {
                     autocomplete.acceptAutocompleteOption(
                       '{${suggestion.variable.key}',
                     );
-                    onChanged?.call(controller.text);
+                    widget.onChanged?.call(controller.text);
                   });
             }),
         AutocompleteTrigger(
@@ -64,7 +109,7 @@ class EnvironmentTriggerField extends StatelessWidget {
                     autocomplete.acceptAutocompleteOption(
                       suggestion.variable.key,
                     );
-                    onChanged?.call(controller.text);
+                    widget.onChanged?.call(controller.text);
                   });
             }),
       ],
@@ -72,13 +117,13 @@ class EnvironmentTriggerField extends StatelessWidget {
         return ExtendedTextField(
           controller: textEditingController,
           focusNode: focusnode,
-          decoration: decoration,
-          style: style,
-          onChanged: onChanged,
-          onSubmitted: onFieldSubmitted,
+          decoration: widget.decoration,
+          style: widget.style,
+          onChanged: widget.onChanged,
+          onSubmitted: widget.onFieldSubmitted,
           specialTextSpanBuilder: EnvRegExpSpanBuilder(),
           onTapOutside: (event) {
-            focusNode.unfocus();
+            _focusNode.unfocus();
           },
         );
       },
