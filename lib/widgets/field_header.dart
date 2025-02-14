@@ -1,9 +1,8 @@
-import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:multi_trigger_autocomplete/multi_trigger_autocomplete.dart';
 import 'package:apidash/utils/utils.dart';
 import 'package:apidash/screens/common_widgets/common_widgets.dart';
-import 'package:apidash/consts.dart';
+import 'package:apidash/widgets/widgets.dart';
 
 class HeaderField extends StatefulWidget {
   const HeaderField({
@@ -112,39 +111,19 @@ class _HeaderSuggestionsState extends State<HeaderSuggestions> {
     }
     return suggestions!.isEmpty
         ? const SizedBox.shrink()
-        : ClipRRect(
-            borderRadius: kBorderRadius8,
-            child: Material(
-              type: MaterialType.card,
-              elevation: 8,
-              child: ConstrainedBox(
-                constraints:
-                    const BoxConstraints(maxHeight: kSuggestionsMenuMaxHeight),
-                child: Ink(
-                  width: kSuggestionsMenuWidth,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surface,
-                    borderRadius: kBorderRadius8,
-                    border: Border.all(
-                      color: Theme.of(context).colorScheme.outlineVariant,
-                    ),
-                  ),
-                  child: ListView.separated(
-                    shrinkWrap: true,
-                    itemCount: suggestions!.length,
-                    separatorBuilder: (context, index) =>
-                        const Divider(height: 2),
-                    itemBuilder: (context, index) {
-                      final suggestion = suggestions![index];
-                      return ListTile(
-                        dense: true,
-                        title: Text(suggestion),
-                        onTap: () => widget.onSuggestionTap(suggestion),
-                      );
-                    },
-                  ),
-                ),
-              ),
+        : SuggestionsMenuBox(
+            child: ListView.separated(
+              shrinkWrap: true,
+              itemCount: suggestions!.length,
+              separatorBuilder: (context, index) => const Divider(height: 2),
+              itemBuilder: (context, index) {
+                final suggestion = suggestions![index];
+                return ListTile(
+                  dense: true,
+                  title: Text(suggestion),
+                  onTap: () => widget.onSuggestionTap(suggestion),
+                );
+              },
             ),
           );
   }

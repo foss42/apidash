@@ -34,7 +34,7 @@ class EnvironmentTriggerField extends StatelessWidget {
       key: Key(keyId),
       textEditingController: controller,
       focusNode: focusNode,
-      optionsWidthFactor: optionsWidthFactor,
+      optionsWidthFactor: optionsWidthFactor ?? 1,
       autocompleteTriggers: [
         if (autocompleteNoTrigger != null) autocompleteNoTrigger!,
         AutocompleteTrigger(

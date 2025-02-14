@@ -51,6 +51,7 @@ export 'splitview_drawer.dart';
 export 'splitview_dashboard.dart';
 export 'splitview_equal.dart';
 export 'splitview_history.dart';
+export 'suggestions_menu_box.dart';
 export 'tabbar_segmented.dart';
 export 'table_map.dart';
 export 'table_request_form.dart';
