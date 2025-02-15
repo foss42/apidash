@@ -38,7 +38,7 @@ Run the following command to setup the base
 choco new --name="apidash" --version="0.3.0" maintainername="foss42" maintainerrepo="https://github.com/foss42/apidash" --built-in-template
 ```
 
-![choco folder structure](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/lzxebtal5tt1u2o4n5hp.png)
+![choco folder structure](../dev_guide/images/choco_create_structure.png)
 
 This creates the following folder structure
 
@@ -62,7 +62,7 @@ The files of our main interest are `chocolateyinstall.ps1` and `apidash.nuspec`.
 ### Step 2: Editing `chocolateyinstall.ps1`
 
 Take a look at `chocolateyinstall.ps1` file. There are many comments stating the use case of each line itself.
-![chocolatelyinstall.ps1](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/boc5lcstslju2qtey9cm.png)
+![chocolatelyinstall.ps1](../dev_guide/images/choco_chocolateyinstall_ps1.png)
 
 Comments can bre remoed using the following command.
 ```powershell
@@ -75,7 +75,7 @@ Now our `chocolateyinstall.ps1` file is ready.
 
 ### Step 3: Editing `apidash.nuspec`
 
-![final apidash.nuspec](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/2km555bocw3upnkulj1y.png)
+![final apidash.nuspec](../dev_guide/images/choco_nuspec.png)
 
 ### Step 4: Build the package
 
@@ -95,7 +95,7 @@ choco install apidash -s .
 ```
 Ensure the application installs correctly.
 
-![Shell output](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/98yzsrhm1tnld8ylatt3.png)
+![Shell output](../dev_guide/images/choco_shell_output.png)
 
 ### Step 6: Pre-Publishing - Update `LICENSE.txt` & `VERIFICATION.txt`
 
