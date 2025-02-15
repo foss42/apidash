@@ -10,15 +10,16 @@ import 'http_client_manager.dart';
 
 typedef HttpResponse = http.Response;
 
-Future<(HttpResponse?, Duration?, String?)> request(
+final httpClientManager = HttpClientManager();
+
+Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
   String requestId,
   APIType apiType,
   HttpRequestModel requestModel, {
   SupportedUriSchemes defaultUriScheme = kDefaultUriScheme,
   bool noSSL = false,
 }) async {
-  final clientManager = HttpClientManager();
-  final client = clientManager.createClient(requestId, noSSL: noSSL);
+  final client = httpClientManager.createClient(requestId, noSSL: noSSL);
 
   (Uri?, String?) uriRec = getValidRequestUri(
     requestModel.url,
@@ -123,14 +124,18 @@ Future<(HttpResponse?, Duration?, String?)> request(
       stopwatch.stop();
       return (response, stopwatch.elapsed, null);
     } catch (e) {
-      if (clientManager.wasRequestCancelled(requestId)) {
+      if (httpClientManager.wasRequestCancelled(requestId)) {
         return (null, null, kMsgRequestCancelled);
       }
       return (null, null, e.toString());
     } finally {
-      clientManager.closeClient(requestId);
+      httpClientManager.closeClient(requestId);
     }
   } else {
     return (null, null, uriRec.$2);
   }
+}
+
+void cancelHttpRequest(String? requestId) {
+  httpClientManager.cancelRequest(requestId);
 }
