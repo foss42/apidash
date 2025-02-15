@@ -1,5 +1,14 @@
 # Packaging API Dash
 
+- [Windows](#windows)
+- [macOS](#macos)
+- [Linux Debian (.deb) & RPM (.rpm)](#linux-debian-deb--rpm-rpm)
+- [Arch Linux (PKGBUILD)](#arch-linux-pkgbuild)
+- [FlatHub (Flatpak)](#flathub-flatpak)
+- [Homebrew](#homebrew)
+- [Chocolatey](#chocolatey)
+- [WinGet](#winget)
+
 ## Windows
 
 [Packaging and Distributing Flutter Desktop Apps : Creating Windows .exe installer](https://medium.com/@fluttergems/packaging-and-distributing-flutter-desktop-apps-the-missing-guide-for-open-source-indie-0b468d5e9e70)
