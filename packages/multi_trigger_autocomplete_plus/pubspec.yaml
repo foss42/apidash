@@ -1,0 +1,35 @@
+name: multi_trigger_autocomplete_plus
+homepage: https://github.com/DenserMeerkat/multi_trigger_autocomplete_plus
+description: A flutter widget to add trigger based autocomplete functionality to your app.
+version: 1.0.2
+repository: https://github.com/DenserMeerkat/multi_trigger_autocomplete_plus
+issue_tracker: https://github.com/DenserMeerkat/multi_trigger_autocomplete_plus/issues
+
+environment:
+  sdk: ">=2.18.0 <4.0.0"
+  flutter: ">=3.3.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_portal: ^1.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+
+topics:
+  - mentions
+  - autocomplete
+  - autocomplete-search
+  - autocomplete-textfield
+  - autocomplete-suggestions
+
+screenshots:
+  - description: "Emoji Autocomplete Demo"
+    path: asset/emoji_demo.gif
+  - description: "Hashtag Autocomplete Demo"
+    path: asset/hashtag_demo.gif
+  - description: "Mention Autocomplete Demo"
+    path: asset/mention_demo.gif
