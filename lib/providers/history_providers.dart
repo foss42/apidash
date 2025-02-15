@@ -1,6 +1,5 @@
-import 'package:apidash/models/models.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import 'package:apidash/models/models.dart';
 import '../services/services.dart' show hiveHandler, HiveHandler;
 import '../utils/history_utils.dart';
 
