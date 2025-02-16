@@ -11,6 +11,7 @@ class HistorySidebarHeader extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final mobileScaffoldKey = ref.read(mobileScaffoldKeyStateProvider);
+    final sm = ScaffoldMessenger.of(context);
     return Padding(
       padding: kPe4,
       child: Row(
@@ -29,53 +30,29 @@ class HistorySidebarHeader extends ConsumerWidget {
                 ? kColorDarkDanger
                 : kColorLightDanger,
             onPressed: () {
-              showDialog(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: const Text('Clear History'),
-                  content: const Text(
-                      'Are you sure you want to clear all history? This action cannot be undone.'),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text('Cancel'),
-                    ),
-                    TextButton(
-                      onPressed: () async {
-                        try {
-                          await ref
-                              .read(historyMetaStateNotifier.notifier)
-                              .clearAllHistory();
-
-                          if (context.mounted) {
-                            Navigator.pop(context);
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('History cleared successfully'),
-                                duration: Duration(seconds: 2),
-                              ),
-                            );
-                          }
-                        } catch (e) {
-                          if (context.mounted) {
-                            Navigator.pop(context);
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Error clearing history'),
-                                backgroundColor: Colors.red,
-                                duration: Duration(seconds: 2),
-                              ),
-                            );
-                          }
-                        }
-                      },
-                      style: TextButton.styleFrom(
-                        foregroundColor: Theme.of(context).colorScheme.error,
-                      ),
-                      child: const Text('Clear'),
-                    ),
-                  ],
-                ),
+              showOkCancelDialog(
+                context,
+                dialogTitle: kTitleClearHistory,
+                content: kMsgClearHistory,
+                onClickOk: () async {
+                  sm.hideCurrentSnackBar();
+                  try {
+                    await ref
+                        .read(historyMetaStateNotifier.notifier)
+                        .clearAllHistory();
+                    sm.showSnackBar(getSnackBar(
+                      kMsgClearHistorySuccess,
+                      small: false,
+                    ));
+                  } catch (e) {
+                    debugPrint("Clear History Stack: $e");
+                    sm.showSnackBar(getSnackBar(
+                      kMsgClearHistoryError,
+                      small: false,
+                      color: kColorRed,
+                    ));
+                  }
+                },
               );
             },
           ),
