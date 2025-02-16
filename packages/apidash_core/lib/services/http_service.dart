@@ -139,4 +139,3 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
 void cancelHttpRequest(String? requestId) {
   httpClientManager.cancelRequest(requestId);
 }
-
