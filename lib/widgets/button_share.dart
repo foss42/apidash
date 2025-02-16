@@ -1,6 +1,5 @@
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'package:apidash/consts.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -17,21 +16,6 @@ class ShareButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var sm = ScaffoldMessenger.of(context);
-    onPressed() async {
-      try {
-        final box = context.findRenderObject() as RenderBox?;
-        await Share.share(
-          toShare,
-          sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
-        );
-      } catch (e) {
-        if (kDebugMode) {
-          print(e);
-        }
-        sm.hideCurrentSnackBar();
-        sm.showSnackBar(getSnackBar("Cannot share"));
-      }
-    }
 
     return ADIconButton(
       icon: Icons.share,
@@ -39,7 +23,15 @@ class ShareButton extends StatelessWidget {
       tooltip: kLabelShare,
       color: Theme.of(context).colorScheme.primary,
       visualDensity: VisualDensity.compact,
-      onPressed: onPressed,
+      onPressed: () async {
+        sm.hideCurrentSnackBar();
+        try {
+          await Share.share(toShare);
+        } catch (e) {
+          debugPrint("$e");
+          sm.showSnackBar(getSnackBar(kMsgShareError));
+        }
+      },
     );
   }
 }
