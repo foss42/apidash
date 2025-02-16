@@ -5,7 +5,7 @@
 A flutter widget to add trigger based autocomplete functionality to your app.
 
 <p>
-  <img src="https://github.com/foss42/apidash/blob/main/packages/multi_trigger_autocomplete_plus/asset/package_demo.gif?raw=true" alt="An animated image of the MultiTriggerAutocomplete" height="400"/>
+  <img src="https://github.com/foss42/apidash/blob/main/packages/multi_trigger_autocomplete_plus/asset/package_demo.gif?raw=true" alt="An animated image of the MultiTriggerAutocomplete" height="600"/>
 </p>
 
 ## Improvements
