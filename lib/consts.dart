@@ -473,3 +473,9 @@ const kMsgNoContent = "No content";
 const kMsgUnknowContentType = "Unknown Response Content-Type";
 // Workspace Selector
 const kMsgSelectWorkspace = "Create your workspace";
+// History Page
+const kTitleClearHistory = 'Clear History';
+const kMsgClearHistory =
+    'Clearing History is permanent. Do you want to continue?';
+const kMsgClearHistorySuccess = 'History cleared successfully';
+const kMsgClearHistoryError = 'Error clearing history';
