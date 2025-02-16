@@ -4,10 +4,8 @@
 
 A flutter widget to add trigger based autocomplete functionality to your app.
 
-**Show some ❤️ and star the repo to support the project**
-
 <p>
-  <img src="https://github.com/DenserMeerkat/multi_trigger_autocomplete_plus/blob/master/asset/package_demo.gif?raw=true" alt="An animated image of the MultiTriggerAutocomplete" height="400"/>
+  <img src="https://github.com/foss42/apidash/tree/main/packages/multi_trigger_autocomplete_plus/asset/package_demo.gif?raw=true" alt="An animated image of the MultiTriggerAutocomplete" height="400"/>
 </p>
 
 ## Improvements
@@ -33,8 +31,6 @@ To use this package you must first wrap your top most widget
 with [Portal](https://pub.dev/documentation/flutter_portal/latest/flutter_portal/Portal-class.html) as this package
 uses [flutter_portal](https://pub.dev/packages/flutter_portal)
 to show the options view.
-
-(Credits to: [Remi Rousselet](https://github.com/rrousselGit))
 
 > `Portal`, is the equivalent of [Overlay].
 >
@@ -128,9 +124,9 @@ MultiTriggerAutocomplete(
 
 ## Demo
 
-| Mention Autocomplete                                                                                                                                              | Hashtag Autocomplete                                                                                                                                              | Emoji Autocomplete                                                                                                                                            |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| <img src="https://github.com/DenserMeerkat/multi_trigger_autocomplete_plus/blob/master/asset/mention_demo.gif?raw=true" height="400" alt="Mention Autocomplete"/> | <img src="https://github.com/DenserMeerkat/multi_trigger_autocomplete_plus/blob/master/asset/hashtag_demo.gif?raw=true" height="400" alt="Hashtag Autocomplete"/> | <img src="https://github.com/DenserMeerkat/multi_trigger_autocomplete_plus/blob/master/asset/emoji_demo.gif?raw=true" height="400" alt="Emoji Autocomplete"/> |
+| Mention Autocomplete | Hashtag Autocomplete | Emoji Autocomplete |
+| --- | --- | --- |
+| ![Mention Autocomplete](asset/mention_demo.gif) | ![Hashtag Autocomplete](asset/hashtag_demo.gif) | ![Emoji Autocomplete](asset/emoji_demo.gif) |
 
 ## Customization
 
@@ -276,4 +272,6 @@ AutocompleteNoTrigger(
 
 ## License
 
-[MIT License](LICENSE)
+This Repo - Apache-2.0  
+Original Code - MIT License  
+Check full [license](LICENSE).
