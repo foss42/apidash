@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:highlighter/highlighter.dart' show highlight;
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart';
+import 'button_copy.dart';
+import 'button_save_download.dart';
+import 'button_share.dart';
 import 'code_previewer.dart';
-import 'widgets.dart'
-    show CopyButton, DropdownButtonCodegenLanguage, SaveInDownloadsButton;
+import 'dropdown_codegen.dart';
 
 class CodeGenPreviewer extends StatefulWidget {
   const CodeGenPreviewer({
@@ -150,11 +152,18 @@ class ViewCodePane extends StatelessWidget {
                       toCopy: code,
                       showLabel: showLabel,
                     ),
+                    Visibility(
+                      visible: kIsMobile,
+                      child: ShareButton(
+                        toShare: code,
+                        showLabel: showLabel,
+                      ),
+                    ),
                     SaveInDownloadsButton(
                       content: stringToBytes(code),
                       ext: codegenLanguage.ext,
                       showLabel: showLabel,
-                    )
+                    ),
                   ],
                 ),
               ),

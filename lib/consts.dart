@@ -421,6 +421,7 @@ const kLabelSend = "Send";
 const kLabelSending = "Sending..";
 const kLabelBusy = "Busy";
 const kLabelCopy = "Copy";
+const kLabelShare = "Share";
 const kLabelSave = "Save";
 const kLabelDownload = "Download";
 const kLabelSaving = "Saving";
@@ -479,3 +480,4 @@ const kMsgClearHistory =
     'Clearing History is permanent. Do you want to continue?';
 const kMsgClearHistorySuccess = 'History cleared successfully';
 const kMsgClearHistoryError = 'Error clearing history';
+const kMsgShareError = "Unable to share";
