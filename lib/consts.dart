@@ -474,3 +474,4 @@ const kMsgNoContent = "No content";
 const kMsgUnknowContentType = "Unknown Response Content-Type";
 // Workspace Selector
 const kMsgSelectWorkspace = "Create your workspace";
+const kMsgShareError = "Unable to share";
