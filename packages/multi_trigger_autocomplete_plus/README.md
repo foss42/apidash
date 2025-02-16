@@ -1,20 +1,16 @@
 # multi_trigger_autocomplete_plus
 
-> This is a fork from [multi_trigger_autocomplete](https://pub.dev/packages/multi_trigger_autocomplete)
-
 A flutter widget to add trigger based autocomplete functionality to your app.
 
-<p>
-  <img src="https://github.com/foss42/apidash/blob/main/packages/multi_trigger_autocomplete_plus/asset/package_demo.gif?raw=true" alt="An animated image of the MultiTriggerAutocomplete" height="600"/>
-</p>
-
-## Improvements
-
-This fork includes the following improvements over the original package:
+It is a fork of [multi_trigger_autocomplete](https://pub.dev/packages/multi_trigger_autocomplete) which includes the following improvements:
 
 - **AutocompleteNoTrigger**: A Special trigger which allows allows autcomplete suggestions without a trigger character/string.
 - **Enhanced Customization**: Allows customization of `triggerEnd` instead of using a hardcoded space (`' '`).
 - **Prefix Triggers Handling**: Correctly identifies and handles triggers that share a common prefix, such as `{` and `{{`.
+
+<p>
+  <img src="https://github.com/foss42/apidash/blob/main/packages/multi_trigger_autocomplete_plus/asset/package_demo.gif?raw=true" alt="An animated image of the MultiTriggerAutocomplete" height="600"/>
+</p>
 
 ## Installation
 
