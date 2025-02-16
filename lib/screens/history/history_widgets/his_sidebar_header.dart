@@ -42,13 +42,11 @@ class HistorySidebarHeader extends ConsumerWidget {
                         .clearAllHistory();
                     sm.showSnackBar(getSnackBar(
                       kMsgClearHistorySuccess,
-                      small: false,
                     ));
                   } catch (e) {
                     debugPrint("Clear History Stack: $e");
                     sm.showSnackBar(getSnackBar(
                       kMsgClearHistoryError,
-                      small: false,
                       color: kColorRed,
                     ));
                   }
