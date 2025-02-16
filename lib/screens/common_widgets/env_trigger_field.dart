@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:multi_trigger_autocomplete_plus/multi_trigger_autocomplete.dart';
+import 'package:multi_trigger_autocomplete_plus/multi_trigger_autocomplete_plus.dart';
 import 'package:extended_text_field/extended_text_field.dart';
 import 'env_regexp_span_builder.dart';
 import 'env_trigger_options.dart';
