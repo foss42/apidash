@@ -4,7 +4,7 @@ import 'package:example/src/data.dart';
 import 'package:example/src/options/options.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:multi_trigger_autocomplete_plus/multi_trigger_autocomplete.dart';
+import 'package:multi_trigger_autocomplete_plus/multi_trigger_autocomplete_plus.dart';
 
 void main() => runApp(const MyApp());
 

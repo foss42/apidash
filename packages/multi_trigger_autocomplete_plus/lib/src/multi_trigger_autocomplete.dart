@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_portal/flutter_portal.dart';
-import 'package:multi_trigger_autocomplete_plus/multi_trigger_autocomplete.dart';
+import 'autocomplete_query.dart';
+import 'autocomplete_trigger.dart';
+
 
 /// The type of the Autocomplete callback which returns the widget that
 /// contains the input [TextField] or [TextFormField].

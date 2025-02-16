@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:multi_trigger_autocomplete_plus/multi_trigger_autocomplete.dart';
+import 'package:multi_trigger_autocomplete_plus/multi_trigger_autocomplete_plus.dart';
 
 void main() {
   testWidgets('should render fine', (tester) async {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:multi_trigger_autocomplete_plus/multi_trigger_autocomplete.dart';
+import 'autocomplete_query.dart';
+import 'autocomplete_trigger.dart';
 
 class AutocompleteNoTrigger extends AutocompleteTrigger {
   /// Creates a [AutocompleteNoTrigger] which can be used to trigger
