@@ -1,10 +1,9 @@
-import 'package:apidash/services/services.dart';
-import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
-import 'package:apidash/consts.dart';
+import '../../../consts.dart';
 
 class HistorySidebarHeader extends ConsumerWidget {
   const HistorySidebarHeader({super.key});
@@ -23,12 +22,12 @@ class HistorySidebarHeader extends ConsumerWidget {
           ),
           const Spacer(),
           ADIconButton(
-  icon: Icons.delete_forever,
-  iconSize: kButtonIconSizeLarge,
-  tooltip: "Clear History",
-  color: Theme.of(context).brightness == Brightness.dark
-      ? kColorDarkDanger
-      : kColorLightDanger,
+            icon: Icons.delete_forever,
+            iconSize: kButtonIconSizeLarge,
+            tooltip: "Clear History",
+            color: Theme.of(context).brightness == Brightness.dark
+                ? kColorDarkDanger
+                : kColorLightDanger,
   onPressed: () {
     showDialog(
       context: context,
@@ -43,7 +42,9 @@ class HistorySidebarHeader extends ConsumerWidget {
           TextButton(
             onPressed: () async {
               try {
-                await hiveHandler.clearAllHistory(ref); // ✅ Pass `ref` here
+              await ref
+                  .read(historyMetaStateNotifier.notifier)
+                  .clearAllHistory();
                 
                 if (context.mounted) {
                   Navigator.pop(context);
