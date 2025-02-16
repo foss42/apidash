@@ -142,27 +142,10 @@ class HiveHandler {
 
   Future<void> deleteHistoryRequest(String id) => historyLazyBox.delete(id);
 
-Future<void> clearAllHistory(WidgetRef ref) async {
-  try {
-    await historyMetaBox.put(kHistoryBoxIds, null);
+  Future clearAllHistory() async {
     await historyMetaBox.clear();
     await historyLazyBox.clear();
-
-    // ✅ Now ref is passed correctly
-    ref.read(selectedHistoryIdStateProvider.notifier).state = null;
-    ref.read(selectedRequestGroupIdStateProvider.notifier).state = null;
-    ref.read(selectedHistoryRequestModelProvider.notifier).state = null;
-    ref.read(historySequenceProvider.notifier).state = null;
-    ref.read(historyMetaStateNotifier.notifier).state = null;
-
-  } catch (e) {
-    debugPrint("ERROR CLEARING HISTORY: $e");
-    rethrow;
   }
-}
-
-
-
 
   Future clear() async {
     await dataBox.clear();
