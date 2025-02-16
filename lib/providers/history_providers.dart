@@ -92,6 +92,8 @@ class HistoryMetaStateNotifier
 
   Future<void> clearAllHistory() async {
     await hiveHandler.clearAllHistory();
+    ref.read(selectedHistoryIdStateProvider.notifier).state = null;
+    ref.read(selectedHistoryRequestModelProvider.notifier).state = null;
     loadHistoryMetas();
   }
 }
