@@ -11,6 +11,7 @@ class HistorySidebarHeader extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final mobileScaffoldKey = ref.read(mobileScaffoldKeyStateProvider);
+    final sm = ScaffoldMessenger.of(context);
     return Padding(
       padding: kPe4,
       child: Row(
@@ -28,10 +29,29 @@ class HistorySidebarHeader extends ConsumerWidget {
             color: Theme.of(context).brightness == Brightness.dark
                 ? kColorDarkDanger
                 : kColorLightDanger,
-            onPressed: () async {
-              await ref
-                  .read(historyMetaStateNotifier.notifier)
-                  .clearAllHistory();
+            onPressed: () {
+              showOkCancelDialog(
+                context,
+                dialogTitle: kTitleClearHistory,
+                content: kMsgClearHistory,
+                onClickOk: () async {
+                  sm.hideCurrentSnackBar();
+                  try {
+                    await ref
+                        .read(historyMetaStateNotifier.notifier)
+                        .clearAllHistory();
+                    sm.showSnackBar(getSnackBar(
+                      kMsgClearHistorySuccess,
+                    ));
+                  } catch (e) {
+                    debugPrint("Clear History Stack: $e");
+                    sm.showSnackBar(getSnackBar(
+                      kMsgClearHistoryError,
+                      color: kColorRed,
+                    ));
+                  }
+                },
+              );
             },
           ),
           ADIconButton(
