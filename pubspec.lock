@@ -1000,15 +1000,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.6.0"
-  multi_trigger_autocomplete:
+  multi_trigger_autocomplete_plus:
     dependency: "direct main"
     description:
-      path: "."
-      ref: cb22bab30dd14452d184bc6ad3bb41b612b22c70
-      resolved-ref: cb22bab30dd14452d184bc6ad3bb41b612b22c70
-      url: "https://github.com/foss42/multi_trigger_autocomplete.git"
-    source: git
-    version: "1.0.1"
+      path: "packages/multi_trigger_autocomplete_plus"
+      relative: true
+    source: path
+    version: "1.0.2"
   mustache_template:
     dependency: transitive
     description:
