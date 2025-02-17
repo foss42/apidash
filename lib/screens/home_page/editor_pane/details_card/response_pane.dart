@@ -159,6 +159,8 @@ class WebsocketResponseView extends ConsumerStatefulWidget {
 
 class _WebsocketResponseViewState extends ConsumerState<WebsocketResponseView> {
   final ScrollController _controller = ScrollController();
+  bool _isAtTop = true;
+  List<WebSocketFrameModel> _pausedFrames = [];
 
   @override
   void initState() {
@@ -172,17 +174,13 @@ class _WebsocketResponseViewState extends ConsumerState<WebsocketResponseView> {
         );
       }
     });
-    // _controller.addListener(() {
-    //   if (_controller.position.atEdge && _controller.position.pixels != 0) {
-    //     setState(() {
-    //       _controller.jumpTo(_controller.position.maxScrollExtent);
-    //     });
-    //   }else{
-    //     setState(() {
-    //       _controller.jumpTo(_controller.offset);
-    //     });
-    //   }
-    // });
+    _controller.addListener(() {
+      if (_controller.hasClients) {
+      setState(() {
+        _isAtTop = _controller.position.atEdge == true;
+      });
+    }
+    });
   }
 
   @override
@@ -197,13 +195,19 @@ class _WebsocketResponseViewState extends ConsumerState<WebsocketResponseView> {
     final frames = ref.watch(selectedRequestModelProvider
             .select((value) => value?.webSocketResponseModel?.frames)) ??
         <WebSocketFrameModel>[];  
+
+     if (_isAtTop) {
+      _pausedFrames = List.from(frames);
+    }
+
+    final displayFrames = _isAtTop ? frames : _pausedFrames;
     return ListView.builder(
       controller: _controller,
       //physics: const BouncingScrollPhysics(),
-      itemCount: frames.length,
+      itemCount: displayFrames.length,
       itemBuilder: (context, index) {
         return WebsocketFrame(
-          websocketFrame: frames[frames.length-index-1],
+          websocketFrame: displayFrames[displayFrames.length-index-1],
           ref: ref,
         );
       },
