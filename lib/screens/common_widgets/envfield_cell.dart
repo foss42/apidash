@@ -1,6 +1,6 @@
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
-import 'package:multi_trigger_autocomplete/multi_trigger_autocomplete.dart';
+import 'package:multi_trigger_autocomplete_plus/multi_trigger_autocomplete_plus.dart';
 import 'env_trigger_field.dart';
 
 class EnvCellField extends StatelessWidget {

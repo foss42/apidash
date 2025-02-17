@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:multi_trigger_autocomplete/multi_trigger_autocomplete.dart';
+import 'package:multi_trigger_autocomplete_plus/multi_trigger_autocomplete_plus.dart';
 import 'package:apidash/utils/utils.dart';
 import 'package:apidash/screens/common_widgets/common_widgets.dart';
 import 'package:apidash/widgets/widgets.dart';
