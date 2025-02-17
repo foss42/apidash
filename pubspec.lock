@@ -944,15 +944,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.6.0"
-  multi_trigger_autocomplete:
+  multi_trigger_autocomplete_plus:
     dependency: "direct main"
     description:
-      path: "."
-      ref: feat-no-trigger-autocomplete
-      resolved-ref: "28b593c69d0cc3774ff642ab345e0960a2f7153c"
-      url: "https://github.com/DenserMeerkat/multi_trigger_autocomplete.git"
-    source: git
-    version: "1.0.1"
+      path: "packages/multi_trigger_autocomplete_plus"
+      relative: true
+    source: path
+    version: "1.0.2"
   mustache_template:
     dependency: transitive
     description:
@@ -1264,6 +1262,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.0.3"
+  share_plus:
+    dependency: "direct main"
+    description:
+      name: share_plus
+      sha256: fce43200aa03ea87b91ce4c3ac79f0cecd52e2a7a56c7a4185023c271fbfa6da
+      url: "https://pub.dev"
+    source: hosted
+    version: "10.1.4"
+  share_plus_platform_interface:
+    dependency: transitive
+    description:
+      name: share_plus_platform_interface
+      sha256: cc012a23fc2d479854e6c80150696c4a5f5bb62cb89af4de1c505cf78d0a5d0b
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.0.2"
   shared_preferences:
     dependency: "direct main"
     description:

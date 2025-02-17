@@ -44,10 +44,8 @@ dependencies:
   markdown: ^7.2.2
   mime_dart: ^3.0.0
   multi_split_view: ^3.2.2
-  multi_trigger_autocomplete:
-    git:
-      url: https://github.com/DenserMeerkat/multi_trigger_autocomplete.git
-      ref: feat-no-trigger-autocomplete
+  multi_trigger_autocomplete_plus:
+    path: packages/multi_trigger_autocomplete_plus
   package_info_plus: ^8.0.2
   path: ^1.8.3
   path_provider: ^2.1.2
@@ -66,6 +64,7 @@ dependencies:
     git:
       url: https://github.com/google/flutter-desktop-embedding.git
       path: plugins/window_size
+  share_plus: ^10.1.4
 
 dependency_overrides:
   extended_text_field: ^16.0.0

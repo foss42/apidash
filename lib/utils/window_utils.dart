@@ -1,3 +1,5 @@
+import '../consts.dart';
+
 bool showButtonLabelsInBodySuccess(int options, double maxWidth) {
   switch (options) {
     case 0:
@@ -14,5 +16,5 @@ bool showButtonLabelsInBodySuccess(int options, double maxWidth) {
 }
 
 bool showButtonLabelsInViewCodePane(double maxWidth) {
-  return (maxWidth < 450) ? false : true;
+  return (maxWidth < 450 || kIsMobile) ? false : true;
 }

@@ -14,7 +14,7 @@ void main() {
   });
 
   test('Testing fromResponse', () async {
-    (HttpResponse?, Duration?, String?)? responseRec = await request(
+    var responseRec = await sendHttpRequest(
       requestModelGet1.id,
       requestModelGet1.apiType,
       requestModelGet1.httpRequestModel!,
@@ -32,7 +32,7 @@ void main() {
   });
 
   test('Testing fromResponse for contentType not Json', () async {
-    (HttpResponse?, Duration?, String?)? responseRec = await request(
+    var responseRec = await sendHttpRequest(
       requestModelGet13.id,
       requestModelGet1.apiType,
       requestModelGet13.httpRequestModel!,
@@ -48,7 +48,7 @@ void main() {
   });
 
   test('Testing fromResponse for Bad SSL with certificate check', () async {
-    (HttpResponse?, Duration?, String?)? responseRec = await request(
+    var responseRec = await sendHttpRequest(
       requestModelGetBadSSL.id,
       requestModelGet1.apiType,
       requestModelGetBadSSL.httpRequestModel!,
@@ -60,7 +60,7 @@ void main() {
   });
 
   test('Testing fromResponse for Bad SSL with no certificate check', () async {
-    (HttpResponse?, Duration?, String?)? responseRec = await request(
+    var responseRec = await sendHttpRequest(
       requestModelGetBadSSL.id,
       requestModelGet1.apiType,
       requestModelGetBadSSL.httpRequestModel!,
