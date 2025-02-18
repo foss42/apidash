@@ -1,10 +1,9 @@
-import 'package:apidash/services/services.dart';
-import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
-import 'package:apidash/consts.dart';
+import '../../../consts.dart';
 
 class HistorySidebarHeader extends ConsumerWidget {
   const HistorySidebarHeader({super.key});
@@ -12,6 +11,7 @@ class HistorySidebarHeader extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final mobileScaffoldKey = ref.read(mobileScaffoldKeyStateProvider);
+    final sm = ScaffoldMessenger.of(context);
     return Padding(
       padding: kPe4,
       child: Row(
@@ -29,7 +29,30 @@ class HistorySidebarHeader extends ConsumerWidget {
             color: Theme.of(context).brightness == Brightness.dark
                 ? kColorDarkDanger
                 : kColorLightDanger,
-            onPressed: () => hiveHandler.clearAllHistory(),
+            onPressed: () {
+              showOkCancelDialog(
+                context,
+                dialogTitle: kTitleClearHistory,
+                content: kMsgClearHistory,
+                onClickOk: () async {
+                  sm.hideCurrentSnackBar();
+                  try {
+                    await ref
+                        .read(historyMetaStateNotifier.notifier)
+                        .clearAllHistory();
+                    sm.showSnackBar(getSnackBar(
+                      kMsgClearHistorySuccess,
+                    ));
+                  } catch (e) {
+                    debugPrint("Clear History Stack: $e");
+                    sm.showSnackBar(getSnackBar(
+                      kMsgClearHistoryError,
+                      color: kColorRed,
+                    ));
+                  }
+                },
+              );
+            },
           ),
           ADIconButton(
             icon: Icons.manage_history_rounded,
