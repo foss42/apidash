@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:apidash/widgets/proxy_settings_dialog.dart';
 
 void main() {
   testWidgets('ProxySettingsDialog shows correctly', (WidgetTester tester) async {
