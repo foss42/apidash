@@ -11,11 +11,17 @@ You can contribute to the project in any or all of the following ways:
 - Add documentation
 - Add a new feature, resolve an existing issue or add a new test to the project. (Goto [Code Contribution Guidelines](#code-contribution-guidelines)).
 
+## Resources for New Contributors
+
+- API Dash Code Walkthrough - [Video](https://www.youtube.com/live/rIlwCTKNz-A?si=iMxTxzkpY_ySo4Ow&t=339)
+- Getting Started with Flutter - [Video](https://www.youtube.com/watch?v=8K2gV1P6ZHI)
+- API Dash Developer Guide - [Read](https://github.com/foss42/apidash/blob/main/doc/dev_guide/README.md)
+
+## Code Contribution Guidelines
+
 ### I have not contributed to any open source project before. Will I get any guidance?
 
 In case you are new to the open source ecosystem, we would be more than happy to guide you through the entire process. Just join our [Discord server](https://bit.ly/heyfoss) and drop a message in the **#foss** channel.
-
-## Code Contribution Guidelines
 
 ### Some things to keep in mind before opening a PR
 
