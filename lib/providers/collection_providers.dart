@@ -25,7 +25,7 @@ final requestSequenceProvider = StateProvider<List<String>>((ref) {
   return ids ?? [];
 });
 
-final httpClientManager = HttpClientManager();
+
 final WebSocketManager webSocketManager = WebSocketManager();
 
 final StateNotifierProvider<CollectionStateNotifier, Map<String, RequestModel>?>
@@ -33,7 +33,6 @@ final StateNotifierProvider<CollectionStateNotifier, Map<String, RequestModel>?>
     StateNotifierProvider((ref) => CollectionStateNotifier(
           ref,
           hiveHandler,
-          httpClientManager,
           webSocketManager
   ));
 
@@ -42,7 +41,6 @@ class CollectionStateNotifier
   CollectionStateNotifier(
     this.ref,
     this.hiveHandler,
-    this.httpClientManager,
     this.webSocketManager
   ) : super(null) {
     var status = loadData();
@@ -60,10 +58,8 @@ class CollectionStateNotifier
   final Ref ref;
   final HiveHandler hiveHandler;
   final baseHttpResponseModel = const HttpResponseModel();
-  final HttpClientManager httpClientManager;
   final WebSocketManager webSocketManager;
   
-
   bool hasId(String id) => state?.keys.contains(id) ?? false;
 
   RequestModel? getRequestModel(String id) {
@@ -123,6 +119,7 @@ class CollectionStateNotifier
     final rId = id ?? ref.read(selectedIdStateProvider);
     var itemIds = ref.read(requestSequenceProvider);
     int idx = itemIds.indexOf(rId!);
+    cancelHttpRequest(rId);
     itemIds.remove(rId);
     ref.read(requestSequenceProvider.notifier).state = [...itemIds];
 
@@ -327,7 +324,7 @@ class CollectionStateNotifier
     state = map;
 
     bool noSSL = ref.read(settingsProvider).isSSLDisabled;
-    (HttpResponse?, Duration?, String?)? responseRec = await request(
+    var responseRec = await sendHttpRequest(
       requestId,
       apiType,
       substitutedHttpRequestModel,
@@ -385,7 +382,7 @@ class CollectionStateNotifier
 
   void cancelRequest() {
     final id = ref.read(selectedIdStateProvider);
-    httpClientManager.cancelRequest(id);
+    cancelHttpRequest(id);
     unsave();
   }
 

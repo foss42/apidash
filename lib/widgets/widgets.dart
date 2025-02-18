@@ -16,6 +16,7 @@ export 'codegen_previewer.dart';
 export 'dialog_about.dart';
 export 'dialog_history_retention.dart';
 export 'dialog_import.dart';
+export 'dialog_ok_cancel.dart';
 export 'dialog_rename.dart';
 export 'dialog_text.dart';
 export 'drag_and_drop_area.dart';
