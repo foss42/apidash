@@ -22,8 +22,10 @@ class HttpRequestModel with _$HttpRequestModel {
     @Default("") String url,
     List<NameValueModel>? headers,
     List<NameValueModel>? params,
+    List<NameValueModel>? graphqlVariables,
     List<bool>? isHeaderEnabledList,
     List<bool>? isParamEnabledList,
+    List<bool>? isGraphqlVariablesEnabledList,
     @Default(ContentType.json) ContentType bodyContentType,
     String? body,
     String? query,
@@ -34,14 +36,18 @@ class HttpRequestModel with _$HttpRequestModel {
       _$HttpRequestModelFromJson(json);
 
   Map<String, String> get headersMap => rowsToMap(headers) ?? {};
+  Map<String, String> get graphqlVariablesMap => rowsToMap(graphqlVariables) ?? {};
   Map<String, String> get paramsMap => rowsToMap(params) ?? {};
   List<NameValueModel>? get enabledHeaders =>
       getEnabledRows(headers, isHeaderEnabledList);
   List<NameValueModel>? get enabledParams =>
       getEnabledRows(params, isParamEnabledList);
+  List<NameValueModel>? get enabledGraphqlVariables =>
+      getEnabledRows(params, isGraphqlVariablesEnabledList);
 
   Map<String, String> get enabledHeadersMap => rowsToMap(enabledHeaders) ?? {};
   Map<String, String> get enabledParamsMap => rowsToMap(enabledParams) ?? {};
+  Map<String, String> get enabledGraphqlVariablesMap => rowsToMap(enabledGraphqlVariables) ?? {};
 
   bool get hasContentTypeHeader => enabledHeadersMap.hasKeyContentType();
   bool get hasFormDataContentType => bodyContentType == ContentType.formdata;

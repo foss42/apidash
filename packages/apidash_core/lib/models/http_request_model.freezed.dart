@@ -24,8 +24,12 @@ mixin _$HttpRequestModel {
   String get url => throw _privateConstructorUsedError;
   List<NameValueModel>? get headers => throw _privateConstructorUsedError;
   List<NameValueModel>? get params => throw _privateConstructorUsedError;
+  List<NameValueModel>? get graphqlVariables =>
+      throw _privateConstructorUsedError;
   List<bool>? get isHeaderEnabledList => throw _privateConstructorUsedError;
   List<bool>? get isParamEnabledList => throw _privateConstructorUsedError;
+  List<bool>? get isGraphqlVariablesEnabledList =>
+      throw _privateConstructorUsedError;
   ContentType get bodyContentType => throw _privateConstructorUsedError;
   String? get body => throw _privateConstructorUsedError;
   String? get query => throw _privateConstructorUsedError;
@@ -52,8 +56,10 @@ abstract class $HttpRequestModelCopyWith<$Res> {
       String url,
       List<NameValueModel>? headers,
       List<NameValueModel>? params,
+      List<NameValueModel>? graphqlVariables,
       List<bool>? isHeaderEnabledList,
       List<bool>? isParamEnabledList,
+      List<bool>? isGraphqlVariablesEnabledList,
       ContentType bodyContentType,
       String? body,
       String? query,
@@ -79,8 +85,10 @@ class _$HttpRequestModelCopyWithImpl<$Res, $Val extends HttpRequestModel>
     Object? url = null,
     Object? headers = freezed,
     Object? params = freezed,
+    Object? graphqlVariables = freezed,
     Object? isHeaderEnabledList = freezed,
     Object? isParamEnabledList = freezed,
+    Object? isGraphqlVariablesEnabledList = freezed,
     Object? bodyContentType = null,
     Object? body = freezed,
     Object? query = freezed,
@@ -103,6 +111,10 @@ class _$HttpRequestModelCopyWithImpl<$Res, $Val extends HttpRequestModel>
           ? _value.params
           : params // ignore: cast_nullable_to_non_nullable
               as List<NameValueModel>?,
+      graphqlVariables: freezed == graphqlVariables
+          ? _value.graphqlVariables
+          : graphqlVariables // ignore: cast_nullable_to_non_nullable
+              as List<NameValueModel>?,
       isHeaderEnabledList: freezed == isHeaderEnabledList
           ? _value.isHeaderEnabledList
           : isHeaderEnabledList // ignore: cast_nullable_to_non_nullable
@@ -110,6 +122,10 @@ class _$HttpRequestModelCopyWithImpl<$Res, $Val extends HttpRequestModel>
       isParamEnabledList: freezed == isParamEnabledList
           ? _value.isParamEnabledList
           : isParamEnabledList // ignore: cast_nullable_to_non_nullable
+              as List<bool>?,
+      isGraphqlVariablesEnabledList: freezed == isGraphqlVariablesEnabledList
+          ? _value.isGraphqlVariablesEnabledList
+          : isGraphqlVariablesEnabledList // ignore: cast_nullable_to_non_nullable
               as List<bool>?,
       bodyContentType: null == bodyContentType
           ? _value.bodyContentType
@@ -144,8 +160,10 @@ abstract class _$$HttpRequestModelImplCopyWith<$Res>
       String url,
       List<NameValueModel>? headers,
       List<NameValueModel>? params,
+      List<NameValueModel>? graphqlVariables,
       List<bool>? isHeaderEnabledList,
       List<bool>? isParamEnabledList,
+      List<bool>? isGraphqlVariablesEnabledList,
       ContentType bodyContentType,
       String? body,
       String? query,
@@ -169,8 +187,10 @@ class __$$HttpRequestModelImplCopyWithImpl<$Res>
     Object? url = null,
     Object? headers = freezed,
     Object? params = freezed,
+    Object? graphqlVariables = freezed,
     Object? isHeaderEnabledList = freezed,
     Object? isParamEnabledList = freezed,
+    Object? isGraphqlVariablesEnabledList = freezed,
     Object? bodyContentType = null,
     Object? body = freezed,
     Object? query = freezed,
@@ -193,6 +213,10 @@ class __$$HttpRequestModelImplCopyWithImpl<$Res>
           ? _value._params
           : params // ignore: cast_nullable_to_non_nullable
               as List<NameValueModel>?,
+      graphqlVariables: freezed == graphqlVariables
+          ? _value._graphqlVariables
+          : graphqlVariables // ignore: cast_nullable_to_non_nullable
+              as List<NameValueModel>?,
       isHeaderEnabledList: freezed == isHeaderEnabledList
           ? _value._isHeaderEnabledList
           : isHeaderEnabledList // ignore: cast_nullable_to_non_nullable
@@ -200,6 +224,10 @@ class __$$HttpRequestModelImplCopyWithImpl<$Res>
       isParamEnabledList: freezed == isParamEnabledList
           ? _value._isParamEnabledList
           : isParamEnabledList // ignore: cast_nullable_to_non_nullable
+              as List<bool>?,
+      isGraphqlVariablesEnabledList: freezed == isGraphqlVariablesEnabledList
+          ? _value._isGraphqlVariablesEnabledList
+          : isGraphqlVariablesEnabledList // ignore: cast_nullable_to_non_nullable
               as List<bool>?,
       bodyContentType: null == bodyContentType
           ? _value.bodyContentType
@@ -230,16 +258,20 @@ class _$HttpRequestModelImpl extends _HttpRequestModel {
       this.url = "",
       final List<NameValueModel>? headers,
       final List<NameValueModel>? params,
+      final List<NameValueModel>? graphqlVariables,
       final List<bool>? isHeaderEnabledList,
       final List<bool>? isParamEnabledList,
+      final List<bool>? isGraphqlVariablesEnabledList,
       this.bodyContentType = ContentType.json,
       this.body,
       this.query,
       final List<FormDataModel>? formData})
       : _headers = headers,
         _params = params,
+        _graphqlVariables = graphqlVariables,
         _isHeaderEnabledList = isHeaderEnabledList,
         _isParamEnabledList = isParamEnabledList,
+        _isGraphqlVariablesEnabledList = isGraphqlVariablesEnabledList,
         _formData = formData,
         super._();
 
@@ -272,6 +304,17 @@ class _$HttpRequestModelImpl extends _HttpRequestModel {
     return EqualUnmodifiableListView(value);
   }
 
+  final List<NameValueModel>? _graphqlVariables;
+  @override
+  List<NameValueModel>? get graphqlVariables {
+    final value = _graphqlVariables;
+    if (value == null) return null;
+    if (_graphqlVariables is EqualUnmodifiableListView)
+      return _graphqlVariables;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
   final List<bool>? _isHeaderEnabledList;
   @override
   List<bool>? get isHeaderEnabledList {
@@ -290,6 +333,17 @@ class _$HttpRequestModelImpl extends _HttpRequestModel {
     if (value == null) return null;
     if (_isParamEnabledList is EqualUnmodifiableListView)
       return _isParamEnabledList;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  final List<bool>? _isGraphqlVariablesEnabledList;
+  @override
+  List<bool>? get isGraphqlVariablesEnabledList {
+    final value = _isGraphqlVariablesEnabledList;
+    if (value == null) return null;
+    if (_isGraphqlVariablesEnabledList is EqualUnmodifiableListView)
+      return _isGraphqlVariablesEnabledList;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(value);
   }
@@ -313,7 +367,7 @@ class _$HttpRequestModelImpl extends _HttpRequestModel {
 
   @override
   String toString() {
-    return 'HttpRequestModel(method: $method, url: $url, headers: $headers, params: $params, isHeaderEnabledList: $isHeaderEnabledList, isParamEnabledList: $isParamEnabledList, bodyContentType: $bodyContentType, body: $body, query: $query, formData: $formData)';
+    return 'HttpRequestModel(method: $method, url: $url, headers: $headers, params: $params, graphqlVariables: $graphqlVariables, isHeaderEnabledList: $isHeaderEnabledList, isParamEnabledList: $isParamEnabledList, isGraphqlVariablesEnabledList: $isGraphqlVariablesEnabledList, bodyContentType: $bodyContentType, body: $body, query: $query, formData: $formData)';
   }
 
   @override
@@ -326,9 +380,14 @@ class _$HttpRequestModelImpl extends _HttpRequestModel {
             const DeepCollectionEquality().equals(other._headers, _headers) &&
             const DeepCollectionEquality().equals(other._params, _params) &&
             const DeepCollectionEquality()
+                .equals(other._graphqlVariables, _graphqlVariables) &&
+            const DeepCollectionEquality()
                 .equals(other._isHeaderEnabledList, _isHeaderEnabledList) &&
             const DeepCollectionEquality()
                 .equals(other._isParamEnabledList, _isParamEnabledList) &&
+            const DeepCollectionEquality().equals(
+                other._isGraphqlVariablesEnabledList,
+                _isGraphqlVariablesEnabledList) &&
             (identical(other.bodyContentType, bodyContentType) ||
                 other.bodyContentType == bodyContentType) &&
             (identical(other.body, body) || other.body == body) &&
@@ -344,8 +403,10 @@ class _$HttpRequestModelImpl extends _HttpRequestModel {
       url,
       const DeepCollectionEquality().hash(_headers),
       const DeepCollectionEquality().hash(_params),
+      const DeepCollectionEquality().hash(_graphqlVariables),
       const DeepCollectionEquality().hash(_isHeaderEnabledList),
       const DeepCollectionEquality().hash(_isParamEnabledList),
+      const DeepCollectionEquality().hash(_isGraphqlVariablesEnabledList),
       bodyContentType,
       body,
       query,
@@ -374,8 +435,10 @@ abstract class _HttpRequestModel extends HttpRequestModel {
       final String url,
       final List<NameValueModel>? headers,
       final List<NameValueModel>? params,
+      final List<NameValueModel>? graphqlVariables,
       final List<bool>? isHeaderEnabledList,
       final List<bool>? isParamEnabledList,
+      final List<bool>? isGraphqlVariablesEnabledList,
       final ContentType bodyContentType,
       final String? body,
       final String? query,
@@ -394,9 +457,13 @@ abstract class _HttpRequestModel extends HttpRequestModel {
   @override
   List<NameValueModel>? get params;
   @override
+  List<NameValueModel>? get graphqlVariables;
+  @override
   List<bool>? get isHeaderEnabledList;
   @override
   List<bool>? get isParamEnabledList;
+  @override
+  List<bool>? get isGraphqlVariablesEnabledList;
   @override
   ContentType get bodyContentType;
   @override
