@@ -1,0 +1,4 @@
+# melos_managed_dependency_overrides: multi_trigger_autocomplete_plus
+dependency_overrides:
+  multi_trigger_autocomplete_plus:
+    path: ..
