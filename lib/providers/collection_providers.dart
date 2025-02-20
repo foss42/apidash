@@ -214,8 +214,10 @@ class CollectionStateNotifier
     int? requestTabIndex,
     List<NameValueModel>? headers,
     List<NameValueModel>? params,
+    List<NameValueModel>? graphqlVariables,
     List<bool>? isHeaderEnabledList,
     List<bool>? isParamEnabledList,
+    List<bool>? isGraphqlVariablesEnabledList,
     ContentType? bodyContentType,
     String? body,
     String? query,
@@ -241,10 +243,12 @@ class CollectionStateNotifier
         url: url ?? currentHttpRequestModel.url,
         headers: headers ?? currentHttpRequestModel.headers,
         params: params ?? currentHttpRequestModel.params,
+        graphqlVariables: graphqlVariables ?? currentHttpRequestModel.graphqlVariables,
         isHeaderEnabledList:
             isHeaderEnabledList ?? currentHttpRequestModel.isHeaderEnabledList,
         isParamEnabledList:
             isParamEnabledList ?? currentHttpRequestModel.isParamEnabledList,
+        isGraphqlVariablesEnabledList: isGraphqlVariablesEnabledList ?? currentHttpRequestModel.isGraphqlVariablesEnabledList,
         bodyContentType:
             bodyContentType ?? currentHttpRequestModel.bodyContentType,
         body: body ?? currentHttpRequestModel.body,

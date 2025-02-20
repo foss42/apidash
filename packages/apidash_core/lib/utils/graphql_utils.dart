@@ -13,6 +13,7 @@ String? getGraphQLBody(HttpRequestModel httpRequestModel) {
     }
 
     return kJsonEncoder.convert(body);
+
   }
   return null;
 }
