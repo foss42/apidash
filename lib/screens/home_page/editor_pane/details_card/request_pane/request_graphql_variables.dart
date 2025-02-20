@@ -10,17 +10,17 @@ import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/screens/common_widgets/common_widgets.dart';
 
-class EditRequestHeaders extends ConsumerStatefulWidget {
-  const EditRequestHeaders({super.key});
+class EditGraphqlVariables extends ConsumerStatefulWidget {
+  const EditGraphqlVariables({super.key});
 
   @override
-  ConsumerState<EditRequestHeaders> createState() => EditRequestHeadersState();
+  ConsumerState<EditGraphqlVariables> createState() => EditGraphqlVariablesState();
 }
 
-class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
+class EditGraphqlVariablesState extends ConsumerState<EditGraphqlVariables> {
   late int seed;
   final random = Random.secure();
-  late List<NameValueModel> headerRows;
+  late List<NameValueModel> graphqlVaraiblesRows;
   late List<bool> isRowEnabledList;
   bool isAddingRow = false;
 
@@ -32,9 +32,9 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
 
   void _onFieldChange() {
     ref.read(collectionStateNotifierProvider.notifier).update(
-      headers: headerRows.sublist(0, headerRows.length - 1),
-      isHeaderEnabledList:
-      isRowEnabledList.sublist(0, headerRows.length - 1),
+      graphqlVariables: graphqlVaraiblesRows.sublist(0, graphqlVaraiblesRows.length - 1),
+      isGraphqlVariablesEnabledList:
+      isRowEnabledList.sublist(0, graphqlVaraiblesRows.length - 1),
     );
   }
 
@@ -43,10 +43,10 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
     dataTableShowLogs = false;
     final selectedId = ref.watch(selectedIdStateProvider);
     ref.watch(selectedRequestModelProvider
-        .select((value) => value?.httpRequestModel?.headers?.length));
-    var rH = ref.read(selectedRequestModelProvider)?.httpRequestModel?.headers;
+        .select((value) => value?.httpRequestModel?.graphqlVariables?.length));
+    var rH = ref.read(selectedRequestModelProvider)?.httpRequestModel?.graphqlVariables;
     bool isHeadersEmpty = rH == null || rH.isEmpty;
-    headerRows = isHeadersEmpty
+    graphqlVaraiblesRows = isHeadersEmpty
         ? [
       kNameValueEmptyModel,
     ]
@@ -55,7 +55,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
       ...(ref
           .read(selectedRequestModelProvider)
           ?.httpRequestModel
-          ?.isHeaderEnabledList ??
+          ?.isGraphqlVariablesEnabledList ??
           List.filled(rH?.length ?? 0, true, growable: true))
     ];
     isRowEnabledList.add(false);
@@ -83,15 +83,15 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
     ];
 
     List<DataRow> dataRows = List<DataRow>.generate(
-      headerRows.length,
+      graphqlVaraiblesRows.length,
           (index) {
-        bool isLast = index + 1 == headerRows.length;
+        bool isLast = index + 1 == graphqlVaraiblesRows.length;
         return DataRow(
-          key: ValueKey("$selectedId-$index-headers-row-$seed"),
+          key: ValueKey("$selectedId-$index-graphqlVariables-row-$seed"),
           cells: <DataCell>[
             DataCell(
               ADCheckBox(
-                keyId: "$selectedId-$index-headers-c-$seed",
+                keyId: "$selectedId-$index-graphqlVariables-c-$seed",
                 value: isRowEnabledList[index],
                 onChanged: isLast
                     ? null
@@ -106,15 +106,15 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
             ),
             DataCell(
               HeaderField(
-                keyId: "$selectedId-$index-headers-k-$seed",
-                initialValue: headerRows[index].name,
+                keyId: "$selectedId-$index-graphqlVariables-k-$seed",
+                initialValue: graphqlVaraiblesRows[index].name,
                 hintText: kHintAddName,
                 onChanged: (value) {
-                  headerRows[index] = headerRows[index].copyWith(name: value);
+                  graphqlVaraiblesRows[index] = graphqlVaraiblesRows[index].copyWith(name: value);
                   if (isLast && !isAddingRow) {
                     isAddingRow = true;
                     isRowEnabledList[index] = true;
-                    headerRows.add(kNameValueEmptyModel);
+                    graphqlVaraiblesRows.add(kNameValueEmptyModel);
                     isRowEnabledList.add(false);
                   }
                   _onFieldChange();
@@ -132,15 +132,15 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
             ),
             DataCell(
               EnvCellField(
-                keyId: "$selectedId-$index-headers-v-$seed",
-                initialValue: headerRows[index].value,
+                keyId: "$selectedId-$index-graphqlVariables-v-$seed",
+                initialValue: graphqlVaraiblesRows[index].value,
                 hintText: kHintAddValue,
                 onChanged: (value) {
-                  headerRows[index] = headerRows[index].copyWith(value: value);
+                  graphqlVaraiblesRows[index] = graphqlVaraiblesRows[index].copyWith(value: value);
                   if (isLast && !isAddingRow) {
                     isAddingRow = true;
                     isRowEnabledList[index] = true;
-                    headerRows.add(kNameValueEmptyModel);
+                    graphqlVaraiblesRows.add(kNameValueEmptyModel);
                     isRowEnabledList.add(false);
                   }
                   _onFieldChange();
@@ -154,15 +154,15 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
                     ? null
                     : () {
                   seed = random.nextInt(kRandMax);
-                  if (headerRows.length == 2) {
+                  if (graphqlVaraiblesRows.length == 2) {
                     setState(() {
-                      headerRows = [
+                      graphqlVaraiblesRows = [
                         kNameValueEmptyModel,
                       ];
                       isRowEnabledList = [false];
                     });
                   } else {
-                    headerRows.removeAt(index);
+                    graphqlVaraiblesRows.removeAt(index);
                     isRowEnabledList.removeAt(index);
                   }
                   _onFieldChange();
@@ -210,7 +210,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
             padding: kPb15,
             child: ElevatedButton.icon(
               onPressed: () {
-                headerRows.add(kNameValueEmptyModel);
+                graphqlVaraiblesRows.add(kNameValueEmptyModel);
                 isRowEnabledList.add(false);
                 _onFieldChange();
               },

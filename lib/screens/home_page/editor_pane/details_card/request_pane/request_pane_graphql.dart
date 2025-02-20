@@ -5,6 +5,7 @@ import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'request_headers.dart';
 import 'request_body.dart';
+import 'request_graphql_variables.dart';
 
 class EditGraphQLRequestPane extends ConsumerWidget {
   const EditGraphQLRequestPane({super.key});
@@ -40,14 +41,17 @@ class EditGraphQLRequestPane extends ConsumerWidget {
       showIndicators: [
         headerLength > 0,
         hasQuery,
+        hasQuery
       ],
       tabLabels: const [
         kLabelHeaders,
         kLabelQuery,
+        kLabelQuery
       ],
       children: const [
         EditRequestHeaders(),
         EditRequestBody(),
+        EditGraphqlVariables()
       ],
     );
   }
