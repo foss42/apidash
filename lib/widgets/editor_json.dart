@@ -74,9 +74,10 @@ class _JsonTextFieldEditorState extends State<JsonTextFieldEditor> {
           fontWeight: FontWeight.bold,
         ),
         errorContainerDecoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.error.withOpacity(
-                kForegroundOpacity,
-              ),
+          color: Theme.of(context)
+              .colorScheme
+              .error
+              .withAlpha((kForegroundOpacity * 255).round()),
           borderRadius: kBorderRadius8,
         ),
         showErrorMessage: true,
@@ -96,16 +97,18 @@ class _JsonTextFieldEditorState extends State<JsonTextFieldEditor> {
         decoration: InputDecoration(
           hintText: kHintJson,
           hintStyle: TextStyle(
-            color: Theme.of(context).colorScheme.outline.withOpacity(
-                  kHintOpacity,
-                ),
+            color: Theme.of(context)
+                .colorScheme
+                .outline
+                .withAlpha((kHintOpacity * 255).round()),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: kBorderRadius8,
             borderSide: BorderSide(
-              color: Theme.of(context).colorScheme.primary.withOpacity(
-                    kHintOpacity,
-                  ),
+              color: Theme.of(context)
+                  .colorScheme
+                  .primary
+                  .withAlpha((kHintOpacity * 255).round()),
             ),
           ),
           enabledBorder: OutlineInputBorder(
@@ -120,7 +123,7 @@ class _JsonTextFieldEditorState extends State<JsonTextFieldEditor> {
               (Theme.of(context).brightness == Brightness.dark
                       ? Theme.of(context).colorScheme.onPrimaryContainer
                       : Theme.of(context).colorScheme.primaryContainer)
-                  .withOpacity(kForegroundOpacity),
+                  .withAlpha((kForegroundOpacity * 255).round()),
               Theme.of(context).colorScheme.surface),
         ),
       ),

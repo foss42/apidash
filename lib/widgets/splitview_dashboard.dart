@@ -36,9 +36,10 @@ class DashboardSplitViewState extends State<DashboardSplitView> {
         dividerThickness: 3,
         dividerPainter: DividerPainters.background(
           color: Theme.of(context).colorScheme.surfaceContainerHighest,
-          highlightedColor: Theme.of(context).colorScheme.outline.withOpacity(
-                kHintOpacity,
-              ),
+          highlightedColor: Theme.of(context)
+              .colorScheme
+              .outline
+              .withAlpha((kHintOpacity * 255).round()),
           animationEnabled: false,
         ),
       ),

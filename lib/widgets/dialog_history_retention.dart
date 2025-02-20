@@ -29,11 +29,10 @@ showHistoryRetentionDialog(
                 child: Text(
                   "Select the duration for which you want to retain your request history",
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onSurface
-                            .withOpacity(0.8),
-                      ),
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withAlpha((0.8 * 255).round())),
                 ),
               ),
               kVSpacer10,
@@ -52,7 +51,7 @@ showHistoryRetentionDialog(
                                 : Theme.of(context)
                                     .colorScheme
                                     .onSurface
-                                    .withOpacity(0.6)),
+                                    .withAlpha((0.6 * 255).round())),
                         value: e,
                         groupValue: selectedRetentionPeriod,
                         onChanged: (value) {

@@ -44,7 +44,7 @@ Color getHTTPMethodColor(HTTPVerb method,
 
 Color getDarkModeColor(Color col) {
   return Color.alphaBlend(
-    col.withOpacity(kOpacityDarkModeBlend),
+    col.withAlpha((kOpacityDarkModeBlend * 255).round()),
     kColorWhite,
   );
 }

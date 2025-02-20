@@ -25,10 +25,10 @@ class URLField extends StatelessWidget {
       decoration: InputDecoration(
         hintText: kHintTextUrlCard,
         hintStyle: kCodeStyle.copyWith(
-          color: Theme.of(context).colorScheme.outline.withOpacity(
-                kHintOpacity,
-              ),
-        ),
+            color: Theme.of(context)
+                .colorScheme
+                .outline
+                .withAlpha((kHintOpacity * 255).round())),
         border: InputBorder.none,
       ),
       onChanged: onChanged,

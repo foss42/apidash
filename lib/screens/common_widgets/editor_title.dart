@@ -32,7 +32,7 @@ class EditorTitle extends StatelessWidget {
               color: Theme.of(context)
                   .colorScheme
                   .secondaryContainer
-                  .withOpacity(0.3),
+                  .withAlpha((0.3 * 255).round()),
               padding:
                   const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6),
               child: Row(

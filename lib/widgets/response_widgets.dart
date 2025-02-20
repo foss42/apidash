@@ -409,7 +409,7 @@ class _BodySuccessState extends State<BodySuccess> {
           (Theme.of(context).brightness == Brightness.dark
                   ? Theme.of(context).colorScheme.onPrimaryContainer
                   : Theme.of(context).colorScheme.primaryContainer)
-              .withOpacity(kForegroundOpacity),
+              .withAlpha((kForegroundOpacity * 255).round()),
           Theme.of(context).colorScheme.surface),
       border: Border.all(
           color: Theme.of(context).colorScheme.surfaceContainerHighest),

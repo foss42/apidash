@@ -28,8 +28,10 @@ class SidebarHistoryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Color color = Theme.of(context).colorScheme.surface;
-    final Color colorVariant =
-        Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.5);
+    final Color colorVariant = Theme.of(context)
+        .colorScheme
+        .surfaceContainerHighest
+      ..withAlpha((0.5 * 255).round());
     final model = models.first;
     final Color surfaceTint = Theme.of(context).colorScheme.primary;
     final String name = getHistoryRequestName(model);
@@ -53,7 +55,7 @@ class SidebarHistoryCard extends StatelessWidget {
           onTap: onTap,
           borderRadius: kBorderRadius8,
           hoverColor: colorVariant,
-          focusColor: colorVariant.withOpacity(0.5),
+          focusColor: colorVariant.withAlpha((0.5 * 255).round()),
           child: Padding(
             padding: const EdgeInsets.only(
               left: 6,
