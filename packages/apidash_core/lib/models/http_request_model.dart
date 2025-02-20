@@ -43,7 +43,7 @@ class HttpRequestModel with _$HttpRequestModel {
   List<NameValueModel>? get enabledParams =>
       getEnabledRows(params, isParamEnabledList);
   List<NameValueModel>? get enabledGraphqlVariables =>
-      getEnabledRows(params, isGraphqlVariablesEnabledList);
+      getEnabledRows(graphqlVariables, isGraphqlVariablesEnabledList);
 
   Map<String, String> get enabledHeadersMap => rowsToMap(enabledHeaders) ?? {};
   Map<String, String> get enabledParamsMap => rowsToMap(enabledParams) ?? {};
