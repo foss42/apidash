@@ -19,7 +19,7 @@ You can contribute to the project in any or all of the following ways:
 
 ## Code Contribution Guidelines
 
-### Why we do not assign issues anyone?
+### Why we do not assign issues to anyone?
 
 - By not assigning issues upfront, anyone can feel welcome to contribute without feeling like the issue is already "taken."
 - This also prevents discouraging new contributors who might feel locked out if issues are pre-assigned.
