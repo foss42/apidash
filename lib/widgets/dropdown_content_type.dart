@@ -12,11 +12,23 @@ class DropdownButtonContentType extends StatelessWidget {
   final ContentType? contentType;
   final void Function(ContentType?)? onChanged;
 
+  String? _getDisplayName(ContentType type) {
+    if (type == ContentType.formdata ||
+        type == ContentType.xwwwformurlencoded) {
+      return "Form Data";
+    }
+    return type.name;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final filteredTypes = ContentType.values
+        .where((type) => type != ContentType.xwwwformurlencoded)
+        .toList();
+
     return ADDropdownButton<ContentType>(
       value: contentType,
-      values: ContentType.values.map((e) => (e, e.name)),
+      values: filteredTypes.map((e) => (e, _getDisplayName(e))).toList(),
       onChanged: onChanged,
       iconSize: 16,
     );

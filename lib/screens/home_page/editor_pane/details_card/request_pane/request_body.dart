@@ -62,12 +62,8 @@ class EditRequestBody extends ConsumerWidget {
                         // TODO: See changeToPostMethod above
                         // changeMethodToPost: changeToPostMethod,
                         )),
-                ContentType.xwwwformurlencoded => const Padding(
-                    padding: kPh4,
-                    child: UrlEncodedFormDataWidget(
-                        // TODO: See changeToPostMethod above
-                        // changeMethodToPost: changeToPostMethod,
-                        )),
+                ContentType.xwwwformurlencoded =>
+                  const Padding(padding: kPh4, child: FormDataWidget()),
                 // TODO: Fix JsonTextFieldEditor & plug it here
                 ContentType.json => Padding(
                     padding: kPt5o10,
@@ -124,6 +120,7 @@ class EditRequestBody extends ConsumerWidget {
   }
 }
 
+// We are merging the two dropdown buttons into one ie: Form Data and urlencoded
 class DropdownButtonBodyContentType extends ConsumerWidget {
   const DropdownButtonBodyContentType({
     super.key,
@@ -134,12 +131,28 @@ class DropdownButtonBodyContentType extends ConsumerWidget {
     ref.watch(selectedIdStateProvider);
     final requestBodyContentType = ref.watch(selectedRequestModelProvider
         .select((value) => value?.httpRequestModel?.bodyContentType));
+
     return DropdownButtonContentType(
-      contentType: requestBodyContentType,
+      contentType: requestBodyContentType == ContentType.xwwwformurlencoded
+          ? ContentType.formdata
+          : requestBodyContentType,
       onChanged: (ContentType? value) {
-        ref
-            .read(collectionStateNotifierProvider.notifier)
-            .update(bodyContentType: value);
+        if (value == ContentType.formdata) {
+          final currentType = requestBodyContentType;
+          if (currentType == ContentType.xwwwformurlencoded) {
+            ref
+                .read(collectionStateNotifierProvider.notifier)
+                .update(bodyContentType: ContentType.xwwwformurlencoded);
+          } else {
+            ref
+                .read(collectionStateNotifierProvider.notifier)
+                .update(bodyContentType: ContentType.formdata);
+          }
+        } else {
+          ref
+              .read(collectionStateNotifierProvider.notifier)
+              .update(bodyContentType: value);
+        }
       },
     );
   }

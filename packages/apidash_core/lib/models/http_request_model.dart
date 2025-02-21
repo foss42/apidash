@@ -45,6 +45,8 @@ class HttpRequestModel with _$HttpRequestModel {
 
   bool get hasContentTypeHeader => enabledHeadersMap.hasKeyContentType();
   bool get hasFormDataContentType => bodyContentType == ContentType.formdata;
+  bool get hasUrlEncodedContentType =>
+      bodyContentType == ContentType.xwwwformurlencoded;
   bool get hasJsonContentType => bodyContentType == ContentType.json;
   bool get hasTextContentType => bodyContentType == ContentType.text;
   int get contentLength => utf8.encode(body ?? "").length;

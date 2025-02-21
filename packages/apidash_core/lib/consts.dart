@@ -77,7 +77,8 @@ const kSubTypeDefaultViewOptions = 'all';
 enum ContentType {
   json("$kTypeApplication/$kSubTypeJson"),
   text("$kTypeText/$kSubTypePlain"),
-  formdata("$kTypeMultipart/$kSubTypeFormData");
+  formdata("$kTypeMultipart/$kSubTypeFormData"),
+  xwwwformurlencoded("$kTypeApplication/$kSubTypeXWwwFormUrlencoded");
 
   const ContentType(this.header);
   final String header;
