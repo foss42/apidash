@@ -216,7 +216,7 @@ class EditGraphqlVariablesState extends ConsumerState<EditGraphqlVariables> {
               },
               icon: const Icon(Icons.add),
               label: const Text(
-                kLabelAddHeader,
+                kLabelAddVariable,
                 style: kTextStyleButton,
               ),
             ),
