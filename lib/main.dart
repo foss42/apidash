@@ -11,7 +11,6 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   var settingsModel = await getSettingsFromSharedPrefs();
 
-  print("inside main ${settingsModel!.workspaceFolderPath}");
   final initStatus = await initApp(
     kIsDesktop,
     settingsModel: settingsModel,

@@ -22,7 +22,10 @@ class EditGraphQLRequestPane extends ConsumerWidget {
     final hasQuery = ref.watch(selectedRequestModelProvider
             .select((value) => value?.httpRequestModel?.hasQuery)) ??
         false;
-    if (tabIndex >= 2) {
+    final variableLength = ref.watch(selectedRequestModelProvider
+        .select((value) => value?.httpRequestModel?.graphqlVariablesMap.length)) ??
+        0;
+    if (tabIndex >= 3) {
       tabIndex = 0;
     }
     return RequestPane(
@@ -41,12 +44,12 @@ class EditGraphQLRequestPane extends ConsumerWidget {
       showIndicators: [
         headerLength > 0,
         hasQuery,
-        hasQuery
+        variableLength > 0,
       ],
       tabLabels: const [
         kLabelHeaders,
         kLabelQuery,
-        kLabelQuery
+        kLabelVariables
       ],
       children: const [
         EditRequestHeaders(),

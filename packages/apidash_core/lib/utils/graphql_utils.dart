@@ -9,9 +9,6 @@ String? getGraphQLBody(HttpRequestModel httpRequestModel) {
 
     if (httpRequestModel.isGraphqlVariablesEnabledList != null &&
         httpRequestModel.isGraphqlVariablesEnabledList!.isNotEmpty) {
-
-      print("inside graph util ${httpRequestModel.enabledGraphqlVariablesMap.toString()}");
-      print(httpRequestModel.graphqlVariables.toString());
         body["variables"] = httpRequestModel.enabledGraphqlVariablesMap;
     }
 

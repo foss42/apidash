@@ -30,6 +30,11 @@ class HistoryRequestPane extends ConsumerWidget {
         {};
     final paramLength = paramsMap.length;
 
+    final graphqlVariablesMap = ref.watch(selectedHistoryRequestModelProvider
+        .select((value) => value?.httpRequestModel.graphqlVariablesMap)) ??
+        {};
+    final graphqlVariablesLength = graphqlVariablesMap.length;
+
     final hasBody = ref.watch(selectedHistoryRequestModelProvider
             .select((value) => value?.httpRequestModel.hasBody)) ??
         false;
@@ -82,10 +87,12 @@ class HistoryRequestPane extends ConsumerWidget {
           showIndicators: [
             headerLength > 0,
             hasQuery,
+            graphqlVariablesLength > 0
           ],
           tabLabels: const [
             kLabelHeaders,
             kLabelQuery,
+            kLabelVariables
           ],
           children: [
             RequestDataTable(
@@ -93,6 +100,10 @@ class HistoryRequestPane extends ConsumerWidget {
               keyName: kNameHeader,
             ),
             const HisRequestBody(),
+            RequestDataTable(
+              rows: graphqlVariablesMap,
+              keyName: kLabelVariables,
+            ),
           ],
         ),
       _ => kSizedBoxEmpty,
