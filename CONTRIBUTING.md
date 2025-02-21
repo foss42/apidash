@@ -19,6 +19,17 @@ You can contribute to the project in any or all of the following ways:
 
 ## Code Contribution Guidelines
 
+### Why we do not assign issues to anyone?
+
+- By not assigning issues upfront, anyone can feel welcome to contribute without feeling like the issue is already "taken."
+- This also prevents discouraging new contributors who might feel locked out if issues are pre-assigned.
+- Contributors are encouraged to pick issues that align with their skills and interests. To take initiative rather than waiting for permission or being "assigned" work.
+- Sometimes contributors express interest but never follow through. If issues are assigned prematurely, others might avoid working on them, delaying progress.
+- Leaving issues unassigned ensures that work can proceed without bottlenecks if someone goes inactive.
+- Open issues encourage community discussion and brainstorming. Prematurely assigning an issue can stifle input from others who might have better ideas or solutions.
+- As open-source work is often voluntary, and contributors' availability can change. Keeping issues unassigned allows anyone to step in if the original contributor becomes unavailable.
+This also supports multiple contributors collaborating on larger or complex issues.
+
 ### I have not contributed to any open source project before. Will I get any guidance?
 
 In case you are new to the open source ecosystem, we would be more than happy to guide you through the entire process. Just join our [Discord server](https://bit.ly/heyfoss) and drop a message in the **#foss** channel.
