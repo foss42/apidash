@@ -125,14 +125,9 @@ class _EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
             ),
             border: InputBorder.none,
           ),
-
-          style: widget.style ??
-              const TextStyle(
-                fontSize: 14,
-                fontFamily: 'monospace',
-              ),
-          maxLines: widget.isEditor ? null : 1, // Multi-line only for editor
-          expands: widget.isEditor, // Expand only for editor
+          style: widget.style,
+          maxLines: widget.isEditor ? null : 1,
+          expands: widget.isEditor,
           keyboardType:
           widget.isEditor ? TextInputType.multiline : TextInputType.text,
           textAlignVertical:
