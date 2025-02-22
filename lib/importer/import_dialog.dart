@@ -4,6 +4,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'importer.dart';
+import 'package:apidash/consts.dart';
+
+List<DropdownMenuItem<ImportFormat>> getImportFormatDropdownItems() {
+  return ImportFormat.values.map((format) {
+    return DropdownMenuItem<ImportFormat>(
+      value: format,
+      child: Text(format.label),
+    );
+  }).toList();
+}
+
+
 
 void importToCollectionPane(
   BuildContext context,
