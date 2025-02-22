@@ -23,6 +23,7 @@ class EnvURLField extends StatelessWidget {
       keyId: "url-$selectedId",
       initialValue: initialValue,
       style: kCodeStyle,
+      hintText: kHintTextUrlCard,
       onChanged: onChanged,
       onFieldSubmitted: onFieldSubmitted,
       optionsWidthFactor: 1,

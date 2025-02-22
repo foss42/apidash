@@ -116,11 +116,15 @@ class _EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
               borderRadius: kBorderRadius8,
             ),
           )
-              : widget.hintText != null
-              ? InputDecoration(
+              : InputDecoration(
             hintText: widget.hintText,
-          )
-              : null,
+            hintStyle: kCodeStyle.copyWith(
+              color: Theme.of(context).colorScheme.outline.withOpacity(
+                kHintOpacity,
+              ),
+            ),
+            border: InputBorder.none,
+          ),
 
           style: widget.style ??
               const TextStyle(
