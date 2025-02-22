@@ -33,6 +33,11 @@ class _ChatbotWidgetState extends ConsumerState<ChatbotWidget> {
           requestModel: requestModel,
           responseModel: responseModel,
         );
+      } else if (message == "Debug API") {
+        response = await ollamaService.debugApi(
+          requestModel: requestModel,
+          responseModel: responseModel,
+        );
       } else {
         response = await ollamaService.generateResponse(message);
       }
@@ -51,6 +56,10 @@ class _ChatbotWidgetState extends ConsumerState<ChatbotWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final requestModel = ref.watch(selectedRequestModelProvider);
+    final statusCode = requestModel?.httpResponseModel?.statusCode;
+    final showDebugButton = statusCode != null && statusCode >= 400;
+
     return Container(
       height: 400,
       padding: const EdgeInsets.all(16),
@@ -70,6 +79,17 @@ class _ChatbotWidgetState extends ConsumerState<ChatbotWidget> {
                 icon: const Icon(Icons.info_outline),
                 label: const Text("Explain API"),
               ),
+              if (showDebugButton) ...[
+                const SizedBox(width: 8),
+                ElevatedButton.icon(
+                  onPressed: () => _sendMessage("Debug API"),
+                  icon: const Icon(Icons.bug_report),
+                  label: const Text("Debug"),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.redAccent,
+                  ),
+                ),
+              ],
               const Spacer(),
             ],
           ),
