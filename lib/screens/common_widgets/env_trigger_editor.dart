@@ -3,11 +3,13 @@ import 'package:multi_trigger_autocomplete_plus/multi_trigger_autocomplete_plus.
 import 'package:extended_text_field/extended_text_field.dart';
 import 'env_regexp_span_builder.dart';
 import 'env_trigger_options.dart';
+import 'package:apidash_design_system/apidash_design_system.dart';
 
-class EnvTriggerEditor extends StatefulWidget {
-  const EnvTriggerEditor({
+class EnvironmentTriggerEditor extends StatefulWidget {
+  const EnvironmentTriggerEditor({
     super.key,
     required this.keyId,
+    this.hintText,
     this.initialValue,
     this.onChanged,
     this.onFieldSubmitted,
@@ -17,6 +19,7 @@ class EnvTriggerEditor extends StatefulWidget {
   });
 
   final String keyId;
+  final String? hintText;
   final String? initialValue;
   final void Function(String)? onChanged;
   final void Function(String)? onFieldSubmitted;
@@ -25,10 +28,10 @@ class EnvTriggerEditor extends StatefulWidget {
   final double? optionsWidthFactor;
 
   @override
-  State<EnvTriggerEditor> createState() => _EnvTriggerEditorState();
+  State<EnvironmentTriggerEditor> createState() => _EnvironmentTriggerEditorState();
 }
 
-class _EnvTriggerEditorState extends State<EnvTriggerEditor> {
+class _EnvironmentTriggerEditorState extends State<EnvironmentTriggerEditor> {
   final TextEditingController controller = TextEditingController();
   final FocusNode focusNode = FocusNode();
 
@@ -48,7 +51,7 @@ class _EnvTriggerEditorState extends State<EnvTriggerEditor> {
   }
 
   @override
-  void didUpdateWidget(EnvTriggerEditor oldWidget) {
+  void didUpdateWidget(EnvironmentTriggerEditor oldWidget) {
     super.didUpdateWidget(oldWidget);
     if ((oldWidget.keyId != widget.keyId) ||
         (oldWidget.initialValue != widget.initialValue)) {
@@ -101,11 +104,13 @@ class _EnvTriggerEditorState extends State<EnvTriggerEditor> {
         return ExtendedTextField(
           controller: textEditingController,
           focusNode: focusnode,
-          decoration: widget.decoration ??
-              InputDecoration(
-                hintText: "Enter text...",
+          decoration:InputDecoration(
+                hintText: widget.hintText,
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(
+                    color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                  ),
+                  borderRadius: kBorderRadius8,
                 ),
               ),
           style: widget.style ??

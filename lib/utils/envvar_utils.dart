@@ -86,6 +86,11 @@ HttpRequestModel substituteHttpRequestModel(
         value: substituteVariables(param.value, envMap, activeEnvironmentId),
       );
     }).toList(),
+    body:substituteVariables(
+      httpRequestModel.body,
+      envMap,
+      activeEnvironmentId,
+    )!,
   );
   return newRequestModel;
 }

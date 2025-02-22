@@ -6,8 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
-import '../../../../common_widgets/env_regexp_span_builder.dart';
-import '../../../../common_widgets/env_trigger_field.dart';
 import '../../../../common_widgets/envfield_editor.dart';
 import 'request_form_data.dart';
 
@@ -68,22 +66,23 @@ class EditRequestBody extends ConsumerWidget {
                 // TODO: Fix JsonTextFieldEditor & plug it here
                 ContentType.json => Padding(
                     padding: kPt5o10,
-                    child: TextFieldEditor(
-                      key: Key("$selectedId-json-body"),
-                      fieldKey: "$selectedId-json-body-editor",
-                      initialValue: requestModel?.httpRequestModel?.body,
-                      onChanged: (String value) {
-                        // changeToPostMethod();
-                        ref
-                            .read(collectionStateNotifierProvider.notifier)
-                            .update(body: value);
-                      },
+                    child: EnvironmentEditorField(
                       hintText: kHintJson,
+                      selectedId: selectedId,
+                      initialValue: ref
+                          .read(collectionStateNotifierProvider.notifier)
+                          .getRequestModel(selectedId)
+                          ?.httpRequestModel
+                          ?.body,
+                      onChanged: (value) {
+                        ref.read(collectionStateNotifierProvider.notifier).update(body: value);
+                      },
                     ),
                   ),
                 _ => Padding(
                     padding: kPt5o10,
-                  child: EnvEditorField(
+                    child: EnvironmentEditorField(
+                      hintText:kHintText,
                     selectedId: selectedId,
                     initialValue: ref
                         .read(collectionStateNotifierProvider.notifier)
