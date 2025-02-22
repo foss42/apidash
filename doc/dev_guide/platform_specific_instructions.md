@@ -42,7 +42,7 @@ Conversion to Dalvik format failed:
 Unable to execute dex: method ID not in [0, 0xffff]: 65536
 ```
 
-To solve this problem, add the `multiDexEnabled true` line to the `defaultConfig` section at `android/app/build.gradle file`
+To solve this problem, add the `multiDexEnabled true` line to the `defaultConfig` section in `android/app/build.gradle file`
 
 ```
 android {
