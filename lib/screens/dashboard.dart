@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
+import '../widgets/chatbot_widget.dart';
 import 'common_widgets/common_widgets.dart';
 import 'envvar/environment_page.dart';
 import 'home_page/home_page.dart';
@@ -124,6 +125,19 @@ class Dashboard extends ConsumerWidget {
           ],
         ),
       ),
+      // Add this to your DashboardScreen's build method:
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          builder: (context) => const Padding(
+            padding: EdgeInsets.all(16.0),
+            child: ChatbotWidget(),
+          ),
+        ),
+        child: const Icon(Icons.help_outline),
+      ),
+
     );
   }
 }

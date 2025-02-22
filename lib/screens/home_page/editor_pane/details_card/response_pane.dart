@@ -54,6 +54,8 @@ class ResponseDetails extends ConsumerWidget {
         .watch(selectedRequestModelProvider.select((value) => value?.message));
     final responseModel = ref.watch(selectedRequestModelProvider
         .select((value) => value?.httpResponseModel));
+    final ollamaService = ref.watch(ollamaServiceProvider);
+
     return Column(
       children: [
         ResponsePaneHeader(
@@ -67,6 +69,25 @@ class ResponseDetails extends ConsumerWidget {
         const Expanded(
           child: ResponseTabs(),
         ),
+        if (responseModel?.body != null) // Show button only if a response exists
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ElevatedButton(
+              onPressed: () async {
+                final explanation = await ollamaService.explainApiResponse(
+                  responseModel!.body as Map<String, dynamic>, // Pass the actual response data
+                );
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('Explanation'),
+                    content: Text(explanation),
+                  ),
+                );
+              },
+              child: const Text('Explain Response'),
+            ),
+          ),
       ],
     );
   }
