@@ -22,7 +22,6 @@ class EnvironmentEditorField extends StatelessWidget {
     return EnvironmentTriggerField(
       keyId: "body-$selectedId",
       isEditor:true,
-      hintText: hintText,
       decoration: InputDecoration(
         hintText: hintText,
         border:OutlineInputBorder(

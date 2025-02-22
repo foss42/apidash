@@ -9,7 +9,6 @@ class EnvironmentTriggerField extends StatefulWidget {
   const EnvironmentTriggerField({
     super.key,
     required this.keyId,
-    this.hintText,
     this.initialValue,
     this.decoration,
     this.onChanged,
@@ -20,7 +19,6 @@ class EnvironmentTriggerField extends StatefulWidget {
   });
 
   final String keyId;
-  final String? hintText;
   final String? initialValue;
   final InputDecoration? decoration;
   final void Function(String)? onChanged;
@@ -106,25 +104,6 @@ class _EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
         return ExtendedTextField(
           controller: textEditingController,
           focusNode: focusnode,
-          // decoration: widget.isEditor
-          //     ? InputDecoration(
-          //   hintText: widget.hintText,
-          //   border:OutlineInputBorder(
-          //     borderSide: BorderSide(
-          //       color: Theme.of(context).colorScheme.outlineVariant, // Use theme color
-          //     ),
-          //     borderRadius: kBorderRadius8,
-          //   ),
-          // )
-          //     : InputDecoration(
-          //   hintText: widget.hintText,
-          //   hintStyle: kCodeStyle.copyWith(
-          //     color: Theme.of(context).colorScheme.outline.withOpacity(
-          //       kHintOpacity,
-          //     ),
-          //   ),
-          //   border: InputBorder.none,
-          // ),
           decoration: widget.decoration,
           style: widget.style,
           maxLines: widget.isEditor ? null : 1,
