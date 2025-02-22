@@ -24,7 +24,8 @@ showImportDialog({
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text("Import "),
+                    const Text("Import    ",style: const TextStyle(fontWeight: FontWeight.bold)),
+                    const SizedBox(width:8),
                     DropdownButtonImportFormat(
                       importFormat: fmt,
                       onChanged: (format) {
@@ -38,9 +39,11 @@ showImportDialog({
                     ),
                   ],
                 ),
+                const SizedBox(height:10),
                 DragAndDropArea(
                   onFileDropped: onFileDropped,
                 ),
+                const SizedBox(height:12),
               ],
             ),
           );

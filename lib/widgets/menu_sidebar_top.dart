@@ -29,7 +29,8 @@ class SidebarTopMenu extends StatelessWidget {
       iconSize: 14,
       offset: offset,
       onSelected: onSelected,
-      shape: shape,
+      shape: RoundedRectangleBorder (borderRadius: BorderRadius. circular (12)),
+      menuPadding: const EdgeInsets.symmetric(vertical: 3, horizontal: 8),
       itemBuilder: (BuildContext context) => SidebarMenuOption.values
           .map<PopupMenuEntry<SidebarMenuOption>>(
             (e) => PopupMenuItem<SidebarMenuOption>(
