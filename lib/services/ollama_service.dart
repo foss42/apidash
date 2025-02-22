@@ -73,9 +73,6 @@ Analysis: [structured analysis]''';
 
 
 return generateResponse(prompt);
-
-
-
 }
 
 Future<String> debugApi({required dynamic requestModel, required dynamic responseModel}) async {
