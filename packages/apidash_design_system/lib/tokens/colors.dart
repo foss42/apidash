@@ -9,9 +9,6 @@ const kColorRed = Colors.red;
 final kColorLightDanger = Colors.red.withOpacity(0.9);
 const kColorDarkDanger = Color(0xffcf6679);
 
-const kColorJSONKey =   Color(0xFF1757BA);
-const kColorJSONString = Color(0xFFA82323);
-
 const kColorSchemeSeed = Colors.blue;
 
 final kColorStatusCodeDefault = Colors.grey.shade700;

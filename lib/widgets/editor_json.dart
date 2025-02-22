@@ -83,10 +83,15 @@ class _JsonTextFieldEditorState extends State<JsonTextFieldEditor> {
             },
             child: JsonTextField(
               stringHighlightStyle: kCodeStyle.copyWith(
-                color: kColorJSONString,
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? kDarkCodeTheme['string']?.color
+                    : kLightCodeTheme['string']?.color,
               ),
+
               keyHighlightStyle: kCodeStyle.copyWith(
-                color: kColorJSONKey,
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? kDarkCodeTheme['attr']?.color
+                    : kLightCodeTheme['attr']?.color,
                 fontWeight: FontWeight.bold,
               ),
               errorContainerDecoration: BoxDecoration(
