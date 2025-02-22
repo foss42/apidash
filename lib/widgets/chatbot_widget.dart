@@ -38,6 +38,11 @@ class _ChatbotWidgetState extends ConsumerState<ChatbotWidget> {
           requestModel: requestModel,
           responseModel: responseModel,
         );
+      } else if (message == "Generate Test Case") {
+        response = await ollamaService.generateTestCases(
+            requestModel: requestModel,
+            responseModel: responseModel
+        );
       } else {
         response = await ollamaService.generateResponse(message);
       }
@@ -90,6 +95,17 @@ class _ChatbotWidgetState extends ConsumerState<ChatbotWidget> {
                   ),
                 ),
               ],
+              const Spacer(),
+              const SizedBox(width: 8),
+              ElevatedButton.icon(
+                onPressed: () => _sendMessage("Generate Test Case"),
+                icon: const Icon(Icons.developer_mode),
+                label: const Text("Test Case"),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blueAccent,
+                ),
+              ),
+
               const Spacer(),
             ],
           ),
