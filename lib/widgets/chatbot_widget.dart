@@ -12,20 +12,41 @@ class ChatbotWidget extends ConsumerStatefulWidget {
 class _ChatbotWidgetState extends ConsumerState<ChatbotWidget> {
   final TextEditingController _controller = TextEditingController();
   final List<Map<String, dynamic>> _messages = [];
+  bool _isLoading = false;
 
   void _sendMessage(String message) async {
+    if (message.trim().isEmpty) return;
     final ollamaService = ref.read(ollamaServiceProvider);
+    final requestModel = ref.read(selectedRequestModelProvider);
+    final responseModel = requestModel?.httpResponseModel;
 
     setState(() {
       _messages.add({'role': 'user', 'message': message});
       _controller.clear();
+      _isLoading = true;
     });
 
-    final response = await ollamaService.generateResponse(message);
+    try {
+      String response;
+      if (message == "Explain API") {
+        response = await ollamaService.explainLatestApi(
+          requestModel: requestModel,
+          responseModel: responseModel,
+        );
+      } else {
+        response = await ollamaService.generateResponse(message);
+      }
 
-    setState(() {
-      _messages.add({'role': 'bot', 'message': response});
-    });
+      setState(() {
+        _messages.add({'role': 'bot', 'message': response});
+      });
+    } catch (error) {
+      setState(() {
+        _messages.add({'role': 'bot', 'message': "Error: ${error.toString()}"});
+      });
+    } finally {
+      setState(() => _isLoading = false);
+    }
   }
 
   @override
@@ -36,51 +57,49 @@ class _ChatbotWidgetState extends ConsumerState<ChatbotWidget> {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
+        boxShadow: const [
+          BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 4)),
         ],
       ),
       child: Column(
         children: [
+          Row(
+            children: [
+              ElevatedButton.icon(
+                onPressed: () => _sendMessage("Explain API"),
+                icon: const Icon(Icons.info_outline),
+                label: const Text("Explain API"),
+              ),
+              const Spacer(),
+            ],
+          ),
           Expanded(
             child: ListView.builder(
+              reverse: true,
               itemCount: _messages.length,
               itemBuilder: (context, index) {
-                final message = _messages[index];
-                return Align(
-                  alignment: message['role'] == 'user'
-                      ? Alignment.centerRight
-                      : Alignment.centerLeft,
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(vertical: 4),
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: message['role'] == 'user'
-                          ? Theme.of(context).colorScheme.primaryContainer
-                          : Theme.of(context).colorScheme.secondaryContainer,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(message['message']),
-                  ),
+                final message = _messages.reversed.toList()[index];
+                return ChatBubble(
+                  message: message['message'],
+                  isUser: message['role'] == 'user',
                 );
               },
             ),
           ),
-          const SizedBox(height: 8),
+          if (_isLoading)
+            const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: CircularProgressIndicator(),
+            ),
           Row(
             children: [
               Expanded(
                 child: TextField(
                   controller: _controller,
                   decoration: InputDecoration(
-                    hintText: 'Ask about API responses, debug issues...',
+                    hintText: 'Ask something...',
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
+                        borderRadius: BorderRadius.circular(8)),
                   ),
                   onSubmitted: _sendMessage,
                 ),
@@ -92,6 +111,31 @@ class _ChatbotWidgetState extends ConsumerState<ChatbotWidget> {
             ],
           ),
         ],
+      ),
+    );
+  }
+}
+
+class ChatBubble extends StatelessWidget {
+  final String message;
+  final bool isUser;
+
+  const ChatBubble({super.key, required this.message, this.isUser = false});
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 4),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: isUser
+              ? Theme.of(context).colorScheme.primaryContainer
+              : Theme.of(context).colorScheme.secondaryContainer,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Text(message),
       ),
     );
   }

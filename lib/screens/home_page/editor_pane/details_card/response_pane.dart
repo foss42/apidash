@@ -54,6 +54,8 @@ class ResponseDetails extends ConsumerWidget {
         .watch(selectedRequestModelProvider.select((value) => value?.message));
     final responseModel = ref.watch(selectedRequestModelProvider
         .select((value) => value?.httpResponseModel));
+
+    final requestModel = ref.watch(selectedRequestModelProvider);
     final ollamaService = ref.watch(ollamaServiceProvider);
 
     return Column(
@@ -69,23 +71,40 @@ class ResponseDetails extends ConsumerWidget {
         const Expanded(
           child: ResponseTabs(),
         ),
-        if (responseModel?.body != null) // Show button only if a response exists
+        if (requestModel != null && responseModel != null)
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: ElevatedButton(
               onPressed: () async {
-                final explanation = await ollamaService.explainApiResponse(
-                  responseModel!.body as Map<String, dynamic>, // Pass the actual response data
-                );
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: const Text('Explanation'),
-                    content: Text(explanation),
-                  ),
-                );
+                try {
+                  final explanation = await ollamaService.explainLatestApi(
+                    requestModel: requestModel,
+                    responseModel: responseModel,
+                  );
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text('Explanation'),
+                      content: SingleChildScrollView(
+                        child: Text(explanation),
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text('Close'),
+                        ),
+                      ],
+                    ),
+                  );
+                } catch (error) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Error explaining response."),
+                    ),
+                  );
+                }
               },
-              child: const Text('Explain Response'),
+              child: const Text('Explain API'),
             ),
           ),
       ],
