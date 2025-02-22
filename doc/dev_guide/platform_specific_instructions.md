@@ -27,19 +27,22 @@ In case you are having a local build failure on macOS due to "audio_session" do 
 
 ## Android (Work in Progress)
 
-- If any case targeting the Android API level below 21 or the project and the libraries it references exceed 65,536 methods, you encounter the following build error that indicates your app has reached the limit of the Android build architecture:
+In case you are targeting the Android API level <21 or the project and the libraries it references exceed 65,536 methods, you encounter the following build error that indicates your app has reached the limit of the Android build architecture:
+  
 ```
 trouble writing output:
 Too many field references: 131000; max is 65536.
 You may try using --multi-dex option.
 ```
+
 OR
+
 ```
 Conversion to Dalvik format failed:
 Unable to execute dex: method ID not in [0, 0xffff]: 65536
 ```
-To solve this problem,
-Add the `multiDexEnabled true` line to the `defaultConfig` section at `android/app/build.gradle file`
+
+To solve this problem, add the `multiDexEnabled true` line to the `defaultConfig` section at `android/app/build.gradle file`
 
 ```
 android {
@@ -53,18 +56,22 @@ android {
 
 For more information on multidex support, you can refer to the Android developer guide on [Configuring Multidex](https://developer.android.com/studio/build/multidex).
 
-- If you are experiencing build failure issues while debugging due to Gradle/JDK/AGP version resolving try the following
-  upgrading gradle version by CLI command
+If you are experiencing build failure issues while debugging due to Gradle/JDK/AGP version resolving try upgrading the gradle version by CLI command
+
 ```
 gradle wrapper --gradle-version <latest compatible version>
 ```
-In any case above command fails then you need to edit the Gradle distribution reference in the `gradle/wrapper/gradle-wrapper.properties` file. The following example sets the Gradle version to 8.8 in the `gradle-wrapper.properties` file.
+
+In case the above command fails, edit the Gradle distribution reference in the `gradle/wrapper/gradle-wrapper.properties` file. The following example sets the Gradle version to 8.8 in the `gradle-wrapper.properties` file.
+
 ```
 ...
 distributionUrl = https\://services.gradle.org/distributions/gradle-8.8-bin.zip
 ...
 ```
-upgrade AGP by specifying the plugin version in the top-level `build.gradle` file. The following example sets the plugin to version 8.8.0 from the `build.gradle` file:
+
+Upgrade AGP by specifying the plugin version in the top-level `build.gradle` file. The following example sets the plugin to version 8.8.0 from the `build.gradle` file:
+
 ```
 plugins {
 ...
@@ -72,12 +79,13 @@ id 'com.android.application' version '8.8.0' apply false
 id 'com.android.library' version '8.8.0' apply false
 ... 
 }
-
 ```
-For more information on Gradle and Java version compatibility, you can refer to [Compatibility Matrix](https://docs.gradle.org/current/userguide/compatibility.html).
-For more information on Gradle and Android Gradle Plugin compatibility, you can refer to [Update Gradle](https://developer.android.com/build/releases/gradle-plugin).
-Note : It is highly recommended that always ensure gradle and agp versions are compatible with your JDK version not the vice-versa and having atleast JDK 17 is recommmended.
 
+For more information on:
+- Gradle and Java version compatibility, you can refer to [Compatibility Matrix](https://docs.gradle.org/current/userguide/compatibility.html).
+- Gradle and Android Gradle Plugin compatibility, you can refer to [Update Gradle](https://developer.android.com/build/releases/gradle-plugin).
+
+Note : It is highly recommended that always ensure gradle and agp versions are compatible with your JDK version not the vice-versa and having atleast JDK 17 is recommmended.
 
 ## Web  
 
