@@ -14,11 +14,13 @@ class JsonTextFieldEditor extends StatefulWidget {
     required this.fieldKey,
     this.onChanged,
     this.initialValue,
+    this.readOnly = false,
   });
 
   final String fieldKey;
   final Function(String)? onChanged;
   final String? initialValue;
+  final bool readOnly;
   @override
   State<JsonTextFieldEditor> createState() => _JsonTextFieldEditorState();
 }
@@ -101,6 +103,7 @@ class _JsonTextFieldEditorState extends State<JsonTextFieldEditor> {
                 borderRadius: kBorderRadius8,
               ),
               showErrorMessage: true,
+              readOnly: widget.readOnly,
               isFormatting: true,
               key: Key(widget.fieldKey),
               controller: controller,

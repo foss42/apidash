@@ -145,6 +145,7 @@ class HisRequestBody extends ConsumerWidget {
                       fieldKey:
                           "${selectedHistoryModel?.historyId}-json-body-viewer",
                       initialValue: requestModel?.body,
+                      readOnly: true,
                     ),
                   ),
                 _ => Padding(
