@@ -23,6 +23,14 @@ class EnvironmentEditorField extends StatelessWidget {
       keyId: "body-$selectedId",
       isEditor:true,
       hintText: hintText,
+      decoration: InputDecoration(
+        hintText: hintText,
+        border:OutlineInputBorder(
+          borderSide: BorderSide(
+            color: Theme.of(context).colorScheme.outlineVariant, // Use theme color
+          ),
+          borderRadius: kBorderRadius8,
+    ),),
       initialValue: initialValue,
       style: kCodeStyle,
       onChanged: onChanged,
