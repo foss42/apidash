@@ -64,7 +64,7 @@ class EditRequestBody extends ConsumerWidget {
                 // TODO: Fix JsonTextFieldEditor & plug it here
                 ContentType.json => Padding(
                     padding: kPt5o10,
-                    child: TextFieldEditor(
+                    child: JsonTextFieldEditor(
                       key: Key("$selectedId-json-body"),
                       fieldKey: "$selectedId-json-body-editor",
                       initialValue: requestModel?.httpRequestModel?.body,
@@ -74,7 +74,6 @@ class EditRequestBody extends ConsumerWidget {
                             .read(collectionStateNotifierProvider.notifier)
                             .update(body: value);
                       },
-                      hintText: kHintJson,
                     ),
                   ),
                 _ => Padding(
