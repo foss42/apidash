@@ -25,7 +25,7 @@ You can read more [here](https://docs.flutter.dev/platform-integration/macos/bui
 
 In case you are having a local build failure on macOS due to "audio_session" do check out issue https://github.com/foss42/apidash/issues/510 for solution.
 
-## Android (Work in Progress)
+## Android
 
 In case you are targeting the Android API level <21 or the project and the libraries it references exceed 65,536 methods, you encounter the following build error that indicates your app has reached the limit of the Android build architecture:
   
