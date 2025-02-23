@@ -184,4 +184,72 @@ generate same to same type of test case url for test purpose
     }
 
   }
+
+  Future<String> generateCode({
+    required dynamic requestModel,
+    required dynamic responseModel,
+    required String language
+  }) async {
+    final method = requestModel.httpRequestModel?.method
+        ?.toString()
+        ?.split('.')
+        ?.last
+        ?.toUpperCase() ?? "GET";
+    final endpoint = requestModel.httpRequestModel?.url ?? "Unknown endpoint";
+    final headers = requestModel.httpRequestModel?.enabledHeadersMap ?? {};
+    final params = requestModel.httpRequestModel?.enabledParamsMap ?? {};
+    final body = requestModel.httpRequestModel?.body;
+    final responseBody = responseModel.body;
+
+    final prompt = '''
+Generate complete $language code for this API integration:
+
+API Request:
+- URL: $endpoint
+- Method: $method
+- Headers: ${headers.isEmpty ? 'None' : jsonEncode(headers)}
+- Params: ${params.isEmpty ? 'None' : jsonEncode(params)}
+- Body: ${body ?? 'None'}
+
+Response Structure:
+${_formatResponse(responseBody)}
+
+Requirements:
+1. Single-file solution with no external config
+2. Direct API URL implementation
+3. Error handling for network/status errors
+4. UI components matching response data
+5. Ready-to-run code with example data display
+
+Generate complete implementation code only.
+''';
+
+    return generateResponse(prompt);
+  }
+
+  String _formatResponse(dynamic response) {
+    if (response is Map) {
+      return response.entries
+          .map((e) => '${e.key}: ${_valueType(e.value)}')
+          .join('\n');
+    }
+    return response?.toString() ?? 'No response body';
+  }
+
+  String _valueType(dynamic value) {
+    if (value is List) return 'List[${value.isNotEmpty ? _valueType(value.first) : '?'}]';
+    if (value is Map) return 'Object';
+    return value.runtimeType.toString();
+  }
+
+// Simplified UI detection
+  List<String> _detectUIElements(dynamic response) {
+    final elements = <String>[];
+    if (response is Map) {
+      if (response.containsKey('image') || response.containsKey('imageUrl')) elements.add('image');
+      if (response.containsKey('items') || response.containsKey('list')) elements.add('list');
+      if (response.containsKey('title') || response.containsKey('name')) elements.add('title');
+    }
+    return elements;
+  }
 }

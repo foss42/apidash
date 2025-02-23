@@ -1,8 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-
 
 class ChatbotWidget extends ConsumerStatefulWidget {
   const ChatbotWidget({Key? key}) : super(key: key);
@@ -15,6 +16,40 @@ class _ChatbotWidgetState extends ConsumerState<ChatbotWidget> {
   final TextEditingController _controller = TextEditingController();
   final List<Map<String, dynamic>> _messages = [];
   bool _isLoading = false;
+
+  Future<void> _handleCodeGeneration() async {
+    final language = await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Select Language'),
+        content: SizedBox(
+          width: 300,
+          child: ListView(
+            shrinkWrap: true,
+            children: [
+              _buildLanguageTile('Dart'),
+              _buildLanguageTile('Flutter'),
+              _buildLanguageTile('React'),
+              _buildLanguageTile('Python'),
+              _buildLanguageTile('JavaScript'),
+              _buildLanguageTile('Node.js'),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    if (language != null) {
+      _sendMessage("Generate $language Code");
+    }
+  }
+
+  ListTile _buildLanguageTile(String language) {
+    return ListTile(
+      title: Text(language),
+      onTap: () => Navigator.pop(context, language),
+    );
+  }
 
   void _sendMessage(String message) async {
     if (message.trim().isEmpty) return;
@@ -30,6 +65,7 @@ class _ChatbotWidgetState extends ConsumerState<ChatbotWidget> {
 
     try {
       String response;
+
       if (message == "Explain API") {
         response = await ollamaService.explainLatestApi(
           requestModel: requestModel,
@@ -42,15 +78,25 @@ class _ChatbotWidgetState extends ConsumerState<ChatbotWidget> {
         );
       } else if (message == "Generate Test Case") {
         response = await ollamaService.generateTestCases(
-            requestModel: requestModel,
-            responseModel: responseModel
+          requestModel: requestModel,
+          responseModel: responseModel,
+        );
+      } else if (message.startsWith("Generate ") && message.endsWith(" Code")) {
+        final language = message.replaceAll("Generate ", "").replaceAll(" Code", "");
+        response = await ollamaService.generateCode(
+          requestModel: requestModel,
+          responseModel: responseModel,
+          language: language,
         );
       } else {
         response = await ollamaService.generateResponse(message);
       }
 
       setState(() {
-        _messages.add({'role': 'bot', 'message': response});
+        _messages.add({
+          'role': 'bot',
+          'message': response.contains("```") ? response : "```$response```"
+        });
       });
     } catch (error) {
       setState(() {
@@ -100,7 +146,12 @@ class _ChatbotWidgetState extends ConsumerState<ChatbotWidget> {
                 icon: const Icon(Icons.developer_mode),
                 label: const Text("Test Case"),
               ),
-
+              const SizedBox(width: 8),
+              ElevatedButton.icon(
+                onPressed: _handleCodeGeneration,
+                icon: const Icon(Icons.code),
+                label: const Text("Generate Code"),
+              ),
               const Spacer(),
             ],
           ),
@@ -168,7 +219,7 @@ class ChatBubble extends StatelessWidget {
         ),
         child: MarkdownBody(
           data: message,
-          selectable: true, // Allows copying text
+          selectable: true,
         ),
       ),
     );
