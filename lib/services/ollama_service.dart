@@ -10,7 +10,7 @@ class OllamaService {
   Future<String> generateResponse(String prompt) async {
     final response = await _client.generateCompletion(
       request: GenerateCompletionRequest(
-          model: 'llama3.2:3b',
+          model: 'llama3.2:1b',
           prompt: prompt
       ),
     );
@@ -112,35 +112,25 @@ Analysis: [structured analysis]''';
     final headers = requestModel.httpRequestModel?.enabledHeadersMap ?? {};
     final parameters = requestModel.httpRequestModel?.enabledParamsMap ?? {};
     final body = requestModel.httpRequestModel?.body;
+    final responsebody=responseModel.body;
     final exampleParams = await generateExampleParams(
       requestModel: requestModel,
       responseModel: responseModel,
     );
     final prompt = '''
-Generate  test cases for the following API:
-
 **API Request:**
 - **Endpoint:** `$endpoint`
 - **Method:** `$method`
 - **Headers:** ${headers.isNotEmpty ? jsonEncode(headers) : "None"}
 - **Parameters:** ${parameters.isNotEmpty ? jsonEncode(parameters) : "None"}
+-**body:** ${body ?? "None"}
 
-**Test Case Requirements:**
-1. Normal case (valid input, expected success)
-2. Edge case (unexpected or boundary values)
-3. Missing required parameters
-4. Invalid authentication (if applicable)
-5. Error handling for different status codes
+here is an example test case for the given:$exampleParams
 
-**Example Test Case Format:**
-@Test
-void testValidRequest() {
-  final response = sendRequest("$endpoint", method: "$method", params: $exampleParams);
-  assert(response.status == 200);
-}
-\`\`\`
-
-Generate test cases covering all scenarios.
+**Instructions:**
+- Generate example parameter values for the request.
+-Generate the url of as i provided in the api reuest 
+-generate same to same type of test case url for test purpose 
 ''';
 
     return generateResponse(prompt);
@@ -177,15 +167,12 @@ Analyze the following API request and generate structured example parameters.
 - **Parameters:** ${parameters.isNotEmpty ? jsonEncode(parameters) : "None"}
 - **Body:** ${body ?? "None"}
 
-**Response:**
-- **Status Code:** ${responseModel?.statusCode ?? "Unknown"}
-- **Response Body:** ${apiResponse != null ? jsonEncode(apiResponse) : rawResponse}
 
-### **Required Output Format**
-1. **Standard Example Values**: Assign the most appropriate example values for each parameter.
-2. **Edge Cases**: Provide at least 2 edge cases per parameter.
-3. **Invalid Cases**: Generate invalid inputs for error handling.
-4. **Output must be in valid JSON format.**
+**Instructions:**
+- Generate example parameter values for the request.
+-Generate the url of as i provided in the api reuest 
+generate same to same type of test case url for test purpose 
+
 ''';
 
     // Force LLM to return structured JSON output

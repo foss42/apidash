@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
+
 
 class ChatbotWidget extends ConsumerStatefulWidget {
   const ChatbotWidget({Key? key}) : super(key: key);
@@ -90,20 +92,13 @@ class _ChatbotWidgetState extends ConsumerState<ChatbotWidget> {
                   onPressed: () => _sendMessage("Debug API"),
                   icon: const Icon(Icons.bug_report),
                   label: const Text("Debug"),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.redAccent,
-                  ),
                 ),
               ],
-              const Spacer(),
               const SizedBox(width: 8),
               ElevatedButton.icon(
                 onPressed: () => _sendMessage("Generate Test Case"),
                 icon: const Icon(Icons.developer_mode),
                 label: const Text("Test Case"),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blueAccent,
-                ),
               ),
 
               const Spacer(),
@@ -171,7 +166,10 @@ class ChatBubble extends StatelessWidget {
               : Theme.of(context).colorScheme.secondaryContainer,
           borderRadius: BorderRadius.circular(8),
         ),
-        child: Text(message),
+        child: MarkdownBody(
+          data: message,
+          selectable: true, // Allows copying text
+        ),
       ),
     );
   }
