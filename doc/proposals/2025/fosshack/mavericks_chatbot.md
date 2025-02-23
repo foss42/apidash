@@ -1,5 +1,7 @@
 # Add ChatBot for API Assistance
 
+Issue - https://github.com/foss42/apidash/issues/605
+PR - https://github.com/foss42/apidash/pull/608
 Link - https://fossunited.org/hack/fosshack25/p/7e6upj6f19
 
 ### What we planned to do:
