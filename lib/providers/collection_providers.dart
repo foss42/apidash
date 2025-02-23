@@ -334,12 +334,14 @@ class CollectionStateNotifier
 
     late final RequestModel newRequestModel;
     if (responseRec.$1 == null) {
+      print("inside response null error");
       newRequestModel = requestModel.copyWith(
         responseStatus: -1,
         message: responseRec.$3,
         isWorking: false,
       );
     } else {
+      print("inside some response");
       final httpResponseModel = baseHttpResponseModel.fromResponse(
         response: responseRec.$1!,
         time: responseRec.$2!,
