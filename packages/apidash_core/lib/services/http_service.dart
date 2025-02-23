@@ -86,8 +86,10 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
             response = await client.head(requestUrl, headers: headers);
             break;
           case HTTPVerb.post:
+            print("entered into post");
             response =
                 await client.post(requestUrl, headers: headers, body: body);
+            print("Response ${response.toString()}");
             break;
           case HTTPVerb.put:
             response =
@@ -130,6 +132,7 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
       }
       return (null, null, e.toString());
     } finally {
+      print("etered into finally");
       httpClientManager.closeClient(requestId);
     }
   } else {
@@ -138,5 +141,6 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
 }
 
 void cancelHttpRequest(String? requestId) {
+  print("inside cancelHttpRequest");
   httpClientManager.cancelRequest(requestId);
 }
