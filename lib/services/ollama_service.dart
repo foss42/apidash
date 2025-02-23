@@ -2,15 +2,15 @@ import 'dart:convert';
 import 'package:ollama_dart/ollama_dart.dart';
 
 class OllamaService {
-  final OllamaClient _client;
+final OllamaClient _client;
 
-  OllamaService() : _client = OllamaClient(baseUrl: 'http://127.0.0.1:11434/api');
+OllamaService() : _client = OllamaClient(baseUrl: 'http://127.0.0.1:11434/api');
 
   // Generate response
   Future<String> generateResponse(String prompt) async {
     final response = await _client.generateCompletion(
       request: GenerateCompletionRequest(
-          model: 'llama3.2:3b',
+          model: 'llama3.2:1b',
           prompt: prompt
       ),
     );
@@ -100,6 +100,42 @@ Analysis: [structured analysis]''';
     return generateResponse(prompt);
   }
 
+  Future<String> generateTestCases({required dynamic requestModel, required dynamic responseModel}) async {
+
+    final method = requestModel.httpRequestModel?.method
+        .toString()
+        .split('.')
+        .last
+        .toUpperCase()
+        ?? "GET";
+    final endpoint = requestModel.httpRequestModel?.url ?? "Unknown endpoint";
+    final headers = requestModel.httpRequestModel?.enabledHeadersMap ?? {};
+    final parameters = requestModel.httpRequestModel?.enabledParamsMap ?? {};
+    final body = requestModel.httpRequestModel?.body;
+    final responsebody=responseModel.body;
+    final exampleParams = await generateExampleParams(
+      requestModel: requestModel,
+      responseModel: responseModel,
+    );
+    final prompt = '''
+**API Request:**
+- **Endpoint:** `$endpoint`
+- **Method:** `$method`
+- **Headers:** ${headers.isNotEmpty ? jsonEncode(headers) : "None"}
+- **Parameters:** ${parameters.isNotEmpty ? jsonEncode(parameters) : "None"}
+-**body:** ${body ?? "None"}
+
+here is an example test case for the given:$exampleParams
+
+**Instructions:**
+- Generate example parameter values for the request.
+-Generate the url of as i provided in the api reuest 
+-generate same to same type of test case url for test purpose 
+''';
+
+    return generateResponse(prompt);
+  }
+
   Future<Map<String, dynamic>> generateExampleParams({required dynamic requestModel, required dynamic responseModel,}) async {
     final ollamaService = OllamaService();
 
@@ -130,15 +166,12 @@ Analyze the following API request and generate structured example parameters.
 - **Parameters:** ${parameters.isNotEmpty ? jsonEncode(parameters) : "None"}
 - **Body:** ${body ?? "None"}
 
-**Response:**
-- **Status Code:** ${responseModel?.statusCode ?? "Unknown"}
-- **Response Body:** ${apiResponse != null ? jsonEncode(apiResponse) : rawResponse}
 
-### **Required Output Format**
-1. **Standard Example Values**: Assign the most appropriate example values for each parameter.
-2. **Edge Cases**: Provide at least 2 edge cases per parameter.
-3. **Invalid Cases**: Generate invalid inputs for error handling.
-4. **Output must be in valid JSON format.**
+**Instructions:**
+- Generate example parameter values for the request.
+-Generate the url of as i provided in the api reuest 
+generate same to same type of test case url for test purpose 
+
 ''';
 
     // Force LLM to return structured JSON output
