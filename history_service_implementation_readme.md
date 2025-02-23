@@ -5,6 +5,9 @@
 + User - `Vishwa Karthik`
 + Mail - `vishwa.prarthana@gmail.com`
 
+## Do Checkout
++ [Issues with Isolate & Compute Methodology](https://github.com/foss42/apidash/pull/604#issuecomment-2676863276)
+
 
 ## Overview
 
@@ -23,15 +26,15 @@ This document outlines the implementation of the autoClearHistory feature in API
 
 + Uses Riverpod StateNotifier to monitor the API request list dynamically.
 
-+ If the length exceeds 50, the history is automatically trimmed, keeping only the latest 50 requests.
++ If the length exceeds 50, the history clearance is automatically triggered, just to avoid heavy duty on app launch.
 
-+ This ensures automatic cleanup without relying on platform-dependent lifecycle events.
++ Reason to use State management here is to resist unnecessary local database call because user may keep switching apps/window during development cycle.
 
 ### Platform-Specific Cleanup Handling
 
 + For Android & iOS: Uses AppLifecycleState.paused via WidgetsBindingObserver to trigger autoClearHistory() when the app goes to the background.
 
-+ For Windows, macOS, Linux:Uses window_manager to detect app minimize/close events and trigger cleanup accordingly.
++ For Windows, macOS, Linux:Uses window_manager to detect app minimize events and trigger cleanup accordingly.
 
 + Ensures proper handling since AppLifecycleState does not work on desktops.
 
