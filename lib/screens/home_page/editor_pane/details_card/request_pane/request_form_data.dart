@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:apidash/screens/common_widgets/common_widgets.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
@@ -138,7 +139,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                       },
                       initialValue: formRows[index].value,
                     )
-                  : CellField(
+                  : EnvFieldFormData(
                       keyId: "$selectedId-$index-form-v-$seed",
                       initialValue: formRows[index].value,
                       hintText: kHintAddValue,

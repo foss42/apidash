@@ -53,7 +53,6 @@ String? substituteVariables(
   for (var variable in activeEnv) {
     combinedMap[variable.key] = variable.value;
   }
-
   String result = input.replaceAllMapped(kEnvVarRegEx, (match) {
     final key = match.group(1)?.trim() ?? '';
     return combinedMap[key] ?? '';
@@ -61,6 +60,38 @@ String? substituteVariables(
 
   return result;
 }
+
+List<FormDataModel>? substituteFormData(
+    List<FormDataModel>? input,
+    Map<String?, List<EnvironmentVariableModel>> envMap,
+    String? activeEnvironmentId) {
+  if (input == null) return null;
+
+  final Map<String, String> combinedMap = {};
+  final activeEnv = envMap[activeEnvironmentId] ?? [];
+  final globalEnv = envMap[kGlobalEnvironmentId] ?? [];
+
+  for (var variable in globalEnv) {
+    combinedMap[variable.key] = variable.value;
+  }
+  for (var variable in activeEnv) {
+    combinedMap[variable.key] = variable.value;
+  }
+
+  List<FormDataModel> result = [];
+
+  for(var formdata in input){
+     var value = formdata.value.replaceAllMapped(kEnvVarRegEx, (match) {
+      final key = match.group(1)?.trim() ?? '';
+      return combinedMap[key] ?? '';
+    });
+     result.add(FormDataModel(name:formdata.name,value: (value != '') ? value : formdata.value,type:FormDataType.text));
+  }
+
+  return result;
+}
+
+
 
 HttpRequestModel substituteHttpRequestModel(
     HttpRequestModel httpRequestModel,
@@ -84,6 +115,11 @@ HttpRequestModel substituteHttpRequestModel(
         name:
             substituteVariables(param.name, envMap, activeEnvironmentId) ?? "",
         value: substituteVariables(param.value, envMap, activeEnvironmentId),
+      );
+    }).toList(),
+    formData: httpRequestModel.formData?.map((form) {
+      return form.copyWith(
+        value: substituteVariables(form.value, envMap, activeEnvironmentId) ?? "",
       );
     }).toList(),
   );
