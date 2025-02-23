@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:apidash/models/history_meta_model.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_portal/flutter_portal.dart';
@@ -101,11 +102,62 @@ class _AppState extends ConsumerState<App> with WindowListener {
   }
 }
 
-class DashApp extends ConsumerWidget {
+class DashApp extends ConsumerStatefulWidget {
   const DashApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ConsumerStatefulWidget> createState() => _DashAppState();
+}
+
+class _DashAppState extends ConsumerState<DashApp>
+    with WidgetsBindingObserver, WindowListener {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    if (kIsDesktop) {
+      windowManager.addListener(this);
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    if (kIsDesktop) {
+      windowManager.removeListener(this);
+    }
+    super.dispose();
+  }
+
+  // Mobile LifeCyclse (Android, IOS)
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.paused:
+        clearHistoryService();
+      default:
+        break;
+    }
+    super.didChangeAppLifecycleState(state);
+  }
+
+  // Desktop Lifecycle (Windows, macOS, Linux)
+  @override
+  void onWindowMinimize() {
+    clearHistoryService();
+  }
+
+  Future<void> clearHistoryService() async {
+    final Map<String, HistoryMetaModel>? historyMetas =
+        ref.watch(historyMetaStateNotifier);
+    if ((historyMetas?.length ?? 0) > kCleaHistoryBackgroundThreshold) {
+      var settingsModel = await getSettingsFromSharedPrefs();
+      await HistoryServiceImpl().autoClearHistory(settingsModel: settingsModel);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final isDarkMode =
         ref.watch(settingsProvider.select((value) => value.isDark));
     final workspaceFolderPath = ref
