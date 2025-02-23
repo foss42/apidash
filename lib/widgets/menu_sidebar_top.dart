@@ -10,13 +10,14 @@ class SidebarTopMenu extends StatelessWidget {
     this.splashRadius = 14,
     this.tooltip,
     this.shape,
+    this.menuPadding,
   });
   final Widget? child;
   final Offset offset;
   final double splashRadius;
   final String? tooltip;
   final ShapeBorder? shape;
-
+  final EdgeInsets? menuPadding;
   final Function(SidebarMenuOption)? onSelected;
 
   @override
@@ -29,8 +30,8 @@ class SidebarTopMenu extends StatelessWidget {
       iconSize: 14,
       offset: offset,
       onSelected: onSelected,
-      shape: RoundedRectangleBorder (borderRadius: BorderRadius. circular (12)),
-      menuPadding: const EdgeInsets.symmetric(vertical: 3, horizontal: 8),
+      shape: shape,
+      menuPadding: menuPadding,
       itemBuilder: (BuildContext context) => SidebarMenuOption.values
           .map<PopupMenuEntry<SidebarMenuOption>>(
             (e) => PopupMenuItem<SidebarMenuOption>(
