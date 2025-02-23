@@ -84,6 +84,25 @@ Future<void> deleteHiveBoxes() async {
   }
 }
 
+Future<void> closeHiveBoxes() async {
+  try {
+    if (Hive.isBoxOpen(kDataBox)) {
+      await Hive.box(kDataBox).close();
+    }
+    if (Hive.isBoxOpen(kEnvironmentBox)) {
+      await Hive.box(kEnvironmentBox).close();
+    }
+    if (Hive.isBoxOpen(kHistoryMetaBox)) {
+      await Hive.box(kHistoryMetaBox).close();
+    }
+    if (Hive.isBoxOpen(kHistoryLazyBox)) {
+      await Hive.lazyBox(kHistoryLazyBox).close();
+    }
+  } catch (e, st) {
+    debugPrint("ERROR CLOSING HIVE BOXES: $e due to $st");
+  }
+}
+
 final hiveHandler = HiveHandler();
 
 class HiveHandler {

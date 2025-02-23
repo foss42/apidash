@@ -70,6 +70,7 @@ final kIconRemoveLight = Icon(
 const kCodePreviewLinesLimit = 500;
 
 enum HistoryRetentionPeriod {
+  fiveSeconds("5 Seconds", Icons.access_time_rounded),
   oneWeek("1 Week", Icons.calendar_view_week_rounded),
   oneMonth("1 Month", Icons.calendar_view_month_rounded),
   threeMonths("3 Months", Icons.calendar_month_rounded),
@@ -481,3 +482,4 @@ const kMsgClearHistory =
 const kMsgClearHistorySuccess = 'History cleared successfully';
 const kMsgClearHistoryError = 'Error clearing history';
 const kMsgShareError = "Unable to share";
+const int kIsolateThreshold = 50;

@@ -1,9 +1,20 @@
 import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash/services/shared_preferences_services.dart'
+    show getSettingsFromSharedPrefs;
+import 'package:path_provider/path_provider.dart'
+    show getApplicationDocumentsDirectory;
 import 'convert_utils.dart';
 
 DateTime stripTime(DateTime dateTime) {
-  return DateTime(dateTime.year, dateTime.month, dateTime.day);
+  return DateTime(
+    dateTime.year,
+    dateTime.month,
+    dateTime.day,
+    dateTime.hour,
+    dateTime.minute,
+    dateTime.second,
+  );
 }
 
 RequestModel getRequestModelFromHistoryModel(HistoryRequestModel model) {
@@ -43,6 +54,16 @@ String? getLatestRequestId(
   List<DateTime> keys = temporalGroups.keys.toList();
   keys.sort((a, b) => b.compareTo(a));
   return temporalGroups[keys.first]!.first.historyId;
+}
+
+Future<String> getHiveBoxPath() async {
+  if (!kIsDesktop) {
+    final dir = await getApplicationDocumentsDirectory();
+    return dir.path;
+  } else {
+    final SettingsModel? settings = await getSettingsFromSharedPrefs();
+    return settings?.workspaceFolderPath ?? "";
+  }
 }
 
 DateTime getDateTimeKey(List<DateTime> keys, DateTime currentKey) {
@@ -115,11 +136,30 @@ List<HistoryMetaModel> getRequestGroup(
   return requestGroup;
 }
 
+int calculateOptimalBatchSize(int totalRecords) {
+  if (totalRecords < 100) return 10;
+  if (totalRecords < 500) return 50;
+  if (totalRecords < 5000) return 200;
+  return 500;
+}
+
+List<List<String>> createBatches(List<String> items, int batchSize) {
+  return List.generate(
+    (items.length / batchSize).ceil(),
+    (index) => items.sublist(
+      index * batchSize,
+      (index * batchSize + batchSize).clamp(0, items.length),
+    ),
+  );
+}
+
 DateTime? getRetentionDate(HistoryRetentionPeriod? retentionPeriod) {
   DateTime now = DateTime.now();
   DateTime today = stripTime(now);
 
   switch (retentionPeriod) {
+    case HistoryRetentionPeriod.fiveSeconds:
+      return today.subtract(const Duration(seconds: 5));
     case HistoryRetentionPeriod.oneWeek:
       return today.subtract(const Duration(days: 7));
     case HistoryRetentionPeriod.oneMonth:
