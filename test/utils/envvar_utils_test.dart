@@ -211,10 +211,12 @@ void main() {
           NameValueModel(name: "num", value: "{{num}}"),
         ],
       );
+
       Map<String?, List<EnvironmentVariableModel>> envMap = {
         kGlobalEnvironmentId: globalVars,
         "activeEnvId": activeEnvVars,
       };
+
       String? activeEnvironmentId = "activeEnvId";
       const expected = HttpRequestModel(
         url: "api.apidash.dev/humanize/social",
@@ -227,7 +229,10 @@ void main() {
       );
       expect(
           substituteHttpRequestModel(
-              httpRequestModel, envMap, activeEnvironmentId),
+            httpRequestModel,
+            envMap,
+            activeEnvironmentId,
+          ),
           expected);
     });
 
@@ -254,6 +259,40 @@ void main() {
         params: [
           NameValueModel(name: "num", value: "8940000"),
         ],
+      );
+      expect(
+          substituteHttpRequestModel(
+              httpRequestModel, envMap, activeEnvironmentId),
+          expected);
+    });
+
+    test(
+        "Testing substituteHttpRequestModel with environment variables in body",
+        () {
+      const httpRequestModel = HttpRequestModel(
+        url: "{{url}}/humanize/social",
+        headers: [
+          NameValueModel(name: "Authorization", value: "Bearer {{token}}"),
+        ],
+        params: [
+          NameValueModel(name: "num", value: "{{num}}"),
+        ],
+        body: "The API key is {{token}} and the number is {{num}}",
+      );
+      Map<String?, List<EnvironmentVariableModel>> envMap = {
+        kGlobalEnvironmentId: globalVars,
+        "activeEnvId": activeEnvVars,
+      };
+      String? activeEnvironmentId = "activeEnvId";
+      const expected = HttpRequestModel(
+        url: "api.apidash.dev/humanize/social",
+        headers: [
+          NameValueModel(name: "Authorization", value: "Bearer token"),
+        ],
+        params: [
+          NameValueModel(name: "num", value: "8940000"),
+        ],
+        body: "The API key is token and the number is 8940000",
       );
       expect(
           substituteHttpRequestModel(
