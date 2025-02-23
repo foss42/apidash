@@ -27,12 +27,14 @@ class _ChatbotWidgetState extends ConsumerState<ChatbotWidget> {
           child: ListView(
             shrinkWrap: true,
             children: [
-              _buildLanguageTile('Dart'),
-              _buildLanguageTile('Flutter'),
-              _buildLanguageTile('React'),
+              _buildLanguageTile('Flutter (UI)'),
+              _buildLanguageTile('React (UI)'),
+              _buildLanguageTile('Dart (Console)'),
               _buildLanguageTile('Python'),
               _buildLanguageTile('JavaScript'),
               _buildLanguageTile('Node.js'),
+              _buildLanguageTile('Java'),
+              _buildLanguageTile('C#'),
             ],
           ),
         ),

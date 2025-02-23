@@ -185,11 +185,7 @@ generate same to same type of test case url for test purpose
 
   }
 
-  Future<String> generateCode({
-    required dynamic requestModel,
-    required dynamic responseModel,
-    required String language
-  }) async {
+  Future<String> generateCode({required dynamic requestModel, required dynamic responseModel, required String language}) async {
     final method = requestModel.httpRequestModel?.method
         ?.toString()
         ?.split('.')
@@ -199,57 +195,29 @@ generate same to same type of test case url for test purpose
     final headers = requestModel.httpRequestModel?.enabledHeadersMap ?? {};
     final params = requestModel.httpRequestModel?.enabledParamsMap ?? {};
     final body = requestModel.httpRequestModel?.body;
-    final responseBody = responseModel.body;
+
+    final isFrontend = language.contains('(UI)');
+    final baseLanguage = language.replaceAll(' (UI)', '').replaceAll(' (Console)', '');
 
     final prompt = '''
-Generate complete $language code for this API integration:
+Generate complete, runnable $baseLanguage code for this API call:
 
-API Request:
+API Details:
 - URL: $endpoint
 - Method: $method
 - Headers: ${headers.isEmpty ? 'None' : jsonEncode(headers)}
 - Params: ${params.isEmpty ? 'None' : jsonEncode(params)}
 - Body: ${body ?? 'None'}
 
-Response Structure:
-${_formatResponse(responseBody)}
-
 Requirements:
-1. Single-file solution with no external config
-2. Direct API URL implementation
-3. Error handling for network/status errors
-4. UI components matching response data
-5. Ready-to-run code with example data display
+1. Generate complete code that runs directly when copied.
+2. ${isFrontend ? 'Include UI components to display response data.' : 'Print the response to the console.'}
+3. Handle all parameter types (query, headers, body).
+4. Add proper error handling.
 
-Generate complete implementation code only.
+Generate only the code with necessary imports.
 ''';
 
     return generateResponse(prompt);
-  }
-
-  String _formatResponse(dynamic response) {
-    if (response is Map) {
-      return response.entries
-          .map((e) => '${e.key}: ${_valueType(e.value)}')
-          .join('\n');
-    }
-    return response?.toString() ?? 'No response body';
-  }
-
-  String _valueType(dynamic value) {
-    if (value is List) return 'List[${value.isNotEmpty ? _valueType(value.first) : '?'}]';
-    if (value is Map) return 'Object';
-    return value.runtimeType.toString();
-  }
-
-// Simplified UI detection
-  List<String> _detectUIElements(dynamic response) {
-    final elements = <String>[];
-    if (response is Map) {
-      if (response.containsKey('image') || response.containsKey('imageUrl')) elements.add('image');
-      if (response.containsKey('items') || response.containsKey('list')) elements.add('list');
-      if (response.containsKey('title') || response.containsKey('name')) elements.add('title');
-    }
-    return elements;
   }
 }
