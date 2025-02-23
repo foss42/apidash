@@ -75,6 +75,21 @@ setState(() {
                 icon: const Icon(Icons.info_outline),
                 label: const Text("Explain API"),
               ),
+
+              if (showDebugButton) ...[
+                const SizedBox(width: 8),
+                ElevatedButton.icon(
+                  onPressed: () => _sendMessage("Debug API"),
+                  icon: const Icon(Icons.bug_report),
+                  label: const Text("Debug"),
+                ),
+              ],
+              const SizedBox(width: 8),
+              ElevatedButton.icon(
+                onPressed: () => _sendMessage("Generate Test Case"),
+                icon: const Icon(Icons.developer_mode),
+                label: const Text("Test Case"),
+              ),
               const Spacer(),
             ],
           ),
@@ -140,7 +155,10 @@ const ChatBubble({super.key, required this.message, this.isUser = false});
               : Theme.of(context).colorScheme.secondaryContainer,
           borderRadius: BorderRadius.circular(8),
         ),
-        child: Text(message),
+        child: MarkdownBody(
+          data: message,
+          selectable: true, // Allows copying text
+        ),
       ),
     );
   }
