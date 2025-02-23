@@ -89,7 +89,21 @@ class _JsonTextFieldEditorState extends State<JsonTextFieldEditor> {
                     ? kDarkCodeTheme['string']?.color
                     : kLightCodeTheme['string']?.color,
               ),
-
+              numberHighlightStyle: kCodeStyle.copyWith(
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? kDarkCodeTheme['number']?.color
+                    : kLightCodeTheme['number']?.color,
+              ),
+              boolHighlightStyle: kCodeStyle.copyWith(
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? kDarkCodeTheme['literal']?.color
+                    : kLightCodeTheme['literal']?.color,
+              ),
+              nullHighlightStyle: kCodeStyle.copyWith(
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? kDarkCodeTheme['variable']?.color
+                    : kLightCodeTheme['variable']?.color,
+              ),
               keyHighlightStyle: kCodeStyle.copyWith(
                 color: Theme.of(context).brightness == Brightness.dark
                     ? kDarkCodeTheme['attr']?.color
@@ -105,6 +119,7 @@ class _JsonTextFieldEditorState extends State<JsonTextFieldEditor> {
               showErrorMessage: true,
               readOnly: widget.readOnly,
               isFormatting: true,
+
               key: Key(widget.fieldKey),
               controller: controller,
               focusNode: editorFocusNode,
