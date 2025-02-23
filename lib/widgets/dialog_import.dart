@@ -1,8 +1,9 @@
-import 'package:apidash/consts.dart';
+import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:file_selector/file_selector.dart';
 import 'drag_and_drop_area.dart';
 import 'dropdown_import_format.dart';
+import '../consts.dart';
 
 showImportDialog({
   required BuildContext context,
@@ -17,14 +18,15 @@ showImportDialog({
       return StatefulBuilder(
         builder: (context, StateSetter setState) {
           return AlertDialog(
-            contentPadding: const EdgeInsets.all(12),
+            contentPadding: kP12,
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text("Import "),
+                    const Text(kLabelImport),
+                    kHSpacer8,
                     DropdownButtonImportFormat(
                       importFormat: fmt,
                       onChanged: (format) {
@@ -38,6 +40,7 @@ showImportDialog({
                     ),
                   ],
                 ),
+                kVSpacer6,
                 DragAndDropArea(
                   onFileDropped: onFileDropped,
                 ),

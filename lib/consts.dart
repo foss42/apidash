@@ -433,6 +433,7 @@ const kLabelSelect = "Select";
 const kLabelContinue = "Continue";
 const kLabelCancel = "Cancel";
 const kLabelOk = "Ok";
+const kLabelImport = "Import";
 const kUntitled = "untitled";
 // Request Pane
 const kLabelRequest = "Request";
