@@ -22,19 +22,24 @@ class _ChatbotWidgetState extends ConsumerState<ChatbotWidget> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Select Language'),
-        content: SizedBox(
-          width: 300,
-          child: ListView(
-            shrinkWrap: true,
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              _buildLanguageTile('Flutter (UI)'),
-              _buildLanguageTile('React (UI)'),
-              _buildLanguageTile('Dart (Console)'),
-              _buildLanguageTile('Python'),
-              _buildLanguageTile('JavaScript'),
-              _buildLanguageTile('Node.js'),
-              _buildLanguageTile('Java'),
-              _buildLanguageTile('C#'),
+              for (var lang in [
+                'Flutter (UI)',
+                'React (UI)',
+                'Dart (Console)',
+                'Python',
+                'JavaScript',
+                'Node.js',
+                'Java',
+                'C#'
+              ])
+                ListTile(
+                  title: Text(lang),
+                  onTap: () => Navigator.pop(context, lang),
+                ),
             ],
           ),
         ),
@@ -44,13 +49,6 @@ class _ChatbotWidgetState extends ConsumerState<ChatbotWidget> {
     if (language != null) {
       _sendMessage("Generate $language Code");
     }
-  }
-
-  ListTile _buildLanguageTile(String language) {
-    return ListTile(
-      title: Text(language),
-      onTap: () => Navigator.pop(context, language),
-    );
   }
 
   void _sendMessage(String message) async {
@@ -97,7 +95,7 @@ class _ChatbotWidgetState extends ConsumerState<ChatbotWidget> {
       setState(() {
         _messages.add({
           'role': 'bot',
-          'message': response.contains("```") ? response : "```$response```"
+          'message': response.contains("```") ? response : "```\n$response\n```"
         });
       });
     } catch (error) {
@@ -116,7 +114,7 @@ class _ChatbotWidgetState extends ConsumerState<ChatbotWidget> {
     final showDebugButton = statusCode != null && statusCode >= 400;
 
     return Container(
-      height: 400,
+      height: 450,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
@@ -127,36 +125,35 @@ class _ChatbotWidgetState extends ConsumerState<ChatbotWidget> {
       ),
       child: Column(
         children: [
-          Row(
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            alignment: WrapAlignment.center,
             children: [
               ElevatedButton.icon(
                 onPressed: () => _sendMessage("Explain API"),
                 icon: const Icon(Icons.info_outline),
                 label: const Text("Explain API"),
               ),
-              if (showDebugButton) ...[
-                const SizedBox(width: 8),
+              if (showDebugButton)
                 ElevatedButton.icon(
                   onPressed: () => _sendMessage("Debug API"),
                   icon: const Icon(Icons.bug_report),
                   label: const Text("Debug"),
                 ),
-              ],
-              const SizedBox(width: 8),
               ElevatedButton.icon(
                 onPressed: () => _sendMessage("Generate Test Case"),
                 icon: const Icon(Icons.developer_mode),
                 label: const Text("Test Case"),
               ),
-              const SizedBox(width: 8),
               ElevatedButton.icon(
                 onPressed: _handleCodeGeneration,
                 icon: const Icon(Icons.code),
                 label: const Text("Generate Code"),
               ),
-              const Spacer(),
             ],
           ),
+          const SizedBox(height: 12),
           Expanded(
             child: ListView.builder(
               reverse: true,
@@ -175,24 +172,31 @@ class _ChatbotWidgetState extends ConsumerState<ChatbotWidget> {
               padding: EdgeInsets.all(8.0),
               child: CircularProgressIndicator(),
             ),
-          Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: _controller,
-                  decoration: InputDecoration(
-                    hintText: 'Ask something...',
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8)),
+          const SizedBox(height: 10),
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              color: Theme.of(context).colorScheme.surfaceVariant,
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _controller,
+                    decoration: const InputDecoration(
+                      hintText: 'Ask something...',
+                      border: InputBorder.none,
+                    ),
+                    onSubmitted: _sendMessage,
                   ),
-                  onSubmitted: _sendMessage,
                 ),
-              ),
-              IconButton(
-                icon: const Icon(Icons.send),
-                onPressed: () => _sendMessage(_controller.text),
-              ),
-            ],
+                IconButton(
+                  icon: const Icon(Icons.send),
+                  onPressed: () => _sendMessage(_controller.text),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -211,7 +215,7 @@ class ChatBubble extends StatelessWidget {
     return Align(
       alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 4),
+        margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: isUser
