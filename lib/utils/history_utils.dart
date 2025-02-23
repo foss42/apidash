@@ -1,9 +1,6 @@
 import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
-import 'package:apidash/services/shared_preferences_services.dart'
-    show getSettingsFromSharedPrefs;
-import 'package:path_provider/path_provider.dart'
-    show getApplicationDocumentsDirectory;
+
 import 'convert_utils.dart';
 
 DateTime stripTime(DateTime dateTime) {
@@ -54,16 +51,6 @@ String? getLatestRequestId(
   List<DateTime> keys = temporalGroups.keys.toList();
   keys.sort((a, b) => b.compareTo(a));
   return temporalGroups[keys.first]!.first.historyId;
-}
-
-Future<String> getHiveBoxPath() async {
-  if (!kIsDesktop) {
-    final dir = await getApplicationDocumentsDirectory();
-    return dir.path;
-  } else {
-    final SettingsModel? settings = await getSettingsFromSharedPrefs();
-    return settings?.workspaceFolderPath ?? "";
-  }
 }
 
 DateTime getDateTimeKey(List<DateTime> keys, DateTime currentKey) {
@@ -137,9 +124,9 @@ List<HistoryMetaModel> getRequestGroup(
 }
 
 int calculateOptimalBatchSize(int totalRecords) {
-  if (totalRecords < 100) return 10;
-  if (totalRecords < 500) return 50;
-  if (totalRecords < 5000) return 200;
+  if (totalRecords < 100) return 50;
+  if (totalRecords < 500) return 80;
+  if (totalRecords < 5000) return 100;
   return 500;
 }
 
