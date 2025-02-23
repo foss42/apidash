@@ -5,29 +5,28 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 
 
 class ChatbotWidget extends ConsumerStatefulWidget {
-const ChatbotWidget({Key? key}) : super(key: key);
+  const ChatbotWidget({Key? key}) : super(key: key);
 
-@override
-_ChatbotWidgetState createState() => _ChatbotWidgetState();
+  @override
+  _ChatbotWidgetState createState() => _ChatbotWidgetState();
 }
 
 class _ChatbotWidgetState extends ConsumerState<ChatbotWidget> {
-final TextEditingController _controller = TextEditingController();
-final List<Map<String, dynamic>> _messages = [];
-bool _isLoading = false;
+  final TextEditingController _controller = TextEditingController();
+  final List<Map<String, dynamic>> _messages = [];
+  bool _isLoading = false;
 
-void _sendMessage(String message) async {
-if (message.trim().isEmpty) return;
-final ollamaService = ref.read(ollamaServiceProvider);
-final requestModel = ref.read(selectedRequestModelProvider);
-final responseModel = requestModel?.httpResponseModel;
+  void _sendMessage(String message) async {
+    if (message.trim().isEmpty) return;
+    final ollamaService = ref.read(ollamaServiceProvider);
+    final requestModel = ref.read(selectedRequestModelProvider);
+    final responseModel = requestModel?.httpResponseModel;
 
-
-setState(() {
-  _messages.add({'role': 'user', 'message': message});
-  _controller.clear();
-  _isLoading = true;
-});
+    setState(() {
+      _messages.add({'role': 'user', 'message': message});
+      _controller.clear();
+      _isLoading = true;
+    });
 
     try {
       String response;
@@ -36,26 +35,38 @@ setState(() {
           requestModel: requestModel,
           responseModel: responseModel,
         );
+      } else if (message == "Debug API") {
+        response = await ollamaService.debugApi(
+          requestModel: requestModel,
+          responseModel: responseModel,
+        );
+      } else if (message == "Generate Test Case") {
+        response = await ollamaService.generateTestCases(
+            requestModel: requestModel,
+            responseModel: responseModel
+        );
       } else {
         response = await ollamaService.generateResponse(message);
       }
 
-  setState(() {
-    _messages.add({'role': 'bot', 'message': response});
-  });
-} catch (error) {
-  setState(() {
-    _messages.add({'role': 'bot', 'message': "Error: ${error.toString()}"});
-  });
-} finally {
-  setState(() => _isLoading = false);
-}
-
-
-}
+      setState(() {
+        _messages.add({'role': 'bot', 'message': response});
+      });
+    } catch (error) {
+      setState(() {
+        _messages.add({'role': 'bot', 'message': "Error: ${error.toString()}"});
+      });
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final requestModel = ref.watch(selectedRequestModelProvider);
+    final statusCode = requestModel?.httpResponseModel?.statusCode;
+    final showDebugButton = statusCode != null && statusCode >= 400;
+
     return Container(
       height: 400,
       padding: const EdgeInsets.all(16),
@@ -75,7 +86,6 @@ setState(() {
                 icon: const Icon(Icons.info_outline),
                 label: const Text("Explain API"),
               ),
-
               if (showDebugButton) ...[
                 const SizedBox(width: 8),
                 ElevatedButton.icon(
@@ -90,6 +100,7 @@ setState(() {
                 icon: const Icon(Icons.developer_mode),
                 label: const Text("Test Case"),
               ),
+
               const Spacer(),
             ],
           ),
@@ -137,10 +148,10 @@ setState(() {
 }
 
 class ChatBubble extends StatelessWidget {
-final String message;
-final bool isUser;
+  final String message;
+  final bool isUser;
 
-const ChatBubble({super.key, required this.message, this.isUser = false});
+  const ChatBubble({super.key, required this.message, this.isUser = false});
 
   @override
   Widget build(BuildContext context) {
