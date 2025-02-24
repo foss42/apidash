@@ -9,6 +9,8 @@ enum APIType {
   final String abbr;
 }
 
+enum EnvironmentVariableType { variable, secret }
+
 enum HTTPVerb {
   get("GET"),
   head("HEAD"),

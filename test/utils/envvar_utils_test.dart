@@ -1,4 +1,3 @@
-import 'package:apidash/models/models.dart';
 import 'package:apidash/utils/envvar_utils.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash_core/apidash_core.dart';
