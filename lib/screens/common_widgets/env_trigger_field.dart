@@ -3,33 +3,35 @@ import 'package:multi_trigger_autocomplete_plus/multi_trigger_autocomplete_plus.
 import 'package:extended_text_field/extended_text_field.dart';
 import 'env_regexp_span_builder.dart';
 import 'env_trigger_options.dart';
+import 'package:apidash_design_system/apidash_design_system.dart';
 
 class EnvironmentTriggerField extends StatefulWidget {
   const EnvironmentTriggerField({
     super.key,
     required this.keyId,
     this.initialValue,
+    this.decoration,
     this.onChanged,
     this.onFieldSubmitted,
     this.style,
-    this.decoration,
     this.optionsWidthFactor,
+    this.isEditor = false, // Determines Field or Editor Mode
   });
 
   final String keyId;
   final String? initialValue;
+  final InputDecoration? decoration;
   final void Function(String)? onChanged;
   final void Function(String)? onFieldSubmitted;
   final TextStyle? style;
-  final InputDecoration? decoration;
   final double? optionsWidthFactor;
+  final bool isEditor;
 
   @override
-  State<EnvironmentTriggerField> createState() =>
-      EnvironmentTriggerFieldState();
+  State<EnvironmentTriggerField> createState() => _EnvironmentTriggerFieldState();
 }
 
-class EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
+class _EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
   final TextEditingController controller = TextEditingController();
   final FocusNode focusNode = FocusNode();
 
@@ -77,7 +79,7 @@ class EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
                   onSuggestionTap: (suggestion) {
                     final autocomplete = MultiTriggerAutocomplete.of(context);
                     autocomplete.acceptAutocompleteOption(
-                      '{${suggestion.variable.key}',
+                      '{${suggestion.variable.key}}',
                     );
                     widget.onChanged?.call(controller.text);
                   });
@@ -104,6 +106,13 @@ class EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
           focusNode: focusnode,
           decoration: widget.decoration,
           style: widget.style,
+          maxLines: widget.isEditor ? null : 1,
+          expands: widget.isEditor,
+          keyboardType:
+          widget.isEditor ? TextInputType.multiline : TextInputType.text,
+          textAlignVertical:
+          widget.isEditor ? TextAlignVertical.top : null,
+          textAlign:TextAlign.left,
           onChanged: widget.onChanged,
           onSubmitted: widget.onFieldSubmitted,
           specialTextSpanBuilder: EnvRegExpSpanBuilder(),

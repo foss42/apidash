@@ -13,3 +13,5 @@ export 'env_trigger_options.dart';
 export 'sidebar_filter.dart';
 export 'sidebar_header.dart';
 export 'sidebar_save_button.dart';
+export 'envfield_editor.dart';
+
