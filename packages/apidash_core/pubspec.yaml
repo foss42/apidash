@@ -19,6 +19,8 @@ dependencies:
   http_parser: ^4.0.2
   postman:
     path: ../postman
+  insomnia_collection:
+    path: ../insomnia_collection
   seed: ^0.0.3
   xml: ^6.3.0
 

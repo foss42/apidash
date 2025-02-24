@@ -1,6 +1,5 @@
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash/consts.dart';
-import 'package:apidash/models/models.dart';
 
 String getEnvironmentTitle(String? name) {
   if (name == null || name.trim() == "") {
@@ -86,11 +85,11 @@ HttpRequestModel substituteHttpRequestModel(
         value: substituteVariables(param.value, envMap, activeEnvironmentId),
       );
     }).toList(),
-    body:substituteVariables(
+    body: substituteVariables(
       httpRequestModel.body,
       envMap,
       activeEnvironmentId,
-    )!,
+    ),
   );
   return newRequestModel;
 }
