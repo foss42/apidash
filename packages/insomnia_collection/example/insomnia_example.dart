@@ -1,4 +1,3 @@
-
 import 'package:insomnia_collection/insomnia_collection.dart';
 
 void main() {
@@ -150,13 +149,9 @@ void main() {
 }
 ''';
 
-
-
   var collection;
   try {
     collection = insomniaCollectionFromJsonStr(collectionJsonStr);
-
-
 
     print(collection.exportSource);
     // insomnia.desktop.app:v10.3.0
@@ -169,7 +164,6 @@ void main() {
   } catch (e) {
     print(e.toString() + 'error from collection');
   }
-
 
   // Example 2: Insomnia collection from JSON
   var collectionJson = {
