@@ -23,7 +23,58 @@
 
 ## Arch Linux (PKGBUILD)
 
-TODO Instructions
+Steps to update and release the Arch Linux package
+
+1. Install required packages:
+  
+```bash
+sudo pacman -S base-devel
+```
+ 
+2. Clone the ApiDash AUR repository:
+
+```bash
+git clone https://aur.archlinux.org/apidash-bin.git
+cd apidash-bin
+```
+
+3. Get the recent `.deb` release from the [releases page](https://github.com/foss42/apidash/releases/)
+
+4. Generate new checksums:
+
+```bash
+sha512sum apidash-linux-amd64.deb LICENSE
+```
+ 
+5. Update the `PKGBUILD` file:
+
+  - Change `pkgver` to the new version
+  - Reset `pkgrel` to 1
+  - Update `sha512sums` with the new checksums  
+
+6. Build the package
+
+```bash
+# Clean build files (if they exist from previous builds)
+# rm -rf pkg/ src/
+
+# Build and install the package
+makepkg -si
+```
+
+7. Update .SRCINFO:
+
+```bash
+makepkg --printsrcinfo > .SRCINFO
+```
+
+8. Commit and push the changes:
+
+```bash
+git add PKGBUILD .SRCINFO
+git commit -m "Update to v[NEW_VERSION]"
+git push
+```
 
 ## FlatHub (Flatpak)
 
