@@ -26,7 +26,6 @@ class EnvironmentsPane extends ConsumerWidget {
               ref
                   .read(environmentsStateNotifierProvider.notifier)
                   .addEnvironment();
-              // createNewEnvironment(ref);
             },
           ),
           kVSpacer10,
