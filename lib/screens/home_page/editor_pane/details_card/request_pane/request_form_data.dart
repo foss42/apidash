@@ -37,8 +37,17 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
   Widget build(BuildContext context) {
     dataTableShowLogs = false;
     final selectedId = ref.watch(selectedIdStateProvider);
+
+    // Watch for form data changes
     ref.watch(selectedRequestModelProvider
         .select((value) => value?.httpRequestModel?.formData?.length));
+
+    // Watch for content type changes
+    final contentType = ref.watch(selectedRequestModelProvider
+        .select((value) => value?.httpRequestModel?.bodyContentType));
+
+    final isMultipartMode = contentType == ContentType.formdata;
+
     var rF = ref.read(selectedRequestModelProvider)?.httpRequestModel?.formData;
     bool isFormDataEmpty = rF == null || rF.isEmpty;
     formRows = isFormDataEmpty
@@ -51,24 +60,26 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
             ];
     isAddingRow = false;
 
-    List<DataColumn> columns = const [
-      DataColumn2(
+    // Define columns based on content type
+    List<DataColumn> columns = [
+      const DataColumn2(
         label: Text(kNameField),
         size: ColumnSize.M,
       ),
-      DataColumn2(
+      const DataColumn2(
         label: Text('='),
         fixedWidth: 20,
       ),
-      DataColumn2(
-        label: Text(''),
-        fixedWidth: 70,
-      ),
-      DataColumn2(
+      if (isMultipartMode)
+        const DataColumn2(
+          label: Text(''),
+          fixedWidth: 70,
+        ),
+      const DataColumn2(
         label: Text(kNameValue),
         size: ColumnSize.L,
       ),
-      DataColumn2(
+      const DataColumn2(
         label: Text(''),
         fixedWidth: 32,
       ),
@@ -105,25 +116,26 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                 ),
               ),
             ),
-            DataCell(
-              DropdownButtonFormData(
-                formDataType: formRows[index].type,
-                onChanged: (value) {
-                  bool hasChanged = formRows[index].type != value;
-                  formRows[index] = formRows[index].copyWith(
-                    type: value ?? FormDataType.text,
-                  );
-                  formRows[index] = formRows[index].copyWith(value: "");
-                  if (isLast && hasChanged) {
-                    formRows.add(kFormDataEmptyModel);
-                  }
-                  setState(() {});
-                  _onFieldChange();
-                },
+            if (isMultipartMode)
+              DataCell(
+                DropdownButtonFormData(
+                  formDataType: formRows[index].type,
+                  onChanged: (value) {
+                    bool hasChanged = formRows[index].type != value;
+                    formRows[index] = formRows[index].copyWith(
+                      type: value ?? FormDataType.text,
+                    );
+                    formRows[index] = formRows[index].copyWith(value: "");
+                    if (isLast && hasChanged) {
+                      formRows.add(kFormDataEmptyModel);
+                    }
+                    setState(() {});
+                    _onFieldChange();
+                  },
+                ),
               ),
-            ),
             DataCell(
-              formRows[index].type == FormDataType.file
+              isMultipartMode && formRows[index].type == FormDataType.file
                   ? FormDataFileButton(
                       onPressed: () async {
                         var pickedResult = await pickFile();
@@ -143,8 +155,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                       initialValue: formRows[index].value,
                       hintText: kHintAddValue,
                       onChanged: (value) {
-                        formRows[index] =
-                            formRows[index].copyWith(value: value);
+                        formRows[index] = formRows[index].copyWith(value: value);
                         if (isLast && !isAddingRow) {
                           isAddingRow = true;
                           formRows.add(kFormDataEmptyModel);
@@ -183,30 +194,56 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
 
     return Stack(
       children: [
-        Container(
-          margin: kP10,
-          child: Column(
-            children: [
-              Expanded(
-                child: Theme(
-                  data: Theme.of(context)
-                      .copyWith(scrollbarTheme: kDataTableScrollbarTheme),
-                  child: DataTable2(
-                    columnSpacing: 12,
-                    dividerThickness: 0,
-                    horizontalMargin: 0,
-                    headingRowHeight: 0,
-                    dataRowHeight: kDataTableRowHeight,
-                    bottomMargin: kDataTableBottomPadding,
-                    isVerticalScrollBarVisible: true,
-                    columns: columns,
-                    rows: dataRows,
+        Column(
+          children: [
+            // Mode toggle switch at the top
+            Padding(
+              padding: kP10,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  const Text('URL Encoded'),
+                  Switch(
+                    value: isMultipartMode,
+                    onChanged: (value) {
+                      // Update content type in the provider
+                      ref.read(collectionStateNotifierProvider.notifier).update(
+                        bodyContentType: value ? ContentType.formdata : ContentType.xwwwformurlencoded,
+                      );
+                    },
                   ),
+                  const Text('Multipart'),
+                ],
+              ),
+            ),
+            Expanded(
+              child: Container(
+                margin: kP10,
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: Theme(
+                        data: Theme.of(context)
+                            .copyWith(scrollbarTheme: kDataTableScrollbarTheme),
+                        child: DataTable2(
+                          columnSpacing: 12,
+                          dividerThickness: 0,
+                          horizontalMargin: 0,
+                          headingRowHeight: 0,
+                          dataRowHeight: kDataTableRowHeight,
+                          bottomMargin: kDataTableBottomPadding,
+                          isVerticalScrollBarVisible: true,
+                          columns: columns,
+                          rows: dataRows,
+                        ),
+                      ),
+                    ),
+                    kVSpacer40,
+                  ],
                 ),
               ),
-              kVSpacer40,
-            ],
-          ),
+            ),
+          ],
         ),
         Align(
           alignment: Alignment.bottomCenter,

@@ -133,10 +133,11 @@ class HisRequestBody extends ConsumerWidget {
             kVSpacer5,
             Expanded(
               child: switch (contentType) {
-                ContentType.formdata => Padding(
-                    padding: kPh4,
-                    child: RequestFormDataTable(
-                        rows: requestModel?.formData ?? [])),
+                (ContentType.formdata || ContentType.xwwwformurlencoded) =>
+                  Padding(
+                      padding: kPh4,
+                      child: RequestFormDataTable(
+                          rows: requestModel?.formData ?? [])),
                 // TODO: Fix JsonTextFieldEditor & plug it here
                 ContentType.json => Padding(
                     padding: kPt5o10,

@@ -49,6 +49,7 @@ Future<bool> initApp(
     if (openBoxesStatus) {
       await autoClearHistory(settingsModel: settingsModel);
     }
+    debugPrint("autoClearHistory done");
     return openBoxesStatus;
   } catch (e) {
     debugPrint("initApp failed due to $e");

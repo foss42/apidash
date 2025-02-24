@@ -37,6 +37,8 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
       if (apiType == APIType.rest) {
         var isMultiPartRequest =
             requestModel.bodyContentType == ContentType.formdata;
+        var isUrlEncodedRequest =
+            requestModel.bodyContentType == ContentType.xwwwformurlencoded;
 
         if (kMethodsWithBody.contains(requestModel.method)) {
           var requestBody = requestModel.body;
@@ -52,7 +54,24 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
               }
             }
           }
-          if (isMultiPartRequest) {
+          if (isUrlEncodedRequest) {
+            // Handle x-www-form-urlencoded data
+            Map<String, String> formMap = {};
+            for (var formData in requestModel.formDataList) {
+              if (formData.type == FormDataType.text) {
+                formMap[formData.name] = formData.value;
+              }
+            }
+            if (formMap.isNotEmpty) {
+              body = Uri(queryParameters: formMap).query;
+              headers[HttpHeaders.contentLengthHeader] =
+                  utf8.encode(body).length.toString();
+              if (!requestModel.hasContentTypeHeader) {
+                headers[HttpHeaders.contentTypeHeader] =
+                    requestModel.bodyContentType.header;
+              }
+            }
+          } else if (isMultiPartRequest) {
             var multiPartRequest = http.MultipartRequest(
               requestModel.method.name.toUpperCase(),
               requestUrl,
