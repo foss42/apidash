@@ -282,7 +282,6 @@ Resource _$ResourceFromJson(Map<String, dynamic> json) {
 mixin _$Resource {
   @JsonKey(name: '_id')
   String? get id => throw _privateConstructorUsedError;
-  @JsonKey(name: 'parentId')
   String? get parentId => throw _privateConstructorUsedError;
   num? get modified => throw _privateConstructorUsedError;
   num? get created => throw _privateConstructorUsedError;
@@ -291,19 +290,33 @@ mixin _$Resource {
   String? get description => throw _privateConstructorUsedError;
   String? get method => throw _privateConstructorUsedError;
   Body? get body => throw _privateConstructorUsedError;
+  String? get preRequestScript => throw _privateConstructorUsedError;
   List<Parameter>? get parameters => throw _privateConstructorUsedError;
   List<Header>? get headers => throw _privateConstructorUsedError;
-  String? get preRequestScript => throw _privateConstructorUsedError;
+  dynamic get authentication => throw _privateConstructorUsedError;
   num? get metaSortKey => throw _privateConstructorUsedError;
   bool? get isPrivate => throw _privateConstructorUsedError;
+  List<dynamic>? get pathParameters => throw _privateConstructorUsedError;
   String? get afterResponseScript => throw _privateConstructorUsedError;
-  bool? get settingSendCookies => throw _privateConstructorUsedError;
   bool? get settingStoreCookies => throw _privateConstructorUsedError;
+  bool? get settingSendCookies => throw _privateConstructorUsedError;
   bool? get settingDisableRenderRequestBody =>
       throw _privateConstructorUsedError;
   bool? get settingEncodeUrl => throw _privateConstructorUsedError;
   bool? get settingRebuildPath => throw _privateConstructorUsedError;
   String? get settingFollowRedirects => throw _privateConstructorUsedError;
+  dynamic get environment => throw _privateConstructorUsedError;
+  dynamic get environmentPropertyOrder => throw _privateConstructorUsedError;
+  String? get scope => throw _privateConstructorUsedError;
+  dynamic get data => throw _privateConstructorUsedError;
+  dynamic get dataPropertyOrder => throw _privateConstructorUsedError;
+  dynamic get color => throw _privateConstructorUsedError;
+  List<Cookie>? get cookies => throw _privateConstructorUsedError;
+  String? get fileName => throw _privateConstructorUsedError;
+  String? get contents => throw _privateConstructorUsedError;
+  String? get contentType => throw _privateConstructorUsedError;
+  String? get environmentType => throw _privateConstructorUsedError;
+  List<KVPairDatum>? get kvPairData => throw _privateConstructorUsedError;
   @JsonKey(name: '_type')
   String? get type => throw _privateConstructorUsedError;
 
@@ -324,7 +337,7 @@ abstract class $ResourceCopyWith<$Res> {
   @useResult
   $Res call(
       {@JsonKey(name: '_id') String? id,
-      @JsonKey(name: 'parentId') String? parentId,
+      String? parentId,
       num? modified,
       num? created,
       String? url,
@@ -332,18 +345,32 @@ abstract class $ResourceCopyWith<$Res> {
       String? description,
       String? method,
       Body? body,
+      String? preRequestScript,
       List<Parameter>? parameters,
       List<Header>? headers,
-      String? preRequestScript,
+      dynamic authentication,
       num? metaSortKey,
       bool? isPrivate,
+      List<dynamic>? pathParameters,
       String? afterResponseScript,
-      bool? settingSendCookies,
       bool? settingStoreCookies,
+      bool? settingSendCookies,
       bool? settingDisableRenderRequestBody,
       bool? settingEncodeUrl,
       bool? settingRebuildPath,
       String? settingFollowRedirects,
+      dynamic environment,
+      dynamic environmentPropertyOrder,
+      String? scope,
+      dynamic data,
+      dynamic dataPropertyOrder,
+      dynamic color,
+      List<Cookie>? cookies,
+      String? fileName,
+      String? contents,
+      String? contentType,
+      String? environmentType,
+      List<KVPairDatum>? kvPairData,
       @JsonKey(name: '_type') String? type});
 
   $BodyCopyWith<$Res>? get body;
@@ -373,18 +400,32 @@ class _$ResourceCopyWithImpl<$Res, $Val extends Resource>
     Object? description = freezed,
     Object? method = freezed,
     Object? body = freezed,
+    Object? preRequestScript = freezed,
     Object? parameters = freezed,
     Object? headers = freezed,
-    Object? preRequestScript = freezed,
+    Object? authentication = freezed,
     Object? metaSortKey = freezed,
     Object? isPrivate = freezed,
+    Object? pathParameters = freezed,
     Object? afterResponseScript = freezed,
-    Object? settingSendCookies = freezed,
     Object? settingStoreCookies = freezed,
+    Object? settingSendCookies = freezed,
     Object? settingDisableRenderRequestBody = freezed,
     Object? settingEncodeUrl = freezed,
     Object? settingRebuildPath = freezed,
     Object? settingFollowRedirects = freezed,
+    Object? environment = freezed,
+    Object? environmentPropertyOrder = freezed,
+    Object? scope = freezed,
+    Object? data = freezed,
+    Object? dataPropertyOrder = freezed,
+    Object? color = freezed,
+    Object? cookies = freezed,
+    Object? fileName = freezed,
+    Object? contents = freezed,
+    Object? contentType = freezed,
+    Object? environmentType = freezed,
+    Object? kvPairData = freezed,
     Object? type = freezed,
   }) {
     return _then(_value.copyWith(
@@ -424,6 +465,10 @@ class _$ResourceCopyWithImpl<$Res, $Val extends Resource>
           ? _value.body
           : body // ignore: cast_nullable_to_non_nullable
               as Body?,
+      preRequestScript: freezed == preRequestScript
+          ? _value.preRequestScript
+          : preRequestScript // ignore: cast_nullable_to_non_nullable
+              as String?,
       parameters: freezed == parameters
           ? _value.parameters
           : parameters // ignore: cast_nullable_to_non_nullable
@@ -432,10 +477,10 @@ class _$ResourceCopyWithImpl<$Res, $Val extends Resource>
           ? _value.headers
           : headers // ignore: cast_nullable_to_non_nullable
               as List<Header>?,
-      preRequestScript: freezed == preRequestScript
-          ? _value.preRequestScript
-          : preRequestScript // ignore: cast_nullable_to_non_nullable
-              as String?,
+      authentication: freezed == authentication
+          ? _value.authentication
+          : authentication // ignore: cast_nullable_to_non_nullable
+              as dynamic,
       metaSortKey: freezed == metaSortKey
           ? _value.metaSortKey
           : metaSortKey // ignore: cast_nullable_to_non_nullable
@@ -444,17 +489,21 @@ class _$ResourceCopyWithImpl<$Res, $Val extends Resource>
           ? _value.isPrivate
           : isPrivate // ignore: cast_nullable_to_non_nullable
               as bool?,
+      pathParameters: freezed == pathParameters
+          ? _value.pathParameters
+          : pathParameters // ignore: cast_nullable_to_non_nullable
+              as List<dynamic>?,
       afterResponseScript: freezed == afterResponseScript
           ? _value.afterResponseScript
           : afterResponseScript // ignore: cast_nullable_to_non_nullable
               as String?,
-      settingSendCookies: freezed == settingSendCookies
-          ? _value.settingSendCookies
-          : settingSendCookies // ignore: cast_nullable_to_non_nullable
-              as bool?,
       settingStoreCookies: freezed == settingStoreCookies
           ? _value.settingStoreCookies
           : settingStoreCookies // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      settingSendCookies: freezed == settingSendCookies
+          ? _value.settingSendCookies
+          : settingSendCookies // ignore: cast_nullable_to_non_nullable
               as bool?,
       settingDisableRenderRequestBody: freezed ==
               settingDisableRenderRequestBody
@@ -473,6 +522,54 @@ class _$ResourceCopyWithImpl<$Res, $Val extends Resource>
           ? _value.settingFollowRedirects
           : settingFollowRedirects // ignore: cast_nullable_to_non_nullable
               as String?,
+      environment: freezed == environment
+          ? _value.environment
+          : environment // ignore: cast_nullable_to_non_nullable
+              as dynamic,
+      environmentPropertyOrder: freezed == environmentPropertyOrder
+          ? _value.environmentPropertyOrder
+          : environmentPropertyOrder // ignore: cast_nullable_to_non_nullable
+              as dynamic,
+      scope: freezed == scope
+          ? _value.scope
+          : scope // ignore: cast_nullable_to_non_nullable
+              as String?,
+      data: freezed == data
+          ? _value.data
+          : data // ignore: cast_nullable_to_non_nullable
+              as dynamic,
+      dataPropertyOrder: freezed == dataPropertyOrder
+          ? _value.dataPropertyOrder
+          : dataPropertyOrder // ignore: cast_nullable_to_non_nullable
+              as dynamic,
+      color: freezed == color
+          ? _value.color
+          : color // ignore: cast_nullable_to_non_nullable
+              as dynamic,
+      cookies: freezed == cookies
+          ? _value.cookies
+          : cookies // ignore: cast_nullable_to_non_nullable
+              as List<Cookie>?,
+      fileName: freezed == fileName
+          ? _value.fileName
+          : fileName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      contents: freezed == contents
+          ? _value.contents
+          : contents // ignore: cast_nullable_to_non_nullable
+              as String?,
+      contentType: freezed == contentType
+          ? _value.contentType
+          : contentType // ignore: cast_nullable_to_non_nullable
+              as String?,
+      environmentType: freezed == environmentType
+          ? _value.environmentType
+          : environmentType // ignore: cast_nullable_to_non_nullable
+              as String?,
+      kvPairData: freezed == kvPairData
+          ? _value.kvPairData
+          : kvPairData // ignore: cast_nullable_to_non_nullable
+              as List<KVPairDatum>?,
       type: freezed == type
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
@@ -505,7 +602,7 @@ abstract class _$$ResourceImplCopyWith<$Res>
   @useResult
   $Res call(
       {@JsonKey(name: '_id') String? id,
-      @JsonKey(name: 'parentId') String? parentId,
+      String? parentId,
       num? modified,
       num? created,
       String? url,
@@ -513,18 +610,32 @@ abstract class _$$ResourceImplCopyWith<$Res>
       String? description,
       String? method,
       Body? body,
+      String? preRequestScript,
       List<Parameter>? parameters,
       List<Header>? headers,
-      String? preRequestScript,
+      dynamic authentication,
       num? metaSortKey,
       bool? isPrivate,
+      List<dynamic>? pathParameters,
       String? afterResponseScript,
-      bool? settingSendCookies,
       bool? settingStoreCookies,
+      bool? settingSendCookies,
       bool? settingDisableRenderRequestBody,
       bool? settingEncodeUrl,
       bool? settingRebuildPath,
       String? settingFollowRedirects,
+      dynamic environment,
+      dynamic environmentPropertyOrder,
+      String? scope,
+      dynamic data,
+      dynamic dataPropertyOrder,
+      dynamic color,
+      List<Cookie>? cookies,
+      String? fileName,
+      String? contents,
+      String? contentType,
+      String? environmentType,
+      List<KVPairDatum>? kvPairData,
       @JsonKey(name: '_type') String? type});
 
   @override
@@ -553,18 +664,32 @@ class __$$ResourceImplCopyWithImpl<$Res>
     Object? description = freezed,
     Object? method = freezed,
     Object? body = freezed,
+    Object? preRequestScript = freezed,
     Object? parameters = freezed,
     Object? headers = freezed,
-    Object? preRequestScript = freezed,
+    Object? authentication = freezed,
     Object? metaSortKey = freezed,
     Object? isPrivate = freezed,
+    Object? pathParameters = freezed,
     Object? afterResponseScript = freezed,
-    Object? settingSendCookies = freezed,
     Object? settingStoreCookies = freezed,
+    Object? settingSendCookies = freezed,
     Object? settingDisableRenderRequestBody = freezed,
     Object? settingEncodeUrl = freezed,
     Object? settingRebuildPath = freezed,
     Object? settingFollowRedirects = freezed,
+    Object? environment = freezed,
+    Object? environmentPropertyOrder = freezed,
+    Object? scope = freezed,
+    Object? data = freezed,
+    Object? dataPropertyOrder = freezed,
+    Object? color = freezed,
+    Object? cookies = freezed,
+    Object? fileName = freezed,
+    Object? contents = freezed,
+    Object? contentType = freezed,
+    Object? environmentType = freezed,
+    Object? kvPairData = freezed,
     Object? type = freezed,
   }) {
     return _then(_$ResourceImpl(
@@ -604,6 +729,10 @@ class __$$ResourceImplCopyWithImpl<$Res>
           ? _value.body
           : body // ignore: cast_nullable_to_non_nullable
               as Body?,
+      preRequestScript: freezed == preRequestScript
+          ? _value.preRequestScript
+          : preRequestScript // ignore: cast_nullable_to_non_nullable
+              as String?,
       parameters: freezed == parameters
           ? _value._parameters
           : parameters // ignore: cast_nullable_to_non_nullable
@@ -612,10 +741,10 @@ class __$$ResourceImplCopyWithImpl<$Res>
           ? _value._headers
           : headers // ignore: cast_nullable_to_non_nullable
               as List<Header>?,
-      preRequestScript: freezed == preRequestScript
-          ? _value.preRequestScript
-          : preRequestScript // ignore: cast_nullable_to_non_nullable
-              as String?,
+      authentication: freezed == authentication
+          ? _value.authentication
+          : authentication // ignore: cast_nullable_to_non_nullable
+              as dynamic,
       metaSortKey: freezed == metaSortKey
           ? _value.metaSortKey
           : metaSortKey // ignore: cast_nullable_to_non_nullable
@@ -624,17 +753,21 @@ class __$$ResourceImplCopyWithImpl<$Res>
           ? _value.isPrivate
           : isPrivate // ignore: cast_nullable_to_non_nullable
               as bool?,
+      pathParameters: freezed == pathParameters
+          ? _value._pathParameters
+          : pathParameters // ignore: cast_nullable_to_non_nullable
+              as List<dynamic>?,
       afterResponseScript: freezed == afterResponseScript
           ? _value.afterResponseScript
           : afterResponseScript // ignore: cast_nullable_to_non_nullable
               as String?,
-      settingSendCookies: freezed == settingSendCookies
-          ? _value.settingSendCookies
-          : settingSendCookies // ignore: cast_nullable_to_non_nullable
-              as bool?,
       settingStoreCookies: freezed == settingStoreCookies
           ? _value.settingStoreCookies
           : settingStoreCookies // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      settingSendCookies: freezed == settingSendCookies
+          ? _value.settingSendCookies
+          : settingSendCookies // ignore: cast_nullable_to_non_nullable
               as bool?,
       settingDisableRenderRequestBody: freezed ==
               settingDisableRenderRequestBody
@@ -653,6 +786,54 @@ class __$$ResourceImplCopyWithImpl<$Res>
           ? _value.settingFollowRedirects
           : settingFollowRedirects // ignore: cast_nullable_to_non_nullable
               as String?,
+      environment: freezed == environment
+          ? _value.environment
+          : environment // ignore: cast_nullable_to_non_nullable
+              as dynamic,
+      environmentPropertyOrder: freezed == environmentPropertyOrder
+          ? _value.environmentPropertyOrder
+          : environmentPropertyOrder // ignore: cast_nullable_to_non_nullable
+              as dynamic,
+      scope: freezed == scope
+          ? _value.scope
+          : scope // ignore: cast_nullable_to_non_nullable
+              as String?,
+      data: freezed == data
+          ? _value.data
+          : data // ignore: cast_nullable_to_non_nullable
+              as dynamic,
+      dataPropertyOrder: freezed == dataPropertyOrder
+          ? _value.dataPropertyOrder
+          : dataPropertyOrder // ignore: cast_nullable_to_non_nullable
+              as dynamic,
+      color: freezed == color
+          ? _value.color
+          : color // ignore: cast_nullable_to_non_nullable
+              as dynamic,
+      cookies: freezed == cookies
+          ? _value._cookies
+          : cookies // ignore: cast_nullable_to_non_nullable
+              as List<Cookie>?,
+      fileName: freezed == fileName
+          ? _value.fileName
+          : fileName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      contents: freezed == contents
+          ? _value.contents
+          : contents // ignore: cast_nullable_to_non_nullable
+              as String?,
+      contentType: freezed == contentType
+          ? _value.contentType
+          : contentType // ignore: cast_nullable_to_non_nullable
+              as String?,
+      environmentType: freezed == environmentType
+          ? _value.environmentType
+          : environmentType // ignore: cast_nullable_to_non_nullable
+              as String?,
+      kvPairData: freezed == kvPairData
+          ? _value._kvPairData
+          : kvPairData // ignore: cast_nullable_to_non_nullable
+              as List<KVPairDatum>?,
       type: freezed == type
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
@@ -667,7 +848,7 @@ class __$$ResourceImplCopyWithImpl<$Res>
 class _$ResourceImpl implements _Resource {
   const _$ResourceImpl(
       {@JsonKey(name: '_id') this.id,
-      @JsonKey(name: 'parentId') this.parentId,
+      this.parentId,
       this.modified,
       this.created,
       this.url,
@@ -675,21 +856,38 @@ class _$ResourceImpl implements _Resource {
       this.description,
       this.method,
       this.body,
+      this.preRequestScript,
       final List<Parameter>? parameters,
       final List<Header>? headers,
-      this.preRequestScript,
+      this.authentication,
       this.metaSortKey,
       this.isPrivate,
+      final List<dynamic>? pathParameters,
       this.afterResponseScript,
-      this.settingSendCookies,
       this.settingStoreCookies,
+      this.settingSendCookies,
       this.settingDisableRenderRequestBody,
       this.settingEncodeUrl,
       this.settingRebuildPath,
       this.settingFollowRedirects,
+      this.environment,
+      this.environmentPropertyOrder,
+      this.scope,
+      this.data,
+      this.dataPropertyOrder,
+      this.color,
+      final List<Cookie>? cookies,
+      this.fileName,
+      this.contents,
+      this.contentType,
+      this.environmentType,
+      final List<KVPairDatum>? kvPairData,
       @JsonKey(name: '_type') this.type})
       : _parameters = parameters,
-        _headers = headers;
+        _headers = headers,
+        _pathParameters = pathParameters,
+        _cookies = cookies,
+        _kvPairData = kvPairData;
 
   factory _$ResourceImpl.fromJson(Map<String, dynamic> json) =>
       _$$ResourceImplFromJson(json);
@@ -698,7 +896,6 @@ class _$ResourceImpl implements _Resource {
   @JsonKey(name: '_id')
   final String? id;
   @override
-  @JsonKey(name: 'parentId')
   final String? parentId;
   @override
   final num? modified;
@@ -714,6 +911,8 @@ class _$ResourceImpl implements _Resource {
   final String? method;
   @override
   final Body? body;
+  @override
+  final String? preRequestScript;
   final List<Parameter>? _parameters;
   @override
   List<Parameter>? get parameters {
@@ -735,17 +934,27 @@ class _$ResourceImpl implements _Resource {
   }
 
   @override
-  final String? preRequestScript;
+  final dynamic authentication;
   @override
   final num? metaSortKey;
   @override
   final bool? isPrivate;
+  final List<dynamic>? _pathParameters;
+  @override
+  List<dynamic>? get pathParameters {
+    final value = _pathParameters;
+    if (value == null) return null;
+    if (_pathParameters is EqualUnmodifiableListView) return _pathParameters;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
   @override
   final String? afterResponseScript;
   @override
-  final bool? settingSendCookies;
-  @override
   final bool? settingStoreCookies;
+  @override
+  final bool? settingSendCookies;
   @override
   final bool? settingDisableRenderRequestBody;
   @override
@@ -755,12 +964,52 @@ class _$ResourceImpl implements _Resource {
   @override
   final String? settingFollowRedirects;
   @override
+  final dynamic environment;
+  @override
+  final dynamic environmentPropertyOrder;
+  @override
+  final String? scope;
+  @override
+  final dynamic data;
+  @override
+  final dynamic dataPropertyOrder;
+  @override
+  final dynamic color;
+  final List<Cookie>? _cookies;
+  @override
+  List<Cookie>? get cookies {
+    final value = _cookies;
+    if (value == null) return null;
+    if (_cookies is EqualUnmodifiableListView) return _cookies;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  @override
+  final String? fileName;
+  @override
+  final String? contents;
+  @override
+  final String? contentType;
+  @override
+  final String? environmentType;
+  final List<KVPairDatum>? _kvPairData;
+  @override
+  List<KVPairDatum>? get kvPairData {
+    final value = _kvPairData;
+    if (value == null) return null;
+    if (_kvPairData is EqualUnmodifiableListView) return _kvPairData;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  @override
   @JsonKey(name: '_type')
   final String? type;
 
   @override
   String toString() {
-    return 'Resource(id: $id, parentId: $parentId, modified: $modified, created: $created, url: $url, name: $name, description: $description, method: $method, body: $body, parameters: $parameters, headers: $headers, preRequestScript: $preRequestScript, metaSortKey: $metaSortKey, isPrivate: $isPrivate, afterResponseScript: $afterResponseScript, settingSendCookies: $settingSendCookies, settingStoreCookies: $settingStoreCookies, settingDisableRenderRequestBody: $settingDisableRenderRequestBody, settingEncodeUrl: $settingEncodeUrl, settingRebuildPath: $settingRebuildPath, settingFollowRedirects: $settingFollowRedirects, type: $type)';
+    return 'Resource(id: $id, parentId: $parentId, modified: $modified, created: $created, url: $url, name: $name, description: $description, method: $method, body: $body, preRequestScript: $preRequestScript, parameters: $parameters, headers: $headers, authentication: $authentication, metaSortKey: $metaSortKey, isPrivate: $isPrivate, pathParameters: $pathParameters, afterResponseScript: $afterResponseScript, settingStoreCookies: $settingStoreCookies, settingSendCookies: $settingSendCookies, settingDisableRenderRequestBody: $settingDisableRenderRequestBody, settingEncodeUrl: $settingEncodeUrl, settingRebuildPath: $settingRebuildPath, settingFollowRedirects: $settingFollowRedirects, environment: $environment, environmentPropertyOrder: $environmentPropertyOrder, scope: $scope, data: $data, dataPropertyOrder: $dataPropertyOrder, color: $color, cookies: $cookies, fileName: $fileName, contents: $contents, contentType: $contentType, environmentType: $environmentType, kvPairData: $kvPairData, type: $type)';
   }
 
   @override
@@ -780,21 +1029,25 @@ class _$ResourceImpl implements _Resource {
                 other.description == description) &&
             (identical(other.method, method) || other.method == method) &&
             (identical(other.body, body) || other.body == body) &&
+            (identical(other.preRequestScript, preRequestScript) ||
+                other.preRequestScript == preRequestScript) &&
             const DeepCollectionEquality()
                 .equals(other._parameters, _parameters) &&
             const DeepCollectionEquality().equals(other._headers, _headers) &&
-            (identical(other.preRequestScript, preRequestScript) ||
-                other.preRequestScript == preRequestScript) &&
+            const DeepCollectionEquality()
+                .equals(other.authentication, authentication) &&
             (identical(other.metaSortKey, metaSortKey) ||
                 other.metaSortKey == metaSortKey) &&
             (identical(other.isPrivate, isPrivate) ||
                 other.isPrivate == isPrivate) &&
+            const DeepCollectionEquality()
+                .equals(other._pathParameters, _pathParameters) &&
             (identical(other.afterResponseScript, afterResponseScript) ||
                 other.afterResponseScript == afterResponseScript) &&
-            (identical(other.settingSendCookies, settingSendCookies) ||
-                other.settingSendCookies == settingSendCookies) &&
             (identical(other.settingStoreCookies, settingStoreCookies) ||
                 other.settingStoreCookies == settingStoreCookies) &&
+            (identical(other.settingSendCookies, settingSendCookies) ||
+                other.settingSendCookies == settingSendCookies) &&
             (identical(other.settingDisableRenderRequestBody,
                     settingDisableRenderRequestBody) ||
                 other.settingDisableRenderRequestBody ==
@@ -805,6 +1058,26 @@ class _$ResourceImpl implements _Resource {
                 other.settingRebuildPath == settingRebuildPath) &&
             (identical(other.settingFollowRedirects, settingFollowRedirects) ||
                 other.settingFollowRedirects == settingFollowRedirects) &&
+            const DeepCollectionEquality()
+                .equals(other.environment, environment) &&
+            const DeepCollectionEquality().equals(
+                other.environmentPropertyOrder, environmentPropertyOrder) &&
+            (identical(other.scope, scope) || other.scope == scope) &&
+            const DeepCollectionEquality().equals(other.data, data) &&
+            const DeepCollectionEquality()
+                .equals(other.dataPropertyOrder, dataPropertyOrder) &&
+            const DeepCollectionEquality().equals(other.color, color) &&
+            const DeepCollectionEquality().equals(other._cookies, _cookies) &&
+            (identical(other.fileName, fileName) ||
+                other.fileName == fileName) &&
+            (identical(other.contents, contents) ||
+                other.contents == contents) &&
+            (identical(other.contentType, contentType) ||
+                other.contentType == contentType) &&
+            (identical(other.environmentType, environmentType) ||
+                other.environmentType == environmentType) &&
+            const DeepCollectionEquality()
+                .equals(other._kvPairData, _kvPairData) &&
             (identical(other.type, type) || other.type == type));
   }
 
@@ -821,18 +1094,32 @@ class _$ResourceImpl implements _Resource {
         description,
         method,
         body,
+        preRequestScript,
         const DeepCollectionEquality().hash(_parameters),
         const DeepCollectionEquality().hash(_headers),
-        preRequestScript,
+        const DeepCollectionEquality().hash(authentication),
         metaSortKey,
         isPrivate,
+        const DeepCollectionEquality().hash(_pathParameters),
         afterResponseScript,
-        settingSendCookies,
         settingStoreCookies,
+        settingSendCookies,
         settingDisableRenderRequestBody,
         settingEncodeUrl,
         settingRebuildPath,
         settingFollowRedirects,
+        const DeepCollectionEquality().hash(environment),
+        const DeepCollectionEquality().hash(environmentPropertyOrder),
+        scope,
+        const DeepCollectionEquality().hash(data),
+        const DeepCollectionEquality().hash(dataPropertyOrder),
+        const DeepCollectionEquality().hash(color),
+        const DeepCollectionEquality().hash(_cookies),
+        fileName,
+        contents,
+        contentType,
+        environmentType,
+        const DeepCollectionEquality().hash(_kvPairData),
         type
       ]);
 
@@ -855,7 +1142,7 @@ class _$ResourceImpl implements _Resource {
 abstract class _Resource implements Resource {
   const factory _Resource(
       {@JsonKey(name: '_id') final String? id,
-      @JsonKey(name: 'parentId') final String? parentId,
+      final String? parentId,
       final num? modified,
       final num? created,
       final String? url,
@@ -863,18 +1150,32 @@ abstract class _Resource implements Resource {
       final String? description,
       final String? method,
       final Body? body,
+      final String? preRequestScript,
       final List<Parameter>? parameters,
       final List<Header>? headers,
-      final String? preRequestScript,
+      final dynamic authentication,
       final num? metaSortKey,
       final bool? isPrivate,
+      final List<dynamic>? pathParameters,
       final String? afterResponseScript,
-      final bool? settingSendCookies,
       final bool? settingStoreCookies,
+      final bool? settingSendCookies,
       final bool? settingDisableRenderRequestBody,
       final bool? settingEncodeUrl,
       final bool? settingRebuildPath,
       final String? settingFollowRedirects,
+      final dynamic environment,
+      final dynamic environmentPropertyOrder,
+      final String? scope,
+      final dynamic data,
+      final dynamic dataPropertyOrder,
+      final dynamic color,
+      final List<Cookie>? cookies,
+      final String? fileName,
+      final String? contents,
+      final String? contentType,
+      final String? environmentType,
+      final List<KVPairDatum>? kvPairData,
       @JsonKey(name: '_type') final String? type}) = _$ResourceImpl;
 
   factory _Resource.fromJson(Map<String, dynamic> json) =
@@ -884,7 +1185,6 @@ abstract class _Resource implements Resource {
   @JsonKey(name: '_id')
   String? get id;
   @override
-  @JsonKey(name: 'parentId')
   String? get parentId;
   @override
   num? get modified;
@@ -901,21 +1201,25 @@ abstract class _Resource implements Resource {
   @override
   Body? get body;
   @override
+  String? get preRequestScript;
+  @override
   List<Parameter>? get parameters;
   @override
   List<Header>? get headers;
   @override
-  String? get preRequestScript;
+  dynamic get authentication;
   @override
   num? get metaSortKey;
   @override
   bool? get isPrivate;
   @override
+  List<dynamic>? get pathParameters;
+  @override
   String? get afterResponseScript;
   @override
-  bool? get settingSendCookies;
-  @override
   bool? get settingStoreCookies;
+  @override
+  bool? get settingSendCookies;
   @override
   bool? get settingDisableRenderRequestBody;
   @override
@@ -924,6 +1228,30 @@ abstract class _Resource implements Resource {
   bool? get settingRebuildPath;
   @override
   String? get settingFollowRedirects;
+  @override
+  dynamic get environment;
+  @override
+  dynamic get environmentPropertyOrder;
+  @override
+  String? get scope;
+  @override
+  dynamic get data;
+  @override
+  dynamic get dataPropertyOrder;
+  @override
+  dynamic get color;
+  @override
+  List<Cookie>? get cookies;
+  @override
+  String? get fileName;
+  @override
+  String? get contents;
+  @override
+  String? get contentType;
+  @override
+  String? get environmentType;
+  @override
+  List<KVPairDatum>? get kvPairData;
   @override
   @JsonKey(name: '_type')
   String? get type;
@@ -1750,5 +2078,583 @@ abstract class _Header implements Header {
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$HeaderImplCopyWith<_$HeaderImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+Cookie _$CookieFromJson(Map<String, dynamic> json) {
+  return _Cookie.fromJson(json);
+}
+
+/// @nodoc
+mixin _$Cookie {
+  String? get key => throw _privateConstructorUsedError;
+  String? get value => throw _privateConstructorUsedError;
+  String? get domain => throw _privateConstructorUsedError;
+  String? get path => throw _privateConstructorUsedError;
+  bool? get secure => throw _privateConstructorUsedError;
+  bool? get httpOnly => throw _privateConstructorUsedError;
+  bool? get hostOnly => throw _privateConstructorUsedError;
+  DateTime? get creation => throw _privateConstructorUsedError;
+  DateTime? get lastAccessed => throw _privateConstructorUsedError;
+  String? get sameSite => throw _privateConstructorUsedError;
+  String? get id => throw _privateConstructorUsedError;
+
+  /// Serializes this Cookie to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of Cookie
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $CookieCopyWith<Cookie> get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $CookieCopyWith<$Res> {
+  factory $CookieCopyWith(Cookie value, $Res Function(Cookie) then) =
+      _$CookieCopyWithImpl<$Res, Cookie>;
+  @useResult
+  $Res call(
+      {String? key,
+      String? value,
+      String? domain,
+      String? path,
+      bool? secure,
+      bool? httpOnly,
+      bool? hostOnly,
+      DateTime? creation,
+      DateTime? lastAccessed,
+      String? sameSite,
+      String? id});
+}
+
+/// @nodoc
+class _$CookieCopyWithImpl<$Res, $Val extends Cookie>
+    implements $CookieCopyWith<$Res> {
+  _$CookieCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of Cookie
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? key = freezed,
+    Object? value = freezed,
+    Object? domain = freezed,
+    Object? path = freezed,
+    Object? secure = freezed,
+    Object? httpOnly = freezed,
+    Object? hostOnly = freezed,
+    Object? creation = freezed,
+    Object? lastAccessed = freezed,
+    Object? sameSite = freezed,
+    Object? id = freezed,
+  }) {
+    return _then(_value.copyWith(
+      key: freezed == key
+          ? _value.key
+          : key // ignore: cast_nullable_to_non_nullable
+              as String?,
+      value: freezed == value
+          ? _value.value
+          : value // ignore: cast_nullable_to_non_nullable
+              as String?,
+      domain: freezed == domain
+          ? _value.domain
+          : domain // ignore: cast_nullable_to_non_nullable
+              as String?,
+      path: freezed == path
+          ? _value.path
+          : path // ignore: cast_nullable_to_non_nullable
+              as String?,
+      secure: freezed == secure
+          ? _value.secure
+          : secure // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      httpOnly: freezed == httpOnly
+          ? _value.httpOnly
+          : httpOnly // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      hostOnly: freezed == hostOnly
+          ? _value.hostOnly
+          : hostOnly // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      creation: freezed == creation
+          ? _value.creation
+          : creation // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      lastAccessed: freezed == lastAccessed
+          ? _value.lastAccessed
+          : lastAccessed // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      sameSite: freezed == sameSite
+          ? _value.sameSite
+          : sameSite // ignore: cast_nullable_to_non_nullable
+              as String?,
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$CookieImplCopyWith<$Res> implements $CookieCopyWith<$Res> {
+  factory _$$CookieImplCopyWith(
+          _$CookieImpl value, $Res Function(_$CookieImpl) then) =
+      __$$CookieImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String? key,
+      String? value,
+      String? domain,
+      String? path,
+      bool? secure,
+      bool? httpOnly,
+      bool? hostOnly,
+      DateTime? creation,
+      DateTime? lastAccessed,
+      String? sameSite,
+      String? id});
+}
+
+/// @nodoc
+class __$$CookieImplCopyWithImpl<$Res>
+    extends _$CookieCopyWithImpl<$Res, _$CookieImpl>
+    implements _$$CookieImplCopyWith<$Res> {
+  __$$CookieImplCopyWithImpl(
+      _$CookieImpl _value, $Res Function(_$CookieImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of Cookie
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? key = freezed,
+    Object? value = freezed,
+    Object? domain = freezed,
+    Object? path = freezed,
+    Object? secure = freezed,
+    Object? httpOnly = freezed,
+    Object? hostOnly = freezed,
+    Object? creation = freezed,
+    Object? lastAccessed = freezed,
+    Object? sameSite = freezed,
+    Object? id = freezed,
+  }) {
+    return _then(_$CookieImpl(
+      key: freezed == key
+          ? _value.key
+          : key // ignore: cast_nullable_to_non_nullable
+              as String?,
+      value: freezed == value
+          ? _value.value
+          : value // ignore: cast_nullable_to_non_nullable
+              as String?,
+      domain: freezed == domain
+          ? _value.domain
+          : domain // ignore: cast_nullable_to_non_nullable
+              as String?,
+      path: freezed == path
+          ? _value.path
+          : path // ignore: cast_nullable_to_non_nullable
+              as String?,
+      secure: freezed == secure
+          ? _value.secure
+          : secure // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      httpOnly: freezed == httpOnly
+          ? _value.httpOnly
+          : httpOnly // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      hostOnly: freezed == hostOnly
+          ? _value.hostOnly
+          : hostOnly // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      creation: freezed == creation
+          ? _value.creation
+          : creation // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      lastAccessed: freezed == lastAccessed
+          ? _value.lastAccessed
+          : lastAccessed // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      sameSite: freezed == sameSite
+          ? _value.sameSite
+          : sameSite // ignore: cast_nullable_to_non_nullable
+              as String?,
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+
+@JsonSerializable(explicitToJson: true, anyMap: true, includeIfNull: false)
+class _$CookieImpl implements _Cookie {
+  const _$CookieImpl(
+      {this.key,
+      this.value,
+      this.domain,
+      this.path,
+      this.secure,
+      this.httpOnly,
+      this.hostOnly,
+      this.creation,
+      this.lastAccessed,
+      this.sameSite,
+      this.id});
+
+  factory _$CookieImpl.fromJson(Map<String, dynamic> json) =>
+      _$$CookieImplFromJson(json);
+
+  @override
+  final String? key;
+  @override
+  final String? value;
+  @override
+  final String? domain;
+  @override
+  final String? path;
+  @override
+  final bool? secure;
+  @override
+  final bool? httpOnly;
+  @override
+  final bool? hostOnly;
+  @override
+  final DateTime? creation;
+  @override
+  final DateTime? lastAccessed;
+  @override
+  final String? sameSite;
+  @override
+  final String? id;
+
+  @override
+  String toString() {
+    return 'Cookie(key: $key, value: $value, domain: $domain, path: $path, secure: $secure, httpOnly: $httpOnly, hostOnly: $hostOnly, creation: $creation, lastAccessed: $lastAccessed, sameSite: $sameSite, id: $id)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$CookieImpl &&
+            (identical(other.key, key) || other.key == key) &&
+            (identical(other.value, value) || other.value == value) &&
+            (identical(other.domain, domain) || other.domain == domain) &&
+            (identical(other.path, path) || other.path == path) &&
+            (identical(other.secure, secure) || other.secure == secure) &&
+            (identical(other.httpOnly, httpOnly) ||
+                other.httpOnly == httpOnly) &&
+            (identical(other.hostOnly, hostOnly) ||
+                other.hostOnly == hostOnly) &&
+            (identical(other.creation, creation) ||
+                other.creation == creation) &&
+            (identical(other.lastAccessed, lastAccessed) ||
+                other.lastAccessed == lastAccessed) &&
+            (identical(other.sameSite, sameSite) ||
+                other.sameSite == sameSite) &&
+            (identical(other.id, id) || other.id == id));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, key, value, domain, path, secure,
+      httpOnly, hostOnly, creation, lastAccessed, sameSite, id);
+
+  /// Create a copy of Cookie
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$CookieImplCopyWith<_$CookieImpl> get copyWith =>
+      __$$CookieImplCopyWithImpl<_$CookieImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$CookieImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _Cookie implements Cookie {
+  const factory _Cookie(
+      {final String? key,
+      final String? value,
+      final String? domain,
+      final String? path,
+      final bool? secure,
+      final bool? httpOnly,
+      final bool? hostOnly,
+      final DateTime? creation,
+      final DateTime? lastAccessed,
+      final String? sameSite,
+      final String? id}) = _$CookieImpl;
+
+  factory _Cookie.fromJson(Map<String, dynamic> json) = _$CookieImpl.fromJson;
+
+  @override
+  String? get key;
+  @override
+  String? get value;
+  @override
+  String? get domain;
+  @override
+  String? get path;
+  @override
+  bool? get secure;
+  @override
+  bool? get httpOnly;
+  @override
+  bool? get hostOnly;
+  @override
+  DateTime? get creation;
+  @override
+  DateTime? get lastAccessed;
+  @override
+  String? get sameSite;
+  @override
+  String? get id;
+
+  /// Create a copy of Cookie
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$CookieImplCopyWith<_$CookieImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+KVPairDatum _$KVPairDatumFromJson(Map<String, dynamic> json) {
+  return _KVPairDatum.fromJson(json);
+}
+
+/// @nodoc
+mixin _$KVPairDatum {
+  String? get id => throw _privateConstructorUsedError;
+  String? get name => throw _privateConstructorUsedError;
+  String? get value => throw _privateConstructorUsedError;
+  String? get type => throw _privateConstructorUsedError;
+  bool? get enabled => throw _privateConstructorUsedError;
+
+  /// Serializes this KVPairDatum to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of KVPairDatum
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $KVPairDatumCopyWith<KVPairDatum> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $KVPairDatumCopyWith<$Res> {
+  factory $KVPairDatumCopyWith(
+          KVPairDatum value, $Res Function(KVPairDatum) then) =
+      _$KVPairDatumCopyWithImpl<$Res, KVPairDatum>;
+  @useResult
+  $Res call(
+      {String? id, String? name, String? value, String? type, bool? enabled});
+}
+
+/// @nodoc
+class _$KVPairDatumCopyWithImpl<$Res, $Val extends KVPairDatum>
+    implements $KVPairDatumCopyWith<$Res> {
+  _$KVPairDatumCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of KVPairDatum
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = freezed,
+    Object? name = freezed,
+    Object? value = freezed,
+    Object? type = freezed,
+    Object? enabled = freezed,
+  }) {
+    return _then(_value.copyWith(
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String?,
+      name: freezed == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String?,
+      value: freezed == value
+          ? _value.value
+          : value // ignore: cast_nullable_to_non_nullable
+              as String?,
+      type: freezed == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
+              as String?,
+      enabled: freezed == enabled
+          ? _value.enabled
+          : enabled // ignore: cast_nullable_to_non_nullable
+              as bool?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$KVPairDatumImplCopyWith<$Res>
+    implements $KVPairDatumCopyWith<$Res> {
+  factory _$$KVPairDatumImplCopyWith(
+          _$KVPairDatumImpl value, $Res Function(_$KVPairDatumImpl) then) =
+      __$$KVPairDatumImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String? id, String? name, String? value, String? type, bool? enabled});
+}
+
+/// @nodoc
+class __$$KVPairDatumImplCopyWithImpl<$Res>
+    extends _$KVPairDatumCopyWithImpl<$Res, _$KVPairDatumImpl>
+    implements _$$KVPairDatumImplCopyWith<$Res> {
+  __$$KVPairDatumImplCopyWithImpl(
+      _$KVPairDatumImpl _value, $Res Function(_$KVPairDatumImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of KVPairDatum
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = freezed,
+    Object? name = freezed,
+    Object? value = freezed,
+    Object? type = freezed,
+    Object? enabled = freezed,
+  }) {
+    return _then(_$KVPairDatumImpl(
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String?,
+      name: freezed == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String?,
+      value: freezed == value
+          ? _value.value
+          : value // ignore: cast_nullable_to_non_nullable
+              as String?,
+      type: freezed == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
+              as String?,
+      enabled: freezed == enabled
+          ? _value.enabled
+          : enabled // ignore: cast_nullable_to_non_nullable
+              as bool?,
+    ));
+  }
+}
+
+/// @nodoc
+
+@JsonSerializable(explicitToJson: true, anyMap: true, includeIfNull: false)
+class _$KVPairDatumImpl implements _KVPairDatum {
+  const _$KVPairDatumImpl(
+      {this.id, this.name, this.value, this.type, this.enabled});
+
+  factory _$KVPairDatumImpl.fromJson(Map<String, dynamic> json) =>
+      _$$KVPairDatumImplFromJson(json);
+
+  @override
+  final String? id;
+  @override
+  final String? name;
+  @override
+  final String? value;
+  @override
+  final String? type;
+  @override
+  final bool? enabled;
+
+  @override
+  String toString() {
+    return 'KVPairDatum(id: $id, name: $name, value: $value, type: $type, enabled: $enabled)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$KVPairDatumImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.value, value) || other.value == value) &&
+            (identical(other.type, type) || other.type == type) &&
+            (identical(other.enabled, enabled) || other.enabled == enabled));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, id, name, value, type, enabled);
+
+  /// Create a copy of KVPairDatum
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$KVPairDatumImplCopyWith<_$KVPairDatumImpl> get copyWith =>
+      __$$KVPairDatumImplCopyWithImpl<_$KVPairDatumImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$KVPairDatumImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _KVPairDatum implements KVPairDatum {
+  const factory _KVPairDatum(
+      {final String? id,
+      final String? name,
+      final String? value,
+      final String? type,
+      final bool? enabled}) = _$KVPairDatumImpl;
+
+  factory _KVPairDatum.fromJson(Map<String, dynamic> json) =
+      _$KVPairDatumImpl.fromJson;
+
+  @override
+  String? get id;
+  @override
+  String? get name;
+  @override
+  String? get value;
+  @override
+  String? get type;
+  @override
+  bool? get enabled;
+
+  /// Create a copy of KVPairDatum
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$KVPairDatumImplCopyWith<_$KVPairDatumImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

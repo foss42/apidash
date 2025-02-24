@@ -1,50 +1,14 @@
 import 'dart:convert';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:insomnia_collection/models/insomnia_environment.dart';
 
 part 'insomnia_collection.freezed.dart';
 part 'insomnia_collection.g.dart';
 
-InsomniaEnvironment insomniaEnvironmentFromJsonStr(String str) {
-  var InsomniaEnvjson = json.decode(str);
-  print(InsomniaEnvjson.toString());
-  InsomniaEnvjson['resources'] = (InsomniaEnvjson['resources'] as List)
-      .where((resource) => resource['_type'] == 'environment')
-      .toList();
-  print(InsomniaEnvjson['resources'].toString());
+InsomniaCollection insomniaCollectionFromJsonStr(String str) =>
+    InsomniaCollection.fromJson(json.decode(str));
 
-  return InsomniaEnvironment.fromJson(InsomniaEnvjson['resources'][0]);
-}
-
-InsomniaEnvironment insomniaEnvironmentFromJson(Map<String, dynamic> json) {
-  // Remove all resources which are not requests
-  json['resources'] = (json['resources'] as List)
-      .where((resource) => resource['_type'] == 'environment')
-      .toList();
-
-  return InsomniaEnvironment.fromJson(json['resources'][0]);
-}
-
-InsomniaCollection insomniaCollectionFromJsonStr(String str) {
-  var Insomniajson = json.decode(str);
-  // Remove all resources which are not requests
-  Insomniajson['resources'] = (Insomniajson['resources'] as List)
-      .where((resource) => resource['_type'] == 'request')
-      .toList();
-
-  return InsomniaCollection.fromJson(Insomniajson);
-}
-
-InsomniaCollection insomniaCollectionFromJson(Map<String, dynamic> json) {
-  // Remove all resources which are not requests
-  json['resources'] = (json['resources'] as List)
-      .where((resource) => resource['_type'] == 'request')
-      .toList();
-
-  return InsomniaCollection.fromJson(json);
-}
-
-/// TODO: functions to convert to json and json string
+String insomniaCollectionToJsonStr(InsomniaCollection data) =>
+    JsonEncoder.withIndent('  ').convert(data);
 
 @freezed
 class InsomniaCollection with _$InsomniaCollection {
@@ -74,7 +38,7 @@ class Resource with _$Resource {
   )
   const factory Resource({
     @JsonKey(name: '_id') String? id,
-    @JsonKey(name: 'parentId') String? parentId,
+    String? parentId,
     num? modified,
     num? created,
     String? url,
@@ -82,18 +46,32 @@ class Resource with _$Resource {
     String? description,
     String? method,
     Body? body,
+    String? preRequestScript,
     List<Parameter>? parameters,
     List<Header>? headers,
-    String? preRequestScript,
+    dynamic authentication,
     num? metaSortKey,
     bool? isPrivate,
+    List<dynamic>? pathParameters,
     String? afterResponseScript,
-    bool? settingSendCookies,
     bool? settingStoreCookies,
+    bool? settingSendCookies,
     bool? settingDisableRenderRequestBody,
     bool? settingEncodeUrl,
     bool? settingRebuildPath,
     String? settingFollowRedirects,
+    dynamic environment,
+    dynamic environmentPropertyOrder,
+    String? scope,
+    dynamic data,
+    dynamic dataPropertyOrder,
+    dynamic color,
+    List<Cookie>? cookies,
+    String? fileName,
+    String? contents,
+    String? contentType,
+    String? environmentType,
+    List<KVPairDatum>? kvPairData,
     @JsonKey(name: '_type') String? type,
   }) = _Resource;
 
@@ -168,4 +146,47 @@ class Header with _$Header {
   }) = _Header;
 
   factory Header.fromJson(Map<String, dynamic> json) => _$HeaderFromJson(json);
+}
+
+@freezed
+class Cookie with _$Cookie {
+  @JsonSerializable(
+    explicitToJson: true,
+    anyMap: true,
+    includeIfNull: false,
+  )
+  const factory Cookie({
+    String? key,
+    String? value,
+    String? domain,
+    String? path,
+    bool? secure,
+    bool? httpOnly,
+    bool? hostOnly,
+    DateTime? creation,
+    DateTime? lastAccessed,
+    String? sameSite,
+    String? id,
+  }) = _Cookie;
+
+  factory Cookie.fromJson(Map<String, dynamic> json) => _$CookieFromJson(json);
+}
+
+@freezed
+class KVPairDatum with _$KVPairDatum {
+  @JsonSerializable(
+    explicitToJson: true,
+    anyMap: true,
+    includeIfNull: false,
+  )
+  const factory KVPairDatum({
+    String? id,
+    String? name,
+    String? value,
+    String? type,
+    bool? enabled,
+  }) = _KVPairDatum;
+
+  factory KVPairDatum.fromJson(Map<String, dynamic> json) =>
+      _$KVPairDatumFromJson(json);
 }
