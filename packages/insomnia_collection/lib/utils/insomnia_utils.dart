@@ -12,12 +12,12 @@ List<(String?, Resource)> getItemByTypeFromInsomniaCollection(
   InsomniaCollection? ic,
   String type,
 ) {
-  if (ic?.resources == null || ic!.resources!.length > 0) {
+  if (ic?.resources == null || ic!.resources!.length == 0) {
     return [];
   }
   List<(String?, Resource)> requests = [];
   for (var item in ic.resources!) {
-    if (item.type != null || item.type == type) {
+    if (item.type != null && item.type == type) {
       requests.add((item.name, item));
     }
   }
