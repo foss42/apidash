@@ -1,42 +1,26 @@
-import 'package:insomnia_collection/models/insomnia_environment.dart';
+import 'package:insomnia_collection/insomnia_collection.dart';
 import 'package:seed/seed.dart';
 import '../consts.dart';
 import '../models/models.dart';
 import '../utils/utils.dart';
-import 'package:insomnia_collection/insomnia_collection.dart' as ins;
 
 class InsomniaIO {
   List<(String?, HttpRequestModel)>? getHttpRequestModelList(String content) {
     content = content.trim();
     try {
-      final ic = ins.insomniaCollectionFromJsonStr(content);
-      final requests = ins.getRequestsFromInsomniaCollection(ic);
-
-      /// TODO; Get env from the insomnia collection
-      // final environmentVariables = ins.getEnvironmentVariablesFromInsomniaEnvironment(env);
+      final ic = insomniaCollectionFromJsonStr(content);
+      final requests = getRequestsFromInsomniaCollection(ic);
 
       return requests
-          .map((req) => (req.$1, insomniaRequestToHttpRequestModel(req.$2)))
+          .map((req) => (req.$1, insomniaResourceToHttpRequestModel(req.$2)))
           .toList();
     } catch (e) {
       return null;
     }
   }
 
-  InsomniaEnvironment? getInsomiaEnvironment(String content) {
-    content = content.trim();
-    try {
-      final env = ins.insomniaEnvironmentFromJsonStr(content);
-     
-      return env;
-    } catch (e) {
-      return null;
-    }
-  }
-
-  HttpRequestModel insomniaRequestToHttpRequestModel(ins.Resource request) {
+  HttpRequestModel insomniaResourceToHttpRequestModel(Resource request) {
     HTTPVerb method;
-
     try {
       method = HTTPVerb.values.byName((request.method ?? "").toLowerCase());
     } catch (e) {
@@ -49,7 +33,7 @@ class InsomniaIO {
     List<NameValueModel> params = [];
     List<bool> isParamEnabledList = [];
 
-    for (var header in request.headers ?? <ins.Header>[]) {
+    for (var header in request.headers ?? <Header>[]) {
       var name = header.name ?? "";
       var value = header.value ?? "";
       var activeHeader = header.disabled ?? false;
@@ -57,7 +41,7 @@ class InsomniaIO {
       isHeaderEnabledList.add(!activeHeader);
     }
 
-    for (var query in request.parameters ?? <ins.Parameter>[]) {
+    for (var query in request.parameters ?? <Parameter>[]) {
       var name = query.name ?? "";
       var value = query.value;
       var activeQuery = query.disabled ?? false;
@@ -65,44 +49,34 @@ class InsomniaIO {
       isParamEnabledList.add(!activeQuery);
     }
 
-    ContentType bodyContentType = kDefaultContentType;
+    ContentType bodyContentType =
+        getContentTypeFromContentTypeStr(request.body?.mimeType) ??
+            kDefaultContentType;
+
     String? body;
     List<FormDataModel>? formData;
-    if (request.body != null) {
-      if (request.body?.mimeType != null) {
-        try {
-          if (request.body?.mimeType == 'text/plain') {
-            bodyContentType = ContentType.text;
-          } else if (request.body?.mimeType == 'application/json') {
-            bodyContentType = ContentType.json;
-          } else if (request.body?.mimeType == 'multipart/form-data') {
-            bodyContentType = ContentType.formdata;
-            formData = [];
-            for (var fd in request.body?.params ?? <ins.Formdatum>[]) {
-              var name = fd.name ?? "";
-              FormDataType formDataType;
-              try {
-                formDataType = FormDataType.values.byName(fd.type ?? "");
-              } catch (e) {
-                formDataType = FormDataType.text;
-              }
-              var value = switch (formDataType) {
-                FormDataType.text => fd.value ?? "",
-                FormDataType.file => fd.src ?? ""
-              };
-              formData.add(FormDataModel(
-                name: name,
-                value: value,
-                type: formDataType,
-              ));
-            }
-          } else {
-            bodyContentType =
-                ContentType.values.byName(request.body?.mimeType ?? "");
+    if (request.body != null && request.body?.mimeType != null) {
+      if (bodyContentType == ContentType.formdata) {
+        formData = [];
+        for (var fd in request.body?.params ?? <Formdatum>[]) {
+          var name = fd.name ?? "";
+          FormDataType formDataType;
+          try {
+            formDataType = FormDataType.values.byName(fd.type ?? "");
+          } catch (e) {
+            formDataType = FormDataType.text;
           }
-        } catch (e) {
-          bodyContentType = kDefaultContentType;
+          var value = switch (formDataType) {
+            FormDataType.text => fd.value ?? "",
+            FormDataType.file => fd.src ?? ""
+          };
+          formData.add(FormDataModel(
+            name: name,
+            value: value,
+            type: formDataType,
+          ));
         }
+      } else {
         body = request.body?.text;
       }
     }
