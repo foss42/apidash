@@ -12,10 +12,11 @@ class Importer {
           .getHttpRequestModelList(content)
           ?.map((t) => (null, t))
           .toList(),
-      ImportFormat.postman => PostmanIO().getHttpRequestModelList(content),
       ImportFormat.har => HarIO().getHttpRequestModelList(content)
           ?.map((t) => (null, t))
           .toList(),
+      ImportFormat.insomnia => InsomniaIO().getHttpRequestModelList(content),
+      ImportFormat.postman => PostmanIO().getHttpRequestModelList(content),
     };
   }
 }

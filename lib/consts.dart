@@ -96,8 +96,6 @@ enum SidebarMenuOption {
   final String label;
 }
 
-enum EnvironmentVariableType { variable, secret }
-
 final kEnvVarRegEx = RegExp(r'{{([^{}]*)}}');
 
 enum CodegenLanguage {
@@ -141,8 +139,9 @@ enum CodegenLanguage {
 
 enum ImportFormat {
   curl("cURL"),
-  postman("Postman Collection v2.1"),
-  har("HAR");
+  har("HAR"),
+  insomnia("Insomnia v4"),
+  postman("Postman Collection v2.1");
 
   const ImportFormat(this.label);
   final String label;
@@ -422,6 +421,7 @@ const kLabelSend = "Send";
 const kLabelSending = "Sending..";
 const kLabelBusy = "Busy";
 const kLabelCopy = "Copy";
+const kLabelShare = "Share";
 const kLabelSave = "Save";
 const kLabelDownload = "Download";
 const kLabelSaving = "Saving";
@@ -432,6 +432,7 @@ const kLabelSelect = "Select";
 const kLabelContinue = "Continue";
 const kLabelCancel = "Cancel";
 const kLabelOk = "Ok";
+const kLabelImport = "Import";
 const kUntitled = "untitled";
 // Request Pane
 const kLabelRequest = "Request";
@@ -474,3 +475,10 @@ const kMsgNoContent = "No content";
 const kMsgUnknowContentType = "Unknown Response Content-Type";
 // Workspace Selector
 const kMsgSelectWorkspace = "Create your workspace";
+// History Page
+const kTitleClearHistory = 'Clear History';
+const kMsgClearHistory =
+    'Clearing History is permanent. Do you want to continue?';
+const kMsgClearHistorySuccess = 'History cleared successfully';
+const kMsgClearHistoryError = 'Error clearing history';
+const kMsgShareError = "Unable to share";
