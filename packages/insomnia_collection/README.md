@@ -389,8 +389,8 @@ void main() {
 ## Maintainer
 
 - Ashita Prasad ([GitHub](https://github.com/ashitaprasad), [LinkedIn](https://www.linkedin.com/in/ashitaprasad/), [X](https://x.com/ashitaprasad))
-- Papa Kofi (contributor) ([GitHub](https://github.com/StormGear), [LinkedIn](https://www.linkedin.com/in/papakofiboahen))
+- Papa Kofi (contributor) ([GitHub](https://github.com/StormGear))
 
 ## License
 
-This project is licensed under the [Apache License 2.0](https://github.com/foss42/apidash/blob/main/packages/postman/LICENSE).
+This project is licensed under the [Apache License 2.0](https://github.com/foss42/apidash/blob/main/packages/insomnia_collection/LICENSE).
