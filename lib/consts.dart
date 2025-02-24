@@ -96,8 +96,6 @@ enum SidebarMenuOption {
   final String label;
 }
 
-enum EnvironmentVariableType { variable, secret }
-
 final kEnvVarRegEx = RegExp(r'{{([^{}]*)}}');
 
 enum CodegenLanguage {
