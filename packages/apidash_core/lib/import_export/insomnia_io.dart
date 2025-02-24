@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:insomnia_collection/insomnia_collection.dart';
 import 'package:seed/seed.dart';
 import '../consts.dart';
@@ -15,6 +16,7 @@ class InsomniaIO {
           .map((req) => (req.$1, insomniaResourceToHttpRequestModel(req.$2)))
           .toList();
     } catch (e) {
+      debugPrint("$e");
       return null;
     }
   }
