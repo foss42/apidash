@@ -12,8 +12,6 @@ dependencies:
     sdk: flutter
   apidash_core:
     path: packages/apidash_core
-  insomnia_collection:
-    path: packages/insomnia_collection
   apidash_design_system:
     path: packages/apidash_design_system
   code_builder: ^4.10.0

@@ -773,7 +773,7 @@ packages:
     source: hosted
     version: "4.3.0"
   insomnia_collection:
-    dependency: "direct main"
+    dependency: transitive
     description:
       path: "packages/insomnia_collection"
       relative: true
