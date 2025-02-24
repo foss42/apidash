@@ -27,26 +27,6 @@ void importToCollectionPane(
       sm.hideCurrentSnackBar();
       file.readAsString().then(
         (content) {
-          kEnvImporter
-              .getInsomniaEnvironment(importFormatType, content)
-              .then((environment) {
-            debugPrint('Environment: $environment');
-            debugPrint('Environment values: ${environment?.resources}');
-
-            if (environment != null) {
-              if (environment.resources == null ||
-                  environment.resources!.isEmpty) {
-                sm.showSnackBar(getSnackBar("No environment variables imported",
-                    small: false));
-              } else {
-                var env = createNewEnvironment(ref, environment);
-
-                sm.showSnackBar(getSnackBar(
-                    "Successfully imported ${env.length} environment variables",
-                    small: false));
-              }
-            }
-          });
           kImporter
               .getHttpRequestModelList(importFormatType, content)
               .then((importedRequestModels) {
