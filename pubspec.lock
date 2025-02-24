@@ -779,7 +779,14 @@ packages:
       sha256: "13d3349ace88f12f4a0d175eb5c12dcdd39d35c4c109a8a13dfeb6d0bd9e31c3"
       url: "https://pub.dev"
     source: hosted
-    version: "4.5.3"
+    version: "4.3.0"
+  insomnia_collection:
+    dependency: transitive
+    description:
+      path: "packages/insomnia_collection"
+      relative: true
+    source: path
+    version: "0.0.1"
   integration_test:
     dependency: "direct dev"
     description: flutter
