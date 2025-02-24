@@ -19,21 +19,21 @@ class InsomniaIO {
     }
   }
 
-  HttpRequestModel insomniaResourceToHttpRequestModel(Resource request) {
+  HttpRequestModel insomniaResourceToHttpRequestModel(Resource resource) {
     HTTPVerb method;
     try {
-      method = HTTPVerb.values.byName((request.method ?? "").toLowerCase());
+      method = HTTPVerb.values.byName((resource.method ?? "").toLowerCase());
     } catch (e) {
       method = kDefaultHttpMethod;
     }
-    String url = stripUrlParams(request.url ?? "");
+    String url = stripUrlParams(resource.url ?? "");
     List<NameValueModel> headers = [];
     List<bool> isHeaderEnabledList = [];
 
     List<NameValueModel> params = [];
     List<bool> isParamEnabledList = [];
 
-    for (var header in request.headers ?? <Header>[]) {
+    for (var header in resource.headers ?? <Header>[]) {
       var name = header.name ?? "";
       var value = header.value ?? "";
       var activeHeader = header.disabled ?? false;
@@ -41,7 +41,7 @@ class InsomniaIO {
       isHeaderEnabledList.add(!activeHeader);
     }
 
-    for (var query in request.parameters ?? <Parameter>[]) {
+    for (var query in resource.parameters ?? <Parameter>[]) {
       var name = query.name ?? "";
       var value = query.value;
       var activeQuery = query.disabled ?? false;
@@ -50,15 +50,15 @@ class InsomniaIO {
     }
 
     ContentType bodyContentType =
-        getContentTypeFromContentTypeStr(request.body?.mimeType) ??
+        getContentTypeFromContentTypeStr(resource.body?.mimeType) ??
             kDefaultContentType;
 
     String? body;
     List<FormDataModel>? formData;
-    if (request.body != null && request.body?.mimeType != null) {
+    if (resource.body != null && resource.body?.mimeType != null) {
       if (bodyContentType == ContentType.formdata) {
         formData = [];
-        for (var fd in request.body?.params ?? <Formdatum>[]) {
+        for (var fd in resource.body?.params ?? <Formdatum>[]) {
           var name = fd.name ?? "";
           FormDataType formDataType;
           try {
@@ -77,7 +77,7 @@ class InsomniaIO {
           ));
         }
       } else {
-        body = request.body?.text;
+        body = resource.body?.text;
       }
     }
 
@@ -91,6 +91,25 @@ class InsomniaIO {
       body: body,
       bodyContentType: bodyContentType,
       formData: formData,
+    );
+  }
+
+  EnvironmentModel insomniaResourceToEnvironmentModel(Resource resource) {
+    List<EnvironmentVariableModel> variables = [];
+    for (var envvar in resource.kvPairData!) {
+      variables.add(EnvironmentVariableModel(
+        key: envvar.name ?? "",
+        value: envvar.value ?? "",
+        enabled: envvar.enabled ?? true,
+        type: envvar.type == "secret"
+            ? EnvironmentVariableType.secret
+            : EnvironmentVariableType.variable,
+      ));
+    }
+    return EnvironmentModel(
+      id: resource.id!,
+      name: resource.name ?? "",
+      values: variables,
     );
   }
 }
