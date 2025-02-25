@@ -1,7 +1,7 @@
+import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:apidash/models/models.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/screens/common_widgets/env_trigger_options.dart';

@@ -1,7 +1,7 @@
 import 'package:apidash/consts.dart';
-import 'package:apidash/models/environment_model.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/utils/file_utils.dart';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../services/services.dart' show hiveHandler, HiveHandler;
 

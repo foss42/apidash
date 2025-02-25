@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:apidash/models/models.dart';
 import 'package:apidash/providers/providers.dart';
+import 'package:apidash/models/models.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/utils/utils.dart';
-
 import 'envvar_indicator.dart';
 
 class EnvironmentTriggerOptions extends ConsumerWidget {
