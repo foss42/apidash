@@ -1,7 +1,9 @@
 import 'dart:typed_data';
 import 'dart:convert';
 import 'package:apidash_core/apidash_core.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:json5/json5.dart' as json5;
 
 String humanizeDate(DateTime? date) {
   if (date == null) {
@@ -80,5 +82,14 @@ Uint8List jsonMapToBytes(Map<String, dynamic>? map) {
     var l = utf8.encode(text);
     var bytes = Uint8List.fromList(l);
     return bytes;
+  }
+}
+
+String removeJsonComments(String json) {
+  try {
+    var parsed = json5.json5Decode(json);
+    return jsonEncode(parsed);
+  } catch (e) {
+    return json;
   }
 }
