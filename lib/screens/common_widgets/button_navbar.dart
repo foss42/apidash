@@ -69,16 +69,13 @@ class NavbarButton extends ConsumerWidget {
                 ? Text(
                     label,
                     style: Theme.of(context).textTheme.labelSmall!.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: isSelected
-                              ? Theme.of(context)
-                                  .colorScheme
-                                  .onSecondaryContainer
-                              : Theme.of(context)
-                                  .colorScheme
-                                  .onSurface
-                                  .withOpacity(0.65),
-                        ),
+                        fontWeight: FontWeight.w600,
+                        color: isSelected
+                            ? Theme.of(context).colorScheme.onSecondaryContainer
+                            : Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withAlpha((0.65 * 255).round())),
                   )
                 : const SizedBox.shrink(),
           ],

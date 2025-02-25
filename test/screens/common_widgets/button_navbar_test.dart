@@ -116,6 +116,6 @@ void main() {
         equals(Theme.of(tester.element(find.byKey(testKey)))
             .colorScheme
             .onSurface
-            .withOpacity(0.65)));
+            .withAlpha((0.65 * 255).round())));
   });
 }

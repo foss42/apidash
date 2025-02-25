@@ -43,8 +43,8 @@ class SidebarEnvironmentCard extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final Color color =
         isGlobal ? colorScheme.secondaryContainer : colorScheme.surface;
-    final Color colorVariant =
-        colorScheme.surfaceContainerHighest.withOpacity(0.5);
+    final Color colorVariant = colorScheme.surfaceContainerHighest
+      ..withAlpha((0.5 * 255).round());
     final Color surfaceTint = colorScheme.primary;
     bool isSelected = selectedId == id;
     bool inEditMode = editRequestId == id;
@@ -68,7 +68,7 @@ class SidebarEnvironmentCard extends StatelessWidget {
         child: InkWell(
           borderRadius: kBorderRadius8,
           hoverColor: colorVariant,
-          focusColor: colorVariant.withOpacity(0.5),
+          focusColor: colorVariant..withAlpha((0.5 * 255).round()),
           onTap: inEditMode ? null : onTap,
           // onSecondaryTap: onSecondaryTap,
           onSecondaryTapUp: (isGlobal)

@@ -21,8 +21,10 @@ class HistoryRequestCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Color color = Theme.of(context).colorScheme.surface;
-    final Color colorVariant =
-        Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.5);
+    final Color colorVariant = Theme.of(context)
+        .colorScheme
+        .surfaceContainerHighest
+      ..withAlpha((0.5 * 255).round());
     final Color surfaceTint = Theme.of(context).colorScheme.primary;
     return Card(
       shape: const ContinuousRectangleBorder(borderRadius: kBorderRadius12),
@@ -38,7 +40,7 @@ class HistoryRequestCard extends StatelessWidget {
         onTap: onTap,
         borderRadius: kBorderRadius6,
         hoverColor: colorVariant,
-        focusColor: colorVariant.withOpacity(0.5),
+        focusColor: colorVariant.withAlpha((0.5 * 255).round()),
         child: Padding(
           padding: kPv6 + kPh8,
           child: SizedBox(

@@ -81,15 +81,14 @@ class _HeaderFieldState extends State<HeaderField> {
         ),
         decoration: InputDecoration(
           hintStyle: kCodeStyle.copyWith(
-              color: colorScheme.outline.withOpacity(kHintOpacity)),
+              color:
+                  colorScheme.outline.withAlpha((kHintOpacity * 255).round())),
           hintText: widget.hintText,
           contentPadding: const EdgeInsets.only(bottom: 12),
           focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(
-              color: colorScheme.primary.withOpacity(
-                kHintOpacity,
-              ),
-            ),
+                color: colorScheme.primary
+                    .withAlpha((kHintOpacity * 255).round())),
           ),
           enabledBorder: UnderlineInputBorder(
             borderSide: BorderSide(

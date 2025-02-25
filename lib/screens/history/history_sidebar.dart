@@ -109,18 +109,15 @@ class _HistoryExpansionTileState extends ConsumerState<HistoryExpansionTile>
         children: [
           RotationTransition(
               turns: animation,
-              child: Icon(
-                Icons.chevron_right_rounded,
-                size: 20,
-                color: colorScheme.onSurface.withOpacity(0.6),
-              )),
+              child: Icon(Icons.chevron_right_rounded,
+                  size: 20,
+                  color: colorScheme.onSurface.withAlpha((0.6 * 255).round()))),
           kHSpacer5,
           Text(
             humanizeDate(widget.date),
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: colorScheme.onSurface.withOpacity(0.6),
-                ),
+                fontWeight: FontWeight.bold,
+                color: colorScheme.onSurface.withAlpha((0.6 * 255).round())),
           ),
         ],
       ),

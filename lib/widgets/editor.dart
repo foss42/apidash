@@ -86,16 +86,17 @@ class _TextFieldEditorState extends State<TextFieldEditor> {
         decoration: InputDecoration(
           hintText: widget.hintText ?? kHintContent,
           hintStyle: TextStyle(
-            color: Theme.of(context).colorScheme.outline.withOpacity(
-                  kHintOpacity,
+            color: Theme.of(context).colorScheme.outline.withAlpha(
+                  (kHintOpacity * 255).round(),
                 ),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: kBorderRadius8,
             borderSide: BorderSide(
-              color: Theme.of(context).colorScheme.primary.withOpacity(
-                    kHintOpacity,
-                  ),
+              color: Theme.of(context)
+                  .colorScheme
+                  .primary
+                  .withAlpha((kHintOpacity * 255).round()),
             ),
           ),
           enabledBorder: OutlineInputBorder(
@@ -110,7 +111,7 @@ class _TextFieldEditorState extends State<TextFieldEditor> {
               (Theme.of(context).brightness == Brightness.dark
                       ? Theme.of(context).colorScheme.onPrimaryContainer
                       : Theme.of(context).colorScheme.primaryContainer)
-                  .withOpacity(kForegroundOpacity),
+                  .withAlpha((kForegroundOpacity * 255).round()),
               Theme.of(context).colorScheme.surface),
         ),
       ),

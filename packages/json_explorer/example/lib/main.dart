@@ -284,7 +284,7 @@ class _JsonExplorerPageState extends State<JsonExplorerPage> {
                         fontSize: 16,
                       ),
                       propertyKeyTextStyle: GoogleFonts.inconsolata(
-                        color: Colors.black.withOpacity(0.7),
+                        color: Colors.black.withAlpha((0.7 * 255).round()),
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                       ),

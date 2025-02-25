@@ -6,7 +6,7 @@ const kColorTransparent = Colors.transparent;
 const kColorWhite = Colors.white;
 const kColorBlack = Colors.black;
 const kColorRed = Colors.red;
-final kColorLightDanger = Colors.red.withOpacity(0.9);
+final kColorLightDanger = Colors.red.withAlpha((0.9 * 255).round());
 const kColorDarkDanger = Color(0xffcf6679);
 
 const kColorSchemeSeed = Colors.blue;
