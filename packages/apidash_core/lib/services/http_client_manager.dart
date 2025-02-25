@@ -37,12 +37,9 @@ class HttpClientManager {
   
 
   void cancelRequest(String? requestId) {
-    print("inside cancel request");
-    print("clients is it or not ${_clients.containsKey(requestId)}");
     if (requestId != null && _clients.containsKey(requestId)) {
-      print("inside if");
+
        _clients[requestId]?.close();
-       print("after closed");
       _clients.remove(requestId);
 
       _cancelledRequests.addLast(requestId);
@@ -57,7 +54,6 @@ class HttpClientManager {
   }
 
   void closeClient(String requestId) {
-    print("inside closeClient");
     if (_clients.containsKey(requestId)) {
       _clients[requestId]?.close();
       _clients.remove(requestId);

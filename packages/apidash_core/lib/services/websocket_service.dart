@@ -17,7 +17,6 @@ class WebSocketClient {
 
   
   Future<(String?,DateTime?)> connect(String url,List<NameValueModel>? headers,List<NameValueModel>? params) async {
-    print("inside client connect");
     try {
       
       String urlWithParams = getValidRequestUri(url,params,defaultUriScheme:SupportedUriSchemes.wss).$1.toString();

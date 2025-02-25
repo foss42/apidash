@@ -19,7 +19,6 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
   SupportedUriSchemes defaultUriScheme = kDefaultUriScheme,
   bool noSSL = false,
 }) async {
-  print("entered send http  request");
   final client = httpClientManager.createClient(requestId, noSSL: noSSL);
 
   (Uri?, String?) uriRec = getValidRequestUri(
@@ -36,7 +35,6 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
     try {
       Stopwatch stopwatch = Stopwatch()..start();
       if (apiType == APIType.rest) {
-        print("entered into rest");
         var isMultiPartRequest =
             requestModel.bodyContentType == ContentType.formdata;
 
@@ -72,10 +70,8 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
                 );
               }
             }
-            print("Just before multipart request");
             http.StreamedResponse multiPartResponse =
                 await multiPartRequest.send();
-            print("Just after mutipart request");
             stopwatch.stop();
             http.Response convertedMultiPartResponse =
                 await convertStreamedResponse(multiPartResponse);
@@ -90,10 +86,8 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
             response = await client.head(requestUrl, headers: headers);
             break;
           case HTTPVerb.post:
-            print("entered into post");
             response =
                 await client.post(requestUrl, headers: headers, body: body);
-            print("Response ${response.toString()}");
             break;
           case HTTPVerb.put:
             response =
@@ -131,13 +125,11 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
       
       return (response, stopwatch.elapsed, null);
     } catch (e) {
-      print("Inside error of sendHttpRequest");
       if (httpClientManager.wasRequestCancelled(requestId)) {
         return (null, null, kMsgRequestCancelled);
       }
       return (null, null, e.toString());
     } finally {
-      print("entered into finally");
       httpClientManager.closeClient(requestId);
     }
   } else {
@@ -146,6 +138,5 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
 }
 
 void cancelHttpRequest(String? requestId) {
-  print("inside cancelHttpRequest");
   httpClientManager.cancelRequest(requestId);
 }
