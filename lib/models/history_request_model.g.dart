@@ -15,10 +15,14 @@ _$HistoryRequestModelImpl _$$HistoryRequestModelImplFromJson(Map json) =>
           Map<String, Object?>.from(json['httpRequestModel'] as Map)),
       httpResponseModel: HttpResponseModel.fromJson(
           Map<String, Object?>.from(json['httpResponseModel'] as Map)),
-      webSocketRequestModel: WebSocketRequestModel.fromJson(
-          Map<String, Object?>.from(json['webSocketRequestModel'] as Map)),
-      webSocketResponseModel: WebSocketResponseModel.fromJson(
-          Map<String, Object?>.from(json['webSocketResponseModel'] as Map)),
+      webSocketRequestModel: json['webSocketRequestModel'] == null
+          ? null
+          : WebSocketRequestModel.fromJson(
+              Map<String, Object?>.from(json['webSocketRequestModel'] as Map)),
+      webSocketResponseModel: json['webSocketResponseModel'] == null
+          ? null
+          : WebSocketResponseModel.fromJson(
+              Map<String, Object?>.from(json['webSocketResponseModel'] as Map)),
     );
 
 Map<String, dynamic> _$$HistoryRequestModelImplToJson(
@@ -28,6 +32,6 @@ Map<String, dynamic> _$$HistoryRequestModelImplToJson(
       'metaData': instance.metaData.toJson(),
       'httpRequestModel': instance.httpRequestModel.toJson(),
       'httpResponseModel': instance.httpResponseModel.toJson(),
-      'webSocketRequestModel': instance.webSocketRequestModel.toJson(),
-      'webSocketResponseModel': instance.webSocketResponseModel.toJson(),
+      'webSocketRequestModel': instance.webSocketRequestModel?.toJson(),
+      'webSocketResponseModel': instance.webSocketResponseModel?.toJson(),
     };

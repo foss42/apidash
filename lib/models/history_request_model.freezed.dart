@@ -24,9 +24,9 @@ mixin _$HistoryRequestModel {
   HistoryMetaModel get metaData => throw _privateConstructorUsedError;
   HttpRequestModel get httpRequestModel => throw _privateConstructorUsedError;
   HttpResponseModel get httpResponseModel => throw _privateConstructorUsedError;
-  WebSocketRequestModel get webSocketRequestModel =>
+  WebSocketRequestModel? get webSocketRequestModel =>
       throw _privateConstructorUsedError;
-  WebSocketResponseModel get webSocketResponseModel =>
+  WebSocketResponseModel? get webSocketResponseModel =>
       throw _privateConstructorUsedError;
 
   /// Serializes this HistoryRequestModel to a JSON map.
@@ -50,14 +50,14 @@ abstract class $HistoryRequestModelCopyWith<$Res> {
       HistoryMetaModel metaData,
       HttpRequestModel httpRequestModel,
       HttpResponseModel httpResponseModel,
-      WebSocketRequestModel webSocketRequestModel,
-      WebSocketResponseModel webSocketResponseModel});
+      WebSocketRequestModel? webSocketRequestModel,
+      WebSocketResponseModel? webSocketResponseModel});
 
   $HistoryMetaModelCopyWith<$Res> get metaData;
   $HttpRequestModelCopyWith<$Res> get httpRequestModel;
   $HttpResponseModelCopyWith<$Res> get httpResponseModel;
-  $WebSocketRequestModelCopyWith<$Res> get webSocketRequestModel;
-  $WebSocketResponseModelCopyWith<$Res> get webSocketResponseModel;
+  $WebSocketRequestModelCopyWith<$Res>? get webSocketRequestModel;
+  $WebSocketResponseModelCopyWith<$Res>? get webSocketResponseModel;
 }
 
 /// @nodoc
@@ -79,8 +79,8 @@ class _$HistoryRequestModelCopyWithImpl<$Res, $Val extends HistoryRequestModel>
     Object? metaData = null,
     Object? httpRequestModel = null,
     Object? httpResponseModel = null,
-    Object? webSocketRequestModel = null,
-    Object? webSocketResponseModel = null,
+    Object? webSocketRequestModel = freezed,
+    Object? webSocketResponseModel = freezed,
   }) {
     return _then(_value.copyWith(
       historyId: null == historyId
@@ -99,14 +99,14 @@ class _$HistoryRequestModelCopyWithImpl<$Res, $Val extends HistoryRequestModel>
           ? _value.httpResponseModel
           : httpResponseModel // ignore: cast_nullable_to_non_nullable
               as HttpResponseModel,
-      webSocketRequestModel: null == webSocketRequestModel
+      webSocketRequestModel: freezed == webSocketRequestModel
           ? _value.webSocketRequestModel
           : webSocketRequestModel // ignore: cast_nullable_to_non_nullable
-              as WebSocketRequestModel,
-      webSocketResponseModel: null == webSocketResponseModel
+              as WebSocketRequestModel?,
+      webSocketResponseModel: freezed == webSocketResponseModel
           ? _value.webSocketResponseModel
           : webSocketResponseModel // ignore: cast_nullable_to_non_nullable
-              as WebSocketResponseModel,
+              as WebSocketResponseModel?,
     ) as $Val);
   }
 
@@ -144,8 +144,12 @@ class _$HistoryRequestModelCopyWithImpl<$Res, $Val extends HistoryRequestModel>
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $WebSocketRequestModelCopyWith<$Res> get webSocketRequestModel {
-    return $WebSocketRequestModelCopyWith<$Res>(_value.webSocketRequestModel,
+  $WebSocketRequestModelCopyWith<$Res>? get webSocketRequestModel {
+    if (_value.webSocketRequestModel == null) {
+      return null;
+    }
+
+    return $WebSocketRequestModelCopyWith<$Res>(_value.webSocketRequestModel!,
         (value) {
       return _then(_value.copyWith(webSocketRequestModel: value) as $Val);
     });
@@ -155,8 +159,12 @@ class _$HistoryRequestModelCopyWithImpl<$Res, $Val extends HistoryRequestModel>
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $WebSocketResponseModelCopyWith<$Res> get webSocketResponseModel {
-    return $WebSocketResponseModelCopyWith<$Res>(_value.webSocketResponseModel,
+  $WebSocketResponseModelCopyWith<$Res>? get webSocketResponseModel {
+    if (_value.webSocketResponseModel == null) {
+      return null;
+    }
+
+    return $WebSocketResponseModelCopyWith<$Res>(_value.webSocketResponseModel!,
         (value) {
       return _then(_value.copyWith(webSocketResponseModel: value) as $Val);
     });
@@ -176,8 +184,8 @@ abstract class _$$HistoryRequestModelImplCopyWith<$Res>
       HistoryMetaModel metaData,
       HttpRequestModel httpRequestModel,
       HttpResponseModel httpResponseModel,
-      WebSocketRequestModel webSocketRequestModel,
-      WebSocketResponseModel webSocketResponseModel});
+      WebSocketRequestModel? webSocketRequestModel,
+      WebSocketResponseModel? webSocketResponseModel});
 
   @override
   $HistoryMetaModelCopyWith<$Res> get metaData;
@@ -186,9 +194,9 @@ abstract class _$$HistoryRequestModelImplCopyWith<$Res>
   @override
   $HttpResponseModelCopyWith<$Res> get httpResponseModel;
   @override
-  $WebSocketRequestModelCopyWith<$Res> get webSocketRequestModel;
+  $WebSocketRequestModelCopyWith<$Res>? get webSocketRequestModel;
   @override
-  $WebSocketResponseModelCopyWith<$Res> get webSocketResponseModel;
+  $WebSocketResponseModelCopyWith<$Res>? get webSocketResponseModel;
 }
 
 /// @nodoc
@@ -208,8 +216,8 @@ class __$$HistoryRequestModelImplCopyWithImpl<$Res>
     Object? metaData = null,
     Object? httpRequestModel = null,
     Object? httpResponseModel = null,
-    Object? webSocketRequestModel = null,
-    Object? webSocketResponseModel = null,
+    Object? webSocketRequestModel = freezed,
+    Object? webSocketResponseModel = freezed,
   }) {
     return _then(_$HistoryRequestModelImpl(
       historyId: null == historyId
@@ -228,14 +236,14 @@ class __$$HistoryRequestModelImplCopyWithImpl<$Res>
           ? _value.httpResponseModel
           : httpResponseModel // ignore: cast_nullable_to_non_nullable
               as HttpResponseModel,
-      webSocketRequestModel: null == webSocketRequestModel
+      webSocketRequestModel: freezed == webSocketRequestModel
           ? _value.webSocketRequestModel
           : webSocketRequestModel // ignore: cast_nullable_to_non_nullable
-              as WebSocketRequestModel,
-      webSocketResponseModel: null == webSocketResponseModel
+              as WebSocketRequestModel?,
+      webSocketResponseModel: freezed == webSocketResponseModel
           ? _value.webSocketResponseModel
           : webSocketResponseModel // ignore: cast_nullable_to_non_nullable
-              as WebSocketResponseModel,
+              as WebSocketResponseModel?,
     ));
   }
 }
@@ -264,9 +272,9 @@ class _$HistoryRequestModelImpl implements _HistoryRequestModel {
   @override
   final HttpResponseModel httpResponseModel;
   @override
-  final WebSocketRequestModel webSocketRequestModel;
+  final WebSocketRequestModel? webSocketRequestModel;
   @override
-  final WebSocketResponseModel webSocketResponseModel;
+  final WebSocketResponseModel? webSocketResponseModel;
 
   @override
   String toString() {
@@ -326,8 +334,8 @@ abstract class _HistoryRequestModel implements HistoryRequestModel {
           required final HistoryMetaModel metaData,
           required final HttpRequestModel httpRequestModel,
           required final HttpResponseModel httpResponseModel,
-          required final WebSocketRequestModel webSocketRequestModel,
-          required final WebSocketResponseModel webSocketResponseModel}) =
+          required final WebSocketRequestModel? webSocketRequestModel,
+          required final WebSocketResponseModel? webSocketResponseModel}) =
       _$HistoryRequestModelImpl;
 
   factory _HistoryRequestModel.fromJson(Map<String, dynamic> json) =
@@ -342,9 +350,9 @@ abstract class _HistoryRequestModel implements HistoryRequestModel {
   @override
   HttpResponseModel get httpResponseModel;
   @override
-  WebSocketRequestModel get webSocketRequestModel;
+  WebSocketRequestModel? get webSocketRequestModel;
   @override
-  WebSocketResponseModel get webSocketResponseModel;
+  WebSocketResponseModel? get webSocketResponseModel;
 
   /// Create a copy of HistoryRequestModel
   /// with the given fields replaced by the non-null parameter values.

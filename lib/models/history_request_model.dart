@@ -16,8 +16,8 @@ class HistoryRequestModel with _$HistoryRequestModel {
     required HistoryMetaModel metaData,
     required HttpRequestModel httpRequestModel,
     required HttpResponseModel httpResponseModel,
-    required WebSocketRequestModel webSocketRequestModel,
-    required WebSocketResponseModel webSocketResponseModel,
+    required WebSocketRequestModel? webSocketRequestModel,
+    required WebSocketResponseModel? webSocketResponseModel,
     
   }) = _HistoryRequestModel;
 
