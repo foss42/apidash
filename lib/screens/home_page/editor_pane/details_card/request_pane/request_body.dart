@@ -74,7 +74,7 @@ class EditRequestBody extends ConsumerWidget {
 
                         ref
                             .read(collectionStateNotifierProvider.notifier)
-                            .update(body: removeJsonComments(value));
+                            .update(body: value);
                       },
                       hintText: kHintJson,
                     ),

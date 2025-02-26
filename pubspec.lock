@@ -809,7 +809,7 @@ packages:
     source: hosted
     version: "0.7.1"
   json5:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: json5
       sha256: b67d6e06c9e225c8277d3c43f796677af7975a2a2b0669ff12ba38ff466a31f4

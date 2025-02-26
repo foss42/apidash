@@ -23,6 +23,7 @@ dependencies:
     path: ../insomnia_collection
   seed: ^0.0.3
   xml: ^6.3.0
+  json5: ^0.8.2
 
 dev_dependencies:
   flutter_test:
