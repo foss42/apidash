@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 part 'websocket_frame_model.freezed.dart';
 part 'websocket_frame_model.g.dart';
 
-/// WebSocket Frame Model
+
 @freezed
 class WebSocketFrameModel with _$WebSocketFrameModel {
   const WebSocketFrameModel._();

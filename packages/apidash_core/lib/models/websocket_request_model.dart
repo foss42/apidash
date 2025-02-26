@@ -28,7 +28,7 @@ class WebSocketRequestModel with _$WebSocketRequestModel {
   factory WebSocketRequestModel.fromJson(Map<String, Object?> json) =>
       _$WebSocketRequestModelFromJson(json);
 
-  /// Headers Map
+
   Map<String, String> get headersMap => rowsToMap(headers) ?? {};
   List<NameValueModel>? get enabledHeaders =>
       getEnabledRows(headers, isHeaderEnabledList);
@@ -45,7 +45,6 @@ class WebSocketRequestModel with _$WebSocketRequestModel {
   
   bool get isValidUrl => url.startsWith("ws://") || url.startsWith("wss://");
 
-  /// Resets received messages
   List<String> resetReceivedMessages() {
     return [];
   }

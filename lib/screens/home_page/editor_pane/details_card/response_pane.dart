@@ -23,7 +23,6 @@ class ResponsePane extends ConsumerWidget{
 
     
     if (isWorking) {
-      print("is Working");
       return SendingWidget(
         startSendingTime: startSendingTime,
       );
@@ -204,7 +203,6 @@ class _WebsocketResponseViewState extends ConsumerState<WebsocketResponseView> {
     final displayFrames = _isAtTop ? frames : _pausedFrames;
     return ListView.builder(
       controller: _controller,
-      //physics: const BouncingScrollPhysics(),
       itemCount: displayFrames.length,
       itemBuilder: (context, index) {
         return WebsocketFrame(

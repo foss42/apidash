@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/models/models.dart';
+import 'package:apidash_core/apidash_core.dart';
 import '../services/services.dart' show hiveHandler, HiveHandler;
 import '../utils/history_utils.dart';
 
@@ -69,6 +70,12 @@ class HistoryMetaStateNotifier
     var jsonModel = await hiveHandler.getHistoryRequest(id);
     if (jsonModel != null) {
       var jsonMap = Map<String, Object?>.from(jsonModel);
+      // for(var js in jsonMap.entries){
+      //   if(js.value!.webSocketRequestModel == null){
+      //
+      //   }
+      //
+      // }
       var historyRequestModelFromJson = HistoryRequestModel.fromJson(jsonMap);
       ref.read(selectedHistoryRequestModelProvider.notifier).state =
           historyRequestModelFromJson;

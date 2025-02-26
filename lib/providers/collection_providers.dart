@@ -171,6 +171,7 @@ class CollectionStateNotifier
       responseStatus: null,
       message: null,
       httpResponseModel: null,
+      webSocketResponseModel: null,
       isWorking: false,
       sendingTime: null,
     );

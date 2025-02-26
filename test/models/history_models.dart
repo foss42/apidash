@@ -21,7 +21,9 @@ final historyRequestModel1 = HistoryRequestModel(
   historyId: 'historyId1',
   metaData: historyMetaModel1,
   httpRequestModel: httpRequestModelGet4,
+  webSocketRequestModel: null,
   httpResponseModel: responseModel,
+
 );
 
 final historyMetaModel2 = HistoryMetaModel(
