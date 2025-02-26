@@ -17,10 +17,15 @@ class OllamaService {
     return response.response.toString();
   }
 
-  // Explain latest API request & response
+  // Explain responses & identify any discrepancy
   Future<String> explainLatestApi({required dynamic requestModel, required dynamic responseModel}) async {
     if (requestModel == null || responseModel == null) {
-      return "No recent API requests found";
+      return "No recent API requests found.";
+    }
+
+    // Validate critical fields
+    if (requestModel.httpRequestModel?.url == null) {
+      return "Error: Invalid API request (missing endpoint).";
     }
 
     // Extract request details
@@ -28,43 +33,44 @@ class OllamaService {
         .toString()
         .split('.')
         .last
-        .toUpperCase()
-        ?? "GET";
-    final endpoint = requestModel.httpRequestModel?.url ?? "Unknown endpoint";
+        .toUpperCase() ?? "GET";
+    final endpoint = requestModel.httpRequestModel!.url!;
     final headers = requestModel.httpRequestModel?.enabledHeadersMap ?? {};
     final parameters = requestModel.httpRequestModel?.enabledParamsMap ?? {};
     final body = requestModel.httpRequestModel?.body;
 
     // Process response
     final rawResponse = responseModel.body;
-    final responseBody = rawResponse is String;
+    final responseBody = rawResponse is String ? rawResponse : jsonEncode(rawResponse);
     final statusCode = responseModel.statusCode ?? 0;
 
     final prompt = '''
-Analyze this API interaction following these examples:
+Analyze this API interaction and **identify discrepancies**:
 
-Current API Request:
-- Endpoint: $endpoint
-- Method: $method
+**API Request:**
+- Endpoint: `$endpoint`
+- Method: `$method`
 - Headers: ${headers.isNotEmpty ? jsonEncode(headers) : "None"}
 - Parameters: ${parameters.isNotEmpty ? jsonEncode(parameters) : "None"}
 - Body: ${body ?? "None"}
 
-Current Response:
+**API Response:**
 - Status Code: $statusCode
-- Response Body: ${jsonEncode(responseBody)}
+- Body: 
+\`\`\`json
+$responseBody
+\`\`\`
 
-Required Analysis Format:
-1. Start with overall status assessment
-2. List validation/security issues
-3. Highlight request/response mismatches
-4. Suggest concrete improvements
-5. Use plain text formatting with clear section headers
+**Instructions:**
+1. Start with a **summary** of the API interaction.
+2. List **validation issues** (e.g., missing headers, invalid parameters).
+3. Highlight **request/response mismatches** (e.g., unexpected data types, missing fields).
+4. Suggest **concrete improvements** (e.g., fix parameters, add error handling).
 
-Response Structure:
-API Request: [request details]
-Response: [response details]
-Analysis: [structured analysis]''';
+**Format:**
+- Use Markdown with headings (`##`, `###`).
+- Include bullet points for clarity.
+''';
 
     return generateResponse(prompt);
   }

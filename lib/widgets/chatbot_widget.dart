@@ -12,8 +12,9 @@ class ChatbotWidget extends ConsumerStatefulWidget {
 
 class _ChatbotWidgetState extends ConsumerState<ChatbotWidget> {
   final TextEditingController _controller = TextEditingController();
-  final List<Map<String, dynamic>> _messages = [];
   bool _isLoading = false;
+
+  List<Map<String, dynamic>> get _messages => ref.watch(chatMessagesProvider);
 
   Future<void> _handleCodeGeneration() async {
     final language = await showDialog<String>(
@@ -56,9 +57,12 @@ class _ChatbotWidgetState extends ConsumerState<ChatbotWidget> {
     final responseModel = requestModel?.httpResponseModel;
 
     setState(() {
-      _messages.add({'role': 'user', 'message': message});
-      _controller.clear();
       _isLoading = true;
+    });
+
+    ref.read(chatMessagesProvider.notifier).addMessage({
+      'role': 'user',
+      'message': message
     });
 
     try {
@@ -123,6 +127,18 @@ class _ChatbotWidgetState extends ConsumerState<ChatbotWidget> {
       ),
       child: Column(
         children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text('DashBot', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              IconButton(
+                icon: const Icon(Icons.delete_sweep),
+                tooltip: 'Clear Chat History',
+                onPressed: () => ref.read(chatMessagesProvider.notifier).clearMessages(),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
           Wrap(
             spacing: 8,
             runSpacing: 8,
@@ -224,6 +240,21 @@ class ChatBubble extends StatelessWidget {
         child: MarkdownBody(
           data: message,
           selectable: true,
+          styleSheet: MarkdownStyleSheet(
+            h2: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+            h3: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+            listBullet: TextStyle(
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+          ),
         ),
       ),
     );
