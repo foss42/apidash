@@ -1,13 +1,11 @@
 import 'dart:io';
-import 'dart:collection';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/io_client.dart';
 
 http.Client createHttpClientWithNoSSL() {
   var ioClient = HttpClient()
-    ..badCertificateCallback =
-        (X509Certificate cert, String host, int port) => true;
+    ..badCertificateCallback = (X509Certificate cert, String host, int port) => true;
   return IOClient(ioClient);
 }
 
@@ -15,7 +13,7 @@ class HttpClientManager {
   static final HttpClientManager _instance = HttpClientManager._internal();
   static const int _maxCancelledRequests = 100;
   final Map<String, http.Client> _clients = {};
-  final Queue<String> _cancelledRequests = Queue();
+  final Set<String> _cancelledRequests = {};
 
   factory HttpClientManager() {
     return _instance;
@@ -23,12 +21,8 @@ class HttpClientManager {
 
   HttpClientManager._internal();
 
-  http.Client createClient(
-    String requestId, {
-    bool noSSL = false,
-  }) {
-    final client =
-        (noSSL && !kIsWeb) ? createHttpClientWithNoSSL() : http.Client();
+  http.Client createClient(String requestId, {bool noSSL = false}) {
+    final client = (noSSL && !kIsWeb) ? createHttpClientWithNoSSL() : http.Client();
     _clients[requestId] = client;
     return client;
   }
@@ -38,15 +32,19 @@ class HttpClientManager {
       _clients[requestId]?.close();
       _clients.remove(requestId);
 
-      _cancelledRequests.addLast(requestId);
-      while (_cancelledRequests.length > _maxCancelledRequests) {
-        _cancelledRequests.removeFirst();
+      _cancelledRequests.add(requestId);
+      if (_cancelledRequests.length > _maxCancelledRequests) {
+        _cancelledRequests.remove(_cancelledRequests.first);
       }
     }
   }
 
   bool wasRequestCancelled(String requestId) {
     return _cancelledRequests.contains(requestId);
+  }
+
+  void removeCancelledRequest(String requestId) {
+    _cancelledRequests.remove(requestId);
   }
 
   void closeClient(String requestId) {

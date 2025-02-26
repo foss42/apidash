@@ -19,6 +19,9 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
   SupportedUriSchemes defaultUriScheme = kDefaultUriScheme,
   bool noSSL = false,
 }) async {
+  if(httpClientManager.wasRequestCancelled(requestId)){
+    httpClientManager.removeCancelledRequest(requestId);
+  }
   final client = httpClientManager.createClient(requestId, noSSL: noSSL);
 
   (Uri?, String?) uriRec = getValidRequestUri(
@@ -71,7 +74,8 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
               }
             }
             http.StreamedResponse multiPartResponse =
-                await multiPartRequest.send();
+                await client.send(multiPartRequest);
+
             stopwatch.stop();
             http.Response convertedMultiPartResponse =
                 await convertStreamedResponse(multiPartResponse);
