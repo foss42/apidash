@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../services/dashbot_service.dart';
 
 final chatMessagesProvider = StateNotifierProvider<ChatMessagesNotifier, List<Map<String, dynamic>>>(
       (ref) => ChatMessagesNotifier(),
@@ -36,3 +37,7 @@ class ChatMessagesNotifier extends StateNotifier<List<Map<String, dynamic>>> {
     _saveMessages();
   }
 }
+
+final dashBotServiceProvider = Provider<DashBotService>((ref) {
+  return DashBotService();
+});

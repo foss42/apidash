@@ -1,116 +1,63 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:apidash/providers/providers.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:apidash/dashbot/providers/dashbot_providers.dart';
+import 'package:apidash/providers/providers.dart';
+import '../../providers/collection_providers.dart';
 
-class ChatbotWidget extends ConsumerStatefulWidget {
-  const ChatbotWidget({Key? key}) : super(key: key);
+class DashBotWidget extends ConsumerStatefulWidget {
+  const DashBotWidget({Key? key}) : super(key: key);
 
   @override
-  _ChatbotWidgetState createState() => _ChatbotWidgetState();
+  _DashBotWidgetState createState() => _DashBotWidgetState();
 }
 
-class _ChatbotWidgetState extends ConsumerState<ChatbotWidget> {
+class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
   final TextEditingController _controller = TextEditingController();
   bool _isLoading = false;
 
-  List<Map<String, dynamic>> get _messages => ref.watch(chatMessagesProvider);
-
-  Future<void> _handleCodeGeneration() async {
-    final language = await showDialog<String>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Select Language'),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              for (var lang in [
-                'Flutter (UI)',
-                'React (UI)',
-                'Dart (Console)',
-                'Python',
-                'JavaScript',
-                'Node.js',
-                'Java',
-                'C#'
-              ])
-                ListTile(
-                  title: Text(lang),
-                  onTap: () => Navigator.pop(context, lang),
-                ),
-            ],
-          ),
-        ),
-      ),
-    );
-
-    if (language != null) {
-      _sendMessage("Generate $language Code");
-    }
-  }
-
-  void _sendMessage(String message) async {
+  Future<void> _sendMessage(String message) async {
     if (message.trim().isEmpty) return;
-    final ollamaService = ref.read(ollamaServiceProvider);
+    final dashBotService = ref.read(dashBotServiceProvider);
     final requestModel = ref.read(selectedRequestModelProvider);
     final responseModel = requestModel?.httpResponseModel;
 
-    setState(() {
-      _isLoading = true;
-    });
+    setState(() => _isLoading = true);
 
     ref.read(chatMessagesProvider.notifier).addMessage({
       'role': 'user',
-      'message': message
+      'message': message,
     });
 
     try {
-      String response;
+      final response = await dashBotService.handleRequest(message, requestModel, responseModel);
+      final formattedResponse = _formatMarkdown(response);
 
-      if (message == "Explain API") {
-        response = await ollamaService.explainLatestApi(
-          requestModel: requestModel,
-          responseModel: responseModel,
-        );
-      } else if (message == "Debug API") {
-        response = await ollamaService.debugApi(
-          requestModel: requestModel,
-          responseModel: responseModel,
-        );
-      } else if (message == "Generate Test Case") {
-        response = await ollamaService.generateTestCases(
-          requestModel: requestModel,
-          responseModel: responseModel,
-        );
-      } else if (message.startsWith("Generate ") && message.endsWith(" Code")) {
-        final language = message.replaceAll("Generate ", "").replaceAll(" Code", "");
-        response = await ollamaService.generateCode(
-          requestModel: requestModel,
-          responseModel: responseModel,
-          language: language,
-        );
-      } else {
-        response = await ollamaService.generateResponse(message);
-      }
-
-      setState(() {
-        _messages.add({
-          'role': 'bot',
-          'message': response.contains("```") ? response : "```\n$response\n```"
-        });
+      ref.read(chatMessagesProvider.notifier).addMessage({
+        'role': 'bot',
+        'message': formattedResponse,
       });
     } catch (error) {
-      setState(() {
-        _messages.add({'role': 'bot', 'message': "Error: ${error.toString()}"});
+      ref.read(chatMessagesProvider.notifier).addMessage({
+        'role': 'bot',
+        'message': "Error: ${error.toString()}",
       });
     } finally {
       setState(() => _isLoading = false);
     }
   }
+  String _formatMarkdown(String text) {
+    if (!text.contains("```") && text.trim().isNotEmpty) {
+      text = "```\n$text\n```";
+    }
+    text = text.replaceAllMapped(RegExp(r'^\*\*(.*?)\*\*', multiLine: true),
+            (match) => '## ${match.group(1)}');
+    return text;
+  }
 
   @override
   Widget build(BuildContext context) {
+    final messages = ref.watch(chatMessagesProvider);
     final requestModel = ref.watch(selectedRequestModelProvider);
     final statusCode = requestModel?.httpResponseModel?.statusCode;
     final showDebugButton = statusCode != null && statusCode >= 400;
@@ -121,9 +68,7 @@ class _ChatbotWidgetState extends ConsumerState<ChatbotWidget> {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: const [
-          BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 4)),
-        ],
+        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 4))],
       ),
       child: Column(
         children: [
@@ -149,31 +94,15 @@ class _ChatbotWidgetState extends ConsumerState<ChatbotWidget> {
                 icon: const Icon(Icons.info_outline),
                 label: const Text("Explain API"),
               ),
-              if (showDebugButton)
-                ElevatedButton.icon(
-                  onPressed: () => _sendMessage("Debug API"),
-                  icon: const Icon(Icons.bug_report),
-                  label: const Text("Debug"),
-                ),
-              ElevatedButton.icon(
-                onPressed: () => _sendMessage("Generate Test Case"),
-                icon: const Icon(Icons.developer_mode),
-                label: const Text("Test Case"),
-              ),
-              ElevatedButton.icon(
-                onPressed: _handleCodeGeneration,
-                icon: const Icon(Icons.code),
-                label: const Text("Generate Code"),
-              ),
             ],
           ),
           const SizedBox(height: 12),
           Expanded(
             child: ListView.builder(
               reverse: true,
-              itemCount: _messages.length,
+              itemCount: messages.length,
               itemBuilder: (context, index) {
-                final message = _messages.reversed.toList()[index];
+                final message = messages.reversed.toList()[index];
                 return ChatBubble(
                   message: message['message'],
                   isUser: message['role'] == 'user',
@@ -251,9 +180,7 @@ class ChatBubble extends StatelessWidget {
               fontWeight: FontWeight.w600,
               color: Theme.of(context).colorScheme.onSurface,
             ),
-            listBullet: TextStyle(
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
+            listBullet: TextStyle(color: Theme.of(context).colorScheme.onSurface),
           ),
         ),
       ),
