@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/dashbot/providers/dashbot_providers.dart';
 import 'package:apidash/providers/providers.dart';
-import 'package:flutter/services.dart';
 import 'chat_bubble.dart';
 
 class DashBotWidget extends ConsumerStatefulWidget {
@@ -106,28 +105,10 @@ class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         const Text('DashBot', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-        Row(
-          children: [
-            IconButton(
-              icon: const Icon(Icons.copy),
-              tooltip: 'Copy Last Response',
-              onPressed: () {
-                final lastBotMessage = ref.read(chatMessagesProvider).lastWhere(
-                      (msg) => msg['role'] == 'bot',
-                  orElse: () => {'message': ''},
-                )['message'];
-                Clipboard.setData(ClipboardData(text: lastBotMessage));
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Copied to clipboard')),
-                );
-              },
-            ),
-            IconButton(
-              icon: const Icon(Icons.delete_sweep),
-              tooltip: 'Clear Chat',
-              onPressed: () => ref.read(chatMessagesProvider.notifier).clearMessages(),
-            ),
-          ],
+        IconButton(
+          icon: const Icon(Icons.delete_sweep),
+          tooltip: 'Clear Chat',
+          onPressed: () => ref.read(chatMessagesProvider.notifier).clearMessages(),
         ),
       ],
     );

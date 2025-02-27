@@ -1,5 +1,6 @@
 // lib/dashbot/widgets/chat_bubble.dart
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'content_renderer.dart';
 
 class ChatBubble extends StatelessWidget {
@@ -21,7 +22,28 @@ class ChatBubble extends StatelessWidget {
               : Theme.of(context).colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(8),
         ),
-        child: renderContent(context, message),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Flexible(
+              child: renderContent(context, message),
+            ),
+            if (!isUser) ...[
+              const SizedBox(width: 8),
+              IconButton(
+                icon: const Icon(Icons.copy, size: 20),
+                tooltip: 'Copy Response',
+                onPressed: () {
+                  Clipboard.setData(ClipboardData(text: message));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Copied to clipboard')),
+                  );
+                },
+              ),
+            ],
+          ],
+        ),
       ),
     );
   }
