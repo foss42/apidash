@@ -67,6 +67,7 @@ dependencies:
       path: plugins/window_size
   share_plus: ^10.1.4
   ollama_dart: ^0.2.2
+  flutter_highlighter: ^0.1.0
 
 dependency_overrides:
   extended_text_field: ^16.0.0

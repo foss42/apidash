@@ -1,12 +1,10 @@
+// lib/dashbot/widgets/dashbot_widget.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/dashbot/providers/dashbot_providers.dart';
 import 'package:apidash/providers/providers.dart';
-import 'package:highlighter/highlighter.dart' show highlight;
-import 'package:json_explorer/json_explorer.dart';
-import 'package:share_plus/share_plus.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
-import 'dart:convert';
+import 'package:flutter/services.dart';
+import 'chat_bubble.dart';
 
 class DashBotWidget extends ConsumerStatefulWidget {
   const DashBotWidget({Key? key}) : super(key: key);
@@ -17,7 +15,21 @@ class DashBotWidget extends ConsumerStatefulWidget {
 
 class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
   final TextEditingController _controller = TextEditingController();
+  late ScrollController _scrollController;
   bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _controller.dispose();
+    super.dispose();
+  }
 
   Future<void> _sendMessage(String message) async {
     if (message.trim().isEmpty) return;
@@ -34,24 +46,27 @@ class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
 
     try {
       final response = await dashBotService.handleRequest(message, requestModel, responseModel);
-      final formattedResponse = _limitResponse(response);
-
       ref.read(chatMessagesProvider.notifier).addMessage({
         'role': 'bot',
-        'message': formattedResponse,
+        'message': response,
       });
-    } catch (error) {
+    } catch (error, stackTrace) {
+      print('Error in _sendMessage: $error');
+      print('StackTrace: $stackTrace');
       ref.read(chatMessagesProvider.notifier).addMessage({
         'role': 'bot',
         'message': "Error: ${error.toString()}",
       });
     } finally {
       setState(() => _isLoading = false);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollController.animateTo(
+          0,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      });
     }
-  }
-
-  String _limitResponse(String response) {
-    return response;
   }
 
   @override
@@ -101,7 +116,10 @@ class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
                       (msg) => msg['role'] == 'bot',
                   orElse: () => {'message': ''},
                 )['message'];
-                Share.share(lastBotMessage);
+                Clipboard.setData(ClipboardData(text: lastBotMessage));
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Copied to clipboard')),
+                );
               },
             ),
             IconButton(
@@ -143,6 +161,7 @@ class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
 
   Widget _buildChatArea(List<Map<String, dynamic>> messages) {
     return ListView.builder(
+      controller: _scrollController,
       reverse: true,
       itemCount: messages.length,
       itemBuilder: (context, index) {
@@ -189,164 +208,5 @@ class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
         ],
       ),
     );
-  }
-}
-
-class ChatBubble extends StatelessWidget {
-  final String message;
-  final bool isUser;
-
-  const ChatBubble({super.key, required this.message, this.isUser = false});
-
-  @override
-  Widget build(BuildContext context) {
-    return Align(
-      alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: isUser
-              ? Theme.of(context).colorScheme.primaryContainer
-              : Theme.of(context).colorScheme.surfaceContainerHighest,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: _renderContent(context, message),
-      ),
-    );
-  }
-
-  Widget _renderContent(BuildContext context, String text) {
-    final codeBlockPattern = RegExp(r'```(\w+)?\n([\s\S]*?)```', multiLine: true);
-    final matches = codeBlockPattern.allMatches(text);
-
-    if (matches.isEmpty) {
-      return MarkdownBody(
-        data: text,
-        selectable: true,
-        styleSheet: MarkdownStyleSheet(
-          h1: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface),
-          h2: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface),
-          h3: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.onSurface),
-          strong: TextStyle(fontWeight: FontWeight.bold),
-          em: TextStyle(fontStyle: FontStyle.italic),
-          listBullet: TextStyle(color: Theme.of(context).colorScheme.onSurface),
-          p: TextStyle(color: Theme.of(context).colorScheme.onSurface),
-        ),
-      );
-    }
-
-    List<Widget> children = [];
-    int lastEnd = 0;
-
-    for (var match in matches) {
-      if (match.start > lastEnd) {
-        children.add(
-          MarkdownBody(
-            data: text.substring(lastEnd, match.start),
-            selectable: true,
-            styleSheet: MarkdownStyleSheet(
-              h1: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface),
-              h2: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface),
-              h3: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.onSurface),
-              strong: TextStyle(fontWeight: FontWeight.bold),
-              em: TextStyle(fontStyle: FontStyle.italic),
-              listBullet: TextStyle(color: Theme.of(context).colorScheme.onSurface),
-              p: TextStyle(color: Theme.of(context).colorScheme.onSurface),
-            ),
-          ),
-        );
-      }
-
-      final language = match.group(1) ?? 'text';
-      final code = match.group(2)!.trim();
-
-      if (language == 'json' && _isValidJson(code)) {
-        final prettyJson = const JsonEncoder.withIndent('  ').convert(jsonDecode(code));
-        children.add(
-          Container(
-            padding: const EdgeInsets.all(8),
-            color: Theme.of(context).colorScheme.surfaceContainerLow,
-            child: SelectableText(
-              prettyJson,
-              style: const TextStyle(fontFamily: 'monospace', fontSize: 12),
-            ),
-          ),
-        );
-      } else {
-        final highlighted = highlight.parse(code, language: language);
-        final spans = _buildTextSpans(highlighted, context);
-        children.add(
-          Container(
-            padding: const EdgeInsets.all(8),
-            color: Theme.of(context).colorScheme.surfaceContainerLow,
-            child: SelectableText.rich(
-              TextSpan(children: spans),
-              style: const TextStyle(fontFamily: 'monospace', fontSize: 12),
-            ),
-          ),
-        );
-      }
-
-      lastEnd = match.end;
-    }
-
-    if (lastEnd < text.length) {
-      children.add(
-        MarkdownBody(
-          data: text.substring(lastEnd),
-          selectable: true,
-          styleSheet: MarkdownStyleSheet(
-            h1: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface),
-            h2: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface),
-            h3: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.onSurface),
-            strong: TextStyle(fontWeight: FontWeight.bold),
-            em: TextStyle(fontStyle: FontStyle.italic),
-            listBullet: TextStyle(color: Theme.of(context).colorScheme.onSurface),
-            p: TextStyle(color: Theme.of(context).colorScheme.onSurface),
-          ),
-        ),
-      );
-    }
-
-    return Column(
-      crossAxisAlignment: isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-      children: children,
-    );
-  }
-
-  bool _isValidJson(String text) {
-    try {
-      jsonDecode(text);
-      return true;
-    } catch (_) {
-      return false;
-    }
-  }
-
-  List<TextSpan> _buildTextSpans(dynamic highlighted, BuildContext context) {
-    final List<TextSpan> spans = [];
-    for (var span in highlighted.spans ?? []) {
-      spans.add(TextSpan(
-        text: span.text,
-        style: TextStyle(
-          color: _getColorForClassName(span.className, context),
-        ),
-      ));
-    }
-    return spans.isEmpty ? [TextSpan(text: highlighted.source)] : spans;
-  }
-
-  Color _getColorForClassName(String? className, BuildContext context) {
-    switch (className) {
-      case 'keyword':
-        return Colors.blue;
-      case 'string':
-        return Colors.green;
-      case 'comment':
-        return Colors.grey;
-      default:
-        return Theme.of(context).colorScheme.onSurface;
-    }
   }
 }
