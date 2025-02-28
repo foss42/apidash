@@ -8,8 +8,8 @@ Choose your programming language/library from the list provided below to learn m
 - [Dart (http)](#dart-http)
 - [Dart (dio)](#dart-dio)
 - [Go (net/http)](#go-nethttp)
-- [JavaScript (axios)](#javascript-axios)
 - [JavaScript (fetch)](#javascript-fetch)
+- [JavaScript (axios)](#javascript-axios)
 - [node.js (JavaScript, axios)](#nodejs-javascript-axios)
 - [node.js (JavaScript, fetch)](#nodejs-javascript-fetch)
 - [Java (asynchttpclient)](#java-asynchttpclient)
@@ -296,13 +296,44 @@ run the program with:
   go run main.go
 ```
 
-## JavaScript (axios)
-
-TODO
-
 ## JavaScript (fetch)
 
+#### 1. Create a new HTML file `index.html`. Paste your generated code inside the `<script>` tags
 
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fetch API Example</title>
+</head>
+<body>
+  <script>
+    Copy and paste your generated fetch code from API Dash here.
+  </script>
+</body>
+</html>
+```
+
+#### 2. Open Developer Tools
+- Chrome: Right-click the page and select "Inspect" or press Ctrl+Shift+I (Windows/Linux) or Cmd+Option+I (macOS).
+- Firefox: Right-click the page and select "Inspect Element" or press Ctrl+Shift+I (Windows/Linux) or Cmd+Option+I (macOS).
+- Edge: Right-click the page and select "Inspect" or press F12 or Ctrl+Shift+I.
+
+#### 3. Navigate to the Network Tab
+Click on the Network tab within the Developer Tools.
+Refresh the page to capture all network activity.
+
+![img_1.png](img_1.png)
+
+## JavaScript (axios)
+
+Same steps as [JavaScript (fetch)](#javascript-fetch).
+
+Add the following to `<head>`.
+```html
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+```
 
 ## node.js (JavaScript, axios)
 
