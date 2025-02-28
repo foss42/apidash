@@ -268,7 +268,33 @@ Here are the detailed instructions for running the generated API Dash code in **
 
 ## Go (net/http)
 
-TODO
+### Prerequisites
+
+#### Install Go
+
+- Windows and MacOS:
+Download and install go from [official website](https://go.dev/doc/install).
+- Linux: Install from your package manager or follow the [official source](https://go.dev/doc/install)
+
+#### Verify Installtion
+```bash
+  go version
+```
+
+### Create a golang project
+
+```bash
+  go mod init example.com/api-example
+```
+
+### Run the code
+
+Create a new file named `main.go` and paste the generated code from `apidash`.
+run the program with:
+
+```bash
+  go run main.go
+```
 
 ## JavaScript (axios)
 
@@ -276,7 +302,7 @@ TODO
 
 ## JavaScript (fetch)
 
-TODO
+
 
 ## node.js (JavaScript, axios)
 
