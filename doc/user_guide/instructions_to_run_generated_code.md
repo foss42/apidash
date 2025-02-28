@@ -273,7 +273,7 @@ Here are the detailed instructions for running the generated API Dash code in **
 - Windows and MacOS: check out the [official source](https://go.dev/doc/install)
 - Linux: Install from your distro's package manager.
 
-Verify the if go is installed:
+Verify if go is installed:
 
 ```bash
 go version
