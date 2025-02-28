@@ -7,6 +7,10 @@ final chatMessagesProvider = StateNotifierProvider<ChatMessagesNotifier, List<Ma
       (ref) => ChatMessagesNotifier(),
 );
 
+final dashBotServiceProvider = Provider<DashBotService>((ref) {
+  return DashBotService();
+});
+
 class ChatMessagesNotifier extends StateNotifier<List<Map<String, dynamic>>> {
   ChatMessagesNotifier() : super([]) {
     _loadMessages();
@@ -37,7 +41,3 @@ class ChatMessagesNotifier extends StateNotifier<List<Map<String, dynamic>>> {
     _saveMessages();
   }
 }
-
-final dashBotServiceProvider = Provider<DashBotService>((ref) {
-  return DashBotService();
-});
