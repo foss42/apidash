@@ -300,19 +300,19 @@ Create a new file `index.html`
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Fetch Example</title>
+    <title>Axios Example</title>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 <body>
     <script>
-        // Paste your APIDash generated code here !!
+        // Paste your API Dash generated code here !!
     </script>
 </body>
 </html>
 
 ```
-Make sure to paste the generated js code from api dash under the 
-`<script>` tag.
+
+Make sure to paste the generated js code from api dash under the `<script>` tag.
 
 ### 2. Test with Browser Developer Tools
 
@@ -328,10 +328,40 @@ Navigate to network tab and refresh the page to see the requests and network act
 
 ## JavaScript (fetch)
 
-Same instructions as [JavaScript (axios)](#javascript-axios) and delete the following line from the html code.
+The generated api code can be run in browser by using the code in an html file as demonstrated below:
+
+### 1. Create the html file with generated code
+
+Create a new file `index.html`
+
 ```html
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fetch Example</title>
+</head>
+<body>
+    <script>
+        // Paste your API Dash generated code here !!
+    </script>
+</body>
+</html>
+
 ```
+
+Make sure to paste the generated js code from api dash under the `<script>` tag.
+
+### 2. Test with Browser Developer Tools
+
+Open the `index.html` file in a modern browser and open devtools.
+
+- **Chrome**: Right-click the page and select "Inspect" or press Ctrl+Shift+I (Windows/Linux) or Cmd+Option+I (macOS).
+
+- **Firefox**: Right-click the page and select "Inspect Element" or press Ctrl+Shift+I (Windows/Linux) or Cmd+Option+I (macOS).
+
+- **Edge**: Right-click the page and select "Inspect" or press F12 or Ctrl+Shift+I.
+
+Navigate to network tab and refresh the page to see the requests and network activity.
 
 ## node.js (JavaScript, axios)
 
