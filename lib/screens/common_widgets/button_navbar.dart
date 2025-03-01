@@ -74,10 +74,7 @@ class NavbarButton extends ConsumerWidget {
                               ? Theme.of(context)
                                   .colorScheme
                                   .onSecondaryContainer
-                              : Theme.of(context)
-                                  .colorScheme
-                                  .onSurface
-                                  .withOpacity(0.65),
+                              : Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                   )
                 : const SizedBox.shrink(),
