@@ -35,8 +35,7 @@ class SegmentedTabbar extends StatelessWidget {
             dividerColor: Colors.transparent,
             indicatorWeight: 0.0,
             indicatorSize: TabBarIndicatorSize.tab,
-            unselectedLabelColor:
-                Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+            unselectedLabelColor: Theme.of(context).colorScheme.outline,
             labelStyle: kTextStyleTab.copyWith(
               fontWeight: FontWeight.bold,
               color: Theme.of(context).colorScheme.onPrimary,

@@ -1,0 +1,88 @@
+name: Update AUR Package
+
+on:
+  push:
+    tags:
+      - 'v*'
+    paths:
+      - 'pubspec.yaml'
+
+jobs:
+  aur-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get version from pubspec
+        id: get_version
+        run: |
+          VERSION=$(grep 'version:' pubspec.yaml | awk '{print $2}' | cut -d'+' -f1)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Get checksums
+        id: get_checksums
+        run: |
+          # Download the x86_64 .deb
+          wget https://github.com/foss42/apidash/releases/download/v${{ steps.get_version.outputs.version }}/apidash-linux-amd64.deb
+          
+          # Download the arm64 .deb
+          wget https://github.com/foss42/apidash/releases/download/v${{ steps.get_version.outputs.version }}/apidash-linux-arm64.deb
+          
+          # Download the LICENSE
+          wget https://raw.githubusercontent.com/foss42/apidash/main/LICENSE
+          
+          # Generate SHA512 checksums
+          DEB_X86_64_CHECKSUM=$(sha512sum apidash-linux-amd64.deb | awk '{print $1}')
+          DEB_ARM64_CHECKSUM=$(sha512sum apidash-linux-arm64.deb | awk '{print $1}')
+          LICENSE_CHECKSUM=$(sha512sum LICENSE | awk '{print $1}')
+          
+          echo "deb_x86_64_checksum=$DEB_X86_64_CHECKSUM" >> $GITHUB_OUTPUT
+          echo "deb_arm64_checksum=$DEB_ARM64_CHECKSUM" >> $GITHUB_OUTPUT
+          echo "license_checksum=$LICENSE_CHECKSUM" >> $GITHUB_OUTPUT
+
+      - name: Publish AUR package
+        uses: KSXGitHub/github-actions-deploy-aur@v2.7.0
+        with:
+          pkgname: apidash-bin
+          pkgbuild: |
+            # Maintainer: Angelo Geulin <angelogeulin123 at gmail dot com>
+            
+            pkgname=apidash-bin
+            pkgver=${{ steps.get_version.outputs.version }}
+            pkgrel=1
+            pkgdesc="Beautiful open-source cross-platform API Client"
+            arch=('x86_64' 'aarch64')
+            url="https://apidash.dev"
+            license=('Apache-2.0')
+            depends=()
+            options=('!emptydirs' '!strip')
+            source=("LICENSE::https://raw.githubusercontent.com/foss42/apidash/main/LICENSE")
+            source_x86_64=("apidash-linux-amd64.deb::https://github.com/foss42/apidash/releases/download/v${{ steps.get_version.outputs.version }}/apidash-linux-amd64.deb")
+            source_aarch64=("apidash-linux-arm64.deb::https://github.com/foss42/apidash/releases/download/v${{ steps.get_version.outputs.version }}/apidash-linux-arm64.deb")
+            sha512sums=('${{ steps.get_checksums.outputs.license_checksum }}')
+            sha512sums_x86_64=('${{ steps.get_checksums.outputs.deb_x86_64_checksum }}')
+            sha512sums_aarch64=('${{ steps.get_checksums.outputs.deb_arm64_checksum }}')
+            
+            package() {
+              if [ "$CARCH" = "x86_64" ]; then
+                _debfile="$srcdir/apidash-linux-amd64.deb"
+              elif [ "$CARCH" = "aarch64" ]; then
+                _debfile="$srcdir/apidash-linux-arm64.deb"
+              fi
+              ar -x "${_debfile}" data.tar.zst
+              bsdtar -xf data.tar.zst -C "$pkgdir/"
+              
+              # Fix permissions of directories
+              find "$pkgdir/" -type d -exec chmod 755 {} \;
+              
+              # Create a symlink inside /usr/bin
+              mkdir -p "${pkgdir}/usr/bin"
+              ln -s /usr/share/apidash/apidash "$pkgdir/usr/bin/apidash"
+              
+              install -Dm644 "$srcdir/LICENSE" "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+            }
+          commit_username: ${{ secrets.AUR_USERNAME }}
+          commit_email: ${{ secrets.AUR_EMAIL }}
+          ssh_private_key: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
+          commit_message: "Update to version ${{ steps.get_version.outputs.version }}"

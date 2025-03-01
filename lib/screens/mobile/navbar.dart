@@ -23,7 +23,7 @@ class BottomNavBar extends ConsumerWidget {
                 color: Theme.of(context).colorScheme.onInverseSurface,
               ),
             ),
-            color: Theme.of(context).colorScheme.surface,
+            color: Theme.of(context).colorScheme.surfaceContainerLowest,
           ),
           child: Material(
             type: MaterialType.transparency,

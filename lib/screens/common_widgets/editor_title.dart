@@ -29,10 +29,7 @@ class EditorTitle extends StatelessWidget {
             tooltip: title,
             onSelected: onSelected,
             child: Ink(
-              color: Theme.of(context)
-                  .colorScheme
-                  .secondaryContainer
-                  .withOpacity(0.3),
+              color: Theme.of(context).colorScheme.surface,
               padding:
                   const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6),
               child: Row(
