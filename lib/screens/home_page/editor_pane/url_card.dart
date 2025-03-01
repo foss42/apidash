@@ -59,7 +59,9 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
                     APIType.rest => kHSpacer20,
                     _ => kHSpacer8,
                   },
-                  const URLTextField(),
+                  const Expanded(
+                    child: URLTextField(),
+                  ),
                   kHSpacer20,
                   switch (apiType) {
                     APIType.rest || APIType.graphql => const SendRequestButton(),
@@ -128,32 +130,7 @@ class URLTextField extends ConsumerWidget {
   }
 }
 
-class URLwebSocketTextField extends ConsumerWidget {
-  const URLwebSocketTextField({
-    super.key,
-  });
 
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final selectedId = ref.watch(selectedIdStateProvider);
-
-    return EnvURLField(
-      selectedId: selectedId!,
-      initialValue: ref
-          .read(collectionStateNotifierProvider.notifier)
-          .getRequestModel(selectedId)
-          ?.httpRequestModel
-          ?.url,
-      onChanged: (value) {
-
-        ref.read(collectionStateNotifierProvider.notifier).update(url: value);
-      },
-      onFieldSubmitted: (value) {
-        ref.read(collectionStateNotifierProvider.notifier).sendRequest();
-      },
-    );
-  }
-}
 
 class SendRequestButton extends ConsumerWidget {
   final Function()? onTap;
