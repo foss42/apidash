@@ -16,7 +16,7 @@ The file should contain the follow:
 9. GitHub profile link 
 10. Twitter, LinkedIn, other socials
 11. Time zone
-12. Link to a resume (PDF, publicly accessible via link)
+12. Link to a resume (PDF, publicly accessible via link and not behind any login-wall)
 
 ### University Info
 
