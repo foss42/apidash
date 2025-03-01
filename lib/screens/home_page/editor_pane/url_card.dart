@@ -59,16 +59,7 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
                     APIType.rest => kHSpacer20,
                     _ => kHSpacer8,
                   },
-                  switch(apiType){
-                  APIType.webSocket => const Expanded(
-                    child: URLwebSocketTextField(),
-                  ),
-                  _ =>  const Expanded(
-                    child: URLTextField(),
-                  ),
-
-
-                  },
+                  const URLTextField(),
                   kHSpacer20,
                   switch (apiType) {
                     APIType.rest || APIType.graphql => const SendRequestButton(),
@@ -110,17 +101,27 @@ class URLTextField extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedId = ref.watch(selectedIdStateProvider);
-
+    final apiType = ref
+        .watch(selectedRequestModelProvider.select((value) => value?.apiType));
     return EnvURLField(
       selectedId: selectedId!,
-      initialValue: ref.watch(selectedRequestModelProvider
-            .select((value) => value?.httpRequestModel?.url)),
-      // onChanged: (value) {
-      //
-      //   ref.read(collectionStateNotifierProvider.notifier).update(url: value);
-      // },
-      onFieldSubmitted: (value) {
+      initialValue:switch(apiType){
+        APIType.rest || APIType.graphql => ref
+            .read(collectionStateNotifierProvider.notifier)
+            .getRequestModel(selectedId)
+            ?.httpRequestModel
+            ?.url,
+        APIType.webSocket => ref
+            .read(collectionStateNotifierProvider.notifier)
+          .getRequestModel(selectedId)
+          ?.webSocketRequestModel
+          ?.url,
+        _=>""
+      },
+      onChanged: (value) {
         ref.read(collectionStateNotifierProvider.notifier).update(url: value);
+      },
+      onFieldSubmitted: (value) {
         ref.read(collectionStateNotifierProvider.notifier).sendRequest();
       },
     );
@@ -138,8 +139,11 @@ class URLwebSocketTextField extends ConsumerWidget {
 
     return EnvURLField(
       selectedId: selectedId!,
-      initialValue: ref.watch(selectedRequestModelProvider
-          .select((value) => value?.webSocketRequestModel?.url)),
+      initialValue: ref
+          .read(collectionStateNotifierProvider.notifier)
+          .getRequestModel(selectedId)
+          ?.httpRequestModel
+          ?.url,
       onChanged: (value) {
 
         ref.read(collectionStateNotifierProvider.notifier).update(url: value);
