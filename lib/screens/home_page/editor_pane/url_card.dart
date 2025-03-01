@@ -35,6 +35,7 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
                   switch (apiType) {
                     APIType.rest => const DropdownButtonHTTPMethod(),
                     APIType.graphql => kSizedBoxEmpty,
+                    APIType.webSocket => kSizedBoxEmpty,
                     null => kSizedBoxEmpty,
                   },
                   switch (apiType) {
@@ -51,20 +52,20 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
                   switch (apiType) {
                     APIType.rest => const DropdownButtonHTTPMethod(),
                     APIType.graphql => kSizedBoxEmpty,
+                    APIType.webSocket => kSizedBoxEmpty,
                     null => kSizedBoxEmpty,
                   },
                   switch (apiType) {
                     APIType.rest => kHSpacer20,
                     _ => kHSpacer8,
                   },
-                  const Expanded(
-                    child: URLTextField(),
-                  ),
+                  const URLTextField(),
                   kHSpacer20,
-                  const SizedBox(
-                    height: 36,
-                    child: SendRequestButton(),
-                  )
+                  switch (apiType) {
+                    APIType.rest || APIType.graphql => const SendRequestButton(),
+                    APIType.webSocket =>const ConnectionRequestButton(),
+                    null => kSizedBoxEmpty,
+                  },
                 ],
               ),
       ),
@@ -100,6 +101,42 @@ class URLTextField extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedId = ref.watch(selectedIdStateProvider);
+    final apiType = ref
+        .watch(selectedRequestModelProvider.select((value) => value?.apiType));
+    return EnvURLField(
+      selectedId: selectedId!,
+      initialValue:switch(apiType){
+        APIType.rest || APIType.graphql => ref
+            .read(collectionStateNotifierProvider.notifier)
+            .getRequestModel(selectedId)
+            ?.httpRequestModel
+            ?.url,
+        APIType.webSocket => ref
+            .read(collectionStateNotifierProvider.notifier)
+          .getRequestModel(selectedId)
+          ?.webSocketRequestModel
+          ?.url,
+        _=>""
+      },
+      onChanged: (value) {
+        ref.read(collectionStateNotifierProvider.notifier).update(url: value);
+      },
+      onFieldSubmitted: (value) {
+        ref.read(collectionStateNotifierProvider.notifier).sendRequest();
+      },
+    );
+  }
+}
+
+class URLwebSocketTextField extends ConsumerWidget {
+  const URLwebSocketTextField({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selectedId = ref.watch(selectedIdStateProvider);
+
     return EnvURLField(
       selectedId: selectedId!,
       initialValue: ref
@@ -108,6 +145,7 @@ class URLTextField extends ConsumerWidget {
           ?.httpRequestModel
           ?.url,
       onChanged: (value) {
+
         ref.read(collectionStateNotifierProvider.notifier).update(url: value);
       },
       onFieldSubmitted: (value) {
@@ -129,7 +167,6 @@ class SendRequestButton extends ConsumerWidget {
     ref.watch(selectedIdStateProvider);
     final isWorking = ref.watch(
         selectedRequestModelProvider.select((value) => value?.isWorking));
-
     return SendButton(
       isWorking: isWorking ?? false,
       onTap: () {
@@ -138,6 +175,34 @@ class SendRequestButton extends ConsumerWidget {
       },
       onCancel: () {
         ref.read(collectionStateNotifierProvider.notifier).cancelRequest();
+      },
+    );
+  }
+}
+
+
+class ConnectionRequestButton extends ConsumerWidget {
+  final Function()? onTap;
+  const ConnectionRequestButton({
+    super.key,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(selectedIdStateProvider);
+    final isConnected = ref.watch(
+        selectedRequestModelProvider.select((value) => value?.webSocketRequestModel!.isConnected));
+    return ConnectionButton(
+      isConnected:isConnected?? false,
+      onTap: () {
+        onTap?.call();
+        ref.read(collectionStateNotifierProvider.notifier).connect();
+      },
+      onDisconnect: () {
+        onTap?.call();
+        ref.read(collectionStateNotifierProvider.notifier).disconnect();
+        
       },
     );
   }
