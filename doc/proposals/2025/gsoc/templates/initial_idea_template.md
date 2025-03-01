@@ -3,7 +3,7 @@
 - Create a fork of API Dash.
 - In the folder [doc/proposals/2025/gsoc](https://github.com/foss42/apidash/tree/main/doc/proposals/2025/gsoc) create a file named `idea_<your name>_<short project name>.md`
 
-The file template is as follow:
+The file should contain the following:
 
 ```
 ### Initial Idea Submission
@@ -22,4 +22,5 @@ Idea description:
 
 ```
 
-Feel free to add images by adding it to the `images` folder inside [doc/proposals/2025/gsoc](https://github.com/foss42/apidash/tree/main/doc/proposals/2025/gsoc) and linking it to your doc.
+- Feel free to add images by adding it to the `images` folder inside [doc/proposals/2025/gsoc](https://github.com/foss42/apidash/tree/main/doc/proposals/2025/gsoc) and linking it to your doc.
+- Finally, send you changes as a PR for review.
