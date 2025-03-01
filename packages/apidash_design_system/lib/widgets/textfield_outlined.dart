@@ -71,19 +71,13 @@ class ADOutlinedTextField extends StatelessWidget {
         hintStyle: hintTextStyle ??
             kCodeStyle.copyWith(
               fontSize: hintTextFontSize,
-              color: hintTextColor ??
-                  clrScheme.outline.withOpacity(
-                    kHintOpacity,
-                  ),
+              color: hintTextColor ?? clrScheme.outlineVariant,
             ),
         hintText: hintText,
         contentPadding: contentPadding ?? kP10,
         focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(
-            color: focussedBorderColor ??
-                clrScheme.primary.withOpacity(
-                  kHintOpacity,
-                ),
+            color: focussedBorderColor ?? clrScheme.outline,
           ),
         ),
         enabledBorder: OutlineInputBorder(
