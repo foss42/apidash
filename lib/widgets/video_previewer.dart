@@ -65,8 +65,8 @@ class _VideoPreviewerState extends State<VideoPreviewer> {
     final iconColor = Theme.of(context).iconTheme.color;
     final progressBarColors = VideoProgressColors(
       playedColor: iconColor!,
-      bufferedColor: iconColor.withOpacity(0.5),
-      backgroundColor: iconColor.withOpacity(0.3),
+      bufferedColor: iconColor.withValues(alpha: 0.5),
+      backgroundColor: iconColor.withValues(alpha: 0.3),
     );
     return Scaffold(
       body: MouseRegion(
