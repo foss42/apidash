@@ -223,6 +223,8 @@ class CollectionStateNotifier
     int? responseStatus,
     String? message,
     HttpResponseModel? httpResponseModel,
+    AuthType? authType,
+    Map<String, dynamic>? authParams,
   }) {
     final rId = id ?? ref.read(selectedIdStateProvider);
     if (rId == null) {
@@ -250,6 +252,8 @@ class CollectionStateNotifier
         body: body ?? currentHttpRequestModel.body,
         query: query ?? currentHttpRequestModel.query,
         formData: formData ?? currentHttpRequestModel.formData,
+        authType: authType ?? currentHttpRequestModel.authType,
+        authParams: authParams ?? currentHttpRequestModel.authParams,
       ),
       responseStatus: responseStatus ?? currentModel.responseStatus,
       message: message ?? currentModel.message,

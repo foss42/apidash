@@ -30,6 +30,8 @@ mixin _$HttpRequestModel {
   String? get body => throw _privateConstructorUsedError;
   String? get query => throw _privateConstructorUsedError;
   List<FormDataModel>? get formData => throw _privateConstructorUsedError;
+  AuthType get authType => throw _privateConstructorUsedError;
+  Map<String, dynamic>? get authParams => throw _privateConstructorUsedError;
 
   /// Serializes this HttpRequestModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -57,7 +59,9 @@ abstract class $HttpRequestModelCopyWith<$Res> {
       ContentType bodyContentType,
       String? body,
       String? query,
-      List<FormDataModel>? formData});
+      List<FormDataModel>? formData,
+      AuthType authType,
+      Map<String, dynamic>? authParams});
 }
 
 /// @nodoc
@@ -85,6 +89,8 @@ class _$HttpRequestModelCopyWithImpl<$Res, $Val extends HttpRequestModel>
     Object? body = freezed,
     Object? query = freezed,
     Object? formData = freezed,
+    Object? authType = null,
+    Object? authParams = freezed,
   }) {
     return _then(_value.copyWith(
       method: null == method
@@ -127,6 +133,14 @@ class _$HttpRequestModelCopyWithImpl<$Res, $Val extends HttpRequestModel>
           ? _value.formData
           : formData // ignore: cast_nullable_to_non_nullable
               as List<FormDataModel>?,
+      authType: null == authType
+          ? _value.authType
+          : authType // ignore: cast_nullable_to_non_nullable
+              as AuthType,
+      authParams: freezed == authParams
+          ? _value.authParams
+          : authParams // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>?,
     ) as $Val);
   }
 }
@@ -149,7 +163,9 @@ abstract class _$$HttpRequestModelImplCopyWith<$Res>
       ContentType bodyContentType,
       String? body,
       String? query,
-      List<FormDataModel>? formData});
+      List<FormDataModel>? formData,
+      AuthType authType,
+      Map<String, dynamic>? authParams});
 }
 
 /// @nodoc
@@ -175,6 +191,8 @@ class __$$HttpRequestModelImplCopyWithImpl<$Res>
     Object? body = freezed,
     Object? query = freezed,
     Object? formData = freezed,
+    Object? authType = null,
+    Object? authParams = freezed,
   }) {
     return _then(_$HttpRequestModelImpl(
       method: null == method
@@ -217,6 +235,14 @@ class __$$HttpRequestModelImplCopyWithImpl<$Res>
           ? _value._formData
           : formData // ignore: cast_nullable_to_non_nullable
               as List<FormDataModel>?,
+      authType: null == authType
+          ? _value.authType
+          : authType // ignore: cast_nullable_to_non_nullable
+              as AuthType,
+      authParams: freezed == authParams
+          ? _value._authParams
+          : authParams // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>?,
     ));
   }
 }
@@ -235,12 +261,15 @@ class _$HttpRequestModelImpl extends _HttpRequestModel {
       this.bodyContentType = ContentType.json,
       this.body,
       this.query,
-      final List<FormDataModel>? formData})
+      final List<FormDataModel>? formData,
+      this.authType = AuthType.none,
+      final Map<String, dynamic>? authParams})
       : _headers = headers,
         _params = params,
         _isHeaderEnabledList = isHeaderEnabledList,
         _isParamEnabledList = isParamEnabledList,
         _formData = formData,
+        _authParams = authParams,
         super._();
 
   factory _$HttpRequestModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -312,8 +341,21 @@ class _$HttpRequestModelImpl extends _HttpRequestModel {
   }
 
   @override
+  @JsonKey()
+  final AuthType authType;
+  final Map<String, dynamic>? _authParams;
+  @override
+  Map<String, dynamic>? get authParams {
+    final value = _authParams;
+    if (value == null) return null;
+    if (_authParams is EqualUnmodifiableMapView) return _authParams;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(value);
+  }
+
+  @override
   String toString() {
-    return 'HttpRequestModel(method: $method, url: $url, headers: $headers, params: $params, isHeaderEnabledList: $isHeaderEnabledList, isParamEnabledList: $isParamEnabledList, bodyContentType: $bodyContentType, body: $body, query: $query, formData: $formData)';
+    return 'HttpRequestModel(method: $method, url: $url, headers: $headers, params: $params, isHeaderEnabledList: $isHeaderEnabledList, isParamEnabledList: $isParamEnabledList, bodyContentType: $bodyContentType, body: $body, query: $query, formData: $formData, authType: $authType, authParams: $authParams)';
   }
 
   @override
@@ -333,7 +375,11 @@ class _$HttpRequestModelImpl extends _HttpRequestModel {
                 other.bodyContentType == bodyContentType) &&
             (identical(other.body, body) || other.body == body) &&
             (identical(other.query, query) || other.query == query) &&
-            const DeepCollectionEquality().equals(other._formData, _formData));
+            const DeepCollectionEquality().equals(other._formData, _formData) &&
+            (identical(other.authType, authType) ||
+                other.authType == authType) &&
+            const DeepCollectionEquality()
+                .equals(other._authParams, _authParams));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -349,7 +395,9 @@ class _$HttpRequestModelImpl extends _HttpRequestModel {
       bodyContentType,
       body,
       query,
-      const DeepCollectionEquality().hash(_formData));
+      const DeepCollectionEquality().hash(_formData),
+      authType,
+      const DeepCollectionEquality().hash(_authParams));
 
   /// Create a copy of HttpRequestModel
   /// with the given fields replaced by the non-null parameter values.
@@ -379,7 +427,9 @@ abstract class _HttpRequestModel extends HttpRequestModel {
       final ContentType bodyContentType,
       final String? body,
       final String? query,
-      final List<FormDataModel>? formData}) = _$HttpRequestModelImpl;
+      final List<FormDataModel>? formData,
+      final AuthType authType,
+      final Map<String, dynamic>? authParams}) = _$HttpRequestModelImpl;
   const _HttpRequestModel._() : super._();
 
   factory _HttpRequestModel.fromJson(Map<String, dynamic> json) =
@@ -405,6 +455,10 @@ abstract class _HttpRequestModel extends HttpRequestModel {
   String? get query;
   @override
   List<FormDataModel>? get formData;
+  @override
+  AuthType get authType;
+  @override
+  Map<String, dynamic>? get authParams;
 
   /// Create a copy of HttpRequestModel
   /// with the given fields replaced by the non-null parameter values.
