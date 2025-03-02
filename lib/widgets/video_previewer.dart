@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:apidash/consts.dart';
 import 'package:fvp/fvp.dart' as fvp;
 import 'package:flutter/material.dart';
@@ -36,7 +35,7 @@ class _VideoPreviewerState extends State<VideoPreviewer> {
     try {
       fvp.registerWith();
     } catch (e) {
-      // pass
+      debugPrint("VideoPreviewer registerWithAllPlatforms(): $e");
     }
   }
 
@@ -56,6 +55,7 @@ class _VideoPreviewerState extends State<VideoPreviewer> {
           }
         });
     } catch (e) {
+      debugPrint("VideoPreviewer _initializeVideoPlayer(): $e");
       return;
     }
   }
@@ -138,6 +138,7 @@ class _VideoPreviewerState extends State<VideoPreviewer> {
             await _tempVideoFile!.delete();
           }
         } catch (e) {
+          debugPrint("VideoPreviewer dispose(): $e");
           return;
         }
       });
