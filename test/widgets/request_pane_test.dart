@@ -15,9 +15,14 @@ void main() {
           body: RequestPane(
             selectedId: '1',
             codePaneVisible: true,
-            tabLabels: const ['URL Params', 'Headers', 'Body'],
+            tabLabels: const ['URL Params', 'Headers', 'Authentication', 'Body'],
             onPressedCodeButton: () {},
-            children: const [Text('abc'), Text('xyz'), Text('mno')],
+            children: const [
+              Text('abc'),  // URL Params
+              Text('xyz'),  // Headers
+              Text('auth'), // Authentication
+              Text('mno')   // Body
+            ],
           ),
         ),
       ),
@@ -29,9 +34,11 @@ void main() {
     expect(find.text('URL Params'), findsOneWidget);
     expect(find.text('Headers'), findsOneWidget);
     expect(find.text('Body'), findsOneWidget);
+    expect(find.text('Authentication'), findsOneWidget);
     expect(find.text('abc'), findsOneWidget);
     expect(find.text('mno'), findsNothing);
     expect(find.text('xyz'), findsNothing);
+    expect(find.text('auth'), findsNothing);  // Authentication tab not selected
 
     expect(find.byIcon(Icons.code_off_rounded), findsOneWidget);
     expect(find.byIcon(Icons.code_rounded), findsNothing);
@@ -48,8 +55,13 @@ void main() {
             codePaneVisible: true,
             onPressedCodeButton: () {},
             tabIndex: 1,
-            tabLabels: const ['URL Params', 'Headers', 'Body'],
-            children: const [Text('abc'), Text('xyz'), Text('mno')],
+            tabLabels: const ['URL Params', 'Headers', 'Authentication', 'Body'],
+            children: const [
+              Text('abc'),  // URL Params
+              Text('xyz'),  // Headers
+              Text('auth'), // Authentication
+              Text('mno')   // Body
+            ],
           ),
         ),
       ),
@@ -64,11 +76,47 @@ void main() {
     expect(find.text('abc'), findsNothing);
     expect(find.text('mno'), findsNothing);
     expect(find.text('xyz'), findsOneWidget);
+    expect(find.text('Authentication'), findsOneWidget);
+    expect(find.text('auth'), findsNothing);  // Authentication tab not selected
 
     expect(find.byIcon(Icons.code_off_rounded), findsOneWidget);
     expect(find.byIcon(Icons.code_rounded), findsNothing);
   });
-  testWidgets('Testing Request Pane for 3rd tab', (tester) async {
+  testWidgets('Testing Request Pane for 3rd tab (Authentication)', (tester) async {
+    await tester.setScreenSize(largeWidthDevice);
+    await tester.pumpWidget(
+      MaterialApp(
+        title: 'Request Pane',
+        theme: kThemeDataLight,
+        home: Scaffold(
+          body: RequestPane(
+            selectedId: '1',
+            codePaneVisible: true,
+            onPressedCodeButton: () {},
+            tabIndex: 2,
+            tabLabels: const ['URL Params', 'Headers', 'Authentication', 'Body'],
+            children: const [
+              Text('abc'),  // URL Params
+              Text('xyz'),  // Headers
+              Text('auth'), // Authentication
+              Text('mno')   // Body
+            ],
+          ),
+        ),
+      ),
+    );
+
+    expect(find.byType(Center), findsAtLeastNWidgets(1));
+    expect(find.text('Authentication'), findsOneWidget);
+    expect(find.text('auth'), findsOneWidget);  // Authentication tab selected
+    expect(find.text('abc'), findsNothing);
+    expect(find.text('xyz'), findsNothing);
+    expect(find.text('mno'), findsNothing);
+
+    expect(find.byIcon(Icons.code_off_rounded), findsOneWidget);
+    expect(find.byIcon(Icons.code_rounded), findsNothing);
+  });
+  testWidgets('Testing Request Pane for 4th tab (Body)', (tester) async {
     await tester.setScreenSize(largeWidthDevice);
     await tester.pumpWidget(
       MaterialApp(
@@ -79,9 +127,14 @@ void main() {
             selectedId: '1',
             codePaneVisible: false,
             onPressedCodeButton: () {},
-            tabIndex: 2,
-            tabLabels: const ['URL Params', 'Headers', 'Body'],
-            children: const [Text('abc'), Text('xyz'), Text('mno')],
+            tabIndex: 3,
+            tabLabels: const ['URL Params', 'Headers', 'Authentication', 'Body'],
+            children: const [
+              Text('abc'),  // URL Params
+              Text('xyz'),  // Headers
+              Text('auth'), // Authentication
+              Text('mno')   // Body
+            ],
           ),
         ),
       ),
@@ -96,6 +149,8 @@ void main() {
     expect(find.text('abc'), findsNothing);
     expect(find.text('mno'), findsOneWidget);
     expect(find.text('xyz'), findsNothing);
+    expect(find.text('Authentication'), findsOneWidget);
+    expect(find.text('auth'), findsNothing);  // Authentication tab not selected
 
     expect(find.byIcon(Icons.code_off_rounded), findsNothing);
     expect(find.byIcon(Icons.code_rounded), findsOneWidget);
@@ -114,8 +169,13 @@ void main() {
             onTapTabBar: (value) {
               computedTabIndex = value;
             },
-            tabLabels: const ['URL Params', 'Headers', 'Body'],
-            children: const [Text('abc'), Text('xyz'), Text('mno')],
+            tabLabels: const ['URL Params', 'Headers', 'Authentication', 'Body'],
+            children: const [
+              Text('abc'),  // URL Params
+              Text('xyz'),  // Headers
+              Text('auth'), // Authentication
+              Text('mno')   // Body
+            ],
           ),
         ),
       ),
@@ -125,6 +185,7 @@ void main() {
     expect(find.text('URL Params'), findsOneWidget);
     expect(find.text('Headers'), findsOneWidget);
     expect(find.text('Body'), findsOneWidget);
+    expect(find.text('Authentication'), findsOneWidget);
 
     await tester.tap(find.text('Headers'));
     await tester.pumpAndSettle();
@@ -136,7 +197,7 @@ void main() {
 
     await tester.tap(find.text('Body'));
     await tester.pumpAndSettle();
-    expect(computedTabIndex, 2);
+    expect(computedTabIndex, 3);
 
     expect(find.text('abc'), findsNothing);
     expect(find.text('mno'), findsOneWidget);
@@ -149,5 +210,13 @@ void main() {
     expect(find.text('abc'), findsOneWidget);
     expect(find.text('mno'), findsNothing);
     expect(find.text('xyz'), findsNothing);
+
+    await tester.tap(find.text('Authentication'));
+    await tester.pumpAndSettle();
+    expect(computedTabIndex, 2);
+    expect(find.text('auth'), findsOneWidget);
+    expect(find.text('abc'), findsNothing);
+    expect(find.text('xyz'), findsNothing);
+    expect(find.text('mno'), findsNothing);
   });
 }
