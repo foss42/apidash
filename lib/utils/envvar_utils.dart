@@ -52,7 +52,6 @@ String? substituteVariables(
   for (var variable in activeEnv) {
     combinedMap[variable.key] = variable.value;
   }
-
   String result = input.replaceAllMapped(kEnvVarRegEx, (match) {
     final key = match.group(1)?.trim() ?? '';
     return combinedMap[key] ?? '';
@@ -60,6 +59,9 @@ String? substituteVariables(
 
   return result;
 }
+
+
+
 
 HttpRequestModel substituteHttpRequestModel(
     HttpRequestModel httpRequestModel,
@@ -83,6 +85,11 @@ HttpRequestModel substituteHttpRequestModel(
         name:
             substituteVariables(param.name, envMap, activeEnvironmentId) ?? "",
         value: substituteVariables(param.value, envMap, activeEnvironmentId),
+      );
+    }).toList(),
+    formData: httpRequestModel.formData?.map((form) {
+      return form.copyWith(
+        value: substituteVariables(form.value, envMap, activeEnvironmentId) ?? "",
       );
     }).toList(),
     body: substituteVariables(
