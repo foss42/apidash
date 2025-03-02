@@ -96,8 +96,6 @@ enum SidebarMenuOption {
   final String label;
 }
 
-enum EnvironmentVariableType { variable, secret }
-
 final kEnvVarRegEx = RegExp(r'{{([^{}]*)}}');
 
 enum CodegenLanguage {
@@ -141,7 +139,8 @@ enum CodegenLanguage {
 
 enum ImportFormat {
   curl("cURL"),
-  postman("Postman Collection v2.1");
+  postman("Postman Collection v2.1"),
+  insomnia("Insomnia v4");
 
   const ImportFormat(this.label);
   final String label;
@@ -432,6 +431,7 @@ const kLabelSelect = "Select";
 const kLabelContinue = "Continue";
 const kLabelCancel = "Cancel";
 const kLabelOk = "Ok";
+const kLabelImport = "Import";
 const kUntitled = "untitled";
 // Request Pane
 const kLabelRequest = "Request";

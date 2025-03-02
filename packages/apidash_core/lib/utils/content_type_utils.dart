@@ -7,15 +7,7 @@ ContentType? getContentTypeFromHeadersMap(
 ) {
   if (kvMap != null && kvMap.hasKeyContentType()) {
     var val = getMediaTypeFromHeaders(kvMap);
-    if (val != null) {
-      if (val.subtype.contains(kSubTypeJson)) {
-        return ContentType.json;
-      } else if (val.type == kTypeMultipart &&
-          val.subtype == kSubTypeFormData) {
-        return ContentType.formdata;
-      }
-      return ContentType.text;
-    }
+    return getContentTypeFromMediaType(val);
   }
   return null;
 }
@@ -34,6 +26,29 @@ MediaType? getMediaTypeFromContentType(String? contentType) {
     } catch (e) {
       return null;
     }
+  }
+  return null;
+}
+
+ContentType? getContentTypeFromMediaType(MediaType? mediaType) {
+  if (mediaType != null) {
+    if (mediaType.subtype.contains(kSubTypeJson)) {
+      return ContentType.json;
+    } else if (mediaType.type == kTypeMultipart &&
+        mediaType.subtype == kSubTypeFormData) {
+      return ContentType.formdata;
+    }
+    return ContentType.text;
+  }
+  return null;
+}
+
+ContentType? getContentTypeFromContentTypeStr(
+  String? contentType,
+) {
+  if (contentType != null) {
+    var val = getMediaTypeFromContentType(contentType);
+    return getContentTypeFromMediaType(val);
   }
   return null;
 }

@@ -405,14 +405,10 @@ class _BodySuccessState extends State<BodySuccess> {
         ? kLightCodeTheme
         : kDarkCodeTheme;
     final textContainerdecoration = BoxDecoration(
-      color: Color.alphaBlend(
-          (Theme.of(context).brightness == Brightness.dark
-                  ? Theme.of(context).colorScheme.onPrimaryContainer
-                  : Theme.of(context).colorScheme.primaryContainer)
-              .withOpacity(kForegroundOpacity),
-          Theme.of(context).colorScheme.surface),
+      color: Theme.of(context).colorScheme.surfaceContainerLow,
       border: Border.all(
-          color: Theme.of(context).colorScheme.surfaceContainerHighest),
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+      ),
       borderRadius: kBorderRadius8,
     );
 

@@ -1,7 +1,7 @@
+import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:apidash/consts.dart';
-import 'package:apidash/models/models.dart';
 import 'package:apidash/screens/common_widgets/envvar_indicator.dart';
 
 void main() {

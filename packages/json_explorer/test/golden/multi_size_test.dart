@@ -46,8 +46,8 @@ void main() {
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
                   ),
-                  propertyKeyTextStyle: TextStyle(
-                    color: Colors.black.withOpacity(0.7),
+                  propertyKeyTextStyle: const TextStyle(
+                    color: Colors.grey,
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
                   ),

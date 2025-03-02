@@ -29,10 +29,7 @@ showHistoryRetentionDialog(
                 child: Text(
                   "Select the duration for which you want to retain your request history",
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onSurface
-                            .withOpacity(0.8),
+                        color: Theme.of(context).colorScheme.outline,
                       ),
                 ),
               ),
@@ -49,10 +46,7 @@ showHistoryRetentionDialog(
                         secondary: Icon(e.icon,
                             color: selectedRetentionPeriod == e
                                 ? Theme.of(context).colorScheme.primary
-                                : Theme.of(context)
-                                    .colorScheme
-                                    .onSurface
-                                    .withOpacity(0.6)),
+                                : Theme.of(context).colorScheme.outline),
                         value: e,
                         groupValue: selectedRetentionPeriod,
                         onChanged: (value) {

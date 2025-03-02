@@ -26,15 +26,16 @@ Color getResponseStatusCodeColor(int? statusCode,
   return col;
 }
 
-Color getHTTPMethodColor(HTTPVerb method,
-    {Brightness brightness = Brightness.light}) {
-  Color col = switch (method) {
-    HTTPVerb.get => kColorHttpMethodGet,
-    HTTPVerb.head => kColorHttpMethodHead,
-    HTTPVerb.post => kColorHttpMethodPost,
-    HTTPVerb.put => kColorHttpMethodPut,
-    HTTPVerb.patch => kColorHttpMethodPatch,
-    HTTPVerb.delete => kColorHttpMethodDelete,
+Color getAPIColor(
+  APIType apiType, {
+  HTTPVerb? method,
+  Brightness? brightness,
+}) {
+  Color col = switch (apiType) {
+    APIType.rest => getHTTPMethodColor(
+        method,
+      ),
+    APIType.graphql => kColorGQL,
   };
   if (brightness == Brightness.dark) {
     col = getDarkModeColor(col);
@@ -42,9 +43,22 @@ Color getHTTPMethodColor(HTTPVerb method,
   return col;
 }
 
+Color getHTTPMethodColor(HTTPVerb? method) {
+  Color col = switch (method) {
+    HTTPVerb.get => kColorHttpMethodGet,
+    HTTPVerb.head => kColorHttpMethodHead,
+    HTTPVerb.post => kColorHttpMethodPost,
+    HTTPVerb.put => kColorHttpMethodPut,
+    HTTPVerb.patch => kColorHttpMethodPatch,
+    HTTPVerb.delete => kColorHttpMethodDelete,
+    _ => kColorHttpMethodGet,
+  };
+  return col;
+}
+
 Color getDarkModeColor(Color col) {
   return Color.alphaBlend(
-    col.withOpacity(kOpacityDarkModeBlend),
+    col.withValues(alpha: kOpacityDarkModeBlend),
     kColorWhite,
   );
 }
