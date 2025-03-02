@@ -49,8 +49,9 @@ class HistoryURLCard extends StatelessWidget {
                   style: kCodeStyle.copyWith(
                     fontSize: fontSize,
                     fontWeight: FontWeight.bold,
-                    color: getHTTPMethodColor(
-                      method,
+                    color: getAPIColor(
+                      apiType!,
+                      method: method,
                       brightness: Theme.of(context).brightness,
                     ),
                   ),
