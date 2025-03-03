@@ -12,12 +12,7 @@ class EditRequestAuth extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedId = ref.watch(selectedIdStateProvider);
-    final requestModel = ref
-        .read(collectionStateNotifierProvider.notifier)
-        .getRequestModel(selectedId!);
-    final contentType = ref.watch(selectedRequestModelProvider
-        .select((value) => value?.httpRequestModel?.bodyContentType));
+    
     final apiType = ref
         .watch(selectedRequestModelProvider.select((value) => value?.apiType));
      final authType = ref
@@ -41,7 +36,7 @@ class EditRequestAuth extends ConsumerWidget {
             : kSizedBoxEmpty,
         switch (authType) {
           AuthType.bearerToken =>  ApiAuthWidget(),
-          AuthType.None =>Center(child: Text("Choose an Authentication"),)
+          AuthType.None =>Center(child: Text("Choose an Authentication"),),
           _ => Center(child: Text("Choose an Authentication"),)
         }   
        ],
