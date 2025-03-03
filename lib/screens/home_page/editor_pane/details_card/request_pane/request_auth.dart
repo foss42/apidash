@@ -36,8 +36,12 @@ class EditRequestAuth extends ConsumerWidget {
             : kSizedBoxEmpty,
         switch (authType) {
           AuthType.bearerToken =>  ApiAuthWidget(),
-          AuthType.None =>Center(child: Text("Choose an Authentication"),),
-          _ => Center(child: Text("Choose an Authentication"),)
+          _ => Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            child: Center(
+              child:Text("Select Auth Type")
+            )
+          )
         }   
        ],
     );
