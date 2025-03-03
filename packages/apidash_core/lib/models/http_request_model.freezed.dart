@@ -259,7 +259,7 @@ class _$HttpRequestModelImpl extends _HttpRequestModel {
       final List<bool>? isHeaderEnabledList,
       final List<bool>? isParamEnabledList,
       this.bodyContentType = ContentType.json,
-      this.authType = AuthType.None,
+      this.authType = AuthType.none,
       this.body,
       this.query,
       final List<FormDataModel>? formData,

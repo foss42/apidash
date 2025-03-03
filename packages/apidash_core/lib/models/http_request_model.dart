@@ -25,7 +25,7 @@ class HttpRequestModel with _$HttpRequestModel {
     List<bool>? isHeaderEnabledList,
     List<bool>? isParamEnabledList,
     @Default(ContentType.json) ContentType bodyContentType,
-    @Default(AuthType.None) AuthType authType,
+    @Default(AuthType.none) AuthType authType,
     String? body,
     String? query,
     List<FormDataModel>? formData,
@@ -65,7 +65,7 @@ class HttpRequestModel with _$HttpRequestModel {
       kMethodsWithBody.contains(method) &&
       hasFormDataContentType &&
       formDataMapList.isNotEmpty;
-  bool get hasAuth => authType != AuthType.None && hasBearerToken;
+  bool get hasAuth => authType != AuthType.none && hasBearerToken;
   bool get hasBearerToken => hasBearerAuthType && tokenLength > 0;
   bool get hasQuery => query?.isNotEmpty ?? false;
   List<FormDataModel> get formDataList => formData ?? <FormDataModel>[];

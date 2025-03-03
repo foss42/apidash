@@ -96,7 +96,7 @@ const kMsgRequestCancelled = 'Request Cancelled';
 
 const kApiKeyAuthType = "API Key";
 enum AuthType {
-  None("None"),
+  none("None"),
   bearerToken("Bearer Token");
 
   const AuthType(this.value);
