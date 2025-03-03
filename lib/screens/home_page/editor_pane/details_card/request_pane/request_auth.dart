@@ -20,6 +20,8 @@ class EditRequestAuth extends ConsumerWidget {
         .select((value) => value?.httpRequestModel?.bodyContentType));
     final apiType = ref
         .watch(selectedRequestModelProvider.select((value) => value?.apiType));
+     final authType = ref
+        .watch(selectedRequestModelProvider.select((value) => value?.httpRequestModel?.authType));
 
     return Column(
       children: [
@@ -37,7 +39,11 @@ class EditRequestAuth extends ConsumerWidget {
                 ),
               )
             : kSizedBoxEmpty,
-            ApiAuthWidget()
+        switch (authType) {
+          AuthType.bearerToken =>  ApiAuthWidget(),
+          AuthType.None =>Center(child: Text("Choose an Authentication"),)
+          _ => Center(child: Text("Choose an Authentication"),)
+        }   
        ],
     );
   }
@@ -51,10 +57,10 @@ class DropdownButtonAuthType extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ref.watch(selectedIdStateProvider);
-    final requestBodyContentType = ref.watch(selectedRequestModelProvider
-        .select((value) => value?.httpRequestModel?.bodyContentType));
+    final requestBodyAuthType = ref.watch(selectedRequestModelProvider
+        .select((value) => value?.httpRequestModel?.authType));
     return DropdownButtonAuthTypeSelection(
-      authType: AuthType.bearerToken,
+      authType: requestBodyAuthType,
       onChanged: (AuthType? value) {
               ref
              .read(collectionStateNotifierProvider.notifier)

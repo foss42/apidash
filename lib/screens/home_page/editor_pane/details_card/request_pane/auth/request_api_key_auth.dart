@@ -13,29 +13,10 @@ class ApiAuthWidget extends ConsumerWidget {
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Padding(
-          //   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          //   child: TextField(
-          //     decoration: InputDecoration(
-          //       labelText: 'Key',
-          //       border: OutlineInputBorder(),
-          //     ),
-          //   ),
-          // ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            // child: TextField(
-            //   decoration: InputDecoration(
-            //     labelText: 'Enter your token',
-            //     border: OutlineInputBorder(),
-            //   ),
-            //   onChanged: (value) => ref
-            //       .read(collectionStateNotifierProvider.notifier)
-            //       .update(token: value),
-            // ),
             child: EnvFieldTokenData(
               keyId: "token",
-             
               onChanged: (value) => ref
                   .read(collectionStateNotifierProvider.notifier)
                   .update(token: value),

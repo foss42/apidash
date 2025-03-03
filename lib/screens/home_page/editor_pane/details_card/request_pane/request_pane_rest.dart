@@ -27,6 +27,9 @@ class EditRestRequestPane extends ConsumerWidget {
     final hasBody = ref.watch(selectedRequestModelProvider
             .select((value) => value?.httpRequestModel?.hasBody)) ??
         false;
+    final hasAuth = ref.watch(selectedRequestModelProvider
+            .select((value) => value?.httpRequestModel?.hasAuth)) ??
+        false;
 
     return RequestPane(
       selectedId: selectedId,
@@ -45,20 +48,19 @@ class EditRestRequestPane extends ConsumerWidget {
         paramLength > 0,
         headerLength > 0,
         hasBody,
-        true
+        hasAuth
       ],
       tabLabels: const [
         kLabelURLParams,
         kLabelHeaders,
         kLabelBody,
-        "Authorization"
+        kLabelAuth
       ],
       children: const [
         EditRequestURLParams(),
         EditRequestHeaders(),
         EditRequestBody(),
         EditRequestAuth()
-
       ],
     );
   }

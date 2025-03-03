@@ -90,6 +90,11 @@ HttpRequestModel substituteHttpRequestModel(
       envMap,
       activeEnvironmentId,
     ),
+    token:substituteVariables(
+      httpRequestModel.token,
+      envMap,
+      activeEnvironmentId,
+    ),
   );
   return newRequestModel;
 }

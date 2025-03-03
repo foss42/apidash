@@ -29,7 +29,7 @@ _$HttpRequestModelImpl _$$HttpRequestModelImplFromJson(Map json) =>
           $enumDecodeNullable(_$ContentTypeEnumMap, json['bodyContentType']) ??
               ContentType.json,
       authType: $enumDecodeNullable(_$AuthTypeEnumMap, json['authType']) ??
-          AuthType.bearerToken,
+          AuthType.None,
       body: json['body'] as String?,
       query: json['query'] as String?,
       formData: (json['formData'] as List<dynamic>?)

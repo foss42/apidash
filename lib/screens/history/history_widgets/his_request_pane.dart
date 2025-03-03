@@ -38,8 +38,8 @@ class HistoryRequestPane extends ConsumerWidget {
             .select((value) => value?.httpRequestModel.hasQuery)) ??
         false;
     
-    final hasToken = ref.watch(selectedHistoryRequestModelProvider
-            .select((value) => value?.httpRequestModel.hasBearerToken)) ??
+    final hasAuth = ref.watch(selectedHistoryRequestModelProvider
+            .select((value) => value?.httpRequestModel.hasAuth)) ??
         false;
 
     return switch (apiType) {
@@ -56,7 +56,7 @@ class HistoryRequestPane extends ConsumerWidget {
             paramLength > 0,
             headerLength > 0,
             hasBody,
-            true
+            hasAuth
           ],
           tabLabels: const [
             kLabelURLParams,
@@ -89,7 +89,7 @@ class HistoryRequestPane extends ConsumerWidget {
           showIndicators: [
             headerLength > 0,
             hasQuery,
-            true
+            hasAuth
           ],
           tabLabels: const [
             kLabelHeaders,
@@ -196,7 +196,6 @@ class HisAuth extends ConsumerWidget {
     final apiType = selectedHistoryModel?.metaData.apiType;
     final requestModel = selectedHistoryModel?.httpRequestModel;
     final authType =selectedHistoryModel?.httpRequestModel.authType;
-    final contentType = requestModel?.bodyContentType;
 
     return switch (apiType) {
       APIType.rest => Column(
@@ -223,12 +222,13 @@ class HisAuth extends ConsumerWidget {
               child: switch (authType) {
                 AuthType.bearerToken => Padding(
                     padding: kPt5o10,
-                    child: TextFieldEditor(
-                      key: Key("${selectedHistoryModel?.historyId}-token-auth"),
-                      fieldKey:
-                          "${selectedHistoryModel?.historyId}-token-auth-viewer",
-                      initialValue: requestModel?.token,
-                      readOnly: true,
+                    child: TextField(
+                        key: Key("${selectedHistoryModel?.historyId}-token-auth"),
+                        controller: TextEditingController(text: requestModel?.token),
+                        readOnly: true,  
+                        decoration: InputDecoration(
+                              border: InputBorder.none,  
+                        ),
                     ),
                   ),
                 _ => Padding(

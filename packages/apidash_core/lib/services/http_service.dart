@@ -34,8 +34,8 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
     String? body;
     try {
       Stopwatch stopwatch = Stopwatch()..start();
-      if(requestModel.authType!=AuthType.None){
-              if(requestModel.hasBearerAuthType){
+      if(requestModel.hasAuth){
+              if(requestModel.hasBearerToken){
                 headers[HttpHeaders.authorizationHeader] = 'Bearer ${requestModel.token}';
               }
       }
