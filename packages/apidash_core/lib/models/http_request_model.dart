@@ -25,9 +25,11 @@ class HttpRequestModel with _$HttpRequestModel {
     List<bool>? isHeaderEnabledList,
     List<bool>? isParamEnabledList,
     @Default(ContentType.json) ContentType bodyContentType,
+    @Default(AuthType.bearerToken) AuthType authType,
     String? body,
     String? query,
     List<FormDataModel>? formData,
+    String? token
   }) = _HttpRequestModel;
 
   factory HttpRequestModel.fromJson(Map<String, Object?> json) =>
@@ -47,7 +49,9 @@ class HttpRequestModel with _$HttpRequestModel {
   bool get hasFormDataContentType => bodyContentType == ContentType.formdata;
   bool get hasJsonContentType => bodyContentType == ContentType.json;
   bool get hasTextContentType => bodyContentType == ContentType.text;
+  bool get hasBearerAuthType => authType == AuthType.bearerToken;
   int get contentLength => utf8.encode(body ?? "").length;
+  int get tokenLength => (token??"").length;
   bool get hasBody => hasJsonData || hasTextData || hasFormData;
   bool get hasJsonData =>
       kMethodsWithBody.contains(method) &&
@@ -61,6 +65,7 @@ class HttpRequestModel with _$HttpRequestModel {
       kMethodsWithBody.contains(method) &&
       hasFormDataContentType &&
       formDataMapList.isNotEmpty;
+  bool get hasBearerToken => hasBearerAuthType && tokenLength > 0;
   bool get hasQuery => query?.isNotEmpty ?? false;
   List<FormDataModel> get formDataList => formData ?? <FormDataModel>[];
   List<Map<String, String>> get formDataMapList =>

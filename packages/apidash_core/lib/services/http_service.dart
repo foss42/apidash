@@ -34,6 +34,11 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
     String? body;
     try {
       Stopwatch stopwatch = Stopwatch()..start();
+      if(requestModel.authType!=AuthType.None){
+              if(requestModel.hasBearerAuthType){
+                headers[HttpHeaders.authorizationHeader] = 'Bearer ${requestModel.token}';
+              }
+      }
       if (apiType == APIType.rest) {
         var isMultiPartRequest =
             requestModel.bodyContentType == ContentType.formdata;

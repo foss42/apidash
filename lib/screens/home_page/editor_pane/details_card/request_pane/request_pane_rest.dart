@@ -1,4 +1,5 @@
 import 'package:apidash/consts.dart';
+import 'package:apidash/screens/home_page/editor_pane/details_card/request_pane/request_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
@@ -44,16 +45,20 @@ class EditRestRequestPane extends ConsumerWidget {
         paramLength > 0,
         headerLength > 0,
         hasBody,
+        true
       ],
       tabLabels: const [
         kLabelURLParams,
         kLabelHeaders,
         kLabelBody,
+        "Authorization"
       ],
       children: const [
         EditRequestURLParams(),
         EditRequestHeaders(),
         EditRequestBody(),
+        EditRequestAuth()
+
       ],
     );
   }

@@ -28,12 +28,15 @@ _$HttpRequestModelImpl _$$HttpRequestModelImplFromJson(Map json) =>
       bodyContentType:
           $enumDecodeNullable(_$ContentTypeEnumMap, json['bodyContentType']) ??
               ContentType.json,
+      authType: $enumDecodeNullable(_$AuthTypeEnumMap, json['authType']) ??
+          AuthType.bearerToken,
       body: json['body'] as String?,
       query: json['query'] as String?,
       formData: (json['formData'] as List<dynamic>?)
           ?.map((e) =>
               FormDataModel.fromJson(Map<String, Object?>.from(e as Map)))
           .toList(),
+      token: json['token'] as String?,
     );
 
 Map<String, dynamic> _$$HttpRequestModelImplToJson(
@@ -46,9 +49,11 @@ Map<String, dynamic> _$$HttpRequestModelImplToJson(
       'isHeaderEnabledList': instance.isHeaderEnabledList,
       'isParamEnabledList': instance.isParamEnabledList,
       'bodyContentType': _$ContentTypeEnumMap[instance.bodyContentType]!,
+      'authType': _$AuthTypeEnumMap[instance.authType]!,
       'body': instance.body,
       'query': instance.query,
       'formData': instance.formData?.map((e) => e.toJson()).toList(),
+      'token': instance.token,
     };
 
 const _$HTTPVerbEnumMap = {
@@ -64,4 +69,9 @@ const _$ContentTypeEnumMap = {
   ContentType.json: 'json',
   ContentType.text: 'text',
   ContentType.formdata: 'formdata',
+};
+
+const _$AuthTypeEnumMap = {
+  AuthType.None: 'None',
+  AuthType.bearerToken: 'bearerToken',
 };
