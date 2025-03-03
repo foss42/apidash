@@ -37,6 +37,10 @@ class HistoryRequestPane extends ConsumerWidget {
     final hasQuery = ref.watch(selectedHistoryRequestModelProvider
             .select((value) => value?.httpRequestModel.hasQuery)) ??
         false;
+    
+    final hasAuth = ref.watch(selectedHistoryRequestModelProvider
+            .select((value) => value?.httpRequestModel.hasAuth)) ??
+        false;
 
     return switch (apiType) {
       APIType.rest => RequestPane(
@@ -52,11 +56,13 @@ class HistoryRequestPane extends ConsumerWidget {
             paramLength > 0,
             headerLength > 0,
             hasBody,
+            hasAuth
           ],
           tabLabels: const [
             kLabelURLParams,
             kLabelHeaders,
             kLabelBody,
+            kLabelAuth
           ],
           children: [
             RequestDataTable(
@@ -68,6 +74,7 @@ class HistoryRequestPane extends ConsumerWidget {
               keyName: kNameHeader,
             ),
             const HisRequestBody(),
+            const HisAuth(),
           ],
         ),
       APIType.graphql => RequestPane(
@@ -82,10 +89,12 @@ class HistoryRequestPane extends ConsumerWidget {
           showIndicators: [
             headerLength > 0,
             hasQuery,
+            hasAuth
           ],
           tabLabels: const [
             kLabelHeaders,
             kLabelQuery,
+            kLabelAuth,
           ],
           children: [
             RequestDataTable(
@@ -93,6 +102,7 @@ class HistoryRequestPane extends ConsumerWidget {
               keyName: kNameHeader,
             ),
             const HisRequestBody(),
+            const HisAuth(),
           ],
         ),
       _ => kSizedBoxEmpty,
@@ -157,6 +167,75 @@ class HisRequestBody extends ConsumerWidget {
                       initialValue: requestModel?.body,
                       readOnly: true,
                     ),
+                  ),
+              },
+            )
+          ],
+        ),
+      APIType.graphql => Padding(
+          padding: kPt5o10,
+          child: TextFieldEditor(
+            key: Key("${selectedHistoryModel?.historyId}-query"),
+            fieldKey: "${selectedHistoryModel?.historyId}-query-viewer",
+            initialValue: requestModel?.query,
+            readOnly: true,
+          ),
+        ),
+      _ => kSizedBoxEmpty,
+    };
+  }
+}
+
+
+class HisAuth extends ConsumerWidget {
+  const HisAuth({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selectedHistoryModel = ref.watch(selectedHistoryRequestModelProvider);
+    final apiType = selectedHistoryModel?.metaData.apiType;
+    final requestModel = selectedHistoryModel?.httpRequestModel;
+    final authType =selectedHistoryModel?.httpRequestModel.authType;
+
+    return switch (apiType) {
+      APIType.rest => Column(
+          children: [
+            kVSpacer5,
+            RichText(
+              text: TextSpan(
+                style: Theme.of(context).textTheme.labelLarge,
+                children: [
+                  const TextSpan(
+                    text: "Auth Type: ",
+                  ),
+                  TextSpan(
+                      text: authType?.name ?? "apiType",
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                            color: Theme.of(context).colorScheme.primary,
+                            fontWeight: FontWeight.bold,
+                          )),
+                ],
+              ),
+            ),
+            kVSpacer5,
+            Expanded(
+              child: switch (authType) {
+                AuthType.bearerToken => Padding(
+                    padding: kPt5o10,
+                    child: TextField(
+                        key: Key("${selectedHistoryModel?.historyId}-token-auth"),
+                        controller: TextEditingController(text: requestModel?.token),
+                        readOnly: true,  
+                        decoration: InputDecoration(
+                              border: InputBorder.none,  
+                        ),
+                    ),
+                  ),
+                _ => Padding(
+                    padding: kPt5o10,
+                    child: Center(
+                      child: Text("No Auth Type"),
+                    )
                   ),
               },
             )
