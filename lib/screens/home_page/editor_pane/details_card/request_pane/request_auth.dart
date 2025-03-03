@@ -38,9 +38,7 @@ class EditRequestAuth extends ConsumerWidget {
               )
             : kSizedBoxEmpty,
             ApiAuthWidget()
-       
-        
-      ],
+       ],
     );
   }
 }

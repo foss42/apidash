@@ -99,6 +99,6 @@ enum AuthType {
   None("None"),
   bearerToken("Bearer Token");
 
-  const AuthType(this.header);
-  final String header;
+  const AuthType(this.value);
+  final String value;
 }

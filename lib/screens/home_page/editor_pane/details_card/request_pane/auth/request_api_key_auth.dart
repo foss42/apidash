@@ -1,4 +1,5 @@
 import 'package:apidash/providers/providers.dart';
+import 'package:apidash/screens/common_widgets/common_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -23,11 +24,18 @@ class ApiAuthWidget extends ConsumerWidget {
           // ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            child: TextField(
-              decoration: InputDecoration(
-                labelText: 'Enter your token',
-                border: OutlineInputBorder(),
-              ),
+            // child: TextField(
+            //   decoration: InputDecoration(
+            //     labelText: 'Enter your token',
+            //     border: OutlineInputBorder(),
+            //   ),
+            //   onChanged: (value) => ref
+            //       .read(collectionStateNotifierProvider.notifier)
+            //       .update(token: value),
+            // ),
+            child: EnvFieldTokenData(
+              keyId: "token",
+             
               onChanged: (value) => ref
                   .read(collectionStateNotifierProvider.notifier)
                   .update(token: value),
