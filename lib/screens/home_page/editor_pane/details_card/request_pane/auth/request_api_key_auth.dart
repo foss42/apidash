@@ -22,27 +22,6 @@ class ApiAuthWidget extends ConsumerWidget {
                   .update(token: value),
             ),
           ),
-          // Padding(
-          //   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          //   child: DropdownButtonFormField<String>(
-          //     value: 'params',
-          //     decoration: InputDecoration(
-          //       labelText: 'Add to',
-          //       border: OutlineInputBorder(),
-          //     ),
-          //     items: const [
-          //       DropdownMenuItem(
-          //         value: 'params',
-          //         child: Text('Params'),
-          //       ),
-          //       DropdownMenuItem(
-          //         value: 'headers',
-          //         child: Text('Headers'),
-          //       ),
-          //     ],
-          //     onChanged: (value) {},
-          //   ),
-          // ),
         ],
       ),
     );
