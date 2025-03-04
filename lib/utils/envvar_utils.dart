@@ -85,6 +85,13 @@ HttpRequestModel substituteHttpRequestModel(
         value: substituteVariables(param.value, envMap, activeEnvironmentId),
       );
     }).toList(),
+    formData: httpRequestModel.formData?.map((formData) {
+      return formData.copyWith(
+        name: 
+            substituteVariables(formData.name, envMap, activeEnvironmentId) ?? "",
+        value: substituteVariables(formData.value, envMap, activeEnvironmentId) ?? "",
+      );
+    }).toList(),
     body: substituteVariables(
       httpRequestModel.body,
       envMap,

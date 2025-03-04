@@ -83,7 +83,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
           key: ValueKey("$selectedId-$index-form-row-$seed"),
           cells: <DataCell>[
             DataCell(
-              EnvCellField(
+              CellField(
                 keyId: "$selectedId-$index-form-k-$seed",
                 initialValue: formRows[index].name,
                 hintText: kHintAddFieldName,
