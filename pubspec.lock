@@ -1065,6 +1065,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.2"
+  openapi_spec:
+    dependency: "direct main"
+    description:
+      path: "packages/openapi_spec"
+      relative: true
+    source: path
+    version: "0.0.1"
   package_config:
     dependency: transitive
     description:
@@ -1935,7 +1942,7 @@ packages:
     source: hosted
     version: "6.5.0"
   yaml:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: yaml
       sha256: b9da305ac7c39faa3f030eccd175340f968459dae4af175130b3fc47e40d76ce
