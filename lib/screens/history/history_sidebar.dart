@@ -112,14 +112,14 @@ class _HistoryExpansionTileState extends ConsumerState<HistoryExpansionTile>
               child: Icon(
                 Icons.chevron_right_rounded,
                 size: 20,
-                color: colorScheme.onSurface.withOpacity(0.6),
+                color: colorScheme.outline,
               )),
           kHSpacer5,
           Text(
             humanizeDate(widget.date),
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: colorScheme.onSurface.withOpacity(0.6),
+                  color: colorScheme.outline,
                 ),
           ),
         ],

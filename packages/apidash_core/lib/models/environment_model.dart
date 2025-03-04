@@ -1,5 +1,5 @@
-import 'package:apidash/consts.dart';
-import 'package:apidash_core/apidash_core.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import '../consts.dart';
 
 part 'environment_model.freezed.dart';
 

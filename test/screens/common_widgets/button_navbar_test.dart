@@ -115,7 +115,6 @@ void main() {
         label.style?.color,
         equals(Theme.of(tester.element(find.byKey(testKey)))
             .colorScheme
-            .onSurface
-            .withOpacity(0.65)));
+            .onSurfaceVariant));
   });
 }
