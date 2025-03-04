@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:code_builder/code_builder.dart';
+import 'package:pub_semver/pub_semver.dart';
 import 'package:dart_style/dart_style.dart';
 import 'shared.dart';
 
@@ -225,7 +226,8 @@ class DartHttpCodeGen {
     sbf.writeln(mainFunction.accept(emitter));
 
     return DartFormatter(
-            pageWidth: contentType == ContentType.formdata ? 70 : 160)
-        .format(sbf.toString());
+      languageVersion: Version(3, 2, 4),
+      pageWidth: contentType == ContentType.formdata ? 70 : 160,
+    ).format(sbf.toString());
   }
 }

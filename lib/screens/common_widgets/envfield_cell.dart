@@ -29,17 +29,13 @@ class EnvCellField extends StatelessWidget {
       ),
       decoration: InputDecoration(
         hintStyle: kCodeStyle.copyWith(
-          color: clrScheme.outline.withOpacity(
-            kHintOpacity,
-          ),
+          color: clrScheme.outlineVariant,
         ),
         hintText: hintText,
         contentPadding: const EdgeInsets.only(bottom: 12),
         focusedBorder: UnderlineInputBorder(
           borderSide: BorderSide(
-            color: clrScheme.primary.withOpacity(
-              kHintOpacity,
-            ),
+            color: clrScheme.outlineVariant,
           ),
         ),
         enabledBorder: UnderlineInputBorder(

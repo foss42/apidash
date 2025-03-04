@@ -25,13 +25,11 @@ class SidebarRequestCardTextBox extends StatelessWidget {
         style: TextStyle(
           fontSize: 8,
           fontWeight: FontWeight.bold,
-          color: switch (apiType) {
-            APIType.rest => getHTTPMethodColor(
-                method,
-                brightness: Theme.of(context).brightness,
-              ),
-            APIType.graphql => kColorGQL,
-          },
+          color: getAPIColor(
+            apiType,
+            method: method,
+            brightness: Theme.of(context).brightness,
+          ),
         ),
       ),
     );
