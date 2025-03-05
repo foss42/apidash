@@ -1,9 +1,5 @@
 import 'package:apidash/consts.dart';
-import 'package:apidash/models/models.dart'
-    show
-        EnvironmentModel,
-        EnvironmentVariableModel,
-        EnvironmentVariableSuggestion;
+import 'package:apidash_core/apidash_core.dart';
 
 /// Global environment model
 const globalEnvironment = EnvironmentModel(
