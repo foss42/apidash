@@ -268,15 +268,100 @@ Here are the detailed instructions for running the generated API Dash code in **
 
 ## Go (net/http)
 
-TODO
+### 1. Install Go compiler
+
+- Windows and MacOS: check out the [official source](https://go.dev/doc/install)
+- Linux: Install from your distro's package manager.
+
+Verify if go is installed:
+
+```bash
+go version
+```
+
+### 2. Create a project
+```bash
+go mod init example.com/api
+```
+
+### 3. Run the generated code
+- Paste the generated code into `main.go`.
+- Build and run by `go run main.go`.
 
 ## JavaScript (axios)
 
-TODO
+The generated api code can be run in browser by using the code in an html file as demonstrated below:
+
+### 1. Create the html file with generated code
+
+Create a new file `index.html`
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Axios Example</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <script>
+        // Paste your API Dash generated code here !!
+    </script>
+</body>
+</html>
+
+```
+
+Make sure to paste the generated js code from api dash under the `<script>` tag.
+
+### 2. Test with Browser Developer Tools
+
+Open the `index.html` file in a modern browser and open devtools.
+
+- **Chrome**: Right-click the page and select "Inspect" or press Ctrl+Shift+I (Windows/Linux) or Cmd+Option+I (macOS).
+
+- **Firefox**: Right-click the page and select "Inspect Element" or press Ctrl+Shift+I (Windows/Linux) or Cmd+Option+I (macOS).
+
+- **Edge**: Right-click the page and select "Inspect" or press F12 or Ctrl+Shift+I.
+
+Navigate to network tab and refresh the page to see the requests and network activity.
 
 ## JavaScript (fetch)
 
-TODO
+The generated api code can be run in browser by using the code in an html file as demonstrated below:
+
+### 1. Create the html file with generated code
+
+Create a new file `index.html`
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fetch Example</title>
+</head>
+<body>
+    <script>
+        // Paste your API Dash generated code here !!
+    </script>
+</body>
+</html>
+
+```
+
+Make sure to paste the generated js code from api dash under the `<script>` tag.
+
+### 2. Test with Browser Developer Tools
+
+Open the `index.html` file in a modern browser and open devtools.
+
+- **Chrome**: Right-click the page and select "Inspect" or press Ctrl+Shift+I (Windows/Linux) or Cmd+Option+I (macOS).
+
+- **Firefox**: Right-click the page and select "Inspect Element" or press Ctrl+Shift+I (Windows/Linux) or Cmd+Option+I (macOS).
+
+- **Edge**: Right-click the page and select "Inspect" or press F12 or Ctrl+Shift+I.
+
+Navigate to network tab and refresh the page to see the requests and network activity.
 
 ## node.js (JavaScript, axios)
 
@@ -655,7 +740,88 @@ java -jar api_test.jar
 
 ## PHP (curl)
 
-TODO
+Here are the detailed instructions for running the generated API Dash code in PHP (using `curl`) for macOS, Windows, and Linux:
+
+### 1. Install and set PHP:
+Before starting out, we need to install PHP in our system. 
+#### macOS:
+- Go to the official PHP website: [https://www.php.net/manual/en/install.macosx.php](https://www.php.net/manual/en/install.macosx.php)
+- Follow the installation instructions.
+
+#### Windows:
+- Go to the official PHP website: [https://www.php.net/manual/en/install.windows.php](https://www.php.net/manual/en/install.windows.php)
+- Follow the installation instructions.
+
+#### Linux:
+The installation process depends on your Linux distribution. Use the appropriate command below:
+- ##### Ubuntu/Debian
+```bash
+sudo apt update
+sudo apt install php php-cli php-curl php-mbstring php-xml php-zip -y
+```
+- ##### Arch Linux / Manjaro
+```bash
+sudo pacman -S php php-apache php-cgi php-curl php-mbstring php-xml php-zip
+```
+- ##### Fedora / CentOS
+```bash
+- sudo dnf install php php-cli php-curl php-mbstring php-xml php-zip -y
+```
+- ##### OpenSUSE
+```bash
+sudo zypper install php php-cli php-curl php-mbstring php-xml php-zip
+```
+
+✅ Finally, check that everything works correctly pasting this command in your terminal
+```bash
+php --version
+```
+
+### 2. Check cURL
+cURL is usually enabled by default. To check if it's active, run:
+```bash
+php -m | grep curl
+```
+and check if it returns **curl** as output
+
+#### If curl is disabled
+
+ 1. Open the `php.ini` configuration file. You can find its location by running:
+```bash
+php --ini
+```
+ 2. Open the file in a text editor/IDE
+ 3. Find this line
+```bash
+;extension=curl
+```
+ 4. Remove the semicolon (`;`) at the beginning to enable it:
+```bash
+extension=curl
+```
+ 5. Save and restart php by using
+```bash
+sudo systemctl restart apache2  # For Apache
+sudo systemctl restart php8.2-fpm  # For PHP-FPM (Nginx)
+```
+
+### 3. Execute the generated code:
+Once you have everything needed installed, follow these steps to execute the generated code:
+
+1. **Open a IDE/text editor** ✍️ (Visual Studio, VS Code or any other text editor).
+2. **Create a php file ( ex. `request.php` )** ✍️ (Visual Studio, VS Code or any other text editor).
+3. **Copy and paste the generated API code** 📋 from API Dash into the `request.php` file.
+
+#### In Visual Studio:
+1. Click the **Start Debugging `(F5)`** button from the top menu to run the project.
+2. The terminal will display the API response.
+
+#### Using the CLI:
+ 1. Open the terminal at the project root directory and run the file you've created:
+   ```bash
+   php filename.php
+   ```
+ 2. The terminal will display the API response.
 
 ## PHP (guzzle)
 

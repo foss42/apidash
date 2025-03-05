@@ -71,16 +71,88 @@ void main() {
     });
   });
 
+  group("Testing getAPIColor function", () {
+    HTTPVerb methodGet = HTTPVerb.get;
+    Color colMethodGetDarkModeExpected = getDarkModeColor(kColorHttpMethodGet);
+    test('Test getAPIColor for GET method dark mode', () {
+      expect(
+          getAPIColor(
+            APIType.rest,
+            method: methodGet,
+            brightness: dark,
+          ),
+          colMethodGetDarkModeExpected);
+    });
+
+    HTTPVerb methodHead = HTTPVerb.head;
+    Color colMethodHeadDarkModeExpected =
+        getDarkModeColor(kColorHttpMethodHead);
+    test('Test getHTTPMethodColor for HEAD Method dark mode', () {
+      expect(
+          getAPIColor(
+            APIType.rest,
+            method: methodHead,
+            brightness: dark,
+          ),
+          colMethodHeadDarkModeExpected);
+    });
+
+    HTTPVerb methodPatch = HTTPVerb.patch;
+    Color colMethodPatchDarkModeExpected =
+        getDarkModeColor(kColorHttpMethodPatch);
+    test('Test getHTTPMethodColor for PATCH Method dark mode', () {
+      expect(
+          getAPIColor(
+            APIType.rest,
+            method: methodPatch,
+            brightness: dark,
+          ),
+          colMethodPatchDarkModeExpected);
+    });
+
+    HTTPVerb methodPut = HTTPVerb.put;
+    Color colMethodPutDarkModeExpected = getDarkModeColor(kColorHttpMethodPut);
+    test('Test getHTTPMethodColor for PUT Method dark mode', () {
+      expect(
+          getAPIColor(
+            APIType.rest,
+            method: methodPut,
+            brightness: dark,
+          ),
+          colMethodPutDarkModeExpected);
+    });
+
+    HTTPVerb methodPost = HTTPVerb.post;
+    Color colMethodPostDarkModeExpected =
+        getDarkModeColor(kColorHttpMethodPost);
+    test('Test getHTTPMethodColor for POST Method dark mode', () {
+      expect(
+          getAPIColor(
+            APIType.rest,
+            method: methodPost,
+            brightness: dark,
+          ),
+          colMethodPostDarkModeExpected);
+    });
+
+    HTTPVerb methodDelete = HTTPVerb.delete;
+    Color colMethodDeleteDarkModeExpected =
+        getDarkModeColor(kColorHttpMethodDelete);
+    test('Test getHTTPMethodColor for DELETE Method dark mode', () {
+      expect(
+          getAPIColor(
+            APIType.rest,
+            method: methodDelete,
+            brightness: dark,
+          ),
+          colMethodDeleteDarkModeExpected);
+    });
+  });
+
   group("Testing getHTTPMethodColor function", () {
     HTTPVerb methodGet = HTTPVerb.get;
     test('Test getHTTPMethodColor for GET method', () {
       expect(getHTTPMethodColor(methodGet), kColorHttpMethodGet);
-    });
-
-    Color colMethodGetDarkModeExpected = getDarkModeColor(kColorHttpMethodGet);
-    test('Test getHTTPMethodColor for GET method dark mode', () {
-      expect(getHTTPMethodColor(methodGet, brightness: dark),
-          colMethodGetDarkModeExpected);
     });
 
     HTTPVerb methodHead = HTTPVerb.head;
@@ -88,34 +160,14 @@ void main() {
       expect(getHTTPMethodColor(methodHead), kColorHttpMethodHead);
     });
 
-    Color colMethodHeadDarkModeExpected =
-        getDarkModeColor(kColorHttpMethodHead);
-    test('Test getHTTPMethodColor for HEAD Method dark mode', () {
-      expect(getHTTPMethodColor(methodHead, brightness: dark),
-          colMethodHeadDarkModeExpected);
-    });
-
     HTTPVerb methodPatch = HTTPVerb.patch;
     test('Test getHTTPMethodColor for PATCH Method', () {
       expect(getHTTPMethodColor(methodPatch), kColorHttpMethodPatch);
     });
 
-    Color colMethodPatchDarkModeExpected =
-        getDarkModeColor(kColorHttpMethodPatch);
-    test('Test getHTTPMethodColor for PATCH Method dark mode', () {
-      expect(getHTTPMethodColor(methodPatch, brightness: dark),
-          colMethodPatchDarkModeExpected);
-    });
-
     HTTPVerb methodPut = HTTPVerb.put;
     test('Test getHTTPMethodColor for PUT Method', () {
       expect(getHTTPMethodColor(methodPut), kColorHttpMethodPut);
-    });
-
-    Color colMethodPutDarkModeExpected = getDarkModeColor(kColorHttpMethodPut);
-    test('Test getHTTPMethodColor for PUT Method dark mode', () {
-      expect(getHTTPMethodColor(methodPut, brightness: dark),
-          colMethodPutDarkModeExpected);
     });
 
     HTTPVerb methodPost = HTTPVerb.post;
@@ -124,23 +176,9 @@ void main() {
       expect(getHTTPMethodColor(methodPost), kColorHttpMethodPost);
     });
 
-    Color colMethodPostDarkModeExpected =
-        getDarkModeColor(kColorHttpMethodPost);
-    test('Test getHTTPMethodColor for POST Method dark mode', () {
-      expect(getHTTPMethodColor(methodPost, brightness: dark),
-          colMethodPostDarkModeExpected);
-    });
-
     HTTPVerb methodDelete = HTTPVerb.delete;
     test('Test getHTTPMethodColor for DELETE Method', () {
       expect(getHTTPMethodColor(methodDelete), kColorHttpMethodDelete);
-    });
-
-    Color colMethodDeleteDarkModeExpected =
-        getDarkModeColor(kColorHttpMethodDelete);
-    test('Test getHTTPMethodColor for DELETE Method dark mode', () {
-      expect(getHTTPMethodColor(methodDelete, brightness: dark),
-          colMethodDeleteDarkModeExpected);
     });
   });
 
