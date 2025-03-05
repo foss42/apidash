@@ -29,31 +29,32 @@ class ExplainFeature {
     final statusCode = responseModel.statusCode ?? 0;
 
     final prompt = '''
-Analyze this API interaction and **identify discrepancies**:
+FOCUSED API INTERACTION BREAKDOWN
 
-**API Request:**
-- Endpoint: `$endpoint`
-- Method: `$method`
-- Headers: ${headers.isNotEmpty ? jsonEncode(headers) : "None"}
-- Parameters: ${parameters.isNotEmpty ? jsonEncode(parameters) : "None"}
-- Body: ${body ?? "None"}
+**Essential Request Details:**
+- Endpoint Purpose: What is this API endpoint designed to do?
+- Interaction Type: Describe the core purpose of this specific request
 
-**API Response:**
-- Status Code: $statusCode
-- Body: 
-\`\`\`json
-$responseBody
-\`\`\`
+**Request Mechanics:**
+- Exact Endpoint: $endpoint
+- HTTP Method: $method
+- Key Parameters: ${parameters.isNotEmpty ? 'Specific inputs driving the request' : 'No custom parameters'}
 
-**Instructions:**
-1. Start with a **summary** of the API interaction.
-2. List **validation issues** (e.g., missing headers, invalid parameters).
-3. Highlight **request/response mismatches** (e.g., unexpected data types, missing fields).
-4. Suggest **concrete improvements** (e.g., fix parameters, add error handling).
+**Response CORE Insights:**
+- Status: Success or Failure?
+- Key Data Extracted: What CRITICAL information does the response contain?
 
-**Format:**
-- Use Markdown with headings (`##`, `###`).
-- Include bullet points for clarity.
+**Precise Analysis Requirements:**
+1. Explain the API's PRIMARY function in ONE clear sentence
+2. Identify the MOST IMPORTANT piece of information returned
+3. Describe the PRACTICAL significance of this API call
+
+AVOID:
+- Technical jargon
+- Unnecessary details
+- Verbose explanations
+
+Deliver a CRYSTAL CLEAR, CONCISE explanation that anyone can understand.
 ''';
 
     return _service.generateResponse(prompt);

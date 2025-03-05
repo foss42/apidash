@@ -24,8 +24,9 @@ class DashBotService {
     if (input == "Explain API") {
       return _explainFeature.explainLatestApi(requestModel: requestModel, responseModel: responseModel);
     } else if(input == "Debug API") {
-       _debugFeature.debugApi(requestModel: requestModel, responseModel: responseModel);
+       return _debugFeature.debugApi(requestModel: requestModel, responseModel: responseModel);
     }
+
     return generateResponse(input);
   }
 }
