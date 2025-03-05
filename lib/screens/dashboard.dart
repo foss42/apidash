@@ -125,7 +125,6 @@ class Dashboard extends ConsumerWidget {
           ],
         ),
       ),
-      // Add this to your DashboardScreen's build method:
       floatingActionButton: FloatingActionButton(
         onPressed: () => showModalBottomSheet(
           context: context,
@@ -137,7 +136,6 @@ class Dashboard extends ConsumerWidget {
         ),
         child: const Icon(Icons.help_outline),
       ),
-
     );
   }
 }
