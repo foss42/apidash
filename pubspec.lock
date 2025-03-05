@@ -390,6 +390,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.3.2"
+  fetch_api:
+    dependency: transitive
+    description:
+      name: fetch_api
+      sha256: "97f46c25b480aad74f7cc2ad7ccba2c5c6f08d008e68f95c1077286ce243d0e6"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.0"
+  fetch_client:
+    dependency: transitive
+    description:
+      name: fetch_client
+      sha256: "9666ee14536778474072245ed5cba07db81ae8eb5de3b7bf4a2d1e2c49696092"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.2"
   ffi:
     dependency: transitive
     description:
@@ -504,6 +520,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_highlighter:
+    dependency: "direct main"
+    description:
+      name: flutter_highlighter
+      sha256: "93173afd47a9ada53f3176371755e7ea4a1065362763976d06d6adfb4d946e10"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.1"
   flutter_hooks:
     dependency: "direct main"
     description:
@@ -1065,6 +1089,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.2"
+  ollama_dart:
+    dependency: "direct main"
+    description:
+      name: ollama_dart
+      sha256: "4e40bc499b6fe46ba54a004d2da601c40bd73d66e3f18cf7b03225ccf3d481a6"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.2+1"
   package_config:
     dependency: transitive
     description:
