@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:charset/charset.dart'; // External package for additional encodings
 import 'package:http/http.dart' as http;
+import 'package:seed/consts.dart';
 import '../consts.dart';
 import '../models/models.dart';
 import '../utils/utils.dart';
@@ -19,7 +19,7 @@ final Map<String, Encoding> _encodingCache = {};
 
 /// Function to get encoding by charset name, supporting built-in and additional encodings
 Encoding getEncodingFromCharset(String? charsetName) {
-  if (charsetName == null) return utf8; // Default encoding
+    if (charsetName == null) return utf8; // Default encoding
 
   final normalizedName = charsetName.toLowerCase().trim();
 
@@ -47,11 +47,8 @@ Encoding getEncodingFromCharset(String? charsetName) {
 
     case 'utf-16':
     case 'utf-16be':
-      encoding = Utf16Codec(bigEndian: true);
-      break;
-
     case 'utf-16le':
-      encoding = Utf16Codec(bigEndian: false);
+      encoding = Utf16Codec();
       break;
 
     case 'utf-32':
@@ -61,7 +58,7 @@ Encoding getEncodingFromCharset(String? charsetName) {
     default:
       // Attempt to retrieve encoding from `charset` package
       try {
-        encoding = charset[normalizedName] ?? utf8; // Fallback to UTF-8
+        encoding = Charset.getByName(normalizedName) ?? utf8; // Fallback to UTF-8
       } catch (e) {
         print("Warning: Unsupported charset: $normalizedName, using UTF-8 as fallback");
         encoding = utf8;
@@ -69,7 +66,8 @@ Encoding getEncodingFromCharset(String? charsetName) {
   }
 
   // Cache result for future lookups
-  _encodingCache[normalizedName] = encoding!;
+  _encodingCache[normalizedName] = encoding;
+  print(encoding.name);
   return encoding;
 }
 
@@ -148,15 +146,28 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
       // Set body if applicable
       if (body != null && kMethodsWithBody.contains(requestModel.method)) {
         Encoding encoding = utf8; // Default encoding
-
+        
         final contentTypeHeader = request.headers[HttpHeaders.contentTypeHeader];
         if (contentTypeHeader != null) {
+          // First check for explicit charset parameter
           final charsetMatch = RegExp(r'charset=([^\s;]+)', caseSensitive: false).firstMatch(contentTypeHeader);
           if (charsetMatch != null) {
-            encoding = getEncodingFromCharset(charsetMatch.group(1));
+            final charsetName = charsetMatch.group(1);
+            encoding = getEncodingFromCharset(charsetName);
+          } else {
+            // No explicit charset, check content type
+            final contentTypeBase = contentTypeHeader.split(';')[0].trim().toLowerCase();
+            
+            // For text-based content types, ensure we apply proper encoding
+            if (contentTypeBase.startsWith('text/') || 
+                contentTypeBase == 'application/json' ||
+                contentTypeBase == 'application/xml' ||
+                contentTypeBase == 'application/javascript') {
+              // Keep default UTF-8 encoding for text-based content
+            }
           }
         }
-
+        
         request.bodyBytes = encoding.encode(body);
       }
 
