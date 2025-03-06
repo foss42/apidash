@@ -21,6 +21,8 @@
 **Objective**:  
 Integrate an **AI-powered security auditing system** into API Dash to proactively detect vulnerabilities (e.g., SQLi, XSS, insecure auth) during API testing and provide actionable mitigation steps. This feature will empower developers to build secure APIs by combining automated scans with AI-driven insights, aligning with API Dash’s focus on testing and observability.
 
+<img width="4458" alt="Untitled (1)" src="https://github.com/user-attachments/assets/464ee594-4e9e-47af-ae6d-295a50b38bcf" />
+
 #### Approach & Implementation  
 1. **AI Vulnerability Detection**:  
    - Train lightweight ML models (e.g., ONNX runtime for Flutter) to analyze request/response patterns for common vulnerabilities:  
@@ -49,6 +51,48 @@ Certainly! Below is a **detailed, phase-wise breakdown** of how to implement the
 
 ---
 
+```mermaid
+sequenceDiagram
+    participant User
+    participant APIDashFrontend
+    participant SecurityAuditor
+    participant ML_Models
+    participant ExternalAPIServer
+    participant OWASP_ZAP
+
+    User->>APIDashFrontend: Sends API Request (e.g., GET /users)
+    APIDashFrontend->>SecurityAuditor: Forward Request for Security Check
+
+    SecurityAuditor->>SecurityAuditor: Preprocess Request Data
+    SecurityAuditor->>ML_Models: Detect SQLi/XSS in Params
+    ML_Models-->>SecurityAuditor: Returns Vulnerability Score
+    SecurityAuditor->>SecurityAuditor: Validate Auth Tokens (e.g., JWT/OAuth)
+    SecurityAuditor->>ML_Models: Check for Sensitive Data Exposure
+    ML_Models-->>SecurityAuditor: Returns Risk Level
+
+    alt Vulnerability Detected
+        SecurityAuditor->>APIDashFrontend: Alert with Severity (🔴 Critical)
+        APIDashFrontend->>User: Display Security Insights Panel
+        User->>APIDashFrontend: View Fix Suggestions (e.g., "Sanitize Input")
+    else No Issues
+        SecurityAuditor->>ExternalAPIServer: Forward Validated Request
+        ExternalAPIServer-->>SecurityAuditor: Return API Response
+        SecurityAuditor->>ML_Models: Analyze Response for Data Leaks
+        ML_Models-->>SecurityAuditor: Flag Sensitive Data (e.g., PII)
+        SecurityAuditor->>APIDashFrontend: Forward Response + Security Summary
+        APIDashFrontend->>User: Show Response with Security Badges (🟢 Safe)
+    end
+
+    loop Automated Penetration Testing (Optional)
+        SecurityAuditor->>SecurityAuditor: Generate Fuzzed Payloads
+        SecurityAuditor->>ExternalAPIServer: Send Malicious Requests (e.g., SQLi)
+        ExternalAPIServer-->>SecurityAuditor: Capture Response/Errors
+        SecurityAuditor->>OWASP_ZAP: Validate Against Baseline
+        OWASP_ZAP-->>SecurityAuditor: Return Compliance Report
+        SecurityAuditor->>APIDashFrontend: Update Security Dashboard
+    end
+```
+
 ### **Phase 1: Data Collection & Model Training**
 #### **Objective**: Build a dataset and train lightweight ML models for vulnerability detection.
 1. **Dataset Creation**:
@@ -57,7 +101,8 @@ Certainly! Below is a **detailed, phase-wise breakdown** of how to implement the
      - Partner with tools like [Burp Suite](https://portswigger.net/burp) or [OWASP ZAP](https://www.zawasp.org/) to collect labeled attack patterns.
    - **Synthetic Data Generation**: 
      - Scripts to simulate attacks (e.g., SQLi payloads in query params, JWT tokens with weak signatures).
-   - **Format**: Structured JSON logs of API requests/responses annotated with vulnerability types (e.g., `{"request": {"url": "...", "headers": {...}, "body": "admin' OR 1=1--"}, "label": "SQLi"}`).
+   - **Format**: Structured JSON logs of API requests/responses annotated with vulnerability types (e.g., `{"request": {"url": "...", "headers": {...}, "body": "admin' OR 1=1-![mermaid-diagram-2025-03-06-114205](https://github.com/user-attachments/assets/2aff3210-983c-4562-a2b9-4ec421b8812b)
+-"}, "label": "SQLi"}`).
 
 2. **Model Selection**:
    - **Injection/XSS Detection**: 
@@ -90,6 +135,7 @@ Certainly! Below is a **detailed, phase-wise breakdown** of how to implement the
      - Link fixes to code snippets (e.g., "Use `parameterized queries`") and OWASP guidelines.
 
 ---
+<img width="1364" alt="Untitled (2)" src="https://github.com/user-attachments/assets/1a8b9b65-ec85-47b1-b01e-3fc6053a9962" />
 
 ### **Phase 3: Automated Penetration Testing**
 #### **Objective**: Simulate attacks and generate compliance reports.
