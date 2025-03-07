@@ -3,6 +3,7 @@ import 'package:apidash/consts.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:extended_text_field/extended_text_field.dart'; 
 
 class TextFieldEditor extends StatefulWidget {
   const TextFieldEditor({
@@ -12,6 +13,7 @@ class TextFieldEditor extends StatefulWidget {
     this.initialValue,
     this.readOnly = false,
     this.hintText,
+    this.specialTextSpanBuilder, // Optional builder for custom text styling
   });
 
   final String fieldKey;
@@ -19,6 +21,7 @@ class TextFieldEditor extends StatefulWidget {
   final String? initialValue;
   final bool readOnly;
   final String? hintText;
+  final SpecialTextSpanBuilder? specialTextSpanBuilder; // Defines the special text handler 
   @override
   State<TextFieldEditor> createState() => _TextFieldEditorState();
 }
@@ -67,7 +70,7 @@ class _TextFieldEditorState extends State<TextFieldEditor> {
           insertTab();
         },
       },
-      child: TextFormField(
+      child: ExtendedTextField( // Replace TextFormField with ExtendedTextField
         key: Key(widget.fieldKey),
         controller: controller,
         focusNode: editorFocusNode,
@@ -83,6 +86,7 @@ class _TextFieldEditorState extends State<TextFieldEditor> {
         onTapOutside: (PointerDownEvent event) {
           editorFocusNode.unfocus();
         },
+        specialTextSpanBuilder: widget.specialTextSpanBuilder, // Passes the builder to apply formatting
         decoration: InputDecoration(
           hintText: widget.hintText ?? kHintContent,
           hintStyle: TextStyle(
