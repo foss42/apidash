@@ -1,3 +1,5 @@
+
+import 'package:flutter/foundation.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
 import 'convert_utils.dart';
@@ -129,4 +131,48 @@ DateTime? getRetentionDate(HistoryRetentionPeriod? retentionPeriod) {
     default:
       return null;
   }
+}
+
+// ----------------------------------------------------------------------
+// New code: Offload expired history cleanup to a background isolate using compute.
+// ----------------------------------------------------------------------
+
+// Top-level function to run in the background isolate.
+// This function expects a serialized Map<String, dynamic> where keys are DateTime
+// represented as epoch milliseconds strings and values are lists of HistoryMetaModel JSON.
+Map<String, dynamic> _filterExpiredHistory(Map<String, dynamic> params) {
+  final String retentionDateStr = params['retentionDate'];
+  final DateTime retentionDate = DateTime.parse(retentionDateStr);
+  final Map<String, dynamic> serializedHistory =
+      Map<String, dynamic>.from(params['history']);
+  
+  // Remove expired history entries.
+  serializedHistory.removeWhere((key, value) {
+    final DateTime date =
+        DateTime.fromMillisecondsSinceEpoch(int.parse(key));
+    return date.isBefore(retentionDate);
+  });
+  return serializedHistory;
+}
+
+// Asynchronous helper that offloads filtering to a background isolate.
+Future<Map<DateTime, List<HistoryMetaModel>>> clearExpiredHistoryAsync(
+    Map<DateTime, List<HistoryMetaModel>> historySequence,
+    DateTime retentionDate) async {
+  // Serialize: convert DateTime keys to strings and each HistoryMetaModel to JSON.
+  final Map<String, dynamic> serialized = historySequence.map((key, value) =>
+      MapEntry(key.millisecondsSinceEpoch.toString(),
+          value.map((item) => item.toJson()).toList()));
+  
+  // Offload the filtering using compute.
+  final result = await compute(_filterExpiredHistory, {
+    'history': serialized,
+    'retentionDate': retentionDate.toIso8601String(),
+  });
+  
+  // Deserialize: convert keys back to DateTime and JSON back to HistoryMetaModel.
+  return result.map((key, value) => MapEntry(
+      DateTime.fromMillisecondsSinceEpoch(int.parse(key)),
+      List<HistoryMetaModel>.from(
+          (value as List).map((item) => HistoryMetaModel.fromJson(item)))));
 }
