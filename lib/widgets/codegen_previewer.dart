@@ -154,10 +154,14 @@ class ViewCodePane extends StatelessWidget {
                         showLabel: showLabel,
                       ),
                     ),
-                    SaveInDownloadsButton(
-                      content: stringToBytes(code),
-                      ext: codegenLanguage.ext,
-                      showLabel: showLabel,
+                    // TODO: Save to Downloads folder does not work in Mobile
+                    Visibility(
+                      visible: !kIsMobile,
+                      child: SaveInDownloadsButton(
+                        content: stringToBytes(code),
+                        ext: codegenLanguage.ext,
+                        showLabel: showLabel,
+                      ),
                     ),
                   ],
                 ),
