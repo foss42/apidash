@@ -125,17 +125,18 @@ class Dashboard extends ConsumerWidget {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => showModalBottomSheet(
-          context: context,
-          isScrollControlled: true,
-          builder: (context) => const Padding(
-            padding: EdgeInsets.all(16.0),
-            child: DashBotWidget(),
-          ),
-        ),
-        child: const Icon(Icons.help_outline),
-      ),
+      // TODO: Release DashBot
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () => showModalBottomSheet(
+      //     context: context,
+      //     isScrollControlled: true,
+      //     builder: (context) => const Padding(
+      //       padding: EdgeInsets.all(16.0),
+      //       child: DashBotWidget(),
+      //     ),
+      //   ),
+      //   child: const Icon(Icons.help_outline),
+      // ),
     );
   }
 }
