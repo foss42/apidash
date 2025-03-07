@@ -30,7 +30,7 @@ class DebugFeature {
         rawResponse is String ? rawResponse : jsonEncode(rawResponse);
     final statusCode = responseModel.statusCode ?? 0;
 
-    final prompt = '''
+    final prompt = """
 URGENT API DEBUG ANALYSIS
 
 **Request Overview:**
@@ -51,12 +51,12 @@ Provide a PRECISE, TEXT-ONLY explanation that:
 - Request Body: ${body ?? "Empty body"}
 
 **Response Context:**
-\`\`\`
+```
 $responseBody
-\`\`\`
+```
 
 Provide a CLEAR, ACTIONABLE solution in the SIMPLEST possible language.
-''';
+""";
 
     return _service.generateResponse(prompt);
   }

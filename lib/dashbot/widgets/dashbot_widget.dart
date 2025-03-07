@@ -6,10 +6,12 @@ import 'package:apidash/providers/providers.dart';
 import 'chat_bubble.dart';
 
 class DashBotWidget extends ConsumerStatefulWidget {
-  const DashBotWidget({Key? key}) : super(key: key);
+  const DashBotWidget({
+    super.key,
+  });
 
   @override
-  _DashBotWidgetState createState() => _DashBotWidgetState();
+  ConsumerState<DashBotWidget> createState() => _DashBotWidgetState();
 }
 
 class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
@@ -51,8 +53,8 @@ class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
         'message': response,
       });
     } catch (error, stackTrace) {
-      print('Error in _sendMessage: $error');
-      print('StackTrace: $stackTrace');
+      debugPrint('Error in _sendMessage: $error');
+      debugPrint('StackTrace: $stackTrace');
       ref.read(chatMessagesProvider.notifier).addMessage({
         'role': 'bot',
         'message': "Error: ${error.toString()}",

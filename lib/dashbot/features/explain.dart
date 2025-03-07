@@ -25,7 +25,7 @@ class ExplainFeature {
             .last
             .toUpperCase() ??
         "GET";
-    final endpoint = requestModel.httpRequestModel!.url!;
+    final endpoint = requestModel.httpRequestModel!.url;
     final headers = requestModel.httpRequestModel?.enabledHeadersMap ?? {};
     final parameters = requestModel.httpRequestModel?.enabledParamsMap ?? {};
     final body = requestModel.httpRequestModel?.body;
