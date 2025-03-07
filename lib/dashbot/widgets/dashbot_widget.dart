@@ -44,7 +44,8 @@ class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
     });
 
     try {
-      final response = await dashBotService.handleRequest(message, requestModel, responseModel);
+      final response = await dashBotService.handleRequest(
+          message, requestModel, responseModel);
       ref.read(chatMessagesProvider.notifier).addMessage({
         'role': 'bot',
         'message': response,
@@ -82,7 +83,9 @@ class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 4))],
+        boxShadow: const [
+          BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 4))
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -104,11 +107,13 @@ class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const Text('DashBot', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        const Text('DashBot',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
         IconButton(
           icon: const Icon(Icons.delete_sweep),
           tooltip: 'Clear Chat',
-          onPressed: () => ref.read(chatMessagesProvider.notifier).clearMessages(),
+          onPressed: () =>
+              ref.read(chatMessagesProvider.notifier).clearMessages(),
         ),
       ],
     );

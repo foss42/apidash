@@ -8,7 +8,8 @@ class DashBotService {
   late final ExplainFeature _explainFeature;
   late final DebugFeature _debugFeature;
 
-  DashBotService() : _client = OllamaClient(baseUrl: 'http://127.0.0.1:11434/api') {
+  DashBotService()
+      : _client = OllamaClient(baseUrl: 'http://127.0.0.1:11434/api') {
     _explainFeature = ExplainFeature(this);
     _debugFeature = DebugFeature(this);
   }
@@ -20,11 +21,14 @@ class DashBotService {
     return response.response.toString();
   }
 
-  Future<String> handleRequest(String input, RequestModel? requestModel, dynamic responseModel) async {
+  Future<String> handleRequest(
+      String input, RequestModel? requestModel, dynamic responseModel) async {
     if (input == "Explain API") {
-      return _explainFeature.explainLatestApi(requestModel: requestModel, responseModel: responseModel);
-    } else if(input == "Debug API") {
-       return _debugFeature.debugApi(requestModel: requestModel, responseModel: responseModel);
+      return _explainFeature.explainLatestApi(
+          requestModel: requestModel, responseModel: responseModel);
+    } else if (input == "Debug API") {
+      return _debugFeature.debugApi(
+          requestModel: requestModel, responseModel: responseModel);
     }
 
     return generateResponse(input);

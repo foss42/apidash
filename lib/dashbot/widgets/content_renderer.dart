@@ -22,7 +22,8 @@ Widget renderContent(BuildContext context, String text) {
 
   for (var match in matches) {
     if (match.start > lastEnd) {
-      children.add(_renderMarkdown(context, text.substring(lastEnd, match.start)));
+      children
+          .add(_renderMarkdown(context, text.substring(lastEnd, match.start)));
     }
 
     final language = match.group(1) ?? 'text';
@@ -55,7 +56,8 @@ Widget _renderMarkdown(BuildContext context, String markdown) {
 Widget _renderCodeBlock(BuildContext context, String language, String code) {
   if (language == 'json') {
     try {
-      final prettyJson = const JsonEncoder.withIndent('  ').convert(jsonDecode(code));
+      final prettyJson =
+          const JsonEncoder.withIndent('  ').convert(jsonDecode(code));
       return Container(
         padding: const EdgeInsets.all(8),
         color: Theme.of(context).colorScheme.surfaceContainerLow,
@@ -91,7 +93,8 @@ Widget _renderFallbackCode(BuildContext context, String code) {
     color: Theme.of(context).colorScheme.surfaceContainerLow,
     child: SelectableText(
       code,
-      style: const TextStyle(fontFamily: 'monospace', fontSize: 12, color: Colors.red),
+      style: const TextStyle(
+          fontFamily: 'monospace', fontSize: 12, color: Colors.red),
     ),
   );
 }
