@@ -33,8 +33,10 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
     HistoryRetentionPeriod? historyRetentionPeriod,
     String? workspaceFolderPath,
     bool? isSSLDisabled,
+    ProxySettings? proxySettings,
   }) async {
-    state = state.copyWith(
+    
+    final newState = state.copyWith(
       isDark: isDark,
       alwaysShowCollectionPaneScrollbar: alwaysShowCollectionPaneScrollbar,
       size: size,
@@ -47,7 +49,12 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
       historyRetentionPeriod: historyRetentionPeriod,
       workspaceFolderPath: workspaceFolderPath,
       isSSLDisabled: isSSLDisabled,
+      proxySettings: proxySettings,
     );
-    await setSettingsToSharedPrefs(state);
+        
+    if (newState != state) {
+      state = newState;
+      await setSettingsToSharedPrefs(state);
+    }
   }
 }
