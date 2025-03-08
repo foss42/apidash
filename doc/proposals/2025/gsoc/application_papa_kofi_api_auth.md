@@ -226,7 +226,7 @@ final tokenCredentials = await authorization.requestTokenCredentials(
 ```
 where `authorization` is an instance of the Authorization class which is created with client credentials and platform definition (Platforms include X, Apple, Google etc) provided by the aforementioned library. 
 It is important to note however that the OAuth1.0 is being deprecated in favor of the 2.0 framework. Learn more [oauth1](https://oauth.net/core/1.0/) <br/>
-![oauth1](../gsoc/images/oauth1.png)
+![oauth1](images/oauth1.png)
 
 
 7. OAuth 2.0
