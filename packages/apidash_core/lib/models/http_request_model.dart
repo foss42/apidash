@@ -28,6 +28,8 @@ class HttpRequestModel with _$HttpRequestModel {
     String? body,
     String? query,
     List<FormDataModel>? formData,
+    @Default(AuthType.none) AuthType authType,
+    Map<String, dynamic>? authParams,
   }) = _HttpRequestModel;
 
   factory HttpRequestModel.fromJson(Map<String, Object?> json) =>
@@ -68,4 +70,5 @@ class HttpRequestModel with _$HttpRequestModel {
   bool get hasFileInFormData => formDataList
       .map((e) => e.type == FormDataType.file)
       .any((element) => element);
+  bool get hasAuthorization => authType != AuthType.none && (authParams?.isNotEmpty ?? false);
 }
