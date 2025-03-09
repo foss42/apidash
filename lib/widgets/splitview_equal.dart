@@ -1,4 +1,3 @@
-import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:multi_split_view/multi_split_view.dart';
 
@@ -30,10 +29,9 @@ class EqualSplitView extends StatelessWidget {
       data: MultiSplitViewThemeData(
         dividerThickness: 3,
         dividerPainter: DividerPainters.background(
-          color: Theme.of(context).colorScheme.surfaceContainerHighest,
-          highlightedColor: Theme.of(context).colorScheme.outline.withOpacity(
-                kHintOpacity,
-              ),
+          color: Theme.of(context).colorScheme.surfaceContainer,
+          highlightedColor:
+              Theme.of(context).colorScheme.surfaceContainerHighest,
           animationEnabled: false,
         ),
       ),

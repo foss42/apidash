@@ -118,12 +118,7 @@ class ViewCodePane extends StatelessWidget {
         ? kLightCodeTheme
         : kDarkCodeTheme;
     final textContainerdecoration = BoxDecoration(
-      color: Color.alphaBlend(
-          (Theme.of(context).brightness == Brightness.dark
-                  ? Theme.of(context).colorScheme.onPrimaryContainer
-                  : Theme.of(context).colorScheme.primaryContainer)
-              .withOpacity(kForegroundOpacity),
-          Theme.of(context).colorScheme.surface),
+      color: Theme.of(context).colorScheme.surfaceContainerLow,
       border: Border.all(
           color: Theme.of(context).colorScheme.surfaceContainerHighest),
       borderRadius: kBorderRadius8,
@@ -159,10 +154,14 @@ class ViewCodePane extends StatelessWidget {
                         showLabel: showLabel,
                       ),
                     ),
-                    SaveInDownloadsButton(
-                      content: stringToBytes(code),
-                      ext: codegenLanguage.ext,
-                      showLabel: showLabel,
+                    // TODO: Save to Downloads folder does not work in Mobile
+                    Visibility(
+                      visible: !kIsMobile,
+                      child: SaveInDownloadsButton(
+                        content: stringToBytes(code),
+                        ext: codegenLanguage.ext,
+                        showLabel: showLabel,
+                      ),
                     ),
                   ],
                 ),

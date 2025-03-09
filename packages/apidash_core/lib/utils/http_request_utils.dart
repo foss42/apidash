@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:apidash_core/consts.dart';
-import 'package:collection/collection.dart';
 import 'package:seed/seed.dart';
 import '../models/models.dart';
 import 'graphql_utils.dart';
@@ -55,7 +54,7 @@ List<Map<String, String>>? rowsToFormDataMapList(
                   "value": formData.value,
                   "type": formData.type.name,
                 })
-      .whereNotNull()
+      .nonNulls
       .toList();
   return finalMap;
 }
