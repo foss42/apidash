@@ -22,6 +22,7 @@ export 'dialog_text.dart';
 export 'drag_and_drop_area.dart';
 export 'dropdown_codegen.dart';
 export 'dropdown_content_type.dart';
+export 'dropdown_auth_type.dart';
 export 'dropdown_formdata.dart';
 export 'dropdown_http_method.dart';
 export 'dropdown_import_format.dart';
