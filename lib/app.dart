@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:apidash/screens/mobile/onboarding/onboarding.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_portal/flutter_portal.dart';
@@ -138,7 +139,7 @@ class DashApp extends ConsumerWidget {
                   !kIsLinux && !kIsMobile
                       ? const App()
                       : context.isMediumWindow
-                          ? const MobileDashboard()
+                          ? const MApp()
                           : const Dashboard(),
                   if (kIsWindows)
                     SizedBox(

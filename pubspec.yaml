@@ -69,6 +69,10 @@ dependencies:
     git:
       url: https://github.com/google/flutter-desktop-embedding.git
       path: plugins/window_size
+  get: ^4.7.2
+  iconsax: ^0.0.8
+  get_storage: ^2.1.1
+  smooth_page_indicator: ^1.2.1
 
 dependency_overrides:
   extended_text_field: ^16.0.0
@@ -93,4 +97,4 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/
+    - assets/images/
