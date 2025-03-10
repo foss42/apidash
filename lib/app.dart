@@ -10,7 +10,6 @@ import 'providers/providers.dart';
 import 'services/services.dart';
 import 'screens/screens.dart';
 import 'consts.dart';
-import 'package:apidash/providers/update_provider.dart';
 
 class App extends ConsumerStatefulWidget {
   const App({super.key});
@@ -102,33 +101,11 @@ class _AppState extends ConsumerState<App> with WindowListener {
   }
 }
 
-class DashApp extends ConsumerStatefulWidget {
+class DashApp extends ConsumerWidget {
   const DashApp({super.key});
 
   @override
-  ConsumerState<DashApp> createState() => _DashAppState();
-}
-
-class _DashAppState extends ConsumerState<DashApp> {
-  @override
-  void initState() {
-    super.initState();
-    // Check for updates when app starts - using direct service call instead of provider
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      try {
-        final updateService = ref.read(updateProvider);
-        final updateInfo = await updateService.checkForUpdate();
-        if (updateInfo != null && updateInfo.isNotEmpty) {
-          ref.read(updateAvailableProvider.notifier).state = true;
-        }
-      } catch (e) {
-        debugPrint('❌ Error in update check: $e');
-      }
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final isDarkMode =
         ref.watch(settingsProvider.select((value) => value.isDark));
     final workspaceFolderPath = ref

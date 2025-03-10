@@ -1,9 +1,21 @@
 import 'dart:io';
+import 'dart:isolate';
 
 import 'package:dio/dio.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+// Data class for passing information to isolate
+class _IsolateUpdateData {
+  final SendPort sendPort;
+  final String currentVersion;
+
+  _IsolateUpdateData({
+    required this.sendPort,
+    required this.currentVersion,
+  });
+}
 
 class UpdateService {
   static const String _githubApiUrl = 'https://api.github.com/repos/foss42/apidash/releases/latest';
@@ -15,35 +27,75 @@ class UpdateService {
       final packageInfo = await PackageInfo.fromPlatform();
       final currentVersion = packageInfo.version;
       
+      // Use isolate to fetch and process update information
+      final updateInfo = await _checkForUpdateInIsolate(currentVersion);
+      
+      return updateInfo;
+    } catch (e) {
+      return null;
+    }
+  }
+  
+  Future<Map<String, dynamic>?> _checkForUpdateInIsolate(String currentVersion) async {
+    final receivePort = ReceivePort();
+    
+    // Create isolate and pass data
+    final isolate = await Isolate.spawn(
+      _isolateUpdateChecker, 
+      _IsolateUpdateData(
+        sendPort: receivePort.sendPort,
+        currentVersion: currentVersion,
+      ),
+    );
+    
+    final result = await receivePort.first as Map<String, dynamic>?;
+    
+    receivePort.close();
+    isolate.kill();
+    
+    return result;
+  }
+  
+  // Static method to run in isolate
+  static void _isolateUpdateChecker(_IsolateUpdateData data) async {
+    try {
       // Fetch latest release from GitHub using Dio
       final dio = Dio();
       dio.options.headers['User-Agent'] = 'APIDash';
       final response = await dio.get(_githubApiUrl);
       
+      Map<String, dynamic>? result;
+      
       if (response.statusCode == 200) {
-        final data = response.data;
-        final latestVersion = data['tag_name'].toString().replaceAll('v', '');
+        final responseData = response.data;
+        final latestVersion = responseData['tag_name'].toString().replaceAll('v', '');
         
-        // Detailed version comparison logging
-        final isUpdateAvailable = _shouldUpdate(currentVersion, latestVersion);
+        final isUpdateAvailable = _isolateShouldUpdate(data.currentVersion, latestVersion);
         
         if (isUpdateAvailable) {
-          return {
-            'currentVersion': currentVersion,
+          result = {
+            'currentVersion': data.currentVersion,
             'latestVersion': latestVersion,
-            'assets': data['assets'],
-            'releaseNotes': data['body'] ?? 'No release notes available.',
+            'assets': responseData['assets'],
+            'releaseNotes': responseData['body'] ?? 'No release notes available.',
           };
-        } 
-      } 
-      return null;
+        }
+      }
+      
+      data.sendPort.send(result);
     } catch (e) {
-      return null;
+      data.sendPort.send(null);
+    } finally {
+      Isolate.exit();
     }
   }
 
   bool _shouldUpdate(String currentVersion, String latestVersion) {
-    // Detailed version comparison
+    return _isolateShouldUpdate(currentVersion, latestVersion);
+  }
+  
+  // Static version of _shouldUpdate to use in isolate
+  static bool _isolateShouldUpdate(String currentVersion, String latestVersion) {
     final current = currentVersion.split('.').map(int.parse).toList();
     final latest = latestVersion.split('.').map(int.parse).toList();
     
