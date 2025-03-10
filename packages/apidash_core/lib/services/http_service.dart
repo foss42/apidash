@@ -40,18 +40,22 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
 
         if (kMethodsWithBody.contains(requestModel.method)) {
           var requestBody = requestModel.body;
-          if (requestBody != null && !isMultiPartRequest) {
-            var contentLength = utf8.encode(requestBody).length;
-            if (contentLength > 0) {
-              body = requestBody;
-              headers[HttpHeaders.contentLengthHeader] =
-                  contentLength.toString();
-              if (!requestModel.hasContentTypeHeader) {
-                headers[HttpHeaders.contentTypeHeader] =
-                    requestModel.bodyContentType.header;
-              }
-            }
-          }
+          //   if (requestBody != null && !isMultiPartRequest) {
+          //     //here we are doing length correction and encoder is hardcoded to utf-8
+          //     // var contentLength = utf8.encode(requestBody).length;
+          //     // if (contentLength > 0) {
+          body = requestBody;
+          //     //   headers[HttpHeaders.contentLengthHeader] =
+          //     //       contentLength.toString();
+          //     //here is the issue
+          //     if (!requestModel.hasContentTypeHeader) {
+          //       headers[HttpHeaders.contentTypeHeader] =
+          //           requestModel.bodyContentType.header;
+          //       // }
+          //     } else {
+          //     }
+          //   }
+
           if (isMultiPartRequest) {
             var multiPartRequest = http.MultipartRequest(
               requestModel.method.name.toUpperCase(),
