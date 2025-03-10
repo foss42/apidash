@@ -23,13 +23,17 @@ void main() async {
     settingsModel = settingsModel?.copyWithPath(workspaceFolderPath: null);
   }
 
+  final container = ProviderContainer(
+    overrides: [
+      settingsProvider.overrideWith(
+        (ref) => ThemeStateNotifier(settingsModel: settingsModel),
+      )
+    ],
+  );
+
   runApp(
-    ProviderScope(
-      overrides: [
-        settingsProvider.overrideWith(
-          (ref) => ThemeStateNotifier(settingsModel: settingsModel),
-        )
-      ],
+    UncontrolledProviderScope(
+      container: container,
       child: const DashApp(),
     ),
   );
@@ -39,8 +43,12 @@ void main() async {
     // Delay update check to ensure app is fully initialized
     Timer(const Duration(seconds: 3), () async {
       try {
-        final container = ProviderContainer();
-        await container.read(updateCheckProvider.future);
+        // Use the same container as the app
+        container.read(updateProvider).checkForUpdate().then((updateInfo) {
+          if (updateInfo != null && updateInfo.isNotEmpty) {
+            container.read(updateAvailableProvider.notifier).state = true;
+          }
+        });
       } catch (e) {
         debugPrint('❌ Error in update check: $e');
       }

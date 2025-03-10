@@ -19,11 +19,9 @@ class UpdateService {
       final dio = Dio();
       dio.options.headers['User-Agent'] = 'APIDash';
       final response = await dio.get(_githubApiUrl);
-      print(response.statusCode);
       
       if (response.statusCode == 200) {
         final data = response.data;
-        print(data['tag_name'].toString());
         final latestVersion = data['tag_name'].toString().replaceAll('v', '');
         
         // Detailed version comparison logging
@@ -45,21 +43,29 @@ class UpdateService {
   }
 
   bool _shouldUpdate(String currentVersion, String latestVersion) {
-
     // Detailed version comparison
     final current = currentVersion.split('.').map(int.parse).toList();
     final latest = latestVersion.split('.').map(int.parse).toList();
     
-    // Compare each part of the version
-    for (var i = 0; i < current.length; i++) {
-      if (latest[i] > current[i]) {
-        return true;
-      }
-      if (latest[i] < current[i]) {
-        return false;
-      }
+    // Compare major version
+    if (latest[0] > current[0]) {
+      return true;
+    } else if (latest[0] < current[0]) {
+      return false;
     }
-  
+    
+    // Compare minor version
+    if (latest[1] > current[1]) {
+      return true;
+    } else if (latest[1] < current[1]) {
+      return false;
+    }
+    
+    // Compare patch version
+    if (latest[2] > current[2]) {
+      return true;
+    }
+    
     return false;
   }
 

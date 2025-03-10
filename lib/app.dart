@@ -113,9 +113,17 @@ class _DashAppState extends ConsumerState<DashApp> {
   @override
   void initState() {
     super.initState();
-    // Check for updates when app starts
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(updateCheckProvider);
+    // Check for updates when app starts - using direct service call instead of provider
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      try {
+        final updateService = ref.read(updateProvider);
+        final updateInfo = await updateService.checkForUpdate();
+        if (updateInfo != null && updateInfo.isNotEmpty) {
+          ref.read(updateAvailableProvider.notifier).state = true;
+        }
+      } catch (e) {
+        debugPrint('❌ Error in update check: $e');
+      }
     });
   }
 
