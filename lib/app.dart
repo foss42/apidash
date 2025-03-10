@@ -10,6 +10,7 @@ import 'providers/providers.dart';
 import 'services/services.dart';
 import 'screens/screens.dart';
 import 'consts.dart';
+import 'package:apidash/providers/update_provider.dart';
 
 class App extends ConsumerStatefulWidget {
   const App({super.key});
@@ -101,11 +102,25 @@ class _AppState extends ConsumerState<App> with WindowListener {
   }
 }
 
-class DashApp extends ConsumerWidget {
+class DashApp extends ConsumerStatefulWidget {
   const DashApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<DashApp> createState() => _DashAppState();
+}
+
+class _DashAppState extends ConsumerState<DashApp> {
+  @override
+  void initState() {
+    super.initState();
+    // Check for updates when app starts
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(updateCheckProvider);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final isDarkMode =
         ref.watch(settingsProvider.select((value) => value.isDark));
     final workspaceFolderPath = ref

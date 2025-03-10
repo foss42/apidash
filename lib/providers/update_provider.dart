@@ -5,7 +5,14 @@ final updateProvider = Provider((ref) => UpdateService());
 
 final updateCheckProvider = FutureProvider.autoDispose((ref) async {
   final updateService = ref.watch(updateProvider);
-  return await updateService.checkForUpdate();
+  final updateInfo = await updateService.checkForUpdate();
+  
+  // Update the update available state
+  if (updateInfo != null && updateInfo.isNotEmpty) {
+    ref.read(updateAvailableProvider.notifier).state = true;
+  }
+  
+  return updateInfo;
 });
 
 class UpdateNotifier extends StateNotifier<bool> {
@@ -19,3 +26,6 @@ class UpdateNotifier extends StateNotifier<bool> {
 final updateCheckingProvider = StateNotifierProvider<UpdateNotifier, bool>((ref) {
   return UpdateNotifier();
 });
+
+// Add a provider to track if an update is available
+final updateAvailableProvider = StateProvider<bool>((ref) => false);

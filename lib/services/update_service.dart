@@ -1,6 +1,6 @@
-import 'dart:convert';
 import 'dart:io';
-import 'package:http/http.dart' as http;
+
+import 'package:dio/dio.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -15,21 +15,21 @@ class UpdateService {
       final packageInfo = await PackageInfo.fromPlatform();
       final currentVersion = packageInfo.version;
       
-      // Fetch latest release from GitHub
-      final response = await http.get(Uri.parse(_githubApiUrl));
+      // Fetch latest release from GitHub using Dio
+      final dio = Dio();
+      dio.options.headers['User-Agent'] = 'APIDash';
+      final response = await dio.get(_githubApiUrl);
+      print(response.statusCode);
       
       if (response.statusCode == 200) {
-        final data = json.decode(response.body);
+        final data = response.data;
+        print(data['tag_name'].toString());
         final latestVersion = data['tag_name'].toString().replaceAll('v', '');
-        
-        // Check shared preferences for skipped version
-        final prefs = await SharedPreferences.getInstance();
-        final skippedVersion = prefs.getString(_skipVersionKey);
         
         // Detailed version comparison logging
         final isUpdateAvailable = _shouldUpdate(currentVersion, latestVersion);
         
-        if (isUpdateAvailable && latestVersion != skippedVersion) {
+        if (isUpdateAvailable) {
           return {
             'currentVersion': currentVersion,
             'latestVersion': latestVersion,
