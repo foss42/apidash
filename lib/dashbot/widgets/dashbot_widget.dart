@@ -143,6 +143,14 @@ class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             ),
           ),
+        ElevatedButton.icon(
+          onPressed: () => _sendMessage("Document API"),
+          icon: const Icon(Icons.description_outlined),
+          label: const Text("Document"),
+          style: ElevatedButton.styleFrom (
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          ),
+        ),
       ],
     );
   }
