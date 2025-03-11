@@ -1,13 +1,14 @@
 import 'package:apidash_core/apidash_core.dart';
 import '../consts.dart';
+import '../utils/jwt_utils.dart'; // Import JWT utilities
 
 String getRequestTitleFromUrl(String? url) {
-  if (url == null || url.trim() == "") {
+  if (url == null || url.trim().isEmpty) {
     return kUntitled;
   }
   if (url.contains("://")) {
     String rem = url.split("://")[1];
-    if (rem.trim() == "") {
+    if (rem.trim().isEmpty) {
       return kUntitled;
     }
     return rem;
@@ -47,4 +48,17 @@ String getRequestTitleFromUrl(String? url) {
     );
   }
   return (kNoBodyViewOptions, null);
+}
+
+// Utility function to get authorization header for API requests
+Future<Map<String, String>> getAuthHeaders() async {
+  final token = await JwtUtils.getToken();
+  final headers = <String, String>{
+    'Content-Type': 'application/json',
+  };
+
+  if (token != null) {
+    headers['Authorization'] = 'Bearer $token';
+  }
+  return headers;
 }

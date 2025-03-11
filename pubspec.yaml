@@ -19,7 +19,11 @@ dependencies:
   data_table_2: 2.5.16
   dart_style: ^3.0.1
   desktop_drop: ^0.5.0
+  dart_jsonwebtoken: ^2.12.2
   extended_text_field: ^16.0.0
+  flutter_secure_storage: ^8.0.0
+  shared_preferences: ^2.2.0
+  jwt_decoder: ^2.0.1
   file_selector: ^1.0.3
   flex_color_scheme: ^8.1.1
   flutter_highlighter: ^0.1.0
@@ -58,7 +62,7 @@ dependencies:
   riverpod: ^2.5.1
   scrollable_positioned_list: ^0.3.8
   share_plus: ^10.1.4
-  shared_preferences: ^2.5.2
+  http: ^1.1.0
   url_launcher: ^6.2.5
   uuid: ^4.5.0
   vector_graphics_compiler: ^1.1.9+1
