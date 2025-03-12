@@ -55,8 +55,8 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
                 }
               }
             }
-            final encoding = Encoding.getByName(encodingName) ?? utf8;
-            var contentLength = encoding.encode(requestBody).length;
+            final encoding = Encoding.getByName(encodingName);
+            var contentLength = encoding!.encode(requestBody).length;
             if (contentLength > 0) {
               body = requestBody;
               headers[HttpHeaders.contentLengthHeader] =
