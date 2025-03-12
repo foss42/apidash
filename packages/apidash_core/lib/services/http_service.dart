@@ -41,7 +41,22 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
         if (kMethodsWithBody.contains(requestModel.method)) {
           var requestBody = requestModel.body;
           if (requestBody != null && !isMultiPartRequest) {
-            var contentLength = utf8.encode(requestBody).length;
+            var encodingName = "utf-8";
+            if (requestModel.headers != null) {
+              for (var header in requestModel.headers!) {
+                if (header.name.toLowerCase() == "content-type") {
+                  final charset =
+                      RegExp(r'charset=([^\s;]+)', caseSensitive: false)
+                          .firstMatch(header.value);
+                  if (charset != null) {
+                    encodingName = charset.group(1)!;
+                  }
+                  break;
+                }
+              }
+            }
+            final encoding = Encoding.getByName(encodingName) ?? utf8;
+            var contentLength = encoding.encode(requestBody).length;
             if (contentLength > 0) {
               body = requestBody;
               headers[HttpHeaders.contentLengthHeader] =
