@@ -1,8 +1,8 @@
-// lib/dashbot/widgets/dashbot_widget.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/dashbot/providers/dashbot_providers.dart';
 import 'package:apidash/providers/providers.dart';
+import 'test_runner_widget.dart';
 import 'chat_bubble.dart';
 
 class DashBotWidget extends ConsumerStatefulWidget {
@@ -18,6 +18,8 @@ class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
   final TextEditingController _controller = TextEditingController();
   late ScrollController _scrollController;
   bool _isLoading = false;
+  bool _showTestRunner = false;
+  String _testCases = '';
 
   @override
   void initState() {
@@ -34,6 +36,12 @@ class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
 
   Future<void> _sendMessage(String message) async {
     if (message.trim().isEmpty) return;
+
+    // Reset test runner state when sending a new message
+    setState(() {
+      _showTestRunner = false;
+    });
+
     final dashBotService = ref.read(dashBotServiceProvider);
     final requestModel = ref.read(selectedRequestModelProvider);
     final responseModel = requestModel?.httpResponseModel;
@@ -48,10 +56,19 @@ class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
     try {
       final response = await dashBotService.handleRequest(
           message, requestModel, responseModel);
+
       ref.read(chatMessagesProvider.notifier).addMessage({
         'role': 'bot',
         'message': response,
       });
+
+      // If message was "Test API", show the test runner
+      if (message == "Test API") {
+        setState(() {
+          _showTestRunner = true;
+          _testCases = response;
+        });
+      }
     } catch (error, stackTrace) {
       debugPrint('Error in _sendMessage: $error');
       debugPrint('StackTrace: $stackTrace');
@@ -78,30 +95,38 @@ class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
     final statusCode = requestModel?.httpResponseModel?.statusCode;
     final showDebugButton = statusCode != null && statusCode >= 400;
 
-    return Container(
-      height: 450,
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: const [
-          BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 4))
+    return Column(
+      children: [
+        Container(
+          height: 450,
+          width: double.infinity,
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: const [
+              BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 4))
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildHeader(context),
+              const SizedBox(height: 12),
+              _buildQuickActions(showDebugButton),
+              const SizedBox(height: 12),
+              Expanded(child: _buildChatArea(messages)),
+              if (_isLoading) _buildLoadingIndicator(),
+              const SizedBox(height: 10),
+              _buildInputArea(context),
+            ],
+          ),
+        ),
+        if (_showTestRunner) ...[
+          const SizedBox(height: 20),
+          TestRunnerWidget(testCases: _testCases),
         ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildHeader(context),
-          const SizedBox(height: 12),
-          _buildQuickActions(showDebugButton),
-          const SizedBox(height: 12),
-          Expanded(child: _buildChatArea(messages)),
-          if (_isLoading) _buildLoadingIndicator(),
-          const SizedBox(height: 10),
-          _buildInputArea(context),
-        ],
-      ),
+      ],
     );
   }
 
@@ -114,8 +139,12 @@ class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
         IconButton(
           icon: const Icon(Icons.delete_sweep),
           tooltip: 'Clear Chat',
-          onPressed: () =>
-              ref.read(chatMessagesProvider.notifier).clearMessages(),
+          onPressed: () {
+            ref.read(chatMessagesProvider.notifier).clearMessages();
+            setState(() {
+              _showTestRunner = false;
+            });
+          },
         ),
       ],
     );
@@ -147,7 +176,15 @@ class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
           onPressed: () => _sendMessage("Document API"),
           icon: const Icon(Icons.description_outlined),
           label: const Text("Document"),
-          style: ElevatedButton.styleFrom (
+          style: ElevatedButton.styleFrom(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          ),
+        ),
+        ElevatedButton.icon(
+          onPressed: () => _sendMessage("Test API"),
+          icon: const Icon(Icons.science_outlined),
+          label: const Text("Test"),
+          style: ElevatedButton.styleFrom(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           ),
         ),
@@ -193,13 +230,19 @@ class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
                 hintText: 'Ask DashBot...',
                 border: InputBorder.none,
               ),
-              onSubmitted: _sendMessage,
+              onSubmitted: (value) {
+                _sendMessage(value);
+                _controller.clear();
+              },
               maxLines: 1,
             ),
           ),
           IconButton(
             icon: const Icon(Icons.send),
-            onPressed: () => _sendMessage(_controller.text),
+            onPressed: () {
+              _sendMessage(_controller.text);
+              _controller.clear();
+            },
           ),
         ],
       ),
