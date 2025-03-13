@@ -30,10 +30,10 @@ _$EnvironmentVariableModelImpl _$$EnvironmentVariableModelImplFromJson(
     _$EnvironmentVariableModelImpl(
       key: json['key'] as String,
       value: json['value'] as String,
-      type:
-          $enumDecodeNullable(_$EnvironmentVariableTypeEnumMap, json['type']) ??
-              EnvironmentVariableType.variable,
+      type: $enumDecodeNullable(_$EnvironmentVariableTypeEnumMap, json['type']) ??
+          EnvironmentVariableType.variable,
       enabled: json['enabled'] as bool? ?? false,
+      fromOS: json['fromOS'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$$EnvironmentVariableModelImplToJson(
@@ -43,6 +43,7 @@ Map<String, dynamic> _$$EnvironmentVariableModelImplToJson(
       'value': instance.value,
       'type': _$EnvironmentVariableTypeEnumMap[instance.type]!,
       'enabled': instance.enabled,
+      'fromOS': instance.fromOS,
     };
 
 const _$EnvironmentVariableTypeEnumMap = {
