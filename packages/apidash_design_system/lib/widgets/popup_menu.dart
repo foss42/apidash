@@ -11,6 +11,8 @@ class ADPopupMenu<T> extends StatelessWidget {
     this.width,
     this.isOutlined = false,
     this.borderColor,
+    this.itemColors,
+    this.valueColor,
   });
 
   final String? value;
@@ -20,6 +22,8 @@ class ADPopupMenu<T> extends StatelessWidget {
   final double? width;
   final bool isOutlined;
   final Color? borderColor;
+  final List<Color?>? itemColors;
+  final Color? valueColor;
 
   @override
   Widget build(BuildContext context) {
@@ -28,15 +32,42 @@ class ADPopupMenu<T> extends StatelessWidget {
       tooltip: tooltip,
       surfaceTintColor: kColorTransparent,
       constraints: BoxConstraints(minWidth: containerWidth),
-      itemBuilder: (BuildContext context) => values
-          .map((item) => PopupMenuItem<T>(
-                value: item.$1,
+      itemBuilder: (BuildContext context) => List.generate(
+        values.length,
+        (index) {
+          final item = values.elementAt(index);
+          final Color? itemColor = itemColors != null && index < itemColors!.length
+              ? itemColors![index]
+              : null;
+
+          return PopupMenuItem<T>(
+            value: item.$1,
+            child: Row(
+              children: [
+                if (itemColor != null)
+                  Container(
+                    width: 16,
+                    height: 16,
+                    margin: const EdgeInsets.only(right: 8),
+              decoration: BoxDecoration(
+                        color: itemColor,
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: Theme.of(context).colorScheme.outline,
+                        width: 1,
+                      ),
+              ),
+                  ),
+                Expanded(
                 child: Text(
                   item.$2 ?? "",
                   style: kTextStylePopupMenuItem,
                 ),
-              ))
-          .toList(),
+              ),
+              ],            ),
+          );
+        },
+      ),
       onSelected: onChanged,
       child: Container(
         width: containerWidth,
@@ -44,6 +75,20 @@ class ADPopupMenu<T> extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            if (valueColor != null)
+              Container(
+                width: 16,
+                height: 16,
+                margin: const EdgeInsets.only(right: 8),
+                decoration: BoxDecoration(
+                  color: valueColor,
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.outline,
+                    width: 1,
+                  ),
+                ),
+              ),
             Expanded(
               child: Text(
                 value ?? "",

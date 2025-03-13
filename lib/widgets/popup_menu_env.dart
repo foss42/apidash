@@ -2,6 +2,7 @@ import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash/utils/utils.dart';
+import 'package:apidash/utils/color_utils.dart';
 import '../consts.dart';
 
 class EnvironmentPopupMenu extends StatelessWidget {
@@ -35,6 +36,9 @@ class EnvironmentPopupMenu extends StatelessWidget {
       tooltip: "Select Environment",
       onChanged: onChanged,
       isOutlined: true,
+      // Pass the color for each environment to display
+      itemColors: options?.map((e) => e.color.isNotEmpty ? hexToColor(e.color) : null).toList(),
+      valueColor: value?.color.isNotEmpty == true ? hexToColor(value!.color) : null,
     );
   }
 }
