@@ -50,8 +50,8 @@ Widget _getAnimatedText(String text, {bool isTitle = false}) {
   }
 
 void onCompleted(BuildContext context)async {
-     await setOnboardingStatus();
-    Navigator.of(context,rootNavigator: true).pushReplacement(
+   
+    Navigator.of(context,rootNavigator: true).push(
     PageRouteBuilder(
       transitionDuration: const Duration(seconds: 1), 
       pageBuilder: (context, animation, secondaryAnimation) => const DashApp(),
@@ -69,6 +69,7 @@ void onCompleted(BuildContext context)async {
       },
     ),
   );
+    await setOnboardingStatus();
 
 
 }
