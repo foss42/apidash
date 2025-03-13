@@ -19,7 +19,7 @@ Proposed solution -
 When the API responses are of type xml/json we can show additional advanced preview action buttons on the
 response widget. eg : Data table, Chart, Summary
 
-\*\*12-Mar-2025 - Proof of concept/ update
+#12-Mar-2025 - Proof of concept/ update
 
 I executed a quick proof of concept using chatgpt and the results were amazing.
 
