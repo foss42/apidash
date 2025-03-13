@@ -6,9 +6,7 @@ import 'test_runner_widget.dart';
 import 'chat_bubble.dart';
 
 class DashBotWidget extends ConsumerStatefulWidget {
-  const DashBotWidget({
-    super.key,
-  });
+  const DashBotWidget({super.key});
 
   @override
   ConsumerState<DashBotWidget> createState() => _DashBotWidgetState();
@@ -18,8 +16,6 @@ class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
   final TextEditingController _controller = TextEditingController();
   late ScrollController _scrollController;
   bool _isLoading = false;
-  bool _showTestRunner = false;
-  String _testCases = '';
 
   @override
   void initState() {
@@ -37,11 +33,6 @@ class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
   Future<void> _sendMessage(String message) async {
     if (message.trim().isEmpty) return;
 
-    // Reset test runner state when sending a new message
-    setState(() {
-      _showTestRunner = false;
-    });
-
     final dashBotService = ref.read(dashBotServiceProvider);
     final requestModel = ref.read(selectedRequestModelProvider);
     final responseModel = requestModel?.httpResponseModel;
@@ -57,18 +48,15 @@ class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
       final response = await dashBotService.handleRequest(
           message, requestModel, responseModel);
 
+      // If "Test API" is requested, append a button to the response
+      final botMessage = message == "Test API"
+          ? "$response\n\n**[Run Test Cases]**"
+          : response;
+
       ref.read(chatMessagesProvider.notifier).addMessage({
         'role': 'bot',
-        'message': response,
+        'message': botMessage,
       });
-
-      // If message was "Test API", show the test runner
-      if (message == "Test API") {
-        setState(() {
-          _showTestRunner = true;
-          _testCases = response;
-        });
-      }
     } catch (error, stackTrace) {
       debugPrint('Error in _sendMessage: $error');
       debugPrint('StackTrace: $stackTrace');
@@ -88,6 +76,19 @@ class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
     }
   }
 
+  void _showTestRunner(String testCases) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        child: SizedBox(
+          width: MediaQuery.of(context).size.width * 0.8,
+          height: 500,
+          child: TestRunnerWidget(testCases: testCases),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final messages = ref.watch(chatMessagesProvider);
@@ -95,38 +96,30 @@ class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
     final statusCode = requestModel?.httpResponseModel?.statusCode;
     final showDebugButton = statusCode != null && statusCode >= 400;
 
-    return Column(
-      children: [
-        Container(
-          height: 450,
-          width: double.infinity,
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface,
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: const [
-              BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 4))
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildHeader(context),
-              const SizedBox(height: 12),
-              _buildQuickActions(showDebugButton),
-              const SizedBox(height: 12),
-              Expanded(child: _buildChatArea(messages)),
-              if (_isLoading) _buildLoadingIndicator(),
-              const SizedBox(height: 10),
-              _buildInputArea(context),
-            ],
-          ),
-        ),
-        if (_showTestRunner) ...[
-          const SizedBox(height: 20),
-          TestRunnerWidget(testCases: _testCases),
+    return Container(
+      height: 450,
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: const [
+          BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 4))
         ],
-      ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildHeader(context),
+          const SizedBox(height: 12),
+          _buildQuickActions(showDebugButton),
+          const SizedBox(height: 12),
+          Expanded(child: _buildChatArea(messages)),
+          if (_isLoading) _buildLoadingIndicator(),
+          const SizedBox(height: 10),
+          _buildInputArea(context),
+        ],
+      ),
     );
   }
 
@@ -141,9 +134,6 @@ class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
           tooltip: 'Clear Chat',
           onPressed: () {
             ref.read(chatMessagesProvider.notifier).clearMessages();
-            setState(() {
-              _showTestRunner = false;
-            });
           },
         ),
       ],
@@ -199,8 +189,30 @@ class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
       itemCount: messages.length,
       itemBuilder: (context, index) {
         final message = messages.reversed.toList()[index];
+        final isBot = message['role'] == 'bot';
+        final text = message['message'] as String;
+
+        // Check if the message contains the "Run Test Cases" button
+        if (isBot && text.contains("[Run Test Cases]")) {
+          final testCases = text.replaceAll("\n\n**[Run Test Cases]**", "");
+          return Column(
+            crossAxisAlignment:
+            isBot ? CrossAxisAlignment.start : CrossAxisAlignment.end,
+            children: [
+              ChatBubble(message: testCases, isUser: false),
+              Padding(
+                padding: const EdgeInsets.only(left: 12, top: 4, bottom: 4),
+                child: ElevatedButton(
+                  onPressed: () => _showTestRunner(testCases),
+                  child: const Text("Run Test Cases"),
+                ),
+              ),
+            ],
+          );
+        }
+
         return ChatBubble(
-          message: message['message'],
+          message: text,
           isUser: message['role'] == 'user',
         );
       },

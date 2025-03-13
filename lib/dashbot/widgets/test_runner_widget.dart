@@ -27,8 +27,7 @@ class _TestRunnerWidgetState extends ConsumerState<TestRunnerWidget> {
   }
 
   void _parseTestCases() {
-    // Basic parsing of cURL commands from the text
-    final curlRegex = RegExp(r'```(.*?)curl\s+(.*?)```', dotAll: true);
+    final curlRegex = RegExp(r'```bash\ncurl\s+(.*?)\n```', dotAll: true);
     final descriptionRegex = RegExp(r'###\s*(.*?)\n', dotAll: true);
 
     final curlMatches = curlRegex.allMatches(widget.testCases);
@@ -43,7 +42,7 @@ class _TestRunnerWidgetState extends ConsumerState<TestRunnerWidget> {
         description = descMatches.elementAt(index).group(1)?.trim();
       }
 
-      final curlCommand = match.group(2)?.trim() ?? "";
+      final curlCommand = match.group(1)?.trim() ?? "";
 
       tests.add({
         'description': description,
@@ -71,34 +70,22 @@ class _TestRunnerWidgetState extends ConsumerState<TestRunnerWidget> {
     final command = test['command'];
 
     try {
-      // Parse curl command to make HTTP request
-      // This is a simplified version - a real implementation would need to handle all curl options
-      final urlMatch = RegExp(r'"([^"]*)"').firstMatch(command);
-      String url = urlMatch?.group(1) ?? "";
+      final urlMatch = RegExp(r'"([^"]*)"').firstMatch(command) ??
+          RegExp(r"'([^']*)'").firstMatch(command);
+      final url = urlMatch?.group(1) ?? "";
+      if (url.isEmpty) throw Exception("Could not parse URL from curl command");
 
-      if (url.isEmpty) {
-        final urlMatch2 = RegExp(r"'([^']*)'").firstMatch(command);
-        url = urlMatch2?.group(1) ?? "";
-      }
-
-      if (url.isEmpty) {
-        throw Exception("Could not parse URL from curl command");
-      }
-
-      // Determine HTTP method (default to GET)
       String method = "GET";
       if (command.contains("-X POST") || command.contains("--request POST")) {
         method = "POST";
       } else if (command.contains("-X PUT") || command.contains("--request PUT")) {
         method = "PUT";
-      } // Add other methods as needed
+      }
 
-      // Make the actual request
       http.Response response;
       if (method == "GET") {
         response = await http.get(Uri.parse(url));
       } else if (method == "POST") {
-        // Extract body if present
         final bodyMatch = RegExp(r'-d\s+"([^"]*)"').firstMatch(command);
         final body = bodyMatch?.group(1) ?? "";
         response = await http.post(Uri.parse(url), body: body);
@@ -131,70 +118,58 @@ class _TestRunnerWidgetState extends ConsumerState<TestRunnerWidget> {
 
   Future<void> _runAllTests() async {
     for (int i = 0; i < _parsedTests.length; i++) {
+      if (!mounted) return;
       await _runTest(i);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 500,
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildHeader(context),
-          const SizedBox(height: 16),
-          Expanded(
-            child: _parsedTests.isEmpty
-                ? Center(child: Text("No test cases found"))
-                : _buildTestList(),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('API Test Runner'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.help_outline),
+            tooltip: 'How to use',
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: const Text('API Test Runner'),
+                  content: const Text(
+                    'Run generated API tests:\n\n'
+                        '• "Run All" executes all tests\n'
+                        '• "Run" executes a single test\n'
+                        '• "Copy" copies the curl command',
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('Close'),
+                    ),
+                  ],
+                ),
+              );
+            },
           ),
-          const SizedBox(height: 16),
-          _buildActionButtons(),
         ],
       ),
-    );
-  }
-
-  Widget _buildHeader(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        const Text(
-          'API Test Runner',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: _parsedTests.isEmpty
+                  ? const Center(child: Text("No test cases found"))
+                  : _buildTestList(),
+            ),
+            const SizedBox(height: 16),
+            _buildActionButtons(),
+          ],
         ),
-        IconButton(
-          icon: const Icon(Icons.help_outline),
-          tooltip: 'How to use',
-          onPressed: () {
-            showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                title: const Text('API Test Runner'),
-                content: const Text(
-                  'This tool runs the API tests generated from your request.\n\n'
-                      '• Click "Run All" to execute all tests\n'
-                      '• Click individual "Run" buttons to execute specific tests\n'
-                      '• Click "Copy" to copy a curl command to clipboard',
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text('Close'),
-                  ),
-                ],
-              ),
-            );
-          },
-        ),
-      ],
+      ),
     );
   }
 
@@ -205,19 +180,17 @@ class _TestRunnerWidgetState extends ConsumerState<TestRunnerWidget> {
         final test = _parsedTests[index];
         final result = _results[index];
         final bool hasResult = result != null;
-        final bool isSuccess = hasResult ? result['isSuccess'] ?? false : false;
+        final bool isSuccess = hasResult && (result['isSuccess'] ?? false);
 
         return Card(
-          margin: const EdgeInsets.only(bottom: 12),
+          margin: const EdgeInsets.symmetric(vertical: 6),
           child: ExpansionTile(
             title: Text(
               test['description'] ?? "Test case ${index + 1}",
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 color: hasResult
-                    ? (isSuccess
-                    ? Colors.green
-                    : Colors.red)
+                    ? (isSuccess ? Colors.green : Colors.red)
                     : null,
               ),
             ),
@@ -231,7 +204,7 @@ class _TestRunnerWidgetState extends ConsumerState<TestRunnerWidget> {
                   onPressed: () {
                     Clipboard.setData(ClipboardData(text: test['command']));
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Command copied to clipboard')),
+                      const SnackBar(content: Text('Command copied')),
                     );
                   },
                 ),
@@ -303,14 +276,14 @@ class _TestRunnerWidgetState extends ConsumerState<TestRunnerWidget> {
                           padding: const EdgeInsets.all(8),
                           margin: const EdgeInsets.only(top: 4),
                           decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.surfaceContainerLow,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .surfaceContainerLow,
                             borderRadius: BorderRadius.circular(4),
                           ),
                           width: double.infinity,
                           child: renderContent(
-                              context,
-                              _tryFormatJson(result['body'])
-                          ),
+                              context, _tryFormatJson(result['body'])),
                         ),
                       ],
                     ],
@@ -339,13 +312,11 @@ class _TestRunnerWidgetState extends ConsumerState<TestRunnerWidget> {
 
   String _tryFormatJson(dynamic input) {
     if (input == null) return "null";
-
     if (input is! String) return input.toString();
-
     try {
       final decoded = json.decode(input);
       return JsonEncoder.withIndent('  ').convert(decoded);
-    } catch (e) {
+    } catch (_) {
       return input;
     }
   }
