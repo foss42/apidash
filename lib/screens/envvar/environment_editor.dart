@@ -1,8 +1,10 @@
+import 'package:apidash/widgets/color_picker.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
+import 'package:apidash/utils/color_utils.dart';
 import 'package:apidash/consts.dart';
 import '../common_widgets/common_widgets.dart';
 import './editor_pane/variables_pane.dart';
@@ -15,6 +17,9 @@ class EnvironmentEditor extends ConsumerWidget {
     final id = ref.watch(selectedEnvironmentIdStateProvider);
     final name = ref
         .watch(selectedEnvironmentModelProvider.select((value) => value?.name));
+    final color = ref
+        .watch(selectedEnvironmentModelProvider.select((value) => value?.color));
+        
     return Padding(
       padding: context.isMediumWindow
           ? kPb10
@@ -30,11 +35,32 @@ class EnvironmentEditor extends ConsumerWidget {
                   children: [
                     kHSpacer10,
                     Expanded(
-                      child: Text(
-                        name ?? "",
-                        style: Theme.of(context).textTheme.bodyMedium,
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
+                      child: Row(
+                        children: [
+                          if (color != null && color.isNotEmpty && id != kGlobalEnvironmentId)
+                            Padding(
+                              padding: const EdgeInsets.only(right: 8.0),
+                              child: ColorPickerButton(
+                                color: hexToColor(color),
+                                onColorChanged: (selectedColor) {
+                                  ref
+                                      .read(environmentsStateNotifierProvider.notifier)
+                                      .updateEnvironment(
+                                        id!,
+                                        color: colorToHex(selectedColor),
+                                      );
+                                },
+                              ),
+                            ),
+                          Expanded(
+                            child: Text(
+                              name ?? "",
+                              style: Theme.of(context).textTheme.bodyMedium,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     const SizedBox(

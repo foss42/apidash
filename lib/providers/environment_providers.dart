@@ -1,6 +1,7 @@
 import 'package:apidash/consts.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/utils/file_utils.dart';
+import 'package:apidash/utils/color_utils.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../services/services.dart' show hiveHandler, HiveHandler;
@@ -86,6 +87,7 @@ class EnvironmentsStateNotifier
             id: environmentModelFromJson.id,
             name: environmentModelFromJson.name,
             values: environmentModelFromJson.values,
+            color: environmentModelFromJson.color,
           );
           environmentsMap[environmentId] = environmentModel;
         }
@@ -100,6 +102,7 @@ class EnvironmentsStateNotifier
     final newEnvironmentModel = EnvironmentModel(
       id: id,
       values: [],
+      color: generateRandomDistinctColor(state?.values.map((e) => e.color).toList() ?? []),
     );
     state = {
       ...state!,
@@ -117,11 +120,13 @@ class EnvironmentsStateNotifier
     String id, {
     String? name,
     List<EnvironmentVariableModel>? values,
+    String? color,
   }) {
     final environment = state![id]!;
     final updatedEnvironment = environment.copyWith(
       name: name ?? environment.name,
       values: values ?? environment.values,
+      color: color ?? environment.color,
     );
     state = {
       ...state!,
@@ -137,6 +142,7 @@ class EnvironmentsStateNotifier
     final newEnvironment = environment.copyWith(
       id: newId,
       name: "${environment.name} Copy",
+      color: generateRandomDistinctColor(state?.values.map((e) => e.color).toList() ?? []),
     );
 
     var environmentIds = ref.read(environmentSequenceProvider);
