@@ -10,6 +10,7 @@ import 'screens/onboarding_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  bool onboardingCompleted = await getOnboardingStatus();
   var settingsModel = await getSettingsFromSharedPrefs();
   final initStatus = await initApp(
     kIsDesktop,
@@ -29,7 +30,7 @@ void main() async {
           (ref) => ThemeStateNotifier(settingsModel: settingsModel),
         )
       ],
-      child: kIsMobile? CheckOnboardingStatus():DashApp(),
+      child: kIsMobile&&!onboardingCompleted?  MaterialApp(home: OnboardingScreen()):DashApp(),
     ),
   );
 }

@@ -1,4 +1,4 @@
-import 'package:apidash/screens/onboarding_screen.dart';
+import 'package:apidash/utils/onboarding_utils.dart';
 import 'package:flutter/material.dart';
 Widget skipButton(BuildContext context) {
   return Positioned(

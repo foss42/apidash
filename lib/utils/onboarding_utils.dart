@@ -1,10 +1,12 @@
+import 'package:apidash/app.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash/services/shared_preferences_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:lottie/lottie.dart';
 
-_getAnimatedLottie(String asset, AnimationType animationType) {
+Widget _getAnimatedLottie(String asset, AnimationType animationType) {
     Widget lottieAnimation = Lottie.asset(asset, width: 250, height: 250);
 
     switch (animationType) {
@@ -18,7 +20,7 @@ _getAnimatedLottie(String asset, AnimationType animationType) {
         return lottieAnimation;
     }
   }
-_getAnimatedText(String text, {bool isTitle = false}) {
+Widget _getAnimatedText(String text, {bool isTitle = false}) {
   TextStyle textStyle = TextStyle(
     fontSize: isTitle ? 24 : 16,
     fontWeight: isTitle ? FontWeight.bold : FontWeight.normal,
@@ -47,3 +49,27 @@ _getAnimatedText(String text, {bool isTitle = false}) {
     );
   }
 
+void onCompleted(BuildContext context)async {
+     await setOnboardingStatus();
+    Navigator.of(context,rootNavigator: true).pushReplacement(
+    PageRouteBuilder(
+      transitionDuration: const Duration(seconds: 1), 
+      pageBuilder: (context, animation, secondaryAnimation) => const DashApp(),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        const begin = Offset(1.0, 0.0); 
+        const end = Offset.zero;
+        const curve = Curves.easeInOut;
+
+        var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+        var offsetAnimation = animation.drive(tween);
+
+        return SlideTransition(
+          position: offsetAnimation,
+          child: child,
+        );
+      },
+    ),
+  );
+
+
+}
