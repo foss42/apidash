@@ -19,6 +19,23 @@ Proposed solution -
 When the API responses are of type xml/json we can show additional advanced preview action buttons on the
 response widget. eg : Data table, Chart, Summary
 
+\*\*12-Mar-2025 - Proof of concept/ update
+
+I executed a quick proof of concept using chatgpt and the results were amazing.
+
+=> I was able to generate entire flutter widget with customizations. This essentially means that our static widget screens now
+can be mere placeholders/containers which render the widgets given by the llm codegen service.
+
+=>We need not restrict on the type of charts we can support. We can in fact take guidance from llm on what
+kind of charts can be helpful in analyzing the data and pick may be the best 5 types
+
+=>However we need to have control on the look and feel and apidash ui standards. These can be provided
+as inputs to the prompt. eg: top/bottom margins should be 5%, bar graph color must be blue, or width of
+bars must be 5 px etc.
+Sample charts generated using json data.<br/>
+(images/data_table.png)</br>
+(images/chart.png)<br/>
+
 We can design a fixed layout as per apidash ui standards (font, colors, themes) for each of the
 visualization. This would comprise the static content by reusing the existing widgets. This will ensure
 uniform look and feel for all users.
