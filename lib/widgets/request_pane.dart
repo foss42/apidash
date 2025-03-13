@@ -57,20 +57,19 @@ class _RequestPaneState extends State<RequestPane>
                         style: FilledButton.styleFrom(
                           padding: kPh12,
                           minimumSize: const Size(44, 44),
+                          visualDensity: VisualDensity.compact, 
+                          alignment: Alignment.center, 
                         ),
                         onPressed: widget.onPressedCodeButton,
                         icon: Icon(
-                          widget.codePaneVisible
-                              ? Icons.code_off_rounded
-                              : Icons.code_rounded,
+                          widget.codePaneVisible ? Icons.code_off_rounded : Icons.code_rounded,
+                          size: 20, 
                         ),
-                        label: SizedBox(
-                          width: 75,
-                          child: Text(
-                            widget.codePaneVisible
-                                ? kLabelHideCode
-                                : kLabelViewCode,
-                          ),
+                        label: Text(
+                          widget.codePaneVisible ? kLabelHideCode : kLabelViewCode, 
+                          textAlign: TextAlign.center,
+                          overflow: TextOverflow.ellipsis, 
+                          maxLines: 1, 
                         ),
                       ),
                     ],
