@@ -6,6 +6,8 @@ import 'providers/providers.dart';
 import 'services/services.dart';
 import 'consts.dart';
 import 'app.dart';
+import 'dart:async';
+import 'package:apidash/providers/update_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,16 +23,37 @@ void main() async {
     settingsModel = settingsModel?.copyWithPath(workspaceFolderPath: null);
   }
 
+  final container = ProviderContainer(
+    overrides: [
+      settingsProvider.overrideWith(
+        (ref) => ThemeStateNotifier(settingsModel: settingsModel),
+      )
+    ],
+  );
+
   runApp(
-    ProviderScope(
-      overrides: [
-        settingsProvider.overrideWith(
-          (ref) => ThemeStateNotifier(settingsModel: settingsModel),
-        )
-      ],
+    UncontrolledProviderScope(
+      container: container,
       child: const DashApp(),
     ),
   );
+  
+  // Check for updates after app launch
+  if (kIsDesktop) {
+    // Delay update check to ensure app is fully initialized
+    Timer(const Duration(seconds: 3), () async {
+      try {
+        // Use the same container as the app
+        container.read(updateProvider).checkForUpdate().then((updateInfo) {
+          if (updateInfo != null && updateInfo.isNotEmpty) {
+            container.read(updateAvailableProvider.notifier).state = true;
+          }
+        });
+      } catch (e) {
+        debugPrint('❌ Error in update check: $e');
+      }
+    });
+  }
 }
 
 Future<bool> initApp(
