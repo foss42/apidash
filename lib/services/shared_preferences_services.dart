@@ -26,3 +26,13 @@ Future<void> clearSharedPrefs() async {
   final prefs = await SharedPreferences.getInstance();
   await prefs.remove(kSharedPrefSettingsKey);
 }
+
+ Future<bool> getOnboardingStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    return false;
+    return prefs.getBool('onboardingCompleted') ?? false;
+  }
+Future setOnboardingStatus() async{
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('onboardingCompleted', true);
+}

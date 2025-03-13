@@ -10,6 +10,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  introduction_screen: ^3.1.8
+  flutter_animate: ^4.5.0
   apidash_core:
     path: packages/apidash_core
   apidash_design_system:
@@ -69,6 +71,7 @@ dependencies:
     git:
       url: https://github.com/google/flutter-desktop-embedding.git
       path: plugins/window_size
+  google_fonts: ^6.2.1
 
 dependency_overrides:
   extended_text_field: ^16.0.0

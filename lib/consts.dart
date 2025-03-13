@@ -481,3 +481,5 @@ const kMsgClearHistory =
 const kMsgClearHistorySuccess = 'History cleared successfully';
 const kMsgClearHistoryError = 'Error clearing history';
 const kMsgShareError = "Unable to share";
+// Onboarding
+enum AnimationType { fadeIn, scale, none ,bounce}

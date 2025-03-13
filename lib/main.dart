@@ -6,6 +6,7 @@ import 'providers/providers.dart';
 import 'services/services.dart';
 import 'consts.dart';
 import 'app.dart';
+import 'screens/onboarding_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,7 +29,7 @@ void main() async {
           (ref) => ThemeStateNotifier(settingsModel: settingsModel),
         )
       ],
-      child: const DashApp(),
+      child: kIsMobile? CheckOnboardingStatus():DashApp(),
     ),
   );
 }
