@@ -34,6 +34,11 @@ _$HttpRequestModelImpl _$$HttpRequestModelImplFromJson(Map json) =>
           ?.map((e) =>
               FormDataModel.fromJson(Map<String, Object?>.from(e as Map)))
           .toList(),
+      authType: $enumDecodeNullable(_$AuthTypeEnumMap, json['authType']) ??
+          AuthType.none,
+      authParams: (json['authParams'] as Map?)?.map(
+        (k, e) => MapEntry(k as String, e),
+      ),
     );
 
 Map<String, dynamic> _$$HttpRequestModelImplToJson(
@@ -49,6 +54,8 @@ Map<String, dynamic> _$$HttpRequestModelImplToJson(
       'body': instance.body,
       'query': instance.query,
       'formData': instance.formData?.map((e) => e.toJson()).toList(),
+      'authType': _$AuthTypeEnumMap[instance.authType]!,
+      'authParams': instance.authParams,
     };
 
 const _$HTTPVerbEnumMap = {
@@ -64,4 +71,15 @@ const _$ContentTypeEnumMap = {
   ContentType.json: 'json',
   ContentType.text: 'text',
   ContentType.formdata: 'formdata',
+};
+
+const _$AuthTypeEnumMap = {
+  AuthType.none: 'none',
+  AuthType.basic: 'basic',
+  AuthType.bearer: 'bearer',
+  AuthType.jwtBearer: 'jwtBearer',
+  AuthType.apiKey: 'apiKey',
+  AuthType.digest: 'digest',
+  AuthType.oauth1: 'oauth1',
+  AuthType.oauth2: 'oauth2',
 };
