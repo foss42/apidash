@@ -2,7 +2,7 @@ import 'package:apidash/utils/onboarding_utils.dart';
 import 'package:flutter/material.dart';
 Widget skipButton(BuildContext context) {
   return Positioned(
-    top: 30,
+    top: 40,
     right: 20,
     child: TextButton(
       onPressed: ()  {

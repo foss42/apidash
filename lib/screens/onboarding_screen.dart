@@ -4,6 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:apidash/widgets/button_onboarding_skip.dart';
 
+final dotsDecorator = DotsDecorator(
+  size: const Size(10.0, 8.0),
+  activeSize: const Size(30.0, 8.0),
+  color: Colors.grey.shade400,
+  activeColor: Colors.blueAccent,
+  spacing: const EdgeInsets.symmetric(horizontal: 4),
+  activeShape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(5.0),
+  ),
+);
+
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -24,7 +35,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       buildPageViewModel(
         asset: 'assets/lottie2.json',
         title: 'Organize your work!',
-        body: 'API Dash efficiently stores history\nEnhancing seamless task management.',
+        body: '   API Dash efficiently stores history.\nEnhancing seamless task management.',
         animationType: AnimationType.scale,
       ),
       buildPageViewModel(
@@ -45,7 +56,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(backgroundColor: Colors.white10,
+      home: Scaffold(
         body: Stack(
           children: [
             IntroductionScreen(
@@ -57,16 +68,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,color: Colors.blue),
               ),
               showBackButton: true, 
-               dotsDecorator: DotsDecorator(
-                size: const Size(10.0, 8.0),
-                activeSize: const Size(30.0, 8.0),
-                color: Colors.grey.shade400,
-                activeColor: Colors.blueAccent,
-                spacing: const EdgeInsets.symmetric(horizontal: 4),
-                activeShape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5.0),
-                ),
-              ),
+              dotsDecorator:dotsDecorator ,
               
               back: const Icon(Icons.arrow_back, size: 24,color: Colors.blue,),
             ),
