@@ -28,8 +28,7 @@ Future<void> clearSharedPrefs() async {
 }
 
  Future<bool> getOnboardingStatus() async {
-    final prefs = await SharedPreferences.getInstance();
-    return false;
+    final prefs = await SharedPreferences.getInstance(); 
     return prefs.getBool('onboardingCompleted') ?? false;
   }
 Future setOnboardingStatus() async{

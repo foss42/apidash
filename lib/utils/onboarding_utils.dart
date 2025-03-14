@@ -51,7 +51,7 @@ Widget _getAnimatedText(String text, {bool isTitle = false}) {
 
 void onCompleted(BuildContext context)async {
    
-    Navigator.of(context,rootNavigator: true).push(
+    Navigator.of(context,rootNavigator: true).pushReplacement(
     PageRouteBuilder(
       transitionDuration: const Duration(seconds: 1), 
       pageBuilder: (context, animation, secondaryAnimation) => const DashApp(),

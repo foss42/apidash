@@ -30,7 +30,7 @@ void main() async {
           (ref) => ThemeStateNotifier(settingsModel: settingsModel),
         )
       ],
-      child: kIsMobile&&!onboardingCompleted?  MaterialApp(home: OnboardingScreen()):DashApp(),
+      child: kIsMobile && !onboardingCompleted?  MaterialApp(home: OnboardingScreen()):DashApp(),
     ),
   );
 }
