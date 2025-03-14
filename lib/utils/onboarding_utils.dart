@@ -48,28 +48,22 @@ Widget _getAnimatedText(String text, {bool isTitle = false}) {
       ),
     );
   }
+void onCompleted(BuildContext context) async {
 
-void onCompleted(BuildContext context)async {
-   
-    Navigator.of(context,rootNavigator: true).pushReplacement(
+  Navigator.of(context).pushReplacement(
     PageRouteBuilder(
-      transitionDuration: const Duration(seconds: 1), 
+      transitionDuration: const Duration(milliseconds: 500),
       pageBuilder: (context, animation, secondaryAnimation) => const DashApp(),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        const begin = Offset(1.0, 0.0); 
-        const end = Offset.zero;
-        const curve = Curves.easeInOut;
-        var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-        var offsetAnimation = animation.drive(tween);
-
+        var tween = Tween(begin: const Offset(1.0, 0.0), end: Offset.zero)
+            .chain(CurveTween(curve: Curves.easeInOut));
+        
         return SlideTransition(
-          position: offsetAnimation,
+          position: animation.drive(tween),
           child: child,
         );
       },
     ),
   );
     await setOnboardingStatus();
-
-
 }
