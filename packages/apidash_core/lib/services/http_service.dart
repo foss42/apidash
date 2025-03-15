@@ -41,7 +41,10 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
         if (kMethodsWithBody.contains(requestModel.method)) {
           var requestBody = requestModel.body;
           if (requestBody != null && !isMultiPartRequest) {
-            var contentLength = utf8.encode(requestBody).length;
+            if (requestModel.hasJsonData) {
+              requestBody = removeJsonComments(requestBody);
+            }
+            var contentLength = utf8.encode(requestBody!).length;
             if (contentLength > 0) {
               body = requestBody;
               headers[HttpHeaders.contentLengthHeader] =
