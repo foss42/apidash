@@ -32,6 +32,7 @@ Widget _getAnimatedText(String text, {bool isTitle = false}) {
       .slideY(begin: isTitle ? -0.3 : 0.3, end: 0);
 }
 
+
   PageViewModel buildPageViewModel({
     required String asset,
     required String title,
@@ -48,6 +49,9 @@ Widget _getAnimatedText(String text, {bool isTitle = false}) {
       ),
     );
   }
+
+
+  
 void onCompleted(BuildContext context) async {
 
   Navigator.of(context).pushReplacement(
