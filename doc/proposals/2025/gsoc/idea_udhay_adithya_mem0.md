@@ -179,17 +179,21 @@ I propose to divide the project into four milestones/deliverables to produce a s
 
 #### **Milestone #1: Create a Bare-bone `package: mem0_dart`.**
 
-This milestone will lay the foundation of `mem0_dart` library, porting core configuration classes and setting up testing frameworks. This milestone will be the first deliverable but it will take the least amount of time and effort to build.
+This milestone will lay the foundation of `mem0_dart` library, porting core configuration classes and setting up testing frameworks.
+
+This milestone will be the first deliverable but it will take the least amount of time and effort to build.
 
 #### **Milestone #2: Vector Store Integrations**
 
 This milestone will integrate and implement multiple Vecotor DB providers available in Dart.
+
 Implementation efforts will concentrate more on the core methods (insert, search, delete, and get).
 
 #### **Milestone #3: LLM and Embedding Model Integration with Basic Functionality**
 
 This Milestone is divided into two parts. The first path will aim at adding integrations for multiple Embedding models.
-The second part will add integrations for LLMs and the core memory operations for addition, retrieval, and updating will be ported and tested.
+
+The second part will add integrations for LLMs and additionally the core memory operations for addition, retrieval, and updating will be ported and tested.
 
 #### **Milestone #4: Add Graph Memory Capabilty**
 
@@ -235,7 +239,8 @@ their final mentor evaluation (standard coding period)
       Work on M#2 begins in the latter half of the week.
     * **Week 2 (June 9 - June 15)**
 
-      Start of M#2 integration for the first two chosen vector database capable of basic vector operations(insert, search, delete, and get) are done, along with unit tests.
+      Integration of first two chosen vector database and implementation of basic vector operations(insert, search, delete, and get) are done, along with unit tests.
+      
     * **Week 3 (June 16 - June 22)**
     
       Building upon the previous week, the integration of the other remaining vector databases will be done.
