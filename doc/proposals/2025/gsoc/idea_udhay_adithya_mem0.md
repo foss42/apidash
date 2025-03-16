@@ -1,4 +1,34 @@
-### Initial Idea Submission
+<h1 style="text-align: center; text-decoration: underline; font-weight: bold;">
+INITIAL IDEA PROPOSAL
+</h1>
+
+<h3 style="text-align: center; font-weight: bold;">
+GOOGLE SUMMER OF CODE 2025
+</h3>
+
+<br>
+
+<div 
+    style="display: flex; justify-content: center; gap: 10px;">
+    <img src="images/GSoC-icon.png" alt="GSoC Logo" style="width: 175px; height: auto;">
+    <img src="images/apidash.png" alt="API Dash Logo" style="width: 175px; height: auto;">
+</div>
+
+<br>
+
+<br>
+
+<h1 style="text-align: center; font-weight: bold;">
+PROJECT TITLE
+</h1>
+
+<h3 style="text-align: center; font-weight: bold;">
+MEM0 FOR DART
+</h3>
+
+<br>
+
+<br>
 
 ### **CONTACT INFORMATION**
 
@@ -15,7 +45,7 @@
 * Expected graduation date: 2027
 
 
-### **PROJECT TITLE: Porting [mem0](https://github.com/mem0ai/mem0) to Dart**
+### **PROJECT TITLE: [mem0](https://github.com/mem0ai/mem0) for Dart**
 
 ### **PROJECT DESCRIPTION:**
 
