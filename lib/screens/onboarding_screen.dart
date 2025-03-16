@@ -42,8 +42,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         animationType: AnimationType.bounce,
       ),
       ];
-    return MaterialApp(
-      home: Scaffold(
+    return Scaffold(
         body: Stack(
           children: [
             IntroductionScreen(
@@ -71,8 +70,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             skipButton(context)
           ],
         ),
-      ),
-    );
+      );
+    
   }
 }
 
