@@ -174,7 +174,8 @@ void main() async {
 
 
 I propose to divide the project into four milestones/deliverables to produce a sequential progress report through the GSoC. 
-> They are NOT of equal sizes/time requirements.
+
+*They are NOT of equal sizes/time* requirements.
 
 #### **Milestone #1: Create a Bare-bone `package: mem0_dart`.**
 
@@ -229,7 +230,9 @@ their final mentor evaluation (standard coding period)
 * **Coding Period (June 2 - July 14)**
     * **Week 1 (June 2 - June 8)**
 
-      <u>M#1 is delivered, comprising of a bare-bones package.</u> Work on M#2 begins in the latter half of the week.
+      <u>M#1 is delivered, comprising of a bare-bones package.</u>
+      
+      Work on M#2 begins in the latter half of the week.
     * **Week 2 (June 9 - June 15)**
 
       Start of M#2 integration for the first two chosen vector database capable of basic vector operations(insert, search, delete, and get) are done, along with unit tests.
@@ -244,7 +247,9 @@ their final mentor evaluation (standard coding period)
     * **Week 5 (June 23 - June 29)**
 
       Start of M#3 by integrating OpenAI and Gemini's LLM and embedding models.
+      
       This week will also contain steps of documenting the package for initial public release.
+      
       Mentor Reviews are requested.
 
       *`The first public release of package mem0_dart:0.0.1 is made.`*
@@ -252,7 +257,9 @@ their final mentor evaluation (standard coding period)
     * **Week 6 (June 30 - July 6)**
 
       Changes follow, from Mentor Review, if required.
+      
       Add support for other LLM and Embedding model providers(Since the same process has been done earlier this must be fairly easy to implement).
+      
       Final Mentor Review before Mid-term Evaluation is submitted.
 
 * **Midterm Evaluation Submission (July 14 - July 18)**
@@ -262,6 +269,7 @@ their final mentor evaluation (standard coding period)
     * **Week 7 (July 14 - July 20)**
       
       A significant portion of the week will be dedicated to testing all integrations thoroughly and addressing any bugs or issues identified.
+      
       Documentation is enhanced in the if no issues arise.
       <u>Milestone #3 is delivered.</u>
       
@@ -278,12 +286,15 @@ their final mentor evaluation (standard coding period)
     * **Week 10 (August 4 - August 10)**
 
       Continuation of the work done in Week 9.
+      
       Mentor Reviews are requested.
 
     * **Week 11 (August 11 - August 17)**
 
       The former half of the week acts as a buffer period in case any issues are confronted.
+      
       Documentation is enhanced in the buffer period if no issues arise.
+
       <u>Milestone #4 is delivered.</u>
 
       *`Third public release of the package at 0.0.3`*
@@ -291,6 +302,7 @@ their final mentor evaluation (standard coding period)
     * **Week 12 (August 18 - August 24)**
 
       Final checks are made, and any supporting documents (such as example markdown files) are written.
+      
       The project Report is written and all tracking issues are labelled appropriately.
       
 * **Final Week (August 25 - September 1)**
