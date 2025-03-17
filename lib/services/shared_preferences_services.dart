@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/models.dart';
 
 const String kSharedPrefSettingsKey = 'apidash-settings';
+const String kSharedPrefOnboardingKey = 'apidash-onboard-status';
 
 Future<SettingsModel?> getSettingsFromSharedPrefs() async {
   final prefs = await SharedPreferences.getInstance();
@@ -20,6 +21,18 @@ Future<SettingsModel?> getSettingsFromSharedPrefs() async {
 Future<void> setSettingsToSharedPrefs(SettingsModel settingsModel) async {
   final prefs = await SharedPreferences.getInstance();
   await prefs.setString(kSharedPrefSettingsKey, settingsModel.toString());
+}
+
+Future<void> setOnboardingStatusToSharedPrefs(
+    {required bool isOnboardingComplete}) async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setBool(kSharedPrefOnboardingKey, isOnboardingComplete);
+}
+
+Future<bool> getOnboardingStatusFromSharedPrefs() async {
+  final prefs = await SharedPreferences.getInstance();
+  final bool? onboardingStatus = prefs.getBool(kSharedPrefOnboardingKey);
+  return onboardingStatus ?? false;
 }
 
 Future<void> clearSharedPrefs() async {
