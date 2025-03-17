@@ -1,5 +1,3 @@
-import 'package:apidash/screens/mobile/onboarding_screen.dart';
-import 'package:apidash/services/shared_preferences_services.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -21,50 +19,41 @@ class MobileDashboard extends ConsumerStatefulWidget {
 }
 
 class _MobileDashboardState extends ConsumerState<MobileDashboard> {
-  Future<bool> _checkOnboardingStatus() async {
-    return await getOnboardingStatusFromSharedPrefs();
-  }
-
   @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<bool>(
-      future: _checkOnboardingStatus(),
-      builder: (context, snapshot) {
-        final railIdx = ref.watch(navRailIndexStateProvider);
-        final isLeftDrawerOpen = ref.watch(leftDrawerStateProvider);
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.data == false) {
-          return const OnboardingScreen();
-        }
-        return AnnotatedRegion<SystemUiOverlayStyle>(
-          value: FlexColorScheme.themedSystemNavigationBar(
-            context,
-            opacity: 0,
-            noAppBar: true,
+  Widget build(
+    BuildContext context,
+  ) {
+    final railIdx = ref.watch(navRailIndexStateProvider);
+    final isLeftDrawerOpen = ref.watch(leftDrawerStateProvider);
+
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: FlexColorScheme.themedSystemNavigationBar(
+        context,
+        opacity: 0,
+        noAppBar: true,
+      ),
+      child: Stack(
+        alignment: AlignmentDirectional.bottomCenter,
+        children: [
+          PageBranch(
+            pageIndex: railIdx,
           ),
-          child: Stack(
-            alignment: AlignmentDirectional.bottomCenter,
-            children: [
-              PageBranch(pageIndex: railIdx),
-              if (context.isMediumWindow)
-                AnimatedPositioned(
-                  bottom: railIdx > 2
+          if (context.isMediumWindow)
+            AnimatedPositioned(
+              bottom: railIdx > 2
+                  ? 0
+                  : isLeftDrawerOpen
                       ? 0
-                      : isLeftDrawerOpen
-                          ? 0
-                          : -(72 + MediaQuery.paddingOf(context).bottom),
-                  left: 0,
-                  right: 0,
-                  height: 70 + MediaQuery.paddingOf(context).bottom,
-                  duration: const Duration(milliseconds: 200),
-                  curve: Curves.easeOut,
-                  child: const BottomNavBar(),
-                ),
-            ],
-          ),
-        );
-      },
+                      : -(72 + MediaQuery.paddingOf(context).bottom),
+              left: 0,
+              right: 0,
+              height: 70 + MediaQuery.paddingOf(context).bottom,
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeOut,
+              child: const BottomNavBar(),
+            ),
+        ],
+      ),
     );
   }
 }

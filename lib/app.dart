@@ -1,5 +1,8 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:developer' show log;
+
+import 'package:apidash/screens/mobile/onboarding_screen.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_portal/flutter_portal.dart';
@@ -104,6 +107,10 @@ class _AppState extends ConsumerState<App> with WindowListener {
 class DashApp extends ConsumerWidget {
   const DashApp({super.key});
 
+  Future<bool> _checkOnboardingStatus() async {
+    return await getOnboardingStatusFromSharedPrefs();
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isDarkMode =
@@ -111,6 +118,7 @@ class DashApp extends ConsumerWidget {
     final workspaceFolderPath = ref
         .watch(settingsProvider.select((value) => value.workspaceFolderPath));
     final showWorkspaceSelector = kIsDesktop && (workspaceFolderPath == null);
+
     return Portal(
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -133,24 +141,41 @@ class DashApp extends ConsumerWidget {
                   }
                 },
               )
-            : Stack(
-                children: [
-                  !kIsLinux && !kIsMobile
-                      ? const App()
-                      : context.isMediumWindow
-                          ? const MobileDashboard()
-                          : const Dashboard(),
-                  if (kIsWindows)
-                    SizedBox(
-                      height: 29,
-                      child: WindowCaption(
-                        backgroundColor: Colors.transparent,
-                        brightness:
-                            isDarkMode ? Brightness.dark : Brightness.light,
-                      ),
-                    ),
-                ],
-              ),
+            : kIsMobile
+                ? FutureBuilder<bool>(
+                    future: _checkOnboardingStatus(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        log(snapshot.data.toString());
+                        final showOnboarding = snapshot.data ?? false;
+                        return showOnboarding
+                            ? const MobileDashboard()
+                            : const OnboardingScreen();
+                      }
+                      return const MobileDashboard();
+                    },
+                  )
+                : Stack(
+                    children: [
+                      !kIsLinux && !kIsMobile
+                          ? const App()
+                          : context.isMediumWindow
+                              ? const MobileDashboard()
+                              : const Dashboard(),
+                      if (kIsWindows)
+                        SizedBox(
+                          height: 29,
+                          child: WindowCaption(
+                            backgroundColor: Colors.transparent,
+                            brightness:
+                                isDarkMode ? Brightness.dark : Brightness.light,
+                          ),
+                        ),
+                    ],
+                  ),
       ),
     );
   }

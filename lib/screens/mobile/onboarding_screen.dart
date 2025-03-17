@@ -1,5 +1,4 @@
 import 'package:apidash/consts.dart';
-import 'package:apidash/screens/common_widgets/theme_switch_button.dart';
 import 'package:apidash/screens/mobile/widgets/onboarding_slide.dart';
 import 'package:apidash/screens/screens.dart';
 import 'package:apidash/services/services.dart';
@@ -42,7 +41,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.surface,
         actions: [
-          const ThemeSwitchButton(),
           TextButton(
             onPressed: () async {
               Navigator.pushAndRemoveUntil(
@@ -143,9 +141,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   child: IconButton(
                     onPressed: () async {
                       _onNextPressed();
-                      await setOnboardingStatusToSharedPrefs(
-                        isOnboardingComplete: true,
-                      );
+                      if (currentPageIndex == 2) {
+                        await setOnboardingStatusToSharedPrefs(
+                          isOnboardingComplete: true,
+                        );
+                      }
                     },
                     icon: const Icon(
                       Icons.arrow_forward_rounded,
