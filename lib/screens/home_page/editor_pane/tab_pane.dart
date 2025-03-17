@@ -1,0 +1,58 @@
+import 'package:apidash_design_system/apidash_design_system.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:apidash/consts.dart';
+import 'package:apidash/providers/collection_providers.dart';
+import 'package:apidash/models/models.dart';
+import 'package:apidash/widgets/tab_request_card.dart';
+import 'package:apidash/screens/home_page/collection_pane.dart';
+import 'package:apidash/utils/utils.dart';
+
+class TabPane extends ConsumerWidget {
+  const TabPane({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final collection = ref.watch(collectionStateNotifierProvider);
+    final requestSequence = ref.watch(requestSequenceProvider);
+    final selectedId = ref.watch(selectedIdStateProvider);
+
+    if (collection == null || requestSequence.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Container(
+      color: Theme.of(context).colorScheme.surfaceContainerLowest,
+      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            minWidth: MediaQuery.of(context).size.width, 
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: requestSequence.map((id) {
+              final request = collection[id]!;
+              final name = request.name.isNotEmpty
+                  ? request.name
+                  : getRequestTitleFromUrl(request.httpRequestModel?.url) ?? 'Untitled';
+              return TabRequestCard(
+                apiType: request.apiType,
+                method: request.httpRequestModel!.method,
+                name: name,
+                isSelected: selectedId == id,
+                onTap: () {
+                  ref.read(selectedIdStateProvider.notifier).state = id;
+                },
+                onClose: () {
+                  ref.read(collectionStateNotifierProvider.notifier).remove(id: id);
+                },
+              );
+            }).toList(),
+          ),
+        ),
+      ),
+    );
+  }
+}
