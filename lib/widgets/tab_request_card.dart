@@ -1,4 +1,3 @@
-
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
@@ -28,9 +27,7 @@ class TabRequestCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: isSelected ? 1 : 0,
-      shape: const RoundedRectangleBorder(
-        borderRadius: kBorderRadius8, 
-      ),
+      shape: const RoundedRectangleBorder(borderRadius: kBorderRadius8),
       margin: const EdgeInsets.only(right: 4),
       child: Stack(
         children: [
@@ -42,18 +39,13 @@ class TabRequestCard extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  SidebarRequestCardTextBox(
-                    apiType: apiType,
-                    method: method,
-                  ),
+                  SidebarRequestCardTextBox(apiType: apiType, method: method),
                   kHSpacer8,
                   Text(
                     name,
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
+                    style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
                   ),
                   kHSpacer8,
                   GestureDetector(
@@ -74,8 +66,8 @@ class TabRequestCard extends StatelessWidget {
               right: 0,
               bottom: 0,
               child: Container(
-                height: 2, 
-                color: Theme.of(context).colorScheme.primary, 
+                height: 2,
+                color: Theme.of(context).colorScheme.primary,
               ),
             ),
         ],
