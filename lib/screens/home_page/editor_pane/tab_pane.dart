@@ -17,6 +17,7 @@ class TabPane extends ConsumerWidget {
     final selectedId = ref.watch(selectedIdStateProvider);
     final visibleTabs = ref.watch(visibleTabsProvider);
 
+    // Prevents rendering if data isn’t ready
     if (collection == null || requestSequence.isEmpty) {
       return const SizedBox.shrink();
     }
@@ -24,12 +25,13 @@ class TabPane extends ConsumerWidget {
     return Container(
       color: Theme.of(context).colorScheme.surfaceContainerLowest,
       padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-      child: SingleChildScrollView(
+      child: SingleChildScrollView(  // horizontal scrolling for the tab bar
         scrollDirection: Axis.horizontal,
         child: ConstrainedBox(
           constraints: BoxConstraints(minWidth: MediaQuery.of(context).size.width),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
+            // Filters and maps only visible tabs for rendering
             children: requestSequence
                 .where((id) => visibleTabs.contains(id))
                 .map((id) {
@@ -37,12 +39,14 @@ class TabPane extends ConsumerWidget {
                   final name = request.name.isNotEmpty
                       ? request.name
                       : getRequestTitleFromUrl(request.httpRequestModel?.url) ?? 'Untitled';
+                      
                   return TabRequestCard(
                     apiType: request.apiType,
                     method: request.httpRequestModel!.method,
                     name: name,
                     isSelected: selectedId == id,
                     onTap: () => ref.read(selectedIdStateProvider.notifier).state = id,
+                    // Manages tab closure and selection adjustment
                     onClose: () {
                       ref.read(visibleTabsProvider.notifier).toggleVisibility(id);
                       if (selectedId == id) {

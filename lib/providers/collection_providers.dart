@@ -32,6 +32,7 @@ final StateNotifierProvider<CollectionStateNotifier, Map<String, RequestModel>?>
           hiveHandler,
         ));
 
+// Manages the set of visible tab IDs
 final visibleTabsProvider = StateNotifierProvider<VisibleTabsNotifier, Set<String>>((ref) {
   return VisibleTabsNotifier(ref);
 });
@@ -41,6 +42,7 @@ class VisibleTabsNotifier extends StateNotifier<Set<String>> {
 
   final Ref ref;
 
+  // Toggles a tab’s visibility in the tab bar
   void toggleVisibility(String id) {
     state = Set.from(state);
     if (state.contains(id)) {
@@ -154,6 +156,7 @@ class CollectionStateNotifier
     } else {
       newId = null;
     }
+    
     ref.read(selectedIdStateProvider.notifier).state = newId;
 
     var map = {...state!};
