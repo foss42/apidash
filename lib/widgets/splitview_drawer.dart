@@ -39,7 +39,6 @@ class DrawerSplitView extends StatelessWidget {
           backgroundColor: Theme.of(context).colorScheme.surface,
           onDrawerChanged: onDrawerChanged,
           onEndDrawerChanged: onEndDrawerChanged,
-          drawerEdgeDragWidth: context.width,
           appBar: AppBar(
             backgroundColor: Theme.of(context).colorScheme.surface,
             scrolledUnderElevation: 0,
