@@ -9,33 +9,62 @@ class RequestEditorDefault extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
+    return Stack(
       children: [
-        Text.rich(
-          TextSpan(
-            children: [
-              TextSpan(
-                text: "Click  ",
-                style: Theme.of(context).textTheme.titleMedium,
+        Align(
+          alignment: Alignment.topCenter,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 80.0),
+            child: Opacity(
+              opacity: 0.1,
+              child: const FlutterLogo(
+                size: 400,
               ),
-              WidgetSpan(
-                alignment: PlaceholderAlignment.middle,
-                child: ElevatedButton(
-                  onPressed: () {
-                    ref.read(collectionStateNotifierProvider.notifier).add();
-                  },
-                  child: const Text(
-                    kLabelPlusNew,
-                    style: kTextStyleButton,
+            // TODO: Replace FlutterLogo with apidash_logo
+            // child: Image.asset(
+            //   'assets/apidash_logo.png',
+            //   width: X,
+            //   height: X,
+            // ),
+            // OR use SVG :
+            // child: SvgPicture.asset(
+            //   'assets/apidash_logo.svg',
+            //   width: X,
+            //   height: X,
+            // ),
+            ),
+          ),
+        ),
+        Center(
+          child: Padding(
+            padding: const EdgeInsets.only(top: 200.0),
+            child: Text.rich(
+              TextSpan(
+                children: [
+                  TextSpan(
+                    text: "Click  ",
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
-                ),
+                  WidgetSpan(
+                    alignment: PlaceholderAlignment.middle,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        ref.read(collectionStateNotifierProvider.notifier).add();
+                      },
+                      child: const Text(
+                        kLabelPlusNew,
+                        style: kTextStyleButton,
+                      ),
+                    ),
+                  ),
+                  TextSpan(
+                    text: "  to start drafting a new API request.",
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                ],
               ),
-              TextSpan(
-                text: "  to start drafting a new API request.",
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-            ],
+              textAlign: TextAlign.center,
+            ),
           ),
         ),
       ],
