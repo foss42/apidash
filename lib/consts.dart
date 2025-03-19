@@ -438,6 +438,7 @@ const kLabelRequest = "Request";
 const kLabelHideCode = "Hide Code";
 const kLabelViewCode = "View Code";
 const kLabelURLParams = "URL Params";
+const kLabelAuth = "Authorization";
 const kLabelHeaders = "Headers";
 const kLabelBody = "Body";
 const kLabelQuery = "Query";

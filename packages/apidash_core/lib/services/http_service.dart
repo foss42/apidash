@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -16,6 +17,7 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
   String requestId,
   APIType apiType,
   HttpRequestModel requestModel, {
+    required Ref ref,
   SupportedUriSchemes defaultUriScheme = kDefaultUriScheme,
   bool noSSL = false,
 }) async {

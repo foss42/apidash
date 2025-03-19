@@ -84,6 +84,10 @@ enum ContentType {
   const ContentType(this.header);
   final String header;
 }
+enum AuthType{
+  none,
+  basic,
+}
 
 const JsonEncoder kJsonEncoder = JsonEncoder.withIndent('  ');
 const JsonDecoder kJsonDecoder = JsonDecoder();
