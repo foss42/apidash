@@ -64,11 +64,12 @@ class _CodeGenPreviewerState extends State<CodeGenPreviewer> {
           thumbVisibility: true,
           controller: controllerH,
           child: SingleChildScrollView(
-            controller: controllerV,
+            scrollDirection: Axis.horizontal,
+            controller: controllerH,
             child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              controller: controllerH,
+              controller: controllerV,
               child: Column(
+                mainAxisSize: MainAxisSize.max,
                 children: [
                   Row(
                     children: [
