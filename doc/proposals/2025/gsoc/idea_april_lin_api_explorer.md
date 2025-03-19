@@ -1,8 +1,8 @@
 ### Initial Idea Submission
 
 **Full Name:** April Lin  
-**University Name:** University of Illinois Urbana-Champaign 
-**Program (Degree & Major/Minor):** Master in Electrical and Computer Engineering
+**University Name:** University of Illinois Urbana-Champaign  
+**Program (Degree & Major/Minor):** Master in Electrical and Computer Engineering  
 **Year:** first year
 **Expected Graduation Date:** 2026  
 
