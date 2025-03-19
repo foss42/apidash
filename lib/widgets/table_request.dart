@@ -12,7 +12,7 @@ class RequestDataTable extends StatelessWidget {
     this.valueName,
   });
 
-  final Map<String, String> rows;
+  final Map<String, dynamic> rows;
   final String? keyName;
   final String? valueName;
 
@@ -57,7 +57,7 @@ class RequestDataTable extends StatelessWidget {
 
     final List<DataRow> dataRows = rows.entries
         .map<DataRow>(
-          (MapEntry<String, String> entry) => DataRow(
+          (MapEntry<String, dynamic> entry) => DataRow(
             cells: <DataCell>[
               const DataCell(kHSpacer5),
               DataCell(
@@ -71,7 +71,7 @@ class RequestDataTable extends StatelessWidget {
               ),
               DataCell(
                 ReadOnlyTextField(
-                  initialValue: entry.value,
+               initialValue: entry.value is String ? entry.value : entry.value.toString(),
                   decoration: fieldDecoration,
                 ),
               ),

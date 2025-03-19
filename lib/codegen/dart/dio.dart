@@ -28,7 +28,7 @@ class DartDioCodeGen {
   String generatedDartCode({
     required String url,
     required HTTPVerb method,
-    required Map<String, String> queryParams,
+    required Map<String, dynamic> queryParams,
     required Map<String, String> headers,
     required String? body,
     required ContentType contentType,
