@@ -116,3 +116,14 @@ I think there are two ways to design the automated pipeline: the first is to use
 - **OpenAPI**: Use existing libraries (e.g., Swagger/OpenAPI parser libraries) to read and interpret JSON or YAML specs.  
 - **HTML**: Perform DOM-based parsing or use regex patterns to identify endpoints, parameter names, and descriptions.  
 - **Markdown**: Utilize Markdown parsers (e.g., remark, markdown-it) to convert the text into a syntax tree and extract relevant sections.
+
+## Questions
+
+1. **Database Selection**  
+   - Which type of database should be used for storing API templates and methods? Are there any specific constraints or preferences (e.g., relational vs. NoSQL, performance requirements, ease of integration) we should consider?
+
+2. **Priority of Automated Parsing**  
+   - What is the preferred approach for automated parsing of OpenAPI/HTML files? Would an AI-based parsing solution be acceptable, or should we prioritize rule-based methods for reliability and simplicity?
+
+3. **UI Interaction Flow**  
+   - Can I add a dedicated “api explorer” menu in the left navigation bar for api explorer?
