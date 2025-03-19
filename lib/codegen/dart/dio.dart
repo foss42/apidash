@@ -87,11 +87,12 @@ class DartDioCodeGen {
           dataExp = declareFinal('data').assign(refer('dio.FormData()'));
       }
     }
+    final parsedUrl = url.split('?').first;
     final responseExp = declareFinal('response').assign(InvokeExpression.newOf(
       refer('dio.Dio()'),
-      [literalString(url)],
+      [literalString(parsedUrl)], 
       {
-        if (queryParamExp != null) 'queryParameters': refer('queryParams'),
+       if (queryParamExp != null) 'queryParameters': refer('queryParams'), 
         if (headerExp != null)
           'options': refer('dio.Options').newInstance(
             [],

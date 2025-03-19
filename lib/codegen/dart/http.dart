@@ -43,9 +43,9 @@ class DartHttpCodeGen {
     final emitter = DartEmitter();
     final dioImport = Directive.import('package:http/http.dart', as: 'http');
     sbf.writeln(dioImport.accept(emitter));
-
+     final parsedUrl = url.split('?').first;
     final uriExp =
-        declareVar('uri').assign(refer('Uri.parse').call([literalString(url)]));
+        declareVar('uri').assign(refer('Uri.parse').call([literalString(parsedUrl)]));
 
     Expression? dataExp;
     if (kMethodsWithBody.contains(method) &&
@@ -61,7 +61,7 @@ class DartHttpCodeGen {
 
     Expression? queryParamExp;
     List<Expression>? uriReassignExps;
-    //     var urlQueryParams = Map<String,String>.from(uri.queryParameters);
+    //     var urlQueryParams = Map<String,dynamic>.from(uri.queryParameters);
     // urlQueryParams.addAll(queryParams);
     // uri = uri.replace(queryParameters: urlQueryParams);
 
@@ -74,7 +74,7 @@ class DartHttpCodeGen {
         if (uri.hasQuery)
           declareVar('urlQueryParams').assign(
             InvokeExpression.newOf(
-              refer('Map<String,String>'),
+              refer('Map<String,dynamic>'),
               [refer('uri.queryParameters')],
               {},
               [],

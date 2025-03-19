@@ -38,7 +38,21 @@ class HttpRequestModel with _$HttpRequestModel {
       getEnabledRows(params, isParamEnabledList);
 
   Map<String, String> get enabledHeadersMap => rowsToMap(enabledHeaders) ?? {};
-  Map<String, dynamic> get enabledParamsMap => rowsToRequestMap(enabledParams) ?? {};
+Map<String, dynamic> get enabledParamsMap {
+  var extractedParams = Uri.parse(url).queryParametersAll;  
+  var userParams = rowsToRequestMap(enabledParams) ?? {};  
+
+  extractedParams.forEach((key, value) {
+    userParams[key] = [
+      ...value, 
+      if (userParams.containsKey(key)) 
+        ...(userParams[key] is List ? List.from(userParams[key]) : [userParams[key]])
+    ];
+  });
+
+  return userParams;
+}
+
 
   bool get hasContentTypeHeader => enabledHeadersMap.hasKeyContentType();
   bool get hasFormDataContentType => bodyContentType == ContentType.formdata;
