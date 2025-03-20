@@ -5,18 +5,35 @@ import 'package:apidash_design_system/tokens/measurements.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class EditRequestAuth extends ConsumerWidget {
+class EditRequestAuth extends ConsumerStatefulWidget {
   const EditRequestAuth({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<EditRequestAuth> createState() => _EditRequestAuthState();
+}
+
+class _EditRequestAuthState extends ConsumerState<EditRequestAuth> {
+  late final TextEditingController usernameController;
+  late final TextEditingController passwordController;
+
+  @override
+  void initState() {
+    super.initState();
+    usernameController = TextEditingController();
+    passwordController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    usernameController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final authData = ref.watch(authDataProvider) ?? {};
     final authType = ref.watch(authTypeProvider);
-
-    final usernameController =
-        TextEditingController(text: authData['username'] ?? '');
-    final passwordController =
-        TextEditingController(text: authData['password'] ?? '');
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -39,63 +56,61 @@ class EditRequestAuth extends ConsumerWidget {
                       }
                     }
                   },
-                ), // Reusable dropdown
+                ),
               ],
             ),
           ),
           if (authType == AuthType.basic) ...[
             Padding(
-              padding: kPt5o10, // Consistent padding
+              padding: kPt5o10,
               child: TextField(
-                controller: usernameController,
-                decoration: const InputDecoration(
-                  labelText: 'Username',
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.blue),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(16),
+                  controller: usernameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Username',
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.blue),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(16),
+                      ),
                     ),
-                  ),
-                  focusedBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.blue),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(16),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.blue),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(16),
+                      ),
                     ),
+                    fillColor: Colors.white,
+                    filled: true,
                   ),
-                  fillColor: Colors.white,
-                  filled: true,
-                ),
-                textDirection: TextDirection.ltr,
-                onChanged: (value) =>
-                    _updateAuth(ref, usernameController, passwordController),
-              ),
+                  onChanged: (value) {
+                    _updateAuth(ref, usernameController, passwordController);
+                  }),
             ),
             Padding(
               padding: kPt5o10,
               child: TextField(
-                controller: passwordController,
-                decoration: const InputDecoration(
-                  labelText: 'Password',
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.blue),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(16),
+                  controller: passwordController,
+                  decoration: const InputDecoration(
+                    labelText: 'Password',
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.blue),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(16),
+                      ),
                     ),
-                  ),
-                  focusedBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.blue),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(16),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.blue),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(16),
+                      ),
                     ),
+                    fillColor: Colors.white,
+                    filled: true,
                   ),
-                  fillColor: Colors.white,
-                  filled: true,
-                ),
-                textDirection: TextDirection.ltr,
-                obscureText: true,
-                onChanged: (value) =>
-                    _updateAuth(ref, usernameController, passwordController),
-              ),
+                  obscureText: true,
+                  onChanged: (value) {
+                    _updateAuth(ref, usernameController, passwordController);
+                  }),
             ),
           ],
         ],
@@ -128,13 +143,11 @@ class DropdownButtonAuthType extends StatelessWidget {
     return DropdownButton<AuthType>(
       value: authType,
       onChanged: onChanged,
-      dropdownColor: Colors.white, // Background color of dropdown menu
-      icon:
-          const Icon(Icons.arrow_drop_down, color: Colors.blue), // Custom icon
+      dropdownColor: Colors.white,
+      icon: const Icon(Icons.arrow_drop_down, color: Colors.blue),
       underline: Container(height: 0),
-      padding:
-          const EdgeInsets.symmetric(horizontal: 12.0), // Padding inside button
-      borderRadius: BorderRadius.circular(8.0), // Rounded corners for menu
+      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+      borderRadius: BorderRadius.circular(8.0),
       elevation: 4,
       items: const [
         DropdownMenuItem(
