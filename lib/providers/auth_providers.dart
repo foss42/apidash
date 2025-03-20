@@ -18,7 +18,7 @@ final authHeaderProvider = Provider<String?>((ref) {
   }
 
   switch (authType) {
-    case AuthType.basic:
+   case AuthType.basic:
       final username = authData['username'] ?? '';
       final password = authData['password'] ?? '';
       if (username.isEmpty && password.isEmpty) return null;

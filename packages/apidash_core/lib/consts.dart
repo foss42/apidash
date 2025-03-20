@@ -84,7 +84,8 @@ enum ContentType {
   const ContentType(this.header);
   final String header;
 }
-enum AuthType{
+
+enum AuthType {
   none,
   basic,
 }
