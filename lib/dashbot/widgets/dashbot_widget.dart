@@ -48,15 +48,25 @@ class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
       final response = await dashBotService.handleRequest(
           message, requestModel, responseModel);
 
-      // If "Test API" is requested, append a button to the response
-      final botMessage = message == "Test API"
-          ? "$response\n\n**[Run Test Cases]**"
-          : response;
+      // Check if this is a test case response with hidden content
+      if (response.startsWith("TEST_CASES_HIDDEN\n")) {
+        // Extract the test cases but don't show them in the message
+        final testCases = response.replaceFirst("TEST_CASES_HIDDEN\n", "");
 
-      ref.read(chatMessagesProvider.notifier).addMessage({
-        'role': 'bot',
-        'message': botMessage,
-      });
+        // Add a message with a marker that will trigger the button display
+        ref.read(chatMessagesProvider.notifier).addMessage({
+          'role': 'bot',
+          'message': "Test cases generated successfully. Click the button below to run them.",
+          'testCases': testCases,
+          'showTestButton': true,
+        });
+      } else {
+        // Normal message handling
+        ref.read(chatMessagesProvider.notifier).addMessage({
+          'role': 'bot',
+          'message': response,
+        });
+      }
     } catch (error, stackTrace) {
       debugPrint('Error in _sendMessage: $error');
       debugPrint('StackTrace: $stackTrace');
@@ -191,20 +201,20 @@ class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
         final message = messages.reversed.toList()[index];
         final isBot = message['role'] == 'bot';
         final text = message['message'] as String;
+        final showTestButton = message['showTestButton'] == true;
+        final testCases = message['testCases'] as String?;
 
-        // Check if the message contains the "Run Test Cases" button
-        if (isBot && text.contains("[Run Test Cases]")) {
-          final testCases = text.replaceAll("\n\n**[Run Test Cases]**", "");
+        if (isBot && showTestButton && testCases != null) {
           return Column(
-            crossAxisAlignment:
-            isBot ? CrossAxisAlignment.start : CrossAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              ChatBubble(message: testCases, isUser: false),
+              ChatBubble(message: text, isUser: false),
               Padding(
                 padding: const EdgeInsets.only(left: 12, top: 4, bottom: 4),
-                child: ElevatedButton(
+                child: ElevatedButton.icon(
                   onPressed: () => _showTestRunner(testCases),
-                  child: const Text("Run Test Cases"),
+                  icon: const Icon(Icons.play_arrow),
+                  label: const Text("Run Test Cases"),
                 ),
               ),
             ],

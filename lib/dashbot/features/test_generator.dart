@@ -1,5 +1,5 @@
 import 'dart:convert';
-import '../services/dashbot_service.dart';
+import 'package:apidash/dashbot/services/dashbot_service.dart';
 import 'package:apidash/models/request_model.dart';
 
 class TestGeneratorFeature {
@@ -67,7 +67,12 @@ For each test case:
 Focus on creating realistic test values based on the API context (e.g., for a country flag API, use real country codes, invalid codes, etc.)
 """;
 
-    return _service.generateResponse(prompt);
+    // Generate the test cases
+    final testCases = await _service.generateResponse(prompt);
+
+    // Return only a button trigger message with the test cases hidden
+    // This will be detected in DashBotWidget to show only a button instead of the full text
+    return "TEST_CASES_HIDDEN\n$testCases";
   }
 
   String _analyzeParameters(Map<String, String> parameters) {
