@@ -74,7 +74,16 @@ class DrawerSplitView extends StatelessWidget {
       ),
       endDrawer: rightDrawerContent,
       body: SafeArea(
-        child: mainContent, 
+        child: Scrollbar(
+          thumbVisibility: true,
+          child: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: mainContent,
+            ),
+          ),
+        ),
       ),
       bottomNavigationBar: bottomNavigationBar,
     );
