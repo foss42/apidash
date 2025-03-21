@@ -1,5 +1,7 @@
 import 'package:apidash/consts.dart';
 import 'package:apidash/providers/auth_providers.dart';
+import 'package:apidash/widgets/dropdown_auth_type.dart';
+import 'package:apidash/widgets/text_auth.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/tokens/measurements.dart';
 import 'package:flutter/material.dart';
@@ -63,54 +65,25 @@ class _EditRequestAuthState extends ConsumerState<EditRequestAuth> {
           if (authType == AuthType.basic) ...[
             Padding(
               padding: kPt5o10,
-              child: TextField(
-                  controller: usernameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Username',
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.blue),
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(16),
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.blue),
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(16),
-                      ),
-                    ),
-                    fillColor: Colors.white,
-                    filled: true,
-                  ),
-                  onChanged: (value) {
-                    _updateAuth(ref, usernameController, passwordController);
-                  }),
+              child: AuthTextField(
+                controller: usernameController,
+                labelText: 'Username',
+                obscureText: false,
+                onChanged: (value) {
+                  _updateAuth(ref, usernameController, passwordController);
+                },
+              ),
             ),
             Padding(
               padding: kPt5o10,
-              child: TextField(
-                  controller: passwordController,
-                  decoration: const InputDecoration(
-                    labelText: 'Password',
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.blue),
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(16),
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.blue),
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(16),
-                      ),
-                    ),
-                    fillColor: Colors.white,
-                    filled: true,
-                  ),
-                  obscureText: true,
-                  onChanged: (value) {
-                    _updateAuth(ref, usernameController, passwordController);
-                  }),
+              child: AuthTextField(
+                controller: passwordController,
+                labelText: 'Password',
+                obscureText: true,
+                onChanged: (value) {
+                  _updateAuth(ref, usernameController, passwordController);
+                },
+              ),
             ),
           ],
         ],
@@ -125,40 +98,5 @@ class _EditRequestAuthState extends ConsumerState<EditRequestAuth> {
       'username': usernameController.text,
       'password': passwordController.text,
     };
-  }
-}
-
-class DropdownButtonAuthType extends StatelessWidget {
-  final AuthType authType;
-  final ValueChanged<AuthType?> onChanged;
-
-  const DropdownButtonAuthType({
-    super.key,
-    required this.authType,
-    required this.onChanged,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return DropdownButton<AuthType>(
-      value: authType,
-      onChanged: onChanged,
-      dropdownColor: Colors.white,
-      icon: const Icon(Icons.arrow_drop_down, color: Colors.blue),
-      underline: Container(height: 0),
-      padding: const EdgeInsets.symmetric(horizontal: 12.0),
-      borderRadius: BorderRadius.circular(8.0),
-      elevation: 4,
-      items: const [
-        DropdownMenuItem(
-          value: AuthType.none,
-          child: Text('None'),
-        ),
-        DropdownMenuItem(
-          value: AuthType.basic,
-          child: Text('Basic'),
-        ),
-      ],
-    );
   }
 }
