@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
-import 'package:apidash/dashbot/dashbot.dart';
+import 'package:apidash/providers/update_provider.dart';
 import 'common_widgets/common_widgets.dart';
 import 'envvar/environment_page.dart';
 import 'home_page/home_page.dart';
@@ -76,15 +76,37 @@ class Dashboard extends ConsumerWidget {
                     children: [
                       Padding(
                         padding: const EdgeInsets.only(bottom: 16.0),
-                        child: NavbarButton(
-                          railIdx: railIdx,
-                          selectedIcon: Icons.help,
-                          icon: Icons.help_outline,
-                          label: 'About',
-                          showLabel: false,
-                          isCompact: true,
-                          onTap: () {
-                            showAboutAppDialog(context);
+                        child: Consumer(
+                          builder: (context, ref, child) {
+                            final isUpdateAvailable = ref.watch(updateAvailableProvider);
+                            return Stack(
+                              children: [
+                                NavbarButton(
+                                  railIdx: railIdx,
+                                  selectedIcon: Icons.help,
+                                  icon: Icons.help_outline,
+                                  label: 'About',
+                                  showLabel: false,
+                                  isCompact: true,
+                                  onTap: () {
+                                    showAboutAppDialog(context);
+                                  },
+                                ),
+                                if (isUpdateAvailable)
+                                  Positioned(
+                                    right: 11,
+                                    top: 3,
+                                    child: Container(
+                                      width: 8,
+                                      height: 8,
+                                      decoration: const BoxDecoration(
+                                        color: Colors.red,
+                                        shape: BoxShape.circle,
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            );
                           },
                         ),
                       ),
