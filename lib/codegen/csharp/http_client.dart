@@ -5,18 +5,30 @@ class CSharpHttpClientCodeGen {
   final String kTemplateNamespaces = r'''
 using System;
 using System.Net.Http;
+using System.Collections.Generic;
+using System.Linq;
 {%- if formdata == 'multipart' %}
 using System.IO;
-{%- elif formdata == 'urlencoded' %}
-using System.Collections.Generic;
 {%- endif %}
 
 ''';
 
-  final String kTemplateUri = '''
-string uri = "{{ uri }}";
 
+final String kTemplateQueryParams = '''
+string baseUri = "{{ baseUri }}";
+
+var query = new Dictionary<string, List<string>>();
+{%- for key, values in queryParams %}
+query["{{ key }}"] = new List<string>();
+{%- for value in values %}
+query["{{ key }}"].Add("{{ value }}");
+{%- endfor %}
+{%- endfor %}
+
+var queryString = string.Join("&", query.SelectMany(kv => kv.Value.Select(v => string.Format("{0}={1}", kv.Key, v))));
+string uri = string.Format("{0}?{1}", baseUri, queryString);
 ''';
+
 
   final String kTemplateHttpClientAndRequest = '''
 using (var client = new HttpClient())
@@ -81,17 +93,23 @@ using (var request = new HttpRequestMessage(HttpMethod.{{ method | capitalize }}
       StringBuffer result = StringBuffer();
 
       // Include necessary C# namespace
-      String formdataImport = requestModel.hasFormData
-          ? "multipart" //(requestModel.hasFileInFormData ? "multipart" : "urlencoded")
-          : "nodata";
+      String formdataImport = requestModel.hasFormData 
+      ? "multipart" //(requestModel.hasFileInFormData ? "multipart" : "urlencoded")
+      : "nodata";
       result.writeln(jj.Template(kTemplateNamespaces)
-          .render({"formdata": formdataImport}));
+      .render({"formdata": formdataImport}));
 
-      // Set request URL
-      var (uri, _) =
-          getValidRequestUri(requestModel.url, requestModel.enabledParams);
-      if (uri != null) {
-        result.writeln(jj.Template(kTemplateUri).render({"uri": uri}));
+      // Extract query parameters and URL
+      String baseUri = requestModel.url.split('?')[0];
+      var queryParams = requestModel.enabledParamsMap; 
+
+      if (queryParams.isNotEmpty) {
+        result.writeln(jj.Template(kTemplateQueryParams).render({
+          "baseUri": baseUri,
+          "queryParams": queryParams,
+        }));
+      } else {
+        result.writeln('string uri = "$baseUri";\n');
       }
 
       // Initialize HttpClient and create HttpRequestMessage
@@ -103,18 +121,18 @@ using (var request = new HttpRequestMessage(HttpMethod.{{ method | capitalize }}
       var headers = requestModel.enabledHeadersMap;
       if (headers.isNotEmpty) {
         result.writeln(
-            jj.Template(kTemplateHeaders).render({"headers": headers}));
+          jj.Template(kTemplateHeaders).render({"headers": headers}));
       }
 
       // Set request body if exists
       if (kMethodsWithBody.contains(requestModel.method) &&
-          requestModel.hasBody) {
+       requestModel.hasBody) {
         var requestBody = requestModel.body;
 
         if (!requestModel.hasFormData &&
-            requestBody != null &&
-            requestBody.isNotEmpty) {
-          // if the request body is not formdata then render raw text body
+         requestBody != null &&
+          requestBody.isNotEmpty) {
+            // if the request body is not formdata then render raw text body
           result.writeln(jj.Template(kTemplateRawBody).render({
             "body": requestBody,
             "mediaType": requestModel.bodyContentType.header,
@@ -133,7 +151,7 @@ using (var request = new HttpRequestMessage(HttpMethod.{{ method | capitalize }}
         result.writeln(kStringContentSetup);
       }
 
-      // Send request and get response
+       // Send request and get response
       result.write(kStringEnd);
       return result.toString();
     } catch (e) {

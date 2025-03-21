@@ -113,18 +113,23 @@ class Program
         });
         result += methodType;
 
-        if (uri.hasQuery) {
-          var params = uri.queryParameters;
-          if (params.isNotEmpty) {
-            jj.Template templateParams = jj.Template(kTemplateParams);
-            String paramsResult = "";
-            for (var item in params.entries) {
-              paramsResult += templateParams
-                  .render({"param": item.key, "value": item.value});
+     if (requestModel.enabledParamsMap.isNotEmpty) {
+          jj.Template templateParams = jj.Template(kTemplateParams);
+          String paramsResult = "";
+          
+          requestModel.enabledParamsMap.forEach((key, values) {
+            if (values is List) {
+              for (var value in values) {
+                paramsResult += templateParams.render({"param": key, "value": value});
+              }
+            } else {
+              paramsResult += templateParams.render({"param": key, "value": values});
             }
-            result += "$paramsResult\n";
-          }
+          });
+
+          result += "$paramsResult\n";
         }
+
 
         var headersList = requestModel.enabledHeaders;
         if (headersList != null ||
