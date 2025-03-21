@@ -940,8 +940,67 @@ TODO
 TODO
 
 ## Rust (hyper)
+### 1. Install Rust & Cargo
+- Rust comes with Cargo (its package manager). To install Rust, follow these steps:
+#### macOS & Linux:
+ 1. Open a terminal.
+ 2. Run the following command to install Rust:
+ ```bash
+ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+ ```
+ 3. Restart your terminal or run:
+ ```bash
+ source $HOME/.cargo/env
+ ```
+ 4. Verify installation:
+ ```bash
+ rustc --version
+ cargo --version
+ ```
+#### Windows:
+ 1. Download Rust from the official website: https://www.rust-lang.org/tools/install.
+ 2. Run the installer and follow the setup instructions.
+ 3. Open Command Prompt (cmd) and verify installation:
+ ```bash
+ rustc --version
+ cargo --version
+ ```
+### 2. Create a New Rust Project
+- Open your terminal (or Command Prompt on Windows) and run:
+ ```bash
+ cargo new api_dash_example
+ cd api_dash_example
+ ```
+### 3. Add Dependencies
+- Edit `Cargo.toml` and add the following dependencies:
+ ```bash
+ [dependencies]
+ hyper = { version = "0.14", features = ["client", "http1", "tokio-runtime"] }
+ tokio = { version = "1", features = ["full"] }
+ ```
+- Then, install dependencies by running:
+ ```bash
+ cargo build
+ ```
+### 4. Paste and Run the API Dash Code
+ 1. Open the `src/main.rs` file.
+ 2. Copy the Rust (hyper) API Dash-generated code and paste it inside `src/main.rs`.
+ 3. Run the code using:
+ ```bash
+ cargo run
+ ```
 
-TODO
+
+
+
+
+
+
+
+
+
+
+
 
 ## Rust (reqwest)
 
