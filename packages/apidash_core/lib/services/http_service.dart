@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:convert';
+import 'dart:convert'; 
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:seed/seed.dart';
@@ -16,6 +16,7 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
   String requestId,
   APIType apiType,
   HttpRequestModel requestModel, {
+  String? authHeader,
   SupportedUriSchemes defaultUriScheme = kDefaultUriScheme,
   bool noSSL = false,
 }) async {
@@ -29,7 +30,10 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
 
   if (uriRec.$1 != null) {
     Uri requestUrl = uriRec.$1!;
-    Map<String, String> headers = requestModel.enabledHeadersMap;
+    Map<String, String> headers = {
+      ...requestModel.enabledHeadersMap,
+      if (authHeader != null) 'Authorization': authHeader,
+    };
     HttpResponse? response;
     String? body;
     try {
