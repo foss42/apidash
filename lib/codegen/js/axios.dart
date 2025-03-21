@@ -69,16 +69,15 @@ axios(config)
         "method": harJson["method"].toLowerCase(),
       });
 
-      var params = harJson["queryString"];
-      if (params.isNotEmpty) {
-        var templateParams = jj.Template(kTemplateParams);
-        var m = {};
-        for (var i in params) {
-          m[i["name"]] = i["value"];
+      var enabledParams = requestModel.enabledParamsMap; 
+
+        if (enabledParams.isNotEmpty) {
+          var templateParams = jj.Template(kTemplateParams);
+          result += templateParams.render({
+            "params": padMultilineString(kJsonEncoder.convert(enabledParams), 2)
+          });
         }
-        result += templateParams
-            .render({"params": padMultilineString(kJsonEncoder.convert(m), 2)});
-      }
+
 
       var headers = harJson["headers"];
       if (headers.isNotEmpty || requestModel.hasFormData) {
