@@ -435,10 +435,12 @@ const kLabelImport = "Import";
 const kUntitled = "untitled";
 // Request Pane
 const kLabelRequest = "Request";
+const kLabelAuthorizationType = "Authorization Type";
 const kLabelHideCode = "Hide Code";
 const kLabelViewCode = "View Code";
 const kLabelURLParams = "URL Params";
 const kLabelHeaders = "Headers";
+const kLabelAuthorization = "Authorization";
 const kLabelBody = "Body";
 const kLabelQuery = "Query";
 const kNameCheckbox = "Checkbox";

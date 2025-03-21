@@ -1,4 +1,5 @@
 import 'package:apidash/consts.dart';
+import 'package:apidash/screens/home_page/editor_pane/details_card/request_pane/request_authorization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
@@ -21,6 +22,9 @@ class EditGraphQLRequestPane extends ConsumerWidget {
     final hasQuery = ref.watch(selectedRequestModelProvider
             .select((value) => value?.httpRequestModel?.hasQuery)) ??
         false;
+
+    final authEnabled = ref.watch(authTypeProvider) != AuthType.none;
+    
     if (tabIndex >= 2) {
       tabIndex = 0;
     }
@@ -38,14 +42,17 @@ class EditGraphQLRequestPane extends ConsumerWidget {
             .update(requestTabIndex: index);
       },
       showIndicators: [
-        headerLength > 0,
+        authEnabled,
+        headerLength > 0 && !authEnabled,
         hasQuery,
       ],
       tabLabels: const [
+        kLabelAuthorization,
         kLabelHeaders,
         kLabelQuery,
       ],
       children: const [
+        EditRequestAuthorization(),
         EditRequestHeaders(),
         EditRequestBody(),
       ],
