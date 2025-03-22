@@ -1,5 +1,9 @@
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash/services/services.dart';
+
+// Create an instance of the OS Environment Service
+final osEnvironmentService = OSEnvironmentService();
 
 String getEnvironmentTitle(String? name) {
   if (name == null || name.trim() == "") {
@@ -36,26 +40,45 @@ List<EnvironmentVariableModel> getEnvironmentSecrets(
       .toList();
 }
 
+/// Gets the actual value of an environment variable, considering whether it should be fetched from OS
+String getEnvironmentVariableValue(EnvironmentVariableModel variable) {
+  
+  if (variable.fromOS) {
+    final osValue = osEnvironmentService.getOSEnvironmentVariable(variable.key);
+    
+    // Return OS value if found, otherwise return the stored value as fallback
+    return osValue ?? variable.value;
+  }
+  // Return the stored value if not from OS
+  return variable.value;
+}
+
 String? substituteVariables(
     String? input,
     Map<String?, List<EnvironmentVariableModel>> envMap,
     String? activeEnvironmentId) {
   if (input == null) return null;
 
-  final Map<String, String> combinedMap = {};
+  final Map<String, EnvironmentVariableModel> combinedMap = {};
   final activeEnv = envMap[activeEnvironmentId] ?? [];
   final globalEnv = envMap[kGlobalEnvironmentId] ?? [];
 
   for (var variable in globalEnv) {
-    combinedMap[variable.key] = variable.value;
+    combinedMap[variable.key] = variable;
   }
   for (var variable in activeEnv) {
-    combinedMap[variable.key] = variable.value;
+    combinedMap[variable.key] = variable;
   }
 
   String result = input.replaceAllMapped(kEnvVarRegEx, (match) {
     final key = match.group(1)?.trim() ?? '';
-    return combinedMap[key] ?? '';
+    final variable = combinedMap[key];
+    if (variable == null) {
+      return '';
+    }
+    
+    final value = getEnvironmentVariableValue(variable);
+    return value;
   });
 
   return result;
@@ -65,6 +88,7 @@ HttpRequestModel substituteHttpRequestModel(
     HttpRequestModel httpRequestModel,
     Map<String?, List<EnvironmentVariableModel>> envMap,
     String? activeEnvironmentId) {
+  
   var newRequestModel = httpRequestModel.copyWith(
     url: substituteVariables(
       httpRequestModel.url,
