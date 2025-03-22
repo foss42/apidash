@@ -4,6 +4,8 @@ import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:json_text_field/json_text_field.dart';
+import 'dart:convert';
+import 'dart:async';
 
 class JsonTextFieldEditor extends StatefulWidget {
   const JsonTextFieldEditor({
@@ -23,6 +25,22 @@ class JsonTextFieldEditor extends StatefulWidget {
 class _JsonTextFieldEditorState extends State<JsonTextFieldEditor> {
   final JsonTextFieldController controller = JsonTextFieldController();
   late final FocusNode editorFocusNode;
+  bool isValidJson = true; // To keep track of JSON validity
+  String errorMessage = ''; // To store error message
+  Timer? _debounce; // Timer for debouncing validation
+  final String validJsonMessage =
+      "Valid JSON"; // Success message when JSON is valid
+
+  // Method to check if JSON is valid
+  bool isJsonValid(String input) {
+    try {
+      jsonDecode(input); // Try decoding the JSON string
+      return true;
+    } catch (e) {
+      errorMessage = e.toString(); // Capture error message
+      return false;
+    }
+  }
 
   void insertTab() {
     String sp = "  ";
@@ -50,8 +68,22 @@ class _JsonTextFieldEditorState extends State<JsonTextFieldEditor> {
 
   @override
   void dispose() {
+    _debounce?.cancel();
     editorFocusNode.dispose();
     super.dispose();
+  }
+
+  void handleInputChange(String value) {
+    if (_debounce?.isActive ?? false) _debounce?.cancel();
+    _debounce = null;
+
+    _debounce = Timer(const Duration(milliseconds: 300), () {
+      setState(() {
+        isValidJson =
+            isJsonValid(value); // Validate JSON after the debounce time
+      });
+      widget.onChanged?.call(value);
+    });
   }
 
   @override
@@ -59,71 +91,88 @@ class _JsonTextFieldEditorState extends State<JsonTextFieldEditor> {
     if (widget.initialValue != null) {
       controller.text = widget.initialValue!;
     }
-    return CallbackShortcuts(
-      bindings: <ShortcutActivator, VoidCallback>{
-        const SingleActivator(LogicalKeyboardKey.tab): () {
-          insertTab();
-        },
-      },
-      child: JsonTextField(
-        stringHighlightStyle: kCodeStyle.copyWith(
-          color: Theme.of(context).colorScheme.secondary,
-        ),
-        keyHighlightStyle: kCodeStyle.copyWith(
-          color: Theme.of(context).colorScheme.primary,
-          fontWeight: FontWeight.bold,
-        ),
-        errorContainerDecoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.error.withOpacity(
-                kForegroundOpacity,
-              ),
-          borderRadius: kBorderRadius8,
-        ),
-        showErrorMessage: true,
-        isFormatting: true,
-        key: Key(widget.fieldKey),
-        controller: controller,
-        focusNode: editorFocusNode,
-        keyboardType: TextInputType.multiline,
-        expands: true,
-        maxLines: null,
-        style: kCodeStyle,
-        textAlignVertical: TextAlignVertical.top,
-        onChanged: (value) {
-          controller.formatJson(sortJson: false);
-          widget.onChanged?.call(value);
-        },
-        decoration: InputDecoration(
-          hintText: kHintJson,
-          hintStyle: TextStyle(
-            color: Theme.of(context).colorScheme.outline.withOpacity(
-                  kHintOpacity,
-                ),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: kBorderRadius8,
-            borderSide: BorderSide(
-              color: Theme.of(context).colorScheme.primary.withOpacity(
-                    kHintOpacity,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CallbackShortcuts(
+          bindings: <ShortcutActivator, VoidCallback>{
+            const SingleActivator(LogicalKeyboardKey.tab): () {
+              insertTab();
+            },
+          },
+          child: JsonTextField(
+            stringHighlightStyle: kCodeStyle.copyWith(
+              color: Theme.of(context).colorScheme.secondary,
+            ),
+            keyHighlightStyle: kCodeStyle.copyWith(
+              color: Theme.of(context).colorScheme.primary,
+              fontWeight: FontWeight.bold,
+            ),
+            errorContainerDecoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.error.withOpacity(
+                    kForegroundOpacity,
                   ),
+              borderRadius: kBorderRadius8,
+            ),
+            showErrorMessage: true,
+            isFormatting: true,
+            key: Key(widget.fieldKey),
+            controller: controller,
+            focusNode: editorFocusNode,
+            keyboardType: TextInputType.multiline,
+            expands: true,
+            maxLines: null,
+            style: kCodeStyle,
+            textAlignVertical: TextAlignVertical.top,
+            onChanged: handleInputChange,
+            decoration: InputDecoration(
+              hintText: kHintJson,
+              hintStyle: TextStyle(
+                color: Theme.of(context).colorScheme.outline.withOpacity(
+                      kHintOpacity,
+                    ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: kBorderRadius8,
+                borderSide: BorderSide(
+                  color: Theme.of(context).colorScheme.primary.withOpacity(
+                        kHintOpacity,
+                      ),
+                ),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: kBorderRadius8,
+                borderSide: BorderSide(
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                ),
+              ),
+              filled: true,
+              hoverColor: kColorTransparent,
+              fillColor: Color.alphaBlend(
+                  (Theme.of(context).brightness == Brightness.dark
+                          ? Theme.of(context).colorScheme.onPrimaryContainer
+                          : Theme.of(context).colorScheme.primaryContainer)
+                      .withOpacity(kForegroundOpacity),
+                  Theme.of(context).colorScheme.surface),
             ),
           ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: kBorderRadius8,
-            borderSide: BorderSide(
-              color: Theme.of(context).colorScheme.surfaceContainerHighest,
-            ),
-          ),
-          filled: true,
-          hoverColor: kColorTransparent,
-          fillColor: Color.alphaBlend(
-              (Theme.of(context).brightness == Brightness.dark
-                      ? Theme.of(context).colorScheme.onPrimaryContainer
-                      : Theme.of(context).colorScheme.primaryContainer)
-                  .withOpacity(kForegroundOpacity),
-              Theme.of(context).colorScheme.surface),
         ),
-      ),
+        if (!isValidJson)
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: Container(
+              padding: const EdgeInsets.all(12.0),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.error,
+                borderRadius: kBorderRadius8,
+              ),
+              child: Text(
+                errorMessage,
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ),
+      ],
     );
   }
 }
