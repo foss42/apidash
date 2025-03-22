@@ -1,10 +1,10 @@
 # melos_managed_dependency_overrides: curl_parser,insomnia_collection,postman,seed
 dependency_overrides:
   curl_parser:
-    path: ../curl_parser
+    path: ..\\curl_parser
   insomnia_collection:
-    path: ../insomnia_collection
+    path: ..\\insomnia_collection
   postman:
-    path: ../postman
+    path: ..\\postman
   seed:
-    path: ../seed
+    path: ..\\seed
