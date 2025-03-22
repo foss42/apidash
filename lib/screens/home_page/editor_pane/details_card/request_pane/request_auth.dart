@@ -40,10 +40,12 @@ class _EditRequestAuthState extends ConsumerState<EditRequestAuth> {
     super.dispose();
   }
 
-void _updateAuth(WidgetRef ref,) {
+  void _updateAuth(
+    WidgetRef ref,
+  ) {
     final authType = ref.read(authTypeProvider);
     final authData = {
-      if(authType == AuthType.basic)...{
+      if (authType == AuthType.basic) ...{
         'username': usernameController.text,
         'password': passwordController.text,
       },
@@ -51,47 +53,7 @@ void _updateAuth(WidgetRef ref,) {
       if (authType == AuthType.bearer) 'token': btokenController.text,
     };
     ref.read(authDataProvider.notifier).state = authData;
-    final collectionNotifier = ref.read(collectionStateNotifierProvider.notifier);
-    final currentHeaders = ref.read(selectedRequestModelProvider)?.httpRequestModel?.headers ?? [];
-    final enabledList = ref.read(selectedRequestModelProvider)?.httpRequestModel?.isHeaderEnabledList ?? List.filled(currentHeaders.length, true).toList();
-    final filteredHeaders = currentHeaders.where((h) => h.name != 'Authorization' && h.name != 'API-Key').toList();
-    final updatedEnabledList = enabledList.length > filteredHeaders.length 
-        ? enabledList.sublist(0, filteredHeaders.length).toList() 
-        : enabledList.toList();
-
-    String? headerValue;
-    String headerKey = 'Authorization';
-    switch (authType) {
-      case AuthType.basic:
-        if (authData['username']?.isNotEmpty == true && authData['password']?.isNotEmpty == true) {
-          headerValue = 'Basic ${base64Encode(utf8.encode('${authData['username']}:${authData['password']}'))}';
-        }
-        break;
-      case AuthType.apiKey:
-        if (authData['key']?.isNotEmpty == true) {
-          headerValue = authData['key'];
-          headerKey = 'API-Key';
-        }
-        break;
-      case AuthType.bearer:
-        if (authData['token']?.isNotEmpty == true) {
-          headerValue = 'Bearer ${authData['token']}';
-        }
-        break;
-      default:
-        headerValue = null;
-    }
-
-    if (headerValue != null) {
-      filteredHeaders.add(NameValueModel(name: headerKey, value: headerValue));
-      updatedEnabledList.add(true);
-    }
-    if (headerValue != null || currentHeaders.any((h) => h.name == 'Authorization' || h.name == 'X-API-Key')) {
-      collectionNotifier.update(
-        headers: filteredHeaders,
-        isHeaderEnabledList: updatedEnabledList,
-      );
-    }
+    AuthMethod.syncHeaders(ref, authType, authData);
   }
 
   @override
@@ -123,12 +85,13 @@ void _updateAuth(WidgetRef ref,) {
               ],
             ),
           ),
-          _authInputfield(authType,ref)
+          _authInputfield(authType, ref)
         ],
       ),
     );
   }
-  Widget _authInputfield(AuthType authType, WidgetRef ref){
+
+  Widget _authInputfield(AuthType authType, WidgetRef ref) {
     switch (authType) {
       case AuthType.basic:
         return Column(
@@ -159,31 +122,30 @@ void _updateAuth(WidgetRef ref,) {
         );
       case AuthType.apiKey:
         return Padding(
-              padding: kPt5o10,
-              child: AuthTextField(
-                controller: apikeyController,
-                labelText: 'API Key',
-                obscureText: false,
-                onChanged: (value) {
-                  _updateAuth(ref);
-                },
-              ),
-            );
+          padding: kPt5o10,
+          child: AuthTextField(
+            controller: apikeyController,
+            labelText: 'API Key',
+            obscureText: false,
+            onChanged: (value) {
+              _updateAuth(ref);
+            },
+          ),
+        );
       case AuthType.bearer:
         return Padding(
-              padding: kPt5o10,
-              child: AuthTextField(
-                controller: btokenController,
-                labelText: 'Bearer Token',
-                obscureText: false,
-                onChanged: (value) {
-                  _updateAuth(ref);
-                },
-              ),
-            );
+          padding: kPt5o10,
+          child: AuthTextField(
+            controller: btokenController,
+            labelText: 'Bearer Token',
+            obscureText: false,
+            onChanged: (value) {
+              _updateAuth(ref);
+            },
+          ),
+        );
       default:
         return const SizedBox.shrink();
     }
   }
-  }
-            
+}
