@@ -15,6 +15,9 @@ dependencies:
   apidash_design_system:
     path: packages/apidash_design_system
   code_builder: ^4.10.0
+  openapi_spec:
+    path: packages/openapi_spec
+  yaml: ^3.1.2
   csv: ^6.0.0
   data_table_2: 2.5.16
   dart_style: ^3.0.1
