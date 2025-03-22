@@ -37,59 +37,60 @@ List<EnvironmentVariableModel> getEnvironmentSecrets(
 }
 
 String? substituteVariables(
-    String? input,
-    Map<String?, List<EnvironmentVariableModel>> envMap,
-    String? activeEnvironmentId) {
+  String? input,
+  Map<String, String> envVarMap,
+) {
   if (input == null) return null;
-
-  final Map<String, String> combinedMap = {};
-  final activeEnv = envMap[activeEnvironmentId] ?? [];
-  final globalEnv = envMap[kGlobalEnvironmentId] ?? [];
-
-  for (var variable in globalEnv) {
-    combinedMap[variable.key] = variable.value;
+  if (envVarMap.keys.isEmpty) {
+    return input;
   }
-  for (var variable in activeEnv) {
-    combinedMap[variable.key] = variable.value;
-  }
+  final regex = RegExp("{{(${envVarMap.keys.join('|')})}}");
 
-  String result = input.replaceAllMapped(kEnvVarRegEx, (match) {
+  String result = input.replaceAllMapped(regex, (match) {
     final key = match.group(1)?.trim() ?? '';
-    return combinedMap[key] ?? '';
+    return envVarMap[key] ?? '{{$key}}';
   });
 
   return result;
 }
 
 HttpRequestModel substituteHttpRequestModel(
-    HttpRequestModel httpRequestModel,
-    Map<String?, List<EnvironmentVariableModel>> envMap,
-    String? activeEnvironmentId) {
+  HttpRequestModel httpRequestModel,
+  Map<String?, List<EnvironmentVariableModel>> envMap,
+  String? activeEnvironmentId,
+) {
+  final Map<String, String> combinedEnvVarMap = {};
+  final activeEnv = envMap[activeEnvironmentId] ?? [];
+  final globalEnv = envMap[kGlobalEnvironmentId] ?? [];
+
+  for (var variable in globalEnv) {
+    combinedEnvVarMap[variable.key] = variable.value;
+  }
+  for (var variable in activeEnv) {
+    combinedEnvVarMap[variable.key] = variable.value;
+  }
+
   var newRequestModel = httpRequestModel.copyWith(
-    url: substituteVariables(
-      httpRequestModel.url,
-      envMap,
-      activeEnvironmentId,
-    )!,
+    url: substituteVariables(httpRequestModel.url, combinedEnvVarMap)!,
     headers: httpRequestModel.headers?.map((header) {
       return header.copyWith(
-        name:
-            substituteVariables(header.name, envMap, activeEnvironmentId) ?? "",
-        value: substituteVariables(header.value, envMap, activeEnvironmentId),
+        name: substituteVariables(header.name, combinedEnvVarMap) ?? "",
+        value: substituteVariables(header.value, combinedEnvVarMap),
       );
     }).toList(),
     params: httpRequestModel.params?.map((param) {
       return param.copyWith(
-        name:
-            substituteVariables(param.name, envMap, activeEnvironmentId) ?? "",
-        value: substituteVariables(param.value, envMap, activeEnvironmentId),
+        name: substituteVariables(param.name, combinedEnvVarMap) ?? "",
+        value: substituteVariables(param.value, combinedEnvVarMap),
       );
     }).toList(),
-    body: substituteVariables(
-      httpRequestModel.body,
-      envMap,
-      activeEnvironmentId,
-    ),
+    formData: httpRequestModel.formData?.map((formData) {
+      return formData.copyWith(
+        name: substituteVariables(formData.name, combinedEnvVarMap) ?? "",
+        value: substituteVariables(formData.value, combinedEnvVarMap) ?? "",
+      );
+    }).toList(),
+    body: substituteVariables(httpRequestModel.body, combinedEnvVarMap),
   );
   return newRequestModel;
 }

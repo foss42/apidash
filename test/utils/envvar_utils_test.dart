@@ -48,10 +48,13 @@ const globalVars = [
   EnvironmentVariableModel(key: "num", value: "5670000"),
   EnvironmentVariableModel(key: "token", value: "token"),
 ];
+final globalVarsMap = {for (var item in globalVars) item.key: item.value};
 const activeEnvVars = [
   EnvironmentVariableModel(key: "url", value: "api.apidash.dev"),
   EnvironmentVariableModel(key: "num", value: "8940000"),
 ];
+final activeEnvVarsMap = {for (var item in activeEnvVars) item.key: item.value};
+final combinedEnvVarsMap = mergeMaps(globalVarsMap, activeEnvVarsMap);
 
 void main() {
   group("Testing getEnvironmentTitle function", () {
@@ -125,66 +128,45 @@ void main() {
   group("Testing substituteVariables function", () {
     test("Testing substituteVariables with null", () {
       String? input;
-      Map<String?, List<EnvironmentVariableModel>> envMap = {};
-      String? activeEnvironmentId;
-      expect(substituteVariables(input, envMap, activeEnvironmentId), null);
+      Map<String, String> envMap = {};
+      expect(substituteVariables(input, envMap), null);
     });
 
     test("Testing substituteVariables with empty input", () {
       String input = "";
-      Map<String?, List<EnvironmentVariableModel>> envMap = {};
-      String? activeEnvironmentId;
-      expect(substituteVariables(input, envMap, activeEnvironmentId), "");
+      Map<String, String> envMap = {};
+      expect(substituteVariables(input, envMap), "");
     });
 
     test("Testing substituteVariables with empty envMap", () {
       String input = "{{url}}/humanize/social?num={{num}}";
-      Map<String?, List<EnvironmentVariableModel>> envMap = {};
-      String? activeEnvironmentId;
-      String expected = "/humanize/social?num=";
-      expect(substituteVariables(input, envMap, activeEnvironmentId), expected);
+      Map<String, String> envMap = {};
+      String expected = "{{url}}/humanize/social?num={{num}}";
+      expect(substituteVariables(input, envMap), expected);
     });
 
     test("Testing substituteVariables with empty activeEnvironmentId", () {
       String input = "{{url}}/humanize/social?num={{num}}";
-      Map<String?, List<EnvironmentVariableModel>> envMap = {
-        kGlobalEnvironmentId: globalVars,
-      };
       String expected = "api.foss42.com/humanize/social?num=5670000";
-      expect(substituteVariables(input, envMap, null), expected);
+      expect(substituteVariables(input, globalVarsMap), expected);
     });
 
     test("Testing substituteVariables with non-empty activeEnvironmentId", () {
       String input = "{{url}}/humanize/social?num={{num}}";
-      Map<String?, List<EnvironmentVariableModel>> envMap = {
-        kGlobalEnvironmentId: globalVars,
-        "activeEnvId": activeEnvVars,
-      };
-      String? activeEnvId = "activeEnvId";
       String expected = "api.apidash.dev/humanize/social?num=8940000";
-      expect(substituteVariables(input, envMap, activeEnvId), expected);
+      expect(substituteVariables(input, combinedEnvVarsMap), expected);
     });
 
     test("Testing substituteVariables with incorrect paranthesis", () {
       String input = "{{url}}}/humanize/social?num={{num}}";
-      Map<String?, List<EnvironmentVariableModel>> envMap = {
-        kGlobalEnvironmentId: globalVars,
-        "activeEnvId": activeEnvVars,
-      };
-      String? activeEnvId = "activeEnvId";
       String expected = "api.apidash.dev}/humanize/social?num=8940000";
-      expect(substituteVariables(input, envMap, activeEnvId), expected);
+      expect(substituteVariables(input, combinedEnvVarsMap), expected);
     });
 
     test("Testing substituteVariables function with unavailable variables", () {
       String input = "{{url1}}/humanize/social?num={{num}}";
-      Map<String?, List<EnvironmentVariableModel>> envMap = {
-        kGlobalEnvironmentId: globalVars,
-        "activeEnvId": activeEnvVars,
-      };
-      String? activeEnvironmentId = "activeEnvId";
-      String expected = "/humanize/social?num=8940000";
-      expect(substituteVariables(input, envMap, activeEnvironmentId), expected);
+      String expected = "{{url1}}/humanize/social?num=8940000";
+      expect(substituteVariables(input, combinedEnvVarsMap), expected);
     });
   });
 
@@ -251,9 +233,9 @@ void main() {
       };
       String? activeEnvironmentId = "activeEnvId";
       const expected = HttpRequestModel(
-        url: "/humanize/social",
+        url: "{{url1}}/humanize/social",
         headers: [
-          NameValueModel(name: "Authorization", value: "Bearer "),
+          NameValueModel(name: "Authorization", value: "Bearer {{token1}}"),
         ],
         params: [
           NameValueModel(name: "num", value: "8940000"),

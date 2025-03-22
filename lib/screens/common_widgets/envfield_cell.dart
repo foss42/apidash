@@ -27,22 +27,9 @@ class EnvCellField extends StatelessWidget {
       style: kCodeStyle.copyWith(
         color: clrScheme.onSurface,
       ),
-      decoration: InputDecoration(
-        hintStyle: kCodeStyle.copyWith(
-          color: clrScheme.outlineVariant,
-        ),
+      decoration: getTextFieldInputDecoration(
+        clrScheme,
         hintText: hintText,
-        contentPadding: const EdgeInsets.only(bottom: 12),
-        focusedBorder: UnderlineInputBorder(
-          borderSide: BorderSide(
-            color: clrScheme.outlineVariant,
-          ),
-        ),
-        enabledBorder: UnderlineInputBorder(
-          borderSide: BorderSide(
-            color: clrScheme.surfaceContainerHighest,
-          ),
-        ),
       ),
       onChanged: onChanged,
     );
