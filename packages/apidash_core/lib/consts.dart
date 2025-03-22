@@ -85,6 +85,17 @@ enum ContentType {
   final String header;
 }
 
+enum AuthType{
+  none,
+  basic,
+  bearer,
+  jwtBearer,
+  apiKey,
+  digest,
+  oauth1,
+  oauth2,
+}
+
 const JsonEncoder kJsonEncoder = JsonEncoder.withIndent('  ');
 const JsonDecoder kJsonDecoder = JsonDecoder();
 const LineSplitter kSplitter = LineSplitter();
