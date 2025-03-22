@@ -32,6 +32,35 @@ final StateNotifierProvider<CollectionStateNotifier, Map<String, RequestModel>?>
           hiveHandler,
         ));
 
+// Manages the set of visible tab IDs
+final visibleTabsProvider = StateNotifierProvider<VisibleTabsNotifier, Set<String>>((ref) {
+  return VisibleTabsNotifier(ref);
+});
+
+class VisibleTabsNotifier extends StateNotifier<Set<String>> {
+  VisibleTabsNotifier(this.ref) : super({});
+
+  final Ref ref;
+
+  // Toggles a tab’s visibility in the tab bar
+  void toggleVisibility(String id) {
+    state = Set.from(state);
+    if (state.contains(id)) {
+      state.remove(id); // Hide the tab
+    } else {
+      state.add(id); // Show the tab (if reopened)
+    }
+  }
+
+  void showAll() {
+    state = ref.read(requestSequenceProvider).toSet();
+  }
+
+  void addSingleTab(String id) {
+    state = {id};
+  }
+}
+
 class CollectionStateNotifier
     extends StateNotifier<Map<String, RequestModel>?> {
   CollectionStateNotifier(
@@ -45,8 +74,6 @@ class CollectionStateNotifier
           state!.keys.first,
         ];
       }
-      ref.read(selectedIdStateProvider.notifier).state =
-          ref.read(requestSequenceProvider)[0];
     });
   }
 
@@ -77,6 +104,7 @@ class CollectionStateNotifier
         .read(requestSequenceProvider.notifier)
         .update((state) => [id, ...state]);
     ref.read(selectedIdStateProvider.notifier).state = newRequestModel.id;
+    ref.read(visibleTabsProvider.notifier).toggleVisibility(id);
     unsave();
   }
 
@@ -97,6 +125,7 @@ class CollectionStateNotifier
         .read(requestSequenceProvider.notifier)
         .update((state) => [id, ...state]);
     ref.read(selectedIdStateProvider.notifier).state = newRequestModel.id;
+    ref.read(visibleTabsProvider.notifier).toggleVisibility(id);
     unsave();
   }
 
@@ -110,21 +139,24 @@ class CollectionStateNotifier
 
   void remove({String? id}) {
     final rId = id ?? ref.read(selectedIdStateProvider);
+    if (rId == null) return;
+
     var itemIds = ref.read(requestSequenceProvider);
-    int idx = itemIds.indexOf(rId!);
+    int idx = itemIds.indexOf(rId);
     cancelHttpRequest(rId);
     itemIds.remove(rId);
     ref.read(requestSequenceProvider.notifier).state = [...itemIds];
 
+    ref.read(visibleTabsProvider.notifier).state =
+        ref.read(visibleTabsProvider).where((tabId) => tabId != rId).toSet();
+
     String? newId;
-    if (idx == 0 && itemIds.isNotEmpty) {
-      newId = itemIds[0];
-    } else if (itemIds.length > 1) {
-      newId = itemIds[idx - 1];
+    if (itemIds.isNotEmpty) {
+      newId = idx < itemIds.length ? itemIds[idx] : itemIds.last;
     } else {
       newId = null;
     }
-
+    
     ref.read(selectedIdStateProvider.notifier).state = newId;
 
     var map = {...state!};
@@ -175,6 +207,7 @@ class CollectionStateNotifier
 
     ref.read(requestSequenceProvider.notifier).state = [...itemIds];
     ref.read(selectedIdStateProvider.notifier).state = newId;
+    ref.read(visibleTabsProvider.notifier).toggleVisibility(newId);
     unsave();
   }
 
@@ -201,6 +234,7 @@ class CollectionStateNotifier
 
     ref.read(requestSequenceProvider.notifier).state = [...itemIds];
     ref.read(selectedIdStateProvider.notifier).state = newId;
+    ref.read(visibleTabsProvider.notifier).toggleVisibility(newId);
     unsave();
   }
 
