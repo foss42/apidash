@@ -93,3 +93,12 @@ const kCodeCharsPerLineLimit = 200;
 
 const kHeaderContentType = "Content-Type";
 const kMsgRequestCancelled = 'Request Cancelled';
+
+const kApiKeyAuthType = "API Key";
+enum AuthType {
+  none("None"),
+  bearerToken("Bearer Token");
+
+  const AuthType(this.value);
+  final String value;
+}
