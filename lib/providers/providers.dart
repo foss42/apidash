@@ -3,3 +3,4 @@ export 'environment_providers.dart';
 export 'history_providers.dart';
 export 'settings_providers.dart';
 export 'ui_providers.dart';
+export 'auth_providers.dart';
