@@ -17,126 +17,130 @@ class Dashboard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final railIdx = ref.watch(navRailIndexStateProvider);
+    final isDashBotVisible = ref.watch(dashBotVisibilityProvider);
+
     return Scaffold(
       body: SafeArea(
-        child: Row(
-          children: <Widget>[
-            Column(
-              children: [
-                SizedBox(
-                  height: kIsMacOS ? 32.0 : 16.0,
-                  width: 64,
-                ),
+        child: Stack(
+          children: [
+            Row(
+              children: <Widget>[
                 Column(
-                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    IconButton(
-                      isSelected: railIdx == 0,
-                      onPressed: () {
-                        ref.read(navRailIndexStateProvider.notifier).state = 0;
-                      },
-                      icon: const Icon(Icons.auto_awesome_mosaic_outlined),
-                      selectedIcon: const Icon(Icons.auto_awesome_mosaic),
+                    SizedBox(
+                      height: kIsMacOS ? 32.0 : 16.0,
+                      width: 64,
                     ),
-                    Text(
-                      'Requests',
-                      style: Theme.of(context).textTheme.labelSmall,
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          isSelected: railIdx == 0,
+                          onPressed: () {
+                            ref.read(navRailIndexStateProvider.notifier).state = 0;
+                          },
+                          icon: const Icon(Icons.auto_awesome_mosaic_outlined),
+                          selectedIcon: const Icon(Icons.auto_awesome_mosaic),
+                        ),
+                        Text(
+                          'Requests',
+                          style: Theme.of(context).textTheme.labelSmall,
+                        ),
+                        kVSpacer10,
+                        IconButton(
+                          isSelected: railIdx == 1,
+                          onPressed: () {
+                            ref.read(navRailIndexStateProvider.notifier).state = 1;
+                          },
+                          icon: const Icon(Icons.laptop_windows_outlined),
+                          selectedIcon: const Icon(Icons.laptop_windows),
+                        ),
+                        Text(
+                          'Variables',
+                          style: Theme.of(context).textTheme.labelSmall,
+                        ),
+                        kVSpacer10,
+                        IconButton(
+                          isSelected: railIdx == 2,
+                          onPressed: () {
+                            ref.read(navRailIndexStateProvider.notifier).state = 2;
+                          },
+                          icon: const Icon(Icons.history_outlined),
+                          selectedIcon: const Icon(Icons.history_rounded),
+                        ),
+                        Text(
+                          'History',
+                          style: Theme.of(context).textTheme.labelSmall,
+                        ),
+                      ],
                     ),
-                    kVSpacer10,
-                    IconButton(
-                      isSelected: railIdx == 1,
-                      onPressed: () {
-                        ref.read(navRailIndexStateProvider.notifier).state = 1;
-                      },
-                      icon: const Icon(Icons.laptop_windows_outlined),
-                      selectedIcon: const Icon(Icons.laptop_windows),
-                    ),
-                    Text(
-                      'Variables',
-                      style: Theme.of(context).textTheme.labelSmall,
-                    ),
-                    kVSpacer10,
-                    IconButton(
-                      isSelected: railIdx == 2,
-                      onPressed: () {
-                        ref.read(navRailIndexStateProvider.notifier).state = 2;
-                      },
-                      icon: const Icon(Icons.history_outlined),
-                      selectedIcon: const Icon(Icons.history_rounded),
-                    ),
-                    Text(
-                      'History',
-                      style: Theme.of(context).textTheme.labelSmall,
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 16.0),
+                            child: NavbarButton(
+                              railIdx: railIdx,
+                              selectedIcon: Icons.help,
+                              icon: Icons.help_outline,
+                              label: 'About',
+                              showLabel: false,
+                              isCompact: true,
+                              onTap: () {
+                                showAboutAppDialog(context);
+                              },
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 16.0),
+                            child: NavbarButton(
+                              railIdx: railIdx,
+                              buttonIdx: 3,
+                              selectedIcon: Icons.settings,
+                              icon: Icons.settings_outlined,
+                              label: 'Settings',
+                              showLabel: false,
+                              isCompact: true,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
+                VerticalDivider(
+                  thickness: 1,
+                  width: 1,
+                  color: Theme.of(context).colorScheme.surfaceContainerHigh,
+                ),
                 Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 16.0),
-                        child: NavbarButton(
-                          railIdx: railIdx,
-                          selectedIcon: Icons.help,
-                          icon: Icons.help_outline,
-                          label: 'About',
-                          showLabel: false,
-                          isCompact: true,
-                          onTap: () {
-                            showAboutAppDialog(context);
-                          },
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 16.0),
-                        child: NavbarButton(
-                          railIdx: railIdx,
-                          buttonIdx: 3,
-                          selectedIcon: Icons.settings,
-                          icon: Icons.settings_outlined,
-                          label: 'Settings',
-                          showLabel: false,
-                          isCompact: true,
-                        ),
-                      ),
+                  child: IndexedStack(
+                    alignment: AlignmentDirectional.topCenter,
+                    index: railIdx,
+                    children: const [
+                      HomePage(),
+                      EnvironmentPage(),
+                      HistoryPage(),
+                      SettingsPage(),
                     ],
                   ),
-                ),
+                )
               ],
             ),
-            VerticalDivider(
-              thickness: 1,
-              width: 1,
-              color: Theme.of(context).colorScheme.surfaceContainerHigh,
-            ),
-            Expanded(
-              child: IndexedStack(
-                alignment: AlignmentDirectional.topCenter,
-                index: railIdx,
-                children: const [
-                  HomePage(),
-                  EnvironmentPage(),
-                  HistoryPage(),
-                  SettingsPage(),
-                ],
+
+            // DashBot Overlay
+            if (isDashBotVisible)
+              Positioned(
+                bottom: 20,
+                right: 20,
+                child: const DashBotOverlay(),
               ),
-            )
           ],
         ),
       ),
-      // TODO: Release DashBot
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => showModalBottomSheet(
-          context: context,
-          isScrollControlled: true,
-          builder: (context) => const Padding(
-            padding: EdgeInsets.all(16.0),
-            child: DashBotWidget(),
-          ),
-        ),
-        child: const Icon(Icons.help_outline),
-      ),
+      // Conditionally show FAB only when DashBot is not visible
+      floatingActionButton: !isDashBotVisible ? const DashBotFAB() : null,
     );
   }
 }

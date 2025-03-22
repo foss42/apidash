@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/dashbot/providers/dashbot_providers.dart';
 import 'package:apidash/providers/providers.dart';
+import 'package:apidash/dashbot/dashbot.dart';
 import 'test_runner_widget.dart';
 import 'chat_bubble.dart';
 
@@ -78,7 +79,7 @@ class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
       setState(() => _isLoading = false);
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _scrollController.animateTo(
-          0,
+          _scrollController.position.minScrollExtent,
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeOut,
         );
@@ -105,19 +106,18 @@ class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
     final requestModel = ref.read(selectedRequestModelProvider);
     final statusCode = requestModel?.httpResponseModel?.statusCode;
     final showDebugButton = statusCode != null && statusCode >= 400;
+    final isMinimized = ref.watch(dashBotMinimizedProvider);
 
     return Container(
-      height: 450,
+      height: double.infinity,
       width: double.infinity,
-      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: const [
-          BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 4))
-        ],
       ),
-      child: Column(
+      child: isMinimized
+          ? _buildMinimizedView(context)
+          : Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildHeader(context),
@@ -134,115 +134,181 @@ class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
   }
 
   Widget _buildHeader(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    final isMinimized = ref.watch(dashBotMinimizedProvider);
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const Text(
+            'DashBot',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          Row(
+            children: [
+              // Minimize/Maximize button with proper alignment
+              IconButton(
+                padding: const EdgeInsets.all(8),
+                visualDensity: VisualDensity.compact,
+                icon: Icon(
+                  isMinimized ? Icons.fullscreen : Icons.remove,
+                  size: 20,
+                ),
+                tooltip: isMinimized ? 'Maximize' : 'Minimize',
+                onPressed: () {
+                  ref.read(dashBotMinimizedProvider.notifier).state = !isMinimized;
+                },
+              ),
+              // Close button
+              IconButton(
+                padding: const EdgeInsets.all(8),
+                visualDensity: VisualDensity.compact,
+                icon: const Icon(Icons.close, size: 20),
+                tooltip: 'Close',
+                onPressed: () {
+                  ref.read(dashBotVisibilityProvider.notifier).state = false;
+                },
+              ),
+              // Clear chat button
+              IconButton(
+                padding: const EdgeInsets.all(8),
+                visualDensity: VisualDensity.compact,
+                icon: const Icon(Icons.delete_sweep, size: 20),
+                tooltip: 'Clear Chat',
+                onPressed: () {
+                  ref.read(chatMessagesProvider.notifier).clearMessages();
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMinimizedView(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('DashBot',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-        IconButton(
-          icon: const Icon(Icons.delete_sweep),
-          tooltip: 'Clear Chat',
-          onPressed: () {
-            ref.read(chatMessagesProvider.notifier).clearMessages();
-          },
+        _buildHeader(context),
+        const SizedBox(height: 8),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: _buildInputArea(context),
         ),
       ],
     );
   }
 
   Widget _buildQuickActions(bool showDebugButton) {
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      children: [
-        ElevatedButton.icon(
-          onPressed: () => _sendMessage("Explain API"),
-          icon: const Icon(Icons.info_outline),
-          label: const Text("Explain"),
-          style: ElevatedButton.styleFrom(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          ),
-        ),
-        if (showDebugButton)
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        children: [
           ElevatedButton.icon(
-            onPressed: () => _sendMessage("Debug API"),
-            icon: const Icon(Icons.bug_report_outlined),
-            label: const Text("Debug"),
+            onPressed: () => _sendMessage("Explain API"),
+            icon: const Icon(Icons.info_outline, size: 16),
+            label: const Text("Explain"),
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              visualDensity: VisualDensity.compact,
             ),
           ),
-        ElevatedButton.icon(
-          onPressed: () => _sendMessage("Document API"),
-          icon: const Icon(Icons.description_outlined),
-          label: const Text("Document"),
-          style: ElevatedButton.styleFrom(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          if (showDebugButton)
+            ElevatedButton.icon(
+              onPressed: () => _sendMessage("Debug API"),
+              icon: const Icon(Icons.bug_report_outlined, size: 16),
+              label: const Text("Debug"),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                visualDensity: VisualDensity.compact,
+              ),
+            ),
+          ElevatedButton.icon(
+            onPressed: () => _sendMessage("Document API"),
+            icon: const Icon(Icons.description_outlined, size: 16),
+            label: const Text("Document"),
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              visualDensity: VisualDensity.compact,
+            ),
           ),
-        ),
-        ElevatedButton.icon(
-          onPressed: () => _sendMessage("Test API"),
-          icon: const Icon(Icons.science_outlined),
-          label: const Text("Test"),
-          style: ElevatedButton.styleFrom(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          ElevatedButton.icon(
+            onPressed: () => _sendMessage("Test API"),
+            icon: const Icon(Icons.science_outlined, size: 16),
+            label: const Text("Test"),
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              visualDensity: VisualDensity.compact,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
   Widget _buildChatArea(List<Map<String, dynamic>> messages) {
-    return ListView.builder(
-      controller: _scrollController,
-      reverse: true,
-      itemCount: messages.length,
-      itemBuilder: (context, index) {
-        final message = messages.reversed.toList()[index];
-        final isBot = message['role'] == 'bot';
-        final text = message['message'] as String;
-        final showTestButton = message['showTestButton'] == true;
-        final testCases = message['testCases'] as String?;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: ListView.builder(
+        controller: _scrollController,
+        reverse: true,
+        itemCount: messages.length,
+        itemBuilder: (context, index) {
+          final message = messages.reversed.toList()[index];
+          final isBot = message['role'] == 'bot';
+          final text = message['message'] as String;
+          final showTestButton = message['showTestButton'] == true;
+          final testCases = message['testCases'] as String?;
 
-        if (isBot && showTestButton && testCases != null) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ChatBubble(message: text, isUser: false),
-              Padding(
-                padding: const EdgeInsets.only(left: 12, top: 4, bottom: 4),
-                child: ElevatedButton.icon(
-                  onPressed: () => _showTestRunner(testCases),
-                  icon: const Icon(Icons.play_arrow),
-                  label: const Text("Run Test Cases"),
+          if (isBot && showTestButton && testCases != null) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ChatBubble(message: text, isUser: false),
+                Padding(
+                  padding: const EdgeInsets.only(left: 12, top: 4, bottom: 4),
+                  child: ElevatedButton.icon(
+                    onPressed: () => _showTestRunner(testCases),
+                    icon: const Icon(Icons.play_arrow, size: 16),
+                    label: const Text("Run Test Cases"),
+                    style: ElevatedButton.styleFrom(
+                      visualDensity: VisualDensity.compact,
+                    ),
+                  ),
                 ),
-              ),
-            ],
-          );
-        }
+              ],
+            );
+          }
 
-        return ChatBubble(
-          message: text,
-          isUser: message['role'] == 'user',
-        );
-      },
+          return ChatBubble(
+            message: text,
+            isUser: message['role'] == 'user',
+          );
+        },
+      ),
     );
   }
 
   Widget _buildLoadingIndicator() {
     return const Padding(
-      padding: EdgeInsets.all(8.0),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: LinearProgressIndicator(),
     );
   }
 
   Widget _buildInputArea(BuildContext context) {
+    final isMinimized = ref.watch(dashBotMinimizedProvider);
+
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
         color: Theme.of(context).colorScheme.surfaceContainer,
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       child: Row(
         children: [
           Expanded(
@@ -251,19 +317,28 @@ class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
               decoration: const InputDecoration(
                 hintText: 'Ask DashBot...',
                 border: InputBorder.none,
+                contentPadding: EdgeInsets.symmetric(vertical: 8),
               ),
               onSubmitted: (value) {
                 _sendMessage(value);
                 _controller.clear();
+                if (isMinimized) {
+                  ref.read(dashBotMinimizedProvider.notifier).state = false;
+                }
               },
               maxLines: 1,
             ),
           ),
           IconButton(
-            icon: const Icon(Icons.send),
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+            icon: const Icon(Icons.send, size: 20),
             onPressed: () {
               _sendMessage(_controller.text);
               _controller.clear();
+              if (isMinimized) {
+                ref.read(dashBotMinimizedProvider.notifier).state = false;
+              }
             },
           ),
         ],
