@@ -6,9 +6,11 @@ import 'providers/providers.dart';
 import 'services/services.dart';
 import 'consts.dart';
 import 'app.dart';
+import 'screens/onboarding_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  bool onboardingCompleted = await getOnboardingStatus();
   var settingsModel = await getSettingsFromSharedPrefs();
   final initStatus = await initApp(
     kIsDesktop,
@@ -28,7 +30,7 @@ void main() async {
           (ref) => ThemeStateNotifier(settingsModel: settingsModel),
         )
       ],
-      child: const DashApp(),
+      child: (kIsMobile && !onboardingCompleted)?  MaterialApp(home: OnboardingScreen()):DashApp(),
     ),
   );
 }
