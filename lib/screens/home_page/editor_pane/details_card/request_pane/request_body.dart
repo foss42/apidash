@@ -6,6 +6,7 @@ import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
 import 'request_form_data.dart';
+import 'package:apidash/screens/common_widgets/env_regexp_span_builder.dart';
 
 class EditRequestBody extends ConsumerWidget {
   const EditRequestBody({super.key});
@@ -55,6 +56,7 @@ class EditRequestBody extends ConsumerWidget {
                             .update(body: value);
                       },
                       hintText: kHintJson,
+                      specialTextSpanBuilder: EnvRegExpSpanBuilder(), // Add this
                     ),
                   ),
                 _ => Padding(
