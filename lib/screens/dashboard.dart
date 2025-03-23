@@ -18,7 +18,6 @@ class Dashboard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final railIdx = ref.watch(navRailIndexStateProvider);
     final isDashBotVisible = ref.watch(dashBotVisibilityProvider);
-
     return Scaffold(
       body: SafeArea(
         child: Stack(
@@ -139,7 +138,7 @@ class Dashboard extends ConsumerWidget {
           ],
         ),
       ),
-      // Conditionally show FAB only when DashBot is not visible
+      // TODO: Release DashBot
       floatingActionButton: !isDashBotVisible ? const DashBotFAB() : null,
     );
   }
