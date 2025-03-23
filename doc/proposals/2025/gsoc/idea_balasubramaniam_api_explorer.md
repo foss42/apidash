@@ -1,9 +1,9 @@
 # **Initial Idea Submission : API Explorer**
 
-**Full Name:** BALASUBRAMANIAM L
-**University Name:** Saveetha Engineering College
-**Program (Degree & Major/Minor):** Bachelor of technology Machine Learning
-**Year:** First year
+**Full Name:** BALASUBRAMANIAM L  
+**University Name:** Saveetha Engineering College  
+**Program (Degree & Major/Minor):** Bachelor of technology Machine Learning  
+**Year:** First year  
 **Expected Graduation Date:** 2028
 
 **Project Title:** API Explorer  
@@ -78,7 +78,7 @@ In the initial phase, contributors can manually add new API definition files (YA
 
 
 
-![alt text](<images/API_EXPLORER_WORKFLOW.png>)
+![alt text](images/API_EXPLORER_WORKFLOW.png)
 
 ---
 
