@@ -7,7 +7,9 @@ import 'test_runner_widget.dart';
 import 'chat_bubble.dart';
 
 class DashBotWidget extends ConsumerStatefulWidget {
-  const DashBotWidget({super.key});
+  const DashBotWidget({
+    super.key,
+  });
 
   @override
   ConsumerState<DashBotWidget> createState() => _DashBotWidgetState();
@@ -33,7 +35,6 @@ class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
 
   Future<void> _sendMessage(String message) async {
     if (message.trim().isEmpty) return;
-
     final dashBotService = ref.read(dashBotServiceProvider);
     final requestModel = ref.read(selectedRequestModelProvider);
     final responseModel = requestModel?.httpResponseModel;
@@ -48,13 +49,8 @@ class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
     try {
       final response = await dashBotService.handleRequest(
           message, requestModel, responseModel);
-
-      // Check if this is a test case response with hidden content
       if (response.startsWith("TEST_CASES_HIDDEN\n")) {
-        // Extract the test cases but don't show them in the message
         final testCases = response.replaceFirst("TEST_CASES_HIDDEN\n", "");
-
-        // Add a message with a marker that will trigger the button display
         ref.read(chatMessagesProvider.notifier).addMessage({
           'role': 'bot',
           'message': "Test cases generated successfully. Click the button below to run them.",
@@ -62,7 +58,6 @@ class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
           'showTestButton': true,
         });
       } else {
-        // Normal message handling
         ref.read(chatMessagesProvider.notifier).addMessage({
           'role': 'bot',
           'message': response,
@@ -135,7 +130,6 @@ class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
 
   Widget _buildHeader(BuildContext context) {
     final isMinimized = ref.watch(dashBotMinimizedProvider);
-
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
       child: Row(
@@ -147,7 +141,6 @@ class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
           ),
           Row(
             children: [
-              // Minimize/Maximize button with proper alignment
               IconButton(
                 padding: const EdgeInsets.all(8),
                 visualDensity: VisualDensity.compact,
@@ -160,7 +153,6 @@ class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
                   ref.read(dashBotMinimizedProvider.notifier).state = !isMinimized;
                 },
               ),
-              // Close button
               IconButton(
                 padding: const EdgeInsets.all(8),
                 visualDensity: VisualDensity.compact,
@@ -170,7 +162,6 @@ class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
                   ref.read(dashBotVisibilityProvider.notifier).state = false;
                 },
               ),
-              // Clear chat button
               IconButton(
                 padding: const EdgeInsets.all(8),
                 visualDensity: VisualDensity.compact,
@@ -302,7 +293,6 @@ class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
 
   Widget _buildInputArea(BuildContext context) {
     final isMinimized = ref.watch(dashBotMinimizedProvider);
-
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),

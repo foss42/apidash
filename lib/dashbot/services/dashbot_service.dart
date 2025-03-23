@@ -2,7 +2,7 @@ import 'package:apidash/dashbot/features/debug.dart';
 import 'package:apidash/dashbot/features/documentation.dart';
 import 'package:ollama_dart/ollama_dart.dart';
 import 'package:apidash/dashbot/features/explain.dart';
-import 'package:apidash/dashbot/features/test_generator.dart'; // New import
+import 'package:apidash/dashbot/features/test_generator.dart';
 import 'package:apidash/models/request_model.dart';
 import 'package:apidash/dashbot/features/general_query.dart';
 
@@ -11,7 +11,7 @@ class DashBotService {
   late final ExplainFeature _explainFeature;
   late final DebugFeature _debugFeature;
   late final DocumentationFeature _documentationFeature;
-  late final TestGeneratorFeature _testGeneratorFeature; // New feature
+  late final TestGeneratorFeature _testGeneratorFeature;
   final GeneralQueryFeature _generalQueryFeature;
 
   DashBotService()
@@ -20,7 +20,7 @@ class DashBotService {
     _explainFeature = ExplainFeature(this);
     _debugFeature = DebugFeature(this);
     _documentationFeature = DocumentationFeature(this);
-    _testGeneratorFeature = TestGeneratorFeature(this); // Initialize new feature
+    _testGeneratorFeature = TestGeneratorFeature(this);
   }
 
   Future<String> generateResponse(String prompt) async {
@@ -38,7 +38,7 @@ class DashBotService {
     } else if (input == "Document API") {
       return _documentationFeature.generateApiDocumentation(
           requestModel: requestModel, responseModel: responseModel);
-    } else if (input == "Test API") { // New condition
+    } else if (input == "Test API") {
       return _testGeneratorFeature.generateApiTests(
           requestModel: requestModel, responseModel: responseModel);
     }

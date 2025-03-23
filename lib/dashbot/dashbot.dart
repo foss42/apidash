@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/dashbot/widgets/dashbot_widget.dart';
 
-// Provider to manage DashBot visibility state
 final dashBotVisibilityProvider = StateProvider<bool>((ref) => false);
 final dashBotMinimizedProvider = StateProvider<bool>((ref) => false);
 
-// Function to show DashBot in a bottom sheet (old style)
 void showDashBotBottomSheet(BuildContext context) {
   showModalBottomSheet(
     context: context,
@@ -18,13 +16,11 @@ void showDashBotBottomSheet(BuildContext context) {
   );
 }
 
-// Function to toggle DashBot overlay (new style)
 void toggleDashBotOverlay(WidgetRef ref) {
   ref.read(dashBotVisibilityProvider.notifier).state = true;
   ref.read(dashBotMinimizedProvider.notifier).state = false;
 }
 
-// DashBot Overlay Widget
 class DashBotOverlay extends ConsumerWidget {
   const DashBotOverlay({super.key});
 
@@ -36,7 +32,7 @@ class DashBotOverlay extends ConsumerWidget {
       elevation: 8,
       borderRadius: BorderRadius.circular(12),
       child: SizedBox(
-        width: 400, // Fixed width for the DashBot
+        width: 400,
         height: isMinimized ? 120 : 450,
         child: const DashBotWidget(),
       ),
@@ -44,7 +40,6 @@ class DashBotOverlay extends ConsumerWidget {
   }
 }
 
-// FloatingActionButton for DashBot
 class DashBotFAB extends ConsumerWidget {
   final bool useOverlay;
 

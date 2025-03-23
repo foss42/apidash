@@ -1,5 +1,5 @@
 import 'dart:convert';
-import '../services/dashbot_service.dart';
+import 'package:apidash/dashbot/services/dashbot_service.dart';
 import 'package:apidash/models/request_model.dart';
 
 class DocumentationFeature {

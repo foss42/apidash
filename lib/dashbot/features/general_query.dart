@@ -7,7 +7,6 @@ class GeneralQueryFeature {
   GeneralQueryFeature(this._client);
 
   Future<String> generateResponse(String prompt, {RequestModel? requestModel, dynamic responseModel}) async {
-    // Create a more focused prompt that incorporates request/response context if available
     String enhancedPrompt = prompt;
 
     if (requestModel != null && responseModel != null) {

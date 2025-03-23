@@ -1,8 +1,8 @@
+import 'dart:convert';
+import 'package:apidash_core/apidash_core.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'content_renderer.dart';
 
 class TestRunnerWidget extends ConsumerStatefulWidget {

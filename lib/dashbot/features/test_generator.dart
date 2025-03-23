@@ -22,20 +22,15 @@ class TestGeneratorFeature {
         .toUpperCase() ??
         "GET";
     final endpoint = requestModel.httpRequestModel?.url ?? "Unknown Endpoint";
-    final headers = requestModel.httpRequestModel?.enabledHeadersMap ?? {};
-    final parameters = requestModel.httpRequestModel?.enabledParamsMap ?? {};
-    final body = requestModel.httpRequestModel?.body;
     final rawResponse = responseModel.body;
     final responseBody =
     rawResponse is String ? rawResponse : jsonEncode(rawResponse);
     final statusCode = responseModel.statusCode ?? 0;
 
-    // Extract base URL and endpoint path
     Uri uri = Uri.parse(endpoint);
     final baseUrl = "${uri.scheme}://${uri.host}";
     final path = uri.path;
 
-    // Analyze parameter types and values
     final parameterAnalysis = _analyzeParameters(uri.queryParameters);
 
     final prompt = """
@@ -67,11 +62,7 @@ For each test case:
 Focus on creating realistic test values based on the API context (e.g., for a country flag API, use real country codes, invalid codes, etc.)
 """;
 
-    // Generate the test cases
     final testCases = await _service.generateResponse(prompt);
-
-    // Return only a button trigger message with the test cases hidden
-    // This will be detected in DashBotWidget to show only a button instead of the full text
     return "TEST_CASES_HIDDEN\n$testCases";
   }
 
@@ -83,7 +74,6 @@ Focus on creating realistic test values based on the API context (e.g., for a co
     Map<String, String> analysis = {};
 
     parameters.forEach((key, value) {
-      // Try to determine parameter type and format
       if (RegExp(r'^[A-Z]{3}$').hasMatch(value)) {
         analysis[key] = "Appears to be a 3-letter country code (ISO 3166-1 alpha-3)";
       } else if (RegExp(r'^[A-Z]{2}$').hasMatch(value)) {
