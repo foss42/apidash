@@ -1,3 +1,4 @@
+import 'package:apidash/codegen/swift/alamofire.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/utils/utils.dart' show getNewUuid;
@@ -117,6 +118,8 @@ class Codegen {
         return PhpHttpPlugCodeGen().getCode(rM);
       case CodegenLanguage.swiftUrlSession:
         return SwiftURLSessionCodeGen().getCode(rM);
+      case CodegenLanguage.swiftAlamofire:
+        return SwiftAlamofireCodeGen().getCode(rM);
     }
   }
 }
