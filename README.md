@@ -2,6 +2,19 @@
 
 [![Discord Server Invite](https://img.shields.io/badge/DISCORD-JOIN%20SERVER-5663F7?style=for-the-badge&logo=discord&logoColor=white)](https://bit.ly/heyfoss)
 
+### 🚨🚨 API Dash is participating in GSoC 2025! Check out the details below:
+
+<img src="https://github.com/foss42/apidash/assets/615622/493ce57f-06c3-4789-b7ae-9fa63bca8183" alt="GSoC" width="500">
+
+| | Link |
+|--|--|
+| Learn about GSoC | [Link](https://summerofcode.withgoogle.com) |
+| API Dash GSoC Page | [Link](https://summerofcode.withgoogle.com/programs/2025/organizations/api-dash) |
+| Project Ideas List | [Link](https://github.com/foss42/apidash/discussions/565) |
+| Application Guide | [Link](https://github.com/foss42/apidash/discussions/564) |
+| Discord Channel | [Link](https://bit.ly/fgfossd) |
+
+
 ### Please support this initiative by giving this project a Star ⭐️
 
 API Dash is a beautiful open-source cross-platform API Client that can help you easily create & customize your API requests, visually inspect responses ([full list of supported mime-types](https://github.com/foss42/apidash?tab=readme-ov-file#mime-types-supported-by-api-dash-response-previewer)) and generate API integration code ([full list](https://github.com/foss42/apidash?tab=readme-ov-file#code-generators)) on the go.
