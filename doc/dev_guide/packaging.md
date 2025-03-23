@@ -78,7 +78,84 @@ git push
 
 ## FlatHub (Flatpak)
 
-TODO Instructions
+Steps to generate .flatpak package of API Dash:
+
+1. Clone and build API Dash:
+
+Follow the [How to run API Dash locally](setup_run.md) guide.
+
+Stay in the root folder of the project directory.
+
+2. Install Required Packages (Debian/Ubuntu):
+
+```bash
+sudo apt install flatpak
+flatpak install -y flathub org.flatpak.Builder
+flatpak remote-add --if-not-exists --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+```
+
+*if using another linux distro, download flatpak and follow the rest of the steps.
+
+3. Build API Dash project:
+
+```bash
+flutter build linux --release
+```
+
+4. Create flatpak manifest file:
+
+```bash
+touch apidash-flatpak.yaml
+```
+in this file, add:
+
+```yaml
+app-id: io.github.foss42.apidash
+runtime: org.freedesktop.Platform
+runtime-version: "23.08"
+sdk: org.freedesktop.Sdk
+
+command: /app/bundle/apidash
+finish-args:
+  - --share=ipc
+  - --socket=fallback-x11
+  - --socket=wayland
+  - --device=dri
+  - --socket=pulseaudio
+  - --share=network
+  - --filesystem=home
+modules:
+  - name: apidash
+    buildsystem: simple
+    build-commands:
+      - cp -a build/linux/x64/release/bundle /app/bundle
+    sources:
+      - type: dir
+        path: .
+```
+
+5. Create the .flatpak file:
+
+```bash
+flatpak run org.flatpak.Builder --force-clean --sandbox --user --install --install-deps-from=flathub --ccache --mirror-screenshots-url=https://dl.flathub.org/media/ --repo=repo builddir apidash-flatpak.yaml
+
+flatpak build-bundle repo apidash.flatpak io.github.foss42.apidash
+```
+
+The apidash.flatpak file should be the project root folder.
+
+To test it:
+
+```bash
+flatpak install --user apidash.flatpak
+
+flatpak run io.github.foss42.apidash
+```
+To uninstall it:
+
+```bash
+flatpak uninstall io.github.foss42.apidash
+```
 
 ## Homebrew
 
