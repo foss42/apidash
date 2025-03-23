@@ -67,9 +67,13 @@ request.httpBody = try! multipartFormData.encode()
 """;
 
   final String kTemplateEnd = """
+let semaphore = DispatchSemaphore(value: 0) 
+
 let task = URLSession.shared.dataTask(with: request) { data, response, error in 
+    defer { semaphore.signal() }  
+
     if let error = error {
-        print("Error: (error.localizedDescription)")
+        print("Error: \\(error.localizedDescription)")
         return
     }
     guard let data = data else {
@@ -77,11 +81,15 @@ let task = URLSession.shared.dataTask(with: request) { data, response, error in
         return
     }
     if let responseString = String(data: data, encoding: .utf8) {
-        print("Response: (responseString)")
+        print("Response: \\(responseString)")
     }
 }
+
 task.resume()
+
+semaphore.wait()
 """;
+
 
   String? getCode(HttpRequestModel requestModel) {
     try {
@@ -145,7 +153,7 @@ task.resume()
       var headers = requestModel.enabledHeadersMap;
       if (requestModel.hasFormData) {
         headers.putIfAbsent("Content-Type",
-            () => "multipart/form-data; boundary=(boundary.stringValue)");
+            () => "multipart/form-data; boundary=\\(boundary.stringValue)");
       } else if (requestModel.hasJsonData || requestModel.hasTextData) {
         headers.putIfAbsent(
             kHeaderContentType, () => requestModel.bodyContentType.header);
