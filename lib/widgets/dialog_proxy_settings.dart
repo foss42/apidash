@@ -45,12 +45,16 @@ class _ProxySettingsDialogState extends ConsumerState<ProxySettingsDialog> {
         username: _usernameController.text.isEmpty ? null : _usernameController.text,
         password: _passwordController.text.isEmpty ? null : _passwordController.text,
       );
-      ref.read(settingsProvider.notifier).update(proxySettings: newProxy);
+      _updateProxySettings(newProxy);
       Navigator.of(context).pop();
     }
     else{
-      ref.read(settingsProvider.notifier).update(proxySettings: null);
+      _updateProxySettings(null);
     }
+  }
+
+  void _updateProxySettings(ProxySettings? newProxy) {
+    ref.read(settingsProvider.notifier).update(proxySettings: newProxy);
   }
 
   @override
