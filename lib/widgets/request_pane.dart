@@ -37,7 +37,7 @@ class _RequestPaneState extends State<RequestPane>
   @override
   Widget build(BuildContext context) {
     final TabController controller = useTabController(
-      initialLength: widget.tabLabels.length,
+      initialLength: widget.children.length,
       vsync: this,
     );
     if (widget.tabIndex != null) {
