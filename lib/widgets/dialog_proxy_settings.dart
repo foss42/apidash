@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash_core/models/models.dart';
 import 'package:apidash/providers/settings_providers.dart';
+import 'package:apidash_design_system/apidash_design_system.dart';
 
 class ProxySettingsDialog extends ConsumerStatefulWidget {
   const ProxySettingsDialog({super.key});
@@ -16,6 +17,7 @@ class _ProxySettingsDialogState extends ConsumerState<ProxySettingsDialog> {
   late TextEditingController _portController;
   late TextEditingController _usernameController;
   late TextEditingController _passwordController;
+  late List<GenericFormField> _formFields;
 
   @override
   void initState() {
@@ -26,6 +28,36 @@ class _ProxySettingsDialogState extends ConsumerState<ProxySettingsDialog> {
     _portController = TextEditingController(text: proxy?.port ?? '');
     _usernameController = TextEditingController(text: proxy?.username ?? '');
     _passwordController = TextEditingController(text: proxy?.password ?? '');
+    
+    _initFormFields();
+  }
+  
+  void _initFormFields() {
+    _formFields = [
+      GenericFormField(
+        controller: _hostController,
+        labelText: 'Proxy Host',
+        hintText: 'e.g., localhost',
+        required: true,
+      ),
+      GenericFormField(
+        controller: _portController,
+        labelText: 'Proxy Port',
+        hintText: 'e.g., 8080',
+        required: true,
+      ),
+      GenericFormField(
+        controller: _usernameController,
+        labelText: 'Username',
+        hintText: 'Optional',
+      ),
+      GenericFormField(
+        controller: _passwordController,
+        labelText: 'Password',
+        hintText: 'Optional',
+        obscureText: true,
+      ),
+    ];
   }
 
   @override
@@ -50,6 +82,7 @@ class _ProxySettingsDialogState extends ConsumerState<ProxySettingsDialog> {
     }
     else{
       _updateProxySettings(null);
+      Navigator.of(context).pop();
     }
   }
 
@@ -62,41 +95,7 @@ class _ProxySettingsDialogState extends ConsumerState<ProxySettingsDialog> {
     return AlertDialog(
       title: const Text('Proxy Settings'),
       content: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: _hostController,
-              decoration: const InputDecoration(
-                labelText: 'Proxy Host',
-                hintText: 'e.g., localhost',
-              ),
-            ),
-            const SizedBox(height: 8),
-            TextField(
-              controller: _portController,
-              decoration: const InputDecoration(
-                labelText: 'Proxy Port',
-                hintText: 'e.g., 8080',
-              ),
-            ),
-            const SizedBox(height: 8),
-            TextField(
-              controller: _usernameController,
-              decoration: const InputDecoration(
-                labelText: 'Username (Optional)',
-              ),
-            ),
-            const SizedBox(height: 8),
-            TextField(
-              controller: _passwordController,
-              decoration: const InputDecoration(
-                labelText: 'Password (Optional)',
-              ),
-              obscureText: true,
-            ),
-          ],
-        ),
+        child: GenericForm(fields: _formFields),
       ),
       actions: [
         TextButton(
