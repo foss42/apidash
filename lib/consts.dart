@@ -69,6 +69,8 @@ final kIconRemoveLight = Icon(
 
 const kCodePreviewLinesLimit = 500;
 
+enum AuthType { none, basic, bearer }
+
 enum HistoryRetentionPeriod {
   oneWeek("1 Week", Icons.calendar_view_week_rounded),
   oneMonth("1 Month", Icons.calendar_view_month_rounded),
@@ -438,6 +440,7 @@ const kLabelRequest = "Request";
 const kLabelHideCode = "Hide Code";
 const kLabelViewCode = "View Code";
 const kLabelURLParams = "URL Params";
+const kLabelAuthorization = "Authorization";
 const kLabelHeaders = "Headers";
 const kLabelBody = "Body";
 const kLabelQuery = "Query";
