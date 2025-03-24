@@ -4,7 +4,7 @@
 
 **Full Name**: Ning Wei  
 **Contact Info**: Allenwei0503@gmail.com 
-**Discord Handle**: @ning_w  
+**Discord Handle**: @allen_wn  
 **GitHub Profile**: [https://github.com/AllenWn](https://github.com/AllenWn)  
 **LinkedIn**: [https://www.linkedin.com/in/ning-wei-allen0503](https://www.linkedin.com/in/ning-wei-allen0503)  
 **Time Zone**: UTC+8  
