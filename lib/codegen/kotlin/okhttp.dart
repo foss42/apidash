@@ -36,12 +36,22 @@ import okhttp3.MediaType.Companion.toMediaType""";
 
 ''';
 
-  final String kTemplateUrlQuery = '''
+ final String kTemplateUrlQuery = """
 
     val url = "{{url}}".toHttpUrl().newBuilder()
-{{params}}        .build()
+{%- for name, values in params %}
+    {%- if values is iterable and not values is string %}
+        {%- for value in values %}
+            .addQueryParameter("{{ name }}", "{{ value }}")
+        {%- endfor %}
+    {%- else %}
+        .addQueryParameter("{{ name }}", "{{ values }}")
+    {%- endif %}
+{%- endfor %}
+        .build()
 
-''';
+""";
+
 
   String kTemplateRequestBody = '''
 
@@ -95,15 +105,13 @@ import okhttp3.MediaType.Companion.toMediaType""";
       if (uri != null) {
         String url = stripUriParams(uri);
 
-        if (uri.hasQuery) {
-          var params = uri.queryParameters;
+          var params = requestModel.enabledParamsMap;
           if (params.isNotEmpty) {
             hasQuery = true;
             var templateParams = jj.Template(kTemplateUrlQuery);
             result += templateParams
-                .render({"url": url, "params": getQueryParams(params)});
+                .render({"url": url, "params": params});
           }
-        }
         if (!hasQuery) {
           var templateUrl = jj.Template(kTemplateUrl);
           result += templateUrl.render({"url": url});
