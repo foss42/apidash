@@ -25,6 +25,7 @@ class _EditRequestAuthorizationState
   late String _password = '';
   late String _token = '';
   late bool _isEnabled = false;
+  bool _obscurePassword = true;
 
   @override
   void initState() {
@@ -59,7 +60,6 @@ class _EditRequestAuthorizationState
     final currentHeaders =
         ref.read(selectedRequestModelProvider)?.httpRequestModel?.headers ?? [];
 
-  // exisiting authorization header will be remove if header is  changed
     final newHeaders = currentHeaders
         .where((h) => (h.name).toLowerCase() != 'authorization')
         .toList();
@@ -91,6 +91,28 @@ class _EditRequestAuthorizationState
         );
   }
 
+  void _handleAuthTypeChange(AuthType? value) {
+    if (value != null) {
+      setState(() {
+        _currentAuthType = value;
+        if (value == AuthType.none) {
+          _username = '';
+          _password = '';
+          _token = '';
+        } else {
+          // Initialize empty values when switching to basic/bearer
+          if (value == AuthType.basic) {
+            _token = '';
+          } else {
+            _username = '';
+            _password = '';
+          }
+        }
+      });
+      _updateHeaders();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -120,41 +142,24 @@ class _EditRequestAuthorizationState
           ),
           const SizedBox(height: 16),
           if (_isEnabled) ...[
-            DropdownButtonFormField<AuthType>(
-              value: _currentAuthType,
-              isExpanded: true,
-              decoration: InputDecoration(
-                contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(color: colorScheme.outline),
-                ),
-                filled: true,
-                fillColor: colorScheme.surface,
-                hintText: 'Select Authorization Type',
+            SizedBox(
+              height: kHeaderHeight,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text("Select Authorization Type:"),
+                  const SizedBox(width: 8),
+                  ADDropdownButton<AuthType>(
+                    value: _currentAuthType,
+                    values: [
+                      (AuthType.none, 'None'),
+                      (AuthType.basic, 'Basic Auth'),
+                      (AuthType.bearer, 'Bearer Token'),
+                    ],
+                    onChanged: _handleAuthTypeChange,
+                  ),
+                ],
               ),
-              items: const [
-                DropdownMenuItem(
-                  value: AuthType.none,
-                  child: Text('None'),
-                ),
-                DropdownMenuItem(
-                  value: AuthType.basic,
-                  child: Text('Basic Auth'),
-                ),
-                DropdownMenuItem(
-                  value: AuthType.bearer,
-                  child: Text('Bearer Token'),
-                ),
-              ],
-              onChanged: (value) {
-                if (value != null) {
-                  setState(() {
-                    _currentAuthType = value;
-                  });
-                  _updateHeaders();
-                }
-              },
             ),
             const SizedBox(height: 16),
             if (_currentAuthType == AuthType.basic) ...[
@@ -186,9 +191,22 @@ class _EditRequestAuthorizationState
                       borderRadius: BorderRadius.circular(8)),
                   filled: true,
                   fillColor: colorScheme.surface,
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscurePassword
+                          ? Icons.visibility_off
+                          : Icons.visibility,
+                      color: colorScheme.onSurface.withOpacity(0.6),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _obscurePassword = !_obscurePassword;
+                      });
+                    },
+                  ),
                 ),
                 initialValue: _password,
-                obscureText: true,
+                obscureText: _obscurePassword,
                 onChanged: (value) {
                   setState(() {
                     _password = value;
