@@ -27,7 +27,13 @@ class EditRestRequestPane extends ConsumerWidget {
     final hasBody = ref.watch(selectedRequestModelProvider
             .select((value) => value?.httpRequestModel?.hasBody)) ??
         false;
-    final authEnabled = ref.watch(authTypeProvider) != AuthType.none;
+    final authEnabled = ref.watch(selectedRequestModelProvider
+            .select((value) => value?.httpRequestModel?.headers?.any(
+                  (h) =>
+                      (h.name).toLowerCase() == 'authorization' &&
+                      h.value?.isNotEmpty == true,
+                ))) ??
+        false;
     return RequestPane(
       selectedId: selectedId,
       codePaneVisible: codePaneVisible,

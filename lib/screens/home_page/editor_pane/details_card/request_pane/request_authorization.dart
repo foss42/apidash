@@ -1,13 +1,12 @@
 import 'dart:convert';
-
-import 'package:apidash/consts.dart';
-import 'package:apidash/providers/collection_providers.dart';
-import 'package:apidash_core/apidash_core.dart';
-import 'package:apidash_design_system/tokens/tokens.dart';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:apidash_core/apidash_core.dart';
+import 'package:apidash_design_system/apidash_design_system.dart';
+import 'package:apidash/providers/providers.dart';
+import 'package:apidash/consts.dart';
 
-import '../../../../../providers/auth_providers.dart';
 
 class EditRequestAuthorization extends ConsumerStatefulWidget {
   const EditRequestAuthorization({super.key});
@@ -19,127 +18,205 @@ class EditRequestAuthorization extends ConsumerStatefulWidget {
 
 class _EditRequestAuthorizationState
     extends ConsumerState<EditRequestAuthorization> {
-  late TextEditingController _usernameController;
-  late TextEditingController _passwordController;
+  late int seed;
+  final random = Random.secure();
+  late AuthType _currentAuthType;
+  late String _username = '';
+  late String _password = '';
+  late String _token = '';
+  late bool _isEnabled = false;
 
   @override
   void initState() {
     super.initState();
-    _usernameController = TextEditingController();
-    _passwordController = TextEditingController();
+    seed = random.nextInt(kRandMax);
+    _currentAuthType = AuthType.none;
 
-    _usernameController.addListener(() {
-      ref.read(authCredentialsProvider.notifier).update((state) => {
-            ...state,
-            'username': _usernameController.text,
-          });
-    });
+    final request = ref.read(selectedRequestModelProvider);
+    final authHeader = request?.httpRequestModel?.headers?.firstWhere(
+      (h) => (h.name).toLowerCase() == 'authorization',
+      orElse: () => const NameValueModel(name: '', value: ''),
+    );
 
-    _passwordController.addListener(() {
-      ref.read(authCredentialsProvider.notifier).update((state) => {
-            ...state,
-            'password': _passwordController.text,
-          });
-    });
-  }
-
-  @override
-  void dispose() {
-    _usernameController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
-
-  void _updateHeaders(AuthType? authType, String? username, String? password) {
-    final headers = _generateAuthHeaders(authType, username, password);
-    ref.read(collectionStateNotifierProvider.notifier).update(headers: headers);
-  }
-
-  List<NameValueModel> _generateAuthHeaders(
-      AuthType? authType, String? username, String? password) {
-    if (authType == AuthType.basicAuth &&
-        username != null &&
-        password != null &&
-        username.isNotEmpty &&
-        password.isNotEmpty) {
-      String basicAuth =
-          'Basic ${base64Encode(utf8.encode('$username:$password'))}';
-      return [NameValueModel(name: "Authorization", value: basicAuth)];
+    if (authHeader?.value?.startsWith('Basic ') ?? false) {
+      _currentAuthType = AuthType.basic;
+      try {
+        final decoded =
+            utf8.decode(base64Decode(authHeader!.value!.substring(6)));
+        final parts = decoded.split(':');
+        _username = parts.isNotEmpty ? parts[0] : '';
+        _password = parts.length > 1 ? parts[1] : '';
+        _isEnabled = true;
+      } catch (_) {}
+    } else if (authHeader?.value?.startsWith('Bearer ') ?? false) {
+      _currentAuthType = AuthType.bearer;
+      _token = authHeader!.value!.substring(7);
+      _isEnabled = true;
     }
-    return [];
+  }
+
+  void _updateHeaders() {
+    final currentHeaders =
+        ref.read(selectedRequestModelProvider)?.httpRequestModel?.headers ?? [];
+
+  // exisiting authorization header will be remove if header is  changed
+    final newHeaders = currentHeaders
+        .where((h) => (h.name).toLowerCase() != 'authorization')
+        .toList();
+
+    if (_isEnabled && _currentAuthType != AuthType.none) {
+      String authValue = '';
+      switch (_currentAuthType) {
+        case AuthType.basic:
+          authValue = 'Basic ${base64Encode(utf8.encode('$_username:$_password'))}';
+          break;
+        case AuthType.bearer:
+          authValue = 'Bearer $_token';
+          break;
+        case AuthType.none:
+          break;
+      }
+
+      if (authValue.isNotEmpty) {
+        newHeaders.add(NameValueModel(
+          name: 'Authorization',
+          value: authValue,
+        ));
+      }
+    }
+
+    ref.read(collectionStateNotifierProvider.notifier).update(
+          headers: newHeaders,
+          isHeaderEnabledList: List.filled(newHeaders.length, true),
+        );
   }
 
   @override
   Widget build(BuildContext context) {
-    final authType = ref.watch(authTypeProvider);
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
+      padding: kP10,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          kVSpacer16,
-          DropdownButtonFormField<AuthType>(
-            value: authType,
-            decoration: InputDecoration(
-              labelText: kLabelAuthorizationType,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
+          Row(
+            children: [
+              ADCheckBox(
+                value: _isEnabled,
+                onChanged: (value) {
+                  setState(() {
+                    _isEnabled = value!;
+                  });
+                  _updateHeaders();
+                },
+                colorScheme: colorScheme,
+                keyId: 'auth-enable-checkbox',
               ),
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            ),
-            items: AuthType.values.map((AuthType type) {
-              return DropdownMenuItem(
-                  value: type, child: Text(type.toString().split('.').last));
-            }).toList(),
-            onChanged: (value) {
-              if (value != null) {
-                ref.read(authTypeProvider.notifier).update((state) => value);
-                _updateHeaders(
-                    value, _usernameController.text, _passwordController.text);
-              }
-            },
+              const SizedBox(width: 8),
+              const Text('Enable Authorization'),
+            ],
           ),
           const SizedBox(height: 16),
-          if (authType == AuthType.basicAuth) ...[
-            TextFormField(
-              controller: _usernameController,
+          if (_isEnabled) ...[
+            DropdownButtonFormField<AuthType>(
+              value: _currentAuthType,
+              isExpanded: true,
               decoration: InputDecoration(
-                labelText: "Username",
+                contentPadding: const EdgeInsets.symmetric(horizontal: 12),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(color: colorScheme.outline),
                 ),
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                filled: true,
+                fillColor: colorScheme.surface,
+                hintText: 'Select Authorization Type',
               ),
+              items: const [
+                DropdownMenuItem(
+                  value: AuthType.none,
+                  child: Text('None'),
+                ),
+                DropdownMenuItem(
+                  value: AuthType.basic,
+                  child: Text('Basic Auth'),
+                ),
+                DropdownMenuItem(
+                  value: AuthType.bearer,
+                  child: Text('Bearer Token'),
+                ),
+              ],
               onChanged: (value) {
-                ref.read(authCredentialsProvider.notifier).update((state) => {
-                      ...state,
-                      'username': value,
-                    });
-                _updateHeaders(authType, value, _passwordController.text);
+                if (value != null) {
+                  setState(() {
+                    _currentAuthType = value;
+                  });
+                  _updateHeaders();
+                }
               },
             ),
-            const SizedBox(height: 12),
-            TextFormField(
-              controller: _passwordController,
-              decoration: InputDecoration(
-                labelText: "Password",
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
+            const SizedBox(height: 16),
+            if (_currentAuthType == AuthType.basic) ...[
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: 'Username',
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8)),
+                  filled: true,
+                  fillColor: colorScheme.surface,
                 ),
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                initialValue: _username,
+                onChanged: (value) {
+                  setState(() {
+                    _username = value;
+                  });
+                  _updateHeaders();
+                },
               ),
-              obscureText: true,
-              onChanged: (value) {
-                ref.read(authCredentialsProvider.notifier).update((state) => {
-                      ...state,
-                      'password': value,
-                    });
-                _updateHeaders(authType, _usernameController.text, value);
-              },
-            ),
+              const SizedBox(height: 12),
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: 'Password',
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8)),
+                  filled: true,
+                  fillColor: colorScheme.surface,
+                ),
+                initialValue: _password,
+                obscureText: true,
+                onChanged: (value) {
+                  setState(() {
+                    _password = value;
+                  });
+                  _updateHeaders();
+                },
+              ),
+            ],
+            if (_currentAuthType == AuthType.bearer) ...[
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: 'Token',
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8)),
+                  filled: true,
+                  fillColor: colorScheme.surface,
+                ),
+                initialValue: _token,
+                onChanged: (value) {
+                  setState(() {
+                    _token = value;
+                  });
+                  _updateHeaders();
+                },
+              ),
+            ],
           ],
         ],
       ),

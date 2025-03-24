@@ -23,8 +23,13 @@ class EditGraphQLRequestPane extends ConsumerWidget {
             .select((value) => value?.httpRequestModel?.hasQuery)) ??
         false;
 
-    final authEnabled = ref.watch(authTypeProvider) != AuthType.none;
-    
+    final authEnabled = ref.watch(selectedRequestModelProvider
+            .select((value) => value?.httpRequestModel?.headers?.any(
+                  (h) =>
+                      (h.name).toLowerCase() == 'authorization' &&
+                      h.value?.isNotEmpty == true,
+                ))) ??
+        false;
     if (tabIndex >= 2) {
       tabIndex = 0;
     }

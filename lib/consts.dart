@@ -80,6 +80,8 @@ enum HistoryRetentionPeriod {
   final IconData icon;
 }
 
+enum AuthType { none, basic, bearer }
+
 enum ItemMenuOption {
   edit("Rename"),
   delete("Delete"),
