@@ -53,6 +53,8 @@ API Dash is focused on improving the developer experience around APIs, which is 
 
 AI UI Designer for APIs
 
+# Relevant Issues: [#617]  
+
 ### Abstract
 
 This project aims to develop an AI-powered assistant within API Dash that automatically generates dynamic user interfaces (UI) based on API responses (JSON/XML). The goal is to allow developers to instantly visualize, customize, and export usable Flutter UI code from raw API data. The generated UI should adapt to the structure of the API response and be interactive, with features like sorting, filtering, and layout tweaking. This tool will streamline frontend prototyping and improve developer productivity.
