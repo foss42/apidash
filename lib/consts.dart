@@ -69,23 +69,6 @@ final kIconRemoveLight = Icon(
 
 const kCodePreviewLinesLimit = 500;
 
-enum AuthType {
-  basic,
-  bearer,
-  none;
-
-  String get displayName {
-    switch (this) {
-      case AuthType.basic:
-        return 'Basic Auth';
-      case AuthType.bearer:
-        return 'Bearer Token';
-      case AuthType.none:
-        return 'None';
-    }
-  }
-}
-
 enum HistoryRetentionPeriod {
   oneWeek("1 Week", Icons.calendar_view_week_rounded),
   oneMonth("1 Month", Icons.calendar_view_month_rounded),
