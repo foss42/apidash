@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -425,6 +427,111 @@ class CollectionStateNotifier
       httpRequestModel,
       envMap,
       activeEnvId,
+    );
+  }
+
+  Map<String, dynamic>? getCurrentAuth(String? id) {
+    final rId = id ?? ref.read(selectedIdStateProvider);
+    if (rId == null || state?[rId] == null) return null;
+
+    final authHeader = state![rId]!
+        .httpRequestModel
+        ?.headers
+        ?.firstWhereOrNull((h) => h.name.toLowerCase() == 'authorization');
+
+    if (authHeader == null) return null;
+
+    final value = authHeader.value;
+    if (value.startsWith('Basic ')) {
+      try {
+        final decoded = utf8.decode(base64.decode(value.substring(6)));
+        final parts = decoded.split(':');
+        return {
+          'type': 'basic',
+          'username': parts.isNotEmpty ? parts[0] : '',
+          'password': parts.length > 1 ? parts[1] : '',
+          'isEnabled': currentEnabledStateForHeader(authHeader, rId),
+        };
+      } catch (e) {
+        return {
+          'type': 'basic',
+          'username': '',
+          'password': '',
+          'isEnabled': false
+        };
+      }
+    } else if (value.startsWith('Bearer ')) {
+      return {
+        'type': 'bearer',
+        'token': value.substring(7),
+        'isEnabled': currentEnabledStateForHeader(authHeader, rId),
+      };
+    }
+    return null;
+  }
+
+  bool currentEnabledStateForHeader(NameValueModel header, String requestId) {
+    final request = state?[requestId];
+    if (request == null) return false;
+
+    final headers = request.httpRequestModel?.headers ?? [];
+    final enabledList = request.httpRequestModel?.isHeaderEnabledList ?? [];
+
+    final index = headers.indexWhere((h) => h.name == header.name);
+    return index != -1 && index < enabledList.length
+        ? enabledList[index]
+        : false;
+  }
+
+  void updateAuth({
+    String? id,
+    required String authType,
+    required bool isEnabled,
+    String? bearerToken,
+    String? username,
+    String? password,
+  }) {
+    final rId = id ?? ref.read(selectedIdStateProvider);
+    if (rId == null) return;
+
+    final currentModel = state![rId]!;
+    final currentHeaders = currentModel.httpRequestModel?.headers ?? [];
+    final currentEnabled =
+        currentModel.httpRequestModel?.isHeaderEnabledList ?? [];
+
+    final newHeaders = <NameValueModel>[];
+    final newEnabled = <bool>[];
+
+    for (int i = 0; i < currentHeaders.length; i++) {
+      if (currentHeaders[i].name.toLowerCase() != 'authorization') {
+        newHeaders.add(currentHeaders[i]);
+        if (i < currentEnabled.length) {
+          newEnabled.add(currentEnabled[i]);
+        } else {
+          newEnabled.add(true); 
+        }
+      }
+    }
+
+    if (isEnabled) {
+      String? authValue;
+      if (authType == 'basic' && username != null && password != null) {
+        authValue =
+            'Basic ${base64.encode(utf8.encode('$username:$password'))}';
+      } else if (authType == 'bearer' && bearerToken != null) {
+        authValue = 'Bearer $bearerToken';
+      }
+
+      if (authValue != null) {
+        newHeaders.add(NameValueModel(name: 'Authorization', value: authValue));
+        newEnabled.add(true);
+      }
+    }
+
+    update(
+      id: rId,
+      headers: newHeaders,
+      isHeaderEnabledList: newEnabled,
     );
   }
 }

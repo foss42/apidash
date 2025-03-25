@@ -1,242 +1,205 @@
-import 'dart:convert';
-import 'dart:math';
+import 'package:apidash/consts.dart';
+import 'package:apidash/providers/collection_providers.dart';
+import 'package:apidash_design_system/tokens/measurements.dart';
+import 'package:apidash_design_system/tokens/typography.dart';
+import 'package:apidash_design_system/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:apidash_core/apidash_core.dart';
-import 'package:apidash_design_system/apidash_design_system.dart';
-import 'package:apidash/providers/providers.dart';
-import 'package:apidash/consts.dart';
-
 
 class EditRequestAuthorization extends ConsumerStatefulWidget {
   const EditRequestAuthorization({super.key});
 
   @override
   ConsumerState<EditRequestAuthorization> createState() =>
-      _EditRequestAuthorizationState();
+      EditRequestAuthorizationState();
 }
 
-class _EditRequestAuthorizationState
+class EditRequestAuthorizationState
     extends ConsumerState<EditRequestAuthorization> {
-  late int seed;
-  final random = Random.secure();
-  late AuthType _currentAuthType;
-  late String _username = '';
-  late String _password = '';
-  late String _token = '';
-  late bool _isEnabled = false;
-  bool _obscurePassword = true;
+  String authType = 'bearer';
+  bool isAuthEnabled = false;
+  String username = '';
+  String password = '';
+  String bearerToken = '';
+
+  late final TextEditingController _bearerTokenController =
+      TextEditingController();
+  late final TextEditingController _usernameController =
+      TextEditingController();
+  late final TextEditingController _passwordController =
+      TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    seed = random.nextInt(kRandMax);
-    _currentAuthType = AuthType.none;
-
-    final request = ref.read(selectedRequestModelProvider);
-    final authHeader = request?.httpRequestModel?.headers?.firstWhere(
-      (h) => (h.name).toLowerCase() == 'authorization',
-      orElse: () => const NameValueModel(name: '', value: ''),
-    );
-
-    if (authHeader?.value?.startsWith('Basic ') ?? false) {
-      _currentAuthType = AuthType.basic;
-      try {
-        final decoded =
-            utf8.decode(base64Decode(authHeader!.value!.substring(6)));
-        final parts = decoded.split(':');
-        _username = parts.isNotEmpty ? parts[0] : '';
-        _password = parts.length > 1 ? parts[1] : '';
-        _isEnabled = true;
-      } catch (_) {}
-    } else if (authHeader?.value?.startsWith('Bearer ') ?? false) {
-      _currentAuthType = AuthType.bearer;
-      _token = authHeader!.value!.substring(7);
-      _isEnabled = true;
-    }
+    _bearerTokenController.text = bearerToken;
+    _usernameController.text = username;
+    _passwordController.text = password;
+    _initializeAuthModel();
   }
 
-  void _updateHeaders() {
-    final currentHeaders =
-        ref.read(selectedRequestModelProvider)?.httpRequestModel?.headers ?? [];
-
-    final newHeaders = currentHeaders
-        .where((h) => (h.name).toLowerCase() != 'authorization')
-        .toList();
-
-    if (_isEnabled && _currentAuthType != AuthType.none) {
-      String authValue = '';
-      switch (_currentAuthType) {
-        case AuthType.basic:
-          authValue = 'Basic ${base64Encode(utf8.encode('$_username:$_password'))}';
-          break;
-        case AuthType.bearer:
-          authValue = 'Bearer $_token';
-          break;
-        case AuthType.none:
-          break;
-      }
-
-      if (authValue.isNotEmpty) {
-        newHeaders.add(NameValueModel(
-          name: 'Authorization',
-          value: authValue,
-        ));
-      }
-    }
-
-    ref.read(collectionStateNotifierProvider.notifier).update(
-          headers: newHeaders,
-          isHeaderEnabledList: List.filled(newHeaders.length, true),
-        );
+  @override
+  void dispose() {
+    _bearerTokenController.dispose();
+    _usernameController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 
-  void _handleAuthTypeChange(AuthType? value) {
-    if (value != null) {
+  void _initializeAuthModel() {
+    final authData = ref
+        .read(collectionStateNotifierProvider.notifier)
+        .getCurrentAuth(ref.read(selectedIdStateProvider));
+
+    if (authData != null) {
       setState(() {
-        _currentAuthType = value;
-        if (value == AuthType.none) {
-          _username = '';
-          _password = '';
-          _token = '';
-        } else {
-          // Initialize empty values when switching to basic/bearer
-          if (value == AuthType.basic) {
-            _token = '';
-          } else {
-            _username = '';
-            _password = '';
-          }
-        }
+        authType = authData['type'] ?? 'bearer';
+        isAuthEnabled = authData['isEnabled'] ?? false;
+        username = authData['username'] ?? '';
+        password = authData['password'] ?? '';
+        bearerToken = authData['token'] ?? '';
+        _bearerTokenController.text = bearerToken;
+        _usernameController.text = username;
+        _passwordController.text = password;
       });
-      _updateHeaders();
     }
+  }
+
+  void _updateAuth() {
+    ref.read(collectionStateNotifierProvider.notifier).updateAuth(
+          authType: authType,
+          isEnabled: isAuthEnabled,
+          bearerToken: authType == 'bearer' ? bearerToken : null,
+          username: authType == 'basic' ? username : null,
+          password: authType == 'basic' ? password : null,
+        );
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+    final selectedId = ref.watch(selectedIdStateProvider);
 
-    return Padding(
-      padding: kP10,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              ADCheckBox(
-                value: _isEnabled,
-                onChanged: (value) {
-                  setState(() {
-                    _isEnabled = value!;
-                  });
-                  _updateHeaders();
-                },
-                colorScheme: colorScheme,
-                keyId: 'auth-enable-checkbox',
-              ),
-              const SizedBox(width: 8),
-              const Text('Enable Authorization'),
-            ],
-          ),
-          const SizedBox(height: 16),
-          if (_isEnabled) ...[
-            SizedBox(
-              height: kHeaderHeight,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text("Select Authorization Type:"),
-                  const SizedBox(width: 8),
-                  ADDropdownButton<AuthType>(
-                    value: _currentAuthType,
-                    values: [
-                      (AuthType.none, 'None'),
-                      (AuthType.basic, 'Basic Auth'),
-                      (AuthType.bearer, 'Bearer Token'),
-                    ],
-                    onChanged: _handleAuthTypeChange,
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-            if (_currentAuthType == AuthType.basic) ...[
-              TextFormField(
-                decoration: InputDecoration(
-                  labelText: 'Username',
-                  contentPadding:
-                      const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8)),
-                  filled: true,
-                  fillColor: colorScheme.surface,
-                ),
-                initialValue: _username,
-                onChanged: (value) {
-                  setState(() {
-                    _username = value;
-                  });
-                  _updateHeaders();
-                },
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                decoration: InputDecoration(
-                  labelText: 'Password',
-                  contentPadding:
-                      const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8)),
-                  filled: true,
-                  fillColor: colorScheme.surface,
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _obscurePassword
-                          ? Icons.visibility_off
-                          : Icons.visibility,
-                      color: colorScheme.onSurface.withOpacity(0.6),
-                    ),
-                    onPressed: () {
+    return ConstrainedBox(
+      constraints: const BoxConstraints(
+        minHeight: kDataTableRowHeight * 2,
+        maxHeight: kDataTableRowHeight * 5,
+      ),
+      child: Container(
+        margin: kP10,
+        child: Column(
+          children: [
+            Row(
+              children: [
+                SizedBox(
+                  width: 30,
+                  child: ADCheckBox(
+                    keyId: "$selectedId-auth-checkbox",
+                    value: isAuthEnabled,
+                    onChanged: (value) {
                       setState(() {
-                        _obscurePassword = !_obscurePassword;
+                        isAuthEnabled = value!;
                       });
+                      _updateAuth();
                     },
+                    colorScheme: Theme.of(context).colorScheme,
                   ),
                 ),
-                initialValue: _password,
-                obscureText: _obscurePassword,
-                onChanged: (value) {
-                  setState(() {
-                    _password = value;
-                  });
-                  _updateHeaders();
-                },
-              ),
-            ],
-            if (_currentAuthType == AuthType.bearer) ...[
-              TextFormField(
-                decoration: InputDecoration(
-                  labelText: 'Token',
-                  contentPadding:
-                      const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8)),
-                  filled: true,
-                  fillColor: colorScheme.surface,
+                kHSpacer10,
+                DropdownButton<String>(
+                  value: authType,
+                  items: const [
+                    DropdownMenuItem(
+                      value: 'bearer',
+                      child: Text('Bearer Token'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'basic',
+                      child: Text('Basic Auth'),
+                    ),
+                  ],
+                  onChanged: isAuthEnabled
+                      ? (value) {
+                          if (value != null) {
+                            setState(() {
+                              authType = value;
+                              if (authType == 'basic') {
+                                bearerToken = '';
+                                _bearerTokenController.text = '';
+                              } else {
+                                username = '';
+                                password = '';
+                                _usernameController.text = '';
+                                _passwordController.text = '';
+                              }
+                            });
+                            _updateAuth();
+                          }
+                        }
+                      : null,
                 ),
-                initialValue: _token,
-                onChanged: (value) {
-                  setState(() {
-                    _token = value;
-                  });
-                  _updateHeaders();
-                },
+                kHSpacer10,
+                Text('=', style: kCodeStyle),
+                kHSpacer10,
+                if (authType == 'bearer')
+                  Expanded(
+                    child: TextField(
+                      key: const ValueKey('bearer_token_field'),
+                      controller: _bearerTokenController,
+                      enabled: isAuthEnabled,
+                      decoration: const InputDecoration(
+                        hintText: 'Enter Bearer Token',
+                        border: InputBorder.none,
+                        isDense: true,
+                      ),
+                      onChanged: isAuthEnabled
+                          ? (value) {
+                              bearerToken = value;
+                              _updateAuth();
+                            }
+                          : null,
+                    ),
+                  ),
+              ],
+            ),
+            if (authType == 'basic') ...[
+              kVSpacer10,
+              TextField(
+                key: const ValueKey('username_field'),
+                controller: _usernameController,
+                enabled: isAuthEnabled,
+                decoration: const InputDecoration(
+                  labelText: 'Username',
+                  border: OutlineInputBorder(),
+                  isDense: true,
+                ),
+                onChanged: isAuthEnabled
+                    ? (value) {
+                        username = value;
+                        _updateAuth();
+                      }
+                    : null,
+              ),
+              const SizedBox(height: 8),
+              TextField(
+                key: const ValueKey('password_field'),
+                controller: _passwordController,
+                enabled: isAuthEnabled,
+                obscureText: true,
+                decoration: const InputDecoration(
+                  labelText: 'Password',
+                  border: OutlineInputBorder(),
+                  isDense: true,
+                ),
+                onChanged: isAuthEnabled
+                    ? (value) {
+                        password = value;
+                        _updateAuth();
+                      }
+                    : null,
               ),
             ],
           ],
-        ],
+        ),
       ),
     );
   }
