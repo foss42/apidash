@@ -5,8 +5,6 @@
 
 **Email:**  [bknideesh@gmail.com](mailto:bknideesh@gmail.com)
 
-**Phone Number:**  +1-224-333-1045
-
 **GitHub profile link:** [https://github.com/nb923](https://github.com/nb923)
 
 **Location:** New Jersey, United States of America
@@ -121,7 +119,7 @@ This project is to develop a Dart-centered evaluation framework designed to simp
 
 **Architecture:**
 
-![architecture](images/nb923-proposal-architecture.png)
+![architecture](images/nb923-proposal-architecture)
 
 -   Frontend Layer: This layer will be the main API Dash app UI. It will use Flutter/Dart to build a UI for users to select the AI evaluation test specifications and obtain details such as API key, model name, API link, and other details. This layer will also display the real-time charts of the evaluations and final metrics.
     
@@ -144,23 +142,23 @@ This prototype contains a custom UI implementation of the AI evaluation layer, l
 
 The top right corner has a new button for API evaluations as show in the picture below:
 
-![prototype-image-one](images/nb923-proposal-prototype-one.png)
+![prototype-image-one](images/nb923-proposal-prototype-one)
 
 When selected, it prompts a selection of tests:
 
-![prototype-image-two](images/nb923-proposal-prototype-two.png)
+![prototype-image-two](images/nb923-proposal-prototype-two)
 
 Hellaswag is the only implemented test currently. When selected, it prompts a menu with model name, API URL, API key, and limit of dataset rows being tested. I recommend setting the limit to 20 to reduce API usage.
 
-![prototype-image-three](images/nb923-proposal-prototype-three.png)
+![prototype-image-three](images/nb923-proposal-prototype-three)
 
 When run is selected, it prompts a loading screen as the lm-evaluation-harness processes this request through a custom implementation of the provided models.
 
-![prototype-image-four](images/nb923-proposal-prototype-four.png)
+![prototype-image-four](images/nb923-proposal-prototype-four)
 
 After the evaluation is finished, it provides a quick value for the accuracy. This is a simple prototype and a limit of rows on the test is set; so, this metric should be taken with a grain of salt.
 
-![prototype-image-five](images/nb923-proposal-prototype-five.png)
+![prototype-image-five](images/nb923-proposal-prototype-five)
 
 Key changes are:
 
