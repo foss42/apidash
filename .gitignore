@@ -64,3 +64,6 @@ installers/*
 
 # Testing Files & Folders
 test-hive-storage
+
+#API Eval Ignore
+results

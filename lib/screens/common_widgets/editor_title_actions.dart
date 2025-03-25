@@ -6,12 +6,14 @@ class EditorTitleActions extends StatelessWidget {
     super.key,
     this.onRenamePressed,
     this.onDuplicatePressed,
-    this.onDeletePressed,
+    this.onDeletePressed, 
+    this.onAIEvalPressed,
   });
 
   final void Function()? onRenamePressed;
   final void Function()? onDuplicatePressed;
   final void Function()? onDeletePressed;
+  final void Function()? onAIEvalPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +48,12 @@ class EditorTitleActions extends StatelessWidget {
                     "Delete",
                     Icons.delete_rounded,
                     onDeletePressed,
+                  ),
+                  verticalDivider,
+                  iconButton(
+                    "AI Eval",
+                    Icons.auto_awesome,
+                    onAIEvalPressed,
                   ),
                   verticalDivider,
                   iconButton(

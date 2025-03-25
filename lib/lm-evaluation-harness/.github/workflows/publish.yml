@@ -1,0 +1,97 @@
+name: Publish Python distribution to PyPI
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    name: Build distribution
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.x"
+
+    - name: Check version consistency
+      run: |
+        # Extract version from pyproject.toml
+        PYPROJECT_VERSION=$(grep 'version = ' pyproject.toml | head -1 | cut -d'"' -f2)
+
+        # Extract version from __init__.py
+        INIT_VERSION=$(grep '__version__ = ' lm_eval/__init__.py | head -1 | cut -d'"' -f2)
+
+        echo "Version in pyproject.toml: $PYPROJECT_VERSION"
+        echo "Version in __init__.py: $INIT_VERSION"
+
+        # Check if versions match
+        if [ "$PYPROJECT_VERSION" != "$INIT_VERSION" ]; then
+          echo "Error: Version mismatch between pyproject.toml ($PYPROJECT_VERSION) and __init__.py ($INIT_VERSION)"
+          exit 1
+        fi
+
+        echo "Version check passed: $PYPROJECT_VERSION"
+
+    - name: Install pypa/build
+      run: >-
+        python3 -m
+        pip install
+        build
+        --user
+    - name: Build a binary wheel and a source tarball
+      run: python3 -m build
+    - name: Store the distribution packages
+      uses: actions/upload-artifact@v4
+      with:
+        name: python-package-distributions
+        path: dist/
+
+  publish-to-pypi:
+    name: >-
+      Publish Python distribution to PyPI
+    if: startsWith(github.ref, 'refs/tags/')  # only publish to PyPI on tag pushes
+    needs:
+    - build
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/lm_eval
+    permissions:
+      id-token: write  # IMPORTANT: mandatory for trusted publishing
+
+    steps:
+    - name: Download all the dists
+      uses: actions/download-artifact@v4
+      with:
+        name: python-package-distributions
+        path: dist/
+    - name: Publish distribution to PyPI
+      uses: pypa/gh-action-pypi-publish@release/v1
+
+  publish-to-testpypi:
+    name: Publish Python distribution to TestPyPI
+    needs:
+    - build
+    runs-on: ubuntu-latest
+
+    environment:
+      name: testpypi
+      url: https://test.pypi.org/p/lm_eval
+
+    permissions:
+      id-token: write  # IMPORTANT: mandatory for trusted publishing
+
+    steps:
+    - name: Download all the dists
+      uses: actions/download-artifact@v4
+      with:
+        name: python-package-distributions
+        path: dist/
+    - name: Publish distribution to TestPyPI
+      uses: pypa/gh-action-pypi-publish@release/v1
+      with:
+        repository-url: https://test.pypi.org/legacy/
