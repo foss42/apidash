@@ -429,8 +429,7 @@ class CollectionStateNotifier
       activeEnvId,
     );
   }
-
-  Map<String, dynamic>? getCurrentAuth(String? id) {
+    Map<String, dynamic>? getCurrentAuth(String? id) {
     final rId = id ?? ref.read(selectedIdStateProvider);
     if (rId == null || state?[rId] == null) return null;
 
