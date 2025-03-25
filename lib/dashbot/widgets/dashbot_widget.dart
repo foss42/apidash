@@ -1,8 +1,10 @@
 // lib/dashbot/widgets/dashbot_widget.dart
+import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/dashbot/providers/dashbot_providers.dart';
 import 'package:apidash/providers/providers.dart';
+import '../../consts.dart';
 import 'chat_bubble.dart';
 
 class DashBotWidget extends ConsumerStatefulWidget {
@@ -94,6 +96,8 @@ class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
         children: [
           _buildHeader(context),
           const SizedBox(height: 12),
+          _buildModelSelector(),
+          const SizedBox(height: 12),
           _buildQuickActions(showDebugButton),
           const SizedBox(height: 12),
           Expanded(child: _buildChatArea(messages)),
@@ -102,6 +106,25 @@ class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
           _buildInputArea(context),
         ],
       ),
+    );
+  }
+  Widget _buildModelSelector() {
+    final selectedLLM = ref.watch(selectedLLMProvider);
+
+    return DropdownButton<LLMProvider>(
+      value: selectedLLM,
+      items: LLMProvider.values.map((provider) {
+        return DropdownMenuItem(
+          value: provider,
+          child: Text(provider.name.capitalize()),
+        );
+      }).toList(),
+      onChanged: (LLMProvider? newProvider) {
+        if (newProvider != null) {
+          ref.read(selectedLLMProvider.notifier).state = newProvider;
+          ref.read(dashBotServiceProvider).setModel(newProvider);
+        }
+      },
     );
   }
 

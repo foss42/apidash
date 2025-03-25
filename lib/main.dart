@@ -1,5 +1,6 @@
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'models/models.dart';
 import 'providers/providers.dart';
@@ -9,6 +10,8 @@ import 'app.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  //TODO: Add API key to .env file
+  Gemini.init(apiKey: "apiKey");
   var settingsModel = await getSettingsFromSharedPrefs();
   final initStatus = await initApp(
     kIsDesktop,

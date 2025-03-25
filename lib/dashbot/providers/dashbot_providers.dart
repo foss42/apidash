@@ -1,16 +1,22 @@
 import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../consts.dart';
 import '../services/dashbot_service.dart';
 
 final chatMessagesProvider =
-    StateNotifierProvider<ChatMessagesNotifier, List<Map<String, dynamic>>>(
-  (ref) => ChatMessagesNotifier(),
+StateNotifierProvider<ChatMessagesNotifier, List<Map<String, dynamic>>>(
+      (ref) => ChatMessagesNotifier(),
 );
 
 final dashBotServiceProvider = Provider<DashBotService>((ref) {
   return DashBotService();
 });
+
+final selectedLLMProvider =
+StateNotifierProvider<SelectedLLMNotifier, LLMProvider>(
+      (ref) => SelectedLLMNotifier(),
+);
 
 class ChatMessagesNotifier extends StateNotifier<List<Map<String, dynamic>>> {
   ChatMessagesNotifier() : super([]) {
@@ -40,5 +46,14 @@ class ChatMessagesNotifier extends StateNotifier<List<Map<String, dynamic>>> {
   void clearMessages() {
     state = [];
     _saveMessages();
+  }
+}
+
+/// Manages the selected LLM (only in memory)
+class SelectedLLMNotifier extends StateNotifier<LLMProvider> {
+  SelectedLLMNotifier() : super(LLMProvider.ollama); // Default LLM
+
+  void setSelectedLLM(LLMProvider model) {
+    state = model;
   }
 }

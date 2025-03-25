@@ -145,6 +145,11 @@ enum ImportFormat {
   const ImportFormat(this.label);
   final String label;
 }
+enum LLMProvider {
+  ollama,
+  gemini,
+  openai
+}
 
 const String kGlobalEnvironmentId = "global";
 
