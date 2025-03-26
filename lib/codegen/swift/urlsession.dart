@@ -48,10 +48,17 @@ let postData = parameters.data(using: .utf8)
 
 ''';
 
-  final String kTemplateRequest = """
-var request = URLRequest(url: URL(string: "{{url}}")!)
-request.httpMethod = "{{method}}"
+final String kTemplateRequest = """
+var urlComponents = URLComponents(string: "{{url}}")!
+var queryItems = [URLQueryItem]()
 
+{% for param in params %}
+queryItems.append(URLQueryItem(name: "{{param.key}}", value: "{{param.value}}")){% if not loop.last %}{% else %}{% endif %}{% endfor %}
+
+urlComponents.queryItems = queryItems
+let requestUrl = urlComponents.url!
+var request = URLRequest(url: requestUrl)
+request.httpMethod = "{{method}}"
 """;
 
   final String kTemplateHeaders = """
@@ -67,9 +74,14 @@ request.httpBody = try! multipartFormData.encode()
 """;
 
   final String kTemplateEnd = """
+
+let semaphore = DispatchSemaphore(value: 0) 
+
 let task = URLSession.shared.dataTask(with: request) { data, response, error in 
+    defer { semaphore.signal() }  
+
     if let error = error {
-        print("Error: (error.localizedDescription)")
+        print("Error: \\(error.localizedDescription)")
         return
     }
     guard let data = data else {
@@ -77,10 +89,13 @@ let task = URLSession.shared.dataTask(with: request) { data, response, error in
         return
     }
     if let responseString = String(data: data, encoding: .utf8) {
-        print("Response: (responseString)")
+        print("Response: \\(responseString)")
     }
 }
+
 task.resume()
+
+semaphore.wait()
 """;
 
   String? getCode(HttpRequestModel requestModel) {
@@ -91,9 +106,21 @@ task.resume()
         result += kTemplateFormDataImport;
       }
 
-      var rec =
-          getValidRequestUri(requestModel.url, requestModel.enabledParams);
+      var rec = 
+      getValidRequestUri(requestModel.url, requestModel.enabledParams);
       Uri? uri = rec.$1;
+
+    var params = requestModel.enabledParamsMap.entries.expand((entry) {
+
+    var values = entry.value is Iterable ? entry.value : [entry.value];
+    
+    return values.map((value) {
+      return {'key': entry.key, 'value': value};
+    });
+  }).toList();
+
+
+
 
       if (requestModel.hasFormData) {
         var formDataList = requestModel.formDataMapList.map((param) {
@@ -138,14 +165,15 @@ task.resume()
 
       var templateRequest = jj.Template(kTemplateRequest);
       result += templateRequest.render({
-        "url": uri.toString(),
-        "method": requestModel.method.name.toUpperCase()
+        "url": uri.toString().split('?').first,
+        "method": requestModel.method.name.toUpperCase(),
+        "params": params, 
       });
 
       var headers = requestModel.enabledHeadersMap;
       if (requestModel.hasFormData) {
         headers.putIfAbsent("Content-Type",
-            () => "multipart/form-data; boundary=(boundary.stringValue)");
+            () => "multipart/form-data; boundary=\\(boundary.stringValue)");
       } else if (requestModel.hasJsonData || requestModel.hasTextData) {
         headers.putIfAbsent(
             kHeaderContentType, () => requestModel.bodyContentType.header);
