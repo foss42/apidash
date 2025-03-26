@@ -64,3 +64,6 @@ installers/*
 
 # Testing Files & Folders
 test-hive-storage
+
+# Prototype ignore
+lib/lm-evaluation-harness/venv/
