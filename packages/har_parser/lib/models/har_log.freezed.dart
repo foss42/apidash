@@ -803,9 +803,9 @@ mixin _$Request {
   String? get url => throw _privateConstructorUsedError;
   String? get httpVersion => throw _privateConstructorUsedError;
   List<dynamic>? get cookies => throw _privateConstructorUsedError;
-  List<dynamic>? get headers => throw _privateConstructorUsedError;
-  List<dynamic>? get queryString => throw _privateConstructorUsedError;
-  Map<String, dynamic>? get postData => throw _privateConstructorUsedError;
+  List<Header>? get headers => throw _privateConstructorUsedError;
+  List<Query>? get queryString => throw _privateConstructorUsedError;
+  PostData? get postData => throw _privateConstructorUsedError;
   int? get headersSize => throw _privateConstructorUsedError;
   int? get bodySize => throw _privateConstructorUsedError;
 
@@ -828,11 +828,13 @@ abstract class $RequestCopyWith<$Res> {
       String? url,
       String? httpVersion,
       List<dynamic>? cookies,
-      List<dynamic>? headers,
-      List<dynamic>? queryString,
-      Map<String, dynamic>? postData,
+      List<Header>? headers,
+      List<Query>? queryString,
+      PostData? postData,
       int? headersSize,
       int? bodySize});
+
+  $PostDataCopyWith<$Res>? get postData;
 }
 
 /// @nodoc
@@ -880,15 +882,15 @@ class _$RequestCopyWithImpl<$Res, $Val extends Request>
       headers: freezed == headers
           ? _value.headers
           : headers // ignore: cast_nullable_to_non_nullable
-              as List<dynamic>?,
+              as List<Header>?,
       queryString: freezed == queryString
           ? _value.queryString
           : queryString // ignore: cast_nullable_to_non_nullable
-              as List<dynamic>?,
+              as List<Query>?,
       postData: freezed == postData
           ? _value.postData
           : postData // ignore: cast_nullable_to_non_nullable
-              as Map<String, dynamic>?,
+              as PostData?,
       headersSize: freezed == headersSize
           ? _value.headersSize
           : headersSize // ignore: cast_nullable_to_non_nullable
@@ -898,6 +900,20 @@ class _$RequestCopyWithImpl<$Res, $Val extends Request>
           : bodySize // ignore: cast_nullable_to_non_nullable
               as int?,
     ) as $Val);
+  }
+
+  /// Create a copy of Request
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $PostDataCopyWith<$Res>? get postData {
+    if (_value.postData == null) {
+      return null;
+    }
+
+    return $PostDataCopyWith<$Res>(_value.postData!, (value) {
+      return _then(_value.copyWith(postData: value) as $Val);
+    });
   }
 }
 
@@ -913,11 +929,14 @@ abstract class _$$RequestImplCopyWith<$Res> implements $RequestCopyWith<$Res> {
       String? url,
       String? httpVersion,
       List<dynamic>? cookies,
-      List<dynamic>? headers,
-      List<dynamic>? queryString,
-      Map<String, dynamic>? postData,
+      List<Header>? headers,
+      List<Query>? queryString,
+      PostData? postData,
       int? headersSize,
       int? bodySize});
+
+  @override
+  $PostDataCopyWith<$Res>? get postData;
 }
 
 /// @nodoc
@@ -963,15 +982,15 @@ class __$$RequestImplCopyWithImpl<$Res>
       headers: freezed == headers
           ? _value._headers
           : headers // ignore: cast_nullable_to_non_nullable
-              as List<dynamic>?,
+              as List<Header>?,
       queryString: freezed == queryString
           ? _value._queryString
           : queryString // ignore: cast_nullable_to_non_nullable
-              as List<dynamic>?,
+              as List<Query>?,
       postData: freezed == postData
-          ? _value._postData
+          ? _value.postData
           : postData // ignore: cast_nullable_to_non_nullable
-              as Map<String, dynamic>?,
+              as PostData?,
       headersSize: freezed == headersSize
           ? _value.headersSize
           : headersSize // ignore: cast_nullable_to_non_nullable
@@ -993,15 +1012,14 @@ class _$RequestImpl implements _Request {
       this.url,
       this.httpVersion,
       final List<dynamic>? cookies,
-      final List<dynamic>? headers,
-      final List<dynamic>? queryString,
-      final Map<String, dynamic>? postData,
+      final List<Header>? headers,
+      final List<Query>? queryString,
+      this.postData,
       this.headersSize,
       this.bodySize})
       : _cookies = cookies,
         _headers = headers,
-        _queryString = queryString,
-        _postData = postData;
+        _queryString = queryString;
 
   factory _$RequestImpl.fromJson(Map<String, dynamic> json) =>
       _$$RequestImplFromJson(json);
@@ -1022,9 +1040,9 @@ class _$RequestImpl implements _Request {
     return EqualUnmodifiableListView(value);
   }
 
-  final List<dynamic>? _headers;
+  final List<Header>? _headers;
   @override
-  List<dynamic>? get headers {
+  List<Header>? get headers {
     final value = _headers;
     if (value == null) return null;
     if (_headers is EqualUnmodifiableListView) return _headers;
@@ -1032,9 +1050,9 @@ class _$RequestImpl implements _Request {
     return EqualUnmodifiableListView(value);
   }
 
-  final List<dynamic>? _queryString;
+  final List<Query>? _queryString;
   @override
-  List<dynamic>? get queryString {
+  List<Query>? get queryString {
     final value = _queryString;
     if (value == null) return null;
     if (_queryString is EqualUnmodifiableListView) return _queryString;
@@ -1042,16 +1060,8 @@ class _$RequestImpl implements _Request {
     return EqualUnmodifiableListView(value);
   }
 
-  final Map<String, dynamic>? _postData;
   @override
-  Map<String, dynamic>? get postData {
-    final value = _postData;
-    if (value == null) return null;
-    if (_postData is EqualUnmodifiableMapView) return _postData;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableMapView(value);
-  }
-
+  final PostData? postData;
   @override
   final int? headersSize;
   @override
@@ -1075,7 +1085,8 @@ class _$RequestImpl implements _Request {
             const DeepCollectionEquality().equals(other._headers, _headers) &&
             const DeepCollectionEquality()
                 .equals(other._queryString, _queryString) &&
-            const DeepCollectionEquality().equals(other._postData, _postData) &&
+            (identical(other.postData, postData) ||
+                other.postData == postData) &&
             (identical(other.headersSize, headersSize) ||
                 other.headersSize == headersSize) &&
             (identical(other.bodySize, bodySize) ||
@@ -1092,7 +1103,7 @@ class _$RequestImpl implements _Request {
       const DeepCollectionEquality().hash(_cookies),
       const DeepCollectionEquality().hash(_headers),
       const DeepCollectionEquality().hash(_queryString),
-      const DeepCollectionEquality().hash(_postData),
+      postData,
       headersSize,
       bodySize);
 
@@ -1118,9 +1129,9 @@ abstract class _Request implements Request {
       final String? url,
       final String? httpVersion,
       final List<dynamic>? cookies,
-      final List<dynamic>? headers,
-      final List<dynamic>? queryString,
-      final Map<String, dynamic>? postData,
+      final List<Header>? headers,
+      final List<Query>? queryString,
+      final PostData? postData,
       final int? headersSize,
       final int? bodySize}) = _$RequestImpl;
 
@@ -1135,11 +1146,11 @@ abstract class _Request implements Request {
   @override
   List<dynamic>? get cookies;
   @override
-  List<dynamic>? get headers;
+  List<Header>? get headers;
   @override
-  List<dynamic>? get queryString;
+  List<Query>? get queryString;
   @override
-  Map<String, dynamic>? get postData;
+  PostData? get postData;
   @override
   int? get headersSize;
   @override
@@ -1150,6 +1161,794 @@ abstract class _Request implements Request {
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$RequestImplCopyWith<_$RequestImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+PostData _$PostDataFromJson(Map<String, dynamic> json) {
+  return _PostData.fromJson(json);
+}
+
+/// @nodoc
+mixin _$PostData {
+  String? get mimeType => throw _privateConstructorUsedError;
+  String? get text => throw _privateConstructorUsedError;
+  List<Param>? get params => throw _privateConstructorUsedError;
+
+  /// Serializes this PostData to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of PostData
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $PostDataCopyWith<PostData> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $PostDataCopyWith<$Res> {
+  factory $PostDataCopyWith(PostData value, $Res Function(PostData) then) =
+      _$PostDataCopyWithImpl<$Res, PostData>;
+  @useResult
+  $Res call({String? mimeType, String? text, List<Param>? params});
+}
+
+/// @nodoc
+class _$PostDataCopyWithImpl<$Res, $Val extends PostData>
+    implements $PostDataCopyWith<$Res> {
+  _$PostDataCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of PostData
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? mimeType = freezed,
+    Object? text = freezed,
+    Object? params = freezed,
+  }) {
+    return _then(_value.copyWith(
+      mimeType: freezed == mimeType
+          ? _value.mimeType
+          : mimeType // ignore: cast_nullable_to_non_nullable
+              as String?,
+      text: freezed == text
+          ? _value.text
+          : text // ignore: cast_nullable_to_non_nullable
+              as String?,
+      params: freezed == params
+          ? _value.params
+          : params // ignore: cast_nullable_to_non_nullable
+              as List<Param>?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$PostDataImplCopyWith<$Res>
+    implements $PostDataCopyWith<$Res> {
+  factory _$$PostDataImplCopyWith(
+          _$PostDataImpl value, $Res Function(_$PostDataImpl) then) =
+      __$$PostDataImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String? mimeType, String? text, List<Param>? params});
+}
+
+/// @nodoc
+class __$$PostDataImplCopyWithImpl<$Res>
+    extends _$PostDataCopyWithImpl<$Res, _$PostDataImpl>
+    implements _$$PostDataImplCopyWith<$Res> {
+  __$$PostDataImplCopyWithImpl(
+      _$PostDataImpl _value, $Res Function(_$PostDataImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of PostData
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? mimeType = freezed,
+    Object? text = freezed,
+    Object? params = freezed,
+  }) {
+    return _then(_$PostDataImpl(
+      mimeType: freezed == mimeType
+          ? _value.mimeType
+          : mimeType // ignore: cast_nullable_to_non_nullable
+              as String?,
+      text: freezed == text
+          ? _value.text
+          : text // ignore: cast_nullable_to_non_nullable
+              as String?,
+      params: freezed == params
+          ? _value._params
+          : params // ignore: cast_nullable_to_non_nullable
+              as List<Param>?,
+    ));
+  }
+}
+
+/// @nodoc
+
+@JsonSerializable(explicitToJson: true, anyMap: true, includeIfNull: false)
+class _$PostDataImpl implements _PostData {
+  const _$PostDataImpl({this.mimeType, this.text, final List<Param>? params})
+      : _params = params;
+
+  factory _$PostDataImpl.fromJson(Map<String, dynamic> json) =>
+      _$$PostDataImplFromJson(json);
+
+  @override
+  final String? mimeType;
+  @override
+  final String? text;
+  final List<Param>? _params;
+  @override
+  List<Param>? get params {
+    final value = _params;
+    if (value == null) return null;
+    if (_params is EqualUnmodifiableListView) return _params;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  @override
+  String toString() {
+    return 'PostData(mimeType: $mimeType, text: $text, params: $params)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$PostDataImpl &&
+            (identical(other.mimeType, mimeType) ||
+                other.mimeType == mimeType) &&
+            (identical(other.text, text) || other.text == text) &&
+            const DeepCollectionEquality().equals(other._params, _params));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, mimeType, text,
+      const DeepCollectionEquality().hash(_params));
+
+  /// Create a copy of PostData
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$PostDataImplCopyWith<_$PostDataImpl> get copyWith =>
+      __$$PostDataImplCopyWithImpl<_$PostDataImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$PostDataImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _PostData implements PostData {
+  const factory _PostData(
+      {final String? mimeType,
+      final String? text,
+      final List<Param>? params}) = _$PostDataImpl;
+
+  factory _PostData.fromJson(Map<String, dynamic> json) =
+      _$PostDataImpl.fromJson;
+
+  @override
+  String? get mimeType;
+  @override
+  String? get text;
+  @override
+  List<Param>? get params;
+
+  /// Create a copy of PostData
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$PostDataImplCopyWith<_$PostDataImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+Param _$ParamFromJson(Map<String, dynamic> json) {
+  return _Param.fromJson(json);
+}
+
+/// @nodoc
+mixin _$Param {
+  String? get name => throw _privateConstructorUsedError;
+  String? get value => throw _privateConstructorUsedError;
+  String? get fileName => throw _privateConstructorUsedError;
+  String? get contentType => throw _privateConstructorUsedError;
+  bool? get disabled => throw _privateConstructorUsedError;
+
+  /// Serializes this Param to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of Param
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $ParamCopyWith<Param> get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ParamCopyWith<$Res> {
+  factory $ParamCopyWith(Param value, $Res Function(Param) then) =
+      _$ParamCopyWithImpl<$Res, Param>;
+  @useResult
+  $Res call(
+      {String? name,
+      String? value,
+      String? fileName,
+      String? contentType,
+      bool? disabled});
+}
+
+/// @nodoc
+class _$ParamCopyWithImpl<$Res, $Val extends Param>
+    implements $ParamCopyWith<$Res> {
+  _$ParamCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of Param
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? name = freezed,
+    Object? value = freezed,
+    Object? fileName = freezed,
+    Object? contentType = freezed,
+    Object? disabled = freezed,
+  }) {
+    return _then(_value.copyWith(
+      name: freezed == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String?,
+      value: freezed == value
+          ? _value.value
+          : value // ignore: cast_nullable_to_non_nullable
+              as String?,
+      fileName: freezed == fileName
+          ? _value.fileName
+          : fileName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      contentType: freezed == contentType
+          ? _value.contentType
+          : contentType // ignore: cast_nullable_to_non_nullable
+              as String?,
+      disabled: freezed == disabled
+          ? _value.disabled
+          : disabled // ignore: cast_nullable_to_non_nullable
+              as bool?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$ParamImplCopyWith<$Res> implements $ParamCopyWith<$Res> {
+  factory _$$ParamImplCopyWith(
+          _$ParamImpl value, $Res Function(_$ParamImpl) then) =
+      __$$ParamImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String? name,
+      String? value,
+      String? fileName,
+      String? contentType,
+      bool? disabled});
+}
+
+/// @nodoc
+class __$$ParamImplCopyWithImpl<$Res>
+    extends _$ParamCopyWithImpl<$Res, _$ParamImpl>
+    implements _$$ParamImplCopyWith<$Res> {
+  __$$ParamImplCopyWithImpl(
+      _$ParamImpl _value, $Res Function(_$ParamImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of Param
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? name = freezed,
+    Object? value = freezed,
+    Object? fileName = freezed,
+    Object? contentType = freezed,
+    Object? disabled = freezed,
+  }) {
+    return _then(_$ParamImpl(
+      name: freezed == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String?,
+      value: freezed == value
+          ? _value.value
+          : value // ignore: cast_nullable_to_non_nullable
+              as String?,
+      fileName: freezed == fileName
+          ? _value.fileName
+          : fileName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      contentType: freezed == contentType
+          ? _value.contentType
+          : contentType // ignore: cast_nullable_to_non_nullable
+              as String?,
+      disabled: freezed == disabled
+          ? _value.disabled
+          : disabled // ignore: cast_nullable_to_non_nullable
+              as bool?,
+    ));
+  }
+}
+
+/// @nodoc
+
+@JsonSerializable(explicitToJson: true, anyMap: true, includeIfNull: false)
+class _$ParamImpl implements _Param {
+  const _$ParamImpl(
+      {this.name, this.value, this.fileName, this.contentType, this.disabled});
+
+  factory _$ParamImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ParamImplFromJson(json);
+
+  @override
+  final String? name;
+  @override
+  final String? value;
+  @override
+  final String? fileName;
+  @override
+  final String? contentType;
+  @override
+  final bool? disabled;
+
+  @override
+  String toString() {
+    return 'Param(name: $name, value: $value, fileName: $fileName, contentType: $contentType, disabled: $disabled)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ParamImpl &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.value, value) || other.value == value) &&
+            (identical(other.fileName, fileName) ||
+                other.fileName == fileName) &&
+            (identical(other.contentType, contentType) ||
+                other.contentType == contentType) &&
+            (identical(other.disabled, disabled) ||
+                other.disabled == disabled));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, name, value, fileName, contentType, disabled);
+
+  /// Create a copy of Param
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ParamImplCopyWith<_$ParamImpl> get copyWith =>
+      __$$ParamImplCopyWithImpl<_$ParamImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ParamImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _Param implements Param {
+  const factory _Param(
+      {final String? name,
+      final String? value,
+      final String? fileName,
+      final String? contentType,
+      final bool? disabled}) = _$ParamImpl;
+
+  factory _Param.fromJson(Map<String, dynamic> json) = _$ParamImpl.fromJson;
+
+  @override
+  String? get name;
+  @override
+  String? get value;
+  @override
+  String? get fileName;
+  @override
+  String? get contentType;
+  @override
+  bool? get disabled;
+
+  /// Create a copy of Param
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$ParamImplCopyWith<_$ParamImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+Query _$QueryFromJson(Map<String, dynamic> json) {
+  return _Query.fromJson(json);
+}
+
+/// @nodoc
+mixin _$Query {
+  String? get name => throw _privateConstructorUsedError;
+  String? get value => throw _privateConstructorUsedError;
+  bool? get disabled => throw _privateConstructorUsedError;
+
+  /// Serializes this Query to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of Query
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $QueryCopyWith<Query> get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $QueryCopyWith<$Res> {
+  factory $QueryCopyWith(Query value, $Res Function(Query) then) =
+      _$QueryCopyWithImpl<$Res, Query>;
+  @useResult
+  $Res call({String? name, String? value, bool? disabled});
+}
+
+/// @nodoc
+class _$QueryCopyWithImpl<$Res, $Val extends Query>
+    implements $QueryCopyWith<$Res> {
+  _$QueryCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of Query
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? name = freezed,
+    Object? value = freezed,
+    Object? disabled = freezed,
+  }) {
+    return _then(_value.copyWith(
+      name: freezed == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String?,
+      value: freezed == value
+          ? _value.value
+          : value // ignore: cast_nullable_to_non_nullable
+              as String?,
+      disabled: freezed == disabled
+          ? _value.disabled
+          : disabled // ignore: cast_nullable_to_non_nullable
+              as bool?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$QueryImplCopyWith<$Res> implements $QueryCopyWith<$Res> {
+  factory _$$QueryImplCopyWith(
+          _$QueryImpl value, $Res Function(_$QueryImpl) then) =
+      __$$QueryImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String? name, String? value, bool? disabled});
+}
+
+/// @nodoc
+class __$$QueryImplCopyWithImpl<$Res>
+    extends _$QueryCopyWithImpl<$Res, _$QueryImpl>
+    implements _$$QueryImplCopyWith<$Res> {
+  __$$QueryImplCopyWithImpl(
+      _$QueryImpl _value, $Res Function(_$QueryImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of Query
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? name = freezed,
+    Object? value = freezed,
+    Object? disabled = freezed,
+  }) {
+    return _then(_$QueryImpl(
+      name: freezed == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String?,
+      value: freezed == value
+          ? _value.value
+          : value // ignore: cast_nullable_to_non_nullable
+              as String?,
+      disabled: freezed == disabled
+          ? _value.disabled
+          : disabled // ignore: cast_nullable_to_non_nullable
+              as bool?,
+    ));
+  }
+}
+
+/// @nodoc
+
+@JsonSerializable(explicitToJson: true, anyMap: true, includeIfNull: false)
+class _$QueryImpl implements _Query {
+  const _$QueryImpl({this.name, this.value, this.disabled});
+
+  factory _$QueryImpl.fromJson(Map<String, dynamic> json) =>
+      _$$QueryImplFromJson(json);
+
+  @override
+  final String? name;
+  @override
+  final String? value;
+  @override
+  final bool? disabled;
+
+  @override
+  String toString() {
+    return 'Query(name: $name, value: $value, disabled: $disabled)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$QueryImpl &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.value, value) || other.value == value) &&
+            (identical(other.disabled, disabled) ||
+                other.disabled == disabled));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, name, value, disabled);
+
+  /// Create a copy of Query
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$QueryImplCopyWith<_$QueryImpl> get copyWith =>
+      __$$QueryImplCopyWithImpl<_$QueryImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$QueryImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _Query implements Query {
+  const factory _Query(
+      {final String? name,
+      final String? value,
+      final bool? disabled}) = _$QueryImpl;
+
+  factory _Query.fromJson(Map<String, dynamic> json) = _$QueryImpl.fromJson;
+
+  @override
+  String? get name;
+  @override
+  String? get value;
+  @override
+  bool? get disabled;
+
+  /// Create a copy of Query
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$QueryImplCopyWith<_$QueryImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+Header _$HeaderFromJson(Map<String, dynamic> json) {
+  return _Header.fromJson(json);
+}
+
+/// @nodoc
+mixin _$Header {
+  String? get name => throw _privateConstructorUsedError;
+  String? get value => throw _privateConstructorUsedError;
+  bool? get disabled => throw _privateConstructorUsedError;
+
+  /// Serializes this Header to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of Header
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $HeaderCopyWith<Header> get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $HeaderCopyWith<$Res> {
+  factory $HeaderCopyWith(Header value, $Res Function(Header) then) =
+      _$HeaderCopyWithImpl<$Res, Header>;
+  @useResult
+  $Res call({String? name, String? value, bool? disabled});
+}
+
+/// @nodoc
+class _$HeaderCopyWithImpl<$Res, $Val extends Header>
+    implements $HeaderCopyWith<$Res> {
+  _$HeaderCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of Header
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? name = freezed,
+    Object? value = freezed,
+    Object? disabled = freezed,
+  }) {
+    return _then(_value.copyWith(
+      name: freezed == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String?,
+      value: freezed == value
+          ? _value.value
+          : value // ignore: cast_nullable_to_non_nullable
+              as String?,
+      disabled: freezed == disabled
+          ? _value.disabled
+          : disabled // ignore: cast_nullable_to_non_nullable
+              as bool?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$HeaderImplCopyWith<$Res> implements $HeaderCopyWith<$Res> {
+  factory _$$HeaderImplCopyWith(
+          _$HeaderImpl value, $Res Function(_$HeaderImpl) then) =
+      __$$HeaderImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String? name, String? value, bool? disabled});
+}
+
+/// @nodoc
+class __$$HeaderImplCopyWithImpl<$Res>
+    extends _$HeaderCopyWithImpl<$Res, _$HeaderImpl>
+    implements _$$HeaderImplCopyWith<$Res> {
+  __$$HeaderImplCopyWithImpl(
+      _$HeaderImpl _value, $Res Function(_$HeaderImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of Header
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? name = freezed,
+    Object? value = freezed,
+    Object? disabled = freezed,
+  }) {
+    return _then(_$HeaderImpl(
+      name: freezed == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String?,
+      value: freezed == value
+          ? _value.value
+          : value // ignore: cast_nullable_to_non_nullable
+              as String?,
+      disabled: freezed == disabled
+          ? _value.disabled
+          : disabled // ignore: cast_nullable_to_non_nullable
+              as bool?,
+    ));
+  }
+}
+
+/// @nodoc
+
+@JsonSerializable(explicitToJson: true, anyMap: true, includeIfNull: false)
+class _$HeaderImpl implements _Header {
+  const _$HeaderImpl({this.name, this.value, this.disabled});
+
+  factory _$HeaderImpl.fromJson(Map<String, dynamic> json) =>
+      _$$HeaderImplFromJson(json);
+
+  @override
+  final String? name;
+  @override
+  final String? value;
+  @override
+  final bool? disabled;
+
+  @override
+  String toString() {
+    return 'Header(name: $name, value: $value, disabled: $disabled)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$HeaderImpl &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.value, value) || other.value == value) &&
+            (identical(other.disabled, disabled) ||
+                other.disabled == disabled));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, name, value, disabled);
+
+  /// Create a copy of Header
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$HeaderImplCopyWith<_$HeaderImpl> get copyWith =>
+      __$$HeaderImplCopyWithImpl<_$HeaderImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$HeaderImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _Header implements Header {
+  const factory _Header(
+      {final String? name,
+      final String? value,
+      final bool? disabled}) = _$HeaderImpl;
+
+  factory _Header.fromJson(Map<String, dynamic> json) = _$HeaderImpl.fromJson;
+
+  @override
+  String? get name;
+  @override
+  String? get value;
+  @override
+  bool? get disabled;
+
+  /// Create a copy of Header
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$HeaderImplCopyWith<_$HeaderImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 

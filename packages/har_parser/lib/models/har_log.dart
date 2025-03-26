@@ -64,15 +64,82 @@ class Request with _$Request {
     String? url,
     String? httpVersion,
     List<dynamic>? cookies,
-    List<dynamic>? headers,
-    List<dynamic>? queryString,
-    Map<String, dynamic>? postData,
+    List<Header>? headers,
+    List<Query>? queryString,
+    PostData? postData,
     int? headersSize,
     int? bodySize,
   }) = _Request;
 
   factory Request.fromJson(Map<String, dynamic> json) =>
       _$RequestFromJson(json);
+}
+
+@freezed
+class PostData with _$PostData {
+  @JsonSerializable(
+    explicitToJson: true,
+    anyMap: true,
+    includeIfNull: false,
+  )
+  const factory PostData({
+    String? mimeType,
+    String? text,
+    List<Param>? params, // for multipart/form-data params
+  }) = _PostData;
+
+  factory PostData.fromJson(Map<String, dynamic> json) =>
+      _$PostDataFromJson(json);
+}
+
+@freezed
+class Param with _$Param {
+  @JsonSerializable(
+    explicitToJson: true,
+    anyMap: true,
+    includeIfNull: false,
+  )
+  const factory Param({
+    String? name,
+    String? value,
+    String? fileName,
+    String? contentType,
+    bool? disabled,
+  }) = _Param;
+
+  factory Param.fromJson(Map<String, dynamic> json) => _$ParamFromJson(json);
+}
+
+@freezed
+class Query with _$Query {
+  @JsonSerializable(
+    explicitToJson: true,
+    anyMap: true,
+    includeIfNull: false,
+  )
+  const factory Query({
+    String? name,
+    String? value,
+    bool? disabled,
+  }) = _Query;
+
+  factory Query.fromJson(Map<String, dynamic> json) => _$QueryFromJson(json);
+}
+
+@freezed
+class Header with _$Header {
+  @JsonSerializable(
+    explicitToJson: true,
+    anyMap: true,
+    includeIfNull: false,
+  )
+  const factory Header({
+    String? name,
+    String? value,
+    bool? disabled,
+  }) = _Header;
+
+  factory Header.fromJson(Map<String, dynamic> json) => _$HeaderFromJson(json);
 }
 
 @freezed

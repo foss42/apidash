@@ -70,11 +70,16 @@ _$RequestImpl _$$RequestImplFromJson(Map json) => _$RequestImpl(
       url: json['url'] as String?,
       httpVersion: json['httpVersion'] as String?,
       cookies: json['cookies'] as List<dynamic>?,
-      headers: json['headers'] as List<dynamic>?,
-      queryString: json['queryString'] as List<dynamic>?,
-      postData: (json['postData'] as Map?)?.map(
-        (k, e) => MapEntry(k as String, e),
-      ),
+      headers: (json['headers'] as List<dynamic>?)
+          ?.map((e) => Header.fromJson(Map<String, dynamic>.from(e as Map)))
+          .toList(),
+      queryString: (json['queryString'] as List<dynamic>?)
+          ?.map((e) => Query.fromJson(Map<String, dynamic>.from(e as Map)))
+          .toList(),
+      postData: json['postData'] == null
+          ? null
+          : PostData.fromJson(
+              Map<String, dynamic>.from(json['postData'] as Map)),
       headersSize: (json['headersSize'] as num?)?.toInt(),
       bodySize: (json['bodySize'] as num?)?.toInt(),
     );
@@ -85,11 +90,73 @@ Map<String, dynamic> _$$RequestImplToJson(_$RequestImpl instance) =>
       if (instance.url case final value?) 'url': value,
       if (instance.httpVersion case final value?) 'httpVersion': value,
       if (instance.cookies case final value?) 'cookies': value,
-      if (instance.headers case final value?) 'headers': value,
-      if (instance.queryString case final value?) 'queryString': value,
-      if (instance.postData case final value?) 'postData': value,
+      if (instance.headers?.map((e) => e.toJson()).toList() case final value?)
+        'headers': value,
+      if (instance.queryString?.map((e) => e.toJson()).toList()
+          case final value?)
+        'queryString': value,
+      if (instance.postData?.toJson() case final value?) 'postData': value,
       if (instance.headersSize case final value?) 'headersSize': value,
       if (instance.bodySize case final value?) 'bodySize': value,
+    };
+
+_$PostDataImpl _$$PostDataImplFromJson(Map json) => _$PostDataImpl(
+      mimeType: json['mimeType'] as String?,
+      text: json['text'] as String?,
+      params: (json['params'] as List<dynamic>?)
+          ?.map((e) => Param.fromJson(Map<String, dynamic>.from(e as Map)))
+          .toList(),
+    );
+
+Map<String, dynamic> _$$PostDataImplToJson(_$PostDataImpl instance) =>
+    <String, dynamic>{
+      if (instance.mimeType case final value?) 'mimeType': value,
+      if (instance.text case final value?) 'text': value,
+      if (instance.params?.map((e) => e.toJson()).toList() case final value?)
+        'params': value,
+    };
+
+_$ParamImpl _$$ParamImplFromJson(Map json) => _$ParamImpl(
+      name: json['name'] as String?,
+      value: json['value'] as String?,
+      fileName: json['fileName'] as String?,
+      contentType: json['contentType'] as String?,
+      disabled: json['disabled'] as bool?,
+    );
+
+Map<String, dynamic> _$$ParamImplToJson(_$ParamImpl instance) =>
+    <String, dynamic>{
+      if (instance.name case final value?) 'name': value,
+      if (instance.value case final value?) 'value': value,
+      if (instance.fileName case final value?) 'fileName': value,
+      if (instance.contentType case final value?) 'contentType': value,
+      if (instance.disabled case final value?) 'disabled': value,
+    };
+
+_$QueryImpl _$$QueryImplFromJson(Map json) => _$QueryImpl(
+      name: json['name'] as String?,
+      value: json['value'] as String?,
+      disabled: json['disabled'] as bool?,
+    );
+
+Map<String, dynamic> _$$QueryImplToJson(_$QueryImpl instance) =>
+    <String, dynamic>{
+      if (instance.name case final value?) 'name': value,
+      if (instance.value case final value?) 'value': value,
+      if (instance.disabled case final value?) 'disabled': value,
+    };
+
+_$HeaderImpl _$$HeaderImplFromJson(Map json) => _$HeaderImpl(
+      name: json['name'] as String?,
+      value: json['value'] as String?,
+      disabled: json['disabled'] as bool?,
+    );
+
+Map<String, dynamic> _$$HeaderImplToJson(_$HeaderImpl instance) =>
+    <String, dynamic>{
+      if (instance.name case final value?) 'name': value,
+      if (instance.value case final value?) 'value': value,
+      if (instance.disabled case final value?) 'disabled': value,
     };
 
 _$ResponseImpl _$$ResponseImplFromJson(Map json) => _$ResponseImpl(
