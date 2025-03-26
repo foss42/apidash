@@ -26,13 +26,11 @@ Real-Time Data Display: Presents results of evaluation in a formatted way.
 Model Selection: Enables users to select from amongst available AI models.
 
 ## Screenshots and Visuals
-![alt text](<Screenshot 2025-03-26 211623.png>)
+![alt text](https://github.com/GANGSTER0910/apidash/blob/1110f4c61d8107decffcc85fdca6cbb5ee545791/doc/proposals/2025/gsoc/images/dashboard_image.png)
 
-![alt text](image.png)
+![alt text](https://github.com/GANGSTER0910/apidash/blob/9a30a61278cc99f2b09ff4f42b9ff13505c5eb26/doc/proposals/2025/gsoc/images/dashboard3.png)
 
-![alt text](<Screenshot 2025-03-26 214413.png>)
-
-![alt text](<Screenshot 2025-03-26 214424.png>)
+![alt text](https://github.com/GANGSTER0910/apidash/blob/1104340895c2af41d264c7f4a707914ed59edff2/doc/proposals/2025/gsoc/images/results.png)
 
 ---
 ##  Proof of Concept Details
