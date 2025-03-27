@@ -48,3 +48,16 @@ BERTScore: Scores contextual embeddings.
 
 METEOR: Considers synonyms, stemming, and grammar.
 
+To run the code 
+### Step 1: Clone the Repository
+```
+# Clone AI API Evaluation Repository
+
+git clone https://github.com/GANGSTER0910/AI_API_EVAL.git
+cd AI_API_EVAL
+
+# Install required Python packages
+pip install -r requirements.txt
+Provide your Hugging Face API token in the FastAPI.py file
+run python FastAPI.py
+```
