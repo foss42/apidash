@@ -179,7 +179,16 @@ class _EvaluationDashboardState extends State<EvaluationDashboard> {
       children: [
         _buildMetricCard("Best Performing Model", _selectedModel ?? "N/A",
             Icons.emoji_events, Colors.amber),
-        _buildMetricCard("Average BERT-4", "0.84", Icons.score, Colors.blue),
+        _buildMetricCard(
+          "Average BERT-4",
+          _results.isEmpty
+              ? "N/A"
+              : _results.length == 1
+            ? _results[0].scores['BERTScore']?.toStringAsFixed(2) ?? "N/A"
+            : _results[1].scores['BERTScore']?.toStringAsFixed(2) ?? "N/A",
+          Icons.score,
+          Colors.blue,
+        ),
         _buildMetricCard("Fastest Model", _selectedModel ?? "N/A", Icons.speed,
             Colors.green),
         _buildMetricCard("Cost Efficiency", _selectedModel ?? "N/A",
