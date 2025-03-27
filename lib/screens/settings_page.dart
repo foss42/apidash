@@ -51,6 +51,24 @@ class SettingsPage extends ConsumerWidget {
                 },
               ),
               SwitchListTile(
+                title: const Text('Proxy Settings'),
+                subtitle: Text(ref.watch(settingsProvider).proxySettings != null 
+                  ? 'Enabled - ${ref.watch(settingsProvider).proxySettings!.host}:${ref.watch(settingsProvider).proxySettings!.port}' 
+                  : 'Disabled'
+                ),
+                value: ref.watch(settingsProvider).proxySettings != null,
+                onChanged: (bool value) {
+                  if (!value) {
+                    ref.read(settingsProvider.notifier).update(proxySettings: null);
+                  } else {
+                    showDialog(
+                      context: context,
+                      builder: (context) => const ProxySettingsDialog(),
+                    );
+                  }
+                },
+              ),
+              SwitchListTile(
                 hoverColor: kColorTransparent,
                 title: const Text('Collection Pane Scrollbar Visiblity'),
                 subtitle: Text(

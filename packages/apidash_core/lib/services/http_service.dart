@@ -18,8 +18,13 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
   HttpRequestModel requestModel, {
   SupportedUriSchemes defaultUriScheme = kDefaultUriScheme,
   bool noSSL = false,
+  ProxySettings? proxySettings,
 }) async {
-  final client = httpClientManager.createClient(requestId, noSSL: noSSL);
+  final client = httpClientManager.createClient(
+    requestId,
+    noSSL: noSSL,
+    proxySettings: proxySettings,
+  );
 
   (Uri?, String?) uriRec = getValidRequestUri(
     requestModel.url,

@@ -5,6 +5,13 @@ import 'package:apidash/models/settings_model.dart';
 import 'package:apidash/consts.dart';
 
 void main() {
+  const proxySettings = ProxySettings(
+    host: 'localhost',
+    port: '8080',
+    username: 'user',
+    password: 'pass',
+  );
+
   const sm = SettingsModel(
     isDark: false,
     alwaysShowCollectionPaneScrollbar: true,
@@ -18,6 +25,7 @@ void main() {
     historyRetentionPeriod: HistoryRetentionPeriod.oneWeek,
     workspaceFolderPath: null,
     isSSLDisabled: true,
+    proxySettings: proxySettings,
   );
 
   test('Testing toJson()', () {
@@ -36,6 +44,12 @@ void main() {
       "historyRetentionPeriod": "oneWeek",
       "workspaceFolderPath": null,
       "isSSLDisabled": true,
+      "proxySettings": {
+        "host": "localhost",
+        "port": "8080",
+        "username": "user",
+        "password": "pass",
+      },
     };
     expect(sm.toJson(), expectedResult);
   });
@@ -56,6 +70,12 @@ void main() {
       "historyRetentionPeriod": "oneWeek",
       "workspaceFolderPath": null,
       "isSSLDisabled": true,
+      "proxySettings": {
+        "host": "localhost",
+        "port": "8080",
+        "username": "user",
+        "password": "pass",
+      },
     };
     expect(SettingsModel.fromJson(input), sm);
   });
@@ -73,12 +93,14 @@ void main() {
       activeEnvironmentId: null,
       historyRetentionPeriod: HistoryRetentionPeriod.oneWeek,
       isSSLDisabled: false,
+      proxySettings: null,
     );
     expect(
         sm.copyWith(
           isDark: true,
           saveResponses: false,
           isSSLDisabled: false,
+          proxySettings: null,
         ),
         expectedResult);
   });
@@ -98,9 +120,29 @@ void main() {
   "activeEnvironmentId": null,
   "historyRetentionPeriod": "oneWeek",
   "workspaceFolderPath": null,
-  "isSSLDisabled": true
+  "isSSLDisabled": true,
+  "proxySettings": {
+    "host": "localhost",
+    "port": "8080",
+    "username": "user",
+    "password": "pass"
+  }
 }''';
     expect(sm.toString(), expectedResult);
+  });
+
+  test('Testing proxy settings update', () {
+    const newProxySettings = ProxySettings(
+      host: 'proxy.example.com',
+      port: '3128',
+    );
+    final updatedSettings = sm.copyWith(proxySettings: newProxySettings);
+    expect(updatedSettings.proxySettings, newProxySettings);
+  });
+
+  test('Testing proxy settings disable', () {
+    final disabledSettings = sm.copyWith(proxySettings: null);
+    expect(disabledSettings.proxySettings, null);
   });
 
   test('Testing hashcode', () {

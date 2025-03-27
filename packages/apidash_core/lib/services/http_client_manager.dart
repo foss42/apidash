@@ -3,11 +3,38 @@ import 'dart:collection';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/io_client.dart';
+import 'package:apidash_core/models/models.dart';
 
-http.Client createHttpClientWithNoSSL() {
-  var ioClient = HttpClient()
-    ..badCertificateCallback =
-        (X509Certificate cert, String host, int port) => true;
+http.Client createCustomHttpClient({
+  bool noSSL = false,
+  ProxySettings? proxySettings,
+}) {
+  if (kIsWeb) {
+    return http.Client();
+  }
+
+  var ioClient = HttpClient();
+
+  // Configure SSL
+  if (noSSL) {
+    ioClient.badCertificateCallback = (X509Certificate cert, String host, int port) => true;
+  }
+
+  // Configure proxy if enabled
+  if (proxySettings != null) {
+    // Set proxy server
+    ioClient.findProxy = (uri) {
+      return 'PROXY ${proxySettings.host}:${proxySettings.port}';
+    };
+
+    // Configure proxy authentication if credentials are provided
+    if (proxySettings.username != null && proxySettings.password != null) {
+      ioClient.authenticate = (Uri url, String scheme, String? realm) async {
+        return true;
+      };
+    }
+  }
+
   return IOClient(ioClient);
 }
 
@@ -26,9 +53,13 @@ class HttpClientManager {
   http.Client createClient(
     String requestId, {
     bool noSSL = false,
+    ProxySettings? proxySettings,
   }) {
-    final client =
-        (noSSL && !kIsWeb) ? createHttpClientWithNoSSL() : http.Client();
+    final client = createCustomHttpClient(
+      noSSL: noSSL,
+      proxySettings: proxySettings,
+    );
+    
     _clients[requestId] = client;
     return client;
   }
