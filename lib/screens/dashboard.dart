@@ -5,6 +5,7 @@ import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/dashbot/dashbot.dart';
+import 'package:apidash/api_evalution/evalution.dart';
 import 'common_widgets/common_widgets.dart';
 import 'envvar/environment_page.dart';
 import 'home_page/home_page.dart';
@@ -68,6 +69,14 @@ class Dashboard extends ConsumerWidget {
                       'History',
                       style: Theme.of(context).textTheme.labelSmall,
                     ),
+                    kVSpacer10,
+                    IconButton(
+                      isSelected: railIdx == 3, // Use index 4 (assuming 3 is Settings)
+                      onPressed: () => ref.read(navRailIndexStateProvider.notifier).state = 3,
+                      icon: const Icon(Icons.assessment_outlined),
+                      selectedIcon: const Icon(Icons.assessment),
+                    ),
+                    Text('Evaluation', style: Theme.of(context).textTheme.labelSmall),
                   ],
                 ),
                 Expanded(
@@ -118,6 +127,7 @@ class Dashboard extends ConsumerWidget {
                   HomePage(),
                   EnvironmentPage(),
                   HistoryPage(),
+                  EvaluationDashboard(),
                   SettingsPage(),
                 ],
               ),
