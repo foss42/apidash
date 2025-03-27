@@ -26,11 +26,11 @@ Real-Time Data Display: Presents results of evaluation in a formatted way.
 Model Selection: Enables users to select from amongst available AI models.
 
 ## Screenshots and Visuals
-![alt text](https://github.com/GANGSTER0910/apidash/blob/1110f4c61d8107decffcc85fdca6cbb5ee545791/doc/proposals/2025/gsoc/images/dashboard_image.png)
+![alt text](https://github.com/GANGSTER0910/apidash/blob/8fc7298824670397b07d0b42307bb1dd533af1fe/doc/proposals/2025/gsoc/images/dashboard1.png)
 
-![alt text](https://github.com/GANGSTER0910/apidash/blob/9a30a61278cc99f2b09ff4f42b9ff13505c5eb26/doc/proposals/2025/gsoc/images/dashboard3.png)
+![alt text](https://github.com/GANGSTER0910/apidash/blob/8fc7298824670397b07d0b42307bb1dd533af1fe/doc/proposals/2025/gsoc/images/dashboard%202.png)
 
-![alt text](https://github.com/GANGSTER0910/apidash/blob/1104340895c2af41d264c7f4a707914ed59edff2/doc/proposals/2025/gsoc/images/results.png)
+![alt text](https://github.com/GANGSTER0910/apidash/blob/8fc7298824670397b07d0b42307bb1dd533af1fe/doc/proposals/2025/gsoc/images/results.png)
 
 ---
 ##  Proof of Concept Details
