@@ -1,27 +1,7 @@
 import 'package:flutter/material.dart';
-// import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:fl_chart/fl_chart.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-
-// void main() => runApp(AIEvaluationApp());
-
-// class AIEvaluationApp extends StatelessWidget {
-//   const AIEvaluationApp({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       title: 'AI API Evaluator',
-//       theme: ThemeData(
-//         primarySwatch: Colors.deepPurple,
-//         scaffoldBackgroundColor: Colors.grey[50],
-//         visualDensity: VisualDensity.adaptivePlatformDensity,
-//       ),
-//       home: EvaluationDashboard(),
-//     );
-//   }
-// }
 
 class EvaluationDashboard extends StatefulWidget {
   const EvaluationDashboard({super.key});
