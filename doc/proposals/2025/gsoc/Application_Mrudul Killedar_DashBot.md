@@ -19,7 +19,7 @@
 ## Motivation & Past Experience  
 **1. Have you worked on or contributed to a FOSS project before?**  
 Yes, I have contributed to FOSS project ie APIDash:  
-- Solves Beautify JSON and Highlight JSOn - https://github.com/foss42/apidash/pull/595  
+- Solves Beautify JSON and Highlight JSON - https://github.com/foss42/apidash/pull/595  
 - Share button functionality - https://github.com/foss42/apidash/pull/571#event-16324056931 
 - Homebrew Installation Guide - https://github.com/foss42/apidash/pull/566#event-16282262849
 - Multiple-Model in DashBot - https://github.com/foss42/apidash/pull/704
