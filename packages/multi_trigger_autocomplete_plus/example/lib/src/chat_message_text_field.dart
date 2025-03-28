@@ -6,11 +6,11 @@ import 'package:example/src/data.dart';
 
 class ChatMessageTextField extends StatelessWidget {
   const ChatMessageTextField({
-    Key? key,
+    super.key,
     required this.focusNode,
     required this.controller,
     required this.onSend,
-  }) : super(key: key);
+  });
 
   final FocusNode focusNode;
   final TextEditingController controller;

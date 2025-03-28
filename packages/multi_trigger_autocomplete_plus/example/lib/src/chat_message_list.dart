@@ -5,9 +5,9 @@ import 'package:google_fonts/google_fonts.dart';
 
 class ChatMessageList extends StatelessWidget {
   const ChatMessageList({
-    Key? key,
+    super.key,
     required this.messages,
-  }) : super(key: key);
+  });
 
   final List<ChatMessage> messages;
 

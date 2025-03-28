@@ -5,10 +5,10 @@ import 'package:example/src/models.dart';
 
 class EmojiAutocompleteOptions extends StatelessWidget {
   const EmojiAutocompleteOptions({
-    Key? key,
+    super.key,
     required this.query,
     required this.onEmojiTap,
-  }) : super(key: key);
+  });
 
   final String query;
   final ValueSetter<Emoji> onEmojiTap;
