@@ -112,6 +112,23 @@ Key dependencies are,
 - [fl_charts](https://pub.dev/packages/fl_chart)
 
 
+
+Here's a well-structured **Flutter MVVM (Model-View-ViewModel) project** using a **feature-first approach**, ensuring scalability and maintainability:  
+
+## **FOLDER STRUCTURE**
+```
+lib/
+│── features/
+│   ├── feature_1/            
+│   │   ├── repository/       # Data layer for feature_1
+│   │   │   ├── feature_1_repository.dart
+│   │   ├── viewmodel/        # Business logic for feature_1
+│   │   │   ├── feature_1_viewmodel.dart
+│   │   ├── view/             # UI layer for feature_1
+│   │   │   ├── feature_1_screen.dart
+│   │   │   ├── widgets/      # Reusable widgets for this feature
+```
+
 ## **USAGE**
 
 DashBot can be accessed from the home screen of API Dash using a floating action button at the bottom right corner.
