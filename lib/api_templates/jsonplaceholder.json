@@ -1,0 +1,206 @@
+{
+  "id": "961235444",
+  "name": "jsonPlaceholder",
+  "source": "lib/api_sources\\jsonPlaceholder.yml",
+  "updatedAt": "2025-03-28T19:09:48.037748",
+  "endpoints": [
+    {
+      "id": "GET_791953231",
+      "name": "List all posts",
+      "path": "/posts",
+      "method": "GET",
+      "baseUrl": "https://jsonplaceholder.typicode.com",
+      "parameters": [],
+      "headers": {},
+      "requestBody": {},
+      "responses": {
+        "200": {
+          "description": "Successful response",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "format": null,
+                "ref": null,
+                "items": {
+                  "type": null,
+                  "format": null,
+                  "ref": "#/components/schemas/Post",
+                  "items": {},
+                  "properties": {}
+                },
+                "properties": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "POST_791953231",
+      "name": "Create a new post",
+      "path": "/posts",
+      "method": "POST",
+      "baseUrl": "https://jsonplaceholder.typicode.com",
+      "parameters": [],
+      "headers": {},
+      "requestBody": {
+        "description": null,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": null,
+              "format": null,
+              "ref": "#/components/schemas/PostInput",
+              "items": {},
+              "properties": {}
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "Post created successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": null,
+                "format": null,
+                "ref": "#/components/schemas/Post",
+                "items": {},
+                "properties": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "GET_519015396",
+      "name": "Get a specific post",
+      "path": "/posts/{postId}",
+      "method": "GET",
+      "baseUrl": "https://jsonplaceholder.typicode.com",
+      "parameters": [
+        {
+          "name": "postId",
+          "in": "path",
+          "description": null,
+          "required": true,
+          "type": "string",
+          "schema": {
+            "type": "integer",
+            "format": null,
+            "ref": null,
+            "items": {},
+            "properties": {}
+          }
+        }
+      ],
+      "headers": {},
+      "requestBody": {},
+      "responses": {
+        "200": {
+          "description": "Successful response",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": null,
+                "format": null,
+                "ref": "#/components/schemas/Post",
+                "items": {},
+                "properties": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "PUT_519015396",
+      "name": "Update a post",
+      "path": "/posts/{postId}",
+      "method": "PUT",
+      "baseUrl": "https://jsonplaceholder.typicode.com",
+      "parameters": [
+        {
+          "name": "postId",
+          "in": "path",
+          "description": null,
+          "required": true,
+          "type": "string",
+          "schema": {
+            "type": "integer",
+            "format": null,
+            "ref": null,
+            "items": {},
+            "properties": {}
+          }
+        }
+      ],
+      "headers": {},
+      "requestBody": {
+        "description": null,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": null,
+              "format": null,
+              "ref": "#/components/schemas/PostInput",
+              "items": {},
+              "properties": {}
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Post updated successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": null,
+                "format": null,
+                "ref": "#/components/schemas/Post",
+                "items": {},
+                "properties": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "GET_613785838",
+      "name": "List all comments",
+      "path": "/comments",
+      "method": "GET",
+      "baseUrl": "https://jsonplaceholder.typicode.com",
+      "parameters": [],
+      "headers": {},
+      "requestBody": {},
+      "responses": {
+        "200": {
+          "description": "Successful response",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "format": null,
+                "ref": null,
+                "items": {
+                  "type": null,
+                  "format": null,
+                  "ref": "#/components/schemas/Comment",
+                  "items": {},
+                  "properties": {}
+                },
+                "properties": {}
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

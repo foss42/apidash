@@ -34,6 +34,7 @@ const kMinRequestEditorDetailsCardPaneSize = 300.0;
 final kHomeScaffoldKey = GlobalKey<ScaffoldState>();
 final kEnvScaffoldKey = GlobalKey<ScaffoldState>();
 final kHisScaffoldKey = GlobalKey<ScaffoldState>();
+final kApiExplorerScaffoldKey = GlobalKey<ScaffoldState>();
 
 const kTabAnimationDuration = Duration(milliseconds: 200);
 const kTabHeight = 40.0;

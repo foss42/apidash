@@ -1,0 +1,81 @@
+openapi: 3.0.0
+info:
+  title: Dog API
+  description: Free API for random dog images and breed information
+  version: 1.0.0
+  contact:
+    name: Dog API
+    url: https://dog.ceo/dog-api/
+
+servers:
+  - url: https://dog.ceo/api
+
+paths:
+  /breeds/image/random:
+    get:
+      summary: Get a random dog image
+      operationId: getRandomDogImage
+      responses:
+        '200':
+          description: Successful response with a random dog image
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: URL of the random dog image
+                    example: "https://images.dog.ceo/breeds/hound-afghan/n02088085_10984.jpg"
+                  status:
+                    type: string
+                    example: "success"
+
+  /breeds/list/all:
+    get:
+      summary: List all dog breeds
+      operationId: listDogBreeds
+      responses:
+        '200':
+          description: Successful response with all dog breeds
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: object
+                    additionalProperties:
+                      type: array
+                      items:
+                        type: string
+                  status:
+                    type: string
+                    example: "success"
+
+  /breed/{breedName}/images:
+    get:
+      summary: Get images for a specific breed
+      operationId: getBreedImages
+      parameters:
+        - name: breedName
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "hound"
+      responses:
+        '200':
+          description: Successful response with breed images
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: array
+                    items:
+                      type: string
+                  status:
+                    type: string
+                    example: "success"

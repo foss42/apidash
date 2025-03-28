@@ -1,0 +1,152 @@
+{
+  "id": "227468134",
+  "name": "dogapi",
+  "source": "lib/api_sources\\dogapi.yml",
+  "updatedAt": "2025-03-28T19:09:48.004032",
+  "endpoints": [
+    {
+      "id": "GET_496810877",
+      "name": "Get a random dog image",
+      "path": "/breeds/image/random",
+      "method": "GET",
+      "baseUrl": "https://dog.ceo/api",
+      "parameters": [],
+      "headers": {},
+      "requestBody": {},
+      "responses": {
+        "200": {
+          "description": "Successful response with a random dog image",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "format": null,
+                "ref": null,
+                "items": {},
+                "properties": {
+                  "message": {
+                    "type": "string",
+                    "format": null,
+                    "ref": null,
+                    "items": {},
+                    "properties": {}
+                  },
+                  "status": {
+                    "type": "string",
+                    "format": null,
+                    "ref": null,
+                    "items": {},
+                    "properties": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "GET_240988333",
+      "name": "List all dog breeds",
+      "path": "/breeds/list/all",
+      "method": "GET",
+      "baseUrl": "https://dog.ceo/api",
+      "parameters": [],
+      "headers": {},
+      "requestBody": {},
+      "responses": {
+        "200": {
+          "description": "Successful response with all dog breeds",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "format": null,
+                "ref": null,
+                "items": {},
+                "properties": {
+                  "message": {
+                    "type": "object",
+                    "format": null,
+                    "ref": null,
+                    "items": {},
+                    "properties": {}
+                  },
+                  "status": {
+                    "type": "string",
+                    "format": null,
+                    "ref": null,
+                    "items": {},
+                    "properties": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "GET_384129530",
+      "name": "Get images for a specific breed",
+      "path": "/breed/{breedName}/images",
+      "method": "GET",
+      "baseUrl": "https://dog.ceo/api",
+      "parameters": [
+        {
+          "name": "breedName",
+          "in": "path",
+          "description": null,
+          "required": true,
+          "type": "string",
+          "schema": {
+            "type": "string",
+            "format": null,
+            "ref": null,
+            "items": {},
+            "properties": {}
+          }
+        }
+      ],
+      "headers": {},
+      "requestBody": {},
+      "responses": {
+        "200": {
+          "description": "Successful response with breed images",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "format": null,
+                "ref": null,
+                "items": {},
+                "properties": {
+                  "message": {
+                    "type": "array",
+                    "format": null,
+                    "ref": null,
+                    "items": {
+                      "type": "string",
+                      "format": null,
+                      "ref": null,
+                      "items": {},
+                      "properties": {}
+                    },
+                    "properties": {}
+                  },
+                  "status": {
+                    "type": "string",
+                    "format": null,
+                    "ref": null,
+                    "items": {},
+                    "properties": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

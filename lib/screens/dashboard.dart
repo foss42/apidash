@@ -1,16 +1,17 @@
+import 'package:apidash/screens/api_explorer/apiExplorerPage.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
-import 'package:apidash/dashbot/dashbot.dart';
 import 'common_widgets/common_widgets.dart';
 import 'envvar/environment_page.dart';
 import 'home_page/home_page.dart';
 import 'history/history_page.dart';
 import 'settings_page.dart';
 
+// Update your Dashboard widget
 class Dashboard extends ConsumerWidget {
   const Dashboard({super.key});
 
@@ -30,6 +31,7 @@ class Dashboard extends ConsumerWidget {
                 Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    // Requests button
                     IconButton(
                       isSelected: railIdx == 0,
                       onPressed: () {
@@ -43,6 +45,8 @@ class Dashboard extends ConsumerWidget {
                       style: Theme.of(context).textTheme.labelSmall,
                     ),
                     kVSpacer10,
+                    
+                    // Variables button
                     IconButton(
                       isSelected: railIdx == 1,
                       onPressed: () {
@@ -56,6 +60,8 @@ class Dashboard extends ConsumerWidget {
                       style: Theme.of(context).textTheme.labelSmall,
                     ),
                     kVSpacer10,
+                    
+                    // History button
                     IconButton(
                       isSelected: railIdx == 2,
                       onPressed: () {
@@ -68,6 +74,20 @@ class Dashboard extends ConsumerWidget {
                       'History',
                       style: Theme.of(context).textTheme.labelSmall,
                     ),
+                    kVSpacer10,
+                    IconButton(
+                      isSelected: railIdx == 3,
+                      onPressed: () {
+                        ref.read(navRailIndexStateProvider.notifier).state = 3;
+                      },
+                      icon: const Icon(Icons.explore_outlined),
+                      selectedIcon: const Icon(Icons.explore),
+                    ),
+                    Text(
+                      'Explore',
+                      style: Theme.of(context).textTheme.labelSmall,
+                    ),
+                    kVSpacer10,
                   ],
                 ),
                 Expanded(
@@ -92,12 +112,15 @@ class Dashboard extends ConsumerWidget {
                         padding: const EdgeInsets.only(bottom: 16.0),
                         child: NavbarButton(
                           railIdx: railIdx,
-                          buttonIdx: 3,
+                          buttonIdx: 4, // Updated index
                           selectedIcon: Icons.settings,
                           icon: Icons.settings_outlined,
                           label: 'Settings',
                           showLabel: false,
                           isCompact: true,
+                          onTap: () {
+                            ref.read(navRailIndexStateProvider.notifier).state = 4;
+                          },
                         ),
                       ),
                     ],
@@ -118,6 +141,7 @@ class Dashboard extends ConsumerWidget {
                   HomePage(),
                   EnvironmentPage(),
                   HistoryPage(),
+                  ApiExplorerPage(),
                   SettingsPage(),
                 ],
               ),
