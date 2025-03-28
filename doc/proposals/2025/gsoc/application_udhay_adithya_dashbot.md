@@ -22,7 +22,7 @@
 
 ### 1. Have you worked on or contributed to a FOSS project before? Can you attach repo links or relevant PRs?
 
-I haven't contributed to open-source projects before this, so API Dash marks my first practical experience with open-source contribution. So far, I have made a total of four PRs—three of which have been merged, while the other one got rejected. Here are the relevant PRs:
+I haven't contributed to open-source projects before this, so API Dash marks my first practical experience with open-source contribution. So far, I have made a total of four PRs—two of which have been merged, while the other two are currently under review. Here are the relevant PRs:
 
 ([#698](https://github.com/foss42/apidash/pull/698)): docs(codegen): add detailed instructions for ureq
 
@@ -68,20 +68,15 @@ What excites me the most about API Dash is its aim to streamline the testing and
 
 
 ### 8. Can you mention some areas where the project can be improved?  
+DashBot's UI/UX can be significantly enhanced by implementing several modern features to improve user interaction and satisfaction. One key improvement is the introduction of a **Resizable and Draggable Chat Window**, allowing users to adjust the chat interface according to their preferences and screen space, creating a more personalized and efficient workspace. 
 
-DashBot's UI/UX can be significantly enhanced by implementing several modern features to improve user interaction and satisfaction. One key improvement is the introduction of a **Resizable and Draggable Chat Window**, allowing users to adjust the chat interface according to their preferences and screen space, creating a more personalized and efficient workspace.  
+**Integrating Voice Input** can also change the way of how users interact with DashBot. By enabling voice commands, users can perform tasks hands-free, which is particularly beneficial in scenarios where typing is inconvenient or impossible. This feature not only adds convenience but also makes DashBot more accessible to users with disabilities, aligning with inclusive design principles and expanding its utility in diverse environments.
 
-**Integrating Voice Input** can also change the way users interact with DashBot. By enabling voice commands, users can perform tasks hands-free, which is particularly beneficial in scenarios where typing is inconvenient or impossible. This feature not only adds convenience but also makes DashBot more accessible to users with disabilities, aligning with inclusive design principles and expanding its utility in diverse environments.  
-
-Additionally, a **Security & Compliance Advisor** can enhance DashBot’s capabilities by providing:  
-- **Vulnerability Scanning:** Automatically identifying security risks such as missing authentication, exposed sensitive data, and other vulnerabilities.  
-- **Auto-Remediation:** Offering actionable suggestions to fix issues like CORS misconfigurations or insecure headers.
-
-### **PROJECT TITLE : DashBot and API Authentication**
+### **PROJECT TITLE : DashBot**
 
 ### **ABSTRACT:**
 
-This proposal seeks to develop DashBot - the AI assistant for API Dash which supercharges developer productivity by helping developers automate tedious tasks, follow best practices, interact & obtain contextual suggestions, all via natural-language input. DashBot will be designed in a modular and extensible manner and provide the following list of features:
+This proposal seeks to develop DashBot - the AI assistant for API Dash which supercharges developer productivity by helping developers automate tedious tasks, follow best practices, interact & obtain contextual suggestions, all via natural-language input. DashBot will be designed in a modular and extensible manner and provide the following list of features (suggestive, not exhaustive):
 
 - Explain responses & identify any discrepancy
 - Debug requests based on Status codes & Error messages
@@ -93,8 +88,7 @@ This proposal seeks to develop DashBot - the AI assistant for API Dash which sup
 For each of the tasks you are benchmark evaluations will also be done so that it is easier for end users to choose the right backend LLM.
 
 Upon successful completion of this project, we will have
-a fully function DashBot integrated with API Dash [#621](https://github.com/foss42/apidash/issues/621) and a new tab “Authorization” in the Home Page of API Dash to handle different API Authentication Methods.
-
+a fully function DashBot integrated with API Dash [#621](https://github.com/foss42/apidash/issues/621)
 
 ### **DETAILED DESCRIPTION**
 
@@ -106,131 +100,36 @@ For core features like debugging API requests, generating documentation, and cre
 
 API response visualizations will be built using the `fl_chart` library, which supports customizable line, bar, pie, scatter, and radar charts. This integration will allow users to interactively analyze API data and identify trends.
 
-**Benchmark evaluations** for each LLM provider will be conducted. Here are the key metrics that will be considered for benchmarking different models,
+The UI/UX will be optimized for developer productivity, featuring a responsive design, dynamic theming and real-time feedback. Benchmark evaluations for each LLM provider will be conducted using predefined datasets to compare accuracy, response time, and cost efficiency, empowering users to choose the optimal backend.
 
-- **Explain responses**
-  - Discrepancy Detection Rate: Does the LLM correctly identify discrepancies?
-  - Explainability Score: Are explanations understandable to developers?
-  - Edge Case Handling: Can it handle ambiguous or incomplete responses?
-
-- **Debug errors**
-  - Error Classification Accuracy: Does the LLM correctly identify the error source?
-  - Fix Implementation Rate: Are fixes actionable and contextually appropriate?
-  - Ambiguity Handling Test: Can it categorize errors (e.g., syntax vs. logic)?
-
-- **Generate Documentation**
-  - Coverage Score: Does the documentation cover all endpoints, parameters, and responses?
-  - Readability Assessment: Is the documentation clear and well-structured?
-  - Standard Compliance Check: Does it adhere to standards?
-
-- **Generate Tests**
-  - Test Coverage Report: Percentage of API endpoints and edge cases covered
-  - Test Execution Success Rate: Do tests pass/fail correctly when run?
-  - Adaptability Test: Are tests structured for easy updates?
-
-- **Generate Visualizations**
-  - Data Fidelity Check: Does the plot correctly represent the data?
-  - Aesthetic Scoring: Is the visualization clear and professional?
-  - Customization Flexibility Test: Can users tweak parameters?
-
-- **Generate Frontend Code**
-  - Code Execution Test: Does the code compile and function as expected?
-  - Best Practice Adherence: Does it follow best practices?
-  - Maintainability Score: Is the code clean and maintainable?
-
-### **Implementing other essential features:**
-
-Adding Support for various API Authentication Methods such as,
-- **Basic authentication:** Sending a verified username and password with API request
-- **API Auth:** Basic authentication [#610](https://github.com/foss42/apidash/issues/610)
-- **API key:** Sending a key-value pair to the API either in the request headers or query parameters Add API Auth: API key [#611](https://github.com/foss42/apidash/issues/611)
-- **Bearer token:** Authenticate using an access key, such as a JSON Web Token (JWT) Add API Auth: Bearer token [#612](https://github.com/foss42/apidash/issues/612)
-- **JWT Bearer:** Generate JWT bearer tokens to authorize requests Add API Auth: JWT Bearer [#613](https://github.com/foss42/apidash/issues/613)
-- **Digest Auth:** Client must send two requests. First request sent to the server receives a nonce value, which is then used to produce a one-time-use hash key to authenticate the request Add API Auth: Digest Auth [#614](https://github.com/foss42/apidash/issues/614)
-- **OAuth 1.0** Add API Auth: OAuth 1.0 [#615](https://github.com/foss42/apidash/issues/615)
-- **OAuth 2.0:** Implement OAuth 2.0 authentication [#481](https://github.com/foss42/apidash/issues/481)
-
-Required dependencies,
+Key dependencies are,
 
 - [anthropic_sdk_dart](https://pub.dev/packages/anthropic_sdk_dart)
 - [googleai_dart](https://pub.dev/packages/googleai_dart/versions)
 - [openai_dart](https://pub.dev/packages/openai_dart)
 - [ollama_dart](https://pub.dev/packages/ollama_dart)
 - [flutter_riverpod](https://pub.dev/packages/flutter_riverpod)
-- [fpdart](https://pub.dev/packages/fpdart)
 - [fl_charts](https://pub.dev/packages/fl_chart)
-- [riverpod_annotation](https://pub.dev/packages/riverpod_annotation)
-- [riverpod_lint](https://pub.dev/packages/riverpod_lint)
-- [riverpod_generator](https://pub.dev/packages/riverpod_generator)
-- [custom_lint](https://pub.dev/packages/custom_lint)
-- [oauth1](https://pub.dev/packages/oauth1)
-- [oauth2](https://pub.dev/packages/oauth2)
 
-## **FOLDER STRUCTURE**
-```
-lib/
-│── features/
-│   ├── feature_1/            
-│   │   ├── repository/       # Data layer for feature_1
-│   │   │   ├── feature_1_repository.dart
-│   │   ├── viewmodel/        # Business logic for feature_1
-│   │   │   ├── feature_1_viewmodel.dart
-│   │   ├── view/             # UI layer for feature_1
-│   │   │   ├── pages/      # Reusable widgets for this feature
-│   │   │   │   ├── feature_1_screen.dart
-│   │   │   ├── widgets/      # Reusable widgets for this feature
-```
 
 ## **USAGE**
 
 DashBot can be accessed from the home screen of API Dash using a floating action button at the bottom right corner.
 
+![api explorer](images/dashbot_on_screen.png)
+
 <div 
     style="display: flex; justify-content: center; gap: 10px;">
-    <img src="images/dashbot_default.png" alt="dashbot_default_dark" style="width: 300px; height: auto;">
-    <img src="images/dashbot_default_dark.png" alt="dashbot_default_dark" style="width: 300px; height: auto;">
+    <img src="images/dashbot_default.png" alt="GSoC Logo" style="width: 200px; height: auto;">
+    <img src="images/dashbot_default_dark.png" alt="API Dash Logo" style="width: 200px; height: auto;">
 </div>
-<h5 style="text-align: center; font-weight: bold;">
-    DashBot Pop-up Window
-</h5>
 
-![DashBot On Screen](images/dashbot_on_screen.png)
-<h5 style="text-align: center; font-weight: bold;">
-    DashBot Home Screen View
-</h5>
-
-![DashBot Settings](images/dashbot_settings_1.png)
-<h5 style="text-align: center; font-weight: bold;">
-    DashBot Settings
-</h5>
-
-![DashBot Debug](images/dashbot_explain.png)
-<h5 style="text-align: center; font-weight: bold;">
-    Access Dashbot Through Context Menu
-</h5>
-
-![DashBot Debug](images/dashbot_debug.png)
-<h5 style="text-align: center; font-weight: bold;">
-    Debug Suggestion by DashBot
-</h5>
-
-![DashBot Debug](images/dashbot_debug_2.png)
-<h5 style="text-align: center; font-weight: bold;">
-    Quick Fix API Errors
-</h5>
-
-![DashBot Debug](images/api_authentication.png)
-<h5 style="text-align: center; font-weight: bold;">
-    Basic Authentication
-</h5>
-
-![DashBot Debug](images/api_authentication_1.png)
-<h5 style="text-align: center; font-weight: bold;">
-    JWT Bearer Authentication
-</h5>
 
 ****
 
+<h4 style="text-align: center; font-weight: bold;">
+    More design files at <a href="https://www.figma.com/design/fC3rs8OBV7fzDNtPIEbq3L/Dashbot?node-id=0-1&t=qRCaeDwBtrlhyDXl-1" target="_blank">Figma</a>
+</h4>
 
 
 ## **MILESTONES AND DELIVERABLES**
@@ -240,35 +139,27 @@ I propose to divide the project into four milestones/deliverables to produce a s
 
 #### **Milestone #1: Architecture Setup & Multi-LLM Integration.**
 
-This milestone will lay the foundation of `DashBot`, building an interactive, draggable and responsive interface for DashBot.
+This milestone will lay the foundation of `DashBot`, building a interactive, draggable and responsive interface for DashBot.
 
-Integrate support for multiple LLM providers with the option to switch between LLMs.
+Integrate support for multiple LLM providers with the option to switch between LLM's.
 
 #### **Milestone #2: Core Feature Implementation**  
-This milestone focuses on integrating the major features and is expected to be the most time-intensive phase of development.  
+This milestone focuses on integrating three major features and is expected to be the most time-intensive phase of development.  
 
 - Implement error debugging based on status codes and error messages.  
-- Documentation generator supporting Markdown and HTML formats.  
+- Develop a documentation generator supporting Markdown and HTML formats.  
 - Build a test generator to create unit and integration tests from API specifications.
 - Enhance LLM responses using Few-shot prompting and ReAct techniques.  
-- API response visualizations (line, bar, pie, scatter, radar charts)
-- Generating API integration frontend code for frontend frameworks.
 
-#### **Milestone #3: Benchmarking & Optimization**
+#### **Milestone #3: Visualization & UI/UX Development**
 
-This milestone will involve running benchmark evaluations for all LLM providers by comparing the result of key metrics from each model mentioned in the [Detailed Description](#detailed-description) section.
+This Milestone is divided into two parts. The first part will aim at adding integrations for for API response visualizations (line, bar, pie, scatter, radar charts).
+The second part will involve generating API integration frontend code for frontend frameworks.
 
-#### **Milestone #4: API Authentication Methods** 
+#### **Milestone #4: Benchmarking & Optimization**
 
-This milestone will add a new tab "Authorization" in the home page of API Dash where users can perform various API Authentication Methods such as,
-- Basic authentication
-- API Auth
-- API key
-- Bearer token
-- JWT Bearer
-- Digest Auth
-- OAuth 1.0
-- OAuth 2.0
+This milestone will invole in running benchmark evaluations for all LLM providers using predefined datasets.
+Comparing accuracy, response time, and cost efficiency across providers.
 
 ## **[GSOC 2025 TIMELINE](https://developers.google.com/open-source/gsoc/timeline) FOR REFERENCE**
 
@@ -298,61 +189,42 @@ their final mentor evaluation (standard coding period)
 ## **PREDICTED PROJECT TIMELINE**
 * **Community Bonding Period (May 8 - June 1)**
 
-    This is the period where I will get to know my mentors better. I will also ask questions and attempt to clarify the doubts and queries in my mind, to get a clear understanding of the project. Although Google recommends this 3-week bonding period to be entirely for the introduction of GSoC Contributors into their projects, since we are going to build a brand new feature, I propose to begin coding from the 2nd or 3rd week of this period, thus adding a head start.
+    This is the period where I will get to know my mentors better. I will also ask questions and attempt to clarify the doubts and queries in my mind, to get a clear understanding of the project. Although Google recommends this 3-week bonding period to be entirely for the introduction of GSoC Contributors into their projects, since we are going to build a brand new feature, I propose to begin coding from the 2nd or 3rd week of this period, thus adding a headstart.
 
 * **Coding Period (June 2 - July 14)**
     * **Week 1 (June 2 - June 8)**
 
-      - Build an interactive, draggable and responsive interface for DashBot.
-      - Add support for Local and Remote LLM providers along with integrated support for switching between local and remote LLM providers.
-
-      **Deliverables:**
-      A fully interactive, draggable, and responsive UI for DashBot, with support for switching between providers.
-
+      <u>M#1 is delivered, comprising of a function DashBot.</u>
+      
+      Work on M#2 begins in the latter half of the week.
 
     * **Week 2 (June 9 - June 15)**
     
-      - Implement API Response explanation generation.
-      - Implement error debugging based on status codes and error messages.
-
-      **Deliverables:**
-      Dashbot capable of providing explanations for API Responses and debugging errors based on status code and error messages.
+      Start of M#2 Implement error debugging based on status codes and error messages.
 
     * **Week 3 (June 16 - June 22)**
     
-      - Develop a documentation generator supporting Markdown and HTML formats.
-      - Develop a Test generator to create unit and integration tests from API specifications is done.
-		
-      **Deliverables:**
-      Dashbot capable of generating documentation and tests from API Specifications.
-
+      Building upon the previous week, the integration for documentation generator and test generator to create unit and integration tests from API specifications is done.
 
     * **Week 4 (June 16 - June 22)**
     
-      - Adding integration for API response visualization.
-      - Adding integration for frontend code generation for frontend frameworks.
-
-      **Deliverables:**
-      Dashbot capable of visualizing api responses and code generation for frontend frameworks.
+      Based on the implementation experience and testing feedback from the previous weeks, refinements will be made by enhance LLM responses using Few-shot prompting and ReAct techniques to ensure robustness and efficiency.
 
     * **Week 5 (June 23 - June 29)**
 
-      - A significant portion of the week will be dedicated to testing all integrations thoroughly and addressing any bugs or issues identified.
-      - Mentor Reviews are requested.
+      A significant portion of the week will be dedicated to testing all integrations thoroughly and addressing any bugs or issues identified.
+      
+      This week will also contain several steps of documenting DashBot.
 
-      **Deliverables:**
-      Ensure that Dashbot is capable of performing all action mentioned in the previous weeks and ready for running benchmarks.
-
+      Mentor Reviews are requested.
 
     * **Week 6 (June 30 - July 6)**
 
-      - Changes follow, from Mentor Review, if required.
-      - Running benchmark evaluation evaluating LLMs for API Response Explanation and API Error Debugging, Documentation generation, Test Generation, API Visualization and Frontend code generation for frontend frameworks.
-
-      - Final Mentor Review before Mid-term Evaluation is submitted.
-
-      **Deliverables:**
-      Benchmarking results of various LLMs for Response Explanation and API Error Debugging, Documentation generation, Test Generation, API Visualization and Frontend code generation for frontend frameworks.
+      Changes follow, from Mentor Review, if required.
+      
+      Start of M#3 by adding integrations for for API response visualizations.
+      
+      Final Mentor Review before Mid-term Evaluation is submitted.
 
 * **Midterm Evaluation Submission (July 14 - July 18)**
     * Projects are submitted to the mentors and the GSoC portal.
@@ -360,45 +232,32 @@ their final mentor evaluation (standard coding period)
 * **Work Period (July 14 - August 25)**
     * **Week 7 (July 14 - July 20)**
       
-      - Extending support for Dashbot in Android/iOS devices.
-      - Finishing up Dashbot.
-
-      **Deliverables:**
-      A fully functional Dashbot across all platforms.
+      Continuation of the work done in Week 6.
 
     * **Week 8 (July 21 - July 27)**
 
-      - Start developing basic API Authentication methods: Basic authentication, API Auth, API key.
-
-      **Deliverables:**
-      Defined API authentication parameters and initial implementation of basic authentication methods.
+      A significant portion of the week will be dedicated to testing all integrations thoroughly and addressing any bugs or issues identified.
+      Documentation is enhanced in the if no issues arise.
+      
 
     * **Week 9 (July 28 - August 3)**
 
-      - Implement API Authentication methods: Bearer token, JWT Bearer.
-      - Develop a mechanism to allow switching authentication parameters between the request header and body.
-      - Mentor Reviews are requested.
-
-      **Deliverables:**
-      Fully implemented Bearer Token and JWT Bearer authentication, along with a configurable authentication parameter placement (header/body).
+      Running benchmark evaluations for all LLM providers.
 
     * **Week 10 (August 4 - August 10)**
 
-      - Develop OAuth API Authentication methods: OAuth 1.0 and OAuth 2.0.
-
-      **Deliverables:**
-      A Fully working “Authorization” tab in the Home Page of API Dash with support for various API Authntication Methods.
+      Continuation of the work done in Week 9.
+      Mentor Reviews are requested.
 
     * **Week 11 (August 11 - August 17)**
 
-      - Implement test cases for different authentication methods, including Basic Auth, API Key, Bearer Token, and JWT and OAuth.
-		
-	  **Deliverables:**
-    Comprehensive test cases covering unit, integration, functional, and end-to-end authentication scenarios.
+      The former half of the week acts as a buffer period in case any issues are confronted.
+      Documentation is enhanced in the buffer period if no issues arise.
+      <u>Milestone #4 is delivered.</u>
 
     * **Week 12 (August 18 - August 24)**
 
-      Final checks are made, and any supporting documents (such as example usage markdown files, benchmarkings, ) are written.
+      Final checks are made, and any supporting documents (such as example usage markdown files) are written.
       The project Report is written and all tracking issues are labelled appropriately.
 
 * **Final Week (August 25 - September 1)**
