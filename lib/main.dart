@@ -10,8 +10,6 @@ import 'app.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  //TODO: Add API key to .env file
-  Gemini.init(apiKey: "apiKey");
   var settingsModel = await getSettingsFromSharedPrefs();
   final initStatus = await initApp(
     kIsDesktop,

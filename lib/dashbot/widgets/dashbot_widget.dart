@@ -1,10 +1,10 @@
-// lib/dashbot/widgets/dashbot_widget.dart
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/dashbot/providers/dashbot_providers.dart';
 import 'package:apidash/providers/providers.dart';
 import '../../consts.dart';
+import '../services/dashbot_service.dart';
 import 'chat_bubble.dart';
 
 class DashBotWidget extends ConsumerStatefulWidget {
@@ -109,25 +109,61 @@ class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
     );
   }
   Widget _buildModelSelector() {
-    final selectedLLM = ref.watch(selectedLLMProvider);
+    return Row(
+      children: [
+        DropdownButton<LLMProvider>(
+          value: ref.watch(selectedLLMProvider),
+          onChanged: (LLMProvider? newProvider) {
+            if (newProvider != null) {
+              ref.read(selectedLLMProvider.notifier).setSelectedLLM(newProvider);
+            }
+          },
+          items: LLMProvider.values.map((provider) {
+            return DropdownMenuItem<LLMProvider>(
+              value: provider,
+              child: Text(provider.toString().split('.').last),
+            );
+          }).toList(),
+        ),
+        SizedBox(width: 20,),
+        Consumer(builder: (context, ref, _) {
+          final selectedProvider = ref.watch(selectedLLMProvider);
+          final config = ref.watch(llmConfigProvider)[selectedProvider]!;
 
-    return DropdownButton<LLMProvider>(
-      value: selectedLLM,
-      items: LLMProvider.values.map((provider) {
-        return DropdownMenuItem(
-          value: provider,
-          child: Text(provider.name.capitalize()),
-        );
-      }).toList(),
-      onChanged: (LLMProvider? newProvider) {
-        if (newProvider != null) {
-          ref.read(selectedLLMProvider.notifier).state = newProvider;
-          ref.read(dashBotServiceProvider).setModel(newProvider);
-        }
-      },
+          List<String> models = [];
+          switch (selectedProvider) {
+            case LLMProvider.gemini:
+              models = ["gemini-1.0", "gemini-1.5", "gemini-pro", "gemini-ultra"];
+              break;
+            case LLMProvider.openai:
+              models = ["gpt-3.5-turbo", "gpt-4-turbo", "gpt-4"];
+              break;
+            case LLMProvider.ollama:
+              models = ["mistral", "llama2", "codellama", "gemma"];
+              break;
+          }
+
+          return DropdownButton<String>(
+            value: config.model,
+            onChanged: (String? newModel) {
+              if (newModel != null) {
+                ref.read(llmConfigProvider.notifier).updateConfig(
+                  selectedProvider,
+                  config.copyWith(model: newModel),
+                );
+              }
+            },
+            items: models.map((model) {
+              return DropdownMenuItem<String>(
+                value: model,
+                child: Text(model),
+              );
+            }).toList(),
+          );
+        }),
+      ],
     );
   }
-
   Widget _buildHeader(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
