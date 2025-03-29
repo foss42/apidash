@@ -19,7 +19,7 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
   SupportedUriSchemes defaultUriScheme = kDefaultUriScheme,
   bool noSSL = false,
 }) async {
-  if(httpClientManager.wasRequestCancelled(requestId)){
+  if (httpClientManager.wasRequestCancelled(requestId)) {
     httpClientManager.removeCancelledRequest(requestId);
   }
   final client = httpClientManager.createClient(requestId, noSSL: noSSL);
@@ -82,30 +82,19 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
             return (convertedMultiPartResponse, stopwatch.elapsed, null);
           }
         }
-        switch (requestModel.method) {
-          case HTTPVerb.get:
-            response = await client.get(requestUrl, headers: headers);
-            break;
-          case HTTPVerb.head:
-            response = await client.head(requestUrl, headers: headers);
-            break;
-          case HTTPVerb.post:
-            response =
-                await client.post(requestUrl, headers: headers, body: body);
-            break;
-          case HTTPVerb.put:
-            response =
-                await client.put(requestUrl, headers: headers, body: body);
-            break;
-          case HTTPVerb.patch:
-            response =
-                await client.patch(requestUrl, headers: headers, body: body);
-            break;
-          case HTTPVerb.delete:
-            response =
-                await client.delete(requestUrl, headers: headers, body: body);
-            break;
-        }
+        response = switch (requestModel.method) {
+          HTTPVerb.get => await client.get(requestUrl, headers: headers),
+          HTTPVerb.head => response =
+              await client.head(requestUrl, headers: headers),
+          HTTPVerb.post => response =
+              await client.post(requestUrl, headers: headers, body: body),
+          HTTPVerb.put => response =
+              await client.put(requestUrl, headers: headers, body: body),
+          HTTPVerb.patch => response =
+              await client.patch(requestUrl, headers: headers, body: body),
+          HTTPVerb.delete => response =
+              await client.delete(requestUrl, headers: headers, body: body),
+        };
       }
       if (apiType == APIType.graphql) {
         var requestBody = getGraphQLBody(requestModel);
