@@ -48,7 +48,7 @@ I like working on problems that push me to improve efficiency, enhance security,
 #### Proposal Title: **Enhancing API Authentication & Secure Storage in API Dash**
 
 #### Abstract
-API Dash currently supports multiple authentication methods, but token storage can pose security risks if not handled properly. This project aims to **implement secure storage for authentication tokens using Flutter Secure Storage and integrate biometric authentication** for an added layer of security. The goal is to **enhance security while keeping API Dash lightweight and user-friendly**.  
+This project aims to **implement secure storage for authentication tokens using Flutter Secure Storage and integrate biometric authentication** for an added layer of security. The goal is to **enhance security while keeping API Dash lightweight and user-friendly**.  
 
 ![sunil Auth image](https://github.com/user-attachments/assets/718d6b35-ebb7-49de-acb0-21ebbcbef3fa)
 image : (doc/proposals/2025/gsoc/images/sunil Auth image.png) 
