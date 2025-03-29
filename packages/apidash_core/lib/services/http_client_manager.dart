@@ -23,8 +23,9 @@ class HttpClientManager {
   HttpClientManager._internal();
 
   http.Client createClient(
-      String requestId,
-      {bool noSSL = false}) {
+    String requestId, {
+    bool noSSL = false,
+  }) {
     final client =
         (noSSL && !kIsWeb) ? createHttpClientWithNoSSL() : http.Client();
     _clients[requestId] = client;
