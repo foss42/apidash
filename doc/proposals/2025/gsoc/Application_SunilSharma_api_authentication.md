@@ -3,7 +3,7 @@
 1. **Full Name**: Sunil Kumar Sharma  
 2. **Contact Info**: sharma.sunil12527@gmail.com, +91 8979696414  
 3. **Discord Handle**: AZURE (502613458638995456)  
-4. **GitHub Profile**: https://github.com/Azur3-bit  
+4. **GitHub User ID**: https://github.com/Azur3-bit  
 5. **Socials**: https://www.linkedin.com/in/sunil-sharma-206871205/  
 6. **Time Zone**: GMT +5:30  
 7. **Resume**: https://drive.google.com/file/d/1B3ixbrlPwwCfFw8Lcq3LXvW3N5dWmviX/view?usp=sharing  
