@@ -66,7 +66,7 @@ I will be working on GSoC full-time, dedicating 7+ hours per day, especially in 
 
 ## Project Proposal
 
-### **Title:** Enhancing Authentication Support & Code Generation in APIDash  
+### **Title:** Adding Authentication Support & Enhance Code Generation feature in APIDash  
 
 ### **Abstract:**  
 This project aims to expand APIDash by implementing multiple authentication methods (Basic Auth, OAuth 2.0, JWT, Digest Auth, API Keys) and improving its code generation capabilities. With prior experience in the codebase, I have already mapped out the necessary changes and will begin work right after mentor discussions.
