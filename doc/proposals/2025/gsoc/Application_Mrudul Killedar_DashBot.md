@@ -1,10 +1,10 @@
 # GSOC Proposal for DashBot
 
 ## About Me  
-**Full Name:** Mrudul Killedar 
-**Email:** mrudulkilledar111@gmail.com 
+**Full Name:** Mrudul Killedar  
+**Email:** mrudulkilledar111@gmail.com  
 **Phone:** +91 7489685683  
-**Discord Handle:** Mrudul  
+**Discord Handle:** Mrudul (username: mk4104)  
 **GitHub Profile:** https://github.com/Mrudul111  
 **LinkedIn:** www.linkedin.com/in/mrudul-killedar-5b0121245  
 **Time Zone:** GMT + 5:30  
@@ -53,58 +53,102 @@ Some areas where API Dash can be improved include:
 DashBot is an AI-powered assistant designed to supercharge developer productivity within API Dash by automating repetitive tasks, improving API debugging, and providing intelligent recommendations. By leveraging advanced large language models (LLMs), DashBot enables developers to interact with APIs using natural language, making API testing, debugging, documentation, and integration significantly more efficient and intuitive.
 
 ### **Detailed Description**  
-DashBot is designed to be an AI-powered assistant for API Dash that helps developers automate tedious tasks, follow best practices, and obtain contextual suggestions via natural-language input. This project extends its capabilities by adding the following advanced features:  
+DashBot is designed to be an AI-powered assistant for API Dash that helps developers automate tedious tasks, follow best practices, and obtain contextual suggestions via natural-language input. First we need to finish tasks that are yet to be finished in the first prototype which include:
+1. Generate plots & visualizations for API responses along with ability to customize
+2. Generate API integration frontend code for frontend frameworks like React, Flutter, etc.
+   
+This project extends its capabilities by adding the following advanced features:  
 
 #### **1. AI-Powered Code Error Detection & Auto-Fix**  
 - Detect syntax and logical errors in API requests and integration code.  
 - Provide human-readable explanations and suggest one-click fixes.  
 - Ensure best practices in authentication, rate limiting, and error handling.  
-- **Flutter Packages:** [`dart_code_metrics`](https://pub.dev/packages/dart_code_metrics), [`lsp_dart`](https://pub.dev/packages/lsp_dart), [`openai_dart`](https://pub.dev/packages/openai_dart)  
 
 #### **2. Multi-Model Support & Fine-Tuning**  
 - Enable users to switch between different LLMs (GPT, Llama, Claude, Gemini, etc.).  
 - Provide on-device LLM support for private inference.  
 - Allow user-defined prompt fine-tuning for personalized suggestions.  
-- **Flutter Packages:** [`ollama_flutter`](https://pub.dev/packages/ollama_flutter), [`tflite_flutter`](https://pub.dev/packages/tflite_flutter), [`http`](https://pub.dev/packages/http)  
 
-#### **3. Multi-Language API Code Generation & AI-Powered Auto Refactoring**  
-- Extend API code generation to Kotlin, Swift, Go, and Rust.  
-- Auto-refactor generated code for better maintainability and efficiency.  
-- Provide real-time code quality analysis and performance suggestions.  
-- **Flutter Packages:** [`dart_style`](https://pub.dev/packages/dart_style), [`flutter_highlight`](https://pub.dev/packages/flutter_highlight), [`language_server_protocol`](https://pub.dev/packages/language_server_protocol)  
+#### **3. Enhanced UI/UX for API Dash**  
+Improve the overall user experience of API Dash by making the interface more intuitive, visually appealing, and developer-friendly.  
 
-#### **4. AI-Driven API Contract Testing & Schema Validation**  
-- Auto-detect API schema inconsistencies with OpenAPI, GraphQL, JSON Schema.  
-- Flag breaking changes and provide regression testing for API updates.  
-- Generate mock API contracts for frontend and backend teams.  
-- **Flutter Packages:** [`json_schema`](https://pub.dev/packages/json_schema), [`dio`](https://pub.dev/packages/dio), [`openapi_parser`](https://pub.dev/packages/openapi_parser)  
+- **Modern UI Elements:** Redesigned buttons, input fields, and layouts for a clean and professional look.  
+- **Dark & Light Mode Support:** Seamless theme switcher for better accessibility.  
+- **Improved API Request/Response Visualization:** Better syntax highlighting, collapsible sections, and JSON tree views for responses.  
+- **Enhanced Error Debugging UI:** Clear, structured error messages with AI-powered suggestions for fixes.  
+- **Keyboard Shortcuts & Command Palette:** Faster workflows with keyboard commands.
+  
+#### **4. API Documentation for Tech Stack Integration**  
+- Provide **Step-by-Step Guides** for React, Flutter, Vue, Express.js, and more and change the response according to coding practice used by the user.  
+- Allow **Markdown and PDF export** for easy sharing.
+  
+### **Packages Used**  
+This project will utilize the following packages to implement the proposed features:  
+- [`anthropic_sdk_dart`](https://pub.dev/packages/anthropic_sdk_dart) - Claude integration  
+- [`googleai_dart`](https://pub.dev/packages/googleai_dart) - Google AI model support  
+- [`openai_dart`](https://pub.dev/packages/openai_dart) - OpenAI API access  
+- [`ollama_dart`](https://pub.dev/packages/ollama_dart) - OllamaAI inference  
+- [`fl_chart`](https://pub.dev/packages/fl_chart) - API response visualization  
 
-#### **5. AI-Powered API Performance & Load Testing**  
-- Predict API performance bottlenecks and optimize response times.  
-- Simulate real-world API traffic patterns for scalability testing.  
-- Suggest optimal rate limits and caching strategies based on usage trends.  
-- **Flutter Packages:** [`flutter_jmeter`](https://pub.dev/packages/flutter_jmeter), [`isolate`](https://pub.dev/packages/isolate), [`statsfl`](https://pub.dev/packages/statsfl)  
+## **Weekly Timeline**  
 
-#### **6. AI-Assisted API Integration Testing Across Platforms**  
-- Auto-generate end-to-end API tests for **Flutter, React, Next.js, etc.**  
-- Ensure consistent API behavior across web and mobile applications.  
-- Test authentication workflows, session handling, and cross-platform API interactions.  
-- Provide real-time debugging assistance inside development environments.  
-- **Flutter Packages:** [`integration_test`](https://pub.dev/packages/integration_test), [`mockito`](https://pub.dev/packages/mockito), [`flutter_test`](https://api.flutter.dev/flutter/flutter_test/flutter_test-library.html)
+### **Week 1: Initial Research & Understanding API Dash**  
+**Tasks:**  
+- Study API Dash’s existing codebase.
+- Research AI assistant implementations.
+- Set up the development environment.
 
-### **Weekly Timeline**  
+### **Week 2: Finalizing Tech Stack & Initial UI Prototyping**  
+**Tasks:**  
+- Decide on AI models & packages to be integrated in DashBot.
+- Finalize the UI wireframe.
+- Create a separate development branch for DashBot features.
+  
+### **Week 3-4: UI/UX Enhancements**  
+**Tasks:**  
+- Implement DashBot Panel UI.
+- Add theme support (light & dark mode).
+- Improve API response display with syntax highlighting.
+- Implement API request history tracking and auto-suggestions.
+  
+### **Week 5: Frontend Code Generation**  
+**Tasks:**  
+- Generate API integration code for React, Flutter, Vue.
+- Allow one-click copy of generated code.
+- 
+### **Week 6: API Response Visualization**  
+**Tasks:**  
+- Implement data visualization for API responses.
+- Add customization options for plots.
+**Deliverable:** Interactive API response visualizations. 
 
-| **Week** | **Task** |  
-|----------|---------|  
-| Week 1  | Implement AI-powered test case generation for API requests |  
-| Week 2  | Develop initial integration with API Dash and set up AI-based testing modules |  
-| Week 3  | Conduct testing, refine AI model responses, and improve performance |  
-| Week 4  | Implement intelligent API documentation generation with auto-explanations |  
-| Week 5  | Enhance UI/UX for generated documentation, including markdown formatting and syntax highlighting |  
-| Week 6  | Gather user feedback, refine documentation AI, and introduce auto-refactoring for better maintainability |  
-| Week 7  | Implement AI-driven response visualization, including charts and statistical insights |  
-| Week 8  | Integrate debugging assistance, including error detection and auto-fixes for API requests |  
-| Week 9  | Improve UI elements, streamline workflows, and optimize model performance for faster processing |  
-| Week 10 | Conduct final testing, polish features, and document best practices for AI-based API automation |  
+### **Week 7: AI-Powered Code Error Detection**  
+**Tasks:**  
+- Implement AI-powered debugging for API requests.
+- Ensure API best practices compliance.
+- Optimize AI model for faster debugging.
 
+### **Week 8: Multi-Model Support & Fine-Tuning**  
+**Tasks:**  
+- Implement model switching UI.
+- Connect multiple AI models via API.
+- Integrate on-device AI support.
+- Enable custom prompt fine-tuning.
+  
+### **Week 9: Documentation for Integration of API to specific tech-stack**  
+**Tasks:**  
+- Generate API integration documentation for multiple languages (Python, JavaScript, Java, Flutter, etc.).  
+- Create UI for selecting the tech stack and displaying relevant API documentation. 
+
+### **Week 10-11: Testing, Debugging & Optimizations**  
+**Tasks:**  
+- Conduct unit & integration testing.
+- Fix bugs & optimize performance.
+- Gather feedback from mentors & community.
+
+### **Week 12: Documentation, Final Touches & Submission**  
+**Tasks:**  
+- Write detailed documentation & API reference.
+- Create a demo video & presentation.
+- Prepare & submit the final report to GSoC.
 ---  
