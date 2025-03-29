@@ -20,6 +20,9 @@ class EditRequestBody extends ConsumerWidget {
         .select((value) => value?.httpRequestModel?.bodyContentType));
     final apiType = ref
         .watch(selectedRequestModelProvider.select((value) => value?.apiType));
+    final mode = ref.watch(settingsProvider.select(
+      (value) => value.isDark,
+    ));
 
     // TODO: #178 GET->POST Currently switches to POST everytime user edits body even if the user intentionally chooses GET
     // final sm = ScaffoldMessenger.of(context);
@@ -66,7 +69,7 @@ class EditRequestBody extends ConsumerWidget {
                     padding: kPt5o10,
                     child: JsonTextFieldEditor(
                       key: Key("$selectedId-json-body"),
-                      fieldKey: "$selectedId-json-body-editor",
+                      fieldKey: "$selectedId-json-body-editor-$mode",
                       initialValue: requestModel?.httpRequestModel?.body,
                       onChanged: (String value) {
                         // changeToPostMethod();
