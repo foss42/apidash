@@ -5,7 +5,7 @@
 3. **Discord User ID**: AZURE (502613458638995456)  
 4. **GitHub Handle**: https://github.com/Azur3-bit  
 5. **Socials**: https://www.linkedin.com/in/sunil-sharma-206871205/  
-6. **Time Zone**: GMT +5:30  
+6. **Time Zone**: GMT +5:30 (India) 
 7. **Resume**: https://drive.google.com/file/d/1B3ixbrlPwwCfFw8Lcq3LXvW3N5dWmviX/view?usp=sharing  
 
 ### University Info
