@@ -54,6 +54,7 @@ class ResponseDetails extends ConsumerWidget {
         .watch(selectedRequestModelProvider.select((value) => value?.message));
     final responseModel = ref.watch(selectedRequestModelProvider
         .select((value) => value?.httpResponseModel));
+
     return Column(
       children: [
         ResponsePaneHeader(

@@ -16,7 +16,7 @@ class OverlayWidgetTemplate {
       _overlay = OverlayEntry(
         // replace with your own layout
         builder: (context) => ColoredBox(
-            color: kColorBlack.withOpacity(kOverlayBackgroundOpacity),
+            color: kColorBlack.withValues(alpha: kOverlayBackgroundOpacity),
             child: widget),
       );
       _overlayState!.insert(_overlay!);

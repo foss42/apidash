@@ -15,3 +15,28 @@ A List of API endpoints that can be used for testing API Dash
 #### For Testing sites with Bad Certificate
 - https://badssl.com/
 - https://www.ssl.com/sample-valid-revoked-and-expired-ssl-tls-certificates/
+
+#### PDF
+
+- https://training.github.com/downloads/github-git-cheat-sheet.pdf
+
+#### Text
+
+- https://www.google.com/robots.txt
+
+#### JSON
+
+- https://api.apidash.dev/openapi.json
+
+#### XML
+
+- https://apidash.dev/sitemap.xml
+
+#### Video
+
+- https://download.blender.org/peach/bigbuckbunny_movies/
+- https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4
+
+#### Audio
+
+- 

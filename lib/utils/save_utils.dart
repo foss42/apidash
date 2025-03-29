@@ -40,6 +40,7 @@ Future<void> saveToDownloads(
       var sp = getShortPath(path);
       message = 'Saved to $sp';
     } catch (e) {
+      debugPrint("$e");
       message = "An error occurred while saving file.";
     }
   } else {

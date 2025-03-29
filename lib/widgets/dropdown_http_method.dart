@@ -23,8 +23,9 @@ class DropdownButtonHttpMethod extends StatelessWidget {
           EdgeInsets.only(left: context.isMediumWindow ? 8 : 16),
       dropdownMenuItemtextStyle: (HTTPVerb v) => kCodeStyle.copyWith(
         fontWeight: FontWeight.bold,
-        color: getHTTPMethodColor(
-          v,
+        color: getAPIColor(
+          APIType.rest,
+          method: v,
           brightness: Theme.of(context).brightness,
         ),
       ),

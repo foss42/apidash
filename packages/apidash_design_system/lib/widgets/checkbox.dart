@@ -34,7 +34,7 @@ class ADCheckBox extends StatelessWidget {
             if (states.contains(WidgetState.selected)) {
               return colorScheme.primary;
             }
-            return null;
+            return colorScheme.surfaceContainerLowest;
           },
         ));
   }

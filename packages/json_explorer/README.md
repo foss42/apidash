@@ -88,7 +88,7 @@ JsonExplorer(
       fontSize: 16,
     ),
     propertyKeyTextStyle: GoogleFonts.inconsolata(
-      color: Colors.black.withOpacity(0.7),
+      color: Colors.grey,
       fontWeight: FontWeight.bold,
       fontSize: 16,
     ),

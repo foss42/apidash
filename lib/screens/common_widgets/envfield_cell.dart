@@ -33,26 +33,9 @@ class EnvCellField extends StatelessWidget {
       style: kCodeStyle.copyWith(
         color: clrScheme.onSurface,
       ),
-      decoration: InputDecoration(
-        hintStyle: kCodeStyle.copyWith(
-          color: clrScheme.outline.withOpacity(
-            kHintOpacity,
-          ),
-        ),
+      decoration: getTextFieldInputDecoration(
+        clrScheme,
         hintText: hintText,
-        contentPadding: const EdgeInsets.only(bottom: 12),
-        focusedBorder: UnderlineInputBorder(
-          borderSide: BorderSide(
-            color: clrScheme.primary.withOpacity(
-              kHintOpacity,
-            ),
-          ),
-        ),
-        enabledBorder: UnderlineInputBorder(
-          borderSide: BorderSide(
-            color: clrScheme.surfaceContainerHighest,
-          ),
-        ),
       ),
       autocompleteNoTrigger: autocompleteNoTrigger,
       onChanged: onChanged,

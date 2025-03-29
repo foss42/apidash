@@ -45,9 +45,7 @@ class RequestDataTable extends StatelessWidget {
       contentPadding: const EdgeInsets.only(bottom: 12),
       focusedBorder: UnderlineInputBorder(
         borderSide: BorderSide(
-          color: clrScheme.primary.withOpacity(
-            kHintOpacity,
-          ),
+          color: clrScheme.outlineVariant,
         ),
       ),
       enabledBorder: UnderlineInputBorder(

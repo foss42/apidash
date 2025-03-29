@@ -45,8 +45,7 @@ class SidebarRequestCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Color color = Theme.of(context).colorScheme.surface;
-    final Color colorVariant =
-        Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.5);
+    final Color colorVariant = Theme.of(context).colorScheme.surfaceContainer;
     final Color surfaceTint = Theme.of(context).colorScheme.primary;
     bool isSelected = selectedId == id;
     bool inEditMode = editRequestId == id;
@@ -72,7 +71,7 @@ class SidebarRequestCard extends StatelessWidget {
         child: InkWell(
           borderRadius: kBorderRadius8,
           hoverColor: colorVariant,
-          focusColor: colorVariant.withOpacity(0.5),
+          focusColor: colorVariant,
           onTap: inEditMode ? null : onTap,
           // onDoubleTap: inEditMode ? null : onDoubleTap,
           onSecondaryTapUp: (details) {

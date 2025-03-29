@@ -21,9 +21,9 @@ class PageBase extends ConsumerWidget {
     final isDarkMode =
         ref.watch(settingsProvider.select((value) => value.isDark));
     final scaffold = Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainerLowest,
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.surface,
+        backgroundColor: Theme.of(context).colorScheme.surfaceContainerLowest,
         primary: true,
         title: Text(title),
         centerTitle: true,
@@ -43,7 +43,7 @@ class PageBase extends ConsumerWidget {
                   ? kPb70
                   : EdgeInsets.zero) +
               (kIsWindows || kIsMacOS ? kPt28 : EdgeInsets.zero),
-          color: Theme.of(context).colorScheme.surface,
+          color: Theme.of(context).colorScheme.surfaceContainerLowest,
           child: scaffold,
         ),
         if (kIsWindows)
