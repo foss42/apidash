@@ -1,10 +1,17 @@
-import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
-import 'package:apidash/consts.dart';
+import '../tokens/tokens.dart';
 
 class SuggestionsMenuBox extends StatelessWidget {
+  const SuggestionsMenuBox({
+    super.key,
+    required this.child,
+    this.width,
+    this.maxHeight,
+  });
+
   final Widget child;
-  const SuggestionsMenuBox({super.key, required this.child});
+  final double? width;
+  final double? maxHeight;
 
   @override
   Widget build(BuildContext context) {
@@ -14,10 +21,9 @@ class SuggestionsMenuBox extends StatelessWidget {
         type: MaterialType.card,
         elevation: 8,
         child: ConstrainedBox(
-          constraints:
-              const BoxConstraints(maxHeight: kSuggestionsMenuMaxHeight),
+          constraints: BoxConstraints(maxHeight: maxHeight ?? 200.0),
           child: Ink(
-            width: kSuggestionsMenuWidth,
+            width: width ?? 300.0,
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surface,
               borderRadius: kBorderRadius8,
