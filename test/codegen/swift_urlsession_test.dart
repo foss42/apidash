@@ -16,16 +16,29 @@ void main() {
         const expectedCode = r"""
 import Foundation
 
-var request = URLRequest(url: URL(string: "https://api.apidash.dev")!,timeoutInterval: Double.infinity)
+var request = URLRequest(url: URL(string: "https://api.apidash.dev")!)
 request.httpMethod = "GET"
+let semaphore = DispatchSemaphore(value: 0) 
+
 let task = URLSession.shared.dataTask(with: request) { data, response, error in 
-  guard let data = data else {
-    print(String(describing: error))
-    return
-  }
-  print(String(data: data, encoding: .utf8)!)
+    defer { semaphore.signal() }  
+
+    if let error = error {
+        print("Error: \(error.localizedDescription)")
+        return
+    }
+    guard let data = data else {
+        print("No data received")
+        return
+    }
+    if let responseString = String(data: data, encoding: .utf8) {
+        print("Response: \(responseString)")
+    }
 }
+
 task.resume()
+
+semaphore.wait()
 """;
 
         expect(
@@ -41,16 +54,29 @@ task.resume()
         const expectedCode = r"""
 import Foundation
 
-var request = URLRequest(url: URL(string: "https://api.apidash.dev/country/data?code=US")!,timeoutInterval: Double.infinity)
+var request = URLRequest(url: URL(string: "https://api.apidash.dev/country/data?code=US")!)
 request.httpMethod = "GET"
+let semaphore = DispatchSemaphore(value: 0) 
+
 let task = URLSession.shared.dataTask(with: request) { data, response, error in 
-  guard let data = data else {
-    print(String(describing: error))
-    return
-  }
-  print(String(data: data, encoding: .utf8)!)
+    defer { semaphore.signal() }  
+
+    if let error = error {
+        print("Error: \(error.localizedDescription)")
+        return
+    }
+    guard let data = data else {
+        print("No data received")
+        return
+    }
+    if let responseString = String(data: data, encoding: .utf8) {
+        print("Response: \(responseString)")
+    }
 }
+
 task.resume()
+
+semaphore.wait()
 """;
 
         expect(
@@ -66,16 +92,29 @@ task.resume()
         const expectedCode = r"""
 import Foundation
 
-var request = URLRequest(url: URL(string: "https://api.apidash.dev/country/data?code=IND")!,timeoutInterval: Double.infinity)
+var request = URLRequest(url: URL(string: "https://api.apidash.dev/country/data?code=IND")!)
 request.httpMethod = "GET"
+let semaphore = DispatchSemaphore(value: 0) 
+
 let task = URLSession.shared.dataTask(with: request) { data, response, error in 
-  guard let data = data else {
-    print(String(describing: error))
-    return
-  }
-  print(String(data: data, encoding: .utf8)!)
+    defer { semaphore.signal() }  
+
+    if let error = error {
+        print("Error: \(error.localizedDescription)")
+        return
+    }
+    guard let data = data else {
+        print("No data received")
+        return
+    }
+    if let responseString = String(data: data, encoding: .utf8) {
+        print("Response: \(responseString)")
+    }
 }
+
 task.resume()
+
+semaphore.wait()
 """;
 
         expect(
@@ -91,16 +130,29 @@ task.resume()
         const expectedCode = r"""
 import Foundation
 
-var request = URLRequest(url: URL(string: "https://api.apidash.dev/humanize/social?num=8700000&digits=3&system=SS&add_space=true&trailing_zeros=true")!,timeoutInterval: Double.infinity)
+var request = URLRequest(url: URL(string: "https://api.apidash.dev/humanize/social?num=8700000&digits=3&system=SS&add_space=true&trailing_zeros=true")!)
 request.httpMethod = "GET"
+let semaphore = DispatchSemaphore(value: 0) 
+
 let task = URLSession.shared.dataTask(with: request) { data, response, error in 
-  guard let data = data else {
-    print(String(describing: error))
-    return
-  }
-  print(String(data: data, encoding: .utf8)!)
+    defer { semaphore.signal() }  
+
+    if let error = error {
+        print("Error: \(error.localizedDescription)")
+        return
+    }
+    guard let data = data else {
+        print("No data received")
+        return
+    }
+    if let responseString = String(data: data, encoding: .utf8) {
+        print("Response: \(responseString)")
+    }
 }
+
 task.resume()
+
+semaphore.wait()
 """;
 
         expect(
@@ -116,19 +168,32 @@ task.resume()
         const expectedCode = r"""
 import Foundation
 
-var request = URLRequest(url: URL(string: "https://api.github.com/repos/foss42/apidash")!,timeoutInterval: Double.infinity)
+var request = URLRequest(url: URL(string: "https://api.github.com/repos/foss42/apidash")!)
 request.httpMethod = "GET"
 
 request.addValue("Test Agent", forHTTPHeaderField: "User-Agent")
 
+let semaphore = DispatchSemaphore(value: 0) 
+
 let task = URLSession.shared.dataTask(with: request) { data, response, error in 
-  guard let data = data else {
-    print(String(describing: error))
-    return
-  }
-  print(String(data: data, encoding: .utf8)!)
+    defer { semaphore.signal() }  
+
+    if let error = error {
+        print("Error: \(error.localizedDescription)")
+        return
+    }
+    guard let data = data else {
+        print("No data received")
+        return
+    }
+    if let responseString = String(data: data, encoding: .utf8) {
+        print("Response: \(responseString)")
+    }
 }
+
 task.resume()
+
+semaphore.wait()
 """;
 
         expect(
@@ -144,19 +209,32 @@ task.resume()
         const expectedCode = r"""
 import Foundation
 
-var request = URLRequest(url: URL(string: "https://api.github.com/repos/foss42/apidash?raw=true")!,timeoutInterval: Double.infinity)
+var request = URLRequest(url: URL(string: "https://api.github.com/repos/foss42/apidash?raw=true")!)
 request.httpMethod = "GET"
 
 request.addValue("Test Agent", forHTTPHeaderField: "User-Agent")
 
+let semaphore = DispatchSemaphore(value: 0) 
+
 let task = URLSession.shared.dataTask(with: request) { data, response, error in 
-  guard let data = data else {
-    print(String(describing: error))
-    return
-  }
-  print(String(data: data, encoding: .utf8)!)
+    defer { semaphore.signal() }  
+
+    if let error = error {
+        print("Error: \(error.localizedDescription)")
+        return
+    }
+    guard let data = data else {
+        print("No data received")
+        return
+    }
+    if let responseString = String(data: data, encoding: .utf8) {
+        print("Response: \(responseString)")
+    }
 }
+
 task.resume()
+
+semaphore.wait()
 """;
 
         expect(
@@ -172,16 +250,29 @@ task.resume()
         const expectedCode = r"""
 import Foundation
 
-var request = URLRequest(url: URL(string: "https://api.apidash.dev")!,timeoutInterval: Double.infinity)
+var request = URLRequest(url: URL(string: "https://api.apidash.dev")!)
 request.httpMethod = "GET"
+let semaphore = DispatchSemaphore(value: 0) 
+
 let task = URLSession.shared.dataTask(with: request) { data, response, error in 
-  guard let data = data else {
-    print(String(describing: error))
-    return
-  }
-  print(String(data: data, encoding: .utf8)!)
+    defer { semaphore.signal() }  
+
+    if let error = error {
+        print("Error: \(error.localizedDescription)")
+        return
+    }
+    guard let data = data else {
+        print("No data received")
+        return
+    }
+    if let responseString = String(data: data, encoding: .utf8) {
+        print("Response: \(responseString)")
+    }
 }
+
 task.resume()
+
+semaphore.wait()
 """;
 
         expect(
@@ -194,21 +285,35 @@ task.resume()
       });
 
       test('GET 8', () {
-        const expectedCode = r"""import Foundation
+        const expectedCode = r"""
+import Foundation
 
-var request = URLRequest(url: URL(string: "https://api.github.com/repos/foss42/apidash?raw=true")!,timeoutInterval: Double.infinity)
+var request = URLRequest(url: URL(string: "https://api.github.com/repos/foss42/apidash?raw=true")!)
 request.httpMethod = "GET"
 
 request.addValue("Test Agent", forHTTPHeaderField: "User-Agent")
 
+let semaphore = DispatchSemaphore(value: 0) 
+
 let task = URLSession.shared.dataTask(with: request) { data, response, error in 
-  guard let data = data else {
-    print(String(describing: error))
-    return
-  }
-  print(String(data: data, encoding: .utf8)!)
+    defer { semaphore.signal() }  
+
+    if let error = error {
+        print("Error: \(error.localizedDescription)")
+        return
+    }
+    guard let data = data else {
+        print("No data received")
+        return
+    }
+    if let responseString = String(data: data, encoding: .utf8) {
+        print("Response: \(responseString)")
+    }
 }
+
 task.resume()
+
+semaphore.wait()
 """;
 
         expect(
@@ -224,16 +329,29 @@ task.resume()
         const expectedCode = r"""
 import Foundation
 
-var request = URLRequest(url: URL(string: "https://api.apidash.dev/humanize/social?num=8700000&add_space=true")!,timeoutInterval: Double.infinity)
+var request = URLRequest(url: URL(string: "https://api.apidash.dev/humanize/social?num=8700000&add_space=true")!)
 request.httpMethod = "GET"
+let semaphore = DispatchSemaphore(value: 0) 
+
 let task = URLSession.shared.dataTask(with: request) { data, response, error in 
-  guard let data = data else {
-    print(String(describing: error))
-    return
-  }
-  print(String(data: data, encoding: .utf8)!)
+    defer { semaphore.signal() }  
+
+    if let error = error {
+        print("Error: \(error.localizedDescription)")
+        return
+    }
+    guard let data = data else {
+        print("No data received")
+        return
+    }
+    if let responseString = String(data: data, encoding: .utf8) {
+        print("Response: \(responseString)")
+    }
 }
+
 task.resume()
+
+semaphore.wait()
 """;
 
         expect(
@@ -249,19 +367,32 @@ task.resume()
         const expectedCode = r"""
 import Foundation
 
-var request = URLRequest(url: URL(string: "https://api.apidash.dev/humanize/social")!,timeoutInterval: Double.infinity)
+var request = URLRequest(url: URL(string: "https://api.apidash.dev/humanize/social")!)
 request.httpMethod = "GET"
 
 request.addValue("Test Agent", forHTTPHeaderField: "User-Agent")
 
+let semaphore = DispatchSemaphore(value: 0) 
+
 let task = URLSession.shared.dataTask(with: request) { data, response, error in 
-  guard let data = data else {
-    print(String(describing: error))
-    return
-  }
-  print(String(data: data, encoding: .utf8)!)
+    defer { semaphore.signal() }  
+
+    if let error = error {
+        print("Error: \(error.localizedDescription)")
+        return
+    }
+    guard let data = data else {
+        print("No data received")
+        return
+    }
+    if let responseString = String(data: data, encoding: .utf8) {
+        print("Response: \(responseString)")
+    }
 }
+
 task.resume()
+
+semaphore.wait()
 """;
 
         expect(
@@ -277,19 +408,32 @@ task.resume()
         const expectedCode = r"""
 import Foundation
 
-var request = URLRequest(url: URL(string: "https://api.apidash.dev/humanize/social?num=8700000&digits=3")!,timeoutInterval: Double.infinity)
+var request = URLRequest(url: URL(string: "https://api.apidash.dev/humanize/social?num=8700000&digits=3")!)
 request.httpMethod = "GET"
 
 request.addValue("Test Agent", forHTTPHeaderField: "User-Agent")
 
+let semaphore = DispatchSemaphore(value: 0) 
+
 let task = URLSession.shared.dataTask(with: request) { data, response, error in 
-  guard let data = data else {
-    print(String(describing: error))
-    return
-  }
-  print(String(data: data, encoding: .utf8)!)
+    defer { semaphore.signal() }  
+
+    if let error = error {
+        print("Error: \(error.localizedDescription)")
+        return
+    }
+    guard let data = data else {
+        print("No data received")
+        return
+    }
+    if let responseString = String(data: data, encoding: .utf8) {
+        print("Response: \(responseString)")
+    }
 }
+
 task.resume()
+
+semaphore.wait()
 """;
 
         expect(
@@ -305,16 +449,29 @@ task.resume()
         const expectedCode = r"""
 import Foundation
 
-var request = URLRequest(url: URL(string: "https://api.apidash.dev/humanize/social")!,timeoutInterval: Double.infinity)
+var request = URLRequest(url: URL(string: "https://api.apidash.dev/humanize/social")!)
 request.httpMethod = "GET"
+let semaphore = DispatchSemaphore(value: 0) 
+
 let task = URLSession.shared.dataTask(with: request) { data, response, error in 
-  guard let data = data else {
-    print(String(describing: error))
-    return
-  }
-  print(String(data: data, encoding: .utf8)!)
+    defer { semaphore.signal() }  
+
+    if let error = error {
+        print("Error: \(error.localizedDescription)")
+        return
+    }
+    guard let data = data else {
+        print("No data received")
+        return
+    }
+    if let responseString = String(data: data, encoding: .utf8) {
+        print("Response: \(responseString)")
+    }
 }
+
 task.resume()
+
+semaphore.wait()
 """;
 
         expect(
@@ -326,25 +483,38 @@ task.resume()
             expectedCode);
       });
     },
-    skip: true,
   );
 
   group(
     'HTTPVerb.head',
     () {
       test('HEAD 1', () {
-        const expectedCode = r"""import Foundation
+        const expectedCode = r"""
+import Foundation
 
-var request = URLRequest(url: URL(string: "https://api.apidash.dev")!,timeoutInterval: Double.infinity)
+var request = URLRequest(url: URL(string: "https://api.apidash.dev")!)
 request.httpMethod = "HEAD"
+let semaphore = DispatchSemaphore(value: 0) 
+
 let task = URLSession.shared.dataTask(with: request) { data, response, error in 
-  guard let data = data else {
-    print(String(describing: error))
-    return
-  }
-  print(String(data: data, encoding: .utf8)!)
+    defer { semaphore.signal() }  
+
+    if let error = error {
+        print("Error: \(error.localizedDescription)")
+        return
+    }
+    guard let data = data else {
+        print("No data received")
+        return
+    }
+    if let responseString = String(data: data, encoding: .utf8) {
+        print("Response: \(responseString)")
+    }
 }
+
 task.resume()
+
+semaphore.wait()
 """;
 
         expect(
@@ -360,16 +530,29 @@ task.resume()
         const expectedCode = r"""
 import Foundation
 
-var request = URLRequest(url: URL(string: "https://api.apidash.dev")!,timeoutInterval: Double.infinity)
+var request = URLRequest(url: URL(string: "https://api.apidash.dev")!)
 request.httpMethod = "HEAD"
+let semaphore = DispatchSemaphore(value: 0) 
+
 let task = URLSession.shared.dataTask(with: request) { data, response, error in 
-  guard let data = data else {
-    print(String(describing: error))
-    return
-  }
-  print(String(data: data, encoding: .utf8)!)
+    defer { semaphore.signal() }  
+
+    if let error = error {
+        print("Error: \(error.localizedDescription)")
+        return
+    }
+    guard let data = data else {
+        print("No data received")
+        return
+    }
+    if let responseString = String(data: data, encoding: .utf8) {
+        print("Response: \(responseString)")
+    }
 }
+
 task.resume()
+
+semaphore.wait()
 """;
 
         expect(
@@ -381,34 +564,49 @@ task.resume()
             expectedCode);
       });
     },
-    skip: true,
   );
 
   group(
     "HTTPVerb.post",
     () {
       test('POST 1', () {
-        const expectedCode = r"""
+        const expectedCode = r'''
 import Foundation
 
-let parameters = "{\n\"text\": \"I LOVE Flutter\"\n}"
-let postData = parameters.data(using: .utf8)
-var request = URLRequest(url: URL(string: "https://api.apidash.dev/case/lower")!,timeoutInterval: Double.infinity)
+let postData = """
+{
+"text": "I LOVE Flutter"
+}
+""".data(using: .utf8)
+var request = URLRequest(url: URL(string: "https://api.apidash.dev/case/lower")!)
 request.httpMethod = "POST"
 
-request.addValue("text/plain", forHTTPHeaderField: "Content-Type")
+request.addValue("application/json", forHTTPHeaderField: "Content-Type")
 
 request.httpBody = postData
 
+let semaphore = DispatchSemaphore(value: 0) 
+
 let task = URLSession.shared.dataTask(with: request) { data, response, error in 
-  guard let data = data else {
-    print(String(describing: error))
-    return
-  }
-  print(String(data: data, encoding: .utf8)!)
+    defer { semaphore.signal() }  
+
+    if let error = error {
+        print("Error: \(error.localizedDescription)")
+        return
+    }
+    guard let data = data else {
+        print("No data received")
+        return
+    }
+    if let responseString = String(data: data, encoding: .utf8) {
+        print("Response: \(responseString)")
+    }
 }
+
 task.resume()
-""";
+
+semaphore.wait()
+''';
 
         expect(
             codeGen.getCode(
@@ -419,27 +617,48 @@ task.resume()
             expectedCode);
       });
       test('POST 2', () {
-        const expectedCode = r"""
+        const expectedCode = r'''
 import Foundation
 
-let parameters = "{\n\"text\": \"I LOVE Flutter\",\n\"flag\": null,\n\"male\": true,\n\"female\": false,\n\"no\": 1.2,\n\"arr\": [\"null\", \"true\", \"false\", null]\n}"
-let postData = parameters.data(using: .utf8)
-var request = URLRequest(url: URL(string: "https://api.apidash.dev/case/lower")!,timeoutInterval: Double.infinity)
+let postData = """
+{
+"text": "I LOVE Flutter",
+"flag": null,
+"male": true,
+"female": false,
+"no": 1.2,
+"arr": ["null", "true", "false", null]
+}
+""".data(using: .utf8)
+var request = URLRequest(url: URL(string: "https://api.apidash.dev/case/lower")!)
 request.httpMethod = "POST"
 
 request.addValue("application/json", forHTTPHeaderField: "Content-Type")
 
 request.httpBody = postData
 
+let semaphore = DispatchSemaphore(value: 0) 
+
 let task = URLSession.shared.dataTask(with: request) { data, response, error in 
-  guard let data = data else {
-    print(String(describing: error))
-    return
-  }
-  print(String(data: data, encoding: .utf8)!)
+    defer { semaphore.signal() }  
+
+    if let error = error {
+        print("Error: \(error.localizedDescription)")
+        return
+    }
+    guard let data = data else {
+        print("No data received")
+        return
+    }
+    if let responseString = String(data: data, encoding: .utf8) {
+        print("Response: \(responseString)")
+    }
 }
+
 task.resume()
-""";
+
+semaphore.wait()
+''';
 
         expect(
             codeGen.getCode(
@@ -451,12 +670,15 @@ task.resume()
       });
 
       test('POST 3', () {
-        const expectedCode = r"""
+        const expectedCode = r'''
 import Foundation
 
-let parameters = "{\n\"text\": \"I LOVE Flutter\"\n}"
-let postData = parameters.data(using: .utf8)
-var request = URLRequest(url: URL(string: "https://api.apidash.dev/case/lower")!,timeoutInterval: Double.infinity)
+let postData = """
+{
+"text": "I LOVE Flutter"
+}
+""".data(using: .utf8)
+var request = URLRequest(url: URL(string: "https://api.apidash.dev/case/lower")!)
 request.httpMethod = "POST"
 
 request.addValue("Test Agent", forHTTPHeaderField: "User-Agent")
@@ -465,15 +687,28 @@ request.addValue("application/json", forHTTPHeaderField: "Content-Type")
 
 request.httpBody = postData
 
+let semaphore = DispatchSemaphore(value: 0) 
+
 let task = URLSession.shared.dataTask(with: request) { data, response, error in 
-  guard let data = data else {
-    print(String(describing: error))
-    return
-  }
-  print(String(data: data, encoding: .utf8)!)
+    defer { semaphore.signal() }  
+
+    if let error = error {
+        print("Error: \(error.localizedDescription)")
+        return
+    }
+    guard let data = data else {
+        print("No data received")
+        return
+    }
+    if let responseString = String(data: data, encoding: .utf8) {
+        print("Response: \(responseString)")
+    }
 }
+
 task.resume()
-""";
+
+semaphore.wait()
+''';
 
         expect(
             codeGen.getCode(
@@ -488,70 +723,63 @@ task.resume()
         const expectedCode = r"""
 import Foundation
 
-let parameters = [
+import MultipartFormData
 
-  [
-    "key": "text",
-    "value": "API",
-    "type": "text"
-  ],
+let boundary = try! Boundary()
+let multipartFormData = try! MultipartFormData(boundary: boundary) {
 
-  [
-    "key": "sep",
-    "value": "|",
-    "type": "text"
-  ],
-
-  [
-    "key": "times",
-    "value": "3",
-    "type": "text"
-  ],
-
-] as [[String: Any]]
-let boundary = "Boundary-\(UUID().uuidString)"
-var body = Data()
-var error: Error? = nil
-for param in parameters {
-  if param["disabled"] as? Bool == true { continue }
-  let paramName = param["key"] as! String
-  body.append("--\(boundary)\r\n".data(using: .utf8)!)
-  body.append("Content-Disposition:form-data; name=\"\(paramName)\"".data(using: .utf8)!)
-  if let contentType = param["contentType"] as? String {
-    body.append("\r\nContent-Type: \(contentType)".data(using: .utf8)!)
-  }
-  let paramType = param["type"] as! String
-  if paramType == "text" {
-    let paramValue = param["value"] as! String
-    body.append("\r\n\r\n\(paramValue)\r\n".data(using: .utf8)!)
-  } else if paramType == "file" {
-    let paramSrc = param["value"] as! String
-    let fileURL = URL(fileURLWithPath: paramSrc)
-    if let fileContent = try? Data(contentsOf: fileURL) {
-      body.append("; filename=\"\(paramSrc)\"\r\n".data(using: .utf8)!)
-      body.append("Content-Type: \"content-type header\"\r\n\r\n".data(using: .utf8)!)
-      body.append(fileContent)
-      body.append("\r\n".data(using: .utf8)!)
+    
+    Subpart {
+        ContentDisposition(name: "text")
+    } body: {
+        Data("API".utf8)
     }
-  }
+    
+
+    
+    Subpart {
+        ContentDisposition(name: "sep")
+    } body: {
+        Data("|".utf8)
+    }
+    
+
+    
+    Subpart {
+        ContentDisposition(name: "times")
+    } body: {
+        Data("3".utf8)
+    }
+    
+
 }
-body.append("--\(boundary)--\r\n".data(using: .utf8)!)
-let postData = body
-var request = URLRequest(url: URL(string: "https://api.apidash.dev/io/form")!,timeoutInterval: Double.infinity)
+var request = URLRequest(url: URL(string: "https://api.apidash.dev/io/form")!)
 request.httpMethod = "POST"
 
-request.addValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+request.addValue("multipart/form-data; boundary=\(boundary.stringValue)", forHTTPHeaderField: "Content-Type")
 
-request.httpBody = postData
+request.httpBody = try! multipartFormData.encode()
+let semaphore = DispatchSemaphore(value: 0) 
 
 let task = URLSession.shared.dataTask(with: request) { data, response, error in 
-  guard let data = data else {
-    print(String(describing: error))
-    return
-  }
-  print(String(data: data, encoding: .utf8)!)
+    defer { semaphore.signal() }  
+
+    if let error = error {
+        print("Error: \(error.localizedDescription)")
+        return
+    }
+    guard let data = data else {
+        print("No data received")
+        return
+    }
+    if let responseString = String(data: data, encoding: .utf8) {
+        print("Response: \(responseString)")
+    }
 }
+
 task.resume()
+
+semaphore.wait()
 """;
 
         expect(
@@ -564,74 +792,68 @@ task.resume()
       });
 
       test('POST 5', () {
-        const expectedCode = r"""import Foundation
+        const expectedCode = r"""
+import Foundation
 
-let parameters = [
+import MultipartFormData
 
-  [
-    "key": "text",
-    "value": "API",
-    "type": "text"
-  ],
+let boundary = try! Boundary()
+let multipartFormData = try! MultipartFormData(boundary: boundary) {
 
-  [
-    "key": "sep",
-    "value": "|",
-    "type": "text"
-  ],
-
-  [
-    "key": "times",
-    "value": "3",
-    "type": "text"
-  ],
-
-] as [[String: Any]]
-let boundary = "Boundary-\(UUID().uuidString)"
-var body = Data()
-var error: Error? = nil
-for param in parameters {
-  if param["disabled"] as? Bool == true { continue }
-  let paramName = param["key"] as! String
-  body.append("--\(boundary)\r\n".data(using: .utf8)!)
-  body.append("Content-Disposition:form-data; name=\"\(paramName)\"".data(using: .utf8)!)
-  if let contentType = param["contentType"] as? String {
-    body.append("\r\nContent-Type: \(contentType)".data(using: .utf8)!)
-  }
-  let paramType = param["type"] as! String
-  if paramType == "text" {
-    let paramValue = param["value"] as! String
-    body.append("\r\n\r\n\(paramValue)\r\n".data(using: .utf8)!)
-  } else if paramType == "file" {
-    let paramSrc = param["value"] as! String
-    let fileURL = URL(fileURLWithPath: paramSrc)
-    if let fileContent = try? Data(contentsOf: fileURL) {
-      body.append("; filename=\"\(paramSrc)\"\r\n".data(using: .utf8)!)
-      body.append("Content-Type: \"content-type header\"\r\n\r\n".data(using: .utf8)!)
-      body.append(fileContent)
-      body.append("\r\n".data(using: .utf8)!)
+    
+    Subpart {
+        ContentDisposition(name: "text")
+    } body: {
+        Data("API".utf8)
     }
-  }
+    
+
+    
+    Subpart {
+        ContentDisposition(name: "sep")
+    } body: {
+        Data("|".utf8)
+    }
+    
+
+    
+    Subpart {
+        ContentDisposition(name: "times")
+    } body: {
+        Data("3".utf8)
+    }
+    
+
 }
-body.append("--\(boundary)--\r\n".data(using: .utf8)!)
-let postData = body
-var request = URLRequest(url: URL(string: "https://api.apidash.dev/io/form")!,timeoutInterval: Double.infinity)
+var request = URLRequest(url: URL(string: "https://api.apidash.dev/io/form")!)
 request.httpMethod = "POST"
 
 request.addValue("Test Agent", forHTTPHeaderField: "User-Agent")
 
-request.addValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+request.addValue("multipart/form-data; boundary=\(boundary.stringValue)", forHTTPHeaderField: "Content-Type")
 
-request.httpBody = postData
+request.httpBody = try! multipartFormData.encode()
+let semaphore = DispatchSemaphore(value: 0) 
 
 let task = URLSession.shared.dataTask(with: request) { data, response, error in 
-  guard let data = data else {
-    print(String(describing: error))
-    return
-  }
-  print(String(data: data, encoding: .utf8)!)
+    defer { semaphore.signal() }  
+
+    if let error = error {
+        print("Error: \(error.localizedDescription)")
+        return
+    }
+    guard let data = data else {
+        print("No data received")
+        return
+    }
+    if let responseString = String(data: data, encoding: .utf8) {
+        print("Response: \(responseString)")
+    }
 }
+
 task.resume()
+
+semaphore.wait()
 """;
 
         expect(
@@ -643,68 +865,60 @@ task.resume()
             expectedCode);
       });
       test('POST 6', () {
-        const expectedCode = r"""
+        const expectedCode = r'''
 import Foundation
 
-let parameters = [
+import MultipartFormData
 
-  [
-    "key": "token",
-    "value": "xyz",
-    "type": "text"
-  ],
+let boundary = try! Boundary()
+let multipartFormData = try! MultipartFormData(boundary: boundary) {
 
-  [
-    "key": "imfile",
-    "value": "/Documents/up/1.png",
-    "type": "file"
-  ],
-
-] as [[String: Any]]
-let boundary = "Boundary-\(UUID().uuidString)"
-var body = Data()
-var error: Error? = nil
-for param in parameters {
-  if param["disabled"] as? Bool == true { continue }
-  let paramName = param["key"] as! String
-  body.append("--\(boundary)\r\n".data(using: .utf8)!)
-  body.append("Content-Disposition:form-data; name=\"\(paramName)\"".data(using: .utf8)!)
-  if let contentType = param["contentType"] as? String {
-    body.append("\r\nContent-Type: \(contentType)".data(using: .utf8)!)
-  }
-  let paramType = param["type"] as! String
-  if paramType == "text" {
-    let paramValue = param["value"] as! String
-    body.append("\r\n\r\n\(paramValue)\r\n".data(using: .utf8)!)
-  } else if paramType == "file" {
-    let paramSrc = param["value"] as! String
-    let fileURL = URL(fileURLWithPath: paramSrc)
-    if let fileContent = try? Data(contentsOf: fileURL) {
-      body.append("; filename=\"\(paramSrc)\"\r\n".data(using: .utf8)!)
-      body.append("Content-Type: \"content-type header\"\r\n\r\n".data(using: .utf8)!)
-      body.append(fileContent)
-      body.append("\r\n".data(using: .utf8)!)
+    
+    Subpart {
+        ContentDisposition(name: "token")
+    } body: {
+        Data("xyz".utf8)
     }
-  }
+    
+
+    
+    try Subpart {
+        ContentDisposition(name: "imfile", filename: "1.png")
+        ContentType(mimeType: MimeType(pathExtension: "png"))
+    } body: {
+        try Data(contentsOf: URL(fileURLWithPath: "/Documents/up/1.png"))
+    }
+    
+
 }
-body.append("--\(boundary)--\r\n".data(using: .utf8)!)
-let postData = body
-var request = URLRequest(url: URL(string: "https://api.apidash.dev/io/img")!,timeoutInterval: Double.infinity)
+var request = URLRequest(url: URL(string: "https://api.apidash.dev/io/img")!)
 request.httpMethod = "POST"
 
-request.addValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+request.addValue("multipart/form-data; boundary=\(boundary.stringValue)", forHTTPHeaderField: "Content-Type")
 
-request.httpBody = postData
+request.httpBody = try! multipartFormData.encode()
+let semaphore = DispatchSemaphore(value: 0) 
 
 let task = URLSession.shared.dataTask(with: request) { data, response, error in 
-  guard let data = data else {
-    print(String(describing: error))
-    return
-  }
-  print(String(data: data, encoding: .utf8)!)
+    defer { semaphore.signal() }  
+
+    if let error = error {
+        print("Error: \(error.localizedDescription)")
+        return
+    }
+    guard let data = data else {
+        print("No data received")
+        return
+    }
+    if let responseString = String(data: data, encoding: .utf8) {
+        print("Response: \(responseString)")
+    }
 }
+
 task.resume()
-""";
+
+semaphore.wait()
+''';
 
         expect(
             codeGen.getCode(
@@ -718,64 +932,56 @@ task.resume()
         const expectedCode = r"""
 import Foundation
 
-let parameters = [
+import MultipartFormData
 
-  [
-    "key": "token",
-    "value": "xyz",
-    "type": "text"
-  ],
+let boundary = try! Boundary()
+let multipartFormData = try! MultipartFormData(boundary: boundary) {
 
-  [
-    "key": "imfile",
-    "value": "/Documents/up/1.png",
-    "type": "file"
-  ],
-
-] as [[String: Any]]
-let boundary = "Boundary-\(UUID().uuidString)"
-var body = Data()
-var error: Error? = nil
-for param in parameters {
-  if param["disabled"] as? Bool == true { continue }
-  let paramName = param["key"] as! String
-  body.append("--\(boundary)\r\n".data(using: .utf8)!)
-  body.append("Content-Disposition:form-data; name=\"\(paramName)\"".data(using: .utf8)!)
-  if let contentType = param["contentType"] as? String {
-    body.append("\r\nContent-Type: \(contentType)".data(using: .utf8)!)
-  }
-  let paramType = param["type"] as! String
-  if paramType == "text" {
-    let paramValue = param["value"] as! String
-    body.append("\r\n\r\n\(paramValue)\r\n".data(using: .utf8)!)
-  } else if paramType == "file" {
-    let paramSrc = param["value"] as! String
-    let fileURL = URL(fileURLWithPath: paramSrc)
-    if let fileContent = try? Data(contentsOf: fileURL) {
-      body.append("; filename=\"\(paramSrc)\"\r\n".data(using: .utf8)!)
-      body.append("Content-Type: \"content-type header\"\r\n\r\n".data(using: .utf8)!)
-      body.append(fileContent)
-      body.append("\r\n".data(using: .utf8)!)
+    
+    Subpart {
+        ContentDisposition(name: "token")
+    } body: {
+        Data("xyz".utf8)
     }
-  }
+    
+
+    
+    try Subpart {
+        ContentDisposition(name: "imfile", filename: "1.png")
+        ContentType(mimeType: MimeType(pathExtension: "png"))
+    } body: {
+        try Data(contentsOf: URL(fileURLWithPath: "/Documents/up/1.png"))
+    }
+    
+
 }
-body.append("--\(boundary)--\r\n".data(using: .utf8)!)
-let postData = body
-var request = URLRequest(url: URL(string: "https://api.apidash.dev/io/img")!,timeoutInterval: Double.infinity)
+var request = URLRequest(url: URL(string: "https://api.apidash.dev/io/img")!)
 request.httpMethod = "POST"
 
-request.addValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+request.addValue("multipart/form-data; boundary=\(boundary.stringValue)", forHTTPHeaderField: "Content-Type")
 
-request.httpBody = postData
+request.httpBody = try! multipartFormData.encode()
+let semaphore = DispatchSemaphore(value: 0) 
 
 let task = URLSession.shared.dataTask(with: request) { data, response, error in 
-  guard let data = data else {
-    print(String(describing: error))
-    return
-  }
-  print(String(data: data, encoding: .utf8)!)
+    defer { semaphore.signal() }  
+
+    if let error = error {
+        print("Error: \(error.localizedDescription)")
+        return
+    }
+    guard let data = data else {
+        print("No data received")
+        return
+    }
+    if let responseString = String(data: data, encoding: .utf8) {
+        print("Response: \(responseString)")
+    }
 }
+
 task.resume()
+
+semaphore.wait()
 """;
 
         expect(
@@ -790,70 +996,63 @@ task.resume()
         const expectedCode = r"""
 import Foundation
 
-let parameters = [
+import MultipartFormData
 
-  [
-    "key": "text",
-    "value": "API",
-    "type": "text"
-  ],
+let boundary = try! Boundary()
+let multipartFormData = try! MultipartFormData(boundary: boundary) {
 
-  [
-    "key": "sep",
-    "value": "|",
-    "type": "text"
-  ],
-
-  [
-    "key": "times",
-    "value": "3",
-    "type": "text"
-  ],
-
-] as [[String: Any]]
-let boundary = "Boundary-\(UUID().uuidString)"
-var body = Data()
-var error: Error? = nil
-for param in parameters {
-  if param["disabled"] as? Bool == true { continue }
-  let paramName = param["key"] as! String
-  body.append("--\(boundary)\r\n".data(using: .utf8)!)
-  body.append("Content-Disposition:form-data; name=\"\(paramName)\"".data(using: .utf8)!)
-  if let contentType = param["contentType"] as? String {
-    body.append("\r\nContent-Type: \(contentType)".data(using: .utf8)!)
-  }
-  let paramType = param["type"] as! String
-  if paramType == "text" {
-    let paramValue = param["value"] as! String
-    body.append("\r\n\r\n\(paramValue)\r\n".data(using: .utf8)!)
-  } else if paramType == "file" {
-    let paramSrc = param["value"] as! String
-    let fileURL = URL(fileURLWithPath: paramSrc)
-    if let fileContent = try? Data(contentsOf: fileURL) {
-      body.append("; filename=\"\(paramSrc)\"\r\n".data(using: .utf8)!)
-      body.append("Content-Type: \"content-type header\"\r\n\r\n".data(using: .utf8)!)
-      body.append(fileContent)
-      body.append("\r\n".data(using: .utf8)!)
+    
+    Subpart {
+        ContentDisposition(name: "text")
+    } body: {
+        Data("API".utf8)
     }
-  }
+    
+
+    
+    Subpart {
+        ContentDisposition(name: "sep")
+    } body: {
+        Data("|".utf8)
+    }
+    
+
+    
+    Subpart {
+        ContentDisposition(name: "times")
+    } body: {
+        Data("3".utf8)
+    }
+    
+
 }
-body.append("--\(boundary)--\r\n".data(using: .utf8)!)
-let postData = body
-var request = URLRequest(url: URL(string: "https://api.apidash.dev/io/form?size=2&len=3")!,timeoutInterval: Double.infinity)
+var request = URLRequest(url: URL(string: "https://api.apidash.dev/io/form?size=2&len=3")!)
 request.httpMethod = "POST"
 
-request.addValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+request.addValue("multipart/form-data; boundary=\(boundary.stringValue)", forHTTPHeaderField: "Content-Type")
 
-request.httpBody = postData
+request.httpBody = try! multipartFormData.encode()
+let semaphore = DispatchSemaphore(value: 0) 
 
 let task = URLSession.shared.dataTask(with: request) { data, response, error in 
-  guard let data = data else {
-    print(String(describing: error))
-    return
-  }
-  print(String(data: data, encoding: .utf8)!)
+    defer { semaphore.signal() }  
+
+    if let error = error {
+        print("Error: \(error.localizedDescription)")
+        return
+    }
+    guard let data = data else {
+        print("No data received")
+        return
+    }
+    if let responseString = String(data: data, encoding: .utf8) {
+        print("Response: \(responseString)")
+    }
 }
+
 task.resume()
+
+semaphore.wait()
 """;
 
         expect(
@@ -868,68 +1067,60 @@ task.resume()
         const expectedCode = r"""
 import Foundation
 
-let parameters = [
+import MultipartFormData
 
-  [
-    "key": "token",
-    "value": "xyz",
-    "type": "text"
-  ],
+let boundary = try! Boundary()
+let multipartFormData = try! MultipartFormData(boundary: boundary) {
 
-  [
-    "key": "imfile",
-    "value": "/Documents/up/1.png",
-    "type": "file"
-  ],
-
-] as [[String: Any]]
-let boundary = "Boundary-\(UUID().uuidString)"
-var body = Data()
-var error: Error? = nil
-for param in parameters {
-  if param["disabled"] as? Bool == true { continue }
-  let paramName = param["key"] as! String
-  body.append("--\(boundary)\r\n".data(using: .utf8)!)
-  body.append("Content-Disposition:form-data; name=\"\(paramName)\"".data(using: .utf8)!)
-  if let contentType = param["contentType"] as? String {
-    body.append("\r\nContent-Type: \(contentType)".data(using: .utf8)!)
-  }
-  let paramType = param["type"] as! String
-  if paramType == "text" {
-    let paramValue = param["value"] as! String
-    body.append("\r\n\r\n\(paramValue)\r\n".data(using: .utf8)!)
-  } else if paramType == "file" {
-    let paramSrc = param["value"] as! String
-    let fileURL = URL(fileURLWithPath: paramSrc)
-    if let fileContent = try? Data(contentsOf: fileURL) {
-      body.append("; filename=\"\(paramSrc)\"\r\n".data(using: .utf8)!)
-      body.append("Content-Type: \"content-type header\"\r\n\r\n".data(using: .utf8)!)
-      body.append(fileContent)
-      body.append("\r\n".data(using: .utf8)!)
+    
+    Subpart {
+        ContentDisposition(name: "token")
+    } body: {
+        Data("xyz".utf8)
     }
-  }
+    
+
+    
+    try Subpart {
+        ContentDisposition(name: "imfile", filename: "1.png")
+        ContentType(mimeType: MimeType(pathExtension: "png"))
+    } body: {
+        try Data(contentsOf: URL(fileURLWithPath: "/Documents/up/1.png"))
+    }
+    
+
 }
-body.append("--\(boundary)--\r\n".data(using: .utf8)!)
-let postData = body
-var request = URLRequest(url: URL(string: "https://api.apidash.dev/io/img?size=2&len=3")!,timeoutInterval: Double.infinity)
+var request = URLRequest(url: URL(string: "https://api.apidash.dev/io/img?size=2&len=3")!)
 request.httpMethod = "POST"
 
 request.addValue("Test Agent", forHTTPHeaderField: "User-Agent")
 
 request.addValue("true", forHTTPHeaderField: "Keep-Alive")
 
-request.addValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+request.addValue("multipart/form-data; boundary=\(boundary.stringValue)", forHTTPHeaderField: "Content-Type")
 
-request.httpBody = postData
+request.httpBody = try! multipartFormData.encode()
+let semaphore = DispatchSemaphore(value: 0) 
 
 let task = URLSession.shared.dataTask(with: request) { data, response, error in 
-  guard let data = data else {
-    print(String(describing: error))
-    return
-  }
-  print(String(data: data, encoding: .utf8)!)
+    defer { semaphore.signal() }  
+
+    if let error = error {
+        print("Error: \(error.localizedDescription)")
+        return
+    }
+    guard let data = data else {
+        print("No data received")
+        return
+    }
+    if let responseString = String(data: data, encoding: .utf8) {
+        print("Response: \(responseString)")
+    }
 }
+
 task.resume()
+
+semaphore.wait()
 """;
 
         expect(
@@ -941,27 +1132,43 @@ task.resume()
             expectedCode);
       });
       test('POST 10', () {
-        const expectedCode = r"""
+        const expectedCode = r'''
 import Foundation
 
-let parameters = "{\n\"text\": \"I LOVE Flutter\"\n}"
-let postData = parameters.data(using: .utf8)
-var request = URLRequest(url: URL(string: "https://api.apidash.dev/case/lower?size=2&len=3")!,timeoutInterval: Double.infinity)
+let postData = """
+{
+"text": "I LOVE Flutter"
+}
+""".data(using: .utf8)
+var request = URLRequest(url: URL(string: "https://api.apidash.dev/case/lower?size=2&len=3")!)
 request.httpMethod = "POST"
 
-request.addValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
+request.addValue("application/json", forHTTPHeaderField: "Content-Type")
 
 request.httpBody = postData
 
+let semaphore = DispatchSemaphore(value: 0) 
+
 let task = URLSession.shared.dataTask(with: request) { data, response, error in 
-  guard let data = data else {
-    print(String(describing: error))
-    return
-  }
-  print(String(data: data, encoding: .utf8)!)
+    defer { semaphore.signal() }  
+
+    if let error = error {
+        print("Error: \(error.localizedDescription)")
+        return
+    }
+    guard let data = data else {
+        print("No data received")
+        return
+    }
+    if let responseString = String(data: data, encoding: .utf8) {
+        print("Response: \(responseString)")
+    }
 }
+
 task.resume()
-""";
+
+semaphore.wait()
+''';
 
         expect(
             codeGen.getCode(
@@ -972,34 +1179,50 @@ task.resume()
             expectedCode);
       });
     },
-    skip: true,
   );
 
   group(
     'HTTPVerb.put',
     () {
       test('PUT 1', () {
-        const expectedCode = r"""
+        const expectedCode = r'''
 import Foundation
 
-let parameters = "{\n\"name\": \"morpheus\",\n\"job\": \"zion resident\"\n}"
-let postData = parameters.data(using: .utf8)
-var request = URLRequest(url: URL(string: "https://reqres.in/api/users/2")!,timeoutInterval: Double.infinity)
+let postData = """
+{
+"name": "morpheus",
+"job": "zion resident"
+}
+""".data(using: .utf8)
+var request = URLRequest(url: URL(string: "https://reqres.in/api/users/2")!)
 request.httpMethod = "PUT"
 
 request.addValue("application/json", forHTTPHeaderField: "Content-Type")
 
 request.httpBody = postData
 
+let semaphore = DispatchSemaphore(value: 0) 
+
 let task = URLSession.shared.dataTask(with: request) { data, response, error in 
-  guard let data = data else {
-    print(String(describing: error))
-    return
-  }
-  print(String(data: data, encoding: .utf8)!)
+    defer { semaphore.signal() }  
+
+    if let error = error {
+        print("Error: \(error.localizedDescription)")
+        return
+    }
+    guard let data = data else {
+        print("No data received")
+        return
+    }
+    if let responseString = String(data: data, encoding: .utf8) {
+        print("Response: \(responseString)")
+    }
 }
+
 task.resume()
-""";
+
+semaphore.wait()
+''';
 
         expect(
             codeGen.getCode(
@@ -1010,34 +1233,50 @@ task.resume()
             expectedCode);
       });
     },
-    skip: true,
   );
 
   group(
     'HTTPVerb.patch',
     () {
       test('PATCH 1', () {
-        const expectedCode = r"""
+        const expectedCode = r'''
 import Foundation
 
-let parameters = "{\n\"name\": \"marfeus\",\n\"job\": \"accountant\"\n}"
-let postData = parameters.data(using: .utf8)
-var request = URLRequest(url: URL(string: "https://reqres.in/api/users/2")!,timeoutInterval: Double.infinity)
+let postData = """
+{
+"name": "marfeus",
+"job": "accountant"
+}
+""".data(using: .utf8)
+var request = URLRequest(url: URL(string: "https://reqres.in/api/users/2")!)
 request.httpMethod = "PATCH"
 
 request.addValue("application/json", forHTTPHeaderField: "Content-Type")
 
 request.httpBody = postData
 
+let semaphore = DispatchSemaphore(value: 0) 
+
 let task = URLSession.shared.dataTask(with: request) { data, response, error in 
-  guard let data = data else {
-    print(String(describing: error))
-    return
-  }
-  print(String(data: data, encoding: .utf8)!)
+    defer { semaphore.signal() }  
+
+    if let error = error {
+        print("Error: \(error.localizedDescription)")
+        return
+    }
+    guard let data = data else {
+        print("No data received")
+        return
+    }
+    if let responseString = String(data: data, encoding: .utf8) {
+        print("Response: \(responseString)")
+    }
 }
+
 task.resume()
-""";
+
+semaphore.wait()
+''';
 
         expect(
             codeGen.getCode(
@@ -1048,27 +1287,39 @@ task.resume()
             expectedCode);
       });
     },
-    skip: true,
   );
 
   group(
     'HTTPVerb.delete',
     () {
       test('DELETE 1', () {
-        const expectedCode = r"""
+        const expectedCode = r'''
 import Foundation
 
-var request = URLRequest(url: URL(string: "https://reqres.in/api/users/2")!,timeoutInterval: Double.infinity)
+var request = URLRequest(url: URL(string: "https://reqres.in/api/users/2")!)
 request.httpMethod = "DELETE"
+let semaphore = DispatchSemaphore(value: 0) 
+
 let task = URLSession.shared.dataTask(with: request) { data, response, error in 
-  guard let data = data else {
-    print(String(describing: error))
-    return
-  }
-  print(String(data: data, encoding: .utf8)!)
+    defer { semaphore.signal() }  
+
+    if let error = error {
+        print("Error: \(error.localizedDescription)")
+        return
+    }
+    guard let data = data else {
+        print("No data received")
+        return
+    }
+    if let responseString = String(data: data, encoding: .utf8) {
+        print("Response: \(responseString)")
+    }
 }
+
 task.resume()
-""";
+
+semaphore.wait()
+''';
 
         expect(
             codeGen.getCode(
@@ -1080,27 +1331,44 @@ task.resume()
       });
 
       test('DELETE 2', () {
-        const expectedCode = r"""
+        const expectedCode = r'''
 import Foundation
 
-let parameters = "{\n\"name\": \"marfeus\",\n\"job\": \"accountant\"\n}"
-let postData = parameters.data(using: .utf8)
-var request = URLRequest(url: URL(string: "https://reqres.in/api/users/2")!,timeoutInterval: Double.infinity)
+let postData = """
+{
+"name": "marfeus",
+"job": "accountant"
+}
+""".data(using: .utf8)
+var request = URLRequest(url: URL(string: "https://reqres.in/api/users/2")!)
 request.httpMethod = "DELETE"
 
 request.addValue("application/json", forHTTPHeaderField: "Content-Type")
 
 request.httpBody = postData
 
+let semaphore = DispatchSemaphore(value: 0) 
+
 let task = URLSession.shared.dataTask(with: request) { data, response, error in 
-  guard let data = data else {
-    print(String(describing: error))
-    return
-  }
-  print(String(data: data, encoding: .utf8)!)
+    defer { semaphore.signal() }  
+
+    if let error = error {
+        print("Error: \(error.localizedDescription)")
+        return
+    }
+    guard let data = data else {
+        print("No data received")
+        return
+    }
+    if let responseString = String(data: data, encoding: .utf8) {
+        print("Response: \(responseString)")
+    }
 }
+
 task.resume()
-""";
+
+semaphore.wait()
+''';
 
         expect(
             codeGen.getCode(
@@ -1111,6 +1379,5 @@ task.resume()
             expectedCode);
       });
     },
-    skip: true,
   );
 }
