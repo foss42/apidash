@@ -9,6 +9,7 @@ import 'widgets/widgets.dart' show WindowCaption, WorkspaceSelector;
 import 'providers/providers.dart';
 import 'services/services.dart';
 import 'screens/screens.dart';
+import 'package:apidash/api_evalution/evalution.dart';
 import 'consts.dart';
 
 class App extends ConsumerStatefulWidget {
@@ -101,6 +102,63 @@ class _AppState extends ConsumerState<App> with WindowListener {
   }
 }
 
+// class DashApp extends ConsumerWidget {
+//   const DashApp({super.key});
+
+//   @override
+//   Widget build(BuildContext context, WidgetRef ref) {
+//     final isDarkMode =
+//         ref.watch(settingsProvider.select((value) => value.isDark));
+//     final workspaceFolderPath = ref
+//         .watch(settingsProvider.select((value) => value.workspaceFolderPath));
+//     final showWorkspaceSelector = kIsDesktop && (workspaceFolderPath == null);
+//     return Portal(
+//       child: MaterialApp(
+//         debugShowCheckedModeBanner: false,
+//         theme: kLightMaterialAppTheme,
+//         darkTheme: kDarkMaterialAppTheme,
+//         themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
+//         routes: {
+//           '/evaluation': (context) => const EvaluationDashboard(), // Your screen
+//       },
+//         home: showWorkspaceSelector
+//             ? WorkspaceSelector(
+//                 onContinue: (val) async {
+//                   await initHiveBoxes(kIsDesktop, val);
+//                   ref
+//                       .read(settingsProvider.notifier)
+//                       .update(workspaceFolderPath: val);
+//                 },
+//                 onCancel: () async {
+//                   try {
+//                     await windowManager.destroy();
+//                   } catch (e) {
+//                     debugPrint(e.toString());
+//                   }
+//                 },
+//               )
+//             : Stack(
+//                 children: [
+//                   !kIsLinux && !kIsMobile
+//                       ? const App()
+//                       : context.isMediumWindow
+//                           ? const MobileDashboard()
+//                           : const Dashboard(),
+//                   if (kIsWindows)
+//                     SizedBox(
+//                       height: 29,
+//                       child: WindowCaption(
+//                         backgroundColor: Colors.transparent,
+//                         brightness:
+//                             isDarkMode ? Brightness.dark : Brightness.light,
+//                       ),
+//                     ),
+//                 ],
+//               ),
+//       ),
+//     );
+//   }
+// }
 class DashApp extends ConsumerWidget {
   const DashApp({super.key});
 
@@ -111,6 +169,7 @@ class DashApp extends ConsumerWidget {
     final workspaceFolderPath = ref
         .watch(settingsProvider.select((value) => value.workspaceFolderPath));
     final showWorkspaceSelector = kIsDesktop && (workspaceFolderPath == null);
+
     return Portal(
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -135,11 +194,14 @@ class DashApp extends ConsumerWidget {
               )
             : Stack(
                 children: [
+                  // Existing APIDash UI layers
                   !kIsLinux && !kIsMobile
                       ? const App()
                       : context.isMediumWindow
                           ? const MobileDashboard()
                           : const Dashboard(),
+
+                  // Windows-specific caption (keep existing)
                   if (kIsWindows)
                     SizedBox(
                       height: 29,
@@ -149,6 +211,14 @@ class DashApp extends ConsumerWidget {
                             isDarkMode ? Brightness.dark : Brightness.light,
                       ),
                     ),
+
+                  // Your EvaluationDashboard added here
+                  Positioned(
+                    right: 16, // 16 pixels from right
+                    bottom: 16, // 16 pixels from bottom
+                    width: 300, // Set a fixed width or use constraints
+                    child: const EvaluationDashboard(), // Your widget
+                  ),
                 ],
               ),
       ),

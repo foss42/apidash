@@ -17,6 +17,8 @@ dependencies:
   code_builder: ^4.10.0
   csv: ^6.0.0
   data_table_2: 2.5.16
+  http: ^1.1.0
+  fl_chart: ^0.70.2
   dart_style: ^3.0.1
   desktop_drop: ^0.5.0
   extended_text_field: ^16.0.0
