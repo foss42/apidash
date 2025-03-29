@@ -10,6 +10,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  introduction_screen: ^3.1.8
+  flutter_animate: ^4.5.0
   apidash_core:
     path: packages/apidash_core
   apidash_design_system:
