@@ -16,9 +16,8 @@
 ## Skills
 
 - **Flutter & Dart Development:** Advanced knowledge in Flutter app development, with a strong focus on API clients, network communication, and performance optimizations.
-- **API Development & Integration:** Deep experience working with REST APIs, GraphQL, WebSockets, authentication methods (OAuth, JWT, API keys), and network protocols.
-- **Programming Languages:** Currently Proficient in C++, Dart, and x86 Assembly but adaptable to any(worked with 15+ languages) with a strong grasp of low-level computing concepts.
-- **Frameworks & Libraries:** Expertise in networking libraries, authentication strategies, and API testing tools.
+- **API Development & Integration:** Deep experience working with REST APIs, GraphQL, WebSockets, authentication methods and network protocols.
+- **Programming Languages:** Currently Proficient in C++, Dart, and x86 Assembly but adaptable to any(worked with 10+ languages) with a strong grasp of low-level computing concepts.
 - **Low-Level System Knowledge:** Understanding of computer architecture, memory management, operating systems, and system performance optimizations.
 - **Problem-Solving & Competitive Coding:** Rated 5-star @CodeChef and 1600+ on LeetCode, with a solid grasp of algorithms and data structures.
 - **Collaboration & Open Source Contributions:** Actively contributing to APIDash, with multiple PRs :
@@ -56,8 +55,9 @@ I’ve been actively contributing to APIDash, submitting multiple PRs and raisin
 **Proudest Achievement:**  
 Leading a college hackathon team to build an API client under a strict deadline. This experience strengthened my problem-solving skills and ability to work efficiently under pressure.
 
-**Interest in APIDash:**  
-I love how APIDash is fully built in Flutter, and I see a lot of potential in enhancing its authentication support and code generation features.
+**Interest in APIDash:**
+
+APIDash is fascinating because of its fully Flutter-based architecture, which ensures a seamless and consistent cross-platform experience. Its efficient approach to  request management and response visualization makes it a powerful yet lightweight tool. The way it streamlines code generation further enhances its usability for developers working with APIs.
 
 **Time Commitment:**  
 I will be working on GSoC full-time, dedicating 7+ hours per day, especially in the early stages, to ensure smooth progress.
