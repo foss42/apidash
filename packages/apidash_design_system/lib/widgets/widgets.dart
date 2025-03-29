@@ -7,5 +7,6 @@ export 'dropdown.dart';
 export 'list_tile.dart';
 export 'popup_menu.dart';
 export 'snackbar.dart';
+export 'suggestions_menu_box.dart';
 export 'textfield_outlined.dart';
 export 'textfield_raw.dart';

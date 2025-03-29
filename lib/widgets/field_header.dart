@@ -1,3 +1,6 @@
+// Deprecated but kept as a backup
+
+/*
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
@@ -110,3 +113,4 @@ class _HeaderFieldState extends State<HeaderField> {
     return getHeaderSuggestions(pattern);
   }
 }
+*/
