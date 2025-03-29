@@ -49,9 +49,8 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
               body = requestBody;
               headers[HttpHeaders.contentLengthHeader] =
                   contentLength.toString();
-              if (!requestModel.hasContentTypeHeader) {
-                headers[HttpHeaders.contentTypeHeader] =
-                    requestModel.bodyContentType.header;
+              if (!requestModel.hasContentTypeHeader && requestModel.bodyContentType.header.isNotEmpty) {
+                headers[HttpHeaders.contentTypeHeader] = requestModel.bodyContentType.header;
               }
             }
           }
@@ -114,7 +113,7 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
           if (contentLength > 0) {
             body = requestBody;
             headers[HttpHeaders.contentLengthHeader] = contentLength.toString();
-            if (!requestModel.hasContentTypeHeader) {
+            if (!requestModel.hasContentTypeHeader && ContentType.json.header.isNotEmpty) {
               headers[HttpHeaders.contentTypeHeader] = ContentType.json.header;
             }
           }
