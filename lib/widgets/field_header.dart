@@ -79,20 +79,9 @@ class _HeaderFieldState extends State<HeaderField> {
         style: kCodeStyle.copyWith(
           color: colorScheme.onSurface,
         ),
-        decoration: InputDecoration(
-          hintStyle: kCodeStyle.copyWith(color: colorScheme.outlineVariant),
+        decoration: getTextFieldInputDecoration(
+          colorScheme,
           hintText: widget.hintText,
-          contentPadding: const EdgeInsets.only(bottom: 12),
-          focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(
-              color: colorScheme.outline,
-            ),
-          ),
-          enabledBorder: UnderlineInputBorder(
-            borderSide: BorderSide(
-              color: colorScheme.surfaceContainerHighest,
-            ),
-          ),
         ),
       ),
     );
