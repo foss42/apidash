@@ -1,4 +1,5 @@
 import 'package:apidash/consts.dart';
+import 'package:apidash/screens/home_page/editor_pane/details_card/request_pane/request_authorization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
@@ -26,7 +27,13 @@ class EditRestRequestPane extends ConsumerWidget {
     final hasBody = ref.watch(selectedRequestModelProvider
             .select((value) => value?.httpRequestModel?.hasBody)) ??
         false;
-
+    final authEnabled = ref.watch(selectedRequestModelProvider
+            .select((value) => value?.httpRequestModel?.headers?.any(
+                  (h) =>
+                      (h.name).toLowerCase() == 'authorization' &&
+                      h.value?.isNotEmpty == true,
+                ))) ??
+        false;
     return RequestPane(
       selectedId: selectedId,
       codePaneVisible: codePaneVisible,
@@ -42,16 +49,19 @@ class EditRestRequestPane extends ConsumerWidget {
       },
       showIndicators: [
         paramLength > 0,
+        authEnabled,
         headerLength > 0,
         hasBody,
       ],
       tabLabels: const [
         kLabelURLParams,
+        kLabelAuthorization,
         kLabelHeaders,
         kLabelBody,
       ],
       children: const [
         EditRequestURLParams(),
+        EditRequestAuthorization(),
         EditRequestHeaders(),
         EditRequestBody(),
       ],
