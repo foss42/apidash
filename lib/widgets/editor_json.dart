@@ -11,12 +11,14 @@ class JsonTextFieldEditor extends StatefulWidget {
     required this.fieldKey,
     this.onChanged,
     this.initialValue,
+    this.hintText,
     this.readOnly = false,
   });
 
   final String fieldKey;
   final Function(String)? onChanged;
   final String? initialValue;
+  final String? hintText;
   final bool readOnly;
   @override
   State<JsonTextFieldEditor> createState() => _JsonTextFieldEditorState();
@@ -147,7 +149,7 @@ class _JsonTextFieldEditorState extends State<JsonTextFieldEditor> {
               editorFocusNode.unfocus();
             },
             decoration: InputDecoration(
-              hintText: kHintJson,
+              hintText: widget.hintText ?? kHintContent,
               hintStyle: TextStyle(
                 color: Theme.of(context).colorScheme.outlineVariant,
               ),

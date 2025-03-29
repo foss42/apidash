@@ -77,6 +77,7 @@ class EditRequestBody extends ConsumerWidget {
                             .read(collectionStateNotifierProvider.notifier)
                             .update(body: value);
                       },
+                      hintText: kHintJson,
                     ),
                   ),
                 _ => Padding(
