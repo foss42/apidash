@@ -1,4 +1,7 @@
 import 'package:apidash/consts.dart';
+import 'package:apidash/providers/auth_providers.dart';
+import 'package:apidash/screens/home_page/editor_pane/details_card/request_pane/request_auth.dart';
+import 'package:apidash_core/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
@@ -20,6 +23,9 @@ class EditRestRequestPane extends ConsumerWidget {
     final headerLength = ref.watch(selectedRequestModelProvider
             .select((value) => value?.httpRequestModel?.headersMap.length)) ??
         0;
+    final hasAuth = ref.watch(authTypeProvider) !=
+            AuthType.none &&
+        (ref.watch(authDataProvider)?.isNotEmpty ?? false);
     final paramLength = ref.watch(selectedRequestModelProvider
             .select((value) => value?.httpRequestModel?.paramsMap.length)) ??
         0;
@@ -42,16 +48,19 @@ class EditRestRequestPane extends ConsumerWidget {
       },
       showIndicators: [
         paramLength > 0,
+        hasAuth,
         headerLength > 0,
         hasBody,
       ],
       tabLabels: const [
         kLabelURLParams,
+        kLabelAuth,
         kLabelHeaders,
         kLabelBody,
       ],
       children: const [
         EditRequestURLParams(),
+        EditRequestAuth(),
         EditRequestHeaders(),
         EditRequestBody(),
       ],
