@@ -68,9 +68,14 @@ What excites me the most about API Dash is its aim to streamline the testing and
 
 
 ### 8. Can you mention some areas where the project can be improved?  
-DashBot's UI/UX can be significantly enhanced by implementing several modern features to improve user interaction and satisfaction. One key improvement is the introduction of a **Resizable and Draggable Chat Window**, allowing users to adjust the chat interface according to their preferences and screen space, creating a more personalized and efficient workspace. 
 
-**Integrating Voice Input** can also change the way of how users interact with DashBot. By enabling voice commands, users can perform tasks hands-free, which is particularly beneficial in scenarios where typing is inconvenient or impossible. This feature not only adds convenience but also makes DashBot more accessible to users with disabilities, aligning with inclusive design principles and expanding its utility in diverse environments.
+DashBot's UI/UX can be significantly enhanced by implementing several modern features to improve user interaction and satisfaction. One key improvement is the introduction of a **Resizable and Draggable Chat Window**, allowing users to adjust the chat interface according to their preferences and screen space, creating a more personalized and efficient workspace.  
+
+**Integrating Voice Input** can also change the way users interact with DashBot. By enabling voice commands, users can perform tasks hands-free, which is particularly beneficial in scenarios where typing is inconvenient or impossible. This feature not only adds convenience but also makes DashBot more accessible to users with disabilities, aligning with inclusive design principles and expanding its utility in diverse environments.  
+
+Additionally, a **Security & Compliance Advisor** can enhance DashBot’s capabilities by providing:  
+- **Vulnerability Scanning:** Automatically identifying security risks such as missing authentication, exposed sensitive data, and other vulnerabilities.  
+- **Auto-Remediation:** Offering actionable suggestions to fix issues like CORS misconfigurations or insecure headers.
 
 ### **PROJECT TITLE : DashBot**
 
@@ -100,7 +105,38 @@ For core features like debugging API requests, generating documentation, and cre
 
 API response visualizations will be built using the `fl_chart` library, which supports customizable line, bar, pie, scatter, and radar charts. This integration will allow users to interactively analyze API data and identify trends.
 
-The UI/UX will be optimized for developer productivity, featuring a responsive design, dynamic theming and real-time feedback. Benchmark evaluations for each LLM provider will be conducted using predefined datasets to compare accuracy, response time, and cost efficiency, empowering users to choose the optimal backend.
+Benchmark evaluations for each LLM provider will be conducted. Here are the key metrics that will be considered for benchmarking different models,
+
+- **Explain responses**
+  - Discrepancy Detection Rate: Does the LLM correctly identify discrepancies?
+  - Explainability Score: Are explanations understandable to developers?
+  - Edge Case Handling: Can it handle ambiguous or incomplete responses?
+
+- **Debug errors**
+  - Error Classification Accuracy: Does the LLM correctly identify the error source?
+  - Fix Implementation Rate: Are fixes actionable and contextually appropriate?
+  - Ambiguity Handling Test: Can it categorize errors (e.g., syntax vs. logic)?
+
+- **Generate Documentation**
+  - Coverage Score: Does the documentation cover all endpoints, parameters, and responses?
+  - Readability Assessment: Is the documentation clear and well-structured?
+  - Standard Compliance Check: Does it adhere to standards?
+
+- **Generate Tests**
+  - Test Coverage Report: Percentage of API endpoints and edge cases covered
+  - Test Execution Success Rate: Do tests pass/fail correctly when run?
+  - Adaptability Test: Are tests structured for easy updates?
+
+- **Generate Visualizations**
+  - Data Fidelity Check: Does the plot correctly represent the data?
+  - Aesthetic Scoring: Is the visualization clear and professional?
+  - Customization Flexibility Test: Can users tweak parameters?
+
+- **Generate Frontend Code**
+  - Code Execution Test: Does the code compile and function as expected?
+  - Best Practice Adherence: Does it follow best practices?
+  - Maintainability Score: Is the code clean and maintainable?
+
 
 Key dependencies are,
 
@@ -111,9 +147,6 @@ Key dependencies are,
 - [flutter_riverpod](https://pub.dev/packages/flutter_riverpod)
 - [fl_charts](https://pub.dev/packages/fl_chart)
 
-
-
-Here's a well-structured **Flutter MVVM (Model-View-ViewModel) project** using a **feature-first approach**, ensuring scalability and maintainability:  
 
 ## **FOLDER STRUCTURE**
 ```
@@ -133,12 +166,14 @@ lib/
 
 DashBot can be accessed from the home screen of API Dash using a floating action button at the bottom right corner.
 
-![api explorer](images/dashbot_on_screen.png)
+![DashBot On Screen](images/dashbot_on_screen.png)
+![DashBot Settings](images/dashbot_settings_1.png)
+![DashBot Debug](images/dashbot_debug.png)
 
 <div 
     style="display: flex; justify-content: center; gap: 10px;">
-    <img src="images/dashbot_default.png" alt="GSoC Logo" style="width: 200px; height: auto;">
-    <img src="images/dashbot_default_dark.png" alt="API Dash Logo" style="width: 200px; height: auto;">
+    <img src="images/dashbot_default.png" alt="dashbot_default_dark" style="width: 300px; height: auto;">
+    <img src="images/dashbot_default_dark.png" alt="dashbot_default_dark" style="width: 300px; height: auto;">
 </div>
 
 
@@ -175,8 +210,7 @@ The second part will involve generating API integration frontend code for fronte
 
 #### **Milestone #4: Benchmarking & Optimization**
 
-This milestone will invole in running benchmark evaluations for all LLM providers using predefined datasets.
-Comparing accuracy, response time, and cost efficiency across providers.
+This milestone will invole in running benchmark evaluations for all LLM providers by comparing the result of key metrics from each model mentioned in the [Detailed Description](#detailed-description) section.
 
 ## **[GSOC 2025 TIMELINE](https://developers.google.com/open-source/gsoc/timeline) FOR REFERENCE**
 
@@ -255,7 +289,6 @@ their final mentor evaluation (standard coding period)
 
       A significant portion of the week will be dedicated to testing all integrations thoroughly and addressing any bugs or issues identified.
       Documentation is enhanced in the if no issues arise.
-      
 
     * **Week 9 (July 28 - August 3)**
 
@@ -269,12 +302,12 @@ their final mentor evaluation (standard coding period)
     * **Week 11 (August 11 - August 17)**
 
       The former half of the week acts as a buffer period in case any issues are confronted.
-      Documentation is enhanced in the buffer period if no issues arise.
+      Documentation and benchmarking evaluations are enhanced in the buffer period if no issues arise.
       <u>Milestone #4 is delivered.</u>
 
     * **Week 12 (August 18 - August 24)**
 
-      Final checks are made, and any supporting documents (such as example usage markdown files) are written.
+      Final checks are made, and any supporting documents (such as example usage markdown files, bechmarkings, ) are written.
       The project Report is written and all tracking issues are labelled appropriately.
 
 * **Final Week (August 25 - September 1)**
