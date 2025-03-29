@@ -57,8 +57,6 @@ class _RequestPaneState extends State<RequestPane>
                         style: FilledButton.styleFrom(
                           padding: kPh12,
                           minimumSize: const Size(44, 44),
-                          visualDensity: VisualDensity.compact,
-                          alignment: Alignment.center,
                         ),
                         onPressed: widget.onPressedCodeButton,
                         icon: Icon(
