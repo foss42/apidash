@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:data_table_2/data_table_2.dart';
 import 'package:apidash/providers/providers.dart';
-import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/screens/common_widgets/common_widgets.dart';
 
