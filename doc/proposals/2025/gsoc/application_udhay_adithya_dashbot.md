@@ -191,9 +191,9 @@ I propose to divide the project into four milestones/deliverables to produce a s
 
 #### **Milestone #1: Architecture Setup & Multi-LLM Integration.**
 
-This milestone will lay the foundation of `DashBot`, building a interactive, draggable and responsive interface for DashBot.
+This milestone will lay the foundation of `DashBot`, building an interactive, draggable and responsive interface for DashBot.
 
-Integrate support for multiple LLM providers with the option to switch between LLM's.
+Integrate support for multiple LLM providers with the option to switch between LLMs.
 
 #### **Milestone #2: Core Feature Implementation**  
 This milestone focuses on integrating three major features and is expected to be the most time-intensive phase of development.  
@@ -205,12 +205,12 @@ This milestone focuses on integrating three major features and is expected to be
 
 #### **Milestone #3: Visualization & UI/UX Development**
 
-This Milestone is divided into two parts. The first part will aim at adding integrations for for API response visualizations (line, bar, pie, scatter, radar charts).
+This Milestone is divided into two parts. The first part will aim at adding integrations for API response visualizations (line, bar, pie, scatter, radar charts).
 The second part will involve generating API integration frontend code for frontend frameworks.
 
 #### **Milestone #4: Benchmarking & Optimization**
 
-This milestone will invole in running benchmark evaluations for all LLM providers by comparing the result of key metrics from each model mentioned in the [Detailed Description](#detailed-description) section.
+This milestone will involve running benchmark evaluations for all LLM providers by comparing the result of key metrics from each model mentioned in the [Detailed Description](#detailed-description) section.
 
 ## **[GSOC 2025 TIMELINE](https://developers.google.com/open-source/gsoc/timeline) FOR REFERENCE**
 
@@ -240,12 +240,12 @@ their final mentor evaluation (standard coding period)
 ## **PREDICTED PROJECT TIMELINE**
 * **Community Bonding Period (May 8 - June 1)**
 
-    This is the period where I will get to know my mentors better. I will also ask questions and attempt to clarify the doubts and queries in my mind, to get a clear understanding of the project. Although Google recommends this 3-week bonding period to be entirely for the introduction of GSoC Contributors into their projects, since we are going to build a brand new feature, I propose to begin coding from the 2nd or 3rd week of this period, thus adding a headstart.
+    This is the period where I will get to know my mentors better. I will also ask questions and attempt to clarify the doubts and queries in my mind, to get a clear understanding of the project. Although Google recommends this 3-week bonding period to be entirely for the introduction of GSoC Contributors into their projects, since we are going to build a brand new feature, I propose to begin coding from the 2nd or 3rd week of this period, thus adding a head start.
 
 * **Coding Period (June 2 - July 14)**
     * **Week 1 (June 2 - June 8)**
 
-      <u>M#1 is delivered, comprising of a function DashBot.</u>
+      <u>M#1 is delivered, consisting of a function DashBot.</u>
       
       Work on M#2 begins in the latter half of the week.
 
@@ -259,7 +259,7 @@ their final mentor evaluation (standard coding period)
 
     * **Week 4 (June 16 - June 22)**
     
-      Based on the implementation experience and testing feedback from the previous weeks, refinements will be made by enhance LLM responses using Few-shot prompting and ReAct techniques to ensure robustness and efficiency.
+      Based on the implementation experience and testing feedback from the previous weeks, refinements will be made by enhancing LLM responses using Few-shot prompting and ReAct techniques to ensure robustness and efficiency.
 
     * **Week 5 (June 23 - June 29)**
 
@@ -273,7 +273,7 @@ their final mentor evaluation (standard coding period)
 
       Changes follow, from Mentor Review, if required.
       
-      Start of M#3 by adding integrations for for API response visualizations.
+      Start of M#3 by adding integrations for API response visualizations.
       
       Final Mentor Review before Mid-term Evaluation is submitted.
 
@@ -288,7 +288,7 @@ their final mentor evaluation (standard coding period)
     * **Week 8 (July 21 - July 27)**
 
       A significant portion of the week will be dedicated to testing all integrations thoroughly and addressing any bugs or issues identified.
-      Documentation is enhanced in the if no issues arise.
+      Documentation is enhanced in if no issues arise.
 
     * **Week 9 (July 28 - August 3)**
 
@@ -307,7 +307,7 @@ their final mentor evaluation (standard coding period)
 
     * **Week 12 (August 18 - August 24)**
 
-      Final checks are made, and any supporting documents (such as example usage markdown files, bechmarkings, ) are written.
+      Final checks are made, and any supporting documents (such as example usage markdown files, benchmarkings, ) are written.
       The project Report is written and all tracking issues are labelled appropriately.
 
 * **Final Week (August 25 - September 1)**
