@@ -69,11 +69,11 @@ This project aims to develop an end-to-end AI API evaluation framework integrate
 This project integrates an AI API evaluation framework into API Dash to assess models across text, images, audio, and video. It supports both online (API-based) and offline (LoRA adapters with 4-bit models) evaluations. Users can upload datasets, customize metrics, and visualize results through charts. Explainability features using SHAP and LIME provide insights into model decisions. The framework also tracks performance metrics and generates detailed reports for easy comparison and analysis.
 
 ## Screenshots 
-![Screenshot 1](https://drive.google.com/file/d/14yO9Hv8i2dXO-0MCZAyW-HsJpRtL0lS4/view?usp=sharing)
+![Screenshot 1](https://github.com/GANGSTER0910/apidash/blob/eb49dfc93538a8e08653b9a89d87e5d4a510b24f/doc/proposals/2025/gsoc/images/AI_API_EVAL_Dashboard_1.png)
 
-![Screenshot 2](https://drive.google.com/file/d/1Lzo4aUCUhCmqQvqog9Xttk1h_nTX4pwP/view)
+![Screenshot 2](https://github.com/GANGSTER0910/apidash/blob/eb49dfc93538a8e08653b9a89d87e5d4a510b24f/doc/proposals/2025/gsoc/images/AI_API_EVAL_Dashboard_2.png)
 
-![Screenshot 3](https://drive.google.com/file/d/1bpwOu-RZHVCDzOoSOVCcayBEqfNDQOay/view?usp=sharing)
+![Screenshot 3](https://github.com/GANGSTER0910/apidash/blob/eb49dfc93538a8e08653b9a89d87e5d4a510b24f/doc/proposals/2025/gsoc/images/AI_API_EVAL_result.png)
 
 
 
