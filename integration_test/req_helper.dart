@@ -84,7 +84,7 @@ class ApidashTestRequestHelper {
 
     var headerCells = find.descendant(
         of: find.byType(EditRequestHeaders),
-        matching: find.byType(HeaderField));
+        matching: find.byType(EnvHeaderField));
     var valueCells = find.descendant(
         of: find.byType(EditRequestHeaders),
         matching: find.byType(EnvCellField));
@@ -95,7 +95,7 @@ class ApidashTestRequestHelper {
       tester.testTextInput.enterText(keyValuePairs[i].$2);
       headerCells = find.descendant(
           of: find.byType(EditRequestHeaders),
-          matching: find.byType(HeaderField));
+          matching: find.byType(EnvHeaderField));
       valueCells = find.descendant(
           of: find.byType(EditRequestHeaders),
           matching: find.byType(EnvCellField));
