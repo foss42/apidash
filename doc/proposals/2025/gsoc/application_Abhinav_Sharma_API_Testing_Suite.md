@@ -144,7 +144,7 @@ My first task will be to analyze the existing APIDash codebase, identify integra
 **Technical Approach Finalization:**  
 - I'm going to define data structures for API collections and workflows.  
 - My approach includes evaluating local storage solutions (such as SQLite or Hive) versus cloud-based options, considering potential future expansion to cloud synchronization.  
-- I need to carefully assess appropriate tools for batch execution, such as threading, isolates, or queue-based execution. The current approach involves utilizing isolates and Future.then() for concurrent API testing.
+- I need to carefully assess appropriate tools for batch execution, such as threading, isolates, or queue-based execution. The current approach involves utilizing isolates and Future.then() for concurrent API testing. Please see PR [Stress Testing](https://github.com/foss42/apidash/pull/734)
 
 **UI/UX Design:**  
 - I'll be creating wireframes for new UI components like API collection manager, workflow builder, and test suite dashboards.  
@@ -242,11 +242,11 @@ In this phase, I need to develop a completely new API Testing Suite to validate 
 #### Week 9: Validation & Assertion Mechanisms
 **Schema Validation Implementation:**  
 - My plans include supporting JSON Schema validation.  
-- I'm committed to ensuring compliance with OpenAPI specifications.
+- I'm committed to ensuring compliance with OpenAPI specifications. [Schema Guidelines](https://spec.openapis.org/oas/latest.html#schema)
 
 **Response Assertion System:**  
 - My implementation will allow users to define conditions like status code checks, response time limits.  
-- I intend to implement support for regex-based validations.
+- I intend to implement support for regex-based validations. [Helpful Resource](https://confluence.atlassian.com/proforma/regex-validation-1087521274.html) 
 
 #### Week 10: Performance & Security Testing
 **Load Testing Module:**  
