@@ -33,40 +33,35 @@
 
 ## University Information
 
-- **University:** Indian Institute of Technology (IIT) Madras  
-- **Program:** BS in Data Science  
-- **Year:** 2024  
-- **Expected Graduation Date:** 2028  
-
----
-
-## Second Institution Information
-
 - **University:** KIET Group of Institutions, Ghaziabad  
 - **Program:** B.Tech in Computer Science with AI/ML  
 - **Year:** 2024  
 - **Expected Graduation Date:** 2028  
+---
+
+
 
 ---
 
 ## Motivation & Experience
 Short answers to the following questions (Add relevant links wherever you can):
 
-1. Have you worked on or contributed to a FOSS project before? Can you attach repo links or relevant PRs?  
+**1. Have you worked on or contributed to a FOSS project before? Can you attach repo links or relevant PRs?**
+
 I’ve been actively contributing to APIDash, submitting multiple PRs and raising issues. I have studied the codebase in depth and will begin implementation immediately after the initial discussions with mentors.
 
 
-2. What is your one project/achievement that you are most proud of? Why? 
+**2. What is your one project/achievement that you are most proud of? Why?**
 Leading a college hackathon team to build an API client under a strict deadline. This experience strengthened my problem-solving skills and ability to work efficiently under pressure.
 
-3. What interests you the most about API Dash?
+**3. What interests you the most about API Dash?**
 APIDash is fascinating because of its fully Flutter-based architecture, which ensures a seamless and consistent cross-platform experience. Its efficient approach to  request management and response visualization makes it a powerful yet lightweight tool. The way it streamlines code generation further enhances its usability for developers working with APIs.
 
 
-4. Will you be working on GSoC full-time? In case not, what will you be studying or working on while working on the project?
+**4. Will you be working on GSoC full-time? In case not, what will you be studying or working on while working on the project?**
 I will be working on GSoC full-time, dedicating 7+ hours per day, especially in the early stages, to ensure smooth progress. My vacations align perfectly with GSoC Timeline and my institute is very supportive for such opportunitites (if needed leave will be granted but i am sure it won't be necessary).
 
-5. Do you mind regularly syncing up with the project mentors?
+**5. Do you mind regularly syncing up with the project mentors?**
 Not at all! Regular sync-ups with the mentors will help me stay on track, get valuable feedback, and ensure the project progresses smoothly.
 
 ---
