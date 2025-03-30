@@ -6,9 +6,11 @@
 **Contact Info:**
 
 - **Email:** [nikhilljatt@gmail.com](mailto:nikhilljatt@gmail.com)
+- **Contact No.** - +918708200907
 - **Discord Handle:** @badnikhil
 - **GitHub:** [badnikhil](https://github.com/badnikhil)
 - **LINKEDIN:** [NIKHIL LUDDER](www.linkedin.com/in/nikhil-ludder-ba631216b)
+- **INSTA:** [INSTA](https://www.instagram.com/bad.nikhill/)
 - **Time Zone:** UTC+5:30 (IST)
 
 ---
