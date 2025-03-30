@@ -52,16 +52,20 @@ I’ve been actively contributing to APIDash, submitting multiple PRs and raisin
 
 
 **2. What is your one project/achievement that you are most proud of? Why?**
+
 Leading a college hackathon team to build an API client under a strict deadline. This experience strengthened my problem-solving skills and ability to work efficiently under pressure.
 
 **3. What interests you the most about API Dash?**
+
 APIDash is fascinating because of its fully Flutter-based architecture, which ensures a seamless and consistent cross-platform experience. Its efficient approach to  request management and response visualization makes it a powerful yet lightweight tool. The way it streamlines code generation further enhances its usability for developers working with APIs.
 
 
 **4. Will you be working on GSoC full-time? In case not, what will you be studying or working on while working on the project?**
+
 I will be working on GSoC full-time, dedicating 7+ hours per day, especially in the early stages, to ensure smooth progress. My vacations align perfectly with GSoC Timeline and my institute is very supportive for such opportunitites (if needed leave will be granted but i am sure it won't be necessary).
 
 **5. Do you mind regularly syncing up with the project mentors?**
+
 Not at all! Regular sync-ups with the mentors will help me stay on track, get valuable feedback, and ensure the project progresses smoothly.
 
 ---
