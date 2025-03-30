@@ -81,7 +81,6 @@ Tech Stack & Tools
     GraphQL	                |     GraphQL Parser (Dart)
     Testing	                |     Widget Testing, Integration Testing
     Environment Handling    |     OS Environment Variables (Dart)
- 
 
 Why This Project?
  Enhances Developer Productivity – Improves usability with better request handling, scripting, and JSON validation.
