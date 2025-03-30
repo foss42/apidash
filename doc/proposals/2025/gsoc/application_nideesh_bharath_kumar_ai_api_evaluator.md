@@ -5,6 +5,8 @@
 
 **Email:**  [bknideesh@gmail.com](mailto:bknideesh@gmail.com)
 
+**Phone Number:**  +1-224-333-1045
+
 **GitHub profile link:** [https://github.com/nb923](https://github.com/nb923)
 
 **Location:** New Jersey, United States of America
