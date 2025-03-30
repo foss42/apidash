@@ -7,7 +7,42 @@
 7. Time zone: GMT +6 (Bangladesh)
 8. Resume: https://drive.google.com/file/d/1_7YC1meQ0juyK80Bvp4A_9bmbfKqZcB7/view?usp=drive_link
 
+### University Info
 
+1. University name: Ahsanullah University Of Science & Technology
+2. Program you are enrolled in (Degree & Major/Minor): B.Sc in CSE
+3. Year: 4(Final Year)
+5. Expected graduation date: 14/05/2026
+
+### Motivation & Past Experience
+
+### **Short Answers:**  
+
+1. **Have you worked on or contributed to a FOSS project before?**  
+   No, I haven't contributed to a FOSS project before, but I'm eager to start with this GSoC opportunity.  
+
+2. **What is your one project/achievement that you are most proud of? Why?**  
+   One of my proudest achievements is developing an **Angry Birds game using iGraphics**. This project pushed me to deeply understand physics-based simulations, collision detection, and game mechanics. It was particularly rewarding because I had to optimize performance while maintaining smooth gameplay, and it solidified my problem-solving skills in real-time rendering.  
+
+3. **What kind of problems or challenges motivate you the most to solve them?**  
+   I am most motivated by challenges that involve **performance optimization, real-time data processing, and system scalability**. Whether it's reducing execution time, handling large-scale data efficiently, or ensuring seamless communication in distributed systems, I find solving such problems both intellectually stimulating and rewarding.  
+
+4. **Will you be working on GSoC full-time?**  
+   Yes, I plan to dedicate my full time to GSoC. I want to immerse myself in the project, actively contribute to discussions, and ensure high-quality deliverables.  
+
+5. **Do you mind regularly syncing up with the project mentors?**  
+   Not at all! Regular sync-ups are essential for feedback and guidance. I believe structured discussions will help me align with project expectations, identify potential roadblocks early, and ensure smooth progress.  
+
+6. **What interests you the most about API Dash?**  
+   What excites me the most about API Dash is its **cross-platform support and extensibility**. The idea of having a unified API testing tool that supports multiple protocols across desktop and mobile platforms is fascinating. Additionally, the opportunity to work on **real-time protocols like WebSocket, SSE, MQTT, and gRPC** aligns perfectly with my interests in high-performance systems.  
+
+7. **Can you mention some areas where the project can be improved?**  
+   - **Real-time Collaboration:** Allow users to share and test APIs collaboratively in real time.  
+   - **Performance Benchmarking:** Add API request performance insights, such as latency breakdowns and server response analytics.  
+   - **Protocol-Specific Debugging Tools:** Enhance error reporting with detailed logs and debugging suggestions for WebSocket, SSE, MQTT, and gRPC failures.  
+   - **Mobile UI Optimization:** Improve API Dash’s UX on mobile devices, ensuring a seamless experience on touch interfaces.  
+
+These improvements can make API Dash an even more powerful tool for developers working on modern applications! 🚀
 ### Key Points
 - It seems likely that adding support for WebSocket, SSE, MQTT, and gRPC in API Dash will enhance its capabilities for real-time and high-performance API testing.
 - The project involves designing the core library architecture, understanding protocol specifications, and implementing testing, visualization, and code generation features.
