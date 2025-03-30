@@ -23,7 +23,7 @@ Short answers to the following questions (Add relevant links wherever you can):
 
 1. Have you worked on or contributed to a FOSS project before? Can you attach repo links or relevant PRs?
 
-   No. My first experience is with apidash. I have raised a PR for issue #122(https://github.com/foss42/apidash/pull/713) and
+   No. My first experience is with apidash. I have raised a PR for issue #122(https://github.com/foss42/apidash/pull/730) and
    had a good learning. Fairly comfortable with the process now
    and looking forward to contribute and work towards merging the PR in the apidash repo.
 
