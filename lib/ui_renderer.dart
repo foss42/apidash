@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:fl_chart/fl_chart.dart';
 class DynamicTable extends StatelessWidget {
   final Map<String, dynamic> schema;
   final List<Map<String, dynamic>> data;
@@ -36,16 +36,39 @@ class DynamicTable extends StatelessWidget {
       case "dropdown":
         return DropdownButton<String>(
           value: value,
-          items: [value].map((option) {
+          items: [value].map((item) {
             return DropdownMenuItem<String>(
-              value: option,
-              child: Text(option),
+              value: item, // item must be a String
+              child: Text(item),
             );
           }).toList(),
           onChanged: (_) {},
         );
       case "chart":
-        return Text("📊 ${value.toString()}"); // placeholder
+        return SizedBox(
+          width: 100,
+          height: 100,
+          child: BarChart(
+            BarChartData(
+              titlesData: FlTitlesData(show: false),
+              borderData: FlBorderData(show: false),
+              barGroups: [
+                BarChartGroupData(x: 0, barRods: [
+                  BarChartRodData(toY: (value as num).toDouble(), width: 20)
+                ])
+              ],
+            ),
+          ),
+        );
+      case "date":
+        return Text(value.toString().split('T').first);
+      case "slider":
+        return Slider(
+          value: (value as num).toDouble(),
+          onChanged: (_) {},
+          min: 0,
+          max: 100,
+        );
       default:
         return Text(value.toString());
     }

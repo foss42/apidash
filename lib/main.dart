@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        appBar: AppBar(title: const Text("AI UI Generator Demo")),
+        appBar: AppBar(title: const Text("AI UI Generator POC")),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: DynamicTable(schema: mockSchema, data: mockData),
