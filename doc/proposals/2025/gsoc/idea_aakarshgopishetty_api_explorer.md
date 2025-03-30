@@ -42,7 +42,7 @@ The wireframe includes three main sections:
 [API Explorer Wireframe](https://excalidraw.com/#json=71K2EyrjsTEv1HXRMTRqB,iw86qFoQz9coZwkuAcXPUQ)  
 
 *(Optional: If you exported an image, add it here)*  
-![Wireframe Preview](./wireframe.png)  
+![Wireframe Preview](images/overview-api-explorer.png)  
 
 ---
 
