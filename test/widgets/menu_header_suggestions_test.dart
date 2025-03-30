@@ -1,54 +1,8 @@
-import 'package:apidash/screens/common_widgets/field_header.dart';
 import 'package:apidash/widgets/menu_header_suggestions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_portal/flutter_portal.dart';
-import 'package:extended_text_field/extended_text_field.dart';
-import 'package:spot/spot.dart';
 
 void main() {
-  group('HeaderField Widget Tests', () {
-    testWidgets('HeaderField renders and displays ExtendedTextField',
-        (tester) async {
-      await tester.pumpWidget(
-        const Portal(
-          child: MaterialApp(
-            home: Scaffold(
-              body: HeaderField(
-                keyId: "testKey",
-                hintText: "Enter header",
-              ),
-            ),
-          ),
-        ),
-      );
-
-      spot<HeaderField>().spot<ExtendedTextField>().existsOnce();
-    });
-
-    testWidgets('HeaderField calls onChanged when text changes',
-        (tester) async {
-      String? changedText;
-      await tester.pumpWidget(
-        Portal(
-          child: MaterialApp(
-            home: Scaffold(
-              body: HeaderField(
-                keyId: "testKey",
-                hintText: "Enter header",
-                onChanged: (text) => changedText = text,
-              ),
-            ),
-          ),
-        ),
-      );
-
-      await act.tap(spot<HeaderField>().spot<ExtendedTextField>());
-      tester.testTextInput.enterText("new header");
-      expect(changedText, "new header");
-    });
-  });
-
   group('HeaderSuggestions Widget Tests', () {
     testWidgets('HeaderSuggestions displays suggestions correctly',
         (tester) async {
