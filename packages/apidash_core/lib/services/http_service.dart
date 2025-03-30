@@ -9,15 +9,19 @@ import '../utils/utils.dart';
 import 'http_client_manager.dart';
 
 typedef HttpResponse = http.Response;
+typedef StreamedResponse = http.StreamedResponse;
 
 final httpClientManager = HttpClientManager();
 
-Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
+Future<(HttpResponse?, Duration?, String?,StreamedResponse?)> sendHttpRequest(
   String requestId,
   APIType apiType,
   HttpRequestModel requestModel, {
   SupportedUriSchemes defaultUriScheme = kDefaultUriScheme,
   bool noSSL = false,
+  Function(String event)? onData,
+  Function(Object error, StackTrace stackTrace)? onError,
+  Function()? onDone,
 }) async {
   final client = httpClientManager.createClient(requestId, noSSL: noSSL);
 
@@ -35,6 +39,78 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
     try {
       Stopwatch stopwatch = Stopwatch()..start();
       if (apiType == APIType.rest) {
+        print("inside sse http serviec");
+        // ✅ SSE Handling (POST, PUT, etc. with Body)
+        var request = http.Request(requestModel.method.name.toUpperCase(), requestUrl);
+        
+        request.headers.addAll(headers);
+        request.headers["Accept"] = "text/event-stream";
+      request.headers["Cache-Control"] = "no-cache";
+      request.headers["Connection"] = "keep-alive";
+     
+        if (body != null) request.body = body;
+
+        http.StreamedResponse streamedResponse = await client.send(request);
+        print("inside streamed response");
+        final stream = streamedResponse.stream
+      .transform(utf8.decoder)
+      .transform(const LineSplitter());
+        try{ stream.listen(
+    (event) {
+      onData?.call(event);
+      if (event.isNotEmpty) {
+        print('🔹 SSE Event Received: $event');
+        print(event.toString());
+      //   final parsedEvent = SSEEventModel.fromRawSSE(event);
+      //   ref.read(sseFramesProvider.notifier).addFrame(requestId, parsedEvent);
+       
+      }
+    },
+    onError: (error) {
+      (error, stackTrace) => onError?.call(error, stackTrace);
+      print('🔹 SSE Error: $error');
+      // ref.read(sseFramesProvider.notifier).update((state) {
+      //   return {...state, requestId: [...(state[requestId] ?? []), 'Error: $error']};
+      // });
+      // finalizeRequestModel(requestId);
+    },
+    onDone: () {
+      onDone?.call();
+       print('🔹 SSE Stream Done');
+   //   finalizeRequestModel(requestId);
+    },
+ );}catch (e, stackTrace) {
+      print('🔹 Error connecting to SSE: $e');
+      onError?.call(e, stackTrace);
+      //_reconnect(onData, onError, onDone);
+    }
+      //   print("streamedResponse"+streamedResponse.headers.toString());
+      //  // var buffer = await convertStreamedResponse(streamedResponse);
+      //  // print(buffer.body.toString());
+      //   if(streamedResponse.headers['content-type']?.contains('text/event-stream') == true){
+      //     print("has the content type");
+      //   }
+      //   stopwatch.stop();
+      //   Stream<String>? utf8Stream;
+      //   if (streamedResponse.statusCode == 200) {
+         
+      //     utf8Stream = await streamedResponse.stream
+      //         .transform(utf8.decoder)
+      //         .transform(const LineSplitter());
+      //     print("utf8stream"+utf8Stream.toString());
+
+      //     await for (final event in utf8Stream) {
+      //       print("inside eventloop");
+      //       if (event.isNotEmpty) {
+      //         print('🔹 SSE Event Received: $event');
+      //       }
+      //     }
+      //   }
+      //   print("just before return ing null");
+        return (null, stopwatch.elapsed, null,streamedResponse);
+      }
+      if (apiType == APIType.rest) {
+        print("iside second rest");
         var isMultiPartRequest =
             requestModel.bodyContentType == ContentType.formdata;
 
@@ -75,7 +151,7 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
             stopwatch.stop();
             http.Response convertedMultiPartResponse =
                 await convertStreamedResponse(multiPartResponse);
-            return (convertedMultiPartResponse, stopwatch.elapsed, null);
+            return (convertedMultiPartResponse, stopwatch.elapsed, null,null);
           }
         }
         switch (requestModel.method) {
@@ -122,20 +198,59 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
         );
       }
       stopwatch.stop();
-      return (response, stopwatch.elapsed, null);
+      return (response, stopwatch.elapsed, null,null);
     } catch (e) {
+      print("inside catch");
       if (httpClientManager.wasRequestCancelled(requestId)) {
-        return (null, null, kMsgRequestCancelled);
+        return (null, null, kMsgRequestCancelled,null);
       }
-      return (null, null, e.toString());
+      return (null, null, e.toString(),null);
     } finally {
+      print("inside finallyy");
       httpClientManager.closeClient(requestId);
     }
   } else {
-    return (null, null, uriRec.$2);
+    return (null, null, uriRec.$2,null);
   }
 }
 
 void cancelHttpRequest(String? requestId) {
   httpClientManager.cancelRequest(requestId);
 }
+
+
+// void startSSE() async {
+//   var url = Uri.parse('https://sse.dev/test');
+//   var client = HttpClient();
+
+//   try {
+//     var request = await client.getUrl(url);
+    
+
+//     var response = await request.close();
+
+//     // Ensure it's a successful SSE connection
+//     if (response.statusCode == 200) {
+//       print("✅ Connected to SSE stream");
+
+//       response.transform(utf8.decoder).listen(
+//         (data) {
+//           print("🔹 SSE Event Received: $data");
+//         },
+//         onError: (error) {
+//           print("❌ SSE Error: $error");
+//         },
+//         onDone: () {
+//           print("🔌 SSE Stream Closed");
+//         },
+//         cancelOnError: true,
+//       );
+//     } else {
+//       print("❌ Failed to connect: ${response.statusCode}");
+//     }
+//   } catch (e) {
+//     print("❌ Exception: $e");
+//   }
+// }
+
+
