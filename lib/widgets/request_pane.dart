@@ -63,13 +63,16 @@ class _RequestPaneState extends State<RequestPane>
                           widget.codePaneVisible
                               ? Icons.code_off_rounded
                               : Icons.code_rounded,
+                          size: 18,
                         ),
                         label: SizedBox(
-                          width: 75,
+                          width: 80,
                           child: Text(
                             widget.codePaneVisible
                                 ? kLabelHideCode
                                 : kLabelViewCode,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
                           ),
                         ),
                       ),
