@@ -15,14 +15,12 @@ class LoggingInterceptor implements InterceptorContract {
   @override
   FutureOr<BaseRequest> interceptRequest({required BaseRequest request}) async {
     interceptedHeaders = request.headers;
-    print("Headers: \${request.headers}");
     return request;
   }
 
   @override
   Future<BaseResponse> interceptResponse({required BaseResponse response}) async {
-    print("Response: \${response.statusCode}");
-    print("Headers: \${response.headers}");
+
     return response;
   }
 
@@ -102,28 +100,20 @@ Future<void> sendSSERequest(
         
        
       }
-      print("before connect");
-      print("status code: ${streamedResponse.statusCode}");
-      print("headers: ${streamedResponse.headers}");
       onConnect?.call(
           streamedResponse.statusCode, streamedResponse.headers, interceptor.interceptedHeaders, stopwatch.elapsed
       );
-      print("after connect");
+      
       final stream = streamedResponse.stream
           .transform(utf8.decoder)
           .transform(const LineSplitter());
       stream.listen(
         (event) {
           onData?.call(event);
-          if (event.isNotEmpty) {
-            print('🔹 SSE Event Received: $event');
-            print(event.toString());
-            
-          }
         },
         onError: (error) {
             if (httpClientManager.wasRequestCancelled(requestId)) {
-              print("inside cancelled");
+             
               onCancel?.call(); 
               return;   
              }
@@ -137,20 +127,20 @@ Future<void> sendSSERequest(
               return;  
           }
           onDone?.call();
-          print('🔹 SSE Stream Done');
+        
         }
       );
     }
   } catch (e, stackTrace) {
-    print("inside catch");
+    
     onError?.call(e, stackTrace);
   }
-  // finally{
-  //   print("finally");
-  //   if (httpClientManager.wasRequestCancelled(requestId)) {
-  //     onCancel?.call();    
-  //   }
-  //   httpClientManager.closeClient(requestId);
-  // }
+  finally{
+ 
+    if (httpClientManager.wasRequestCancelled(requestId)) {
+      onCancel?.call();    
+    }
+  
+  }
 }
 
