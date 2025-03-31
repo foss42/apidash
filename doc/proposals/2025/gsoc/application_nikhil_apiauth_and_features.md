@@ -99,6 +99,10 @@ This project aims to expand APIDash by implementing multiple authentication meth
 
 ---
 # Authentication Integration 
+## Frontend Images
+![image](https://github.com/user-attachments/assets/7e1471a0-86ca-469a-a765-41799246d720)
+![image](https://github.com/user-attachments/assets/538a4b3a-7bf2-4f9c-8396-17f5a4ddb87d)
+
 
 ## Authentication Methods to be Implemented 
 1. **Basic Authentication** - Username & Password
