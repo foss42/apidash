@@ -93,7 +93,7 @@ List<NameValueModel>? getEnabledRows(
 
 String? getRequestBody(APIType type, HttpRequestModel httpRequestModel) {
   return switch (type) {
-    APIType.rest =>
+    APIType.rest || APIType.sse =>
       (httpRequestModel.hasJsonData || httpRequestModel.hasTextData)
           ? httpRequestModel.body
           : null,

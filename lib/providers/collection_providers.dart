@@ -22,10 +22,10 @@ final selectedRequestModelProvider = StateProvider<RequestModel?>((ref) {
   }
 });
 
-class SSEFramesNotifier extends StateNotifier<Map<String, List<dynamic>>> {
+class SSEFramesNotifier extends StateNotifier<Map<String, List<SSEEventModel>>> {
   SSEFramesNotifier() : super({});
 
-  void addFrame(String requestId, dynamic frame) {
+  void addFrame(String requestId, String frame) {
     state = {
       ...state,
       requestId: [...(state[requestId] ?? []), SSEEventModel.fromRawSSE(frame)],
@@ -50,7 +50,7 @@ class SSEFramesNotifier extends StateNotifier<Map<String, List<dynamic>>> {
 
 // Provide it globally
 final sseFramesProvider =
-    StateNotifierProvider<SSEFramesNotifier, Map<String, List<dynamic>>>(
+    StateNotifierProvider<SSEFramesNotifier, Map<String, List<SSEEventModel>>>(
   (ref) => SSEFramesNotifier(),
 );
 
@@ -297,6 +297,7 @@ class CollectionStateNotifier
     unsave();
   }
 
+  
   Future<void> sendRequest() async {
     final requestId = ref.read(selectedIdStateProvider);
     ref.read(codePaneVisibleStateProvider.notifier).state = false;
@@ -324,139 +325,131 @@ class CollectionStateNotifier
     state = map;
 
     bool noSSL = ref.read(settingsProvider).isSSLDisabled;
-    
-    state = map;
-    var responseRec = await sendSSERequest(
-      requestId,
-      apiType,
-      substitutedHttpRequestModel,
-      defaultUriScheme: defaultUriScheme,
-      noSSL: noSSL,
-      onConnect: (statusCode, headers) {
+    if(apiType == APIType.sse){
+      print("inside sendrequest apitype,sse");
+      List<SSEEventModel> frames; 
+      await sendSSERequest(
+        requestId,
+        apiType,
+        substitutedHttpRequestModel,
+        defaultUriScheme: defaultUriScheme,
+        noSSL: noSSL,
+        onConnect: (statusCode, responseHeaders, requestHeaders,duration) {
+          print("inside sse onconnect");
+        ref.read(sseFramesProvider.notifier).clearFrames(requestId);
         map = {...state!};
+        print(statusCode);
+      print(responseHeaders);
+      print(requestHeaders);
         map[requestId] = requestModel.copyWith(
         responseStatus: statusCode,
         message: kResponseCodeReasons[statusCode],
-        httpResponseModel: null,
+        httpResponseModel: baseHttpResponseModel.copyWith(
+          statusCode: statusCode,
+          headers: responseHeaders,
+          requestHeaders: requestHeaders,
+          time: duration,
+        ),
         isWorking: true,
       );
+      state = map;
       
        
       },
       onData: (response) {
           ref.read(sseFramesProvider.notifier).addFrame(requestId, response);
       },
+      onError: (error, stackTrace) {
+        frames = ref.read(sseFramesProvider)[requestId] ?? [];
+        map = {...state!};
+        map[requestId] = requestModel.copyWith(
+          responseStatus: 500,
+          message: error.toString(),
+          httpResponseModel: baseHttpResponseModel.copyWith(
+            sseEvents: frames,
+          ),
+          isWorking: false,
+        );
+        state = map;
+      },
+      onDone: () {
+        frames = ref.read(sseFramesProvider)[requestId] ?? [];
+        map = {...state!};
+        map[requestId] = requestModel.copyWith(
+          httpResponseModel: baseHttpResponseModel.copyWith(
+            sseEvents: frames,
+          ),
+          isWorking: false,
+        );
+        state = map;
+      },
+      onCancel: () {
+        frames = ref.read(sseFramesProvider)[requestId] ?? [];
+        map = {...state!};
+        map[requestId] = requestModel.copyWith(
+          responseStatus: -1,
+          message: kMsgRequestCancelled,
+          isWorking: false,
+        );
+        state = map;
+      },
+      );
+      return;
+    }
+    var responseRec = await sendHttpRequest(
+      requestId,
+      apiType,
+      substitutedHttpRequestModel,
+      defaultUriScheme: defaultUriScheme,
+      noSSL: noSSL,
     );
 
     late final RequestModel newRequestModel;
-  //   if (responseRec.$1 == null && responseRec.$4 == null) {
-  //     print("inside first if");
-      
-  //     newRequestModel = requestModel.copyWith(
-  //       responseStatus: -1,
-  //       message: responseRec.$3,
-  //       isWorking: false,
-  //     );
-  //   } else if(responseRec.$1 != null){
-  //      print("inside second if");
-  //     final httpResponseModel = baseHttpResponseModel.fromResponse(
-  //       response: responseRec.$1!,
-  //       time: responseRec.$2!,
-  //     );
-  // //     if(responseRec.$1!.headers['content-type']?.contains('text/event-stream') ?? false){
-        
-  // //       Stream.value(responseRec.$1!.bodyBytes  as List<int>).byteStream.transform(utf8.decoder).transform(const LineSplitter());
+    if (responseRec.$1 == null) {
+      newRequestModel = requestModel.copyWith(
+        responseStatus: -1,
+        message: responseRec.$3,
+        isWorking: false,
+      );
+    } else {
+      final httpResponseModel = baseHttpResponseModel.fromResponse(
+        response: responseRec.$1!,
+        time: responseRec.$2!,
+      );
+      int statusCode = responseRec.$1!.statusCode;
+      newRequestModel = requestModel.copyWith(
+        responseStatus: statusCode,
+        message: kResponseCodeReasons[statusCode],
+        httpResponseModel: httpResponseModel,
+        isWorking: false,
+      );
+      String newHistoryId = getNewUuid();
+      HistoryRequestModel model = HistoryRequestModel(
+        historyId: newHistoryId,
+        metaData: HistoryMetaModel(
+          historyId: newHistoryId,
+          requestId: requestId,
+          apiType: requestModel.apiType,
+          name: requestModel.name,
+          url: substitutedHttpRequestModel.url,
+          method: substitutedHttpRequestModel.method,
+          responseStatus: statusCode,
+          timeStamp: DateTime.now(),
+        ),
+        httpRequestModel: substitutedHttpRequestModel,
+        httpResponseModel: httpResponseModel,
+      );
+      ref.read(historyMetaStateNotifier.notifier).addHistoryRequest(model);
+    }
 
-  // //   await for (final event in utf8Stream) {
-  // //     if (event.isNotEmpty) {
-  // //       yield SSEEventModel.fromRawSSE(event);  // ✅ Emit each event lazily
-  // //     }
-  // //   }
-  // // }
-  //     // }
-  //     int statusCode = responseRec.$1!.statusCode;
-  //     newRequestModel = requestModel.copyWith(
-  //       responseStatus: statusCode,
-  //       message: kResponseCodeReasons[statusCode],
-  //       httpResponseModel: httpResponseModel,
-  //       isWorking: false,
-  //     );
-  //     String newHistoryId = getNewUuid();
-  //     HistoryRequestModel model = HistoryRequestModel(
-  //       historyId: newHistoryId,
-  //       metaData: HistoryMetaModel(
-  //         historyId: newHistoryId,
-  //         requestId: requestId,
-  //         apiType: requestModel.apiType,
-  //         name: requestModel.name,
-  //         url: substitutedHttpRequestModel.url,
-  //         method: substitutedHttpRequestModel.method,
-  //         responseStatus: statusCode,
-  //         timeStamp: DateTime.now(),
-  //       ),
-  //       httpRequestModel: substitutedHttpRequestModel,
-  //       httpResponseModel: httpResponseModel,
-  //     );
-  //     ref.read(historyMetaStateNotifier.notifier).addHistoryRequest(model);
-  //   }else if(responseRec.$4 != null){
-  //     print("inside else if");
-      
-  //     // final httpResponseModel = baseHttpResponseModel.fromResponse(
-  //     //   response: responseRec.$4!,
-  //     //   time: responseRec.$2!,
-  //     // );
-  // //     if(responseRec.$1!.headers['content-type']?.contains('text/event-stream') ?? false){
-        
-  // //       Stream.value(responseRec.$1!.bodyBytes  as List<int>).byteStream.transform(utf8.decoder).transform(const LineSplitter());
+    // update state with response data
+    map = {...state!};
+    map[requestId] = newRequestModel;
+    state = map;
 
-  // //   await for (final event in utf8Stream) {
-  // //     if (event.isNotEmpty) {
-  // //       yield SSEEventModel.fromRawSSE(event);  // ✅ Emit each event lazily
-  // //     }
-  // //   }
-  // // }
-  //     // }
-  // //    var streamedResponse = responseRec.$4!;
-  // //    final stream = streamedResponse.stream
-  // //     .transform(utf8.decoder)
-  // //     .transform(const LineSplitter());
-
-  // // stream.listen(
-  // //   (event) {
-  // //     if (event.isNotEmpty) {
-  // //       print('🔹 SSE Event Received: $event');
-  // //       print(event.toString());
-  // //       // final parsedEvent = SSEEventModel.fromRawSSE(event);
-  // //       // ref.read(sseFramesProvider.notifier).addFrame(requestId, parsedEvent);
-       
-  // //     }
-  // //   },
-  // //   onError: (error) {
-  // //     // ref.read(sseFramesProvider.notifier).update((state) {
-  // //     //   return {...state, requestId: [...(state[requestId] ?? []), 'Error: $error']};
-  // //     // });
-  // //     // finalizeRequestModel(requestId);
-  // //   },
-  // //   onDone: () {
-  // //  //   finalizeRequestModel(requestId);
-  // //   },
-  // // );
-
-  // // // newRequestModel = requestModel.copyWith(
-  // // //       responseStatus: 200,
-  // // //       message: kResponseCodeReasons[200],
-  // //       httpResponseModel: httpResponseModel,
-  // //       isWorking: false,
-  // //     );
-  //   }
-
-  //   // update state with response data
-  //   // map = {...state!};
-  //   // map[requestId] = newRequestModel;
-  //   // state = map;
-
-  //   unsave();
+    unsave();
   }
+
 
   void cancelRequest() {
     final id = ref.read(selectedIdStateProvider);

@@ -26,6 +26,7 @@ class ResponsePane extends ConsumerWidget{
 
     
     if (isWorking && sseFramesNotifier.isEmpty) {
+      print("inside sending widget"+sseFramesNotifier.isEmpty.toString());
       return SendingWidget(
         startSendingTime: startSendingTime,
       );
@@ -91,14 +92,13 @@ class ResponseTabs extends ConsumerWidget {
     return ResponseTabView(
       selectedId: selectedId,
       children: [
-        if (apiType == APIType.rest || apiType == APIType.graphql) ...[
-          SSEView(requestId: selectedId ),  
-        const ResponseHeadersTab(),
+        if (apiType == APIType.rest || apiType == APIType.graphql) ...const[
+           ResponseBodyTab(),
+           ResponseHeadersTab(),
+        ]else ...[
+          SSEView(requestId: selectedId),
+          const ResponseHeadersTab(),
         ]
-        // ] else if (apiType == APIType.rest) ...const [
-        //   WebsocketResponseView(),
-        //   ResponseHeadersTab(),
-        // ],
       
       ],
     );
@@ -128,20 +128,11 @@ class ResponseHeadersTab extends ConsumerWidget {
     final responseHttpHeaders = ref.watch(selectedRequestModelProvider
             .select((value) => value?.httpResponseModel?.headers)) ??
         {};
-    // final requestWebSocketHeaders = ref.watch(selectedRequestModelProvider
-    //         .select((value) => value?.webSocketResponseModel?.requestHeaders)) ??
-    //     {};
-    // final responseWebSocketHeaders = ref.watch(selectedRequestModelProvider
-    //         .select((value) => value?.webSocketResponseModel?.headers)) ??
-    //     {};
+   
     final apiType = ref
         .watch(selectedRequestModelProvider.select((value) => value?.apiType));
     switch (apiType!) {
-      // case APIType.rest || APIType.graphql:
-      //   return ResponseHeaders(
-      //     responseHeaders: responseHttpHeaders,
-      //     requestHeaders: requestHttpHeaders,
-      //   );
+     
       case APIType.rest:
         return ResponseHeaders(
           responseHeaders: responseHttpHeaders,

@@ -2,8 +2,8 @@ import 'dart:convert';
 
 enum APIType {
   rest("HTTP", "HTTP"),
-  graphql("GraphQL", "GQL");
-//  sse("SSE", "SSE");
+  graphql("GraphQL", "GQL"),
+  sse("SSE", "SSE");
 
   const APIType(this.label, this.abbr);
   final String label;

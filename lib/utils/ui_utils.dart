@@ -36,6 +36,7 @@ Color getAPIColor(
         method,
       ),
     APIType.graphql => kColorGQL,
+    APIType.sse => kColorSSE,
   };
   if (brightness == Brightness.dark) {
     col = getDarkModeColor(col);
