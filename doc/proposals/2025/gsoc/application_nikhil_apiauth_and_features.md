@@ -10,7 +10,6 @@
 - **Discord Handle:** @badnikhil
 - **GitHub:** [badnikhil](https://github.com/badnikhil)
 - **LINKEDIN:** [NIKHIL LUDDER](www.linkedin.com/in/nikhil-ludder-ba631216b)
-- **INSTA:** [INSTA](https://www.instagram.com/bad.nikhill/)
 - **Time Zone:** UTC+5:30 (IST)
 
 ---
