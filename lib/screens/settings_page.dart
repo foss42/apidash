@@ -1,3 +1,4 @@
+import 'package:apidash/widgets/llm_provider_dropdown.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -230,6 +231,36 @@ class SettingsPage extends ConsumerWidget {
                 onTap: () {
                   showAboutAppDialog(context);
                 },
+              ),
+              kVSpacer20,
+              ListTile(
+                title: const Text(
+                  'DashBot Settings',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                onTap: null,
+              ),
+              ListTile(
+                title: const Text(
+                  'LLM Provider',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                onTap: null,
+              ),
+              Row(
+                children: [
+                  kHSpacer20,
+                  SizedBox(
+                    width: 300,
+                    child: LlmProviderDropdown(),
+                  ),
+                ],
               ),
               kVSpacer20,
             ],
