@@ -1,10 +1,10 @@
+import 'package:apidash/dashbot/draggable_window.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
-import 'package:apidash/dashbot/dashbot.dart';
 import 'common_widgets/common_widgets.dart';
 import 'envvar/environment_page.dart';
 import 'home_page/home_page.dart';
@@ -13,6 +13,20 @@ import 'settings_page.dart';
 
 class Dashboard extends ConsumerWidget {
   const Dashboard({super.key});
+
+  void _showChatWindow(BuildContext context) {
+    final overlay = Overlay.of(context);
+    OverlayEntry? entry;
+
+    entry = OverlayEntry(
+      builder: (context) => DraggableChatWindow(
+        screenSize: MediaQuery.of(context).size,
+        onClose: () => entry?.remove(),
+      ),
+    );
+
+    overlay.insert(entry);
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -126,16 +140,22 @@ class Dashboard extends ConsumerWidget {
         ),
       ),
       // TODO: Release DashBot
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => showModalBottomSheet(
-          context: context,
-          isScrollControlled: true,
-          builder: (context) => const Padding(
-            padding: EdgeInsets.all(16.0),
-            child: DashBotWidget(),
+      floatingActionButton: SizedBox(
+        height: 70,
+        width: 70,
+        child: FloatingActionButton(
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          onPressed: () => _showChatWindow(context),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              vertical: 8.0,
+              horizontal: 12,
+            ),
+            child: Image.asset(
+              'assets/dashbot_icon_2.png',
+            ),
           ),
         ),
-        child: const Icon(Icons.help_outline),
       ),
     );
   }
