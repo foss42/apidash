@@ -4,8 +4,8 @@ import 'package:multi_trigger_autocomplete_plus/multi_trigger_autocomplete_plus.
 import 'package:apidash/utils/utils.dart';
 import 'envfield_cell.dart';
 
-class HeaderField extends StatefulWidget {
-  const HeaderField({
+class EnvHeaderField extends StatefulWidget {
+  const EnvHeaderField({
     super.key,
     required this.keyId,
     this.hintText,
@@ -20,10 +20,10 @@ class HeaderField extends StatefulWidget {
   final ColorScheme? colorScheme;
 
   @override
-  State<HeaderField> createState() => _HeaderFieldState();
+  State<EnvHeaderField> createState() => _EnvHeaderFieldState();
 }
 
-class _HeaderFieldState extends State<HeaderField> {
+class _EnvHeaderFieldState extends State<EnvHeaderField> {
   final FocusNode focusNode = FocusNode();
   @override
   Widget build(BuildContext context) {
