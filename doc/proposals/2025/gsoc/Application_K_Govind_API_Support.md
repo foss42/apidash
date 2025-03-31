@@ -60,17 +60,71 @@
 
  
 ### API Testing Support 
+I would like to intoroduce some feautures as listed above to enhance the api testing support of the application.
 
 
-
-### Abstract  
-A brief summary of the problem and how you plan to tackle it.  
+### Abstract  1
+Introducing web socket implementation into the APIDash. Introduce a new client and manager to handle the websocket messages and render them in the ui . 
+  ```  
+            
+            +-------------------------+
+            |     WebSocket Server     |
+            |  - Manages connections   |
+            |  - Handles messages      |
+            +-----------+-------------+
+                        |
+                        v
+     +------------------------------------+
+     |  WebSocket Client (web_socket_channel) |
+     |  - Establishes connection          |
+     |  - Sends & receives messages       |
+     |  - Handles ping & retries          |
+     |  - onError → Update Riverpod state |
+     |  - onDone  → Update Riverpod state |
+     +------------------------------------+
+                        |
+                        v
+        +-------------------------------+
+        | WebSocket Connection Manager  |
+        |  - Ping interval handling     |
+        |  - Reconnection attempts      |
+        |  - Interval between retries   |
+        +-------------------------------+
+                        |
+                        v
+          +-----------------------------+
+          | Riverpod State Management   |
+          |  - Stores all messages      |
+          |  - Updates WebSocket Model  |
+          |  - Handles UI reactivity    |
+          +-----------------------------+
+                        |
+                        v
+         +--------------------------------+
+         | Flutter WebSocket UI          |
+         |  - Search messages            |
+         |  - Clear all/one message      |
+         |  - Scroll to top/up option    |
+         |  - Dynamic UI per request     |
+         +--------------------------------+
+```
 
 ### Detailed Description  
 - **Problem Statement:** [Explain the problem]  
-- **Proposed Solution:** [Your approach]  
-- **Technologies & Tools:** [List of technologies you plan to use]  
-- **Expected Outcomes:** [Deliverables and goals]  
+- **Proposed Solution:**
+  The 
+
+- **Technologies & Tools:** The approach uses the package  web_socket_channel(^3.0.1)
+- **Expected Outcomes:** A clean ui with maximum smoothness satisfying above mentioned solutions.
+- **Linked PR for POC:**  https://github.com/foss42/apidash/pull/555
+
+### Abstract 2
+
+
+
+
+
+
 
 ### Weekly Timeline  
 
