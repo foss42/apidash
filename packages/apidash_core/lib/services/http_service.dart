@@ -49,10 +49,11 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
               body = requestBody;
               headers[HttpHeaders.contentLengthHeader] =
                   contentLength.toString();
-              if (!requestModel.hasContentTypeHeader) {
-                headers[HttpHeaders.contentTypeHeader] =
-                    requestModel.bodyContentType.header;
-              }
+                if (!requestModel.hasContentTypeHeader) {
+                  headers[HttpHeaders.contentTypeHeader] = requestModel.useRawContentType 
+                      ? requestModel.bodyContentType.header.split(";")[0]
+                      : requestModel.bodyContentType.header;
+                }
             }
           }
           if (isMultiPartRequest) {
@@ -103,9 +104,11 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
           if (contentLength > 0) {
             body = requestBody;
             headers[HttpHeaders.contentLengthHeader] = contentLength.toString();
-            if (!requestModel.hasContentTypeHeader) {
-              headers[HttpHeaders.contentTypeHeader] = ContentType.json.header;
-            }
+                if (!requestModel.hasContentTypeHeader) {
+                  headers[HttpHeaders.contentTypeHeader] = requestModel.useRawContentType 
+                      ? requestModel.bodyContentType.header.split(";")[0]
+                      : requestModel.bodyContentType.header;
+                }
           }
         }
         response = await client.post(

@@ -27,6 +27,7 @@ class HttpRequestModel with _$HttpRequestModel {
     @Default(ContentType.json) ContentType bodyContentType,
     String? body,
     String? query,
+    @Default(false) bool useRawContentType,
     List<FormDataModel>? formData,
   }) = _HttpRequestModel;
 
@@ -40,7 +41,14 @@ class HttpRequestModel with _$HttpRequestModel {
   List<NameValueModel>? get enabledParams =>
       getEnabledRows(params, isParamEnabledList);
 
-  Map<String, String> get enabledHeadersMap => rowsToMap(enabledHeaders) ?? {};
+  Map<String, String> get enabledHeadersMap {
+    final map = rowsToMap(enabledHeaders) ?? {};
+    if (useRawContentType && map.containsKey(HttpHeaders.contentTypeHeader)) {
+      // Use the raw Content-Type header value without charset
+      map[HttpHeaders.contentTypeHeader] = map[HttpHeaders.contentTypeHeader]!.split(";")[0];
+    }
+    return map;
+  }
   Map<String, String> get enabledParamsMap => rowsToMap(enabledParams) ?? {};
 
   bool get hasContentTypeHeader => enabledHeadersMap.hasKeyContentType();
