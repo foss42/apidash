@@ -104,6 +104,9 @@ This project aims to expand APIDash by implementing multiple authentication meth
 ![image](https://github.com/user-attachments/assets/538a4b3a-7bf2-4f9c-8396-17f5a4ddb87d)
 
 
+
+**A dropdown to select the authentication type, along with an icon to open a dialog box where users can enter their credentials for seamless integration into their workflow.  I will ensure minimal changes to the existing codebase(only a line or two ).*
+
 ## Authentication Methods to be Implemented 
 1. **Basic Authentication** - Username & Password
 2. **API Key Authentication** - Key-Value pair in headers or query
