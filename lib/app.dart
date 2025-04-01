@@ -115,7 +115,6 @@ class DashApp extends ConsumerWidget {
     final workspaceFolderPath = ref
         .watch(settingsProvider.select((value) => value.workspaceFolderPath));
     final showWorkspaceSelector = kIsDesktop && (workspaceFolderPath == null);
-
     return Portal(
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
