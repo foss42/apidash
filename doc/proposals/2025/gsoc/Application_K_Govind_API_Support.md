@@ -191,7 +191,8 @@ Architecture is as shown below:
 ```
 POC Link:
 Images of POC: 
-![SSE](/images/SSE(1).png)
+![SSE](./images/SSE(1).png)
+![SSE](./images/SSE(1).png)
 
 
 
