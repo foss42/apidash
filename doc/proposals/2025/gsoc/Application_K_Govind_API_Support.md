@@ -66,6 +66,8 @@ I would like to introduce some feautures as listed below to enhance the api test
 ### Abstract  1(Web Socket Implementation)
 Introducing web socket implementation into the APIDash. Introduce a new client and manager to handle the websocket messages and render them in the ui . 
 The solution involves providing the users with an option to change ping intervals, number of reconnection attempts, interval between reconnection attenpts. All of this would be managed inside the settings. The ui updates would be made using river pod provider specifically for websocket messages for each request ids. All this would be initiated by user clicking on the new APIType (Web Socket). The appropriate changes would be done in codegen related files to give code. 
+I have tested my approach on custom endpoints https://github.com/Clasherzz/testing/blob/main/websock.js , echo websocket and multiple fast incoming web socket message endpoints related to bit coin and stock prices to ensure robustness.
+
   ```  
             
             +-------------------------+
@@ -123,7 +125,12 @@ Trying to implement SSE Support into the application. The approach is similar to
 ### Abstract 3(GraphQL Enhancement)
 Proposing to include graphql variable support and graphql introspection .
 
-Graphql variable :- Make a json editor pane as an additional tab in request pane for graphql with enviornment support. And then parse it along the body of request. The approach was verified in custom endpoint and in https://rickandmortyapi.com/graphql . A partial implementation of this was done in  https://github.com/foss42/apidash/pull/588   with a mistake in ui approach which would be rectified.
+Graphql variable :- 
+UI Changes:
+Make a json editor pane as an additional tab in request pane for graphql with enviornment support. 
+And then parse it along the body of request.
+
+The approach was verified in custom endpoint and in https://rickandmortyapi.com/graphql . A partial implementation of this was done in  https://github.com/foss42/apidash/pull/588   with a mistake in ui approach which would be rectified.
 
 
 GraphQL Introspection :- The approach is to use a prebuild introspection query that  asks for all the contents necessary that developer would want to know and display the results in GraphQL SDL (Schema Definition Language) . The introspection query asks for all schema details mutation ,subscription, query schema types , directives . Later on we iterate through the received json making the GRAPHQL SDL.
@@ -221,7 +228,24 @@ The introspection query would be:
 Afterwards if possible i would like to make a package similar to json explorer to render the ui with collapse and expand feauture . This would require some time as SDL is quite different from the standard JSON.
 
 
-### Abstract 4(URL Encoded Multipart nd File Support)
+### Abstract 4(URL Encoded Multipart and File Support)
+
+Url Encoded Multipart(Issue #352):- 
+Ui change: There would be a toggle button in multipart tab that can switch between multipart and urlencoded multipart . 
+Request model change: An additional content type (application/x-www-form-urlencoded). By default the choice would be url encoded multipart content type and would only change to multipart if toggle button is used or if a file is uploaded and selected to send.
+Service level change:- We would make key value pairs as string . This is encoded and passes into the body along with added header .
+
+File support(Issue #337);-
+UI Chnages: Make a combination of drag and droppable and select file ui as a new tab.
+Model changes: Add another content type application/octet-stream .
+Service changes: Stream the file as bytes 
+       
+      List<int> fileBytes = await file.readAsBytes();
+Then change it to base64 format:   
+       
+       String base64String = base64Encode(fileBytes);
+We can run this 
+
 
 
 
@@ -236,34 +260,36 @@ Afterwards if possible i would like to make a package similar to json explorer t
 ### Weekly Timeline  
 
 #### **Week 1-2:**  
-- [Task 1]  
-- [Task 2]  
-- [Task 3]  
+- Getting to know about the organization and what mentors wants to say about the work I am about to start. Fix the timings of meetings if there are any. Get to know which time do the maintainers be more active and share the approach and queries with them.
+- Changing the design and architecture from feedback.
+- Start with the graphql variable and inspect schema feautures.
 
-#### **Week 3-4:**  
-- [Task 1]  
-- [Task 2]  
-- [Task 3]  
+#### **Week 3-4:**  (Web Socket)
+- Coninuing work on graphql feautures and add testing.
+- Start working on the initial ui and set update settings providers for the new feautures of Web Socket.
+- Add service layer of web sockets and make way for codegen feauture for web socket.
+- Work on handling the web socket history. Add testing for the ui and service code. 
 
-#### **Week 5-6:**  
-- [Task 1]  
-- [Task 2]  
-- [Task 3]  
+#### **Week 5-6:**  (SSE)
+- Work on handling the web socket history. Add testing for the ui and service code. 
+- Start working on the initial ui and set update settings providers for the new feautures of SSE.
+- Add service layer of web sockets and make way for codegen feauture for SSE.
 
-#### **Week 7-8:**  
-- [Task 1]  
-- [Task 2]  
-- [Task 3]  
+
+#### **Week 7-8:** 
+- Work on handling the SSE history.Add testing for ui and service code.
+- Work on UI changes for url encoded multipart and make service layer changes to accomadate that.
+- Add testing for the ui changes.
+
 
 #### **Week 9-10:**  
-- [Task 1]  
-- [Task 2]  
-- [Task 3]  
+- Work on UI changes of File Request and implement the service layer changes.
+- Add test files to this. after testing thoroughly on all file types.
 
 #### **Week 11-12:**  
-- [Finalizing & Testing]  
-- [Documentation]  
-- [Submission]  
+- Final polishing done if needed.  
+- Adding needed docmentations.
+- Submitting the final documentation and work.
 
 ---
 
