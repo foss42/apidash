@@ -133,39 +133,42 @@ class DashApp extends ConsumerWidget {
                   }
                 },
               )
-            : kIsMobile
-                ? FutureBuilder<bool>(
-                    future: getOnboardingStatusFromSharedPrefs(),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.done) {
-                        debugPrint(
-                            "showOnboarding: ${snapshot.data.toString()}");
-                        final showOnboarding = snapshot.data ?? false;
-                        return showOnboarding
-                            ? const MobileDashboard()
-                            : const OnboardingScreen();
-                      }
-                      return const Center(child: CircularProgressIndicator());
-                    },
-                  )
-                : Stack(
-                    children: [
-                      !kIsLinux && !kIsMobile
-                          ? const App()
-                          : context.isMediumWindow
-                              ? const MobileDashboard()
-                              : const Dashboard(),
-                      if (kIsWindows)
-                        SizedBox(
-                          height: 29,
-                          child: WindowCaption(
-                            backgroundColor: Colors.transparent,
-                            brightness:
-                                isDarkMode ? Brightness.dark : Brightness.light,
-                          ),
-                        ),
-                    ],
-                  ),
+            : Stack(
+                children: [
+                  !kIsLinux && !kIsMobile
+                      ? const App()
+                      : context.isMediumWindow
+                          ? (kIsMobile
+                              ? FutureBuilder<bool>(
+                                  future: getOnboardingStatusFromSharedPrefs(),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.done) {
+                                      debugPrint(
+                                          "showOnboarding: ${snapshot.data.toString()}");
+                                      final showOnboarding =
+                                          snapshot.data ?? false;
+                                      return showOnboarding
+                                          ? const MobileDashboard()
+                                          : const OnboardingScreen();
+                                    }
+                                    return const Center(
+                                        child: CircularProgressIndicator());
+                                  },
+                                )
+                              : const MobileDashboard())
+                          : const Dashboard(),
+                  if (kIsWindows)
+                    SizedBox(
+                      height: 29,
+                      child: WindowCaption(
+                        backgroundColor: Colors.transparent,
+                        brightness:
+                            isDarkMode ? Brightness.dark : Brightness.light,
+                      ),
+                    ),
+                ],
+              ),
       ),
     );
   }
