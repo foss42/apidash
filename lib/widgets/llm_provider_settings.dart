@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:apidash/dashbot/features/home/models/llm_provider.dart';
 import 'package:apidash/providers/dashbot_llm_providers.dart';
+import 'package:apidash_design_system/tokens/measurements.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -89,16 +90,6 @@ class LlmProviderSettingsState extends ConsumerState<LlmProviderSettings> {
       child: Column(
         children: [
           PopupMenuButton<LlmProvider>(
-            style: ButtonStyle(
-              backgroundColor: WidgetStatePropertyAll(
-                Theme.of(context).colorScheme.secondary,
-              ),
-              shape: WidgetStatePropertyAll(
-                RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-            ),
             initialValue: selectedProvider,
             onSelected: (LlmProvider item) {
               log(item.localConfig?.baseUrl ?? "");
@@ -110,17 +101,33 @@ class LlmProviderSettingsState extends ConsumerState<LlmProviderSettings> {
               return PopupMenuItem<LlmProvider>(
                 value: item,
                 child: ListTile(
+                  tileColor: Theme.of(context).colorScheme.surfaceContainerLow,
+                  contentPadding: EdgeInsets.all(8),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                   leading: Container(
-                    width: 32,
-                    height: 32,
+                    width: 42,
+                    height: 42,
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primary,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Image.asset(item.logo),
                   ),
-                  title: Text(item.name),
-                  subtitle: Text(item.subtitle),
+                  title: Text(
+                    item.name,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  subtitle: Text(
+                    item.subtitle,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
                   dense: true,
                   visualDensity: VisualDensity.adaptivePlatformDensity,
                 ),
@@ -132,64 +139,94 @@ class LlmProviderSettingsState extends ConsumerState<LlmProviderSettings> {
             ),
             padding: EdgeInsets.zero,
             child: ListTile(
+              tileColor: Theme.of(context).colorScheme.surfaceContainerLow,
+              contentPadding: EdgeInsets.all(8),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
               leading: Container(
-                width: 32,
-                height: 32,
+                width: 42,
+                height: 42,
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary,
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Image.asset(selectedProvider.logo),
+                child: Image.asset(
+                  selectedProvider.logo,
+                ),
               ),
-              title: Text(selectedProvider.name),
-              subtitle: Text(selectedProvider.subtitle),
+              title: Text(
+                selectedProvider.name,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              subtitle: Text(
+                selectedProvider.subtitle,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
               trailing: Icon(Icons.arrow_drop_down),
               dense: true,
               visualDensity: VisualDensity.compact,
-              contentPadding: EdgeInsets.zero,
             ),
           ),
+          kVSpacer16,
           Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               if (selectedProvider.type == LlmProviderType.local) ...[
-                Column(
+                Row(
                   children: [
-                    TextFormField(
-                      controller: _localModelNameController,
-                      decoration: const InputDecoration(
-                        labelText: 'Model Name',
-                        border: OutlineInputBorder(),
+                    SizedBox(
+                      width: 150,
+                      child: TextFormField(
+                        controller: _localModelNameController,
+                        decoration: const InputDecoration(
+                          labelText: 'Model Name',
+                          border: OutlineInputBorder(),
+                        ),
                       ),
                     ),
-                    const SizedBox(height: 8),
-                    TextFormField(
-                      controller: _baseUrlController,
-                      decoration: const InputDecoration(
-                        labelText: 'Base URL',
-                        border: OutlineInputBorder(),
+                    kHSpacer12,
+                    SizedBox(
+                      width: 235,
+                      child: TextFormField(
+                        controller: _baseUrlController,
+                        decoration: const InputDecoration(
+                          labelText: 'Base URL',
+                          border: OutlineInputBorder(),
+                        ),
                       ),
                     ),
                   ],
                 ),
               ],
               if (selectedProvider.type == LlmProviderType.remote) ...[
-                Column(
+                Row(
                   children: [
-                    TextFormField(
-                      controller: _apiKeyController,
-                      obscureText: true,
-                      decoration: const InputDecoration(
-                        labelText: 'API Key',
-                        border: OutlineInputBorder(),
+                    SizedBox(
+                      width: 225,
+                      child: TextFormField(
+                        controller: _apiKeyController,
+                        obscureText: true,
+                        decoration: const InputDecoration(
+                          labelText: 'API Key',
+                          border: OutlineInputBorder(),
+                        ),
                       ),
                     ),
-                    const SizedBox(height: 8),
-                    TextFormField(
-                      controller: _remoteModelNameController,
-                      decoration: const InputDecoration(
-                        labelText: 'Model Name',
-                        border: OutlineInputBorder(),
+                    kHSpacer12,
+                    SizedBox(
+                      width: 150,
+                      child: TextFormField(
+                        controller: _remoteModelNameController,
+                        decoration: const InputDecoration(
+                          labelText: 'Model Name',
+                          border: OutlineInputBorder(),
+                        ),
                       ),
                     ),
                   ],
