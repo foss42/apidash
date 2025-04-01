@@ -137,17 +137,15 @@ class DashApp extends ConsumerWidget {
                 ? FutureBuilder<bool>(
                     future: getOnboardingStatusFromSharedPrefs(),
                     builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
                       if (snapshot.connectionState == ConnectionState.done) {
-                        debugPrint(snapshot.data.toString());
+                        debugPrint(
+                            "showOnboarding: ${snapshot.data.toString()}");
                         final showOnboarding = snapshot.data ?? false;
                         return showOnboarding
                             ? const MobileDashboard()
                             : const OnboardingScreen();
                       }
-                      return const MobileDashboard();
+                      return const Center(child: CircularProgressIndicator());
                     },
                   )
                 : Stack(
