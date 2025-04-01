@@ -104,10 +104,6 @@ class _AppState extends ConsumerState<App> with WindowListener {
 class DashApp extends ConsumerWidget {
   const DashApp({super.key});
 
-  Future<bool> _checkOnboardingStatus() async {
-    return await getOnboardingStatusFromSharedPrefs();
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isDarkMode =
@@ -139,7 +135,7 @@ class DashApp extends ConsumerWidget {
               )
             : kIsMobile
                 ? FutureBuilder<bool>(
-                    future: _checkOnboardingStatus(),
+                    future: getOnboardingStatusFromSharedPrefs(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(child: CircularProgressIndicator());
