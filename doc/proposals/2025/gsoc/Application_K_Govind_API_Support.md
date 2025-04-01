@@ -134,7 +134,7 @@ Architecture is as shown below:
 ### Abstract 2(SSE Support)
 Implementation fo server send events in the Apidash.
 
-Trying to implement SSE Support into the application. Using a special provider for incoming frames just like in web socket messages . Now the incoming messages would be parsed and decided if it is comment ,data,event,id,retry. Data is the most important one that is needed to be shown. But we keep an advanced option in settings for dev's who need advanced testing they can turn on it to all other kind of frames. This would be helpful for testers for advanced testing.Additionally the ui would render message perfectly if it is a json.
+Trying to implement SSE Support into the application. Using a special provider for incoming frames just like in web socket messages . Now the incoming messages would be parsed and decided if it is comment ,data,event,id,retry. Data is the most important one that is needed to be shown. Often comments , id , retry are hidden away. We can provide an option for advanced visibily in settings that helps the developer to see these frames if they want. This can enhance their testing.
 
 The apiType uses the Http Client Manager itself but generates a streamed reponse and listens into it.Inorder to get the actual request headers send by the client i had to use the http_interceptopr package(https://pub.dev/packages/http_interceptor). 
 
