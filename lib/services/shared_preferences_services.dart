@@ -3,7 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/models.dart';
 
 const String kSharedPrefSettingsKey = 'apidash-settings';
-const String kSharedPrefOnboardingKey = 'apidash-onboard-status';
+const String kSharedPrefOnboardingKey = 'apidash-onboarding-status';
 
 Future<SettingsModel?> getSettingsFromSharedPrefs() async {
   final prefs = await SharedPreferences.getInstance();
