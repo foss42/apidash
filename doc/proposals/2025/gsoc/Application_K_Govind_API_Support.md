@@ -12,7 +12,7 @@
   
 - **Time Zone:** Thrissur, KL · UTC+5:30 (IST)
 - **Resume:** https://drive.google.com/drive/folders/1nHlF1_uSjGRc-DruOZaVZeZT-MF8FBVh?usp=sharing
--  
+   
 
 ---
 
