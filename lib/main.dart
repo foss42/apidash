@@ -9,6 +9,7 @@ import 'app.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await initSharedPreferences();
   var settingsModel = await getSettingsFromSharedPrefs();
   final initStatus = await initApp(
     kIsDesktop,

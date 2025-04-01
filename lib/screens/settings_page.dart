@@ -1,4 +1,4 @@
-import 'package:apidash/widgets/llm_provider_dropdown.dart';
+import 'package:apidash/widgets/llm_provider_settings.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -257,8 +257,8 @@ class SettingsPage extends ConsumerWidget {
                 children: [
                   kHSpacer20,
                   SizedBox(
-                    width: 300,
-                    child: LlmProviderDropdown(),
+                    width: 400,
+                    child: LlmProviderSettings(),
                   ),
                 ],
               ),

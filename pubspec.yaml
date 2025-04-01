@@ -68,6 +68,7 @@ dependencies:
     git:
       url: https://github.com/google/flutter-desktop-embedding.git
       path: plugins/window_size
+  riverpod_annotation: ^2.6.1
 
 dependency_overrides:
   extended_text_field: ^16.0.0
@@ -88,6 +89,9 @@ dev_dependencies:
   melos: ^6.3.2
   spot: ^0.17.0
   test: ^1.25.2
+  riverpod_lint: ^2.6.4
+  riverpod_generator: ^2.6.4
+  custom_lint: ^0.7.3
 
 flutter:
   uses-material-design: true
