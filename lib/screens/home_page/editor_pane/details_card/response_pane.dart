@@ -193,7 +193,6 @@ class _SSEViewState extends ConsumerState<SSEView> {
     final displayFrames = _isAtBottom ? frames : _pausedFrames;
 
     return Scaffold(
-      appBar: AppBar(title: Text("SSE Stream - ${widget.requestId}")),
       body: Column(
         children: [
           Expanded(
@@ -213,8 +212,8 @@ class _SSEViewState extends ConsumerState<SSEView> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          if (event.event.isEmpty) _buildTag("Event", "message", Colors.blue),
-                          _buildData(event.data),
+                          if (event.event.isNotEmpty) _buildTag("Event", "message", Colors.blue),
+                          if (event.data.isNotEmpty) _buildData(event.data),
                           if (event.id != null && event.id!.isNotEmpty) _buildTag("ID", event.id!, Colors.orange),
                           if (event.retry != null) _buildTag("Retry", "${event.retry} ms", Colors.purple),
                           if (event.customFields != null && event.customFields!.isNotEmpty)
@@ -282,7 +281,7 @@ class _SSEViewState extends ConsumerState<SSEView> {
         try {
           final jsonData = json.decode(data);
           final formattedJson = const JsonEncoder.withIndent('  ').convert(jsonData);
-          final bool shouldCollapse = formattedJson.length > 2;
+          final bool shouldCollapse = formattedJson.length > 100;
 
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,

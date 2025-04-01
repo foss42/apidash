@@ -130,6 +130,5 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
 }
 
 void cancelHttpRequest(String? requestId) {
-  print("cancelHttpRequest: $requestId");
   httpClientManager.cancelRequest(requestId);
 }
