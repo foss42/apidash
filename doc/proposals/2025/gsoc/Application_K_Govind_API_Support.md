@@ -69,47 +69,51 @@ The solution involves providing the users with an option to change ping interval
 I have tested my approach on custom endpoints https://github.com/Clasherzz/testing/blob/main/websock.js , echo websocket and multiple fast incoming web socket message endpoints related to bit coin and stock prices to ensure robustness.
 
   ```  
-            
-            +-------------------------+
-            |     WebSocket Server     |
-            |  - Manages connections   |
-            |  - Handles messages      |
-            +-----------+-------------+
-                        |
-                        v
-     +------------------------------------+
-     |  WebSocket Client (web_socket_channel) |
-     |  - Establishes connection          |
-     |  - Sends & receives messages       |
-     |  - Handles ping & retries          |
-     |  - onError → Update Riverpod state |
-     |  - onDone  → Update Riverpod state |
-     +------------------------------------+
-                        |
-                        v
-        +-------------------------------+
-        | WebSocket Connection Manager  |
-        |  - Ping interval handling     |
-        |  - Reconnection attempts      |
-        |  - Interval between retries   |
-        +-------------------------------+
-                        |
-                        v
-          +-----------------------------+
-          | Riverpod State Management   |
-          |  - Stores all messages      |
-          |  - Updates WebSocket Model  |
-          |  - Handles UI reactivity    |
-          +-----------------------------+
-                        |
-                        v
-         +--------------------------------+
-         | Flutter WebSocket UI          |
-         |  - Search messages            |
-         |  - Clear all/one message      |
-         |  - Scroll to top/up option    |
-         |  - Dynamic UI per request     |
-         +--------------------------------+
+               +--------------------------------+
+               |      WebSocket Server         |
+               |  - Manages connections        |
+               |  - Handles messages           |
+               +---------------+--------------+
+                               |
+                               v
+           +--------------------------------------+
+           |   Settings Connection Manager       |
+           |  - Ping interval handling           |
+           |  - Reconnection attempts            |
+           |  - Interval between retries         |
+           +----------------+-------------------+
+                               |
+                               v
+    +---------------------------------------------------------------+
+    |  WebSocket Client (web_socket_channel)                        |
+    |  - Establishes connection                                     |
+    |  - Sends & receives messages                                  |
+    |  - Handles ping & retries                                     |
+    |  - onError  → Updates Riverpod WebSocket Response Model State |
+    |  - onListen → Updates WebSocket Messages Provider             |
+    |  - onDone   → Updates Riverpod WebSocket Response Model State |
+    +----------------------+----------------------+----------------+
+                           |                      |
+                           |                      |
+  +------------------------------------+  +--------------------------------+
+  |  WebSocket Messages Riverpod       |  |  Riverpod State Management    |
+  |  Provider                          |  |  - Stores all messages        |
+  |  - Stores incoming messages        |  |  - Updates WebSocket Model    |
+  |  - Groups messages by request ID   |  |  - Handles UI reactivity      |
+  |  - Provides real-time updates      |  +--------------------------------+
+  +------------------------------------+
+                           |
+                           v
+         +-----------------------------------------+
+         |        Flutter WebSocket UI            |
+         |  - Search messages                     |
+         |  - Clear all/one message               |
+         |  - Scroll to top/up option             |
+         |  - Dynamic UI per request              |
+         +-----------------------------------------+
+
+          
+  
 ```
 
   
