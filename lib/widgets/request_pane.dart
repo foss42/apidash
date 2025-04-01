@@ -4,6 +4,8 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:apidash/consts.dart';
 import 'tabs.dart';
 
+/// TODO: For setting a new tab
+
 class RequestPane extends StatefulHookWidget {
   const RequestPane({
     super.key,
@@ -14,7 +16,7 @@ class RequestPane extends StatefulHookWidget {
     this.onTapTabBar,
     required this.tabLabels,
     required this.children,
-    this.showIndicators = const [false, false, false],
+    this.showIndicators = const [false, false, false, false],
     this.showViewCodeButton,
   });
 

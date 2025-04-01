@@ -29,6 +29,8 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
     seed = random.nextInt(kRandMax);
   }
 
+
+  /// TODO: When the field is changed, we update the headers and isHeaderEnabledList
   void _onFieldChange() {
     ref.read(collectionStateNotifierProvider.notifier).update(
           headers: headerRows.sublist(0, headerRows.length - 1),

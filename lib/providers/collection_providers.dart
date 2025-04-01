@@ -25,6 +25,7 @@ final requestSequenceProvider = StateProvider<List<String>>((ref) {
   return ids ?? [];
 });
 
+/// TODO; Provider for current request model
 final StateNotifierProvider<CollectionStateNotifier, Map<String, RequestModel>?>
     collectionStateNotifierProvider =
     StateNotifierProvider((ref) => CollectionStateNotifier(
@@ -204,6 +205,7 @@ class CollectionStateNotifier
     unsave();
   }
 
+  /// TODO: Update the request model with given parameters for each change
   void update({
     String? id,
     HTTPVerb? method,
@@ -262,6 +264,7 @@ class CollectionStateNotifier
     unsave();
   }
 
+  /// TODO: Send the request with all given parameters
   Future<void> sendRequest() async {
     final requestId = ref.read(selectedIdStateProvider);
     ref.read(codePaneVisibleStateProvider.notifier).state = false;

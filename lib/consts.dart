@@ -441,6 +441,7 @@ const kLabelURLParams = "URL Params";
 const kLabelHeaders = "Headers";
 const kLabelBody = "Body";
 const kLabelQuery = "Query";
+const kLabelAuthorization = "Authorization";
 const kNameCheckbox = "Checkbox";
 const kNameURLParam = "URL Parameter";
 const kNameHeader = "Header Name";
