@@ -47,7 +47,7 @@ dependencies:
   multi_split_view: ^3.2.2
   multi_trigger_autocomplete_plus:
     path: packages/multi_trigger_autocomplete_plus
-  ollama_dart: ^0.2.2
+  ollama_dart: ^0.2.2+1
   package_info_plus: ^8.3.0
   path: ^1.8.3
   path_provider: ^2.1.2

@@ -1,3 +1,4 @@
+import 'package:apidash/dashbot/features/home/view/pages/dashbot_chat_page.dart';
 import 'package:apidash_design_system/tokens/measurements.dart';
 import 'package:flutter/material.dart';
 
@@ -6,6 +7,21 @@ class DashbotHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return Navigator(
+      initialRoute: '/dashbothome',
+      onGenerateRoute: (settings) {
+        if (settings.name == '/') {
+          return MaterialPageRoute(
+              builder: (context) => _buildHomePageContent(context));
+        } else if (settings.name == '/dashbotchat') {
+          return MaterialPageRoute(builder: (context) => const ChatScreen());
+        }
+        return null;
+      },
+    );
+  }
+
+  Widget _buildHomePageContent(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -26,11 +42,14 @@ class DashbotHomePage extends StatelessWidget {
           Text('How can I help you today?'),
           kVSpacer16,
           Wrap(
+            alignment: WrapAlignment.center,
             spacing: 8,
             runSpacing: 8,
             children: [
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context).pushNamed('/dashbotchat');
+                },
                 style: TextButton.styleFrom(
                   side: BorderSide(
                     color: Theme.of(context).colorScheme.primary,

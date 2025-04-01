@@ -1,27 +1,28 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'dashbot_llm_providers.dart';
+part of 'chat_local_repository.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$llmProviderNotifierHash() =>
-    r'9a10801872f525249e76d32df7ac2e6f02059924';
+String _$chatLocalRepositoryHash() =>
+    r'1609067a20be30b0ba734f66d45523e2d3e0ed2d';
 
-/// See also [LlmProviderNotifier].
-@ProviderFor(LlmProviderNotifier)
-final llmProviderNotifierProvider = AutoDisposeNotifierProvider<
-    LlmProviderNotifier, List<LlmProvider>>.internal(
-  LlmProviderNotifier.new,
-  name: r'llmProviderNotifierProvider',
+/// See also [chatLocalRepository].
+@ProviderFor(chatLocalRepository)
+final chatLocalRepositoryProvider = Provider<ChatLocalRepository>.internal(
+  chatLocalRepository,
+  name: r'chatLocalRepositoryProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$llmProviderNotifierHash,
+      : _$chatLocalRepositoryHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$LlmProviderNotifier = AutoDisposeNotifier<List<LlmProvider>>;
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef ChatLocalRepositoryRef = ProviderRef<ChatLocalRepository>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
