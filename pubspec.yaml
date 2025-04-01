@@ -28,7 +28,6 @@ dependencies:
   flutter_portal: ^1.1.4
   flutter_riverpod: ^2.5.1
   flutter_svg: ^2.0.17
-  flutter_typeahead: ^5.2.0
   fvp: ^0.30.0
   highlighter: ^0.1.1
   hive_flutter: ^1.1.0
@@ -69,6 +68,7 @@ dependencies:
     git:
       url: https://github.com/google/flutter-desktop-embedding.git
       path: plugins/window_size
+  carousel_slider: ^5.0.0
 
 dependency_overrides:
   extended_text_field: ^16.0.0

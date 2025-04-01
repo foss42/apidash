@@ -32,9 +32,9 @@ Short answers to the following questions (Add relevant links wherever you can):
 2. What is your one project/achievement that you are most proud of? Why?
 3. What kind of problems or challenges motivate you the most to solve them?
 4. Will you be working on GSoC full-time? In case not, what will you be studying or working on while working on the project?
-6. Do you mind regularly syncing up with the project mentors?
-7. What interests you the most about API Dash?
-8. Can you mention some areas where the project can be improved?
+5. Do you mind regularly syncing up with the project mentors?
+6. What interests you the most about API Dash?
+7. Can you mention some areas where the project can be improved?
 
 ### Project Proposal Information
 

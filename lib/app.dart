@@ -138,7 +138,25 @@ class DashApp extends ConsumerWidget {
                   !kIsLinux && !kIsMobile
                       ? const App()
                       : context.isMediumWindow
-                          ? const MobileDashboard()
+                          ? (kIsMobile
+                              ? FutureBuilder<bool>(
+                                  future: getOnboardingStatusFromSharedPrefs(),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.done) {
+                                      debugPrint(
+                                          "showOnboarding: ${snapshot.data.toString()}");
+                                      final showOnboarding =
+                                          snapshot.data ?? false;
+                                      return showOnboarding
+                                          ? const MobileDashboard()
+                                          : const OnboardingScreen();
+                                    }
+                                    return const Center(
+                                        child: CircularProgressIndicator());
+                                  },
+                                )
+                              : const MobileDashboard())
                           : const Dashboard(),
                   if (kIsWindows)
                     SizedBox(
