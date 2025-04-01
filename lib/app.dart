@@ -1,8 +1,5 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'dart:developer' show log;
-
-import 'package:apidash/screens/mobile/onboarding_screen.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_portal/flutter_portal.dart';
@@ -149,7 +146,7 @@ class DashApp extends ConsumerWidget {
                         return const Center(child: CircularProgressIndicator());
                       }
                       if (snapshot.connectionState == ConnectionState.done) {
-                        log(snapshot.data.toString());
+                        debugPrint(snapshot.data.toString());
                         final showOnboarding = snapshot.data ?? false;
                         return showOnboarding
                             ? const MobileDashboard()
