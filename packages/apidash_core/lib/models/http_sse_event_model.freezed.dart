@@ -20,13 +20,11 @@ SSEEventModel _$SSEEventModelFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$SSEEventModel {
-  String get event => throw _privateConstructorUsedError; // Custom event name
-  String get data =>
-      throw _privateConstructorUsedError; // Event data (main payload)
-  String? get id =>
-      throw _privateConstructorUsedError; // Last event ID for reconnection
-  int? get retry =>
-      throw _privateConstructorUsedError; // Reconnect interval in milliseconds
+  String get event => throw _privateConstructorUsedError;
+  String get data => throw _privateConstructorUsedError;
+  String get comment => throw _privateConstructorUsedError;
+  String? get id => throw _privateConstructorUsedError;
+  int? get retry => throw _privateConstructorUsedError;
   Map<String, String>? get customFields => throw _privateConstructorUsedError;
 
   /// Serializes this SSEEventModel to a JSON map.
@@ -48,6 +46,7 @@ abstract class $SSEEventModelCopyWith<$Res> {
   $Res call(
       {String event,
       String data,
+      String comment,
       String? id,
       int? retry,
       Map<String, String>? customFields});
@@ -70,6 +69,7 @@ class _$SSEEventModelCopyWithImpl<$Res, $Val extends SSEEventModel>
   $Res call({
     Object? event = null,
     Object? data = null,
+    Object? comment = null,
     Object? id = freezed,
     Object? retry = freezed,
     Object? customFields = freezed,
@@ -82,6 +82,10 @@ class _$SSEEventModelCopyWithImpl<$Res, $Val extends SSEEventModel>
       data: null == data
           ? _value.data
           : data // ignore: cast_nullable_to_non_nullable
+              as String,
+      comment: null == comment
+          ? _value.comment
+          : comment // ignore: cast_nullable_to_non_nullable
               as String,
       id: freezed == id
           ? _value.id
@@ -110,6 +114,7 @@ abstract class _$$SSEEventModelImplCopyWith<$Res>
   $Res call(
       {String event,
       String data,
+      String comment,
       String? id,
       int? retry,
       Map<String, String>? customFields});
@@ -130,6 +135,7 @@ class __$$SSEEventModelImplCopyWithImpl<$Res>
   $Res call({
     Object? event = null,
     Object? data = null,
+    Object? comment = null,
     Object? id = freezed,
     Object? retry = freezed,
     Object? customFields = freezed,
@@ -142,6 +148,10 @@ class __$$SSEEventModelImplCopyWithImpl<$Res>
       data: null == data
           ? _value.data
           : data // ignore: cast_nullable_to_non_nullable
+              as String,
+      comment: null == comment
+          ? _value.comment
+          : comment // ignore: cast_nullable_to_non_nullable
               as String,
       id: freezed == id
           ? _value.id
@@ -166,6 +176,7 @@ class _$SSEEventModelImpl extends _SSEEventModel {
   const _$SSEEventModelImpl(
       {this.event = "",
       this.data = "",
+      this.comment = "",
       this.id,
       this.retry,
       final Map<String, String>? customFields})
@@ -178,19 +189,17 @@ class _$SSEEventModelImpl extends _SSEEventModel {
   @override
   @JsonKey()
   final String event;
-// Custom event name
   @override
   @JsonKey()
   final String data;
-// Event data (main payload)
+  @override
+  @JsonKey()
+  final String comment;
   @override
   final String? id;
-// Last event ID for reconnection
   @override
   final int? retry;
-// Reconnect interval in milliseconds
   final Map<String, String>? _customFields;
-// Reconnect interval in milliseconds
   @override
   Map<String, String>? get customFields {
     final value = _customFields;
@@ -202,7 +211,7 @@ class _$SSEEventModelImpl extends _SSEEventModel {
 
   @override
   String toString() {
-    return 'SSEEventModel(event: $event, data: $data, id: $id, retry: $retry, customFields: $customFields)';
+    return 'SSEEventModel(event: $event, data: $data, comment: $comment, id: $id, retry: $retry, customFields: $customFields)';
   }
 
   @override
@@ -212,6 +221,7 @@ class _$SSEEventModelImpl extends _SSEEventModel {
             other is _$SSEEventModelImpl &&
             (identical(other.event, event) || other.event == event) &&
             (identical(other.data, data) || other.data == data) &&
+            (identical(other.comment, comment) || other.comment == comment) &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.retry, retry) || other.retry == retry) &&
             const DeepCollectionEquality()
@@ -220,7 +230,7 @@ class _$SSEEventModelImpl extends _SSEEventModel {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, event, data, id, retry,
+  int get hashCode => Object.hash(runtimeType, event, data, comment, id, retry,
       const DeepCollectionEquality().hash(_customFields));
 
   /// Create a copy of SSEEventModel
@@ -243,6 +253,7 @@ abstract class _SSEEventModel extends SSEEventModel {
   const factory _SSEEventModel(
       {final String event,
       final String data,
+      final String comment,
       final String? id,
       final int? retry,
       final Map<String, String>? customFields}) = _$SSEEventModelImpl;
@@ -252,13 +263,15 @@ abstract class _SSEEventModel extends SSEEventModel {
       _$SSEEventModelImpl.fromJson;
 
   @override
-  String get event; // Custom event name
+  String get event;
   @override
-  String get data; // Event data (main payload)
+  String get data;
   @override
-  String? get id; // Last event ID for reconnection
+  String get comment;
   @override
-  int? get retry; // Reconnect interval in milliseconds
+  String? get id;
+  @override
+  int? get retry;
   @override
   Map<String, String>? get customFields;
 

@@ -63,7 +63,6 @@ Future<void> sendSSERequest(
     var stopwatch = Stopwatch()..start();
     late http.StreamedResponse streamedResponse;
     if (apiType == APIType.sse) {
-      print("Inside SSE HTTP service");
       
       if (isMultiPartRequest) {
         var multiPartRequest = http.MultipartRequest(

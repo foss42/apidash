@@ -13,11 +13,12 @@ class SSEEventModel with _$SSEEventModel {
     anyMap: true,
   )
   const factory SSEEventModel({
-    @Default("") String event, // Custom event name
-    @Default("") String data, // Event data (main payload)
-    String? id, // Last event ID for reconnection
-    int? retry, // Reconnect interval in milliseconds
-    Map<String, String>? customFields, // Additional metadata
+    @Default("") String event, 
+    @Default("") String data,
+    @Default("") String comment,
+    String? id, 
+    int? retry, 
+    Map<String, String>? customFields, 
   }) = _SSEEventModel;
 
   factory SSEEventModel.fromJson(Map<String, Object?> json) =>
@@ -26,12 +27,12 @@ class SSEEventModel with _$SSEEventModel {
   /// Parses raw SSE data into an SSEEventModel
   static SSEEventModel fromRawSSE(String rawEvent) {
     final Map<String, String> fields = {};
-    String? event, data, id;
+    String? event, data, id ,comment;
     int? retry;
 
     for (var line in LineSplitter.split(rawEvent)) {
       if (line.startsWith(":")) {
-        continue; // Ignore comments
+        comment = line;// Ignore comments
       }
       final parts = line.split(": ");
       if (parts.length < 2) continue;
@@ -44,7 +45,7 @@ class SSEEventModel with _$SSEEventModel {
           event = value;
           break;
         case "data":
-          data = (data ?? "") + value + "\n"; // Multi-line data support
+          data = (data ?? "") + value; 
           break;
         case "id":
           id = value;
@@ -60,6 +61,7 @@ class SSEEventModel with _$SSEEventModel {
     return SSEEventModel(
       event: event ?? "",
       data: data?.trim() ?? "",
+      comment: comment ?? "",
       id: id,
       retry: retry,
       customFields: fields.isNotEmpty ? fields : null,
