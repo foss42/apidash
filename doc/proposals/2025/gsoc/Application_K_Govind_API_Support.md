@@ -76,73 +76,7 @@ Operations on incoming messages:
 I have tested my approach on custom endpoints https://github.com/Clasherzz/testing/blob/main/websock.js , echo websocket and multiple fast incoming web socket message endpoints related to bit coin and stock prices to ensure robustness.
 Architecture is as shown below:
   ```  
-               +--------------------------------+
-               |      WebSocket Server         |
-               |  - Manages connections        |
-               |  - Handles messages           |
-               +---------------+--------------+
-                               |
-                               v
-           +--------------------------------------+
-           |   Settings Connection Manager       |
-           |  - Ping interval handling           |
-           |  - Reconnection attempts            |
-           |  - Interval between retries         |
-           +----------------+-------------------+
-                               |
-                               v
-    +---------------------------------------------------------------+
-    |  WebSocket Client (web_socket_channel)                        |
-    |  - Establishes connection                                     |
-    |  - Sends & receives messages                                  |
-    |  - Handles ping & retries                                     |
-    |  - onError  → Updates Riverpod WebSocket Response Model State |
-    |  - onListen → Updates WebSocket Messages Provider             |
-    |  - onDone   → Updates Riverpod WebSocket Response Model State |
-    +----------------------+----------------------+----------------+
-                           |                      |
-                           |                      |
-  +------------------------------------+  +--------------------------------+
-  |  WebSocket Messages Riverpod       |  |  Riverpod State Management    |
-  |  Provider                          |  |  - Stores all messages        |
-  |  - Stores incoming messages        |  |  - Updates WebSocket Model    |
-  |  - Groups messages by request ID   |  |  - Handles UI reactivity      |
-  |  - Provides real-time updates      |  +--------------------------------+
-  +------------------------------------+      |
-                           |                  |
-                           v                  |
-         +-----------------------------------------+
-         |        Flutter WebSocket UI            |
-         |  - Search messages                     |
-         |  - Clear all/one message               |
-         |  - Scroll to top/up option             |
-         |  - Dynamic UI per request              |
-         +-----------------------------------------+
-
-          
-  
-```
-
-  
-- **Technologies & Tools:** The approach uses the package  web_socket_channel(^3.0.1)
-- **Expected Outcomes:** A clean ui with maximum smoothness satisfying above mentioned solutions.
-- **Linked PR for POC:**  https://github.com/foss42/apidash/pull/555  (The PR is in no way the final product but simply to show the code structure and my approach)
-  ![Alt text](./images/websocket(1).png)
-  ![Alt text](./images/websocket(2).png)
-
-
-### Abstract 2(SSE Support)
-Implementation fo server send events in the Apidash.
-
-Trying to implement SSE Support into the application. Using a special provider for incoming frames just like in web socket messages . Now the incoming messages would be parsed and decided if it is comment ,data,event,id,retry. Data is the most important one that is needed to be shown. Often comments , id , retry are hidden away. We can provide an option for advanced visibily in settings that helps the developer to see these frames if they want. This can enhance their testing.
-
-The apiType uses the Http Client Manager itself but generates a streamed reponse and listens into it.Inorder to get the actual request headers send by the client i had to use the http_interceptopr package(https://pub.dev/packages/http_interceptor). 
-
-My approach was tested on a https://sse.dev/test
-
-Architecture is as shown below:
-```
-      +--------------------------------+
+     +--------------------------------+
 |      WebSocket Server         |
 |  - Manages connections        |
 |  - Handles messages           |
@@ -195,8 +129,87 @@ Architecture is as shown below:
 |  - Scroll to top/up option             |
 |  - Dynamic UI per request              |
 |  - View WebSocket Message History      |
-+-----------------------------------------+
++-----------------------------------------+    
+  
+```
 
+  
+- **Technologies & Tools:** The approach uses the package  web_socket_channel(^3.0.1)
+- **Expected Outcomes:** A clean ui with maximum smoothness satisfying above mentioned solutions.
+- **Linked PR for POC:**  https://github.com/foss42/apidash/pull/555  (The PR is in no way the final product but simply to show the code structure and my approach)
+  ![Alt text](./images/websocket(1).png)
+  ![Alt text](./images/websocket(2).png)
+
+
+### Abstract 2(SSE Support)
+Implementation fo server send events in the Apidash.
+
+Trying to implement SSE Support into the application. Using a special provider for incoming frames just like in web socket messages . Now the incoming messages would be parsed and decided if it is comment ,data,event,id,retry. Data is the most important one that is needed to be shown. Often comments , id , retry are hidden away. We can provide an option for advanced visibily in settings that helps the developer to see these frames if they want. This can enhance their testing.
+
+The apiType uses the Http Client Manager itself but generates a streamed reponse and listens into it.Inorder to get the actual request headers send by the client i had to use the http_interceptopr package(https://pub.dev/packages/http_interceptor). 
+
+My approach was tested on a https://sse.dev/test
+
+Architecture is as shown below:
+```
+               +--------------------------------+
+                |       SSE Server               |
+                |  - Manages connections        |
+                |  - Sends event streams        |
+                +---------------+--------------+
+                                |
+                                v
+            +--------------------------------------+
+            |   Settings Connection Manager       |
+            |  - Handles retry intervals         |
+            |  - Manages reconnections           |
+            |  - Configures event listeners      |
+            |  - (Optional) Show Advanced Options|
+            |     - Comments                     |
+            |     - ID                           |
+            |     - Retry Interval               |
+            +----------------+-------------------+
+                                |
+                                v
+     +-------------------------------------------------------------------+
+     |  SSE Client (http package / eventsource)                          |
+     |  - Establishes connection                                         |
+     |  - Listens for events                                             |
+     |  - Handles automatic reconnections                               |
+     |  - onError  → Updates Riverpod SSE Response Model State          |
+     |              → Saves event history in HistoryModel Provider      |
+     |  - onEvent  → Updates SSE Messages Provider                      |
+     |  - onDone   → Updates Riverpod SSE Response Model State          |
+     |              → Saves event history in HistoryModel Provider      |
+     |  - **HTTP Interceptor** (Inside SSE Client)                       |
+     +----------------------+----------------------+--------------------+
+                            |                      | 
+                            |                      | 
+   +------------------------------------+  +--------------------------------+
+   |  SSE Messages Riverpod Provider    |  |  Riverpod State Management    |
+   |  - Stores incoming messages        |  |  - Stores all messages        |
+   |  - Groups messages by event ID     |  |  - Updates SSE Model          |
+   |  - Provides real-time updates      |  |  - Handles UI reactivity      |
+   +------------------------------------+  +--------------------------------+
+                            |                      |
+                            |                      |
+   +------------------------------------------------+
+   |  HistoryModel Provider                         |
+   |  - Saves event history upon errors (`onError`)|
+   |  - Saves event history when done (`onDone`)   |
+   |  - Stores event metadata & timestamps         |
+   |  - Persists disconnected session logs         |
+   +------------------------------------------------+
+                            |
+                            v
+          +-----------------------------------------+
+          |        Flutter SSE UI                   |
+          |  - Search messages                     |
+          |  - Clear all/one message               |
+          |  - Scroll to top/up option             |
+          |  - Dynamic UI per event type           |
+          |  - View Event History                  |
+          +-----------------------------------------+
 
 ```
 POC Link: https://github.com/foss42/apidash/pull/757
