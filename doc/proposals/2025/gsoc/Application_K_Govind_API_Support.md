@@ -302,7 +302,7 @@ Request model change: An additional content type (application/x-www-form-urlenco
 Service level change:- We would make key value pairs as string . This is encoded and passes into the body along with added header .
 
 File support(Issue #337);-
-UI Chnages: Make a combination of drag and droppable and select file ui as a new tab.
+UI Changes: Make a combination of drag and droppable and select file ui as a new tab.
 Model changes: Add another content type application/octet-stream .
 Service changes: Stream the file as bytes 
        
