@@ -23,20 +23,29 @@ class ResponsePane extends ConsumerWidget{
     final message = ref
         .watch(selectedRequestModelProvider.select((value) => value?.message));
     final sseFramesNotifier =  ref.watch(sseFramesProvider.select((state) => state[selectedId] ?? []));
-
+    final apiType = ref.watch(selectedRequestModelProvider.select((value) => value?.apiType));
     
-    if (isWorking && sseFramesNotifier.isEmpty) {
-      print("inside sending widget"+sseFramesNotifier.isEmpty.toString());
+    if (isWorking && apiType == APIType.sse && sseFramesNotifier.isEmpty) {
+     
+      return SendingWidget(
+        startSendingTime: startSendingTime,
+      );
+
+    }
+   
+
+    if (isWorking && apiType != APIType.sse ) {
+     
       return SendingWidget(
         startSendingTime: startSendingTime,
       );
 
     }
 
-    if (responseStatus == null && sseFramesNotifier.isEmpty) {
+    if (responseStatus == null) {
       return const NotSentWidget();
     }
-    if (responseStatus == -1 && sseFramesNotifier.isEmpty) {
+    if (responseStatus == -1) {
       return message == kMsgRequestCancelled
           ? ErrorMessage(
               message: message,
@@ -187,7 +196,10 @@ class _SSEViewState extends ConsumerState<SSEView> {
   Widget build(BuildContext context) {
     final frames = ref.watch(sseFramesProvider.select((state) => state[widget.requestId] ?? []));
 
-    if (_isAtBottom) {
+    // if (_isAtBottom) {
+    //   _pausedFrames = List.from(frames);
+    // }
+    if (_isAtBottom || frames.isEmpty) {
       _pausedFrames = List.from(frames);
     }
     final displayFrames = _isAtBottom ? frames : _pausedFrames;

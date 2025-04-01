@@ -335,12 +335,10 @@ class CollectionStateNotifier
         defaultUriScheme: defaultUriScheme,
         noSSL: noSSL,
         onConnect: (statusCode, responseHeaders, requestHeaders,duration) {
-          print("inside sse onconnect");
+        
         ref.read(sseFramesProvider.notifier).clearFrames(requestId);
         map = {...state!};
-        print(statusCode);
-      print(responseHeaders);
-      print(requestHeaders);
+       
         map[requestId] = requestModel.copyWith(
         responseStatus: statusCode,
         message: kResponseCodeReasons[statusCode],
