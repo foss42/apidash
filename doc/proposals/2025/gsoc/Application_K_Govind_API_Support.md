@@ -11,7 +11,8 @@
   - LinkedIn: https://www.linkedin.com/in/k-govind-226529270/
   
 - **Time Zone:** Thrissur, KL · UTC+5:30 (IST)
-- **Resume:** [Publicly accessible link to resume]  
+- **Resume:** https://drive.google.com/drive/folders/1nHlF1_uSjGRc-DruOZaVZeZT-MF8FBVh?usp=sharing
+-  
 
 ---
 
@@ -45,7 +46,7 @@
 
 ### Availability for GSoC  
 - **Will you work full-time on GSoC?** No  
-- **If not, what else will you be working on?** I currently have to meet with my study requirements and have to continue my Btech course. My initial plan is to contribute 2 hours per week days and 5 hours in weekend days which i beleive is enough for achieving the proposals goal.
+- **If not, what else will you be working on?** I currently have to meet with my study requirements and have to continue my Btech course. My initial plan is to contribute 2 hours per week day and 5 hours in weekend days which i beleive is enough for achieving the proposals goal.
    
 
 ### Communication & Sync-ups  
@@ -61,7 +62,7 @@
 
  
 ### API Testing Support 
-I would like to introduce some feautures as listed below to enhance the api testing support of the application. This is part of a single proposal.
+I would like to introduce some feautures as listed below to enhance the api testing support of the application.All this abstracts are part of a single proposal.
 
 
 ### Abstract  1(Web Socket Implementation)
