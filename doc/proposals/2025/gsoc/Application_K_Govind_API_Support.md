@@ -142,64 +142,60 @@ My approach was tested on a https://sse.dev/test
 
 Architecture is as shown below:
 ```
-                   +--------------------------------+
-               |       SSE Server               |
-               |  - Manages connections        |
-               |  - Sends event streams        |
-               +---------------+--------------+
-                               |
-                               v
-           +--------------------------------------+
-           |   Settings Connection Manager       |
-           |  - Handles retry intervals         |
-           |  - Manages reconnections           |
-           |  - Configures event listeners      |
-           |  - (Optional) Show Advanced Options|
-           |     - Comments                     |
-           |     - ID                           |
-           |     - Retry Interval               |
-           +----------------+-------------------+
-                               |
-                               v
-    +-------------------------------------------------------------------+
-    |  SSE Client (http package / eventsource)                          |
-    |  - Establishes connection                                         |
-    |  - Listens for events                                             |
-    |  - Handles automatic reconnections                               |
-    |  - onError  → Updates Riverpod SSE Response Model State          |
-    |              → Saves event history in HistoryModel Provider      |
-    |  - onEvent  → Updates SSE Messages Provider                      |
-    |  - onDone   → Updates Riverpod SSE Response Model State          |
-    |              → Saves event history in HistoryModel Provider      |
-    |  - **HTTP Interceptor** (Inside SSE Client)                       |
-    +----------------------+----------------------+--------------------+
-                           |                      | 
-                           |                      | 
-  +------------------------------------+  +--------------------------------+
-  |  SSE Messages Riverpod Provider    |  |  Riverpod State Management    |
-  |  - Stores incoming messages        |  |  - Stores all messages        |
-  |  - Groups messages by event ID     |  |  - Updates SSE Model          |
-  |  - Provides real-time updates      |  |  - Handles UI reactivity      |
-  +------------------------------------+  +--------------------------------+
-                           |                      |
-                           |                      |
-  +------------------------------------------------+
-  |  HistoryModel Provider                         |
-  |  - Saves event history upon errors (`onError`)|
-  |  - Saves event history when done (`onDone`)   |
-  |  - Stores event metadata & timestamps         |
-  |  - Persists disconnected session logs         |
-  +------------------------------------------------+
-                           |
-                           v
-         +-----------------------------------------+
-         |        Flutter SSE UI                   |
-         |  - Search messages                     |
-         |  - Clear all/one message               |
-         |  - Scroll to top/up option             |
-         |  - Dynamic UI per event type           |
-         |  - View Event History                  |
-         +-----------------------------------------+
+      +--------------------------------+
+|      WebSocket Server         |
+|  - Manages connections        |
+|  - Handles messages           |
++---------------+--------------+
+               |
+               v
++--------------------------------------+
+|   Settings Connection Manager       |
+|  - Ping interval handling           |
+|  - Reconnection attempts            |
+|  - Interval between retries         |
++----------------+-------------------+
+               |
+               v
++---------------------------------------------------------------+
+|  WebSocket Client (web_socket_channel)                        |
+|  - Establishes connection                                     |
+|  - Sends & receives messages                                  |
+|  - Handles ping & retries                                     |
+|  - onError  → Updates Riverpod WebSocket Response Model State |
+|              → Saves event history in HistoryModel Provider   |
+|  - onListen → Updates WebSocket Messages Provider             |
+|  - onDone   → Updates Riverpod WebSocket Response Model State |
+|              → Saves event history in HistoryModel Provider   |
++----------------------+----------------------+----------------+
+                       |                      |
+                       |                      |
++------------------------------------+  +--------------------------------+
+|  WebSocket Messages Riverpod       |  |  Riverpod State Management    |
+|  Provider                          |  |  - Stores all messages        |
+|  - Stores incoming messages        |  |  - Updates WebSocket Model    |
+|  - Groups messages by request ID   |  |  - Handles UI reactivity      |
+|  - Provides real-time updates      |  +--------------------------------+
++------------------------------------+      |
+                       |                     |
+                       v                     |
++------------------------------------------------+
+|  HistoryModel Provider                         |
+|  - Saves event history upon errors (`onError`)|
+|  - Saves event history when done (`onDone`)   |
+|  - Stores event metadata & timestamps         |
+|  - Persists disconnected session logs         |
++------------------------------------------------+
+                       |
+                       v
++-----------------------------------------+
+|        Flutter WebSocket UI            |
+|  - Search messages                     |
+|  - Clear all/one message               |
+|  - Scroll to top/up option             |
+|  - Dynamic UI per request              |
+|  - View WebSocket Message History      |
++-----------------------------------------+
 
 
 ```
