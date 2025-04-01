@@ -88,7 +88,10 @@ This project will utilize the following packages to implement the proposed featu
 - [`googleai_dart`](https://pub.dev/packages/googleai_dart) - Google AI model support  
 - [`openai_dart`](https://pub.dev/packages/openai_dart) - OpenAI API access  
 - [`ollama_dart`](https://pub.dev/packages/ollama_dart) - OllamaAI inference  
-- [`fl_chart`](https://pub.dev/packages/fl_chart) - API response visualization  
+- [`fl_chart`](https://pub.dev/packages/fl_chart) - API response visualization
+
+### **Figma Link**
+https://www.figma.com/design/vzpQ7xzwwmx2G92VVyF4aw/GSOC-Proposal?node-id=0-1&t=7D6Njm8Rr2x6VCkx-1
 
 ## **Weekly Timeline**  
 
