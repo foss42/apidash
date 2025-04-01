@@ -35,9 +35,10 @@
       - Multipart cancellation error and Request cancellation flow Error :- Both of these errors came acorss me while trying to implement the web socket protocol in the app.
 
 ### Proud Project/Achievement  
-- **Project Name:** [Project Title]  
-- **Why it matters:** [Brief Explanation]  
-- **Repo/Link:** [Link to Project]  
+- **Project Name:** EKO is a combination of reselling and recycling platforms platform for electric components which connects the technicians with the common public.The project gave us state level winner title in the prestigious YIP Programme. This was one of the first applications that i have coded.
+- **Why it matters:** Upon uploading the IMEI No(if component has it) ,model no and model name. Using gemini api we produce all the components inside that phone ,computer etc(using gemini api).The data is then stored . Technicians can now search the components seperately and can purchase the component they want. Rather than scraping (were valuable components are lost) this is a better way to go forward. The consumers get the maximum value price for each of their working components. Imagine your phone is lagging dueto overuse.The app comes to help you to sell your undamages screen , phone speaker etc. The application also had computer vision to recognize electric components lying around your house to know how much it is worth.
+- **Repo/Link:** Frontend: https://github.com/Apollo-Blaze/Ekov1
+                  Backend: https://github.com/Clasherzz/eko
 
 ### Motivating Challenges  
 - I like challenges of two kind, one which demands me to think and implement what i learned. And the other  one  which makes me learn new things.
@@ -65,9 +66,9 @@ I would like to introduce some feautures as listed below to enhance the api test
 
 ### Abstract  1(Web Socket Implementation)
 Introducing web socket implementation into the APIDash. Introduce a new client and manager to handle the websocket messages and render them in the ui . 
-The solution involves providing the users with an option to change ping intervals, number of reconnection attempts, interval between reconnection attenpts. All of this would be managed inside the settings. The ui updates would be made using river pod provider specifically for websocket messages for each request ids. All this would be initiated by user clicking on the new APIType (Web Socket). The appropriate changes would be done in codegen related files to give code. 
+The solution involves providing the users with an option to change ping intervals, number of reconnection attempts, interval between reconnection attenpts. All of this would be managed inside the settings. The ui updates would be made using riverpod provider specifically for websocket messages for each request ids. All this would be initiated by user clicking on the new APIType (Web Socket). The appropriate changes would be done in codegen related files to give code. 
 I have tested my approach on custom endpoints https://github.com/Clasherzz/testing/blob/main/websock.js , echo websocket and multiple fast incoming web socket message endpoints related to bit coin and stock prices to ensure robustness.
-
+Architecture is as shown below:
   ```  
                +--------------------------------+
                |      WebSocket Server         |
@@ -101,9 +102,9 @@ I have tested my approach on custom endpoints https://github.com/Clasherzz/testi
   |  - Stores incoming messages        |  |  - Updates WebSocket Model    |
   |  - Groups messages by request ID   |  |  - Handles UI reactivity      |
   |  - Provides real-time updates      |  +--------------------------------+
-  +------------------------------------+
-                           |
-                           v
+  +------------------------------------+      |
+                           |                  |
+                           v                  |
          +-----------------------------------------+
          |        Flutter WebSocket UI            |
          |  - Search messages                     |
@@ -122,10 +123,71 @@ I have tested my approach on custom endpoints https://github.com/Clasherzz/testi
 - **Linked PR for POC:**  https://github.com/foss42/apidash/pull/555  (The PR is in no way the final product but simply to show the code structure and my approach)
 
 ### Abstract 2(SSE Support)
-Trying to implement SSE Support into the application. The approach is similar to web_sockets in many ways.
+Trying to implement SSE Support into the application. Using a special provider for incoming frames just like in web socket messages . Now the incoming messages would be parsed and decided if it is comment ,data,event,id,retry. Data is the most important one that is needed to be shown. But we keep an advanced option in settings for dev's who need advanced testing they can turn on it to all other kind of frames. This would be helpful for testers for advanced testing.Additionally the ui would render message perfectly if it is a json.
+
+Architecture is as shown below:
+```
+                   +--------------------------------+
+               |       SSE Server               |
+               |  - Manages connections        |
+               |  - Sends event streams        |
+               +---------------+--------------+
+                               |
+                               v
+           +--------------------------------------+
+           |   Settings Connection Manager       |
+           |  - Handles retry intervals         |
+           |  - Manages reconnections           |
+           |  - Configures event listeners      |
+           |  - (Optional) Show Advanced Options|
+           |     - Comments                     |
+           |     - ID                           |
+           |     - Retry Interval               |
+           +----------------+-------------------+
+                               |
+                               v
+    +-------------------------------------------------------------------+
+    |  SSE Client (http package / eventsource)                          |
+    |  - Establishes connection                                         |
+    |  - Listens for events                                             |
+    |  - Handles automatic reconnections                               |
+    |  - onError  → Updates Riverpod SSE Response Model State          |
+    |              → Saves event history in HistoryModel Provider      |
+    |  - onEvent  → Updates SSE Messages Provider                      |
+    |  - onDone   → Updates Riverpod SSE Response Model State          |
+    |              → Saves event history in HistoryModel Provider      |
+    |  - **HTTP Interceptor** (Inside SSE Client)                       |
+    +----------------------+----------------------+--------------------+
+                           |                      | 
+                           |                      | 
+  +------------------------------------+  +--------------------------------+
+  |  SSE Messages Riverpod Provider    |  |  Riverpod State Management    |
+  |  - Stores incoming messages        |  |  - Stores all messages        |
+  |  - Groups messages by event ID     |  |  - Updates SSE Model          |
+  |  - Provides real-time updates      |  |  - Handles UI reactivity      |
+  +------------------------------------+  +--------------------------------+
+                           |                      |
+                           |                      |
+  +------------------------------------------------+
+  |  HistoryModel Provider                         |
+  |  - Saves event history upon errors (`onError`)|
+  |  - Saves event history when done (`onDone`)   |
+  |  - Stores event metadata & timestamps         |
+  |  - Persists disconnected session logs         |
+  +------------------------------------------------+
+                           |
+                           v
+         +-----------------------------------------+
+         |        Flutter SSE UI                   |
+         |  - Search messages                     |
+         |  - Clear all/one message               |
+         |  - Scroll to top/up option             |
+         |  - Dynamic UI per event type           |
+         |  - View Event History                  |
+         +-----------------------------------------+
 
 
-
+```
 ### Abstract 3(GraphQL Enhancement)
 Proposing to include graphql variable support and graphql introspection .
 
