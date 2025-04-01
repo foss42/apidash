@@ -10,6 +10,7 @@ class ADDropdownButton<T> extends StatelessWidget {
     this.isExpanded = false,
     this.isDense = false,
     this.iconSize,
+    this.fontSize,
     this.dropdownMenuItemPadding = kPs8,
     this.dropdownMenuItemtextStyle,
   });
@@ -20,6 +21,7 @@ class ADDropdownButton<T> extends StatelessWidget {
   final bool isExpanded;
   final bool isDense;
   final double? iconSize;
+  final double? fontSize;
   final EdgeInsetsGeometry dropdownMenuItemPadding;
   final TextStyle? Function(T)? dropdownMenuItemtextStyle;
 
@@ -38,6 +40,7 @@ class ADDropdownButton<T> extends StatelessWidget {
       elevation: 4,
       style: kCodeStyle.copyWith(
         color: Theme.of(context).colorScheme.primary,
+        fontSize: fontSize ?? Theme.of(context).textTheme.bodyMedium?.fontSize,
       ),
       underline: Container(
         height: 0,
