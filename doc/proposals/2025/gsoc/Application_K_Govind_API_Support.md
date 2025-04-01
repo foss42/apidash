@@ -122,6 +122,9 @@ Architecture is as shown below:
 - **Technologies & Tools:** The approach uses the package  web_socket_channel(^3.0.1)
 - **Expected Outcomes:** A clean ui with maximum smoothness satisfying above mentioned solutions.
 - **Linked PR for POC:**  https://github.com/foss42/apidash/pull/555  (The PR is in no way the final product but simply to show the code structure and my approach)
+  ![Alt text](./images/websocket(1).png)
+  ![Alt text](./images/websocket(2).png)
+
 
 ### Abstract 2(SSE Support)
 Trying to implement SSE Support into the application. Using a special provider for incoming frames just like in web socket messages . Now the incoming messages would be parsed and decided if it is comment ,data,event,id,retry. Data is the most important one that is needed to be shown. But we keep an advanced option in settings for dev's who need advanced testing they can turn on it to all other kind of frames. This would be helpful for testers for advanced testing.Additionally the ui would render message perfectly if it is a json.
