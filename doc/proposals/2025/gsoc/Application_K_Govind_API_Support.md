@@ -28,16 +28,16 @@
 ## Motivation & Past Experience  
 
 ### Open Source Contributions  
-- My open source journey started from APIDash itself. I discovered it ast year and became a regular user of it.
+- My open source journey started from APIDash itself. I discovered it towards the end of last year and became a regular user of it.
   - **Repo Links/PRs:**
       - Adding codegen for hyper-rust (https://github.com/foss42/apidash/pull/468) :- I thought this to be a comparitively easy contribution when i started but became challenging when i encountered with lack of multipart functionaility in the package. I made some mistakable commits since it was first PR but with all that happened was still able to make a quality PR
       - SSL Feature (https://github.com/foss42/apidash/pull/512) :- I came across this issue first while testing the hyper codegen i made. I took notice of the issue and when came to learn that the feauture was not in apidash took initiative to make it happen.
       - Client running in background problem even after removal (https://github.com/foss42/apidash/pull/560) ;- A small bug that came across me while using the app.
-      - Multipart cancellation error and Request cancellation flow Error :- Both of these errors came acorss me while trying to implement the web socket protocol in the app.
+      - Multipart cancellation error and Request cancellation flow Error :- Both of these bugs came acorss me while trying to implement the web socket protocol in the app.
 
 ### Proud Project/Achievement  
-- **Project Name:** EKO is a combination of reselling and recycling platforms platform for electric components which connects the technicians with the common public.The project gave us state level winner title in the prestigious YIP Programme. This was one of the first applications that i have coded.
-- **Why it matters:** Upon uploading the IMEI No(if component has it) ,model no and model name. Using gemini api we produce all the components inside that phone ,computer etc(using gemini api).The data is then stored . Technicians can now search the components seperately and can purchase the component they want. Rather than scraping (were valuable components are lost) this is a better way to go forward. The consumers get the maximum value price for each of their working components. Imagine your phone is lagging dueto overuse.The app comes to help you to sell your undamages screen , phone speaker etc. The application also had computer vision to recognize electric components lying around your house to know how much it is worth.
+- **Project Name:** EKO is a combination of reselling and recycling platforms for electric components which connects the technicians with the common public.The project gave us Kerela state level winner title in the prestigious YIP Programme. This was one of the first applications that i have coded.
+- **Why it matters:** Upon uploading the IMEI No(if component has it) ,model no and model name. Using gemini api we produce all the components inside the phone ,computer etc(using gemini api).The data is then stored . Technicians can now search the components seperately and can purchase the component they want. Rather than scraping (were valuable components are lost) this is a better way to go forward. The consumers get the maximum value price for each of their working components. Imagine your phone is lagging due to overuse.The app comes to help you to sell your undamaged screen , phone speaker etc. The application also had computer vision to recognize electric components lying around your house to know how much it is worth.
 - **Repo/Link:** Frontend: https://github.com/Apollo-Blaze/Ekov1
                   Backend: https://github.com/Clasherzz/eko
 
@@ -53,21 +53,26 @@
 - **Do you mind regularly syncing up with mentors?** I am totally fine with syncing up with mentors for being uptodated on my work and for feedbacks. If its a virtual meet it would be great to have a heads up about the time.  
 
 ### Interest in API Dash  
-- **What interests you about API Dash?** 
+- **What interests you about API Dash?**
+ What fascinates me most about APIDash is its elegant Flutter architecture,vibrant community, and its codebase. Despite standing humbly among industry giants, APIDash holds its ground with a well-structured, easy-to-understand codebase that helped me understand how code must be written for a complicated application. The clarity and separation in its design make it a pleasure to explore and contribute to.Apart from that by contributing and going through open issues I was abl to understand a lot of backend concepts.While it may be an underdog today, I have no doubt that it will grow into a formidable contender in the future. I look forward to contributing more features and supporting others along the way!
+
 - **Areas for improvement:** I feel like the application would fullfill its goal as it reaches into wider audience of api testers . And for that the application has to tend to broader needs of api testers.Currently APIDash supports on REST APIs and GRAPHQL in its work flow. It would be great to add in other protocols into the app.
 
 ---
-
-
-
- 
-### API Testing Support 
+ ### API Testing Support 
 I would like to introduce some feautures as listed below to enhance the api testing support of the application.All this abstracts are part of a single proposal.
 
 
 ### Abstract  1(Web Socket Implementation)
 Introducing web socket implementation into the APIDash. Introduce a new client and manager to handle the websocket messages and render them in the ui . 
-The solution involves providing the users with an option to change ping intervals, number of reconnection attempts, interval between reconnection attenpts. All of this would be managed inside the settings. The ui updates would be made using riverpod provider specifically for websocket messages for each request ids. All this would be initiated by user clicking on the new APIType (Web Socket). The appropriate changes would be done in codegen related files to give code. 
+
+The solution involves providing the users with an option to change ping intervals, number of reconnection attempts, interval between reconnection attenpts. All of this would be managed inside the settings. The ui updates would be made using riverpod provider specifically for websocket messages for each request ids.Finally during onError and onDone the frames are added into the websocket Response Model. All this would be initiated by user clicking on the new APIType (Web Socket). The appropriate changes would be done in codegen related files to give code. 
+In the proposed approach I am using a web Socket Client Manager similar to the Http Manger to not conflict with the existing services.
+
+Operations on incoming messages:
+-Upon the incoming messages we can delete specific ones or whole. 
+-We can also search for keywords withing every message. Which would be highlightned.(Not Submitted in POC)
+
 I have tested my approach on custom endpoints https://github.com/Clasherzz/testing/blob/main/websock.js , echo websocket and multiple fast incoming web socket message endpoints related to bit coin and stock prices to ensure robustness.
 Architecture is as shown below:
   ```  
@@ -127,7 +132,11 @@ Architecture is as shown below:
 
 
 ### Abstract 2(SSE Support)
+Implementation fo server send events in the Apidash.
+
 Trying to implement SSE Support into the application. Using a special provider for incoming frames just like in web socket messages . Now the incoming messages would be parsed and decided if it is comment ,data,event,id,retry. Data is the most important one that is needed to be shown. But we keep an advanced option in settings for dev's who need advanced testing they can turn on it to all other kind of frames. This would be helpful for testers for advanced testing.Additionally the ui would render message perfectly if it is a json.
+
+The apiType uses the Http Client Manager itself but generates a streamed reponse and listens into it.
 
 Architecture is as shown below:
 ```
@@ -203,9 +212,9 @@ Images of POC:
 Proposing to include graphql variable support and graphql introspection .
 
 Graphql variable :- 
-UI Changes:
-Make a json editor pane as an additional tab in request pane for graphql with enviornment support. 
-And then parse it along the body of request.
+
+UI Changes:Make a json editor pane as an additional tab in request pane for graphql with enviornment support. 
+Service changes: And then parse it along the body of request.
 
 The approach was verified in custom endpoint and in https://rickandmortyapi.com/graphql . A partial implementation of this was done in  https://github.com/foss42/apidash/pull/588   with a mistake in ui approach which would be rectified.
 
@@ -307,29 +316,20 @@ Afterwards if possible i would like to make a package similar to json explorer t
 
 ### Abstract 4(URL Encoded Multipart and File Support)
 
-Url Encoded Multipart(Issue #352):- 
+Url Encoded Multipart(Issue #337):- 
+Sending MultiPart through the body with x-www-form-urlencoded content type.
+
 Ui change: There would be a toggle button in multipart tab that can switch between multipart and urlencoded multipart . 
 Request model change: An additional content type (application/x-www-form-urlencoded). By default the choice would be url encoded multipart content type and would only change to multipart if toggle button is used or if a file is uploaded and selected to send.
 Service level change:- We would make key value pairs as string . This is encoded and passes into the body along with added header .
 
-File support(Issue #337);-
+File support(Issue #352):-
+Sending Files through octect-stream content type. 
 UI Changes: Make a combination of drag and droppable and select file ui as a new tab.
 Model changes: Add another content type application/octet-stream .
-Service changes: Stream the file as bytes 
-       
-      List<int> fileBytes = await file.readAsBytes();
-Then change it to base64 format:   
-       
-       String base64String = base64Encode(fileBytes);
-We can run this 
-
-
-
-
-
-
-
-
+Service changes:We would first stream the file as bytes , add it into the body .
+Put Content-Type header as application/octet-stream and send the request.
+      
 
 
 
