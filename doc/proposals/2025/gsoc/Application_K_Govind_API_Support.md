@@ -189,6 +189,12 @@ Architecture is as shown below:
 
 
 ```
+POC Link:
+Images of POC: 
+![SSE](/images/SSE(1).png)
+
+
+
 ### Abstract 3(GraphQL Enhancement)
 Proposing to include graphql variable support and graphql introspection .
 
