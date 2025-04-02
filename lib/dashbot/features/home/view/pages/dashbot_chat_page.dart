@@ -4,6 +4,7 @@ import 'package:apidash/dashbot/features/home/view/widgets/chat_message.dart';
 import 'package:apidash/dashbot/features/home/viewmodel/home_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ollama_dart/ollama_dart.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
   const ChatScreen({super.key});
@@ -14,7 +15,7 @@ class ChatScreen extends ConsumerStatefulWidget {
 
 class _ChatScreenState extends ConsumerState<ChatScreen> {
   final TextEditingController _textController = TextEditingController();
-  final List<ChatMessage> _messages = [];
+  final List<Message> _messages = [];
   bool _isGenerating = false;
   String _currentStreamingResponse = '';
 
@@ -22,7 +23,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     if (_textController.text.trim().isEmpty) return;
 
     final userMessage = _textController.text;
-    final userChatMessage = ChatMessage(text: userMessage, isUser: true);
+    final userChatMessage =
+        Message(content: userMessage, role: MessageRole.user);
 
     _textController.clear();
 
@@ -46,8 +48,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         });
       }
       if (_currentStreamingResponse.isNotEmpty) {
-        final assistantChatMessage =
-            ChatMessage(text: _currentStreamingResponse, isUser: false);
+        final assistantChatMessage = Message(
+            content: _currentStreamingResponse, role: MessageRole.system);
         _messages.add(assistantChatMessage);
       }
 
@@ -56,7 +58,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       });
     } catch (e) {
       log("Error receiving stream: $e");
-      final errorChatMessage = ChatMessage(text: "Error: $e", isUser: false);
+      final errorChatMessage =
+          Message(content: "Error: $e", role: MessageRole.system);
       setState(() {
         _messages.add(errorChatMessage);
         _isGenerating = false;
@@ -81,13 +84,13 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       if (_isGenerating && index == _messages.length) {
                         return ChatBubble(
                           message: _currentStreamingResponse,
-                          isUser: false,
+                          role: MessageRole.user,
                         );
                       }
                       final message = _messages[index];
                       return ChatBubble(
-                        message: message.text,
-                        isUser: message.isUser,
+                        message: message.content,
+                        role: message.role,
                       );
                     },
                   ),

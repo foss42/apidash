@@ -1,20 +1,13 @@
-// chat_message.dart
 import 'package:apidash_design_system/tokens/tokens.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_markdown/flutter_markdown.dart'; // Import the package
-
-class ChatMessage {
-  final String text;
-  final bool isUser;
-
-  ChatMessage({required this.text, required this.isUser});
-}
+import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:ollama_dart/ollama_dart.dart';
 
 class ChatBubble extends StatelessWidget {
   final String message;
-  final bool isUser;
+  final MessageRole role;
 
-  const ChatBubble({super.key, required this.message, required this.isUser});
+  const ChatBubble({super.key, required this.message, required this.role});
 
   @override
   Widget build(BuildContext context) {
@@ -35,12 +28,14 @@ class ChatBubble extends StatelessWidget {
       );
     }
     return Align(
-      alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
+      alignment: role == MessageRole.user
+          ? Alignment.centerRight
+          : Alignment.centerLeft,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (!isUser) ...[
+          if (role == MessageRole.system) ...[
             kVSpacer6,
             Image.asset(
               "assets/dashbot_icon_1.png",
@@ -55,7 +50,7 @@ class ChatBubble extends StatelessWidget {
               maxWidth: MediaQuery.of(context).size.width * 0.75,
             ),
             decoration: BoxDecoration(
-              color: isUser
+              color: role == MessageRole.user
                   ? Theme.of(context).colorScheme.primaryContainer
                   : Theme.of(context).colorScheme.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(16.0),
@@ -66,7 +61,7 @@ class ChatBubble extends StatelessWidget {
               styleSheet:
                   MarkdownStyleSheet.fromTheme(Theme.of(context)).copyWith(
                 p: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: isUser
+                      color: role == MessageRole.user
                           ? Theme.of(context).colorScheme.surfaceBright
                           : Theme.of(context).colorScheme.onSurface,
                     ),
