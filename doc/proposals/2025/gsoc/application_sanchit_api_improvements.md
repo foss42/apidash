@@ -1,8 +1,8 @@
 
 # APIDash GSoC 2024 Proposal: Enhancing Core Functionality  
-Student: [Your Full Name]  
+Student: Sanchit
 Organization: APIDash  
-Project: Core Feature Improvements  
+Project: Feature Improvements  
 
 -
 
@@ -80,11 +80,16 @@ Why Me?
 
 
 
-### 7. Technical Approach  
+Got it! Here’s your original text with only the code formatting fixed:  
 
-#### 7.1 Pre-Request Scripting  
-Architecture:  
-dart
+---
+
+### **7. Technical Approach**  
+
+#### **7.1 Pre-Request Scripting**  
+
+**Architecture:**  
+```dart
 class ScriptEngine {
   final JavascriptRuntime _runtime;
   
@@ -99,25 +104,29 @@ class ScriptEngine {
     return ScriptResult.fromJS(result);
   }
 }
+```
 
-
-Security Measures:  
+**Security Measures:**  
 - Timeout after 5 seconds  
 - Restricted API access:  
-  javascript
-  // Exposed objects
-  const allowedObjects = {
-    environment: window.apidash.environment,
-    console: { log: () => {} }
-  };
-  
 
-#### 7.2 JSON Editor Enhancements  
-Tech Stack:  
+```javascript
+// Exposed objects
+const allowedObjects = {
+  environment: window.apidash.environment,
+  console: { log: () => {} }
+};
+```
+
+---
+
+#### **7.2 JSON Editor Enhancements**  
+
+**Tech Stack:**  
 - CodeMirror for syntax highlighting  
 - json_serializable for validation  
 
-Validation Workflow:  
+**Validation Workflow:**  
 ```dart
 void _validateJSON(String content) {
   try {
@@ -129,8 +138,11 @@ void _validateJSON(String content) {
 }
 ```
 
-#### 7.3 Environment Variables
-OS Integration:  
+---
+
+#### **7.3 Environment Variables**  
+
+**OS Integration:**  
 ```dart
 Future<Map<String, String>> fetchOSEnv() async {
   if (Platform.isWindows) {
@@ -139,9 +151,9 @@ Future<Map<String, String>> fetchOSEnv() async {
     return _parseEnvOutput(await Process.run('env', []));
   }
 }
+```
 
-
-Color Tagging:  
+**Color Tagging:**  
 ```dart
 DropdownButton<EnvColor>(
   items: [
@@ -157,7 +169,9 @@ DropdownButton<EnvColor>(
     // Other colors...
   ],
 )
+```
 
+---
 
 ### 8. Timeline  
 Total Hours: 175 (20-25 hrs/week)  
