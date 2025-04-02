@@ -20,8 +20,11 @@ class ChatLocalRepository {
     _client = OllamaClient();
   }
 
-  Stream<GenerateCompletionResponse> dashbotGenerateChat(
-      {required String prompt, required String model}) async* {
+  Stream<GenerateCompletionResponse> dashbotGenerateChat({
+    required String prompt,
+    required String model,
+    List<int>? context,
+  }) async* {
     try {
       log("Came to chat: $prompt");
       final responseStream = _client.generateCompletionStream(
@@ -29,6 +32,7 @@ class ChatLocalRepository {
           model: model,
           prompt: prompt,
           system: kDashbotSystemPrompt,
+          context: context,
         ),
       );
       await for (final response in responseStream) {

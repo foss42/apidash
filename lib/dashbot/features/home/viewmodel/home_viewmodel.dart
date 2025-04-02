@@ -30,10 +30,16 @@ class HomeViewmodel extends _$HomeViewmodel {
     yield GenerateCompletionResponse(response: "Welcome to DashBot!");
   }
 
-  Stream<GenerateCompletionResponse> sendMessage(String prompt) async* {
+  Stream<GenerateCompletionResponse> sendMessage(
+    String prompt,
+    List<int>? context,
+  ) async* {
     log("Came to sendMessage: $prompt");
     final chatStream = _chatLocalRepository.dashbotGenerateChat(
-        prompt: prompt, model: _modelName);
+      prompt: prompt,
+      model: _modelName,
+      context: context,
+    );
     yield* chatStream;
   }
 }

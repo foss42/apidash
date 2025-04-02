@@ -37,14 +37,12 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     log("Sending message: $userMessage");
 
     final stream =
-        ref.read(homeViewmodelProvider.notifier).sendMessage(userMessage);
+        ref.read(homeViewmodelProvider.notifier).sendMessage(userMessage, null);
 
     try {
       await for (final responseChunk in stream) {
         setState(() {
           _currentStreamingResponse += responseChunk.response ?? '';
-          log("Stream chunk received: ${responseChunk.response}");
-          log("Current streaming response: $_currentStreamingResponse");
         });
       }
       if (_currentStreamingResponse.isNotEmpty) {
