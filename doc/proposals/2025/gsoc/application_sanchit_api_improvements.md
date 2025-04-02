@@ -205,6 +205,6 @@ Total Hours: 175 (20-25 hrs/week)
 ---
 
 ### Conclusion
-Detailed below is a proposal that answers key APIDash requirements while being considered within my academic obligations. My CodeFest-winning entry shows that I'm capable of creating production-level Flutter tools, and I look forward to contributing to making APIDash the most developer-centric API client. Feel free to give suggestions on how to improve this plan further!
+Detailed below is a proposal that answers key APIDash requirements while being considered within my academic obligations. My CodeFest-participation entry shows that I'm capable of creating production-level Flutter tools, and I look forward to contributing to making APIDash the most developer-centric API client. Feel free to give suggestions on how to improve this plan further!
 
 Let me know if you want to adjust any section!
