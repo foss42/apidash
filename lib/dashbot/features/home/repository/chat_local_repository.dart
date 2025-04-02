@@ -21,12 +21,12 @@ class ChatLocalRepository {
   }
 
   Stream<GenerateCompletionResponse> dashbotGenerateChat(
-      {required String prompt}) async* {
+      {required String prompt, required String model}) async* {
     try {
       log("Came to chat: $prompt");
       final responseStream = _client.generateCompletionStream(
         request: GenerateCompletionRequest(
-          model: "llama3.2:3b",
+          model: model,
           prompt: prompt,
           system: kDashbotSystemPrompt,
         ),
