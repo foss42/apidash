@@ -90,6 +90,16 @@ This project will utilize the following packages to implement the proposed featu
 - [`ollama_dart`](https://pub.dev/packages/ollama_dart) - OllamaAI inference  
 - [`fl_chart`](https://pub.dev/packages/fl_chart) - API response visualization
 
+![light](https://github.com/user-attachments/assets/3f28dca1-8886-4e50-a52e-525640e4816e)
+
+![dark](https://github.com/user-attachments/assets/ac6f318e-714f-463a-b981-25fd9fc9f768)
+
+![iPhone SE - 2](https://github.com/user-attachments/assets/8a26c3a5-0fed-448f-8c1b-1bec9a56d734)
+![iPhone SE - 4](https://github.com/user-attachments/assets/bb702a3e-8b05-432a-b6a2-8b3db9e2bf79)
+
+![Blank diagram](https://github.com/user-attachments/assets/4b24ec3a-4a2f-4d69-83fe-78129cf94938)
+
+
 ### **Figma Link**
 https://www.figma.com/design/vzpQ7xzwwmx2G92VVyF4aw/GSOC-Proposal?node-id=0-1&t=7D6Njm8Rr2x6VCkx-1
 
