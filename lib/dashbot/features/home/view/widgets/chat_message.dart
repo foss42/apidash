@@ -1,5 +1,6 @@
 import 'package:apidash_design_system/tokens/tokens.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:ollama_dart/ollama_dart.dart';
 
@@ -68,6 +69,19 @@ class ChatBubble extends StatelessWidget {
               ),
             ),
           ),
+          if (role == MessageRole.system) ...[
+            IconButton(
+              onPressed: () {
+                Clipboard.setData(
+                  ClipboardData(text: message),
+                );
+              },
+              icon: Icon(
+                Icons.copy_rounded,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ],
         ],
       ),
     );

@@ -111,29 +111,24 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       hintText:
                           _isGenerating ? 'Generating...' : 'Ask anything',
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(8),
                         borderSide: BorderSide.none,
                       ),
                       filled: true,
-                      fillColor:
-                          Theme.of(context).colorScheme.surfaceContainerHighest,
+                      fillColor: Theme.of(context).colorScheme.surface,
                     ),
                     enabled: !_isGenerating,
-                    onSubmitted: (_) =>
-                        _isGenerating ? null : _sendMessage(), // Send on enter
+                    onSubmitted: (_) => _isGenerating ? null : _sendMessage(),
                   ),
                 ),
                 const SizedBox(width: 8),
-                IconButton.filled(
-                  icon: const Icon(Icons.send),
+                IconButton(
+                  icon: const Icon(Icons.send_rounded),
                   onPressed: _isGenerating ? null : _sendMessage,
                   tooltip: 'Send message',
                 ),
               ],
             ),
-          ),
-          SizedBox(
-            height: MediaQuery.of(context).viewInsets.bottom > 0 ? 10 : 20,
           ),
         ],
       ),
