@@ -11,7 +11,6 @@ void main() {
 
   group('OSEnvironmentService', () {
     test('getOSEnvironmentVariable returns the value for existing variable', () {
-      // This test requires checking with a variable that's commonly available
       final testKey = Platform.environment.keys.firstWhere(
         (key) => Platform.environment[key]?.isNotEmpty ?? false,
         orElse: () => '',

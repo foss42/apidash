@@ -39,7 +39,6 @@ class EnvironmentVariableModel with _$EnvironmentVariableModel {
       _$EnvironmentVariableModelFromJson(json);
 }
 
-// Make sure to include fromOS in the constant models to match the model definition
 const kEnvironmentVariableEmptyModel =
     EnvironmentVariableModel(key: "", value: "", fromOS: false);
 const kEnvironmentSecretEmptyModel = EnvironmentVariableModel(
