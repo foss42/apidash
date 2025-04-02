@@ -132,44 +132,44 @@ void main() {
     test("Testing substituteVariables with null", () {
       String? input;
       Map<String, String> envMap = {};
-      expect(substituteVariables(input, envMap), null);
+      expect(substituteVariables(input, envMap, null), null);
     });
 
     test("Testing substituteVariables with empty input", () {
       String input = "";
       Map<String, String> envMap = {};
-      expect(substituteVariables(input, envMap), "");
+      expect(substituteVariables(input, envMap, null), "");
     });
 
     test("Testing substituteVariables with empty envMap", () {
       String input = "{{url}}/humanize/social?num={{num}}";
       Map<String, String> envMap = {};
       String expected = "{{url}}/humanize/social?num={{num}}";
-      expect(substituteVariables(input, envMap), expected);
+      expect(substituteVariables(input, envMap, null), expected);
     });
 
     test("Testing substituteVariables with empty activeEnvironmentId", () {
       String input = "{{url}}/humanize/social?num={{num}}";
       String expected = "api.foss42.com/humanize/social?num=5670000";
-      expect(substituteVariables(input, globalVarsMap), expected);
+      expect(substituteVariables(input, globalVarsMap, null), expected);
     });
 
     test("Testing substituteVariables with non-empty activeEnvironmentId", () {
       String input = "{{url}}/humanize/social?num={{num}}";
       String expected = "api.apidash.dev/humanize/social?num=8940000";
-      expect(substituteVariables(input, combinedEnvVarsMap), expected);
+      expect(substituteVariables(input, combinedEnvVarsMap, "activeEnvId"), expected);
     });
 
     test("Testing substituteVariables with incorrect paranthesis", () {
       String input = "{{url}}}/humanize/social?num={{num}}";
       String expected = "api.apidash.dev}/humanize/social?num=8940000";
-      expect(substituteVariables(input, combinedEnvVarsMap), expected);
+      expect(substituteVariables(input, combinedEnvVarsMap, "activeEnvId"), expected);
     });
 
     test("Testing substituteVariables function with unavailable variables", () {
       String input = "{{url1}}/humanize/social?num={{num}}";
       String expected = "{{url1}}/humanize/social?num=8940000";
-      expect(substituteVariables(input, combinedEnvVarsMap), expected);
+      expect(substituteVariables(input, combinedEnvVarsMap, "activeEnvId"), expected);
     });
   });
 
@@ -361,7 +361,7 @@ void main() {
     });
   });
   
-    group('getEnvironmentVariableValue tests', () {
+  group('getEnvironmentVariableValue tests', () {
     test('returns original value when fromOS is false', () {
       const variable = EnvironmentVariableModel(
         key: 'TEST_KEY',
@@ -369,7 +369,20 @@ void main() {
         fromOS: false,
       );
       
-      final result = getEnvironmentVariableValue(variable);
+      final combinedEnvVarMap = {'TEST_KEY': 'mapped_value'};
+      final result = getEnvironmentVariableValue(variable, null, combinedEnvVarMap);
+      expect(result, 'mapped_value');
+    });
+    
+    test('returns original value when fromOS is false and not in map', () {
+      const variable = EnvironmentVariableModel(
+        key: 'TEST_KEY',
+        value: 'test_value',
+        fromOS: false,
+      );
+      
+      final combinedEnvVarMap = <String, String>{};
+      final result = getEnvironmentVariableValue(variable, null, combinedEnvVarMap);
       expect(result, 'test_value');
     });
     
@@ -388,7 +401,8 @@ void main() {
           fromOS: true,
         );
         
-        final result = getEnvironmentVariableValue(variable);
+        final combinedEnvVarMap = <String, String>{};
+        final result = getEnvironmentVariableValue(variable, null, combinedEnvVarMap);
         expect(result, osValue);
       } else {
         if (kDebugMode) {
@@ -406,8 +420,48 @@ void main() {
         fromOS: true,
       );
       
-      final result = getEnvironmentVariableValue(variable);
+      final combinedEnvVarMap = <String, String>{};
+      final result = getEnvironmentVariableValue(variable, null, combinedEnvVarMap);
       expect(result, 'fallback_value');
+    });
+  });
+  
+  group('substituteHttpRequestModel with OS environment variables', () {
+    test('correctly substitutes OS environment variables', () {
+      final testKey = Platform.environment.keys.firstWhere(
+        (key) => Platform.environment[key]?.isNotEmpty ?? false,
+        orElse: () => '',
+      );
+      
+      if (testKey.isNotEmpty) {
+        final osValue = Platform.environment[testKey];
+        
+        const httpRequestModel = HttpRequestModel(
+          url: "{{osVar}}/test",
+        );
+        
+        final osVariable = EnvironmentVariableModel(
+          key: 'osVar',
+          value: 'fallback_value',
+          fromOS: true,
+        );
+        
+        final Map<String?, List<EnvironmentVariableModel>> envMap = {
+          'activeEnvId': [osVariable],
+        };
+        
+        final result = substituteHttpRequestModel(
+          httpRequestModel,
+          envMap,
+          'activeEnvId',
+        );
+        
+        expect(result.url, startsWith(osValue ?? 'fallback_value'));
+      } else {
+        if (kDebugMode) {
+          print('Skipped test: No environment variables available for testing');
+        }
+      }
     });
   });
   
@@ -423,18 +477,10 @@ void main() {
         
         final input = 'Value from OS: {{$testKey}}';
         
-        final envMap = {
-          'env1': [
-            EnvironmentVariableModel(
-              key: testKey,
-              value: 'fallback_value', 
-              fromOS: true,
-            ),
-          ],
-        };
+        Map<String, String> combinedEnvVarMap = {testKey: osValue ?? 'fallback_value'};
         
-        final result = substituteVariables(input, envMap, 'env1');
-        final expected = 'Value from OS: $osValue';
+        final result = substituteVariables(input, combinedEnvVarMap, 'env1');
+        final expected = 'Value from OS: ${osValue ?? 'fallback_value'}';
         
         expect(result, expected);
       } else {
@@ -448,18 +494,10 @@ void main() {
       const nonExistentKey = 'NON_EXISTENT_ENVIRONMENT_VARIABLE_12345';
       const input = 'Fallback value: {{NON_EXISTENT_ENVIRONMENT_VARIABLE_12345}}';
       
-      final envMap = {
-        'env1': [
-          const EnvironmentVariableModel(
-            key: nonExistentKey,
-            value: 'fallback_value', 
-            fromOS: true,
-          ),
-        ],
-      };
+      Map<String, String> combinedEnvVarMap = {nonExistentKey: 'fallback_value'};
       
-      final result = substituteVariables(input, envMap, 'env1');
-      final expected = 'Fallback value: fallback_value';
+      final result = substituteVariables(input, combinedEnvVarMap, 'env1');
+      const expected = 'Fallback value: fallback_value';
       
       expect(result, expected);
     });
