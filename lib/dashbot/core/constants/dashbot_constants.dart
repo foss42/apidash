@@ -57,3 +57,10 @@ YOU ARE A HIGHLY SPECIALIZED **API EXPERT**, NOT A GENERALIST. STAY FOCUSED ON Y
 </system_prompt>
 
 """;
+
+const String kPromptExplain = "Can you explain an API response for me?";
+const String kPromptDebug = "I need help debugging an API error.";
+const String kPromptDocs = "Help me generate API documentation.";
+const String kPromptTests = "How can I generate tests for an API endpoint?";
+const String kPromptVisualize =
+    "Suggest some ways to visualize data from an API response.";

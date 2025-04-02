@@ -3,11 +3,13 @@ import 'dart:developer';
 import 'package:apidash/dashbot/features/home/view/widgets/chat_message.dart';
 import 'package:apidash/dashbot/features/home/viewmodel/home_viewmodel.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ollama_dart/ollama_dart.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
-  const ChatScreen({super.key});
+  final String? initialPrompt;
+  const ChatScreen({super.key, this.initialPrompt});
 
   @override
   ConsumerState<ChatScreen> createState() => _ChatScreenState();
@@ -19,14 +21,30 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   bool _isGenerating = false;
   String _currentStreamingResponse = '';
 
-  void _sendMessage() async {
-    if (_textController.text.trim().isEmpty) return;
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialPrompt != null &&
+        widget.initialPrompt!.trim().isNotEmpty) {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _sendMessage(promptOverride: widget.initialPrompt);
+        }
+      });
+    }
+  }
 
-    final userMessage = _textController.text;
+  void _sendMessage({String? promptOverride}) async {
+    final messageContent = promptOverride ?? _textController.text;
+
+    if (messageContent.trim().isEmpty) return;
+
     final userChatMessage =
-        Message(content: userMessage, role: MessageRole.user);
+        Message(content: messageContent, role: MessageRole.user);
 
-    _textController.clear();
+    if (promptOverride == null) {
+      _textController.clear();
+    }
 
     setState(() {
       _messages.add(userChatMessage);
@@ -34,17 +52,22 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       _currentStreamingResponse = '';
     });
 
-    log("Sending message: $userMessage");
+    log("Sending message: $messageContent");
 
-    final stream =
-        ref.read(homeViewmodelProvider.notifier).sendMessage(userMessage, null);
+    final stream = ref
+        .read(homeViewmodelProvider.notifier)
+        .sendMessage(messageContent, null);
 
     try {
       await for (final responseChunk in stream) {
+        if (!mounted) return;
         setState(() {
           _currentStreamingResponse += responseChunk.response ?? '';
         });
       }
+
+      if (!mounted) return;
+
       if (_currentStreamingResponse.isNotEmpty) {
         final assistantChatMessage = Message(
             content: _currentStreamingResponse, role: MessageRole.system);
@@ -56,6 +79,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       });
     } catch (e) {
       log("Error receiving stream: $e");
+      if (!mounted) return;
       final errorChatMessage =
           Message(content: "Error: $e", role: MessageRole.system);
       setState(() {

@@ -1,3 +1,4 @@
+import 'package:apidash/dashbot/core/constants/dashbot_constants.dart';
 import 'package:apidash/dashbot/features/home/view/pages/dashbot_chat_page.dart';
 import 'package:apidash_design_system/tokens/measurements.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +15,11 @@ class DashbotHomePage extends StatelessWidget {
           return MaterialPageRoute(
               builder: (context) => _buildHomePageContent(context));
         } else if (settings.name == '/dashbotchat') {
-          return MaterialPageRoute(builder: (context) => const ChatScreen());
+          final args = settings.arguments as Map<String, dynamic>?;
+          final initialPrompt = args?['initialPrompt'] as String?;
+          return MaterialPageRoute(
+            builder: (context) => ChatScreen(initialPrompt: initialPrompt),
+          );
         }
         return null;
       },
@@ -22,6 +27,13 @@ class DashbotHomePage extends StatelessWidget {
   }
 
   Widget _buildHomePageContent(BuildContext context) {
+    void navigateToChat(String prompt) {
+      Navigator.of(context).pushNamed(
+        '/dashbotchat',
+        arguments: {'initialPrompt': prompt},
+      );
+    }
+
     return Container(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -47,9 +59,7 @@ class DashbotHomePage extends StatelessWidget {
             runSpacing: 8,
             children: [
               TextButton(
-                onPressed: () {
-                  Navigator.of(context).pushNamed('/dashbotchat');
-                },
+                onPressed: () => navigateToChat(kPromptExplain),
                 style: TextButton.styleFrom(
                   side: BorderSide(
                     color: Theme.of(context).colorScheme.primary,
@@ -59,12 +69,10 @@ class DashbotHomePage extends StatelessWidget {
                     horizontal: 16,
                   ),
                 ),
-                child: Text(
-                  "🔎 Explain me this response",
-                ),
+                child: const Text("🔎 Explain me this response"),
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: () => navigateToChat(kPromptDebug),
                 style: TextButton.styleFrom(
                   side: BorderSide(
                     color: Theme.of(context).colorScheme.primary,
@@ -74,10 +82,10 @@ class DashbotHomePage extends StatelessWidget {
                     horizontal: 16,
                   ),
                 ),
-                child: Text("🐞 Help me debug this error"),
+                child: const Text("🐞 Help me debug this error"),
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: () => navigateToChat(kPromptDocs),
                 style: TextButton.styleFrom(
                   side: BorderSide(
                     color: Theme.of(context).colorScheme.primary,
@@ -87,13 +95,13 @@ class DashbotHomePage extends StatelessWidget {
                     horizontal: 16,
                   ),
                 ),
-                child: Text(
+                child: const Text(
                   "📄 Generate documentation",
                   textAlign: TextAlign.center,
                 ),
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: () => navigateToChat(kPromptTests),
                 style: TextButton.styleFrom(
                   side: BorderSide(
                     color: Theme.of(context).colorScheme.primary,
@@ -103,10 +111,10 @@ class DashbotHomePage extends StatelessWidget {
                     horizontal: 16,
                   ),
                 ),
-                child: Text("📝 Generate Tests"),
+                child: const Text("📝 Generate Tests"),
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: () => navigateToChat(kPromptVisualize),
                 style: TextButton.styleFrom(
                   side: BorderSide(
                     color: Theme.of(context).colorScheme.primary,
@@ -116,7 +124,7 @@ class DashbotHomePage extends StatelessWidget {
                     horizontal: 16,
                   ),
                 ),
-                child: Text("📊 Generate Visualizations"),
+                child: const Text("📊 Generate Visualizations"),
               ),
             ],
           )

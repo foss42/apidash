@@ -7,11 +7,19 @@ import 'package:ollama_dart/ollama_dart.dart';
 class ChatBubble extends StatelessWidget {
   final String message;
   final MessageRole role;
+  final String? promptOverride;
 
-  const ChatBubble({super.key, required this.message, required this.role});
+  const ChatBubble(
+      {super.key,
+      required this.message,
+      required this.role,
+      this.promptOverride});
 
   @override
   Widget build(BuildContext context) {
+    if (promptOverride != null && role == MessageRole.user) {
+      return SizedBox.shrink();
+    }
     if (message.isEmpty) {
       return Align(
         alignment: Alignment.centerLeft,
