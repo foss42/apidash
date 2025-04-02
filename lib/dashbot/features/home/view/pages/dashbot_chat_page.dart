@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:apidash/dashbot/features/home/view/widgets/chat_message.dart';
 import 'package:apidash/dashbot/features/home/viewmodel/home_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,6 +17,43 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   final List<ChatMessage> _messages = [];
   bool _isGenerating = false;
   String _currentGeneratedText = '';
+
+  void _sendMessage() async {
+    if (_textController.text.trim().isEmpty) return;
+
+    final userMessage = _textController.text;
+    setState(() {
+      _messages.add(ChatMessage(text: userMessage, isUser: true));
+      _isGenerating = true;
+      _currentGeneratedText = '';
+    });
+
+    log("Sending message: $userMessage");
+
+    // Start the stream
+    final stream =
+        ref.read(homeViewmodelProvider.notifier).sendMessage(userMessage);
+
+    _textController.clear();
+
+    // Listen for the stream completion
+    try {
+      await for (final _ in stream) {
+        // We're already updating UI via the provider listener
+      }
+      // When stream completes, add the full message to history
+      setState(() {
+        _messages.add(ChatMessage(text: _currentGeneratedText, isUser: false));
+        _isGenerating = false;
+      });
+    } catch (e) {
+      log("Error in stream: $e");
+      setState(() {
+        _messages.add(ChatMessage(text: "Error: $e", isUser: false));
+        _isGenerating = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,78 +116,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  void _sendMessage() async {
-    if (_textController.text.trim().isEmpty) return;
-
-    final userMessage = _textController.text;
-    setState(() {
-      _messages.add(ChatMessage(text: userMessage, isUser: true));
-      _isGenerating = true;
-      _currentGeneratedText = '';
-    });
-
-    log("Sending message: $userMessage");
-
-    // Start the stream
-    final stream =
-        ref.read(homeViewmodelProvider.notifier).sendMessage(userMessage);
-
-    _textController.clear();
-
-    // Listen for the stream completion
-    try {
-      await for (final _ in stream) {
-        // We're already updating UI via the provider listener
-      }
-      // When stream completes, add the full message to history
-      setState(() {
-        _messages.add(ChatMessage(text: _currentGeneratedText, isUser: false));
-        _isGenerating = false;
-      });
-    } catch (e) {
-      log("Error in stream: $e");
-      setState(() {
-        _messages.add(ChatMessage(text: "Error: $e", isUser: false));
-        _isGenerating = false;
-      });
-    }
-  }
-}
-
-class ChatMessage {
-  final String text;
-  final bool isUser;
-
-  ChatMessage({required this.text, required this.isUser});
-}
-
-class ChatBubble extends StatelessWidget {
-  final String message;
-  final bool isUser;
-
-  const ChatBubble({super.key, required this.message, required this.isUser});
-
-  @override
-  Widget build(BuildContext context) {
-    return Align(
-      alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 5.0),
-        padding: const EdgeInsets.all(12.0),
-        constraints: BoxConstraints(
-          maxWidth: MediaQuery.of(context).size.width * 0.7,
-        ),
-        decoration: BoxDecoration(
-          color: isUser
-              ? Theme.of(context).colorScheme.primaryContainer
-              : Theme.of(context).colorScheme.surfaceContainer,
-          borderRadius: BorderRadius.circular(12.0),
-        ),
-        child: Text(message),
       ),
     );
   }

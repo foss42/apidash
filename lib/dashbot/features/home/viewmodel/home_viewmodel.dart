@@ -12,10 +12,10 @@ class HomeViewmodel extends _$HomeViewmodel {
   late ChatLocalRepository _chatLocalRepository;
 
   @override
-  Stream<GenerateCompletionResponse> build() {
+  Stream<GenerateCompletionResponse> build() async* {
     _chatLocalRepository = ref.watch(chatLocalRepositoryProvider);
     _chatLocalRepository.init();
-    return const Stream.empty();
+    yield GenerateCompletionResponse(response: "Welcome to DashBot!");
   }
 
   Stream<GenerateCompletionResponse> sendMessage(String prompt) async* {

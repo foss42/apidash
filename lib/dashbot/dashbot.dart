@@ -1,1 +1,1 @@
-export 'widgets/dashbot_widget.dart';
+export 'draggable_window.dart';
