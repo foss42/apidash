@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:apidash/utils/envvar_utils.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash_core/apidash_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:test/test.dart';
 
 const envVars = [
@@ -357,4 +360,109 @@ void main() {
       expect(getVariableStatus(query, envMap, activeEnvironmentId), expected);
     });
   });
+  
+    group('getEnvironmentVariableValue tests', () {
+    test('returns original value when fromOS is false', () {
+      const variable = EnvironmentVariableModel(
+        key: 'TEST_KEY',
+        value: 'test_value',
+        fromOS: false,
+      );
+      
+      final result = getEnvironmentVariableValue(variable);
+      expect(result, 'test_value');
+    });
+    
+    test('returns OS value when fromOS is true and OS variable exists', () {
+      final testKey = Platform.environment.keys.firstWhere(
+        (key) => Platform.environment[key]?.isNotEmpty ?? false,
+        orElse: () => '',
+      );
+      
+      if (testKey.isNotEmpty) {
+        final osValue = Platform.environment[testKey];
+        
+        final variable = EnvironmentVariableModel(
+          key: testKey,
+          value: 'fallback_value',
+          fromOS: true,
+        );
+        
+        final result = getEnvironmentVariableValue(variable);
+        expect(result, osValue);
+      } else {
+        if (kDebugMode) {
+          print('Skipped test: No environment variables available for testing');
+        }
+      }
+    });
+    
+    test('returns fallback value when fromOS is true but OS variable does not exist', () {
+      const nonExistentKey = 'NON_EXISTENT_ENVIRONMENT_VARIABLE_12345';
+      
+      const variable = EnvironmentVariableModel(
+        key: nonExistentKey,
+        value: 'fallback_value',
+        fromOS: true,
+      );
+      
+      final result = getEnvironmentVariableValue(variable);
+      expect(result, 'fallback_value');
+    });
+  });
+  
+  group('substituteVariables with OS environment variables', () {
+    test('substitutes OS environment variables when fromOS is true', () {
+      final testKey = Platform.environment.keys.firstWhere(
+        (key) => Platform.environment[key]?.isNotEmpty ?? false,
+        orElse: () => '',
+      );
+      
+      if (testKey.isNotEmpty) {
+        final osValue = Platform.environment[testKey];
+        
+        final input = 'Value from OS: {{$testKey}}';
+        
+        final envMap = {
+          'env1': [
+            EnvironmentVariableModel(
+              key: testKey,
+              value: 'fallback_value', 
+              fromOS: true,
+            ),
+          ],
+        };
+        
+        final result = substituteVariables(input, envMap, 'env1');
+        final expected = 'Value from OS: $osValue';
+        
+        expect(result, expected);
+      } else {
+        if (kDebugMode) {
+          print('Skipped test: No environment variables available for testing');
+        }
+      }
+    });
+    
+    test('falls back to stored value when OS variable not found and fromOS is true', () {
+      const nonExistentKey = 'NON_EXISTENT_ENVIRONMENT_VARIABLE_12345';
+      const input = 'Fallback value: {{NON_EXISTENT_ENVIRONMENT_VARIABLE_12345}}';
+      
+      final envMap = {
+        'env1': [
+          const EnvironmentVariableModel(
+            key: nonExistentKey,
+            value: 'fallback_value', 
+            fromOS: true,
+          ),
+        ],
+      };
+      
+      final result = substituteVariables(input, envMap, 'env1');
+      final expected = 'Fallback value: fallback_value';
+      
+      expect(result, expected);
+    });
+  });
+  
 }
