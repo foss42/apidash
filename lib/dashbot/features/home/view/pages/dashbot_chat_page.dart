@@ -113,6 +113,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       return ChatBubble(
                         message: message.content,
                         role: message.role,
+                        promptOverride: widget.initialPrompt,
                       );
                     },
                   ),

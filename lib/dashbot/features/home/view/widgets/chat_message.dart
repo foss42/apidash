@@ -17,7 +17,9 @@ class ChatBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (promptOverride != null && role == MessageRole.user) {
+    if (promptOverride != null &&
+        role == MessageRole.user &&
+        message == promptOverride) {
       return SizedBox.shrink();
     }
     if (message.isEmpty) {
