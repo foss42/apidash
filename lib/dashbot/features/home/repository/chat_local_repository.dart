@@ -29,7 +29,7 @@ class ChatLocalRepository {
         ),
       );
       await for (final response in responseStream) {
-        log(response.toString());
+        log(response.response.toString());
         yield response;
       }
     } catch (e) {

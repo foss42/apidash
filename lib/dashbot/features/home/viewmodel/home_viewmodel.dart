@@ -20,6 +20,7 @@ class HomeViewmodel extends _$HomeViewmodel {
 
   Stream<GenerateCompletionResponse> sendMessage(String prompt) async* {
     log("Came to sendMessage: $prompt");
-    yield* _chatLocalRepository.dashbotChat(prompt: prompt);
+    final chatStream = _chatLocalRepository.dashbotChat(prompt: prompt);
+    yield* chatStream;
   }
 }
