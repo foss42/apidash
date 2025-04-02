@@ -87,6 +87,40 @@ void main() {
       expect(environmentVariableModel.enabled, true);
     });
 
+    test("Testing EnvironmentVariableModel copyWith with fromOS", () {
+      var environmentVariableModel = environmentVariableModel1;
+      final environmentVariableModelcopyWith = environmentVariableModel
+          .copyWith(fromOS: true);
+      expect(environmentVariableModelcopyWith.fromOS, true);
+      expect(environmentVariableModel.fromOS, false);
+    });
+
+    test("Testing EnvironmentVariableModel toJson with fromOS", () {
+      var environmentVariable = EnvironmentVariableModel(
+        key: 'key1',
+        value: 'value1',
+        type: EnvironmentVariableType.variable,
+        enabled: true,
+        fromOS: true,
+      );
+      
+      final jsonMap = environmentVariable.toJson();
+      expect(jsonMap['fromOS'], true);
+    });
+
+    test("Testing EnvironmentVariableModel fromJson with fromOS", () {
+      var json = {
+        'key': 'key1',
+        'value': 'value1',
+        'type': 'variable',
+        'enabled': true,
+        'fromOS': true,
+      };
+      
+      final modelFromJson = EnvironmentVariableModel.fromJson(json);
+      expect(modelFromJson.fromOS, true);
+    });
+
     test("Testing EnvironmentVariableModel toJson", () {
       var environmentVariable = environmentVariableModel1;
       expect(environmentVariable.toJson(), environmentVariableModel1Json);

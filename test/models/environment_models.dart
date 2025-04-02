@@ -97,12 +97,14 @@ const environmentModel1Json = {
       'value': 'value1',
       'type': 'variable',
       'enabled': true,
+      'fromOS': false,
     },
     {
       'key': 'key2',
       'value': 'value2',
       'type': 'variable',
       'enabled': false,
+      'fromOS': false,
     },
   ],
 };
@@ -116,12 +118,14 @@ const environmentModel2Json = {
       'value': 'value1',
       'type': 'secret',
       'enabled': true,
+      'fromOS': false,
     },
     {
       'key': 'key2',
       'value': 'value2',
       'type': 'secret',
       'enabled': false,
+      'fromOS': false,
     },
   ],
 };
@@ -131,6 +135,7 @@ const environmentVariableModel1Json = {
   'value': 'value1',
   'type': 'variable',
   'enabled': true,
+  'fromOS': false,
 };
 
 const environmentVariableModel2Json = {
@@ -138,4 +143,5 @@ const environmentVariableModel2Json = {
   'value': 'value1',
   'type': 'secret',
   'enabled': true,
+  'fromOS': false,
 };

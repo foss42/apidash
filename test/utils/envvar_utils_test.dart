@@ -197,8 +197,13 @@ void main() {
       );
 
       Map<String?, List<EnvironmentVariableModel>> envMap = {
-        kGlobalEnvironmentId: globalVars,
-        "activeEnvId": activeEnvVars,
+        kGlobalEnvironmentId: [
+          const EnvironmentVariableModel(key: "token", value: "token"),
+        ],
+        "activeEnvId": [
+          const EnvironmentVariableModel(key: "url", value: "api.apidash.dev"),
+          const EnvironmentVariableModel(key: "num", value: "8940000"),
+        ],
       };
 
       String? activeEnvironmentId = "activeEnvId";
@@ -230,10 +235,14 @@ void main() {
           NameValueModel(name: "num", value: "{{num}}"),
         ],
       );
+      
       Map<String?, List<EnvironmentVariableModel>> envMap = {
-        kGlobalEnvironmentId: globalVars,
-        "activeEnvId": activeEnvVars,
+        kGlobalEnvironmentId: [],
+        "activeEnvId": [
+          const EnvironmentVariableModel(key: "num", value: "8940000"),
+        ],
       };
+      
       String? activeEnvironmentId = "activeEnvId";
       const expected = HttpRequestModel(
         url: "{{url1}}/humanize/social",
@@ -263,10 +272,17 @@ void main() {
         ],
         body: "The API key is {{token}} and the number is {{num}}",
       );
+      
       Map<String?, List<EnvironmentVariableModel>> envMap = {
-        kGlobalEnvironmentId: globalVars,
-        "activeEnvId": activeEnvVars,
+        kGlobalEnvironmentId: [
+          const EnvironmentVariableModel(key: "token", value: "token"),
+        ],
+        "activeEnvId": [
+          const EnvironmentVariableModel(key: "url", value: "api.apidash.dev"),
+          const EnvironmentVariableModel(key: "num", value: "8940000"),
+        ],
       };
+      
       String? activeEnvironmentId = "activeEnvId";
       const expected = HttpRequestModel(
         url: "api.apidash.dev/humanize/social",
@@ -428,40 +444,29 @@ void main() {
   
   group('substituteHttpRequestModel with OS environment variables', () {
     test('correctly substitutes OS environment variables', () {
-      final testKey = Platform.environment.keys.firstWhere(
-        (key) => Platform.environment[key]?.isNotEmpty ?? false,
-        orElse: () => '',
+      const osKey = 'osVar';
+      
+      const httpRequestModel = HttpRequestModel(
+        url: "{{osVar}}/test",
       );
       
-      if (testKey.isNotEmpty) {
-        final osValue = Platform.environment[testKey];
-        
-        const httpRequestModel = HttpRequestModel(
-          url: "{{osVar}}/test",
-        );
-        
-        final osVariable = EnvironmentVariableModel(
-          key: 'osVar',
-          value: 'fallback_value',
-          fromOS: true,
-        );
-        
-        final Map<String?, List<EnvironmentVariableModel>> envMap = {
-          'activeEnvId': [osVariable],
-        };
-        
-        final result = substituteHttpRequestModel(
-          httpRequestModel,
-          envMap,
-          'activeEnvId',
-        );
-        
-        expect(result.url, startsWith(osValue ?? 'fallback_value'));
-      } else {
-        if (kDebugMode) {
-          print('Skipped test: No environment variables available for testing');
-        }
-      }
+      final osVariable = EnvironmentVariableModel(
+        key: osKey,
+        value: 'fallback_value',
+        fromOS: true,
+      );
+      
+      final Map<String?, List<EnvironmentVariableModel>> envMap = {
+        'activeEnvId': [osVariable],
+      };
+      
+      final result = substituteHttpRequestModel(
+        httpRequestModel,
+        envMap,
+        'activeEnvId',
+      );
+      
+      expect(result.url, 'fallback_value/test');
     });
   });
   
