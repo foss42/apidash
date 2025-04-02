@@ -1,9 +1,7 @@
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash/consts.dart';
-import 'package:apidash/services/services.dart';
 
-// Create an instance of the OS Environment Service
-final osEnvironmentService = OSEnvironmentService();
+import '../services/services.dart';
 
 String getEnvironmentTitle(String? name) {
   if (name == null || name.trim() == "") {
@@ -40,76 +38,80 @@ List<EnvironmentVariableModel> getEnvironmentSecrets(
       .toList();
 }
 
-/// Gets the actual value of an environment variable, considering whether it should be fetched from OS
-String getEnvironmentVariableValue(EnvironmentVariableModel variable) {
-  
-  if (variable.fromOS) {
-    final osValue = osEnvironmentService.getOSEnvironmentVariable(variable.key);
-    
-    // Return OS value if found, otherwise return the stored value as fallback
-    return osValue ?? variable.value;
-  }
-  // Return the stored value if not from OS
-  return variable.value;
-}
-
 String? substituteVariables(
   String? input,
   Map<String, String> envVarMap,
+  String? activeEnvironmentId,
 ) {
   if (input == null) return null;
-
-  final Map<String, EnvironmentVariableModel> combinedMap = {};
-  final activeEnv = envMap[activeEnvironmentId] ?? [];
-  final globalEnv = envMap[kGlobalEnvironmentId] ?? [];
-
-  for (var variable in globalEnv) {
-    combinedMap[variable.key] = variable;
+  if (envVarMap.keys.isEmpty) {
+    return input;
   }
-  for (var variable in activeEnv) {
-    combinedMap[variable.key] = variable;
-  }
+  final regex = RegExp("{{(${envVarMap.keys.join('|')})}}");
 
   String result = input.replaceAllMapped(regex, (match) {
     final key = match.group(1)?.trim() ?? '';
-    final variable = combinedMap[key];
-    if (variable == null) {
-      return '';
-    }
-    
-    final value = getEnvironmentVariableValue(variable);
-    return value;
+    return envVarMap[key] ?? '{{$key}}';
   });
 
   return result;
 }
 
+String getEnvironmentVariableValue(EnvironmentVariableModel variable, String? activeEnvironmentId, Map<String, String> combinedEnvVarMap) {
+  if (variable.fromOS) {
+    final osValue = osEnvironmentService.getOSEnvironmentVariable(variable.key);
+    return osValue ?? variable.value;
+  }
+  return combinedEnvVarMap[variable.key] ?? variable.value;
+}
+
 HttpRequestModel substituteHttpRequestModel(
-    HttpRequestModel httpRequestModel,
-    Map<String?, List<EnvironmentVariableModel>> envMap,
-    String? activeEnvironmentId) {
-  
+  HttpRequestModel httpRequestModel,
+  Map<String?, List<EnvironmentVariableModel>> envMap,
+  String? activeEnvironmentId,
+) {
+  final Map<String, String> combinedEnvVarMap = {};
+  final activeEnv = envMap[activeEnvironmentId] ?? [];
+  final globalEnv = envMap[kGlobalEnvironmentId] ?? [];
+
+  for (var variable in globalEnv) {
+    combinedEnvVarMap[variable.key] = getEnvironmentVariableValue(variable, activeEnvironmentId, combinedEnvVarMap);
+  }
+  for (var variable in activeEnv) {
+    combinedEnvVarMap[variable.key] = getEnvironmentVariableValue(variable, activeEnvironmentId, combinedEnvVarMap);
+  }
+
   var newRequestModel = httpRequestModel.copyWith(
-    url: substituteVariables(httpRequestModel.url, combinedEnvVarMap)!,
+    url: substituteVariables(
+      httpRequestModel.url,
+      combinedEnvVarMap,
+      activeEnvironmentId,
+    )!,
     headers: httpRequestModel.headers?.map((header) {
       return header.copyWith(
-        name: substituteVariables(header.name, combinedEnvVarMap) ?? "",
-        value: substituteVariables(header.value, combinedEnvVarMap),
+        name:
+            substituteVariables(header.name, combinedEnvVarMap, activeEnvironmentId) ?? "",
+        value: substituteVariables(header.value, combinedEnvVarMap, activeEnvironmentId),
       );
     }).toList(),
     params: httpRequestModel.params?.map((param) {
       return param.copyWith(
-        name: substituteVariables(param.name, combinedEnvVarMap) ?? "",
-        value: substituteVariables(param.value, combinedEnvVarMap),
+        name:
+            substituteVariables(param.name, combinedEnvVarMap, activeEnvironmentId) ?? "",
+        value: substituteVariables(param.value, combinedEnvVarMap, activeEnvironmentId),
       );
     }).toList(),
     formData: httpRequestModel.formData?.map((formData) {
       return formData.copyWith(
-        name: substituteVariables(formData.name, combinedEnvVarMap) ?? "",
-        value: substituteVariables(formData.value, combinedEnvVarMap) ?? "",
+        name: substituteVariables(formData.name, combinedEnvVarMap, activeEnvironmentId) ?? "",
+        value: substituteVariables(formData.value, combinedEnvVarMap, activeEnvironmentId) ?? "",
       );
     }).toList(),
-    body: substituteVariables(httpRequestModel.body, combinedEnvVarMap),
+    body: substituteVariables(
+      httpRequestModel.body,
+      combinedEnvVarMap,
+      activeEnvironmentId,
+    ),
   );
   return newRequestModel;
 }
