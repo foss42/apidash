@@ -10,7 +10,7 @@ class DashbotHomePage extends StatelessWidget {
     return Navigator(
       initialRoute: '/dashbothome',
       onGenerateRoute: (settings) {
-        if (settings.name == '/') {
+        if (settings.name == '/dashbothome') {
           return MaterialPageRoute(
               builder: (context) => _buildHomePageContent(context));
         } else if (settings.name == '/dashbotchat') {
