@@ -1,0 +1,15 @@
+[
+    {
+      "title": "Introducing Flutter",
+      "author": {
+        "name": "Jane Doe",
+        "email": "jane@example.com"
+      },
+      "content": "Flutter is Google's UI toolkit...",
+      "tags": ["flutter", "mobile", "google"],
+      "views": 1234,
+      "published": true,
+      "created_at": "2024-01-12T10:00:00Z"
+    }
+  ]
+  

@@ -1,0 +1,19 @@
+[
+    {
+      "id": 1,
+      "name": "Alice",
+      "email": "alice@example.com",
+      "profileUrl": "https://example.com/alice",
+      "isActive": true,
+      "createdAt": "2024-01-01T00:00:00Z"
+    },
+    {
+      "id": 2,
+      "name": "Bob",
+      "email": "bob@example.com",
+      "profileUrl": "https://example.com/bob",
+      "isActive": false,
+      "createdAt": "2024-01-02T00:00:00Z"
+    }
+  ]
+  

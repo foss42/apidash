@@ -1,0 +1,16 @@
+[
+    {
+      "orderId": "ORD001",
+      "customer": {
+        "name": "Charlie",
+        "phone": "123-456-7890"
+      },
+      "items": [
+        {"name": "Notebook", "qty": 2, "price": 5.99},
+        {"name": "Pen", "qty": 3, "price": 1.99}
+      ],
+      "total": 17.95,
+      "paid": true
+    }
+  ]
+  

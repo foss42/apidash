@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "name": "Alice",
+    "email": "alice@example.com",
+    "isActive": true,
+    "createdAt": "2024-03-01T12:30:00Z"
+  },
+  {
+    "id": 2,
+    "name": "Bob",
+    "email": "bob@example.com",
+    "isActive": false,
+    "createdAt": "2023-11-15T09:10:00Z"
+  }
+]

@@ -1,0 +1,22 @@
+[
+    {
+      "productId": "A100",
+      "name": "Laptop",
+      "price": 899.99,
+      "tags": ["electronics", "portable"],
+      "stock": {
+        "warehouse": 15,
+        "retail": 8
+      }
+    },
+    {
+      "productId": "B200",
+      "name": "Headphones",
+      "price": 199.99,
+      "tags": ["audio", "wireless"],
+      "stock": {
+        "warehouse": 30,
+        "retail": 12
+      }
+    }
+  ]
