@@ -1,6 +1,6 @@
 import 'dart:developer';
 
-import 'package:apidash/dashbot/features/home/view/widgets/chat_message.dart';
+import 'package:apidash/dashbot/features/home/view/widgets/chat_bubble.dart';
 import 'package:apidash/dashbot/features/home/viewmodel/home_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
