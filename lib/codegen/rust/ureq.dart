@@ -16,14 +16,21 @@ fn main() -> Result<(), ureq::Error> {
     let url = "{{url}}";
 """;
 
-  // String kTemplateParams = """\n        .query_pairs({{ params }})""";
-  String kTemplateParams =
-      """\n        {% for key, val in params -%}.query("{{key}}", "{{val}}"){% if not loop.last %}{{ '\n        ' }}{% endif %}{%- endfor -%}""";
+  String kTemplateParams = """
+    {%- for key, values in params %}
+      {%- if values is iterable and values is not string %}
+        {%- for val in values %}
+        .query("{{key}}", "{{val}}")
+        {%- endfor %}
+      {%- else %}
+        .query("{{key}}", "{{values}}")
+      {%- endif %}
+    {%- endfor %}
+""";
 
   String kTemplateBody = """
 
     let payload = r#"{{body}}"#;
-
 """;
 
   String kTemplateJson = """\n
@@ -134,7 +141,6 @@ multipart/form-data; boundary={{boundary}}''';
         result += templateStartUrl.render({
           "url": stripUriParams(uri),
           'isFormDataRequest': requestModel.hasFormData,
-          "method": requestModel.method.name.toLowerCase()
         });
           
         
@@ -167,12 +173,10 @@ multipart/form-data; boundary={{boundary}}''';
           "method": method.name.toLowerCase(),
         });
 
-        if (uri.hasQuery) {
-          var params = uri.queryParameters;
-          if (params.isNotEmpty) {
-            var templateParms = jj.Template(kTemplateParams);
-            result += templateParms.render({"params": params});
-          }
+        var params = requestModel.enabledParamsMap;
+        if (params.isNotEmpty) {
+          var templateParams = jj.Template(kTemplateParams);
+          result += templateParams.render({"params": params});
         }
 
         var headersList = requestModel.enabledHeaders;

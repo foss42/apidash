@@ -1,6 +1,6 @@
+
 import 'package:apidash_core/apidash_core.dart';
 import 'package:jinja/jinja.dart' as jj;
-import '../../utils/utils.dart';
 
 class RustCurlCodeGen {
   final String kTemplateStart = """use curl::easy::Easy;
@@ -10,11 +10,27 @@ class RustCurlCodeGen {
 fn main() {
   let mut easy = Easy::new();
   let mut data = Vec::new();
-
+   let base_url = "{{baseUrl}}";
 """;
 
-  String kTemplateUrl = """
-  easy.url("{{url}}").unwrap();
+  String kTemplateUrlParams = """
+ 
+  {% if params %}
+  let params: Vec<(&str, Vec<&str>)> = vec![
+    {%- for key, values in params %}
+    ("{{key}}", vec![{% if values is iterable and values is not string %}{% for val in values %}"{{val}}", {% endfor %}{% else %}"{{values}}"{% endif %}]),
+    {%- endfor %}
+  ];
+  let query_string: String = params
+      .iter()
+      .flat_map(|(key, values)| values.iter().map(move |val| format!("{}={}", key, val)))
+      .collect::<Vec<_>>()
+      .join("&");
+  let url = format!("{}?{}", base_url, query_string);
+  {% else %}
+  let url = base_url.to_string();
+  {% endif %}
+ 
 """;
 
   String kTemplateMethod = """
@@ -50,7 +66,7 @@ fn main() {
     .add().unwrap();
   {% endfor %}
   easy.httppost(form).unwrap();
-  """;
+""";
 
   String kTemplateHeader = """
   {% if headers %}let mut list = List::new();{% for header, value in headers %}
@@ -62,6 +78,7 @@ fn main() {
 
   final String kTemplateEnd = """
   {
+   easy.url(&url).unwrap();
     let mut transfer = easy.transfer();
     transfer.write_function(|new_data| {
         data.extend_from_slice(new_data);
@@ -71,7 +88,6 @@ fn main() {
   }
 
   let response_body = String::from_utf8_lossy(&data);
-
   println!("Response body: {}", response_body);
   println!("Response code: {}", easy.response_code().unwrap());
 }""";
@@ -86,7 +102,8 @@ fn main() {
         "hasJsonBody": requestModel.hasJsonData,
         "hasHeaders": (requestModel.enabledHeaders != null &&
                 requestModel.enabledHeaders!.isNotEmpty) ||
-            (requestModel.hasJsonData || requestModel.hasTextData)
+            (requestModel.hasJsonData || requestModel.hasTextData),
+       "baseUrl": url.split('?').first,
       });
 
       var rec = getValidRequestUri(
@@ -95,16 +112,21 @@ fn main() {
       );
 
       Uri? uri = rec.$1;
-      var harJson =
-          requestModelToHARJsonRequest(requestModel, useEnabled: true);
-
-      var templateUrl = jj.Template(kTemplateUrl);
-      result += templateUrl.render({"url": harJson["url"]});
-
-      var methodTemplate = jj.Template(kTemplateMethod);
-      result += methodTemplate.render({"method": requestModel.method.name});
-
+      
       if (uri != null) {
+
+        var params = requestModel.enabledParamsMap;
+
+        var templateUrlParams = jj.Template(kTemplateUrlParams);
+        result += templateUrlParams.render({
+          "params": params.isNotEmpty ? params : null,
+        });
+
+        // Method
+        var methodTemplate = jj.Template(kTemplateMethod);
+        result += methodTemplate.render({"method": requestModel.method.name.toLowerCase()});
+
+        // Request body
         if (requestModel.hasTextData) {
           var templateBody = jj.Template(kTemplateRawBody);
           result += templateBody.render({"body": requestModel.body});
@@ -117,7 +139,7 @@ fn main() {
             "fields": requestModel.formDataMapList,
           });
         }
-
+              
         var headersList = requestModel.enabledHeaders;
         if (headersList != null || requestModel.hasBody) {
           var headers = requestModel.enabledHeadersMap;
@@ -129,10 +151,10 @@ fn main() {
             var templateHeader = jj.Template(kTemplateHeader);
             result += templateHeader.render({
               "headers": headers,
-            });
+              });
           }
         }
-
+        
         result += kTemplateEnd;
       }
 
