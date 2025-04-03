@@ -1,6 +1,6 @@
 import 'dart:developer' show log;
 
-import 'package:apidash/dashbot/features/home/view/pages/dashbot_chat_page.dart';
+import 'package:apidash/dashbot/features/chat/view/pages/dashbot_chat_page.dart';
 import 'package:apidash/dashbot/features/home/view/pages/dashbot_default_page.dart';
 import 'package:apidash/dashbot/features/home/view/pages/dashbot_home_page.dart';
 import 'package:apidash/models/request_model.dart' show RequestModel;
