@@ -212,7 +212,7 @@ class _SSEViewState extends ConsumerState<SSEView> {
               controller: _controller,
               itemCount: displayFrames.length,
               itemBuilder: (context, index) {
-                final event = displayFrames[displayFrames.length - index - 1];
+                final event = displayFrames[index];
 
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),

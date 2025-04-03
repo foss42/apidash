@@ -131,16 +131,13 @@ Future<void> sendSSERequest(
           .transform(const SSETransformer());
       stream.listen(
         (frame) {
-          print("Received frames: $frame");
-          
-              onData?.call(frame);
-          
-         
+           onData?.call(frame);
         },
         onError: (error) {
+           
             if (httpClientManager.wasRequestCancelled(requestId)) {
-             
-              onCancel?.call(); 
+              onCancel?.call();  
+              
               return;   
              }
           (error, stackTrace) => onError?.call(error, stackTrace);
@@ -148,7 +145,6 @@ Future<void> sendSSERequest(
         },
         onDone: () {
           if (httpClientManager.wasRequestCancelled(requestId)) {
-           
               onCancel?.call();  
               return;  
           }
@@ -161,12 +157,6 @@ Future<void> sendSSERequest(
     
     onError?.call(e, stackTrace);
   }
-  finally{
- 
-    if (httpClientManager.wasRequestCancelled(requestId)) {
-      onCancel?.call();    
-    }
   
-  }
 }
 
