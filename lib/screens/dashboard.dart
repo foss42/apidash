@@ -1,4 +1,4 @@
-import 'package:apidash/dashbot/draggable_window.dart';
+import 'package:apidash/dashbot/dashbot_window.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -19,7 +19,7 @@ class Dashboard extends ConsumerWidget {
     OverlayEntry? entry;
 
     entry = OverlayEntry(
-      builder: (context) => DraggableChatWindow(
+      builder: (context) => DashbotWindow(
         screenSize: MediaQuery.of(context).size,
         onClose: () => entry?.remove(),
       ),

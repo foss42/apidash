@@ -1,31 +1,23 @@
-import 'package:apidash/dashbot/features/home/view/pages/dashbot_chat_page.dart';
+import 'package:apidash/dashbot/core/constants/dashbot_prompts.dart';
+import 'package:apidash/models/request_model.dart' show RequestModel;
 import 'package:apidash_design_system/tokens/measurements.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class DashbotHomePage extends StatelessWidget {
-  const DashbotHomePage({super.key});
+class DashbotHomePage extends ConsumerStatefulWidget {
+  final RequestModel requestModel;
+  const DashbotHomePage({
+    super.key,
+    required this.requestModel,
+  });
 
   @override
-  Widget build(BuildContext context) {
-    return Navigator(
-      initialRoute: '/dashbothome',
-      onGenerateRoute: (settings) {
-        if (settings.name == '/dashbothome') {
-          return MaterialPageRoute(
-              builder: (context) => _buildHomePageContent(context));
-        } else if (settings.name == '/dashbotchat') {
-          final args = settings.arguments as Map<String, dynamic>?;
-          final initialPrompt = args?['initialPrompt'] as String?;
-          return MaterialPageRoute(
-            builder: (context) => ChatScreen(initialPrompt: initialPrompt),
-          );
-        }
-        return null;
-      },
-    );
-  }
+  ConsumerState<DashbotHomePage> createState() => _DashbotHomePageState();
+}
 
-  Widget _buildHomePageContent(BuildContext context) {
+class _DashbotHomePageState extends ConsumerState<DashbotHomePage> {
+  @override
+  Widget build(BuildContext context) {
     void navigateToChat(String prompt) {
       Navigator.of(context).pushNamed(
         '/dashbotchat',
@@ -59,9 +51,7 @@ class DashbotHomePage extends StatelessWidget {
             children: [
               TextButton(
                 onPressed: () {
-                  Navigator.of(context).pushNamed(
-                    '/dashbotchat',
-                  );
+                  DashbotPrompts(requestModel: widget.requestModel);
                 },
                 style: TextButton.styleFrom(
                   side: BorderSide(

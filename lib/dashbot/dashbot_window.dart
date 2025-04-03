@@ -1,19 +1,19 @@
-import 'package:apidash/dashbot/features/home/view/pages/dashbot_home_page.dart';
+import 'package:apidash/dashbot/features/home/view/pages/dashbot_dashboard.dart';
 import 'package:apidash_design_system/tokens/tokens.dart';
 import 'package:flutter/material.dart';
 
-class DraggableChatWindow extends StatefulWidget {
+class DashbotWindow extends StatefulWidget {
   final VoidCallback onClose;
   final Size screenSize;
 
-  const DraggableChatWindow(
+  const DashbotWindow(
       {super.key, required this.onClose, required this.screenSize});
 
   @override
-  DraggableChatWindowState createState() => DraggableChatWindowState();
+  DashbotWindowState createState() => DashbotWindowState();
 }
 
-class DraggableChatWindowState extends State<DraggableChatWindow> {
+class DashbotWindowState extends State<DashbotWindow> {
   double _right = 50;
   double _bottom = 100;
 
@@ -89,7 +89,7 @@ class DraggableChatWindowState extends State<DraggableChatWindow> {
                     ),
                   ),
                   Expanded(
-                    child: DashbotHomePage(),
+                    child: DashbotDashboard(),
                   ),
                 ],
               ),

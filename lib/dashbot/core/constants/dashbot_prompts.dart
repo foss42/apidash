@@ -1,4 +1,12 @@
+import 'package:apidash/models/request_model.dart';
+import 'package:apidash/providers/collection_providers.dart'
+    show selectedRequestModelProvider;
+
 class DashbotPrompts {
+  final RequestModel requestModel;
+
+  DashbotPrompts({required this.requestModel});
+
   /// Generates a dynamic system prompt specifically for explaining an API response.
   ///
   /// This prompt instructs Dashbot to analyze the provided details (URL, status code,
@@ -13,6 +21,7 @@ class DashbotPrompts {
   /// Returns:
   ///   String: A detailed system prompt tailored for the API response explanation task.
   static String explainApiResponsePrompt({
+    required RequestModel requestModel,
     required String apiUrl,
     required int statusCode,
     required String responseBody,
