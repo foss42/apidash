@@ -1,4 +1,3 @@
-import 'package:apidash/dashbot/core/constants/dashbot_constants.dart';
 import 'package:apidash/dashbot/features/home/view/pages/dashbot_chat_page.dart';
 import 'package:apidash_design_system/tokens/measurements.dart';
 import 'package:flutter/material.dart';
@@ -59,7 +58,7 @@ class DashbotHomePage extends StatelessWidget {
             runSpacing: 8,
             children: [
               TextButton(
-                onPressed: () => navigateToChat(kPromptExplain),
+                onPressed: () {},
                 style: TextButton.styleFrom(
                   side: BorderSide(
                     color: Theme.of(context).colorScheme.primary,
@@ -72,7 +71,7 @@ class DashbotHomePage extends StatelessWidget {
                 child: const Text("🔎 Explain me this response"),
               ),
               TextButton(
-                onPressed: () => navigateToChat(kPromptDebug),
+                onPressed: () {},
                 style: TextButton.styleFrom(
                   side: BorderSide(
                     color: Theme.of(context).colorScheme.primary,
@@ -85,7 +84,7 @@ class DashbotHomePage extends StatelessWidget {
                 child: const Text("🐞 Help me debug this error"),
               ),
               TextButton(
-                onPressed: () => navigateToChat(kPromptDocs),
+                onPressed: () {},
                 style: TextButton.styleFrom(
                   side: BorderSide(
                     color: Theme.of(context).colorScheme.primary,
@@ -101,7 +100,7 @@ class DashbotHomePage extends StatelessWidget {
                 ),
               ),
               TextButton(
-                onPressed: () => navigateToChat(kPromptTests),
+                onPressed: () {},
                 style: TextButton.styleFrom(
                   side: BorderSide(
                     color: Theme.of(context).colorScheme.primary,
@@ -114,7 +113,7 @@ class DashbotHomePage extends StatelessWidget {
                 child: const Text("📝 Generate Tests"),
               ),
               TextButton(
-                onPressed: () => navigateToChat(kPromptVisualize),
+                onPressed: () {},
                 style: TextButton.styleFrom(
                   side: BorderSide(
                     color: Theme.of(context).colorScheme.primary,

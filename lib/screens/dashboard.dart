@@ -24,7 +24,6 @@ class Dashboard extends ConsumerWidget {
         onClose: () => entry?.remove(),
       ),
     );
-
     overlay.insert(entry);
   }
 
