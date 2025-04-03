@@ -26,6 +26,7 @@ class SSEFramesNotifier extends StateNotifier<Map<String, List<SSEEventModel>>> 
   SSEFramesNotifier() : super({});
 
   void addFrame(String requestId, String frame) {
+    print(frame+"\n");
     state = {
       ...state,
       requestId: [...(state[requestId] ?? []), SSEEventModel.fromRawSSE(frame)],
@@ -326,7 +327,7 @@ class CollectionStateNotifier
 
     bool noSSL = ref.read(settingsProvider).isSSLDisabled;
     if(apiType == APIType.sse){
-      print("inside sendrequest apitype,sse");
+     
       List<SSEEventModel> frames; 
       await sendSSERequest(
         requestId,

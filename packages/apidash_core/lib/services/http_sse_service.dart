@@ -9,6 +9,29 @@ import '../models/models.dart';
 import '../utils/utils.dart';
 import 'http_service.dart';
 
+
+
+
+
+class SSETransformer extends StreamTransformerBase<String, String> {
+  const SSETransformer();
+
+  @override
+  Stream<String> bind(Stream<String> stream) async* {
+    String buffer = "";
+    await for (final chunk in stream) {
+      buffer += chunk;
+      List<String> frames = buffer.split("\n\n");
+
+    
+      buffer = frames.removeLast();
+
+      for (final frame in frames) {
+        yield frame.trim(); 
+      }
+    }
+  }
+}
 class LoggingInterceptor implements InterceptorContract {
   Map<String, String>? interceptedHeaders;
 
@@ -105,10 +128,14 @@ Future<void> sendSSERequest(
       
       final stream = streamedResponse.stream
           .transform(utf8.decoder)
-          .transform(const LineSplitter());
+          .transform(const SSETransformer());
       stream.listen(
-        (event) {
-          onData?.call(event);
+        (frame) {
+          print("Received frames: $frame");
+          
+              onData?.call(frame);
+          
+         
         },
         onError: (error) {
             if (httpClientManager.wasRequestCancelled(requestId)) {
@@ -117,11 +144,11 @@ Future<void> sendSSERequest(
               return;   
              }
           (error, stackTrace) => onError?.call(error, stackTrace);
-          print('🔹 SSE Error: $error');
+         
         },
         onDone: () {
           if (httpClientManager.wasRequestCancelled(requestId)) {
-            print("inside cancelled");
+           
               onCancel?.call();  
               return;  
           }
