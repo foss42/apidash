@@ -1,6 +1,4 @@
 import 'package:apidash/models/request_model.dart';
-import 'package:apidash/providers/collection_providers.dart'
-    show selectedRequestModelProvider;
 
 class DashbotPrompts {
   final RequestModel requestModel;

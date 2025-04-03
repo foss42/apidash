@@ -1,1 +1,1 @@
-export 'dashbot_window.dart';
+export 'dashbot_dashboard.dart';

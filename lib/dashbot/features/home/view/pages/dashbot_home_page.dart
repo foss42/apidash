@@ -1,14 +1,14 @@
 import 'package:apidash/dashbot/core/constants/dashbot_prompts.dart';
-import 'package:apidash/models/request_model.dart' show RequestModel;
+import 'package:apidash/dashbot/core/routes/dashbot_routes.dart';
+import 'package:apidash/models/request_model.dart';
+import 'package:apidash/providers/providers.dart';
 import 'package:apidash_design_system/tokens/measurements.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class DashbotHomePage extends ConsumerStatefulWidget {
-  final RequestModel requestModel;
   const DashbotHomePage({
     super.key,
-    required this.requestModel,
   });
 
   @override
@@ -16,15 +16,16 @@ class DashbotHomePage extends ConsumerStatefulWidget {
 }
 
 class _DashbotHomePageState extends ConsumerState<DashbotHomePage> {
+  void navigateToChat(String prompt) {
+    Navigator.of(context).pushNamed(
+      DashbotRoutes.dashbotChat,
+      arguments: {'initialPrompt': prompt},
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    void navigateToChat(String prompt) {
-      Navigator.of(context).pushNamed(
-        '/dashbotchat',
-        arguments: {'initialPrompt': prompt},
-      );
-    }
-
+    final RequestModel? currentRequest = ref.read(selectedRequestModelProvider);
     return Container(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -51,7 +52,9 @@ class _DashbotHomePageState extends ConsumerState<DashbotHomePage> {
             children: [
               TextButton(
                 onPressed: () {
-                  DashbotPrompts(requestModel: widget.requestModel);
+                  Navigator.of(context).pushNamed(
+                    DashbotRoutes.dashbotChat,
+                  );
                 },
                 style: TextButton.styleFrom(
                   side: BorderSide(
@@ -66,9 +69,7 @@ class _DashbotHomePageState extends ConsumerState<DashbotHomePage> {
               ),
               TextButton(
                 onPressed: () {
-                  Navigator.of(context).pushNamed(
-                    '/dashbotchat',
-                  );
+                  final prompt = DashbotPrompts(requestModel: currentRequest!);
                 },
                 style: TextButton.styleFrom(
                   side: BorderSide(

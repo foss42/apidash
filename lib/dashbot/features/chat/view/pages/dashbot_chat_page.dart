@@ -1,15 +1,15 @@
 import 'dart:developer';
 
 import 'package:apidash/dashbot/features/chat/view/widgets/chat_bubble.dart';
-import 'package:apidash/dashbot/features/home/viewmodel/home_viewmodel.dart';
+import 'package:apidash/dashbot/features/chat/viewmodel/chat_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ollama_dart/ollama_dart.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
-  final String? initialPrompt;
-  const ChatScreen({super.key, this.initialPrompt});
+  final String initialPrompt;
+  const ChatScreen({super.key, required this.initialPrompt});
 
   @override
   ConsumerState<ChatScreen> createState() => _ChatScreenState();
@@ -24,14 +24,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   @override
   void initState() {
     super.initState();
-    if (widget.initialPrompt != null &&
-        widget.initialPrompt!.trim().isNotEmpty) {
-      SchedulerBinding.instance.addPostFrameCallback((_) {
-        if (mounted) {
-          _sendMessage(promptOverride: widget.initialPrompt);
-        }
-      });
-    }
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _sendMessage(promptOverride: widget.initialPrompt);
+      }
+    });
   }
 
   void _sendMessage({String? promptOverride}) async {
@@ -55,7 +52,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     log("Sending message: $messageContent");
 
     final stream = ref
-        .read(homeViewmodelProvider.notifier)
+        .read(chatViewmodelProvider.notifier)
         .sendMessage(messageContent, null);
 
     try {

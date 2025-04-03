@@ -26,7 +26,7 @@ class DashbotDefaultPage extends StatelessWidget {
         ),
         kVSpacer10,
         Text(
-          'Seems like you haven\'t made any\nrequest yet 👀',
+          'Seems like you haven\'t made any\nrequest yet! 👀',
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 16,

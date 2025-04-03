@@ -1,16 +1,17 @@
 import 'dart:developer';
 
+import 'package:apidash/dashbot/features/chat/repository/chat_local_repository.dart'
+    show ChatLocalRepository, chatLocalRepositoryProvider;
 import 'package:apidash/dashbot/features/home/models/llm_provider.dart';
-import 'package:apidash/dashbot/features/home/repository/chat_local_repository.dart';
 import 'package:apidash/providers/dashbot_llm_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:ollama_dart/ollama_dart.dart';
 import 'dart:async';
 
-part 'home_viewmodel.g.dart';
+part 'chat_viewmodel.g.dart';
 
 @riverpod
-class HomeViewmodel extends _$HomeViewmodel {
+class ChatViewmodel extends _$ChatViewmodel {
   late ChatLocalRepository _chatLocalRepository;
   late String _modelName;
 

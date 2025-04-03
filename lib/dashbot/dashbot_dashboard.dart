@@ -1,8 +1,14 @@
-import 'package:apidash/dashbot/features/home/view/pages/dashbot_dashboard.dart';
+import 'package:apidash/dashbot/core/routes/dashbot_router.dart';
+import 'package:apidash/dashbot/core/routes/dashbot_routes.dart'
+    show DashbotRoutes;
+import 'package:apidash/models/request_model.dart' show RequestModel;
+import 'package:apidash/providers/collection_providers.dart'
+    show selectedRequestModelProvider;
 import 'package:apidash_design_system/tokens/tokens.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class DashbotWindow extends StatefulWidget {
+class DashbotWindow extends ConsumerStatefulWidget {
   final VoidCallback onClose;
   final Size screenSize;
 
@@ -13,7 +19,7 @@ class DashbotWindow extends StatefulWidget {
   DashbotWindowState createState() => DashbotWindowState();
 }
 
-class DashbotWindowState extends State<DashbotWindow> {
+class DashbotWindowState extends ConsumerState<DashbotWindow> {
   double _right = 50;
   double _bottom = 100;
 
@@ -28,6 +34,7 @@ class DashbotWindowState extends State<DashbotWindow> {
 
   @override
   Widget build(BuildContext context) {
+    final RequestModel? currentRequest = ref.read(selectedRequestModelProvider);
     return Stack(
       children: [
         Positioned(
@@ -89,7 +96,12 @@ class DashbotWindowState extends State<DashbotWindow> {
                     ),
                   ),
                   Expanded(
-                    child: DashbotDashboard(),
+                    child: Navigator(
+                      initialRoute: currentRequest?.responseStatus == null
+                          ? DashbotRoutes.dashbotDefault
+                          : DashbotRoutes.dashbotHome,
+                      onGenerateRoute: generateRoute,
+                    ),
                   ),
                 ],
               ),
