@@ -12,11 +12,9 @@ url = '{{url}}'
 
 """;
 
-  String kTemplateParams = """
-
-params = {{params}}
-
-""";
+String kTemplateParams = """
+params = { {{params}} }
+""";  
 
   String kTemplateBody = """
 
@@ -100,15 +98,24 @@ print('Response Body:', response.text)
           'hasFormData': requestModel.hasFormData
         });
 
-        if (uri.hasQuery) {
-          var params = uri.queryParameters;
-          if (params.isNotEmpty) {
-            hasQuery = true;
-            var templateParams = jj.Template(kTemplateParams);
-            var paramsString = kJsonEncoder.convert(params);
-            result += templateParams.render({"params": paramsString});
-          }
+    var params = requestModel.enabledParamsMap;
+    if (params.isNotEmpty) {
+      hasQuery=true;
+      var templateParams = jj.Template(kTemplateParams);
+      List<String> paramList = [];
+
+      params.forEach((key, value) {
+        if (value is List) {
+          paramList.add("'$key': [${value.map((v) => "'$v'").join(", ")}]");
+        } else {
+          paramList.add("'$key': '$value'");
         }
+      });
+
+      result += templateParams.render({
+        "params": paramList.join(",\n"),
+      });
+    }
 
         if (requestModel.hasFormData) {
           hasBody = true;
