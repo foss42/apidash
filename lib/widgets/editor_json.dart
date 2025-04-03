@@ -167,7 +167,7 @@ class _JsonTextFieldEditorState extends State<JsonTextFieldEditor> {
               ),
               filled: true,
               hoverColor: kColorTransparent,
-              fillColor: Theme.of(context).colorScheme.surfaceContainerLow,
+              fillColor: Theme.of(context).colorScheme.surfaceContainerLowest,
             ),
           ),
         ),

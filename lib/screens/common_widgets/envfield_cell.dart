@@ -32,6 +32,7 @@ class EnvCellField extends StatelessWidget {
       focusNode: focusNode,
       style: kCodeStyle.copyWith(
         color: clrScheme.onSurface,
+        fontSize: Theme.of(context).textTheme.bodyMedium?.fontSize,
       ),
       decoration: getTextFieldInputDecoration(
         clrScheme,

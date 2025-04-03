@@ -102,7 +102,7 @@ class _TextFieldEditorState extends State<TextFieldEditor> {
           ),
           filled: true,
           hoverColor: kColorTransparent,
-          fillColor: Theme.of(context).colorScheme.surfaceContainerLow,
+          fillColor: Theme.of(context).colorScheme.surfaceContainerLowest,
         ),
       ),
     );
