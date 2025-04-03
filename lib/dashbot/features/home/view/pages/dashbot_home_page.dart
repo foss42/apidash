@@ -26,6 +26,7 @@ class _DashbotHomePageState extends ConsumerState<DashbotHomePage> {
   @override
   Widget build(BuildContext context) {
     final RequestModel? currentRequest = ref.read(selectedRequestModelProvider);
+    final dashbotPrompts = DashbotPrompts(requestModel: currentRequest!);
     return Container(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -69,7 +70,9 @@ class _DashbotHomePageState extends ConsumerState<DashbotHomePage> {
               ),
               TextButton(
                 onPressed: () {
-                  final prompt = DashbotPrompts(requestModel: currentRequest!);
+                  navigateToChat(
+                    dashbotPrompts.explainApiResponsePrompt(),
+                  );
                 },
                 style: TextButton.styleFrom(
                   side: BorderSide(

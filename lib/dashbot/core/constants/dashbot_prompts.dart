@@ -18,23 +18,22 @@ class DashbotPrompts {
   ///
   /// Returns:
   ///   String: A detailed system prompt tailored for the API response explanation task.
-  static String explainApiResponsePrompt({
-    required RequestModel requestModel,
-    required String apiUrl,
-    required int statusCode,
-    required String responseBody,
-    required String requestFormat,
-  }) {
+  String explainApiResponsePrompt() {
     String statusType;
-    if (statusCode >= 100 && statusCode < 200) {
+    if (requestModel.responseStatus! >= 100 &&
+        requestModel.responseStatus! < 200) {
       statusType = "Informational (1xx)";
-    } else if (statusCode >= 200 && statusCode < 300) {
+    } else if (requestModel.responseStatus! >= 200 &&
+        requestModel.responseStatus! < 300) {
       statusType = "Success (2xx)";
-    } else if (statusCode >= 300 && statusCode < 400) {
+    } else if (requestModel.responseStatus! >= 300 &&
+        requestModel.responseStatus! < 400) {
       statusType = "Redirection (3xx)";
-    } else if (statusCode >= 400 && statusCode < 500) {
+    } else if (requestModel.responseStatus! >= 400 &&
+        requestModel.responseStatus! < 500) {
       statusType = "Client Error (4xx)";
-    } else if (statusCode >= 500 && statusCode < 600) {
+    } else if (requestModel.responseStatus! >= 500 &&
+        requestModel.responseStatus! < 600) {
       statusType = "Server Error (5xx)";
     } else {
       statusType = "Unknown";
@@ -104,11 +103,14 @@ NOW, PROVIDE THE DETAILED EXPLANATION FOR THE GIVEN API RESPONSE.
 </system_prompt>
 """;
 
-    prompt = prompt.replaceAll(apiUrlPlaceholder, apiUrl);
-    prompt = prompt.replaceAll(statusCodePlaceholder, statusCode.toString());
+    prompt = prompt.replaceAll(
+        apiUrlPlaceholder, requestModel.httpRequestModel!.url);
+    prompt = prompt.replaceAll(
+        statusCodePlaceholder, requestModel.responseStatus.toString());
     prompt = prompt.replaceAll(statusTypePlaceholder, statusType);
-    prompt = prompt.replaceAll(responseBodyPlaceholder, responseBody);
-    prompt = prompt.replaceAll(requestFormatPlaceholder, requestFormat);
+    prompt = prompt.replaceAll(responseBodyPlaceholder, requestModel.message!);
+    prompt = prompt.replaceAll(requestFormatPlaceholder,
+        requestModel.httpRequestModel!.bodyContentType.toString());
 
     return prompt;
   }
@@ -130,24 +132,19 @@ NOW, PROVIDE THE DETAILED EXPLANATION FOR THE GIVEN API RESPONSE.
   ///
   /// Returns:
   ///   String: A detailed system prompt tailored for the API error debugging task.
-  static String debugApiErrorPrompt({
-    required String apiUrl,
-    required String httpMethod,
-    required int statusCode,
-    required String responseBody,
-    required String requestFormat,
-    String? requestHeaders,
-    String? requestBody,
-  }) {
+  String debugApiErrorPrompt() {
     String statusType;
-    if (statusCode >= 400 && statusCode < 500) {
+    if (requestModel.responseStatus! >= 400 &&
+        requestModel.responseStatus! < 500) {
       statusType = "Client Error (4xx)";
-    } else if (statusCode >= 500 && statusCode < 600) {
+    } else if (requestModel.responseStatus! >= 500 &&
+        requestModel.responseStatus! < 600) {
       statusType = "Server Error (5xx)";
-    } else if (statusCode >= 100 && statusCode < 400) {
-      statusType = "Non-Error Status ($statusCode)";
+    } else if (requestModel.responseStatus! >= 100 &&
+        requestModel.responseStatus! < 400) {
+      statusType = "Non-Error Status ($requestModel.responseStatus)";
     } else {
-      statusType = "Unknown Status ($statusCode)";
+      statusType = "Unknown Status ($requestModel.responseStatus)";
     }
 
     const String apiUrlPlaceholder = "{{API_URL}}";
@@ -229,16 +226,20 @@ NOW, PROVIDE THE DETAILED DEBUGGING ANALYSIS AND SUGGESTED STEPS FOR THE GIVEN A
 </system_prompt>
 """;
 
-    prompt = prompt.replaceAll(apiUrlPlaceholder, apiUrl);
-    prompt = prompt.replaceAll(httpMethodPlaceholder, httpMethod);
-    prompt = prompt.replaceAll(statusCodePlaceholder, statusCode.toString());
+    prompt = prompt.replaceAll(
+        apiUrlPlaceholder, requestModel.httpRequestModel!.url);
+    prompt = prompt.replaceAll(httpMethodPlaceholder,
+        requestModel.httpRequestModel!.method.toString());
+    prompt = prompt.replaceAll(
+        statusCodePlaceholder, requestModel.responseStatus.toString());
     prompt = prompt.replaceAll(statusTypePlaceholder, statusType);
-    prompt = prompt.replaceAll(responseBodyPlaceholder, responseBody);
-    prompt = prompt.replaceAll(requestFormatPlaceholder, requestFormat);
-    prompt = prompt.replaceAll(
-        requestHeadersPlaceholder, requestHeaders ?? "Not provided or N/A");
-    prompt = prompt.replaceAll(
-        requestBodyPlaceholder, requestBody ?? "Not provided or N/A");
+    prompt = prompt.replaceAll(responseBodyPlaceholder, requestModel.message!);
+    prompt = prompt.replaceAll(requestFormatPlaceholder,
+        requestModel.httpRequestModel!.bodyContentType.toString());
+    prompt = prompt.replaceAll(requestHeadersPlaceholder,
+        requestModel.httpRequestModel!.headersMap.toString());
+    prompt = prompt.replaceAll(requestBodyPlaceholder,
+        requestModel.httpRequestModel!.body ?? "Not provided or N/A");
 
     return prompt;
   }
