@@ -398,7 +398,7 @@ The value is added to the Authorization header in the format by the client:
 #### **Week 3:** 
 - Start working on the initial ui.
 - update settings providers for the new feautures of Web Socket (number of reconnection attemps, time interval between number of reconnection attempt,ping interval).
-- Add service layer of web sockets.
+- Add service layer of web sockets(Like adding the functions to listen  , catching the error and cancellation)
 - Make ui changes to reflect the incoming and outgoing messages.
 
 #### **Week 4:** 
@@ -409,7 +409,7 @@ The value is added to the Authorization header in the format by the client:
 
 #### **Week 5:** 
 - Start working on the initial ui and set update settings providers for the new feautures of SSE.
-- Add service layer of SSE.
+- Add service layer of SSE.(add functions to listen , handle error etc).
 - Make ui for incoming frames.
 
 #### **Week 6:** 
