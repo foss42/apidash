@@ -347,7 +347,7 @@ Put Content-Type header as application/octet-stream and send the request.
 
 ### Basic Authentication (Issue Number #610)
 This would be a straightforward implementation. We take the input password and username and follow the below said transformation.
-                     
+ ```                    
 +--------------------------------------------------+
 | 1. Client combines them into one string         |
 |    Format: username:password                     |
@@ -367,7 +367,7 @@ This would be a straightforward implementation. We take the input password and u
 |    Example: Authorization: Basic YWRtaW46...     |
 +--------------------------------------------------+
       
-
+```
 ### API Key authentication.
 UI:Upon selecting AuthType as APIKey there would be a text field for entering APIKey and a sliding button to select whther it should be send through header(X-API-Type) or 
 via query parameter. 
