@@ -1,9 +1,13 @@
 ### Initial Idea Submission
 
 **Full Name:**  NIKHIL
+
 **University Name:**  KIET Group of Institutions
+
 **Program (Degree & Major/Minor):**  Btech in AIML
+
 **Year:**  2024
+
 **Expected Graduation Date:**  2028
 
 ---
@@ -99,7 +103,7 @@ message Number {
 
 ---
 
-## 🧰 Dart Client Snippet Using gRPC
+##  Dart Client Snippet Using gRPC
 
 ```
 import 'package:grpc/grpc.dart';
