@@ -21,11 +21,7 @@ fn main() {
     ("{{key}}", vec![{% if values is iterable and values is not string %}{% for val in values %}"{{val}}", {% endfor %}{% else %}"{{values}}"{% endif %}]),
     {%- endfor %}
   ];
-  let query_string: String = params
-      .iter()
-      .flat_map(|(key, values)| values.iter().map(move |val| format!("{}={}", key, val)))
-      .collect::<Vec<_>>()
-      .join("&");
+  let query_string: String = params.iter().flat_map(|(key, values)| values.iter().map(move |val| format!("{}={}", key, val)))      .collect::<Vec<_>>().join("&");
   let url = format!("{}?{}", base_url, query_string);
   {% else %}
   let url = base_url.to_string();
