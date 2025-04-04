@@ -40,11 +40,9 @@ The system will then:
 ##  Key Features to Implement
 
 - [x] Support for uploading `.proto` files  
-- [x] In-app code editor to define `.proto` schemas  
 - [x] Parser to read proto files and extract Services, RPCs, and Message types  
 - [x] Dynamic input generation based on request message fields  
 - [x] gRPC client integration using `grpc-dart`  
-
 ---
 
 ##  Flowchart: gRPC Support Workflow
