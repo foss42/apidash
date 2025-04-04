@@ -338,52 +338,107 @@ UI Changes: Make a combination of drag and droppable and select file ui as a new
 Model changes: Add another content type application/octet-stream .
 Service changes:We would first stream the file as bytes , add it into the body .
 Put Content-Type header as application/octet-stream and send the request.
+
+### Basic Authentication (Issue Number #610)
+This would be a straightforward implementation. We take the input password and username and follow the below said transformation.
+                     
++--------------------------------------------------+
+| 1. Client combines them into one string         |
+|    Format: username:password                     |
+|    Example: admin:pass123                        |
++--------------------------------------------------+
+                      |
+                      v
++--------------------------------------------------+
+| 2.Client encodes the string using Base64         |
+|    Result: YWRtaW46cGFzczEyMw==                  |
++--------------------------------------------------+
+                      |
+                      v
++--------------------------------------------------+
+| 3. Client adds Authorization header              |
+|    Format: Authorization: Basic <Base64String>   |
+|    Example: Authorization: Basic YWRtaW46...     |
++--------------------------------------------------+
       
 
+### API Key authentication.
+UI:Upon selecting AuthType as APIKey there would be a text field for entering APIKey and a sliding button to select whther it should be send through header(X-API-Type) or 
+via query parameter. 
 
+Then the transformation occurs depending on the selection.
+
+### Bearer Token authentication:
+UI: There would be a text field to enter the bearer token.
+
+The value is added to the Authorization header in the format by the client:
+  Bearer <token_value>
 
 
 ### Weekly Timeline  
 
-#### **Week 1-2:**  
+#### **Week 1:**  
 - Getting to know about the organization and what mentors wants to say about the work I am about to start. Fix the timings of meetings if there are any. Get to know which time do the maintainers be more active and share the approach and queries with them.
 - Changing the design and architecture from feedback.
 - Add the ui for graphql variables feauture. Change service layer to accomodate the change.
-- Make additional endpoints to test the feauture and test it on them. Make related test files for this feauture.
+
+#### **Week 2:**
+- Make additional endpoints to test the graphql variable feauture and test it on them. Make related test files for this feauture.
 - Work on graphql introspection query and on its transformation to GraphqlSDL.
 - Add the ui for the inspect Schema.
 - Work on the endpoints if needed and test files of this feauture.
 - Work on the feauture and do improvements if the testing is causing issues.
 
-#### **Week 3-4:** (Web Socket)
+#### **Week 3:** 
 - Start working on the initial ui.
 - update settings providers for the new feautures of Web Socket (number of reconnection attemps, time interval between number of reconnection attempt,ping interval).
 - Add service layer of web sockets.
-- Make ui changes to reflect the incoming and outgoing messages.'
+- Make ui changes to reflect the incoming and outgoing messages.
+
+#### **Week 4:** 
 - Add Searching through the messages feauture.
 - Work on handling the web socket history.
 - Make endpoints to test the feauture. And add the ui and service level tests.
 - Work on the feauture and do improvements if the testing is causing issues.
 
-#### **Week 5-6:**  (SSE)
-- Work on handling the web socket history. Add testing for the ui and service code. 
+#### **Week 5:** 
 - Start working on the initial ui and set update settings providers for the new feautures of SSE.
-- Add service layer of web sockets and make way for codegen feauture for SSE.
-- 
+- Add service layer of SSE.
+- Make ui for incoming frames.
 
+#### **Week 6:** 
+- Add Searching through the messages feauture.
+- Work on handling the SSE history.
+- Make custom endpoints to test the feauture if organization wants it. And add the ui and service level tests.
+- Work on the feauture and do improvements if the testing is causing issues.
+ 
 
 #### **Week 7-8:** 
-- Work on handling the SSE history. Add testing for ui and service code.
+- Make way for codegen feautures of sse and WebSocket.
 - Work on UI changes for url encoded multipart and make service layer changes to accomadate that.
 - Add testing for the ui changes.
+- Make endpoints for this feauture if needed and test it upon it generating needed test files.
 
 
-#### **Week 9-10:**  
+#### **Week 9**  
 - Work on UI changes of File Request and implement the service layer changes.
-- Add test files to this. after testing thoroughly on all file types.
+- Add test files to this After testing thoroughly on major file types coming in different file sizes.
 
-#### **Week 11-12:**  
-- Final polishing done if needed.  
+### **Week 10**:
+- Make UI changes for Bearer Token.
+- Make service level changes needed for it.
+- Write test files for this feautre.
+- Make UI changes for API Authentication 
+- Make service level changes for this and write needed test files.
+
+
+#### **Week 11**: 
+- Make UI changes for Basic Authentication.
+- Make service level changes needed for it.
+- Write test files for this feautre.
+- Final polishing done for any feauture is done if needed.  
+
+#### **Week 12:**  
 - Adding needed docmentations.
 - Submitting the final documentation and work.
 
