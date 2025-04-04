@@ -62,7 +62,7 @@ The core innovation lies in DashBot Pro's **Multi-Agent Collective Intelligence 
 
 ### Core AI Agent Ecosystem:
 
-![DashBot Pro AI Agent Ecosystem](https://raw.githubusercontent.com/Aman071106/Issues/main/system-architecture-diagram.svg)
+![DashBot Pro AI Agent Ecosystem](images/system-architecture-diagram.svg)
 
 DashBot Pro is built on a multi-agent architecture where specialized agents collaborate to deliver comprehensive API assistance:
 
@@ -110,7 +110,7 @@ DashBot Pro is built on a multi-agent architecture where specialized agents coll
 
 ### System Interaction Flow:
 
-![DashBot Pro System Interaction Flow ](https://raw.githubusercontent.com/Aman071106/Issues/refs/heads/main/worflow.svg)
+![DashBot Pro System Interaction Flow ](images/worflow.svg)
 
 The diagram above illustrates the sophisticated workflow of DashBot Pro:
 
@@ -136,7 +136,7 @@ The diagram above illustrates the sophisticated workflow of DashBot Pro:
 
 ### Agent Communication Protocol:
 
-![DashBot Pro Agent Communication Protocol](https://raw.githubusercontent.com/Aman071106/Issues/refs/heads/main/agentCommunicationProtocol.svg)
+![DashBot Pro Agent Communication Protocol](images/agentCommunicationProtocol.svg)
 
 The multi-agent system employs a sophisticated communication protocol:
 
