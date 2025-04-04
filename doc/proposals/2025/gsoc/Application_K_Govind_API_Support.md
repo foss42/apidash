@@ -329,14 +329,20 @@ Afterwards if possible i would like to make a package similar to json explorer t
 Sending MultiPart through the body with x-www-form-urlencoded content type.
 
 Ui change: There would be a toggle button in multipart tab that can switch between multipart and urlencoded multipart . 
+
 Request model change: An additional content type (application/x-www-form-urlencoded). By default the choice would be url encoded multipart content type and would only change to multipart if toggle button is used or if a file is uploaded and selected to send.
+
 Service level change:- We would make key value pairs as string . This is encoded and passes into the body along with added header .
 
 ### File support(Issue #352):-
 Sending Files through octect-stream content type. 
-UI Changes: Make a combination of drag and droppable and select file ui as a new tab.
+
+UI Changes: Make a combination of drag and droppable and select file ui as a new tab. Make a progression bar to show the uploading progress.
+
 Model changes: Add another content type application/octet-stream .
+
 Service changes:We would first stream the file as bytes , add it into the body .
+
 Put Content-Type header as application/octet-stream and send the request.
 
 ### Basic Authentication (Issue Number #610)
@@ -407,7 +413,7 @@ The value is added to the Authorization header in the format by the client:
 - Make ui for incoming frames.
 
 #### **Week 6:** 
-- Add Searching through the messages feauture.
+- Add Searching through the frames feauture.
 - Work on handling the SSE history.
 - Make custom endpoints to test the feauture if organization wants it. And add the ui and service level tests.
 - Work on the feauture and do improvements if the testing is causing issues.
