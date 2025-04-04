@@ -63,7 +63,7 @@
 I would like to introduce some feautures as listed below to enhance the api testing support of the application.All this abstracts are part of a single proposal.
 
 
-###Web Socket Implementation (Issue Number: #15)
+### Web Socket Implementation (Issue Number: #15)
 Introducing web socket implementation into the APIDash. Introduce a new client and manager to handle the websocket messages and render them in the ui . 
 
 The solution involves providing the users with an option to change ping intervals, number of reconnection attempts, interval between reconnection attenpts. All of this would be managed inside the settings. The ui updates would be made using riverpod provider specifically for websocket messages for each request ids.Finally during onError and onDone the frames are added into the websocket Response Model. All this would be initiated by user clicking on the new APIType (Web Socket). The appropriate changes would be done in codegen related files to give code. 
@@ -141,7 +141,7 @@ Architecture is as shown below:
   ![Alt text](./images/websocket(2).png)
 
 
-###SSE Support(Issue Number #116)
+### SSE Support(Issue Number #116)
 Implementation fo server send events in the Apidash.
 
 Trying to implement SSE Support into the application. Using a special provider for incoming frames just like in web socket messages . Now the incoming messages would be parsed and decided if it is comment ,data,event,id,retry. Data is the most important one that is needed to be shown. Often comments , id , retry are hidden away. We can provide an option for advanced visibily in settings that helps the developer to see these frames if they want. This can enhance their testing.
@@ -325,14 +325,14 @@ The introspection query would be:
 Afterwards if possible i would like to make a package similar to json explorer to render the ui with collapse and expand feauture . This would require some time as SDL is quite different from the standard JSON.
 
 
-###URL Encoded Multipart(Issue $337):-
+### URL Encoded Multipart(Issue $337):-
 Sending MultiPart through the body with x-www-form-urlencoded content type.
 
 Ui change: There would be a toggle button in multipart tab that can switch between multipart and urlencoded multipart . 
 Request model change: An additional content type (application/x-www-form-urlencoded). By default the choice would be url encoded multipart content type and would only change to multipart if toggle button is used or if a file is uploaded and selected to send.
 Service level change:- We would make key value pairs as string . This is encoded and passes into the body along with added header .
 
-###File support(Issue #352):-
+### File support(Issue #352):-
 Sending Files through octect-stream content type. 
 UI Changes: Make a combination of drag and droppable and select file ui as a new tab.
 Model changes: Add another content type application/octet-stream .
