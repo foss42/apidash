@@ -230,7 +230,7 @@ Service changes: And then parse it along the body of request.
 The approach was verified in custom endpoint and in https://rickandmortyapi.com/graphql . A partial implementation of this was done in  https://github.com/foss42/apidash/pull/588   with a mistake in ui approach which would be rectified.
 
 
-GraphQL Introspection :- The approach is to use a prebuild introspection query that  asks for all the contents necessary that developer would want to know and display the results in GraphQL SDL (Schema Definition Language) . The introspection query asks for all schema details mutation ,subscription, query schema types , directives . Later on we iterate through the received json making the GRAPHQL SDL.
+GraphQL Inspect Schema :- The approach is to use a prebuild introspection query that  asks for all the contents necessary that developer would want to know and display the results in GraphQL SDL (Schema Definition Language) . The introspection query asks for all schema details mutation ,subscription, query schema types , directives . Later on we iterate through the received json making the GRAPHQL SDL.
 The introspection query would be:
 ```
 {
@@ -348,22 +348,32 @@ Put Content-Type header as application/octet-stream and send the request.
 #### **Week 1-2:**  
 - Getting to know about the organization and what mentors wants to say about the work I am about to start. Fix the timings of meetings if there are any. Get to know which time do the maintainers be more active and share the approach and queries with them.
 - Changing the design and architecture from feedback.
-- Start with the graphql variable and inspect schema feautures.
+- Add the ui for graphql variables feauture. Change service layer to accomodate the change.
+- Make additional endpoints to test the feauture and test it on them. Make related test files for this feauture.
+- Work on graphql introspection query and on its transformation to GraphqlSDL.
+- Add the ui for the inspect Schema.
+- Work on the endpoints if needed and test files of this feauture.
+- Work on the feauture and do improvements if the testing is causing issues.
 
-#### **Week 3-4:**  (Web Socket)
-- Coninuing work on graphql feautures and add testing.
-- Start working on the initial ui and set update settings providers for the new feautures of Web Socket.
-- Add service layer of web sockets and make way for codegen feauture for web socket.
-- Work on handling the web socket history. Add testing for the ui and service code. 
+#### **Week 3-4:** (Web Socket)
+- Start working on the initial ui.
+- update settings providers for the new feautures of Web Socket (number of reconnection attemps, time interval between number of reconnection attempt,ping interval).
+- Add service layer of web sockets.
+- Make ui changes to reflect the incoming and outgoing messages.'
+- Add Searching through the messages feauture.
+- Work on handling the web socket history.
+- Make endpoints to test the feauture. And add the ui and service level tests.
+- Work on the feauture and do improvements if the testing is causing issues.
 
 #### **Week 5-6:**  (SSE)
 - Work on handling the web socket history. Add testing for the ui and service code. 
 - Start working on the initial ui and set update settings providers for the new feautures of SSE.
 - Add service layer of web sockets and make way for codegen feauture for SSE.
+- 
 
 
 #### **Week 7-8:** 
-- Work on handling the SSE history.Add testing for ui and service code.
+- Work on handling the SSE history. Add testing for ui and service code.
 - Work on UI changes for url encoded multipart and make service layer changes to accomadate that.
 - Add testing for the ui changes.
 
