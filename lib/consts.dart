@@ -509,3 +509,4 @@ const kMsgClearHistory =
 const kMsgClearHistorySuccess = 'History cleared successfully';
 const kMsgClearHistoryError = 'Error clearing history';
 const kMsgShareError = "Unable to share";
+const kLabelGenerateUI = "Generate UI";
