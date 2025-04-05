@@ -144,8 +144,6 @@ class DashApp extends ConsumerWidget {
                                   builder: (context, snapshot) {
                                     if (snapshot.connectionState ==
                                         ConnectionState.done) {
-                                      debugPrint(
-                                          "showOnboarding: ${snapshot.data.toString()}");
                                       final showOnboarding =
                                           snapshot.data ?? false;
                                       return showOnboarding
