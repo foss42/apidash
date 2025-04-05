@@ -7,10 +7,10 @@ import 'package:printing/printing.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 import 'error_message.dart';
+import 'previewer_csv.dart';
+import 'previewer_json.dart';
+import 'previewer_video.dart';
 import 'uint8_audio_player.dart';
-import 'json_previewer.dart';
-import 'csv_previewer.dart';
-import 'video_previewer.dart';
 import '../consts.dart';
 
 class Previewer extends StatefulWidget {
