@@ -8,6 +8,9 @@ import '../consts.dart';
 final codegenLanguageStateProvider = StateProvider<CodegenLanguage>((ref) =>
     ref.watch(settingsProvider.select((value) => value.defaultCodeGenLang)));
 
+final llmProviderStateProvider = StateProvider<LLMProvider>((ref) =>
+    ref.watch(settingsProvider.select((value) => value.defaultLLMProvider)));
+
 final activeEnvironmentIdStateProvider = StateProvider<String?>((ref) =>
     ref.watch(settingsProvider.select((value) => value.activeEnvironmentId)));
 
@@ -34,6 +37,7 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
     String? workspaceFolderPath,
     bool? isSSLDisabled,
     bool? isDashBotEnabled,
+    LLMProvider? defaultLLMProvider,
   }) async {
     state = state.copyWith(
       isDark: isDark,
@@ -49,6 +53,7 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
       workspaceFolderPath: workspaceFolderPath,
       isSSLDisabled: isSSLDisabled,
       isDashBotEnabled: isDashBotEnabled,
+      defaultLLMProvider: defaultLLMProvider,
     );
     await setSettingsToSharedPrefs(state);
   }
