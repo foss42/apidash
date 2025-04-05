@@ -2,20 +2,9 @@ import 'package:apidash/consts.dart';
 import 'package:apidash/services/agentic_services/agent_blueprint.dart';
 import 'package:apidash/services/agentic_services/llm_services.dart';
 
-class LLMKeyStore {
-  static String? API_KEY;
-  static LLMProvider? provider;
-}
-
-typedef TCustomAPIKEY = (LLMProvider provider, String key);
+typedef LLMAccessDetail = (LLMProvider provider, String credential);
 
 class APIDashAIService {
-  static Future<TCustomAPIKEY?> _getUserCustomAPIKey() async {
-    if (LLMKeyStore.API_KEY == null) return null;
-    if (LLMKeyStore.provider == null) return null;
-    return (LLMKeyStore.provider!, LLMKeyStore.API_KEY!);
-  }
-
   static Future<String?> _call_ollama({
     required String systemPrompt,
     required String input,
@@ -52,7 +41,8 @@ class APIDashAIService {
   }
 
   static Future<String?> _orchestrator(
-    APIDashAIAgent agent, {
+    APIDashAIAgent agent,
+    LLMAccessDetail accessDetail, {
     String? query,
     Map? variables,
   }) async {
@@ -65,16 +55,15 @@ class APIDashAIService {
       }
     }
 
-    final customKey = await _getUserCustomAPIKey();
     //Implement any Rate limiting logic as needed
-    if (customKey == null) {
+    if (accessDetail.$1 == LLMProvider.ollama) {
       //Use local ollama implementation
       return await _call_ollama(systemPrompt: sP, input: query ?? '');
     } else {
       //Use LLMProvider implementation
       return await _call_provider(
-        provider: customKey.$1,
-        apiKey: customKey.$2,
+        provider: accessDetail.$1,
+        apiKey: accessDetail.$2,
         systemPrompt: sP,
         input: query ?? '',
       );
@@ -82,7 +71,8 @@ class APIDashAIService {
   }
 
   static Future<dynamic> _governor(
-    APIDashAIAgent agent, {
+    APIDashAIAgent agent,
+    LLMAccessDetail accessDetail, {
     String? query,
     Map? variables,
   }) async {
@@ -92,6 +82,7 @@ class APIDashAIService {
       try {
         final res = await _orchestrator(
           agent,
+          accessDetail,
           query: query,
           variables: variables,
         );
@@ -118,10 +109,16 @@ class APIDashAIService {
   }
 
   static Future<dynamic> callAgent(
-    APIDashAIAgent agent, {
+    APIDashAIAgent agent,
+    LLMAccessDetail accessDetail, {
     String? query,
     Map? variables,
   }) async {
-    return await _governor(agent, query: query, variables: variables);
+    return await _governor(
+      agent,
+      accessDetail,
+      query: query,
+      variables: variables,
+    );
   }
 }
