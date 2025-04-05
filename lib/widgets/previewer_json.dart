@@ -177,31 +177,39 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.surface,
-                            border: Border.all(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .surfaceContainerHighest),
-                            borderRadius: kBorderRadius8,
-                          ),
-                          child: Row(
-                            children: [
-                              const Padding(
-                                padding: kPh4,
-                                child: Icon(
-                                  Icons.search,
-                                  size: 16,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: constraints.minWidth > kMinWindowSize.width
+                          ? [
+                              TextButton(
+                                onPressed: state.areAllExpanded()
+                                    ? null
+                                    : state.expandAll,
+                                child: const Text(
+                                  'Expand All',
+                                  style: kTextStyleButtonSmall,
                                 ),
                               ),
-                              Expanded(
-                                child: JsonSearchField(
-                                  controller: searchController,
-                                  onChanged: (term) => state.search(term),
+                              TextButton(
+                                onPressed: state.areAllCollapsed()
+                                    ? null
+                                    : state.collapseAll,
+                                child: const Text(
+                                  'Collapse All',
+                                  style: kTextStyleButtonSmall,
+                                ),
+                              ),
+                            ]
+                          : [
+                              IconButton(
+                                tooltip: "Expand All",
+                                color: Theme.of(context).colorScheme.primary,
+                                visualDensity: VisualDensity.compact,
+                                onPressed: state.areAllExpanded()
+                                    ? null
+                                    : state.expandAll,
+                                icon: const Icon(
+                                  Icons.unfold_more,
+                                  size: 16,
                                 ),
                               ),
                               const SizedBox(
