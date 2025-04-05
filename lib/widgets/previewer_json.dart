@@ -177,75 +177,11 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: constraints.minWidth > kMinWindowSize.width
-                          ? [
-                              TextButton(
-                                onPressed: state.areAllExpanded()
-                                    ? null
-                                    : state.expandAll,
-                                child: const Text(
-                                  'Expand All',
-                                  style: kTextStyleButtonSmall,
-                                ),
-                              ),
-                              TextButton(
-                                onPressed: state.areAllCollapsed()
-                                    ? null
-                                    : state.collapseAll,
-                                child: const Text(
-                                  'Collapse All',
-                                  style: kTextStyleButtonSmall,
-                                ),
-                              ),
-                            ]
-                          : [
-                              IconButton(
-                                tooltip: "Expand All",
-                                color: Theme.of(context).colorScheme.primary,
-                                visualDensity: VisualDensity.compact,
-                                onPressed: state.areAllExpanded()
-                                    ? null
-                                    : state.expandAll,
-                                icon: const Icon(
-                                  Icons.unfold_more,
-                                  size: 16,
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 8,
-                              ),
-                              if (state.searchResults.isNotEmpty)
-                                Text(_searchFocusText(),
-                                    style:
-                                        Theme.of(context).textTheme.bodySmall),
-                              if (state.searchResults.isNotEmpty)
-                                IconButton(
-                                  visualDensity: VisualDensity.compact,
-                                  onPressed: () {
-                                    store.focusPreviousSearchResult();
-                                    _scrollToSearchMatch();
-                                  },
-                                  icon: const Icon(Icons.arrow_drop_up),
-                                ),
-                              if (state.searchResults.isNotEmpty)
-                                IconButton(
-                                  visualDensity: VisualDensity.compact,
-                                  onPressed: () {
-                                    store.focusNextSearchResult();
-                                    _scrollToSearchMatch();
-                                  },
-                                  icon: const Icon(Icons.arrow_drop_down),
-                                ),
-                            ],
-                          ),
-                        ),
-                      ),
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
                       ADTextButton(
                         icon: Icons.unfold_more,
-                        showLabel:
-                            (constraints.minWidth > kMinWindowSize.width) &&
-                                !kIsMobile,
+                        showLabel: constraints.minWidth > kMinWindowSize.width,
                         label: 'Expand All',
                         labelTextStyle: kTextStyleButtonSmall,
                         onPressed:
@@ -253,9 +189,7 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
                       ),
                       ADTextButton(
                         icon: Icons.unfold_less,
-                        showLabel:
-                            (constraints.minWidth > kMinWindowSize.width) &&
-                                !kIsMobile,
+                        showLabel: constraints.minWidth > kMinWindowSize.width,
                         label: 'Collapse All',
                         labelTextStyle: kTextStyleButtonSmall,
                         onPressed:
@@ -263,7 +197,6 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
                       ),
                     ],
                   ),
-                  kVSpacer6,
                   Expanded(
                     child: JsonExplorer(
                       nodes: state.displayNodes,
