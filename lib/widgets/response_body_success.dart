@@ -83,8 +83,7 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
                           },
                         ),
                   const Spacer(),
-                  ((widget.options == kPreviewRawBodyViewOptions) ||
-                          kCodeRawBodyViewOptions.contains(currentSeg))
+                  kCodeRawBodyViewOptions.contains(currentSeg)
                       ? CopyButton(
                           toCopy: widget.formattedBody ?? widget.body,
                           showLabel: showLabel,
