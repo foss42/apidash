@@ -1,5 +1,5 @@
 
-![](https://raw.githubusercontent.com/synapsecode/CustomStorage/main/GSOCBANNER.jpg)
+![](images/GSOCBANNER_APIDASH.jpg)
 
 # AI-Based API Response to Dynamic UI and Tool Generator 
 
@@ -71,7 +71,7 @@
 
 ### Internal AI Service Architecture
 
-![](https://raw.githubusercontent.com/synapsecode/CustomStorage/main/agentservice_arch.png)
+![](images/agentservice_arch.png)
 
 Parts of the Centralised Internal AI Agent Service Architecture
 1. **Input Layer:** the input to each agent will be a JSON/XML input along with an Agent Name. The Agent name will be used to specify which agent we want to call internally.
@@ -260,7 +260,7 @@ final ans = await APIDashAIService.callAgent(
 ### Agent Implementations
 
 #### Agent: API_RESPONSE_ANALYZER
-![](https://raw.githubusercontent.com/synapsecode/CustomStorage/main/ARANA.png)
+![](images/AI_RESP_ANA.png)
 
 - The API response is first parsed correctly according to its type (JSON / XML) and is then sanitised
 -  The Agent then goes through the whole response and generates relevant semantic context. This context will be very helpful in determining what is actually needed in the final UI
@@ -292,7 +292,7 @@ class ResponseAnalyzerAgent extends APIDashAIAgent {
 ```
 
 #### Agent: STAC_GEN (SDUI Representation Generator) 
-![](https://github.com/synapsecode/CustomStorage/raw/main/stacgenimg.png)
+![](images/STAC_GEN.png)
 -   Using the internal schema and additional context, the SDUI Stac Generator Agent determines the most appropriate UI component for the data. For example, if the data structure is a `List<List>`, it can generate a table and so on. This data is converted into a SDUI (Server Driven UI) representation called `Stac` from the [Stac](https://pub.dev/packages/stac) flutter package.
 -   The agent can further refine this decision based on factors such as data type, layout, and design preferences.
 -   The generated Stac code is basically a json representation of a flutter component and this can be used to create lightning-fast previews
@@ -308,7 +308,7 @@ class StacGenBot extends APIDashAIAgent {
 
 
 #### Agent: STAC_MODIFIER (UI Customization using Natural Language)
-![](https://github.com/synapsecode/CustomStorage/raw/main/stacmodifer.png)
+![](images/STAC_MODIFIER.png)
 
 -   The generated SDUI code can be previewed in a Component Preview Window, allowing users to inspect the result.
 -   The Stac Modifier Agent is an optional feature that allows users to modify the generated SDUI using natural language prompts. This iterative process enables users to refine the UI to meet their exact needs. This is fairly easy to do as most LLMs can already do this very well. We just have to use good system prompting to get it right
@@ -324,7 +324,7 @@ class StacModifierAgent extends APIDashAIAgent {
 }
 ```
 #### Agent: STAC2CODE (Conversion from SDUI Code to Framework Code)
-![](https://github.com/synapsecode/CustomStorage/raw/main/STAC2CODE.png)
+![](images/STAC2CODE.png)
 - The generated SDUI code cannot be executed on the user's machine, hence we must convert this into actual flutter code.
 - This is fairly easy to do as Stac is almost a one-one representation of flutter code  just in JSON
 - This property also makes it fairly easy to convert to other languages as the LLM can understand the context through the JSON SDUI and just convert it into another framework like NextJS code. This allows future extensibility.
@@ -349,7 +349,7 @@ We will also be using a regular JSON based rendering approach as a fallback inca
 
 ## System Architecture & Flow
 
-![image info](https://github.com/synapsecode/CustomStorage/raw/main/newmainarch.png)
+![image info](images/AI_UI_DES_ARCH_MAIN.png)
 
 ### Sample API Response
 This is a sample response given when I hit a [DEMO API](https://reqres.in/api/users?page=0)
@@ -457,14 +457,14 @@ Scaffold(
 ```
 
 ### Sample Output (Flutter)
-![image info](https://github.com/synapsecode/CustomStorage/raw/main/flutout.png)
+![image info](images/FLUT_OUTPUT.png)
 
 
 ## Sample UI 
 
-![image info](https://raw.githubusercontent.com/synapsecode/CustomStorage/main/framwdiag.png)
-![image info](https://raw.githubusercontent.com/synapsecode/CustomStorage/main/LDG.png)
-![image info](https://raw.githubusercontent.com/synapsecode/CustomStorage/main/compo.png)
+![image info](images/AI_UI_DES_SUI_1.png)
+![image info](images/AI_UI_DES_SUI_2.png)
+![image info](images/AI_UI_DES_SUI_3.png)
 If any modifications are made, it will go back to loading screen and come back to this page with the relevant modifications.
 When Export is clicked, the relevant generated code is **copied to clipboard** and the dialog closes!
 
@@ -486,7 +486,7 @@ Since this is an agent application itself, we can reuse the `APIDashAIAgent` abs
 `Supported Agentic Frameworks`: **OpenAI**, **LangChain**, Anthropic, **Gemini**,  Mistral, Microsoft Autogen
 `Supported Programming Languages`: Python, JavaScript 
 
-![](https://github.com/synapsecode/CustomStorage/raw/main/TOOLGENARCH.png)
+![](images/TOOLGENARCH.png)
 
 - **Step 1: API Request Consolidation:** We accept the incoming API Request and add all of the relevant data (method, url, headers, auth etc) into a single text object named `REQDATA` this will be useful for the previous steps.
 - **Step 2: Tool Template Selector:** After doing some research, it appears that *API Tools* have a very limited number of templates.
@@ -552,7 +552,7 @@ Since this is an agent application itself, we can reuse the `APIDashAIAgent` abs
  
 ## Week-wise Breakdown
 
-![image_info](https://github.com/synapsecode/CustomStorage/raw/main/gsocgantt2.png)
+![image_info](images/aiuides_timeline.png)
 
 ### Week 1 (Internal AI Service Development)
 - Discuss Future Agentic needs for Smarter code structuring
@@ -612,7 +612,7 @@ Since this is an agent application itself, we can reuse the `APIDashAIAgent` abs
  **DELIVERABLE**:  By the end of the week, we will have a new api dash client with the settings UI modified to include a `AI Engine` selector and a `LLM Api Key` field.
  Additionally we will have the UI implemented for the whole UI generation pipeline created and integrated with the described agents.
 
-###  Week 7 (Mobile Specific Changes & Additional Buffer)
+###  Week 7 (Mobile Specific Changes)
 
 - Since apidash works on mobile too, this week will be used to convert all the existing desktop-styled UI components into mobile friendly UI components
 - ollama is not accessible via localhost on a phone, hence on mobile devices we must include a textbox in the settings page so that the user can paste their hosted ollama instance link (they must also be able to select their model of choice)
@@ -640,21 +640,16 @@ Since this is an agent application itself, we can reuse the `APIDashAIAgent` abs
 
  **DELIVERABLE**:  A working module that accepts API specifications and user inputs, and outputs a unified REQDATA. 
 
-###  Week 10 (Template Creator and Selector)
+###  Week 10 (Template Selector and FUNC_GEN, TOOL_GEN Implementation)
 
 - Design reusable templates for tool definitions across frameworks: OpenAI, Gemini, Mistral, Anthropic, LangChain, and Autogen.
 - Implement a simple rule-based tool selector which can select the relevant template based on  `AGENTIC_FRAMEWORK` and `TARGET_LANGUAGE`
-
- **DELIVERABLE**:  The Rule based Tool Selector that can reliably return the relevant template based on inputs 
-
-###  Week 11 (FUNC_GEN & TOOL_GEN Implementation)
-
 - Creation of the **FUNC_GEN** Bot that can convert a given API Request into a piece of language-specific code which calls the API and returns its value
 - Creation of the **TOOL_GEN** Bot that can convert the selected Template and Generated Function into a fully functional API Tool 
 
- **DELIVERABLE**:  Both of the bots in complete working condition with correct code output.
+ **DELIVERABLE**:  A Rule based Tool Selector that can reliably return the relevant template based on inputs and the complete FUNC_GEN and TOOL_GEN working agents
 
-###  Week 12 (UI Integration & Tool Testing)
+###  Week 11 (UI Integration & Tool Testing)
 
 - Integrate this newly created pipeline with the existing apidash application
 - Test with multiple examples to confirm that both of the bots are working properly
@@ -662,10 +657,10 @@ Since this is an agent application itself, we can reuse the `APIDashAIAgent` abs
 
  **DELIVERABLE**:  The Entire Product fully working & Tested: AI UI Designer + API Tool Generator
 
-###  Week 13 (Report & Documentation)
+###  Week 12 (Report & Documentation)
 - The Documentation for the entire pipeline to be written in this period along with the final GSoC Report. 
  
- **DELIVERABLE**:  GSoC Report
+ **DELIVERABLE**:  Technical Documentation & GSoC Report
  
 ---
 
