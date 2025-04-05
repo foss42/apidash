@@ -34,9 +34,10 @@ class HttpClientManager {
 
   void cancelRequest(String? requestId) {
     if (requestId != null && _clients.containsKey(requestId)) {
-       _cancelledRequests.add(requestId);
       _clients[requestId]?.close();
       _clients.remove(requestId);
+
+      _cancelledRequests.add(requestId);
       if (_cancelledRequests.length > _maxCancelledRequests) {
         _cancelledRequests.remove(_cancelledRequests.first);
       }
