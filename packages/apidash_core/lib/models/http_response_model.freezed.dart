@@ -29,6 +29,7 @@ mixin _$HttpResponseModel {
   Uint8List? get bodyBytes => throw _privateConstructorUsedError;
   @DurationConverter()
   Duration? get time => throw _privateConstructorUsedError;
+  List<SSEEventModel>? get sseEvents => throw _privateConstructorUsedError;
 
   /// Serializes this HttpResponseModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -53,7 +54,8 @@ abstract class $HttpResponseModelCopyWith<$Res> {
       String? body,
       String? formattedBody,
       @Uint8ListConverter() Uint8List? bodyBytes,
-      @DurationConverter() Duration? time});
+      @DurationConverter() Duration? time,
+      List<SSEEventModel>? sseEvents});
 }
 
 /// @nodoc
@@ -78,6 +80,7 @@ class _$HttpResponseModelCopyWithImpl<$Res, $Val extends HttpResponseModel>
     Object? formattedBody = freezed,
     Object? bodyBytes = freezed,
     Object? time = freezed,
+    Object? sseEvents = freezed,
   }) {
     return _then(_value.copyWith(
       statusCode: freezed == statusCode
@@ -108,6 +111,10 @@ class _$HttpResponseModelCopyWithImpl<$Res, $Val extends HttpResponseModel>
           ? _value.time
           : time // ignore: cast_nullable_to_non_nullable
               as Duration?,
+      sseEvents: freezed == sseEvents
+          ? _value.sseEvents
+          : sseEvents // ignore: cast_nullable_to_non_nullable
+              as List<SSEEventModel>?,
     ) as $Val);
   }
 }
@@ -127,7 +134,8 @@ abstract class _$$HttpResponseModelImplCopyWith<$Res>
       String? body,
       String? formattedBody,
       @Uint8ListConverter() Uint8List? bodyBytes,
-      @DurationConverter() Duration? time});
+      @DurationConverter() Duration? time,
+      List<SSEEventModel>? sseEvents});
 }
 
 /// @nodoc
@@ -150,6 +158,7 @@ class __$$HttpResponseModelImplCopyWithImpl<$Res>
     Object? formattedBody = freezed,
     Object? bodyBytes = freezed,
     Object? time = freezed,
+    Object? sseEvents = freezed,
   }) {
     return _then(_$HttpResponseModelImpl(
       statusCode: freezed == statusCode
@@ -180,6 +189,10 @@ class __$$HttpResponseModelImplCopyWithImpl<$Res>
           ? _value.time
           : time // ignore: cast_nullable_to_non_nullable
               as Duration?,
+      sseEvents: freezed == sseEvents
+          ? _value._sseEvents
+          : sseEvents // ignore: cast_nullable_to_non_nullable
+              as List<SSEEventModel>?,
     ));
   }
 }
@@ -195,9 +208,11 @@ class _$HttpResponseModelImpl extends _HttpResponseModel {
       this.body,
       this.formattedBody,
       @Uint8ListConverter() this.bodyBytes,
-      @DurationConverter() this.time})
+      @DurationConverter() this.time,
+      final List<SSEEventModel>? sseEvents})
       : _headers = headers,
         _requestHeaders = requestHeaders,
+        _sseEvents = sseEvents,
         super._();
 
   factory _$HttpResponseModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -235,10 +250,19 @@ class _$HttpResponseModelImpl extends _HttpResponseModel {
   @override
   @DurationConverter()
   final Duration? time;
+  final List<SSEEventModel>? _sseEvents;
+  @override
+  List<SSEEventModel>? get sseEvents {
+    final value = _sseEvents;
+    if (value == null) return null;
+    if (_sseEvents is EqualUnmodifiableListView) return _sseEvents;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
 
   @override
   String toString() {
-    return 'HttpResponseModel(statusCode: $statusCode, headers: $headers, requestHeaders: $requestHeaders, body: $body, formattedBody: $formattedBody, bodyBytes: $bodyBytes, time: $time)';
+    return 'HttpResponseModel(statusCode: $statusCode, headers: $headers, requestHeaders: $requestHeaders, body: $body, formattedBody: $formattedBody, bodyBytes: $bodyBytes, time: $time, sseEvents: $sseEvents)';
   }
 
   @override
@@ -255,7 +279,9 @@ class _$HttpResponseModelImpl extends _HttpResponseModel {
             (identical(other.formattedBody, formattedBody) ||
                 other.formattedBody == formattedBody) &&
             const DeepCollectionEquality().equals(other.bodyBytes, bodyBytes) &&
-            (identical(other.time, time) || other.time == time));
+            (identical(other.time, time) || other.time == time) &&
+            const DeepCollectionEquality()
+                .equals(other._sseEvents, _sseEvents));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -268,7 +294,8 @@ class _$HttpResponseModelImpl extends _HttpResponseModel {
       body,
       formattedBody,
       const DeepCollectionEquality().hash(bodyBytes),
-      time);
+      time,
+      const DeepCollectionEquality().hash(_sseEvents));
 
   /// Create a copy of HttpResponseModel
   /// with the given fields replaced by the non-null parameter values.
@@ -295,7 +322,8 @@ abstract class _HttpResponseModel extends HttpResponseModel {
       final String? body,
       final String? formattedBody,
       @Uint8ListConverter() final Uint8List? bodyBytes,
-      @DurationConverter() final Duration? time}) = _$HttpResponseModelImpl;
+      @DurationConverter() final Duration? time,
+      final List<SSEEventModel>? sseEvents}) = _$HttpResponseModelImpl;
   const _HttpResponseModel._() : super._();
 
   factory _HttpResponseModel.fromJson(Map<String, dynamic> json) =
@@ -317,6 +345,8 @@ abstract class _HttpResponseModel extends HttpResponseModel {
   @override
   @DurationConverter()
   Duration? get time;
+  @override
+  List<SSEEventModel>? get sseEvents;
 
   /// Create a copy of HttpResponseModel
   /// with the given fields replaced by the non-null parameter values.

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -19,6 +21,40 @@ final selectedRequestModelProvider = StateProvider<RequestModel?>((ref) {
     return collection[selectedId];
   }
 });
+
+class SSEFramesNotifier extends StateNotifier<Map<String, List<SSEEventModel>>> {
+  SSEFramesNotifier() : super({});
+
+  void addFrame(String requestId, String frame) {
+    print(frame+"\n");
+    state = {
+      ...state,
+      requestId: [...(state[requestId] ?? []), SSEEventModel.fromRawSSE(frame)],
+    };
+  }
+
+  void clearFrames(String requestId) {
+    if (state.containsKey(requestId)) {
+      state = {
+        ...state,
+        requestId: [],
+      };
+    }
+  }
+
+  void removeRequest(String requestId) {
+    final newState = {...state};
+    newState.remove(requestId);
+    state = newState;
+  }
+}
+
+// Provide it globally
+final sseFramesProvider =
+    StateNotifierProvider<SSEFramesNotifier, Map<String, List<SSEEventModel>>>(
+  (ref) => SSEFramesNotifier(),
+);
+
 
 final requestSequenceProvider = StateProvider<List<String>>((ref) {
   var ids = hiveHandler.getIds();
@@ -262,6 +298,7 @@ class CollectionStateNotifier
     unsave();
   }
 
+  
   Future<void> sendRequest() async {
     final requestId = ref.read(selectedIdStateProvider);
     ref.read(codePaneVisibleStateProvider.notifier).state = false;
@@ -289,6 +326,75 @@ class CollectionStateNotifier
     state = map;
 
     bool noSSL = ref.read(settingsProvider).isSSLDisabled;
+    if(apiType == APIType.sse){
+     
+      List<SSEEventModel> frames; 
+      await sendSSERequest(
+        requestId,
+        apiType,
+        substitutedHttpRequestModel,
+        defaultUriScheme: defaultUriScheme,
+        noSSL: noSSL,
+        onConnect: (statusCode, responseHeaders, requestHeaders,duration) {
+        
+        ref.read(sseFramesProvider.notifier).clearFrames(requestId);
+        map = {...state!};
+       
+        map[requestId] = requestModel.copyWith(
+        responseStatus: statusCode,
+        message: kResponseCodeReasons[statusCode],
+        httpResponseModel: baseHttpResponseModel.copyWith(
+          statusCode: statusCode,
+          headers: responseHeaders,
+          requestHeaders: requestHeaders,
+          time: duration,
+        ),
+        isWorking: true,
+      );
+      state = map;
+      
+       
+      },
+      onData: (response) {
+          ref.read(sseFramesProvider.notifier).addFrame(requestId, response);
+      },
+      onError: (error, stackTrace) {
+        frames = ref.read(sseFramesProvider)[requestId] ?? [];
+        map = {...state!};
+        map[requestId] = requestModel.copyWith(
+          responseStatus: 500,
+          message: error.toString(),
+          httpResponseModel: baseHttpResponseModel.copyWith(
+            sseEvents: frames,
+          ),
+          isWorking: false,
+        );
+        state = map;
+      },
+      onDone: () {
+        frames = ref.read(sseFramesProvider)[requestId] ?? [];
+        map = {...state!};
+        map[requestId] = requestModel.copyWith(
+          httpResponseModel: baseHttpResponseModel.copyWith(
+            sseEvents: frames,
+          ),
+          isWorking: false,
+        );
+        state = map;
+      },
+      onCancel: () {
+        frames = ref.read(sseFramesProvider)[requestId] ?? [];
+        map = {...state!};
+        map[requestId] = requestModel.copyWith(
+          responseStatus: -1,
+          message: kMsgRequestCancelled,
+          isWorking: false,
+        );
+        state = map;
+      },
+      );
+      return;
+    }
     var responseRec = await sendHttpRequest(
       requestId,
       apiType,
@@ -342,6 +448,7 @@ class CollectionStateNotifier
 
     unsave();
   }
+
 
   void cancelRequest() {
     final id = ref.read(selectedIdStateProvider);
