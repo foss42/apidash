@@ -181,16 +181,6 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
                       children: constraints.minWidth > kMinWindowSize.width
                           ? [
                               TextButton(
-                                onPressed: () async {
-                                  await _copy(
-                                      kJsonEncoder.convert(widget.code), sm);
-                                },
-                                child: const Text(
-                                  'Copy',
-                                  style: kTextStyleButtonSmall,
-                                ),
-                              ),
-                              TextButton(
                                 onPressed: state.areAllExpanded()
                                     ? null
                                     : state.expandAll,
@@ -210,19 +200,6 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
                               ),
                             ]
                           : [
-                              IconButton(
-                                tooltip: "Copy",
-                                color: Theme.of(context).colorScheme.primary,
-                                visualDensity: VisualDensity.compact,
-                                onPressed: () async {
-                                  await _copy(
-                                      kJsonEncoder.convert(widget.code), sm);
-                                },
-                                icon: const Icon(
-                                  Icons.copy,
-                                  size: 16,
-                                ),
-                              ),
                               IconButton(
                                 tooltip: "Expand All",
                                 color: Theme.of(context).colorScheme.primary,
