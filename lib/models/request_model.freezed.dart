@@ -27,6 +27,8 @@ mixin _$RequestModel {
   @JsonKey(includeToJson: false)
   dynamic get requestTabIndex => throw _privateConstructorUsedError;
   HttpRequestModel? get httpRequestModel => throw _privateConstructorUsedError;
+  AuthorizationModel? get authorizationModel =>
+      throw _privateConstructorUsedError;
   int? get responseStatus => throw _privateConstructorUsedError;
   String? get message => throw _privateConstructorUsedError;
   HttpResponseModel? get httpResponseModel =>
@@ -59,6 +61,7 @@ abstract class $RequestModelCopyWith<$Res> {
       String description,
       @JsonKey(includeToJson: false) dynamic requestTabIndex,
       HttpRequestModel? httpRequestModel,
+      AuthorizationModel? authorizationModel,
       int? responseStatus,
       String? message,
       HttpResponseModel? httpResponseModel,
@@ -66,6 +69,7 @@ abstract class $RequestModelCopyWith<$Res> {
       @JsonKey(includeToJson: false) DateTime? sendingTime});
 
   $HttpRequestModelCopyWith<$Res>? get httpRequestModel;
+  $AuthorizationModelCopyWith<$Res>? get authorizationModel;
   $HttpResponseModelCopyWith<$Res>? get httpResponseModel;
 }
 
@@ -90,6 +94,7 @@ class _$RequestModelCopyWithImpl<$Res, $Val extends RequestModel>
     Object? description = null,
     Object? requestTabIndex = freezed,
     Object? httpRequestModel = freezed,
+    Object? authorizationModel = freezed,
     Object? responseStatus = freezed,
     Object? message = freezed,
     Object? httpResponseModel = freezed,
@@ -121,6 +126,10 @@ class _$RequestModelCopyWithImpl<$Res, $Val extends RequestModel>
           ? _value.httpRequestModel
           : httpRequestModel // ignore: cast_nullable_to_non_nullable
               as HttpRequestModel?,
+      authorizationModel: freezed == authorizationModel
+          ? _value.authorizationModel
+          : authorizationModel // ignore: cast_nullable_to_non_nullable
+              as AuthorizationModel?,
       responseStatus: freezed == responseStatus
           ? _value.responseStatus
           : responseStatus // ignore: cast_nullable_to_non_nullable
@@ -162,6 +171,21 @@ class _$RequestModelCopyWithImpl<$Res, $Val extends RequestModel>
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
+  $AuthorizationModelCopyWith<$Res>? get authorizationModel {
+    if (_value.authorizationModel == null) {
+      return null;
+    }
+
+    return $AuthorizationModelCopyWith<$Res>(_value.authorizationModel!,
+        (value) {
+      return _then(_value.copyWith(authorizationModel: value) as $Val);
+    });
+  }
+
+  /// Create a copy of RequestModel
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
   $HttpResponseModelCopyWith<$Res>? get httpResponseModel {
     if (_value.httpResponseModel == null) {
       return null;
@@ -188,6 +212,7 @@ abstract class _$$RequestModelImplCopyWith<$Res>
       String description,
       @JsonKey(includeToJson: false) dynamic requestTabIndex,
       HttpRequestModel? httpRequestModel,
+      AuthorizationModel? authorizationModel,
       int? responseStatus,
       String? message,
       HttpResponseModel? httpResponseModel,
@@ -196,6 +221,8 @@ abstract class _$$RequestModelImplCopyWith<$Res>
 
   @override
   $HttpRequestModelCopyWith<$Res>? get httpRequestModel;
+  @override
+  $AuthorizationModelCopyWith<$Res>? get authorizationModel;
   @override
   $HttpResponseModelCopyWith<$Res>? get httpResponseModel;
 }
@@ -219,6 +246,7 @@ class __$$RequestModelImplCopyWithImpl<$Res>
     Object? description = null,
     Object? requestTabIndex = freezed,
     Object? httpRequestModel = freezed,
+    Object? authorizationModel = freezed,
     Object? responseStatus = freezed,
     Object? message = freezed,
     Object? httpResponseModel = freezed,
@@ -249,6 +277,10 @@ class __$$RequestModelImplCopyWithImpl<$Res>
           ? _value.httpRequestModel
           : httpRequestModel // ignore: cast_nullable_to_non_nullable
               as HttpRequestModel?,
+      authorizationModel: freezed == authorizationModel
+          ? _value.authorizationModel
+          : authorizationModel // ignore: cast_nullable_to_non_nullable
+              as AuthorizationModel?,
       responseStatus: freezed == responseStatus
           ? _value.responseStatus
           : responseStatus // ignore: cast_nullable_to_non_nullable
@@ -284,6 +316,7 @@ class _$RequestModelImpl implements _RequestModel {
       this.description = "",
       @JsonKey(includeToJson: false) this.requestTabIndex = 0,
       this.httpRequestModel,
+      this.authorizationModel,
       this.responseStatus,
       this.message,
       this.httpResponseModel,
@@ -310,6 +343,8 @@ class _$RequestModelImpl implements _RequestModel {
   @override
   final HttpRequestModel? httpRequestModel;
   @override
+  final AuthorizationModel? authorizationModel;
+  @override
   final int? responseStatus;
   @override
   final String? message;
@@ -324,7 +359,7 @@ class _$RequestModelImpl implements _RequestModel {
 
   @override
   String toString() {
-    return 'RequestModel(id: $id, apiType: $apiType, name: $name, description: $description, requestTabIndex: $requestTabIndex, httpRequestModel: $httpRequestModel, responseStatus: $responseStatus, message: $message, httpResponseModel: $httpResponseModel, isWorking: $isWorking, sendingTime: $sendingTime)';
+    return 'RequestModel(id: $id, apiType: $apiType, name: $name, description: $description, requestTabIndex: $requestTabIndex, httpRequestModel: $httpRequestModel, authorizationModel: $authorizationModel, responseStatus: $responseStatus, message: $message, httpResponseModel: $httpResponseModel, isWorking: $isWorking, sendingTime: $sendingTime)';
   }
 
   @override
@@ -341,6 +376,8 @@ class _$RequestModelImpl implements _RequestModel {
                 .equals(other.requestTabIndex, requestTabIndex) &&
             (identical(other.httpRequestModel, httpRequestModel) ||
                 other.httpRequestModel == httpRequestModel) &&
+            (identical(other.authorizationModel, authorizationModel) ||
+                other.authorizationModel == authorizationModel) &&
             (identical(other.responseStatus, responseStatus) ||
                 other.responseStatus == responseStatus) &&
             (identical(other.message, message) || other.message == message) &&
@@ -362,6 +399,7 @@ class _$RequestModelImpl implements _RequestModel {
       description,
       const DeepCollectionEquality().hash(requestTabIndex),
       httpRequestModel,
+      authorizationModel,
       responseStatus,
       message,
       httpResponseModel,
@@ -392,6 +430,7 @@ abstract class _RequestModel implements RequestModel {
           final String description,
           @JsonKey(includeToJson: false) final dynamic requestTabIndex,
           final HttpRequestModel? httpRequestModel,
+          final AuthorizationModel? authorizationModel,
           final int? responseStatus,
           final String? message,
           final HttpResponseModel? httpResponseModel,
@@ -415,6 +454,8 @@ abstract class _RequestModel implements RequestModel {
   dynamic get requestTabIndex;
   @override
   HttpRequestModel? get httpRequestModel;
+  @override
+  AuthorizationModel? get authorizationModel;
   @override
   int? get responseStatus;
   @override

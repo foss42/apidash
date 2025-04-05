@@ -85,17 +85,7 @@ enum ContentType {
   final String header;
 }
 
-enum AuthType {
-  noauth("No Auth"),
-  basic("Basic"),
-  bearer("Bearer"),
-  digest("Digest"),
-  oauth1("OAuth 1.0"),
-  oauth2("OAuth 2.0");
 
-  const AuthType(this.label);
-  final String label;
-}
 
 const JsonEncoder kJsonEncoder = JsonEncoder.withIndent('  ');
 const JsonDecoder kJsonDecoder = JsonDecoder();

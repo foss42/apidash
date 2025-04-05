@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'dart:math';
+import 'package:apidash/providers/authorization_providers.dart';
+import 'package:apidash/providers/collection_providers.dart';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
-import 'package:apidash/providers/providers.dart';
 import 'package:apidash/consts.dart';
-
 
 class EditRequestAuthorization extends ConsumerStatefulWidget {
   const EditRequestAuthorization({super.key});
@@ -20,58 +20,48 @@ class _EditRequestAuthorizationState
     extends ConsumerState<EditRequestAuthorization> {
   late int seed;
   final random = Random.secure();
-  late AuthType _currentAuthType;
-  late String _username = '';
-  late String _password = '';
-  late String _token = '';
-  late bool _isEnabled = false;
   bool _obscurePassword = true;
 
   @override
   void initState() {
     super.initState();
     seed = random.nextInt(kRandMax);
-    _currentAuthType = AuthType.noauth;
-
-    final request = ref.read(selectedRequestModelProvider);
-    final authHeader = request?.httpRequestModel?.headers?.firstWhere(
-      (h) => (h.name).toLowerCase() == 'authorization',
-      orElse: () => const NameValueModel(name: '', value: ''),
-    );
-
-    if (authHeader?.value?.startsWith('Basic ') ?? false) {
-      _currentAuthType = AuthType.basic;
-      try {
-        final decoded =
-            utf8.decode(base64Decode(authHeader!.value!.substring(6)));
-        final parts = decoded.split(':');
-        _username = parts.isNotEmpty ? parts[0] : '';
-        _password = parts.length > 1 ? parts[1] : '';
-        _isEnabled = true;
-      } catch (_) {}
-    } else if (authHeader?.value?.startsWith('Bearer ') ?? false) {
-      _currentAuthType = AuthType.bearer;
-      _token = authHeader!.value!.substring(7);
-      _isEnabled = true;
-    }
   }
 
   void _updateHeaders() {
     final currentHeaders =
         ref.read(selectedRequestModelProvider)?.httpRequestModel?.headers ?? [];
+    final authModel = ref.watch(authorizationProvider);
+    final currentAuthType =
+        ref.watch(authorizationProvider.select((value) => value.authType));
+    var newHeaders = currentHeaders.toList();
 
-    final newHeaders = currentHeaders
-        .where((h) => (h.name).toLowerCase() != 'authorization')
-        .toList();
+    if (currentAuthType == AuthType.basic ||
+        currentAuthType == AuthType.bearer) {
+      newHeaders = currentHeaders
+          .where((h) => (h.name).toLowerCase() != 'authorization')
+          .toList();
+    }
+    if (currentAuthType == AuthType.apikey &&
+        authModel.apiKeyAuthModel.addTo == AddTo.header) {
+      if (authModel.apiKeyAuthModel.key.isNotEmpty &&
+          authModel.apiKeyAuthModel.value.isNotEmpty) {
+        newHeaders.add(NameValueModel(
+          name: authModel.apiKeyAuthModel.key,
+          value: authModel.apiKeyAuthModel.value,
+        ));
+      }
+    }
 
-    if (_isEnabled && _currentAuthType != AuthType.noauth) {
+    if (authModel.isEnabled && currentAuthType != AuthType.noauth) {
       String authValue = '';
-      switch (_currentAuthType) {
+      switch (currentAuthType) {
         case AuthType.basic:
-          authValue = 'Basic ${base64Encode(utf8.encode('$_username:$_password'))}';
+          authValue =
+              'Basic ${base64Encode(utf8.encode('${authModel.basicAuthModel.username}:${authModel.basicAuthModel.password}'))}';
           break;
         case AuthType.bearer:
-          authValue = 'Bearer $_token';
+          authValue = 'Bearer ${authModel.bearerAuthModel.token}';
           break;
         case AuthType.noauth:
           break;
@@ -92,33 +82,74 @@ class _EditRequestAuthorizationState
           isHeaderEnabledList: List.filled(newHeaders.length, true),
         );
   }
+  
+void _updateQueryParams() {
+  final currentParams = ref
+          .read(selectedRequestModelProvider)
+          ?.httpRequestModel
+          ?.params ??
+      [];
+  final authModel = ref.watch(authorizationProvider);
+  final currentAuthType =
+      ref.watch(authorizationProvider.select((value) => value.authType));
 
-  void _handleAuthTypeChange(AuthType? value) {
-    if (value != null) {
-      setState(() {
-        _currentAuthType = value;
-        if (value == AuthType.noauth) {
-          _username = '';
-          _password = '';
-          _token = '';
-        } else {
-          // Initialize empty values when switching to basic/bearer
-          if (value == AuthType.basic) {
-            _token = '';
-          } else {
-            _username = '';
-            _password = '';
-          }
+  if (authModel.isEnabled &&
+      currentAuthType == AuthType.apikey &&
+      authModel.apiKeyAuthModel.addTo == AddTo.query) {
+    final apiKeyName = authModel.apiKeyAuthModel.key;
+    final apiKeyvalue = authModel.apiKeyAuthModel.value;
+
+    if (apiKeyName.isNotEmpty && apiKeyvalue.isNotEmpty) {
+      // Check if a parameter with ANY name from apiKey auth already exists
+      // if it does, we need to update the name and value
+      // if it doesn't, we need to add a new parameter
+      bool foundExisting = false;
+      List<NameValueModel> newParams = currentParams.map((param) {
+        if (currentParams.indexWhere((p) => p.name == authModel.apiKeyAuthModel.key) != -1) {
+          foundExisting = true;
+          return param.copyWith(name: apiKeyName, value: apiKeyvalue);
         }
-      });
-      _updateHeaders();
+        return param;
+      }).toList();
+
+      if (!foundExisting) {
+        // Add new parameter
+        newParams = [...newParams, NameValueModel(name: apiKeyName, value: apiKeyvalue)];
+      }
+
+      ref.read(collectionStateNotifierProvider.notifier).update(
+            params: newParams,
+            isParamEnabledList: List.filled(newParams.length, true),
+          );
     }
+  } else {
+    //If not enabled or not apiKey auth, remove the param if it exists
+    List<NameValueModel> newParams = currentParams.where((param) => param.name != authModel.apiKeyAuthModel.key).toList();
+    ref.read(collectionStateNotifierProvider.notifier).update(
+          params: newParams,
+          isParamEnabledList: List.filled(newParams.length, true),
+        );
   }
+}
+
+  // @override
+  // void didUpdateWidget(covariant EditRequestAuthorization oldWidget) {
+  //   super.didUpdateWidget(oldWidget);
+  //   _updateHeaders();
+  //   _updateQueryParams();
+
+  // }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+
+    final authNotifier = ref.read(authorizationProvider.notifier);
+    final authModel = ref.watch(authorizationProvider);
+    final currentAuthType =
+        ref.watch(authorizationProvider.select((value) => value.authType));
+    final selectedId = ref.watch(selectedIdStateProvider);
 
     return Padding(
       padding: kP10,
@@ -128,22 +159,23 @@ class _EditRequestAuthorizationState
           Row(
             children: [
               ADCheckBox(
-                value: _isEnabled,
+                value: authModel.isEnabled,
                 onChanged: (value) {
-                  setState(() {
-                    _isEnabled = value!;
-                  });
-                  _updateHeaders();
+                  authNotifier.update(
+                    isEnabled: value,
+                  );
                 },
                 colorScheme: colorScheme,
-                keyId: 'auth-enable-checkbox',
+                keyId: 'auth-checkbox',
               ),
               const SizedBox(width: 8),
               const Text('Enable Authorization'),
             ],
           ),
+          Text(
+              'The authorization header will be automatically generated when you send the request.'),
           const SizedBox(height: 16),
-          if (_isEnabled) ...[
+          if (authModel.isEnabled) ...[
             SizedBox(
               height: kHeaderHeight,
               child: Row(
@@ -152,91 +184,188 @@ class _EditRequestAuthorizationState
                   const Text("Select Authorization Type:"),
                   const SizedBox(width: 8),
                   ADDropdownButton<AuthType>(
-                    value: _currentAuthType,
+                    value: currentAuthType,
                     values: [
                       (AuthType.noauth, 'No Auth'),
                       (AuthType.basic, 'Basic Auth'),
                       (AuthType.bearer, 'Bearer Token'),
+                      (AuthType.apikey, 'API Key'),
                     ],
-                    onChanged: _handleAuthTypeChange,
+                    onChanged: (value) {
+                      authNotifier.update(
+                        authType: value,
+                      );
+                    },
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 16),
-            if (_currentAuthType == AuthType.basic) ...[
-              TextFormField(
-                decoration: InputDecoration(
-                  labelText: 'Username',
-                  contentPadding:
-                      const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8)),
-                  filled: true,
-                  fillColor: colorScheme.surface,
-                ),
-                initialValue: _username,
-                onChanged: (value) {
-                  setState(() {
-                    _username = value;
-                  });
-                  _updateHeaders();
-                },
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                decoration: InputDecoration(
-                  labelText: 'Password',
-                  contentPadding:
-                      const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8)),
-                  filled: true,
-                  fillColor: colorScheme.surface,
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _obscurePassword
-                          ? Icons.visibility_off
-                          : Icons.visibility,
-                      color: colorScheme.onSurface.withOpacity(0.6),
+            switch (currentAuthType) {
+              AuthType.basic => Column(children: [
+                  TextFormField(
+                    key: Key("$selectedId-username"),
+                    decoration: InputDecoration(
+                      labelText: 'Username',
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 12, horizontal: 12),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8)),
+                      filled: true,
+                      fillColor: colorScheme.surface,
                     ),
-                    onPressed: () {
-                      setState(() {
-                        _obscurePassword = !_obscurePassword;
-                      });
+                    initialValue: authModel.basicAuthModel.username,
+                    onChanged: (value) {
+                      authNotifier.update(
+                        username: value,
+                      );
+
+                      /// TODO: when value is not null and not empty add the authorization header
+                      if (value.isNotEmpty) {
+                        _updateHeaders();
+                      }
                     },
                   ),
-                ),
-                initialValue: _password,
-                obscureText: _obscurePassword,
-                onChanged: (value) {
-                  setState(() {
-                    _password = value;
-                  });
-                  _updateHeaders();
-                },
-              ),
-            ],
-            if (_currentAuthType == AuthType.bearer) ...[
-              TextFormField(
-                decoration: InputDecoration(
-                  labelText: 'Token',
-                  contentPadding:
-                      const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8)),
-                  filled: true,
-                  fillColor: colorScheme.surface,
-                ),
-                initialValue: _token,
-                onChanged: (value) {
-                  setState(() {
-                    _token = value;
-                  });
-                  _updateHeaders();
-                },
-              ),
-            ],
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    key: Key("$selectedId-password"),
+                    decoration: InputDecoration(
+                      labelText: 'Password',
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 12, horizontal: 12),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8)),
+                      filled: true,
+                      fillColor: colorScheme.surface,
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscurePassword
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                          color: colorScheme.onSurface.withAlpha(150),
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _obscurePassword = !_obscurePassword;
+                          });
+                        },
+                      ),
+                    ),
+                    initialValue: authModel.basicAuthModel.password,
+                    obscureText: _obscurePassword,
+                    onChanged: (value) {
+                      authNotifier.update(
+                        password: value,
+                      );
+                      if (value.isNotEmpty) {
+                        _updateHeaders();
+                      }
+                    },
+                  ),
+                ]),
+              AuthType.bearer => Column(children: [
+                  TextFormField(
+                    key: Key("$selectedId-token"),
+                    decoration: InputDecoration(
+                      labelText: 'Token',
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 12, horizontal: 12),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8)),
+                      filled: true,
+                      fillColor: colorScheme.surface,
+                    ),
+                    initialValue: authModel.bearerAuthModel.token,
+                    onChanged: (value) {
+                      authNotifier.update(
+                        token: value,
+                      );
+                      if (value.isNotEmpty) {
+                        _updateHeaders();
+                      }
+                    },
+                  ),
+                ]),
+              AuthType.apikey => Column(children: [
+                  TextFormField(
+                    key: Key("$selectedId-key"),
+                    decoration: InputDecoration(
+                      labelText: 'Key',
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 12, horizontal: 12),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8)),
+                      filled: true,
+                      fillColor: colorScheme.surface,
+                    ),
+                    initialValue: authModel.apiKeyAuthModel.key,
+                    onChanged: (value) {
+                      authNotifier.update(
+                        apiKey: value,
+                      );
+                      if (value.isNotEmpty &&
+                          authModel.apiKeyAuthModel.addTo == AddTo.query) {
+                        _updateQueryParams();
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    key: Key("$selectedId-value"),
+                    decoration: InputDecoration(
+                      labelText: 'Value',
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 12, horizontal: 12),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8)),
+                      filled: true,
+                      fillColor: colorScheme.surface,
+                    ),
+                    initialValue: authModel.apiKeyAuthModel.value,
+                    onChanged: (value) {
+                      authNotifier.update(
+                        apiValue: value,
+                      );
+                      if (value.isNotEmpty &&
+                          authModel.apiKeyAuthModel.addTo == AddTo.query) {
+                        _updateQueryParams();
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    height: kHeaderHeight,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        const Text("Add to:"),
+                        const SizedBox(width: 8),
+                        ADDropdownButton<AddTo>(
+                          value: authModel.apiKeyAuthModel.addTo,
+                          values: [
+                            (
+                              AddTo.header,
+                              'Header',
+                            ),
+                            (AddTo.query, 'Query Params'),
+                          ],
+                          onChanged: (value) {
+                            authNotifier.update(
+                              addTo: value,
+                            );
+                            if (value == AddTo.header) {
+                              _updateHeaders();
+                            } else if (value == AddTo.query) {
+                              _updateQueryParams();
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ]),
+              _ => Container()
+            },
           ],
         ],
       ),

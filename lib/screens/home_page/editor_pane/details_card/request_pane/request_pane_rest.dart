@@ -51,14 +51,12 @@ class EditRestRequestPane extends ConsumerWidget {
       tabLabels: const [
         kLabelURLParams,
         kLabelHeaders,
-        /// TODO: Add Authorization tab
         kLabelAuthorization,
         kLabelBody,
       ],
       children: const [
         EditRequestURLParams(),
         EditRequestHeaders(),
-        /// TODO: Add Authorization tab
         EditRequestAuthorization(),
         EditRequestBody(),
       ],

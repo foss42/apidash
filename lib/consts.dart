@@ -162,6 +162,27 @@ enum ResponseBodyView {
   final IconData icon;
 }
 
+enum AuthType {
+  noauth("No Auth"),
+  basic("Basic"),
+  bearer("Bearer"),
+  apikey("API Key"),
+  digest("Digest"),
+  oauth1("OAuth 1.0"),
+  oauth2("OAuth 2.0");
+
+  const AuthType(this.label);
+  final String label;
+}
+
+enum AddTo {
+  header("Header"),
+  query("Query Parameter");
+
+  const AddTo(this.label);
+  final String label;
+}
+
 const kNoBodyViewOptions = [ResponseBodyView.none];
 const kNoRawBodyViewOptions = [ResponseBodyView.none, ResponseBodyView.raw];
 const kRawBodyViewOptions = [ResponseBodyView.raw];
