@@ -18,16 +18,6 @@ class RequestTabs extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const Padding(
-          padding: kPh8,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              APITypeDropdown(),
-              EnvironmentDropdown(),
-            ],
-          ),
-        ),
         kVSpacer3,
         const Padding(
           padding: kPh4,
