@@ -479,15 +479,12 @@ An API Tool Generator basically is a system to automatically generate functions 
 
 This functionality is particularly useful for developers working on AI-driven applications, as it simplifies integrating external APIs into agent workflows, enhancing efficiency and reducing development time.
 
-Reference: [https://www.postman.com/explore/toolgen](https://www.postman.com/explore/toolgen)
-
 ## Implementation Details
 
 Since this is an agent application itself, we can reuse the `APIDashAIAgent` abstract class mentioned above to implement our agents needed for this task. This highlights its modular and easy-to-use nature.
 
 `Supported Agentic Frameworks`: **OpenAI**, **LangChain**, Anthropic, **Gemini**,  Mistral, Microsoft Autogen
 `Supported Programming Languages`: Python, JavaScript 
-*(same as Postman's Implementation)*
 
 ![](https://github.com/synapsecode/CustomStorage/raw/main/TOOLGENARCH.png)
 
