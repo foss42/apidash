@@ -147,22 +147,16 @@ class ViewCodePane extends StatelessWidget {
                       toCopy: code,
                       showLabel: showLabel,
                     ),
-                    Visibility(
-                      visible: kIsMobile,
-                      child: ShareButton(
-                        toShare: code,
-                        showLabel: showLabel,
-                      ),
-                    ),
-                    // TODO: Save to Downloads folder does not work in Mobile
-                    Visibility(
-                      visible: !kIsMobile,
-                      child: SaveInDownloadsButton(
-                        content: stringToBytes(code),
-                        ext: codegenLanguage.ext,
-                        showLabel: showLabel,
-                      ),
-                    ),
+                    kIsMobile
+                        ? ShareButton(
+                            toShare: code,
+                            showLabel: showLabel,
+                          )
+                        : SaveInDownloadsButton(
+                            content: stringToBytes(code),
+                            ext: codegenLanguage.ext,
+                            showLabel: showLabel,
+                          ),
                   ],
                 ),
               ),
