@@ -6,30 +6,42 @@ class ADTextButton extends StatelessWidget {
     super.key,
     this.icon,
     this.iconSize,
+    this.showLabel = true,
     this.label,
+    this.labelTextStyle,
     this.onPressed,
   });
 
   final IconData? icon;
   final double? iconSize;
+  final bool showLabel;
   final String? label;
+  final TextStyle? labelTextStyle;
   final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) {
     var child = Text(
       label ?? "",
-      style: kTextStyleButton,
+      style: labelTextStyle ?? kTextStyleButton,
     );
     return icon != null
-        ? TextButton.icon(
-            icon: Icon(
-              icon,
-              size: iconSize ?? kButtonIconSizeMedium,
-            ),
-            label: child,
-            onPressed: onPressed,
-          )
+        ? showLabel
+            ? TextButton.icon(
+                icon: Icon(
+                  icon,
+                  size: iconSize ?? kButtonIconSizeMedium,
+                ),
+                label: child,
+                onPressed: onPressed,
+              )
+            : IconButton(
+                onPressed: onPressed,
+                icon: Icon(
+                  icon,
+                  size: iconSize ?? kButtonIconSizeMedium,
+                ),
+              )
         : TextButton(
             onPressed: onPressed,
             child: child,
