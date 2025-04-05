@@ -9,6 +9,8 @@ import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
 
+import 'button_share.dart';
+
 class NotSentWidget extends StatelessWidget {
   const NotSentWidget({super.key});
 
@@ -458,11 +460,16 @@ class _BodySuccessState extends State<BodySuccess> {
                           showLabel: showLabel,
                         )
                       : const SizedBox(),
-                  SaveInDownloadsButton(
-                    content: widget.bytes,
-                    mimeType: widget.mediaType.mimeType,
-                    showLabel: showLabel,
-                  ),
+                  kIsMobile
+                      ? ShareButton(
+                          toShare: widget.formattedBody ?? widget.body,
+                          showLabel: showLabel,
+                        )
+                      : SaveInDownloadsButton(
+                          content: widget.bytes,
+                          mimeType: widget.mediaType.mimeType,
+                          showLabel: showLabel,
+                        ),
                 ],
               ),
               kVSpacer10,
