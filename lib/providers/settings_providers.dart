@@ -11,6 +11,9 @@ final codegenLanguageStateProvider = StateProvider<CodegenLanguage>((ref) =>
 final llmProviderStateProvider = StateProvider<LLMProvider>((ref) =>
     ref.watch(settingsProvider.select((value) => value.defaultLLMProvider)));
 
+final llmProviderCredentialsProvider = StateProvider<String>((ref) => ref.watch(
+    settingsProvider.select((value) => value.defaultLLMProviderCredentials)));
+
 final activeEnvironmentIdStateProvider = StateProvider<String?>((ref) =>
     ref.watch(settingsProvider.select((value) => value.activeEnvironmentId)));
 
@@ -38,6 +41,7 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
     bool? isSSLDisabled,
     bool? isDashBotEnabled,
     LLMProvider? defaultLLMProvider,
+    String? defaultLLMProviderCredentials,
   }) async {
     state = state.copyWith(
       isDark: isDark,
@@ -54,6 +58,7 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
       isSSLDisabled: isSSLDisabled,
       isDashBotEnabled: isDashBotEnabled,
       defaultLLMProvider: defaultLLMProvider,
+      defaultLLMProviderCredentials: defaultLLMProviderCredentials,
     );
     await setSettingsToSharedPrefs(state);
   }
