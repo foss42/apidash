@@ -177,54 +177,26 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: constraints.minWidth > kMinWindowSize.width
-                          ? [
-                              TextButton(
-                                onPressed: state.areAllExpanded()
-                                    ? null
-                                    : state.expandAll,
-                                child: const Text(
-                                  'Expand All',
-                                  style: kTextStyleButtonSmall,
-                                ),
-                              ),
-                              TextButton(
-                                onPressed: state.areAllCollapsed()
-                                    ? null
-                                    : state.collapseAll,
-                                child: const Text(
-                                  'Collapse All',
-                                  style: kTextStyleButtonSmall,
-                                ),
-                              ),
-                            ]
-                          : [
-                              IconButton(
-                                tooltip: "Expand All",
-                                color: Theme.of(context).colorScheme.primary,
-                                visualDensity: VisualDensity.compact,
-                                onPressed: state.areAllExpanded()
-                                    ? null
-                                    : state.expandAll,
-                                icon: const Icon(
-                                  Icons.unfold_more,
-                                  size: 16,
-                                ),
-                              ),
-                              IconButton(
-                                tooltip: "Collapse All",
-                                color: Theme.of(context).colorScheme.primary,
-                                visualDensity: VisualDensity.compact,
-                                onPressed: state.areAllCollapsed()
-                                    ? null
-                                    : state.collapseAll,
-                                icon: const Icon(
-                                  Icons.unfold_less,
-                                  size: 16,
-                                ),
-                              ),
-                            ]),
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      ADTextButton(
+                        icon: Icons.unfold_more,
+                        showLabel: constraints.minWidth > kMinWindowSize.width,
+                        label: 'Expand All',
+                        labelTextStyle: kTextStyleButtonSmall,
+                        onPressed:
+                            state.areAllExpanded() ? null : state.expandAll,
+                      ),
+                      ADTextButton(
+                        icon: Icons.unfold_less,
+                        showLabel: constraints.minWidth > kMinWindowSize.width,
+                        label: 'Collapse All',
+                        labelTextStyle: kTextStyleButtonSmall,
+                        onPressed:
+                            state.areAllCollapsed() ? null : state.collapseAll,
+                      ),
+                    ],
+                  ),
                   Expanded(
                     child: JsonExplorer(
                       nodes: state.displayNodes,
