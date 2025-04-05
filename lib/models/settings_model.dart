@@ -17,6 +17,7 @@ class SettingsModel {
     this.historyRetentionPeriod = HistoryRetentionPeriod.oneWeek,
     this.workspaceFolderPath,
     this.isSSLDisabled = false,
+    this.defaultLLMProvider = LLMProvider.ollama,
   });
 
   final bool isDark;
@@ -31,6 +32,7 @@ class SettingsModel {
   final HistoryRetentionPeriod historyRetentionPeriod;
   final String? workspaceFolderPath;
   final bool isSSLDisabled;
+  final LLMProvider defaultLLMProvider;
 
   SettingsModel copyWith({
     bool? isDark,
@@ -45,6 +47,7 @@ class SettingsModel {
     HistoryRetentionPeriod? historyRetentionPeriod,
     String? workspaceFolderPath,
     bool? isSSLDisabled,
+    LLMProvider? defaultLLMProvider,
   }) {
     return SettingsModel(
       isDark: isDark ?? this.isDark,
@@ -61,6 +64,7 @@ class SettingsModel {
           historyRetentionPeriod ?? this.historyRetentionPeriod,
       workspaceFolderPath: workspaceFolderPath ?? this.workspaceFolderPath,
       isSSLDisabled: isSSLDisabled ?? this.isSSLDisabled,
+      defaultLLMProvider: defaultLLMProvider ?? this.defaultLLMProvider,
     );
   }
 
@@ -80,6 +84,7 @@ class SettingsModel {
       historyRetentionPeriod: historyRetentionPeriod,
       workspaceFolderPath: workspaceFolderPath,
       isSSLDisabled: isSSLDisabled,
+      defaultLLMProvider: defaultLLMProvider,
     );
   }
 
@@ -119,6 +124,17 @@ class SettingsModel {
         // pass
       }
     }
+
+    final defaultLLMProviderStr = data["defaultLLMProvider"] as String?;
+    LLMProvider? defaultLLMProvider;
+    if (defaultLLMProviderStr != null) {
+      try {
+        defaultLLMProvider = LLMProvider.values.byName(defaultLLMProviderStr);
+      } catch (e) {
+        // pass
+      }
+    }
+
     final saveResponses = data["saveResponses"] as bool?;
     final promptBeforeClosing = data["promptBeforeClosing"] as bool?;
     final activeEnvironmentId = data["activeEnvironmentId"] as String?;
@@ -151,6 +167,7 @@ class SettingsModel {
           historyRetentionPeriod ?? HistoryRetentionPeriod.oneWeek,
       workspaceFolderPath: workspaceFolderPath,
       isSSLDisabled: isSSLDisabled,
+      defaultLLMProvider: defaultLLMProvider,
     );
   }
 
@@ -170,6 +187,7 @@ class SettingsModel {
       "historyRetentionPeriod": historyRetentionPeriod.name,
       "workspaceFolderPath": workspaceFolderPath,
       "isSSLDisabled": isSSLDisabled,
+      "defaultLLMProvider": defaultLLMProvider.name,
     };
   }
 
@@ -194,7 +212,8 @@ class SettingsModel {
         other.activeEnvironmentId == activeEnvironmentId &&
         other.historyRetentionPeriod == historyRetentionPeriod &&
         other.workspaceFolderPath == workspaceFolderPath &&
-        other.isSSLDisabled == isSSLDisabled;
+        other.isSSLDisabled == isSSLDisabled &&
+        other.defaultLLMProvider == defaultLLMProvider;
   }
 
   @override
@@ -213,6 +232,7 @@ class SettingsModel {
       historyRetentionPeriod,
       workspaceFolderPath,
       isSSLDisabled,
+      defaultLLMProvider,
     );
   }
 }

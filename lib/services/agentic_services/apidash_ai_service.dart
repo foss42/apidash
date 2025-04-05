@@ -1,7 +1,6 @@
+import 'package:apidash/consts.dart';
 import 'package:apidash/services/agentic_services/agent_blueprint.dart';
 import 'package:apidash/services/agentic_services/llm_services.dart';
-
-enum LLMProvider { chatgpt, claude, gemini, openai_azure }
 
 class LLMKeyStore {
   static String? API_KEY;
@@ -40,7 +39,7 @@ class APIDashAIService {
       case LLMProvider.claude:
         return await APIDashCustomLLMService.claude(
             systemPrompt, input, apiKey);
-      case LLMProvider.openai_azure:
+      case LLMProvider.azureOpenAI:
         return await APIDashCustomLLMService.openai_azure(
           systemPrompt,
           input,

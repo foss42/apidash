@@ -1,3 +1,4 @@
+import 'package:apidash/widgets/popup_menu_llmprovider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -99,6 +100,18 @@ class SettingsPage extends ConsumerWidget {
                     ref
                         .read(settingsProvider.notifier)
                         .update(defaultCodeGenLang: value);
+                  },
+                ),
+              ),
+              ListTile(
+                hoverColor: kColorTransparent,
+                title: const Text('Default LLM Provider'),
+                trailing: LLMProviderPopupMenu(
+                  value: settings.defaultLLMProvider,
+                  onChanged: (value) {
+                    ref
+                        .read(settingsProvider.notifier)
+                        .update(defaultLLMProvider: value);
                   },
                 ),
               ),
