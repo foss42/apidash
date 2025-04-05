@@ -1,10 +1,13 @@
+import 'package:apidash/providers/collection_providers.dart';
+import 'package:apidash/widgets/ai_ui_desginer_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:apidash/utils/utils.dart';
 import 'package:apidash/consts.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'button_clear_response.dart';
 
-class ResponsePaneHeader extends StatelessWidget {
+class ResponsePaneHeader extends ConsumerWidget {
   const ResponsePaneHeader({
     super.key,
     this.responseStatus,
@@ -19,7 +22,7 @@ class ResponsePaneHeader extends StatelessWidget {
   final VoidCallback? onClearResponse;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final bool showClearButton = onClearResponse != null;
     return Padding(
       padding: kPv8,
@@ -41,6 +44,25 @@ class ResponsePaneHeader extends StatelessWidget {
                         brightness: Theme.of(context).brightness,
                       ),
                     ),
+              ),
+            ),
+            FilledButton.tonalIcon(
+              style: FilledButton.styleFrom(
+                padding: kPh12,
+                minimumSize: const Size(44, 44),
+              ),
+              onPressed: () {
+                final model = ref.watch(selectedRequestModelProvider
+                    .select((value) => value?.httpResponseModel));
+                showCustomDialog(context, model?.formattedBody ?? "");
+              },
+              icon: Icon(
+                Icons.generating_tokens,
+              ),
+              label: const SizedBox(
+                child: Text(
+                  kLabelGenerateUI,
+                ),
               ),
             ),
             kHSpacer10,
