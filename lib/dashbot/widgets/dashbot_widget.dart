@@ -18,6 +18,8 @@ class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
   final TextEditingController _controller = TextEditingController();
   late ScrollController _scrollController;
   bool _isLoading = false;
+  final List<String> aiModels = ["Google", "LLaMA", "Snowflake"];
+  String selectedAI = "Google";
 
   @override
   void initState() {
@@ -34,9 +36,14 @@ class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
 
   Future<void> _sendMessage(String message) async {
     if (message.trim().isEmpty) return;
+
+    _controller.clear(); // Clears input field after sending
+
     final dashBotService = ref.read(dashBotServiceProvider);
     final requestModel = ref.read(selectedRequestModelProvider);
     final responseModel = requestModel?.httpResponseModel;
+
+    // print("Sending message with AI model: $selectedAI");
 
     setState(() => _isLoading = true);
 
@@ -47,14 +54,16 @@ class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
 
     try {
       final response = await dashBotService.handleRequest(
-          message, requestModel, responseModel);
+          message, requestModel, responseModel, selectedAI, context);
+
       ref.read(chatMessagesProvider.notifier).addMessage({
         'role': 'bot',
         'message': response,
       });
+    // ignore: unused_catch_stack
     } catch (error, stackTrace) {
-      debugPrint('Error in _sendMessage: $error');
-      debugPrint('StackTrace: $stackTrace');
+      // debugPrint('Error in _sendMessage: $error');
+      // debugPrint('StackTrace: $stackTrace');
       ref.read(chatMessagesProvider.notifier).addMessage({
         'role': 'bot',
         'message': "Error: ${error.toString()}",
@@ -134,6 +143,62 @@ class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           ),
         ),
+     
+
+        ElevatedButton.icon(
+          onPressed: () => _sendMessage("Generate API Documentation"),
+          icon: const Icon(Icons.description),
+          label: const Text("Generate Docs"),
+          style: ElevatedButton.styleFrom(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          ),
+        ),
+        ElevatedButton.icon(
+          onPressed: () => _sendMessage("Generate API Plots"),
+          icon: const Icon(Icons.bar_chart),
+          label: const Text("Generate Plots"),
+          style: ElevatedButton.styleFrom(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(
+              horizontal: 16.0),
+          child: DropdownButton<String>(
+            value: selectedAI,
+            onChanged: (String? newValue) {
+              if (newValue != null) {
+                setState(() {
+                  selectedAI = newValue;
+                });
+              }
+            },
+            items: aiModels.map((String model) {
+              return DropdownMenuItem<String>(
+                value: model,
+                child: Text(
+                  model,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.black87,
+                  ),
+                ),
+              );
+            }).toList(),
+            icon: Icon(
+              Icons.arrow_drop_down,
+              color: Colors.blue,
+              size: 24,
+            ),
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.black87,
+            ),
+            isExpanded: false,
+            underline: Container(),
+          ),
+        ),
+
         if (showDebugButton)
           ElevatedButton.icon(
             onPressed: () => _sendMessage("Debug API"),
