@@ -12,9 +12,8 @@ from codecs import encode
 
   String kTemplateParams = """
 from urllib.parse import urlencode
-
-queryParams = {{params}}
-queryParamsStr = '?' + urlencode(queryParams)
+params = { {{params}} }
+queryParamsStr = '?' + urlencode(params,doseq=True)
 
 """;
 
@@ -102,17 +101,27 @@ body = b'\r\n'.join(dataList)
       );
 
       Uri? uri = rec.$1;
+    var params = requestModel.enabledParamsMap;
+    if (params.isNotEmpty) {
+      hasQuery=true;
+      var templateParams = jj.Template(kTemplateParams);
+      List<String> paramList = [];
+
+      params.forEach((key, value) {
+        if (value is List) {
+          paramList.add("'$key': [${value.map((v) => "'$v'").join(", ")}]");
+        } else {
+          paramList.add("'$key': '$value'");
+        }
+      });
+
+      result += templateParams.render({
+        "params": paramList.join(",\n"),
+      });
+    }
 
       if (uri != null) {
-        if (uri.hasQuery) {
-          var params = uri.queryParameters;
-          if (params.isNotEmpty) {
-            hasQuery = true;
-            var templateParams = jj.Template(kTemplateParams);
-            var paramsString = kJsonEncoder.convert(params);
-            result += templateParams.render({"params": paramsString});
-          }
-        }
+    
 
         if (requestModel.hasBody) {
           hasBody = true;

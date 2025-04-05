@@ -5,82 +5,90 @@ import 'package:jinja/jinja.dart' as jj;
 class RustHyperCodeGen {
   final String kTemplateStart = """
 {% if hasForm %}extern crate hyper_multipart_rfc7578 as hyper_multipart;
-{% endif %}use hyper::{Body, Client, Request, Uri};
+{% endif %}use hyper::{Body, Client, Request};
 {% if isHttps %}use hyper_tls::HttpsConnector;
 {% else %}use hyper::client::HttpConnector;
 {% endif %}{% if hasForm %}use hyper_multipart::client::multipart;
 {% endif %}{% if hasJsonBody %}use serde_json::json;
 {% endif %}use tokio;
+use url::Url;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let http{% if isHttps %}s{% endif %} = Http{% if isHttps %}s{% endif %}Connector::new();
     let client = Client::builder().build::<_, hyper::Body>(http{% if isHttps %}s{% endif %});
-    let url = "{{ url }}".parse::<Uri>().unwrap();
+    let mut url = Url::parse("{{ baseUrl }}")?;\n
+    """;
 
+  final String kTemplateParams = """
+    {% for key, values in params %}{% if values is iterable and values is not string %}{% for val in values %}\n     url.query_pairs_mut().append_pair("{{ key }}", "{{ val }}");{% endfor %}
+    {% else %}
+    url.query_pairs_mut().append_pair("{{ key }}", "{{ values }}");
+    {% endif %}
+    {% endfor %}
 """;
 
   final String kTemplateMethod = """
     let req_builder = Request::builder()
-              .method("{{ method }}")
-              .uri(url)
+        .method("{{ method }}").uri(url.as_str())
 """;
+
   final String kTemplateMethodNoHeadersButForm = """
     let req_builder = Request::builder()
-              .method("{{ method }}")
-              .uri(url);
+        .method("{{ method }}")
+        .uri(url.as_str());
 """;
 
   final String kTemplateHeaders = """
-        {% for key, val in headers %}
-              .header("{{ key }}", "{{ val }}")
-        {% endfor %}""";
+    {% for key, val in headers %}
+        .header("{{ key }}", "{{ val }}")
+    {% endfor %}""";
 
   final String kTemplateHeadersFormData = """
-        {% for key, val in headers %}
-              .header("{{ key }}", "{{ val }}"){% if loop.last %};{% endif %}
-        {% endfor %}
+    {% for key, val in headers %}
+        .header("{{ key }}", "{{ val }}"){% if loop.last %};{% endif %}
+    {% endfor %}
 """;
 
   final String kTemplateBody = """
-        
-              .body(Body::from(r#"{{ body }}"#))?;\n
+
+        .body(Body::from(r#"{{ body }}"#))?;\n
 """;
 
   final String kTemplateJsonBody = """
-        
-              .body(Body::from(json!({{ body }}).to_string()))?;\n
+
+        .body(Body::from(json!({{ body }}).to_string()))?;\n
 """;
 
   final String kTemplateEmptyBody = """
 
-              .body(Body::empty())?;\n
+        .body(Body::empty())?;\n
 """;
 
   final String kTemplateFormData = """
-    
+
     let mut form = multipart::Form::default();
     {%- for field in fields_list %}
-        {%- if field.type == "file" %}
+    {%- if field.type == "file" %}
     form.add_file("{{ field.name }}", r"{{ field.value }}").unwrap();
-        {%- else %}
+    {%- else %}
     form.add_text("{{ field.name }}", "{{ field.value }}");
-        {%- endif %}
+    {%- endif %}
     {%- endfor %}
 
     let req = form.set_body_convert::<Body, multipart::Body>(req_builder).unwrap();
-    
-  """;
+
+""";
 
   final String kTemplateEndForm = """
-  let res = client.request(req).await?;
+    let res = client.request(req).await?;
     let status = res.status();
     let body_bytes = hyper::body::to_bytes(res).await?;
     let body = String::from_utf8(body_bytes.to_vec())?;
 
     println!("Response Status: {}", status);
     println!("Response: {:?}", body);
-    
+
 
 """;
 
@@ -108,16 +116,30 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
       String url = requestModel.url;
       var rec = getValidRequestUri(url, requestModel.enabledParams);
       Uri? uri = rec.$1;
-
+      
       if (uri != null) {
+        var baseUrl = url.split('?').first;
+        
+        // Get query parameters
+        var params = requestModel.enabledParamsMap;
+        
         var headers = requestModel.enabledHeadersMap;
+        
+        // Generate template start with base URL
         result += jj.Template(kTemplateStart).render({
-          "url": uri,
+          "baseUrl": baseUrl,
           "isHttps": uri.scheme == "https" ? true : false,
           'hasJsonBody': requestModel.hasJsonData,
           'hasForm': requestModel.hasFormData,
         });
-
+        
+        // Add query parameters if available
+        if (params.isNotEmpty) {
+          result += jj.Template(kTemplateParams).render({
+            "params": params,
+          });
+        }
+        
         if (requestModel.hasFormData && headers.isEmpty) {
           result += jj.Template(kTemplateMethodNoHeadersButForm).render({
             "method": requestModel.method.name.toUpperCase(),
@@ -127,9 +149,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             "method": requestModel.method.name.toUpperCase(),
           });
         }
-
+        
         // Add headers if available
-
         if (headers.isNotEmpty) {
           if (requestModel.hasFormData) {
             result += jj.Template(kTemplateHeadersFormData)
@@ -139,7 +160,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 jj.Template(kTemplateHeaders).render({"headers": headers});
           }
         }
-
+        
         // Handle body (JSON or raw)
         var requestBody = requestModel.body;
         if (requestModel.hasFormData) {
@@ -157,16 +178,17 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         } else if (requestModel.hasTextData) {
           result += jj.Template(kTemplateBody).render({"body": requestBody});
         }
+        
         // End request
-
         if (requestModel.hasFormData && requestModel.method != HTTPVerb.get) {
           result += kTemplateEndForm;
         } else {
           result += kTemplateRequestEnd;
         }
+        
         result += kTemplateEnd;
       }
-
+      
       return result;
     } catch (e) {
       return null;

@@ -100,3 +100,51 @@ String? getRequestBody(APIType type, HttpRequestModel httpRequestModel) {
     APIType.graphql => getGraphQLBody(httpRequestModel),
   };
 }
+Map<String, dynamic>? rowsToRequestMap(List<NameValueModel>? rows) {
+  if (rows == null) {
+    return null;
+  }
+  
+  final Map<String, dynamic> finalMap = {};
+  
+  for (var row in rows) {
+    final key = row.name.trim();
+    if (key.isEmpty) continue;
+    
+    final value = row.value.toString();
+    
+    if (finalMap.containsKey(key)) {
+     
+      if (finalMap[key] is List) {
+        (finalMap[key] as List).add(value);
+      } else {
+        finalMap[key] = [finalMap[key], value];
+      }
+    } else {
+      
+      finalMap[key] = value;
+    }
+  }
+  
+  return finalMap;
+}
+
+List<NameValueModel>? requestMapToRows(Map<String, dynamic>? requestMap) {
+  if (requestMap == null) {
+    return null;
+  }
+  
+  final List<NameValueModel> finalRows = [];
+  
+  requestMap.forEach((key, value) {
+    if (value is List) {
+      for (var item in value) {
+        finalRows.add(NameValueModel(name: key, value: item.toString()));
+      }
+    } else {
+      finalRows.add(NameValueModel(name: key, value: value.toString()));
+    }
+  });
+  
+  return finalRows;
+}
