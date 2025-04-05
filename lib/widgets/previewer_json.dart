@@ -179,9 +179,65 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
+                      Expanded(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.surface,
+                            border: Border.all(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .surfaceContainerHighest),
+                            borderRadius: kBorderRadius8,
+                          ),
+                          child: Row(
+                            children: [
+                              const Padding(
+                                padding: kPh4,
+                                child: Icon(
+                                  Icons.search,
+                                  size: 16,
+                                ),
+                              ),
+                              Expanded(
+                                child: JsonSearchField(
+                                  controller: searchController,
+                                  onChanged: (term) => state.search(term),
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 8,
+                              ),
+                              if (state.searchResults.isNotEmpty)
+                                Text(_searchFocusText(),
+                                    style:
+                                        Theme.of(context).textTheme.bodySmall),
+                              if (state.searchResults.isNotEmpty)
+                                IconButton(
+                                  visualDensity: VisualDensity.compact,
+                                  onPressed: () {
+                                    store.focusPreviousSearchResult();
+                                    _scrollToSearchMatch();
+                                  },
+                                  icon: const Icon(Icons.arrow_drop_up),
+                                ),
+                              if (state.searchResults.isNotEmpty)
+                                IconButton(
+                                  visualDensity: VisualDensity.compact,
+                                  onPressed: () {
+                                    store.focusNextSearchResult();
+                                    _scrollToSearchMatch();
+                                  },
+                                  icon: const Icon(Icons.arrow_drop_down),
+                                ),
+                            ],
+                          ),
+                        ),
+                      ),
                       ADTextButton(
                         icon: Icons.unfold_more,
-                        showLabel: constraints.minWidth > kMinWindowSize.width,
+                        showLabel:
+                            (constraints.minWidth > kMinWindowSize.width) &&
+                                !kIsMobile,
                         label: 'Expand All',
                         labelTextStyle: kTextStyleButtonSmall,
                         onPressed:
@@ -189,7 +245,9 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
                       ),
                       ADTextButton(
                         icon: Icons.unfold_less,
-                        showLabel: constraints.minWidth > kMinWindowSize.width,
+                        showLabel:
+                            (constraints.minWidth > kMinWindowSize.width) &&
+                                !kIsMobile,
                         label: 'Collapse All',
                         labelTextStyle: kTextStyleButtonSmall,
                         onPressed:
@@ -197,6 +255,7 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
                       ),
                     ],
                   ),
+                  kVSpacer6,
                   Expanded(
                     child: JsonExplorer(
                       nodes: state.displayNodes,
@@ -234,57 +293,6 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
                           ? jsonExplorerThemeLight
                           : jsonExplorerThemeDark,
                       maxRootNodeWidth: maxRootNodeWidth,
-                    ),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surface,
-                      border: Border.all(
-                          color: Theme.of(context)
-                              .colorScheme
-                              .surfaceContainerHighest),
-                      borderRadius: kBorderRadius8,
-                    ),
-                    child: Row(
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 8.0),
-                          child: Icon(
-                            Icons.search,
-                            size: 18,
-                          ),
-                        ),
-                        Expanded(
-                          child: JsonSearchField(
-                            controller: searchController,
-                            onChanged: (term) => state.search(term),
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 8,
-                        ),
-                        if (state.searchResults.isNotEmpty)
-                          Text(_searchFocusText(),
-                              style: Theme.of(context).textTheme.bodySmall),
-                        if (state.searchResults.isNotEmpty)
-                          IconButton(
-                            visualDensity: VisualDensity.compact,
-                            onPressed: () {
-                              store.focusPreviousSearchResult();
-                              _scrollToSearchMatch();
-                            },
-                            icon: const Icon(Icons.arrow_drop_up),
-                          ),
-                        if (state.searchResults.isNotEmpty)
-                          IconButton(
-                            visualDensity: VisualDensity.compact,
-                            onPressed: () {
-                              store.focusNextSearchResult();
-                              _scrollToSearchMatch();
-                            },
-                            icon: const Icon(Icons.arrow_drop_down),
-                          ),
-                      ],
                     ),
                   ),
                 ],
@@ -369,7 +377,7 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
   }
 
   String _searchFocusText() =>
-      '${store.focusedSearchResultIndex + 1} of ${store.searchResults.length}';
+      '${store.focusedSearchResultIndex + 1}/${store.searchResults.length}';
 
   void _scrollToSearchMatch() {
     final index = store.displayNodes.indexOf(store.focusedSearchResult.node);
