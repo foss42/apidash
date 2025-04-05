@@ -56,7 +56,7 @@ export 'tabbar_segmented.dart';
 export 'table_map.dart';
 export 'table_request_form.dart';
 export 'table_request.dart';
-export 'tabs.dart';
+export 'tab_label.dart';
 export 'texts.dart';
 export 'uint8_audio_player.dart';
 export 'window_caption.dart';
