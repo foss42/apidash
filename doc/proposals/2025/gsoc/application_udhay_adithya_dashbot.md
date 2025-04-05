@@ -315,11 +315,12 @@ their final mentor evaluation (standard coding period)
     * **Week 6 (June 30 - July 6)**
 
       - Changes follow, from Mentor Review, if required.
-      - Setting up a benchmarking environment and evaluating LLMs for API Response Explanation and API Error Debugging.
+      - Running benchmark evaluation evaluating LLMs for API Response Explanation and API Error Debugging, Documentation generation, Test Generation, API Visualization and Frontend code generation for frontend frameworks.
+
       - Final Mentor Review before Mid-term Evaluation is submitted.
 
       **Deliverables:**
-      Benchmarking results of various LLMs for Response Explanation and API Error Debugging.
+      Benchmarking results of various LLMs for Response Explanation and API Error Debugging, Documentation generation, Test Generation, API Visualization and Frontend code generation for frontend frameworks.
 
 * **Midterm Evaluation Submission (July 14 - July 18)**
     * Projects are submitted to the mentors and the GSoC portal.
@@ -327,28 +328,21 @@ their final mentor evaluation (standard coding period)
 * **Work Period (July 14 - August 25)**
     * **Week 7 (July 14 - July 20)**
       
-      - Running benchmark evaluation for remaining features, Documentation generation, Test Generation, API Visualization and Frontend code generation for frontend frameworks.
-
-      **Deliverables:**
-      Benchmarking results of different LLMs for Documentation generation, Test Generation, API Visualization and Frontend code generation for frontend frameworks.
-
-    * **Week 8 (July 21 - July 27)**
-
       - Extending support for Dashbot in Android/iOS devices.
-      - Documentation and benchmarking evaluations are enhanced if time permits. 
+      - Documentation and benchmarking evaluations are enhanced in the buffer period if no issues arise. 
       - Finishing up Dashbot.
 
       **Deliverables:**
       A fully functional Dashbot across all platforms.
 
-    * **Week 9 (July 28 - August 3)**
+    * **Week 8 (July 21 - July 27)**
 
       - Start developing basic API Authentication methods: Basic authentication, API Auth, API key.
 
       **Deliverables:**
       Defined API authentication parameters and initial implementation of basic authentication methods.
 
-    * **Week 10 (August 4 - August 10)**
+    * **Week 9 (July 28 - August 3)**
 
       - Implement API Authentication methods: Bearer token, JWT Bearer.
       - Develop a mechanism to allow switching authentication parameters between the request header and body.
@@ -357,9 +351,16 @@ their final mentor evaluation (standard coding period)
       **Deliverables:**
       Fully implemented Bearer Token and JWT Bearer authentication, along with a configurable authentication parameter placement (header/body).
 
+    * **Week 10 (August 4 - August 10)**
+
+      - Develop OAuth API Authentication methods: OAuth 1.0 and OAuth 2.0.
+
+      **Deliverables:**
+      A Fully working “Authorization” tab in the Home Page of API Dash with support for various API Authntication Methods.
+
     * **Week 11 (August 11 - August 17)**
 
-      - Implement test cases for different authentication methods, including Basic Auth, API Key, Bearer Token, and JWT.
+      - Implement test cases for different authentication methods, including Basic Auth, API Key, Bearer Token, and JWT and OAuth.
 		
 	  **Deliverables:**
     Comprehensive test cases covering unit, integration, functional, and end-to-end authentication scenarios.
