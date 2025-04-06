@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/providers/providers.dart';
-import '../../common/utils.dart';
+import 'package:apidash/utils/utils.dart';
 
 class SaveButton extends ConsumerWidget {
   const SaveButton({super.key});
@@ -16,7 +16,14 @@ class SaveButton extends ConsumerWidget {
       onPressed: (savingData || !hasUnsavedChanges)
           ? null
           : () async {
-              await saveData(context, ref);
+              await saveAndShowDialog(context, onSave: () async {
+                await ref
+                    .read(collectionStateNotifierProvider.notifier)
+                    .saveData();
+                await ref
+                    .read(environmentsStateNotifierProvider.notifier)
+                    .saveEnvironments();
+              });
             },
       icon: const Icon(
         Icons.save,
