@@ -1,7 +1,12 @@
+import 'dart:convert';
+
 import 'package:apidash/consts.dart';
+import 'package:apidash/services/agentic_services/agent_caller.dart';
 import 'package:apidash/widgets/widget_sending.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:stac/stac.dart' as stac;
 
 void showCustomDialog(BuildContext context, String content) {
   showDialog(
@@ -20,7 +25,7 @@ void showCustomDialog(BuildContext context, String content) {
   );
 }
 
-class DialogContents extends StatefulWidget {
+class DialogContents extends ConsumerStatefulWidget {
   final String content;
   const DialogContents({
     super.key,
@@ -28,11 +33,49 @@ class DialogContents extends StatefulWidget {
   });
 
   @override
-  State<DialogContents> createState() => _DialogContentsState();
+  ConsumerState<DialogContents> createState() => _DialogContentsState();
 }
 
-class _DialogContentsState extends State<DialogContents> {
+class _DialogContentsState extends ConsumerState<DialogContents> {
   int index = 0;
+  TextEditingController controller = TextEditingController();
+
+  String generatedSDUI = '{}';
+
+  Future<String> generateSDUICode(String apiResponse) async {
+    setState(() {
+      index = 1; //Induce Loading
+    });
+    //STEP 1: RESPONSE_ANALYSER (call the Semantic Analysis & IRGen Bots in parallel)
+    final step1Res = await Future.wait([
+      APIDashAgentCaller.instance.semanticAnalyser(
+        ref,
+        input: AgentInputs(query: apiResponse),
+      ),
+      APIDashAgentCaller.instance.irGenerator(
+        ref,
+        input: AgentInputs(variables: {
+          'VAR_API_RESPONSE': apiResponse,
+        }),
+      ),
+    ]);
+    final SA = step1Res[0]['SEMANTIC_ANALYSIS'];
+    final IR = step1Res[1]['INTERMEDIATE_REPRESENTATION'];
+    print("Semantic Analysis: $SA");
+    print("Intermediate Representation: $IR");
+
+    //STEP 2: STAC_GEN (Generate the SDUI Code)
+    final sduiCode = await APIDashAgentCaller.instance.stacGenerator(
+      ref,
+      input: AgentInputs(variables: {
+        'VAR_RAW_API_RESPONSE': apiResponse,
+        'VAR_INTERMEDIATE_REPR': IR,
+        'VAR_SEMANTIC_ANALYSIS': SA,
+      }),
+    );
+    return sduiCode['STAC'].toString();
+  }
+
   @override
   Widget build(BuildContext context) {
     return IndexedStack(
@@ -40,9 +83,12 @@ class _DialogContentsState extends State<DialogContents> {
       children: [
         FrameWorkSelectorPage(
           content: widget.content,
-          onNext: () {
+          onNext: (apiResponse, targetLanguage) async {
+            print("Generating SDUI Code");
+            final sdui = await generateSDUICode(apiResponse);
             setState(() {
-              index = 1;
+              index = 2;
+              generatedSDUI = sdui;
             });
           },
         ),
@@ -53,9 +99,9 @@ class _DialogContentsState extends State<DialogContents> {
               padding: const EdgeInsets.only(top: 40.0),
               child: GestureDetector(
                 onTap: () {
-                  setState(() {
-                    index = 2;
-                  });
+                  // setState(() {
+                  //   index = 2;
+                  // });
                 },
                 child: Container(
                   height: 500,
@@ -67,8 +113,9 @@ class _DialogContentsState extends State<DialogContents> {
             ),
           ),
         ),
-        EditorPage(
+        SDUIPreviewPage(
           onNext: () {},
+          sduiCode: generatedSDUI,
         )
       ],
     );
@@ -77,7 +124,7 @@ class _DialogContentsState extends State<DialogContents> {
 
 class FrameWorkSelectorPage extends StatefulWidget {
   final String content;
-  final Function() onNext;
+  final Function(String, String) onNext;
   const FrameWorkSelectorPage(
       {super.key, required this.content, required this.onNext});
 
@@ -173,7 +220,7 @@ class _FrameWorkSelectorPageState extends State<FrameWorkSelectorPage> {
                 minimumSize: const Size(44, 44),
               ),
               onPressed: () {
-                widget.onNext();
+                widget.onNext(controller.value.text, "FLUTTER");
               },
               icon: Icon(
                 Icons.generating_tokens,
@@ -191,15 +238,17 @@ class _FrameWorkSelectorPageState extends State<FrameWorkSelectorPage> {
   }
 }
 
-class EditorPage extends StatefulWidget {
+class SDUIPreviewPage extends StatefulWidget {
+  final String sduiCode;
   final Function() onNext;
-  const EditorPage({super.key, required this.onNext});
+  const SDUIPreviewPage(
+      {super.key, required this.onNext, required this.sduiCode});
 
   @override
-  State<EditorPage> createState() => _EditorPageState();
+  State<SDUIPreviewPage> createState() => _SDUIPreviewPageState();
 }
 
-class _EditorPageState extends State<EditorPage> {
+class _SDUIPreviewPageState extends State<SDUIPreviewPage> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -223,9 +272,11 @@ class _EditorPageState extends State<EditorPage> {
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.white),
                 ),
-                child: Container(
-                  color: Colors.grey,
-                ),
+                child: widget.sduiCode == '{}'
+                    ? SizedBox()
+                    : StacRenderer(
+                        stacRepresentation: widget.sduiCode,
+                      ),
               ),
             ),
           ),
@@ -299,6 +350,21 @@ class _EditorPageState extends State<EditorPage> {
             ],
           ),
         ],
+      ),
+    );
+  }
+}
+
+class StacRenderer extends StatelessWidget {
+  final String stacRepresentation;
+  const StacRenderer({super.key, required this.stacRepresentation});
+
+  @override
+  Widget build(BuildContext context) {
+    return stac.StacApp(
+      title: 'Component Preview',
+      homeBuilder: (context) => Material(
+        child: stac.Stac.fromJson(jsonDecode(stacRepresentation), context),
       ),
     );
   }
