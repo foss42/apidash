@@ -31,25 +31,25 @@ class HttpRequestModel with _$HttpRequestModel {
       _$HttpRequestModelFromJson(json);
 
   Map<String, String> get headersMap => rowsToMap(headers) ?? {};
-  Map<String, dynamic> get paramsMap => rowsToRequestMap(params) ?? {};
+  Map<String, List<String>> get paramsMap => rowsToRequestMap(params) ?? {};
   List<NameValueModel>? get enabledHeaders =>
       getEnabledRows(headers, isHeaderEnabledList);
   List<NameValueModel>? get enabledParams =>
       getEnabledRows(params, isParamEnabledList);
 
   Map<String, String> get enabledHeadersMap => rowsToMap(enabledHeaders) ?? {};
-Map<String, dynamic> get enabledParamsMap {
+Map<String, List<String>> get enabledParamsMap {  
   var extractedParams = Uri.parse(url).queryParametersAll;  
   var userParams = rowsToRequestMap(enabledParams) ?? {};  
-
-  extractedParams.forEach((key, value) {
-    userParams[key] = [
-      ...value, 
-      if (userParams.containsKey(key)) 
-        ...(userParams[key] is List ? List.from(userParams[key]) : [userParams[key]])
-    ];
+  
+  extractedParams.forEach((key, values) {
+    if (userParams.containsKey(key)) {
+      userParams[key]!.addAll(values);
+    } else {
+      userParams[key] = List.from(values);
+    }
   });
-
+  
   return userParams;
 }
 

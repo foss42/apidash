@@ -57,13 +57,11 @@ String stripUrlParams(String url) {
 
   Map<String, List<String>> queryParams = uri.queryParametersAll;
 
-  Map<String, dynamic>? requestQueryParams = rowsToRequestMap(requestParams);
-  if (requestQueryParams != null) {
-    Map<String, List<String>> queryParamsList = requestQueryParams.map((key, value) {
-      return MapEntry(key, List<String>.from(value is String ? [value] : value));
-    });
-    queryParams = mergeMaps(queryParams, queryParamsList, value: (v1, v2) => v1 + v2);
-  }
+  Map<String, List<String>>? requestQueryParams = rowsToRequestMap(requestParams);
+ if (requestQueryParams != null) {
+  queryParams = mergeMaps(queryParams, requestQueryParams, value: (v1, v2) => v1 + v2);
+}
+  
   if (queryParams.isNotEmpty) {
     uri = uri.replace(queryParameters: queryParams);
   }
