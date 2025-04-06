@@ -1,7 +1,9 @@
 import 'package:apidash_design_system/apidash_design_system.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:apidash/utils/utils.dart';
+import 'package:apidash/widgets/widgets.dart';
 
 Future<void> saveCollection(
   Map<String, dynamic> data,
@@ -48,4 +50,17 @@ Future<void> saveToDownloads(
   }
   sm.hideCurrentSnackBar();
   sm.showSnackBar(getSnackBar(message, small: false));
+}
+
+Future<void> saveAndShowDialog(
+  BuildContext context, {
+  AsyncCallback? onSave,
+}) async {
+  final overlayWidget = OverlayWidgetTemplate(context: context);
+  overlayWidget.show(widget: const SavingOverlay(saveCompleted: false));
+  await onSave?.call();
+  overlayWidget.hide();
+  overlayWidget.show(widget: const SavingOverlay(saveCompleted: true));
+  await Future.delayed(const Duration(seconds: 1));
+  overlayWidget.hide();
 }
