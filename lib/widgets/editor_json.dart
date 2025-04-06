@@ -51,7 +51,10 @@ class _JsonTextFieldEditorState extends State<JsonTextFieldEditor> {
     if (widget.initialValue != null) {
       controller.text = widget.initialValue!;
     }
-    controller.formatJson(sortJson: false);
+    Future.delayed(Duration(milliseconds: 50), () {
+      controller.formatJson(sortJson: false);
+      setState(() {});
+    });
     editorFocusNode = FocusNode(debugLabel: "Editor Focus Node");
   }
 
