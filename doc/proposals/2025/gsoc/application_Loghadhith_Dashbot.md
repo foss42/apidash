@@ -73,9 +73,11 @@ DashBot will include:
 The entire system will be modular and extensible, ensuring future contributions and new features can plug into the core easily.
 
 ---
+### 4. Architecture Diagram
+![1743958514](https://github.com/user-attachments/assets/ef3d1d7c-5c58-4183-864a-8711bcd1f62e)
+---
 
-
-### 4. Weekly Timeline (12 Weeks)
+### 5. Weekly Timeline (12 Weeks)
 
 | Week | Activities |
 |------|------------|
@@ -173,7 +175,7 @@ The entire system will be modular and extensible, ensuring future contributions 
 
 ---
 
-## 5.Techstack
+## 6.Techstack
 
 
 #### 1. **NLP Module (Intent + Entity Extraction)**
