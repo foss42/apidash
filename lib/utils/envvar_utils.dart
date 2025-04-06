@@ -42,9 +42,9 @@ String? substituteVariables(
   Map<String, String> envVarMap,
 ) {
   if (input == null) return null;
-  
+
   String result = input;
-  
+
   if (envVarMap.keys.isNotEmpty) {
     final envVarRegex = RegExp("{{(${envVarMap.keys.join('|')})}}");
     result = result.replaceAllMapped(envVarRegex, (match) {
@@ -52,7 +52,7 @@ String? substituteVariables(
       return envVarMap[key] ?? '{{$key}}';
     });
   }
-  
+
   final fakeDataRegex = RegExp(r'{{(\$[a-zA-Z0-9]+)}}');
   result = result.replaceAllMapped(fakeDataRegex, (match) {
     final key = match.group(1)?.trim().substring(1) ?? '';
@@ -159,9 +159,32 @@ EnvironmentVariableSuggestion getVariableStatus(
     );
   }
 
+  // If not found in environments check if it's a random data generator
+  if (key.startsWith('\$')) {
+    final generatorType = key.substring(1);
+    final generator = FakeDataProvider.processFakeDataTag(generatorType);
+    if (generator != '{{generatorType}}') {
+      return EnvironmentVariableSuggestion(
+        environmentId: "Random",
+        variable: EnvironmentVariableModel(
+          key: key,
+          type: EnvironmentVariableType.variable,
+          value: generator,
+          enabled: true,
+        ),
+        isUnknown: false,
+      );
+    }
+  }
+
   return EnvironmentVariableSuggestion(
-      isUnknown: true,
-      environmentId: "unknown",
-      variable: EnvironmentVariableModel(
-          key: key, type: EnvironmentVariableType.variable, value: "unknown"));
+    isUnknown: true,
+    environmentId: "unknown",
+    variable: EnvironmentVariableModel(
+      key: key,
+      type: EnvironmentVariableType.variable,
+      value: "unknown",
+      // enabled: false,
+    ),
+  );
 }
