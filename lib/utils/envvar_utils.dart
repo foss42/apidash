@@ -43,20 +43,14 @@ String? substituteVariables(
 ) {
   if (input == null) return null;
 
-  String result = input;
-
-  if (envVarMap.keys.isNotEmpty) {
-    final envVarRegex = RegExp("{{(${envVarMap.keys.join('|')})}}");
-    result = result.replaceAllMapped(envVarRegex, (match) {
-      final key = match.group(1)?.trim() ?? '';
-      return envVarMap[key] ?? '{{$key}}';
-    });
+  if (envVarMap.keys.isEmpty) {
+    return input;
   }
+  final regex = RegExp("{{(${envVarMap.keys.join('|')})}}");
 
-  final fakeDataRegex = RegExp(r'{{(\$[a-zA-Z0-9]+)}}');
-  result = result.replaceAllMapped(fakeDataRegex, (match) {
-    final key = match.group(1)?.trim().substring(1) ?? '';
-    return FakeDataProvider.processFakeDataTag(key);
+  String result = input.replaceAllMapped(regex, (match) {
+    final key = match.group(1)?.trim() ?? '';
+    return envVarMap[key] ?? '{{$key}}';
   });
 
   return result;
