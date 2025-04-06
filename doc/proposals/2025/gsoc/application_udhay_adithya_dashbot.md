@@ -22,7 +22,7 @@
 
 ### 1. Have you worked on or contributed to a FOSS project before? Can you attach repo links or relevant PRs?
 
-I haven't contributed to open-source projects before this, so API Dash marks my first practical experience with open-source contribution. So far, I have made a total of four PRs—three of which have been merged, while the other one is currently under review. Here are the relevant PRs:
+I haven't contributed to open-source projects before this, so API Dash marks my first practical experience with open-source contribution. So far, I have made a total of four PRs—three of which have been merged, while the other one got rejected. Here are the relevant PRs:
 
 ([#698](https://github.com/foss42/apidash/pull/698)): docs(codegen): add detailed instructions for ureq
 
@@ -77,7 +77,7 @@ Additionally, a **Security & Compliance Advisor** can enhance DashBot’s capabi
 - **Vulnerability Scanning:** Automatically identifying security risks such as missing authentication, exposed sensitive data, and other vulnerabilities.  
 - **Auto-Remediation:** Offering actionable suggestions to fix issues like CORS misconfigurations or insecure headers.
 
-### **PROJECT TITLE : DashBot**
+### **PROJECT TITLE : DashBot and API Authentication**
 
 ### **ABSTRACT:**
 
@@ -93,7 +93,8 @@ This proposal seeks to develop DashBot - the AI assistant for API Dash which sup
 For each of the tasks you are benchmark evaluations will also be done so that it is easier for end users to choose the right backend LLM.
 
 Upon successful completion of this project, we will have
-a fully function DashBot integrated with API Dash [#621](https://github.com/foss42/apidash/issues/621)
+a fully function DashBot integrated with API Dash [#621](https://github.com/foss42/apidash/issues/621) and a new tab “Authorization” in the Home Page of API Dash to handle different API Authentication Methods.
+
 
 ### **DETAILED DESCRIPTION**
 
@@ -156,6 +157,7 @@ Required dependencies,
 - [openai_dart](https://pub.dev/packages/openai_dart)
 - [ollama_dart](https://pub.dev/packages/ollama_dart)
 - [flutter_riverpod](https://pub.dev/packages/flutter_riverpod)
+- [fpdart](https://pub.dev/packages/fpdart)
 - [fl_charts](https://pub.dev/packages/fl_chart)
 - [riverpod_annotation](https://pub.dev/packages/riverpod_annotation)
 - [riverpod_lint](https://pub.dev/packages/riverpod_lint)
@@ -183,22 +185,52 @@ lib/
 
 DashBot can be accessed from the home screen of API Dash using a floating action button at the bottom right corner.
 
-![DashBot On Screen](images/dashbot_on_screen.png)
-![DashBot Settings](images/dashbot_settings_1.png)
-![DashBot Debug](images/dashbot_debug.png)
-
 <div 
     style="display: flex; justify-content: center; gap: 10px;">
     <img src="images/dashbot_default.png" alt="dashbot_default_dark" style="width: 300px; height: auto;">
     <img src="images/dashbot_default_dark.png" alt="dashbot_default_dark" style="width: 300px; height: auto;">
 </div>
+<h5 style="text-align: center; font-weight: bold;">
+    DashBot Pop-up Window
+</h5>
 
+![DashBot On Screen](images/dashbot_on_screen.png)
+<h5 style="text-align: center; font-weight: bold;">
+    DashBot Home Screen View
+</h5>
+
+![DashBot Settings](images/dashbot_settings_1.png)
+<h5 style="text-align: center; font-weight: bold;">
+    DashBot Settings
+</h5>
+
+![DashBot Debug](images/dashbot_explain.png)
+<h5 style="text-align: center; font-weight: bold;">
+    Access Dashbot Through Context Menu
+</h5>
+
+![DashBot Debug](images/dashbot_debug.png)
+<h5 style="text-align: center; font-weight: bold;">
+    Debug Suggestion by DashBot
+</h5>
+
+![DashBot Debug](images/dashbot_debug_2.png)
+<h5 style="text-align: center; font-weight: bold;">
+    Quick Fix API Errors
+</h5>
+
+![DashBot Debug](images/api_authentication.png)
+<h5 style="text-align: center; font-weight: bold;">
+    Basic Authentication
+</h5>
+
+![DashBot Debug](images/api_authentication_1.png)
+<h5 style="text-align: center; font-weight: bold;">
+    JWT Bearer Authentication
+</h5>
 
 ****
 
-<h4 style="text-align: center; font-weight: bold;">
-    More design files at <a href="https://www.figma.com/design/fC3rs8OBV7fzDNtPIEbq3L/Dashbot?node-id=0-1&t=qRCaeDwBtrlhyDXl-1" target="_blank">Figma</a>
-</h4>
 
 
 ## **MILESTONES AND DELIVERABLES**
@@ -329,7 +361,6 @@ their final mentor evaluation (standard coding period)
     * **Week 7 (July 14 - July 20)**
       
       - Extending support for Dashbot in Android/iOS devices.
-      - Documentation and benchmarking evaluations are enhanced in the buffer period if no issues arise. 
       - Finishing up Dashbot.
 
       **Deliverables:**
