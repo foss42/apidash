@@ -1,5 +1,5 @@
 # GSoC Proposal
-## DashBot - AI-Powered API Assistant for API Dash   Making LLM powered insights as plugins for each different api's
+## DashBot - AI-Powered API Assistant
 
 
 ## About
