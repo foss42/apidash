@@ -6,8 +6,8 @@ import 'package:apidash/utils/utils.dart';
 import 'button_copy.dart';
 import 'button_save_download.dart';
 import 'button_share.dart';
-import 'code_previewer.dart';
 import 'dropdown_codegen.dart';
+import 'previewer_code.dart';
 
 class CodeGenPreviewer extends StatefulWidget {
   const CodeGenPreviewer({
@@ -147,22 +147,16 @@ class ViewCodePane extends StatelessWidget {
                       toCopy: code,
                       showLabel: showLabel,
                     ),
-                    Visibility(
-                      visible: kIsMobile,
-                      child: ShareButton(
-                        toShare: code,
-                        showLabel: showLabel,
-                      ),
-                    ),
-                    // TODO: Save to Downloads folder does not work in Mobile
-                    Visibility(
-                      visible: !kIsMobile,
-                      child: SaveInDownloadsButton(
-                        content: stringToBytes(code),
-                        ext: codegenLanguage.ext,
-                        showLabel: showLabel,
-                      ),
-                    ),
+                    kIsMobile
+                        ? ShareButton(
+                            toShare: code,
+                            showLabel: showLabel,
+                          )
+                        : SaveInDownloadsButton(
+                            content: stringToBytes(code),
+                            ext: codegenLanguage.ext,
+                            showLabel: showLabel,
+                          ),
                   ],
                 ),
               ),
