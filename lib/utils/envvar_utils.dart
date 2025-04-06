@@ -1,5 +1,6 @@
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash/consts.dart';
+import 'fake_data_provider.dart';
 
 String getEnvironmentTitle(String? name) {
   if (name == null || name.trim() == "") {
@@ -41,14 +42,21 @@ String? substituteVariables(
   Map<String, String> envVarMap,
 ) {
   if (input == null) return null;
-  if (envVarMap.keys.isEmpty) {
-    return input;
+  
+  String result = input;
+  
+  if (envVarMap.keys.isNotEmpty) {
+    final envVarRegex = RegExp("{{(${envVarMap.keys.join('|')})}}");
+    result = result.replaceAllMapped(envVarRegex, (match) {
+      final key = match.group(1)?.trim() ?? '';
+      return envVarMap[key] ?? '{{$key}}';
+    });
   }
-  final regex = RegExp("{{(${envVarMap.keys.join('|')})}}");
-
-  String result = input.replaceAllMapped(regex, (match) {
-    final key = match.group(1)?.trim() ?? '';
-    return envVarMap[key] ?? '{{$key}}';
+  
+  final fakeDataRegex = RegExp(r'{{(\$[a-zA-Z0-9]+)}}');
+  result = result.replaceAllMapped(fakeDataRegex, (match) {
+    final key = match.group(1)?.trim().substring(1) ?? '';
+    return FakeDataProvider.processFakeDataTag(key);
   });
 
   return result;

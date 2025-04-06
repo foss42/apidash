@@ -6,10 +6,81 @@ import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
 import '../common_widgets/common_widgets.dart';
 import './editor_pane/variables_pane.dart';
+import './editor_pane/fake_data_pane.dart';
+
+final environmentEditorTabProvider = StateProvider<int>((ref) => 0);
 
 class EnvironmentEditor extends ConsumerWidget {
   const EnvironmentEditor({super.key});
 
+  Widget _buildTabBar(BuildContext context, WidgetRef ref) {
+    final selectedTab = ref.watch(environmentEditorTabProvider);
+    
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        _buildTabButton(
+          context, 
+          'Environment Variables', 
+          0, 
+          selectedTab == 0,
+          () => ref.read(environmentEditorTabProvider.notifier).state = 0,
+        ),
+        const SizedBox(width: 16),
+        _buildTabButton(
+          context, 
+          'Fake Data Providers', 
+          1, 
+          selectedTab == 1,
+          () => ref.read(environmentEditorTabProvider.notifier).state = 1,
+        ),
+      ],
+    );
+  }
+  
+  Widget _buildTabButton(BuildContext context, String title, int index, bool isSelected, VoidCallback onPressed) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: isSelected 
+            ? Theme.of(context).colorScheme.primaryContainer 
+            : Theme.of(context).colorScheme.surfaceContainerLow,
+        foregroundColor: isSelected
+            ? Theme.of(context).colorScheme.primary
+            : Theme.of(context).colorScheme.onSurface,
+        elevation: 0,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      ),
+      child: Text(title),
+    );
+  }
+  
+  Widget _buildTabContent(WidgetRef ref) {
+    final selectedTab = ref.watch(environmentEditorTabProvider);
+    
+    if (selectedTab == 0) {
+      return Column(
+        children: [
+          const Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              SizedBox(width: 30),
+              Text("Variable"),
+              SizedBox(width: 30),
+              Text("Value"),
+              SizedBox(width: 40),
+            ],
+          ),
+          kHSpacer40,
+          const Divider(),
+          const Expanded(child: EditEnvironmentVariables()),
+        ],
+      );
+    } else {
+      return const FakeDataProvidersPane();
+    }
+  }
+  
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final id = ref.watch(selectedEnvironmentIdStateProvider);
@@ -84,24 +155,13 @@ class EnvironmentEditor extends ConsumerWidget {
                         borderRadius: kBorderRadius12,
                       ),
                 elevation: 0,
-                child: const Padding(
+                child: Padding(
                   padding: kPv6,
                   child: Column(
                     children: [
-                      kHSpacer40,
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          SizedBox(width: 30),
-                          Text("Variable"),
-                          SizedBox(width: 30),
-                          Text("Value"),
-                          SizedBox(width: 40),
-                        ],
-                      ),
-                      kHSpacer40,
-                      Divider(),
-                      Expanded(child: EditEnvironmentVariables())
+                      _buildTabBar(context, ref),
+                      kHSpacer20,
+                      Expanded(child: _buildTabContent(ref))
                     ],
                   ),
                 ),
