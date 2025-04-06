@@ -96,6 +96,7 @@ By integrating these features, I will enhance APIDash to provide an end-to-end A
 - **Monitoring System**: I will implement a system to track API responses and errors.
 - **Sync with authentication providers**: I plan to integrate authentication services for seamless API test management.
 - **Implement a global search bar**: I aim to add functionality for quick navigation and feature discovery.
+- **Automated fake data generation**: I plan to implement functionality to generate diverse and random API test cases by analyzing historical API data or API documentation, ensuring extensive coverage of edge cases.
 
 **AI-Enhanced Features (if time permits):**
 
@@ -213,6 +214,39 @@ In this approach, my goal is to represent each API request as a node in the DAG,
 
 - I need to display successful requests in green (indicating an HTTP 200 status), while failed requests will be shown in red, instantly signaling an error state.
 - My implementation includes a central state repository using Riverpod providers that stores API request outputs (headers, bodies, tokens) in memory during workflow execution. This state repository will follow APIDash's existing pattern of immutable state objects while providing a mechanism for downstream nodes to access upstream outputs.
+
+Here's an implementation of the topological sort algorithm that will be used for executing API workflows in the correct order:
+
+```dart
+List<ApiNode> topologicalSort(List<ApiNode> nodes) {
+  final sortedNodes = <ApiNode>[];
+  final inDegree = Map<ApiNode, int>.fromIterable(nodes, value: (_) => 0);
+  
+  // Calculate in-degree for each node
+  for (final node in nodes) {
+    for (final dep in node.dependencies) {
+      inDegree[dep] = (inDegree[dep] ?? 0) + 1;
+    }
+  }
+  
+  // Initialize queue with nodes having no dependencies
+  final queue = nodes.where((n) => inDegree[n] == 0).toList();
+  
+  // Process nodes in topological order
+  while (queue.isNotEmpty) {
+    final node = queue.removeLast();
+    sortedNodes.add(node);
+    
+    // Update in-degree of dependencies
+    for (final dep in node.dependencies) {
+      inDegree[dep] = (inDegree[dep] ?? 0) - 1;
+      if (inDegree[dep] == 0) queue.add(dep);
+    }
+  }
+  
+  return sortedNodes;
+}
+```
 - I'm planning to implement execution controls with start, pause, and exit flags, allowing the workflow to be initiated, temporarily halted, or completely terminated without losing progress.
 
 **Conditional Execution Support**  
@@ -252,6 +286,30 @@ In this phase, I need to develop a completely new API Testing Suite to validate 
 **Load Testing Module:**  
 - As part of this work, I'll create simulations for high-traffic scenarios.  
 - My testing framework will measure API response latency and throughput.
+
+Below is a sample implementation of the load testing scheduler that will generate request timestamps based on the test configuration:
+
+```dart
+List<int> generateRequestTimestamps(LoadTestConfig config) {
+  final timings = <int>[];
+  
+  // Handle concurrent users simulation
+  if (config.type == LoadTestType.concurrentUsers) {
+    // For concurrent users, all requests start at the same time
+    timings.addAll(List.filled(config.value, 0));
+  }
+  
+  // Handle requests-per-second simulation
+  if (config.type == LoadTestType.rps) {
+    // Calculate interval between requests in milliseconds
+    final interval = (1000 / config.value).round();
+    // Generate evenly spaced timestamps
+    timings.addAll(List.generate(config.value, (i) => i * interval));
+  }
+  
+  return timings;
+}
+```
 
 **Security Testing Integration:**  
 - I intend to build systems to detect vulnerabilities like CORS misconfigurations, exposed secrets.  
@@ -325,11 +383,13 @@ To ensure project completion within the GSoC timeline, I've prioritized features
 - Collection Runner with basic sequential and parallel execution
 - Simple Workflow Builder with linear API chaining
 - Basic API validation testing
+- Automated fake data generation for API testing to reduce manual work
 
 **Extended Goals (If Time Permits):**
 - Advanced workflow conditionals and branching
 - Security testing features
 - Performance testing capabilities
+- Flexible metrics integration: Giving users options to either set up their own Prometheus server to scrape metrics from APIDash's exposed endpoint or use APIDash's built-in visualization of these metrics without requiring a full Prometheus server setup
 
 **Stretch Goals (Post-GSoC):**
 - AI-enhanced features
