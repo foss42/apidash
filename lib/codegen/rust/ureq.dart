@@ -30,7 +30,7 @@ fn main() -> Result<(), ureq::Error> {
 """;
 
   String kTemplateHeaders =
-      """\n        {% for key, val in headers -%}.set("{{key}}", "{{val}}"){% if not loop.last %}{{ '\n        ' }}{% endif %}{%- endfor -%}""";
+      """\n        {% for key, val in headers -%}.header("{{key}}", "{{val}}"){% if not loop.last %}{{ '\n        ' }}{% endif %}{%- endfor -%}""";
 
   String kTemplateFormHeaderContentType = '''
 multipart/form-data; boundary={{boundary}}''';
