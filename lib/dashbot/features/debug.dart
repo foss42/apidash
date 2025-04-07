@@ -10,6 +10,7 @@ class DebugFeature {
   Future<String> debugApi({
     required RequestModel? requestModel,
     required dynamic responseModel,
+    required String selectedAI,
   }) async {
     if (requestModel == null || responseModel == null) {
       return "No recent API requests found.";
@@ -58,6 +59,6 @@ $responseBody
 Provide a CLEAR, ACTIONABLE solution in the SIMPLEST possible language.
 """;
 
-    return _service.generateResponse(prompt);
+    return _service.generateResponse(prompt,selectedAI);
   }
 }
