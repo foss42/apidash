@@ -6,6 +6,7 @@ import 'package:collection/collection.dart' show mergeMaps;
 import 'package:http/http.dart';
 import 'package:http_parser/http_parser.dart';
 import '../extensions/extensions.dart';
+import 'package:dio/dio.dart' as dio;
 import '../utils/utils.dart';
 import '../consts.dart';
 
@@ -82,6 +83,33 @@ class HttpResponseModel with _$HttpResponseModel {
       body: body,
       formattedBody: formatBody(body, mediaType),
       bodyBytes: response.bodyBytes,
+      time: time,
+    );
+  }
+
+  HttpResponseModel fromDioResponse({
+    required dio.Response response,
+    Duration? time,
+  }) {
+    final headers = <String, String>{};
+    response.headers.forEach((k, v) {
+      headers[k] = v.join(',');
+    });
+
+    MediaType? mediaType = getMediaTypeFromHeaders(headers);
+    final body = (mediaType?.subtype == kSubTypeJson)
+        ? jsonEncode(response.data)
+        : response.data.toString();
+
+    return HttpResponseModel(
+      statusCode: response.statusCode,
+      headers: headers,
+      requestHeaders: response.requestOptions.headers.map((k, v) => MapEntry(k, v.toString())),
+      body: body,
+      formattedBody: formatBody(body, mediaType),
+      bodyBytes: response.data is List<int>
+          ? Uint8List.fromList(response.data)
+          : utf8.encode(body),
       time: time,
     );
   }
