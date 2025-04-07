@@ -44,9 +44,14 @@ As part of the core engineering team, I collaborated with product managers and d
 
 The cross-functional effort paid off – our team’s prototype was showcased on Shark Tank India, securing funding from 3 investors. This experience taught me how to balance technical innovation with product thinking in fast-paced, collaborative environments.
 
+[App URL](https://play.google.com/store/apps/details?id=xyz.neosapien.neo) 
+
 Earlier, I engineered MapIt (a Flutter-based location-note app) to solve spatial memory challenges. It integrated geofencing, Google Maps, and battery-efficient background services. The complex dance of optimizing Dart Isolates for asynchronous geolocation tracking – ensuring notifications fired reliably even with the app closed – taught me valuable lessons in state management and performance tuning.
 
 Both projects pushed me to solve critical technical hurdles: Neo demanded scalable architecture for real-time voice/data processing, while MapIt required deep platform-level understanding of Android/iOS background execution limits. Together, they reflect my focus on building systems that augment human capabilities through thoughtful technical design.
+
+[Project URL](https://github.com/etackel/mapit_mobile) 
+
 
 **What kind of problems or challenges motivate you the most to solve them?**  
 I love working with Flutter and creating automation solutions for real-world problems that help users worldwide. The ability to build applications that streamline workflows, reduce manual effort, and enhance user experience excites me the most. I strive to solve practical problems that users face daily by developing scalable and user-friendly applications. My passion lies in integrating different technologies, optimizing performance, and refining processes to improve developer productivity. Whether it's automating API testing, optimizing background processes, or designing intuitive UI/UX solutions, I always aim to create impactful applications that make a difference.  
