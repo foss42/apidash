@@ -1,13 +1,13 @@
+import 'package:apidash/models/api_endpoint.dart';
 import 'package:apidash/screens/api_explorer/api_explorer_widget/api_explorer_detail_view.dart';
 import 'package:apidash/utils/color_utils.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
-import 'package:apidash/models/models.dart';
 
 class MethodCard extends ConsumerWidget {
-  final ApiExplorerModel endpoint;
+  final ApiEndpointModel endpoint;
   
   const MethodCard({super.key, required this.endpoint});
 
@@ -16,6 +16,8 @@ class MethodCard extends ConsumerWidget {
     final theme = Theme.of(context);
     final method = endpoint.method.name;
     final color = getMethodColor(method);
+    final catalog = ref.watch(selectedCatalogProvider);
+    final baseUrl = catalog?.baseUrl ?? '';
 
     return Card(
       child: InkWell(
@@ -40,7 +42,7 @@ class MethodCard extends ConsumerWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                endpoint.fullUrl,
+                '$baseUrl${endpoint.path}',
                 style: theme.textTheme.bodySmall?.copyWith(
                   fontFamily: 'RobotoMono',
                   color: theme.colorScheme.primary,
@@ -71,7 +73,7 @@ class MethodCard extends ConsumerWidget {
     );
   }
 
-  void _navigateToEndpointDetail(BuildContext context, WidgetRef ref, ApiExplorerModel endpoint) {
+  void _navigateToEndpointDetail(BuildContext context, WidgetRef ref, ApiEndpointModel endpoint) {
     ref.read(selectedEndpointIdProvider.notifier).state = endpoint.id;
     
     if (context.isMediumWindow) {
@@ -79,9 +81,9 @@ class MethodCard extends ConsumerWidget {
         context,
         MaterialPageRoute(
           builder: (context) => ApiExplorerDetailView(
-            api: endpoint,
+        
             isMediumWindow: true,
-            searchController: TextEditingController(),
+            searchController: TextEditingController(), endpoint: endpoint,
           ),
         ),
       );

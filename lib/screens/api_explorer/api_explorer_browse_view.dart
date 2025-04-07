@@ -17,9 +17,9 @@ class ApiExplorerBrowseView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isLoading = ref.watch(apiExplorerLoadingProvider);
-    final error = ref.watch(apiExplorerErrorProvider);
-    final filteredCollections = ref.watch(filteredCollectionsProvider);
+    final isLoading = ref.watch(apiCatalogLoadingProvider);
+    final error = ref.watch(apiCatalogErrorProvider);
+    final filteredCatalogs = ref.watch(filteredCatalogsProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -56,7 +56,7 @@ class ApiExplorerBrowseView extends ConsumerWidget {
             ? const Center(child: CircularProgressIndicator())
             : error != null
                 ? ErrorView(error: error)
-                : filteredCollections.isEmpty
+                : filteredCatalogs.isEmpty
                     ? const EmptyCollectionsView()
                     : GridView.builder(
                         gridDelegate:
@@ -66,9 +66,9 @@ class ApiExplorerBrowseView extends ConsumerWidget {
                           crossAxisSpacing: 16,
                           childAspectRatio: 1.2,
                         ),
-                        itemCount: filteredCollections.length,
+                        itemCount: filteredCatalogs.length,
                         itemBuilder: (context, index) => ApiCard(
-                          collection: filteredCollections[index],
+                          catalog: filteredCatalogs[index],
                           theme: Theme.of(context),
                         ),
                         shrinkWrap: true,

@@ -1,23 +1,27 @@
+import 'package:apidash/models/api_catalog.dart';
 import 'package:apidash/utils/color_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
-import 'package:apidash/models/models.dart';
+import 'package:apidash_core/apidash_core.dart';
 
 class ApiCard extends ConsumerWidget {
-  final ApiExplorerModel collection;
+  final ApiCatalogModel catalog;
   final ThemeData theme;
 
   const ApiCard({
     super.key,
-    required this.collection,
+    required this.catalog,
     required this.theme,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Using parameters as a proxy for endpoints count
-    final endpointCount = collection.parameters.length;
+    final endpointCount = catalog.endpoints?.length;
+    final methodCounts = catalog.methodCounts;
+    final primaryMethod = methodCounts!.isNotEmpty 
+        ? methodCounts.entries.reduce((a, b) => a.value > b.value ? a : b).key
+        : 'get';
 
     return Card(
       elevation: 0,
@@ -42,18 +46,18 @@ class ApiCard extends ConsumerWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _CardHeader(theme: theme, endpointCount: endpointCount),
+                  _CardHeader(theme: theme, endpointCount: endpointCount ?? 0),
                   const SizedBox(height: 12),
-                  _CardTitle(theme: theme, name: collection.name),
+                  _CardTitle(theme: theme, name: catalog.name),
                   const SizedBox(height: 8),
                   _CardDescription(
-                      theme: theme, description: collection.description),
+                      theme: theme, description: catalog.description),
                 ],
               ),
-              if (endpointCount > 0) ...[
+              if (endpointCount! > 0) ...[
                 const SizedBox(height: 12),
                 _MethodChip(
-                  method: collection.method.name,
+                  method: primaryMethod,
                   theme: theme,
                 ),
               ],
@@ -76,9 +80,11 @@ class ApiCard extends ConsumerWidget {
 
   void _handleTap(WidgetRef ref) {
     ref.read(selectedEndpointIdProvider.notifier).state = null;
-    ref.read(selectedCollectionIdProvider.notifier).state = collection.id;
+    ref.read(selectedCatalogIdProvider.notifier).state = catalog.id;
   }
 }
+
+// ... (Keep the remaining helper widget classes unchanged)
 
 class _CardHeader extends StatelessWidget {
   final ThemeData theme;

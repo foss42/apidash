@@ -1,6 +1,6 @@
 import 'package:apidash/screens/api_explorer/api_explorer_widget/api_documentatioin/Openapispecfileadd.dart';
 import 'package:flutter/material.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:apidash/providers/providers.dart';
 import '../../../consts.dart';
@@ -40,7 +40,7 @@ class ApiExplorerSidebarHeader extends ConsumerWidget {
             iconSize: kButtonIconSizeLarge,
             tooltip: "Refresh APIs",
             onPressed: () {
-              ref.read(apiExplorerProvider.notifier).refreshApis();
+              ref.read(apiCatalogProvider.notifier).refreshApis();
               sm.showSnackBar(
                 const SnackBar(content: Text('Refreshing API collections')),
               );

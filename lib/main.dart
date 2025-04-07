@@ -12,6 +12,7 @@ import 'package:apidash/consts.dart' as consts;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
   var settingsModel = await getSettingsFromSharedPrefs();
   final initStatus = await initApp(
     kIsDesktop,
@@ -24,7 +25,14 @@ void main() async {
     settingsModel = settingsModel?.copyWithPath(workspaceFolderPath: null);
   }
   
-await Hive.openBox(consts.kApiSpecsBox);
+ await Hive.initFlutter();
+  await Hive.openBox(consts.kApiSpecsBox);
+
+  try {
+    await GitHubSpecsService().fetchAndStoreSpecs();
+  } catch (e) {
+    debugPrint("Failed to fetch specs: $e");
+  }
 
   try {
     await GitHubSpecsService().fetchAndStoreSpecs();

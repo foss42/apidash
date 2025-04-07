@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:apidash/providers/collection_providers.dart';
 import 'package:apidash/providers/ui_providers.dart';
-import 'package:apidash/services/api_fetcher.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,74 +10,78 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import '../services/services.dart';
-import '../models/models.dart';
 
-// Main API Explorer Provider
-final apiExplorerProvider =
-    StateNotifierProvider<ApiExplorerNotifier, List<ApiExplorerModel>>(
-  (ref) => ApiExplorerNotifier(ref),
+
+// Main API Catalog Provider
+final apiCatalogProvider =
+    StateNotifierProvider<ApiCatalogNotifier, List<ApiCatalogModel>>(
+  (ref) => ApiCatalogNotifier(ref),
 );
 
 // Loading and Error States
-final apiExplorerLoadingProvider = StateProvider<bool>((ref) => false);
-final apiExplorerErrorProvider = StateProvider<String?>((ref) => null);
+final apiCatalogLoadingProvider = StateProvider<bool>((ref) => false);
+final apiCatalogErrorProvider = StateProvider<String?>((ref) => null);
 
 // UI State Providers
-final apiExplorerCodePaneVisibleStateProvider =
+final apiCatalogCodePaneVisibleStateProvider =
     StateProvider<bool>((ref) => false);
 final selectedEndpointIdProvider = StateProvider<String?>((ref) => null);
-final selectedCollectionIdProvider = StateProvider<String?>((ref) => null);
+final selectedCatalogIdProvider = StateProvider<String?>((ref) => null);
 final apiSearchQueryProvider = StateProvider<String>((ref) => '');
 
 // Derived Providers
-final selectedCollectionProvider = Provider<ApiExplorerModel?>((ref) {
-  final collectionId = ref.watch(selectedCollectionIdProvider);
-  if (collectionId == null) return null;
+final selectedCatalogProvider = Provider<ApiCatalogModel?>((ref) {
+  final catalogId = ref.watch(selectedCatalogIdProvider);
+  if (catalogId == null) return null;
 
-  final collections = ref.watch(apiExplorerProvider);
+  final catalogs = ref.watch(apiCatalogProvider);
   try {
-    return collections.firstWhere((c) => c.id == collectionId);
+    return catalogs.firstWhere((c) => c.id == catalogId);
   } catch (_) {
     return null;
   }
 });
 
-final selectedEndpointProvider = Provider<ApiExplorerModel?>((ref) {
+final selectedEndpointProvider = Provider<ApiEndpointModel?>((ref) {
   final endpointId = ref.watch(selectedEndpointIdProvider);
-  final collection = ref.watch(selectedCollectionProvider);
+  final catalog = ref.watch(selectedCatalogProvider);
 
-  if (endpointId == null || collection == null) return null;
-  
-  return collection.copyWith(
-    id: endpointId,
-    name: endpointId,
-  );
+  if (endpointId == null || catalog == null) return null;
+
+  try {
+    return catalog.endpoints?.firstWhere((e) => e.id == endpointId);
+  } catch (_) {
+    return null;
+  }
 });
 
-final filteredCollectionsProvider = Provider<List<ApiExplorerModel>>((ref) {
+final filteredCatalogsProvider = Provider<List<ApiCatalogModel>>((ref) {
   final query = ref.watch(apiSearchQueryProvider);
-  final collections = ref.watch(apiExplorerProvider);
+  final catalogs = ref.watch(apiCatalogProvider);
 
-  if (query.isEmpty) return collections;
+  if (query.isEmpty) return catalogs;
 
   final queryLower = query.toLowerCase();
-  return collections.where((collection) {
-    return collection.name.toLowerCase().contains(queryLower) ||
-        collection.path.toLowerCase().contains(queryLower);
+  return catalogs.where((catalog) {
+    return catalog.name.toLowerCase().contains(queryLower) ||
+        catalog.description!.toLowerCase().contains(queryLower) ||
+        catalog.endpoints!.any((endpoint) =>
+            endpoint.name.toLowerCase().contains(queryLower) ||
+            endpoint.path.toLowerCase().contains(queryLower));
   }).toList();
 });
 
-class ApiExplorerNotifier extends StateNotifier<List<ApiExplorerModel>> {
+class ApiCatalogNotifier extends StateNotifier<List<ApiCatalogModel>> {
   final ApiProcessingService _apiService;
   final Ref _ref;
 
-  ApiExplorerNotifier(this._ref)
+  ApiCatalogNotifier(this._ref)
       : _apiService = ApiProcessingService(),
         super([]);
 
   Future<void> loadApis() async {
-    _ref.read(apiExplorerLoadingProvider.notifier).state = true;
-    _ref.read(apiExplorerErrorProvider.notifier).state = null;
+    _ref.read(apiCatalogLoadingProvider.notifier).state = true;
+    _ref.read(apiCatalogErrorProvider.notifier).state = null;
 
     try {
       // Attempt 1: Load from Hive
@@ -86,56 +89,59 @@ class ApiExplorerNotifier extends StateNotifier<List<ApiExplorerModel>> {
 
       // Attempt 2: Load from local files
       if (await _tryLoadFromFiles()) return;
-      
-      // Attempt 3: Load from templates
-      if (await _tryLoadFromTemplates()) return;
-      
+
+
       _handleNoApisFound();
     } catch (e) {
       _handleLoadError(e);
     } finally {
-      _ref.read(apiExplorerLoadingProvider.notifier).state = false;
+      _ref.read(apiCatalogLoadingProvider.notifier).state = false;
     }
   }
+Future<bool> _tryLoadFromHive() async {
+  try {
+    final box = Hive.box(kApiSpecsBox);
+    final ids = (box.get(kApiSpecsBoxIds, defaultValue: <dynamic>[])) as List;
 
-  Future<bool> _tryLoadFromHive() async {
-    try {
-      if (!Hive.isBoxOpen(kApiSpecsBox)) {
-        await Hive.openBox(kApiSpecsBox);
-      }
+    final catalogs = <ApiCatalogModel>[];
+    for (final id in ids) {
+      try {
+        final data = box.get(id);
+        if (data == null) continue;
 
-      final box = Hive.box(kApiSpecsBox);
-      final ids = (box.get(kApiSpecsBoxIds, defaultValue: <dynamic>[]) as List)
-          .map((e) => e.toString())
-          .toList();
-
-      if (ids.isEmpty) return false;
-      
-      final collections = <ApiExplorerModel>[];
-      for (final id in ids) {
-        final dynamic data = box.get(id);
-        if (data is Map) {
-          try {
-            final jsonData = Map<String, dynamic>.from(data);
-            final collection = ApiExplorerModel.fromJson(jsonData);
-            collections.add(collection);
-          } catch (e) {
-            debugPrint('[API Explorer] Skipping invalid collection: $id, $e');
-          }
+        Map<String, dynamic> jsonData;
+        if (data is String) {
+          jsonData = jsonDecode(data) as Map<String, dynamic>;
+        } else if (data is Map) {
+          jsonData = data.cast<String, dynamic>();
+        } else {
+          continue;
         }
-      }
 
-      if (collections.isNotEmpty) {
-        state = collections;
-        debugPrint('[API Explorer] Loaded ${collections.length} collections from Hive');
-        return true;
+        // Add null checks for required fields
+        if (jsonData['id'] == null || 
+            jsonData['name'] == null || 
+            jsonData['sourceUrl'] == null ||
+            jsonData['updatedAt'] == null) {
+          continue;
+        }
+
+        catalogs.add(ApiCatalogModel.fromJson(jsonData));
+      } catch (e) {
+        debugPrint('Error loading catalog $id: $e');
       }
-      return false;
-    } catch (e) {
-      debugPrint('[API Explorer] Hive load failed: $e');
-      return false;
     }
+
+    if (catalogs.isNotEmpty) {
+      state = catalogs;
+      return true;
+    }
+    return false;
+  } catch (e) {
+    debugPrint('Hive load failed: $e');
+    return false;
   }
+}
 
   Future<bool> _tryLoadFromFiles() async {
     try {
@@ -145,9 +151,9 @@ class ApiExplorerNotifier extends StateNotifier<List<ApiExplorerModel>> {
           .timeout(const Duration(seconds: 10));
 
       if (processed.isNotEmpty) {
-        debugPrint('Loaded ${processed.length} collections from files');
-        state = processed;
-        await _storeInHive(processed);
+        debugPrint('Loaded ${processed.length} catalogs from files');
+        state = processed.cast<ApiCatalogModel>();
+        await _storeInHive(processed.cast<ApiCatalogModel>());
         return true;
       }
     } catch (e) {
@@ -156,86 +162,59 @@ class ApiExplorerNotifier extends StateNotifier<List<ApiExplorerModel>> {
     return false;
   }
 
-  Future<bool> _tryLoadFromTemplates() async {
-    try {
-      final templatesDir = await getApplicationSupportDirectory();
-      final templatesPath = '${templatesDir.path}/templates';
-
-      if (await Directory(templatesPath).exists()) {
-        debugPrint('Loading from templates folder');
-        final files = await Directory(templatesPath)
-            .list()
-            .where((entity) => entity is File)
-            .cast<File>()
-            .toList();
-
-        final specs = <String, String>{};
-
-        for (final file in files) {
-          try {
-            specs[path.basename(file.path)] = await file.readAsString();
-          } catch (e) {
-            debugPrint('Error reading ${file.path}: $e');
-          }
-        }
-
-        if (specs.isNotEmpty) {
-          // Changed from processApiFiles to processHiveSpecs since we're processing specs
-          final processedData = await _apiService.processHiveSpecs(specs);
-
-          final updatedData = processedData.map((collection) {
-            return collection.copyWith(
-              source: 'Template: ${collection.source}',
-            );
-          }).toList();
-
-          if (updatedData.isNotEmpty) {
-            state = updatedData;
-            await _storeInHive(updatedData);
-            return true;
-          }
-        }
-      }
-    } catch (e) {
-      debugPrint('Template load failed: $e');
+  Map<String, int> _countMethods(List<ApiEndpointModel> endpoints) {
+    final counts = <String, int>{};
+    for (final endpoint in endpoints) {
+      counts.update(
+        endpoint.method.name,
+        (count) => count + 1,
+        ifAbsent: () => 1,
+      );
     }
-    return false;
+    return counts;
   }
 
-  Future<void> _storeInHive(List<ApiExplorerModel> collections) async {
+  Future<void> _storeInHive(List<ApiCatalogModel> catalogs) async {
     try {
       final box = Hive.box(kApiSpecsBox);
       await box.clear();
 
-      for (final collection in collections) {
-        await box.put(collection.id, collection.toJson());
+      for (final catalog in catalogs) {
+        await box.put(catalog.id, jsonEncode(catalog.toJson()));
       }
 
-      await box.put(kApiSpecsBoxIds, collections.map((c) => c.id).toList());
-      debugPrint('[API Explorer] Stored ${collections.length} collections in Hive');
+      await box.put(kApiSpecsBoxIds, catalogs.map((c) => c.id).toList());
     } catch (e) {
-      debugPrint('[API Explorer] ERROR - Hive storage failed: $e');
+      debugPrint('[API Catalog] ERROR - Hive storage failed: $e');
       rethrow;
     }
   }
 
   void _handleNoApisFound() {
-    debugPrint('No API collections found in any source');
+    debugPrint('No API catalogs found in any source');
     state = [];
-    _ref.read(apiExplorerErrorProvider.notifier).state =
-        'No API collections available. Please check your connection and try again.';
+    _ref.read(apiCatalogErrorProvider.notifier).state =
+        'No API catalogs available. Please check your connection and try again.';
   }
 
   void _handleLoadError(dynamic e) {
     debugPrint('Critical API load error: $e');
     state = [];
-    _ref.read(apiExplorerErrorProvider.notifier).state =
+    _ref.read(apiCatalogErrorProvider.notifier).state =
         'Failed to load APIs: ${e.toString()}';
   }
 
-  Future<void> importEndpoint(ApiExplorerModel endpoint) async {
+  Future<void> importEndpoint(ApiEndpointModel endpoint) async {
     try {
-      final requestModel = endpoint.toHttpRequestModel();
+      final catalog = state.firstWhere((c) => c.id == endpoint.catalogId);
+      final baseUrl = catalog.baseUrl;
+      
+      final requestModel = HttpRequestModel(
+        url: baseUrl!.isEmpty ? endpoint.path : '$baseUrl${endpoint.path}',
+        method: endpoint.method,
+        bodyContentType: ContentType.json,
+      );
+      
       _ref
           .read(collectionStateNotifierProvider.notifier)
           .addRequestModel(requestModel);
@@ -246,41 +225,157 @@ class ApiExplorerNotifier extends StateNotifier<List<ApiExplorerModel>> {
     }
   }
 
-  Future<void> addCollection({
-    required String url,
-    String? name,
-  }) async {
-    try {
-      if (url.isEmpty) throw Exception('URL cannot be empty');
-      final processedUrl = _addRawPrefix(url);
-      final collectionName = name ?? shortenLongUrl(processedUrl);
+  // Future<void> addCatalog({
+  //   required String url,
+  //   String? name,
+  // }) async {
+  //   try {
+  //     if (url.isEmpty) throw Exception('URL cannot be empty');
+  //     final processedUrl = _addRawPrefix(url);
+  //     final catalogName = name ?? shortenLongUrl(processedUrl);
+
+  //     final apiSpec = await _fetchOpenApiSpec(processedUrl);
       
-      // This should return a List<ApiExplorerModel> representing endpoints
-      final endpoints = await _apiService.parseOpenApiContent(processedUrl, url);
+  //     if (apiSpec == null || apiSpec.isEmpty) {
+  //       throw Exception('No valid specification found at the provided URL');
+  //     }
+      
+  //     final catalog = await _createCatalogFromSpec(apiSpec, processedUrl, catalogName);
+      
+  //     state = [...state, catalog];
+  //     await _persistCatalogs();
+  //   } catch (e) {
+  //     debugPrint('Failed to add catalog: ${e.toString()}');
+  //     rethrow;
+  //   }
+  // }
+  
+  // Future<Map<String, dynamic>?> _fetchOpenApiSpec(String url) async {
+  //   const requestId = 'api-spec-fetch';
+  //   try {
+  //     final requestModel = HttpRequestModel(
+  //       url: url, 
+  //       method: HTTPVerb.get, 
+  //       bodyContentType: ContentType.text
+  //     );
 
-      if (endpoints.isEmpty) {
-        throw Exception('No valid endpoints found in the specification');
+  //     final (response, _, error) = await sendHttpRequest(
+  //       requestId,
+  //       APIType.rest,
+  //       requestModel,
+  //       noSSL: true,
+  //     );
+
+  //     if (error != null) throw Exception(error);
+  //     if (response?.statusCode != 200) {
+  //       throw Exception('Received HTTP ${response?.statusCode}');
+  //     }
+
+  //     final content = response?.body ?? '';
+      
+  //     try {
+  //       return jsonDecode(content) as Map<String, dynamic>;
+  //     } catch (_) {
+  //       return _apiService.(content);
+  //     }
+  //   } finally {
+  //     httpClientManager.closeClient(requestId);
+  //   }
+  // }
+  
+  Future<ApiCatalogModel> _createCatalogFromSpec(
+    Map<String, dynamic> spec, 
+    String sourceUrl, 
+    String name
+  ) async {
+    final info = spec['info'] as Map<String, dynamic>? ?? {};
+    final servers = spec['servers'] as List? ?? [];
+    final paths = spec['paths'] as Map<String, dynamic>? ?? {};
+    
+    final baseUrl = servers.isNotEmpty ? servers.first['url']?.toString() ?? '' : '';
+    final version = info['version']?.toString() ?? '';
+    final description = info['description']?.toString() ?? '';
+    
+    final endpoints = <ApiEndpointModel>[];
+    final catalogId = 'cat_${DateTime.now().millisecondsSinceEpoch}';
+    
+    paths.forEach((path, pathItem) {
+      if (pathItem is Map<String, dynamic>) {
+        pathItem.forEach((method, operation) {
+          if (method.toLowerCase() == 'parameters' || 
+              !(operation is Map<String, dynamic>)) {
+            return;
+          }
+          
+          try {
+            final httpMethod = _parseHttpMethod(method);
+            final operationId = operation['operationId']?.toString() ?? '';
+            final summary = operation['summary']?.toString() ?? '';
+            final operationDescription = operation['description']?.toString() ?? '';
+            
+            final endpointId = '${method}_${path.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '_')}';
+            final endpointName = summary.isNotEmpty ? summary : operationId.isNotEmpty ? operationId : path;
+            
+            final parameters = <String, dynamic>{};
+            final parametersList = operation['parameters'] as List? ?? [];
+            for (final param in parametersList) {
+              if (param is Map<String, dynamic>) {
+                final paramName = param['name']?.toString();
+                if (paramName != null) {
+                  parameters[paramName] = param;
+                }
+              }
+            }
+            
+            final responses = operation['responses'] as Map<String, dynamic>? ?? {};
+            
+            endpoints.add(ApiEndpointModel(
+              id: endpointId,
+              name: endpointName,
+              catalogId: catalogId,
+              description: operationDescription,
+              operationId: operationId,
+              path: path,
+              method: httpMethod,
+              parameters: parameters,
+              responses: responses,
+            ));
+          } catch (e) {
+            debugPrint('Error processing endpoint $method $path: $e');
+          }
+        });
       }
-
-      // For now, we'll just add the first endpoint as a collection
-      // This should likely be updated to handle multiple endpoints
-      final newCollection = endpoints.first.copyWith(
-        id: 'col-${DateTime.now().millisecondsSinceEpoch}',
-        name: collectionName,
-        source: processedUrl,
-      );
-
-      state = [...state, newCollection];
-      await _persistCollections();
-    } catch (e) {
-      debugPrint('Failed to add collection: ${e.toString()}');
-      rethrow;
-    }
+    });
+    
+    final methodCounts = _countMethods(endpoints);
+    
+    return ApiCatalogModel(
+      id: catalogId,
+      name: name,
+      sourceUrl: sourceUrl,
+      description: description,
+      updatedAt: DateTime.now(),
+      version: version,
+      baseUrl: baseUrl,
+      openApiSpec: spec,
+      endpoints: endpoints,
+      endpointCount: endpoints.length,
+      methodCounts: methodCounts,
+    );
+  }
+  
+  HTTPVerb _parseHttpMethod(String method) {
+    final normalizedMethod = method.toLowerCase();
+    return HTTPVerb.values.firstWhere(
+      (verb) => verb.name.toLowerCase() == normalizedMethod,
+      orElse: () => HTTPVerb.get,
+    );
   }
 
   String _addRawPrefix(String url) {
-    if (!url.contains('://raw.')) {
-      return url.replaceFirst('://', '://raw.');
+    if (url.contains('github.com') && !url.contains('raw.githubusercontent.com')) {
+      return url.replaceFirst('github.com', 'raw.githubusercontent.com')
+               .replaceFirst('/blob/', '/');
     }
     return url;
   }
@@ -301,91 +396,64 @@ class ApiExplorerNotifier extends StateNotifier<List<ApiExplorerModel>> {
   }
 
   Future<void> refreshApis() async {
-    _ref.read(apiExplorerLoadingProvider.notifier).state = true;
+    _ref.read(apiCatalogLoadingProvider.notifier).state = true;
     try {
       await Future.delayed(const Duration(seconds: 1));
       await loadApis();
     } catch (e) {
-      _ref.read(apiExplorerErrorProvider.notifier).state = e.toString();
+      _ref.read(apiCatalogErrorProvider.notifier).state = e.toString();
       rethrow;
     } finally {
-      _ref.read(apiExplorerLoadingProvider.notifier).state = false;
+      _ref.read(apiCatalogLoadingProvider.notifier).state = false;
     }
   }
 
-  Future<void> addCollectionFromUrl(String url, {String? name}) async {
-    const requestId = 'api-spec-import';
-    _ref.read(apiExplorerLoadingProvider.notifier).state = true;
-    _ref.read(apiExplorerErrorProvider.notifier).state = null;
-    
-    try {
-      final uri = Uri.tryParse(url);
-      if (uri == null || !uri.isAbsolute) {
-        throw const FormatException('Invalid URL format');
-      }
+  // Future<void> addCatalogFromUrl(String url, {String? name}) async {
+  //   _ref.read(apiCatalogLoadingProvider.notifier).state = true;
+  //   _ref.read(apiCatalogErrorProvider.notifier).state = null;
+
+  //   try {
+  //     final apiSpec = await _fetchOpenApiSpec(url);
       
-      final requestModel = HttpRequestModel(
-        url: url, 
-        method: HTTPVerb.get, 
-        bodyContentType: ContentType.text
-      );
-
-      final (response, _, error) = await sendHttpRequest(
-        requestId,
-        APIType.rest,
-        requestModel,
-        noSSL: true,
-      );
-
-      if (error != null) throw Exception(error);
-      if (response?.statusCode != 200) {
-        throw Exception('Received HTTP ${response?.statusCode}');
-      }
+  //     if (apiSpec == null || apiSpec.isEmpty) {
+  //       throw Exception('No valid specification found at the provided URL');
+  //     }
       
-      final content = response?.body ?? '';
-      final endpoints = await _apiService.parseOpenApiContent(content, url);
+  //     final catalog = await _createCatalogFromSpec(
+  //       apiSpec, 
+  //       url, 
+  //       name ?? shortenLongUrl(url)
+  //     );
+      
+  //     state = [...state, catalog];
+  //     await _persistCatalogs();
+  //   } catch (e) {
+  //     _ref.read(apiCatalogErrorProvider.notifier).state = e.toString();
+  //     rethrow;
+  //   } finally {
+  //     _ref.read(apiCatalogLoadingProvider.notifier).state = false;
+  //   }
+  // }
 
-      if (endpoints.isEmpty) {
-        throw Exception('No valid endpoints found in the specification');
-      }
-
-      // For now, we'll just add the first endpoint as a collection
-      // This should likely be updated to handle multiple endpoints
-      final newCollection = endpoints.first.copyWith(
-        id: 'col-${DateTime.now().millisecondsSinceEpoch}',
-        name: name ?? shortenLongUrl(url),
-        source: url,
-      );
-
-      state = [...state, newCollection];
-      await _persistCollections();
-    } catch (e) {
-      _ref.read(apiExplorerErrorProvider.notifier).state = e.toString();
-      rethrow;
-    } finally {
-      _ref.read(apiExplorerLoadingProvider.notifier).state = false;
-      httpClientManager.closeClient(requestId);
-    }
+  Future<void> removeCatalog(String catalogId) async {
+    state = state.where((c) => c.id != catalogId).toList();
+    await _persistCatalogs();
   }
 
-  Future<void> removeCollection(String collectionId) async {
-    state = state.where((c) => c.id != collectionId).toList();
-    await _persistCollections();
-  }
-
-  Future<void> _persistCollections() async {
+  Future<void> _persistCatalogs() async {
     try {
       final box = Hive.box(kApiSpecsBox);
       await box.clear();
-      
-      for (final collection in state) {
-        await box.put(collection.id, collection.toJson());
+
+      for (final catalog in state) {
+        await box.put(catalog.id, jsonEncode(catalog.toJson()));
       }
-      
+
       await box.put(kApiSpecsBoxIds, state.map((c) => c.id).toList());
-      debugPrint('[API Explorer] Persisted ${state.length} collections to Hive');
+      debugPrint(
+          '[API Catalog] Persisted ${state.length} catalogs to Hive');
     } catch (e) {
-      debugPrint('[API Explorer] Error persisting collections: $e');
+      debugPrint('[API Catalog] Error persisting catalogs: $e');
       rethrow;
     }
   }

@@ -1,24 +1,25 @@
+import 'package:apidash/models/api_endpoint.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash/widgets/widgets.dart';
 import '../../../utils/color_utils.dart';
 import 'api_explorer_action_buttons.dart';
-import '../../../models/models.dart';  // Add model import
 
 class ApiExplorerURLCard extends StatelessWidget {
   const ApiExplorerURLCard({
     super.key,
-    required this.apiEndpoint,
+    required this.endpoint,
+    required this.baseUrl,
   });
 
-  final ApiExplorerModel? apiEndpoint;  // Changed to model type
+  final ApiEndpointModel? endpoint;
+  final String baseUrl;
 
   @override
   Widget build(BuildContext context) {
-    final method = apiEndpoint?.method.name.toUpperCase() ?? 'GET';
-    final path = apiEndpoint?.path ?? '';
-    final baseUrl = apiEndpoint?.baseUrl ?? 'https://api.example.com';
-    final name = apiEndpoint?.name ?? '';
+    final method = endpoint?.method.name.toUpperCase() ?? 'GET';
+    final path = endpoint?.path ?? '';
+    final name = endpoint?.name ?? '';
 
     return Card(
       margin: EdgeInsets.zero,
@@ -71,7 +72,7 @@ class ApiExplorerURLCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 8),
-                ApiExplorerActionButtons(endpoint: apiEndpoint),
+                ApiExplorerActionButtons(endpoint: endpoint),
               ],
             ),
           ],

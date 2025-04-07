@@ -1,8 +1,10 @@
+import 'package:apidash/models/api_endpoint.dart';
 import 'package:apidash/screens/api_explorer/api_explorer_widget/api_documentatioin/api_documentation_pane.dart';
 import 'package:flutter/material.dart';
-import '../../../models/models.dart';
+import 'package:apidash_core/apidash_core.dart';
+
 class ApiExplorerSplitView extends StatelessWidget {
-  final ApiExplorerModel api;  // Changed type
+  final ApiEndpointModel api;
 
   const ApiExplorerSplitView({super.key, required this.api});
 
@@ -16,7 +18,7 @@ class ApiExplorerSplitView extends StatelessWidget {
             children: [
               Expanded(
                 flex: 1,
-                child: ApiDocumentationPane(endpoint: api),  // Ensure this also uses model
+                child: ApiDocumentationPane(endpoint: api),
               ),
             ],
           ),

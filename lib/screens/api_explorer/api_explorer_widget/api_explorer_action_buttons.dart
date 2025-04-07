@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/widgets/widgets.dart';
-import '../../../models/models.dart';
+import '../../../models/api_endpoint.dart';
 import '../../../providers/providers.dart';
 
 class ApiExplorerActionButtons extends ConsumerWidget {
   const ApiExplorerActionButtons({super.key, this.endpoint});
 
-  final ApiExplorerModel? endpoint;
+  final ApiEndpointModel? endpoint;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final apiExplorer = ref.read(apiExplorerProvider.notifier);
+    final apiCatalog = ref.read(apiCatalogProvider.notifier);
     return FilledButtonGroup(
       buttons: [
         ButtonData(
@@ -20,7 +20,7 @@ class ApiExplorerActionButtons extends ConsumerWidget {
           onPressed: () async {
             if (endpoint != null) {
               try {
-                await apiExplorer.importEndpoint(endpoint!);
+                await apiCatalog.importEndpoint(endpoint!);
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                       content: Text('API endpoint imported successfully')),

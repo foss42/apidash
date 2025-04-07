@@ -12,7 +12,7 @@ import 'api_explorer_widget/api_explorer_detail_view.dart';
 
 class ApiExplorerPage extends ConsumerStatefulWidget {
   const ApiExplorerPage({super.key});
-  
+
   @override
   ConsumerState<ApiExplorerPage> createState() => _ApiExplorerPageState();
 }
@@ -26,9 +26,9 @@ class _ApiExplorerPageState extends ConsumerState<ApiExplorerPage> {
     super.initState();
     _scrollController = ScrollController();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final notifier = ref.read(apiExplorerProvider.notifier);
+      final notifier = ref.read(apiCatalogProvider.notifier);
       await notifier.loadApis();
-      if (ref.read(apiExplorerProvider).isEmpty) {
+      if (ref.read(apiCatalogProvider).isEmpty) {
         await notifier.refreshApis();
       }
     });
@@ -45,21 +45,21 @@ class _ApiExplorerPageState extends ConsumerState<ApiExplorerPage> {
     return Consumer(
       builder: (context, ref, child) {
         final selectedApi = ref.watch(selectedEndpointProvider);
-        final selectedCollection = ref.watch(selectedCollectionProvider);
+        final selectedCatalog = ref.watch(selectedCatalogProvider);
 
         return AnimatedSwitcher(
           duration: kTabAnimationDuration,
           child: selectedApi != null
               ? ApiExplorerDetailView(
                   key: ValueKey(selectedApi.id),
-                  api: selectedApi,
                   isMediumWindow: isMediumWindow,
                   searchController: TextEditingController(),
+                  endpoint: selectedApi,
                 )
-              : selectedCollection != null
+              : selectedCatalog != null
                   ? MethodsList(
-                      key: ValueKey(selectedCollection.id),
-                      collection: selectedCollection,
+                      key: ValueKey(selectedCatalog.id),
+                      catalog: selectedCatalog,
                     )
                   : ApiExplorerBrowseView(
                       key: const ValueKey('browse'),
