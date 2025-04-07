@@ -54,25 +54,28 @@ class _CodeGenPreviewerState extends State<CodeGenPreviewer> {
     }
     return Padding(
       padding: widget.padding,
-      child: Scrollbar(
-        thickness: 10,
-        thumbVisibility: true,
-        controller: controllerV,
-        child: Scrollbar(
-          notificationPredicate: (notification) => notification.depth == 1,
-          thickness: 10,
-          thumbVisibility: true,
-          controller: controllerH,
-          child: SingleChildScrollView(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return Scrollbar(
+            thickness: 10,
+            thumbVisibility: true,
             controller: controllerV,
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
+            child: Scrollbar(
+              notificationPredicate: (notification) => notification.depth == 1,
+              thickness: 10,
+              thumbVisibility: true,
               controller: controllerH,
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      SelectionArea(
+              child: SingleChildScrollView(
+                controller: controllerV,
+                child: IntrinsicHeight(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight,
+                    ),
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      controller: controllerH,
+                      child: SelectionArea(
                         child: Text.rich(
                           TextSpan(
                             children: spans,
@@ -81,13 +84,13 @@ class _CodeGenPreviewerState extends State<CodeGenPreviewer> {
                           softWrap: false,
                         ),
                       ),
-                    ],
+                    ),
                   ),
-                ],
+                ),
               ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }
