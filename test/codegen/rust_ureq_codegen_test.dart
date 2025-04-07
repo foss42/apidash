@@ -15,7 +15,7 @@ void main() {
         .call()?;
 
     println!("Response Status: {}", response.status());
-    println!("Response: {}", response.into_string()?);
+    println!("Response: {}", response.into_body().read_to_string()?);
 
     Ok(())
 }
@@ -37,7 +37,7 @@ void main() {
         .call()?;
 
     println!("Response Status: {}", response.status());
-    println!("Response: {}", response.into_string()?);
+    println!("Response: {}", response.into_body().read_to_string()?);
 
     Ok(())
 }
@@ -59,7 +59,7 @@ void main() {
         .call()?;
 
     println!("Response Status: {}", response.status());
-    println!("Response: {}", response.into_string()?);
+    println!("Response: {}", response.into_body().read_to_string()?);
 
     Ok(())
 }
@@ -85,7 +85,7 @@ void main() {
         .call()?;
 
     println!("Response Status: {}", response.status());
-    println!("Response: {}", response.into_string()?);
+    println!("Response: {}", response.into_body().read_to_string()?);
 
     Ok(())
 }
@@ -107,7 +107,7 @@ void main() {
         .call()?;
 
     println!("Response Status: {}", response.status());
-    println!("Response: {}", response.into_string()?);
+    println!("Response: {}", response.into_body().read_to_string()?);
 
     Ok(())
 }
@@ -130,7 +130,7 @@ void main() {
         .call()?;
 
     println!("Response Status: {}", response.status());
-    println!("Response: {}", response.into_string()?);
+    println!("Response: {}", response.into_body().read_to_string()?);
 
     Ok(())
 }
@@ -151,7 +151,7 @@ void main() {
         .call()?;
 
     println!("Response Status: {}", response.status());
-    println!("Response: {}", response.into_string()?);
+    println!("Response: {}", response.into_body().read_to_string()?);
 
     Ok(())
 }
@@ -174,7 +174,7 @@ void main() {
         .call()?;
 
     println!("Response Status: {}", response.status());
-    println!("Response: {}", response.into_string()?);
+    println!("Response: {}", response.into_body().read_to_string()?);
 
     Ok(())
 }
@@ -197,7 +197,7 @@ void main() {
         .call()?;
 
     println!("Response Status: {}", response.status());
-    println!("Response: {}", response.into_string()?);
+    println!("Response: {}", response.into_body().read_to_string()?);
 
     Ok(())
 }
@@ -219,7 +219,7 @@ void main() {
         .call()?;
 
     println!("Response Status: {}", response.status());
-    println!("Response: {}", response.into_string()?);
+    println!("Response: {}", response.into_body().read_to_string()?);
 
     Ok(())
 }
@@ -243,7 +243,7 @@ void main() {
         .call()?;
 
     println!("Response Status: {}", response.status());
-    println!("Response: {}", response.into_string()?);
+    println!("Response: {}", response.into_body().read_to_string()?);
 
     Ok(())
 }
@@ -264,7 +264,7 @@ void main() {
         .call()?;
 
     println!("Response Status: {}", response.status());
-    println!("Response: {}", response.into_string()?);
+    println!("Response: {}", response.into_body().read_to_string()?);
 
     Ok(())
 }
@@ -287,7 +287,7 @@ void main() {
         .call()?;
 
     println!("Response Status: {}", response.status());
-    println!("Response: {}", response.into_string()?);
+    println!("Response: {}", response.into_body().read_to_string()?);
 
     Ok(())
 }
@@ -308,7 +308,7 @@ void main() {
         .call()?;
 
     println!("Response Status: {}", response.status());
-    println!("Response: {}", response.into_string()?);
+    println!("Response: {}", response.into_body().read_to_string()?);
 
     Ok(())
 }
@@ -336,7 +336,7 @@ void main() {
         .send_string(payload)?;
 
     println!("Response Status: {}", response.status());
-    println!("Response: {}", response.into_string()?);
+    println!("Response: {}", response.into_body().read_to_string()?);
 
     Ok(())
 }
@@ -366,7 +366,7 @@ void main() {
         .send_json(payload)?;
 
     println!("Response Status: {}", response.status());
-    println!("Response: {}", response.into_string()?);
+    println!("Response: {}", response.into_body().read_to_string()?);
 
     Ok(())
 }
@@ -392,7 +392,7 @@ void main() {
         .send_json(payload)?;
 
     println!("Response Status: {}", response.status());
-    println!("Response: {}", response.into_string()?);
+    println!("Response: {}", response.into_body().read_to_string()?);
 
     Ok(())
 }
@@ -469,7 +469,7 @@ fn main() -> Result<(), ureq::Error> {
         .send_bytes(&payload)?;
 
     println!("Response Status: {}", response.status());
-    println!("Response: {}", response.into_string()?);
+    println!("Response: {}", response.into_body().read_to_string()?);
 
     Ok(())
 }
@@ -547,7 +547,7 @@ fn main() -> Result<(), ureq::Error> {
         .send_bytes(&payload)?;
 
     println!("Response Status: {}", response.status());
-    println!("Response: {}", response.into_string()?);
+    println!("Response: {}", response.into_body().read_to_string()?);
 
     Ok(())
 }
@@ -616,7 +616,7 @@ fn main() -> Result<(), ureq::Error> {
         .send_bytes(&payload)?;
 
     println!("Response Status: {}", response.status());
-    println!("Response: {}", response.into_string()?);
+    println!("Response: {}", response.into_body().read_to_string()?);
 
     Ok(())
 }
@@ -685,7 +685,7 @@ fn main() -> Result<(), ureq::Error> {
         .send_bytes(&payload)?;
 
     println!("Response Status: {}", response.status());
-    println!("Response: {}", response.into_string()?);
+    println!("Response: {}", response.into_body().read_to_string()?);
 
     Ok(())
 }
@@ -761,7 +761,7 @@ fn main() -> Result<(), ureq::Error> {
         .send_bytes(&payload)?;
 
     println!("Response Status: {}", response.status());
-    println!("Response: {}", response.into_string()?);
+    println!("Response: {}", response.into_body().read_to_string()?);
 
     Ok(())
 }
@@ -834,7 +834,7 @@ fn main() -> Result<(), ureq::Error> {
         .send_bytes(&payload)?;
 
     println!("Response Status: {}", response.status());
-    println!("Response: {}", response.into_string()?);
+    println!("Response: {}", response.into_body().read_to_string()?);
 
     Ok(())
 }
@@ -860,7 +860,7 @@ fn main() -> Result<(), ureq::Error> {
         .send_json(payload)?;
 
     println!("Response Status: {}", response.status());
-    println!("Response: {}", response.into_string()?);
+    println!("Response: {}", response.into_body().read_to_string()?);
 
     Ok(())
 }
@@ -888,7 +888,7 @@ fn main() -> Result<(), ureq::Error> {
         .send_json(payload)?;
 
     println!("Response Status: {}", response.status());
-    println!("Response: {}", response.into_string()?);
+    println!("Response: {}", response.into_body().read_to_string()?);
 
     Ok(())
 }
@@ -911,7 +911,7 @@ fn main() -> Result<(), ureq::Error> {
         .call()?;
 
     println!("Response Status: {}", response.status());
-    println!("Response: {}", response.into_string()?);
+    println!("Response: {}", response.into_body().read_to_string()?);
 
     Ok(())
 }
@@ -937,7 +937,7 @@ fn main() -> Result<(), ureq::Error> {
         .send_json(payload)?;
 
     println!("Response Status: {}", response.status());
-    println!("Response: {}", response.into_string()?);
+    println!("Response: {}", response.into_body().read_to_string()?);
 
     Ok(())
 }

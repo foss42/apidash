@@ -100,7 +100,7 @@ multipart/form-data; boundary={{boundary}}''';
 
   final String kStringRequestEnd = """\n
     println!("Response Status: {}", response.status());
-    println!("Response: {}", response.into_string()?);
+    println!("Response: {}", response.into_body().read_to_string()?);
 
     Ok(())
 }
