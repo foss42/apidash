@@ -67,22 +67,20 @@ class _CodeGenPreviewerState extends State<CodeGenPreviewer> {
               controller: controllerH,
               child: SingleChildScrollView(
                 controller: controllerV,
-                child: IntrinsicHeight(
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minHeight: constraints.maxHeight,
-                    ),
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      controller: controllerH,
-                      child: SelectionArea(
-                        child: Text.rich(
-                          TextSpan(
-                            children: spans,
-                            style: textStyle,
-                          ),
-                          softWrap: false,
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: constraints.maxHeight,
+                  ),
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    controller: controllerH,
+                    child: SelectionArea(
+                      child: Text.rich(
+                        TextSpan(
+                          children: spans,
+                          style: textStyle,
                         ),
+                        softWrap: false,
                       ),
                     ),
                   ),
