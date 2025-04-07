@@ -24,8 +24,8 @@ fn main() -> Result<(), ureq::Error> {
 """;
 
   String kTemplateJson = """
-
-    let payload = ureq::json!({{body}});
+    use serde_json::json;
+    let payload = json!({{body}});
 
 """;
 
