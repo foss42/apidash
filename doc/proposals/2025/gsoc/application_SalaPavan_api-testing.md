@@ -58,21 +58,101 @@ Week 1-2: Research & Planning
 - Finalize target frameworks and API formats
 - Research best-fit LLMs 
 - Define API testing criteria and tool definition schemas
+  Tasks :
+    -  Define problem scope (API types, test goals, output formats)
+    -  Choose baseline LLMs (e.g., GPT-4, Claude, Mixtral, Mistral-Instruct, etc.)
+    -  Study integration specs of crewAI, smolagent, pydantic-ai, langgraph
+    -  Define evaluation metrics (accuracy, coverage, latency, cost)
+    - Set up project repo, issue tracker, CI/CD for deployments
+    -  Prepare API collection (Swagger/OpenAPI/REST/GraphQL)
+  Deliverables:
+    -  Project blueprint & API collection
+    -  Defined output schema for tool definitions & test cases
+    -  Initial prompt templates
+      
 Week 3-4: API Parsing & Tool Generation Module
 - Build parsers for OpenAPI and Swagger 
-- Generate tool definitions for popular agent frameworks 
+- Generate tool definitions for popular agent frameworks
+   Tasks:
+    -  Create OpenAPI parser using Python (pydantic, openapi-spec-validator)
+    -  Add feedback for parsing raw text descriptions
+    -  Make prompt templates for converting API specs to: pydantic-ai function signatures,crewAI tools,Langgraph nodes
+    -  Validate tool formats via auto-regression tests
+    -  Build minimal CLI: python generate_tools.py --api_spec sample.json
+  Deliverables:
+    -  API parser module (OpenAPI, raw docs)
+    -  Initial prompt-to-tool-definition pipeline
+    -  Sample tool outputs across 3 agent frameworks
+
 Week 5-6: API Testing Engine
 - Accept natural language test scenarios 
 - Generate test cases 
 - Execute tests and validate responses
+  Tasks:
+    -  Create NL2TestCase prompt templates (e.g., "Test login with invalid password")
+    -  Use LLM to:
+      -  Parse prompt into method + params
+      -  Generate edge cases and parameter variations
+    -  Implement the executor (requests/httpx) to call endpoints
+    -  Implement LLM-based validator:
+      -  Match response schema
+      -  Check for expected fields/values
+      -  Score for correctness and performance
+    -  Add basic metrics: latency, response size, status codes
+  Deliverables:
+    -  test_runner.py with support for JSON/REST APIs
+    -  LLM prompt templates for test generation
+    -  Sample outputs and test logs
+
 Week 7-8: Agent Framework Integration
 - Wrap test functions for agent compatibility
- - Build CLI and optional Flutter web frontend
+- Build CLI and optional Flutter web frontend
+Tasks:
+    -  Wrap test modules and tool definitions for:
+      -  crewAI agents with roles (tester, validator, reporter)
+      -  smolagent function chains
+      -  pydantic-ai function registry
+    -  Create orchestrator:
+      -  Accept test goals in natural language
+      -  Select relevant APIs/tools
+      -  Chain test generation → execution → validation
+    -  Provide CLI: agent test_sample_api.yaml "<sample prompt>"
+  Deliverables:
+    -  Agent orchestration modules
+    -  CLI interface for testing flows
+    -  Compatibility will be tested across 3 frameworks
+
 Week 9: Benchmarking & Evaluation
 - Create a benchmark dataset
-- Compare LLMs for performance and cost
+- Compare LLMs for performance and cost on identical tasks
+  Tasks:
+    -  Collect 10–20 APIs (public and varied: weather, books, finance, auth, etc.)
+    -  Write 30–50 natural language test prompts and expected outcomes
+    -  Create test matrix:
+      -  API, prompt, model used, output, validation score
+    -  Run tests on: GPT-4, Claude, Mixtral/Mistral-Instruct, Command R+
+    -  Log the results with latency, tokens (if API-based)
+  Deliverables:
+    -  benchmark.jsonl with labeled prompts, inputs,outputs
+    -  Evaluation script + scoring logic
+    -  LLM comparison table (charts if needed)
+
+
 Week 10: Finalize
-- Documentation and demo 
+- Documentation and demo
+  Tasks:
+    -  Add Logging-retries in test ececutor
+    -  try new prompt versions
+    -  Failure recovery for bad input
+    -  Write Dev and user documentation
+    -  Prepare Integration guide for frameworks used
+    -  Make demo APIs and walkthroughs(if nay)
+  Deliverables:
+    -  Final CLI
+    -  Packaged tools by Python-module or docker image
+    -  Documentation and guide
+
+
 This timeline has significant flexibility to add or modify tasks.
 
 #Tools
