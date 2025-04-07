@@ -1,4 +1,3 @@
-// api_explorer_page.dart
 import 'package:apidash/screens/api_explorer/api_explorer_widget/methods_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -25,12 +24,8 @@ class _ApiExplorerPageState extends ConsumerState<ApiExplorerPage> {
   void initState() {
     super.initState();
     _scrollController = ScrollController();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final notifier = ref.read(apiCatalogProvider.notifier);
-      await notifier.loadApis();
-      if (ref.read(apiCatalogProvider).isEmpty) {
-        await notifier.refreshApis();
-      }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(apiExplorerProvider.notifier).loadApis(ref);
     });
   }
 
@@ -45,21 +40,21 @@ class _ApiExplorerPageState extends ConsumerState<ApiExplorerPage> {
     return Consumer(
       builder: (context, ref, child) {
         final selectedApi = ref.watch(selectedEndpointProvider);
-        final selectedCatalog = ref.watch(selectedCatalogProvider);
+        final selectedCollection = ref.watch(selectedCollectionProvider);
 
         return AnimatedSwitcher(
           duration: kTabAnimationDuration,
           child: selectedApi != null
               ? ApiExplorerDetailView(
-                  key: ValueKey(selectedApi.id),
+                  key: ValueKey(selectedApi['id']),
+                  api: selectedApi,
                   isMediumWindow: isMediumWindow,
                   searchController: TextEditingController(),
-                  endpoint: selectedApi,
                 )
-              : selectedCatalog != null
+              : selectedCollection != null
                   ? MethodsList(
-                      key: ValueKey(selectedCatalog.id),
-                      catalog: selectedCatalog,
+                      key: ValueKey(selectedCollection['id']),
+                      collection: selectedCollection,
                     )
                   : ApiExplorerBrowseView(
                       key: const ValueKey('browse'),
@@ -89,7 +84,7 @@ class _ApiExplorerPageState extends ConsumerState<ApiExplorerPage> {
       title: Consumer(
         builder: (context, ref, _) {
           final selectedApi = ref.watch(selectedEndpointProvider);
-          return Text(selectedApi?.name ?? kWindowTitle);
+          return Text(selectedApi?['name']?.toString() ?? kWindowTitle);
         },
       ),
       leftDrawerContent: const ApiExplorerSidebar(),

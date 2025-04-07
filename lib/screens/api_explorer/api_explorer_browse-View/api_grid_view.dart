@@ -1,15 +1,13 @@
-import 'package:apidash/models/api_catalog.dart';
 import 'package:flutter/material.dart';
-import 'package:apidash_core/apidash_core.dart';
 import 'api_card.dart';
 
 class ApiGridView extends StatelessWidget {
-  final List<ApiCatalogModel> catalogs;
+  final List<Map<String, dynamic>> collections;
   final ThemeData theme;
 
   const ApiGridView({
     super.key,
-    required this.catalogs,
+    required this.collections,
     required this.theme,
   });
 
@@ -20,15 +18,16 @@ class ApiGridView extends StatelessWidget {
       child: Wrap(
         spacing: 16,
         runSpacing: 16,
-        children: catalogs
+        children: collections
             .map(
-              (catalog) => ConstrainedBox(
+              (collection) => ConstrainedBox(
                 constraints: const BoxConstraints(
                   minWidth: 300,
                   maxWidth: 300,
                 ),
                 child: ApiCard(
-                  theme: theme, catalog: catalog,
+                  collection: collection,
+                  theme: theme,
                 ),
               ),
             )

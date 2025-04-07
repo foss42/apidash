@@ -1,4 +1,4 @@
-import 'package:apidash/services/api_fetcher.dart';
+import 'package:apidash/services/apiExplorerServices/api_fetcher.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -28,16 +28,10 @@ void main() async {
  await Hive.initFlutter();
   await Hive.openBox(consts.kApiSpecsBox);
 
-  try {
-    await GitHubSpecsService().fetchAndStoreSpecs();
-  } catch (e) {
-    debugPrint("Failed to fetch specs: $e");
-  }
-
-  try {
-    await GitHubSpecsService().fetchAndStoreSpecs();
-  } catch (e) {
-    debugPrint("Failed to fetch specs: $e");
+  final githubfetcher = new GitHubSpecsFetcher();
+  final specs = await githubfetcher.fetchAndStoreSpecs();
+  if (specs.isNotEmpty) {
+    await Hive.box(consts.kApiSpecsBox).put(consts.kApiSpecsBox, specs.keys.toList());
   }
 
   runApp(

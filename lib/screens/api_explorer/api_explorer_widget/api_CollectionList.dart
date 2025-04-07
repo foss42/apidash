@@ -1,30 +1,28 @@
-import 'package:apidash/models/api_catalog.dart';
 import 'package:apidash/screens/api_explorer/api_explorer_widget/api_endpoint_card.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/consts.dart';
-import 'package:apidash_core/apidash_core.dart';
 
-class ApiCollectionList extends ConsumerWidget {
+class ApiCollectionList extends HookConsumerWidget {
   const ApiCollectionList({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final apiCatalogs = ref.watch(filteredCatalogsProvider);
+    final apiCollections = ref.watch(filteredCollectionsProvider);
     final alwaysShowScrollbar = ref.watch(settingsProvider
         .select((value) => value.alwaysShowCollectionPaneScrollbar));
 
     final searchQuery = ref.watch(apiSearchQueryProvider);
     final scrollController = ScrollController();
-    final isLoading = ref.watch(apiCatalogLoadingProvider);
+    final isLoading = ref.watch(apiExplorerLoadingProvider);
 
     if (isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
 
-    if (apiCatalogs.isEmpty) {
+    if (apiCollections.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -33,7 +31,7 @@ class ApiCollectionList extends ConsumerWidget {
             kVSpacer16,
             Text(
               searchQuery.isEmpty
-                  ? 'No API catalogs found'
+                  ? 'No API collections found'
                   : 'No results for "$searchQuery"',
               style: Theme.of(context).textTheme.bodyLarge,
             ),
@@ -48,7 +46,7 @@ class ApiCollectionList extends ConsumerWidget {
           Padding(
             padding: kPh8,
             child: Chip(
-              label: Text('${apiCatalogs.length} results'),
+              label: Text('${apiCollections.length} results'),
               onDeleted: () =>
                   ref.read(apiSearchQueryProvider.notifier).state = '',
             ),
@@ -62,21 +60,21 @@ class ApiCollectionList extends ConsumerWidget {
             radius: const Radius.circular(12),
             child: RefreshIndicator(
               onRefresh: () =>
-                  ref.read(apiCatalogProvider.notifier).refreshApis(),
+                  ref.read(apiExplorerProvider.notifier).refreshApis(ref),
               child: ListView.separated(
                 controller: scrollController,
-                itemCount: apiCatalogs.length,
+                itemCount: apiCollections.length,
                 separatorBuilder: (context, index) => Divider(
                   height: 0,
                   thickness: 2,
                   color: Theme.of(context).colorScheme.surfaceContainerHigh,
                 ),
                 itemBuilder: (context, index) {
-                  final catalog = apiCatalogs[index];
+                  final collection = apiCollections[index];
                   return Padding(
                     padding: kPv2,
-                    child: ApiCatalogExpansionTile(
-                      catalog: catalog,
+                    child: ApiCollectionExpansionTile(
+                      collection: collection,
                       initiallyExpanded: index == 0 && searchQuery.isEmpty,
                     ),
                   );
@@ -90,21 +88,23 @@ class ApiCollectionList extends ConsumerWidget {
   }
 }
 
-class ApiCatalogExpansionTile extends ConsumerWidget {
-  const ApiCatalogExpansionTile({
+class ApiCollectionExpansionTile extends HookConsumerWidget {
+  const ApiCollectionExpansionTile({
     super.key,
-    required this.catalog,
+    required this.collection,
     this.initiallyExpanded = false,
   });
 
-  final ApiCatalogModel catalog;
+  final Map<String, dynamic> collection;
   final bool initiallyExpanded;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
     final selectedEndpointId = ref.watch(selectedEndpointIdProvider);
-    final selectedCatalogId = ref.watch(selectedCatalogIdProvider);
+    final selectedCollectionId = ref.watch(selectedCollectionIdProvider);
+    final endpoints =
+        List<Map<String, dynamic>>.from(collection['endpoints'] ?? []);
 
     return ExpansionTile(
       dense: true,
@@ -117,10 +117,10 @@ class ApiCatalogExpansionTile extends ConsumerWidget {
           ),
           kHSpacer5,
           Text(
-            catalog.name,
+            collection['name'] ?? 'Unnamed Collection',
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: selectedCatalogId == catalog.id
+                  color: selectedCollectionId == collection['id']
                       ? colorScheme.primary
                       : colorScheme.outline,
                 ),
@@ -129,10 +129,11 @@ class ApiCatalogExpansionTile extends ConsumerWidget {
       ),
       onExpansionChanged: (expanded) {
         if (expanded) {
-          ref.read(selectedCatalogIdProvider.notifier).state = catalog.id;
+          ref.read(selectedCollectionIdProvider.notifier).state =
+              collection['id'];
         } else {
-          if (selectedCatalogId == catalog.id) {
-            ref.read(selectedCatalogIdProvider.notifier).state = null;
+          if (selectedCollectionId == collection['id']) {
+            ref.read(selectedCollectionIdProvider.notifier).state = null;
           }
         }
       },
@@ -142,20 +143,25 @@ class ApiCatalogExpansionTile extends ConsumerWidget {
       collapsedBackgroundColor: colorScheme.surfaceContainerLow,
       initiallyExpanded: initiallyExpanded,
       childrenPadding: kPv8 + kPe4,
-      children: catalog.endpoints!.map((endpoint) => Padding(
-        padding: kPv2 + kPh4,
-        child: ApiUrlCard(
-          endpoint: endpoint,
-          isSelected: selectedEndpointId == endpoint.id,
-          onTap: () {
-            ref.read(selectedCatalogIdProvider.notifier).state = catalog.id;
-            ref.read(selectedEndpointIdProvider.notifier).state = endpoint.id;
-            if (context.isMediumWindow) {
-              kApiExplorerScaffoldKey.currentState?.closeDrawer();
-            }
-          },
-        ),
-      )).toList(),
+      children: endpoints.map((endpoint) {
+        return Padding(
+          padding: kPv2 + kPh4,
+          child: ApiUrlCard(
+            apiEndpoint: endpoint,
+            isSelected: selectedEndpointId == endpoint['id'],
+            onTap: () {
+              ref.read(selectedCollectionIdProvider.notifier).state =
+                  collection['id'];
+              ref.read(selectedEndpointIdProvider.notifier).state =
+                  endpoint['id'];
+
+              if (context.isMediumWindow) {
+                kApiExplorerScaffoldKey.currentState?.closeDrawer();
+              }
+            },
+          ),
+        );
+      }).toList(),
     );
   }
 }

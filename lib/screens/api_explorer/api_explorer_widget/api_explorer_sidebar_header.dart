@@ -11,7 +11,7 @@ class ApiExplorerSidebarHeader extends ConsumerWidget {
   Future<void> showAddApiDialog(BuildContext context, WidgetRef ref) async {
     await showDialog(
       context: context,
-      builder: (context) => AddApiDialog(),
+      builder: (context) => const AddApiDialog(),
     );
   }
 
@@ -19,6 +19,7 @@ class ApiExplorerSidebarHeader extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final mobileScaffoldKey = ref.read(mobileScaffoldKeyStateProvider);
     final sm = ScaffoldMessenger.of(context);
+    
     return Padding(
       padding: kPe4,
       child: Row(
@@ -39,11 +40,17 @@ class ApiExplorerSidebarHeader extends ConsumerWidget {
             icon: Icons.refresh,
             iconSize: kButtonIconSizeLarge,
             tooltip: "Refresh APIs",
-            onPressed: () {
-              ref.read(apiCatalogProvider.notifier).refreshApis();
-              sm.showSnackBar(
-                const SnackBar(content: Text('Refreshing API collections')),
-              );
+            onPressed: () async {
+              try {
+                await ref.read(apiExplorerProvider.notifier).refreshApis(ref);
+                sm.showSnackBar(
+                  const SnackBar(content: Text('API collections refreshed')),
+                );
+              } catch (e) {
+                sm.showSnackBar(
+                  SnackBar(content: Text('Error refreshing: ${e.toString()}')),
+                );
+              }
             },
           ),
           context.width <= kMinWindowSize.width

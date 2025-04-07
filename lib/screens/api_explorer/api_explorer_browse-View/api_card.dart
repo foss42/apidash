@@ -1,27 +1,22 @@
-import 'package:apidash/models/api_catalog.dart';
 import 'package:apidash/utils/color_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
-import 'package:apidash_core/apidash_core.dart';
 
 class ApiCard extends ConsumerWidget {
-  final ApiCatalogModel catalog;
+  final Map<String, dynamic> collection;
   final ThemeData theme;
 
   const ApiCard({
     super.key,
-    required this.catalog,
+    required this.collection,
     required this.theme,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final endpointCount = catalog.endpoints?.length;
-    final methodCounts = catalog.methodCounts;
-    final primaryMethod = methodCounts!.isNotEmpty 
-        ? methodCounts.entries.reduce((a, b) => a.value > b.value ? a : b).key
-        : 'get';
+    final endpoints =
+        List<Map<String, dynamic>>.from(collection['endpoints'] ?? []);
 
     return Card(
       elevation: 0,
@@ -46,20 +41,17 @@ class ApiCard extends ConsumerWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _CardHeader(theme: theme, endpointCount: endpointCount ?? 0),
+                  _CardHeader(theme: theme, endpointCount: endpoints.length),
                   const SizedBox(height: 12),
-                  _CardTitle(theme: theme, name: catalog.name),
+                  _CardTitle(theme: theme, name: collection['name']),
                   const SizedBox(height: 8),
                   _CardDescription(
-                      theme: theme, description: catalog.description),
+                      theme: theme, description: collection['description']),
                 ],
               ),
-              if (endpointCount! > 0) ...[
+              if (endpoints.isNotEmpty) ...[
                 const SizedBox(height: 12),
-                _MethodChip(
-                  method: primaryMethod,
-                  theme: theme,
-                ),
+                _MethodChips(theme: theme, endpoints: endpoints),
               ],
             ],
           ),
@@ -80,11 +72,9 @@ class ApiCard extends ConsumerWidget {
 
   void _handleTap(WidgetRef ref) {
     ref.read(selectedEndpointIdProvider.notifier).state = null;
-    ref.read(selectedCatalogIdProvider.notifier).state = catalog.id;
+    ref.read(selectedCollectionIdProvider.notifier).state = collection['id'];
   }
 }
-
-// ... (Keep the remaining helper widget classes unchanged)
 
 class _CardHeader extends StatelessWidget {
   final ThemeData theme;
@@ -173,6 +163,35 @@ class _CardDescription extends StatelessWidget {
       ),
       maxLines: 2,
       overflow: TextOverflow.ellipsis,
+    );
+  }
+}
+
+class _MethodChips extends StatelessWidget {
+  final ThemeData theme;
+  final List<Map<String, dynamic>> endpoints;
+
+  const _MethodChips({
+    required this.theme,
+    required this.endpoints,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 32,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: endpoints.length > 4 ? 4 : endpoints.length,
+        separatorBuilder: (context, index) => const SizedBox(width: 6),
+        itemBuilder: (context, index) {
+          final method = endpoints[index]['method'] ?? 'GET';
+          return _MethodChip(
+            method: method,
+            theme: theme,
+          );
+        },
+      ),
     );
   }
 }

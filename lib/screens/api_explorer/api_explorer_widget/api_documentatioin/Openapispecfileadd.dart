@@ -9,7 +9,6 @@ class AddApiDialog extends ConsumerWidget {
     final sm = ScaffoldMessenger.of(context);
     final urlController = TextEditingController();
     final nameController = TextEditingController();
-
     return AlertDialog(
       title: const Text('Add API Specification'),
       content: SizedBox(
@@ -50,26 +49,26 @@ class AddApiDialog extends ConsumerWidget {
                 const SizedBox(width: 8),
                 FilledButton(
                   onPressed: () async {
-                    // final url = urlController.text.trim();
-                    // final name = nameController.text.trim();
-                    // if (url.isEmpty) return;
+                    final url = urlController.text.trim();
+                    final name = nameController.text.trim();
+                    if (url.isEmpty) return;
 
-                    // Navigator.pop(context);
-                    // try {
-                    //   await ref
-                    //       .read(apiExplorerProvider.notifier)
-                    //       .addCollectionFromUrl(
-                    //         url, 
-                    //         name: name.isNotEmpty ? name : null,
-                    //       );
-                    //   sm.showSnackBar(
-                    //     const SnackBar(content: Text('API imported successfully!')),
-                    //   );
-                    // } catch (e) {
-                    //   sm.showSnackBar(
-                    //     SnackBar(content: Text('Error importing API: $e')),
-                    //   );
-                    // }
+                    Navigator.pop(context);
+                    try {
+                      await ref
+                          .read(apiExplorerProvider.notifier)
+                          .addCollectionFromUrl(
+                            url,
+                            ref,
+                          );
+                      sm.showSnackBar(
+                        const SnackBar(content: Text('API imported successfully!')),
+                      );
+                    } catch (e) {
+                      sm.showSnackBar(
+                        SnackBar(content: Text('Error importing API: $e')),
+                      );
+                    }
                   },
                   child: const Text('Import'),
                 ),

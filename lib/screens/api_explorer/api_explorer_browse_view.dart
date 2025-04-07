@@ -1,11 +1,9 @@
-// api_explorer_browse_view.dart
 import 'package:apidash/screens/api_explorer/api_explorer_browse-View/api_card.dart';
+import 'package:apidash/screens/api_explorer/api_explorer_browse-View/empty_collections_view.dart';
 import 'package:apidash/screens/api_explorer/api_explorer_widget/error_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
-
-import 'api_explorer_browse-View/empty_collections_view.dart';
 
 class ApiExplorerBrowseView extends ConsumerWidget {
   final TextEditingController searchController;
@@ -17,9 +15,9 @@ class ApiExplorerBrowseView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isLoading = ref.watch(apiCatalogLoadingProvider);
-    final error = ref.watch(apiCatalogErrorProvider);
-    final filteredCatalogs = ref.watch(filteredCatalogsProvider);
+    final isLoading = ref.watch(apiExplorerLoadingProvider);
+    final error = ref.watch(apiExplorerErrorProvider);
+    final filteredCollections = ref.watch(filteredCollectionsProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -56,7 +54,7 @@ class ApiExplorerBrowseView extends ConsumerWidget {
             ? const Center(child: CircularProgressIndicator())
             : error != null
                 ? ErrorView(error: error)
-                : filteredCatalogs.isEmpty
+                : filteredCollections.isEmpty
                     ? const EmptyCollectionsView()
                     : GridView.builder(
                         gridDelegate:
@@ -66,9 +64,9 @@ class ApiExplorerBrowseView extends ConsumerWidget {
                           crossAxisSpacing: 16,
                           childAspectRatio: 1.2,
                         ),
-                        itemCount: filteredCatalogs.length,
+                        itemCount: filteredCollections.length,
                         itemBuilder: (context, index) => ApiCard(
-                          catalog: filteredCatalogs[index],
+                          collection: filteredCollections[index],
                           theme: Theme.of(context),
                         ),
                         shrinkWrap: true,
