@@ -14,16 +14,9 @@ class EmptyCollectionsView extends StatelessWidget {
           Icon(Icons.auto_awesome_mosaic_rounded,
               size: 48, color: theme.colorScheme.outline),
           const SizedBox(height: 24),
-          Text('No APIs Found', style: theme.textTheme.titleMedium),
-          const SizedBox(height: 16),
-          Text(
-            'Try adjusting your search or add a new API collection',
-            textAlign: TextAlign.center,
-            style: theme.textTheme.bodyMedium,
-          ),
-          const SizedBox(height: 24),
-          OutlinedButton(
-              onPressed: () {}, child: const Text('Add New Collection')),
+          Center(
+            child: Text('No APIs Found', style: theme.textTheme.titleMedium),
+          )
         ],
       ),
     );

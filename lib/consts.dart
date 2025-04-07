@@ -482,3 +482,7 @@ const kMsgClearHistory =
 const kMsgClearHistorySuccess = 'History cleared successfully';
 const kMsgClearHistoryError = 'Error clearing history';
 const kMsgShareError = "Unable to share";
+
+// api Spec fetch Service
+const String kApiSpecsBox = 'api_specs';
+const String kApiSpecsBoxIds = '_spec_names';

@@ -3,19 +3,19 @@ import 'package:apidash/screens/api_explorer/api_explorer_widget/api_explorer_ur
 import 'package:apidash/screens/api_explorer/api_explorer_widget/splitView.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import '../../../models/models.dart';
 
 class ApiExplorerDetailView extends ConsumerWidget {
-  final Map<String, dynamic> api;
+  final ApiExplorerModel api; // Changed type
   final bool isMediumWindow;
   final TextEditingController searchController;
 
   const ApiExplorerDetailView({
     super.key,
-    required this.api,
+    required this.api, // Now accepts model
     required this.isMediumWindow,
     required this.searchController,
   });
-
   void _handleBackNavigation(WidgetRef ref, BuildContext context) {
     ref.read(selectedEndpointIdProvider.notifier).state = null;
     ref.read(selectedCollectionIdProvider.notifier).state = null;
@@ -25,7 +25,6 @@ class ApiExplorerDetailView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(api['name']?.toString() ?? 'API Details'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => _handleBackNavigation(ref, context),
@@ -34,12 +33,14 @@ class ApiExplorerDetailView extends ConsumerWidget {
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(16),
-            child: ApiExplorerURLCard(apiEndpoint: api),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: ApiExplorerURLCard(apiEndpoint: api), // Direct model usage
           ),
           Expanded(
-            child: ApiExplorerSplitView(api: api),
-          ),
+            child: Padding(
+                padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+                child: ApiExplorerSplitView(api: api)),
+          )
         ],
       ),
     );

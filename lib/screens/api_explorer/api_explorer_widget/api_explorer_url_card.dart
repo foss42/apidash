@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:apidash/widgets/widgets.dart';
 import '../../../utils/color_utils.dart';
 import 'api_explorer_action_buttons.dart';
+import '../../../models/models.dart';  // Add model import
 
 class ApiExplorerURLCard extends StatelessWidget {
   const ApiExplorerURLCard({
@@ -10,15 +11,14 @@ class ApiExplorerURLCard extends StatelessWidget {
     required this.apiEndpoint,
   });
 
-  final Map<String, dynamic>? apiEndpoint;
+  final ApiExplorerModel? apiEndpoint;  // Changed to model type
 
   @override
   Widget build(BuildContext context) {
-    final method = apiEndpoint?['method']?.toString().toUpperCase() ?? 'GET';
-    final path = apiEndpoint?['path']?.toString() ?? '';
-    final baseUrl =
-        apiEndpoint?['baseUrl']?.toString() ?? 'https://api.example.com';
-    final name = apiEndpoint?['name']?.toString() ?? '';
+    final method = apiEndpoint?.method.name.toUpperCase() ?? 'GET';
+    final path = apiEndpoint?.path ?? '';
+    final baseUrl = apiEndpoint?.baseUrl ?? 'https://api.example.com';
+    final name = apiEndpoint?.name ?? '';
 
     return Card(
       margin: EdgeInsets.zero,
@@ -31,8 +31,9 @@ class ApiExplorerURLCard extends StatelessWidget {
       ),
       elevation: 0,
       child: Padding(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (name.isNotEmpty) ...[
@@ -47,8 +48,7 @@ class ApiExplorerURLCard extends StatelessWidget {
             Row(
               children: [
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: getMethodColor(method).withOpacity(0.15),
                     borderRadius: kBorderRadius4,
@@ -66,11 +66,11 @@ class ApiExplorerURLCard extends StatelessWidget {
                   child: ReadOnlyTextField(
                     initialValue: '$baseUrl$path',
                     style: kCodeStyle.copyWith(
-                      fontSize:
-                          Theme.of(context).textTheme.bodyMedium?.fontSize,
+                      fontSize: Theme.of(context).textTheme.bodyMedium?.fontSize,
                     ),
                   ),
                 ),
+                const SizedBox(width: 8),
                 ApiExplorerActionButtons(endpoint: apiEndpoint),
               ],
             ),

@@ -1,7 +1,7 @@
 import 'package:apidash/screens/api_explorer/api_explorer_widget/api_CollectionList.dart';
-import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:apidash/consts.dart';
 import 'api_explorer_widget/api_explorer_sidebar_header.dart';
 
@@ -18,10 +18,9 @@ class ApiExplorerSidebar extends ConsumerWidget {
         children: [
           ApiExplorerSidebarHeader(),
           Expanded(child: ApiCollectionList()),
-          kVSpacer5,
+          kHSpacer5,
         ],
       ),
     );
   }
 }
-

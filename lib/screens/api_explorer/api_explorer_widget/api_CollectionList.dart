@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/consts.dart';
+import '../../../models/models.dart';
 
 class ApiCollectionList extends HookConsumerWidget {
   const ApiCollectionList({super.key});
@@ -16,6 +17,11 @@ class ApiCollectionList extends HookConsumerWidget {
 
     final searchQuery = ref.watch(apiSearchQueryProvider);
     final scrollController = ScrollController();
+    final isLoading = ref.watch(apiExplorerLoadingProvider);
+
+    if (isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
     if (apiCollections.isEmpty) {
       return Center(
@@ -23,7 +29,7 @@ class ApiCollectionList extends HookConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Icon(Icons.api, size: 48),
-            const SizedBox(height: 16),
+            kVSpacer16,
             Text(
               searchQuery.isEmpty
                   ? 'No API collections found'
@@ -55,7 +61,7 @@ class ApiCollectionList extends HookConsumerWidget {
             radius: const Radius.circular(12),
             child: RefreshIndicator(
               onRefresh: () =>
-                  ref.read(apiExplorerProvider.notifier).refreshApis(ref),
+                  ref.read(apiExplorerProvider.notifier).refreshApis(),
               child: ListView.separated(
                 controller: scrollController,
                 itemCount: apiCollections.length,
@@ -90,7 +96,7 @@ class ApiCollectionExpansionTile extends HookConsumerWidget {
     this.initiallyExpanded = false,
   });
 
-  final Map<String, dynamic> collection;
+  final ApiExplorerModel collection;
   final bool initiallyExpanded;
 
   @override
@@ -98,8 +104,6 @@ class ApiCollectionExpansionTile extends HookConsumerWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final selectedEndpointId = ref.watch(selectedEndpointIdProvider);
     final selectedCollectionId = ref.watch(selectedCollectionIdProvider);
-    final endpoints =
-        List<Map<String, dynamic>>.from(collection['endpoints'] ?? []);
 
     return ExpansionTile(
       dense: true,
@@ -112,10 +116,10 @@ class ApiCollectionExpansionTile extends HookConsumerWidget {
           ),
           kHSpacer5,
           Text(
-            collection['name'] ?? 'Unnamed Collection',
+            collection.name,
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: selectedCollectionId == collection['id']
+                  color: selectedCollectionId == collection.id
                       ? colorScheme.primary
                       : colorScheme.outline,
                 ),
@@ -124,10 +128,9 @@ class ApiCollectionExpansionTile extends HookConsumerWidget {
       ),
       onExpansionChanged: (expanded) {
         if (expanded) {
-          ref.read(selectedCollectionIdProvider.notifier).state =
-              collection['id'];
+          ref.read(selectedCollectionIdProvider.notifier).state = collection.id;
         } else {
-          if (selectedCollectionId == collection['id']) {
+          if (selectedCollectionId == collection.id) {
             ref.read(selectedCollectionIdProvider.notifier).state = null;
           }
         }
@@ -138,25 +141,22 @@ class ApiCollectionExpansionTile extends HookConsumerWidget {
       collapsedBackgroundColor: colorScheme.surfaceContainerLow,
       initiallyExpanded: initiallyExpanded,
       childrenPadding: kPv8 + kPe4,
-      children: endpoints.map((endpoint) {
-        return Padding(
+      children: [
+        Padding(
           padding: kPv2 + kPh4,
           child: ApiUrlCard(
-            apiEndpoint: endpoint,
-            isSelected: selectedEndpointId == endpoint['id'],
+            apiEndpoint: collection,  // Now properly typed
+            isSelected: selectedEndpointId == collection.id,
             onTap: () {
-              ref.read(selectedCollectionIdProvider.notifier).state =
-                  collection['id'];
-              ref.read(selectedEndpointIdProvider.notifier).state =
-                  endpoint['id'];
-
+              ref.read(selectedCollectionIdProvider.notifier).state = collection.id;
+              ref.read(selectedEndpointIdProvider.notifier).state = collection.id;
               if (context.isMediumWindow) {
                 kApiExplorerScaffoldKey.currentState?.closeDrawer();
               }
             },
           ),
-        );
-      }).toList(),
+        )
+      ],
     );
   }
 }

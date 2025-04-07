@@ -83,24 +83,26 @@ class RequestDataTable extends StatelessWidget {
 
     return Container(
       margin: kP10,
-      constraints: BoxConstraints(
-        minHeight: 0,
-        maxHeight: MediaQuery.of(context).size.height * 0.7,
-      ),
-      child: Theme(
-        data: Theme.of(context)
-            .copyWith(scrollbarTheme: kDataTableScrollbarTheme),
-        child: DataTable2(
-          columnSpacing: 12,
-          dividerThickness: 0,
-          horizontalMargin: 0,
-          headingRowHeight: 0,
-          dataRowHeight: kDataTableRowHeight,
-          bottomMargin: kDataTableBottomPadding,
-          isVerticalScrollBarVisible: true,
-          columns: columns,
-          rows: dataRows,
-        ),
+      child: Column(
+        children: [
+          Expanded(
+            child: Theme(
+              data: Theme.of(context)
+                  .copyWith(scrollbarTheme: kDataTableScrollbarTheme),
+              child: DataTable2(
+                columnSpacing: 12,
+                dividerThickness: 0,
+                horizontalMargin: 0,
+                headingRowHeight: 0,
+                dataRowHeight: kDataTableRowHeight,
+                bottomMargin: kDataTableBottomPadding,
+                isVerticalScrollBarVisible: true,
+                columns: columns,
+                rows: dataRows,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

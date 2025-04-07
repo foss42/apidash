@@ -4,6 +4,9 @@ import 'package:hive_flutter/hive_flutter.dart';
 const String kDataBox = "apidash-data";
 const String kKeyDataBoxIds = "ids";
 
+const String kApiSpecsBox = "apidash-api-specs";
+const String kApiSpecsBoxIds = "apiSpecsIds";
+
 const String kEnvironmentBox = "apidash-environments";
 const String kKeyEnvironmentBoxIds = "environmentIds";
 
@@ -23,9 +26,10 @@ Future<bool> initHiveBoxes(
         return false;
       }
     } else {
-      await Hive.initFlutter();
+      await Hive.initFlutter(workspaceFolderPath);
     }
     final openHiveBoxesStatus = await openHiveBoxes();
+    await Hive.openBox(kApiSpecsBox);
     return openHiveBoxesStatus;
   } catch (e) {
     return false;
@@ -38,6 +42,7 @@ Future<bool> openHiveBoxes() async {
     await Hive.openBox(kEnvironmentBox);
     await Hive.openBox(kHistoryMetaBox);
     await Hive.openLazyBox(kHistoryLazyBox);
+    await Hive.openBox(kApiSpecsBox);
     return true;
   } catch (e) {
     debugPrint("ERROR OPEN HIVE BOXES: $e");
@@ -59,6 +64,9 @@ Future<void> clearHiveBoxes() async {
     if (Hive.isBoxOpen(kHistoryLazyBox)) {
       await Hive.lazyBox(kHistoryLazyBox).clear();
     }
+    if (Hive.isBoxOpen(kApiSpecsBox)) {
+      await Hive.box(kApiSpecsBox).clear();
+    }
   } catch (e) {
     debugPrint("ERROR CLEAR HIVE BOXES: $e");
   }
@@ -78,6 +86,9 @@ Future<void> deleteHiveBoxes() async {
     if (Hive.isBoxOpen(kHistoryLazyBox)) {
       await Hive.lazyBox(kHistoryLazyBox).deleteFromDisk();
     }
+    if (Hive.isBoxOpen(kApiSpecsBox)) {
+      await Hive.box(kApiSpecsBox).deleteFromDisk();
+    }
     await Hive.close();
   } catch (e) {
     debugPrint("ERROR DELETE HIVE BOXES: $e");
@@ -91,13 +102,14 @@ class HiveHandler {
   late final Box environmentBox;
   late final Box historyMetaBox;
   late final LazyBox historyLazyBox;
-
+  late final Box apiSpecsBox;
   HiveHandler() {
     debugPrint("Trying to open Hive boxes");
     dataBox = Hive.box(kDataBox);
     environmentBox = Hive.box(kEnvironmentBox);
     historyMetaBox = Hive.box(kHistoryMetaBox);
     historyLazyBox = Hive.lazyBox(kHistoryLazyBox);
+    apiSpecsBox = Hive.box(kApiSpecsBox);
   }
 
   dynamic getIds() => dataBox.get(kKeyDataBoxIds);
@@ -171,5 +183,48 @@ class HiveHandler {
         }
       }
     }
+    var apiSpecIds = getApiSpecIds();
+    for (var key in apiSpecsBox.keys.toList()) {
+      if (key != kApiSpecsBoxIds && !apiSpecIds.contains(key)) {
+        await apiSpecsBox.delete(key);
+      }
+    }
+  }
+
+  Future<void> storeApiSpecs(Map<String, String> specs) async {
+    final ids = specs.keys.toList();
+    await apiSpecsBox.put(kApiSpecsBoxIds, ids);
+    await apiSpecsBox.putAll(specs);
+  }
+
+  List<String> getApiSpecIds() {
+    return (apiSpecsBox.get(kApiSpecsBoxIds)?.cast<String>() ?? []);
+  }
+
+  String? getApiSpec(String id) {
+    return apiSpecsBox.get(id);
+  }
+
+  Map<String, String> getAllApiSpecs() {
+    try {
+      final ids = getApiSpecIds();
+      if (ids.isEmpty) return {};
+
+      final result = <String, String>{};
+      for (final id in ids) {
+        final content = apiSpecsBox.get(id);
+        if (content != null && content is String) {
+          result[id] = content;
+        }
+      }
+      return result;
+    } catch (e) {
+      debugPrint('Error getting API specs: $e');
+      return {};
+    }
+  }
+
+  Future<void> clearApiSpecs() async {
+    await apiSpecsBox.clear();
   }
 }

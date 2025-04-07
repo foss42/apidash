@@ -5,13 +5,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash/dashbot/dashbot.dart';
 import 'common_widgets/common_widgets.dart';
 import 'envvar/environment_page.dart';
 import 'home_page/home_page.dart';
 import 'history/history_page.dart';
 import 'settings_page.dart';
 
-// Update your Dashboard widget
 class Dashboard extends ConsumerWidget {
   const Dashboard({super.key});
 
@@ -31,7 +31,6 @@ class Dashboard extends ConsumerWidget {
                 Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Requests button
                     IconButton(
                       isSelected: railIdx == 0,
                       onPressed: () {
@@ -45,8 +44,6 @@ class Dashboard extends ConsumerWidget {
                       style: Theme.of(context).textTheme.labelSmall,
                     ),
                     kVSpacer10,
-                    
-                    // Variables button
                     IconButton(
                       isSelected: railIdx == 1,
                       onPressed: () {
@@ -60,9 +57,7 @@ class Dashboard extends ConsumerWidget {
                       style: Theme.of(context).textTheme.labelSmall,
                     ),
                     kVSpacer10,
-                    
-                    // History button
-                    IconButton(
+                      IconButton(
                       isSelected: railIdx == 2,
                       onPressed: () {
                         ref.read(navRailIndexStateProvider.notifier).state = 2;

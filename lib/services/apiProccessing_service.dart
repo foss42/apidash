@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:yaml/yaml.dart';
+import 'package:apidash_core/apidash_core.dart';
+import '../models/models.dart';
 
 class ApiProcessingService {
   final String _sourcesDir;
@@ -14,260 +16,313 @@ class ApiProcessingService {
   })  : _sourcesDir = sourcesDir ?? 'lib/api_sources',
         _outputDir = outputDir ?? 'lib/api_templates';
 
-  Future<List<Map<String, dynamic>>> processApiFiles() async {
-    final files = await _getApiSpecFiles();
-    final collections = <Map<String, dynamic>>[];
-    final outputDir = Directory(_outputDir);
+  Future<List<ApiExplorerModel>> processHiveSpecs(
+    Map<String, dynamic> hiveSpecs,
+  ) async {
+    final processedData = <ApiExplorerModel>[];
 
-    for (final file in files) {
+    for (final entry in hiveSpecs.entries) {
       try {
-        final outputFile =
-            File('${outputDir.path}/${_getOutputFileName(file.path)}');
-        if (await outputFile.exists() &&
-            outputFile.lastModifiedSync().isAfter(file.lastModifiedSync())) {
-          final cachedContent = await outputFile.readAsString();
-          collections.add(jsonDecode(cachedContent));
+        debugPrint('Processing spec: ${entry.key}');
+        final jsonContent = await _convertToJson(entry.value, entry.key);
+        
+        if (!_isValidOpenApi(jsonContent)) {
+          debugPrint('Invalid OpenAPI spec: ${entry.key}');
           continue;
         }
-        final content = await file.readAsString();
-        final endpoints = await parseOpenApiContent(content, file.path);
-        final collection = {
-          'id': _generateFileId(file.path),
-          'name': getCollectionName(file.path),
-          'source': file.path,
-          'updatedAt': DateTime.now().toIso8601String(),
-          'endpoints': endpoints,
-        };
 
-        collections.add(collection);
-        await _writeTemplate(outputFile, collection);
+        final endpoints = _parseOpenApiToEndpoints(jsonContent);
+        if (endpoints.isEmpty) continue;
+
+        final collection = ApiExplorerModel(
+          id: 'col-${entry.key.hashCode}',
+          name: jsonContent['info']?['title']?.toString() ?? _getSourceName(entry.key),
+          source: 'Hive: ${entry.key}',
+          updatedAt: DateTime.now(),
+          path: '',
+          method: HTTPVerb.get,
+          baseUrl: _getBaseUrl(jsonContent),
+          parameters: [],
+        );
+
+        processedData.add(collection);
       } catch (e) {
-        debugPrint('Error processing ${file.path}: $e');
+        debugPrint('Error processing ${entry.key}: $e');
       }
     }
-    return collections;
+
+    debugPrint('Successfully processed ${processedData.length} collections');
+    return processedData;
   }
 
-  String _getOutputFileName(String sourcePath) {
-  return '${_slugify(getCollectionName(sourcePath))}.json';
-}
-
-Future<void> _writeTemplate(File file, Map<String, dynamic> collection) async {
-  await file.create(recursive: true);
-  await file.writeAsString(JsonEncoder.withIndent('  ').convert(collection));
-}
-
-  Future<List<Map<String, dynamic>>> parseOpenApiContent(
-      String content, String source) async {
+  Future<List<ApiExplorerModel>> processApiFiles() async {
     try {
-      dynamic parsed;
-      if (source.endsWith('.yaml') || source.endsWith('.yml')) {
-        parsed = loadYaml(content);
-        parsed = _convertYamlToJson(parsed);
-      } else {
-        parsed = jsonDecode(content);
-      }
+      debugPrint('[API Processor] Starting file processing...');
+      final files = await _getApiSpecFiles();
+      if (files.isEmpty) return [];
 
-      if (parsed['openapi'] == null && parsed['swagger'] == null) {
-        throw Exception('Not an OpenAPI/Swagger specification file');
-      }
+      final processedData = <ApiExplorerModel>[];
 
-      return _parseOpenApi(parsed);
-    } catch (e) {
-      throw Exception('Failed to parse OpenAPI spec: $e');
-    }
-  }
+      for (final file in files) {
+        try {
+          final content = await file.readAsString();
+          final jsonContent = await _convertToJson(content, file.path);
 
-  List<Map<String, dynamic>> _parseOpenApi(dynamic spec) {
-    final endpoints = <Map<String, dynamic>>[];
-    try {
-      final paths = spec['paths'] as Map<String, dynamic>? ?? {};
+          if (!_isValidOpenApi(jsonContent)) {
+            debugPrint('[API Processor] Skipping non-OpenAPI file: ${file.path}');
+            continue;
+          }
 
-      for (final pathEntry in paths.entries) {
-        final path = pathEntry.key;
-        final operations = pathEntry.value as Map<String, dynamic>;
+          final endpoints = _parseOpenApiToEndpoints(jsonContent);
+          if (endpoints.isEmpty) continue;
 
-        for (final methodEntry in operations.entries) {
-          final method = methodEntry.key.toUpperCase();
-          final operation = methodEntry.value as Map<String, dynamic>;
+          final collection = ApiExplorerModel(
+            id: 'col-${file.path.hashCode}',
+            name: jsonContent['info']?['title']?.toString() ?? _getSourceName(file.path),
+            source: file.path,
+            updatedAt: DateTime.now(),
+            path: '',
+            method: HTTPVerb.get,
+            baseUrl: _getBaseUrl(jsonContent),
+            parameters: [],
+          );
 
-          endpoints.add({
-            'id': '${method}_${path.hashCode}',
-            'name': _getOperationSummary(operation),
-            'path': path,
-            'method': method,
-            'baseUrl': _getBaseUrl(spec),
-            'parameters': _parseParameters(operation['parameters']),
-            'headers': _parseHeaders(operation),
-            'requestBody': _parseRequestBody(operation['requestBody']),
-            'responses': _parseResponses(operation['responses']),
-          });
+          processedData.add(collection);
+        } catch (e) {
+          debugPrint('[API Processor] Error processing ${file.path}: $e');
         }
       }
+
+      return processedData;
     } catch (e) {
-      debugPrint('Error parsing OpenAPI: $e');
+      debugPrint('[API Processor] Critical error in file processing: $e');
+      return [];
     }
+  }
+
+  Future<List<ApiExplorerModel>> parseOpenApiContent(
+    String content,
+    String source,
+  ) async {
+    try {
+      final jsonContent = await _convertToJson(content, source);
+
+      if (!_isValidOpenApi(jsonContent)) {
+        throw const FormatException('Invalid OpenAPI specification');
+      }
+
+      final endpoints = _parseOpenApiToEndpoints(jsonContent);
+      if (endpoints.isEmpty) {
+        throw const FormatException('No endpoints found in specification');
+      }
+
+      return endpoints;
+    } catch (e) {
+      debugPrint('[API Processor] Error parsing OpenAPI content: $e');
+      rethrow;
+    }
+  }
+
+  List<ApiExplorerModel> _parseOpenApiToEndpoints(Map<String, dynamic> spec) {
+    final endpoints = <ApiExplorerModel>[];
+    final paths = spec['paths'] as Map<String, dynamic>? ?? {};
+    final components = spec['components'] as Map<String, dynamic>? ?? {};
+    final baseUrl = _getBaseUrl(spec);
+
+    for (final pathEntry in paths.entries) {
+      final path = _normalizePath(pathEntry.key);
+      final pathItem = pathEntry.value as Map<String, dynamic>;
+
+      final operations = _getOperations(pathItem);
+
+      for (final methodEntry in operations.entries) {
+        final method = _parseHttpVerb(methodEntry.key);
+        final operation = methodEntry.value as Map<String, dynamic>;
+
+        endpoints.add(ApiExplorerModel(
+          id: '${method.name}_${path}_${operation['operationId'] ?? '${path.hashCode}'}',
+          name: operation['summary'] ?? operation['operationId'] ?? path,
+          source: baseUrl,
+          description: operation['description'] ?? '',
+          updatedAt: DateTime.now(),
+          path: path,
+          method: method,
+          baseUrl: baseUrl,
+          parameters: _parseParameters(operation['parameters'] ?? [], components),
+          headers: _parseHeaders(operation['parameters'] ?? [], components),
+          requestBody: operation['requestBody'],
+          responses: operation['responses'],
+        ));
+      }
+    }
+
     return endpoints;
   }
 
-  String _getBaseUrl(dynamic spec) {
+  String _getBaseUrl(Map<String, dynamic> spec) {
     try {
-      if (spec['servers'] != null &&
-          spec['servers'] is List &&
-          spec['servers'].isNotEmpty) {
+      if (spec['servers'] is List && spec['servers'].isNotEmpty) {
         return spec['servers'][0]['url']?.toString() ?? '';
-      } else {
-        return [
-          _getScheme(spec),
-          '://',
-          _getHost(spec),
-          _getBasePath(spec),
-        ].join('');
       }
+      return '';
     } catch (e) {
-      debugPrint('Error getting base URL: $e');
+      debugPrint('[API Processor] Error getting base URL: $e');
       return '';
     }
   }
 
-  String _getOperationSummary(dynamic operation) {
-    return operation['summary']?.toString() ??
-        operation['operationId']?.toString() ??
-        operation['description']?.toString() ??
-        'Unnamed Endpoint';
+  String _normalizePath(String path) {
+    return path.replaceAllMapped(
+      RegExp(r':(\w+)'),
+      (match) => '{${match.group(1)}}',
+    );
   }
 
-  List<Map<String, dynamic>> _parseParameters(dynamic parameters) {
-    if (parameters is! List) return [];
-    return parameters.map<Map<String, dynamic>>((param) {
-      return {
-        'name': param['name']?.toString() ?? '',
-        'in': param['in']?.toString() ?? 'query',
-        'description': param['description']?.toString(),
-        'required': param['required'] == true,
-        'type': param['type']?.toString() ?? 'string',
-        'schema': _parseSchema(param['schema']),
-      };
+  String _getSourceName(String source) {
+    try {
+      return source.split('/').last.replaceAll(RegExp(r'\.(ya?ml|json)$'), '');
+    } catch (e) {
+      return 'Unnamed API';
+    }
+  }
+
+  Map<String, dynamic> _getOperations(Map<String, dynamic> pathItem) {
+    return pathItem.entries.fold<Map<String, dynamic>>(
+      {},
+      (map, entry) {
+        final key = entry.key.toLowerCase();
+        if (['get', 'post', 'put', 'delete', 'patch', 'head'].contains(key)) {
+          return {...map, key: entry.value};
+        }
+        return map;
+      },
+    );
+  }
+
+  HTTPVerb _parseHttpVerb(String? method) {
+    if (method == null) return HTTPVerb.get;
+    
+    switch (method.toUpperCase()) {
+      case 'POST': return HTTPVerb.post;
+      case 'PUT': return HTTPVerb.put;
+      case 'DELETE': return HTTPVerb.delete;
+      case 'PATCH': return HTTPVerb.patch;
+      case 'HEAD': return HTTPVerb.head;
+      default: return HTTPVerb.get;
+    }
+  }
+
+  List<NameValueModel> _parseParameters(
+    List<dynamic> parameters,
+    Map<String, dynamic> components,
+  ) {
+    return parameters.map<NameValueModel>((param) {
+      if (param is Map && param.containsKey(r'$ref')) {
+        param = _resolveRef(param[r'$ref'] as String, components);
+      }
+
+      return NameValueModel(
+        name: param['name']?.toString() ?? '',
+        value: param['example']?.toString() ?? '',
+      );
     }).toList();
   }
 
-  Map<String, dynamic> _parseHeaders(dynamic operation) {
-    final headers = <String, dynamic>{};
-    final parameters = _parseParameters(operation['parameters'])
-        .where((p) => p['in'] == 'header');
-    for (final param in parameters) {
-      headers[param['name']] = param;
-    }
-    return headers;
-  }
+  List<NameValueModel> _parseHeaders(
+    List<dynamic> parameters,
+    Map<String, dynamic> components,
+  ) {
+    return parameters
+        .where((param) => param['in'] == 'header')
+        .map<NameValueModel>((param) {
+          if (param is Map && param.containsKey(r'$ref')) {
+            param = _resolveRef(param[r'$ref'] as String, components);
+          }
 
-  Map<String, dynamic> _parseRequestBody(dynamic requestBody) {
-    if (requestBody is! Map) return {};
-    return {
-      'description': requestBody['description']?.toString(),
-      'content': _parseContent(requestBody['content']),
-    };
-  }
-
-  Map<String, dynamic> _parseContent(dynamic content) {
-    if (content is! Map) return {};
-    final result = <String, dynamic>{};
-    for (final entry in content.entries) {
-      result[entry.key.toString()] = _parseMediaType(entry.value);
-    }
-    return result;
-  }
-
-  Map<String, dynamic> _parseMediaType(dynamic mediaType) {
-    return {
-      'schema': _parseSchema(mediaType?['schema']),
-    };
-  }
-
-  Map<String, dynamic> _parseSchema(dynamic schema) {
-    if (schema is! Map) return {};
-    return {
-      'type': schema['type']?.toString(),
-      'format': schema['format']?.toString(),
-      'ref': schema['\$ref']?.toString(),
-      'items': _parseSchema(schema['items']),
-      'properties': _parseProperties(schema['properties']),
-    };
-  }
-
-  Map<String, dynamic> _parseProperties(dynamic properties) {
-    if (properties is! Map) return {};
-    return properties.map<String, dynamic>((key, value) {
-      return MapEntry(key.toString(), _parseSchema(value));
-    });
-  }
-
-  Map<String, dynamic> _parseResponses(dynamic responses) {
-    if (responses is! Map) return {};
-    return responses.map<String, dynamic>((code, response) {
-      return MapEntry(code.toString(), {
-        'description': response['description']?.toString(),
-        'content': _parseContent(response['content']),
-      });
-    });
-  }
-
-  Future<List<File>> _getApiSpecFiles() async {
-    final dir = Directory(_sourcesDir);
-    if (!dir.existsSync()) {
-      debugPrint('Directory does not exist: $_sourcesDir');
-      return [];
-    }
-
-    return dir
-        .listSync(recursive: true)
-        .whereType<File>()
-        .where((file) =>
-            file.path.endsWith('.yaml') ||
-            file.path.endsWith('.yml') ||
-            file.path.endsWith('.json'))
+          return NameValueModel(
+            name: param['name']?.toString() ?? '',
+            value: param['example']?.toString() ?? '',
+          );
+        })
         .toList();
   }
 
-  String getCollectionName(String source) {
-    final filename = source.split(Platform.pathSeparator).last;
-    return filename
-        .replaceAll(RegExp(r'\.(json|yml|yaml)$'), '')
-        .replaceAll(RegExp(r'[^a-zA-Z0-9]'), ' ')
-        .trim();
-  }
+  Map<String, dynamic> _resolveRef(String ref, Map<String, dynamic> components) {
+    try {
+      final parts = ref.split('/').skip(2).toList();
+      dynamic current = components;
 
-  String _slugify(String text) {
-    return text
-        .toLowerCase()
-        .replaceAll(RegExp(r'[^\w-]'), '-')
-        .replaceAll(RegExp(r'-{2,}'), '-')
-        .replaceAll(RegExp(r'^-|-$'), '');
-  }
+      for (final part in parts) {
+        current = current[part];
+        if (current == null) break;
+      }
 
-  String _generateFileId(String path) {
-    return path.hashCode.toString();
-  }
-
-  dynamic _convertYamlToJson(dynamic yaml) {
-    if (yaml is YamlMap) {
-      return Map.fromEntries(yaml.entries
-          .map((e) => MapEntry(e.key.toString(), _convertYamlToJson(e.value))));
-    } else if (yaml is YamlList) {
-      return yaml.map(_convertYamlToJson).toList();
+      return current is Map ? Map<String, dynamic>.from(current) : {};
+    } catch (e) {
+      debugPrint('[API Processor] Error resolving reference: $e');
+      return {};
     }
-    return yaml;
   }
 
-  String _getScheme(dynamic spec) =>
-      _getFirstListItem(spec['schemes']) ?? 'https';
+  Future<List<File>> _getApiSpecFiles() async {
+    try {
+      final dir = Directory(_sourcesDir);
+      if (!await dir.exists()) {
+        debugPrint('[API Processor] Directory $_sourcesDir does not exist');
+        return [];
+      }
 
-  String _getHost(dynamic spec) => spec['host']?.toString() ?? '';
+      return dir
+          .listSync(recursive: true)
+          .whereType<File>()
+          .where(_isValidSourceFile)
+          .toList();
+    } catch (e) {
+      debugPrint('[API Processor] Error getting API spec files: $e');
+      return [];
+    }
+  }
 
-  String _getBasePath(dynamic spec) => spec['basePath']?.toString() ?? '';
+  bool _isValidSourceFile(FileSystemEntity file) {
+    final path = file.path.toLowerCase();
+    return path.endsWith('.yaml') ||
+        path.endsWith('.yml') ||
+        path.endsWith('.json');
+  }
 
-  dynamic _getFirstListItem(dynamic list) {
-    if (list is List && list.isNotEmpty) return list.first.toString();
-    return null;
+  bool _isYaml(String path) =>
+      path.toLowerCase().endsWith('.yaml') ||
+      path.toLowerCase().endsWith('.yml');
+
+  Future<Map<String, dynamic>> _convertToJson(
+    dynamic content,
+    String source,
+  ) async {
+    try {
+      if (content is String) {
+        final cleanedContent = content
+            .replaceAll(RegExp(r'\s+'), ' ')
+            .replaceAll(RegExp(r',\s*}'), '}')
+            .replaceAll(RegExp(r',\s*]'), ']');
+
+        if (_isYaml(source)) {
+          final yamlMap = loadYaml(cleanedContent);
+          return jsonDecode(jsonEncode(yamlMap)) as Map<String, dynamic>;
+        }
+        return jsonDecode(cleanedContent) as Map<String, dynamic>;
+      } else if (content is Map) {
+        return Map<String, dynamic>.from(content);
+      }
+      throw FormatException('Unsupported content type for $source');
+    } catch (e) {
+      debugPrint('[API Processor] Error converting to JSON: $e');
+      throw FormatException('Failed to parse $source: ${e.toString()}');
+    }
+  }
+
+  bool _isValidOpenApi(dynamic spec) {
+    return spec is Map<String, dynamic> &&
+        (spec.containsKey('openapi') || spec.containsKey('swagger')) &&
+        spec['paths'] is Map;
   }
 }

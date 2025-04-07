@@ -1,11 +1,14 @@
+import 'package:apidash/services/api_fetcher.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'models/models.dart';
 import 'providers/providers.dart';
 import 'services/services.dart';
 import 'consts.dart';
 import 'app.dart';
+import 'package:apidash/consts.dart' as consts;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,6 +22,14 @@ void main() async {
   }
   if (!initStatus) {
     settingsModel = settingsModel?.copyWithPath(workspaceFolderPath: null);
+  }
+  
+await Hive.openBox(consts.kApiSpecsBox);
+
+  try {
+    await GitHubSpecsService().fetchAndStoreSpecs();
+  } catch (e) {
+    debugPrint("Failed to fetch specs: $e");
   }
 
   runApp(
@@ -45,6 +56,9 @@ Future<bool> initApp(
       initializeUsingPath,
       settingsModel?.workspaceFolderPath,
     );
+     if (!Hive.isBoxOpen(consts.kApiSpecsBox)) {
+      await Hive.openBox(consts.kApiSpecsBox);
+    }
     debugPrint("openBoxesStatus: $openBoxesStatus");
     if (openBoxesStatus) {
       await autoClearHistory(settingsModel: settingsModel);
