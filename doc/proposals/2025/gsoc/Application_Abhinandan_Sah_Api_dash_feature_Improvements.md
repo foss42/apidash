@@ -94,7 +94,6 @@ API Dash’s request body editor can become a more powerful tool with:
 ---
 
 ## Additional Notes  
-- I’ll include UI mockups in `doc/proposals/2025/gsoc/images/` if needed.  
 - My work on DevConnect’s real-time systems and API integrations fuels my enthusiasm to enhance API Dash’s developer-friendly features!  
 
 ---
