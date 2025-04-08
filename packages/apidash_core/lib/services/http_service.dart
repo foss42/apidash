@@ -1,16 +1,17 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:dio/dio.dart' as dio;
 import 'package:http/http.dart' as http;
 import 'package:seed/seed.dart';
 import '../consts.dart';
 import '../models/models.dart';
 import '../utils/utils.dart';
-import 'http_client_manager.dart';
+import 'dio_client_manager.dart' as dio1;
 
 typedef HttpResponse = http.Response;
 
-final httpClientManager = HttpClientManager();
+final httpClientManager = dio1.HttpClientManager();
 
 Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
   String requestId,
@@ -80,26 +81,79 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
         }
         switch (requestModel.method) {
           case HTTPVerb.get:
-            response = await client.get(requestUrl, headers: headers);
+            var dioResponse = await client.get(requestUrl.toString(), options: dio.Options(headers: headers));
+            response=await convertDioToHttpResponse(dioResponse);
             break;
           case HTTPVerb.head:
-            response = await client.head(requestUrl, headers: headers);
+            var dioResponse = await client.head(requestUrl.toString(), options: dio.Options(headers: headers));
+            response=await convertDioToHttpResponse(dioResponse);
             break;
           case HTTPVerb.post:
-            response =
-                await client.post(requestUrl, headers: headers, body: body);
+            try {
+              // Define Dio options for the request
+              final dioOptions = dio.Options(
+                method: 'POST',
+                headers: headers,
+                responseType: dio.ResponseType.json,   // Can be changed based on requirement (json, bytes, stream, plain)
+                contentType: 'application/json',       // Default content type for POST
+                followRedirects: true,                 // Allows automatic following of redirects
+                receiveDataWhenStatusError: true,      // Allows data reception even on error status codes
+                maxRedirects: 5,                       // Maximum number of redirects
+                persistentConnection: true,            // Persistent HTTP connection
+                sendTimeout: const Duration(seconds: 30),  // Timeout for sending data
+                receiveTimeout: const Duration(seconds: 30), // Timeout for receiving data
+                validateStatus: (status) => status != null && status >= 200 && status < 300,
+              );
+
+              // Making a POST request using Dio client
+              var dioResponse = await client.post(
+                requestUrl.toString(),
+                data: body,
+                options: dioOptions,
+                onSendProgress: (count, total) {
+                  print('Progress: $count / $total bytes sent');
+                },
+                onReceiveProgress: (count, total) {
+                  print('Progress: $count / $total bytes received');
+                },
+              );
+
+              // Converting Dio response to http.Response using the helper function
+              response = await convertDioToHttpResponse(dioResponse);
+
+              // Logging the response for debugging
+              print('HTTP Response Status: ${response.statusCode}');
+              print('HTTP Response Headers: ${response.headers}');
+              print('HTTP Response Body: ${response.body}');
+            } on dio.DioError catch (e) {
+              // Handling Dio exceptions and extracting the response if available
+              if (e.response != null) {
+                print('DioError: ${e.message}');
+                print('Error Response: ${e.response?.data}');
+                print('Error Headers: ${e.response?.headers}');
+                
+                response = await convertDioToHttpResponse(
+                  e.response!,
+                );
+              } else {
+                // Re-throw if there's no response at all (network failure, timeout, etc.)
+                print('Request failed with no response: ${e.message}');
+                rethrow;
+              }
+            }
             break;
+
           case HTTPVerb.put:
-            response =
-                await client.put(requestUrl, headers: headers, body: body);
+            var dioResponse = await client.put(requestUrl.toString(), data: body, options: dio.Options(headers: headers));
+            response=await convertDioToHttpResponse(dioResponse);
             break;
           case HTTPVerb.patch:
-            response =
-                await client.patch(requestUrl, headers: headers, body: body);
+            var dioResponse = await client.patch(requestUrl.toString(), data: body, options: dio.Options(headers: headers));
+            response=await convertDioToHttpResponse(dioResponse);
             break;
           case HTTPVerb.delete:
-            response =
-                await client.delete(requestUrl, headers: headers, body: body);
+            var dioResponse = await client.delete(requestUrl.toString(), data: body, options: dio.Options(headers: headers));
+            response=await convertDioToHttpResponse(dioResponse);
             break;
         }
       }
@@ -115,11 +169,12 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
             }
           }
         }
-        response = await client.post(
-          requestUrl,
-          headers: headers,
-          body: body,
+        var dioResponse = await client.post(
+          requestUrl.toString(),
+          data: body,
+          options: dio.Options(headers: headers),
         );
+        response=await convertDioToHttpResponse(dioResponse);
       }
       stopwatch.stop();
       return (response, stopwatch.elapsed, null);
