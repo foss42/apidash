@@ -260,7 +260,7 @@ This milestone will involve running benchmark evaluations for all LLM providers 
 
 #### **Milestone #4: API Authentication Methods** 
 
-This milestone will a new section in the home page of API Dash "Authorization" where users can perform various API Authentication Methods such as,
+This milestone will add a new tab "Authorization" in the home page of API Dash where users can perform various API Authentication Methods such as,
 - Basic authentication
 - API Auth
 - API key
@@ -268,7 +268,7 @@ This milestone will a new section in the home page of API Dash "Authorization" w
 - JWT Bearer
 - Digest Auth
 - OAuth 1.0
-- OAuth 2.0.
+- OAuth 2.0
 
 ## **[GSOC 2025 TIMELINE](https://developers.google.com/open-source/gsoc/timeline) FOR REFERENCE**
 
