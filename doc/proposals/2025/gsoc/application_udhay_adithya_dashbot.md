@@ -260,7 +260,7 @@ This milestone will involve running benchmark evaluations for all LLM providers 
 
 #### **Milestone #4: API Authentication Methods** 
 
-This milestone will a new section in the home page of API Dash "Authorization" where users can perform various API Authentication Methods such as,
+This milestone will add a new tab in the home page of API Dash "Authorization" where users can perform various API Authentication Methods such as,
 - Basic authentication
 - API Auth
 - API key
