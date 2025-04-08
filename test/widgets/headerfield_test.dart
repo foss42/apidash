@@ -3,7 +3,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:apidash/widgets/field_header.dart';
 
 void main() {
-  /* This HeaderField is deprecated
   testWidgets('Testing Header Field', (tester) async {
     await tester.pumpWidget(
       const MaterialApp(
@@ -22,5 +21,4 @@ void main() {
     expect(find.byKey(const Key("1")), findsOneWidget);
     expect(find.text('X'), findsOneWidget);
   });
-  */
 }

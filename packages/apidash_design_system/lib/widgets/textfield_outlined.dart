@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../tokens/tokens.dart';
-import 'decoration_input_textfield.dart';
 
 class ADOutlinedTextField extends StatelessWidget {
   const ADOutlinedTextField({
@@ -66,16 +65,26 @@ class ADOutlinedTextField extends StatelessWidget {
             fontSize: textFontSize,
             color: textColor ?? clrScheme.onSurface,
           ),
-      decoration: getTextFieldInputDecoration(
-        clrScheme,
-        fillColor: fillColor,
+      decoration: InputDecoration(
+        filled: true,
+        fillColor: fillColor ?? clrScheme.surfaceContainerLowest,
+        hintStyle: hintTextStyle ??
+            kCodeStyle.copyWith(
+              fontSize: hintTextFontSize,
+              color: hintTextColor ?? clrScheme.outlineVariant,
+            ),
         hintText: hintText,
-        hintTextStyle: hintTextStyle,
-        hintTextFontSize: hintTextFontSize,
-        hintTextColor: hintTextColor,
-        contentPadding: contentPadding,
-        focussedBorderColor: focussedBorderColor,
-        enabledBorderColor: enabledBorderColor,
+        contentPadding: contentPadding ?? kP10,
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(
+            color: focussedBorderColor ?? clrScheme.outline,
+          ),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(
+            color: enabledBorderColor ?? clrScheme.surfaceContainerHighest,
+          ),
+        ),
         isDense: isDense,
       ),
       onChanged: onChanged,

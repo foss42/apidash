@@ -13,9 +13,6 @@ const kAssetIntroMd = "assets/intro.md";
 const kAssetSendingLottie = "assets/sending.json";
 const kAssetSavingLottie = "assets/saving.json";
 const kAssetSavedLottie = "assets/completed.json";
-const kAssetGenerateCodeLottie = "assets/generate.json";
-const kAssetApiServerLottie = "assets/api_server.json";
-const kAssetFolderLottie = "assets/files.json";
 
 final kIsMacOS = !kIsWeb && Platform.isMacOS;
 final kIsWindows = !kIsWeb && Platform.isWindows;
