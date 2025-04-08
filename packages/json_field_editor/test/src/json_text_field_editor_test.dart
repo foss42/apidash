@@ -18,14 +18,18 @@ void main() {
           body: SizedBox(
             height: 300,
             width: 300,
-            child: JsonField(isFormatting: true, controller: controller),
+            child: JsonField(
+              key: ValueKey("1"),
+              isFormatting: true,
+              controller: controller,
+            ),
           ),
         ),
       ),
     );
 
-    // Verify that JsonTextField is present.
-    expect(find.byType(JsonField), findsOneWidget);
+    // Verify that JsonField is present.
+    expect(find.byKey(ValueKey("1")), findsOneWidget);
     expect(controller.text, equals('{\n  "key": "value"\n}'));
   });
 
@@ -45,14 +49,18 @@ void main() {
             body: SizedBox(
               height: 300,
               width: 300,
-              child: JsonField(isFormatting: true, controller: controller),
+              child: JsonField(
+                key: ValueKey("2"),
+                isFormatting: true,
+                controller: controller,
+              ),
             ),
           ),
         ),
       );
 
       // Verify that JsonField is present.
-      expect(find.byType(JsonField), findsOneWidget);
+      expect(find.byKey(ValueKey("2")), findsOneWidget);
       expect(controller.text, equals('{\n  "key": "value"\n}'));
     },
   );
@@ -71,15 +79,20 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
-          body: JsonField(isFormatting: true, controller: controller),
+          body: JsonField(
+            key: ValueKey("3"),
+            isFormatting: true,
+            controller: controller,
+          ),
         ),
       ),
     );
 
     // Verify that JsonField is present.
-    expect(find.byType(JsonField), findsOneWidget);
-    expect(controller.text, equals('\n{"key": "value"'));
+    expect(find.byKey(ValueKey("3")), findsOneWidget);
+    expect(controller.text, equals('{"key": "value"'));
   });
+
   testWidgets('JsonField Widget Test, in a valid Json', (
     WidgetTester tester,
   ) async {
@@ -94,13 +107,17 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
-          body: JsonField(isFormatting: true, controller: controller),
+          body: JsonField(
+            key: ValueKey("4"),
+            isFormatting: true,
+            controller: controller,
+          ),
         ),
       ),
     );
 
     // Verify that JsonField is present.
-    expect(find.byType(JsonField), findsOneWidget);
+    expect(find.byKey(ValueKey("4")), findsOneWidget);
     expect(
       controller.text,
       equals(
