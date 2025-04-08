@@ -5,6 +5,9 @@ import 'package:jinja/jinja.dart' as jj;
 import '../../utils/utils.dart';
 
 class RustUreqCodeGen {
+  final String kJsonImport = """
+use serde_json::json;
+""";
   final String kTemplateStart = """
 {%- if isFormDataRequest -%}
 use std::io::Read;
@@ -23,8 +26,7 @@ fn main() -> Result<(), ureq::Error> {
 
 """;
 
-  String kTemplateJson = """
-    use serde_json::json;
+  String kTemplateJson = """\n
     let payload = json!({{body}});
 
 """;
@@ -90,7 +92,7 @@ multipart/form-data; boundary={{boundary}}''';
     let payload = build_data_list(form_data_items);
 """;
 
-  String kStringRequestBody = """\n        .send_string(payload)?;""";
+  String kStringRequestBody = """\n        .send(payload)?;""";
 
   String kStringRequestForm = """\n        .send_bytes(&payload)?;""";
 
@@ -117,12 +119,16 @@ multipart/form-data; boundary={{boundary}}''';
       String uuid = getNewUuid();
 
       String url = requestModel.url;
-
       var rec = getValidRequestUri(
         url,
         requestModel.enabledParams,
       );
       Uri? uri = rec.$1;
+      var method = requestModel.method;
+      var requestBody = requestModel.body;
+      if (requestModel.bodyContentType == ContentType.json && requestBody?.isNotEmpty == true){
+        result += kJsonImport;
+      }
       if (uri != null) {
         var templateStartUrl = jj.Template(kTemplateStart);
         result += templateStartUrl.render({
@@ -130,9 +136,8 @@ multipart/form-data; boundary={{boundary}}''';
           'isFormDataRequest': requestModel.hasFormData,
           "method": requestModel.method.name.toLowerCase()
         });
-
-        var method = requestModel.method;
-        var requestBody = requestModel.body;
+          
+        
         if (kMethodsWithBody.contains(method) && requestBody != null) {
           var contentLength = utf8.encode(requestBody).length;
           if (contentLength > 0) {

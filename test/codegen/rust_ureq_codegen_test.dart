@@ -9,7 +9,8 @@ void main() {
 
   group('GET Request', () {
     test('GET 1', () {
-      const expectedCode = r"""fn main() -> Result<(), ureq::Error> {
+      const expectedCode = r"""
+fn main() -> Result<(), ureq::Error> {
     let url = "https://api.apidash.dev";
     let response = ureq::get(url)
         .call()?;
@@ -103,7 +104,7 @@ void main() {
       const expectedCode = r"""fn main() -> Result<(), ureq::Error> {
     let url = "https://api.github.com/repos/foss42/apidash";
     let response = ureq::get(url)
-        .set("User-Agent", "Test Agent")
+        .header("User-Agent", "Test Agent")
         .call()?;
 
     println!("Response Status: {}", response.status());
@@ -126,7 +127,7 @@ void main() {
     let url = "https://api.github.com/repos/foss42/apidash";
     let response = ureq::get(url)
         .query("raw", "true")
-        .set("User-Agent", "Test Agent")
+        .header("User-Agent", "Test Agent")
         .call()?;
 
     println!("Response Status: {}", response.status());
@@ -170,7 +171,7 @@ void main() {
     let url = "https://api.github.com/repos/foss42/apidash";
     let response = ureq::get(url)
         .query("raw", "true")
-        .set("User-Agent", "Test Agent")
+        .header("User-Agent", "Test Agent")
         .call()?;
 
     println!("Response Status: {}", response.status());
@@ -215,7 +216,7 @@ void main() {
       const expectedCode = r"""fn main() -> Result<(), ureq::Error> {
     let url = "https://api.apidash.dev/humanize/social";
     let response = ureq::get(url)
-        .set("User-Agent", "Test Agent")
+        .header("User-Agent", "Test Agent")
         .call()?;
 
     println!("Response Status: {}", response.status());
@@ -239,7 +240,7 @@ void main() {
     let response = ureq::get(url)
         .query("num", "8700000")
         .query("digits", "3")
-        .set("User-Agent", "Test Agent")
+        .header("User-Agent", "Test Agent")
         .call()?;
 
     println!("Response Status: {}", response.status());
@@ -332,8 +333,8 @@ void main() {
 }"#;
 
     let response = ureq::post(url)
-        .set("content-type", "text/plain")
-        .send_string(payload)?;
+        .header("content-type", "text/plain")
+        .send(payload)?;
 
     println!("Response Status: {}", response.status());
     println!("Response: {}", response.into_body().read_to_string()?);
@@ -351,9 +352,12 @@ void main() {
     });
 
     test('POST 2', () {
-      const expectedCode = r'''fn main() -> Result<(), ureq::Error> {
+      const expectedCode = r'''
+use serde_json::json;
+fn main() -> Result<(), ureq::Error> {
     let url = "https://api.apidash.dev/case/lower";
-    let payload = ureq::json!({
+
+    let payload = json!({
 "text": "I LOVE Flutter",
 "flag": null,
 "male": true,
@@ -381,14 +385,17 @@ void main() {
     });
 
     test('POST 3', () {
-      const expectedCode = r'''fn main() -> Result<(), ureq::Error> {
+      const expectedCode = r'''
+use serde_json::json;
+fn main() -> Result<(), ureq::Error> {
     let url = "https://api.apidash.dev/case/lower";
-    let payload = ureq::json!({
+
+    let payload = json!({
 "text": "I LOVE Flutter"
 });
 
     let response = ureq::post(url)
-        .set("User-Agent", "Test Agent")
+        .header("User-Agent", "Test Agent")
         .send_json(payload)?;
 
     println!("Response Status: {}", response.status());
@@ -465,7 +472,7 @@ fn main() -> Result<(), ureq::Error> {
   
     let payload = build_data_list(form_data_items);
     let response = ureq::post(url)
-        .set("content-type", "multipart/form-data; boundary=test")
+        .header("content-type", "multipart/form-data; boundary=test")
         .send_bytes(&payload)?;
 
     println!("Response Status: {}", response.status());
@@ -542,8 +549,8 @@ fn main() -> Result<(), ureq::Error> {
   
     let payload = build_data_list(form_data_items);
     let response = ureq::post(url)
-        .set("User-Agent", "Test Agent")
-        .set("content-type", "multipart/form-data; boundary=test")
+        .header("User-Agent", "Test Agent")
+        .header("content-type", "multipart/form-data; boundary=test")
         .send_bytes(&payload)?;
 
     println!("Response Status: {}", response.status());
@@ -612,7 +619,7 @@ fn main() -> Result<(), ureq::Error> {
   
     let payload = build_data_list(form_data_items);
     let response = ureq::post(url)
-        .set("content-type", "multipart/form-data; boundary=test")
+        .header("content-type", "multipart/form-data; boundary=test")
         .send_bytes(&payload)?;
 
     println!("Response Status: {}", response.status());
@@ -681,7 +688,7 @@ fn main() -> Result<(), ureq::Error> {
   
     let payload = build_data_list(form_data_items);
     let response = ureq::post(url)
-        .set("content-type", "multipart/form-data; boundary=test")
+        .header("content-type", "multipart/form-data; boundary=test")
         .send_bytes(&payload)?;
 
     println!("Response Status: {}", response.status());
@@ -757,7 +764,7 @@ fn main() -> Result<(), ureq::Error> {
     let response = ureq::post(url)
         .query("size", "2")
         .query("len", "3")
-        .set("content-type", "multipart/form-data; boundary=test")
+        .header("content-type", "multipart/form-data; boundary=test")
         .send_bytes(&payload)?;
 
     println!("Response Status: {}", response.status());
@@ -828,9 +835,9 @@ fn main() -> Result<(), ureq::Error> {
     let response = ureq::post(url)
         .query("size", "2")
         .query("len", "3")
-        .set("User-Agent", "Test Agent")
-        .set("Keep-Alive", "true")
-        .set("content-type", "multipart/form-data; boundary=test")
+        .header("User-Agent", "Test Agent")
+        .header("Keep-Alive", "true")
+        .header("content-type", "multipart/form-data; boundary=test")
         .send_bytes(&payload)?;
 
     println!("Response Status: {}", response.status());
@@ -849,9 +856,11 @@ fn main() -> Result<(), ureq::Error> {
 
   group('PUT Request', () {
     test('PUT 1', () {
-      const expectedCode = r'''fn main() -> Result<(), ureq::Error> {
+      const expectedCode = r'''use serde_json::json;
+fn main() -> Result<(), ureq::Error> {
     let url = "https://reqres.in/api/users/2";
-    let payload = ureq::json!({
+
+    let payload = json!({
 "name": "morpheus",
 "job": "zion resident"
 });
@@ -877,9 +886,12 @@ fn main() -> Result<(), ureq::Error> {
 
   group('PATCH Request', () {
     test('PATCH 1', () {
-      const expectedCode = r'''fn main() -> Result<(), ureq::Error> {
+      const expectedCode = r'''
+use serde_json::json;
+fn main() -> Result<(), ureq::Error> {
     let url = "https://reqres.in/api/users/2";
-    let payload = ureq::json!({
+
+    let payload = json!({
 "name": "marfeus",
 "job": "accountant"
 });
@@ -905,7 +917,8 @@ fn main() -> Result<(), ureq::Error> {
 
   group('DELETE Request', () {
     test('DELETE 1', () {
-      const expectedCode = r"""fn main() -> Result<(), ureq::Error> {
+      const expectedCode = r"""
+fn main() -> Result<(), ureq::Error> {
     let url = "https://reqres.in/api/users/2";
     let response = ureq::delete(url)
         .call()?;
@@ -926,9 +939,12 @@ fn main() -> Result<(), ureq::Error> {
     });
 
     test('DELETE 2', () {
-      const expectedCode = r'''fn main() -> Result<(), ureq::Error> {
+      const expectedCode = r'''
+use serde_json::json;
+fn main() -> Result<(), ureq::Error> {
     let url = "https://reqres.in/api/users/2";
-    let payload = ureq::json!({
+
+    let payload = json!({
 "name": "marfeus",
 "job": "accountant"
 });
