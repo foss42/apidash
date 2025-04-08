@@ -82,48 +82,37 @@ class _CodePreviewerState extends State<CodePreviewer> {
       padding: widget.padding,
       child: FutureBuilder(
         future: spans,
-        builder:
-            (BuildContext context, AsyncSnapshot<List<TextSpan>> snapshot) {
+        builder: (
+          BuildContext context,
+          AsyncSnapshot<List<TextSpan>> snapshot,
+        ) {
           if (snapshot.hasData &&
               snapshot.connectionState == ConnectionState.done) {
             var finalSpans = snapshot.data!;
-            return Scrollbar(
-              thickness: 10,
-              thumbVisibility: true,
-              controller: controllerV,
-              child: Scrollbar(
-                notificationPredicate: (notification) =>
-                    notification.depth == 1,
-                thickness: 10,
-                thumbVisibility: true,
-                controller: controllerH,
-                child: SingleChildScrollView(
-                  controller: controllerV,
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    controller: controllerH,
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            SelectionArea(
-                              child: Text.rich(
-                                TextSpan(
-                                  children: finalSpans,
-                                  style: textStyle,
-                                ),
-                                softWrap: false,
-                                //selectionRegistrar:
-                                //    SelectionContainer.maybeOf(context),
-                                //selectionColor: const Color(0xAF6694e8),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+            var codeLines = processed.$1.split('\n');
+            return InteractiveViewer(
+              constrained: false,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: List.generate(
+                      codeLines.length,
+                      (index) => Text(
+                        '${index + 1}',
+                        style: textStyle.copyWith(color: Colors.grey),
+                      ),
                     ),
                   ),
-                ),
+                  const SizedBox(width: 16),
+                  SelectionArea(
+                    child: Text.rich(
+                      TextSpan(children: finalSpans, style: textStyle),
+                      softWrap: false,
+                    ),
+                  ),
+                ],
               ),
             );
           }
@@ -137,14 +126,21 @@ class _CodePreviewerState extends State<CodePreviewer> {
   }
 }
 
-Future<List<TextSpan>> asyncGenerateSpans(String code, String? language,
-    Map<String, TextStyle> theme, bool limitedLines) async {
+Future<List<TextSpan>> asyncGenerateSpans(
+  String code,
+  String? language,
+  Map<String, TextStyle> theme,
+  bool limitedLines,
+) async {
   var parsed = highlight.parse(code, language: language);
   var spans = convert(parsed.nodes!, theme);
   if (limitedLines) {
-    spans.add(const TextSpan(
+    spans.add(
+      const TextSpan(
         text:
-            "\n... more.\nPreview ends here ($kCodePreviewLinesLimit lines).\nYou can check Raw for full result."));
+            "\n... more.\nPreview ends here ($kCodePreviewLinesLimit lines).\nYou can check Raw for full result.",
+      ),
+    );
   }
   return spans;
 }
