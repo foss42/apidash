@@ -20,6 +20,9 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
   SupportedUriSchemes defaultUriScheme = kDefaultUriScheme,
   bool noSSL = false,
 }) async {
+  if (httpClientManager.wasRequestCancelled(requestId)) {
+    httpClientManager.removeCancelledRequest(requestId);
+  }
   final client = httpClientManager.createClient(requestId, noSSL: noSSL);
 
   (Uri?, String?) uriRec = getValidRequestUri(
@@ -72,13 +75,15 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
               }
             }
             http.StreamedResponse multiPartResponse =
-                await multiPartRequest.send();
+                await client.send(multiPartRequest);
+
             stopwatch.stop();
             http.Response convertedMultiPartResponse =
                 await convertStreamedResponse(multiPartResponse);
             return (convertedMultiPartResponse, stopwatch.elapsed, null);
           }
         }
+<<<<<<< HEAD
         switch (requestModel.method) {
           case HTTPVerb.get:
             var dioResponse = await client.get(requestUrl.toString(), options: dio.Options(headers: headers));
@@ -156,6 +161,21 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
             response=await convertDioToHttpResponse(dioResponse);
             break;
         }
+=======
+        response = switch (requestModel.method) {
+          HTTPVerb.get => await client.get(requestUrl, headers: headers),
+          HTTPVerb.head => response =
+              await client.head(requestUrl, headers: headers),
+          HTTPVerb.post => response =
+              await client.post(requestUrl, headers: headers, body: body),
+          HTTPVerb.put => response =
+              await client.put(requestUrl, headers: headers, body: body),
+          HTTPVerb.patch => response =
+              await client.patch(requestUrl, headers: headers, body: body),
+          HTTPVerb.delete => response =
+              await client.delete(requestUrl, headers: headers, body: body),
+        };
+>>>>>>> 440f9fbdec10eb1524e8934c4ad2b54413692301
       }
       if (apiType == APIType.graphql) {
         var requestBody = getGraphQLBody(requestModel);

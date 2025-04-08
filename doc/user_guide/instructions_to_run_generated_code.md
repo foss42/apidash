@@ -945,11 +945,129 @@ TODO
 
 ## Rust (reqwest)
 
-TODO
+### 1. Download and Install Rust:
+
+#### **Windows**  
+1. Download and install `rustup` from [Rustup Official Site](https://rustup.rs).  
+2. Run the installer (`rustup-init.exe`) and follow the instructions.  
+3. Restart your terminal (Command Prompt or PowerShell).  
+4. Verify the installation:  
+   ```sh
+   rustc --version
+   cargo --version
+   ```
+
+#### **MacOS/Linux**
+1. Run the following in your terminal:  
+   ```sh
+   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+   ```
+   then follow the on-screen instructions.
+
+2. Restart the terminal and verify:  
+   ```sh
+   rustc --version
+   cargo --version
+   ```
+
+> Note: If you prefer not to use rustup for some reason, please see the Other [Rust Installation Methods](https://forge.rust-lang.org/infra/other-installation-methods.html) page for more options.
+
+### 2. Set Up a New Rust Project
+1. Open a terminal and create a new Rust project:  
+   ```sh
+   cargo new reqwest-demo
+   ```
+2. Navigate into the project directory:  
+   ```sh
+   cd reqwest-demo
+   ```
+
+   or open this project directory in your preferred code editor.
+
+### 3. Add Necessary Dependencies
+Run the following command to add dependencies:  
+```sh
+cargo add reqwest --features blocking,json
+cargo add tokio --features full
+```
+- `"blocking"`: Enables synchronous requests.  
+- `"json"`: Allows JSON parsing.  
+- `"tokio"`: Needed for asynchronous execution.  
+
+Run the following command to fetch dependencies:  
+```sh
+cargo build
+```
+
+### 4. Execute code
+1. Copy the generated code from API Dash.
+2. Paste the code into your project's `src/main.rs` directory
+
+Run the generated code: 
+```sh
+cargo run
+```
 
 ## Rust (ureq)
 
-TODO
+### 1. Download and Install Rust:
+
+#### **Windows**  
+1. Download and install `rustup` from [Rustup Official Site](https://rustup.rs).  
+2. Run the installer (`rustup-init.exe`) and follow the instructions.  
+3. Restart your terminal (Command Prompt or PowerShell).  
+4. Verify the installation:  
+   ```sh
+   rustc --version
+   cargo --version
+   ```
+
+#### **MacOS/Linux**
+1. Run the following in your terminal:  
+   ```sh
+   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+   ```
+   then follow the on-screen instructions.
+
+2. Restart the terminal and verify:  
+   ```sh
+   rustc --version
+   cargo --version
+   ```
+
+> Note: If you prefer not to use rustup for some reason, please see the Other [Rust Installation Methods](https://forge.rust-lang.org/infra/other-installation-methods.html) page for more options.
+
+### 2. Set Up a New Rust Project
+1. Open a terminal and create a new Rust project:  
+   ```sh
+   cargo new ureq-demo
+   ```
+2. Navigate into the project directory:  
+   ```sh
+   cd ureq-demo
+   ```
+
+   or open this project directory in your preferred code editor.
+
+### 3. Add `ureq` Dependency
+
+Run the following command to add dependencies:  
+```sh
+cargo add ureq
+``` 
+Run the following command to fetch dependencies:  
+```sh
+cargo build
+```
+
+### 4. Execute code
+1. Copy the generated code from API Dash.
+2. Paste the code into your project's `src/main.rs` directory
+
+Run the generated code: 
+```sh
+cargo run
+```
 
 ## Rust (Actix Client)
 
