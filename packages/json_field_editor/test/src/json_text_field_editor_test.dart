@@ -30,7 +30,7 @@ void main() {
   });
 
   testWidgets(
-    'JsonTextField Widget Test. Formatting a valid json using controller',
+    'JsonField Widget Test. Formatting a valid json using controller',
     (WidgetTester tester) async {
       // Build our app and trigger a frame.
       final controller = JsonTextFieldController();
@@ -51,13 +51,13 @@ void main() {
         ),
       );
 
-      // Verify that JsonTextField is present.
+      // Verify that JsonField is present.
       expect(find.byType(JsonField), findsOneWidget);
       expect(controller.text, equals('{\n  "key": "value"\n}'));
     },
   );
 
-  testWidgets('JsonTextField Widget Test, invalid Json', (
+  testWidgets('JsonField Widget Test, invalid Json', (
     WidgetTester tester,
   ) async {
     final controller = JsonTextFieldController();
@@ -76,11 +76,11 @@ void main() {
       ),
     );
 
-    // Verify that JsonTextField is present.
+    // Verify that JsonField is present.
     expect(find.byType(JsonField), findsOneWidget);
     expect(controller.text, equals('\n{"key": "value"'));
   });
-  testWidgets('JsonTextField Widget Test, in a valid Json', (
+  testWidgets('JsonField Widget Test, in a valid Json', (
     WidgetTester tester,
   ) async {
     final controller = JsonTextFieldController();
@@ -99,7 +99,7 @@ void main() {
       ),
     );
 
-    // Verify that JsonTextField is present.
+    // Verify that JsonField is present.
     expect(find.byType(JsonField), findsOneWidget);
     expect(
       controller.text,
