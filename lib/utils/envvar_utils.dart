@@ -1,6 +1,8 @@
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash/consts.dart';
 
+import '../services/services.dart';
+
 String getEnvironmentTitle(String? name) {
   if (name == null || name.trim() == "") {
     return kUntitled;
@@ -39,6 +41,7 @@ List<EnvironmentVariableModel> getEnvironmentSecrets(
 String? substituteVariables(
   String? input,
   Map<String, String> envVarMap,
+  String? activeEnvironmentId,
 ) {
   if (input == null) return null;
   if (envVarMap.keys.isEmpty) {
@@ -54,6 +57,14 @@ String? substituteVariables(
   return result;
 }
 
+String getEnvironmentVariableValue(EnvironmentVariableModel variable, String? activeEnvironmentId, Map<String, String> combinedEnvVarMap) {
+  if (variable.fromOS) {
+    final osValue = osEnvironmentService.getOSEnvironmentVariable(variable.key);
+    return osValue ?? variable.value;
+  }
+  return combinedEnvVarMap[variable.key] ?? variable.value;
+}
+
 HttpRequestModel substituteHttpRequestModel(
   HttpRequestModel httpRequestModel,
   Map<String?, List<EnvironmentVariableModel>> envMap,
@@ -64,33 +75,43 @@ HttpRequestModel substituteHttpRequestModel(
   final globalEnv = envMap[kGlobalEnvironmentId] ?? [];
 
   for (var variable in globalEnv) {
-    combinedEnvVarMap[variable.key] = variable.value;
+    combinedEnvVarMap[variable.key] = getEnvironmentVariableValue(variable, activeEnvironmentId, combinedEnvVarMap);
   }
   for (var variable in activeEnv) {
-    combinedEnvVarMap[variable.key] = variable.value;
+    combinedEnvVarMap[variable.key] = getEnvironmentVariableValue(variable, activeEnvironmentId, combinedEnvVarMap);
   }
 
   var newRequestModel = httpRequestModel.copyWith(
-    url: substituteVariables(httpRequestModel.url, combinedEnvVarMap)!,
+    url: substituteVariables(
+      httpRequestModel.url,
+      combinedEnvVarMap,
+      activeEnvironmentId,
+    )!,
     headers: httpRequestModel.headers?.map((header) {
       return header.copyWith(
-        name: substituteVariables(header.name, combinedEnvVarMap) ?? "",
-        value: substituteVariables(header.value, combinedEnvVarMap),
+        name:
+            substituteVariables(header.name, combinedEnvVarMap, activeEnvironmentId) ?? "",
+        value: substituteVariables(header.value, combinedEnvVarMap, activeEnvironmentId),
       );
     }).toList(),
     params: httpRequestModel.params?.map((param) {
       return param.copyWith(
-        name: substituteVariables(param.name, combinedEnvVarMap) ?? "",
-        value: substituteVariables(param.value, combinedEnvVarMap),
+        name:
+            substituteVariables(param.name, combinedEnvVarMap, activeEnvironmentId) ?? "",
+        value: substituteVariables(param.value, combinedEnvVarMap, activeEnvironmentId),
       );
     }).toList(),
     formData: httpRequestModel.formData?.map((formData) {
       return formData.copyWith(
-        name: substituteVariables(formData.name, combinedEnvVarMap) ?? "",
-        value: substituteVariables(formData.value, combinedEnvVarMap) ?? "",
+        name: substituteVariables(formData.name, combinedEnvVarMap, activeEnvironmentId) ?? "",
+        value: substituteVariables(formData.value, combinedEnvVarMap, activeEnvironmentId) ?? "",
       );
     }).toList(),
-    body: substituteVariables(httpRequestModel.body, combinedEnvVarMap),
+    body: substituteVariables(
+      httpRequestModel.body,
+      combinedEnvVarMap,
+      activeEnvironmentId,
+    ),
   );
   return newRequestModel;
 }
