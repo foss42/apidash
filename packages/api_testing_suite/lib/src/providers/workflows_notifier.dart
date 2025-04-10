@@ -12,11 +12,9 @@ class WorkflowsNotifier extends StateNotifier<List<WorkflowModel>> {
   
   WorkflowsNotifier(this._ref) : super([]);
 
-  /// Add a new workflow
   void add() {
-    final newWorkflow = WorkflowModel.create();
+    final newWorkflow = WorkflowModel.create(name: 'New Workflow');
     state = [...state, newWorkflow];
-    // We need to update the state provider directly through the ref
     _ref.read(StateProvider<String?>((ref) => null).notifier).state = newWorkflow.id;
   }
 
@@ -85,23 +83,21 @@ class WorkflowsNotifier extends StateNotifier<List<WorkflowModel>> {
     ];
   }
 
-  /// Remove a node from a workflow
-  void removeNode(String workflowId, String nodeId) {
-    state = [
-      for (final workflow in state)
-        if (workflow.id == workflowId)
-          workflow.copyWith(
-            nodes: workflow.nodes.where((node) => node.id != nodeId).toList(),
-            connections: workflow.connections.where(
-              (conn) => conn.sourceId != nodeId && conn.targetId != nodeId
-            ).toList(),
-          )
-        else
-          workflow,
-    ];
-  }
+  // void removeNode(String workflowId, String nodeId) {
+  //   state = [
+  //     for (final workflow in state)
+  //       if (workflow.id == workflowId)
+  //         workflow.copyWith(
+  //           nodes: workflow.nodes.where((node) => node.id != nodeId).toList(),
+  //           connections: workflow.connections.where(
+  //             (conn) => conn?.sourceId != nodeId && conn.targetId != nodeId
+  //           ).toList(),
+  //         )
+  //       else
+  //         workflow,
+  //   ];
+  // }
 
-  /// Add a connection between nodes in a workflow
   void addConnection(String workflowId, WorkflowConnectionModel connection) {
     state = [
       for (final workflow in state)
@@ -128,20 +124,18 @@ class WorkflowsNotifier extends StateNotifier<List<WorkflowModel>> {
     ];
   }
 
-  /// Remove a connection from a workflow
-  void removeConnection(String workflowId, String connectionId) {
-    state = [
-      for (final workflow in state)
-        if (workflow.id == workflowId)
-          workflow.copyWith(
-            connections: workflow.connections.where((conn) => conn.id != connectionId).toList(),
-          )
-        else
-          workflow,
-    ];
-  }
+  // void removeConnection(String workflowId, String connectionId) {
+  //   state = [
+  //     for (final workflow in state)
+  //       if (workflow.id == workflowId)
+  //         workflow.copyWith(
+  //           connections: workflow.connections.where((conn) => conn.id != connectionId).toList(),
+  //         )
+  //       else
+  //         workflow,
+  //   ];
+  // }
 
-  /// Delete a workflow
   void delete(String workflowId) {
     state = state.where((workflow) => workflow.id != workflowId).toList();
     if (_ref.read(StateProvider<String?>((ref) => null)) == workflowId) {
