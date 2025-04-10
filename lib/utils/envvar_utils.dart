@@ -1,6 +1,6 @@
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash/consts.dart';
-import 'fake_data_provider.dart';
+import 'package:api_testing_suite/src/fake_data_provider/services/fake_data_provider.dart';
 
 String getEnvironmentTitle(String? name) {
   if (name == null || name.trim() == "") {
