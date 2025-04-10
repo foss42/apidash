@@ -2,6 +2,7 @@ import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:data_table_2/data_table_2.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash_core/apidash_core.dart'; 
 import 'field_read_only.dart';
 
 class RequestDataTable extends StatelessWidget {
@@ -12,7 +13,7 @@ class RequestDataTable extends StatelessWidget {
     this.valueName,
   });
 
-  final Map<String, dynamic> rows;
+  final List<NameValueModel> rows;
   final String? keyName;
   final String? valueName;
 
@@ -55,31 +56,29 @@ class RequestDataTable extends StatelessWidget {
       ),
     );
 
-    final List<DataRow> dataRows = rows.entries
-        .map<DataRow>(
-          (MapEntry<String, dynamic> entry) => DataRow(
-            cells: <DataCell>[
-              const DataCell(kHSpacer5),
-              DataCell(
-                ReadOnlyTextField(
-                  initialValue: entry.key,
-                  decoration: fieldDecoration,
-                ),
-              ),
-              const DataCell(
-                Text('='),
-              ),
-              DataCell(
-                ReadOnlyTextField(
-               initialValue: entry.value is String ? entry.value : entry.value.toString(),
-                  decoration: fieldDecoration,
-                ),
-              ),
-              const DataCell(kHSpacer5),
-            ],
+    final List<DataRow> dataRows = rows.map<DataRow>((NameValueModel row) {
+      return DataRow(
+        cells: <DataCell>[
+          const DataCell(kHSpacer5),
+          DataCell(
+            ReadOnlyTextField(
+              initialValue: row.name,
+              decoration: fieldDecoration,
+            ),
           ),
-        )
-        .toList();
+          const DataCell(
+            Text('='),
+          ),
+          DataCell(
+            ReadOnlyTextField(
+              initialValue: row.value,
+              decoration: fieldDecoration,
+            ),
+          ),
+          const DataCell(kHSpacer5),
+        ],
+      );
+    }).toList();
 
     return Container(
       margin: kP10,
