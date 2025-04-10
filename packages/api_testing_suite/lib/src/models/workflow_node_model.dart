@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:json_annotation/json_annotation.dart';
 import 'package:uuid/uuid.dart';
 
 import 'core_models.dart';
 import 'node_status.dart';
+import 'workflow_connection_model.dart';
 
 part 'workflow_node_model.freezed.dart';
 part 'workflow_node_model.g.dart';
@@ -69,15 +71,20 @@ class WorkflowNodeModel with _$WorkflowNodeModel {
     @Default(NodeStatus.inactive) NodeStatus status,
     @Default([]) List<String> connectedToIds,
     @RequestModelConverter() RequestModel? requestModel,
+    @Default({}) Map<String, dynamic> nodeData,
+    @Default(NodeType.request) NodeType nodeType,
+    @Default([]) List<WorkflowConnectionModel> connections,
     @Default({}) Map<String, dynamic> simulatedResponse,
     @Default(200) int simulatedStatusCode,
   }) = _WorkflowNodeModel;
 
   factory WorkflowNodeModel.create({
     required String requestId,
-    @OffsetConverter() required Offset position,
-    required String label,
+    required Offset position,
+    String label = '',
     RequestModel? requestModel,
+    NodeType nodeType = NodeType.request,
+    Map<String, dynamic> nodeData = const {},
   }) {
     return WorkflowNodeModel(
       id: const Uuid().v4(),
@@ -85,9 +92,21 @@ class WorkflowNodeModel with _$WorkflowNodeModel {
       position: position,
       label: label,
       requestModel: requestModel,
+      nodeType: nodeType,
+      nodeData: nodeData,
     );
   }
 
-  factory WorkflowNodeModel.fromJson(Map<String, dynamic> json) => 
-      _$WorkflowNodeModelFromJson(json);
+  double get x => position.dx;
+  double get y => position.dy;
+  String get workflowId => requestId;
+
+  factory WorkflowNodeModel.fromJson(Map<String, dynamic> json) => _$WorkflowNodeModelFromJson(json);
+}
+
+enum NodeType {
+  request,
+  response,
+  condition,
+  action,
 }
