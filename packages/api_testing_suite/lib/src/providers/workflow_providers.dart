@@ -23,7 +23,7 @@ final activeWorkflowProvider = Provider<WorkflowModel?>((ref) {
   
   return workflows.firstWhere(
     (workflow) => workflow.id == currentWorkflowId,
-    orElse: () => WorkflowModel.create(),
+    // orElse: () => WorkflowModel.create(),
   );
 });
 
@@ -32,7 +32,6 @@ final workflowExecutionStateProvider = StateNotifierProvider<WorkflowExecutionNo
   return WorkflowExecutionNotifier(ref);
 });
 
-/// Workflow execution status enum
 enum WorkflowExecutionStatus {
   idle,
   running,
@@ -40,7 +39,6 @@ enum WorkflowExecutionStatus {
   completed,
 }
 
-/// Workflow execution state class
 class WorkflowExecutionState {
   final WorkflowExecutionStatus status;
   final String? currentNodeId;
@@ -69,7 +67,6 @@ class WorkflowExecutionState {
   }
 }
 
-/// Workflow execution notifier class
 class WorkflowExecutionNotifier extends StateNotifier<WorkflowExecutionState> {
   final Ref _ref;
   
@@ -81,7 +78,6 @@ class WorkflowExecutionNotifier extends StateNotifier<WorkflowExecutionState> {
     final workflow = _ref.read(activeWorkflowProvider);
     if (workflow == null || workflow.nodes.isEmpty) return;
 
-    // Start with the first node
     final firstNode = workflow.nodes.first;
     
     state = WorkflowExecutionState(
@@ -91,7 +87,6 @@ class WorkflowExecutionNotifier extends StateNotifier<WorkflowExecutionState> {
       executionContext: {},
     );
 
-    // Execute the first node
     await _executeNode(firstNode.id);
   }
 
@@ -114,7 +109,6 @@ class WorkflowExecutionNotifier extends StateNotifier<WorkflowExecutionState> {
   Future<void> stop() async {
     state = WorkflowExecutionState();
     
-    // Reset all node statuses
     final workflow = _ref.read(activeWorkflowProvider);
     if (workflow != null) {
       _ref.read(workflowsProvider.notifier).updateNodes(
@@ -135,65 +129,60 @@ class WorkflowExecutionNotifier extends StateNotifier<WorkflowExecutionState> {
     
     final node = workflow.nodes[nodeIndex];
     
-    // Update node status to running
     _ref.read(workflowsProvider.notifier).updateNode(
       workflow.id,
       node.copyWith(status: NodeStatus.running),
     );
     
-    // Simulate API execution
     await Future.delayed(const Duration(seconds: 1));
     
-    // Determine success or failure
     final isSuccess = DateTime.now().millisecondsSinceEpoch % 5 != 0; // 80% success rate
     
-    // Update node status based on result
     _ref.read(workflowsProvider.notifier).updateNode(
       workflow.id,
       node.copyWith(status: isSuccess ? NodeStatus.success : NodeStatus.failure),
     );
     
-    // Add this node to executed nodes
     final updatedExecutedNodeIds = [...state.executedNodeIds, nodeId];
     state = state.copyWith(
       executedNodeIds: updatedExecutedNodeIds,
     );
     
     // If failed and is conditional, stop execution
-    if (!isSuccess && node.connectedToIds.isNotEmpty) {
-      final connections = workflow.connections.where(
-        (conn) => conn.sourceId == nodeId && conn.isConditional
-      ).toList();
+    // if (!isSuccess && node.connectedToIds.isNotEmpty) {
+    //   final connections = workflow.connections.where(
+    //     (conn) => conn.sourceId == nodeId && conn.isConditional
+    //   ).toList();
       
-      if (connections.isNotEmpty) {
-        state = state.copyWith(status: WorkflowExecutionStatus.completed);
-        return;
-      }
-    }
+    //   if (connections.isNotEmpty) {
+    //     state = state.copyWith(status: WorkflowExecutionStatus.completed);
+    //     return;
+    //   }
+    // }
     
-    // Get next nodes
-    final nextNodeIds = node.connectedToIds.isEmpty 
-        ? [] 
-        : workflow.connections
-            .where((conn) => conn.sourceId == nodeId)
-            .map((conn) => conn.targetId)
-            .toList();
+    // // Get next nodes
+    // final nextNodeIds = node.connectedToIds.isEmpty 
+    //     ? [] 
+    //     : workflow.connections
+    //         .where((conn) => conn.sourceId == nodeId)
+    //         .map((conn) => conn.targetId)
+    //         .toList();
     
-    // If no next nodes, workflow is completed
-    if (nextNodeIds.isEmpty) {
-      state = state.copyWith(status: WorkflowExecutionStatus.completed);
-      return;
-    }
+    // // If no next nodes, workflow is completed
+    // if (nextNodeIds.isEmpty) {
+    //   state = state.copyWith(status: WorkflowExecutionStatus.completed);
+    //   return;
+    // }
     
-    // Execute next nodes
-    for (final nextNodeId in nextNodeIds) {
-      state = state.copyWith(currentNodeId: nextNodeId);
-      await _executeNode(nextNodeId);
+    // // Execute next nodes
+    // for (final nextNodeId in nextNodeIds) {
+    //   state = state.copyWith(currentNodeId: nextNodeId);
+    //   await _executeNode(nextNodeId);
       
-      // If execution was paused or stopped, break the loop
-      if (state.status != WorkflowExecutionStatus.running) {
-        break;
-      }
-    }
+    //   // If execution was paused or stopped, break the loop
+    //   if (state.status != WorkflowExecutionStatus.running) {
+    //     break;
+    //   }
+    // }
   }
 }
