@@ -5,10 +5,10 @@ import 'package:example/src/models.dart';
 
 class HashtagAutocompleteOptions extends StatelessWidget {
   const HashtagAutocompleteOptions({
-    Key? key,
+    super.key,
     required this.query,
     required this.onHashtagTap,
-  }) : super(key: key);
+  });
 
   final String query;
   final ValueSetter<Hashtag> onHashtagTap;
