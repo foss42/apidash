@@ -1,8 +1,9 @@
-import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:apidash/utils/fake_data_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:api_testing_suite/src/fake_data_provider/models/fake_data_config.dart';
+
+import '../services/fake_data_provider.dart';
 
 class FakeDataProvidersPane extends ConsumerWidget {
   const FakeDataProvidersPane({super.key});
@@ -12,9 +13,9 @@ class FakeDataProvidersPane extends ConsumerWidget {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        borderRadius: kBorderRadius12,
+        borderRadius: BorderRadius.circular(12),
       ),
-      margin: kP10,
+      margin: const EdgeInsets.all(10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
