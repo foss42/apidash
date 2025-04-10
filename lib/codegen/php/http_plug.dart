@@ -19,10 +19,12 @@ use Http\\Discovery\\Psr18ClientDiscovery;
 """;
 
   String kTemplateParams = """
-\$queryParams = [{{params}}];
-\$uri .= '?' . http_build_query(\$queryParams);
+  \$queryParams = [
+  {{params}}
+  ];
+  \$uri .= '?' . http_build_query(\$queryParams,'','&');
 
-""";
+  """;
 
   String kTemplateRequestInit = """
 \$request = Psr17FactoryDiscovery::findRequestFactory()->createRequest('{{method}}', \$uri);
@@ -89,19 +91,23 @@ echo \$response->getBody();
         var templateUri = jj.Template(kTemplateUri);
         result += templateUri.render({"uri": stripUriParams(uri)});
 
-        if (uri.hasQuery) {
-          var params = uri.queryParameters;
-          if (params.isNotEmpty) {
-            var templateParams = jj.Template(kTemplateParams);
-            List<String> queryList = [];
-            for (MapEntry<String, String> entry in params.entries) {
-              String entryStr = "\"${entry.key}\" => \"${entry.value}\"";
-              queryList.add(entryStr);
-            }
-            String paramsString = "\n ${queryList.join(",\n ")}\n";
-            result += templateParams.render({"params": paramsString});
+      var params = requestModel.enabledParamsMap;
+      if (params.isNotEmpty) {
+        var templateParams = jj.Template(kTemplateParams);
+        List<String> paramList = [];
+
+        params.forEach((key, value) {
+          if (value is List) {
+            paramList.add("'$key' => [${value.map((v) => "'$v'").join(", ")}]");
+          } else {
+            paramList.add("'$key' => '$value'");
           }
-        }
+        });
+
+        result += templateParams.render({
+          "params": paramList.join(",\n"),
+        });
+      }
 
         var templateRequestInit = jj.Template(kTemplateRequestInit);
         result += templateRequestInit
