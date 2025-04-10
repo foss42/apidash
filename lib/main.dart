@@ -6,8 +6,10 @@ import 'providers/providers.dart';
 import 'services/services.dart';
 import 'consts.dart';
 import 'app.dart';
+import 'package:stac/stac.dart' as stac;
 
 void main() async {
+  await stac.Stac.initialize();
   WidgetsFlutterBinding.ensureInitialized();
   var settingsModel = await getSettingsFromSharedPrefs();
   var onboardingStatus = await getOnboardingStatusFromSharedPrefs();
