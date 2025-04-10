@@ -1,40 +1,52 @@
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:uuid/uuid.dart';
 
 part 'workflow_connection_model.freezed.dart';
-part 'workflow_connection_model.g.dart';
 
 /// Model representing a connection between nodes in a workflow
 @freezed
 class WorkflowConnectionModel with _$WorkflowConnectionModel {
-  const WorkflowConnectionModel._();
-
   const factory WorkflowConnectionModel({
     required String id,
     required String sourceId,
     required String targetId,
-    @Default('') String label,
+    required String workflowId,
+    @JsonKey(fromJson: _offsetFromJson, toJson: _offsetToJson) required Offset position,
+    String? label,
     @Default(false) bool isConditional,
-    @Default('') String condition,
+    String? condition,
   }) = _WorkflowConnectionModel;
+
+  factory WorkflowConnectionModel.fromJson(Map<String, dynamic> json) =>
+      _$WorkflowConnectionModelFromJson(json);
 
   factory WorkflowConnectionModel.create({
     required String sourceId,
     required String targetId,
-    String label = '',
+    required String workflowId,
+    required Offset position,
+    String? label,
     bool isConditional = false,
-    String condition = '',
-  }) {
-    return WorkflowConnectionModel(
-      id: const Uuid().v4(),
-      sourceId: sourceId,
-      targetId: targetId,
-      label: label,
-      isConditional: isConditional,
-      condition: condition,
-    );
-  }
+    String? condition,
+  }) =>
+      WorkflowConnectionModel(
+        id: const Uuid().v4(),
+        sourceId: sourceId,
+        targetId: targetId,
+        workflowId: workflowId,
+        position: position,
+        label: label,
+        isConditional: isConditional,
+        condition: condition,
+      );
+}
 
-  factory WorkflowConnectionModel.fromJson(Map<String, dynamic> json) => 
-      _$WorkflowConnectionModelFromJson(json);
+Offset _offsetFromJson(Map<String, dynamic> json) {
+  return Offset(json['dx'] as double, json['dy'] as double);
+}
+
+Map<String, dynamic> _offsetToJson(Offset offset) {
+  return {'dx': offset.dx, 'dy': offset.dy};
 }
