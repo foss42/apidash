@@ -4,6 +4,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:uuid/uuid.dart';
 
 part 'workflow_connection_model.freezed.dart';
+part 'workflow_connection_model.g.dart';
 
 /// Model representing a connection between nodes in a workflow
 @freezed

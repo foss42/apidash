@@ -1,44 +1,27 @@
 import 'package:flutter/material.dart';
 
+/// Enum representing the different states a workflow node can be in
 enum NodeStatus {
-  pending,
+  inactive,
   running,
   success,
-  error,
-  idle,
-  failure;
+  failure,
+  pending,
+}
 
-  String get label {
-    switch (this) {
-      case NodeStatus.pending:
-        return 'Pending';
-      case NodeStatus.running:
-        return 'Running';
-      case NodeStatus.success:
-        return 'Success';
-      case NodeStatus.error:
-        return 'Error';
-      case NodeStatus.idle:
-        return 'Idle';
-      case NodeStatus.failure:
-        return 'Failure';
-    }
-  }
-
+extension NodeStatusExtension on NodeStatus {
   Color get color {
     switch (this) {
-      case NodeStatus.pending:
-        return Colors.grey;
       case NodeStatus.running:
         return Colors.blue;
       case NodeStatus.success:
         return Colors.green;
-      case NodeStatus.error:
-        return Colors.red;
-      case NodeStatus.idle:
-        return Colors.grey;
       case NodeStatus.failure:
         return Colors.red;
+      case NodeStatus.pending:
+        return Colors.orange;
+      case NodeStatus.inactive:
+        return Colors.grey;
     }
   }
 }
