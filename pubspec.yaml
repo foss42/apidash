@@ -37,7 +37,8 @@ dependencies:
   json_annotation: ^4.9.0
   json_explorer:
     path: packages/json_explorer
-  json_text_field: ^1.2.0
+  json_field_editor:
+    path: packages/json_field_editor
   just_audio: ^0.9.46
   just_audio_mpv: ^0.1.7
   just_audio_windows: ^0.2.0

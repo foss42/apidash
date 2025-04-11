@@ -30,6 +30,7 @@
 
 **Have you worked on or contributed to a FOSS project before?**  
 Yes, I have contributed to various FOSS projects, including APIDash. Here are some relevant PRs and repository links:  
+- [Implemented Fake Data Providers for API Dash to streamline testing](https://github.com/foss42/apidash/pull/777)
 - [Feature that allows users to configure and use a proxy for their HTTP requests within the API Dash](https://github.com/foss42/apidash/pull/544)  
 - [Support for running multiple API requests in parallel](https://github.com/foss42/apidash/pull/734)  
 - [Support for fetching environment variables directly from the OS in API Dash](https://github.com/foss42/apidash/pull/662) 
@@ -39,15 +40,24 @@ Yes, I have contributed to various FOSS projects, including APIDash. Here are so
 - [Dependency upgradation in Talawa](https://github.com/PalisadoesFoundation/talawa/pull/2353)  
 
 **What is your one project/achievement that you are most proud of? Why?**  
-The project I'm most proud of is MapIt, a location-based note-taking app I built using Flutter. It allows users to create notes, tag locations using Google Maps, and set reminders with notifications. What makes this project special is that it combines multiple advanced features like Google Sign-In, Geofencing, Background Notification Service, and Battery Optimization to ensure a smooth user experience.  
-One of the most challenging yet rewarding aspects was implementing background services efficiently, ensuring notifications and location tracking worked even when the app was closed, without draining the battery. I also optimized the Isolates to handle background tasks asynchronously, improving app performance.  
-This project pushed me to learn state management, background execution, and efficient API handling. Seeing it come together and solving real-world problems with it made me really proud.  
+As part of the core engineering team, I collaborated with product managers and designers to prototype Neo, an AI-powered productivity assistant. My key contribution was architecting the natural language processing (NLP) pipeline that powers its automation features. Working closely with backend engineers, I developed models to extract user intent, deadlines, and emotional cues from voice/text inputs, which enabled features like smart scheduling and action plan generation. To ensure scalability, I integrated hybrid logic (ML models + rule-based systems).
+
+The cross-functional effort paid off – our team’s prototype was showcased on Shark Tank India, securing funding from 3 investors. This experience taught me how to balance technical innovation with product thinking in fast-paced, collaborative environments.
+
+[App URL](https://play.google.com/store/apps/details?id=xyz.neosapien.neo) 
+
+Earlier, I engineered MapIt (a Flutter-based location-note app) to solve spatial memory challenges. It integrated geofencing, Google Maps, and battery-efficient background services. The complex dance of optimizing Dart Isolates for asynchronous geolocation tracking – ensuring notifications fired reliably even with the app closed – taught me valuable lessons in state management and performance tuning.
+
+Both projects pushed me to solve critical technical hurdles: Neo demanded scalable architecture for real-time voice/data processing, while MapIt required deep platform-level understanding of Android/iOS background execution limits. Together, they reflect my focus on building systems that augment human capabilities through thoughtful technical design.
+
+[Project URL](https://github.com/etackel/mapit_mobile) 
+
 
 **What kind of problems or challenges motivate you the most to solve them?**  
 I love working with Flutter and creating automation solutions for real-world problems that help users worldwide. The ability to build applications that streamline workflows, reduce manual effort, and enhance user experience excites me the most. I strive to solve practical problems that users face daily by developing scalable and user-friendly applications. My passion lies in integrating different technologies, optimizing performance, and refining processes to improve developer productivity. Whether it's automating API testing, optimizing background processes, or designing intuitive UI/UX solutions, I always aim to create impactful applications that make a difference.  
 
 **Will you be working on GSoC full-time?**  
-Yes, I will be dedicating my full time to GSoC.  
+Yes, I will be dedicating my full time to GSoC till end of July, then after that I would be able to give 15-20 hours per week due to my coursework.  
 
 **Do you mind regularly syncing up with the project mentors?**  
 Not at all, I am comfortable with regular sync-ups.  
@@ -84,18 +94,26 @@ By integrating these features, I will enhance APIDash to provide an end-to-end A
 
 ## Detailed Description
 
-### Key Features:
+### Key Features by Priority:
 
-- **API Validation Testing**: I intend to implement schema validation and assertion checks.
-- **Integration Testing**: I need to ensure seamless interactions between APIs.
-- **Security Testing**: I plan to develop features to identify vulnerabilities & secure endpoints, along with detection of security breaches like script injection.
-- **Performance Testing**: I aim to create tools to measure API performance under load.
-- **Scalability Testing**: I will implement features to ensure APIs scale efficiently.
+#### P0 (Must-Have Core Features):
 - **Collection Runner**: I plan to develop functionality to automate batch API executions, along with variable data payload sending ability.
+- **API Validation Testing**: I intend to implement schema validation and assertion checks.
 - **Workflow Builder**: I aim to create a drag-and-drop API request chaining interface.
 - **Monitoring System**: I will implement a system to track API responses and errors.
+
+#### P1 (High-Value Additions):
+- **Performance Testing**: I aim to create tools to measure API performance under load.
+- **Integration Testing**: I need to ensure seamless interactions between APIs.
+- **Security Testing**: I plan to develop features to identify vulnerabilities & secure endpoints, along with detection of security breaches like script injection.
+- **Scalability Testing**: I will implement features to ensure APIs scale efficiently.
+- **Automated fake data generation**: I plan to implement functionality to generate diverse and random data to send with the API requests.
+
+#### P2 (Extended Capabilities):
 - **Sync with authentication providers**: I plan to integrate authentication services for seamless API test management.
 - **Implement a global search bar**: I aim to add functionality for quick navigation and feature discovery.
+- **Export API test results**: I plan to implement functionality to export API test results in various formats, such as CSV, JSON, or PDF.
+- **Performance Insights** - Create load testing tools with flexible metrics integration (Prometheus optional) for monitoring and alerting.
 
 **AI-Enhanced Features (if time permits):**
 
@@ -110,6 +128,7 @@ By integrating these features, I will enhance APIDash to provide an end-to-end A
 - **Backend**: Firebase or Node.js/Golang (if required for logging and monitoring)
 - **Testing Framework**: Postman alternatives, automated test scripts
 - **AI-Model**: Gemini or similar (If Required)
+- **Monitoring & Alerting Toolkit**: Prometheus
 
 ![API Testing Suite](images/api-testing-suite-1.png)
 
@@ -213,6 +232,39 @@ In this approach, my goal is to represent each API request as a node in the DAG,
 
 - I need to display successful requests in green (indicating an HTTP 200 status), while failed requests will be shown in red, instantly signaling an error state.
 - My implementation includes a central state repository using Riverpod providers that stores API request outputs (headers, bodies, tokens) in memory during workflow execution. This state repository will follow APIDash's existing pattern of immutable state objects while providing a mechanism for downstream nodes to access upstream outputs.
+
+Here's an implementation of the topological sort algorithm that will be used for executing API workflows in the correct order:
+
+```dart
+List<ApiNode> topologicalSort(List<ApiNode> nodes) {
+  final sortedNodes = <ApiNode>[];
+  final inDegree = Map<ApiNode, int>.fromIterable(nodes, value: (_) => 0);
+  
+  // Calculate in-degree for each node
+  for (final node in nodes) {
+    for (final dep in node.dependencies) {
+      inDegree[dep] = (inDegree[dep] ?? 0) + 1;
+    }
+  }
+  
+  // Initialize queue with nodes having no dependencies
+  final queue = nodes.where((n) => inDegree[n] == 0).toList();
+  
+  // Process nodes in topological order
+  while (queue.isNotEmpty) {
+    final node = queue.removeLast();
+    sortedNodes.add(node);
+    
+    // Update in-degree of dependencies
+    for (final dep in node.dependencies) {
+      inDegree[dep] = (inDegree[dep] ?? 0) - 1;
+      if (inDegree[dep] == 0) queue.add(dep);
+    }
+  }
+  
+  return sortedNodes;
+}
+```
 - I'm planning to implement execution controls with start, pause, and exit flags, allowing the workflow to be initiated, temporarily halted, or completely terminated without losing progress.
 
 **Conditional Execution Support**  
@@ -235,6 +287,10 @@ It's critical that I validate complex workflows involving multiple requests, dep
 - My testing strategy includes monitoring memory consumption and performance, ensuring large or long-running workflows do not degrade the user experience.
 - I aim to include an export feature that saves the workflow's execution results in JSON format, allowing teams to share and review outcomes easily.
 
+Current Prototype:
+
+![](images/api-testing-suite-5.png)
+
 ### Phase 5: API Testing Suite (Weeks 9-10)
 **Objective:**  
 In this phase, I need to develop a completely new API Testing Suite to validate API responses with schema validation and assertions. This functionality will be built from the ground up as it's not currently implemented in APIDash.
@@ -252,6 +308,30 @@ In this phase, I need to develop a completely new API Testing Suite to validate 
 **Load Testing Module:**  
 - As part of this work, I'll create simulations for high-traffic scenarios.  
 - My testing framework will measure API response latency and throughput.
+
+Below is a sample implementation of the load testing scheduler that will generate request timestamps based on the test configuration:
+
+```dart
+List<int> generateRequestTimestamps(LoadTestConfig config) {
+  final timings = <int>[];
+  
+  // Handle concurrent users simulation
+  if (config.type == LoadTestType.concurrentUsers) {
+    // For concurrent users, all requests start at the same time
+    timings.addAll(List.filled(config.value, 0));
+  }
+  
+  // Handle requests-per-second simulation
+  if (config.type == LoadTestType.rps) {
+    // Calculate interval between requests in milliseconds
+    final interval = (1000 / config.value).round();
+    // Generate evenly spaced timestamps
+    timings.addAll(List.generate(config.value, (i) => i * interval));
+  }
+  
+  return timings;
+}
+```
 
 **Security Testing Integration:**  
 - I intend to build systems to detect vulnerabilities like CORS misconfigurations, exposed secrets.  
@@ -325,11 +405,13 @@ To ensure project completion within the GSoC timeline, I've prioritized features
 - Collection Runner with basic sequential and parallel execution
 - Simple Workflow Builder with linear API chaining
 - Basic API validation testing
+- Security testing features
+- Automated fake data generation for API testing to reduce manual work
 
 **Extended Goals (If Time Permits):**
 - Advanced workflow conditionals and branching
-- Security testing features
 - Performance testing capabilities
+- Flexible metrics integration: Giving users options to either set up their own Prometheus server to scrape metrics from APIDash's exposed endpoint or use APIDash's built-in visualization of these metrics without requiring a full Prometheus server setup
 
 **Stretch Goals (Post-GSoC):**
 - AI-enhanced features

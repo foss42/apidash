@@ -2,7 +2,7 @@ import 'dart:math' as math;
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:json_text_field/json_text_field.dart';
+import 'package:json_field_editor/json_field_editor.dart';
 import 'package:apidash/consts.dart';
 
 class JsonTextFieldEditor extends StatefulWidget {
@@ -51,7 +51,12 @@ class _JsonTextFieldEditorState extends State<JsonTextFieldEditor> {
     if (widget.initialValue != null) {
       controller.text = widget.initialValue!;
     }
-    controller.formatJson(sortJson: false);
+    // Below code fixes issue #782 but JSON formatting
+    // should be manual via beautify button
+    // Future.delayed(Duration(milliseconds: 50), () {
+    //   controller.formatJson(sortJson: false);
+    //   setState(() {});
+    // });
     editorFocusNode = FocusNode(debugLabel: "Editor Focus Node");
   }
 
@@ -87,7 +92,7 @@ class _JsonTextFieldEditorState extends State<JsonTextFieldEditor> {
               insertTab();
             },
           },
-          child: JsonTextField(
+          child: JsonField(
             key: Key(widget.fieldKey),
             commonTextStyle: kCodeStyle.copyWith(
               color: Theme.of(context).brightness == Brightness.dark
