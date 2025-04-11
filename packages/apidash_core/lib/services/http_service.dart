@@ -1,18 +1,21 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
-import 'package:http/http.dart' as http;
+
+import 'package:apidash_core/apidash_core.dart' as http;
+import 'package:dio/dio.dart';
 import 'package:seed/seed.dart';
+
 import '../consts.dart';
 import '../models/models.dart';
 import '../utils/utils.dart';
 import 'http_client_manager.dart';
 
-typedef HttpResponse = http.Response;
+typedef DioHttpResponse = Response; // from dio
+typedef HttpHttpResponse = http.Response; // from http
 
 final httpClientManager = HttpClientManager();
 
-Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
+Future<(Response?, Duration?, String?)> sendHttpRequest(
   String requestId,
   APIType apiType,
   HttpRequestModel requestModel, {
@@ -22,110 +25,104 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
   if (httpClientManager.wasRequestCancelled(requestId)) {
     httpClientManager.removeCancelledRequest(requestId);
   }
-  final client = httpClientManager.createClient(requestId, noSSL: noSSL);
 
-  (Uri?, String?) uriRec = getValidRequestUri(
+  final dio = httpClientManager.createClient(requestId, noSSL: noSSL);
+  final cancelToken = httpClientManager.getCancelToken(requestId);
+
+  final (uri, uriError) = getValidRequestUri(
     requestModel.url,
     requestModel.enabledParams,
     defaultUriScheme: defaultUriScheme,
   );
 
-  if (uriRec.$1 != null) {
-    Uri requestUrl = uriRec.$1!;
-    Map<String, String> headers = requestModel.enabledHeadersMap;
-    HttpResponse? response;
-    String? body;
-    try {
-      Stopwatch stopwatch = Stopwatch()..start();
-      if (apiType == APIType.rest) {
-        var isMultiPartRequest =
-            requestModel.bodyContentType == ContentType.formdata;
+  if (uri == null) return (null, null, uriError);
 
-        if (kMethodsWithBody.contains(requestModel.method)) {
-          var requestBody = requestModel.body;
-          if (requestBody != null && !isMultiPartRequest) {
-            var contentLength = utf8.encode(requestBody).length;
-            if (contentLength > 0) {
-              body = requestBody;
-              headers[HttpHeaders.contentLengthHeader] =
-                  contentLength.toString();
-              if (!requestModel.hasContentTypeHeader) {
-                headers[HttpHeaders.contentTypeHeader] =
-                    requestModel.bodyContentType.header;
-              }
-            }
-          }
-          if (isMultiPartRequest) {
-            var multiPartRequest = http.MultipartRequest(
-              requestModel.method.name.toUpperCase(),
-              requestUrl,
-            );
-            multiPartRequest.headers.addAll(headers);
-            for (var formData in requestModel.formDataList) {
-              if (formData.type == FormDataType.text) {
-                multiPartRequest.fields.addAll({formData.name: formData.value});
-              } else {
-                multiPartRequest.files.add(
-                  await http.MultipartFile.fromPath(
-                    formData.name,
-                    formData.value,
-                  ),
-                );
-              }
-            }
-            http.StreamedResponse multiPartResponse =
-                await client.send(multiPartRequest);
+  try {
+    final headers = requestModel.enabledHeadersMap;
+    final stopwatch = Stopwatch()..start();
+    Response? response;
 
-            stopwatch.stop();
-            http.Response convertedMultiPartResponse =
-                await convertStreamedResponse(multiPartResponse);
-            return (convertedMultiPartResponse, stopwatch.elapsed, null);
-          }
-        }
-        response = switch (requestModel.method) {
-          HTTPVerb.get => await client.get(requestUrl, headers: headers),
-          HTTPVerb.head => response =
-              await client.head(requestUrl, headers: headers),
-          HTTPVerb.post => response =
-              await client.post(requestUrl, headers: headers, body: body),
-          HTTPVerb.put => response =
-              await client.put(requestUrl, headers: headers, body: body),
-          HTTPVerb.patch => response =
-              await client.patch(requestUrl, headers: headers, body: body),
-          HTTPVerb.delete => response =
-              await client.delete(requestUrl, headers: headers, body: body),
-        };
-      }
-      if (apiType == APIType.graphql) {
-        var requestBody = getGraphQLBody(requestModel);
-        if (requestBody != null) {
-          var contentLength = utf8.encode(requestBody).length;
-          if (contentLength > 0) {
-            body = requestBody;
-            headers[HttpHeaders.contentLengthHeader] = contentLength.toString();
-            if (!requestModel.hasContentTypeHeader) {
-              headers[HttpHeaders.contentTypeHeader] = ContentType.json.header;
+    final isMultiPartRequest =
+        requestModel.bodyContentType == ContentType.formdata;
+
+    if (!requestModel.hasContentTypeHeader) {
+      headers[HttpHeaders.contentTypeHeader] =
+          requestModel.bodyContentType.header;
+    }
+
+    if (apiType == APIType.rest) {
+      if (kMethodsWithBody.contains(requestModel.method)) {
+        if (isMultiPartRequest) {
+          final formData = FormData();
+
+          for (var formField in requestModel.formDataList) {
+            if (formField.type == FormDataType.text) {
+              formData.fields.add(MapEntry(formField.name, formField.value));
+            } else {
+              formData.files.add(
+                MapEntry(
+                  formField.name,
+                  await MultipartFile.fromFile(formField.value),
+                ),
+              );
             }
           }
+
+          response = await dio.request(
+            uri.toString(),
+            data: formData,
+            options: Options(
+              method: requestModel.method.name.toUpperCase(),
+              headers: headers,
+            ),
+            cancelToken: cancelToken,
+          );
+        } else {
+          final body = requestModel.body ?? '';
+          response = await dio.request(
+            uri.toString(),
+            data: body,
+            options: Options(
+              method: requestModel.method.name.toUpperCase(),
+              headers: headers,
+            ),
+            cancelToken: cancelToken,
+          );
         }
-        response = await client.post(
-          requestUrl,
-          headers: headers,
-          body: body,
+      } else {
+        response = await dio.request(
+          uri.toString(),
+          options: Options(
+            method: requestModel.method.name.toUpperCase(),
+            headers: headers,
+          ),
+          cancelToken: cancelToken,
         );
       }
-      stopwatch.stop();
-      return (response, stopwatch.elapsed, null);
-    } catch (e) {
-      if (httpClientManager.wasRequestCancelled(requestId)) {
-        return (null, null, kMsgRequestCancelled);
-      }
-      return (null, null, e.toString());
-    } finally {
-      httpClientManager.closeClient(requestId);
     }
-  } else {
-    return (null, null, uriRec.$2);
+
+    if (apiType == APIType.graphql) {
+      final body = getGraphQLBody(requestModel);
+      if (body != null) {
+        headers[HttpHeaders.contentTypeHeader] = ContentType.json.header;
+        response = await dio.post(
+          uri.toString(),
+          data: body,
+          options: Options(headers: headers),
+          cancelToken: cancelToken,
+        );
+      }
+    }
+
+    stopwatch.stop();
+    return (response, stopwatch.elapsed, null);
+  } catch (e) {
+    if (httpClientManager.wasRequestCancelled(requestId)) {
+      return (null, null, kMsgRequestCancelled);
+    }
+    return (null, null, e.toString());
+  } finally {
+    httpClientManager.closeClient(requestId);
   }
 }
 

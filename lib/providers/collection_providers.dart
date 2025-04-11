@@ -267,20 +267,16 @@ class CollectionStateNotifier
     ref.read(codePaneVisibleStateProvider.notifier).state = false;
     final defaultUriScheme = ref.read(settingsProvider).defaultUriScheme;
 
-    if (requestId == null || state == null) {
-      return;
-    }
-    RequestModel? requestModel = state![requestId];
+    if (requestId == null || state == null) return;
 
-    if (requestModel?.httpRequestModel == null) {
-      return;
-    }
+    RequestModel? requestModel = state![requestId];
+    if (requestModel?.httpRequestModel == null) return;
 
     APIType apiType = requestModel!.apiType;
     HttpRequestModel substitutedHttpRequestModel =
         getSubstitutedHttpRequestModel(requestModel.httpRequestModel!);
 
-    // set current model's isWorking to true and update state
+    // Set current model's isWorking to true and update state
     var map = {...state!};
     map[requestId] = requestModel.copyWith(
       isWorking: true,
@@ -298,6 +294,7 @@ class CollectionStateNotifier
     );
 
     late final RequestModel newRequestModel;
+
     if (responseRec.$1 == null) {
       newRequestModel = requestModel.copyWith(
         responseStatus: -1,
@@ -305,17 +302,20 @@ class CollectionStateNotifier
         isWorking: false,
       );
     } else {
-      final httpResponseModel = baseHttpResponseModel.fromResponse(
+      final httpResponseModel = baseHttpResponseModel.fromDioResponse(
         response: responseRec.$1!,
         time: responseRec.$2!,
       );
-      int statusCode = responseRec.$1!.statusCode;
+
+      final int statusCode = responseRec.$1?.statusCode ?? -1;
+
       newRequestModel = requestModel.copyWith(
         responseStatus: statusCode,
         message: kResponseCodeReasons[statusCode],
         httpResponseModel: httpResponseModel,
         isWorking: false,
       );
+
       String newHistoryId = getNewUuid();
       HistoryRequestModel model = HistoryRequestModel(
         historyId: newHistoryId,
@@ -335,7 +335,7 @@ class CollectionStateNotifier
       ref.read(historyMetaStateNotifier.notifier).addHistoryRequest(model);
     }
 
-    // update state with response data
+    // Update state with response data
     map = {...state!};
     map[requestId] = newRequestModel;
     state = map;
