@@ -11,6 +11,7 @@ class JsonField extends ExtendedTextField {
 
   const JsonField({
     super.key,
+    this.fieldKey,
     super.autocorrect,
     super.autofillHints,
     super.autofocus,
@@ -82,11 +83,18 @@ class JsonField extends ExtendedTextField {
     this.errorContainerDecoration,
     this.showErrorMessage = false,
     this.isFormatting = true,
+    this.doInitFormatting = false,
     this.onError,
   });
 
   /// If true, the text will be formatted as json. If false, the text field will behave as a normal text field. Default is true.
   final bool isFormatting;
+
+  /// If true, the text will be formatted during initialization
+  final bool doInitFormatting;
+
+  /// Provide the key value for ExtendedTextField widget
+  final String? fieldKey;
 
   /// TextStyle for the json key.
   final TextStyle? keyHighlightStyle;
@@ -164,7 +172,9 @@ class JsonFieldState extends State<JsonField> {
   @override
   void initState() {
     controller.text =
-        (widget.isFormatting && JsonUtils.isValidJson(controller.text))
+        (widget.doInitFormatting &&
+                widget.isFormatting &&
+                JsonUtils.isValidJson(controller.text))
             ? JsonUtils.getPrettyPrintJson(controller.text)
             : controller.text;
 
@@ -172,12 +182,14 @@ class JsonFieldState extends State<JsonField> {
   }
 
   void _setJsonError(String? error) => setState(() => jsonError = error);
+
   @override
   Widget build(BuildContext context) {
     return Stack(
       alignment: AlignmentDirectional.bottomCenter,
       children: [
         ExtendedTextField(
+          key: widget.fieldKey != null ? ValueKey(widget.fieldKey!) : null,
           autocorrect: widget.autocorrect,
           autofillHints: widget.autofillHints,
           autofocus: widget.autofocus,

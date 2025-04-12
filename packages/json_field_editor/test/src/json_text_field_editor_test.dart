@@ -21,6 +21,7 @@ void main() {
             child: JsonField(
               key: ValueKey("1"),
               isFormatting: true,
+              doInitFormatting: true,
               controller: controller,
             ),
           ),
