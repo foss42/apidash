@@ -13,6 +13,7 @@ class JsonTextFieldEditor extends StatefulWidget {
     this.initialValue,
     this.hintText,
     this.readOnly = false,
+    this.isDark = false,
   });
 
   final String fieldKey;
@@ -20,6 +21,8 @@ class JsonTextFieldEditor extends StatefulWidget {
   final String? initialValue;
   final String? hintText;
   final bool readOnly;
+  final bool isDark;
+
   @override
   State<JsonTextFieldEditor> createState() => _JsonTextFieldEditorState();
 }
@@ -74,10 +77,8 @@ class _JsonTextFieldEditorState extends State<JsonTextFieldEditor> {
       controller.selection =
           TextSelection.collapsed(offset: controller.text.length);
     }
-    if (oldWidget.fieldKey != widget.fieldKey) {
-      // TODO: JsonTextField uses ExtendedTextField which does
-      // not rebuild because no key is provided
-      // so light mode to dark mode switching leads to incorrect color.
+    if ((oldWidget.fieldKey != widget.fieldKey) ||
+        (oldWidget.isDark != widget.isDark)) {
       setState(() {});
     }
   }
@@ -93,39 +94,40 @@ class _JsonTextFieldEditorState extends State<JsonTextFieldEditor> {
             },
           },
           child: JsonField(
-            key: Key(widget.fieldKey),
+            key: ValueKey("${widget.fieldKey}-fld"),
+            fieldKey: widget.fieldKey,
             commonTextStyle: kCodeStyle.copyWith(
-              color: Theme.of(context).brightness == Brightness.dark
+              color: widget.isDark
                   ? kDarkCodeTheme['root']?.color
                   : kLightCodeTheme['root']?.color,
             ),
             specialCharHighlightStyle: kCodeStyle.copyWith(
-              color: Theme.of(context).brightness == Brightness.dark
+              color: widget.isDark
                   ? kDarkCodeTheme['root']?.color
                   : kLightCodeTheme['root']?.color,
             ),
             stringHighlightStyle: kCodeStyle.copyWith(
-              color: Theme.of(context).brightness == Brightness.dark
+              color: widget.isDark
                   ? kDarkCodeTheme['string']?.color
                   : kLightCodeTheme['string']?.color,
             ),
             numberHighlightStyle: kCodeStyle.copyWith(
-              color: Theme.of(context).brightness == Brightness.dark
+              color: widget.isDark
                   ? kDarkCodeTheme['number']?.color
                   : kLightCodeTheme['number']?.color,
             ),
             boolHighlightStyle: kCodeStyle.copyWith(
-              color: Theme.of(context).brightness == Brightness.dark
+              color: widget.isDark
                   ? kDarkCodeTheme['literal']?.color
                   : kLightCodeTheme['literal']?.color,
             ),
             nullHighlightStyle: kCodeStyle.copyWith(
-              color: Theme.of(context).brightness == Brightness.dark
+              color: widget.isDark
                   ? kDarkCodeTheme['variable']?.color
                   : kLightCodeTheme['variable']?.color,
             ),
             keyHighlightStyle: kCodeStyle.copyWith(
-              color: Theme.of(context).brightness == Brightness.dark
+              color: widget.isDark
                   ? kDarkCodeTheme['attr']?.color
                   : kLightCodeTheme['attr']?.color,
               fontWeight: FontWeight.bold,

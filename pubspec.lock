@@ -832,7 +832,7 @@ packages:
       path: "packages/json_field_editor"
       relative: true
     source: path
-    version: "1.2.0"
+    version: "1.2.1"
   json_serializable:
     dependency: "direct dev"
     description:

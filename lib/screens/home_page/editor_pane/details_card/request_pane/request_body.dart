@@ -20,7 +20,7 @@ class EditRequestBody extends ConsumerWidget {
         .select((value) => value?.httpRequestModel?.bodyContentType));
     final apiType = ref
         .watch(selectedRequestModelProvider.select((value) => value?.apiType));
-    final mode = ref.watch(settingsProvider.select(
+    final darkMode = ref.watch(settingsProvider.select(
       (value) => value.isDark,
     ));
 
@@ -49,7 +49,8 @@ class EditRequestBody extends ConsumerWidget {
                     padding: kPt5o10,
                     child: JsonTextFieldEditor(
                       key: Key("$selectedId-json-body"),
-                      fieldKey: "$selectedId-json-body-editor-$mode",
+                      fieldKey: "$selectedId-json-body-editor-$darkMode",
+                      isDark: darkMode,
                       initialValue: requestModel?.httpRequestModel?.body,
                       onChanged: (String value) {
                         ref
