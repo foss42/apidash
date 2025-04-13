@@ -21,13 +21,17 @@ multipartFormData.append(fileURL, withName: "{{param.name}}", fileName: "{{param
 ''';
  
   final String kTemplateJsonData = '''
-let jsonString = """{{jsonData}}"""
-let jsonData = jsonString.data(using: .utf8)
+let jsonString = """
+{{jsonData}}
+"""
+let jsonData = jsonString.data(using: .utf8)\n
 ''';
 
   final String kTemplateTextData = '''
-let textString = """{{textData}}"""
-let textData = textString.data(using: .utf8)
+let textString = """
+{{textData}}
+"""
+let textData = textString.data(using: .utf8)\n
 ''';
 
   final String kTemplateRequest = """
