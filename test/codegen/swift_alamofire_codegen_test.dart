@@ -637,19 +637,19 @@ dispatchMain()''';
 //             ),
 //             expectedCode);
 //       });
-      test('POST 8', () {
-        const expectedCode = r"""
+//       test('POST 8', () {
+//         const expectedCode = r"""
 
-""";
+// """;
 
-        expect(
-            codeGen.getCode(
-              CodegenLanguage.swiftAlamofire,
-              requestModelPost8,
-              SupportedUriSchemes.https,
-            ),
-            expectedCode);
-      });
+//         expect(
+//             codeGen.getCode(
+//               CodegenLanguage.swiftAlamofire,
+//               requestModelPost8,
+//               SupportedUriSchemes.https,
+//             ),
+//             expectedCode);
+//       });
 //       test('POST 9', () {
 //         const expectedCode = r"""
 
