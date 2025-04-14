@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 class StressTestResultCard extends StatelessWidget {
   final StressTestSummary summary;
 
-  const StressTestResultCard({Key? key, required this.summary}) : super(key: key);
+  const StressTestResultCard({Key? key, required this.summary})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +14,7 @@ class StressTestResultCard extends StatelessWidget {
     final errorColor = isDarkMode ? Colors.red[400] : Colors.red[700];
     final cardColor = isDarkMode ? Colors.grey[850] : Colors.grey[200];
     final textColor = isDarkMode ? Colors.grey[400] : Colors.grey[800];
-    
+
     return Card(
       color: cardColor,
       elevation: 0,
@@ -116,8 +117,8 @@ class StressTestResultCard extends StatelessWidget {
             Text(
               label,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: textColor,
-              ),
+                    color: textColor,
+                  ),
             ),
           ],
         ),
@@ -137,8 +138,9 @@ class StressTestResultCard extends StatelessWidget {
     int total,
     Color color,
   ) {
-    final percentage = total > 0 ? (count / total * 100).toStringAsFixed(1) : '0.0';
-    
+    final percentage =
+        total > 0 ? (count / total * 100).toStringAsFixed(1) : '0.0';
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -152,16 +154,16 @@ class StressTestResultCard extends StatelessWidget {
             Text(
               '$count',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: color,
-                fontWeight: FontWeight.bold,
-              ),
+                    color: color,
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
             const SizedBox(width: 4),
             Text(
               '($percentage%)',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: color,
-              ),
+                    color: color,
+                  ),
             ),
           ],
         ),
@@ -179,44 +181,46 @@ class StressTestResultCard extends StatelessWidget {
     );
   }
 
-  Widget _buildResponseTimeDistribution(BuildContext context, List<ApiRequestResult> results) {
+  Widget _buildResponseTimeDistribution(
+      BuildContext context, List<ApiRequestResult> results) {
     final successfulResults = results.where((r) => r.error == null).toList();
     if (successfulResults.isEmpty) {
       return const Text('No successful responses to analyze');
     }
-    
+
     successfulResults.sort((a, b) => a.duration.compareTo(b.duration));
-    
+
     final p50Index = (successfulResults.length * 0.5).floor();
     final p75Index = (successfulResults.length * 0.75).floor();
     final p90Index = (successfulResults.length * 0.9).floor();
     final p95Index = (successfulResults.length * 0.95).floor();
     final p99Index = (successfulResults.length * 0.99).floor();
-    
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Column(
         children: [
-          _buildPercentileRow(context, 'Min', 
+          _buildPercentileRow(context, 'Min',
               '${successfulResults.first.duration.inMilliseconds} ms'),
-          _buildPercentileRow(context, 'P50', 
+          _buildPercentileRow(context, 'P50',
               '${successfulResults[p50Index].duration.inMilliseconds} ms'),
-          _buildPercentileRow(context, 'P75', 
+          _buildPercentileRow(context, 'P75',
               '${successfulResults[p75Index].duration.inMilliseconds} ms'),
-          _buildPercentileRow(context, 'P90', 
+          _buildPercentileRow(context, 'P90',
               '${successfulResults[p90Index].duration.inMilliseconds} ms'),
-          _buildPercentileRow(context, 'P95', 
+          _buildPercentileRow(context, 'P95',
               '${successfulResults[p95Index].duration.inMilliseconds} ms'),
-          _buildPercentileRow(context, 'P99', 
+          _buildPercentileRow(context, 'P99',
               '${successfulResults[p99Index].duration.inMilliseconds} ms'),
-          _buildPercentileRow(context, 'Max', 
+          _buildPercentileRow(context, 'Max',
               '${successfulResults.last.duration.inMilliseconds} ms'),
         ],
       ),
     );
   }
 
-  Widget _buildPercentileRow(BuildContext context, String percentile, String value) {
+  Widget _buildPercentileRow(
+      BuildContext context, String percentile, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2.0),
       child: Row(
@@ -240,22 +244,23 @@ class StressTestResultCard extends StatelessWidget {
     );
   }
 
-  Widget _buildStatusCodeDistribution(BuildContext context, List<ApiRequestResult> results) {
+  Widget _buildStatusCodeDistribution(
+      BuildContext context, List<ApiRequestResult> results) {
     final statusCodeCounts = <int, int>{};
     for (final result in results) {
-      if (result.statusCode != -1) { // Skip errors
-        statusCodeCounts[result.statusCode] = 
+      if (result.statusCode != -1) {
+        statusCodeCounts[result.statusCode] =
             (statusCodeCounts[result.statusCode] ?? 0) + 1;
       }
     }
-    
+
     if (statusCodeCounts.isEmpty) {
       return const Text('No status codes to analyze');
     }
-    
+
     final sortedEntries = statusCodeCounts.entries.toList()
       ..sort((a, b) => a.key.compareTo(b.key));
-    
+
     return Wrap(
       spacing: 8,
       runSpacing: 8,
@@ -266,7 +271,7 @@ class StressTestResultCard extends StatelessWidget {
         final isRedirect = statusCode >= 300 && statusCode < 400;
         final isClientError = statusCode >= 400 && statusCode < 500;
         final isServerError = statusCode >= 500;
-        
+
         Color chipColor;
         if (isSuccess) {
           chipColor = Colors.green;
@@ -279,10 +284,10 @@ class StressTestResultCard extends StatelessWidget {
         } else {
           chipColor = Colors.grey;
         }
-        
+
         return Chip(
           label: Text('$statusCode ($count)'),
-          backgroundColor: chipColor.withOpacity(0.2),
+          backgroundColor: chipColor.withAlpha(51),
           labelStyle: TextStyle(color: chipColor),
         );
       }).toList(),
