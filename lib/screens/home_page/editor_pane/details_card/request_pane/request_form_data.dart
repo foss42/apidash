@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:data_table_2/data_table_2.dart';
 import 'package:apidash/providers/providers.dart';
+import 'package:apidash/screens/common_widgets/common_widgets.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/utils/utils.dart';
 import 'package:apidash/consts.dart';
@@ -82,7 +83,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
           key: ValueKey("$selectedId-$index-form-row-$seed"),
           cells: <DataCell>[
             DataCell(
-              CellField(
+              EnvCellField(
                 keyId: "$selectedId-$index-form-k-$seed",
                 initialValue: formRows[index].name,
                 hintText: kHintAddFieldName,
@@ -138,7 +139,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                       },
                       initialValue: formRows[index].value,
                     )
-                  : CellField(
+                  : EnvCellField(
                       keyId: "$selectedId-$index-form-v-$seed",
                       initialValue: formRows[index].value,
                       hintText: kHintAddValue,
