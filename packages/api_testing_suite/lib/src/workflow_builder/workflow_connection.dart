@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../models/workflow_connection_model.dart';
+import 'models/workflow_connection_model.dart';
 
 class WorkflowConnectionWidget extends StatelessWidget {
   final WorkflowConnectionModel connection;
@@ -8,7 +8,8 @@ class WorkflowConnectionWidget extends StatelessWidget {
   final VoidCallback onTap;
   final VoidCallback onRemove;
 
-  WorkflowConnectionWidget({
+  const WorkflowConnectionWidget({
+    super.key,
     required this.connection,
     required this.sourcePosition,
     required this.targetPosition,
@@ -99,7 +100,7 @@ class ConnectionPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
     return oldDelegate is ConnectionPainter &&
-           (oldDelegate.source != source ||
+        (oldDelegate.source != source ||
             oldDelegate.target != target ||
             oldDelegate.isConditional != isConditional);
   }

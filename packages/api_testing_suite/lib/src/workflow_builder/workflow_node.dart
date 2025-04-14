@@ -1,142 +1,327 @@
-// import 'package:apidash_core/apidash_core.dart';
-// import 'package:flutter/material.dart';
-// import 'package:flutter_riverpod/flutter_riverpod.dart';
-// import '../models/node_status.dart';
-// import '../models/workflow_node_model.dart';
-// import '../models/workflow_connection_model.dart';
-// import 'workflow_providers.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-// /// Widget that displays a workflow node
-// @immutable
-// class WorkflowNodeWidget extends StatefulWidget {
-//   final WorkflowNodeModel node;
-//   final double scale;
-//   final Function(double, double) onDragUpdate;
-//   final Function(Offset) onConnect;
+import 'models/models.dart';
+class WorkflowNode extends ConsumerWidget {
+  final WorkflowNodeModel node;
+  final bool isSelected;
+  final bool isRunning;
+  final bool isCompleted;
+  final bool hasError;
 
-//   const WorkflowNodeWidget({
-//     required this.node,
-//     required this.scale,
-//     required this.onDragUpdate,
-//     required this.onConnect,
-//     Key? key,
-//   }) : super(key: key);
+  const WorkflowNode({
+    Key? key,
+    required this.node,
+    this.isSelected = false,
+    this.isRunning = false,
+    this.isCompleted = false,
+    this.hasError = false,
+  }) : super(key: key);
 
-//   @override
-//   State<WorkflowNodeWidget> createState() => _WorkflowNodeWidgetState();
-// }
-
-// class _WorkflowNodeWidgetState extends State<WorkflowNodeWidget> {
-//   Offset _dragOffset = Offset.zero;
-//   bool _isDragging = false;
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Positioned(
-//       left: widget.node.position.dx * widget.scale + _dragOffset.dx,
-//       top: widget.node.position.dy * widget.scale + _dragOffset.dy,
-//       child: GestureDetector(
-//         onPanStart: (details) {
-//           setState(() {
-//             _isDragging = true;
-//             _dragOffset = details.localPosition;
-//           });
-//         },
-//         onPanUpdate: (details) {
-//           if (_isDragging) {
-//             setState(() {
-//               _dragOffset = details.localPosition;
-//             });
-//             widget.onDragUpdate(_dragOffset.dx, _dragOffset.dy);
-//           }
-//         },
-//         onPanEnd: (details) {
-//           setState(() {
-//             _isDragging = false;
-//             _dragOffset = Offset.zero;
-//           });
-//         },
-//         child: MouseRegion(
-//           onEnter: (_) {
-//             setState(() {
-//               _isDragging = false;
-//               _dragOffset = Offset.zero;
-//             });
-//           },
-//           child: Container(
-//             width: 200 * widget.scale,
-//             height: 100 * widget.scale,
-//             decoration: BoxDecoration(
-//               color: Colors.white,
-//               border: Border.all(
-//                 color: widget.node.status.color,
-//                 width: 2 * widget.scale,
-//               ),
-//               borderRadius: BorderRadius.circular(8 * widget.scale),
-//               boxShadow: [
-//                 BoxShadow(
-//                   color: Colors.black.withOpacity(0.1),
-//                   blurRadius: 4 * widget.scale,
-//                   offset: Offset(0, 2 * widget.scale),
-//                 ),
-//               ],
-//             ),
-//             child: Column(
-//               crossAxisAlignment: CrossAxisAlignment.start,
-//               children: [
-//                 Padding(
-//                   padding: EdgeInsets.all(8 * widget.scale),
-//                   child: Row(
-//                     children: [
-//                       Expanded(
-//                         child: Text(
-//                           widget.node.nodeType.toString(),
-//                           style: TextStyle(
-//                             fontSize: 16 * widget.scale,
-//                             fontWeight: FontWeight.bold,
-//                           ),
-//                         ),
-//                       ),
-//                       IconButton(
-//                         icon: Icon(Icons.delete, size: 20 * widget.scale),
-//                         onPressed: () {
-//                           context.read(workflowsNotifierProvider.notifier).removeNode(widget.node.id);
-//                         },
-//                       ),
-//                     ],
-//                   ),
-//                 ),
-//                 Padding(
-//                   padding: EdgeInsets.all(8 * widget.scale),
-//                   child: Text(
-//                     widget.node.nodeData.toString(),
-//                     style: TextStyle(fontSize: 12 * widget.scale),
-//                   ),
-//                 ),
-//                 Padding(
-//                   padding: EdgeInsets.all(8 * widget.scale),
-//                   child: Row(
-//                     children: [
-//                       IconButton(
-//                         icon: Icon(Icons.edit, size: 20 * widget.scale),
-//                         onPressed: () {
-//                           context.read(workflowsNotifierProvider.notifier).selectNode(widget.node.id);
-//                         },
-//                       ),
-//                       IconButton(
-//                         icon: Icon(Icons.connect_without_contact, size: 20 * widget.scale),
-//                         onPressed: () {
-//                           widget.onConnect(widget.node.position);
-//                         },
-//                       ),
-//                     ],
-//                   ),
-//                 ),
-//               ],
-//             ),
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final nodeSize = _getNodeSize();
+    final nodeColor = _getNodeColor();
+    final borderColor = isSelected ? Colors.blue : Colors.transparent;
+    final iconData = _getNodeIcon();
+    final elevation = isSelected ? 8.0 : 4.0;
+    
+    return Material(
+      elevation: elevation,
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(8),
+      shadowColor: isRunning 
+          ? Colors.blue.withOpacity(0.6) 
+          : isCompleted 
+              ? Colors.green.withOpacity(0.6)
+              : hasError
+                  ? Colors.red.withOpacity(0.6)
+                  : Colors.black.withOpacity(0.3),
+      child: Container(
+        width: nodeSize.width,
+        height: nodeSize.height,
+        decoration: BoxDecoration(
+          color: nodeColor,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: borderColor,
+            width: 2,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: isRunning
+                  ? Colors.blue.withOpacity(0.3)
+                  : isCompleted
+                      ? Colors.green.withOpacity(0.3)
+                      : hasError
+                          ? Colors.red.withOpacity(0.3)
+                          : Colors.black.withOpacity(0.2),
+              blurRadius: 5,
+              spreadRadius: 1,
+            ),
+          ],
+        ),
+        child: Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        iconData,
+                        color: Colors.white,
+                        size: 18,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          node.label.isEmpty
+                              ? 'Node ${node.id.substring(0, 4)}'
+                              : node.label,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  if (node.nodeType == NodeType.request && node.requestModel != null)
+                    _buildRequestDetails(),
+                  if (node.nodeType == NodeType.condition)
+                    _buildConditionDetails(),
+                  if (node.nodeType == NodeType.action)
+                    _buildActionDetails(),
+                  if (node.nodeType == NodeType.response)
+                    _buildResponseDetails(),
+                ],
+              ),
+            ),
+            
+            Positioned(
+              top: 4,
+              right: 4,
+              child: Container(
+                width: 12,
+                height: 12,
+                decoration: BoxDecoration(
+                  color: isRunning
+                      ? Colors.blue
+                      : isCompleted
+                          ? Colors.green
+                          : hasError
+                              ? Colors.red
+                              : Colors.grey.withOpacity(0.5),
+                  shape: BoxShape.circle,
+                ),
+                child: isRunning
+                    ? const Center(
+                        child: SizedBox(
+                          width: 6,
+                          height: 6,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 1,
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.white),
+                          ),
+                        ),
+                      )
+                    : null,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+  
+  Widget _buildRequestDetails() {
+    final method = node.requestModel?.method ?? 'GET';
+    final url = node.requestModel?.url ?? '';
+    final shortUrl = url.length > 25 ? '${url.substring(0, 22)}...' : url;
+    
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+          decoration: BoxDecoration(
+            color: _getMethodColor(method),
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child: Text(
+            method,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 10,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          shortUrl,
+          style: TextStyle(
+            color: Colors.white.withOpacity(0.8),
+            fontSize: 10,
+          ),
+          overflow: TextOverflow.ellipsis,
+        ),
+      ],
+    );
+  }
+  
+  Widget _buildConditionDetails() {
+    final condition = node.nodeData['condition'] as String? ?? '';
+    final shortCondition = condition.length > 30 ? '${condition.substring(0, 27)}...' : condition;
+    
+    return Container(
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: Colors.black.withOpacity(0.2),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Text(
+        shortCondition.isEmpty ? 'No condition set' : shortCondition,
+        style: TextStyle(
+          color: Colors.white.withOpacity(0.8),
+          fontSize: 10,
+          fontStyle: shortCondition.isEmpty ? FontStyle.italic : FontStyle.normal,
+        ),
+      ),
+    );
+  }
+  
+  Widget _buildActionDetails() {
+    final actionType = node.nodeData['actionType'] as String? ?? 'transform';
+    
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+          decoration: BoxDecoration(
+            color: Colors.black.withOpacity(0.2),
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child: Text(
+            actionType.toUpperCase(),
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 10,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+  
+  Widget _buildResponseDetails() {
+    final statusCode = node.simulatedStatusCode;
+    
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+          decoration: BoxDecoration(
+            color: _getStatusCodeColor(statusCode),
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child: Text(
+            'Status: $statusCode',
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 10,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+  
+  Size _getNodeSize() {
+    switch (node.nodeType) {
+      case NodeType.request:
+        return const Size(160, 80);
+      case NodeType.response:
+        return const Size(160, 60);
+      case NodeType.condition:
+        return const Size(160, 60);
+      case NodeType.action:
+        return const Size(160, 60);
+    }
+  }
+  
+  Color _getNodeColor() {
+    final baseColors = {
+      NodeType.request: const Color(0xFF2d3748),
+      NodeType.response: const Color(0xFF553C9A),
+      NodeType.condition: const Color(0xFFb91c1c),
+      NodeType.action: const Color(0xFF047857),
+    };
+    
+    Color baseColor = baseColors[node.nodeType] ?? const Color(0xFF2d3748);
+    
+    if (isRunning) {
+      return Color.lerp(baseColor, Colors.blue, 0.15) ?? baseColor;
+    } else if (isCompleted) {
+      return Color.lerp(baseColor, Colors.green, 0.15) ?? baseColor;
+    } else if (hasError) {
+      return Color.lerp(baseColor, Colors.red, 0.15) ?? baseColor;
+    } else {
+      return baseColor;
+    }
+  }
+  
+  IconData _getNodeIcon() {
+    switch (node.nodeType) {
+      case NodeType.request:
+        return Icons.send;
+      case NodeType.response:
+        return Icons.call_received;
+      case NodeType.condition:
+        return Icons.fork_right;
+      case NodeType.action:
+        return Icons.settings;
+    }
+  }
+  
+  Color _getMethodColor(String method) {
+    switch (method.toUpperCase()) {
+      case 'GET':
+        return const Color(0xFF3182CE);
+      case 'POST':
+        return const Color(0xFF38A169);
+      case 'PUT':
+        return const Color(0xFFDD6B20);
+      case 'DELETE':
+        return const Color(0xFFE53E3E);
+      case 'PATCH':
+        return const Color(0xFF805AD5);
+      default:
+        return const Color(0xFF718096);
+    }
+  }
+  
+  Color _getStatusCodeColor(int statusCode) {
+    if (statusCode >= 200 && statusCode < 300) {
+      return Colors.green;
+    } else if (statusCode >= 300 && statusCode < 400) {
+      return Colors.blue;
+    } else if (statusCode >= 400 && statusCode < 500) {
+      return Colors.orange;
+    } else if (statusCode >= 500) {
+      return Colors.red;
+    } else {
+      return Colors.grey;
+    }
+  }
+}

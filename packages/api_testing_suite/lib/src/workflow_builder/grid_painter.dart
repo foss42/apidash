@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-/// Painter for the background grid
 class GridPainter extends CustomPainter {
   final Color gridColor;
   final double gridWidth;
@@ -33,9 +32,10 @@ class GridPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant GridPainter oldDelegate) {
-    return oldDelegate.gridColor != gridColor ||
-        oldDelegate.gridWidth != gridWidth ||
-        oldDelegate.gridSpacing != gridSpacing;
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return oldDelegate is GridPainter &&
+        (oldDelegate.gridColor != gridColor ||
+            oldDelegate.gridWidth != gridWidth ||
+            oldDelegate.gridSpacing != gridSpacing);
   }
 }
