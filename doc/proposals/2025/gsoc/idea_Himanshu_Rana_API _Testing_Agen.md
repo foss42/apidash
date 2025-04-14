@@ -81,8 +81,8 @@ flowchart TD
     D --> E["Response Validator Agent"]
     E --> F["Tool Definition Agent"]
     F --> G["Feedback & Improvement Agent"]
-    G --> H["Benchmark Agent]
-    
+    G --> H["Benchmark Agent"]
+
     A -.-> Parsers[Parsing Options]
     
     subgraph Parsers
