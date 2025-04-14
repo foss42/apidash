@@ -1,3 +1,4 @@
+import 'package:apidash/api_testing/api_testing_integration.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -6,7 +7,6 @@ import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
 import '../common_widgets/common_widgets.dart';
 import './editor_pane/variables_pane.dart';
-import './editor_pane/fake_data_pane.dart';
 
 final environmentEditorTabProvider = StateProvider<int>((ref) => 0);
 
