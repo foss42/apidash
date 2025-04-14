@@ -1,10 +1,8 @@
-import 'package:api_testing_suite/src/models/models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../models/request_model.dart';
+import '../models/models.dart';
 
-import '../models/workflow_model.dart';
 
 /// Notifier class for workflows state management
 class WorkflowsNotifier extends StateNotifier<List<WorkflowModel>> {
@@ -18,7 +16,6 @@ class WorkflowsNotifier extends StateNotifier<List<WorkflowModel>> {
     _ref.read(StateProvider<String?>((ref) => null).notifier).state = newWorkflow.id;
   }
 
-  /// Update an existing workflow
   void update(WorkflowModel workflow) {
     state = [
       for (final existingWorkflow in state)
@@ -26,7 +23,6 @@ class WorkflowsNotifier extends StateNotifier<List<WorkflowModel>> {
     ];
   }
 
-  /// Add a node to a workflow
   void addNode(String workflowId, WorkflowNodeModel node) {
     state = [
       for (final workflow in state)
@@ -37,7 +33,6 @@ class WorkflowsNotifier extends StateNotifier<List<WorkflowModel>> {
     ];
   }
 
-  /// Update a node in a workflow
   void updateNode(String workflowId, WorkflowNodeModel updatedNode) {
     state = [
       for (final workflow in state)
@@ -53,7 +48,6 @@ class WorkflowsNotifier extends StateNotifier<List<WorkflowModel>> {
     ];
   }
   
-  /// Update multiple nodes in a workflow
   void updateNodes(String workflowId, List<WorkflowNodeModel> updatedNodes) {
     state = [
       for (final workflow in state)
@@ -64,7 +58,6 @@ class WorkflowsNotifier extends StateNotifier<List<WorkflowModel>> {
     ];
   }
 
-  /// Update a node's position in a workflow
   void updateNodePosition(String workflowId, String nodeId, Offset position) {
     state = [
       for (final workflow in state)
@@ -83,20 +76,20 @@ class WorkflowsNotifier extends StateNotifier<List<WorkflowModel>> {
     ];
   }
 
-  // void removeNode(String workflowId, String nodeId) {
-  //   state = [
-  //     for (final workflow in state)
-  //       if (workflow.id == workflowId)
-  //         workflow.copyWith(
-  //           nodes: workflow.nodes.where((node) => node.id != nodeId).toList(),
-  //           connections: workflow.connections.where(
-  //             (conn) => conn?.sourceId != nodeId && conn.targetId != nodeId
-  //           ).toList(),
-  //         )
-  //       else
-  //         workflow,
-  //   ];
-  // }
+  void removeNode(String workflowId, String nodeId) {
+    state = [
+      for (final workflow in state)
+        if (workflow.id == workflowId)
+          workflow.copyWith(
+            nodes: workflow.nodes.where((node) => node.id != nodeId).toList(),
+            connections: workflow.connections.where(
+              (conn) => conn.sourceId != nodeId && conn.targetId != nodeId
+            ).toList(),
+          )
+        else
+          workflow,
+    ];
+  }
 
   void addConnection(String workflowId, WorkflowConnectionModel connection) {
     state = [
@@ -108,7 +101,6 @@ class WorkflowsNotifier extends StateNotifier<List<WorkflowModel>> {
     ];
   }
 
-  /// Update a connection in a workflow
   void updateConnection(String workflowId, WorkflowConnectionModel updatedConnection) {
     state = [
       for (final workflow in state)
@@ -124,17 +116,17 @@ class WorkflowsNotifier extends StateNotifier<List<WorkflowModel>> {
     ];
   }
 
-  // void removeConnection(String workflowId, String connectionId) {
-  //   state = [
-  //     for (final workflow in state)
-  //       if (workflow.id == workflowId)
-  //         workflow.copyWith(
-  //           connections: workflow.connections.where((conn) => conn.id != connectionId).toList(),
-  //         )
-  //       else
-  //         workflow,
-  //   ];
-  // }
+  void removeConnection(String workflowId, String connectionId) {
+    state = [
+      for (final workflow in state)
+        if (workflow.id == workflowId)
+          workflow.copyWith(
+            connections: workflow.connections.where((conn) => conn.id != connectionId).toList(),
+          )
+        else
+          workflow,
+    ];
+  }
 
   void delete(String workflowId) {
     state = state.where((workflow) => workflow.id != workflowId).toList();
@@ -143,11 +135,9 @@ class WorkflowsNotifier extends StateNotifier<List<WorkflowModel>> {
     }
   }
 
-  /// Import a request as a workflow node
   void importRequestAsNode(String workflowId, String requestId, Offset position, Map<String, RequestModel> collection) {
     try {
-      // Get the request from the collection
-      final request = collection[requestId];
+      final RequestModel? request = collection[requestId];
       if (request == null) {
         debugPrint('Request not found with ID: $requestId');
         return;

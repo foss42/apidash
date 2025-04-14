@@ -1,20 +1,13 @@
-import 'package:api_testing_suite/src/models/models.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import '../models/workflow_model.dart';
-
-/// Provider for workflows list
+import '../models/models.dart';
 import 'workflows_notifier.dart';
 
-/// Provider for workflows list
 final workflowsProvider = StateNotifierProvider<WorkflowsNotifier, List<WorkflowModel>>((ref) {
   return WorkflowsNotifier(ref);
 });
 
-/// Provider for current workflow ID
 final currentWorkflowProvider = StateProvider<String?>((ref) => null);
 
-/// Provider for active workflow
 final activeWorkflowProvider = Provider<WorkflowModel?>((ref) {
   final currentWorkflowId = ref.watch(currentWorkflowProvider);
   final workflows = ref.watch(workflowsProvider);
@@ -23,11 +16,10 @@ final activeWorkflowProvider = Provider<WorkflowModel?>((ref) {
   
   return workflows.firstWhere(
     (workflow) => workflow.id == currentWorkflowId,
-    // orElse: () => WorkflowModel.create(),
+    orElse: () => WorkflowModel.create(name: 'Workflow $currentWorkflowId'),
   );
 });
 
-/// Provider for workflow execution state
 final workflowExecutionStateProvider = StateNotifierProvider<WorkflowExecutionNotifier, WorkflowExecutionState>((ref) {
   return WorkflowExecutionNotifier(ref);
 });
@@ -136,7 +128,7 @@ class WorkflowExecutionNotifier extends StateNotifier<WorkflowExecutionState> {
     
     await Future.delayed(const Duration(seconds: 1));
     
-    final isSuccess = DateTime.now().millisecondsSinceEpoch % 5 != 0; // 80% success rate
+    final isSuccess = DateTime.now().millisecondsSinceEpoch % 5 != 0; 
     
     _ref.read(workflowsProvider.notifier).updateNode(
       workflow.id,
@@ -148,41 +140,36 @@ class WorkflowExecutionNotifier extends StateNotifier<WorkflowExecutionState> {
       executedNodeIds: updatedExecutedNodeIds,
     );
     
-    // If failed and is conditional, stop execution
-    // if (!isSuccess && node.connectedToIds.isNotEmpty) {
-    //   final connections = workflow.connections.where(
-    //     (conn) => conn.sourceId == nodeId && conn.isConditional
-    //   ).toList();
+    if (!isSuccess && node.connectedToIds.isNotEmpty) {
+      final connections = workflow.connections.where(
+        (conn) => conn.sourceId == nodeId && conn.isConditional
+      ).toList();
       
-    //   if (connections.isNotEmpty) {
-    //     state = state.copyWith(status: WorkflowExecutionStatus.completed);
-    //     return;
-    //   }
-    // }
+      if (connections.isNotEmpty) {
+        state = state.copyWith(status: WorkflowExecutionStatus.completed);
+        return;
+      }
+    }
     
-    // // Get next nodes
-    // final nextNodeIds = node.connectedToIds.isEmpty 
-    //     ? [] 
-    //     : workflow.connections
-    //         .where((conn) => conn.sourceId == nodeId)
-    //         .map((conn) => conn.targetId)
-    //         .toList();
+    final nextNodeIds = node.connectedToIds.isEmpty 
+        ? [] 
+        : workflow.connections
+            .where((conn) => conn.sourceId == nodeId)
+            .map((conn) => conn.targetId)
+            .toList();
     
-    // // If no next nodes, workflow is completed
-    // if (nextNodeIds.isEmpty) {
-    //   state = state.copyWith(status: WorkflowExecutionStatus.completed);
-    //   return;
-    // }
+    if (nextNodeIds.isEmpty) {
+      state = state.copyWith(status: WorkflowExecutionStatus.completed);
+      return;
+    }
     
-    // // Execute next nodes
-    // for (final nextNodeId in nextNodeIds) {
-    //   state = state.copyWith(currentNodeId: nextNodeId);
-    //   await _executeNode(nextNodeId);
+    for (final nextNodeId in nextNodeIds) {
+      state = state.copyWith(currentNodeId: nextNodeId);
+      await _executeNode(nextNodeId);
       
-    //   // If execution was paused or stopped, break the loop
-    //   if (state.status != WorkflowExecutionStatus.running) {
-    //     break;
-    //   }
-    // }
+      if (state.status != WorkflowExecutionStatus.running) {
+        break;
+      }
+    }
   }
 }
