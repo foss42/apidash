@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:api_testing_suite/src/fake_data_provider/models/fake_data_config.dart';
 
 import '../services/fake_data_provider.dart';
 
@@ -144,7 +143,6 @@ class FakeDataProvidersPane extends ConsumerWidget {
         width: 1,
       ),
       children: [
-
         TableRow(
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surfaceContainerHigh,
@@ -156,7 +154,6 @@ class FakeDataProvidersPane extends ConsumerWidget {
             _buildTableCell(context, 'Copy', isHeader: true),
           ],
         ),
-
         for (var item in fakeDataTags)
           TableRow(
             children: [
@@ -170,7 +167,8 @@ class FakeDataProvidersPane extends ConsumerWidget {
     );
   }
 
-  Widget _buildTableCell(BuildContext context, String text, {bool isHeader = false}) {
+  Widget _buildTableCell(BuildContext context, String text,
+      {bool isHeader = false}) {
     return Padding(
       padding: const EdgeInsets.all(8),
       child: Text(
