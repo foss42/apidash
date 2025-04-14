@@ -132,7 +132,7 @@ class Dashboard extends ConsumerWidget {
                   HomePage(),
                   EnvironmentPage(),
                   HistoryPage(),
-                  WorkflowBuilderPage(),
+                  WorkflowBuilder(),
                   SettingsPage(),
                 ],
               ),
