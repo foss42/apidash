@@ -1,18 +1,14 @@
 library api_testing_suite;
 
-// Models
-export 'src/models/workflow_model.dart';
-
-// Providers
-export 'src/providers/workflow_providers.dart';
-
-// Widgets
-export 'src/workflow_builder/workflow_canvas.dart';
-export 'src/workflow_builder/workflow_connection.dart';
-export 'src/workflow_builder/workflow_node.dart';
+// Workflow Builder Feature
+export 'src/workflow_builder/workflow_builder.dart';
 export 'src/workflow_builder/workflow_screens.dart';
 
-// Models
+// Stress Test Components
+export 'src/stress_test/widgets/stress_test_result_card.dart';
 export 'src/stress_test/models/stress_test_config.dart';
 export 'src/stress_test/models/stress_test_summary.dart';
+
+// Fake Data Provider Components
+export 'src/fake_data_provider/widgets/fake_data_pane.dart';
 export 'src/fake_data_provider/models/fake_data_config.dart';

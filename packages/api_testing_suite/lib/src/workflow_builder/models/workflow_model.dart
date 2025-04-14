@@ -47,6 +47,8 @@ class WorkflowModel with _$WorkflowModel {
 
   bool get hasStartNode => startNodeId != null;
 
+  get createdAt => null;
+
   WorkflowNodeModel? getStartNode() {
     if (startNodeId == null) return null;
     return nodes.firstWhere((node) => node.id == startNodeId);

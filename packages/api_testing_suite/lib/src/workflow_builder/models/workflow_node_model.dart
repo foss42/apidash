@@ -1,3 +1,4 @@
+import 'package:apidash_core/models/http_request_model.dart';
 import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -42,7 +43,7 @@ class RequestModelConverter implements JsonConverter<RequestModel?, Map<String, 
       id: json['id'] as String,
       name: json['name'] as String? ?? '',
       method: json['method'] as String? ?? 'GET',
-      url: json['url'] as String? ?? '',
+      url: json['url'] as String? ?? '', httpRequestModel: HttpRequestModel(),
     );
   }
 
@@ -69,6 +70,7 @@ class WorkflowNodeModel with _$WorkflowNodeModel {
     @OffsetConverter() required Offset position,
     @Default('') String label,
     @Default(NodeStatus.inactive) NodeStatus status,
+    @Default(false) bool isDragging,
     @Default([]) List<String> connectedToIds,
     @RequestModelConverter() RequestModel? requestModel,
     @Default({}) Map<String, dynamic> nodeData,
