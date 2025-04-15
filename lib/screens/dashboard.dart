@@ -1,3 +1,6 @@
+import 'package:apidash/screens/collections/collections.dart';
+import 'package:apidash/screens/dashflow/dashflow.dart';
+import 'package:apidash/screens/monitor/monitor.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -68,6 +71,7 @@ class Dashboard extends ConsumerWidget {
                       'History',
                       style: Theme.of(context).textTheme.labelSmall,
                     ),
+                    kVSpacer10,
                     IconButton(
                       isSelected: railIdx == 3,
                       onPressed: () {
@@ -80,6 +84,7 @@ class Dashboard extends ConsumerWidget {
                       'Collections',
                       style: Theme.of(context).textTheme.labelSmall,
                     ),
+                    kVSpacer10,
                     IconButton(
                       isSelected: railIdx == 4,
                       onPressed: () {
@@ -92,10 +97,11 @@ class Dashboard extends ConsumerWidget {
                       'Monitors',
                       style: Theme.of(context).textTheme.labelSmall,
                     ),
+                    kVSpacer10,
                     IconButton(
-                      isSelected: railIdx == 3,
+                      isSelected: railIdx == 5,
                       onPressed: () {
-                        ref.read(navRailIndexStateProvider.notifier).state = 3;
+                        ref.read(navRailIndexStateProvider.notifier).state = 5;
                       },
                       icon: Image.asset("assets/images/dashflow_black.png",height: MediaQuery.of(context).size.height*0.05,),
                       selectedIcon: Image.asset("assets/images/dashflow_blue.png",height: MediaQuery.of(context).size.height*0.05,),
@@ -168,6 +174,9 @@ class Dashboard extends ConsumerWidget {
                   HomePage(),
                   EnvironmentPage(),
                   HistoryPage(),
+                  CollectionPage(),
+                  MonitorPage(),
+                  DashflowPage(),
                   SettingsPage(),
                 ],
               ),
