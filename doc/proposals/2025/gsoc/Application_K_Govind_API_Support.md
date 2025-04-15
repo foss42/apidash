@@ -134,7 +134,7 @@ Architecture is as shown below:
 ```
 
   
-- **Technologies & Tools:** The approach uses the package  web_socket_channel(^3.0.1)
+- **Technologies & Tools:** The approach uses the package  web_socket_channel(^3.0.1).(https://fluttergems.dev/packages/web_socket_channel/).Supports all platforms.
 - **Expected Outcomes:** A clean ui with maximum smoothness satisfying above mentioned solutions.
 - **Linked PR for POC:**  https://github.com/foss42/apidash/pull/555  (The PR is in no way the final product but simply to show the code structure and my approach)
   ![Alt text](./images/websocket(1).png)
@@ -337,11 +337,13 @@ Service level change:- We would make key value pairs as string . This is encoded
 ### File support(Issue #352):-
 Sending Files through octect-stream content type. 
 
-UI Changes: Make a combination of drag and droppable and select file ui as a new tab. Make a progression bar to show the uploading progress.
+UI Changes: Make a combination of drag and droppable and select file ui as a new tab. Make a progression bar to show the conversion to bytes progress.
+To acheive the droppable interface we can use desktop_drop(https://fluttergems.dev/packages/desktop_drop/)(supports windows,linux,macos,android,web).This works along with already existing file_selector.But it doesn't support IOS.
+To support IOS we would have to use super_drag_and_drop(https://fluttergems.dev/packages/super_drag_and_drop/) . Currently I have only been able to test the feauture in windows ,android using desktop_drop.
 
 Model changes: Add another content type application/octet-stream .
 
-Service changes:We would first stream the file as bytes , add it into the body .
+Service changes:We pick the file using file_selector. And adds the filepath into the body. Then stream the content to bytes whenever we need to send the file. Showing and handling error appropriately if file is not present or corrupted. 
 
 Put Content-Type header as application/octet-stream and send the request.
 
