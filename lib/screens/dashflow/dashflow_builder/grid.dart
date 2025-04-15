@@ -1,5 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:path_drawing/path_drawing.dart';
+import 'package:vector_math/vector_math_64.dart' as vm;
 
 class GridPainter extends CustomPainter {
   final Matrix4 transformation;
@@ -11,21 +13,33 @@ class GridPainter extends CustomPainter {
     required this.viewportSize,
     this.baseGridSize = 20,
   });
+  Offset _transformPoint(Offset point, Matrix4 matrix) {
+    final vector = matrix.transform3(vm.Vector3(point.dx, point.dy, 0));
+    return Offset(vector.x, vector.y);
+  }
 
   @override
   void paint(Canvas canvas, Size size) {
     final zoom = transformation.getMaxScaleOnAxis();
     final gridSize = baseGridSize * zoom;
+    final inverted = Matrix4.copy(transformation)..invert();
 
     final dx = transformation.getTranslation().x;
     final dy = transformation.getTranslation().y;
 
-    // Viewport-relative offsets
-    final startX = -dx % gridSize;
-    final startY = -dy % gridSize;
+    // Calculate visible top-left and bottom-right corners in world space
+    final topLeft = _transformPoint(Offset.zero, inverted);
+    final bottomRight = _transformPoint(
+      Offset(viewportSize.width, viewportSize.height),
+      inverted,
+    );
 
-    final cols = (viewportSize.width / gridSize).ceil() + 2;
-    final rows = (viewportSize.height / gridSize).ceil() + 2;
+    // Viewport-relative offsets
+    final startX = (topLeft.dx ~/ baseGridSize - 1) * baseGridSize.toDouble();
+    final endX = (bottomRight.dx ~/ baseGridSize + 1) * baseGridSize.toDouble();
+
+    final startY = (topLeft.dy ~/ baseGridSize - 1) * baseGridSize.toDouble();
+    final endY = (bottomRight.dy ~/ baseGridSize + 1) * baseGridSize.toDouble();
 
     final paint = Paint()
       ..color = Colors.black
@@ -33,34 +47,38 @@ class GridPainter extends CustomPainter {
       ..strokeWidth = 1;
 
     // Restrict drawing to visible area
-    canvas
-        .clipRect(Rect.fromLTWH(0, 0, viewportSize.width, viewportSize.height));
+    //canvas
+    // .clipRect(Rect.fromLTWH(0, 0, viewportSize.width, viewportSize.height));
 
-   // Draw vertical dotted lines
-    for (int i = 0; i < cols; i++) {
-      final x = startX + i * gridSize;
+    // Draw vertical dotted lines
+    // Vertical grid lines
+    for (double x = startX; x <= endX; x += baseGridSize) {
       final path = Path()
-        ..moveTo(x, 0)
-        ..lineTo(x, viewportSize.height);
+        ..moveTo(x, startY)
+        ..lineTo(x, endY);
 
-      canvas.drawPath(dashPath(path, dashArray: CircularIntervalList<double>([1,5])), paint);
+      canvas.drawPath(
+        dashPath(path, dashArray: CircularIntervalList<double>([2, 6])),
+        paint,
+      );
     }
 
-       // Draw horizontal dotted lines
-    for (int j = 0; j < rows; j++) {
-      final y = startY + j * gridSize;
+// Horizontal grid lines
+    for (double y = startY; y <= endY; y += baseGridSize) {
       final path = Path()
-        ..moveTo(0, y)
-        ..lineTo(viewportSize.width, y);
+        ..moveTo(startX, y)
+        ..lineTo(endX, y);
 
-      canvas.drawPath(dashPath(path, dashArray: CircularIntervalList<double>([1,5])), paint);
+      canvas.drawPath(
+        dashPath(path, dashArray: CircularIntervalList<double>([2, 6])),
+        paint,
+      );
     }
-
-  }
-
-  @override
-  bool shouldRepaint(covariant GridPainter oldDelegate) =>
-      oldDelegate.transformation != transformation ||
-      oldDelegate.viewportSize != viewportSize;
 }
-
+  @override
+  bool shouldRepaint( GridPainter oldDelegate) {
+    return !listEquals(
+            oldDelegate.transformation.storage, transformation.storage) ||
+        oldDelegate.viewportSize != viewportSize;
+  }
+}

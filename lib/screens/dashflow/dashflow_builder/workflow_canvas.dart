@@ -50,8 +50,7 @@ class _WorkflowCanvasState extends State<WorkflowCanvas> {
               child: CustomPaint(
                 painter: GridPainter(
                   transformation: _controller.value,
-                  viewportSize: Size(mq.width * 10,
-                      mq.width * 10),
+                  viewportSize: MediaQuery.of(context).size,
                 ),
                 child: Stack(
                   children: nodes.map((node) {
