@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import '../../common_widgets/common_widgets.dart';
+import '../../../screens/performance_test_screen.dart';
 
 class EditorPaneRequestURLCard extends ConsumerWidget {
   const EditorPaneRequestURLCard({super.key});
@@ -64,7 +65,49 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
                   const SizedBox(
                     height: 36,
                     child: SendRequestButton(),
-                  )
+                  ),
+                  kHSpacer10,
+                  SizedBox(
+                    height: 36,
+                    child: ADFilledButton(
+                      onPressed: () {
+                        final selectedId = ref.read(selectedIdStateProvider);
+                        final requestModel = ref.read(collectionStateNotifierProvider)?[selectedId];
+                        if (requestModel?.httpRequestModel != null) {
+                          final headers = <String, String>{};
+                          final httpRequestModel = requestModel!.httpRequestModel!;
+                          
+                          // Convert headers using isHeaderEnabledList
+                          if (httpRequestModel.headers != null) {
+                            for (var i = 0; i < httpRequestModel.headers!.length; i++) {
+                              if (httpRequestModel.isHeaderEnabledList?[i] ?? true) {
+                                final header = httpRequestModel.headers![i];
+                                headers[header.name] = header.value.toString();
+                              }
+                            }
+                          }
+
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => PerformanceTestScreen(
+                                url: httpRequestModel.url,
+                                method: httpRequestModel.method.name.toUpperCase(),
+                                headers: headers,
+                                body: httpRequestModel.body,
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                      isTonal: true,
+                      items: const [
+                        Icon(Icons.speed, size: 16),
+                        kHSpacer6,
+                        Text('Test', style: kTextStyleButton),
+                      ],
+                    ),
+                  ),
                 ],
               ),
       ),

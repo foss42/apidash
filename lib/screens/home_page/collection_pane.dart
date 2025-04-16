@@ -7,6 +7,11 @@ import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
 import '../common_widgets/common_widgets.dart';
+import '../../widgets/create_collection_dialog.dart';
+import '../../widgets/collection_runner_dialog.dart';
+
+
+ final selectedIdEditStateProvider = StateProvider<String?>((ref) => null);
 
 class CollectionPane extends ConsumerWidget {
   const CollectionPane({
@@ -16,20 +21,151 @@ class CollectionPane extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final collection = ref.watch(collectionStateNotifierProvider);
+    final collections = ref.watch(filteredCollectionsProvider);
+    // Activate the sync provider
+    ref.watch(collectionRequestSyncProvider);
     var sm = ScaffoldMessenger.of(context);
+
     if (collection == null) {
       return const Center(
         child: CircularProgressIndicator(),
       );
     }
+
     return Padding(
       padding: (!context.isMediumWindow && kIsMacOS ? kPt24l4 : kPt8l4) +
           (context.isMediumWindow ? kPb70 : EdgeInsets.zero),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          // Collections header
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  'Collections',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.add),
+                tooltip: 'Create Collection',
+                onPressed: () async {
+                  final result = await showDialog<Collection>(
+                    context: context,
+                    builder: (context) => const CreateCollectionDialog(),
+                  );
+
+                  if (result != null) {
+                    ref.read(collectionsProvider.notifier).addCollection(result);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Created collection: ${result.name}'),
+                      ),
+                    );
+                  }
+                },
+              ),
+              IconButton(
+                icon: const Icon(Icons.play_arrow),
+                tooltip: 'Run Collection',
+                onPressed: () async {
+                  final selectedId = ref.read(selectedCollectionIdProvider);
+                  if (selectedId == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Please select a collection to run'),
+                      ),
+                    );
+                    return;
+                  }
+
+                  final selectedCollection = collections.firstWhere(
+                    (c) => c.id == selectedId,
+                  );
+
+                  final config = await showDialog(
+                    context: context,
+                    builder: (context) => CollectionRunnerDialog(
+                      collection: selectedCollection,
+                    ),
+                  );
+
+                  if (config != null) {
+                    // TODO: Implement collection run logic using the config
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          'Running collection: ${selectedCollection.name} '
+                          '(${config.iterations} iterations, '
+                          '${config.delayMs}ms delay)',
+                        ),
+                      ),
+                    );
+                  }
+                },
+              ),
+            ],
+          ),
+          kVSpacer10,
+
+          // Collections list
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (collections.isEmpty)
+                    const Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Center(
+                        child: Text('No collections yet'),
+                      ),
+                    )
+                  else
+                    ...collections.map((collection) => ListTile(
+                      leading: const Icon(Icons.folder_outlined),
+                      title: Text(collection.name),
+                      subtitle: Text(
+                        '${collection.requests.length} requests',
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                      trailing: PopupMenuButton(
+                        itemBuilder: (context) => [
+                          const PopupMenuItem(
+                            value: 'rename',
+                            child: Text('Rename'),
+                          ),
+                          const PopupMenuItem(
+                            value: 'delete',
+                            child: Text('Delete'),
+                          ),
+                        ],
+                        onSelected: (value) {
+                          if (value == 'delete') {
+                            ref.read(collectionsProvider.notifier)
+                                .removeCollection(collection.id);
+                          }
+                          // TODO: Handle rename
+                        },
+                      ),
+                      onTap: () {
+                        ref.read(selectedCollectionIdProvider.notifier).state =
+                            collection.id;
+                      },
+                    )),
+                ],
+              ),
+            ),
+          ),
+          kVSpacer16,
+
+          // Requests section
           SidebarHeader(
             onAddNew: () {
+              // Use the CollectionStateNotifier to add a new request
               ref.read(collectionStateNotifierProvider.notifier).add();
             },
             onImport: () {
@@ -45,7 +181,7 @@ class CollectionPane extends ConsumerWidget {
             },
           ),
           kVSpacer10,
-          const Expanded(
+          Expanded(
             child: RequestList(),
           ),
           kVSpacer5
@@ -81,6 +217,7 @@ class _RequestListState extends ConsumerState<RequestList> {
 
   @override
   Widget build(BuildContext context) {
+    // Use the CollectionStateNotifier's providers for request sequence and items
     final requestSequence = ref.watch(requestSequenceProvider);
     final requestItems = ref.watch(collectionStateNotifierProvider)!;
     final alwaysShowCollectionPaneScrollbar = ref.watch(settingsProvider
@@ -93,78 +230,79 @@ class _RequestListState extends ConsumerState<RequestList> {
       radius: const Radius.circular(12),
       child: filterQuery.isEmpty
           ? ReorderableListView.builder(
-              padding: context.isMediumWindow
-                  ? EdgeInsets.only(
-                      bottom: MediaQuery.paddingOf(context).bottom,
-                      right: 8,
-                    )
-                  : kPe8,
-              scrollController: controller,
-              buildDefaultDragHandles: false,
-              itemCount: requestSequence.length,
-              onReorder: (int oldIndex, int newIndex) {
-                if (oldIndex < newIndex) {
-                  newIndex -= 1;
-                }
-                if (oldIndex != newIndex) {
-                  ref
-                      .read(collectionStateNotifierProvider.notifier)
-                      .reorder(oldIndex, newIndex);
-                }
-              },
-              itemBuilder: (context, index) {
-                var id = requestSequence[index];
-                if (kIsMobile) {
-                  return ReorderableDelayedDragStartListener(
-                    key: ValueKey(id),
-                    index: index,
-                    child: Padding(
-                      padding: kP1,
-                      child: RequestItem(
-                        id: id,
-                        requestModel: requestItems[id]!,
-                      ),
-                    ),
-                  );
-                }
-                return ReorderableDragStartListener(
-                  key: ValueKey(id),
-                  index: index,
-                  child: Padding(
-                    padding: kP1,
-                    child: RequestItem(
-                      id: id,
-                      requestModel: requestItems[id]!,
-                    ),
-                  ),
-                );
-              },
-            )
-          : ListView(
-              padding: context.isMediumWindow
-                  ? EdgeInsets.only(
-                      bottom: MediaQuery.paddingOf(context).bottom,
-                      right: 8,
-                    )
-                  : kPe8,
-              controller: controller,
-              children: requestSequence.map((id) {
-                var item = requestItems[id]!;
-                if (item.httpRequestModel!.url
-                        .toLowerCase()
-                        .contains(filterQuery) ||
-                    item.name.toLowerCase().contains(filterQuery)) {
-                  return Padding(
-                    padding: kP1,
-                    child: RequestItem(
-                      id: id,
-                      requestModel: item,
-                    ),
-                  );
-                }
-                return kSizedBoxEmpty;
-              }).toList(),
+        padding: context.isMediumWindow
+            ? EdgeInsets.only(
+          bottom: MediaQuery.paddingOf(context).bottom,
+          right: 8,
+        )
+            : kPe8,
+        scrollController: controller,
+        buildDefaultDragHandles: false,
+        itemCount: requestSequence.length,
+        onReorder: (int oldIndex, int newIndex) {
+          if (oldIndex < newIndex) {
+            newIndex -= 1;
+          }
+          if (oldIndex != newIndex) {
+            // Use CollectionStateNotifier to reorder requests
+            ref
+                .read(collectionStateNotifierProvider.notifier)
+                .reorder(oldIndex, newIndex);
+          }
+        },
+        itemBuilder: (context, index) {
+          var id = requestSequence[index];
+          if (kIsMobile) {
+            return ReorderableDelayedDragStartListener(
+              key: ValueKey(id),
+              index: index,
+              child: Padding(
+                padding: kP1,
+                child: RequestItem(
+                  id: id,
+                  requestModel: requestItems[id]!,
+                ),
+              ),
+            );
+          }
+          return ReorderableDragStartListener(
+            key: ValueKey(id),
+            index: index,
+            child: Padding(
+              padding: kP1,
+              child: RequestItem(
+                id: id,
+                requestModel: requestItems[id]!,
+              ),
             ),
+          );
+        },
+      )
+          : ListView(
+        padding: context.isMediumWindow
+            ? EdgeInsets.only(
+          bottom: MediaQuery.paddingOf(context).bottom,
+          right: 8,
+        )
+            : kPe8,
+        controller: controller,
+        children: requestSequence.map((id) {
+          var item = requestItems[id]!;
+          if (item.httpRequestModel!.url
+              .toLowerCase()
+              .contains(filterQuery) ||
+              item.name.toLowerCase().contains(filterQuery)) {
+            return Padding(
+              padding: kP1,
+              child: RequestItem(
+                id: id,
+                requestModel: item,
+              ),
+            );
+          }
+          return kSizedBoxEmpty;
+        }).toList(),
+      ),
     );
   }
 }
@@ -193,20 +331,17 @@ class RequestItem extends ConsumerWidget {
       selectedId: selectedId,
       editRequestId: editRequestId,
       onTap: () {
+        // Use the selectedIdStateProvider to update selected request
         ref.read(selectedIdStateProvider.notifier).state = id;
         kHomeScaffoldKey.currentState?.closeDrawer();
       },
       onSecondaryTap: () {
         ref.read(selectedIdStateProvider.notifier).state = id;
       },
-      // onDoubleTap: () {
-      //   ref.read(selectedIdStateProvider.notifier).state = id;
-      //   ref.read(selectedIdEditStateProvider.notifier).state = id;
-      // },
-      // controller: ref.watch(nameTextFieldControllerProvider),
       focusNode: ref.watch(nameTextFieldFocusNodeProvider),
       onChangedNameEditor: (value) {
         value = value.trim();
+        // Use CollectionStateNotifier to update request name
         ref
             .read(collectionStateNotifierProvider.notifier)
             .update(id: editRequestId!, name: value);
@@ -216,25 +351,21 @@ class RequestItem extends ConsumerWidget {
       },
       onMenuSelected: (ItemMenuOption item) {
         if (item == ItemMenuOption.edit) {
-          // var controller =
-          //     ref.read(nameTextFieldControllerProvider.notifier).state;
-          // controller.text = requestModel.name;
-          // controller.selection = TextSelection.fromPosition(
-          //   TextPosition(offset: controller.text.length),
-          // );
           ref.read(selectedIdEditStateProvider.notifier).state = id;
           Future.delayed(
             const Duration(milliseconds: 150),
-            () => ref
+                () => ref
                 .read(nameTextFieldFocusNodeProvider.notifier)
                 .state
                 .requestFocus(),
           );
         }
         if (item == ItemMenuOption.delete) {
+          // Use CollectionStateNotifier to remove a request
           ref.read(collectionStateNotifierProvider.notifier).remove(id: id);
         }
         if (item == ItemMenuOption.duplicate) {
+          // Use CollectionStateNotifier to duplicate a request
           ref.read(collectionStateNotifierProvider.notifier).duplicate(id: id);
         }
       },

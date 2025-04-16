@@ -21,6 +21,7 @@ dependencies:
   desktop_drop: ^0.5.0
   extended_text_field: ^16.0.0
   file_selector: ^1.0.3
+  fl_chart: ^0.70.2
   flex_color_scheme: ^8.1.1
   flutter_highlighter: ^0.1.0
   flutter_hooks: ^0.21.2
@@ -32,6 +33,7 @@ dependencies:
   highlighter: ^0.1.1
   hive_flutter: ^1.1.0
   hooks_riverpod: ^2.5.2
+  http: ^1.2.1
   intl: ^0.19.0
   jinja: ^0.6.1
   json_annotation: ^4.9.0
@@ -69,6 +71,9 @@ dependencies:
       url: https://github.com/google/flutter-desktop-embedding.git
       path: plugins/window_size
   carousel_slider: ^5.0.0
+  graphview: ^1.2.0
+  flutter_flow_chart: ^3.2.3
+  flutter_bloc: ^9.1.0
 
 dependency_overrides:
   extended_text_field: ^16.0.0
