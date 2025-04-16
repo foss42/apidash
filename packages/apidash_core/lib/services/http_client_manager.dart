@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/io_client.dart';
 
+
 http.Client createHttpClientWithNoSSL() {
   var ioClient = HttpClient()
     ..badCertificateCallback =
@@ -21,20 +22,23 @@ class HttpClientManager {
   }
 
   HttpClientManager._internal();
-
+  
   http.Client createClient(
     String requestId, {
     bool noSSL = false,
   }) {
+
     final client =
         (noSSL && !kIsWeb) ? createHttpClientWithNoSSL() : http.Client();
     _clients[requestId] = client;
     return client;
   }
+  
 
   void cancelRequest(String? requestId) {
     if (requestId != null && _clients.containsKey(requestId)) {
-      _clients[requestId]?.close();
+
+       _clients[requestId]?.close();
       _clients.remove(requestId);
 
       _cancelledRequests.add(requestId);

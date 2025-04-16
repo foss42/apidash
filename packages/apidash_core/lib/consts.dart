@@ -2,7 +2,8 @@ import 'dart:convert';
 
 enum APIType {
   rest("HTTP", "HTTP"),
-  graphql("GraphQL", "GQL");
+  graphql("GraphQL", "GQL"),
+  webSocket("WebSocket", "WS");
 
   const APIType(this.label, this.abbr);
   final String label;
@@ -23,7 +24,7 @@ enum HTTPVerb {
   final String abbr;
 }
 
-enum SupportedUriSchemes { https, http }
+enum SupportedUriSchemes { https, http , ws, wss}
 
 final kSupportedUriSchemes =
     SupportedUriSchemes.values.map((i) => i.name).toList();
@@ -76,12 +77,24 @@ const kSubTypeFormData = "form-data";
 
 const kSubTypeDefaultViewOptions = 'all';
 
+const kTypeBinary = 'binary';
+
 enum ContentType {
   json("$kTypeApplication/$kSubTypeJson"),
   text("$kTypeText/$kSubTypePlain"),
   formdata("$kTypeMultipart/$kSubTypeFormData");
 
   const ContentType(this.header);
+  final String header;
+}
+
+enum ContentTypeWebSocket {
+  
+  text(kTypeText),
+  binary(kTypeBinary);
+
+
+  const ContentTypeWebSocket(this.header);
   final String header;
 }
 
@@ -93,3 +106,5 @@ const kCodeCharsPerLineLimit = 200;
 
 const kHeaderContentType = "Content-Type";
 const kMsgRequestCancelled = 'Request Cancelled';
+const kMsgConnected = 'Connected';
+const kMsgDisconnected = 'Disconnected';
