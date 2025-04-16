@@ -223,6 +223,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.1.0"
+  cli_completion:
+    dependency: transitive
+    description:
+      name: cli_completion
+      sha256: "158deec74a75cdc69bce061645fea08f94190dd6833f988f517c2dfcb45e9117"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.5.0"
   cli_launcher:
     dependency: transitive
     description:
@@ -937,6 +945,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "7.3.0"
+  mason_logger:
+    dependency: transitive
+    description:
+      name: mason_logger
+      sha256: "1fdf5c76870eb6fc3611ed6fbae1973a3794abe581ea5e22e68af2f73c688b93"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.16"
   matcher:
     dependency: transitive
     description:
@@ -1048,6 +1064,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.2.2+1"
+  openapi_spec:
+    dependency: transitive
+    description:
+      path: "packages/openapi_spec"
+      relative: true
+    source: path
+    version: "0.7.24"
   package_config:
     dependency: transitive
     description:
@@ -1263,6 +1286,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.2"
+  recase:
+    dependency: transitive
+    description:
+      name: recase
+      sha256: e4eb4ec2dcdee52dcf99cb4ceabaffc631d7424ee55e56f280bc039737f89213
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.1.0"
   riverpod:
     dependency: "direct main"
     description:
