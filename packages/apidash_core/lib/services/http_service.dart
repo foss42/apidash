@@ -82,19 +82,27 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
             return (convertedMultiPartResponse, stopwatch.elapsed, null);
           }
         }
-        response = switch (requestModel.method) {
-          HTTPVerb.get => await client.get(requestUrl, headers: headers),
-          HTTPVerb.head => response =
-              await client.head(requestUrl, headers: headers),
-          HTTPVerb.post => response =
-              await client.post(requestUrl, headers: headers, body: body),
-          HTTPVerb.put => response =
-              await client.put(requestUrl, headers: headers, body: body),
-          HTTPVerb.patch => response =
-              await client.patch(requestUrl, headers: headers, body: body),
-          HTTPVerb.delete => response =
-              await client.delete(requestUrl, headers: headers, body: body),
-        };
+        switch (requestModel.method) {
+          case HTTPVerb.get:
+            response = await client.get(requestUrl, headers: headers);
+            break;
+          case HTTPVerb.head:
+            response = await client.head(requestUrl, headers: headers);
+            break;
+          case HTTPVerb.post:
+          case HTTPVerb.put:
+          case HTTPVerb.patch:
+          case HTTPVerb.delete:
+            final request = http.Request(
+              requestModel.method.name.toUpperCase(),
+              requestUrl,
+            );
+            if (body != null) request.body = body;
+            request.headers.addAll(headers);
+            final streamed = await client.send(request);
+            response = await http.Response.fromStream(streamed);
+            break;
+        }
       }
       if (apiType == APIType.graphql) {
         var requestBody = getGraphQLBody(requestModel);
