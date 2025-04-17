@@ -11,7 +11,7 @@ class GridPainter extends CustomPainter {
   GridPainter({
     required this.transformation,
     required this.viewportSize,
-    this.baseGridSize = 20,
+    this.baseGridSize = 50,
   });
   Offset _transformPoint(Offset point, Matrix4 matrix) {
     final vector = matrix.transform3(vm.Vector3(point.dx, point.dy, 0));
@@ -30,7 +30,7 @@ class GridPainter extends CustomPainter {
     // Calculate visible top-left and bottom-right corners in world space
     final topLeft = _transformPoint(Offset.zero, inverted);
     final bottomRight = _transformPoint(
-      Offset(viewportSize.width, viewportSize.height),
+      Offset(viewportSize.width, viewportSize.width),
       inverted,
     );
 
@@ -42,13 +42,9 @@ class GridPainter extends CustomPainter {
     final endY = (bottomRight.dy ~/ baseGridSize + 1) * baseGridSize.toDouble();
 
     final paint = Paint()
-      ..color = Colors.black
+      ..color = Colors.blueGrey
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1;
-
-    // Restrict drawing to visible area
-    //canvas
-    // .clipRect(Rect.fromLTWH(0, 0, viewportSize.width, viewportSize.height));
 
     // Draw vertical dotted lines
     // Vertical grid lines
@@ -58,7 +54,7 @@ class GridPainter extends CustomPainter {
         ..lineTo(x, endY);
 
       canvas.drawPath(
-        dashPath(path, dashArray: CircularIntervalList<double>([2, 6])),
+        dashPath(path, dashArray: CircularIntervalList<double>([1, 5])),
         paint,
       );
     }
@@ -70,7 +66,7 @@ class GridPainter extends CustomPainter {
         ..lineTo(endX, y);
 
       canvas.drawPath(
-        dashPath(path, dashArray: CircularIntervalList<double>([2, 6])),
+        dashPath(path, dashArray: CircularIntervalList<double>([1, 5])),
         paint,
       );
     }

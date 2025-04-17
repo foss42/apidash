@@ -42,7 +42,7 @@ class _WorkflowCanvasState extends State<WorkflowCanvas> {
             transformationController: _controller,
             constrained: false,
             boundaryMargin: EdgeInsets.all(double.infinity),
-            minScale: 0.5,
+            minScale: 1,
             maxScale: 3,
             child: SizedBox(
               height: mq.width,
