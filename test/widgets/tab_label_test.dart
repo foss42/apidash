@@ -1,6 +1,6 @@
+import 'package:apidash/widgets/tab_label.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:apidash/widgets/tabs.dart';
 
 void main() {
   testWidgets('TabLabel shows indicator when showIndicator is true',
