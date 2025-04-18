@@ -1,4 +1,4 @@
-import 'package:api_testing_suite/src/workflow_builder/workflow_providers.dart';
+import 'package:api_testing_suite/src/workflow_builder/providers/providers.dart';
 import '../../models/workflow_connection_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,7 +8,6 @@ import '../../models/workflow_node_model.dart';
 mixin CanvasEventHandlers<T extends ConsumerStatefulWidget> on ConsumerState<T> {
   TransformationController get transformationController;
 
-  // Declare mutable properties with setters and getters
   String? _draggedNodeId;
   Offset? _dragOffsetFromNodeTopLeft;
   String? _sourceNodeId;
@@ -51,13 +50,10 @@ mixin CanvasEventHandlers<T extends ConsumerStatefulWidget> on ConsumerState<T> 
         label: 'API Request ${DateTime.now().millisecondsSinceEpoch % 1000}',
       );
       
-      // Add the node to workflow state
       ref.read(workflowsNotifierProvider.notifier).addNode(workflowId, nodeModel);
       
-      // Debug print to confirm node was added
       debugPrint('Added node with ID: ${nodeModel.id} at position: ${nodeModel.position}');
       
-      // Check if node was actually added to the workflow
       final workflows = ref.read(workflowsNotifierProvider);
       final workflow = workflows.firstWhere((w) => w.id == workflowId);
       debugPrint('Current nodes in workflow: ${workflow.nodes.length}');
@@ -70,27 +66,22 @@ mixin CanvasEventHandlers<T extends ConsumerStatefulWidget> on ConsumerState<T> 
   }
 
   void handleNodeDrag(WidgetRef ref, String workflowId, String nodeId, Offset position) {
-    // This is critical for smooth dragging - update state directly without debouncing
-    // Update the UI immediately
+
     ref.read(workflowsNotifierProvider.notifier).updateNodePosition(workflowId, nodeId, position);
   }
   
   void handleNodeDragStart(WidgetRef ref, String workflowId, String nodeId, Offset globalPosition) {
     final RenderBox box = context.findRenderObject() as RenderBox;
     
-    // Get current node position from the workflow
     final workflows = ref.read(workflowsNotifierProvider);
     final workflow = workflows.firstWhere((w) => w.id == workflowId);
     final node = workflow.nodes.firstWhere((n) => n.id == nodeId);
     
-    // Calculate node top-left in global coordinates
     final nodeTopLeft = box.localToGlobal(node.position);
     
-    // Set drag info
     draggedNodeId = nodeId;
     dragOffsetFromNodeTopLeft = globalPosition - nodeTopLeft;
     
-    // Let the notifier know we're starting to drag
     ref.read(workflowsNotifierProvider.notifier).startNodeDrag(workflowId, nodeId, node.position);
   }
   
@@ -98,58 +89,47 @@ mixin CanvasEventHandlers<T extends ConsumerStatefulWidget> on ConsumerState<T> 
     if (draggedNodeId != null && dragOffsetFromNodeTopLeft != null) {
       final RenderBox box = context.findRenderObject() as RenderBox;
       
-      // Calculate the new local position, adjusting by the drag offset
       final localPosition = box.globalToLocal(globalPosition - dragOffsetFromNodeTopLeft!);
       
-      // Update the node position using the real-time position
       handleNodeDrag(ref, workflowId, draggedNodeId!, localPosition);
     }
   }
   
   void handleNodeDragEnd(WidgetRef ref, String workflowId) {
     if (draggedNodeId != null) {
-      // Notify that dragging is finished
       ref.read(workflowsNotifierProvider.notifier).finishNodeDrag(workflowId, draggedNodeId!);
       
-      // Clear drag state
       draggedNodeId = null;
       dragOffsetFromNodeTopLeft = null;
     }
   }
 
   void handleNodeTap(WidgetRef ref, String workflowId, String nodeId, Offset position) {
-    // Check if connection mode is active
     final isConnectionModeActive = ref.read(connectionModeProvider);
     
     if (isConnectionModeActive) {
-      // If we don't have a source node yet, set this as the source
       if (sourceNodeId == null) {
         debugPrint('Setting source node: $nodeId');
         sourceNodeId = nodeId;
         connectionStart = position;
         
-        // Force a rebuild to show the connection state
         setState(() {});
       } 
-      // If we already have a source and it's not the same node, create connection
       else if (sourceNodeId != nodeId) {
         debugPrint('Creating connection from ${sourceNodeId!} to $nodeId');
         handleConnectionCreated(ref, workflowId, sourceNodeId!, nodeId);
         
-        // Reset connection state
         sourceNodeId = null;
         connectionStart = null;
         connectionEnd = null;
       }
     } else {
-      // Not in connection mode - just select the node
       ref.read(selectedNodeIdProvider.notifier).state = nodeId;
     }
   }
 
   void handleConnectionCreated(WidgetRef ref, String workflowId, String sourceNodeId, String targetNodeId) {
     try {
-      // Find source node position for connection visual
       final workflows = ref.read(workflowsNotifierProvider);
       final workflow = workflows.firstWhere((w) => w.id == workflowId);
       final sourceNode = workflow.nodes.firstWhere(
@@ -167,7 +147,6 @@ mixin CanvasEventHandlers<T extends ConsumerStatefulWidget> on ConsumerState<T> 
       ref.read(workflowsNotifierProvider.notifier).createConnection(workflowId, sourceNodeId, targetNodeId);
       debugPrint('Added connection from $sourceNodeId to $targetNodeId');
       
-      // Notify the user visually that the connection was created
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Connected nodes'),

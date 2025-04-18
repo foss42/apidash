@@ -1,4 +1,5 @@
 import 'package:api_testing_suite/api_testing_suite.dart';
+import 'package:api_testing_suite/src/workflow_builder/providers/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -13,7 +14,6 @@ class CanvasView extends ConsumerStatefulWidget {
 class _CanvasViewState extends ConsumerState<CanvasView>
     with CanvasEventHandlers<CanvasView> {
   void handleNodeDrop(WidgetRef ref, String workflowId, Object data, Offset position) {
-    // Handle the drop from the left panel
     if (data is String) {
       final requestId = data;
       handleApiNodeAdded(ref, workflowId, requestId, position);
@@ -30,14 +30,12 @@ class _CanvasViewState extends ConsumerState<CanvasView>
 
   @override
   Widget build(BuildContext context) {
-    // Get workflow directly from the notifier provider
     final workflows = ref.watch(workflowsNotifierProvider);
     final workflow = workflows.firstWhere(
       (w) => w.id == widget.workflowId,
       orElse: () => throw Exception('Workflow not found: ${widget.workflowId}'),
     );
     
-    // Get connection mode state
     final isConnectionMode = ref.watch(connectionModeProvider);
     
     debugPrint('[CanvasView] Workflow nodes count: ${workflow.nodes.length}');
@@ -45,7 +43,6 @@ class _CanvasViewState extends ConsumerState<CanvasView>
       debugPrint('[CanvasView] Node ID: ${node.id}, Position: ${node.position}, Label: ${node.label}');
     }
     
-    // Get running/completed nodes
     final runningNodeIds = workflow.nodes
         .where((node) => node.status == NodeStatus.running)
         .map((node) => node.id)
@@ -62,7 +59,6 @@ class _CanvasViewState extends ConsumerState<CanvasView>
 
     return Stack(
       children: [
-        // Connection mode indicator
         if (isConnectionMode)
           Positioned(
             top: 16,
@@ -91,7 +87,6 @@ class _CanvasViewState extends ConsumerState<CanvasView>
         MouseRegion(
           onHover: (event) {
             if (sourceNodeId != null && connectionStart != null) {
-              // Convert to local coordinates in the canvas
               final RenderBox box = context.findRenderObject() as RenderBox;
               final localPosition = box.globalToLocal(event.position);
               
@@ -137,11 +132,9 @@ class _CanvasViewState extends ConsumerState<CanvasView>
                       handleNodeDragEnd(ref, widget.workflowId);
                     },
                     onStartConnection: (nodeId, position) {
-                      // Simplified - just use the node tap handler which now handles everything
                       handleNodeTap(ref, widget.workflowId, nodeId, position);
                     },
                     onNodeSelected: (nodeId, position) {
-                      // Use our simplified node tap handler with position
                       handleNodeTap(ref, widget.workflowId, nodeId, position);
                     },
                     draggedNodeId: draggedNodeId,
@@ -174,7 +167,7 @@ class _CanvasViewState extends ConsumerState<CanvasView>
         ),
         Positioned(
           left: 16,
-          top: isConnectionMode ? 70 : 16, // Position below connection mode indicator
+          top: isConnectionMode ? 70 : 16,
           child: CanvasInfoCard(workflow: workflow),
         ),
       ],

@@ -1,4 +1,5 @@
 import 'package:api_testing_suite/api_testing_suite.dart';
+import 'package:api_testing_suite/src/workflow_builder/providers/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -26,14 +27,12 @@ class CanvasNodeLayer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Get workflow directly from the notifier provider
     final workflows = ref.watch(workflowsNotifierProvider);
     final workflow = workflows.firstWhere(
       (w) => w.id == workflowId,
       orElse: () => throw Exception('Workflow not found: $workflowId'),
     );
     
-    // Check if connection mode is active for visual cues
     final isConnectionMode = ref.watch(connectionModeProvider);
     
     debugPrint('[CanvasNodeLayer] Rendering nodes. Count: ${workflow.nodes.length}');
@@ -43,10 +42,9 @@ class CanvasNodeLayer extends ConsumerWidget {
     
     return Stack(
       children: workflow.nodes.map((node) {
-        // Calculate the center position of the node for better connection point
         final nodeCenter = Offset(
-          node.position.dx + 100, // Half of width (200)
-          node.position.dy + 40,  // Approximate half of height
+          node.position.dx + 100, 
+          node.position.dy + 40,  
         );
         
         return Positioned(
@@ -54,29 +52,24 @@ class CanvasNodeLayer extends ConsumerWidget {
           top: node.position.dy,
           child: GestureDetector(
             onTap: () {
-              // Pass both node ID and position to make connections easier
               onNodeSelected(node.id, nodeCenter);
             },
             onPanStart: (details) {
-              // Only start drag if we're not in connection mode
               if (!isConnectionMode) {
                 onNodeDragStart(node.id, details.globalPosition);
               }
             },
             onPanUpdate: (details) {
-              // Only update drag if we're not in connection mode
               if (!isConnectionMode) {
                 onNodeDragUpdate(details.globalPosition);
               }
             },
             onPanEnd: (_) {
-              // Only end drag if we're not in connection mode
               if (!isConnectionMode) {
                 onNodeDragEnd();
               }
             },
             onLongPress: () {
-              // In connection mode, long press also works to select a node
               if (isConnectionMode) {
                 onStartConnection(node.id, nodeCenter);
               }
@@ -149,7 +142,7 @@ class CanvasNodeLayer extends ConsumerWidget {
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
-                            if (isConnectionMode)
+                            if (isConnectionMode)                                 
                               const Icon(
                                 Icons.cable_outlined,
                                 color: Colors.white,
