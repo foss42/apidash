@@ -7,6 +7,7 @@ import 'package:uuid/uuid.dart';
 import 'core_models.dart';
 import 'node_status.dart';
 import 'workflow_connection_model.dart';
+import 'node_type.dart';
 
 part 'workflow_node_model.freezed.dart';
 part 'workflow_node_model.g.dart';
@@ -43,7 +44,8 @@ class RequestModelConverter implements JsonConverter<RequestModel?, Map<String, 
       id: json['id'] as String,
       name: json['name'] as String? ?? '',
       method: json['method'] as String? ?? 'GET',
-      url: json['url'] as String? ?? '', httpRequestModel: HttpRequestModel(),
+      url: json['url'] as String? ?? '', 
+      httpRequestModel: HttpRequestModel(),
     );
   }
 
@@ -104,11 +106,4 @@ class WorkflowNodeModel with _$WorkflowNodeModel {
   String get workflowId => requestId;
 
   factory WorkflowNodeModel.fromJson(Map<String, dynamic> json) => _$WorkflowNodeModelFromJson(json);
-}
-
-enum NodeType {
-  request,
-  response,
-  condition,
-  action,
 }

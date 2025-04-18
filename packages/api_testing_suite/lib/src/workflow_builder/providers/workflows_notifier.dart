@@ -1,158 +1,326 @@
+import 'dart:async';
+
+import 'package:api_testing_suite/api_testing_suite.dart';
+import 'package:apidash_core/models/http_request_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../models/models.dart';
 
-
-/// Notifier class for workflows state management
 class WorkflowsNotifier extends StateNotifier<List<WorkflowModel>> {
-  final Ref _ref;
-  
-  WorkflowsNotifier(this._ref) : super([]);
+  final Map<String, WorkflowExecutor> _executionEngines = {};
+  Timer? _debounceTimer;
 
-  void add() {
-    final newWorkflow = WorkflowModel.create(name: 'New Workflow');
+  WorkflowsNotifier() : super([]);
+
+  String createWorkflow({String? name, String? description}) {
+    final newWorkflow = WorkflowModel.create(
+      name: name ?? 'New Workflow',
+      description: description ?? '',
+    );
+
     state = [...state, newWorkflow];
-    _ref.read(StateProvider<String?>((ref) => null).notifier).state = newWorkflow.id;
+    return newWorkflow.id;
   }
 
-  void update(WorkflowModel workflow) {
+  void updateWorkflow(WorkflowModel updatedWorkflow) {
     state = [
-      for (final existingWorkflow in state)
-        if (existingWorkflow.id == workflow.id) workflow else existingWorkflow,
+      for (final workflow in state)
+        if (workflow.id == updatedWorkflow.id) updatedWorkflow else workflow,
     ];
+  }
+
+  void deleteWorkflow(String workflowId) {
+    _executionEngines[workflowId]?.dispose();
+    _executionEngines.remove(workflowId);
+
+    state = state.where((workflow) => workflow.id != workflowId).toList();
   }
 
   void addNode(String workflowId, WorkflowNodeModel node) {
-    state = [
-      for (final workflow in state)
-        if (workflow.id == workflowId)
-          workflow.copyWith(nodes: [...workflow.nodes, node])
-        else
-          workflow,
-    ];
+    state = state.map((workflow) {
+      if (workflow.id == workflowId) {
+        return workflow.copyWith(
+          nodes: [...workflow.nodes, node],
+        );
+      }
+      return workflow;
+    }).toList();
   }
 
   void updateNode(String workflowId, WorkflowNodeModel updatedNode) {
-    state = [
-      for (final workflow in state)
-        if (workflow.id == workflowId)
-          workflow.copyWith(
-            nodes: [
-              for (final node in workflow.nodes)
-                if (node.id == updatedNode.id) updatedNode else node,
-            ],
-          )
-        else
-          workflow,
-    ];
+    WorkflowNodeModel nodeToSave = updatedNode;
+    if (updatedNode.nodeType == NodeType.request) {
+      final nodeData = updatedNode.nodeData;
+      final url = nodeData['url'] ?? '';
+      final method = nodeData['method'] ?? 'GET';
+      if (updatedNode.requestModel != null) {
+        nodeToSave = updatedNode.copyWith(
+          requestModel: updatedNode.requestModel!.copyWith(
+            url: url,
+            method: method,
+          ),
+        );
+      } else {
+        nodeToSave = updatedNode.copyWith(
+          requestModel: RequestModel(
+            id: updatedNode.id,
+            name: updatedNode.label,
+            method: method,
+            url: url,
+            httpRequestModel: HttpRequestModel(),
+          ),
+        );
+      }
+    }
+
+    state = state.map((workflow) {
+      if (workflow.id == workflowId) {
+        return workflow.copyWith(
+          nodes: workflow.nodes.map((node) {
+            return node.id == updatedNode.id ? nodeToSave : node;
+          }).toList(),
+        );
+      }
+      return workflow;
+    }).toList();
+    print('Updated node: ${nodeToSave.id} | nodeData: ${nodeToSave.nodeData} | requestModel: ${nodeToSave.requestModel}');
   }
-  
-  void updateNodes(String workflowId, List<WorkflowNodeModel> updatedNodes) {
-    state = [
-      for (final workflow in state)
-        if (workflow.id == workflowId)
-          workflow.copyWith(nodes: updatedNodes)
-        else
-          workflow,
-    ];
+
+  void updateNodeStatus(String workflowId, String nodeId, NodeStatus status) {
+    state = state.map((workflow) {
+      if (workflow.id == workflowId) {
+        return workflow.copyWith(
+          nodes: workflow.nodes.map((node) {
+            return node.id == nodeId ? node.copyWith(status: status) : node;
+          }).toList(),
+        );
+      }
+      return workflow;
+    }).toList();
   }
 
   void updateNodePosition(String workflowId, String nodeId, Offset position) {
-    state = [
-      for (final workflow in state)
-        if (workflow.id == workflowId)
-          workflow.copyWith(
-            nodes: [
-              for (final node in workflow.nodes)
-                if (node.id == nodeId)
-                  node.copyWith(position: position)
-                else
-                  node,
-            ],
-          )
-        else
-          workflow,
-    ];
+    _debounceTimer?.cancel();
+    _debounceTimer = Timer(const Duration(milliseconds: 50), () {
+      state = state.map((workflow) {
+        if (workflow.id == workflowId) {
+          return workflow.copyWith(
+            nodes: workflow.nodes.map((node) {
+              return node.id == nodeId
+                  ? node.copyWith(position: position)
+                  : node;
+            }).toList(),
+          );
+        }
+        return workflow;
+      }).toList();
+    });
   }
 
   void removeNode(String workflowId, String nodeId) {
-    state = [
-      for (final workflow in state)
-        if (workflow.id == workflowId)
-          workflow.copyWith(
-            nodes: workflow.nodes.where((node) => node.id != nodeId).toList(),
-            connections: workflow.connections.where(
-              (conn) => conn.sourceId != nodeId && conn.targetId != nodeId
-            ).toList(),
-          )
-        else
-          workflow,
-    ];
+    state = state.map((workflow) {
+      if (workflow.id == workflowId) {
+        return workflow.copyWith(
+          nodes: workflow.nodes.where((node) => node.id != nodeId).toList(),
+          connections: workflow.connections
+              .where(
+                  (conn) => conn.sourceId != nodeId && conn.targetId != nodeId)
+              .toList(),
+        );
+      }
+      return workflow;
+    }).toList();
   }
 
-  void addConnection(String workflowId, WorkflowConnectionModel connection) {
-    state = [
-      for (final workflow in state)
-        if (workflow.id == workflowId)
-          workflow.copyWith(connections: [...workflow.connections, connection])
-        else
-          workflow,
-    ];
+  void selectNode(String workflowId, String? nodeId) {
+    state = state.map((workflow) {
+      if (workflow.id == workflowId) {
+        return workflow.copyWith(selectedNodeId: nodeId);
+      }
+      return workflow;
+    }).toList();
   }
 
-  void updateConnection(String workflowId, WorkflowConnectionModel updatedConnection) {
-    state = [
-      for (final workflow in state)
-        if (workflow.id == workflowId)
-          workflow.copyWith(
-            connections: [
-              for (final connection in workflow.connections)
-                if (connection.id == updatedConnection.id) updatedConnection else connection,
-            ],
-          )
-        else
-          workflow,
-    ];
+  void createConnection(String workflowId, String sourceId, String targetId) {
+    if (sourceId == targetId) return;
+
+    state = state.map((workflow) {
+      if (workflow.id == workflowId) {
+        final connectionExists = workflow.connections.any(
+          (conn) => conn.sourceId == sourceId && conn.targetId == targetId,
+        );
+
+        if (!connectionExists) {
+          final newConnection = WorkflowConnectionModel.create(
+            sourceId: sourceId,
+            targetId: targetId,
+            workflowId: workflowId,
+            position: Offset.zero,
+          );
+
+          return workflow.copyWith(
+            connections: [...workflow.connections, newConnection],
+          );
+        }
+      }
+      return workflow;
+    }).toList();
+
+    _resetExecutionEngine(workflowId);
   }
 
   void removeConnection(String workflowId, String connectionId) {
-    state = [
-      for (final workflow in state)
-        if (workflow.id == workflowId)
-          workflow.copyWith(
-            connections: workflow.connections.where((conn) => conn.id != connectionId).toList(),
-          )
-        else
-          workflow,
-    ];
-  }
-
-  void delete(String workflowId) {
-    state = state.where((workflow) => workflow.id != workflowId).toList();
-    if (_ref.read(StateProvider<String?>((ref) => null)) == workflowId) {
-      _ref.read(StateProvider<String?>((ref) => null).notifier).state = state.isNotEmpty ? state.first.id : null;
-    }
-  }
-
-  void importRequestAsNode(String workflowId, String requestId, Offset position, Map<String, RequestModel> collection) {
-    try {
-      final RequestModel? request = collection[requestId];
-      if (request == null) {
-        debugPrint('Request not found with ID: $requestId');
-        return;
+    state = state.map((workflow) {
+      if (workflow.id == workflowId) {
+        return workflow.copyWith(
+          connections: workflow.connections
+              .where((conn) => conn.id != connectionId)
+              .toList(),
+        );
       }
-      
-      final node = WorkflowNodeModel.create(
-        requestId: requestId,
-        position: position,
-        label: request.name.isNotEmpty ? request.name : 'Request ${requestId.substring(0, 4)}',
-        requestModel: request,
-      );
-      
-      addNode(workflowId, node);
-    } catch (e) {
-      debugPrint('Error importing node: $e');
+      return workflow;
+    }).toList();
+
+    _resetExecutionEngine(workflowId);
+  }
+
+  void setActiveNodes(String workflowId, List<String> nodeIds) {
+    state = state.map((workflow) {
+      if (workflow.id == workflowId) {
+        return workflow.copyWith(activeNodeIds: nodeIds);
+      }
+      return workflow;
+    }).toList();
+  }
+
+  void setCompletedNodes(String workflowId, List<String> nodeIds) {
+    state = state.map((workflow) {
+      if (workflow.id == workflowId) {
+        return workflow.copyWith(completedNodeIds: nodeIds);
+      }
+      return workflow;
+    }).toList();
+  }
+
+  void setStartNode(String workflowId, String? nodeId) {
+    state = state.map((workflow) {
+      if (workflow.id == workflowId) {
+        return workflow.copyWith(startNodeId: nodeId);
+      }
+      return workflow;
+    }).toList();
+  }
+
+  WorkflowModel? getWorkflow(String workflowId) {
+    return state.firstWhere(
+      (workflow) => workflow.id == workflowId,
+      orElse: () => throw Exception('Workflow not found: $workflowId'),
+    );
+  }
+
+  void startExecution(
+      String workflowId, Function(WorkflowExecutionState) onStateChanged) {
+    final engine = _getOrCreateExecutionEngine(workflowId, onStateChanged: onStateChanged);
+    if (engine != null) {
+      engine.start();
     }
+  }
+
+  void pauseExecution(String workflowId) {
+    final engine = _executionEngines[workflowId];
+    engine?.pause();
+  }
+
+  void resumeExecution(String workflowId) {
+    final engine = _executionEngines[workflowId];
+    engine?.resume();
+  }
+
+  void stopExecution(String workflowId) {
+    final engine = _executionEngines[workflowId];
+    engine?.stop();
+  }
+
+  WorkflowExecutor? _getOrCreateExecutionEngine(String workflowId, {Function(WorkflowExecutionState)? onStateChanged}) {
+    if (_executionEngines.containsKey(workflowId)) {
+      return _executionEngines[workflowId];
+    }
+
+    final workflow = getWorkflow(workflowId);
+    if (workflow == null) return null;
+
+    final engine = WorkflowExecutor(
+      workflow: workflow,
+      onNodeStatusChanged: (nodeId, status) =>
+          updateNodeStatus(workflowId, nodeId, status),
+      onExecutionStateChanged: (state) {
+        setActiveNodes(workflowId, state.pendingNodeIds);
+        setCompletedNodes(workflowId, state.executedNodeIds);
+        if (onStateChanged != null) {
+          onStateChanged(state);
+        }
+      },
+    );
+
+    _executionEngines[workflowId] = engine;
+    return engine;
+  }
+
+  void _resetExecutionEngine(String workflowId) {
+    _executionEngines[workflowId]?.dispose();
+    _executionEngines.remove(workflowId);
+  }
+
+  void startNodeDrag(String workflowId, String nodeId, Offset position) {
+    state = state.map((workflow) {
+      if (workflow.id == workflowId) {
+        return workflow.copyWith(
+          nodes: workflow.nodes.map((node) {
+            return node.id == nodeId 
+                ? node.copyWith(
+                    position: position,
+                    isDragging: true,
+                  )
+                : node.copyWith(
+                    isDragging: false,
+                  );
+          }).toList(),
+        );
+      }
+      return workflow;
+    }).toList();
+  }
+
+  void updateNodeDrag(String workflowId, String nodeId, Offset position) {
+    updateNodePosition(workflowId, nodeId, position);
+  }
+
+  void finishNodeDrag(String workflowId, String nodeId) {
+    state = state.map((workflow) {
+      if (workflow.id == workflowId) {
+        return workflow.copyWith(
+          nodes: workflow.nodes.map((node) {
+            return node.id == nodeId 
+                ? node.copyWith(
+                    isDragging: false,
+                  )
+                : node;
+          }).toList(),
+        );
+      }
+      return workflow;
+    }).toList();
+  }
+
+  @override
+  void dispose() {
+    _debounceTimer?.cancel();
+
+    for (final engine in _executionEngines.values) {
+      engine.dispose();
+    }
+    _executionEngines.clear();
+
+    super.dispose();
   }
 }

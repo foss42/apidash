@@ -1,7 +1,7 @@
+import 'package:api_testing_suite/src/workflow_builder/providers/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/workflow_execution_state.dart';
-import '../workflow_providers.dart';
 import '../models/log_entry.dart';
 
 class LogsViewer extends ConsumerWidget {
