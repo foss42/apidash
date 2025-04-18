@@ -6,8 +6,7 @@ export 'workflow_connection.dart' hide ConnectionPainter;
 export 'execution/workflow_executor.dart';
 
 // Providers
-export 'workflow_providers.dart';
-export 'workflows_notifier.dart';
+export 'providers/providers.dart';
 
 // Models
 export 'models/models.dart';
