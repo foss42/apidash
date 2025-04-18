@@ -29,6 +29,7 @@ final kSupportedUriSchemes =
     SupportedUriSchemes.values.map((i) => i.name).toList();
 const kDefaultUriScheme = SupportedUriSchemes.https;
 final kLocalhostRegex = RegExp(r'^localhost(:\d+)?(/.*)?$');
+final kCharsetRegEx = RegExp(r'charset\s*=\s*([^;]+)', caseSensitive: false);
 
 const kMethodsWithBody = [
   HTTPVerb.post,

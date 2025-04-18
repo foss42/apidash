@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:seed/seed.dart';
@@ -35,6 +36,16 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
     Map<String, String> headers = requestModel.enabledHeadersMap;
     HttpResponse? response;
     String? body;
+    String? contentType = headers[kHeaderContentType];
+    final charset = contentType != null
+        ? kCharsetRegEx.firstMatch(contentType)?.group(1)?.trim()
+        : null;
+
+    log("Raw Content-Type: $contentType");
+    log("Parsed Charset: $charset");
+
+    final encoding = Encoding.getByName(charset ?? 'utf-8') ?? utf8;
+    log("Final Encoding: $encoding");
     try {
       Stopwatch stopwatch = Stopwatch()..start();
       if (apiType == APIType.rest) {
@@ -44,12 +55,15 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
         if (kMethodsWithBody.contains(requestModel.method)) {
           var requestBody = requestModel.body;
           if (requestBody != null && !isMultiPartRequest) {
-            var contentLength = utf8.encode(requestBody).length;
+            var contentLength = encoding.encode(requestBody).length;
             if (contentLength > 0) {
               body = requestBody;
               headers[HttpHeaders.contentLengthHeader] =
                   contentLength.toString();
               if (!requestModel.hasContentTypeHeader) {
+                log(requestModel.bodyContentType.header.toString());
+                log("Headers: ${requestModel.enabledHeaders}");
+                log("Headers Map: ${requestModel.enabledHeadersMap}");
                 headers[HttpHeaders.contentTypeHeader] =
                     requestModel.bodyContentType.header;
               }
@@ -82,18 +96,38 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
             return (convertedMultiPartResponse, stopwatch.elapsed, null);
           }
         }
+
         response = switch (requestModel.method) {
           HTTPVerb.get => await client.get(requestUrl, headers: headers),
-          HTTPVerb.head => response =
-              await client.head(requestUrl, headers: headers),
-          HTTPVerb.post => response =
-              await client.post(requestUrl, headers: headers, body: body),
-          HTTPVerb.put => response =
-              await client.put(requestUrl, headers: headers, body: body),
-          HTTPVerb.patch => response =
-              await client.patch(requestUrl, headers: headers, body: body),
-          HTTPVerb.delete => response =
-              await client.delete(requestUrl, headers: headers, body: body),
+          HTTPVerb.head => await client.head(requestUrl, headers: headers),
+          HTTPVerb.post => await client.post(
+              requestUrl,
+              headers: headers,
+              body: body != null && encoding != utf8
+                  ? encoding.encode(body)
+                  : body,
+            ),
+          HTTPVerb.put => await client.put(
+              requestUrl,
+              headers: headers,
+              body: body != null && encoding != utf8
+                  ? encoding.encode(body)
+                  : body,
+            ),
+          HTTPVerb.patch => await client.patch(
+              requestUrl,
+              headers: headers,
+              body: body != null && encoding != utf8
+                  ? encoding.encode(body)
+                  : body,
+            ),
+          HTTPVerb.delete => await client.delete(
+              requestUrl,
+              headers: headers,
+              body: body != null && encoding != utf8
+                  ? encoding.encode(body)
+                  : body,
+            ),
         };
       }
       if (apiType == APIType.graphql) {
