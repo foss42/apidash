@@ -1,4 +1,4 @@
-import 'package:apidash/api_testing/api_testing_integration.dart';
+import 'package:api_testing_suite/api_testing_suite.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
