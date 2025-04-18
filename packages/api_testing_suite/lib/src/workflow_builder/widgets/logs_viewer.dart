@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/workflow_execution_state.dart';
 import '../workflow_providers.dart';
+import '../models/log_entry.dart';
 
 class LogsViewer extends ConsumerWidget {
   final String workflowId;
@@ -34,7 +35,7 @@ class LogsViewer extends ConsumerWidget {
           Expanded(
             child: logs.isEmpty
                 ? _buildEmptyState()
-                : _buildLogsList(logs),
+                : _buildLogsList(logs.cast<LogEntry>()),
           ),
         ],
       ),
@@ -142,7 +143,7 @@ class LogsViewer extends ConsumerWidget {
     );
   }
 
-  Widget _buildLogsList(List<WorkflowLogEntry> logs) {
+  Widget _buildLogsList(List<LogEntry> logs) {
     return ListView.builder(
       itemCount: logs.length,
       reverse: true,
@@ -153,9 +154,11 @@ class LogsViewer extends ConsumerWidget {
     );
   }
 
-  Widget _buildLogItem(WorkflowLogEntry log) {
+  Widget _buildLogItem(LogEntry log) {
     Color getLogColor() {
       switch (log.level) {
+        case LogLevel.debug:
+          return Colors.grey;
         case LogLevel.info:
           return Colors.blue;
         case LogLevel.success:
@@ -164,13 +167,13 @@ class LogsViewer extends ConsumerWidget {
           return Colors.orange;
         case LogLevel.error:
           return Colors.red;
-        case LogLevel.debug:
-          return Colors.grey;
       }
     }
 
     IconData getLogIcon() {
       switch (log.level) {
+        case LogLevel.debug:
+          return Icons.code;
         case LogLevel.info:
           return Icons.info_outline;
         case LogLevel.success:
@@ -179,8 +182,6 @@ class LogsViewer extends ConsumerWidget {
           return Icons.warning_amber_outlined;
         case LogLevel.error:
           return Icons.error_outline;
-        case LogLevel.debug:
-          return Icons.code;
       }
     }
 
@@ -272,28 +273,4 @@ class LogsViewer extends ConsumerWidget {
       return '${timestamp.month.toString().padLeft(2, '0')}/${timestamp.day.toString().padLeft(2, '0')} ${timestamp.hour.toString().padLeft(2, '0')}:${timestamp.minute.toString().padLeft(2, '0')}';
     }
   }
-}
-
-class WorkflowLogEntry {
-  final String message;
-  final LogLevel level;
-  final DateTime timestamp;
-  final String? nodeId;
-  final String? details;
-
-  WorkflowLogEntry({
-    required this.message,
-    this.level = LogLevel.info,
-    DateTime? timestamp,
-    this.nodeId,
-    this.details,
-  }) : timestamp = timestamp ?? DateTime.now();
-}
-
-enum LogLevel {
-  debug,
-  info,
-  success,
-  warning,
-  error,
 }
