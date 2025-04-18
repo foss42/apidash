@@ -1,224 +1,214 @@
-import 'dart:ui' as ui;
+import 'package:api_testing_suite/api_testing_suite.dart';
 import 'package:flutter/material.dart';
-import 'models/workflow_connection_model.dart';
-import 'models/workflow_node_model.dart';
 
 /// Painter for workflow connections
 class ConnectionPainter extends CustomPainter {
   final List<WorkflowConnectionModel> connections;
   final List<WorkflowNodeModel> nodes;
   final Map<String, Offset> nodePositions;
-  final Offset? tempConnectionStart;
-  final Offset? tempConnectionEnd;
   final List<String> runningNodeIds;
   final List<String> completedNodeIds;
-  final Size nodeSize;
+  final Offset? tempConnectionStart;
+  final Offset? tempConnectionEnd;
+  final double strokeWidth;
+  
+  final Offset? start;
+  final Offset? end;
+  final Color? color;
+  final bool animated;
+  final String? label;
 
   ConnectionPainter({
-    required this.connections,
-    required this.nodes,
-    required this.nodePositions,
-    this.tempConnectionStart,
-    this.tempConnectionEnd,
+    this.connections = const [],
+    this.nodes = const [],
+    this.nodePositions = const {},
     this.runningNodeIds = const [],
     this.completedNodeIds = const [],
-    this.nodeSize = const Size(160, 80),
+    this.tempConnectionStart,
+    this.tempConnectionEnd,
+    this.strokeWidth = 2.0,
+    this.start,
+    this.end,
+    this.color,
+    this.animated = false,
+    this.label,
   });
 
   @override
   void paint(Canvas canvas, Size size) {
+    if (start != null && end != null) {
+      _paintSingleConnection(canvas, start!, end!, color ?? Colors.blue, animated, label);
+      return;
+    }
+    
     for (final connection in connections) {
-      try {
-        final sourceId = connection.sourceId;
-        final targetId = connection.targetId;
-
-        if (nodePositions.containsKey(sourceId) &&
-            nodePositions.containsKey(targetId)) {
-          final isActive = runningNodeIds.contains(sourceId) ||
-              runningNodeIds.contains(targetId);
-          final isCompleted = completedNodeIds.contains(sourceId) &&
-              completedNodeIds.contains(targetId);
-
-          _drawConnection(
-            canvas,
-            sourceId,
-            targetId,
-            isActive: isActive,
-            isCompleted: isCompleted,
-          );
+      final sourcePos = _getNodeCenterPosition(connection.sourceId);
+      final targetPos = _getNodeCenterPosition(connection.targetId);
+      
+      if (sourcePos != null && targetPos != null) {
+        final isActive = _isConnectionActive(connection.sourceId, connection.targetId);
+        final isCompleted = _isConnectionCompleted(connection.sourceId, connection.targetId);
+        
+        Color connectionColor;
+        if (isActive) {
+          connectionColor = Colors.blue.shade500;
+        } else if (isCompleted) {
+          connectionColor = Colors.green.shade500;
+        } else if (connection.condition != null) {
+          connectionColor = Colors.amber.shade500;
+        } else {
+          connectionColor = Colors.blue.shade300;
         }
-      } catch (e) {
-        debugPrint('Error drawing connection: $e');
+        
+        _paintSingleConnection(
+          canvas, 
+          sourcePos, 
+          targetPos, 
+          connectionColor,
+          isActive, 
+          connection.condition
+        );
       }
     }
-
+    
     if (tempConnectionStart != null && tempConnectionEnd != null) {
-      _drawTempConnection(canvas, tempConnectionStart!, tempConnectionEnd!);
+      _paintSingleConnection(
+        canvas,
+        tempConnectionStart!,
+        tempConnectionEnd!,
+        Colors.blue.withOpacity(0.7),
+        true,
+        null
+      );
     }
   }
-
-  void _drawConnection(
-    Canvas canvas,
-    String sourceId,
-    String targetId, {
-    bool isActive = false,
-    bool isCompleted = false,
-  }) {
-    try {
-      final start = nodePositions[sourceId]!;
-      final end = nodePositions[targetId]!;
-
-      final Color color = isActive
-          ? Colors.blue
-          : isCompleted
-              ? Colors.green
-              : Colors.grey;
-
-      final double width = isActive || isCompleted ? 2.0 : 1.0;
-
-      _drawBezierLine(canvas, start, end, color, width);
-    } catch (e) {
-      debugPrint('Error drawing connection: $e');
+  
+  Offset? _getNodeCenterPosition(String nodeId) {
+    final position = nodePositions[nodeId];
+    if (position != null) {
+      return position + const Offset(80, 40); 
     }
+    return null;
+  }
+  
+  bool _isConnectionActive(String sourceId, String targetId) {
+    return runningNodeIds.contains(sourceId) || runningNodeIds.contains(targetId);
+  }
+  
+  bool _isConnectionCompleted(String sourceId, String targetId) {
+    return completedNodeIds.contains(sourceId) && completedNodeIds.contains(targetId);
   }
 
-  void _drawTempConnection(Canvas canvas, Offset start, Offset end) {
-    _drawBezierLine(canvas, start, end, Colors.blue.withOpacity(0.7), 2.0,
-        isDashed: true);
-  }
-
-  void _drawBezierLine(
+  void _paintSingleConnection(
     Canvas canvas,
     Offset start,
     Offset end,
     Color color,
-    double width, {
-    bool isDashed = false,
-  }) {
-    try {
-      final sourceCenter =
-          Offset(start.dx + nodeSize.width / 2, start.dy + nodeSize.height / 2);
-
-      final targetCenter =
-          Offset(end.dx + nodeSize.width / 2, end.dy + nodeSize.height / 2);
-
-      final controlPoint1 = Offset(
-        sourceCenter.dx + (targetCenter.dx - sourceCenter.dx) * 0.5,
-        sourceCenter.dy,
-      );
-
-      final controlPoint2 = Offset(
-        sourceCenter.dx + (targetCenter.dx - sourceCenter.dx) * 0.5,
-        targetCenter.dy,
-      );
-
-      final path = Path()
-        ..moveTo(sourceCenter.dx, sourceCenter.dy)
-        ..cubicTo(
-          controlPoint1.dx,
-          controlPoint1.dy,
-          controlPoint2.dx,
-          controlPoint2.dy,
-          targetCenter.dx,
-          targetCenter.dy,
-        );
-
-      final shadowPaint = Paint()
-        ..color = Colors.black.withOpacity(0.3)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = width + 2.0;
-
-      final paint = Paint()
-        ..color = color
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = width;
-
-      if (isDashed) {
-        final dashPath = _dashPath(
-          path,
-          dashArray: CircularIntervalList<double>([5, 5]),
-        );
-        canvas.drawPath(dashPath, paint);
-      } else {
-        canvas.drawPath(path, shadowPaint);
-        canvas.drawPath(path, paint);
-
-        _drawArrow(canvas, targetCenter.dx, targetCenter.dy, color, width);
-      }
-    } catch (e) {
-      debugPrint('Error drawing bezier line: $e');
-    }
-  }
-
-  void _drawArrow(
-      Canvas canvas, double x, double y, Color color, double width) {
+    bool animated,
+    String? label,
+  ) {
     final paint = Paint()
       ..color = color
-      ..style = PaintingStyle.fill;
+      ..strokeWidth = strokeWidth
+      ..style = PaintingStyle.stroke;
 
-    final path = Path();
-
-    path.moveTo(x, y);
-    path.lineTo(x - 6, y - 3);
-    path.lineTo(x - 6, y + 3);
-    path.close();
-
-    canvas.drawPath(path, paint);
-  }
-
-  Path _dashPath(
-    Path source, {
-    required CircularIntervalList<double> dashArray,
-  }) {
-    final Path dest = Path();
-    final List<ui.PathMetric> metrics = source.computeMetrics().toList();
-
-    for (final ui.PathMetric pathMetric in metrics) {
-      double distance = 0;
-      bool draw = true;
-      while (distance < pathMetric.length) {
-        final double len = dashArray.next;
-        if (draw) {
-          try {
-            dest.addPath(
-              pathMetric.extractPath(distance, distance + len),
-              Offset.zero,
-            );
-          } catch (e) {
-            debugPrint('Error adding path segment: $e');
-          }
-        }
-        distance += len;
-        draw = !draw;
-      }
+    if (animated) {
+      paint.shader = LinearGradient(
+        colors: [
+          color.withOpacity(0.3),
+          color,
+          color.withOpacity(0.3),
+        ],
+        stops: const [0.0, 0.5, 1.0],
+      ).createShader(Rect.fromPoints(start, end));
     }
 
-    return dest;
+    final path = Path()
+      ..moveTo(start.dx, start.dy)
+      ..lineTo(end.dx, end.dy);
+
+    canvas.drawPath(path, paint);
+
+    if (label != null && label.isNotEmpty) {
+      final midpoint = Offset(
+        (start.dx + end.dx) / 2,
+        (start.dy + end.dy) / 2,
+      );
+      _drawLabel(canvas, midpoint, label);
+    }
+  }
+
+  // Offset _calculateTangent(Offset controlPoint, Offset endPoint) {
+  //   return (endPoint - controlPoint).normalize();
+  // }
+
+  // void _drawArrow(Canvas canvas, Offset position, Offset direction, Paint paint) {
+  //   final arrowSize = 8.0;
+  //   final angle = atan2(direction.dy, direction.dx);
+
+  //   final path = Path()
+  //     ..moveTo(position.dx, position.dy)
+  //     ..lineTo(
+  //       position.dx - arrowSize * cos(angle - pi / 6),
+  //       position.dy - arrowSize * sin(angle - pi / 6),
+  //     )
+  //     ..lineTo(
+  //       position.dx - arrowSize * cos(angle + pi / 6),
+  //       position.dy - arrowSize * sin(angle + pi / 6),
+  //     )
+  //     ..close();
+
+  //   canvas.drawPath(path, paint..style = PaintingStyle.fill);
+  // }
+
+  void _drawLabel(Canvas canvas, Offset position, String label) {
+    final textPainter = TextPainter(
+      text: TextSpan(
+        text: label,
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 12,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+    );
+    textPainter.layout();
+
+    canvas.drawRect(
+      Rect.fromCenter(
+        center: position,
+        width: textPainter.width + 16,
+        height: textPainter.height + 8,
+      ),
+      Paint()..color = Colors.black.withOpacity(0.7),
+    );
+
+    textPainter.paint(
+      canvas,
+      Offset(
+        position.dx - textPainter.width / 2,
+        position.dy - textPainter.height / 2,
+      ),
+    );
   }
 
   @override
-  bool shouldRepaint(covariant ConnectionPainter oldDelegate) {
+  bool shouldRepaint(ConnectionPainter oldDelegate) {
     return oldDelegate.connections != connections ||
-        oldDelegate.nodePositions != nodePositions ||
+        oldDelegate.runningNodeIds != runningNodeIds ||
+        oldDelegate.completedNodeIds != completedNodeIds ||
         oldDelegate.tempConnectionStart != tempConnectionStart ||
         oldDelegate.tempConnectionEnd != tempConnectionEnd ||
-        oldDelegate.runningNodeIds != runningNodeIds ||
-        oldDelegate.completedNodeIds != completedNodeIds;
+        oldDelegate.start != start ||
+        oldDelegate.end != end;
   }
 }
 
-class CircularIntervalList<T> {
-  final List<T> _items;
-  int _index = 0;
-
-  CircularIntervalList(this._items);
-
-  T get next {
-    if (_items.isEmpty) {
-      throw Exception('CircularIntervalList is empty');
-    }
-    final item = _items[_index];
-    _index = (_index + 1) % _items.length;
-    return item;
+extension OffsetExtension on Offset {
+  Offset normalize() {
+    final magnitude = distance;
+    if (magnitude == 0) return Offset.zero;
+    return Offset(dx / magnitude, dy / magnitude);
   }
 }

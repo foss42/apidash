@@ -1,41 +1,29 @@
 import 'package:flutter/material.dart';
 
-class GridPainter extends CustomPainter {
+/// A custom painter for drawing a grid background
+class GridBackgroundPainter extends CustomPainter {
   final Color gridColor;
-  final double gridWidth;
-  final double gridSpacing;
+  final double step;
 
-  GridPainter({
+  GridBackgroundPainter({
     required this.gridColor,
-    required this.gridWidth,
-    required this.gridSpacing,
+    required this.step,
   });
 
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
       ..color = gridColor
-      ..strokeWidth = gridWidth;
+      ..strokeWidth = 1.0;
 
-    final horizontalLines = (size.height / gridSpacing).ceil();
-    final verticalLines = (size.width / gridSpacing).ceil();
-
-    for (var i = 0; i <= horizontalLines; i++) {
-      final y = i * gridSpacing;
-      canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
-    }
-
-    for (var i = 0; i <= verticalLines; i++) {
-      final x = i * gridSpacing;
+    for (double x = 0; x < size.width; x += step) {
       canvas.drawLine(Offset(x, 0), Offset(x, size.height), paint);
+    }
+    for (double y = 0; y < size.height; y += step) {
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
     }
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return oldDelegate is GridPainter &&
-        (oldDelegate.gridColor != gridColor ||
-            oldDelegate.gridWidth != gridWidth ||
-            oldDelegate.gridSpacing != gridSpacing);
-  }
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
