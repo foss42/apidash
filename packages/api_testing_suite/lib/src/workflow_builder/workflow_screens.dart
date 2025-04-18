@@ -1,8 +1,6 @@
 // Main components
 export 'workflow_builder.dart';
 export 'components/workflow_builder_screen.dart';
-export 'workflow_node.dart';
-export 'workflow_connection.dart' hide ConnectionPainter;
 export 'execution/workflow_executor.dart';
 
 // Providers

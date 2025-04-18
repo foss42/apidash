@@ -1,6 +1,5 @@
 // Export core components
 export 'components/workflow_builder_screen.dart';
-export 'workflow_node.dart';
 
 // Export optimized components
 export 'components/components.dart';
