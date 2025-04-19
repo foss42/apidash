@@ -3,7 +3,6 @@ import 'package:apidash/screens/dashflow/dashflow_builder/nodes.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter/widgets.dart';
 
 class WorkflowCanvas extends ConsumerStatefulWidget {
   const WorkflowCanvas({super.key});
@@ -33,37 +32,47 @@ class _WorkflowCanvasState extends ConsumerState<WorkflowCanvas> {
   }
 
   void _onTransformChanged() {
-   if (!_needsRepaint){
-    _needsRepaint = true;
-    WidgetsBinding.instance.addPostFrameCallback((_){
-      if (mounted){
-        setState((){
-          _needsRepaint = false;
-        });
-      }
+    if (!_needsRepaint) {
+      _needsRepaint = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          setState(() {
+            _needsRepaint = false;
+          });
+        }
+      });
     }
-    );
-   }
   }
 
   @override
   Widget build(BuildContext context) {
     final mq = MediaQuery.of(context).size;
-    const canvasSize = 5000.00;
+    final canvasSize = 5000.00;
+    const double baseGridSize = 20;
     final nodes = ref.watch(workflowProvider);
     return Scaffold(
       appBar: AppBar(title: Text("New Dashflow")),
       body: Padding(
-        padding: const EdgeInsets.only(left: 5,right: 5,bottom: 10),
+        padding: const EdgeInsets.only(left: 5, right: 5, bottom: 10),
         child: Container(
           decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey.shade300),
             borderRadius: BorderRadius.vertical(bottom: Radius.circular(8)),
-            color: const Color.fromARGB(255, 229, 247, 255),
+            gradient: LinearGradient(
+              colors: [
+                Colors.black12,
+                Colors.transparent,
+                Colors.transparent,
+                Colors.transparent,
+              ],
+              begin: Alignment.topCenter,
+              end: Alignment.center,
+            ),
           ),
           child: InteractiveViewer(
             transformationController: _controller,
             constrained: false,
-            boundaryMargin: EdgeInsets.all(canvasSize/2),
+            boundaryMargin: EdgeInsets.all(canvasSize / 2),
             minScale: 0.5,
             maxScale: 3,
             child: SizedBox(
@@ -71,6 +80,7 @@ class _WorkflowCanvasState extends ConsumerState<WorkflowCanvas> {
               width: canvasSize,
               child: CustomPaint(
                 painter: GridPainter(
+                  baseGridSize: baseGridSize,
                   canvasSize: canvasSize,
                   transformation: _controller.value,
                   viewportSize: mq,
@@ -87,9 +97,11 @@ class _WorkflowCanvasState extends ConsumerState<WorkflowCanvas> {
                       left: centeredOffset.dx,
                       top: centeredOffset.dy,
                       child: DraggableNode(
+                        gridSize: baseGridSize,
                         node: node,
-                        onDrag:(id, offset) =>
-                                ref.read(workflowProvider.notifier).updateNodeOffset(id, offset),
+                        onDrag: (id, offset) => ref
+                            .read(workflowProvider.notifier)
+                            .updateNodeOffset(id, offset),
                       ),
                     );
                   }).toList(),
@@ -102,4 +114,3 @@ class _WorkflowCanvasState extends ConsumerState<WorkflowCanvas> {
     );
   }
 }
-

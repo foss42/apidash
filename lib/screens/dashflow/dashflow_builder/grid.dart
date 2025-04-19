@@ -1,6 +1,4 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:path_drawing/path_drawing.dart';
 import 'package:vector_math/vector_math_64.dart' as vm;
 
 class GridPainter extends CustomPainter {
@@ -12,7 +10,7 @@ class GridPainter extends CustomPainter {
   GridPainter({
     required this.transformation,
     required this.viewportSize,
-    this.baseGridSize = 50,
+    this.baseGridSize = 20,
     required this.canvasSize,
   });
   Offset _transformPoint(Offset point, Matrix4 matrix) {
@@ -26,11 +24,12 @@ class GridPainter extends CustomPainter {
     final gridSize = baseGridSize * zoom;
     final inverted = Matrix4.copy(transformation)..invert();
 
-    final dx = transformation.getTranslation().x;
-    final dy = transformation.getTranslation().y;
-
     // Increase grid spacing at low zoom to reduce lines
-    final effectiveGridSize = zoom < 1 ? gridSize * 2 : gridSize;
+    final effectiveGridSize = zoom < 0.5
+        ? gridSize * 4
+        : zoom < 1
+            ? gridSize * 2
+            : gridSize;
 
     // Center the origin
     final centerOffset = Offset(canvasSize / 2, canvasSize / 2);
@@ -40,38 +39,29 @@ class GridPainter extends CustomPainter {
             centerOffset;
 
     // Viewport-relative offsets
-    final startX = (topLeft.dx ~/ effectiveGridSize - 1) * effectiveGridSize.toDouble();
-    final endX = (bottomRight.dx ~/ effectiveGridSize + 1) * effectiveGridSize.toDouble();
+    final startX =
+        (topLeft.dx ~/ effectiveGridSize - 1) * effectiveGridSize.toDouble();
+    final endX = (bottomRight.dx ~/ effectiveGridSize + 1) *
+        effectiveGridSize.toDouble();
 
-    final startY = (topLeft.dy ~/ effectiveGridSize - 1) * effectiveGridSize.toDouble();
-    final endY = (bottomRight.dy ~/ effectiveGridSize + 1) * effectiveGridSize.toDouble();
+    final startY =
+        (topLeft.dy ~/ effectiveGridSize - 1) * effectiveGridSize.toDouble();
+    final endY = (bottomRight.dy ~/ effectiveGridSize + 1) *
+        effectiveGridSize.toDouble();
 
     final paint = Paint()
-      ..color = Colors.blueGrey.shade600
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1;
+      ..color = Colors.blue.shade700
+      ..style = PaintingStyle.fill;
 
-    // Draw vertical dotted lines
-    for (double x = startX; x <= endX; x += baseGridSize) {
-      final path = Path()
-        ..moveTo(x + centerOffset.dx, startY + centerOffset.dy)
-        ..lineTo(x + centerOffset.dx, endY + centerOffset.dy);
-
-      canvas.drawPath(
-        dashPath(path, dashArray: CircularIntervalList<double>([1, 5])),
-        paint,
-      );
-    }
-
-// Horizontal grid lines
-    for (double y = startY; y <= endY; y += baseGridSize) {
-      final path = Path()
-        ..moveTo(startX + centerOffset.dx, y + centerOffset.dy)
-        ..lineTo(endX + centerOffset.dx, y + centerOffset.dy);
-      canvas.drawPath(
-        dashPath(path, dashArray: CircularIntervalList<double>([1, 5])),
-        paint,
-      );
+    // Draw dots at grid box corners
+    for (double x = startX; x <= endX; x += effectiveGridSize) {
+      for (double y = startY; y <= endY; y += effectiveGridSize) {
+        canvas.drawCircle(
+          Offset(x + centerOffset.dx, y + centerOffset.dy),
+          1.0,
+          paint,
+        );
+      }
     }
   }
 

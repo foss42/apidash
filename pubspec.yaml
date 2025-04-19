@@ -70,7 +70,6 @@ dependencies:
       url: https://github.com/google/flutter-desktop-embedding.git
       path: plugins/window_size
   carousel_slider: ^5.0.0
-  path_drawing: ^1.0.1
   vector_math: ^2.1.4
 
 dependency_overrides:

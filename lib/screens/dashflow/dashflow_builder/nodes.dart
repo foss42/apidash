@@ -13,8 +13,9 @@ class NodeData {
 class DraggableNode extends StatefulWidget {
   final NodeData node;
   final Function(int id, Offset newOffset) onDrag;
+  final double gridSize; // Added for snap-to-grid
 
-  const DraggableNode({super.key, required this.node, required this.onDrag});
+  const DraggableNode({super.key, required this.node, required this.onDrag,required this.gridSize,});
 
   @override
   State<DraggableNode> createState() => _DraggableNodeState();
@@ -43,7 +44,12 @@ class _DraggableNodeState extends State<DraggableNode> {
         final zoom = (context.findAncestorWidgetOfExactType<InteractiveViewer>()?.transformationController?.value.getMaxScaleOnAxis() ?? 1.0);
         final adjustedDelta = details.delta*zoom;
         offset += adjustedDelta;
-        widget.onDrag(widget.node.id, offset);
+        // Snap to grid
+          final snappedOffset = Offset(
+            (offset.dx / widget.gridSize).round() * widget.gridSize,
+            (offset.dy / widget.gridSize).round() * widget.gridSize,
+          );
+        widget.onDrag(widget.node.id, snappedOffset);
         }
       },
       onPanEnd: (_){
