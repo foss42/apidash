@@ -58,7 +58,7 @@ void main() {
     final responseData = responseModel.fromResponse(response: responseRec.$1!);
     expect(responseData.statusCode, 200);
     expect(responseData.body, '{"data":"i love flutter"}');
-    expect(responseData.contentType, 'application/json; charset=utf-8');
+    expect(responseData.contentType, 'application/json');
     expect(responseData.requestHeaders?['content-type'], 'application/json');
   });
 
