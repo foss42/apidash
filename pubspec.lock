@@ -33,20 +33,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.3"
-  apidash_core:
-    dependency: "direct main"
-    description:
-      path: "packages/apidash_core"
-      relative: true
-    source: path
-    version: "0.0.1"
-  apidash_design_system:
-    dependency: "direct main"
-    description:
-      path: "packages/apidash_design_system"
-      relative: true
-    source: path
-    version: "0.0.1"
   archive:
     dependency: transitive
     description:
@@ -319,13 +305,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.0.0"
-  curl_parser:
-    dependency: transitive
-    description:
-      path: "packages/curl_parser"
-      relative: true
-    source: path
-    version: "0.1.2"
   dart_style:
     dependency: "direct main"
     description:
@@ -358,6 +337,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.5.0"
+  effective_dart:
+    dependency: transitive
+    description:
+      name: effective_dart
+      sha256: "6a69783c808344084b65667e87ff600823531e95810a8a15882cb542fe22de80"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.3.2"
   equatable:
     dependency: transitive
     description:
@@ -655,6 +642,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.3"
+  golden_toolkit:
+    dependency: transitive
+    description:
+      name: golden_toolkit
+      sha256: "8f74adab33154fe7b731395782797021f97d2edc52f7bfb85ff4f1b5c4a215f0"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.15.0"
   google_fonts:
     dependency: transitive
     description:
@@ -759,13 +754,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.5.3"
-  insomnia_collection:
-    dependency: transitive
-    description:
-      path: "packages/insomnia_collection"
-      relative: true
-    source: path
-    version: "0.0.1"
   integration_test:
     dependency: "direct dev"
     description: flutter
@@ -819,20 +807,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.9.0"
-  json_explorer:
-    dependency: "direct main"
-    description:
-      path: "packages/json_explorer"
-      relative: true
-    source: path
-    version: "0.1.2"
-  json_field_editor:
-    dependency: "direct main"
-    description:
-      path: "packages/json_field_editor"
-      relative: true
-    source: path
-    version: "1.2.1"
   json_serializable:
     dependency: "direct dev"
     description:
@@ -985,6 +959,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.0"
+  mocktail:
+    dependency: transitive
+    description:
+      name: mocktail
+      sha256: "890df3f9688106f25755f26b1c60589a92b3ab91a22b8b224947ad041bf172d8"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.4"
   mpv_dart:
     dependency: transitive
     description:
@@ -1001,13 +983,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.6.0"
-  multi_trigger_autocomplete_plus:
-    dependency: "direct main"
-    description:
-      path: "packages/multi_trigger_autocomplete_plus"
-      relative: true
-    source: path
-    version: "1.0.2"
   mustache_template:
     dependency: transitive
     description:
@@ -1192,13 +1167,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.0.1"
-  postman:
-    dependency: transitive
-    description:
-      path: "packages/postman"
-      relative: true
-    source: path
-    version: "0.1.2"
   printing:
     dependency: "direct main"
     description:
@@ -1271,6 +1239,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.6.1"
+  rows_lint:
+    dependency: transitive
+    description:
+      name: rows_lint
+      sha256: "772b3e0759a62282365c16ea3e51e2bab5823b916f6ae6f4bfe2012e28028afc"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.1"
   rxdart:
     dependency: transitive
     description:
@@ -1327,14 +1303,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.3.8"
-  seed:
-    dependency: transitive
-    description:
-      name: seed
-      sha256: "0d74a46abd169c96a73d9dec4739e6623021915661beadf265e885bb1eafd214"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.3"
   share_plus:
     dependency: "direct main"
     description:
