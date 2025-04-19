@@ -4,8 +4,19 @@ publish_to: "none"
 version: 0.5.0+5
 
 environment:
-  sdk: ">=3.0.0 <4.0.0"
+  sdk: ">=3.6.0 <4.0.0"
   flutter: ">=3.29.0"
+
+workspace:
+  - packages/apidash_core
+  - packages/apidash_design_system
+  - packages/curl_parser
+  - packages/insomnia_collection
+  - packages/json_explorer
+  - packages/json_field_editor
+  - packages/multi_trigger_autocomplete_plus
+  - packages/postman
+  - packages/seed
 
 dependencies:
   flutter:

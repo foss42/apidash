@@ -11,7 +11,9 @@ topics:
   - network
 
 environment:
-  sdk: ">=3.0.0 <4.0.0"
+  sdk: ">=3.6.0 <4.0.0"
+
+resolution: workspace
 
 dependencies:
   freezed_annotation: ^2.4.4
