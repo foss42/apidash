@@ -20,15 +20,15 @@ class HistoryRequestPane extends ConsumerWidget {
     final codePaneVisible = ref.watch(historyCodePaneVisibleStateProvider);
     final apiType = ref.watch(selectedHistoryRequestModelProvider
         .select((value) => value?.metaData.apiType));
-    final headersMap = ref.watch(selectedHistoryRequestModelProvider
-            .select((value) => value?.httpRequestModel.headersMap)) ??
-        {};
-    final headerLength = headersMap.length;
+    final headers = ref.watch(selectedHistoryRequestModelProvider
+            .select((value) => value?.httpRequestModel.headers)) ??
+        [];
+    final headerLength = headers.length;
 
-    final paramsMap = ref.watch(selectedHistoryRequestModelProvider
-            .select((value) => value?.httpRequestModel.paramsMap)) ??
-        {};
-    final paramLength = paramsMap.length;
+    final params = ref.watch(selectedHistoryRequestModelProvider
+            .select((value) => value?.httpRequestModel.params)) ??
+        [];
+    final paramLength = params.length;
 
     final hasBody = ref.watch(selectedHistoryRequestModelProvider
             .select((value) => value?.httpRequestModel.hasBody)) ??
@@ -60,11 +60,11 @@ class HistoryRequestPane extends ConsumerWidget {
           ],
           children: [
             RequestDataTable(
-              rows: paramsMap,
+              rows: params, 
               keyName: kNameURLParam,
             ),
             RequestDataTable(
-              rows: headersMap,
+              rows: headers, 
               keyName: kNameHeader,
             ),
             const HisRequestBody(),
@@ -89,7 +89,7 @@ class HistoryRequestPane extends ConsumerWidget {
           ],
           children: [
             RequestDataTable(
-              rows: headersMap,
+              rows: headers, 
               keyName: kNameHeader,
             ),
             const HisRequestBody(),
@@ -137,7 +137,6 @@ class HisRequestBody extends ConsumerWidget {
                     padding: kPh4,
                     child: RequestFormDataTable(
                         rows: requestModel?.formData ?? [])),
-                // TODO: Fix JsonTextFieldEditor & plug it here
                 ContentType.json => Padding(
                     padding: kPt5o10,
                     child: JsonTextFieldEditor(

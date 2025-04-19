@@ -13,14 +13,18 @@ url = "{{url}}"
 \n
 """;
 
-  String kTemplateParams = """
+String kTemplateParams = """
 params = Dict(
 {%- for name, value in params %}
-    "{{ name }}" => "{{ value }}",
+    "{{ name }}" => {%- if value is iterable and not value is string -%}[
+        {%- for v in value -%}"{{ v }}"{%- if not loop.last -%}, {%- endif -%}{%- endfor -%}
+    ]{%- else -%}"{{ value }}"{%- endif -%},
 {%- endfor %}
 )
 \n
 """;
+
+
 
   String kTemplateHeaders = """
 headers = Dict(
@@ -64,7 +68,7 @@ response = HTTP.request("{{ method | upper }}", url
   final String kStringRequestEnd = r"""
 , status_exception=false)
 
-println("Status Code: $(response.status) $(HTTP.StatusCodes.statustext(response.status))")
+println("Status Code: $(response.status)")
 println("Response Body: \n$(String(response.body))")
 """;
 
@@ -91,14 +95,14 @@ println("Response Body: \n$(String(response.body))")
         final templateUrl = jj.Template(kTemplateUrl);
         result += templateUrl.render({"url": stripUriParams(uri)});
 
-        if (uri.hasQuery) {
-          var params = uri.queryParameters;
+
+          var params = requestModel.enabledParamsMap;
           if (params.isNotEmpty) {
             hasQuery = true;
             final templateParams = jj.Template(kTemplateParams);
             result += templateParams.render({"params": params});
           }
-        }
+        
 
         if (requestModel.hasJsonData || requestModel.hasTextData) {
           addHeaderForBody = true;
