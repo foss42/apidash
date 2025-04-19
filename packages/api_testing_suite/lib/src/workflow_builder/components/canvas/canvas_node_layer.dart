@@ -100,7 +100,7 @@ class CanvasNodeLayer extends ConsumerWidget {
                     borderRadius: BorderRadius.circular(8),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
+                        color: Color(0xff171433).withValues(alpha: 0.1),
                         spreadRadius: 1,
                         blurRadius: 3,
                         offset: const Offset(0, 2),

@@ -64,7 +64,7 @@ class LogsViewer extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
             decoration: BoxDecoration(
-              color: Colors.blue.withOpacity(0.2),
+              color: Color(0xff171433).withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(4),
               border: Border.all(color: Colors.blue, width: 1),
             ),
@@ -95,7 +95,7 @@ class LogsViewer extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
             decoration: BoxDecoration(
-              color: Colors.green.withOpacity(0.2),
+              color: Color(0xff171433).withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(4),
               border: Border.all(color: Colors.green, width: 1),
             ),
@@ -240,7 +240,7 @@ class LogsViewer extends ConsumerWidget {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.3),
+                      color: Color(0xff171433).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(4),
                       border: Border.all(
                         color: Colors.grey[850]!,

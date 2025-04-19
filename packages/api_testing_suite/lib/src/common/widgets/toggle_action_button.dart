@@ -41,7 +41,7 @@ class ToggleActionButton extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
             color: isActive 
-                ? effectiveActiveColor.withOpacity(0.1) 
+                ? Color(0xff171433).withValues(alpha: 0.1) 
                 : Colors.transparent,
             borderRadius: BorderRadius.circular(4),
             border: Border.all(

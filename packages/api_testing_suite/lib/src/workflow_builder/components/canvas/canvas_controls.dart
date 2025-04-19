@@ -19,7 +19,7 @@ class CanvasControls extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Colors.black.withOpacity(0.7),
+      color: Color(0xff171433).withValues(alpha: 0.1),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Row(
@@ -38,7 +38,7 @@ class CanvasControls extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: Colors.blue.withOpacity(0.2),
+                color: Color(0xff171433).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(4),
               ),
               child: Text(

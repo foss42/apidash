@@ -8,7 +8,7 @@ class CanvasInfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Colors.black.withOpacity(0.7),
+      color: Color(0xff171433).withValues(alpha: 0.1),
       child: Padding(
         padding: const EdgeInsets.all(12.0),
         child: Column(

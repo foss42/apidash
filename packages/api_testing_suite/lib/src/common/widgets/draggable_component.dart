@@ -37,15 +37,15 @@ class DraggableComponent extends StatelessWidget {
       onDragEnd: onDragEnd,
       onDraggableCanceled: (_, __) => onDraggableCanceled?.call(),
       feedback: feedback ?? _buildDefaultFeedback(context),
-      childWhenDragging: childWhenDragging ?? 
-          Opacity(opacity: 0.5, child: child),
+      childWhenDragging:
+          childWhenDragging ?? Opacity(opacity: 0.5, child: child),
       child: child,
     );
   }
 
   Widget _buildDefaultFeedback(BuildContext context) {
     if (!useDefaultFeedback && feedback != null) return feedback!;
-    
+
     return Material(
       color: Colors.transparent,
       elevation: 4,

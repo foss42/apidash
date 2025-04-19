@@ -22,9 +22,9 @@ class StatusIndicator extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: Color(0xff171433).withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: Color(0xff171433).withValues(alpha: 0.1)), 
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

@@ -66,7 +66,7 @@ class _CanvasViewState extends ConsumerState<CanvasView>
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
-                color: Colors.purple.withOpacity(0.8),
+                color: Color(0xff171433).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Row(

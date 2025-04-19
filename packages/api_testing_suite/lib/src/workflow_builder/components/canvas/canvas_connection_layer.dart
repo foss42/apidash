@@ -93,7 +93,7 @@ class TemporaryConnectionPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.blue.withOpacity(0.6)
+      ..color = Color(0xff171433).withValues(alpha: 0.1)
       ..strokeWidth = 2.0
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
