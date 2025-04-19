@@ -1,0 +1,82 @@
+{
+    "info": {
+      "title": "Blog Post API",
+      "description": "API for creating, retrieving, and deleting blog posts",
+      "tags": ["blog", "posts", "content"]
+    },
+    "requests": [
+      {
+        "id": "post_create",
+        "apiType": "rest",
+        "name": "Create a blog post",
+        "description": "Publishes a new blog post",
+        "httpRequestModel": {
+          "method": "post",
+          "url": "https://api.example.com/v1/posts",
+          "headers": [
+            {"name": "Content-Type", "value": "application/json"}
+          ],
+          "params": [],
+          "isHeaderEnabledList": [true],
+          "isParamEnabledList": [],
+          "bodyContentType": "json",
+          "body": "{\"title\": \"My First Post\", \"content\": \"This is a blog post\", \"author\": \"Jane Doe\"}",
+          "query": null,
+          "formData": null
+        },
+        "responseStatus": null,
+        "message": null,
+        "httpResponseModel": null,
+        "isWorking": false,
+        "sendingTime": null
+      },
+      {
+        "id": "post_get_all",
+        "apiType": "rest",
+        "name": "Get all blog posts",
+        "description": "Retrieves a list of all blog posts",
+        "httpRequestModel": {
+          "method": "get",
+          "url": "https://api.example.com/v1/posts",
+          "headers": [],
+          "params": [],
+          "isHeaderEnabledList": [],
+          "isParamEnabledList": [],
+          "bodyContentType": "json",
+          "body": null,
+          "query": null,
+          "formData": null
+        },
+        "responseStatus": null,
+        "message": null,
+        "httpResponseModel": null,
+        "isWorking": false,
+        "sendingTime": null
+      },
+      {
+        "id": "post_delete",
+        "apiType": "rest",
+        "name": "Delete a blog post",
+        "description": "Removes a blog post by ID",
+        "httpRequestModel": {
+          "method": "delete",
+          "url": "https://api.example.com/v1/posts/1",
+          "headers": [],
+          "params": [
+            {"name": "id", "value": "1"}
+          ],
+          "isHeaderEnabledList": [],
+          "isParamEnabledList": [true],
+          "bodyContentType": "json",
+          "body": null,
+          "query": null,
+          "formData": null
+        },
+        "responseStatus": null,
+        "message": null,
+        "httpResponseModel": null,
+        "isWorking": false,
+        "sendingTime": null
+      }
+    ]
+  }

@@ -1,0 +1,59 @@
+{
+    "info": {
+      "title": "Order Processing API",
+      "description": "API for processing customer orders and checking order status",
+      "tags": ["orders", "e-commerce", "processing"]
+    },
+    "requests": [
+      {
+        "id": "order_create",
+        "apiType": "rest",
+        "name": "Create an order",
+        "description": "Places a new customer order",
+        "httpRequestModel": {
+          "method": "post",
+          "url": "https://api.example.com/v1/orders",
+          "headers": [
+            {"name": "Content-Type", "value": "application/json"}
+          ],
+          "params": [],
+          "isHeaderEnabledList": [true],
+          "isParamEnabledList": [],
+          "bodyContentType": "json",
+          "body": "{\"customerId\": \"cust123\", \"items\": [{\"productId\": \"101\", \"quantity\": 2}]}",
+          "query": null,
+          "formData": null
+        },
+        "responseStatus": null,
+        "message": null,
+        "httpResponseModel": null,
+        "isWorking": false,
+        "sendingTime": null
+      },
+      {
+        "id": "order_status",
+        "apiType": "rest",
+        "name": "Get order status",
+        "description": "Fetches the status of a specific order",
+        "httpRequestModel": {
+          "method": "get",
+          "url": "https://api.example.com/v1/orders/1001",
+          "headers": [],
+          "params": [
+            {"name": "id", "value": "1001"}
+          ],
+          "isHeaderEnabledList": [],
+          "isParamEnabledList": [true],
+          "bodyContentType": "json",
+          "body": null,
+          "query": null,
+          "formData": null
+        },
+        "responseStatus": null,
+        "message": null,
+        "httpResponseModel": null,
+        "isWorking": false,
+        "sendingTime": null
+      }
+    ]
+  }

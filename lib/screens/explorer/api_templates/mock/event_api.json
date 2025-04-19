@@ -1,0 +1,82 @@
+{
+    "info": {
+      "title": "Event Booking API",
+      "description": "API for booking and managing event tickets",
+      "tags": ["events", "bookings", "tickets"]
+    },
+    "requests": [
+      {
+        "id": "event_book",
+        "apiType": "rest",
+        "name": "Book an event ticket",
+        "description": "Books a ticket for a specific event",
+        "httpRequestModel": {
+          "method": "post",
+          "url": "https://api.example.com/v1/bookings",
+          "headers": [
+            {"name": "Content-Type", "value": "application/json"}
+          ],
+          "params": [],
+          "isHeaderEnabledList": [true],
+          "isParamEnabledList": [],
+          "bodyContentType": "json",
+          "body": "{\"eventId\": \"evt456\", \"userId\": \"user789\", \"quantity\": 2}",
+          "query": null,
+          "formData": null
+        },
+        "responseStatus": null,
+        "message": null,
+        "httpResponseModel": null,
+        "isWorking": false,
+        "sendingTime": null
+      },
+      {
+        "id": "event_get_bookings",
+        "apiType": "rest",
+        "name": "Get all bookings",
+        "description": "Retrieves a list of all event bookings",
+        "httpRequestModel": {
+          "method": "get",
+          "url": "https://api.example.com/v1/bookings",
+          "headers": [],
+          "params": [],
+          "isHeaderEnabledList": [],
+          "isParamEnabledList": [],
+          "bodyContentType": "json",
+          "body": null,
+          "query": null,
+          "formData": null
+        },
+        "responseStatus": null,
+        "message": null,
+        "httpResponseModel": null,
+        "isWorking": false,
+        "sendingTime": null
+      },
+      {
+        "id": "event_cancel_booking",
+        "apiType": "rest",
+        "name": "Cancel a booking",
+        "description": "Cancels an event booking by ID",
+        "httpRequestModel": {
+          "method": "delete",
+          "url": "https://api.example.com/v1/bookings/123",
+          "headers": [],
+          "params": [
+            {"name": "id", "value": "123"}
+          ],
+          "isHeaderEnabledList": [],
+          "isParamEnabledList": [true],
+          "bodyContentType": "json",
+          "body": null,
+          "query": null,
+          "formData": null
+        },
+        "responseStatus": null,
+        "message": null,
+        "httpResponseModel": null,
+        "isWorking": false,
+        "sendingTime": null
+      }
+    ]
+  }
