@@ -111,34 +111,29 @@ class FakeDataProvider {
     return '{"id": ${randomId()}, "name": "${randomName()}", "email": "${randomEmail()}", "active": ${randomBoolean()}}';
   }
 
+  /// Registry for mapping tags to fake data generator functions.
+  static final Map<String, String Function()> _tagRegistry = {
+    'randomusername': randomUsername,
+    'randomemail': randomEmail,
+    'randomid': randomId,
+    'randomuuid': randomUuid,
+    'randomname': randomName,
+    'randomphone': randomPhone,
+    'randomaddress': randomAddress,
+    'randomdate': randomDate,
+    'randomdatetime': randomDateTime,
+    'randomboolean': randomBoolean,
+    'randomnumber': randomNumber,
+    'randomjson': randomJson,
+  };
+
+  /// Processes a fake data tag and returns generated data.
+  ///
+  /// Example: processFakeDataTag('randomEmail') -> 'jane123@example.com'
+  /// Returns the tag itself in {{tag}} format if not found.
   static String processFakeDataTag(String tag) {
-    switch (tag.toLowerCase()) {
-      case 'randomusername':
-        return randomUsername();
-      case 'randomemail':
-        return randomEmail();
-      case 'randomid':
-        return randomId();
-      case 'randomuuid':
-        return randomUuid();
-      case 'randomname':
-        return randomName();
-      case 'randomphone':
-        return randomPhone();
-      case 'randomaddress':
-        return randomAddress();
-      case 'randomdate':
-        return randomDate();
-      case 'randomdatetime':
-        return randomDateTime();
-      case 'randomboolean':
-        return randomBoolean();
-      case 'randomnumber':
-        return randomNumber();
-      case 'randomjson':
-        return randomJson();
-      default:
-        return '{{$tag}}'; 
-    }
+    final key = tag.toLowerCase();
+    final generator = _tagRegistry[key];
+    return generator != null ? generator() : '{{$tag}}';
   }
 }
