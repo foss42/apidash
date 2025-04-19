@@ -1,3 +1,4 @@
+import 'package:apidash/models/authorization_model.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -25,6 +26,7 @@ final requestSequenceProvider = StateProvider<List<String>>((ref) {
   return ids ?? [];
 });
 
+/// TODO: Provider for current request model
 final StateNotifierProvider<CollectionStateNotifier, Map<String, RequestModel>?>
     collectionStateNotifierProvider =
     StateNotifierProvider((ref) => CollectionStateNotifier(
@@ -204,10 +206,12 @@ class CollectionStateNotifier
     unsave();
   }
 
+  /// TODO: Update the request model with given parameters for each change
   void update({
     String? id,
     HTTPVerb? method,
     APIType? apiType,
+    AuthorizationModel? authorizationModel,
     String? url,
     String? name,
     String? description,
@@ -233,6 +237,7 @@ class CollectionStateNotifier
     var currentHttpRequestModel = currentModel.httpRequestModel;
     final newModel = currentModel.copyWith(
       apiType: apiType ?? currentModel.apiType,
+      authorizationModel: authorizationModel ?? currentModel.authorizationModel,
       name: name ?? currentModel.name,
       description: description ?? currentModel.description,
       requestTabIndex: requestTabIndex ?? currentModel.requestTabIndex,
@@ -262,6 +267,7 @@ class CollectionStateNotifier
     unsave();
   }
 
+  /// TODO: Send the request with all given parameters
   Future<void> sendRequest() async {
     final requestId = ref.read(selectedIdStateProvider);
     ref.read(codePaneVisibleStateProvider.notifier).state = false;

@@ -17,6 +17,10 @@ _$RequestModelImpl _$$RequestModelImplFromJson(Map json) => _$RequestModelImpl(
           ? null
           : HttpRequestModel.fromJson(
               Map<String, Object?>.from(json['httpRequestModel'] as Map)),
+      authorizationModel: json['authorizationModel'] == null
+          ? null
+          : AuthorizationModel.fromJson(
+              Map<String, Object?>.from(json['authorizationModel'] as Map)),
       responseStatus: (json['responseStatus'] as num?)?.toInt(),
       message: json['message'] as String?,
       httpResponseModel: json['httpResponseModel'] == null
@@ -36,6 +40,7 @@ Map<String, dynamic> _$$RequestModelImplToJson(_$RequestModelImpl instance) =>
       'name': instance.name,
       'description': instance.description,
       'httpRequestModel': instance.httpRequestModel?.toJson(),
+      'authorizationModel': instance.authorizationModel?.toJson(),
       'responseStatus': instance.responseStatus,
       'message': instance.message,
       'httpResponseModel': instance.httpResponseModel?.toJson(),
