@@ -34,7 +34,7 @@ void main() {
   test('Testing fromResponse for contentType not Json', () async {
     var responseRec = await sendHttpRequest(
       requestModelGet13.id,
-      requestModelGet1.apiType,
+      requestModelGet13.apiType,
       requestModelGet13.httpRequestModel!,
       defaultUriScheme: kDefaultUriScheme,
       noSSL: false,
@@ -47,10 +47,25 @@ void main() {
     expect(responseData.mediaType!.mimeType, 'text/html');
   });
 
+  test('Testing contentType override by the user having no charset (#630)',
+      () async {
+    var responseRec = await sendHttpRequest(
+      requestModelPost11.id,
+      requestModelPost11.apiType,
+      requestModelPost11.httpRequestModel!,
+    );
+
+    final responseData = responseModel.fromResponse(response: responseRec.$1!);
+    expect(responseData.statusCode, 200);
+    expect(responseData.body, '{"data":"i love flutter"}');
+    expect(responseData.contentType, 'application/json; charset=utf-8');
+    expect(responseData.requestHeaders?['content-type'], 'application/json');
+  });
+
   test('Testing fromResponse for Bad SSL with certificate check', () async {
     var responseRec = await sendHttpRequest(
       requestModelGetBadSSL.id,
-      requestModelGet1.apiType,
+      requestModelGetBadSSL.apiType,
       requestModelGetBadSSL.httpRequestModel!,
       defaultUriScheme: kDefaultUriScheme,
       noSSL: false,
@@ -62,7 +77,7 @@ void main() {
   test('Testing fromResponse for Bad SSL with no certificate check', () async {
     var responseRec = await sendHttpRequest(
       requestModelGetBadSSL.id,
-      requestModelGet1.apiType,
+      requestModelGetBadSSL.apiType,
       requestModelGetBadSSL.httpRequestModel!,
       defaultUriScheme: kDefaultUriScheme,
       noSSL: true,
