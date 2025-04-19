@@ -1085,7 +1085,7 @@ swift --version
 ```
 
 
-#### Linux
+#### Linux(Multipartformdata is not supported)
 
 Download Swift for Linux (e.g., Ubuntu) from Swift.org.
 
@@ -1140,7 +1140,7 @@ swift --version
 ```
 
 
-#### Linux
+#### Linux (Multipartformdata is not supported)
 
 Download Swift for Linux (e.g., Ubuntu) from Swift.org.
 
