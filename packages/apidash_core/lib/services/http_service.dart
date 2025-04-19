@@ -84,16 +84,15 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
         }
         response = switch (requestModel.method) {
           HTTPVerb.get => await client.get(requestUrl, headers: headers),
-          HTTPVerb.head => response =
-              await client.head(requestUrl, headers: headers),
-          HTTPVerb.post => response =
-              await client.post(requestUrl, headers: headers, body: body),
-          HTTPVerb.put => response =
-              await client.put(requestUrl, headers: headers, body: body),
-          HTTPVerb.patch => response =
-              await client.patch(requestUrl, headers: headers, body: body),
-          HTTPVerb.delete => response =
-              await client.delete(requestUrl, headers: headers, body: body),
+          HTTPVerb.head => await client.head(requestUrl, headers: headers),
+          HTTPVerb.post =>
+            await client.post(requestUrl, headers: headers, body: body),
+          HTTPVerb.put =>
+            await client.put(requestUrl, headers: headers, body: body),
+          HTTPVerb.patch =>
+            await client.patch(requestUrl, headers: headers, body: body),
+          HTTPVerb.delete =>
+            await client.delete(requestUrl, headers: headers, body: body),
         };
       }
       if (apiType == APIType.graphql) {
