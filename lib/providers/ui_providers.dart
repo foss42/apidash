@@ -1,6 +1,7 @@
 import 'package:apidash/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:apidash/screens/dashflow/dashflow_builder/nodes.dart';
 
 final mobileScaffoldKeyStateProvider =
     StateProvider<GlobalKey<ScaffoldState>>((ref) => kHomeScaffoldKey);
@@ -37,3 +38,19 @@ final environmentSearchQueryProvider = StateProvider<String>((ref) => '');
 final importFormatStateProvider =
     StateProvider<ImportFormat>((ref) => ImportFormat.curl);
 final userOnboardedProvider = StateProvider<bool>((ref) => false);
+
+final workflowProvider = StateNotifierProvider<WorkflowNotifier, List<NodeData>>((ref) => WorkflowNotifier());
+
+class WorkflowNotifier extends StateNotifier<List<NodeData>> {
+  WorkflowNotifier() : super([
+    NodeData(id: 1, offset: Offset(0, 0)),
+    NodeData(id: 2, offset: Offset(50, 50)),
+  ]);
+
+  void updateNodeOffset(int id, Offset newOffset) {
+    state = [
+      for (final node in state)
+        if (node.id == id) node.copyWith(offset: newOffset) else node,
+    ];
+  }
+}

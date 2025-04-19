@@ -21,7 +21,8 @@ class DraggableNode extends StatefulWidget {
 }
 
 class _DraggableNodeState extends State<DraggableNode> {
-  Offset offset = Offset.zero;
+  late Offset offset;
+  bool isDragging = false;
 
   @override
   void initState() {
@@ -32,16 +33,31 @@ class _DraggableNodeState extends State<DraggableNode> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      onPanStart:(_){
+        setState((){
+          isDragging =true;
+        });
+      },
       onPanUpdate: (details) {
-        offset += details.delta;
+        if(isDragging){
+        final zoom = (context.findAncestorWidgetOfExactType<InteractiveViewer>()?.transformationController?.value.getMaxScaleOnAxis() ?? 1.0);
+        final adjustedDelta = details.delta*zoom;
+        offset += adjustedDelta;
         widget.onDrag(widget.node.id, offset);
+        }
+      },
+      onPanEnd: (_){
+        setState((){
+          isDragging = false;
+        });
       },
       child: Card(
         elevation: 4,
         color: Colors.lightBlue[100],
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Text("Node ${widget.node.id}"),
+          child: Text("Node ${widget.node.id}", style: Theme.of(context).textTheme.bodyMedium),
         ),
       ),
     );

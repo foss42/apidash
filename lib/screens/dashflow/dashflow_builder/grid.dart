@@ -7,11 +7,13 @@ class GridPainter extends CustomPainter {
   final Matrix4 transformation;
   final Size viewportSize;
   final double baseGridSize;
+  final double canvasSize;
 
   GridPainter({
     required this.transformation,
     required this.viewportSize,
     this.baseGridSize = 50,
+    required this.canvasSize,
   });
   Offset _transformPoint(Offset point, Matrix4 matrix) {
     final vector = matrix.transform3(vm.Vector3(point.dx, point.dy, 0));
@@ -27,31 +29,33 @@ class GridPainter extends CustomPainter {
     final dx = transformation.getTranslation().x;
     final dy = transformation.getTranslation().y;
 
-    // Calculate visible top-left and bottom-right corners in world space
-    final topLeft = _transformPoint(Offset.zero, inverted);
-    final bottomRight = _transformPoint(
-      Offset(viewportSize.width, viewportSize.width),
-      inverted,
-    );
+    // Increase grid spacing at low zoom to reduce lines
+    final effectiveGridSize = zoom < 1 ? gridSize * 2 : gridSize;
+
+    // Center the origin
+    final centerOffset = Offset(canvasSize / 2, canvasSize / 2);
+    final topLeft = _transformPoint(Offset.zero, inverted) - centerOffset;
+    final bottomRight =
+        _transformPoint(Offset(size.width, size.height), inverted) -
+            centerOffset;
 
     // Viewport-relative offsets
-    final startX = (topLeft.dx ~/ baseGridSize - 1) * baseGridSize.toDouble();
-    final endX = (bottomRight.dx ~/ baseGridSize + 1) * baseGridSize.toDouble();
+    final startX = (topLeft.dx ~/ effectiveGridSize - 1) * effectiveGridSize.toDouble();
+    final endX = (bottomRight.dx ~/ effectiveGridSize + 1) * effectiveGridSize.toDouble();
 
-    final startY = (topLeft.dy ~/ baseGridSize - 1) * baseGridSize.toDouble();
-    final endY = (bottomRight.dy ~/ baseGridSize + 1) * baseGridSize.toDouble();
+    final startY = (topLeft.dy ~/ effectiveGridSize - 1) * effectiveGridSize.toDouble();
+    final endY = (bottomRight.dy ~/ effectiveGridSize + 1) * effectiveGridSize.toDouble();
 
     final paint = Paint()
-      ..color = Colors.blueGrey
+      ..color = Colors.blueGrey.shade600
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1;
 
     // Draw vertical dotted lines
-    // Vertical grid lines
     for (double x = startX; x <= endX; x += baseGridSize) {
       final path = Path()
-        ..moveTo(x, startY)
-        ..lineTo(x, endY);
+        ..moveTo(x + centerOffset.dx, startY + centerOffset.dy)
+        ..lineTo(x + centerOffset.dx, endY + centerOffset.dy);
 
       canvas.drawPath(
         dashPath(path, dashArray: CircularIntervalList<double>([1, 5])),
@@ -62,19 +66,19 @@ class GridPainter extends CustomPainter {
 // Horizontal grid lines
     for (double y = startY; y <= endY; y += baseGridSize) {
       final path = Path()
-        ..moveTo(startX, y)
-        ..lineTo(endX, y);
-
+        ..moveTo(startX + centerOffset.dx, y + centerOffset.dy)
+        ..lineTo(endX + centerOffset.dx, y + centerOffset.dy);
       canvas.drawPath(
         dashPath(path, dashArray: CircularIntervalList<double>([1, 5])),
         paint,
       );
     }
-}
+  }
+
   @override
-  bool shouldRepaint( GridPainter oldDelegate) {
-    return !listEquals(
-            oldDelegate.transformation.storage, transformation.storage) ||
-        oldDelegate.viewportSize != viewportSize;
+  bool shouldRepaint(GridPainter oldDelegate) {
+    return transformation != oldDelegate.transformation ||
+        viewportSize != oldDelegate.viewportSize ||
+        canvasSize != oldDelegate.canvasSize;
   }
 }
