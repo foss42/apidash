@@ -58,8 +58,34 @@ void main() {
     final responseData = responseModel.fromResponse(response: responseRec.$1!);
     expect(responseData.statusCode, 200);
     expect(responseData.body, '{"data":"i love flutter"}');
-    expect(responseData.contentType, 'application/json; charset=utf-8');
+    expect(responseData.contentType, 'application/json');
     expect(responseData.requestHeaders?['content-type'], 'application/json');
+  });
+
+  test('Testing default contentType charset added by dart', () async {
+    var responseRec = await sendHttpRequest(
+      requestModelPost12.id,
+      requestModelPost12.apiType,
+      requestModelPost12.httpRequestModel!,
+    );
+
+    final responseData = responseModel.fromResponse(response: responseRec.$1!);
+    expect(responseData.statusCode, 200);
+    expect(responseData.requestHeaders?['content-type'],
+        'application/json; charset=utf-8');
+  });
+
+  test('Testing latin1 charset added by user', () async {
+    var responseRec = await sendHttpRequest(
+      requestModelPost13.id,
+      requestModelPost13.apiType,
+      requestModelPost13.httpRequestModel!,
+    );
+
+    final responseData = responseModel.fromResponse(response: responseRec.$1!);
+    expect(responseData.statusCode, 200);
+    expect(responseData.requestHeaders?['content-type'],
+        'application/json; charset=latin1');
   });
 
   test('Testing fromResponse for Bad SSL with certificate check', () async {

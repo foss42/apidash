@@ -233,8 +233,23 @@ const requestModelGetBadSSL = RequestModel(
   httpRequestModel: httpRequestModelGetBadSSL,
 );
 
+/// POST request model with content type override having no charset
 const requestModelPost11 = RequestModel(
   id: 'post11',
   apiType: APIType.rest,
   httpRequestModel: httpRequestModelPost11,
+);
+
+/// POST request model with default (utf-8) content type charset
+const requestModelPost12 = RequestModel(
+  id: 'post12',
+  apiType: APIType.rest,
+  httpRequestModel: httpRequestModelPost12,
+);
+
+/// POST request model with charset override (latin1)
+const requestModelPost13 = RequestModel(
+  id: 'post13',
+  apiType: APIType.rest,
+  httpRequestModel: httpRequestModelPost13,
 );
