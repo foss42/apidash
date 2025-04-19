@@ -578,104 +578,264 @@ dispatchMain()''';
             expectedCode);
       });
 
-//       test('POST 4', () {
-//         const expectedCode = r"""
-
-// """;
-
-//         expect(
-//             codeGen.getCode(
-//               CodegenLanguage.swiftAlamofire,
-//               requestModelPost4,
-//               SupportedUriSchemes.https,
-//             ),
-//             expectedCode);
-//       });
-
-//       test('POST 5', () {
-//         const expectedCode = r"""
-
-// """;
-
-//         expect(
-//             codeGen.getCode(
-//               CodegenLanguage.swiftAlamofire,
-//               requestModelPost5,
-//               SupportedUriSchemes.https,
-//             ),
-//             expectedCode);
-//       });
+      test('POST 4', () {
+        const expectedCode = r"""
+import Foundation
+import Alamofire
+let multipartFormData = MultipartFormData()
+    multipartFormData.append(Data("API".utf8), withName: "text")    
+    multipartFormData.append(Data("|".utf8), withName: "sep")    
+    multipartFormData.append(Data("3".utf8), withName: "times")    
+let url = "https://api.apidash.dev/io/form"
 
 
-//       test('POST 6', () {
-//         const expectedCode = r"""
+AF.upload(multipartFormData: multipartFormData, to: url, method: .post)
 
-// """;
+.responseData { response in
+    switch response.result {
+    case .success(let data):
+        if let responseString = String(data: data, encoding: .utf8) {
+            print("Response: \(responseString)")
+        }
+    case .failure(let error):
+        print("Error: \(error)")
+    }
+    exit(0)
+}
 
-//         expect(
-//             codeGen.getCode(
-//               CodegenLanguage.swiftAlamofire,
-//               requestModelPost6,
-//               SupportedUriSchemes.https,
-//             ),
-//             expectedCode);
-//       });
+dispatchMain()""";
+
+        expect(
+            codeGen.getCode(
+              CodegenLanguage.swiftAlamofire,
+              requestModelPost4,
+              SupportedUriSchemes.https,
+            ),
+            expectedCode);
+      });
+
+      test('POST 5', () {
+        const expectedCode = r"""
+import Foundation
+import Alamofire
+let multipartFormData = MultipartFormData()
+    multipartFormData.append(Data("API".utf8), withName: "text")    
+    multipartFormData.append(Data("|".utf8), withName: "sep")    
+    multipartFormData.append(Data("3".utf8), withName: "times")    
+let url = "https://api.apidash.dev/io/form"
+
+
+AF.upload(multipartFormData: multipartFormData, to: url, method: .post, headers: ["User-Agent": "Test Agent"])
+
+.responseData { response in
+    switch response.result {
+    case .success(let data):
+        if let responseString = String(data: data, encoding: .utf8) {
+            print("Response: \(responseString)")
+        }
+    case .failure(let error):
+        print("Error: \(error)")
+    }
+    exit(0)
+}
+
+dispatchMain()""";
+
+        expect(
+            codeGen.getCode(
+              CodegenLanguage.swiftAlamofire,
+              requestModelPost5,
+              SupportedUriSchemes.https,
+            ),
+            expectedCode);
+      });
+
+
+      test('POST 6', () {
+        const expectedCode = r"""
+import Foundation
+import Alamofire
+let multipartFormData = MultipartFormData()
+    multipartFormData.append(Data("xyz".utf8), withName: "token")    
+    
+let fileURL = URL(fileURLWithPath: "/Documents/up/1.png")
+multipartFormData.append(fileURL, withName: "imfile", fileName: "1.png", mimeType: "application/octet-stream")
+    
+let url = "https://api.apidash.dev/io/img"
+
+
+AF.upload(multipartFormData: multipartFormData, to: url, method: .post)
+
+.responseData { response in
+    switch response.result {
+    case .success(let data):
+        if let responseString = String(data: data, encoding: .utf8) {
+            print("Response: \(responseString)")
+        }
+    case .failure(let error):
+        print("Error: \(error)")
+    }
+    exit(0)
+}
+
+dispatchMain()""";
+
+        expect(
+            codeGen.getCode(
+              CodegenLanguage.swiftAlamofire,
+              requestModelPost6,
+              SupportedUriSchemes.https,
+            ),
+            expectedCode);
+      });
 
 
 
 
-//       test('POST 7', () {
-//         const expectedCode = r"""
+      test('POST 7', () {
+        const expectedCode = r"""
+import Foundation
+import Alamofire
+let multipartFormData = MultipartFormData()
+    multipartFormData.append(Data("xyz".utf8), withName: "token")    
+    
+let fileURL = URL(fileURLWithPath: "/Documents/up/1.png")
+multipartFormData.append(fileURL, withName: "imfile", fileName: "1.png", mimeType: "application/octet-stream")
+    
+let url = "https://api.apidash.dev/io/img"
 
-// """;
 
-//         expect(
-//             codeGen.getCode(
-//               CodegenLanguage.swiftAlamofire,
-//               requestModelPost7,
-//               SupportedUriSchemes.https,
-//             ),
-//             expectedCode);
-//       });
-//       test('POST 8', () {
-//         const expectedCode = r"""
+AF.upload(multipartFormData: multipartFormData, to: url, method: .post)
 
-// """;
+.responseData { response in
+    switch response.result {
+    case .success(let data):
+        if let responseString = String(data: data, encoding: .utf8) {
+            print("Response: \(responseString)")
+        }
+    case .failure(let error):
+        print("Error: \(error)")
+    }
+    exit(0)
+}
 
-//         expect(
-//             codeGen.getCode(
-//               CodegenLanguage.swiftAlamofire,
-//               requestModelPost8,
-//               SupportedUriSchemes.https,
-//             ),
-//             expectedCode);
-//       });
-//       test('POST 9', () {
-//         const expectedCode = r"""
+dispatchMain()""";
 
-// """;
+        expect(
+            codeGen.getCode(
+              CodegenLanguage.swiftAlamofire,
+              requestModelPost7,
+              SupportedUriSchemes.https,
+            ),
+            expectedCode);
+      });
+      test('POST 8', () {
+        const expectedCode = r"""
+import Foundation
+import Alamofire
+let multipartFormData = MultipartFormData()
+    multipartFormData.append(Data("API".utf8), withName: "text")    
+    multipartFormData.append(Data("|".utf8), withName: "sep")    
+    multipartFormData.append(Data("3".utf8), withName: "times")    
+let url = "https://api.apidash.dev/io/form?size=2&len=3"
 
-//         expect(
-//             codeGen.getCode(
-//               CodegenLanguage.swiftAlamofire,
-//               requestModelPost9,
-//               SupportedUriSchemes.https,
-//             ),
-//             expectedCode);
-//      });
-//       test('POST 10', () {
-//         const expectedCode = r"""
 
-// """;
+AF.upload(multipartFormData: multipartFormData, to: url, method: .post)
 
-//         expect(
-//             codeGen.getCode(
-//               CodegenLanguage.swiftAlamofire,
-//               requestModelPost10,
-//               SupportedUriSchemes.https,
-//             ),
-//             expectedCode);
-//       });
+.responseData { response in
+    switch response.result {
+    case .success(let data):
+        if let responseString = String(data: data, encoding: .utf8) {
+            print("Response: \(responseString)")
+        }
+    case .failure(let error):
+        print("Error: \(error)")
+    }
+    exit(0)
+}
+
+dispatchMain()""";
+
+        expect(
+            codeGen.getCode(
+              CodegenLanguage.swiftAlamofire,
+              requestModelPost8,
+              SupportedUriSchemes.https,
+            ),
+            expectedCode);
+      });
+      test('POST 9', () {
+        const expectedCode = r"""
+import Foundation
+import Alamofire
+let multipartFormData = MultipartFormData()
+    multipartFormData.append(Data("xyz".utf8), withName: "token")    
+    
+let fileURL = URL(fileURLWithPath: "/Documents/up/1.png")
+multipartFormData.append(fileURL, withName: "imfile", fileName: "1.png", mimeType: "application/octet-stream")
+    
+let url = "https://api.apidash.dev/io/img?size=2&len=3"
+
+
+AF.upload(multipartFormData: multipartFormData, to: url, method: .post, headers: ["User-Agent": "Test Agent", "Keep-Alive": "true"])
+
+.responseData { response in
+    switch response.result {
+    case .success(let data):
+        if let responseString = String(data: data, encoding: .utf8) {
+            print("Response: \(responseString)")
+        }
+    case .failure(let error):
+        print("Error: \(error)")
+    }
+    exit(0)
+}
+
+dispatchMain()""";
+
+        expect(
+            codeGen.getCode(
+              CodegenLanguage.swiftAlamofire,
+              requestModelPost9,
+              SupportedUriSchemes.https,
+            ),
+            expectedCode);
+     });
+      test('POST 10', () {
+        const expectedCode = r'''
+import Foundation
+import Alamofire
+let jsonString = """
+{\n\"text\": \"I LOVE Flutter\"\n}
+"""
+let jsonData = jsonString.data(using: .utf8)
+let url = "https://api.apidash.dev/case/lower?size=2&len=3"
+
+
+AF.upload(jsonData!, to: url, method: .post, headers: ["Content-Type": "application/json; charset=utf-8"])
+
+.responseData { response in
+    switch response.result {
+    case .success(let data):
+        if let responseString = String(data: data, encoding: .utf8) {
+            print("Response: \(responseString)")
+        }
+    case .failure(let error):
+        print("Error: \(error)")
+    }
+    exit(0)
+}
+
+dispatchMain()''';
+
+        expect(
+            codeGen.getCode(
+              CodegenLanguage.swiftAlamofire,
+              requestModelPost10,
+              SupportedUriSchemes.https,
+            ),
+            expectedCode);
+      });
     },
    
   );

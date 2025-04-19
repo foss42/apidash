@@ -10,12 +10,9 @@ import Alamofire
 
   final String kTemplateFormData = '''
 let multipartFormData = MultipartFormData()
-{% for param in formData %}
-    {% if param.type == 'text' %}
-multipartFormData.append(Data("{{param.value}}".utf8), withName: "{{param.name}}")
-    {% elif param.type == 'file' %}
+{% for param in formData %}    {% if param.type == 'text' %}multipartFormData.append(Data("{{param.value}}".utf8), withName: "{{param.name}}")    {% elif param.type == 'file' %}
 let fileURL = URL(fileURLWithPath: "{{param.filepath}}")
-multipartFormData.append(fileURL, withName: "{{param.name}}", fileName: "{{param.filename}}")
+multipartFormData.append(fileURL, withName: "{{param.name}}", fileName: "{{param.filename}}", mimeType: "application/octet-stream")
     {% endif %}
 {% endfor %}
 ''';
