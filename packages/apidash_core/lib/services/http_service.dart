@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:seed/seed.dart';
 import '../consts.dart';
+import '../extensions/extensions.dart';
 import '../models/models.dart';
 import '../utils/utils.dart';
 import 'http_client_manager.dart';
@@ -33,6 +34,7 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
   if (uriRec.$1 != null) {
     Uri requestUrl = uriRec.$1!;
     Map<String, String> headers = requestModel.enabledHeadersMap;
+    bool overrideContentType = false;
     HttpResponse? response;
     String? body;
     try {
@@ -43,16 +45,15 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
 
         if (kMethodsWithBody.contains(requestModel.method)) {
           var requestBody = requestModel.body;
-          if (requestBody != null && !isMultiPartRequest) {
-            var contentLength = utf8.encode(requestBody).length;
-            if (contentLength > 0) {
-              body = requestBody;
-              headers[HttpHeaders.contentLengthHeader] =
-                  contentLength.toString();
-              if (!requestModel.hasContentTypeHeader) {
-                headers[HttpHeaders.contentTypeHeader] =
-                    requestModel.bodyContentType.header;
-              }
+          if (requestBody != null &&
+              !isMultiPartRequest &&
+              requestBody.isNotEmpty) {
+            body = requestBody;
+            if (requestModel.hasContentTypeHeader) {
+              overrideContentType = true;
+            } else {
+              headers[HttpHeaders.contentTypeHeader] =
+                  requestModel.bodyContentType.header;
             }
           }
           if (isMultiPartRequest) {
@@ -93,12 +94,13 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
           case HTTPVerb.put:
           case HTTPVerb.patch:
           case HTTPVerb.delete:
-            final request = http.Request(
-              requestModel.method.name.toUpperCase(),
-              requestUrl,
+            final request = prepareHttpRequest(
+              url: requestUrl,
+              method: requestModel.method.name.toUpperCase(),
+              headers: headers,
+              body: body,
+              overrideContentType: overrideContentType,
             );
-            if (body != null) request.body = body;
-            request.headers.addAll(headers);
             final streamed = await client.send(request);
             response = await http.Response.fromStream(streamed);
             break;
@@ -139,4 +141,28 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
 
 void cancelHttpRequest(String? requestId) {
   httpClientManager.cancelRequest(requestId);
+}
+
+http.Request prepareHttpRequest({
+  required Uri url,
+  required String method,
+  required Map<String, String> headers,
+  required String? body,
+  bool overrideContentType = false,
+}) {
+  var request = http.Request(method, url);
+  if (headers.getValueContentType() != null) {
+    request.headers[HttpHeaders.contentTypeHeader] =
+        headers.getValueContentType()!;
+    if (!overrideContentType) {
+      headers.removeKeyContentType();
+    }
+  }
+  if (body != null) {
+    request.body = body;
+    headers[HttpHeaders.contentLengthHeader] =
+        request.bodyBytes.length.toString();
+  }
+  request.headers.addAll(headers);
+  return request;
 }
