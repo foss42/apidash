@@ -29,7 +29,8 @@ Choose your programming language/library from the list provided below to learn m
 - [Rust (reqwest)](#rust-reqwest)
 - [Rust (ureq)](#rust-ureq)
 - [Rust (Actix Client)](#rust-actix-client)
-- [Swift](#swift)
+- [Swift (URLSession)](#swift-urlsession)
+- [Swift (Alamofire)](#swift-alamofire)
 
 **Please raise a GitHub issue in case any instruction is not clear or if it is not working.**
 
@@ -1073,6 +1074,133 @@ cargo run
 
 TODO
 
-## Swift
+## Swift (URLSession)
 
-TODO
+###  Set Up the Environment
+#### MacBook (macOS)
+
+Verify Swift :  
+```
+swift --version
+```
+
+
+#### Linux(Multipartformdata is not supported)
+
+Download Swift for Linux (e.g., Ubuntu) from Swift.org.
+
+```
+tar xzf filename
+export PATH=$PWD/filename/usr/bin:$PATH
+
+```
+Verify: 
+```
+swift --version
+```
+
+
+
+
+
+Install Dependencies:
+```
+sudo apt-get update
+sudo apt-get install clang libicu-dev libcurl4-openssl-dev
+```
+
+
+### Create a Project:
+```
+mkdir URLSessionDemo
+cd URLSessionDemo
+swift package init --type executable
+```
+
+
+
+
+### Run the Code
+Ensure main.swift is in Sources/URLSessionDemo.
+
+
+Run:
+```
+swift run
+```
+
+## Swift (Alamofire)
+
+###  Set Up the Environment
+#### MacBook (macOS)
+
+Verify Swift :  
+```
+swift --version
+```
+
+
+#### Linux (Multipartformdata is not supported)
+
+Download Swift for Linux (e.g., Ubuntu) from Swift.org.
+
+```
+tar xzf filename
+export PATH=$PWD/filename/usr/bin:$PATH
+
+```
+Verify: 
+```
+swift --version
+```
+
+
+
+
+
+ Install Dependencies for swift:
+```
+sudo apt-get update
+sudo apt-get install clang libicu-dev libcurl4-openssl-dev
+```
+
+
+### Create a Project:
+```
+mkdir URLSessionDemo
+cd URLSessionDemo
+swift package init --type executable
+```
+
+
+### Adding alamofire
+ open `package.swift` and add following dependencies and target(replace `project-name` with your project name)
+```
+ dependencies: [
+        .package(url: "https://github.com/Alamofire/Alamofire", from: "5.6.4")
+    ],
+ targets: [
+        .executableTarget(
+            name: "project-name",
+            dependencies: [
+                "Alamofire" 
+            ]
+        )
+    ]
+
+
+```
+
+
+
+### Run the Code
+Ensure main.swift is in Sources/URLSessionDemo.
+
+
+Run:
+```
+swift run
+```
+
+
+
