@@ -427,3 +427,17 @@ const httpRequestModelGetBadSSL = HttpRequestModel(
   method: HTTPVerb.get,
   url: 'https://expired.badssl.com/',
 );
+
+/// POST request model with content type override having no charset
+const httpRequestModelPost11 = HttpRequestModel(
+  method: HTTPVerb.post,
+  url: 'https://api.apidash.dev/case/lower',
+  headers: [
+    NameValueModel(name: 'Content-Type', value: 'application/json'),
+  ],
+  isHeaderEnabledList: [true],
+  bodyContentType: ContentType.json,
+  body: r"""{
+"text": "I LOVE Flutter"
+}""",
+);
