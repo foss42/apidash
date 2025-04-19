@@ -441,3 +441,28 @@ const httpRequestModelPost11 = HttpRequestModel(
 "text": "I LOVE Flutter"
 }""",
 );
+
+/// POST request model with default (utf-8) content type charset
+const httpRequestModelPost12 = HttpRequestModel(
+  method: HTTPVerb.post,
+  url: 'https://api.apidash.dev/case/lower',
+  bodyContentType: ContentType.json,
+  body: r"""{
+"text": "I LOVE Flutter"
+}""",
+);
+
+/// POST request model with charset override (latin1)
+const httpRequestModelPost13 = HttpRequestModel(
+  method: HTTPVerb.post,
+  url: 'https://api.apidash.dev/case/lower',
+  headers: [
+    NameValueModel(
+        name: 'Content-Type', value: 'application/json; charset=latin1'),
+  ],
+  isHeaderEnabledList: [true],
+  bodyContentType: ContentType.json,
+  body: r"""{
+"text": "I LOVE Flutter"
+}""",
+);
