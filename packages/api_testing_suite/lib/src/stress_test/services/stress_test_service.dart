@@ -15,53 +15,52 @@ class StressTestService {
 
     if (config.useIsolates) {
       final isolates = <Isolate>[];
-      final receivePorts = <ReceivePort>[];
       final sendPorts = <SendPort>[];
       final completers = <Completer<ApiRequestResult>>[];
-
+      final mainReceivePort = ReceivePort();
+      int sendPortCount = 0;
+      int resultCount = 0;
+      
       try {
         for (var i = 0; i < config.concurrentRequests; i++) {
-          final receivePort = ReceivePort();
           final completer = Completer<ApiRequestResult>();
-          
-          final isolate = await Isolate.spawn(
-            IsolateWorker.worker, 
-            receivePort.sendPort,
-            errorsAreFatal: false,
-            onExit: receivePort.sendPort,
-            onError: receivePort.sendPort,
-          );
-          
-          isolates.add(isolate);
-          receivePorts.add(receivePort);
           completers.add(completer);
-          
-          receivePort.listen((message) {
-            if (message is SendPort) {
-              sendPorts.add(message);
-              if (sendPorts.length == config.concurrentRequests) {
-                for (var j = 0; j < config.concurrentRequests; j++) {
-                  sendPorts[j].send(IsolateMessage(
-                    url: config.url,
-                    method: config.method,
-                    headers: config.headers,
-                    body: config.body,
-                    timeout: config.timeout,
-                  ));
-                }
-              }
-            } else if (message is ApiRequestResult) {
-              if (!completer.isCompleted) {
-                completer.complete(message);
-              }
-            } else if (message is List && message.length >= 2) {
-              if (!completer.isCompleted) {
-                completer.complete(_handleError('Isolate error: ${message[0]}'));
+          final isolate = await Isolate.spawn(
+            IsolateWorker.worker,
+            mainReceivePort.sendPort,
+            errorsAreFatal: false,
+          );
+          isolates.add(isolate);
+        }
+
+        mainReceivePort.listen((message) {
+          if (message is SendPort) {
+            sendPorts.add(message);
+            sendPortCount++;
+            if (sendPortCount == config.concurrentRequests) {
+              for (var j = 0; j < config.concurrentRequests; j++) {
+                sendPorts[j].send(IsolateMessage(
+                  url: config.url,
+                  method: config.method,
+                  headers: config.headers,
+                  body: config.body,
+                  timeout: config.timeout,
+                ));
               }
             }
-          });
-        }
-        
+          } else if (message is ApiRequestResult) {
+            if (resultCount < completers.length && !completers[resultCount].isCompleted) {
+              completers[resultCount].complete(message);
+              resultCount++;
+            }
+          } else if (message is List && message.length >= 2) {
+            if (resultCount < completers.length && !completers[resultCount].isCompleted) {
+              completers[resultCount].complete(_handleError('Isolate error: ${message[0]}'));
+              resultCount++;
+            }
+          }
+        });
+
         for (var completer in completers) {
           try {
             final result = await completer.future.timeout(
@@ -69,7 +68,7 @@ class StressTestService {
             );
             results.add(result);
           } on TimeoutException {
-            results.add(_handleError('Isolate communication timed out', context: 'Completer index: {completers.indexOf(completer)}'));
+            results.add(_handleError('Isolate communication timed out', context: 'Completer index: ￼{completers.indexOf(completer)}'));
           }
         }
       } finally {
@@ -79,12 +78,10 @@ class StressTestService {
               sendPorts[i].send('close');
             }
             isolates[i].kill(priority: Isolate.immediate);
-          } catch (_) { /*We need to ignore once termination is done*/ }
+          } catch (_) {}
         }
         
-        for (var port in receivePorts) {
-          port.close();
-        }
+
       }
     } else {
       final futures = <Future<ApiRequestResult>>[];
