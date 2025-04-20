@@ -3,6 +3,7 @@ import 'dart:isolate';
 import '../models/api_request_result.dart';
 import '../models/stress_test_config.dart';
 import '../models/stress_test_summary.dart';
+import 'stress_test_constants.dart';
 import '../models/isolate_message.dart';
 import 'request_executor.dart';
 import 'isolate_worker.dart';
@@ -65,7 +66,7 @@ class StressTestService {
         for (var completer in completers) {
           try {
             final result = await completer.future.timeout(
-              (config.timeout ?? const Duration(seconds: 30)) + const Duration(seconds: 10)
+              (config.timeout ?? StressTestConstants.defaultTimeout) + StressTestConstants.isolateCommunicationTimeout
             );
             results.add(result);
           } on TimeoutException {
@@ -100,7 +101,7 @@ class StressTestService {
       }
       
       try {
-        final overallTimeout = (config.timeout ?? const Duration(seconds: 30)) + const Duration(seconds: 10);
+        final overallTimeout = (config.timeout ?? StressTestConstants.defaultTimeout) + StressTestConstants.isolateCommunicationTimeout;
         final futureResults = await Future.wait(futures).timeout(overallTimeout);
         results.addAll(futureResults);
       } on TimeoutException {

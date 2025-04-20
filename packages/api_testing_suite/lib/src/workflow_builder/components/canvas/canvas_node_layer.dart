@@ -2,6 +2,7 @@ import 'package:api_testing_suite/api_testing_suite.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'canvas_styles.dart';
+import 'canvas_ui_constants.dart';
 
 class CanvasNodeLayer extends ConsumerWidget {
   final String workflowId;
@@ -38,8 +39,8 @@ class CanvasNodeLayer extends ConsumerWidget {
     return Stack(
       children: workflow.nodes.map((node) {
         final nodeCenter = Offset(
-          node.position.dx + 100, 
-          node.position.dy + 40,  
+          node.position.dx + CanvasUIConstants.nodeWidth, 
+          node.position.dy + CanvasUIConstants.nodeHeight,  
         );
         
         return Positioned(
