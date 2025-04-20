@@ -40,10 +40,10 @@ class StressTestService {
             if (sendPortCount == config.concurrentRequests) {
               for (var j = 0; j < config.concurrentRequests; j++) {
                 sendPorts[j].send(IsolateMessage(
-                  url: config.url,
-                  method: config.method,
-                  headers: config.headers,
-                  body: config.body,
+                  url: config.resolvedUrl,
+                  method: config.resolvedMethod,
+                  headers: config.resolvedHeaders,
+                  body: config.resolvedBody,
                   timeout: config.timeout,
                 ));
               }
@@ -88,10 +88,10 @@ class StressTestService {
       
       for (int i = 0; i < config.concurrentRequests; i++) {
         futures.add(RequestExecutor.execute(
-          url: config.url,
-          method: config.method,
-          headers: config.headers,
-          body: config.body,
+          url: config.resolvedUrl,
+          method: config.resolvedMethod,
+          headers: config.resolvedHeaders,
+          body: config.resolvedBody,
           timeout: config.timeout,
         ));
       }
