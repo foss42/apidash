@@ -1,7 +1,7 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:api_testing_suite/api_testing_suite.dart';
+import 'package:apidash_core/apidash_core.dart';
+
 import 'package:uuid/uuid.dart';
-import 'workflow_node_model.dart';
-import 'workflow_connection_model.dart';
 
 part 'workflow_model.freezed.dart';
 part 'workflow_model.g.dart';
@@ -63,7 +63,7 @@ class WorkflowModel with _$WorkflowModel {
   }
 
   WorkflowNodeModel? getNodeById(String nodeId) {
-    return nodes.firstWhere((node) => node.id == nodeId);
+    return nodes.firstWhereOrNull((node) => node.id == nodeId);
   }
 
   List<WorkflowConnectionModel> getConnectionsFromNode(String nodeId) {
