@@ -1,7 +1,7 @@
 import 'package:api_testing_suite/api_testing_suite.dart';
-import 'package:api_testing_suite/src/workflow_builder/providers/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'canvas_styles.dart';
 
 class CanvasNodeLayer extends ConsumerWidget {
   final String workflowId;
@@ -205,40 +205,15 @@ class CanvasNodeLayer extends ConsumerWidget {
   }
   
   Widget _buildMethodBadge(String method) {
-    Color color;
-    switch (method.toUpperCase()) {
-      case 'GET':
-        color = Colors.blue;
-        break;
-      case 'POST':
-        color = Colors.green;
-        break;
-      case 'PUT':
-        color = Colors.orange;
-        break;
-      case 'DELETE':
-        color = Colors.red;
-        break;
-      case 'PATCH':
-        color = Colors.purple;
-        break;
-      default:
-        color = Colors.grey;
-    }
-    
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      padding: CanvasStyles.methodBadgePadding,
       decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(4),
+        color: CanvasStyles.methodBadgeColor(method),
+        borderRadius: BorderRadius.circular(CanvasStyles.methodBadgeBorderRadius),
       ),
       child: Text(
         method.toUpperCase(),
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 10,
-          fontWeight: FontWeight.bold,
-        ),
+        style: CanvasStyles.methodBadgeTextStyle,
       ),
     );
   }
