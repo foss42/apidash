@@ -1,139 +1,13 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:isolate';
-
-import 'package:http/http.dart' as http;
-
 import '../models/api_request_result.dart';
 import '../models/stress_test_config.dart';
 import '../models/stress_test_summary.dart';
 import '../models/isolate_message.dart';
+import 'request_executor.dart';
+import 'isolate_worker.dart';
 
-// Stress Test Service Class 
 class StressTestService {
-
-  static Future<ApiRequestResult> _executeRequest({
-    required String url,
-    required String method,
-    Map<String, String>? headers,
-    dynamic body,
-    Duration? timeout,
-  }) async {
-    final stopwatch = Stopwatch()..start();
-    final client = http.Client();
-
-    try {
-      http.Response response;
-      final defaultTimeout = const Duration(seconds: 30);
-      
-      try {
-        switch (method.toUpperCase()) {
-          case 'GET':
-            response = await client.get(
-              Uri.parse(url),
-              headers: headers,
-            ).timeout(timeout ?? defaultTimeout);
-            break;
-          case 'POST':
-            response = await client.post(
-              Uri.parse(url),
-              headers: headers,
-              body: body is String ? body : jsonEncode(body),
-            ).timeout(timeout ?? defaultTimeout);
-            break;
-          case 'PUT':
-            response = await client.put(
-              Uri.parse(url),
-              headers: headers,
-              body: body is String ? body : jsonEncode(body),
-            ).timeout(timeout ?? defaultTimeout);
-            break;
-          case 'DELETE':
-            response = await client.delete(
-              Uri.parse(url),
-              headers: headers,
-              body: body is String ? body : jsonEncode(body),
-            ).timeout(timeout ?? defaultTimeout);
-            break;
-          case 'PATCH':
-            response = await client.patch(
-              Uri.parse(url),
-              headers: headers,
-              body: body is String ? body : jsonEncode(body),
-            ).timeout(timeout ?? defaultTimeout);
-            break;
-          default:
-            throw Exception('Unsupported HTTP method: $method');
-        }
-
-        stopwatch.stop();
-        return ApiRequestResult(
-          statusCode: response.statusCode,
-          body: response.body,
-          duration: stopwatch.elapsed,
-          error: null,
-        );
-      } on TimeoutException {
-        stopwatch.stop();
-        return ApiRequestResult(
-          statusCode: -1,
-          body: '',
-          duration: stopwatch.elapsed,
-          error: 'Request timed out after ${(timeout ?? defaultTimeout).inSeconds} seconds',
-        );
-      } on http.ClientException catch (e) {
-        stopwatch.stop();
-        return ApiRequestResult(
-          statusCode: -1,
-          body: '',
-          duration: stopwatch.elapsed,
-          error: 'HTTP client error: ${e.message}',
-        );
-      } on FormatException catch (e) {
-        stopwatch.stop();
-        return ApiRequestResult(
-          statusCode: -1,
-          body: '',
-          duration: stopwatch.elapsed,
-          error: 'Format error: ${e.message}',
-        );
-      } catch (e) {
-        stopwatch.stop();
-        return ApiRequestResult(
-          statusCode: -1,
-          body: '',
-          duration: stopwatch.elapsed,
-          error: e.toString(),
-        );
-      }
-    } finally {
-      client.close();
-    }
-  }
-
-  /// Isolate worker function
-  static Future<void> _isolateWorker(SendPort sendPort) async {
-    final receivePort = ReceivePort();
-    sendPort.send(receivePort.sendPort);
-
-    await for (final message in receivePort) {
-      if (message is IsolateMessage) {
-        final result = await _executeRequest(
-          url: message.url,
-          method: message.method,
-          headers: message.headers,
-          body: message.body,
-          timeout: message.timeout,
-        );
-        sendPort.send(result);
-      } else if (message == 'close') {
-        break;
-      }
-    }
-
-    Isolate.exit();
-  }
-
   /// Execute a parallel API test
   static Future<StressTestSummary> runTest(StressTestConfig config) async {
     final totalStopwatch = Stopwatch()..start();
@@ -151,7 +25,7 @@ class StressTestService {
           final completer = Completer<ApiRequestResult>();
           
           final isolate = await Isolate.spawn(
-            _isolateWorker, 
+            IsolateWorker.worker, 
             receivePort.sendPort,
             errorsAreFatal: false,
             onExit: receivePort.sendPort,
@@ -226,7 +100,7 @@ class StressTestService {
       final futures = <Future<ApiRequestResult>>[];
       
       for (int i = 0; i < config.concurrentRequests; i++) {
-        futures.add(_executeRequest(
+        futures.add(RequestExecutor.execute(
           url: config.url,
           method: config.method,
           headers: config.headers,
