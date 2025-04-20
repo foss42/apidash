@@ -9,7 +9,6 @@ import 'request_executor.dart';
 import 'isolate_worker.dart';
 
 class StressTestService {
-  /// Execute a parallel API test
   static Future<StressTestSummary> runTest(StressTestConfig config) async {
     final totalStopwatch = Stopwatch()..start();
     final List<ApiRequestResult> results = [];
@@ -62,7 +61,7 @@ class StressTestService {
             }
           });
         }
-
+        
         for (var completer in completers) {
           try {
             final result = await completer.future.timeout(
@@ -70,7 +69,7 @@ class StressTestService {
             );
             results.add(result);
           } on TimeoutException {
-            results.add(_handleError('Isolate communication timed out'));
+            results.add(_handleError('Isolate communication timed out', context: 'Completer index: {completers.indexOf(completer)}'));
           }
         }
       } finally {
@@ -109,7 +108,7 @@ class StressTestService {
         final remainingCount = config.concurrentRequests - completedResults;
         
         for (int i = 0; i < remainingCount; i++) {
-          results.add(_handleError('Operation timed out'));
+          results.add(_handleError('Operation timed out', context: 'Timeout batch fill'));
         }
       }
     }
@@ -141,12 +140,12 @@ class StressTestService {
     );
   }
 
-  static ApiRequestResult _handleError(String error) {
+  static ApiRequestResult _handleError(String error, {String? context}) {
     return ApiRequestResult(
       statusCode: -1,
       body: '',
       duration: Duration.zero,
-      error: error,
+      error: context != null ? '[Context: $context] $error' : error,
     );
   }
 }

@@ -10,7 +10,6 @@ class WorkflowExecutor {
   
   WorkflowExecutionState _executionState;
   
-  // Dependency and outgoing node maps for efficient traversal
   final Map<String, List<String>> _nodeDependencyMap = {};
   final Map<String, List<String>> _nodeOutgoingMap = {};
   
@@ -173,7 +172,7 @@ class WorkflowExecutor {
 
     final node = workflow.nodes.firstWhere(
       (n) => n.id == nodeId,
-      orElse: () => throw Exception('Node not found: $nodeId'),
+      orElse: () => throw StateError('Node not found: $nodeId in WorkflowExecutor._executeNextNodes'),
     );
 
     final dependencies = _nodeDependencyMap[nodeId] ?? [];

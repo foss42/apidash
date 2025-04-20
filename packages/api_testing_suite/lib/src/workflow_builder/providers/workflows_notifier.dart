@@ -212,10 +212,13 @@ class WorkflowsNotifier extends StateNotifier<List<WorkflowModel>> {
   }
 
   WorkflowModel? getWorkflow(String workflowId) {
-    return state.firstWhere(
-      (workflow) => workflow.id == workflowId,
-      orElse: () => throw Exception('Workflow not found: $workflowId'),
-    );
+    try {
+      return state.firstWhere(
+        (workflow) => workflow.id == workflowId,
+      );
+    } on StateError {
+      throw StateError('Workflow not found: $workflowId in getWorkflow');
+    }
   }
 
   void startExecution(

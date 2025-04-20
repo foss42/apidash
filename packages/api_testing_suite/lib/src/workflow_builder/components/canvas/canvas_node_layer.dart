@@ -31,7 +31,7 @@ class CanvasNodeLayer extends ConsumerWidget {
     final workflows = ref.watch(workflowsNotifierProvider);
     final workflow = workflows.firstWhere(
       (w) => w.id == workflowId,
-      orElse: () => throw Exception('Workflow not found: $workflowId'),
+      orElse: () => throw StateError('Workflow not found: $workflowId in CanvasNodeLayer'),
     );
     
     final isConnectionMode = ref.watch(connectionModeProvider);
