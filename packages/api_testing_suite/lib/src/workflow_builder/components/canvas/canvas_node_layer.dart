@@ -34,12 +34,7 @@ class CanvasNodeLayer extends ConsumerWidget {
     );
     
     final isConnectionMode = ref.watch(connectionModeProvider);
-    
-    debugPrint('[CanvasNodeLayer] Rendering nodes. Count: ${workflow.nodes.length}');
-    for (final node in workflow.nodes) {
-      debugPrint('[CanvasNodeLayer] Node ID: ${node.id}, Position: ${node.position}, Label: ${node.label}');
-    }
-    
+        
     return Stack(
       children: workflow.nodes.map((node) {
         final nodeCenter = Offset(

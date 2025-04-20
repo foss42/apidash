@@ -30,7 +30,7 @@ mixin CanvasEventHandlers<T extends ConsumerStatefulWidget> on ConsumerState<T> 
   set connectionEnd(Offset? value) => setState(() => _connectionEnd = value);
 
   void handleApiNodeAdded(WidgetRef ref, String workflowId, String requestId, Offset position) {
-    debugPrint('[CanvasEventHandlers] handleApiNodeAdded called with workflowId: $workflowId, requestId: $requestId, position: $position');
+
     try {
       final renderBox = context.findRenderObject() as RenderBox;
       final viewportCenter = transformationController.toScene(
@@ -52,16 +52,13 @@ mixin CanvasEventHandlers<T extends ConsumerStatefulWidget> on ConsumerState<T> 
       
       ref.read(workflowsNotifierProvider.notifier).addNode(workflowId, nodeModel);
       
-      debugPrint('Added node with ID: ${nodeModel.id} at position: ${nodeModel.position}');
+
       
       final workflows = ref.read(workflowsNotifierProvider);
       final workflow = workflows.firstWhere((w) => w.id == workflowId);
-      debugPrint('Current nodes in workflow: ${workflow.nodes.length}');
-      for (final node in workflow.nodes) {
-        debugPrint('Node ID: ${node.id}, Position: ${node.position}, Label: ${node.label}');
-      }
+
     } catch (e) {
-      debugPrint('Error adding API node: $e');
+
     }
   }
 
