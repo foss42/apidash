@@ -56,12 +56,7 @@ class StressTestService {
               }
             } else if (message is List && message.length >= 2) {
               if (!completer.isCompleted) {
-                completer.complete(ApiRequestResult(
-                  statusCode: -1,
-                  body: '',
-                  duration: Duration.zero,
-                  error: 'Isolate error: ${message[0]}',
-                ));
+                completer.complete(_handleError('Isolate error: ${message[0]}'));
               }
             }
           });
@@ -74,12 +69,7 @@ class StressTestService {
             );
             results.add(result);
           } on TimeoutException {
-            results.add(ApiRequestResult(
-              statusCode: -1,
-              body: '',
-              duration: Duration.zero,
-              error: 'Isolate communication timed out',
-            ));
+            results.add(_handleError('Isolate communication timed out'));
           }
         }
       } finally {
@@ -118,12 +108,7 @@ class StressTestService {
         final remainingCount = config.concurrentRequests - completedResults;
         
         for (int i = 0; i < remainingCount; i++) {
-          results.add(ApiRequestResult(
-            statusCode: -1,
-            body: '',
-            duration: Duration.zero,
-            error: 'Operation timed out',
-          ));
+          results.add(_handleError('Operation timed out'));
         }
       }
     }
@@ -152,6 +137,15 @@ class StressTestService {
       avgResponseTime: avgResponseTime,
       successCount: successCount,
       failureCount: failureCount,
+    );
+  }
+
+  static ApiRequestResult _handleError(String error) {
+    return ApiRequestResult(
+      statusCode: -1,
+      body: '',
+      duration: Duration.zero,
+      error: error,
     );
   }
 }
