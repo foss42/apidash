@@ -67,68 +67,18 @@ class FakeDataProvidersPane extends ConsumerWidget {
   }
 
   Widget _buildFakeDataTable(BuildContext context) {
-    final fakeDataTags = [
-      _FakeDataItem(
-        name: 'randomUsername',
-        description: 'Random username (e.g., user123, test_dev)',
-        example: FakeDataProvider.randomUsername(),
-      ),
-      _FakeDataItem(
-        name: 'randomEmail',
-        description: 'Random email address',
-        example: FakeDataProvider.randomEmail(),
-      ),
-      _FakeDataItem(
-        name: 'randomId',
-        description: 'Random numeric ID',
-        example: FakeDataProvider.randomId(),
-      ),
-      _FakeDataItem(
-        name: 'randomUuid',
-        description: 'Random UUID',
-        example: FakeDataProvider.randomUuid(),
-      ),
-      _FakeDataItem(
-        name: 'randomName',
-        description: 'Random full name',
-        example: FakeDataProvider.randomName(),
-      ),
-      _FakeDataItem(
-        name: 'randomPhone',
-        description: 'Random phone number',
-        example: FakeDataProvider.randomPhone(),
-      ),
-      _FakeDataItem(
-        name: 'randomAddress',
-        description: 'Random address',
-        example: FakeDataProvider.randomAddress(),
-      ),
-      _FakeDataItem(
-        name: 'randomDate',
-        description: 'Random date (YYYY-MM-DD)',
-        example: FakeDataProvider.randomDate(),
-      ),
-      _FakeDataItem(
-        name: 'randomDateTime',
-        description: 'Random date and time (ISO format)',
-        example: FakeDataProvider.randomDateTime(),
-      ),
-      _FakeDataItem(
-        name: 'randomBoolean',
-        description: 'Random boolean value (true/false)',
-        example: FakeDataProvider.randomBoolean(),
-      ),
-      _FakeDataItem(
-        name: 'randomNumber',
-        description: 'Random number between 0-1000',
-        example: FakeDataProvider.randomNumber(),
-      ),
-      _FakeDataItem(
-        name: 'randomJson',
-        description: 'Random JSON object with basic fields',
-        example: FakeDataProvider.randomJson(),
-      ),
-    ];
+    // Dynamically fetch tag list from FakeDataProvider's registry
+    final fakeDataTags = FakeDataProvider.tagRegistry.entries.map((entry) {
+      final tag = entry.key;
+      final example = entry.value();
+      // For localization, use a lookup or resource map for descriptions
+      final description = _localizedDescription(tag, context);
+      return _FakeDataItem(
+        name: tag,
+        description: description,
+        example: example,
+      );
+    }).toList();
 
     return Table(
       columnWidths: const {
@@ -197,6 +147,37 @@ class FakeDataProvidersPane extends ConsumerWidget {
         tooltip: 'Copy to clipboard',
       ),
     );
+  }
+
+  String _localizedDescription(String tag, BuildContext context) {
+    switch (tag) {
+      case 'randomusername':
+        return 'Random username (e.g., user123, test_dev)';
+      case 'randomemail':
+        return 'Random email address';
+      case 'randomid':
+        return 'Random numeric ID';
+      case 'randomuuid':
+        return 'Random UUID';
+      case 'randomname':
+        return 'Random full name';
+      case 'randomphone':
+        return 'Random US phone number';
+      case 'randomaddress':
+        return 'Random US address';
+      case 'randomdate':
+        return 'Random date (ISO 8601)';
+      case 'randomdatetime':
+        return 'Random date & time (ISO 8601)';
+      case 'randomboolean':
+        return 'Random boolean (true/false)';
+      case 'randomnumber':
+        return 'Random number (0-1000)';
+      case 'randomjson':
+        return 'Random JSON object';
+      default:
+        return tag;
+    }
   }
 }
 
