@@ -1,14 +1,17 @@
-import 'package:apidash/consts.dart';
-import 'package:apidash/screens/mobile/widgets/onboarding_slide.dart';
-import 'package:apidash/screens/screens.dart';
-import 'package:apidash/services/services.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:flutter/material.dart';
+import 'package:apidash/consts.dart';
+import 'widgets/onboarding_slide.dart';
 
 class OnboardingScreen extends StatefulWidget {
-  const OnboardingScreen({super.key});
+  const OnboardingScreen({
+    super.key,
+    this.onComplete,
+  });
 
+  final AsyncCallback? onComplete;
   @override
   State<OnboardingScreen> createState() => _OnboardingScreenState();
 }
@@ -24,14 +27,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         duration: const Duration(milliseconds: 600),
         curve: Curves.ease,
       );
-    } else {
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(
-          builder: (context) => MobileDashboard(),
-        ),
-        (route) => false,
-      );
     }
   }
 
@@ -43,16 +38,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         actions: [
           TextButton(
             onPressed: () async {
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => MobileDashboard(),
-                ),
-                (route) => false,
-              );
-              await setOnboardingStatusToSharedPrefs(
-                isOnboardingComplete: true,
-              );
+              await widget.onComplete?.call();
             },
             child: const Text(
               'Skip',
@@ -142,9 +128,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     onPressed: () async {
                       _onNextPressed();
                       if (currentPageIndex == 2) {
-                        await setOnboardingStatusToSharedPrefs(
-                          isOnboardingComplete: true,
-                        );
+                        await widget.onComplete?.call();
                       }
                     },
                     icon: const Icon(
