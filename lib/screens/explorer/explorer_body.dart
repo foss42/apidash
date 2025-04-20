@@ -5,7 +5,12 @@ import 'common_widgets/api_search_bar.dart';
 import 'package:apidash/models/models.dart';
 
 class ExplorerBody extends StatefulWidget {
-  const ExplorerBody({super.key});
+  final VoidCallback? onCardTap;
+  
+  const ExplorerBody({
+    super.key,
+    this.onCardTap,
+  });
 
   @override
   _ExplorerBodyState createState() => _ExplorerBodyState();
@@ -60,8 +65,8 @@ class _ExplorerBodyState extends State<ExplorerBody> {
                 return GridView.builder(
                   padding: const EdgeInsets.all(12),
                   gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 300, // Maximum width of each card
-                    childAspectRatio: 1.3, // Height-to-width ratio
+                    maxCrossAxisExtent: 300,
+                    childAspectRatio: 1.3,
                     crossAxisSpacing: 12,
                     mainAxisSpacing: 12,
                   ),
@@ -73,9 +78,7 @@ class _ExplorerBodyState extends State<ExplorerBody> {
                       name: template.info.title,
                       description: template.info.description,
                       icon: Icons.api,
-                      onTap: () {
-                        // TODO: Handle card tap (navigate to details screen)
-                      },
+                      onTap: widget.onCardTap,
                     );
                   },
                 );
