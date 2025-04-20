@@ -1,4 +1,5 @@
 import 'package:apidash/screens/dashflow/dashflow_builder/grid.dart';
+import 'package:apidash/screens/dashflow/dashflow_builder/node_connectors.dart';
 import 'package:apidash/screens/dashflow/dashflow_builder/nodes.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash/providers/providers.dart';
@@ -48,21 +49,21 @@ class _WorkflowCanvasState extends ConsumerState<WorkflowCanvas> {
   Widget build(BuildContext context) {
     final mq = MediaQuery.of(context).size;
     final canvasSize = 5000.00;
-    const double baseGridSize = 20;
+    const double baseGridSize = 25;
     final nodes = ref.watch(workflowProvider);
+    final hoveredNodeId = ref.watch(hoverNodeProvider);
+
     return Scaffold(
-      appBar: AppBar(title: Text("New Dashflow")),
+      appBar: AppBar(title: Text("Dashflow 1")),
       body: Padding(
         padding: const EdgeInsets.only(left: 5, right: 5, bottom: 10),
         child: Container(
           decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey.shade300),
-            borderRadius: BorderRadius.vertical(bottom: Radius.circular(8)),
+            border: Border.all(color: Colors.grey.shade400),
+            borderRadius: BorderRadius.all(Radius.circular(10)),
             gradient: LinearGradient(
               colors: [
                 Colors.black12,
-                Colors.transparent,
-                Colors.transparent,
                 Colors.transparent,
               ],
               begin: Alignment.topCenter,
@@ -78,34 +79,54 @@ class _WorkflowCanvasState extends ConsumerState<WorkflowCanvas> {
             child: SizedBox(
               height: canvasSize,
               width: canvasSize,
-              child: CustomPaint(
-                painter: GridPainter(
-                  baseGridSize: baseGridSize,
-                  canvasSize: canvasSize,
-                  transformation: _controller.value,
-                  viewportSize: mq,
-                ),
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: nodes.map((node) {
-                    // Translate node positions to center of canvas
-                    final centeredOffset = Offset(
-                      node.offset.dx + canvasSize / 2,
-                      node.offset.dy + canvasSize / 2,
-                    );
-                    return Positioned(
-                      left: centeredOffset.dx,
-                      top: centeredOffset.dy,
-                      child: DraggableNode(
-                        gridSize: baseGridSize,
-                        node: node,
-                        onDrag: (id, offset) => ref
-                            .read(workflowProvider.notifier)
-                            .updateNodeOffset(id, offset),
-                      ),
-                    );
-                  }).toList(),
-                ),
+              child: Stack(
+                children: [
+                  CustomPaint(
+                    painter: ArrowPainter(
+                      nodes: nodes,
+                      canvasSize: canvasSize,
+                      gridSize: baseGridSize,
+                      hoveredNodeId: hoveredNodeId, // Pass the hovered node ID
+                    ),
+                  ),
+                  CustomPaint(
+                    painter: GridPainter(
+                      baseGridSize: baseGridSize,
+                      canvasSize: canvasSize,
+                      transformation: _controller.value,
+                      viewportSize: mq,
+                    ),
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      children: nodes.map((node) {
+                        // Translate node positions to center of canvas
+                        final centeredOffset = Offset(
+                          node.offset.dx + canvasSize / 2,
+                          node.offset.dy + canvasSize / 2,
+                        );
+                        return Positioned(
+                          left: centeredOffset.dx,
+                          top: centeredOffset.dy,
+                          child: MouseRegion(
+                            onEnter: (_) => ref
+                                .read(hoverNodeProvider.notifier)
+                                .state = node.id,
+                            onExit: (_) => ref
+                                .read(hoverNodeProvider.notifier)
+                                .state = null,
+                            child: DraggableNode(
+                              gridSize: baseGridSize,
+                              node: node,
+                              onDrag: (id, offset) => ref
+                                  .read(workflowProvider.notifier)
+                                  .updateNodeOffset(id, offset),
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

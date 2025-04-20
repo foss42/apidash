@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class NodeData {
   final int id;
   final Offset offset;
+  final GlobalKey sizeKey = GlobalKey();
 
   NodeData({required this.id, required this.offset});
 
@@ -58,12 +59,13 @@ class _DraggableNodeState extends State<DraggableNode> {
         });
       },
       child: Card(
-        elevation: 4,
+        key: widget.node.sizeKey,
+        elevation: isDragging ? 16 : 4,
         color: Colors.lightBlue[100],
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Text("Node ${widget.node.id}", style: Theme.of(context).textTheme.bodyMedium),
+          child: Text("Node ${widget.node.id}, this is the test node", style: Theme.of(context).textTheme.bodyMedium),
         ),
       ),
     );

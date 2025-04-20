@@ -40,7 +40,7 @@ final importFormatStateProvider =
 final userOnboardedProvider = StateProvider<bool>((ref) => false);
 
 final workflowProvider = StateNotifierProvider<WorkflowNotifier, List<NodeData>>((ref) => WorkflowNotifier());
-
+final hoverNodeProvider = StateProvider<int?>((ref) => null);
 class WorkflowNotifier extends StateNotifier<List<NodeData>> {
   WorkflowNotifier() : super([
     NodeData(id: 1, offset: Offset(0, 0)),
