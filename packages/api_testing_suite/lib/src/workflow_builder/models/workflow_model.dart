@@ -47,7 +47,20 @@ class WorkflowModel with _$WorkflowModel {
 
   bool get hasStartNode => startNodeId != null;
 
-  get createdAt => null;
+  DateTime? get createdAt {
+    if (metadata.containsKey('createdAt')) {
+      final value = metadata['createdAt'];
+      if (value is DateTime) return value;
+      if (value is String) {
+        try {
+          return DateTime.parse(value);
+        } catch (_) {
+          return null;
+        }
+      }
+    }
+    return null;
+  }
 
   WorkflowNodeModel? getStartNode() {
     if (startNodeId == null) return null;
