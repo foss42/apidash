@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:apidash/models/models.dart';
 import 'description_header.dart';
 import 'description_body.dart';
 
 class DescriptionPage extends StatelessWidget {
+  final ApiTemplate template;
   final VoidCallback onBack;
 
   const DescriptionPage({
     super.key,
+    required this.template,
     required this.onBack,
   });
 
@@ -14,9 +17,9 @@ class DescriptionPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        SizedBox(
-          height: 60,
-          child: DescriptionHeader(onBack: onBack),
+        DescriptionHeader(
+          info: template.info,
+          onBack: onBack,
         ),
         const Expanded(
           child: DescriptionBody(),

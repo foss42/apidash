@@ -1,21 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:apidash/models/models.dart';
 import 'card_title.dart';
 import 'card_description.dart';
 
-
 class TemplateCard extends StatelessWidget {
-  final String id;
-  final String name;
-  final String description;
-  final IconData? icon;
+  final ApiTemplate template;
   final VoidCallback? onTap;
 
   const TemplateCard({
     Key? key,
-    required this.id,
-    required this.name,
-    required this.description,
-    this.icon,
+    required this.template,
     this.onTap,
   }) : super(key: key);
 
@@ -43,13 +37,13 @@ class TemplateCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CardTitle(
-                title: name,
-                icon: icon ?? Icons.api, //currently no icons in the templates so icon always Icons.api
+                title: template.info.title,
+                icon: Icons.api, //currently no icons in the templates so icon always Icons.api
                 iconColor: colorScheme.primary,
               ),
               const SizedBox(height: 8),
               CardDescription(
-                description: description.isEmpty ? 'No description' : description,
+                description: template.info.description.isEmpty ? 'No description' : template.info.description,
                 maxLines: 2,
               ),
             ],

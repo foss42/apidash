@@ -5,8 +5,8 @@ import 'common_widgets/api_search_bar.dart';
 import 'package:apidash/models/models.dart';
 
 class ExplorerBody extends StatefulWidget {
-  final VoidCallback? onCardTap;
-  
+  final Function(ApiTemplate)? onCardTap;
+
   const ExplorerBody({
     super.key,
     this.onCardTap,
@@ -74,11 +74,8 @@ class _ExplorerBodyState extends State<ExplorerBody> {
                   itemBuilder: (context, index) {
                     final template = templates[index];
                     return TemplateCard(
-                      id: template.info.title,
-                      name: template.info.title,
-                      description: template.info.description,
-                      icon: Icons.api,
-                      onTap: widget.onCardTap,
+                      template: template,
+                      onTap: () => widget.onCardTap?.call(template),
                     );
                   },
                 );
