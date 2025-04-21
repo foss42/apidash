@@ -71,53 +71,45 @@ class CanvasNodeLayer extends ConsumerWidget {
               }
             },
             child: Opacity(
-              opacity: draggedNodeId == node.id ? 0.7 : 1.0,
+              opacity: draggedNodeId == node.id 
+                  ? CanvasUIConstants.nodeOpacityDragged 
+                  : CanvasUIConstants.nodeOpacityDefault,
               child: Material(
-                elevation: draggedNodeId == node.id ? 8 : 3,
-                borderRadius: BorderRadius.circular(8),
+                elevation: draggedNodeId == node.id 
+                    ? CanvasUIConstants.nodeElevationDragged 
+                    : CanvasUIConstants.nodeElevationDefault,
+                borderRadius: CanvasStyles.nodeBorderRadius,
                 color: Colors.transparent,
                 child: Container(
-                  width: 200,
-                  constraints: const BoxConstraints(minHeight: 80),
+                  width: CanvasUIConstants.nodeWidth * 2,
+                  constraints: const BoxConstraints(minHeight: CanvasUIConstants.nodeHeight * 2),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
-                      colors: sourceNodeId == node.id 
-                          ? [Colors.blue[300]!, Colors.blue[100]!]
-                          : (isConnectionMode 
-                              ? [Colors.purple[100]!, Colors.purple[50]!]
-                              : [Colors.white, const Color(0xFFF5F5F5)]),
+                      colors: CanvasStyles.getNodeGradient(node.id, sourceNodeId, isConnectionMode),
                     ),
                     border: Border.all(
-                      color: _getBorderColor(node.id, sourceNodeId, isConnectionMode),
-                      width: isConnectionMode ? 2.5 : 2,
+                      color: CanvasStyles.getBorderColor(node.id, sourceNodeId, isConnectionMode),
+                      width: isConnectionMode 
+                          ? CanvasUIConstants.nodeBorderWidthActive 
+                          : CanvasUIConstants.nodeBorderWidthDefault,
                     ),
-                    borderRadius: BorderRadius.circular(8),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Color(0xff171433).withValues(alpha: 0.1),
-                        spreadRadius: 1,
-                        blurRadius: 3,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
+                    borderRadius: CanvasStyles.nodeBorderRadius,
+                    boxShadow: [CanvasStyles.nodeShadow],
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: node.nodeType == NodeType.request 
-                              ? Colors.blue.shade700
-                              : Colors.green.shade700,
-                          borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(6),
-                            topRight: Radius.circular(6),
-                          ),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: CanvasUIConstants.nodeHeaderPaddingHorizontal, 
+                          vertical: CanvasUIConstants.nodeHeaderPaddingVertical
                         ),
+                        decoration: node.nodeType == NodeType.request 
+                            ? CanvasStyles.requestHeaderDecoration
+                            : CanvasStyles.processingHeaderDecoration,
                         child: Row(
                           children: [
                             Icon(
@@ -125,16 +117,13 @@ class CanvasNodeLayer extends ConsumerWidget {
                                   ? Icons.http
                                   : Icons.settings,
                               color: Colors.white,
-                              size: 16,
+                              size: CanvasUIConstants.nodeHeaderIconSize,
                             ),
-                            const SizedBox(width: 8),
+                            SizedBox(width: CanvasUIConstants.nodeHeaderSpacing),
                             Expanded(
                               child: Text(
                                 node.label,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                                style: CanvasStyles.nodeHeaderTextStyle,
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
@@ -142,13 +131,13 @@ class CanvasNodeLayer extends ConsumerWidget {
                               const Icon(
                                 Icons.cable_outlined,
                                 color: Colors.white,
-                                size: 16,
+                                size: CanvasUIConstants.nodeHeaderIconSize,
                               ),
                           ],
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.all(12),
+                        padding: EdgeInsets.all(CanvasUIConstants.nodeContentPadding),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -156,16 +145,13 @@ class CanvasNodeLayer extends ConsumerWidget {
                               Row(
                                 children: [
                                   _buildMethodBadge(node.requestModel!.method),
-                                  const SizedBox(width: 8),
+                                  SizedBox(width: CanvasUIConstants.nodeContentSpacing),
                                   Expanded(
                                     child: Text(
                                       node.requestModel!.url.isEmpty 
                                           ? 'No URL specified'
                                           : node.requestModel!.url,
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.grey[700],
-                                      ),
+                                      style: CanvasStyles.nodeContentTextStyle,
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
@@ -174,10 +160,7 @@ class CanvasNodeLayer extends ConsumerWidget {
                             else
                               Text(
                                 'Node ID: ${node.id.substring(0, 6)}',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.grey[700],
-                                ),
+                                style: CanvasStyles.nodeContentTextStyle,
                               ),
                           ],
                         ),
@@ -193,24 +176,12 @@ class CanvasNodeLayer extends ConsumerWidget {
     );
   }
   
-  Color _getBorderColor(String nodeId, String? sourceNodeId, bool isConnectionMode) {
-    if (sourceNodeId == nodeId) {
-      return Colors.blue;
-    }
-    
-    if (isConnectionMode) {
-      return Colors.purple;
-    }
-    
-    return Colors.grey.shade300;
-  }
-  
   Widget _buildMethodBadge(String method) {
     return Container(
       padding: CanvasStyles.methodBadgePadding,
       decoration: BoxDecoration(
         color: CanvasStyles.methodBadgeColor(method),
-        borderRadius: BorderRadius.circular(CanvasStyles.methodBadgeBorderRadius),
+        borderRadius: CanvasStyles.methodBadgeBorderRadius,
       ),
       child: Text(
         method.toUpperCase(),

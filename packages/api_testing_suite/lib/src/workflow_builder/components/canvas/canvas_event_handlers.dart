@@ -1,10 +1,12 @@
+import 'package:api_testing_suite/src/common/utils/error_handler.dart';
+import 'package:api_testing_suite/src/common/utils/logger.dart';
 import 'package:api_testing_suite/src/workflow_builder/providers/providers.dart';
 import '../../models/workflow_connection_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../models/workflow_node_model.dart';
 
-
+/// A mixin that provides canvas event handling capabilities to a ConsumerStatefulWidget
 mixin CanvasEventHandlers<T extends ConsumerStatefulWidget> on ConsumerState<T> {
   TransformationController get transformationController;
 
@@ -30,8 +32,7 @@ mixin CanvasEventHandlers<T extends ConsumerStatefulWidget> on ConsumerState<T> 
   set connectionEnd(Offset? value) => setState(() => _connectionEnd = value);
 
   void handleApiNodeAdded(WidgetRef ref, String workflowId, String requestId, Offset position) {
-
-    try {
+    ErrorHandler.execute('adding API node', () {
       final renderBox = context.findRenderObject() as RenderBox;
       final viewportCenter = transformationController.toScene(
         Offset(
@@ -52,34 +53,29 @@ mixin CanvasEventHandlers<T extends ConsumerStatefulWidget> on ConsumerState<T> 
       
       ref.read(workflowsNotifierProvider.notifier).addNode(workflowId, nodeModel);
       
-
-      
-      final workflows = ref.read(workflowsNotifierProvider);
-      final workflow = workflows.firstWhere((w) => w.id == workflowId);
-
-    } catch (e) {
-
-    }
+      ApiTestLogger.info('Added node: ${nodeModel.id} at position: ${nodeModel.position}');
+    });
   }
 
   void handleNodeDrag(WidgetRef ref, String workflowId, String nodeId, Offset position) {
-
     ref.read(workflowsNotifierProvider.notifier).updateNodePosition(workflowId, nodeId, position);
   }
   
   void handleNodeDragStart(WidgetRef ref, String workflowId, String nodeId, Offset globalPosition) {
-    final RenderBox box = context.findRenderObject() as RenderBox;
-    
-    final workflows = ref.read(workflowsNotifierProvider);
-    final workflow = workflows.firstWhere((w) => w.id == workflowId);
-    final node = workflow.nodes.firstWhere((n) => n.id == nodeId);
-    
-    final nodeTopLeft = box.localToGlobal(node.position);
-    
-    draggedNodeId = nodeId;
-    dragOffsetFromNodeTopLeft = globalPosition - nodeTopLeft;
-    
-    ref.read(workflowsNotifierProvider.notifier).startNodeDrag(workflowId, nodeId, node.position);
+    ErrorHandler.execute('starting node drag', () {
+      final RenderBox box = context.findRenderObject() as RenderBox;
+      
+      final workflows = ref.read(workflowsNotifierProvider);
+      final workflow = workflows.firstWhere((w) => w.id == workflowId);
+      final node = workflow.nodes.firstWhere((n) => n.id == nodeId);
+      
+      final nodeTopLeft = box.localToGlobal(node.position);
+      
+      draggedNodeId = nodeId;
+      dragOffsetFromNodeTopLeft = globalPosition - nodeTopLeft;
+      
+      ref.read(workflowsNotifierProvider.notifier).startNodeDrag(workflowId, nodeId, node.position);
+    });
   }
   
   void handleNodeDragUpdate(WidgetRef ref, String workflowId, Offset globalPosition) {
@@ -106,14 +102,14 @@ mixin CanvasEventHandlers<T extends ConsumerStatefulWidget> on ConsumerState<T> 
     
     if (isConnectionModeActive) {
       if (sourceNodeId == null) {
-        debugPrint('Setting source node: $nodeId');
+        ApiTestLogger.debug('Setting source node: $nodeId');
         sourceNodeId = nodeId;
         connectionStart = position;
         
         setState(() {});
       } 
       else if (sourceNodeId != nodeId) {
-        debugPrint('Creating connection from ${sourceNodeId!} to $nodeId');
+        ApiTestLogger.debug('Creating connection from ${sourceNodeId!} to $nodeId');
         handleConnectionCreated(ref, workflowId, sourceNodeId!, nodeId);
         
         sourceNodeId = null;
@@ -126,12 +122,12 @@ mixin CanvasEventHandlers<T extends ConsumerStatefulWidget> on ConsumerState<T> 
   }
 
   void handleConnectionCreated(WidgetRef ref, String workflowId, String sourceNodeId, String targetNodeId) {
-    try {
+    ErrorHandler.execute('creating connection', () {
       final workflows = ref.read(workflowsNotifierProvider);
       final workflow = workflows.firstWhere((w) => w.id == workflowId);
       final sourceNode = workflow.nodes.firstWhere(
         (n) => n.id == sourceNodeId, 
-        orElse: () => throw Exception('Source node not found')
+        orElse: () => throw StateError('Source node not found')
       );
       
       final connection = WorkflowConnectionModel.create(
@@ -142,16 +138,22 @@ mixin CanvasEventHandlers<T extends ConsumerStatefulWidget> on ConsumerState<T> 
       );
       
       ref.read(workflowsNotifierProvider.notifier).createConnection(workflowId, sourceNodeId, targetNodeId);
-      debugPrint('Added connection from $sourceNodeId to $targetNodeId');
+      ApiTestLogger.info('Added connection from $sourceNodeId to $targetNodeId');
       
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Connected nodes'),
-          duration: const Duration(seconds: 2),
+          duration: Duration(seconds: 2),
         ),
       );
-    } catch (e) {
-      debugPrint('Error creating connection: $e');
-    }
+    }, onError: (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to connect nodes: ${e.toString()}'),
+          backgroundColor: Colors.red,
+          duration: const Duration(seconds: 3),
+        ),
+      );
+    });
   }
 }

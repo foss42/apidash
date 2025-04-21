@@ -1,19 +1,24 @@
 import 'dart:async';
 
+import 'package:api_testing_suite/src/common/utils/error_handler.dart';
+import 'package:api_testing_suite/src/common/utils/logger.dart';
+import 'workflow_execution_constants.dart';
 import '../models/models.dart';
 
-/// A more optimized execution engine that follows single responsibility principle
+/// Executes workflows by processing nodes in dependency order
+///
+/// The WorkflowExecutor is responsible for managing the execution state
+/// of a workflow, tracking dependencies between nodes, and executing
+/// nodes in the correct order.
 class WorkflowExecutor {
   final WorkflowModel workflow;
+  
   final Function(String, NodeStatus) onNodeStatusChanged;
   final Function(WorkflowExecutionState) onExecutionStateChanged;
-  
   WorkflowExecutionState _executionState;
-  
   final Map<String, List<String>> _nodeDependencyMap = {};
   final Map<String, List<String>> _nodeOutgoingMap = {};
   
-  // Stream control for execution commands
   final _executionController = StreamController<ExecutionCommand>.broadcast();
   StreamSubscription? _executionSubscription;
   Timer? _executionTimer;
@@ -28,17 +33,14 @@ class WorkflowExecutor {
   }
 
   void _initializeDependencyMaps() {
-    // Clear existing maps
     _nodeDependencyMap.clear();
     _nodeOutgoingMap.clear();
 
-    // Initialize empty lists for each node
     for (final node in workflow.nodes) {
       _nodeDependencyMap[node.id] = [];
       _nodeOutgoingMap[node.id] = [];
     }
 
-    // Populate the dependency maps based on connections
     for (final connection in workflow.connections) {
       final sourceId = connection.sourceId;
       final targetId = connection.targetId;
@@ -53,11 +55,19 @@ class WorkflowExecutor {
         _nodeOutgoingMap[sourceId]!.add(targetId);
       }
     }
+    
+    ApiTestLogger.debug('Initialized dependency maps for workflow ${workflow.id}');
   }
 
-  /// Start the workflow execution
+  /// Starts the workflow execution
+  ///
+  /// If the workflow is already running, this method does nothing.
+  /// If the workflow has completed or encountered an error, it is reset first.
   void start() {
-    if (_executionState.isRunning) return;
+    if (_executionState.isRunning) {
+      ApiTestLogger.debug('Workflow already running, ignoring start command');
+      return;
+    }
 
     if (_executionState.isCompleted || _executionState.hasError) {
       _resetExecutionState();
@@ -68,9 +78,10 @@ class WorkflowExecutor {
       _updateExecutionState(
         _executionState.copyWith(
           status: WorkflowExecutionStatus.error,
-          errorMessage: 'No starting nodes found in the workflow',
+          errorMessage: WorkflowExecutionConstants.errorNoStartingNodes,
         ),
       );
+      ApiTestLogger.error('Cannot start workflow: no starting nodes found');
       return;
     }
 
@@ -81,12 +92,16 @@ class WorkflowExecutor {
         pendingNodeIds: initialNodes.map((node) => node.id).toList(),
       ),
     );
-
+    
+    ApiTestLogger.info('Started workflow execution with ${initialNodes.length} initial nodes');
     _executeNextNodes();
   }
 
-   void pause() {
-    if (!_executionState.isRunning) return;
+  void pause() {
+    if (!_executionState.isRunning) {
+      ApiTestLogger.debug('Workflow not running, ignoring pause command');
+      return;
+    }
 
     _updateExecutionState(
       _executionState.copyWith(
@@ -95,10 +110,17 @@ class WorkflowExecutor {
     );
 
     _cancelExecutionTimer();
+    ApiTestLogger.info('Paused workflow execution');
   }
 
+  /// Resumes a paused workflow execution
+  ///
+  /// If the workflow is not paused, this method does nothing.
   void resume() {
-    if (!_executionState.isPaused) return;
+    if (!_executionState.isPaused) {
+      ApiTestLogger.debug('Workflow not paused, ignoring resume command');
+      return;
+    }
 
     _updateExecutionState(
       _executionState.copyWith(
@@ -106,9 +128,13 @@ class WorkflowExecutor {
       ),
     );
 
+    ApiTestLogger.info('Resumed workflow execution');
     _executeNextNodes();
   }
 
+  /// Stops the workflow execution
+  ///
+  /// This cancels any pending executions and resets the current node.
   void stop() {
     _cancelExecutionTimer();
 
@@ -118,16 +144,22 @@ class WorkflowExecutor {
         currentNodeId: null,
       ),
     );
+    
+    ApiTestLogger.info('Stopped workflow execution');
   }
 
   void reset() {
     _resetExecutionState();
+    ApiTestLogger.info('Reset workflow execution state');
   }
 
   void _resetExecutionState() {
     _updateExecutionState(const WorkflowExecutionState());
   }
 
+  /// Finds nodes that have no dependencies
+  ///
+  /// These nodes can be used as starting points for execution.
   List<WorkflowNodeModel> _findInitialNodes() {
     return workflow.nodes.where((node) {
       return _nodeDependencyMap[node.id]?.isEmpty ?? true;
@@ -138,6 +170,7 @@ class WorkflowExecutor {
     _cancelExecutionSubscription();
 
     _executionSubscription = _executionController.stream.listen((command) {
+      ApiTestLogger.debug('Received execution command: $command');
       switch (command) {
         case ExecutionCommand.start:
           start();
@@ -170,10 +203,23 @@ class WorkflowExecutor {
     final nodeId = pendingNodeIds.first;
     pendingNodeIds.removeAt(0);
 
-    final node = workflow.nodes.firstWhere(
-      (n) => n.id == nodeId,
-      orElse: () => throw StateError('Node not found: $nodeId in WorkflowExecutor._executeNextNodes'),
-    );
+    final node = ErrorHandler.execute<WorkflowNodeModel>('finding node for execution', () {
+      return workflow.nodes.firstWhere(
+        (n) => n.id == nodeId,
+        orElse: () => throw StateError('${WorkflowExecutionConstants.errorNodeNotFound}: $nodeId'),
+      );
+    });
+    
+    if (node == null) {
+      ApiTestLogger.error('Failed to execute node: $nodeId - node not found');
+      _updateExecutionState(
+        _executionState.copyWith(
+          status: WorkflowExecutionStatus.error,
+          errorMessage: '${WorkflowExecutionConstants.errorNodeNotFound}: $nodeId',
+        ),
+      );
+      return;
+    }
 
     final dependencies = _nodeDependencyMap[nodeId] ?? [];
     final allDependenciesMet = dependencies.every(
@@ -201,18 +247,23 @@ class WorkflowExecutor {
     );
 
     onNodeStatusChanged(nodeId, NodeStatus.running);
+    ApiTestLogger.debug('Executing node: ${node.label} (ID: $nodeId)');
 
-    _executionTimer = Timer(const Duration(milliseconds: 500), () {
+    _executionTimer = Timer(WorkflowExecutionConstants.nodeExecutionDelay, () {
       final success = _executeNode(node);
       final newStatus = success ? NodeStatus.success : NodeStatus.failure;
 
       onNodeStatusChanged(nodeId, newStatus);
+      ApiTestLogger.debug('Node execution ${success ? "succeeded" : "failed"}: ${node.label}');
 
       final updatedResults = Map<String, dynamic>.from(_executionState.executionResults);
       updatedResults[nodeId] = {
-        'status': success ? 'success' : 'failure',
-        'timestamp': DateTime.now().toIso8601String(),
-        'data': {'message': 'Executed ${node.label}'},
+        WorkflowExecutionConstants.resultStatusKey: 
+            success ? WorkflowExecutionConstants.statusSuccess : WorkflowExecutionConstants.statusFailure,
+        WorkflowExecutionConstants.resultTimestampKey: DateTime.now().toIso8601String(),
+        WorkflowExecutionConstants.resultDataKey: {
+          WorkflowExecutionConstants.resultMessageKey: 'Executed ${node.label}'
+        },
       };
 
       final nextNodeIds = _nodeOutgoingMap[nodeId] ?? [];
@@ -242,21 +293,34 @@ class WorkflowExecutor {
     });
   }
 
+  /// Executes a single node and returns whether execution was successful
+  ///
+  /// The implementation of this method will vary based on the node type.
   bool _executeNode(WorkflowNodeModel node) {
-    switch (node.nodeType) {
-      case NodeType.request:
-        return true;
-      case NodeType.condition:
-        return true;
-      case NodeType.action:
-        return true;
-      default:
-        return true;
+    try {
+      ApiTestLogger.debug('Processing node of type: ${node.nodeType}');
+      switch (node.nodeType) {
+        case NodeType.request:
+          return true;
+        case NodeType.condition:
+          return true;
+        case NodeType.action:
+          return true;// TODO: implement action execution
+        default:
+          ApiTestLogger.warning('Unknown node type: ${node.nodeType}');
+          return true;// TODO: handle unknown node types
+      }
+    } catch (e) {
+      ApiTestLogger.error('Error executing node ${node.id}', e);
+      return false;
     }
   }
 
   void _scheduleNextExecution() {
-    _executionTimer = Timer(const Duration(milliseconds: 100), _executeNextNodes);
+    _executionTimer = Timer(
+      WorkflowExecutionConstants.nextNodeScheduleDelay, 
+      _executeNextNodes
+    );
   }
 
   void _completeExecution() {
@@ -266,6 +330,7 @@ class WorkflowExecutor {
         endTime: DateTime.now(),
       ),
     );
+    ApiTestLogger.info('Workflow execution completed successfully');
   }
 
   void _updateExecutionState(WorkflowExecutionState newState) {
@@ -287,5 +352,6 @@ class WorkflowExecutor {
     _cancelExecutionSubscription();
     _cancelExecutionTimer();
     _executionController.close();
+    ApiTestLogger.debug('Disposed workflow executor');
   }
 }
