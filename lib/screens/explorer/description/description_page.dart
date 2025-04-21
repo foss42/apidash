@@ -21,8 +21,8 @@ class DescriptionPage extends StatelessWidget {
           info: template.info,
           onBack: onBack,
         ),
-        const Expanded(
-          child: DescriptionBody(),
+        Expanded(
+          child: DescriptionBody(template: template),
         ),
       ],
     );

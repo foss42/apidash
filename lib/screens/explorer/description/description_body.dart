@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
-import 'method_pane.dart';
+import 'package:apidash/models/models.dart';
+import 'request_pane.dart';
 import 'description_pane.dart';
 
 class DescriptionBody extends StatelessWidget {
-  const DescriptionBody({super.key});
+  final ApiTemplate template;
+
+  const DescriptionBody({
+    super.key,
+    required this.template,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -12,8 +18,8 @@ class DescriptionBody extends StatelessWidget {
       child: Row(
         children: [
           SizedBox(
-            width: MediaQuery.of(context).size.width * 0.3, 
-            child: const MethodPane(),
+            width: MediaQuery.of(context).size.width * 0.3,
+            child: RequestsPane(requests: template.requests),
           ),
           const Expanded(
             child: DescriptionPane(),
