@@ -44,16 +44,19 @@ class EditRestRequestPane extends ConsumerWidget {
         paramLength > 0,
         headerLength > 0,
         hasBody,
+        false, // TODO: Add indicator condition once it is added to [selectedRequestModelProvider]
       ],
       tabLabels: const [
         kLabelURLParams,
         kLabelHeaders,
         kLabelBody,
+        kLabelScripts,
       ],
       children: const [
         EditRequestURLParams(),
         EditRequestHeaders(),
         EditRequestBody(),
+        SizedBox.shrink(),
       ],
     );
   }
