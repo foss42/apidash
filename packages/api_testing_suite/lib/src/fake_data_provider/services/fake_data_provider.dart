@@ -1,4 +1,6 @@
 import 'dart:math';
+import 'package:api_testing_suite/src/common/utils/logger.dart';
+import 'fake_data_constants.dart';
 
 /// A utility class that provides functions to generate fake data for API testing
 class FakeDataProvider {
@@ -18,9 +20,8 @@ class FakeDataProvider {
     final suffixes = ['123', '2023', '_test', '_dev', '_admin', '_guest'];
 
     final prefix = prefixes[_random.nextInt(prefixes.length)];
-    final suffix = _random.nextInt(10) > 5
-        ? suffixes[_random.nextInt(suffixes.length)]
-        : '';
+    final includeSuffix = _random.nextInt(10) > FakeDataConstants.usernameSuffixProbabilityThreshold;
+    final suffix = includeSuffix ? suffixes[_random.nextInt(suffixes.length)] : '';
 
     return '$prefix$suffix';
   }
@@ -46,29 +47,26 @@ class FakeDataProvider {
     ];
 
     final username = usernames[_random.nextInt(usernames.length)];
-    final randomNum = _random.nextInt(1000);
+    final randomNum = _random.nextInt(FakeDataConstants.defaultMaxRandomNumber);
     final domain = domains[_random.nextInt(domains.length)];
 
     return '$username$randomNum@$domain';
   }
 
   static String randomId() {
-    return _random.nextInt(10000).toString().padLeft(4, '0');
+    return _random.nextInt(FakeDataConstants.randomIdMaxValue)
+        .toString()
+        .padLeft(FakeDataConstants.randomIdDigits, '0');
   }
 
   static String randomUuid() {
-    const chars = 'abcdef0123456789';
-    final segments = [
-      8,
-      4,
-      4,
-      4,
-      12
-    ]; //standard length of different segments of uuid
-
-    final uuid = segments.map((segment) {
-      return List.generate(segment, (_) => chars[_random.nextInt(chars.length)])
-          .join();
+    final uuid = FakeDataConstants.uuidSegmentLengths.map((segmentLength) {
+      return List.generate(
+        segmentLength, 
+        (_) => FakeDataConstants.uuidCharacterSet[
+          _random.nextInt(FakeDataConstants.uuidCharacterSet.length)
+        ]
+      ).join();
     }).join('-');
 
     return uuid;
@@ -103,15 +101,27 @@ class FakeDataProvider {
   }
 
   static String randomPhone() {
-    final areaCode = (100 + _random.nextInt(900)).toString();
-    final firstPart = (100 + _random.nextInt(900)).toString();
-    final secondPart = (1000 + _random.nextInt(9000)).toString();
+    final areaCode = (FakeDataConstants.phoneAreaCodeMin + 
+                     _random.nextInt(FakeDataConstants.phoneAreaCodeMax - 
+                                    FakeDataConstants.phoneAreaCodeMin)).toString();
+                                    
+    final firstPart = (FakeDataConstants.phoneFirstPartMin + 
+                      _random.nextInt(FakeDataConstants.phoneFirstPartMax - 
+                                     FakeDataConstants.phoneFirstPartMin)).toString();
+                                     
+    final secondPart = (FakeDataConstants.phoneSecondPartMin + 
+                       _random.nextInt(FakeDataConstants.phoneSecondPartMax - 
+                                      FakeDataConstants.phoneSecondPartMin)).toString();
 
     return '+1-$areaCode-$firstPart-$secondPart';
   }
 
   static String randomAddress() {
-    final streetNumbers = List.generate(100, (i) => (i + 1) * 10);
+    final streetNumbers = List.generate(
+      (FakeDataConstants.streetNumberMax - FakeDataConstants.streetNumberMin) ~/ 10,
+      (i) => (i + 1) * 10
+    );
+    
     final streetNames = [
       'Main St',
       'Oak Ave',
@@ -120,6 +130,7 @@ class FakeDataProvider {
       'Pine Ln',
       'Cedar Blvd'
     ];
+    
     final cities = [
       'Springfield',
       'Rivertown',
@@ -127,9 +138,15 @@ class FakeDataProvider {
       'Mountainview',
       'Brookfield'
     ];
+    
     final states = ['CA', 'NY', 'TX', 'FL', 'IL', 'WA'];
-    final zipCodes =
-        List.generate(90, (i) => 10000 + (i * 1000) + _random.nextInt(999));
+    
+    final zipCodes = List.generate(
+      90, 
+      (i) => FakeDataConstants.zipCodeMin + 
+             (i * 1000) + 
+             _random.nextInt(999)
+    );
 
     final streetNumber = streetNumbers[_random.nextInt(streetNumbers.length)];
     final streetName = streetNames[_random.nextInt(streetNames.length)];
@@ -142,15 +159,18 @@ class FakeDataProvider {
 
   static String randomDate() {
     final now = DateTime.now();
-    final randomDays = _random.nextInt(1000) - 500;
+    final randomDays = _random.nextInt(FakeDataConstants.randomDateRangeDays) - 
+                       (FakeDataConstants.randomDateRangeDays ~/ 2);
     final date = now.add(Duration(days: randomDays));
 
     return date.toIso8601String().split('T')[0];
   }
 
+  ///  ISO 8601 format
   static String randomDateTime() {
     final now = DateTime.now();
-    final randomDays = _random.nextInt(100) - 50;
+    final randomDays = _random.nextInt(FakeDataConstants.randomDateTimeRangeDays) - 
+                       (FakeDataConstants.randomDateTimeRangeDays ~/ 2);
     final randomHours = _random.nextInt(24);
     final randomMinutes = _random.nextInt(60);
     final randomSeconds = _random.nextInt(60);
@@ -169,12 +189,22 @@ class FakeDataProvider {
     return _random.nextBool().toString();
   }
 
-  static String randomNumber({int min = 0, int max = 1000}) {
+  static String randomNumber({
+    int min = FakeDataConstants.defaultMinRandomNumber, 
+    int max = FakeDataConstants.defaultMaxRandomNumber
+  }) {
     return (_random.nextInt(max - min) + min).toString();
   }
 
   static String randomJson() {
-    return '{"id": ${randomId()}, "name": "${randomName()}", "email": "${randomEmail()}", "active": ${randomBoolean()}}';
+    return '''
+{
+  "id": ${randomId()},
+  "name": "${randomName()}",
+  "email": "${randomEmail()}",
+  "active": ${randomBoolean()},
+  "created_at": "${randomDateTime()}"
+}''';
   }
 
   /// Registry for mapping tags to fake data generator functions.
@@ -193,16 +223,31 @@ class FakeDataProvider {
     'randomjson': randomJson,
   };
 
-  /// Processes a fake data tag and returns generated data.
-  ///
-  /// Example: processFakeDataTag('randomEmail') -> 'jane123@example.com'
-  /// Returns the tag itself in {{tag}} format if not found.
-  /// Public getter for the tag registry.
   static Map<String, String Function()> get tagRegistry => _tagRegistry;
-
-  static String processFakeDataTag(String tag) {
-    final key = tag.toLowerCase();
-    final generator = _tagRegistry[key];
-    return generator != null ? generator() : '{{$tag}}';
+  
+  /// Processes a string containing fake data tags and replaces them with generated data
+  /// 
+  /// Example: "Hello {{randomName}}, your email is {{randomEmail}}"
+  /// Returns the input string with all tags replaced with generated values
+  static String processFakeDataTags(String input) {
+    ApiTestLogger.debug('Processing fake data tags in: $input');
+    
+    final regex = RegExp(r'\{\{(\w+)(?:\((.*?)\))?\}\}');
+    final result = input.replaceAllMapped(regex, (match) {
+      final tag = match.group(1)?.toLowerCase();
+      
+      if (tag != null && _tagRegistry.containsKey(tag)) {
+        try {
+          return _tagRegistry[tag]!();
+        } catch (e) {
+          ApiTestLogger.error('Error generating fake data for tag: $tag', e);
+          return match.group(0) ?? '';
+        }
+      }
+      
+      return match.group(0) ?? '';
+    });
+    
+    return result;
   }
 }
