@@ -1,7 +1,7 @@
-import 'package:api_testing_suite/api_testing_suite.dart';
-import 'package:apidash_core/apidash_core.dart';
-
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:uuid/uuid.dart';
+import 'workflow_node_model.dart';
+import 'workflow_connection_model.dart';
 
 part 'workflow_model.freezed.dart';
 part 'workflow_model.g.dart';
@@ -23,11 +23,13 @@ class WorkflowModel with _$WorkflowModel {
     @Default([]) List<String> activeNodeIds,
     @Default([]) List<String> completedNodeIds,
     @Default({}) Map<String, dynamic> metadata,
+    DateTime? createdAt,
   }) = _WorkflowModel;
 
   factory WorkflowModel.fromJson(Map<String, dynamic> json) => 
       _$WorkflowModelFromJson(json);
 
+  /// Create a new workflow with a unique ID
   factory WorkflowModel.create({
     required String name,
     String description = '',
@@ -42,29 +44,20 @@ class WorkflowModel with _$WorkflowModel {
       nodes: nodes,
       connections: connections,
       metadata: metadata,
+      createdAt: DateTime.now(),
     );
   }
 
+  /// Returns whether a start node has been set for this workflow
   bool get hasStartNode => startNodeId != null;
-
-  DateTime? get createdAt {
-    if (metadata.containsKey('createdAt')) {
-      final value = metadata['createdAt'];
-      if (value is DateTime) return value;
-      if (value is String) {
-        try {
-          return DateTime.parse(value);
-        } catch (_) {
-          return null;
-        }
-      }
-    }
-    return null;
-  }
 
   WorkflowNodeModel? getStartNode() {
     if (startNodeId == null) return null;
-    return nodes.firstWhere((node) => node.id == startNodeId);
+    try {
+      return nodes.firstWhere((node) => node.id == startNodeId);
+    } catch (e) {
+      return null; 
+    }
   }
 
   List<WorkflowNodeModel> getActiveNodes() {
@@ -75,8 +68,15 @@ class WorkflowModel with _$WorkflowModel {
     return nodes.where((node) => completedNodeIds.contains(node.id)).toList();
   }
 
+  /// Find a node by its ID
+  ///
+  /// Returns null if the node is not found
   WorkflowNodeModel? getNodeById(String nodeId) {
-    return nodes.firstWhereOrNull((node) => node.id == nodeId);
+    try {
+      return nodes.firstWhere((node) => node.id == nodeId);
+    } catch (e) {
+      return null; 
+    }
   }
 
   List<WorkflowConnectionModel> getConnectionsFromNode(String nodeId) {
