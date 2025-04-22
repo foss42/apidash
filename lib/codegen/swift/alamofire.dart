@@ -16,7 +16,7 @@ multipartFormData.append(fileURL, withName: "{{param.name}}", fileName: "{{param
     {% endif %}
 {% endfor %}
 ''';
- 
+
   final String kTemplateJsonData = '''
 let jsonString = """
 {{jsonData}}
@@ -60,9 +60,10 @@ dispatchMain()
     try {
       String result = kTemplateStart;
 
-      var rec = getValidRequestUri(requestModel.url, requestModel.enabledParams);
+      var rec =
+          getValidRequestUri(requestModel.url, requestModel.enabledParams);
       Uri? uri = rec.$1;
-      
+
       var headers = requestModel.enabledHeadersMap;
 
       bool hasBody = false;
@@ -91,30 +92,32 @@ dispatchMain()
         result += templateFormData.render({
           "formData": formDataList,
         });
-        
+
         hasBody = true;
-      } 
-      else if (requestModel.hasJsonData) {
+      } else if (requestModel.hasJsonData) {
         var templateJsonData = jj.Template(kTemplateJsonData);
         result += templateJsonData.render({
-          "jsonData": requestModel.body!.replaceAll('"', '\\"').replaceAll('\n', '\\n'),
+          "jsonData":
+              requestModel.body!.replaceAll('"', '\\"').replaceAll('\n', '\\n'),
         });
-        
+
         headers.putIfAbsent("Content-Type", () => "application/json");
         hasBody = true;
         hasJsonData = true;
-      } 
+      }
       // Handle text data
       else if (requestModel.hasTextData) {
         var templateTextData = jj.Template(kTemplateTextData);
         result += templateTextData.render({
-          "textData": requestModel.body!.replaceAll('"', '\\"').replaceAll('\n', '\\n'),
+          "textData":
+              requestModel.body!.replaceAll('"', '\\"').replaceAll('\n', '\\n'),
         });
-        
-        headers.putIfAbsent(kHeaderContentType, () => requestModel.bodyContentType.header);
+
+        headers.putIfAbsent(
+            kHeaderContentType, () => requestModel.bodyContentType.header);
         hasBody = true;
       }
-      
+
       String headersString = "nil";
       bool hasHeaders = false;
       if (headers.isNotEmpty) {
