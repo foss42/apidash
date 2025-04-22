@@ -79,6 +79,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.1.25"
+  autotrie:
+    dependency: transitive
+    description:
+      name: autotrie
+      sha256: "55da6faefb53cfcb0abb2f2ca8636123fb40e35286bb57440d2cf467568188f8"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.0"
   barcode:
     dependency: transitive
     description:
@@ -523,19 +531,27 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_code_editor:
+    dependency: "direct main"
+    description:
+      name: flutter_code_editor
+      sha256: "18cc1200e7481fcf144bc970fdec4e75b83e3f523da60bbf55810a4e8dd6f5fb"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.3"
   flutter_driver:
     dependency: transitive
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_highlighter:
+  flutter_highlight:
     dependency: "direct main"
     description:
-      name: flutter_highlighter
-      sha256: "93173afd47a9ada53f3176371755e7ea4a1065362763976d06d6adfb4d946e10"
+      name: flutter_highlight
+      sha256: "7b96333867aa07e122e245c033b8ad622e4e3a42a1a2372cbb098a2541d8782c"
       url: "https://pub.dev"
     source: hosted
-    version: "0.1.1"
+    version: "0.7.0"
   flutter_hooks:
     dependency: "direct main"
     description:
@@ -671,14 +687,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.3.2"
-  highlighter:
+  highlight:
     dependency: "direct main"
     description:
-      name: highlighter
-      sha256: "92180c72b9da8758e1acf39a45aa305a97dcfe2fdc8f3d1d2947c23f2772bfbc"
+      name: highlight
+      sha256: "5353a83ffe3e3eca7df0abfb72dcf3fa66cc56b953728e7113ad4ad88497cf21"
       url: "https://pub.dev"
     source: hosted
-    version: "0.1.1"
+    version: "0.7.0"
   hive:
     dependency: transitive
     description:
@@ -905,6 +921,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.1"
+  linked_scroll_controller:
+    dependency: transitive
+    description:
+      name: linked_scroll_controller
+      sha256: e6020062bcf4ffc907ee7fd090fa971e65d8dfaac3c62baf601a3ced0b37986a
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.0"
   lints:
     dependency: transitive
     description:
@@ -985,6 +1009,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.0"
+  mocktail:
+    dependency: transitive
+    description:
+      name: mocktail
+      sha256: "890df3f9688106f25755f26b1c60589a92b3ab91a22b8b224947ad041bf172d8"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.4"
   mpv_dart:
     dependency: transitive
     description:
@@ -1628,6 +1660,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.2"
+  tuple:
+    dependency: transitive
+    description:
+      name: tuple
+      sha256: a97ce2013f240b2f3807bcbaf218765b6f301c3eff91092bcfa23a039e7dd151
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.2"
   typed_data:
     dependency: transitive
     description:

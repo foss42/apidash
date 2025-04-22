@@ -1,4 +1,5 @@
 import 'package:apidash/consts.dart';
+import 'package:apidash/screens/home_page/editor_pane/details_card/request_pane/scripts_code_pane.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
@@ -56,7 +57,7 @@ class EditRestRequestPane extends ConsumerWidget {
         EditRequestURLParams(),
         EditRequestHeaders(),
         EditRequestBody(),
-        SizedBox.shrink(),
+        ScriptsCodePane(),
       ],
     );
   }
