@@ -1,4 +1,4 @@
-import 'package:apidash/screens/api_explorer/api_explorer_widget/api_documentatioin/api_documentation_pane.dart';
+import 'package:apidash/screens/explorer/api_documentatioin/documentation_pane.dart';
 import 'package:flutter/material.dart';
 
 class ApiExplorerSplitView extends StatelessWidget {

@@ -1,7 +1,7 @@
 import 'package:apidash/providers/collection_providers.dart';
 import 'package:apidash/providers/ui_providers.dart';
-import 'package:apidash/services/apiExplorerServices/apiProccessing_service.dart';
-import 'package:apidash/services/apiExplorerServices/api_fetcher.dart';
+import 'package:apidash/services/explorer_services/apiProccessing_service.dart';
+import 'package:apidash/services/explorer_services/api_fetcher.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

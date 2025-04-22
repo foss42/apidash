@@ -1,4 +1,4 @@
-import 'package:apidash/screens/api_explorer/api_explorer_widget/api_endpoint_card.dart';
+import 'package:apidash/screens/explorer/explorer_widget/api_endpoint_card.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

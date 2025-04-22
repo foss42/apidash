@@ -1,4 +1,4 @@
-import 'package:apidash/screens/api_explorer/api_explorer_widget/method_card.dart';
+import 'package:apidash/screens/explorer/explorer_widget/method_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';

@@ -1,6 +1,6 @@
-import 'package:apidash/screens/api_explorer/api_explorer_browse-View/api_card.dart';
-import 'package:apidash/screens/api_explorer/api_explorer_browse-View/empty_collections_view.dart';
-import 'package:apidash/screens/api_explorer/api_explorer_widget/error_view.dart';
+import 'package:apidash/screens/explorer/browser_view/api_card.dart';
+import 'package:apidash/screens/explorer/browser_view/empty_collections_view.dart';
+import 'package:apidash/screens/explorer/explorer_widget/error_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
