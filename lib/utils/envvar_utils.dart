@@ -156,7 +156,7 @@ EnvironmentVariableSuggestion getVariableStatus(
   // If not found in environments check if it's a random data generator
   if (key.startsWith('\$')) {
     final generatorType = key.substring(1);
-    final generator = FakeDataProvider.processFakeDataTag(generatorType);
+    final generator = FakeDataProvider.processFakeDataTags(generatorType);
     if (generator != '{{generatorType}}') {
       return EnvironmentVariableSuggestion(
         environmentId: "Random",
