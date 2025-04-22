@@ -199,7 +199,6 @@ Map<String, String> _extractAndValidateSpecs(List<int> zipBytes) {
     try {
       final box = Hive.box(_hiveBoxName);
       final names = (box.get(_specNamesKey) as List?)?.cast<String>() ?? [];
-
       return Map.fromEntries(
           names.map((name) => MapEntry(name, box.get(name) as String)));
     } catch (e) {

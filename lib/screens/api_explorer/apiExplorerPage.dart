@@ -18,12 +18,10 @@ class ApiExplorerPage extends ConsumerStatefulWidget {
 
 class _ApiExplorerPageState extends ConsumerState<ApiExplorerPage> {
   final _searchController = TextEditingController();
-  late final ScrollController _scrollController;
 
   @override
   void initState() {
     super.initState();
-    _scrollController = ScrollController();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(apiExplorerProvider.notifier).loadApis(ref);
     });
@@ -31,8 +29,6 @@ class _ApiExplorerPageState extends ConsumerState<ApiExplorerPage> {
 
   @override
   void dispose() {
-    _searchController.dispose();
-    _scrollController.dispose();
     super.dispose();
   }
 

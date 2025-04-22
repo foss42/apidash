@@ -14,7 +14,7 @@ Future<List<Map<String, dynamic>>> processHiveSpecs(
     try {
       if (entry.key == '_spec_names') continue;
       final jsonContent = await _convertToJson(entry.value, entry.key);
-      
+
       if (!_isValidOpenApi(jsonContent)) {
         debugPrint('Invalid OpenAPI spec: ${entry.key}');
         continue;
