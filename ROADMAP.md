@@ -15,7 +15,7 @@
 - [ ] Save items in Response headers/body in an Environment variable to be used by other requests. Something like a post-processing script. (https://github.com/foss42/apidash/issues/465)
 - [ ] Importers
   - [ ] OpenAPI (https://github.com/foss42/apidash/issues/121)
-  - [ ] Insomnia (https://github.com/foss42/apidash/issues/125)
+  - [x] Insomnia (https://github.com/foss42/apidash/issues/125)
   - [ ] Hurl (https://github.com/foss42/apidash/issues/123)
   - [ ] HAR (https://github.com/foss42/apidash/issues/122)
 
