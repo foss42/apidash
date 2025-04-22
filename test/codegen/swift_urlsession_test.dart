@@ -5,7 +5,6 @@ import 'package:test/test.dart';
 
 import '../models/request_models.dart';
 
-// TODO: Fix tests for URLSession
 void main() {
   final codeGen = Codegen();
 
