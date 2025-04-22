@@ -1,21 +1,5 @@
 import 'package:flutter/material.dart';
-
-class MethodWidget extends StatelessWidget {
-  final String method;
-
-  const MethodWidget({super.key, required this.method});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(8.0),
-      child: Text(
-        method,
-        style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green),
-      ),
-    );
-  }
-}
+import '../common_widgets/method_chip.dart';
 
 class ImportButton extends StatelessWidget {
   const ImportButton({super.key});
@@ -36,7 +20,11 @@ class UrlCard extends StatelessWidget {
   final String? url;
   final String method;
 
-  const UrlCard({super.key, this.url, this.method = 'GET'});
+  const UrlCard({
+    super.key, 
+    required this.url, 
+    required this.method,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +41,7 @@ class UrlCard extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
         child: Row(
           children: [
-            MethodWidget(method: method),
+            MethodChip(method: method),
             const SizedBox(width: 5),
             Expanded(
               child: Text(

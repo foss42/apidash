@@ -14,7 +14,10 @@ class DescriptionPane extends StatelessWidget {
       color: Theme.of(context).colorScheme.background,
       child: Column(
         children: [
-          UrlCard(url: selectedRequest?.httpRequestModel?.url),
+          UrlCard(
+          url: selectedRequest?.httpRequestModel?.url,
+          method: selectedRequest?.httpRequestModel?.method.toString().split('.').last ?? 'GET',
+          ),
         ],
       ),
     );
