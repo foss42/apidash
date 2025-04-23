@@ -1,235 +1,281 @@
+import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
+import 'dart:math';
+import 'package:apidash/models/api_explorer_models.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:archive/archive.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:flutter/foundation.dart';
+import 'package:hive/hive.dart';
 import 'package:path/path.dart' as path;
-import 'package:yaml/yaml.dart';
 
-class GitHubSpecsFetcher {
-  static const String _latestReleaseUrl =
-      'https://github.com/pratapsingh9/api-catalog-repo/releases/latest/download/final.zip';
-  static const String _hiveBoxName = 'api_specs';
+class ApiSpecsRepository {
+  static const String _hiveBoxName = 'api_specs_box';
   static const String _specNamesKey = '_spec_names';
+  static const Duration _maxProcessingTime = Duration(seconds: 15);
 
-  Future<Map<String, String>> fetchAndStoreSpecs() async {
-    const requestId = 'github-specs-fetch';
+  final String _downloadUrl;
+  final Box<String> _specsBox;
+
+  ApiSpecsRepository({
+    String? downloadUrl,
+    Box<String>? box,
+  })  : _downloadUrl = downloadUrl ??
+            'https://github.com/pratapsingh9/api-catalog-repo/releases/latest/download/final.zip',
+        _specsBox = box ?? Hive.box(_hiveBoxName);
+
+  /// Fetches and caches API specifications, returning parsed model objects
+  Future<List<ApiCollection>> fetchAndCacheSpecs() async {
+    final completer = Completer<List<ApiCollection>>();
+    final timer = Timer(_maxProcessingTime, () {
+      if (!completer.isCompleted) {
+        completer.completeError(
+          ApiSpecsException('Specs processing timed out'),
+        );
+      }
+    });
+
     try {
-      final zipBytes = await _downloadZip(requestId, _latestReleaseUrl);
+      debugPrint('[API_SPECS] Starting specs fetch');
+      final stopwatch = Stopwatch()..start();
 
-      final specs = _extractAndValidateSpecs(zipBytes);
-      await _storeWithVerification(specs);
+      // 1. Download the zip file
+      final zipBytes = await _downloadSpecsZip();
+      
+      // 2. Process contents into models
+      final collections = await _processZipContents(zipBytes);
+      
+      // 3. Cache the models
+      await _cacheCollections(collections);
 
-      log('[SUCCESS] Stored ${specs.length} API specs');
-      return specs;
-    } catch (e) {
-      log('[ERROR] Failed to fetch and store specs: $e', error: e);
-      rethrow;
+      debugPrint('[API_SPECS] Processed ${collections.length} collections in ${stopwatch.elapsedMilliseconds}ms');
+      timer.cancel();
+      completer.complete(collections);
+    } catch (e, stackTrace) {
+      timer.cancel();
+      debugPrint('[API_SPECS_ERROR] Fetch failed: $e\n$stackTrace');
+      completer.completeError(
+        e is ApiSpecsException ? e : ApiSpecsException('Fetch failed: $e'),
+      );
+    }
+
+    return completer.future;
+  }
+
+  /// Returns cached API specifications as model objects
+  List<ApiCollection> getCachedSpecs() {
+    try {
+      final idsJson = _specsBox.get(_specNamesKey);
+      if (idsJson == null) return [];
+
+      final ids = (jsonDecode(idsJson) as List).cast<String>();
+      return ids.map((id) {
+        final json = _specsBox.get(id);
+        if (json == null) throw Exception('Missing collection $id');
+        return ApiCollection.fromJson(jsonDecode(json) as Map<String, dynamic>);
+      }).toList();
+    } catch (e, stackTrace) {
+      debugPrint('[API_SPECS_ERROR] Cache read failed: $e\n$stackTrace');
+      return [];
+    }
+  }
+
+  Future<List<int>> _downloadSpecsZip() async {
+    const requestId = 'api-specs-fetch';
+    try {
+      debugPrint('[API_SPECS] Downloading specs ZIP');
+      final (zipRes, _, zipErr) = await sendHttpRequest(
+        requestId,
+        APIType.rest,
+        HttpRequestModel(
+          url: _downloadUrl,
+          method: HTTPVerb.get,
+        ),
+      );
+
+      if (zipErr != null) throw ApiSpecsException('Download failed: $zipErr');
+      if (zipRes == null) throw ApiSpecsException('No response received');
+      if (zipRes.statusCode != 200) {
+        throw ApiSpecsException('Server responded with HTTP ${zipRes.statusCode}');
+      }
+      if (zipRes.bodyBytes.isEmpty) throw ApiSpecsException('Empty ZIP content');
+
+      return zipRes.bodyBytes;
     } finally {
       httpClientManager.closeClient(requestId);
     }
   }
 
-  Future<Map<String, dynamic>> _fetchReleaseMetadata(String requestId) async {
-    log('[STEP] Fetching release metadata...');
-    final (releaseRes, _, releaseErr) = await sendHttpRequest(
-      requestId,
-      APIType.rest,
-      HttpRequestModel(
-        url: _latestReleaseUrl,
-        method: HTTPVerb.get,
-        
-      ),
+  Future<List<ApiCollection>> _processZipContents(List<int> zipBytes) async {
+    try {
+      final archive = _decodeZipArchive(zipBytes);
+      final collections = <ApiCollection>[];
+      final jsonFiles = archive.files.where((f) => f.isFile && f.name.endsWith('.json'));
+
+      await Future.wait(jsonFiles.map((file) async {
+        try {
+          final content = utf8.decode(file.content);
+          final json = jsonDecode(content) as Map<String, dynamic>;
+          
+          if (!_isValidOpenApiSpec(json)) {
+            throw ApiSpecsException('Invalid OpenAPI specification');
+          }
+
+          final collection = ApiCollection(
+            id: path.basename(file.name),
+            name: json['info']?['title'] ?? 'Unnamed Collection',
+            description: json['info']?['description'],
+            endpoints: _parseEndpoints(json),
+            sourceUrl: json['info']?['contact']?['url']?.toString(),
+          );
+
+          collections.add(collection);
+          debugPrint('[API_SPECS] Processed file: ${file.name}');
+        } catch (e) {
+          debugPrint('[API_SPECS_WARN] Failed to process file: $e');
+        }
+      }));
+
+      if (collections.isEmpty) throw ApiSpecsException('No valid specs found');
+      return collections;
+    } on FormatException {
+      throw ApiSpecsException('Invalid ZIP file format');
+    } catch (e) {
+      throw ApiSpecsException('Failed to process ZIP contents: $e');
+    }
+  }
+
+  List<ApiEndpoint> _parseEndpoints(Map<String, dynamic> specJson) {
+    final endpoints = <ApiEndpoint>[];
+    final paths = specJson['paths'] as Map<String, dynamic>? ?? {};
+    final baseUrl = specJson['servers']?[0]?['url']?.toString() ?? '';
+
+    paths.forEach((path, pathData) {
+      if (pathData is! Map<String, dynamic>) return;
+
+      pathData.forEach((method, endpointData) {
+        if (endpointData is! Map<String, dynamic>) return;
+
+        try {
+          endpoints.add(ApiEndpoint(
+            id: '${path}_${method}',
+            name: endpointData['summary'] ?? '${method.toUpperCase()} $path',
+            description: endpointData['description']?.toString(),
+            path: path,
+            method: HTTPVerb.values.firstWhere(
+              (v) => v.name.toLowerCase() == method.toLowerCase(),
+              orElse: () => HTTPVerb.get,
+            ),
+            baseUrl: baseUrl,
+            parameters: _parseParameters(endpointData['parameters']),
+            requestBody: _parseRequestBody(endpointData['requestBody']),
+            headers: _parseHeaders(endpointData),
+            responses: _parseResponses(endpointData['responses']),
+          ));
+        } catch (e) {
+          debugPrint('[API_SPECS_WARN] Failed to parse endpoint $method $path: $e');
+        }
+      });
+    });
+
+    return endpoints;
+  }
+
+Future<void> _cacheCollections(List<ApiCollection> collections) async {
+  try {
+    await _specsBox.clear();
+
+    await _specsBox.put(
+      _specNamesKey,
+      jsonEncode(collections.map((c) => c.id).toList()),
     );
 
-    if (releaseErr != null) {
-      throw _GitHubFetchException('Release fetch failed: $releaseErr');
-    }
-    if (releaseRes == null)
-      throw _GitHubFetchException('No release response received');
-    if (releaseRes.statusCode != 200) {
-      throw _GitHubFetchException('HTTP ${releaseRes.statusCode} received');
+    // Store each collection as JSON
+    for (final collection in collections) {
+      await _specsBox.put(
+        collection.id,
+        jsonEncode(collection.toJson()),
+      );
     }
 
-    try {
-      final releaseJson = jsonDecode(releaseRes.body) as Map<String, dynamic>;
-      if (releaseJson['zipball_url'] == null) {
-        throw _GitHubFetchException('No zipball_url in release');
-      }
-
-      log('[VERIFIED] Release metadata for tag: ${releaseJson['tag_name']}');
-      return releaseJson;
-    } catch (e) {
-      throw _GitHubFetchException('Invalid release JSON: $e');
-    }
+    await _verifyCache(collections);
+  } catch (e) {
+    await _specsBox.clear();
+    throw ApiSpecsException('Cache update failed: $e');
   }
-
-  Future<List<int>> _downloadZip(String requestId, String zipUrl) async {
-    log('[STEP] Downloading ZIP from $zipUrl...');
-    final (zipRes, _, zipErr) = await sendHttpRequest(
-      requestId,
-      APIType.rest,
-      HttpRequestModel(url: zipUrl, method: HTTPVerb.get),
-    );
-
-    if (zipErr != null)
-      throw _GitHubFetchException('ZIP download failed: $zipErr');
-    if (zipRes == null) throw _GitHubFetchException('No ZIP response received');
-    if (zipRes.statusCode != 200) {
-      throw _GitHubFetchException(
-          'ZIP download failed with HTTP ${zipRes.statusCode}');
-    }
-    if (zipRes.bodyBytes.isEmpty)
-      throw _GitHubFetchException('Empty ZIP content');
-
-    log('[VERIFIED] ZIP downloaded (${zipRes.bodyBytes.length} bytes)');
-    return zipRes.bodyBytes;
-  }
-
-Map<String, String> _extractAndValidateSpecs(List<int> zipBytes) {
-  final archive = _decodeZipArchive(zipBytes);
-  final specs = <String, String>{};
-
-  for (final file in archive.files.where((f) => f.isFile)) {
-    final filename = path.basename(file.name);
-    if (!filename.endsWith('.json')) continue;
-
-    try {
-      final content = utf8.decode(file.content);
-      specs[filename] = content;
-      log('[ADDED] $filename');
-    } catch (e) {
-      log('[ERROR] Processing $filename: $e');
-    }
-  }
-
-  return specs;
 }
 
-  bool _isYaml(String filename) {
-    return filename.endsWith('.yaml') || filename.endsWith('.yml');
+
+  Future<void> _verifyCache(List<ApiCollection> collections) async {
+    try {
+      final idsJson = _specsBox.get(_specNamesKey);
+      if (idsJson == null) throw Exception('Missing IDs list');
+
+      final storedIds = (jsonDecode(idsJson) as List).cast<String>();
+      if (storedIds.length != collections.length) {
+        throw ApiSpecsException('Cache verification failed: count mismatch');
+      }
+
+      // Verify random samples
+      final random = Random();
+      final samples = collections.length > 5
+          ? [collections.first, collections[random.nextInt(collections.length)], collections.last]
+          : collections;
+
+      for (final collection in samples) {
+        final json = _specsBox.get(collection.id);
+        if (json == null) throw Exception('Missing collection');
+        ApiCollection.fromJson(jsonDecode(json) as Map<String, dynamic>);
+      }
+    } catch (e) {
+      throw ApiSpecsException('Cache verification failed: $e');
+    }
+  }
+
+  bool _isValidOpenApiSpec(Map<String, dynamic> json) {
+    return json.containsKey('openapi') || json.containsKey('swagger');
   }
 
   Archive _decodeZipArchive(List<int> bytes) {
     try {
       final archive = ZipDecoder().decodeBytes(bytes);
-      if (archive.files.isEmpty)
-        throw _GitHubFetchException('Empty ZIP archive');
+      if (archive.files.isEmpty) throw ApiSpecsException('Empty ZIP archive');
       return archive;
     } catch (e) {
-      throw _GitHubFetchException('ZIP extraction failed: $e');
+      throw ApiSpecsException('ZIP extraction failed: $e');
     }
   }
 
-  bool _isValidOpenApiSpec(Map<String, dynamic> json) {
-    return true;
+  // Model parsing helpers
+  List<ApiParameter>? _parseParameters(dynamic parameters) {
+    if (parameters is! List) return null;
+    return parameters.map((p) => ApiParameter.fromJson(p)).toList();
   }
 
-  Future<void> _storeWithVerification(Map<String, String> specs) async {
-    log('[STEP] Storing ${specs.length} specs...');
-    final box = await _getHiveBox();
-
-    try {
-      // Clear previous data
-      await box.clear();
-
-      // Store all specs
-      await Future.wait([
-        ...specs.entries.map((e) => box.put(e.key, e.value)),
-        box.put(_specNamesKey, specs.keys.toList()),
-      ]);
-
-      // Verify storage
-      await _verifyStorage(box, specs.keys.toList());
-
-      log('[VERIFIED] All specs stored successfully');
-    } catch (e) {
-      await box.clear(); // Clear potentially corrupted data
-      throw _GitHubFetchException('Storage failed: $e');
-    }
+  ApiRequestBody? _parseRequestBody(dynamic requestBody) {
+    if (requestBody is! Map<String, dynamic>) return null;
+    return ApiRequestBody.fromJson(requestBody);
   }
 
-  Future<void> _verifyStorage(Box box, List<String> expectedKeys) async {
-    log('[VERIFY] Checking storage integrity...');
-
-    // Check spec names list
-    final storedNames = (box.get(_specNamesKey) as List?)?.cast<String>();
-    if (storedNames == null || !_listsMatch(storedNames, expectedKeys)) {
-      throw _GitHubFetchException('Spec names list verification failed');
-    }
-
-    // Sample check some specs (first, middle, last)
-    final sampleIndices = [0, expectedKeys.length ~/ 2, expectedKeys.length - 1]
-        .where((i) => i < expectedKeys.length);
-
-    for (final i in sampleIndices) {
-      final key = expectedKeys[i];
-      if (!box.containsKey(key)) {
-        throw _GitHubFetchException('Missing spec: $key');
-      }
-
-      try {
-        jsonDecode(box.get(key) as String);
-      } catch (e) {
-        throw _GitHubFetchException('Corrupted spec $key: $e');
-      }
-    }
+  Map<String, ApiHeader>? _parseHeaders(dynamic headers) {
+    // Implement based on your header structure
+    return null;
   }
 
-  bool _listsMatch(List<String> a, List<String> b) {
-    if (a.length != b.length) return false;
-    for (var i = 0; i < a.length; i++) {
-      if (a[i] != b[i]) return false;
-    }
-    return true;
-  }
-
-  Future<Box> _getHiveBox() async {
-    try {
-      if (!Hive.isBoxOpen(_hiveBoxName)) {
-        await Hive.openBox(_hiveBoxName);
-      }
-      return Hive.box(_hiveBoxName);
-    } catch (e) {
-      throw _GitHubFetchException('Hive initialization failed: $e');
-    }
-  }
-
-  static Map<String, String> getCachedSpecs() {
-    try {
-      final box = Hive.box(_hiveBoxName);
-      final names = (box.get(_specNamesKey) as List?)?.cast<String>() ?? [];
-      return Map.fromEntries(
-          names.map((name) => MapEntry(name, box.get(name) as String)));
-    } catch (e) {
-      log('[ERROR] Failed to get cached specs: $e');
-      return {};
-    }
-  }
-
-  static Future<bool> verifyCacheIntegrity() async {
-    try {
-      final box = await Hive.openBox(_hiveBoxName);
-      final names = (box.get(_specNamesKey) as List?)?.cast<String>();
-
-      if (names == null || names.isEmpty) return false;
-
-      for (final name in [names.first, names.last]) {
-        if (!box.containsKey(name)) return false;
-        jsonDecode(box.get(name) as String);
-      }
-
-      return true;
-    } catch (e) {
-      log('[CACHE VERIFY] Failed: $e');
-      return false;
-    }
+  Map<String, ApiResponse>? _parseResponses(dynamic responses) {
+    if (responses is! Map<String, dynamic>) return null;
+    return responses.map((k, v) => MapEntry(k, ApiResponse.fromJson(v)));
   }
 }
 
-class _GitHubFetchException implements Exception {
+/// Custom exception for API specs operations
+class ApiSpecsException implements Exception {
   final String message;
-  _GitHubFetchException(this.message);
+  final String? details;
+
+  ApiSpecsException(this.message, [this.details]);
+
   @override
-  String toString() => 'GitHubFetchException: $message';
+  String toString() => details != null 
+      ? 'ApiSpecsException: $message ($details)'
+      : 'ApiSpecsException: $message';
 }

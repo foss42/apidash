@@ -1,14 +1,15 @@
 import 'package:apidash_core/apidash_core.dart';
-import 'package:collection/collection.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'api_explorer_models.freezed.dart';
 part 'api_explorer_models.g.dart';
 
-// Main collection model with helper methods
 @freezed
+@JsonSerializable(explicitToJson: true, anyMap: true)
 class ApiCollection with _$ApiCollection {
-  const ApiCollection._(); // Private constructor for custom methods
+  const ApiCollection._();
 
+  @JsonSerializable(explicitToJson: true)
   const factory ApiCollection({
     required String id,
     required String name,
@@ -22,34 +23,38 @@ class ApiCollection with _$ApiCollection {
   factory ApiCollection.fromJson(Map<String, dynamic> json) =>
       _$ApiCollectionFromJson(json);
 
-  // Helper method to filter endpoints by search query
+  // Convert to map for UI components
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'sourceUrl': sourceUrl,
+      'description': description,
+      'endpoints': endpoints.map((e) => e.toMap()).toList(),
+      'isExpanded': isExpanded,
+      'baseUrl': baseUrl,
+    };
+  }
+
+  // Helper methods
   ApiCollection filterEndpoints(String query) {
     if (query.isEmpty) return this;
-
-    final filtered = endpoints.where((endpoint) =>
-        endpoint.name.toLowerCase().contains(query.toLowerCase()) ||
-        endpoint.path.toLowerCase().contains(query.toLowerCase())).toList();
-
+    final filtered = endpoints.where((e) =>
+        e.name.toLowerCase().contains(query.toLowerCase()) ||
+        e.path.toLowerCase().contains(query.toLowerCase())).toList();
     return copyWith(endpoints: filtered);
   }
 
-  // Helper to get base URL for the collection
-  String? getBaseUrl() {
-    return baseUrl ?? (endpoints.isNotEmpty ? endpoints.first.baseUrl : null);
-  }
-
-  // Helper to get endpoint count text
-  String get endpointCountText {
-    final count = endpoints.length;
-    return '$count ${count == 1 ? 'Endpoint' : 'Endpoints'}';
-  }
+  String get endpointCountText =>
+      '${endpoints.length} ${endpoints.length == 1 ? 'Endpoint' : 'Endpoints'}';
 }
 
-// Endpoint model with helper methods
 @freezed
+@JsonSerializable(explicitToJson: true, anyMap: true)
 class ApiEndpoint with _$ApiEndpoint {
-  const ApiEndpoint._(); // Private constructor for custom methods
+  const ApiEndpoint._();
 
+  @JsonSerializable(explicitToJson: true)
   const factory ApiEndpoint({
     required String id,
     required String name,
@@ -66,46 +71,7 @@ class ApiEndpoint with _$ApiEndpoint {
   factory ApiEndpoint.fromJson(Map<String, dynamic> json) =>
       _$ApiEndpointFromJson(json);
 
-  // Get full URL
-  String get fullUrl => '$baseUrl$path';
-
-  // Get method display text
-  String get methodText => method.name.toUpperCase();
-
-// Create request model for this endpoint
-HttpRequestModel toRequestModel() {
-  //  headers to List<NameValueModel>
-  final headerList = headers?.entries.map((entry) => 
-    NameValueModel(name: entry.key, value: entry.value.example ?? '')).toList();
-
-  //  query parameters to List<NameValueModel>
-  final queryParamList = parameters
-      ?.where((p) => p.inLocation == 'query')
-      .map((p) => NameValueModel(name: p.name, value: p.example ?? ''))
-      .toList();
-
-  //  body content
-  final bodyContent = requestBody?.content.values.firstOrNull?.schema?.example;
-
-  //  conten type
-  final contentType = requestBody?.content.keys.firstOrNull;
-  final parsedContentType = contentType != null 
-      ? ContentType.values.firstWhere(
-          (type) => type.name.toLowerCase() == contentType.toLowerCase(),
-          orElse: () => ContentType.json,
-        )
-      : ContentType.json;
-
-  return HttpRequestModel(
-    method: method,
-    url: fullUrl,
-    headers: headerList,
-    params: queryParamList,
-    bodyContentType: parsedContentType,
-    body: bodyContent,
-  );
-}
-  // map for UI compatibility
+  // UI-compatible map conversion
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -120,10 +86,40 @@ HttpRequestModel toRequestModel() {
       'responses': responses?.map((key, value) => MapEntry(key, value.toMap())),
     };
   }
+
+  // For MethodCard and ApiExplorerURLCard
+  String get fullUrl => '$baseUrl$path';
+  String get methodText => method.name.toUpperCase();
+
+  // For HttpRequestModel conversion
+  HttpRequestModel toRequestModel() {
+    return HttpRequestModel(
+      method: method,
+      url: fullUrl,
+      headers: headers?.entries
+          .map((e) => NameValueModel(name: e.key, value: e.value.example ?? ''))
+          .toList(),
+      params: parameters
+          ?.where((p) => p.inLocation == 'query')
+          .map((p) => NameValueModel(name: p.name, value: p.example ?? ''))
+          .toList(),
+      body: requestBody?.content.values.firstOrNull?.schema?.example,
+      bodyContentType: _getContentType(),
+    );
+  }
+
+  ContentType _getContentType() {
+    final contentType = requestBody?.content.keys.firstOrNull;
+    if (contentType == null) return ContentType.json;
+    return ContentType.values.firstWhere(
+      (e) => e.name.toLowerCase() == contentType.toLowerCase(),
+      orElse: () => ContentType.json,
+    );
+  }
 }
 
-// Parameter model
 @freezed
+@JsonSerializable(explicitToJson: true)
 class ApiParameter with _$ApiParameter {
   const factory ApiParameter({
     required String name,
@@ -137,20 +133,18 @@ class ApiParameter with _$ApiParameter {
   factory ApiParameter.fromJson(Map<String, dynamic> json) =>
       _$ApiParameterFromJson(json);
 
-  Map<String, dynamic> toMap() {
-    return {
-      'name': name,
-      'in': inLocation,
-      'description': description,
-      'required': required,
-      'schema': schema?.toMap(),
-      'example': example,
-    };
-  }
+  Map<String, dynamic> toMap() => {
+        'name': name,
+        'in': inLocation,
+        'description': description,
+        'required': required,
+        'schema': schema?.toMap(),
+        'example': example,
+      };
 }
 
-// Request body model
 @freezed
+@JsonSerializable(explicitToJson: true)
 class ApiRequestBody with _$ApiRequestBody {
   const factory ApiRequestBody({
     String? description,
@@ -160,16 +154,14 @@ class ApiRequestBody with _$ApiRequestBody {
   factory ApiRequestBody.fromJson(Map<String, dynamic> json) =>
       _$ApiRequestBodyFromJson(json);
 
-  Map<String, dynamic> toMap() {
-    return {
-      'description': description,
-      'content': content.map((key, value) => MapEntry(key, value.toMap())),
-    };
-  }
+  Map<String, dynamic> toMap() => {
+        'description': description,
+        'content': content.map((k, v) => MapEntry(k, v.toMap())),
+      };
 }
 
-// Header model
 @freezed
+@JsonSerializable(explicitToJson: true)
 class ApiHeader with _$ApiHeader {
   const factory ApiHeader({
     String? description,
@@ -181,18 +173,16 @@ class ApiHeader with _$ApiHeader {
   factory ApiHeader.fromJson(Map<String, dynamic> json) =>
       _$ApiHeaderFromJson(json);
 
-  Map<String, dynamic> toMap() {
-    return {
-      'description': description,
-      'required': required,
-      'schema': schema?.toMap(),
-      'example': example,
-    };
-  }
+  Map<String, dynamic> toMap() => {
+        'description': description,
+        'required': required,
+        'schema': schema?.toMap(),
+        'example': example,
+      };
 }
 
-// Response model
 @freezed
+@JsonSerializable(explicitToJson: true)
 class ApiResponse with _$ApiResponse {
   const factory ApiResponse({
     String? description,
@@ -202,16 +192,14 @@ class ApiResponse with _$ApiResponse {
   factory ApiResponse.fromJson(Map<String, dynamic> json) =>
       _$ApiResponseFromJson(json);
 
-  Map<String, dynamic> toMap() {
-    return {
-      'description': description,
-      'content': content?.map((key, value) => MapEntry(key, value.toMap())),
-    };
-  }
+  Map<String, dynamic> toMap() => {
+        'description': description,
+        'content': content?.map((k, v) => MapEntry(k, v.toMap())),
+      };
 }
 
-// Content model
 @freezed
+@JsonSerializable(explicitToJson: true)
 class ApiContent with _$ApiContent {
   const factory ApiContent({
     required ApiSchema schema,
@@ -220,15 +208,11 @@ class ApiContent with _$ApiContent {
   factory ApiContent.fromJson(Map<String, dynamic> json) =>
       _$ApiContentFromJson(json);
 
-  Map<String, dynamic> toMap() {
-    return {
-      'schema': schema.toMap(),
-    };
-  }
+  Map<String, dynamic> toMap() => {'schema': schema.toMap()};
 }
 
-// Schema model
 @freezed
+@JsonSerializable(explicitToJson: true)
 class ApiSchema with _$ApiSchema {
   const factory ApiSchema({
     String? type,
@@ -242,59 +226,30 @@ class ApiSchema with _$ApiSchema {
   factory ApiSchema.fromJson(Map<String, dynamic> json) =>
       _$ApiSchemaFromJson(json);
 
-  Map<String, dynamic> toMap() {
-    return {
-      'type': type,
-      'format': format,
-      'description': description,
-      'example': example,
-      'items': items?.toMap(),
-      'properties': properties?.map((key, value) => MapEntry(key, value.toMap())),
-    };
-  }
+  Map<String, dynamic> toMap() => {
+        'type': type,
+        'format': format,
+        'description': description,
+        'example': example,
+        'items': items?.toMap(),
+        'properties': properties?.map((k, v) => MapEntry(k, v.toMap())),
+      };
 }
 
-// Helper extension for collections
-extension ApiCollectionHelpers on List<ApiCollection> {
-  // Filter collections by search query
+// Helper extensions
+extension ApiCollectionListX on List<ApiCollection> {
   List<ApiCollection> filterCollections(String query) {
     if (query.isEmpty) return this;
-
-    return map((collection) => collection.filterEndpoints(query))
-        .where((collection) => collection.endpoints.isNotEmpty)
+    return map((c) => c.filterEndpoints(query))
+        .where((c) => c.endpoints.isNotEmpty)
         .toList();
   }
 
-  // Find collection by ID
-  ApiCollection? findById(String? id) {
-    if (id == null) return null;
-    return firstWhereOrNull((c) => c.id == id);
-  }
-
-  // Convert to list of maps for UI compatibility
-  List<Map<String, dynamic>> toMapList() {
-    return map((collection) => {
-      'id': collection.id,
-      'name': collection.name,
-      'sourceUrl': collection.sourceUrl,
-      'description': collection.description,
-      'endpoints': collection.endpoints.map((e) => e.toMap()).toList(),
-      'isExpanded': collection.isExpanded,
-      'baseUrl': collection.baseUrl,
-    }).toList();
-  }
+  ApiCollection? findById(String? id) =>
+      id == null ? null : firstWhereOrNull((c) => c.id == id);
 }
 
-// Helper extension for endpoints
-extension ApiEndpointHelpers on List<ApiEndpoint> {
-  // Find endpoint by ID
-  ApiEndpoint? findById(String? id) {
-    if (id == null) return null;
-    return firstWhereOrNull((e) => e.id == id);
-  }
-
-  // Get first 4 methods for display
-  List<String> getFirstFourMethods() {
-    return take(4).map((e) => e.methodText).toList();
-  }
+extension ApiEndpointListX on List<ApiEndpoint> {
+  ApiEndpoint? findById(String? id) =>
+      id == null ? null : firstWhereOrNull((e) => e.id == id);
 }

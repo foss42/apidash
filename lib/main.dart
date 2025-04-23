@@ -27,11 +27,6 @@ void main() async {
  await Hive.initFlutter();
   await Hive.openBox(consts.kApiSpecsBox);
 
-  final githubfetcher = new GitHubSpecsFetcher();
-  final specs = await githubfetcher.fetchAndStoreSpecs();
-  if (specs.isNotEmpty) {
-    await Hive.box(consts.kApiSpecsBox).put(consts.kApiSpecsBox, specs.keys.toList());
-  }
 
   runApp(
     ProviderScope(
