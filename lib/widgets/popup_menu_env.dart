@@ -20,8 +20,25 @@ class EnvironmentPopupMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     final double width = context.isCompactWindow ? 100 : 130;
 
+<<<<<<< HEAD
     // Use PopupMenuButton directly to customize the items
     return PopupMenuButton<EnvironmentModel>(
+=======
+    return ADPopupMenu<EnvironmentModel?>(
+      value: value == null
+          ? "Select Env."
+          : value?.id == kGlobalEnvironmentId
+              ? "Global"
+              : getEnvironmentTitle(value?.name),
+      values: options?.map((e) => (
+                e,
+                (e.id == kGlobalEnvironmentId)
+                    ? "Global"
+                    : getEnvironmentTitle(e.name).clip(30)
+              )) ??
+          [],
+      width: width,
+>>>>>>> upstream/main
       tooltip: "Select Environment",
       surfaceTintColor: kColorTransparent,
       constraints: BoxConstraints(minWidth: width),

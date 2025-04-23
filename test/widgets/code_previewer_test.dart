@@ -1,8 +1,8 @@
+import 'package:apidash/widgets/previewer_code.dart';
 import 'package:apidash_core/apidash_core.dart' show RandomStringGenerator;
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:apidash/widgets/code_previewer.dart';
 import '../test_consts.dart';
 
 void main() {
