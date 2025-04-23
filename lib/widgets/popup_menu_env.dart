@@ -28,8 +28,9 @@ class EnvironmentPopupMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double width = context.isCompactWindow ? 100 : 130;
+    final double width = context.isCompactWindow ? 100 : 130; // Reintroduced dynamic width
 
+    // Use the active environment's color directly for the dropdown button
     final Color? activeBgColor = _parseColor(value?.color);
     return PopupMenuButton<EnvironmentModel>(
       tooltip: "Select Environment",

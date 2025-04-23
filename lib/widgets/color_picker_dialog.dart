@@ -20,7 +20,7 @@ Future<String?> showColorPickerDialog(
           },
           showLabel: true,
           pickerAreaHeightPercent: 0.8,
-          enableAlpha: false, // transparency isn’t need
+          enableAlpha: true, // transparency isn’t need
         ),
       ),
       actions: [
