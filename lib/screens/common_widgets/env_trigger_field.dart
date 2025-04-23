@@ -123,18 +123,23 @@ class EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
             }),
       ],
       fieldViewBuilder: (context, textEditingController, focusnode) {
-        return ExtendedTextField(
-          controller: textEditingController,
-          focusNode: focusnode,
-          maxLines: _isFocused ? null : 1,
-          decoration: widget.decoration,
-          style: widget.style,
-          onChanged: widget.onChanged,
-          onSubmitted: widget.onFieldSubmitted,
-          specialTextSpanBuilder: EnvRegExpSpanBuilder(),
-          onTapOutside: (event) {
-            _focusNode.unfocus();
-          },
+        return AnimatedSize(
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeInOut,
+          child: ExtendedTextField(
+            controller: textEditingController,
+            focusNode: focusnode,
+            maxLines: _isFocused ? null : 1,
+            minLines: 1,
+            decoration: widget.decoration,
+            style: widget.style,
+            onChanged: widget.onChanged,
+            onSubmitted: widget.onFieldSubmitted,
+            specialTextSpanBuilder: EnvRegExpSpanBuilder(),
+            onTapOutside: (event) {
+              _focusNode.unfocus();
+            },
+          ),
         );
       },
     );
