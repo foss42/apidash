@@ -117,6 +117,7 @@ class EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
         return ExtendedTextField(
           controller: textEditingController,
           focusNode: focusnode,
+          maxLines: null,
           decoration: widget.decoration,
           style: widget.style,
           onChanged: widget.onChanged,
