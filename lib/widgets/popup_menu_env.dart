@@ -16,29 +16,22 @@ class EnvironmentPopupMenu extends StatelessWidget {
   final void Function(EnvironmentModel? value)? onChanged;
   final List<EnvironmentModel>? options;
 
+  Color? _parseColor(String? hexColor) {
+    if (hexColor == null) return null;
+    return Color(int.parse(hexColor.substring(1), radix: 16)).withOpacity(0.2);
+  }
+
+  Color? _getTextColor(Color? bgColor) {
+    if (bgColor == null) return null;
+    return bgColor.computeLuminance() > 0.5 ? Colors.black : Colors.white;
+  }
+
   @override
   Widget build(BuildContext context) {
     final double width = context.isCompactWindow ? 100 : 130;
 
-<<<<<<< HEAD
-    // Use PopupMenuButton directly to customize the items
+    final Color? activeBgColor = _parseColor(value?.color);
     return PopupMenuButton<EnvironmentModel>(
-=======
-    return ADPopupMenu<EnvironmentModel?>(
-      value: value == null
-          ? "Select Env."
-          : value?.id == kGlobalEnvironmentId
-              ? "Global"
-              : getEnvironmentTitle(value?.name),
-      values: options?.map((e) => (
-                e,
-                (e.id == kGlobalEnvironmentId)
-                    ? "Global"
-                    : getEnvironmentTitle(e.name).clip(30)
-              )) ??
-          [],
-      width: width,
->>>>>>> upstream/main
       tooltip: "Select Environment",
       surfaceTintColor: kColorTransparent,
       constraints: BoxConstraints(minWidth: width),
@@ -46,14 +39,12 @@ class EnvironmentPopupMenu extends StatelessWidget {
             final label = (e.id == kGlobalEnvironmentId)
                 ? "None"
                 : getEnvironmentTitle(e.name).clip(30);
-            final Color? bgColor = e.color != null
-                ? Color(int.parse(e.color!.substring(1), radix: 16))
-                : null;
+            final Color? bgColor = _parseColor(e.color);
             return PopupMenuItem<EnvironmentModel>(
               value: e,
               child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                   color: bgColor?.withOpacity(0.2), 
                   borderRadius: kBorderRadius8,
@@ -61,9 +52,7 @@ class EnvironmentPopupMenu extends StatelessWidget {
                 child: Text(
                   label,
                   style: kTextStylePopupMenuItem.copyWith(
-                    color: bgColor != null
-                        ? Theme.of(context).colorScheme.onSurface
-                        : null, // Ensure text is readable
+                    color: _getTextColor(bgColor),
                   ),
                 ),
               ),
@@ -79,6 +68,7 @@ class EnvironmentPopupMenu extends StatelessWidget {
             color: Theme.of(context).colorScheme.surfaceContainerHighest,
           ),
           borderRadius: kBorderRadius8,
+          color: activeBgColor,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -88,9 +78,9 @@ class EnvironmentPopupMenu extends StatelessWidget {
                 (value == null || value?.id == kGlobalEnvironmentId)
                     ? "None"
                     : getEnvironmentTitle(value?.name),
-                style: kTextStylePopupMenuItem,
-                softWrap: false,
-                overflow: TextOverflow.ellipsis,
+                style: kTextStylePopupMenuItem.copyWith(
+                  color: _getTextColor(activeBgColor),
+                ),
               ),
             ),
             const Icon(
