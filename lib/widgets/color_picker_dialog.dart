@@ -13,11 +13,14 @@ Future<String?> showColorPickerDialog(
     builder: (context) => AlertDialog(
       title: const Text('Pick a color'),
       content: SingleChildScrollView(
-        child: BlockPicker(
+        child: ColorPicker(
           pickerColor: selectedColor,
           onColorChanged: (color) {
             selectedColor = color;
           },
+          showLabel: true,
+          pickerAreaHeightPercent: 0.8,
+          enableAlpha: false, // transparency isn’t need
         ),
       ),
       actions: [
