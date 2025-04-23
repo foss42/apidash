@@ -22,11 +22,9 @@ ApiCollection _$ApiCollectionFromJson(Map<String, dynamic> json) {
 mixin _$ApiCollection {
   String get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
-  String? get sourceUrl => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
   List<ApiEndpoint> get endpoints => throw _privateConstructorUsedError;
-  bool get isExpanded => throw _privateConstructorUsedError;
-  String? get baseUrl => throw _privateConstructorUsedError;
+  String? get sourceUrl => throw _privateConstructorUsedError;
 
   /// Serializes this ApiCollection to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -47,11 +45,9 @@ abstract class $ApiCollectionCopyWith<$Res> {
   $Res call(
       {String id,
       String name,
-      String? sourceUrl,
       String? description,
       List<ApiEndpoint> endpoints,
-      bool isExpanded,
-      String? baseUrl});
+      String? sourceUrl});
 }
 
 /// @nodoc
@@ -71,11 +67,9 @@ class _$ApiCollectionCopyWithImpl<$Res, $Val extends ApiCollection>
   $Res call({
     Object? id = null,
     Object? name = null,
-    Object? sourceUrl = freezed,
     Object? description = freezed,
     Object? endpoints = null,
-    Object? isExpanded = null,
-    Object? baseUrl = freezed,
+    Object? sourceUrl = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -86,10 +80,6 @@ class _$ApiCollectionCopyWithImpl<$Res, $Val extends ApiCollection>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
-      sourceUrl: freezed == sourceUrl
-          ? _value.sourceUrl
-          : sourceUrl // ignore: cast_nullable_to_non_nullable
-              as String?,
       description: freezed == description
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
@@ -98,13 +88,9 @@ class _$ApiCollectionCopyWithImpl<$Res, $Val extends ApiCollection>
           ? _value.endpoints
           : endpoints // ignore: cast_nullable_to_non_nullable
               as List<ApiEndpoint>,
-      isExpanded: null == isExpanded
-          ? _value.isExpanded
-          : isExpanded // ignore: cast_nullable_to_non_nullable
-              as bool,
-      baseUrl: freezed == baseUrl
-          ? _value.baseUrl
-          : baseUrl // ignore: cast_nullable_to_non_nullable
+      sourceUrl: freezed == sourceUrl
+          ? _value.sourceUrl
+          : sourceUrl // ignore: cast_nullable_to_non_nullable
               as String?,
     ) as $Val);
   }
@@ -121,11 +107,9 @@ abstract class _$$ApiCollectionImplCopyWith<$Res>
   $Res call(
       {String id,
       String name,
-      String? sourceUrl,
       String? description,
       List<ApiEndpoint> endpoints,
-      bool isExpanded,
-      String? baseUrl});
+      String? sourceUrl});
 }
 
 /// @nodoc
@@ -143,11 +127,9 @@ class __$$ApiCollectionImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? name = null,
-    Object? sourceUrl = freezed,
     Object? description = freezed,
     Object? endpoints = null,
-    Object? isExpanded = null,
-    Object? baseUrl = freezed,
+    Object? sourceUrl = freezed,
   }) {
     return _then(_$ApiCollectionImpl(
       id: null == id
@@ -158,10 +140,6 @@ class __$$ApiCollectionImplCopyWithImpl<$Res>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
-      sourceUrl: freezed == sourceUrl
-          ? _value.sourceUrl
-          : sourceUrl // ignore: cast_nullable_to_non_nullable
-              as String?,
       description: freezed == description
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
@@ -170,13 +148,9 @@ class __$$ApiCollectionImplCopyWithImpl<$Res>
           ? _value._endpoints
           : endpoints // ignore: cast_nullable_to_non_nullable
               as List<ApiEndpoint>,
-      isExpanded: null == isExpanded
-          ? _value.isExpanded
-          : isExpanded // ignore: cast_nullable_to_non_nullable
-              as bool,
-      baseUrl: freezed == baseUrl
-          ? _value.baseUrl
-          : baseUrl // ignore: cast_nullable_to_non_nullable
+      sourceUrl: freezed == sourceUrl
+          ? _value.sourceUrl
+          : sourceUrl // ignore: cast_nullable_to_non_nullable
               as String?,
     ));
   }
@@ -184,17 +158,14 @@ class __$$ApiCollectionImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$ApiCollectionImpl extends _ApiCollection {
+class _$ApiCollectionImpl implements _ApiCollection {
   const _$ApiCollectionImpl(
       {required this.id,
       required this.name,
-      this.sourceUrl,
       this.description,
       required final List<ApiEndpoint> endpoints,
-      this.isExpanded = false,
-      this.baseUrl})
-      : _endpoints = endpoints,
-        super._();
+      this.sourceUrl})
+      : _endpoints = endpoints;
 
   factory _$ApiCollectionImpl.fromJson(Map<String, dynamic> json) =>
       _$$ApiCollectionImplFromJson(json);
@@ -203,8 +174,6 @@ class _$ApiCollectionImpl extends _ApiCollection {
   final String id;
   @override
   final String name;
-  @override
-  final String? sourceUrl;
   @override
   final String? description;
   final List<ApiEndpoint> _endpoints;
@@ -216,14 +185,11 @@ class _$ApiCollectionImpl extends _ApiCollection {
   }
 
   @override
-  @JsonKey()
-  final bool isExpanded;
-  @override
-  final String? baseUrl;
+  final String? sourceUrl;
 
   @override
   String toString() {
-    return 'ApiCollection(id: $id, name: $name, sourceUrl: $sourceUrl, description: $description, endpoints: $endpoints, isExpanded: $isExpanded, baseUrl: $baseUrl)';
+    return 'ApiCollection(id: $id, name: $name, description: $description, endpoints: $endpoints, sourceUrl: $sourceUrl)';
   }
 
   @override
@@ -233,21 +199,18 @@ class _$ApiCollectionImpl extends _ApiCollection {
             other is _$ApiCollectionImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
-            (identical(other.sourceUrl, sourceUrl) ||
-                other.sourceUrl == sourceUrl) &&
             (identical(other.description, description) ||
                 other.description == description) &&
             const DeepCollectionEquality()
                 .equals(other._endpoints, _endpoints) &&
-            (identical(other.isExpanded, isExpanded) ||
-                other.isExpanded == isExpanded) &&
-            (identical(other.baseUrl, baseUrl) || other.baseUrl == baseUrl));
+            (identical(other.sourceUrl, sourceUrl) ||
+                other.sourceUrl == sourceUrl));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, name, sourceUrl, description,
-      const DeepCollectionEquality().hash(_endpoints), isExpanded, baseUrl);
+  int get hashCode => Object.hash(runtimeType, id, name, description,
+      const DeepCollectionEquality().hash(_endpoints), sourceUrl);
 
   /// Create a copy of ApiCollection
   /// with the given fields replaced by the non-null parameter values.
@@ -265,16 +228,13 @@ class _$ApiCollectionImpl extends _ApiCollection {
   }
 }
 
-abstract class _ApiCollection extends ApiCollection {
+abstract class _ApiCollection implements ApiCollection {
   const factory _ApiCollection(
       {required final String id,
       required final String name,
-      final String? sourceUrl,
       final String? description,
       required final List<ApiEndpoint> endpoints,
-      final bool isExpanded,
-      final String? baseUrl}) = _$ApiCollectionImpl;
-  const _ApiCollection._() : super._();
+      final String? sourceUrl}) = _$ApiCollectionImpl;
 
   factory _ApiCollection.fromJson(Map<String, dynamic> json) =
       _$ApiCollectionImpl.fromJson;
@@ -284,15 +244,11 @@ abstract class _ApiCollection extends ApiCollection {
   @override
   String get name;
   @override
-  String? get sourceUrl;
-  @override
   String? get description;
   @override
   List<ApiEndpoint> get endpoints;
   @override
-  bool get isExpanded;
-  @override
-  String? get baseUrl;
+  String? get sourceUrl;
 
   /// Create a copy of ApiCollection
   /// with the given fields replaced by the non-null parameter values.
@@ -530,7 +486,7 @@ class __$$ApiEndpointImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$ApiEndpointImpl extends _ApiEndpoint {
+class _$ApiEndpointImpl implements _ApiEndpoint {
   const _$ApiEndpointImpl(
       {required this.id,
       required this.name,
@@ -544,8 +500,7 @@ class _$ApiEndpointImpl extends _ApiEndpoint {
       final Map<String, ApiResponse>? responses})
       : _parameters = parameters,
         _headers = headers,
-        _responses = responses,
-        super._();
+        _responses = responses;
 
   factory _$ApiEndpointImpl.fromJson(Map<String, dynamic> json) =>
       _$$ApiEndpointImplFromJson(json);
@@ -651,7 +606,7 @@ class _$ApiEndpointImpl extends _ApiEndpoint {
   }
 }
 
-abstract class _ApiEndpoint extends ApiEndpoint {
+abstract class _ApiEndpoint implements ApiEndpoint {
   const factory _ApiEndpoint(
       {required final String id,
       required final String name,
@@ -663,7 +618,6 @@ abstract class _ApiEndpoint extends ApiEndpoint {
       final ApiRequestBody? requestBody,
       final Map<String, ApiHeader>? headers,
       final Map<String, ApiResponse>? responses}) = _$ApiEndpointImpl;
-  const _ApiEndpoint._() : super._();
 
   factory _ApiEndpoint.fromJson(Map<String, dynamic> json) =
       _$ApiEndpointImpl.fromJson;
@@ -704,7 +658,6 @@ ApiParameter _$ApiParameterFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$ApiParameter {
   String get name => throw _privateConstructorUsedError;
-  @JsonKey(name: 'in')
   String get inLocation => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
   bool get required => throw _privateConstructorUsedError;
@@ -729,7 +682,7 @@ abstract class $ApiParameterCopyWith<$Res> {
   @useResult
   $Res call(
       {String name,
-      @JsonKey(name: 'in') String inLocation,
+      String inLocation,
       String? description,
       bool required,
       ApiSchema? schema,
@@ -813,7 +766,7 @@ abstract class _$$ApiParameterImplCopyWith<$Res>
   @useResult
   $Res call(
       {String name,
-      @JsonKey(name: 'in') String inLocation,
+      String inLocation,
       String? description,
       bool required,
       ApiSchema? schema,
@@ -877,9 +830,9 @@ class __$$ApiParameterImplCopyWithImpl<$Res>
 class _$ApiParameterImpl implements _ApiParameter {
   const _$ApiParameterImpl(
       {required this.name,
-      @JsonKey(name: 'in') required this.inLocation,
+      required this.inLocation,
       this.description,
-      this.required = false,
+      required this.required,
       this.schema,
       this.example});
 
@@ -889,12 +842,10 @@ class _$ApiParameterImpl implements _ApiParameter {
   @override
   final String name;
   @override
-  @JsonKey(name: 'in')
   final String inLocation;
   @override
   final String? description;
   @override
-  @JsonKey()
   final bool required;
   @override
   final ApiSchema? schema;
@@ -946,9 +897,9 @@ class _$ApiParameterImpl implements _ApiParameter {
 abstract class _ApiParameter implements ApiParameter {
   const factory _ApiParameter(
       {required final String name,
-      @JsonKey(name: 'in') required final String inLocation,
+      required final String inLocation,
       final String? description,
-      final bool required,
+      required final bool required,
       final ApiSchema? schema,
       final String? example}) = _$ApiParameterImpl;
 
@@ -958,7 +909,6 @@ abstract class _ApiParameter implements ApiParameter {
   @override
   String get name;
   @override
-  @JsonKey(name: 'in')
   String get inLocation;
   @override
   String? get description;
@@ -1299,7 +1249,7 @@ class __$$ApiHeaderImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$ApiHeaderImpl implements _ApiHeader {
   const _$ApiHeaderImpl(
-      {this.description, this.required = false, this.schema, this.example});
+      {this.description, required this.required, this.schema, this.example});
 
   factory _$ApiHeaderImpl.fromJson(Map<String, dynamic> json) =>
       _$$ApiHeaderImplFromJson(json);
@@ -1307,7 +1257,6 @@ class _$ApiHeaderImpl implements _ApiHeader {
   @override
   final String? description;
   @override
-  @JsonKey()
   final bool required;
   @override
   final ApiSchema? schema;
@@ -1356,7 +1305,7 @@ class _$ApiHeaderImpl implements _ApiHeader {
 abstract class _ApiHeader implements ApiHeader {
   const factory _ApiHeader(
       {final String? description,
-      final bool required,
+      required final bool required,
       final ApiSchema? schema,
       final String? example}) = _$ApiHeaderImpl;
 

@@ -1,10 +1,14 @@
-import 'package:apidash/screens/explorer/api_documentatioin/documentation_pane.dart';
+import 'package:apidash/screens/explorer/documentation/documentation_pane.dart';
 import 'package:flutter/material.dart';
+import 'package:apidash/models/api_explorer_models.dart';
 
 class ApiExplorerSplitView extends StatelessWidget {
-  final Map<String, dynamic> api;
+  final ApiEndpoint endpoint;
 
-  const ApiExplorerSplitView({super.key, required this.api});
+  const ApiExplorerSplitView({
+    super.key, 
+    required this.endpoint,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +26,7 @@ class ApiExplorerSplitView extends StatelessWidget {
             children: [
               Expanded(
                 flex: 1,
-                child: ApiDocumentationPane(endpoint: api),
+                child: ApiDocumentationPane(endpoint: endpoint),
               ),
             ],
           ),

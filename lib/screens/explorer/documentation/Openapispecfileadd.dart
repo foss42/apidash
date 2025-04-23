@@ -41,8 +41,9 @@ class _AddApiDialogState extends ConsumerState<AddApiDialog> {
     });
   }
 
+ 
   Future<void> _importApi() async {
-    if (!_formKey.currentState!.validate()) return;
+    if (!_formKey.currentState!.validate() || !mounted) return;
 
     final url = _urlController.text.trim();
     final name = _nameController.text.trim();
@@ -50,17 +51,19 @@ class _AddApiDialogState extends ConsumerState<AddApiDialog> {
     setState(() => _isLoading = true);
 
     try {
+      await ref.read(apiExplorerProvider.notifier).addCollectionFromUrl(url, ref);
+      
+      if (!mounted) return;
       Navigator.pop(context);
-      await ref.read(apiExplorerProvider.notifier).addCollectionFromUrl(
-            url,
-            ref,
-          );
-
+      
       _showSnackBar('API imported successfully!', isError: false);
     } catch (e) {
-      _showSnackBar('Error importing API: $e', isError: true);
+      if (!mounted) return;
+      _showSnackBar('Error importing API: ${e.toString()}', isError: true);
     } finally {
-      setState(() => _isLoading = false);
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     }
   }
 

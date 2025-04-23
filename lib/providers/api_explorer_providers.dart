@@ -1,14 +1,16 @@
+import 'package:apidash/models/api_explorer_models.dart';
 import 'package:apidash/providers/collection_providers.dart';
 import 'package:apidash/providers/ui_providers.dart';
 import 'package:apidash/services/explorer_services/apiProccessing_service.dart';
 import 'package:apidash/services/explorer_services/api_fetcher.dart';
+import 'package:apidash/services/hive_services.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // Main API Explorer Provider
 final apiExplorerProvider =
-    StateNotifierProvider<ApiExplorerNotifier, List<Map<String, dynamic>>>(
+    StateNotifierProvider<ApiExplorerNotifier, List<ApiCollection>>(
   (ref) => ApiExplorerNotifier(),
 );
 
@@ -24,34 +26,28 @@ final selectedCollectionIdProvider = StateProvider<String?>((ref) => null);
 final apiSearchQueryProvider = StateProvider<String>((ref) => '');
 
 // Derived Providers
-final selectedCollectionProvider = Provider<Map<String, dynamic>?>((ref) {
+final selectedCollectionProvider = Provider<ApiCollection?>((ref) {
   final collectionId = ref.watch(selectedCollectionIdProvider);
   if (collectionId == null) return null;
 
   final collections = ref.watch(apiExplorerProvider);
   return collections.firstWhere(
-    (c) => c['id'] == collectionId,
-    orElse: () => {},
+    (c) => c.id == collectionId,
   );
 });
 
-final selectedEndpointProvider = Provider<Map<String, dynamic>?>((ref) {
+final selectedEndpointProvider = Provider<ApiEndpoint?>((ref) {
   final endpointId = ref.watch(selectedEndpointIdProvider);
   final collection = ref.watch(selectedCollectionProvider);
 
   if (endpointId == null || collection == null) return null;
 
-  final endpoints = collection['endpoints'] as List<dynamic>? ?? [];
-  try {
-    return endpoints.firstWhere(
-      (e) => e['id'] == endpointId,
-    ) as Map<String, dynamic>;
-  } catch (_) {
-    return null;
-  }
+  return collection.endpoints.firstWhere(
+    (e) => e.id == endpointId,
+  );
 });
 
-final filteredCollectionsProvider = Provider<List<Map<String, dynamic>>>((ref) {
+final filteredCollectionsProvider = Provider<List<ApiCollection>>((ref) {
   final query = ref.watch(apiSearchQueryProvider);
   final collections = ref.watch(apiExplorerProvider);
 
@@ -59,35 +55,24 @@ final filteredCollectionsProvider = Provider<List<Map<String, dynamic>>>((ref) {
 
   return collections
       .map((collection) {
-        final endpoints = collection['endpoints'] as List<dynamic>? ?? [];
-        final filteredEndpoints = endpoints.where((endpoint) {
-          final endpointMap = endpoint as Map<String, dynamic>;
-          return endpointMap['name']
-                  ?.toString()
-                  .toLowerCase()
-                  .contains(query.toLowerCase()) ??
-              false ||
-                  endpointMap['path']!
-                      .toString()
-                      .toLowerCase()
-                      .contains(query.toLowerCase());
+        final filteredEndpoints = collection.endpoints.where((endpoint) {
+          return endpoint.name.toLowerCase().contains(query.toLowerCase()) ||
+              endpoint.path.toLowerCase().contains(query.toLowerCase());
         }).toList();
 
-        return {
-          ...collection,
-          'endpoints': filteredEndpoints,
-        };
+        return collection.copyWith(endpoints: filteredEndpoints);
       })
-      .where((collection) => (collection['endpoints'] as List).isNotEmpty)
+      .where((collection) => collection.endpoints.isNotEmpty)
       .toList();
 });
 
-class ApiExplorerNotifier extends StateNotifier<List<Map<String, dynamic>>> {
+class ApiExplorerNotifier extends StateNotifier<List<ApiCollection>> {
   final ApiProcessingService _apiService;
-  final GitHubSpecsFetcher _specsFetcher;
+  final ApiSpecsRepository _specsRepository;
+
   ApiExplorerNotifier()
       : _apiService = ApiProcessingService(),
-        _specsFetcher = GitHubSpecsFetcher(),
+        _specsRepository = ApiSpecsRepository(),
         super([]);
 
   Future<void> loadApis(WidgetRef ref) async {
@@ -95,20 +80,15 @@ class ApiExplorerNotifier extends StateNotifier<List<Map<String, dynamic>>> {
     ref.read(apiExplorerErrorProvider.notifier).state = null;
 
     try {
-      // First try to load from cache
-      final cachedSpecs = GitHubSpecsFetcher.getCachedSpecs();
-      List<Map<String, dynamic>> processedCollections = [];
+      // First try to load from cache via HiveHandler
+      final cachedCollections = hiveHandler.getCachedApiSpecsCollections();
 
-      if (cachedSpecs.isNotEmpty) {
-        // Process the cached specs
-        processedCollections = await _apiService.processHiveSpecs(cachedSpecs);
+      if (cachedCollections.isNotEmpty) {
+        state = cachedCollections;
       } else {
-        // If no cache, fetch fresh from GitHub
-        final freshSpecs = await _specsFetcher.fetchAndStoreSpecs();
-        processedCollections = await _apiService.processHiveSpecs(freshSpecs);
+        // If no cache, fetch fresh
+        await refreshApis(ref);
       }
-
-      state = processedCollections;
     } catch (e) {
       ref.read(apiExplorerErrorProvider.notifier).state = e.toString();
     } finally {
@@ -118,11 +98,12 @@ class ApiExplorerNotifier extends StateNotifier<List<Map<String, dynamic>>> {
 
   Future<void> refreshApis(WidgetRef ref) async {
     ref.read(apiExplorerLoadingProvider.notifier).state = true;
+    ref.read(apiExplorerErrorProvider.notifier).state = null;
+
     try {
-      final freshSpecs = await _specsFetcher.fetchAndStoreSpecs();
-      final processedCollections =
-          await _apiService.processHiveSpecs(freshSpecs);
-      state = processedCollections;
+      final collections = await _specsRepository.fetchSpecs();
+      await hiveHandler.cacheApiSpecsCollections(collections);
+      state = collections;
     } catch (e) {
       ref.read(apiExplorerErrorProvider.notifier).state = e.toString();
     } finally {
@@ -156,70 +137,38 @@ class ApiExplorerNotifier extends StateNotifier<List<Map<String, dynamic>>> {
         throw Exception('Received HTTP ${response?.statusCode}');
       }
 
-      final endpoints =
-          await _apiService.parseOpenApiContent(response!.body, url);
-      final newCollection = _createCollection(endpoints, url, 'url');
+      final content = response!.body;
+      if (content.isEmpty) throw Exception('Empty response from server');
 
-      state = [...state, newCollection];
-    } catch (e) {
-      ref.read(apiExplorerErrorProvider.notifier).state = e.toString();
+      final collection = await _apiService.parseSingleSpec(content, url);
+
+      state = [...state, collection];
+      await hiveHandler.cacheApiSpecsCollections(state);
+    } catch (e, stack) {
+      debugPrint('Error adding collection from URL: $e\n$stack');
+      ref.read(apiExplorerErrorProvider.notifier).state =
+          'Failed to import API: ${e.toString()}';
+      rethrow;
     } finally {
       ref.read(apiExplorerLoadingProvider.notifier).state = false;
       httpClientManager.closeClient(requestId);
     }
   }
 
-HTTPVerb convert(String verb) {
-    switch (verb.toLowerCase()) {
-      case 'get':
-        return HTTPVerb.get;
-      case 'post':
-        return HTTPVerb.post;
-      case 'put':
-        return HTTPVerb.put;
-      case 'delete':
-        return HTTPVerb.delete;
-      case 'patch':
-        return HTTPVerb.patch;
-      default:
-        return HTTPVerb.get; 
-    }
-}
-  Future<void> importEndpoint(Map<String, dynamic>? endpoint , WidgetRef ref) async  {
-   try {
-      final requestMode = HttpRequestModel(
-      url: (endpoint?['baseUrl']?.toString() ?? '') + (endpoint?['path'] ?? ''),
-      method:  convert(endpoint?['method']),
-      bodyContentType: ContentType.json,
-    );
-    ref.read(collectionStateNotifierProvider.notifier).addRequestModel(requestMode);
-    ref.read(navRailIndexStateProvider.notifier).state = 0;
-   } catch (e) {
-     debugPrint('Error importing endpoint: $e');
-   }
-  }
-
-
-  Map<String, dynamic> _createCollection(
-    List<Map<String, dynamic>> endpoints,
-    String source,
-    String type,
-  ) {
-    return {
-      'id': '$type-${DateTime.now().millisecondsSinceEpoch}',
-      'name': _getSourceName(source),
-      'source': source,
-      'updatedAt': DateTime.now().toIso8601String(),
-      'endpoints': endpoints,
-    };
-  }
-
-  String _getSourceName(String source) {
+  Future<void> importEndpoint(ApiEndpoint endpoint, WidgetRef ref) async {
     try {
-      return source.split('/').last.replaceAll(RegExp(r'\.(ya?ml|json)$'), '');
+      final requestModel = HttpRequestModel(
+        url: endpoint.baseUrl + endpoint.path,
+        method: endpoint.method,
+        bodyContentType: ContentType.json,
+      );
+
+      ref
+          .read(collectionStateNotifierProvider.notifier)
+          .addRequestModel(requestModel);
+      ref.read(navRailIndexStateProvider.notifier).state = 0;
     } catch (e) {
-      return 'Unnamed API';
+      debugPrint('Error importing endpoint: $e');
     }
   }
-
 }

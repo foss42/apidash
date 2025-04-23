@@ -10,24 +10,20 @@ _$ApiCollectionImpl _$$ApiCollectionImplFromJson(Map<String, dynamic> json) =>
     _$ApiCollectionImpl(
       id: json['id'] as String,
       name: json['name'] as String,
-      sourceUrl: json['sourceUrl'] as String?,
       description: json['description'] as String?,
       endpoints: (json['endpoints'] as List<dynamic>)
           .map((e) => ApiEndpoint.fromJson(e as Map<String, dynamic>))
           .toList(),
-      isExpanded: json['isExpanded'] as bool? ?? false,
-      baseUrl: json['baseUrl'] as String?,
+      sourceUrl: json['sourceUrl'] as String?,
     );
 
 Map<String, dynamic> _$$ApiCollectionImplToJson(_$ApiCollectionImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
-      'sourceUrl': instance.sourceUrl,
       'description': instance.description,
       'endpoints': instance.endpoints,
-      'isExpanded': instance.isExpanded,
-      'baseUrl': instance.baseUrl,
+      'sourceUrl': instance.sourceUrl,
     };
 
 _$ApiEndpointImpl _$$ApiEndpointImplFromJson(Map<String, dynamic> json) =>
@@ -79,9 +75,9 @@ const _$HTTPVerbEnumMap = {
 _$ApiParameterImpl _$$ApiParameterImplFromJson(Map<String, dynamic> json) =>
     _$ApiParameterImpl(
       name: json['name'] as String,
-      inLocation: json['in'] as String,
+      inLocation: json['inLocation'] as String,
       description: json['description'] as String?,
-      required: json['required'] as bool? ?? false,
+      required: json['required'] as bool,
       schema: json['schema'] == null
           ? null
           : ApiSchema.fromJson(json['schema'] as Map<String, dynamic>),
@@ -91,7 +87,7 @@ _$ApiParameterImpl _$$ApiParameterImplFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$$ApiParameterImplToJson(_$ApiParameterImpl instance) =>
     <String, dynamic>{
       'name': instance.name,
-      'in': instance.inLocation,
+      'inLocation': instance.inLocation,
       'description': instance.description,
       'required': instance.required,
       'schema': instance.schema,
@@ -116,7 +112,7 @@ Map<String, dynamic> _$$ApiRequestBodyImplToJson(
 _$ApiHeaderImpl _$$ApiHeaderImplFromJson(Map<String, dynamic> json) =>
     _$ApiHeaderImpl(
       description: json['description'] as String?,
-      required: json['required'] as bool? ?? false,
+      required: json['required'] as bool,
       schema: json['schema'] == null
           ? null
           : ApiSchema.fromJson(json['schema'] as Map<String, dynamic>),

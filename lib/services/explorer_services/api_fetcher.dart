@@ -1,82 +1,43 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:math';
 import 'package:apidash/models/api_explorer_models.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:archive/archive.dart';
 import 'package:flutter/foundation.dart';
-import 'package:hive/hive.dart';
 import 'package:path/path.dart' as path;
 
 class ApiSpecsRepository {
-  static const String _hiveBoxName = 'api_specs_box';
-  static const String _specNamesKey = '_spec_names';
   static const Duration _maxProcessingTime = Duration(seconds: 15);
-
   final String _downloadUrl;
-  final Box<String> _specsBox;
 
-  ApiSpecsRepository({
-    String? downloadUrl,
-    Box<String>? box,
-  })  : _downloadUrl = downloadUrl ??
-            'https://github.com/pratapsingh9/api-catalog-repo/releases/latest/download/final.zip',
-        _specsBox = box ?? Hive.box(_hiveBoxName);
+  ApiSpecsRepository({String? downloadUrl})
+      : _downloadUrl = downloadUrl ??
+            'https://github.com/pratapsingh9/api-catalog-repo/releases/latest/download/final.zip';
 
-  /// Fetches and caches API specifications, returning parsed model objects
-  Future<List<ApiCollection>> fetchAndCacheSpecs() async {
+  Future<List<ApiCollection>> fetchSpecs() async {
     final completer = Completer<List<ApiCollection>>();
     final timer = Timer(_maxProcessingTime, () {
       if (!completer.isCompleted) {
-        completer.completeError(
-          ApiSpecsException('Specs processing timed out'),
-        );
+        completer.completeError(ApiSpecsException('Specs processing timed out'));
       }
     });
 
     try {
       debugPrint('[API_SPECS] Starting specs fetch');
       final stopwatch = Stopwatch()..start();
-
-      // 1. Download the zip file
       final zipBytes = await _downloadSpecsZip();
-      
-      // 2. Process contents into models
       final collections = await _processZipContents(zipBytes);
       
-      // 3. Cache the models
-      await _cacheCollections(collections);
-
       debugPrint('[API_SPECS] Processed ${collections.length} collections in ${stopwatch.elapsedMilliseconds}ms');
       timer.cancel();
       completer.complete(collections);
     } catch (e, stackTrace) {
       timer.cancel();
       debugPrint('[API_SPECS_ERROR] Fetch failed: $e\n$stackTrace');
-      completer.completeError(
-        e is ApiSpecsException ? e : ApiSpecsException('Fetch failed: $e'),
-      );
+      completer.completeError(e is ApiSpecsException ? e : ApiSpecsException('Fetch failed: $e'));
     }
 
     return completer.future;
-  }
-
-  /// Returns cached API specifications as model objects
-  List<ApiCollection> getCachedSpecs() {
-    try {
-      final idsJson = _specsBox.get(_specNamesKey);
-      if (idsJson == null) return [];
-
-      final ids = (jsonDecode(idsJson) as List).cast<String>();
-      return ids.map((id) {
-        final json = _specsBox.get(id);
-        if (json == null) throw Exception('Missing collection $id');
-        return ApiCollection.fromJson(jsonDecode(json) as Map<String, dynamic>);
-      }).toList();
-    } catch (e, stackTrace) {
-      debugPrint('[API_SPECS_ERROR] Cache read failed: $e\n$stackTrace');
-      return [];
-    }
   }
 
   Future<List<int>> _downloadSpecsZip() async {
@@ -86,17 +47,12 @@ class ApiSpecsRepository {
       final (zipRes, _, zipErr) = await sendHttpRequest(
         requestId,
         APIType.rest,
-        HttpRequestModel(
-          url: _downloadUrl,
-          method: HTTPVerb.get,
-        ),
+        HttpRequestModel(url: _downloadUrl, method: HTTPVerb.get),
       );
 
       if (zipErr != null) throw ApiSpecsException('Download failed: $zipErr');
       if (zipRes == null) throw ApiSpecsException('No response received');
-      if (zipRes.statusCode != 200) {
-        throw ApiSpecsException('Server responded with HTTP ${zipRes.statusCode}');
-      }
+      if (zipRes.statusCode != 200) throw ApiSpecsException('HTTP ${zipRes.statusCode}');
       if (zipRes.bodyBytes.isEmpty) throw ApiSpecsException('Empty ZIP content');
 
       return zipRes.bodyBytes;
@@ -122,8 +78,8 @@ class ApiSpecsRepository {
 
           final collection = ApiCollection(
             id: path.basename(file.name),
-            name: json['info']?['title'] ?? 'Unnamed Collection',
-            description: json['info']?['description'],
+            name: json['info']?['title']?.toString() ?? 'Unnamed Collection',
+            description: json['info']?['description']?.toString(),
             endpoints: _parseEndpoints(json),
             sourceUrl: json['info']?['contact']?['url']?.toString(),
           );
@@ -158,7 +114,7 @@ class ApiSpecsRepository {
         try {
           endpoints.add(ApiEndpoint(
             id: '${path}_${method}',
-            name: endpointData['summary'] ?? '${method.toUpperCase()} $path',
+            name: (endpointData['summary'] ?? '${method.toUpperCase()} $path').toString(),
             description: endpointData['description']?.toString(),
             path: path,
             method: HTTPVerb.values.firstWhere(
@@ -166,10 +122,10 @@ class ApiSpecsRepository {
               orElse: () => HTTPVerb.get,
             ),
             baseUrl: baseUrl,
-            parameters: _parseParameters(endpointData['parameters']),
-            requestBody: _parseRequestBody(endpointData['requestBody']),
-            headers: _parseHeaders(endpointData),
-            responses: _parseResponses(endpointData['responses']),
+            parameters: _parseParameters(endpointData['parameters'] as List<dynamic>?),
+            requestBody: _parseRequestBody(endpointData['requestBody'] as Map<String, dynamic>?),
+            headers: _parseHeaders(endpointData['headers'] as Map<String, dynamic>?),
+            responses: _parseResponses(endpointData['responses'] as Map<String, dynamic>?),
           ));
         } catch (e) {
           debugPrint('[API_SPECS_WARN] Failed to parse endpoint $method $path: $e');
@@ -178,57 +134,6 @@ class ApiSpecsRepository {
     });
 
     return endpoints;
-  }
-
-Future<void> _cacheCollections(List<ApiCollection> collections) async {
-  try {
-    await _specsBox.clear();
-
-    await _specsBox.put(
-      _specNamesKey,
-      jsonEncode(collections.map((c) => c.id).toList()),
-    );
-
-    // Store each collection as JSON
-    for (final collection in collections) {
-      await _specsBox.put(
-        collection.id,
-        jsonEncode(collection.toJson()),
-      );
-    }
-
-    await _verifyCache(collections);
-  } catch (e) {
-    await _specsBox.clear();
-    throw ApiSpecsException('Cache update failed: $e');
-  }
-}
-
-
-  Future<void> _verifyCache(List<ApiCollection> collections) async {
-    try {
-      final idsJson = _specsBox.get(_specNamesKey);
-      if (idsJson == null) throw Exception('Missing IDs list');
-
-      final storedIds = (jsonDecode(idsJson) as List).cast<String>();
-      if (storedIds.length != collections.length) {
-        throw ApiSpecsException('Cache verification failed: count mismatch');
-      }
-
-      // Verify random samples
-      final random = Random();
-      final samples = collections.length > 5
-          ? [collections.first, collections[random.nextInt(collections.length)], collections.last]
-          : collections;
-
-      for (final collection in samples) {
-        final json = _specsBox.get(collection.id);
-        if (json == null) throw Exception('Missing collection');
-        ApiCollection.fromJson(jsonDecode(json) as Map<String, dynamic>);
-      }
-    } catch (e) {
-      throw ApiSpecsException('Cache verification failed: $e');
-    }
   }
 
   bool _isValidOpenApiSpec(Map<String, dynamic> json) {
@@ -245,29 +150,27 @@ Future<void> _cacheCollections(List<ApiCollection> collections) async {
     }
   }
 
-  // Model parsing helpers
-  List<ApiParameter>? _parseParameters(dynamic parameters) {
-    if (parameters is! List) return null;
-    return parameters.map((p) => ApiParameter.fromJson(p)).toList();
+  List<ApiParameter>? _parseParameters(List<dynamic>? parameters) {
+    if (parameters == null) return null;
+    return parameters.map((p) => ApiParameter.fromJson(p as Map<String, dynamic>)).toList();
   }
 
-  ApiRequestBody? _parseRequestBody(dynamic requestBody) {
-    if (requestBody is! Map<String, dynamic>) return null;
+  ApiRequestBody? _parseRequestBody(Map<String, dynamic>? requestBody) {
+    if (requestBody == null) return null;
     return ApiRequestBody.fromJson(requestBody);
   }
 
-  Map<String, ApiHeader>? _parseHeaders(dynamic headers) {
-    // Implement based on your header structure
-    return null;
+  Map<String, ApiHeader>? _parseHeaders(Map<String, dynamic>? headers) {
+    if (headers == null) return null;
+    return headers.map((k, v) => MapEntry(k, ApiHeader.fromJson(v as Map<String, dynamic>)));
   }
 
-  Map<String, ApiResponse>? _parseResponses(dynamic responses) {
-    if (responses is! Map<String, dynamic>) return null;
-    return responses.map((k, v) => MapEntry(k, ApiResponse.fromJson(v)));
+  Map<String, ApiResponse>? _parseResponses(Map<String, dynamic>? responses) {
+    if (responses == null) return null;
+    return responses.map((k, v) => MapEntry(k, ApiResponse.fromJson(v as Map<String, dynamic>)));
   }
 }
 
-/// Custom exception for API specs operations
 class ApiSpecsException implements Exception {
   final String message;
   final String? details;

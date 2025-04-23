@@ -1,3 +1,7 @@
+import 'dart:convert';
+import 'dart:math';
+
+import 'package:apidash/models/api_explorer_models.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -10,6 +14,9 @@ const String kKeyEnvironmentBoxIds = "environmentIds";
 const String kHistoryMetaBox = "apidash-history-meta";
 const String kHistoryBoxIds = "historyIds";
 const String kHistoryLazyBox = "apidash-history-lazy";
+
+const String kApiSpecsBox = "api_specs_box";
+const String kApiSpecsNamesKey = "_spec_names";
 
 Future<bool> initHiveBoxes(
   bool initializeUsingPath,
@@ -38,6 +45,7 @@ Future<bool> openHiveBoxes() async {
     await Hive.openBox(kEnvironmentBox);
     await Hive.openBox(kHistoryMetaBox);
     await Hive.openLazyBox(kHistoryLazyBox);
+    await Hive.openBox<String>(kApiSpecsBox); // api spec box
     return true;
   } catch (e) {
     debugPrint("ERROR OPEN HIVE BOXES: $e");
@@ -59,6 +67,9 @@ Future<void> clearHiveBoxes() async {
     if (Hive.isBoxOpen(kHistoryLazyBox)) {
       await Hive.lazyBox(kHistoryLazyBox).clear();
     }
+    if (Hive.isBoxOpen(kApiSpecsBox)) {
+      await Hive.box(kApiSpecsBox).clear();
+    }
   } catch (e) {
     debugPrint("ERROR CLEAR HIVE BOXES: $e");
   }
@@ -78,6 +89,9 @@ Future<void> deleteHiveBoxes() async {
     if (Hive.isBoxOpen(kHistoryLazyBox)) {
       await Hive.lazyBox(kHistoryLazyBox).deleteFromDisk();
     }
+    if (Hive.isBoxOpen(kApiSpecsBox)) {
+      await Hive.box(kApiSpecsBox).deleteFromDisk();
+    }
     await Hive.close();
   } catch (e) {
     debugPrint("ERROR DELETE HIVE BOXES: $e");
@@ -91,13 +105,14 @@ class HiveHandler {
   late final Box environmentBox;
   late final Box historyMetaBox;
   late final LazyBox historyLazyBox;
-
+  late final Box apiSpecsBox;
   HiveHandler() {
     debugPrint("Trying to open Hive boxes");
     dataBox = Hive.box(kDataBox);
     environmentBox = Hive.box(kEnvironmentBox);
     historyMetaBox = Hive.box(kHistoryMetaBox);
     historyLazyBox = Hive.lazyBox(kHistoryLazyBox);
+    apiSpecsBox = Hive.box<String>(kApiSpecsBox);
   }
 
   dynamic getIds() => dataBox.get(kKeyDataBoxIds);
@@ -170,6 +185,77 @@ class HiveHandler {
           await environmentBox.delete(key);
         }
       }
+    }
+  }
+
+  Future<void> cacheApiSpecsCollections(List<ApiCollection> collections) async {
+    try {
+      await apiSpecsBox.clear();
+
+      await apiSpecsBox.put(
+        kApiSpecsNamesKey,
+        jsonEncode(collections.map((c) => c.id).toList()),
+      );
+
+      // Store each collection as JSON
+      for (final collection in collections) {
+        await apiSpecsBox.put(
+          collection.id,
+          jsonEncode(collection.toJson()),
+        );
+      }
+
+      await _verifyApiSpecsCache(collections);
+    } catch (e) {
+      await apiSpecsBox.clear();
+      throw Exception('API specs cache update failed: $e');
+    }
+  }
+
+  Future<void> _verifyApiSpecsCache(List<ApiCollection> collections) async {
+    try {
+      final idsJson = apiSpecsBox.get(kApiSpecsNamesKey);
+      if (idsJson == null) throw Exception('Missing API specs IDs list');
+
+      final storedIds = (jsonDecode(idsJson) as List).cast<String>();
+      if (storedIds.length != collections.length) {
+        throw Exception('API specs cache verification failed: count mismatch');
+      }
+
+      // Verify random samples
+      final random = Random();
+      final samples = collections.length > 5
+          ? [
+              collections.first,
+              collections[random.nextInt(collections.length)],
+              collections.last
+            ]
+          : collections;
+
+      for (final collection in samples) {
+        final json = apiSpecsBox.get(collection.id);
+        if (json == null) throw Exception('Missing API specs collection');
+        ApiCollection.fromJson(jsonDecode(json) as Map<String, dynamic>);
+      }
+    } catch (e) {
+      throw Exception('API specs cache verification failed: $e');
+    }
+  }
+
+  List<ApiCollection> getCachedApiSpecsCollections() {
+    try {
+      final idsJson = apiSpecsBox.get(kApiSpecsNamesKey);
+      if (idsJson == null) return [];
+
+      final ids = (jsonDecode(idsJson) as List).cast<String>();
+      return ids.map((id) {
+        final json = apiSpecsBox.get(id);
+        if (json == null) throw Exception('Missing API specs collection $id');
+        return ApiCollection.fromJson(jsonDecode(json) as Map<String, dynamic>);
+      }).toList();
+    } catch (e, stackTrace) {
+      debugPrint('[API_SPECS_ERROR] Cache read failed: $e\n$stackTrace');
+      return [];
     }
   }
 }

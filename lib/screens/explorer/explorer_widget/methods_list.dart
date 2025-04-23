@@ -2,9 +2,10 @@ import 'package:apidash/screens/explorer/explorer_widget/method_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
+import 'package:apidash/models/api_explorer_models.dart';
 
 class MethodsList extends ConsumerWidget {
-  final Map<String, dynamic> collection;
+  final ApiCollection collection;
   
   const MethodsList({
     super.key, 
@@ -13,11 +14,9 @@ class MethodsList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final endpoints = collection['endpoints'] as List<dynamic>? ?? [];
-
     return Scaffold(
       appBar: AppBar(
-        title: Text(collection['name'] ?? 'API Collection'),
+        title: Text(collection.name),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => 
@@ -26,9 +25,9 @@ class MethodsList extends ConsumerWidget {
       ),
       body: ListView.builder(
         padding: const EdgeInsets.all(16),
-        itemCount: endpoints.length,
+        itemCount: collection.endpoints.length,
         itemBuilder: (context, index) {
-          final endpoint = endpoints[index] as Map<String, dynamic>;
+          final endpoint = collection.endpoints[index];
           return Padding(
             padding: const EdgeInsets.only(bottom: 12),
             child: MethodCard(endpoint: endpoint),

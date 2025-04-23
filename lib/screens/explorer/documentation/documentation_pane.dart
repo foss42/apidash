@@ -1,29 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:apidash/models/api_explorer_models.dart';
 
-// Main widget that composes all the documentation sections
 class ApiDocumentationPane extends ConsumerWidget {
   const ApiDocumentationPane({
     super.key,
-    this.endpoint,
+    required this.endpoint,
     this.isStandalone = false,
   });
 
-  final Map<String, dynamic>? endpoint;
+  final ApiEndpoint endpoint;
   final bool isStandalone;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedApi = endpoint;
-
     return Scaffold(
       appBar: isStandalone ? _buildAppBar(context) : null,
-      body: selectedApi == null
-          ? _EmptyStateWidget()
-          : SingleChildScrollView(
-              padding: const EdgeInsets.all(24),
-              child: _DocumentationContent(endpoint: selectedApi),
-            ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(24),
+        child: _DocumentationContent(endpoint: endpoint),
+      ),
     );
   }
 
@@ -51,40 +47,8 @@ class ApiDocumentationPane extends ConsumerWidget {
   }
 }
 
-// Widget for showing empty state when no endpoint is selected
-class _EmptyStateWidget extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.api_rounded,
-            size: 64,
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'No endpoint selected',
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Select an API endpoint to view documentation',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// Main content widget that organizes all documentation sections
 class _DocumentationContent extends StatelessWidget {
-  final Map<String, dynamic> endpoint;
+  final ApiEndpoint endpoint;
 
   const _DocumentationContent({required this.endpoint});
 
@@ -95,53 +59,49 @@ class _DocumentationContent extends StatelessWidget {
       children: [
         _EndpointHeaderWidget(endpoint: endpoint),
         const SizedBox(height: 32),
-        if (endpoint['description'] != null) ...[
-          _DescriptionSection(description: endpoint['description']),
+        if (endpoint.description != null) ...[
+          _DescriptionSection(description: endpoint.description!),
           const SizedBox(height: 32),
         ],
-        if ((endpoint['parameters'] as List?)?.isNotEmpty ?? false) ...[
-          _ParametersSection(parameters: endpoint['parameters']),
+        if (endpoint.parameters?.isNotEmpty ?? false) ...[
+          _ParametersSection(parameters: endpoint.parameters!),
           const SizedBox(height: 32),
         ],
-        if (endpoint['requestBody'] != null) ...[
-          _RequestBodySection(requestBody: endpoint['requestBody']),
+        if (endpoint.requestBody != null) ...[
+          _RequestBodySection(requestBody: endpoint.requestBody!),
           const SizedBox(height: 32),
         ],
-        if ((endpoint['headers'] as Map?)?.isNotEmpty ?? false) ...[
-          _HeadersSection(headers: endpoint['headers']),
+        if (endpoint.headers?.isNotEmpty ?? false) ...[
+          _HeadersSection(headers: endpoint.headers!),
           const SizedBox(height: 32),
         ],
-        if ((endpoint['responses'] as Map?)?.isNotEmpty ?? false) ...[
-          _ResponsesSection(responses: endpoint['responses']),
+        if (endpoint.responses?.isNotEmpty ?? false) ...[
+          _ResponsesSection(responses: endpoint.responses!),
         ],
       ],
     );
   }
 }
 
-// Widget for displaying the endpoint header section
 class _EndpointHeaderWidget extends StatelessWidget {
-  final Map<String, dynamic> endpoint;
+  final ApiEndpoint endpoint;
 
   const _EndpointHeaderWidget({required this.endpoint});
 
   @override
   Widget build(BuildContext context) {
-    final method = (endpoint['method']?.toString() ?? 'GET').toUpperCase();
-    final path = endpoint['path']?.toString() ?? '';
-    final baseUrl = endpoint['baseUrl']?.toString() ?? '';
-    final fullUrl = '$baseUrl$path';
+    final fullUrl = '${endpoint.baseUrl}${endpoint.path}';
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            _MethodChip(method: method),
+            _MethodChip(method: endpoint.method.name.toUpperCase()),
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                endpoint['name']?.toString() ?? 'Unnamed Endpoint',
+                endpoint.name,
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
@@ -158,7 +118,6 @@ class _EndpointHeaderWidget extends StatelessWidget {
   }
 }
 
-// Widget for displaying the method chip
 class _MethodChip extends StatelessWidget {
   final String method;
 
@@ -199,7 +158,6 @@ class _MethodChip extends StatelessWidget {
   }
 }
 
-// Widget for displaying and copying the URL
 class _UrlDisplayWidget extends StatelessWidget {
   final String url;
 
@@ -244,7 +202,6 @@ class _UrlDisplayWidget extends StatelessWidget {
   }
 }
 
-// Widget for displaying a section header
 class _SectionHeader extends StatelessWidget {
   final IconData icon;
   final String title;
@@ -294,7 +251,6 @@ class _SectionHeader extends StatelessWidget {
   }
 }
 
-// Widget for the description section
 class _DescriptionSection extends StatelessWidget {
   final String description;
 
@@ -316,7 +272,6 @@ class _DescriptionSection extends StatelessWidget {
   }
 }
 
-// Widget for the description card
 class _DescriptionCard extends StatelessWidget {
   final String description;
 
@@ -345,9 +300,8 @@ class _DescriptionCard extends StatelessWidget {
   }
 }
 
-// Widget for the parameters section
 class _ParametersSection extends StatelessWidget {
-  final List<dynamic> parameters;
+  final List<ApiParameter> parameters;
 
   const _ParametersSection({required this.parameters});
 
@@ -368,9 +322,8 @@ class _ParametersSection extends StatelessWidget {
   }
 }
 
-// Widget for the parameters grid
 class _ParametersGrid extends StatelessWidget {
-  final List<dynamic> parameters;
+  final List<ApiParameter> parameters;
 
   const _ParametersGrid({required this.parameters});
 
@@ -392,17 +345,13 @@ class _ParametersGrid extends StatelessWidget {
   }
 }
 
-// Widget for a single parameter card
 class _ParameterCard extends StatelessWidget {
-  final Map<String, dynamic> parameter;
+  final ApiParameter parameter;
 
   const _ParameterCard({required this.parameter});
 
   @override
   Widget build(BuildContext context) {
-    final isRequired = parameter['required'] == true;
-    final paramType = parameter['in']?.toString() ?? 'query';
-
     return Card(
       elevation: 0,
       shape: RoundedRectangleBorder(
@@ -420,21 +369,21 @@ class _ParameterCard extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    parameter['name']?.toString() ?? 'Parameter',
+                    parameter.name,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
-                _ParamTypeChip(type: paramType),
-                if (isRequired) const SizedBox(width: 8),
-                if (isRequired) _RequiredChip(),
+                _ParamTypeChip(type: parameter.inLocation),
+                if (parameter.required) const SizedBox(width: 8),
+                if (parameter.required) _RequiredChip(),
               ],
             ),
             const SizedBox(height: 8),
-            if (parameter['description'] != null) ...[
+            if (parameter.description != null) ...[
               Text(
-                parameter['description'].toString(),
+                parameter.description!,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
                 ),
@@ -449,7 +398,6 @@ class _ParameterCard extends StatelessWidget {
   }
 }
 
-// Widget for parameter type chip
 class _ParamTypeChip extends StatelessWidget {
   final String type;
 
@@ -479,7 +427,6 @@ class _ParamTypeChip extends StatelessWidget {
   }
 }
 
-// Widget for required chip
 class _RequiredChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -495,9 +442,8 @@ class _RequiredChip extends StatelessWidget {
   }
 }
 
-// Widget for parameter metadata
 class _ParameterMetadata extends StatelessWidget {
-  final Map<String, dynamic> parameter;
+  final ApiParameter parameter;
 
   const _ParameterMetadata({required this.parameter});
 
@@ -507,18 +453,15 @@ class _ParameterMetadata extends StatelessWidget {
       spacing: 8,
       runSpacing: 8,
       children: [
-        if (parameter['type'] != null)
-          _MetadataChip(text: 'Type: ${parameter['type']}'),
-        if (parameter['example'] != null)
-          _MetadataChip(text: 'Example: ${parameter['example']}'),
-        if (parameter['default'] != null)
-          _MetadataChip(text: 'Default: ${parameter['default']}'),
+        if (parameter.schema?.type != null)
+          _MetadataChip(text: 'Type: ${parameter.schema!.type}'),
+        if (parameter.example != null)
+          _MetadataChip(text: 'Example: $parameter.example'),
       ],
     );
   }
 }
 
-// Widget for metadata chip
 class _MetadataChip extends StatelessWidget {
   final String text;
 
@@ -535,9 +478,8 @@ class _MetadataChip extends StatelessWidget {
   }
 }
 
-// Widget for request body section
 class _RequestBodySection extends StatelessWidget {
-  final Map<String, dynamic> requestBody;
+  final ApiRequestBody requestBody;
 
   const _RequestBodySection({required this.requestBody});
 
@@ -557,17 +499,13 @@ class _RequestBodySection extends StatelessWidget {
   }
 }
 
-// Widget for request body card
 class _RequestBodyCard extends StatelessWidget {
-  final Map<String, dynamic> requestBody;
+  final ApiRequestBody requestBody;
 
   const _RequestBodyCard({required this.requestBody});
 
   @override
   Widget build(BuildContext context) {
-    final content = requestBody['content'] as Map<String, dynamic>? ?? {};
-    final description = requestBody['description']?.toString();
-
     return Card(
       elevation: 0,
       shape: RoundedRectangleBorder(
@@ -579,32 +517,33 @@ class _RequestBodyCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (description != null) ...[
+          if (requestBody.description != null) ...[
             Padding(
               padding: const EdgeInsets.all(16),
               child: Text(
-                description,
+                requestBody.description!,
                 style: Theme.of(context).textTheme.bodyLarge,
               ),
             ),
             const Divider(height: 1),
           ],
-          ...content.entries.map((entry) {
-            return _ContentTypeSection(
-              contentType: entry.key,
-              content: entry.value,
-            );
-          }),
+          if (requestBody.content != null && requestBody.content!.isNotEmpty) ...[
+            ...requestBody.content!.entries.map((entry) {
+              return _ContentTypeSection(
+                contentType: entry.key,
+                content: entry.value,
+              );
+            }),
+          ],
         ],
       ),
     );
   }
 }
 
-// Widget for content type section
 class _ContentTypeSection extends StatelessWidget {
   final String contentType;
-  final Map<String, dynamic> content;
+  final ApiContent content;
 
   const _ContentTypeSection({
     required this.contentType,
@@ -613,8 +552,6 @@ class _ContentTypeSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final schema = content['schema'] as Map<String, dynamic>? ?? {};
-
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -633,24 +570,23 @@ class _ContentTypeSection extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-          _SchemaDetails(schema: schema),
+          _SchemaDetails(schema: content.schema),
         ],
       ),
     );
   }
 }
 
-// Widget for schema details
 class _SchemaDetails extends StatelessWidget {
-  final Map<String, dynamic> schema;
+  final ApiSchema schema;
 
   const _SchemaDetails({required this.schema});
 
   @override
   Widget build(BuildContext context) {
-    if (schema['type'] == 'object' && schema['properties'] != null) {
+    if (schema.type == 'object' && schema.properties != null) {
       return _ObjectSchema(schema: schema);
-    } else if (schema['type'] == 'array' && schema['items'] != null) {
+    } else if (schema.type == 'array' && schema.items != null) {
       return _ArraySchema(schema: schema);
     } else {
       return _BasicSchema(schema: schema);
@@ -658,33 +594,27 @@ class _SchemaDetails extends StatelessWidget {
   }
 }
 
-// Widget for object schema
 class _ObjectSchema extends StatelessWidget {
-  final Map<String, dynamic> schema;
+  final ApiSchema schema;
 
   const _ObjectSchema({required this.schema});
 
   @override
   Widget build(BuildContext context) {
-    final properties = schema['properties'] as Map<String, dynamic>? ?? {};
-    final requiredFields = List<String>.from(schema['required'] ?? []);
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (schema['description'] != null) ...[
+        if (schema.description != null) ...[
           Text(
-            schema['description'].toString(),
+            schema.description!,
             style: Theme.of(context).textTheme.bodyMedium,
           ),
           const SizedBox(height: 16),
         ],
-        ...properties.entries.map((entry) {
-          final isRequired = requiredFields.contains(entry.key);
+        ...schema.properties!.entries.map((entry) {
           return _PropertyItem(
             name: entry.key,
             property: entry.value,
-            isRequired: isRequired,
           );
         }),
       ],
@@ -692,16 +622,13 @@ class _ObjectSchema extends StatelessWidget {
   }
 }
 
-// Widget for property item
 class _PropertyItem extends StatelessWidget {
   final String name;
-  final dynamic property;
-  final bool isRequired;
+  final ApiSchema property;
 
   const _PropertyItem({
     required this.name,
     required this.property,
-    required this.isRequired,
   });
 
   @override
@@ -719,27 +646,21 @@ class _PropertyItem extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Text(
-                name,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const Spacer(),
-              if (isRequired) _RequiredChip(),
-            ],
+          Text(
+            name,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
           ),
           const SizedBox(height: 8),
           Text(
-            'Type: ${property['type'] ?? 'unknown'}',
+            'Type: ${property.type ?? 'unknown'}',
             style: Theme.of(context).textTheme.bodySmall,
           ),
-          if (property['description'] != null) ...[
+          if (property.description != null) ...[
             const SizedBox(height: 8),
             Text(
-              property['description'].toString(),
+              property.description!,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
               ),
@@ -751,22 +672,19 @@ class _PropertyItem extends StatelessWidget {
   }
 }
 
-// Widget for array schema
 class _ArraySchema extends StatelessWidget {
-  final Map<String, dynamic> schema;
+  final ApiSchema schema;
 
   const _ArraySchema({required this.schema});
 
   @override
   Widget build(BuildContext context) {
-    final items = schema['items'] as Map<String, dynamic>? ?? {};
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (schema['description'] != null) ...[
+        if (schema.description != null) ...[
           Text(
-            schema['description'].toString(),
+            schema.description!,
             style: Theme.of(context).textTheme.bodyMedium,
           ),
           const SizedBox(height: 16),
@@ -780,30 +698,26 @@ class _ArraySchema extends StatelessWidget {
         const SizedBox(height: 16),
         Padding(
           padding: const EdgeInsets.only(left: 16),
-          child: _SchemaDetails(schema: items),
+          child: _SchemaDetails(schema: schema.items!),
         ),
       ],
     );
   }
 }
 
-// Widget for basic schema
 class _BasicSchema extends StatelessWidget {
-  final Map<String, dynamic> schema;
+  final ApiSchema schema;
 
   const _BasicSchema({required this.schema});
 
   @override
   Widget build(BuildContext context) {
-    final type = schema['type']?.toString() ?? 'unknown';
-    final format = schema['format']?.toString();
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (schema['description'] != null) ...[
+        if (schema.description != null) ...[
           Text(
-            schema['description'].toString(),
+            schema.description!,
             style: Theme.of(context).textTheme.bodyMedium,
           ),
           const SizedBox(height: 16),
@@ -811,10 +725,9 @@ class _BasicSchema extends StatelessWidget {
         Wrap(
           spacing: 8,
           children: [
-            _MetadataChip(text: 'Type: $type'),
-            if (format != null) _MetadataChip(text: 'Format: $format'),
-            if (schema['example'] != null)
-              _MetadataChip(text: 'Example: ${schema['example']}'),
+            _MetadataChip(text: 'Type: ${schema.type}'),
+            if (schema.format != null) _MetadataChip(text: 'Format: ${schema.format}'),
+            if (schema.example != null) _MetadataChip(text: 'Example: ${schema.example}'),
           ],
         ),
       ],
@@ -822,9 +735,8 @@ class _BasicSchema extends StatelessWidget {
   }
 }
 
-// Widget for headers section
 class _HeadersSection extends StatelessWidget {
-  final Map<String, dynamic> headers;
+  final Map<String, ApiHeader> headers;
 
   const _HeadersSection({required this.headers});
 
@@ -845,9 +757,8 @@ class _HeadersSection extends StatelessWidget {
   }
 }
 
-// Widget for headers table
 class _HeadersTable extends StatelessWidget {
-  final Map<String, dynamic> headers;
+  final Map<String, ApiHeader> headers;
 
   const _HeadersTable({required this.headers});
 
@@ -883,12 +794,10 @@ class _HeadersTable extends StatelessWidget {
           ),
           // Table Rows
           ...headers.entries.map((entry) {
-            final header = entry.value as Map<String, dynamic>;
-            final isRequired = header['required'] == true;
             return _HeaderRow(
               name: entry.key,
-              description: header['description']?.toString() ?? '',
-              isRequired: isRequired,
+              description: entry.value.description ?? '',
+              isRequired: entry.value.required,
             );
           }),
         ],
@@ -897,7 +806,6 @@ class _HeadersTable extends StatelessWidget {
   }
 }
 
-// Widget for a single header row
 class _HeaderRow extends StatelessWidget {
   final String name;
   final String description;
@@ -952,9 +860,8 @@ class _HeaderRow extends StatelessWidget {
   }
 }
 
-// Widget for responses section
 class _ResponsesSection extends StatelessWidget {
-  final Map<String, dynamic> responses;
+  final Map<String, ApiResponse> responses;
 
   const _ResponsesSection({required this.responses});
 
@@ -982,10 +889,9 @@ class _ResponsesSection extends StatelessWidget {
   }
 }
 
-// Widget for a single response card
 class _ResponseCard extends StatelessWidget {
   final String statusCode;
-  final Map<String, dynamic> response;
+  final ApiResponse response;
 
   const _ResponseCard({
     required this.statusCode,
@@ -994,9 +900,6 @@ class _ResponseCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final description = response['description']?.toString() ?? 'No description';
-    final content = response['content'] as Map<String, dynamic>? ?? {};
-
     return Card(
       elevation: 0,
       margin: const EdgeInsets.only(bottom: 16),
@@ -1037,7 +940,7 @@ class _ResponseCard extends StatelessWidget {
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    description,
+                    response.description ?? 'No description',
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ),
@@ -1045,12 +948,12 @@ class _ResponseCard extends StatelessWidget {
             ),
           ),
           // Response Content
-          if (content.isNotEmpty) ...[
+          if (response.content != null && response.content!.isNotEmpty) ...[
             Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: content.entries.map((entry) {
+                children: response.content!.entries.map((entry) {
                   return _ContentTypeSection(
                     contentType: entry.key,
                     content: entry.value,

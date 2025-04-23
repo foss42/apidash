@@ -2,18 +2,17 @@ import 'package:apidash/providers/providers.dart';
 import 'package:apidash/screens/explorer/explorer_widget/api_explorer_url_card.dart';
 import 'package:apidash/screens/explorer/explorer_widget/splitView.dart';
 import 'package:flutter/material.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:apidash/models/api_explorer_models.dart';
 
 class ApiExplorerDetailView extends ConsumerWidget {
-  final Map<String, dynamic> api;
+  final ApiEndpoint endpoint;
   final bool isMediumWindow;
-  final TextEditingController searchController;
 
   const ApiExplorerDetailView({
     super.key,
-    required this.api,
+    required this.endpoint,
     required this.isMediumWindow,
-    required this.searchController,
   });
 
   void _handleBackNavigation(WidgetRef ref, BuildContext context) {
@@ -21,29 +20,30 @@ class ApiExplorerDetailView extends ConsumerWidget {
     ref.read(selectedCollectionIdProvider.notifier).state = null;
   }
 
- @override
-Widget build(BuildContext context, WidgetRef ref) {
-  return Scaffold(
-    appBar: AppBar(
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back),
-        onPressed: () => _handleBackNavigation(ref, context),
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => _handleBackNavigation(ref, context),
+        ),
+        title: Text(endpoint.name),
       ),
-    ),
-    body: Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          child: ApiExplorerURLCard(apiEndpoint: api),
-        ),
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
-            child: ApiExplorerSplitView(api: api),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: ApiExplorerURLCard(endpoint: endpoint),
           ),
-        ),
-      ],
-    ),
-  );
-}
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+              child: ApiExplorerSplitView(endpoint: endpoint),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

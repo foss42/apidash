@@ -1,12 +1,14 @@
 import 'package:apidash/screens/explorer/explorer_widget/api_explorer_detail_view.dart';
 import 'package:apidash/utils/color_utils.dart';
+import 'package:apidash_core/consts.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
+import 'package:apidash/models/api_explorer_models.dart';
 
 class MethodCard extends ConsumerWidget {
-  final Map<String, dynamic> endpoint;
+  final ApiEndpoint endpoint;
   
   const MethodCard({
     super.key, 
@@ -16,14 +18,12 @@ class MethodCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final method = endpoint['method']?.toString().toUpperCase() ?? 'GET';
-    final color = getMethodColor(method);
-    final collection = ref.watch(selectedCollectionProvider);
-    final baseUrl = collection?['baseUrl']?.toString() ?? '';
+    final color = getMethodColor(endpoint.method.name.toUpperCase());
 
     return Card(
       child: InkWell(
-        onTap: () => _navigateToEndpointDetail(context, ref),
+        borderRadius: BorderRadius.circular(12),
+        onTap: () => _handleEndpointTap(context, ref),
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -31,12 +31,13 @@ class MethodCard extends ConsumerWidget {
             children: [
               Row(
                 children: [
-                  _buildMethodBadge(context, method, color),
+                  _buildMethodBadge(method: endpoint.method, color: color),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      endpoint['name']?.toString() ?? 'Untitled Endpoint',
+                      endpoint.name,
                       style: theme.textTheme.titleMedium,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                   const Icon(Icons.chevron_right),
@@ -44,11 +45,12 @@ class MethodCard extends ConsumerWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                '$baseUrl${endpoint['path'] ?? ''}',
+                '${endpoint.baseUrl}${endpoint.path}',
                 style: theme.textTheme.bodySmall?.copyWith(
                   fontFamily: 'RobotoMono',
                   color: theme.colorScheme.primary,
                 ),
+                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),
@@ -57,7 +59,10 @@ class MethodCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildMethodBadge(BuildContext context, String method, Color color) {
+  Widget _buildMethodBadge({
+    required HTTPVerb method,
+    required Color color,
+  }) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
@@ -66,26 +71,25 @@ class MethodCard extends ConsumerWidget {
         border: Border.all(color: color.withOpacity(0.3)),
       ),
       child: Text(
-        method,
-        style: Theme.of(context).textTheme.labelMedium?.copyWith(
-          color: color,
-          fontWeight: FontWeight.w600,
-        ),
+        method.name.toUpperCase(),
+        // style: Theme.of(context).textTheme.labelMedium?.copyWith(
+        //   color: color,
+        //   fontWeight: FontWeight.w600,
+        // ),
       ),
     );
   }
 
-  void _navigateToEndpointDetail(BuildContext context, WidgetRef ref) {
-    ref.read(selectedEndpointIdProvider.notifier).state = endpoint['id'];
+  void _handleEndpointTap(BuildContext context, WidgetRef ref) {
+    ref.read(selectedEndpointIdProvider.notifier).state = endpoint.id;
     
     if (context.isMediumWindow) {
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => ApiExplorerDetailView(
+            endpoint: endpoint,
             isMediumWindow: true,
-            searchController: TextEditingController(),
-             api: endpoint,
           ),
         ),
       );

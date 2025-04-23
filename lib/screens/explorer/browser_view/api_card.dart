@@ -1,10 +1,13 @@
+import 'package:apidash/models/api_explorer_models.dart';
 import 'package:apidash/utils/color_utils.dart';
+import 'package:apidash_core/consts.dart';
+import 'package:code_builder/code_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 
 class ApiCard extends ConsumerWidget {
-  final Map<String, dynamic> collection;
+  final ApiCollection collection;
   final ThemeData theme;
 
   const ApiCard({
@@ -15,8 +18,7 @@ class ApiCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final endpoints =
-        List<Map<String, dynamic>>.from(collection['endpoints'] ?? []);
+    final endpoints = collection.endpoints;
 
     return Card(
       elevation: 0,
@@ -41,15 +43,17 @@ class ApiCard extends ConsumerWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _CardHeader(theme: theme, endpointCount: endpoints.length),
+                  _CardHeader(
+                      theme: theme,
+                      endpointCount: endpoints?.length ?? 0),
                   const SizedBox(height: 12),
-                  _CardTitle(theme: theme, name: collection['name']),
+                  _CardTitle(theme: theme, name: collection.name),
                   const SizedBox(height: 8),
                   _CardDescription(
-                      theme: theme, description: collection['description']),
+                      theme: theme, description: collection.description),
                 ],
               ),
-              if (endpoints.isNotEmpty) ...[
+              if (endpoints != null && endpoints.isNotEmpty) ...[
                 const SizedBox(height: 12),
                 _MethodChips(theme: theme, endpoints: endpoints),
               ],
@@ -72,7 +76,7 @@ class ApiCard extends ConsumerWidget {
 
   void _handleTap(WidgetRef ref) {
     ref.read(selectedEndpointIdProvider.notifier).state = null;
-    ref.read(selectedCollectionIdProvider.notifier).state = collection['id'];
+    ref.read(selectedCollectionIdProvider.notifier).state = collection.id;
   }
 }
 
@@ -123,7 +127,7 @@ class _CardHeader extends StatelessWidget {
 
 class _CardTitle extends StatelessWidget {
   final ThemeData theme;
-  final String? name;
+  final String name;
 
   const _CardTitle({
     required this.theme,
@@ -133,7 +137,7 @@ class _CardTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(
-      name ?? 'Unnamed API',
+      name,
       style: theme.textTheme.titleMedium?.copyWith(
         fontWeight: FontWeight.w600,
         height: 1.3,
@@ -169,7 +173,7 @@ class _CardDescription extends StatelessWidget {
 
 class _MethodChips extends StatelessWidget {
   final ThemeData theme;
-  final List<Map<String, dynamic>> endpoints;
+  final List<ApiEndpoint> endpoints;
 
   const _MethodChips({
     required this.theme,
@@ -185,7 +189,7 @@ class _MethodChips extends StatelessWidget {
         itemCount: endpoints.length > 4 ? 4 : endpoints.length,
         separatorBuilder: (context, index) => const SizedBox(width: 6),
         itemBuilder: (context, index) {
-          final method = endpoints[index]['method'] ?? 'GET';
+          final method = endpoints[index].method;
           return _MethodChip(
             method: method,
             theme: theme,
@@ -197,17 +201,16 @@ class _MethodChips extends StatelessWidget {
 }
 
 class _MethodChip extends StatelessWidget {
-  final String method;
+  final HTTPVerb method;
   final ThemeData theme;
 
   const _MethodChip({
     required this.method,
     required this.theme,
   });
-
   @override
   Widget build(BuildContext context) {
-    final color = getMethodColor(method);
+    final color = getMethodColor(method.toString());
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -220,7 +223,7 @@ class _MethodChip extends StatelessWidget {
         ),
       ),
       child: Text(
-        method.toUpperCase(),
+        method.name.toUpperCase(),
         style: theme.textTheme.labelSmall?.copyWith(
           color: color,
           fontWeight: FontWeight.w600,

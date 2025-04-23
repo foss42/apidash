@@ -1,8 +1,9 @@
+import 'package:apidash/models/api_explorer_models.dart';
 import 'package:flutter/material.dart';
 import 'api_card.dart';
 
 class ApiGridView extends StatelessWidget {
-  final List<Map<String, dynamic>> collections;
+  final List<ApiCollection> collections;
   final ThemeData theme;
 
   const ApiGridView({
