@@ -41,20 +41,29 @@ class EnvironmentTriggerField extends StatefulWidget {
 class EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
   late TextEditingController controller;
   late FocusNode _focusNode;
+  bool _isFocused = false;
 
   @override
   void initState() {
     super.initState();
     controller = widget.controller ??
         TextEditingController.fromValue(TextEditingValue(
-            text: widget.initialValue!,
-            selection:
-                TextSelection.collapsed(offset: widget.initialValue!.length)));
+            text: widget.initialValue ?? '',
+            selection: TextSelection.collapsed(
+                offset: widget.initialValue?.length ?? 0)));
     _focusNode = widget.focusNode ?? FocusNode();
+    _focusNode.addListener(_handleFocusChange);
+  }
+
+  void _handleFocusChange() {
+    setState(() {
+      _isFocused = _focusNode.hasFocus;
+    });
   }
 
   @override
   void dispose() {
+    _focusNode.removeListener(_handleFocusChange);
     controller.dispose();
     _focusNode.dispose();
     super.dispose();
@@ -67,9 +76,9 @@ class EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
         (oldWidget.initialValue != widget.initialValue)) {
       controller = widget.controller ??
           TextEditingController.fromValue(TextEditingValue(
-              text: widget.initialValue!,
+              text: widget.initialValue ?? '',
               selection: TextSelection.collapsed(
-                  offset: widget.initialValue!.length)));
+                  offset: widget.initialValue?.length ?? 0)));
     }
   }
 
@@ -117,7 +126,7 @@ class EnvironmentTriggerFieldState extends State<EnvironmentTriggerField> {
         return ExtendedTextField(
           controller: textEditingController,
           focusNode: focusnode,
-          maxLines: null,
+          maxLines: _isFocused ? null : 1,
           decoration: widget.decoration,
           style: widget.style,
           onChanged: widget.onChanged,
