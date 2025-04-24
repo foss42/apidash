@@ -11,7 +11,10 @@ A List of API endpoints that can be used for testing API Dash
 
 #### For Testing HTTP PUT, PATCH, DELETE
 - https://reqres.in/
-  
+ 
+#### For Testing HTTP OPTIONS, TRACE
+- Use localhost servers, as TRACE and OPTIONS HTTP methods are not publicly available (used for diagnostic purposes)
+
 #### For Testing sites with Bad Certificate
 - https://badssl.com/
 - https://www.ssl.com/sample-valid-revoked-and-expired-ssl-tls-certificates/

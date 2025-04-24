@@ -104,6 +104,17 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
             final streamed = await client.send(request);
             response = await http.Response.fromStream(streamed);
             break;
+          case HTTPVerb.options:
+            final request = prepareHttpRequest(
+              url: requestUrl,
+              method: requestModel.method.name.toUpperCase(),
+              headers: headers,
+              body: body,
+              overrideContentType: overrideContentType,
+            );
+            final streamed = await client.send(request);
+            response = await http.Response.fromStream(streamed);
+            break;
         }
       }
       if (apiType == APIType.graphql) {
