@@ -1,10 +1,10 @@
 name: json_field_editor
 description: "JSON field editor allows easy editing of JSON text. Unlock the full capabilities of JSON syntax highlighting, validation & formatting."
-version: 1.2.0
-repository: https://github.com/foss42/apidash/tree/main/packages/json_textfield
-homepage: https://github.com/foss42/apidash/tree/main/packages/json_textfield
+version: 1.2.1
+repository: https://github.com/foss42/apidash/tree/main/packages/json_field_editor
+homepage: https://github.com/foss42/apidash/tree/main/packages/json_field_editor
 issue_tracker: https://github.com/foss42/apidash/issues
-documentation: https://github.com/foss42/apidash/tree/main/packages/json_textfield
+documentation: https://github.com/foss42/apidash/tree/main/packages/json_field_editor
 
 environment:
   sdk: ^3.7.0

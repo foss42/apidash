@@ -136,8 +136,8 @@ class HisRequestBody extends ConsumerWidget {
                 ContentType.formdata => Padding(
                     padding: kPh4,
                     child: RequestFormDataTable(
-                        rows: requestModel?.formData ?? [])),
-                // TODO: Fix JsonTextFieldEditor & plug it here
+                        rows: requestModel?.formData ?? []),
+                  ),
                 ContentType.json => Padding(
                     padding: kPt5o10,
                     child: JsonTextFieldEditor(
@@ -146,6 +146,7 @@ class HisRequestBody extends ConsumerWidget {
                           "${selectedHistoryModel?.historyId}-json-body-viewer",
                       initialValue: requestModel?.body,
                       readOnly: true,
+                      isDark: Theme.of(context).brightness == Brightness.dark,
                     ),
                   ),
                 _ => Padding(
