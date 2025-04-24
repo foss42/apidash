@@ -90,3 +90,12 @@ Column(
 ```
 
 Explore the complete example in the `example` folder.
+
+## Maintainer
+
+- Ashita Prasad ([GitHub](https://github.com/ashitaprasad), [LinkedIn](https://www.linkedin.com/in/ashitaprasad/), [X](https://x.com/ashitaprasad))
+
+## License
+
+This project is licensed under the [Apache 2.0 & MIT License](https://github.com/foss42/apidash/blob/main/packages/json_field_editor/LICENSE).
+
