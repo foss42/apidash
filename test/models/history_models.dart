@@ -77,3 +77,21 @@ final Map<String, dynamic> historyRequestModelJson2 = {
   "httpRequestModel": httpRequestModelPost10Json,
   "httpResponseModel": responseModelJson,
 };
+
+/// Basic History Meta model 1
+final historyMetaModel3 = HistoryMetaModel(
+  historyId: 'historyId3',
+  requestId: 'requestId3',
+  apiType: APIType.rest,
+  url: 'https://reqbin.com/echo/options',
+  method: HTTPVerb.options,
+  timeStamp: DateTime(2024, 1, 1),
+  responseStatus: 200,
+);
+
+final historyRequestModel3 = HistoryRequestModel(
+  historyId: 'historyId3',
+  metaData: historyMetaModel3,
+  httpRequestModel: httpRequestModelOptions1,
+  httpResponseModel: responseModel,
+);

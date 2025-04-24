@@ -75,5 +75,13 @@ void main() {
       expect(historyRequestModel.httpRequestModel, httpRequestModelGet4);
       expect(historyRequestModel.httpResponseModel, responseModel);
     });
+
+    test("Testing HistoryRequestModel getters", () {
+      var historyRequestModel = historyRequestModel3;
+      expect(historyRequestModel.historyId, 'historyId3');
+      expect(historyRequestModel.metaData, historyMetaModel3);
+      expect(historyRequestModel.httpRequestModel, httpRequestModelOptions1);
+      expect(historyRequestModel.httpResponseModel, responseModel);
+    });
   });
 }
