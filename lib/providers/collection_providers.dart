@@ -112,7 +112,7 @@ class CollectionStateNotifier
     final rId = id ?? ref.read(selectedIdStateProvider);
     var itemIds = ref.read(requestSequenceProvider);
     int idx = itemIds.indexOf(rId!);
-    cancelHttpRequest(rId);
+    cancelDioRequest(rId);
     itemIds.remove(rId);
     ref.read(requestSequenceProvider.notifier).state = [...itemIds];
 
@@ -289,7 +289,7 @@ class CollectionStateNotifier
     state = map;
 
     bool noSSL = ref.read(settingsProvider).isSSLDisabled;
-    var responseRec = await sendHttpRequest(
+    var responseRec = await sendDioRequest(
       requestId,
       apiType,
       substitutedHttpRequestModel,
@@ -305,11 +305,11 @@ class CollectionStateNotifier
         isWorking: false,
       );
     } else {
-      final httpResponseModel = baseHttpResponseModel.fromResponse(
+      final httpResponseModel = HttpResponseModel.fromDioResponse(
         response: responseRec.$1!,
         time: responseRec.$2!,
       );
-      int statusCode = responseRec.$1!.statusCode;
+      int statusCode = responseRec.$1!.statusCode ?? -1;
       newRequestModel = requestModel.copyWith(
         responseStatus: statusCode,
         message: kResponseCodeReasons[statusCode],
@@ -345,7 +345,7 @@ class CollectionStateNotifier
 
   void cancelRequest() {
     final id = ref.read(selectedIdStateProvider);
-    cancelHttpRequest(id);
+    cancelDioRequest(id);
     unsave();
   }
 
