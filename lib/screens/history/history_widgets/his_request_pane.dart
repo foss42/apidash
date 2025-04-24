@@ -140,7 +140,7 @@ class HisRequestBody extends ConsumerWidget {
                   ),
                 ContentType.json => Padding(
                     padding: kPt5o10,
-                    child: JsonTextFieldEditor(
+                    child: TextFieldEditor(
                       key: Key("${selectedHistoryModel?.historyId}-json-body"),
                       fieldKey:
                           "${selectedHistoryModel?.historyId}-json-body-viewer",
