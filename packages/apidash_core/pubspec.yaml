@@ -9,6 +9,7 @@ environment:
   flutter: ">=1.17.0"
 
 dependencies:
+  dio: ^5.8.0+1
   flutter:
     sdk: flutter
   collection: ^1.18.0
@@ -23,7 +24,7 @@ dependencies:
     path: ../postman
   seed: ^0.0.3
   xml: ^6.3.0
-  dio: ^5.8.0+1
+  
 
 dev_dependencies:
   flutter_test:
