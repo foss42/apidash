@@ -1,4 +1,4 @@
-import 'package:apidash/screens/explorer/explorer_widget/api_explorer_detail_view.dart';
+import 'package:apidash/screens/explorer/widget/api_explorer_detail_view.dart';
 import 'package:apidash/utils/color_utils.dart';
 import 'package:apidash_core/consts.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';

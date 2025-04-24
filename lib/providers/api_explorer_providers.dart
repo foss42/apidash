@@ -1,8 +1,8 @@
 import 'package:apidash/models/api_explorer_models.dart';
 import 'package:apidash/providers/collection_providers.dart';
 import 'package:apidash/providers/ui_providers.dart';
-import 'package:apidash/services/explorer_services/apiProccessing_service.dart';
-import 'package:apidash/services/explorer_services/api_fetcher.dart';
+import 'package:apidash/services/apiproccessing.dart';
+import 'package:apidash/services/apipackagezip_service.dart';
 import 'package:apidash/services/hive_services.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
@@ -42,9 +42,11 @@ final selectedEndpointProvider = Provider<ApiEndpoint?>((ref) {
 
   if (endpointId == null || collection == null) return null;
 
-  return collection.endpoints.firstWhere(
-    (e) => e.id == endpointId,
-  );
+  try {
+    return collection.endpoints.firstWhere((e) => e.id == endpointId);
+  } catch (e) {
+    return null; 
+  }
 });
 
 final filteredCollectionsProvider = Provider<List<ApiCollection>>((ref) {

@@ -1,6 +1,6 @@
 import 'package:apidash/providers/providers.dart';
-import 'package:apidash/screens/explorer/explorer_widget/api_explorer_url_card.dart';
-import 'package:apidash/screens/explorer/explorer_widget/splitView.dart';
+import 'package:apidash/screens/explorer/widget/url_card.dart';
+import 'package:apidash/screens/explorer/widget/splitView.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/models/api_explorer_models.dart';

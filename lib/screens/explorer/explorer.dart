@@ -6,8 +6,8 @@ import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
 import 'sidebar.dart';
-import 'explorer_widget/api_explorer_detail_view.dart';
-import 'explorer_widget/methods_list.dart';
+import 'widget/api_explorer_detail_view.dart';
+import 'widget/methods_list.dart';
 
 class ApiExplorerPage extends ConsumerStatefulWidget {
   const ApiExplorerPage({super.key});
@@ -33,29 +33,29 @@ class _ApiExplorerPageState extends ConsumerState<ApiExplorerPage> {
     super.dispose();
   }
 
-  Widget _buildContent(bool isMediumWindow) {
-    final selectedEndpoint = ref.watch(selectedEndpointProvider);
-    final selectedCollection = ref.watch(selectedCollectionProvider);
+Widget _buildContent(bool isMediumWindow) {
+  final selectedEndpoint = ref.watch(selectedEndpointProvider);
+  final selectedCollection = ref.watch(selectedCollectionProvider);
 
-    return AnimatedSwitcher(
-      duration: kTabAnimationDuration,
-      child: selectedEndpoint != null
-          ? ApiExplorerDetailView(
-              key: ValueKey(selectedEndpoint.id),
-              endpoint: selectedEndpoint,
-              isMediumWindow: isMediumWindow,
-            )
-          : selectedCollection != null
-              ? MethodsList(
-                  key: ValueKey(selectedCollection.id),
-                  collection: selectedCollection,
-                )
-              : ApiExplorerBrowseView(
-                  key: const ValueKey('browse'),
-                  searchController: _searchController,
-                ),
-    );
-  }
+  return AnimatedSwitcher(
+    duration: kTabAnimationDuration,
+    child: selectedEndpoint != null
+        ? ApiExplorerDetailView(
+            key: ValueKey('detail_${selectedEndpoint.id}'),
+            endpoint: selectedEndpoint,
+            isMediumWindow: isMediumWindow,
+          )
+        : selectedCollection != null
+            ? MethodsList(
+                key: ValueKey('methods_${selectedCollection.id}'),
+                collection: selectedCollection,
+              )
+            : ApiExplorerBrowseView(
+                key: const ValueKey('browse'),
+                searchController: _searchController,
+              ),
+  );
+}
 
   @override
   Widget build(BuildContext context) {

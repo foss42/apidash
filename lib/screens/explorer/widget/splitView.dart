@@ -26,7 +26,7 @@ class ApiExplorerSplitView extends StatelessWidget {
             children: [
               Expanded(
                 flex: 1,
-                child: ApiDocumentationPane(endpoint: endpoint),
+                child: ApiDocumentationView(endpoint: endpoint),
               ),
             ],
           ),

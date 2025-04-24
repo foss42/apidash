@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:apidash_core/consts.dart';
 import 'package:apidash/models/api_explorer_models.dart';
 
-class ApiDocumentationPane extends ConsumerWidget {
-  const ApiDocumentationPane({
+class ApiDocumentationView extends ConsumerWidget {
+  const ApiDocumentationView({
     super.key,
     required this.endpoint,
     this.isStandalone = false,
@@ -16,352 +17,321 @@ class ApiDocumentationPane extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: isStandalone ? _buildAppBar(context) : null,
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
-        child: _DocumentationContent(endpoint: endpoint),
+      body: Column(
+        children: [
+          Expanded(
+            child: CustomScrollView(
+              slivers: [
+                SliverPadding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 16,
+                  ),
+                  sliver: SliverList(
+                    delegate: SliverChildListDelegate([
+                      _EndpointHeader(endpoint: endpoint),
+                      const SizedBox(height: 32),
+                      if (endpoint.description != null)
+                        _DocumentationSection(
+                          title: 'Description',
+                          child: Text(
+                            endpoint.description!,
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                        ),
+                    ]),
+                  ),
+                ),
+                if (endpoint.parameters?.isNotEmpty ?? false)
+                  _SectionSliver(
+                    title: 'Parameters',
+                    count: endpoint.parameters!.length,
+                    child: _ParametersList(parameters: endpoint.parameters!),
+                  ),
+                if (endpoint.requestBody != null)
+                  _SectionSliver(
+                    title: 'Request Body',
+                    child: _RequestBodyView(requestBody: endpoint.requestBody!),
+                  ),
+                if (endpoint.headers?.isNotEmpty ?? false)
+                  _SectionSliver(
+                    title: 'Headers',
+                    count: endpoint.headers!.length,
+                    child: _HeadersList(headers: endpoint.headers!),
+                  ),
+                if (endpoint.responses?.isNotEmpty ?? false)
+                  _SectionSliver(
+                    title: 'Responses',
+                    count: endpoint.responses!.length,
+                    child: _ResponsesView(responses: endpoint.responses!),
+                  ),
+                const SliverPadding(padding: EdgeInsets.only(bottom: 24)),
+              ],
+            ),
+          ),
+          if (isStandalone)
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: FilledButton(
+                onPressed: () => _tryApi(context),
+                child: const Text('Try this API'),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  void _tryApi(BuildContext context) {
+    // Implement API testing functionality
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ApiTesterView(endpoint: endpoint),
       ),
     );
   }
 
   AppBar _buildAppBar(BuildContext context) {
     return AppBar(
-      title: const Text('API Documentation'),
-      centerTitle: true,
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back),
-        onPressed: () => Navigator.pop(context),
-      ),
+      title: Text(endpoint.name),
       actions: [
         IconButton(
           icon: const Icon(Icons.share),
-          onPressed: () => _shareDocumentation(context),
+          onPressed: () => _shareEndpoint(context),
+          tooltip: 'Share endpoint',
         ),
       ],
     );
   }
 
-  void _shareDocumentation(BuildContext context) {
+  void _shareEndpoint(BuildContext context) {
+    // Implement share functionality
+    final url = '${endpoint.baseUrl}${endpoint.path}';
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Sharing documentation...')),
+      SnackBar(content: Text('Copied to clipboard: $url')),
     );
   }
 }
 
-class _DocumentationContent extends StatelessWidget {
-  final ApiEndpoint endpoint;
+// Helper widget for endpoint header
+class _EndpointHeader extends StatelessWidget {
+  const _EndpointHeader({required this.endpoint});
 
-  const _DocumentationContent({required this.endpoint});
+  final ApiEndpoint endpoint;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _EndpointHeaderWidget(endpoint: endpoint),
-        const SizedBox(height: 32),
-        if (endpoint.description != null) ...[
-          _DescriptionSection(description: endpoint.description!),
-          const SizedBox(height: 32),
-        ],
-        if (endpoint.parameters?.isNotEmpty ?? false) ...[
-          _ParametersSection(parameters: endpoint.parameters!),
-          const SizedBox(height: 32),
-        ],
-        if (endpoint.requestBody != null) ...[
-          _RequestBodySection(requestBody: endpoint.requestBody!),
-          const SizedBox(height: 32),
-        ],
-        if (endpoint.headers?.isNotEmpty ?? false) ...[
-          _HeadersSection(headers: endpoint.headers!),
-          const SizedBox(height: 32),
-        ],
-        if (endpoint.responses?.isNotEmpty ?? false) ...[
-          _ResponsesSection(responses: endpoint.responses!),
-        ],
-      ],
+    return Card(
+      elevation: 1,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                _MethodChip(method: endpoint.method),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    endpoint.name,
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'Endpoint URL',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                  ),
+            ),
+            const SizedBox(height: 4),
+            SelectableText(
+              '${endpoint.baseUrl}${endpoint.path}',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    fontFamily: 'RobotoMono',
+                  ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
 
-class _EndpointHeaderWidget extends StatelessWidget {
-  final ApiEndpoint endpoint;
+// HTTP Method visual indicator
+class _MethodChip extends StatelessWidget {
+  const _MethodChip({required this.method});
 
-  const _EndpointHeaderWidget({required this.endpoint});
+  final HTTPVerb method;
 
   @override
   Widget build(BuildContext context) {
-    final fullUrl = '${endpoint.baseUrl}${endpoint.path}';
+    final color = _getMethodColor(method);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: color),
+      ),
+      child: Text(
+        method.name.toUpperCase(),
+        style: TextStyle(
+          color: color,
+          fontWeight: FontWeight.bold,
+          fontSize: 12,
+        ),
+      ),
+    );
+  }
 
+  Color _getMethodColor(HTTPVerb method) {
+    switch (method) {
+      case HTTPVerb.get:
+        return Colors.green;
+      case HTTPVerb.post:
+        return Colors.blue;
+      case HTTPVerb.put:
+        return Colors.orange;
+      case HTTPVerb.delete:
+        return Colors.red;
+      case HTTPVerb.patch:
+        return Colors.purple;
+      case HTTPVerb.head:
+        return Colors.teal;
+      default:
+        return Colors.grey;
+    }
+  }
+}
+
+// Section wrapper with title and count
+class _SectionSliver extends StatelessWidget {
+  const _SectionSliver({
+    required this.title,
+    this.count,
+    required this.child,
+  });
+
+  final String title;
+  final int? count;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverPadding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      sliver: SliverList(
+        delegate: SliverChildListDelegate([
+          const SizedBox(height: 16),
+          _DocumentationSection(
+            title: title,
+            count: count,
+            child: child,
+          ),
+        ]),
+      ),
+    );
+  }
+}
+
+// Documentation section layout
+class _DocumentationSection extends StatelessWidget {
+  const _DocumentationSection({
+    required this.title,
+    this.count,
+    required this.child,
+  });
+
+  final String title;
+  final int? count;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            _MethodChip(method: endpoint.method.name.toUpperCase()),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                endpoint.name,
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
+            Text(
+              title,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
+            if (count != null) ...[
+              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  count.toString(),
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: Theme.of(context).colorScheme.primary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
+              ),
+            ],
           ],
         ),
-        const SizedBox(height: 16),
-        _UrlDisplayWidget(url: fullUrl),
+        const SizedBox(height: 12),
+        child,
       ],
     );
   }
 }
 
-class _MethodChip extends StatelessWidget {
-  final String method;
+// Parameters list view
+class _ParametersList extends StatelessWidget {
+  const _ParametersList({required this.parameters});
 
-  const _MethodChip({required this.method});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: _getMethodColor(method).withOpacity(0.1),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: _getMethodColor(method).withOpacity(0.3),
-          width: 1.5,
-        ),
-      ),
-      child: Text(
-        method,
-        style: TextStyle(
-          color: _getMethodColor(method),
-          fontWeight: FontWeight.bold,
-          fontSize: 14,
-        ),
-      ),
-    );
-  }
-
-  Color _getMethodColor(String method) {
-    switch (method) {
-      case 'GET': return Colors.green;
-      case 'POST': return Colors.blue;
-      case 'PUT': return Colors.orange;
-      case 'DELETE': return Colors.red;
-      case 'PATCH': return Colors.purple;
-      default: return Colors.grey;
-    }
-  }
-}
-
-class _UrlDisplayWidget extends StatelessWidget {
-  final String url;
-
-  const _UrlDisplayWidget({required this.url});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: Theme.of(context).dividerColor.withOpacity(0.1),
-        ),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: SelectableText(
-              url,
-              style: const TextStyle(fontFamily: 'RobotoMono'),
-            ),
-          ),
-          IconButton(
-            icon: Icon(
-              Icons.copy,
-              size: 20,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            onPressed: () => _copyToClipboard(context, url),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _copyToClipboard(BuildContext context, String text) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Copied to clipboard')),
-    );
-  }
-}
-
-class _SectionHeader extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final int? count;
-
-  const _SectionHeader({
-    required this.icon,
-    required this.title,
-    this.count,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Icon(
-          icon,
-          size: 24,
-          color: Theme.of(context).colorScheme.primary,
-        ),
-        const SizedBox(width: 12),
-        Text(
-          title,
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        if (count != null) ...[
-          const SizedBox(width: 8),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Text(
-              count.toString(),
-              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ],
-      ],
-    );
-  }
-}
-
-class _DescriptionSection extends StatelessWidget {
-  final String description;
-
-  const _DescriptionSection({required this.description});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _SectionHeader(
-          icon: Icons.description_outlined,
-          title: 'Description',
-        ),
-        const SizedBox(height: 16),
-        _DescriptionCard(description: description),
-      ],
-    );
-  }
-}
-
-class _DescriptionCard extends StatelessWidget {
-  final String description;
-
-  const _DescriptionCard({required this.description});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(
-          color: Theme.of(context).dividerColor.withOpacity(0.1),
-        ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Text(
-          description,
-          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-            height: 1.6,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _ParametersSection extends StatelessWidget {
   final List<ApiParameter> parameters;
 
-  const _ParametersSection({required this.parameters});
-
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _SectionHeader(
-          icon: Icons.tune_rounded,
-          title: 'Parameters',
-          count: parameters.length,
-        ),
-        const SizedBox(height: 16),
-        _ParametersGrid(parameters: parameters),
-      ],
-    );
-  }
-}
-
-class _ParametersGrid extends StatelessWidget {
-  final List<ApiParameter> parameters;
-
-  const _ParametersGrid({required this.parameters});
-
-  @override
-  Widget build(BuildContext context) {
-    return GridView.builder(
-      shrinkWrap: true,
+    return ListView.builder(
       physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 1,
-        childAspectRatio: 3,
-        mainAxisSpacing: 12,
-      ),
+      shrinkWrap: true,
       itemCount: parameters.length,
       itemBuilder: (context, index) {
-        return _ParameterCard(parameter: parameters[index]);
+        final param = parameters[index];
+        return _ParameterItem(parameter: param);
       },
     );
   }
 }
 
-class _ParameterCard extends StatelessWidget {
-  final ApiParameter parameter;
+// Single parameter item
+class _ParameterItem extends StatelessWidget {
+  const _ParameterItem({required this.parameter});
 
-  const _ParameterCard({required this.parameter});
+  final ApiParameter parameter;
 
   @override
   Widget build(BuildContext context) {
     return Card(
       elevation: 0,
+      margin: const EdgeInsets.only(bottom: 8),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(8),
         side: BorderSide(
-          color: Theme.of(context).dividerColor.withOpacity(0.1),
+          color: Theme.of(context).dividerColor,
+          width: 1,
         ),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -370,27 +340,33 @@ class _ParameterCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     parameter.name,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                   ),
                 ),
-                _ParamTypeChip(type: parameter.inLocation),
-                if (parameter.required) const SizedBox(width: 8),
-                if (parameter.required) _RequiredChip(),
+                _ParameterBadge(location: parameter.inLocation),
+                if (parameter.required)
+                  const SizedBox(width: 8),
+                if (parameter.required)
+                  const Chip(
+                    label: Text('Required'),
+                    backgroundColor: Colors.red,
+                    labelStyle: TextStyle(color: Colors.white),
+                  ),
               ],
             ),
-            const SizedBox(height: 8),
             if (parameter.description != null) ...[
+              const SizedBox(height: 8),
               Text(
                 parameter.description!,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
-                ),
+                style: Theme.of(context).textTheme.bodyMedium,
               ),
-              const SizedBox(height: 12),
             ],
-            _ParameterMetadata(parameter: parameter),
+            if (parameter.schema != null) ...[
+              const SizedBox(height: 8),
+              _SchemaView(schema: parameter.schema!),
+            ],
           ],
         ),
       ),
@@ -398,126 +374,128 @@ class _ParameterCard extends StatelessWidget {
   }
 }
 
-class _ParamTypeChip extends StatelessWidget {
-  final String type;
+// Parameter location badge
+class _ParameterBadge extends StatelessWidget {
+  const _ParameterBadge({required this.location});
 
-  const _ParamTypeChip({required this.type});
+  final String location;
 
   @override
   Widget build(BuildContext context) {
-    return Chip(
-      label: Text(type),
-      visualDensity: VisualDensity.compact,
-      backgroundColor: _getParamTypeColor(type).withOpacity(0.1),
-      labelStyle: Theme.of(context).textTheme.labelSmall?.copyWith(
-        color: _getParamTypeColor(type),
-        fontWeight: FontWeight.w600,
+    final color = _getLocationColor(location);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Text(
+        location,
+        style: TextStyle(
+          color: color,
+          fontSize: 12,
+        ),
       ),
     );
   }
 
-  Color _getParamTypeColor(String type) {
-    switch (type) {
-      case 'query': return Colors.blue;
-      case 'path': return Colors.green;
-      case 'header': return Colors.purple;
-      case 'body': return Colors.orange;
-      default: return Colors.grey;
+  Color _getLocationColor(String location) {
+    switch (location.toLowerCase()) {
+      case 'query':
+        return Colors.blue;
+      case 'path':
+        return Colors.green;
+      case 'header':
+        return Colors.purple;
+      case 'body':
+        return Colors.orange;
+      default:
+        return Colors.grey;
     }
   }
 }
 
-class _RequiredChip extends StatelessWidget {
+// Schema documentation view
+class _SchemaView extends StatelessWidget {
+  const _SchemaView({required this.schema});
+
+  final ApiSchema schema;
+
   @override
   Widget build(BuildContext context) {
-    return Chip(
-      label: const Text('Required'),
-      visualDensity: VisualDensity.compact,
-      backgroundColor: Colors.red.withOpacity(0.1),
-      labelStyle: Theme.of(context).textTheme.labelSmall?.copyWith(
-        color: Colors.red,
-        fontWeight: FontWeight.w600,
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (schema.type != null)
+            Text(
+              'Type: ${schema.type}',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          if (schema.format != null)
+            Text(
+              'Format: ${schema.format}',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          if (schema.description != null)
+            Text(
+              'Description: ${schema.description}',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          if (schema.example != null)
+            Text(
+              'Example: ${schema.example}',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          if (schema.properties != null) ...[
+            const SizedBox(height: 8),
+            Text(
+              'Properties:',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+            ...schema.properties!.entries.map(
+              (entry) => Padding(
+                padding: const EdgeInsets.only(left: 8, top: 4),
+                child: Text(
+                  '${entry.key}: ${entry.value.type ?? 'unknown'}',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ),
+            ),
+          ],
+        ],
       ),
     );
   }
 }
 
-class _ParameterMetadata extends StatelessWidget {
-  final ApiParameter parameter;
+// Request body documentation
+class _RequestBodyView extends StatelessWidget {
+  const _RequestBodyView({required this.requestBody});
 
-  const _ParameterMetadata({required this.parameter});
-
-  @override
-  Widget build(BuildContext context) {
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      children: [
-        if (parameter.schema?.type != null)
-          _MetadataChip(text: 'Type: ${parameter.schema!.type}'),
-        if (parameter.example != null)
-          _MetadataChip(text: 'Example: $parameter.example'),
-      ],
-    );
-  }
-}
-
-class _MetadataChip extends StatelessWidget {
-  final String text;
-
-  const _MetadataChip({required this.text});
-
-  @override
-  Widget build(BuildContext context) {
-    return Chip(
-      label: Text(text),
-      visualDensity: VisualDensity.compact,
-      backgroundColor: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.1),
-      labelStyle: Theme.of(context).textTheme.labelSmall,
-    );
-  }
-}
-
-class _RequestBodySection extends StatelessWidget {
   final ApiRequestBody requestBody;
-
-  const _RequestBodySection({required this.requestBody});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _SectionHeader(
-          icon: Icons.input_rounded,
-          title: 'Request Body',
-        ),
-        const SizedBox(height: 16),
-        _RequestBodyCard(requestBody: requestBody),
-      ],
-    );
-  }
-}
-
-class _RequestBodyCard extends StatelessWidget {
-  final ApiRequestBody requestBody;
-
-  const _RequestBodyCard({required this.requestBody});
 
   @override
   Widget build(BuildContext context) {
     return Card(
       elevation: 0,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(8),
         side: BorderSide(
-          color: Theme.of(context).dividerColor.withOpacity(0.1),
+          color: Theme.of(context).dividerColor,
+          width: 1,
         ),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (requestBody.description != null) ...[
+          if (requestBody.description != null)
             Padding(
               padding: const EdgeInsets.all(16),
               child: Text(
@@ -525,456 +503,243 @@ class _RequestBodyCard extends StatelessWidget {
                 style: Theme.of(context).textTheme.bodyLarge,
               ),
             ),
-            const Divider(height: 1),
-          ],
-          if (requestBody.content != null && requestBody.content!.isNotEmpty) ...[
-            ...requestBody.content!.entries.map((entry) {
-              return _ContentTypeSection(
+          if (requestBody.content.isNotEmpty)
+            ...requestBody.content.entries.map(
+              (entry) => _ContentTypeSection(
                 contentType: entry.key,
                 content: entry.value,
-              );
-            }),
-          ],
+              ),
+            ),
         ],
       ),
     );
   }
 }
 
+// Content type section (expandable)
 class _ContentTypeSection extends StatelessWidget {
-  final String contentType;
-  final ApiContent content;
-
   const _ContentTypeSection({
     required this.contentType,
     required this.content,
   });
 
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const Icon(Icons.code_rounded, size: 20),
-              const SizedBox(width: 8),
-              Text(
-                contentType,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          _SchemaDetails(schema: content.schema),
-        ],
-      ),
-    );
-  }
-}
-
-class _SchemaDetails extends StatelessWidget {
-  final ApiSchema schema;
-
-  const _SchemaDetails({required this.schema});
+  final String contentType;
+  final ApiContent content;
 
   @override
   Widget build(BuildContext context) {
-    if (schema.type == 'object' && schema.properties != null) {
-      return _ObjectSchema(schema: schema);
-    } else if (schema.type == 'array' && schema.items != null) {
-      return _ArraySchema(schema: schema);
-    } else {
-      return _BasicSchema(schema: schema);
-    }
-  }
-}
-
-class _ObjectSchema extends StatelessWidget {
-  final ApiSchema schema;
-
-  const _ObjectSchema({required this.schema});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return ExpansionTile(
+      title: Text(contentType),
       children: [
-        if (schema.description != null) ...[
-          Text(
-            schema.description!,
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
-          const SizedBox(height: 16),
-        ],
-        ...schema.properties!.entries.map((entry) {
-          return _PropertyItem(
-            name: entry.key,
-            property: entry.value,
-          );
-        }),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          child: _SchemaView(schema: content.schema),
+        ),
       ],
     );
   }
 }
 
-class _PropertyItem extends StatelessWidget {
-  final String name;
-  final ApiSchema property;
+// Headers list view
+class _HeadersList extends StatelessWidget {
+  const _HeadersList({required this.headers});
 
-  const _PropertyItem({
+  final Map<String, ApiHeader> headers;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: headers.length,
+      itemBuilder: (context, index) {
+        final entry = headers.entries.elementAt(index);
+        return _HeaderItem(
+          name: entry.key,
+          header: entry.value,
+        );
+      },
+    );
+  }
+}
+
+// Single header item
+class _HeaderItem extends StatelessWidget {
+  const _HeaderItem({
     required this.name,
-    required this.property,
+    required this.header,
   });
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.05),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: Theme.of(context).dividerColor.withOpacity(0.1),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            name,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Type: ${property.type ?? 'unknown'}',
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-          if (property.description != null) ...[
-            const SizedBox(height: 8),
-            Text(
-              property.description!,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-}
-
-class _ArraySchema extends StatelessWidget {
-  final ApiSchema schema;
-
-  const _ArraySchema({required this.schema});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (schema.description != null) ...[
-          Text(
-            schema.description!,
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
-          const SizedBox(height: 16),
-        ],
-        Text(
-          'Array Items:',
-          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        const SizedBox(height: 16),
-        Padding(
-          padding: const EdgeInsets.only(left: 16),
-          child: _SchemaDetails(schema: schema.items!),
-        ),
-      ],
-    );
-  }
-}
-
-class _BasicSchema extends StatelessWidget {
-  final ApiSchema schema;
-
-  const _BasicSchema({required this.schema});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (schema.description != null) ...[
-          Text(
-            schema.description!,
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
-          const SizedBox(height: 16),
-        ],
-        Wrap(
-          spacing: 8,
-          children: [
-            _MetadataChip(text: 'Type: ${schema.type}'),
-            if (schema.format != null) _MetadataChip(text: 'Format: ${schema.format}'),
-            if (schema.example != null) _MetadataChip(text: 'Example: ${schema.example}'),
-          ],
-        ),
-      ],
-    );
-  }
-}
-
-class _HeadersSection extends StatelessWidget {
-  final Map<String, ApiHeader> headers;
-
-  const _HeadersSection({required this.headers});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _SectionHeader(
-          icon: Icons.list_alt_rounded,
-          title: 'Headers',
-          count: headers.length,
-        ),
-        const SizedBox(height: 16),
-        _HeadersTable(headers: headers),
-      ],
-    );
-  }
-}
-
-class _HeadersTable extends StatelessWidget {
-  final Map<String, ApiHeader> headers;
-
-  const _HeadersTable({required this.headers});
+  final String name;
+  final ApiHeader header;
 
   @override
   Widget build(BuildContext context) {
     return Card(
       elevation: 0,
+      margin: const EdgeInsets.only(bottom: 8),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(8),
         side: BorderSide(
-          color: Theme.of(context).dividerColor.withOpacity(0.1),
+          color: Theme.of(context).dividerColor,
+          width: 1,
         ),
       ),
-      child: Column(
-        children: [
-          // Table Header
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-            decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide(
-                  color: Theme.of(context).dividerColor.withOpacity(0.1),
-                ),
-              ),
-            ),
-            child: const Row(
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
               children: [
-                Expanded(flex: 2, child: Text('Header')),
-                Expanded(flex: 3, child: Text('Description')),
-                Expanded(flex: 1, child: Center(child: Text('Required'))),
+                Expanded(
+                  child: Text(
+                    name,
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                ),
+                Chip(
+                  label: Text(header.required ? 'Required' : 'Optional'),
+                  backgroundColor: header.required
+                      ? Colors.red.withOpacity(0.1)
+                      : Colors.green.withOpacity(0.1),
+                  labelStyle: TextStyle(
+                    color: header.required ? Colors.red : Colors.green,
+                  ),
+                ),
               ],
             ),
-          ),
-          // Table Rows
-          ...headers.entries.map((entry) {
-            return _HeaderRow(
-              name: entry.key,
-              description: entry.value.description ?? '',
-              isRequired: entry.value.required,
-            );
-          }),
-        ],
-      ),
-    );
-  }
-}
-
-class _HeaderRow extends StatelessWidget {
-  final String name;
-  final String description;
-  final bool isRequired;
-
-  const _HeaderRow({
-    required this.name,
-    required this.description,
-    required this.isRequired,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-      decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(
-            color: Theme.of(context).dividerColor.withOpacity(0.1),
-          ),
+            if (header.description != null) ...[
+              const SizedBox(height: 8),
+              Text(
+                header.description!,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ],
+            if (header.schema != null) ...[
+              const SizedBox(height: 8),
+              _SchemaView(schema: header.schema!),
+            ],
+          ],
         ),
       ),
-      child: Row(
-        children: [
-          Expanded(
-            flex: 2,
-            child: Text(
-              name,
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-          ),
-          Expanded(
-            flex: 3,
-            child: Text(
-              description,
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-          ),
-          Expanded(
-            flex: 1,
-            child: Center(
-              child: Icon(
-                isRequired ? Icons.check_circle : Icons.cancel,
-                color: isRequired ? Colors.green : Colors.grey,
-                size: 20,
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
 
-class _ResponsesSection extends StatelessWidget {
+// Responses list view
+class _ResponsesView extends StatelessWidget {
+  const _ResponsesView({required this.responses});
+
   final Map<String, ApiResponse> responses;
 
-  const _ResponsesSection({required this.responses});
-
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _SectionHeader(
-          icon: Icons.assignment_returned_rounded,
-          title: 'Responses',
-          count: responses.length,
-        ),
-        const SizedBox(height: 16),
-        Column(
-          children: responses.entries.map((entry) {
-            return _ResponseCard(
-              statusCode: entry.key,
-              response: entry.value,
-            );
-          }).toList(),
-        ),
-      ],
+    return ListView.builder(
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: responses.length,
+      itemBuilder: (context, index) {
+        final entry = responses.entries.elementAt(index);
+        return _ResponseItem(
+          statusCode: entry.key,
+          response: entry.value,
+        );
+      },
     );
   }
 }
 
-class _ResponseCard extends StatelessWidget {
-  final String statusCode;
-  final ApiResponse response;
-
-  const _ResponseCard({
+// Single response item
+class _ResponseItem extends StatelessWidget {
+  const _ResponseItem({
     required this.statusCode,
     required this.response,
   });
 
+  final String statusCode;
+  final ApiResponse response;
+
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 0,
       margin: const EdgeInsets.only(bottom: 16),
+      elevation: 0,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(8),
         side: BorderSide(
-          color: Theme.of(context).dividerColor.withOpacity(0.1),
+          color: Theme.of(context).dividerColor,
+          width: 1,
         ),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Status Code Header
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              color: _getStatusCodeColor(statusCode).withOpacity(0.05),
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(12),
+          ListTile(
+            leading: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: _getStatusColor(statusCode).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Text(
+                statusCode,
+                style: TextStyle(
+                  color: _getStatusColor(statusCode),
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: _getStatusCodeColor(statusCode).withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Text(
-                    statusCode,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: _getStatusCodeColor(statusCode),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    response.description ?? 'No description',
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                ),
-              ],
+            title: Text(
+              response.description ?? 'No description',
+              style: Theme.of(context).textTheme.bodyLarge,
             ),
           ),
-          // Response Content
-          if (response.content != null && response.content!.isNotEmpty) ...[
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: response.content!.entries.map((entry) {
-                  return _ContentTypeSection(
-                    contentType: entry.key,
-                    content: entry.value,
-                  );
-                }).toList(),
+          if (response.content?.isNotEmpty ?? false)
+            ...response.content!.entries.map(
+              (entry) => _ContentTypeSection(
+                contentType: entry.key,
+                content: entry.value,
               ),
             ),
-          ],
         ],
       ),
     );
   }
 
-  Color _getStatusCodeColor(String code) {
+  Color _getStatusColor(String code) {
     final firstDigit = code.isNotEmpty ? code[0] : '0';
     switch (firstDigit) {
-      case '2': return Colors.green;
-      case '3': return Colors.blue;
-      case '4': return Colors.orange;
-      case '5': return Colors.red;
-      default: return Colors.grey;
+      case '2':
+        return Colors.green;
+      case '3':
+        return Colors.blue;
+      case '4':
+        return Colors.orange;
+      case '5':
+        return Colors.red;
+      default:
+        return Colors.grey;
     }
+  }
+}
+
+// API Tester View (placeholder)
+class ApiTesterView extends StatelessWidget {
+  final ApiEndpoint endpoint;
+
+  const ApiTesterView({super.key, required this.endpoint});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Test ${endpoint.name}'),
+      ),
+      body: Center(
+        child: Text('API Testing functionality for ${endpoint.method.name} ${endpoint.path}'),
+      ),
+    );
   }
 }
