@@ -195,7 +195,7 @@ class EditEnvironmentVariablesState
                     dividerThickness: 0,
                     horizontalMargin: 0,
                     headingRowHeight: 0,
-                    dataRowHeight: kDataTableRowHeight,
+                    dataRowHeight: null, // Allow dynamic row height
                     bottomMargin: kDataTableBottomPadding,
                     isVerticalScrollBarVisible: true,
                     columns: columns,

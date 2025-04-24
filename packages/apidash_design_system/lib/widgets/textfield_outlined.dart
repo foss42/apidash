@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../tokens/tokens.dart';
 import 'decoration_input_textfield.dart';
 
-class ADOutlinedTextField extends StatelessWidget {
+class ADOutlinedTextField extends StatefulWidget {
   const ADOutlinedTextField({
     super.key,
     this.keyId,
@@ -51,34 +51,64 @@ class ADOutlinedTextField extends StatelessWidget {
   final ColorScheme? colorScheme;
 
   @override
+  State<ADOutlinedTextField> createState() => _ADOutlinedTextFieldState();
+}
+
+class _ADOutlinedTextFieldState extends State<ADOutlinedTextField> {
+  late FocusNode _focusNode;
+  bool _isFocused = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode = FocusNode();
+    _focusNode.addListener(_handleFocusChange);
+  }
+
+  void _handleFocusChange() {
+    setState(() {
+      _isFocused = _focusNode.hasFocus;
+    });
+  }
+
+  @override
+  void dispose() {
+    _focusNode.removeListener(_handleFocusChange);
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    var clrScheme = colorScheme ?? Theme.of(context).colorScheme;
+    var clrScheme = widget.colorScheme ?? Theme.of(context).colorScheme;
     return TextFormField(
-      key: keyId != null ? Key(keyId!) : null,
-      controller: controller,
-      readOnly: readOnly,
-      enabled: enabled,
-      maxLines: maxLines,
-      expands: expands,
-      initialValue: initialValue,
-      style: textStyle ??
+      key: widget.keyId != null ? Key(widget.keyId!) : null,
+      controller: widget.controller,
+      focusNode: _focusNode,
+      readOnly: widget.readOnly,
+      enabled: widget.enabled,
+      maxLines: _isFocused ? null : 1, // Multi-line when focused, single-line otherwise
+      keyboardType: TextInputType.multiline, // Support newlines
+      expands: widget.expands,
+      initialValue: widget.initialValue,
+      style: widget.textStyle ??
           kCodeStyle.copyWith(
-            fontSize: textFontSize,
-            color: textColor ?? clrScheme.onSurface,
+            fontSize: widget.textFontSize,
+            color: widget.textColor ?? clrScheme.onSurface,
           ),
       decoration: getTextFieldInputDecoration(
         clrScheme,
-        fillColor: fillColor,
-        hintText: hintText,
-        hintTextStyle: hintTextStyle,
-        hintTextFontSize: hintTextFontSize,
-        hintTextColor: hintTextColor,
-        contentPadding: contentPadding,
-        focussedBorderColor: focussedBorderColor,
-        enabledBorderColor: enabledBorderColor,
-        isDense: isDense,
+        fillColor: widget.fillColor,
+        hintText: widget.hintText,
+        hintTextStyle: widget.hintTextStyle,
+        hintTextFontSize: widget.hintTextFontSize,
+        hintTextColor: widget.hintTextColor,
+        contentPadding: widget.contentPadding ?? const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+        focussedBorderColor: widget.focussedBorderColor,
+        enabledBorderColor: widget.enabledBorderColor,
+        isDense: widget.isDense ?? true, // Ensure compact rendering
       ),
-      onChanged: onChanged,
+      onChanged: widget.onChanged,
     );
   }
 }

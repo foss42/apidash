@@ -19,13 +19,17 @@ class CellField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ADOutlinedTextField(
-      keyId: keyId,
-      initialValue: initialValue,
-      hintText: hintText,
-      hintTextFontSize: Theme.of(context).textTheme.bodySmall?.fontSize,
-      onChanged: onChanged,
-      colorScheme: colorScheme,
+    return SizedBox(
+      width: double.infinity, // Ensure the text field takes full cell width
+      child: ADOutlinedTextField(
+        keyId: keyId,
+        initialValue: initialValue,
+        hintText: hintText,
+        hintTextFontSize: Theme.of(context).textTheme.bodySmall?.fontSize,
+        onChanged: onChanged,
+        colorScheme: colorScheme,
+        isDense: true, // Compact rendering
+      ),
     );
   }
 }
