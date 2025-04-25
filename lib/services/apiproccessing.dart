@@ -175,8 +175,6 @@ class ApiProcessingService {
     }
   }
 
-  bool _isYaml(String path) => path.toLowerCase().endsWith('.yaml') || 
-                            path.toLowerCase().endsWith('.yml');
 }
 
 class ApiProcessingException implements Exception {

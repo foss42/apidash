@@ -1,4 +1,4 @@
-import 'package:apidash/screens/explorer/browser_view/browse_view.dart';
+import 'package:apidash/screens/explorer/browse_pane/browse_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
