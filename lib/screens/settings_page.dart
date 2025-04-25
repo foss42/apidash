@@ -40,21 +40,21 @@ class SettingsPage extends ConsumerWidget {
           child: ListView(
             shrinkWrap: true,
             children: [
-              SwitchListTile(
-                hoverColor: kColorTransparent,
-                title: const Text('Switch Theme Mode'),
-                subtitle: Text(
-                    'Current selection: ${settings.isDark ? "Dark Mode" : "Light mode"}'),
+              ADListTile(
+                type: ListTileType.switchOnOff,
+                title: 'Switch Theme Mode',
+                subtitle:
+                    'Current selection: ${settings.isDark ? "Dark Mode" : "Light mode"}',
                 value: settings.isDark,
                 onChanged: (bool? value) {
                   ref.read(settingsProvider.notifier).update(isDark: value);
                 },
               ),
-              SwitchListTile(
-                hoverColor: kColorTransparent,
-                title: const Text('Collection Pane Scrollbar Visiblity'),
-                subtitle: Text(
-                    'Current selection: ${settings.alwaysShowCollectionPaneScrollbar ? "Always show" : "Show only when scrolling"}'),
+              ADListTile(
+                type: ListTileType.switchOnOff,
+                title: 'Collection Pane Scrollbar Visiblity',
+                subtitle:
+                    'Current selection: ${settings.alwaysShowCollectionPaneScrollbar ? "Always show" : "Show only when scrolling"}',
                 value: settings.alwaysShowCollectionPaneScrollbar,
                 onChanged: (bool? value) {
                   ref
@@ -77,12 +77,11 @@ class SettingsPage extends ConsumerWidget {
                 ),
               ),
               !kIsWeb
-                  ? SwitchListTile(
-                      hoverColor: kColorTransparent,
-                      title: const Text('Disable SSL verification'),
-                      subtitle: Text(
-                        'Current selection: ${settings.isSSLDisabled ? "SSL Verification Disabled" : "SSL Verification Enabled"}',
-                      ),
+                  ? ADListTile(
+                      type: ListTileType.switchOnOff,
+                      title: 'Disable SSL verification',
+                      subtitle:
+                          'Current selection: ${settings.isSSLDisabled ? "SSL Verification Disabled" : "SSL Verification Enabled"}',
                       value: settings.isSSLDisabled,
                       onChanged: (bool? value) {
                         ref
@@ -164,11 +163,11 @@ class SettingsPage extends ConsumerWidget {
                 subtitle: const Text('Delete all requests data from the disk'),
                 trailing: FilledButton.tonalIcon(
                   style: FilledButton.styleFrom(
-                      backgroundColor: settings.isDark
-                          ? kColorDarkDanger
-                          : kColorLightDanger,
-                      surfaceTintColor: kColorRed,
-                      foregroundColor: Theme.of(context).colorScheme.onPrimary),
+                    backgroundColor:
+                        settings.isDark ? kColorDarkDanger : kColorLightDanger,
+                    surfaceTintColor: kColorRed,
+                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                  ),
                   onPressed: clearingData
                       ? null
                       : () => showDialog<String>(
@@ -218,9 +217,10 @@ class SettingsPage extends ConsumerWidget {
                             ),
                           ),
                   label: const Text("Clear"),
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.delete_forever_rounded,
                     size: 20,
+                    color: Theme.of(context).colorScheme.onPrimary,
                   ),
                 ),
               ),
