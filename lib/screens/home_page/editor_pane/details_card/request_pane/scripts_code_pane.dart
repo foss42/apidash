@@ -1,28 +1,45 @@
 import 'package:apidash/widgets/scripts_editor_pane.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_code_editor/flutter_code_editor.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:highlight/languages/javascript.dart';
+import 'package:apidash/providers/providers.dart';
 
-class ScriptsCodePane extends StatefulWidget {
+class ScriptsCodePane extends ConsumerStatefulWidget {
   const ScriptsCodePane({super.key});
 
   @override
-  State<ScriptsCodePane> createState() => _ScriptsCodePaneState();
+  ConsumerState<ScriptsCodePane> createState() => _ScriptsCodePaneState();
 }
 
-class _ScriptsCodePaneState extends State<ScriptsCodePane> {
-  int _selectedTabIndex = 0;
-  final preReqCodeController = CodeController(
-    text: '// Use javascript to modify this request dynamically',
-    language: javascript,
-  );
-  final postResCodeController = CodeController(
-    text: '...',
-    language: javascript,
-  );
-
+class _ScriptsCodePaneState extends ConsumerState<ScriptsCodePane> {
   @override
   Widget build(BuildContext context) {
+    int _selectedTabIndex = 0;
+    final requestModel = ref.read(selectedRequestModelProvider);
+
+    final preReqCodeController = CodeController(
+      text: requestModel?.preRequestScript,
+      language: javascript,
+    );
+
+    final postResCodeController = CodeController(
+      text: requestModel?.postRequestScript,
+      language: javascript,
+    );
+
+    preReqCodeController.addListener(() {
+      ref.read(collectionStateNotifierProvider.notifier).update(
+            preRequestScript: preReqCodeController.text,
+          );
+    });
+
+    postResCodeController.addListener(() {
+      ref.read(collectionStateNotifierProvider.notifier).update(
+            postRequestScript: postResCodeController.text,
+          );
+    });
+
     final tabs = ["Pre-Req", "Post-Res"];
     final content = [
       ScriptsEditorPane(

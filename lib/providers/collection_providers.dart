@@ -223,6 +223,8 @@ class CollectionStateNotifier
     int? responseStatus,
     String? message,
     HttpResponseModel? httpResponseModel,
+    String? preRequestScript,
+    String? postRequestScript,
   }) {
     final rId = id ?? ref.read(selectedIdStateProvider);
     if (rId == null) {
@@ -254,6 +256,8 @@ class CollectionStateNotifier
       responseStatus: responseStatus ?? currentModel.responseStatus,
       message: message ?? currentModel.message,
       httpResponseModel: httpResponseModel ?? currentModel.httpResponseModel,
+      preRequestScript: preRequestScript ?? currentModel.preRequestScript,
+      postRequestScript: postRequestScript ?? currentModel.postRequestScript,
     );
 
     var map = {...state!};
