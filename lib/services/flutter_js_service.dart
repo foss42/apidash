@@ -1,5 +1,10 @@
+// ignore_for_file: avoid_print
+
+import 'dart:convert';
 import 'dart:developer';
 
+import 'package:apidash/models/request_model.dart';
+import 'package:apidash_core/models/http_request_model.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_js/flutter_js.dart';
 
@@ -20,4 +25,150 @@ void evaluate(String code) {
   } on PlatformException catch (e) {
     log('ERROR: ${e.details}');
   }
+}
+
+// TODO: These log statements can be printed in a custom api dash terminal.
+void setupJsBridge() {
+  jsRuntime.onMessage('consoleLog', (args) {
+    try {
+      final decodedArgs = jsonDecode(args as String);
+      if (decodedArgs is List) {
+        print('[JS LOG]: ${decodedArgs.map((e) => e.toString()).join(' ')}');
+      } else {
+        print('[JS LOG]: $decodedArgs');
+      }
+    } catch (e) {
+      print('[JS LOG ERROR decoding]: $args, Error: $e');
+    }
+  });
+
+  jsRuntime.onMessage('consoleWarn', (args) {
+    try {
+      final decodedArgs = jsonDecode(args as String);
+      if (decodedArgs is List) {
+        print('[JS WARN]: ${decodedArgs.map((e) => e.toString()).join(' ')}');
+      } else {
+        print('[JS WARN]: $decodedArgs');
+      }
+    } catch (e) {
+      print('[JS WARN ERROR decoding]: $args, Error: $e');
+    }
+  });
+
+  jsRuntime.onMessage('consoleError', (args) {
+    try {
+      final decodedArgs = jsonDecode(args as String);
+      if (decodedArgs is List) {
+        print('[JS ERROR]: ${decodedArgs.map((e) => e.toString()).join(' ')}');
+      } else {
+        print('[JS ERROR]: $decodedArgs');
+      }
+    } catch (e) {
+      print('[JS ERROR ERROR decoding]: $args, Error: $e');
+    }
+  });
+
+  jsRuntime.onMessage('fatalError', (args) {
+    try {
+      final errorDetails = jsonDecode(args as String);
+      print('[JS FATAL ERROR]: ${errorDetails['message']}');
+      if (errorDetails['error']) print('  Error: ${errorDetails['error']}');
+      if (errorDetails['stack']) print('  Stack: ${errorDetails['stack']}');
+    } catch (e) {
+      print('[JS FATAL ERROR decoding error]: $args, Error: $e');
+    }
+  });
+
+  //TODO: Add handlers for 'testResult'
+}
+
+Future<
+    ({
+      HttpRequestModel updatedRequest,
+      Map<String, dynamic> updatedEnvironment
+    })> executePreRequestScript({
+  required RequestModel currentRequestModel,
+  required Map<String, dynamic> activeEnvironment,
+  required String setupScript,
+}) async {
+  if (currentRequestModel.preRequestScript.trim().isEmpty) {
+    // No script, return original data
+    // return (
+    //   updatedRequest: currentRequestModel.httpRequestModel,
+    //   updatedEnvironment: activeEnvironment
+    // );
+  }
+
+  final httpRequest = currentRequestModel.httpRequestModel;
+  final userScript = currentRequestModel.preRequestScript;
+
+  // Prepare Data
+  final requestJson = jsonEncode(httpRequest?.toJson());
+  final environmentJson = jsonEncode(activeEnvironment);
+
+  // Inject data as JS variables
+  // Escape strings properly if embedding directly
+  final dataInjection = """
+  const injectedRequestJson = ${jsEscapeString(requestJson)};
+  const injectedEnvironmentJson = ${jsEscapeString(environmentJson)};
+  const injectedResponseJson = null; // Not needed for pre-request
+  """;
+
+  // Concatenate & Add Return
+  final fullScript = """
+  $dataInjection
+  $setupScript
+  // --- User Script ---
+  $userScript
+  // --- Return Result ---
+  JSON.stringify({ request: request, environment: environment });
+  """;
+  // TODO: Do something better to avoid null check here.
+  HttpRequestModel resultingRequest = httpRequest!;
+  Map<String, dynamic> resultingEnvironment = Map.from(activeEnvironment);
+
+  try {
+    // Execute
+    final JsEvalResult result = await jsRuntime.evaluateAsync(fullScript);
+
+    // Process Results
+    if (result.isError) {
+      print("Pre-request script execution error: ${result.stringResult}");
+      // Handle error - maybe show in UI, keep original request/env
+    } else if (result.stringResult.isNotEmpty) {
+      final resultMap = jsonDecode(result.stringResult);
+      if (resultMap is Map<String, dynamic>) {
+        // Deserialize Request
+        if (resultMap.containsKey('request') && resultMap['request'] is Map) {
+          try {
+            resultingRequest = HttpRequestModel.fromJson(
+                Map<String, Object?>.from(resultMap['request']));
+          } catch (e) {
+            print("Error deserializing modified request from script: $e");
+            //TODO: Handle error - maybe keep original request?
+          }
+        }
+        // Get Environment Modifications
+        if (resultMap.containsKey('environment') &&
+            resultMap['environment'] is Map) {
+          resultingEnvironment =
+              Map<String, dynamic>.from(resultMap['environment']);
+        }
+      }
+    }
+  } catch (e) {
+    print("Dart-level error during pre-request script execution: $e");
+    // Handle Dart-level errors (e.g., JS runtime issues)
+  }
+
+  return (
+    updatedRequest: resultingRequest,
+    updatedEnvironment: resultingEnvironment
+  );
+}
+
+// Helper to properly escape strings for JS embedding
+String jsEscapeString(String s) {
+  return jsonEncode(
+      s); // jsonEncode handles escaping correctly for JS string literals
 }
