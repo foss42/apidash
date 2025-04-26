@@ -51,8 +51,7 @@ Widget _buildContent(bool isMediumWindow) {
                 collection: selectedCollection,
               )
             : ApiExplorerBrowseView(
-                key: const ValueKey('browse'),
-                searchController: _searchController,
+                key: const ValueKey('browse'), searchController: _searchController,
               ),
   );
 }
