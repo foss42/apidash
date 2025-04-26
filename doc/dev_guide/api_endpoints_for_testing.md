@@ -11,7 +11,10 @@ A List of API endpoints that can be used for testing API Dash
 
 #### For Testing HTTP PUT, PATCH, DELETE
 - https://reqres.in/
-  
+ 
+#### For Testing HTTP OPTIONS
+- https://reqbin.com/echo/options 
+
 #### For Testing sites with Bad Certificate
 - https://badssl.com/
 - https://www.ssl.com/sample-valid-revoked-and-expired-ssl-tls-certificates/

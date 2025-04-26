@@ -466,3 +466,9 @@ const httpRequestModelPost13 = HttpRequestModel(
 "text": "I LOVE Flutter"
 }""",
 );
+
+/// Basic OPTIONS request model
+const httpRequestModelOptions1 = HttpRequestModel(
+  method: HTTPVerb.options,
+  url: 'https://reqbin.com/echo/options',
+);
