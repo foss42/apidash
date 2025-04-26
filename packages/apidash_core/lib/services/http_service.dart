@@ -94,16 +94,6 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
           case HTTPVerb.put:
           case HTTPVerb.patch:
           case HTTPVerb.delete:
-            final request = prepareHttpRequest(
-              url: requestUrl,
-              method: requestModel.method.name.toUpperCase(),
-              headers: headers,
-              body: body,
-              overrideContentType: overrideContentType,
-            );
-            final streamed = await client.send(request);
-            response = await http.Response.fromStream(streamed);
-            break;
           case HTTPVerb.options:
             final request = prepareHttpRequest(
               url: requestUrl,
