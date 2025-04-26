@@ -3,12 +3,14 @@ import 'nodes.dart';
 
 class ArrowPainter extends CustomPainter {
   final List<NodeData> nodes;
+  final List<Connection> connections;
   final double gridSize;
   final double canvasSize;
   final int? hoveredNodeId; // Properly declared as optional
 
   ArrowPainter({
     required this.nodes,
+    required this.connections,
     required this.gridSize,
     required this.canvasSize,
     this.hoveredNodeId,
@@ -28,6 +30,12 @@ class ArrowPainter extends CustomPainter {
       ..color = isHighlighted ? Colors.blue : Colors.grey
       ..style = PaintingStyle.stroke
       ..strokeWidth = isHighlighted ? 3 : 2;
+
+   for (var conn in connections) {
+      final fromNode = nodes.firstWhere((n) => n.id == conn.from, orElse: () => NodeData(id: -1, offset: Offset.zero));
+      final toNode = nodes.firstWhere((n) => n.id == conn.to, orElse: () => NodeData(id: -1, offset: Offset.zero));
+      if (fromNode.id == -1 || toNode.id == -1) continue;}
+
 
     // Get rendered sizes using GlobalKey
     final sourceRenderBox =
@@ -75,5 +83,5 @@ class ArrowPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(ArrowPainter oldDelegate) =>
-      nodes != oldDelegate.nodes || hoveredNodeId != oldDelegate.hoveredNodeId;
+      true;
 }

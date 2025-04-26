@@ -41,16 +41,44 @@ final userOnboardedProvider = StateProvider<bool>((ref) => false);
 
 final workflowProvider = StateNotifierProvider<WorkflowNotifier, List<NodeData>>((ref) => WorkflowNotifier());
 final hoverNodeProvider = StateProvider<int?>((ref) => null);
+final connectionListProvider = StateProvider<List<Connection>>((ref) => []);
 class WorkflowNotifier extends StateNotifier<List<NodeData>> {
   WorkflowNotifier() : super([
     NodeData(id: 1, offset: Offset(0, 0)),
     NodeData(id: 2, offset: Offset(50, 50)),
   ]);
 
-  void updateNodeOffset(int id, Offset newOffset) {
+    void updateNodeOffset(int id, Offset newOffset) {
     state = [
       for (final node in state)
         if (node.id == id) node.copyWith(offset: newOffset) else node,
     ];
   }
+
+  void addNode(NodeData node) {
+    state = [...state, node];
+  }
+
+  void updateNode(int id, {String? title, String? url, Map<String, String>? headers}) {
+    state = [
+      for (final node in state)
+        if (node.id == id)
+          node.copyWith(title: title, url: url, headers: headers)
+        else
+          node,
+    ];
+  }
 }
+
+class ConnectionListNotifier extends StateNotifier<List<Connection>> {
+  ConnectionListNotifier() : super([]); // Initialize with an empty list
+
+  void addConnection(Connection connection) {
+    state = [...state, connection]; // Add a new connection
+  }
+
+  void removeConnection(Connection connection) {
+    state = state.where((c) => c != connection).toList(); // Remove a connection
+  }
+}
+

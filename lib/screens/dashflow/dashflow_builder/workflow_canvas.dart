@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+
 class WorkflowCanvas extends ConsumerStatefulWidget {
   const WorkflowCanvas({super.key});
 
@@ -53,6 +54,7 @@ class _WorkflowCanvasState extends ConsumerState<WorkflowCanvas> {
     const double baseGridSize = 25;
     final nodes = ref.watch(workflowProvider);
     final hoveredNodeId = ref.watch(hoverNodeProvider);
+    final connections = ref.watch(connectionListProvider);
 
     return Scaffold(
       appBar: AppBar(title: Text("Dashflow 1")),
@@ -86,6 +88,7 @@ class _WorkflowCanvasState extends ConsumerState<WorkflowCanvas> {
                     CustomPaint(
                       painter: ArrowPainter(
                         nodes: nodes,
+                        connections: connections,
                         canvasSize: canvasSize,
                         gridSize: baseGridSize,
                         hoveredNodeId:
