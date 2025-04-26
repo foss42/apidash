@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/utils/color_utils.dart';
 import 'package:apidash/models/api_explorer_models.dart';
-import 'api_explorer_action_buttons.dart';
+import 'action_buttons.dart';
 
 class ApiExplorerURLCard extends StatelessWidget {
   const ApiExplorerURLCard({

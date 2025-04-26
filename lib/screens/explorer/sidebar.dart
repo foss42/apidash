@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:apidash/consts.dart';
-import 'widget/api_explorer_sidebar_header.dart';
+import 'widget/sidebar_header.dart';
 
 class ApiExplorerSidebar extends ConsumerWidget {
   const ApiExplorerSidebar({super.key});

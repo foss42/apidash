@@ -25,9 +25,9 @@ class SearchAppBar extends ConsumerWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const _Title(),
+              const Title(),
               const SizedBox(height: 12),
-              _SearchField(
+              SearchField(
                 searchController: searchController,
                 ref: ref,
                 onCleared: onSearchCleared,
@@ -40,8 +40,8 @@ class SearchAppBar extends ConsumerWidget {
   }
 }
 
-class _Title extends StatelessWidget {
-  const _Title();
+class Title extends StatelessWidget {
+  const Title();
 
   @override
   Widget build(BuildContext context) {
@@ -57,12 +57,12 @@ class _Title extends StatelessWidget {
   }
 }
 
-class _SearchField extends ConsumerWidget {
+class SearchField extends ConsumerWidget {
   final TextEditingController searchController;
   final WidgetRef ref;
   final VoidCallback? onCleared;
 
-  const _SearchField({
+  const SearchField({
     required this.searchController,
     required this.ref,
     this.onCleared,
@@ -117,7 +117,7 @@ class _SearchField extends ConsumerWidget {
               : theme.colorScheme.surfaceVariant,
           contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8), // Matching your card radius
+            borderRadius: BorderRadius.circular(8), 
             borderSide: BorderSide.none,
           ),
           enabledBorder: OutlineInputBorder(

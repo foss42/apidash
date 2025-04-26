@@ -1,4 +1,4 @@
-import 'package:apidash/screens/explorer/browse_pane/browse_view.dart';
+import 'package:apidash/screens/explorer/browse_pane/browse_pane.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
@@ -6,7 +6,7 @@ import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
 import 'sidebar.dart';
-import 'widget/api_explorer_detail_view.dart';
+import 'widget/detail_view.dart';
 import 'widget/methods_list.dart';
 
 class ApiExplorerPage extends ConsumerStatefulWidget {

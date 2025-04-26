@@ -1,5 +1,5 @@
 import 'package:apidash/screens/explorer/browse_pane/api_card.dart';
-import 'package:apidash/screens/explorer/browse_pane/empty_collections_view.dart';
+import 'package:apidash/screens/explorer/browse_pane/empty_collections.dart';
 import 'package:apidash/screens/explorer/widget/error_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

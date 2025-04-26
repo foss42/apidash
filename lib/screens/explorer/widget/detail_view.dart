@@ -30,19 +30,11 @@ class ApiExplorerDetailView extends ConsumerWidget {
         ),
         title: Text(endpoint.name),
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: ApiExplorerURLCard(endpoint: endpoint),
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
-              child: ApiExplorerSplitView(endpoint: endpoint),
-            ),
-          ),
-        ],
+      body: Expanded(
+        child: Padding(
+          padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+          child: ApiExplorerSplitView(endpoint: endpoint),
+        ),
       ),
     );
   }
