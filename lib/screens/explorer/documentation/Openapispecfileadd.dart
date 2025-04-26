@@ -41,7 +41,6 @@ class _AddApiDialogState extends ConsumerState<AddApiDialog> {
     });
   }
 
- 
   Future<void> _importApi() async {
     if (!_formKey.currentState!.validate() || !mounted) return;
 
@@ -59,7 +58,7 @@ class _AddApiDialogState extends ConsumerState<AddApiDialog> {
       _showSnackBar('API imported successfully!', isError: false);
     } catch (e) {
       if (!mounted) return;
-      _showSnackBar('Error importing API: ${e.toString()}', isError: true);
+      _showSnackBar('Failed to import API: ${e.toString()}', isError: true);
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);
@@ -71,20 +70,18 @@ class _AddApiDialogState extends ConsumerState<AddApiDialog> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: isError
-            ? _getMethodColor('DELETE').withOpacity(0.9)
-            : _getMethodColor('GET').withOpacity(0.9),
+        backgroundColor: isError ? Colors.red.shade400 : Colors.green.shade400,
         behavior: SnackBarBehavior.floating,
-        margin: const EdgeInsets.all(8),
-        dismissDirection: DismissDirection.horizontal,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+        margin: const EdgeInsets.all(16),
+        duration: const Duration(seconds: 3),
         action: isError
             ? SnackBarAction(
                 label: 'Retry',
                 textColor: Colors.white,
-                onPressed: () => showDialog(
-                  context: context,
-                  builder: (_) => const AddApiDialog(),
-                ),
+                onPressed: () => _importApi(),
               )
             : null,
       ),
@@ -99,68 +96,50 @@ class _AddApiDialogState extends ConsumerState<AddApiDialog> {
     }
   }
 
-  Color _getMethodColor(String method) {
-    switch (method) {
-      case 'GET':
-        return Colors.green;
-      case 'POST':
-        return Colors.blue;
-      case 'PUT':
-        return Colors.orange;
-      case 'DELETE':
-        return Colors.red;
-      case 'PATCH':
-        return Colors.purple;
-      default:
-        return Colors.grey;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final colors = theme.colorScheme;
 
     return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Container(
-        width: 450,
-        padding: const EdgeInsets.all(0),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      elevation: 0,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 500),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // Header
             Container(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.fromLTRB(24, 20, 24, 20),
               decoration: BoxDecoration(
-                color: theme.colorScheme.surfaceVariant.withOpacity(0.1),
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(16),
-                  topRight: Radius.circular(16),
-                ),
-                border: Border(
-                  bottom: BorderSide(
-                    color: theme.dividerColor.withOpacity(0.1),
-                  ),
-                ),
+                color: colors.surfaceVariant.withOpacity(0.2),
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
               ),
               child: Row(
                 children: [
                   Icon(
-                    Icons.api_rounded,
-                    color: theme.colorScheme.primary,
+                    Icons.api,
+                    color: colors.primary,
                     size: 24,
                   ),
                   const SizedBox(width: 12),
                   Text(
-                    'Add API Specification',
+                    'Import OpenAPI Specification',
                     style: theme.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.w600,
+                      color: colors.onSurface,
                     ),
                   ),
                 ],
               ),
             ),
+
+            // Divider
+            const Divider(height: 1),
 
             // Content
             Padding(
@@ -171,171 +150,169 @@ class _AddApiDialogState extends ConsumerState<AddApiDialog> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Import an OpenAPI specification from a URL',
+                      'Enter the URL of your OpenAPI specification to import',
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.7),
+                        color: colors.onSurface.withOpacity(0.8),
                       ),
                     ),
                     const SizedBox(height: 24),
 
-                    // Collection name field
-                    _buildSectionHeader(
-                      context,
-                      title: 'Collection Name',
-                      icon: Icons.collections_bookmark,
+                    // Collection Name
+                    Text(
+                      'Collection Name',
+                      style: theme.textTheme.labelLarge?.copyWith(
+                        fontWeight: FontWeight.w500,
+                        color: colors.onSurface.withOpacity(0.8),
+                      ),
                     ),
                     const SizedBox(height: 8),
                     TextFormField(
                       controller: _nameController,
                       decoration: InputDecoration(
-                        hintText: 'My API Collection',
+                        hintText: 'e.g., Payment API',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(color: colors.outline),
                         ),
-                        filled: true,
-                        fillColor:
-                            theme.colorScheme.surfaceVariant.withOpacity(0.05),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(color: colors.outline),
+                        ),
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: 16,
-                          vertical: 12,
+                          vertical: 14,
                         ),
                       ),
-                      maxLength: 40,
-                      autofocus: true,
-                      textInputAction: TextInputAction.next,
                       validator: (value) {
-                        if (value != null && value.length > 3) return null;
-                        return 'Please enter a name with at least 3 characters';
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter a name';
+                        }
+                        if (value.length < 3) {
+                          return 'Name must be at least 3 characters';
+                        }
+                        return null;
                       },
                     ),
                     const SizedBox(height: 20),
 
-                    // URL field
-                    _buildSectionHeader(
-                      context,
-                      title: 'API Spec URL',
-                      icon: Icons.link,
+                    // API URL
+                    Text(
+                      'OpenAPI Specification URL',
+                      style: theme.textTheme.labelLarge?.copyWith(
+                        fontWeight: FontWeight.w500,
+                        color: colors.onSurface.withOpacity(0.8),
+                      ),
                     ),
                     const SizedBox(height: 8),
                     TextFormField(
                       controller: _urlController,
                       decoration: InputDecoration(
-                        hintText: 'https://example.com/api-spec.yaml',
+                        hintText: 'https://api.example.com/openapi.json',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(color: colors.outline),
                         ),
-                        filled: true,
-                        fillColor:
-                            theme.colorScheme.surfaceVariant.withOpacity(0.05),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 12,
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(color: colors.outline),
                         ),
                         suffixIcon: IconButton(
-                          icon: const Icon(Icons.content_paste),
-                          tooltip: 'Paste from clipboard',
+                          icon: Icon(Icons.paste, size: 20),
                           onPressed: _pasteFromClipboard,
+                          tooltip: 'Paste from clipboard',
                         ),
-                        errorMaxLines: 2,
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 14,
+                        ),
                       ),
-                      maxLength: 200,
-                      keyboardType: TextInputType.url,
-                      textInputAction: TextInputAction.done,
                       onChanged: _validateUrl,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter a URL';
                         }
                         if (!_isUrlValid) {
-                          return 'Please enter a valid URL starting with http:// or https://';
+                          return 'Enter a valid HTTP/HTTPS URL';
                         }
                         return null;
                       },
-                      onFieldSubmitted: (_) =>
-                          _isUrlValid ? _importApi() : null,
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 12),
 
-                    // Info text
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.secondary.withOpacity(0.05),
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                          color: theme.colorScheme.secondary.withOpacity(0.2),
-                          width: 1,
+                    // Supported formats
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(
+                          Icons.info_outline,
+                          size: 16,
+                          color: colors.primary,
                         ),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.info_outline,
-                            size: 16,
-                            color: theme.colorScheme.secondary,
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Text(
-                              'Supports OpenAPI 2.0, 3.0, and 3.1 formats (JSON/YAML)',
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                color: theme.colorScheme.secondary,
-                              ),
+                        const SizedBox(width: 8),
+                        Flexible(
+                          child: Text(
+                            'Supports OpenAPI 2.0 (Swagger), 3.0, and 3.1 specifications in JSON or YAML format',
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: colors.onSurface.withOpacity(0.6),
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
               ),
             ),
 
+            // Divider
+            const Divider(height: 1),
+
             // Actions
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-              decoration: BoxDecoration(
-                color: theme.colorScheme.surfaceVariant.withOpacity(0.05),
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(16),
-                  bottomRight: Radius.circular(16),
-                ),
-                border: Border(
-                  top: BorderSide(
-                    color: theme.dividerColor.withOpacity(0.1),
-                  ),
-                ),
-              ),
+            Padding(
+              padding: const EdgeInsets.all(16),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  OutlinedButton(
+                  TextButton(
                     onPressed: () => Navigator.pop(context),
-                    style: OutlinedButton.styleFrom(
+                    style: TextButton.styleFrom(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 12),
+                        horizontal: 20,
+                        vertical: 12,
+                      ),
                     ),
                     child: const Text('Cancel'),
                   ),
                   const SizedBox(width: 12),
-                  FilledButton.icon(
+                  ElevatedButton(
                     onPressed: _isLoading || !_isUrlValid ? null : _importApi,
-                    style: FilledButton.styleFrom(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: colors.primary,
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 12),
-                      backgroundColor: _getMethodColor('POST'),
+                        horizontal: 20,
+                        vertical: 12,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
-                    icon: _isLoading
-                        ? SizedBox(
-                            width: 16,
-                            height: 16,
+                    child: _isLoading
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
                               color: Colors.white,
                             ),
                           )
-                        : const Icon(Icons.download),
-                    label: const Text('Import'),
+                        : const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.download, size: 18),
+                              SizedBox(width: 8),
+                              Text('Import'),
+                            ],
+                          ),
                   ),
                 ],
               ),
@@ -343,28 +320,6 @@ class _AddApiDialogState extends ConsumerState<AddApiDialog> {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildSectionHeader(
-    BuildContext context, {
-    required String title,
-    required IconData icon,
-  }) {
-    final theme = Theme.of(context);
-
-    return Row(
-      children: [
-        Icon(icon, size: 18, color: theme.colorScheme.primary),
-        const SizedBox(width: 8),
-        Text(
-          title,
-          style: theme.textTheme.labelLarge?.copyWith(
-            fontWeight: FontWeight.w600,
-            color: theme.colorScheme.onSurface.withOpacity(0.8),
-          ),
-        ),
-      ],
     );
   }
 }

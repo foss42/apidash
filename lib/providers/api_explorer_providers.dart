@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:apidash/models/api_explorer_models.dart';
 import 'package:apidash/providers/collection_providers.dart';
 import 'package:apidash/providers/ui_providers.dart';
@@ -45,7 +47,7 @@ final selectedEndpointProvider = Provider<ApiEndpoint?>((ref) {
   try {
     return collection.endpoints.firstWhere((e) => e.id == endpointId);
   } catch (e) {
-    return null; 
+    return null;
   }
 });
 
@@ -159,18 +161,134 @@ class ApiExplorerNotifier extends StateNotifier<List<ApiCollection>> {
 
   Future<void> importEndpoint(ApiEndpoint endpoint, WidgetRef ref) async {
     try {
-      final requestModel = HttpRequestModel(
-        url: endpoint.baseUrl + endpoint.path,
-        method: endpoint.method,
-        bodyContentType: ContentType.json,
-      );
+      // Process path parameters first
+      String processedPath = endpoint.path;
+      final pathParams = endpoint.parameters
+          ?.where((p) => p.inLocation == 'path' && p.example != null)
+          .toList();
 
+      if (pathParams != null && pathParams.isNotEmpty) {
+        for (final param in pathParams) {
+          processedPath =
+              processedPath.replaceAll('{${param.name}}', param.example ?? '');
+        }
+      }
+
+      // Process query parameters
+      final List<NameValueModel>? params = endpoint.parameters
+          ?.where((p) => p.inLocation == 'query' && p.example != null)
+          .map((p) => NameValueModel(name: p.name, value: p.example!))
+          .toList();
+
+      // Process headers
+      final List<NameValueModel>? headers = endpoint.headers?.entries
+          .where((e) => e.value.example != null)
+          .map((e) => NameValueModel(name: e.key, value: e.value.example!))
+          .toList();
+
+      // Handle content type and body
+      ContentType contentType = ContentType.json;
+      String? requestBody;
+      List<FormDataModel>? formData;
+
+      if (endpoint.requestBody != null &&
+          endpoint.requestBody!.content.isNotEmpty) {
+        final contentEntry = endpoint.requestBody!.content.entries.first;
+        final mediaType = contentEntry.key;
+        final content = contentEntry.value;
+
+        contentType = _getContentTypeFromMediaType(mediaType);
+
+        if (contentType == ContentType.formdata) {
+          formData = _convertToFormData(content.schema);
+        } else {
+          requestBody = content.schema.example?.toString() ??
+              jsonEncode(_convertSchemaToJson(content.schema));
+        }
+      }
+      // 1. Build base URL + path
+      String baseUrl = endpoint.baseUrl;
+      if (baseUrl.endsWith('/')) {
+        baseUrl = baseUrl.substring(0, baseUrl.length - 1);
+      }
+      String path =
+          processedPath.startsWith('/') ? processedPath : '/$processedPath';
+      String fullUrl = '$baseUrl$path';
+
+      // 2.  query parameters if any exist
+      final queryParams = endpoint.parameters
+          ?.where((p) => p.inLocation == 'query' && p.example != null)
+          .map((p) =>
+              '${Uri.encodeComponent(p.name)}=${Uri.encodeComponent(p.example!)}')
+          .join('&');
+
+      if (queryParams != null && queryParams.isNotEmpty) {
+        fullUrl += '?$queryParams'; // FINAL URL HAS QUERY PARAMS
+      }
+
+      final requestModel = HttpRequestModel(
+        method: endpoint.method,
+        url: fullUrl, // NOW INCLUDES QUERY PARAMS
+        headers: headers,
+        // params: params, // REMOVE THIS IF NOT USED ELSEWHERE
+        bodyContentType: contentType,
+        body: requestBody,
+        formData: formData,
+      );
       ref
           .read(collectionStateNotifierProvider.notifier)
           .addRequestModel(requestModel);
       ref.read(navRailIndexStateProvider.notifier).state = 0;
     } catch (e) {
       debugPrint('Error importing endpoint: $e');
+      rethrow;
     }
+  }
+
+  ContentType _getContentTypeFromMediaType(String mediaType) {
+    if (mediaType.contains('application/json')) {
+      return ContentType.json;
+    } else if (mediaType.contains('multipart/form-data') ||
+        mediaType.contains('application/x-www-form-urlencoded')) {
+      return ContentType.formdata;
+    } else if (mediaType.contains('text/')) {
+      return ContentType.text;
+    }
+    return ContentType.json; // default
+  }
+
+  List<FormDataModel>? _convertToFormData(ApiSchema? schema) {
+    if (schema == null || schema.properties == null) return null;
+
+    return schema.properties!.entries.map((entry) {
+      return FormDataModel(
+        name: entry.key,
+        value: entry.value.example?.toString() ?? '',
+        type: _determineFormDataType(entry.value),
+      );
+    }).toList();
+  }
+
+  FormDataType _determineFormDataType(ApiSchema schema) {
+    if (schema.type == 'string' && schema.format == 'binary') {
+      return FormDataType.file;
+    }
+    return FormDataType.text;
+  }
+
+  Object _convertSchemaToJson(ApiSchema schema) {
+    if (schema.example != null) {
+      return {'value': schema.example};
+    }
+
+    final result = <String, dynamic>{};
+    if (schema.properties != null) {
+      for (final entry in schema.properties!.entries) {
+        result[entry.key] = _convertSchemaToJson(entry.value);
+      }
+    } else if (schema.type == 'array' && schema.items != null) {
+      return [_convertSchemaToJson(schema.items!)];
+    }
+    return result;
   }
 }
