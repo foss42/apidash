@@ -15,6 +15,7 @@ class WorkflowCanvas extends ConsumerStatefulWidget {
 class _WorkflowCanvasState extends ConsumerState<WorkflowCanvas> {
   final TransformationController _controller = TransformationController();
   bool _needsRepaint = false;
+  Offset _controlNodeOffset = const Offset(100, 100); // Initial position
 
   @override
   void initState() {
@@ -70,66 +71,79 @@ class _WorkflowCanvasState extends ConsumerState<WorkflowCanvas> {
               end: Alignment.center,
             ),
           ),
-          child: InteractiveViewer(
-            transformationController: _controller,
-            constrained: false,
-            boundaryMargin: EdgeInsets.all(canvasSize / 2),
-            minScale: 0.5,
-            maxScale: 3,
-            child: SizedBox(
-              height: canvasSize,
-              width: canvasSize,
-              child: Stack(
-                children: [
-                  CustomPaint(
-                    painter: ArrowPainter(
-                      nodes: nodes,
-                      canvasSize: canvasSize,
-                      gridSize: baseGridSize,
-                      hoveredNodeId: hoveredNodeId, // Pass the hovered node ID
+          child: Stack(children: [
+            InteractiveViewer(
+              transformationController: _controller,
+              constrained: false,
+              boundaryMargin: EdgeInsets.all(canvasSize / 2),
+              minScale: 0.5,
+              maxScale: 3,
+              child: SizedBox(
+                height: canvasSize,
+                width: canvasSize,
+                child: Stack(
+                  children: [
+                    CustomPaint(
+                      painter: ArrowPainter(
+                        nodes: nodes,
+                        canvasSize: canvasSize,
+                        gridSize: baseGridSize,
+                        hoveredNodeId:
+                            hoveredNodeId, // Pass the hovered node ID
+                      ),
                     ),
-                  ),
-                  CustomPaint(
-                    painter: GridPainter(
-                      baseGridSize: baseGridSize,
-                      canvasSize: canvasSize,
-                      transformation: _controller.value,
-                      viewportSize: mq,
-                    ),
-                    child: Stack(
-                      clipBehavior: Clip.none,
-                      children: nodes.map((node) {
-                        // Translate node positions to center of canvas
-                        final centeredOffset = Offset(
-                          node.offset.dx + canvasSize / 2,
-                          node.offset.dy + canvasSize / 2,
-                        );
-                        return Positioned(
-                          left: centeredOffset.dx,
-                          top: centeredOffset.dy,
-                          child: MouseRegion(
-                            onEnter: (_) => ref
-                                .read(hoverNodeProvider.notifier)
-                                .state = node.id,
-                            onExit: (_) => ref
-                                .read(hoverNodeProvider.notifier)
-                                .state = null,
-                            child: DraggableNode(
-                              gridSize: baseGridSize,
-                              node: node,
-                              onDrag: (id, offset) => ref
-                                  .read(workflowProvider.notifier)
-                                  .updateNodeOffset(id, offset),
+                    CustomPaint(
+                      painter: GridPainter(
+                        baseGridSize: baseGridSize,
+                        canvasSize: canvasSize,
+                        transformation: _controller.value,
+                        viewportSize: mq,
+                      ),
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        children: nodes.map((node) {
+                          // Translate node positions to center of canvas
+                          final centeredOffset = Offset(
+                            node.offset.dx + canvasSize / 2,
+                            node.offset.dy + canvasSize / 2,
+                          );
+                          return Positioned(
+                            left: centeredOffset.dx,
+                            top: centeredOffset.dy,
+                            child: MouseRegion(
+                              onEnter: (_) => ref
+                                  .read(hoverNodeProvider.notifier)
+                                  .state = node.id,
+                              onExit: (_) => ref
+                                  .read(hoverNodeProvider.notifier)
+                                  .state = null,
+                              child: DraggableNode(
+                                gridSize: baseGridSize,
+                                node: node,
+                                onDrag: (id, offset) => ref
+                                    .read(workflowProvider.notifier)
+                                    .updateNodeOffset(id, offset),
+                              ),
                             ),
-                          ),
-                        );
-                      }).toList(),
+                          );
+                        }).toList(),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
+            // Control node, always visible and draggable
+            ControlNode(
+              offset: _controlNodeOffset,
+              onDrag: (newOffset) {
+                setState(() {
+                  _controlNodeOffset = newOffset;
+                });
+              },
+              gridSize: baseGridSize,
+            ),
+          ]),
         ),
       ),
     );

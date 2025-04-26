@@ -71,3 +71,153 @@ class _DraggableNodeState extends State<DraggableNode> {
     );
   }
 }
+
+class ControlNode extends StatefulWidget {
+  final Offset offset;
+  final Function(Offset newOffset) onDrag;
+  final double gridSize;
+
+  const ControlNode({
+    super.key,
+    required this.offset,
+    required this.onDrag,
+    required this.gridSize,
+  });
+
+  @override
+  State<ControlNode> createState() => _ControlNodeState();
+}
+
+class _ControlNodeState extends State<ControlNode> {
+  late Offset offset;
+  bool isDragging = false;
+
+  void _runFlow(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Run Flow'),
+        content: const Text('Workflow executed successfully (mock).'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _addAnnotation(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Add Annotation'),
+        content: const TextField(decoration: InputDecoration(hintText: 'Enter note')),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Save'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _clearCanvas(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Clear Canvas'),
+        content: const Text('This will reset all nodes. Proceed?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Clear'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    offset = widget.offset;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      left: offset.dx,
+      top: offset.dy,
+      child: GestureDetector(
+        onPanUpdate: (details) {
+          setState(() {
+            offset += details.delta;
+            final snappedOffset = Offset(
+              (offset.dx / widget.gridSize).round() * widget.gridSize,
+              (offset.dy / widget.gridSize).round() * widget.gridSize,
+            );
+            widget.onDrag(snappedOffset);
+          });
+        },
+        child: Card(
+          elevation: isDragging ? 8 : 4,
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Theme.of(context).colorScheme.secondaryContainer,
+                  Theme.of(context).colorScheme.secondary,
+                ],
+              ),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Controls',
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.play_arrow, size: 20),
+                        onPressed: () => _runFlow(context),
+                        tooltip: 'Run Flow',
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.note_add, size: 20),
+                        onPressed: () => _addAnnotation(context),
+                        tooltip: 'Add Annotation',
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.delete, size: 20),
+                        onPressed: () => _clearCanvas(context),
+                        tooltip: 'Clear Canvas',
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
