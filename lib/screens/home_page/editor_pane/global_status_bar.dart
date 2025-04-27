@@ -30,7 +30,7 @@ class _GlobalStatusBarState extends ConsumerState<GlobalStatusBar> {
       StatusMessageType.info => kColorSchemeSeed,
       StatusMessageType.warning => kColorHttpMethodPut,
       StatusMessageType.error => kColorDarkDanger,
-      _ => isDarkMode ? Colors.white : kColorBlack,
+      _ => isDarkMode ? kColorWhite : kColorBlack,
     };
 
     final icon = switch (type) {
@@ -62,7 +62,7 @@ class _GlobalStatusBarState extends ConsumerState<GlobalStatusBar> {
                 Expanded(
                   child: Text(
                     _cachedLines.isNotEmpty ? _cachedLines.first : '',
-                    style: TextStyle(color: color, fontSize: 14, fontWeight: FontWeight.w500),
+                    style: kStatusBarTextStyle.copyWith(color: color),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                   ),
@@ -73,7 +73,7 @@ class _GlobalStatusBarState extends ConsumerState<GlobalStatusBar> {
                     customBorder: const CircleBorder(),
                     child: Icon(
                       _isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-                      size: 24,
+                      size: kStatusBarExpandIconSize,
                       color: color,
                     ),
                   ),
@@ -83,14 +83,13 @@ class _GlobalStatusBarState extends ConsumerState<GlobalStatusBar> {
           if (_isExpanded && needsExpansion)
             Container(
               width: double.infinity,
-              padding: EdgeInsets.only(
-                left: 12 + (icon != null ? 32 : 0),
-                right: 12,
-                bottom: 8,
+              padding: kStatusBarExpandedPadding.copyWith(
+                left: kStatusBarExpandedPadding.left +
+                    (icon != null ? kStatusBarIconPaddingOffset : 0),
               ),
               child: Text(
                 _cachedLines.skip(1).join('\n'),
-                style: TextStyle(color: color, fontSize: 14, fontWeight: FontWeight.w500),
+                style: kStatusBarTextStyle.copyWith(color: color),
               ),
             ),
         ],

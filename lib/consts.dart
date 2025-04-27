@@ -486,7 +486,16 @@ const kMsgClearHistorySuccess = 'History cleared successfully';
 const kMsgClearHistoryError = 'Error clearing history';
 const kMsgShareError = "Unable to share";
 
+// Status Bar Constants 
 const kStatusBarHeight = 40.0;
 const kStatusBarFontSize = 14.0;
-const kStatusBarDefaultMessage = "GLOBAL STATUS BAR";
+const kStatusBarDefaultMessage = "Global Status Bar";
 
+const kStatusBarExpandIconSize = 24.0;
+const kStatusBarExpandedPadding = EdgeInsets.only(left: 12.0, right: 12.0, bottom: 8.0);
+const kStatusBarIconPaddingOffset = 32.0;
+const kStatusBarFontWeight = FontWeight.w500;
+const kStatusBarTextStyle = TextStyle(
+  fontSize: kStatusBarFontSize,
+  fontWeight: kStatusBarFontWeight,
+);
