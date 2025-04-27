@@ -7,7 +7,6 @@ class ADRawTextField extends StatelessWidget {
     this.onChanged,
     this.controller,
     this.hintText,
-    this.hintTextStyle,
     this.style,
     this.readOnly = false,
   });
@@ -15,7 +14,6 @@ class ADRawTextField extends StatelessWidget {
   final void Function(String)? onChanged;
   final TextEditingController? controller;
   final String? hintText;
-  final TextStyle? hintTextStyle;
   final TextStyle? style;
   final bool readOnly;
 
@@ -30,7 +28,6 @@ class ADRawTextField extends StatelessWidget {
         isDense: true,
         border: InputBorder.none,
         hintText: hintText,
-        hintStyle: hintTextStyle,
         contentPadding: kPv8,
       ),
       onTapOutside: (PointerDownEvent event) {

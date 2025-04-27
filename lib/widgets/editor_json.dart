@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'package:apidash/consts.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -189,7 +190,7 @@ class _JsonTextFieldEditorState extends State<JsonTextFieldEditor> {
             },
           ),
         ),
-      ],
-    );
+      ]
+      );
   }
 }

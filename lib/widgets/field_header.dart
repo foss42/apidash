@@ -1,6 +1,3 @@
-// Deprecated but kept as a backup
-
-/*
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
@@ -82,9 +79,20 @@ class _HeaderFieldState extends State<HeaderField> {
         style: kCodeStyle.copyWith(
           color: colorScheme.onSurface,
         ),
-        decoration: getTextFieldInputDecoration(
-          colorScheme,
+        decoration: InputDecoration(
+          hintStyle: kCodeStyle.copyWith(color: colorScheme.outlineVariant),
           hintText: widget.hintText,
+          contentPadding: const EdgeInsets.only(bottom: 12),
+          focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(
+              color: colorScheme.outline,
+            ),
+          ),
+          enabledBorder: UnderlineInputBorder(
+            borderSide: BorderSide(
+              color: colorScheme.surfaceContainerHighest,
+            ),
+          ),
         ),
       ),
     );
@@ -113,4 +121,3 @@ class _HeaderFieldState extends State<HeaderField> {
     return getHeaderSuggestions(pattern);
   }
 }
-*/

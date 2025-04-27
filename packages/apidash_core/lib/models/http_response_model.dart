@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:convert';
 import 'dart:typed_data';
+import 'package:dio/dio.dart' as dio;
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:collection/collection.dart' show mergeMaps;
 import 'package:http/http.dart';
@@ -64,6 +65,7 @@ class HttpResponseModel with _$HttpResponseModel {
   String? get contentType => headers?.getValueContentType();
   MediaType? get mediaType => getMediaTypeFromHeaders(headers);
 
+  /// For http.Response
   HttpResponseModel fromResponse({
     required Response response,
     Duration? time,
@@ -85,4 +87,75 @@ class HttpResponseModel with _$HttpResponseModel {
       time: time,
     );
   }
+
+/// For Dio Response (patched to handle content-type fallback)
+
+factory HttpResponseModel.fromDioResponse({
+  required dio.Response response,
+  required Duration time,
+}) {
+  // Normalize header keys to lowercase
+  final headersMap = <String, String>{};
+  response.headers.forEach((name, values) {
+    headersMap[name.toLowerCase()] = values.join(', ');
+  });
+
+  // Normalize request headers too
+  final requestHeaders = <String, String>{};
+  response.requestOptions.headers.forEach((key, value) {
+    requestHeaders[key] = value.toString();
+  });
+
+  final rawBody = response.data;
+
+  String bodyText;
+  Uint8List? bodyBytes;
+
+  if (rawBody is Uint8List) {
+    bodyBytes = rawBody;
+    bodyText = utf8.decode(bodyBytes, allowMalformed: true);
+  } else if (rawBody is String) {
+    bodyText = rawBody;
+  } else {
+    try {
+      bodyText = const JsonEncoder.withIndent('  ').convert(rawBody);
+    } catch (_) {
+      bodyText = rawBody.toString();
+    }
+  }
+
+  final mediaType = _determineMediaType(headersMap, rawBody);
+
+  return HttpResponseModel(
+    statusCode: response.statusCode,
+    headers: headersMap,
+    requestHeaders: requestHeaders,
+    body: bodyText,
+    formattedBody: formatBody(bodyText, mediaType),
+    bodyBytes: bodyBytes,
+    time: time,
+  );
+}
+}
+MediaType? _determineMediaType(Map<String, String> headers, dynamic body) {
+  final contentType = headers['content-type'];
+  if (contentType != null) {
+    try {
+      return MediaType.parse(contentType);
+    } catch (_) {
+      // Invalid content-type format
+    }
+  }
+
+  if (body is String) {
+    final trimmed = body.trimLeft().toLowerCase();
+    if (trimmed.startsWith('{') || trimmed.startsWith('[')) {
+      return MediaType.parse('application/json');
+    }
+    if (trimmed.startsWith('<!doctype html') || trimmed.startsWith('<html')) {
+      return MediaType.parse('text/html');
+    }
+  }
+
+  return null;
 }

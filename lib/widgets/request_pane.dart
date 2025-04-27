@@ -2,7 +2,7 @@ import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:apidash/consts.dart';
-import 'tab_label.dart';
+import 'tabs.dart';
 
 class RequestPane extends StatefulHookWidget {
   const RequestPane({
@@ -63,16 +63,13 @@ class _RequestPaneState extends State<RequestPane>
                           widget.codePaneVisible
                               ? Icons.code_off_rounded
                               : Icons.code_rounded,
-                          size: 18,
                         ),
                         label: SizedBox(
-                          width: 80,
+                          width: 75,
                           child: Text(
                             widget.codePaneVisible
                                 ? kLabelHideCode
                                 : kLabelViewCode,
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
                           ),
                         ),
                       ),

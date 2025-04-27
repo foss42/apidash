@@ -1,15 +1,8 @@
-import 'package:apidash/widgets/response_body.dart';
-import 'package:apidash/widgets/response_body_success.dart';
-import 'package:apidash/widgets/response_headers.dart';
-import 'package:apidash/widgets/response_pane_header.dart';
-import 'package:apidash/widgets/response_tab_view.dart';
-import 'package:apidash/widgets/widget_not_sent.dart';
-import 'package:apidash/widgets/widget_sending.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
-
+import 'package:apidash/widgets/response_widgets.dart';
 import 'package:lottie/lottie.dart';
 import 'package:apidash/utils/utils.dart';
 import 'package:apidash/consts.dart';
@@ -298,7 +291,7 @@ void main() {
         title: 'Body Success',
         theme: kThemeDataDark,
         home: Scaffold(
-          body: ResponseBodySuccess(
+          body: BodySuccess(
               body: 'Hello from API Dash',
               mediaType: MediaType("application", "json"),
               options: const [
@@ -322,7 +315,7 @@ void main() {
         title: 'Body Success',
         theme: kThemeDataDark,
         home: Scaffold(
-          body: ResponseBodySuccess(
+          body: BodySuccess(
               body: 'Hello from API Dash',
               mediaType: MediaType("application", "json"),
               options: const [
@@ -360,7 +353,7 @@ void main() async {
         title: 'Body Success',
         theme: kThemeDataLight,
         home: Scaffold(
-          body: ResponseBodySuccess(
+          body: BodySuccess(
             body: 'Hello',
             formattedBody: code,
             mediaType: MediaType("application", "json"),
@@ -388,7 +381,7 @@ void main() async {
         title: 'Body Success',
         theme: kThemeDataDark,
         home: Scaffold(
-          body: ResponseBodySuccess(
+          body: BodySuccess(
             body: 'Hello from API Dash',
             mediaType: MediaType("image", "jpeg"),
             options: const [
@@ -412,7 +405,7 @@ void main() async {
         title: 'Body Success',
         theme: kThemeDataLight,
         home: Scaffold(
-          body: ResponseBodySuccess(
+          body: BodySuccess(
             body: 'Raw Hello from API Dash',
             formattedBody: 'Formatted Hello from API Dash',
             mediaType: MediaType("application", "json"),
@@ -444,7 +437,7 @@ void main() async {
         title: 'Body Success',
         theme: kThemeDataLight,
         home: Scaffold(
-          body: ResponseBodySuccess(
+          body: BodySuccess(
             body: 'Raw Hello from API Dash',
             formattedBody: null,
             mediaType: MediaType("text", "csv"),
