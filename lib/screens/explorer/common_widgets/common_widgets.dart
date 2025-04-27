@@ -4,5 +4,6 @@ export 'response_card.dart';
 export 'method_chip.dart';
 export 'url_card.dart';
 export 'template_card.dart';
-export 'card_tittle.dart';
+export 'card_title.dart';
 export 'card_description.dart';
+export 'chip.dart';

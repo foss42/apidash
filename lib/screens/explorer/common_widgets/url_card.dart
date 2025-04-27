@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../common_widgets/method_chip.dart';
+import 'package:apidash_design_system/apidash_design_system.dart'; // Ensure this is imported
+import 'chip.dart';
 
 class ImportButton extends StatelessWidget {
   const ImportButton({super.key});
@@ -21,8 +22,8 @@ class UrlCard extends StatelessWidget {
   final String method;
 
   const UrlCard({
-    super.key, 
-    required this.url, 
+    super.key,
+    required this.url,
     required this.method,
   });
 
@@ -41,8 +42,8 @@ class UrlCard extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
         child: Row(
           children: [
-            MethodChip(method: method),
-            const SizedBox(width: 5),
+            CustomChip.httpMethod(method),
+            kHSpacer10,
             Expanded(
               child: Text(
                 url ?? '',
@@ -51,7 +52,7 @@ class UrlCard extends StatelessWidget {
                 maxLines: 1,
               ),
             ),
-            const SizedBox(width: 20),
+            kHSpacer20,
             const ImportButton(),
           ],
         ),

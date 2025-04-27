@@ -3,6 +3,7 @@ import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
+import 'chip.dart'; 
 
 /// Displays a list of headers with enabled/disabled status
 class RequestHeadersCard extends StatelessWidget {
@@ -11,9 +12,9 @@ class RequestHeadersCard extends StatelessWidget {
   final List<bool>? isEnabledList;
 
   const RequestHeadersCard({
-    super.key, 
-    required this.title, 
-    this.headers, 
+    super.key,
+    required this.title,
+    this.headers,
     this.isEnabledList,
   });
 
@@ -62,9 +63,9 @@ class RequestParamsCard extends StatelessWidget {
   final List<bool>? isEnabledList;
 
   const RequestParamsCard({
-    super.key, 
-    required this.title, 
-    this.params, 
+    super.key,
+    required this.title,
+    this.params,
     this.isEnabledList,
   });
 
@@ -134,15 +135,7 @@ class RequestBodyCard extends StatelessWidget {
               Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
               kHSpacer8,
               if (contentType != null)
-                Chip(
-                  label: Text(
-                    contentType!,
-                    style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onPrimary),
-                  ),
-                  backgroundColor: Theme.of(context).colorScheme.primary,
-                  padding: EdgeInsets.zero,
-                  visualDensity: VisualDensity.compact,
-                ),
+                CustomChip.contentType(contentType!),
             ],
           ),
           kVSpacer8,
@@ -179,7 +172,7 @@ class StyledCard extends StatelessWidget {
         side: BorderSide(color: Theme.of(context).colorScheme.surfaceContainerHighest),
         borderRadius: kBorderRadius12,
       ),
-      child: Padding(padding: kP12, child: child), // Changed from kP16 to kP12
+      child: Padding(padding: kP12, child: child),
     );
   }
 }
@@ -199,20 +192,11 @@ class ResponseBodyCard extends StatelessWidget {
     this.body,
   });
 
-  Color _getStatusColor(int? status) {
-    if (status == null) return kColorStatusCodeDefault;
-    if (status >= 200 && status < 300) return kColorStatusCode200;
-    if (status >= 300 && status < 400) return kColorStatusCode300;
-    if (status >= 400 && status < 500) return kColorStatusCode400;
-    return kColorStatusCode500;
-  }
-
   @override
   Widget build(BuildContext context) {
     final statusCode = httpResponseModel?.statusCode ?? responseStatus;
     final responseTime = httpResponseModel?.time?.inMilliseconds ?? 0;
     final responseBody = body ?? httpResponseModel?.formattedBody ?? httpResponseModel?.body ?? '';
-    final statusReason = statusCode != null ? kResponseCodeReasons[statusCode] ?? 'Unknown' : null;
 
     // Hide the card if there's no relevant data to display
     if (statusCode == null && responseBody.isEmpty && (message == null || message!.isEmpty)) {
@@ -228,13 +212,7 @@ class ResponseBodyCard extends StatelessWidget {
               const Text(kLabelResponseBody, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
               kHSpacer8,
               if (statusCode != null)
-                Chip(
-                  label: Text('$statusCode${statusReason != null ? ' - $statusReason' : ''}', 
-                    style: const TextStyle(fontSize: 12, color: kColorWhite)),
-                  backgroundColor: _getStatusColor(statusCode),
-                  padding: EdgeInsets.zero,
-                  visualDensity: VisualDensity.compact,
-                ),
+                CustomChip.statusCode(statusCode), 
               const Spacer(),
               if (responseTime > 0)
                 Text('${responseTime}ms', style: TextStyle(
@@ -250,7 +228,7 @@ class ResponseBodyCard extends StatelessWidget {
             ),
           ],
           if (responseBody.isNotEmpty) ...[
-            kVSpacer10, // Changed from kVSpacer12 to kVSpacer10
+            kVSpacer10,
             Container(
               width: double.infinity,
               padding: kP12,
