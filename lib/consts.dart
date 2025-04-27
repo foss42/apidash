@@ -485,3 +485,8 @@ const kMsgClearHistory =
 const kMsgClearHistorySuccess = 'History cleared successfully';
 const kMsgClearHistoryError = 'Error clearing history';
 const kMsgShareError = "Unable to share";
+
+const kStatusBarHeight = 40.0;
+const kStatusBarFontSize = 14.0;
+const kStatusBarDefaultMessage = "GLOBAL STATUS BAR";
+
