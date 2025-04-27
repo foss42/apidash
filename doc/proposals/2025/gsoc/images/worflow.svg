@@ -1,0 +1,131 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600">
+  <!-- Background -->
+  <rect width="900" height="600" fill="#f8f9fa" />
+  
+  
+  <!-- Flow Diagram -->
+  
+  <!-- API Request Entry -->
+  <rect x="50" y="100" width="120" height="60" rx="10" fill="#4299e1" />
+  <text x="110" y="135" font-family="Arial" font-size="14" text-anchor="middle" fill="white">API Request</text>
+  
+  <!-- Perception Agent -->
+  <rect x="250" y="100" width="160" height="80" rx="10" fill="#9f7aea" />
+  <text x="330" y="135" font-family="Arial" font-size="16" text-anchor="middle" fill="white">Perception Agent</text>
+  <text x="330" y="160" font-family="Arial" font-size="12" text-anchor="middle" fill="white">Request Analysis</text>
+  
+  <!-- Memory Agent -->
+  <rect x="250" y="220" width="160" height="80" rx="10" fill="#9f7aea" />
+  <text x="330" y="255" font-family="Arial" font-size="16" text-anchor="middle" fill="white">Memory Agent</text>
+  <text x="330" y="280" font-family="Arial" font-size="12" text-anchor="middle" fill="white">Context Management</text>
+  
+  <!-- Reasoning Agent -->
+  <rect x="500" y="160" width="160" height="80" rx="10" fill="#9f7aea" />
+  <text x="580" y="195" font-family="Arial" font-size="16" text-anchor="middle" fill="white">Reasoning Agent</text>
+  <text x="580" y="220" font-family="Arial" font-size="12" text-anchor="middle" fill="white">Decision Processing</text>
+  
+  <!-- Action Selection -->
+  <rect x="740" y="160" width="120" height="80" rx="10" fill="#4299e1" />
+  <text x="800" y="195" font-family="Arial" font-size="16" text-anchor="middle" fill="white">Action</text>
+  <text x="800" y="220" font-family="Arial" font-size="12" text-anchor="middle" fill="white">Selection</text>
+  
+  <!-- Action Agents -->
+  <rect x="640" y="320" width="120" height="60" rx="10" fill="#38b2ac" />
+  <text x="700" y="350" font-family="Arial" font-size="14" text-anchor="middle" fill="white">Debugging</text>
+  
+  <rect x="640" y="400" width="120" height="60" rx="10" fill="#38b2ac" />
+  <text x="700" y="430" font-family="Arial" font-size="14" text-anchor="middle" fill="white">Documentation</text>
+  
+  <rect x="640" y="480" width="120" height="60" rx="10" fill="#38b2ac" />
+  <text x="700" y="510" font-family="Arial" font-size="14" text-anchor="middle" fill="white">Code Gen</text>
+  
+  <!-- Result Processors -->
+  <rect x="350" y="320" width="160" height="60" rx="10" fill="#ed8936" />
+  <text x="430" y="355" font-family="Arial" font-size="14" text-anchor="middle" fill="white">Pattern Recognition</text>
+  
+  <rect x="350" y="400" width="160" height="60" rx="10" fill="#ed8936" />
+  <text x="430" y="435" font-family="Arial" font-size="14" text-anchor="middle" fill="white">Schema Generation</text>
+  
+  <rect x="350" y="480" width="160" height="60" rx="10" fill="#ed8936" />
+  <text x="430" y="515" font-family="Arial" font-size="14" text-anchor="middle" fill="white">Template Selection</text>
+  
+  <!-- API Response -->
+  <rect x="60" y="400" width="120" height="60" rx="10" fill="#4299e1" />
+  <text x="120" y="435" font-family="Arial" font-size="14" text-anchor="middle" fill="white">API Response</text>
+  
+  <!-- Learning Agent -->
+  <rect x="250" y="520" width="400" height="60" rx="10" fill="#f56565" />
+  <text x="450" y="555" font-family="Arial" font-size="16" text-anchor="middle" fill="white">Learning Agent: Continuous Improvement Loop</text>
+  
+  <!-- Connections -->
+  <!-- Request to Perception -->
+  <line x1="170" y1="130" x2="250" y2="130" stroke="#2d3748" stroke-width="2" />
+  <polygon points="250,130 242,126 242,134" fill="#2d3748" />
+  
+  <!-- Perception to Memory -->
+  <line x1="330" y1="180" x2="330" y2="220" stroke="#2d3748" stroke-width="2" />
+  <polygon points="330,220 326,212 334,212" fill="#2d3748" />
+  
+  <!-- Perception to Reasoning -->
+  <line x1="410" y1="140" x2="500" y2="180" stroke="#2d3748" stroke-width="2" />
+  <polygon points="500,180 492,178 494,186" fill="#2d3748" />
+  
+  <!-- Memory to Reasoning -->
+  <line x1="410" y1="260" x2="500" y2="220" stroke="#2d3748" stroke-width="2" />
+  <polygon points="500,220 492,216 494,224" fill="#2d3748" />
+  
+  <!-- Reasoning to Action Selection -->
+  <line x1="660" y1="200" x2="740" y2="200" stroke="#2d3748" stroke-width="2" />
+  <polygon points="740,200 732,196 732,204" fill="#2d3748" />
+  
+  <!-- Action Selection to Actions -->
+  <line x1="800" y1="240" x2="800" y2="280" stroke="#2d3748" stroke-width="2" />
+  <path d="M800 280 Q800 300 760 320" stroke="#2d3748" stroke-width="2" fill="none" />
+  <path d="M800 280 Q800 340 760 400" stroke="#2d3748" stroke-width="2" fill="none" />
+  <path d="M800 280 Q800 380 760 480" stroke="#2d3748" stroke-width="2" fill="none" />
+  <polygon points="760,320 766,315 770,325" fill="#2d3748" />
+  <polygon points="760,400 766,395 770,405" fill="#2d3748" />
+  <polygon points="760,480 766,475 770,485" fill="#2d3748" />
+  
+  <!-- Actions to Result Processors -->
+  <line x1="640" y1="350" x2="510" y2="350" stroke="#2d3748" stroke-width="2" />
+  <polygon points="510,350 518,346 518,354" fill="#2d3748" />
+  
+  <line x1="640" y1="430" x2="510" y2="430" stroke="#2d3748" stroke-width="2" />
+  <polygon points="510,430 518,426 518,434" fill="#2d3748" />
+  
+  <line x1="640" y1="510" x2="510" y2="510" stroke="#2d3748" stroke-width="2" />
+  <polygon points="510,510 518,506 518,514" fill="#2d3748" />
+  
+  <!-- Result Processors to API Response -->
+  <path d="M350 350 Q250 350 180 400" stroke="#2d3748" stroke-width="2" fill="none" />
+  <path d="M350 430 Q250 430 180 430" stroke="#2d3748" stroke-width="2" fill="none" />
+  <path d="M350 510 Q250 510 180 460" stroke="#2d3748" stroke-width="2" fill="none" />
+  <polygon points="180,400 188,396 186,404" fill="#2d3748" />
+  <polygon points="180,430 188,426 186,434" fill="#2d3748" />
+  <polygon points="180,460 188,456 186,464" fill="#2d3748" />
+  
+  <!-- Feedback to Learning Agent -->
+  <path d="M120 460 Q120 520 250 550" stroke="#2d3748" stroke-width="2" fill="none" />
+  <polygon points="250,550 242,546 242,554" fill="#2d3748" />
+  
+  <!-- Learning Agent to Process -->
+  <path d="M650 550 Q700 550 800 250" stroke="#2d3748" stroke-width="2" fill="none" />
+  <polygon points="800,250 796,258 804,258" fill="#2d3748" />
+  
+  <!-- Key Processes Labels -->
+  <rect x="20" y="20" width="140" height="30" rx="5" fill="#4299e1" opacity="0.7" />
+  <text x="90" y="40" font-family="Arial" font-size="12" text-anchor="middle" fill="white">Input/Output</text>
+  
+  <rect x="170" y="20" width="140" height="30" rx="5" fill="#9f7aea" opacity="0.7" />
+  <text x="240" y="40" font-family="Arial" font-size="12" text-anchor="middle" fill="white">Core AI Agents</text>
+  
+  <rect x="320" y="20" width="140" height="30" rx="5" fill="#38b2ac" opacity="0.7" />
+  <text x="390" y="40" font-family="Arial" font-size="12" text-anchor="middle" fill="white">Action Modules</text>
+  
+  <rect x="470" y="20" width="140" height="30" rx="5" fill="#ed8936" opacity="0.7" />
+  <text x="540" y="40" font-family="Arial" font-size="12" text-anchor="middle" fill="white">Processing Units</text>
+  
+  <rect x="620" y="20" width="140" height="30" rx="5" fill="#f56565" opacity="0.7" />
+  <text x="690" y="40" font-family="Arial" font-size="12" text-anchor="middle" fill="white">Learning System</text>
+</svg>

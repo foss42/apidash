@@ -111,6 +111,7 @@ class DashApp extends ConsumerWidget {
     final workspaceFolderPath = ref
         .watch(settingsProvider.select((value) => value.workspaceFolderPath));
     final showWorkspaceSelector = kIsDesktop && (workspaceFolderPath == null);
+    final userOnboarded = ref.watch(userOnboardedProvider);
     return Portal(
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -138,7 +139,18 @@ class DashApp extends ConsumerWidget {
                   !kIsLinux && !kIsMobile
                       ? const App()
                       : context.isMediumWindow
-                          ? const MobileDashboard()
+                          ? (kIsMobile && !userOnboarded)
+                              ? OnboardingScreen(
+                                  onComplete: () async {
+                                    await setOnboardingStatusToSharedPrefs(
+                                      isOnboardingComplete: true,
+                                    );
+                                    ref
+                                        .read(userOnboardedProvider.notifier)
+                                        .state = true;
+                                  },
+                                )
+                              : const MobileDashboard()
                           : const Dashboard(),
                   if (kIsWindows)
                     SizedBox(

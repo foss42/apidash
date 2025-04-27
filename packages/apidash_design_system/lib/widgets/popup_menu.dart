@@ -49,7 +49,7 @@ class ADPopupMenu<T> extends StatelessWidget {
                 value ?? "",
                 style: kTextStylePopupMenuItem,
                 softWrap: false,
-                overflow: TextOverflow.ellipsis,
+                overflow: TextOverflow.clip,
               ),
             ),
             const Icon(

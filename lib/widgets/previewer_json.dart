@@ -177,77 +177,85 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: constraints.minWidth > kMinWindowSize.width
-                          ? [
-                              TextButton(
-                                onPressed: () async {
-                                  await _copy(
-                                      kJsonEncoder.convert(widget.code), sm);
-                                },
-                                child: const Text(
-                                  'Copy',
-                                  style: kTextStyleButtonSmall,
-                                ),
-                              ),
-                              TextButton(
-                                onPressed: state.areAllExpanded()
-                                    ? null
-                                    : state.expandAll,
-                                child: const Text(
-                                  'Expand All',
-                                  style: kTextStyleButtonSmall,
-                                ),
-                              ),
-                              TextButton(
-                                onPressed: state.areAllCollapsed()
-                                    ? null
-                                    : state.collapseAll,
-                                child: const Text(
-                                  'Collapse All',
-                                  style: kTextStyleButtonSmall,
-                                ),
-                              ),
-                            ]
-                          : [
-                              IconButton(
-                                tooltip: "Copy",
-                                color: Theme.of(context).colorScheme.primary,
-                                visualDensity: VisualDensity.compact,
-                                onPressed: () async {
-                                  await _copy(
-                                      kJsonEncoder.convert(widget.code), sm);
-                                },
-                                icon: const Icon(
-                                  Icons.copy,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Expanded(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.surface,
+                            border: Border.all(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .surfaceContainerHighest),
+                            borderRadius: kBorderRadius8,
+                          ),
+                          child: Row(
+                            children: [
+                              const Padding(
+                                padding: kPh4,
+                                child: Icon(
+                                  Icons.search,
                                   size: 16,
                                 ),
                               ),
-                              IconButton(
-                                tooltip: "Expand All",
-                                color: Theme.of(context).colorScheme.primary,
-                                visualDensity: VisualDensity.compact,
-                                onPressed: state.areAllExpanded()
-                                    ? null
-                                    : state.expandAll,
-                                icon: const Icon(
-                                  Icons.unfold_more,
-                                  size: 16,
+                              Expanded(
+                                child: JsonSearchField(
+                                  controller: searchController,
+                                  onChanged: (term) => state.search(term),
                                 ),
                               ),
-                              IconButton(
-                                tooltip: "Collapse All",
-                                color: Theme.of(context).colorScheme.primary,
-                                visualDensity: VisualDensity.compact,
-                                onPressed: state.areAllCollapsed()
-                                    ? null
-                                    : state.collapseAll,
-                                icon: const Icon(
-                                  Icons.unfold_less,
-                                  size: 16,
-                                ),
+                              const SizedBox(
+                                width: 8,
                               ),
-                            ]),
+                              if (state.searchResults.isNotEmpty)
+                                Text(_searchFocusText(),
+                                    style:
+                                        Theme.of(context).textTheme.bodySmall),
+                              if (state.searchResults.isNotEmpty)
+                                IconButton(
+                                  visualDensity: VisualDensity.compact,
+                                  onPressed: () {
+                                    store.focusPreviousSearchResult();
+                                    _scrollToSearchMatch();
+                                  },
+                                  icon: const Icon(Icons.arrow_drop_up),
+                                ),
+                              if (state.searchResults.isNotEmpty)
+                                IconButton(
+                                  visualDensity: VisualDensity.compact,
+                                  onPressed: () {
+                                    store.focusNextSearchResult();
+                                    _scrollToSearchMatch();
+                                  },
+                                  icon: const Icon(Icons.arrow_drop_down),
+                                ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      ADTextButton(
+                        icon: Icons.unfold_more,
+                        showLabel:
+                            (constraints.minWidth > kMinWindowSize.width) &&
+                                !kIsMobile,
+                        label: 'Expand All',
+                        labelTextStyle: kTextStyleButtonSmall,
+                        onPressed:
+                            state.areAllExpanded() ? null : state.expandAll,
+                      ),
+                      ADTextButton(
+                        icon: Icons.unfold_less,
+                        showLabel:
+                            (constraints.minWidth > kMinWindowSize.width) &&
+                                !kIsMobile,
+                        label: 'Collapse All',
+                        labelTextStyle: kTextStyleButtonSmall,
+                        onPressed:
+                            state.areAllCollapsed() ? null : state.collapseAll,
+                      ),
+                    ],
+                  ),
+                  kVSpacer6,
                   Expanded(
                     child: JsonExplorer(
                       nodes: state.displayNodes,
@@ -285,57 +293,6 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
                           ? jsonExplorerThemeLight
                           : jsonExplorerThemeDark,
                       maxRootNodeWidth: maxRootNodeWidth,
-                    ),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surface,
-                      border: Border.all(
-                          color: Theme.of(context)
-                              .colorScheme
-                              .surfaceContainerHighest),
-                      borderRadius: kBorderRadius8,
-                    ),
-                    child: Row(
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 8.0),
-                          child: Icon(
-                            Icons.search,
-                            size: 18,
-                          ),
-                        ),
-                        Expanded(
-                          child: JsonSearchField(
-                            controller: searchController,
-                            onChanged: (term) => state.search(term),
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 8,
-                        ),
-                        if (state.searchResults.isNotEmpty)
-                          Text(_searchFocusText(),
-                              style: Theme.of(context).textTheme.bodySmall),
-                        if (state.searchResults.isNotEmpty)
-                          IconButton(
-                            visualDensity: VisualDensity.compact,
-                            onPressed: () {
-                              store.focusPreviousSearchResult();
-                              _scrollToSearchMatch();
-                            },
-                            icon: const Icon(Icons.arrow_drop_up),
-                          ),
-                        if (state.searchResults.isNotEmpty)
-                          IconButton(
-                            visualDensity: VisualDensity.compact,
-                            onPressed: () {
-                              store.focusNextSearchResult();
-                              _scrollToSearchMatch();
-                            },
-                            icon: const Icon(Icons.arrow_drop_down),
-                          ),
-                      ],
                     ),
                   ),
                 ],
@@ -420,7 +377,7 @@ class _JsonPreviewerState extends State<JsonPreviewer> {
   }
 
   String _searchFocusText() =>
-      '${store.focusedSearchResultIndex + 1} of ${store.searchResults.length}';
+      '${store.focusedSearchResultIndex + 1}/${store.searchResults.length}';
 
   void _scrollToSearchMatch() {
     final index = store.displayNodes.indexOf(store.focusedSearchResult.node);

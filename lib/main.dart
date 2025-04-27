@@ -10,6 +10,7 @@ import 'app.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   var settingsModel = await getSettingsFromSharedPrefs();
+  var onboardingStatus = await getOnboardingStatusFromSharedPrefs();
   final initStatus = await initApp(
     kIsDesktop,
     settingsModel: settingsModel,
@@ -26,7 +27,8 @@ void main() async {
       overrides: [
         settingsProvider.overrideWith(
           (ref) => ThemeStateNotifier(settingsModel: settingsModel),
-        )
+        ),
+        userOnboardedProvider.overrideWith((ref) => onboardingStatus),
       ],
       child: const DashApp(),
     ),

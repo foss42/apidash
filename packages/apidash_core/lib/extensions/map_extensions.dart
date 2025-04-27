@@ -23,4 +23,10 @@ extension MapExtension on Map {
   String? getValueContentType() {
     return this[getKeyContentType()];
   }
+
+  Map removeKeyContentType() {
+    removeWhere(
+        (key, value) => key.toLowerCase() == HttpHeaders.contentTypeHeader);
+    return this;
+  }
 }
