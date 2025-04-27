@@ -21,15 +21,13 @@ class EnvironmentPopupMenu extends StatelessWidget {
     final double width = context.isCompactWindow ? 100 : 130;
 
     return ADPopupMenu<EnvironmentModel?>(
-      value: value == null
-          ? "Select Env."
-          : value?.id == kGlobalEnvironmentId
-              ? "Global"
-              : getEnvironmentTitle(value?.name),
+      value: (value == null || value?.id == kGlobalEnvironmentId)
+          ? "None"
+          : getEnvironmentTitle(value?.name),
       values: options?.map((e) => (
                 e,
                 (e.id == kGlobalEnvironmentId)
-                    ? "Global"
+                    ? "None"
                     : getEnvironmentTitle(e.name).clip(30)
               )) ??
           [],

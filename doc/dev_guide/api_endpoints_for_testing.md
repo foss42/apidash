@@ -43,7 +43,3 @@ A List of API endpoints that can be used for testing API Dash
 #### Audio
 
 - 
-
-## SSE
-
-- https://sse.dev

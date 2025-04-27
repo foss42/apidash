@@ -2,6 +2,7 @@
 name: Bug report
 about: Something wrong with API Dash. Report the problem/bug here.
 title: ''
+labels: bug
 assignees: ''
 
 ---

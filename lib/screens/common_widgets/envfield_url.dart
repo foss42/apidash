@@ -10,21 +10,18 @@ class EnvURLField extends StatelessWidget {
     this.initialValue,
     this.onChanged,
     this.onFieldSubmitted,
-    this.focusNode,
   });
 
   final String selectedId;
   final String? initialValue;
   final void Function(String)? onChanged;
   final void Function(String)? onFieldSubmitted;
-  final FocusNode? focusNode;
 
   @override
   Widget build(BuildContext context) {
     return EnvironmentTriggerField(
       keyId: "url-$selectedId",
       initialValue: initialValue,
-      focusNode: focusNode,
       style: kCodeStyle,
       decoration: InputDecoration(
         hintText: kHintTextUrlCard,

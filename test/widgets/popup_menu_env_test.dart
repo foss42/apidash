@@ -40,7 +40,7 @@ void main() {
       ),
     );
 
-    expect(find.text('Global'), findsOneWidget);
+    expect(find.text('None'), findsOneWidget);
   });
 
   testWidgets('EnvironmentPopupMenu displays popup menu items',
@@ -72,7 +72,7 @@ void main() {
     await tester.tap(find.byIcon(Icons.unfold_more));
     await tester.pumpAndSettle();
 
-    expect(find.text('Global'), findsExactly(2));
+    expect(find.text('None'), findsExactly(2));
     expect(find.text('Production'), findsOneWidget);
     expect(find.text('Development'), findsOneWidget);
   });
@@ -135,7 +135,7 @@ void main() {
     await tester.tap(find.byIcon(Icons.unfold_more));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Global').last);
+    await tester.tap(find.text('None').last);
     await tester.pumpAndSettle();
 
     expect(selectedEnvironment, environment);

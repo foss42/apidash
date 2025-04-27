@@ -1,19 +1,6 @@
 # API Dash ⚡️
 
-[![Discord Server Invite](https://img.shields.io/badge/DISCORD-JOIN%20SERVER-5663F7?style=for-the-badge&logo=discord&logoColor=white)](https://discord.com/invite/bBeSdtJ6Ue)
-
-### 🚨🚨 API Dash is participating in GSoC 2025! Check out the details below:
-
-<img src="https://github.com/foss42/apidash/assets/615622/493ce57f-06c3-4789-b7ae-9fa63bca8183" alt="GSoC" width="500">
-
-| | Link |
-|--|--|
-| Learn about GSoC | [Link](https://summerofcode.withgoogle.com) |
-| API Dash GSoC Page | [Link](https://summerofcode.withgoogle.com/programs/2025/organizations/api-dash) |
-| Project Ideas List | [Link](https://github.com/foss42/apidash/discussions/565) |
-| Application Guide | [Link](https://github.com/foss42/apidash/discussions/564) |
-| Discord Channel | [Link](https://discord.com/invite/bBeSdtJ6Ue) |
-
+[![Discord Server Invite](https://img.shields.io/badge/DISCORD-JOIN%20SERVER-5663F7?style=for-the-badge&logo=discord&logoColor=white)](https://bit.ly/heyfoss)
 
 ### Please support this initiative by giving this project a Star ⭐️
 
@@ -291,4 +278,4 @@ You can contribute to API Dash in any or all of the following ways:
 
 ## Need Any Help?
 
-In case you need any help with API Dash or are encountering any issue while running the tool, please feel free to drop by our [Discord server](https://discord.com/invite/bBeSdtJ6Ue) and we can have a chat in the **#foss-apidash** channel.
+In case you need any help with API Dash or are encountering any issue while running the tool, please feel free to drop by our [Discord server](https://bit.ly/heyfoss) and we can have a chat in the **#foss-apidash** channel.
