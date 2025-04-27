@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:apidash/models/models.dart';
 import 'card_title.dart';
 import 'card_description.dart';
+import 'chip.dart';
 
 class TemplateCard extends StatelessWidget {
   final ApiTemplate template;
@@ -27,7 +28,7 @@ class TemplateCard extends StatelessWidget {
         ),
       ),
       color: colorScheme.surface,
-      elevation: 0.5,
+      elevation: 0.8,
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(16),
@@ -45,6 +46,12 @@ class TemplateCard extends StatelessWidget {
               CardDescription(
                 description: template.info.description.isEmpty ? 'No description' : template.info.description,
                 maxLines: 2,
+              ),
+              const SizedBox(height: 10),
+              Wrap(
+                spacing: 8,
+                runSpacing: 4,
+                children: template.info.tags.map((tag) => CustomChip.tag(tag, colorScheme)).toList(),
               ),
             ],
           ),

@@ -64,8 +64,8 @@ class _ExplorerBodyState extends State<ExplorerBody> {
                 return GridView.builder(
                   padding: const EdgeInsets.all(12),
                   gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 300,
-                    childAspectRatio: 1.3,
+                    maxCrossAxisExtent: 384, 
+                    childAspectRatio: 1.6,
                     crossAxisSpacing: 12,
                     mainAxisSpacing: 12,
                   ),

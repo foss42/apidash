@@ -89,6 +89,17 @@ class CustomChip extends StatelessWidget {
     );
   }
 
+  factory CustomChip.tag(String tag, ColorScheme colorScheme) {
+    return CustomChip(
+      label: tag,
+      fontSize: 10, 
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4), 
+      backgroundColor: colorScheme.primary.withOpacity(0.1),
+      textColor: colorScheme.primary,
+      borderColor: colorScheme.primary.withOpacity(0.3),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
