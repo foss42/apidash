@@ -253,3 +253,9 @@ const requestModelPost13 = RequestModel(
   apiType: APIType.rest,
   httpRequestModel: httpRequestModelPost13,
 );
+
+const requestModelOptions1 = RequestModel(
+  id: 'options1',
+  apiType: APIType.rest,
+  httpRequestModel: httpRequestModelOptions1,
+);

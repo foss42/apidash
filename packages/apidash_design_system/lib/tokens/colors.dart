@@ -23,6 +23,7 @@ final kColorHttpMethodPost = Colors.blue.shade800;
 final kColorHttpMethodPut = Colors.amber.shade900;
 final kColorHttpMethodPatch = kColorHttpMethodPut;
 final kColorHttpMethodDelete = Colors.red.shade800;
+final kColorHttpMethodOptions = Colors.deepPurple.shade800;
 
 final kColorGQL = Colors.pink.shade600;
 
