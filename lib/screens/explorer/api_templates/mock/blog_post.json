@@ -1,82 +1,113 @@
 {
-    "info": {
-      "title": "Blog Post API",
-      "description": "API for creating, retrieving, and deleting blog posts",
-      "tags": ["blog", "posts", "content"]
+  "info": {
+    "title": "Blog Post API",
+    "description": "API for managing blog posts",
+    "tags": ["blog", "posts"]
+  },
+  "requests": [
+    {
+      "id": "post_create",
+      "apiType": "rest",
+      "name": "Create post",
+      "description": "Create a new blog post",
+      "httpRequestModel": {
+        "method": "post",
+        "url": "https://api.example.com/v1/posts",
+        "headers": [
+          {"name": "Content-Type", "value": "application/json"}
+        ],
+        "params": [],
+        "isHeaderEnabledList": [true],
+        "isParamEnabledList": [],
+        "bodyContentType": "json",
+        "body": "{\"title\":\"New Post\",\"content\":\"Content here\"}",
+        "query": null,
+        "formData": null
+      },
+      "responseStatus": 201,
+      "message": "Post created",
+      "httpResponseModel": {
+        "statusCode": 201,
+        "headers": {
+          "Content-Type": "application/json",
+          "Content-Length": "89"
+        },
+        "requestHeaders": {
+          "Content-Type": "application/json"
+        },
+        "body": "{\"id\":1,\"title\":\"New Post\",\"content\":\"Content here\",\"created_at\":\"2025-04-25T10:30:00Z\"}",
+        "formattedBody": "{\n  \"id\": 1,\n  \"title\": \"New Post\",\n  \"content\": \"Content here\",\n  \"created_at\": \"2025-04-25T10:30:00Z\"\n}",
+        "time": 240000
+      },
+      "isWorking": false,
+      "sendingTime": null
     },
-    "requests": [
-      {
-        "id": "post_create",
-        "apiType": "rest",
-        "name": "Create a blog post",
-        "description": "Publishes a new blog post",
-        "httpRequestModel": {
-          "method": "post",
-          "url": "https://api.example.com/v1/posts",
-          "headers": [
-            {"name": "Content-Type", "value": "application/json"}
-          ],
-          "params": [],
-          "isHeaderEnabledList": [true],
-          "isParamEnabledList": [],
-          "bodyContentType": "json",
-          "body": "{\"title\": \"My First Post\", \"content\": \"This is a blog post\", \"author\": \"Jane Doe\"}",
-          "query": null,
-          "formData": null
-        },
-        "responseStatus": null,
-        "message": null,
-        "httpResponseModel": null,
-        "isWorking": false,
-        "sendingTime": null
+    {
+      "id": "post_get_all",
+      "apiType": "rest",
+      "name": "List posts",
+      "description": "Get all blog posts",
+      "httpRequestModel": {
+        "method": "get",
+        "url": "https://api.example.com/v1/posts",
+        "headers": [],
+        "params": [
+          {"name": "limit", "value": "10"}
+        ],
+        "isHeaderEnabledList": [],
+        "isParamEnabledList": [true],
+        "bodyContentType": "json",
+        "body": null,
+        "query": "limit=10",
+        "formData": null
       },
-      {
-        "id": "post_get_all",
-        "apiType": "rest",
-        "name": "Get all blog posts",
-        "description": "Retrieves a list of all blog posts",
-        "httpRequestModel": {
-          "method": "get",
-          "url": "https://api.example.com/v1/posts",
-          "headers": [],
-          "params": [],
-          "isHeaderEnabledList": [],
-          "isParamEnabledList": [],
-          "bodyContentType": "json",
-          "body": null,
-          "query": null,
-          "formData": null
+      "responseStatus": 200,
+      "message": "Success",
+      "httpResponseModel": {
+        "statusCode": 200,
+        "headers": {
+          "Content-Type": "application/json",
+          "Content-Length": "126"
         },
-        "responseStatus": null,
-        "message": null,
-        "httpResponseModel": null,
-        "isWorking": false,
-        "sendingTime": null
+        "requestHeaders": {},
+        "body": "{\"data\":[{\"id\":1,\"title\":\"New Post\"},{\"id\":2,\"title\":\"Another Post\"}],\"meta\":{\"total\":2}}",
+        "formattedBody": "{\n  \"data\": [\n    {\n      \"id\": 1,\n      \"title\": \"New Post\"\n    },\n    {\n      \"id\": 2,\n      \"title\": \"Another Post\"\n    }\n  ],\n  \"meta\": {\n    \"total\": 2\n  }\n}",
+        "time": 150000
       },
-      {
-        "id": "post_delete",
-        "apiType": "rest",
-        "name": "Delete a blog post",
-        "description": "Removes a blog post by ID",
-        "httpRequestModel": {
-          "method": "delete",
-          "url": "https://api.example.com/v1/posts/1",
-          "headers": [],
-          "params": [
-            {"name": "id", "value": "1"}
-          ],
-          "isHeaderEnabledList": [],
-          "isParamEnabledList": [true],
-          "bodyContentType": "json",
-          "body": null,
-          "query": null,
-          "formData": null
+      "isWorking": false,
+      "sendingTime": null
+    },
+    {
+      "id": "post_delete",
+      "apiType": "rest",
+      "name": "Delete post",
+      "description": "Delete a post by ID",
+      "httpRequestModel": {
+        "method": "delete",
+        "url": "https://api.example.com/v1/posts/1",
+        "headers": [],
+        "params": [],
+        "isHeaderEnabledList": [],
+        "isParamEnabledList": [],
+        "bodyContentType": "json",
+        "body": null,
+        "query": null,
+        "formData": null
+      },
+      "responseStatus": 204,
+      "message": "Deleted",
+      "httpResponseModel": {
+        "statusCode": 204,
+        "headers": {
+          "Content-Length": "0"
         },
-        "responseStatus": null,
-        "message": null,
-        "httpResponseModel": null,
-        "isWorking": false,
-        "sendingTime": null
-      }
-    ]
-  }
+        "requestHeaders": {},
+        "body": "",
+        "formattedBody": "",
+        "time": 110000
+      },
+      "isWorking": false,
+      "sendingTime": null
+    }
+  ]
+}
