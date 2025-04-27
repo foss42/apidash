@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:apidash_core/apidash_core.dart';
-import '../common_widgets/url_card.dart';
+import '../common_widgets/common_widgets.dart';
 import 'package:apidash/models/models.dart';
+import 'package:apidash/consts.dart';
+import 'package:apidash_design_system/apidash_design_system.dart'; 
 
 class DescriptionPane extends StatelessWidget {
   final RequestModel? selectedRequest;
@@ -10,15 +12,53 @@ class DescriptionPane extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final httpRequestModel = selectedRequest?.httpRequestModel;
     return Container(
       color: Theme.of(context).colorScheme.background,
-      child: Column(
-        children: [
-          UrlCard(
-          url: selectedRequest?.httpRequestModel?.url,
-          method: selectedRequest?.httpRequestModel?.method.toString().split('.').last ?? 'GET',
-          ),
-        ],
+      child: SingleChildScrollView(
+        padding: kP12, 
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (selectedRequest?.name != null) ...[
+              Text(selectedRequest!.name, 
+                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              if (selectedRequest?.description != null)
+                Text(selectedRequest!.description, style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7))),
+              kVSpacer16,
+            ],
+            UrlCard(
+              url: httpRequestModel?.url,
+              method: httpRequestModel?.method.toString().split('.').last ?? 'GET',
+            ),
+            kVSpacer16,
+            RequestHeadersCard(
+              title: kLabelHeaders,
+              headers: httpRequestModel?.headers,
+              isEnabledList: httpRequestModel?.isHeaderEnabledList,
+            ),
+            kVSpacer10,
+            RequestParamsCard(
+              title: kLabelQuery,
+              params: httpRequestModel?.params,
+              isEnabledList: httpRequestModel?.isParamEnabledList,
+            ),
+            kVSpacer10,
+            RequestBodyCard(
+              title: kLabelBody,
+              body: httpRequestModel?.body,
+              contentType: httpRequestModel?.bodyContentType?.toString().split('.').last,
+            ),
+            kVSpacer16,
+            ResponseBodyCard(
+              httpResponseModel: selectedRequest?.httpResponseModel,
+              responseStatus: selectedRequest?.responseStatus,
+              message: selectedRequest?.message,
+              body: selectedRequest?.httpResponseModel?.formattedBody ?? selectedRequest?.httpResponseModel?.body,
+            ),
+          ],
+        ),
       ),
     );
   }

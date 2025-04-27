@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:apidash/screens/explorer/common_widgets/import.dart'; 
 
 class ExplorerHeader extends StatelessWidget {
   const ExplorerHeader({super.key});
@@ -15,8 +14,7 @@ class ExplorerHeader extends StatelessWidget {
           const Text(
             'API EXPLORER',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const ImportButton(),
+          )
         ],
       ),
     );

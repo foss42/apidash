@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:apidash/services/services.dart';
-import 'common_widgets/template_card.dart';
-import 'common_widgets/api_search_bar.dart';
+import 'common_widgets/common_widgets.dart';
 import 'package:apidash/models/models.dart';
 
 class ExplorerBody extends StatefulWidget {

@@ -1,0 +1,162 @@
+{
+    "info": {
+      "title": "Swagger Petstore",
+      "description": "API for managing pets in the pet store",
+      "tags": ["pets", "petstore", "api"]
+    },
+    "requests": [
+      {
+        "id": "list_pets",
+        "apiType": "rest",
+        "name": "List all pets",
+        "description": "Returns a paged array of pets",
+        "httpRequestModel": {
+          "method": "get",
+          "url": "http://petstore.swagger.io/v1/pets",
+          "headers": [
+            {"name": "Accept", "value": "application/json"}
+          ],
+          "params": [
+            {"name": "limit", "value": "10"}
+          ],
+          "isHeaderEnabledList": [true],
+          "isParamEnabledList": [true],
+          "bodyContentType": "json",
+          "body": null,
+          "query": "limit=10",
+          "formData": null
+        },
+        "responseStatus": 200,
+        "message": "An paged array of pets",
+        "httpResponseModel": {
+          "statusCode": 200,
+          "headers": {
+            "Content-Type": "application/json",
+            "x-next": "/v1/pets?page=2",
+            "Content-Length": "157"
+          },
+          "requestHeaders": {
+            "Accept": "application/json"
+          },
+          "body": "[{\"id\":1,\"name\":\"Dog\",\"tag\":\"golden\"},{\"id\":2,\"name\":\"Cat\",\"tag\":\"siamese\"}]",
+          "formattedBody": "[\n  {\n    \"id\": 1,\n    \"name\": \"Dog\",\n    \"tag\": \"golden\"\n  },\n  {\n    \"id\": 2,\n    \"name\": \"Cat\",\n    \"tag\": \"siamese\"\n  }\n]",
+          "time": 120000
+        },
+        "isWorking": false,
+        "sendingTime": null
+      },
+      {
+        "id": "create_pet",
+        "apiType": "rest",
+        "name": "Create a pet",
+        "description": "Creates a new pet in the store",
+        "httpRequestModel": {
+          "method": "post",
+          "url": "http://petstore.swagger.io/v1/pets",
+          "headers": [
+            {"name": "Content-Type", "value": "application/json"},
+            {"name": "Accept", "value": "application/json"}
+          ],
+          "params": [],
+          "isHeaderEnabledList": [true, true],
+          "isParamEnabledList": [],
+          "bodyContentType": "json",
+          "body": "{\"name\":\"Fluffy\",\"tag\":\"poodle\"}",
+          "query": null,
+          "formData": null
+        },
+        "responseStatus": 201,
+        "message": "Pet created successfully",
+        "httpResponseModel": {
+          "statusCode": 201,
+          "headers": {
+            "Content-Type": "application/json",
+            "Content-Length": "0"
+          },
+          "requestHeaders": {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+          },
+          "body": "",
+          "formattedBody": "",
+          "time": 150000
+        },
+        "isWorking": false,
+        "sendingTime": null
+      },
+      {
+        "id": "get_pet_by_id",
+        "apiType": "rest",
+        "name": "Info for a specific pet",
+        "description": "Returns details about a specific pet by ID",
+        "httpRequestModel": {
+          "method": "get",
+          "url": "http://petstore.swagger.io/v1/pets/1",
+          "headers": [
+            {"name": "Accept", "value": "application/json"}
+          ],
+          "params": [],
+          "isHeaderEnabledList": [true],
+          "isParamEnabledList": [],
+          "bodyContentType": "json",
+          "body": null,
+          "query": null,
+          "formData": null
+        },
+        "responseStatus": 200,
+        "message": "Expected response to a valid request",
+        "httpResponseModel": {
+          "statusCode": 200,
+          "headers": {
+            "Content-Type": "application/json",
+            "Content-Length": "45"
+          },
+          "requestHeaders": {
+            "Accept": "application/json"
+          },
+          "body": "{\"id\":1,\"name\":\"Dog\",\"tag\":\"golden\"}",
+          "formattedBody": "{\n  \"id\": 1,\n  \"name\": \"Dog\",\n  \"tag\": \"golden\"\n}",
+          "time": 130000
+        },
+        "isWorking": false,
+        "sendingTime": null
+      },
+      {
+        "id": "error_response",
+        "apiType": "rest",
+        "name": "Error example",
+        "description": "Example of an error response",
+        "httpRequestModel": {
+          "method": "get",
+          "url": "http://petstore.swagger.io/v1/pets/999",
+          "headers": [
+            {"name": "Accept", "value": "application/json"}
+          ],
+          "params": [],
+          "isHeaderEnabledList": [true],
+          "isParamEnabledList": [],
+          "bodyContentType": "json",
+          "body": null,
+          "query": null,
+          "formData": null
+        },
+        "responseStatus": 404,
+        "message": "Pet not found",
+        "httpResponseModel": {
+          "statusCode": 404,
+          "headers": {
+            "Content-Type": "application/json",
+            "Content-Length": "49"
+          },
+          "requestHeaders": {
+            "Accept": "application/json"
+          },
+          "body": "{\"code\":404,\"message\":\"Pet with ID 999 not found\"}",
+          "formattedBody": "{\n  \"code\": 404,\n  \"message\": \"Pet with ID 999 not found\"\n}",
+          "time": 110000
+        },
+        "isWorking": false,
+        "sendingTime": null
+      }
+    ]
+  }
