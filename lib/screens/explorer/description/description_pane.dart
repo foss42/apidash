@@ -29,8 +29,7 @@ class DescriptionPane extends StatelessWidget {
               kVSpacer16,
             ],
             UrlCard(
-              url: httpRequestModel?.url,
-              method: httpRequestModel?.method.toString().split('.').last ?? 'GET',
+              requestModel: selectedRequest,
             ),
             kVSpacer16,
             RequestHeadersCard(

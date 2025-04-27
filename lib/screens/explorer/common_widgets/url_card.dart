@@ -1,34 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:apidash_design_system/apidash_design_system.dart'; // Ensure this is imported
+import 'package:apidash_core/apidash_core.dart';
+import 'package:apidash/models/models.dart';
 import 'chip.dart';
+import '../import.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:apidash/providers/providers.dart';
 
-class ImportButton extends StatelessWidget {
-  const ImportButton({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      child: const Text(
-        'Import',
-        style: TextStyle(color: Colors.blue),
-      ),
-    );
-  }
-}
-
-class UrlCard extends StatelessWidget {
-  final String? url;
-  final String method;
+class UrlCard extends ConsumerWidget {
+  final RequestModel? requestModel;
 
   const UrlCard({
     super.key,
-    required this.url,
-    required this.method,
+    required this.requestModel,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final importedData = importRequestData(requestModel);
+    final httpRequestModel = importedData.httpRequestModel;
+    final url = httpRequestModel?.url ?? '';
+    final method = httpRequestModel?.method.toString().split('.').last.toUpperCase() ?? 'GET';
+
     return Card(
       color: Colors.transparent,
       elevation: 0,
@@ -46,14 +39,29 @@ class UrlCard extends StatelessWidget {
             kHSpacer10,
             Expanded(
               child: Text(
-                url ?? '',
+                url,
                 style: const TextStyle(color: Colors.blue),
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
               ),
             ),
             kHSpacer20,
-            const ImportButton(),
+            ElevatedButton(
+              onPressed: () {
+                if (httpRequestModel != null) {
+                  ref.read(collectionStateNotifierProvider.notifier).addRequestModel(
+                    httpRequestModel,
+                    name: requestModel?.name ?? 'Imported Request',
+                  );
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              ),
+              child: const Text('Import'),
+            ),
           ],
         ),
       ),
