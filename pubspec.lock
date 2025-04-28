@@ -826,6 +826,13 @@ packages:
       relative: true
     source: path
     version: "0.1.2"
+  json_field_editor:
+    dependency: "direct main"
+    description:
+      path: "packages/json_field_editor"
+      relative: true
+    source: path
+    version: "1.2.1"
   json_serializable:
     dependency: "direct dev"
     description:
@@ -834,14 +841,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.9.4"
-  json_text_field:
-    dependency: "direct main"
-    description:
-      name: json_text_field
-      sha256: d922cf02d5807c3971d57e1ba5463c68b98650e8913163e7391cdb31c6af3ae4
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.2.0"
   just_audio:
     dependency: "direct main"
     description:

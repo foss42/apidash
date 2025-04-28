@@ -1,11 +1,12 @@
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:apidash/widgets/widgets.dart';
 import 'package:flutter/foundation.dart';
 import 'package:printing/printing.dart' show PdfPreview;
 import 'package:flutter_svg/flutter_svg.dart' show SvgPicture;
-import 'package:apidash/widgets/video_previewer.dart';
+import 'package:apidash/widgets/previewer.dart';
+import 'package:apidash/widgets/previewer_video.dart';
+import 'package:apidash/widgets/uint8_audio_player.dart';
 import '../test_consts.dart';
 
 void main() {

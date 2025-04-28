@@ -6,8 +6,8 @@ import 'package:apidash/utils/utils.dart';
 import 'button_copy.dart';
 import 'button_save_download.dart';
 import 'button_share.dart';
-import 'code_previewer.dart';
 import 'dropdown_codegen.dart';
+import 'previewer_code.dart';
 
 class CodeGenPreviewer extends StatefulWidget {
   const CodeGenPreviewer({
@@ -54,40 +54,41 @@ class _CodeGenPreviewerState extends State<CodeGenPreviewer> {
     }
     return Padding(
       padding: widget.padding,
-      child: Scrollbar(
-        thickness: 10,
-        thumbVisibility: true,
-        controller: controllerV,
-        child: Scrollbar(
-          notificationPredicate: (notification) => notification.depth == 1,
-          thickness: 10,
-          thumbVisibility: true,
-          controller: controllerH,
-          child: SingleChildScrollView(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return Scrollbar(
+            thickness: 10,
+            thumbVisibility: true,
             controller: controllerV,
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
+            child: Scrollbar(
+              notificationPredicate: (notification) => notification.depth == 1,
+              thickness: 10,
+              thumbVisibility: true,
               controller: controllerH,
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      SelectionArea(
-                        child: Text.rich(
-                          TextSpan(
-                            children: spans,
-                            style: textStyle,
-                          ),
-                          softWrap: false,
-                        ),
-                      ),
-                    ],
+              child: SingleChildScrollView(
+                controller: controllerV,
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: constraints.maxHeight,
                   ),
-                ],
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    controller: controllerH,
+                    child: SelectionArea(
+                      child: Text.rich(
+                        TextSpan(
+                          children: spans,
+                          style: textStyle,
+                        ),
+                        softWrap: false,
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }
@@ -147,22 +148,16 @@ class ViewCodePane extends StatelessWidget {
                       toCopy: code,
                       showLabel: showLabel,
                     ),
-                    Visibility(
-                      visible: kIsMobile,
-                      child: ShareButton(
-                        toShare: code,
-                        showLabel: showLabel,
-                      ),
-                    ),
-                    // TODO: Save to Downloads folder does not work in Mobile
-                    Visibility(
-                      visible: !kIsMobile,
-                      child: SaveInDownloadsButton(
-                        content: stringToBytes(code),
-                        ext: codegenLanguage.ext,
-                        showLabel: showLabel,
-                      ),
-                    ),
+                    kIsMobile
+                        ? ShareButton(
+                            toShare: code,
+                            showLabel: showLabel,
+                          )
+                        : SaveInDownloadsButton(
+                            content: stringToBytes(code),
+                            ext: codegenLanguage.ext,
+                            showLabel: showLabel,
+                          ),
                   ],
                 ),
               ),
