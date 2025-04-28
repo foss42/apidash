@@ -26,6 +26,7 @@ class _ExplorerBodyState extends State<ExplorerBody> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
     return Container(
       color: Theme.of(context).colorScheme.background,
       child: Column(
@@ -33,17 +34,19 @@ class _ExplorerBodyState extends State<ExplorerBody> {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 16.0),
             child: Center(
-              child: SizedBox(
-                width: MediaQuery.of(context).size.width * 0.6,
-                child: ApiSearchBar(
-                  hintText: 'Search Explorer',
-                  onChanged: (value) {
-                    // TODO: Implement search filtering
-                    // Example: Filter templates by title or tags
-                  },
-                  onClear: () {
-                    // TODO:Handle clear action
-                  },
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 600),
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  child: ApiSearchBar(
+                    hintText: 'Search Explorer',
+                    onChanged: (value) {
+                      // TODO: Implement search filtering
+                    },
+                    onClear: () {
+                      // TODO: Handle clear action
+                    },
+                  ),
                 ),
               ),
             ),
@@ -63,9 +66,9 @@ class _ExplorerBodyState extends State<ExplorerBody> {
                 final templates = snapshot.data!;
                 return GridView.builder(
                   padding: const EdgeInsets.all(12),
-                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 384, 
-                    childAspectRatio: 1.6,
+                  gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent: 384,
+                    childAspectRatio: 1.3,
                     crossAxisSpacing: 12,
                     mainAxisSpacing: 12,
                   ),

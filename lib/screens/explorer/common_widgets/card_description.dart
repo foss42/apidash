@@ -7,7 +7,7 @@ class CardDescription extends StatelessWidget {
   const CardDescription({
     Key? key,
     required this.description,
-    this.maxLines = 2,
+    this.maxLines = 5,
   }) : super(key: key);
 
   @override
@@ -15,23 +15,21 @@ class CardDescription extends StatelessWidget {
     final theme = Theme.of(context);
 
     return SizedBox(
-      height: 80,
+      width: double.infinity,
       child: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
           color: theme.colorScheme.surfaceVariant.withOpacity(0.3),
           borderRadius: BorderRadius.circular(8),
         ),
-        child: Center(
-          child: Text(
-            description.isEmpty ? 'No description' : description,
-            textAlign: TextAlign.left, 
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.7),
-            ),
-            maxLines: maxLines,
-            overflow: TextOverflow.ellipsis,
+        child: Text(
+          description.isEmpty ? 'No description' : description,
+          textAlign: TextAlign.left,
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: theme.colorScheme.onSurface,
           ),
+          maxLines: maxLines,
+          overflow: TextOverflow.ellipsis,
         ),
       ),
     );
