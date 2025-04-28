@@ -29,9 +29,11 @@ class _RequestsPaneState extends State<RequestsPane> {
         itemCount: widget.requests.length,
         itemBuilder: (context, index) {
           final request = widget.requests[index];
+          final method = request.httpRequestModel?.method.toString().split('.').last.toUpperCase() ?? 'GET';
           return RequestCard(
             title: request.name,
             isSelected: _selectedRequest == request,
+            method: method,
             onTap: () {
               setState(() {
                 _selectedRequest = request;
