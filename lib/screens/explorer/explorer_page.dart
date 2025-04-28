@@ -39,15 +39,8 @@ class _ExplorerPageState extends State<ExplorerPage> {
             )
           : Column(
               children: [
-                const SizedBox(
-                  height: 60,
-                  child: ExplorerHeader(),
-                ),
-                Expanded(
-                  child: ExplorerBody(
-                    onCardTap: _navigateToDescription,
-                  ),
-                ),
+                const SizedBox(height: 60, child: ExplorerHeader()),
+                Expanded(child: ExplorerBody(onCardTap: _navigateToDescription)),
               ],
             ),
     );

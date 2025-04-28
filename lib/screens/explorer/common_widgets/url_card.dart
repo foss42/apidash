@@ -53,6 +53,12 @@ class UrlCard extends ConsumerWidget {
                     httpRequestModel,
                     name: requestModel?.name ?? 'Imported Request',
                   );
+                   ScaffoldMessenger.of(context).showSnackBar(  //SnackBar notification
+                    SnackBar(
+                      content: Text('Request "${requestModel?.name ?? 'Imported Request'}" imported successfully'),
+                      duration: const Duration(seconds: 2),
+                    ),
+                  );
                   ref.read(navRailIndexStateProvider.notifier).state = 0;  // Navigate to HomePage ind 0
                 }
               },
