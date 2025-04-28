@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:apidash_design_system/apidash_design_system.dart'; // Ensure this is imported
+import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash/models/models.dart';
 import 'chip.dart';
@@ -53,6 +53,7 @@ class UrlCard extends ConsumerWidget {
                     httpRequestModel,
                     name: requestModel?.name ?? 'Imported Request',
                   );
+                  ref.read(navRailIndexStateProvider.notifier).state = 0;  // Navigate to HomePage ind 0
                 }
               },
               style: ElevatedButton.styleFrom(
