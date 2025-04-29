@@ -33,28 +33,29 @@ class _ApiExplorerPageState extends ConsumerState<ApiExplorerPage> {
     super.dispose();
   }
 
-Widget _buildContent(bool isMediumWindow) {
-  final selectedEndpoint = ref.watch(selectedEndpointProvider);
-  final selectedCollection = ref.watch(selectedCollectionProvider);
+  Widget _buildContent(bool isMediumWindow) {
+    final selectedEndpoint = ref.watch(selectedEndpointProvider);
+    final selectedCollection = ref.watch(selectedCollectionProvider);
 
-  return AnimatedSwitcher(
-    duration: kTabAnimationDuration,
-    child: selectedEndpoint != null
-        ? ApiExplorerDetailView(
-            key: ValueKey('detail_${selectedEndpoint.id}'),
-            endpoint: selectedEndpoint,
-            isMediumWindow: isMediumWindow,
-          )
-        : selectedCollection != null
-            ? MethodsList(
-                key: ValueKey('methods_${selectedCollection.id}'),
-                collection: selectedCollection,
-              )
-            : ApiExplorerBrowseView(
-                key: const ValueKey('browse'), searchController: _searchController,
-              ),
-  );
-}
+    return AnimatedSwitcher(
+      duration: kTabAnimationDuration,
+      child: selectedEndpoint != null
+          ? ApiExplorerDetailView(
+              key: ValueKey('detail_${selectedEndpoint.id}'),
+              endpoint: selectedEndpoint,
+              isMediumWindow: isMediumWindow,
+            )
+          : selectedCollection != null
+              ? MethodsList(
+                  key: ValueKey('methods_${selectedCollection.id}'),
+                  collection: selectedCollection,
+                )
+              : ApiExplorerBrowseView(
+                  key: const ValueKey('browse'),
+                  searchController: _searchController,
+                ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,23 +70,49 @@ Widget _buildContent(bool isMediumWindow) {
   }
 
   Widget _buildDrawerView(bool isMediumWindow) {
-    return DrawerSplitView(
-      scaffoldKey: kApiExplorerScaffoldKey,
-      mainContent: _buildContent(isMediumWindow),
-      title: Consumer(
-        builder: (context, ref, _) {
-          final selectedEndpoint = ref.watch(selectedEndpointProvider);
-          return Text(selectedEndpoint?.name ?? kWindowTitle);
-        },
-      ),
-      leftDrawerContent: const ApiExplorerSidebar(),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Row(
+          children: [
+            // Left drawer with fixed width
+            SizedBox(
+              width: 250,
+              child: const ApiExplorerSidebar(),
+            ),
+            // Main content area that takes remaining space
+            SizedBox(
+              width: constraints.maxWidth - 250,
+              child: _buildContent(isMediumWindow),
+            ),
+          ],
+        );
+      },
     );
   }
 
   Widget _buildSplitView(bool isMediumWindow) {
-    return DashboardSplitView(
-      sidebarWidget: const ApiExplorerSidebar(),
-      mainWidget: _buildContent(isMediumWindow),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Row(
+          children: [
+            // Sidebar with fixed width
+            SizedBox(
+              width: 300,
+              child: const ApiExplorerSidebar(),
+            ),
+            // Vertical divider
+            Container(
+              width: 1,
+              color: Theme.of(context).dividerColor,
+            ),
+            // Main content area that takes remaining space
+            SizedBox(
+              width: constraints.maxWidth - 301, // Account for divider
+              child: _buildContent(isMediumWindow),
+            ),
+          ],
+        );
+      },
     );
   }
 }

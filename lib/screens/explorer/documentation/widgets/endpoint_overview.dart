@@ -26,12 +26,11 @@ class EndpointOverview extends ConsumerWidget {
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
+          children: [    Row(
               children: [
                 MethodBadge(method: endpoint.method),
                 const SizedBox(width: 12),
-                Expanded(
+                Flexible(
                   child: Text(
                     endpoint.name,
                     style: theme.textTheme.headlineSmall?.copyWith(

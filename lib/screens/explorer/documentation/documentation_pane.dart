@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash/models/api_explorer_models.dart';
 import 'widgets/endpoint_overview.dart';
@@ -42,7 +43,7 @@ class ApiDocumentationPage extends StatelessWidget {
           child: Column(
             children: [
               
-              const SizedBox(height: 16),
+              kHSpacer12,
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: EndpointOverview(endpoint: endpoint),

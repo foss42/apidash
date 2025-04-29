@@ -21,14 +21,11 @@ class ApiExplorerSplitView extends StatelessWidget {
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(12),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                flex: 1,
-                child: ApiDocumentationPage(endpoint: endpoint),
-              ),
-            ],
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: MediaQuery.of(context).size.height - 32, // Adjust padding
+            ),
+            child: ApiDocumentationPage(endpoint: endpoint),
           ),
         ),
       ),

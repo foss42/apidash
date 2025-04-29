@@ -1,3 +1,4 @@
+import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
@@ -138,10 +139,8 @@ class _AddApiDialogState extends ConsumerState<AddApiDialog> {
               ),
             ),
 
-            // Divider
             const Divider(height: 1),
 
-            // Content
             Padding(
               padding: const EdgeInsets.all(24),
               child: Form(
@@ -155,7 +154,7 @@ class _AddApiDialogState extends ConsumerState<AddApiDialog> {
                         color: colors.onSurface.withOpacity(0.8),
                       ),
                     ),
-                    const SizedBox(height: 24),
+                    kVSpacer20,
 
                     // Collection Name
                     Text(
@@ -193,8 +192,7 @@ class _AddApiDialogState extends ConsumerState<AddApiDialog> {
                         return null;
                       },
                     ),
-                    const SizedBox(height: 20),
-
+                    kVSpacer10,
                     // API URL
                     Text(
                       'OpenAPI Specification URL',
@@ -237,7 +235,7 @@ class _AddApiDialogState extends ConsumerState<AddApiDialog> {
                         return null;
                       },
                     ),
-                    const SizedBox(height: 12),
+                    kHSpacer12,
 
                     // Supported formats
                     Row(
@@ -283,7 +281,7 @@ class _AddApiDialogState extends ConsumerState<AddApiDialog> {
                     ),
                     child: const Text('Cancel'),
                   ),
-                  const SizedBox(width: 12),
+                  kHSpacer12,
                   ElevatedButton(
                     onPressed: _isLoading || !_isUrlValid ? null : _importApi,
                     style: ElevatedButton.styleFrom(
