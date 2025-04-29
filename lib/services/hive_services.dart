@@ -11,6 +11,9 @@ const String kHistoryMetaBox = "apidash-history-meta";
 const String kHistoryBoxIds = "historyIds";
 const String kHistoryLazyBox = "apidash-history-lazy";
 
+const String kTemplatesBox = "apidash-templates";
+const String kTemplatesKey = "templates";
+
 Future<bool> initHiveBoxes(
   bool initializeUsingPath,
   String? workspaceFolderPath,
@@ -38,6 +41,7 @@ Future<bool> openHiveBoxes() async {
     await Hive.openBox(kEnvironmentBox);
     await Hive.openBox(kHistoryMetaBox);
     await Hive.openLazyBox(kHistoryLazyBox);
+    await Hive.openBox(kTemplatesBox);
     return true;
   } catch (e) {
     debugPrint("ERROR OPEN HIVE BOXES: $e");
@@ -59,6 +63,9 @@ Future<void> clearHiveBoxes() async {
     if (Hive.isBoxOpen(kHistoryLazyBox)) {
       await Hive.lazyBox(kHistoryLazyBox).clear();
     }
+    if (Hive.isBoxOpen(kTemplatesBox)) {
+      await Hive.box(kTemplatesBox).clear();
+    }
   } catch (e) {
     debugPrint("ERROR CLEAR HIVE BOXES: $e");
   }
@@ -78,6 +85,9 @@ Future<void> deleteHiveBoxes() async {
     if (Hive.isBoxOpen(kHistoryLazyBox)) {
       await Hive.lazyBox(kHistoryLazyBox).deleteFromDisk();
     }
+    if (Hive.isBoxOpen(kTemplatesBox)) {
+      await Hive.box(kTemplatesBox).deleteFromDisk();
+    }
     await Hive.close();
   } catch (e) {
     debugPrint("ERROR DELETE HIVE BOXES: $e");
@@ -91,6 +101,7 @@ class HiveHandler {
   late final Box environmentBox;
   late final Box historyMetaBox;
   late final LazyBox historyLazyBox;
+  late final Box templatesBox;
 
   HiveHandler() {
     debugPrint("Trying to open Hive boxes");
@@ -98,6 +109,7 @@ class HiveHandler {
     environmentBox = Hive.box(kEnvironmentBox);
     historyMetaBox = Hive.box(kHistoryMetaBox);
     historyLazyBox = Hive.lazyBox(kHistoryLazyBox);
+    templatesBox = Hive.box(kTemplatesBox);
   }
 
   dynamic getIds() => dataBox.get(kKeyDataBoxIds);
@@ -150,6 +162,7 @@ class HiveHandler {
     await environmentBox.clear();
     await historyMetaBox.clear();
     await historyLazyBox.clear();
+    await templatesBox.clear();
   }
 
   Future<void> removeUnused() async {
@@ -172,4 +185,8 @@ class HiveHandler {
       }
     }
   }
+  
+  dynamic getTemplates() => templatesBox.get(kTemplatesKey);
+  Future<void> setTemplates(List<Map<String, dynamic>>? templates) =>
+      templatesBox.put(kTemplatesKey, templates);
 }

@@ -19,7 +19,8 @@ class FetchTemplatesButton extends ConsumerWidget {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(
-                    newState.error ?? 'Templates fetched successfully!',
+                    newState.error ??
+                        'New templates fetched successfully!',
                     style: const TextStyle(fontSize: 14),
                   ),
                   backgroundColor: newState.error != null
