@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:apidash/services/services.dart';
-import 'common_widgets/common_widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/models/models.dart';
+import 'package:apidash/providers/templates_provider.dart';
+import 'package:apidash/screens/explorer/common_widgets/common_widgets.dart';
 
-class ExplorerBody extends StatefulWidget {
+class ExplorerBody extends ConsumerWidget {
   final Function(ApiTemplate)? onCardTap;
 
   const ExplorerBody({
@@ -12,21 +13,9 @@ class ExplorerBody extends StatefulWidget {
   });
 
   @override
-  _ExplorerBodyState createState() => _ExplorerBodyState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final templatesState = ref.watch(templatesProvider);
 
-class _ExplorerBodyState extends State<ExplorerBody> {
-  late Future<List<ApiTemplate>> _templatesFuture;
-
-  @override
-  void initState() {
-    super.initState();
-    _templatesFuture = TemplatesService.loadTemplates();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
     return Container(
       color: Theme.of(context).colorScheme.background,
       child: Column(
@@ -52,37 +41,29 @@ class _ExplorerBodyState extends State<ExplorerBody> {
             ),
           ),
           Expanded(
-            child: FutureBuilder<List<ApiTemplate>>(
-              future: _templatesFuture,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return const Center(child: Text('No templates found'));
-                }
-
-                final templates = snapshot.data!;
-                return GridView.builder(
-                  padding: const EdgeInsets.all(12),
-                  gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 384,
-                    childAspectRatio: 1.3,
-                    crossAxisSpacing: 12,
-                    mainAxisSpacing: 12,
-                  ),
-                  itemCount: templates.length,
-                  itemBuilder: (context, index) {
-                    final template = templates[index];
-                    return TemplateCard(
-                      template: template,
-                      onTap: () => widget.onCardTap?.call(template),
-                    );
-                  },
-                );
-              },
-            ),
+            child: templatesState.isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : templatesState.error != null
+                    ? Center(child: Text('Error: ${templatesState.error}'))
+                    : templatesState.templates.isEmpty
+                        ? const Center(child: Text('No templates found'))
+                        : GridView.builder(
+                            padding: const EdgeInsets.all(12),
+                            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                              maxCrossAxisExtent: 384,
+                              childAspectRatio: 1.3,
+                              crossAxisSpacing: 12,
+                              mainAxisSpacing: 12,
+                            ),
+                            itemCount: templatesState.templates.length,
+                            itemBuilder: (context, index) {
+                              final template = templatesState.templates[index];
+                              return TemplateCard(
+                                template: template,
+                                onTap: () => onCardTap?.call(template),
+                              );
+                            },
+                          ),
           ),
         ],
       ),
