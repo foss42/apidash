@@ -56,12 +56,14 @@ class ADOutlinedTextField extends StatefulWidget {
 
 class _ADOutlinedTextFieldState extends State<ADOutlinedTextField> {
   late FocusNode _focusNode;
+  late TextEditingController _controller;
   bool _isFocused = false;
 
   @override
   void initState() {
     super.initState();
     _focusNode = FocusNode();
+    _controller = widget.controller ?? TextEditingController(text: widget.initialValue);
     _focusNode.addListener(_handleFocusChange);
   }
 
@@ -73,42 +75,107 @@ class _ADOutlinedTextFieldState extends State<ADOutlinedTextField> {
 
   @override
   void dispose() {
+    if (widget.controller == null) {
+      _controller.dispose();
+    }
     _focusNode.removeListener(_handleFocusChange);
     _focusNode.dispose();
     super.dispose();
   }
 
+  int _calculateLineCount(String text, TextStyle textStyle, double maxWidth) {
+    final textPainter = TextPainter(
+      text: TextSpan(text: text, style: textStyle),
+      textDirection: TextDirection.ltr,
+      maxLines: null,
+    );
+    textPainter.layout(maxWidth: maxWidth);
+    return textPainter.computeLineMetrics().length;
+  }
+
   @override
   Widget build(BuildContext context) {
     var clrScheme = widget.colorScheme ?? Theme.of(context).colorScheme;
-    return TextFormField(
-      key: widget.keyId != null ? Key(widget.keyId!) : null,
-      controller: widget.controller,
-      focusNode: _focusNode,
-      readOnly: widget.readOnly,
-      enabled: widget.enabled,
-      maxLines: _isFocused ? null : 1, // Multi-line when focused, single-line otherwise
-      keyboardType: TextInputType.multiline, // Support newlines
-      expands: widget.expands,
-      initialValue: widget.initialValue,
-      style: widget.textStyle ??
-          kCodeStyle.copyWith(
-            fontSize: widget.textFontSize,
-            color: widget.textColor ?? clrScheme.onSurface,
-          ),
-      decoration: getTextFieldInputDecoration(
-        clrScheme,
-        fillColor: widget.fillColor,
-        hintText: widget.hintText,
-        hintTextStyle: widget.hintTextStyle,
-        hintTextFontSize: widget.hintTextFontSize,
-        hintTextColor: widget.hintTextColor,
-        contentPadding: widget.contentPadding ?? const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-        focussedBorderColor: widget.focussedBorderColor,
-        enabledBorderColor: widget.enabledBorderColor,
-        isDense: widget.isDense ?? true, // Ensure compact rendering
-      ),
-      onChanged: widget.onChanged,
+    final textStyle = widget.textStyle ??
+        kCodeStyle.copyWith(
+          fontSize: widget.textFontSize,
+          color: widget.textColor ?? clrScheme.onSurface,
+        );
+    final contentPadding = widget.contentPadding ?? const EdgeInsets.symmetric(horizontal: 8, vertical: 8);
+    final horizontalPadding = contentPadding is EdgeInsets ? contentPadding.horizontal : 16.0;
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final maxWidth = constraints.maxWidth - horizontalPadding;
+        final text = _controller.text.isEmpty ? widget.hintText ?? '' : _controller.text;
+        final lineCount = _calculateLineCount(text, textStyle, maxWidth);
+        final isMultiLine = lineCount > 1;
+        final showOverlayBox = _isFocused && isMultiLine;
+
+        return Stack(
+          clipBehavior: Clip.none,
+          children: [
+            TextFormField(
+              key: widget.keyId != null ? Key(widget.keyId!) : null,
+              controller: _controller,
+              focusNode: _focusNode,
+              readOnly: widget.readOnly,
+              enabled: widget.enabled,
+              maxLines: _isFocused ? null : 1,
+              keyboardType: TextInputType.multiline,
+              expands: widget.expands,
+              style: textStyle,
+              decoration: getTextFieldInputDecoration(
+                clrScheme,
+                fillColor: widget.fillColor,
+                hintText: widget.hintText,
+                hintTextStyle: widget.hintTextStyle,
+                hintTextFontSize: widget.hintTextFontSize,
+                hintTextColor: widget.hintTextColor,
+                contentPadding: contentPadding,
+                focussedBorderColor: widget.focussedBorderColor,
+                enabledBorderColor: widget.enabledBorderColor,
+                isDense: widget.isDense ?? true,
+              ),
+              onChanged: (value) {
+                widget.onChanged?.call(value);
+                setState(() {}); // Trigger rebuild to update line count
+              },
+            ),
+            if (showOverlayBox)
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                child: Material(
+                  elevation: 4,
+                  borderRadius: BorderRadius.circular(8),
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: clrScheme.surface,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: widget.focussedBorderColor ?? clrScheme.primary,
+                      ),
+                    ),
+                    child: SingleChildScrollView(
+                      child: Text(
+                        _controller.text.isEmpty ? widget.hintText ?? '' : _controller.text,
+                        style: textStyle.copyWith(
+                          color: _controller.text.isEmpty
+                              ? (widget.hintTextColor ?? clrScheme.onSurface.withOpacity(0.6))
+                              : (widget.textColor ?? clrScheme.onSurface),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        );
+      },
     );
   }
 }
