@@ -1,0 +1,205 @@
+{
+  "info": {
+    "title": "Webhook Management API",
+    "description": "API for creating, configuring, and managing webhooks for event notifications",
+    "tags": ["webhooks", "events", "integrations", "notifications"]
+  },
+  "requests": [
+    {
+      "id": "webhook_register",
+      "apiType": "rest",
+      "name": "Register Webhook",
+      "description": "Register a new webhook endpoint to receive event notifications",
+      "httpRequestModel": {
+        "method": "post",
+        "url": "https://api.example.com/v1/webhooks",
+        "headers": [
+          {"name": "Content-Type", "value": "application/json"},
+          {"name": "Authorization", "value": "Bearer YOUR_API_KEY"}
+        ],
+        "params": [],
+        "isHeaderEnabledList": [true, true],
+        "isParamEnabledList": [],
+        "bodyContentType": "json",
+        "body": "{\n  \"url\": \"https://your-server.example.com/webhook\",\n  \"events\": [\"payment.created\", \"payment.succeeded\", \"payment.failed\"],\n  \"description\": \"Payment notifications endpoint\",\n  \"active\": true,\n  \"secret\": \"whsec_8dj29dj29d8j29dj\"\n}",
+        "query": null,
+        "formData": null
+      },
+      "responseStatus": 201,
+      "message": "Webhook registered successfully",
+      "httpResponseModel": {
+        "statusCode": 201,
+        "headers": {
+          "Content-Type": "application/json",
+          "Content-Length": "315",
+          "Location": "https://api.example.com/v1/webhooks/wh_92jd92j9d2j9"
+        },
+        "requestHeaders": {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer YOUR_API_KEY"
+        },
+        "body": "{\n  \"id\": \"wh_92jd92j9d2j9\",\n  \"object\": \"webhook\",\n  \"url\": \"https://your-server.example.com/webhook\",\n  \"events\": [\"payment.created\", \"payment.succeeded\", \"payment.failed\"],\n  \"description\": \"Payment notifications endpoint\",\n  \"active\": true,\n  \"created_at\": \"2025-04-29T10:05:32Z\"\n}",
+        "formattedBody": "{\n  \"id\": \"wh_92jd92j9d2j9\",\n  \"object\": \"webhook\",\n  \"url\": \"https://your-server.example.com/webhook\",\n  \"events\": [\"payment.created\", \"payment.succeeded\", \"payment.failed\"],\n  \"description\": \"Payment notifications endpoint\",\n  \"active\": true,\n  \"created_at\": \"2025-04-29T10:05:32Z\"\n}",
+        "bodyBytes": null,
+        "time": 232000
+      },
+      "isWorking": false,
+      "sendingTime": null
+    },
+    {
+      "id": "webhook_list",
+      "apiType": "rest",
+      "name": "List Webhooks",
+      "description": "Get all registered webhooks",
+      "httpRequestModel": {
+        "method": "get",
+        "url": "https://api.example.com/v1/webhooks",
+        "headers": [
+          {"name": "Authorization", "value": "Bearer YOUR_API_KEY"}
+        ],
+        "params": [],
+        "isHeaderEnabledList": [true],
+        "isParamEnabledList": [],
+        "bodyContentType": "json",
+        "body": null,
+        "query": null,
+        "formData": null
+      },
+      "responseStatus": 200,
+      "message": "Webhooks retrieved successfully",
+      "httpResponseModel": {
+        "statusCode": 200,
+        "headers": {
+          "Content-Type": "application/json",
+          "Content-Length": "562"
+        },
+        "requestHeaders": {
+          "Authorization": "Bearer YOUR_API_KEY"
+        },
+        "body": "{\n  \"object\": \"list\",\n  \"data\": [\n    {\n      \"id\": \"wh_92jd92j9d2j9\",\n      \"object\": \"webhook\",\n      \"url\": \"https://your-server.example.com/webhook\",\n      \"events\": [\"payment.created\", \"payment.succeeded\", \"payment.failed\"],\n      \"description\": \"Payment notifications endpoint\",\n      \"active\": true,\n      \"created_at\": \"2025-04-29T10:05:32Z\"\n    },\n    {\n      \"id\": \"wh_8jf83jf8jf38\",\n      \"object\": \"webhook\",\n      \"url\": \"https://your-app.example.org/hooks/refunds\",\n      \"events\": [\"refund.created\", \"refund.updated\"],\n      \"description\": \"Refund notifications\",\n      \"active\": true,\n      \"created_at\": \"2025-04-20T14:22:18Z\"\n    }\n  ],\n  \"has_more\": false,\n  \"total_count\": 2\n}",
+        "formattedBody": "{\n  \"object\": \"list\",\n  \"data\": [\n    {\n      \"id\": \"wh_92jd92j9d2j9\",\n      \"object\": \"webhook\",\n      \"url\": \"https://your-server.example.com/webhook\",\n      \"events\": [\"payment.created\", \"payment.succeeded\", \"payment.failed\"],\n      \"description\": \"Payment notifications endpoint\",\n      \"active\": true,\n      \"created_at\": \"2025-04-29T10:05:32Z\"\n    },\n    {\n      \"id\": \"wh_8jf83jf8jf38\",\n      \"object\": \"webhook\",\n      \"url\": \"https://your-app.example.org/hooks/refunds\",\n      \"events\": [\"refund.created\", \"refund.updated\"],\n      \"description\": \"Refund notifications\",\n      \"active\": true,\n      \"created_at\": \"2025-04-20T14:22:18Z\"\n    }\n  ],\n  \"has_more\": false,\n  \"total_count\": 2\n}",
+        "bodyBytes": null,
+        "time": 180000
+      },
+      "isWorking": false,
+      "sendingTime": null
+    },
+    {
+      "id": "webhook_update",
+      "apiType": "rest",
+      "name": "Update Webhook",
+      "description": "Update an existing webhook configuration",
+      "httpRequestModel": {
+        "method": "patch",
+        "url": "https://api.example.com/v1/webhooks/wh_92jd92j9d2j9",
+        "headers": [
+          {"name": "Content-Type", "value": "application/json"},
+          {"name": "Authorization", "value": "Bearer YOUR_API_KEY"}
+        ],
+        "params": [],
+        "isHeaderEnabledList": [true, true],
+        "isParamEnabledList": [],
+        "bodyContentType": "json",
+        "body": "{\n  \"events\": [\"payment.created\", \"payment.succeeded\", \"payment.failed\", \"payment.refunded\"],\n  \"description\": \"Updated payment notifications endpoint\"\n}",
+        "query": null,
+        "formData": null
+      },
+      "responseStatus": 200,
+      "message": "Webhook updated successfully",
+      "httpResponseModel": {
+        "statusCode": 200,
+        "headers": {
+          "Content-Type": "application/json",
+          "Content-Length": "336"
+        },
+        "requestHeaders": {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer YOUR_API_KEY"
+        },
+        "body": "{\n  \"id\": \"wh_92jd92j9d2j9\",\n  \"object\": \"webhook\",\n  \"url\": \"https://your-server.example.com/webhook\",\n  \"events\": [\"payment.created\", \"payment.succeeded\", \"payment.failed\", \"payment.refunded\"],\n  \"description\": \"Updated payment notifications endpoint\",\n  \"active\": true,\n  \"created_at\": \"2025-04-29T10:05:32Z\",\n  \"updated_at\": \"2025-04-29T10:20:15Z\"\n}",
+        "formattedBody": "{\n  \"id\": \"wh_92jd92j9d2j9\",\n  \"object\": \"webhook\",\n  \"url\": \"https://your-server.example.com/webhook\",\n  \"events\": [\"payment.created\", \"payment.succeeded\", \"payment.failed\", \"payment.refunded\"],\n  \"description\": \"Updated payment notifications endpoint\",\n  \"active\": true,\n  \"created_at\": \"2025-04-29T10:05:32Z\",\n  \"updated_at\": \"2025-04-29T10:20:15Z\"\n}",
+        "bodyBytes": null,
+        "time": 195000
+      },
+      "isWorking": false,
+      "sendingTime": null
+    },
+    {
+      "id": "webhook_delete",
+      "apiType": "rest",
+      "name": "Delete Webhook",
+      "description": "Remove a webhook endpoint",
+      "httpRequestModel": {
+        "method": "delete",
+        "url": "https://api.example.com/v1/webhooks/wh_92jd92j9d2j9",
+        "headers": [
+          {"name": "Authorization", "value": "Bearer YOUR_API_KEY"}
+        ],
+        "params": [],
+        "isHeaderEnabledList": [true],
+        "isParamEnabledList": [],
+        "bodyContentType": "json",
+        "body": null,
+        "query": null,
+        "formData": null
+      },
+      "responseStatus": 204,
+      "message": "Webhook deleted successfully",
+      "httpResponseModel": {
+        "statusCode": 204,
+        "headers": {
+          "Content-Length": "0"
+        },
+        "requestHeaders": {
+          "Authorization": "Bearer YOUR_API_KEY"
+        },
+        "body": "",
+        "formattedBody": "",
+        "bodyBytes": null,
+        "time": 165000
+      },
+      "isWorking": false,
+      "sendingTime": null
+    },
+    {
+      "id": "webhook_test",
+      "apiType": "rest",
+      "name": "Test Webhook",
+      "description": "Send a test event to a webhook endpoint",
+      "httpRequestModel": {
+        "method": "post",
+        "url": "https://api.example.com/v1/webhooks/wh_8jf83jf8jf38/test",
+        "headers": [
+          {"name": "Content-Type", "value": "application/json"},
+          {"name": "Authorization", "value": "Bearer YOUR_API_KEY"}
+        ],
+        "params": [],
+        "isHeaderEnabledList": [true, true],
+        "isParamEnabledList": [],
+        "bodyContentType": "json",
+        "body": "{\n  \"event\": \"refund.created\"\n}",
+        "query": null,
+        "formData": null
+      },
+      "responseStatus": 200,
+      "message": "Test event sent successfully",
+      "httpResponseModel": {
+        "statusCode": 200,
+        "headers": {
+          "Content-Type": "application/json",
+          "Content-Length": "254"
+        },
+        "requestHeaders": {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer YOUR_API_KEY"
+        },
+        "body": "{\n  \"id\": \"evt_test_83j93jd93j\",\n  \"object\": \"event\",\n  \"type\": \"refund.created\",\n  \"created\": \"2025-04-29T10:35:42Z\",\n  \"data\": {\n    \"object\": {\n      \"id\": \"ref_test_8j382j38\",\n      \"object\": \"refund\",\n      \"status\": \"succeeded\"\n    }\n  },\n  \"pending_webhooks\": 1,\n  \"request\": \"req_test_92j92j29d\"\n}",
+        "formattedBody": "{\n  \"id\": \"evt_test_83j93jd93j\",\n  \"object\": \"event\",\n  \"type\": \"refund.created\",\n  \"created\": \"2025-04-29T10:35:42Z\",\n  \"data\": {\n    \"object\": {\n      \"id\": \"ref_test_8j382j38\",\n      \"object\": \"refund\",\n      \"status\": \"succeeded\"\n    }\n  },\n  \"pending_webhooks\": 1,\n  \"request\": \"req_test_92j92j29d\"\n}",
+        "bodyBytes": null,
+        "time": 215000
+      },
+      "isWorking": false,
+      "sendingTime": null
+    }
+  ]
+}
