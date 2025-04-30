@@ -94,6 +94,7 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
           case HTTPVerb.put:
           case HTTPVerb.patch:
           case HTTPVerb.delete:
+          case HTTPVerb.options:
             final request = prepareHttpRequest(
               url: requestUrl,
               method: requestModel.method.name.toUpperCase(),
