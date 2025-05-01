@@ -13,9 +13,9 @@ class ScriptsCodePane extends ConsumerStatefulWidget {
 }
 
 class _ScriptsCodePaneState extends ConsumerState<ScriptsCodePane> {
+  int _selectedTabIndex = 0;
   @override
   Widget build(BuildContext context) {
-    int _selectedTabIndex = 0;
     final requestModel = ref.read(selectedRequestModelProvider);
 
     final preReqCodeController = CodeController(
