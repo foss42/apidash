@@ -288,17 +288,19 @@ class JsonAttribute extends StatelessWidget {
         node.highlight(isHighlighted: false);
         node.focus(isFocused: false);
       },
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: hasInteraction
-            ? () {
-                if (valueStyle.onTap != null) {
-                  valueStyle.onTap!.call();
-                } else {
-                  _onTap(context);
-                }
-              }
-            : null,
+      child: Listener(
+        behavior: HitTestBehavior.translucent,
+        onPointerDown: (_) {
+          node.highlight();
+          node.focus();
+          if (hasInteraction) {
+            if (valueStyle.onTap != null) {
+              valueStyle.onTap!.call();
+            } else {
+            _onTap(context);
+            }
+          }
+        },
         child: AnimatedBuilder(
           animation: node,
 
