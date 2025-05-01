@@ -487,7 +487,6 @@ const kMsgClearHistorySuccess = 'History cleared successfully';
 const kMsgClearHistoryError = 'Error clearing history';
 const kMsgShareError = "Unable to share";
 
-
 const String setupScript = r"""
 // === APIDash Setup Script ===
 
@@ -547,7 +546,7 @@ try {
 // This object provides functions to interact with the request, response,
 // environment, and the Dart host application.
 
-const ad = {
+var ad = {
   /**
    * Functions to modify the request object *before* it is sent.
    * Only available in pre-request scripts.

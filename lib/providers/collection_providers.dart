@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:apidash/services/flutter_js_service.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -278,6 +281,18 @@ class CollectionStateNotifier
 
     if (requestModel?.httpRequestModel == null) {
       return;
+    }
+
+    if (requestModel != null && requestModel.preRequestScript.isNotEmpty) {
+      final res = await executePreRequestScript(
+        currentRequestModel: requestModel,
+        activeEnvironment: {},
+      );
+      requestModel =
+          requestModel.copyWith(httpRequestModel: res.updatedRequest);
+      log(res.updatedRequest.url);
+      log(res.updatedRequest.headersMap.toString());
+      log(res.updatedRequest.body.toString());
     }
 
     APIType apiType = requestModel!.apiType;

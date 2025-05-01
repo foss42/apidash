@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:apidash/consts.dart';
 import 'package:apidash/models/request_model.dart';
 import 'package:apidash_core/models/http_request_model.dart';
 import 'package:flutter/services.dart';
@@ -12,6 +13,7 @@ late JavascriptRuntime jsRuntime;
 
 void initializeJsRuntime() {
   jsRuntime = getJavascriptRuntime();
+  setupJsBridge();
 }
 
 void disposeJsRuntime() {
@@ -89,7 +91,6 @@ Future<
     })> executePreRequestScript({
   required RequestModel currentRequestModel,
   required Map<String, dynamic> activeEnvironment,
-  required String setupScript,
 }) async {
   if (currentRequestModel.preRequestScript.trim().isEmpty) {
     // No script, return original data
@@ -109,27 +110,37 @@ Future<
   // Inject data as JS variables
   // Escape strings properly if embedding directly
   final dataInjection = """
-  const injectedRequestJson = ${jsEscapeString(requestJson)};
-  const injectedEnvironmentJson = ${jsEscapeString(environmentJson)};
-  const injectedResponseJson = null; // Not needed for pre-request
+  var injectedRequestJson = ${jsEscapeString(requestJson)};
+  var injectedEnvironmentJson = ${jsEscapeString(environmentJson)};
+  var injectedResponseJson = null; // Not needed for pre-request
   """;
 
   // Concatenate & Add Return
   final fullScript = """
-  $dataInjection
-  $setupScript
-  // --- User Script ---
-  $userScript
-  // --- Return Result ---
-  JSON.stringify({ request: request, environment: environment });
+  (function() {
+    // --- Data Injection (now constants within the IIFE scope) ---
+    $dataInjection
+
+    // --- Setup Script (will declare variables within the IIFE scope) ---
+    $setupScript
+
+    // --- User Script (will execute within the IIFE scope)---
+    $userScript
+
+    // --- Return Result (accesses variables from the IIFE scope) ---
+    // Ensure 'request' and 'environment' are accessible here
+    return JSON.stringify({ request: request, environment: environment });
+  })(); // Immediately invoke the function
   """;
+
+
   // TODO: Do something better to avoid null check here.
   HttpRequestModel resultingRequest = httpRequest!;
   Map<String, dynamic> resultingEnvironment = Map.from(activeEnvironment);
 
   try {
     // Execute
-    final JsEvalResult result = await jsRuntime.evaluateAsync(fullScript);
+    final JsEvalResult result = jsRuntime.evaluate(fullScript);
 
     // Process Results
     if (result.isError) {
@@ -158,7 +169,6 @@ Future<
     }
   } catch (e) {
     print("Dart-level error during pre-request script execution: $e");
-    // Handle Dart-level errors (e.g., JS runtime issues)
   }
 
   return (

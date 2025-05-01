@@ -1,3 +1,4 @@
+import 'package:apidash/services/flutter_js_service.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,6 +12,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   var settingsModel = await getSettingsFromSharedPrefs();
   var onboardingStatus = await getOnboardingStatusFromSharedPrefs();
+  initializeJsRuntime();
   final initStatus = await initApp(
     kIsDesktop,
     settingsModel: settingsModel,
