@@ -10,7 +10,6 @@ _$AuthorizationModelImpl _$$AuthorizationModelImplFromJson(Map json) =>
     _$AuthorizationModelImpl(
       authType: $enumDecodeNullable(_$AuthTypeEnumMap, json['authType']) ??
           AuthType.noauth,
-      isEnabled: json['isEnabled'] as bool? ?? false,
       basicAuthModel: json['basicAuthModel'] == null
           ? const BasicAuthModel(username: '', password: '')
           : BasicAuthModel.fromJson(
@@ -29,7 +28,6 @@ Map<String, dynamic> _$$AuthorizationModelImplToJson(
         _$AuthorizationModelImpl instance) =>
     <String, dynamic>{
       'authType': _$AuthTypeEnumMap[instance.authType]!,
-      'isEnabled': instance.isEnabled,
       'basicAuthModel': instance.basicAuthModel.toJson(),
       'bearerAuthModel': instance.bearerAuthModel.toJson(),
       'apiKeyAuthModel': instance.apiKeyAuthModel.toJson(),

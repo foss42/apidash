@@ -53,7 +53,7 @@ class _EditRequestAuthorizationState
       }
     }
 
-    if (authModel.isEnabled && currentAuthType != AuthType.noauth) {
+    if (currentAuthType != AuthType.noauth) {
       String authValue = '';
       switch (currentAuthType) {
         case AuthType.basic:
@@ -93,7 +93,7 @@ void _updateQueryParams() {
   final currentAuthType =
       ref.watch(authorizationProvider.select((value) => value.authType));
 
-  if (authModel.isEnabled &&
+  if (
       currentAuthType == AuthType.apikey &&
       authModel.apiKeyAuthModel.addTo == AddTo.query) {
     final apiKeyName = authModel.apiKeyAuthModel.key;
@@ -156,26 +156,10 @@ void _updateQueryParams() {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              ADCheckBox(
-                value: authModel.isEnabled,
-                onChanged: (value) {
-                  authNotifier.update(
-                    isEnabled: value,
-                  );
-                },
-                colorScheme: colorScheme,
-                keyId: 'auth-checkbox',
-              ),
-              const SizedBox(width: 8),
-              const Text('Enable Authorization'),
-            ],
-          ),
           Text(
               'The authorization header will be automatically generated when you send the request.'),
           const SizedBox(height: 16),
-          if (authModel.isEnabled) ...[
+           ...[
             SizedBox(
               height: kHeaderHeight,
               child: Row(

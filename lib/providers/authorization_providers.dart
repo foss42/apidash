@@ -10,7 +10,6 @@ class AuthorizationNotifier extends StateNotifier<AuthorizationModel> {
       : super(initialState);
 
   void update({
-    bool? isEnabled,
     AuthType? authType,
     String? username,
     String? password,
@@ -24,7 +23,6 @@ class AuthorizationNotifier extends StateNotifier<AuthorizationModel> {
     }
     // General state update
     state = state.copyWith(
-      isEnabled: isEnabled ?? state.isEnabled,
       basicAuthModel: state.authType == AuthType.basic
           ? state.basicAuthModel.copyWith(
               username: username ?? state.basicAuthModel.username,

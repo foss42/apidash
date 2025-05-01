@@ -21,7 +21,6 @@ AuthorizationModel _$AuthorizationModelFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$AuthorizationModel {
   AuthType get authType => throw _privateConstructorUsedError;
-  bool get isEnabled => throw _privateConstructorUsedError;
   BasicAuthModel get basicAuthModel => throw _privateConstructorUsedError;
   BearerAuthModel get bearerAuthModel => throw _privateConstructorUsedError;
   ApiKeyAuthModel get apiKeyAuthModel => throw _privateConstructorUsedError;
@@ -44,7 +43,6 @@ abstract class $AuthorizationModelCopyWith<$Res> {
   @useResult
   $Res call(
       {AuthType authType,
-      bool isEnabled,
       BasicAuthModel basicAuthModel,
       BearerAuthModel bearerAuthModel,
       ApiKeyAuthModel apiKeyAuthModel});
@@ -70,7 +68,6 @@ class _$AuthorizationModelCopyWithImpl<$Res, $Val extends AuthorizationModel>
   @override
   $Res call({
     Object? authType = null,
-    Object? isEnabled = null,
     Object? basicAuthModel = null,
     Object? bearerAuthModel = null,
     Object? apiKeyAuthModel = null,
@@ -80,10 +77,6 @@ class _$AuthorizationModelCopyWithImpl<$Res, $Val extends AuthorizationModel>
           ? _value.authType
           : authType // ignore: cast_nullable_to_non_nullable
               as AuthType,
-      isEnabled: null == isEnabled
-          ? _value.isEnabled
-          : isEnabled // ignore: cast_nullable_to_non_nullable
-              as bool,
       basicAuthModel: null == basicAuthModel
           ? _value.basicAuthModel
           : basicAuthModel // ignore: cast_nullable_to_non_nullable
@@ -140,7 +133,6 @@ abstract class _$$AuthorizationModelImplCopyWith<$Res>
   @useResult
   $Res call(
       {AuthType authType,
-      bool isEnabled,
       BasicAuthModel basicAuthModel,
       BearerAuthModel bearerAuthModel,
       ApiKeyAuthModel apiKeyAuthModel});
@@ -167,7 +159,6 @@ class __$$AuthorizationModelImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? authType = null,
-    Object? isEnabled = null,
     Object? basicAuthModel = null,
     Object? bearerAuthModel = null,
     Object? apiKeyAuthModel = null,
@@ -177,10 +168,6 @@ class __$$AuthorizationModelImplCopyWithImpl<$Res>
           ? _value.authType
           : authType // ignore: cast_nullable_to_non_nullable
               as AuthType,
-      isEnabled: null == isEnabled
-          ? _value.isEnabled
-          : isEnabled // ignore: cast_nullable_to_non_nullable
-              as bool,
       basicAuthModel: null == basicAuthModel
           ? _value.basicAuthModel
           : basicAuthModel // ignore: cast_nullable_to_non_nullable
@@ -203,7 +190,6 @@ class __$$AuthorizationModelImplCopyWithImpl<$Res>
 class _$AuthorizationModelImpl implements _AuthorizationModel {
   const _$AuthorizationModelImpl(
       {this.authType = AuthType.noauth,
-      this.isEnabled = false,
       this.basicAuthModel = const BasicAuthModel(username: '', password: ''),
       this.bearerAuthModel = const BearerAuthModel(token: ''),
       this.apiKeyAuthModel =
@@ -217,9 +203,6 @@ class _$AuthorizationModelImpl implements _AuthorizationModel {
   final AuthType authType;
   @override
   @JsonKey()
-  final bool isEnabled;
-  @override
-  @JsonKey()
   final BasicAuthModel basicAuthModel;
   @override
   @JsonKey()
@@ -230,7 +213,7 @@ class _$AuthorizationModelImpl implements _AuthorizationModel {
 
   @override
   String toString() {
-    return 'AuthorizationModel(authType: $authType, isEnabled: $isEnabled, basicAuthModel: $basicAuthModel, bearerAuthModel: $bearerAuthModel, apiKeyAuthModel: $apiKeyAuthModel)';
+    return 'AuthorizationModel(authType: $authType, basicAuthModel: $basicAuthModel, bearerAuthModel: $bearerAuthModel, apiKeyAuthModel: $apiKeyAuthModel)';
   }
 
   @override
@@ -240,8 +223,6 @@ class _$AuthorizationModelImpl implements _AuthorizationModel {
             other is _$AuthorizationModelImpl &&
             (identical(other.authType, authType) ||
                 other.authType == authType) &&
-            (identical(other.isEnabled, isEnabled) ||
-                other.isEnabled == isEnabled) &&
             (identical(other.basicAuthModel, basicAuthModel) ||
                 other.basicAuthModel == basicAuthModel) &&
             (identical(other.bearerAuthModel, bearerAuthModel) ||
@@ -252,8 +233,8 @@ class _$AuthorizationModelImpl implements _AuthorizationModel {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, authType, isEnabled,
-      basicAuthModel, bearerAuthModel, apiKeyAuthModel);
+  int get hashCode => Object.hash(
+      runtimeType, authType, basicAuthModel, bearerAuthModel, apiKeyAuthModel);
 
   /// Create a copy of AuthorizationModel
   /// with the given fields replaced by the non-null parameter values.
@@ -275,7 +256,6 @@ class _$AuthorizationModelImpl implements _AuthorizationModel {
 abstract class _AuthorizationModel implements AuthorizationModel {
   const factory _AuthorizationModel(
       {final AuthType authType,
-      final bool isEnabled,
       final BasicAuthModel basicAuthModel,
       final BearerAuthModel bearerAuthModel,
       final ApiKeyAuthModel apiKeyAuthModel}) = _$AuthorizationModelImpl;
@@ -285,8 +265,6 @@ abstract class _AuthorizationModel implements AuthorizationModel {
 
   @override
   AuthType get authType;
-  @override
-  bool get isEnabled;
   @override
   BasicAuthModel get basicAuthModel;
   @override

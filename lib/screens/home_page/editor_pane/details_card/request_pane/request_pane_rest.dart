@@ -18,6 +18,8 @@ class EditRestRequestPane extends ConsumerWidget {
     final tabIndex = ref.watch(
         selectedRequestModelProvider.select((value) => value?.requestTabIndex));
 
+    final authType = ref.watch(selectedRequestModelProvider.select((value) => value?.authorizationModel?.authType));
+
     final headerLength = ref.watch(selectedRequestModelProvider
             .select((value) => value?.httpRequestModel?.headersMap.length)) ??
         0;
@@ -44,8 +46,7 @@ class EditRestRequestPane extends ConsumerWidget {
       showIndicators: [
         paramLength > 0,
         headerLength > 0,
-        // TODO: Check if there needs to be an indicator for authorization tab
-        headerLength > 0,
+        authType != AuthType.noauth,
         hasBody,
       ],
       tabLabels: const [

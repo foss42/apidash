@@ -13,7 +13,6 @@ class AuthorizationModel with _$AuthorizationModel {
   )
   const factory AuthorizationModel({
     @Default(AuthType.noauth) AuthType authType,
-    @Default(false) bool isEnabled,
     @Default(BasicAuthModel(username: '', password: '')) BasicAuthModel basicAuthModel,
     @Default(BearerAuthModel(token: '')) BearerAuthModel bearerAuthModel,
     @Default(ApiKeyAuthModel(key: '', value: '', addTo: AddTo.header)) ApiKeyAuthModel apiKeyAuthModel,
