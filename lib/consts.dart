@@ -496,12 +496,12 @@ const String setupScript = r"""
 
 let request = {}; // Will hold the RequestModel data
 let response = {}; // Will hold the ResponseModel data (only for post-request)
-let environment = {}; // Will hold the active environment variables
+let environment = {}; // Will hold the *active* environment variables as a simple {key: value} map
 
-// Note: Using 'let' because environment might be completely cleared/reassigned.
+// Note: Using 'let' because environment might be completely cleared/reassigned by ad.environment.clear().
 
 try {
-  // 'injectedRequestJson' should always be provided (even if empty for some edge case)
+  // 'injectedRequestJson' should always be provided
   if (typeof injectedRequestJson !== 'undefined' && injectedRequestJson) {
     request = JSON.parse(injectedRequestJson);
     // Ensure essential arrays exist if they are null/undefined after parsing
@@ -509,7 +509,6 @@ try {
     request.params = request.params || [];
     request.formData = request.formData || [];
   } else {
-     // Should not happen based on the plan, but good to log
      sendMessage('consoleError', JSON.stringify(['Setup Error: injectedRequestJson is missing or empty.']));
   }
 
@@ -523,9 +522,29 @@ try {
 
   // 'injectedEnvironmentJson' should always be provided
   if (typeof injectedEnvironmentJson !== 'undefined' && injectedEnvironmentJson) {
-    environment = JSON.parse(injectedEnvironmentJson);
+    const parsedEnvData = JSON.parse(injectedEnvironmentJson);
+
+    environment = {}; // Initialize the target simple map
+
+    if (parsedEnvData && Array.isArray(parsedEnvData.values)) {
+      parsedEnvData.values.forEach(variable => {
+        // Check if the variable object is valid and enabled
+        if (variable && typeof variable === 'object' && variable.enabled === true && typeof variable.key === 'string') {
+           // Add the key-value pair to our simplified 'environment' map
+           environment[variable.key] = variable.value;
+        }
+      });
+      // sendMessage('consoleLog', JSON.stringify(['Successfully parsed environment variables.']));
+    } else {
+      // Log a warning if the structure is not as expected, but continue with an empty env
+      sendMessage('consoleWarn', JSON.stringify([
+          'Setup Warning: injectedEnvironmentJson does not have the expected structure ({values: Array}). Using an empty environment.',
+          'Received Data:', parsedEnvData // Log received data for debugging
+      ]));
+      environment = {}; // Ensure it's an empty object
+    }
+
   } else {
-     // Should not happen based on the plan, but good to log
      sendMessage('consoleError', JSON.stringify(['Setup Error: injectedEnvironmentJson is missing or empty.']));
      environment = {}; // Initialize to empty object to avoid errors later
   }
@@ -546,7 +565,7 @@ try {
 // This object provides functions to interact with the request, response,
 // environment, and the Dart host application.
 
-var ad = {
+const ad = {
   /**
    * Functions to modify the request object *before* it is sent.
    * Only available in pre-request scripts.
@@ -717,7 +736,7 @@ var ad = {
          * @param {string} [contentType] Optionally specify the Content-Type (e.g., 'application/json', 'text/plain'). If not set, defaults to 'text/plain' or 'application/json' if newBody is an object.
          */
         set: (newBody, contentType) => {
-            if (!request || typeof request === 'object') return; // Safety check
+            if (!request || typeof request !== 'object') return; // Safety check fix: check !request or typeof !== object
 
             let finalBody = '';
             let finalContentType = contentType;
@@ -839,11 +858,12 @@ var ad = {
      * @returns {object|undefined} The parsed JSON object, or undefined if parsing fails or body is empty.
      */
     json: () => {
-      if (!ad.response.body) {
+      const bodyContent = ad.response.body; // Assign to variable first
+      if (!bodyContent) { // Check the variable
         return undefined;
       }
       try {
-        return JSON.parse(ad.response.body);
+        return JSON.parse(bodyContent); // Parse the variable
       } catch (e) {
         ad.console.error("Failed to parse response body as JSON:", e.toString());
         return undefined;
@@ -859,61 +879,70 @@ var ad = {
         const headers = ad.response.headers;
         if (!headers || typeof key !== 'string') return undefined;
         const lowerKey = key.toLowerCase();
+        // Find the key in the headers object case-insensitively
         const headerKey = Object.keys(headers).find(k => k.toLowerCase() === lowerKey);
-        return headerKey ? headers[headerKey] : undefined;
+        return headerKey ? headers[headerKey] : undefined; // Return the value using the found key
     }
   },
 
   /**
    * Access and modify environment variables for the active environment.
-   * Changes are made to the 'environment' JS object and sent back to Dart.
+   * Changes are made to the 'environment' JS object (simple {key: value} map)
+   * and sent back to Dart. Dart side will need to merge these changes back
+   * into the original structured format if needed.
    */
   environment: {
     /**
-     * Gets the value of an environment variable.
+     * Gets the value of an environment variable from the simplified map.
      * @param {string} key The variable name.
      * @returns {any} The variable value or undefined if not found.
      */
     get: (key) => {
+      // Access the simplified 'environment' object directly
       return (environment && typeof environment === 'object') ? environment[key] : undefined;
     },
     /**
-     * Sets the value of an environment variable.
+     * Sets the value of an environment variable in the simplified map.
      * @param {string} key The variable name.
      * @param {any} value The variable value. Should be JSON-serializable (string, number, boolean, object, array).
      */
     set: (key, value) => {
       if (environment && typeof environment === 'object' && typeof key === 'string') {
+        // Modify the simplified 'environment' object
         environment[key] = value;
       }
     },
     /**
-     * Removes an environment variable.
+     * Removes an environment variable from the simplified map.
      * @param {string} key The variable name to remove.
      */
     unset: (key) => {
       if (environment && typeof environment === 'object') {
+        // Modify the simplified 'environment' object
         delete environment[key];
       }
     },
     /**
-     * Checks if an environment variable exists.
+     * Checks if an environment variable exists in the simplified map.
      * @param {string} key The variable name.
      * @returns {boolean} True if the variable exists, false otherwise.
      */
     has: (key) => {
+       // Check the simplified 'environment' object
        return (environment && typeof environment === 'object') ? environment.hasOwnProperty(key) : false;
     },
     /**
-     * Removes all variables from the current environment scope.
+     * Removes all variables from the simplified environment map scope.
      */
     clear: () => {
       if (environment && typeof environment === 'object') {
+          // Clear the simplified 'environment' object
           for (const key in environment) {
               if (environment.hasOwnProperty(key)) {
                   delete environment[key];
               }
           }
+          // Alternatively, just reassign: environment = {};
       }
     }
     // Note: A separate 'globals' object could be added here if global variables are implemented distinctly.
