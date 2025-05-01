@@ -51,6 +51,7 @@ Color getHTTPMethodColor(HTTPVerb? method) {
     HTTPVerb.put => kColorHttpMethodPut,
     HTTPVerb.patch => kColorHttpMethodPatch,
     HTTPVerb.delete => kColorHttpMethodDelete,
+    HTTPVerb.options => kColorHttpMethodOptions,
     _ => kColorHttpMethodGet,
   };
   return col;
