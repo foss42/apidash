@@ -17,7 +17,8 @@ enum HTTPVerb {
   post("POST"),
   put("PUT"),
   patch("PAT"),
-  delete("DEL");
+  delete("DEL"),
+  options("OPT");
 
   const HTTPVerb(this.abbr);
   final String abbr;

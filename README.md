@@ -182,7 +182,8 @@ API Dash currently supports API integration code generation for the following la
 | Rust                   | `reqwest`     |         |
 | Rust                   | `ureq`        |         |
 | Rust                   | `Actix Client` |        |
-| Swift                  | `URLSession`  | Testing Required |
+| Swift                  | `Alamofire`   |         |
+| Swift                  | `URLSession`  |         |
 
 We welcome contributions to support other programming languages/libraries/frameworks. Please check out more details [here](https://github.com/foss42/apidash/discussions/80).
 
