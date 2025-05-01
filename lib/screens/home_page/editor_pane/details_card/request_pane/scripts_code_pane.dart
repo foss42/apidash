@@ -73,6 +73,11 @@ class _ScriptsCodePaneState extends ConsumerState<ScriptsCodePane> {
                     tabs[i],
                     style: TextStyle(
                       fontSize: 12,
+                      color: _selectedTabIndex == i
+                          ? Theme.of(context)
+                              .colorScheme
+                              .onSecondaryFixedVariant
+                          : Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                   selected: _selectedTabIndex == i,
