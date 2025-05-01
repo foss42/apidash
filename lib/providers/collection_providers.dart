@@ -329,6 +329,68 @@ class CollectionStateNotifier
     }
   }
 
+  Future<void> handlePostResponseScript(
+    RequestModel requestModel,
+    EnvironmentModel? originalEnvironmentModel,
+  ) async {
+    final scriptResult = await executePostResponseScript(
+      currentRequestModel: requestModel,
+      activeEnvironment: originalEnvironmentModel?.toJson() ?? {},
+    );
+
+    requestModel =
+        requestModel.copyWith(httpResponseModel: scriptResult.updatedResponse);
+
+    if (originalEnvironmentModel != null) {
+      final updatedEnvironmentMap = scriptResult.updatedEnvironment;
+
+      final List<EnvironmentVariableModel> newValues = [];
+      final Map<String, dynamic> mutableUpdatedEnv =
+          Map.from(updatedEnvironmentMap);
+
+      for (final originalVariable in originalEnvironmentModel.values) {
+        if (mutableUpdatedEnv.containsKey(originalVariable.key)) {
+          final dynamic newValue = mutableUpdatedEnv[originalVariable.key];
+          newValues.add(
+            originalVariable.copyWith(
+              value: newValue == null ? '' : newValue.toString(),
+              enabled: true,
+            ),
+          );
+
+          mutableUpdatedEnv.remove(originalVariable.key);
+        } else {
+          // Variable was removed by the script (unset/clear), don't add it to newValues.
+          // Alternatively, you could keep it but set enabled = false:
+          // newValues.add(originalVariable.copyWith(enabled: false));
+        }
+      }
+
+      for (final entry in mutableUpdatedEnv.entries) {
+        final dynamic newValue = entry.value;
+        newValues.add(
+          EnvironmentVariableModel(
+            key: entry.key,
+            value: newValue == null ? '' : newValue.toString(),
+            enabled: true,
+            type: EnvironmentVariableType.variable,
+          ),
+        );
+      }
+      ref.read(environmentsStateNotifierProvider.notifier).updateEnvironment(
+          originalEnvironmentModel.id,
+          name: originalEnvironmentModel.name,
+          values: newValues);
+    } else {
+      debugPrint(
+          "Skipped environment update as originalEnvironmentModel was null.");
+      if (scriptResult.updatedEnvironment.isNotEmpty) {
+        debugPrint(
+            "Warning: Pre-request script updated environment variables, but no active environment was selected to save them to.");
+      }
+    }
+  }
+
   Future<void> sendRequest() async {
     final requestId = ref.read(selectedIdStateProvider);
     ref.read(codePaneVisibleStateProvider.notifier).state = false;
@@ -405,6 +467,7 @@ class CollectionStateNotifier
         httpRequestModel: substitutedHttpRequestModel,
         httpResponseModel: httpResponseModel,
       );
+      handlePostResponseScript(newRequestModel, originalEnvironmentModel);
       ref.read(historyMetaStateNotifier.notifier).addHistoryRequest(model);
     }
 
