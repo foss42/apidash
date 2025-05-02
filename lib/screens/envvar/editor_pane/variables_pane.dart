@@ -78,11 +78,11 @@ class EditEnvironmentVariablesState
           elevation: 8,
           borderRadius: BorderRadius.circular(8),
           child: Container(
-            padding: const EdgeInsets.all(8),
+            // padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: clrScheme.surface,
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: kColorWhite.withOpacity(0.5)),
+              // borderRadius: BorderRadius.circular(8),
+              // border: Border.all(color: kColorWhite.withOpacity(0.5)),
             ),
             child: TextField(
               controller: controller,
