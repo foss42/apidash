@@ -9,7 +9,7 @@ class CellField extends StatelessWidget {
     this.hintText,
     this.onChanged,
     this.colorScheme,
-    this.onOverlayToggle
+    this.onOverlayToggle,
   });
 
   final String keyId;
@@ -17,12 +17,21 @@ class CellField extends StatelessWidget {
   final String? hintText;
   final void Function(String)? onChanged;
   final ColorScheme? colorScheme;
-  final void Function(bool, GlobalKey<State<StatefulWidget>>, String, TextStyle, ColorScheme)? onOverlayToggle;
+  final void Function(
+    bool,
+    GlobalKey<State<StatefulWidget>>,
+    String,
+    TextStyle,
+    ColorScheme,
+    FocusNode,
+    TextEditingController,
+    InputDecoration,
+  )? onOverlayToggle;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: double.infinity, // Ensure the text field takes full cell width
+      width: double.infinity,
       child: ADOutlinedTextField(
         keyId: keyId,
         initialValue: initialValue,
@@ -31,7 +40,7 @@ class CellField extends StatelessWidget {
         onChanged: onChanged,
         onOverlayToggle: onOverlayToggle,
         colorScheme: colorScheme,
-        isDense: true, // Compact rendering
+        isDense: true,
       ),
     );
   }

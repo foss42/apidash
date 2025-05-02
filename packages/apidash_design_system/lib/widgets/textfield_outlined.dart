@@ -26,7 +26,7 @@ class ADOutlinedTextField extends StatefulWidget {
     this.isDense,
     this.onChanged,
     this.colorScheme,
-    this.onOverlayToggle, // Callback to toggle overlay
+    this.onOverlayToggle,
   });
 
   final String? keyId;
@@ -50,7 +50,16 @@ class ADOutlinedTextField extends StatefulWidget {
   final Color? enabledBorderColor;
   final void Function(String)? onChanged;
   final ColorScheme? colorScheme;
-  final void Function(bool, GlobalKey, String, TextStyle, ColorScheme)? onOverlayToggle;
+  final void Function(
+    bool,
+    GlobalKey,
+    String,
+    TextStyle,
+    ColorScheme,
+    FocusNode,
+    TextEditingController,
+    InputDecoration,
+  )? onOverlayToggle;
 
   @override
   State<ADOutlinedTextField> createState() => _ADOutlinedTextFieldState();
@@ -84,7 +93,16 @@ class _ADOutlinedTextFieldState extends State<ADOutlinedTextField> {
     }
     _focusNode.removeListener(_handleFocusChange);
     _focusNode.dispose();
-    widget.onOverlayToggle?.call(false, _textFieldKey, '', TextStyle(), Theme.of(context).colorScheme);
+    widget.onOverlayToggle?.call(
+      false,
+      _textFieldKey,
+      '',
+      TextStyle(),
+      Theme.of(context).colorScheme,
+      _focusNode,
+      _controller,
+      InputDecoration(),
+    );
     super.dispose();
   }
 
@@ -114,7 +132,29 @@ class _ADOutlinedTextFieldState extends State<ADOutlinedTextField> {
     final isMultiLine = lineCount > 1;
     final showOverlay = _isFocused && isMultiLine;
 
-    widget.onOverlayToggle?.call(showOverlay, _textFieldKey, text, textStyle, clrScheme);
+    final decoration = getTextFieldInputDecoration(
+      clrScheme,
+      fillColor: widget.fillColor,
+      hintText: widget.hintText,
+      hintTextStyle: widget.hintTextStyle,
+      hintTextFontSize: widget.hintTextFontSize,
+      hintTextColor: widget.hintTextColor,
+      contentPadding: contentPadding,
+      focussedBorderColor: widget.focussedBorderColor,
+      enabledBorderColor: widget.enabledBorderColor,
+      isDense: widget.isDense ?? true,
+    );
+
+    widget.onOverlayToggle?.call(
+      showOverlay,
+      _textFieldKey,
+      text,
+      textStyle,
+      clrScheme,
+      _focusNode,
+      _controller,
+      decoration,
+    );
   }
 
   @override

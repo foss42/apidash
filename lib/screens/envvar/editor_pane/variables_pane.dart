@@ -24,6 +24,7 @@ class EditEnvironmentVariablesState
   late List<EnvironmentVariableModel> variableRows;
   bool isAddingRow = false;
   OverlayEntry? _overlayEntry;
+  FocusNode? _currentFocusNode;
 
   @override
   void initState() {
@@ -40,16 +41,33 @@ class EditEnvironmentVariablesState
   void _removeOverlay() {
     _overlayEntry?.remove();
     _overlayEntry = null;
+    _currentFocusNode?.removeListener(_handleOverlayFocusChange);
+    _currentFocusNode = null;
+  }
+
+  void _handleOverlayFocusChange() {
+    if (_currentFocusNode != null && !_currentFocusNode!.hasFocus) {
+      _removeOverlay();
+    }
   }
 
   void _showOverlay(
-      GlobalKey key, String text, TextStyle textStyle, ColorScheme clrScheme) {
+    GlobalKey key,
+    String text,
+    TextStyle textStyle,
+    ColorScheme clrScheme,
+    FocusNode focusNode,
+    TextEditingController controller,
+    InputDecoration decoration,
+  ) {
     _removeOverlay();
 
-    final RenderBox renderBox =
-        key.currentContext!.findRenderObject() as RenderBox;
+    final RenderBox renderBox = key.currentContext!.findRenderObject() as RenderBox;
     final position = renderBox.localToGlobal(Offset.zero);
     final size = renderBox.size;
+
+    _currentFocusNode = focusNode;
+    _currentFocusNode?.addListener(_handleOverlayFocusChange);
 
     _overlayEntry = OverlayEntry(
       builder: (context) => Positioned(
@@ -66,11 +84,14 @@ class EditEnvironmentVariablesState
               borderRadius: BorderRadius.circular(8),
               border: Border.all(color: kColorWhite.withOpacity(0.5)),
             ),
-            child: SingleChildScrollView(
-              child: Text(
-                text,
-                style: textStyle,
-              ),
+            child: TextField(
+              controller: controller,
+              focusNode: focusNode,
+              style: textStyle,
+              decoration: decoration,
+              maxLines: null,
+              keyboardType: TextInputType.multiline,
+              autofocus: true,
             ),
           ),
         ),
@@ -80,10 +101,18 @@ class EditEnvironmentVariablesState
     Overlay.of(context).insert(_overlayEntry!);
   }
 
-  void _onOverlayToggle(bool show, GlobalKey key, String text,
-      TextStyle textStyle, ColorScheme clrScheme) {
+  void _onOverlayToggle(
+    bool show,
+    GlobalKey key,
+    String text,
+    TextStyle textStyle,
+    ColorScheme clrScheme,
+    FocusNode focusNode,
+    TextEditingController controller,
+    InputDecoration decoration,
+  ) {
     if (show) {
-      _showOverlay(key, text, textStyle, clrScheme);
+      _showOverlay(key, text, textStyle, clrScheme, focusNode, controller, decoration);
     } else {
       _removeOverlay();
     }
@@ -126,7 +155,7 @@ class EditEnvironmentVariablesState
         fixedWidth: 30,
       ),
       DataColumn2(
-        label: Text("Variable value"),
+        label: Text(" jars value"),
       ),
       DataColumn2(
         label: Text(''),
