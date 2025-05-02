@@ -23,11 +23,70 @@ class EditEnvironmentVariablesState
   final random = Random.secure();
   late List<EnvironmentVariableModel> variableRows;
   bool isAddingRow = false;
+  OverlayEntry? _overlayEntry;
 
   @override
   void initState() {
     super.initState();
     seed = random.nextInt(kRandMax);
+  }
+
+  @override
+  void dispose() {
+    _removeOverlay();
+    super.dispose();
+  }
+
+  void _removeOverlay() {
+    _overlayEntry?.remove();
+    _overlayEntry = null;
+  }
+
+  void _showOverlay(
+      GlobalKey key, String text, TextStyle textStyle, ColorScheme clrScheme) {
+    _removeOverlay();
+
+    final RenderBox renderBox =
+        key.currentContext!.findRenderObject() as RenderBox;
+    final position = renderBox.localToGlobal(Offset.zero);
+    final size = renderBox.size;
+
+    _overlayEntry = OverlayEntry(
+      builder: (context) => Positioned(
+        left: position.dx,
+        top: position.dy,
+        width: size.width,
+        child: Material(
+          elevation: 8,
+          borderRadius: BorderRadius.circular(8),
+          child: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: clrScheme.surface,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: kColorWhite.withOpacity(0.5)),
+            ),
+            child: SingleChildScrollView(
+              child: Text(
+                text,
+                style: textStyle,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    Overlay.of(context).insert(_overlayEntry!);
+  }
+
+  void _onOverlayToggle(bool show, GlobalKey key, String text,
+      TextStyle textStyle, ColorScheme clrScheme) {
+    if (show) {
+      _showOverlay(key, text, textStyle, clrScheme);
+    } else {
+      _removeOverlay();
+    }
   }
 
   void _onFieldChange(String selectedId) {
@@ -118,6 +177,7 @@ class EditEnvironmentVariablesState
                   _onFieldChange(selectedId!);
                 },
                 colorScheme: Theme.of(context).colorScheme,
+                onOverlayToggle: _onOverlayToggle,
               ),
             ),
             DataCell(
@@ -146,6 +206,7 @@ class EditEnvironmentVariablesState
                   _onFieldChange(selectedId!);
                 },
                 colorScheme: Theme.of(context).colorScheme,
+                onOverlayToggle: _onOverlayToggle,
               ),
             ),
             DataCell(
@@ -195,7 +256,7 @@ class EditEnvironmentVariablesState
                     dividerThickness: 0,
                     horizontalMargin: 0,
                     headingRowHeight: 0,
-                    dataRowHeight: null, // Allow dynamic row height
+                    dataRowHeight: null,
                     bottomMargin: kDataTableBottomPadding,
                     isVerticalScrollBarVisible: true,
                     columns: columns,
