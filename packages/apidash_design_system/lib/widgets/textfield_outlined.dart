@@ -69,6 +69,7 @@ class _ADOutlinedTextFieldState extends State<ADOutlinedTextField> {
   late FocusNode _focusNode;
   late TextEditingController _controller;
   bool _isFocused = false;
+  bool _isMultiLine = false;
   final GlobalKey _textFieldKey = GlobalKey();
 
   @override
@@ -77,13 +78,22 @@ class _ADOutlinedTextFieldState extends State<ADOutlinedTextField> {
     _focusNode = FocusNode();
     _controller = widget.controller ?? TextEditingController(text: widget.initialValue);
     _focusNode.addListener(_handleFocusChange);
+    // Initial check for multiline state
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkMultiLineAndUpdateOverlay();
+    });
   }
 
   void _handleFocusChange() {
-    setState(() {
-      _isFocused = _focusNode.hasFocus;
-    });
-    _updateOverlay();
+    final wasFocused = _isFocused;
+    _isFocused = _focusNode.hasFocus;
+
+    if (_isFocused != wasFocused) {
+      setState(() {
+        // Update the maxLines based on focus
+      });
+      _checkMultiLineAndUpdateOverlay();
+    }
   }
 
   @override
@@ -116,7 +126,7 @@ class _ADOutlinedTextFieldState extends State<ADOutlinedTextField> {
     return textPainter.computeLineMetrics().length;
   }
 
-  void _updateOverlay() {
+  void _checkMultiLineAndUpdateOverlay() {
     var clrScheme = widget.colorScheme ?? Theme.of(context).colorScheme;
     final textStyle = widget.textStyle ??
         kCodeStyle.copyWith(
@@ -126,11 +136,23 @@ class _ADOutlinedTextFieldState extends State<ADOutlinedTextField> {
     final contentPadding = widget.contentPadding ?? const EdgeInsets.symmetric(horizontal: 8, vertical: 8);
     final horizontalPadding = contentPadding is EdgeInsets ? contentPadding.horizontal : 16.0;
 
-    final maxWidth = context.size!.width - horizontalPadding;
+    // Safely calculate maxWidth
+    double maxWidth = double.infinity;
+    if (_textFieldKey.currentContext != null) {
+      final renderBox = _textFieldKey.currentContext!.findRenderObject() as RenderBox?;
+      if (renderBox != null && renderBox.hasSize) {
+        maxWidth = renderBox.size.width - horizontalPadding;
+      }
+    }
+
     final text = _controller.text.isEmpty ? widget.hintText ?? '' : _controller.text;
     final lineCount = _calculateLineCount(text, textStyle, maxWidth);
     final isMultiLine = lineCount > 1;
-    final showOverlay = _isFocused && isMultiLine;
+
+    // Update the multiline state
+    _isMultiLine = isMultiLine;
+
+    final showOverlay = _isFocused && _isMultiLine;
 
     final decoration = getTextFieldInputDecoration(
       clrScheme,
@@ -191,8 +213,14 @@ class _ADOutlinedTextFieldState extends State<ADOutlinedTextField> {
       ),
       onChanged: (value) {
         widget.onChanged?.call(value);
-        setState(() {});
-        _updateOverlay();
+        _checkMultiLineAndUpdateOverlay();
+      },
+      onTap: () {
+        if (!_isFocused) {
+          _isFocused = true;
+          setState(() {});
+        }
+        _checkMultiLineAndUpdateOverlay();
       },
     );
   }
