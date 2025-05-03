@@ -9,7 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:stac/stac.dart' as stac;
 
-void showCustomDialog(BuildContext context, String content) {
+void showCustomDialog(BuildContext context, Widget dialogContent) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -18,26 +18,24 @@ void showCustomDialog(BuildContext context, String content) {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12.0),
         ),
-        child: DialogContents(
-          content: content,
-        ),
+        child: dialogContent,
       );
     },
   );
 }
 
-class DialogContents extends ConsumerStatefulWidget {
+class GenerateUIDialog extends ConsumerStatefulWidget {
   final String content;
-  const DialogContents({
+  const GenerateUIDialog({
     super.key,
     required this.content,
   });
 
   @override
-  ConsumerState<DialogContents> createState() => _DialogContentsState();
+  ConsumerState<GenerateUIDialog> createState() => _GenerateUIDialogState();
 }
 
-class _DialogContentsState extends ConsumerState<DialogContents> {
+class _GenerateUIDialogState extends ConsumerState<GenerateUIDialog> {
   int index = 0;
   TextEditingController controller = TextEditingController();
 

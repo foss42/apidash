@@ -91,7 +91,7 @@ ENDPOINT: $endpoint
 HEADERS: ${headersStr.isEmpty ? '{}' : headersStr}
 $queryParamStr
 $bodyDetails
-
+$responseDetails
 """;
   }
 }
