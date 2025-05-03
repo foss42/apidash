@@ -86,17 +86,13 @@ class APIDashAIService {
           query: query,
           variables: variables,
         );
-        if (res == null) {
-          RETRY_COUNT += 1;
-        } else {
+        if (res != null) {
           if (await agent.validator(res)) {
             return agent.outputFormatter(res);
-          } else {
-            RETRY_COUNT += 1;
           }
         }
       } catch (e) {
-        print(e);
+        "APIDashAIService::Governor: Exception Occured: $e";
       }
       // Exponential Backoff
       if (RETRY_COUNT < backoffDelays.length) {
@@ -106,6 +102,7 @@ class APIDashAIService {
       }
       RETRY_COUNT += 1;
     } while (RETRY_COUNT < 5);
+    return null;
   }
 
   static Future<dynamic> callAgent(

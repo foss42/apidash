@@ -40,6 +40,13 @@ class APIToolFunctionGenerator extends APIDashAIAgent {
 
   @override
   Future outputFormatter(String validatedResponse) async {
+    validatedResponse = validatedResponse
+        .replaceAll('```python', '')
+        .replaceAll('```python\n', '')
+        .replaceAll('```javascript', '')
+        .replaceAll('```javascript\n', '')
+        .replaceAll('```', '');
+
     return {
       'FUNC': validatedResponse,
     };

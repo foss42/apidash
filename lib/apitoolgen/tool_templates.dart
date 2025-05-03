@@ -91,3 +91,22 @@ api_tool = {
 
 __all__ = ["api_tool"]
 """;
+
+class APIToolGenTemplateSelector {
+  static String getTemplate(String language, String agent) {
+    if (language == 'PYTHON') {
+      if (agent == 'MICROSOFT_AUTOGEN') {
+        return MICROSOFT_AUTOGEN_TOOL_FORMAT;
+      } else if (agent == 'LANGCHAIN') {
+        return LANGCHAIN_PYTHON_TOOL_FORMAT;
+      }
+      return GENERAL_PYTHON_TOOL_FORMAT;
+    } else if (language == 'JAVASCRIPT') {
+      if (agent == 'LANGCHAIN') {
+        return LANGCHAIN_JAVASCRIPT_TOOL_FORMAT;
+      }
+      return GENERAL_JAVASCRIPT_TOOL_FORMAT;
+    }
+    return 'NO_TEMPLATE';
+  }
+}

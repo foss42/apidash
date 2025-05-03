@@ -1,5 +1,7 @@
 import 'package:apidash/apitoolgen/request_consolidator.dart';
+import 'package:apidash/apitoolgen/tool_templates.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash/services/agentic_services/agent_blueprint.dart';
 import 'package:apidash/services/agentic_services/agent_caller.dart';
 import 'package:apidash/widgets/ai_ui_desginer_widgets.dart';
 import 'package:apidash/widgets/button_copy.dart';
@@ -25,15 +27,54 @@ class _GenerateToolDialogState extends ConsumerState<GenerateToolDialog> {
   int index = 0;
   TextEditingController controller = TextEditingController();
 
-  generateAPITool(String lang) async {
+  String selectedLanguage = 'PYTHON';
+  String selectedAgent = 'GEMINI';
+  String? generatedToolCode = '';
+
+  generateAPITool() async {
+    setState(() {
+      generatedToolCode = null;
+    });
     final x = await APIDashAgentCaller.instance.apiToolFunctionGenerator(
       ref,
       input: AgentInputs(variables: {
         'REQDATA': widget.requestDesc.generateREQDATA,
-        'TARGET_LANGUAGE': lang,
+        'TARGET_LANGUAGE': selectedLanguage,
       }),
     );
-    print(x);
+    if (x == null) {
+      setState(() {
+        generatedToolCode = '';
+      });
+      print("ToolGeneration Failed"); //TODO: Make Alert
+      return;
+    }
+
+    String toolCode = x!['FUNC'];
+
+    print(toolCode);
+
+    //TODO: Integrate into tool
+    final toolres = await APIDashAgentCaller.instance.apiToolBodyGenerator(
+      ref,
+      input: AgentInputs(variables: {
+        'TEMPLATE': APIToolGenTemplateSelector.getTemplate(
+                selectedLanguage, selectedAgent)
+            .substitutePromptVariable('FUNC', toolCode),
+      }),
+    );
+    if (toolres == null) {
+      setState(() {
+        generatedToolCode = '';
+      });
+      print("ToolGeneration Failed"); //TODO: Make Alert
+      return;
+    }
+    String toolDefinition = toolres!['TOOL'];
+
+    setState(() {
+      generatedToolCode = toolDefinition;
+    });
   }
 
   @override
@@ -41,31 +82,20 @@ class _GenerateToolDialogState extends ConsumerState<GenerateToolDialog> {
     return Container(
       height: 600,
       width: MediaQuery.of(context).size.width * 0.8,
-      child: IndexedStack(
-        index: index,
+      child: Row(
         children: [
-          Row(
-            children: [
-              Expanded(child: ToolRequirementSelectorPage()),
-              GeneratedToolCodeCopyPage(
-                toolCode: r"""""",
-                language: 'javascript',
-              ),
-            ],
-          ),
-          SizedBox(
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 40.0),
-                child: Container(
-                  height: 500,
-                  child: SendingWidget(
-                    startSendingTime: DateTime.now(),
-                    showTimeElapsed: false,
-                  ),
-                ),
-              ),
-            ),
+          Expanded(child: ToolRequirementSelectorPage(
+            onGenerateCallback: (agent, lang) {
+              setState(() {
+                selectedLanguage = lang;
+                selectedAgent = agent;
+              });
+              generateAPITool();
+            },
+          )),
+          GeneratedToolCodeCopyPage(
+            toolCode: generatedToolCode,
+            language: 'javascript',
           ),
         ],
       ),
@@ -74,7 +104,9 @@ class _GenerateToolDialogState extends ConsumerState<GenerateToolDialog> {
 }
 
 class ToolRequirementSelectorPage extends StatefulWidget {
-  const ToolRequirementSelectorPage({super.key});
+  final Function(String agent, String lang) onGenerateCallback;
+  const ToolRequirementSelectorPage(
+      {super.key, required this.onGenerateCallback});
 
   @override
   State<ToolRequirementSelectorPage> createState() =>
@@ -147,7 +179,7 @@ class _ToolRequirementSelectorPageState
 
                 //AutoGen is Python-Only
                 if (agentFramework == 'MICROSOFT_AUTOGEN') {
-                  targetLanguage = 'JAVASCRIPT';
+                  targetLanguage = 'PYTHON';
                 }
               });
             },
@@ -176,7 +208,7 @@ class _ToolRequirementSelectorPageState
 
                 //AutoGen is Python-Only
                 if (agentFramework == 'MICROSOFT_AUTOGEN') {
-                  targetLanguage = 'JAVASCRIPT';
+                  targetLanguage = 'PYTHON';
                 }
               });
             },
@@ -188,7 +220,9 @@ class _ToolRequirementSelectorPageState
               padding: kPh12,
               minimumSize: const Size(44, 44),
             ),
-            onPressed: () {},
+            onPressed: () {
+              widget.onGenerateCallback(agentFramework, targetLanguage);
+            },
             icon: Icon(
               Icons.token_outlined,
             ),
@@ -205,7 +239,7 @@ class _ToolRequirementSelectorPageState
 }
 
 class GeneratedToolCodeCopyPage extends StatelessWidget {
-  final String toolCode;
+  final String? toolCode;
   final String language;
   const GeneratedToolCodeCopyPage(
       {super.key, required this.toolCode, required this.language});
@@ -216,7 +250,14 @@ class GeneratedToolCodeCopyPage extends StatelessWidget {
         ? kLightCodeTheme
         : kDarkCodeTheme;
 
-    if (toolCode.isEmpty) {
+    if (toolCode == null) {
+      return SendingWidget(
+        startSendingTime: DateTime.now(),
+        showTimeElapsed: false,
+      );
+    }
+
+    if (toolCode!.isEmpty) {
       return Padding(
         padding: const EdgeInsets.only(right: 40),
         child: Center(
@@ -232,22 +273,24 @@ class GeneratedToolCodeCopyPage extends StatelessWidget {
     return Container(
       color: const Color.fromARGB(255, 28, 28, 28),
       padding: EdgeInsets.all(20),
-      constraints: BoxConstraints(maxWidth: 700),
-      width: MediaQuery.of(context).size.width * 0.55,
+      width: MediaQuery.of(context).size.width * 0.50,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           CopyButton(
-            toCopy: toolCode,
+            toCopy: toolCode!,
             showLabel: true,
           ),
           Expanded(
             child: SingleChildScrollView(
-              child: CodePreviewer(
-                code: toolCode,
-                theme: codeTheme,
-                language: language.toLowerCase(),
-                textStyle: kCodeStyle,
+              child: Container(
+                width: double.infinity,
+                child: CodePreviewer(
+                  code: toolCode!,
+                  theme: codeTheme,
+                  language: language.toLowerCase(),
+                  textStyle: kCodeStyle,
+                ),
               ),
             ),
           ),

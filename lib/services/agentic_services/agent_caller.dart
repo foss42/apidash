@@ -1,5 +1,6 @@
 import 'package:apidash/providers/settings_providers.dart';
 import 'package:apidash/services/agentic_services/agent_blueprint.dart';
+import 'package:apidash/services/agentic_services/agents/apitool_bodygen.dart';
 import 'package:apidash/services/agentic_services/agents/apitool_funcgen.dart';
 import 'package:apidash/services/agentic_services/agents/intermediate_rep_gen.dart';
 import 'package:apidash/services/agentic_services/agents/semantic_analyser.dart';
@@ -78,5 +79,12 @@ class APIDashAgentCaller {
     required AgentInputs input,
   }) async {
     return _callAgent(APIToolFunctionGenerator(), ref: ref, input: input);
+  }
+
+  Future<dynamic> apiToolBodyGenerator(
+    WidgetRef ref, {
+    required AgentInputs input,
+  }) async {
+    return _callAgent(ApiToolBodyGen(), ref: ref, input: input);
   }
 }
