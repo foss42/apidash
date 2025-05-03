@@ -101,6 +101,9 @@ class APIDashAIService {
         ));
       }
       RETRY_COUNT += 1;
+      print(
+        "Retrying AgentCall for (${agent.agentName}): ATTEMPT: $RETRY_COUNT",
+      );
     } while (RETRY_COUNT < 5);
     return null;
   }

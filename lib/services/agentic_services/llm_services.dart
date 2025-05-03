@@ -38,6 +38,9 @@ class APIDashCustomLLMService {
   ) async {
     final inpS = input == '' ? '' : '\nProvided Inputs:$input';
     String combinedInput = "$systemPrompt$inpS";
+
+    // throw Exception(); //TO SIMULATE EXCEPTION
+
     final url = Uri.parse(
         'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=$apiKey');
     final response = await http.post(
@@ -57,8 +60,9 @@ class APIDashCustomLLMService {
       final data = jsonDecode(response.body);
       return data['candidates']?[0]?['content']?['parts']?[0]?['text'];
     } else {
-      print("GEMINI_ERROR: ${response.statusCode}");
-      return null;
+      throw Exception(
+        'GEMINI_EXCEPTION: ${response.statusCode}\n${response.body}',
+      );
     }
   }
 
