@@ -1,5 +1,10 @@
 import 'dart:convert';
 
+import 'package:apidash/apitoolgen/request_consolidator.dart';
+import 'package:apidash/providers/collection_providers.dart';
+import 'package:apidash/widgets/ai_toolgen_widgets.dart';
+import 'package:apidash/widgets/ai_ui_desginer_widgets.dart';
+
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/foundation.dart';
@@ -8,9 +13,10 @@ import 'package:apidash/utils/utils.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
 import 'package:genai/genai.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'button_share.dart';
 
-class ResponseBodySuccess extends StatefulWidget {
+class ResponseBodySuccess extends ConsumerStatefulWidget {
   const ResponseBodySuccess({
     super.key,
     required this.mediaType,
@@ -30,10 +36,11 @@ class ResponseBodySuccess extends StatefulWidget {
   final LLMModel? selectedModel; //ONLY FOR AI-REQUESTS
 
   @override
-  State<ResponseBodySuccess> createState() => _ResponseBodySuccessState();
+  ConsumerState<ResponseBodySuccess> createState() =>
+      _ResponseBodySuccessState();
 }
 
-class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
+class _ResponseBodySuccessState extends ConsumerState<ResponseBodySuccess> {
   int segmentIdx = 0;
 
   @override
@@ -62,6 +69,97 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
           padding: kP10,
           child: Column(
             children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  FilledButton.tonalIcon(
+                    style: FilledButton.styleFrom(
+                      padding: kPh12,
+                      minimumSize: const Size(44, 44),
+                    ),
+                    onPressed: () async {
+                      final requestModel = ref.watch(
+                          selectedRequestModelProvider
+                              .select((value) => value?.httpRequestModel));
+                      final responseModel = ref.watch(
+                          selectedRequestModelProvider
+                              .select((value) => value?.httpResponseModel));
+
+                      if (requestModel == null) return;
+                      if (responseModel == null) {
+                        print("AA");
+                        return;
+                      }
+
+                      String? bodyTXT;
+                      Map? bodyJSON;
+                      List<Map>? bodyFormData;
+
+                      if (requestModel.bodyContentType ==
+                          ContentType.formdata) {
+                        bodyFormData = requestModel.formDataMapList;
+                      } else if (requestModel.bodyContentType ==
+                          ContentType.json) {
+                        bodyJSON = jsonDecode(requestModel.body.toString());
+                      } else {
+                        bodyTXT = requestModel.body!;
+                      }
+
+                      final reqDesModel = APIDashRequestDescription(
+                        endpoint: requestModel.url,
+                        method: requestModel.method.name.toUpperCase(),
+                        responseType: responseModel.contentType.toString(),
+                        headers: requestModel.headersMap,
+                        response: responseModel.body,
+                        formData: bodyFormData,
+                        bodyTXT: bodyTXT,
+                        bodyJSON: bodyJSON,
+                      );
+
+                      print("GT2");
+                      showCustomDialog(
+                        context,
+                        GenerateToolDialog(
+                          requestDesc: reqDesModel,
+                        ),
+                      );
+                    },
+                    icon: Icon(
+                      Icons.token_outlined,
+                    ),
+                    label: const SizedBox(
+                      child: Text(
+                        "Generate Tool",
+                      ),
+                    ),
+                  ),
+                  kHSpacer10,
+                  FilledButton.tonalIcon(
+                    style: FilledButton.styleFrom(
+                      padding: kPh12,
+                      minimumSize: const Size(44, 44),
+                    ),
+                    onPressed: () {
+                      final model = ref.watch(selectedRequestModelProvider
+                          .select((value) => value?.httpResponseModel));
+                      showCustomDialog(
+                        context,
+                        GenerateUIDialog(content: model?.formattedBody ?? ""),
+                      );
+                    },
+                    icon: Icon(
+                      Icons.generating_tokens,
+                    ),
+                    label: const SizedBox(
+                      child: Text(
+                        kLabelGenerateUI,
+                      ),
+                    ),
+                  ),
+                  kHSpacer10,
+                ],
+              ),
+              kVSpacer10,
               Row(
                 children: [
                   (widget.options == kRawBodyViewOptions)
