@@ -10,9 +10,8 @@ import '../consts.dart';
 import '../models/models.dart';
 
 /// A utility class for converting OpenAPI specifications to HTTP request models.
-class OpenApiParser {
+class OpenAPIIO {
   /// Parses OpenAPI content (JSON only) and returns a list of HTTP request models.
-  ///
   /// Returns `null` if the content cannot be parsed.
   List<(String?, HttpRequestModel)>? parseOpenApiContent(String content) {
     content = content.trim();
@@ -219,7 +218,7 @@ class OpenApiParser {
   }
 
   dynamic _getRequestBodyExample(Schema? schema, MediaType mediaType) {
-    return mediaType.example ?? (schema != null ? schema : null);
+    return mediaType.example ?? (schema);
   }
 
   ContentType _determineContentType(String mediaType) {
