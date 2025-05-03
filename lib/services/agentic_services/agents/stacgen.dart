@@ -224,7 +224,7 @@ circleAvatar has a field backgroundImage which takes the image url directly. no 
 
 DO NOT START OR END THE RESPONSE WITH ANYTHING ELSE. I WANT PURE FLutter-SDUI OUTPUT
 
-Generally wrap the whole thing with a SingleChildScrollView so that the whole thing is scrollable
+Generally wrap the whole thing with a SingleChildScrollView so that the whole thing is scrollable and wrap the SingleChildScrollView with a container so that colors and stuff can be changed
 
 """;
 

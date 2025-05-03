@@ -42,7 +42,7 @@ class _GenerateUIDialogState extends ConsumerState<GenerateUIDialog> {
 
   String generatedSDUI = '{}';
 
-  Future<String> generateSDUICode(String apiResponse) async {
+  Future<String?> generateSDUICode(String apiResponse) async {
     setState(() {
       index = 1; //Induce Loading
     });
@@ -61,9 +61,23 @@ class _GenerateUIDialogState extends ConsumerState<GenerateUIDialog> {
         }),
       ),
     ]);
-
     final SA = step1Res[0]?['SEMANTIC_ANALYSIS'];
     final IR = step1Res[1]?['INTERMEDIATE_REPRESENTATION'];
+
+    if (SA == null || IR == null) {
+      setState(() {
+        index = 0;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(
+          "Preview Generation Failed!",
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Colors.redAccent,
+      ));
+      return null;
+    }
+
     print("Semantic Analysis: $SA");
     print("Intermediate Representation: $IR");
 
@@ -78,7 +92,21 @@ class _GenerateUIDialogState extends ConsumerState<GenerateUIDialog> {
         'VAR_SEMANTIC_ANALYSIS': SA,
       }),
     );
-    return sduiCode?['STAC']?.toString() ?? "<NONE>";
+    final stacCode = sduiCode?['STAC']?.toString();
+    if (stacCode == null) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(
+          "Preview Generation Failed!",
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Colors.redAccent,
+      ));
+      setState(() {
+        index = 0;
+      });
+      return null;
+    }
+    return sduiCode['STAC'].toString();
   }
 
   Future<void> modifySDUICode(String modificationRequest) async {
@@ -95,7 +123,21 @@ class _GenerateUIDialogState extends ConsumerState<GenerateUIDialog> {
       }),
     );
 
-    final SDUI = res['STAC'];
+    final SDUI = res?['STAC'];
+
+    if (SDUI == null) {
+      setState(() {
+        index = 2;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(
+          "Modification Request Failed!",
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Colors.redAccent,
+      ));
+      return;
+    }
     setState(() {
       generatedSDUI = SDUI;
       index = 2;
@@ -112,6 +154,7 @@ class _GenerateUIDialogState extends ConsumerState<GenerateUIDialog> {
           onNext: (apiResponse, targetLanguage) async {
             print("Generating SDUI Code");
             final sdui = await generateSDUICode(apiResponse);
+            if (sdui == null) return;
             setState(() {
               index = 2;
               generatedSDUI = sdui;
@@ -276,6 +319,42 @@ class _SDUIPreviewPageState extends ConsumerState<SDUIPreviewPage> {
   bool exportingCode = false;
   String modificationRequest = "";
 
+  exportCode() async {
+    setState(() {
+      exportingCode = true;
+    });
+    final ans = await APIDashAgentCaller.instance.call(
+      StacToFlutterBot(),
+      ref: ref,
+      input: AgentInputs(
+        variables: {'VAR_CODE': widget.sduiCode},
+      ),
+    );
+    final exportedCode = ans?['CODE'];
+
+    if (exportedCode == null) {
+      setState(() {
+        exportingCode = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(
+          "Export Failed",
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Colors.redAccent,
+      ));
+      print("exportCode: Failed; ABORTING");
+      return;
+    }
+
+    Clipboard.setData(ClipboardData(text: ans['CODE']));
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text("Copied to clipboard!")));
+    setState(() {
+      exportingCode = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -354,24 +433,7 @@ class _SDUIPreviewPageState extends ConsumerState<SDUIPreviewPage> {
                           padding: kPh12,
                           minimumSize: const Size(44, 44),
                         ),
-                        onPressed: () async {
-                          setState(() {
-                            exportingCode = true;
-                          });
-                          final ans = await APIDashAgentCaller.instance.call(
-                            StacToFlutterBot(),
-                            ref: ref,
-                            input: AgentInputs(
-                                variables: {'VAR_CODE': widget.sduiCode}),
-                          );
-                          final exportedCode = ans['CODE'];
-                          Clipboard.setData(ClipboardData(text: ans['CODE']));
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text("Copied to clipboard!")));
-                          setState(() {
-                            exportingCode = false;
-                          });
-                        },
+                        onPressed: exportCode,
                         icon: Icon(
                           Icons.download,
                         ),

@@ -37,7 +37,7 @@ class _GenerateToolDialogState extends ConsumerState<GenerateToolDialog> {
     setState(() {
       generatedToolCode = null;
     });
-    final x = await APIDashAgentCaller.instance.call(
+    final toolfuncRes = await APIDashAgentCaller.instance.call(
       APIToolFunctionGenerator(),
       ref: ref,
       input: AgentInputs(variables: {
@@ -45,19 +45,22 @@ class _GenerateToolDialogState extends ConsumerState<GenerateToolDialog> {
         'TARGET_LANGUAGE': selectedLanguage,
       }),
     );
-    if (x == null) {
+    if (toolfuncRes == null) {
       setState(() {
         generatedToolCode = '';
       });
-      print("ToolGeneration Failed"); //TODO: Make Alert
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(
+          "API Tool generation failed!",
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Colors.redAccent,
+      ));
       return;
     }
 
-    String toolCode = x!['FUNC'];
+    String toolCode = toolfuncRes!['FUNC'];
 
-    print(toolCode);
-
-    //TODO: Integrate into tool
     final toolres = await APIDashAgentCaller.instance.call(
       ApiToolBodyGen(),
       ref: ref,
@@ -71,7 +74,13 @@ class _GenerateToolDialogState extends ConsumerState<GenerateToolDialog> {
       setState(() {
         generatedToolCode = '';
       });
-      print("ToolGeneration Failed"); //TODO: Make Alert
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(
+          "API Tool generation failed!",
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Colors.redAccent,
+      ));
       return;
     }
     String toolDefinition = toolres!['TOOL'];
