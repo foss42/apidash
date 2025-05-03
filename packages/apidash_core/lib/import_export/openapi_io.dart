@@ -16,71 +16,62 @@ class OpenAPIIO {
   List<(String?, HttpRequestModel)>? parseOpenApiContent(String content) {
     content = content.trim();
     try {
-      // Try parsing as JSON
       final jsonMap = jsonDecode(content) as Map<String, dynamic>;
       final openApi = OpenApi.fromJson(jsonMap);
-      return _parseOpenApiSpec(openApi);
+      return parseOpenApiSpec(openApi);
     } catch (e) {
       return null;
     }
   }
 
-  List<(String?, HttpRequestModel)>? _parseOpenApiSpec(OpenApi openApi) {
+  List<(String?, HttpRequestModel)>? parseOpenApiSpec(OpenApi openApi) {
     final requests = <(String?, HttpRequestModel)>[];
-    
     final baseUrl = openApi.servers?.isNotEmpty == true 
         ? openApi.servers!.first.url ?? ''
         : '';
 
     openApi.paths?.forEach((path, pathItem) {
-      _getOperations(pathItem).forEach((method, operation) {
-        final request = _createRequestModel(
+      getOperations(pathItem).forEach((method, operation) {
+        final request = createRequestModel(
           method: method,
           baseUrl: baseUrl,
           path: path,
           operation: operation,
         );
-        
-        if (request != null) {
-          requests.add(request);
-        }
+        if (request != null) requests.add(request);
       });
     });
 
     return requests.isNotEmpty ? requests : null;
   }
 
-  Map<HTTPVerb, Operation> _getOperations(PathItem pathItem) {
-    return {
-      if (pathItem.get != null) HTTPVerb.get: pathItem.get!,
-      if (pathItem.post != null) HTTPVerb.post: pathItem.post!,
-      if (pathItem.put != null) HTTPVerb.put: pathItem.put!,
-      if (pathItem.delete != null) HTTPVerb.delete: pathItem.delete!,
-      if (pathItem.patch != null) HTTPVerb.patch: pathItem.patch!,
-      if (pathItem.head != null) HTTPVerb.head: pathItem.head!,
-    };
-  }
+  Map<HTTPVerb, Operation> getOperations(PathItem pathItem) => {
+    if (pathItem.get != null) HTTPVerb.get: pathItem.get!,
+    if (pathItem.post != null) HTTPVerb.post: pathItem.post!,
+    if (pathItem.put != null) HTTPVerb.put: pathItem.put!,
+    if (pathItem.delete != null) HTTPVerb.delete: pathItem.delete!,
+    if (pathItem.patch != null) HTTPVerb.patch: pathItem.patch!,
+    if (pathItem.head != null) HTTPVerb.head: pathItem.head!,
+  };
 
-  (String?, HttpRequestModel)? _createRequestModel({
+  (String?, HttpRequestModel)? createRequestModel({
     required HTTPVerb method,
     required String baseUrl,
     required String path,
     required Operation operation,
   }) {
     try {
-      final fullUrl = _combineUrls(baseUrl, path);
-      
-      final (headers, isHeaderEnabledList) = _convertParameters(
+      final fullUrl = combineUrls(baseUrl, path);
+      final (headers, headerEnabled) = convertParameters(
         operation.parameters,
         ['header', 'cookie']
       );
-      final (params, isParamEnabledList) = _convertParameters(
+      final (params, paramEnabled) = convertParameters(
         operation.parameters,
         ['query']
       );
-      
       final (bodyContentType, body, formData) = 
-          _convertRequestBody(operation.requestBody);
+          convertRequestBody(operation.requestBody);
 
       final name = operation.summary ??
                   operation.description ??
@@ -93,8 +84,8 @@ class OpenAPIIO {
           url: fullUrl,
           headers: headers,
           params: params,
-          isHeaderEnabledList: isHeaderEnabledList,
-          isParamEnabledList: isParamEnabledList,
+          isHeaderEnabledList: headerEnabled,
+          isParamEnabledList: paramEnabled,
           bodyContentType: bodyContentType,
           body: body,
           formData: formData,
@@ -105,25 +96,21 @@ class OpenAPIIO {
     }
   }
 
-  String _combineUrls(String baseUrl, String path) {
+  String combineUrls(String baseUrl, String path) {
     if (baseUrl.isEmpty) return path;
-    
     final uri = Uri.parse(baseUrl);
     final pathUri = Uri.parse(path.startsWith('/') ? path : '/$path');
-    
     return uri.replace(
       path: uri.path + pathUri.path,
       query: pathUri.query.isNotEmpty ? pathUri.query : uri.query,
     ).toString();
   }
 
-  (List<NameValueModel>?, List<bool>?) _convertParameters(
+  (List<NameValueModel>?, List<bool>?) convertParameters(
     List<Parameter>? parameters, 
     List<String> parameterTypes,
   ) {
-    if (parameters == null || parameters.isEmpty) {
-      return (null, null);
-    }
+    if (parameters == null || parameters.isEmpty) return (null, null);
     
     final result = <NameValueModel>[];
     final enabledList = <bool>[];
@@ -138,11 +125,11 @@ class OpenAPIIO {
         if (parameterTypes.contains(paramIn)) {
           result.add(NameValueModel(
             name: param.name ?? '',
-            value: _getParameterExample(param),
+            value: getParameterExample(param),
           ));
           enabledList.add(!(param.deprecated ?? false));
         }
-      } catch (e) {
+      } catch (_) {
         continue;
       }
     }
@@ -153,18 +140,13 @@ class OpenAPIIO {
     );
   }
 
-  String _getParameterExample(Parameter param) {
+  String getParameterExample(Parameter param) {
     if (param.example != null) return param.example.toString();
-    if (param.schema != null) {
-      if (param.schema!.defaultValue != null) {
-        return param.schema!.defaultValue.toString();
-      }
-      return param.schema!.toString();
-    }
-    return '';
+    if (param.schema?.defaultValue != null) return param.schema!.defaultValue.toString();
+    return param.schema?.toString() ?? '';
   }
 
-  (ContentType, String?, List<FormDataModel>?) _convertRequestBody(
+  (ContentType, String?, List<FormDataModel>?) convertRequestBody(
     RequestBody? requestBody,
   ) {
     if (requestBody?.content?.isEmpty ?? true) {
@@ -173,59 +155,48 @@ class OpenAPIIO {
 
     try {
       final mediaType = requestBody!.content!.entries.first;
-      final contentType = _determineContentType(mediaType.key);
+      final contentType = determineContentType(mediaType.key);
       final schema = mediaType.value.schema;
 
       if (contentType == ContentType.formdata) {
-        final formData = _parseFormData(schema);
+        final formData = parseFormData(schema);
         return (contentType, null, formData.isNotEmpty ? formData : null);
-      } else {
-        final example = _getRequestBodyExample(schema, mediaType.value);
-        return (
-          contentType, 
-          example != null ? jsonEncode(example) : null, 
-          null
-        );
       }
-    } catch (e) {
+      final example = getRequestBodyExample(schema, mediaType.value);
+      return (contentType, example != null ? jsonEncode(example) : null, null);
+    } catch (_) {
       return (kDefaultContentType, null, null);
     }
   }
 
-  List<FormDataModel> _parseFormData(Schema? schema) {
-    final formData = <FormDataModel>[];
-    if (schema != null && schema is SchemaObject && schema.properties != null) {
-      for (final prop in schema.properties!.entries) {
-        formData.add(FormDataModel(
-          name: prop.key,
-          value: _getSchemaExampleValue(prop.value),
-          type: FormDataType.text,
-        ));
-      }
+  List<FormDataModel> parseFormData(Schema? schema) {
+    if (schema == null || schema is! SchemaObject || schema.properties == null) {
+      return [];
     }
-    return formData;
+    return schema.properties!.entries.map((prop) => FormDataModel(
+      name: prop.key,
+      value: getSchemaExampleValue(prop.value),
+      type: FormDataType.text,
+    )).toList();
   }
 
-  String _getSchemaExampleValue(Schema schema) {
+  String getSchemaExampleValue(Schema schema) {
     if (schema is SchemaObject && schema.properties != null) {
-      final exampleMap = <String, dynamic>{};
-      for (final prop in schema.properties!.entries) {
-        exampleMap[prop.key] = _getSchemaExampleValue(prop.value);
-      }
-      return jsonEncode(exampleMap);
+      return jsonEncode(Map.fromEntries(
+        schema.properties!.entries.map((e) => 
+          MapEntry(e.key, getSchemaExampleValue(e.value)))
+      ));
     }
     return schema.defaultValue?.toString() ?? schema.toString();
   }
 
-  dynamic _getRequestBodyExample(Schema? schema, MediaType mediaType) {
-    return mediaType.example ?? (schema);
-  }
+  dynamic getRequestBodyExample(Schema? schema, MediaType mediaType) =>
+      mediaType.example ?? schema;
 
-  ContentType _determineContentType(String mediaType) {
+  ContentType determineContentType(String mediaType) {
     final normalized = mediaType.toLowerCase();
     if (normalized.contains('json')) return ContentType.json;
-    if (normalized.contains('form-data') || 
-        normalized.contains('x-www-form-urlencoded')) {
+    if (normalized.contains('form-data') || normalized.contains('x-www-form-urlencoded')) {
       return ContentType.formdata;
     }
     return ContentType.text;
