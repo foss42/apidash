@@ -4,3 +4,4 @@ export 'stac2flutter.dart';
 export 'stacgen.dart';
 export 'stacmodifier.dart';
 export 'apitool_funcgen.dart';
+export 'apitool_bodygen.dart';
