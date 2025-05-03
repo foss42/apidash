@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+  <!-- Background -->
+  <rect width="800" height="600" fill="#f8f9fa" />
+  
+  <!-- Title -->
+  <text x="400" y="40" font-family="Arial" font-size="24" text-anchor="middle" font-weight="bold" fill="#2d3748">DashBot Pro System Architecture</text>
+  
+  <!-- User/Developer -->
+  <rect x="350" y="80" width="100" height="60" rx="10" fill="#4299e1" />
+  <text x="400" y="115" font-family="Arial" font-size="16" text-anchor="middle" fill="white">Developer</text>
+  
+  <!-- API Dash -->
+  <rect x="300" y="180" width="200" height="60" rx="10" fill="#38b2ac" />
+  <text x="400" y="215" font-family="Arial" font-size="16" text-anchor="middle" fill="white">API Dash Interface</text>
+  
+  <!-- DashBot Core -->
+  <rect x="220" y="280" width="360" height="80" rx="10" fill="#805ad5" />
+  <text x="400" y="315" font-family="Arial" font-size="18" text-anchor="middle" fill="white">DashBot Pro Core</text>
+  <text x="400" y="340" font-family="Arial" font-size="14" text-anchor="middle" fill="white">Multi-Agent Orchestration Layer</text>
+  
+  <!-- Agent System -->
+  <rect x="80" y="400" width="640" height="120" rx="10" fill="#d53f8c" opacity="0.2" />
+  <text x="400" y="425" font-family="Arial" font-size="16" text-anchor="middle" fill="#d53f8c">AI Agent Ecosystem</text>
+  
+  <!-- Individual Agents -->
+  <rect x="100" y="440" width="100" height="60" rx="8" fill="#d53f8c" />
+  <text x="150" y="475" font-family="Arial" font-size="14" text-anchor="middle" fill="white">Perception Agent</text>
+  
+  <rect x="220" y="440" width="100" height="60" rx="8" fill="#d53f8c" />
+  <text x="270" y="475" font-family="Arial" font-size="14" text-anchor="middle" fill="white">Reasoning Agent</text>
+  
+  <rect x="340" y="440" width="100" height="60" rx="8" fill="#d53f8c" />
+  <text x="390" y="475" font-family="Arial" font-size="14" text-anchor="middle" fill="white">Memory Agent</text>
+  
+  <rect x="460" y="440" width="100" height="60" rx="8" fill="#d53f8c" />
+  <text x="510" y="475" font-family="Arial" font-size="14" text-anchor="middle" fill="white">Action Agent</text>
+  
+  <rect x="580" y="440" width="100" height="60" rx="8" fill="#d53f8c" />
+  <text x="630" y="475" font-family="Arial" font-size="14" text-anchor="middle" fill="white">Learning Agent</text>
+  
+  <!-- Service Modules -->
+  <rect x="80" y="560" width="140" height="60" rx="8" fill="#ed8936" />
+  <text x="150" y="595" font-family="Arial" font-size="14" text-anchor="middle" fill="white">Debugging System</text>
+  
+  <rect x="240" y="560" width="140" height="60" rx="8" fill="#ed8936" />
+  <text x="310" y="595" font-family="Arial" font-size="14" text-anchor="middle" fill="white">Documentation Engine</text>
+  
+  <rect x="400" y="560" width="140" height="60" rx="8" fill="#ed8936" />
+  <text x="470" y="595" font-family="Arial" font-size="14" text-anchor="middle" fill="white">Code Generation</text>
+  
+  <rect x="560" y="560" width="140" height="60" rx="8" fill="#ed8936" />
+  <text x="630" y="595" font-family="Arial" font-size="14" text-anchor="middle" fill="white">Visualization System</text>
+  
+  <!-- Connections -->
+  <!-- Developer to API Dash -->
+  <line x1="400" y1="140" x2="400" y2="180" stroke="#2d3748" stroke-width="2" />
+  <polygon points="400,180 396,172 404,172" fill="#2d3748" />
+  
+  <!-- API Dash to Core -->
+  <line x1="400" y1="240" x2="400" y2="280" stroke="#2d3748" stroke-width="2" />
+  <polygon points="400,280 396,272 404,272" fill="#2d3748" />
+  
+  <!-- Core to Agent System -->
+  <line x1="400" y1="360" x2="400" y2="400" stroke="#2d3748" stroke-width="2" />
+  <polygon points="400,400 396,392 404,392" fill="#2d3748" />
+  
+  <!-- Agent System to Service Modules -->
+  <line x1="150" y1="520" x2="150" y2="560" stroke="#2d3748" stroke-width="2" />
+  <polygon points="150,560 146,552 154,552" fill="#2d3748" />
+  
+  <line x1="310" y1="520" x2="310" y2="560" stroke="#2d3748" stroke-width="2" />
+  <polygon points="310,560 306,552 314,552" fill="#2d3748" />
+  
+  <line x1="470" y1="520" x2="470" y2="560" stroke="#2d3748" stroke-width="2" />
+  <polygon points="470,560 466,552 474,552" fill="#2d3748" />
+  
+  <line x1="630" y1="520" x2="630" y2="560" stroke="#2d3748" stroke-width="2" />
+  <polygon points="630,560 626,552 634,552" fill="#2d3748" />
+  
+  <!-- Agent Interconnections -->
+  <path d="M200 470 C220 455, 220 485, 220 470" stroke="#2d3748" stroke-width="1.5" fill="none" />
+  <polygon points="220,470 213,467 213,473" fill="#2d3748" />
+  
+  <path d="M320 470 C340 455, 340 485, 340 470" stroke="#2d3748" stroke-width="1.5" fill="none" />
+  <polygon points="340,470 333,467 333,473" fill="#2d3748" />
+  
+  <path d="M440 470 C460 455, 460 485, 460 470" stroke="#2d3748" stroke-width="1.5" fill="none" />
+  <polygon points="460,470 453,467 453,473" fill="#2d3748" />
+  
+  <path d="M560 470 C580 455, 580 485, 580 470" stroke="#2d3748" stroke-width="1.5" fill="none" />
+  <polygon points="580,470 573,467 573,473" fill="#2d3748" />
+</svg>

@@ -29,7 +29,8 @@ Choose your programming language/library from the list provided below to learn m
 - [Rust (reqwest)](#rust-reqwest)
 - [Rust (ureq)](#rust-ureq)
 - [Rust (Actix Client)](#rust-actix-client)
-- [Swift](#swift)
+- [Swift (URLSession)](#swift-urlsession)
+- [Swift (Alamofire)](#swift-alamofire)
 
 **Please raise a GitHub issue in case any instruction is not clear or if it is not working.**
 
@@ -945,16 +946,261 @@ TODO
 
 ## Rust (reqwest)
 
-TODO
+### 1. Download and Install Rust:
+
+#### **Windows**  
+1. Download and install `rustup` from [Rustup Official Site](https://rustup.rs).  
+2. Run the installer (`rustup-init.exe`) and follow the instructions.  
+3. Restart your terminal (Command Prompt or PowerShell).  
+4. Verify the installation:  
+   ```sh
+   rustc --version
+   cargo --version
+   ```
+
+#### **MacOS/Linux**
+1. Run the following in your terminal:  
+   ```sh
+   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+   ```
+   then follow the on-screen instructions.
+
+2. Restart the terminal and verify:  
+   ```sh
+   rustc --version
+   cargo --version
+   ```
+
+> Note: If you prefer not to use rustup for some reason, please see the Other [Rust Installation Methods](https://forge.rust-lang.org/infra/other-installation-methods.html) page for more options.
+
+### 2. Set Up a New Rust Project
+1. Open a terminal and create a new Rust project:  
+   ```sh
+   cargo new reqwest-demo
+   ```
+2. Navigate into the project directory:  
+   ```sh
+   cd reqwest-demo
+   ```
+
+   or open this project directory in your preferred code editor.
+
+### 3. Add Necessary Dependencies
+Run the following command to add dependencies:  
+```sh
+cargo add reqwest --features blocking,json
+cargo add tokio --features full
+```
+- `"blocking"`: Enables synchronous requests.  
+- `"json"`: Allows JSON parsing.  
+- `"tokio"`: Needed for asynchronous execution.  
+
+Run the following command to fetch dependencies:  
+```sh
+cargo build
+```
+
+### 4. Execute code
+1. Copy the generated code from API Dash.
+2. Paste the code into your project's `src/main.rs` directory
+
+Run the generated code: 
+```sh
+cargo run
+```
 
 ## Rust (ureq)
 
-TODO
+### 1. Download and Install Rust:
+
+#### **Windows**  
+1. Download and install `rustup` from [Rustup Official Site](https://rustup.rs).  
+2. Run the installer (`rustup-init.exe`) and follow the instructions.  
+3. Restart your terminal (Command Prompt or PowerShell).  
+4. Verify the installation:  
+   ```sh
+   rustc --version
+   cargo --version
+   ```
+
+#### **MacOS/Linux**
+1. Run the following in your terminal:  
+   ```sh
+   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+   ```
+   then follow the on-screen instructions.
+
+2. Restart the terminal and verify:  
+   ```sh
+   rustc --version
+   cargo --version
+   ```
+
+> Note: If you prefer not to use rustup for some reason, please see the Other [Rust Installation Methods](https://forge.rust-lang.org/infra/other-installation-methods.html) page for more options.
+
+### 2. Set Up a New Rust Project
+1. Open a terminal and create a new Rust project:  
+   ```sh
+   cargo new ureq-demo
+   ```
+2. Navigate into the project directory:  
+   ```sh
+   cd ureq-demo
+   ```
+
+   or open this project directory in your preferred code editor.
+
+### 3. Add `ureq` Dependency
+
+Run the following command to add dependencies:  
+```sh
+cargo add ureq
+``` 
+Run the following command to fetch dependencies:  
+```sh
+cargo build
+```
+
+### 4. Execute code
+1. Copy the generated code from API Dash.
+2. Paste the code into your project's `src/main.rs` directory
+
+Run the generated code: 
+```sh
+cargo run
+```
 
 ## Rust (Actix Client)
 
 TODO
 
-## Swift
+## Swift (URLSession)
 
-TODO
+###  Set Up the Environment
+#### MacBook (macOS)
+
+Verify Swift :  
+```
+swift --version
+```
+
+
+#### Linux(Multipartformdata is not supported)
+
+Download Swift for Linux (e.g., Ubuntu) from Swift.org.
+
+```
+tar xzf filename
+export PATH=$PWD/filename/usr/bin:$PATH
+
+```
+Verify: 
+```
+swift --version
+```
+
+
+
+
+
+Install Dependencies:
+```
+sudo apt-get update
+sudo apt-get install clang libicu-dev libcurl4-openssl-dev
+```
+
+
+### Create a Project:
+```
+mkdir URLSessionDemo
+cd URLSessionDemo
+swift package init --type executable
+```
+
+
+
+
+### Run the Code
+Ensure main.swift is in Sources/URLSessionDemo.
+
+
+Run:
+```
+swift run
+```
+
+## Swift (Alamofire)
+
+###  Set Up the Environment
+#### MacBook (macOS)
+
+Verify Swift :  
+```
+swift --version
+```
+
+
+#### Linux (Multipartformdata is not supported)
+
+Download Swift for Linux (e.g., Ubuntu) from Swift.org.
+
+```
+tar xzf filename
+export PATH=$PWD/filename/usr/bin:$PATH
+
+```
+Verify: 
+```
+swift --version
+```
+
+
+
+
+
+ Install Dependencies for swift:
+```
+sudo apt-get update
+sudo apt-get install clang libicu-dev libcurl4-openssl-dev
+```
+
+
+### Create a Project:
+```
+mkdir URLSessionDemo
+cd URLSessionDemo
+swift package init --type executable
+```
+
+
+### Adding alamofire
+ open `package.swift` and add following dependencies and target(replace `project-name` with your project name)
+```
+ dependencies: [
+        .package(url: "https://github.com/Alamofire/Alamofire", from: "5.6.4")
+    ],
+ targets: [
+        .executableTarget(
+            name: "project-name",
+            dependencies: [
+                "Alamofire" 
+            ]
+        )
+    ]
+
+
+```
+
+
+
+### Run the Code
+Ensure main.swift is in Sources/URLSessionDemo.
+
+
+Run:
+```
+swift run
+```
+
+
+

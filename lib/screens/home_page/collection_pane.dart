@@ -36,6 +36,12 @@ class CollectionPane extends ConsumerWidget {
               importToCollectionPane(context, ref, sm);
             },
           ),
+          if (context.isMediumWindow) kVSpacer6,
+          if (context.isMediumWindow)
+            Padding(
+              padding: kPh8,
+              child: EnvironmentDropdown(),
+            ),
           kVSpacer10,
           SidebarFilter(
             filterHintText: "Filter by name or url",

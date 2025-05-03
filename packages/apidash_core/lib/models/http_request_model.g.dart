@@ -58,6 +58,7 @@ const _$HTTPVerbEnumMap = {
   HTTPVerb.put: 'put',
   HTTPVerb.patch: 'patch',
   HTTPVerb.delete: 'delete',
+  HTTPVerb.options: 'options',
 };
 
 const _$ContentTypeEnumMap = {

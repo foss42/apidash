@@ -16,10 +16,16 @@ class CopyButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var sm = ScaffoldMessenger.of(context);
+    String msg;
     onPressed() async {
-      await Clipboard.setData(ClipboardData(text: toCopy));
+      try {
+        await Clipboard.setData(ClipboardData(text: toCopy));
+        msg = "Copied";
+      } catch (e) {
+        msg = "An error occurred";
+      }
       sm.hideCurrentSnackBar();
-      sm.showSnackBar(getSnackBar("Copied"));
+      sm.showSnackBar(getSnackBar(msg));
     }
 
     return showLabel

@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
-import 'package:apidash/widgets/response_widgets.dart';
 import 'package:apidash/screens/history/history_widgets/his_response_pane.dart';
-
+import 'package:apidash/widgets/response_pane_header.dart';
+import 'package:apidash/widgets/response_tab_view.dart';
 import '../../../models/history_models.dart';
 
 void main() {

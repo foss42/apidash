@@ -30,6 +30,7 @@ import 'rust/curl_rust.dart';
 import 'rust/hyper.dart';
 import 'rust/reqwest.dart';
 import 'rust/ureq.dart';
+import 'swift/alamofire.dart';
 import 'swift/urlsession.dart';
 
 class Codegen {
@@ -115,6 +116,8 @@ class Codegen {
         return CSharpRestSharp().getCode(rM);
       case CodegenLanguage.phpHttpPlug:
         return PhpHttpPlugCodeGen().getCode(rM);
+      case CodegenLanguage.swiftAlamofire:
+        return SwiftAlamofireCodeGen().getCode(rM);
       case CodegenLanguage.swiftUrlSession:
         return SwiftURLSessionCodeGen().getCode(rM);
     }
