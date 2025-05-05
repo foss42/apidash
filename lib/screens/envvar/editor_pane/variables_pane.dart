@@ -23,11 +23,99 @@ class EditEnvironmentVariablesState
   final random = Random.secure();
   late List<EnvironmentVariableModel> variableRows;
   bool isAddingRow = false;
+  OverlayEntry? _overlayEntry;
+  FocusNode? _currentFocusNode;
 
   @override
   void initState() {
     super.initState();
     seed = random.nextInt(kRandMax);
+  }
+
+  @override
+  void dispose() {
+    _removeOverlay();
+    super.dispose();
+  }
+
+  void _removeOverlay() {
+    _overlayEntry?.remove();
+    _overlayEntry = null;
+    _currentFocusNode?.removeListener(_handleOverlayFocusChange);
+    _currentFocusNode = null;
+  }
+
+  void _handleOverlayFocusChange() {
+    if (_currentFocusNode != null && !_currentFocusNode!.hasFocus) {
+      _removeOverlay();
+    }
+  }
+
+  void _showOverlay(
+    GlobalKey key,
+    String text,
+    TextStyle textStyle,
+    ColorScheme clrScheme,
+    FocusNode focusNode,
+    TextEditingController controller,
+    InputDecoration decoration,
+  ) {
+    _removeOverlay();
+
+    final RenderBox renderBox = key.currentContext!.findRenderObject() as RenderBox;
+    final position = renderBox.localToGlobal(Offset.zero);
+    final size = renderBox.size;
+
+    _currentFocusNode = focusNode;
+    _currentFocusNode?.addListener(_handleOverlayFocusChange);
+
+    _overlayEntry = OverlayEntry(
+      builder: (context) => Positioned(
+        left: position.dx,
+        top: position.dy,
+        width: size.width,
+        child: Material(
+          elevation: 8,
+          borderRadius: BorderRadius.circular(8),
+          child: Container(
+            // padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: clrScheme.surface,
+              // borderRadius: BorderRadius.circular(8),
+              // border: Border.all(color: kColorWhite.withOpacity(0.5)),
+            ),
+            child: TextField(
+              controller: controller,
+              focusNode: focusNode,
+              style: textStyle,
+              decoration: decoration,
+              maxLines: null,
+              keyboardType: TextInputType.multiline,
+              autofocus: true,
+            ),
+          ),
+        ),
+      ),
+    );
+
+    Overlay.of(context).insert(_overlayEntry!);
+  }
+
+  void _onOverlayToggle(
+    bool show,
+    GlobalKey key,
+    String text,
+    TextStyle textStyle,
+    ColorScheme clrScheme,
+    FocusNode focusNode,
+    TextEditingController controller,
+    InputDecoration decoration,
+  ) {
+    if (show) {
+      _showOverlay(key, text, textStyle, clrScheme, focusNode, controller, decoration);
+    } else {
+      _removeOverlay();
+    }
   }
 
   void _onFieldChange(String selectedId) {
@@ -67,7 +155,7 @@ class EditEnvironmentVariablesState
         fixedWidth: 30,
       ),
       DataColumn2(
-        label: Text("Variable value"),
+        label: Text(" jars value"),
       ),
       DataColumn2(
         label: Text(''),
@@ -118,6 +206,7 @@ class EditEnvironmentVariablesState
                   _onFieldChange(selectedId!);
                 },
                 colorScheme: Theme.of(context).colorScheme,
+                onOverlayToggle: _onOverlayToggle,
               ),
             ),
             DataCell(
@@ -146,6 +235,7 @@ class EditEnvironmentVariablesState
                   _onFieldChange(selectedId!);
                 },
                 colorScheme: Theme.of(context).colorScheme,
+                onOverlayToggle: _onOverlayToggle,
               ),
             ),
             DataCell(
@@ -195,7 +285,7 @@ class EditEnvironmentVariablesState
                     dividerThickness: 0,
                     horizontalMargin: 0,
                     headingRowHeight: 0,
-                    dataRowHeight: kDataTableRowHeight,
+                    dataRowHeight: null,
                     bottomMargin: kDataTableBottomPadding,
                     isVerticalScrollBarVisible: true,
                     columns: columns,

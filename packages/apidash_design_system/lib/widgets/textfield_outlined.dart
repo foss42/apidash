@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../tokens/tokens.dart';
 import 'decoration_input_textfield.dart';
 
-class ADOutlinedTextField extends StatelessWidget {
+class ADOutlinedTextField extends StatefulWidget {
   const ADOutlinedTextField({
     super.key,
     this.keyId,
@@ -26,6 +26,7 @@ class ADOutlinedTextField extends StatelessWidget {
     this.isDense,
     this.onChanged,
     this.colorScheme,
+    this.onOverlayToggle,
   });
 
   final String? keyId;
@@ -49,36 +50,178 @@ class ADOutlinedTextField extends StatelessWidget {
   final Color? enabledBorderColor;
   final void Function(String)? onChanged;
   final ColorScheme? colorScheme;
+  final void Function(
+    bool,
+    GlobalKey,
+    String,
+    TextStyle,
+    ColorScheme,
+    FocusNode,
+    TextEditingController,
+    InputDecoration,
+  )? onOverlayToggle;
+
+  @override
+  State<ADOutlinedTextField> createState() => _ADOutlinedTextFieldState();
+}
+
+class _ADOutlinedTextFieldState extends State<ADOutlinedTextField> {
+  late FocusNode _focusNode;
+  late TextEditingController _controller;
+  bool _isFocused = false;
+  bool _isMultiLine = false;
+  final GlobalKey _textFieldKey = GlobalKey();
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode = FocusNode();
+    _controller = widget.controller ?? TextEditingController(text: widget.initialValue);
+    _focusNode.addListener(_handleFocusChange);
+    // Initial check for multiline state
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkMultiLineAndUpdateOverlay();
+    });
+  }
+
+  void _handleFocusChange() {
+    final wasFocused = _isFocused;
+    _isFocused = _focusNode.hasFocus;
+
+    if (_isFocused != wasFocused) {
+      setState(() {
+        // Update the maxLines based on focus
+      });
+      _checkMultiLineAndUpdateOverlay();
+    }
+  }
+
+  @override
+  void dispose() {
+    if (widget.controller == null) {
+      _controller.dispose();
+    }
+    _focusNode.removeListener(_handleFocusChange);
+    _focusNode.dispose();
+    widget.onOverlayToggle?.call(
+      false,
+      _textFieldKey,
+      '',
+      TextStyle(),
+      Theme.of(context).colorScheme,
+      _focusNode,
+      _controller,
+      InputDecoration(),
+    );
+    super.dispose();
+  }
+
+  int _calculateLineCount(String text, TextStyle textStyle, double maxWidth) {
+    final textPainter = TextPainter(
+      text: TextSpan(text: text, style: textStyle),
+      textDirection: TextDirection.ltr,
+      maxLines: null,
+    );
+    textPainter.layout(maxWidth: maxWidth);
+    return textPainter.computeLineMetrics().length;
+  }
+
+  void _checkMultiLineAndUpdateOverlay() {
+    var clrScheme = widget.colorScheme ?? Theme.of(context).colorScheme;
+    final textStyle = widget.textStyle ??
+        kCodeStyle.copyWith(
+          fontSize: widget.textFontSize,
+          color: widget.textColor ?? clrScheme.onSurface,
+        );
+    final contentPadding = widget.contentPadding ?? const EdgeInsets.symmetric(horizontal: 8, vertical: 8);
+    final horizontalPadding = contentPadding is EdgeInsets ? contentPadding.horizontal : 16.0;
+
+    // Safely calculate maxWidth
+    double maxWidth = double.infinity;
+    if (_textFieldKey.currentContext != null) {
+      final renderBox = _textFieldKey.currentContext!.findRenderObject() as RenderBox?;
+      if (renderBox != null && renderBox.hasSize) {
+        maxWidth = renderBox.size.width - horizontalPadding;
+      }
+    }
+
+    final text = _controller.text.isEmpty ? widget.hintText ?? '' : _controller.text;
+    final lineCount = _calculateLineCount(text, textStyle, maxWidth);
+    final isMultiLine = lineCount > 1;
+
+    // Update the multiline state
+    _isMultiLine = isMultiLine;
+
+    final showOverlay = _isFocused && _isMultiLine;
+
+    final decoration = getTextFieldInputDecoration(
+      clrScheme,
+      fillColor: widget.fillColor,
+      hintText: widget.hintText,
+      hintTextStyle: widget.hintTextStyle,
+      hintTextFontSize: widget.hintTextFontSize,
+      hintTextColor: widget.hintTextColor,
+      contentPadding: contentPadding,
+      focussedBorderColor: widget.focussedBorderColor,
+      enabledBorderColor: widget.enabledBorderColor,
+      isDense: widget.isDense ?? true,
+    );
+
+    widget.onOverlayToggle?.call(
+      showOverlay,
+      _textFieldKey,
+      text,
+      textStyle,
+      clrScheme,
+      _focusNode,
+      _controller,
+      decoration,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    var clrScheme = colorScheme ?? Theme.of(context).colorScheme;
+    var clrScheme = widget.colorScheme ?? Theme.of(context).colorScheme;
+    final textStyle = widget.textStyle ??
+        kCodeStyle.copyWith(
+          fontSize: widget.textFontSize,
+          color: widget.textColor ?? clrScheme.onSurface,
+        );
+    final contentPadding = widget.contentPadding ?? const EdgeInsets.symmetric(horizontal: 8, vertical: 8);
+
     return TextFormField(
-      key: keyId != null ? Key(keyId!) : null,
-      controller: controller,
-      readOnly: readOnly,
-      enabled: enabled,
-      maxLines: maxLines,
-      expands: expands,
-      initialValue: initialValue,
-      style: textStyle ??
-          kCodeStyle.copyWith(
-            fontSize: textFontSize,
-            color: textColor ?? clrScheme.onSurface,
-          ),
+      key: _textFieldKey,
+      controller: _controller,
+      focusNode: _focusNode,
+      readOnly: widget.readOnly,
+      enabled: widget.enabled,
+      maxLines: _isFocused ? null : 1,
+      keyboardType: TextInputType.multiline,
+      expands: widget.expands,
+      style: textStyle,
       decoration: getTextFieldInputDecoration(
         clrScheme,
-        fillColor: fillColor,
-        hintText: hintText,
-        hintTextStyle: hintTextStyle,
-        hintTextFontSize: hintTextFontSize,
-        hintTextColor: hintTextColor,
+        fillColor: widget.fillColor,
+        hintText: widget.hintText,
+        hintTextStyle: widget.hintTextStyle,
+        hintTextFontSize: widget.hintTextFontSize,
+        hintTextColor: widget.hintTextColor,
         contentPadding: contentPadding,
-        focussedBorderColor: focussedBorderColor,
-        enabledBorderColor: enabledBorderColor,
-        isDense: isDense,
+        focussedBorderColor: widget.focussedBorderColor,
+        enabledBorderColor: widget.enabledBorderColor,
+        isDense: widget.isDense ?? true,
       ),
-      onChanged: onChanged,
+      onChanged: (value) {
+        widget.onChanged?.call(value);
+        _checkMultiLineAndUpdateOverlay();
+      },
+      onTap: () {
+        if (!_isFocused) {
+          _isFocused = true;
+          setState(() {});
+        }
+        _checkMultiLineAndUpdateOverlay();
+      },
     );
   }
 }
