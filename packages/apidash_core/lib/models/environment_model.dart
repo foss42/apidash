@@ -15,6 +15,7 @@ class EnvironmentModel with _$EnvironmentModel {
     required String id,
     @Default("") String name,
     @Default([]) List<EnvironmentVariableModel> values,
+    String? color, // New field for environment color (hex string, e.g., #FF0000)
   }) = _EnvironmentModel;
 
   factory EnvironmentModel.fromJson(Map<String, Object?> json) =>

@@ -40,7 +40,7 @@ class EnvironmentEditor extends ConsumerWidget {
                     const SizedBox(
                       width: 6,
                     ),
-                    EditorTitleActions(
+                    EnvEditorTitleActions( // Replaced EditorTitleActions
                       onRenamePressed: () {
                         showRenameDialog(context, "Rename Environment", name,
                             (val) {
