@@ -5,11 +5,13 @@ import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/dashbot/dashbot.dart';
+import '../workflow/screens/workflow_editor_screen.dart';
 import 'common_widgets/common_widgets.dart';
 import 'envvar/environment_page.dart';
 import 'home_page/home_page.dart';
 import 'history/history_page.dart';
 import 'settings_page.dart';
+
 
 class Dashboard extends ConsumerWidget {
   const Dashboard({super.key});
@@ -68,6 +70,19 @@ class Dashboard extends ConsumerWidget {
                       'History',
                       style: Theme.of(context).textTheme.labelSmall,
                     ),
+                    kVSpacer10,
+                    IconButton(
+                      isSelected: railIdx == 4,
+                      onPressed: () {
+                        ref.read(navRailIndexStateProvider.notifier).state = 4;
+                      },
+                      icon: const Icon(Icons.account_tree_outlined),
+                      selectedIcon: const Icon(Icons.account_tree),
+                    ),
+                    Text(
+                      'Workflows',
+                      style: Theme.of(context).textTheme.labelSmall,
+                    ),
                   ],
                 ),
                 Expanded(
@@ -119,6 +134,7 @@ class Dashboard extends ConsumerWidget {
                   EnvironmentPage(),
                   HistoryPage(),
                   SettingsPage(),
+                  WorkflowEditorScreen (),
                 ],
               ),
             )
