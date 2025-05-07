@@ -96,7 +96,7 @@ class SettingsPage extends ConsumerWidget {
                 trailing: CodegenPopupMenu(
                   value: settings.defaultCodeGenLang,
                   onChanged: (value) {
-                    ref
+                        ref
                         .read(settingsProvider.notifier)
                         .update(defaultCodeGenLang: value);
                   },
@@ -224,6 +224,44 @@ class SettingsPage extends ConsumerWidget {
                   ),
                 ),
               ),
+              !kIsWeb
+                  ? SwitchListTile(
+                      hoverColor: kColorTransparent,
+                      title: const Text('Enable Pinging'),
+                      subtitle: Text(
+                        'Current selection: ${settings.isPinging ? "Pinging Enabled" : "Pinging Disabled"}',
+                       
+                      ),
+                      value: settings.isPinging,
+                      onChanged: (bool value) {
+                        ref
+                            .read(settingsProvider.notifier)
+                            .update(isPinging: value );
+                      },
+                    )
+                  : kSizedBoxEmpty,
+                !kIsWeb
+                  ?
+                ListTile(
+                hoverColor: kColorTransparent,
+                title: const Text('Interval Between Ping Requests'),
+                subtitle: Text(
+                  'Current interval between consecutive pings are: ${settings.pingInterval}  milliseconds'),
+                trailing: SizedBox(
+                  width:  120,
+                  child: TextField(
+                  decoration: InputDecoration(
+                    hintText:  settings.pingInterval.toString()
+                  ),
+                  keyboardType: TextInputType.number,
+                  onChanged: (value) {
+                    ref
+                      .read(settingsProvider.notifier)
+                      .update(pingInterval: int.parse(value));
+                  },
+                  ),
+                ),
+                ) : kSizedBoxEmpty,
               ListTile(
                 title: const Text('About'),
                 subtitle: const Text(

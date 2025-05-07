@@ -126,6 +126,7 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
         );
       }
       stopwatch.stop();
+      
       return (response, stopwatch.elapsed, null);
     } catch (e) {
       if (httpClientManager.wasRequestCancelled(requestId)) {

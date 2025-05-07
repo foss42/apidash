@@ -31,7 +31,12 @@ String stripUrlParams(String url) {
   }
 
   if (kLocalhostRegex.hasMatch(url)) {
-    url = '${SupportedUriSchemes.http.name}://$url';
+    if(defaultUriScheme == SupportedUriSchemes.https){
+      url = '${SupportedUriSchemes.http.name}://$url';
+    }else if(defaultUriScheme == SupportedUriSchemes.wss){
+      url = '${SupportedUriSchemes.ws.name}://$url';
+    }
+   
   }
   Uri? uri = Uri.tryParse(url);
   if (uri == null) {
@@ -58,7 +63,10 @@ String stripUrlParams(String url) {
       Map<String, String> urlQueryParams = uri.queryParameters;
       queryParams = mergeMaps(urlQueryParams, queryParams);
     }
+    
     uri = uri.replace(queryParameters: queryParams);
   }
   return (uri, null);
 }
+
+

@@ -297,6 +297,19 @@ const kResponseCodeReasons = {
   508: 'Loop Detected',
   510: 'Not Extended',
   511: 'Network Authentication Required',
+  // 1000s - WebSocket Error
+  1000: 'Normal Closure',
+  1001: 'Going Away',
+  1002: 'Protocol Error',
+  1003: 'Unsupported Data',
+  1005: 'No Status Received',
+  1006: 'Abnormal Closure',
+  1007: 'Invalid Frame Payload Data',
+  1008: 'Policy Violation',
+  1009: 'Message Too Big',
+  1010: 'Missing Mandatory Extension',
+  1011: 'Internal Server Error (WebSocket)',
+  1015: 'TLS Handshake Failed',
 };
 
 Map<String, String> kHttpHeadersMap = {
@@ -437,6 +450,8 @@ const kLabelCancel = "Cancel";
 const kLabelOk = "Ok";
 const kLabelImport = "Import";
 const kUntitled = "untitled";
+const kLabelConnect = "Connect";
+const kLabelDisconnect = "Disconnect";
 // Request Pane
 const kLabelRequest = "Request";
 const kLabelHideCode = "Hide Code";
@@ -445,6 +460,7 @@ const kLabelURLParams = "URL Params";
 const kLabelHeaders = "Headers";
 const kLabelBody = "Body";
 const kLabelQuery = "Query";
+const kLabelMessage = "Message";
 const kNameCheckbox = "Checkbox";
 const kNameURLParam = "URL Parameter";
 const kNameHeader = "Header Name";
@@ -463,6 +479,7 @@ const kHintContent = "Enter content";
 const kHintText = "Enter text";
 const kHintJson = "Enter JSON";
 const kHintQuery = "Enter Query";
+const kHintMessage = "Enter message";
 // Response Pane
 const kLabelNotSent = "Not Sent";
 const kLabelResponse = "Response";

@@ -24,6 +24,10 @@ mixin _$HistoryRequestModel {
   HistoryMetaModel get metaData => throw _privateConstructorUsedError;
   HttpRequestModel get httpRequestModel => throw _privateConstructorUsedError;
   HttpResponseModel get httpResponseModel => throw _privateConstructorUsedError;
+  WebSocketRequestModel? get webSocketRequestModel =>
+      throw _privateConstructorUsedError;
+  WebSocketResponseModel? get webSocketResponseModel =>
+      throw _privateConstructorUsedError;
 
   /// Serializes this HistoryRequestModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -45,11 +49,15 @@ abstract class $HistoryRequestModelCopyWith<$Res> {
       {String historyId,
       HistoryMetaModel metaData,
       HttpRequestModel httpRequestModel,
-      HttpResponseModel httpResponseModel});
+      HttpResponseModel httpResponseModel,
+      WebSocketRequestModel? webSocketRequestModel,
+      WebSocketResponseModel? webSocketResponseModel});
 
   $HistoryMetaModelCopyWith<$Res> get metaData;
   $HttpRequestModelCopyWith<$Res> get httpRequestModel;
   $HttpResponseModelCopyWith<$Res> get httpResponseModel;
+  $WebSocketRequestModelCopyWith<$Res>? get webSocketRequestModel;
+  $WebSocketResponseModelCopyWith<$Res>? get webSocketResponseModel;
 }
 
 /// @nodoc
@@ -71,6 +79,8 @@ class _$HistoryRequestModelCopyWithImpl<$Res, $Val extends HistoryRequestModel>
     Object? metaData = null,
     Object? httpRequestModel = null,
     Object? httpResponseModel = null,
+    Object? webSocketRequestModel = freezed,
+    Object? webSocketResponseModel = freezed,
   }) {
     return _then(_value.copyWith(
       historyId: null == historyId
@@ -89,6 +99,14 @@ class _$HistoryRequestModelCopyWithImpl<$Res, $Val extends HistoryRequestModel>
           ? _value.httpResponseModel
           : httpResponseModel // ignore: cast_nullable_to_non_nullable
               as HttpResponseModel,
+      webSocketRequestModel: freezed == webSocketRequestModel
+          ? _value.webSocketRequestModel
+          : webSocketRequestModel // ignore: cast_nullable_to_non_nullable
+              as WebSocketRequestModel?,
+      webSocketResponseModel: freezed == webSocketResponseModel
+          ? _value.webSocketResponseModel
+          : webSocketResponseModel // ignore: cast_nullable_to_non_nullable
+              as WebSocketResponseModel?,
     ) as $Val);
   }
 
@@ -121,6 +139,36 @@ class _$HistoryRequestModelCopyWithImpl<$Res, $Val extends HistoryRequestModel>
       return _then(_value.copyWith(httpResponseModel: value) as $Val);
     });
   }
+
+  /// Create a copy of HistoryRequestModel
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $WebSocketRequestModelCopyWith<$Res>? get webSocketRequestModel {
+    if (_value.webSocketRequestModel == null) {
+      return null;
+    }
+
+    return $WebSocketRequestModelCopyWith<$Res>(_value.webSocketRequestModel!,
+        (value) {
+      return _then(_value.copyWith(webSocketRequestModel: value) as $Val);
+    });
+  }
+
+  /// Create a copy of HistoryRequestModel
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $WebSocketResponseModelCopyWith<$Res>? get webSocketResponseModel {
+    if (_value.webSocketResponseModel == null) {
+      return null;
+    }
+
+    return $WebSocketResponseModelCopyWith<$Res>(_value.webSocketResponseModel!,
+        (value) {
+      return _then(_value.copyWith(webSocketResponseModel: value) as $Val);
+    });
+  }
 }
 
 /// @nodoc
@@ -135,7 +183,9 @@ abstract class _$$HistoryRequestModelImplCopyWith<$Res>
       {String historyId,
       HistoryMetaModel metaData,
       HttpRequestModel httpRequestModel,
-      HttpResponseModel httpResponseModel});
+      HttpResponseModel httpResponseModel,
+      WebSocketRequestModel? webSocketRequestModel,
+      WebSocketResponseModel? webSocketResponseModel});
 
   @override
   $HistoryMetaModelCopyWith<$Res> get metaData;
@@ -143,6 +193,10 @@ abstract class _$$HistoryRequestModelImplCopyWith<$Res>
   $HttpRequestModelCopyWith<$Res> get httpRequestModel;
   @override
   $HttpResponseModelCopyWith<$Res> get httpResponseModel;
+  @override
+  $WebSocketRequestModelCopyWith<$Res>? get webSocketRequestModel;
+  @override
+  $WebSocketResponseModelCopyWith<$Res>? get webSocketResponseModel;
 }
 
 /// @nodoc
@@ -162,6 +216,8 @@ class __$$HistoryRequestModelImplCopyWithImpl<$Res>
     Object? metaData = null,
     Object? httpRequestModel = null,
     Object? httpResponseModel = null,
+    Object? webSocketRequestModel = freezed,
+    Object? webSocketResponseModel = freezed,
   }) {
     return _then(_$HistoryRequestModelImpl(
       historyId: null == historyId
@@ -180,6 +236,14 @@ class __$$HistoryRequestModelImplCopyWithImpl<$Res>
           ? _value.httpResponseModel
           : httpResponseModel // ignore: cast_nullable_to_non_nullable
               as HttpResponseModel,
+      webSocketRequestModel: freezed == webSocketRequestModel
+          ? _value.webSocketRequestModel
+          : webSocketRequestModel // ignore: cast_nullable_to_non_nullable
+              as WebSocketRequestModel?,
+      webSocketResponseModel: freezed == webSocketResponseModel
+          ? _value.webSocketResponseModel
+          : webSocketResponseModel // ignore: cast_nullable_to_non_nullable
+              as WebSocketResponseModel?,
     ));
   }
 }
@@ -192,7 +256,9 @@ class _$HistoryRequestModelImpl implements _HistoryRequestModel {
       {required this.historyId,
       required this.metaData,
       required this.httpRequestModel,
-      required this.httpResponseModel});
+      required this.httpResponseModel,
+      required this.webSocketRequestModel,
+      required this.webSocketResponseModel});
 
   factory _$HistoryRequestModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$HistoryRequestModelImplFromJson(json);
@@ -205,10 +271,14 @@ class _$HistoryRequestModelImpl implements _HistoryRequestModel {
   final HttpRequestModel httpRequestModel;
   @override
   final HttpResponseModel httpResponseModel;
+  @override
+  final WebSocketRequestModel? webSocketRequestModel;
+  @override
+  final WebSocketResponseModel? webSocketResponseModel;
 
   @override
   String toString() {
-    return 'HistoryRequestModel(historyId: $historyId, metaData: $metaData, httpRequestModel: $httpRequestModel, httpResponseModel: $httpResponseModel)';
+    return 'HistoryRequestModel(historyId: $historyId, metaData: $metaData, httpRequestModel: $httpRequestModel, httpResponseModel: $httpResponseModel, webSocketRequestModel: $webSocketRequestModel, webSocketResponseModel: $webSocketResponseModel)';
   }
 
   @override
@@ -223,13 +293,23 @@ class _$HistoryRequestModelImpl implements _HistoryRequestModel {
             (identical(other.httpRequestModel, httpRequestModel) ||
                 other.httpRequestModel == httpRequestModel) &&
             (identical(other.httpResponseModel, httpResponseModel) ||
-                other.httpResponseModel == httpResponseModel));
+                other.httpResponseModel == httpResponseModel) &&
+            (identical(other.webSocketRequestModel, webSocketRequestModel) ||
+                other.webSocketRequestModel == webSocketRequestModel) &&
+            (identical(other.webSocketResponseModel, webSocketResponseModel) ||
+                other.webSocketResponseModel == webSocketResponseModel));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType, historyId, metaData, httpRequestModel, httpResponseModel);
+      runtimeType,
+      historyId,
+      metaData,
+      httpRequestModel,
+      httpResponseModel,
+      webSocketRequestModel,
+      webSocketResponseModel);
 
   /// Create a copy of HistoryRequestModel
   /// with the given fields replaced by the non-null parameter values.
@@ -253,7 +333,9 @@ abstract class _HistoryRequestModel implements HistoryRequestModel {
           {required final String historyId,
           required final HistoryMetaModel metaData,
           required final HttpRequestModel httpRequestModel,
-          required final HttpResponseModel httpResponseModel}) =
+          required final HttpResponseModel httpResponseModel,
+          required final WebSocketRequestModel? webSocketRequestModel,
+          required final WebSocketResponseModel? webSocketResponseModel}) =
       _$HistoryRequestModelImpl;
 
   factory _HistoryRequestModel.fromJson(Map<String, dynamic> json) =
@@ -267,6 +349,10 @@ abstract class _HistoryRequestModel implements HistoryRequestModel {
   HttpRequestModel get httpRequestModel;
   @override
   HttpResponseModel get httpResponseModel;
+  @override
+  WebSocketRequestModel? get webSocketRequestModel;
+  @override
+  WebSocketResponseModel? get webSocketResponseModel;
 
   /// Create a copy of HistoryRequestModel
   /// with the given fields replaced by the non-null parameter values.

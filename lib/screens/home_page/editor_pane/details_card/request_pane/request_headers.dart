@@ -42,9 +42,23 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
     final selectedId = ref.watch(selectedIdStateProvider);
     ref.watch(selectedRequestModelProvider
         .select((value) => value?.httpRequestModel?.headers?.length));
-    var rH = ref.read(selectedRequestModelProvider)?.httpRequestModel?.headers;
-    bool isHeadersEmpty = rH == null || rH.isEmpty;
-    headerRows = isHeadersEmpty
+    ref.watch(selectedRequestModelProvider
+        .select((value) => value?.webSocketRequestModel?.headers?.length));
+    var apiType = ref.watch(selectedRequestModelProvider
+        .select((value) => value?.apiType));
+    late List<NameValueModel>? rH;
+    late bool isHeadersEmpty;
+    if (apiType == APIType.webSocket) {
+      rH = ref.read(selectedRequestModelProvider)?.webSocketRequestModel?.headers;
+      isHeadersEmpty = rH == null || rH.isEmpty;
+       isRowEnabledList = [
+      ...(ref
+              .read(selectedRequestModelProvider)
+              ?.webSocketRequestModel
+              ?.isHeaderEnabledList ??
+          List.filled(rH?.length ?? 0, true, growable: true))
+    ];
+     headerRows = isHeadersEmpty
         ? [
             kNameValueEmptyModel,
           ]
@@ -52,13 +66,31 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
     isRowEnabledList = [
       ...(ref
               .read(selectedRequestModelProvider)
+              ?.webSocketRequestModel
+              ?.isHeaderEnabledList ??
+          List.filled(rH?.length ?? 0, true, growable: true))
+    ];
+    
+    }else{
+      rH = ref.read(selectedRequestModelProvider)?.httpRequestModel?.headers;
+      isHeadersEmpty = rH == null || rH.isEmpty;
+      headerRows = isHeadersEmpty
+        ? [
+            kNameValueEmptyModel,
+          ]
+        : rH + [kNameValueEmptyModel];
+      isRowEnabledList = [
+      ...(ref
+              .read(selectedRequestModelProvider)
               ?.httpRequestModel
               ?.isHeaderEnabledList ??
           List.filled(rH?.length ?? 0, true, growable: true))
     ];
+      
+    }
     isRowEnabledList.add(false);
     isAddingRow = false;
-
+    
     List<DataColumn> columns = const [
       DataColumn2(
         label: Text(kNameCheckbox),
@@ -83,7 +115,9 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
     List<DataRow> dataRows = List<DataRow>.generate(
       headerRows.length,
       (index) {
+       
         bool isLast = index + 1 == headerRows.length;
+         
         return DataRow(
           key: ValueKey("$selectedId-$index-headers-row-$seed"),
           cells: <DataCell>[

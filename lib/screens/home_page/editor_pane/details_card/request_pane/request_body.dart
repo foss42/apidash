@@ -1,3 +1,4 @@
+import 'package:apidash/widgets/dropdown_websocket_content_type.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
@@ -26,8 +27,8 @@ class EditRequestBody extends ConsumerWidget {
 
     return Column(
       children: [
-        (apiType == APIType.rest)
-            ? const SizedBox(
+        switch(apiType){
+        APIType.rest => const SizedBox(
                 height: kHeaderHeight,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -38,8 +39,41 @@ class EditRequestBody extends ConsumerWidget {
                     DropdownButtonBodyContentType(),
                   ],
                 ),
-              )
-            : kSizedBoxEmpty,
+        ),
+        APIType.webSocket => //dont forget to make it switch and put for rest
+             SizedBox(
+                height: kHeaderHeight,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Padding(
+                      padding:EdgeInsets.only(left:10),
+                      child: SizedBox(
+                          height: kHeaderHeight,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                                  Text(
+                                    "Select Content Type:",
+                                  ),
+                                  DropdownButtonBodyContentWebSocketType(),
+                            ]),),
+                     ),
+                    
+                    
+                    Padding(
+                      padding:const EdgeInsets.only(right:10),
+                      child: SendButton(isWorking: false, onTap: (){
+                          ref.read(collectionStateNotifierProvider.notifier).sendFrames();
+                        }),
+                      
+                    ),
+                  ],
+                ),
+              ),
+         _=> kSizedBoxEmpty,
+            
+        },
         switch (apiType) {
           APIType.rest => Expanded(
               child: switch (contentType) {
@@ -92,6 +126,29 @@ class EditRequestBody extends ConsumerWidget {
                 ),
               ),
             ),
+          APIType.webSocket => Expanded(
+            
+              child: Padding(
+                padding: kPt5o10,
+                child: Stack(
+                  children: [
+                  TextFieldEditor(
+                    key: Key("$selectedId-websocket-body"),
+                    fieldKey: "$selectedId-websocket-body-editor",
+                   initialValue: requestModel?.webSocketRequestModel?.message,
+                    onChanged: (String value) {
+                    ref
+                      .read(collectionStateNotifierProvider.notifier)
+                      .update(webSocketMessage: value);
+                    },
+                    hintText: kHintMessage,
+                  ),
+  
+                  ],
+                 
+              ),
+              ),
+            ),
           _ => kSizedBoxEmpty,
         }
       ],
@@ -115,6 +172,29 @@ class DropdownButtonBodyContentType extends ConsumerWidget {
         ref
             .read(collectionStateNotifierProvider.notifier)
             .update(bodyContentType: value);
+      },
+    );
+  }
+}
+
+class DropdownButtonBodyContentWebSocketType extends ConsumerWidget {
+  const DropdownButtonBodyContentWebSocketType({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(selectedIdStateProvider);
+    final requestBodyContentType = ref.watch(selectedRequestModelProvider
+        .select((value) => value?.webSocketRequestModel?.contentType));
+    return DropdownButtonContentTypeWebSocket(
+      contentType: requestBodyContentType,
+      onChanged: (ContentTypeWebSocket? value) {
+        
+        // ref.read(collectionStateNotifierProvider.notifier).update(
+        //   contentType: value,
+        // );
+      
       },
     );
   }

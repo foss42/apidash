@@ -17,6 +17,8 @@ class SettingsModel {
     this.historyRetentionPeriod = HistoryRetentionPeriod.oneWeek,
     this.workspaceFolderPath,
     this.isSSLDisabled = false,
+    this.pingInterval = 100,
+    this.isPinging = false,
   });
 
   final bool isDark;
@@ -31,6 +33,8 @@ class SettingsModel {
   final HistoryRetentionPeriod historyRetentionPeriod;
   final String? workspaceFolderPath;
   final bool isSSLDisabled;
+  final int? pingInterval;
+  final bool isPinging;
 
   SettingsModel copyWith({
     bool? isDark,
@@ -45,6 +49,8 @@ class SettingsModel {
     HistoryRetentionPeriod? historyRetentionPeriod,
     String? workspaceFolderPath,
     bool? isSSLDisabled,
+    int? pingInterval,
+    bool? isPinging,
   }) {
     return SettingsModel(
       isDark: isDark ?? this.isDark,
@@ -61,6 +67,8 @@ class SettingsModel {
           historyRetentionPeriod ?? this.historyRetentionPeriod,
       workspaceFolderPath: workspaceFolderPath ?? this.workspaceFolderPath,
       isSSLDisabled: isSSLDisabled ?? this.isSSLDisabled,
+      pingInterval: pingInterval ?? this.pingInterval,
+      isPinging: isPinging ?? this.isPinging,
     );
   }
 
@@ -80,6 +88,8 @@ class SettingsModel {
       historyRetentionPeriod: historyRetentionPeriod,
       workspaceFolderPath: workspaceFolderPath,
       isSSLDisabled: isSSLDisabled,
+      pingInterval: pingInterval,
+      isPinging: isPinging
     );
   }
 
@@ -134,6 +144,8 @@ class SettingsModel {
     }
     final workspaceFolderPath = data["workspaceFolderPath"] as String?;
     final isSSLDisabled = data["isSSLDisabled"] as bool?;
+    final pingInterval = data["pingInterval"] as int?;
+    final isPinging = data["isPinging"] as bool?;
 
     const sm = SettingsModel();
 
@@ -151,6 +163,8 @@ class SettingsModel {
           historyRetentionPeriod ?? HistoryRetentionPeriod.oneWeek,
       workspaceFolderPath: workspaceFolderPath,
       isSSLDisabled: isSSLDisabled,
+      pingInterval: pingInterval,
+      isPinging: isPinging
     );
   }
 
@@ -170,6 +184,8 @@ class SettingsModel {
       "historyRetentionPeriod": historyRetentionPeriod.name,
       "workspaceFolderPath": workspaceFolderPath,
       "isSSLDisabled": isSSLDisabled,
+      "pingInterval": pingInterval, 
+      "isPinging": isPinging  
     };
   }
 
@@ -194,7 +210,9 @@ class SettingsModel {
         other.activeEnvironmentId == activeEnvironmentId &&
         other.historyRetentionPeriod == historyRetentionPeriod &&
         other.workspaceFolderPath == workspaceFolderPath &&
-        other.isSSLDisabled == isSSLDisabled;
+        other.isSSLDisabled == isSSLDisabled &&
+        other.pingInterval == pingInterval &&
+        other.isPinging == isPinging;
   }
 
   @override
@@ -213,6 +231,8 @@ class SettingsModel {
       historyRetentionPeriod,
       workspaceFolderPath,
       isSSLDisabled,
+      pingInterval,
+      isPinging
     );
   }
 }

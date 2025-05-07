@@ -20,6 +20,7 @@ class SidebarRequestCardTextBox extends StatelessWidget {
         switch (apiType) {
           APIType.rest => method.abbr,
           APIType.graphql => apiType.abbr,
+          APIType.webSocket => apiType.abbr,
         },
         textAlign: TextAlign.center,
         style: TextStyle(
