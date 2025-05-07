@@ -37,6 +37,7 @@ const kMinRequestEditorDetailsCardPaneSize = 300.0;
 final kHomeScaffoldKey = GlobalKey<ScaffoldState>();
 final kEnvScaffoldKey = GlobalKey<ScaffoldState>();
 final kHisScaffoldKey = GlobalKey<ScaffoldState>();
+final kApiExplorerScaffoldKey = GlobalKey<ScaffoldState>();
 
 const kTabAnimationDuration = Duration(milliseconds: 200);
 const kTabHeight = 40.0;
@@ -485,3 +486,7 @@ const kMsgClearHistory =
 const kMsgClearHistorySuccess = 'History cleared successfully';
 const kMsgClearHistoryError = 'Error clearing history';
 const kMsgShareError = "Unable to share";
+
+// api Spec fetch Service
+const String kApiSpecsBox = 'api_specs';
+const String kApiSpecsBoxIds = '_spec_names';

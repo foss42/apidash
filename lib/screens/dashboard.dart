@@ -1,3 +1,4 @@
+import 'package:apidash/screens/explorer/explorer.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -56,7 +57,7 @@ class Dashboard extends ConsumerWidget {
                       style: Theme.of(context).textTheme.labelSmall,
                     ),
                     kVSpacer10,
-                    IconButton(
+                      IconButton(
                       isSelected: railIdx == 2,
                       onPressed: () {
                         ref.read(navRailIndexStateProvider.notifier).state = 2;
@@ -68,6 +69,20 @@ class Dashboard extends ConsumerWidget {
                       'History',
                       style: Theme.of(context).textTheme.labelSmall,
                     ),
+                    kVSpacer10,
+                    IconButton(
+                      isSelected: railIdx == 3,
+                      onPressed: () {
+                        ref.read(navRailIndexStateProvider.notifier).state = 3;
+                      },
+                      icon: const Icon(Icons.explore_outlined),
+                      selectedIcon: const Icon(Icons.explore),
+                    ),
+                    Text(
+                      'Explore',
+                      style: Theme.of(context).textTheme.labelSmall,
+                    ),
+                    kVSpacer10,
                   ],
                 ),
                 Expanded(
@@ -92,12 +107,15 @@ class Dashboard extends ConsumerWidget {
                         padding: const EdgeInsets.only(bottom: 16.0),
                         child: NavbarButton(
                           railIdx: railIdx,
-                          buttonIdx: 3,
+                          buttonIdx: 4, // Updated index
                           selectedIcon: Icons.settings,
                           icon: Icons.settings_outlined,
                           label: 'Settings',
                           showLabel: false,
                           isCompact: true,
+                          onTap: () {
+                            ref.read(navRailIndexStateProvider.notifier).state = 4;
+                          },
                         ),
                       ),
                     ],
@@ -118,6 +136,7 @@ class Dashboard extends ConsumerWidget {
                   HomePage(),
                   EnvironmentPage(),
                   HistoryPage(),
+                  ApiExplorerPage(),
                   SettingsPage(),
                 ],
               ),
