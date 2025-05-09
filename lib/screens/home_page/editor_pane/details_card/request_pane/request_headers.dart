@@ -178,7 +178,7 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
     return Stack(
       children: [
         Container(
-          margin: kP10,
+          margin: kPh10t10,
           child: Column(
             children: [
               Expanded(
@@ -198,28 +198,29 @@ class EditRequestHeadersState extends ConsumerState<EditRequestHeaders> {
                   ),
                 ),
               ),
-              kVSpacer40,
+              if (!kIsMobile) kVSpacer40,
             ],
           ),
         ),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: Padding(
-            padding: kPb15,
-            child: ElevatedButton.icon(
-              onPressed: () {
-                headerRows.add(kNameValueEmptyModel);
-                isRowEnabledList.add(false);
-                _onFieldChange();
-              },
-              icon: const Icon(Icons.add),
-              label: const Text(
-                kLabelAddHeader,
-                style: kTextStyleButton,
+        if (!kIsMobile)
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: kPb15,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  headerRows.add(kNameValueEmptyModel);
+                  isRowEnabledList.add(false);
+                  _onFieldChange();
+                },
+                icon: const Icon(Icons.add),
+                label: const Text(
+                  kLabelAddHeader,
+                  style: kTextStyleButton,
+                ),
               ),
             ),
           ),
-        ),
       ],
     );
   }
