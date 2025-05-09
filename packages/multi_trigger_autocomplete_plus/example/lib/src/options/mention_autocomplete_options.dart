@@ -5,10 +5,10 @@ import 'package:example/src/models.dart';
 
 class MentionAutocompleteOptions extends StatelessWidget {
   const MentionAutocompleteOptions({
-    Key? key,
+    super.key,
     required this.query,
     required this.onMentionUserTap,
-  }) : super(key: key);
+  });
 
   final String query;
   final ValueSetter<User> onMentionUserTap;

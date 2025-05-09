@@ -86,6 +86,8 @@ enum ContentType {
   final String header;
 }
 
+
+
 const JsonEncoder kJsonEncoder = JsonEncoder.withIndent('  ');
 const JsonDecoder kJsonDecoder = JsonDecoder();
 const LineSplitter kSplitter = LineSplitter();
