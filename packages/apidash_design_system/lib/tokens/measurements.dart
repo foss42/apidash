@@ -53,6 +53,11 @@ const kPh20t40 = EdgeInsets.only(
   right: 20,
   top: 40,
 );
+const kPh10t10 = EdgeInsets.only(
+  left: 10,
+  right: 10,
+  top: 10,
+);
 const kPs0o6 = EdgeInsets.only(
   left: 0,
   top: 6,
