@@ -14,7 +14,7 @@ class RequestPane extends StatefulHookWidget {
     this.onTapTabBar,
     required this.tabLabels,
     required this.children,
-    this.showIndicators = const [false, false, false],
+    this.showIndicators = const [false, false, false, false],
     this.showViewCodeButton,
   });
 

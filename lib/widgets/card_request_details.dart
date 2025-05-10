@@ -6,7 +6,6 @@ class RequestDetailsCard extends StatelessWidget {
 
   final Widget? child;
   @override
-  @override
   Widget build(BuildContext context) {
     return Card(
       color: kColorTransparent,
@@ -18,7 +17,10 @@ class RequestDetailsCard extends StatelessWidget {
         borderRadius: kBorderRadius12,
       ),
       elevation: 0,
-      child: child,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0), 
+        child: child ?? const SizedBox.shrink(),
+      ),
     );
   }
 }

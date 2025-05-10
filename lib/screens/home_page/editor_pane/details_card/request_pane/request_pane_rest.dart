@@ -6,6 +6,7 @@ import 'package:apidash/widgets/widgets.dart';
 import 'request_headers.dart';
 import 'request_params.dart';
 import 'request_body.dart';
+import 'request_stress_test.dart';
 
 class EditRestRequestPane extends ConsumerWidget {
   const EditRestRequestPane({super.key});
@@ -44,16 +45,19 @@ class EditRestRequestPane extends ConsumerWidget {
         paramLength > 0,
         headerLength > 0,
         hasBody,
+        false, //default false
       ],
       tabLabels: const [
         kLabelURLParams,
         kLabelHeaders,
         kLabelBody,
+        kLabelStressTest, // label from consts.dart
       ],
-      children: const [
-        EditRequestURLParams(),
-        EditRequestHeaders(),
-        EditRequestBody(),
+      children: [
+        const EditRequestURLParams(),
+        const EditRequestHeaders(),
+        const EditRequestBody(),
+        const RequestStressTestPane(),
       ],
     );
   }
