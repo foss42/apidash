@@ -15,8 +15,18 @@ import { {% if hasFileInFormData %}fileFromSync, {% endif %}FormData } from 'nod
 
 """;
 
-  String kTemplateStart = """const url = '{{url}}';
+  String kTemplateStart = """const url = new URL('{{url}}');
+  
+{% for key, value in params -%}
+{% if value is iterable and (value is not string) -%}
+{% for item in value -%}
+url.searchParams.append('{{key}}', '{{item}}');
+{% endfor -%}
+{% else -%}
 
+url.searchParams.append('{{key}}', '{{value}}');
+{% endif -%}
+{% endfor -%}
 const options = {
   method: '{{method}}'
 """;
@@ -63,7 +73,7 @@ fetch(url, options)
           : requestModel.hasFileInFormData
               ? "// refer https://github.com/foss42/apidash/issues/293#issuecomment-1995208098 for details regarding integration\n\n"
               : "";
-      if (requestModel.hasFormData) {
+                    if (requestModel.hasFormData) {
         result += "const payload = new FormData();\n";
         var templateMultiPartBody = jj.Template(kMultiPartBodyTemplate);
         var formFileCounter = 1;
@@ -83,15 +93,17 @@ fetch(url, options)
 
       var harJson =
           requestModelToHARJsonRequest(requestModel, useEnabled: true);
+      var params = requestModel.enabledParamsMap;
 
       var templateStart = jj.Template(kTemplateStart);
       result += templateStart.render({
-        "url": harJson["url"],
+        "url": stripUrlParams(requestModel.url),
         "method": harJson["method"],
+        "params": params,
       });
 
       var headers = harJson["headers"];
-
+      
       if (headers.isNotEmpty) {
         var templateHeader = jj.Template(kTemplateHeader);
         var m = {};
