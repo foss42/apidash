@@ -1,0 +1,130 @@
+{
+  "info": {
+    "title": "E-commerce API",
+    "description": "API for managing products, orders, and customers in an e-commerce platform",
+    "tags": ["ecommerce", "products", "orders", "customers"]
+  },
+  "requests": [
+    {
+      "id": "order_get",
+      "apiType": "rest",
+      "name": "Get Order",
+      "description": "Retrieves details about a specific order",
+      "httpRequestModel": {
+        "method": "get",
+        "url": "https://api.example.com/v1/orders/ord_456",
+        "headers": [
+          {"name": "Accept", "value": "application/json"},
+          {"name": "Authorization", "value": "Bearer YOUR_TOKEN"}
+        ],
+        "params": [],
+        "isHeaderEnabledList": [true, true],
+        "isParamEnabledList": [],
+        "bodyContentType": "json",
+        "body": null,
+        "query": null,
+        "formData": null
+      },
+      "responseStatus": 200,
+      "message": "Order retrieved successfully",
+      "httpResponseModel": {
+        "statusCode": 200,
+        "headers": {
+          "Content-Type": "application/json",
+          "Content-Length": "612"
+        },
+        "requestHeaders": {
+          "Accept": "application/json",
+          "Authorization": "Bearer YOUR_TOKEN"
+        },
+        "body": "{\n  \"id\": \"ord_456\",\n  \"customer_id\": \"cust_789\",\n  \"status\": \"shipped\",\n  \"items\": [\n    {\n      \"product_id\": \"prod_123\",\n      \"name\": \"Wireless Earbuds\",\n      \"quantity\": 2,\n      \"unit_price\": 79.99,\n      \"subtotal\": 159.98\n    },\n    {\n      \"product_id\": \"prod_124\",\n      \"name\": \"Smart Watch\",\n      \"quantity\": 1,\n      \"unit_price\": 129.99,\n      \"subtotal\": 129.99\n    }\n  ],\n  \"subtotal\": 289.97,\n  \"tax\": 23.20,\n  \"shipping\": 12.99,\n  \"total\": 326.16,\n  \"shipping_address\": {\n    \"street\": \"123 Main St\",\n    \"city\": \"Anytown\",\n    \"state\": \"CA\",\n    \"postal_code\": \"12345\",\n    \"country\": \"US\"\n  },\n  \"tracking_number\": \"1ZW5Y9949045539359\",\n  \"created_at\": \"2025-04-25T16:30:15Z\",\n  \"updated_at\": \"2025-04-25T18:45:22Z\"\n}",
+        "formattedBody": "{\n  \"id\": \"ord_456\",\n  \"customer_id\": \"cust_789\",\n  \"status\": \"shipped\",\n  \"items\": [\n    {\n      \"product_id\": \"prod_123\",\n      \"name\": \"Wireless Earbuds\",\n      \"quantity\": 2,\n      \"unit_price\": 79.99,\n      \"subtotal\": 159.98\n    },\n    {\n      \"product_id\": \"prod_124\",\n      \"name\": \"Smart Watch\",\n      \"quantity\": 1,\n      \"unit_price\": 129.99,\n      \"subtotal\": 129.99\n    }\n  ],\n  \"subtotal\": 289.97,\n  \"tax\": 23.20,\n  \"shipping\": 12.99,\n  \"total\": 326.16,\n  \"shipping_address\": {\n    \"street\": \"123 Main St\",\n    \"city\": \"Anytown\",\n    \"state\": \"CA\",\n    \"postal_code\": \"12345\",\n    \"country\": \"US\"\n  },\n  \"tracking_number\": \"1ZW5Y9949045539359\",\n  \"created_at\": \"2025-04-25T16:30:15Z\",\n  \"updated_at\": \"2025-04-25T18:45:22Z\"\n}",
+        "bodyBytes": null,
+        "time": 143000
+      },
+      "isWorking": false,
+      "sendingTime": null
+    },
+    {
+      "id": "order_update_status",
+      "apiType": "rest",
+      "name": "Update Order Status",
+      "description": "Updates the status of an existing order",
+      "httpRequestModel": {
+        "method": "patch",
+        "url": "https://api.example.com/v1/orders/ordi_456/status",
+        "headers": [
+          {"name": "Content-Type", "value": "application/json"},
+          {"name": "Authorization", "value": "Bearer YOUR_TOKEN"}
+        ],
+        "params": [],
+        "isHeaderEnabledList": [true, true],
+        "isParamEnabledList": [],
+        "bodyContentType": "json",
+        "body": "{\n  \"status\": \"delivered\",\n  \"notes\": \"Delivered to customer's porch\"\n}",
+        "query": null,
+        "formData": null
+      },
+      "responseStatus": 200,
+      "message": "Order status updated successfully",
+      "httpResponseModel": {
+        "statusCode": 200,
+        "headers": {
+          "Content-Type": "application/json",
+          "Content-Length": "128"
+        },
+        "requestHeaders": {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer YOUR_TOKEN"
+        },
+        "body": "{\n  \"id\": \"ord_456\",\n  \"status\": \"delivered\",\n  \"updated_at\": \"2025-04-26T10:15:30Z\",\n  \"notes\": \"Delivered to customer's porch\"\n}",
+        "formattedBody": "{\n  \"id\": \"ord_456\",\n  \"status\": \"delivered\",\n  \"updated_at\": \"2025-04-26T10:15:30Z\",\n  \"notes\": \"Delivered to customer's porch\"\n}",
+        "bodyBytes": null,
+        "time": 185000
+      },
+      "isWorking": false,
+      "sendingTime": null
+    },
+    {
+      "id": "customer_create",
+      "apiType": "rest",
+      "name": "Create Customer",
+      "description": "Registers a new customer in the system",
+      "httpRequestModel": {
+        "method": "post",
+        "url": "https://api.example.com/v1/customers",
+        "headers": [
+          {"name": "Content-Type", "value": "application/json"},
+          {"name": "Authorization", "value": "Bearer YOUR_TOKEN"}
+        ],
+        "params": [],
+        "isHeaderEnabledList": [true, true],
+        "isParamEnabledList": [],
+        "bodyContentType": "json",
+        "body": "{\n  \"email\": \"jane.smith@example.com\",\n  \"first_name\": \"Jane\",\n  \"last_name\": \"Smith\",\n  \"phone\": \"+1-555-123-4567\",\n  \"addresses\": [\n    {\n      \"type\": \"shipping\",\n      \"street\": \"123 Main St\",\n      \"city\": \"Anytown\",\n      \"state\": \"CA\",\n      \"postal_code\": \"12345\",\n      \"country\": \"US\"\n    }\n  ]\n}",
+        "query": null,
+        "formData": null
+      },
+      "responseStatus": 201,
+      "message": "Customer created successfully",
+      "httpResponseModel": {
+        "statusCode": 201,
+        "headers": {
+          "Content-Type": "application/json",
+          "Content-Length": "294",
+          "Location": "https://api.example.com/v1/customers/cust_789"
+        },
+        "requestHeaders": {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer YOUR_TOKEN"
+        },
+        "body": "{\n  \"id\": \"cust_789\",\n  \"email\": \"jane.smith@example.com\",\n  \"first_name\": \"Jane\",\n  \"last_name\": \"Smith\",\n  \"phone\": \"+1-555-123-4567\",\n  \"addresses\": [\n    {\n      \"type\": \"shipping\",\n      \"street\": \"123 Main St\",\n      \"city\": \"Anytown\",\n      \"state\": \"CA\",\n      \"postal_code\": \"12345\",\n      \"country\": \"US\"\n    }\n  ],\n  \"created_at\": \"2025-04-25T11:20:35Z\"\n}",
+        "formattedBody": "{\n  \"id\": \"cust_789\",\n  \"email\": \"jane.smith@example.com\",\n  \"first_name\": \"Jane\",\n  \"last_name\": \"Smith\",\n  \"phone\": \"+1-555-123-4567\",\n  \"addresses\": [\n    {\n      \"type\": \"shipping\",\n      \"street\": \"123 Main St\",\n      \"city\": \"Anytown\",\n      \"state\": \"CA\",\n      \"postal_code\": \"12345\",\n      \"country\": \"US\"\n    }\n  ],\n  \"created_at\": \"2025-04-25T11:20:35Z\"\n}",
+        "bodyBytes": null,
+        "time": 289000
+      },
+      "isWorking": false,
+      "sendingTime": null
+    }
+  ]
+}
