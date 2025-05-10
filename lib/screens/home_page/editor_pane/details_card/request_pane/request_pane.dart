@@ -15,7 +15,7 @@ class EditRequestPane extends ConsumerWidget {
     final apiType = ref
         .watch(selectedRequestModelProvider.select((value) => value?.apiType));
     return switch (apiType) {
-      APIType.rest => const EditRestRequestPane(),
+      APIType.rest || APIType.sse => const EditRestRequestPane(),
       APIType.graphql => const EditGraphQLRequestPane(),
       _ => kSizedBoxEmpty,
     };
