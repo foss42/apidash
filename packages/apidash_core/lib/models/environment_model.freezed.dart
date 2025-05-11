@@ -224,6 +224,7 @@ mixin _$EnvironmentVariableModel {
   String get value => throw _privateConstructorUsedError;
   EnvironmentVariableType get type => throw _privateConstructorUsedError;
   bool get enabled => throw _privateConstructorUsedError;
+  bool get fromOS => throw _privateConstructorUsedError;
 
   /// Serializes this EnvironmentVariableModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -242,7 +243,11 @@ abstract class $EnvironmentVariableModelCopyWith<$Res> {
       _$EnvironmentVariableModelCopyWithImpl<$Res, EnvironmentVariableModel>;
   @useResult
   $Res call(
-      {String key, String value, EnvironmentVariableType type, bool enabled});
+      {String key,
+      String value,
+      EnvironmentVariableType type,
+      bool enabled,
+      bool fromOS});
 }
 
 /// @nodoc
@@ -265,6 +270,7 @@ class _$EnvironmentVariableModelCopyWithImpl<$Res,
     Object? value = null,
     Object? type = null,
     Object? enabled = null,
+    Object? fromOS = null,
   }) {
     return _then(_value.copyWith(
       key: null == key
@@ -283,6 +289,10 @@ class _$EnvironmentVariableModelCopyWithImpl<$Res,
           ? _value.enabled
           : enabled // ignore: cast_nullable_to_non_nullable
               as bool,
+      fromOS: null == fromOS
+          ? _value.fromOS
+          : fromOS // ignore: cast_nullable_to_non_nullable
+              as bool,
     ) as $Val);
   }
 }
@@ -297,7 +307,11 @@ abstract class _$$EnvironmentVariableModelImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String key, String value, EnvironmentVariableType type, bool enabled});
+      {String key,
+      String value,
+      EnvironmentVariableType type,
+      bool enabled,
+      bool fromOS});
 }
 
 /// @nodoc
@@ -319,6 +333,7 @@ class __$$EnvironmentVariableModelImplCopyWithImpl<$Res>
     Object? value = null,
     Object? type = null,
     Object? enabled = null,
+    Object? fromOS = null,
   }) {
     return _then(_$EnvironmentVariableModelImpl(
       key: null == key
@@ -337,6 +352,10 @@ class __$$EnvironmentVariableModelImplCopyWithImpl<$Res>
           ? _value.enabled
           : enabled // ignore: cast_nullable_to_non_nullable
               as bool,
+      fromOS: null == fromOS
+          ? _value.fromOS
+          : fromOS // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -349,7 +368,8 @@ class _$EnvironmentVariableModelImpl implements _EnvironmentVariableModel {
       {required this.key,
       required this.value,
       this.type = EnvironmentVariableType.variable,
-      this.enabled = false});
+      this.enabled = false,
+      this.fromOS = false});
 
   factory _$EnvironmentVariableModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$EnvironmentVariableModelImplFromJson(json);
@@ -364,10 +384,13 @@ class _$EnvironmentVariableModelImpl implements _EnvironmentVariableModel {
   @override
   @JsonKey()
   final bool enabled;
+  @override
+  @JsonKey()
+  final bool fromOS;
 
   @override
   String toString() {
-    return 'EnvironmentVariableModel(key: $key, value: $value, type: $type, enabled: $enabled)';
+    return 'EnvironmentVariableModel(key: $key, value: $value, type: $type, enabled: $enabled, fromOS: $fromOS)';
   }
 
   @override
@@ -378,12 +401,14 @@ class _$EnvironmentVariableModelImpl implements _EnvironmentVariableModel {
             (identical(other.key, key) || other.key == key) &&
             (identical(other.value, value) || other.value == value) &&
             (identical(other.type, type) || other.type == type) &&
-            (identical(other.enabled, enabled) || other.enabled == enabled));
+            (identical(other.enabled, enabled) || other.enabled == enabled) &&
+            (identical(other.fromOS, fromOS) || other.fromOS == fromOS));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, key, value, type, enabled);
+  int get hashCode =>
+      Object.hash(runtimeType, key, value, type, enabled, fromOS);
 
   /// Create a copy of EnvironmentVariableModel
   /// with the given fields replaced by the non-null parameter values.
@@ -407,7 +432,8 @@ abstract class _EnvironmentVariableModel implements EnvironmentVariableModel {
       {required final String key,
       required final String value,
       final EnvironmentVariableType type,
-      final bool enabled}) = _$EnvironmentVariableModelImpl;
+      final bool enabled,
+      final bool fromOS}) = _$EnvironmentVariableModelImpl;
 
   factory _EnvironmentVariableModel.fromJson(Map<String, dynamic> json) =
       _$EnvironmentVariableModelImpl.fromJson;
@@ -420,6 +446,8 @@ abstract class _EnvironmentVariableModel implements EnvironmentVariableModel {
   EnvironmentVariableType get type;
   @override
   bool get enabled;
+  @override
+  bool get fromOS;
 
   /// Create a copy of EnvironmentVariableModel
   /// with the given fields replaced by the non-null parameter values.
