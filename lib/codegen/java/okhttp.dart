@@ -37,19 +37,15 @@ import okhttp3.MultipartBody;""";
 ''';
 
 final String kTemplateUrlQuery = '''
-
         HttpUrl.Builder urlBuilder = HttpUrl.parse("{{url}}").newBuilder();
-        {% for name, value in queryParams %}{% if value is not string %} {% for v in value %} urlBuilder.addQueryParameter("{{ name }}", "{{ v }}");
-         {% endfor %}  
-        {% else %}  urlBuilder.addQueryParameter("{{ name }}", "{{ value }}"); {% endif %}{% endfor %}
-        
-        HttpUrl url = urlBuilder.build();
-
-''';
+        {% for name, value in queryParams %}{% for v in value %} 
+        urlBuilder.addQueryParameter("{{ name }}", "{{ v }}");{% endfor %}{% endfor %}  
+        HttpUrl url = urlBuilder.build();      
+        ''';
 
 
   String kTemplateRequestBody = '''
-
+        
         MediaType mediaType = MediaType.parse("{{contentType}}");
 
         RequestBody body = RequestBody.create({{body}}, mediaType);

@@ -15,17 +15,11 @@ import { {% if hasFileInFormData %}fileFromSync, {% endif %}FormData } from 'nod
 
 """;
 
-  String kTemplateStart = """const url = new URL('{{url}}');
-  
+  String kTemplateStart = """const url = new URL('{{url}}'); 
 {% for key, value in params -%}
-{% if value is iterable and (value is not string) -%}
 {% for item in value -%}
 url.searchParams.append('{{key}}', '{{item}}');
 {% endfor -%}
-{% else -%}
-
-url.searchParams.append('{{key}}', '{{value}}');
-{% endif -%}
 {% endfor -%}
 const options = {
   method: '{{method}}'

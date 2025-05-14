@@ -18,7 +18,7 @@ fn main() {
   {% if params %}
   let params: Vec<(&str, Vec<&str>)> = vec![
     {%- for key, values in params %}
-    ("{{key}}", vec![{% if values is iterable and values is not string %}{% for val in values %}"{{val}}", {% endfor %}{% else %}"{{values}}"{% endif %}]),
+    ("{{key}}", vec![{% for val in values %}"{{val}}", {% endfor %}]),
     {%- endfor %}
   ];
   let query_string: String = params.iter().flat_map(|(key, values)| values.iter().map(move |val| format!("{}={}", key, val)))      .collect::<Vec<_>>().join("&");

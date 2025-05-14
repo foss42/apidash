@@ -39,10 +39,9 @@ public class Main {
             BoundRequestBuilder requestBuilder = asyncHttpClient.prepare("{{ method|upper }}", url);
 ''';
 
-  final String kTemplateUrlQueryParam = ''' {% for name, value in queryParams %}
-{% if value is not string %}
-        {% for v in value %} requestBuilder.addQueryParam("{{ name }}", "{{ v }}");
-        {% endfor %}  {% else %}         requestBuilder.addQueryParam("{{ name }}", "{{ value }}");{% endif %}{% endfor %}\n\n
+  final String kTemplateUrlQueryParam = ''' 
+          {% for name, value in queryParams %} {% for v in value %}
+            requestBuilder.addQueryParam("{{ name }}", "{{ v }}"); {% endfor %}{% endfor %}\n
 ''';
   final String kTemplateRequestHeader = '''
             requestBuilder{% for name, value in headers %}

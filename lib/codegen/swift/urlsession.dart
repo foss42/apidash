@@ -128,7 +128,7 @@ semaphore.wait()
 
     var params = requestModel.enabledParamsMap.entries.expand((entry) {
 
-    var values = entry.value is Iterable ? entry.value : [entry.value];
+    var values = entry.value;
     
     return values.map((value) {
       return {'key': entry.key, 'value': value};

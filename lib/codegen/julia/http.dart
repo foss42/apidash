@@ -16,9 +16,9 @@ url = "{{url}}"
 String kTemplateParams = """
 params = Dict(
 {%- for name, value in params %}
-    "{{ name }}" => {%- if value is iterable and not value is string -%}[
+    "{{ name }}" =>[
         {%- for v in value -%}"{{ v }}"{%- if not loop.last -%}, {%- endif -%}{%- endfor -%}
-    ]{%- else -%}"{{ value }}"{%- endif -%},
+    ],
 {%- endfor %}
 )
 \n

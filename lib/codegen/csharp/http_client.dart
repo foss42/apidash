@@ -19,15 +19,10 @@ string baseUri = "{{ baseUri }}";
 
 var query = new Dictionary<string, List<string>>();
 {%- for key, values in queryParams %}
-  {%- if values is string %}
-    query["{{ key }}"] = new List<string>(); 
-      query["{{ key }}"].Add("{{ values }}");
-  {%- else %}
     query["{{ key }}"] = new List<string>();
     {%- for value in values %}
       query["{{ key }}"].Add("{{ value }}");
     {%- endfor %}
-  {%- endif %}
 {%- endfor %}
 
 var queryString = string.Join("&", query.SelectMany(kv => kv.Value.Select(v => string.Format("{0}={1}", kv.Key, v))));

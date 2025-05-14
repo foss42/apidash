@@ -13,13 +13,9 @@ class RustReqwestCodeGen {
   String kTemplateParamsDef = """
     let query_params = [
     {%- for key, values in params %}
-      {%- if values is iterable and values is not string %}
         {%- for val in values %}
         ("{{key}}", "{{val}}"),
         {%- endfor %}
-      {%- else %}
-        ("{{key}}", "{{values}}"),
-      {%- endif %}
     {%- endfor %}
     ];
 """;

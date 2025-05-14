@@ -40,15 +40,11 @@ import okhttp3.MediaType.Companion.toMediaType""";
 
     val url = "{{url}}".toHttpUrl().newBuilder()
 {%- for name, values in params %}
-    {%- if values is iterable and not values is string %}
         {%- for value in values %}
             .addQueryParameter("{{ name }}", "{{ value }}")
         {%- endfor %}
-    {%- else %}
-        .addQueryParameter("{{ name }}", "{{ values }}")
-    {%- endif %}
 {%- endfor %}
-        .build()
+            .build()
 
 """;
 

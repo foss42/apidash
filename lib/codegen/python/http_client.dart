@@ -108,12 +108,8 @@ body = b'\r\n'.join(dataList)
       List<String> paramList = [];
 
       params.forEach((key, value) {
-        if (value is List) {
-          paramList.add("'$key': [${value.map((v) => "'$v'").join(", ")}]");
-        } else {
-          paramList.add("'$key': '$value'");
-        }
-      });
+        paramList.add("'$key': [${value.map((v) => "'$v'").join(", ")}]");
+            });
 
       result += templateParams.render({
         "params": paramList.join(",\n"),

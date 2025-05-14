@@ -10,7 +10,7 @@ url = URI("{{url}}")
 
   String kTemplateRequestParams = """
 \nparams = {
-{% for key, val in params %} "{{ key }}" => {% if val is list %}[{% for v in val %}"{{ v|string }}"{% if not loop.last %}, {% endif %}{% endfor %}]{% else %}"{{ val|string }}"{% endif %},
+{% for key, val in params %} "{{ key }}" => [{% for v in val %}"{{ v|string }}"{% if not loop.last %}, {% endif %}{% endfor %}],
 {% endfor %}}
 url.query = URI.encode_www_form(params)\n
 """;

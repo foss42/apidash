@@ -27,8 +27,7 @@ public class Main {
 ''';
 
   final String kTemplateRequestCreation = '''
-        HttpResponse<JsonNode> response = Unirest
-                .{{method}}(requestURL)\n
+        HttpResponse<JsonNode> response = Unirest.{{method}}(requestURL)\n
 ''';
 
   final String kTemplateRequestHeader = '''
@@ -36,11 +35,9 @@ public class Main {
 ''';
 
     final String kTemplateUrlQueryParam = '''
-              {% for name, value in queryParams %}
-            {% if value is iterable and value is not string %}  {% for v in value -%}
-                  .queryString("{{name}}", "{{v}}"){% if not loop.last %} {% endif %}
-              {% endfor %}  {% else %} 
-              .queryString("{{name}}", "{{value}}")  {% endif %} {% if not loop.last %}{% endif %} {% endfor %}
+              {% for name, value in queryParams %}{% for v in value -%}
+                  .queryString("{{name}}", "{{v}}")
+              {% endfor %}{% endfor %}
 ''';
 
 
@@ -58,7 +55,7 @@ public class Main {
 ''';
 
   final String kStringRequestEnd = """
-                .asJson();
+        .asJson();
         System.out.println(response.getStatus());
         System.out.println(response.getBody());
     }

@@ -118,14 +118,10 @@ class Program
           String paramsResult = "";
           
           requestModel.enabledParamsMap.forEach((key, values) {
-            if (values is List) {
-              for (var value in values) {
-                paramsResult += templateParams.render({"param": key, "value": value});
-              }
-            } else {
-              paramsResult += templateParams.render({"param": key, "value": values});
+            for (var value in values) {
+              paramsResult += templateParams.render({"param": key, "value": value});
             }
-          });
+                    });
 
           result += "$paramsResult\n";
         }
