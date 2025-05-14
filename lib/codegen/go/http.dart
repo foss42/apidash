@@ -128,14 +128,10 @@ url.RawQuery = query.Encode()
       if (requestModel.enabledParamsMap.isNotEmpty) {
       var queryParams = [];
       requestModel.enabledParamsMap.forEach((key, value) {
-        if (value is List) {
-          for (var v in value) {
-            queryParams.add({'key': key, 'value': v});
-          }
-        } else {
-          queryParams.add({'key': key, 'value': value});
+        for (var v in value) {
+          queryParams.add({'key': key, 'value': v});
         }
-      });
+            });
 
       var templateQueryParam = jj.Template(kTemplateQueryParam);
       result += templateQueryParam.render({"params": queryParams});

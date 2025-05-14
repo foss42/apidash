@@ -17,15 +17,12 @@ use url::Url;
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let http{% if isHttps %}s{% endif %} = Http{% if isHttps %}s{% endif %}Connector::new();
     let client = Client::builder().build::<_, hyper::Body>(http{% if isHttps %}s{% endif %});
-    let mut url = Url::parse("{{ baseUrl }}")?;\n
+    let mut url = Url::parse("{{ baseUrl }}")?;
     """;
 
   final String kTemplateParams = """
-    {% for key, values in params %}{% if values is iterable and values is not string %}{% for val in values %}\n     url.query_pairs_mut().append_pair("{{ key }}", "{{ val }}");{% endfor %}
-    {% else %}
-    url.query_pairs_mut().append_pair("{{ key }}", "{{ values }}");
-    {% endif %}
-    {% endfor %}
+    {% for key, values in params %}{% for val in values %}
+    url.query_pairs_mut().append_pair("{{ key }}", "{{ val }}");{% endfor %}{% endfor %}
 """;
 
   final String kTemplateMethod = """

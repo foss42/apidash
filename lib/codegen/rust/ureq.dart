@@ -18,13 +18,9 @@ fn main() -> Result<(), ureq::Error> {
 
   String kTemplateParams = """
     {%- for key, values in params %}
-      {%- if values is iterable and values is not string %}
         {%- for val in values %}
         .query("{{key}}", "{{val}}")
         {%- endfor %}
-      {%- else %}
-        .query("{{key}}", "{{values}}")
-      {%- endif %}
     {%- endfor %}
 """;
 
