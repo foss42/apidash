@@ -386,7 +386,7 @@ class CollectionStateNotifier
           "Skipped environment update as originalEnvironmentModel was null.");
       if (scriptResult.updatedEnvironment.isNotEmpty) {
         debugPrint(
-            "Warning: Pre-request script updated environment variables, but no active environment was selected to save them to.");
+            "Warning: Post-response script updated environment variables, but no active environment was selected to save them to.");
       }
     }
   }
@@ -467,7 +467,9 @@ class CollectionStateNotifier
         httpRequestModel: substitutedHttpRequestModel,
         httpResponseModel: httpResponseModel,
       );
-      handlePostResponseScript(newRequestModel, originalEnvironmentModel);
+      if (requestModel.postRequestScript.isNotEmpty) {
+        handlePostResponseScript(newRequestModel, originalEnvironmentModel);
+      }
       ref.read(historyMetaStateNotifier.notifier).addHistoryRequest(model);
     }
 

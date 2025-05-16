@@ -34,55 +34,54 @@ void evaluate(String code) {
 void setupJsBridge() {
   jsRuntime.onMessage('consoleLog', (args) {
     try {
-      final decodedArgs = jsonDecode(args as String);
-      if (decodedArgs is List) {
-        print('[JS LOG]: ${decodedArgs.map((e) => e.toString()).join(' ')}');
+      if (args is List) {
+        print('[JS LOG]: ${args.map((e) => e.toString()).join(' ')}');
       } else {
-        print('[JS LOG]: $decodedArgs');
+        print('[JS LOG]: $args');
       }
     } catch (e) {
-      print('[JS LOG ERROR decoding]: $args, Error: $e');
+      print('[JS LOG ERROR]: $args, Error: $e');
     }
   });
 
   jsRuntime.onMessage('consoleWarn', (args) {
     try {
-      final decodedArgs = jsonDecode(args as String);
-      if (decodedArgs is List) {
-        print('[JS WARN]: ${decodedArgs.map((e) => e.toString()).join(' ')}');
+      if (args is List) {
+        print('[JS WARN]: ${args.map((e) => e.toString()).join(' ')}');
       } else {
-        print('[JS WARN]: $decodedArgs');
+        print('[JS WARN]: $args');
       }
     } catch (e) {
-      print('[JS WARN ERROR decoding]: $args, Error: $e');
+      print('[JS WARN ERROR]: $args, Error: $e');
     }
   });
 
   jsRuntime.onMessage('consoleError', (args) {
     try {
-      final decodedArgs = jsonDecode(args as String);
-      if (decodedArgs is List) {
-        print('[JS ERROR]: ${decodedArgs.map((e) => e.toString()).join(' ')}');
+      if (args is List) {
+        print('[JS ERROR]: ${args.map((e) => e.toString()).join(' ')}');
       } else {
-        print('[JS ERROR]: $decodedArgs');
+        print('[JS ERROR]: $args');
       }
     } catch (e) {
-      print('[JS ERROR ERROR decoding]: $args, Error: $e');
+      print('[JS ERROR ERROR]: $args, Error: $e');
     }
   });
 
   jsRuntime.onMessage('fatalError', (args) {
     try {
-      final errorDetails = jsonDecode(args as String);
-      print('[JS FATAL ERROR]: ${errorDetails['message']}');
-      if (errorDetails['error']) print('  Error: ${errorDetails['error']}');
-      if (errorDetails['stack']) print('  Stack: ${errorDetails['stack']}');
+      // 'fatalError' message is constructed as a JSON object in setupScript
+      if (args is Map<String, dynamic>) {
+        print('[JS FATAL ERROR]: ${args['message']}');
+        if (args['error'] != null) print('  Error: ${args['error']}');
+        if (args['stack'] != null) print('  Stack: ${args['stack']}');
+      } else {
+        print('[JS FATAL ERROR decoding error]: $args, Expected a Map.');
+      }
     } catch (e) {
       print('[JS FATAL ERROR decoding error]: $args, Error: $e');
     }
   });
-
-  //TODO: Add handlers for 'testResult'
 }
 
 Future<
@@ -154,6 +153,8 @@ Future<
           try {
             resultingRequest = HttpRequestModel.fromJson(
                 Map<String, Object?>.from(resultMap['request']));
+            log(resultingRequest.toString());
+            log("Resmap req/; ${resultMap['request'].toString()}");
           } catch (e) {
             print("Error deserializing modified request from script: $e");
             //TODO: Handle error - maybe keep original request?
@@ -242,7 +243,6 @@ Future<
       // TODO: Handle error - maybe show in UI, keep original request/env
     } else if (result.stringResult.isNotEmpty) {
       final resultMap = jsonDecode(result.stringResult);
-      log(resultMap['response'].toString());
       if (resultMap is Map<String, dynamic>) {
         // Deserialize Request
         if (resultMap.containsKey('response') && resultMap['response'] is Map) {
