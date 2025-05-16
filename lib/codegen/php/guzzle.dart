@@ -20,14 +20,14 @@ use GuzzleHttp\\Psr7\\Request;
 
 """;
 
-  String kTemplateParams = """
+String kTemplateParams = """
 \$queryParams = [
 {{params}}
 ];
-\$queryParamsStr = '?' . http_build_query(\$queryParams);
-
-
+\$queryParamsStr = '?' . http_build_query(\$queryParams, '','&');
 """;
+
+
 
   String kTemplateHeader = """
 \$headers = [
@@ -80,17 +80,20 @@ echo $res->getBody();
         result += renderedMultiPartBody;
       }
 
-      var params = requestModel.enabledParamsMap;
-      if (params.isNotEmpty) {
-        var templateParams = jj.Template(kTemplateParams);
-        List<String> paramList = [];
-        params.forEach((key, value) {
-          paramList.add("'$key' => '$value'");
-        });
-        result += templateParams.render({
-          "params": paramList.join(",\n"),
-        });
-      }
+var params = requestModel.enabledParamsMap;
+if (params.isNotEmpty) {
+  var templateParams = jj.Template(kTemplateParams);
+  List<String> paramList = [];
+
+  params.forEach((key, value) {
+    paramList.add("'$key' => [${value.map((v) => "'$v'").join(", ")}]");
+    });
+
+  result += templateParams.render({
+    "params": paramList.join(",\n"),
+  });
+}
+
 
       var headers = requestModel.enabledHeadersMap;
       List<String> headerList = [];

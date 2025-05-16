@@ -35,11 +35,9 @@ $request_body = '{{body}}';
   //defining query parameters
   String kTemplateParams = r'''
 $queryParams = [
-{%- for name, value in params %}
-    '{{ name }}' => '{{ value }}',
-{%- endfor %}
+{{params}}
 ];
-$uri .= '?' . http_build_query($queryParams);
+$uri .= '?' . http_build_query($queryParams, '', '&');
 
 
 ''';
@@ -82,9 +80,9 @@ curl_setopt_array($request, [
 
 $response = curl_exec($request);
 
+$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 curl_close($request);
 
-$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 echo "Status Code: " . $httpCode . "\n";
 echo $response . "\n";
 ''';
@@ -122,13 +120,19 @@ echo $response . "\n";
         }
 
         //checking and adding query params
-        if (uri.hasQuery) {
-          if (requestModel.enabledParamsMap.isNotEmpty) {
-            var templateParams = jj.Template(kTemplateParams);
-            result += templateParams
-                .render({"params": requestModel.enabledParamsMap});
-          }
-        }
+       var params = requestModel.enabledParamsMap;
+if (params.isNotEmpty) {
+  var templateParams = jj.Template(kTemplateParams);
+  List<String> paramList = [];
+
+  params.forEach((key, value) {
+    paramList.add("'$key' => [${value.map((v) => "'$v'").join(", ")}]");
+    });
+
+  result += templateParams.render({
+    "params": paramList.join(",\n"),
+  });
+}
 
         var headers = requestModel.enabledHeadersMap;
         if (requestModel.hasBody && !requestModel.hasContentTypeHeader) {
