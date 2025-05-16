@@ -2,11 +2,20 @@ import 'dart:convert';
 
 enum APIType {
   rest("HTTP", "HTTP"),
+  ai("AI", "AI"),
   graphql("GraphQL", "GQL");
 
   const APIType(this.label, this.abbr);
   final String label;
   final String abbr;
+}
+
+enum AIVerb {
+  gemini_20_flash("Gemini 2.0 Flash"),
+  ollama("Ollama Custom");
+
+  const AIVerb(this.dispName);
+  final String dispName;
 }
 
 enum EnvironmentVariableType { variable, secret }

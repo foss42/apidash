@@ -223,6 +223,7 @@ class CollectionStateNotifier
     int? responseStatus,
     String? message,
     HttpResponseModel? httpResponseModel,
+    Map? extraDetails,
   }) {
     final rId = id ?? ref.read(selectedIdStateProvider);
     if (rId == null) {
@@ -251,6 +252,7 @@ class CollectionStateNotifier
         query: query ?? currentHttpRequestModel.query,
         formData: formData ?? currentHttpRequestModel.formData,
       ),
+      extraDetails: extraDetails ?? currentModel.extraDetails,
       responseStatus: responseStatus ?? currentModel.responseStatus,
       message: message ?? currentModel.message,
       httpResponseModel: httpResponseModel ?? currentModel.httpResponseModel,

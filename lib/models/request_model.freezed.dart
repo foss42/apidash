@@ -34,7 +34,10 @@ mixin _$RequestModel {
   @JsonKey(includeToJson: false)
   bool get isWorking => throw _privateConstructorUsedError;
   @JsonKey(includeToJson: false)
-  DateTime? get sendingTime => throw _privateConstructorUsedError;
+  DateTime? get sendingTime =>
+      throw _privateConstructorUsedError; //ExtraDetails for anything else that can be included
+  @JsonKey(fromJson: customMapFromJson, toJson: customMapToJson)
+  Map<dynamic, dynamic> get extraDetails => throw _privateConstructorUsedError;
 
   /// Serializes this RequestModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -63,7 +66,9 @@ abstract class $RequestModelCopyWith<$Res> {
       String? message,
       HttpResponseModel? httpResponseModel,
       @JsonKey(includeToJson: false) bool isWorking,
-      @JsonKey(includeToJson: false) DateTime? sendingTime});
+      @JsonKey(includeToJson: false) DateTime? sendingTime,
+      @JsonKey(fromJson: customMapFromJson, toJson: customMapToJson)
+      Map<dynamic, dynamic> extraDetails});
 
   $HttpRequestModelCopyWith<$Res>? get httpRequestModel;
   $HttpResponseModelCopyWith<$Res>? get httpResponseModel;
@@ -95,6 +100,7 @@ class _$RequestModelCopyWithImpl<$Res, $Val extends RequestModel>
     Object? httpResponseModel = freezed,
     Object? isWorking = null,
     Object? sendingTime = freezed,
+    Object? extraDetails = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -141,6 +147,10 @@ class _$RequestModelCopyWithImpl<$Res, $Val extends RequestModel>
           ? _value.sendingTime
           : sendingTime // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      extraDetails: null == extraDetails
+          ? _value.extraDetails
+          : extraDetails // ignore: cast_nullable_to_non_nullable
+              as Map<dynamic, dynamic>,
     ) as $Val);
   }
 
@@ -192,7 +202,9 @@ abstract class _$$RequestModelImplCopyWith<$Res>
       String? message,
       HttpResponseModel? httpResponseModel,
       @JsonKey(includeToJson: false) bool isWorking,
-      @JsonKey(includeToJson: false) DateTime? sendingTime});
+      @JsonKey(includeToJson: false) DateTime? sendingTime,
+      @JsonKey(fromJson: customMapFromJson, toJson: customMapToJson)
+      Map<dynamic, dynamic> extraDetails});
 
   @override
   $HttpRequestModelCopyWith<$Res>? get httpRequestModel;
@@ -224,6 +236,7 @@ class __$$RequestModelImplCopyWithImpl<$Res>
     Object? httpResponseModel = freezed,
     Object? isWorking = null,
     Object? sendingTime = freezed,
+    Object? extraDetails = null,
   }) {
     return _then(_$RequestModelImpl(
       id: null == id
@@ -269,6 +282,10 @@ class __$$RequestModelImplCopyWithImpl<$Res>
           ? _value.sendingTime
           : sendingTime // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      extraDetails: null == extraDetails
+          ? _value._extraDetails
+          : extraDetails // ignore: cast_nullable_to_non_nullable
+              as Map<dynamic, dynamic>,
     ));
   }
 }
@@ -288,7 +305,10 @@ class _$RequestModelImpl implements _RequestModel {
       this.message,
       this.httpResponseModel,
       @JsonKey(includeToJson: false) this.isWorking = false,
-      @JsonKey(includeToJson: false) this.sendingTime});
+      @JsonKey(includeToJson: false) this.sendingTime,
+      @JsonKey(fromJson: customMapFromJson, toJson: customMapToJson)
+      final Map<dynamic, dynamic> extraDetails = const {}})
+      : _extraDetails = extraDetails;
 
   factory _$RequestModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$RequestModelImplFromJson(json);
@@ -321,10 +341,20 @@ class _$RequestModelImpl implements _RequestModel {
   @override
   @JsonKey(includeToJson: false)
   final DateTime? sendingTime;
+//ExtraDetails for anything else that can be included
+  final Map<dynamic, dynamic> _extraDetails;
+//ExtraDetails for anything else that can be included
+  @override
+  @JsonKey(fromJson: customMapFromJson, toJson: customMapToJson)
+  Map<dynamic, dynamic> get extraDetails {
+    if (_extraDetails is EqualUnmodifiableMapView) return _extraDetails;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_extraDetails);
+  }
 
   @override
   String toString() {
-    return 'RequestModel(id: $id, apiType: $apiType, name: $name, description: $description, requestTabIndex: $requestTabIndex, httpRequestModel: $httpRequestModel, responseStatus: $responseStatus, message: $message, httpResponseModel: $httpResponseModel, isWorking: $isWorking, sendingTime: $sendingTime)';
+    return 'RequestModel(id: $id, apiType: $apiType, name: $name, description: $description, requestTabIndex: $requestTabIndex, httpRequestModel: $httpRequestModel, responseStatus: $responseStatus, message: $message, httpResponseModel: $httpResponseModel, isWorking: $isWorking, sendingTime: $sendingTime, extraDetails: $extraDetails)';
   }
 
   @override
@@ -349,7 +379,9 @@ class _$RequestModelImpl implements _RequestModel {
             (identical(other.isWorking, isWorking) ||
                 other.isWorking == isWorking) &&
             (identical(other.sendingTime, sendingTime) ||
-                other.sendingTime == sendingTime));
+                other.sendingTime == sendingTime) &&
+            const DeepCollectionEquality()
+                .equals(other._extraDetails, _extraDetails));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -366,7 +398,8 @@ class _$RequestModelImpl implements _RequestModel {
       message,
       httpResponseModel,
       isWorking,
-      sendingTime);
+      sendingTime,
+      const DeepCollectionEquality().hash(_extraDetails));
 
   /// Create a copy of RequestModel
   /// with the given fields replaced by the non-null parameter values.
@@ -386,18 +419,19 @@ class _$RequestModelImpl implements _RequestModel {
 
 abstract class _RequestModel implements RequestModel {
   const factory _RequestModel(
-          {required final String id,
-          final APIType apiType,
-          final String name,
-          final String description,
-          @JsonKey(includeToJson: false) final dynamic requestTabIndex,
-          final HttpRequestModel? httpRequestModel,
-          final int? responseStatus,
-          final String? message,
-          final HttpResponseModel? httpResponseModel,
-          @JsonKey(includeToJson: false) final bool isWorking,
-          @JsonKey(includeToJson: false) final DateTime? sendingTime}) =
-      _$RequestModelImpl;
+      {required final String id,
+      final APIType apiType,
+      final String name,
+      final String description,
+      @JsonKey(includeToJson: false) final dynamic requestTabIndex,
+      final HttpRequestModel? httpRequestModel,
+      final int? responseStatus,
+      final String? message,
+      final HttpResponseModel? httpResponseModel,
+      @JsonKey(includeToJson: false) final bool isWorking,
+      @JsonKey(includeToJson: false) final DateTime? sendingTime,
+      @JsonKey(fromJson: customMapFromJson, toJson: customMapToJson)
+      final Map<dynamic, dynamic> extraDetails}) = _$RequestModelImpl;
 
   factory _RequestModel.fromJson(Map<String, dynamic> json) =
       _$RequestModelImpl.fromJson;
@@ -426,7 +460,11 @@ abstract class _RequestModel implements RequestModel {
   bool get isWorking;
   @override
   @JsonKey(includeToJson: false)
-  DateTime? get sendingTime;
+  DateTime?
+      get sendingTime; //ExtraDetails for anything else that can be included
+  @override
+  @JsonKey(fromJson: customMapFromJson, toJson: customMapToJson)
+  Map<dynamic, dynamic> get extraDetails;
 
   /// Create a copy of RequestModel
   /// with the given fields replaced by the non-null parameter values.

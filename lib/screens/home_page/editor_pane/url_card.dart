@@ -1,3 +1,4 @@
+import 'package:apidash/widgets/dropdown_ai_method.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
@@ -35,6 +36,7 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
                   switch (apiType) {
                     APIType.rest => const DropdownButtonHTTPMethod(),
                     APIType.graphql => kSizedBoxEmpty,
+                    APIType.ai => const DropdownButtonAIMethod(),
                     null => kSizedBoxEmpty,
                   },
                   switch (apiType) {
@@ -51,15 +53,18 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
                   switch (apiType) {
                     APIType.rest => const DropdownButtonHTTPMethod(),
                     APIType.graphql => kSizedBoxEmpty,
+                    APIType.ai => const DropdownButtonAIMethod(),
                     null => kSizedBoxEmpty,
                   },
                   switch (apiType) {
                     APIType.rest => kHSpacer20,
                     _ => kHSpacer8,
                   },
-                  const Expanded(
-                    child: URLTextField(),
-                  ),
+                  apiType == APIType.ai
+                      ? Spacer()
+                      : const Expanded(
+                          child: URLTextField(),
+                        ),
                   kHSpacer20,
                   const SizedBox(
                     height: 36,
@@ -138,6 +143,30 @@ class SendRequestButton extends ConsumerWidget {
       },
       onCancel: () {
         ref.read(collectionStateNotifierProvider.notifier).cancelRequest();
+      },
+    );
+  }
+}
+
+class DropdownButtonAIMethod extends ConsumerWidget {
+  const DropdownButtonAIMethod({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final xtraDetails = ref.watch(selectedRequestModelProvider
+            .select((value) => value?.extraDetails)) ??
+        {};
+
+    final aiVerb = xtraDetails['ai_verb'] ?? AIVerb.gemini_20_flash;
+
+    return DropdownButtonAiMethod(
+      method: aiVerb,
+      onChanged: (AIVerb? value) {
+        ref
+            .read(collectionStateNotifierProvider.notifier)
+            .update(extraDetails: {...xtraDetails, 'ai_verb': value});
       },
     );
   }

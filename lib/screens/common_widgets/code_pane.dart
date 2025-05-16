@@ -47,6 +47,12 @@ class CodePane extends ConsumerWidget {
         message: "Code generation for GraphQL is currently not available.",
       );
     }
+
+    if (substitutedRequestModel.apiType == APIType.ai) {
+      return const ErrorMessage(
+        message: "Code generation for AI Requests is currently not available.",
+      );
+    }
     if (code == null) {
       return const ErrorMessage(
         message: "An error was encountered while generating code. $kRaiseIssue",
