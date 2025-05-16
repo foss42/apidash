@@ -1,3 +1,4 @@
+import 'package:apidash/consts.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:multi_trigger_autocomplete_plus/multi_trigger_autocomplete_plus.dart';
@@ -38,10 +39,8 @@ class EnvCellField extends StatelessWidget {
         clrScheme,
         hintText: hintText,
         isDense: true,
-        contentPadding: const EdgeInsets.symmetric(vertical: 9.0, horizontal: 10.0),
-
+        contentPadding: kIsMobile ? kPh6b12 : null,
       ),
-      
       autocompleteNoTrigger: autocompleteNoTrigger,
       onChanged: onChanged,
     );
