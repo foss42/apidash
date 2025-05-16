@@ -38,7 +38,6 @@ class EnvCellField extends StatelessWidget {
         clrScheme,
         hintText: hintText,
         isDense: true,
-        // contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 8.0),
         contentPadding: const EdgeInsets.symmetric(vertical: 9.0, horizontal: 10.0),
 
       ),
