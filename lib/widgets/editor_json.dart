@@ -2,7 +2,7 @@ import 'dart:math' as math;
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:json_text_field/json_text_field.dart';
+import 'package:json_field_editor/json_field_editor.dart';
 import 'package:apidash/consts.dart';
 
 class JsonTextFieldEditor extends StatefulWidget {
@@ -13,6 +13,7 @@ class JsonTextFieldEditor extends StatefulWidget {
     this.initialValue,
     this.hintText,
     this.readOnly = false,
+    this.isDark = false,
   });
 
   final String fieldKey;
@@ -20,6 +21,8 @@ class JsonTextFieldEditor extends StatefulWidget {
   final String? initialValue;
   final String? hintText;
   final bool readOnly;
+  final bool isDark;
+
   @override
   State<JsonTextFieldEditor> createState() => _JsonTextFieldEditorState();
 }
@@ -51,7 +54,12 @@ class _JsonTextFieldEditorState extends State<JsonTextFieldEditor> {
     if (widget.initialValue != null) {
       controller.text = widget.initialValue!;
     }
-    controller.formatJson(sortJson: false);
+    // Below code fixes issue #782 but JSON formatting
+    // should be manual via beautify button
+    // Future.delayed(Duration(milliseconds: 50), () {
+    //   controller.formatJson(sortJson: false);
+    //   setState(() {});
+    // });
     editorFocusNode = FocusNode(debugLabel: "Editor Focus Node");
   }
 
@@ -69,10 +77,8 @@ class _JsonTextFieldEditorState extends State<JsonTextFieldEditor> {
       controller.selection =
           TextSelection.collapsed(offset: controller.text.length);
     }
-    if (oldWidget.fieldKey != widget.fieldKey) {
-      // TODO: JsonTextField uses ExtendedTextField which does
-      // not rebuild because no key is provided
-      // so light mode to dark mode switching leads to incorrect color.
+    if ((oldWidget.fieldKey != widget.fieldKey) ||
+        (oldWidget.isDark != widget.isDark)) {
       setState(() {});
     }
   }
@@ -87,40 +93,41 @@ class _JsonTextFieldEditorState extends State<JsonTextFieldEditor> {
               insertTab();
             },
           },
-          child: JsonTextField(
-            key: Key(widget.fieldKey),
+          child: JsonField(
+            key: ValueKey("${widget.fieldKey}-fld"),
+            fieldKey: widget.fieldKey,
             commonTextStyle: kCodeStyle.copyWith(
-              color: Theme.of(context).brightness == Brightness.dark
+              color: widget.isDark
                   ? kDarkCodeTheme['root']?.color
                   : kLightCodeTheme['root']?.color,
             ),
             specialCharHighlightStyle: kCodeStyle.copyWith(
-              color: Theme.of(context).brightness == Brightness.dark
+              color: widget.isDark
                   ? kDarkCodeTheme['root']?.color
                   : kLightCodeTheme['root']?.color,
             ),
             stringHighlightStyle: kCodeStyle.copyWith(
-              color: Theme.of(context).brightness == Brightness.dark
+              color: widget.isDark
                   ? kDarkCodeTheme['string']?.color
                   : kLightCodeTheme['string']?.color,
             ),
             numberHighlightStyle: kCodeStyle.copyWith(
-              color: Theme.of(context).brightness == Brightness.dark
+              color: widget.isDark
                   ? kDarkCodeTheme['number']?.color
                   : kLightCodeTheme['number']?.color,
             ),
             boolHighlightStyle: kCodeStyle.copyWith(
-              color: Theme.of(context).brightness == Brightness.dark
+              color: widget.isDark
                   ? kDarkCodeTheme['literal']?.color
                   : kLightCodeTheme['literal']?.color,
             ),
             nullHighlightStyle: kCodeStyle.copyWith(
-              color: Theme.of(context).brightness == Brightness.dark
+              color: widget.isDark
                   ? kDarkCodeTheme['variable']?.color
                   : kLightCodeTheme['variable']?.color,
             ),
             keyHighlightStyle: kCodeStyle.copyWith(
-              color: Theme.of(context).brightness == Brightness.dark
+              color: widget.isDark
                   ? kDarkCodeTheme['attr']?.color
                   : kLightCodeTheme['attr']?.color,
               fontWeight: FontWeight.bold,

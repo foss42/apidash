@@ -52,6 +52,18 @@ class SettingsPage extends ConsumerWidget {
               ),
               ADListTile(
                 type: ListTileType.switchOnOff,
+                title: 'DashBot',
+                subtitle:
+                    'Current selection: ${settings.isDashBotEnabled ? "Enabled" : "Disabled"}',
+                value: settings.isDashBotEnabled,
+                onChanged: (bool? value) {
+                  ref
+                      .read(settingsProvider.notifier)
+                      .update(isDashBotEnabled: value);
+                },
+              ),
+              ADListTile(
+                type: ListTileType.switchOnOff,
                 title: 'Collection Pane Scrollbar Visiblity',
                 subtitle:
                     'Current selection: ${settings.alwaysShowCollectionPaneScrollbar ? "Always show" : "Show only when scrolling"}',
@@ -163,11 +175,11 @@ class SettingsPage extends ConsumerWidget {
                 subtitle: const Text('Delete all requests data from the disk'),
                 trailing: FilledButton.tonalIcon(
                   style: FilledButton.styleFrom(
-                      backgroundColor: settings.isDark
-                          ? kColorDarkDanger
-                          : kColorLightDanger,
-                      surfaceTintColor: kColorRed,
-                      foregroundColor: Theme.of(context).colorScheme.onPrimary),
+                    backgroundColor:
+                        settings.isDark ? kColorDarkDanger : kColorLightDanger,
+                    surfaceTintColor: kColorRed,
+                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                  ),
                   onPressed: clearingData
                       ? null
                       : () => showDialog<String>(
@@ -217,9 +229,10 @@ class SettingsPage extends ConsumerWidget {
                             ),
                           ),
                   label: const Text("Clear"),
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.delete_forever_rounded,
                     size: 20,
+                    color: Theme.of(context).colorScheme.onPrimary,
                   ),
                 ),
               ),

@@ -1,5 +1,5 @@
 name: apidash
-description: API Dash is a beautiful open-source cross-platform API Client built using Flutter which can help you easily create & customize your API requests, visually inspect responses and generate Dart code on the go.
+description: API Dash is a beautiful open-source cross-platform API Client built using Flutter which can help you easily create & customize your API requests, visually inspect responses and generate API integration code on the go.
 publish_to: "none"
 version: 0.5.0+5
 
@@ -37,7 +37,8 @@ dependencies:
   json_annotation: ^4.9.0
   json_explorer:
     path: packages/json_explorer
-  json_text_field: ^1.2.0
+  json_field_editor:
+    path: packages/json_field_editor
   just_audio: ^0.9.46
   just_audio_mpv: ^0.1.7
   just_audio_windows: ^0.2.0

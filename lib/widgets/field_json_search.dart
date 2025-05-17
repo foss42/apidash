@@ -12,8 +12,13 @@ class JsonSearchField extends StatelessWidget {
     return ADRawTextField(
       controller: controller,
       onChanged: onChanged,
-      style: kCodeStyle,
+      style: kCodeStyle.copyWith(
+        fontSize: Theme.of(context).textTheme.bodySmall?.fontSize,
+      ),
       hintText: 'Search..',
+      hintTextStyle: kCodeStyle.copyWith(
+        fontSize: Theme.of(context).textTheme.bodySmall?.fontSize,
+      ),
     );
   }
 }

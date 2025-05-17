@@ -185,7 +185,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
     return Stack(
       children: [
         Container(
-          margin: kP10,
+          margin: kPh10t10,
           child: Column(
             children: [
               Expanded(
@@ -205,27 +205,28 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                   ),
                 ),
               ),
-              kVSpacer40,
+              if (!kIsMobile) kVSpacer40,
             ],
           ),
         ),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: Padding(
-            padding: kPb15,
-            child: ElevatedButton.icon(
-              onPressed: () {
-                formRows.add(kFormDataEmptyModel);
-                _onFieldChange();
-              },
-              icon: const Icon(Icons.add),
-              label: const Text(
-                kLabelAddFormField,
-                style: kTextStyleButton,
+        if (!kIsMobile)
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: kPb15,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  formRows.add(kFormDataEmptyModel);
+                  _onFieldChange();
+                },
+                icon: const Icon(Icons.add),
+                label: const Text(
+                  kLabelAddFormField,
+                  style: kTextStyleButton,
+                ),
               ),
             ),
           ),
-        ),
       ],
     );
   }

@@ -53,11 +53,21 @@ const kPh20t40 = EdgeInsets.only(
   right: 20,
   top: 40,
 );
+const kPh10t10 = EdgeInsets.only(
+  left: 10,
+  right: 10,
+  top: 10,
+);
 const kPs0o6 = EdgeInsets.only(
   left: 0,
   top: 6,
   right: 6,
   bottom: 6,
+);
+const kPh6b12 = EdgeInsets.only(
+  left: 6.0,
+  right: 6.0,
+  bottom: 12.0,
 );
 const kPh60 = EdgeInsets.symmetric(horizontal: 60);
 const kPh60v60 = EdgeInsets.symmetric(vertical: 60, horizontal: 60);
