@@ -2,6 +2,7 @@ import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/consts.dart';
+import '../screens/home_page/collection_pane.dart';
 import 'providers.dart';
 import '../models/models.dart';
 import '../services/services.dart' show hiveHandler, HiveHandler;
@@ -9,6 +10,12 @@ import '../utils/utils.dart'
     show getNewUuid, collectionToHAR, substituteHttpRequestModel;
 
 final selectedIdStateProvider = StateProvider<String?>((ref) => null);
+
+final selectedCollectionIdProvider = StateProvider<String?>((ref) => null);
+final filteredCollectionsProvider = Provider<List<Collection>>((ref) {
+  return ref.watch(collectionsProvider);
+});
+
 
 final selectedRequestModelProvider = StateProvider<RequestModel?>((ref) {
   final selectedId = ref.watch(selectedIdStateProvider);
@@ -26,18 +33,48 @@ final requestSequenceProvider = StateProvider<List<String>>((ref) {
 });
 
 final StateNotifierProvider<CollectionStateNotifier, Map<String, RequestModel>?>
-    collectionStateNotifierProvider =
-    StateNotifierProvider((ref) => CollectionStateNotifier(
-          ref,
-          hiveHandler,
-        ));
+collectionStateNotifierProvider =
+StateNotifierProvider((ref) => CollectionStateNotifier(
+  ref,
+  hiveHandler,
+  ));
+
+ //  this provider listens for changes in collection state and request sequence
+final collectionRequestSyncProvider = Provider<void>((ref) {
+  final selectedCollectionId = ref.watch(selectedCollectionIdProvider);
+  final requestSequence = ref.watch(requestSequenceProvider);
+
+  // Only proceed if a collection is selected
+  if (selectedCollectionId != null && requestSequence.isNotEmpty) {
+    ref.listen(collectionStateNotifierProvider, (previous, current) {
+      if (previous != current) {
+        // Get the current collection
+        final collections = ref.read(collectionsProvider);
+        final collectionIndex = collections.indexWhere((c) => c.id == selectedCollectionId);
+
+        if (collectionIndex >= 0) {
+          // Update the collection with the current request sequence
+          // requestSequence is already List<String>, which matches what Collection.requests expects
+          final updatedCollection = collections[collectionIndex].copyWith(
+              requests: requestSequence
+          );
+
+          // Update the collection in the provider
+          ref.read(collectionsProvider.notifier).updateCollection(updatedCollection);
+        }
+      }
+    });
+  }
+  return null;
+ });
+
 
 class CollectionStateNotifier
     extends StateNotifier<Map<String, RequestModel>?> {
   CollectionStateNotifier(
-    this.ref,
-    this.hiveHandler,
-  ) : super(null) {
+      this.ref,
+      this.hiveHandler,
+      ) : super(null) {
     var status = loadData();
     Future.microtask(() {
       if (status) {
@@ -46,7 +83,7 @@ class CollectionStateNotifier
         ];
       }
       ref.read(selectedIdStateProvider.notifier).state =
-          ref.read(requestSequenceProvider)[0];
+      ref.read(requestSequenceProvider)[0];
     });
   }
 
@@ -78,12 +115,14 @@ class CollectionStateNotifier
         .update((state) => [id, ...state]);
     ref.read(selectedIdStateProvider.notifier).state = newRequestModel.id;
     unsave();
+
+
   }
 
   void addRequestModel(
-    HttpRequestModel httpRequestModel, {
-    String? name,
-  }) {
+      HttpRequestModel httpRequestModel, {
+        String? name,
+      }) {
     final id = getNewUuid();
     final newRequestModel = RequestModel(
       id: id,
@@ -204,6 +243,8 @@ class CollectionStateNotifier
     unsave();
   }
 
+
+
   void update({
     String? id,
     HTTPVerb? method,
@@ -242,11 +283,11 @@ class CollectionStateNotifier
         headers: headers ?? currentHttpRequestModel.headers,
         params: params ?? currentHttpRequestModel.params,
         isHeaderEnabledList:
-            isHeaderEnabledList ?? currentHttpRequestModel.isHeaderEnabledList,
+        isHeaderEnabledList ?? currentHttpRequestModel.isHeaderEnabledList,
         isParamEnabledList:
-            isParamEnabledList ?? currentHttpRequestModel.isParamEnabledList,
+        isParamEnabledList ?? currentHttpRequestModel.isParamEnabledList,
         bodyContentType:
-            bodyContentType ?? currentHttpRequestModel.bodyContentType,
+        bodyContentType ?? currentHttpRequestModel.bodyContentType,
         body: body ?? currentHttpRequestModel.body,
         query: query ?? currentHttpRequestModel.query,
         formData: formData ?? currentHttpRequestModel.formData,
@@ -278,7 +319,7 @@ class CollectionStateNotifier
 
     APIType apiType = requestModel!.apiType;
     HttpRequestModel substitutedHttpRequestModel =
-        getSubstitutedHttpRequestModel(requestModel.httpRequestModel!);
+    getSubstitutedHttpRequestModel(requestModel.httpRequestModel!);
 
     // set current model's isWorking to true and update state
     var map = {...state!};

@@ -1,5 +1,5 @@
 //import 'package:spot/spot.dart';
-import 'package:apidash/providers/providers.dart';
+// import 'package:apidash/providers/providers.dart';
 import 'package:apidash/screens/common_widgets/common_widgets.dart';
 import 'package:apidash/screens/dashboard.dart';
 import 'package:apidash/screens/envvar/environment_page.dart';
@@ -22,6 +22,7 @@ import 'package:flutter_test/flutter_test.dart';
 import '../extensions/widget_tester_extensions.dart';
 import '../test_consts.dart';
 import 'helpers.dart';
+import 'package:apidash/providers/providers.dart' as providers;
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -58,7 +59,7 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            navRailIndexStateProvider.overrideWith((ref) => 1),
+            providers.navRailIndexStateProvider.overrideWith((ref) => 1),
           ],
           child: const MaterialApp(
             home: Dashboard(),
@@ -79,7 +80,7 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            navRailIndexStateProvider.overrideWith((ref) => 2),
+            providers.navRailIndexStateProvider.overrideWith((ref) => 2),
           ],
           child: const Portal(
             child: MaterialApp(
@@ -101,7 +102,7 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            navRailIndexStateProvider.overrideWith((ref) => 3),
+            providers.navRailIndexStateProvider.overrideWith((ref) => 3),
           ],
           child: const Portal(
             child: MaterialApp(
@@ -138,7 +139,7 @@ void main() {
       // Verify that the navRailIndexStateProvider is updated
       final dashboard = tester.element(find.byType(Dashboard));
       final container = ProviderScope.containerOf(dashboard);
-      expect(container.read(navRailIndexStateProvider), 3);
+      expect(container.read(providers.navRailIndexStateProvider), 3);
     });
 
     testWidgets(
@@ -173,7 +174,7 @@ void main() {
       // Verify that the navRailIndexStateProvider still has the updated value
       final dashboard = tester.element(find.byType(Dashboard));
       final container = ProviderScope.containerOf(dashboard);
-      expect(container.read(navRailIndexStateProvider), 3);
+      expect(container.read(providers.navRailIndexStateProvider), 3);
 
       // Verify that the SettingsPage is still displayed after the rebuild
       expect(find.byType(SettingsPage), findsOneWidget);
@@ -199,7 +200,7 @@ void main() {
       final container = ProviderScope.containerOf(dashboard);
 
       // Go to EnvironmentPage
-      container.read(navRailIndexStateProvider.notifier).state = 1;
+      container.read(providers.navRailIndexStateProvider.notifier).state = 1;
       await tester.pump();
 
       // Verify that the EnvironmentPage is displayed
@@ -208,7 +209,7 @@ void main() {
       expect(find.byIcon(Icons.laptop_windows), findsOneWidget);
 
       // Go to HistoryPage
-      container.read(navRailIndexStateProvider.notifier).state = 2;
+      container.read(providers.navRailIndexStateProvider.notifier).state = 2;
       await tester.pump();
 
       // Verify that the HistoryPage is displayed
@@ -217,7 +218,7 @@ void main() {
       expect(find.byIcon(Icons.history_rounded), findsOneWidget);
 
       // Go to SettingsPage
-      container.read(navRailIndexStateProvider.notifier).state = 3;
+      container.read(providers.navRailIndexStateProvider.notifier).state = 3;
       await tester.pump();
 
       // Verify that the SettingsPage is displayed
@@ -254,7 +255,7 @@ void main() {
       // by trying to read from disposed container
       bool isDisposed = false;
       try {
-        container.read(navRailIndexStateProvider);
+        container.read(providers.navRailIndexStateProvider);
       } catch (e) {
         isDisposed = true;
       }
@@ -298,7 +299,7 @@ void main() {
 
       final collectionPane = tester.element(find.byType(CollectionPane));
       final container = ProviderScope.containerOf(collectionPane);
-      var orig = container.read(selectedIdStateProvider);
+      var orig = container.read(providers.selectedIdStateProvider);
       expect(orig, isNotNull);
 
       // Tap on the three dots to open the request card menu
@@ -322,7 +323,7 @@ void main() {
       // INFO: Screenshot using spot
       // await takeScreenshot();
 
-      var dupId = container.read(selectedIdStateProvider);
+      var dupId = container.read(providers.selectedIdStateProvider);
       expect(dupId, isNotNull);
       expect(dupId.runtimeType, String);
       expect(dupId != orig, isTrue);
@@ -416,7 +417,7 @@ void main() {
       // Verify that the initial value is false
       final editorPane = tester.element(find.byType(RequestEditorPane));
       final container = ProviderScope.containerOf(editorPane);
-      expect(container.read(codePaneVisibleStateProvider), false);
+      expect(container.read(providers.codePaneVisibleStateProvider), false);
     });
 
     testWidgets("When state is false ResponsePane should be visible",
@@ -463,7 +464,7 @@ void main() {
 
       final editorPane = tester.element(find.byType(RequestEditorPane));
       final container = ProviderScope.containerOf(editorPane);
-      expect(container.read(codePaneVisibleStateProvider), false);
+      expect(container.read(providers.codePaneVisibleStateProvider), false);
       expect(find.byType(ResponsePane), findsOneWidget);
     });
 
@@ -512,11 +513,11 @@ void main() {
       final editorPane = tester.element(find.byType(RequestEditorPane));
       final container = ProviderScope.containerOf(editorPane);
       // Change codePaneVisibleStateProvider state to true
-      container.read(codePaneVisibleStateProvider.notifier).state = true;
+      container.read(providers.codePaneVisibleStateProvider.notifier).state = true;
       await tester.pump();
 
       // Verify that the CodePane is visible
-      expect(container.read(codePaneVisibleStateProvider), true);
+      expect(container.read(providers.codePaneVisibleStateProvider), true);
       expect(find.byType(CodePane), findsOneWidget);
     });
 
@@ -563,22 +564,22 @@ void main() {
 
       final editorPane = tester.element(find.byType(RequestEditorPane));
       final container = ProviderScope.containerOf(editorPane);
-      final bool currentValue = container.read(codePaneVisibleStateProvider);
+      final bool currentValue = container.read(providers.codePaneVisibleStateProvider);
 
       // Click on View Code button
       await tester.tap(find.byIcon(Icons.code_rounded));
       await tester.pump();
 
       // Verify that the state value has changed
-      expect(container.read(codePaneVisibleStateProvider), !currentValue);
-      final bool newValue = container.read(codePaneVisibleStateProvider);
+      expect(container.read(providers.codePaneVisibleStateProvider), !currentValue);
+      final bool newValue = container.read(providers.codePaneVisibleStateProvider);
 
       // Click on Hide Code button
       await tester.tap(find.byIcon(Icons.code_off_rounded));
       await tester.pump();
 
       // Verify that the state value has changed
-      expect(container.read(codePaneVisibleStateProvider), !newValue);
+      expect(container.read(providers.codePaneVisibleStateProvider), !newValue);
     });
 
     testWidgets("That state persists across widget rebuilds", (tester) async {
@@ -624,14 +625,14 @@ void main() {
 
       final editorPane = tester.element(find.byType(RequestEditorPane));
       final container = ProviderScope.containerOf(editorPane);
-      final bool currentValue = container.read(codePaneVisibleStateProvider);
+      final bool currentValue = container.read(providers.codePaneVisibleStateProvider);
 
       // Click on View Code button
       await tester.tap(find.byIcon(Icons.code_rounded));
       await tester.pump();
 
       // Verify that the state value has changed
-      expect(container.read(codePaneVisibleStateProvider), !currentValue);
+      expect(container.read(providers.codePaneVisibleStateProvider), !currentValue);
       bool matcher = !currentValue;
 
       // Rebuild the widget tree
@@ -649,7 +650,7 @@ void main() {
 
       // Verify that the value of codePaneVisibleStateProvider is still true
       final containerAfterRebuild = ProviderScope.containerOf(editorPane);
-      bool actual = containerAfterRebuild.read(codePaneVisibleStateProvider);
+      bool actual = containerAfterRebuild.read(providers.codePaneVisibleStateProvider);
       expect(actual, matcher);
     });
 
@@ -667,16 +668,16 @@ void main() {
       // Verify that codePaneVisibleStateProvider is present
       final editorPane = tester.element(find.byType(RequestEditorPane));
       final container = ProviderScope.containerOf(editorPane);
-      expect(container.read(codePaneVisibleStateProvider).runtimeType, bool);
+      expect(container.read(providers.codePaneVisibleStateProvider).runtimeType, bool);
 
       // Update the widget tree to dispose the provider
       await tester.pumpWidget(const MaterialApp());
 
       // Verify that the provider was disposed
-      expect(() => container.read(codePaneVisibleStateProvider),
+      expect(() => container.read(providers.codePaneVisibleStateProvider),
           throwsA(isA<StateError>()));
       expect(
-        () => container.read(codePaneVisibleStateProvider),
+        () => container.read(providers.codePaneVisibleStateProvider),
         throwsA(
           isA<StateError>().having(
             (e) => e.message,
