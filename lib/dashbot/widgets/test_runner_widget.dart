@@ -9,9 +9,9 @@ class TestRunnerWidget extends ConsumerStatefulWidget {
   final String testCases;
 
   const TestRunnerWidget({
-    Key? key,
+    super.key,
     required this.testCases,
-  }) : super(key: key);
+  });
 
   @override
   ConsumerState<TestRunnerWidget> createState() => _TestRunnerWidgetState();

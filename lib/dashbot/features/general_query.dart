@@ -1,5 +1,5 @@
 import 'package:ollama_dart/ollama_dart.dart';
-import 'package:apidash/models/request_model.dart';
+import 'package:apidash/models/models.dart';
 
 class GeneralQueryFeature {
   final OllamaClient _client;
