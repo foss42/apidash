@@ -33,26 +33,35 @@ class _RequestResponsePageState extends ConsumerState<RequestResponsePage>
         useTabController(initialLength: 3, vsync: this);
     return DrawerSplitView(
       scaffoldKey: kHomeScaffoldKey,
-      title: EditorTitle(
-        title: name,
-        onSelected: (ItemMenuOption item) {
-          if (item == ItemMenuOption.edit) {
-            showRenameDialog(context, "Rename Request", name, (val) {
-              ref
-                  .read(collectionStateNotifierProvider.notifier)
-                  .update(name: val);
-            });
-          }
-          if (item == ItemMenuOption.delete) {
-            ref.read(collectionStateNotifierProvider.notifier).remove();
-          }
-          if (item == ItemMenuOption.duplicate) {
-            ref.read(collectionStateNotifierProvider.notifier).duplicate();
-          }
-        },
+      title: Row(
+        children: [
+          APITypeDropdown(),
+          Expanded(
+            child: EditorTitle(
+              title: name,
+              onSelected: (ItemMenuOption item) {
+                if (item == ItemMenuOption.edit) {
+                  showRenameDialog(context, "Rename Request", name, (val) {
+                    ref
+                        .read(collectionStateNotifierProvider.notifier)
+                        .update(name: val);
+                  });
+                }
+                if (item == ItemMenuOption.delete) {
+                  ref.read(collectionStateNotifierProvider.notifier).remove();
+                }
+                if (item == ItemMenuOption.duplicate) {
+                  ref
+                      .read(collectionStateNotifierProvider.notifier)
+                      .duplicate();
+                }
+              },
+            ),
+          ),
+        ],
       ),
       leftDrawerContent: const CollectionPane(),
-      actions: const [kVSpacer16],
+      actions: const [kHSpacer12],
       mainContent: id == null
           ? const RequestEditorDefault()
           : RequestTabs(
