@@ -1,0 +1,74 @@
+import 'package:flutter/material.dart';
+import 'package:vector_math/vector_math_64.dart' as vm;
+
+class GridPainter extends CustomPainter {
+  final Matrix4 transformation;
+  final Size viewportSize;
+  final double baseGridSize;
+  final double canvasSize;
+
+  GridPainter({
+    required this.transformation,
+    required this.viewportSize,
+    this.baseGridSize = 20,
+    required this.canvasSize,
+  });
+  Offset _transformPoint(Offset point, Matrix4 matrix) {
+    final vector = matrix.transform3(vm.Vector3(point.dx, point.dy, 0));
+    return Offset(vector.x, vector.y);
+  }
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final zoom = transformation.getMaxScaleOnAxis();
+    final gridSize = baseGridSize * zoom;
+    final inverted = Matrix4.copy(transformation)..invert();
+
+    // Increase grid spacing at low zoom to reduce lines
+    final effectiveGridSize = zoom < 0.5
+        ? gridSize * 4
+        : zoom < 1
+            ? gridSize * 2
+            : gridSize;
+
+    // Center the origin
+    final centerOffset = Offset(canvasSize / 2, canvasSize / 2);
+    final topLeft = _transformPoint(Offset.zero, inverted) - centerOffset;
+    final bottomRight =
+        _transformPoint(Offset(size.width, size.height), inverted) -
+            centerOffset;
+
+    // Viewport-relative offsets
+    final startX =
+        (topLeft.dx ~/ effectiveGridSize - 1) * effectiveGridSize.toDouble();
+    final endX = (bottomRight.dx ~/ effectiveGridSize + 1) *
+        effectiveGridSize.toDouble();
+
+    final startY =
+        (topLeft.dy ~/ effectiveGridSize - 1) * effectiveGridSize.toDouble();
+    final endY = (bottomRight.dy ~/ effectiveGridSize + 1) *
+        effectiveGridSize.toDouble();
+
+    final paint = Paint()
+      ..color = Colors.blue.shade700
+      ..style = PaintingStyle.fill;
+
+    // Draw dots at grid box corners
+    for (double x = startX; x <= endX; x += effectiveGridSize) {
+      for (double y = startY; y <= endY; y += effectiveGridSize) {
+        canvas.drawCircle(
+          Offset(x + centerOffset.dx, y + centerOffset.dy),
+          1.0,
+          paint,
+        );
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(GridPainter oldDelegate) {
+    return transformation != oldDelegate.transformation ||
+        viewportSize != oldDelegate.viewportSize ||
+        canvasSize != oldDelegate.canvasSize;
+  }
+}

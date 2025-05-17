@@ -1,3 +1,6 @@
+import 'package:apidash/screens/collections/collections.dart';
+import 'package:apidash/screens/dashflow/dashflow.dart';
+import 'package:apidash/screens/monitor/monitor.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -68,12 +71,65 @@ class Dashboard extends ConsumerWidget {
                       'History',
                       style: Theme.of(context).textTheme.labelSmall,
                     ),
+                    kVSpacer10,
+                    IconButton(
+                      isSelected: railIdx == 3,
+                      onPressed: () {
+                        ref.read(navRailIndexStateProvider.notifier).state = 3;
+                      },
+                      icon: const Icon(Icons.layers_sharp),
+                      selectedIcon: const Icon(Icons.layers_outlined),
+                    ),
+                    Text(
+                      'Collections',
+                      style: Theme.of(context).textTheme.labelSmall,
+                    ),
+                    kVSpacer10,
+                    IconButton(
+                      isSelected: railIdx == 4,
+                      onPressed: () {
+                        ref.read(navRailIndexStateProvider.notifier).state = 4;
+                      },
+                      icon: const Icon(Icons.monitor_heart_sharp),
+                      selectedIcon: const Icon(Icons.monitor_heart_outlined),
+                    ),
+                    Text(
+                      'Monitors',
+                      style: Theme.of(context).textTheme.labelSmall,
+                    ),
+                    kVSpacer10,
+                    IconButton(
+                      isSelected: railIdx == 5,
+                      onPressed: () {
+                        ref.read(navRailIndexStateProvider.notifier).state = 5;
+                      },
+                      icon: Image.asset("assets/images/dashflow_black.png",height: MediaQuery.of(context).size.height*0.05,),
+                      selectedIcon: Image.asset("assets/images/dashflow_blue.png",height: MediaQuery.of(context).size.height*0.05,),
+                    ),
+                    Text(
+                      'Dash Flow',
+                      style: Theme.of(context).textTheme.labelSmall,
+                    ),
                   ],
                 ),
                 Expanded(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 16.0),
+                        child: NavbarButton(
+                          railIdx: railIdx,
+                          selectedIcon: Icons.play_circle,
+                          icon: Icons.play_circle_outlined,
+                          label: 'Runner',
+                          showLabel: false,
+                          isCompact: true,
+                          onTap: () {
+                            showAboutAppDialog(context);
+                          },
+                        ),
+                      ),
                       Padding(
                         padding: const EdgeInsets.only(bottom: 16.0),
                         child: NavbarButton(
@@ -118,6 +174,9 @@ class Dashboard extends ConsumerWidget {
                   HomePage(),
                   EnvironmentPage(),
                   HistoryPage(),
+                  CollectionPage(),
+                  MonitorPage(),
+                  DashflowPage(),
                   SettingsPage(),
                 ],
               ),
