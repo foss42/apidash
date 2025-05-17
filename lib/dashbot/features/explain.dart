@@ -9,6 +9,7 @@ class ExplainFeature {
   Future<String> explainLatestApi({
     required RequestModel? requestModel,
     required dynamic responseModel,
+    required String selectedAI,
   }) async {
     if (requestModel == null || responseModel == null) {
       return "No recent API requests found.";
@@ -62,6 +63,6 @@ AVOID:
 Deliver a CRYSTAL CLEAR, CONCISE explanation that anyone can understand.
 ''';
 
-    return _service.generateResponse(prompt);
+    return _service.generateResponse(prompt, selectedAI);
   }
 }
