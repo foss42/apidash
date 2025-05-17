@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../tokens/tokens.dart';
 import 'decoration_input_textfield.dart';
 
@@ -78,7 +79,6 @@ class _ADOutlinedTextFieldState extends State<ADOutlinedTextField> {
     _focusNode = FocusNode();
     _controller = widget.controller ?? TextEditingController(text: widget.initialValue);
     _focusNode.addListener(_handleFocusChange);
-    // Initial check for multiline state
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkMultiLineAndUpdateOverlay();
     });
@@ -89,20 +89,26 @@ class _ADOutlinedTextFieldState extends State<ADOutlinedTextField> {
     _isFocused = _focusNode.hasFocus;
 
     if (_isFocused != wasFocused) {
-      setState(() {
-        // Update the maxLines based on focus
-      });
+      setState(() {});
       _checkMultiLineAndUpdateOverlay();
+    }
+
+    if (!_isFocused && widget.onOverlayToggle != null) {
+      widget.onOverlayToggle!(
+        false,
+        _textFieldKey,
+        _controller.text,
+        TextStyle(),
+        Theme.of(context).colorScheme,
+        _focusNode,
+        _controller,
+        InputDecoration(),
+      );
     }
   }
 
   @override
   void dispose() {
-    if (widget.controller == null) {
-      _controller.dispose();
-    }
-    _focusNode.removeListener(_handleFocusChange);
-    _focusNode.dispose();
     widget.onOverlayToggle?.call(
       false,
       _textFieldKey,
@@ -113,6 +119,11 @@ class _ADOutlinedTextFieldState extends State<ADOutlinedTextField> {
       _controller,
       InputDecoration(),
     );
+    if (widget.controller == null) {
+      _controller.dispose();
+    }
+    _focusNode.removeListener(_handleFocusChange);
+    _focusNode.dispose();
     super.dispose();
   }
 
@@ -136,7 +147,6 @@ class _ADOutlinedTextFieldState extends State<ADOutlinedTextField> {
     final contentPadding = widget.contentPadding ?? const EdgeInsets.symmetric(horizontal: 8, vertical: 8);
     final horizontalPadding = contentPadding is EdgeInsets ? contentPadding.horizontal : 16.0;
 
-    // Safely calculate maxWidth
     double maxWidth = double.infinity;
     if (_textFieldKey.currentContext != null) {
       final renderBox = _textFieldKey.currentContext!.findRenderObject() as RenderBox?;
@@ -149,7 +159,6 @@ class _ADOutlinedTextFieldState extends State<ADOutlinedTextField> {
     final lineCount = _calculateLineCount(text, textStyle, maxWidth);
     final isMultiLine = lineCount > 1;
 
-    // Update the multiline state
     _isMultiLine = isMultiLine;
 
     final showOverlay = _isFocused && _isMultiLine;
@@ -189,39 +198,64 @@ class _ADOutlinedTextFieldState extends State<ADOutlinedTextField> {
         );
     final contentPadding = widget.contentPadding ?? const EdgeInsets.symmetric(horizontal: 8, vertical: 8);
 
-    return TextFormField(
-      key: _textFieldKey,
-      controller: _controller,
-      focusNode: _focusNode,
-      readOnly: widget.readOnly,
-      enabled: widget.enabled,
-      maxLines: _isFocused ? null : 1,
-      keyboardType: TextInputType.multiline,
-      expands: widget.expands,
-      style: textStyle,
-      decoration: getTextFieldInputDecoration(
-        clrScheme,
-        fillColor: widget.fillColor,
-        hintText: widget.hintText,
-        hintTextStyle: widget.hintTextStyle,
-        hintTextFontSize: widget.hintTextFontSize,
-        hintTextColor: widget.hintTextColor,
-        contentPadding: contentPadding,
-        focussedBorderColor: widget.focussedBorderColor,
-        enabledBorderColor: widget.enabledBorderColor,
-        isDense: widget.isDense ?? true,
-      ),
-      onChanged: (value) {
-        widget.onChanged?.call(value);
-        _checkMultiLineAndUpdateOverlay();
-      },
-      onTap: () {
-        if (!_isFocused) {
-          _isFocused = true;
-          setState(() {});
+    return RawKeyboardListener(
+      focusNode: FocusNode(),
+      onKey: (RawKeyEvent event) {
+        if (event is RawKeyDownEvent && event.logicalKey == LogicalKeyboardKey.enter) {
+          _focusNode.unfocus();
+          widget.onChanged?.call(_controller.text);
+          widget.onOverlayToggle?.call(
+            false,
+            _textFieldKey,
+            _controller.text,
+            textStyle,
+            clrScheme,
+            _focusNode,
+            _controller,
+            InputDecoration(),
+          );
         }
-        _checkMultiLineAndUpdateOverlay();
       },
+      child: TextFormField(
+        key: _textFieldKey,
+        controller: _controller,
+        focusNode: _focusNode,
+        readOnly: widget.readOnly,
+        enabled: widget.enabled,
+        maxLines: _isFocused ? null : 1,
+        keyboardType: TextInputType.multiline,
+        expands: widget.expands,
+        style: textStyle,
+        decoration: getTextFieldInputDecoration(
+          clrScheme,
+          fillColor: widget.fillColor,
+          hintText: widget.hintText,
+          hintTextStyle: widget.hintTextStyle,
+          hintTextFontSize: widget.hintTextFontSize,
+          hintTextColor: widget.hintTextColor,
+          contentPadding: contentPadding,
+          focussedBorderColor: widget.focussedBorderColor,
+          enabledBorderColor: widget.enabledBorderColor,
+          isDense: widget.isDense ?? true,
+        ),
+        onChanged: (value) {
+          widget.onChanged?.call(value);
+          _checkMultiLineAndUpdateOverlay();
+        },
+        onTap: () {
+          if (!_isFocused) {
+            FocusScope.of(context).requestFocus(FocusNode());
+            _focusNode.requestFocus();
+            _isFocused = true;
+            setState(() {});
+          }
+          _checkMultiLineAndUpdateOverlay();
+        },
+        onFieldSubmitted: (_) {
+          _focusNode.unfocus();
+          widget.onChanged?.call(_controller.text);
+        },
+      ),
     );
   }
 }

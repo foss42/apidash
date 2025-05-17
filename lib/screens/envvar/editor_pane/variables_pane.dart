@@ -78,11 +78,8 @@ class EditEnvironmentVariablesState
           elevation: 8,
           borderRadius: BorderRadius.circular(8),
           child: Container(
-            // padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: clrScheme.surface,
-              // borderRadius: BorderRadius.circular(8),
-              // border: Border.all(color: kColorWhite.withOpacity(0.5)),
             ),
             child: TextField(
               controller: controller,
@@ -92,6 +89,10 @@ class EditEnvironmentVariablesState
               maxLines: null,
               keyboardType: TextInputType.multiline,
               autofocus: true,
+              onSubmitted: (_) {
+                focusNode.unfocus();
+                _removeOverlay();
+              },
             ),
           ),
         ),
@@ -265,57 +266,63 @@ class EditEnvironmentVariablesState
       },
     );
 
-    return Stack(
-      children: [
-        Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface,
-            borderRadius: kBorderRadius12,
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).requestFocus(FocusNode());
+        _removeOverlay();
+      },
+      child: Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surface,
+              borderRadius: kBorderRadius12,
+            ),
+            margin: kPh10t10,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(
+                  child: Theme(
+                    data: Theme.of(context)
+                        .copyWith(scrollbarTheme: kDataTableScrollbarTheme),
+                    child: DataTable2(
+                      columnSpacing: 12,
+                      dividerThickness: 0,
+                      horizontalMargin: 0,
+                      headingRowHeight: 0,
+                      dataRowHeight: null,
+                      bottomMargin: kDataTableBottomPadding,
+                      isVerticalScrollBarVisible: true,
+                      columns: columns,
+                      rows: dataRows,
+                    ),
+                  ),
+                ),
+                if (!kIsMobile) kVSpacer40,
+              ],
+            ),
           ),
-          margin: kPh10t10,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Expanded(
-                child: Theme(
-                  data: Theme.of(context)
-                      .copyWith(scrollbarTheme: kDataTableScrollbarTheme),
-                  child: DataTable2(
-                    columnSpacing: 12,
-                    dividerThickness: 0,
-                    horizontalMargin: 0,
-                    headingRowHeight: 0,
-                    dataRowHeight: null,
-                    bottomMargin: kDataTableBottomPadding,
-                    isVerticalScrollBarVisible: true,
-                    columns: columns,
-                    rows: dataRows,
+          if (!kIsMobile)
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Padding(
+                padding: kPb15,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    variableRows.add(kEnvironmentVariableEmptyModel);
+                    _onFieldChange(selectedId!);
+                  },
+                  icon: const Icon(Icons.add),
+                  label: const Text(
+                    kLabelAddVariable,
+                    style: kTextStyleButton,
                   ),
                 ),
               ),
-              if (!kIsMobile) kVSpacer40,
-            ],
-          ),
-        ),
-        if (!kIsMobile)
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: kPb15,
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  variableRows.add(kEnvironmentVariableEmptyModel);
-                  _onFieldChange(selectedId!);
-                },
-                icon: const Icon(Icons.add),
-                label: const Text(
-                  kLabelAddVariable,
-                  style: kTextStyleButton,
-                ),
-              ),
             ),
-          ),
-      ],
+        ],
+      ),
     );
   }
 }
