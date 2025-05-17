@@ -16,15 +16,15 @@ class TestGeneratorFeature {
     }
 
     final method = requestModel.httpRequestModel?.method
-        .toString()
-        .split('.')
-        .last
-        .toUpperCase() ??
+            .toString()
+            .split('.')
+            .last
+            .toUpperCase() ??
         "GET";
     final endpoint = requestModel.httpRequestModel?.url ?? "Unknown Endpoint";
     final rawResponse = responseModel.body;
     final responseBody =
-    rawResponse is String ? rawResponse : jsonEncode(rawResponse);
+        rawResponse is String ? rawResponse : jsonEncode(rawResponse);
     final statusCode = responseModel.statusCode ?? 0;
 
     Uri uri = Uri.parse(endpoint);
@@ -75,9 +75,11 @@ Focus on creating realistic test values based on the API context (e.g., for a co
 
     parameters.forEach((key, value) {
       if (RegExp(r'^[A-Z]{3}$').hasMatch(value)) {
-        analysis[key] = "Appears to be a 3-letter country code (ISO 3166-1 alpha-3)";
+        analysis[key] =
+            "Appears to be a 3-letter country code (ISO 3166-1 alpha-3)";
       } else if (RegExp(r'^[A-Z]{2}$').hasMatch(value)) {
-        analysis[key] = "Appears to be a 2-letter country code (ISO 3166-1 alpha-2)";
+        analysis[key] =
+            "Appears to be a 2-letter country code (ISO 3166-1 alpha-2)";
       } else if (RegExp(r'^\d+$').hasMatch(value)) {
         analysis[key] = "Numeric value";
       } else if (RegExp(r'^[a-zA-Z]+$').hasMatch(value)) {

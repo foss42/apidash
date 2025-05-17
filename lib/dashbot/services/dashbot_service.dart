@@ -1,10 +1,6 @@
-import 'package:apidash/dashbot/features/debug.dart';
-import 'package:apidash/dashbot/features/documentation.dart';
 import 'package:ollama_dart/ollama_dart.dart';
-import 'package:apidash/dashbot/features/explain.dart';
-import 'package:apidash/dashbot/features/test_generator.dart';
 import 'package:apidash/models/request_model.dart';
-import 'package:apidash/dashbot/features/general_query.dart';
+import '../features/features.dart';
 
 class DashBotService {
   final OllamaClient _client;
@@ -16,7 +12,8 @@ class DashBotService {
 
   DashBotService()
       : _client = OllamaClient(baseUrl: 'http://127.0.0.1:11434/api'),
-        _generalQueryFeature = GeneralQueryFeature(OllamaClient(baseUrl: 'http://127.0.0.1:11434/api')) {
+        _generalQueryFeature = GeneralQueryFeature(
+            OllamaClient(baseUrl: 'http://127.0.0.1:11434/api')) {
     _explainFeature = ExplainFeature(this);
     _debugFeature = DebugFeature(this);
     _documentationFeature = DocumentationFeature(this);
@@ -28,21 +25,36 @@ class DashBotService {
   }
 
   Future<String> handleRequest(
-      String input, RequestModel? requestModel, dynamic responseModel) async {
+    String input,
+    RequestModel? requestModel,
+    dynamic responseModel,
+  ) async {
     if (input == "Explain API") {
       return _explainFeature.explainLatestApi(
-          requestModel: requestModel, responseModel: responseModel);
+        requestModel: requestModel,
+        responseModel: responseModel,
+      );
     } else if (input == "Debug API") {
       return _debugFeature.debugApi(
-          requestModel: requestModel, responseModel: responseModel);
+        requestModel: requestModel,
+        responseModel: responseModel,
+      );
     } else if (input == "Document API") {
       return _documentationFeature.generateApiDocumentation(
-          requestModel: requestModel, responseModel: responseModel);
+        requestModel: requestModel,
+        responseModel: responseModel,
+      );
     } else if (input == "Test API") {
       return _testGeneratorFeature.generateApiTests(
-          requestModel: requestModel, responseModel: responseModel);
+        requestModel: requestModel,
+        responseModel: responseModel,
+      );
     }
 
-    return _generalQueryFeature.generateResponse(input, requestModel: requestModel, responseModel: responseModel);
+    return _generalQueryFeature.generateResponse(
+      input,
+      requestModel: requestModel,
+      responseModel: responseModel,
+    );
   }
 }

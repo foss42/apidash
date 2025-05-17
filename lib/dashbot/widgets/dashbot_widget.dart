@@ -53,7 +53,8 @@ class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
         final testCases = response.replaceFirst("TEST_CASES_HIDDEN\n", "");
         ref.read(chatMessagesProvider.notifier).addMessage({
           'role': 'bot',
-          'message': "Test cases generated successfully. Click the button below to run them.",
+          'message':
+              "Test cases generated successfully. Click the button below to run them.",
           'testCases': testCases,
           'showTestButton': true,
         });
@@ -113,18 +114,18 @@ class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
       child: isMinimized
           ? _buildMinimizedView(context)
           : Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildHeader(context),
-          const SizedBox(height: 12),
-          _buildQuickActions(showDebugButton),
-          const SizedBox(height: 12),
-          Expanded(child: _buildChatArea(messages)),
-          if (_isLoading) _buildLoadingIndicator(),
-          const SizedBox(height: 10),
-          _buildInputArea(context),
-        ],
-      ),
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildHeader(context),
+                const SizedBox(height: 12),
+                _buildQuickActions(showDebugButton),
+                const SizedBox(height: 12),
+                Expanded(child: _buildChatArea(messages)),
+                if (_isLoading) _buildLoadingIndicator(),
+                const SizedBox(height: 10),
+                _buildInputArea(context),
+              ],
+            ),
     );
   }
 
@@ -150,7 +151,8 @@ class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
                 ),
                 tooltip: isMinimized ? 'Maximize' : 'Minimize',
                 onPressed: () {
-                  ref.read(dashBotMinimizedProvider.notifier).state = !isMinimized;
+                  ref.read(dashBotMinimizedProvider.notifier).state =
+                      !isMinimized;
                 },
               ),
               IconButton(
@@ -214,7 +216,8 @@ class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
               icon: const Icon(Icons.bug_report_outlined, size: 16),
               label: const Text("Debug"),
               style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 visualDensity: VisualDensity.compact,
               ),
             ),

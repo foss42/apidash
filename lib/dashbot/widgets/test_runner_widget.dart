@@ -8,7 +8,10 @@ import 'content_renderer.dart';
 class TestRunnerWidget extends ConsumerStatefulWidget {
   final String testCases;
 
-  const TestRunnerWidget({Key? key, required this.testCases}) : super(key: key);
+  const TestRunnerWidget({
+    Key? key,
+    required this.testCases,
+  }) : super(key: key);
 
   @override
   ConsumerState<TestRunnerWidget> createState() => _TestRunnerWidgetState();
@@ -78,7 +81,8 @@ class _TestRunnerWidgetState extends ConsumerState<TestRunnerWidget> {
       String method = "GET";
       if (command.contains("-X POST") || command.contains("--request POST")) {
         method = "POST";
-      } else if (command.contains("-X PUT") || command.contains("--request PUT")) {
+      } else if (command.contains("-X PUT") ||
+          command.contains("--request PUT")) {
         method = "PUT";
       }
 
@@ -139,9 +143,9 @@ class _TestRunnerWidgetState extends ConsumerState<TestRunnerWidget> {
                   title: const Text('API Test Runner'),
                   content: const Text(
                     'Run generated API tests:\n\n'
-                        '• "Run All" executes all tests\n'
-                        '• "Run" executes a single test\n'
-                        '• "Copy" copies the curl command',
+                    '• "Run All" executes all tests\n'
+                    '• "Run" executes a single test\n'
+                    '• "Copy" copies the curl command',
                   ),
                   actions: [
                     TextButton(
@@ -189,9 +193,8 @@ class _TestRunnerWidgetState extends ConsumerState<TestRunnerWidget> {
               test['description'] ?? "Test case ${index + 1}",
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                color: hasResult
-                    ? (isSuccess ? Colors.green : Colors.red)
-                    : null,
+                color:
+                    hasResult ? (isSuccess ? Colors.green : Colors.red) : null,
               ),
             ),
             subtitle: Text('Test ${index + 1} of ${_parsedTests.length}'),
@@ -241,7 +244,8 @@ class _TestRunnerWidgetState extends ConsumerState<TestRunnerWidget> {
                       padding: const EdgeInsets.all(8),
                       margin: const EdgeInsets.only(top: 4, bottom: 16),
                       decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.surfaceContainerLow,
+                        color:
+                            Theme.of(context).colorScheme.surfaceContainerLow,
                         borderRadius: BorderRadius.circular(4),
                       ),
                       width: double.infinity,

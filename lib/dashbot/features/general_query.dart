@@ -6,11 +6,17 @@ class GeneralQueryFeature {
 
   GeneralQueryFeature(this._client);
 
-  Future<String> generateResponse(String prompt, {RequestModel? requestModel, dynamic responseModel}) async {
+  Future<String> generateResponse(String prompt,
+      {RequestModel? requestModel, dynamic responseModel}) async {
     String enhancedPrompt = prompt;
 
     if (requestModel != null && responseModel != null) {
-      final method = requestModel.httpRequestModel?.method.toString().split('.').last.toUpperCase() ?? "GET";
+      final method = requestModel.httpRequestModel?.method
+              .toString()
+              .split('.')
+              .last
+              .toUpperCase() ??
+          "GET";
       final endpoint = requestModel.httpRequestModel?.url ?? "Unknown Endpoint";
       final statusCode = responseModel.statusCode ?? 0;
 
@@ -37,7 +43,10 @@ Respond in a helpful, direct manner that specifically answers what was asked.
     }
 
     final response = await _client.generateCompletion(
-      request: GenerateCompletionRequest(model: 'llama3.2:3b', prompt: enhancedPrompt),
+      request: GenerateCompletionRequest(
+        model: 'llama3.2:3b',
+        prompt: enhancedPrompt,
+      ),
     );
     return response.response.toString();
   }
