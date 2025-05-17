@@ -182,7 +182,7 @@ class EditEnvironmentVariablesState
             color: Theme.of(context).colorScheme.surface,
             borderRadius: kBorderRadius12,
           ),
-          margin: kP10,
+          margin: kPh10t10,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -203,27 +203,28 @@ class EditEnvironmentVariablesState
                   ),
                 ),
               ),
-              kVSpacer40,
+              if (!kIsMobile) kVSpacer40,
             ],
           ),
         ),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: Padding(
-            padding: kPb15,
-            child: ElevatedButton.icon(
-              onPressed: () {
-                variableRows.add(kEnvironmentVariableEmptyModel);
-                _onFieldChange(selectedId!);
-              },
-              icon: const Icon(Icons.add),
-              label: const Text(
-                kLabelAddVariable,
-                style: kTextStyleButton,
+        if (!kIsMobile)
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: kPb15,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  variableRows.add(kEnvironmentVariableEmptyModel);
+                  _onFieldChange(selectedId!);
+                },
+                icon: const Icon(Icons.add),
+                label: const Text(
+                  kLabelAddVariable,
+                  style: kTextStyleButton,
+                ),
               ),
             ),
           ),
-        ),
       ],
     );
   }

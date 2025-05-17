@@ -178,7 +178,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
     return Stack(
       children: [
         Container(
-          margin: kP10,
+          margin: kPh10t10,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -199,28 +199,29 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
                   ),
                 ),
               ),
-              kVSpacer40,
+              if (!kIsMobile) kVSpacer40,
             ],
           ),
         ),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: Padding(
-            padding: kPb15,
-            child: ElevatedButton.icon(
-              onPressed: () {
-                paramRows.add(kNameValueEmptyModel);
-                isRowEnabledList.add(false);
-                _onFieldChange();
-              },
-              icon: const Icon(Icons.add),
-              label: const Text(
-                kLabelAddParam,
-                style: kTextStyleButton,
+        if (!kIsMobile)
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: kPb15,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  paramRows.add(kNameValueEmptyModel);
+                  isRowEnabledList.add(false);
+                  _onFieldChange();
+                },
+                icon: const Icon(Icons.add),
+                label: const Text(
+                  kLabelAddParam,
+                  style: kTextStyleButton,
+                ),
               ),
             ),
           ),
-        ),
       ],
     );
   }

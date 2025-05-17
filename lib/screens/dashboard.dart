@@ -17,7 +17,7 @@ class Dashboard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final railIdx = ref.watch(navRailIndexStateProvider);
-    final isDashBotVisible = ref.watch(dashBotVisibilityProvider);
+    final settings = ref.watch(settingsProvider);
     return Scaffold(
       body: SafeArea(
         child: Stack(
@@ -138,8 +138,9 @@ class Dashboard extends ConsumerWidget {
           ],
         ),
       ),
-      // TODO: Release DashBot
-      floatingActionButton: !isDashBotVisible ? const DashBotFAB() : null,
+      floatingActionButton: settings.isDashBotEnabled
+          ? const DashBotFAB()
+          : null,
     );
   }
 }

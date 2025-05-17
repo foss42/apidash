@@ -119,4 +119,21 @@ void main() {
   test('Testing hashcode', () {
     expect(responseModel.hashCode, greaterThan(0));
   });
+
+  test('Testing fromResponse for OPTIONS method', () async {
+    var responseRec = await sendHttpRequest(
+      requestModelOptions1.id,
+      requestModelOptions1.apiType,
+      requestModelOptions1.httpRequestModel!,
+      defaultUriScheme: kDefaultUriScheme,
+      noSSL: false,
+    );
+
+    final responseData = responseModel.fromResponse(response: responseRec.$1!);
+    expect(responseData.statusCode, 200);
+    expect(responseData.headers?['access-control-allow-methods'], 'GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS');
+    expect(responseData.headers?['access-control-allow-methods']?.contains("OPTIONS"), true);
+    expect(responseData.headers?['allow'], 'GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS');
+    expect(responseData.headers?['allow']?.contains("OPTIONS"), true);
+  });
 }
