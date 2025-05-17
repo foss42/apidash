@@ -1,4 +1,3 @@
-import 'dart:convert';
 import '../services/dashbot_service.dart';
 import 'package:apidash/models/request_model.dart';
 
@@ -19,20 +18,14 @@ class ExplainFeature {
       return "Error: Invalid API request (missing endpoint).";
     }
 
-    final method = requestModel.httpRequestModel?.method
-            .toString()
-            .split('.')
-            .last
-            .toUpperCase() ??
-        "GET";
-    final endpoint = requestModel.httpRequestModel!.url;
+    final method =
+        requestModel.httpRequestModel?.method.name.toUpperCase() ?? "GET";
+    final url = requestModel.httpRequestModel!.url;
     final headers = requestModel.httpRequestModel?.enabledHeadersMap ?? {};
     final parameters = requestModel.httpRequestModel?.enabledParamsMap ?? {};
-    final body = requestModel.httpRequestModel?.body;
-    final rawResponse = responseModel.body;
-    final responseBody =
-        rawResponse is String ? rawResponse : jsonEncode(rawResponse);
-    final statusCode = responseModel.statusCode ?? 0;
+    final body = requestModel.httpRequestModel?.body ?? '';
+    final responseBody = responseModel.body;
+    final statusCode = responseModel.statusCode;
 
     final prompt = '''
 FOCUSED API INTERACTION BREAKDOWN
@@ -41,10 +34,16 @@ FOCUSED API INTERACTION BREAKDOWN
 - Endpoint Purpose: What is this API endpoint designed to do?
 - Interaction Type: Describe the core purpose of this specific request
 
-**Request Mechanics:**
-- Exact Endpoint: $endpoint
+**Request Details:**
+- Endpoint: $url
 - HTTP Method: $method
-- Key Parameters: ${parameters.isNotEmpty ? 'Specific inputs driving the request' : 'No custom parameters'}
+- Request Headers: ${headers.isEmpty ? "None" : headers}
+- URL Parameters: ${parameters.isEmpty ? "None" : parameters}
+- Request Body: ${body.isEmpty ? "None" : body}
+
+**Response Details**
+- Status Code: $statusCode
+- Content: $responseBody
 
 **Response CORE Insights:**
 - Status: Success or Failure?
