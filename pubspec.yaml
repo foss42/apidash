@@ -14,6 +14,7 @@ dependencies:
     path: packages/apidash_core
   apidash_design_system:
     path: packages/apidash_design_system
+  carousel_slider: ^5.0.0
   code_builder: ^4.10.0
   csv: ^6.0.0
   data_table_2: 2.5.16
@@ -22,6 +23,7 @@ dependencies:
   extended_text_field: ^16.0.0
   file_selector: ^1.0.3
   flex_color_scheme: ^8.1.1
+  flutter_gemini: ^3.0.0
   flutter_highlighter: ^0.1.0
   flutter_hooks: ^0.21.2
   flutter_markdown: ^0.7.6+2
@@ -49,6 +51,7 @@ dependencies:
   multi_trigger_autocomplete_plus:
     path: packages/multi_trigger_autocomplete_plus
   ollama_dart: ^0.2.2
+  openai_dart: ^0.4.5
   package_info_plus: ^8.3.0
   path: ^1.8.3
   path_provider: ^2.1.2
@@ -69,10 +72,6 @@ dependencies:
     git:
       url: https://github.com/google/flutter-desktop-embedding.git
       path: plugins/window_size
-  openai_dart: ^0.4.5
-  flutter_gemini: ^3.0.0
-  carousel_slider: ^5.0.0
-
 
 dependency_overrides:
   extended_text_field: ^16.0.0
