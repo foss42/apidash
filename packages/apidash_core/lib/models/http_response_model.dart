@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:convert';
 import 'dart:typed_data';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:collection/collection.dart' show mergeMaps;
 import 'package:http/http.dart';
@@ -56,6 +57,7 @@ class HttpResponseModel with _$HttpResponseModel {
     String? formattedBody,
     @Uint8ListConverter() Uint8List? bodyBytes,
     @DurationConverter() Duration? time,
+    List<SSEEventModel>? sseEvents,
   }) = _HttpResponseModel;
 
   factory HttpResponseModel.fromJson(Map<String, Object?> json) =>
