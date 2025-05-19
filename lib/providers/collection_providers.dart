@@ -267,7 +267,7 @@ class CollectionStateNotifier
     unsave();
   }
 
-  Future<void> handlePreRequestScript(
+  Future<RequestModel> handlePreRequestScript(
     RequestModel requestModel,
     EnvironmentModel? originalEnvironmentModel,
   ) async {
@@ -275,10 +275,8 @@ class CollectionStateNotifier
       currentRequestModel: requestModel,
       activeEnvironment: originalEnvironmentModel?.toJson() ?? {},
     );
-
-    requestModel =
+    final newRequestModel =
         requestModel.copyWith(httpRequestModel: scriptResult.updatedRequest);
-
     if (originalEnvironmentModel != null) {
       final updatedEnvironmentMap = scriptResult.updatedEnvironment;
 
@@ -322,14 +320,17 @@ class CollectionStateNotifier
     } else {
       debugPrint(
           "Skipped environment update as originalEnvironmentModel was null.");
+
       if (scriptResult.updatedEnvironment.isNotEmpty) {
         debugPrint(
             "Warning: Pre-request script updated environment variables, but no active environment was selected to save them to.");
       }
+      return requestModel;
     }
+    return newRequestModel;
   }
 
-  Future<void> handlePostResponseScript(
+  Future<RequestModel> handlePostResponseScript(
     RequestModel requestModel,
     EnvironmentModel? originalEnvironmentModel,
   ) async {
@@ -338,7 +339,7 @@ class CollectionStateNotifier
       activeEnvironment: originalEnvironmentModel?.toJson() ?? {},
     );
 
-    requestModel =
+    final newRequestModel =
         requestModel.copyWith(httpResponseModel: scriptResult.updatedResponse);
 
     if (originalEnvironmentModel != null) {
@@ -388,7 +389,9 @@ class CollectionStateNotifier
         debugPrint(
             "Warning: Post-response script updated environment variables, but no active environment was selected to save them to.");
       }
+      return requestModel;
     }
+    return newRequestModel;
   }
 
   Future<void> sendRequest() async {
@@ -408,7 +411,8 @@ class CollectionStateNotifier
     }
 
     if (requestModel != null && requestModel.preRequestScript.isNotEmpty) {
-      await handlePreRequestScript(requestModel, originalEnvironmentModel);
+      requestModel =
+          await handlePreRequestScript(requestModel, originalEnvironmentModel);
     }
 
     APIType apiType = requestModel!.apiType;
@@ -432,7 +436,7 @@ class CollectionStateNotifier
       noSSL: noSSL,
     );
 
-    late final RequestModel newRequestModel;
+    late RequestModel newRequestModel;
     if (responseRec.$1 == null) {
       newRequestModel = requestModel.copyWith(
         responseStatus: -1,
@@ -468,7 +472,8 @@ class CollectionStateNotifier
         httpResponseModel: httpResponseModel,
       );
       if (requestModel.postRequestScript.isNotEmpty) {
-        handlePostResponseScript(newRequestModel, originalEnvironmentModel);
+        newRequestModel = await handlePostResponseScript(
+            newRequestModel, originalEnvironmentModel);
       }
       ref.read(historyMetaStateNotifier.notifier).addHistoryRequest(model);
     }
