@@ -32,7 +32,13 @@ String stripUrlParams(String url) {
 
   if (kLocalhostRegex.hasMatch(url)) {
     url = '${SupportedUriSchemes.http.name}://$url';
+  } else {
+    final hasScheme = RegExp(r'^[a-zA-Z][a-zA-Z0-9+.-]*://').hasMatch(url);
+    if (!hasScheme) {
+      url = "${defaultUriScheme.name}://$url";
+    }
   }
+
   Uri? uri = Uri.tryParse(url);
   if (uri == null) {
     return (null, "Check URL (malformed)");
