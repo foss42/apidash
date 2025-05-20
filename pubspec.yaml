@@ -94,4 +94,5 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/
+  - assets/
+  - lib/screens/explorer/api_templates/mock/

@@ -1,0 +1,84 @@
+{
+    "info": {
+      "title": "Product Catalog API",
+      "description": "API for managing a product catalog, including listing and adding products",
+      "tags": ["products", "catalog", "e-commerce"]
+    },
+    "requests": [
+      {
+        "id": "product_list",
+        "apiType": "rest",
+        "name": "List all products",
+        "description": "Retrieves a list of all products in the catalog",
+        "httpRequestModel": {
+          "method": "get",
+          "url": "https://api.example.com/v1/products",
+          "headers": [],
+          "params": [
+            {"name": "category", "value": "electronics"}
+          ],
+          "isHeaderEnabledList": [],
+          "isParamEnabledList": [true],
+          "bodyContentType": "json",
+          "body": null,
+          "query": null,
+          "formData": null
+        },
+        "responseStatus": null,
+        "message": null,
+        "httpResponseModel": null,
+        "isWorking": false,
+        "sendingTime": null
+      },
+      {
+        "id": "product_get",
+        "apiType": "rest",
+        "name": "Get product details",
+        "description": "Fetches details of a specific product by ID",
+        "httpRequestModel": {
+          "method": "get",
+          "url": "https://api.example.com/v1/products/101",
+          "headers": [],
+          "params": [
+            {"name": "id", "value": "101"}
+          ],
+          "isHeaderEnabledList": [],
+          "isParamEnabledList": [true],
+          "bodyContentType": "json",
+          "body": null,
+          "query": null,
+          "formData": null
+        },
+        "responseStatus": null,
+        "message": null,
+        "httpResponseModel": null,
+        "isWorking": false,
+        "sendingTime": null
+      },
+      {
+        "id": "product_add",
+        "apiType": "rest",
+        "name": "Add a new product",
+        "description": "Adds a new product to the catalog",
+        "httpRequestModel": {
+          "method": "post",
+          "url": "https://api.example.com/v1/products",
+          "headers": [
+            {"name": "Content-Type", "value": "application/json"}
+          ],
+          "params": [],
+          "isHeaderEnabledList": [true],
+          "isParamEnabledList": [],
+          "bodyContentType": "json",
+          "body": "{\"name\": \"Smartphone\", \"price\": 599.99, \"category\": \"electronics\"}",
+          "query": null,
+          "formData": null
+        },
+        "responseStatus": null,
+        "message": null,
+        "httpResponseModel": null,
+        "isWorking": false,
+        "sendingTime": null
+      }
+    ]
+  }
