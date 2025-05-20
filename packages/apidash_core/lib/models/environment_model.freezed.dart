@@ -24,6 +24,7 @@ mixin _$EnvironmentModel {
   String get name => throw _privateConstructorUsedError;
   List<EnvironmentVariableModel> get values =>
       throw _privateConstructorUsedError;
+  String? get color => throw _privateConstructorUsedError;
 
   /// Serializes this EnvironmentModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -41,7 +42,11 @@ abstract class $EnvironmentModelCopyWith<$Res> {
           EnvironmentModel value, $Res Function(EnvironmentModel) then) =
       _$EnvironmentModelCopyWithImpl<$Res, EnvironmentModel>;
   @useResult
-  $Res call({String id, String name, List<EnvironmentVariableModel> values});
+  $Res call(
+      {String id,
+      String name,
+      List<EnvironmentVariableModel> values,
+      String? color});
 }
 
 /// @nodoc
@@ -62,6 +67,7 @@ class _$EnvironmentModelCopyWithImpl<$Res, $Val extends EnvironmentModel>
     Object? id = null,
     Object? name = null,
     Object? values = null,
+    Object? color = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -76,6 +82,10 @@ class _$EnvironmentModelCopyWithImpl<$Res, $Val extends EnvironmentModel>
           ? _value.values
           : values // ignore: cast_nullable_to_non_nullable
               as List<EnvironmentVariableModel>,
+      color: freezed == color
+          ? _value.color
+          : color // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -88,7 +98,11 @@ abstract class _$$EnvironmentModelImplCopyWith<$Res>
       __$$EnvironmentModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String id, String name, List<EnvironmentVariableModel> values});
+  $Res call(
+      {String id,
+      String name,
+      List<EnvironmentVariableModel> values,
+      String? color});
 }
 
 /// @nodoc
@@ -107,6 +121,7 @@ class __$$EnvironmentModelImplCopyWithImpl<$Res>
     Object? id = null,
     Object? name = null,
     Object? values = null,
+    Object? color = freezed,
   }) {
     return _then(_$EnvironmentModelImpl(
       id: null == id
@@ -121,6 +136,10 @@ class __$$EnvironmentModelImplCopyWithImpl<$Res>
           ? _value._values
           : values // ignore: cast_nullable_to_non_nullable
               as List<EnvironmentVariableModel>,
+      color: freezed == color
+          ? _value.color
+          : color // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -132,7 +151,8 @@ class _$EnvironmentModelImpl implements _EnvironmentModel {
   const _$EnvironmentModelImpl(
       {required this.id,
       this.name = "",
-      final List<EnvironmentVariableModel> values = const []})
+      final List<EnvironmentVariableModel> values = const [],
+      this.color})
       : _values = values;
 
   factory _$EnvironmentModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -153,8 +173,11 @@ class _$EnvironmentModelImpl implements _EnvironmentModel {
   }
 
   @override
+  final String? color;
+
+  @override
   String toString() {
-    return 'EnvironmentModel(id: $id, name: $name, values: $values)';
+    return 'EnvironmentModel(id: $id, name: $name, values: $values, color: $color)';
   }
 
   @override
@@ -164,13 +187,14 @@ class _$EnvironmentModelImpl implements _EnvironmentModel {
             other is _$EnvironmentModelImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
-            const DeepCollectionEquality().equals(other._values, _values));
+            const DeepCollectionEquality().equals(other._values, _values) &&
+            (identical(other.color, color) || other.color == color));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, id, name, const DeepCollectionEquality().hash(_values));
+  int get hashCode => Object.hash(runtimeType, id, name,
+      const DeepCollectionEquality().hash(_values), color);
 
   /// Create a copy of EnvironmentModel
   /// with the given fields replaced by the non-null parameter values.
@@ -193,7 +217,8 @@ abstract class _EnvironmentModel implements EnvironmentModel {
   const factory _EnvironmentModel(
       {required final String id,
       final String name,
-      final List<EnvironmentVariableModel> values}) = _$EnvironmentModelImpl;
+      final List<EnvironmentVariableModel> values,
+      final String? color}) = _$EnvironmentModelImpl;
 
   factory _EnvironmentModel.fromJson(Map<String, dynamic> json) =
       _$EnvironmentModelImpl.fromJson;
@@ -204,6 +229,8 @@ abstract class _EnvironmentModel implements EnvironmentModel {
   String get name;
   @override
   List<EnvironmentVariableModel> get values;
+  @override
+  String? get color;
 
   /// Create a copy of EnvironmentModel
   /// with the given fields replaced by the non-null parameter values.

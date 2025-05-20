@@ -15,6 +15,7 @@ _$EnvironmentModelImpl _$$EnvironmentModelImplFromJson(Map json) =>
                   Map<String, Object?>.from(e as Map)))
               .toList() ??
           const [],
+      color: json['color'] as String?,
     );
 
 Map<String, dynamic> _$$EnvironmentModelImplToJson(
@@ -23,6 +24,7 @@ Map<String, dynamic> _$$EnvironmentModelImplToJson(
       'id': instance.id,
       'name': instance.name,
       'values': instance.values.map((e) => e.toJson()).toList(),
+      'color': instance.color,
     };
 
 _$EnvironmentVariableModelImpl _$$EnvironmentVariableModelImplFromJson(
