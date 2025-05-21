@@ -15,7 +15,7 @@ const httpRequestModelGet2 = HttpRequestModel(
   ],
 );
 
-/// GET request model with  query param having multiple values
+/// GET request model with  query param having multiple values (The code should  handle both paramaters)
 const httpRequestModelGet3 = HttpRequestModel(
   url: 'https://api.apidash.dev/country/data?code=US',
   method: HTTPVerb.get,
