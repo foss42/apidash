@@ -36,7 +36,7 @@ public class Main {
 ''';
 
   final String kTemplateRequestCreation = '''
-            BoundRequestBuilder requestBuilder = asyncHttpClient.prepare("{{ method|upper }}", url);
+            BoundRequestBuilder requestBuilder = asyncHttpClient.prepare("{{ method|upper }}", url);\n
 ''';
 
   final String kTemplateUrlQueryParam = ''' 
