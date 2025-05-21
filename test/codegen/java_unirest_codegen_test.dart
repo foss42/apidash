@@ -9,14 +9,13 @@ void main() {
 
   group('GET Request', () {
     test('GET 1', () {
-      const expectedCode = r"""import kong.unirest.core.*;
+      const expectedCode = r"""import kong.unirest.*;
 
 public class Main {
     public static void main(String[] args) {
         final String requestURL = "https://api.apidash.dev";
-        HttpResponse<JsonNode> response = Unirest
-                .get(requestURL)
-                .asJson();
+        HttpResponse<JsonNode> response = Unirest.get(requestURL)
+                      .asJson();
         System.out.println(response.getStatus());
         System.out.println(response.getBody());
     }
@@ -32,15 +31,14 @@ public class Main {
     });
 
     test('GET 2', () {
-      const expectedCode = r"""import kong.unirest.core.*;
+      const expectedCode = r"""import kong.unirest.*;
 
 public class Main {
     public static void main(String[] args) {
         final String requestURL = "https://api.apidash.dev/country/data";
-        HttpResponse<JsonNode> response = Unirest
-                .get(requestURL)
-                .queryString("code", "US")
-                .asJson();
+        HttpResponse<JsonNode> response = Unirest.get(requestURL)
+              .queryString("code", "US")
+                      .asJson();
         System.out.println(response.getStatus());
         System.out.println(response.getBody());
     }
@@ -56,15 +54,15 @@ public class Main {
     });
 
     test('GET 3', () {
-      const expectedCode = r"""import kong.unirest.core.*;
+      const expectedCode = r"""import kong.unirest.*;
 
 public class Main {
     public static void main(String[] args) {
         final String requestURL = "https://api.apidash.dev/country/data";
-        HttpResponse<JsonNode> response = Unirest
-                .get(requestURL)
-                .queryString("code", "IND")
-                .asJson();
+        HttpResponse<JsonNode> response = Unirest.get(requestURL)
+              .queryString("code", "IND")
+              .queryString("code", "US")
+                      .asJson();
         System.out.println(response.getStatus());
         System.out.println(response.getBody());
     }
@@ -80,19 +78,18 @@ public class Main {
     });
 
     test('GET 4', () {
-      const expectedCode = r"""import kong.unirest.core.*;
+      const expectedCode = r"""import kong.unirest.*;
 
 public class Main {
     public static void main(String[] args) {
         final String requestURL = "https://api.apidash.dev/humanize/social";
-        HttpResponse<JsonNode> response = Unirest
-                .get(requestURL)
-                .queryString("num", "8700000")
-                .queryString("digits", "3")
-                .queryString("system", "SS")
-                .queryString("add_space", "true")
-                .queryString("trailing_zeros", "true")
-                .asJson();
+        HttpResponse<JsonNode> response = Unirest.get(requestURL)
+              .queryString("num", "8700000")
+              .queryString("digits", "3")
+              .queryString("system", "SS")
+              .queryString("add_space", "true")
+              .queryString("trailing_zeros", "true")
+                      .asJson();
         System.out.println(response.getStatus());
         System.out.println(response.getBody());
     }
@@ -108,15 +105,14 @@ public class Main {
     });
 
     test('GET 5', () {
-      const expectedCode = r"""import kong.unirest.core.*;
+      const expectedCode = r"""import kong.unirest.*;
 
 public class Main {
     public static void main(String[] args) {
         final String requestURL = "https://api.github.com/repos/foss42/apidash";
-        HttpResponse<JsonNode> response = Unirest
-                .get(requestURL)
+        HttpResponse<JsonNode> response = Unirest.get(requestURL)
                 .header("User-Agent", "Test Agent")
-                .asJson();
+                      .asJson();
         System.out.println(response.getStatus());
         System.out.println(response.getBody());
     }
@@ -132,16 +128,15 @@ public class Main {
     });
 
     test('GET 6', () {
-      const expectedCode = r"""import kong.unirest.core.*;
+      const expectedCode = r"""import kong.unirest.*;
 
 public class Main {
     public static void main(String[] args) {
         final String requestURL = "https://api.github.com/repos/foss42/apidash";
-        HttpResponse<JsonNode> response = Unirest
-                .get(requestURL)
+        HttpResponse<JsonNode> response = Unirest.get(requestURL)
                 .header("User-Agent", "Test Agent")
-                .queryString("raw", "true")
-                .asJson();
+              .queryString("raw", "true")
+                      .asJson();
         System.out.println(response.getStatus());
         System.out.println(response.getBody());
     }
@@ -157,14 +152,13 @@ public class Main {
     });
 
     test('GET 7', () {
-      const expectedCode = r"""import kong.unirest.core.*;
+      const expectedCode = r"""import kong.unirest.*;
 
 public class Main {
     public static void main(String[] args) {
         final String requestURL = "https://api.apidash.dev";
-        HttpResponse<JsonNode> response = Unirest
-                .get(requestURL)
-                .asJson();
+        HttpResponse<JsonNode> response = Unirest.get(requestURL)
+                      .asJson();
         System.out.println(response.getStatus());
         System.out.println(response.getBody());
     }
@@ -180,16 +174,15 @@ public class Main {
     });
 
     test('GET 8', () {
-      const expectedCode = r"""import kong.unirest.core.*;
+      const expectedCode = r"""import kong.unirest.*;
 
 public class Main {
     public static void main(String[] args) {
         final String requestURL = "https://api.github.com/repos/foss42/apidash";
-        HttpResponse<JsonNode> response = Unirest
-                .get(requestURL)
+        HttpResponse<JsonNode> response = Unirest.get(requestURL)
                 .header("User-Agent", "Test Agent")
-                .queryString("raw", "true")
-                .asJson();
+              .queryString("raw", "true")
+                      .asJson();
         System.out.println(response.getStatus());
         System.out.println(response.getBody());
     }
@@ -205,16 +198,15 @@ public class Main {
     });
 
     test('GET 9', () {
-      const expectedCode = r"""import kong.unirest.core.*;
+      const expectedCode = r"""import kong.unirest.*;
 
 public class Main {
     public static void main(String[] args) {
         final String requestURL = "https://api.apidash.dev/humanize/social";
-        HttpResponse<JsonNode> response = Unirest
-                .get(requestURL)
-                .queryString("num", "8700000")
-                .queryString("add_space", "true")
-                .asJson();
+        HttpResponse<JsonNode> response = Unirest.get(requestURL)
+              .queryString("num", "8700000")
+              .queryString("add_space", "true")
+                      .asJson();
         System.out.println(response.getStatus());
         System.out.println(response.getBody());
     }
@@ -230,15 +222,14 @@ public class Main {
     });
 
     test('GET 10', () {
-      const expectedCode = r"""import kong.unirest.core.*;
+      const expectedCode = r"""import kong.unirest.*;
 
 public class Main {
     public static void main(String[] args) {
         final String requestURL = "https://api.apidash.dev/humanize/social";
-        HttpResponse<JsonNode> response = Unirest
-                .get(requestURL)
+        HttpResponse<JsonNode> response = Unirest.get(requestURL)
                 .header("User-Agent", "Test Agent")
-                .asJson();
+                      .asJson();
         System.out.println(response.getStatus());
         System.out.println(response.getBody());
     }
@@ -254,17 +245,16 @@ public class Main {
     });
 
     test('GET 11', () {
-      const expectedCode = r"""import kong.unirest.core.*;
+      const expectedCode = r"""import kong.unirest.*;
 
 public class Main {
     public static void main(String[] args) {
         final String requestURL = "https://api.apidash.dev/humanize/social";
-        HttpResponse<JsonNode> response = Unirest
-                .get(requestURL)
+        HttpResponse<JsonNode> response = Unirest.get(requestURL)
                 .header("User-Agent", "Test Agent")
-                .queryString("num", "8700000")
-                .queryString("digits", "3")
-                .asJson();
+              .queryString("num", "8700000")
+              .queryString("digits", "3")
+                      .asJson();
         System.out.println(response.getStatus());
         System.out.println(response.getBody());
     }
@@ -280,14 +270,13 @@ public class Main {
     });
 
     test('GET 12', () {
-      const expectedCode = r"""import kong.unirest.core.*;
+      const expectedCode = r"""import kong.unirest.*;
 
 public class Main {
     public static void main(String[] args) {
         final String requestURL = "https://api.apidash.dev/humanize/social";
-        HttpResponse<JsonNode> response = Unirest
-                .get(requestURL)
-                .asJson();
+        HttpResponse<JsonNode> response = Unirest.get(requestURL)
+                      .asJson();
         System.out.println(response.getStatus());
         System.out.println(response.getBody());
     }
@@ -305,14 +294,13 @@ public class Main {
 
   group('HEAD Request', () {
     test('HEAD 1', () {
-      const expectedCode = r"""import kong.unirest.core.*;
+      const expectedCode = r"""import kong.unirest.*;
 
 public class Main {
     public static void main(String[] args) {
         final String requestURL = "https://api.apidash.dev";
-        HttpResponse<JsonNode> response = Unirest
-                .head(requestURL)
-                .asJson();
+        HttpResponse<JsonNode> response = Unirest.head(requestURL)
+                      .asJson();
         System.out.println(response.getStatus());
         System.out.println(response.getBody());
     }
@@ -328,14 +316,13 @@ public class Main {
     });
 
     test('HEAD 2', () {
-      const expectedCode = r"""import kong.unirest.core.*;
+      const expectedCode = r"""import kong.unirest.*;
 
 public class Main {
     public static void main(String[] args) {
         final String requestURL = "http://api.apidash.dev";
-        HttpResponse<JsonNode> response = Unirest
-                .head(requestURL)
-                .asJson();
+        HttpResponse<JsonNode> response = Unirest.head(requestURL)
+                      .asJson();
         System.out.println(response.getStatus());
         System.out.println(response.getBody());
     }
@@ -353,7 +340,7 @@ public class Main {
 
   group('POST Request', () {
     test('POST 1', () {
-      const expectedCode = r'''import kong.unirest.core.*;
+      const expectedCode = r'''import kong.unirest.*;
 
 public class Main {
     public static void main(String[] args) {
@@ -362,11 +349,10 @@ public class Main {
 {
 "text": "I LOVE Flutter"
 }""";
-        HttpResponse<JsonNode> response = Unirest
-                .post(requestURL)
+        HttpResponse<JsonNode> response = Unirest.post(requestURL)
                 .header("Content-Type", "text/plain")
-                .body(requestBody)
-                .asJson();
+                              .body(requestBody)
+        .asJson();
         System.out.println(response.getStatus());
         System.out.println(response.getBody());
     }
@@ -382,7 +368,7 @@ public class Main {
     });
 
     test('POST 2', () {
-      const expectedCode = r'''import kong.unirest.core.*;
+      const expectedCode = r'''import kong.unirest.*;
 
 public class Main {
     public static void main(String[] args) {
@@ -396,11 +382,10 @@ public class Main {
 "no": 1.2,
 "arr": ["null", "true", "false", null]
 }""";
-        HttpResponse<JsonNode> response = Unirest
-                .post(requestURL)
+        HttpResponse<JsonNode> response = Unirest.post(requestURL)
                 .header("Content-Type", "application/json")
-                .body(requestBody)
-                .asJson();
+                              .body(requestBody)
+        .asJson();
         System.out.println(response.getStatus());
         System.out.println(response.getBody());
     }
@@ -416,7 +401,7 @@ public class Main {
     });
 
     test('POST 3', () {
-      const expectedCode = r'''import kong.unirest.core.*;
+      const expectedCode = r'''import kong.unirest.*;
 
 public class Main {
     public static void main(String[] args) {
@@ -425,12 +410,11 @@ public class Main {
 {
 "text": "I LOVE Flutter"
 }""";
-        HttpResponse<JsonNode> response = Unirest
-                .post(requestURL)
+        HttpResponse<JsonNode> response = Unirest.post(requestURL)
                 .header("User-Agent", "Test Agent")
                 .header("Content-Type", "application/json")
-                .body(requestBody)
-                .asJson();
+                              .body(requestBody)
+        .asJson();
         System.out.println(response.getStatus());
         System.out.println(response.getBody());
     }
@@ -445,17 +429,16 @@ public class Main {
           expectedCode);
     });
     test('POST 4', () {
-      const expectedCode = r"""import kong.unirest.core.*;
+      const expectedCode = r"""import kong.unirest.*;
 
 public class Main {
     public static void main(String[] args) {
         final String requestURL = "https://api.apidash.dev/io/form";
-        HttpResponse<JsonNode> response = Unirest
-                .post(requestURL)
-                .field("text", "API")
+        HttpResponse<JsonNode> response = Unirest.post(requestURL)
+                              .field("text", "API")
                 .field("sep", "|")
                 .field("times", "3")
-                .asJson();
+        .asJson();
         System.out.println(response.getStatus());
         System.out.println(response.getBody());
     }
@@ -471,18 +454,17 @@ public class Main {
     });
 
     test('POST 5', () {
-      const expectedCode = r"""import kong.unirest.core.*;
+      const expectedCode = r"""import kong.unirest.*;
 
 public class Main {
     public static void main(String[] args) {
         final String requestURL = "https://api.apidash.dev/io/form";
-        HttpResponse<JsonNode> response = Unirest
-                .post(requestURL)
+        HttpResponse<JsonNode> response = Unirest.post(requestURL)
                 .header("User-Agent", "Test Agent")
-                .field("text", "API")
+                              .field("text", "API")
                 .field("sep", "|")
                 .field("times", "3")
-                .asJson();
+        .asJson();
         System.out.println(response.getStatus());
         System.out.println(response.getBody());
     }
@@ -497,18 +479,17 @@ public class Main {
           expectedCode);
     });
     test('POST 6', () {
-      const expectedCode = r"""import kong.unirest.core.*;
+      const expectedCode = r"""import kong.unirest.*;
 
 import java.io.File;
 
 public class Main {
     public static void main(String[] args) {
         final String requestURL = "https://api.apidash.dev/io/img";
-        HttpResponse<JsonNode> response = Unirest
-                .post(requestURL)
-                .field("token", "xyz")
+        HttpResponse<JsonNode> response = Unirest.post(requestURL)
+                              .field("token", "xyz")
                 .field("imfile", new File("/Documents/up/1.png"))
-                .asJson();
+        .asJson();
         System.out.println(response.getStatus());
         System.out.println(response.getBody());
     }
@@ -523,18 +504,17 @@ public class Main {
           expectedCode);
     });
     test('POST 7', () {
-      const expectedCode = r"""import kong.unirest.core.*;
+      const expectedCode = r"""import kong.unirest.*;
 
 import java.io.File;
 
 public class Main {
     public static void main(String[] args) {
         final String requestURL = "https://api.apidash.dev/io/img";
-        HttpResponse<JsonNode> response = Unirest
-                .post(requestURL)
-                .field("token", "xyz")
+        HttpResponse<JsonNode> response = Unirest.post(requestURL)
+                              .field("token", "xyz")
                 .field("imfile", new File("/Documents/up/1.png"))
-                .asJson();
+        .asJson();
         System.out.println(response.getStatus());
         System.out.println(response.getBody());
     }
@@ -549,19 +529,18 @@ public class Main {
           expectedCode);
     });
     test('POST 8', () {
-      const expectedCode = r"""import kong.unirest.core.*;
+      const expectedCode = r"""import kong.unirest.*;
 
 public class Main {
     public static void main(String[] args) {
         final String requestURL = "https://api.apidash.dev/io/form";
-        HttpResponse<JsonNode> response = Unirest
-                .post(requestURL)
-                .queryString("size", "2")
-                .queryString("len", "3")
-                .field("text", "API")
+        HttpResponse<JsonNode> response = Unirest.post(requestURL)
+              .queryString("size", "2")
+              .queryString("len", "3")
+                              .field("text", "API")
                 .field("sep", "|")
                 .field("times", "3")
-                .asJson();
+        .asJson();
         System.out.println(response.getStatus());
         System.out.println(response.getBody());
     }
@@ -576,22 +555,21 @@ public class Main {
           expectedCode);
     });
     test('POST 9', () {
-      const expectedCode = r"""import kong.unirest.core.*;
+      const expectedCode = r"""import kong.unirest.*;
 
 import java.io.File;
 
 public class Main {
     public static void main(String[] args) {
         final String requestURL = "https://api.apidash.dev/io/img";
-        HttpResponse<JsonNode> response = Unirest
-                .post(requestURL)
+        HttpResponse<JsonNode> response = Unirest.post(requestURL)
                 .header("User-Agent", "Test Agent")
                 .header("Keep-Alive", "true")
-                .queryString("size", "2")
-                .queryString("len", "3")
-                .field("token", "xyz")
+              .queryString("size", "2")
+              .queryString("len", "3")
+                              .field("token", "xyz")
                 .field("imfile", new File("/Documents/up/1.png"))
-                .asJson();
+        .asJson();
         System.out.println(response.getStatus());
         System.out.println(response.getBody());
     }
@@ -609,7 +587,7 @@ public class Main {
 
   group('PUT Request', () {
     test('PUT 1', () {
-      const expectedCode = r'''import kong.unirest.core.*;
+      const expectedCode = r'''import kong.unirest.*;
 
 public class Main {
     public static void main(String[] args) {
@@ -619,11 +597,11 @@ public class Main {
 "name": "morpheus",
 "job": "zion resident"
 }""";
-        HttpResponse<JsonNode> response = Unirest
-                .put(requestURL)
+        HttpResponse<JsonNode> response = Unirest.put(requestURL)
+                .header("x-api-key", "reqres-free-v1")
                 .header("Content-Type", "application/json")
-                .body(requestBody)
-                .asJson();
+                              .body(requestBody)
+        .asJson();
         System.out.println(response.getStatus());
         System.out.println(response.getBody());
     }
@@ -641,7 +619,7 @@ public class Main {
 
   group('PATCH Request', () {
     test('PATCH 1', () {
-      const expectedCode = r'''import kong.unirest.core.*;
+      const expectedCode = r'''import kong.unirest.*;
 
 public class Main {
     public static void main(String[] args) {
@@ -651,11 +629,11 @@ public class Main {
 "name": "marfeus",
 "job": "accountant"
 }""";
-        HttpResponse<JsonNode> response = Unirest
-                .patch(requestURL)
+        HttpResponse<JsonNode> response = Unirest.patch(requestURL)
+                .header("x-api-key", "reqres-free-v1")
                 .header("Content-Type", "application/json")
-                .body(requestBody)
-                .asJson();
+                              .body(requestBody)
+        .asJson();
         System.out.println(response.getStatus());
         System.out.println(response.getBody());
     }
@@ -673,14 +651,14 @@ public class Main {
 
   group('DELETE Request', () {
     test('DELETE 1', () {
-      const expectedCode = r"""import kong.unirest.core.*;
+      const expectedCode = r"""import kong.unirest.*;
 
 public class Main {
     public static void main(String[] args) {
         final String requestURL = "https://reqres.in/api/users/2";
-        HttpResponse<JsonNode> response = Unirest
-                .delete(requestURL)
-                .asJson();
+        HttpResponse<JsonNode> response = Unirest.delete(requestURL)
+                .header("x-api-key", "reqres-free-v1")
+                      .asJson();
         System.out.println(response.getStatus());
         System.out.println(response.getBody());
     }
@@ -696,7 +674,7 @@ public class Main {
     });
 
     test('DELETE 2', () {
-      const expectedCode = r'''import kong.unirest.core.*;
+      const expectedCode = r'''import kong.unirest.*;
 
 public class Main {
     public static void main(String[] args) {
@@ -706,11 +684,11 @@ public class Main {
 "name": "marfeus",
 "job": "accountant"
 }""";
-        HttpResponse<JsonNode> response = Unirest
-                .delete(requestURL)
+        HttpResponse<JsonNode> response = Unirest.delete(requestURL)
+                .header("x-api-key", "reqres-free-v1")
                 .header("Content-Type", "application/json")
-                .body(requestBody)
-                .asJson();
+                              .body(requestBody)
+        .asJson();
         System.out.println(response.getStatus());
         System.out.println(response.getBody());
     }
