@@ -8,10 +8,10 @@ class AxiosCodeGen {
   final bool isNodeJs;
 
   String kStringImportNode = """import axios from 'axios';
+import qs from 'qs';
 {%if hasFileInFormData -%}
 import fs from 'fs'
 {% endif %}
-
 """;
 
   String kTemplateStart = """const config = {
@@ -20,7 +20,10 @@ import fs from 'fs'
 """;
 
   String kTemplateParams = """,
-  params: {{params}}
+  params: {{params}},
+  paramsSerializer: (params) => {
+    return qs.stringify(params, { arrayFormat: 'repeat' });
+  }
 """;
 
   String kTemplateHeader = """,
