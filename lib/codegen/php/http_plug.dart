@@ -22,7 +22,11 @@ use Http\\Discovery\\Psr18ClientDiscovery;
   \$queryParams = [
   {{params}}
   ];
-  \$uri .= '?' . http_build_query(\$queryParams,'','&');
+  \$queryString = http_build_query(\$queryParams, '', '&', PHP_QUERY_RFC3986);
+  \$queryString = preg_replace('/%5B[0-9]+%5D/', '', \$queryString);
+
+  \$uri .= '?'.\$queryString;
+
 
   """;
 
