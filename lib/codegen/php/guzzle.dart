@@ -24,7 +24,14 @@ String kTemplateParams = """
 \$queryParams = [
 {{params}}
 ];
-\$queryParamsStr = '?' . http_build_query(\$queryParams, '','&');
+\$queryParts = [];
+foreach (\$queryParams as \$key => \$values) {
+    foreach ((array)\$values as \$value) {
+        \$queryParts[] = urlencode(\$key) . '=' . urlencode(\$value);
+    }
+}
+\$queryParamsStr = '?' . implode('&', \$queryParts);
+
 """;
 
 

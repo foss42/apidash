@@ -37,7 +37,14 @@ $request_body = '{{body}}';
 $queryParams = [
 {{params}}
 ];
-$uri .= '?' . http_build_query($queryParams, '', '&');
+$queryParts = [];
+foreach ($queryParams as $key => $values) {
+    foreach ((array) $values as $value) {
+        $queryParts[] = urlencode($key) . '=' . urlencode($value);
+    }
+}
+$queryString = implode('&', $queryParts);
+$uri .= '?' . $queryString;
 
 
 ''';
