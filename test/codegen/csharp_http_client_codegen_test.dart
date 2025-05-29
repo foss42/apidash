@@ -9,8 +9,11 @@ void main() {
 
   group('Get Request', () {
     test('GET 1', () {
-      const expectedCode = r'''using System;
+      const expectedCode = r'''
+using System;
 using System.Net.Http;
+using System.Collections.Generic;
+using System.Linq;
 
 string uri = "https://api.apidash.dev";
 
@@ -33,11 +36,20 @@ using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
     });
 
     test('GET 2', () {
-      const expectedCode = r'''using System;
+      const expectedCode = r'''
+using System;
 using System.Net.Http;
+using System.Collections.Generic;
+using System.Linq;
 
-string uri = "https://api.apidash.dev/country/data?code=US";
+string baseUri = "https://api.apidash.dev/country/data";
 
+var query = new Dictionary<string, List<string>>();
+    query["code"] = new List<string>();
+      query["code"].Add("US");
+
+var queryString = string.Join("&", query.SelectMany(kv => kv.Value.Select(v => string.Format("{0}={1}", kv.Key, v))));
+string uri = string.Format("{0}?{1}", baseUri, queryString);
 using (var client = new HttpClient())
 using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
 {
@@ -59,9 +71,18 @@ using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
     test('GET 3', () {
       const expectedCode = r'''using System;
 using System.Net.Http;
+using System.Collections.Generic;
+using System.Linq;
 
-string uri = "https://api.apidash.dev/country/data?code=IND";
+string baseUri = "https://api.apidash.dev/country/data";
 
+var query = new Dictionary<string, List<string>>();
+    query["code"] = new List<string>();
+      query["code"].Add("IND");
+      query["code"].Add("US");
+
+var queryString = string.Join("&", query.SelectMany(kv => kv.Value.Select(v => string.Format("{0}={1}", kv.Key, v))));
+string uri = string.Format("{0}?{1}", baseUri, queryString);
 using (var client = new HttpClient())
 using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
 {
@@ -81,11 +102,28 @@ using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
     });
 
     test('GET 4', () {
-      const expectedCode = r'''using System;
+      const expectedCode = r'''
+using System;
 using System.Net.Http;
+using System.Collections.Generic;
+using System.Linq;
 
-string uri = "https://api.apidash.dev/humanize/social?num=8700000&digits=3&system=SS&add_space=true&trailing_zeros=true";
+string baseUri = "https://api.apidash.dev/humanize/social";
 
+var query = new Dictionary<string, List<string>>();
+    query["num"] = new List<string>();
+      query["num"].Add("8700000");
+    query["digits"] = new List<string>();
+      query["digits"].Add("3");
+    query["system"] = new List<string>();
+      query["system"].Add("SS");
+    query["add_space"] = new List<string>();
+      query["add_space"].Add("true");
+    query["trailing_zeros"] = new List<string>();
+      query["trailing_zeros"].Add("true");
+
+var queryString = string.Join("&", query.SelectMany(kv => kv.Value.Select(v => string.Format("{0}={1}", kv.Key, v))));
+string uri = string.Format("{0}?{1}", baseUri, queryString);
 using (var client = new HttpClient())
 using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
 {
@@ -105,8 +143,11 @@ using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
     });
 
     test('GET 5', () {
-      const expectedCode = r'''using System;
+      const expectedCode = r'''
+using System;
 using System.Net.Http;
+using System.Collections.Generic;
+using System.Linq;
 
 string uri = "https://api.github.com/repos/foss42/apidash";
 
@@ -131,11 +172,20 @@ using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
     });
 
     test('GET 6', () {
-      const expectedCode = r'''using System;
+      const expectedCode = r'''
+using System;
 using System.Net.Http;
+using System.Collections.Generic;
+using System.Linq;
 
-string uri = "https://api.github.com/repos/foss42/apidash?raw=true";
+string baseUri = "https://api.github.com/repos/foss42/apidash";
 
+var query = new Dictionary<string, List<string>>();
+    query["raw"] = new List<string>();
+      query["raw"].Add("true");
+
+var queryString = string.Join("&", query.SelectMany(kv => kv.Value.Select(v => string.Format("{0}={1}", kv.Key, v))));
+string uri = string.Format("{0}?{1}", baseUri, queryString);
 using (var client = new HttpClient())
 using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
 {
@@ -157,8 +207,11 @@ using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
     });
 
     test('GET 7', () {
-      const expectedCode = r'''using System;
+      const expectedCode = r'''
+using System;
 using System.Net.Http;
+using System.Collections.Generic;
+using System.Linq;
 
 string uri = "https://api.apidash.dev";
 
@@ -181,11 +234,20 @@ using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
     });
 
     test('GET 8', () {
-      const expectedCode = r'''using System;
+      const expectedCode = r'''
+using System;
 using System.Net.Http;
+using System.Collections.Generic;
+using System.Linq;
 
-string uri = "https://api.github.com/repos/foss42/apidash?raw=true";
+string baseUri = "https://api.github.com/repos/foss42/apidash";
 
+var query = new Dictionary<string, List<string>>();
+    query["raw"] = new List<string>();
+      query["raw"].Add("true");
+
+var queryString = string.Join("&", query.SelectMany(kv => kv.Value.Select(v => string.Format("{0}={1}", kv.Key, v))));
+string uri = string.Format("{0}?{1}", baseUri, queryString);
 using (var client = new HttpClient())
 using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
 {
@@ -207,11 +269,22 @@ using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
     });
 
     test('GET 9', () {
-      const expectedCode = r'''using System;
+      const expectedCode = r'''
+using System;
 using System.Net.Http;
+using System.Collections.Generic;
+using System.Linq;
 
-string uri = "https://api.apidash.dev/humanize/social?num=8700000&add_space=true";
+string baseUri = "https://api.apidash.dev/humanize/social";
 
+var query = new Dictionary<string, List<string>>();
+    query["num"] = new List<string>();
+      query["num"].Add("8700000");
+    query["add_space"] = new List<string>();
+      query["add_space"].Add("true");
+
+var queryString = string.Join("&", query.SelectMany(kv => kv.Value.Select(v => string.Format("{0}={1}", kv.Key, v))));
+string uri = string.Format("{0}?{1}", baseUri, queryString);
 using (var client = new HttpClient())
 using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
 {
@@ -233,6 +306,8 @@ using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
     test('GET 10', () {
       const expectedCode = r'''using System;
 using System.Net.Http;
+using System.Collections.Generic;
+using System.Linq;
 
 string uri = "https://api.apidash.dev/humanize/social";
 
@@ -259,9 +334,19 @@ using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
     test('GET 11', () {
       const expectedCode = r'''using System;
 using System.Net.Http;
+using System.Collections.Generic;
+using System.Linq;
 
-string uri = "https://api.apidash.dev/humanize/social?num=8700000&digits=3";
+string baseUri = "https://api.apidash.dev/humanize/social";
 
+var query = new Dictionary<string, List<string>>();
+    query["num"] = new List<string>();
+      query["num"].Add("8700000");
+    query["digits"] = new List<string>();
+      query["digits"].Add("3");
+
+var queryString = string.Join("&", query.SelectMany(kv => kv.Value.Select(v => string.Format("{0}={1}", kv.Key, v))));
+string uri = string.Format("{0}?{1}", baseUri, queryString);
 using (var client = new HttpClient())
 using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
 {
@@ -285,6 +370,8 @@ using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
     test('GET 12', () {
       const expectedCode = r'''using System;
 using System.Net.Http;
+using System.Collections.Generic;
+using System.Linq;
 
 string uri = "https://api.apidash.dev/humanize/social";
 
@@ -311,6 +398,8 @@ using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
     test('HEAD 1', () {
       const expectedCode = r'''using System;
 using System.Net.Http;
+using System.Collections.Generic;
+using System.Linq;
 
 string uri = "https://api.apidash.dev";
 
@@ -335,6 +424,8 @@ using (var request = new HttpRequestMessage(HttpMethod.Head, uri))
     test('HEAD 2', () {
       const expectedCode = r'''using System;
 using System.Net.Http;
+using System.Collections.Generic;
+using System.Linq;
 
 string uri = "http://api.apidash.dev";
 
@@ -361,6 +452,8 @@ using (var request = new HttpRequestMessage(HttpMethod.Head, uri))
     test('POST 1', () {
       const expectedCode = r'''using System;
 using System.Net.Http;
+using System.Collections.Generic;
+using System.Linq;
 
 string uri = "https://api.apidash.dev/case/lower";
 
@@ -393,6 +486,8 @@ using (var request = new HttpRequestMessage(HttpMethod.Post, uri))
     test('POST 2', () {
       const expectedCode = r'''using System;
 using System.Net.Http;
+using System.Collections.Generic;
+using System.Linq;
 
 string uri = "https://api.apidash.dev/case/lower";
 
@@ -430,6 +525,8 @@ using (var request = new HttpRequestMessage(HttpMethod.Post, uri))
     test('POST 3', () {
       const expectedCode = r'''using System;
 using System.Net.Http;
+using System.Collections.Generic;
+using System.Linq;
 
 string uri = "https://api.apidash.dev/case/lower";
 
@@ -464,6 +561,8 @@ using (var request = new HttpRequestMessage(HttpMethod.Post, uri))
     test('POST 4', () {
       const expectedCode = r'''using System;
 using System.Net.Http;
+using System.Collections.Generic;
+using System.Linq;
 using System.IO;
 
 string uri = "https://api.apidash.dev/io/form";
@@ -497,6 +596,8 @@ using (var request = new HttpRequestMessage(HttpMethod.Post, uri))
     test('POST 5', () {
       const expectedCode = r'''using System;
 using System.Net.Http;
+using System.Collections.Generic;
+using System.Linq;
 using System.IO;
 
 string uri = "https://api.apidash.dev/io/form";
@@ -532,6 +633,8 @@ using (var request = new HttpRequestMessage(HttpMethod.Post, uri))
     test('POST 6', () {
       const expectedCode = r'''using System;
 using System.Net.Http;
+using System.Collections.Generic;
+using System.Linq;
 using System.IO;
 
 string uri = "https://api.apidash.dev/io/img";
@@ -566,8 +669,11 @@ using (var request = new HttpRequestMessage(HttpMethod.Post, uri))
     });
 
     test('POST 7', () {
-      const expectedCode = r'''using System;
+      const expectedCode = r'''
+using System;
 using System.Net.Http;
+using System.Collections.Generic;
+using System.Linq;
 using System.IO;
 
 string uri = "https://api.apidash.dev/io/img";
@@ -604,10 +710,20 @@ using (var request = new HttpRequestMessage(HttpMethod.Post, uri))
     test('POST 8', () {
       const expectedCode = r'''using System;
 using System.Net.Http;
+using System.Collections.Generic;
+using System.Linq;
 using System.IO;
 
-string uri = "https://api.apidash.dev/io/form?size=2&len=3";
+string baseUri = "https://api.apidash.dev/io/form";
 
+var query = new Dictionary<string, List<string>>();
+    query["size"] = new List<string>();
+      query["size"].Add("2");
+    query["len"] = new List<string>();
+      query["len"].Add("3");
+
+var queryString = string.Join("&", query.SelectMany(kv => kv.Value.Select(v => string.Format("{0}={1}", kv.Key, v))));
+string uri = string.Format("{0}?{1}", baseUri, queryString);
 using (var client = new HttpClient())
 using (var request = new HttpRequestMessage(HttpMethod.Post, uri))
 {
@@ -637,10 +753,20 @@ using (var request = new HttpRequestMessage(HttpMethod.Post, uri))
     test('POST 9', () {
       const expectedCode = r'''using System;
 using System.Net.Http;
+using System.Collections.Generic;
+using System.Linq;
 using System.IO;
 
-string uri = "https://api.apidash.dev/io/img?size=2&len=3";
+string baseUri = "https://api.apidash.dev/io/img";
 
+var query = new Dictionary<string, List<string>>();
+    query["size"] = new List<string>();
+      query["size"].Add("2");
+    query["len"] = new List<string>();
+      query["len"].Add("3");
+
+var queryString = string.Join("&", query.SelectMany(kv => kv.Value.Select(v => string.Format("{0}={1}", kv.Key, v))));
+string uri = string.Format("{0}?{1}", baseUri, queryString);
 using (var client = new HttpClient())
 using (var request = new HttpRequestMessage(HttpMethod.Post, uri))
 {
@@ -678,12 +804,16 @@ using (var request = new HttpRequestMessage(HttpMethod.Post, uri))
     test('PUT 1', () {
       const expectedCode = r'''using System;
 using System.Net.Http;
+using System.Collections.Generic;
+using System.Linq;
 
 string uri = "https://reqres.in/api/users/2";
 
 using (var client = new HttpClient())
 using (var request = new HttpRequestMessage(HttpMethod.Put, uri))
 {
+    request.Headers.Add("x-api-key", "reqres-free-v1");
+    
     var payload = """
 {
 "name": "morpheus",
@@ -713,12 +843,16 @@ using (var request = new HttpRequestMessage(HttpMethod.Put, uri))
     test('PATCH 1', () {
       const expectedCode = r'''using System;
 using System.Net.Http;
+using System.Collections.Generic;
+using System.Linq;
 
 string uri = "https://reqres.in/api/users/2";
 
 using (var client = new HttpClient())
 using (var request = new HttpRequestMessage(HttpMethod.Patch, uri))
 {
+    request.Headers.Add("x-api-key", "reqres-free-v1");
+    
     var payload = """
 {
 "name": "marfeus",
@@ -748,12 +882,16 @@ using (var request = new HttpRequestMessage(HttpMethod.Patch, uri))
     test('DELETE 1', () {
       const expectedCode = r'''using System;
 using System.Net.Http;
+using System.Collections.Generic;
+using System.Linq;
 
 string uri = "https://reqres.in/api/users/2";
 
 using (var client = new HttpClient())
 using (var request = new HttpRequestMessage(HttpMethod.Delete, uri))
 {
+    request.Headers.Add("x-api-key", "reqres-free-v1");
+    
     HttpResponseMessage response = await client.SendAsync(request);
 
     Console.WriteLine((int)response.StatusCode);
@@ -772,12 +910,16 @@ using (var request = new HttpRequestMessage(HttpMethod.Delete, uri))
     test('DELETE 2', () {
       const expectedCode = r'''using System;
 using System.Net.Http;
+using System.Collections.Generic;
+using System.Linq;
 
 string uri = "https://reqres.in/api/users/2";
 
 using (var client = new HttpClient())
 using (var request = new HttpRequestMessage(HttpMethod.Delete, uri))
 {
+    request.Headers.Add("x-api-key", "reqres-free-v1");
+    
     var payload = """
 {
 "name": "marfeus",
