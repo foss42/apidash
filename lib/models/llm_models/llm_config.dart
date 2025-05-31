@@ -7,6 +7,16 @@ class LLMModelConfiguration {
   final LLMModelConfigurationType configType;
   final LLMModelConfigValue configValue;
 
+  LLMModelConfiguration updateValue(LLMModelConfigValue value) {
+    return LLMModelConfiguration(
+      configId: configId,
+      configName: configName,
+      configDescription: configDescription,
+      configType: configType,
+      configValue: value,
+    );
+  }
+
   LLMModelConfiguration({
     required this.configId,
     required this.configName,

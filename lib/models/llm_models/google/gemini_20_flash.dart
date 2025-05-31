@@ -106,15 +106,12 @@ class Gemini20FlashModel extends LLMModel {
     required double? top_p,
     required int? max_tokens,
   }) {
-    print('loading configs => $temperature, $top_p, $max_tokens');
+    //print('loading configs => $temperature, $top_p, $max_tokens');
     if (temperature != null) {
       final config = configurations['temperature']!;
-      configurations['temperature'] = LLMModelConfiguration(
-        configName: config.configName,
-        configDescription: config.configDescription,
-        configType: config.configType,
-        configId: config.configId,
-        configValue: LLMConfigSliderValue(value: (
+      configurations['temperature'] =
+          configurations['temperature']!.updateValue(
+        LLMConfigSliderValue(value: (
           config.configValue.value.$1,
           temperature,
           config.configValue.value.$3
@@ -123,12 +120,8 @@ class Gemini20FlashModel extends LLMModel {
     }
     if (top_p != null) {
       final config = configurations['top_p']!;
-      configurations['top_p'] = LLMModelConfiguration(
-        configName: config.configName,
-        configId: config.configId,
-        configDescription: config.configDescription,
-        configType: config.configType,
-        configValue: LLMConfigSliderValue(value: (
+      configurations['top_p'] = configurations['top_p']!.updateValue(
+        LLMConfigSliderValue(value: (
           config.configValue.value.$1,
           top_p,
           config.configValue.value.$3
@@ -136,13 +129,8 @@ class Gemini20FlashModel extends LLMModel {
       );
     }
     if (max_tokens != null) {
-      final config = configurations['max_tokens']!;
-      configurations['max_tokens'] = LLMModelConfiguration(
-        configName: config.configName,
-        configId: config.configId,
-        configDescription: config.configDescription,
-        configType: config.configType,
-        configValue: LLMConfigNumericValue(value: max_tokens),
+      configurations['max_tokens'] = configurations['max_tokens']!.updateValue(
+        LLMConfigNumericValue(value: max_tokens),
       );
     }
   }

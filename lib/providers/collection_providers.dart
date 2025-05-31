@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:apidash/models/llm_models/llm_model.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -282,6 +285,13 @@ class CollectionStateNotifier
     HttpRequestModel substitutedHttpRequestModel =
         getSubstitutedHttpRequestModel(requestModel.httpRequestModel!);
 
+    if (apiType == APIType.ai) {
+      substitutedHttpRequestModel = getSubstitutedHttpRequestModelForAIRequest(
+        requestModel,
+        substitutedHttpRequestModel,
+      );
+    }
+
     // set current model's isWorking to true and update state
     var map = {...state!};
     map[requestId] = requestModel.copyWith(
@@ -307,10 +317,37 @@ class CollectionStateNotifier
         isWorking: false,
       );
     } else {
-      final httpResponseModel = baseHttpResponseModel.fromResponse(
+      HttpResponseModel httpResponseModel = baseHttpResponseModel.fromResponse(
         response: responseRec.$1!,
         time: responseRec.$2!,
       );
+
+      //Modify the Output to show the Formatted output
+      if (apiType == APIType.ai) {
+        if (httpResponseModel.statusCode == 200) {
+          final LLMModel aiModel = requestModel.extraDetails['model']!;
+          final output = aiModel.specifics
+              .outputFormatter(jsonDecode(httpResponseModel.body!));
+
+          //---------MODIFY CONTENT TYPE TO SHOW OUTPUT------
+          final respHeaders = {...httpResponseModel.headers ?? {}};
+          respHeaders['content-type'] = 'text/plain';
+          final reqHeaders = {...httpResponseModel.requestHeaders ?? {}};
+          reqHeaders['content-type'] = 'text/plain';
+          //-------------------------------------------------
+
+          httpResponseModel = HttpResponseModel(
+            statusCode: 200,
+            headers: respHeaders,
+            requestHeaders: reqHeaders,
+            time: httpResponseModel.time,
+            body: output,
+            formattedBody: output,
+            bodyBytes: output != null ? utf8.encode(output) : null,
+          );
+        }
+      }
+
       int statusCode = responseRec.$1!.statusCode;
       newRequestModel = requestModel.copyWith(
         responseStatus: statusCode,
@@ -428,5 +465,30 @@ class CollectionStateNotifier
       envMap,
       activeEnvId,
     );
+  }
+
+  HttpRequestModel getSubstitutedHttpRequestModelForAIRequest(
+    RequestModel requestModel,
+    HttpRequestModel httpRequestModel,
+  ) {
+    final LLMModel aiModel = requestModel.extraDetails['model']!;
+    final reqData = aiModel.getRequestPayload(
+      systemPrompt: requestModel.extraDetails['system_prompt']!,
+      userPrompt: requestModel.extraDetails['user_prompt']!,
+      credential: requestModel.extraDetails['authorization_credential']!,
+    );
+    //Substitute POST
+    httpRequestModel = httpRequestModel.copyWith(method: HTTPVerb.post);
+    //Substitute URL
+    httpRequestModel = httpRequestModel.copyWith(url: reqData['url']!);
+    //Substitute Payload
+    httpRequestModel =
+        httpRequestModel.copyWith(body: jsonEncode(reqData['payload']!));
+    //Substitute Headers
+    httpRequestModel = httpRequestModel.copyWith(headers: [
+      ...aiModel.specifics.headers.entries
+          .map((x) => NameValueModel(name: x.key, value: x.value)),
+    ]);
+    return httpRequestModel;
   }
 }

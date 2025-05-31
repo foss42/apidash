@@ -126,7 +126,6 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
         );
       }
       if (apiType == APIType.ai) {
-        //TODO: Make the AI Specific changes here
         var requestBody = requestModel.body;
         if (requestBody != null) {
           var contentLength = utf8.encode(requestBody).length;
