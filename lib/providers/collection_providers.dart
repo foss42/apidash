@@ -475,7 +475,7 @@ class CollectionStateNotifier
     final reqData = aiModel.getRequestPayload(
       systemPrompt: requestModel.extraDetails['system_prompt']!,
       userPrompt: requestModel.extraDetails['user_prompt']!,
-      credential: requestModel.extraDetails['authorization_credential']!,
+      credential: requestModel.extraDetails['authorization_credential'] ?? '',
     );
     //Substitute POST
     httpRequestModel = httpRequestModel.copyWith(method: HTTPVerb.post);

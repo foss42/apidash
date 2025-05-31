@@ -50,7 +50,8 @@ extension LLMModelExtensions on LLMModel {
 
 enum LLMModelAuthorizationType {
   bearerToken('Bearer Token'),
-  apiKey('API Key');
+  apiKey('API Key'),
+  none('No Authorization');
 
   const LLMModelAuthorizationType(this.label);
   final String label;

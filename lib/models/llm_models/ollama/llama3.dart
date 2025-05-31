@@ -2,23 +2,21 @@ import 'dart:convert';
 
 import 'package:apidash/models/llm_models/llm_config.dart';
 import 'package:apidash/models/llm_models/llm_model.dart';
-import 'package:apidash_core/apidash_core.dart' as http;
 
 class LLama3LocalModel extends LLMModel {
   static LLama3LocalModel instance = LLama3LocalModel();
 
   @override
-  String provider = 'Ollama';
+  String provider = 'Local';
 
   @override
-  String modelName = 'llama 3 (Local)';
+  String modelName = 'LLaMA 3 (Local)';
 
   @override
-  String modelIdentifier = 'llama_3';
+  String modelIdentifier = 'llama3_local';
 
   @override
-  LLMModelAuthorizationType authorizationType =
-      LLMModelAuthorizationType.apiKey;
+  LLMModelAuthorizationType authorizationType = LLMModelAuthorizationType.none;
 
   @override
   Map<String, LLMModelConfiguration> configurations = {
@@ -26,39 +24,41 @@ class LLama3LocalModel extends LLMModel {
       configId: 'temperature',
       configName: 'Temperature',
       configDescription:
-          'Higher values mean greater variability and lesser values mean more deterministic responses',
+          'Controls the randomness of the model\'s output. Higher is more creative.',
       configType: LLMModelConfigurationType.slider,
-      configValue: LLMConfigSliderValue(value: (0.0, 0.5, 1.0)),
+      configValue: LLMConfigSliderValue(value: (0.0, 0.7, 1.5)),
     ),
     'top_p': LLMModelConfiguration(
       configId: 'top_p',
       configName: 'Top P',
-      configDescription: 'Controls the randomness of the LLM Response',
-      configType: LLMModelConfigurationType.slider,
-      configValue: LLMConfigSliderValue(value: (0.0, 0.95, 1.0)),
-    ),
-    'max_tokens': LLMModelConfiguration(
-      configId: 'max_tokens',
-      configName: 'Max Tokens',
       configDescription:
-          'The maximum number of tokens to generate. -1 means no limit',
-      configType: LLMModelConfigurationType.numeric,
-      configValue: LLMConfigNumericValue(value: -1),
+          'Limits token selection to a subset of the most likely options.',
+      configType: LLMModelConfigurationType.slider,
+      configValue: LLMConfigSliderValue(value: (0.0, 0.9, 1.0)),
     ),
+    // 'max_tokens': LLMModelConfiguration(
+    //   configId: 'max_tokens',
+    //   configName: 'Max Tokens',
+    //   configDescription:
+    //       'Maximum tokens to generate. Set low for short answers.',
+    //   configType: LLMModelConfigurationType.numeric,
+    //   configValue: LLMConfigNumericValue(value: 512),
+    // ),
   };
 
   @override
-  String providerIcon = 'https://img.icons8.com/color/48/google-logo.png';
+  String providerIcon = 'https://img.icons8.com/ios-glyphs/30/bot.png';
 
   @override
   LLMModelSpecifics specifics = LLMModelSpecifics(
-    endpoint:
-        'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent',
+    endpoint: 'http://localhost:11434/v1/chat/completions',
     method: 'POST',
-    headers: {},
+    headers: {
+      'Content-Type': 'application/json',
+    },
     outputFormatter: (resp) {
       if (resp == null) return null;
-      return resp['candidates']?[0]?['content']?['parts']?[0]?['text'];
+      return resp['choices']?[0]?['message']?['content'];
     },
   );
 
@@ -66,55 +66,47 @@ class LLama3LocalModel extends LLMModel {
   Map getRequestPayload({
     required String systemPrompt,
     required String userPrompt,
-    required String credential,
+    required String credential, // not used for local
   }) {
-    final temp = configurations['temperature']!.configValue.serialize();
-    final top_p = configurations['top_p']!.configValue.serialize();
-    final mT = configurations['max_tokens']!.configValue.serialize();
+    final temp =
+        (jsonDecode(configurations['temperature']!.configValue.serialize())
+            as List)[1];
+    final topP = (jsonDecode(configurations['top_p']!.configValue.serialize())
+        as List)[1];
+    // final maxTokens = configurations['max_tokens']!.configValue.value as int;
+
     final payload = {
-      "model": "gemini-2.0-flash",
-      "contents": [
+      "model": "llama3:latest", // or "llama3:instruct" depending on your server
+      "messages": [
+        {
+          "role": "system",
+          "content": systemPrompt,
+        },
         {
           "role": "user",
-          "parts": [
-            {"text": userPrompt}
-          ]
+          "content": userPrompt,
         }
       ],
-      "systemInstruction": {
-        "role": "system",
-        "parts": [
-          {"text": systemPrompt}
-        ]
-      },
-      "generationConfig": {
-        "temperature": (jsonDecode(temp) as List)[1].toString(),
-        "topP": (jsonDecode(top_p) as List)[1].toString(),
-        if (mT != '-1') ...{
-          "maxOutputTokens": mT,
-        }
-      }
+      "temperature": temp,
+      "top_p": topP,
+      // "max_tokens": maxTokens,
     };
-    final endpoint = specifics.endpoint;
-    final url = "$endpoint?key=$credential";
+
     return {
-      'url': url,
+      'url': specifics.endpoint,
       'payload': payload,
     };
   }
 
   @override
   loadConfigurations(Map configMap) {
-    print('Loaded Ollama Configurations');
     final double? temperature = configMap['temperature'];
     final double? top_p = configMap['top_p'];
     final int? max_tokens = configMap['max_tokens'];
 
-    //print('loading configs => $temperature, $top_p, $max_tokens');
     if (temperature != null) {
       final config = configurations['temperature']!;
-      configurations['temperature'] =
-          configurations['temperature']!.updateValue(
+      configurations['temperature'] = config.updateValue(
         LLMConfigSliderValue(value: (
           config.configValue.value.$1,
           temperature,
@@ -122,9 +114,10 @@ class LLama3LocalModel extends LLMModel {
         )),
       );
     }
+
     if (top_p != null) {
       final config = configurations['top_p']!;
-      configurations['top_p'] = configurations['top_p']!.updateValue(
+      configurations['top_p'] = config.updateValue(
         LLMConfigSliderValue(value: (
           config.configValue.value.$1,
           top_p,
@@ -132,10 +125,10 @@ class LLama3LocalModel extends LLMModel {
         )),
       );
     }
+
     if (max_tokens != null) {
-      configurations['max_tokens'] = configurations['max_tokens']!.updateValue(
-        LLMConfigNumericValue(value: max_tokens),
-      );
+      configurations['max_tokens'] = configurations['max_tokens']!
+          .updateValue(LLMConfigNumericValue(value: max_tokens));
     }
   }
 }
