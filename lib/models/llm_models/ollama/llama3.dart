@@ -4,17 +4,17 @@ import 'package:apidash/models/llm_models/llm_config.dart';
 import 'package:apidash/models/llm_models/llm_model.dart';
 import 'package:apidash_core/apidash_core.dart' as http;
 
-class Gemini20FlashModel extends LLMModel {
-  static Gemini20FlashModel instance = Gemini20FlashModel();
+class LLama3LocalModel extends LLMModel {
+  static LLama3LocalModel instance = LLama3LocalModel();
 
   @override
-  String provider = 'Google';
+  String provider = 'Ollama';
 
   @override
-  String modelName = 'Gemini 2.0 Flash';
+  String modelName = 'llama 3 (Local)';
 
   @override
-  String modelIdentifier = 'gemini_20_flash';
+  String modelIdentifier = 'llama_3';
 
   @override
   LLMModelAuthorizationType authorizationType =
@@ -105,7 +105,7 @@ class Gemini20FlashModel extends LLMModel {
 
   @override
   loadConfigurations(Map configMap) {
-    print('Loaded Gemini Configurations');
+    print('Loaded Ollama Configurations');
     final double? temperature = configMap['temperature'];
     final double? top_p = configMap['top_p'];
     final int? max_tokens = configMap['max_tokens'];

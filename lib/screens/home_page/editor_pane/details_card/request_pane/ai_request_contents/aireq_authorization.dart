@@ -8,6 +8,7 @@ class AIRequestAuthorizationSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final selectedId = ref.watch(selectedIdStateProvider);
     final reqDetails = ref
         .watch(collectionStateNotifierProvider
             .select((value) => value![ref.read(selectedIdStateProvider)!]))!
@@ -21,8 +22,8 @@ class AIRequestAuthorizationSection extends ConsumerWidget {
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 20),
               child: TextFieldEditor(
-                key: Key("aireq-authvalue-body"),
-                fieldKey: "aireq-authvalue-body",
+                key: Key("$selectedId-aireq-authvalue-body"),
+                fieldKey: "$selectedId-aireq-authvalue-body",
                 initialValue: iV,
                 onChanged: (String value) {
                   ref.read(collectionStateNotifierProvider.notifier).update(

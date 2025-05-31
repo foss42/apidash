@@ -1,4 +1,6 @@
+import 'package:apidash/models/llm_models/all_models.dart';
 import 'package:apidash/models/llm_models/google/gemini_20_flash.dart';
+import 'package:apidash/models/llm_models/llm_model.dart';
 import 'package:apidash/widgets/dropdown_ai_method.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
@@ -160,19 +162,17 @@ class DropdownButtonAIMethod extends ConsumerWidget {
             .select((value) => value?.extraDetails)) ??
         {};
 
-    final aiVerb = xtraDetails['ai_verb'] ?? AIVerb.gemini_20_flash;
-
-    final model = Gemini20FlashModel();
+    final model = (xtraDetails['model'] as LLMModel?);
+    final String modelId = model?.modelIdentifier ?? 'gemini_20_flash';
 
     return DropdownButtonAiMethod(
-      method: aiVerb,
-      onChanged: (AIVerb? value) {
+      method: modelId,
+      onChanged: (String? value) {
         ref
             .read(collectionStateNotifierProvider.notifier)
             .update(extraDetails: {
           ...xtraDetails,
-          'ai_verb': value,
-          'model': model,
+          'model': getLLMModelFromID(value!, xtraDetails),
         });
       },
     );

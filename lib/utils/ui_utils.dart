@@ -58,12 +58,8 @@ Color getHTTPMethodColor(HTTPVerb? method) {
   return col;
 }
 
-Color getAIMethodColor(AIVerb? method) {
-  Color col = switch (method) {
-    AIVerb.gemini_20_flash => kColorHttpMethodGet,
-    _ => kColorHttpMethodGet,
-  };
-  return col;
+Color getAIMethodColor(String? modelID) {
+  return kColorHttpMethodGet;
 }
 
 Color getDarkModeColor(Color col) {

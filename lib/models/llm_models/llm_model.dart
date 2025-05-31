@@ -16,6 +16,7 @@ abstract class LLMModel {
     required String userPrompt,
     required String credential,
   });
+  loadConfigurations(Map configMap);
 }
 
 extension LLMModelExtensions on LLMModel {

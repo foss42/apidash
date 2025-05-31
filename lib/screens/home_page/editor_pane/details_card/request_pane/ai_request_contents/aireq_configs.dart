@@ -19,6 +19,7 @@ class _AIRequestConfigSectionState
     extends ConsumerState<AIRequestConfigSection> {
   @override
   Widget build(BuildContext context) {
+    final selectedId = ref.watch(selectedIdStateProvider);
     final reqDetails = ref
         .watch(collectionStateNotifierProvider
             .select((value) => value![ref.read(selectedIdStateProvider)!]))!
@@ -29,6 +30,7 @@ class _AIRequestConfigSectionState
     return SingleChildScrollView(
       padding: EdgeInsets.symmetric(vertical: 20),
       child: Column(
+        key: ValueKey(selectedId),
         children: [
           ...model.configurations.values
               .map(

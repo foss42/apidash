@@ -10,14 +10,6 @@ enum APIType {
   final String abbr;
 }
 
-enum AIVerb {
-  gemini_20_flash("Gemini 2.0 Flash"),
-  ollama("Ollama Custom");
-
-  const AIVerb(this.dispName);
-  final String dispName;
-}
-
 enum EnvironmentVariableType { variable, secret }
 
 enum HTTPVerb {

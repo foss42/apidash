@@ -1,3 +1,4 @@
+import 'package:apidash/models/llm_models/all_models.dart';
 import 'package:apidash/models/llm_models/google/gemini_20_flash.dart';
 import 'package:apidash/models/llm_models/llm_model.dart';
 import 'package:apidash_core/apidash_core.dart';
@@ -36,39 +37,13 @@ class RequestModel with _$RequestModel {
 }
 
 // ----------------- Custom SerDes --------------
-AIVerb aiVerbFromString(String value) {
-  for (var i = 0; i < AIVerb.values.length; i++) {
-    if (AIVerb.values[i].name == value) {
-      return AIVerb.values[i];
-    }
-  }
-
-  throw Exception('UNKNOWN AIVERB: $value');
-}
-
-String aiVerbToString(AIVerb aiVerb) {
-  return aiVerb.name;
-}
 
 // Map converter
 Map customMapFromJson(Map json) {
   Map result = {};
   for (var entry in json.entries) {
     if (entry.key == 'model' && entry.value is String) {
-      // print('${entry.key} => ${entry.value}');
-      if (entry.value == 'gemini_20_flash') {
-        final m = Gemini20FlashModel();
-        //load Saved Configs
-        m.loadConfigurations(
-          temperature: json['temperature'],
-          top_p: json['top_p'],
-          max_tokens: json['max_tokens'],
-        );
-        result[entry.key] = m;
-        // print('loaded_model');
-      }
-    } else if (entry.key == 'ai_verb' && entry.value is String) {
-      result[entry.key] = aiVerbFromString(entry.value);
+      result[entry.key] = getLLMModelFromID(entry.value, json);
     } else {
       result[entry.key] = entry.value;
     }
@@ -81,8 +56,6 @@ Map customMapToJson(Map map) {
   for (var entry in map.entries) {
     if (entry.key == 'model' && entry.value is LLMModel) {
       result[entry.key] = (entry.value as LLMModel).modelIdentifier;
-    } else if (entry.key == 'ai_verb' && entry.value is AIVerb) {
-      result[entry.key] = aiVerbToString(entry.value as AIVerb);
     } else {
       result[entry.key] = entry.value;
     }

@@ -8,6 +8,7 @@ class AIRequestPromptSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final selectedId = ref.watch(selectedIdStateProvider);
     final reqDetails = ref
         .watch(collectionStateNotifierProvider
             .select((value) => value![ref.read(selectedIdStateProvider)!]))!
@@ -23,8 +24,8 @@ class AIRequestPromptSection extends ConsumerWidget {
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 20),
               child: TextFieldEditor(
-                key: Key("aireq-sysprompt-body"),
-                fieldKey: "aireq-sysprompt-body",
+                key: Key("$selectedId-aireq-sysprompt-body"),
+                fieldKey: "$selectedId-aireq-sysprompt-body",
                 initialValue: systemPrompt,
                 onChanged: (String value) {
                   ref.read(collectionStateNotifierProvider.notifier).update(

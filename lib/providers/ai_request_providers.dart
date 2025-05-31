@@ -3,17 +3,17 @@ import 'package:apidash/utils/file_utils.dart';
 import 'package:apidash_core/consts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final selectedAIRequestTypeProvider = StateProvider<AIVerb?>((ref) => null);
+final selectedAIRequestTypeProvider = StateProvider<String?>((ref) => null);
 final aiRequestCollection =
     StateProvider<Map<String, AIRequestModel>>((ref) => {});
 
 class AIRequestModel {
   final String id;
-  final AIVerb aiVerb;
+  final String modelIdentifier;
 
   AIRequestModel({
     required this.id,
-    required this.aiVerb,
+    required this.modelIdentifier,
   });
 }
 
