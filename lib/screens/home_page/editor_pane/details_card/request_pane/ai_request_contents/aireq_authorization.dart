@@ -1,11 +1,18 @@
+import 'package:apidash/providers/collection_providers.dart';
 import 'package:apidash/widgets/editor.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class AIRequestAuthorizationSection extends StatelessWidget {
+class AIRequestAuthorizationSection extends ConsumerWidget {
   const AIRequestAuthorizationSection({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final reqDetails = ref
+        .watch(collectionStateNotifierProvider
+            .select((value) => value![ref.read(selectedIdStateProvider)!]))!
+        .extraDetails;
+    final iV = reqDetails['authorization_credential'];
     return Container(
       padding: EdgeInsets.symmetric(vertical: 20),
       child: Column(
@@ -16,10 +23,14 @@ class AIRequestAuthorizationSection extends StatelessWidget {
               child: TextFieldEditor(
                 key: Key("aireq-authvalue-body"),
                 fieldKey: "aireq-authvalue-body",
+                initialValue: iV,
                 onChanged: (String value) {
-                  // ref
-                  //     .read(collectionStateNotifierProvider.notifier)
-                  //     .update(body: value);
+                  ref.read(collectionStateNotifierProvider.notifier).update(
+                    extraDetails: {
+                      ...reqDetails,
+                      'authorization_credential': value
+                    },
+                  );
                 },
                 hintText: 'Enter API key or Authorization Credentials',
               ),

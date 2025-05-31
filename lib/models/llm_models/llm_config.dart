@@ -1,12 +1,14 @@
 import 'dart:convert';
 
 class LLMModelConfiguration {
+  final String configId;
   final String configName;
   final String configDescription;
   final LLMModelConfigurationType configType;
   final LLMModelConfigValue configValue;
 
   LLMModelConfiguration({
+    required this.configId,
     required this.configName,
     required this.configDescription,
     required this.configType,
@@ -34,6 +36,7 @@ class LLMModelConfiguration {
             : LLMConfigNumericValue.deserialize(x['configValue']);
 
     return LLMModelConfiguration(
+      configId: x['config_id'],
       configName: x['configName'],
       configDescription: x['configDescription'],
       configType: cT,
@@ -43,6 +46,7 @@ class LLMModelConfiguration {
 
   Map toJson() {
     return {
+      'configId': configId,
       'configName': configName,
       'configDescription': configDescription,
       'configType': configType.name.toString(),

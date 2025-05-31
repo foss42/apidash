@@ -6,6 +6,7 @@ import 'package:apidash_core/apidash_core.dart' as http;
 abstract class LLMModel {
   abstract String providerIcon;
   abstract String provider;
+  abstract String modelIdentifier;
   abstract String modelName;
   abstract LLMModelAuthorizationType authorizationType;
   abstract Map<String, LLMModelConfiguration> configurations;

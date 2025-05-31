@@ -1,20 +1,31 @@
 import 'package:apidash/models/llm_models/google/gemini_20_flash.dart';
 import 'package:apidash/models/llm_models/llm_config.dart';
+import 'package:apidash/models/llm_models/llm_model.dart';
+import 'package:apidash/providers/collection_providers.dart';
 import 'package:apidash/widgets/editor.dart';
 import 'package:apidash_design_system/widgets/textfield_outlined.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class AIRequestConfigSection extends StatefulWidget {
+class AIRequestConfigSection extends ConsumerStatefulWidget {
   const AIRequestConfigSection({super.key});
 
   @override
-  State<AIRequestConfigSection> createState() => _AIRequestConfigSectionState();
+  ConsumerState<AIRequestConfigSection> createState() =>
+      _AIRequestConfigSectionState();
 }
 
-class _AIRequestConfigSectionState extends State<AIRequestConfigSection> {
-  final model = Gemini20FlashModel();
+class _AIRequestConfigSectionState
+    extends ConsumerState<AIRequestConfigSection> {
   @override
   Widget build(BuildContext context) {
+    final reqDetails = ref
+        .watch(collectionStateNotifierProvider
+            .select((value) => value![ref.read(selectedIdStateProvider)!]))!
+        .extraDetails;
+
+    final LLMModel model = reqDetails['model']!;
+
     return SingleChildScrollView(
       padding: EdgeInsets.symmetric(vertical: 20),
       child: Column(
@@ -37,6 +48,15 @@ class _AIRequestConfigSectionState extends State<AIRequestConfigSection> {
                           value: el.configValue.value as bool,
                           onChanged: (x) {
                             el.configValue.value = x;
+                            ref
+                                .read(collectionStateNotifierProvider.notifier)
+                                .update(
+                              extraDetails: {
+                                ...reqDetails,
+                                el.configId: x,
+                                'model': model,
+                              },
+                            );
                             setState(() {});
                           },
                         )
@@ -48,6 +68,15 @@ class _AIRequestConfigSectionState extends State<AIRequestConfigSection> {
                             if (x.isEmpty) x = '0';
                             if (num.tryParse(x) == null) return;
                             el.configValue.value = num.parse(x);
+                            ref
+                                .read(collectionStateNotifierProvider.notifier)
+                                .update(
+                              extraDetails: {
+                                ...reqDetails,
+                                el.configId: num.parse(x),
+                                'model': model,
+                              },
+                            );
                             setState(() {});
                           },
                         )
@@ -82,6 +111,16 @@ class _AIRequestConfigSectionState extends State<AIRequestConfigSection> {
                                     double
                                   );
                                   el.configValue.value = (z.$1, x, z.$3);
+                                  ref
+                                      .read(collectionStateNotifierProvider
+                                          .notifier)
+                                      .update(
+                                    extraDetails: {
+                                      ...reqDetails,
+                                      el.configId: x,
+                                      'model': model,
+                                    },
+                                  );
                                   setState(() {});
                                 },
                               ),

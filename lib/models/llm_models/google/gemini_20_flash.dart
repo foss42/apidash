@@ -6,12 +6,22 @@ import 'package:apidash_core/apidash_core.dart' as http;
 
 class Gemini20FlashModel extends LLMModel {
   @override
+  String provider = 'Google';
+
+  @override
+  String modelName = 'Gemini 2.0 Flash';
+
+  @override
+  String modelIdentifier = 'gemini_20_flash';
+
+  @override
   LLMModelAuthorizationType authorizationType =
       LLMModelAuthorizationType.apiKey;
 
   @override
   Map<String, LLMModelConfiguration> configurations = {
     'temperature': LLMModelConfiguration(
+      configId: 'temperature',
       configName: 'Temperature',
       configDescription:
           'Higher values mean greater variability and lesser values mean more deterministic responses',
@@ -19,19 +29,14 @@ class Gemini20FlashModel extends LLMModel {
       configValue: LLMConfigSliderValue(value: (0.0, 0.5, 1.0)),
     ),
     'top_p': LLMModelConfiguration(
+      configId: 'top_p',
       configName: 'Top P',
       configDescription: 'Controls the randomness of the LLM Response',
       configType: LLMModelConfigurationType.slider,
       configValue: LLMConfigSliderValue(value: (0.0, 0.95, 1.0)),
     ),
-    'resp_format_json': LLMModelConfiguration(
-      configName: 'Response Format (JSON)',
-      configDescription:
-          'Enforces that the returned response is in JSON format',
-      configType: LLMModelConfigurationType.boolean,
-      configValue: LLMConfigBooleanValue(value: false),
-    ),
     'max_tokens': LLMModelConfiguration(
+      configId: 'max_tokens',
       configName: 'Max Tokens',
       configDescription:
           'The maximum number of tokens to generate. -1 means no limit',
@@ -39,12 +44,6 @@ class Gemini20FlashModel extends LLMModel {
       configValue: LLMConfigNumericValue(value: -1),
     ),
   };
-
-  @override
-  String modelName = 'Gemini 2.0 Flash';
-
-  @override
-  String provider = 'Google';
 
   @override
   String providerIcon = 'https://img.icons8.com/color/48/google-logo.png';
@@ -100,5 +99,51 @@ class Gemini20FlashModel extends LLMModel {
       'url': url,
       'payload': payload,
     };
+  }
+
+  loadConfigurations({
+    required double? temperature,
+    required double? top_p,
+    required int? max_tokens,
+  }) {
+    print('loading configs => $temperature, $top_p, $max_tokens');
+    if (temperature != null) {
+      final config = configurations['temperature']!;
+      configurations['temperature'] = LLMModelConfiguration(
+        configName: config.configName,
+        configDescription: config.configDescription,
+        configType: config.configType,
+        configId: config.configId,
+        configValue: LLMConfigSliderValue(value: (
+          config.configValue.value.$1,
+          temperature,
+          config.configValue.value.$3
+        )),
+      );
+    }
+    if (top_p != null) {
+      final config = configurations['top_p']!;
+      configurations['top_p'] = LLMModelConfiguration(
+        configName: config.configName,
+        configId: config.configId,
+        configDescription: config.configDescription,
+        configType: config.configType,
+        configValue: LLMConfigSliderValue(value: (
+          config.configValue.value.$1,
+          top_p,
+          config.configValue.value.$3
+        )),
+      );
+    }
+    if (max_tokens != null) {
+      final config = configurations['max_tokens']!;
+      configurations['max_tokens'] = LLMModelConfiguration(
+        configName: config.configName,
+        configId: config.configId,
+        configDescription: config.configDescription,
+        configType: config.configType,
+        configValue: LLMConfigNumericValue(value: max_tokens),
+      );
+    }
   }
 }
