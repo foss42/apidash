@@ -4,17 +4,22 @@ import 'package:apidash/widgets/editor.dart';
 import 'package:apidash_design_system/widgets/textfield_outlined.dart';
 import 'package:flutter/material.dart';
 
-class AIRequestConfigSection extends StatelessWidget {
+class AIRequestConfigSection extends StatefulWidget {
   const AIRequestConfigSection({super.key});
 
+  @override
+  State<AIRequestConfigSection> createState() => _AIRequestConfigSectionState();
+}
+
+class _AIRequestConfigSectionState extends State<AIRequestConfigSection> {
+  final model = Gemini20FlashModel();
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       padding: EdgeInsets.symmetric(vertical: 20),
       child: Column(
         children: [
-          ...Gemini20FlashModel()
-              .configurations
+          ...model.configurations
               .map(
                 (el) => ListTile(
                   title: Text(el.configName),
@@ -30,12 +35,21 @@ class AIRequestConfigSection extends StatelessWidget {
                           LLMModelConfigurationType.boolean) ...[
                         Switch(
                           value: el.configValue.value as bool,
-                          onChanged: (x) {},
+                          onChanged: (x) {
+                            el.configValue.value = x;
+                            setState(() {});
+                          },
                         )
                       ] else if (el.configType ==
                           LLMModelConfigurationType.numeric) ...[
                         ADOutlinedTextField(
                           initialValue: el.configValue.value.toString(),
+                          onChanged: (x) {
+                            if (x.isEmpty) x = '0';
+                            if (num.tryParse(x) == null) return;
+                            el.configValue.value = num.parse(x);
+                            setState(() {});
+                          },
                         )
                       ] else if (el.configType ==
                           LLMModelConfigurationType.slider) ...[
@@ -61,7 +75,15 @@ class AIRequestConfigSection extends StatelessWidget {
                                   double
                                 ))
                                     .$3,
-                                onChanged: (x) {},
+                                onChanged: (x) {
+                                  final z = el.configValue.value as (
+                                    double,
+                                    double,
+                                    double
+                                  );
+                                  el.configValue.value = (z.$1, x, z.$3);
+                                  setState(() {});
+                                },
                               ),
                             ),
                             Text((el.configValue.value as (
@@ -70,7 +92,7 @@ class AIRequestConfigSection extends StatelessWidget {
                               double
                             ))
                                 .$2
-                                .toString()),
+                                .toStringAsFixed(2)),
                           ],
                         )
                       ],

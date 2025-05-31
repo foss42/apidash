@@ -56,16 +56,20 @@ enum LLMModelConfigurationType { boolean, slider, numeric }
 //----------------LLMConfigValues ------------
 
 abstract class LLMModelConfigValue {
-  dynamic value;
+  dynamic _value;
+
+  // ignore: unnecessary_getters_setters
+  dynamic get value => _value;
+
+  set value(dynamic newValue) => _value = newValue;
+
   String serialize();
 
-  LLMModelConfigValue(this.value);
+  LLMModelConfigValue(this._value);
 }
 
 class LLMConfigBooleanValue extends LLMModelConfigValue {
-  final bool value;
-
-  LLMConfigBooleanValue({required this.value}) : super(value);
+  LLMConfigBooleanValue({required bool value}) : super(value);
 
   @override
   String serialize() {
@@ -73,14 +77,12 @@ class LLMConfigBooleanValue extends LLMModelConfigValue {
   }
 
   static LLMConfigBooleanValue deserialize(String x) {
-    return LLMConfigBooleanValue(value: x == 'true' ? true : false);
+    return LLMConfigBooleanValue(value: x == 'true');
   }
 }
 
 class LLMConfigNumericValue extends LLMModelConfigValue {
-  final num value;
-
-  LLMConfigNumericValue({required this.value}) : super(value);
+  LLMConfigNumericValue({required num value}) : super(value);
 
   @override
   String serialize() {
@@ -93,20 +95,21 @@ class LLMConfigNumericValue extends LLMModelConfigValue {
 }
 
 class LLMConfigSliderValue extends LLMModelConfigValue {
-  final (double, double, double) value; //[start,val,end]
+  LLMConfigSliderValue({required (double, double, double) value})
+      : super(value);
 
-  LLMConfigSliderValue({required this.value}) : super(value);
   @override
   String serialize() {
-    return jsonEncode([value.$1, value.$2, value.$3]);
+    final v = value as (double, double, double);
+    return jsonEncode([v.$1, v.$2, v.$3]);
   }
 
   static LLMConfigSliderValue deserialize(String x) {
     final z = jsonDecode(x) as List;
     final val = (
-      double.tryParse(z[0].toString())!,
-      double.tryParse(z[1].toString())!,
-      double.tryParse(z[2].toString())!
+      double.parse(z[0].toString()),
+      double.parse(z[1].toString()),
+      double.parse(z[2].toString())
     );
     return LLMConfigSliderValue(value: val);
   }
