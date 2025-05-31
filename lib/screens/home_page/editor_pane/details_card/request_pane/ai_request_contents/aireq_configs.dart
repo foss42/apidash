@@ -19,7 +19,7 @@ class _AIRequestConfigSectionState extends State<AIRequestConfigSection> {
       padding: EdgeInsets.symmetric(vertical: 20),
       child: Column(
         children: [
-          ...model.configurations
+          ...model.configurations.values
               .map(
                 (el) => ListTile(
                   title: Text(el.configName),
