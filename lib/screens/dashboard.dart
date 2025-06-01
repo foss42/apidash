@@ -6,10 +6,6 @@ import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/dashbot/dashbot.dart';
 import 'common_widgets/common_widgets.dart';
-import 'envvar/environment_page.dart';
-import 'home_page/home_page.dart';
-import 'history/history_page.dart';
-import 'settings_page.dart';
 
 class Dashboard extends ConsumerWidget {
   const Dashboard({super.key});
@@ -112,14 +108,11 @@ class Dashboard extends ConsumerWidget {
               color: Theme.of(context).colorScheme.surfaceContainerHigh,
             ),
             Expanded(
-              child: IndexedStack(
-                alignment: AlignmentDirectional.topCenter,
-                index: railIdx,
-                children: const [
-                  HomePage(),
-                  EnvironmentPage(),
-                  HistoryPage(),
-                  SettingsPage(),
+              child: Stack(
+                children: [
+                  PageBranch(
+                    pageIndex: railIdx,
+                  ),
                 ],
               ),
             )
