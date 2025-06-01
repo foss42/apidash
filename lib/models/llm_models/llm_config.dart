@@ -25,26 +25,42 @@ class LLMModelConfiguration {
     required this.configValue,
   }) {
     // Assert that the configuration type and value matches
-    assert(configType == LLMModelConfigurationType.boolean
-        ? configValue is LLMConfigBooleanValue
-        : configType == LLMModelConfigurationType.numeric
-            ? configValue is LLMConfigNumericValue
-            : configValue is LLMConfigSliderValue);
+    switch (configType) {
+      case LLMModelConfigurationType.boolean:
+        assert(configValue is LLMConfigBooleanValue);
+      case LLMModelConfigurationType.slider:
+        assert(configValue is LLMConfigSliderValue);
+      case LLMModelConfigurationType.numeric:
+        assert(configValue is LLMConfigNumericValue);
+      case LLMModelConfigurationType.text:
+        assert(configValue is LLMConfigTextValue);
+    }
   }
 
   factory LLMModelConfiguration.fromJson(Map x) {
-    final cT = x['configType'] == 'boolean'
-        ? LLMModelConfigurationType.boolean
-        : x['configType'] == 'slider'
-            ? LLMModelConfigurationType.slider
-            : LLMModelConfigurationType.numeric;
-
-    final cV = cT == LLMModelConfigurationType.boolean
-        ? LLMConfigBooleanValue.deserialize(x['configValue'])
-        : cT == LLMModelConfigurationType.slider
-            ? LLMConfigSliderValue.deserialize(x['configValue'])
-            : LLMConfigNumericValue.deserialize(x['configValue']);
-
+    LLMModelConfigurationType cT;
+    LLMModelConfigValue cV;
+    switch (x['configType']) {
+      case 'boolean':
+        cT = LLMModelConfigurationType.boolean;
+        cV = LLMConfigBooleanValue.deserialize(x['configValue']);
+        break;
+      case 'slider':
+        cT = LLMModelConfigurationType.slider;
+        cV = LLMConfigSliderValue.deserialize(x['configValue']);
+        break;
+      case 'numeric':
+        cT = LLMModelConfigurationType.numeric;
+        cV = LLMConfigNumericValue.deserialize(x['configValue']);
+        break;
+      case 'text':
+        cT = LLMModelConfigurationType.text;
+        cV = LLMConfigTextValue.deserialize(x['configValue']);
+        break;
+      default:
+        cT = LLMModelConfigurationType.text;
+        cV = LLMConfigTextValue.deserialize(x['configValue']);
+    }
     return LLMModelConfiguration(
       configId: x['config_id'],
       configName: x['configName'],
@@ -65,7 +81,7 @@ class LLMModelConfiguration {
   }
 }
 
-enum LLMModelConfigurationType { boolean, slider, numeric }
+enum LLMModelConfigurationType { boolean, slider, numeric, text }
 
 //----------------LLMConfigValues ------------
 
@@ -126,5 +142,18 @@ class LLMConfigSliderValue extends LLMModelConfigValue {
       double.parse(z[2].toString())
     );
     return LLMConfigSliderValue(value: val);
+  }
+}
+
+class LLMConfigTextValue extends LLMModelConfigValue {
+  LLMConfigTextValue({required String value}) : super(value);
+
+  @override
+  String serialize() {
+    return value.toString();
+  }
+
+  static LLMConfigTextValue deserialize(String x) {
+    return LLMConfigTextValue(value: x);
   }
 }

@@ -1,6 +1,7 @@
 import 'package:apidash/models/llm_models/google/gemini_20_flash.dart';
 import 'package:apidash/models/llm_models/llm_model.dart';
 import 'package:apidash/models/llm_models/ollama/llama3.dart';
+import 'package:apidash/models/llm_models/openai/azure_openai.dart';
 
 // Exports
 export 'package:apidash/models/llm_models/google/gemini_20_flash.dart';
@@ -14,6 +15,10 @@ Map<String, (LLMModel instance, LLMModel Function())> availableModels = {
   LLama3LocalModel.instance.modelIdentifier: (
     LLama3LocalModel.instance,
     () => LLama3LocalModel()
+  ),
+  AzureOpenAIModel.instance.modelIdentifier: (
+    AzureOpenAIModel.instance,
+    () => AzureOpenAIModel()
   ),
 };
 

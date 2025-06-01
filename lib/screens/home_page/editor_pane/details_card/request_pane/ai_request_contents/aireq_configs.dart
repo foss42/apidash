@@ -83,6 +83,24 @@ class _AIRequestConfigSectionState
                           },
                         )
                       ] else if (el.configType ==
+                          LLMModelConfigurationType.text) ...[
+                        ADOutlinedTextField(
+                          initialValue: el.configValue.value.toString(),
+                          onChanged: (x) {
+                            el.configValue.value = x;
+                            ref
+                                .read(collectionStateNotifierProvider.notifier)
+                                .update(
+                              extraDetails: {
+                                ...reqDetails,
+                                el.configId: x,
+                                'model': model,
+                              },
+                            );
+                            setState(() {});
+                          },
+                        )
+                      ] else if (el.configType ==
                           LLMModelConfigurationType.slider) ...[
                         Row(
                           children: [

@@ -485,8 +485,12 @@ class CollectionStateNotifier
     httpRequestModel =
         httpRequestModel.copyWith(body: jsonEncode(reqData['payload']!));
     //Substitute Headers
+    final headers = {
+      ...(reqData['headers'] ?? {}),
+      ...aiModel.specifics.headers,
+    };
     httpRequestModel = httpRequestModel.copyWith(headers: [
-      ...aiModel.specifics.headers.entries
+      ...headers.entries
           .map((x) => NameValueModel(name: x.key, value: x.value)),
     ]);
     return httpRequestModel;

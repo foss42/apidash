@@ -30,9 +30,11 @@ extension LLMModelExtensions on LLMModel {
       userPrompt: userPrompt,
       credential: credential,
     );
+    print('calling => ${reqData['url']}');
+    final headers = reqData['headers'] ?? specifics.headers;
     final response = await http.post(
       Uri.parse(reqData['url']),
-      headers: {'Content-Type': 'application/json', ...specifics.headers},
+      headers: {'Content-Type': 'application/json', ...headers},
       body: jsonEncode(reqData['payload']),
     );
     if (response.statusCode == 200) {
