@@ -156,8 +156,8 @@ class _AIRequestConfigSectionState
                         )
                       ],
                       SizedBox(height: 10),
-                      Divider(color: Colors.white10),
-                      SizedBox(height: 10),
+                      // Divider(color: Colors.white10),
+                      // SizedBox(height: 10),
                     ],
                   ),
                 ),

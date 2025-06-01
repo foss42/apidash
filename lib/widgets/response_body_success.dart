@@ -1,3 +1,7 @@
+import 'dart:convert';
+
+import 'package:apidash/models/llm_models/llm_model.dart';
+import 'package:apidash/providers/collection_providers.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/foundation.dart';
@@ -5,9 +9,10 @@ import 'package:flutter/material.dart';
 import 'package:apidash/utils/utils.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'button_share.dart';
 
-class ResponseBodySuccess extends StatefulWidget {
+class ResponseBodySuccess extends ConsumerStatefulWidget {
   const ResponseBodySuccess(
       {super.key,
       required this.mediaType,
@@ -23,15 +28,30 @@ class ResponseBodySuccess extends StatefulWidget {
   final String? formattedBody;
   final String? highlightLanguage;
   @override
-  State<ResponseBodySuccess> createState() => _ResponseBodySuccessState();
+  ConsumerState<ResponseBodySuccess> createState() =>
+      _ResponseBodySuccessState();
 }
 
-class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
+class _ResponseBodySuccessState extends ConsumerState<ResponseBodySuccess> {
   int segmentIdx = 0;
 
   @override
   Widget build(BuildContext context) {
-    var currentSeg = widget.options[segmentIdx];
+    final obj = ref.watch(collectionStateNotifierProvider
+        .select((value) => value![ref.read(selectedIdStateProvider)!]))!;
+
+    final options = [...widget.options];
+    if (obj.apiType == APIType.ai) {
+      options.remove(ResponseBodyView.preview);
+      options.add(ResponseBodyView.answer);
+    }
+    options.sort((x, y) => x.label.compareTo(y.label));
+
+    final outputAnswer = (obj.extraDetails['model'] as LLMModel?)
+            ?.specifics
+            .outputFormatter(jsonDecode(widget.body)) ??
+        '';
+    var currentSeg = options[segmentIdx];
     var codeTheme = Theme.of(context).brightness == Brightness.light
         ? kLightCodeTheme
         : kDarkCodeTheme;
@@ -46,7 +66,7 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
         var showLabel = showButtonLabelsInBodySuccess(
-          widget.options.length,
+          options.length,
           constraints.maxWidth,
         );
         return Padding(
@@ -55,14 +75,14 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
             children: [
               Row(
                 children: [
-                  (widget.options == kRawBodyViewOptions)
+                  (options == kRawBodyViewOptions)
                       ? const SizedBox()
                       : SegmentedButton<ResponseBodyView>(
                           style: SegmentedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(horizontal: 8),
                           ),
                           selectedIcon: Icon(currentSeg.icon),
-                          segments: widget.options
+                          segments: options
                               .map<ButtonSegment<ResponseBodyView>>(
                                 (e) => ButtonSegment<ResponseBodyView>(
                                   value: e,
@@ -77,27 +97,35 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
                           selected: {currentSeg},
                           onSelectionChanged: (newSelection) {
                             setState(() {
-                              segmentIdx =
-                                  widget.options.indexOf(newSelection.first);
+                              segmentIdx = options.indexOf(newSelection.first);
                             });
                           },
                         ),
                   const Spacer(),
-                  ((widget.options == kPreviewRawBodyViewOptions) ||
-                          kCodeRawBodyViewOptions.contains(currentSeg))
+                  ((options == kPreviewRawBodyViewOptions) ||
+                          kCodeRawBodyViewOptions.contains(currentSeg) ||
+                          obj.apiType == APIType.ai)
                       ? CopyButton(
-                          toCopy: widget.formattedBody ?? widget.body,
+                          toCopy: (currentSeg == ResponseBodyView.answer)
+                              ? outputAnswer!
+                              : widget.formattedBody ?? widget.body,
                           showLabel: showLabel,
                         )
                       : const SizedBox(),
                   kIsMobile
                       ? ShareButton(
-                          toShare: widget.formattedBody ?? widget.body,
+                          toShare: (currentSeg == ResponseBodyView.answer)
+                              ? outputAnswer!
+                              : widget.formattedBody ?? widget.body,
                           showLabel: showLabel,
                         )
                       : SaveInDownloadsButton(
-                          content: widget.bytes,
-                          mimeType: widget.mediaType.mimeType,
+                          content: (currentSeg == ResponseBodyView.answer)
+                              ? utf8.encode(outputAnswer!)
+                              : widget.bytes,
+                          mimeType: (currentSeg == ResponseBodyView.answer)
+                              ? 'text/plain'
+                              : widget.mediaType.mimeType,
                           showLabel: showLabel,
                         ),
                 ],
@@ -114,7 +142,7 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
                         body: widget.body,
                         type: widget.mediaType.type,
                         subtype: widget.mediaType.subtype,
-                        hasRaw: widget.options.contains(ResponseBodyView.raw),
+                        hasRaw: options.contains(ResponseBodyView.raw),
                       ),
                     ),
                   ),
@@ -139,6 +167,19 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
                       child: SingleChildScrollView(
                         child: SelectableText(
                           widget.formattedBody ?? widget.body,
+                          style: kCodeStyle,
+                        ),
+                      ),
+                    ),
+                  ),
+                ResponseBodyView.answer => Expanded(
+                    child: Container(
+                      width: double.maxFinite,
+                      padding: kP8,
+                      decoration: textContainerdecoration,
+                      child: SingleChildScrollView(
+                        child: SelectableText(
+                          outputAnswer!,
                           style: kCodeStyle,
                         ),
                       ),

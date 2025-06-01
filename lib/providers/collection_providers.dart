@@ -322,32 +322,6 @@ class CollectionStateNotifier
         time: responseRec.$2!,
       );
 
-      //Modify the Output to show the Formatted output
-      if (apiType == APIType.ai) {
-        if (httpResponseModel.statusCode == 200) {
-          final LLMModel aiModel = requestModel.extraDetails['model']!;
-          final output = aiModel.specifics
-              .outputFormatter(jsonDecode(httpResponseModel.body!));
-
-          //---------MODIFY CONTENT TYPE TO SHOW OUTPUT------
-          final respHeaders = {...httpResponseModel.headers ?? {}};
-          respHeaders['content-type'] = 'text/plain';
-          final reqHeaders = {...httpResponseModel.requestHeaders ?? {}};
-          reqHeaders['content-type'] = 'text/plain';
-          //-------------------------------------------------
-
-          httpResponseModel = HttpResponseModel(
-            statusCode: 200,
-            headers: respHeaders,
-            requestHeaders: reqHeaders,
-            time: httpResponseModel.time,
-            body: output,
-            formattedBody: output,
-            bodyBytes: output != null ? utf8.encode(output) : null,
-          );
-        }
-      }
-
       int statusCode = responseRec.$1!.statusCode;
       newRequestModel = requestModel.copyWith(
         responseStatus: statusCode,

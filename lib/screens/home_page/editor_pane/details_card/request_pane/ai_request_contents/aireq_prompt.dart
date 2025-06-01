@@ -1,5 +1,6 @@
 import 'package:apidash/providers/collection_providers.dart';
 import 'package:apidash/widgets/editor.dart';
+import 'package:apidash_design_system/tokens/measurements.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -19,7 +20,16 @@ class AIRequestPromptSection extends ConsumerWidget {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 20),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 25.0),
+            child: Text(
+              'System Prompt',
+              style: TextStyle(color: Colors.white54),
+            ),
+          ),
+          kVSpacer10,
           Expanded(
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 20),
@@ -36,7 +46,15 @@ class AIRequestPromptSection extends ConsumerWidget {
               ),
             ),
           ),
-          SizedBox(height: 20),
+          SizedBox(height: 10),
+          Padding(
+            padding: const EdgeInsets.only(left: 25.0),
+            child: Text(
+              'User Prompt / Input',
+              style: TextStyle(color: Colors.white54),
+            ),
+          ),
+          kVSpacer10,
           Expanded(
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 20),
