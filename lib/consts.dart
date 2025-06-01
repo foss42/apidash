@@ -141,18 +141,6 @@ enum CodegenLanguage {
   final String ext;
 }
 
-enum LLMProvider {
-  ollama('Ollama', 'llama3'),
-  chatgpt('ChatGPT', '4o'),
-  gemini('Gemini', '2.0-flash'),
-  claude('Claude', '3.7'),
-  azureOpenAI('AzureOpenAI', 'custom');
-
-  const LLMProvider(this.label, this.model);
-  final String label;
-  final String model;
-}
-
 enum ImportFormat {
   curl("cURL"),
   postman("Postman Collection v2.1"),

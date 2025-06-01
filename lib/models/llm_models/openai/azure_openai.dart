@@ -10,7 +10,7 @@ class AzureOpenAIModel extends LLMModel {
   String provider = 'Azure OpenAI';
 
   @override
-  String modelName = 'AzureOpenAI';
+  String modelName = 'Azure OpenAI';
 
   @override
   String modelIdentifier = 'azure_openai';

@@ -18,7 +18,7 @@ class SettingsModel {
     this.workspaceFolderPath,
     this.isSSLDisabled = false,
     this.isDashBotEnabled = true,
-    this.defaultLLMProvider = LLMProvider.ollama,
+    this.defaultLLMProvider = 'llama3_local',
     this.defaultLLMProviderCredentials = '',
   });
 
@@ -35,7 +35,7 @@ class SettingsModel {
   final String? workspaceFolderPath;
   final bool isSSLDisabled;
   final bool isDashBotEnabled;
-  final LLMProvider defaultLLMProvider;
+  final String defaultLLMProvider;
   final String defaultLLMProviderCredentials;
 
   SettingsModel copyWith({
@@ -52,7 +52,7 @@ class SettingsModel {
     String? workspaceFolderPath,
     bool? isSSLDisabled,
     bool? isDashBotEnabled,
-    LLMProvider? defaultLLMProvider,
+    String? defaultLLMProvider,
     String? defaultLLMProviderCredentials,
   }) {
     return SettingsModel(
@@ -136,15 +136,7 @@ class SettingsModel {
       }
     }
 
-    final defaultLLMProviderStr = data["defaultLLMProvider"] as String?;
-    LLMProvider? defaultLLMProvider;
-    if (defaultLLMProviderStr != null) {
-      try {
-        defaultLLMProvider = LLMProvider.values.byName(defaultLLMProviderStr);
-      } catch (e) {
-        // pass
-      }
-    }
+    final defaultLLMProvider = data["defaultLLMProvider"] as String?;
 
     final defaultLLMProviderCredentialsStr =
         data['defaultLLMProviderCredentials'] as String?;
@@ -213,7 +205,7 @@ class SettingsModel {
       "workspaceFolderPath": workspaceFolderPath,
       "isSSLDisabled": isSSLDisabled,
       "isDashBotEnabled": isDashBotEnabled,
-      "defaultLLMProvider": defaultLLMProvider.name,
+      "defaultLLMProvider": defaultLLMProvider,
       "defaultLLMProviderCredentials": defaultLLMProviderCredentials,
     };
   }

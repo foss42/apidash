@@ -131,7 +131,7 @@ class SettingsPage extends ConsumerWidget {
                   },
                 ),
               ),
-              if (settings.defaultLLMProvider != LLMProvider.ollama) ...[
+              if (settings.defaultLLMProvider != 'llama3_local') ...[
                 ListTile(
                   hoverColor: kColorTransparent,
                   title: const Text('Default LLM Provider Credentials'),
