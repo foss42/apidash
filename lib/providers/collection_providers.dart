@@ -344,6 +344,7 @@ class CollectionStateNotifier
         ),
         httpRequestModel: substitutedHttpRequestModel,
         httpResponseModel: httpResponseModel,
+        extraDetails: requestModel!.extraDetails,
       );
       ref.read(historyMetaStateNotifier.notifier).addHistoryRequest(model);
     }

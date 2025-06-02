@@ -59,8 +59,8 @@ class AIRequestPromptSection extends ConsumerWidget {
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 20),
               child: TextFieldEditor(
-                key: Key("aireq-userprompt-body"),
-                fieldKey: "aireq-userprompt-body",
+                key: Key("$selectedId-aireq-userprompt-body"),
+                fieldKey: "$selectedId-aireq-userprompt-body",
                 initialValue: userPrompt,
                 onChanged: (String value) {
                   ref.read(collectionStateNotifierProvider.notifier).update(
