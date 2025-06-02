@@ -137,5 +137,10 @@ class Gemini20FlashModel extends LLMModel {
         LLMConfigNumericValue(value: max_tokens),
       );
     }
+
+    // Load Modified Endpoint
+    if (configMap['modifed_endpoint'] != null) {
+      specifics.endpoint = configMap['modifed_endpoint']!;
+    }
   }
 }

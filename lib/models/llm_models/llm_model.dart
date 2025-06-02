@@ -60,7 +60,7 @@ enum LLMModelAuthorizationType {
 }
 
 class LLMModelSpecifics {
-  final String endpoint;
+  String endpoint;
   final String method;
   final Map<String, dynamic> headers;
   final String? Function(Map?) outputFormatter;

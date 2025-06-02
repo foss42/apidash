@@ -25,12 +25,19 @@ class APITypeDropdown extends ConsumerWidget {
               .read(collectionStateNotifierProvider.select(
                   (value) => value![ref.read(selectedIdStateProvider)!]))!
               .extraDetails;
+
+          final defaultModel = Gemini20FlashModel(); //DEFAULT_MODEL
           ref.read(collectionStateNotifierProvider.notifier).update(
             extraDetails: {
               ...eD,
-              'model': Gemini20FlashModel() //DEFAULT_MODEL
+              'model': defaultModel,
             },
           );
+          // Update the Internal URL to Model URL
+          ref
+              .read(collectionStateNotifierProvider.notifier)
+              .update(url: defaultModel.specifics.endpoint);
+          // print('setting url -> ${defaultModel.specifics.endpoint}');
         }
       },
     );

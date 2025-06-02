@@ -126,9 +126,14 @@ class LLama3LocalModel extends LLMModel {
       );
     }
 
-    if (max_tokens != null) {
-      configurations['max_tokens'] = configurations['max_tokens']!
-          .updateValue(LLMConfigNumericValue(value: max_tokens));
+    // if (max_tokens != null) {
+    //   configurations['max_tokens'] = configurations['max_tokens']!
+    //       .updateValue(LLMConfigNumericValue(value: max_tokens));
+    // }
+
+    // Load Modified Endpoint
+    if (configMap['modifed_endpoint'] != null) {
+      specifics.endpoint = configMap['modifed_endpoint']!;
     }
   }
 }

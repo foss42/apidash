@@ -47,10 +47,17 @@ class _ResponseBodySuccessState extends ConsumerState<ResponseBodySuccess> {
     }
     options.sort((x, y) => x.label.compareTo(y.label));
 
-    final outputAnswer = (obj.extraDetails['model'] as LLMModel?)
-            ?.specifics
-            .outputFormatter(jsonDecode(widget.body)) ??
-        '';
+    String outputAnswer;
+    try {
+      outputAnswer = (obj.extraDetails['model'] as LLMModel?)
+              ?.specifics
+              .outputFormatter(jsonDecode(widget.body)) ??
+          'ERROR';
+    } catch (e) {
+      outputAnswer = '';
+      options.remove(ResponseBodyView.answer);
+    }
+
     var currentSeg = options[segmentIdx];
     var codeTheme = Theme.of(context).brightness == Brightness.light
         ? kLightCodeTheme
