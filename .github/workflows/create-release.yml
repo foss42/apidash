@@ -1,0 +1,40 @@
+name: Release API Templates
+
+on:
+  push:
+    paths:
+      - 'lib/screens/explorer/api_templates/**'
+      
+permissions:
+  contents: write 
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Zip API Templates
+        run: zip -r api_templates.zip lib/screens/explorer/api_templates
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: templates-${{ github.sha }}
+          release_name: API Templates Release ${{ github.sha }}
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./api_templates.zip
+          asset_name: api_templates.zip
+          asset_content_type: application/zip

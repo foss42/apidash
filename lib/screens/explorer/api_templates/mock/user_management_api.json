@@ -1,0 +1,84 @@
+{
+    "info": {
+      "title": "User Management API",
+      "description": "API for managing user accounts, including registration, retrieval, and updates",
+      "tags": ["users", "management", "authentication"]
+    },
+    "requests": [
+      {
+        "id": "user_register",
+        "apiType": "rest",
+        "name": "Register a new user",
+        "description": "Creates a new user account",
+        "httpRequestModel": {
+          "method": "post",
+          "url": "https://api.example.com/v1/users",
+          "headers": [
+            {"name": "Content-Type", "value": "application/json"}
+          ],
+          "params": [],
+          "isHeaderEnabledList": [true],
+          "isParamEnabledList": [],
+          "bodyContentType": "json",
+          "body": "{\"username\": \"johndoe\", \"email\": \"john@example.com\", \"password\": \"secure123\"}",
+          "query": null,
+          "formData": null
+        },
+        "responseStatus": null,
+        "message": null,
+        "httpResponseModel": null,
+        "isWorking": false,
+        "sendingTime": null
+      },
+      {
+        "id": "user_get_all",
+        "apiType": "rest",
+        "name": "Get all users",
+        "description": "Fetches a list of all users",
+        "httpRequestModel": {
+          "method": "get",
+          "url": "https://api.example.com/v1/users",
+          "headers": [],
+          "params": [],
+          "isHeaderEnabledList": [],
+          "isParamEnabledList": [],
+          "bodyContentType": "json",
+          "body": null,
+          "query": null,
+          "formData": null
+        },
+        "responseStatus": null,
+        "message": null,
+        "httpResponseModel": null,
+        "isWorking": false,
+        "sendingTime": null
+      },
+      {
+        "id": "user_update",
+        "apiType": "rest",
+        "name": "Update user details",
+        "description": "Updates details of a specific user by ID",
+        "httpRequestModel": {
+          "method": "put",
+          "url": "https://api.example.com/v1/users/1",
+          "headers": [
+            {"name": "Content-Type", "value": "application/json"}
+          ],
+          "params": [
+            {"name": "id", "value": "1"}
+          ],
+          "isHeaderEnabledList": [true],
+          "isParamEnabledList": [true],
+          "bodyContentType": "json",
+          "body": "{\"email\": \"john.doe@example.com\"}",
+          "query": null,
+          "formData": null
+        },
+        "responseStatus": null,
+        "message": null,
+        "httpResponseModel": null,
+        "isWorking": false,
+        "sendingTime": null
+      }
+    ]
+  }
