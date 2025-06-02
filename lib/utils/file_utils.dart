@@ -2,7 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:file_selector/file_selector.dart';
 import 'package:path/path.dart' as p;
-import 'package:mime_dart/mime_dart.dart';
+import 'package:mime/mime.dart';
 import 'package:uuid/uuid.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -16,7 +16,7 @@ String? getFileExtension(String? mimeType) {
   if (mimeType == null) {
     return null;
   }
-  return Mime.getExtensionsFromType(mimeType)?[0];
+  return extensionFromMime(mimeType);
 }
 
 Future<String?> getFileDownloadpath(String? name, String? ext) async {
