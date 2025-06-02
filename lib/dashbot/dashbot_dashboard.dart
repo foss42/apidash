@@ -1,3 +1,4 @@
+import 'package:apidash/dashbot/core/providers/dashbot_window_notifier.dart';
 import 'package:apidash/dashbot/core/routes/dashbot_router.dart';
 import 'package:apidash/dashbot/core/routes/dashbot_routes.dart'
     show DashbotRoutes;
@@ -8,101 +9,133 @@ import 'package:apidash_design_system/tokens/tokens.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class DashbotWindow extends ConsumerStatefulWidget {
+class DashbotWindow extends ConsumerWidget {
   final VoidCallback onClose;
-  final Size screenSize;
 
-  const DashbotWindow(
-      {super.key, required this.onClose, required this.screenSize});
-
-  @override
-  DashbotWindowState createState() => DashbotWindowState();
-}
-
-class DashbotWindowState extends ConsumerState<DashbotWindow> {
-  double _right = 50;
-  double _bottom = 100;
-
-  void _handleDragUpdate(DragUpdateDetails details) {
-    setState(() {
-      _right =
-          (_right - details.delta.dx).clamp(0, widget.screenSize.width - 300);
-      _bottom =
-          (_bottom - details.delta.dy).clamp(0, widget.screenSize.height - 400);
-    });
-  }
+  const DashbotWindow({
+    super.key,
+    required this.onClose,
+  });
 
   @override
-  Widget build(BuildContext context) {
-    final RequestModel? currentRequest = ref.read(selectedRequestModelProvider);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final windowState = ref.watch(dashbotWindowNotifierProvider);
+    final windowNotifier = ref.read(dashbotWindowNotifierProvider.notifier);
+    final RequestModel? currentRequest =
+        ref.watch(selectedRequestModelProvider);
+
     return Stack(
       children: [
         Positioned(
-          right: _right,
-          bottom: _bottom,
+          right: windowState.right,
+          bottom: windowState.bottom,
           child: Material(
             elevation: 8,
             borderRadius: BorderRadius.circular(8),
             child: Container(
-              width: 350,
-              height: 450,
+              width: windowState.width,
+              height: windowState.height,
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.surfaceContainerLow,
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: Column(
+              child: Stack(
                 children: [
-                  GestureDetector(
-                    onPanUpdate: _handleDragUpdate,
-                    child: Container(
-                      height: 50,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.primaryContainer,
-                        borderRadius:
-                            BorderRadius.vertical(top: Radius.circular(10)),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
+                  Column(
+                    children: [
+                      // This is to update position
+                      GestureDetector(
+                        onPanUpdate: (details) {
+                          windowNotifier.updatePosition(details.delta.dx,
+                              details.delta.dy, MediaQuery.of(context).size);
+                        },
+                        child: Container(
+                          height: 50,
+                          decoration: BoxDecoration(
+                            color:
+                                Theme.of(context).colorScheme.primaryContainer,
+                            borderRadius: const BorderRadius.vertical(
+                              top: Radius.circular(10),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              kHSpacer8,
-                              Image.asset(
-                                'assets/dashbot_icon_2.png',
-                                width: 38,
+                              Row(
+                                children: [
+                                  kHSpacer20,
+                                  Image.asset(
+                                    'assets/dashbot_icon_2.png',
+                                    width: 38,
+                                  ),
+                                  kHSpacer12,
+                                  Text(
+                                    'DashBot',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color:
+                                          Theme.of(context).colorScheme.surface,
+                                    ),
+                                  ),
+                                ],
                               ),
-                              kHSpacer12,
-                              Text(
-                                'DashBot',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onPrimaryContainer,
+                              IconButton(
+                                icon: Icon(
+                                  Icons.close,
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
                                 ),
+                                onPressed: onClose,
                               ),
                             ],
                           ),
-                          IconButton(
-                            icon: Icon(
-                              Icons.close,
-                              color: Theme.of(context).colorScheme.onPrimary,
-                            ),
-                            onPressed: widget.onClose,
-                          ),
-                        ],
+                        ),
                       ),
-                    ),
+                      Expanded(
+                        child: Navigator(
+                          initialRoute: currentRequest?.responseStatus == null
+                              ? DashbotRoutes.dashbotDefault
+                              : DashbotRoutes.dashbotHome,
+                          onGenerateRoute: generateRoute,
+                        ),
+                      ),
+                    ],
                   ),
-                  Expanded(
-                    child: Navigator(
-                      initialRoute: currentRequest?.responseStatus == null
-                          ? DashbotRoutes.dashbotDefault
-                          : DashbotRoutes.dashbotHome,
-                      onGenerateRoute: generateRoute,
+                  // This is to update size
+                  Positioned(
+                    left: 0,
+                    top: 0,
+                    child: GestureDetector(
+                      onPanUpdate: (details) {
+                        windowNotifier.updateSize(
+                          details.delta.dx,
+                          details.delta.dy,
+                          MediaQuery.of(context).size,
+                        );
+                      },
+                      child: MouseRegion(
+                        cursor: SystemMouseCursors.resizeUpLeft,
+                        child: Container(
+                          padding: EdgeInsets.only(top: 6, left: 1),
+                          width: 20,
+                          height: 20,
+                          decoration: BoxDecoration(
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(8),
+                            ),
+                            color: Theme.of(context)
+                                .colorScheme
+                                .primaryContainer
+                                .withValues(alpha: 0.7),
+                          ),
+                          child: Icon(
+                            Icons.drag_indicator_rounded,
+                            size: 16,
+                            color: Theme.of(context).colorScheme.surfaceBright,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ],

@@ -1,3 +1,4 @@
+import 'package:apidash/dashbot/core/providers/dashbot_window_notifier.dart';
 import 'package:apidash/dashbot/dashbot_dashboard.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
@@ -14,16 +15,22 @@ import 'settings_page.dart';
 class Dashboard extends ConsumerWidget {
   const Dashboard({super.key});
 
-  void _showDashbotWindow(BuildContext context) {
+  void _showDashbotWindow(BuildContext context, WidgetRef ref) {
+    final isDashbotActive = ref.read(dashbotWindowNotifierProvider).isActive;
+    final windowNotifier = ref.read(dashbotWindowNotifierProvider.notifier);
+    if (isDashbotActive) return;
     final overlay = Overlay.of(context);
     OverlayEntry? entry;
 
     entry = OverlayEntry(
       builder: (context) => DashbotWindow(
-        screenSize: MediaQuery.of(context).size,
-        onClose: () => entry?.remove(),
+        onClose: () {
+          entry?.remove();
+          windowNotifier.toggleActive();
+        },
       ),
     );
+    windowNotifier.toggleActive();
     overlay.insert(entry);
   }
 
@@ -31,6 +38,7 @@ class Dashboard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final railIdx = ref.watch(navRailIndexStateProvider);
     final settings = ref.watch(settingsProvider);
+
     return Scaffold(
       body: SafeArea(
         child: Row(
@@ -142,7 +150,7 @@ class Dashboard extends ConsumerWidget {
       floatingActionButton: settings.isDashBotEnabled
           ? FloatingActionButton(
               backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-              onPressed: () => _showDashbotWindow(context),
+              onPressed: () => _showDashbotWindow(context, ref),
               child: Padding(
                 padding: const EdgeInsets.symmetric(
                   vertical: 6.0,
