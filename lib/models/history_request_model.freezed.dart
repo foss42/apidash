@@ -23,7 +23,10 @@ mixin _$HistoryRequestModel {
   String get historyId => throw _privateConstructorUsedError;
   HistoryMetaModel get metaData => throw _privateConstructorUsedError;
   HttpRequestModel get httpRequestModel => throw _privateConstructorUsedError;
-  HttpResponseModel get httpResponseModel => throw _privateConstructorUsedError;
+  HttpResponseModel get httpResponseModel =>
+      throw _privateConstructorUsedError; //ExtraDetails for anything else that can be included
+  @JsonKey(fromJson: customMapFromJson, toJson: customMapToJson)
+  Map<dynamic, dynamic> get extraDetails => throw _privateConstructorUsedError;
 
   /// Serializes this HistoryRequestModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -45,7 +48,9 @@ abstract class $HistoryRequestModelCopyWith<$Res> {
       {String historyId,
       HistoryMetaModel metaData,
       HttpRequestModel httpRequestModel,
-      HttpResponseModel httpResponseModel});
+      HttpResponseModel httpResponseModel,
+      @JsonKey(fromJson: customMapFromJson, toJson: customMapToJson)
+      Map<dynamic, dynamic> extraDetails});
 
   $HistoryMetaModelCopyWith<$Res> get metaData;
   $HttpRequestModelCopyWith<$Res> get httpRequestModel;
@@ -71,6 +76,7 @@ class _$HistoryRequestModelCopyWithImpl<$Res, $Val extends HistoryRequestModel>
     Object? metaData = null,
     Object? httpRequestModel = null,
     Object? httpResponseModel = null,
+    Object? extraDetails = null,
   }) {
     return _then(_value.copyWith(
       historyId: null == historyId
@@ -89,6 +95,10 @@ class _$HistoryRequestModelCopyWithImpl<$Res, $Val extends HistoryRequestModel>
           ? _value.httpResponseModel
           : httpResponseModel // ignore: cast_nullable_to_non_nullable
               as HttpResponseModel,
+      extraDetails: null == extraDetails
+          ? _value.extraDetails
+          : extraDetails // ignore: cast_nullable_to_non_nullable
+              as Map<dynamic, dynamic>,
     ) as $Val);
   }
 
@@ -135,7 +145,9 @@ abstract class _$$HistoryRequestModelImplCopyWith<$Res>
       {String historyId,
       HistoryMetaModel metaData,
       HttpRequestModel httpRequestModel,
-      HttpResponseModel httpResponseModel});
+      HttpResponseModel httpResponseModel,
+      @JsonKey(fromJson: customMapFromJson, toJson: customMapToJson)
+      Map<dynamic, dynamic> extraDetails});
 
   @override
   $HistoryMetaModelCopyWith<$Res> get metaData;
@@ -162,6 +174,7 @@ class __$$HistoryRequestModelImplCopyWithImpl<$Res>
     Object? metaData = null,
     Object? httpRequestModel = null,
     Object? httpResponseModel = null,
+    Object? extraDetails = null,
   }) {
     return _then(_$HistoryRequestModelImpl(
       historyId: null == historyId
@@ -180,6 +193,10 @@ class __$$HistoryRequestModelImplCopyWithImpl<$Res>
           ? _value.httpResponseModel
           : httpResponseModel // ignore: cast_nullable_to_non_nullable
               as HttpResponseModel,
+      extraDetails: null == extraDetails
+          ? _value._extraDetails
+          : extraDetails // ignore: cast_nullable_to_non_nullable
+              as Map<dynamic, dynamic>,
     ));
   }
 }
@@ -192,7 +209,10 @@ class _$HistoryRequestModelImpl implements _HistoryRequestModel {
       {required this.historyId,
       required this.metaData,
       required this.httpRequestModel,
-      required this.httpResponseModel});
+      required this.httpResponseModel,
+      @JsonKey(fromJson: customMapFromJson, toJson: customMapToJson)
+      final Map<dynamic, dynamic> extraDetails = const {}})
+      : _extraDetails = extraDetails;
 
   factory _$HistoryRequestModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$HistoryRequestModelImplFromJson(json);
@@ -205,10 +225,20 @@ class _$HistoryRequestModelImpl implements _HistoryRequestModel {
   final HttpRequestModel httpRequestModel;
   @override
   final HttpResponseModel httpResponseModel;
+//ExtraDetails for anything else that can be included
+  final Map<dynamic, dynamic> _extraDetails;
+//ExtraDetails for anything else that can be included
+  @override
+  @JsonKey(fromJson: customMapFromJson, toJson: customMapToJson)
+  Map<dynamic, dynamic> get extraDetails {
+    if (_extraDetails is EqualUnmodifiableMapView) return _extraDetails;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_extraDetails);
+  }
 
   @override
   String toString() {
-    return 'HistoryRequestModel(historyId: $historyId, metaData: $metaData, httpRequestModel: $httpRequestModel, httpResponseModel: $httpResponseModel)';
+    return 'HistoryRequestModel(historyId: $historyId, metaData: $metaData, httpRequestModel: $httpRequestModel, httpResponseModel: $httpResponseModel, extraDetails: $extraDetails)';
   }
 
   @override
@@ -223,13 +253,20 @@ class _$HistoryRequestModelImpl implements _HistoryRequestModel {
             (identical(other.httpRequestModel, httpRequestModel) ||
                 other.httpRequestModel == httpRequestModel) &&
             (identical(other.httpResponseModel, httpResponseModel) ||
-                other.httpResponseModel == httpResponseModel));
+                other.httpResponseModel == httpResponseModel) &&
+            const DeepCollectionEquality()
+                .equals(other._extraDetails, _extraDetails));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType, historyId, metaData, httpRequestModel, httpResponseModel);
+      runtimeType,
+      historyId,
+      metaData,
+      httpRequestModel,
+      httpResponseModel,
+      const DeepCollectionEquality().hash(_extraDetails));
 
   /// Create a copy of HistoryRequestModel
   /// with the given fields replaced by the non-null parameter values.
@@ -250,11 +287,12 @@ class _$HistoryRequestModelImpl implements _HistoryRequestModel {
 
 abstract class _HistoryRequestModel implements HistoryRequestModel {
   const factory _HistoryRequestModel(
-          {required final String historyId,
-          required final HistoryMetaModel metaData,
-          required final HttpRequestModel httpRequestModel,
-          required final HttpResponseModel httpResponseModel}) =
-      _$HistoryRequestModelImpl;
+      {required final String historyId,
+      required final HistoryMetaModel metaData,
+      required final HttpRequestModel httpRequestModel,
+      required final HttpResponseModel httpResponseModel,
+      @JsonKey(fromJson: customMapFromJson, toJson: customMapToJson)
+      final Map<dynamic, dynamic> extraDetails}) = _$HistoryRequestModelImpl;
 
   factory _HistoryRequestModel.fromJson(Map<String, dynamic> json) =
       _$HistoryRequestModelImpl.fromJson;
@@ -266,7 +304,11 @@ abstract class _HistoryRequestModel implements HistoryRequestModel {
   @override
   HttpRequestModel get httpRequestModel;
   @override
-  HttpResponseModel get httpResponseModel;
+  HttpResponseModel
+      get httpResponseModel; //ExtraDetails for anything else that can be included
+  @override
+  @JsonKey(fromJson: customMapFromJson, toJson: customMapToJson)
+  Map<dynamic, dynamic> get extraDetails;
 
   /// Create a copy of HistoryRequestModel
   /// with the given fields replaced by the non-null parameter values.

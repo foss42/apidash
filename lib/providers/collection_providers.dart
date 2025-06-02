@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:apidash/models/llm_models/llm_model.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -223,6 +226,7 @@ class CollectionStateNotifier
     int? responseStatus,
     String? message,
     HttpResponseModel? httpResponseModel,
+    Map? extraDetails,
   }) {
     final rId = id ?? ref.read(selectedIdStateProvider);
     if (rId == null) {
@@ -251,6 +255,7 @@ class CollectionStateNotifier
         query: query ?? currentHttpRequestModel.query,
         formData: formData ?? currentHttpRequestModel.formData,
       ),
+      extraDetails: extraDetails ?? currentModel.extraDetails,
       responseStatus: responseStatus ?? currentModel.responseStatus,
       message: message ?? currentModel.message,
       httpResponseModel: httpResponseModel ?? currentModel.httpResponseModel,
@@ -280,6 +285,13 @@ class CollectionStateNotifier
     HttpRequestModel substitutedHttpRequestModel =
         getSubstitutedHttpRequestModel(requestModel.httpRequestModel!);
 
+    if (apiType == APIType.ai) {
+      substitutedHttpRequestModel = getSubstitutedHttpRequestModelForAIRequest(
+        requestModel,
+        substitutedHttpRequestModel,
+      );
+    }
+
     // set current model's isWorking to true and update state
     var map = {...state!};
     map[requestId] = requestModel.copyWith(
@@ -305,10 +317,11 @@ class CollectionStateNotifier
         isWorking: false,
       );
     } else {
-      final httpResponseModel = baseHttpResponseModel.fromResponse(
+      HttpResponseModel httpResponseModel = baseHttpResponseModel.fromResponse(
         response: responseRec.$1!,
         time: responseRec.$2!,
       );
+
       int statusCode = responseRec.$1!.statusCode;
       newRequestModel = requestModel.copyWith(
         responseStatus: statusCode,
@@ -331,6 +344,7 @@ class CollectionStateNotifier
         ),
         httpRequestModel: substitutedHttpRequestModel,
         httpResponseModel: httpResponseModel,
+        extraDetails: requestModel!.extraDetails,
       );
       ref.read(historyMetaStateNotifier.notifier).addHistoryRequest(model);
     }
@@ -426,5 +440,34 @@ class CollectionStateNotifier
       envMap,
       activeEnvId,
     );
+  }
+
+  HttpRequestModel getSubstitutedHttpRequestModelForAIRequest(
+    RequestModel requestModel,
+    HttpRequestModel httpRequestModel,
+  ) {
+    final LLMModel aiModel = requestModel.extraDetails['model']!;
+    final reqData = aiModel.getRequestPayload(
+      systemPrompt: requestModel.extraDetails['system_prompt']!,
+      userPrompt: requestModel.extraDetails['user_prompt']!,
+      credential: requestModel.extraDetails['authorization_credential'] ?? '',
+    );
+    //Substitute POST
+    httpRequestModel = httpRequestModel.copyWith(method: HTTPVerb.post);
+    //Substitute URL
+    httpRequestModel = httpRequestModel.copyWith(url: reqData['url']!);
+    //Substitute Payload
+    httpRequestModel =
+        httpRequestModel.copyWith(body: jsonEncode(reqData['payload']!));
+    //Substitute Headers
+    final headers = {
+      ...(reqData['headers'] ?? {}),
+      ...aiModel.specifics.headers,
+    };
+    httpRequestModel = httpRequestModel.copyWith(headers: [
+      ...headers.entries
+          .map((x) => NameValueModel(name: x.key, value: x.value)),
+    ]);
+    return httpRequestModel;
   }
 }

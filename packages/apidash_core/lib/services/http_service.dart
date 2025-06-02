@@ -125,6 +125,24 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
           body: body,
         );
       }
+      if (apiType == APIType.ai) {
+        var requestBody = requestModel.body;
+        if (requestBody != null) {
+          var contentLength = utf8.encode(requestBody).length;
+          if (contentLength > 0) {
+            body = requestBody;
+            headers[HttpHeaders.contentLengthHeader] = contentLength.toString();
+            if (!requestModel.hasContentTypeHeader) {
+              headers[HttpHeaders.contentTypeHeader] = ContentType.json.header;
+            }
+          }
+        }
+        response = await client.post(
+          requestUrl,
+          headers: headers,
+          body: body,
+        );
+      }
       stopwatch.stop();
       return (response, stopwatch.elapsed, null);
     } catch (e) {

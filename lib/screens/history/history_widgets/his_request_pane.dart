@@ -1,3 +1,4 @@
+import 'package:apidash/screens/history/history_widgets/ai_history.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
@@ -93,6 +94,27 @@ class HistoryRequestPane extends ConsumerWidget {
               keyName: kNameHeader,
             ),
             const HisRequestBody(),
+          ],
+        ),
+      APIType.ai => RequestPane(
+          key: const Key("history-request-pane-ai"),
+          selectedId: selectedId,
+          codePaneVisible: codePaneVisible,
+          onPressedCodeButton: () {
+            ref.read(historyCodePaneVisibleStateProvider.notifier).state =
+                !codePaneVisible;
+          },
+          showViewCodeButton: !isCompact,
+          showIndicators: [
+            true,
+            false,
+            false,
+          ],
+          tabLabels: const ["Prompts", "Authorization", "Configuration"],
+          children: [
+            const HisAIPromptsSection(),
+            const HisAIAuthorizationSection(),
+            const HisAIConfigsSection(),
           ],
         ),
       _ => kSizedBoxEmpty,

@@ -18,6 +18,8 @@ class SettingsModel {
     this.workspaceFolderPath,
     this.isSSLDisabled = false,
     this.isDashBotEnabled = true,
+    this.defaultLLMProvider = 'llama3_local',
+    this.defaultLLMProviderCredentials = '',
   });
 
   final bool isDark;
@@ -33,6 +35,8 @@ class SettingsModel {
   final String? workspaceFolderPath;
   final bool isSSLDisabled;
   final bool isDashBotEnabled;
+  final String defaultLLMProvider;
+  final String defaultLLMProviderCredentials;
 
   SettingsModel copyWith({
     bool? isDark,
@@ -48,6 +52,8 @@ class SettingsModel {
     String? workspaceFolderPath,
     bool? isSSLDisabled,
     bool? isDashBotEnabled,
+    String? defaultLLMProvider,
+    String? defaultLLMProviderCredentials,
   }) {
     return SettingsModel(
       isDark: isDark ?? this.isDark,
@@ -65,6 +71,9 @@ class SettingsModel {
       workspaceFolderPath: workspaceFolderPath ?? this.workspaceFolderPath,
       isSSLDisabled: isSSLDisabled ?? this.isSSLDisabled,
       isDashBotEnabled: isDashBotEnabled ?? this.isDashBotEnabled,
+      defaultLLMProvider: defaultLLMProvider ?? this.defaultLLMProvider,
+      defaultLLMProviderCredentials:
+          defaultLLMProviderCredentials ?? this.defaultLLMProviderCredentials,
     );
   }
 
@@ -85,6 +94,8 @@ class SettingsModel {
       workspaceFolderPath: workspaceFolderPath,
       isSSLDisabled: isSSLDisabled,
       isDashBotEnabled: isDashBotEnabled,
+      defaultLLMProvider: defaultLLMProvider,
+      defaultLLMProviderCredentials: defaultLLMProviderCredentials,
     );
   }
 
@@ -124,6 +135,20 @@ class SettingsModel {
         // pass
       }
     }
+
+    final defaultLLMProvider = data["defaultLLMProvider"] as String?;
+
+    final defaultLLMProviderCredentialsStr =
+        data['defaultLLMProviderCredentials'] as String?;
+    String? defaultLLMProviderCredentials;
+    if (defaultLLMProviderCredentialsStr != null) {
+      try {
+        defaultLLMProviderCredentials = defaultLLMProviderCredentialsStr;
+      } catch (e) {
+        // pass
+      }
+    }
+
     final saveResponses = data["saveResponses"] as bool?;
     final promptBeforeClosing = data["promptBeforeClosing"] as bool?;
     final activeEnvironmentId = data["activeEnvironmentId"] as String?;
@@ -158,6 +183,8 @@ class SettingsModel {
       workspaceFolderPath: workspaceFolderPath,
       isSSLDisabled: isSSLDisabled,
       isDashBotEnabled: isDashBotEnabled,
+      defaultLLMProvider: defaultLLMProvider,
+      defaultLLMProviderCredentials: defaultLLMProviderCredentials,
     );
   }
 
@@ -178,6 +205,8 @@ class SettingsModel {
       "workspaceFolderPath": workspaceFolderPath,
       "isSSLDisabled": isSSLDisabled,
       "isDashBotEnabled": isDashBotEnabled,
+      "defaultLLMProvider": defaultLLMProvider,
+      "defaultLLMProviderCredentials": defaultLLMProviderCredentials,
     };
   }
 
@@ -203,7 +232,9 @@ class SettingsModel {
         other.historyRetentionPeriod == historyRetentionPeriod &&
         other.workspaceFolderPath == workspaceFolderPath &&
         other.isSSLDisabled == isSSLDisabled &&
-        other.isDashBotEnabled == isDashBotEnabled;
+        other.isDashBotEnabled == isDashBotEnabled &&
+        other.defaultLLMProvider == defaultLLMProvider &&
+        other.defaultLLMProviderCredentials == defaultLLMProviderCredentials;
   }
 
   @override
@@ -223,6 +254,8 @@ class SettingsModel {
       workspaceFolderPath,
       isSSLDisabled,
       isDashBotEnabled,
+      defaultLLMProvider,
+      defaultLLMProviderCredentials,
     );
   }
 }

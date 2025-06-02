@@ -15,6 +15,9 @@ _$HistoryRequestModelImpl _$$HistoryRequestModelImplFromJson(Map json) =>
           Map<String, Object?>.from(json['httpRequestModel'] as Map)),
       httpResponseModel: HttpResponseModel.fromJson(
           Map<String, Object?>.from(json['httpResponseModel'] as Map)),
+      extraDetails: json['extraDetails'] == null
+          ? const {}
+          : customMapFromJson(json['extraDetails'] as Map),
     );
 
 Map<String, dynamic> _$$HistoryRequestModelImplToJson(
@@ -24,4 +27,5 @@ Map<String, dynamic> _$$HistoryRequestModelImplToJson(
       'metaData': instance.metaData.toJson(),
       'httpRequestModel': instance.httpRequestModel.toJson(),
       'httpResponseModel': instance.httpResponseModel.toJson(),
+      'extraDetails': customMapToJson(instance.extraDetails),
     };

@@ -16,6 +16,10 @@ class HistoryRequestModel with _$HistoryRequestModel {
     required HistoryMetaModel metaData,
     required HttpRequestModel httpRequestModel,
     required HttpResponseModel httpResponseModel,
+//ExtraDetails for anything else that can be included
+    @JsonKey(fromJson: customMapFromJson, toJson: customMapToJson)
+    @Default({})
+    Map extraDetails,
   }) = _HistoryRequestModel;
 
   factory HistoryRequestModel.fromJson(Map<String, Object?> json) =>

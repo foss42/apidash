@@ -1,3 +1,5 @@
+import 'package:apidash/widgets/popup_menu_llmprovider.dart';
+import 'package:apidash/widgets/textfield_llmprovider_credentials.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -114,6 +116,35 @@ class SettingsPage extends ConsumerWidget {
                   },
                 ),
               ),
+              ListTile(
+                hoverColor: kColorTransparent,
+                title: const Text('Default LLM Provider'),
+                trailing: LLMProviderPopupMenu(
+                  value: settings.defaultLLMProvider,
+                  onChanged: (value) {
+                    ref
+                        .read(settingsProvider.notifier)
+                        .update(defaultLLMProvider: value);
+                    ref
+                        .read(settingsProvider.notifier)
+                        .update(defaultLLMProviderCredentials: '');
+                  },
+                ),
+              ),
+              if (settings.defaultLLMProvider != 'llama3_local') ...[
+                ListTile(
+                  hoverColor: kColorTransparent,
+                  title: const Text('Default LLM Provider Credentials'),
+                  trailing: LLMProviderCredentialsTextField(
+                    value: settings.defaultLLMProviderCredentials,
+                    onChanged: (value) {
+                      ref
+                          .read(settingsProvider.notifier)
+                          .update(defaultLLMProviderCredentials: value);
+                    },
+                  ),
+                ),
+              ],
               CheckboxListTile(
                 title: const Text("Save Responses"),
                 subtitle:

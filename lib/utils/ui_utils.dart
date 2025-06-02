@@ -36,6 +36,7 @@ Color getAPIColor(
         method,
       ),
     APIType.graphql => kColorGQL,
+    APIType.ai => kColorSchemeSeed,
   };
   if (brightness == Brightness.dark) {
     col = getDarkModeColor(col);
@@ -55,6 +56,10 @@ Color getHTTPMethodColor(HTTPVerb? method) {
     _ => kColorHttpMethodGet,
   };
   return col;
+}
+
+Color getAIMethodColor(String? modelID) {
+  return kColorHttpMethodGet;
 }
 
 Color getDarkModeColor(Color col) {

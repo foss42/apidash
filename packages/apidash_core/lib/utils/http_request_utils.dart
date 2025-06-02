@@ -1,4 +1,5 @@
 import 'package:apidash_core/consts.dart';
+import 'package:flutter/widgets.dart';
 import 'package:seed/seed.dart';
 import '../models/models.dart';
 import 'graphql_utils.dart';
@@ -98,5 +99,7 @@ String? getRequestBody(APIType type, HttpRequestModel httpRequestModel) {
           ? httpRequestModel.body
           : null,
     APIType.graphql => getGraphQLBody(httpRequestModel),
+    APIType.ai =>
+      httpRequestModel.hasTextData ? httpRequestModel.body?.toString() : null,
   };
 }

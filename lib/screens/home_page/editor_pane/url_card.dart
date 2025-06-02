@@ -1,3 +1,8 @@
+import 'package:apidash/models/llm_models/all_models.dart';
+import 'package:apidash/models/llm_models/google/gemini_20_flash.dart';
+import 'package:apidash/models/llm_models/llm_model.dart';
+import 'package:apidash/models/llm_models/openai/azure_openai.dart';
+import 'package:apidash/widgets/dropdown_ai_method.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +19,10 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
     ref.watch(selectedIdStateProvider);
     final apiType = ref
         .watch(selectedRequestModelProvider.select((value) => value?.apiType));
+
+    final aiModel = ref.watch(selectedRequestModelProvider
+        .select((value) => value?.extraDetails['model'] as LLMModel?));
+
     return Card(
       color: kColorTransparent,
       surfaceTintColor: kColorTransparent,
@@ -35,14 +44,19 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
                   switch (apiType) {
                     APIType.rest => const DropdownButtonHTTPMethod(),
                     APIType.graphql => kSizedBoxEmpty,
+                    APIType.ai => const DropdownButtonAIMethod(),
                     null => kSizedBoxEmpty,
                   },
                   switch (apiType) {
                     APIType.rest => kHSpacer5,
                     _ => kHSpacer8,
                   },
-                  const Expanded(
-                    child: URLTextField(),
+                  Expanded(
+                    child: URLTextField(
+                      key: aiModel == null
+                          ? null
+                          : ValueKey(aiModel.modelIdentifier),
+                    ),
                   ),
                 ],
               )
@@ -51,14 +65,20 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
                   switch (apiType) {
                     APIType.rest => const DropdownButtonHTTPMethod(),
                     APIType.graphql => kSizedBoxEmpty,
+                    APIType.ai => const DropdownButtonAIMethod(),
                     null => kSizedBoxEmpty,
                   },
                   switch (apiType) {
                     APIType.rest => kHSpacer20,
+                    APIType.ai => kHSpacer20,
                     _ => kHSpacer8,
                   },
-                  const Expanded(
-                    child: URLTextField(),
+                  Expanded(
+                    child: URLTextField(
+                      key: aiModel == null
+                          ? null
+                          : ValueKey(aiModel.modelIdentifier),
+                    ),
                   ),
                   kHSpacer20,
                   const SizedBox(
@@ -99,15 +119,28 @@ class URLTextField extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedId = ref.watch(selectedIdStateProvider);
+    final selectedId = ref.watch(selectedIdStateProvider)!;
     return EnvURLField(
-      selectedId: selectedId!,
+      selectedId: selectedId,
       initialValue: ref
           .read(collectionStateNotifierProvider.notifier)
           .getRequestModel(selectedId)
           ?.httpRequestModel
           ?.url,
       onChanged: (value) {
+        final obj = ref.read(collectionStateNotifierProvider)![selectedId]!;
+        final aT = obj.apiType;
+        if (aT == APIType.ai) {
+          final model = obj.extraDetails['model']! as LLMModel;
+          model.specifics.endpoint = value;
+          ref.read(collectionStateNotifierProvider.notifier).update(
+            extraDetails: {
+              ...obj.extraDetails,
+              'model': model,
+              'modifed_endpoint': value,
+            },
+          );
+        }
         ref.read(collectionStateNotifierProvider.notifier).update(url: value);
       },
       onFieldSubmitted: (value) {
@@ -138,6 +171,38 @@ class SendRequestButton extends ConsumerWidget {
       },
       onCancel: () {
         ref.read(collectionStateNotifierProvider.notifier).cancelRequest();
+      },
+    );
+  }
+}
+
+class DropdownButtonAIMethod extends ConsumerWidget {
+  const DropdownButtonAIMethod({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final xtraDetails = ref.watch(selectedRequestModelProvider
+            .select((value) => value?.extraDetails)) ??
+        {};
+
+    final model = (xtraDetails['model'] as LLMModel?);
+    final String modelId = model?.modelIdentifier ?? 'gemini_20_flash';
+
+    return DropdownButtonAiMethod(
+      method: modelId,
+      onChanged: (String? value) {
+        final xD = {
+          ...xtraDetails,
+        };
+        xD.remove('modifed_endpoint');
+        final m = getLLMModelFromID(value!, xD);
+        xD.addAll({'model': m});
+        ref
+            .read(collectionStateNotifierProvider.notifier)
+            .update(extraDetails: xD, url: m!.specifics.endpoint);
+        // print('setting url -> ${m.specifics.endpoint}');
       },
     );
   }
