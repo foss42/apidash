@@ -1,3 +1,4 @@
+import 'package:apidash/dashbot/dashbot_dashboard.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,6 +13,19 @@ import 'settings_page.dart';
 
 class Dashboard extends ConsumerWidget {
   const Dashboard({super.key});
+
+  void _showDashbotWindow(BuildContext context) {
+    final overlay = Overlay.of(context);
+    OverlayEntry? entry;
+
+    entry = OverlayEntry(
+      builder: (context) => DashbotWindow(
+        screenSize: MediaQuery.of(context).size,
+        onClose: () => entry?.remove(),
+      ),
+    );
+    overlay.insert(entry);
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -125,19 +139,21 @@ class Dashboard extends ConsumerWidget {
           ],
         ),
       ),
-      // floatingActionButton: settings.isDashBotEnabled
-      //     ? FloatingActionButton(
-      //         onPressed: () => showModalBottomSheet(
-      //           context: context,
-      //           isScrollControlled: true,
-      //           builder: (context) => const Padding(
-      //             padding: EdgeInsets.all(16.0),
-      //             child: DashBotWidget(),
-      //           ),
-      //         ),
-      //         child: const Icon(Icons.help_outline),
-      //       )
-      //     : null,
+      floatingActionButton: settings.isDashBotEnabled
+          ? FloatingActionButton(
+              backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+              onPressed: () => _showDashbotWindow(context),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 6.0,
+                  horizontal: 10,
+                ),
+                child: Image.asset(
+                  'assets/dashbot_icon_2.png',
+                ),
+              ),
+            )
+          : null,
     );
   }
 }
