@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:ui';
 
 import 'package:apidash/dashbot/core/model/dashbot_window_model.dart';
@@ -24,6 +23,22 @@ void main() {
       expect(initialState.right, 50);
       expect(initialState.bottom, 100);
       expect(initialState.isActive, false);
+    });
+
+    test('Toggle active state', () {
+      final container = createContainer();
+      final notifier = container.read(dashbotWindowNotifierProvider.notifier);
+
+      // Initial state is false
+      expect(container.read(dashbotWindowNotifierProvider).isActive, false);
+
+      // First toggle
+      notifier.toggleActive();
+      expect(container.read(dashbotWindowNotifierProvider).isActive, true);
+
+      // Second toggle
+      notifier.toggleActive();
+      expect(container.read(dashbotWindowNotifierProvider).isActive, false);
     });
 
     group('Position updates', () {
