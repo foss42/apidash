@@ -56,7 +56,9 @@ void main() {
         expect(state.bottom, 100 - 50); // 100 - 50 = 50
       });
 
-      test('Drag beyond left boundary', () {
+      test(
+          'given dashbot window notifier when position is updated beyond the left boundary then the value must be clamped to the upper boundary',
+          () {
         final container = createContainer();
         final notifier = container.read(dashbotWindowNotifierProvider.notifier);
 
@@ -65,10 +67,12 @@ void main() {
 
         final state = container.read(dashbotWindowNotifierProvider);
         expect(state.right,
-            850); // 50 - (-1200) = 1250 → not within bounds max is screen width(1200) - width(350) = 850
+            850); // 50 - (-1200) = 1250 → not within bounds, max is screen width(1200) - width(350) = 850
       });
 
-      test('Drag beyond bottom boundary', () {
+      test(
+          'given dashbot window notifier when position is updated beyond bottom boundary then the value must be clamped to the upper boundary',
+          () {
         final container = createContainer();
         final notifier = container.read(dashbotWindowNotifierProvider.notifier);
 
@@ -78,6 +82,50 @@ void main() {
         final state = container.read(dashbotWindowNotifierProvider);
         // 100 - (-700) = 800 → but max is screenHeight(800) - height(450) = 350
         expect(state.bottom, 350);
+      });
+    });
+
+    group('Size updates', () {
+      test('Normal resize within bounds', () {
+        final container = createContainer();
+        final notifier = container.read(dashbotWindowNotifierProvider.notifier);
+
+        // Increase width by 100px, height by 50px
+        notifier.updateSize(-100, -50, testScreenSize);
+
+        final state = container.read(dashbotWindowNotifierProvider);
+        expect(state.width, 350 - (-100)); // = 450
+        expect(state.height, 450 - (-50)); // = 500
+      });
+
+      test(
+          'given dashbot window notifier when tried to resize below the minimum limit then the value must be clamped to the lower boundary',
+          () {
+        final container = createContainer();
+        final notifier = container.read(dashbotWindowNotifierProvider.notifier);
+
+        // Try to shrink too much
+        notifier.updateSize(100, 100, testScreenSize);
+
+        final state = container.read(dashbotWindowNotifierProvider);
+        expect(state.width, 300); // Clamped to minimum
+        expect(state.height, 350); // Clamped to minimum
+      });
+
+      test(
+          'given dashbot window notifier when tried to resize above the maximum limit then the value must be clamped to the upper boundary',
+          () {
+        final container = createContainer();
+        final notifier = container.read(dashbotWindowNotifierProvider.notifier);
+
+        // Try to expand beyond screen
+        notifier.updateSize(-1200, -900, testScreenSize);
+
+        final state = container.read(dashbotWindowNotifierProvider);
+        // Max width = screenWidth(1200) - right(50) = 1150
+        expect(state.width, 1150);
+        // Max height = screenHeight(800) - bottom(100) = 700
+        expect(state.height, 700);
       });
     });
   });

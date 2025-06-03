@@ -20,13 +20,13 @@ class DashbotWindowNotifier extends _$DashbotWindowNotifier {
 
   void updateSize(double dx, double dy, Size screenSize) {
     final newWidth =
-        (state.width - dx).clamp(300, screenSize.width + state.right);
+        (state.width - dx).clamp(300, screenSize.width - state.right);
     final newHeight =
-        (state.height - dy).clamp(300, screenSize.height + state.bottom);
+        (state.height - dy).clamp(350, screenSize.height - state.bottom);
 
     state = state.copyWith(
-      width: newWidth as double,
-      height: newHeight as double,
+      width: newWidth.toDouble(),
+      height: newHeight.toDouble(),
     );
   }
 
