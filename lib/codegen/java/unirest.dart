@@ -3,7 +3,7 @@ import 'package:jinja/jinja.dart' as jj;
 
 class JavaUnirestGen {
   final String kStringUnirestImports = '''
-import kong.unirest.core.*;
+import kong.unirest.*;
 
 ''';
 
@@ -27,17 +27,20 @@ public class Main {
 ''';
 
   final String kTemplateRequestCreation = '''
-        HttpResponse<JsonNode> response = Unirest
-                .{{method}}(requestURL)\n
+        HttpResponse<JsonNode> response = Unirest.{{method}}(requestURL)\n
 ''';
 
   final String kTemplateRequestHeader = '''
                 .header("{{name}}", "{{value}}")\n
 ''';
 
-  final String kTemplateUrlQueryParam = '''
-                .queryString("{{name}}", "{{value}}")\n
+    final String kTemplateUrlQueryParam = '''
+              {% for name, value in queryParams %}{% for v in value -%}
+                  .queryString("{{name}}", "{{v}}")
+              {% endfor %}{% endfor %}
 ''';
+
+
 
   final String kTemplateRequestTextFormData = '''
                 .field("{{name}}", "{{value}}")\n
@@ -52,7 +55,7 @@ public class Main {
 ''';
 
   final String kStringRequestEnd = """
-                .asJson();
+        .asJson();
         System.out.println(response.getStatus());
         System.out.println(response.getBody());
     }
@@ -125,14 +128,11 @@ public class Main {
 
       // ~~~~~~~~~~~~~~~~~~ query parameters start ~~~~~~~~~~~~~~~~~~
 
-      if (uri.hasQuery) {
-        var params = uri.queryParameters;
-        var templateUrlQueryParam = jj.Template(kTemplateUrlQueryParam);
-        params.forEach((name, value) {
-          result +=
-              templateUrlQueryParam.render({"name": name, "value": value});
-        });
-      }
+     
+     var params = requestModel.enabledParamsMap;
+    var templateUrlQueryParam = jj.Template(kTemplateUrlQueryParam);
+    result += templateUrlQueryParam.render({"queryParams": params});
+          
 
       // ~~~~~~~~~~~~~~~~~~ query parameters end ~~~~~~~~~~~~~~~~~~
 

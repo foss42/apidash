@@ -23,9 +23,9 @@ curl_setopt_array($request, [
 
 $response = curl_exec($request);
 
+$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 curl_close($request);
 
-$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 echo "Status Code: " . $httpCode . "\n";
 echo $response . "\n";
 ''';
@@ -43,9 +43,16 @@ echo $response . "\n";
 $uri = 'https://api.apidash.dev/country/data';
 
 $queryParams = [
-    'code' => 'US',
+'code' => ['US']
 ];
-$uri .= '?' . http_build_query($queryParams);
+$queryParts = [];
+foreach ($queryParams as $key => $values) {
+    foreach ((array) $values as $value) {
+        $queryParts[] = urlencode($key) . '=' . urlencode($value);
+    }
+}
+$queryString = implode('&', $queryParts);
+$uri .= '?' . $queryString;
 
 $request = curl_init($uri);
 
@@ -57,9 +64,9 @@ curl_setopt_array($request, [
 
 $response = curl_exec($request);
 
+$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 curl_close($request);
 
-$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 echo "Status Code: " . $httpCode . "\n";
 echo $response . "\n";
 ''';
@@ -77,9 +84,16 @@ echo $response . "\n";
 $uri = 'https://api.apidash.dev/country/data';
 
 $queryParams = [
-    'code' => 'IND',
+'code' => ['IND', 'US']
 ];
-$uri .= '?' . http_build_query($queryParams);
+$queryParts = [];
+foreach ($queryParams as $key => $values) {
+    foreach ((array) $values as $value) {
+        $queryParts[] = urlencode($key) . '=' . urlencode($value);
+    }
+}
+$queryString = implode('&', $queryParts);
+$uri .= '?' . $queryString;
 
 $request = curl_init($uri);
 
@@ -91,9 +105,9 @@ curl_setopt_array($request, [
 
 $response = curl_exec($request);
 
+$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 curl_close($request);
 
-$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 echo "Status Code: " . $httpCode . "\n";
 echo $response . "\n";
 ''';
@@ -111,13 +125,20 @@ echo $response . "\n";
 $uri = 'https://api.apidash.dev/humanize/social';
 
 $queryParams = [
-    'num' => '8700000',
-    'digits' => '3',
-    'system' => 'SS',
-    'add_space' => 'true',
-    'trailing_zeros' => 'true',
+'num' => ['8700000'],
+'digits' => ['3'],
+'system' => ['SS'],
+'add_space' => ['true'],
+'trailing_zeros' => ['true']
 ];
-$uri .= '?' . http_build_query($queryParams);
+$queryParts = [];
+foreach ($queryParams as $key => $values) {
+    foreach ((array) $values as $value) {
+        $queryParts[] = urlencode($key) . '=' . urlencode($value);
+    }
+}
+$queryString = implode('&', $queryParts);
+$uri .= '?' . $queryString;
 
 $request = curl_init($uri);
 
@@ -129,9 +150,9 @@ curl_setopt_array($request, [
 
 $response = curl_exec($request);
 
+$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 curl_close($request);
 
-$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 echo "Status Code: " . $httpCode . "\n";
 echo $response . "\n";
 ''';
@@ -164,9 +185,9 @@ curl_setopt_array($request, [
 
 $response = curl_exec($request);
 
+$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 curl_close($request);
 
-$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 echo "Status Code: " . $httpCode . "\n";
 echo $response . "\n";
 ''';
@@ -185,9 +206,16 @@ echo $response . "\n";
 $uri = 'https://api.github.com/repos/foss42/apidash';
 
 $queryParams = [
-    'raw' => 'true',
+'raw' => ['true']
 ];
-$uri .= '?' . http_build_query($queryParams);
+$queryParts = [];
+foreach ($queryParams as $key => $values) {
+    foreach ((array) $values as $value) {
+        $queryParts[] = urlencode($key) . '=' . urlencode($value);
+    }
+}
+$queryString = implode('&', $queryParts);
+$uri .= '?' . $queryString;
 
 $headers = [
     'User-Agent: Test Agent',
@@ -204,9 +232,9 @@ curl_setopt_array($request, [
 
 $response = curl_exec($request);
 
+$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 curl_close($request);
 
-$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 echo "Status Code: " . $httpCode . "\n";
 echo $response . "\n";
 ''';
@@ -234,9 +262,9 @@ curl_setopt_array($request, [
 
 $response = curl_exec($request);
 
+$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 curl_close($request);
 
-$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 echo "Status Code: " . $httpCode . "\n";
 echo $response . "\n";
 ''';
@@ -255,9 +283,16 @@ echo $response . "\n";
 $uri = 'https://api.github.com/repos/foss42/apidash';
 
 $queryParams = [
-    'raw' => 'true',
+'raw' => ['true']
 ];
-$uri .= '?' . http_build_query($queryParams);
+$queryParts = [];
+foreach ($queryParams as $key => $values) {
+    foreach ((array) $values as $value) {
+        $queryParts[] = urlencode($key) . '=' . urlencode($value);
+    }
+}
+$queryString = implode('&', $queryParts);
+$uri .= '?' . $queryString;
 
 $headers = [
     'User-Agent: Test Agent',
@@ -274,9 +309,9 @@ curl_setopt_array($request, [
 
 $response = curl_exec($request);
 
+$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 curl_close($request);
 
-$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 echo "Status Code: " . $httpCode . "\n";
 echo $response . "\n";
 ''';
@@ -295,10 +330,17 @@ echo $response . "\n";
 $uri = 'https://api.apidash.dev/humanize/social';
 
 $queryParams = [
-    'num' => '8700000',
-    'add_space' => 'true',
+'num' => ['8700000'],
+'add_space' => ['true']
 ];
-$uri .= '?' . http_build_query($queryParams);
+$queryParts = [];
+foreach ($queryParams as $key => $values) {
+    foreach ((array) $values as $value) {
+        $queryParts[] = urlencode($key) . '=' . urlencode($value);
+    }
+}
+$queryString = implode('&', $queryParts);
+$uri .= '?' . $queryString;
 
 $request = curl_init($uri);
 
@@ -310,9 +352,9 @@ curl_setopt_array($request, [
 
 $response = curl_exec($request);
 
+$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 curl_close($request);
 
-$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 echo "Status Code: " . $httpCode . "\n";
 echo $response . "\n";
 ''';
@@ -345,9 +387,9 @@ curl_setopt_array($request, [
 
 $response = curl_exec($request);
 
+$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 curl_close($request);
 
-$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 echo "Status Code: " . $httpCode . "\n";
 echo $response . "\n";
 ''';
@@ -366,10 +408,17 @@ echo $response . "\n";
 $uri = 'https://api.apidash.dev/humanize/social';
 
 $queryParams = [
-    'num' => '8700000',
-    'digits' => '3',
+'num' => ['8700000'],
+'digits' => ['3']
 ];
-$uri .= '?' . http_build_query($queryParams);
+$queryParts = [];
+foreach ($queryParams as $key => $values) {
+    foreach ((array) $values as $value) {
+        $queryParts[] = urlencode($key) . '=' . urlencode($value);
+    }
+}
+$queryString = implode('&', $queryParts);
+$uri .= '?' . $queryString;
 
 $headers = [
     'User-Agent: Test Agent',
@@ -386,9 +435,9 @@ curl_setopt_array($request, [
 
 $response = curl_exec($request);
 
+$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 curl_close($request);
 
-$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 echo "Status Code: " . $httpCode . "\n";
 echo $response . "\n";
 ''';
@@ -416,9 +465,9 @@ curl_setopt_array($request, [
 
 $response = curl_exec($request);
 
+$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 curl_close($request);
 
-$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 echo "Status Code: " . $httpCode . "\n";
 echo $response . "\n";
 ''';
@@ -448,9 +497,9 @@ curl_setopt_array($request, [
 
 $response = curl_exec($request);
 
+$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 curl_close($request);
 
-$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 echo "Status Code: " . $httpCode . "\n";
 echo $response . "\n";
 ''';
@@ -478,9 +527,9 @@ curl_setopt_array($request, [
 
 $response = curl_exec($request);
 
+$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 curl_close($request);
 
-$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 echo "Status Code: " . $httpCode . "\n";
 echo $response . "\n";
 ''';
@@ -520,9 +569,9 @@ curl_setopt_array($request, [
 
 $response = curl_exec($request);
 
+$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 curl_close($request);
 
-$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 echo "Status Code: " . $httpCode . "\n";
 echo $response . "\n";
 ''';
@@ -565,9 +614,9 @@ curl_setopt_array($request, [
 
 $response = curl_exec($request);
 
+$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 curl_close($request);
 
-$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 echo "Status Code: " . $httpCode . "\n";
 echo $response . "\n";
 ''';
@@ -605,9 +654,9 @@ curl_setopt_array($request, [
 
 $response = curl_exec($request);
 
+$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 curl_close($request);
 
-$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 echo "Status Code: " . $httpCode . "\n";
 echo $response . "\n";
 ''';
@@ -642,9 +691,9 @@ curl_setopt_array($request, [
 
 $response = curl_exec($request);
 
+$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 curl_close($request);
 
-$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 echo "Status Code: " . $httpCode . "\n";
 echo $response . "\n";
 ''';
@@ -684,9 +733,9 @@ curl_setopt_array($request, [
 
 $response = curl_exec($request);
 
+$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 curl_close($request);
 
-$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 echo "Status Code: " . $httpCode . "\n";
 echo $response . "\n";
 ''';
@@ -719,9 +768,9 @@ curl_setopt_array($request, [
 
 $response = curl_exec($request);
 
+$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 curl_close($request);
 
-$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 echo "Status Code: " . $httpCode . "\n";
 echo $response . "\n";
 ''';
@@ -754,9 +803,9 @@ curl_setopt_array($request, [
 
 $response = curl_exec($request);
 
+$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 curl_close($request);
 
-$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 echo "Status Code: " . $httpCode . "\n";
 echo $response . "\n";
 ''';
@@ -780,10 +829,17 @@ $request_body = [
 ];
 
 $queryParams = [
-    'size' => '2',
-    'len' => '3',
+'size' => ['2'],
+'len' => ['3']
 ];
-$uri .= '?' . http_build_query($queryParams);
+$queryParts = [];
+foreach ($queryParams as $key => $values) {
+    foreach ((array) $values as $value) {
+        $queryParts[] = urlencode($key) . '=' . urlencode($value);
+    }
+}
+$queryString = implode('&', $queryParts);
+$uri .= '?' . $queryString;
 
 $request = curl_init($uri);
 
@@ -796,9 +852,9 @@ curl_setopt_array($request, [
 
 $response = curl_exec($request);
 
+$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 curl_close($request);
 
-$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 echo "Status Code: " . $httpCode . "\n";
 echo $response . "\n";
 ''';
@@ -821,10 +877,17 @@ $request_body = [
 ];
 
 $queryParams = [
-    'size' => '2',
-    'len' => '3',
+'size' => ['2'],
+'len' => ['3']
 ];
-$uri .= '?' . http_build_query($queryParams);
+$queryParts = [];
+foreach ($queryParams as $key => $values) {
+    foreach ((array) $values as $value) {
+        $queryParts[] = urlencode($key) . '=' . urlencode($value);
+    }
+}
+$queryString = implode('&', $queryParts);
+$uri .= '?' . $queryString;
 
 $headers = [
     'User-Agent: Test Agent',
@@ -843,9 +906,9 @@ curl_setopt_array($request, [
 
 $response = curl_exec($request);
 
+$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 curl_close($request);
 
-$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 echo "Status Code: " . $httpCode . "\n";
 echo $response . "\n";
 ''';
@@ -870,6 +933,7 @@ $request_body = '{
 }';
 
 $headers = [
+    'x-api-key: reqres-free-v1',
     'Content-Type: application/json',
 ];
 
@@ -885,9 +949,9 @@ curl_setopt_array($request, [
 
 $response = curl_exec($request);
 
+$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 curl_close($request);
 
-$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 echo "Status Code: " . $httpCode . "\n";
 echo $response . "\n";
 ''';
@@ -912,6 +976,7 @@ $request_body = '{
 }';
 
 $headers = [
+    'x-api-key: reqres-free-v1',
     'Content-Type: application/json',
 ];
 
@@ -927,9 +992,9 @@ curl_setopt_array($request, [
 
 $response = curl_exec($request);
 
+$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 curl_close($request);
 
-$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 echo "Status Code: " . $httpCode . "\n";
 echo $response . "\n";
 ''';
@@ -948,19 +1013,24 @@ echo $response . "\n";
 
 $uri = 'https://reqres.in/api/users/2';
 
+$headers = [
+    'x-api-key: reqres-free-v1',
+];
+
 $request = curl_init($uri);
 
 curl_setopt_array($request, [
     CURLOPT_RETURNTRANSFER => 1,
     CURLOPT_CUSTOMREQUEST => 'DELETE',
+    CURLOPT_HTTPHEADER => $headers,
     CURLOPT_FOLLOWLOCATION => true,
 ]);
 
 $response = curl_exec($request);
 
+$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 curl_close($request);
 
-$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 echo "Status Code: " . $httpCode . "\n";
 echo $response . "\n";
 ''';
@@ -983,6 +1053,7 @@ $request_body = '{
 }';
 
 $headers = [
+    'x-api-key: reqres-free-v1',
     'Content-Type: application/json',
 ];
 
@@ -998,9 +1069,9 @@ curl_setopt_array($request, [
 
 $response = curl_exec($request);
 
+$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 curl_close($request);
 
-$httpCode = curl_getinfo($request, CURLINFO_HTTP_CODE);
 echo "Status Code: " . $httpCode . "\n";
 echo $response . "\n";
 ''';
