@@ -6,6 +6,7 @@ class RubyNetHttpCodeGen {
 require "net/http"
 
 url = URI("{{url}}")
+
 """;
 
   String kTemplateRequestParams = """
