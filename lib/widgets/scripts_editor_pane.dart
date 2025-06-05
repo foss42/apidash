@@ -17,27 +17,33 @@ class _ScriptsEditorPaneState extends ConsumerState<ScriptsEditorPane> {
   @override
   Widget build(BuildContext context) {
     final settings = ref.watch(settingsProvider);
-    return CodeTheme(
-      data: CodeThemeData(
-        styles: settings.isDark ? monokaiTheme : xcodeTheme,
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(9),
+        color: Theme.of(context).colorScheme.surfaceContainerLowest,
       ),
-      child: SingleChildScrollView(
-        child: CodeField(
-          smartDashesType: SmartDashesType.enabled,
-          smartQuotesType: SmartQuotesType.enabled,
-          background: Theme.of(context).colorScheme.surfaceContainerLowest,
-          gutterStyle: GutterStyle(
-            width: 40, // TODO: Fix numbers size
-            margin: 2,
-            textAlign: TextAlign.left,
-            showFoldingHandles: false,
-            showLineNumbers: false,
-          ),
-          cursorColor: Theme.of(context).colorScheme.primary,
-          controller: widget.controller,
-          textStyle: TextStyle(
-            fontSize: 12,
-            fontFamily: 'monospace',
+      child: CodeTheme(
+        data: CodeThemeData(
+          styles: settings.isDark ? monokaiTheme : xcodeTheme,
+        ),
+        child: SingleChildScrollView(
+          child: CodeField(
+            smartDashesType: SmartDashesType.enabled,
+            smartQuotesType: SmartQuotesType.enabled,
+            background: Theme.of(context).colorScheme.surfaceContainerLowest,
+            gutterStyle: GutterStyle(
+              width: 40, // TODO: Fix numbers size
+              margin: 2,
+              textAlign: TextAlign.left,
+              showFoldingHandles: false,
+              showLineNumbers: false,
+            ),
+            cursorColor: Theme.of(context).colorScheme.primary,
+            controller: widget.controller,
+            textStyle: TextStyle(
+              fontSize: 12,
+              fontFamily: 'monospace',
+            ),
           ),
         ),
       ),

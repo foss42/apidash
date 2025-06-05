@@ -40,7 +40,7 @@ class _ScriptsCodePaneState extends ConsumerState<ScriptsCodePane> {
           );
     });
 
-    final tabs = ["Pre-Req", "Post-Res"];
+    final tabs = ["Pre Request", "Post Response"];
     final content = [
       ScriptsEditorPane(
         controller: preReqCodeController,
@@ -50,52 +50,45 @@ class _ScriptsCodePaneState extends ConsumerState<ScriptsCodePane> {
       ),
     ];
 
-    return Row(
+    return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(
-          width: 100,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              for (int i = 0; i < tabs.length; i++)
-                ListTile(
-                  dense: true,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                  selectedTileColor: _selectedTabIndex == i
-                      ? Theme.of(context).colorScheme.secondaryFixed
-                      : Theme.of(context).colorScheme.surface,
-                  title: Text(
-                    tabs[i],
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: _selectedTabIndex == i
-                          ? Theme.of(context)
-                              .colorScheme
-                              .onSecondaryFixedVariant
-                          : Theme.of(context).colorScheme.onSurface,
-                    ),
-                  ),
-                  selected: _selectedTabIndex == i,
-                  onTap: () {
-                    setState(() {
-                      _selectedTabIndex = i;
-                    });
-                  },
-                ),
-            ],
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: DropdownButton<int>(
+            focusColor: Theme.of(context).colorScheme.surface,
+            icon: Icon(
+              Icons.arrow_drop_down_rounded,
+              size: 22,
+            ),
+            borderRadius: BorderRadius.circular(9),
+            elevation: 4,
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              fontSize: 12,
+            ),
+            underline: Container(
+              height: 0,
+            ),
+            value: _selectedTabIndex,
+            items: tabs.asMap().entries.map((entry) {
+              return DropdownMenuItem<int>(
+                value: entry.key,
+                child: Text(entry.value),
+              );
+            }).toList(),
+            onChanged: (int? newValue) {
+              if (newValue != null) {
+                setState(() {
+                  _selectedTabIndex = newValue;
+                });
+              }
+            },
           ),
         ),
-        const VerticalDivider(width: 1),
         Expanded(
-          child: Container(
-            color: Theme.of(context).colorScheme.surfaceContainerLowest,
-            child: content[_selectedTabIndex],
-          ),
+          child: content[_selectedTabIndex],
         ),
       ],
     );
