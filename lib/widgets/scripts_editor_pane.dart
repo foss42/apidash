@@ -30,6 +30,8 @@ class _ScriptsEditorPaneState extends ConsumerState<ScriptsEditorPane> {
             width: 40, // TODO: Fix numbers size
             margin: 2,
             textAlign: TextAlign.left,
+            showFoldingHandles: false,
+            showLineNumbers: false,
           ),
           cursorColor: Theme.of(context).colorScheme.primary,
           controller: widget.controller,
