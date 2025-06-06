@@ -160,7 +160,7 @@ class LLMConfigTextValue extends LLMModelConfigValue {
   }
 }
 
-enum LLMModelConfigurationName { temperature, top_p }
+enum LLMModelConfigurationName { temperature, top_p, max_tokens }
 
 Map<LLMModelConfigurationName, LLMModelConfiguration> defaultLLMConfigurations =
     {
@@ -177,5 +177,12 @@ Map<LLMModelConfigurationName, LLMModelConfiguration> defaultLLMConfigurations =
         configDescription: 'The Top P of the Model',
         configType: LLMModelConfigurationType.slider,
         configValue: LLMConfigSliderValue(value: (0, 0.95, 1)),
+      ),
+      LLMModelConfigurationName.max_tokens: LLMModelConfiguration(
+        configId: 'max_tokens',
+        configName: 'Maximum Tokens',
+        configDescription: 'The maximum number of tokens allowed in the output',
+        configType: LLMModelConfigurationType.numeric,
+        configValue: LLMConfigNumericValue(value: -1),
       ),
     };

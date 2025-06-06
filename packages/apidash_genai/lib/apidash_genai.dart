@@ -1,5 +1,6 @@
 import 'dart:convert';
 // import 'package:apidash_core/apidash_core.dart' as http;
+import 'package:apidash_genai/providers/providers.dart';
 import 'package:http/http.dart' as http;
 import 'package:apidash_genai/llm_request.dart';
 import 'package:apidash_genai/providers/common.dart';
@@ -8,6 +9,11 @@ Future<String?> executeGenAIRequest(
   LLMModel model,
   LLMRequestDetails requestDetails,
 ) async {
+  final mC = getLLMModelControllerByProvider(model.provider);
+  if (mC == null) {
+    print('INVALID MODEL CONTROLLER');
+    return null;
+  }
   final headers = requestDetails.headers;
   // print(jsonEncode(requestDetails.body));
   //TODO: enable streaming outputs
@@ -19,7 +25,7 @@ Future<String?> executeGenAIRequest(
   if (response.statusCode == 200) {
     final data = jsonDecode(response.body);
     // print(data);
-    return model.outputFormatter(data);
+    return mC.outputFormatter(data);
   } else {
     print(requestDetails.endpoint);
     print(response.body);

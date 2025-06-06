@@ -1,19 +1,23 @@
 import 'package:apidash_genai/llm_config.dart';
 import 'package:apidash_genai/providers/common.dart';
-import 'package:apidash_genai/providers/output_formatters.dart';
+import 'package:apidash_genai/providers/providers.dart';
 
 enum OllamaModel implements LLMModel {
-  llama3('llama3', LLMOutputFormatters.genericOllamaOutputFormatter),
-  mistral('mistral', LLMOutputFormatters.genericOllamaOutputFormatter),
-  gemma3('gemma3', LLMOutputFormatters.genericOllamaOutputFormatter),
-  phi('phi', LLMOutputFormatters.genericOllamaOutputFormatter);
+  llama3('llama3', 'Llama 3', LLMProvider.ollama),
+  mistral('mistral', 'Mistral', LLMProvider.ollama),
+  gemma3('gemma3', 'Gemma 3', LLMProvider.ollama),
+  phi('phi', 'Phi', LLMProvider.ollama);
 
   //////////////////////////////////////////////////////////
-  const OllamaModel(this.identifier, this.outputFormatter);
+  const OllamaModel(this.identifier, this.modelName, this.provider);
   @override
   final String identifier;
+
   @override
-  final LLMOutputFormatter outputFormatter;
+  final String modelName;
+
+  @override
+  final LLMProvider provider;
 }
 
 OllamaModel getOllamaModelFromIdentifier(String id) {

@@ -1,7 +1,6 @@
 import 'package:apidash_genai/apidash_genai.dart';
-import 'package:apidash_genai/providers/ollama/configs.dart';
+import 'package:apidash_genai/providers/gemini/models.dart';
 import 'package:apidash_genai/providers/ollama/models.dart';
-import 'package:apidash_genai/providers/ollama/ollama_request.dart';
 import 'package:apidash_genai/providers/providers.dart';
 
 void main() async {
@@ -33,11 +32,31 @@ void main() async {
 
   // final ollama = LLMProvider.ollama;
   // final lms = getLLMModelsByProvider(ollama);
-  final model = OllamaModel.gemma3;
-  final model_input_payload = BASE_OLLAMA_PAYLOAD.clone();
-  model_input_payload.systemPrompt = 'Reverse the String';
-  model_input_payload.userPrompt = 'hello';
-  final modelRequest = createOllamaRequest(model, model_input_payload);
+
+  //----Select the Model--------
+  final provider = LLMProvider.gemini;
+  final models = getLLMModelsByProvider(provider);
+  final model = models.where((m) => m == GeminiModel.gemini_15_flash_8b).first;
+
+  // -----Get the Payload-------
+  final mC = getLLMModelControllerByProvider(provider);
+  if (mC == null) return;
+  final model_input_payload = mC.inputPayload;
+
+  // ------Fill in the Details-------
+  model_input_payload.systemPrompt = 'Say YAY or NAY';
+  model_input_payload.userPrompt = 'The sun sets in the west';
+  model_input_payload.credential = 'AIzaSyDbZ1nkatVF9Aw5wMetTWst5mpbbHZCrvk';
+  /////Adding MaxTokens/////
+  // final mT = defaultLLMConfigurations[LLMModelConfigurationName.max_tokens]!
+  //     .updateValue(LLMConfigNumericValue(value: 1));
+  // model_input_payload.configMap[LLMModelConfigurationName.max_tokens.name] = mT;
+  //////////////////////////
+
+  // Create Model Request
+  final modelRequest = mC.createRequest(model, model_input_payload);
+
+  // Execute Model Request
   final ans = await executeGenAIRequest(model, modelRequest);
   print('ANSWER: $ans');
 
