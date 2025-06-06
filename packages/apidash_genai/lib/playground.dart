@@ -1,4 +1,5 @@
 import 'package:apidash_genai/apidash_genai.dart';
+import 'package:apidash_genai/providers/azureopenai/models.dart';
 import 'package:apidash_genai/providers/gemini/models.dart';
 import 'package:apidash_genai/providers/ollama/models.dart';
 import 'package:apidash_genai/providers/providers.dart';
@@ -34,9 +35,9 @@ void main() async {
   // final lms = getLLMModelsByProvider(ollama);
 
   //----Select the Model--------
-  final provider = LLMProvider.gemini;
+  final provider = LLMProvider.azureopenai;
   final models = getLLMModelsByProvider(provider);
-  final model = models.where((m) => m == GeminiModel.gemini_15_flash_8b).first;
+  final model = models.where((m) => m == AzureOpenAIModel.custom).first;
 
   // -----Get the Payload-------
   final mC = getLLMModelControllerByProvider(provider);
@@ -46,7 +47,9 @@ void main() async {
   // ------Fill in the Details-------
   model_input_payload.systemPrompt = 'Say YAY or NAY';
   model_input_payload.userPrompt = 'The sun sets in the west';
-  model_input_payload.credential = 'AIzaSyDbZ1nkatVF9Aw5wMetTWst5mpbbHZCrvk';
+  model_input_payload.credential = '....';
+  model_input_payload.endpoint =
+      'https://domain.openai.azure.com/openai/deployments/....';
   /////Adding MaxTokens/////
   // final mT = defaultLLMConfigurations[LLMModelConfigurationName.max_tokens]!
   //     .updateValue(LLMConfigNumericValue(value: 1));

@@ -160,29 +160,28 @@ class LLMConfigTextValue extends LLMModelConfigValue {
   }
 }
 
-enum LLMModelConfigurationName { temperature, top_p, max_tokens }
+enum LLMConfigName { temperature, top_p, max_tokens, endpoint }
 
-Map<LLMModelConfigurationName, LLMModelConfiguration> defaultLLMConfigurations =
-    {
-      LLMModelConfigurationName.temperature: LLMModelConfiguration(
-        configId: 'temperature',
-        configName: 'Temperature',
-        configDescription: 'The Temperature of the Model',
-        configType: LLMModelConfigurationType.slider,
-        configValue: LLMConfigSliderValue(value: (0, 0.5, 1)),
-      ),
-      LLMModelConfigurationName.top_p: LLMModelConfiguration(
-        configId: 'top_p',
-        configName: 'Top P',
-        configDescription: 'The Top P of the Model',
-        configType: LLMModelConfigurationType.slider,
-        configValue: LLMConfigSliderValue(value: (0, 0.95, 1)),
-      ),
-      LLMModelConfigurationName.max_tokens: LLMModelConfiguration(
-        configId: 'max_tokens',
-        configName: 'Maximum Tokens',
-        configDescription: 'The maximum number of tokens allowed in the output',
-        configType: LLMModelConfigurationType.numeric,
-        configValue: LLMConfigNumericValue(value: -1),
-      ),
-    };
+Map<LLMConfigName, LLMModelConfiguration> defaultLLMConfigurations = {
+  LLMConfigName.temperature: LLMModelConfiguration(
+    configId: 'temperature',
+    configName: 'Temperature',
+    configDescription: 'The Temperature of the Model',
+    configType: LLMModelConfigurationType.slider,
+    configValue: LLMConfigSliderValue(value: (0, 0.5, 1)),
+  ),
+  LLMConfigName.top_p: LLMModelConfiguration(
+    configId: 'top_p',
+    configName: 'Top P',
+    configDescription: 'The Top P of the Model',
+    configType: LLMModelConfigurationType.slider,
+    configValue: LLMConfigSliderValue(value: (0, 0.95, 1)),
+  ),
+  LLMConfigName.max_tokens: LLMModelConfiguration(
+    configId: 'max_tokens',
+    configName: 'Maximum Tokens',
+    configDescription: 'The maximum number of tokens allowed in the output',
+    configType: LLMModelConfigurationType.numeric,
+    configValue: LLMConfigNumericValue(value: -1),
+  ),
+};

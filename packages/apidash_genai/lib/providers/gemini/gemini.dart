@@ -11,10 +11,10 @@ class GeminiModelController extends ModelController {
     systemPrompt: '',
     userPrompt: '',
     configMap: {
-      LLMModelConfigurationName.temperature.name:
-          defaultLLMConfigurations[LLMModelConfigurationName.temperature]!,
-      LLMModelConfigurationName.top_p.name:
-          defaultLLMConfigurations[LLMModelConfigurationName.temperature]!,
+      LLMConfigName.temperature.name:
+          defaultLLMConfigurations[LLMConfigName.temperature]!,
+      LLMConfigName.top_p.name:
+          defaultLLMConfigurations[LLMConfigName.temperature]!,
     },
   ).clone();
 
@@ -49,24 +49,22 @@ class GeminiModelController extends ModelController {
         "generationConfig": {
           "temperature":
               inputPayload
-                  .configMap[LLMModelConfigurationName.temperature.name]
+                  .configMap[LLMConfigName.temperature.name]
                   ?.configValue
                   .value
                   ?.$2 ??
               0.5,
           "topP":
               inputPayload
-                  .configMap[LLMModelConfigurationName.top_p.name]
+                  .configMap[LLMConfigName.top_p.name]
                   ?.configValue
                   .value
                   ?.$2 ??
               0.95,
-          if (inputPayload.configMap[LLMModelConfigurationName
-                  .max_tokens
-                  .name] !=
+          if (inputPayload.configMap[LLMConfigName.max_tokens.name] !=
               null) ...{
             "maxOutputTokens": inputPayload
-                .configMap[LLMModelConfigurationName.max_tokens.name]!
+                .configMap[LLMConfigName.max_tokens.name]!
                 .configValue
                 .value,
           },

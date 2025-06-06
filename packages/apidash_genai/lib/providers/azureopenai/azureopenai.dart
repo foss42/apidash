@@ -3,10 +3,10 @@ import 'package:apidash_genai/llm_input_payload.dart';
 import 'package:apidash_genai/llm_request.dart';
 import 'package:apidash_genai/providers/common.dart';
 
-class OllamaModelController extends ModelController {
+class AzureOpenAIModelController extends ModelController {
   @override
   LLMInputPayload get inputPayload => LLMInputPayload(
-    endpoint: 'http://localhost:11434/v1/chat/completions',
+    endpoint: '', //TO BE FILLED BY USER
     credential: '',
     systemPrompt: '',
     userPrompt: '',
@@ -23,15 +23,21 @@ class OllamaModelController extends ModelController {
     LLMModel model,
     LLMInputPayload inputPayload,
   ) {
+    if (inputPayload.endpoint.isEmpty) {
+      throw Exception('MODEL ENDPOINT IS EMPTY');
+    }
     return LLMRequestDetails(
       endpoint: inputPayload.endpoint,
-      headers: {},
+      headers: {'api-key': inputPayload.credential},
       method: 'POST',
       body: {
-        "model": model.identifier,
         "messages": [
           {"role": "system", "content": inputPayload.systemPrompt},
-          {"role": "user", "content": inputPayload.userPrompt},
+          if (inputPayload.userPrompt.isNotEmpty) ...{
+            {"role": "user", "content": inputPayload.userPrompt},
+          } else ...{
+            {"role": "user", "content": "Generate"},
+          },
         ],
         "temperature":
             inputPayload
@@ -47,12 +53,18 @@ class OllamaModelController extends ModelController {
                 .value
                 ?.$2 ??
             0.95,
+        if (inputPayload.configMap[LLMConfigName.max_tokens.name] != null) ...{
+          "max_tokens": inputPayload
+              .configMap[LLMConfigName.max_tokens.name]!
+              .configValue
+              .value,
+        },
       },
     );
   }
 
   @override
   String? outputFormatter(Map x) {
-    return x['choices']?[0]['message']?['content'];
+    return x["choices"]?[0]["message"]?["content"]?.trim();
   }
 }

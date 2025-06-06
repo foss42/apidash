@@ -1,5 +1,7 @@
 import 'package:apidash_genai/llm_config.dart';
 import 'package:apidash_genai/llm_input_payload.dart';
+import 'package:apidash_genai/providers/azureopenai/azureopenai.dart';
+import 'package:apidash_genai/providers/azureopenai/models.dart';
 import 'package:apidash_genai/providers/common.dart';
 import 'package:apidash_genai/providers/gemini/gemini.dart';
 import 'package:apidash_genai/providers/gemini/models.dart';
@@ -12,7 +14,8 @@ enum LLMProvider {
   gemini('Gemini'),
   openai('OpenAI'),
   anthropic('Anthropic'),
-  ollama('Ollama');
+  ollama('Ollama'),
+  azureopenai('Azure OpenAI');
 
   const LLMProvider(this.displayName);
   final String displayName;
@@ -38,6 +41,8 @@ List<LLMModel> getLLMModelsByProvider(LLMProvider p) {
       return OllamaModel.values;
     case LLMProvider.gemini:
       return GeminiModel.values;
+    case LLMProvider.azureopenai:
+      return AzureOpenAIModel.values;
     default:
       return [];
   }
@@ -49,6 +54,8 @@ ModelController? getLLMModelControllerByProvider(LLMProvider p) {
       return OllamaModelController();
     case LLMProvider.gemini:
       return GeminiModelController();
+    case LLMProvider.azureopenai:
+      return AzureOpenAIModelController();
     default:
       return null;
   }
