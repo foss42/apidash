@@ -21,6 +21,6 @@ enum AzureOpenAIModel implements LLMModel {
 AzureOpenAIModel getAzureOpenAIModelFromIdentifier(String id) {
   return AzureOpenAIModel.values.firstWhere(
     (model) => model.identifier == id,
-    orElse: () => throw ArgumentError('INVALID GEMINI MODEL: $id'),
+    orElse: () => throw ArgumentError('INVALID AZURE OPENAI MODEL: $id'),
   );
 }
