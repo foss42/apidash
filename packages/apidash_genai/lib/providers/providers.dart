@@ -1,5 +1,5 @@
-import 'package:apidash_genai/llm_config.dart';
-import 'package:apidash_genai/llm_input_payload.dart';
+import 'package:apidash_genai/providers/anthropic/anthropic.dart';
+import 'package:apidash_genai/providers/anthropic/models.dart';
 import 'package:apidash_genai/providers/azureopenai/azureopenai.dart';
 import 'package:apidash_genai/providers/azureopenai/models.dart';
 import 'package:apidash_genai/providers/common.dart';
@@ -7,6 +7,8 @@ import 'package:apidash_genai/providers/gemini/gemini.dart';
 import 'package:apidash_genai/providers/gemini/models.dart';
 import 'package:apidash_genai/providers/ollama/models.dart';
 import 'package:apidash_genai/providers/ollama/ollama.dart';
+import 'package:apidash_genai/providers/openai/models.dart';
+import 'package:apidash_genai/providers/openai/openai.dart';
 
 enum LLMProviderType { local, remote }
 
@@ -43,12 +45,14 @@ List<LLMModel> getLLMModelsByProvider(LLMProvider p) {
       return GeminiModel.values;
     case LLMProvider.azureopenai:
       return AzureOpenAIModel.values;
-    default:
-      return [];
+    case LLMProvider.openai:
+      return OpenAIModel.values;
+    case LLMProvider.anthropic:
+      return AnthropicModel.values;
   }
 }
 
-ModelController? getLLMModelControllerByProvider(LLMProvider p) {
+ModelController getLLMModelControllerByProvider(LLMProvider p) {
   switch (p) {
     case LLMProvider.ollama:
       return OllamaModelController();
@@ -56,7 +60,9 @@ ModelController? getLLMModelControllerByProvider(LLMProvider p) {
       return GeminiModelController();
     case LLMProvider.azureopenai:
       return AzureOpenAIModelController();
-    default:
-      return null;
+    case LLMProvider.openai:
+      return OpenAIModelController();
+    case LLMProvider.anthropic:
+      return AnthropicModelController();
   }
 }
