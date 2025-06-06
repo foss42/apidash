@@ -21,14 +21,16 @@ class OllamaModelController extends ModelController {
   @override
   LLMRequestDetails createRequest(
     LLMModel model,
-    LLMInputPayload inputPayload,
-  ) {
+    LLMInputPayload inputPayload, {
+    bool stream = false,
+  }) {
     return LLMRequestDetails(
       endpoint: inputPayload.endpoint,
       headers: {},
       method: 'POST',
       body: {
         "model": model.identifier,
+        if (stream) ...{'stream': true},
         "messages": [
           {"role": "system", "content": inputPayload.systemPrompt},
           {"role": "user", "content": inputPayload.userPrompt},
@@ -60,5 +62,10 @@ class OllamaModelController extends ModelController {
   @override
   String? outputFormatter(Map x) {
     return x['choices']?[0]['message']?['content'];
+  }
+
+  @override
+  String? streamOutputFormatter(Map x) {
+    return x['choices']?[0]['delta']?['content'];
   }
 }

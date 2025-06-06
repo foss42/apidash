@@ -1,10 +1,8 @@
-import 'package:apidash_genai/llm_config.dart';
-
 class LLMRequestDetails {
-  final String endpoint;
-  final Map<String, String> headers;
-  final String method;
-  final Map<String, dynamic> body;
+  String endpoint;
+  Map<String, String> headers;
+  String method;
+  Map<String, dynamic> body;
 
   LLMRequestDetails({
     required this.endpoint,

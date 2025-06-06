@@ -15,12 +15,17 @@ abstract class ModelController {
 
   LLMRequestDetails createRequest(
     LLMModel model,
-    LLMInputPayload inputPayload,
-  ) {
+    LLMInputPayload inputPayload, {
+    bool stream = false,
+  }) {
     throw UnimplementedError();
   }
 
   String? outputFormatter(Map x) {
+    throw UnimplementedError();
+  }
+
+  String? streamOutputFormatter(Map x) {
     throw UnimplementedError();
   }
 }

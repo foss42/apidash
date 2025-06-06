@@ -21,8 +21,9 @@ class AnthropicModelController extends ModelController {
   @override
   LLMRequestDetails createRequest(
     LLMModel model,
-    LLMInputPayload inputPayload,
-  ) {
+    LLMInputPayload inputPayload, {
+    bool stream = false,
+  }) {
     return LLMRequestDetails(
       endpoint: inputPayload.endpoint,
       headers: {
@@ -32,6 +33,7 @@ class AnthropicModelController extends ModelController {
       method: 'POST',
       body: {
         "model": model.identifier,
+        if (stream) ...{'stream': true},
         "messages": [
           {"role": "system", "content": inputPayload.systemPrompt},
           {"role": "user", "content": inputPayload.userPrompt},
@@ -63,5 +65,10 @@ class AnthropicModelController extends ModelController {
   @override
   String? outputFormatter(Map x) {
     return x['content']?[0]['text'];
+  }
+
+  @override
+  String? streamOutputFormatter(Map x) {
+    return x['text'];
   }
 }

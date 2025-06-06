@@ -21,8 +21,9 @@ class AzureOpenAIModelController extends ModelController {
   @override
   LLMRequestDetails createRequest(
     LLMModel model,
-    LLMInputPayload inputPayload,
-  ) {
+    LLMInputPayload inputPayload, {
+    bool stream = false,
+  }) {
     if (inputPayload.endpoint.isEmpty) {
       throw Exception('MODEL ENDPOINT IS EMPTY');
     }
@@ -31,6 +32,7 @@ class AzureOpenAIModelController extends ModelController {
       headers: {'api-key': inputPayload.credential},
       method: 'POST',
       body: {
+        if (stream) ...{'stream': true},
         "messages": [
           {"role": "system", "content": inputPayload.systemPrompt},
           if (inputPayload.userPrompt.isNotEmpty) ...{
@@ -66,5 +68,10 @@ class AzureOpenAIModelController extends ModelController {
   @override
   String? outputFormatter(Map x) {
     return x["choices"]?[0]["message"]?["content"]?.trim();
+  }
+
+  @override
+  String? streamOutputFormatter(Map x) {
+    return x["choices"]?[0]["delta"]?["content"];
   }
 }

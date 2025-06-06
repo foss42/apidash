@@ -21,14 +21,16 @@ class OpenAIModelController extends ModelController {
   @override
   LLMRequestDetails createRequest(
     LLMModel model,
-    LLMInputPayload inputPayload,
-  ) {
+    LLMInputPayload inputPayload, {
+    bool stream = false,
+  }) {
     return LLMRequestDetails(
       endpoint: inputPayload.endpoint,
       headers: {'Authorization': "Bearer ${inputPayload.credential}"},
       method: 'POST',
       body: {
         'model': model.identifier,
+        if (stream) ...{'stream': true},
         "messages": [
           {"role": "system", "content": inputPayload.systemPrompt},
           if (inputPayload.userPrompt.isNotEmpty) ...{
@@ -64,5 +66,10 @@ class OpenAIModelController extends ModelController {
   @override
   String? outputFormatter(Map x) {
     return x["choices"]?[0]["message"]?["content"]?.trim();
+  }
+
+  @override
+  String? streamOutputFormatter(Map x) {
+    return x["choices"]?[0]["delta"]?["content"];
   }
 }

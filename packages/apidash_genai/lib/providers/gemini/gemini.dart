@@ -21,13 +21,20 @@ class GeminiModelController extends ModelController {
   @override
   LLMRequestDetails createRequest(
     LLMModel model,
-    LLMInputPayload inputPayload,
-  ) {
-    String endpont = inputPayload.endpoint;
-    endpont =
-        "$endpont/${model.identifier}:generateContent?key=${inputPayload.credential}";
+    LLMInputPayload inputPayload, {
+    bool stream = false,
+  }) {
+    String endpoint = inputPayload.endpoint;
+    endpoint =
+        "$endpoint/${model.identifier}:generateContent?key=${inputPayload.credential}";
+    if (stream) {
+      endpoint = endpoint.replaceAll(
+        'generateContent?',
+        'streamGenerateContent?alt=sse&',
+      );
+    }
     return LLMRequestDetails(
-      endpoint: endpont,
+      endpoint: endpoint,
       headers: {},
       method: 'POST',
       body: {
@@ -75,6 +82,11 @@ class GeminiModelController extends ModelController {
 
   @override
   String? outputFormatter(Map x) {
+    return x['candidates']?[0]?['content']?['parts']?[0]?['text'];
+  }
+
+  @override
+  String? streamOutputFormatter(Map x) {
     return x['candidates']?[0]?['content']?['parts']?[0]?['text'];
   }
 }
