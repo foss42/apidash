@@ -14,16 +14,22 @@ class ExplainFeature {
       return "No recent API requests found.";
     }
 
-    if (requestModel.httpRequestModel?.url == null) {
+    if (requestModel.genericRequestModel?.httpRequestModel?.url == null) {
       return "Error: Invalid API request (missing endpoint).";
     }
 
-    final method =
-        requestModel.httpRequestModel?.method.name.toUpperCase() ?? "GET";
-    final url = requestModel.httpRequestModel!.url;
-    final headers = requestModel.httpRequestModel?.enabledHeadersMap ?? {};
-    final parameters = requestModel.httpRequestModel?.enabledParamsMap ?? {};
-    final body = requestModel.httpRequestModel?.body ?? '';
+    final method = requestModel
+            .genericRequestModel?.httpRequestModel?.method.name
+            .toUpperCase() ??
+        "GET";
+    final url = requestModel.genericRequestModel?.httpRequestModel!.url;
+    final headers =
+        requestModel.genericRequestModel?.httpRequestModel?.enabledHeadersMap ??
+            {};
+    final parameters =
+        requestModel.genericRequestModel?.httpRequestModel?.enabledParamsMap ??
+            {};
+    final body = requestModel.genericRequestModel?.httpRequestModel?.body ?? '';
     final responseBody = responseModel.body;
     final statusCode = responseModel.statusCode;
 

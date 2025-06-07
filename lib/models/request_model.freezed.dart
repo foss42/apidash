@@ -25,16 +25,19 @@ mixin _$RequestModel {
   String get name => throw _privateConstructorUsedError;
   String get description => throw _privateConstructorUsedError;
   @JsonKey(includeToJson: false)
-  dynamic get requestTabIndex => throw _privateConstructorUsedError;
-  HttpRequestModel? get httpRequestModel => throw _privateConstructorUsedError;
+  dynamic get requestTabIndex =>
+      throw _privateConstructorUsedError; // HttpRequestModel? httpRequestModel,
   int? get responseStatus => throw _privateConstructorUsedError;
-  String? get message => throw _privateConstructorUsedError;
-  HttpResponseModel? get httpResponseModel =>
-      throw _privateConstructorUsedError;
+  String? get message =>
+      throw _privateConstructorUsedError; // HttpResponseModel? httpResponseModel,
   @JsonKey(includeToJson: false)
   bool get isWorking => throw _privateConstructorUsedError;
   @JsonKey(includeToJson: false)
   DateTime? get sendingTime => throw _privateConstructorUsedError;
+  GenericRequestModel? get genericRequestModel =>
+      throw _privateConstructorUsedError;
+  GenericResponseModel? get genericResponseModel =>
+      throw _privateConstructorUsedError;
 
   /// Serializes this RequestModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -58,15 +61,15 @@ abstract class $RequestModelCopyWith<$Res> {
       String name,
       String description,
       @JsonKey(includeToJson: false) dynamic requestTabIndex,
-      HttpRequestModel? httpRequestModel,
       int? responseStatus,
       String? message,
-      HttpResponseModel? httpResponseModel,
       @JsonKey(includeToJson: false) bool isWorking,
-      @JsonKey(includeToJson: false) DateTime? sendingTime});
+      @JsonKey(includeToJson: false) DateTime? sendingTime,
+      GenericRequestModel? genericRequestModel,
+      GenericResponseModel? genericResponseModel});
 
-  $HttpRequestModelCopyWith<$Res>? get httpRequestModel;
-  $HttpResponseModelCopyWith<$Res>? get httpResponseModel;
+  $GenericRequestModelCopyWith<$Res>? get genericRequestModel;
+  $GenericResponseModelCopyWith<$Res>? get genericResponseModel;
 }
 
 /// @nodoc
@@ -89,12 +92,12 @@ class _$RequestModelCopyWithImpl<$Res, $Val extends RequestModel>
     Object? name = null,
     Object? description = null,
     Object? requestTabIndex = freezed,
-    Object? httpRequestModel = freezed,
     Object? responseStatus = freezed,
     Object? message = freezed,
-    Object? httpResponseModel = freezed,
     Object? isWorking = null,
     Object? sendingTime = freezed,
+    Object? genericRequestModel = freezed,
+    Object? genericResponseModel = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -117,10 +120,6 @@ class _$RequestModelCopyWithImpl<$Res, $Val extends RequestModel>
           ? _value.requestTabIndex
           : requestTabIndex // ignore: cast_nullable_to_non_nullable
               as dynamic,
-      httpRequestModel: freezed == httpRequestModel
-          ? _value.httpRequestModel
-          : httpRequestModel // ignore: cast_nullable_to_non_nullable
-              as HttpRequestModel?,
       responseStatus: freezed == responseStatus
           ? _value.responseStatus
           : responseStatus // ignore: cast_nullable_to_non_nullable
@@ -129,10 +128,6 @@ class _$RequestModelCopyWithImpl<$Res, $Val extends RequestModel>
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
               as String?,
-      httpResponseModel: freezed == httpResponseModel
-          ? _value.httpResponseModel
-          : httpResponseModel // ignore: cast_nullable_to_non_nullable
-              as HttpResponseModel?,
       isWorking: null == isWorking
           ? _value.isWorking
           : isWorking // ignore: cast_nullable_to_non_nullable
@@ -141,6 +136,14 @@ class _$RequestModelCopyWithImpl<$Res, $Val extends RequestModel>
           ? _value.sendingTime
           : sendingTime // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      genericRequestModel: freezed == genericRequestModel
+          ? _value.genericRequestModel
+          : genericRequestModel // ignore: cast_nullable_to_non_nullable
+              as GenericRequestModel?,
+      genericResponseModel: freezed == genericResponseModel
+          ? _value.genericResponseModel
+          : genericResponseModel // ignore: cast_nullable_to_non_nullable
+              as GenericResponseModel?,
     ) as $Val);
   }
 
@@ -148,13 +151,14 @@ class _$RequestModelCopyWithImpl<$Res, $Val extends RequestModel>
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $HttpRequestModelCopyWith<$Res>? get httpRequestModel {
-    if (_value.httpRequestModel == null) {
+  $GenericRequestModelCopyWith<$Res>? get genericRequestModel {
+    if (_value.genericRequestModel == null) {
       return null;
     }
 
-    return $HttpRequestModelCopyWith<$Res>(_value.httpRequestModel!, (value) {
-      return _then(_value.copyWith(httpRequestModel: value) as $Val);
+    return $GenericRequestModelCopyWith<$Res>(_value.genericRequestModel!,
+        (value) {
+      return _then(_value.copyWith(genericRequestModel: value) as $Val);
     });
   }
 
@@ -162,13 +166,14 @@ class _$RequestModelCopyWithImpl<$Res, $Val extends RequestModel>
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $HttpResponseModelCopyWith<$Res>? get httpResponseModel {
-    if (_value.httpResponseModel == null) {
+  $GenericResponseModelCopyWith<$Res>? get genericResponseModel {
+    if (_value.genericResponseModel == null) {
       return null;
     }
 
-    return $HttpResponseModelCopyWith<$Res>(_value.httpResponseModel!, (value) {
-      return _then(_value.copyWith(httpResponseModel: value) as $Val);
+    return $GenericResponseModelCopyWith<$Res>(_value.genericResponseModel!,
+        (value) {
+      return _then(_value.copyWith(genericResponseModel: value) as $Val);
     });
   }
 }
@@ -187,17 +192,17 @@ abstract class _$$RequestModelImplCopyWith<$Res>
       String name,
       String description,
       @JsonKey(includeToJson: false) dynamic requestTabIndex,
-      HttpRequestModel? httpRequestModel,
       int? responseStatus,
       String? message,
-      HttpResponseModel? httpResponseModel,
       @JsonKey(includeToJson: false) bool isWorking,
-      @JsonKey(includeToJson: false) DateTime? sendingTime});
+      @JsonKey(includeToJson: false) DateTime? sendingTime,
+      GenericRequestModel? genericRequestModel,
+      GenericResponseModel? genericResponseModel});
 
   @override
-  $HttpRequestModelCopyWith<$Res>? get httpRequestModel;
+  $GenericRequestModelCopyWith<$Res>? get genericRequestModel;
   @override
-  $HttpResponseModelCopyWith<$Res>? get httpResponseModel;
+  $GenericResponseModelCopyWith<$Res>? get genericResponseModel;
 }
 
 /// @nodoc
@@ -218,12 +223,12 @@ class __$$RequestModelImplCopyWithImpl<$Res>
     Object? name = null,
     Object? description = null,
     Object? requestTabIndex = freezed,
-    Object? httpRequestModel = freezed,
     Object? responseStatus = freezed,
     Object? message = freezed,
-    Object? httpResponseModel = freezed,
     Object? isWorking = null,
     Object? sendingTime = freezed,
+    Object? genericRequestModel = freezed,
+    Object? genericResponseModel = freezed,
   }) {
     return _then(_$RequestModelImpl(
       id: null == id
@@ -245,10 +250,6 @@ class __$$RequestModelImplCopyWithImpl<$Res>
       requestTabIndex: freezed == requestTabIndex
           ? _value.requestTabIndex!
           : requestTabIndex,
-      httpRequestModel: freezed == httpRequestModel
-          ? _value.httpRequestModel
-          : httpRequestModel // ignore: cast_nullable_to_non_nullable
-              as HttpRequestModel?,
       responseStatus: freezed == responseStatus
           ? _value.responseStatus
           : responseStatus // ignore: cast_nullable_to_non_nullable
@@ -257,10 +258,6 @@ class __$$RequestModelImplCopyWithImpl<$Res>
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
               as String?,
-      httpResponseModel: freezed == httpResponseModel
-          ? _value.httpResponseModel
-          : httpResponseModel // ignore: cast_nullable_to_non_nullable
-              as HttpResponseModel?,
       isWorking: null == isWorking
           ? _value.isWorking
           : isWorking // ignore: cast_nullable_to_non_nullable
@@ -269,6 +266,14 @@ class __$$RequestModelImplCopyWithImpl<$Res>
           ? _value.sendingTime
           : sendingTime // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      genericRequestModel: freezed == genericRequestModel
+          ? _value.genericRequestModel
+          : genericRequestModel // ignore: cast_nullable_to_non_nullable
+              as GenericRequestModel?,
+      genericResponseModel: freezed == genericResponseModel
+          ? _value.genericResponseModel
+          : genericResponseModel // ignore: cast_nullable_to_non_nullable
+              as GenericResponseModel?,
     ));
   }
 }
@@ -283,12 +288,12 @@ class _$RequestModelImpl implements _RequestModel {
       this.name = "",
       this.description = "",
       @JsonKey(includeToJson: false) this.requestTabIndex = 0,
-      this.httpRequestModel,
       this.responseStatus,
       this.message,
-      this.httpResponseModel,
       @JsonKey(includeToJson: false) this.isWorking = false,
-      @JsonKey(includeToJson: false) this.sendingTime});
+      @JsonKey(includeToJson: false) this.sendingTime,
+      this.genericRequestModel,
+      this.genericResponseModel});
 
   factory _$RequestModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$RequestModelImplFromJson(json);
@@ -307,24 +312,26 @@ class _$RequestModelImpl implements _RequestModel {
   @override
   @JsonKey(includeToJson: false)
   final dynamic requestTabIndex;
-  @override
-  final HttpRequestModel? httpRequestModel;
+// HttpRequestModel? httpRequestModel,
   @override
   final int? responseStatus;
   @override
   final String? message;
-  @override
-  final HttpResponseModel? httpResponseModel;
+// HttpResponseModel? httpResponseModel,
   @override
   @JsonKey(includeToJson: false)
   final bool isWorking;
   @override
   @JsonKey(includeToJson: false)
   final DateTime? sendingTime;
+  @override
+  final GenericRequestModel? genericRequestModel;
+  @override
+  final GenericResponseModel? genericResponseModel;
 
   @override
   String toString() {
-    return 'RequestModel(id: $id, apiType: $apiType, name: $name, description: $description, requestTabIndex: $requestTabIndex, httpRequestModel: $httpRequestModel, responseStatus: $responseStatus, message: $message, httpResponseModel: $httpResponseModel, isWorking: $isWorking, sendingTime: $sendingTime)';
+    return 'RequestModel(id: $id, apiType: $apiType, name: $name, description: $description, requestTabIndex: $requestTabIndex, responseStatus: $responseStatus, message: $message, isWorking: $isWorking, sendingTime: $sendingTime, genericRequestModel: $genericRequestModel, genericResponseModel: $genericResponseModel)';
   }
 
   @override
@@ -339,17 +346,17 @@ class _$RequestModelImpl implements _RequestModel {
                 other.description == description) &&
             const DeepCollectionEquality()
                 .equals(other.requestTabIndex, requestTabIndex) &&
-            (identical(other.httpRequestModel, httpRequestModel) ||
-                other.httpRequestModel == httpRequestModel) &&
             (identical(other.responseStatus, responseStatus) ||
                 other.responseStatus == responseStatus) &&
             (identical(other.message, message) || other.message == message) &&
-            (identical(other.httpResponseModel, httpResponseModel) ||
-                other.httpResponseModel == httpResponseModel) &&
             (identical(other.isWorking, isWorking) ||
                 other.isWorking == isWorking) &&
             (identical(other.sendingTime, sendingTime) ||
-                other.sendingTime == sendingTime));
+                other.sendingTime == sendingTime) &&
+            (identical(other.genericRequestModel, genericRequestModel) ||
+                other.genericRequestModel == genericRequestModel) &&
+            (identical(other.genericResponseModel, genericResponseModel) ||
+                other.genericResponseModel == genericResponseModel));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -361,12 +368,12 @@ class _$RequestModelImpl implements _RequestModel {
       name,
       description,
       const DeepCollectionEquality().hash(requestTabIndex),
-      httpRequestModel,
       responseStatus,
       message,
-      httpResponseModel,
       isWorking,
-      sendingTime);
+      sendingTime,
+      genericRequestModel,
+      genericResponseModel);
 
   /// Create a copy of RequestModel
   /// with the given fields replaced by the non-null parameter values.
@@ -386,18 +393,17 @@ class _$RequestModelImpl implements _RequestModel {
 
 abstract class _RequestModel implements RequestModel {
   const factory _RequestModel(
-          {required final String id,
-          final APIType apiType,
-          final String name,
-          final String description,
-          @JsonKey(includeToJson: false) final dynamic requestTabIndex,
-          final HttpRequestModel? httpRequestModel,
-          final int? responseStatus,
-          final String? message,
-          final HttpResponseModel? httpResponseModel,
-          @JsonKey(includeToJson: false) final bool isWorking,
-          @JsonKey(includeToJson: false) final DateTime? sendingTime}) =
-      _$RequestModelImpl;
+      {required final String id,
+      final APIType apiType,
+      final String name,
+      final String description,
+      @JsonKey(includeToJson: false) final dynamic requestTabIndex,
+      final int? responseStatus,
+      final String? message,
+      @JsonKey(includeToJson: false) final bool isWorking,
+      @JsonKey(includeToJson: false) final DateTime? sendingTime,
+      final GenericRequestModel? genericRequestModel,
+      final GenericResponseModel? genericResponseModel}) = _$RequestModelImpl;
 
   factory _RequestModel.fromJson(Map<String, dynamic> json) =
       _$RequestModelImpl.fromJson;
@@ -412,21 +418,21 @@ abstract class _RequestModel implements RequestModel {
   String get description;
   @override
   @JsonKey(includeToJson: false)
-  dynamic get requestTabIndex;
-  @override
-  HttpRequestModel? get httpRequestModel;
+  dynamic get requestTabIndex; // HttpRequestModel? httpRequestModel,
   @override
   int? get responseStatus;
   @override
-  String? get message;
-  @override
-  HttpResponseModel? get httpResponseModel;
+  String? get message; // HttpResponseModel? httpResponseModel,
   @override
   @JsonKey(includeToJson: false)
   bool get isWorking;
   @override
   @JsonKey(includeToJson: false)
   DateTime? get sendingTime;
+  @override
+  GenericRequestModel? get genericRequestModel;
+  @override
+  GenericResponseModel? get genericResponseModel;
 
   /// Create a copy of RequestModel
   /// with the given fields replaced by the non-null parameter values.

@@ -65,9 +65,9 @@ Map<String, dynamic> entryToHAR(RequestModel requestModel) {
       "bodySize": 0,
       "comment": ""
     },
-    "request": requestModel.httpRequestModel != null
+    "request": requestModel.genericRequestModel?.httpRequestModel != null
         ? requestModelToHARJsonRequest(
-            requestModel.httpRequestModel!,
+            requestModel.genericRequestModel!.httpRequestModel!,
             exportMode: true,
           )
         : {},

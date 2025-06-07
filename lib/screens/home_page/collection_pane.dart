@@ -156,7 +156,7 @@ class _RequestListState extends ConsumerState<RequestList> {
               controller: controller,
               children: requestSequence.map((id) {
                 var item = requestItems[id]!;
-                if (item.httpRequestModel!.url
+                if (item.genericRequestModel!.httpRequestModel!.url
                         .toLowerCase()
                         .contains(filterQuery) ||
                     item.name.toLowerCase().contains(filterQuery)) {
@@ -193,9 +193,9 @@ class RequestItem extends ConsumerWidget {
     return SidebarRequestCard(
       id: id,
       apiType: requestModel.apiType,
-      method: requestModel.httpRequestModel!.method,
+      method: requestModel.genericRequestModel!.httpRequestModel!.method,
       name: requestModel.name,
-      url: requestModel.httpRequestModel?.url,
+      url: requestModel.genericRequestModel!.httpRequestModel?.url,
       selectedId: selectedId,
       editRequestId: editRequestId,
       onTap: () {

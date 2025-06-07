@@ -222,7 +222,9 @@ void main() {
             {'name': 'User-Agent', 'value': 'Test Agent'}
           ]
         };
-        expect(requestModelToHARJsonRequest(requestModelGet6.httpRequestModel),
+        expect(
+            requestModelToHARJsonRequest(
+                requestModelGet6.genericRequestModel?.httpRequestModel),
             expectedResult);
       });
 
@@ -244,7 +246,7 @@ void main() {
         };
         expect(
             requestModelToHARJsonRequest(
-              requestModelGet6.httpRequestModel,
+              requestModelGet6.genericRequestModel?.httpRequestModel,
               exportMode: true,
             ),
             expectedResult);
@@ -278,7 +280,7 @@ void main() {
         };
         expect(
             requestModelToHARJsonRequest(
-              requestModelPost2.httpRequestModel,
+              requestModelPost2.genericRequestModel?.httpRequestModel,
               exportMode: true,
             ),
             expectedResult);
@@ -301,7 +303,9 @@ void main() {
             {'name': 'Content-Type', 'value': 'application/json'}
           ]
         };
-        expect(requestModelToHARJsonRequest(requestModelGet11.httpRequestModel),
+        expect(
+            requestModelToHARJsonRequest(
+                requestModelGet11.genericRequestModel?.httpRequestModel),
             expectedResult);
       });
 
@@ -320,7 +324,7 @@ void main() {
         };
         expect(
             requestModelToHARJsonRequest(
-              requestModelGet11.httpRequestModel,
+              requestModelGet11.genericRequestModel?.httpRequestModel,
               useEnabled: true,
             ),
             expectedResult);

@@ -6,6 +6,7 @@ import 'package:apidash/widgets/response_tab_view.dart';
 import 'package:apidash/widgets/widget_not_sent.dart';
 import 'package:apidash/widgets/widget_sending.dart';
 import 'package:apidash_core/apidash_core.dart';
+import 'package:apidash_core/models/generic_response_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -205,8 +206,10 @@ void main() {
 
   testWidgets('Testing Response Body, no body', (tester) async {
     var responseModelNoBody = responseModel.copyWith(body: null);
-    var requestModelNoResponseBody =
-        testRequestModel.copyWith(httpResponseModel: responseModelNoBody);
+    var requestModelNoResponseBody = testRequestModel.copyWith(
+      genericResponseModel: GenericResponseModel(
+          aiResponseModel: null, httpResponseModel: responseModelNoBody),
+    );
     await tester.pumpWidget(
       MaterialApp(
         title: 'Response Body',
@@ -228,8 +231,12 @@ void main() {
       headers: null,
       formattedBody: null,
     );
-    var requestModelNoResponseHeaders =
-        testRequestModel.copyWith(httpResponseModel: responseModelNoHeaders);
+    var requestModelNoResponseHeaders = testRequestModel.copyWith(
+      genericResponseModel: GenericResponseModel(
+        aiResponseModel: null,
+        httpResponseModel: responseModelNoHeaders,
+      ),
+    );
 
     await tester.pumpWidget(
       MaterialApp(
@@ -252,8 +259,12 @@ void main() {
     var responseModelOctet = responseModel.copyWith(
       headers: const {"content-type": "application/octet-stream"},
     );
-    var requestModelNoResponseHeaders =
-        testRequestModel.copyWith(httpResponseModel: responseModelOctet);
+    var requestModelNoResponseHeaders = testRequestModel.copyWith(
+      genericResponseModel: GenericResponseModel(
+        aiResponseModel: null,
+        httpResponseModel: responseModelOctet,
+      ),
+    );
     await tester.pumpWidget(
       MaterialApp(
         title: 'Response Body',
@@ -274,7 +285,11 @@ void main() {
       formattedBody: null,
     );
     var requestModelNoResponseHeaders = testRequestModel.copyWith(
-        httpResponseModel: responseModelNoFormattedBody);
+      genericResponseModel: GenericResponseModel(
+        aiResponseModel: null,
+        httpResponseModel: responseModelNoFormattedBody,
+      ),
+    );
     await tester.pumpWidget(
       MaterialApp(
         title: 'Response Body',

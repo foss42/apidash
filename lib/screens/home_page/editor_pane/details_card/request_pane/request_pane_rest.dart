@@ -17,14 +17,15 @@ class EditRestRequestPane extends ConsumerWidget {
     final tabIndex = ref.watch(
         selectedRequestModelProvider.select((value) => value?.requestTabIndex));
 
-    final headerLength = ref.watch(selectedRequestModelProvider
-            .select((value) => value?.httpRequestModel?.headersMap.length)) ??
+    final headerLength = ref.watch(selectedRequestModelProvider.select(
+            (value) => value
+                ?.genericRequestModel?.httpRequestModel?.headersMap.length)) ??
         0;
-    final paramLength = ref.watch(selectedRequestModelProvider
-            .select((value) => value?.httpRequestModel?.paramsMap.length)) ??
+    final paramLength = ref.watch(selectedRequestModelProvider.select((value) =>
+            value?.genericRequestModel?.httpRequestModel?.paramsMap.length)) ??
         0;
-    final hasBody = ref.watch(selectedRequestModelProvider
-            .select((value) => value?.httpRequestModel?.hasBody)) ??
+    final hasBody = ref.watch(selectedRequestModelProvider.select((value) =>
+            value?.genericRequestModel?.httpRequestModel?.hasBody)) ??
         false;
 
     return RequestPane(

@@ -13,20 +13,20 @@ _$RequestModelImpl _$$RequestModelImplFromJson(Map json) => _$RequestModelImpl(
       name: json['name'] as String? ?? "",
       description: json['description'] as String? ?? "",
       requestTabIndex: json['requestTabIndex'] ?? 0,
-      httpRequestModel: json['httpRequestModel'] == null
-          ? null
-          : HttpRequestModel.fromJson(
-              Map<String, Object?>.from(json['httpRequestModel'] as Map)),
       responseStatus: (json['responseStatus'] as num?)?.toInt(),
       message: json['message'] as String?,
-      httpResponseModel: json['httpResponseModel'] == null
-          ? null
-          : HttpResponseModel.fromJson(
-              Map<String, Object?>.from(json['httpResponseModel'] as Map)),
       isWorking: json['isWorking'] as bool? ?? false,
       sendingTime: json['sendingTime'] == null
           ? null
           : DateTime.parse(json['sendingTime'] as String),
+      genericRequestModel: json['genericRequestModel'] == null
+          ? null
+          : GenericRequestModel.fromJson(
+              Map<String, dynamic>.from(json['genericRequestModel'] as Map)),
+      genericResponseModel: json['genericResponseModel'] == null
+          ? null
+          : GenericResponseModel.fromJson(
+              Map<String, dynamic>.from(json['genericResponseModel'] as Map)),
     );
 
 Map<String, dynamic> _$$RequestModelImplToJson(_$RequestModelImpl instance) =>
@@ -35,10 +35,10 @@ Map<String, dynamic> _$$RequestModelImplToJson(_$RequestModelImpl instance) =>
       'apiType': _$APITypeEnumMap[instance.apiType]!,
       'name': instance.name,
       'description': instance.description,
-      'httpRequestModel': instance.httpRequestModel?.toJson(),
       'responseStatus': instance.responseStatus,
       'message': instance.message,
-      'httpResponseModel': instance.httpResponseModel?.toJson(),
+      'genericRequestModel': instance.genericRequestModel?.toJson(),
+      'genericResponseModel': instance.genericResponseModel?.toJson(),
     };
 
 const _$APITypeEnumMap = {

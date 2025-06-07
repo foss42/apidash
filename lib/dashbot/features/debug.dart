@@ -15,16 +15,21 @@ class DebugFeature {
       return "No recent API requests found.";
     }
 
-    final method = requestModel.httpRequestModel?.method
+    final method = requestModel.genericRequestModel?.httpRequestModel?.method
             .toString()
             .split('.')
             .last
             .toUpperCase() ??
         "GET";
-    final endpoint = requestModel.httpRequestModel?.url ?? "Unknown Endpoint";
-    final headers = requestModel.httpRequestModel?.enabledHeadersMap ?? {};
-    final parameters = requestModel.httpRequestModel?.enabledParamsMap ?? {};
-    final body = requestModel.httpRequestModel?.body;
+    final endpoint = requestModel.genericRequestModel?.httpRequestModel?.url ??
+        "Unknown Endpoint";
+    final headers =
+        requestModel.genericRequestModel?.httpRequestModel?.enabledHeadersMap ??
+            {};
+    final parameters =
+        requestModel.genericRequestModel?.httpRequestModel?.enabledParamsMap ??
+            {};
+    final body = requestModel.genericRequestModel?.httpRequestModel?.body;
     final rawResponse = responseModel.body;
     final responseBody =
         rawResponse is String ? rawResponse : jsonEncode(rawResponse);

@@ -16,7 +16,8 @@ class ResponseBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responseModel = selectedRequestModel?.httpResponseModel;
+    final responseModel =
+        selectedRequestModel?.genericResponseModel?.httpResponseModel;
     if (responseModel == null) {
       return const ErrorMessage(
           message: '$kNullResponseModelError $kUnexpectedRaiseIssue');

@@ -17,7 +17,7 @@ void main() {
     var responseRec = await sendHttpRequest(
       requestModelGet1.id,
       requestModelGet1.apiType,
-      requestModelGet1.httpRequestModel!,
+      requestModelGet1.genericRequestModel!.httpRequestModel!,
       defaultUriScheme: kDefaultUriScheme,
       noSSL: false,
     );
@@ -35,7 +35,7 @@ void main() {
     var responseRec = await sendHttpRequest(
       requestModelGet13.id,
       requestModelGet13.apiType,
-      requestModelGet13.httpRequestModel!,
+      requestModelGet13.genericRequestModel!.httpRequestModel!,
       defaultUriScheme: kDefaultUriScheme,
       noSSL: false,
     );
@@ -52,7 +52,7 @@ void main() {
     var responseRec = await sendHttpRequest(
       requestModelPost11.id,
       requestModelPost11.apiType,
-      requestModelPost11.httpRequestModel!,
+      requestModelPost11.genericRequestModel!.httpRequestModel!,
     );
 
     final responseData = responseModel.fromResponse(response: responseRec.$1!);
@@ -66,7 +66,7 @@ void main() {
     var responseRec = await sendHttpRequest(
       requestModelPost12.id,
       requestModelPost12.apiType,
-      requestModelPost12.httpRequestModel!,
+      requestModelPost12.genericRequestModel!.httpRequestModel!,
     );
 
     final responseData = responseModel.fromResponse(response: responseRec.$1!);
@@ -79,7 +79,7 @@ void main() {
     var responseRec = await sendHttpRequest(
       requestModelPost13.id,
       requestModelPost13.apiType,
-      requestModelPost13.httpRequestModel!,
+      requestModelPost13.genericRequestModel!.httpRequestModel!,
     );
 
     final responseData = responseModel.fromResponse(response: responseRec.$1!);
@@ -92,7 +92,7 @@ void main() {
     var responseRec = await sendHttpRequest(
       requestModelGetBadSSL.id,
       requestModelGetBadSSL.apiType,
-      requestModelGetBadSSL.httpRequestModel!,
+      requestModelGetBadSSL.genericRequestModel!.httpRequestModel!,
       defaultUriScheme: kDefaultUriScheme,
       noSSL: false,
     );
@@ -104,7 +104,7 @@ void main() {
     var responseRec = await sendHttpRequest(
       requestModelGetBadSSL.id,
       requestModelGetBadSSL.apiType,
-      requestModelGetBadSSL.httpRequestModel!,
+      requestModelGetBadSSL.genericRequestModel!.httpRequestModel!,
       defaultUriScheme: kDefaultUriScheme,
       noSSL: true,
     );
@@ -124,16 +124,21 @@ void main() {
     var responseRec = await sendHttpRequest(
       requestModelOptions1.id,
       requestModelOptions1.apiType,
-      requestModelOptions1.httpRequestModel!,
+      requestModelOptions1.genericRequestModel!.httpRequestModel!,
       defaultUriScheme: kDefaultUriScheme,
       noSSL: false,
     );
 
     final responseData = responseModel.fromResponse(response: responseRec.$1!);
     expect(responseData.statusCode, 200);
-    expect(responseData.headers?['access-control-allow-methods'], 'GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS');
-    expect(responseData.headers?['access-control-allow-methods']?.contains("OPTIONS"), true);
-    expect(responseData.headers?['allow'], 'GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS');
+    expect(responseData.headers?['access-control-allow-methods'],
+        'GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS');
+    expect(
+        responseData.headers?['access-control-allow-methods']
+            ?.contains("OPTIONS"),
+        true);
+    expect(responseData.headers?['allow'],
+        'GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS');
     expect(responseData.headers?['allow']?.contains("OPTIONS"), true);
   });
 }

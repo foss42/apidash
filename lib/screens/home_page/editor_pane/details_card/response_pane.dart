@@ -53,7 +53,7 @@ class ResponseDetails extends ConsumerWidget {
     final message = ref
         .watch(selectedRequestModelProvider.select((value) => value?.message));
     final responseModel = ref.watch(selectedRequestModelProvider
-        .select((value) => value?.httpResponseModel));
+        .select((value) => value?.genericResponseModel?.httpResponseModel));
 
     return Column(
       children: [
@@ -106,11 +106,13 @@ class ResponseHeadersTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final requestHeaders = ref.watch(selectedRequestModelProvider
-            .select((value) => value?.httpResponseModel?.requestHeaders)) ??
+    final requestHeaders = ref.watch(selectedRequestModelProvider.select(
+            (value) => value
+                ?.genericResponseModel?.httpResponseModel?.requestHeaders)) ??
         {};
-    final responseHeaders = ref.watch(selectedRequestModelProvider
-            .select((value) => value?.httpResponseModel?.headers)) ??
+    final responseHeaders = ref.watch(selectedRequestModelProvider.select(
+            (value) =>
+                value?.genericResponseModel?.httpResponseModel?.headers)) ??
         {};
     return ResponseHeaders(
       responseHeaders: responseHeaders,

@@ -1,5 +1,7 @@
 import 'package:apidash/models/models.dart';
 import 'package:apidash/consts.dart';
+import 'package:apidash_core/models/generic_request_model.dart';
+import 'package:apidash_core/models/generic_response_model.dart';
 import 'convert_utils.dart';
 
 DateTime stripTime(DateTime dateTime) {
@@ -14,8 +16,14 @@ RequestModel getRequestModelFromHistoryModel(HistoryRequestModel model) {
     responseStatus: model.genericResponseModel.httpResponseModel?.statusCode,
     message: kResponseCodeReasons[
         model.genericResponseModel.httpResponseModel?.statusCode],
-    httpRequestModel: model.genericRequestModel.httpRequestModel,
-    httpResponseModel: model.genericResponseModel.httpResponseModel,
+    genericRequestModel: GenericRequestModel(
+      aiRequestModel: null,
+      httpRequestModel: model.genericRequestModel.httpRequestModel,
+    ),
+    genericResponseModel: GenericResponseModel(
+      aiResponseModel: null,
+      httpResponseModel: model.genericResponseModel.httpResponseModel,
+    ),
   );
 }
 

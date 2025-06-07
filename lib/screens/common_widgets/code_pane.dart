@@ -1,4 +1,5 @@
 import 'package:apidash_core/apidash_core.dart';
+import 'package:apidash_core/models/generic_request_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
@@ -35,8 +36,14 @@ class CodePane extends ConsumerWidget {
     var activeEnvId = ref.watch(activeEnvironmentIdStateProvider);
 
     final substitutedRequestModel = selectedRequestModel?.copyWith(
+      genericRequestModel: GenericRequestModel(
+        aiRequestModel: null,
         httpRequestModel: substituteHttpRequestModel(
-            selectedRequestModel.httpRequestModel!, envMap, activeEnvId));
+            selectedRequestModel.genericRequestModel!.httpRequestModel!,
+            envMap,
+            activeEnvId),
+      ),
+    );
 
     final code = codegen.getCode(
         codegenLanguage, substitutedRequestModel!, defaultUriScheme);

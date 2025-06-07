@@ -15,11 +15,12 @@ class EditGraphQLRequestPane extends ConsumerWidget {
     var tabIndex = ref.watch(
         selectedRequestModelProvider.select((value) => value?.requestTabIndex));
     final codePaneVisible = ref.watch(codePaneVisibleStateProvider);
-    final headerLength = ref.watch(selectedRequestModelProvider
-            .select((value) => value?.httpRequestModel?.headersMap.length)) ??
+    final headerLength = ref.watch(selectedRequestModelProvider.select(
+            (value) => value
+                ?.genericRequestModel?.httpRequestModel?.headersMap.length)) ??
         0;
-    final hasQuery = ref.watch(selectedRequestModelProvider
-            .select((value) => value?.httpRequestModel?.hasQuery)) ??
+    final hasQuery = ref.watch(selectedRequestModelProvider.select((value) =>
+            value?.genericRequestModel?.httpRequestModel?.hasQuery)) ??
         false;
     if (tabIndex >= 2) {
       tabIndex = 0;

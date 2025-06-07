@@ -36,7 +36,7 @@ class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
     if (message.trim().isEmpty) return;
     final dashBotService = ref.read(dashBotServiceProvider);
     final requestModel = ref.read(selectedRequestModelProvider);
-    final responseModel = requestModel?.httpResponseModel;
+    final responseModel = requestModel?.genericResponseModel?.httpResponseModel;
 
     setState(() => _isLoading = true);
 
@@ -75,7 +75,8 @@ class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
   Widget build(BuildContext context) {
     final messages = ref.watch(chatMessagesProvider);
     final requestModel = ref.read(selectedRequestModelProvider);
-    final statusCode = requestModel?.httpResponseModel?.statusCode;
+    final statusCode =
+        requestModel?.genericResponseModel?.httpResponseModel?.statusCode;
     final showDebugButton = statusCode != null && statusCode >= 400;
 
     return Container(

@@ -81,8 +81,8 @@ class DropdownButtonHTTPMethod extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final method = ref.watch(selectedRequestModelProvider
-        .select((value) => value?.httpRequestModel?.method));
+    final method = ref.watch(selectedRequestModelProvider.select(
+        (value) => value?.genericRequestModel?.httpRequestModel?.method));
     return DropdownButtonHttpMethod(
       method: method,
       onChanged: (HTTPVerb? value) {
@@ -107,6 +107,7 @@ class URLTextField extends ConsumerWidget {
       initialValue: ref
           .read(collectionStateNotifierProvider.notifier)
           .getRequestModel(selectedId)
+          ?.genericRequestModel
           ?.httpRequestModel
           ?.url,
       onChanged: (value) {

@@ -40,9 +40,13 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
   Widget build(BuildContext context) {
     dataTableShowLogs = false;
     final selectedId = ref.watch(selectedIdStateProvider);
-    ref.watch(selectedRequestModelProvider
-        .select((value) => value?.httpRequestModel?.params?.length));
-    var rP = ref.read(selectedRequestModelProvider)?.httpRequestModel?.params;
+    ref.watch(selectedRequestModelProvider.select((value) =>
+        value?.genericRequestModel?.httpRequestModel?.params?.length));
+    var rP = ref
+        .read(selectedRequestModelProvider)
+        ?.genericRequestModel
+        ?.httpRequestModel
+        ?.params;
     bool isParamsEmpty = rP == null || rP.isEmpty;
     paramRows = isParamsEmpty
         ? [
@@ -52,6 +56,7 @@ class EditRequestURLParamsState extends ConsumerState<EditRequestURLParams> {
     isRowEnabledList = [
       ...(ref
               .read(selectedRequestModelProvider)
+              ?.genericRequestModel
               ?.httpRequestModel
               ?.isParamEnabledList ??
           List.filled(rP?.length ?? 0, true, growable: true))
