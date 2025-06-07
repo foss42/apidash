@@ -12,7 +12,6 @@ class GenericRequestModel with _$GenericRequestModel {
   @JsonSerializable(
     explicitToJson: true,
     anyMap: true,
-    createToJson: true,
   )
   const factory GenericRequestModel({
     required AIRequestModel? aiRequestModel,

@@ -1,4 +1,6 @@
 import 'package:apidash_core/apidash_core.dart';
+import 'package:apidash_core/models/ai_request_model.dart';
+import 'package:apidash_core/models/ai_response_model.dart';
 import 'package:apidash_core/models/generic_request_model.dart';
 import 'package:apidash_core/models/generic_response_model.dart';
 import 'package:flutter/material.dart';
@@ -237,6 +239,8 @@ class CollectionStateNotifier
     int? responseStatus,
     String? message,
     HttpResponseModel? httpResponseModel,
+    AIResponseModel? aiResponseModel,
+    AIRequestModel? aiRequestModel,
   }) {
     final rId = id ?? ref.read(selectedIdStateProvider);
     if (rId == null) {
@@ -252,7 +256,8 @@ class CollectionStateNotifier
       description: description ?? currentModel.description,
       requestTabIndex: requestTabIndex ?? currentModel.requestTabIndex,
       genericRequestModel: GenericRequestModel(
-        aiRequestModel: null,
+        aiRequestModel:
+            aiRequestModel ?? currentModel.genericRequestModel?.aiRequestModel,
         httpRequestModel: currentHttpRequestModel?.copyWith(
           method: method ?? currentHttpRequestModel.method,
           url: url ?? currentHttpRequestModel.url,
@@ -272,7 +277,8 @@ class CollectionStateNotifier
       responseStatus: responseStatus ?? currentModel.responseStatus,
       message: message ?? currentModel.message,
       genericResponseModel: GenericResponseModel(
-        aiResponseModel: null,
+        aiResponseModel: aiResponseModel ??
+            currentModel.genericResponseModel?.aiResponseModel,
         httpResponseModel: httpResponseModel ??
             currentModel.genericResponseModel?.httpResponseModel,
       ),

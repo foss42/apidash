@@ -153,7 +153,7 @@ class __$$GenericRequestModelImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-@JsonSerializable(explicitToJson: true, anyMap: true, createToJson: true)
+@JsonSerializable(explicitToJson: true, anyMap: true)
 class _$GenericRequestModelImpl extends _GenericRequestModel {
   const _$GenericRequestModelImpl(
       {required this.aiRequestModel, required this.httpRequestModel})

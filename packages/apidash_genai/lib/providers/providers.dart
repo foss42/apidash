@@ -23,6 +23,14 @@ enum LLMProvider {
   final String displayName;
 }
 
+LLMProvider llmProviderFromJSON(Map json) {
+  return getLLMProviderByName(json['llm_provider']);
+}
+
+Map llmProviderToJSON(LLMProvider p) {
+  return {'llm_provider': p.name};
+}
+
 LLMProvider getLLMProviderByName(String name) {
   return LLMProvider.values.firstWhere(
     (model) => model.name == name,

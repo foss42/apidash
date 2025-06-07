@@ -1,9 +1,14 @@
 import 'package:apidash_core/apidash_core.dart';
+import 'package:apidash_core/models/ai_request_model.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
+import 'package:apidash_genai/llm_input_payload.dart';
+import 'package:apidash_genai/llm_saveobject.dart';
+import 'package:apidash_genai/widgets/llm_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
+import 'package:uuid/uuid.dart';
 import '../../common_widgets/common_widgets.dart';
 
 class EditorPaneRequestURLCard extends ConsumerWidget {
@@ -35,7 +40,7 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
                   switch (apiType) {
                     APIType.rest => const DropdownButtonHTTPMethod(),
                     APIType.graphql => kSizedBoxEmpty,
-                    APIType.ai => FlutterLogo(),
+                    APIType.ai => const AIProviderSelector(),
                     null => kSizedBoxEmpty,
                   },
                   switch (apiType) {
@@ -52,7 +57,7 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
                   switch (apiType) {
                     APIType.rest => const DropdownButtonHTTPMethod(),
                     APIType.graphql => kSizedBoxEmpty,
-                    APIType.ai => FlutterLogo(),
+                    APIType.ai => const AIProviderSelector(),
                     null => kSizedBoxEmpty,
                   },
                   switch (apiType) {
@@ -141,6 +146,51 @@ class SendRequestButton extends ConsumerWidget {
       },
       onCancel: () {
         ref.read(collectionStateNotifierProvider.notifier).cancelRequest();
+      },
+    );
+  }
+}
+
+class AIProviderSelector extends ConsumerWidget {
+  const AIProviderSelector({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selectedId = ref.watch(selectedIdStateProvider);
+    final req = ref.watch(collectionStateNotifierProvider)![selectedId]!;
+    final aiRequestModel = req.genericRequestModel?.aiRequestModel;
+    final defaultLLMSO = aiRequestModel == null
+        ? ref
+            .read(settingsProvider.notifier)
+            .settingsModel
+            ?.defaultLLMSaveObject
+        : LLMSaveObject(
+            endpoint: aiRequestModel.payload.endpoint,
+            credential: aiRequestModel.payload.credential,
+            configMap: aiRequestModel.payload.configMap,
+            selectedLLM: aiRequestModel.model,
+            provider: aiRequestModel.provider,
+          );
+
+    return DefaultLLMSelectorButton(
+      key: ValueKey(ref.watch(selectedIdStateProvider)),
+      defaultLLM: defaultLLMSO,
+      onDefaultLLMUpdated: (llmso) {
+        ref.read(collectionStateNotifierProvider.notifier).update(
+              aiRequestModel: AIRequestModel(
+                model: llmso.selectedLLM,
+                provider: llmso.provider,
+                payload: LLMInputPayload(
+                  endpoint: llmso.endpoint,
+                  credential: llmso.credential,
+                  systemPrompt: aiRequestModel?.payload.systemPrompt ?? '',
+                  userPrompt: aiRequestModel?.payload.userPrompt ?? '',
+                  configMap: llmso.configMap,
+                ),
+              ),
+            );
       },
     );
   }

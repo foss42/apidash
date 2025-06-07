@@ -8,6 +8,17 @@ abstract class LLMModel {
   final String identifier;
   final String modelName;
   final LLMProvider provider;
+
+  static Map toJson(LLMModel m) {
+    return {'identifier': m.identifier, 'provider': m.provider.name};
+  }
+
+  static LLMModel fromJson(Map json) {
+    return getSpecificLLMByProviderAndIdentifier(
+      getLLMProviderByName(json['provider']),
+      json['identifier'],
+    );
+  }
 }
 
 abstract class ModelController {
