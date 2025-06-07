@@ -25,4 +25,12 @@ class AIRequestModel with _$AIRequestModel {
 
   factory AIRequestModel.fromJson(Map<String, Object?> json) =>
       _$AIRequestModelFromJson(json);
+
+  AIRequestModel updatePayload(LLMInputPayload p) {
+    return AIRequestModel(
+      payload: p,
+      model: model,
+      provider: provider,
+    );
+  }
 }
