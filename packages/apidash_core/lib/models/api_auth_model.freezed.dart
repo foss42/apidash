@@ -20,6 +20,12 @@ APIAuthModel _$APIAuthModelFromJson(Map<String, dynamic> json) {
       return None.fromJson(json);
     case 'basic':
       return BasicAuth.fromJson(json);
+    case 'bearerToken':
+      return BearerTokenAuth.fromJson(json);
+    case 'apiKey':
+      return APIKeyAuth.fromJson(json);
+    case 'jwtBearer':
+      return JWTBearerAuth.fromJson(json);
 
     default:
       throw CheckedFromJsonException(json, 'runtimeType', 'APIAuthModel',
@@ -33,18 +39,27 @@ mixin _$APIAuthModel {
   TResult when<TResult extends Object?>({
     required TResult Function() none,
     required TResult Function(String username, String password) basic,
+    required TResult Function(String token) bearerToken,
+    required TResult Function(String key, String location, String name) apiKey,
+    required TResult Function(String jwt) jwtBearer,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? none,
     TResult? Function(String username, String password)? basic,
+    TResult? Function(String token)? bearerToken,
+    TResult? Function(String key, String location, String name)? apiKey,
+    TResult? Function(String jwt)? jwtBearer,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? none,
     TResult Function(String username, String password)? basic,
+    TResult Function(String token)? bearerToken,
+    TResult Function(String key, String location, String name)? apiKey,
+    TResult Function(String jwt)? jwtBearer,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -52,18 +67,27 @@ mixin _$APIAuthModel {
   TResult map<TResult extends Object?>({
     required TResult Function(None value) none,
     required TResult Function(BasicAuth value) basic,
+    required TResult Function(BearerTokenAuth value) bearerToken,
+    required TResult Function(APIKeyAuth value) apiKey,
+    required TResult Function(JWTBearerAuth value) jwtBearer,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(None value)? none,
     TResult? Function(BasicAuth value)? basic,
+    TResult? Function(BearerTokenAuth value)? bearerToken,
+    TResult? Function(APIKeyAuth value)? apiKey,
+    TResult? Function(JWTBearerAuth value)? jwtBearer,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(None value)? none,
     TResult Function(BasicAuth value)? basic,
+    TResult Function(BearerTokenAuth value)? bearerToken,
+    TResult Function(APIKeyAuth value)? apiKey,
+    TResult Function(JWTBearerAuth value)? jwtBearer,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -142,6 +166,9 @@ class _$NoneImpl implements None {
   TResult when<TResult extends Object?>({
     required TResult Function() none,
     required TResult Function(String username, String password) basic,
+    required TResult Function(String token) bearerToken,
+    required TResult Function(String key, String location, String name) apiKey,
+    required TResult Function(String jwt) jwtBearer,
   }) {
     return none();
   }
@@ -151,6 +178,9 @@ class _$NoneImpl implements None {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? none,
     TResult? Function(String username, String password)? basic,
+    TResult? Function(String token)? bearerToken,
+    TResult? Function(String key, String location, String name)? apiKey,
+    TResult? Function(String jwt)? jwtBearer,
   }) {
     return none?.call();
   }
@@ -160,6 +190,9 @@ class _$NoneImpl implements None {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? none,
     TResult Function(String username, String password)? basic,
+    TResult Function(String token)? bearerToken,
+    TResult Function(String key, String location, String name)? apiKey,
+    TResult Function(String jwt)? jwtBearer,
     required TResult orElse(),
   }) {
     if (none != null) {
@@ -173,6 +206,9 @@ class _$NoneImpl implements None {
   TResult map<TResult extends Object?>({
     required TResult Function(None value) none,
     required TResult Function(BasicAuth value) basic,
+    required TResult Function(BearerTokenAuth value) bearerToken,
+    required TResult Function(APIKeyAuth value) apiKey,
+    required TResult Function(JWTBearerAuth value) jwtBearer,
   }) {
     return none(this);
   }
@@ -182,6 +218,9 @@ class _$NoneImpl implements None {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(None value)? none,
     TResult? Function(BasicAuth value)? basic,
+    TResult? Function(BearerTokenAuth value)? bearerToken,
+    TResult? Function(APIKeyAuth value)? apiKey,
+    TResult? Function(JWTBearerAuth value)? jwtBearer,
   }) {
     return none?.call(this);
   }
@@ -191,6 +230,9 @@ class _$NoneImpl implements None {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(None value)? none,
     TResult Function(BasicAuth value)? basic,
+    TResult Function(BearerTokenAuth value)? bearerToken,
+    TResult Function(APIKeyAuth value)? apiKey,
+    TResult Function(JWTBearerAuth value)? jwtBearer,
     required TResult orElse(),
   }) {
     if (none != null) {
@@ -302,6 +344,9 @@ class _$BasicAuthImpl implements BasicAuth {
   TResult when<TResult extends Object?>({
     required TResult Function() none,
     required TResult Function(String username, String password) basic,
+    required TResult Function(String token) bearerToken,
+    required TResult Function(String key, String location, String name) apiKey,
+    required TResult Function(String jwt) jwtBearer,
   }) {
     return basic(username, password);
   }
@@ -311,6 +356,9 @@ class _$BasicAuthImpl implements BasicAuth {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? none,
     TResult? Function(String username, String password)? basic,
+    TResult? Function(String token)? bearerToken,
+    TResult? Function(String key, String location, String name)? apiKey,
+    TResult? Function(String jwt)? jwtBearer,
   }) {
     return basic?.call(username, password);
   }
@@ -320,6 +368,9 @@ class _$BasicAuthImpl implements BasicAuth {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? none,
     TResult Function(String username, String password)? basic,
+    TResult Function(String token)? bearerToken,
+    TResult Function(String key, String location, String name)? apiKey,
+    TResult Function(String jwt)? jwtBearer,
     required TResult orElse(),
   }) {
     if (basic != null) {
@@ -333,6 +384,9 @@ class _$BasicAuthImpl implements BasicAuth {
   TResult map<TResult extends Object?>({
     required TResult Function(None value) none,
     required TResult Function(BasicAuth value) basic,
+    required TResult Function(BearerTokenAuth value) bearerToken,
+    required TResult Function(APIKeyAuth value) apiKey,
+    required TResult Function(JWTBearerAuth value) jwtBearer,
   }) {
     return basic(this);
   }
@@ -342,6 +396,9 @@ class _$BasicAuthImpl implements BasicAuth {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(None value)? none,
     TResult? Function(BasicAuth value)? basic,
+    TResult? Function(BearerTokenAuth value)? bearerToken,
+    TResult? Function(APIKeyAuth value)? apiKey,
+    TResult? Function(JWTBearerAuth value)? jwtBearer,
   }) {
     return basic?.call(this);
   }
@@ -351,6 +408,9 @@ class _$BasicAuthImpl implements BasicAuth {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(None value)? none,
     TResult Function(BasicAuth value)? basic,
+    TResult Function(BearerTokenAuth value)? bearerToken,
+    TResult Function(APIKeyAuth value)? apiKey,
+    TResult Function(JWTBearerAuth value)? jwtBearer,
     required TResult orElse(),
   }) {
     if (basic != null) {
@@ -382,5 +442,565 @@ abstract class BasicAuth implements APIAuthModel {
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$BasicAuthImplCopyWith<_$BasicAuthImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$BearerTokenAuthImplCopyWith<$Res> {
+  factory _$$BearerTokenAuthImplCopyWith(_$BearerTokenAuthImpl value,
+          $Res Function(_$BearerTokenAuthImpl) then) =
+      __$$BearerTokenAuthImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String token});
+}
+
+/// @nodoc
+class __$$BearerTokenAuthImplCopyWithImpl<$Res>
+    extends _$APIAuthModelCopyWithImpl<$Res, _$BearerTokenAuthImpl>
+    implements _$$BearerTokenAuthImplCopyWith<$Res> {
+  __$$BearerTokenAuthImplCopyWithImpl(
+      _$BearerTokenAuthImpl _value, $Res Function(_$BearerTokenAuthImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of APIAuthModel
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? token = null,
+  }) {
+    return _then(_$BearerTokenAuthImpl(
+      token: null == token
+          ? _value.token
+          : token // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$BearerTokenAuthImpl implements BearerTokenAuth {
+  const _$BearerTokenAuthImpl({required this.token, final String? $type})
+      : $type = $type ?? 'bearerToken';
+
+  factory _$BearerTokenAuthImpl.fromJson(Map<String, dynamic> json) =>
+      _$$BearerTokenAuthImplFromJson(json);
+
+  @override
+  final String token;
+
+  @JsonKey(name: 'runtimeType')
+  final String $type;
+
+  @override
+  String toString() {
+    return 'APIAuthModel.bearerToken(token: $token)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$BearerTokenAuthImpl &&
+            (identical(other.token, token) || other.token == token));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, token);
+
+  /// Create a copy of APIAuthModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$BearerTokenAuthImplCopyWith<_$BearerTokenAuthImpl> get copyWith =>
+      __$$BearerTokenAuthImplCopyWithImpl<_$BearerTokenAuthImpl>(
+          this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() none,
+    required TResult Function(String username, String password) basic,
+    required TResult Function(String token) bearerToken,
+    required TResult Function(String key, String location, String name) apiKey,
+    required TResult Function(String jwt) jwtBearer,
+  }) {
+    return bearerToken(token);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? none,
+    TResult? Function(String username, String password)? basic,
+    TResult? Function(String token)? bearerToken,
+    TResult? Function(String key, String location, String name)? apiKey,
+    TResult? Function(String jwt)? jwtBearer,
+  }) {
+    return bearerToken?.call(token);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? none,
+    TResult Function(String username, String password)? basic,
+    TResult Function(String token)? bearerToken,
+    TResult Function(String key, String location, String name)? apiKey,
+    TResult Function(String jwt)? jwtBearer,
+    required TResult orElse(),
+  }) {
+    if (bearerToken != null) {
+      return bearerToken(token);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(None value) none,
+    required TResult Function(BasicAuth value) basic,
+    required TResult Function(BearerTokenAuth value) bearerToken,
+    required TResult Function(APIKeyAuth value) apiKey,
+    required TResult Function(JWTBearerAuth value) jwtBearer,
+  }) {
+    return bearerToken(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(None value)? none,
+    TResult? Function(BasicAuth value)? basic,
+    TResult? Function(BearerTokenAuth value)? bearerToken,
+    TResult? Function(APIKeyAuth value)? apiKey,
+    TResult? Function(JWTBearerAuth value)? jwtBearer,
+  }) {
+    return bearerToken?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(None value)? none,
+    TResult Function(BasicAuth value)? basic,
+    TResult Function(BearerTokenAuth value)? bearerToken,
+    TResult Function(APIKeyAuth value)? apiKey,
+    TResult Function(JWTBearerAuth value)? jwtBearer,
+    required TResult orElse(),
+  }) {
+    if (bearerToken != null) {
+      return bearerToken(this);
+    }
+    return orElse();
+  }
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$BearerTokenAuthImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class BearerTokenAuth implements APIAuthModel {
+  const factory BearerTokenAuth({required final String token}) =
+      _$BearerTokenAuthImpl;
+
+  factory BearerTokenAuth.fromJson(Map<String, dynamic> json) =
+      _$BearerTokenAuthImpl.fromJson;
+
+  String get token;
+
+  /// Create a copy of APIAuthModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$BearerTokenAuthImplCopyWith<_$BearerTokenAuthImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$APIKeyAuthImplCopyWith<$Res> {
+  factory _$$APIKeyAuthImplCopyWith(
+          _$APIKeyAuthImpl value, $Res Function(_$APIKeyAuthImpl) then) =
+      __$$APIKeyAuthImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String key, String location, String name});
+}
+
+/// @nodoc
+class __$$APIKeyAuthImplCopyWithImpl<$Res>
+    extends _$APIAuthModelCopyWithImpl<$Res, _$APIKeyAuthImpl>
+    implements _$$APIKeyAuthImplCopyWith<$Res> {
+  __$$APIKeyAuthImplCopyWithImpl(
+      _$APIKeyAuthImpl _value, $Res Function(_$APIKeyAuthImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of APIAuthModel
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? key = null,
+    Object? location = null,
+    Object? name = null,
+  }) {
+    return _then(_$APIKeyAuthImpl(
+      key: null == key
+          ? _value.key
+          : key // ignore: cast_nullable_to_non_nullable
+              as String,
+      location: null == location
+          ? _value.location
+          : location // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$APIKeyAuthImpl implements APIKeyAuth {
+  const _$APIKeyAuthImpl(
+      {required this.key,
+      this.location = 'header',
+      this.name = 'x-api-key',
+      final String? $type})
+      : $type = $type ?? 'apiKey';
+
+  factory _$APIKeyAuthImpl.fromJson(Map<String, dynamic> json) =>
+      _$$APIKeyAuthImplFromJson(json);
+
+  @override
+  final String key;
+  @override
+  @JsonKey()
+  final String location;
+// or 'query'
+  @override
+  @JsonKey()
+  final String name;
+
+  @JsonKey(name: 'runtimeType')
+  final String $type;
+
+  @override
+  String toString() {
+    return 'APIAuthModel.apiKey(key: $key, location: $location, name: $name)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$APIKeyAuthImpl &&
+            (identical(other.key, key) || other.key == key) &&
+            (identical(other.location, location) ||
+                other.location == location) &&
+            (identical(other.name, name) || other.name == name));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, key, location, name);
+
+  /// Create a copy of APIAuthModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$APIKeyAuthImplCopyWith<_$APIKeyAuthImpl> get copyWith =>
+      __$$APIKeyAuthImplCopyWithImpl<_$APIKeyAuthImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() none,
+    required TResult Function(String username, String password) basic,
+    required TResult Function(String token) bearerToken,
+    required TResult Function(String key, String location, String name) apiKey,
+    required TResult Function(String jwt) jwtBearer,
+  }) {
+    return apiKey(key, location, name);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? none,
+    TResult? Function(String username, String password)? basic,
+    TResult? Function(String token)? bearerToken,
+    TResult? Function(String key, String location, String name)? apiKey,
+    TResult? Function(String jwt)? jwtBearer,
+  }) {
+    return apiKey?.call(key, location, name);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? none,
+    TResult Function(String username, String password)? basic,
+    TResult Function(String token)? bearerToken,
+    TResult Function(String key, String location, String name)? apiKey,
+    TResult Function(String jwt)? jwtBearer,
+    required TResult orElse(),
+  }) {
+    if (apiKey != null) {
+      return apiKey(key, location, name);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(None value) none,
+    required TResult Function(BasicAuth value) basic,
+    required TResult Function(BearerTokenAuth value) bearerToken,
+    required TResult Function(APIKeyAuth value) apiKey,
+    required TResult Function(JWTBearerAuth value) jwtBearer,
+  }) {
+    return apiKey(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(None value)? none,
+    TResult? Function(BasicAuth value)? basic,
+    TResult? Function(BearerTokenAuth value)? bearerToken,
+    TResult? Function(APIKeyAuth value)? apiKey,
+    TResult? Function(JWTBearerAuth value)? jwtBearer,
+  }) {
+    return apiKey?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(None value)? none,
+    TResult Function(BasicAuth value)? basic,
+    TResult Function(BearerTokenAuth value)? bearerToken,
+    TResult Function(APIKeyAuth value)? apiKey,
+    TResult Function(JWTBearerAuth value)? jwtBearer,
+    required TResult orElse(),
+  }) {
+    if (apiKey != null) {
+      return apiKey(this);
+    }
+    return orElse();
+  }
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$APIKeyAuthImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class APIKeyAuth implements APIAuthModel {
+  const factory APIKeyAuth(
+      {required final String key,
+      final String location,
+      final String name}) = _$APIKeyAuthImpl;
+
+  factory APIKeyAuth.fromJson(Map<String, dynamic> json) =
+      _$APIKeyAuthImpl.fromJson;
+
+  String get key;
+  String get location; // or 'query'
+  String get name;
+
+  /// Create a copy of APIAuthModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$APIKeyAuthImplCopyWith<_$APIKeyAuthImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$JWTBearerAuthImplCopyWith<$Res> {
+  factory _$$JWTBearerAuthImplCopyWith(
+          _$JWTBearerAuthImpl value, $Res Function(_$JWTBearerAuthImpl) then) =
+      __$$JWTBearerAuthImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String jwt});
+}
+
+/// @nodoc
+class __$$JWTBearerAuthImplCopyWithImpl<$Res>
+    extends _$APIAuthModelCopyWithImpl<$Res, _$JWTBearerAuthImpl>
+    implements _$$JWTBearerAuthImplCopyWith<$Res> {
+  __$$JWTBearerAuthImplCopyWithImpl(
+      _$JWTBearerAuthImpl _value, $Res Function(_$JWTBearerAuthImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of APIAuthModel
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? jwt = null,
+  }) {
+    return _then(_$JWTBearerAuthImpl(
+      jwt: null == jwt
+          ? _value.jwt
+          : jwt // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$JWTBearerAuthImpl implements JWTBearerAuth {
+  const _$JWTBearerAuthImpl({required this.jwt, final String? $type})
+      : $type = $type ?? 'jwtBearer';
+
+  factory _$JWTBearerAuthImpl.fromJson(Map<String, dynamic> json) =>
+      _$$JWTBearerAuthImplFromJson(json);
+
+  @override
+  final String jwt;
+
+  @JsonKey(name: 'runtimeType')
+  final String $type;
+
+  @override
+  String toString() {
+    return 'APIAuthModel.jwtBearer(jwt: $jwt)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$JWTBearerAuthImpl &&
+            (identical(other.jwt, jwt) || other.jwt == jwt));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, jwt);
+
+  /// Create a copy of APIAuthModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$JWTBearerAuthImplCopyWith<_$JWTBearerAuthImpl> get copyWith =>
+      __$$JWTBearerAuthImplCopyWithImpl<_$JWTBearerAuthImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() none,
+    required TResult Function(String username, String password) basic,
+    required TResult Function(String token) bearerToken,
+    required TResult Function(String key, String location, String name) apiKey,
+    required TResult Function(String jwt) jwtBearer,
+  }) {
+    return jwtBearer(jwt);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? none,
+    TResult? Function(String username, String password)? basic,
+    TResult? Function(String token)? bearerToken,
+    TResult? Function(String key, String location, String name)? apiKey,
+    TResult? Function(String jwt)? jwtBearer,
+  }) {
+    return jwtBearer?.call(jwt);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? none,
+    TResult Function(String username, String password)? basic,
+    TResult Function(String token)? bearerToken,
+    TResult Function(String key, String location, String name)? apiKey,
+    TResult Function(String jwt)? jwtBearer,
+    required TResult orElse(),
+  }) {
+    if (jwtBearer != null) {
+      return jwtBearer(jwt);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(None value) none,
+    required TResult Function(BasicAuth value) basic,
+    required TResult Function(BearerTokenAuth value) bearerToken,
+    required TResult Function(APIKeyAuth value) apiKey,
+    required TResult Function(JWTBearerAuth value) jwtBearer,
+  }) {
+    return jwtBearer(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(None value)? none,
+    TResult? Function(BasicAuth value)? basic,
+    TResult? Function(BearerTokenAuth value)? bearerToken,
+    TResult? Function(APIKeyAuth value)? apiKey,
+    TResult? Function(JWTBearerAuth value)? jwtBearer,
+  }) {
+    return jwtBearer?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(None value)? none,
+    TResult Function(BasicAuth value)? basic,
+    TResult Function(BearerTokenAuth value)? bearerToken,
+    TResult Function(APIKeyAuth value)? apiKey,
+    TResult Function(JWTBearerAuth value)? jwtBearer,
+    required TResult orElse(),
+  }) {
+    if (jwtBearer != null) {
+      return jwtBearer(this);
+    }
+    return orElse();
+  }
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$JWTBearerAuthImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class JWTBearerAuth implements APIAuthModel {
+  const factory JWTBearerAuth({required final String jwt}) =
+      _$JWTBearerAuthImpl;
+
+  factory JWTBearerAuth.fromJson(Map<String, dynamic> json) =
+      _$JWTBearerAuthImpl.fromJson;
+
+  String get jwt;
+
+  /// Create a copy of APIAuthModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$JWTBearerAuthImplCopyWith<_$JWTBearerAuthImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
