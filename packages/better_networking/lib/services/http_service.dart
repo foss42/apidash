@@ -7,6 +7,7 @@ import '../consts.dart';
 import '../extensions/extensions.dart';
 import '../models/models.dart';
 import '../utils/utils.dart';
+import '../utils/handle_auth.dart';
 import 'http_client_manager.dart';
 
 typedef HttpResponse = http.Response;
@@ -16,6 +17,8 @@ final httpClientManager = HttpClientManager();
 Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
   String requestId,
   APIType apiType,
+  APIAuthModel? authData,
+  APIAuthType apiAuthType,
   HttpRequestModel requestModel, {
   SupportedUriSchemes defaultUriScheme = kDefaultUriScheme,
   bool noSSL = false,
@@ -25,15 +28,19 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
   }
   final client = httpClientManager.createClient(requestId, noSSL: noSSL);
 
+  // Handle authentication
+  final authenticatedRequestModel =
+      handleAuth(requestModel, apiAuthType, authData);
+
   (Uri?, String?) uriRec = getValidRequestUri(
-    requestModel.url,
-    requestModel.enabledParams,
+    authenticatedRequestModel.url,
+    authenticatedRequestModel.enabledParams,
     defaultUriScheme: defaultUriScheme,
   );
 
   if (uriRec.$1 != null) {
     Uri requestUrl = uriRec.$1!;
-    Map<String, String> headers = requestModel.enabledHeadersMap;
+    Map<String, String> headers = authenticatedRequestModel.enabledHeadersMap;
     bool overrideContentType = false;
     HttpResponse? response;
     String? body;
@@ -43,26 +50,26 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
         var isMultiPartRequest =
             requestModel.bodyContentType == ContentType.formdata;
 
-        if (kMethodsWithBody.contains(requestModel.method)) {
-          var requestBody = requestModel.body;
+        if (kMethodsWithBody.contains(authenticatedRequestModel.method)) {
+          var requestBody = authenticatedRequestModel.body;
           if (requestBody != null &&
               !isMultiPartRequest &&
               requestBody.isNotEmpty) {
             body = requestBody;
-            if (requestModel.hasContentTypeHeader) {
+            if (authenticatedRequestModel.hasContentTypeHeader) {
               overrideContentType = true;
             } else {
               headers[HttpHeaders.contentTypeHeader] =
-                  requestModel.bodyContentType.header;
+                  authenticatedRequestModel.bodyContentType.header;
             }
           }
           if (isMultiPartRequest) {
             var multiPartRequest = http.MultipartRequest(
-              requestModel.method.name.toUpperCase(),
+              authenticatedRequestModel.method.name.toUpperCase(),
               requestUrl,
             );
             multiPartRequest.headers.addAll(headers);
-            for (var formData in requestModel.formDataList) {
+            for (var formData in authenticatedRequestModel.formDataList) {
               if (formData.type == FormDataType.text) {
                 multiPartRequest.fields.addAll({formData.name: formData.value});
               } else {
@@ -84,7 +91,7 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
             return (convertedMultiPartResponse, stopwatch.elapsed, null);
           }
         }
-        switch (requestModel.method) {
+        switch (authenticatedRequestModel.method) {
           case HTTPVerb.get:
             response = await client.get(requestUrl, headers: headers);
             break;
@@ -98,7 +105,7 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
           case HTTPVerb.options:
             final request = prepareHttpRequest(
               url: requestUrl,
-              method: requestModel.method.name.toUpperCase(),
+              method: authenticatedRequestModel.method.name.toUpperCase(),
               headers: headers,
               body: body,
               overrideContentType: overrideContentType,
@@ -109,13 +116,13 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
         }
       }
       if (apiType == APIType.graphql) {
-        var requestBody = getGraphQLBody(requestModel);
+        var requestBody = getGraphQLBody(authenticatedRequestModel);
         if (requestBody != null) {
           var contentLength = utf8.encode(requestBody).length;
           if (contentLength > 0) {
             body = requestBody;
             headers[HttpHeaders.contentLengthHeader] = contentLength.toString();
-            if (!requestModel.hasContentTypeHeader) {
+            if (!authenticatedRequestModel.hasContentTypeHeader) {
               headers[HttpHeaders.contentTypeHeader] = ContentType.json.header;
             }
           }
