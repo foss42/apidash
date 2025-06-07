@@ -1,6 +1,7 @@
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:genai/genai.dart';
 import '../models/models.dart';
 import '../services/services.dart';
 import '../consts.dart';
@@ -34,6 +35,7 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
     String? workspaceFolderPath,
     bool? isSSLDisabled,
     bool? isDashBotEnabled,
+    LLMSaveObject? defaultLLMSaveObject,
   }) async {
     state = state.copyWith(
       isDark: isDark,
@@ -49,6 +51,7 @@ class ThemeStateNotifier extends StateNotifier<SettingsModel> {
       workspaceFolderPath: workspaceFolderPath,
       isSSLDisabled: isSSLDisabled,
       isDashBotEnabled: isDashBotEnabled,
+      defaultLLMSaveObject: defaultLLMSaveObject,
     );
     await setSettingsToSharedPrefs(state);
   }
