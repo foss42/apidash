@@ -207,6 +207,8 @@ class CollectionStateNotifier
     String? id,
     HTTPVerb? method,
     APIType? apiType,
+    APIAuthType? authType,
+    APIAuthModel? authData,
     String? url,
     String? name,
     String? description,
@@ -234,6 +236,8 @@ class CollectionStateNotifier
     var currentHttpRequestModel = currentModel.httpRequestModel;
     final newModel = currentModel.copyWith(
       apiType: apiType ?? currentModel.apiType,
+      authType: authType ?? currentModel.authType,
+      authData: authData ?? currentModel.authData,
       name: name ?? currentModel.name,
       description: description ?? currentModel.description,
       requestTabIndex: requestTabIndex ?? currentModel.requestTabIndex,

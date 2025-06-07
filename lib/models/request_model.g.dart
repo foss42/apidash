@@ -12,6 +12,12 @@ _$RequestModelImpl _$$RequestModelImplFromJson(Map json) => _$RequestModelImpl(
           APIType.rest,
       name: json['name'] as String? ?? "",
       description: json['description'] as String? ?? "",
+      authType: $enumDecodeNullable(_$APIAuthTypeEnumMap, json['authType']) ??
+          APIAuthType.none,
+      authData: json['authData'] == null
+          ? null
+          : APIAuthModel.fromJson(
+              Map<String, dynamic>.from(json['authData'] as Map)),
       requestTabIndex: json['requestTabIndex'] ?? 0,
       httpRequestModel: json['httpRequestModel'] == null
           ? null
@@ -37,6 +43,8 @@ Map<String, dynamic> _$$RequestModelImplToJson(_$RequestModelImpl instance) =>
       'apiType': _$APITypeEnumMap[instance.apiType]!,
       'name': instance.name,
       'description': instance.description,
+      'authType': _$APIAuthTypeEnumMap[instance.authType]!,
+      'authData': instance.authData?.toJson(),
       'httpRequestModel': instance.httpRequestModel?.toJson(),
       'responseStatus': instance.responseStatus,
       'message': instance.message,
@@ -48,4 +56,15 @@ Map<String, dynamic> _$$RequestModelImplToJson(_$RequestModelImpl instance) =>
 const _$APITypeEnumMap = {
   APIType.rest: 'rest',
   APIType.graphql: 'graphql',
+};
+
+const _$APIAuthTypeEnumMap = {
+  APIAuthType.none: 'none',
+  APIAuthType.basic: 'basic',
+  APIAuthType.apiKey: 'apiKey',
+  APIAuthType.bearerToken: 'bearerToken',
+  APIAuthType.jwtBearer: 'jwtBearer',
+  APIAuthType.digest: 'digest',
+  APIAuthType.oauth1: 'oauth1',
+  APIAuthType.oauth2: 'oauth2',
 };
