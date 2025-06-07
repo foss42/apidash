@@ -1,29 +1,21 @@
 import 'package:apidash_genai/llm_config.dart';
+import 'package:apidash_genai/providers/common.dart';
+import 'package:apidash_genai/providers/providers.dart';
 
-class LLMInputPayload {
+class LLMSaveObject {
   String endpoint;
   String credential;
-  String systemPrompt;
-  String userPrompt;
+  LLMProvider provider;
+  LLMModel selectedLLM;
   Map<String, LLMModelConfiguration> configMap;
 
-  LLMInputPayload({
+  LLMSaveObject({
     required this.endpoint,
     required this.credential,
-    required this.systemPrompt,
-    required this.userPrompt,
     required this.configMap,
+    required this.selectedLLM,
+    required this.provider,
   });
-
-  LLMInputPayload clone() {
-    return LLMInputPayload(
-      endpoint: endpoint,
-      credential: credential,
-      systemPrompt: systemPrompt,
-      userPrompt: userPrompt,
-      configMap: configMap,
-    );
-  }
 
   Map toJSON() {
     Map cmap = {};
@@ -33,23 +25,27 @@ class LLMInputPayload {
     return {
       'endpoint': endpoint,
       'credential': credential,
-      'system_prompt': systemPrompt,
-      'user_prompt': userPrompt,
       'config_map': cmap,
+      'selected_llm': selectedLLM.identifier,
+      'provider': provider.name,
     };
   }
 
-  static LLMInputPayload fromJSON(Map json) {
+  static LLMSaveObject fromJSON(Map json) {
     Map<String, LLMModelConfiguration> cmap = {};
     for (final k in json['config_map'].keys) {
       cmap[k] = LLMModelConfiguration.fromJson(json['config_map'][k]);
     }
-    return LLMInputPayload(
+    final provider = getLLMProviderByName(json['provider']);
+    return LLMSaveObject(
       endpoint: json['endpoint'],
       credential: json['credential'],
-      systemPrompt: json['system_prompt'],
-      userPrompt: json['user_prompt'],
       configMap: cmap,
+      selectedLLM: getSpecificLLMByProviderAndIdentifier(
+        provider,
+        json['selected_llm'],
+      ),
+      provider: provider,
     );
   }
 }

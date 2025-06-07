@@ -1,3 +1,4 @@
+import 'package:apidash_genai/widgets/llm_selector.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -111,6 +112,18 @@ class SettingsPage extends ConsumerWidget {
                     ref
                         .read(settingsProvider.notifier)
                         .update(defaultCodeGenLang: value);
+                  },
+                ),
+              ),
+              ListTile(
+                hoverColor: kColorTransparent,
+                title: const Text('Default Large Language Model (LLM)'),
+                trailing: DefaultLLMSelectorButton(
+                  defaultLLM: settings.defaultLLMSaveObject,
+                  onDefaultLLMUpdated: (d) {
+                    ref
+                        .read(settingsProvider.notifier)
+                        .update(defaultLLMSaveObject: d);
                   },
                 ),
               ),

@@ -66,3 +66,21 @@ ModelController getLLMModelControllerByProvider(LLMProvider p) {
       return AnthropicModelController();
   }
 }
+
+LLMModel getSpecificLLMByProviderAndIdentifier(
+  LLMProvider provider,
+  String identifier,
+) {
+  switch (provider) {
+    case LLMProvider.ollama:
+      return getOllamaModelFromIdentifier(identifier);
+    case LLMProvider.gemini:
+      return getGeminiModelFromIdentifier(identifier);
+    case LLMProvider.azureopenai:
+      return getAzureOpenAIModelFromIdentifier(identifier);
+    case LLMProvider.openai:
+      return getOpenAIModelFromIdentifier(identifier);
+    case LLMProvider.anthropic:
+      return getAnthropicModelFromIdentifier(identifier);
+  }
+}

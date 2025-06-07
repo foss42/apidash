@@ -64,7 +64,7 @@ class LLMModelConfiguration {
         cV = LLMConfigTextValue.deserialize(x['configValue']);
     }
     return LLMModelConfiguration(
-      configId: x['config_id'],
+      configId: x['configId'],
       configName: x['configName'],
       configDescription: x['configDescription'],
       configType: cT,
