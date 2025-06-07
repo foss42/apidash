@@ -127,6 +127,7 @@ class HistoryRequestPane extends ConsumerWidget {
             const HistoryScriptsTab(),
           ],
         ),
+      APIType.ai => FlutterLogo(),
       _ => kSizedBoxEmpty,
     };
   }
@@ -204,6 +205,7 @@ class HisRequestBody extends ConsumerWidget {
             readOnly: true,
           ),
         ),
+      APIType.ai => FlutterLogo(),
       _ => kSizedBoxEmpty,
     };
   }
