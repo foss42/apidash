@@ -108,7 +108,7 @@ class GenerativeAI {
       payload.credential = credential;
     }
     if (configurations != null) {
-      payload.configMap = configurations;
+      payload.configMap.addAll(configurations);
     }
     if (endpoint != null) {
       payload.endpoint = endpoint;

@@ -15,7 +15,7 @@ final List<LLMModel> ollamaModels = getLLMModelsByProvider(LLMProvider.ollama)
 final List<LLMModel> geminiModels = getLLMModelsByProvider(LLMProvider.gemini)
 ```
 
-### Using a Model (eg: Gemini)
+### Directly Using a Model (eg: Gemini)
 ```dart
 final LLMModel model = GeminiModel.gemini_20_flash;
 final ModelController controller = getLLMModelControllerByProvider(model.provider);
@@ -24,6 +24,35 @@ payload.systemPrompt = 'Say YES or NO';
 payload.userPrompt = 'The sun sets in the west';
 payload.credential = 'AIza....';
 final genAIRequest = controller.createRequest(model, payload);
-final answer = await executeGenAIRequest(model, genAIRequest);
+final answer = await GenerativeAI.executeGenAIRequest(model, genAIRequest);
 print(answer)
+```
+
+### Calling a GenAI Model using the provided helper
+```dart
+final geminiModel = GeminiModel.gemini_15_flash_8b;
+GenerativeAI.callGenerativeModel(
+    geminiModel,
+    onAnswer: (x) {
+        print(x);
+    },
+    systemPrompt: 'Give a 100 word summary of the provided word. Only give the answer',
+    userPrompt: 'Pizza',
+    credential: 'AIza.....',
+);
+```
+
+### Calling a GenAI model (with Streaming)
+```dart
+final geminiModel = GeminiModel.gemini_15_flash_8b;
+GenerativeAI.callGenerativeModel(
+    geminiModel,
+    onAnswer: (x) {
+        stdout.write(x); //each word in the stream
+    },
+    systemPrompt: 'Give a 100 word summary of the provided word. Only give the answer',
+    userPrompt: 'Pizza',
+    credential: 'AIza.....',
+    stream: true,
+);
 ```
