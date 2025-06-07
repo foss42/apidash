@@ -13,8 +13,7 @@ class OpenAIModelController extends ModelController {
     configMap: {
       LLMConfigName.temperature.name:
           defaultLLMConfigurations[LLMConfigName.temperature]!,
-      LLMConfigName.top_p.name:
-          defaultLLMConfigurations[LLMConfigName.temperature]!,
+      LLMConfigName.top_p.name: defaultLLMConfigurations[LLMConfigName.top_p]!,
     },
   ).clone();
 
