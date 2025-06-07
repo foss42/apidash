@@ -14,4 +14,18 @@ class APIAuthModel with _$APIAuthModel {
 
   factory APIAuthModel.fromJson(Map<String, dynamic> json) =>
       _$APIAuthModelFromJson(json);
+
+  const factory APIAuthModel.bearerToken({
+    required String token,
+  }) = BearerTokenAuth;
+
+  const factory APIAuthModel.apiKey({
+    required String key,
+    @Default('header') String location, // or 'query'
+    @Default('x-api-key') String name,
+  }) = APIKeyAuth;
+
+  const factory APIAuthModel.jwtBearer({
+    required String jwt,
+  }) = JWTBearerAuth;
 }
