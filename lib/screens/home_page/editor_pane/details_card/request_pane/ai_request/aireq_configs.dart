@@ -22,6 +22,17 @@ class _AIRequestConfigSectionState
     final aiReqM = reqM.genericRequestModel!.aiRequestModel!;
     final payload = aiReqM.payload;
 
+    updateRequestModel(LLMModelConfiguration el) {
+      final aim = ref
+          .read(collectionStateNotifierProvider)![selectedId]!
+          .genericRequestModel!
+          .aiRequestModel!;
+      aim.payload.configMap[el.configId] = el;
+      ref.read(collectionStateNotifierProvider.notifier).update(
+            aiRequestModel: aim.updatePayload(aim.payload),
+          );
+    }
+
     return SingleChildScrollView(
       padding: EdgeInsets.symmetric(vertical: 20),
       child: Column(
@@ -43,12 +54,7 @@ class _AIRequestConfigSectionState
                       value: el.configValue.value as bool,
                       onChanged: (x) {
                         el.configValue.value = x;
-                        payload.configMap[el.configId] = el;
-                        ref
-                            .read(collectionStateNotifierProvider.notifier)
-                            .update(
-                              aiRequestModel: aiReqM.updatePayload(payload),
-                            );
+                        updateRequestModel(el);
                         setState(() {});
                       },
                     )
@@ -60,14 +66,7 @@ class _AIRequestConfigSectionState
                         if (x.isEmpty) x = '0';
                         if (num.tryParse(x) == null) return;
                         el.configValue.value = num.parse(x);
-
-                        payload.configMap[el.configId] = el;
-                        ref
-                            .read(collectionStateNotifierProvider.notifier)
-                            .update(
-                              aiRequestModel: aiReqM.updatePayload(payload),
-                            );
-
+                        updateRequestModel(el);
                         setState(() {});
                       },
                     )
@@ -77,14 +76,7 @@ class _AIRequestConfigSectionState
                       initialValue: el.configValue.value.toString(),
                       onChanged: (x) {
                         el.configValue.value = x;
-
-                        payload.configMap[el.configId] = el;
-                        ref
-                            .read(collectionStateNotifierProvider.notifier)
-                            .update(
-                              aiRequestModel: aiReqM.updatePayload(payload),
-                            );
-
+                        updateRequestModel(el);
                         setState(() {});
                       },
                     )
@@ -119,16 +111,7 @@ class _AIRequestConfigSectionState
                                 double
                               );
                               el.configValue.value = (z.$1, x, z.$3);
-
-                              payload.configMap[el.configId] = el;
-                              ref
-                                  .read(
-                                      collectionStateNotifierProvider.notifier)
-                                  .update(
-                                    aiRequestModel:
-                                        aiReqM.updatePayload(payload),
-                                  );
-
+                              updateRequestModel(el);
                               setState(() {});
                             },
                           ),

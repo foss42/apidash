@@ -39,10 +39,14 @@ class AIRequestPromptSection extends ConsumerWidget {
                 fieldKey: "$selectedId-aireq-sysprompt-body",
                 initialValue: systemPrompt,
                 onChanged: (String value) {
-                  payload.systemPrompt = value;
+                  final aim = ref
+                      .read(collectionStateNotifierProvider)![selectedId]!
+                      .genericRequestModel!
+                      .aiRequestModel!;
+                  aim.payload.systemPrompt = value;
                   ref
                       .read(collectionStateNotifierProvider.notifier)
-                      .update(aiRequestModel: aiReqM.updatePayload(payload));
+                      .update(aiRequestModel: aim.updatePayload(aim.payload));
                 },
                 hintText: 'Enter System Prompt',
               ),
@@ -65,10 +69,14 @@ class AIRequestPromptSection extends ConsumerWidget {
                 fieldKey: "$selectedId-aireq-userprompt-body",
                 initialValue: userPrompt,
                 onChanged: (String value) {
-                  payload.userPrompt = value;
+                  final aim = ref
+                      .read(collectionStateNotifierProvider)![selectedId]!
+                      .genericRequestModel!
+                      .aiRequestModel!;
+                  aim.payload.userPrompt = value;
                   ref
                       .read(collectionStateNotifierProvider.notifier)
-                      .update(aiRequestModel: aiReqM.updatePayload(payload));
+                      .update(aiRequestModel: aim.updatePayload(aim.payload));
                 },
                 hintText: 'Enter User Prompt',
               ),

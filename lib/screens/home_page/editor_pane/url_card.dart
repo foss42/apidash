@@ -3,12 +3,13 @@ import 'package:apidash_core/models/ai_request_model.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:apidash_genai/llm_input_payload.dart';
 import 'package:apidash_genai/llm_saveobject.dart';
+
 import 'package:apidash_genai/widgets/llm_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
-import 'package:uuid/uuid.dart';
+
 import '../../common_widgets/common_widgets.dart';
 
 class EditorPaneRequestURLCard extends ConsumerWidget {
@@ -160,19 +161,19 @@ class AIProviderSelector extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedId = ref.watch(selectedIdStateProvider);
     final req = ref.watch(collectionStateNotifierProvider)![selectedId]!;
-    final aiRequestModel = req.genericRequestModel?.aiRequestModel;
-    final defaultLLMSO = aiRequestModel == null
-        ? ref
-            .read(settingsProvider.notifier)
-            .settingsModel
-            ?.defaultLLMSaveObject
-        : LLMSaveObject(
-            endpoint: aiRequestModel.payload.endpoint,
-            credential: aiRequestModel.payload.credential,
-            configMap: aiRequestModel.payload.configMap,
-            selectedLLM: aiRequestModel.model,
-            provider: aiRequestModel.provider,
-          );
+    AIRequestModel? aiRequestModel = req.genericRequestModel!.aiRequestModel;
+
+    if (aiRequestModel == null) {
+      return Container();
+    }
+
+    LLMSaveObject defaultLLMSO = LLMSaveObject(
+      endpoint: aiRequestModel.payload.endpoint,
+      credential: aiRequestModel.payload.credential,
+      configMap: aiRequestModel.payload.configMap,
+      selectedLLM: aiRequestModel.model,
+      provider: aiRequestModel.provider,
+    );
 
     return DefaultLLMSelectorButton(
       key: ValueKey(ref.watch(selectedIdStateProvider)),
@@ -185,8 +186,8 @@ class AIProviderSelector extends ConsumerWidget {
                 payload: LLMInputPayload(
                   endpoint: llmso.endpoint,
                   credential: llmso.credential,
-                  systemPrompt: aiRequestModel?.payload.systemPrompt ?? '',
-                  userPrompt: aiRequestModel?.payload.userPrompt ?? '',
+                  systemPrompt: aiRequestModel.payload.systemPrompt,
+                  userPrompt: aiRequestModel.payload.userPrompt,
                   configMap: llmso.configMap,
                 ),
               ),

@@ -28,10 +28,14 @@ class AIRequestAuthorizationSection extends ConsumerWidget {
                 fieldKey: "$selectedId-aireq-authvalue-body",
                 initialValue: cred,
                 onChanged: (String value) {
-                  payload.credential = value;
+                  final aim = ref
+                      .read(collectionStateNotifierProvider)![selectedId]!
+                      .genericRequestModel!
+                      .aiRequestModel!;
+                  aim.payload.credential = value;
                   ref
                       .read(collectionStateNotifierProvider.notifier)
-                      .update(aiRequestModel: aiReqM.updatePayload(payload));
+                      .update(aiRequestModel: aim.updatePayload(aim.payload));
                 },
                 hintText: 'Enter API key or Authorization Credentials',
               ),
