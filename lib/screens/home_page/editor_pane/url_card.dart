@@ -159,19 +159,19 @@ class AIProviderSelector extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedId = ref.watch(selectedIdStateProvider);
     final req = ref.watch(collectionStateNotifierProvider)![selectedId]!;
-    final aiRequestModel = req.aiRequestModel;
-    final defaultLLMSO = aiRequestModel == null
-        ? ref
-            .read(settingsProvider.notifier)
-            .settingsModel
-            ?.defaultLLMSaveObject
-        : LLMSaveObject(
-            endpoint: aiRequestModel.payload.endpoint,
-            credential: aiRequestModel.payload.credential,
-            configMap: aiRequestModel.payload.configMap,
-            selectedLLM: aiRequestModel.model,
-            provider: aiRequestModel.provider,
-          );
+    AIRequestModel? aiRequestModel = req.aiRequestModel;
+
+    if (aiRequestModel == null) {
+      return Container();
+    }
+
+    LLMSaveObject defaultLLMSO = LLMSaveObject(
+      endpoint: aiRequestModel.payload.endpoint,
+      credential: aiRequestModel.payload.credential,
+      configMap: aiRequestModel.payload.configMap,
+      selectedLLM: aiRequestModel.model,
+      provider: aiRequestModel.provider,
+    );
 
     return DefaultLLMSelectorButton(
       key: ValueKey(ref.watch(selectedIdStateProvider)),
@@ -184,8 +184,8 @@ class AIProviderSelector extends ConsumerWidget {
                 payload: LLMInputPayload(
                   endpoint: llmso.endpoint,
                   credential: llmso.credential,
-                  systemPrompt: aiRequestModel?.payload.systemPrompt ?? '',
-                  userPrompt: aiRequestModel?.payload.userPrompt ?? '',
+                  systemPrompt: aiRequestModel.payload.systemPrompt,
+                  userPrompt: aiRequestModel.payload.userPrompt,
                   configMap: llmso.configMap,
                 ),
               ),

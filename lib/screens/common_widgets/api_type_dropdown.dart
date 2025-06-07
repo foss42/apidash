@@ -1,7 +1,9 @@
+import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
+import 'package:genai/genai.dart';
 
 class APITypeDropdown extends ConsumerWidget {
   const APITypeDropdown({super.key});
@@ -14,10 +16,43 @@ class APITypeDropdown extends ConsumerWidget {
     return APITypePopupMenu(
       apiType: apiType,
       onChanged: (type) {
+        if (type == APIType.ai) {
+          initializeAIRequest(ref);
+        }
         ref
             .read(collectionStateNotifierProvider.notifier)
             .update(apiType: type);
       },
     );
+  }
+}
+
+initializeAIRequest(WidgetRef ref) {
+  final selectedId = ref.watch(selectedIdStateProvider);
+  final req = ref.watch(collectionStateNotifierProvider)![selectedId]!;
+  AIRequestModel? aiRequestModel = req.aiRequestModel;
+  LLMSaveObject? defaultLLMSO = ref
+      .watch(settingsProvider.notifier)
+      .settingsModel
+      ?.defaultLLMSaveObject; //Settings Default
+
+  if (aiRequestModel == null) {
+    // Creating the AIRequest Model initially
+    final gmC = GeminiModelController();
+    final newAIRM = AIRequestModel(
+      model: defaultLLMSO?.selectedLLM ??
+          LLMProvider.gemini.getLLMByIdentifier('gemini-2.0-flash'),
+      provider: defaultLLMSO?.provider ?? LLMProvider.gemini,
+      payload: LLMInputPayload(
+        endpoint: defaultLLMSO?.endpoint ?? gmC.inputPayload.endpoint,
+        credential: defaultLLMSO?.credential ?? '',
+        systemPrompt: '',
+        userPrompt: '',
+        configMap: defaultLLMSO?.configMap ?? gmC.inputPayload.configMap,
+      ),
+    );
+    ref.read(collectionStateNotifierProvider.notifier).update(
+          aiRequestModel: newAIRM,
+        );
   }
 }
