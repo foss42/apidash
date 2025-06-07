@@ -9,6 +9,18 @@ enum APIType {
   final String abbr;
 }
 
+enum APIAuthType {
+  none,
+  basic,
+  apiKey,
+  bearerToken,
+  jwtBearer,
+  digest,
+  oauth1,
+  oauth2,
+}
+
+
 enum EnvironmentVariableType { variable, secret }
 
 enum HTTPVerb {
