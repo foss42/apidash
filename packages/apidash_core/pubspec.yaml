@@ -23,6 +23,8 @@ dependencies:
     path: ../postman
   seed: ^0.0.3
   xml: ^6.3.0
+  apidash_genai:
+    path: ../apidash_genai
 
 dev_dependencies:
   flutter_test:

@@ -21,9 +21,13 @@ HistoryRequestModel _$HistoryRequestModelFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$HistoryRequestModel {
   String get historyId => throw _privateConstructorUsedError;
-  HistoryMetaModel get metaData => throw _privateConstructorUsedError;
-  HttpRequestModel get httpRequestModel => throw _privateConstructorUsedError;
-  HttpResponseModel get httpResponseModel => throw _privateConstructorUsedError;
+  HistoryMetaModel get metaData =>
+      throw _privateConstructorUsedError; // required HttpRequestModel httpRequestModel,
+// required HttpResponseModel httpResponseModel,
+  GenericRequestModel get genericRequestModel =>
+      throw _privateConstructorUsedError;
+  GenericResponseModel get genericResponseModel =>
+      throw _privateConstructorUsedError;
 
   /// Serializes this HistoryRequestModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -44,12 +48,12 @@ abstract class $HistoryRequestModelCopyWith<$Res> {
   $Res call(
       {String historyId,
       HistoryMetaModel metaData,
-      HttpRequestModel httpRequestModel,
-      HttpResponseModel httpResponseModel});
+      GenericRequestModel genericRequestModel,
+      GenericResponseModel genericResponseModel});
 
   $HistoryMetaModelCopyWith<$Res> get metaData;
-  $HttpRequestModelCopyWith<$Res> get httpRequestModel;
-  $HttpResponseModelCopyWith<$Res> get httpResponseModel;
+  $GenericRequestModelCopyWith<$Res> get genericRequestModel;
+  $GenericResponseModelCopyWith<$Res> get genericResponseModel;
 }
 
 /// @nodoc
@@ -69,8 +73,8 @@ class _$HistoryRequestModelCopyWithImpl<$Res, $Val extends HistoryRequestModel>
   $Res call({
     Object? historyId = null,
     Object? metaData = null,
-    Object? httpRequestModel = null,
-    Object? httpResponseModel = null,
+    Object? genericRequestModel = null,
+    Object? genericResponseModel = null,
   }) {
     return _then(_value.copyWith(
       historyId: null == historyId
@@ -81,14 +85,14 @@ class _$HistoryRequestModelCopyWithImpl<$Res, $Val extends HistoryRequestModel>
           ? _value.metaData
           : metaData // ignore: cast_nullable_to_non_nullable
               as HistoryMetaModel,
-      httpRequestModel: null == httpRequestModel
-          ? _value.httpRequestModel
-          : httpRequestModel // ignore: cast_nullable_to_non_nullable
-              as HttpRequestModel,
-      httpResponseModel: null == httpResponseModel
-          ? _value.httpResponseModel
-          : httpResponseModel // ignore: cast_nullable_to_non_nullable
-              as HttpResponseModel,
+      genericRequestModel: null == genericRequestModel
+          ? _value.genericRequestModel
+          : genericRequestModel // ignore: cast_nullable_to_non_nullable
+              as GenericRequestModel,
+      genericResponseModel: null == genericResponseModel
+          ? _value.genericResponseModel
+          : genericResponseModel // ignore: cast_nullable_to_non_nullable
+              as GenericResponseModel,
     ) as $Val);
   }
 
@@ -106,9 +110,10 @@ class _$HistoryRequestModelCopyWithImpl<$Res, $Val extends HistoryRequestModel>
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $HttpRequestModelCopyWith<$Res> get httpRequestModel {
-    return $HttpRequestModelCopyWith<$Res>(_value.httpRequestModel, (value) {
-      return _then(_value.copyWith(httpRequestModel: value) as $Val);
+  $GenericRequestModelCopyWith<$Res> get genericRequestModel {
+    return $GenericRequestModelCopyWith<$Res>(_value.genericRequestModel,
+        (value) {
+      return _then(_value.copyWith(genericRequestModel: value) as $Val);
     });
   }
 
@@ -116,9 +121,10 @@ class _$HistoryRequestModelCopyWithImpl<$Res, $Val extends HistoryRequestModel>
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $HttpResponseModelCopyWith<$Res> get httpResponseModel {
-    return $HttpResponseModelCopyWith<$Res>(_value.httpResponseModel, (value) {
-      return _then(_value.copyWith(httpResponseModel: value) as $Val);
+  $GenericResponseModelCopyWith<$Res> get genericResponseModel {
+    return $GenericResponseModelCopyWith<$Res>(_value.genericResponseModel,
+        (value) {
+      return _then(_value.copyWith(genericResponseModel: value) as $Val);
     });
   }
 }
@@ -134,15 +140,15 @@ abstract class _$$HistoryRequestModelImplCopyWith<$Res>
   $Res call(
       {String historyId,
       HistoryMetaModel metaData,
-      HttpRequestModel httpRequestModel,
-      HttpResponseModel httpResponseModel});
+      GenericRequestModel genericRequestModel,
+      GenericResponseModel genericResponseModel});
 
   @override
   $HistoryMetaModelCopyWith<$Res> get metaData;
   @override
-  $HttpRequestModelCopyWith<$Res> get httpRequestModel;
+  $GenericRequestModelCopyWith<$Res> get genericRequestModel;
   @override
-  $HttpResponseModelCopyWith<$Res> get httpResponseModel;
+  $GenericResponseModelCopyWith<$Res> get genericResponseModel;
 }
 
 /// @nodoc
@@ -160,8 +166,8 @@ class __$$HistoryRequestModelImplCopyWithImpl<$Res>
   $Res call({
     Object? historyId = null,
     Object? metaData = null,
-    Object? httpRequestModel = null,
-    Object? httpResponseModel = null,
+    Object? genericRequestModel = null,
+    Object? genericResponseModel = null,
   }) {
     return _then(_$HistoryRequestModelImpl(
       historyId: null == historyId
@@ -172,14 +178,14 @@ class __$$HistoryRequestModelImplCopyWithImpl<$Res>
           ? _value.metaData
           : metaData // ignore: cast_nullable_to_non_nullable
               as HistoryMetaModel,
-      httpRequestModel: null == httpRequestModel
-          ? _value.httpRequestModel
-          : httpRequestModel // ignore: cast_nullable_to_non_nullable
-              as HttpRequestModel,
-      httpResponseModel: null == httpResponseModel
-          ? _value.httpResponseModel
-          : httpResponseModel // ignore: cast_nullable_to_non_nullable
-              as HttpResponseModel,
+      genericRequestModel: null == genericRequestModel
+          ? _value.genericRequestModel
+          : genericRequestModel // ignore: cast_nullable_to_non_nullable
+              as GenericRequestModel,
+      genericResponseModel: null == genericResponseModel
+          ? _value.genericResponseModel
+          : genericResponseModel // ignore: cast_nullable_to_non_nullable
+              as GenericResponseModel,
     ));
   }
 }
@@ -191,8 +197,8 @@ class _$HistoryRequestModelImpl implements _HistoryRequestModel {
   const _$HistoryRequestModelImpl(
       {required this.historyId,
       required this.metaData,
-      required this.httpRequestModel,
-      required this.httpResponseModel});
+      required this.genericRequestModel,
+      required this.genericResponseModel});
 
   factory _$HistoryRequestModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$HistoryRequestModelImplFromJson(json);
@@ -201,14 +207,16 @@ class _$HistoryRequestModelImpl implements _HistoryRequestModel {
   final String historyId;
   @override
   final HistoryMetaModel metaData;
+// required HttpRequestModel httpRequestModel,
+// required HttpResponseModel httpResponseModel,
   @override
-  final HttpRequestModel httpRequestModel;
+  final GenericRequestModel genericRequestModel;
   @override
-  final HttpResponseModel httpResponseModel;
+  final GenericResponseModel genericResponseModel;
 
   @override
   String toString() {
-    return 'HistoryRequestModel(historyId: $historyId, metaData: $metaData, httpRequestModel: $httpRequestModel, httpResponseModel: $httpResponseModel)';
+    return 'HistoryRequestModel(historyId: $historyId, metaData: $metaData, genericRequestModel: $genericRequestModel, genericResponseModel: $genericResponseModel)';
   }
 
   @override
@@ -220,16 +228,16 @@ class _$HistoryRequestModelImpl implements _HistoryRequestModel {
                 other.historyId == historyId) &&
             (identical(other.metaData, metaData) ||
                 other.metaData == metaData) &&
-            (identical(other.httpRequestModel, httpRequestModel) ||
-                other.httpRequestModel == httpRequestModel) &&
-            (identical(other.httpResponseModel, httpResponseModel) ||
-                other.httpResponseModel == httpResponseModel));
+            (identical(other.genericRequestModel, genericRequestModel) ||
+                other.genericRequestModel == genericRequestModel) &&
+            (identical(other.genericResponseModel, genericResponseModel) ||
+                other.genericResponseModel == genericResponseModel));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, historyId, metaData, httpRequestModel, httpResponseModel);
+  int get hashCode => Object.hash(runtimeType, historyId, metaData,
+      genericRequestModel, genericResponseModel);
 
   /// Create a copy of HistoryRequestModel
   /// with the given fields replaced by the non-null parameter values.
@@ -252,8 +260,8 @@ abstract class _HistoryRequestModel implements HistoryRequestModel {
   const factory _HistoryRequestModel(
           {required final String historyId,
           required final HistoryMetaModel metaData,
-          required final HttpRequestModel httpRequestModel,
-          required final HttpResponseModel httpResponseModel}) =
+          required final GenericRequestModel genericRequestModel,
+          required final GenericResponseModel genericResponseModel}) =
       _$HistoryRequestModelImpl;
 
   factory _HistoryRequestModel.fromJson(Map<String, dynamic> json) =
@@ -262,11 +270,12 @@ abstract class _HistoryRequestModel implements HistoryRequestModel {
   @override
   String get historyId;
   @override
-  HistoryMetaModel get metaData;
+  HistoryMetaModel get metaData; // required HttpRequestModel httpRequestModel,
+// required HttpResponseModel httpResponseModel,
   @override
-  HttpRequestModel get httpRequestModel;
+  GenericRequestModel get genericRequestModel;
   @override
-  HttpResponseModel get httpResponseModel;
+  GenericResponseModel get genericResponseModel;
 
   /// Create a copy of HistoryRequestModel
   /// with the given fields replaced by the non-null parameter values.

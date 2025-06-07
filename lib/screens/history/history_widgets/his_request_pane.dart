@@ -20,22 +20,25 @@ class HistoryRequestPane extends ConsumerWidget {
     final codePaneVisible = ref.watch(historyCodePaneVisibleStateProvider);
     final apiType = ref.watch(selectedHistoryRequestModelProvider
         .select((value) => value?.metaData.apiType));
-    final headersMap = ref.watch(selectedHistoryRequestModelProvider
-            .select((value) => value?.httpRequestModel.headersMap)) ??
+    final headersMap = ref.watch(selectedHistoryRequestModelProvider.select(
+            (value) =>
+                value?.genericRequestModel.httpRequestModel!.headersMap)) ??
         {};
     final headerLength = headersMap.length;
 
-    final paramsMap = ref.watch(selectedHistoryRequestModelProvider
-            .select((value) => value?.httpRequestModel.paramsMap)) ??
+    final paramsMap = ref.watch(selectedHistoryRequestModelProvider.select(
+            (value) =>
+                value?.genericRequestModel.httpRequestModel!.paramsMap)) ??
         {};
     final paramLength = paramsMap.length;
 
-    final hasBody = ref.watch(selectedHistoryRequestModelProvider
-            .select((value) => value?.httpRequestModel.hasBody)) ??
+    final hasBody = ref.watch(selectedHistoryRequestModelProvider.select(
+            (value) => value?.genericRequestModel.httpRequestModel!.hasBody)) ??
         false;
 
-    final hasQuery = ref.watch(selectedHistoryRequestModelProvider
-            .select((value) => value?.httpRequestModel.hasQuery)) ??
+    final hasQuery = ref.watch(selectedHistoryRequestModelProvider.select(
+            (value) =>
+                value?.genericRequestModel.httpRequestModel!.hasQuery)) ??
         false;
 
     return switch (apiType) {
@@ -107,7 +110,8 @@ class HisRequestBody extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedHistoryModel = ref.watch(selectedHistoryRequestModelProvider);
     final apiType = selectedHistoryModel?.metaData.apiType;
-    final requestModel = selectedHistoryModel?.httpRequestModel;
+    final requestModel =
+        selectedHistoryModel?.genericRequestModel.httpRequestModel;
     final contentType = requestModel?.bodyContentType;
 
     return switch (apiType) {

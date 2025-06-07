@@ -1,4 +1,6 @@
 import 'package:apidash_core/apidash_core.dart';
+import 'package:apidash_core/models/generic_request_model.dart';
+import 'package:apidash_core/models/generic_response_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/consts.dart';
@@ -186,10 +188,10 @@ class CollectionStateNotifier
     final newModel = RequestModel(
       id: newId,
       name: "${currentModel.metaData.name} (history)",
-      httpRequestModel: currentModel.httpRequestModel,
+      httpRequestModel: currentModel.genericRequestModel.httpRequestModel,
       responseStatus: currentModel.metaData.responseStatus,
       message: kResponseCodeReasons[currentModel.metaData.responseStatus],
-      httpResponseModel: currentModel.httpResponseModel,
+      httpResponseModel: currentModel.genericResponseModel.httpResponseModel,
       isWorking: false,
       sendingTime: null,
     );
@@ -329,8 +331,14 @@ class CollectionStateNotifier
           responseStatus: statusCode,
           timeStamp: DateTime.now(),
         ),
-        httpRequestModel: substitutedHttpRequestModel,
-        httpResponseModel: httpResponseModel,
+        genericRequestModel: GenericRequestModel(
+          aiRequestModel: null,
+          httpRequestModel: substitutedHttpRequestModel,
+        ),
+        genericResponseModel: GenericResponseModel(
+          aiResponseModel: null,
+          httpResponseModel: httpResponseModel,
+        ),
       );
       ref.read(historyMetaStateNotifier.notifier).addHistoryRequest(model);
     }

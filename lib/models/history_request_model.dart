@@ -1,4 +1,6 @@
 import 'package:apidash_core/apidash_core.dart';
+import 'package:apidash_core/models/generic_request_model.dart';
+import 'package:apidash_core/models/generic_response_model.dart';
 import 'models.dart';
 
 part 'history_request_model.freezed.dart';
@@ -14,8 +16,10 @@ class HistoryRequestModel with _$HistoryRequestModel {
   const factory HistoryRequestModel({
     required String historyId,
     required HistoryMetaModel metaData,
-    required HttpRequestModel httpRequestModel,
-    required HttpResponseModel httpResponseModel,
+    // required HttpRequestModel httpRequestModel,
+    // required HttpResponseModel httpResponseModel,
+    required GenericRequestModel genericRequestModel,
+    required GenericResponseModel genericResponseModel,
   }) = _HistoryRequestModel;
 
   factory HistoryRequestModel.fromJson(Map<String, Object?> json) =>

@@ -1,6 +1,8 @@
 import 'package:apidash/models/models.dart'
     show HistoryMetaModel, HistoryRequestModel;
 import 'package:apidash_core/apidash_core.dart';
+import 'package:apidash_core/models/generic_request_model.dart';
+import 'package:apidash_core/models/generic_response_model.dart';
 
 import 'http_request_models.dart';
 import 'http_response_models.dart';
@@ -20,8 +22,10 @@ final historyMetaModel1 = HistoryMetaModel(
 final historyRequestModel1 = HistoryRequestModel(
   historyId: 'historyId1',
   metaData: historyMetaModel1,
-  httpRequestModel: httpRequestModelGet4,
-  httpResponseModel: responseModel,
+  genericRequestModel: GenericRequestModel(
+      aiRequestModel: null, httpRequestModel: httpRequestModelGet4),
+  genericResponseModel: GenericResponseModel(
+      aiResponseModel: null, httpResponseModel: responseModel),
 );
 
 final historyMetaModel2 = HistoryMetaModel(
@@ -37,8 +41,10 @@ final historyMetaModel2 = HistoryMetaModel(
 final historyRequestModel2 = HistoryRequestModel(
   historyId: 'historyId2',
   metaData: historyMetaModel2,
-  httpRequestModel: httpRequestModelPost10,
-  httpResponseModel: responseModel,
+  genericRequestModel: GenericRequestModel(
+      aiRequestModel: null, httpRequestModel: httpRequestModelPost10),
+  genericResponseModel: GenericResponseModel(
+      aiResponseModel: null, httpResponseModel: responseModel),
 );
 
 /// JSONs

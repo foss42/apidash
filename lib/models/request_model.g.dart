@@ -44,4 +44,5 @@ Map<String, dynamic> _$$RequestModelImplToJson(_$RequestModelImpl instance) =>
 const _$APITypeEnumMap = {
   APIType.rest: 'rest',
   APIType.graphql: 'graphql',
+  APIType.ai: 'ai',
 };

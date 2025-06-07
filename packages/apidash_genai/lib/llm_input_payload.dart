@@ -25,16 +25,16 @@ class LLMInputPayload {
     );
   }
 
-  Map toJSON() {
+  static Map toJSON(LLMInputPayload payload) {
     Map cmap = {};
-    for (final e in configMap.entries) {
+    for (final e in payload.configMap.entries) {
       cmap[e.key] = e.value.toJson();
     }
     return {
-      'endpoint': endpoint,
-      'credential': credential,
-      'system_prompt': systemPrompt,
-      'user_prompt': userPrompt,
+      'endpoint': payload.endpoint,
+      'credential': payload.credential,
+      'system_prompt': payload.systemPrompt,
+      'user_prompt': payload.userPrompt,
       'config_map': cmap,
     };
   }

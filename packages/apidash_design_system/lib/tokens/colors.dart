@@ -31,3 +31,5 @@ const kHintOpacity = 0.6;
 const kForegroundOpacity = 0.05;
 const kOverlayBackgroundOpacity = 0.5;
 const kOpacityDarkModeBlend = 0.4;
+
+const kColorAI = Colors.amber;

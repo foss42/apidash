@@ -64,16 +64,20 @@ void main() {
           HistoryRequestModel.fromJson(historyRequestModelJson1);
       expect(modelFromJson, historyRequestModel);
       expect(modelFromJson.metaData, historyMetaModel1);
-      expect(modelFromJson.httpRequestModel, httpRequestModelGet4);
-      expect(modelFromJson.httpResponseModel, responseModel);
+      expect(modelFromJson.genericRequestModel.httpRequestModel,
+          httpRequestModelGet4);
+      expect(
+          modelFromJson.genericResponseModel.httpResponseModel, responseModel);
     });
 
     test("Testing HistoryRequestModel getters", () {
       var historyRequestModel = historyRequestModel1;
       expect(historyRequestModel.historyId, 'historyId1');
       expect(historyRequestModel.metaData, historyMetaModel1);
-      expect(historyRequestModel.httpRequestModel, httpRequestModelGet4);
-      expect(historyRequestModel.httpResponseModel, responseModel);
+      expect(historyRequestModel.genericRequestModel.httpRequestModel,
+          httpRequestModelGet4);
+      expect(historyRequestModel.genericResponseModel.httpResponseModel,
+          responseModel);
     });
   });
 }

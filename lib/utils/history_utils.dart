@@ -11,10 +11,11 @@ RequestModel getRequestModelFromHistoryModel(HistoryRequestModel model) {
     id: model.historyId,
     apiType: model.metaData.apiType,
     name: model.metaData.name,
-    responseStatus: model.httpResponseModel.statusCode,
-    message: kResponseCodeReasons[model.httpResponseModel.statusCode],
-    httpRequestModel: model.httpRequestModel,
-    httpResponseModel: model.httpResponseModel,
+    responseStatus: model.genericResponseModel.httpResponseModel?.statusCode,
+    message: kResponseCodeReasons[
+        model.genericResponseModel.httpResponseModel?.statusCode],
+    httpRequestModel: model.genericRequestModel.httpRequestModel,
+    httpResponseModel: model.genericResponseModel.httpResponseModel,
   );
 }
 

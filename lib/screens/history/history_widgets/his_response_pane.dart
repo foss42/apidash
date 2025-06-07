@@ -13,7 +13,8 @@ class HistoryResponsePane extends ConsumerWidget {
     final selectedId = ref.watch(selectedHistoryIdStateProvider);
     final selectedHistoryRequest =
         ref.watch(selectedHistoryRequestModelProvider);
-    final historyHttpResponseModel = selectedHistoryRequest?.httpResponseModel;
+    final historyHttpResponseModel =
+        selectedHistoryRequest?.genericResponseModel.httpResponseModel;
 
     if (selectedId != null) {
       final requestModel =
