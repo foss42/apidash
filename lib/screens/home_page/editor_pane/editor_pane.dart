@@ -3,19 +3,24 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'editor_default.dart';
 import 'editor_request.dart';
+import 'global_status_bar.dart';
 
 class RequestEditorPane extends ConsumerWidget {
-  const RequestEditorPane({
-    super.key,
-  });
+  const RequestEditorPane({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedId = ref.watch(selectedIdStateProvider);
-    if (selectedId == null) {
-      return const RequestEditorDefault();
-    } else {
-      return const RequestEditor();
-    }
+
+    return Column(
+      children: [
+        Expanded(
+          child: selectedId == null
+              ? const RequestEditorDefault()
+              : const RequestEditor(),
+        ),
+        const GlobalStatusBar(),
+      ],
+    );
   }
 }
