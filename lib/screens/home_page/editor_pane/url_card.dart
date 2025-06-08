@@ -20,6 +20,8 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
     ref.watch(selectedIdStateProvider);
     final apiType = ref
         .watch(selectedRequestModelProvider.select((value) => value?.apiType));
+    final aiHC = ref.watch(selectedRequestModelProvider
+        .select((v) => v?.genericRequestModel?.aiRequestModel?.hashCode));
     return Card(
       color: kColorTransparent,
       surfaceTintColor: kColorTransparent,
@@ -48,8 +50,10 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
                     APIType.rest => kHSpacer5,
                     _ => kHSpacer8,
                   },
-                  const Expanded(
-                    child: URLTextField(),
+                  Expanded(
+                    child: URLTextField(
+                      key: aiHC == null ? null : ValueKey(aiHC),
+                    ),
                   ),
                 ],
               )
@@ -65,8 +69,10 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
                     APIType.rest => kHSpacer20,
                     _ => kHSpacer8,
                   },
-                  const Expanded(
-                    child: URLTextField(),
+                  Expanded(
+                    child: URLTextField(
+                      key: aiHC == null ? null : ValueKey(aiHC),
+                    ),
                   ),
                   kHSpacer20,
                   const SizedBox(
@@ -108,16 +114,33 @@ class URLTextField extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedId = ref.watch(selectedIdStateProvider);
+
+    final reqM = ref.read(collectionStateNotifierProvider)![selectedId]!;
+    final aiReqM = reqM.genericRequestModel?.aiRequestModel;
+    final payload = aiReqM?.payload;
+
     return EnvURLField(
       selectedId: selectedId!,
-      initialValue: ref
-          .read(collectionStateNotifierProvider.notifier)
-          .getRequestModel(selectedId)
-          ?.genericRequestModel
-          ?.httpRequestModel
-          ?.url,
+      initialValue: payload?.endpoint ??
+          ref
+              .read(collectionStateNotifierProvider.notifier)
+              .getRequestModel(selectedId)
+              ?.genericRequestModel
+              ?.httpRequestModel
+              ?.url,
       onChanged: (value) {
-        ref.read(collectionStateNotifierProvider.notifier).update(url: value);
+        final aim = ref
+            .read(collectionStateNotifierProvider)![selectedId]!
+            .genericRequestModel
+            ?.aiRequestModel;
+        if (aim != null) {
+          aim.payload.endpoint = value;
+          ref
+              .read(collectionStateNotifierProvider.notifier)
+              .update(aiRequestModel: aim.updatePayload(aim.payload));
+        } else {
+          ref.read(collectionStateNotifierProvider.notifier).update(url: value);
+        }
       },
       onFieldSubmitted: (value) {
         ref.read(collectionStateNotifierProvider.notifier).sendRequest();
