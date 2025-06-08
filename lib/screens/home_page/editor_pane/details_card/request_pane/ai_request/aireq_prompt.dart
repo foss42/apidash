@@ -26,7 +26,6 @@ class AIRequestPromptSection extends ConsumerWidget {
             padding: const EdgeInsets.only(left: 25.0),
             child: Text(
               'System Prompt',
-              style: TextStyle(color: Colors.white54),
             ),
           ),
           kVSpacer10,
@@ -55,7 +54,6 @@ class AIRequestPromptSection extends ConsumerWidget {
             padding: const EdgeInsets.only(left: 25.0),
             child: Text(
               'User Prompt / Input',
-              style: TextStyle(color: Colors.white54),
             ),
           ),
           kVSpacer10,

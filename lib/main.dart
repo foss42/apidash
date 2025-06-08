@@ -25,10 +25,9 @@ void main() async {
     settingsModel = settingsModel?.copyWithPath(workspaceFolderPath: null);
   }
 
-  //Load all LLM
-  LLMManager.fetchAvailableLLMs().then((_) {
-    LLMManager.loadAvailableLLMs().then((_) {});
-  });
+  //Load all LLMs
+  await LLMManager.fetchAvailableLLMs();
+  await LLMManager.loadAvailableLLMs();
 
   runApp(
     ProviderScope(

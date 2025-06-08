@@ -14,29 +14,22 @@ class DefaultLLMSelectorButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Chip(label: Text(defaultLLM?.selectedLLM.modelName ?? 'none')),
-        SizedBox(height: 10),
-        IconButton(
-          onPressed: () async {
-            final saveObject = await showDialog(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                  scrollable: true,
-                  content: DefaultLLMSelectorDialog(defaultLLM: defaultLLM),
-                  contentPadding: EdgeInsets.all(10),
-                );
-              },
+    return ElevatedButton(
+      onPressed: () async {
+        final saveObject = await showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              scrollable: true,
+              content: DefaultLLMSelectorDialog(defaultLLM: defaultLLM),
+              contentPadding: EdgeInsets.all(10),
             );
-            if (saveObject == null) return;
-            onDefaultLLMUpdated(saveObject);
           },
-          icon: Icon(Icons.edit),
-        ),
-      ],
+        );
+        if (saveObject == null) return;
+        onDefaultLLMUpdated(saveObject);
+      },
+      child: Text(defaultLLM?.selectedLLM.modelName ?? 'Select Model'),
     );
   }
 }
