@@ -17,11 +17,11 @@ RequestModel getRequestModelFromHistoryModel(HistoryRequestModel model) {
     message: kResponseCodeReasons[
         model.genericResponseModel.httpResponseModel?.statusCode],
     genericRequestModel: GenericRequestModel(
-      aiRequestModel: null,
+      aiRequestModel: model.genericRequestModel.aiRequestModel,
       httpRequestModel: model.genericRequestModel.httpRequestModel,
     ),
     genericResponseModel: GenericResponseModel(
-      aiResponseModel: null,
+      aiResponseModel: model.genericResponseModel.aiResponseModel,
       httpResponseModel: model.genericResponseModel.httpResponseModel,
     ),
   );

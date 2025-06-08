@@ -13,18 +13,26 @@ class HistoryResponsePane extends ConsumerWidget {
     final selectedId = ref.watch(selectedHistoryIdStateProvider);
     final selectedHistoryRequest =
         ref.watch(selectedHistoryRequestModelProvider);
+
+    final historyAIResponseModel =
+        selectedHistoryRequest?.genericResponseModel.aiResponseModel;
     final historyHttpResponseModel =
         selectedHistoryRequest?.genericResponseModel.httpResponseModel;
 
     if (selectedId != null) {
       final requestModel =
           getRequestModelFromHistoryModel(selectedHistoryRequest!);
+
+      final statusCode = historyAIResponseModel?.statusCode ??
+          historyHttpResponseModel?.statusCode;
+
       return Column(
         children: [
           ResponsePaneHeader(
-            responseStatus: historyHttpResponseModel?.statusCode,
-            message: kResponseCodeReasons[historyHttpResponseModel?.statusCode],
-            time: historyHttpResponseModel?.time,
+            responseStatus: statusCode,
+            message: kResponseCodeReasons[statusCode],
+            time:
+                historyAIResponseModel?.time ?? historyHttpResponseModel?.time,
           ),
           Expanded(
             child: ResponseTabView(
@@ -34,9 +42,12 @@ class HistoryResponsePane extends ConsumerWidget {
                   selectedRequestModel: requestModel,
                 ),
                 ResponseHeaders(
-                  responseHeaders: historyHttpResponseModel?.headers ?? {},
-                  requestHeaders:
-                      historyHttpResponseModel?.requestHeaders ?? {},
+                  responseHeaders: historyAIResponseModel?.headers ??
+                      historyHttpResponseModel?.headers ??
+                      {},
+                  requestHeaders: historyAIResponseModel?.requestHeaders ??
+                      historyHttpResponseModel?.requestHeaders ??
+                      {},
                 ),
               ],
             ),

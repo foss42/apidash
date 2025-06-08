@@ -198,18 +198,27 @@ class CollectionStateNotifier
 
     var itemIds = ref.read(requestSequenceProvider);
     var currentModel = historyRequestModel;
+
+    final aT = currentModel.genericRequestModel.aiRequestModel != null
+        ? APIType.ai
+        : APIType.rest;
+
     final newModel = RequestModel(
+      apiType: aT,
       id: newId,
       name: "${currentModel.metaData.name} (history)",
       genericRequestModel: GenericRequestModel(
-        aiRequestModel: null,
-        httpRequestModel: currentModel.genericRequestModel.httpRequestModel,
+        aiRequestModel: currentModel.genericRequestModel.aiRequestModel,
+        httpRequestModel: currentModel.genericRequestModel.httpRequestModel ??
+            HttpRequestModel(),
       ),
       responseStatus: currentModel.metaData.responseStatus,
       message: kResponseCodeReasons[currentModel.metaData.responseStatus],
       genericResponseModel: GenericResponseModel(
-        aiResponseModel: null,
-        httpResponseModel: currentModel.genericResponseModel.httpResponseModel,
+        aiResponseModel: currentModel.genericResponseModel.aiResponseModel,
+        httpResponseModel:
+            currentModel.genericResponseModel.httpResponseModel ??
+                HttpResponseModel(),
       ),
       isWorking: false,
       sendingTime: null,
