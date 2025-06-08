@@ -1,7 +1,6 @@
+import 'package:apidash_genai/models/ai_request_model.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:apidash_core/apidash_core.dart';
-import 'package:apidash_core/models/ai_request_model.dart';
-
 part 'generic_request_model.freezed.dart';
 part 'generic_request_model.g.dart';
 

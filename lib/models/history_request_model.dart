@@ -1,6 +1,6 @@
+import 'package:apidash/models/generic_request_model.dart';
+import 'package:apidash/models/generic_response_model.dart';
 import 'package:apidash_core/apidash_core.dart';
-import 'package:apidash_core/models/generic_request_model.dart';
-import 'package:apidash_core/models/generic_response_model.dart';
 import 'models.dart';
 
 part 'history_request_model.freezed.dart';

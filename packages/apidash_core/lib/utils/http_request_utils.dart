@@ -1,5 +1,4 @@
 import 'package:apidash_core/consts.dart';
-import 'package:apidash_core/models/generic_request_model.dart';
 import 'package:seed/seed.dart';
 import '../models/models.dart';
 import 'graphql_utils.dart';

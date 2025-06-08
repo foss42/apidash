@@ -1,8 +1,9 @@
 import 'package:apidash_core/apidash_core.dart';
-import 'package:apidash_core/models/ai_request_model.dart';
-import 'package:apidash_core/models/ai_response_model.dart';
-import 'package:apidash_core/models/generic_request_model.dart';
-import 'package:apidash_core/models/generic_response_model.dart';
+
+import 'package:apidash/models/generic_request_model.dart';
+import 'package:apidash/models/generic_response_model.dart';
+import 'package:apidash_genai/models/ai_request_model.dart';
+import 'package:apidash_genai/models/ai_response_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/consts.dart';

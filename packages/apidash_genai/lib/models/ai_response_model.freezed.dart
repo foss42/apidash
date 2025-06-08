@@ -12,7 +12,8 @@ part of 'ai_response_model.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 AIResponseModel _$AIResponseModelFromJson(Map<String, dynamic> json) {
   return _AIResponseModel.fromJson(json);
@@ -43,17 +44,19 @@ mixin _$AIResponseModel {
 /// @nodoc
 abstract class $AIResponseModelCopyWith<$Res> {
   factory $AIResponseModelCopyWith(
-          AIResponseModel value, $Res Function(AIResponseModel) then) =
-      _$AIResponseModelCopyWithImpl<$Res, AIResponseModel>;
+    AIResponseModel value,
+    $Res Function(AIResponseModel) then,
+  ) = _$AIResponseModelCopyWithImpl<$Res, AIResponseModel>;
   @useResult
-  $Res call(
-      {int? statusCode,
-      Map<String, String>? headers,
-      Map<String, String>? requestHeaders,
-      String? body,
-      String? formattedBody,
-      @Uint8ListConverter() Uint8List? bodyBytes,
-      @DurationConverter() Duration? time});
+  $Res call({
+    int? statusCode,
+    Map<String, String>? headers,
+    Map<String, String>? requestHeaders,
+    String? body,
+    String? formattedBody,
+    @Uint8ListConverter() Uint8List? bodyBytes,
+    @DurationConverter() Duration? time,
+  });
 }
 
 /// @nodoc
@@ -79,55 +82,60 @@ class _$AIResponseModelCopyWithImpl<$Res, $Val extends AIResponseModel>
     Object? bodyBytes = freezed,
     Object? time = freezed,
   }) {
-    return _then(_value.copyWith(
-      statusCode: freezed == statusCode
-          ? _value.statusCode
-          : statusCode // ignore: cast_nullable_to_non_nullable
-              as int?,
-      headers: freezed == headers
-          ? _value.headers
-          : headers // ignore: cast_nullable_to_non_nullable
-              as Map<String, String>?,
-      requestHeaders: freezed == requestHeaders
-          ? _value.requestHeaders
-          : requestHeaders // ignore: cast_nullable_to_non_nullable
-              as Map<String, String>?,
-      body: freezed == body
-          ? _value.body
-          : body // ignore: cast_nullable_to_non_nullable
-              as String?,
-      formattedBody: freezed == formattedBody
-          ? _value.formattedBody
-          : formattedBody // ignore: cast_nullable_to_non_nullable
-              as String?,
-      bodyBytes: freezed == bodyBytes
-          ? _value.bodyBytes
-          : bodyBytes // ignore: cast_nullable_to_non_nullable
-              as Uint8List?,
-      time: freezed == time
-          ? _value.time
-          : time // ignore: cast_nullable_to_non_nullable
-              as Duration?,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            statusCode: freezed == statusCode
+                ? _value.statusCode
+                : statusCode // ignore: cast_nullable_to_non_nullable
+                      as int?,
+            headers: freezed == headers
+                ? _value.headers
+                : headers // ignore: cast_nullable_to_non_nullable
+                      as Map<String, String>?,
+            requestHeaders: freezed == requestHeaders
+                ? _value.requestHeaders
+                : requestHeaders // ignore: cast_nullable_to_non_nullable
+                      as Map<String, String>?,
+            body: freezed == body
+                ? _value.body
+                : body // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            formattedBody: freezed == formattedBody
+                ? _value.formattedBody
+                : formattedBody // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            bodyBytes: freezed == bodyBytes
+                ? _value.bodyBytes
+                : bodyBytes // ignore: cast_nullable_to_non_nullable
+                      as Uint8List?,
+            time: freezed == time
+                ? _value.time
+                : time // ignore: cast_nullable_to_non_nullable
+                      as Duration?,
+          )
+          as $Val,
+    );
   }
 }
 
 /// @nodoc
 abstract class _$$AIResponseModelImplCopyWith<$Res>
     implements $AIResponseModelCopyWith<$Res> {
-  factory _$$AIResponseModelImplCopyWith(_$AIResponseModelImpl value,
-          $Res Function(_$AIResponseModelImpl) then) =
-      __$$AIResponseModelImplCopyWithImpl<$Res>;
+  factory _$$AIResponseModelImplCopyWith(
+    _$AIResponseModelImpl value,
+    $Res Function(_$AIResponseModelImpl) then,
+  ) = __$$AIResponseModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {int? statusCode,
-      Map<String, String>? headers,
-      Map<String, String>? requestHeaders,
-      String? body,
-      String? formattedBody,
-      @Uint8ListConverter() Uint8List? bodyBytes,
-      @DurationConverter() Duration? time});
+  $Res call({
+    int? statusCode,
+    Map<String, String>? headers,
+    Map<String, String>? requestHeaders,
+    String? body,
+    String? formattedBody,
+    @Uint8ListConverter() Uint8List? bodyBytes,
+    @DurationConverter() Duration? time,
+  });
 }
 
 /// @nodoc
@@ -135,8 +143,9 @@ class __$$AIResponseModelImplCopyWithImpl<$Res>
     extends _$AIResponseModelCopyWithImpl<$Res, _$AIResponseModelImpl>
     implements _$$AIResponseModelImplCopyWith<$Res> {
   __$$AIResponseModelImplCopyWithImpl(
-      _$AIResponseModelImpl _value, $Res Function(_$AIResponseModelImpl) _then)
-      : super(_value, _then);
+    _$AIResponseModelImpl _value,
+    $Res Function(_$AIResponseModelImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of AIResponseModel
   /// with the given fields replaced by the non-null parameter values.
@@ -151,36 +160,38 @@ class __$$AIResponseModelImplCopyWithImpl<$Res>
     Object? bodyBytes = freezed,
     Object? time = freezed,
   }) {
-    return _then(_$AIResponseModelImpl(
-      statusCode: freezed == statusCode
-          ? _value.statusCode
-          : statusCode // ignore: cast_nullable_to_non_nullable
-              as int?,
-      headers: freezed == headers
-          ? _value._headers
-          : headers // ignore: cast_nullable_to_non_nullable
-              as Map<String, String>?,
-      requestHeaders: freezed == requestHeaders
-          ? _value._requestHeaders
-          : requestHeaders // ignore: cast_nullable_to_non_nullable
-              as Map<String, String>?,
-      body: freezed == body
-          ? _value.body
-          : body // ignore: cast_nullable_to_non_nullable
-              as String?,
-      formattedBody: freezed == formattedBody
-          ? _value.formattedBody
-          : formattedBody // ignore: cast_nullable_to_non_nullable
-              as String?,
-      bodyBytes: freezed == bodyBytes
-          ? _value.bodyBytes
-          : bodyBytes // ignore: cast_nullable_to_non_nullable
-              as Uint8List?,
-      time: freezed == time
-          ? _value.time
-          : time // ignore: cast_nullable_to_non_nullable
-              as Duration?,
-    ));
+    return _then(
+      _$AIResponseModelImpl(
+        statusCode: freezed == statusCode
+            ? _value.statusCode
+            : statusCode // ignore: cast_nullable_to_non_nullable
+                  as int?,
+        headers: freezed == headers
+            ? _value._headers
+            : headers // ignore: cast_nullable_to_non_nullable
+                  as Map<String, String>?,
+        requestHeaders: freezed == requestHeaders
+            ? _value._requestHeaders
+            : requestHeaders // ignore: cast_nullable_to_non_nullable
+                  as Map<String, String>?,
+        body: freezed == body
+            ? _value.body
+            : body // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        formattedBody: freezed == formattedBody
+            ? _value.formattedBody
+            : formattedBody // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        bodyBytes: freezed == bodyBytes
+            ? _value.bodyBytes
+            : bodyBytes // ignore: cast_nullable_to_non_nullable
+                  as Uint8List?,
+        time: freezed == time
+            ? _value.time
+            : time // ignore: cast_nullable_to_non_nullable
+                  as Duration?,
+      ),
+    );
   }
 }
 
@@ -188,17 +199,17 @@ class __$$AIResponseModelImplCopyWithImpl<$Res>
 
 @JsonSerializable(explicitToJson: true, anyMap: true, createToJson: true)
 class _$AIResponseModelImpl extends _AIResponseModel {
-  const _$AIResponseModelImpl(
-      {this.statusCode,
-      final Map<String, String>? headers,
-      final Map<String, String>? requestHeaders,
-      this.body,
-      this.formattedBody,
-      @Uint8ListConverter() this.bodyBytes,
-      @DurationConverter() this.time})
-      : _headers = headers,
-        _requestHeaders = requestHeaders,
-        super._();
+  const _$AIResponseModelImpl({
+    this.statusCode,
+    final Map<String, String>? headers,
+    final Map<String, String>? requestHeaders,
+    this.body,
+    this.formattedBody,
+    @Uint8ListConverter() this.bodyBytes,
+    @DurationConverter() this.time,
+  }) : _headers = headers,
+       _requestHeaders = requestHeaders,
+       super._();
 
   factory _$AIResponseModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$AIResponseModelImplFromJson(json);
@@ -249,8 +260,10 @@ class _$AIResponseModelImpl extends _AIResponseModel {
             (identical(other.statusCode, statusCode) ||
                 other.statusCode == statusCode) &&
             const DeepCollectionEquality().equals(other._headers, _headers) &&
-            const DeepCollectionEquality()
-                .equals(other._requestHeaders, _requestHeaders) &&
+            const DeepCollectionEquality().equals(
+              other._requestHeaders,
+              _requestHeaders,
+            ) &&
             (identical(other.body, body) || other.body == body) &&
             (identical(other.formattedBody, formattedBody) ||
                 other.formattedBody == formattedBody) &&
@@ -261,14 +274,15 @@ class _$AIResponseModelImpl extends _AIResponseModel {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      statusCode,
-      const DeepCollectionEquality().hash(_headers),
-      const DeepCollectionEquality().hash(_requestHeaders),
-      body,
-      formattedBody,
-      const DeepCollectionEquality().hash(bodyBytes),
-      time);
+    runtimeType,
+    statusCode,
+    const DeepCollectionEquality().hash(_headers),
+    const DeepCollectionEquality().hash(_requestHeaders),
+    body,
+    formattedBody,
+    const DeepCollectionEquality().hash(bodyBytes),
+    time,
+  );
 
   /// Create a copy of AIResponseModel
   /// with the given fields replaced by the non-null parameter values.
@@ -277,25 +291,26 @@ class _$AIResponseModelImpl extends _AIResponseModel {
   @pragma('vm:prefer-inline')
   _$$AIResponseModelImplCopyWith<_$AIResponseModelImpl> get copyWith =>
       __$$AIResponseModelImplCopyWithImpl<_$AIResponseModelImpl>(
-          this, _$identity);
+        this,
+        _$identity,
+      );
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$AIResponseModelImplToJson(
-      this,
-    );
+    return _$$AIResponseModelImplToJson(this);
   }
 }
 
 abstract class _AIResponseModel extends AIResponseModel {
-  const factory _AIResponseModel(
-      {final int? statusCode,
-      final Map<String, String>? headers,
-      final Map<String, String>? requestHeaders,
-      final String? body,
-      final String? formattedBody,
-      @Uint8ListConverter() final Uint8List? bodyBytes,
-      @DurationConverter() final Duration? time}) = _$AIResponseModelImpl;
+  const factory _AIResponseModel({
+    final int? statusCode,
+    final Map<String, String>? headers,
+    final Map<String, String>? requestHeaders,
+    final String? body,
+    final String? formattedBody,
+    @Uint8ListConverter() final Uint8List? bodyBytes,
+    @DurationConverter() final Duration? time,
+  }) = _$AIResponseModelImpl;
   const _AIResponseModel._() : super._();
 
   factory _AIResponseModel.fromJson(Map<String, dynamic> json) =

@@ -14,9 +14,9 @@ _$AIRequestModelImpl _$$AIRequestModelImplFromJson(Map json) =>
     );
 
 Map<String, dynamic> _$$AIRequestModelImplToJson(
-        _$AIRequestModelImpl instance) =>
-    <String, dynamic>{
-      'payload': LLMInputPayload.toJSON(instance.payload),
-      'model': LLMModel.toJson(instance.model),
-      'provider': LLMProvider.toJSON(instance.provider),
-    };
+  _$AIRequestModelImpl instance,
+) => <String, dynamic>{
+  'payload': LLMInputPayload.toJSON(instance.payload),
+  'model': LLMModel.toJson(instance.model),
+  'provider': LLMProvider.toJSON(instance.provider),
+};

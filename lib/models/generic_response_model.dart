@@ -1,5 +1,5 @@
-import 'package:apidash_core/models/ai_response_model.dart';
 import 'package:apidash_core/apidash_core.dart';
+import 'package:apidash_genai/models/ai_response_model.dart';
 
 part 'generic_response_model.freezed.dart';
 part 'generic_response_model.g.dart';

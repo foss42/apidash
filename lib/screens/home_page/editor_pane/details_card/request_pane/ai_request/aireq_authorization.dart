@@ -1,6 +1,6 @@
 import 'package:apidash/providers/collection_providers.dart';
 import 'package:apidash/widgets/editor.dart';
-import 'package:apidash_core/models/ai_request_model.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
