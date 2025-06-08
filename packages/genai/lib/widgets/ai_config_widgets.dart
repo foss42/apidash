@@ -4,10 +4,12 @@ import 'package:genai/llm_config.dart';
 class SliderAIConfig extends StatelessWidget {
   final LLMModelConfiguration configuration;
   final Function(LLMModelConfiguration) onSliderUpdated;
+  final bool readonly;
   const SliderAIConfig({
     super.key,
     required this.configuration,
     required this.onSliderUpdated,
+    this.readonly = false,
   });
 
   @override
@@ -23,6 +25,7 @@ class SliderAIConfig extends StatelessWidget {
             max: (configuration.configValue.value as (double, double, double))
                 .$3,
             onChanged: (x) {
+              if (readonly) return;
               final z =
                   configuration.configValue.value as (double, double, double);
               configuration.configValue.value = (z.$1, x, z.$3);
@@ -43,11 +46,13 @@ class WritableAIConfig extends StatelessWidget {
   final bool numeric;
   final LLMModelConfiguration configuration;
   final Function(LLMModelConfiguration) onConfigUpdated;
+  final bool readonly;
   const WritableAIConfig({
     super.key,
     this.numeric = false,
     required this.configuration,
     required this.onConfigUpdated,
+    this.readonly = false,
   });
 
   @override
@@ -55,6 +60,7 @@ class WritableAIConfig extends StatelessWidget {
     return TextFormField(
       initialValue: configuration.configValue.value.toString(),
       onChanged: (x) {
+        if (readonly) return;
         if (numeric) {
           if (x.isEmpty) x = '0';
           if (num.tryParse(x) == null) return;
@@ -71,10 +77,12 @@ class WritableAIConfig extends StatelessWidget {
 class BooleanAIConfig extends StatelessWidget {
   final LLMModelConfiguration configuration;
   final Function(LLMModelConfiguration) onConfigUpdated;
+  final bool readonly;
   const BooleanAIConfig({
     super.key,
     required this.configuration,
     required this.onConfigUpdated,
+    this.readonly = false,
   });
 
   @override
@@ -82,6 +90,7 @@ class BooleanAIConfig extends StatelessWidget {
     return Switch(
       value: configuration.configValue.value as bool,
       onChanged: (x) {
+        if (readonly) return;
         configuration.configValue.value = x;
         onConfigUpdated(configuration);
       },

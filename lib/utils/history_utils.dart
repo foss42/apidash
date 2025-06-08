@@ -13,6 +13,7 @@ RequestModel getRequestModelFromHistoryModel(HistoryRequestModel model) {
     name: model.metaData.name,
     responseStatus: model.httpResponseModel.statusCode,
     message: kResponseCodeReasons[model.httpResponseModel.statusCode],
+    aiRequestModel: model.aiRequestModel,
     httpRequestModel: model.httpRequestModel,
     httpResponseModel: model.httpResponseModel,
   );

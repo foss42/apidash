@@ -187,10 +187,15 @@ class CollectionStateNotifier
 
     var itemIds = ref.read(requestSequenceProvider);
     var currentModel = historyRequestModel;
+
+    final aT = currentModel.aiRequestModel != null ? APIType.ai : APIType.rest;
+
     final newModel = RequestModel(
+      apiType: aT,
       id: newId,
       name: "${currentModel.metaData.name} (history)",
-      httpRequestModel: currentModel.httpRequestModel,
+      aiRequestModel: currentModel.aiRequestModel,
+      httpRequestModel: currentModel.httpRequestModel ?? HttpRequestModel(),
       responseStatus: currentModel.metaData.responseStatus,
       message: kResponseCodeReasons[currentModel.metaData.responseStatus],
       httpResponseModel: currentModel.httpResponseModel,
@@ -461,6 +466,7 @@ class CollectionStateNotifier
           timeStamp: DateTime.now(),
         ),
         httpRequestModel: substitutedHttpRequestModel,
+        aiRequestModel: aiRequestModel,
         httpResponseModel: httpResponseModel!,
         preRequestScript: requestModel.preRequestScript,
         postRequestScript: requestModel.postRequestScript,
