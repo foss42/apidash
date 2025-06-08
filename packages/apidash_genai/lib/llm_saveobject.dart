@@ -36,15 +36,12 @@ class LLMSaveObject {
     for (final k in json['config_map'].keys) {
       cmap[k] = LLMModelConfiguration.fromJson(json['config_map'][k]);
     }
-    final provider = getLLMProviderByName(json['provider']);
+    final provider = LLMProvider.fromName(json['provider']);
     return LLMSaveObject(
       endpoint: json['endpoint'],
       credential: json['credential'],
       configMap: cmap,
-      selectedLLM: getSpecificLLMByProviderAndIdentifier(
-        provider,
-        json['selected_llm'],
-      ),
+      selectedLLM: provider.getLLMByIdentifier(json['selected_llm']),
       provider: provider,
     );
   }

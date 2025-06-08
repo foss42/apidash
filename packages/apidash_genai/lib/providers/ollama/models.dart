@@ -1,4 +1,3 @@
-import 'package:apidash_genai/llm_config.dart';
 import 'package:apidash_genai/providers/common.dart';
 import 'package:apidash_genai/providers/providers.dart';
 
@@ -18,11 +17,11 @@ enum OllamaModel implements LLMModel {
 
   @override
   final LLMProvider provider;
-}
 
-OllamaModel getOllamaModelFromIdentifier(String id) {
-  return OllamaModel.values.firstWhere(
-    (model) => model.identifier == id,
-    orElse: () => throw ArgumentError('INVALID OLLAMA MODEL: $id'),
-  );
+  static OllamaModel fromIdentifier(String id) {
+    return OllamaModel.values.firstWhere(
+      (model) => model.identifier == id,
+      orElse: () => throw ArgumentError('INVALID OLLAMA MODEL: $id'),
+    );
+  }
 }

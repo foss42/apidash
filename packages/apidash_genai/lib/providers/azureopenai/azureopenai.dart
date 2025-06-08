@@ -4,6 +4,7 @@ import 'package:apidash_genai/llm_request.dart';
 import 'package:apidash_genai/providers/common.dart';
 
 class AzureOpenAIModelController extends ModelController {
+  static final instance = AzureOpenAIModelController();
   @override
   LLMInputPayload get inputPayload => LLMInputPayload(
     endpoint: '', //TO BE FILLED BY USER

@@ -16,11 +16,11 @@ enum AzureOpenAIModel implements LLMModel {
   final String modelName;
   @override
   final LLMProvider provider;
-}
 
-AzureOpenAIModel getAzureOpenAIModelFromIdentifier(String id) {
-  return AzureOpenAIModel.values.firstWhere(
-    (model) => model.identifier == id,
-    orElse: () => throw ArgumentError('INVALID AZURE OPENAI MODEL: $id'),
-  );
+  static AzureOpenAIModel fromIdentifier(String id) {
+    return AzureOpenAIModel.values.firstWhere(
+      (model) => model.identifier == id,
+      orElse: () => throw ArgumentError('INVALID AZURE OPENAI MODEL: $id'),
+    );
+  }
 }

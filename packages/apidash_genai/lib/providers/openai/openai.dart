@@ -4,6 +4,8 @@ import 'package:apidash_genai/llm_request.dart';
 import 'package:apidash_genai/providers/common.dart';
 
 class OpenAIModelController extends ModelController {
+  static final instance = OpenAIModelController();
+
   @override
   LLMInputPayload get inputPayload => LLMInputPayload(
     endpoint: 'https://api.openai.com/v1/chat/completions',

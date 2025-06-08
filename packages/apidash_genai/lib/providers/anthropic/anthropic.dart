@@ -4,6 +4,7 @@ import 'package:apidash_genai/llm_request.dart';
 import 'package:apidash_genai/providers/common.dart';
 
 class AnthropicModelController extends ModelController {
+  static final instance = AnthropicModelController();
   @override
   LLMInputPayload get inputPayload => LLMInputPayload(
     endpoint: 'https://api.anthropic.com/v1/messages',

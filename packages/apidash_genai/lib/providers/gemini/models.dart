@@ -1,8 +1,6 @@
 // ignore_for_file: constant_identifier_names
 
-import 'package:apidash_genai/llm_config.dart';
 import 'package:apidash_genai/providers/common.dart';
-import 'package:apidash_genai/providers/gemini/gemini.dart';
 import 'package:apidash_genai/providers/providers.dart';
 
 enum GeminiModel implements LLMModel {
@@ -33,11 +31,11 @@ enum GeminiModel implements LLMModel {
   final String modelName;
   @override
   final LLMProvider provider;
-}
 
-GeminiModel getGeminiModelFromIdentifier(String id) {
-  return GeminiModel.values.firstWhere(
-    (model) => model.identifier == id,
-    orElse: () => throw ArgumentError('INVALID GEMINI MODEL: $id'),
-  );
+  static GeminiModel fromIdentifier(String id) {
+    return GeminiModel.values.firstWhere(
+      (model) => model.identifier == id,
+      orElse: () => throw ArgumentError('INVALID GEMINI MODEL: $id'),
+    );
+  }
 }

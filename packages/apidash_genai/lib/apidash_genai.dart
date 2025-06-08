@@ -12,7 +12,7 @@ class GenerativeAI {
     LLMModel model,
     LLMRequestDetails requestDetails,
   ) async {
-    final mC = getLLMModelControllerByProvider(model.provider);
+    final (_, mC) = model.provider.models;
     final headers = requestDetails.headers;
     // print(jsonEncode(requestDetails.body));
     final response = await http.post(
@@ -37,8 +37,7 @@ class GenerativeAI {
     LLMModel model,
     LLMRequestDetails requestDetails,
   ) async* {
-    final modelController = getLLMModelControllerByProvider(model.provider);
-
+    final (_, modelController) = model.provider.models;
     final uri = Uri.parse(requestDetails.endpoint);
     final headers = {
       'Content-Type': 'application/json',
@@ -100,7 +99,7 @@ class GenerativeAI {
     Map<String, LLMModelConfiguration>? configurations,
     bool stream = false,
   }) async {
-    final c = getLLMModelControllerByProvider(model.provider);
+    final (_, c) = model.provider.models;
     final payload = c.inputPayload;
     payload.systemPrompt = systemPrompt;
     payload.userPrompt = userPrompt;

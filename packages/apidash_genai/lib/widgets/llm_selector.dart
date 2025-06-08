@@ -86,9 +86,7 @@ class _DefaultLLMSelectorDialogState extends State<DefaultLLMSelectorDialog> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Local Providers'),
-                  SizedBox(height: 10),
-                  ...getLLMProvidersByType(LLMProviderType.local).map(
+                  ...LLMProvider.values.map(
                     (x) => ListTile(
                       title: Text(x.displayName),
                       trailing: llmSaveObject.provider != x
@@ -99,43 +97,13 @@ class _DefaultLLMSelectorDialogState extends State<DefaultLLMSelectorDialog> {
                             ),
                       onTap: () {
                         selectedLLMProvider = x;
-                        final p = getLLMModelControllerByProvider(
-                          x,
-                        ).inputPayload;
+                        final (models, mC) = x.models;
+                        final p = mC.inputPayload;
                         llmSaveObject = LLMSaveObject(
                           endpoint: p.endpoint,
                           credential: '',
                           configMap: p.configMap,
-                          selectedLLM: getLLMModelsByProvider(x).first,
-                          provider: x,
-                        );
-                        setState(() {});
-                      },
-                    ),
-                  ),
-                  Divider(),
-                  SizedBox(height: 20),
-                  Text('Remote Providers'),
-                  SizedBox(height: 10),
-                  ...getLLMProvidersByType(LLMProviderType.remote).map(
-                    (x) => ListTile(
-                      title: Text(x.displayName),
-                      trailing: llmSaveObject.provider != x
-                          ? null
-                          : CircleAvatar(
-                              radius: 5,
-                              backgroundColor: Colors.green,
-                            ),
-                      onTap: () {
-                        selectedLLMProvider = x;
-                        final p = getLLMModelControllerByProvider(
-                          x,
-                        ).inputPayload;
-                        llmSaveObject = LLMSaveObject(
-                          endpoint: p.endpoint,
-                          credential: '',
-                          configMap: p.configMap,
-                          selectedLLM: getLLMModelsByProvider(x).first,
+                          selectedLLM: models.first,
                           provider: x,
                         );
                         setState(() {});
@@ -193,7 +161,7 @@ class _DefaultLLMSelectorDialogState extends State<DefaultLLMSelectorDialog> {
                     child: SingleChildScrollView(
                       child: Column(
                         children: [
-                          ...getLLMModelsByProvider(selectedLLMProvider).map(
+                          ...selectedLLMProvider.models.$1.map(
                             (x) => ListTile(
                               title: Text(x.modelName),
                               subtitle: Text(x.identifier),

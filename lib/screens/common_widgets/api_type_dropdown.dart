@@ -43,7 +43,7 @@ initializeAIRequest(WidgetRef ref) {
 
   if (aiRequestModel == null) {
     // Creating the AIRequest Model initially
-    final gmC = GeminiModelController();
+    final gmC = GeminiModelController.instance;
     final newAIRM = AIRequestModel(
       model: defaultLLMSO?.selectedLLM ?? GeminiModel.gemini_20_flash,
       provider: defaultLLMSO?.provider ?? LLMProvider.gemini,

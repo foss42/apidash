@@ -4,6 +4,8 @@ import 'package:apidash_genai/llm_request.dart';
 import 'package:apidash_genai/providers/common.dart';
 
 class OllamaModelController extends ModelController {
+  static final instance = OllamaModelController();
+
   @override
   LLMInputPayload get inputPayload => LLMInputPayload(
     endpoint: 'http://localhost:11434/v1/chat/completions',

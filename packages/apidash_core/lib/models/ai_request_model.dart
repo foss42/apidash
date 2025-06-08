@@ -19,7 +19,7 @@ class AIRequestModel with _$AIRequestModel {
     required LLMInputPayload payload,
     @JsonKey(fromJson: LLMModel.fromJson, toJson: LLMModel.toJson)
     required LLMModel model,
-    @JsonKey(fromJson: llmProviderFromJSON, toJson: llmProviderToJSON)
+    @JsonKey(fromJson: LLMProvider.fromJSON, toJson: LLMProvider.toJSON)
     required LLMProvider provider,
   }) = _AIRequestModel;
 

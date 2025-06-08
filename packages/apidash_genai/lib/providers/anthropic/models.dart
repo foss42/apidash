@@ -35,11 +35,11 @@ enum AnthropicModel implements LLMModel {
 
   @override
   final LLMProvider provider;
-}
 
-AnthropicModel getAnthropicModelFromIdentifier(String id) {
-  return AnthropicModel.values.firstWhere(
-    (model) => model.identifier == id,
-    orElse: () => throw ArgumentError('INVALID ANTHROPIC MODEL: $id'),
-  );
+  static AnthropicModel fromIdentifier(String id) {
+    return AnthropicModel.values.firstWhere(
+      (model) => model.identifier == id,
+      orElse: () => throw ArgumentError('INVALID ANTHROPIC MODEL: $id'),
+    );
+  }
 }

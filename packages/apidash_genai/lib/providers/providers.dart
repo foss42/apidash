@@ -10,8 +10,6 @@ import 'package:apidash_genai/providers/ollama/ollama.dart';
 import 'package:apidash_genai/providers/openai/models.dart';
 import 'package:apidash_genai/providers/openai/openai.dart';
 
-enum LLMProviderType { local, remote }
-
 enum LLMProvider {
   gemini('Gemini'),
   openai('OpenAI'),
@@ -20,75 +18,51 @@ enum LLMProvider {
   azureopenai('Azure OpenAI');
 
   const LLMProvider(this.displayName);
+
   final String displayName;
-}
 
-LLMProvider llmProviderFromJSON(Map json) {
-  return getLLMProviderByName(json['llm_provider']);
-}
-
-Map llmProviderToJSON(LLMProvider p) {
-  return {'llm_provider': p.name};
-}
-
-LLMProvider getLLMProviderByName(String name) {
-  return LLMProvider.values.firstWhere(
-    (model) => model.name == name,
-    orElse: () => throw ArgumentError('INVALID LLM PROVIDER: $name'),
-  );
-}
-
-List<LLMProvider> getLLMProvidersByType(LLMProviderType pT) {
-  if (pT == LLMProviderType.local) {
-    return [LLMProvider.ollama];
+  (List<LLMModel>, ModelController) get models {
+    switch (this) {
+      case LLMProvider.ollama:
+        return (OllamaModel.values, OllamaModelController.instance);
+      case LLMProvider.gemini:
+        return (GeminiModel.values, GeminiModelController.instance);
+      case LLMProvider.azureopenai:
+        return (AzureOpenAIModel.values, AzureOpenAIModelController.instance);
+      case LLMProvider.openai:
+        return (OpenAIModel.values, OpenAIModelController.instance);
+      case LLMProvider.anthropic:
+        return (AnthropicModel.values, AnthropicModelController.instance);
+    }
   }
-  return LLMProvider.values.toSet().difference({LLMProvider.ollama}).toList();
-}
 
-List<LLMModel> getLLMModelsByProvider(LLMProvider p) {
-  switch (p) {
-    case LLMProvider.ollama:
-      return OllamaModel.values;
-    case LLMProvider.gemini:
-      return GeminiModel.values;
-    case LLMProvider.azureopenai:
-      return AzureOpenAIModel.values;
-    case LLMProvider.openai:
-      return OpenAIModel.values;
-    case LLMProvider.anthropic:
-      return AnthropicModel.values;
+  static LLMProvider fromJSON(Map json) {
+    return LLMProvider.fromName(json['llm_provider']);
   }
-}
 
-ModelController getLLMModelControllerByProvider(LLMProvider p) {
-  switch (p) {
-    case LLMProvider.ollama:
-      return OllamaModelController();
-    case LLMProvider.gemini:
-      return GeminiModelController();
-    case LLMProvider.azureopenai:
-      return AzureOpenAIModelController();
-    case LLMProvider.openai:
-      return OpenAIModelController();
-    case LLMProvider.anthropic:
-      return AnthropicModelController();
+  static Map toJSON(LLMProvider p) {
+    return {'llm_provider': p.name};
   }
-}
 
-LLMModel getSpecificLLMByProviderAndIdentifier(
-  LLMProvider provider,
-  String identifier,
-) {
-  switch (provider) {
-    case LLMProvider.ollama:
-      return getOllamaModelFromIdentifier(identifier);
-    case LLMProvider.gemini:
-      return getGeminiModelFromIdentifier(identifier);
-    case LLMProvider.azureopenai:
-      return getAzureOpenAIModelFromIdentifier(identifier);
-    case LLMProvider.openai:
-      return getOpenAIModelFromIdentifier(identifier);
-    case LLMProvider.anthropic:
-      return getAnthropicModelFromIdentifier(identifier);
+  LLMModel getLLMByIdentifier(String identifier) {
+    switch (this) {
+      case LLMProvider.ollama:
+        return OllamaModel.fromIdentifier(identifier);
+      case LLMProvider.gemini:
+        return GeminiModel.fromIdentifier(identifier);
+      case LLMProvider.azureopenai:
+        return AzureOpenAIModel.fromIdentifier(identifier);
+      case LLMProvider.openai:
+        return OpenAIModel.fromIdentifier(identifier);
+      case LLMProvider.anthropic:
+        return AnthropicModel.fromIdentifier(identifier);
+    }
+  }
+
+  static LLMProvider fromName(String name) {
+    return LLMProvider.values.firstWhere(
+      (model) => model.name == name,
+      orElse: () => throw ArgumentError('INVALID LLM PROVIDER: $name'),
+    );
   }
 }

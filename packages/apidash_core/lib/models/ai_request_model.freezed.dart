@@ -24,7 +24,7 @@ mixin _$AIRequestModel {
   LLMInputPayload get payload => throw _privateConstructorUsedError;
   @JsonKey(fromJson: LLMModel.fromJson, toJson: LLMModel.toJson)
   LLMModel get model => throw _privateConstructorUsedError;
-  @JsonKey(fromJson: llmProviderFromJSON, toJson: llmProviderToJSON)
+  @JsonKey(fromJson: LLMProvider.fromJSON, toJson: LLMProvider.toJSON)
   LLMProvider get provider => throw _privateConstructorUsedError;
 
   /// Serializes this AIRequestModel to a JSON map.
@@ -49,7 +49,7 @@ abstract class $AIRequestModelCopyWith<$Res> {
       LLMInputPayload payload,
       @JsonKey(fromJson: LLMModel.fromJson, toJson: LLMModel.toJson)
       LLMModel model,
-      @JsonKey(fromJson: llmProviderFromJSON, toJson: llmProviderToJSON)
+      @JsonKey(fromJson: LLMProvider.fromJSON, toJson: LLMProvider.toJSON)
       LLMProvider provider});
 }
 
@@ -103,7 +103,7 @@ abstract class _$$AIRequestModelImplCopyWith<$Res>
       LLMInputPayload payload,
       @JsonKey(fromJson: LLMModel.fromJson, toJson: LLMModel.toJson)
       LLMModel model,
-      @JsonKey(fromJson: llmProviderFromJSON, toJson: llmProviderToJSON)
+      @JsonKey(fromJson: LLMProvider.fromJSON, toJson: LLMProvider.toJSON)
       LLMProvider provider});
 }
 
@@ -151,7 +151,7 @@ class _$AIRequestModelImpl extends _AIRequestModel {
       required this.payload,
       @JsonKey(fromJson: LLMModel.fromJson, toJson: LLMModel.toJson)
       required this.model,
-      @JsonKey(fromJson: llmProviderFromJSON, toJson: llmProviderToJSON)
+      @JsonKey(fromJson: LLMProvider.fromJSON, toJson: LLMProvider.toJSON)
       required this.provider})
       : super._();
 
@@ -165,7 +165,7 @@ class _$AIRequestModelImpl extends _AIRequestModel {
   @JsonKey(fromJson: LLMModel.fromJson, toJson: LLMModel.toJson)
   final LLMModel model;
   @override
-  @JsonKey(fromJson: llmProviderFromJSON, toJson: llmProviderToJSON)
+  @JsonKey(fromJson: LLMProvider.fromJSON, toJson: LLMProvider.toJSON)
   final LLMProvider provider;
 
   @override
@@ -212,7 +212,7 @@ abstract class _AIRequestModel extends AIRequestModel {
       required final LLMInputPayload payload,
       @JsonKey(fromJson: LLMModel.fromJson, toJson: LLMModel.toJson)
       required final LLMModel model,
-      @JsonKey(fromJson: llmProviderFromJSON, toJson: llmProviderToJSON)
+      @JsonKey(fromJson: LLMProvider.fromJSON, toJson: LLMProvider.toJSON)
       required final LLMProvider provider}) = _$AIRequestModelImpl;
   _AIRequestModel._() : super._();
 
@@ -226,7 +226,7 @@ abstract class _AIRequestModel extends AIRequestModel {
   @JsonKey(fromJson: LLMModel.fromJson, toJson: LLMModel.toJson)
   LLMModel get model;
   @override
-  @JsonKey(fromJson: llmProviderFromJSON, toJson: llmProviderToJSON)
+  @JsonKey(fromJson: LLMProvider.fromJSON, toJson: LLMProvider.toJSON)
   LLMProvider get provider;
 
   /// Create a copy of AIRequestModel

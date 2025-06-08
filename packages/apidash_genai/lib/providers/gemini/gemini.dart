@@ -4,6 +4,7 @@ import 'package:apidash_genai/llm_request.dart';
 import 'package:apidash_genai/providers/common.dart';
 
 class GeminiModelController extends ModelController {
+  static final instance = GeminiModelController();
   @override
   LLMInputPayload get inputPayload => LLMInputPayload(
     endpoint: 'https://generativelanguage.googleapis.com/v1beta/models',

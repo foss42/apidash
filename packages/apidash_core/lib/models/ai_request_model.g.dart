@@ -10,7 +10,7 @@ _$AIRequestModelImpl _$$AIRequestModelImplFromJson(Map json) =>
     _$AIRequestModelImpl(
       payload: LLMInputPayload.fromJSON(json['payload'] as Map),
       model: LLMModel.fromJson(json['model'] as Map),
-      provider: llmProviderFromJSON(json['provider'] as Map),
+      provider: LLMProvider.fromJSON(json['provider'] as Map),
     );
 
 Map<String, dynamic> _$$AIRequestModelImplToJson(
@@ -18,5 +18,5 @@ Map<String, dynamic> _$$AIRequestModelImplToJson(
     <String, dynamic>{
       'payload': LLMInputPayload.toJSON(instance.payload),
       'model': LLMModel.toJson(instance.model),
-      'provider': llmProviderToJSON(instance.provider),
+      'provider': LLMProvider.toJSON(instance.provider),
     };

@@ -14,10 +14,9 @@ abstract class LLMModel {
   }
 
   static LLMModel fromJson(Map json) {
-    return getSpecificLLMByProviderAndIdentifier(
-      getLLMProviderByName(json['provider']),
-      json['identifier'],
-    );
+    return LLMProvider.fromName(
+      json['provider'],
+    ).getLLMByIdentifier(json['identifier']);
   }
 }
 
