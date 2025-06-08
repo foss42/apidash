@@ -40,7 +40,6 @@ mixin _$RequestModel {
   String? get preRequestScript => throw _privateConstructorUsedError;
   String? get postRequestScript => throw _privateConstructorUsedError;
   AIRequestModel? get aiRequestModel => throw _privateConstructorUsedError;
-  AIResponseModel? get aiResponseModel => throw _privateConstructorUsedError;
 
   /// Serializes this RequestModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -73,13 +72,11 @@ abstract class $RequestModelCopyWith<$Res> {
       @JsonKey(includeToJson: false) bool isStreaming,
       String? preRequestScript,
       String? postRequestScript,
-      AIRequestModel? aiRequestModel,
-      AIResponseModel? aiResponseModel});
+      AIRequestModel? aiRequestModel});
 
   $HttpRequestModelCopyWith<$Res>? get httpRequestModel;
   $HttpResponseModelCopyWith<$Res>? get httpResponseModel;
   $AIRequestModelCopyWith<$Res>? get aiRequestModel;
-  $AIResponseModelCopyWith<$Res>? get aiResponseModel;
 }
 
 /// @nodoc
@@ -112,7 +109,6 @@ class _$RequestModelCopyWithImpl<$Res, $Val extends RequestModel>
     Object? preRequestScript = freezed,
     Object? postRequestScript = freezed,
     Object? aiRequestModel = freezed,
-    Object? aiResponseModel = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -175,10 +171,6 @@ class _$RequestModelCopyWithImpl<$Res, $Val extends RequestModel>
           ? _value.aiRequestModel
           : aiRequestModel // ignore: cast_nullable_to_non_nullable
               as AIRequestModel?,
-      aiResponseModel: freezed == aiResponseModel
-          ? _value.aiResponseModel
-          : aiResponseModel // ignore: cast_nullable_to_non_nullable
-              as AIResponseModel?,
     ) as $Val);
   }
 
@@ -223,20 +215,6 @@ class _$RequestModelCopyWithImpl<$Res, $Val extends RequestModel>
       return _then(_value.copyWith(aiRequestModel: value) as $Val);
     });
   }
-
-  /// Create a copy of RequestModel
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $AIResponseModelCopyWith<$Res>? get aiResponseModel {
-    if (_value.aiResponseModel == null) {
-      return null;
-    }
-
-    return $AIResponseModelCopyWith<$Res>(_value.aiResponseModel!, (value) {
-      return _then(_value.copyWith(aiResponseModel: value) as $Val);
-    });
-  }
 }
 
 /// @nodoc
@@ -262,8 +240,7 @@ abstract class _$$RequestModelImplCopyWith<$Res>
       @JsonKey(includeToJson: false) bool isStreaming,
       String? preRequestScript,
       String? postRequestScript,
-      AIRequestModel? aiRequestModel,
-      AIResponseModel? aiResponseModel});
+      AIRequestModel? aiRequestModel});
 
   @override
   $HttpRequestModelCopyWith<$Res>? get httpRequestModel;
@@ -271,8 +248,6 @@ abstract class _$$RequestModelImplCopyWith<$Res>
   $HttpResponseModelCopyWith<$Res>? get httpResponseModel;
   @override
   $AIRequestModelCopyWith<$Res>? get aiRequestModel;
-  @override
-  $AIResponseModelCopyWith<$Res>? get aiResponseModel;
 }
 
 /// @nodoc
@@ -303,7 +278,6 @@ class __$$RequestModelImplCopyWithImpl<$Res>
     Object? preRequestScript = freezed,
     Object? postRequestScript = freezed,
     Object? aiRequestModel = freezed,
-    Object? aiResponseModel = freezed,
   }) {
     return _then(_$RequestModelImpl(
       id: null == id
@@ -365,10 +339,6 @@ class __$$RequestModelImplCopyWithImpl<$Res>
           ? _value.aiRequestModel
           : aiRequestModel // ignore: cast_nullable_to_non_nullable
               as AIRequestModel?,
-      aiResponseModel: freezed == aiResponseModel
-          ? _value.aiResponseModel
-          : aiResponseModel // ignore: cast_nullable_to_non_nullable
-              as AIResponseModel?,
     ));
   }
 }
@@ -392,8 +362,7 @@ class _$RequestModelImpl implements _RequestModel {
       @JsonKey(includeToJson: false) this.isStreaming = false,
       this.preRequestScript,
       this.postRequestScript,
-      this.aiRequestModel,
-      this.aiResponseModel});
+      this.aiRequestModel});
 
   factory _$RequestModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$RequestModelImplFromJson(json);
@@ -435,12 +404,10 @@ class _$RequestModelImpl implements _RequestModel {
   final String? postRequestScript;
   @override
   final AIRequestModel? aiRequestModel;
-  @override
-  final AIResponseModel? aiResponseModel;
 
   @override
   String toString() {
-    return 'RequestModel(id: $id, apiType: $apiType, name: $name, description: $description, requestTabIndex: $requestTabIndex, httpRequestModel: $httpRequestModel, responseStatus: $responseStatus, message: $message, httpResponseModel: $httpResponseModel, isWorking: $isWorking, sendingTime: $sendingTime, isStreaming: $isStreaming, preRequestScript: $preRequestScript, postRequestScript: $postRequestScript, aiRequestModel: $aiRequestModel, aiResponseModel: $aiResponseModel)';
+    return 'RequestModel(id: $id, apiType: $apiType, name: $name, description: $description, requestTabIndex: $requestTabIndex, httpRequestModel: $httpRequestModel, responseStatus: $responseStatus, message: $message, httpResponseModel: $httpResponseModel, isWorking: $isWorking, sendingTime: $sendingTime, isStreaming: $isStreaming, preRequestScript: $preRequestScript, postRequestScript: $postRequestScript, aiRequestModel: $aiRequestModel)';
   }
 
   @override
@@ -473,9 +440,7 @@ class _$RequestModelImpl implements _RequestModel {
             (identical(other.postRequestScript, postRequestScript) ||
                 other.postRequestScript == postRequestScript) &&
             (identical(other.aiRequestModel, aiRequestModel) ||
-                other.aiRequestModel == aiRequestModel) &&
-            (identical(other.aiResponseModel, aiResponseModel) ||
-                other.aiResponseModel == aiResponseModel));
+                other.aiRequestModel == aiRequestModel));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -496,8 +461,7 @@ class _$RequestModelImpl implements _RequestModel {
       isStreaming,
       preRequestScript,
       postRequestScript,
-      aiRequestModel,
-      aiResponseModel);
+      aiRequestModel);
 
   /// Create a copy of RequestModel
   /// with the given fields replaced by the non-null parameter values.
@@ -531,8 +495,7 @@ abstract class _RequestModel implements RequestModel {
       @JsonKey(includeToJson: false) final bool isStreaming,
       final String? preRequestScript,
       final String? postRequestScript,
-      final AIRequestModel? aiRequestModel,
-      final AIResponseModel? aiResponseModel}) = _$RequestModelImpl;
+      final AIRequestModel? aiRequestModel}) = _$RequestModelImpl;
 
   factory _RequestModel.fromJson(Map<String, dynamic> json) =
       _$RequestModelImpl.fromJson;
@@ -571,8 +534,6 @@ abstract class _RequestModel implements RequestModel {
   String? get postRequestScript;
   @override
   AIRequestModel? get aiRequestModel;
-  @override
-  AIResponseModel? get aiResponseModel;
 
   /// Create a copy of RequestModel
   /// with the given fields replaced by the non-null parameter values.

@@ -34,10 +34,6 @@ _$RequestModelImpl _$$RequestModelImplFromJson(Map json) => _$RequestModelImpl(
           ? null
           : AIRequestModel.fromJson(
               Map<String, Object?>.from(json['aiRequestModel'] as Map)),
-      aiResponseModel: json['aiResponseModel'] == null
-          ? null
-          : AIResponseModel.fromJson(
-              Map<String, Object?>.from(json['aiResponseModel'] as Map)),
     );
 
 Map<String, dynamic> _$$RequestModelImplToJson(_$RequestModelImpl instance) =>
@@ -53,7 +49,6 @@ Map<String, dynamic> _$$RequestModelImplToJson(_$RequestModelImpl instance) =>
       'preRequestScript': instance.preRequestScript,
       'postRequestScript': instance.postRequestScript,
       'aiRequestModel': instance.aiRequestModel?.toJson(),
-      'aiResponseModel': instance.aiResponseModel?.toJson(),
     };
 
 const _$APITypeEnumMap = {

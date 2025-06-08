@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:convert';
+
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -229,7 +231,6 @@ class CollectionStateNotifier
     String? preRequestScript,
     String? postRequestScript,
     AIRequestModel? aiRequestModel,
-    AIResponseModel? aiResponseModel,
   }) {
     final rId = id ?? ref.read(selectedIdStateProvider);
     if (rId == null) {
@@ -265,7 +266,6 @@ class CollectionStateNotifier
       preRequestScript: preRequestScript ?? currentModel.preRequestScript,
       postRequestScript: postRequestScript ?? currentModel.postRequestScript,
       aiRequestModel: aiRequestModel ?? currentModel.aiRequestModel,
-      aiResponseModel: aiResponseModel ?? currentModel.aiResponseModel,
     );
 
     var map = {...state!};
@@ -310,9 +310,31 @@ class CollectionStateNotifier
     }
 
     APIType apiType = executionRequestModel.apiType;
-    HttpRequestModel substitutedHttpRequestModel =
-        getSubstitutedHttpRequestModel(executionRequestModel.httpRequestModel!);
+
+    late HttpRequestModel substitutedHttpRequestModel;
+    AIRequestModel? aiRequestModel;
     bool noSSL = ref.read(settingsProvider).isSSLDisabled;
+
+    if (apiType == APIType.ai) {
+      aiRequestModel = requestModel.aiRequestModel!;
+      final genAIRequest = aiRequestModel.createRequest();
+      substitutedHttpRequestModel = getSubstitutedHttpRequestModel(
+        HttpRequestModel(
+          method: HTTPVerb.post,
+          headers: [
+            ...genAIRequest.headers.entries.map(
+              (x) => NameValueModel.fromJson({x.key: x.value}),
+            ),
+          ],
+          url: genAIRequest.endpoint,
+          bodyContentType: ContentType.json,
+          body: jsonEncode(genAIRequest.body),
+        ),
+      );
+    } else {
+      substitutedHttpRequestModel = getSubstitutedHttpRequestModel(
+          executionRequestModel.httpRequestModel!);
+    }
 
     // Set model to working and streaming
     state = {
@@ -339,6 +361,8 @@ class CollectionStateNotifier
 
     StreamSubscription? sub;
 
+    // bool streaming = true; //DEFAULT to streaming
+
     sub = stream.listen((rec) async {
       if (rec == null) return;
 
@@ -346,6 +370,14 @@ class CollectionStateNotifier
       final response = rec.$2;
       final duration = rec.$3;
       final errorMessage = rec.$4;
+
+      if (isStreamingResponse == false) {
+        // streaming = false;
+        if (!completer.isCompleted) {
+          completer.complete((response, duration, errorMessage));
+        }
+        return;
+      }
 
       if (isStreamingResponse) {
         httpResponseModel = httpResponseModel?.copyWith(

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash/models/models.dart';
@@ -16,15 +18,18 @@ class ResponseBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responseModel = selectedRequestModel?.httpResponseModel;
-    if (responseModel == null) {
+    HttpResponseModel? httpResponseModel;
+    httpResponseModel = selectedRequestModel?.httpResponseModel;
+
+    if (httpResponseModel == null) {
       return const ErrorMessage(
           message: '$kNullResponseModelError $kUnexpectedRaiseIssue');
     }
 
-    final isSSE = responseModel.sseOutput?.isNotEmpty ?? false;
-    var body = responseModel.body;
-    var formattedBody = responseModel.formattedBody;
+    final isSSE = httpResponseModel.sseOutput?.isNotEmpty ?? false;
+    var body = httpResponseModel.body;
+    var formattedBody = httpResponseModel.formattedBody;
+
     if (body == null) {
       return const ErrorMessage(
           message: '$kMsgNullBody $kUnexpectedRaiseIssue');
@@ -37,11 +42,12 @@ class ResponseBody extends StatelessWidget {
       );
     }
     if (isSSE) {
-      body = responseModel.sseOutput!.join();
+      body = httpResponseModel.sseOutput!.join();
     }
 
     final mediaType =
-        responseModel.mediaType ?? MediaType(kTypeText, kSubTypePlain);
+        httpResponseModel.mediaType ?? MediaType(kTypeText, kSubTypePlain);
+
     // Fix #415: Treat null Content-type as plain text instead of Error message
     // if (mediaType == null) {
     //   return ErrorMessage(
@@ -58,14 +64,28 @@ class ResponseBody extends StatelessWidget {
       options.remove(ResponseBodyView.code);
     }
 
+    // print('reM -> ${responseModel.sseOutput}');
+
+    if (httpResponseModel.sseOutput?.isNotEmpty ?? false) {
+      // final modifiedBody = responseModel.sseOutput!.join('\n\n');
+      return ResponseBodySuccess(
+        key: Key("${selectedRequestModel!.id}-response"),
+        mediaType: MediaType('text', 'event-stream'),
+        options: [ResponseBodyView.sse, ResponseBodyView.raw],
+        bytes: utf8.encode((httpResponseModel.sseOutput!).toString()),
+        body: jsonEncode(httpResponseModel.sseOutput!),
+        formattedBody: httpResponseModel.sseOutput!.join('\n'),
+      );
+    }
+
     return ResponseBodySuccess(
       key: Key("${selectedRequestModel!.id}-response"),
       mediaType: mediaType,
       options: options,
-      bytes: responseModel.bodyBytes!,
+      bytes: httpResponseModel.bodyBytes!,
       body: body,
       formattedBody: formattedBody,
-      sseOutput: responseModel.sseOutput,
+      sseOutput: httpResponseModel.sseOutput,
       highlightLanguage: highlightLanguage,
     );
   }
