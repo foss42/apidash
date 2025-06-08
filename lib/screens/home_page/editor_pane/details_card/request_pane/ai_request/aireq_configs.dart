@@ -1,9 +1,8 @@
 import 'package:apidash/providers/collection_providers.dart';
-import 'package:apidash/widgets/editor.dart';
-import 'package:apidash_design_system/widgets/textfield_outlined.dart';
 import 'package:genai/llm_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:genai/widgets/ai_config_widgets.dart';
 
 class AIRequestConfigSection extends ConsumerStatefulWidget {
   const AIRequestConfigSection({super.key});
@@ -46,85 +45,46 @@ class _AIRequestConfigSectionState
                 children: [
                   Text(
                     el.configDescription,
-                    style: TextStyle(color: Colors.white30),
                   ),
                   SizedBox(height: 5),
                   if (el.configType == LLMModelConfigurationType.boolean) ...[
-                    Switch(
-                      value: el.configValue.value as bool,
-                      onChanged: (x) {
-                        el.configValue.value = x;
+                    BooleanAIConfig(
+                      configuration: el,
+                      onConfigUpdated: (x) {
                         updateRequestModel(el);
                         setState(() {});
                       },
-                    )
+                    ),
                   ] else if (el.configType ==
                       LLMModelConfigurationType.numeric) ...[
-                    ADOutlinedTextField(
-                      initialValue: el.configValue.value.toString(),
-                      onChanged: (x) {
-                        if (x.isEmpty) x = '0';
-                        if (num.tryParse(x) == null) return;
-                        el.configValue.value = num.parse(x);
+                    WritableAIConfig(
+                      configuration: el,
+                      onConfigUpdated: (x) {
                         updateRequestModel(el);
                         setState(() {});
                       },
-                    )
+                      numeric: true,
+                    ),
                   ] else if (el.configType ==
                       LLMModelConfigurationType.text) ...[
-                    ADOutlinedTextField(
-                      initialValue: el.configValue.value.toString(),
-                      onChanged: (x) {
-                        el.configValue.value = x;
+                    WritableAIConfig(
+                      configuration: el,
+                      onConfigUpdated: (x) {
                         updateRequestModel(el);
                         setState(() {});
                       },
-                    )
+                    ),
                   ] else if (el.configType ==
                       LLMModelConfigurationType.slider) ...[
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Slider(
-                            min: (el.configValue.value as (
-                              double,
-                              double,
-                              double
-                            ))
-                                .$1,
-                            value: (el.configValue.value as (
-                              double,
-                              double,
-                              double
-                            ))
-                                .$2,
-                            max: (el.configValue.value as (
-                              double,
-                              double,
-                              double
-                            ))
-                                .$3,
-                            onChanged: (x) {
-                              final z = el.configValue.value as (
-                                double,
-                                double,
-                                double
-                              );
-                              el.configValue.value = (z.$1, x, z.$3);
-                              updateRequestModel(el);
-                              setState(() {});
-                            },
-                          ),
-                        ),
-                        Text((el.configValue.value as (double, double, double))
-                            .$2
-                            .toStringAsFixed(2)),
-                      ],
-                    )
+                    SliderAIConfig(
+                      configuration: el,
+                      onSliderUpdated: (x) {
+                        updateRequestModel(x);
+                        setState(() {});
+                      },
+                    ),
                   ],
                   SizedBox(height: 10),
-                  // Divider(color: Colors.white10),
-                  // SizedBox(height: 10),
                 ],
               ),
             ),
