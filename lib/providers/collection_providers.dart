@@ -1,5 +1,7 @@
-import 'package:apidash_core/apidash_core.dart';
+import 'dart:convert';
 
+import 'package:apidash_core/apidash_core.dart';
+import 'package:genai/genai.dart';
 import 'package:apidash/models/generic_request_model.dart';
 import 'package:apidash/models/generic_response_model.dart';
 import 'package:genai/models/ai_request_model.dart';
@@ -7,6 +9,7 @@ import 'package:genai/models/ai_response_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/consts.dart';
+import 'package:genai/providers/common.dart';
 import 'providers.dart';
 import '../models/models.dart';
 import '../services/services.dart' show hiveHandler, HiveHandler;
@@ -58,6 +61,7 @@ class CollectionStateNotifier
   final Ref ref;
   final HiveHandler hiveHandler;
   final baseHttpResponseModel = const HttpResponseModel();
+  final baseAIResponseModel = const AIResponseModel();
 
   bool hasId(String id) => state?.keys.contains(id) ?? false;
 
@@ -306,9 +310,9 @@ class CollectionStateNotifier
     }
 
     APIType apiType = requestModel!.apiType;
-    HttpRequestModel substitutedHttpRequestModel =
-        getSubstitutedHttpRequestModel(
-            requestModel.genericRequestModel!.httpRequestModel!);
+
+    HttpRequestModel? substitutedHttpRequestModel;
+    AIRequestModel? aiRequestModel;
 
     // set current model's isWorking to true and update state
     var map = {...state!};
@@ -319,32 +323,74 @@ class CollectionStateNotifier
     state = map;
 
     bool noSSL = ref.read(settingsProvider).isSSLDisabled;
-    var responseRec = await sendHttpRequest(
-      requestId,
-      apiType,
-      substitutedHttpRequestModel,
-      defaultUriScheme: defaultUriScheme,
-      noSSL: noSSL,
-    );
+    (Response?, Duration?, String?)? reqRes;
+
+    if (apiType == APIType.ai) {
+      aiRequestModel = requestModel.genericRequestModel!.aiRequestModel!;
+      final genAIRequest = aiRequestModel.createRequest();
+      reqRes = await sendHttpRequest(
+        requestId,
+        APIType.rest, //AI Requests internally use REST
+        HttpRequestModel(
+          method: HTTPVerb.post,
+          headers: [
+            ...genAIRequest.headers.entries.map(
+              (x) => NameValueModel.fromJson({x.key: x.value}),
+            ),
+          ],
+          url: genAIRequest.endpoint,
+          bodyContentType: ContentType.json,
+          body: jsonEncode(genAIRequest.body),
+        ),
+      );
+    } else {
+      substitutedHttpRequestModel = getSubstitutedHttpRequestModel(
+          requestModel.genericRequestModel!.httpRequestModel!);
+      reqRes = await sendHttpRequest(
+        requestId,
+        apiType,
+        substitutedHttpRequestModel,
+        defaultUriScheme: defaultUriScheme,
+        noSSL: noSSL,
+      );
+    }
 
     late final RequestModel newRequestModel;
-    if (responseRec.$1 == null) {
+    if (reqRes.$1 == null) {
       newRequestModel = requestModel.copyWith(
         responseStatus: -1,
-        message: responseRec.$3,
+        message: reqRes.$3,
         isWorking: false,
       );
     } else {
-      final httpResponseModel = baseHttpResponseModel.fromResponse(
-        response: responseRec.$1!,
-        time: responseRec.$2!,
-      );
-      int statusCode = responseRec.$1!.statusCode;
+      HttpResponseModel? httpResponseModel;
+      AIResponseModel? aiResponseModel;
+      String url;
+      HTTPVerb method;
+
+      if (apiType == APIType.ai) {
+        aiResponseModel = baseAIResponseModel.fromResponse(
+          response: reqRes.$1!,
+          time: reqRes.$2!,
+        );
+        final aiRq = aiRequestModel!.createRequest();
+        url = aiRq.endpoint;
+        method = HTTPVerb.fromMethod(aiRq.method);
+      } else {
+        httpResponseModel = baseHttpResponseModel.fromResponse(
+          response: reqRes.$1!,
+          time: reqRes.$2!,
+        );
+        url = substitutedHttpRequestModel!.url;
+        method = substitutedHttpRequestModel.method;
+      }
+
+      int statusCode = reqRes.$1!.statusCode;
       newRequestModel = requestModel.copyWith(
         responseStatus: statusCode,
         message: kResponseCodeReasons[statusCode],
         genericResponseModel: GenericResponseModel(
-          aiResponseModel: null,
+          aiResponseModel: aiResponseModel,
           httpResponseModel: httpResponseModel,
         ),
         isWorking: false,
@@ -357,17 +403,17 @@ class CollectionStateNotifier
           requestId: requestId,
           apiType: requestModel.apiType,
           name: requestModel.name,
-          url: substitutedHttpRequestModel.url,
-          method: substitutedHttpRequestModel.method,
+          url: url,
+          method: method,
           responseStatus: statusCode,
           timeStamp: DateTime.now(),
         ),
         genericRequestModel: GenericRequestModel(
-          aiRequestModel: null,
+          aiRequestModel: aiRequestModel,
           httpRequestModel: substitutedHttpRequestModel,
         ),
         genericResponseModel: GenericResponseModel(
-          aiResponseModel: null,
+          aiResponseModel: aiResponseModel,
           httpResponseModel: httpResponseModel,
         ),
       );

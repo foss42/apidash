@@ -71,4 +71,7 @@ class AIResponseModel with _$AIResponseModel {
       time: time,
     );
   }
+
+  String? get contentType => headers?.getValueContentType();
+  MediaType? get mediaType => getMediaTypeFromHeaders(headers);
 }

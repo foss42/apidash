@@ -1,4 +1,5 @@
 import 'package:genai/llm_input_payload.dart';
+import 'package:genai/llm_request.dart';
 import 'package:genai/providers/common.dart';
 import 'package:genai/providers/providers.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -25,5 +26,10 @@ class AIRequestModel with _$AIRequestModel {
 
   AIRequestModel updatePayload(LLMInputPayload p) {
     return AIRequestModel(payload: p, model: model, provider: provider);
+  }
+
+  LLMRequestDetails createRequest() {
+    final (_, ModelController controller) = model.provider.models;
+    return controller.createRequest(model, payload);
   }
 }

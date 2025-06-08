@@ -23,6 +23,13 @@ enum HTTPVerb {
 
   const HTTPVerb(this.abbr);
   final String abbr;
+
+  static fromMethod(String method) {
+    return HTTPVerb.values.firstWhere(
+      (model) => model.name == method.toLowerCase(),
+      orElse: () => throw ArgumentError('INVALID HTTP METHOD'),
+    );
+  }
 }
 
 enum SupportedUriSchemes { https, http }

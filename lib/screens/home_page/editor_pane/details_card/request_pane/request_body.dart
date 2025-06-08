@@ -95,7 +95,6 @@ class EditRequestBody extends ConsumerWidget {
                 ),
               ),
             ),
-          APIType.ai => FlutterLogo(),
           _ => kSizedBoxEmpty,
         }
       ],

@@ -3,6 +3,7 @@ import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/utils/utils.dart';
 import 'package:apidash/consts.dart';
+import 'package:genai/models/ai_response_model.dart';
 import 'error_message.dart';
 import 'response_body_success.dart';
 
@@ -16,15 +17,24 @@ class ResponseBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responseModel =
+    HttpResponseModel? httpResponseModel;
+    AIResponseModel? aiResponseModel;
+
+    httpResponseModel =
         selectedRequestModel?.genericResponseModel?.httpResponseModel;
-    if (responseModel == null) {
+    aiResponseModel =
+        selectedRequestModel?.genericResponseModel?.aiResponseModel;
+
+    if (aiResponseModel == null && httpResponseModel == null) {
       return const ErrorMessage(
           message: '$kNullResponseModelError $kUnexpectedRaiseIssue');
     }
 
-    var body = responseModel.body;
-    var formattedBody = responseModel.formattedBody;
+    var body = aiResponseModel?.body ?? httpResponseModel!.body;
+    var formattedBody = aiResponseModel?.formattedBody ??
+        httpResponseModel?.formattedBody ??
+        body; //LAST OPTION IS TO SHOW UNFORMATTED BODY
+
     if (body == null) {
       return const ErrorMessage(
           message: '$kMsgNullBody $kUnexpectedRaiseIssue');
@@ -37,8 +47,10 @@ class ResponseBody extends StatelessWidget {
       );
     }
 
-    final mediaType =
-        responseModel.mediaType ?? MediaType(kTypeText, kSubTypePlain);
+    final mediaType = aiResponseModel?.mediaType ??
+        httpResponseModel?.mediaType ??
+        MediaType(kTypeText, kSubTypePlain);
+
     // Fix #415: Treat null Content-type as plain text instead of Error message
     // if (mediaType == null) {
     //   return ErrorMessage(
@@ -59,7 +71,7 @@ class ResponseBody extends StatelessWidget {
       key: Key("${selectedRequestModel!.id}-response"),
       mediaType: mediaType,
       options: options,
-      bytes: responseModel.bodyBytes!,
+      bytes: aiResponseModel?.bodyBytes ?? httpResponseModel!.bodyBytes!,
       body: body,
       formattedBody: formattedBody,
       highlightLanguage: highlightLanguage,
