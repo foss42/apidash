@@ -1,14 +1,14 @@
-import 'package:apidash_genai/providers/anthropic/anthropic.dart';
-import 'package:apidash_genai/providers/anthropic/models.dart';
-import 'package:apidash_genai/providers/azureopenai/azureopenai.dart';
-import 'package:apidash_genai/providers/azureopenai/models.dart';
-import 'package:apidash_genai/providers/common.dart';
-import 'package:apidash_genai/providers/gemini/gemini.dart';
-import 'package:apidash_genai/providers/gemini/models.dart';
-import 'package:apidash_genai/providers/ollama/models.dart';
-import 'package:apidash_genai/providers/ollama/ollama.dart';
-import 'package:apidash_genai/providers/openai/models.dart';
-import 'package:apidash_genai/providers/openai/openai.dart';
+import 'package:genai/providers/anthropic/anthropic.dart';
+import 'package:genai/providers/anthropic/models.dart';
+import 'package:genai/providers/azureopenai/azureopenai.dart';
+import 'package:genai/providers/azureopenai/models.dart';
+import 'package:genai/providers/common.dart';
+import 'package:genai/providers/gemini/gemini.dart';
+import 'package:genai/providers/gemini/models.dart';
+import 'package:genai/providers/ollama/models.dart';
+import 'package:genai/providers/ollama/ollama.dart';
+import 'package:genai/providers/openai/models.dart';
+import 'package:genai/providers/openai/openai.dart';
 
 enum LLMProvider {
   gemini('Gemini'),

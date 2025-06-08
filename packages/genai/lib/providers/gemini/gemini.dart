@@ -1,7 +1,7 @@
-import 'package:apidash_genai/llm_config.dart';
-import 'package:apidash_genai/llm_input_payload.dart';
-import 'package:apidash_genai/llm_request.dart';
-import 'package:apidash_genai/providers/common.dart';
+import 'package:genai/llm_config.dart';
+import 'package:genai/llm_input_payload.dart';
+import 'package:genai/llm_request.dart';
+import 'package:genai/providers/common.dart';
 
 class GeminiModelController extends ModelController {
   static final instance = GeminiModelController();

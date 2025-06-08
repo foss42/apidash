@@ -1,13 +1,14 @@
-import 'package:apidash_genai/llm_config.dart';
-import 'package:apidash_genai/llm_input_payload.dart';
-import 'package:apidash_genai/llm_request.dart';
-import 'package:apidash_genai/providers/common.dart';
+import 'package:genai/llm_config.dart';
+import 'package:genai/llm_input_payload.dart';
+import 'package:genai/llm_request.dart';
+import 'package:genai/providers/common.dart';
 
-class AnthropicModelController extends ModelController {
-  static final instance = AnthropicModelController();
+class OllamaModelController extends ModelController {
+  static final instance = OllamaModelController();
+
   @override
   LLMInputPayload get inputPayload => LLMInputPayload(
-    endpoint: 'https://api.anthropic.com/v1/messages',
+    endpoint: 'http://localhost:11434/v1/chat/completions',
     credential: '',
     systemPrompt: '',
     userPrompt: '',
@@ -26,10 +27,7 @@ class AnthropicModelController extends ModelController {
   }) {
     return LLMRequestDetails(
       endpoint: inputPayload.endpoint,
-      headers: {
-        'anthropic-version': '2023-06-01',
-        'Authorization': 'Bearer ${inputPayload.credential}',
-      },
+      headers: {},
       method: 'POST',
       body: {
         "model": model.identifier,
@@ -64,11 +62,11 @@ class AnthropicModelController extends ModelController {
 
   @override
   String? outputFormatter(Map x) {
-    return x['content']?[0]['text'];
+    return x['choices']?[0]['message']?['content'];
   }
 
   @override
   String? streamOutputFormatter(Map x) {
-    return x['text'];
+    return x['choices']?[0]['delta']?['content'];
   }
 }

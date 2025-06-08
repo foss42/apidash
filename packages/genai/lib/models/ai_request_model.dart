@@ -1,6 +1,6 @@
-import 'package:apidash_genai/llm_input_payload.dart';
-import 'package:apidash_genai/providers/common.dart';
-import 'package:apidash_genai/providers/providers.dart';
+import 'package:genai/llm_input_payload.dart';
+import 'package:genai/providers/common.dart';
+import 'package:genai/providers/providers.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'ai_request_model.freezed.dart';
@@ -10,10 +10,7 @@ part 'ai_request_model.g.dart';
 class AIRequestModel with _$AIRequestModel {
   const AIRequestModel._();
 
-  @JsonSerializable(
-    explicitToJson: true,
-    anyMap: true,
-  )
+  @JsonSerializable(explicitToJson: true, anyMap: true)
   factory AIRequestModel({
     @JsonKey(fromJson: LLMInputPayload.fromJSON, toJson: LLMInputPayload.toJSON)
     required LLMInputPayload payload,
@@ -27,10 +24,6 @@ class AIRequestModel with _$AIRequestModel {
       _$AIRequestModelFromJson(json);
 
   AIRequestModel updatePayload(LLMInputPayload p) {
-    return AIRequestModel(
-      payload: p,
-      model: model,
-      provider: provider,
-    );
+    return AIRequestModel(payload: p, model: model, provider: provider);
   }
 }

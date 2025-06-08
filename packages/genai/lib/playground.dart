@@ -1,6 +1,6 @@
 import 'dart:io';
-import 'package:apidash_genai/apidash_genai.dart';
-import 'package:apidash_genai/providers/ollama/models.dart';
+import 'package:genai/genai.dart';
+import 'package:genai/providers/ollama/models.dart';
 
 void main() async {
   const SYSPROMPT =

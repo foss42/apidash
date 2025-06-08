@@ -1,9 +1,9 @@
 // ignore_for_file: constant_identifier_names
 
-import 'package:apidash_genai/llm_config.dart';
-import 'package:apidash_genai/providers/common.dart';
-import 'package:apidash_genai/providers/gemini/gemini.dart';
-import 'package:apidash_genai/providers/providers.dart';
+import 'package:genai/llm_config.dart';
+import 'package:genai/providers/common.dart';
+import 'package:genai/providers/gemini/gemini.dart';
+import 'package:genai/providers/providers.dart';
 
 enum AzureOpenAIModel implements LLMModel {
   custom('custom', 'Custom', LLMProvider.azureopenai);

@@ -1,7 +1,7 @@
-import 'package:apidash_genai/llm_config.dart';
-import 'package:apidash_genai/llm_input_payload.dart';
-import 'package:apidash_genai/llm_request.dart';
-import 'package:apidash_genai/providers/providers.dart';
+import 'package:genai/llm_config.dart';
+import 'package:genai/llm_input_payload.dart';
+import 'package:genai/llm_request.dart';
+import 'package:genai/providers/providers.dart';
 
 abstract class LLMModel {
   const LLMModel(this.identifier, this.modelName, this.provider);

@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 // import 'package:apidash_core/apidash_core.dart' as http;
-import 'package:apidash_genai/llm_config.dart';
-import 'package:apidash_genai/providers/providers.dart';
+import 'package:genai/llm_config.dart';
+import 'package:genai/providers/providers.dart';
 import 'package:http/http.dart' as http;
-import 'package:apidash_genai/llm_request.dart';
-import 'package:apidash_genai/providers/common.dart';
+import 'package:genai/llm_request.dart';
+import 'package:genai/providers/common.dart';
 
 class GenerativeAI {
   static Future<String?> executeGenAIRequest(

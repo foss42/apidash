@@ -1,6 +1,6 @@
 // ignore_for_file: constant_identifier_names
-import 'package:apidash_genai/providers/common.dart';
-import 'package:apidash_genai/providers/providers.dart';
+import 'package:genai/providers/common.dart';
+import 'package:genai/providers/providers.dart';
 
 enum OpenAIModel implements LLMModel {
   gpt_4o('gpt-4o', 'GPT-4o', LLMProvider.openai),

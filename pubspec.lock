@@ -47,13 +47,6 @@ packages:
       relative: true
     source: path
     version: "0.0.1"
-  apidash_genai:
-    dependency: "direct main"
-    description:
-      path: "packages/apidash_genai"
-      relative: true
-    source: path
-    version: "0.0.1"
   archive:
     dependency: transitive
     description:
@@ -654,6 +647,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.30.0"
+  genai:
+    dependency: "direct main"
+    description:
+      path: "packages/genai"
+      relative: true
+    source: path
+    version: "0.0.1"
   glob:
     dependency: transitive
     description:

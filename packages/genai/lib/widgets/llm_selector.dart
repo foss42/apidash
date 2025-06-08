@@ -1,8 +1,8 @@
 import 'package:apidash_design_system/apidash_design_system.dart';
-import 'package:apidash_genai/llm_saveobject.dart';
-import 'package:apidash_genai/providers/ollama/models.dart';
-import 'package:apidash_genai/providers/ollama/ollama.dart';
-import 'package:apidash_genai/providers/providers.dart';
+import 'package:genai/llm_saveobject.dart';
+import 'package:genai/providers/ollama/models.dart';
+import 'package:genai/providers/ollama/ollama.dart';
+import 'package:genai/providers/providers.dart';
 import 'package:flutter/material.dart';
 
 class DefaultLLMSelectorButton extends StatelessWidget {

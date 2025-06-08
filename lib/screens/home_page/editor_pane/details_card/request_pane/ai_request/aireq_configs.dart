@@ -1,7 +1,7 @@
 import 'package:apidash/providers/collection_providers.dart';
 import 'package:apidash/widgets/editor.dart';
 import 'package:apidash_design_system/widgets/textfield_outlined.dart';
-import 'package:apidash_genai/llm_config.dart';
+import 'package:genai/llm_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
