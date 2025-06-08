@@ -27,6 +27,7 @@ GenerativeAI.callGenerativeModel(
     onAnswer: (x) {
         print(x);
     },
+    onError: (e){},
     systemPrompt: 'Give a 100 word summary of the provided word. Only give the answer',
     userPrompt: 'Pizza',
     credential: 'AIza.....',
@@ -41,6 +42,7 @@ GenerativeAI.callGenerativeModel(
     onAnswer: (x) {
         stdout.write(x); //each word in the stream
     },
+    onError: (e){},
     systemPrompt: 'Give a 100 word summary of the provided word. Only give the answer',
     userPrompt: 'Pizza',
     credential: 'AIza.....',

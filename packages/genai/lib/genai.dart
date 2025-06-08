@@ -1,9 +1,8 @@
+import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
-// import 'package:apidash_core/apidash_core.dart' as http;
+import 'dart:math';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:genai/llm_config.dart';
-import 'package:genai/providers/providers.dart';
-import 'package:http/http.dart' as http;
 import 'package:genai/llm_request.dart';
 import 'package:genai/providers/common.dart';
 
@@ -15,11 +14,22 @@ class GenerativeAI {
     final (_, mC) = model.provider.models;
     final headers = requestDetails.headers;
     // print(jsonEncode(requestDetails.body));
-    final response = await http.post(
-      Uri.parse(requestDetails.endpoint),
-      headers: {'Content-Type': 'application/json', ...headers},
-      body: jsonEncode(requestDetails.body),
+    final (response, _, _) = await sendHttpRequest(
+      (Random().nextDouble() * 9999999 + 1).toString(),
+      APIType.rest,
+      HttpRequestModel(
+        method: HTTPVerb.post,
+        headers: [
+          ...headers.entries.map(
+            (x) => NameValueModel.fromJson({x.key: x.value}),
+          ),
+        ],
+        url: requestDetails.endpoint,
+        bodyContentType: ContentType.json,
+        body: jsonEncode(requestDetails.body),
+      ),
     );
+    if (response == null) return null;
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       // print(data);
@@ -33,65 +43,85 @@ class GenerativeAI {
     }
   }
 
-  static Stream<String?> streamGenAIRequest(
+  static Future<Stream<String?>> streamGenAIRequest(
     LLMModel model,
     LLMRequestDetails requestDetails,
-  ) async* {
+  ) async {
     final (_, modelController) = model.provider.models;
-    final uri = Uri.parse(requestDetails.endpoint);
+
     final headers = {
       'Content-Type': 'application/json',
       ...requestDetails.headers,
     };
 
-    final request = http.Request('POST', uri)
-      ..headers.addAll(headers)
-      ..body = jsonEncode(requestDetails.body);
+    final httpStream = await streamHttpRequest(
+      requestDetails.hashCode.toString(),
+      APIType.rest,
+      HttpRequestModel(
+        method: HTTPVerb.post,
+        headers: headers.entries
+            .map((entry) => NameValueModel(name: entry.key, value: entry.value))
+            .toList(),
+        url: requestDetails.endpoint,
+        bodyContentType: ContentType.json,
+        body: jsonEncode(requestDetails.body),
+      ),
+    );
 
-    final client = http.Client();
-    http.StreamedResponse? streamedResponse;
+    final streamController = StreamController<String?>();
 
-    try {
-      streamedResponse = await client.send(request);
+    final subscription = httpStream.listen(
+      (dat) {
+        if (dat == null) {
+          streamController.addError('STREAMING ERROR: NULL DATA');
+          return;
+        }
 
-      if (streamedResponse.statusCode != 200) {
-        final errorText = await streamedResponse.stream.bytesToString();
+        final chunk = dat.$1;
+        final error = dat.$3;
 
-        throw Exception(
-          'LLM_STREAM_EXCEPTION: ${streamedResponse.statusCode}\n$errorText',
-        );
-      }
+        if (chunk == null) {
+          streamController.addError(error ?? 'NULL ERROR');
+          return;
+        }
 
-      final utf8Stream = streamedResponse.stream.transform(utf8.decoder);
-
-      await for (final chunk in utf8Stream) {
         final lines = chunk.split('\n');
-
         for (final line in lines) {
           if (!line.startsWith('data: ') || line.contains('[DONE]')) continue;
-
-          final jsonStr = line.substring(6); // Strip 'data: '
-
+          final jsonStr = line.substring(6).trim();
           try {
             final jsonData = jsonDecode(jsonStr);
-            final output = modelController.streamOutputFormatter(jsonData);
-            yield output;
-          } catch (e, sT) {
-            print('⚠️ Error parsing SSE JSON: $e');
+            final formattedOutput = modelController.streamOutputFormatter(
+              jsonData,
+            );
+            streamController.sink.add(formattedOutput);
+          } catch (e) {
+            print('⚠️ JSON decode error in SSE: $e\Sending as Regular Text');
+            streamController.sink.add(jsonStr);
           }
         }
-      }
-    } catch (e) {
-      print('🚨 Error during streaming: $e');
-      rethrow;
-    } finally {
-      client.close();
-    }
+      },
+      onError: (error) {
+        streamController.addError('STREAM ERROR: $error');
+        streamController.close();
+      },
+      onDone: () {
+        streamController.close();
+      },
+      cancelOnError: true,
+    );
+
+    streamController.onCancel = () async {
+      await subscription.cancel();
+    };
+
+    return streamController.stream;
   }
 
   static callGenerativeModel(
     LLMModel model, {
     required Function(String?) onAnswer,
+    required Function(dynamic) onError,
     required String systemPrompt,
     required String userPrompt,
     String? credential,
@@ -112,22 +142,27 @@ class GenerativeAI {
     if (endpoint != null) {
       payload.endpoint = endpoint;
     }
-    if (stream) {
-      final streamRequest = c.createRequest(model, payload, stream: true);
-      final answerStream = streamGenAIRequest(model, streamRequest);
-      processGenAIStreamOutput(answerStream, (w) {
-        onAnswer('$w ');
-      });
-    } else {
-      final request = c.createRequest(model, payload);
-      final answer = await executeGenAIRequest(model, request);
-      onAnswer(answer);
+    try {
+      if (stream) {
+        final streamRequest = c.createRequest(model, payload, stream: true);
+        final answerStream = await streamGenAIRequest(model, streamRequest);
+        processGenAIStreamOutput(answerStream, (w) {
+          onAnswer('$w ');
+        }, onError);
+      } else {
+        final request = c.createRequest(model, payload);
+        final answer = await executeGenAIRequest(model, request);
+        onAnswer(answer);
+      }
+    } catch (e) {
+      onError(e);
     }
   }
 
   static void processGenAIStreamOutput(
     Stream<String?> stream,
     Function(String) onWord,
+    Function(dynamic) onError,
   ) {
     String buffer = '';
     stream.listen(
@@ -151,6 +186,9 @@ class GenerativeAI {
         if (buffer.trim().isNotEmpty) {
           onWord(buffer);
         }
+      },
+      onError: (e) {
+        onError(e);
       },
     );
   }
