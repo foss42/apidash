@@ -17,6 +17,7 @@ _$AIResponseModelImpl _$$AIResponseModelImplFromJson(Map json) =>
       ),
       body: json['body'] as String?,
       formattedBody: json['formattedBody'] as String?,
+      llmProvider: LLMProvider.fromJSONNullable(json['llmProvider'] as Map?),
       bodyBytes: const Uint8ListConverter().fromJson(
         json['bodyBytes'] as List<int>?,
       ),
@@ -31,6 +32,7 @@ Map<String, dynamic> _$$AIResponseModelImplToJson(
   'requestHeaders': instance.requestHeaders,
   'body': instance.body,
   'formattedBody': instance.formattedBody,
+  'llmProvider': LLMProvider.toJSONNullable(instance.llmProvider),
   'bodyBytes': const Uint8ListConverter().toJson(instance.bodyBytes),
   'time': const DurationConverter().toJson(instance.time),
 };

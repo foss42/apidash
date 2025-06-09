@@ -26,6 +26,11 @@ mixin _$AIResponseModel {
   Map<String, String>? get requestHeaders => throw _privateConstructorUsedError;
   String? get body => throw _privateConstructorUsedError;
   String? get formattedBody => throw _privateConstructorUsedError;
+  @JsonKey(
+    fromJson: LLMProvider.fromJSONNullable,
+    toJson: LLMProvider.toJSONNullable,
+  )
+  LLMProvider? get llmProvider => throw _privateConstructorUsedError;
   @Uint8ListConverter()
   Uint8List? get bodyBytes => throw _privateConstructorUsedError;
   @DurationConverter()
@@ -54,6 +59,11 @@ abstract class $AIResponseModelCopyWith<$Res> {
     Map<String, String>? requestHeaders,
     String? body,
     String? formattedBody,
+    @JsonKey(
+      fromJson: LLMProvider.fromJSONNullable,
+      toJson: LLMProvider.toJSONNullable,
+    )
+    LLMProvider? llmProvider,
     @Uint8ListConverter() Uint8List? bodyBytes,
     @DurationConverter() Duration? time,
   });
@@ -79,6 +89,7 @@ class _$AIResponseModelCopyWithImpl<$Res, $Val extends AIResponseModel>
     Object? requestHeaders = freezed,
     Object? body = freezed,
     Object? formattedBody = freezed,
+    Object? llmProvider = freezed,
     Object? bodyBytes = freezed,
     Object? time = freezed,
   }) {
@@ -104,6 +115,10 @@ class _$AIResponseModelCopyWithImpl<$Res, $Val extends AIResponseModel>
                 ? _value.formattedBody
                 : formattedBody // ignore: cast_nullable_to_non_nullable
                       as String?,
+            llmProvider: freezed == llmProvider
+                ? _value.llmProvider
+                : llmProvider // ignore: cast_nullable_to_non_nullable
+                      as LLMProvider?,
             bodyBytes: freezed == bodyBytes
                 ? _value.bodyBytes
                 : bodyBytes // ignore: cast_nullable_to_non_nullable
@@ -133,6 +148,11 @@ abstract class _$$AIResponseModelImplCopyWith<$Res>
     Map<String, String>? requestHeaders,
     String? body,
     String? formattedBody,
+    @JsonKey(
+      fromJson: LLMProvider.fromJSONNullable,
+      toJson: LLMProvider.toJSONNullable,
+    )
+    LLMProvider? llmProvider,
     @Uint8ListConverter() Uint8List? bodyBytes,
     @DurationConverter() Duration? time,
   });
@@ -157,6 +177,7 @@ class __$$AIResponseModelImplCopyWithImpl<$Res>
     Object? requestHeaders = freezed,
     Object? body = freezed,
     Object? formattedBody = freezed,
+    Object? llmProvider = freezed,
     Object? bodyBytes = freezed,
     Object? time = freezed,
   }) {
@@ -182,6 +203,10 @@ class __$$AIResponseModelImplCopyWithImpl<$Res>
             ? _value.formattedBody
             : formattedBody // ignore: cast_nullable_to_non_nullable
                   as String?,
+        llmProvider: freezed == llmProvider
+            ? _value.llmProvider
+            : llmProvider // ignore: cast_nullable_to_non_nullable
+                  as LLMProvider?,
         bodyBytes: freezed == bodyBytes
             ? _value.bodyBytes
             : bodyBytes // ignore: cast_nullable_to_non_nullable
@@ -205,6 +230,11 @@ class _$AIResponseModelImpl extends _AIResponseModel {
     final Map<String, String>? requestHeaders,
     this.body,
     this.formattedBody,
+    @JsonKey(
+      fromJson: LLMProvider.fromJSONNullable,
+      toJson: LLMProvider.toJSONNullable,
+    )
+    this.llmProvider,
     @Uint8ListConverter() this.bodyBytes,
     @DurationConverter() this.time,
   }) : _headers = headers,
@@ -241,6 +271,12 @@ class _$AIResponseModelImpl extends _AIResponseModel {
   @override
   final String? formattedBody;
   @override
+  @JsonKey(
+    fromJson: LLMProvider.fromJSONNullable,
+    toJson: LLMProvider.toJSONNullable,
+  )
+  final LLMProvider? llmProvider;
+  @override
   @Uint8ListConverter()
   final Uint8List? bodyBytes;
   @override
@@ -249,7 +285,7 @@ class _$AIResponseModelImpl extends _AIResponseModel {
 
   @override
   String toString() {
-    return 'AIResponseModel(statusCode: $statusCode, headers: $headers, requestHeaders: $requestHeaders, body: $body, formattedBody: $formattedBody, bodyBytes: $bodyBytes, time: $time)';
+    return 'AIResponseModel(statusCode: $statusCode, headers: $headers, requestHeaders: $requestHeaders, body: $body, formattedBody: $formattedBody, llmProvider: $llmProvider, bodyBytes: $bodyBytes, time: $time)';
   }
 
   @override
@@ -267,6 +303,8 @@ class _$AIResponseModelImpl extends _AIResponseModel {
             (identical(other.body, body) || other.body == body) &&
             (identical(other.formattedBody, formattedBody) ||
                 other.formattedBody == formattedBody) &&
+            (identical(other.llmProvider, llmProvider) ||
+                other.llmProvider == llmProvider) &&
             const DeepCollectionEquality().equals(other.bodyBytes, bodyBytes) &&
             (identical(other.time, time) || other.time == time));
   }
@@ -280,6 +318,7 @@ class _$AIResponseModelImpl extends _AIResponseModel {
     const DeepCollectionEquality().hash(_requestHeaders),
     body,
     formattedBody,
+    llmProvider,
     const DeepCollectionEquality().hash(bodyBytes),
     time,
   );
@@ -308,6 +347,11 @@ abstract class _AIResponseModel extends AIResponseModel {
     final Map<String, String>? requestHeaders,
     final String? body,
     final String? formattedBody,
+    @JsonKey(
+      fromJson: LLMProvider.fromJSONNullable,
+      toJson: LLMProvider.toJSONNullable,
+    )
+    final LLMProvider? llmProvider,
     @Uint8ListConverter() final Uint8List? bodyBytes,
     @DurationConverter() final Duration? time,
   }) = _$AIResponseModelImpl;
@@ -326,6 +370,12 @@ abstract class _AIResponseModel extends AIResponseModel {
   String? get body;
   @override
   String? get formattedBody;
+  @override
+  @JsonKey(
+    fromJson: LLMProvider.fromJSONNullable,
+    toJson: LLMProvider.toJSONNullable,
+  )
+  LLMProvider? get llmProvider;
   @override
   @Uint8ListConverter()
   Uint8List? get bodyBytes;

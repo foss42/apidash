@@ -44,6 +44,16 @@ enum LLMProvider {
     return {'llm_provider': p.name};
   }
 
+  static LLMProvider? fromJSONNullable(Map? json) {
+    if (json == null) return null;
+    return LLMProvider.fromName(json['llm_provider']);
+  }
+
+  static Map? toJSONNullable(LLMProvider? p) {
+    if (p == null) return null;
+    return {'llm_provider': p.name};
+  }
+
   LLMModel getLLMByIdentifier(String identifier) {
     switch (this) {
       case LLMProvider.ollama:

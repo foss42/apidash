@@ -152,10 +152,11 @@ class CollectionStateNotifier
     final rId = id ?? ref.read(selectedIdStateProvider);
     if (rId == null || state?[rId] == null) return;
     var currentModel = state![rId]!;
+
     final newModel = currentModel.copyWith(
       responseStatus: null,
       message: null,
-      genericRequestModel: null,
+      genericResponseModel: null,
       isWorking: false,
       sendingTime: null,
     );
@@ -344,7 +345,7 @@ class CollectionStateNotifier
           method: HTTPVerb.post,
           headers: [
             ...genAIRequest.headers.entries.map(
-              (x) => NameValueModel.fromJson({x.key: x.value}),
+              (x) => NameValueModel(name: x.key, value: x.value),
             ),
           ],
           url: genAIRequest.endpoint,
@@ -381,8 +382,9 @@ class CollectionStateNotifier
         aiResponseModel = baseAIResponseModel.fromResponse(
           response: reqRes.$1!,
           time: reqRes.$2!,
+          provider: aiRequestModel!.provider,
         );
-        final aiRq = aiRequestModel!.createRequest();
+        final aiRq = aiRequestModel.createRequest();
         url = aiRq.endpoint;
         method = HTTPVerb.fromMethod(aiRq.method);
       } else {

@@ -58,7 +58,9 @@ class ResponseBody extends StatelessWidget {
     //           '$kMsgUnknowContentType - ${responseModel.contentType}. $kUnexpectedRaiseIssue');
     // }
 
-    var responseBodyView = getResponseBodyViewOptions(mediaType);
+    var responseBodyView = aiResponseModel != null
+        ? ([ResponseBodyView.answer, ResponseBodyView.raw], 'text')
+        : getResponseBodyViewOptions(mediaType);
     var options = responseBodyView.$1;
     var highlightLanguage = responseBodyView.$2;
 

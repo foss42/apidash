@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:genai/providers/providers.dart';
 part 'ai_response_model.freezed.dart';
 part 'ai_response_model.g.dart';
 
@@ -45,6 +46,11 @@ class AIResponseModel with _$AIResponseModel {
     Map<String, String>? requestHeaders,
     String? body,
     String? formattedBody,
+    @JsonKey(
+      fromJson: LLMProvider.fromJSONNullable,
+      toJson: LLMProvider.toJSONNullable,
+    )
+    LLMProvider? llmProvider,
     @Uint8ListConverter() Uint8List? bodyBytes,
     @DurationConverter() Duration? time,
   }) = _AIResponseModel;
@@ -52,7 +58,11 @@ class AIResponseModel with _$AIResponseModel {
   factory AIResponseModel.fromJson(Map<String, Object?> json) =>
       _$AIResponseModelFromJson(json);
 
-  AIResponseModel fromResponse({required Response response, Duration? time}) {
+  AIResponseModel fromResponse({
+    required Response response,
+    required LLMProvider provider,
+    Duration? time,
+  }) {
     final responseHeaders = mergeMaps({
       HttpHeaders.contentLengthHeader: response.contentLength.toString(),
     }, response.headers);
@@ -60,15 +70,17 @@ class AIResponseModel with _$AIResponseModel {
     final body = (mediaType?.subtype == kSubTypeJson)
         ? utf8.decode(response.bodyBytes)
         : response.body;
-
     return AIResponseModel(
       statusCode: response.statusCode,
       headers: responseHeaders,
       requestHeaders: response.request?.headers,
       body: body,
-      formattedBody: formatBody(body, mediaType),
+      formattedBody: response.statusCode == 200
+          ? provider.models.$2.outputFormatter(jsonDecode(body))
+          : formatBody(body, mediaType),
       bodyBytes: response.bodyBytes,
       time: time,
+      llmProvider: provider,
     );
   }
 
