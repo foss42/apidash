@@ -179,7 +179,7 @@ class CollectionStateNotifier
       requestTabIndex: 0,
       responseStatus: null,
       message: null,
-      genericRequestModel: null,
+      genericRequestModel: currentModel.genericRequestModel?.clone(),
       isWorking: false,
       sendingTime: null,
     );
@@ -337,22 +337,27 @@ class CollectionStateNotifier
 
     if (apiType == APIType.ai) {
       aiRequestModel = requestModel.genericRequestModel!.aiRequestModel!;
-      final genAIRequest = aiRequestModel.createRequest();
-      reqRes = await sendHttpRequest(
-        requestId,
-        APIType.rest, //AI Requests internally use REST
-        HttpRequestModel(
-          method: HTTPVerb.post,
-          headers: [
-            ...genAIRequest.headers.entries.map(
-              (x) => NameValueModel(name: x.key, value: x.value),
-            ),
-          ],
-          url: genAIRequest.endpoint,
-          bodyContentType: ContentType.json,
-          body: jsonEncode(genAIRequest.body),
-        ),
-      );
+      if (aiRequestModel.payload.systemPrompt.isEmpty &&
+          aiRequestModel.payload.userPrompt.isEmpty) {
+        reqRes = (null, null, 'AI Requests cannot have empty prompts');
+      } else {
+        final genAIRequest = aiRequestModel.createRequest();
+        reqRes = await sendHttpRequest(
+          requestId,
+          APIType.rest, //AI Requests internally use REST
+          HttpRequestModel(
+            method: HTTPVerb.post,
+            headers: [
+              ...genAIRequest.headers.entries.map(
+                (x) => NameValueModel(name: x.key, value: x.value),
+              ),
+            ],
+            url: genAIRequest.endpoint,
+            bodyContentType: ContentType.json,
+            body: jsonEncode(genAIRequest.body),
+          ),
+        );
+      }
     } else {
       substitutedHttpRequestModel = getSubstitutedHttpRequestModel(
           requestModel.genericRequestModel!.httpRequestModel!);

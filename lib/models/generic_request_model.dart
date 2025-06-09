@@ -19,4 +19,11 @@ class GenericRequestModel with _$GenericRequestModel {
 
   factory GenericRequestModel.fromJson(Map<String, dynamic> json) =>
       _$GenericRequestModelFromJson(json);
+
+  GenericRequestModel clone() {
+    return GenericRequestModel(
+      aiRequestModel: aiRequestModel?.clone(),
+      httpRequestModel: httpRequestModel,
+    );
+  }
 }

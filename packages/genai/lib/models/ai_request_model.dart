@@ -32,4 +32,12 @@ class AIRequestModel with _$AIRequestModel {
     final (_, ModelController controller) = model.provider.models;
     return controller.createRequest(model, payload);
   }
+
+  AIRequestModel clone() {
+    return AIRequestModel(
+      payload: payload.clone(),
+      model: model,
+      provider: provider,
+    );
+  }
 }
