@@ -242,7 +242,6 @@ class HisRequestBody extends ConsumerWidget {
             readOnly: true,
           ),
         ),
-      APIType.ai => FlutterLogo(),
       _ => kSizedBoxEmpty,
     };
   }

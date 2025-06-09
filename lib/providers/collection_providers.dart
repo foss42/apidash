@@ -168,6 +168,8 @@ class CollectionStateNotifier
       requestTabIndex: 0,
       responseStatus: null,
       message: null,
+      httpRequestModel: currentModel.httpRequestModel?.copyWith(),
+      aiRequestModel: currentModel.aiRequestModel?.copyWith(),
       httpResponseModel: null,
       isWorking: false,
       sendingTime: null,
