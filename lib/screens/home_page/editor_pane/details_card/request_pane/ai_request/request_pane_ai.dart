@@ -18,7 +18,7 @@ class EditAIRequestPane extends ConsumerWidget {
 
     return RequestPane(
       selectedId: selectedId,
-      codePaneVisible: false,
+      codePaneVisible: codePaneVisible,
       tabIndex: tabIndex,
       onPressedCodeButton: () {
         ref.read(codePaneVisibleStateProvider.notifier).state =

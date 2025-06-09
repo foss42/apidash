@@ -46,6 +46,8 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
       borderRadius: kBorderRadius8,
     );
 
+    final isAIRequest = widget.options.contains(ResponseBodyView.answer);
+
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
         var showLabel = showButtonLabelsInBodySuccess(
@@ -87,20 +89,33 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
                         ),
                   const Spacer(),
                   ((widget.options == kPreviewRawBodyViewOptions) ||
-                          kCodeRawBodyViewOptions.contains(currentSeg))
+                          kCodeRawBodyViewOptions.contains(currentSeg) ||
+                          isAIRequest)
                       ? CopyButton(
-                          toCopy: widget.formattedBody ?? widget.body,
+                          toCopy: (currentSeg == ResponseBodyView.answer)
+                              ? widget.formattedBody!
+                              : isAIRequest
+                                  ? formatBody(widget.body, widget.mediaType)!
+                                  : (widget.formattedBody ?? widget.body),
                           showLabel: showLabel,
                         )
                       : const SizedBox(),
                   kIsMobile
                       ? ShareButton(
-                          toShare: widget.formattedBody ?? widget.body,
+                          toShare: (currentSeg == ResponseBodyView.answer)
+                              ? widget.formattedBody!
+                              : isAIRequest
+                                  ? formatBody(widget.body, widget.mediaType)!
+                                  : (widget.formattedBody ?? widget.body),
                           showLabel: showLabel,
                         )
                       : SaveInDownloadsButton(
-                          content: widget.bytes,
-                          mimeType: widget.mediaType.mimeType,
+                          content: (currentSeg == ResponseBodyView.answer)
+                              ? utf8.encode(widget.formattedBody!)
+                              : widget.bytes,
+                          mimeType: (currentSeg == ResponseBodyView.answer)
+                              ? 'text/plain'
+                              : widget.mediaType.mimeType,
                           showLabel: showLabel,
                         ),
                 ],
@@ -135,6 +150,24 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
                     ),
                   ),
                 ResponseBodyView.raw => Expanded(
+                    child: Container(
+                      width: double.maxFinite,
+                      padding: kP8,
+                      decoration: textContainerdecoration,
+                      child: SingleChildScrollView(
+                        child: SelectableText(
+                          widget.options.contains(ResponseBodyView.answer)
+                              ? formatBody(
+                                  widget.body,
+                                  MediaType(kTypeApplication, kSubTypeJson),
+                                )!
+                              : (widget.formattedBody ?? widget.body),
+                          style: kCodeStyle,
+                        ),
+                      ),
+                    ),
+                  ),
+                ResponseBodyView.answer => Expanded(
                     child: Container(
                       width: double.maxFinite,
                       padding: kP8,

@@ -18,8 +18,8 @@ class ResponseBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    HttpResponseModel? httpResponseModel;
-    httpResponseModel = selectedRequestModel?.httpResponseModel;
+    HttpResponseModel? httpResponseModel =
+        selectedRequestModel?.httpResponseModel;
 
     if (httpResponseModel == null) {
       return const ErrorMessage(
@@ -55,7 +55,9 @@ class ResponseBody extends StatelessWidget {
     //           '$kMsgUnknowContentType - ${responseModel.contentType}. $kUnexpectedRaiseIssue');
     // }
 
-    var responseBodyView = getResponseBodyViewOptions(mediaType);
+    var responseBodyView = selectedRequestModel?.apiType == APIType.ai
+        ? ([ResponseBodyView.answer, ResponseBodyView.raw], 'text')
+        : getResponseBodyViewOptions(mediaType);
     var options = responseBodyView.$1;
     var highlightLanguage = responseBodyView.$2;
 
