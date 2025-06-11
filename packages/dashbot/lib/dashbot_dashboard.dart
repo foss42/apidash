@@ -1,28 +1,23 @@
-import 'package:apidash/dashbot/core/providers/dashbot_window_notifier.dart';
-import 'package:apidash/dashbot/core/routes/dashbot_router.dart';
-import 'package:apidash/dashbot/core/routes/dashbot_routes.dart'
-    show DashbotRoutes;
-import 'package:apidash/models/request_model.dart' show RequestModel;
-import 'package:apidash/providers/collection_providers.dart'
-    show selectedRequestModelProvider;
-import 'package:apidash_design_system/tokens/tokens.dart';
+import 'package:apidash_design_system/apidash_design_system.dart';
+
+import 'core/providers/dashbot_window_notifier.dart';
+import 'core/routes/dashbot_router.dart';
+import 'core/routes/dashbot_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class DashbotWindow extends ConsumerWidget {
   final VoidCallback onClose;
 
-  const DashbotWindow({
-    super.key,
-    required this.onClose,
-  });
+  const DashbotWindow({super.key, required this.onClose});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final windowState = ref.watch(dashbotWindowNotifierProvider);
     final windowNotifier = ref.read(dashbotWindowNotifierProvider.notifier);
-    final RequestModel? currentRequest =
-        ref.watch(selectedRequestModelProvider);
+    // final RequestModel? currentRequest = ref.watch(
+    //   selectedRequestModelProvider,
+    // );
 
     return Stack(
       children: [
@@ -46,8 +41,11 @@ class DashbotWindow extends ConsumerWidget {
                       // This is to update position
                       GestureDetector(
                         onPanUpdate: (details) {
-                          windowNotifier.updatePosition(details.delta.dx,
-                              details.delta.dy, MediaQuery.of(context).size);
+                          windowNotifier.updatePosition(
+                            details.delta.dx,
+                            details.delta.dy,
+                            MediaQuery.of(context).size,
+                          );
                         },
                         child: Container(
                           height: 50,
@@ -94,9 +92,10 @@ class DashbotWindow extends ConsumerWidget {
                       ),
                       Expanded(
                         child: Navigator(
-                          initialRoute: currentRequest?.responseStatus == null
-                              ? DashbotRoutes.dashbotDefault
-                              : DashbotRoutes.dashbotHome,
+                          initialRoute: DashbotRoutes.dashbotHome,
+                          // currentRequest?.responseStatus == null
+                          //     ? DashbotRoutes.dashbotDefault
+                          //     : DashbotRoutes.dashbotHome,
                           onGenerateRoute: generateRoute,
                         ),
                       ),

@@ -1,4 +1,4 @@
-import 'package:apidash/dashbot/core/routes/dashbot_routes.dart';
+import '../../../../core/routes/dashbot_routes.dart';
 import 'package:apidash_design_system/tokens/measurements.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

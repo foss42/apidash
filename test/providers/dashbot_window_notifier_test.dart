@@ -1,7 +1,7 @@
 import 'dart:ui';
 
-import 'package:apidash/dashbot/core/model/dashbot_window_model.dart';
-import 'package:apidash/dashbot/core/providers/dashbot_window_notifier.dart';
+import '../../packages/dashbot/lib/core/model/dashbot_window_model.dart';
+import '../../packages/dashbot/lib/core/providers/dashbot_window_notifier.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'helpers.dart';

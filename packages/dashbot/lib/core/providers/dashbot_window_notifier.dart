@@ -1,4 +1,4 @@
-import 'package:apidash/dashbot/core/model/dashbot_window_model.dart';
+import '../model/dashbot_window_model.dart';
 import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
