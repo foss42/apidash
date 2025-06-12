@@ -1,4 +1,5 @@
 import 'package:apidash_core/apidash_core.dart';
+import 'package:apidash_core/models/auth/api_auth_model.dart';
 
 part 'request_model.freezed.dart';
 
@@ -15,8 +16,7 @@ class RequestModel with _$RequestModel {
     @Default(APIType.rest) APIType apiType,
     @Default("") String name,
     @Default("") String description,
-    @Default(APIAuthType.none) APIAuthType authType,
-    APIAuthModel? authData,
+    @Default(ApiAuthModel(type: APIAuthType.none)) ApiAuthModel? authData,
     @JsonKey(includeToJson: false) @Default(0) requestTabIndex,
     HttpRequestModel? httpRequestModel,
     int? responseStatus,

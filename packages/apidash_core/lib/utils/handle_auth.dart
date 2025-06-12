@@ -1,70 +1,78 @@
 import 'dart:convert';
 import 'package:apidash_core/consts.dart';
-import 'package:apidash_core/models/api_auth_model.dart';
+import 'package:apidash_core/models/auth/api_auth_model.dart';
 import 'package:apidash_core/models/http_request_model.dart';
 import 'package:seed/seed.dart';
 
-HttpRequestModel handleAuth(HttpRequestModel httpRequestModel,
-    APIAuthType apiAuthType, APIAuthModel? authData) {
-  if (authData == null || apiAuthType == APIAuthType.none) {
+HttpRequestModel handleAuth(HttpRequestModel httpRequestModel, ApiAuthModel? auth) {
+  if (auth == null || auth.type == APIAuthType.none) {
     return httpRequestModel;
   }
 
-  List<NameValueModel> updatedHeaders = List.from(httpRequestModel.headers ?? []);
+  List<NameValueModel> updatedHeaders =
+      List.from(httpRequestModel.headers ?? []);
   List<NameValueModel> updatedParams = List.from(httpRequestModel.params ?? []);
-  List<bool> updatedHeaderEnabledList = List.from(httpRequestModel.isHeaderEnabledList ?? []);
-  List<bool> updatedParamEnabledList = List.from(httpRequestModel.isParamEnabledList ?? []);
+  List<bool> updatedHeaderEnabledList =
+      List.from(httpRequestModel.isHeaderEnabledList ?? []);
+  List<bool> updatedParamEnabledList =
+      List.from(httpRequestModel.isParamEnabledList ?? []);
 
-  switch (apiAuthType) {
+  switch (auth.type) {
     case APIAuthType.basic:
-      final auth = authData as BasicAuth;
-      final encoded =
-          base64Encode(utf8.encode('${auth.username}:${auth.password}'));
-      updatedHeaders.add(const NameValueModel(name: 'Authorization', value: ''));
-      updatedHeaders[updatedHeaders.length - 1] = NameValueModel(
-        name: 'Authorization', 
-        value: 'Basic $encoded'
-      );
-      updatedHeaderEnabledList.add(true);
-      break;
-
-    case APIAuthType.bearerToken:
-      final auth = authData as BearerTokenAuth;
-      updatedHeaders.add(NameValueModel(
-        name: 'Authorization', 
-        value: 'Bearer ${auth.token}'
-      ));
-      updatedHeaderEnabledList.add(true);
-      break;
-
-    case APIAuthType.jwtBearer:
-      final auth = authData as JWTBearerAuth;
-      updatedHeaders.add(NameValueModel(
-        name: 'Authorization', 
-        value: 'Bearer ${auth.jwt}'
-      ));
-      updatedHeaderEnabledList.add(true);
-      break;
-
-    case APIAuthType.apiKey:
-      final auth = authData as APIKeyAuth;
-      if (auth.location == 'header') {
-        updatedHeaders.add(NameValueModel(
-          name: auth.name, 
-          value: auth.key
-        ));
+      if (auth.basic != null) {
+        final basicAuth = auth.basic!;
+        final encoded = base64Encode(
+            utf8.encode('${basicAuth.username}:${basicAuth.password}'));
+        updatedHeaders.add(
+            NameValueModel(name: 'Authorization', value: 'Basic $encoded'));
         updatedHeaderEnabledList.add(true);
-      } else if (auth.location == 'query') {
-        updatedParams.add(NameValueModel(
-          name: auth.name, 
-          value: auth.key
-        ));
-        updatedParamEnabledList.add(true);
       }
       break;
 
-    default:
+    case APIAuthType.bearer:
+      if (auth.bearer != null) {
+        final bearerAuth = auth.bearer!;
+        updatedHeaders.add(NameValueModel(
+            name: 'Authorization', value: 'Bearer ${bearerAuth.token}'));
+        updatedHeaderEnabledList.add(true);
+      }
       break;
+
+    case APIAuthType.jwt:
+      if (auth.jwt != null) {
+        final jwtAuth = auth.jwt!;
+        updatedHeaders.add(NameValueModel(
+            name: 'Authorization', value: 'Bearer ${jwtAuth.jwt}'));
+        updatedHeaderEnabledList.add(true);
+      }
+      break;
+
+    case APIAuthType.apiKey:
+      if (auth.apikey != null) {
+        final apiKeyAuth = auth.apikey!;
+        if (apiKeyAuth.location == 'header') {
+          updatedHeaders.add(
+              NameValueModel(name: apiKeyAuth.name, value: apiKeyAuth.key));
+          updatedHeaderEnabledList.add(true);
+        } else if (apiKeyAuth.location == 'query') {
+          updatedParams.add(
+              NameValueModel(name: apiKeyAuth.name, value: apiKeyAuth.key));
+          updatedParamEnabledList.add(true);
+        }
+      }
+      break;
+
+    case APIAuthType.none:
+      break;
+    case APIAuthType.digest:
+      // TODO: Handle this case.
+      throw UnimplementedError();
+    case APIAuthType.oauth1:
+      // TODO: Handle this case.
+      throw UnimplementedError();
+    case APIAuthType.oauth2:
+      // TODO: Handle this case.
+      throw UnimplementedError();
   }
 
   return httpRequestModel.copyWith(

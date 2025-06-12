@@ -17,8 +17,7 @@ final httpClientManager = HttpClientManager();
 Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
   String requestId,
   APIType apiType,
-  APIAuthModel? authData,
-  APIAuthType apiAuthType,
+  ApiAuthModel? authData,
   HttpRequestModel requestModel, {
   SupportedUriSchemes defaultUriScheme = kDefaultUriScheme,
   bool noSSL = false,
@@ -29,8 +28,7 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
   final client = httpClientManager.createClient(requestId, noSSL: noSSL);
 
   // Handle authentication
-  final authenticatedRequestModel =
-      handleAuth(requestModel, apiAuthType, authData);
+  final authenticatedRequestModel = handleAuth(requestModel, authData);
 
   (Uri?, String?) uriRec = getValidRequestUri(
     authenticatedRequestModel.url,
