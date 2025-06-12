@@ -109,12 +109,12 @@ class EditAuthType extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              onChanged: (value) => updateAuth(
+              onEditingComplete: () => updateAuth(
                 ApiAuthModel(
                   type: APIAuthType.basic,
                   basic: AuthBasicAuthModel(
-                    username: usernameController.text,
-                    password: value,
+                    username: usernameController.text.trim(),
+                    password: passwordController.text.trim(),
                   ),
                 ),
               ),
@@ -145,12 +145,12 @@ class EditAuthType extends ConsumerWidget {
                 ),
               ),
               obscureText: true,
-              onChanged: (value) => updateAuth(
+              onEditingComplete: () => updateAuth(
                 ApiAuthModel(
                   type: APIAuthType.basic,
                   basic: AuthBasicAuthModel(
-                    username: usernameController.text,
-                    password: value,
+                    username: usernameController.text.trim(),
+                    password: passwordController.text.trim(),
                   ),
                 ),
               ),
@@ -187,10 +187,10 @@ class EditAuthType extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              onChanged: (value) => updateAuth(
+              onEditingComplete: () => updateAuth(
                 ApiAuthModel(
                   type: APIAuthType.bearer,
-                  bearer: AuthBearerModel(token: value),
+                  bearer: AuthBearerModel(token: tokenController.text.trim()),
                 ),
               ),
             ),
@@ -202,7 +202,7 @@ class EditAuthType extends ConsumerWidget {
           text: authData?.apikey?.key ?? '',
         );
         final nameController = TextEditingController(
-          text: authData?.apikey?.key ?? 'x-api-key',
+          text: authData?.apikey?.name ?? 'x-api-key',
         );
         final currentLocation = authData?.apikey?.location ?? 'header';
 
@@ -275,12 +275,12 @@ class EditAuthType extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              onChanged: (value) => updateAuth(
+              onEditingComplete: () => updateAuth(
                 ApiAuthModel(
                   type: APIAuthType.apiKey,
                   apikey: AuthApiKeyModel(
                     key: keyController.text,
-                    name: value,
+                    name: nameController.text.trim(),
                     location: currentLocation,
                   ),
                 ),
@@ -309,10 +309,10 @@ class EditAuthType extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              onChanged: (value) => updateAuth(ApiAuthModel(
+              onEditingComplete: () => updateAuth(ApiAuthModel(
                 type: APIAuthType.apiKey,
                 apikey: AuthApiKeyModel(
-                  key: value,
+                  key: keyController.text.trim(),
                   name: nameController.text,
                   location: currentLocation,
                 ),
@@ -350,9 +350,9 @@ class EditAuthType extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              onChanged: (value) => updateAuth(ApiAuthModel(
+              onEditingComplete: () => updateAuth(ApiAuthModel(
                 type: APIAuthType.jwt,
-                jwt: AuthJwtModel(jwt: value),
+                jwt: AuthJwtModel(jwt: jwtController.text.trim()),
               )),
             ),
           ],
