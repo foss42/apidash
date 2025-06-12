@@ -1,3 +1,7 @@
+import 'package:apidash_core/models/auth/auth_api_key_model.dart';
+import 'package:apidash_core/models/auth/auth_basic_model.dart';
+import 'package:apidash_core/models/auth/auth_bearer_model.dart';
+import 'package:apidash_core/models/auth/auth_jwt_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash_core/apidash_core.dart';
@@ -14,7 +18,7 @@ class EditAuthType extends ConsumerWidget {
       return const SizedBox.shrink();
     }
 
-    final currentAuthType = selectedRequest.authType;
+    final currentAuthType = selectedRequest.authData?.type ?? APIAuthType.none;
     final currentAuthData = selectedRequest.authData;
 
     return Padding(
@@ -48,14 +52,14 @@ class EditAuthType extends ConsumerWidget {
             onChanged: (APIAuthType? newType) {
               if (newType != null) {
                 ref.read(collectionStateNotifierProvider.notifier).update(
-                      authType: newType,
-                      authData: null,
+                      authData: currentAuthData?.copyWith(type: newType) ??
+                          ApiAuthModel(type: newType),
                     );
               }
             },
           ),
           const SizedBox(height: 48),
-          _buildAuthFields(context, ref, currentAuthType, currentAuthData),
+          _buildAuthFields(context, ref, currentAuthData),
         ],
       ),
     );
@@ -64,22 +68,21 @@ class EditAuthType extends ConsumerWidget {
   Widget _buildAuthFields(
     BuildContext context,
     WidgetRef ref,
-    APIAuthType authType,
-    APIAuthModel? authData,
+    ApiAuthModel? authData,
   ) {
-    void updateAuth(APIAuthModel model) {
+    void updateAuth(ApiAuthModel model) {
       ref.read(collectionStateNotifierProvider.notifier).update(
             authData: model,
           );
     }
 
-    switch (authType) {
+    switch (authData?.type) {
       case APIAuthType.basic:
         final usernameController = TextEditingController(
-          text: (authData is BasicAuth) ? authData.username : '',
+          text: authData?.basic?.username ?? '',
         );
         final passwordController = TextEditingController(
-          text: (authData is BasicAuth) ? authData.password : '',
+          text: authData?.basic?.password ?? '',
         );
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -107,7 +110,13 @@ class EditAuthType extends ConsumerWidget {
                 ),
               ),
               onChanged: (value) => updateAuth(
-                BasicAuth(username: value, password: passwordController.text),
+                ApiAuthModel(
+                  type: APIAuthType.basic,
+                  basic: AuthBasicAuthModel(
+                    username: usernameController.text,
+                    password: value,
+                  ),
+                ),
               ),
             ),
             SizedBox(
@@ -136,15 +145,22 @@ class EditAuthType extends ConsumerWidget {
                 ),
               ),
               obscureText: true,
-              onChanged: (value) => updateAuth(BasicAuth(
-                  username: usernameController.text, password: value)),
+              onChanged: (value) => updateAuth(
+                ApiAuthModel(
+                  type: APIAuthType.basic,
+                  basic: AuthBasicAuthModel(
+                    username: usernameController.text,
+                    password: value,
+                  ),
+                ),
+              ),
             ),
           ],
         );
 
-      case APIAuthType.bearerToken:
+      case APIAuthType.bearer:
         final tokenController = TextEditingController(
-          text: (authData is BearerTokenAuth) ? authData.token : '',
+          text: authData?.bearer?.token ?? '',
         );
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -171,20 +187,24 @@ class EditAuthType extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              onChanged: (value) => updateAuth(BearerTokenAuth(token: value)),
+              onChanged: (value) => updateAuth(
+                ApiAuthModel(
+                  type: APIAuthType.bearer,
+                  bearer: AuthBearerModel(token: value),
+                ),
+              ),
             ),
           ],
         );
 
       case APIAuthType.apiKey:
         final keyController = TextEditingController(
-          text: (authData is APIKeyAuth) ? authData.key : '',
+          text: authData?.apikey?.key ?? '',
         );
         final nameController = TextEditingController(
-          text: (authData is APIKeyAuth) ? authData.name : 'x-api-key',
+          text: authData?.apikey?.key ?? 'x-api-key',
         );
-        final currentLocation =
-            (authData is APIKeyAuth) ? authData.location : 'header';
+        final currentLocation = authData?.apikey?.location ?? 'header';
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -221,10 +241,13 @@ class EditAuthType extends ConsumerWidget {
               ],
               onChanged: (String? newLocation) {
                 if (newLocation != null) {
-                  updateAuth(APIKeyAuth(
-                    key: keyController.text,
-                    name: nameController.text,
-                    location: newLocation,
+                  updateAuth(ApiAuthModel(
+                    type: APIAuthType.apiKey,
+                    apikey: AuthApiKeyModel(
+                      key: keyController.text,
+                      name: nameController.text,
+                      location: newLocation,
+                    ),
                   ));
                 }
               },
@@ -252,11 +275,16 @@ class EditAuthType extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              onChanged: (value) => updateAuth(APIKeyAuth(
-                key: keyController.text,
-                name: value,
-                location: currentLocation,
-              )),
+              onChanged: (value) => updateAuth(
+                ApiAuthModel(
+                  type: APIAuthType.apiKey,
+                  apikey: AuthApiKeyModel(
+                    key: keyController.text,
+                    name: value,
+                    location: currentLocation,
+                  ),
+                ),
+              ),
             ),
             const SizedBox(height: 16),
             Text(
@@ -281,18 +309,21 @@ class EditAuthType extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              onChanged: (value) => updateAuth(APIKeyAuth(
-                key: value,
-                name: nameController.text,
-                location: currentLocation,
+              onChanged: (value) => updateAuth(ApiAuthModel(
+                type: APIAuthType.apiKey,
+                apikey: AuthApiKeyModel(
+                  key: value,
+                  name: nameController.text,
+                  location: currentLocation,
+                ),
               )),
             ),
           ],
         );
 
-      case APIAuthType.jwtBearer:
+      case APIAuthType.jwt:
         final jwtController = TextEditingController(
-          text: (authData is JWTBearerAuth) ? authData.jwt : '',
+          text: authData?.jwt?.jwt ?? '',
         );
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -319,7 +350,10 @@ class EditAuthType extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              onChanged: (value) => updateAuth(JWTBearerAuth(jwt: value)),
+              onChanged: (value) => updateAuth(ApiAuthModel(
+                type: APIAuthType.jwt,
+                jwt: AuthJwtModel(jwt: value),
+              )),
             ),
           ],
         );

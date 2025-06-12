@@ -24,8 +24,7 @@ mixin _$RequestModel {
   APIType get apiType => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   String get description => throw _privateConstructorUsedError;
-  APIAuthType get authType => throw _privateConstructorUsedError;
-  APIAuthModel? get authData => throw _privateConstructorUsedError;
+  ApiAuthModel? get authData => throw _privateConstructorUsedError;
   @JsonKey(includeToJson: false)
   dynamic get requestTabIndex => throw _privateConstructorUsedError;
   HttpRequestModel? get httpRequestModel => throw _privateConstructorUsedError;
@@ -61,8 +60,7 @@ abstract class $RequestModelCopyWith<$Res> {
       APIType apiType,
       String name,
       String description,
-      APIAuthType authType,
-      APIAuthModel? authData,
+      ApiAuthModel? authData,
       @JsonKey(includeToJson: false) dynamic requestTabIndex,
       HttpRequestModel? httpRequestModel,
       int? responseStatus,
@@ -73,7 +71,7 @@ abstract class $RequestModelCopyWith<$Res> {
       String? preRequestScript,
       String? postRequestScript});
 
-  $APIAuthModelCopyWith<$Res>? get authData;
+  $ApiAuthModelCopyWith<$Res>? get authData;
   $HttpRequestModelCopyWith<$Res>? get httpRequestModel;
   $HttpResponseModelCopyWith<$Res>? get httpResponseModel;
 }
@@ -97,7 +95,6 @@ class _$RequestModelCopyWithImpl<$Res, $Val extends RequestModel>
     Object? apiType = null,
     Object? name = null,
     Object? description = null,
-    Object? authType = null,
     Object? authData = freezed,
     Object? requestTabIndex = freezed,
     Object? httpRequestModel = freezed,
@@ -126,14 +123,10 @@ class _$RequestModelCopyWithImpl<$Res, $Val extends RequestModel>
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
               as String,
-      authType: null == authType
-          ? _value.authType
-          : authType // ignore: cast_nullable_to_non_nullable
-              as APIAuthType,
       authData: freezed == authData
           ? _value.authData
           : authData // ignore: cast_nullable_to_non_nullable
-              as APIAuthModel?,
+              as ApiAuthModel?,
       requestTabIndex: freezed == requestTabIndex
           ? _value.requestTabIndex
           : requestTabIndex // ignore: cast_nullable_to_non_nullable
@@ -177,12 +170,12 @@ class _$RequestModelCopyWithImpl<$Res, $Val extends RequestModel>
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $APIAuthModelCopyWith<$Res>? get authData {
+  $ApiAuthModelCopyWith<$Res>? get authData {
     if (_value.authData == null) {
       return null;
     }
 
-    return $APIAuthModelCopyWith<$Res>(_value.authData!, (value) {
+    return $ApiAuthModelCopyWith<$Res>(_value.authData!, (value) {
       return _then(_value.copyWith(authData: value) as $Val);
     });
   }
@@ -229,8 +222,7 @@ abstract class _$$RequestModelImplCopyWith<$Res>
       APIType apiType,
       String name,
       String description,
-      APIAuthType authType,
-      APIAuthModel? authData,
+      ApiAuthModel? authData,
       @JsonKey(includeToJson: false) dynamic requestTabIndex,
       HttpRequestModel? httpRequestModel,
       int? responseStatus,
@@ -242,7 +234,7 @@ abstract class _$$RequestModelImplCopyWith<$Res>
       String? postRequestScript});
 
   @override
-  $APIAuthModelCopyWith<$Res>? get authData;
+  $ApiAuthModelCopyWith<$Res>? get authData;
   @override
   $HttpRequestModelCopyWith<$Res>? get httpRequestModel;
   @override
@@ -266,7 +258,6 @@ class __$$RequestModelImplCopyWithImpl<$Res>
     Object? apiType = null,
     Object? name = null,
     Object? description = null,
-    Object? authType = null,
     Object? authData = freezed,
     Object? requestTabIndex = freezed,
     Object? httpRequestModel = freezed,
@@ -295,14 +286,10 @@ class __$$RequestModelImplCopyWithImpl<$Res>
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
               as String,
-      authType: null == authType
-          ? _value.authType
-          : authType // ignore: cast_nullable_to_non_nullable
-              as APIAuthType,
       authData: freezed == authData
           ? _value.authData
           : authData // ignore: cast_nullable_to_non_nullable
-              as APIAuthModel?,
+              as ApiAuthModel?,
       requestTabIndex: freezed == requestTabIndex
           ? _value.requestTabIndex!
           : requestTabIndex,
@@ -351,8 +338,7 @@ class _$RequestModelImpl implements _RequestModel {
       this.apiType = APIType.rest,
       this.name = "",
       this.description = "",
-      this.authType = APIAuthType.none,
-      this.authData,
+      this.authData = const ApiAuthModel(type: APIAuthType.none),
       @JsonKey(includeToJson: false) this.requestTabIndex = 0,
       this.httpRequestModel,
       this.responseStatus,
@@ -379,9 +365,7 @@ class _$RequestModelImpl implements _RequestModel {
   final String description;
   @override
   @JsonKey()
-  final APIAuthType authType;
-  @override
-  final APIAuthModel? authData;
+  final ApiAuthModel? authData;
   @override
   @JsonKey(includeToJson: false)
   final dynamic requestTabIndex;
@@ -406,7 +390,7 @@ class _$RequestModelImpl implements _RequestModel {
 
   @override
   String toString() {
-    return 'RequestModel(id: $id, apiType: $apiType, name: $name, description: $description, authType: $authType, authData: $authData, requestTabIndex: $requestTabIndex, httpRequestModel: $httpRequestModel, responseStatus: $responseStatus, message: $message, httpResponseModel: $httpResponseModel, isWorking: $isWorking, sendingTime: $sendingTime)';
+    return 'RequestModel(id: $id, apiType: $apiType, name: $name, description: $description, authData: $authData, requestTabIndex: $requestTabIndex, httpRequestModel: $httpRequestModel, responseStatus: $responseStatus, message: $message, httpResponseModel: $httpResponseModel, isWorking: $isWorking, sendingTime: $sendingTime)';
   }
 
   @override
@@ -419,8 +403,6 @@ class _$RequestModelImpl implements _RequestModel {
             (identical(other.name, name) || other.name == name) &&
             (identical(other.description, description) ||
                 other.description == description) &&
-            (identical(other.authType, authType) ||
-                other.authType == authType) &&
             (identical(other.authData, authData) ||
                 other.authData == authData) &&
             const DeepCollectionEquality()
@@ -450,7 +432,6 @@ class _$RequestModelImpl implements _RequestModel {
       apiType,
       name,
       description,
-      authType,
       authData,
       const DeepCollectionEquality().hash(requestTabIndex),
       httpRequestModel,
@@ -484,8 +465,7 @@ abstract class _RequestModel implements RequestModel {
           final APIType apiType,
           final String name,
           final String description,
-          final APIAuthType authType,
-          final APIAuthModel? authData,
+          final ApiAuthModel? authData,
           @JsonKey(includeToJson: false) final dynamic requestTabIndex,
           final HttpRequestModel? httpRequestModel,
           final int? responseStatus,
@@ -507,9 +487,7 @@ abstract class _RequestModel implements RequestModel {
   @override
   String get description;
   @override
-  APIAuthType get authType;
-  @override
-  APIAuthModel? get authData;
+  ApiAuthModel? get authData;
   @override
   @JsonKey(includeToJson: false)
   dynamic get requestTabIndex;

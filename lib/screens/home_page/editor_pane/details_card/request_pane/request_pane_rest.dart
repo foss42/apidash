@@ -30,8 +30,8 @@ class EditRestRequestPane extends ConsumerWidget {
             .select((value) => value?.httpRequestModel?.hasBody)) ??
         false;
 
-    final hasAuth = ref.watch(
-            selectedRequestModelProvider.select((value) => value?.authType != APIAuthType.none));
+    final hasAuth = ref.watch(selectedRequestModelProvider
+        .select((value) => value?.authData?.type != APIAuthType.none));
     false;
 
     return RequestPane(
@@ -47,12 +47,7 @@ class EditRestRequestPane extends ConsumerWidget {
             .read(collectionStateNotifierProvider.notifier)
             .update(requestTabIndex: index);
       },
-      showIndicators: [
-        paramLength > 0,
-        headerLength > 0,
-        hasBody,
-        hasAuth
-      ],
+      showIndicators: [paramLength > 0, headerLength > 0, hasBody, hasAuth],
       tabLabels: const [
         kLabelURLParams,
         kLabelHeaders,

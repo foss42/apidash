@@ -6,7 +6,8 @@ part of 'api_auth_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$AuthImpl _$$AuthImplFromJson(Map<String, dynamic> json) => _$AuthImpl(
+_$ApiAuthModelImpl _$$ApiAuthModelImplFromJson(Map<String, dynamic> json) =>
+    _$ApiAuthModelImpl(
       type: $enumDecode(_$APIAuthTypeEnumMap, json['type']),
       apikey: json['apikey'] == null
           ? null
@@ -22,7 +23,7 @@ _$AuthImpl _$$AuthImplFromJson(Map<String, dynamic> json) => _$AuthImpl(
           : AuthJwtModel.fromJson(json['jwt'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$$AuthImplToJson(_$AuthImpl instance) =>
+Map<String, dynamic> _$$ApiAuthModelImplToJson(_$ApiAuthModelImpl instance) =>
     <String, dynamic>{
       'type': _$APIAuthTypeEnumMap[instance.type]!,
       'apikey': instance.apikey,
@@ -35,8 +36,8 @@ const _$APIAuthTypeEnumMap = {
   APIAuthType.none: 'none',
   APIAuthType.basic: 'basic',
   APIAuthType.apiKey: 'apiKey',
-  APIAuthType.bearerToken: 'bearerToken',
-  APIAuthType.jwtBearer: 'jwtBearer',
+  APIAuthType.bearer: 'bearer',
+  APIAuthType.jwt: 'jwt',
   APIAuthType.digest: 'digest',
   APIAuthType.oauth1: 'oauth1',
   APIAuthType.oauth2: 'oauth2',

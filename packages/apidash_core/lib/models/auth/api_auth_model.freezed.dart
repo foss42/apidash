@@ -14,31 +14,33 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
-Auth _$AuthFromJson(Map<String, dynamic> json) {
-  return _Auth.fromJson(json);
+ApiAuthModel _$ApiAuthModelFromJson(Map<String, dynamic> json) {
+  return _ApiAuthModel.fromJson(json);
 }
 
 /// @nodoc
-mixin _$Auth {
+mixin _$ApiAuthModel {
   APIAuthType get type => throw _privateConstructorUsedError;
   AuthApiKeyModel? get apikey => throw _privateConstructorUsedError;
   AuthBearerModel? get bearer => throw _privateConstructorUsedError;
   AuthBasicAuthModel? get basic => throw _privateConstructorUsedError;
   AuthJwtModel? get jwt => throw _privateConstructorUsedError;
 
-  /// Serializes this Auth to a JSON map.
+  /// Serializes this ApiAuthModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
-  /// Create a copy of Auth
+  /// Create a copy of ApiAuthModel
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $AuthCopyWith<Auth> get copyWith => throw _privateConstructorUsedError;
+  $ApiAuthModelCopyWith<ApiAuthModel> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $AuthCopyWith<$Res> {
-  factory $AuthCopyWith(Auth value, $Res Function(Auth) then) =
-      _$AuthCopyWithImpl<$Res, Auth>;
+abstract class $ApiAuthModelCopyWith<$Res> {
+  factory $ApiAuthModelCopyWith(
+          ApiAuthModel value, $Res Function(ApiAuthModel) then) =
+      _$ApiAuthModelCopyWithImpl<$Res, ApiAuthModel>;
   @useResult
   $Res call(
       {APIAuthType type,
@@ -54,16 +56,16 @@ abstract class $AuthCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$AuthCopyWithImpl<$Res, $Val extends Auth>
-    implements $AuthCopyWith<$Res> {
-  _$AuthCopyWithImpl(this._value, this._then);
+class _$ApiAuthModelCopyWithImpl<$Res, $Val extends ApiAuthModel>
+    implements $ApiAuthModelCopyWith<$Res> {
+  _$ApiAuthModelCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of Auth
+  /// Create a copy of ApiAuthModel
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -98,7 +100,7 @@ class _$AuthCopyWithImpl<$Res, $Val extends Auth>
     ) as $Val);
   }
 
-  /// Create a copy of Auth
+  /// Create a copy of ApiAuthModel
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
@@ -112,7 +114,7 @@ class _$AuthCopyWithImpl<$Res, $Val extends Auth>
     });
   }
 
-  /// Create a copy of Auth
+  /// Create a copy of ApiAuthModel
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
@@ -126,7 +128,7 @@ class _$AuthCopyWithImpl<$Res, $Val extends Auth>
     });
   }
 
-  /// Create a copy of Auth
+  /// Create a copy of ApiAuthModel
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
@@ -140,7 +142,7 @@ class _$AuthCopyWithImpl<$Res, $Val extends Auth>
     });
   }
 
-  /// Create a copy of Auth
+  /// Create a copy of ApiAuthModel
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
@@ -156,10 +158,11 @@ class _$AuthCopyWithImpl<$Res, $Val extends Auth>
 }
 
 /// @nodoc
-abstract class _$$AuthImplCopyWith<$Res> implements $AuthCopyWith<$Res> {
-  factory _$$AuthImplCopyWith(
-          _$AuthImpl value, $Res Function(_$AuthImpl) then) =
-      __$$AuthImplCopyWithImpl<$Res>;
+abstract class _$$ApiAuthModelImplCopyWith<$Res>
+    implements $ApiAuthModelCopyWith<$Res> {
+  factory _$$ApiAuthModelImplCopyWith(
+          _$ApiAuthModelImpl value, $Res Function(_$ApiAuthModelImpl) then) =
+      __$$ApiAuthModelImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -180,13 +183,14 @@ abstract class _$$AuthImplCopyWith<$Res> implements $AuthCopyWith<$Res> {
 }
 
 /// @nodoc
-class __$$AuthImplCopyWithImpl<$Res>
-    extends _$AuthCopyWithImpl<$Res, _$AuthImpl>
-    implements _$$AuthImplCopyWith<$Res> {
-  __$$AuthImplCopyWithImpl(_$AuthImpl _value, $Res Function(_$AuthImpl) _then)
+class __$$ApiAuthModelImplCopyWithImpl<$Res>
+    extends _$ApiAuthModelCopyWithImpl<$Res, _$ApiAuthModelImpl>
+    implements _$$ApiAuthModelImplCopyWith<$Res> {
+  __$$ApiAuthModelImplCopyWithImpl(
+      _$ApiAuthModelImpl _value, $Res Function(_$ApiAuthModelImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of Auth
+  /// Create a copy of ApiAuthModel
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -197,7 +201,7 @@ class __$$AuthImplCopyWithImpl<$Res>
     Object? basic = freezed,
     Object? jwt = freezed,
   }) {
-    return _then(_$AuthImpl(
+    return _then(_$ApiAuthModelImpl(
       type: null == type
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
@@ -224,12 +228,12 @@ class __$$AuthImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$AuthImpl implements _Auth {
-  const _$AuthImpl(
+class _$ApiAuthModelImpl implements _ApiAuthModel {
+  const _$ApiAuthModelImpl(
       {required this.type, this.apikey, this.bearer, this.basic, this.jwt});
 
-  factory _$AuthImpl.fromJson(Map<String, dynamic> json) =>
-      _$$AuthImplFromJson(json);
+  factory _$ApiAuthModelImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ApiAuthModelImplFromJson(json);
 
   @override
   final APIAuthType type;
@@ -244,14 +248,14 @@ class _$AuthImpl implements _Auth {
 
   @override
   String toString() {
-    return 'Auth(type: $type, apikey: $apikey, bearer: $bearer, basic: $basic, jwt: $jwt)';
+    return 'ApiAuthModel(type: $type, apikey: $apikey, bearer: $bearer, basic: $basic, jwt: $jwt)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$AuthImpl &&
+            other is _$ApiAuthModelImpl &&
             (identical(other.type, type) || other.type == type) &&
             (identical(other.apikey, apikey) || other.apikey == apikey) &&
             (identical(other.bearer, bearer) || other.bearer == bearer) &&
@@ -264,31 +268,32 @@ class _$AuthImpl implements _Auth {
   int get hashCode =>
       Object.hash(runtimeType, type, apikey, bearer, basic, jwt);
 
-  /// Create a copy of Auth
+  /// Create a copy of ApiAuthModel
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$AuthImplCopyWith<_$AuthImpl> get copyWith =>
-      __$$AuthImplCopyWithImpl<_$AuthImpl>(this, _$identity);
+  _$$ApiAuthModelImplCopyWith<_$ApiAuthModelImpl> get copyWith =>
+      __$$ApiAuthModelImplCopyWithImpl<_$ApiAuthModelImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$AuthImplToJson(
+    return _$$ApiAuthModelImplToJson(
       this,
     );
   }
 }
 
-abstract class _Auth implements Auth {
-  const factory _Auth(
+abstract class _ApiAuthModel implements ApiAuthModel {
+  const factory _ApiAuthModel(
       {required final APIAuthType type,
       final AuthApiKeyModel? apikey,
       final AuthBearerModel? bearer,
       final AuthBasicAuthModel? basic,
-      final AuthJwtModel? jwt}) = _$AuthImpl;
+      final AuthJwtModel? jwt}) = _$ApiAuthModelImpl;
 
-  factory _Auth.fromJson(Map<String, dynamic> json) = _$AuthImpl.fromJson;
+  factory _ApiAuthModel.fromJson(Map<String, dynamic> json) =
+      _$ApiAuthModelImpl.fromJson;
 
   @override
   APIAuthType get type;
@@ -301,10 +306,10 @@ abstract class _Auth implements Auth {
   @override
   AuthJwtModel? get jwt;
 
-  /// Create a copy of Auth
+  /// Create a copy of ApiAuthModel
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$AuthImplCopyWith<_$AuthImpl> get copyWith =>
+  _$$ApiAuthModelImplCopyWith<_$ApiAuthModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
