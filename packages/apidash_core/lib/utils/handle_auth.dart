@@ -2,9 +2,11 @@ import 'dart:convert';
 import 'package:apidash_core/consts.dart';
 import 'package:apidash_core/models/auth/api_auth_model.dart';
 import 'package:apidash_core/models/http_request_model.dart';
+import 'package:apidash_core/utils/auth_utils.dart';
 import 'package:seed/seed.dart';
 
-HttpRequestModel handleAuth(HttpRequestModel httpRequestModel, ApiAuthModel? auth) {
+HttpRequestModel handleAuth(
+    HttpRequestModel httpRequestModel, ApiAuthModel? auth) {
   if (auth == null || auth.type == APIAuthType.none) {
     return httpRequestModel;
   }
@@ -41,9 +43,26 @@ HttpRequestModel handleAuth(HttpRequestModel httpRequestModel, ApiAuthModel? aut
     case APIAuthType.jwt:
       if (auth.jwt != null) {
         final jwtAuth = auth.jwt!;
-        updatedHeaders.add(NameValueModel(
-            name: 'Authorization', value: 'Bearer ${jwtAuth.jwt}'));
-        updatedHeaderEnabledList.add(true);
+
+        // Generate JWT token
+        final jwtToken = generateJWT(jwtAuth);
+
+        if (jwtAuth.addTokenTo == 'header') {
+          // Add to request header with prefix
+          final headerValue = jwtAuth.headerPrefix.isNotEmpty
+              ? '${jwtAuth.headerPrefix} $jwtToken'
+              : jwtToken;
+          updatedHeaders
+              .add(NameValueModel(name: 'Authorization', value: headerValue));
+          updatedHeaderEnabledList.add(true);
+        } else if (jwtAuth.addTokenTo == 'query') {
+          // Add to query parameters(if selected)
+          final paramKey = jwtAuth.queryParamKey.isNotEmpty
+              ? jwtAuth.queryParamKey
+              : 'token';
+          updatedParams.add(NameValueModel(name: paramKey, value: jwtToken));
+          updatedParamEnabledList.add(true);
+        }
       }
       break;
 
