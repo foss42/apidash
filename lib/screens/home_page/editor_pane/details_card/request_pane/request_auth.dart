@@ -12,13 +12,16 @@ class EditAuthType extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedRequest = ref.watch(selectedRequestModelProvider);
+    final selectedRequest = ref.read(selectedRequestModelProvider);
 
     if (selectedRequest == null) {
       return const SizedBox.shrink();
     }
 
-    final currentAuthType = selectedRequest.authData?.type ?? APIAuthType.none;
+    final currentAuthType = ref.watch(
+      selectedRequestModelProvider
+          .select((request) => request?.authData?.type ?? APIAuthType.none),
+    );
     final currentAuthData = selectedRequest.authData;
 
     return Padding(
@@ -109,7 +112,7 @@ class EditAuthType extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              onEditingComplete: () => updateAuth(
+              onChanged: (value) => updateAuth(
                 ApiAuthModel(
                   type: APIAuthType.basic,
                   basic: AuthBasicAuthModel(
@@ -145,7 +148,7 @@ class EditAuthType extends ConsumerWidget {
                 ),
               ),
               obscureText: true,
-              onEditingComplete: () => updateAuth(
+              onChanged: (value) => updateAuth(
                 ApiAuthModel(
                   type: APIAuthType.basic,
                   basic: AuthBasicAuthModel(
@@ -187,7 +190,7 @@ class EditAuthType extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              onEditingComplete: () => updateAuth(
+              onChanged: (value) => updateAuth(
                 ApiAuthModel(
                   type: APIAuthType.bearer,
                   bearer: AuthBearerModel(token: tokenController.text.trim()),
@@ -275,7 +278,7 @@ class EditAuthType extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              onEditingComplete: () => updateAuth(
+              onChanged: (value) => updateAuth(
                 ApiAuthModel(
                   type: APIAuthType.apiKey,
                   apikey: AuthApiKeyModel(
@@ -309,7 +312,7 @@ class EditAuthType extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              onEditingComplete: () => updateAuth(ApiAuthModel(
+              onChanged: (value) => updateAuth(ApiAuthModel(
                 type: APIAuthType.apiKey,
                 apikey: AuthApiKeyModel(
                   key: keyController.text.trim(),
@@ -350,7 +353,7 @@ class EditAuthType extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              onEditingComplete: () => updateAuth(ApiAuthModel(
+              onChanged: (value) => updateAuth(ApiAuthModel(
                 type: APIAuthType.jwt,
                 jwt: AuthJwtModel(jwt: jwtController.text.trim()),
               )),
