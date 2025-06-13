@@ -20,7 +20,14 @@ AuthJwtModel _$AuthJwtModelFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$AuthJwtModel {
-  String get jwt => throw _privateConstructorUsedError;
+  String get secret => throw _privateConstructorUsedError;
+  String get payload => throw _privateConstructorUsedError;
+  String get addTokenTo => throw _privateConstructorUsedError;
+  String get algorithm => throw _privateConstructorUsedError;
+  bool get isSecretBase64Encoded => throw _privateConstructorUsedError;
+  String get headerPrefix => throw _privateConstructorUsedError;
+  String get queryParamKey => throw _privateConstructorUsedError;
+  String get header => throw _privateConstructorUsedError;
 
   /// Serializes this AuthJwtModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -38,7 +45,15 @@ abstract class $AuthJwtModelCopyWith<$Res> {
           AuthJwtModel value, $Res Function(AuthJwtModel) then) =
       _$AuthJwtModelCopyWithImpl<$Res, AuthJwtModel>;
   @useResult
-  $Res call({String jwt});
+  $Res call(
+      {String secret,
+      String payload,
+      String addTokenTo,
+      String algorithm,
+      bool isSecretBase64Encoded,
+      String headerPrefix,
+      String queryParamKey,
+      String header});
 }
 
 /// @nodoc
@@ -56,12 +71,47 @@ class _$AuthJwtModelCopyWithImpl<$Res, $Val extends AuthJwtModel>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? jwt = null,
+    Object? secret = null,
+    Object? payload = null,
+    Object? addTokenTo = null,
+    Object? algorithm = null,
+    Object? isSecretBase64Encoded = null,
+    Object? headerPrefix = null,
+    Object? queryParamKey = null,
+    Object? header = null,
   }) {
     return _then(_value.copyWith(
-      jwt: null == jwt
-          ? _value.jwt
-          : jwt // ignore: cast_nullable_to_non_nullable
+      secret: null == secret
+          ? _value.secret
+          : secret // ignore: cast_nullable_to_non_nullable
+              as String,
+      payload: null == payload
+          ? _value.payload
+          : payload // ignore: cast_nullable_to_non_nullable
+              as String,
+      addTokenTo: null == addTokenTo
+          ? _value.addTokenTo
+          : addTokenTo // ignore: cast_nullable_to_non_nullable
+              as String,
+      algorithm: null == algorithm
+          ? _value.algorithm
+          : algorithm // ignore: cast_nullable_to_non_nullable
+              as String,
+      isSecretBase64Encoded: null == isSecretBase64Encoded
+          ? _value.isSecretBase64Encoded
+          : isSecretBase64Encoded // ignore: cast_nullable_to_non_nullable
+              as bool,
+      headerPrefix: null == headerPrefix
+          ? _value.headerPrefix
+          : headerPrefix // ignore: cast_nullable_to_non_nullable
+              as String,
+      queryParamKey: null == queryParamKey
+          ? _value.queryParamKey
+          : queryParamKey // ignore: cast_nullable_to_non_nullable
+              as String,
+      header: null == header
+          ? _value.header
+          : header // ignore: cast_nullable_to_non_nullable
               as String,
     ) as $Val);
   }
@@ -75,7 +125,15 @@ abstract class _$$AuthJwtModelImplCopyWith<$Res>
       __$$AuthJwtModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String jwt});
+  $Res call(
+      {String secret,
+      String payload,
+      String addTokenTo,
+      String algorithm,
+      bool isSecretBase64Encoded,
+      String headerPrefix,
+      String queryParamKey,
+      String header});
 }
 
 /// @nodoc
@@ -91,12 +149,47 @@ class __$$AuthJwtModelImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? jwt = null,
+    Object? secret = null,
+    Object? payload = null,
+    Object? addTokenTo = null,
+    Object? algorithm = null,
+    Object? isSecretBase64Encoded = null,
+    Object? headerPrefix = null,
+    Object? queryParamKey = null,
+    Object? header = null,
   }) {
     return _then(_$AuthJwtModelImpl(
-      jwt: null == jwt
-          ? _value.jwt
-          : jwt // ignore: cast_nullable_to_non_nullable
+      secret: null == secret
+          ? _value.secret
+          : secret // ignore: cast_nullable_to_non_nullable
+              as String,
+      payload: null == payload
+          ? _value.payload
+          : payload // ignore: cast_nullable_to_non_nullable
+              as String,
+      addTokenTo: null == addTokenTo
+          ? _value.addTokenTo
+          : addTokenTo // ignore: cast_nullable_to_non_nullable
+              as String,
+      algorithm: null == algorithm
+          ? _value.algorithm
+          : algorithm // ignore: cast_nullable_to_non_nullable
+              as String,
+      isSecretBase64Encoded: null == isSecretBase64Encoded
+          ? _value.isSecretBase64Encoded
+          : isSecretBase64Encoded // ignore: cast_nullable_to_non_nullable
+              as bool,
+      headerPrefix: null == headerPrefix
+          ? _value.headerPrefix
+          : headerPrefix // ignore: cast_nullable_to_non_nullable
+              as String,
+      queryParamKey: null == queryParamKey
+          ? _value.queryParamKey
+          : queryParamKey // ignore: cast_nullable_to_non_nullable
+              as String,
+      header: null == header
+          ? _value.header
+          : header // ignore: cast_nullable_to_non_nullable
               as String,
     ));
   }
@@ -105,17 +198,39 @@ class __$$AuthJwtModelImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$AuthJwtModelImpl implements _AuthJwtModel {
-  const _$AuthJwtModelImpl({required this.jwt});
+  const _$AuthJwtModelImpl(
+      {required this.secret,
+      required this.payload,
+      required this.addTokenTo,
+      required this.algorithm,
+      required this.isSecretBase64Encoded,
+      required this.headerPrefix,
+      required this.queryParamKey,
+      required this.header});
 
   factory _$AuthJwtModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$AuthJwtModelImplFromJson(json);
 
   @override
-  final String jwt;
+  final String secret;
+  @override
+  final String payload;
+  @override
+  final String addTokenTo;
+  @override
+  final String algorithm;
+  @override
+  final bool isSecretBase64Encoded;
+  @override
+  final String headerPrefix;
+  @override
+  final String queryParamKey;
+  @override
+  final String header;
 
   @override
   String toString() {
-    return 'AuthJwtModel(jwt: $jwt)';
+    return 'AuthJwtModel(secret: $secret, payload: $payload, addTokenTo: $addTokenTo, algorithm: $algorithm, isSecretBase64Encoded: $isSecretBase64Encoded, headerPrefix: $headerPrefix, queryParamKey: $queryParamKey, header: $header)';
   }
 
   @override
@@ -123,12 +238,25 @@ class _$AuthJwtModelImpl implements _AuthJwtModel {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$AuthJwtModelImpl &&
-            (identical(other.jwt, jwt) || other.jwt == jwt));
+            (identical(other.secret, secret) || other.secret == secret) &&
+            (identical(other.payload, payload) || other.payload == payload) &&
+            (identical(other.addTokenTo, addTokenTo) ||
+                other.addTokenTo == addTokenTo) &&
+            (identical(other.algorithm, algorithm) ||
+                other.algorithm == algorithm) &&
+            (identical(other.isSecretBase64Encoded, isSecretBase64Encoded) ||
+                other.isSecretBase64Encoded == isSecretBase64Encoded) &&
+            (identical(other.headerPrefix, headerPrefix) ||
+                other.headerPrefix == headerPrefix) &&
+            (identical(other.queryParamKey, queryParamKey) ||
+                other.queryParamKey == queryParamKey) &&
+            (identical(other.header, header) || other.header == header));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, jwt);
+  int get hashCode => Object.hash(runtimeType, secret, payload, addTokenTo,
+      algorithm, isSecretBase64Encoded, headerPrefix, queryParamKey, header);
 
   /// Create a copy of AuthJwtModel
   /// with the given fields replaced by the non-null parameter values.
@@ -147,13 +275,35 @@ class _$AuthJwtModelImpl implements _AuthJwtModel {
 }
 
 abstract class _AuthJwtModel implements AuthJwtModel {
-  const factory _AuthJwtModel({required final String jwt}) = _$AuthJwtModelImpl;
+  const factory _AuthJwtModel(
+      {required final String secret,
+      required final String payload,
+      required final String addTokenTo,
+      required final String algorithm,
+      required final bool isSecretBase64Encoded,
+      required final String headerPrefix,
+      required final String queryParamKey,
+      required final String header}) = _$AuthJwtModelImpl;
 
   factory _AuthJwtModel.fromJson(Map<String, dynamic> json) =
       _$AuthJwtModelImpl.fromJson;
 
   @override
-  String get jwt;
+  String get secret;
+  @override
+  String get payload;
+  @override
+  String get addTokenTo;
+  @override
+  String get algorithm;
+  @override
+  bool get isSecretBase64Encoded;
+  @override
+  String get headerPrefix;
+  @override
+  String get queryParamKey;
+  @override
+  String get header;
 
   /// Create a copy of AuthJwtModel
   /// with the given fields replaced by the non-null parameter values.

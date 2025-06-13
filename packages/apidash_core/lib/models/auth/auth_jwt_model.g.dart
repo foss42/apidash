@@ -8,10 +8,24 @@ part of 'auth_jwt_model.dart';
 
 _$AuthJwtModelImpl _$$AuthJwtModelImplFromJson(Map<String, dynamic> json) =>
     _$AuthJwtModelImpl(
-      jwt: json['jwt'] as String,
+      secret: json['secret'] as String,
+      payload: json['payload'] as String,
+      addTokenTo: json['addTokenTo'] as String,
+      algorithm: json['algorithm'] as String,
+      isSecretBase64Encoded: json['isSecretBase64Encoded'] as bool,
+      headerPrefix: json['headerPrefix'] as String,
+      queryParamKey: json['queryParamKey'] as String,
+      header: json['header'] as String,
     );
 
 Map<String, dynamic> _$$AuthJwtModelImplToJson(_$AuthJwtModelImpl instance) =>
     <String, dynamic>{
-      'jwt': instance.jwt,
+      'secret': instance.secret,
+      'payload': instance.payload,
+      'addTokenTo': instance.addTokenTo,
+      'algorithm': instance.algorithm,
+      'isSecretBase64Encoded': instance.isSecretBase64Encoded,
+      'headerPrefix': instance.headerPrefix,
+      'queryParamKey': instance.queryParamKey,
+      'header': instance.header,
     };
