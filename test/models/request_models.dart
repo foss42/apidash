@@ -1,6 +1,5 @@
 import 'package:apidash/models/models.dart';
 import 'package:apidash_core/apidash_core.dart';
-import 'package:apidash/models/generic_request_model.dart';
 import 'http_request_models.dart';
 import 'http_response_models.dart';
 

@@ -1,5 +1,3 @@
-import 'package:apidash/models/generic_request_model.dart';
-import 'package:apidash/models/generic_response_model.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:genai/models/ai_request_model.dart';
 import 'package:genai/models/ai_response_model.dart';

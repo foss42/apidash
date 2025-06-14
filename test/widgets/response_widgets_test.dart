@@ -6,7 +6,6 @@ import 'package:apidash/widgets/response_tab_view.dart';
 import 'package:apidash/widgets/widget_not_sent.dart';
 import 'package:apidash/widgets/widget_sending.dart';
 import 'package:apidash_core/apidash_core.dart';
-import 'package:apidash/models/generic_response_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
