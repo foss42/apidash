@@ -141,6 +141,7 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
 }
 
 void cancelHttpRequest(String? requestId) {
+  print("Cancelling request: $requestId");
   httpClientManager.cancelRequest(requestId);
 }
 
@@ -167,3 +168,4 @@ http.Request prepareHttpRequest({
   request.headers.addAll(headers);
   return request;
 }
+
