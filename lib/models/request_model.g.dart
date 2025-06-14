@@ -12,6 +12,10 @@ _$RequestModelImpl _$$RequestModelImplFromJson(Map json) => _$RequestModelImpl(
           APIType.rest,
       name: json['name'] as String? ?? "",
       description: json['description'] as String? ?? "",
+      authData: json['authData'] == null
+          ? const ApiAuthModel(type: APIAuthType.none)
+          : ApiAuthModel.fromJson(
+              Map<String, dynamic>.from(json['authData'] as Map)),
       requestTabIndex: json['requestTabIndex'] ?? 0,
       httpRequestModel: json['httpRequestModel'] == null
           ? null
@@ -35,6 +39,7 @@ Map<String, dynamic> _$$RequestModelImplToJson(_$RequestModelImpl instance) =>
       'apiType': _$APITypeEnumMap[instance.apiType]!,
       'name': instance.name,
       'description': instance.description,
+      'authData': instance.authData?.toJson(),
       'httpRequestModel': instance.httpRequestModel?.toJson(),
       'responseStatus': instance.responseStatus,
       'message': instance.message,
