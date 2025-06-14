@@ -11,7 +11,7 @@ class AIRequestAuthorizationSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedId = ref.watch(selectedIdStateProvider);
     final reqM = ref.read(collectionStateNotifierProvider)![selectedId]!;
-    final aiReqM = reqM.genericRequestModel!.aiRequestModel!;
+    final aiReqM = reqM.aiRequestModel!;
     final payload = aiReqM.payload;
 
     final cred = payload.credential;
@@ -30,7 +30,6 @@ class AIRequestAuthorizationSection extends ConsumerWidget {
                 onChanged: (String value) {
                   final aim = ref
                       .read(collectionStateNotifierProvider)![selectedId]!
-                      .genericRequestModel!
                       .aiRequestModel!;
                   aim.payload.credential = value;
                   ref

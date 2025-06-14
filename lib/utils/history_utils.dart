@@ -16,14 +16,10 @@ RequestModel getRequestModelFromHistoryModel(HistoryRequestModel model) {
     responseStatus: model.genericResponseModel.httpResponseModel?.statusCode,
     message: kResponseCodeReasons[
         model.genericResponseModel.httpResponseModel?.statusCode],
-    genericRequestModel: GenericRequestModel(
-      aiRequestModel: model.genericRequestModel.aiRequestModel,
-      httpRequestModel: model.genericRequestModel.httpRequestModel,
-    ),
-    genericResponseModel: GenericResponseModel(
-      aiResponseModel: model.genericResponseModel.aiResponseModel,
-      httpResponseModel: model.genericResponseModel.httpResponseModel,
-    ),
+    aiRequestModel: model.genericRequestModel.aiRequestModel,
+    aiResponseModel: model.genericResponseModel.aiResponseModel,
+    httpRequestModel: model.genericRequestModel.httpRequestModel,
+    httpResponseModel: model.genericResponseModel.httpResponseModel,
   );
 }
 

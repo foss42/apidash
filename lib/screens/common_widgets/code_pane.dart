@@ -42,14 +42,10 @@ class CodePane extends ConsumerWidget {
     var envMap = ref.watch(availableEnvironmentVariablesStateProvider);
     var activeEnvId = ref.watch(activeEnvironmentIdStateProvider);
 
-    final substitutedRequestModel = selectedRequestModel?.copyWith(
-      genericRequestModel: GenericRequestModel(
-        aiRequestModel: null,
-        httpRequestModel: substituteHttpRequestModel(
-            selectedRequestModel.genericRequestModel!.httpRequestModel!,
-            envMap,
-            activeEnvId),
-      ),
+    final substitutedRequestModel = selectedRequestModel.copyWith(
+      aiRequestModel: null,
+      httpRequestModel: substituteHttpRequestModel(
+          selectedRequestModel.httpRequestModel!, envMap, activeEnvId),
     );
 
     final code = codegen.getCode(

@@ -24,19 +24,8 @@ void main() async {
     // Ensure the initial request is a GET request with no body
     final id = notifier.state!.entries.first.key;
     expect(
-        notifier
-            .getRequestModel(id)!
-            .genericRequestModel!
-            .httpRequestModel!
-            .method,
-        HTTPVerb.get);
-    expect(
-        notifier
-            .getRequestModel(id)!
-            .genericRequestModel!
-            .httpRequestModel!
-            .body,
-        isNull);
+        notifier.getRequestModel(id)!.httpRequestModel!.method, HTTPVerb.get);
+    expect(notifier.getRequestModel(id)!.httpRequestModel!.body, isNull);
 
     // Build the EditRequestBody widget
     await tester.pumpWidget(
@@ -57,12 +46,7 @@ void main() async {
 
     // Verify that the request method changed to POST
     expect(
-        notifier
-            .getRequestModel(id)!
-            .genericRequestModel!
-            .httpRequestModel!
-            .method,
-        HTTPVerb.post);
+        notifier.getRequestModel(id)!.httpRequestModel!.method, HTTPVerb.post);
 
     // Verify that the Snackbar is shown
     expect(find.text('Switched to POST method'), findsOneWidget);

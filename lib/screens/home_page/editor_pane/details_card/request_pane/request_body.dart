@@ -16,8 +16,8 @@ class EditRequestBody extends ConsumerWidget {
     final requestModel = ref
         .read(collectionStateNotifierProvider.notifier)
         .getRequestModel(selectedId!);
-    final contentType = ref.watch(selectedRequestModelProvider.select((value) =>
-        value?.genericRequestModel?.httpRequestModel?.bodyContentType));
+    final contentType = ref.watch(selectedRequestModelProvider
+        .select((value) => value?.httpRequestModel?.bodyContentType));
     final apiType = ref
         .watch(selectedRequestModelProvider.select((value) => value?.apiType));
     final darkMode = ref.watch(settingsProvider.select(
@@ -51,8 +51,7 @@ class EditRequestBody extends ConsumerWidget {
                       key: Key("$selectedId-json-body"),
                       fieldKey: "$selectedId-json-body-editor-$darkMode",
                       isDark: darkMode,
-                      initialValue: requestModel
-                          ?.genericRequestModel?.httpRequestModel?.body,
+                      initialValue: requestModel?.httpRequestModel?.body,
                       onChanged: (String value) {
                         ref
                             .read(collectionStateNotifierProvider.notifier)
@@ -66,8 +65,7 @@ class EditRequestBody extends ConsumerWidget {
                     child: TextFieldEditor(
                       key: Key("$selectedId-body"),
                       fieldKey: "$selectedId-body-editor",
-                      initialValue: requestModel
-                          ?.genericRequestModel?.httpRequestModel?.body,
+                      initialValue: requestModel?.httpRequestModel?.body,
                       onChanged: (String value) {
                         ref
                             .read(collectionStateNotifierProvider.notifier)
@@ -84,8 +82,7 @@ class EditRequestBody extends ConsumerWidget {
                 child: TextFieldEditor(
                   key: Key("$selectedId-query"),
                   fieldKey: "$selectedId-query-editor",
-                  initialValue: requestModel
-                      ?.genericRequestModel?.httpRequestModel?.query,
+                  initialValue: requestModel?.httpRequestModel?.query,
                   onChanged: (String value) {
                     ref
                         .read(collectionStateNotifierProvider.notifier)
@@ -110,9 +107,8 @@ class DropdownButtonBodyContentType extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ref.watch(selectedIdStateProvider);
-    final requestBodyContentType = ref.watch(
-        selectedRequestModelProvider.select((value) =>
-            value?.genericRequestModel?.httpRequestModel?.bodyContentType));
+    final requestBodyContentType = ref.watch(selectedRequestModelProvider
+        .select((value) => value?.httpRequestModel?.bodyContentType));
     return DropdownButtonContentType(
       contentType: requestBodyContentType,
       onChanged: (ContentType? value) {

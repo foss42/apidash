@@ -40,7 +40,7 @@ class Codegen {
     SupportedUriSchemes defaultUriScheme, {
     String? boundary,
   }) {
-    var httpRequestModel = requestModel.genericRequestModel?.httpRequestModel;
+    var httpRequestModel = requestModel.httpRequestModel;
     if (httpRequestModel == null) {
       return "";
     }

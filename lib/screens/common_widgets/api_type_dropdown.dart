@@ -36,7 +36,7 @@ class APITypeDropdown extends ConsumerWidget {
 initializeAIRequest(WidgetRef ref) {
   final selectedId = ref.watch(selectedIdStateProvider);
   final req = ref.watch(collectionStateNotifierProvider)![selectedId]!;
-  AIRequestModel? aiRequestModel = req.genericRequestModel?.aiRequestModel;
+  AIRequestModel? aiRequestModel = req.aiRequestModel;
   LLMSaveObject? defaultLLMSO = ref
       .watch(settingsProvider.notifier)
       .settingsModel

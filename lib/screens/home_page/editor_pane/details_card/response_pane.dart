@@ -58,9 +58,9 @@ class ResponseDetails extends ConsumerWidget {
     AIResponseModel? aiResponseModel;
 
     httpResponseModel = ref.watch(selectedRequestModelProvider
-        .select((value) => value?.genericResponseModel?.httpResponseModel));
-    aiResponseModel = ref.watch(selectedRequestModelProvider
-        .select((value) => value?.genericResponseModel?.aiResponseModel));
+        .select((value) => value?.httpResponseModel));
+    aiResponseModel = ref.watch(
+        selectedRequestModelProvider.select((value) => value?.aiResponseModel));
 
     return Column(
       children: [
@@ -115,14 +115,14 @@ class ResponseHeadersTab extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final requestHeaders =
         ref.watch(selectedRequestModelProvider.select((value) {
-      return value!.genericResponseModel!.aiResponseModel?.requestHeaders ??
-          value.genericResponseModel!.httpResponseModel!.requestHeaders;
+      return value!.aiResponseModel?.requestHeaders ??
+          value.httpResponseModel!.requestHeaders;
     }));
 
     final responseHeaders =
         ref.watch(selectedRequestModelProvider.select((value) {
-              return value!.genericResponseModel!.aiResponseModel?.headers ??
-                  value.genericResponseModel!.httpResponseModel!.headers;
+              return value!.aiResponseModel?.headers ??
+                  value.httpResponseModel!.headers;
             })) ??
             {};
 

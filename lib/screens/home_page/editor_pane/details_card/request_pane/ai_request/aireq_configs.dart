@@ -18,13 +18,12 @@ class _AIRequestConfigSectionState
   Widget build(BuildContext context) {
     final selectedId = ref.watch(selectedIdStateProvider);
     final reqM = ref.read(collectionStateNotifierProvider)![selectedId]!;
-    final aiReqM = reqM.genericRequestModel!.aiRequestModel!;
+    final aiReqM = reqM.aiRequestModel!;
     final payload = aiReqM.payload;
 
     updateRequestModel(LLMModelConfiguration el) {
       final aim = ref
           .read(collectionStateNotifierProvider)![selectedId]!
-          .genericRequestModel!
           .aiRequestModel!;
       aim.payload.configMap[el.configId] = el;
       ref.read(collectionStateNotifierProvider.notifier).update(

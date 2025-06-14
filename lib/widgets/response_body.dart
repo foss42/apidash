@@ -20,10 +20,8 @@ class ResponseBody extends StatelessWidget {
     HttpResponseModel? httpResponseModel;
     AIResponseModel? aiResponseModel;
 
-    httpResponseModel =
-        selectedRequestModel?.genericResponseModel?.httpResponseModel;
-    aiResponseModel =
-        selectedRequestModel?.genericResponseModel?.aiResponseModel;
+    httpResponseModel = selectedRequestModel?.httpResponseModel;
+    aiResponseModel = selectedRequestModel?.aiResponseModel;
 
     if (aiResponseModel == null && httpResponseModel == null) {
       return const ErrorMessage(

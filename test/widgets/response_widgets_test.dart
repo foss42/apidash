@@ -207,8 +207,8 @@ void main() {
   testWidgets('Testing Response Body, no body', (tester) async {
     var responseModelNoBody = responseModel.copyWith(body: null);
     var requestModelNoResponseBody = testRequestModel.copyWith(
-      genericResponseModel: GenericResponseModel(
-          aiResponseModel: null, httpResponseModel: responseModelNoBody),
+      aiResponseModel: null,
+      httpResponseModel: responseModelNoBody,
     );
     await tester.pumpWidget(
       MaterialApp(
@@ -232,10 +232,8 @@ void main() {
       formattedBody: null,
     );
     var requestModelNoResponseHeaders = testRequestModel.copyWith(
-      genericResponseModel: GenericResponseModel(
-        aiResponseModel: null,
-        httpResponseModel: responseModelNoHeaders,
-      ),
+      aiResponseModel: null,
+      httpResponseModel: responseModelNoHeaders,
     );
 
     await tester.pumpWidget(
@@ -260,10 +258,8 @@ void main() {
       headers: const {"content-type": "application/octet-stream"},
     );
     var requestModelNoResponseHeaders = testRequestModel.copyWith(
-      genericResponseModel: GenericResponseModel(
-        aiResponseModel: null,
-        httpResponseModel: responseModelOctet,
-      ),
+      aiResponseModel: null,
+      httpResponseModel: responseModelOctet,
     );
     await tester.pumpWidget(
       MaterialApp(
@@ -285,10 +281,8 @@ void main() {
       formattedBody: null,
     );
     var requestModelNoResponseHeaders = testRequestModel.copyWith(
-      genericResponseModel: GenericResponseModel(
-        aiResponseModel: null,
-        httpResponseModel: responseModelNoFormattedBody,
-      ),
+      aiResponseModel: null,
+      httpResponseModel: responseModelNoFormattedBody,
     );
     await tester.pumpWidget(
       MaterialApp(

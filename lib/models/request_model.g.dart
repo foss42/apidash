@@ -19,14 +19,22 @@ _$RequestModelImpl _$$RequestModelImplFromJson(Map json) => _$RequestModelImpl(
       sendingTime: json['sendingTime'] == null
           ? null
           : DateTime.parse(json['sendingTime'] as String),
-      genericRequestModel: json['genericRequestModel'] == null
+      httpRequestModel: json['httpRequestModel'] == null
           ? null
-          : GenericRequestModel.fromJson(
-              Map<String, dynamic>.from(json['genericRequestModel'] as Map)),
-      genericResponseModel: json['genericResponseModel'] == null
+          : HttpRequestModel.fromJson(
+              Map<String, Object?>.from(json['httpRequestModel'] as Map)),
+      httpResponseModel: json['httpResponseModel'] == null
           ? null
-          : GenericResponseModel.fromJson(
-              Map<String, dynamic>.from(json['genericResponseModel'] as Map)),
+          : HttpResponseModel.fromJson(
+              Map<String, Object?>.from(json['httpResponseModel'] as Map)),
+      aiRequestModel: json['aiRequestModel'] == null
+          ? null
+          : AIRequestModel.fromJson(
+              Map<String, Object?>.from(json['aiRequestModel'] as Map)),
+      aiResponseModel: json['aiResponseModel'] == null
+          ? null
+          : AIResponseModel.fromJson(
+              Map<String, Object?>.from(json['aiResponseModel'] as Map)),
     );
 
 Map<String, dynamic> _$$RequestModelImplToJson(_$RequestModelImpl instance) =>
@@ -37,8 +45,10 @@ Map<String, dynamic> _$$RequestModelImplToJson(_$RequestModelImpl instance) =>
       'description': instance.description,
       'responseStatus': instance.responseStatus,
       'message': instance.message,
-      'genericRequestModel': instance.genericRequestModel?.toJson(),
-      'genericResponseModel': instance.genericResponseModel?.toJson(),
+      'httpRequestModel': instance.httpRequestModel?.toJson(),
+      'httpResponseModel': instance.httpResponseModel?.toJson(),
+      'aiRequestModel': instance.aiRequestModel?.toJson(),
+      'aiResponseModel': instance.aiResponseModel?.toJson(),
     };
 
 const _$APITypeEnumMap = {

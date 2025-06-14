@@ -51,7 +51,6 @@ class SettingsModel {
     String? workspaceFolderPath,
     bool? isSSLDisabled,
     bool? isDashBotEnabled,
-    LLMSaveObject? def,
     LLMSaveObject? defaultLLMSaveObject,
   }) {
     return SettingsModel(

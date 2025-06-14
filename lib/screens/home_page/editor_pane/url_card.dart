@@ -22,7 +22,7 @@ class EditorPaneRequestURLCard extends ConsumerWidget {
     final apiType = ref
         .watch(selectedRequestModelProvider.select((value) => value?.apiType));
     final aiHC = ref.watch(selectedRequestModelProvider
-        .select((v) => v?.genericRequestModel?.aiRequestModel?.hashCode));
+        .select((v) => v?.aiRequestModel?.hashCode));
     return Card(
       color: kColorTransparent,
       surfaceTintColor: kColorTransparent,
@@ -94,8 +94,8 @@ class DropdownButtonHTTPMethod extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final method = ref.watch(selectedRequestModelProvider.select(
-        (value) => value?.genericRequestModel?.httpRequestModel?.method));
+    final method = ref.watch(selectedRequestModelProvider
+        .select((value) => value?.httpRequestModel?.method));
     return DropdownButtonHttpMethod(
       method: method,
       onChanged: (HTTPVerb? value) {
@@ -117,7 +117,7 @@ class URLTextField extends ConsumerWidget {
     final selectedId = ref.watch(selectedIdStateProvider);
 
     final reqM = ref.read(collectionStateNotifierProvider)![selectedId]!;
-    final aiReqM = reqM.genericRequestModel?.aiRequestModel;
+    final aiReqM = reqM.aiRequestModel;
     final payload = aiReqM?.payload;
 
     return EnvURLField(
@@ -126,14 +126,12 @@ class URLTextField extends ConsumerWidget {
           ref
               .read(collectionStateNotifierProvider.notifier)
               .getRequestModel(selectedId)
-              ?.genericRequestModel
               ?.httpRequestModel
               ?.url,
       onChanged: (value) {
         final aim = ref
             .read(collectionStateNotifierProvider)![selectedId]!
-            .genericRequestModel
-            ?.aiRequestModel;
+            .aiRequestModel;
         if (aim != null) {
           aim.payload.endpoint = value;
           ref
@@ -185,7 +183,7 @@ class AIProviderSelector extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedId = ref.watch(selectedIdStateProvider);
     final req = ref.watch(collectionStateNotifierProvider)![selectedId]!;
-    AIRequestModel? aiRequestModel = req.genericRequestModel!.aiRequestModel;
+    AIRequestModel? aiRequestModel = req.aiRequestModel;
 
     if (aiRequestModel == null) {
       return Container();

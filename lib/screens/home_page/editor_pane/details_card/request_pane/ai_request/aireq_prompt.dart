@@ -12,7 +12,7 @@ class AIRequestPromptSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedId = ref.watch(selectedIdStateProvider);
     final reqM = ref.read(collectionStateNotifierProvider)![selectedId]!;
-    final aiReqM = reqM.genericRequestModel!.aiRequestModel!;
+    final aiReqM = reqM.aiRequestModel!;
     final payload = aiReqM.payload;
 
     final systemPrompt = payload.systemPrompt;
@@ -40,7 +40,6 @@ class AIRequestPromptSection extends ConsumerWidget {
                 onChanged: (String value) {
                   final aim = ref
                       .read(collectionStateNotifierProvider)![selectedId]!
-                      .genericRequestModel!
                       .aiRequestModel!;
                   aim.payload.systemPrompt = value;
                   ref
@@ -69,7 +68,6 @@ class AIRequestPromptSection extends ConsumerWidget {
                 onChanged: (String value) {
                   final aim = ref
                       .read(collectionStateNotifierProvider)![selectedId]!
-                      .genericRequestModel!
                       .aiRequestModel!;
                   aim.payload.userPrompt = value;
                   ref

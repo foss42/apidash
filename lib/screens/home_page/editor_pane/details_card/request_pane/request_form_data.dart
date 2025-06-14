@@ -38,13 +38,9 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
   Widget build(BuildContext context) {
     dataTableShowLogs = false;
     final selectedId = ref.watch(selectedIdStateProvider);
-    ref.watch(selectedRequestModelProvider.select((value) =>
-        value?.genericRequestModel?.httpRequestModel?.formData?.length));
-    var rF = ref
-        .read(selectedRequestModelProvider)
-        ?.genericRequestModel
-        ?.httpRequestModel
-        ?.formData;
+    ref.watch(selectedRequestModelProvider
+        .select((value) => value?.httpRequestModel?.formData?.length));
+    var rF = ref.read(selectedRequestModelProvider)?.httpRequestModel?.formData;
     bool isFormDataEmpty = rF == null || rF.isEmpty;
     formRows = isFormDataEmpty
         ? [

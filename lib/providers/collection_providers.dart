@@ -77,10 +77,7 @@ class CollectionStateNotifier
     final id = getNewUuid();
     final newRequestModel = RequestModel(
       id: id,
-      genericRequestModel: GenericRequestModel(
-        aiRequestModel: null,
-        httpRequestModel: const HttpRequestModel(),
-      ),
+      httpRequestModel: const HttpRequestModel(),
     );
     var map = {...state!};
     map[id] = newRequestModel;
@@ -100,10 +97,7 @@ class CollectionStateNotifier
     final newRequestModel = RequestModel(
       id: id,
       name: name ?? "",
-      genericRequestModel: GenericRequestModel(
-        aiRequestModel: null,
-        httpRequestModel: const HttpRequestModel(),
-      ),
+      httpRequestModel: const HttpRequestModel(),
     );
     var map = {...state!};
     map[id] = newRequestModel;
@@ -156,9 +150,11 @@ class CollectionStateNotifier
     final newModel = currentModel.copyWith(
       responseStatus: null,
       message: null,
-      genericResponseModel: null,
       isWorking: false,
       sendingTime: null,
+      // Clear Response Models
+      httpResponseModel: null,
+      aiResponseModel: null,
     );
     var map = {...state!};
     map[rId] = newModel;
@@ -179,7 +175,8 @@ class CollectionStateNotifier
       requestTabIndex: 0,
       responseStatus: null,
       message: null,
-      genericRequestModel: currentModel.genericRequestModel?.clone(),
+      httpRequestModel: currentModel.httpRequestModel,
+      aiRequestModel: currentModel.aiRequestModel,
       isWorking: false,
       sendingTime: null,
     );
@@ -208,21 +205,14 @@ class CollectionStateNotifier
       apiType: aT,
       id: newId,
       name: "${currentModel.metaData.name} (history)",
-      genericRequestModel: GenericRequestModel(
-        aiRequestModel: currentModel.genericRequestModel.aiRequestModel,
-        httpRequestModel: currentModel.genericRequestModel.httpRequestModel ??
-            HttpRequestModel(),
-      ),
       responseStatus: currentModel.metaData.responseStatus,
       message: kResponseCodeReasons[currentModel.metaData.responseStatus],
-      genericResponseModel: GenericResponseModel(
-        aiResponseModel: currentModel.genericResponseModel.aiResponseModel,
-        httpResponseModel:
-            currentModel.genericResponseModel.httpResponseModel ??
-                HttpResponseModel(),
-      ),
       isWorking: false,
       sendingTime: null,
+      aiRequestModel: currentModel.genericRequestModel.aiRequestModel,
+      aiResponseModel: currentModel.genericResponseModel.aiResponseModel,
+      httpRequestModel: currentModel.genericRequestModel.httpRequestModel,
+      httpResponseModel: currentModel.genericResponseModel.httpResponseModel,
     );
 
     itemIds.insert(0, newId);
@@ -263,40 +253,32 @@ class CollectionStateNotifier
       return;
     }
     var currentModel = state![rId]!;
-    var currentHttpRequestModel =
-        currentModel.genericRequestModel?.httpRequestModel;
+    var currentHttpRequestModel = currentModel.httpRequestModel;
     final newModel = currentModel.copyWith(
       apiType: apiType ?? currentModel.apiType,
       name: name ?? currentModel.name,
       description: description ?? currentModel.description,
       requestTabIndex: requestTabIndex ?? currentModel.requestTabIndex,
-      genericRequestModel: GenericRequestModel(
-        aiRequestModel:
-            aiRequestModel ?? currentModel.genericRequestModel?.aiRequestModel,
-        httpRequestModel: currentHttpRequestModel?.copyWith(
-          method: method ?? currentHttpRequestModel.method,
-          url: url ?? currentHttpRequestModel.url,
-          headers: headers ?? currentHttpRequestModel.headers,
-          params: params ?? currentHttpRequestModel.params,
-          isHeaderEnabledList: isHeaderEnabledList ??
-              currentHttpRequestModel.isHeaderEnabledList,
-          isParamEnabledList:
-              isParamEnabledList ?? currentHttpRequestModel.isParamEnabledList,
-          bodyContentType:
-              bodyContentType ?? currentHttpRequestModel.bodyContentType,
-          body: body ?? currentHttpRequestModel.body,
-          query: query ?? currentHttpRequestModel.query,
-          formData: formData ?? currentHttpRequestModel.formData,
-        ),
+      aiRequestModel: aiRequestModel ?? currentModel.aiRequestModel,
+      httpRequestModel: currentHttpRequestModel?.copyWith(
+        method: method ?? currentHttpRequestModel.method,
+        url: url ?? currentHttpRequestModel.url,
+        headers: headers ?? currentHttpRequestModel.headers,
+        params: params ?? currentHttpRequestModel.params,
+        isHeaderEnabledList:
+            isHeaderEnabledList ?? currentHttpRequestModel.isHeaderEnabledList,
+        isParamEnabledList:
+            isParamEnabledList ?? currentHttpRequestModel.isParamEnabledList,
+        bodyContentType:
+            bodyContentType ?? currentHttpRequestModel.bodyContentType,
+        body: body ?? currentHttpRequestModel.body,
+        query: query ?? currentHttpRequestModel.query,
+        formData: formData ?? currentHttpRequestModel.formData,
       ),
       responseStatus: responseStatus ?? currentModel.responseStatus,
       message: message ?? currentModel.message,
-      genericResponseModel: GenericResponseModel(
-        aiResponseModel: aiResponseModel ??
-            currentModel.genericResponseModel?.aiResponseModel,
-        httpResponseModel: httpResponseModel ??
-            currentModel.genericResponseModel?.httpResponseModel,
-      ),
+      aiResponseModel: aiResponseModel ?? currentModel.aiResponseModel,
+      httpResponseModel: httpResponseModel ?? currentModel.httpResponseModel,
     );
 
     var map = {...state!};
@@ -315,7 +297,7 @@ class CollectionStateNotifier
     }
     RequestModel? requestModel = state![requestId];
 
-    if (requestModel?.genericRequestModel?.httpRequestModel == null) {
+    if (requestModel?.httpRequestModel == null) {
       return;
     }
 
@@ -336,7 +318,7 @@ class CollectionStateNotifier
     (Response?, Duration?, String?)? reqRes;
 
     if (apiType == APIType.ai) {
-      aiRequestModel = requestModel.genericRequestModel!.aiRequestModel!;
+      aiRequestModel = requestModel.aiRequestModel!;
       if (aiRequestModel.payload.systemPrompt.isEmpty &&
           aiRequestModel.payload.userPrompt.isEmpty) {
         reqRes = (null, null, 'AI Requests cannot have empty prompts');
@@ -359,8 +341,8 @@ class CollectionStateNotifier
         );
       }
     } else {
-      substitutedHttpRequestModel = getSubstitutedHttpRequestModel(
-          requestModel.genericRequestModel!.httpRequestModel!);
+      substitutedHttpRequestModel =
+          getSubstitutedHttpRequestModel(requestModel.httpRequestModel!);
       reqRes = await sendHttpRequest(
         requestId,
         apiType,
@@ -405,10 +387,8 @@ class CollectionStateNotifier
       newRequestModel = requestModel.copyWith(
         responseStatus: statusCode,
         message: kResponseCodeReasons[statusCode],
-        genericResponseModel: GenericResponseModel(
-          aiResponseModel: aiResponseModel,
-          httpResponseModel: httpResponseModel,
-        ),
+        aiResponseModel: aiResponseModel,
+        httpResponseModel: httpResponseModel,
         isWorking: false,
       );
       String newHistoryId = getNewUuid();
@@ -467,10 +447,8 @@ class CollectionStateNotifier
       state = {
         newId: RequestModel(
           id: newId,
-          genericRequestModel: GenericRequestModel(
-            aiRequestModel: null,
-            httpRequestModel: HttpRequestModel(),
-          ),
+          aiRequestModel: null,
+          httpRequestModel: HttpRequestModel(),
         ),
       };
       return true;
@@ -481,12 +459,10 @@ class CollectionStateNotifier
         if (jsonModel != null) {
           var jsonMap = Map<String, Object?>.from(jsonModel);
           var requestModel = RequestModel.fromJson(jsonMap);
-          if (requestModel.genericRequestModel?.httpRequestModel == null) {
+          if (requestModel.httpRequestModel == null) {
             requestModel = requestModel.copyWith(
-              genericRequestModel: GenericRequestModel(
-                aiRequestModel: null,
-                httpRequestModel: HttpRequestModel(),
-              ),
+              aiRequestModel: null,
+              httpRequestModel: HttpRequestModel(),
             );
           }
           data[id] = requestModel;
@@ -507,7 +483,10 @@ class CollectionStateNotifier
         id,
         saveResponse
             ? (state?[id])?.toJson()
-            : (state?[id]?.copyWith(genericResponseModel: null))?.toJson(),
+            : (state?[id]?.copyWith(
+                aiResponseModel: null,
+                httpResponseModel: null,
+              ))?.toJson(),
       );
     }
     await hiveHandler.removeUnused();
