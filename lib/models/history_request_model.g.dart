@@ -11,10 +11,22 @@ _$HistoryRequestModelImpl _$$HistoryRequestModelImplFromJson(Map json) =>
       historyId: json['historyId'] as String,
       metaData: HistoryMetaModel.fromJson(
           Map<String, Object?>.from(json['metaData'] as Map)),
-      genericRequestModel: GenericRequestModel.fromJson(
-          Map<String, dynamic>.from(json['genericRequestModel'] as Map)),
-      genericResponseModel: GenericResponseModel.fromJson(
-          Map<String, dynamic>.from(json['genericResponseModel'] as Map)),
+      httpRequestModel: json['httpRequestModel'] == null
+          ? null
+          : HttpRequestModel.fromJson(
+              Map<String, Object?>.from(json['httpRequestModel'] as Map)),
+      httpResponseModel: json['httpResponseModel'] == null
+          ? null
+          : HttpResponseModel.fromJson(
+              Map<String, Object?>.from(json['httpResponseModel'] as Map)),
+      aiRequestModel: json['aiRequestModel'] == null
+          ? null
+          : AIRequestModel.fromJson(
+              Map<String, Object?>.from(json['aiRequestModel'] as Map)),
+      aiResponseModel: json['aiResponseModel'] == null
+          ? null
+          : AIResponseModel.fromJson(
+              Map<String, Object?>.from(json['aiResponseModel'] as Map)),
     );
 
 Map<String, dynamic> _$$HistoryRequestModelImplToJson(
@@ -22,6 +34,8 @@ Map<String, dynamic> _$$HistoryRequestModelImplToJson(
     <String, dynamic>{
       'historyId': instance.historyId,
       'metaData': instance.metaData.toJson(),
-      'genericRequestModel': instance.genericRequestModel.toJson(),
-      'genericResponseModel': instance.genericResponseModel.toJson(),
+      'httpRequestModel': instance.httpRequestModel?.toJson(),
+      'httpResponseModel': instance.httpResponseModel?.toJson(),
+      'aiRequestModel': instance.aiRequestModel?.toJson(),
+      'aiResponseModel': instance.aiResponseModel?.toJson(),
     };

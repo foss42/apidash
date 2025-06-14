@@ -16,7 +16,7 @@ class HisAIRequestPromptSection extends ConsumerWidget {
     final selectedHistoryModel =
         ref.watch(selectedHistoryRequestModelProvider)!;
 
-    final aiReqM = selectedHistoryModel.genericRequestModel.aiRequestModel!;
+    final aiReqM = selectedHistoryModel.aiRequestModel!;
     final payload = aiReqM.payload;
     final systemPrompt = payload.systemPrompt;
     final userPrompt = payload.userPrompt;
@@ -81,7 +81,7 @@ class HisAIRequestAuthorizationSection extends ConsumerWidget {
     final selectedHistoryModel =
         ref.watch(selectedHistoryRequestModelProvider)!;
 
-    final aiReqM = selectedHistoryModel.genericRequestModel.aiRequestModel!;
+    final aiReqM = selectedHistoryModel.aiRequestModel!;
 
     final payload = aiReqM.payload;
 
@@ -118,7 +118,7 @@ class HisAIRequestConfigSection extends ConsumerWidget {
     final selectedHistoryModel =
         ref.watch(selectedHistoryRequestModelProvider)!;
 
-    final aiReqM = selectedHistoryModel.genericRequestModel.aiRequestModel!;
+    final aiReqM = selectedHistoryModel.aiRequestModel!;
 
     final payload = aiReqM.payload;
 

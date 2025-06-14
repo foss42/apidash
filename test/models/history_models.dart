@@ -22,10 +22,10 @@ final historyMetaModel1 = HistoryMetaModel(
 final historyRequestModel1 = HistoryRequestModel(
   historyId: 'historyId1',
   metaData: historyMetaModel1,
-  genericRequestModel: GenericRequestModel(
-      aiRequestModel: null, httpRequestModel: httpRequestModelGet4),
-  genericResponseModel: GenericResponseModel(
-      aiResponseModel: null, httpResponseModel: responseModel),
+  aiRequestModel: null,
+  httpRequestModel: httpRequestModelGet4,
+  aiResponseModel: null,
+  httpResponseModel: responseModel,
 );
 
 final historyMetaModel2 = HistoryMetaModel(
@@ -41,10 +41,10 @@ final historyMetaModel2 = HistoryMetaModel(
 final historyRequestModel2 = HistoryRequestModel(
   historyId: 'historyId2',
   metaData: historyMetaModel2,
-  genericRequestModel: GenericRequestModel(
-      aiRequestModel: null, httpRequestModel: httpRequestModelPost10),
-  genericResponseModel: GenericResponseModel(
-      aiResponseModel: null, httpResponseModel: responseModel),
+  aiRequestModel: null,
+  httpRequestModel: httpRequestModelPost10,
+  aiResponseModel: null,
+  httpResponseModel: responseModel,
 );
 
 /// JSONs

@@ -25,7 +25,7 @@ class HistoryRequestPane extends ConsumerWidget {
     final headersMap = ref.watch(selectedHistoryRequestModelProvider.select(
           (value) {
             if (apiType == APIType.ai) return <String, String>{};
-            return value?.genericRequestModel.httpRequestModel!.headersMap;
+            return value?.httpRequestModel?.headersMap;
           },
         )) ??
         {};
@@ -34,7 +34,7 @@ class HistoryRequestPane extends ConsumerWidget {
     final paramsMap = ref.watch(selectedHistoryRequestModelProvider.select(
           (value) {
             if (apiType == APIType.ai) return <String, String>{};
-            return value?.genericRequestModel.httpRequestModel!.paramsMap;
+            return value?.httpRequestModel?.paramsMap;
           },
         )) ??
         {};
@@ -43,7 +43,7 @@ class HistoryRequestPane extends ConsumerWidget {
     final hasBody = ref.watch(selectedHistoryRequestModelProvider.select(
           (value) {
             if (apiType == APIType.ai) return false;
-            return value?.genericRequestModel.httpRequestModel!.hasBody;
+            return value?.httpRequestModel?.hasBody;
           },
         )) ??
         false;
@@ -51,7 +51,7 @@ class HistoryRequestPane extends ConsumerWidget {
     final hasQuery =
         ref.watch(selectedHistoryRequestModelProvider.select((value) {
               if (apiType == APIType.ai) return false;
-              return value?.genericRequestModel.httpRequestModel!.hasQuery;
+              return value?.httpRequestModel?.hasQuery;
             })) ??
             false;
 
@@ -145,8 +145,7 @@ class HisRequestBody extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedHistoryModel = ref.watch(selectedHistoryRequestModelProvider);
     final apiType = selectedHistoryModel?.metaData.apiType;
-    final requestModel =
-        selectedHistoryModel?.genericRequestModel.httpRequestModel;
+    final requestModel = selectedHistoryModel?.httpRequestModel;
     final contentType = requestModel?.bodyContentType;
 
     return switch (apiType) {

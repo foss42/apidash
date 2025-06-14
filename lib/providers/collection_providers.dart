@@ -197,9 +197,7 @@ class CollectionStateNotifier
     var itemIds = ref.read(requestSequenceProvider);
     var currentModel = historyRequestModel;
 
-    final aT = currentModel.genericRequestModel.aiRequestModel != null
-        ? APIType.ai
-        : APIType.rest;
+    final aT = currentModel.aiRequestModel != null ? APIType.ai : APIType.rest;
 
     final newModel = RequestModel(
       apiType: aT,
@@ -209,10 +207,10 @@ class CollectionStateNotifier
       message: kResponseCodeReasons[currentModel.metaData.responseStatus],
       isWorking: false,
       sendingTime: null,
-      aiRequestModel: currentModel.genericRequestModel.aiRequestModel,
-      aiResponseModel: currentModel.genericResponseModel.aiResponseModel,
-      httpRequestModel: currentModel.genericRequestModel.httpRequestModel,
-      httpResponseModel: currentModel.genericResponseModel.httpResponseModel,
+      aiRequestModel: currentModel.aiRequestModel,
+      aiResponseModel: currentModel.aiResponseModel,
+      httpRequestModel: currentModel.httpRequestModel,
+      httpResponseModel: currentModel.httpResponseModel,
     );
 
     itemIds.insert(0, newId);
@@ -296,10 +294,6 @@ class CollectionStateNotifier
       return;
     }
     RequestModel? requestModel = state![requestId];
-
-    if (requestModel?.httpRequestModel == null) {
-      return;
-    }
 
     APIType apiType = requestModel!.apiType;
 
@@ -404,14 +398,10 @@ class CollectionStateNotifier
           responseStatus: statusCode,
           timeStamp: DateTime.now(),
         ),
-        genericRequestModel: GenericRequestModel(
-          aiRequestModel: aiRequestModel,
-          httpRequestModel: substitutedHttpRequestModel,
-        ),
-        genericResponseModel: GenericResponseModel(
-          aiResponseModel: aiResponseModel,
-          httpResponseModel: httpResponseModel,
-        ),
+        aiRequestModel: aiRequestModel,
+        httpRequestModel: substitutedHttpRequestModel,
+        aiResponseModel: aiResponseModel,
+        httpResponseModel: httpResponseModel,
       );
       ref.read(historyMetaStateNotifier.notifier).addHistoryRequest(model);
     }
@@ -459,12 +449,13 @@ class CollectionStateNotifier
         if (jsonModel != null) {
           var jsonMap = Map<String, Object?>.from(jsonModel);
           var requestModel = RequestModel.fromJson(jsonMap);
-          if (requestModel.httpRequestModel == null) {
-            requestModel = requestModel.copyWith(
-              aiRequestModel: null,
-              httpRequestModel: HttpRequestModel(),
-            );
-          }
+          //TODO: Investigate if this needs to be re-introduced
+          // if (requestModel.httpRequestModel == null) {
+          //   requestModel = requestModel.copyWith(
+          //     aiRequestModel: requestModel.aiRequestModel,
+          //     httpRequestModel: HttpRequestModel(),
+          //   );
+          // }
           data[id] = requestModel;
         }
       }

@@ -13,13 +13,12 @@ RequestModel getRequestModelFromHistoryModel(HistoryRequestModel model) {
     id: model.historyId,
     apiType: model.metaData.apiType,
     name: model.metaData.name,
-    responseStatus: model.genericResponseModel.httpResponseModel?.statusCode,
-    message: kResponseCodeReasons[
-        model.genericResponseModel.httpResponseModel?.statusCode],
-    aiRequestModel: model.genericRequestModel.aiRequestModel,
-    aiResponseModel: model.genericResponseModel.aiResponseModel,
-    httpRequestModel: model.genericRequestModel.httpRequestModel,
-    httpResponseModel: model.genericResponseModel.httpResponseModel,
+    responseStatus: model.httpResponseModel?.statusCode,
+    message: kResponseCodeReasons[model.httpResponseModel?.statusCode],
+    aiRequestModel: model.aiRequestModel,
+    aiResponseModel: model.aiResponseModel,
+    httpRequestModel: model.httpRequestModel,
+    httpResponseModel: model.httpResponseModel,
   );
 }
 
