@@ -54,9 +54,11 @@ class EditAuthType extends ConsumerWidget {
                 );
               }).toList(),
               onChanged: (APIAuthType? newType) {
+                final selectedRequest = ref.read(selectedRequestModelProvider);
                 if (newType != null) {
                   ref.read(collectionStateNotifierProvider.notifier).update(
-                        authData: currentAuthData?.copyWith(type: newType) ??
+                        authData: selectedRequest?.authData
+                                ?.copyWith(type: newType) ??
                             ApiAuthModel(type: newType),
                       );
                 }
@@ -75,7 +77,7 @@ class EditAuthType extends ConsumerWidget {
     WidgetRef ref,
     ApiAuthModel? authData,
   ) {
-    void updateAuth(ApiAuthModel model) {
+    void updateAuth(ApiAuthModel? model) {
       ref.read(collectionStateNotifierProvider.notifier).update(
             authData: model,
           );
@@ -114,15 +116,13 @@ class EditAuthType extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              onChanged: (value) => updateAuth(
-                ApiAuthModel(
-                  type: APIAuthType.basic,
-                  basic: AuthBasicAuthModel(
-                    username: usernameController.text.trim(),
-                    password: passwordController.text.trim(),
-                  ),
+              onChanged: (value) => updateAuth(authData?.copyWith(
+                type: APIAuthType.basic,
+                basic: AuthBasicAuthModel(
+                  username: usernameController.text.trim(),
+                  password: passwordController.text.trim(),
                 ),
-              ),
+              )),
             ),
             SizedBox(
               height: 16,
@@ -151,7 +151,7 @@ class EditAuthType extends ConsumerWidget {
               ),
               obscureText: true,
               onChanged: (value) => updateAuth(
-                ApiAuthModel(
+                authData?.copyWith(
                   type: APIAuthType.basic,
                   basic: AuthBasicAuthModel(
                     username: usernameController.text.trim(),
@@ -193,7 +193,7 @@ class EditAuthType extends ConsumerWidget {
                 ),
               ),
               onChanged: (value) => updateAuth(
-                ApiAuthModel(
+                authData?.copyWith(
                   type: APIAuthType.bearer,
                   bearer: AuthBearerModel(token: tokenController.text.trim()),
                 ),
@@ -246,14 +246,16 @@ class EditAuthType extends ConsumerWidget {
               ],
               onChanged: (String? newLocation) {
                 if (newLocation != null) {
-                  updateAuth(ApiAuthModel(
-                    type: APIAuthType.apiKey,
-                    apikey: AuthApiKeyModel(
-                      key: keyController.text,
-                      name: nameController.text,
-                      location: newLocation,
+                  updateAuth(
+                    authData?.copyWith(
+                      type: APIAuthType.apiKey,
+                      apikey: AuthApiKeyModel(
+                        key: keyController.text,
+                        name: nameController.text,
+                        location: newLocation,
+                      ),
                     ),
-                  ));
+                  );
                 }
               },
             ),
@@ -281,7 +283,7 @@ class EditAuthType extends ConsumerWidget {
                 ),
               ),
               onChanged: (value) => updateAuth(
-                ApiAuthModel(
+                authData?.copyWith(
                   type: APIAuthType.apiKey,
                   apikey: AuthApiKeyModel(
                     key: keyController.text,
@@ -314,14 +316,16 @@ class EditAuthType extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              onChanged: (value) => updateAuth(ApiAuthModel(
-                type: APIAuthType.apiKey,
-                apikey: AuthApiKeyModel(
-                  key: keyController.text.trim(),
-                  name: nameController.text,
-                  location: currentLocation,
+              onChanged: (value) => updateAuth(
+                authData?.copyWith(
+                  type: APIAuthType.apiKey,
+                  apikey: AuthApiKeyModel(
+                    key: keyController.text.trim(),
+                    name: nameController.text,
+                    location: currentLocation,
+                  ),
                 ),
-              )),
+              ),
             ),
           ],
         );
@@ -381,19 +385,21 @@ class EditAuthType extends ConsumerWidget {
               ],
               onChanged: (String? newAddTokenTo) {
                 if (newAddTokenTo != null) {
-                  updateAuth(ApiAuthModel(
-                    type: APIAuthType.jwt,
-                    jwt: AuthJwtModel(
-                      secret: jwtSecretController.text.trim(),
-                      payload: jwtPayloadController.text.trim(),
-                      addTokenTo: newAddTokenTo,
-                      algorithm: currentAlgorithm,
-                      isSecretBase64Encoded: isSecretBase64Encoded,
-                      headerPrefix: jwtHeaderPrefixController.text.trim(),
-                      queryParamKey: jwtQueryParamKeyController.text.trim(),
-                      header: jwtHeaderController.text.trim(),
+                  updateAuth(
+                    authData?.copyWith(
+                      type: APIAuthType.jwt,
+                      jwt: AuthJwtModel(
+                        secret: jwtSecretController.text.trim(),
+                        payload: jwtPayloadController.text.trim(),
+                        addTokenTo: newAddTokenTo,
+                        algorithm: currentAlgorithm,
+                        isSecretBase64Encoded: isSecretBase64Encoded,
+                        headerPrefix: jwtHeaderPrefixController.text.trim(),
+                        queryParamKey: jwtQueryParamKeyController.text.trim(),
+                        header: jwtHeaderController.text.trim(),
+                      ),
                     ),
-                  ));
+                  );
                 }
               },
             ),
@@ -428,19 +434,21 @@ class EditAuthType extends ConsumerWidget {
               }).toList(),
               onChanged: (String? newAlgorithm) {
                 if (newAlgorithm != null) {
-                  updateAuth(ApiAuthModel(
-                    type: APIAuthType.jwt,
-                    jwt: AuthJwtModel(
-                      secret: jwtSecretController.text.trim(),
-                      payload: jwtPayloadController.text.trim(),
-                      addTokenTo: currentAddTokenTo,
-                      algorithm: newAlgorithm,
-                      isSecretBase64Encoded: isSecretBase64Encoded,
-                      headerPrefix: jwtHeaderPrefixController.text.trim(),
-                      queryParamKey: jwtQueryParamKeyController.text.trim(),
-                      header: jwtHeaderController.text.trim(),
+                  updateAuth(
+                    authData?.copyWith(
+                      type: APIAuthType.jwt,
+                      jwt: AuthJwtModel(
+                        secret: jwtSecretController.text.trim(),
+                        payload: jwtPayloadController.text.trim(),
+                        addTokenTo: currentAddTokenTo,
+                        algorithm: newAlgorithm,
+                        isSecretBase64Encoded: isSecretBase64Encoded,
+                        headerPrefix: jwtHeaderPrefixController.text.trim(),
+                        queryParamKey: jwtQueryParamKeyController.text.trim(),
+                        header: jwtHeaderController.text.trim(),
+                      ),
                     ),
-                  ));
+                  );
                 }
               },
             ),
@@ -465,19 +473,21 @@ class EditAuthType extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              onChanged: (value) => updateAuth(ApiAuthModel(
-                type: APIAuthType.jwt,
-                jwt: AuthJwtModel(
-                  secret: jwtSecretController.text.trim(),
-                  payload: jwtPayloadController.text.trim(),
-                  addTokenTo: currentAddTokenTo,
-                  algorithm: currentAlgorithm,
-                  isSecretBase64Encoded: isSecretBase64Encoded,
-                  headerPrefix: jwtHeaderPrefixController.text.trim(),
-                  queryParamKey: jwtQueryParamKeyController.text.trim(),
-                  header: jwtHeaderController.text.trim(),
+              onChanged: (value) => updateAuth(
+                authData?.copyWith(
+                  type: APIAuthType.jwt,
+                  jwt: AuthJwtModel(
+                    secret: jwtSecretController.text.trim(),
+                    payload: jwtPayloadController.text.trim(),
+                    addTokenTo: currentAddTokenTo,
+                    algorithm: currentAlgorithm,
+                    isSecretBase64Encoded: isSecretBase64Encoded,
+                    headerPrefix: jwtHeaderPrefixController.text.trim(),
+                    queryParamKey: jwtQueryParamKeyController.text.trim(),
+                    header: jwtHeaderController.text.trim(),
+                  ),
                 ),
-              )),
+              ),
             ),
             const SizedBox(height: 16),
             CheckboxListTile(
@@ -491,19 +501,21 @@ class EditAuthType extends ConsumerWidget {
               contentPadding: EdgeInsets.zero,
               controlAffinity: ListTileControlAffinity.leading,
               onChanged: (bool? value) {
-                updateAuth(ApiAuthModel(
-                  type: APIAuthType.jwt,
-                  jwt: AuthJwtModel(
-                    secret: jwtSecretController.text.trim(),
-                    payload: jwtPayloadController.text.trim(),
-                    addTokenTo: currentAddTokenTo,
-                    algorithm: currentAlgorithm,
-                    isSecretBase64Encoded: value ?? false,
-                    headerPrefix: jwtHeaderPrefixController.text.trim(),
-                    queryParamKey: jwtQueryParamKeyController.text.trim(),
-                    header: jwtHeaderController.text.trim(),
+                updateAuth(
+                  authData?.copyWith(
+                    type: APIAuthType.jwt,
+                    jwt: AuthJwtModel(
+                      secret: jwtSecretController.text.trim(),
+                      payload: jwtPayloadController.text.trim(),
+                      addTokenTo: currentAddTokenTo,
+                      algorithm: currentAlgorithm,
+                      isSecretBase64Encoded: value ?? false,
+                      headerPrefix: jwtHeaderPrefixController.text.trim(),
+                      queryParamKey: jwtQueryParamKeyController.text.trim(),
+                      header: jwtHeaderController.text.trim(),
+                    ),
                   ),
-                ));
+                );
               },
             ),
             const SizedBox(height: 16),
@@ -529,19 +541,21 @@ class EditAuthType extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              onChanged: (value) => updateAuth(ApiAuthModel(
-                type: APIAuthType.jwt,
-                jwt: AuthJwtModel(
-                  secret: jwtSecretController.text.trim(),
-                  payload: jwtPayloadController.text.trim(),
-                  addTokenTo: currentAddTokenTo,
-                  algorithm: currentAlgorithm,
-                  isSecretBase64Encoded: isSecretBase64Encoded,
-                  headerPrefix: jwtHeaderPrefixController.text.trim(),
-                  queryParamKey: jwtQueryParamKeyController.text.trim(),
-                  header: jwtHeaderController.text.trim(),
+              onChanged: (value) => updateAuth(
+                authData?.copyWith(
+                  type: APIAuthType.jwt,
+                  jwt: AuthJwtModel(
+                    secret: jwtSecretController.text.trim(),
+                    payload: jwtPayloadController.text.trim(),
+                    addTokenTo: currentAddTokenTo,
+                    algorithm: currentAlgorithm,
+                    isSecretBase64Encoded: isSecretBase64Encoded,
+                    headerPrefix: jwtHeaderPrefixController.text.trim(),
+                    queryParamKey: jwtQueryParamKeyController.text.trim(),
+                    header: jwtHeaderController.text.trim(),
+                  ),
                 ),
-              )),
+              ),
             ),
             // const SizedBox(height: 16),
             // if (currentAddTokenTo == 'header') ...[
