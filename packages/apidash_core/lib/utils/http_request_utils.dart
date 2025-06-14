@@ -90,13 +90,3 @@ List<NameValueModel>? getEnabledRows(
       rows.where((element) => isRowEnabledList[rows.indexOf(element)]).toList();
   return finalRows == [] ? null : finalRows;
 }
-
-String? getRequestBody(APIType type, HttpRequestModel httpRequestModel) {
-  return switch (type) {
-    APIType.rest =>
-      (httpRequestModel.hasJsonData || httpRequestModel.hasTextData)
-          ? httpRequestModel.body
-          : null,
-    APIType.graphql => getGraphQLBody(httpRequestModel),
-  };
-}

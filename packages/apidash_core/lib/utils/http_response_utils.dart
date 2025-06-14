@@ -50,3 +50,20 @@ Future<http.Response> convertStreamedResponse(
 
   return response;
 }
+
+Stream<String?> streamTextResponse(
+  http.StreamedResponse streamedResponse,
+) async* {
+  try {
+    if (streamedResponse.statusCode != 200) {
+      final errorText = await streamedResponse.stream.bytesToString();
+      throw Exception('${streamedResponse.statusCode}\n$errorText');
+    }
+    final utf8Stream = streamedResponse.stream.transform(utf8.decoder);
+    await for (final chunk in utf8Stream) {
+      yield chunk;
+    }
+  } catch (e) {
+    rethrow;
+  }
+}
