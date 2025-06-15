@@ -17,7 +17,7 @@ final httpClientManager = HttpClientManager();
 Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
   String requestId,
   APIType apiType,
-  ApiAuthModel? authData,
+  AuthModel? authData,
   HttpRequestModel requestModel, {
   SupportedUriSchemes defaultUriScheme = kDefaultUriScheme,
   bool noSSL = false,
