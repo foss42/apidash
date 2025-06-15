@@ -1,5 +1,4 @@
 import 'package:apidash/consts.dart';
-import 'package:apidash/screens/home_page/editor_pane/details_card/request_pane/request_auth.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,7 +7,7 @@ import 'package:apidash/widgets/widgets.dart';
 import 'request_headers.dart';
 import 'request_params.dart';
 import 'request_body.dart';
-import 'request_scripts.dart';
+import 'request_auth.dart';
 
 class EditRestRequestPane extends ConsumerWidget {
   const EditRestRequestPane({super.key});

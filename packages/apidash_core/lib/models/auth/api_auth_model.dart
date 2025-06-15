@@ -1,9 +1,9 @@
-import 'package:apidash_core/models/auth/auth_api_key_model.dart';
-import 'package:apidash_core/models/auth/auth_basic_model.dart';
-import 'package:apidash_core/models/auth/auth_bearer_model.dart';
-import 'package:apidash_core/models/auth/auth_jwt_model.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import '../../consts.dart';
+import 'auth_api_key_model.dart';
+import 'auth_basic_model.dart';
+import 'auth_bearer_model.dart';
+import 'auth_jwt_model.dart';
 
 part 'api_auth_model.g.dart';
 part 'api_auth_model.freezed.dart';
