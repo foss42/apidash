@@ -30,9 +30,10 @@ String stripUrlParams(String url) {
     return (null, "URL is missing!");
   }
 
-  if (kLocalhostRegex.hasMatch(url)) {
+  if (kLocalhostRegex.hasMatch(url) || kIPHostRegex.hasMatch(url)) {
     url = '${SupportedUriSchemes.http.name}://$url';
   }
+
   Uri? uri = Uri.tryParse(url);
   if (uri == null) {
     return (null, "Check URL (malformed)");
