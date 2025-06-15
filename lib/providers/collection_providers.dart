@@ -245,7 +245,21 @@ class CollectionStateNotifier
       debugPrint("Unable to update as Request Id is null");
       return;
     }
+
     var currentModel = state![rId]!;
+
+    if (apiType == APIType.ai) {
+      //Adding default AI Request Modoel
+      AIRequestModel? aiRM = currentModel.aiRequestModel;
+      LLMSaveObject? defaultLLMSO = ref
+          .watch(settingsProvider.notifier)
+          .settingsModel
+          ?.defaultLLMSaveObject; //Settings Default
+      if (aiRM == null) {
+        aiRequestModel = AIRequestModel.fromDefaultSaveObject(defaultLLMSO);
+      }
+    }
+
     var currentHttpRequestModel = currentModel.httpRequestModel;
     final newModel = currentModel.copyWith(
       apiType: apiType ?? currentModel.apiType,
