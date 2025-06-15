@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:data_table_2/data_table_2.dart';
 import 'package:apidash/providers/providers.dart';
+import 'package:apidash/screens/common_widgets/common_widgets.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/utils/utils.dart';
 import 'package:apidash/consts.dart';
@@ -82,7 +83,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
           key: ValueKey("$selectedId-$index-form-row-$seed"),
           cells: <DataCell>[
             DataCell(
-              CellField(
+              EnvCellField(
                 keyId: "$selectedId-$index-form-k-$seed",
                 initialValue: formRows[index].name,
                 hintText: kHintAddFieldName,
@@ -138,7 +139,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                       },
                       initialValue: formRows[index].value,
                     )
-                  : CellField(
+                  : EnvCellField(
                       keyId: "$selectedId-$index-form-v-$seed",
                       initialValue: formRows[index].value,
                       hintText: kHintAddValue,
@@ -184,7 +185,7 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
     return Stack(
       children: [
         Container(
-          margin: kP10,
+          margin: kPh10t10,
           child: Column(
             children: [
               Expanded(
@@ -204,27 +205,28 @@ class _FormDataBodyState extends ConsumerState<FormDataWidget> {
                   ),
                 ),
               ),
-              kVSpacer40,
+              if (!kIsMobile) kVSpacer40,
             ],
           ),
         ),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: Padding(
-            padding: kPb15,
-            child: ElevatedButton.icon(
-              onPressed: () {
-                formRows.add(kFormDataEmptyModel);
-                _onFieldChange();
-              },
-              icon: const Icon(Icons.add),
-              label: const Text(
-                kLabelAddFormField,
-                style: kTextStyleButton,
+        if (!kIsMobile)
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: kPb15,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  formRows.add(kFormDataEmptyModel);
+                  _onFieldChange();
+                },
+                icon: const Icon(Icons.add),
+                label: const Text(
+                  kLabelAddFormField,
+                  style: kTextStyleButton,
+                ),
               ),
             ),
           ),
-        ),
       ],
     );
   }

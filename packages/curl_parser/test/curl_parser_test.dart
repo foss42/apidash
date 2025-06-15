@@ -19,6 +19,30 @@ void main() {
     },
   );
 
+  test(
+    'parse another easy cURL',
+    () async {
+      expect(
+        Curl.parse(
+            r"""curl --location --request GET 'https://dummyimage.com/150/92c952' \
+--header 'user-agent: Dart/3.8 (dart:io)' \
+--header 'accept-encoding: gzip' \
+--header 'content-length: 0' \
+--header 'host: dummyimage.com'"""),
+        Curl(
+            method: 'GET',
+            uri: Uri.parse('https://dummyimage.com/150/92c952'),
+            headers: {
+              'user-agent': 'Dart/3.8 (dart:io)',
+              'accept-encoding': 'gzip',
+              'content-length': '0',
+              'host': 'dummyimage.com'
+            },
+            location: true),
+      );
+    },
+  );
+
   test('parse POST request with multipart/form-data', () {
     const curl = r'''curl -X POST 'https://api.apidash.dev/io/img' \
       -H 'Content-Type: multipart/form-data' \

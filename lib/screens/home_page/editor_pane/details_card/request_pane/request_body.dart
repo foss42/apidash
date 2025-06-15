@@ -21,6 +21,9 @@ class EditRequestBody extends ConsumerWidget {
         .select((value) => value?.httpRequestModel?.bodyContentType));
     final apiType = ref
         .watch(selectedRequestModelProvider.select((value) => value?.apiType));
+    final darkMode = ref.watch(settingsProvider.select(
+      (value) => value.isDark,
+    ));
 
     return Column(
       children: [
@@ -43,12 +46,12 @@ class EditRequestBody extends ConsumerWidget {
               child: switch (contentType) {
                 ContentType.formdata =>
                   const Padding(padding: kPh4, child: FormDataWidget()),
-                // TODO: Fix JsonTextFieldEditor & plug it here
                 ContentType.json => Padding(
                     padding: kPt5o10,
-                    child: TextFieldEditor(
+                    child: JsonTextFieldEditor(
                       key: Key("$selectedId-json-body"),
-                      fieldKey: "$selectedId-json-body-editor",
+                      fieldKey: "$selectedId-json-body-editor-$darkMode",
+                      isDark: darkMode,
                       initialValue: requestModel?.httpRequestModel?.body,
                       onChanged: (String value) {
                         ref
