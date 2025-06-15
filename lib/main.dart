@@ -26,7 +26,7 @@ void main() async {
   }
 
   //Load all LLMs
-  await LLMManager.fetchAvailableLLMs();
+  // await LLMManager.fetchAvailableLLMs();
   await LLMManager.loadAvailableLLMs();
 
   runApp(
