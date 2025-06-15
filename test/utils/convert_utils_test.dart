@@ -316,7 +316,9 @@ Easily manipulate and play around with request inputs like headers, query parame
       }
       ''';
 
-      String expected = '{"key":"value"}';
+      String expected = '''{
+  "key": "value"
+}''';
       expect(removeJsonComments(input), expected);
     });
 
@@ -330,13 +332,17 @@ Easily manipulate and play around with request inputs like headers, query parame
       }
       ''';
 
-      String expected = '{"key":"value"}';
+      String expected = '''{
+  "key": "value"
+}''';
       expect(removeJsonComments(input), expected);
     });
 
     test('Handles valid JSON without comments', () {
       String input = '{"key":"value"}';
-      String expected = '{"key":"value"}';
+      String expected = '''{
+  "key": "value"
+}''';
       expect(removeJsonComments(input), expected);
     });
 
@@ -354,7 +360,10 @@ Easily manipulate and play around with request inputs like headers, query parame
       }
       ''';
 
-      String expected = '{"key1":"value1","key2":"value2"}';
+      String expected = '''{
+  "key1": "value1",
+  "key2": "value2"
+}''';
       expect(removeJsonComments(input), expected);
     });
 
