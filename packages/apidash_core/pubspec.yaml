@@ -23,6 +23,7 @@ dependencies:
     path: ../postman
   seed: ^0.0.3
   xml: ^6.3.0
+  http_interceptor: ^2.0.0
 
 dev_dependencies:
   flutter_test:
