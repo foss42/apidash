@@ -62,6 +62,37 @@ void main() {
       expect(getValidRequestUri(url1, []), (uri1Expected, null));
     });
 
+    test('Testing getValidRequestUri with IP URL without port or path', () {
+      String url1 = "8.8.8.8";
+      Uri uri1Expected = Uri(scheme: 'http', host: '8.8.8.8');
+      expect(getValidRequestUri(url1, []), (uri1Expected, null));
+    });
+
+    test('Testing getValidRequestUri with IP URL with port', () {
+      String url1 = "8.8.8.8:8080";
+      Uri uri1Expected = Uri(scheme: 'http', host: '8.8.8.8', port: 8080);
+      expect(getValidRequestUri(url1, []), (uri1Expected, null));
+    });
+
+    test('Testing getValidRequestUri with IP URL with port and path', () {
+      String url1 = "8.8.8.8:8080/hello";
+      Uri uri1Expected =
+          Uri(scheme: 'http', host: '8.8.8.8', port: 8080, path: '/hello');
+      expect(getValidRequestUri(url1, []), (uri1Expected, null));
+    });
+
+    test('Testing getValidRequestUri with IP URL with http prefix', () {
+      String url1 = "http://8.8.8.8:3080";
+      Uri uri1Expected = Uri(scheme: 'http', host: '8.8.8.8', port: 3080);
+      expect(getValidRequestUri(url1, []), (uri1Expected, null));
+    });
+
+    test('Testing getValidRequestUri with IP URL with https prefix', () {
+      String url1 = "https://8.8.8.8:8080";
+      Uri uri1Expected = Uri(scheme: 'https', host: '8.8.8.8', port: 8080);
+      expect(getValidRequestUri(url1, []), (uri1Expected, null));
+    });
+
     test('Testing getValidRequestUri for normal values', () {
       String url1 = "https://api.apidash.dev/country/data";
       const kvRow1 = NameValueModel(name: "code", value: "US");

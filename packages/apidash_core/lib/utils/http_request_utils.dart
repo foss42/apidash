@@ -2,6 +2,7 @@ import 'package:apidash_core/consts.dart';
 import 'package:seed/seed.dart';
 import '../models/models.dart';
 import 'graphql_utils.dart';
+import 'package:json5/json5.dart' as json5;
 
 Map<String, String>? rowsToMap(
   List<NameValueModel>? kvRows, {
@@ -99,4 +100,15 @@ String? getRequestBody(APIType type, HttpRequestModel httpRequestModel) {
           : null,
     APIType.graphql => getGraphQLBody(httpRequestModel),
   };
+}
+
+// TODO: Expose this function to remove JSON comments
+String? removeJsonComments(String? json) {
+  try {
+    if (json == null) return null;
+    var parsed = json5.json5Decode(json);
+    return kJsonEncoder.convert(parsed);
+  } catch (e) {
+    return json;
+  }
 }
