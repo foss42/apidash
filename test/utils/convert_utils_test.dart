@@ -274,4 +274,36 @@ Easily manipulate and play around with request inputs like headers, query parame
           [kvRow1, kvRow3]);
     });
   });
+
+  group("Testing audioPosition function", () {
+    test('Testing using dur1', () {
+      Duration dur1 = const Duration(minutes: 1, seconds: 3);
+      String dur1Expected = "1:03";
+      expect(audioPosition(dur1), dur1Expected);
+    });
+
+    test('Testing using dur2', () {
+      Duration dur2 = const Duration(minutes: 0, seconds: 20);
+      String dur2Expected = "0:20";
+      expect(audioPosition(dur2), dur2Expected);
+    });
+
+    test('Testing using dur3', () {
+      Duration dur3 = const Duration(hours: 3);
+      String dur3Expected = "180:00";
+      expect(audioPosition(dur3), dur3Expected);
+    });
+
+    test('Testing using dur4', () {
+      Duration dur4 = const Duration(seconds: 1, milliseconds: 200);
+      String dur4Expected = "0:01";
+      expect(audioPosition(dur4), dur4Expected);
+    });
+
+    test('Testing using dur5', () {
+      Duration? dur4;
+      String dur4Expected = "";
+      expect(audioPosition(dur4), dur4Expected);
+    });
+  });
 }
