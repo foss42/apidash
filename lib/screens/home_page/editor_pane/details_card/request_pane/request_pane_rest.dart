@@ -47,18 +47,23 @@ class EditRestRequestPane extends ConsumerWidget {
             .read(collectionStateNotifierProvider.notifier)
             .update(requestTabIndex: index);
       },
-      showIndicators: [paramLength > 0, headerLength > 0, hasBody, hasAuth],
+      showIndicators: [
+        paramLength > 0,
+        hasAuth,
+        headerLength > 0,
+        hasBody,
+      ],
       tabLabels: const [
         kLabelURLParams,
+        kLabelAuth,
         kLabelHeaders,
         kLabelBody,
-        kLabelAuth,
       ],
       children: const [
         EditRequestURLParams(),
+        EditAuthType(),
         EditRequestHeaders(),
         EditRequestBody(),
-        EditAuthType(),
       ],
     );
   }
