@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:apidash_core/consts.dart';
 import 'package:seed/seed.dart';
 import '../models/models.dart';
@@ -104,10 +102,10 @@ String? getRequestBody(APIType type, HttpRequestModel httpRequestModel) {
   };
 }
 
+// TODO: Expose this function to remove JSON comments
 String? removeJsonComments(String? json) {
   try {
     if (json == null) return null;
-
     var parsed = json5.json5Decode(json);
     return kJsonEncoder.convert(parsed);
   } catch (e) {
