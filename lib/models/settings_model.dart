@@ -1,4 +1,5 @@
 import 'package:apidash_core/apidash_core.dart';
+import 'package:genai/genai.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash/consts.dart';
 
@@ -18,6 +19,7 @@ class SettingsModel {
     this.workspaceFolderPath,
     this.isSSLDisabled = false,
     this.isDashBotEnabled = true,
+    this.defaultLLMSaveObject,
   });
 
   final bool isDark;
@@ -33,6 +35,7 @@ class SettingsModel {
   final String? workspaceFolderPath;
   final bool isSSLDisabled;
   final bool isDashBotEnabled;
+  final LLMSaveObject? defaultLLMSaveObject;
 
   SettingsModel copyWith({
     bool? isDark,
@@ -48,6 +51,7 @@ class SettingsModel {
     String? workspaceFolderPath,
     bool? isSSLDisabled,
     bool? isDashBotEnabled,
+    LLMSaveObject? defaultLLMSaveObject,
   }) {
     return SettingsModel(
       isDark: isDark ?? this.isDark,
@@ -65,6 +69,7 @@ class SettingsModel {
       workspaceFolderPath: workspaceFolderPath ?? this.workspaceFolderPath,
       isSSLDisabled: isSSLDisabled ?? this.isSSLDisabled,
       isDashBotEnabled: isDashBotEnabled ?? this.isDashBotEnabled,
+      defaultLLMSaveObject: defaultLLMSaveObject ?? this.defaultLLMSaveObject,
     );
   }
 
@@ -85,6 +90,7 @@ class SettingsModel {
       workspaceFolderPath: workspaceFolderPath,
       isSSLDisabled: isSSLDisabled,
       isDashBotEnabled: isDashBotEnabled,
+      defaultLLMSaveObject: defaultLLMSaveObject,
     );
   }
 
@@ -141,6 +147,12 @@ class SettingsModel {
     final isSSLDisabled = data["isSSLDisabled"] as bool?;
     final isDashBotEnabled = data["isDashBotEnabled"] as bool?;
 
+    LLMSaveObject? defaultLLMSaveObject;
+    if (data["defaultLLMSaveObject"] != null) {
+      defaultLLMSaveObject =
+          LLMSaveObject.fromJSON(data["defaultLLMSaveObject"]);
+    }
+
     const sm = SettingsModel();
 
     return sm.copyWith(
@@ -158,6 +170,7 @@ class SettingsModel {
       workspaceFolderPath: workspaceFolderPath,
       isSSLDisabled: isSSLDisabled,
       isDashBotEnabled: isDashBotEnabled,
+      defaultLLMSaveObject: defaultLLMSaveObject,
     );
   }
 
@@ -178,6 +191,7 @@ class SettingsModel {
       "workspaceFolderPath": workspaceFolderPath,
       "isSSLDisabled": isSSLDisabled,
       "isDashBotEnabled": isDashBotEnabled,
+      'defaultLLMSaveObject': defaultLLMSaveObject?.toJSON(),
     };
   }
 
@@ -203,7 +217,8 @@ class SettingsModel {
         other.historyRetentionPeriod == historyRetentionPeriod &&
         other.workspaceFolderPath == workspaceFolderPath &&
         other.isSSLDisabled == isSSLDisabled &&
-        other.isDashBotEnabled == isDashBotEnabled;
+        other.isDashBotEnabled == isDashBotEnabled &&
+        other.defaultLLMSaveObject == defaultLLMSaveObject;
   }
 
   @override
@@ -223,6 +238,7 @@ class SettingsModel {
       workspaceFolderPath,
       isSSLDisabled,
       isDashBotEnabled,
+      defaultLLMSaveObject,
     );
   }
 }

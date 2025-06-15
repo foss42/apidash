@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:apidash_core/apidash_core.dart';
+import 'package:genai/genai.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/consts.dart';
@@ -53,6 +55,7 @@ class CollectionStateNotifier
   final Ref ref;
   final HiveHandler hiveHandler;
   final baseHttpResponseModel = const HttpResponseModel();
+  final baseAIResponseModel = const AIResponseModel();
 
   bool hasId(String id) => state?.keys.contains(id) ?? false;
 
@@ -88,7 +91,7 @@ class CollectionStateNotifier
     final newRequestModel = RequestModel(
       id: id,
       name: name ?? "",
-      httpRequestModel: httpRequestModel,
+      httpRequestModel: const HttpRequestModel(),
     );
     var map = {...state!};
     map[id] = newRequestModel;
@@ -137,12 +140,15 @@ class CollectionStateNotifier
     final rId = id ?? ref.read(selectedIdStateProvider);
     if (rId == null || state?[rId] == null) return;
     var currentModel = state![rId]!;
+
     final newModel = currentModel.copyWith(
       responseStatus: null,
       message: null,
-      httpResponseModel: null,
       isWorking: false,
       sendingTime: null,
+      // Clear Response Models
+      httpResponseModel: null,
+      aiResponseModel: null,
     );
     var map = {...state!};
     map[rId] = newModel;
@@ -163,7 +169,8 @@ class CollectionStateNotifier
       requestTabIndex: 0,
       responseStatus: null,
       message: null,
-      httpResponseModel: null,
+      httpRequestModel: currentModel.httpRequestModel,
+      aiRequestModel: currentModel.aiRequestModel,
       isWorking: false,
       sendingTime: null,
     );
@@ -183,15 +190,21 @@ class CollectionStateNotifier
 
     var itemIds = ref.read(requestSequenceProvider);
     var currentModel = historyRequestModel;
+
+    final aT = currentModel.aiRequestModel != null ? APIType.ai : APIType.rest;
+
     final newModel = RequestModel(
+      apiType: aT,
       id: newId,
       name: "${currentModel.metaData.name} (history)",
-      httpRequestModel: currentModel.httpRequestModel,
       responseStatus: currentModel.metaData.responseStatus,
       message: kResponseCodeReasons[currentModel.metaData.responseStatus],
-      httpResponseModel: currentModel.httpResponseModel,
       isWorking: false,
       sendingTime: null,
+      aiRequestModel: currentModel.aiRequestModel,
+      aiResponseModel: currentModel.aiResponseModel,
+      httpRequestModel: currentModel.httpRequestModel,
+      httpResponseModel: currentModel.httpResponseModel,
     );
 
     itemIds.insert(0, newId);
@@ -223,6 +236,8 @@ class CollectionStateNotifier
     int? responseStatus,
     String? message,
     HttpResponseModel? httpResponseModel,
+    AIResponseModel? aiResponseModel,
+    AIRequestModel? aiRequestModel,
   }) {
     final rId = id ?? ref.read(selectedIdStateProvider);
     if (rId == null) {
@@ -236,6 +251,7 @@ class CollectionStateNotifier
       name: name ?? currentModel.name,
       description: description ?? currentModel.description,
       requestTabIndex: requestTabIndex ?? currentModel.requestTabIndex,
+      aiRequestModel: aiRequestModel ?? currentModel.aiRequestModel,
       httpRequestModel: currentHttpRequestModel?.copyWith(
         method: method ?? currentHttpRequestModel.method,
         url: url ?? currentHttpRequestModel.url,
@@ -253,6 +269,7 @@ class CollectionStateNotifier
       ),
       responseStatus: responseStatus ?? currentModel.responseStatus,
       message: message ?? currentModel.message,
+      aiResponseModel: aiResponseModel ?? currentModel.aiResponseModel,
       httpResponseModel: httpResponseModel ?? currentModel.httpResponseModel,
     );
 
@@ -272,13 +289,10 @@ class CollectionStateNotifier
     }
     RequestModel? requestModel = state![requestId];
 
-    if (requestModel?.httpRequestModel == null) {
-      return;
-    }
-
     APIType apiType = requestModel!.apiType;
-    HttpRequestModel substitutedHttpRequestModel =
-        getSubstitutedHttpRequestModel(requestModel.httpRequestModel!);
+
+    HttpRequestModel? substitutedHttpRequestModel;
+    AIRequestModel? aiRequestModel;
 
     // set current model's isWorking to true and update state
     var map = {...state!};
@@ -289,30 +303,79 @@ class CollectionStateNotifier
     state = map;
 
     bool noSSL = ref.read(settingsProvider).isSSLDisabled;
-    var responseRec = await sendHttpRequest(
-      requestId,
-      apiType,
-      substitutedHttpRequestModel,
-      defaultUriScheme: defaultUriScheme,
-      noSSL: noSSL,
-    );
+    (Response?, Duration?, String?)? reqRes;
+
+    if (apiType == APIType.ai) {
+      aiRequestModel = requestModel.aiRequestModel!;
+      if (aiRequestModel.payload.systemPrompt.isEmpty &&
+          aiRequestModel.payload.userPrompt.isEmpty) {
+        reqRes = (null, null, 'AI Requests cannot have empty prompts');
+      } else {
+        final genAIRequest = aiRequestModel.createRequest();
+        reqRes = await sendHttpRequest(
+          requestId,
+          APIType.rest, //AI Requests internally use REST
+          HttpRequestModel(
+            method: HTTPVerb.post,
+            headers: [
+              ...genAIRequest.headers.entries.map(
+                (x) => NameValueModel(name: x.key, value: x.value),
+              ),
+            ],
+            url: genAIRequest.endpoint,
+            bodyContentType: ContentType.json,
+            body: jsonEncode(genAIRequest.body),
+          ),
+        );
+      }
+    } else {
+      substitutedHttpRequestModel =
+          getSubstitutedHttpRequestModel(requestModel.httpRequestModel!);
+      reqRes = await sendHttpRequest(
+        requestId,
+        apiType,
+        substitutedHttpRequestModel,
+        defaultUriScheme: defaultUriScheme,
+        noSSL: noSSL,
+      );
+    }
 
     late final RequestModel newRequestModel;
-    if (responseRec.$1 == null) {
+    if (reqRes.$1 == null) {
       newRequestModel = requestModel.copyWith(
         responseStatus: -1,
-        message: responseRec.$3,
+        message: reqRes.$3,
         isWorking: false,
       );
     } else {
-      final httpResponseModel = baseHttpResponseModel.fromResponse(
-        response: responseRec.$1!,
-        time: responseRec.$2!,
-      );
-      int statusCode = responseRec.$1!.statusCode;
+      HttpResponseModel? httpResponseModel;
+      AIResponseModel? aiResponseModel;
+      String url;
+      HTTPVerb method;
+
+      if (apiType == APIType.ai) {
+        aiResponseModel = baseAIResponseModel.fromResponse(
+          response: reqRes.$1!,
+          time: reqRes.$2!,
+          provider: aiRequestModel!.provider,
+        );
+        final aiRq = aiRequestModel.createRequest();
+        url = aiRq.endpoint;
+        method = HTTPVerb.fromMethod(aiRq.method);
+      } else {
+        httpResponseModel = baseHttpResponseModel.fromResponse(
+          response: reqRes.$1!,
+          time: reqRes.$2!,
+        );
+        url = substitutedHttpRequestModel!.url;
+        method = substitutedHttpRequestModel.method;
+      }
+
+      int statusCode = reqRes.$1!.statusCode;
       newRequestModel = requestModel.copyWith(
         responseStatus: statusCode,
         message: kResponseCodeReasons[statusCode],
+        aiResponseModel: aiResponseModel,
         httpResponseModel: httpResponseModel,
         isWorking: false,
       );
@@ -324,12 +387,14 @@ class CollectionStateNotifier
           requestId: requestId,
           apiType: requestModel.apiType,
           name: requestModel.name,
-          url: substitutedHttpRequestModel.url,
-          method: substitutedHttpRequestModel.method,
+          url: url,
+          method: method,
           responseStatus: statusCode,
           timeStamp: DateTime.now(),
         ),
+        aiRequestModel: aiRequestModel,
         httpRequestModel: substitutedHttpRequestModel,
+        aiResponseModel: aiResponseModel,
         httpResponseModel: httpResponseModel,
       );
       ref.read(historyMetaStateNotifier.notifier).addHistoryRequest(model);
@@ -366,7 +431,8 @@ class CollectionStateNotifier
       state = {
         newId: RequestModel(
           id: newId,
-          httpRequestModel: const HttpRequestModel(),
+          aiRequestModel: null,
+          httpRequestModel: HttpRequestModel(),
         ),
       };
       return true;
@@ -377,11 +443,13 @@ class CollectionStateNotifier
         if (jsonModel != null) {
           var jsonMap = Map<String, Object?>.from(jsonModel);
           var requestModel = RequestModel.fromJson(jsonMap);
-          if (requestModel.httpRequestModel == null) {
-            requestModel = requestModel.copyWith(
-              httpRequestModel: const HttpRequestModel(),
-            );
-          }
+          //TODO: Investigate if this needs to be re-introduced
+          // if (requestModel.httpRequestModel == null) {
+          //   requestModel = requestModel.copyWith(
+          //     aiRequestModel: requestModel.aiRequestModel,
+          //     httpRequestModel: HttpRequestModel(),
+          //   );
+          // }
           data[id] = requestModel;
         }
       }
@@ -400,7 +468,10 @@ class CollectionStateNotifier
         id,
         saveResponse
             ? (state?[id])?.toJson()
-            : (state?[id]?.copyWith(httpResponseModel: null))?.toJson(),
+            : (state?[id]?.copyWith(
+                aiResponseModel: null,
+                httpResponseModel: null,
+              ))?.toJson(),
       );
     }
     await hiveHandler.removeUnused();

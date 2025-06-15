@@ -28,15 +28,24 @@ class CodePane extends ConsumerWidget {
     final selectedRequestModel = isHistoryRequest
         ? getRequestModelFromHistoryModel(selectedHistoryRequestModel!)
         : ref.watch(selectedRequestModelProvider);
+
+    if (selectedRequestModel!.apiType == APIType.ai) {
+      return const ErrorMessage(
+        message: "Code generation for AI Requests is currently not available.",
+      );
+    }
+
     final defaultUriScheme =
         ref.watch(settingsProvider.select((value) => value.defaultUriScheme));
 
     var envMap = ref.watch(availableEnvironmentVariablesStateProvider);
     var activeEnvId = ref.watch(activeEnvironmentIdStateProvider);
 
-    final substitutedRequestModel = selectedRequestModel?.copyWith(
-        httpRequestModel: substituteHttpRequestModel(
-            selectedRequestModel.httpRequestModel!, envMap, activeEnvId));
+    final substitutedRequestModel = selectedRequestModel.copyWith(
+      aiRequestModel: null,
+      httpRequestModel: substituteHttpRequestModel(
+          selectedRequestModel.httpRequestModel!, envMap, activeEnvId),
+    );
 
     final code = codegen.getCode(
         codegenLanguage, substitutedRequestModel!, defaultUriScheme);

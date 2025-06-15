@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
+import 'package:genai/genai.dart';
 
 class ResponsePane extends ConsumerWidget {
   const ResponsePane({super.key});
@@ -52,15 +53,21 @@ class ResponseDetails extends ConsumerWidget {
         selectedRequestModelProvider.select((value) => value?.responseStatus));
     final message = ref
         .watch(selectedRequestModelProvider.select((value) => value?.message));
-    final responseModel = ref.watch(selectedRequestModelProvider
+
+    HttpResponseModel? httpResponseModel;
+    AIResponseModel? aiResponseModel;
+
+    httpResponseModel = ref.watch(selectedRequestModelProvider
         .select((value) => value?.httpResponseModel));
+    aiResponseModel = ref.watch(
+        selectedRequestModelProvider.select((value) => value?.aiResponseModel));
 
     return Column(
       children: [
         ResponsePaneHeader(
           responseStatus: responseStatus,
           message: message,
-          time: responseModel?.time,
+          time: aiResponseModel?.time ?? httpResponseModel?.time,
           onClearResponse: () {
             ref.read(collectionStateNotifierProvider.notifier).clearResponse();
           },
@@ -106,15 +113,22 @@ class ResponseHeadersTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final requestHeaders = ref.watch(selectedRequestModelProvider
-            .select((value) => value?.httpResponseModel?.requestHeaders)) ??
-        {};
-    final responseHeaders = ref.watch(selectedRequestModelProvider
-            .select((value) => value?.httpResponseModel?.headers)) ??
-        {};
+    final requestHeaders =
+        ref.watch(selectedRequestModelProvider.select((value) {
+      return value!.aiResponseModel?.requestHeaders ??
+          value.httpResponseModel!.requestHeaders;
+    }));
+
+    final responseHeaders =
+        ref.watch(selectedRequestModelProvider.select((value) {
+              return value!.aiResponseModel?.headers ??
+                  value.httpResponseModel!.headers;
+            })) ??
+            {};
+
     return ResponseHeaders(
       responseHeaders: responseHeaders,
-      requestHeaders: requestHeaders,
+      requestHeaders: requestHeaders as Map? ?? {},
     );
   }
 }

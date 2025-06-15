@@ -1,3 +1,4 @@
+import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -190,12 +191,22 @@ class RequestItem extends ConsumerWidget {
     final selectedId = ref.watch(selectedIdStateProvider);
     final editRequestId = ref.watch(selectedIdEditStateProvider);
 
+    HTTPVerb method;
+    String url;
+    if (requestModel.aiRequestModel != null) {
+      method = HTTPVerb.post;
+      url = requestModel.aiRequestModel!.payload.endpoint;
+    } else {
+      method = requestModel.httpRequestModel!.method;
+      url = requestModel.httpRequestModel!.url;
+    }
+
     return SidebarRequestCard(
       id: id,
       apiType: requestModel.apiType,
-      method: requestModel.httpRequestModel!.method,
+      method: method,
       name: requestModel.name,
-      url: requestModel.httpRequestModel?.url,
+      url: url,
       selectedId: selectedId,
       editRequestId: editRequestId,
       onTap: () {

@@ -202,9 +202,8 @@ const requestModelDelete2 = RequestModel(
 RequestModel testRequestModel = RequestModel(
   id: '1',
   apiType: APIType.rest,
-  httpRequestModel: httpRequestModelPost10,
   responseStatus: 200,
-  httpResponseModel: responseModel,
+  httpRequestModel: httpRequestModelPost10,
 );
 
 // JSON

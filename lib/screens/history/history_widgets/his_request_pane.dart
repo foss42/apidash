@@ -1,3 +1,4 @@
+import 'package:apidash/screens/history/history_widgets/ai_history_page.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
@@ -20,23 +21,39 @@ class HistoryRequestPane extends ConsumerWidget {
     final codePaneVisible = ref.watch(historyCodePaneVisibleStateProvider);
     final apiType = ref.watch(selectedHistoryRequestModelProvider
         .select((value) => value?.metaData.apiType));
-    final headersMap = ref.watch(selectedHistoryRequestModelProvider
-            .select((value) => value?.httpRequestModel.headersMap)) ??
+
+    final headersMap = ref.watch(selectedHistoryRequestModelProvider.select(
+          (value) {
+            if (apiType == APIType.ai) return <String, String>{};
+            return value?.httpRequestModel?.headersMap;
+          },
+        )) ??
         {};
     final headerLength = headersMap.length;
 
-    final paramsMap = ref.watch(selectedHistoryRequestModelProvider
-            .select((value) => value?.httpRequestModel.paramsMap)) ??
+    final paramsMap = ref.watch(selectedHistoryRequestModelProvider.select(
+          (value) {
+            if (apiType == APIType.ai) return <String, String>{};
+            return value?.httpRequestModel?.paramsMap;
+          },
+        )) ??
         {};
     final paramLength = paramsMap.length;
 
-    final hasBody = ref.watch(selectedHistoryRequestModelProvider
-            .select((value) => value?.httpRequestModel.hasBody)) ??
+    final hasBody = ref.watch(selectedHistoryRequestModelProvider.select(
+          (value) {
+            if (apiType == APIType.ai) return false;
+            return value?.httpRequestModel?.hasBody;
+          },
+        )) ??
         false;
 
-    final hasQuery = ref.watch(selectedHistoryRequestModelProvider
-            .select((value) => value?.httpRequestModel.hasQuery)) ??
-        false;
+    final hasQuery =
+        ref.watch(selectedHistoryRequestModelProvider.select((value) {
+              if (apiType == APIType.ai) return false;
+              return value?.httpRequestModel?.hasQuery;
+            })) ??
+            false;
 
     return switch (apiType) {
       APIType.rest => RequestPane(
@@ -93,6 +110,27 @@ class HistoryRequestPane extends ConsumerWidget {
               keyName: kNameHeader,
             ),
             const HisRequestBody(),
+          ],
+        ),
+      APIType.ai => RequestPane(
+          key: const Key("history-request-pane-ai"),
+          selectedId: selectedId,
+          codePaneVisible: codePaneVisible,
+          onPressedCodeButton: () {
+            ref.read(historyCodePaneVisibleStateProvider.notifier).state =
+                !codePaneVisible;
+          },
+          showViewCodeButton: !isCompact,
+          showIndicators: [
+            false,
+            false,
+            false,
+          ],
+          tabLabels: const ["Prompts", "Authorization", "Configuration"],
+          children: [
+            const HisAIRequestPromptSection(),
+            const HisAIRequestAuthorizationSection(),
+            const HisAIRequestConfigSection(),
           ],
         ),
       _ => kSizedBoxEmpty,
