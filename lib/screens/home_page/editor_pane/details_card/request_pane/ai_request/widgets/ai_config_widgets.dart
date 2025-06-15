@@ -1,6 +1,6 @@
 import 'package:apidash_design_system/widgets/textfield_outlined.dart';
 import 'package:flutter/material.dart';
-import 'package:genai/llm_config.dart';
+import 'package:genai/genai.dart';
 
 class SliderAIConfig extends StatelessWidget {
   final LLMModelConfiguration configuration;
@@ -35,7 +35,8 @@ class SliderAIConfig extends StatelessWidget {
           ),
         ),
         Text(
-          (configuration.configValue.value as (double, double, double)).$2
+          (configuration.configValue.value as (double, double, double))
+              .$2
               .toStringAsFixed(2),
         ),
       ],

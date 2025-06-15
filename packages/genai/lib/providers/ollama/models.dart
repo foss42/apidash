@@ -1,5 +1,5 @@
-import 'package:genai/providers/common.dart';
-import 'package:genai/providers/providers.dart';
+import '../../providers/common.dart';
+import '../providers.dart';
 
 enum OllamaModel implements LLMModel {
   llama3('llama3', 'Llama 3', LLMProvider.ollama),

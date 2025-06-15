@@ -1,6 +1,5 @@
-import 'package:genai/llm_config.dart';
-import 'package:genai/providers/common.dart';
-import 'package:genai/providers/providers.dart';
+import '../../providers/common.dart';
+import '../providers.dart';
 
 enum AnthropicModel implements LLMModel {
   claude3opus('claude-3-opus-latest', 'Claude 3 Opus', LLMProvider.anthropic),

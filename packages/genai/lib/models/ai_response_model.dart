@@ -3,7 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:genai/providers/providers.dart';
+import '../providers/providers.dart';
 part 'ai_response_model.freezed.dart';
 part 'ai_response_model.g.dart';
 

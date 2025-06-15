@@ -1,4 +1,4 @@
-import 'package:genai/llm_config.dart';
+import 'llm_config.dart';
 
 class LLMInputPayload {
   String endpoint;

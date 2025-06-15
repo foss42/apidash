@@ -1,7 +1,6 @@
 // ignore_for_file: constant_identifier_names
-
-import 'package:genai/providers/common.dart';
-import 'package:genai/providers/providers.dart';
+import '../../providers/common.dart';
+import '../providers.dart';
 
 enum GeminiModel implements LLMModel {
   gemini_15_pro('gemini-1.5-pro', 'Gemini 1.5 Pro', LLMProvider.gemini),

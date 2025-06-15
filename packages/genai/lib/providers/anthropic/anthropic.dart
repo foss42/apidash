@@ -1,7 +1,7 @@
-import 'package:genai/llm_config.dart';
-import 'package:genai/llm_input_payload.dart';
-import 'package:genai/llm_request.dart';
-import 'package:genai/providers/common.dart';
+import '../../llm_config.dart';
+import '../../llm_input_payload.dart';
+import '../../llm_request.dart';
+import '../../providers/common.dart';
 
 class AnthropicModelController extends ModelController {
   static final instance = AnthropicModelController();
