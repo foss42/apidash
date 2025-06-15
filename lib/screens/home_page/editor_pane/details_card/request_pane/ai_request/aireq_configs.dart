@@ -1,8 +1,8 @@
 import 'package:apidash/providers/collection_providers.dart';
-import 'package:genai/llm_config.dart';
+import 'package:apidash/screens/home_page/editor_pane/details_card/request_pane/ai_request/widgets/ai_config_widgets.dart';
+import 'package:genai/genai.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:genai/widgets/ai_config_widgets.dart';
 
 class AIRequestConfigSection extends ConsumerStatefulWidget {
   const AIRequestConfigSection({super.key});

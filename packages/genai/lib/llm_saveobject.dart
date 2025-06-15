@@ -1,6 +1,4 @@
-import 'package:genai/llm_config.dart';
-import 'package:genai/providers/common.dart';
-import 'package:genai/providers/providers.dart';
+import 'package:genai/genai.dart';
 
 class LLMSaveObject {
   String endpoint;

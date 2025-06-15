@@ -1,7 +1,4 @@
-import 'package:genai/llm_input_payload.dart';
-import 'package:genai/llm_request.dart';
-import 'package:genai/providers/common.dart';
-import 'package:genai/providers/providers.dart';
+import 'package:genai/genai.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'ai_request_model.freezed.dart';

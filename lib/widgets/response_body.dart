@@ -3,7 +3,7 @@ import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/utils/utils.dart';
 import 'package:apidash/consts.dart';
-import 'package:genai/models/ai_response_model.dart';
+import 'package:genai/genai.dart';
 import 'error_message.dart';
 import 'response_body_success.dart';
 

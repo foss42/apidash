@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
-import 'package:genai/models/ai_response_model.dart';
+import 'package:genai/genai.dart';
 
 class ResponsePane extends ConsumerWidget {
   const ResponsePane({super.key});

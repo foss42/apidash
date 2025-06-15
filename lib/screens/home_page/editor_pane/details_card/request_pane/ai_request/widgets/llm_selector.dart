@@ -1,8 +1,5 @@
 import 'package:apidash_design_system/apidash_design_system.dart';
-import 'package:genai/llm_saveobject.dart';
-import 'package:genai/providers/ollama/models.dart';
-import 'package:genai/providers/ollama/ollama.dart';
-import 'package:genai/providers/providers.dart';
+import 'package:genai/genai.dart';
 import 'package:flutter/material.dart';
 
 class DefaultLLMSelectorButton extends StatelessWidget {
@@ -53,8 +50,7 @@ class _DefaultLLMSelectorDialogState extends State<DefaultLLMSelectorDialog> {
   void initState() {
     super.initState();
     final oC = OllamaModelController().inputPayload;
-    llmSaveObject =
-        widget.defaultLLM ??
+    llmSaveObject = widget.defaultLLM ??
         LLMSaveObject(
           endpoint: oC.endpoint,
           credential: '',
