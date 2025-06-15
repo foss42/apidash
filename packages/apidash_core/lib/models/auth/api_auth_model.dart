@@ -9,15 +9,15 @@ part 'api_auth_model.g.dart';
 part 'api_auth_model.freezed.dart';
 
 @freezed
-class ApiAuthModel with _$ApiAuthModel {
-  const factory ApiAuthModel({
+class AuthModel with _$AuthModel {
+  const factory AuthModel({
     required APIAuthType type,
     AuthApiKeyModel? apikey,
     AuthBearerModel? bearer,
     AuthBasicAuthModel? basic,
     AuthJwtModel? jwt,
-  }) = _ApiAuthModel;
+  }) = _AuthModel;
 
-  factory ApiAuthModel.fromJson(Map<String, dynamic> json) =>
-      _$ApiAuthModelFromJson(json);
+  factory AuthModel.fromJson(Map<String, dynamic> json) =>
+      _$AuthModelFromJson(json);
 }
