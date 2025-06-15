@@ -19,11 +19,11 @@ dependencies:
   http_parser: ^4.1.2
   insomnia_collection:
     path: ../insomnia_collection
+  json5: ^0.8.2
   postman:
     path: ../postman
   seed: ^0.0.3
   xml: ^6.3.0
-  json5: ^0.8.2
 
 dev_dependencies:
   flutter_test:
