@@ -7,6 +7,7 @@ import 'http_response_models.dart';
 const requestModelGet1 = RequestModel(
   id: 'get1',
   apiType: APIType.rest,
+  authModel: AuthModel(type: APIAuthType.none),
   httpRequestModel: httpRequestModelGet1,
 );
 
@@ -14,6 +15,7 @@ const requestModelGet1 = RequestModel(
 const requestModelGet2 = RequestModel(
   id: 'get2',
   apiType: APIType.rest,
+  authModel: AuthModel(type: APIAuthType.none),
   httpRequestModel: httpRequestModelGet2,
 );
 
@@ -21,6 +23,7 @@ const requestModelGet2 = RequestModel(
 const requestModelGet3 = RequestModel(
   id: 'get3',
   apiType: APIType.rest,
+  authModel: AuthModel(type: APIAuthType.none),
   httpRequestModel: httpRequestModelGet3,
 );
 
@@ -28,6 +31,7 @@ const requestModelGet3 = RequestModel(
 const requestModelGet4 = RequestModel(
   id: 'get4',
   apiType: APIType.rest,
+  authModel: AuthModel(type: APIAuthType.none),
   httpRequestModel: httpRequestModelGet4,
 );
 
@@ -35,6 +39,7 @@ const requestModelGet4 = RequestModel(
 const requestModelGet5 = RequestModel(
   id: 'get5',
   apiType: APIType.rest,
+  authModel: AuthModel(type: APIAuthType.none),
   httpRequestModel: httpRequestModelGet5,
 );
 
@@ -42,6 +47,7 @@ const requestModelGet5 = RequestModel(
 const requestModelGet6 = RequestModel(
   id: 'get6',
   apiType: APIType.rest,
+  authModel: AuthModel(type: APIAuthType.none),
   httpRequestModel: httpRequestModelGet6,
 );
 
@@ -49,6 +55,7 @@ const requestModelGet6 = RequestModel(
 const requestModelGet7 = RequestModel(
   id: 'get7',
   apiType: APIType.rest,
+  authModel: AuthModel(type: APIAuthType.none),
   httpRequestModel: httpRequestModelGet7,
 );
 
@@ -56,6 +63,7 @@ const requestModelGet7 = RequestModel(
 const requestModelGet8 = RequestModel(
   id: 'get8',
   apiType: APIType.rest,
+  authModel: AuthModel(type: APIAuthType.none),
   httpRequestModel: httpRequestModelGet8,
 );
 
@@ -63,6 +71,7 @@ const requestModelGet8 = RequestModel(
 const requestModelGet9 = RequestModel(
   id: 'get9',
   apiType: APIType.rest,
+  authModel: AuthModel(type: APIAuthType.none),
   httpRequestModel: httpRequestModelGet9,
 );
 
@@ -70,6 +79,7 @@ const requestModelGet9 = RequestModel(
 const requestModelGet10 = RequestModel(
   id: 'get10',
   apiType: APIType.rest,
+  authModel: AuthModel(type: APIAuthType.none),
   httpRequestModel: httpRequestModelGet10,
 );
 
@@ -77,6 +87,7 @@ const requestModelGet10 = RequestModel(
 const requestModelGet11 = RequestModel(
   id: 'get11',
   apiType: APIType.rest,
+  authModel: AuthModel(type: APIAuthType.none),
   httpRequestModel: httpRequestModelGet11,
 );
 
@@ -84,6 +95,7 @@ const requestModelGet11 = RequestModel(
 const requestModelGet12 = RequestModel(
   id: 'get12',
   apiType: APIType.rest,
+  authModel: AuthModel(type: APIAuthType.none),
   httpRequestModel: httpRequestModelGet12,
 );
 
@@ -91,6 +103,7 @@ const requestModelGet12 = RequestModel(
 const requestModelHead1 = RequestModel(
   id: 'head1',
   apiType: APIType.rest,
+  authModel: AuthModel(type: APIAuthType.none),
   httpRequestModel: httpRequestModelHead1,
 );
 
@@ -98,6 +111,7 @@ const requestModelHead1 = RequestModel(
 const requestModelHead2 = RequestModel(
   id: 'head2',
   apiType: APIType.rest,
+  authModel: AuthModel(type: APIAuthType.none),
   httpRequestModel: httpRequestModelHead2,
 );
 
@@ -105,6 +119,7 @@ const requestModelHead2 = RequestModel(
 const requestModelPost1 = RequestModel(
   id: 'post1',
   apiType: APIType.rest,
+  authModel: AuthModel(type: APIAuthType.none),
   httpRequestModel: httpRequestModelPost1,
 );
 
@@ -112,6 +127,7 @@ const requestModelPost1 = RequestModel(
 const requestModelPost2 = RequestModel(
   id: 'post2',
   apiType: APIType.rest,
+  authModel: AuthModel(type: APIAuthType.none),
   httpRequestModel: httpRequestModelPost2,
 );
 
@@ -119,6 +135,7 @@ const requestModelPost2 = RequestModel(
 const requestModelPost3 = RequestModel(
   id: 'post3',
   apiType: APIType.rest,
+  authModel: AuthModel(type: APIAuthType.none),
   httpRequestModel: httpRequestModelPost3,
 );
 
@@ -126,6 +143,7 @@ const requestModelPost3 = RequestModel(
 const requestModelPost4 = RequestModel(
   id: 'post4',
   apiType: APIType.rest,
+  authModel: AuthModel(type: APIAuthType.none),
   httpRequestModel: httpRequestModelPost4,
 );
 
@@ -133,6 +151,7 @@ const requestModelPost4 = RequestModel(
 const requestModelPost5 = RequestModel(
   id: 'post5',
   apiType: APIType.rest,
+  authModel: AuthModel(type: APIAuthType.none),
   httpRequestModel: httpRequestModelPost5,
 );
 
@@ -140,6 +159,7 @@ const requestModelPost5 = RequestModel(
 const requestModelPost6 = RequestModel(
   id: 'post6',
   apiType: APIType.rest,
+  authModel: AuthModel(type: APIAuthType.none),
   httpRequestModel: httpRequestModelPost6,
 );
 
@@ -147,6 +167,7 @@ const requestModelPost6 = RequestModel(
 const requestModelPost7 = RequestModel(
   id: 'post7',
   apiType: APIType.rest,
+  authModel: AuthModel(type: APIAuthType.none),
   httpRequestModel: httpRequestModelPost7,
 );
 
@@ -154,6 +175,7 @@ const requestModelPost7 = RequestModel(
 const requestModelPost8 = RequestModel(
   id: 'post8',
   apiType: APIType.rest,
+  authModel: AuthModel(type: APIAuthType.none),
   httpRequestModel: httpRequestModelPost8,
 );
 
@@ -161,12 +183,14 @@ const requestModelPost8 = RequestModel(
 const requestModelPost9 = RequestModel(
   id: 'post9',
   apiType: APIType.rest,
+  authModel: AuthModel(type: APIAuthType.none),
   httpRequestModel: httpRequestModelPost9,
 );
 
 const requestModelPost10 = RequestModel(
   id: 'post9',
   apiType: APIType.rest,
+  authModel: AuthModel(type: APIAuthType.none),
   httpRequestModel: httpRequestModelPost10,
 );
 
@@ -174,6 +198,7 @@ const requestModelPost10 = RequestModel(
 const requestModelPut1 = RequestModel(
   id: 'put1',
   apiType: APIType.rest,
+  authModel: AuthModel(type: APIAuthType.none),
   httpRequestModel: httpRequestModelPut1,
 );
 
@@ -181,6 +206,7 @@ const requestModelPut1 = RequestModel(
 const requestModelPatch1 = RequestModel(
   id: 'patch1',
   apiType: APIType.rest,
+  authModel: AuthModel(type: APIAuthType.none),
   httpRequestModel: httpRequestModelPatch1,
 );
 
@@ -188,6 +214,7 @@ const requestModelPatch1 = RequestModel(
 const requestModelDelete1 = RequestModel(
   id: 'delete1',
   apiType: APIType.rest,
+  authModel: AuthModel(type: APIAuthType.none),
   httpRequestModel: httpRequestModelDelete1,
 );
 
@@ -195,6 +222,7 @@ const requestModelDelete1 = RequestModel(
 const requestModelDelete2 = RequestModel(
   id: 'delete2',
   apiType: APIType.rest,
+  authModel: AuthModel(type: APIAuthType.none),
   httpRequestModel: httpRequestModelDelete2,
 );
 
@@ -202,6 +230,7 @@ const requestModelDelete2 = RequestModel(
 RequestModel testRequestModel = RequestModel(
   id: '1',
   apiType: APIType.rest,
+  authModel: AuthModel(type: APIAuthType.none),
   httpRequestModel: httpRequestModelPost10,
   responseStatus: 200,
   httpResponseModel: responseModel,
@@ -212,6 +241,7 @@ Map<String, dynamic> requestModelJson = {
   'id': '1',
   'apiType': 'rest',
   'name': '',
+  'authModel': '',
   'description': '',
   'httpRequestModel': httpRequestModelPost10Json,
   'responseStatus': 200,
@@ -225,6 +255,7 @@ Map<String, dynamic> requestModelJson = {
 const requestModelGet13 = RequestModel(
   id: 'get13',
   apiType: APIType.rest,
+  authModel: AuthModel(type: APIAuthType.none),
   httpRequestModel: httpRequestModelGet13,
 );
 
@@ -232,6 +263,7 @@ const requestModelGet13 = RequestModel(
 const requestModelGetBadSSL = RequestModel(
   id: 'badSSL',
   apiType: APIType.rest,
+  authModel: AuthModel(type: APIAuthType.none),
   httpRequestModel: httpRequestModelGetBadSSL,
 );
 
@@ -239,6 +271,7 @@ const requestModelGetBadSSL = RequestModel(
 const requestModelPost11 = RequestModel(
   id: 'post11',
   apiType: APIType.rest,
+  authModel: AuthModel(type: APIAuthType.none),
   httpRequestModel: httpRequestModelPost11,
 );
 
@@ -246,6 +279,7 @@ const requestModelPost11 = RequestModel(
 const requestModelPost12 = RequestModel(
   id: 'post12',
   apiType: APIType.rest,
+  authModel: AuthModel(type: APIAuthType.none),
   httpRequestModel: httpRequestModelPost12,
 );
 
@@ -253,11 +287,13 @@ const requestModelPost12 = RequestModel(
 const requestModelPost13 = RequestModel(
   id: 'post13',
   apiType: APIType.rest,
+  authModel: AuthModel(type: APIAuthType.none),
   httpRequestModel: httpRequestModelPost13,
 );
 
 const requestModelOptions1 = RequestModel(
   id: 'options1',
   apiType: APIType.rest,
+  authModel: AuthModel(type: APIAuthType.none),
   httpRequestModel: httpRequestModelOptions1,
 );

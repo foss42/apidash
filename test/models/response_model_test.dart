@@ -17,6 +17,7 @@ void main() {
     var responseRec = await sendHttpRequest(
       requestModelGet1.id,
       requestModelGet1.apiType,
+      requestModelGet1.authModel,
       requestModelGet1.httpRequestModel!,
       defaultUriScheme: kDefaultUriScheme,
       noSSL: false,
@@ -35,6 +36,7 @@ void main() {
     var responseRec = await sendHttpRequest(
       requestModelGet13.id,
       requestModelGet13.apiType,
+      requestModelGet13.authModel,
       requestModelGet13.httpRequestModel!,
       defaultUriScheme: kDefaultUriScheme,
       noSSL: false,
@@ -52,6 +54,7 @@ void main() {
     var responseRec = await sendHttpRequest(
       requestModelPost11.id,
       requestModelPost11.apiType,
+      requestModelPost11.authModel,
       requestModelPost11.httpRequestModel!,
     );
 
@@ -66,6 +69,7 @@ void main() {
     var responseRec = await sendHttpRequest(
       requestModelPost12.id,
       requestModelPost12.apiType,
+      requestModelPost12.authModel,
       requestModelPost12.httpRequestModel!,
     );
 
@@ -79,6 +83,7 @@ void main() {
     var responseRec = await sendHttpRequest(
       requestModelPost13.id,
       requestModelPost13.apiType,
+      requestModelPost13.authModel,
       requestModelPost13.httpRequestModel!,
     );
 
@@ -92,6 +97,7 @@ void main() {
     var responseRec = await sendHttpRequest(
       requestModelGetBadSSL.id,
       requestModelGetBadSSL.apiType,
+      requestModelGetBadSSL.authModel,
       requestModelGetBadSSL.httpRequestModel!,
       defaultUriScheme: kDefaultUriScheme,
       noSSL: false,
@@ -104,6 +110,7 @@ void main() {
     var responseRec = await sendHttpRequest(
       requestModelGetBadSSL.id,
       requestModelGetBadSSL.apiType,
+      requestModelGetBadSSL.authModel,
       requestModelGetBadSSL.httpRequestModel!,
       defaultUriScheme: kDefaultUriScheme,
       noSSL: true,
@@ -124,6 +131,7 @@ void main() {
     var responseRec = await sendHttpRequest(
       requestModelOptions1.id,
       requestModelOptions1.apiType,
+      requestModelOptions1.authModel,
       requestModelOptions1.httpRequestModel!,
       defaultUriScheme: kDefaultUriScheme,
       noSSL: false,
