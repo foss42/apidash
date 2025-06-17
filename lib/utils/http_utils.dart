@@ -1,4 +1,4 @@
-import 'package:apidash_core/apidash_core.dart';
+import 'package:better_networking/better_networking.dart';
 import '../consts.dart';
 
 String getRequestTitleFromUrl(String? url) {

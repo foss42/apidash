@@ -1,4 +1,4 @@
-import 'package:apidash_core/apidash_core.dart';
+import 'package:better_networking/better_networking.dart';
 import 'models.dart';
 
 part 'history_request_model.freezed.dart';

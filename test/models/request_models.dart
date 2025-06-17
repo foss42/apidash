@@ -1,5 +1,5 @@
 import 'package:apidash/models/models.dart';
-import 'package:apidash_core/apidash_core.dart';
+import 'package:better_networking/better_networking.dart';
 import 'http_request_models.dart';
 import 'http_response_models.dart';
 

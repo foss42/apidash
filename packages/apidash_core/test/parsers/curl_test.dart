@@ -1,5 +1,6 @@
-import 'package:test/test.dart';
 import 'package:apidash_core/apidash_core.dart';
+import 'package:better_networking/better_networking.dart';
+import 'package:test/test.dart';
 
 void main() {
   group('CurlFileImport Tests', () {

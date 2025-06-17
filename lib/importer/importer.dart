@@ -1,5 +1,6 @@
 import 'package:apidash/consts.dart';
 import 'package:apidash_core/apidash_core.dart';
+import 'package:better_networking/better_networking.dart';
 
 class Importer {
   Future<List<(String?, HttpRequestModel)>?> getHttpRequestModelList(

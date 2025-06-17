@@ -1,4 +1,5 @@
 import 'package:apidash_core/apidash_core.dart';
+import 'package:better_networking/better_networking.dart';
 import 'package:apidash/consts.dart';
 
 String getEnvironmentTitle(String? name) {

@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:apidash_core/apidash_core.dart';
+import 'package:better_networking/better_networking.dart';
 import 'package:jinja/jinja.dart' as jj;
 
 class JuliaHttpClientCodeGen {
