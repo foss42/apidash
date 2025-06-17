@@ -1,4 +1,4 @@
-import 'package:apidash_core/apidash_core.dart' show MediaType;
+import 'package:better_networking/better_networking.dart';
 import 'package:test/test.dart';
 import 'package:apidash/utils/http_utils.dart';
 import 'package:apidash/consts.dart';
