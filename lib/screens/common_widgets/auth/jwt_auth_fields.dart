@@ -1,0 +1,307 @@
+import 'package:flutter/material.dart';
+import 'package:apidash_core/apidash_core.dart';
+
+class JwtAuthFields extends StatefulWidget {
+  final AuthModel? authData;
+  final Function(AuthModel?) updateAuth;
+
+  const JwtAuthFields({
+    super.key,
+    required this.authData,
+    required this.updateAuth,
+  });
+
+  @override
+  State<JwtAuthFields> createState() => _JwtAuthFieldsState();
+}
+
+class _JwtAuthFieldsState extends State<JwtAuthFields> {
+  late TextEditingController _secretController;
+  late TextEditingController _payloadController;
+  late String _addTokenTo;
+  late String _algorithm;
+  late bool _isSecretBase64Encoded;
+
+  @override
+  void initState() {
+    super.initState();
+    final jwt = widget.authData?.jwt;
+    _secretController = TextEditingController(text: jwt?.secret ?? '');
+    _payloadController = TextEditingController(text: jwt?.payload ?? '');
+    _addTokenTo = jwt?.addTokenTo ?? 'header';
+    _algorithm = jwt?.algorithm ?? 'HS256';
+    _isSecretBase64Encoded = jwt?.isSecretBase64Encoded ?? false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Add JWT token to",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        SizedBox(height: 4),
+        DropdownButtonFormField<String>(
+          value: _addTokenTo,
+          decoration: InputDecoration(
+            constraints: BoxConstraints(
+              maxWidth: MediaQuery.sizeOf(context).width - 100,
+            ),
+            contentPadding: const EdgeInsets.all(18),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+          items: [
+            DropdownMenuItem(
+              value: 'header',
+              child: Text('Request Header'),
+            ),
+            DropdownMenuItem(
+              value: 'query',
+              child: Text('Query Parameters'),
+            ),
+          ],
+          onChanged: (String? newAddTokenTo) {
+            if (newAddTokenTo != null) {
+              _updateJwtAuth();
+            }
+          },
+        ),
+        const SizedBox(height: 16),
+        Text(
+          "Algorithm",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        SizedBox(height: 4),
+        DropdownButtonFormField<String>(
+          value: _algorithm,
+          decoration: InputDecoration(
+            constraints: BoxConstraints(
+              maxWidth: MediaQuery.sizeOf(context).width - 100,
+            ),
+            contentPadding: const EdgeInsets.all(18),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+          items: [
+            'HS256',
+            'HS384',
+            'HS512',
+          ].map((algorithm) {
+            return DropdownMenuItem(
+              value: algorithm,
+              child: Text(algorithm),
+            );
+          }).toList(),
+          onChanged: (String? newAlgorithm) {
+            if (newAlgorithm != null) {
+              _updateJwtAuth();
+            }
+          },
+        ),
+        const SizedBox(height: 16),
+        Text(
+          "Secret",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        SizedBox(height: 4),
+        TextField(
+          controller: _secretController,
+          decoration: InputDecoration(
+            constraints: BoxConstraints(
+              maxWidth: MediaQuery.sizeOf(context).width - 100,
+            ),
+            contentPadding: const EdgeInsets.all(18),
+            hintText: "Secret key",
+            hintStyle: Theme.of(context).textTheme.bodyMedium,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+          onChanged: (value) => _updateJwtAuth(),
+        ),
+        const SizedBox(height: 16),
+        CheckboxListTile(
+          title: Text(
+            "Secret is Base64 encoded",
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          value: _isSecretBase64Encoded,
+          contentPadding: EdgeInsets.zero,
+          controlAffinity: ListTileControlAffinity.leading,
+          onChanged: (bool? value) {
+            _updateJwtAuth();
+          },
+        ),
+        const SizedBox(height: 16),
+        Text(
+          "Payload (JSON format)",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        SizedBox(height: 4),
+        TextField(
+          controller: _payloadController,
+          maxLines: 4,
+          decoration: InputDecoration(
+            constraints: BoxConstraints(
+              maxWidth: MediaQuery.sizeOf(context).width - 100,
+            ),
+            contentPadding: const EdgeInsets.all(18),
+            hintText:
+                '{"sub": "1234567890", "name": "John Doe", "iat": 1516239022}',
+            hintStyle: Theme.of(context).textTheme.bodyMedium,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+          onChanged: (value) => _updateJwtAuth(),
+        ),
+        // const SizedBox(height: 16),
+        // if (currentAddTokenTo == 'header') ...[
+        //   Text(
+        //     "Header Prefix",
+        //     style: TextStyle(
+        //       fontWeight: FontWeight.bold,
+        //     ),
+        //   ),
+        //   SizedBox(height: 4),
+        //   TextField(
+        //     controller: jwtHeaderPrefixController,
+        //     decoration: InputDecoration(
+        //       constraints: BoxConstraints(
+        //         maxWidth: MediaQuery.sizeOf(context).width - 100,
+        //       ),
+        //       contentPadding: const EdgeInsets.all(18),
+        //       hintText: "Bearer",
+        //       hintStyle: Theme.of(context).textTheme.bodyMedium,
+        //       border: OutlineInputBorder(
+        //         borderRadius: BorderRadius.circular(8),
+        //       ),
+        //     ),
+        //     onChanged: (value) => updateAuth(ApiAuthModel(
+        //       type: APIAuthType.jwt,
+        //       jwt: AuthJwtModel(
+        //         secret: jwtSecretController.text.trim(),
+        //         payload: jwtPayloadController.text.trim(),
+        //         addTokenTo: currentAddTokenTo,
+        //         algorithm: currentAlgorithm,
+        //         isSecretBase64Encoded: isSecretBase64Encoded,
+        //         headerPrefix: jwtHeaderPrefixController.text.trim(),
+        //         queryParamKey: jwtQueryParamKeyController.text.trim(),
+        //         header: jwtHeaderController.text.trim(),
+        //       ),
+        //     )),
+        //   ),
+        //   const SizedBox(height: 16),
+        // ],
+        // if (currentAddTokenTo == 'query') ...[
+        //   Text(
+        //     "Query Parameter Key",
+        //     style: TextStyle(
+        //       fontWeight: FontWeight.bold,
+        //     ),
+        //   ),
+        //   SizedBox(height: 4),
+        //   TextField(
+        //     controller: jwtQueryParamKeyController,
+        //     decoration: InputDecoration(
+        //       constraints: BoxConstraints(
+        //         maxWidth: MediaQuery.sizeOf(context).width - 100,
+        //       ),
+        //       contentPadding: const EdgeInsets.all(18),
+        //       hintText: "token",
+        //       hintStyle: Theme.of(context).textTheme.bodyMedium,
+        //       border: OutlineInputBorder(
+        //         borderRadius: BorderRadius.circular(8),
+        //       ),
+        //     ),
+        //     onChanged: (value) => updateAuth(ApiAuthModel(
+        //       type: APIAuthType.jwt,
+        //       jwt: AuthJwtModel(
+        //         secret: jwtSecretController.text.trim(),
+        //         payload: jwtPayloadController.text.trim(),
+        //         addTokenTo: currentAddTokenTo,
+        //         algorithm: currentAlgorithm,
+        //         isSecretBase64Encoded: isSecretBase64Encoded,
+        //         headerPrefix: jwtHeaderPrefixController.text.trim(),
+        //         queryParamKey: jwtQueryParamKeyController.text.trim(),
+        //         header: jwtHeaderController.text.trim(),
+        //       ),
+        //     )),
+        //   ),
+        //   const SizedBox(height: 16),
+        // ],
+        // Text(
+        //   "JWT Headers (JSON format)",
+        //   style: TextStyle(
+        //     fontWeight: FontWeight.bold,
+        //   ),
+        // ),
+        // SizedBox(height: 4),
+        // TextField(
+        //   controller: jwtHeaderController,
+        //   maxLines: 3,
+        //   decoration: InputDecoration(
+        //     constraints: BoxConstraints(
+        //       maxWidth: MediaQuery.sizeOf(context).width - 100,
+        //     ),
+        //     contentPadding: const EdgeInsets.all(18),
+        //     hintText: '{"typ": "JWT", "alg": "HS256"}',
+        //     hintStyle: Theme.of(context).textTheme.bodyMedium,
+        //     border: OutlineInputBorder(
+        //       borderRadius: BorderRadius.circular(8),
+        //     ),
+        //   ),
+        //   onChanged: (value) => updateAuth(
+        //     ApiAuthModel(
+        //       type: APIAuthType.jwt,
+        //       jwt: AuthJwtModel(
+        //         secret: jwtSecretController.text.trim(),
+        //         payload: jwtPayloadController.text.trim(),
+        //         addTokenTo: currentAddTokenTo,
+        //         algorithm: currentAlgorithm,
+        //         isSecretBase64Encoded: isSecretBase64Encoded,
+        //         headerPrefix: jwtHeaderPrefixController.text.trim(),
+        //         queryParamKey: jwtQueryParamKeyController.text.trim(),
+        //         header: jwtHeaderController.text.trim(),
+        //       ),
+        //     ),
+        //   ),
+        // ),
+      ],
+    );
+  }
+
+  void _updateJwtAuth() {
+    widget.updateAuth(
+      widget.authData?.copyWith(
+        type: APIAuthType.jwt,
+        jwt: AuthJwtModel(
+          secret: _secretController.text.trim(),
+          payload: _payloadController.text.trim(),
+          addTokenTo: _addTokenTo,
+          algorithm: _algorithm,
+          isSecretBase64Encoded: _isSecretBase64Encoded,
+          headerPrefix: 'Bearer',
+          queryParamKey: 'token',
+          header: '',
+        ),
+      ),
+    );
+  }
+}
