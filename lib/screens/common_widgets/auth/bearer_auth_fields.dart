@@ -1,3 +1,4 @@
+import 'package:apidash/screens/common_widgets/auth_textfield.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 
@@ -27,34 +28,11 @@ class _BearerAuthFieldsState extends State<BearerAuthFields> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          "Token",
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        SizedBox(
-          height: 4,
-        ),
-        TextField(
-          controller: _tokenController,
-          decoration: InputDecoration(
-            constraints: BoxConstraints(
-              maxWidth: MediaQuery.sizeOf(context).width - 100,
-            ),
-            contentPadding: const EdgeInsets.all(18),
-            hintText: "Token",
-            hintStyle: Theme.of(context).textTheme.bodyMedium,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
-          onChanged: (value) => _updateBearerAuth(),
-        ),
-      ],
+    return AuthTextField(
+      controller: _tokenController,
+      hintText: "Token",
+      isObscureText: true,
+      onChanged: (value) => _updateBearerAuth(),
     );
   }
 

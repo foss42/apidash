@@ -1,3 +1,4 @@
+import 'package:apidash/screens/common_widgets/auth_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash_core/apidash_core.dart';
 
@@ -23,47 +24,25 @@ class BasicAuthFields extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          "Username",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 4),
-        TextField(
+        AuthTextField(
+          hintText: "Username",
           controller: usernameController,
-          decoration: _inputDecoration(context, "Username"),
           onChanged: (_) => _updateBasicAuth(
             usernameController,
             passwordController,
           ),
         ),
         const SizedBox(height: 16),
-        Text(
-          "Password",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 4),
-        TextField(
+        AuthTextField(
+          hintText: "Password",
+          isObscureText: true,
           controller: passwordController,
-          decoration: _inputDecoration(context, "Password"),
-          obscureText: true,
           onChanged: (_) => _updateBasicAuth(
             usernameController,
             passwordController,
           ),
         ),
       ],
-    );
-  }
-
-  InputDecoration _inputDecoration(BuildContext context, String hint) {
-    return InputDecoration(
-      constraints: BoxConstraints(
-        maxWidth: MediaQuery.sizeOf(context).width - 100,
-      ),
-      contentPadding: const EdgeInsets.all(18),
-      hintText: hint,
-      hintStyle: Theme.of(context).textTheme.bodyMedium,
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
     );
   }
 
