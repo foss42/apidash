@@ -1,3 +1,4 @@
+import 'package:apidash/screens/common_widgets/auth_textfield.dart';
 import 'package:apidash_core/consts.dart';
 import 'package:apidash_core/models/auth/api_auth_model.dart';
 import 'package:apidash_core/models/auth/auth_api_key_model.dart';
@@ -73,53 +74,16 @@ class _ApiKeyAuthFieldsState extends State<ApiKeyAuthFields> {
           },
         ),
         const SizedBox(height: 16),
-        Text(
-          "Header/Query Param Name",
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        SizedBox(
-          height: 4,
-        ),
-        TextField(
+        AuthTextField(
           controller: _nameController,
-          decoration: InputDecoration(
-            constraints: BoxConstraints(
-              maxWidth: MediaQuery.sizeOf(context).width - 100,
-            ),
-            contentPadding: const EdgeInsets.all(18),
-            hintText: "Header/Query Param Name",
-            hintStyle: Theme.of(context).textTheme.bodyMedium,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
+          hintText: "Header/Query Param Name",
           onChanged: (value) => _updateApiKeyAuth(),
         ),
         const SizedBox(height: 16),
-        Text(
-          "API Key",
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        SizedBox(
-          height: 4,
-        ),
-        TextField(
+        AuthTextField(
           controller: _keyController,
-          decoration: InputDecoration(
-            constraints: BoxConstraints(
-              maxWidth: MediaQuery.sizeOf(context).width - 100,
-            ),
-            contentPadding: const EdgeInsets.all(18),
-            hintText: "API Key",
-            hintStyle: Theme.of(context).textTheme.bodyMedium,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
+          hintText: "API KeyName",
+          isObscureText: true,
           onChanged: (value) => _updateApiKeyAuth(),
         ),
       ],

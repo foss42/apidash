@@ -1,3 +1,4 @@
+import 'package:apidash/screens/common_widgets/auth_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash_core/apidash_core.dart';
 
@@ -35,7 +36,6 @@ class _JwtAuthFieldsState extends State<JwtAuthFields> {
 
   @override
   Widget build(BuildContext context) {
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -109,26 +109,10 @@ class _JwtAuthFieldsState extends State<JwtAuthFields> {
           },
         ),
         const SizedBox(height: 16),
-        Text(
-          "Secret",
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        SizedBox(height: 4),
-        TextField(
+        AuthTextField(
           controller: _secretController,
-          decoration: InputDecoration(
-            constraints: BoxConstraints(
-              maxWidth: MediaQuery.sizeOf(context).width - 100,
-            ),
-            contentPadding: const EdgeInsets.all(18),
-            hintText: "Secret key",
-            hintStyle: Theme.of(context).textTheme.bodyMedium,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
+          isObscureText: true,
+          hintText: "Secret key",
           onChanged: (value) => _updateJwtAuth(),
         ),
         const SizedBox(height: 16),
@@ -143,6 +127,10 @@ class _JwtAuthFieldsState extends State<JwtAuthFields> {
           contentPadding: EdgeInsets.zero,
           controlAffinity: ListTileControlAffinity.leading,
           onChanged: (bool? value) {
+            setState(() {
+              _isSecretBase64Encoded = value ?? false;
+            });
+
             _updateJwtAuth();
           },
         ),
@@ -158,6 +146,8 @@ class _JwtAuthFieldsState extends State<JwtAuthFields> {
           controller: _payloadController,
           maxLines: 4,
           decoration: InputDecoration(
+            filled: true,
+            fillColor: Theme.of(context).colorScheme.surfaceContainerLowest,
             constraints: BoxConstraints(
               maxWidth: MediaQuery.sizeOf(context).width - 100,
             ),
@@ -167,6 +157,16 @@ class _JwtAuthFieldsState extends State<JwtAuthFields> {
             hintStyle: Theme.of(context).textTheme.bodyMedium,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Theme.of(context).colorScheme.outline,
+              ),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
+              ),
             ),
           ),
           onChanged: (value) => _updateJwtAuth(),
