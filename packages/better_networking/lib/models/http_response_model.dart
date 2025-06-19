@@ -44,7 +44,10 @@ class DurationConverter implements JsonConverter<Duration?, int?> {
 class HttpResponseModel with _$HttpResponseModel {
   const HttpResponseModel._();
 
-  @JsonSerializable(explicitToJson: true, anyMap: true)
+  @JsonSerializable(
+    explicitToJson: true,
+    anyMap: true
+  )
   const factory HttpResponseModel({
     int? statusCode,
     Map<String, String>? headers,
@@ -65,10 +68,6 @@ class HttpResponseModel with _$HttpResponseModel {
     final responseHeaders = mergeMaps({
       HttpHeaders.contentLengthHeader: response.contentLength.toString(),
     }, response.headers);
-    MediaType? mediaType = getMediaTypeFromHeaders(responseHeaders);
-    final body = (mediaType?.subtype == kSubTypeJson)
-        ? utf8.decode(response.bodyBytes)
-        : response.body;
     return HttpResponseModel(
       statusCode: response.statusCode,
       headers: responseHeaders,
