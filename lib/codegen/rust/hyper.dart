@@ -1,5 +1,5 @@
 import 'dart:core';
-import 'package:better_networking/better_networking.dart';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:jinja/jinja.dart' as jj;
 
 class RustHyperCodeGen {

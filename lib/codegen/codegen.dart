@@ -1,7 +1,7 @@
 import 'package:apidash/consts.dart';
 import 'package:apidash/models/models.dart';
 import 'package:apidash/utils/utils.dart' show getNewUuid;
-import 'package:better_networking/better_networking.dart';
+import 'package:apidash_core/apidash_core.dart';
 import 'c/curl.dart';
 import 'csharp/http_client.dart';
 import 'csharp/rest_sharp.dart';

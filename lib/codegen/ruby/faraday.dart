@@ -1,4 +1,4 @@
-import 'package:better_networking/better_networking.dart';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:jinja/jinja.dart' as jj;
 
 // Note that delete is a special case in Faraday as API Dash supports request

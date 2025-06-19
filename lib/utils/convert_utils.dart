@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 import 'dart:convert';
 import 'package:apidash_core/apidash_core.dart';
-import 'package:better_networking/better_networking.dart';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:intl/intl.dart';
 
 String humanizeDate(DateTime? date) {

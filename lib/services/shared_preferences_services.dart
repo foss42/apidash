@@ -1,4 +1,4 @@
-import 'package:better_networking/better_networking.dart';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/models.dart';
 

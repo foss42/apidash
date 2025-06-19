@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'dart:convert';
-import 'package:better_networking/better_networking.dart';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:jinja/jinja.dart' as jj;
 
 class RustReqwestCodeGen {

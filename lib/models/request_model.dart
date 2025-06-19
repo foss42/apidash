@@ -1,5 +1,5 @@
 import 'package:apidash_core/apidash_core.dart';
-import 'package:better_networking/better_networking.dart';
+import 'package:apidash_core/apidash_core.dart';
 part 'request_model.freezed.dart';
 part 'request_model.g.dart';
 

@@ -88,7 +88,7 @@ packages:
     source: hosted
     version: "2.2.9"
   better_networking:
-    dependency: "direct main"
+    dependency: transitive
     description:
       path: "packages/better_networking"
       relative: true
