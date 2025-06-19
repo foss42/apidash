@@ -10,6 +10,7 @@ part 'api_auth_model.freezed.dart';
 
 @freezed
 class AuthModel with _$AuthModel {
+  @JsonSerializable(explicitToJson: true)
   const factory AuthModel({
     required APIAuthType type,
     AuthApiKeyModel? apikey,

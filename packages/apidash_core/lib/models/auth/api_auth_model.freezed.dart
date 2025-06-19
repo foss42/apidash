@@ -226,7 +226,8 @@ class __$$AuthModelImplCopyWithImpl<$Res>
 }
 
 /// @nodoc
-@JsonSerializable()
+
+@JsonSerializable(explicitToJson: true)
 class _$AuthModelImpl implements _AuthModel {
   const _$AuthModelImpl(
       {required this.type, this.apikey, this.bearer, this.basic, this.jwt});
