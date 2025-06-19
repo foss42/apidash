@@ -5,8 +5,8 @@ import 'package:apidash_core/models/http_request_model.dart';
 import 'package:apidash_core/utils/auth_utils.dart';
 import 'package:seed/seed.dart';
 
-HttpRequestModel handleAuth(
-    HttpRequestModel httpRequestModel, AuthModel? auth) {
+HttpRequestModel handleAuth(HttpRequestModel httpRequestModel) {
+  final AuthModel? auth = httpRequestModel.authModel;
   if (auth == null || auth.type == APIAuthType.none) {
     return httpRequestModel;
   }

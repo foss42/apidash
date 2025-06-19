@@ -234,7 +234,6 @@ class CollectionStateNotifier
     var currentHttpRequestModel = currentModel.httpRequestModel;
     final newModel = currentModel.copyWith(
       apiType: apiType ?? currentModel.apiType,
-      authModel: authData ?? currentModel.authModel,
       name: name ?? currentModel.name,
       description: description ?? currentModel.description,
       requestTabIndex: requestTabIndex ?? currentModel.requestTabIndex,
@@ -243,6 +242,7 @@ class CollectionStateNotifier
         url: url ?? currentHttpRequestModel.url,
         headers: headers ?? currentHttpRequestModel.headers,
         params: params ?? currentHttpRequestModel.params,
+        authModel: authData ?? currentHttpRequestModel.authModel,
         isHeaderEnabledList:
             isHeaderEnabledList ?? currentHttpRequestModel.isHeaderEnabledList,
         isParamEnabledList:
@@ -294,7 +294,6 @@ class CollectionStateNotifier
     var responseRec = await sendHttpRequest(
       requestId,
       apiType,
-      requestModel.authModel,
       substitutedHttpRequestModel,
       defaultUriScheme: defaultUriScheme,
       noSSL: noSSL,

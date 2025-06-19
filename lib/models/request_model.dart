@@ -15,7 +15,6 @@ class RequestModel with _$RequestModel {
     @Default(APIType.rest) APIType apiType,
     @Default("") String name,
     @Default("") String description,
-    @Default(AuthModel(type: APIAuthType.none)) AuthModel? authModel,
     @JsonKey(includeToJson: false) @Default(0) requestTabIndex,
     HttpRequestModel? httpRequestModel,
     int? responseStatus,
