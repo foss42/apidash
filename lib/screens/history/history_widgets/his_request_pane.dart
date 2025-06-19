@@ -95,16 +95,22 @@ class HistoryRequestPane extends ConsumerWidget {
           showViewCodeButton: !isCompact,
           showIndicators: [
             headerLength > 0,
+            hasAuth,
             hasQuery,
           ],
           tabLabels: const [
             kLabelHeaders,
+            kLabelAuth,
             kLabelQuery,
           ],
           children: [
             RequestDataTable(
               rows: headersMap,
               keyName: kNameHeader,
+            ),
+            EditAuthType(
+              authModel: authModel,
+              readOnly: true,
             ),
             const HisRequestBody(),
           ],
