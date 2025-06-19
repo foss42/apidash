@@ -6,21 +6,24 @@ part of 'api_auth_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$AuthModelImpl _$$AuthModelImplFromJson(Map<String, dynamic> json) =>
-    _$AuthModelImpl(
+_$AuthModelImpl _$$AuthModelImplFromJson(Map json) => _$AuthModelImpl(
       type: $enumDecode(_$APIAuthTypeEnumMap, json['type']),
       apikey: json['apikey'] == null
           ? null
-          : AuthApiKeyModel.fromJson(json['apikey'] as Map<String, dynamic>),
+          : AuthApiKeyModel.fromJson(
+              Map<String, dynamic>.from(json['apikey'] as Map)),
       bearer: json['bearer'] == null
           ? null
-          : AuthBearerModel.fromJson(json['bearer'] as Map<String, dynamic>),
+          : AuthBearerModel.fromJson(
+              Map<String, dynamic>.from(json['bearer'] as Map)),
       basic: json['basic'] == null
           ? null
-          : AuthBasicAuthModel.fromJson(json['basic'] as Map<String, dynamic>),
+          : AuthBasicAuthModel.fromJson(
+              Map<String, dynamic>.from(json['basic'] as Map)),
       jwt: json['jwt'] == null
           ? null
-          : AuthJwtModel.fromJson(json['jwt'] as Map<String, dynamic>),
+          : AuthJwtModel.fromJson(
+              Map<String, dynamic>.from(json['jwt'] as Map)),
     );
 
 Map<String, dynamic> _$$AuthModelImplToJson(_$AuthModelImpl instance) =>

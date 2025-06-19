@@ -29,7 +29,7 @@ class _ApiKeyAuthFieldsState extends State<ApiKeyAuthFields> {
     super.initState();
     final apiAuth = widget.authData?.apikey;
     _keyController = TextEditingController(text: apiAuth?.key ?? '');
-    _nameController = TextEditingController(text: apiAuth?.name ?? '');
+    _nameController = TextEditingController(text: apiAuth?.name ?? 'x-api-key');
     _addKeyTo = apiAuth?.location ?? 'header';
   }
 
