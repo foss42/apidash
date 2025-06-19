@@ -26,10 +26,10 @@ _$AuthModelImpl _$$AuthModelImplFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$$AuthModelImplToJson(_$AuthModelImpl instance) =>
     <String, dynamic>{
       'type': _$APIAuthTypeEnumMap[instance.type]!,
-      'apikey': instance.apikey,
-      'bearer': instance.bearer,
-      'basic': instance.basic,
-      'jwt': instance.jwt,
+      'apikey': instance.apikey?.toJson(),
+      'bearer': instance.bearer?.toJson(),
+      'basic': instance.basic?.toJson(),
+      'jwt': instance.jwt?.toJson(),
     };
 
 const _$APIAuthTypeEnumMap = {
