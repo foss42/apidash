@@ -1,3 +1,4 @@
+import 'package:apidash/screens/home_page/editor_pane/details_card/request_pane/request_auth.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
@@ -60,7 +61,6 @@ class HistoryRequestPane extends ConsumerWidget {
             paramLength > 0,
             headerLength > 0,
             hasBody,
-            scriptsLength > 0
           ],
           tabLabels: const [
             kLabelURLParams,
@@ -94,9 +94,14 @@ class HistoryRequestPane extends ConsumerWidget {
                 !codePaneVisible;
           },
           showViewCodeButton: !isCompact,
-          showIndicators: [headerLength > 0, hasQuery, scriptsLength > 0],
+          showIndicators: [
+            headerLength > 0,
+            hasAuth,
+            hasQuery,
+          ],
           tabLabels: const [
             kLabelHeaders,
+            kLabelAuth,
             kLabelQuery,
             kLabelScripts,
           ],
@@ -104,6 +109,10 @@ class HistoryRequestPane extends ConsumerWidget {
             RequestDataTable(
               rows: headersMap,
               keyName: kNameHeader,
+            ),
+            EditAuthType(
+              authModel: authModel,
+              readOnly: true,
             ),
             const HisRequestBody(),
             const HistoryScriptsTab(),
