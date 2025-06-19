@@ -1,4 +1,6 @@
-import 'package:apidash_core/utils/utils.dart';
+import 'package:better_networking/utils/content_type_utils.dart';
+import 'package:better_networking/utils/http_response_utils.dart';
+import 'package:better_networking/utils/string_utils.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:test/test.dart';
 
@@ -7,7 +9,7 @@ void main() {
     test('Testing getMediaTypeFromContentType for json type', () {
       String contentType1 = "application/json";
       MediaType mediaType1Expected = MediaType("application", "json");
-      expect(getMediaTypeFromContentType(contentType1).toString(),
+     expect(getMediaTypeFromContentType(contentType1).toString(),
           mediaType1Expected.toString());
     });
     test('Testing getMediaTypeFromContentType for null', () {
@@ -53,7 +55,7 @@ void main() {
       Map<String, String> header1 = {
         "content-length": "4506",
         "cache-control": "private",
-        "content-type": "application/json"
+        "content-type": "application/json",
       };
       MediaType mediaType1Expected = MediaType("application", "json");
       expect(getMediaTypeFromHeaders(header1).toString(),
@@ -71,13 +73,13 @@ void main() {
       expect(getMediaTypeFromHeaders(header3), null);
     });
     test(
-        'Testing getMediaTypeFromHeaders for erroneous header value - missing type',
+      'Testing getMediaTypeFromHeaders for erroneous header value - missing type',
         () {
       Map<String, String> header4 = {"content-type": "/json"};
       expect(getMediaTypeFromHeaders(header4), null);
     });
     test(
-        'Testing getMediaTypeFromHeaders for erroneous header value - missing subtype',
+     'Testing getMediaTypeFromHeaders for erroneous header value - missing subtype',
         () {
       Map<String, String> header5 = {"content-type": "application"};
       expect(getMediaTypeFromHeaders(header5), null);
@@ -157,7 +159,7 @@ void main() {
         expect(formatBody(body5, mediaTypeHtml), null);
       });
       test(
-          'Testing formatBody for html subtype values with random values within limit',
+        'Testing formatBody for html subtype values with random values within limit',
           () {
         String body6 =
             '''<html>${RandomStringGenerator.getRandomStringLines(100, 190)}</html>''';

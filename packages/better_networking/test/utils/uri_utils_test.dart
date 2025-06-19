@@ -1,5 +1,5 @@
-import 'package:apidash_core/utils/uri_utils.dart';
-import 'package:seed/seed.dart';
+
+import 'package:better_networking/better_networking.dart';
 import 'package:test/test.dart';
 
 void main() {

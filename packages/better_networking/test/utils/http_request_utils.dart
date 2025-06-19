@@ -1,4 +1,4 @@
-import 'package:apidash_core/utils/http_request_utils.dart';
+import 'package:better_networking/utils/http_request_utils.dart';
 import 'package:test/test.dart';
 
 void main() {

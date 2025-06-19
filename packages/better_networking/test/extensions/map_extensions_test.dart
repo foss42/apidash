@@ -1,4 +1,4 @@
-import 'package:apidash_core/apidash_core.dart';
+import 'package:better_networking/extensions/extensions.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -118,7 +118,7 @@ void main() {
       String contentType1Expected = "application/json";
       expect(header1.getValueContentType(), contentType1Expected);
     });
-    test('Testing ?.getValueContentType() when header keys are in header case',
+   test('Testing ?.getValueContentType() when header keys are in header case',
         () {
       Map<String, String> header2 = {
         "Content-Type": "application/json",

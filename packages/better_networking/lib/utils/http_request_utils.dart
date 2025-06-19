@@ -1,7 +1,5 @@
-import 'package:apidash_core/consts.dart';
-import 'package:seed/seed.dart';
-import '../models/models.dart';
-import 'graphql_utils.dart';
+
+import 'package:better_networking/better_networking.dart';
 import 'package:json5/json5.dart' as json5;
 
 Map<String, String>? rowsToMap(
