@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:apidash_core/apidash_core.dart';
-import 'package:apidash_core/apidash_core.dart';
 import 'package:jinja/jinja.dart' as jj;
 
 class CSharpRestSharp {

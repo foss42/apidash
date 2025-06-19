@@ -1,4 +1,4 @@
-import 'package:better_networking/better_networking.dart';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:apidash/widgets/popup_menu_uri.dart';

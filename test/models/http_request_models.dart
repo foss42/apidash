@@ -1,4 +1,4 @@
-import 'package:better_networking/better_networking.dart';
+import 'package:apidash_core/apidash_core.dart';
 
 /// Basic GET request model
 const httpRequestModelGet1 = HttpRequestModel(

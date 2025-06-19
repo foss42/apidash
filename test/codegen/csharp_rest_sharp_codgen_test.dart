@@ -1,6 +1,6 @@
 import 'package:apidash/consts.dart';
 import 'package:apidash/screens/common_widgets/common_widgets.dart';
-import 'package:better_networking/better_networking.dart';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter_test/flutter_test.dart';
 import '../models/request_models.dart';
 

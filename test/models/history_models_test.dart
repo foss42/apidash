@@ -1,4 +1,4 @@
-import 'package:better_networking/better_networking.dart';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:test/test.dart';
 import 'package:apidash/models/models.dart';
 import 'history_models.dart';
