@@ -19,6 +19,10 @@ _$HttpRequestModelImpl _$$HttpRequestModelImplFromJson(Map json) =>
           ?.map((e) =>
               NameValueModel.fromJson(Map<String, Object?>.from(e as Map)))
           .toList(),
+      authModel: json['authModel'] == null
+          ? const AuthModel(type: APIAuthType.none)
+          : AuthModel.fromJson(
+              Map<String, dynamic>.from(json['authModel'] as Map)),
       isHeaderEnabledList: (json['isHeaderEnabledList'] as List<dynamic>?)
           ?.map((e) => e as bool)
           .toList(),
@@ -43,6 +47,7 @@ Map<String, dynamic> _$$HttpRequestModelImplToJson(
       'url': instance.url,
       'headers': instance.headers?.map((e) => e.toJson()).toList(),
       'params': instance.params?.map((e) => e.toJson()).toList(),
+      'authModel': instance.authModel?.toJson(),
       'isHeaderEnabledList': instance.isHeaderEnabledList,
       'isParamEnabledList': instance.isParamEnabledList,
       'bodyContentType': _$ContentTypeEnumMap[instance.bodyContentType]!,

@@ -208,6 +208,7 @@ class CollectionStateNotifier
     String? id,
     HTTPVerb? method,
     APIType? apiType,
+    AuthModel? authData,
     String? url,
     String? name,
     String? description,
@@ -241,6 +242,7 @@ class CollectionStateNotifier
         url: url ?? currentHttpRequestModel.url,
         headers: headers ?? currentHttpRequestModel.headers,
         params: params ?? currentHttpRequestModel.params,
+        authModel: authData ?? currentHttpRequestModel.authModel,
         isHeaderEnabledList:
             isHeaderEnabledList ?? currentHttpRequestModel.isHeaderEnabledList,
         isParamEnabledList:

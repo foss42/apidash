@@ -1,0 +1,154 @@
+import 'package:apidash/screens/common_widgets/auth/api_key_auth_fields.dart';
+import 'package:apidash/screens/common_widgets/auth/basic_auth_fields.dart';
+import 'package:apidash/screens/common_widgets/auth/bearer_auth_fields.dart';
+import 'package:apidash/screens/common_widgets/auth/jwt_auth_fields.dart';
+import 'package:apidash_design_system/widgets/popup_menu.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:apidash_core/apidash_core.dart';
+import 'package:apidash/providers/providers.dart';
+
+class EditAuthType extends ConsumerWidget {
+  final AuthModel? authModel;
+  final bool readOnly;
+
+  const EditAuthType({
+    super.key,
+    this.authModel,
+    this.readOnly = false,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final AuthModel? currentAuthData;
+    final APIAuthType currentAuthType;
+
+    if (authModel != null) {
+      currentAuthData = authModel;
+      currentAuthType = authModel!.type;
+    } else {
+      final selectedRequest = ref.read(selectedRequestModelProvider);
+      if (selectedRequest == null) {
+        return const SizedBox.shrink();
+      }
+
+      currentAuthType = ref.watch(
+        selectedRequestModelProvider.select((request) =>
+            request?.httpRequestModel?.authModel?.type ?? APIAuthType.none),
+      );
+      currentAuthData = selectedRequest.httpRequestModel?.authModel;
+    }
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Authentication Type",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(
+              height: 8,
+            ),
+            if (readOnly)
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surfaceContainerLowest,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color:
+                        Theme.of(context).colorScheme.outline.withOpacity(0.3),
+                  ),
+                ),
+                child: Text(
+                  currentAuthType.name.toUpperCase(),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w500,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                ),
+              )
+            else
+              ADPopupMenu<APIAuthType>(
+                value: currentAuthType.name.capitalize(),
+                values: const [
+                  (APIAuthType.none, 'None'),
+                  (APIAuthType.basic, 'Basic'),
+                  (APIAuthType.apiKey, 'API Key'),
+                  (APIAuthType.bearer, 'Bearer'),
+                  (APIAuthType.jwt, 'JWT'),
+                  (APIAuthType.digest, 'Digest'),
+                  (APIAuthType.oauth1, 'OAuth 1.0'),
+                  (APIAuthType.oauth2, 'OAuth 2.0'),
+                ],
+                tooltip: "Select Authentication Type",
+                isOutlined: true,
+                onChanged: (APIAuthType? newType) {
+                  final selectedRequest =
+                      ref.read(selectedRequestModelProvider);
+                  if (newType != null) {
+                    ref.read(collectionStateNotifierProvider.notifier).update(
+                          authData: selectedRequest?.httpRequestModel?.authModel
+                                  ?.copyWith(type: newType) ??
+                              AuthModel(type: newType),
+                        );
+                  }
+                },
+              ),
+            const SizedBox(height: 48),
+            _buildAuthFields(context, ref, currentAuthData),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ...existing code...
+  Widget _buildAuthFields(
+    BuildContext context,
+    WidgetRef ref,
+    AuthModel? authData,
+  ) {
+    void updateAuth(AuthModel? model) {
+      ref.read(collectionStateNotifierProvider.notifier).update(
+            authData: model,
+          );
+    }
+
+    switch (authData?.type) {
+      case APIAuthType.basic:
+        return BasicAuthFields(
+          authData: authData,
+          updateAuth: updateAuth,
+        );
+      case APIAuthType.bearer:
+        return BearerAuthFields(
+          authData: authData,
+          updateAuth: updateAuth,
+        );
+      case APIAuthType.apiKey:
+        return ApiKeyAuthFields(
+          authData: authData,
+          updateAuth: updateAuth,
+        );
+      case APIAuthType.jwt:
+        return JwtAuthFields(
+          authData: authData,
+          updateAuth: updateAuth,
+        );
+      case APIAuthType.none:
+        return Text(readOnly
+            ? "No authentication was used for this request."
+            : "No authentication selected.");
+      default:
+        return Text(readOnly
+            ? "Authentication details for ${authData?.type.name} are not yet supported in history view."
+            : "This auth type is not implemented yet.");
+    }
+  }
+}
