@@ -39,8 +39,12 @@ class HistoryRequestPane extends ConsumerWidget {
             .select((value) => value?.httpRequestModel.hasQuery)) ??
         false;
 
-    final hasAuth = ref.watch(selectedHistoryRequestModelProvider
-        .select((value) => value?.httpRequestModel.authModel?.type != APIAuthType.none));
+    final hasAuth = ref.watch(selectedHistoryRequestModelProvider.select(
+        (value) =>
+            value?.httpRequestModel.authModel?.type != APIAuthType.none));
+
+    final authModel = ref.watch(selectedHistoryRequestModelProvider
+        .select((value) => value?.httpRequestModel.authModel));
 
     return switch (apiType) {
       APIType.rest => RequestPane(
@@ -69,7 +73,10 @@ class HistoryRequestPane extends ConsumerWidget {
               rows: paramsMap,
               keyName: kNameURLParam,
             ),
-            EditAuthType(),
+            EditAuthType(
+              authModel: authModel,
+              readOnly: true,
+            ),
             RequestDataTable(
               rows: headersMap,
               keyName: kNameHeader,
