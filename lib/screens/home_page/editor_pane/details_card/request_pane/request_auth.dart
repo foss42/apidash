@@ -2,6 +2,7 @@ import 'package:apidash/screens/common_widgets/auth/api_key_auth_fields.dart';
 import 'package:apidash/screens/common_widgets/auth/basic_auth_fields.dart';
 import 'package:apidash/screens/common_widgets/auth/bearer_auth_fields.dart';
 import 'package:apidash/screens/common_widgets/auth/jwt_auth_fields.dart';
+import 'package:apidash_design_system/widgets/popup_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash_core/apidash_core.dart';
@@ -39,20 +40,20 @@ class EditAuthType extends ConsumerWidget {
             SizedBox(
               height: 8,
             ),
-            DropdownButtonFormField<APIAuthType>(
-              value: currentAuthType,
-              elevation: 4,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(9),
-                ),
-              ),
-              items: APIAuthType.values.map((type) {
-                return DropdownMenuItem(
-                  value: type,
-                  child: Text(type.name.capitalize()),
-                );
-              }).toList(),
+            ADPopupMenu<APIAuthType>(
+              value: currentAuthType.name.capitalize(),
+              values: const [
+                (APIAuthType.none, 'None'),
+                (APIAuthType.basic, 'Basic'),
+                (APIAuthType.apiKey, 'API Key'),
+                (APIAuthType.bearer, 'Bearer'),
+                (APIAuthType.jwt, 'JWT'),
+                (APIAuthType.digest, 'Digest'),
+                (APIAuthType.oauth1, 'OAuth 1.0'),
+                (APIAuthType.oauth2, 'OAuth 2.0'),
+              ],
+              tooltip: "Select Authentication Type",
+              isOutlined: true,
               onChanged: (APIAuthType? newType) {
                 final selectedRequest = ref.read(selectedRequestModelProvider);
                 if (newType != null) {
@@ -72,6 +73,7 @@ class EditAuthType extends ConsumerWidget {
     );
   }
 
+  // ...existing code...
   Widget _buildAuthFields(
     BuildContext context,
     WidgetRef ref,

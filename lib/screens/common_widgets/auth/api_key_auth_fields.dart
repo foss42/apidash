@@ -2,6 +2,7 @@ import 'package:apidash/screens/common_widgets/auth_textfield.dart';
 import 'package:apidash_core/consts.dart';
 import 'package:apidash_core/models/auth/api_auth_model.dart';
 import 'package:apidash_core/models/auth/auth_api_key_model.dart';
+import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 
 class ApiKeyAuthFields extends StatefulWidget {
@@ -40,35 +41,26 @@ class _ApiKeyAuthFieldsState extends State<ApiKeyAuthFields> {
         Text(
           "Add to",
           style: TextStyle(
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.normal,
+            fontSize: 14,
           ),
         ),
         SizedBox(
           height: 4,
         ),
-        DropdownButtonFormField<String>(
-          value: _addKeyTo,
-          decoration: InputDecoration(
-            constraints: BoxConstraints(
-              maxWidth: MediaQuery.sizeOf(context).width - 100,
-            ),
-            contentPadding: const EdgeInsets.all(18),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
-          items: [
-            DropdownMenuItem(
-              value: 'header',
-              child: Text('Header'),
-            ),
-            DropdownMenuItem(
-              value: 'query',
-              child: Text('Query Params'),
-            ),
+        ADPopupMenu<String>(
+          value: _addKeyTo == 'header' ? 'Header' : 'Query Params',
+          values: const [
+            ('header', 'Header'),
+            ('query', 'Query Params'),
           ],
+          tooltip: "Select where to add API key",
+          isOutlined: true,
           onChanged: (String? newLocation) {
             if (newLocation != null) {
+              setState(() {
+                _addKeyTo = newLocation;
+              });
               _updateApiKeyAuth();
             }
           },
@@ -82,7 +74,7 @@ class _ApiKeyAuthFieldsState extends State<ApiKeyAuthFields> {
         const SizedBox(height: 16),
         AuthTextField(
           controller: _keyController,
-          hintText: "API KeyName",
+          hintText: "API Key",
           isObscureText: true,
           onChanged: (value) => _updateApiKeyAuth(),
         ),

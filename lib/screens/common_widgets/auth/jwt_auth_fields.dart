@@ -1,4 +1,5 @@
 import 'package:apidash/screens/common_widgets/auth_textfield.dart';
+import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash_core/apidash_core.dart';
 
@@ -42,33 +43,25 @@ class _JwtAuthFieldsState extends State<JwtAuthFields> {
         Text(
           "Add JWT token to",
           style: TextStyle(
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.normal,
+            fontSize: 14,
           ),
         ),
         SizedBox(height: 4),
-        DropdownButtonFormField<String>(
-          value: _addTokenTo,
-          decoration: InputDecoration(
-            constraints: BoxConstraints(
-              maxWidth: MediaQuery.sizeOf(context).width - 100,
-            ),
-            contentPadding: const EdgeInsets.all(18),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
-          items: [
-            DropdownMenuItem(
-              value: 'header',
-              child: Text('Request Header'),
-            ),
-            DropdownMenuItem(
-              value: 'query',
-              child: Text('Query Parameters'),
-            ),
+        ADPopupMenu<String>(
+          value:
+              _addTokenTo == 'header' ? 'Request Header' : 'Query Parameters',
+          values: const [
+            ('header', 'Request Header'),
+            ('query', 'Query Parameters'),
           ],
+          tooltip: "Select where to add JWT token",
+          isOutlined: true,
           onChanged: (String? newAddTokenTo) {
             if (newAddTokenTo != null) {
+              setState(() {
+                _addTokenTo = newAddTokenTo;
+              });
               _updateJwtAuth();
             }
           },
@@ -77,33 +70,25 @@ class _JwtAuthFieldsState extends State<JwtAuthFields> {
         Text(
           "Algorithm",
           style: TextStyle(
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.normal,
+            fontSize: 14,
           ),
         ),
         SizedBox(height: 4),
-        DropdownButtonFormField<String>(
+        ADPopupMenu<String>(
           value: _algorithm,
-          decoration: InputDecoration(
-            constraints: BoxConstraints(
-              maxWidth: MediaQuery.sizeOf(context).width - 100,
-            ),
-            contentPadding: const EdgeInsets.all(18),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
-          items: [
-            'HS256',
-            'HS384',
-            'HS512',
-          ].map((algorithm) {
-            return DropdownMenuItem(
-              value: algorithm,
-              child: Text(algorithm),
-            );
-          }).toList(),
+          values: const [
+            ('HS256', 'HS256'),
+            ('HS384', 'HS384'),
+            ('HS512', 'HS512'),
+          ],
+          tooltip: "Select JWT algorithm",
+          isOutlined: true,
           onChanged: (String? newAlgorithm) {
             if (newAlgorithm != null) {
+              setState(() {
+                _algorithm = newAlgorithm;
+              });
               _updateJwtAuth();
             }
           },
@@ -120,7 +105,8 @@ class _JwtAuthFieldsState extends State<JwtAuthFields> {
           title: Text(
             "Secret is Base64 encoded",
             style: TextStyle(
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.normal,
+              fontSize: 14,
             ),
           ),
           value: _isSecretBase64Encoded,
@@ -138,7 +124,8 @@ class _JwtAuthFieldsState extends State<JwtAuthFields> {
         Text(
           "Payload (JSON format)",
           style: TextStyle(
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.normal,
+            fontSize: 14,
           ),
         ),
         SizedBox(height: 4),
