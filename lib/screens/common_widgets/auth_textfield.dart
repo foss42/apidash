@@ -45,7 +45,8 @@ class _AuthFieldState extends State<AuthTextField> {
           Text(
             widget.hintText,
             style: TextStyle(
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.normal,
+              fontSize: 14,
             ),
           ),
           const SizedBox(height: 6),
