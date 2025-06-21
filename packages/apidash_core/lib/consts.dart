@@ -30,6 +30,8 @@ final kSupportedUriSchemes =
     SupportedUriSchemes.values.map((i) => i.name).toList();
 const kDefaultUriScheme = SupportedUriSchemes.https;
 final kLocalhostRegex = RegExp(r'^localhost(:\d+)?(/.*)?$');
+final kIPHostRegex =
+    RegExp(r'^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\b){4}(:\d+)?(/.*)?$');
 
 const kMethodsWithBody = [
   HTTPVerb.post,
