@@ -1,5 +1,6 @@
-# genai package
-This Package contains all the code related to generative AI capabilities and is a foundational package that can be used in various projects
+# GenAI Example
+
+This project is a simple demonstration of how to use the GenAI package
 
 ### Fetch all available Remote LLMs
 ```dart
