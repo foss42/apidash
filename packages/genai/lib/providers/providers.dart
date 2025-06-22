@@ -1,6 +1,10 @@
 import '../llm_manager.dart';
+import 'anthropic.dart';
+import 'azureopenai.dart';
 import 'common.dart';
+import 'gemini.dart';
 import 'ollama.dart';
+import 'openai.dart';
 
 enum LLMProvider {
   gemini('Gemini'),
@@ -27,8 +31,14 @@ enum LLMProvider {
     switch (this) {
       case LLMProvider.ollama:
         return OllamaModelController.instance;
-      case _:
-        return OllamaModelController.instance;
+      case LLMProvider.gemini:
+        return GeminiModelController.instance;
+      case LLMProvider.azureopenai:
+        return AzureOpenAIModelController.instance;
+      case LLMProvider.openai:
+        return OpenAIModelController.instance;
+      case LLMProvider.anthropic:
+        return AnthropicModelController.instance;
     }
   }
 
