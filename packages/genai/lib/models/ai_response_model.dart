@@ -4,7 +4,7 @@ import 'dart:typed_data';
 import 'package:better_networking/better_networking.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:collection/collection.dart' show mergeMaps;
-import '../providers/providers.dart';
+import '../llm_provider.dart';
 part 'ai_response_model.freezed.dart';
 part 'ai_response_model.g.dart';
 

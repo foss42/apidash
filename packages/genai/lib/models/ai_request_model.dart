@@ -1,8 +1,9 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import '../llm_model.dart';
+import '../llm_provider.dart';
 import '../llm_saveobject.dart';
 import '../llm_input_payload.dart';
 import '../llm_request.dart';
-import '../providers/common.dart';
 import '../providers/gemini.dart';
 import '../providers/providers.dart';
 part 'ai_request_model.freezed.dart';

@@ -1,6 +1,6 @@
 import 'llm_config.dart';
-import 'providers/common.dart';
-import 'providers/providers.dart';
+import 'llm_model.dart';
+import 'llm_provider.dart';
 
 class LLMSaveObject {
   String endpoint;

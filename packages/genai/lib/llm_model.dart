@@ -1,6 +1,6 @@
-import '../llm_input_payload.dart';
-import '../llm_request.dart';
-import 'providers.dart';
+import 'llm_input_payload.dart';
+import 'llm_provider.dart';
+import 'llm_request.dart';
 
 class LLMModel {
   const LLMModel(this.identifier, this.modelName, this.provider);
