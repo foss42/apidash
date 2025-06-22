@@ -11,6 +11,9 @@ final codegenLanguageStateProvider = StateProvider<CodegenLanguage>((ref) =>
 final activeEnvironmentIdStateProvider = StateProvider<String?>((ref) =>
     ref.watch(settingsProvider.select((value) => value.activeEnvironmentId)));
 
+final isDashBotEnabledStateProvider = StateProvider<bool>((ref) =>
+    ref.watch(settingsProvider.select((value) => value.isDashBotEnabled)));
+
 final StateNotifierProvider<ThemeStateNotifier, SettingsModel>
     settingsProvider = StateNotifierProvider((ref) => ThemeStateNotifier());
 

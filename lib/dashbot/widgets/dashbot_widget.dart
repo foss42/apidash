@@ -131,6 +131,7 @@ class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
 
   Widget _buildHeader(BuildContext context) {
     final isMinimized = ref.watch(dashBotMinimizedProvider);
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
       child: Row(
@@ -161,7 +162,8 @@ class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
                 icon: const Icon(Icons.close, size: 20),
                 tooltip: 'Close',
                 onPressed: () {
-                  ref.read(dashBotVisibilityProvider.notifier).state = false;
+                  ref.read(isDashBotEnabledStateProvider.notifier).state =
+                      false;
                 },
               ),
               IconButton(

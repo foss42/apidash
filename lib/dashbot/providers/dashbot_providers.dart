@@ -3,6 +3,10 @@ import 'package:apidash/services/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../services/services.dart';
 
+final dashBotMinimizedProvider = StateProvider<bool>((ref) {
+  return true;
+});
+
 final chatMessagesProvider =
     StateNotifierProvider<ChatMessagesNotifier, List<Map<String, dynamic>>>(
   (ref) => ChatMessagesNotifier(),
