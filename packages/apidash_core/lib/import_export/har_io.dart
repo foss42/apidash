@@ -64,8 +64,8 @@ class HarParserIO {
       Map<String, String> parsedData = parseFormData(formDataStr);
       parsedData.forEach((key, value) {
         formDataType = FormDataType.text;
-        var name = key ?? "";
-        var val = value ?? "";
+        var name = key;
+        var val = value;
         formData.add(FormDataModel(
           name: name,
           value: val,
@@ -76,7 +76,7 @@ class HarParserIO {
 
     if (request.postData?.mimeType == "multipart/form-data") {
       bodyContentType = ContentType.formdata;
-      var name, val;
+      String? name, val;
       for (var fd in request.postData?.params ?? <har.Param>[]) {
         name = fd.name;
         if (fd.contentType == "text/plain") {
@@ -87,8 +87,8 @@ class HarParserIO {
           val = fd.fileName;
         }
         formData.add(FormDataModel(
-          name: name,
-          value: val,
+          name: name ?? "",
+          value: val ?? "",
           type: formDataType,
         ));
       }
