@@ -1,10 +1,9 @@
-# melos_managed_dependency_overrides: har_parser
-# melos_managed_dependency_overrides: curl_parser,insomnia_collection,postman,seed
+# melos_managed_dependency_overrides: curl_parser,insomnia_collection,postman,seed,har
 dependency_overrides:
   curl_parser:
     path: ../curl_parser
-  har_parser:
-    path: ..\\har_parser
+  har:
+    path: ../har
   insomnia_collection:
     path: ../insomnia_collection
   postman:

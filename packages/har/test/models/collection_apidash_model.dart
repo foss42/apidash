@@ -1,4 +1,4 @@
-import 'package:har_parser/models/models.dart';
+import 'package:har/models/models.dart';
 
 var collectionApiDashModel = HarLog(
   log: Log(
@@ -62,7 +62,8 @@ var collectionApiDashModel = HarLog(
         time: 200,
         request: Request(
           method: "GET",
-          url: "https://api.apidash.dev/humanize/social?num=8700000&digits=3&system=SS&add_space=true&trailing_zeros=true",
+          url:
+              "https://api.apidash.dev/humanize/social?num=8700000&digits=3&system=SS&add_space=true&trailing_zeros=true",
           httpVersion: null,
           cookies: null,
           headers: [],
@@ -122,15 +123,32 @@ var collectionApiDashModel = HarLog(
         request: Request(
           method: "POST",
           url: "https://api.apidash.dev/io/form",
-          headers: [Header(name: "User-Agent", value: "Test Agent", disabled: null)],
+          headers: [
+            Header(name: "User-Agent", value: "Test Agent", disabled: null)
+          ],
           queryString: [],
           bodySize: 100,
           postData: PostData(
             mimeType: "multipart/form-data",
             params: [
-              Param(name: "text", value: "API", fileName: null, contentType: "text/plain", disabled: null),
-              Param(name: "sep", value: "|", fileName: null, contentType: "text/plain", disabled: null),
-              Param(name: "times", value: "3", fileName: null, contentType: "text/plain", disabled: null)
+              Param(
+                  name: "text",
+                  value: "API",
+                  fileName: null,
+                  contentType: "text/plain",
+                  disabled: null),
+              Param(
+                  name: "sep",
+                  value: "|",
+                  fileName: null,
+                  contentType: "text/plain",
+                  disabled: null),
+              Param(
+                  name: "times",
+                  value: "3",
+                  fileName: null,
+                  contentType: "text/plain",
+                  disabled: null)
             ],
           ),
         ),
@@ -160,8 +178,18 @@ var collectionApiDashModel = HarLog(
             mimeType: "multipart/form-data",
             text: null,
             params: [
-              Param(name: "token", value: "xyz", fileName: null, contentType: "text/plain", disabled: null),
-              Param(name: "imfile", value: null, fileName: "hire AI.jpeg", contentType: "image/jpeg", disabled: null)
+              Param(
+                  name: "token",
+                  value: "xyz",
+                  fileName: null,
+                  contentType: "text/plain",
+                  disabled: null),
+              Param(
+                  name: "imfile",
+                  value: null,
+                  fileName: "hire AI.jpeg",
+                  contentType: "image/jpeg",
+                  disabled: null)
             ],
           ),
           headersSize: null,

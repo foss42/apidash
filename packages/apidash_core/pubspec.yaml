@@ -21,8 +21,8 @@ dependencies:
     path: ../insomnia_collection
   postman:
     path: ../postman
-  har_parser:
-    path: ../har_parser
+  har:
+    path: ../har
   seed: ^0.0.3
   xml: ^6.3.0
 

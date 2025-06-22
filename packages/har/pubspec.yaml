@@ -1,4 +1,4 @@
-name: har_parser
+name: har
 description: "Seamlessly convert har Format to Dart and vice versa."
 version: 0.0.1
 homepage: https://github.com/foss42/apidash

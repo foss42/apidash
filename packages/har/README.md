@@ -1,4 +1,4 @@
-# insomnia
+# har
 
 Seamlessly convert Har Collection Format v1.2 to Dart.
 
@@ -11,7 +11,7 @@ Currently, this package is being used by [API Dash](https://github.com/foss42/ap
 ### Example 1: Har collection JSON string to Har model
 
 ```dart
-import 'package:har_parser/har_parser.dart';
+import 'package:har/har.dart';
 
 void main() {
   // Example 1: Har collection JSON string to Har model
@@ -173,7 +173,7 @@ void main() {
 ### Example 2: Har collection from JSON
 
 ```dart
-import 'package:har_parser/har_parser.dart';
+import 'package:har/har.dart';
 
 void main() {
    // Example 2: Har collection from JSON
@@ -337,4 +337,4 @@ var collectionJson = {
 
 ## License
 
-This project is licensed under the [Apache License 2.0](https://github.com/foss42/apidash/blob/main/packages/har_parser/LICENSE).
+This project is licensed under the [Apache License 2.0](https://github.com/foss42/apidash/blob/main/packages/har/LICENSE).

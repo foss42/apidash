@@ -1,4 +1,4 @@
-import 'package:har_parser/har_parser.dart';
+import 'package:har/har.dart';
 
 void main() {
   //Example 1

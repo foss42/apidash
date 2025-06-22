@@ -1,4 +1,4 @@
-import 'package:har_parser/har_parser.dart';
+import 'package:har/har.dart';
 import 'package:test/test.dart';
 
 import 'collection_examples/collection_apidash.dart';

@@ -1,4 +1,4 @@
-import 'package:har_parser/har_parser.dart' as hp;
+import 'package:har/har.dart' as har;
 import 'package:seed/seed.dart';
 import '../consts.dart';
 import '../models/models.dart';
@@ -8,8 +8,8 @@ class HarParserIO {
   List<(String?, HttpRequestModel)>? getHttpRequestModelList(String content) {
     content = content.trim();
     try {
-      final hl = hp.harLogFromJsonStr(content);
-      final requests = hp.getRequestsFromHarLog(hl);
+      final hl = har.harLogFromJsonStr(content);
+      final requests = har.getRequestsFromHarLog(hl);
       return requests
           .map((req) => (req.$2.url, harRequestToHttpRequestModel(req.$2)))
           .toList();
@@ -18,7 +18,7 @@ class HarParserIO {
     }
   }
 
-  HttpRequestModel harRequestToHttpRequestModel(hp.Request request) {
+  HttpRequestModel harRequestToHttpRequestModel(har.Request request) {
     HTTPVerb method;
 
     try {
@@ -33,7 +33,7 @@ class HarParserIO {
     List<NameValueModel> params = [];
     List<bool> isParamEnabledList = [];
 
-    for (var header in request.headers ?? <hp.Header>[]) {
+    for (var header in request.headers ?? <har.Header>[]) {
       var name = header.name ?? "";
       var value = header.value;
       var activeHeader = header.disabled ?? false;
@@ -41,7 +41,7 @@ class HarParserIO {
       isHeaderEnabledList.add(!activeHeader);
     }
 
-    for (var query in request.queryString ?? <hp.Query>[]) {
+    for (var query in request.queryString ?? <har.Query>[]) {
       var name = query.name ?? "";
       var value = query.value;
       var activeQuery = query.disabled ?? false;
@@ -77,7 +77,7 @@ class HarParserIO {
     if (request.postData?.mimeType == "multipart/form-data") {
       bodyContentType = ContentType.formdata;
       var name, val;
-      for (var fd in request.postData?.params ?? <hp.Param>[]) {
+      for (var fd in request.postData?.params ?? <har.Param>[]) {
         name = fd.name;
         if (fd.contentType == "text/plain") {
           formDataType = FormDataType.text;
