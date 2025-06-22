@@ -2,13 +2,11 @@
 
 import 'dart:convert';
 import 'dart:developer';
-
-import 'package:apidash/consts.dart';
-import 'package:apidash/models/request_model.dart';
-import 'package:apidash_core/models/http_request_model.dart';
-import 'package:apidash_core/models/http_response_model.dart';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_js/flutter_js.dart';
+import '../models/models.dart';
+import '../utils/utils.dart';
 
 late JavascriptRuntime jsRuntime;
 
@@ -122,7 +120,7 @@ Future<
     $dataInjection
 
     // --- Setup Script (will declare variables within the IIFE scope) ---
-    $setupScript
+    $kJSSetupScript
 
     // --- User Script (will execute within the IIFE scope)---
     $userScript
@@ -216,7 +214,7 @@ Future<
     $dataInjection
 
     // --- Setup Script (will declare variables within the IIFE scope) ---
-    $setupScript
+    $kJSSetupScript
 
     // --- User Script (will execute within the IIFE scope)---
     $userScript
