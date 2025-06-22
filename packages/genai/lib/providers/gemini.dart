@@ -1,7 +1,7 @@
 import '../llm_config.dart';
 import '../llm_input_payload.dart';
+import '../llm_model.dart';
 import '../llm_request.dart';
-import 'common.dart';
 
 class GeminiModelController extends ModelController {
   static final instance = GeminiModelController();
