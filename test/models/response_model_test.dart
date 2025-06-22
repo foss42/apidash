@@ -131,14 +131,9 @@ void main() {
 
     final responseData = responseModel.fromResponse(response: responseRec.$1!);
     expect(responseData.statusCode, 200);
-    expect(responseData.headers?['access-control-allow-methods'],
-        'GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS');
-    expect(
-        responseData.headers?['access-control-allow-methods']
-            ?.contains("OPTIONS"),
-        true);
-    expect(responseData.headers?['allow'],
-        'GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS');
+    expect(responseData.headers?['access-control-allow-methods'], 'GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS');
+    expect(responseData.headers?['access-control-allow-methods']?.contains("OPTIONS"), true);
+    expect(responseData.headers?['allow'], 'GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS');
     expect(responseData.headers?['allow']?.contains("OPTIONS"), true);
   });
 }

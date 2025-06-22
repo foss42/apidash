@@ -1,7 +1,5 @@
-import 'package:better_networking/consts.dart';
-import 'package:seed/seed.dart';
-import '../models/models.dart';
-import 'graphql_utils.dart';
+
+import 'package:better_networking/better_networking.dart';
 import 'package:json5/json5.dart' as json5;
 
 Map<String, String>? rowsToMap(
@@ -24,7 +22,9 @@ Map<String, String>? rowsToMap(
   return finalMap;
 }
 
-List<NameValueModel>? mapToRows(Map<String, String>? kvMap) {
+List<NameValueModel>? mapToRows(
+  Map<String, String>? kvMap,
+) {
   if (kvMap == null) {
     return null;
   }
@@ -35,45 +35,47 @@ List<NameValueModel>? mapToRows(Map<String, String>? kvMap) {
   return finalRows;
 }
 
-List<Map<String, String>>? rowsToFormDataMapList(List<FormDataModel>? kvRows) {
+List<Map<String, String>>? rowsToFormDataMapList(
+  List<FormDataModel>? kvRows,
+) {
   if (kvRows == null) {
     return null;
   }
   List<Map<String, String>> finalMap = kvRows
-      .map(
-        (FormDataModel formData) =>
-            (formData.name.trim().isEmpty && formData.value.trim().isEmpty)
-            ? null
-            : {
-                "name": formData.name,
-                "value": formData.value,
-                "type": formData.type.name,
-              },
-      )
+      .map((FormDataModel formData) =>
+          (formData.name.trim().isEmpty && formData.value.trim().isEmpty)
+              ? null
+              : {
+                  "name": formData.name,
+                  "value": formData.value,
+                  "type": formData.type.name,
+                })
       .nonNulls
       .toList();
   return finalMap;
 }
 
-List<FormDataModel>? mapListToFormDataModelRows(List<Map>? kvMap) {
+List<FormDataModel>? mapListToFormDataModelRows(
+  List<Map>? kvMap,
+) {
   if (kvMap == null) {
     return null;
   }
-  List<FormDataModel> finalRows = kvMap.map((formData) {
-    return FormDataModel(
-      name: formData["name"],
-      value: formData["value"],
-      type: getFormDataType(formData["type"]),
-    );
-  }).toList();
+  List<FormDataModel> finalRows = kvMap.map(
+    (formData) {
+      return FormDataModel(
+        name: formData["name"],
+        value: formData["value"],
+        type: getFormDataType(formData["type"]),
+      );
+    },
+  ).toList();
   return finalRows;
 }
 
 FormDataType getFormDataType(String? type) {
-  return FormDataType.values.firstWhere(
-    (element) => element.name == type,
-    orElse: () => FormDataType.text,
-  );
+  return FormDataType.values.firstWhere((element) => element.name == type,
+      orElse: () => FormDataType.text);
 }
 
 List<NameValueModel>? getEnabledRows(
@@ -83,9 +85,8 @@ List<NameValueModel>? getEnabledRows(
   if (rows == null || isRowEnabledList == null) {
     return rows;
   }
-  List<NameValueModel> finalRows = rows
-      .where((element) => isRowEnabledList[rows.indexOf(element)])
-      .toList();
+  List<NameValueModel> finalRows =
+      rows.where((element) => isRowEnabledList[rows.indexOf(element)]).toList();
   return finalRows == [] ? null : finalRows;
 }
 

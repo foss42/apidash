@@ -23,10 +23,8 @@ String stripUrlParams(String url) {
 }
 
 (Uri?, String?) getValidRequestUri(
-  String? url,
-  List<NameValueModel>? requestParams, {
-  SupportedUriSchemes defaultUriScheme = kDefaultUriScheme,
-}) {
+    String? url, List<NameValueModel>? requestParams,
+    {SupportedUriSchemes defaultUriScheme = kDefaultUriScheme}) {
   url = url?.trim();
   if (url == null || url == "") {
     return (null, "URL is missing!");
