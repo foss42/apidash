@@ -1,5 +1,5 @@
 import '../services/services.dart';
-import 'package:apidash/models/models.dart';
+import '../../models/models.dart';
 
 class ExplainFeature {
   final DashBotService _service;

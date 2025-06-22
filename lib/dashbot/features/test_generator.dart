@@ -1,6 +1,6 @@
 import 'dart:convert';
 import '../services/services.dart';
-import 'package:apidash/models/models.dart';
+import '../../models/models.dart';
 
 class TestGeneratorFeature {
   final DashBotService _service;
