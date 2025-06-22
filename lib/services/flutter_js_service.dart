@@ -153,8 +153,6 @@ Future<
           try {
             resultingRequest = HttpRequestModel.fromJson(
                 Map<String, Object?>.from(resultMap['request']));
-            log(resultingRequest.toString());
-            log("Resmap req/; ${resultMap['request'].toString()}");
           } catch (e) {
             print("Error deserializing modified request from script: $e");
             //TODO: Handle error - maybe keep original request?

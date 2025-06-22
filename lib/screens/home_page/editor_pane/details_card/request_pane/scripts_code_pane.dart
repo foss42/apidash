@@ -1,4 +1,5 @@
 import 'package:apidash/widgets/scripts_editor_pane.dart';
+import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_code_editor/flutter_code_editor.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -40,7 +41,7 @@ class _ScriptsCodePaneState extends ConsumerState<ScriptsCodePane> {
           );
     });
 
-    final tabs = ["Pre Request", "Post Response"];
+    final tabs = [(0, "Pre Request"), (1, "Post Response")];
     final content = [
       ScriptsEditorPane(
         controller: preReqCodeController,
@@ -56,28 +57,9 @@ class _ScriptsCodePaneState extends ConsumerState<ScriptsCodePane> {
       children: [
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: DropdownButton<int>(
-            focusColor: Theme.of(context).colorScheme.surface,
-            icon: Icon(
-              Icons.arrow_drop_down_rounded,
-              size: 22,
-            ),
-            borderRadius: BorderRadius.circular(9),
-            elevation: 4,
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-              fontSize: 12,
-            ),
-            underline: Container(
-              height: 0,
-            ),
+          child: ADDropdownButton<int>(
             value: _selectedTabIndex,
-            items: tabs.asMap().entries.map((entry) {
-              return DropdownMenuItem<int>(
-                value: entry.key,
-                child: Text(entry.value),
-              );
-            }).toList(),
+            values: tabs,
             onChanged: (int? newValue) {
               if (newValue != null) {
                 setState(() {
