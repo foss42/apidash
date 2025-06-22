@@ -3,7 +3,7 @@ import 'package:har/models/models.dart';
 var collectionApiDashModel = HarLog(
   log: Log(
     version: "1.2",
-    creator: Creator(name: "Postman", version: "v8.x.x"),
+    creator: Creator(name: "Client Name", version: "v8.x.x"),
     entries: [
       Entry(
         startedDateTime: "2025-03-25T12:00:00.000Z",

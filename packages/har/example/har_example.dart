@@ -7,7 +7,7 @@ void main() {
   "log": {
     "version": "1.2",
     "creator": {
-      "name": "Postman",
+      "name": "Client Name",
       "version": "v8.x.x"
     },
     "entries": [
@@ -163,7 +163,7 @@ void main() {
   var collectionJson = {
     "log": {
       "version": "1.2",
-      "creator": {"name": "Postman", "version": "v8.x.x"},
+      "creator": {"name": "Client Name", "version": "v8.x.x"},
       "entries": [
         {
           "startedDateTime": "2025-03-25T12:00:00.000Z",
