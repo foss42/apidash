@@ -12,7 +12,7 @@ class LLMManager {
   static get models => avaiableModels;
 
   static const String modelRemoteURL =
-      'https://raw.githubusercontent.com/synapsecode/apidash/llm_model_rearch/packages/genai/models.json';
+      'https://raw.githubusercontent.com/synapsecode/apidash/package/genai/packages/genai/models.json';
   static const String baseOllamaURL = 'http://localhost:11434';
 
   static addLLM(String providerID, String modelID, String modelName) async {
