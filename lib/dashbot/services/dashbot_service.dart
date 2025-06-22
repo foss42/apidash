@@ -1,5 +1,6 @@
 import 'package:ollama_dart/ollama_dart.dart';
 import 'package:apidash/models/request_model.dart';
+import '../consts.dart';
 import '../features/features.dart';
 
 class DashBotService {
@@ -11,9 +12,9 @@ class DashBotService {
   final GeneralQueryFeature _generalQueryFeature;
 
   DashBotService()
-      : _client = OllamaClient(baseUrl: 'http://127.0.0.1:11434/api'),
-        _generalQueryFeature = GeneralQueryFeature(
-            OllamaClient(baseUrl: 'http://127.0.0.1:11434/api')) {
+      : _client = OllamaClient(baseUrl: kOllamaEndpoint),
+        _generalQueryFeature =
+            GeneralQueryFeature(OllamaClient(baseUrl: kOllamaEndpoint)) {
     _explainFeature = ExplainFeature(this);
     _debugFeature = DebugFeature(this);
     _documentationFeature = DocumentationFeature(this);

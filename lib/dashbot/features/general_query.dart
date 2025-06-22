@@ -1,5 +1,6 @@
 import 'package:ollama_dart/ollama_dart.dart';
 import '../../models/models.dart';
+import '../consts.dart';
 
 class GeneralQueryFeature {
   final OllamaClient _client;
@@ -44,7 +45,7 @@ Respond in a helpful, direct manner that specifically answers what was asked.
 
     final response = await _client.generateCompletion(
       request: GenerateCompletionRequest(
-        model: 'llama3.2:3b',
+        model: kModel,
         prompt: enhancedPrompt,
       ),
     );
