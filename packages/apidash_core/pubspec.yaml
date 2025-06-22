@@ -22,6 +22,8 @@ dependencies:
   json5: ^0.8.2
   postman:
     path: ../postman
+  har:
+    path: ../har
   seed: ^0.0.3
   xml: ^6.3.0
 
