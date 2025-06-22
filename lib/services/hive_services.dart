@@ -147,10 +147,15 @@ class HiveHandler {
   Future<dynamic> getHistoryRequest(String id) async =>
       await historyLazyBox.get(id);
   Future<void> setHistoryRequest(
-          String id, Map<String, dynamic>? historyRequestJsoon) =>
-      historyLazyBox.put(id, historyRequestJsoon);
+          String id, Map<String, dynamic>? historyRequestJson) =>
+      historyLazyBox.put(id, historyRequestJson);
 
   Future<void> deleteHistoryRequest(String id) => historyLazyBox.delete(id);
+
+  Future<dynamic> getDashbotMessages() async =>
+      await dashBotBox.get(kKeyDashBotBoxIds);
+  Future<void> saveDashbotMessages(String messages) =>
+      dashBotBox.put(kKeyDashBotBoxIds, messages);
 
   Future clearAllHistory() async {
     await historyMetaBox.clear();
