@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/dashbot/providers/dashbot_providers.dart';
 import 'package:apidash/providers/providers.dart';
-import 'package:apidash/dashbot/dashbot.dart';
 import 'test_runner_widget.dart';
 import 'chat_bubble.dart';
 
@@ -105,8 +104,6 @@ class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
     final isMinimized = ref.watch(dashBotMinimizedProvider);
 
     return Container(
-      height: double.infinity,
-      width: double.infinity,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
@@ -162,8 +159,7 @@ class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
                 icon: const Icon(Icons.close, size: 20),
                 tooltip: 'Close',
                 onPressed: () {
-                  ref.read(isDashBotEnabledStateProvider.notifier).state =
-                      false;
+                  Navigator.pop(context);
                 },
               ),
               IconButton(
@@ -185,6 +181,7 @@ class _DashBotWidgetState extends ConsumerState<DashBotWidget> {
   Widget _buildMinimizedView(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       children: [
         _buildHeader(context),
         const SizedBox(height: 8),

@@ -17,7 +17,8 @@ class Dashboard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final railIdx = ref.watch(navRailIndexStateProvider);
-    final isDashBotEnabled = ref.watch(isDashBotEnabledStateProvider);
+    final isDashBotEnabled =
+        ref.watch(settingsProvider.select((value) => value.isDashBotEnabled));
     return Scaffold(
       body: SafeArea(
         child: Row(
