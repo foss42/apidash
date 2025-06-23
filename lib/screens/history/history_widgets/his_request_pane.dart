@@ -1,3 +1,4 @@
+import 'package:apidash/screens/history/history_widgets/his_scripts_tab.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
@@ -38,6 +39,12 @@ class HistoryRequestPane extends ConsumerWidget {
             .select((value) => value?.httpRequestModel.hasQuery)) ??
         false;
 
+    final scriptsLength = ref.watch(selectedHistoryRequestModelProvider
+            .select((value) => value?.preRequestScript.length)) ??
+        ref.watch(selectedRequestModelProvider
+            .select((value) => value?.postRequestScript.length)) ??
+        0;
+
     return switch (apiType) {
       APIType.rest => RequestPane(
           key: const Key("history-request-pane-rest"),
@@ -52,11 +59,13 @@ class HistoryRequestPane extends ConsumerWidget {
             paramLength > 0,
             headerLength > 0,
             hasBody,
+            scriptsLength > 0
           ],
           tabLabels: const [
             kLabelURLParams,
             kLabelHeaders,
             kLabelBody,
+            kLabelScripts,
           ],
           children: [
             RequestDataTable(
@@ -68,6 +77,7 @@ class HistoryRequestPane extends ConsumerWidget {
               keyName: kNameHeader,
             ),
             const HisRequestBody(),
+            const HistoryScriptsTab(),
           ],
         ),
       APIType.graphql => RequestPane(

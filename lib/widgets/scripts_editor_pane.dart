@@ -6,8 +6,13 @@ import 'package:flutter_highlight/themes/xcode.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ScriptsEditorPane extends ConsumerStatefulWidget {
+  final bool readOnly;
   final CodeController controller;
-  const ScriptsEditorPane({super.key, required this.controller});
+  const ScriptsEditorPane({
+    super.key,
+    required this.controller,
+    this.readOnly = false,
+  });
 
   @override
   ConsumerState<ScriptsEditorPane> createState() => _ScriptsEditorPaneState();
@@ -28,6 +33,7 @@ class _ScriptsEditorPaneState extends ConsumerState<ScriptsEditorPane> {
         ),
         child: SingleChildScrollView(
           child: CodeField(
+            readOnly: widget.readOnly,
             smartDashesType: SmartDashesType.enabled,
             smartQuotesType: SmartQuotesType.enabled,
             background: Theme.of(context).colorScheme.surfaceContainerLowest,
