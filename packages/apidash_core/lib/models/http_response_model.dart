@@ -12,13 +12,12 @@ import '../consts.dart';
 part 'http_response_model.freezed.dart';
 part 'http_response_model.g.dart';
 
-class Uint8ListConverter implements JsonConverter<Uint8List?, List<dynamic>?> {
+class Uint8ListConverter implements JsonConverter<Uint8List?, List<int>?> {
   const Uint8ListConverter();
 
   @override
-  Uint8List? fromJson(List<dynamic>? json) {
-    if (json == null) return null;
-    return Uint8List.fromList(json.cast<int>());
+  Uint8List? fromJson(List<int>? json) {
+    return json == null ? null : Uint8List.fromList(json);
   }
 
   @override
