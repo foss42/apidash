@@ -352,6 +352,8 @@ class CollectionStateNotifier
         ),
         httpRequestModel: substitutedHttpRequestModel,
         httpResponseModel: httpResponseModel,
+        preRequestScript: requestModel.preRequestScript,
+        postRequestScript: requestModel.postRequestScript,
       );
       if (requestModel.postRequestScript.isNotEmpty) {
         newRequestModel = await handlePostResponseScript(
