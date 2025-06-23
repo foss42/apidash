@@ -315,8 +315,10 @@ class _$RequestModelImpl implements _RequestModel {
       this.httpResponseModel,
       @JsonKey(includeToJson: false) this.isWorking = false,
       @JsonKey(includeToJson: false) this.sendingTime,
-      this.preRequestScript = "",
-      this.postRequestScript = ""});
+      this.preRequestScript =
+          "// Use Javacript to modify this request dynamically",
+      this.postRequestScript =
+          "// Use Javacript to modify this request dynamically"});
 
   factory _$RequestModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$RequestModelImplFromJson(json);

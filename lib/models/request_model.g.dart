@@ -27,8 +27,10 @@ _$RequestModelImpl _$$RequestModelImplFromJson(Map json) => _$RequestModelImpl(
       sendingTime: json['sendingTime'] == null
           ? null
           : DateTime.parse(json['sendingTime'] as String),
-      preRequestScript: json['preRequestScript'] as String? ?? "",
-      postRequestScript: json['postRequestScript'] as String? ?? "",
+      preRequestScript: json['preRequestScript'] as String? ??
+          "// Use Javacript to modify this request dynamically",
+      postRequestScript: json['postRequestScript'] as String? ??
+          "// Use Javacript to modify this request dynamically",
     );
 
 Map<String, dynamic> _$$RequestModelImplToJson(_$RequestModelImpl instance) =>

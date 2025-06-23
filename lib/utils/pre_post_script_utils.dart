@@ -1,5 +1,3 @@
-import 'dart:nativewrappers/_internal/vm/lib/ffi_allocation_patch.dart';
-
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/foundation.dart';
 import '../models/models.dart';
