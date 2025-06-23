@@ -52,6 +52,18 @@ class SettingsPage extends ConsumerWidget {
               ),
               ADListTile(
                 type: ListTileType.switchOnOff,
+                title: 'DashBot',
+                subtitle:
+                    'Current selection: ${settings.isDashBotEnabled ? "Enabled" : "Disabled"}',
+                value: settings.isDashBotEnabled,
+                onChanged: (bool? value) {
+                  ref
+                      .read(settingsProvider.notifier)
+                      .update(isDashBotEnabled: value);
+                },
+              ),
+              ADListTile(
+                type: ListTileType.switchOnOff,
                 title: 'Collection Pane Scrollbar Visiblity',
                 subtitle:
                     'Current selection: ${settings.alwaysShowCollectionPaneScrollbar ? "Always show" : "Show only when scrolling"}',

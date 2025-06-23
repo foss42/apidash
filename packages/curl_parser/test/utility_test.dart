@@ -32,6 +32,30 @@ void main() {
     );
   }, timeout: defaultTimeout);
 
+  test('parse cURL DevTools', () async {
+    expect(
+      splitAsCommandLineArgs(
+          r"""--request GET 'https://dummyimage.com/150/92c952' \
+--header 'user-agent: Dart/3.8 (dart:io)' \
+--header 'accept-encoding: gzip' \
+--header 'content-length: 0' \
+--header 'host: dummyimage.com'"""),
+      [
+        '--request',
+        'GET',
+        'https://dummyimage.com/150/92c952',
+        '--header',
+        'user-agent: Dart/3.8 (dart:io)',
+        '--header',
+        'accept-encoding: gzip',
+        '--header',
+        'content-length: 0',
+        '--header',
+        'host: dummyimage.com'
+      ],
+    );
+  }, timeout: defaultTimeout);
+
   test('parse cURL with body', () async {
     expect(
       splitAsCommandLineArgs(r"""--request POST \

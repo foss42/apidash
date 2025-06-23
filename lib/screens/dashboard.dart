@@ -17,6 +17,8 @@ class Dashboard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final railIdx = ref.watch(navRailIndexStateProvider);
+    final isDashBotEnabled =
+        ref.watch(settingsProvider.select((value) => value.isDashBotEnabled));
     return Scaffold(
       body: SafeArea(
         child: Row(
@@ -125,18 +127,19 @@ class Dashboard extends ConsumerWidget {
           ],
         ),
       ),
-      // TODO: Release DashBot
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () => showModalBottomSheet(
-      //     context: context,
-      //     isScrollControlled: true,
-      //     builder: (context) => const Padding(
-      //       padding: EdgeInsets.all(16.0),
-      //       child: DashBotWidget(),
-      //     ),
-      //   ),
-      //   child: const Icon(Icons.help_outline),
-      // ),
+      floatingActionButton: isDashBotEnabled
+          ? FloatingActionButton(
+              onPressed: () => showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                builder: (context) => const Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: DashBotWidget(),
+                ),
+              ),
+              child: const Icon(Icons.help_outline),
+            )
+          : null,
     );
   }
 }

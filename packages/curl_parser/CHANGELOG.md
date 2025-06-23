@@ -1,3 +1,7 @@
+## 0.1.3
+
+- Bugfix: Header with `:` in value gets parsed properly
+
 ## 0.1.2
 
 - Bump dependencies.

@@ -130,10 +130,15 @@ class Curl extends Equatable {
         headers = <String, String>{};
         for (var headerString in headersList) {
           final splittedHeaderString = headerString.split(RegExp(r':\s*'));
-          if (splittedHeaderString.length != 2) {
+          if (splittedHeaderString.length > 2) {
+            headers.addAll({
+              splittedHeaderString[0]: splittedHeaderString.sublist(1).join(":")
+            });
+          } else if (splittedHeaderString.length < 2) {
             throw Exception('Failed to split the `$headerString` header');
+          } else {
+            headers.addAll({splittedHeaderString[0]: splittedHeaderString[1]});
           }
-          headers.addAll({splittedHeaderString[0]: splittedHeaderString[1]});
         }
       }
     }

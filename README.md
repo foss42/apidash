@@ -105,7 +105,7 @@ API Dash can be downloaded from the links below:
 | Insomnia | ✅ | 
 | OpenAPI | https://github.com/foss42/apidash/issues/121 |
 | hurl | https://github.com/foss42/apidash/issues/123 |
-| HAR | https://github.com/foss42/apidash/issues/122 |
+| HAR | ✅ |
 
 
 **↗️ Create & Customize API Requests**

@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
+enum HiveBoxType { normal, lazy }
+
 const String kDataBox = "apidash-data";
 const String kKeyDataBoxIds = "ids";
 
@@ -10,6 +12,17 @@ const String kKeyEnvironmentBoxIds = "environmentIds";
 const String kHistoryMetaBox = "apidash-history-meta";
 const String kHistoryBoxIds = "historyIds";
 const String kHistoryLazyBox = "apidash-history-lazy";
+
+const String kDashBotBox = "apidash-dashbot-data";
+const String kKeyDashBotBoxIds = 'messages';
+
+const kHiveBoxes = [
+  (kDataBox, HiveBoxType.normal),
+  (kEnvironmentBox, HiveBoxType.normal),
+  (kHistoryMetaBox, HiveBoxType.normal),
+  (kHistoryLazyBox, HiveBoxType.lazy),
+  (kDashBotBox, HiveBoxType.lazy),
+];
 
 Future<bool> initHiveBoxes(
   bool initializeUsingPath,
@@ -34,10 +47,13 @@ Future<bool> initHiveBoxes(
 
 Future<bool> openHiveBoxes() async {
   try {
-    await Hive.openBox(kDataBox);
-    await Hive.openBox(kEnvironmentBox);
-    await Hive.openBox(kHistoryMetaBox);
-    await Hive.openLazyBox(kHistoryLazyBox);
+    for (var box in kHiveBoxes) {
+      if (box.$2 == HiveBoxType.normal) {
+        await Hive.openBox(box.$1);
+      } else if (box.$2 == HiveBoxType.lazy) {
+        await Hive.openLazyBox(box.$1);
+      }
+    }
     return true;
   } catch (e) {
     debugPrint("ERROR OPEN HIVE BOXES: $e");
@@ -47,17 +63,14 @@ Future<bool> openHiveBoxes() async {
 
 Future<void> clearHiveBoxes() async {
   try {
-    if (Hive.isBoxOpen(kDataBox)) {
-      await Hive.box(kDataBox).clear();
-    }
-    if (Hive.isBoxOpen(kEnvironmentBox)) {
-      await Hive.box(kEnvironmentBox).clear();
-    }
-    if (Hive.isBoxOpen(kHistoryMetaBox)) {
-      await Hive.box(kHistoryMetaBox).clear();
-    }
-    if (Hive.isBoxOpen(kHistoryLazyBox)) {
-      await Hive.lazyBox(kHistoryLazyBox).clear();
+    for (var box in kHiveBoxes) {
+      if (Hive.isBoxOpen(box.$1)) {
+        if (box.$2 == HiveBoxType.normal) {
+          await Hive.box(box.$1).clear();
+        } else if (box.$2 == HiveBoxType.lazy) {
+          await Hive.lazyBox(box.$1).clear();
+        }
+      }
     }
   } catch (e) {
     debugPrint("ERROR CLEAR HIVE BOXES: $e");
@@ -66,17 +79,14 @@ Future<void> clearHiveBoxes() async {
 
 Future<void> deleteHiveBoxes() async {
   try {
-    if (Hive.isBoxOpen(kDataBox)) {
-      await Hive.box(kDataBox).deleteFromDisk();
-    }
-    if (Hive.isBoxOpen(kEnvironmentBox)) {
-      await Hive.box(kEnvironmentBox).deleteFromDisk();
-    }
-    if (Hive.isBoxOpen(kHistoryMetaBox)) {
-      await Hive.box(kHistoryMetaBox).deleteFromDisk();
-    }
-    if (Hive.isBoxOpen(kHistoryLazyBox)) {
-      await Hive.lazyBox(kHistoryLazyBox).deleteFromDisk();
+    for (var box in kHiveBoxes) {
+      if (Hive.isBoxOpen(box.$1)) {
+        if (box.$2 == HiveBoxType.normal) {
+          await Hive.box(box.$1).deleteFromDisk();
+        } else if (box.$2 == HiveBoxType.lazy) {
+          await Hive.lazyBox(box.$1).deleteFromDisk();
+        }
+      }
     }
     await Hive.close();
   } catch (e) {
@@ -91,6 +101,7 @@ class HiveHandler {
   late final Box environmentBox;
   late final Box historyMetaBox;
   late final LazyBox historyLazyBox;
+  late final LazyBox dashBotBox;
 
   HiveHandler() {
     debugPrint("Trying to open Hive boxes");
@@ -98,6 +109,7 @@ class HiveHandler {
     environmentBox = Hive.box(kEnvironmentBox);
     historyMetaBox = Hive.box(kHistoryMetaBox);
     historyLazyBox = Hive.lazyBox(kHistoryLazyBox);
+    dashBotBox = Hive.lazyBox(kDashBotBox);
   }
 
   dynamic getIds() => dataBox.get(kKeyDataBoxIds);
@@ -135,10 +147,15 @@ class HiveHandler {
   Future<dynamic> getHistoryRequest(String id) async =>
       await historyLazyBox.get(id);
   Future<void> setHistoryRequest(
-          String id, Map<String, dynamic>? historyRequestJsoon) =>
-      historyLazyBox.put(id, historyRequestJsoon);
+          String id, Map<String, dynamic>? historyRequestJson) =>
+      historyLazyBox.put(id, historyRequestJson);
 
   Future<void> deleteHistoryRequest(String id) => historyLazyBox.delete(id);
+
+  Future<dynamic> getDashbotMessages() async =>
+      await dashBotBox.get(kKeyDashBotBoxIds);
+  Future<void> saveDashbotMessages(String messages) =>
+      dashBotBox.put(kKeyDashBotBoxIds, messages);
 
   Future clearAllHistory() async {
     await historyMetaBox.clear();
@@ -150,6 +167,7 @@ class HiveHandler {
     await environmentBox.clear();
     await historyMetaBox.clear();
     await historyLazyBox.clear();
+    await dashBotBox.clear();
   }
 
   Future<void> removeUnused() async {
