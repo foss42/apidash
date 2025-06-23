@@ -28,7 +28,7 @@ class DartDioCodeGen {
   String generatedDartCode({
     required String url,
     required HTTPVerb method,
-    required Map<String, String> queryParams,
+    required Map<String, dynamic> queryParams,
     required Map<String, String> headers,
     required String? body,
     required ContentType contentType,
@@ -87,11 +87,12 @@ class DartDioCodeGen {
           dataExp = declareFinal('data').assign(refer('dio.FormData()'));
       }
     }
+    final parsedUrl = url.split('?').first;
     final responseExp = declareFinal('response').assign(InvokeExpression.newOf(
       refer('dio.Dio()'),
-      [literalString(url)],
+      [literalString(parsedUrl)], 
       {
-        if (queryParamExp != null) 'queryParameters': refer('queryParams'),
+       if (queryParamExp != null) 'queryParameters': refer('queryParams'), 
         if (headerExp != null)
           'options': refer('dio.Options').newInstance(
             [],
