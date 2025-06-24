@@ -89,13 +89,11 @@ class HistoryRequestPane extends ConsumerWidget {
                 !codePaneVisible;
           },
           showViewCodeButton: !isCompact,
-          showIndicators: [
-            headerLength > 0,
-            hasQuery,
-          ],
+          showIndicators: [headerLength > 0, hasQuery, scriptsLength > 0],
           tabLabels: const [
             kLabelHeaders,
             kLabelQuery,
+            kLabelScripts,
           ],
           children: [
             RequestDataTable(
@@ -103,6 +101,7 @@ class HistoryRequestPane extends ConsumerWidget {
               keyName: kNameHeader,
             ),
             const HisRequestBody(),
+            const HistoryScriptsTab(),
           ],
         ),
       _ => kSizedBoxEmpty,
