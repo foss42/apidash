@@ -175,6 +175,53 @@ Access or modify the request body.
         let xmlString = "<user><name>Test</name></user>";
         ad.request.body.set(xmlString, "application/xml");
         ```
+### `ad.request.query`
+
+  * Access or modify the GraphQL query string. This applies specifically to GraphQL requests, where the body typically includes a `query`, `variables`, and optionally `operationName`.
+
+* **`ad.request.query.get(): string`**
+
+  * Returns the current GraphQL query string (query, mutation, or subscription). If not set, returns an empty string.
+  * Example:
+
+    ```javascript
+    let gqlQuery = ad.request.query.get();
+    ad.console.log("Current GraphQL query:", gqlQuery);
+    ```
+
+* **`ad.request.query.set(newQuery: string)`**
+
+  * Sets the GraphQL query string.
+  * Automatically sets the `Content-Type` header to `application/json` unless it's already set, ensuring correct handling by GraphQL servers.
+  * Does **not** set the entire request body, it is up to the user to include the full GraphQL payload inside the query. (e.g., `{ query, variables, operationName }`).
+  * Example:
+
+    ```javascript
+    let newQuery = `
+      query {
+         user(id: 1) {
+            id
+            username
+            email
+            address {
+              geo {
+                lat
+                lng
+              }
+            } 
+        }
+    }`;
+    ad.request.query.set(newQuery);
+    ```
+
+* **`ad.request.query.clear()`**
+
+  * Clears the current GraphQL query string by setting it to an empty string.
+  * Example:
+
+    ```javascript
+    ad.request.query.clear();
+    ```
 
 ### `ad.request.method`
 
