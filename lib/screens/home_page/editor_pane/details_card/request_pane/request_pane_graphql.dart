@@ -1,4 +1,5 @@
 import 'package:apidash/consts.dart';
+import 'package:apidash/screens/home_page/editor_pane/details_card/request_pane/scripts_code_pane.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
@@ -21,7 +22,14 @@ class EditGraphQLRequestPane extends ConsumerWidget {
     final hasQuery = ref.watch(selectedRequestModelProvider
             .select((value) => value?.httpRequestModel?.hasQuery)) ??
         false;
-    if (tabIndex >= 2) {
+
+    final scriptsLength = ref.watch(selectedRequestModelProvider
+            .select((value) => value?.preRequestScript.length)) ??
+        ref.watch(selectedRequestModelProvider
+            .select((value) => value?.postRequestScript.length)) ??
+        0;
+
+    if (tabIndex >= 3) {
       tabIndex = 0;
     }
     return RequestPane(
@@ -40,14 +48,17 @@ class EditGraphQLRequestPane extends ConsumerWidget {
       showIndicators: [
         headerLength > 0,
         hasQuery,
+        scriptsLength > 0,
       ],
       tabLabels: const [
         kLabelHeaders,
         kLabelQuery,
+        kLabelScripts,
       ],
       children: const [
         EditRequestHeaders(),
         EditRequestBody(),
+        ScriptsCodePane(),
       ],
     );
   }
