@@ -346,6 +346,39 @@ const ad = {
             // TODO: Add helpers for request.formData if needed (similar to headers/params)
         },
 
+        
+        /**
+         * Access and modify GraphQL query string.
+         * For GraphQL requests, this represents the query/mutation/subscription.
+         */
+        query: {
+            /**
+             * Gets the current GraphQL query string.
+             * @returns {string} The GraphQL query.
+             */
+            get: () => {
+                return (request && typeof request === 'object') ? (request.query || '') : '';
+            },
+            /**
+             * Sets the GraphQL query string.
+             * @param {string} newQuery The GraphQL query/mutation/subscription.
+             */
+            set: (newQuery) => {
+                if (request && typeof request === 'object' && typeof newQuery === 'string') {
+                    request.query = newQuery;
+                    ad.request.headers.set('Content-Type', 'application/json');
+                }
+            },
+            /**
+             * Clears the GraphQL query.
+             */
+            clear: () => {
+                if (request && typeof request === 'object') {
+                    request.query = '';
+                }
+            }
+        },
+
         /**
          * Access or modify the request method (e.g., 'GET', 'POST').
          */
