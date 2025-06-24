@@ -574,39 +574,6 @@ const ad = {
         }
     },
 
-    /**
-     * Basic testing functions (example structure).
-     * Results might need to be collected and sent back via the bridge or at the end.
-     */
-    // test: (testName, callback) => {
-    //   try {
-    //     callback();
-    //     ad.console.log(`Test Passed: ${testName}`);
-    //     // TODO: Potentially collect results: sendMessage('testResult', JSON.stringify({ name: testName, status: 'passed' }));
-    //   } catch (e) {
-    //     ad.console.error(`Test Failed: ${testName}`, e.toString(), e.stack);
-    //      // TODO: Potentially collect results: sendMessage('testResult', JSON.stringify({ name: testName, status: 'failed', error: e.toString() }));
-    //   }
-    // },
-
-    // expect: (value) => {
-    //   // Very basic assertion example (can be expanded or use a tiny library)
-    //   return {
-    //     toBe: (expected) => {
-    //       if (value !== expected) {
-    //         throw new Error(`Assertion Failed: Expected ${JSON.stringify(value)} to be ${JSON.stringify(expected)}`);
-    //       }
-    //     },
-    // Add more assertions: toBeTruthy, toEqual (deep compare), etc.
-    //   };
-    // }
-
-    // TODO: Add other utilities if needed: crypto, base64 (atob/btoa - might need polyfills)
-    // E.g.,
-    // crypto: { /* methods */ },
-    // btoa: (str) => btoa(str), // Needs btoa to be available in the JS context
-    // atob: (encodedStr) => atob(encodedStr) // Needs atob
-
 };
 
 // --- End of APIDash Setup Script ---
