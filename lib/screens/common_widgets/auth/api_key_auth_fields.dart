@@ -7,12 +7,14 @@ import 'package:flutter/material.dart';
 
 class ApiKeyAuthFields extends StatefulWidget {
   final AuthModel? authData;
+  final bool readOnly;
   final Function(AuthModel?) updateAuth;
 
   const ApiKeyAuthFields({
     super.key,
     required this.authData,
     required this.updateAuth,
+    this.readOnly = false
   });
 
   @override
@@ -67,12 +69,14 @@ class _ApiKeyAuthFieldsState extends State<ApiKeyAuthFields> {
         ),
         const SizedBox(height: 16),
         AuthTextField(
+          readOnly: widget.readOnly,
           controller: _nameController,
           hintText: "Header/Query Param Name",
           onChanged: (value) => _updateApiKeyAuth(),
         ),
         const SizedBox(height: 16),
         AuthTextField(
+           readOnly: widget.readOnly,
           controller: _keyController,
           hintText: "API Key",
           isObscureText: true,

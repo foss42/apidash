@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:apidash/screens/common_widgets/auth/api_key_auth_fields.dart';
 import 'package:apidash/screens/common_widgets/auth/basic_auth_fields.dart';
 import 'package:apidash/screens/common_widgets/auth/bearer_auth_fields.dart';
@@ -24,17 +26,19 @@ class EditAuthType extends ConsumerWidget {
     final APIAuthType currentAuthType;
 
     if (authModel != null) {
+      log("Got Auth Model");
       currentAuthData = authModel;
       currentAuthType = authModel!.type;
     } else {
+      log("Using Provider");
       final selectedRequest = ref.read(selectedRequestModelProvider);
       if (selectedRequest == null) {
         return const SizedBox.shrink();
       }
 
       currentAuthType = ref.watch(
-        selectedRequestModelProvider.select((request) =>
-            request?.authModel?.type ?? APIAuthType.none),
+        selectedRequestModelProvider
+            .select((request) => request?.authModel?.type ?? APIAuthType.none),
       );
       currentAuthData = selectedRequest.authModel;
     }
@@ -115,6 +119,11 @@ class EditAuthType extends ConsumerWidget {
     AuthModel? authData,
   ) {
     void updateAuth(AuthModel? model) {
+      if (model == null) {
+        ref.read(collectionStateNotifierProvider.notifier).update(
+              authData: AuthModel(type: APIAuthType.none),
+            );
+      }
       ref.read(collectionStateNotifierProvider.notifier).update(
             authData: model,
           );
@@ -123,21 +132,25 @@ class EditAuthType extends ConsumerWidget {
     switch (authData?.type) {
       case APIAuthType.basic:
         return BasicAuthFields(
+          readOnly: readOnly,
           authData: authData,
           updateAuth: updateAuth,
         );
       case APIAuthType.bearer:
         return BearerAuthFields(
+          readOnly: readOnly,
           authData: authData,
           updateAuth: updateAuth,
         );
       case APIAuthType.apiKey:
         return ApiKeyAuthFields(
+          readOnly: readOnly,
           authData: authData,
           updateAuth: updateAuth,
         );
       case APIAuthType.jwt:
         return JwtAuthFields(
+          readOnly: readOnly,
           authData: authData,
           updateAuth: updateAuth,
         );

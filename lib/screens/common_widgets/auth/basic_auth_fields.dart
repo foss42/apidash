@@ -5,11 +5,13 @@ import 'package:apidash_core/apidash_core.dart';
 class BasicAuthFields extends StatelessWidget {
   final AuthModel? authData;
   final Function(AuthModel?) updateAuth;
+  final bool readOnly;
 
   const BasicAuthFields({
     super.key,
     required this.authData,
     required this.updateAuth,
+    this.readOnly = false,
   });
 
   @override
@@ -25,6 +27,7 @@ class BasicAuthFields extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         AuthTextField(
+          readOnly: readOnly,
           hintText: "Username",
           controller: usernameController,
           onChanged: (_) => _updateBasicAuth(
@@ -34,6 +37,7 @@ class BasicAuthFields extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         AuthTextField(
+          readOnly: readOnly,
           hintText: "Password",
           isObscureText: true,
           controller: passwordController,

@@ -7,12 +7,14 @@ class AuthTextField extends StatefulWidget {
   final TextEditingController controller;
   final bool isObscureText;
   final Function(String)? onChanged;
+  final bool readOnly;
 
   const AuthTextField({
     super.key,
     required this.hintText,
     required this.controller,
     required this.onChanged,
+    this.readOnly = false,
     this.isObscureText = false,
   });
 
@@ -51,6 +53,7 @@ class _AuthFieldState extends State<AuthTextField> {
           ),
           const SizedBox(height: 6),
           TextFormField(
+            readOnly: widget.readOnly,
             controller: widget.controller,
             style: kCodeStyle.copyWith(
               color: Theme.of(context).colorScheme.onSurface,

@@ -5,11 +5,13 @@ import 'package:flutter/material.dart';
 class BearerAuthFields extends StatefulWidget {
   final AuthModel? authData;
   final Function(AuthModel?) updateAuth;
+  final bool readOnly;
 
   const BearerAuthFields({
     super.key,
     required this.authData,
     required this.updateAuth,
+    this.readOnly = false,
   });
 
   @override
@@ -29,6 +31,7 @@ class _BearerAuthFieldsState extends State<BearerAuthFields> {
   @override
   Widget build(BuildContext context) {
     return AuthTextField(
+      readOnly: widget.readOnly,
       controller: _tokenController,
       hintText: "Token",
       isObscureText: true,
