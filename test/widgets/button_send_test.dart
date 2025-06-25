@@ -17,6 +17,7 @@ void main() {
           home: Scaffold(
             body: SendButton(
               isWorking: false,
+              isStreaming: false,
               onTap: () => sendPressed = true,
               onCancel: () => cancelPressed = true,
             ),
@@ -46,6 +47,7 @@ void main() {
           home: Scaffold(
             body: SendButton(
               isWorking: true,
+              isStreaming: false,
               onTap: () => sendPressed = true,
               onCancel: () => cancelPressed = true,
             ),
@@ -74,6 +76,7 @@ void main() {
             builder: (context, setState) {
               return Scaffold(
                 body: SendButton(
+                  isStreaming: false,
                   isWorking: isWorking,
                   onTap: () => setState(() => isWorking = true),
                   onCancel: () => setState(() => isWorking = false),

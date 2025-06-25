@@ -270,18 +270,15 @@ class CollectionStateNotifier
   Future<void> sendRequest() async {
     final requestId = ref.read(selectedIdStateProvider);
     ref.read(codePaneVisibleStateProvider.notifier).state = false;
+
+    if (requestId == null || state == null) return;
+
+    RequestModel? requestModel = state![requestId];
+    if (requestModel?.httpRequestModel == null) return;
+
     final defaultUriScheme = ref.read(settingsProvider).defaultUriScheme;
     final EnvironmentModel? originalEnvironmentModel =
         ref.read(selectedEnvironmentModelProvider);
-
-    if (requestId == null || state == null) {
-      return;
-    }
-    RequestModel? requestModel = state![requestId];
-
-    if (requestModel?.httpRequestModel == null) {
-      return;
-    }
 
     if (requestModel != null &&
         !requestModel.preRequestScript.isNullOrEmpty()) {
@@ -303,23 +300,18 @@ class CollectionStateNotifier
     APIType apiType = requestModel!.apiType;
     HttpRequestModel substitutedHttpRequestModel =
         getSubstitutedHttpRequestModel(requestModel.httpRequestModel!);
-
-    // set current model's isWorking to true and update state
-    var map = {...state!};
-    map[requestId] = requestModel.copyWith(
-      isWorking: true,
-      sendingTime: DateTime.now(),
-    );
-    state = map;
-
     bool noSSL = ref.read(settingsProvider).isSSLDisabled;
 
-    (Response?, Duration?, String?) responseRec;
-    HttpResponseModel? respModel;
-    HistoryRequestModel? historyM;
-    RequestModel? newRequestModel;
+    // Set model to working and streaming
+    state = {
+      ...state!,
+      requestId: requestModel.copyWith(
+        isWorking: true,
+        isStreaming: true,
+        sendingTime: DateTime.now(),
+      ),
+    };
 
-    responseRec = (null, null, null);
     final stream = await streamHttpRequest(
       requestId,
       apiType,
@@ -328,101 +320,98 @@ class CollectionStateNotifier
       noSSL: noSSL,
     );
 
-    StreamSubscription? sub;
-    final completer = Completer();
-
+    HttpResponseModel? respModel;
+    HistoryRequestModel? historyM;
+    RequestModel newRequestModel = requestModel;
+    final completer = Completer<(Response?, Duration?, String?)>();
     bool isTextStream = false;
+    StreamSubscription? sub;
 
     sub = stream.listen((d) async {
       if (d == null) return;
 
-      isTextStream = ((d.$1 == null && isTextStream) ||
-          (d.$1 == 'text/event-stream' || d.$1 == 'application/x-ndjson'));
+      final contentType = d.$1;
+      isTextStream = isTextStream ||
+          contentType == 'text/event-stream' ||
+          contentType == 'application/x-ndjson';
 
-      responseRec = (d.$2, d.$3, d.$4);
+      final response = d.$2;
+      final duration = d.$3;
+      final errorMessage = d.$4;
 
       if (!isTextStream) {
-        if (completer.isCompleted) return;
-        completer.complete(responseRec);
-        await Future.delayed(Duration(milliseconds: 100));
+        if (!completer.isCompleted) {
+          completer.complete((response, duration, errorMessage));
+        }
+        return;
       }
 
-      if (responseRec.$1 != null) {
-        responseRec = (
-          HttpResponse(
-            responseRec.$1!.body,
-            responseRec.$1!.statusCode,
-            request: responseRec.$1!.request,
-            headers: {
-              ...(responseRec.$1?.headers ?? {}),
-              'content-type': 'text/event-stream'
-            },
-            isRedirect: responseRec.$1!.isRedirect,
-            reasonPhrase: responseRec.$1!.reasonPhrase,
-            persistentConnection: responseRec.$1!.persistentConnection,
-          ),
-          responseRec.$2,
-          responseRec.$3,
-        );
-      }
+      respModel = respModel?.copyWith(
+        sseOutput: [
+          ...(respModel?.sseOutput ?? []),
+          if (response != null) response.body,
+        ],
+      );
 
-      //----------- MAKE CHANGES --------------
-      respModel = respModel?.copyWith(sseOutput: [
-        ...(respModel?.sseOutput ?? []),
-        responseRec.$1!.body,
-      ]);
-      if (respModel != null) {
-        final nRM = newRequestModel!.copyWith(
-          httpResponseModel: respModel,
-        );
-        map = {...state!};
-        map[requestId] = nRM;
-        state = map;
-        unsave();
-      }
-      //Changing History
+      newRequestModel = newRequestModel.copyWith(
+        httpResponseModel: respModel,
+        isStreaming: true,
+      );
+      state = {
+        ...state!,
+        requestId: newRequestModel,
+      };
+      unsave();
+
       if (historyM != null && respModel != null) {
-        historyM = historyM!.copyWith(
-          httpResponseModel: respModel!,
-        );
+        historyM = historyM!.copyWith(httpResponseModel: respModel!);
         ref
             .read(historyMetaStateNotifier.notifier)
             .editHistoryRequest(historyM!);
       }
-      //----------- MAKE CHANGES --------------
 
-      if (completer.isCompleted) return;
-      completer.complete(responseRec);
+      if (!completer.isCompleted) {
+        completer.complete((response, duration, errorMessage));
+      }
     }, onDone: () {
       sub?.cancel();
+      state = {
+        ...state!,
+        requestId: newRequestModel.copyWith(isStreaming: false),
+      };
+      unsave();
     }, onError: (e) {
-      print('err: $e');
+      print('Stream error: $e');
     });
-    responseRec = await completer.future;
 
-    if (responseRec.$1 == null) {
-      newRequestModel = requestModel.copyWith(
+    final (response, duration, errorMessage) = await completer.future;
+
+    if (response == null) {
+      newRequestModel = newRequestModel.copyWith(
         responseStatus: -1,
-        message: responseRec.$3,
+        message: errorMessage,
         isWorking: false,
+        isStreaming: false,
       );
     } else {
+      final statusCode = response.statusCode;
       respModel = baseHttpResponseModel.fromResponse(
-        response: responseRec.$1!,
-        time: responseRec.$2!,
+        response: response,
+        time: duration,
       );
-      int statusCode = responseRec.$1!.statusCode;
-      newRequestModel = requestModel.copyWith(
+
+      newRequestModel = newRequestModel.copyWith(
         responseStatus: statusCode,
         message: kResponseCodeReasons[statusCode],
         httpResponseModel: respModel,
         isWorking: false,
       );
-      String newHistoryId = getNewUuid();
+
+      final historyId = getNewUuid();
       historyM = HistoryRequestModel(
-        historyId: newHistoryId,
+        historyId: historyId,
         metaData: HistoryMetaModel(
-          historyId: newHistoryId,
+          historyId: historyId,
           requestId: requestId,
           apiType: requestModel.apiType,
           name: requestModel.name,
@@ -452,13 +441,15 @@ class CollectionStateNotifier
           },
         );
       }
+
       ref.read(historyMetaStateNotifier.notifier).addHistoryRequest(historyM!);
     }
 
-    // update state with response data
-    map = {...state!};
-    map[requestId] = newRequestModel;
-    state = map;
+    // Final state update
+    state = {
+      ...state!,
+      requestId: newRequestModel,
+    };
 
     unsave();
   }

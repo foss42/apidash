@@ -22,6 +22,7 @@ class RequestModel with _$RequestModel {
     HttpResponseModel? httpResponseModel,
     @JsonKey(includeToJson: false) @Default(false) bool isWorking,
     @JsonKey(includeToJson: false) DateTime? sendingTime,
+    @JsonKey(includeToJson: false) @Default(false) bool isStreaming,
     String? preRequestScript,
     String? postRequestScript,
   }) = _RequestModel;
