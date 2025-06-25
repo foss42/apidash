@@ -17,7 +17,7 @@ final httpClientManager = HttpClientManager();
 Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
   String requestId,
   APIType apiType,
-  AuthModel? authModel,
+  AuthModel? authData,
   HttpRequestModel requestModel, {
   SupportedUriSchemes defaultUriScheme = kDefaultUriScheme,
   bool noSSL = false,
@@ -28,7 +28,11 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
   final client = httpClientManager.createClient(requestId, noSSL: noSSL);
 
   // Handle authentication
+<<<<<<< HEAD:packages/better_networking/lib/services/http_service.dart
   final authenticatedRequestModel = handleAuth(requestModel, authModel);
+=======
+  final authenticatedRequestModel = handleAuth(requestModel, authData);
+>>>>>>> f24eb4e6 (feat: remove AuthModel from HttpRequestModel and integrate into HistoryRequestModel and RequestModel):packages/apidash_core/lib/services/http_service.dart
 
   (Uri?, String?) uriRec = getValidRequestUri(
     authenticatedRequestModel.url,

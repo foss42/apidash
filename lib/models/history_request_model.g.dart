@@ -15,8 +15,10 @@ _$HistoryRequestModelImpl _$$HistoryRequestModelImplFromJson(Map json) =>
           Map<String, Object?>.from(json['httpRequestModel'] as Map)),
       httpResponseModel: HttpResponseModel.fromJson(
           Map<String, Object?>.from(json['httpResponseModel'] as Map)),
-      preRequestScript: json['preRequestScript'] as String?,
-      postRequestScript: json['postRequestScript'] as String?,
+      authModel: json['authModel'] == null
+          ? null
+          : AuthModel.fromJson(
+              Map<String, dynamic>.from(json['authModel'] as Map)),
     );
 
 Map<String, dynamic> _$$HistoryRequestModelImplToJson(
@@ -26,6 +28,5 @@ Map<String, dynamic> _$$HistoryRequestModelImplToJson(
       'metaData': instance.metaData.toJson(),
       'httpRequestModel': instance.httpRequestModel.toJson(),
       'httpResponseModel': instance.httpResponseModel.toJson(),
-      'preRequestScript': instance.preRequestScript,
-      'postRequestScript': instance.postRequestScript,
+      'authModel': instance.authModel?.toJson(),
     };

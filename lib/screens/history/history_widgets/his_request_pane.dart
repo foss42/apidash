@@ -42,10 +42,10 @@ class HistoryRequestPane extends ConsumerWidget {
 
     final hasAuth = ref.watch(selectedHistoryRequestModelProvider.select(
         (value) =>
-            value?.httpRequestModel.authModel?.type != APIAuthType.none));
+            value?.authModel?.type != APIAuthType.none));
 
     final authModel = ref.watch(selectedHistoryRequestModelProvider
-        .select((value) => value?.httpRequestModel.authModel));
+        .select((value) => value?.authModel));
 
     return switch (apiType) {
       APIType.rest => RequestPane(

@@ -5,9 +5,8 @@ import 'package:apidash_core/models/http_request_model.dart';
 import 'package:apidash_core/utils/auth_utils.dart';
 import 'package:seed/seed.dart';
 
-HttpRequestModel handleAuth(
-    HttpRequestModel httpRequestModel, AuthModel? auth) {
-  if (auth == null || auth.type == APIAuthType.none) {
+HttpRequestModel handleAuth(HttpRequestModel httpRequestModel,AuthModel? authData) {
+  if (authData == null || authData.type == APIAuthType.none) {
     return httpRequestModel;
   }
 
@@ -19,10 +18,10 @@ HttpRequestModel handleAuth(
   List<bool> updatedParamEnabledList =
       List.from(httpRequestModel.isParamEnabledList ?? []);
 
-  switch (auth.type) {
+  switch (authData.type) {
     case APIAuthType.basic:
-      if (auth.basic != null) {
-        final basicAuth = auth.basic!;
+      if (authData.basic != null) {
+        final basicAuth = authData.basic!;
         final encoded = base64Encode(
             utf8.encode('${basicAuth.username}:${basicAuth.password}'));
         updatedHeaders.add(
@@ -32,8 +31,8 @@ HttpRequestModel handleAuth(
       break;
 
     case APIAuthType.bearer:
-      if (auth.bearer != null) {
-        final bearerAuth = auth.bearer!;
+      if (authData.bearer != null) {
+        final bearerAuth = authData.bearer!;
         updatedHeaders.add(NameValueModel(
             name: 'Authorization', value: 'Bearer ${bearerAuth.token}'));
         updatedHeaderEnabledList.add(true);
@@ -41,8 +40,8 @@ HttpRequestModel handleAuth(
       break;
 
     case APIAuthType.jwt:
-      if (auth.jwt != null) {
-        final jwtAuth = auth.jwt!;
+      if (authData.jwt != null) {
+        final jwtAuth = authData.jwt!;
 
         // Generate JWT token
         final jwtToken = generateJWT(jwtAuth);
@@ -67,8 +66,8 @@ HttpRequestModel handleAuth(
       break;
 
     case APIAuthType.apiKey:
-      if (auth.apikey != null) {
-        final apiKeyAuth = auth.apikey!;
+      if (authData.apikey != null) {
+        final apiKeyAuth = authData.apikey!;
         if (apiKeyAuth.location == 'header') {
           updatedHeaders.add(
               NameValueModel(name: apiKeyAuth.name, value: apiKeyAuth.key));

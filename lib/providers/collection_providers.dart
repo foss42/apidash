@@ -239,6 +239,7 @@ class CollectionStateNotifier
       name: name ?? currentModel.name,
       description: description ?? currentModel.description,
       requestTabIndex: requestTabIndex ?? currentModel.requestTabIndex,
+      authModel: authData ?? currentModel.authModel,
       httpRequestModel: currentHttpRequestModel?.copyWith(
         method: method ?? currentHttpRequestModel.method,
         url: url ?? currentHttpRequestModel.url,
@@ -317,6 +318,7 @@ class CollectionStateNotifier
       requestId,
       apiType,
       requestModel.authModel,
+      requestModel.authModel,
       substitutedHttpRequestModel,
       defaultUriScheme: defaultUriScheme,
       noSSL: noSSL,
@@ -343,38 +345,20 @@ class CollectionStateNotifier
       );
       String newHistoryId = getNewUuid();
       HistoryRequestModel model = HistoryRequestModel(
-        historyId: newHistoryId,
-        metaData: HistoryMetaModel(
           historyId: newHistoryId,
-          requestId: requestId,
-          apiType: requestModel.apiType,
-          name: requestModel.name,
-          url: substitutedHttpRequestModel.url,
-          method: substitutedHttpRequestModel.method,
-          responseStatus: statusCode,
-          timeStamp: DateTime.now(),
-        ),
-        httpRequestModel: substitutedHttpRequestModel,
-        httpResponseModel: httpResponseModel,
-        preRequestScript: requestModel.preRequestScript,
-        postRequestScript: requestModel.postRequestScript,
-      );
-
-      if (!requestModel.postRequestScript.isNullOrEmpty()) {
-        newRequestModel = await handlePostResponseScript(
-          newRequestModel,
-          originalEnvironmentModel,
-          (envModel, updatedValues) {
-            ref
-                .read(environmentsStateNotifierProvider.notifier)
-                .updateEnvironment(
-                  envModel.id,
-                  name: envModel.name,
-                  values: updatedValues,
-                );
-          },
-        );
-      }
+          metaData: HistoryMetaModel(
+            historyId: newHistoryId,
+            requestId: requestId,
+            apiType: requestModel.apiType,
+            name: requestModel.name,
+            url: substitutedHttpRequestModel.url,
+            method: substitutedHttpRequestModel.method,
+            responseStatus: statusCode,
+            timeStamp: DateTime.now(),
+          ),
+          httpRequestModel: substitutedHttpRequestModel,
+          httpResponseModel: httpResponseModel,
+          authModel: requestModel.authModel);
       ref.read(historyMetaStateNotifier.notifier).addHistoryRequest(model);
     }
 

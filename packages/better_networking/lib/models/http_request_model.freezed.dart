@@ -61,6 +61,17 @@ abstract class $HttpRequestModelCopyWith<$Res> {
     String? query,
     List<FormDataModel>? formData,
   });
+  $Res call(
+      {HTTPVerb method,
+      String url,
+      List<NameValueModel>? headers,
+      List<NameValueModel>? params,
+      List<bool>? isHeaderEnabledList,
+      List<bool>? isParamEnabledList,
+      ContentType bodyContentType,
+      String? body,
+      String? query,
+      List<FormDataModel>? formData});
 }
 
 /// @nodoc
@@ -135,6 +146,49 @@ class _$HttpRequestModelCopyWithImpl<$Res, $Val extends HttpRequestModel>
           as $Val,
     );
   }
+    return _then(_value.copyWith(
+      method: null == method
+          ? _value.method
+          : method // ignore: cast_nullable_to_non_nullable
+              as HTTPVerb,
+      url: null == url
+          ? _value.url
+          : url // ignore: cast_nullable_to_non_nullable
+              as String,
+      headers: freezed == headers
+          ? _value.headers
+          : headers // ignore: cast_nullable_to_non_nullable
+              as List<NameValueModel>?,
+      params: freezed == params
+          ? _value.params
+          : params // ignore: cast_nullable_to_non_nullable
+              as List<NameValueModel>?,
+      isHeaderEnabledList: freezed == isHeaderEnabledList
+          ? _value.isHeaderEnabledList
+          : isHeaderEnabledList // ignore: cast_nullable_to_non_nullable
+              as List<bool>?,
+      isParamEnabledList: freezed == isParamEnabledList
+          ? _value.isParamEnabledList
+          : isParamEnabledList // ignore: cast_nullable_to_non_nullable
+              as List<bool>?,
+      bodyContentType: null == bodyContentType
+          ? _value.bodyContentType
+          : bodyContentType // ignore: cast_nullable_to_non_nullable
+              as ContentType,
+      body: freezed == body
+          ? _value.body
+          : body // ignore: cast_nullable_to_non_nullable
+              as String?,
+      query: freezed == query
+          ? _value.query
+          : query // ignore: cast_nullable_to_non_nullable
+              as String?,
+      formData: freezed == formData
+          ? _value.formData
+          : formData // ignore: cast_nullable_to_non_nullable
+              as List<FormDataModel>?,
+    ) as $Val);
+  }
 }
 
 /// @nodoc
@@ -158,6 +212,17 @@ abstract class _$$HttpRequestModelImplCopyWith<$Res>
     String? query,
     List<FormDataModel>? formData,
   });
+  $Res call(
+      {HTTPVerb method,
+      String url,
+      List<NameValueModel>? headers,
+      List<NameValueModel>? params,
+      List<bool>? isHeaderEnabledList,
+      List<bool>? isParamEnabledList,
+      ContentType bodyContentType,
+      String? body,
+      String? query,
+      List<FormDataModel>? formData});
 }
 
 /// @nodoc
@@ -229,6 +294,48 @@ class __$$HttpRequestModelImplCopyWithImpl<$Res>
                   as List<FormDataModel>?,
       ),
     );
+    return _then(_$HttpRequestModelImpl(
+      method: null == method
+          ? _value.method
+          : method // ignore: cast_nullable_to_non_nullable
+              as HTTPVerb,
+      url: null == url
+          ? _value.url
+          : url // ignore: cast_nullable_to_non_nullable
+              as String,
+      headers: freezed == headers
+          ? _value._headers
+          : headers // ignore: cast_nullable_to_non_nullable
+              as List<NameValueModel>?,
+      params: freezed == params
+          ? _value._params
+          : params // ignore: cast_nullable_to_non_nullable
+              as List<NameValueModel>?,
+      isHeaderEnabledList: freezed == isHeaderEnabledList
+          ? _value._isHeaderEnabledList
+          : isHeaderEnabledList // ignore: cast_nullable_to_non_nullable
+              as List<bool>?,
+      isParamEnabledList: freezed == isParamEnabledList
+          ? _value._isParamEnabledList
+          : isParamEnabledList // ignore: cast_nullable_to_non_nullable
+              as List<bool>?,
+      bodyContentType: null == bodyContentType
+          ? _value.bodyContentType
+          : bodyContentType // ignore: cast_nullable_to_non_nullable
+              as ContentType,
+      body: freezed == body
+          ? _value.body
+          : body // ignore: cast_nullable_to_non_nullable
+              as String?,
+      query: freezed == query
+          ? _value.query
+          : query // ignore: cast_nullable_to_non_nullable
+              as String?,
+      formData: freezed == formData
+          ? _value._formData
+          : formData // ignore: cast_nullable_to_non_nullable
+              as List<FormDataModel>?,
+    ));
   }
 }
 
@@ -253,6 +360,23 @@ class _$HttpRequestModelImpl extends _HttpRequestModel {
        _isParamEnabledList = isParamEnabledList,
        _formData = formData,
        super._();
+  const _$HttpRequestModelImpl(
+      {this.method = HTTPVerb.get,
+      this.url = "",
+      final List<NameValueModel>? headers,
+      final List<NameValueModel>? params,
+      final List<bool>? isHeaderEnabledList,
+      final List<bool>? isParamEnabledList,
+      this.bodyContentType = ContentType.json,
+      this.body,
+      this.query,
+      final List<FormDataModel>? formData})
+      : _headers = headers,
+        _params = params,
+        _isHeaderEnabledList = isHeaderEnabledList,
+        _isParamEnabledList = isParamEnabledList,
+        _formData = formData,
+        super._();
 
   factory _$HttpRequestModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$HttpRequestModelImplFromJson(json);
@@ -325,6 +449,7 @@ class _$HttpRequestModelImpl extends _HttpRequestModel {
   @override
   String toString() {
     return 'HttpRequestModel(method: $method, url: $url, headers: $headers, params: $params, isHeaderEnabledList: $isHeaderEnabledList, isParamEnabledList: $isParamEnabledList, bodyContentType: $bodyContentType, body: $body, query: $query, formData: $formData)';
+    return 'HttpRequestModel(method: $method, url: $url, headers: $headers, params: $params, isHeaderEnabledList: $isHeaderEnabledList, isParamEnabledList: $isParamEnabledList, bodyContentType: $bodyContentType, body: $body, query: $query, formData: $formData)';
   }
 
   @override
@@ -344,6 +469,10 @@ class _$HttpRequestModelImpl extends _HttpRequestModel {
               other._isParamEnabledList,
               _isParamEnabledList,
             ) &&
+            const DeepCollectionEquality()
+                .equals(other._isHeaderEnabledList, _isHeaderEnabledList) &&
+            const DeepCollectionEquality()
+                .equals(other._isParamEnabledList, _isParamEnabledList) &&
             (identical(other.bodyContentType, bodyContentType) ||
                 other.bodyContentType == bodyContentType) &&
             (identical(other.body, body) || other.body == body) &&
@@ -366,6 +495,17 @@ class _$HttpRequestModelImpl extends _HttpRequestModel {
     query,
     const DeepCollectionEquality().hash(_formData),
   );
+      runtimeType,
+      method,
+      url,
+      const DeepCollectionEquality().hash(_headers),
+      const DeepCollectionEquality().hash(_params),
+      const DeepCollectionEquality().hash(_isHeaderEnabledList),
+      const DeepCollectionEquality().hash(_isParamEnabledList),
+      bodyContentType,
+      body,
+      query,
+      const DeepCollectionEquality().hash(_formData));
 
   /// Create a copy of HttpRequestModel
   /// with the given fields replaced by the non-null parameter values.
@@ -397,6 +537,17 @@ abstract class _HttpRequestModel extends HttpRequestModel {
     final String? query,
     final List<FormDataModel>? formData,
   }) = _$HttpRequestModelImpl;
+  const factory _HttpRequestModel(
+      {final HTTPVerb method,
+      final String url,
+      final List<NameValueModel>? headers,
+      final List<NameValueModel>? params,
+      final List<bool>? isHeaderEnabledList,
+      final List<bool>? isParamEnabledList,
+      final ContentType bodyContentType,
+      final String? body,
+      final String? query,
+      final List<FormDataModel>? formData}) = _$HttpRequestModelImpl;
   const _HttpRequestModel._() : super._();
 
   factory _HttpRequestModel.fromJson(Map<String, dynamic> json) =
