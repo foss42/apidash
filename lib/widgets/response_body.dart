@@ -59,16 +59,13 @@ class ResponseBody extends StatelessWidget {
     // print('reM -> ${responseModel.sseOutput}');
 
     if (responseModel.sseOutput?.isNotEmpty ?? false) {
-      final modifiedBody = responseModel.sseOutput!.join('\n\n');
-      print(modifiedBody);
+      // final modifiedBody = responseModel.sseOutput!.join('\n\n');
       return ResponseBodySuccess(
         key: Key("${selectedRequestModel!.id}-response"),
-        mediaType: mediaType,
-        options: options,
-        bytes: utf8.encode(modifiedBody),
-        body: modifiedBody,
-        formattedBody: modifiedBody,
-        highlightLanguage: highlightLanguage,
+        mediaType: MediaType('text', 'event-stream'),
+        options: [ResponseBodyView.sse],
+        bytes: utf8.encode((responseModel.sseOutput!).toString()),
+        body: jsonEncode(responseModel.sseOutput!),
       );
     }
 
