@@ -247,8 +247,6 @@ streamHttpRequest(
       final streamedResponse = await client.send(multipart);
       final stream = streamTextResponse(streamedResponse);
 
-      print(streamedResponse.headers['content-type']);
-
       subscription = stream.listen(
         (data) => controller.add((
           streamedResponse.headers['content-type'].toString(),
