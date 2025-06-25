@@ -430,6 +430,7 @@ class CollectionStateNotifier
             : (state?[id]?.copyWith(httpResponseModel: null))?.toJson(),
       );
     }
+    
     await hiveHandler.removeUnused();
     ref.read(saveDataStateProvider.notifier).state = false;
     ref.read(hasUnsavedChangesProvider.notifier).state = false;

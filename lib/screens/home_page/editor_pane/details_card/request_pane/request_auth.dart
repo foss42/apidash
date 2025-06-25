@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:apidash/screens/common_widgets/auth/api_key_auth_fields.dart';
 import 'package:apidash/screens/common_widgets/auth/basic_auth_fields.dart';
 import 'package:apidash/screens/common_widgets/auth/bearer_auth_fields.dart';
@@ -26,11 +24,9 @@ class EditAuthType extends ConsumerWidget {
     final APIAuthType currentAuthType;
 
     if (authModel != null) {
-      log("Got Auth Model");
       currentAuthData = authModel;
       currentAuthType = authModel!.type;
     } else {
-      log("Using Provider");
       final selectedRequest = ref.read(selectedRequestModelProvider);
       if (selectedRequest == null) {
         return const SizedBox.shrink();
