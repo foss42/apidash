@@ -374,10 +374,14 @@ class CollectionStateNotifier
       final statusCode = response.statusCode;
 
       respModel = respModel ??
-          baseHttpResponseModel.fromResponse(
-            response: response,
-            time: duration,
-          );
+          baseHttpResponseModel
+              .fromResponse(
+                response: response,
+                time: duration,
+              )
+              .copyWith(
+                sseOutput: isTextStream ? [response.body] : [],
+              );
 
       newRequestModel = newRequestModel.copyWith(
         responseStatus: statusCode,

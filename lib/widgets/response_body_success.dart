@@ -151,10 +151,9 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
                       width: double.maxFinite,
                       padding: kP8,
                       decoration: textContainerdecoration,
-                      child: SingleChildScrollView(
-                          child: SSEDisplay(
+                      child: SSEDisplay(
                         sseOutput: widget.body,
-                      )),
+                      ),
                     ),
                   ),
               }
@@ -167,16 +166,67 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
 }
 
 //MOVE THIS SOMEWHERE ELSE
-class SSEDisplay extends StatelessWidget {
+class SSEDisplay extends StatefulWidget {
   final String sseOutput;
   const SSEDisplay({super.key, required this.sseOutput});
+
+  @override
+  State<SSEDisplay> createState() => _SSEDisplayState();
+}
+
+class _SSEDisplayState extends State<SSEDisplay> {
+  final _scrollController = ScrollController();
+  bool autoScrollEnabled = true;
+  bool _isScrolling = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _scrollController.addListener(() {
+      final position = _scrollController.position;
+      final atBottom = position.pixels >= position.maxScrollExtent - 50;
+
+      if (autoScrollEnabled && !atBottom) {
+        // User scrolled up manually
+        setState(() => autoScrollEnabled = false);
+      } else if (!autoScrollEnabled && atBottom) {
+        // User scrolled back to bottom
+        setState(() => autoScrollEnabled = true);
+      }
+    });
+  }
+
+  @override
+  void didUpdateWidget(covariant SSEDisplay oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.sseOutput != widget.sseOutput &&
+        autoScrollEnabled &&
+        !_isScrolling) {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        if (_scrollController.hasClients) {
+          _isScrolling = true;
+          _scrollController.jumpTo(
+            _scrollController.position.maxScrollExtent,
+          );
+          _isScrolling = false;
+        }
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     List<dynamic> sse;
     try {
-      sse = jsonDecode(sseOutput);
+      sse = jsonDecode(widget.sseOutput);
     } catch (e) {
       return Text(
         'Invalid SSE output',
@@ -184,59 +234,64 @@ class SSEDisplay extends StatelessWidget {
       );
     }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: sse.map<Widget>((chunk) {
-        Map<String, dynamic>? parsedJson;
-        try {
-          parsedJson = jsonDecode(chunk);
-        } catch (_) {
-          // Not a JSON object
-        }
+    return SingleChildScrollView(
+      controller: _scrollController,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: sse.map<Widget>((chunk) {
+          Map<String, dynamic>? parsedJson;
+          try {
+            parsedJson = jsonDecode(chunk);
+          } catch (_) {}
 
-        return Card(
-          margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
-          elevation: 2,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          child: Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: parsedJson != null
-                ? Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: parsedJson.entries.map((entry) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 2.0),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              '${entry.key}: ',
-                              style: theme.textTheme.bodyMedium?.copyWith(
+          return Card(
+            margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
+            elevation: 2,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: parsedJson != null
+                  ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: parsedJson.entries.map((entry) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 2.0),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '${entry.key}: ',
+                                style: theme.textTheme.bodyMedium?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: kColorGQL),
-                            ),
-                            SizedBox(width: 4),
-                            Expanded(
-                              child: Text(
-                                entry.value.toString(),
-                                style: theme.textTheme.bodyMedium
-                                    ?.copyWith(fontFamily: 'monospace'),
+                                  color: kColorGQL,
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }).toList(),
-                  )
-                : Text(
-                    chunk.toString(),
-                    style: theme.textTheme.bodyMedium
-                        ?.copyWith(fontFamily: 'monospace'),
-                  ),
-          ),
-        );
-      }).toList(),
+                              const SizedBox(width: 4),
+                              Expanded(
+                                child: Text(
+                                  entry.value.toString(),
+                                  style: theme.textTheme.bodyMedium?.copyWith(
+                                    fontFamily: 'monospace',
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                    )
+                  : Text(
+                      chunk.toString(),
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        fontFamily: 'monospace',
+                      ),
+                    ),
+            ),
+          );
+        }).toList(),
+      ),
     );
   }
 }
