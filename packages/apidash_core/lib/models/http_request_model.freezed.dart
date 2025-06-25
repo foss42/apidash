@@ -24,7 +24,6 @@ mixin _$HttpRequestModel {
   String get url => throw _privateConstructorUsedError;
   List<NameValueModel>? get headers => throw _privateConstructorUsedError;
   List<NameValueModel>? get params => throw _privateConstructorUsedError;
-  AuthModel? get authModel => throw _privateConstructorUsedError;
   List<bool>? get isHeaderEnabledList => throw _privateConstructorUsedError;
   List<bool>? get isParamEnabledList => throw _privateConstructorUsedError;
   ContentType get bodyContentType => throw _privateConstructorUsedError;
@@ -53,15 +52,12 @@ abstract class $HttpRequestModelCopyWith<$Res> {
       String url,
       List<NameValueModel>? headers,
       List<NameValueModel>? params,
-      AuthModel? authModel,
       List<bool>? isHeaderEnabledList,
       List<bool>? isParamEnabledList,
       ContentType bodyContentType,
       String? body,
       String? query,
       List<FormDataModel>? formData});
-
-  $AuthModelCopyWith<$Res>? get authModel;
 }
 
 /// @nodoc
@@ -83,7 +79,6 @@ class _$HttpRequestModelCopyWithImpl<$Res, $Val extends HttpRequestModel>
     Object? url = null,
     Object? headers = freezed,
     Object? params = freezed,
-    Object? authModel = freezed,
     Object? isHeaderEnabledList = freezed,
     Object? isParamEnabledList = freezed,
     Object? bodyContentType = null,
@@ -108,10 +103,6 @@ class _$HttpRequestModelCopyWithImpl<$Res, $Val extends HttpRequestModel>
           ? _value.params
           : params // ignore: cast_nullable_to_non_nullable
               as List<NameValueModel>?,
-      authModel: freezed == authModel
-          ? _value.authModel
-          : authModel // ignore: cast_nullable_to_non_nullable
-              as AuthModel?,
       isHeaderEnabledList: freezed == isHeaderEnabledList
           ? _value.isHeaderEnabledList
           : isHeaderEnabledList // ignore: cast_nullable_to_non_nullable
@@ -138,20 +129,6 @@ class _$HttpRequestModelCopyWithImpl<$Res, $Val extends HttpRequestModel>
               as List<FormDataModel>?,
     ) as $Val);
   }
-
-  /// Create a copy of HttpRequestModel
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $AuthModelCopyWith<$Res>? get authModel {
-    if (_value.authModel == null) {
-      return null;
-    }
-
-    return $AuthModelCopyWith<$Res>(_value.authModel!, (value) {
-      return _then(_value.copyWith(authModel: value) as $Val);
-    });
-  }
 }
 
 /// @nodoc
@@ -167,16 +144,12 @@ abstract class _$$HttpRequestModelImplCopyWith<$Res>
       String url,
       List<NameValueModel>? headers,
       List<NameValueModel>? params,
-      AuthModel? authModel,
       List<bool>? isHeaderEnabledList,
       List<bool>? isParamEnabledList,
       ContentType bodyContentType,
       String? body,
       String? query,
       List<FormDataModel>? formData});
-
-  @override
-  $AuthModelCopyWith<$Res>? get authModel;
 }
 
 /// @nodoc
@@ -196,7 +169,6 @@ class __$$HttpRequestModelImplCopyWithImpl<$Res>
     Object? url = null,
     Object? headers = freezed,
     Object? params = freezed,
-    Object? authModel = freezed,
     Object? isHeaderEnabledList = freezed,
     Object? isParamEnabledList = freezed,
     Object? bodyContentType = null,
@@ -221,10 +193,6 @@ class __$$HttpRequestModelImplCopyWithImpl<$Res>
           ? _value._params
           : params // ignore: cast_nullable_to_non_nullable
               as List<NameValueModel>?,
-      authModel: freezed == authModel
-          ? _value.authModel
-          : authModel // ignore: cast_nullable_to_non_nullable
-              as AuthModel?,
       isHeaderEnabledList: freezed == isHeaderEnabledList
           ? _value._isHeaderEnabledList
           : isHeaderEnabledList // ignore: cast_nullable_to_non_nullable
@@ -262,7 +230,6 @@ class _$HttpRequestModelImpl extends _HttpRequestModel {
       this.url = "",
       final List<NameValueModel>? headers,
       final List<NameValueModel>? params,
-      this.authModel = const AuthModel(type: APIAuthType.none),
       final List<bool>? isHeaderEnabledList,
       final List<bool>? isParamEnabledList,
       this.bodyContentType = ContentType.json,
@@ -305,9 +272,6 @@ class _$HttpRequestModelImpl extends _HttpRequestModel {
     return EqualUnmodifiableListView(value);
   }
 
-  @override
-  @JsonKey()
-  final AuthModel? authModel;
   final List<bool>? _isHeaderEnabledList;
   @override
   List<bool>? get isHeaderEnabledList {
@@ -349,7 +313,7 @@ class _$HttpRequestModelImpl extends _HttpRequestModel {
 
   @override
   String toString() {
-    return 'HttpRequestModel(method: $method, url: $url, headers: $headers, params: $params, authModel: $authModel, isHeaderEnabledList: $isHeaderEnabledList, isParamEnabledList: $isParamEnabledList, bodyContentType: $bodyContentType, body: $body, query: $query, formData: $formData)';
+    return 'HttpRequestModel(method: $method, url: $url, headers: $headers, params: $params, isHeaderEnabledList: $isHeaderEnabledList, isParamEnabledList: $isParamEnabledList, bodyContentType: $bodyContentType, body: $body, query: $query, formData: $formData)';
   }
 
   @override
@@ -361,8 +325,6 @@ class _$HttpRequestModelImpl extends _HttpRequestModel {
             (identical(other.url, url) || other.url == url) &&
             const DeepCollectionEquality().equals(other._headers, _headers) &&
             const DeepCollectionEquality().equals(other._params, _params) &&
-            (identical(other.authModel, authModel) ||
-                other.authModel == authModel) &&
             const DeepCollectionEquality()
                 .equals(other._isHeaderEnabledList, _isHeaderEnabledList) &&
             const DeepCollectionEquality()
@@ -382,7 +344,6 @@ class _$HttpRequestModelImpl extends _HttpRequestModel {
       url,
       const DeepCollectionEquality().hash(_headers),
       const DeepCollectionEquality().hash(_params),
-      authModel,
       const DeepCollectionEquality().hash(_isHeaderEnabledList),
       const DeepCollectionEquality().hash(_isParamEnabledList),
       bodyContentType,
@@ -413,7 +374,6 @@ abstract class _HttpRequestModel extends HttpRequestModel {
       final String url,
       final List<NameValueModel>? headers,
       final List<NameValueModel>? params,
-      final AuthModel? authModel,
       final List<bool>? isHeaderEnabledList,
       final List<bool>? isParamEnabledList,
       final ContentType bodyContentType,
@@ -433,8 +393,6 @@ abstract class _HttpRequestModel extends HttpRequestModel {
   List<NameValueModel>? get headers;
   @override
   List<NameValueModel>? get params;
-  @override
-  AuthModel? get authModel;
   @override
   List<bool>? get isHeaderEnabledList;
   @override

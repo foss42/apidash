@@ -30,7 +30,7 @@ class EditRestRequestPane extends ConsumerWidget {
         false;
 
     final hasAuth = ref.watch(selectedRequestModelProvider.select((value) =>
-        value?.httpRequestModel?.authModel?.type != APIAuthType.none));
+        value?.authModel?.type != APIAuthType.none));
 
     return RequestPane(
       selectedId: selectedId,
