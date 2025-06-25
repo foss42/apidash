@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -289,7 +291,14 @@ class CollectionStateNotifier
     state = map;
 
     bool noSSL = ref.read(settingsProvider).isSSLDisabled;
-    var responseRec = await sendHttpRequest(
+
+    (Response?, Duration?, String?) responseRec;
+    HttpResponseModel? respModel;
+    HistoryRequestModel? historyM;
+    late final RequestModel newRequestModel;
+
+    responseRec = (null, null, null);
+    final stream = await streamHttpRequest(
       requestId,
       apiType,
       substitutedHttpRequestModel,
@@ -297,7 +306,78 @@ class CollectionStateNotifier
       noSSL: noSSL,
     );
 
-    late final RequestModel newRequestModel;
+    StreamSubscription? sub;
+    final completer = Completer();
+
+    bool isTextStream = false;
+
+    sub = stream.listen((d) async {
+      if (d == null) return;
+
+      isTextStream = ((d.$1 == null && isTextStream) ||
+          (d.$1 == 'text/event-stream' || d.$1 == 'application/x-ndjson'));
+
+      responseRec = (d.$2, d.$3, d.$4);
+
+      if (!isTextStream) {
+        if (completer.isCompleted) return;
+        completer.complete(responseRec);
+        await Future.delayed(Duration(milliseconds: 100));
+      }
+
+      if (responseRec.$1 != null) {
+        responseRec = (
+          HttpResponse(
+            responseRec.$1!.body,
+            responseRec.$1!.statusCode,
+            request: responseRec.$1!.request,
+            headers: {
+              ...(responseRec.$1?.headers ?? {}),
+              'content-type': 'text/event-stream'
+            },
+            isRedirect: responseRec.$1!.isRedirect,
+            reasonPhrase: responseRec.$1!.reasonPhrase,
+            persistentConnection: responseRec.$1!.persistentConnection,
+          ),
+          responseRec.$2,
+          responseRec.$3,
+        );
+      }
+
+      //----------- MAKE CHANGES --------------
+      respModel = respModel?.copyWith(sseOutput: [
+        ...(respModel?.sseOutput ?? []),
+        responseRec.$1!.body,
+      ]);
+      if (respModel != null) {
+        final nRM = newRequestModel.copyWith(
+          httpResponseModel: respModel,
+        );
+        map = {...state!};
+        map[requestId] = nRM;
+        state = map;
+        unsave();
+      }
+      //Changing History
+      if (historyM != null && respModel != null) {
+        historyM = historyM!.copyWith(
+          httpResponseModel: respModel!,
+        );
+        ref
+            .read(historyMetaStateNotifier.notifier)
+            .editHistoryRequest(historyM!);
+      }
+      //----------- MAKE CHANGES --------------
+
+      if (completer.isCompleted) return;
+      completer.complete(responseRec);
+    }, onDone: () {
+      sub?.cancel();
+    }, onError: (e) {
+      print('err: $e');
+    });
+    responseRec = await completer.future;
+
     if (responseRec.$1 == null) {
       newRequestModel = requestModel.copyWith(
         responseStatus: -1,
@@ -305,7 +385,7 @@ class CollectionStateNotifier
         isWorking: false,
       );
     } else {
-      final httpResponseModel = baseHttpResponseModel.fromResponse(
+      respModel = baseHttpResponseModel.fromResponse(
         response: responseRec.$1!,
         time: responseRec.$2!,
       );
@@ -313,11 +393,11 @@ class CollectionStateNotifier
       newRequestModel = requestModel.copyWith(
         responseStatus: statusCode,
         message: kResponseCodeReasons[statusCode],
-        httpResponseModel: httpResponseModel,
+        httpResponseModel: respModel,
         isWorking: false,
       );
       String newHistoryId = getNewUuid();
-      HistoryRequestModel model = HistoryRequestModel(
+      historyM = HistoryRequestModel(
         historyId: newHistoryId,
         metaData: HistoryMetaModel(
           historyId: newHistoryId,
@@ -330,9 +410,9 @@ class CollectionStateNotifier
           timeStamp: DateTime.now(),
         ),
         httpRequestModel: substitutedHttpRequestModel,
-        httpResponseModel: httpResponseModel,
+        httpResponseModel: respModel!,
       );
-      ref.read(historyMetaStateNotifier.notifier).addHistoryRequest(model);
+      ref.read(historyMetaStateNotifier.notifier).addHistoryRequest(historyM!);
     }
 
     // update state with response data
