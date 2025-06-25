@@ -6,11 +6,13 @@ import 'package:apidash_core/apidash_core.dart';
 class JwtAuthFields extends StatefulWidget {
   final AuthModel? authData;
   final Function(AuthModel?) updateAuth;
+  final bool readOnly;
 
   const JwtAuthFields({
     super.key,
     required this.authData,
     required this.updateAuth,
+    this.readOnly = false,
   });
 
   @override
@@ -95,6 +97,7 @@ class _JwtAuthFieldsState extends State<JwtAuthFields> {
         ),
         const SizedBox(height: 16),
         AuthTextField(
+          readOnly: widget.readOnly,
           controller: _secretController,
           isObscureText: true,
           hintText: "Secret key",
@@ -130,6 +133,7 @@ class _JwtAuthFieldsState extends State<JwtAuthFields> {
         ),
         SizedBox(height: 4),
         TextField(
+          readOnly: widget.readOnly,
           controller: _payloadController,
           maxLines: 4,
           decoration: InputDecoration(
