@@ -15,8 +15,8 @@ _$HistoryRequestModelImpl _$$HistoryRequestModelImplFromJson(Map json) =>
           Map<String, Object?>.from(json['httpRequestModel'] as Map)),
       httpResponseModel: HttpResponseModel.fromJson(
           Map<String, Object?>.from(json['httpResponseModel'] as Map)),
-      preRequestScript: json['preRequestScript'] as String,
-      postRequestScript: json['postRequestScript'] as String,
+      preRequestScript: json['preRequestScript'] as String?,
+      postRequestScript: json['postRequestScript'] as String?,
     );
 
 Map<String, dynamic> _$$HistoryRequestModelImplToJson(

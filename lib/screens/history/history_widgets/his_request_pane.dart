@@ -40,9 +40,9 @@ class HistoryRequestPane extends ConsumerWidget {
         false;
 
     final scriptsLength = ref.watch(selectedHistoryRequestModelProvider
-            .select((value) => value?.preRequestScript.length)) ??
-        ref.watch(selectedRequestModelProvider
-            .select((value) => value?.postRequestScript.length)) ??
+            .select((value) => value?.preRequestScript?.length)) ??
+        ref.watch(selectedHistoryRequestModelProvider
+            .select((value) => value?.postRequestScript?.length)) ??
         0;
 
     return switch (apiType) {
