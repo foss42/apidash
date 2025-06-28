@@ -23,17 +23,15 @@ class _ScriptsEditorPaneState extends ConsumerState<ScriptsEditorPane> {
   @override
   Widget build(BuildContext context) {
     final settings = ref.watch(settingsProvider);
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(9),
-        color: Theme.of(context).colorScheme.surfaceContainerLowest,
-      ),
+    return Padding(
+      padding: kPt5o10,
       child: CodeTheme(
         data: CodeThemeData(
           styles: settings.isDark ? monokaiTheme : xcodeTheme,
         ),
         child: SingleChildScrollView(
           child: CodeField(
+            minLines: 35,
             readOnly: widget.readOnly,
             smartDashesType: SmartDashesType.enabled,
             smartQuotesType: SmartQuotesType.enabled,
@@ -49,6 +47,13 @@ class _ScriptsEditorPaneState extends ConsumerState<ScriptsEditorPane> {
             controller: widget.controller,
             textStyle: kCodeStyle.copyWith(
               fontSize: Theme.of(context).textTheme.bodyMedium?.fontSize,
+            ),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(9),
+              border: Border.all(
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
+              ),
+              color: Theme.of(context).colorScheme.surfaceContainerLowest,
             ),
           ),
         ),
