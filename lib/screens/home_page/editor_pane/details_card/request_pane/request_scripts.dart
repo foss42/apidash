@@ -1,19 +1,20 @@
-import 'package:apidash/widgets/scripts_editor_pane.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_code_editor/flutter_code_editor.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:highlight/languages/javascript.dart';
 import 'package:apidash/providers/providers.dart';
+import 'package:apidash/widgets/widgets.dart';
+import 'package:apidash/consts.dart';
 
-class ScriptsCodePane extends ConsumerStatefulWidget {
-  const ScriptsCodePane({super.key});
+class EditRequestScripts extends ConsumerStatefulWidget {
+  const EditRequestScripts({super.key});
 
   @override
-  ConsumerState<ScriptsCodePane> createState() => _ScriptsCodePaneState();
+  ConsumerState<EditRequestScripts> createState() => _EditRequestScriptsState();
 }
 
-class _ScriptsCodePaneState extends ConsumerState<ScriptsCodePane> {
+class _EditRequestScriptsState extends ConsumerState<EditRequestScripts> {
   int _selectedTabIndex = 0;
   @override
   Widget build(BuildContext context) {
@@ -43,34 +44,46 @@ class _ScriptsCodePaneState extends ConsumerState<ScriptsCodePane> {
 
     final tabs = [(0, "Pre Request"), (1, "Post Response")];
     final content = [
-      ScriptsEditorPane(
+      CodeEditor(
         controller: preReqCodeController,
       ),
-      ScriptsEditorPane(
+      CodeEditor(
         controller: postResCodeController,
       ),
     ];
 
     return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: ADDropdownButton<int>(
-            value: _selectedTabIndex,
-            values: tabs,
-            onChanged: (int? newValue) {
-              if (newValue != null) {
-                setState(() {
-                  _selectedTabIndex = newValue;
-                });
-              }
-            },
+          padding: kPh8b6,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              ADDropdownButton<int>(
+                isDense: true,
+                iconSize: kButtonIconSizeMedium,
+                value: _selectedTabIndex,
+                values: tabs,
+                onChanged: (int? newValue) {
+                  if (newValue != null) {
+                    setState(() {
+                      _selectedTabIndex = newValue;
+                    });
+                  }
+                },
+              ),
+              LearnButton(
+                url: kLearnScriptingUrl,
+              ),
+            ],
           ),
         ),
         Expanded(
-          child: content[_selectedTabIndex],
+          child: Padding(
+            padding: kPt5o10,
+            child: content[_selectedTabIndex],
+          ),
         ),
       ],
     );

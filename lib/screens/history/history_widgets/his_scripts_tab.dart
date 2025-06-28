@@ -1,10 +1,10 @@
-import 'package:apidash/widgets/scripts_editor_pane.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_code_editor/flutter_code_editor.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:highlight/languages/javascript.dart';
 import 'package:apidash/providers/providers.dart';
+import 'package:apidash/widgets/widgets.dart';
 
 class HistoryScriptsTab extends ConsumerStatefulWidget {
   const HistoryScriptsTab({super.key});
@@ -43,11 +43,11 @@ class _ScriptsCodePaneState extends ConsumerState<HistoryScriptsTab> {
 
     final tabs = [(0, "Pre Request"), (1, "Post Response")];
     final content = [
-      ScriptsEditorPane(
+      CodeEditor(
         controller: preReqCodeController,
         readOnly: true,
       ),
-      ScriptsEditorPane(
+      CodeEditor(
         controller: postResCodeController,
         readOnly: true,
       ),
