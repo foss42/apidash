@@ -2,8 +2,8 @@
 import 'dart:convert';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_highlight/flutter_highlight.dart';
-import 'package:flutter_highlight/themes/monokai-sublime.dart';
+import 'package:flutter_highlighter/flutter_highlighter.dart';
+import 'package:flutter_highlighter/themes/monokai-sublime.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 
 Widget renderContent(
