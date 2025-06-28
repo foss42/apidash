@@ -90,7 +90,7 @@ Future<
   required RequestModel currentRequestModel,
   required Map<String, dynamic> activeEnvironment,
 }) async {
-  if (currentRequestModel.preRequestScript.trim().isEmpty) {
+  if ((currentRequestModel.preRequestScript ?? "").trim().isEmpty) {
     // No script, return original data
     // return (
     //   updatedRequest: currentRequestModel.httpRequestModel,
@@ -182,7 +182,7 @@ Future<
   required RequestModel currentRequestModel,
   required Map<String, dynamic> activeEnvironment,
 }) async {
-  if (currentRequestModel.postRequestScript.trim().isEmpty) {
+  if ((currentRequestModel.postRequestScript ?? "").trim().isEmpty) {
     // No script, return original data
     // return (
     //   updatedRequest: currentRequestModel.httpRequestModel,
