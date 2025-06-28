@@ -712,7 +712,7 @@ packages:
     source: hosted
     version: "0.7.0"
   highlighter:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: highlighter
       sha256: "92180c72b9da8758e1acf39a45aa305a97dcfe2fdc8f3d1d2947c23f2772bfbc"

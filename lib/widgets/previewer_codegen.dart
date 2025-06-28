@@ -1,8 +1,8 @@
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:highlighter/highlighter.dart' show highlight;
 import 'package:apidash/consts.dart';
 import 'package:apidash/utils/utils.dart';
-import 'package:highlight/highlight.dart';
 import 'button_copy.dart';
 import 'button_save_download.dart';
 import 'button_share.dart';
