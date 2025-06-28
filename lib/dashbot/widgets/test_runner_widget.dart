@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:apidash_core/apidash_core.dart' as http;
+import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -251,7 +252,7 @@ class _TestRunnerWidgetState extends ConsumerState<TestRunnerWidget> {
                       width: double.infinity,
                       child: SelectableText(
                         test['command'],
-                        style: const TextStyle(fontFamily: 'monospace'),
+                        style: kCodeStyle,
                       ),
                     ),
                     if (hasResult) ...[

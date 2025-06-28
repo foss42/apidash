@@ -5,6 +5,8 @@ export 'har_utils.dart';
 export 'header_utils.dart';
 export 'history_utils.dart';
 export 'http_utils.dart';
+export 'js_utils.dart';
+export 'pre_post_script_utils.dart';
 export 'save_utils.dart';
 export 'ui_utils.dart';
 export 'window_utils.dart';

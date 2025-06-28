@@ -69,6 +69,11 @@ const kPh6b12 = EdgeInsets.only(
   right: 6.0,
   bottom: 12.0,
 );
+const kPh8b6 = EdgeInsets.only(
+  left: 8.0,
+  right: 8.0,
+  bottom: 6.0,
+);
 const kPh60 = EdgeInsets.symmetric(horizontal: 60);
 const kPh60v60 = EdgeInsets.symmetric(vertical: 60, horizontal: 60);
 const kPt24l4 = EdgeInsets.only(
@@ -88,6 +93,7 @@ const kPt20 = EdgeInsets.only(top: 20);
 const kPt24 = EdgeInsets.only(top: 24);
 const kPt28 = EdgeInsets.only(top: 28);
 const kPt32 = EdgeInsets.only(top: 32);
+const kPb6 = EdgeInsets.only(bottom: 6);
 const kPb10 = EdgeInsets.only(bottom: 10);
 const kPb15 = EdgeInsets.only(bottom: 15);
 const kPb70 = EdgeInsets.only(bottom: 70);

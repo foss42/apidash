@@ -4,9 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/consts.dart';
 import 'providers.dart';
 import '../models/models.dart';
-import '../services/services.dart' show hiveHandler, HiveHandler;
-import '../utils/utils.dart'
-    show getNewUuid, collectionToHAR, substituteHttpRequestModel;
+import '../services/services.dart';
+import '../utils/utils.dart';
 
 final selectedIdStateProvider = StateProvider<String?>((ref) => null);
 
@@ -223,6 +222,8 @@ class CollectionStateNotifier
     int? responseStatus,
     String? message,
     HttpResponseModel? httpResponseModel,
+    String? preRequestScript,
+    String? postRequestScript,
   }) {
     final rId = id ?? ref.read(selectedIdStateProvider);
     if (rId == null) {
@@ -254,6 +255,8 @@ class CollectionStateNotifier
       responseStatus: responseStatus ?? currentModel.responseStatus,
       message: message ?? currentModel.message,
       httpResponseModel: httpResponseModel ?? currentModel.httpResponseModel,
+      preRequestScript: preRequestScript ?? currentModel.preRequestScript,
+      postRequestScript: postRequestScript ?? currentModel.postRequestScript,
     );
 
     var map = {...state!};
@@ -266,6 +269,8 @@ class CollectionStateNotifier
     final requestId = ref.read(selectedIdStateProvider);
     ref.read(codePaneVisibleStateProvider.notifier).state = false;
     final defaultUriScheme = ref.read(settingsProvider).defaultUriScheme;
+    final EnvironmentModel? originalEnvironmentModel =
+        ref.read(selectedEnvironmentModelProvider);
 
     if (requestId == null || state == null) {
       return;
@@ -274,6 +279,23 @@ class CollectionStateNotifier
 
     if (requestModel?.httpRequestModel == null) {
       return;
+    }
+
+    if (requestModel != null &&
+        !requestModel.preRequestScript.isNullOrEmpty()) {
+      requestModel = await handlePreRequestScript(
+        requestModel,
+        originalEnvironmentModel,
+        (envModel, updatedValues) {
+          ref
+              .read(environmentsStateNotifierProvider.notifier)
+              .updateEnvironment(
+                envModel.id,
+                name: envModel.name,
+                values: updatedValues,
+              );
+        },
+      );
     }
 
     APIType apiType = requestModel!.apiType;
@@ -297,7 +319,7 @@ class CollectionStateNotifier
       noSSL: noSSL,
     );
 
-    late final RequestModel newRequestModel;
+    late RequestModel newRequestModel;
     if (responseRec.$1 == null) {
       newRequestModel = requestModel.copyWith(
         responseStatus: -1,
@@ -331,7 +353,25 @@ class CollectionStateNotifier
         ),
         httpRequestModel: substitutedHttpRequestModel,
         httpResponseModel: httpResponseModel,
+        preRequestScript: requestModel.preRequestScript,
+        postRequestScript: requestModel.postRequestScript,
       );
+
+      if (!requestModel.postRequestScript.isNullOrEmpty()) {
+        newRequestModel = await handlePostResponseScript(
+          newRequestModel,
+          originalEnvironmentModel,
+          (envModel, updatedValues) {
+            ref
+                .read(environmentsStateNotifierProvider.notifier)
+                .updateEnvironment(
+                  envModel.id,
+                  name: envModel.name,
+                  values: updatedValues,
+                );
+          },
+        );
+      }
       ref.read(historyMetaStateNotifier.notifier).addHistoryRequest(model);
     }
 
