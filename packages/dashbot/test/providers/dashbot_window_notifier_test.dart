@@ -1,10 +1,9 @@
 import 'dart:ui';
-
-import '../../packages/dashbot/lib/core/model/dashbot_window_model.dart';
-import '../../packages/dashbot/lib/core/providers/dashbot_window_notifier.dart';
+import 'package:dashbot/core/model/dashbot_window_model.dart';
+import 'package:dashbot/core/providers/dashbot_window_notifier.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'helpers.dart';
+import '../../../../test/providers/helpers.dart';
 
 void main() {
   const testScreenSize = Size(1200, 800);
