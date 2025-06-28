@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 
 const kDiscordUrl = "https://bit.ly/heyfoss";
 const kGitUrl = "https://github.com/foss42/apidash";
+const kLearnScriptingUrl =
+    "$kGitUrl/blob/main/doc/user_guide/scripting_user_guide.md";
 const kIssueUrl = "$kGitUrl/issues";
 const kDefaultUri = "api.apidash.dev";
 
@@ -442,7 +444,7 @@ const kUntitled = "untitled";
 const kLabelRequest = "Request";
 const kLabelHideCode = "Hide Code";
 const kLabelViewCode = "View Code";
-const kLabelURLParams = "URL Params";
+const kLabelURLParams = "Params";
 const kLabelHeaders = "Headers";
 const kLabelBody = "Body";
 const kLabelScripts = "Scripts";
@@ -465,6 +467,8 @@ const kHintContent = "Enter content";
 const kHintText = "Enter text";
 const kHintJson = "Enter JSON";
 const kHintQuery = "Enter Query";
+// TODO: CodeField widget does not allow this hint. To be solved.
+const kHintScript = "// Use Javacript to modify this request dynamically";
 // Response Pane
 const kLabelNotSent = "Not Sent";
 const kLabelResponse = "Response";
