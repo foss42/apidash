@@ -281,7 +281,8 @@ class CollectionStateNotifier
       return;
     }
 
-    if (requestModel != null && requestModel.preRequestScript.isNotEmpty) {
+    if (requestModel != null &&
+        !requestModel.preRequestScript.isNullOrEmpty()) {
       requestModel = await handlePreRequestScript(
         requestModel,
         originalEnvironmentModel,
@@ -355,7 +356,8 @@ class CollectionStateNotifier
         preRequestScript: requestModel.preRequestScript,
         postRequestScript: requestModel.postRequestScript,
       );
-      if (requestModel.postRequestScript.isNotEmpty) {
+
+      if (!requestModel.postRequestScript.isNullOrEmpty()) {
         newRequestModel = await handlePostResponseScript(
           newRequestModel,
           originalEnvironmentModel,
