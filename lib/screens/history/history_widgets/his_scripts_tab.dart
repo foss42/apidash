@@ -18,7 +18,8 @@ class _ScriptsCodePaneState extends ConsumerState<HistoryScriptsTab> {
   @override
   Widget build(BuildContext context) {
     final hisRequestModel = ref.read(selectedHistoryRequestModelProvider);
-
+    final isDarkMode =
+        ref.watch(settingsProvider.select((value) => value.isDark));
     final preReqCodeController = CodeController(
       text: hisRequestModel?.preRequestScript,
       language: javascript,
@@ -46,10 +47,12 @@ class _ScriptsCodePaneState extends ConsumerState<HistoryScriptsTab> {
       CodeEditor(
         controller: preReqCodeController,
         readOnly: true,
+        isDark: isDarkMode,
       ),
       CodeEditor(
         controller: postResCodeController,
         readOnly: true,
+        isDark: isDarkMode,
       ),
     ];
 

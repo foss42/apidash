@@ -1,26 +1,26 @@
-import 'package:apidash/providers/settings_providers.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_code_editor/flutter_code_editor.dart';
 import 'package:flutter_highlight/themes/monokai.dart';
 import 'package:flutter_highlight/themes/xcode.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class CodeEditor extends ConsumerWidget {
-  final bool readOnly;
-  final CodeController controller;
+class CodeEditor extends StatelessWidget {
   const CodeEditor({
     super.key,
     required this.controller,
     this.readOnly = false,
+    this.isDark = false,
   });
 
+  final bool readOnly;
+  final CodeController controller;
+  final bool isDark;
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final settings = ref.watch(settingsProvider);
+  Widget build(BuildContext context) {
     return CodeTheme(
       data: CodeThemeData(
-        styles: settings.isDark ? monokaiTheme : xcodeTheme,
+        styles: isDark ? monokaiTheme : xcodeTheme,
       ),
       child: CodeField(
         expands: true,

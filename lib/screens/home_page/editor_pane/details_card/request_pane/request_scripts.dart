@@ -19,7 +19,8 @@ class _EditRequestScriptsState extends ConsumerState<EditRequestScripts> {
   @override
   Widget build(BuildContext context) {
     final requestModel = ref.read(selectedRequestModelProvider);
-
+    final isDarkMode =
+        ref.watch(settingsProvider.select((value) => value.isDark));
     final preReqCodeController = CodeController(
       text: requestModel?.preRequestScript,
       language: javascript,
@@ -46,9 +47,11 @@ class _EditRequestScriptsState extends ConsumerState<EditRequestScripts> {
     final content = [
       CodeEditor(
         controller: preReqCodeController,
+        isDark: isDarkMode,
       ),
       CodeEditor(
         controller: postResCodeController,
+        isDark: isDarkMode,
       ),
     ];
 
