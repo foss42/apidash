@@ -2,12 +2,12 @@ import 'dart:convert';
 import '../services/services.dart';
 import '../../models/models.dart';
 
-class DebugFeature {
+class DocumentationFeature {
   final DashBotService _service;
 
-  DebugFeature(this._service);
+  DocumentationFeature(this._service);
 
-  Future<String> debugApi({
+  Future<String> generateApiDocumentation({
     required RequestModel? requestModel,
     required dynamic responseModel,
   }) async {
@@ -31,31 +31,34 @@ class DebugFeature {
     final statusCode = responseModel.statusCode ?? 0;
 
     final prompt = """
-URGENT API DEBUG ANALYSIS
+API DOCUMENTATION GENERATION
 
-**Request Overview:**
+**API Details:**
 - Endpoint: $endpoint
 - Method: $method
 - Status Code: $statusCode
 
-**Debugging Instructions:**
-Provide a PRECISE, TEXT-ONLY explanation that:
-1. Identifies the EXACT problem
-2. Explains WHY the request failed
-3. Describes SPECIFIC steps to resolve the issue
-4. NO CODE SNIPPETS ALLOWED
+**Request Components:**
+- Headers: ${headers.isNotEmpty ? jsonEncode(headers) : "None"}
+- Query Parameters: ${parameters.isNotEmpty ? jsonEncode(parameters) : "None"}
+- Request Body: ${body != null && body.isNotEmpty ? body : "None"}
 
-**Request Details:**
-- Headers: ${headers.isNotEmpty ? jsonEncode(headers) : "No headers"}
-- Parameters: ${parameters.isNotEmpty ? jsonEncode(parameters) : "No parameters"}
-- Request Body: ${body ?? "Empty body"}
-
-**Response Context:**
+**Response Example:**
 ```
 $responseBody
 ```
 
-Provide a CLEAR, ACTIONABLE solution in the SIMPLEST possible language.
+**Documentation Instructions:**
+Create comprehensive API documentation that includes:
+
+1. **Overview**: A clear, concise description of what this API endpoint does
+2. **Authentication**: Required authentication method based on headers
+3. **Request Details**: All required and optional parameters with descriptions
+4. **Response Structure**: Breakdown of response fields and their meanings
+5. **Error Handling**: Possible error codes and troubleshooting
+6. **Example Usage**: A complete code example showing how to call this API
+
+Format in clean markdown with proper sections and code blocks where appropriate.
 """;
 
     return _service.generateResponse(prompt);

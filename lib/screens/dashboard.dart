@@ -17,7 +17,8 @@ class Dashboard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final railIdx = ref.watch(navRailIndexStateProvider);
-    final settings = ref.watch(settingsProvider);
+    final isDashBotEnabled =
+        ref.watch(settingsProvider.select((value) => value.isDashBotEnabled));
     return Scaffold(
       body: SafeArea(
         child: Row(
@@ -126,7 +127,7 @@ class Dashboard extends ConsumerWidget {
           ],
         ),
       ),
-      floatingActionButton: settings.isDashBotEnabled
+      floatingActionButton: isDashBotEnabled
           ? FloatingActionButton(
               onPressed: () => showModalBottomSheet(
                 context: context,

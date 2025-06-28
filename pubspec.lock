@@ -703,6 +703,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.3.2"
+  har:
+    dependency: transitive
+    description:
+      path: "packages/har"
+      relative: true
+    source: path
+    version: "0.0.1"
   highlight:
     dependency: "direct main"
     description:

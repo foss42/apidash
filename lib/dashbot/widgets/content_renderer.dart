@@ -5,12 +5,18 @@ import 'package:flutter_highlight/flutter_highlight.dart';
 import 'package:flutter_highlight/themes/monokai-sublime.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 
-Widget renderContent(BuildContext context, String text) {
+Widget renderContent(
+  BuildContext context,
+  String text,
+) {
   if (text.isEmpty) {
     return const Text("No content to display.");
   }
 
-  final codeBlockPattern = RegExp(r'```(\w+)?\n([\s\S]*?)```', multiLine: true);
+  final codeBlockPattern = RegExp(
+    r'```(\w+)?\n([\s\S]*?)```',
+    multiLine: true,
+  );
   final matches = codeBlockPattern.allMatches(text);
 
   if (matches.isEmpty) {
@@ -22,8 +28,10 @@ Widget renderContent(BuildContext context, String text) {
 
   for (var match in matches) {
     if (match.start > lastEnd) {
-      children
-          .add(_renderMarkdown(context, text.substring(lastEnd, match.start)));
+      children.add(_renderMarkdown(
+        context,
+        text.substring(lastEnd, match.start),
+      ));
     }
 
     final language = match.group(1) ?? 'text';
@@ -43,7 +51,10 @@ Widget renderContent(BuildContext context, String text) {
   );
 }
 
-Widget _renderMarkdown(BuildContext context, String markdown) {
+Widget _renderMarkdown(
+  BuildContext context,
+  String markdown,
+) {
   return MarkdownBody(
     data: markdown,
     selectable: true,
@@ -53,7 +64,11 @@ Widget _renderMarkdown(BuildContext context, String markdown) {
   );
 }
 
-Widget _renderCodeBlock(BuildContext context, String language, String code) {
+Widget _renderCodeBlock(
+  BuildContext context,
+  String language,
+  String code,
+) {
   if (language == 'json') {
     try {
       final prettyJson =
@@ -63,7 +78,10 @@ Widget _renderCodeBlock(BuildContext context, String language, String code) {
         color: Theme.of(context).colorScheme.surfaceContainerLow,
         child: SelectableText(
           prettyJson,
-          style: const TextStyle(fontFamily: 'monospace', fontSize: 12),
+          style: const TextStyle(
+            fontFamily: 'monospace',
+            fontSize: 12,
+          ),
         ),
       );
     } catch (e) {
@@ -78,7 +96,10 @@ Widget _renderCodeBlock(BuildContext context, String language, String code) {
           code,
           language: language,
           theme: monokaiSublimeTheme,
-          textStyle: const TextStyle(fontFamily: 'monospace', fontSize: 12),
+          textStyle: const TextStyle(
+            fontFamily: 'monospace',
+            fontSize: 12,
+          ),
         ),
       );
     } catch (e) {
@@ -87,14 +108,20 @@ Widget _renderCodeBlock(BuildContext context, String language, String code) {
   }
 }
 
-Widget _renderFallbackCode(BuildContext context, String code) {
+Widget _renderFallbackCode(
+  BuildContext context,
+  String code,
+) {
   return Container(
     padding: const EdgeInsets.all(8),
     color: Theme.of(context).colorScheme.surfaceContainerLow,
     child: SelectableText(
       code,
       style: const TextStyle(
-          fontFamily: 'monospace', fontSize: 12, color: Colors.red),
+        fontFamily: 'monospace',
+        fontSize: 12,
+        color: Colors.red,
+      ),
     ),
   );
 }
