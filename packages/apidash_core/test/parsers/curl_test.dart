@@ -1,6 +1,5 @@
-import 'package:apidash_core/apidash_core.dart';
-import 'package:apidash_core/apidash_core.dart';
 import 'package:test/test.dart';
+import 'package:apidash_core/apidash_core.dart';
 
 void main() {
   group('CurlFileImport Tests', () {
