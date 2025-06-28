@@ -58,6 +58,8 @@ final Map<String, dynamic> historyRequestModelJson1 = {
   "metaData": historyMetaModelJson1,
   "httpRequestModel": httpRequestModelGet4Json,
   "httpResponseModel": responseModelJson,
+  'preRequestScript': null,
+  'postRequestScript': null
 };
 
 final Map<String, dynamic> historyMetaModelJson2 = {
