@@ -35,6 +35,8 @@ mixin _$RequestModel {
   bool get isWorking => throw _privateConstructorUsedError;
   @JsonKey(includeToJson: false)
   DateTime? get sendingTime => throw _privateConstructorUsedError;
+  String? get preRequestScript => throw _privateConstructorUsedError;
+  String? get postRequestScript => throw _privateConstructorUsedError;
 
   /// Serializes this RequestModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -63,7 +65,9 @@ abstract class $RequestModelCopyWith<$Res> {
       String? message,
       HttpResponseModel? httpResponseModel,
       @JsonKey(includeToJson: false) bool isWorking,
-      @JsonKey(includeToJson: false) DateTime? sendingTime});
+      @JsonKey(includeToJson: false) DateTime? sendingTime,
+      String? preRequestScript,
+      String? postRequestScript});
 
   $HttpRequestModelCopyWith<$Res>? get httpRequestModel;
   $HttpResponseModelCopyWith<$Res>? get httpResponseModel;
@@ -95,6 +99,8 @@ class _$RequestModelCopyWithImpl<$Res, $Val extends RequestModel>
     Object? httpResponseModel = freezed,
     Object? isWorking = null,
     Object? sendingTime = freezed,
+    Object? preRequestScript = freezed,
+    Object? postRequestScript = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -141,6 +147,14 @@ class _$RequestModelCopyWithImpl<$Res, $Val extends RequestModel>
           ? _value.sendingTime
           : sendingTime // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      preRequestScript: freezed == preRequestScript
+          ? _value.preRequestScript
+          : preRequestScript // ignore: cast_nullable_to_non_nullable
+              as String?,
+      postRequestScript: freezed == postRequestScript
+          ? _value.postRequestScript
+          : postRequestScript // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 
@@ -192,7 +206,9 @@ abstract class _$$RequestModelImplCopyWith<$Res>
       String? message,
       HttpResponseModel? httpResponseModel,
       @JsonKey(includeToJson: false) bool isWorking,
-      @JsonKey(includeToJson: false) DateTime? sendingTime});
+      @JsonKey(includeToJson: false) DateTime? sendingTime,
+      String? preRequestScript,
+      String? postRequestScript});
 
   @override
   $HttpRequestModelCopyWith<$Res>? get httpRequestModel;
@@ -224,6 +240,8 @@ class __$$RequestModelImplCopyWithImpl<$Res>
     Object? httpResponseModel = freezed,
     Object? isWorking = null,
     Object? sendingTime = freezed,
+    Object? preRequestScript = freezed,
+    Object? postRequestScript = freezed,
   }) {
     return _then(_$RequestModelImpl(
       id: null == id
@@ -269,6 +287,14 @@ class __$$RequestModelImplCopyWithImpl<$Res>
           ? _value.sendingTime
           : sendingTime // ignore: cast_nullable_to_non_nullable
               as DateTime?,
+      preRequestScript: freezed == preRequestScript
+          ? _value.preRequestScript
+          : preRequestScript // ignore: cast_nullable_to_non_nullable
+              as String?,
+      postRequestScript: freezed == postRequestScript
+          ? _value.postRequestScript
+          : postRequestScript // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -288,7 +314,9 @@ class _$RequestModelImpl implements _RequestModel {
       this.message,
       this.httpResponseModel,
       @JsonKey(includeToJson: false) this.isWorking = false,
-      @JsonKey(includeToJson: false) this.sendingTime});
+      @JsonKey(includeToJson: false) this.sendingTime,
+      this.preRequestScript,
+      this.postRequestScript});
 
   factory _$RequestModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$RequestModelImplFromJson(json);
@@ -321,10 +349,14 @@ class _$RequestModelImpl implements _RequestModel {
   @override
   @JsonKey(includeToJson: false)
   final DateTime? sendingTime;
+  @override
+  final String? preRequestScript;
+  @override
+  final String? postRequestScript;
 
   @override
   String toString() {
-    return 'RequestModel(id: $id, apiType: $apiType, name: $name, description: $description, requestTabIndex: $requestTabIndex, httpRequestModel: $httpRequestModel, responseStatus: $responseStatus, message: $message, httpResponseModel: $httpResponseModel, isWorking: $isWorking, sendingTime: $sendingTime)';
+    return 'RequestModel(id: $id, apiType: $apiType, name: $name, description: $description, requestTabIndex: $requestTabIndex, httpRequestModel: $httpRequestModel, responseStatus: $responseStatus, message: $message, httpResponseModel: $httpResponseModel, isWorking: $isWorking, sendingTime: $sendingTime, preRequestScript: $preRequestScript, postRequestScript: $postRequestScript)';
   }
 
   @override
@@ -349,7 +381,11 @@ class _$RequestModelImpl implements _RequestModel {
             (identical(other.isWorking, isWorking) ||
                 other.isWorking == isWorking) &&
             (identical(other.sendingTime, sendingTime) ||
-                other.sendingTime == sendingTime));
+                other.sendingTime == sendingTime) &&
+            (identical(other.preRequestScript, preRequestScript) ||
+                other.preRequestScript == preRequestScript) &&
+            (identical(other.postRequestScript, postRequestScript) ||
+                other.postRequestScript == postRequestScript));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -366,7 +402,9 @@ class _$RequestModelImpl implements _RequestModel {
       message,
       httpResponseModel,
       isWorking,
-      sendingTime);
+      sendingTime,
+      preRequestScript,
+      postRequestScript);
 
   /// Create a copy of RequestModel
   /// with the given fields replaced by the non-null parameter values.
@@ -386,18 +424,19 @@ class _$RequestModelImpl implements _RequestModel {
 
 abstract class _RequestModel implements RequestModel {
   const factory _RequestModel(
-          {required final String id,
-          final APIType apiType,
-          final String name,
-          final String description,
-          @JsonKey(includeToJson: false) final dynamic requestTabIndex,
-          final HttpRequestModel? httpRequestModel,
-          final int? responseStatus,
-          final String? message,
-          final HttpResponseModel? httpResponseModel,
-          @JsonKey(includeToJson: false) final bool isWorking,
-          @JsonKey(includeToJson: false) final DateTime? sendingTime}) =
-      _$RequestModelImpl;
+      {required final String id,
+      final APIType apiType,
+      final String name,
+      final String description,
+      @JsonKey(includeToJson: false) final dynamic requestTabIndex,
+      final HttpRequestModel? httpRequestModel,
+      final int? responseStatus,
+      final String? message,
+      final HttpResponseModel? httpResponseModel,
+      @JsonKey(includeToJson: false) final bool isWorking,
+      @JsonKey(includeToJson: false) final DateTime? sendingTime,
+      final String? preRequestScript,
+      final String? postRequestScript}) = _$RequestModelImpl;
 
   factory _RequestModel.fromJson(Map<String, dynamic> json) =
       _$RequestModelImpl.fromJson;
@@ -427,6 +466,10 @@ abstract class _RequestModel implements RequestModel {
   @override
   @JsonKey(includeToJson: false)
   DateTime? get sendingTime;
+  @override
+  String? get preRequestScript;
+  @override
+  String? get postRequestScript;
 
   /// Create a copy of RequestModel
   /// with the given fields replaced by the non-null parameter values.

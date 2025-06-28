@@ -22,6 +22,8 @@ class RequestModel with _$RequestModel {
     HttpResponseModel? httpResponseModel,
     @JsonKey(includeToJson: false) @Default(false) bool isWorking,
     @JsonKey(includeToJson: false) DateTime? sendingTime,
+    String? preRequestScript,
+    String? postRequestScript,
   }) = _RequestModel;
 
   factory RequestModel.fromJson(Map<String, Object?> json) =>

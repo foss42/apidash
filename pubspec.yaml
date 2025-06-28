@@ -23,13 +23,17 @@ dependencies:
   extended_text_field: ^16.0.0
   file_selector: ^1.0.3
   flex_color_scheme: ^8.2.0
+  flutter_code_editor: ^0.3.3
+  flutter_highlight: ^0.7.0
   flutter_highlighter: ^0.1.0
   flutter_hooks: ^0.21.2
+  flutter_js: ^0.8.2
   flutter_markdown: ^0.7.6+2
   flutter_portal: ^1.1.4
   flutter_riverpod: ^2.5.1
   flutter_svg: ^2.0.17
   fvp: ^0.30.0
+  highlight: ^0.7.0
   highlighter: ^0.1.1
   hive_flutter: ^1.1.0
   hooks_riverpod: ^2.5.2

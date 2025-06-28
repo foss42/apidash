@@ -13,6 +13,7 @@ class Importer {
           .toList(),
       ImportFormat.postman => PostmanIO().getHttpRequestModelList(content),
       ImportFormat.insomnia => InsomniaIO().getHttpRequestModelList(content),
+      ImportFormat.har => HarParserIO().getHttpRequestModelList(content),
     };
   }
 }
