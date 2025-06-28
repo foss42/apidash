@@ -1,4 +1,5 @@
 import 'package:apidash/providers/settings_providers.dart';
+import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_code_editor/flutter_code_editor.dart';
 import 'package:flutter_highlight/themes/monokai.dart';
@@ -46,9 +47,8 @@ class _ScriptsEditorPaneState extends ConsumerState<ScriptsEditorPane> {
             ),
             cursorColor: Theme.of(context).colorScheme.primary,
             controller: widget.controller,
-            textStyle: TextStyle(
-              fontSize: 12,
-              fontFamily: 'monospace',
+            textStyle: kCodeStyle.copyWith(
+              fontSize: Theme.of(context).textTheme.bodyMedium?.fontSize,
             ),
           ),
         ),
