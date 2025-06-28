@@ -1,5 +1,6 @@
 // lib/dashbot/widgets/content_renderer.dart
 import 'dart:convert';
+import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_highlight/flutter_highlight.dart';
 import 'package:flutter_highlight/themes/monokai-sublime.dart';
@@ -78,9 +79,8 @@ Widget _renderCodeBlock(
         color: Theme.of(context).colorScheme.surfaceContainerLow,
         child: SelectableText(
           prettyJson,
-          style: const TextStyle(
-            fontFamily: 'monospace',
-            fontSize: 12,
+          style: kCodeStyle.copyWith(
+            fontSize: Theme.of(context).textTheme.bodyMedium?.fontSize,
           ),
         ),
       );
@@ -96,9 +96,8 @@ Widget _renderCodeBlock(
           code,
           language: language,
           theme: monokaiSublimeTheme,
-          textStyle: const TextStyle(
-            fontFamily: 'monospace',
-            fontSize: 12,
+          textStyle: kCodeStyle.copyWith(
+            fontSize: Theme.of(context).textTheme.bodyMedium?.fontSize,
           ),
         ),
       );
@@ -117,9 +116,8 @@ Widget _renderFallbackCode(
     color: Theme.of(context).colorScheme.surfaceContainerLow,
     child: SelectableText(
       code,
-      style: const TextStyle(
-        fontFamily: 'monospace',
-        fontSize: 12,
+      style: kCodeStyle.copyWith(
+        fontSize: Theme.of(context).textTheme.bodyMedium?.fontSize,
         color: Colors.red,
       ),
     ),
