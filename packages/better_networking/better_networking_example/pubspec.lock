@@ -195,12 +195,11 @@ packages:
     source: hosted
     version: "6.1.0"
   seed:
-    dependency: transitive
+    dependency: "direct overridden"
     description:
-      name: seed
-      sha256: "0d74a46abd169c96a73d9dec4739e6623021915661beadf265e885bb1eafd214"
-      url: "https://pub.dev"
-    source: hosted
+      path: "../../seed"
+      relative: true
+    source: path
     version: "0.0.3"
   sky_engine:
     dependency: transitive
