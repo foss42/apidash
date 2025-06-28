@@ -1,5 +1,6 @@
 import 'package:apidash_design_system/apidash_design_system.dart'
     show kVSpacer20, kVSpacer16, kVSpacer10;
+import 'package:dashbot/core/utils/dashbot_icons.dart';
 import 'package:flutter/material.dart';
 
 class DashbotDefaultPage extends StatelessWidget {
@@ -12,17 +13,12 @@ class DashbotDefaultPage extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         kVSpacer16,
-        Image.asset(
-          'assets/dashbot_icon_1.png',
-          width: 60,
-        ),
+        DashbotIcons.getDashbotIcon1(width: 60),
+
         kVSpacer20,
         Text(
           'Hello there!',
-          style: TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.w800,
-          ),
+          style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800),
         ),
         kVSpacer10,
         Text(
@@ -36,10 +32,7 @@ class DashbotDefaultPage extends StatelessWidget {
         Text(
           "Why not go ahead and make one?",
           textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w200,
-          ),
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w200),
         ),
       ],
     );

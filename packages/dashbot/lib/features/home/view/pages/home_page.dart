@@ -1,12 +1,12 @@
+import 'package:dashbot/core/utils/dashbot_icons.dart';
+
 import '../../../../core/routes/dashbot_routes.dart';
 import 'package:apidash_design_system/tokens/measurements.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class DashbotHomePage extends ConsumerStatefulWidget {
-  const DashbotHomePage({
-    super.key,
-  });
+  const DashbotHomePage({super.key});
 
   @override
   ConsumerState<DashbotHomePage> createState() => _DashbotHomePageState();
@@ -27,17 +27,12 @@ class _DashbotHomePageState extends ConsumerState<DashbotHomePage> {
       child: Column(
         children: [
           kVSpacer16,
-          Image.asset(
-            'assets/dashbot_icon_1.png',
-            width: 60,
-          ),
+          DashbotIcons.getDashbotIcon1(width: 60),
+
           kVSpacer16,
           Text(
             'Hello there,',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w800,
-            ),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
           ),
           Text('How can I help you today?'),
           kVSpacer16,
@@ -132,7 +127,7 @@ class _DashbotHomePageState extends ConsumerState<DashbotHomePage> {
               //   child: const Text("📊 Generate Visualizations"),
               // ),
             ],
-          )
+          ),
         ],
       ),
     );

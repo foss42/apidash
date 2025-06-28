@@ -136,9 +136,7 @@ class Dashboard extends ConsumerWidget {
                   vertical: 6.0,
                   horizontal: 10,
                 ),
-                child: Image.asset(
-                  'assets/dashbot_icon_2.png',
-                ),
+                child: DashbotIcons.getDashbotIcon1(),
               ),
             )
           : null,

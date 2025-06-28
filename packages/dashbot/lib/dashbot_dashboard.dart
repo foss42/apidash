@@ -1,4 +1,5 @@
 import 'package:apidash_design_system/apidash_design_system.dart';
+import 'package:dashbot/core/utils/dashbot_icons.dart';
 
 import 'core/providers/dashbot_window_notifier.dart';
 import 'core/routes/dashbot_router.dart';
@@ -62,10 +63,8 @@ class DashbotWindow extends ConsumerWidget {
                               Row(
                                 children: [
                                   kHSpacer20,
-                                  Image.asset(
-                                    'assets/dashbot_icon_2.png',
-                                    width: 38,
-                                  ),
+                                  DashbotIcons.getDashbotIcon1(width: 38),
+
                                   kHSpacer12,
                                   Text(
                                     'DashBot',
