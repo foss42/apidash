@@ -347,6 +347,7 @@ class CollectionStateNotifier
       }
 
       respModel = respModel?.copyWith(
+        time: duration,
         sseOutput: [
           ...(respModel?.sseOutput ?? []),
           if (response != null) response.body,
@@ -396,15 +397,14 @@ class CollectionStateNotifier
     } else {
       final statusCode = response.statusCode;
 
-      respModel = respModel ??
-          baseHttpResponseModel
-              .fromResponse(
-                response: response,
-                time: duration,
-              )
-              .copyWith(
-                sseOutput: isTextStream ? [response.body] : [],
-              );
+      respModel = baseHttpResponseModel
+          .fromResponse(
+            response: response,
+            time: duration,
+          )
+          .copyWith(
+            sseOutput: isTextStream ? [response.body] : [],
+          );
 
       newRequestModel = newRequestModel.copyWith(
         responseStatus: statusCode,
