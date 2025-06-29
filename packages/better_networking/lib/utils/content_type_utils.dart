@@ -2,9 +2,7 @@ import 'package:http_parser/http_parser.dart';
 import '../consts.dart';
 import '../extensions/extensions.dart';
 
-ContentType? getContentTypeFromHeadersMap(
-  Map<String, String>? kvMap,
-) {
+ContentType? getContentTypeFromHeadersMap(Map<String, String>? kvMap) {
   if (kvMap != null && kvMap.hasKeyContentType()) {
     var val = getMediaTypeFromHeaders(kvMap);
     return getContentTypeFromMediaType(val);
@@ -43,9 +41,7 @@ ContentType? getContentTypeFromMediaType(MediaType? mediaType) {
   return null;
 }
 
-ContentType? getContentTypeFromContentTypeStr(
-  String? contentType,
-) {
+ContentType? getContentTypeFromContentTypeStr(String? contentType) {
   if (contentType != null) {
     var val = getMediaTypeFromContentType(contentType);
     return getContentTypeFromMediaType(val);
