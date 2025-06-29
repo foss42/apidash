@@ -12,7 +12,8 @@ part of 'http_response_model.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 HttpResponseModel _$HttpResponseModelFromJson(Map<String, dynamic> json) {
   return _HttpResponseModel.fromJson(json);
@@ -43,17 +44,19 @@ mixin _$HttpResponseModel {
 /// @nodoc
 abstract class $HttpResponseModelCopyWith<$Res> {
   factory $HttpResponseModelCopyWith(
-          HttpResponseModel value, $Res Function(HttpResponseModel) then) =
-      _$HttpResponseModelCopyWithImpl<$Res, HttpResponseModel>;
+    HttpResponseModel value,
+    $Res Function(HttpResponseModel) then,
+  ) = _$HttpResponseModelCopyWithImpl<$Res, HttpResponseModel>;
   @useResult
-  $Res call(
-      {int? statusCode,
-      Map<String, String>? headers,
-      Map<String, String>? requestHeaders,
-      String? body,
-      String? formattedBody,
-      @Uint8ListConverter() Uint8List? bodyBytes,
-      @DurationConverter() Duration? time});
+  $Res call({
+    int? statusCode,
+    Map<String, String>? headers,
+    Map<String, String>? requestHeaders,
+    String? body,
+    String? formattedBody,
+    @Uint8ListConverter() Uint8List? bodyBytes,
+    @DurationConverter() Duration? time,
+  });
 }
 
 /// @nodoc
@@ -79,64 +82,70 @@ class _$HttpResponseModelCopyWithImpl<$Res, $Val extends HttpResponseModel>
     Object? bodyBytes = freezed,
     Object? time = freezed,
   }) {
-    return _then(_value.copyWith(
-      statusCode: freezed == statusCode
-          ? _value.statusCode
-          : statusCode // ignore: cast_nullable_to_non_nullable
-              as int?,
-      headers: freezed == headers
-          ? _value.headers
-          : headers // ignore: cast_nullable_to_non_nullable
-              as Map<String, String>?,
-      requestHeaders: freezed == requestHeaders
-          ? _value.requestHeaders
-          : requestHeaders // ignore: cast_nullable_to_non_nullable
-              as Map<String, String>?,
-      body: freezed == body
-          ? _value.body
-          : body // ignore: cast_nullable_to_non_nullable
-              as String?,
-      formattedBody: freezed == formattedBody
-          ? _value.formattedBody
-          : formattedBody // ignore: cast_nullable_to_non_nullable
-              as String?,
-      bodyBytes: freezed == bodyBytes
-          ? _value.bodyBytes
-          : bodyBytes // ignore: cast_nullable_to_non_nullable
-              as Uint8List?,
-      time: freezed == time
-          ? _value.time
-          : time // ignore: cast_nullable_to_non_nullable
-              as Duration?,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            statusCode: freezed == statusCode
+                ? _value.statusCode
+                : statusCode // ignore: cast_nullable_to_non_nullable
+                      as int?,
+            headers: freezed == headers
+                ? _value.headers
+                : headers // ignore: cast_nullable_to_non_nullable
+                      as Map<String, String>?,
+            requestHeaders: freezed == requestHeaders
+                ? _value.requestHeaders
+                : requestHeaders // ignore: cast_nullable_to_non_nullable
+                      as Map<String, String>?,
+            body: freezed == body
+                ? _value.body
+                : body // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            formattedBody: freezed == formattedBody
+                ? _value.formattedBody
+                : formattedBody // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            bodyBytes: freezed == bodyBytes
+                ? _value.bodyBytes
+                : bodyBytes // ignore: cast_nullable_to_non_nullable
+                      as Uint8List?,
+            time: freezed == time
+                ? _value.time
+                : time // ignore: cast_nullable_to_non_nullable
+                      as Duration?,
+          )
+          as $Val,
+    );
   }
 }
 
 /// @nodoc
 abstract class _$$HttpResponseModelImplCopyWith<$Res>
     implements $HttpResponseModelCopyWith<$Res> {
-  factory _$$HttpResponseModelImplCopyWith(_$HttpResponseModelImpl value,
-          $Res Function(_$HttpResponseModelImpl) then) =
-      __$$HttpResponseModelImplCopyWithImpl<$Res>;
+  factory _$$HttpResponseModelImplCopyWith(
+    _$HttpResponseModelImpl value,
+    $Res Function(_$HttpResponseModelImpl) then,
+  ) = __$$HttpResponseModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {int? statusCode,
-      Map<String, String>? headers,
-      Map<String, String>? requestHeaders,
-      String? body,
-      String? formattedBody,
-      @Uint8ListConverter() Uint8List? bodyBytes,
-      @DurationConverter() Duration? time});
+  $Res call({
+    int? statusCode,
+    Map<String, String>? headers,
+    Map<String, String>? requestHeaders,
+    String? body,
+    String? formattedBody,
+    @Uint8ListConverter() Uint8List? bodyBytes,
+    @DurationConverter() Duration? time,
+  });
 }
 
 /// @nodoc
 class __$$HttpResponseModelImplCopyWithImpl<$Res>
     extends _$HttpResponseModelCopyWithImpl<$Res, _$HttpResponseModelImpl>
     implements _$$HttpResponseModelImplCopyWith<$Res> {
-  __$$HttpResponseModelImplCopyWithImpl(_$HttpResponseModelImpl _value,
-      $Res Function(_$HttpResponseModelImpl) _then)
-      : super(_value, _then);
+  __$$HttpResponseModelImplCopyWithImpl(
+    _$HttpResponseModelImpl _value,
+    $Res Function(_$HttpResponseModelImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of HttpResponseModel
   /// with the given fields replaced by the non-null parameter values.
@@ -151,36 +160,38 @@ class __$$HttpResponseModelImplCopyWithImpl<$Res>
     Object? bodyBytes = freezed,
     Object? time = freezed,
   }) {
-    return _then(_$HttpResponseModelImpl(
-      statusCode: freezed == statusCode
-          ? _value.statusCode
-          : statusCode // ignore: cast_nullable_to_non_nullable
-              as int?,
-      headers: freezed == headers
-          ? _value._headers
-          : headers // ignore: cast_nullable_to_non_nullable
-              as Map<String, String>?,
-      requestHeaders: freezed == requestHeaders
-          ? _value._requestHeaders
-          : requestHeaders // ignore: cast_nullable_to_non_nullable
-              as Map<String, String>?,
-      body: freezed == body
-          ? _value.body
-          : body // ignore: cast_nullable_to_non_nullable
-              as String?,
-      formattedBody: freezed == formattedBody
-          ? _value.formattedBody
-          : formattedBody // ignore: cast_nullable_to_non_nullable
-              as String?,
-      bodyBytes: freezed == bodyBytes
-          ? _value.bodyBytes
-          : bodyBytes // ignore: cast_nullable_to_non_nullable
-              as Uint8List?,
-      time: freezed == time
-          ? _value.time
-          : time // ignore: cast_nullable_to_non_nullable
-              as Duration?,
-    ));
+    return _then(
+      _$HttpResponseModelImpl(
+        statusCode: freezed == statusCode
+            ? _value.statusCode
+            : statusCode // ignore: cast_nullable_to_non_nullable
+                  as int?,
+        headers: freezed == headers
+            ? _value._headers
+            : headers // ignore: cast_nullable_to_non_nullable
+                  as Map<String, String>?,
+        requestHeaders: freezed == requestHeaders
+            ? _value._requestHeaders
+            : requestHeaders // ignore: cast_nullable_to_non_nullable
+                  as Map<String, String>?,
+        body: freezed == body
+            ? _value.body
+            : body // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        formattedBody: freezed == formattedBody
+            ? _value.formattedBody
+            : formattedBody // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        bodyBytes: freezed == bodyBytes
+            ? _value.bodyBytes
+            : bodyBytes // ignore: cast_nullable_to_non_nullable
+                  as Uint8List?,
+        time: freezed == time
+            ? _value.time
+            : time // ignore: cast_nullable_to_non_nullable
+                  as Duration?,
+      ),
+    );
   }
 }
 
@@ -188,17 +199,17 @@ class __$$HttpResponseModelImplCopyWithImpl<$Res>
 
 @JsonSerializable(explicitToJson: true, anyMap: true)
 class _$HttpResponseModelImpl extends _HttpResponseModel {
-  const _$HttpResponseModelImpl(
-      {this.statusCode,
-      final Map<String, String>? headers,
-      final Map<String, String>? requestHeaders,
-      this.body,
-      this.formattedBody,
-      @Uint8ListConverter() this.bodyBytes,
-      @DurationConverter() this.time})
-      : _headers = headers,
-        _requestHeaders = requestHeaders,
-        super._();
+  const _$HttpResponseModelImpl({
+    this.statusCode,
+    final Map<String, String>? headers,
+    final Map<String, String>? requestHeaders,
+    this.body,
+    this.formattedBody,
+    @Uint8ListConverter() this.bodyBytes,
+    @DurationConverter() this.time,
+  }) : _headers = headers,
+       _requestHeaders = requestHeaders,
+       super._();
 
   factory _$HttpResponseModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$HttpResponseModelImplFromJson(json);
@@ -249,8 +260,10 @@ class _$HttpResponseModelImpl extends _HttpResponseModel {
             (identical(other.statusCode, statusCode) ||
                 other.statusCode == statusCode) &&
             const DeepCollectionEquality().equals(other._headers, _headers) &&
-            const DeepCollectionEquality()
-                .equals(other._requestHeaders, _requestHeaders) &&
+            const DeepCollectionEquality().equals(
+              other._requestHeaders,
+              _requestHeaders,
+            ) &&
             (identical(other.body, body) || other.body == body) &&
             (identical(other.formattedBody, formattedBody) ||
                 other.formattedBody == formattedBody) &&
@@ -261,14 +274,15 @@ class _$HttpResponseModelImpl extends _HttpResponseModel {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      statusCode,
-      const DeepCollectionEquality().hash(_headers),
-      const DeepCollectionEquality().hash(_requestHeaders),
-      body,
-      formattedBody,
-      const DeepCollectionEquality().hash(bodyBytes),
-      time);
+    runtimeType,
+    statusCode,
+    const DeepCollectionEquality().hash(_headers),
+    const DeepCollectionEquality().hash(_requestHeaders),
+    body,
+    formattedBody,
+    const DeepCollectionEquality().hash(bodyBytes),
+    time,
+  );
 
   /// Create a copy of HttpResponseModel
   /// with the given fields replaced by the non-null parameter values.
@@ -277,25 +291,26 @@ class _$HttpResponseModelImpl extends _HttpResponseModel {
   @pragma('vm:prefer-inline')
   _$$HttpResponseModelImplCopyWith<_$HttpResponseModelImpl> get copyWith =>
       __$$HttpResponseModelImplCopyWithImpl<_$HttpResponseModelImpl>(
-          this, _$identity);
+        this,
+        _$identity,
+      );
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$HttpResponseModelImplToJson(
-      this,
-    );
+    return _$$HttpResponseModelImplToJson(this);
   }
 }
 
 abstract class _HttpResponseModel extends HttpResponseModel {
-  const factory _HttpResponseModel(
-      {final int? statusCode,
-      final Map<String, String>? headers,
-      final Map<String, String>? requestHeaders,
-      final String? body,
-      final String? formattedBody,
-      @Uint8ListConverter() final Uint8List? bodyBytes,
-      @DurationConverter() final Duration? time}) = _$HttpResponseModelImpl;
+  const factory _HttpResponseModel({
+    final int? statusCode,
+    final Map<String, String>? headers,
+    final Map<String, String>? requestHeaders,
+    final String? body,
+    final String? formattedBody,
+    @Uint8ListConverter() final Uint8List? bodyBytes,
+    @DurationConverter() final Duration? time,
+  }) = _$HttpResponseModelImpl;
   const _HttpResponseModel._() : super._();
 
   factory _HttpResponseModel.fromJson(Map<String, dynamic> json) =
