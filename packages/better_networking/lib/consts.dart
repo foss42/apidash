@@ -38,6 +38,7 @@ const kMethodsWithBody = [
   HTTPVerb.put,
   HTTPVerb.patch,
   HTTPVerb.delete,
+  HTTPVerb.options,
 ];
 
 const kDefaultHttpMethod = HTTPVerb.get;
