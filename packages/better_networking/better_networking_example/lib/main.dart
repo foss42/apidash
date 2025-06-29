@@ -40,7 +40,7 @@ class _BetterNetworkingExampleState extends State<BetterNetworkingExample> {
             ElevatedButton(
               onPressed: () {
                 if (currentRequest.isEmpty) return;
-                print('Cancelling: $currentRequest');
+                debugPrint('Cancelling: $currentRequest');
                 cancelHttpRequest(currentRequest);
               },
               child: Text('CANCEL REQUEST'),
@@ -65,9 +65,9 @@ class _BetterNetworkingExampleState extends State<BetterNetworkingExample> {
                     ],
                   ),
                 );
-                print('Response: ${resp?.body}');
-                print('Duration: ${duration?.inMilliseconds}');
-                print('Error: $err');
+                debugPrint('Response: ${resp?.body}');
+                debugPrint('Duration: ${duration?.inMilliseconds}');
+                debugPrint('Error: $err');
               },
               child: Text('GET REQUEST'),
             ),
@@ -92,9 +92,9 @@ class _BetterNetworkingExampleState extends State<BetterNetworkingExample> {
                     body: jsonEncode({"name": "morpheus", "job": "leader"}),
                   ),
                 );
-                print('Response: ${resp?.body}');
-                print('Duration: ${duration?.inMilliseconds}');
-                print('Error: $err');
+                debugPrint('Response: ${resp?.body}');
+                debugPrint('Duration: ${duration?.inMilliseconds}');
+                debugPrint('Error: $err');
               },
               child: Text('POST REQUEST'),
             ),
@@ -126,13 +126,13 @@ class _BetterNetworkingExampleState extends State<BetterNetworkingExample> {
                 );
                 stream.listen(
                   (data) {
-                    print('Recieved Data: $data');
+                    debugPrint('Recieved Data: $data');
                   },
                   onDone: () {
-                    print('Streaming Complete');
+                    debugPrint('Streaming Complete');
                   },
                   onError: (e) {
-                    print(e);
+                    debugPrint(e);
                   },
                 );
               },
