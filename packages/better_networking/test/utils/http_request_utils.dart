@@ -1,4 +1,4 @@
-import 'package:better_networking/utils/http_request_utils.dart';
+import 'package:better_networking/better_networking.dart';
 import 'package:test/test.dart';
 
 void main() {
