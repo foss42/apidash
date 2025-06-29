@@ -1,8 +1,5 @@
+import 'package:better_networking/better_networking.dart';
 import 'package:har/har.dart' as har;
-import 'package:seed/seed.dart';
-import '../consts.dart';
-import '../models/models.dart';
-import '../utils/utils.dart';
 
 class HarParserIO {
   List<(String?, HttpRequestModel)>? getHttpRequestModelList(String content) {
