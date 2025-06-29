@@ -16,8 +16,8 @@ void main() {
           theme: kThemeDataLight,
           home: Scaffold(
             body: SendButton(
-              isWorking: false,
               isStreaming: false,
+              isWorking: false,
               onTap: () => sendPressed = true,
               onCancel: () => cancelPressed = true,
             ),
@@ -46,8 +46,8 @@ void main() {
           theme: kThemeDataLight,
           home: Scaffold(
             body: SendButton(
-              isWorking: true,
               isStreaming: false,
+              isWorking: true,
               onTap: () => sendPressed = true,
               onCancel: () => cancelPressed = true,
             ),

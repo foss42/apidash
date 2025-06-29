@@ -395,10 +395,12 @@ class CollectionStateNotifier
       );
     } else {
       final statusCode = response.statusCode;
-      respModel = baseHttpResponseModel.fromResponse(
-        response: response,
-        time: duration,
-      );
+
+      respModel = respModel ??
+          baseHttpResponseModel.fromResponse(
+            response: response,
+            time: duration,
+          );
 
       newRequestModel = newRequestModel.copyWith(
         responseStatus: statusCode,
