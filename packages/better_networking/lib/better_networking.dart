@@ -1,4 +1,4 @@
-library apidash_core;
+library better_networking;
 
 export 'consts.dart';
 export 'extensions/extensions.dart';
