@@ -176,14 +176,14 @@ Future<Stream<(String?, Duration?, String?)?>> streamHttpRequest(
   StreamSubscription<String?>? subscription;
   final stopwatch = Stopwatch()..start();
 
-  _cleanup() async {
+  cleanup() async {
     stopwatch.stop();
     httpClientManager.closeClient(requestId);
     await Future.microtask(() {});
     controller.close();
   }
 
-  Future<void> _handleError(dynamic error) async {
+  Future<void> handleError(dynamic error) async {
     await Future.microtask(() {});
     if (httpClientManager.wasRequestCancelled(requestId)) {
       controller.add((null, null, kMsgRequestCancelled));
@@ -191,7 +191,7 @@ Future<Stream<(String?, Duration?, String?)?>> streamHttpRequest(
     } else {
       controller.add((null, null, error.toString()));
     }
-    await _cleanup();
+    await cleanup();
   }
 
   controller.onCancel = () async {
@@ -214,7 +214,7 @@ Future<Stream<(String?, Duration?, String?)?>> streamHttpRequest(
   );
 
   if (uri == null) {
-    await _handleError(uriError ?? 'Invalid URL');
+    await handleError(uriError ?? 'Invalid URL');
     return controller.stream;
   }
 
@@ -245,8 +245,8 @@ Future<Stream<(String?, Duration?, String?)?>> streamHttpRequest(
 
       subscription = stream.listen(
         (data) => controller.add((data, stopwatch.elapsed, null)),
-        onDone: () => _cleanup(),
-        onError: _handleError,
+        onDone: () => cleanup(),
+        onError: handleError,
       );
 
       return controller.stream;
@@ -282,13 +282,13 @@ Future<Stream<(String?, Duration?, String?)?>> streamHttpRequest(
           controller.add((data, stopwatch.elapsed, null));
         }
       },
-      onDone: () => _cleanup(),
-      onError: _handleError,
+      onDone: () => cleanup(),
+      onError: handleError,
     );
 
     return controller.stream;
   } catch (e) {
-    await _handleError(e);
+    await handleError(e);
     return controller.stream;
   }
 }
