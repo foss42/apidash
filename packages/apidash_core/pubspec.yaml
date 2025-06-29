@@ -13,7 +13,6 @@ dependencies:
     sdk: flutter
   better_networking:
     path: ../better_networking
-  collection: ^1.18.0
   curl_parser:
     path: ../curl_parser
   freezed_annotation: ^2.4.1

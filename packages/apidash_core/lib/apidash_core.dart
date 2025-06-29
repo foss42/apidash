@@ -7,6 +7,5 @@ export 'import_export/import_export.dart';
 export 'utils/utils.dart';
 
 // Export 3rd party packages
-export 'package:collection/collection.dart';
 export 'package:freezed_annotation/freezed_annotation.dart';
 export 'package:better_networking/better_networking.dart';
