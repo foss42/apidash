@@ -1,7 +1,14 @@
 name: better_networking
-description: "Simplified Networking"
+description: "Simplified Networking. Support for sending REST & GraphQL API Requests."
 version: 0.0.1
-homepage:
+homepage: https://github.com/foss42/apidash
+
+topics:
+  - networking
+  - api
+  - rest
+  - http
+  - graphql
 
 environment:
   sdk: ^3.8.0
