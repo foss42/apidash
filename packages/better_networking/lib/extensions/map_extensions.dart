@@ -2,9 +2,11 @@ import 'dart:io';
 
 extension MapExtension on Map {
   bool hasKeyContentType() {
-    return keys.any((k) => (k is String)
-        ? k.toLowerCase() == HttpHeaders.contentTypeHeader
-        : false);
+    return keys.any(
+      (k) => (k is String)
+          ? k.toLowerCase() == HttpHeaders.contentTypeHeader
+          : false,
+    );
   }
 
   String? getKeyContentType() {
@@ -13,9 +15,11 @@ extension MapExtension on Map {
     }
     bool present = hasKeyContentType();
     if (present) {
-      return keys.firstWhere((e) => (e is String)
-          ? e.toLowerCase() == HttpHeaders.contentTypeHeader
-          : false);
+      return keys.firstWhere(
+        (e) => (e is String)
+            ? e.toLowerCase() == HttpHeaders.contentTypeHeader
+            : false,
+      );
     }
     return null;
   }
@@ -26,7 +30,8 @@ extension MapExtension on Map {
 
   Map removeKeyContentType() {
     removeWhere(
-        (key, value) => key.toLowerCase() == HttpHeaders.contentTypeHeader);
+      (key, value) => key.toLowerCase() == HttpHeaders.contentTypeHeader,
+    );
     return this;
   }
 }
