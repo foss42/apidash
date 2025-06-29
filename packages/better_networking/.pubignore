@@ -1,0 +1,10 @@
+pubspec.lock
+melos_better_networking.iml
+build/
+coverage/
+dart_test.yaml
+doc/
+test/
+pubspec_overrides.yaml
+better_networking_example/melos_better_networking_example.iml
+better_networking_example/pubspec_overrides.yaml
