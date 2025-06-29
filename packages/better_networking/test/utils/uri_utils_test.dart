@@ -1,4 +1,3 @@
-
 import 'package:better_networking/better_networking.dart';
 import 'package:test/test.dart';
 
@@ -6,10 +5,11 @@ void main() {
   group("Testing getUriScheme", () {
     test('Testing getUriScheme for https', () {
       Uri uri1 = Uri(
-          scheme: 'https',
-          host: 'dart.dev',
-          path: 'guides/libraries/library-tour',
-          fragment: 'numbers');
+        scheme: 'https',
+        host: 'dart.dev',
+        path: 'guides/libraries/library-tour',
+        fragment: 'numbers',
+      );
       String uriScheme1Expected = 'https';
       expect(getUriScheme(uri1), (uriScheme1Expected, true));
     });
@@ -29,12 +29,14 @@ void main() {
   });
 
   group("Testing getValidRequestUri", () {
-    test('Testing getValidRequestUri with localhost URL without port or path',
-        () {
-      String url1 = "localhost";
-      Uri uri1Expected = Uri(scheme: 'http', host: 'localhost');
-      expect(getValidRequestUri(url1, []), (uri1Expected, null));
-    });
+    test(
+      'Testing getValidRequestUri with localhost URL without port or path',
+      () {
+        String url1 = "localhost";
+        Uri uri1Expected = Uri(scheme: 'http', host: 'localhost');
+        expect(getValidRequestUri(url1, []), (uri1Expected, null));
+      },
+    );
 
     test('Testing getValidRequestUri with localhost URL with port', () {
       String url1 = "localhost:8080";
@@ -42,13 +44,19 @@ void main() {
       expect(getValidRequestUri(url1, []), (uri1Expected, null));
     });
 
-    test('Testing getValidRequestUri with localhost URL with port and path',
-        () {
-      String url1 = "localhost:8080/hello";
-      Uri uri1Expected =
-          Uri(scheme: 'http', host: 'localhost', port: 8080, path: '/hello');
-      expect(getValidRequestUri(url1, []), (uri1Expected, null));
-    });
+    test(
+      'Testing getValidRequestUri with localhost URL with port and path',
+      () {
+        String url1 = "localhost:8080/hello";
+        Uri uri1Expected = Uri(
+          scheme: 'http',
+          host: 'localhost',
+          port: 8080,
+          path: '/hello',
+        );
+        expect(getValidRequestUri(url1, []), (uri1Expected, null));
+      },
+    );
 
     test('Testing getValidRequestUri with localhost URL with http prefix', () {
       String url1 = "http://localhost:3080";
@@ -76,8 +84,12 @@ void main() {
 
     test('Testing getValidRequestUri with IP URL with port and path', () {
       String url1 = "8.8.8.8:8080/hello";
-      Uri uri1Expected =
-          Uri(scheme: 'http', host: '8.8.8.8', port: 8080, path: '/hello');
+      Uri uri1Expected = Uri(
+        scheme: 'http',
+        host: '8.8.8.8',
+        port: 8080,
+        path: '/hello',
+      );
       expect(getValidRequestUri(url1, []), (uri1Expected, null));
     });
 
@@ -97,10 +109,11 @@ void main() {
       String url1 = "https://api.apidash.dev/country/data";
       const kvRow1 = NameValueModel(name: "code", value: "US");
       Uri uri1Expected = Uri(
-          scheme: 'https',
-          host: 'api.apidash.dev',
-          path: 'country/data',
-          queryParameters: {'code': 'US'});
+        scheme: 'https',
+        host: 'api.apidash.dev',
+        path: 'country/data',
+        queryParameters: {'code': 'US'},
+      );
       expect(getValidRequestUri(url1, [kvRow1]), (uri1Expected, null));
     });
     test('Testing getValidRequestUri for null url value', () {
@@ -115,43 +128,51 @@ void main() {
       String url4 = "api.apidash.dev/country/data";
       const kvRow4 = NameValueModel(name: "code", value: "US");
       Uri uri4Expected = Uri(
-          scheme: 'https',
-          host: 'api.apidash.dev',
-          path: 'country/data',
-          queryParameters: {'code': 'US'});
+        scheme: 'https',
+        host: 'api.apidash.dev',
+        path: 'country/data',
+        queryParameters: {'code': 'US'},
+      );
       expect(getValidRequestUri(url4, [kvRow4]), (uri4Expected, null));
     });
     test('Testing getValidRequestUri when url has fragment', () {
       String url5 = "https://dart.dev/guides/libraries/library-tour#numbers";
       Uri uri5Expected = Uri(
-          scheme: 'https',
-          host: 'dart.dev',
-          path: '/guides/libraries/library-tour');
+        scheme: 'https',
+        host: 'dart.dev',
+        path: '/guides/libraries/library-tour',
+      );
       expect(getValidRequestUri(url5, null), (uri5Expected, null));
     });
     test('Testing getValidRequestUri when uri scheme is not supported', () {
       String url5 = "mailto:someone@example.com";
-      expect(getValidRequestUri(url5, null),
-          (null, "Unsupported URL Scheme (mailto)"));
+      expect(getValidRequestUri(url5, null), (
+        null,
+        "Unsupported URL Scheme (mailto)",
+      ));
     });
-    test('Testing getValidRequestUri when query params in both url and kvrow',
-        () {
-      String url6 = "api.apidash.dev/country/data?code=IND";
-      const kvRow6 = NameValueModel(name: "code", value: "US");
-      Uri uri6Expected = Uri(
+    test(
+      'Testing getValidRequestUri when query params in both url and kvrow',
+      () {
+        String url6 = "api.apidash.dev/country/data?code=IND";
+        const kvRow6 = NameValueModel(name: "code", value: "US");
+        Uri uri6Expected = Uri(
           scheme: 'https',
           host: 'api.apidash.dev',
           path: 'country/data',
-          queryParameters: {'code': 'US'});
-      expect(getValidRequestUri(url6, [kvRow6]), (uri6Expected, null));
-    });
+          queryParameters: {'code': 'US'},
+        );
+        expect(getValidRequestUri(url6, [kvRow6]), (uri6Expected, null));
+      },
+    );
     test('Testing getValidRequestUri when kvrow is null', () {
       String url7 = "api.apidash.dev/country/data?code=US";
       Uri uri7Expected = Uri(
-          scheme: 'https',
-          host: 'api.apidash.dev',
-          path: 'country/data',
-          queryParameters: {'code': 'US'});
+        scheme: 'https',
+        host: 'api.apidash.dev',
+        path: 'country/data',
+        queryParameters: {'code': 'US'},
+      );
       expect(getValidRequestUri(url7, null), (uri7Expected, null));
     });
   });

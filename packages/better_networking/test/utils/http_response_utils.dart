@@ -1,4 +1,3 @@
-
 import 'package:better_networking/better_networking.dart';
 import 'package:better_networking/utils/string_utils.dart';
 import 'package:test/test.dart';
@@ -8,8 +7,10 @@ void main() {
     test('Testing getMediaTypeFromContentType for json type', () {
       String contentType1 = "application/json";
       MediaType mediaType1Expected = MediaType("application", "json");
-      expect(getMediaTypeFromContentType(contentType1).toString(),
-          mediaType1Expected.toString());
+      expect(
+        getMediaTypeFromContentType(contentType1).toString(),
+        mediaType1Expected.toString(),
+      );
     });
     test('Testing getMediaTypeFromContentType for null', () {
       expect(getMediaTypeFromContentType(null), null);
@@ -17,8 +18,10 @@ void main() {
     test('Testing getMediaTypeFromContentType for image svg+xml type', () {
       String contentType3 = "image/svg+xml";
       MediaType mediaType3Expected = MediaType("image", "svg+xml");
-      expect(getMediaTypeFromContentType(contentType3).toString(),
-          mediaType3Expected.toString());
+      expect(
+        getMediaTypeFromContentType(contentType3).toString(),
+        mediaType3Expected.toString(),
+      );
     });
     test('Testing getMediaTypeFromContentType for incorrect content type', () {
       String contentType4 = "text/html : charset=utf-8";
@@ -26,10 +29,13 @@ void main() {
     });
     test('Testing getMediaTypeFromContentType for text/css type', () {
       String contentType5 = "text/css; charset=utf-8";
-      MediaType mediaType5Expected =
-          MediaType("text", "css", {"charset": "utf-8"});
-      expect(getMediaTypeFromContentType(contentType5).toString(),
-          mediaType5Expected.toString());
+      MediaType mediaType5Expected = MediaType("text", "css", {
+        "charset": "utf-8",
+      });
+      expect(
+        getMediaTypeFromContentType(contentType5).toString(),
+        mediaType5Expected.toString(),
+      );
     });
     test('Testing getMediaTypeFromContentType for incorrect with double ;', () {
       String contentType6 =
@@ -54,11 +60,13 @@ void main() {
       Map<String, String> header1 = {
         "content-length": "4506",
         "cache-control": "private",
-        "content-type": "application/json"
+        "content-type": "application/json",
       };
       MediaType mediaType1Expected = MediaType("application", "json");
-      expect(getMediaTypeFromHeaders(header1).toString(),
-          mediaType1Expected.toString());
+      expect(
+        getMediaTypeFromHeaders(header1).toString(),
+        mediaType1Expected.toString(),
+      );
     });
     test('Testing getMediaTypeFromHeaders for null header', () {
       expect(getMediaTypeFromHeaders(null), null);
@@ -72,22 +80,26 @@ void main() {
       expect(getMediaTypeFromHeaders(header3), null);
     });
     test(
-        'Testing getMediaTypeFromHeaders for erroneous header value - missing type',
-        () {
-      Map<String, String> header4 = {"content-type": "/json"};
-      expect(getMediaTypeFromHeaders(header4), null);
-    });
+      'Testing getMediaTypeFromHeaders for erroneous header value - missing type',
+      () {
+        Map<String, String> header4 = {"content-type": "/json"};
+        expect(getMediaTypeFromHeaders(header4), null);
+      },
+    );
     test(
-        'Testing getMediaTypeFromHeaders for erroneous header value - missing subtype',
-        () {
-      Map<String, String> header5 = {"content-type": "application"};
-      expect(getMediaTypeFromHeaders(header5), null);
-    });
+      'Testing getMediaTypeFromHeaders for erroneous header value - missing subtype',
+      () {
+        Map<String, String> header5 = {"content-type": "application"};
+        expect(getMediaTypeFromHeaders(header5), null);
+      },
+    );
     test('Testing getMediaTypeFromHeaders for header6', () {
       Map<String, String> header6 = {"content-type": "image/svg+xml"};
       MediaType mediaType6Expected = MediaType("image", "svg+xml");
-      expect(getMediaTypeFromHeaders(header6).toString(),
-          mediaType6Expected.toString());
+      expect(
+        getMediaTypeFromHeaders(header6).toString(),
+        mediaType6Expected.toString(),
+      );
     });
   });
 
@@ -158,12 +170,13 @@ void main() {
         expect(formatBody(body5, mediaTypeHtml), null);
       });
       test(
-          'Testing formatBody for html subtype values with random values within limit',
-          () {
-        String body6 =
-            '''<html>${RandomStringGenerator.getRandomStringLines(100, 190)}</html>''';
-        expect(formatBody(body6, mediaTypeHtml), body6);
-      });
+        'Testing formatBody for html subtype values with random values within limit',
+        () {
+          String body6 =
+              '''<html>${RandomStringGenerator.getRandomStringLines(100, 190)}</html>''';
+          expect(formatBody(body6, mediaTypeHtml), body6);
+        },
+      );
     });
   });
 }
