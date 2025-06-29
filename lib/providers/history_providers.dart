@@ -90,6 +90,21 @@ class HistoryMetaStateNotifier
     await loadHistoryRequest(id);
   }
 
+  void editHistoryRequest(HistoryRequestModel model) async {
+    final id = model.historyId;
+    state = {
+      ...state ?? {},
+      id: model.metaData,
+    };
+    final existingKeys = state?.keys.toList() ?? [];
+    if (!existingKeys.contains(id)) {
+      hiveHandler.setHistoryIds([...existingKeys, id]);
+    }
+    hiveHandler.setHistoryMeta(id, model.metaData.toJson());
+    await hiveHandler.setHistoryRequest(id, model.toJson());
+    await loadHistoryRequest(id);
+  }
+
   Future<void> clearAllHistory() async {
     await hiveHandler.clearAllHistory();
     ref.read(selectedHistoryIdStateProvider.notifier).state = null;

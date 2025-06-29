@@ -53,6 +53,7 @@ class HttpResponseModel with _$HttpResponseModel {
     String? formattedBody,
     @Uint8ListConverter() Uint8List? bodyBytes,
     @DurationConverter() Duration? time,
+    List<String>? sseOutput,
   }) = _HttpResponseModel;
 
   factory HttpResponseModel.fromJson(Map<String, Object?> json) =>
