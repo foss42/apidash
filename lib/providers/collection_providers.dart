@@ -281,9 +281,10 @@ class CollectionStateNotifier
       return;
     }
 
-    if (requestModel != null &&
-        !requestModel.preRequestScript.isNullOrEmpty()) {
-      requestModel = await handlePreRequestScript(
+    RequestModel executionRequestModel = requestModel!;
+
+    if (!requestModel.preRequestScript.isNullOrEmpty()) {
+      executionRequestModel = await handlePreRequestScript(
         requestModel,
         originalEnvironmentModel,
         (envModel, updatedValues) {
@@ -298,9 +299,9 @@ class CollectionStateNotifier
       );
     }
 
-    APIType apiType = requestModel!.apiType;
+    APIType apiType = executionRequestModel.apiType;
     HttpRequestModel substitutedHttpRequestModel =
-        getSubstitutedHttpRequestModel(requestModel.httpRequestModel!);
+        getSubstitutedHttpRequestModel(executionRequestModel.httpRequestModel!);
 
     // set current model's isWorking to true and update state
     var map = {...state!};
