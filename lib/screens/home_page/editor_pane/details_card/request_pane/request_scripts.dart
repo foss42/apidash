@@ -59,7 +59,7 @@ class _EditRequestScriptsState extends ConsumerState<EditRequestScripts> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Padding(
-          padding: kPh8b6,
+          padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
