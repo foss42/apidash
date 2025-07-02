@@ -324,22 +324,27 @@ class CollectionStateNotifier
     HistoryRequestModel? historyM;
     RequestModel newRequestModel = requestModel;
     final completer = Completer<(Response?, Duration?, String?)>();
-    bool isTextStream = false;
+    bool? isTextStream;
     StreamSubscription? sub;
 
     sub = stream.listen((d) async {
       if (d == null) return;
 
-      final contentType = d.$1;
-      isTextStream = isTextStream ||
-          contentType == 'text/event-stream' ||
-          contentType == 'application/x-ndjson';
+      final contentType = d.$1?.headers['content-type']?.toLowerCase();
 
-      final response = d.$2;
-      final duration = d.$3;
-      final errorMessage = d.$4;
+      if (isTextStream == null) {
+        if (kStreamingResponseTypes.contains(contentType)) {
+          isTextStream = true;
+        } else {
+          isTextStream = false;
+        }
+      }
 
-      if (!isTextStream) {
+      final response = d.$1;
+      final duration = d.$2;
+      final errorMessage = d.$3;
+
+      if (isTextStream == false) {
         if (!completer.isCompleted) {
           completer.complete((response, duration, errorMessage));
         }
@@ -403,7 +408,7 @@ class CollectionStateNotifier
             time: duration,
           )
           .copyWith(
-            sseOutput: isTextStream ? [response.body] : [],
+            sseOutput: (isTextStream == true) ? [response.body] : [],
           );
 
       newRequestModel = newRequestModel.copyWith(
