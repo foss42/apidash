@@ -23,7 +23,6 @@ dependencies:
   postman:
     path: ../postman
   xml: ^6.3.0
-  crypto: ^3.0.6
 
 dev_dependencies:
   flutter_test:

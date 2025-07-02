@@ -46,10 +46,8 @@ class HistoryRequestPane extends ConsumerWidget {
             .select((value) => value?.postRequestScript?.length)) ??
         0;
 
-
-    final hasAuth = ref.watch(selectedHistoryRequestModelProvider.select(
-        (value) =>
-            value?.authModel?.type != APIAuthType.none));
+    final hasAuth = ref.watch(selectedHistoryRequestModelProvider
+        .select((value) => value?.authModel?.type != APIAuthType.none));
 
     final authModel = ref.watch(selectedHistoryRequestModelProvider
         .select((value) => value?.authModel));
@@ -66,12 +64,14 @@ class HistoryRequestPane extends ConsumerWidget {
           showViewCodeButton: !isCompact,
           showIndicators: [
             paramLength > 0,
+            hasAuth,
             headerLength > 0,
             hasBody,
             scriptsLength > 0,
           ],
           tabLabels: const [
             kLabelURLParams,
+            kLabelAuth,
             kLabelHeaders,
             kLabelBody,
             kLabelScripts,

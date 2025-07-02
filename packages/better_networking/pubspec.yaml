@@ -25,6 +25,7 @@ dependencies:
   json_annotation: ^4.9.0
   seed: ^0.0.3
   xml: ^6.3.0
+  crypto: ^3.0.6
 
 dev_dependencies:
   flutter_test:
