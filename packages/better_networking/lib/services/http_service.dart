@@ -232,7 +232,7 @@ streamHttpRequest(
   http.StreamedResponse streamedResponse;
 
   try {
-    //HANDLE MULTI-PART
+    //Handling HTTP Multipart Requests
     if (apiType == APIType.rest && isMultipart && hasBody) {
       final multipart = http.MultipartRequest(
         requestModel.method.name.toUpperCase(),
@@ -248,6 +248,24 @@ streamHttpRequest(
         }
       }
       streamedResponse = await client.send(multipart);
+    } else if (apiType == APIType.graphql) {
+      // Handling GraphQL Requests
+      var requestBody = getGraphQLBody(requestModel);
+      String? body;
+      if (requestBody != null) {
+        var contentLength = utf8.encode(requestBody).length;
+        if (contentLength > 0) {
+          body = requestBody;
+          headers[HttpHeaders.contentLengthHeader] = contentLength.toString();
+          if (!requestModel.hasContentTypeHeader) {
+            headers[HttpHeaders.contentTypeHeader] = ContentType.json.header;
+          }
+        }
+      }
+      final request = http.Request('POST', uri)
+        ..headers.addAll(headers)
+        ..body = body ?? '';
+      streamedResponse = await client.send(request);
     } else {
       String? body;
       bool overrideContentType = false;
@@ -274,20 +292,19 @@ streamHttpRequest(
 
     subscription = outputStream.listen(
       (data) {
-        if (!controller.isClosed) {
-          HttpResponse? resp;
-          if (data != null) {
-            resp = HttpResponse.bytes(
-              data.codeUnits,
-              streamedResponse.statusCode,
-              request: streamedResponse.request,
-              headers: streamedResponse.headers,
-              isRedirect: streamedResponse.isRedirect,
-              persistentConnection: streamedResponse.persistentConnection,
-              reasonPhrase: streamedResponse.reasonPhrase,
-            );
-          }
+        HttpResponse? resp;
+        if (data != null) {
+          resp = HttpResponse.bytes(
+            data.codeUnits,
+            streamedResponse.statusCode,
+            request: streamedResponse.request,
+            headers: streamedResponse.headers,
+            isRedirect: streamedResponse.isRedirect,
+            persistentConnection: streamedResponse.persistentConnection,
+            reasonPhrase: streamedResponse.reasonPhrase,
+          );
           if (!controller.isClosed) {
+            //if it is partial response chunk, complete it here only and then send
             controller.add((resp, stopwatch.elapsed, null));
           }
         }
