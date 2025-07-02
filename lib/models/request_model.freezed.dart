@@ -36,7 +36,8 @@ mixin _$RequestModel {
   bool get isWorking => throw _privateConstructorUsedError;
   @JsonKey(includeToJson: false)
   DateTime? get sendingTime => throw _privateConstructorUsedError;
-  AuthModel? get authModel => throw _privateConstructorUsedError;
+  String? get preRequestScript => throw _privateConstructorUsedError;
+  String? get postRequestScript => throw _privateConstructorUsedError;
 
   /// Serializes this RequestModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -67,12 +68,12 @@ abstract class $RequestModelCopyWith<$Res> {
       HttpResponseModel? httpResponseModel,
       @JsonKey(includeToJson: false) bool isWorking,
       @JsonKey(includeToJson: false) DateTime? sendingTime,
-      AuthModel? authModel});
+      String? preRequestScript,
+      String? postRequestScript});
 
   $AuthModelCopyWith<$Res>? get authModel;
   $HttpRequestModelCopyWith<$Res>? get httpRequestModel;
   $HttpResponseModelCopyWith<$Res>? get httpResponseModel;
-  $AuthModelCopyWith<$Res>? get authModel;
 }
 
 /// @nodoc
@@ -102,7 +103,8 @@ class _$RequestModelCopyWithImpl<$Res, $Val extends RequestModel>
     Object? httpResponseModel = freezed,
     Object? isWorking = null,
     Object? sendingTime = freezed,
-    Object? authModel = freezed,
+    Object? preRequestScript = freezed,
+    Object? postRequestScript = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -153,10 +155,14 @@ class _$RequestModelCopyWithImpl<$Res, $Val extends RequestModel>
           ? _value.sendingTime
           : sendingTime // ignore: cast_nullable_to_non_nullable
               as DateTime?,
-      authModel: freezed == authModel
-          ? _value.authModel
-          : authModel // ignore: cast_nullable_to_non_nullable
-              as AuthModel?,
+      preRequestScript: freezed == preRequestScript
+          ? _value.preRequestScript
+          : preRequestScript // ignore: cast_nullable_to_non_nullable
+              as String?,
+      postRequestScript: freezed == postRequestScript
+          ? _value.postRequestScript
+          : postRequestScript // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 
@@ -201,20 +207,6 @@ class _$RequestModelCopyWithImpl<$Res, $Val extends RequestModel>
       return _then(_value.copyWith(httpResponseModel: value) as $Val);
     });
   }
-
-  /// Create a copy of RequestModel
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $AuthModelCopyWith<$Res>? get authModel {
-    if (_value.authModel == null) {
-      return null;
-    }
-
-    return $AuthModelCopyWith<$Res>(_value.authModel!, (value) {
-      return _then(_value.copyWith(authModel: value) as $Val);
-    });
-  }
 }
 
 /// @nodoc
@@ -238,7 +230,8 @@ abstract class _$$RequestModelImplCopyWith<$Res>
       HttpResponseModel? httpResponseModel,
       @JsonKey(includeToJson: false) bool isWorking,
       @JsonKey(includeToJson: false) DateTime? sendingTime,
-      AuthModel? authModel});
+      String? preRequestScript,
+      String? postRequestScript});
 
   @override
   $AuthModelCopyWith<$Res>? get authModel;
@@ -246,8 +239,6 @@ abstract class _$$RequestModelImplCopyWith<$Res>
   $HttpRequestModelCopyWith<$Res>? get httpRequestModel;
   @override
   $HttpResponseModelCopyWith<$Res>? get httpResponseModel;
-  @override
-  $AuthModelCopyWith<$Res>? get authModel;
 }
 
 /// @nodoc
@@ -275,7 +266,8 @@ class __$$RequestModelImplCopyWithImpl<$Res>
     Object? httpResponseModel = freezed,
     Object? isWorking = null,
     Object? sendingTime = freezed,
-    Object? authModel = freezed,
+    Object? preRequestScript = freezed,
+    Object? postRequestScript = freezed,
   }) {
     return _then(_$RequestModelImpl(
       id: null == id
@@ -325,10 +317,14 @@ class __$$RequestModelImplCopyWithImpl<$Res>
           ? _value.sendingTime
           : sendingTime // ignore: cast_nullable_to_non_nullable
               as DateTime?,
-      authModel: freezed == authModel
-          ? _value.authModel
-          : authModel // ignore: cast_nullable_to_non_nullable
-              as AuthModel?,
+      preRequestScript: freezed == preRequestScript
+          ? _value.preRequestScript
+          : preRequestScript // ignore: cast_nullable_to_non_nullable
+              as String?,
+      postRequestScript: freezed == postRequestScript
+          ? _value.postRequestScript
+          : postRequestScript // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -350,7 +346,8 @@ class _$RequestModelImpl implements _RequestModel {
       this.httpResponseModel,
       @JsonKey(includeToJson: false) this.isWorking = false,
       @JsonKey(includeToJson: false) this.sendingTime,
-      this.authModel = const AuthModel(type: APIAuthType.none)});
+      this.preRequestScript,
+      this.postRequestScript});
 
   factory _$RequestModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$RequestModelImplFromJson(json);
@@ -387,12 +384,13 @@ class _$RequestModelImpl implements _RequestModel {
   @JsonKey(includeToJson: false)
   final DateTime? sendingTime;
   @override
-  @JsonKey()
-  final AuthModel? authModel;
+  final String? preRequestScript;
+  @override
+  final String? postRequestScript;
 
   @override
   String toString() {
-    return 'RequestModel(id: $id, apiType: $apiType, name: $name, description: $description, requestTabIndex: $requestTabIndex, httpRequestModel: $httpRequestModel, responseStatus: $responseStatus, message: $message, httpResponseModel: $httpResponseModel, isWorking: $isWorking, sendingTime: $sendingTime, authModel: $authModel)';
+    return 'RequestModel(id: $id, apiType: $apiType, name: $name, description: $description, authModel: $authModel, requestTabIndex: $requestTabIndex, httpRequestModel: $httpRequestModel, responseStatus: $responseStatus, message: $message, httpResponseModel: $httpResponseModel, isWorking: $isWorking, sendingTime: $sendingTime, preRequestScript: $preRequestScript, postRequestScript: $postRequestScript)';
   }
 
   @override
@@ -420,8 +418,10 @@ class _$RequestModelImpl implements _RequestModel {
                 other.isWorking == isWorking) &&
             (identical(other.sendingTime, sendingTime) ||
                 other.sendingTime == sendingTime) &&
-            (identical(other.authModel, authModel) ||
-                other.authModel == authModel));
+            (identical(other.preRequestScript, preRequestScript) ||
+                other.preRequestScript == preRequestScript) &&
+            (identical(other.postRequestScript, postRequestScript) ||
+                other.postRequestScript == postRequestScript));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -440,7 +440,8 @@ class _$RequestModelImpl implements _RequestModel {
       httpResponseModel,
       isWorking,
       sendingTime,
-      authModel);
+      preRequestScript,
+      postRequestScript);
 
   /// Create a copy of RequestModel
   /// with the given fields replaced by the non-null parameter values.
@@ -464,6 +465,7 @@ abstract class _RequestModel implements RequestModel {
       final APIType apiType,
       final String name,
       final String description,
+      final AuthModel? authModel,
       @JsonKey(includeToJson: false) final dynamic requestTabIndex,
       final HttpRequestModel? httpRequestModel,
       final int? responseStatus,
@@ -471,7 +473,8 @@ abstract class _RequestModel implements RequestModel {
       final HttpResponseModel? httpResponseModel,
       @JsonKey(includeToJson: false) final bool isWorking,
       @JsonKey(includeToJson: false) final DateTime? sendingTime,
-      final AuthModel? authModel}) = _$RequestModelImpl;
+      final String? preRequestScript,
+      final String? postRequestScript}) = _$RequestModelImpl;
 
   factory _RequestModel.fromJson(Map<String, dynamic> json) =
       _$RequestModelImpl.fromJson;
@@ -504,7 +507,9 @@ abstract class _RequestModel implements RequestModel {
   @JsonKey(includeToJson: false)
   DateTime? get sendingTime;
   @override
-  AuthModel? get authModel;
+  String? get preRequestScript;
+  @override
+  String? get postRequestScript;
 
   /// Create a copy of RequestModel
   /// with the given fields replaced by the non-null parameter values.

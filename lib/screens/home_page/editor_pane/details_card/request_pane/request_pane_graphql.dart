@@ -28,6 +28,12 @@ class EditGraphQLRequestPane extends ConsumerWidget {
     final hasAuth = ref.watch(selectedRequestModelProvider.select((value) =>
         value?.authModel?.type != APIAuthType.none));
 
+    final scriptsLength = ref.watch(selectedHistoryRequestModelProvider
+            .select((value) => value?.preRequestScript?.length)) ??
+        ref.watch(selectedHistoryRequestModelProvider
+            .select((value) => value?.postRequestScript?.length)) ??
+        0;
+
     if (tabIndex >= 3) {
       tabIndex = 0;
     }

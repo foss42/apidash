@@ -8,6 +8,7 @@ import 'request_headers.dart';
 import 'request_params.dart';
 import 'request_body.dart';
 import 'request_auth.dart';
+import 'request_scripts.dart';
 
 class EditRestRequestPane extends ConsumerWidget {
   const EditRestRequestPane({super.key});
@@ -28,6 +29,12 @@ class EditRestRequestPane extends ConsumerWidget {
     final hasBody = ref.watch(selectedRequestModelProvider
             .select((value) => value?.httpRequestModel?.hasBody)) ??
         false;
+
+    final scriptsLength = ref.watch(selectedRequestModelProvider
+            .select((value) => value?.preRequestScript?.length)) ??
+        ref.watch(selectedRequestModelProvider
+            .select((value) => value?.postRequestScript?.length)) ??
+        0;
 
     final hasAuth = ref.watch(selectedRequestModelProvider.select((value) =>
         value?.authModel?.type != APIAuthType.none));
@@ -50,18 +57,21 @@ class EditRestRequestPane extends ConsumerWidget {
         hasAuth,
         headerLength > 0,
         hasBody,
+        scriptsLength > 0,
       ],
       tabLabels: const [
         kLabelURLParams,
         kLabelAuth,
         kLabelHeaders,
         kLabelBody,
+        kLabelScripts,
       ],
       children: const [
         EditRequestURLParams(),
         EditAuthType(),
         EditRequestHeaders(),
         EditRequestBody(),
+        EditRequestScripts(),
       ],
     );
   }

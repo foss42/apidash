@@ -40,6 +40,13 @@ class HistoryRequestPane extends ConsumerWidget {
             .select((value) => value?.httpRequestModel.hasQuery)) ??
         false;
 
+    final scriptsLength = ref.watch(selectedHistoryRequestModelProvider
+            .select((value) => value?.preRequestScript?.length)) ??
+        ref.watch(selectedHistoryRequestModelProvider
+            .select((value) => value?.postRequestScript?.length)) ??
+        0;
+
+
     final hasAuth = ref.watch(selectedHistoryRequestModelProvider.select(
         (value) =>
             value?.authModel?.type != APIAuthType.none));
@@ -61,6 +68,7 @@ class HistoryRequestPane extends ConsumerWidget {
             paramLength > 0,
             headerLength > 0,
             hasBody,
+            scriptsLength > 0,
           ],
           tabLabels: const [
             kLabelURLParams,
@@ -98,6 +106,7 @@ class HistoryRequestPane extends ConsumerWidget {
             headerLength > 0,
             hasAuth,
             hasQuery,
+            scriptsLength > 0
           ],
           tabLabels: const [
             kLabelHeaders,

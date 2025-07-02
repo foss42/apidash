@@ -1,9 +1,7 @@
 import 'dart:convert';
 import 'package:apidash_core/consts.dart';
 import 'package:apidash_core/models/auth/api_auth_model.dart';
-import 'package:apidash_core/models/http_request_model.dart';
 import 'package:apidash_core/utils/auth_utils.dart';
-import 'package:seed/seed.dart';
 
 HttpRequestModel handleAuth(HttpRequestModel httpRequestModel,AuthModel? authData) {
   if (authData == null || authData.type == APIAuthType.none) {

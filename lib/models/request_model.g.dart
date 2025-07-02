@@ -31,10 +31,8 @@ _$RequestModelImpl _$$RequestModelImplFromJson(Map json) => _$RequestModelImpl(
       sendingTime: json['sendingTime'] == null
           ? null
           : DateTime.parse(json['sendingTime'] as String),
-      authModel: json['authModel'] == null
-          ? const AuthModel(type: APIAuthType.none)
-          : AuthModel.fromJson(
-              Map<String, dynamic>.from(json['authModel'] as Map)),
+      preRequestScript: json['preRequestScript'] as String?,
+      postRequestScript: json['postRequestScript'] as String?,
     );
 
 Map<String, dynamic> _$$RequestModelImplToJson(_$RequestModelImpl instance) =>
@@ -48,7 +46,8 @@ Map<String, dynamic> _$$RequestModelImplToJson(_$RequestModelImpl instance) =>
       'responseStatus': instance.responseStatus,
       'message': instance.message,
       'httpResponseModel': instance.httpResponseModel?.toJson(),
-      'authModel': instance.authModel?.toJson(),
+      'preRequestScript': instance.preRequestScript,
+      'postRequestScript': instance.postRequestScript,
     };
 
 const _$APITypeEnumMap = {

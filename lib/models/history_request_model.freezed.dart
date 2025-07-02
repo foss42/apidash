@@ -24,6 +24,8 @@ mixin _$HistoryRequestModel {
   HistoryMetaModel get metaData => throw _privateConstructorUsedError;
   HttpRequestModel get httpRequestModel => throw _privateConstructorUsedError;
   HttpResponseModel get httpResponseModel => throw _privateConstructorUsedError;
+  String? get preRequestScript => throw _privateConstructorUsedError;
+  String? get postRequestScript => throw _privateConstructorUsedError;
   AuthModel? get authModel => throw _privateConstructorUsedError;
 
   /// Serializes this HistoryRequestModel to a JSON map.
@@ -47,6 +49,8 @@ abstract class $HistoryRequestModelCopyWith<$Res> {
       HistoryMetaModel metaData,
       HttpRequestModel httpRequestModel,
       HttpResponseModel httpResponseModel,
+      String? preRequestScript,
+      String? postRequestScript,
       AuthModel? authModel});
 
   $HistoryMetaModelCopyWith<$Res> get metaData;
@@ -74,6 +78,8 @@ class _$HistoryRequestModelCopyWithImpl<$Res, $Val extends HistoryRequestModel>
     Object? metaData = null,
     Object? httpRequestModel = null,
     Object? httpResponseModel = null,
+    Object? preRequestScript = freezed,
+    Object? postRequestScript = freezed,
     Object? authModel = freezed,
   }) {
     return _then(_value.copyWith(
@@ -93,6 +99,14 @@ class _$HistoryRequestModelCopyWithImpl<$Res, $Val extends HistoryRequestModel>
           ? _value.httpResponseModel
           : httpResponseModel // ignore: cast_nullable_to_non_nullable
               as HttpResponseModel,
+      preRequestScript: freezed == preRequestScript
+          ? _value.preRequestScript
+          : preRequestScript // ignore: cast_nullable_to_non_nullable
+              as String?,
+      postRequestScript: freezed == postRequestScript
+          ? _value.postRequestScript
+          : postRequestScript // ignore: cast_nullable_to_non_nullable
+              as String?,
       authModel: freezed == authModel
           ? _value.authModel
           : authModel // ignore: cast_nullable_to_non_nullable
@@ -158,6 +172,8 @@ abstract class _$$HistoryRequestModelImplCopyWith<$Res>
       HistoryMetaModel metaData,
       HttpRequestModel httpRequestModel,
       HttpResponseModel httpResponseModel,
+      String? preRequestScript,
+      String? postRequestScript,
       AuthModel? authModel});
 
   @override
@@ -187,6 +203,8 @@ class __$$HistoryRequestModelImplCopyWithImpl<$Res>
     Object? metaData = null,
     Object? httpRequestModel = null,
     Object? httpResponseModel = null,
+    Object? preRequestScript = freezed,
+    Object? postRequestScript = freezed,
     Object? authModel = freezed,
   }) {
     return _then(_$HistoryRequestModelImpl(
@@ -206,6 +224,14 @@ class __$$HistoryRequestModelImplCopyWithImpl<$Res>
           ? _value.httpResponseModel
           : httpResponseModel // ignore: cast_nullable_to_non_nullable
               as HttpResponseModel,
+      preRequestScript: freezed == preRequestScript
+          ? _value.preRequestScript
+          : preRequestScript // ignore: cast_nullable_to_non_nullable
+              as String?,
+      postRequestScript: freezed == postRequestScript
+          ? _value.postRequestScript
+          : postRequestScript // ignore: cast_nullable_to_non_nullable
+              as String?,
       authModel: freezed == authModel
           ? _value.authModel
           : authModel // ignore: cast_nullable_to_non_nullable
@@ -223,6 +249,8 @@ class _$HistoryRequestModelImpl implements _HistoryRequestModel {
       required this.metaData,
       required this.httpRequestModel,
       required this.httpResponseModel,
+      this.preRequestScript,
+      this.postRequestScript,
       required this.authModel});
 
   factory _$HistoryRequestModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -237,11 +265,15 @@ class _$HistoryRequestModelImpl implements _HistoryRequestModel {
   @override
   final HttpResponseModel httpResponseModel;
   @override
+  final String? preRequestScript;
+  @override
+  final String? postRequestScript;
+  @override
   final AuthModel? authModel;
 
   @override
   String toString() {
-    return 'HistoryRequestModel(historyId: $historyId, metaData: $metaData, httpRequestModel: $httpRequestModel, httpResponseModel: $httpResponseModel, authModel: $authModel)';
+    return 'HistoryRequestModel(historyId: $historyId, metaData: $metaData, httpRequestModel: $httpRequestModel, httpResponseModel: $httpResponseModel, preRequestScript: $preRequestScript, postRequestScript: $postRequestScript, authModel: $authModel)';
   }
 
   @override
@@ -257,14 +289,25 @@ class _$HistoryRequestModelImpl implements _HistoryRequestModel {
                 other.httpRequestModel == httpRequestModel) &&
             (identical(other.httpResponseModel, httpResponseModel) ||
                 other.httpResponseModel == httpResponseModel) &&
+            (identical(other.preRequestScript, preRequestScript) ||
+                other.preRequestScript == preRequestScript) &&
+            (identical(other.postRequestScript, postRequestScript) ||
+                other.postRequestScript == postRequestScript) &&
             (identical(other.authModel, authModel) ||
                 other.authModel == authModel));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, historyId, metaData,
-      httpRequestModel, httpResponseModel, authModel);
+  int get hashCode => Object.hash(
+      runtimeType,
+      historyId,
+      metaData,
+      httpRequestModel,
+      httpResponseModel,
+      preRequestScript,
+      postRequestScript,
+      authModel);
 
   /// Create a copy of HistoryRequestModel
   /// with the given fields replaced by the non-null parameter values.
@@ -289,6 +332,8 @@ abstract class _HistoryRequestModel implements HistoryRequestModel {
       required final HistoryMetaModel metaData,
       required final HttpRequestModel httpRequestModel,
       required final HttpResponseModel httpResponseModel,
+      final String? preRequestScript,
+      final String? postRequestScript,
       required final AuthModel? authModel}) = _$HistoryRequestModelImpl;
 
   factory _HistoryRequestModel.fromJson(Map<String, dynamic> json) =
@@ -302,6 +347,10 @@ abstract class _HistoryRequestModel implements HistoryRequestModel {
   HttpRequestModel get httpRequestModel;
   @override
   HttpResponseModel get httpResponseModel;
+  @override
+  String? get preRequestScript;
+  @override
+  String? get postRequestScript;
   @override
   AuthModel? get authModel;
 
