@@ -270,7 +270,7 @@ class CollectionStateNotifier
     ref.read(codePaneVisibleStateProvider.notifier).state = false;
     final defaultUriScheme = ref.read(settingsProvider).defaultUriScheme;
     final EnvironmentModel? originalEnvironmentModel =
-        ref.read(selectedEnvironmentModelProvider);
+        ref.read(activeEnvironmentModelProvider);
 
     if (requestId == null || state == null) {
       return;
