@@ -270,7 +270,7 @@ class CollectionStateNotifier
     ref.read(codePaneVisibleStateProvider.notifier).state = false;
     final defaultUriScheme = ref.read(settingsProvider).defaultUriScheme;
     final EnvironmentModel? originalEnvironmentModel =
-        ref.read(selectedEnvironmentModelProvider);
+        ref.read(activeEnvironmentModelProvider);
 
     if (requestId == null || state == null) {
       return;
@@ -281,10 +281,11 @@ class CollectionStateNotifier
       return;
     }
 
-    if (requestModel != null &&
-        !requestModel.preRequestScript.isNullOrEmpty()) {
-      requestModel = await handlePreRequestScript(
-        requestModel,
+    RequestModel executionRequestModel = requestModel!.copyWith();
+
+    if (!requestModel.preRequestScript.isNullOrEmpty()) {
+      executionRequestModel = await handlePreRequestScript(
+        executionRequestModel,
         originalEnvironmentModel,
         (envModel, updatedValues) {
           ref
@@ -298,9 +299,9 @@ class CollectionStateNotifier
       );
     }
 
-    APIType apiType = requestModel!.apiType;
+    APIType apiType = executionRequestModel.apiType;
     HttpRequestModel substitutedHttpRequestModel =
-        getSubstitutedHttpRequestModel(requestModel.httpRequestModel!);
+        getSubstitutedHttpRequestModel(executionRequestModel.httpRequestModel!);
 
     // set current model's isWorking to true and update state
     var map = {...state!};

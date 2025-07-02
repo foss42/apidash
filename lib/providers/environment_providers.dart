@@ -15,6 +15,15 @@ final selectedEnvironmentModelProvider =
   return selectedId != null ? environments![selectedId] : null;
 });
 
+final activeEnvironmentModelProvider = StateProvider<EnvironmentModel?>((ref) {
+  final activeId = ref.watch(activeEnvironmentIdStateProvider);
+  final environments = ref.watch(environmentsStateNotifierProvider);
+  if (activeId != null && environments != null) {
+    return environments[activeId];
+  }
+  return null;
+});
+
 final availableEnvironmentVariablesStateProvider =
     StateProvider<Map<String, List<EnvironmentVariableModel>>>((ref) {
   Map<String, List<EnvironmentVariableModel>> result = {};

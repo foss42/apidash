@@ -61,7 +61,7 @@ class _ScriptsCodePaneState extends ConsumerState<HistoryScriptsTab> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: kP6,
           child: ADDropdownButton<int>(
             value: _selectedTabIndex,
             values: tabs,
@@ -75,7 +75,10 @@ class _ScriptsCodePaneState extends ConsumerState<HistoryScriptsTab> {
           ),
         ),
         Expanded(
-          child: content[_selectedTabIndex],
+          child: Padding(
+            padding: kPt5o10,
+            child: content[_selectedTabIndex],
+          ),
         ),
       ],
     );
