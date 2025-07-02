@@ -347,9 +347,10 @@ Future<Stream<HttpStreamOutput>> streamHttpRequest(
         //handle cases where response is larger than a TCP packet and cuts mid-way
         if (!hasEmitted && !controller.isClosed) {
           final response = getResponseFromBytes(buffer.toString().codeUnits);
-          if (response.body.trim().isEmpty) return;
-          final isStreaming = kStreamingResponseTypes.contains(contentType);
-          controller.add((isStreaming, response, stopwatch.elapsed, null));
+          if (response.body.trim().isNotEmpty) {
+            final isStreaming = kStreamingResponseTypes.contains(contentType);
+            controller.add((isStreaming, response, stopwatch.elapsed, null));
+          }
         }
         cleanup();
       },
