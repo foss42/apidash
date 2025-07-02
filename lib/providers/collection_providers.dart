@@ -281,11 +281,11 @@ class CollectionStateNotifier
       return;
     }
 
-    RequestModel executionRequestModel = requestModel!;
+    RequestModel executionRequestModel = requestModel!.copyWith();
 
     if (!requestModel.preRequestScript.isNullOrEmpty()) {
       executionRequestModel = await handlePreRequestScript(
-        requestModel,
+        executionRequestModel,
         originalEnvironmentModel,
         (envModel, updatedValues) {
           ref
