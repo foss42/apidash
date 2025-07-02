@@ -180,7 +180,7 @@ Future<Stream<HttpStreamOutput>> streamHttpRequest(
   bool noSSL = false,
 }) async {
   final controller = StreamController<HttpStreamOutput>();
-  StreamSubscription<String?>? subscription;
+  StreamSubscription<List<int>?>? subscription;
   final stopwatch = Stopwatch()..start();
 
   cleanup() async {
@@ -296,7 +296,6 @@ Future<Stream<HttpStreamOutput>> streamHttpRequest(
     }
 
     //----------------- Response Handling ---------------------
-    final Stream<String?> outputStream = streamTextResponse(streamedResponse);
 
     HttpResponse getResponseFromBytes(List<int> bytes) {
       return HttpResponse.bytes(
@@ -318,22 +317,22 @@ Future<Stream<HttpStreamOutput>> streamHttpRequest(
     int receivedBytes = 0;
     bool hasEmitted = false;
 
-    subscription = outputStream.listen(
-      (chunk) {
-        if (chunk == null || controller.isClosed) return;
+    subscription = streamedResponse.stream.listen(
+      (bytes) {
+        if (controller.isClosed) return;
 
         final isStreaming = kStreamingResponseTypes.contains(contentType);
 
         if (isStreaming) {
           //For Streaming responses, output every response
-          final response = getResponseFromBytes(chunk.codeUnits);
+          final response = getResponseFromBytes(bytes);
           controller.add((true, response, stopwatch.elapsed, null));
           return;
         }
 
         //For non Streaming events, add output to buffer
-        receivedBytes += chunk.codeUnits.length;
-        buffer.write(chunk);
+        receivedBytes += bytes.length;
+        buffer.write(decodeBytes(bytes, contentType));
 
         if (!hasEmitted &&
             contentLength > 0 &&
