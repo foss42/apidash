@@ -323,26 +323,18 @@ class CollectionStateNotifier
     HttpResponseModel? respModel;
     HistoryRequestModel? historyM;
     RequestModel newRequestModel = requestModel;
-    final completer = Completer<(Response?, Duration?, String?)>();
     bool? isTextStream;
+    final completer = Completer<(Response?, Duration?, String?)>();
+
     StreamSubscription? sub;
 
     sub = stream.listen((d) async {
       if (d == null) return;
 
-      final contentType = d.$1?.headers['content-type']?.toLowerCase();
-
-      if (isTextStream == null) {
-        if (kStreamingResponseTypes.contains(contentType)) {
-          isTextStream = true;
-        } else {
-          isTextStream = false;
-        }
-      }
-
-      final response = d.$1;
-      final duration = d.$2;
-      final errorMessage = d.$3;
+      isTextStream = d.$1;
+      final response = d.$2;
+      final duration = d.$3;
+      final errorMessage = d.$4;
 
       if (isTextStream == false) {
         if (!completer.isCompleted) {

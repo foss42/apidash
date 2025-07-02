@@ -165,16 +165,21 @@ http.Request prepareHttpRequest({
   return request;
 }
 
-Future<Stream<(HttpResponse? resp, Duration? dur, String? err)?>>
-streamHttpRequest(
+typedef HttpStreamOutput = (
+  bool? streamOutput,
+  HttpResponse? resp,
+  Duration? dur,
+  String? err,
+)?;
+
+Future<Stream<HttpStreamOutput>> streamHttpRequest(
   String requestId,
   APIType apiType,
   HttpRequestModel requestModel, {
   SupportedUriSchemes defaultUriScheme = kDefaultUriScheme,
   bool noSSL = false,
 }) async {
-  final controller =
-      StreamController<(HttpResponse? resp, Duration? dur, String? err)?>();
+  final controller = StreamController<HttpStreamOutput>();
   StreamSubscription<String?>? subscription;
   final stopwatch = Stopwatch()..start();
 
@@ -190,11 +195,11 @@ streamHttpRequest(
     await Future.microtask(() {});
     if (httpClientManager.wasRequestCancelled(requestId)) {
       if (!controller.isClosed) {
-        controller.add((null, null, kMsgRequestCancelled));
+        controller.add((null, null, null, kMsgRequestCancelled));
       }
       httpClientManager.removeCancelledRequest(requestId);
     } else {
-      controller.add((null, null, error.toString()));
+      controller.add((null, null, null, error.toString()));
     }
     await cleanup();
   }
@@ -206,7 +211,7 @@ streamHttpRequest(
 
   if (httpClientManager.wasRequestCancelled(requestId)) {
     if (!controller.isClosed) {
-      controller.add((null, null, kMsgRequestCancelled));
+      controller.add((null, null, null, kMsgRequestCancelled));
     }
     httpClientManager.removeCancelledRequest(requestId);
     controller.close();
@@ -232,6 +237,7 @@ streamHttpRequest(
   http.StreamedResponse streamedResponse;
 
   try {
+    //----------------- Request Creation ---------------------
     //Handling HTTP Multipart Requests
     if (apiType == APIType.rest && isMultipart && hasBody) {
       final multipart = http.MultipartRequest(
@@ -267,6 +273,7 @@ streamHttpRequest(
         ..body = body ?? '';
       streamedResponse = await client.send(request);
     } else {
+      //Handling regular REST Requests
       String? body;
       bool overrideContentType = false;
       if (hasBody && requestModel.body?.isNotEmpty == true) {
@@ -288,28 +295,65 @@ streamHttpRequest(
       streamedResponse = await client.send(request);
     }
 
+    //----------------- Response Handling ---------------------
     final Stream<String?> outputStream = streamTextResponse(streamedResponse);
 
+    HttpResponse getResponseFromBytes(List<int> bytes) {
+      return HttpResponse.bytes(
+        bytes,
+        streamedResponse.statusCode,
+        request: streamedResponse.request,
+        headers: streamedResponse.headers,
+        isRedirect: streamedResponse.isRedirect,
+        persistentConnection: streamedResponse.persistentConnection,
+        reasonPhrase: streamedResponse.reasonPhrase,
+      );
+    }
+
+    final buffer = StringBuffer();
+    final contentType =
+        streamedResponse.headers['content-type']?.toString() ?? '';
+    final contentLength =
+        int.tryParse(streamedResponse.headers['content-length'] ?? '') ?? -1;
+    int receivedBytes = 0;
+    bool hasEmitted = false;
+
     subscription = outputStream.listen(
-      (data) {
-        HttpResponse? resp;
-        if (data != null) {
-          resp = HttpResponse.bytes(
-            data.codeUnits,
-            streamedResponse.statusCode,
-            request: streamedResponse.request,
-            headers: streamedResponse.headers,
-            isRedirect: streamedResponse.isRedirect,
-            persistentConnection: streamedResponse.persistentConnection,
-            reasonPhrase: streamedResponse.reasonPhrase,
-          );
-          if (!controller.isClosed) {
-            //if it is partial response chunk, complete it here only and then send
-            controller.add((resp, stopwatch.elapsed, null));
-          }
+      (chunk) {
+        if (chunk == null || controller.isClosed) return;
+
+        final isStreaming = kStreamingResponseTypes.contains(contentType);
+
+        if (isStreaming) {
+          //For Streaming responses, output every response
+          final response = getResponseFromBytes(chunk.codeUnits);
+          controller.add((true, response, stopwatch.elapsed, null));
+          return;
+        }
+
+        //For non Streaming events, add output to buffer
+        receivedBytes += chunk.codeUnits.length;
+        buffer.write(chunk);
+
+        if (!hasEmitted &&
+            contentLength > 0 &&
+            receivedBytes >= contentLength &&
+            !controller.isClosed) {
+          final response = getResponseFromBytes(buffer.toString().codeUnits);
+          controller.add((false, response, stopwatch.elapsed, null));
+          hasEmitted = true;
         }
       },
-      onDone: () => cleanup(),
+      onDone: () {
+        //handle cases where response is larger than a TCP packet and cuts mid-way
+        if (!hasEmitted && !controller.isClosed) {
+          final response = getResponseFromBytes(buffer.toString().codeUnits);
+          if (response.body.trim().isEmpty) return;
+          final isStreaming = kStreamingResponseTypes.contains(contentType);
+          controller.add((isStreaming, response, stopwatch.elapsed, null));
+        }
+        cleanup();
+      },
       onError: handleError,
     );
     return controller.stream;
