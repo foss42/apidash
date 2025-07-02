@@ -12,7 +12,8 @@ part of 'auth_jwt_model.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 AuthJwtModel _$AuthJwtModelFromJson(Map<String, dynamic> json) {
   return _AuthJwtModel.fromJson(json);
@@ -42,18 +43,20 @@ mixin _$AuthJwtModel {
 /// @nodoc
 abstract class $AuthJwtModelCopyWith<$Res> {
   factory $AuthJwtModelCopyWith(
-          AuthJwtModel value, $Res Function(AuthJwtModel) then) =
-      _$AuthJwtModelCopyWithImpl<$Res, AuthJwtModel>;
+    AuthJwtModel value,
+    $Res Function(AuthJwtModel) then,
+  ) = _$AuthJwtModelCopyWithImpl<$Res, AuthJwtModel>;
   @useResult
-  $Res call(
-      {String secret,
-      String payload,
-      String addTokenTo,
-      String algorithm,
-      bool isSecretBase64Encoded,
-      String headerPrefix,
-      String queryParamKey,
-      String header});
+  $Res call({
+    String secret,
+    String payload,
+    String addTokenTo,
+    String algorithm,
+    bool isSecretBase64Encoded,
+    String headerPrefix,
+    String queryParamKey,
+    String header,
+  });
 }
 
 /// @nodoc
@@ -80,40 +83,43 @@ class _$AuthJwtModelCopyWithImpl<$Res, $Val extends AuthJwtModel>
     Object? queryParamKey = null,
     Object? header = null,
   }) {
-    return _then(_value.copyWith(
-      secret: null == secret
-          ? _value.secret
-          : secret // ignore: cast_nullable_to_non_nullable
-              as String,
-      payload: null == payload
-          ? _value.payload
-          : payload // ignore: cast_nullable_to_non_nullable
-              as String,
-      addTokenTo: null == addTokenTo
-          ? _value.addTokenTo
-          : addTokenTo // ignore: cast_nullable_to_non_nullable
-              as String,
-      algorithm: null == algorithm
-          ? _value.algorithm
-          : algorithm // ignore: cast_nullable_to_non_nullable
-              as String,
-      isSecretBase64Encoded: null == isSecretBase64Encoded
-          ? _value.isSecretBase64Encoded
-          : isSecretBase64Encoded // ignore: cast_nullable_to_non_nullable
-              as bool,
-      headerPrefix: null == headerPrefix
-          ? _value.headerPrefix
-          : headerPrefix // ignore: cast_nullable_to_non_nullable
-              as String,
-      queryParamKey: null == queryParamKey
-          ? _value.queryParamKey
-          : queryParamKey // ignore: cast_nullable_to_non_nullable
-              as String,
-      header: null == header
-          ? _value.header
-          : header // ignore: cast_nullable_to_non_nullable
-              as String,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            secret: null == secret
+                ? _value.secret
+                : secret // ignore: cast_nullable_to_non_nullable
+                      as String,
+            payload: null == payload
+                ? _value.payload
+                : payload // ignore: cast_nullable_to_non_nullable
+                      as String,
+            addTokenTo: null == addTokenTo
+                ? _value.addTokenTo
+                : addTokenTo // ignore: cast_nullable_to_non_nullable
+                      as String,
+            algorithm: null == algorithm
+                ? _value.algorithm
+                : algorithm // ignore: cast_nullable_to_non_nullable
+                      as String,
+            isSecretBase64Encoded: null == isSecretBase64Encoded
+                ? _value.isSecretBase64Encoded
+                : isSecretBase64Encoded // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            headerPrefix: null == headerPrefix
+                ? _value.headerPrefix
+                : headerPrefix // ignore: cast_nullable_to_non_nullable
+                      as String,
+            queryParamKey: null == queryParamKey
+                ? _value.queryParamKey
+                : queryParamKey // ignore: cast_nullable_to_non_nullable
+                      as String,
+            header: null == header
+                ? _value.header
+                : header // ignore: cast_nullable_to_non_nullable
+                      as String,
+          )
+          as $Val,
+    );
   }
 }
 
@@ -121,19 +127,21 @@ class _$AuthJwtModelCopyWithImpl<$Res, $Val extends AuthJwtModel>
 abstract class _$$AuthJwtModelImplCopyWith<$Res>
     implements $AuthJwtModelCopyWith<$Res> {
   factory _$$AuthJwtModelImplCopyWith(
-          _$AuthJwtModelImpl value, $Res Function(_$AuthJwtModelImpl) then) =
-      __$$AuthJwtModelImplCopyWithImpl<$Res>;
+    _$AuthJwtModelImpl value,
+    $Res Function(_$AuthJwtModelImpl) then,
+  ) = __$$AuthJwtModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String secret,
-      String payload,
-      String addTokenTo,
-      String algorithm,
-      bool isSecretBase64Encoded,
-      String headerPrefix,
-      String queryParamKey,
-      String header});
+  $Res call({
+    String secret,
+    String payload,
+    String addTokenTo,
+    String algorithm,
+    bool isSecretBase64Encoded,
+    String headerPrefix,
+    String queryParamKey,
+    String header,
+  });
 }
 
 /// @nodoc
@@ -141,8 +149,9 @@ class __$$AuthJwtModelImplCopyWithImpl<$Res>
     extends _$AuthJwtModelCopyWithImpl<$Res, _$AuthJwtModelImpl>
     implements _$$AuthJwtModelImplCopyWith<$Res> {
   __$$AuthJwtModelImplCopyWithImpl(
-      _$AuthJwtModelImpl _value, $Res Function(_$AuthJwtModelImpl) _then)
-      : super(_value, _then);
+    _$AuthJwtModelImpl _value,
+    $Res Function(_$AuthJwtModelImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of AuthJwtModel
   /// with the given fields replaced by the non-null parameter values.
@@ -158,55 +167,58 @@ class __$$AuthJwtModelImplCopyWithImpl<$Res>
     Object? queryParamKey = null,
     Object? header = null,
   }) {
-    return _then(_$AuthJwtModelImpl(
-      secret: null == secret
-          ? _value.secret
-          : secret // ignore: cast_nullable_to_non_nullable
-              as String,
-      payload: null == payload
-          ? _value.payload
-          : payload // ignore: cast_nullable_to_non_nullable
-              as String,
-      addTokenTo: null == addTokenTo
-          ? _value.addTokenTo
-          : addTokenTo // ignore: cast_nullable_to_non_nullable
-              as String,
-      algorithm: null == algorithm
-          ? _value.algorithm
-          : algorithm // ignore: cast_nullable_to_non_nullable
-              as String,
-      isSecretBase64Encoded: null == isSecretBase64Encoded
-          ? _value.isSecretBase64Encoded
-          : isSecretBase64Encoded // ignore: cast_nullable_to_non_nullable
-              as bool,
-      headerPrefix: null == headerPrefix
-          ? _value.headerPrefix
-          : headerPrefix // ignore: cast_nullable_to_non_nullable
-              as String,
-      queryParamKey: null == queryParamKey
-          ? _value.queryParamKey
-          : queryParamKey // ignore: cast_nullable_to_non_nullable
-              as String,
-      header: null == header
-          ? _value.header
-          : header // ignore: cast_nullable_to_non_nullable
-              as String,
-    ));
+    return _then(
+      _$AuthJwtModelImpl(
+        secret: null == secret
+            ? _value.secret
+            : secret // ignore: cast_nullable_to_non_nullable
+                  as String,
+        payload: null == payload
+            ? _value.payload
+            : payload // ignore: cast_nullable_to_non_nullable
+                  as String,
+        addTokenTo: null == addTokenTo
+            ? _value.addTokenTo
+            : addTokenTo // ignore: cast_nullable_to_non_nullable
+                  as String,
+        algorithm: null == algorithm
+            ? _value.algorithm
+            : algorithm // ignore: cast_nullable_to_non_nullable
+                  as String,
+        isSecretBase64Encoded: null == isSecretBase64Encoded
+            ? _value.isSecretBase64Encoded
+            : isSecretBase64Encoded // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        headerPrefix: null == headerPrefix
+            ? _value.headerPrefix
+            : headerPrefix // ignore: cast_nullable_to_non_nullable
+                  as String,
+        queryParamKey: null == queryParamKey
+            ? _value.queryParamKey
+            : queryParamKey // ignore: cast_nullable_to_non_nullable
+                  as String,
+        header: null == header
+            ? _value.header
+            : header // ignore: cast_nullable_to_non_nullable
+                  as String,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$AuthJwtModelImpl implements _AuthJwtModel {
-  const _$AuthJwtModelImpl(
-      {required this.secret,
-      required this.payload,
-      required this.addTokenTo,
-      required this.algorithm,
-      required this.isSecretBase64Encoded,
-      required this.headerPrefix,
-      required this.queryParamKey,
-      required this.header});
+  const _$AuthJwtModelImpl({
+    required this.secret,
+    required this.payload,
+    required this.addTokenTo,
+    required this.algorithm,
+    required this.isSecretBase64Encoded,
+    required this.headerPrefix,
+    required this.queryParamKey,
+    required this.header,
+  });
 
   factory _$AuthJwtModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$AuthJwtModelImplFromJson(json);
@@ -255,8 +267,17 @@ class _$AuthJwtModelImpl implements _AuthJwtModel {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, secret, payload, addTokenTo,
-      algorithm, isSecretBase64Encoded, headerPrefix, queryParamKey, header);
+  int get hashCode => Object.hash(
+    runtimeType,
+    secret,
+    payload,
+    addTokenTo,
+    algorithm,
+    isSecretBase64Encoded,
+    headerPrefix,
+    queryParamKey,
+    header,
+  );
 
   /// Create a copy of AuthJwtModel
   /// with the given fields replaced by the non-null parameter values.
@@ -268,22 +289,21 @@ class _$AuthJwtModelImpl implements _AuthJwtModel {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$AuthJwtModelImplToJson(
-      this,
-    );
+    return _$$AuthJwtModelImplToJson(this);
   }
 }
 
 abstract class _AuthJwtModel implements AuthJwtModel {
-  const factory _AuthJwtModel(
-      {required final String secret,
-      required final String payload,
-      required final String addTokenTo,
-      required final String algorithm,
-      required final bool isSecretBase64Encoded,
-      required final String headerPrefix,
-      required final String queryParamKey,
-      required final String header}) = _$AuthJwtModelImpl;
+  const factory _AuthJwtModel({
+    required final String secret,
+    required final String payload,
+    required final String addTokenTo,
+    required final String algorithm,
+    required final bool isSecretBase64Encoded,
+    required final String headerPrefix,
+    required final String queryParamKey,
+    required final String header,
+  }) = _$AuthJwtModelImpl;
 
   factory _AuthJwtModel.fromJson(Map<String, dynamic> json) =
       _$AuthJwtModelImpl.fromJson;

@@ -7,24 +7,26 @@ part of 'api_auth_model.dart';
 // **************************************************************************
 
 _$AuthModelImpl _$$AuthModelImplFromJson(Map json) => _$AuthModelImpl(
-      type: $enumDecode(_$APIAuthTypeEnumMap, json['type']),
-      apikey: json['apikey'] == null
-          ? null
-          : AuthApiKeyModel.fromJson(
-              Map<String, dynamic>.from(json['apikey'] as Map)),
-      bearer: json['bearer'] == null
-          ? null
-          : AuthBearerModel.fromJson(
-              Map<String, dynamic>.from(json['bearer'] as Map)),
-      basic: json['basic'] == null
-          ? null
-          : AuthBasicAuthModel.fromJson(
-              Map<String, dynamic>.from(json['basic'] as Map)),
-      jwt: json['jwt'] == null
-          ? null
-          : AuthJwtModel.fromJson(
-              Map<String, dynamic>.from(json['jwt'] as Map)),
-    );
+  type: $enumDecode(_$APIAuthTypeEnumMap, json['type']),
+  apikey: json['apikey'] == null
+      ? null
+      : AuthApiKeyModel.fromJson(
+          Map<String, dynamic>.from(json['apikey'] as Map),
+        ),
+  bearer: json['bearer'] == null
+      ? null
+      : AuthBearerModel.fromJson(
+          Map<String, dynamic>.from(json['bearer'] as Map),
+        ),
+  basic: json['basic'] == null
+      ? null
+      : AuthBasicAuthModel.fromJson(
+          Map<String, dynamic>.from(json['basic'] as Map),
+        ),
+  jwt: json['jwt'] == null
+      ? null
+      : AuthJwtModel.fromJson(Map<String, dynamic>.from(json['jwt'] as Map)),
+);
 
 Map<String, dynamic> _$$AuthModelImplToJson(_$AuthModelImpl instance) =>
     <String, dynamic>{

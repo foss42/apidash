@@ -1,7 +1,5 @@
 import 'package:apidash/screens/common_widgets/auth_textfield.dart';
-import 'package:apidash_core/consts.dart';
-import 'package:apidash_core/models/auth/api_auth_model.dart';
-import 'package:apidash_core/models/auth/auth_api_key_model.dart';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
 
@@ -10,12 +8,11 @@ class ApiKeyAuthFields extends StatefulWidget {
   final bool readOnly;
   final Function(AuthModel?) updateAuth;
 
-  const ApiKeyAuthFields({
-    super.key,
-    required this.authData,
-    required this.updateAuth,
-    this.readOnly = false
-  });
+  const ApiKeyAuthFields(
+      {super.key,
+      required this.authData,
+      required this.updateAuth,
+      this.readOnly = false});
 
   @override
   State<ApiKeyAuthFields> createState() => _ApiKeyAuthFieldsState();
@@ -76,7 +73,7 @@ class _ApiKeyAuthFieldsState extends State<ApiKeyAuthFields> {
         ),
         const SizedBox(height: 16),
         AuthTextField(
-           readOnly: widget.readOnly,
+          readOnly: widget.readOnly,
           controller: _keyController,
           hintText: "API Key",
           isObscureText: true,

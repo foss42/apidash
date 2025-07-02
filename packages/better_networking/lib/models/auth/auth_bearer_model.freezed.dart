@@ -12,7 +12,8 @@ part of 'auth_bearer_model.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 AuthBearerModel _$AuthBearerModelFromJson(Map<String, dynamic> json) {
   return _AuthBearerModel.fromJson(json);
@@ -35,8 +36,9 @@ mixin _$AuthBearerModel {
 /// @nodoc
 abstract class $AuthBearerModelCopyWith<$Res> {
   factory $AuthBearerModelCopyWith(
-          AuthBearerModel value, $Res Function(AuthBearerModel) then) =
-      _$AuthBearerModelCopyWithImpl<$Res, AuthBearerModel>;
+    AuthBearerModel value,
+    $Res Function(AuthBearerModel) then,
+  ) = _$AuthBearerModelCopyWithImpl<$Res, AuthBearerModel>;
   @useResult
   $Res call({String token});
 }
@@ -55,24 +57,26 @@ class _$AuthBearerModelCopyWithImpl<$Res, $Val extends AuthBearerModel>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({
-    Object? token = null,
-  }) {
-    return _then(_value.copyWith(
-      token: null == token
-          ? _value.token
-          : token // ignore: cast_nullable_to_non_nullable
-              as String,
-    ) as $Val);
+  $Res call({Object? token = null}) {
+    return _then(
+      _value.copyWith(
+            token: null == token
+                ? _value.token
+                : token // ignore: cast_nullable_to_non_nullable
+                      as String,
+          )
+          as $Val,
+    );
   }
 }
 
 /// @nodoc
 abstract class _$$AuthBearerModelImplCopyWith<$Res>
     implements $AuthBearerModelCopyWith<$Res> {
-  factory _$$AuthBearerModelImplCopyWith(_$AuthBearerModelImpl value,
-          $Res Function(_$AuthBearerModelImpl) then) =
-      __$$AuthBearerModelImplCopyWithImpl<$Res>;
+  factory _$$AuthBearerModelImplCopyWith(
+    _$AuthBearerModelImpl value,
+    $Res Function(_$AuthBearerModelImpl) then,
+  ) = __$$AuthBearerModelImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({String token});
@@ -83,22 +87,23 @@ class __$$AuthBearerModelImplCopyWithImpl<$Res>
     extends _$AuthBearerModelCopyWithImpl<$Res, _$AuthBearerModelImpl>
     implements _$$AuthBearerModelImplCopyWith<$Res> {
   __$$AuthBearerModelImplCopyWithImpl(
-      _$AuthBearerModelImpl _value, $Res Function(_$AuthBearerModelImpl) _then)
-      : super(_value, _then);
+    _$AuthBearerModelImpl _value,
+    $Res Function(_$AuthBearerModelImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of AuthBearerModel
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({
-    Object? token = null,
-  }) {
-    return _then(_$AuthBearerModelImpl(
-      token: null == token
-          ? _value.token
-          : token // ignore: cast_nullable_to_non_nullable
-              as String,
-    ));
+  $Res call({Object? token = null}) {
+    return _then(
+      _$AuthBearerModelImpl(
+        token: null == token
+            ? _value.token
+            : token // ignore: cast_nullable_to_non_nullable
+                  as String,
+      ),
+    );
   }
 }
 
@@ -137,13 +142,13 @@ class _$AuthBearerModelImpl implements _AuthBearerModel {
   @pragma('vm:prefer-inline')
   _$$AuthBearerModelImplCopyWith<_$AuthBearerModelImpl> get copyWith =>
       __$$AuthBearerModelImplCopyWithImpl<_$AuthBearerModelImpl>(
-          this, _$identity);
+        this,
+        _$identity,
+      );
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$AuthBearerModelImplToJson(
-      this,
-    );
+    return _$$AuthBearerModelImplToJson(this);
   }
 }
 

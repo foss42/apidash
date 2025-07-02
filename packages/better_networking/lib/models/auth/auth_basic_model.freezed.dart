@@ -12,7 +12,8 @@ part of 'auth_basic_model.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 AuthBasicAuthModel _$AuthBasicAuthModelFromJson(Map<String, dynamic> json) {
   return _AuthBasicAuthModel.fromJson(json);
@@ -36,8 +37,9 @@ mixin _$AuthBasicAuthModel {
 /// @nodoc
 abstract class $AuthBasicAuthModelCopyWith<$Res> {
   factory $AuthBasicAuthModelCopyWith(
-          AuthBasicAuthModel value, $Res Function(AuthBasicAuthModel) then) =
-      _$AuthBasicAuthModelCopyWithImpl<$Res, AuthBasicAuthModel>;
+    AuthBasicAuthModel value,
+    $Res Function(AuthBasicAuthModel) then,
+  ) = _$AuthBasicAuthModelCopyWithImpl<$Res, AuthBasicAuthModel>;
   @useResult
   $Res call({String username, String password});
 }
@@ -56,29 +58,30 @@ class _$AuthBasicAuthModelCopyWithImpl<$Res, $Val extends AuthBasicAuthModel>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({
-    Object? username = null,
-    Object? password = null,
-  }) {
-    return _then(_value.copyWith(
-      username: null == username
-          ? _value.username
-          : username // ignore: cast_nullable_to_non_nullable
-              as String,
-      password: null == password
-          ? _value.password
-          : password // ignore: cast_nullable_to_non_nullable
-              as String,
-    ) as $Val);
+  $Res call({Object? username = null, Object? password = null}) {
+    return _then(
+      _value.copyWith(
+            username: null == username
+                ? _value.username
+                : username // ignore: cast_nullable_to_non_nullable
+                      as String,
+            password: null == password
+                ? _value.password
+                : password // ignore: cast_nullable_to_non_nullable
+                      as String,
+          )
+          as $Val,
+    );
   }
 }
 
 /// @nodoc
 abstract class _$$AuthBasicAuthModelImplCopyWith<$Res>
     implements $AuthBasicAuthModelCopyWith<$Res> {
-  factory _$$AuthBasicAuthModelImplCopyWith(_$AuthBasicAuthModelImpl value,
-          $Res Function(_$AuthBasicAuthModelImpl) then) =
-      __$$AuthBasicAuthModelImplCopyWithImpl<$Res>;
+  factory _$$AuthBasicAuthModelImplCopyWith(
+    _$AuthBasicAuthModelImpl value,
+    $Res Function(_$AuthBasicAuthModelImpl) then,
+  ) = __$$AuthBasicAuthModelImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({String username, String password});
@@ -88,36 +91,38 @@ abstract class _$$AuthBasicAuthModelImplCopyWith<$Res>
 class __$$AuthBasicAuthModelImplCopyWithImpl<$Res>
     extends _$AuthBasicAuthModelCopyWithImpl<$Res, _$AuthBasicAuthModelImpl>
     implements _$$AuthBasicAuthModelImplCopyWith<$Res> {
-  __$$AuthBasicAuthModelImplCopyWithImpl(_$AuthBasicAuthModelImpl _value,
-      $Res Function(_$AuthBasicAuthModelImpl) _then)
-      : super(_value, _then);
+  __$$AuthBasicAuthModelImplCopyWithImpl(
+    _$AuthBasicAuthModelImpl _value,
+    $Res Function(_$AuthBasicAuthModelImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of AuthBasicAuthModel
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({
-    Object? username = null,
-    Object? password = null,
-  }) {
-    return _then(_$AuthBasicAuthModelImpl(
-      username: null == username
-          ? _value.username
-          : username // ignore: cast_nullable_to_non_nullable
-              as String,
-      password: null == password
-          ? _value.password
-          : password // ignore: cast_nullable_to_non_nullable
-              as String,
-    ));
+  $Res call({Object? username = null, Object? password = null}) {
+    return _then(
+      _$AuthBasicAuthModelImpl(
+        username: null == username
+            ? _value.username
+            : username // ignore: cast_nullable_to_non_nullable
+                  as String,
+        password: null == password
+            ? _value.password
+            : password // ignore: cast_nullable_to_non_nullable
+                  as String,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$AuthBasicAuthModelImpl implements _AuthBasicAuthModel {
-  const _$AuthBasicAuthModelImpl(
-      {required this.username, required this.password});
+  const _$AuthBasicAuthModelImpl({
+    required this.username,
+    required this.password,
+  });
 
   factory _$AuthBasicAuthModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$AuthBasicAuthModelImplFromJson(json);
@@ -154,20 +159,21 @@ class _$AuthBasicAuthModelImpl implements _AuthBasicAuthModel {
   @pragma('vm:prefer-inline')
   _$$AuthBasicAuthModelImplCopyWith<_$AuthBasicAuthModelImpl> get copyWith =>
       __$$AuthBasicAuthModelImplCopyWithImpl<_$AuthBasicAuthModelImpl>(
-          this, _$identity);
+        this,
+        _$identity,
+      );
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$AuthBasicAuthModelImplToJson(
-      this,
-    );
+    return _$$AuthBasicAuthModelImplToJson(this);
   }
 }
 
 abstract class _AuthBasicAuthModel implements AuthBasicAuthModel {
-  const factory _AuthBasicAuthModel(
-      {required final String username,
-      required final String password}) = _$AuthBasicAuthModelImpl;
+  const factory _AuthBasicAuthModel({
+    required final String username,
+    required final String password,
+  }) = _$AuthBasicAuthModelImpl;
 
   factory _AuthBasicAuthModel.fromJson(Map<String, dynamic> json) =
       _$AuthBasicAuthModelImpl.fromJson;

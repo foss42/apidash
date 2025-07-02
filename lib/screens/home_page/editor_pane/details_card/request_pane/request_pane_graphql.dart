@@ -1,6 +1,6 @@
 import 'package:apidash/consts.dart';
 import 'package:apidash/screens/home_page/editor_pane/details_card/request_pane/request_auth.dart';
-import 'package:apidash_core/consts.dart';
+import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
@@ -25,8 +25,8 @@ class EditGraphQLRequestPane extends ConsumerWidget {
             .select((value) => value?.httpRequestModel?.hasQuery)) ??
         false;
 
-    final hasAuth = ref.watch(selectedRequestModelProvider.select((value) =>
-        value?.authModel?.type != APIAuthType.none));
+    final hasAuth = ref.watch(selectedRequestModelProvider
+        .select((value) => value?.authModel?.type != APIAuthType.none));
 
     final scriptsLength = ref.watch(selectedHistoryRequestModelProvider
             .select((value) => value?.preRequestScript?.length)) ??

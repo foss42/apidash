@@ -1,7 +1,8 @@
 import 'dart:convert';
-import 'package:apidash_core/consts.dart';
-import 'package:apidash_core/models/auth/api_auth_model.dart';
-import 'package:apidash_core/utils/auth_utils.dart';
+import 'package:better_networking/utils/auth_utils.dart';
+import 'package:better_networking/better_networking.dart';
+
+import '../models/auth/api_auth_model.dart';
 
 HttpRequestModel handleAuth(HttpRequestModel httpRequestModel,AuthModel? authData) {
   if (authData == null || authData.type == APIAuthType.none) {

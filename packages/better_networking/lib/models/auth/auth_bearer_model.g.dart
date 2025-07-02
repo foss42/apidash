@@ -7,13 +7,9 @@ part of 'auth_bearer_model.dart';
 // **************************************************************************
 
 _$AuthBearerModelImpl _$$AuthBearerModelImplFromJson(
-        Map<String, dynamic> json) =>
-    _$AuthBearerModelImpl(
-      token: json['token'] as String,
-    );
+  Map<String, dynamic> json,
+) => _$AuthBearerModelImpl(token: json['token'] as String);
 
 Map<String, dynamic> _$$AuthBearerModelImplToJson(
-        _$AuthBearerModelImpl instance) =>
-    <String, dynamic>{
-      'token': instance.token,
-    };
+  _$AuthBearerModelImpl instance,
+) => <String, dynamic>{'token': instance.token};

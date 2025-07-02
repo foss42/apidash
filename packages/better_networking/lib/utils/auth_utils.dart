@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'dart:typed_data';
-import 'package:apidash_core/models/auth/auth_jwt_model.dart';
+import 'package:better_networking/models/auth/auth_jwt_model.dart';
 import 'package:crypto/crypto.dart';
 
 String generateJWT(AuthJwtModel jwtAuth) {
