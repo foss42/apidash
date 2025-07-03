@@ -1110,6 +1110,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.2"
+  oauth1:
+    dependency: transitive
+    description:
+      name: oauth1
+      sha256: "1d424e3c24017a6c5714acb12e0dd76c2fdff96db6d6ef0aab58c925ffc28ae0"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.0"
   ollama_dart:
     dependency: "direct main"
     description:

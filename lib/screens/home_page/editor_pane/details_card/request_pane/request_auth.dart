@@ -3,6 +3,7 @@ import 'package:apidash/screens/common_widgets/auth/basic_auth_fields.dart';
 import 'package:apidash/screens/common_widgets/auth/bearer_auth_fields.dart';
 import 'package:apidash/screens/common_widgets/auth/digest_auth_fields.dart';
 import 'package:apidash/screens/common_widgets/auth/jwt_auth_fields.dart';
+import 'package:apidash/screens/common_widgets/auth/oauth1_fields.dart';
 import 'package:apidash_design_system/widgets/popup_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -93,7 +94,6 @@ class EditAuthType extends ConsumerWidget {
     );
   }
 
-  // ...existing code...
   Widget _buildAuthFields(
     BuildContext context,
     WidgetRef ref,
@@ -137,6 +137,12 @@ class EditAuthType extends ConsumerWidget {
         );
       case APIAuthType.digest:
         return DigestAuthFields(
+          readOnly: readOnly,
+          authData: authData,
+          updateAuth: updateAuth,
+        );
+      case APIAuthType.oauth1:
+        return OAuth1Fields(
           readOnly: readOnly,
           authData: authData,
           updateAuth: updateAuth,
