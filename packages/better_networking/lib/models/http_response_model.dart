@@ -68,11 +68,9 @@ class HttpResponseModel with _$HttpResponseModel {
     }, response.headers);
     MediaType? mediaType = getMediaTypeFromHeaders(responseHeaders);
 
-    //TODO: Review Effectiveness
-    final body = decodeBytes(
-      response.bodyBytes,
-      response.headers['content-type']!,
-    );
+    final body = (mediaType?.subtype == kSubTypeJson)
+        ? utf8.decode(response.bodyBytes)
+        : response.body;
 
     return HttpResponseModel(
       statusCode: response.statusCode,
