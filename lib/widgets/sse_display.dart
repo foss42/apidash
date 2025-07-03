@@ -27,7 +27,7 @@ class _SSEDisplayState extends State<SSEDisplay> {
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: sse.reversed.map<Widget>((chunk) {
+        children: sse.reversed.where((e) => e != '').map<Widget>((chunk) {
           Map<String, dynamic>? parsedJson;
           try {
             parsedJson = jsonDecode(chunk);
