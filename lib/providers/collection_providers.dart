@@ -207,7 +207,7 @@ class CollectionStateNotifier
     String? id,
     HTTPVerb? method,
     APIType? apiType,
-    AuthModel? authData,
+    AuthModel? authModel,
     String? url,
     String? name,
     String? description,
@@ -235,7 +235,6 @@ class CollectionStateNotifier
     var currentHttpRequestModel = currentModel.httpRequestModel;
     final newModel = currentModel.copyWith(
       apiType: apiType ?? currentModel.apiType,
-      authModel: authData ?? currentModel.authModel,
       name: name ?? currentModel.name,
       description: description ?? currentModel.description,
       requestTabIndex: requestTabIndex ?? currentModel.requestTabIndex,
@@ -244,6 +243,7 @@ class CollectionStateNotifier
         url: url ?? currentHttpRequestModel.url,
         headers: headers ?? currentHttpRequestModel.headers,
         params: params ?? currentHttpRequestModel.params,
+        authModel: authModel ?? currentHttpRequestModel.authModel,
         isHeaderEnabledList:
             isHeaderEnabledList ?? currentHttpRequestModel.isHeaderEnabledList,
         isParamEnabledList:
@@ -316,7 +316,7 @@ class CollectionStateNotifier
     var responseRec = await sendHttpRequest(
       requestId,
       apiType,
-      requestModel.authModel,
+      requestModel.httpRequestModel?.authModel,
       substitutedHttpRequestModel,
       defaultUriScheme: defaultUriScheme,
       noSSL: noSSL,
@@ -358,7 +358,7 @@ class CollectionStateNotifier
         httpResponseModel: httpResponseModel,
         preRequestScript: requestModel.preRequestScript,
         postRequestScript: requestModel.postRequestScript,
-        authModel: requestModel.authModel,
+        authModel: requestModel.httpRequestModel?.authModel,
       );
 
       ref.read(historyMetaStateNotifier.notifier).addHistoryRequest(model);

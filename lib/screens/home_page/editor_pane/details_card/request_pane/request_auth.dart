@@ -33,10 +33,10 @@ class EditAuthType extends ConsumerWidget {
       }
 
       currentAuthType = ref.watch(
-        selectedRequestModelProvider
-            .select((request) => request?.authModel?.type ?? APIAuthType.none),
+        selectedRequestModelProvider.select((request) =>
+            request?.httpRequestModel?.authModel?.type ?? APIAuthType.none),
       );
-      currentAuthData = selectedRequest.authModel;
+      currentAuthData = selectedRequest.httpRequestModel?.authModel;
     }
     return SingleChildScrollView(
       child: Padding(
@@ -93,7 +93,8 @@ class EditAuthType extends ConsumerWidget {
                       ref.read(selectedRequestModelProvider);
                   if (newType != null) {
                     ref.read(collectionStateNotifierProvider.notifier).update(
-                          authData: selectedRequest?.authModel
+                          authModel: selectedRequest
+                                  ?.httpRequestModel?.authModel
                                   ?.copyWith(type: newType) ??
                               AuthModel(type: newType),
                         );
@@ -117,11 +118,11 @@ class EditAuthType extends ConsumerWidget {
     void updateAuth(AuthModel? model) {
       if (model == null) {
         ref.read(collectionStateNotifierProvider.notifier).update(
-              authData: AuthModel(type: APIAuthType.none),
+              authModel: AuthModel(type: APIAuthType.none),
             );
       }
       ref.read(collectionStateNotifierProvider.notifier).update(
-            authData: model,
+            authModel: model,
           );
     }
 

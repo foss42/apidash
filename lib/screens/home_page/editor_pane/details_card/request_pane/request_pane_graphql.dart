@@ -26,7 +26,7 @@ class EditGraphQLRequestPane extends ConsumerWidget {
         false;
 
     final hasAuth = ref.watch(selectedRequestModelProvider
-        .select((value) => value?.authModel?.type != APIAuthType.none));
+        .select((value) => value?.httpRequestModel?.authModel?.type != APIAuthType.none));
 
     final scriptsLength = ref.watch(selectedHistoryRequestModelProvider
             .select((value) => value?.preRequestScript?.length)) ??
