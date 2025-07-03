@@ -1,6 +1,7 @@
 import 'package:apidash/screens/common_widgets/auth/api_key_auth_fields.dart';
 import 'package:apidash/screens/common_widgets/auth/basic_auth_fields.dart';
 import 'package:apidash/screens/common_widgets/auth/bearer_auth_fields.dart';
+import 'package:apidash/screens/common_widgets/auth/digest_auth_fields.dart';
 import 'package:apidash/screens/common_widgets/auth/jwt_auth_fields.dart';
 import 'package:apidash_design_system/widgets/popup_menu.dart';
 import 'package:flutter/material.dart';
@@ -53,54 +54,37 @@ class EditAuthType extends ConsumerWidget {
             SizedBox(
               height: 8,
             ),
-            if (readOnly)
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surfaceContainerLowest,
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(
-                    color:
-                        Theme.of(context).colorScheme.outline.withOpacity(0.3),
-                  ),
-                ),
-                child: Text(
-                  currentAuthType.name.toUpperCase(),
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w500,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                ),
-              )
-            else
-              ADPopupMenu<APIAuthType>(
-                value: currentAuthType.name.capitalize(),
-                values: const [
-                  (APIAuthType.none, 'None'),
-                  (APIAuthType.basic, 'Basic'),
-                  (APIAuthType.apiKey, 'API Key'),
-                  (APIAuthType.bearer, 'Bearer'),
-                  (APIAuthType.jwt, 'JWT'),
-                  (APIAuthType.digest, 'Digest'),
-                  (APIAuthType.oauth1, 'OAuth 1.0'),
-                  (APIAuthType.oauth2, 'OAuth 2.0'),
-                ],
-                tooltip: "Select Authentication Type",
-                isOutlined: true,
-                onChanged: (APIAuthType? newType) {
-                  final selectedRequest =
-                      ref.read(selectedRequestModelProvider);
-                  if (newType != null) {
-                    ref.read(collectionStateNotifierProvider.notifier).update(
-                          authModel: selectedRequest
-                                  ?.httpRequestModel?.authModel
-                                  ?.copyWith(type: newType) ??
-                              AuthModel(type: newType),
-                        );
-                  }
-                },
-              ),
+            ADPopupMenu<APIAuthType>(
+              value: currentAuthType.name.capitalize(),
+              values: const [
+                (APIAuthType.none, 'None'),
+                (APIAuthType.basic, 'Basic'),
+                (APIAuthType.apiKey, 'API Key'),
+                (APIAuthType.bearer, 'Bearer'),
+                (APIAuthType.jwt, 'JWT'),
+                (APIAuthType.digest, 'Digest'),
+                (APIAuthType.oauth1, 'OAuth 1.0'),
+                (APIAuthType.oauth2, 'OAuth 2.0'),
+              ],
+              tooltip: "Select Authentication Type",
+              isOutlined: true,
+              onChanged: readOnly
+                  ? null
+                  : (APIAuthType? newType) {
+                      final selectedRequest =
+                          ref.read(selectedRequestModelProvider);
+                      if (newType != null) {
+                        ref
+                            .read(collectionStateNotifierProvider.notifier)
+                            .update(
+                              authModel: selectedRequest
+                                      ?.httpRequestModel?.authModel
+                                      ?.copyWith(type: newType) ??
+                                  AuthModel(type: newType),
+                            );
+                      }
+                    },
+            ),
             const SizedBox(height: 48),
             _buildAuthFields(context, ref, currentAuthData),
           ],
@@ -147,6 +131,12 @@ class EditAuthType extends ConsumerWidget {
         );
       case APIAuthType.jwt:
         return JwtAuthFields(
+          readOnly: readOnly,
+          authData: authData,
+          updateAuth: updateAuth,
+        );
+      case APIAuthType.digest:
+        return DigestAuthFields(
           readOnly: readOnly,
           authData: authData,
           updateAuth: updateAuth,

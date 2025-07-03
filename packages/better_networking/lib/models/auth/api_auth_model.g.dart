@@ -26,6 +26,11 @@ _$AuthModelImpl _$$AuthModelImplFromJson(Map json) => _$AuthModelImpl(
   jwt: json['jwt'] == null
       ? null
       : AuthJwtModel.fromJson(Map<String, dynamic>.from(json['jwt'] as Map)),
+  digest: json['digest'] == null
+      ? null
+      : AuthDigestModel.fromJson(
+          Map<String, dynamic>.from(json['digest'] as Map),
+        ),
 );
 
 Map<String, dynamic> _$$AuthModelImplToJson(_$AuthModelImpl instance) =>
@@ -35,6 +40,7 @@ Map<String, dynamic> _$$AuthModelImplToJson(_$AuthModelImpl instance) =>
       'bearer': instance.bearer?.toJson(),
       'basic': instance.basic?.toJson(),
       'jwt': instance.jwt?.toJson(),
+      'digest': instance.digest?.toJson(),
     };
 
 const _$APIAuthTypeEnumMap = {

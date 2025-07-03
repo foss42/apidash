@@ -20,14 +20,22 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
   HttpRequestModel requestModel, {
   SupportedUriSchemes defaultUriScheme = kDefaultUriScheme,
   bool noSSL = false,
+  bool enableAuth = true,
 }) async {
   if (httpClientManager.wasRequestCancelled(requestId)) {
     httpClientManager.removeCancelledRequest(requestId);
   }
   final client = httpClientManager.createClient(requestId, noSSL: noSSL);
 
-  // Handle authentication
-  final authenticatedRequestModel = handleAuth(requestModel, authData);
+  HttpRequestModel authenticatedRequestModel = requestModel.copyWith();
+
+  try {
+    if (enableAuth) {
+      authenticatedRequestModel = await handleAuth(requestModel, authData);
+    }
+  } catch (e) {
+    return (null, null, e.toString());
+  }
 
   (Uri?, String?) uriRec = getValidRequestUri(
     authenticatedRequestModel.url,

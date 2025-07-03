@@ -9,7 +9,7 @@ enum APIType {
   final String abbr;
 }
 
-enum APIAuthType { none, basic, apiKey, bearer, jwt, digest, oauth1, oauth2}
+enum APIAuthType { none, basic, apiKey, bearer, jwt, digest, oauth1, oauth2 }
 
 enum HTTPVerb {
   get("GET"),
@@ -98,4 +98,5 @@ const LineSplitter kSplitter = LineSplitter();
 const kCodeCharsPerLineLimit = 200;
 
 const kHeaderContentType = "Content-Type";
+const kHeaderWwwAuthenticate = 'www-authenticate';
 const kMsgRequestCancelled = 'Request Cancelled';
