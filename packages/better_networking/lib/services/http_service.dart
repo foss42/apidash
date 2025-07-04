@@ -169,6 +169,9 @@ Future<Stream<HttpStreamOutput>> streamHttpRequest(
           final isStreaming = kStreamingResponseTypes.contains(contentType);
           controller.add((isStreaming, response, stopwatch.elapsed, null));
           chunkList.clear();
+        } else {
+          final response = _createResponseFromBytes([]);
+          controller.add((false, response, stopwatch.elapsed, null));
         }
         await _cleanup();
       },
