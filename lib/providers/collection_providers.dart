@@ -307,7 +307,6 @@ class CollectionStateNotifier
       ...state!,
       requestId: requestModel.copyWith(
         isWorking: true,
-        isStreaming: true,
         sendingTime: DateTime.now(),
       ),
     };
