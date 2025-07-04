@@ -4,7 +4,6 @@ import 'package:http_parser/http_parser.dart';
 import 'package:xml/xml.dart';
 import '../consts.dart';
 import 'dart:convert';
-import 'dart:typed_data';
 
 String? formatBody(String? body, MediaType? mediaType) {
   if (mediaType != null && body != null) {
