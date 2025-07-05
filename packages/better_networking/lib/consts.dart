@@ -11,6 +11,15 @@ enum APIType {
 
 enum APIAuthType { none, basic, apiKey, bearer, jwt, digest, oauth1, oauth2 }
 
+enum OAuth2GrantType {
+  authorizationCode("Authorization Code"),
+  clientCredentials("Client Credentials"),
+  resourceOwnerPassword("Resource Owner Password");
+
+  const OAuth2GrantType(this.displayTitle);
+  final String displayTitle;
+}
+
 enum HTTPVerb {
   get("GET"),
   head("HEAD"),

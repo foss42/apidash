@@ -21,7 +21,7 @@ AuthOAuth2Model _$AuthOAuth2ModelFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$AuthOAuth2Model {
-  String get grantType => throw _privateConstructorUsedError;
+  OAuth2GrantType get grantType => throw _privateConstructorUsedError;
   String get authorizationUrl => throw _privateConstructorUsedError;
   String get accessTokenUrl => throw _privateConstructorUsedError;
   String get clientId => throw _privateConstructorUsedError;
@@ -56,7 +56,7 @@ abstract class $AuthOAuth2ModelCopyWith<$Res> {
   ) = _$AuthOAuth2ModelCopyWithImpl<$Res, AuthOAuth2Model>;
   @useResult
   $Res call({
-    String grantType,
+    OAuth2GrantType grantType,
     String authorizationUrl,
     String accessTokenUrl,
     String clientId,
@@ -112,7 +112,7 @@ class _$AuthOAuth2ModelCopyWithImpl<$Res, $Val extends AuthOAuth2Model>
             grantType: null == grantType
                 ? _value.grantType
                 : grantType // ignore: cast_nullable_to_non_nullable
-                      as String,
+                      as OAuth2GrantType,
             authorizationUrl: null == authorizationUrl
                 ? _value.authorizationUrl
                 : authorizationUrl // ignore: cast_nullable_to_non_nullable
@@ -189,7 +189,7 @@ abstract class _$$AuthOAuth2ModelImplCopyWith<$Res>
   @override
   @useResult
   $Res call({
-    String grantType,
+    OAuth2GrantType grantType,
     String authorizationUrl,
     String accessTokenUrl,
     String clientId,
@@ -244,7 +244,7 @@ class __$$AuthOAuth2ModelImplCopyWithImpl<$Res>
         grantType: null == grantType
             ? _value.grantType
             : grantType // ignore: cast_nullable_to_non_nullable
-                  as String,
+                  as OAuth2GrantType,
         authorizationUrl: null == authorizationUrl
             ? _value.authorizationUrl
             : authorizationUrl // ignore: cast_nullable_to_non_nullable
@@ -314,7 +314,7 @@ class __$$AuthOAuth2ModelImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$AuthOAuth2ModelImpl implements _AuthOAuth2Model {
   const _$AuthOAuth2ModelImpl({
-    this.grantType = "authorization_code",
+    this.grantType = OAuth2GrantType.authorizationCode,
     required this.authorizationUrl,
     required this.accessTokenUrl,
     required this.clientId,
@@ -337,7 +337,7 @@ class _$AuthOAuth2ModelImpl implements _AuthOAuth2Model {
 
   @override
   @JsonKey()
-  final String grantType;
+  final OAuth2GrantType grantType;
   @override
   final String authorizationUrl;
   @override
@@ -453,7 +453,7 @@ class _$AuthOAuth2ModelImpl implements _AuthOAuth2Model {
 
 abstract class _AuthOAuth2Model implements AuthOAuth2Model {
   const factory _AuthOAuth2Model({
-    final String grantType,
+    final OAuth2GrantType grantType,
     required final String authorizationUrl,
     required final String accessTokenUrl,
     required final String clientId,
@@ -475,7 +475,7 @@ abstract class _AuthOAuth2Model implements AuthOAuth2Model {
       _$AuthOAuth2ModelImpl.fromJson;
 
   @override
-  String get grantType;
+  OAuth2GrantType get grantType;
   @override
   String get authorizationUrl;
   @override

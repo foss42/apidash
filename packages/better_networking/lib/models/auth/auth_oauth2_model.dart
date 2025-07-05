@@ -1,3 +1,4 @@
+import 'package:better_networking/better_networking.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'auth_oauth2_model.g.dart';
@@ -6,7 +7,7 @@ part 'auth_oauth2_model.freezed.dart';
 @freezed
 class AuthOAuth2Model with _$AuthOAuth2Model {
   const factory AuthOAuth2Model({
-    @Default("authorization_code") String grantType,
+    @Default(OAuth2GrantType.authorizationCode) OAuth2GrantType grantType,
     required String authorizationUrl,
     required String accessTokenUrl,
     required String clientId,
