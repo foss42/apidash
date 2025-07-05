@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:better_networking/utils/auth/jwt_auth_utils.dart';
 import 'package:better_networking/utils/auth/digest_auth_utils.dart';
 import 'package:better_networking/better_networking.dart';
+import 'package:flutter/foundation.dart';
+import 'package:oauth2/oauth2.dart' as oauth2;
 
 Future<HttpRequestModel> handleAuth(
   HttpRequestModel httpRequestModel,

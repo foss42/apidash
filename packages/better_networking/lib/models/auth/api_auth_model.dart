@@ -6,6 +6,7 @@ import 'auth_bearer_model.dart';
 import 'auth_jwt_model.dart';
 import 'auth_digest_model.dart';
 import 'auth_oauth1_model.dart';
+import 'auth_oauth2_model.dart';
 
 part 'api_auth_model.g.dart';
 part 'api_auth_model.freezed.dart';
@@ -21,6 +22,7 @@ class AuthModel with _$AuthModel {
     AuthJwtModel? jwt,
     AuthDigestModel? digest,
     AuthOAuth1Model? oauth1,
+    AuthOAuth2Model? oauth2,
   }) = _AuthModel;
 
   factory AuthModel.fromJson(Map<String, dynamic> json) =>
