@@ -81,6 +81,7 @@ void main() {
       );
       httpClientManager.cancelRequest('graphql_test_c');
       final output = await stream.first;
+      print(output);
       final errMsg = output?.$4;
       expect(
         errMsg,
