@@ -53,12 +53,9 @@ Future<HttpRequestModel> handleAuth(
     case APIAuthType.jwt:
       if (authData.jwt != null) {
         final jwtAuth = authData.jwt!;
-
-        // Generate JWT token
         final jwtToken = generateJWT(jwtAuth);
 
         if (jwtAuth.addTokenTo == 'header') {
-          // Add to request header with prefix
           final headerValue = jwtAuth.headerPrefix.isNotEmpty
               ? '${jwtAuth.headerPrefix} $jwtToken'
               : jwtToken;
@@ -67,7 +64,6 @@ Future<HttpRequestModel> handleAuth(
           );
           updatedHeaderEnabledList.add(true);
         } else if (jwtAuth.addTokenTo == 'query') {
-          // Add to query parameters(if selected)
           final paramKey = jwtAuth.queryParamKey.isNotEmpty
               ? jwtAuth.queryParamKey
               : 'token';

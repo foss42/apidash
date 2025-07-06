@@ -3,7 +3,6 @@ import 'dart:math' as math;
 
 import 'package:convert/convert.dart';
 import 'package:crypto/crypto.dart' as crypto;
-import '../../models/auth/auth_digest_model.dart';
 import '../../models/models.dart';
 
 Map<String, String>? splitAuthenticateHeader(String header) {
@@ -220,18 +219,5 @@ class DigestAuth {
         .join(', ');
     final authString = 'Digest $authValuesString';
     return authString;
-  }
-
-  // TODO: Use this function
-  void initFromAuthenticateHeader(String /*!*/ authInfo) {
-    final values = splitAuthenticateHeader(authInfo);
-    if (values != null) {
-      _algorithm = values['algorithm'] ?? _algorithm;
-      _qop = values['qop'] ?? _qop;
-      _realm = values['realm'] ?? _realm;
-      _nonce = values['nonce'] ?? _nonce;
-      _opaque = values['opaque'] ?? _opaque;
-      _nc = 0;
-    }
   }
 }
