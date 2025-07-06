@@ -111,7 +111,6 @@ Future<HttpRequestModel> handleAuth(
             APIType.rest,
             authData,
             httpRequestModel,
-            enableAuth: false,
           );
           final httpResponse = httpResult.$1;
 

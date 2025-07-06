@@ -20,7 +20,6 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
   HttpRequestModel requestModel, {
   SupportedUriSchemes defaultUriScheme = kDefaultUriScheme,
   bool noSSL = false,
-  bool enableAuth = true,
 }) async {
   if (httpClientManager.wasRequestCancelled(requestId)) {
     httpClientManager.removeCancelledRequest(requestId);
@@ -30,7 +29,7 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
   HttpRequestModel authenticatedRequestModel = requestModel.copyWith();
 
   try {
-    if (enableAuth) {
+    if (authData != null && authData.type != APIAuthType.none) {
       authenticatedRequestModel = await handleAuth(requestModel, authData);
     }
   } catch (e) {
