@@ -26,7 +26,7 @@ dependencies:
   seed: ^0.0.3
   xml: ^6.3.0
   crypto: ^3.0.6
-  convert: ^3.1.2
+  dart_jsonwebtoken: ^3.2.0
 
 dev_dependencies:
   flutter_test:

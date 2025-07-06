@@ -21,6 +21,7 @@ class JwtAuthFields extends StatefulWidget {
 
 class _JwtAuthFieldsState extends State<JwtAuthFields> {
   late TextEditingController _secretController;
+  late TextEditingController _privateKeyController;
   late TextEditingController _payloadController;
   late String _addTokenTo;
   late String _algorithm;
@@ -31,6 +32,7 @@ class _JwtAuthFieldsState extends State<JwtAuthFields> {
     super.initState();
     final jwt = widget.authData?.jwt;
     _secretController = TextEditingController(text: jwt?.secret ?? '');
+    _privateKeyController = TextEditingController(text: jwt?.privateKey ?? '');
     _payloadController = TextEditingController(text: jwt?.payload ?? '');
     _addTokenTo = jwt?.addTokenTo ?? 'header';
     _algorithm = jwt?.algorithm ?? 'HS256';
@@ -83,6 +85,17 @@ class _JwtAuthFieldsState extends State<JwtAuthFields> {
             ('HS256', 'HS256'),
             ('HS384', 'HS384'),
             ('HS512', 'HS512'),
+            ('RS256', 'RS256'),
+            ('RS384', 'RS384'),
+            ('RS512', 'RS512'),
+            ('PS256', 'PS256'),
+            ('PS384', 'PS384'),
+            ('PS512', 'PS512'),
+            ('ES256', 'ES256'),
+            ('ES256K', 'ES256K'),
+            ('ES384', 'ES384'),
+            ('ES512', 'ES512'),
+            ('EdDSA', 'EdDSA'),
           ],
           tooltip: "Select JWT algorithm",
           isOutlined: true,
@@ -96,33 +109,78 @@ class _JwtAuthFieldsState extends State<JwtAuthFields> {
           },
         ),
         const SizedBox(height: 16),
-        AuthTextField(
-          readOnly: widget.readOnly,
-          controller: _secretController,
-          isObscureText: true,
-          hintText: "Secret key",
-          onChanged: (value) => _updateJwtAuth(),
-        ),
-        const SizedBox(height: 16),
-        CheckboxListTile(
-          title: Text(
-            "Secret is Base64 encoded",
+        if (_algorithm.startsWith('HS')) ...[
+          AuthTextField(
+            readOnly: widget.readOnly,
+            controller: _secretController,
+            isObscureText: true,
+            hintText: "Secret key",
+            onChanged: (value) => _updateJwtAuth(),
+          ),
+          const SizedBox(height: 16),
+          CheckboxListTile(
+            title: Text(
+              "Secret is Base64 encoded",
+              style: TextStyle(
+                fontWeight: FontWeight.normal,
+                fontSize: 14,
+              ),
+            ),
+            value: _isSecretBase64Encoded,
+            contentPadding: EdgeInsets.zero,
+            controlAffinity: ListTileControlAffinity.leading,
+            onChanged: (bool? value) {
+              setState(() {
+                _isSecretBase64Encoded = value ?? false;
+              });
+
+              _updateJwtAuth();
+            },
+          ),
+        ] else ...[
+          Text(
+            "Private Key (PEM Format)",
             style: TextStyle(
               fontWeight: FontWeight.normal,
               fontSize: 14,
             ),
           ),
-          value: _isSecretBase64Encoded,
-          contentPadding: EdgeInsets.zero,
-          controlAffinity: ListTileControlAffinity.leading,
-          onChanged: (bool? value) {
-            setState(() {
-              _isSecretBase64Encoded = value ?? false;
-            });
+          SizedBox(height: 4),
+          TextField(
+            readOnly: widget.readOnly,
+            controller: _privateKeyController,
+            maxLines: 5,
+            decoration: InputDecoration(
+              filled: true,
+              fillColor: Theme.of(context).colorScheme.surfaceContainerLowest,
+              constraints: BoxConstraints(
+                maxWidth: MediaQuery.sizeOf(context).width - 100,
+              ),
+              contentPadding: const EdgeInsets.all(18),
+              hintText: '''
+-----BEGIN RSA PRIVATE KEY-----
+Private Key in PKCS#8 PEM Format
+-----END RSA PRIVATE KEY-----
+''',
+              hintStyle: Theme.of(context).textTheme.bodyMedium,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: Theme.of(context).colorScheme.outline,
+                ),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                ),
+              ),
+            ),
+            onChanged: (value) => _updateJwtAuth(),
+          ),
+        ],
 
-            _updateJwtAuth();
-          },
-        ),
         const SizedBox(height: 16),
         Text(
           "Payload (JSON format)",
@@ -284,6 +342,7 @@ class _JwtAuthFieldsState extends State<JwtAuthFields> {
         type: APIAuthType.jwt,
         jwt: AuthJwtModel(
           secret: _secretController.text.trim(),
+          privateKey: _privateKeyController.text.trim(),
           payload: _payloadController.text.trim(),
           addTokenTo: _addTokenTo,
           algorithm: _algorithm,

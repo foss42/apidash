@@ -1,94 +1,95 @@
 import 'dart:convert';
-import 'dart:typed_data';
+import 'dart:developer';
 import 'package:better_networking/models/auth/auth_jwt_model.dart';
-import 'package:crypto/crypto.dart';
+import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 
 String generateJWT(AuthJwtModel jwtAuth) {
   try {
-    Map<String, dynamic> header;
+    // Parse header if provided
+    Map<String, dynamic> headerMap = {};
     if (jwtAuth.header.isNotEmpty) {
       try {
-        header = json.decode(jwtAuth.header) as Map<String, dynamic>;
+        headerMap = json.decode(jwtAuth.header) as Map<String, dynamic>;
       } catch (e) {
-        header = {};
+        // If header parsing fails, use empty header
+        headerMap = {};
       }
-    } else {
-      header = {};
     }
-    header['typ'] = header['typ'] ?? 'JWT';
-    header['alg'] = jwtAuth.algorithm;
-    Map<String, dynamic> payload;
+
+    // Parse payload if provided
+    Map<String, dynamic> payloadMap = {};
     if (jwtAuth.payload.isNotEmpty) {
       try {
-        payload = json.decode(jwtAuth.payload) as Map<String, dynamic>;
+        payloadMap = json.decode(jwtAuth.payload) as Map<String, dynamic>;
       } catch (e) {
-        payload = {};
+        // If payload parsing fails, use empty payload
+        payloadMap = {};
       }
-    } else {
-      payload = {};
-    }
-    if (!payload.containsKey('iat')) {
-      payload['iat'] = DateTime.now().millisecondsSinceEpoch ~/ 1000;
     }
 
-    // Encode header and payload
-    final encodedHeader = _base64UrlEncode(utf8.encode(json.encode(header)));
-    final encodedPayload = _base64UrlEncode(utf8.encode(json.encode(payload)));
+    // Add issued at time if not present
+    if (!payloadMap.containsKey('iat')) {
+      payloadMap['iat'] = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+    }
+    final jwt = JWT(payloadMap, header: headerMap);
 
-    // Create signature
-    final signature = _createSignature(
-      '$encodedHeader.$encodedPayload',
+    final key = _createKey(
       jwtAuth.secret,
       jwtAuth.algorithm,
       jwtAuth.isSecretBase64Encoded,
+      jwtAuth.privateKey,
+    );
+    final token = jwt.sign(
+      key,
+      algorithm: JWTAlgorithm.fromName(jwtAuth.algorithm),
     );
 
-    return '$encodedHeader.$encodedPayload.$signature';
+    return token;
   } catch (e) {
-    throw Exception('Failed to generate JWT: $e');
+    log(e.toString());
+    throw Exception('Failed to generate JSON Wweb Token: $e');
   }
 }
 
-String _createSignature(
-    String data, String secret, String algorithm, bool isSecretBase64Encoded) {
-  try {
-    Uint8List secretBytes;
+JWTKey _createKey(
+  String secret,
+  String algorithm,
+  bool isSecretBase64Encoded,
+  String? privateKey,
+) {
+  if (algorithm.startsWith('HS')) {
     if (isSecretBase64Encoded) {
-      secretBytes = base64.decode(secret);
+      final decodedSecret = base64.decode(secret);
+      return SecretKey(String.fromCharCodes(decodedSecret));
     } else {
-      secretBytes = utf8.encode(secret);
+      return SecretKey(secret);
     }
-
-    final dataBytes = utf8.encode(data);
-
-    switch (algorithm) {
-      case 'HS256':
-        final hmac = Hmac(sha256, secretBytes);
-        final digest = hmac.convert(dataBytes);
-        return _base64UrlEncode(digest.bytes);
-
-      case 'HS384':
-        final hmac = Hmac(sha384, secretBytes);
-        final digest = hmac.convert(dataBytes);
-        return _base64UrlEncode(digest.bytes);
-
-      case 'HS512':
-        final hmac = Hmac(sha512, secretBytes);
-        final digest = hmac.convert(dataBytes);
-        return _base64UrlEncode(digest.bytes);
-
-      default:
-        // Default to HS256
-        final hmac = Hmac(sha256, secretBytes);
-        final digest = hmac.convert(dataBytes);
-        return _base64UrlEncode(digest.bytes);
-    }
-  } catch (e) {
-    // Return placeholder signature if creation fails
-    return _base64UrlEncode(utf8.encode('signature_generation_failed'));
   }
-}
+  if (algorithm.startsWith('RS') || algorithm.startsWith('PS')) {
+    if (privateKey == null) {
+      throw Exception(
+        'Failed to generate JSON Wweb Token: Private Key not Found',
+      );
+    }
+    return RSAPrivateKey(privateKey);
+  }
+  if (algorithm.startsWith('ES')) {
+    if (privateKey == null) {
+      throw Exception(
+        'Failed to generate JSON Wweb Token: Private Key not Found',
+      );
+    }
+    return ECPrivateKey(privateKey);
+  }
 
-String _base64UrlEncode(List<int> bytes) {
-  return base64Url.encode(bytes).replaceAll('=', '');
+  if (algorithm == 'EdDSA') {
+    if (privateKey == null) {
+      throw Exception(
+        'Failed to generate JSON Wweb Token: Private Key not Found',
+      );
+    }
+    return EdDSAPrivateKey.fromPEM(privateKey);
+  }
+
+  return SecretKey(secret, isBase64Encoded: isSecretBase64Encoded);
 }

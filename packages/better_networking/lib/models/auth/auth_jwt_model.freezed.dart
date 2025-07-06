@@ -22,6 +22,7 @@ AuthJwtModel _$AuthJwtModelFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$AuthJwtModel {
   String get secret => throw _privateConstructorUsedError;
+  String? get privateKey => throw _privateConstructorUsedError;
   String get payload => throw _privateConstructorUsedError;
   String get addTokenTo => throw _privateConstructorUsedError;
   String get algorithm => throw _privateConstructorUsedError;
@@ -49,6 +50,7 @@ abstract class $AuthJwtModelCopyWith<$Res> {
   @useResult
   $Res call({
     String secret,
+    String? privateKey,
     String payload,
     String addTokenTo,
     String algorithm,
@@ -75,6 +77,7 @@ class _$AuthJwtModelCopyWithImpl<$Res, $Val extends AuthJwtModel>
   @override
   $Res call({
     Object? secret = null,
+    Object? privateKey = freezed,
     Object? payload = null,
     Object? addTokenTo = null,
     Object? algorithm = null,
@@ -89,6 +92,10 @@ class _$AuthJwtModelCopyWithImpl<$Res, $Val extends AuthJwtModel>
                 ? _value.secret
                 : secret // ignore: cast_nullable_to_non_nullable
                       as String,
+            privateKey: freezed == privateKey
+                ? _value.privateKey
+                : privateKey // ignore: cast_nullable_to_non_nullable
+                      as String?,
             payload: null == payload
                 ? _value.payload
                 : payload // ignore: cast_nullable_to_non_nullable
@@ -134,6 +141,7 @@ abstract class _$$AuthJwtModelImplCopyWith<$Res>
   @useResult
   $Res call({
     String secret,
+    String? privateKey,
     String payload,
     String addTokenTo,
     String algorithm,
@@ -159,6 +167,7 @@ class __$$AuthJwtModelImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? secret = null,
+    Object? privateKey = freezed,
     Object? payload = null,
     Object? addTokenTo = null,
     Object? algorithm = null,
@@ -173,6 +182,10 @@ class __$$AuthJwtModelImplCopyWithImpl<$Res>
             ? _value.secret
             : secret // ignore: cast_nullable_to_non_nullable
                   as String,
+        privateKey: freezed == privateKey
+            ? _value.privateKey
+            : privateKey // ignore: cast_nullable_to_non_nullable
+                  as String?,
         payload: null == payload
             ? _value.payload
             : payload // ignore: cast_nullable_to_non_nullable
@@ -211,6 +224,7 @@ class __$$AuthJwtModelImplCopyWithImpl<$Res>
 class _$AuthJwtModelImpl implements _AuthJwtModel {
   const _$AuthJwtModelImpl({
     required this.secret,
+    this.privateKey,
     required this.payload,
     required this.addTokenTo,
     required this.algorithm,
@@ -225,6 +239,8 @@ class _$AuthJwtModelImpl implements _AuthJwtModel {
 
   @override
   final String secret;
+  @override
+  final String? privateKey;
   @override
   final String payload;
   @override
@@ -242,7 +258,7 @@ class _$AuthJwtModelImpl implements _AuthJwtModel {
 
   @override
   String toString() {
-    return 'AuthJwtModel(secret: $secret, payload: $payload, addTokenTo: $addTokenTo, algorithm: $algorithm, isSecretBase64Encoded: $isSecretBase64Encoded, headerPrefix: $headerPrefix, queryParamKey: $queryParamKey, header: $header)';
+    return 'AuthJwtModel(secret: $secret, privateKey: $privateKey, payload: $payload, addTokenTo: $addTokenTo, algorithm: $algorithm, isSecretBase64Encoded: $isSecretBase64Encoded, headerPrefix: $headerPrefix, queryParamKey: $queryParamKey, header: $header)';
   }
 
   @override
@@ -251,6 +267,8 @@ class _$AuthJwtModelImpl implements _AuthJwtModel {
         (other.runtimeType == runtimeType &&
             other is _$AuthJwtModelImpl &&
             (identical(other.secret, secret) || other.secret == secret) &&
+            (identical(other.privateKey, privateKey) ||
+                other.privateKey == privateKey) &&
             (identical(other.payload, payload) || other.payload == payload) &&
             (identical(other.addTokenTo, addTokenTo) ||
                 other.addTokenTo == addTokenTo) &&
@@ -270,6 +288,7 @@ class _$AuthJwtModelImpl implements _AuthJwtModel {
   int get hashCode => Object.hash(
     runtimeType,
     secret,
+    privateKey,
     payload,
     addTokenTo,
     algorithm,
@@ -296,6 +315,7 @@ class _$AuthJwtModelImpl implements _AuthJwtModel {
 abstract class _AuthJwtModel implements AuthJwtModel {
   const factory _AuthJwtModel({
     required final String secret,
+    final String? privateKey,
     required final String payload,
     required final String addTokenTo,
     required final String algorithm,
@@ -310,6 +330,8 @@ abstract class _AuthJwtModel implements AuthJwtModel {
 
   @override
   String get secret;
+  @override
+  String? get privateKey;
   @override
   String get payload;
   @override

@@ -7,6 +7,7 @@ part 'auth_jwt_model.g.dart';
 class AuthJwtModel with _$AuthJwtModel {
   const factory AuthJwtModel({
     required String secret,
+    String? privateKey,
     required String payload,
     required String addTokenTo,
     required String algorithm,
