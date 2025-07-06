@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'package:better_networking/models/auth/auth_jwt_model.dart';
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 
@@ -46,7 +45,6 @@ String generateJWT(AuthJwtModel jwtAuth) {
 
     return token;
   } catch (e) {
-    log(e.toString());
     throw Exception('Failed to generate JSON Wweb Token: $e');
   }
 }
