@@ -73,15 +73,13 @@ void main() {
         url: 'https://countries.trevorblades.com/',
         query: kGQLquery,
       );
-
       final stream = await streamHttpRequest(
-        'graphql_test_c',
+        'graphql_test_cancellation',
         APIType.graphql,
         model,
       );
-      httpClientManager.cancelRequest('graphql_test_c');
-      final output = await stream.first;
-      print(output);
+      httpClientManager.cancelRequest('graphql_test_cancellation');
+      final output = await stream.last;
       final errMsg = output?.$4;
       expect(
         errMsg,

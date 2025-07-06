@@ -1,13 +1,81 @@
 import 'dart:async';
 import 'dart:convert';
-
-import 'package:better_networking/consts.dart';
-import 'package:better_networking/models/http_request_model.dart';
-import 'package:better_networking/services/http_service.dart';
-import 'package:seed/models/name_value_model.dart';
+import 'dart:io';
+import 'dart:typed_data';
+import 'package:better_networking/better_networking.dart';
 import 'package:test/test.dart';
 
 void main() {
+  group('sendHttpRequest: REST Specific Tests', () {
+    test('GET (Regular)', () async {
+      const model = HttpRequestModel(
+        url: 'https://jsonplaceholder.typicode.com/posts/1',
+        method: HTTPVerb.get,
+        headers: [
+          NameValueModel(name: 'User-Agent', value: 'Dart/3.0 (dart:io)'),
+          NameValueModel(name: 'Accept', value: 'application/json'),
+        ],
+      );
+      final (resp, dur, err) = await sendHttpRequest(
+        'get_test',
+        APIType.rest,
+        model,
+      );
+      final output = jsonDecode(resp?.body ?? '{}');
+      expect(resp?.statusCode == 200, true, reason: 'Response must be 200');
+      expect(jsonEncode(output), contains('userId'));
+    });
+  });
+
+  group('streamHttpRequest: MULTIPART', () {
+    test('MULTIPART (Regular)', () async {
+      final tempDir = Directory.systemTemp.createTempSync();
+      const fullName = 'temp_image.png';
+      const token = 'xyz';
+      final file = File('${tempDir.path}/$fullName');
+      file.writeAsBytesSync(
+        Uint8List.fromList([0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A]),
+      );
+      final model = HttpRequestModel(
+        method: HTTPVerb.post,
+        url: 'https://api.apidash.dev/io/img',
+        bodyContentType: ContentType.formdata,
+        body: r"""{
+"text": "I LOVE Flutter"
+}""",
+        formData: [
+          const FormDataModel(
+            name: "token",
+            value: token,
+            type: FormDataType.text,
+          ),
+          FormDataModel(
+            name: "imfile",
+            value: file.path,
+            type: FormDataType.file,
+          ),
+        ],
+      );
+      final (resp, dur, err) = await sendHttpRequest(
+        'mpreq',
+        APIType.rest,
+        model,
+      );
+      final output = jsonDecode(resp?.body ?? '{}');
+      expect(resp?.statusCode == 200, true, reason: 'Response must be 200');
+      expect(
+        jsonEncode(output),
+        contains(fullName),
+        reason: 'Response must contain filename',
+      );
+      expect(
+        jsonEncode(output),
+        contains(token),
+        reason: 'Response must contain token',
+      );
+    });
+  });
+
   group('streamHttpRequest: REST Specific Tests', () {
     test('GET (Regular)', () async {
       const model = HttpRequestModel(
