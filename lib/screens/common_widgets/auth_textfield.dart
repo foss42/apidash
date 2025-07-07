@@ -60,8 +60,8 @@ class _AuthFieldState extends State<AuthTextField> {
                     padding: const EdgeInsets.only(left: 4.0),
                     child: Icon(
                       Icons.help_outline_rounded,
-                      color: Theme.of(context).colorScheme.secondary,
-                      size: 18,
+                      color: Theme.of(context).colorScheme.primaryFixedDim,
+                      size: 14,
                     ),
                   ),
                 ),
