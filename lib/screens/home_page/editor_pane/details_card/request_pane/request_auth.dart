@@ -55,17 +55,10 @@ class EditAuthType extends ConsumerWidget {
               height: 8,
             ),
             ADPopupMenu<APIAuthType>(
-              value: currentAuthType.name.capitalize(),
-              values: const [
-                (APIAuthType.none, 'None'),
-                (APIAuthType.basic, 'Basic'),
-                (APIAuthType.apiKey, 'API Key'),
-                (APIAuthType.bearer, 'Bearer'),
-                (APIAuthType.jwt, 'JWT'),
-                (APIAuthType.digest, 'Digest'),
-                (APIAuthType.oauth1, 'OAuth 1.0'),
-                (APIAuthType.oauth2, 'OAuth 2.0'),
-              ],
+              value: currentAuthType.displayType,
+              values: APIAuthType.values
+                  .map((type) => (type, type.displayType))
+                  .toList(),
               tooltip: "Select Authentication Type",
               isOutlined: true,
               onChanged: readOnly
@@ -92,6 +85,7 @@ class EditAuthType extends ConsumerWidget {
       ),
     );
   }
+
   Widget _buildAuthFields(
     BuildContext context,
     WidgetRef ref,

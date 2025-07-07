@@ -9,7 +9,19 @@ enum APIType {
   final String abbr;
 }
 
-enum APIAuthType { none, basic, apiKey, bearer, jwt, digest, oauth1, oauth2 }
+enum APIAuthType {
+  none("None"),
+  basic("Basic Auth"),
+  apiKey("API Key"),
+  bearer("Bearer Token"),
+  jwt("JWT Bearer"),
+  digest("Digest Auth"),
+  oauth1("OAuth 1.0"),
+  oauth2("OAuth 2.0");
+
+  const APIAuthType(this.displayType);
+  final String displayType;
+}
 
 enum HTTPVerb {
   get("GET"),
