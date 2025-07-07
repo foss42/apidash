@@ -192,17 +192,27 @@ void main() {
       );
     });
   });
+  group('Testing overrideContentType functionality', () {
+    test('overrideContentType is true', () async {
+      final request = prepareHttpRequest(
+        url: Uri.parse('https://www.example.com'),
+        method: 'POST',
+        body: 'Hello',
+        headers: {'content-type': 'application/json'},
+        overrideContentType: true,
+      );
+      expect(request.headers['content-type'], 'application/json');
+    });
 
-  //TODO: Needs to be Discussed
-  // test('prepareHttpRequest: check overrideContentType ', () async {
-  //   final request = prepareHttpRequest(
-  //     url: Uri.parse('https://www.example.com'),
-  //     method: 'POST',
-  //     body: '{"key":"value"}',
-  //     headers: {'content-type': 'application/json'},
-  //     overrideContentType: true,
-  //   );
-  //   print(request.headers);
-  //   expect(request.headers['content-type'], isNot('application/json'));
-  // });
+    test('overrideContentType is false', () async {
+      final request = prepareHttpRequest(
+        url: Uri.parse('https://www.example.com'),
+        method: 'POST',
+        body: 'Hello',
+        headers: {'content-type': 'application/json'},
+        overrideContentType: false,
+      );
+      expect(request.headers['content-type'], isNot('application/json'));
+    });
+  });
 }

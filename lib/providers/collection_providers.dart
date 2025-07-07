@@ -378,7 +378,9 @@ class CollectionStateNotifier
       };
       unsave();
     }, onError: (e) {
-      print('Stream error: $e');
+      if (!completer.isCompleted) {
+        completer.complete((null, null, 'StreamError: $e'));
+      }
     });
 
     final (response, duration, errorMessage) = await completer.future;
