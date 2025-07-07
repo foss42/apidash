@@ -102,14 +102,16 @@ class _DigestAuthFieldsState extends State<DigestAuthFields> {
             ],
             tooltip: "Algorithm that will be used to produce the digest",
             isOutlined: true,
-            onChanged: (String? newLocation) {
-              if (newLocation != null) {
-                setState(() {
-                  _algorithmController = newLocation;
-                });
-                _updateDigestAuth();
-              }
-            },
+            onChanged: widget.readOnly
+                ? null
+                : (String? newLocation) {
+                    if (newLocation != null) {
+                      setState(() {
+                        _algorithmController = newLocation;
+                      });
+                      _updateDigestAuth();
+                    }
+                  },
           ),
           const SizedBox(height: 12),
           AuthTextField(

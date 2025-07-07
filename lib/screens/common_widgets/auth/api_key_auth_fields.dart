@@ -55,14 +55,16 @@ class _ApiKeyAuthFieldsState extends State<ApiKeyAuthFields> {
           ],
           tooltip: "Select where to add API key",
           isOutlined: true,
-          onChanged: (String? newLocation) {
-            if (newLocation != null) {
-              setState(() {
-                _addKeyTo = newLocation;
-              });
-              _updateApiKeyAuth();
-            }
-          },
+          onChanged: widget.readOnly
+              ? null
+              : (String? newLocation) {
+                  if (newLocation != null) {
+                    setState(() {
+                      _addKeyTo = newLocation;
+                    });
+                    _updateApiKeyAuth();
+                  }
+                },
         ),
         const SizedBox(height: 16),
         AuthTextField(

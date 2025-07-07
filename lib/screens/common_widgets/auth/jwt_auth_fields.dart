@@ -61,14 +61,16 @@ class _JwtAuthFieldsState extends State<JwtAuthFields> {
           ],
           tooltip: "Select where to add JWT token",
           isOutlined: true,
-          onChanged: (String? newAddTokenTo) {
-            if (newAddTokenTo != null) {
-              setState(() {
-                _addTokenTo = newAddTokenTo;
-              });
-              _updateJwtAuth();
-            }
-          },
+          onChanged: widget.readOnly
+              ? null
+              : (String? newAddTokenTo) {
+                  if (newAddTokenTo != null) {
+                    setState(() {
+                      _addTokenTo = newAddTokenTo;
+                    });
+                    _updateJwtAuth();
+                  }
+                },
         ),
         const SizedBox(height: 16),
         Text(
@@ -99,14 +101,16 @@ class _JwtAuthFieldsState extends State<JwtAuthFields> {
           ],
           tooltip: "Select JWT algorithm",
           isOutlined: true,
-          onChanged: (String? newAlgorithm) {
-            if (newAlgorithm != null) {
-              setState(() {
-                _algorithm = newAlgorithm;
-              });
-              _updateJwtAuth();
-            }
-          },
+          onChanged: widget.readOnly
+              ? null
+              : (String? newAlgorithm) {
+                  if (newAlgorithm != null) {
+                    setState(() {
+                      _algorithm = newAlgorithm;
+                    });
+                    _updateJwtAuth();
+                  }
+                },
         ),
         const SizedBox(height: 16),
         if (_algorithm.startsWith('HS')) ...[
