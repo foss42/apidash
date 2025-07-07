@@ -92,7 +92,14 @@ class _ApiKeyAuthFieldsState extends State<ApiKeyAuthFields> {
           name: _nameController.text.trim(),
           location: _addKeyTo,
         ),
-      ),
+      ) ?? AuthModel(
+          type: APIAuthType.apiKey,
+          apikey: AuthApiKeyModel(
+            key: _keyController.text.trim(),
+            name: _nameController.text.trim(),
+            location: _addKeyTo,
+          ),
+        )
     );
   }
 }

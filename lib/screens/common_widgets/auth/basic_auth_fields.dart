@@ -61,7 +61,13 @@ class BasicAuthFields extends StatelessWidget {
           username: usernameController.text.trim(),
           password: passwordController.text.trim(),
         ),
-      ),
+      ) ?? AuthModel(
+          type: APIAuthType.basic,
+          basic: AuthBasicAuthModel(
+            username: usernameController.text.trim(),
+            password: passwordController.text.trim(),
+          ),
+        )
     );
   }
 }

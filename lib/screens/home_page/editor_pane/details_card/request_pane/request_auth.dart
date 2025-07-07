@@ -92,8 +92,6 @@ class EditAuthType extends ConsumerWidget {
       ),
     );
   }
-
-  // ...existing code...
   Widget _buildAuthFields(
     BuildContext context,
     WidgetRef ref,

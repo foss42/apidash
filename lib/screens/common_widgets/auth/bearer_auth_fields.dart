@@ -40,13 +40,17 @@ class _BearerAuthFieldsState extends State<BearerAuthFields> {
   }
 
   void _updateBearerAuth() {
-    widget.updateAuth(
-      widget.authData?.copyWith(
-        type: APIAuthType.bearer,
-        bearer: AuthBearerModel(
-          token: _tokenController.text.trim(),
-        ),
-      ),
-    );
+    widget.updateAuth(widget.authData?.copyWith(
+          type: APIAuthType.bearer,
+          bearer: AuthBearerModel(
+            token: _tokenController.text.trim(),
+          ),
+        ) ??
+        AuthModel(
+          type: APIAuthType.bearer,
+          bearer: AuthBearerModel(
+            token: _tokenController.text.trim(),
+          ),
+        ));
   }
 }
