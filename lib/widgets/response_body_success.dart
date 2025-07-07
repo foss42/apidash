@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:apidash/widgets/sse_display.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/foundation.dart';
@@ -141,6 +144,16 @@ class _ResponseBodySuccessState extends State<ResponseBodySuccess> {
                           widget.formattedBody ?? widget.body,
                           style: kCodeStyle,
                         ),
+                      ),
+                    ),
+                  ),
+                ResponseBodyView.sse => Expanded(
+                    child: Container(
+                      width: double.maxFinite,
+                      padding: kP8,
+                      decoration: textContainerdecoration,
+                      child: SSEDisplay(
+                        sseOutput: widget.body,
                       ),
                     ),
                   ),

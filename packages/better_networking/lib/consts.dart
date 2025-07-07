@@ -22,6 +22,13 @@ enum HTTPVerb {
   final String abbr;
 }
 
+List<String> kStreamingResponseTypes = [
+  'text/event-stream',
+  'application/x-ndjson',
+  'application/json-seq',
+  'application/octet-stream',
+];
+
 enum SupportedUriSchemes { https, http }
 
 final kSupportedUriSchemes = SupportedUriSchemes.values

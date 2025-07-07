@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash/models/models.dart';
@@ -52,6 +54,19 @@ class ResponseBody extends StatelessWidget {
     if (formattedBody == null) {
       options = [...options];
       options.remove(ResponseBodyView.code);
+    }
+
+    // print('reM -> ${responseModel.sseOutput}');
+
+    if (responseModel.sseOutput?.isNotEmpty ?? false) {
+      // final modifiedBody = responseModel.sseOutput!.join('\n\n');
+      return ResponseBodySuccess(
+        key: Key("${selectedRequestModel!.id}-response"),
+        mediaType: MediaType('text', 'event-stream'),
+        options: [ResponseBodyView.sse],
+        bytes: utf8.encode((responseModel.sseOutput!).toString()),
+        body: jsonEncode(responseModel.sseOutput!),
+      );
     }
 
     return ResponseBodySuccess(

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -268,18 +270,15 @@ class CollectionStateNotifier
   Future<void> sendRequest() async {
     final requestId = ref.read(selectedIdStateProvider);
     ref.read(codePaneVisibleStateProvider.notifier).state = false;
+
+    if (requestId == null || state == null) return;
+
+    RequestModel? requestModel = state![requestId];
+    if (requestModel?.httpRequestModel == null) return;
+
     final defaultUriScheme = ref.read(settingsProvider).defaultUriScheme;
     final EnvironmentModel? originalEnvironmentModel =
         ref.read(selectedEnvironmentModelProvider);
-
-    if (requestId == null || state == null) {
-      return;
-    }
-    RequestModel? requestModel = state![requestId];
-
-    if (requestModel?.httpRequestModel == null) {
-      return;
-    }
 
     if (requestModel != null &&
         !requestModel.preRequestScript.isNullOrEmpty()) {
@@ -301,17 +300,18 @@ class CollectionStateNotifier
     APIType apiType = requestModel!.apiType;
     HttpRequestModel substitutedHttpRequestModel =
         getSubstitutedHttpRequestModel(requestModel.httpRequestModel!);
-
-    // set current model's isWorking to true and update state
-    var map = {...state!};
-    map[requestId] = requestModel.copyWith(
-      isWorking: true,
-      sendingTime: DateTime.now(),
-    );
-    state = map;
-
     bool noSSL = ref.read(settingsProvider).isSSLDisabled;
-    var responseRec = await sendHttpRequest(
+
+    // Set model to working and streaming
+    state = {
+      ...state!,
+      requestId: requestModel.copyWith(
+        isWorking: true,
+        sendingTime: DateTime.now(),
+      ),
+    };
+
+    final stream = await streamHttpRequest(
       requestId,
       apiType,
       substitutedHttpRequestModel,
@@ -319,30 +319,103 @@ class CollectionStateNotifier
       noSSL: noSSL,
     );
 
-    late RequestModel newRequestModel;
-    if (responseRec.$1 == null) {
-      newRequestModel = requestModel.copyWith(
+    HttpResponseModel? respModel;
+    HistoryRequestModel? historyM;
+    RequestModel newRequestModel = requestModel;
+    bool? isTextStream;
+    final completer = Completer<(Response?, Duration?, String?)>();
+
+    StreamSubscription? sub;
+
+    sub = stream.listen((d) async {
+      if (d == null) return;
+
+      isTextStream = d.$1;
+      final response = d.$2;
+      final duration = d.$3;
+      final errorMessage = d.$4;
+
+      if (isTextStream == false) {
+        if (!completer.isCompleted) {
+          completer.complete((response, duration, errorMessage));
+        }
+        return;
+      }
+
+      respModel = respModel?.copyWith(
+        time: duration,
+        sseOutput: [
+          ...(respModel?.sseOutput ?? []),
+          if (response != null) response.body,
+        ],
+      );
+
+      newRequestModel = newRequestModel.copyWith(
+        httpResponseModel: respModel,
+        isStreaming: true,
+      );
+      state = {
+        ...state!,
+        requestId: newRequestModel,
+      };
+      unsave();
+
+      if (historyM != null && respModel != null) {
+        historyM = historyM!.copyWith(httpResponseModel: respModel!);
+        ref
+            .read(historyMetaStateNotifier.notifier)
+            .editHistoryRequest(historyM!);
+      }
+
+      if (!completer.isCompleted) {
+        completer.complete((response, duration, errorMessage));
+      }
+    }, onDone: () {
+      sub?.cancel();
+      state = {
+        ...state!,
+        requestId: newRequestModel.copyWith(isStreaming: false),
+      };
+      unsave();
+    }, onError: (e) {
+      if (!completer.isCompleted) {
+        completer.complete((null, null, 'StreamError: $e'));
+      }
+    });
+
+    final (response, duration, errorMessage) = await completer.future;
+
+    if (response == null) {
+      newRequestModel = newRequestModel.copyWith(
         responseStatus: -1,
-        message: responseRec.$3,
+        message: errorMessage,
         isWorking: false,
+        isStreaming: false,
       );
     } else {
-      final httpResponseModel = baseHttpResponseModel.fromResponse(
-        response: responseRec.$1!,
-        time: responseRec.$2!,
-      );
-      int statusCode = responseRec.$1!.statusCode;
-      newRequestModel = requestModel.copyWith(
+      final statusCode = response.statusCode;
+
+      respModel = baseHttpResponseModel
+          .fromResponse(
+            response: response,
+            time: duration,
+          )
+          .copyWith(
+            sseOutput: (isTextStream == true) ? [response.body] : [],
+          );
+
+      newRequestModel = newRequestModel.copyWith(
         responseStatus: statusCode,
         message: kResponseCodeReasons[statusCode],
-        httpResponseModel: httpResponseModel,
+        httpResponseModel: respModel,
         isWorking: false,
       );
-      String newHistoryId = getNewUuid();
-      HistoryRequestModel model = HistoryRequestModel(
-        historyId: newHistoryId,
+
+      final historyId = getNewUuid();
+      historyM = HistoryRequestModel(
+        historyId: historyId,
         metaData: HistoryMetaModel(
-          historyId: newHistoryId,
+          historyId: historyId,
           requestId: requestId,
           apiType: requestModel.apiType,
           name: requestModel.name,
@@ -352,7 +425,7 @@ class CollectionStateNotifier
           timeStamp: DateTime.now(),
         ),
         httpRequestModel: substitutedHttpRequestModel,
-        httpResponseModel: httpResponseModel,
+        httpResponseModel: respModel!,
         preRequestScript: requestModel.preRequestScript,
         postRequestScript: requestModel.postRequestScript,
       );
@@ -372,13 +445,15 @@ class CollectionStateNotifier
           },
         );
       }
-      ref.read(historyMetaStateNotifier.notifier).addHistoryRequest(model);
+
+      ref.read(historyMetaStateNotifier.notifier).addHistoryRequest(historyM!);
     }
 
-    // update state with response data
-    map = {...state!};
-    map[requestId] = newRequestModel;
-    state = map;
+    // Final state update
+    state = {
+      ...state!,
+      requestId: newRequestModel,
+    };
 
     unsave();
   }

@@ -53,6 +53,7 @@ class HttpResponseModel with _$HttpResponseModel {
     String? formattedBody,
     @Uint8ListConverter() Uint8List? bodyBytes,
     @DurationConverter() Duration? time,
+    List<String>? sseOutput,
   }) = _HttpResponseModel;
 
   factory HttpResponseModel.fromJson(Map<String, Object?> json) =>
@@ -66,9 +67,11 @@ class HttpResponseModel with _$HttpResponseModel {
       HttpHeaders.contentLengthHeader: response.contentLength.toString(),
     }, response.headers);
     MediaType? mediaType = getMediaTypeFromHeaders(responseHeaders);
+
     final body = (mediaType?.subtype == kSubTypeJson)
         ? utf8.decode(response.bodyBytes)
         : response.body;
+
     return HttpResponseModel(
       statusCode: response.statusCode,
       headers: responseHeaders,

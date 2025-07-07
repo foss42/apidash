@@ -1,9 +1,9 @@
-import 'dart:convert';
 import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:xml/xml.dart';
 import '../consts.dart';
+import 'dart:convert';
 
 String? formatBody(String? body, MediaType? mediaType) {
   if (mediaType != null && body != null) {
@@ -49,21 +49,4 @@ Future<http.Response> convertStreamedResponse(
   );
 
   return response;
-}
-
-Stream<String?> streamTextResponse(
-  http.StreamedResponse streamedResponse,
-) async* {
-  try {
-    if (streamedResponse.statusCode != 200) {
-      final errorText = await streamedResponse.stream.bytesToString();
-      throw Exception('${streamedResponse.statusCode}\n$errorText');
-    }
-    final utf8Stream = streamedResponse.stream.transform(utf8.decoder);
-    await for (final chunk in utf8Stream) {
-      yield chunk;
-    }
-  } catch (e) {
-    rethrow;
-  }
 }

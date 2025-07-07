@@ -176,4 +176,33 @@ void main() {
       expect(getValidRequestUri(url7, null), (uri7Expected, null));
     });
   });
+
+  group("Testing stripUriParams", () {
+    test('Removes query parameters from Uri with query', () {
+      final uri = Uri.parse(
+        "https://example.com/path/to/resource?param1=value1&param2=value2",
+      );
+      expect(stripUriParams(uri), "https://example.com/path/to/resource");
+    });
+
+    test('Removes fragment and query from Uri', () {
+      final uri = Uri.parse("https://example.com/api#section?foo=bar");
+      expect(stripUriParams(uri), "https://example.com/api");
+    });
+
+    test('stripUrlParams removes query from URL string', () {
+      const url = "https://example.com/page?x=1&y=2";
+      expect(stripUrlParams(url), "https://example.com/page");
+    });
+
+    test('stripUrlParams handles URL with no query', () {
+      const url = "https://example.com/page";
+      expect(stripUrlParams(url), "https://example.com/page");
+    });
+
+    test('stripUrlParams with only ? and no query', () {
+      const url = "https://example.com/page?";
+      expect(stripUrlParams(url), "https://example.com/page");
+    });
+  });
 }

@@ -124,4 +124,22 @@ void main() {
       },
     );
   });
+
+  group("Testing removeKeyContentType() function", () {
+    test('Removes lowercase content-type key', () {
+      Map<String, String> header1 = {
+        "content-type": "application/json",
+        "authorization": "Bearer token",
+      };
+      header1.removeKeyContentType();
+      expect(header1.containsKey("content-type"), false);
+      expect(header1.containsKey("authorization"), true);
+    });
+
+    test('Preserves original map after mutation', () {
+      final header4 = {"Content-Type": "application/json", "X-Custom": "value"};
+      final result = header4.removeKeyContentType();
+      expect(identical(result, header4), true);
+    });
+  });
 }
