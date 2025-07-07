@@ -51,6 +51,8 @@ class _DigestAuthFieldsState extends State<DigestAuthFields> {
             readOnly: widget.readOnly,
             controller: _usernameController,
             hintText: "Username",
+            infoText:
+                "Your username for digest authentication. This will be sent to the server for credential verification.",
             onChanged: (_) => _updateDigestAuth(),
           ),
           const SizedBox(height: 12),
@@ -59,6 +61,8 @@ class _DigestAuthFieldsState extends State<DigestAuthFields> {
             controller: _passwordController,
             hintText: "Password",
             isObscureText: true,
+            infoText:
+                "Your password for digest authentication. This is hashed and not sent in plain text to the server.",
             onChanged: (_) => _updateDigestAuth(),
           ),
           const SizedBox(height: 12),
@@ -66,6 +70,8 @@ class _DigestAuthFieldsState extends State<DigestAuthFields> {
             readOnly: widget.readOnly,
             controller: _realmController,
             hintText: "Realm",
+            infoText:
+                "Authentication realm as specified by the server. This defines the protection space for the credentials.",
             onChanged: (_) => _updateDigestAuth(),
           ),
           const SizedBox(height: 12),
@@ -73,6 +79,8 @@ class _DigestAuthFieldsState extends State<DigestAuthFields> {
             readOnly: widget.readOnly,
             controller: _nonceController,
             hintText: "Nonce",
+            infoText:
+                "Server-generated random value used to prevent replay attacks.",
             onChanged: (_) => _updateDigestAuth(),
           ),
           const SizedBox(height: 12),
@@ -92,7 +100,7 @@ class _DigestAuthFieldsState extends State<DigestAuthFields> {
               ('SHA-256', 'SHA-256'),
               ('SHA-256-sess', 'SHA-256-sess'),
             ],
-            tooltip: "this algorithm will be used to produce the digest",
+            tooltip: "Algorithm that will be used to produce the digest",
             isOutlined: true,
             onChanged: (String? newLocation) {
               if (newLocation != null) {
@@ -107,7 +115,9 @@ class _DigestAuthFieldsState extends State<DigestAuthFields> {
           AuthTextField(
             readOnly: widget.readOnly,
             controller: _qopController,
-            hintText: "QOP (e.g. auth)",
+            hintText: "QOP",
+            infoText:
+                "Quality of Protection. Typically 'auth' for authentication only, or 'auth-int' for authentication with integrity protection.",
             onChanged: (_) => _updateDigestAuth(),
           ),
           const SizedBox(height: 12),
@@ -115,6 +125,8 @@ class _DigestAuthFieldsState extends State<DigestAuthFields> {
             readOnly: widget.readOnly,
             controller: _opaqueController,
             hintText: "Opaque",
+            infoText:
+                "Server-specified data string that should be returned unchanged in the authorization header. Usually obtained from server's 401 response.",
             onChanged: (_) => _updateDigestAuth(),
           ),
         ],

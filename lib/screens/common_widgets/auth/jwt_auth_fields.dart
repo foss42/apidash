@@ -115,6 +115,8 @@ class _JwtAuthFieldsState extends State<JwtAuthFields> {
             controller: _secretController,
             isObscureText: true,
             hintText: "Secret key",
+            infoText:
+                "The secret key used to sign the JWT token. Keep this secure and match it with your server configuration.",
             onChanged: (value) => _updateJwtAuth(),
           ),
           const SizedBox(height: 16),
@@ -139,7 +141,7 @@ class _JwtAuthFieldsState extends State<JwtAuthFields> {
           ),
         ] else ...[
           Text(
-            "Private Key (PEM Format)",
+            "Private Key",
             style: TextStyle(
               fontWeight: FontWeight.normal,
               fontSize: 14,

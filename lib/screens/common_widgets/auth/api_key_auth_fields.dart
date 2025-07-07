@@ -75,7 +75,8 @@ class _ApiKeyAuthFieldsState extends State<ApiKeyAuthFields> {
         AuthTextField(
           readOnly: widget.readOnly,
           controller: _keyController,
-          hintText: "API Key",
+          title: "API Key",
+          hintText: "Key",
           isObscureText: true,
           onChanged: (value) => _updateApiKeyAuth(),
         ),
@@ -84,22 +85,21 @@ class _ApiKeyAuthFieldsState extends State<ApiKeyAuthFields> {
   }
 
   void _updateApiKeyAuth() {
-    widget.updateAuth(
-      widget.authData?.copyWith(
-        type: APIAuthType.apiKey,
-        apikey: AuthApiKeyModel(
-          key: _keyController.text.trim(),
-          name: _nameController.text.trim(),
-          location: _addKeyTo,
-        ),
-      ) ?? AuthModel(
+    widget.updateAuth(widget.authData?.copyWith(
           type: APIAuthType.apiKey,
           apikey: AuthApiKeyModel(
             key: _keyController.text.trim(),
             name: _nameController.text.trim(),
             location: _addKeyTo,
           ),
-        )
-    );
+        ) ??
+        AuthModel(
+          type: APIAuthType.apiKey,
+          apikey: AuthApiKeyModel(
+            key: _keyController.text.trim(),
+            name: _nameController.text.trim(),
+            location: _addKeyTo,
+          ),
+        ));
   }
 }
