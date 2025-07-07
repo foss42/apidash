@@ -167,16 +167,6 @@ stream.listen((data) {
 
 ---
 
-## 🔧 Utility Functions
-
-The `better_networking` package also includes several built-in utility functions for common tasks:
-
-* **`cancelHttpRequest`**: Cancels an ongoing request by its unique ID.
-* **`sendHttpRequest`**: Sends a request and returns the response, duration, and error (if any).
-* **`streamHttpRequest`**: Streams data from the server, useful for real-time updates or SSE.
-
----
-
 ## 🤝 Contributing
 
 We welcome contributions to the `better_networking` package! If you'd like to contribute, please fork the repository and submit a pull request. For major changes or new features, it's a good idea to open an issue first to discuss your ideas.

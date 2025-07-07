@@ -34,7 +34,9 @@ class _SSEDisplayState extends State<SSEDisplay> {
           } catch (_) {}
 
           return Card(
-            color: Colors.white,
+            color: Theme.of(context).brightness == Brightness.light
+                ? Colors.white
+                : const Color.fromARGB(255, 14, 20, 27),
             margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
             elevation: 2,
             shape: RoundedRectangleBorder(
