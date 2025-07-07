@@ -51,7 +51,7 @@ void main() {
 
         final result = await handleAuth(httpRequestModel, authModel);
 
-        expect(result.headers, isEmpty);
+        expect(result.headers, isNull);
         expect(result.url, equals('https://api.apidash.dev/users'));
       },
     );
