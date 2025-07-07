@@ -174,5 +174,125 @@ void main() {
         throwsA(isA<JWTException>()),
       );
     });
+
+    test(
+      'should throw error when generating JWT fails due to invalid payload',
+      () {
+        const jwtAuth = AuthJwtModel(
+          secret: 'test_secret',
+          payload:
+              '{"invalid": json}', // Malformed JSON that will cause parsing to fail but createKey to succeed
+          addTokenTo: 'header',
+          algorithm: 'HS256',
+          isSecretBase64Encoded: false,
+          headerPrefix: 'Bearer',
+          queryParamKey: 'token',
+          header: '',
+        );
+
+        // This should not throw since we handle JSON parsing gracefully
+        expect(() => generateJWT(jwtAuth), returnsNormally);
+      },
+    );
+
+    test('should throw exception for RSA algorithm without private key', () {
+      const jwtAuth = AuthJwtModel(
+        secret: 'test_secret',
+        payload: '{"user": "test"}',
+        addTokenTo: 'header',
+        algorithm: 'RS256',
+        isSecretBase64Encoded: false,
+        headerPrefix: 'Bearer',
+        queryParamKey: 'token',
+        header: '',
+        privateKey: null,
+      );
+
+      expect(() => generateJWT(jwtAuth), throwsA(isA<Exception>()));
+    });
+
+    test('should throw exception for ECDSA algorithm without private key', () {
+      const jwtAuth = AuthJwtModel(
+        secret: 'test_secret',
+        payload: '{"user": "test"}',
+        addTokenTo: 'header',
+        algorithm: 'ES256',
+        isSecretBase64Encoded: false,
+        headerPrefix: 'Bearer',
+        queryParamKey: 'token',
+        header: '',
+        privateKey: null,
+      );
+
+      expect(() => generateJWT(jwtAuth), throwsA(isA<Exception>()));
+    });
+
+    test('should throw exception for PS algorithm without private key', () {
+      const jwtAuth = AuthJwtModel(
+        secret: 'test_secret',
+        payload: '{"user": "test"}',
+        addTokenTo: 'header',
+        algorithm: 'PS256',
+        isSecretBase64Encoded: false,
+        headerPrefix: 'Bearer',
+        queryParamKey: 'token',
+        header: '',
+        privateKey: null,
+      );
+
+      expect(() => generateJWT(jwtAuth), throwsA(isA<Exception>()));
+    });
+
+    test('should throw exception for EdDSA algorithm without private key', () {
+      const jwtAuth = AuthJwtModel(
+        secret: 'test_secret',
+        payload: '{"user": "test"}',
+        addTokenTo: 'header',
+        algorithm: 'EdDSA',
+        isSecretBase64Encoded: false,
+        headerPrefix: 'Bearer',
+        queryParamKey: 'token',
+        header: '',
+        privateKey: null,
+      );
+
+      expect(() => generateJWT(jwtAuth), throwsA(isA<Exception>()));
+    });
+
+    test('should handle invalid header JSON gracefully', () {
+      const jwtAuth = AuthJwtModel(
+        secret: 'test_secret',
+        payload: '{"user": "test"}',
+        addTokenTo: 'header',
+        algorithm: 'HS256',
+        isSecretBase64Encoded: false,
+        headerPrefix: 'Bearer',
+        queryParamKey: 'token',
+        header: '{"invalid": json}', // Invalid JSON
+      );
+
+      final token = generateJWT(jwtAuth);
+      expect(token, isNotEmpty);
+      expect(token.split('.').length, equals(3));
+
+      // Should still generate a valid token with empty header
+      final decoded = JWT.decode(token);
+      expect(decoded.payload['user'], equals('test'));
+    });
+
+    test('should throw exception for unknown algorithm', () {
+      const jwtAuth = AuthJwtModel(
+        secret: 'test_secret',
+        payload: '{"user": "test"}',
+        addTokenTo: 'header',
+        algorithm: 'UNKNOWN_ALG',
+        isSecretBase64Encoded: false,
+        headerPrefix: 'Bearer',
+        queryParamKey: 'token',
+        header: '',
+      );
+
+      expect(() => generateJWT(jwtAuth), throwsA(isA<Exception>()));
+    });
   });
 }

@@ -334,5 +334,213 @@ void main() {
         expect(result.url, equals('https://api.apidash.dev/users'));
       },
     );
+
+    test(
+      'given handleAuth when JWT authentication with query parameter is provided then it should add to query params',
+      () async {
+        const httpRequestModel = HttpRequestModel(
+          method: HTTPVerb.get,
+          url: 'https://api.apidash.dev/users',
+        );
+
+        const jwtAuth = AuthJwtModel(
+          secret: 'jwt-secret',
+          payload: '{"sub": "1234567890"}',
+          addTokenTo: 'query',
+          algorithm: 'HS256',
+          isSecretBase64Encoded: false,
+          headerPrefix: 'Bearer',
+          queryParamKey: 'access_token',
+          header: 'Authorization',
+        );
+        const authModel = AuthModel(type: APIAuthType.jwt, jwt: jwtAuth);
+
+        final result = await handleAuth(httpRequestModel, authModel);
+
+        expect(result.params, isNotEmpty);
+        expect(result.params?.any((p) => p.name == 'access_token'), isTrue);
+        expect(result.url, equals('https://api.apidash.dev/users'));
+      },
+    );
+
+    test(
+      'given handleAuth when JWT authentication with empty query param key then it should use default "token"',
+      () async {
+        const httpRequestModel = HttpRequestModel(
+          method: HTTPVerb.get,
+          url: 'https://api.apidash.dev/users',
+        );
+
+        const jwtAuth = AuthJwtModel(
+          secret: 'jwt-secret',
+          payload: '{"sub": "1234567890"}',
+          addTokenTo: 'query',
+          algorithm: 'HS256',
+          isSecretBase64Encoded: false,
+          headerPrefix: 'Bearer',
+          queryParamKey: '',
+          header: 'Authorization',
+        );
+        const authModel = AuthModel(type: APIAuthType.jwt, jwt: jwtAuth);
+
+        final result = await handleAuth(httpRequestModel, authModel);
+
+        expect(result.params, isNotEmpty);
+        expect(result.params?.any((p) => p.name == 'token'), isTrue);
+        expect(result.url, equals('https://api.apidash.dev/users'));
+      },
+    );
+
+    test(
+      'given handleAuth when JWT authentication with empty header prefix then it should not add prefix',
+      () async {
+        const httpRequestModel = HttpRequestModel(
+          method: HTTPVerb.get,
+          url: 'https://api.apidash.dev/users',
+        );
+
+        const jwtAuth = AuthJwtModel(
+          secret: 'jwt-secret',
+          payload: '{"sub": "1234567890"}',
+          addTokenTo: 'header',
+          algorithm: 'HS256',
+          isSecretBase64Encoded: false,
+          headerPrefix: '',
+          queryParamKey: 'token',
+          header: 'Authorization',
+        );
+        const authModel = AuthModel(type: APIAuthType.jwt, jwt: jwtAuth);
+
+        final result = await handleAuth(httpRequestModel, authModel);
+
+        expect(result.headers, isNotEmpty);
+        final authHeader = result.headers?.firstWhere(
+          (h) => h.name.toLowerCase() == 'authorization',
+        );
+        expect(authHeader?.value, isNotNull);
+        expect(authHeader?.value?.startsWith('Bearer '), isFalse);
+        expect(result.url, equals('https://api.apidash.dev/users'));
+      },
+    );
+
+    test(
+      'given handleAuth when OAuth1 authentication is provided then it should throw UnimplementedError',
+      () async {
+        const httpRequestModel = HttpRequestModel(
+          method: HTTPVerb.get,
+          url: 'https://api.apidash.dev/users',
+        );
+
+        const authModel = AuthModel(type: APIAuthType.oauth1);
+
+        expect(
+          () async => await handleAuth(httpRequestModel, authModel),
+          throwsA(isA<UnimplementedError>()),
+        );
+      },
+    );
+
+    test(
+      'given handleAuth when OAuth2 authentication is provided then it should throw UnimplementedError',
+      () async {
+        const httpRequestModel = HttpRequestModel(
+          method: HTTPVerb.get,
+          url: 'https://api.apidash.dev/users',
+        );
+
+        const authModel = AuthModel(type: APIAuthType.oauth2);
+
+        expect(
+          () async => await handleAuth(httpRequestModel, authModel),
+          throwsA(isA<UnimplementedError>()),
+        );
+      },
+    );
+
+    test(
+      'given handleAuth when basic auth model is null then it should not add headers',
+      () async {
+        const httpRequestModel = HttpRequestModel(
+          method: HTTPVerb.get,
+          url: 'https://api.apidash.dev/users',
+        );
+
+        const authModel = AuthModel(type: APIAuthType.basic, basic: null);
+
+        final result = await handleAuth(httpRequestModel, authModel);
+
+        expect(result.headers, isEmpty);
+        expect(result.url, equals('https://api.apidash.dev/users'));
+      },
+    );
+
+    test(
+      'given handleAuth when bearer auth model is null then it should not add headers',
+      () async {
+        const httpRequestModel = HttpRequestModel(
+          method: HTTPVerb.get,
+          url: 'https://api.apidash.dev/users',
+        );
+
+        const authModel = AuthModel(type: APIAuthType.bearer, bearer: null);
+
+        final result = await handleAuth(httpRequestModel, authModel);
+
+        expect(result.headers, isEmpty);
+        expect(result.url, equals('https://api.apidash.dev/users'));
+      },
+    );
+
+    test(
+      'given handleAuth when JWT auth model is null then it should not add headers',
+      () async {
+        const httpRequestModel = HttpRequestModel(
+          method: HTTPVerb.get,
+          url: 'https://api.apidash.dev/users',
+        );
+
+        const authModel = AuthModel(type: APIAuthType.jwt, jwt: null);
+
+        final result = await handleAuth(httpRequestModel, authModel);
+
+        expect(result.headers, isEmpty);
+        expect(result.url, equals('https://api.apidash.dev/users'));
+      },
+    );
+
+    test(
+      'given handleAuth when API key auth model is null then it should not add headers or params',
+      () async {
+        const httpRequestModel = HttpRequestModel(
+          method: HTTPVerb.get,
+          url: 'https://api.apidash.dev/users',
+        );
+
+        const authModel = AuthModel(type: APIAuthType.apiKey, apikey: null);
+
+        final result = await handleAuth(httpRequestModel, authModel);
+
+        expect(result.headers, isEmpty);
+        expect(result.params, isEmpty);
+        expect(result.url, equals('https://api.apidash.dev/users'));
+      },
+    );
+
+    test(
+      'given handleAuth when digest auth model is null then it should not add headers',
+      () async {
+        const httpRequestModel = HttpRequestModel(
+          method: HTTPVerb.get,
+          url: 'https://api.apidash.dev/users',
+        );
+
+        const authModel = AuthModel(type: APIAuthType.digest, digest: null);
+
+        final result = await handleAuth(httpRequestModel, authModel);
+
+        expect(result.headers, isEmpty);
+        expect(result.url, equals('https://api.apidash.dev/users'));
+      },
+    );
   });
 }
