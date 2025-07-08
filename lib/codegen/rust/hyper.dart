@@ -23,6 +23,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
   final String kTemplateParams = """
     {% for key, values in params %}{% for val in values %}
     url.query_pairs_mut().append_pair("{{ key }}", "{{ val }}");{% endfor %}{% endfor %}
+    
 """;
 
   final String kTemplateMethod = """

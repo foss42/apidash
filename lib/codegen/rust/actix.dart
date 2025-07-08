@@ -39,9 +39,9 @@ String kTemplateParams = """
     let payload = serde_json::json!({{body}});
 
 """;
-
-  String kTemplateHeaders =
-      """\n        {% for key, val in headers -%}.insert_header(("{{key}}", "{{val}}")){% if not loop.last %}{{ '\n        ' }}{% endif %}{%- endfor -%}""";
+String kTemplateHeaders =
+    """
+\n    {% for key, val in headers -%}request = request.insert_header(("{{key}}", "{{val}}"));{{ '\n    ' }}{%- endfor -%}""";
 
   String kTemplateFormHeaderContentType = '''
 multipart/form-data; boundary={{boundary}}''';
