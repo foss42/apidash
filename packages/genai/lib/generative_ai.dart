@@ -77,15 +77,17 @@ class GenerativeAI {
           return;
         }
 
-        final chunk = dat.$1;
-        final error = dat.$3;
+        final chunk = dat.$2;
+        final error = dat.$4;
 
         if (chunk == null) {
           streamController.addError(error ?? 'NULL ERROR');
           return;
         }
 
-        final lines = chunk.split('\n');
+        final ans = chunk.body;
+
+        final lines = ans.split('\n');
         for (final line in lines) {
           if (!line.startsWith('data: ') || line.contains('[DONE]')) continue;
           final jsonStr = line.substring(6).trim();
