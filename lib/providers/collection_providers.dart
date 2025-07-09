@@ -3,6 +3,8 @@ import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/consts.dart';
+import 'package:genai/genai.dart';
+import 'package:genai/models/ai_request_model.dart';
 import 'providers.dart';
 import '../models/models.dart';
 import '../services/services.dart';
@@ -226,6 +228,8 @@ class CollectionStateNotifier
     HttpResponseModel? httpResponseModel,
     String? preRequestScript,
     String? postRequestScript,
+    AIRequestModel? aiRequestModel,
+    AIResponseModel? aiResponseModel,
   }) {
     final rId = id ?? ref.read(selectedIdStateProvider);
     if (rId == null) {
@@ -260,6 +264,8 @@ class CollectionStateNotifier
       httpResponseModel: httpResponseModel ?? currentModel.httpResponseModel,
       preRequestScript: preRequestScript ?? currentModel.preRequestScript,
       postRequestScript: postRequestScript ?? currentModel.postRequestScript,
+      aiRequestModel: aiRequestModel ?? currentModel.aiRequestModel,
+      aiResponseModel: aiResponseModel ?? currentModel.aiResponseModel,
     );
 
     var map = {...state!};

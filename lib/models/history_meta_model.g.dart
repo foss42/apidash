@@ -34,6 +34,7 @@ Map<String, dynamic> _$$HistoryMetaModelImplToJson(
 
 const _$APITypeEnumMap = {
   APIType.rest: 'rest',
+  APIType.ai: 'ai',
   APIType.graphql: 'graphql',
 };
 

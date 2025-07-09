@@ -1,4 +1,5 @@
 import 'package:apidash_core/apidash_core.dart';
+import 'package:genai/genai.dart';
 
 part 'request_model.freezed.dart';
 
@@ -25,6 +26,8 @@ class RequestModel with _$RequestModel {
     @JsonKey(includeToJson: false) @Default(false) bool isStreaming,
     String? preRequestScript,
     String? postRequestScript,
+    AIRequestModel? aiRequestModel,
+    AIResponseModel? aiResponseModel,
   }) = _RequestModel;
 
   factory RequestModel.fromJson(Map<String, Object?> json) =>
