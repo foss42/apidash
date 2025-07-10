@@ -6,6 +6,7 @@ import 'package:apidash/widgets/widgets.dart';
 import 'request_headers.dart';
 import 'request_params.dart';
 import 'request_body.dart';
+import 'request_scripts.dart';
 
 class EditRestRequestPane extends ConsumerWidget {
   const EditRestRequestPane({super.key});
@@ -27,6 +28,12 @@ class EditRestRequestPane extends ConsumerWidget {
             .select((value) => value?.httpRequestModel?.hasBody)) ??
         false;
 
+    final scriptsLength = ref.watch(selectedRequestModelProvider
+            .select((value) => value?.preRequestScript?.length)) ??
+        ref.watch(selectedRequestModelProvider
+            .select((value) => value?.postRequestScript?.length)) ??
+        0;
+
     return RequestPane(
       selectedId: selectedId,
       codePaneVisible: codePaneVisible,
@@ -44,16 +51,19 @@ class EditRestRequestPane extends ConsumerWidget {
         paramLength > 0,
         headerLength > 0,
         hasBody,
+        scriptsLength > 0,
       ],
       tabLabels: const [
         kLabelURLParams,
         kLabelHeaders,
         kLabelBody,
+        kLabelScripts,
       ],
       children: const [
         EditRequestURLParams(),
         EditRequestHeaders(),
         EditRequestBody(),
+        EditRequestScripts(),
       ],
     );
   }
