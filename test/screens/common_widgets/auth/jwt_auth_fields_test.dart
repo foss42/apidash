@@ -1,5 +1,5 @@
 import 'package:apidash/screens/common_widgets/auth/jwt_auth_fields.dart';
-import 'package:apidash/screens/common_widgets/auth_textfield.dart';
+import 'package:apidash/widgets/auth_textfield.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
