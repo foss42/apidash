@@ -18,7 +18,7 @@ class HistoryRequestModel with _$HistoryRequestModel {
     required HttpResponseModel httpResponseModel,
     String? preRequestScript,
     String? postRequestScript,
-    required AuthModel? authModel,
+    AuthModel? authModel,
   }) = _HistoryRequestModel;
 
   factory HistoryRequestModel.fromJson(Map<String, Object?> json) =>

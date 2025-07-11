@@ -251,7 +251,7 @@ class _$HistoryRequestModelImpl implements _HistoryRequestModel {
       required this.httpResponseModel,
       this.preRequestScript,
       this.postRequestScript,
-      required this.authModel});
+      this.authModel});
 
   factory _$HistoryRequestModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$HistoryRequestModelImplFromJson(json);
@@ -334,7 +334,7 @@ abstract class _HistoryRequestModel implements HistoryRequestModel {
       required final HttpResponseModel httpResponseModel,
       final String? preRequestScript,
       final String? postRequestScript,
-      required final AuthModel? authModel}) = _$HistoryRequestModelImpl;
+      final AuthModel? authModel}) = _$HistoryRequestModelImpl;
 
   factory _HistoryRequestModel.fromJson(Map<String, dynamic> json) =
       _$HistoryRequestModelImpl.fromJson;
