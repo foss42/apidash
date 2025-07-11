@@ -294,6 +294,17 @@ class _OAuth2FieldsState extends State<OAuth2Fields> {
 
 // ),
 
+        ..._buildFieldWithSpacing(
+          TextButton(
+            onPressed: widget.readOnly
+                ? null
+                : () async {
+                    await OAuth2Util().clearCredentials();
+                  },
+            child: const Text("Clear OAuth2 Session"),
+          ),
+        ),
+
         Divider(),
 
         kVSpacer16,
@@ -348,6 +359,7 @@ class _OAuth2FieldsState extends State<OAuth2Fields> {
       OAuth2Field.refreshToken,
       OAuth2Field.identityToken,
       OAuth2Field.accessToken,
+      OAuth2Field.clearSession,
     };
 
     if (alwaysShownFields.contains(field)) {
@@ -457,32 +469,19 @@ class _OAuth2FieldsState extends State<OAuth2Fields> {
 
 enum OAuth2Field {
   authorizationUrl,
-
   accessTokenUrl,
-
   clientId,
-
   clientSecret,
-
   redirectUrl,
-
   scope,
-
   state,
-
   codeChallengeMethod,
-
   username,
-
   password,
-
   refreshToken,
-
   identityToken,
-
   accessToken,
-
   headerPrefix,
-
-  audience
+  audience,
+  clearSession
 }

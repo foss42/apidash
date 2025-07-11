@@ -1,10 +1,12 @@
 import 'dart:convert';
-import 'dart:io';
 import 'dart:math';
-import 'package:better_networking/utils/auth/jwt_auth_utils.dart';
-import 'package:better_networking/utils/auth/digest_auth_utils.dart';
-import 'package:better_networking/better_networking.dart';
-import 'package:better_networking/utils/auth/oauth2_utils.dart';
+
+import 'package:seed/models/models.dart';
+
+import '../../consts.dart';
+import '../../models/models.dart';
+import '../../services/http_service.dart';
+import 'auth.dart';
 
 Future<HttpRequestModel> handleAuth(
   HttpRequestModel httpRequestModel,
@@ -162,54 +164,76 @@ Future<HttpRequestModel> handleAuth(
       final oauth2 = authData.oauth2;
 
       if (oauth2 == null) {
-        throw Exception("Failed to get OAuth2 Data");
+        throw Exception("No OAuth2 Data found");
       }
-
       if (oauth2.redirectUrl == null) {
         throw Exception("No Redirect URL found!");
       }
 
-      // Create a proper credentials file path
-
-      final credentialsDir = Directory.systemTemp;
-
-      final credentialsFile = File(
-        '${credentialsDir.path}/oauth2_credentials.json',
+      final redirectUri = Uri.parse(
+        oauth2.redirectUrl ?? "apidash://oauth/callback",
       );
 
-      final redirectUri = Uri.parse(oauth2.redirectUrl!);
+      final oauth2Util = OAuth2Util();
+      switch (oauth2.grantType) {
+        case OAuth2GrantType.authorizationCode:
+          final oauth2Client = await oauth2Util
+              .oAuth2AuthorizationCodeGrantHandler(
+                identifier: oauth2.clientId,
+                secret: oauth2.clientSecret,
+                authorizationEndpoint: Uri.parse(oauth2.authorizationUrl),
+                tokenEndpoint: Uri.parse(oauth2.accessTokenUrl),
+                redirectUrl: redirectUri,
+                scope: oauth2.scope,
+                state: oauth2.state,
+              );
 
-      // Use the appropriate OAuth2 handler based on the redirect URL
+          updatedHeaders.add(
+            NameValueModel(
+              name: 'Authorization',
+              value: 'Bearer ${oauth2Client.credentials.accessToken}',
+            ),
+          );
+          updatedHeaderEnabledList.add(true);
+        case OAuth2GrantType.clientCredentials:
+          final oauth2Client = await oauth2Util
+              .oAuth2ClientCredentialsGrantHandler(
+                identifier: oauth2.clientId,
+                secret: oauth2.clientSecret,
+                authorizationEndpoint: Uri.parse(oauth2.authorizationUrl),
+                scopes: oauth2.scope != null ? [oauth2.scope!] : null,
+              );
 
-      final oauth2Client = await oAuth2AuthorizationCodeGrantHandler(
-        identifier: oauth2.clientId,
+          updatedHeaders.add(
+            NameValueModel(
+              name: 'Authorization',
+              value: 'Bearer ${oauth2Client.credentials.accessToken}',
+            ),
+          );
+          updatedHeaderEnabledList.add(true);
+          throw UnimplementedError();
+        case OAuth2GrantType.resourceOwnerPassword:
+          if (oauth2.username == null || oauth2.password == null) {
+            throw Exception("OAuth Credentials are missing");
+          }
+          final oauth2Client = await oauth2Util
+              .oAuth2ResourceOwnerPasswordGrantHandler(
+                identifier: oauth2.clientId,
+                secret: oauth2.clientSecret,
+                authorizationEndpoint: Uri.parse(oauth2.authorizationUrl),
+                username: oauth2.username!,
+                password: oauth2.password!,
+                scopes: oauth2.scope != null ? [oauth2.scope!] : null,
+              );
 
-        secret: oauth2.clientSecret,
-
-        authorizationEndpoint: Uri.parse(oauth2.authorizationUrl),
-
-        tokenEndpoint: Uri.parse(oauth2.accessTokenUrl),
-
-        redirectUrl: redirectUri,
-
-        credentialsFile: credentialsFile,
-
-        scope: oauth2.scope,
-
-        state: oauth2.state,
-      );
-
-      // Add the access token to the request headers
-
-      updatedHeaders.add(
-        NameValueModel(
-          name: 'Authorization',
-
-          value: 'Bearer ${oauth2Client.credentials.accessToken}',
-        ),
-      );
-
-      updatedHeaderEnabledList.add(true);
+          updatedHeaders.add(
+            NameValueModel(
+              name: 'Authorization',
+              value: 'Bearer ${oauth2Client.credentials.accessToken}',
+            ),
+          );
+          updatedHeaderEnabledList.add(true);
+      }
 
       break;
   }
