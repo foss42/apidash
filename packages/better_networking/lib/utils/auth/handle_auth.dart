@@ -1,8 +1,10 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 import 'package:better_networking/utils/auth/jwt_auth_utils.dart';
 import 'package:better_networking/utils/auth/digest_auth_utils.dart';
 import 'package:better_networking/better_networking.dart';
+import 'package:better_networking/utils/auth/oauth2_utils.dart';
 
 Future<HttpRequestModel> handleAuth(
   HttpRequestModel httpRequestModel,
@@ -157,8 +159,59 @@ Future<HttpRequestModel> handleAuth(
       // TODO: Handle this case.
       throw UnimplementedError();
     case APIAuthType.oauth2:
-      // TODO: Handle this case.
-      throw UnimplementedError();
+      final oauth2 = authData.oauth2;
+
+      if (oauth2 == null) {
+        throw Exception("Failed to get OAuth2 Data");
+      }
+
+      if (oauth2.redirectUrl == null) {
+        throw Exception("No Redirect URL found!");
+      }
+
+      // Create a proper credentials file path
+
+      final credentialsDir = Directory.systemTemp;
+
+      final credentialsFile = File(
+        '${credentialsDir.path}/oauth2_credentials.json',
+      );
+
+      final redirectUri = Uri.parse(oauth2.redirectUrl!);
+
+      // Use the appropriate OAuth2 handler based on the redirect URL
+
+      final oauth2Client = await oAuth2AuthorizationCodeGrantHandler(
+        identifier: oauth2.clientId,
+
+        secret: oauth2.clientSecret,
+
+        authorizationEndpoint: Uri.parse(oauth2.authorizationUrl),
+
+        tokenEndpoint: Uri.parse(oauth2.accessTokenUrl),
+
+        redirectUrl: redirectUri,
+
+        credentialsFile: credentialsFile,
+
+        scope: oauth2.scope,
+
+        state: oauth2.state,
+      );
+
+      // Add the access token to the request headers
+
+      updatedHeaders.add(
+        NameValueModel(
+          name: 'Authorization',
+
+          value: 'Bearer ${oauth2Client.credentials.accessToken}',
+        ),
+      );
+
+      updatedHeaderEnabledList.add(true);
+
+      break;
   }
 
   return httpRequestModel.copyWith(

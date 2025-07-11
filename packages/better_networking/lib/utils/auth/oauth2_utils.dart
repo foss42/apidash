@@ -12,15 +12,10 @@ import 'package:url_launcher/url_launcher.dart';
 
 Future<oauth2.Client> oAuth2AuthorizationCodeGrantHandler({
   required String identifier,
-
   required String secret,
-
   required Uri authorizationEndpoint,
-
   required Uri tokenEndpoint,
-
   required Uri redirectUrl,
-
   required File credentialsFile,
 
   String? state,
