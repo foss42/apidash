@@ -137,7 +137,7 @@ void main() {
         ),
       );
 
-      expect(find.text('Private Key (PEM Format)'), findsOneWidget);
+      expect(find.text('Private Key'), findsOneWidget);
       expect(find.text('Secret key'), findsNothing);
       expect(find.byType(TextField), findsNWidgets(2)); // Private key + payload
     });
