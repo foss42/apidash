@@ -41,7 +41,7 @@ void main() {
       expect(find.text('Realm'), findsNWidgets(2));
       expect(find.text('Nonce'), findsNWidgets(2));
       expect(find.text('Algorithm'), findsOneWidget);
-      expect(find.text('QOP (e.g. auth)'), findsNWidgets(2));
+      expect(find.text('QOP'), findsNWidgets(2));
       expect(find.text('Opaque'), findsNWidgets(2));
     });
 
