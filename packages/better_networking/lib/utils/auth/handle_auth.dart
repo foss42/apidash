@@ -109,7 +109,7 @@ Future<HttpRequestModel> handleAuth(
           final httpResult = await sendHttpRequest(
             "digest-${Random.secure()}",
             APIType.rest,
-            authData,
+            null,
             httpRequestModel,
           );
           final httpResponse = httpResult.$1;
