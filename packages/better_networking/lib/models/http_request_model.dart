@@ -5,6 +5,7 @@ import '../extensions/extensions.dart';
 import '../utils/utils.dart'
     show rowsToFormDataMapList, rowsToMap, getEnabledRows;
 import '../consts.dart';
+import 'auth/api_auth_model.dart';
 
 part 'http_request_model.freezed.dart';
 part 'http_request_model.g.dart';
@@ -19,6 +20,7 @@ class HttpRequestModel with _$HttpRequestModel {
     @Default("") String url,
     List<NameValueModel>? headers,
     List<NameValueModel>? params,
+    @Default(AuthModel(type: APIAuthType.none)) AuthModel? authModel,
     List<bool>? isHeaderEnabledList,
     List<bool>? isParamEnabledList,
     @Default(ContentType.json) ContentType bodyContentType,

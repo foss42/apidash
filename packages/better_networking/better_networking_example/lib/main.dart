@@ -54,6 +54,7 @@ class _BetterNetworkingExampleState extends State<BetterNetworkingExample> {
                 final (resp, duration, err) = await sendHttpRequest(
                   'G1',
                   APIType.rest,
+                  AuthModel(type: APIAuthType.none),
                   HttpRequestModel(
                     url: 'https://reqres.in/api/users/2',
                     method: HTTPVerb.get,
@@ -80,6 +81,7 @@ class _BetterNetworkingExampleState extends State<BetterNetworkingExample> {
                 final (resp, duration, err) = await sendHttpRequest(
                   'P1',
                   APIType.rest,
+                  AuthModel(type: APIAuthType.none),
                   HttpRequestModel(
                     url: 'https://reqres.in/api/users',
                     method: HTTPVerb.post,
