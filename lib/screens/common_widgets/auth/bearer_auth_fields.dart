@@ -1,6 +1,7 @@
 import 'package:apidash/widgets/auth_textfield.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
+import 'consts.dart';
 
 class BearerAuthFields extends StatefulWidget {
   final AuthModel? authData;
@@ -33,24 +34,23 @@ class _BearerAuthFieldsState extends State<BearerAuthFields> {
     return AuthTextField(
       readOnly: widget.readOnly,
       controller: _tokenController,
-      hintText: "Token",
+      hintText: kHintToken,
       isObscureText: true,
       onChanged: (value) => _updateBearerAuth(),
     );
   }
 
   void _updateBearerAuth() {
+    final bearer = AuthBearerModel(
+      token: _tokenController.text.trim(),
+    );
     widget.updateAuth(widget.authData?.copyWith(
           type: APIAuthType.bearer,
-          bearer: AuthBearerModel(
-            token: _tokenController.text.trim(),
-          ),
+          bearer: bearer,
         ) ??
         AuthModel(
           type: APIAuthType.bearer,
-          bearer: AuthBearerModel(
-            token: _tokenController.text.trim(),
-          ),
+          bearer: bearer,
         ));
   }
 }
