@@ -26,6 +26,23 @@ enum APIAuthType {
 const kDigestAlgos = ['MD5', 'MD5-sess', 'SHA-256', 'SHA-256-sess'];
 const kQop = ['auth', 'auth-int'];
 
+const kJwtAlgos = [
+  'HS256',
+  'HS384',
+  'HS512',
+  'RS256',
+  'RS384',
+  'RS512',
+  'PS256',
+  'PS384',
+  'PS512',
+  'ES256',
+  'ES256K',
+  'ES384',
+  'ES512',
+  'EdDSA',
+];
+
 enum HTTPVerb {
   get("GET"),
   head("HEAD"),

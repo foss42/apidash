@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:apidash/widgets/widgets.dart';
+import 'consts.dart';
 
 class JwtAuthFields extends StatefulWidget {
   final AuthModel? authData;
@@ -34,8 +35,8 @@ class _JwtAuthFieldsState extends State<JwtAuthFields> {
     _secretController = TextEditingController(text: jwt?.secret ?? '');
     _privateKeyController = TextEditingController(text: jwt?.privateKey ?? '');
     _payloadController = TextEditingController(text: jwt?.payload ?? '');
-    _addTokenTo = jwt?.addTokenTo ?? 'header';
-    _algorithm = jwt?.algorithm ?? 'HS256';
+    _addTokenTo = jwt?.addTokenTo ?? kAddToDefaultLocation;
+    _algorithm = jwt?.algorithm ?? kJwtAlgos[0];
     _isSecretBase64Encoded = jwt?.isSecretBase64Encoded ?? false;
   }
 
@@ -45,7 +46,7 @@ class _JwtAuthFieldsState extends State<JwtAuthFields> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Add JWT token to",
+          kMsgAddToken,
           style: TextStyle(
             fontWeight: FontWeight.normal,
             fontSize: 14,
@@ -53,13 +54,9 @@ class _JwtAuthFieldsState extends State<JwtAuthFields> {
         ),
         SizedBox(height: 4),
         ADPopupMenu<String>(
-          value:
-              _addTokenTo == 'header' ? 'Request Header' : 'Query Parameters',
-          values: const [
-            ('header', 'Request Header'),
-            ('query', 'Query Parameters'),
-          ],
-          tooltip: "Select where to add JWT token",
+          value: kAddToLocationsMap[_addTokenTo],
+          values: kAddToLocations,
+          tooltip: kTooltipTokenAddTo,
           isOutlined: true,
           onChanged: widget.readOnly
               ? null
@@ -74,7 +71,7 @@ class _JwtAuthFieldsState extends State<JwtAuthFields> {
         ),
         const SizedBox(height: 16),
         Text(
-          "Algorithm",
+          kTextAlgo,
           style: TextStyle(
             fontWeight: FontWeight.normal,
             fontSize: 14,
@@ -83,23 +80,8 @@ class _JwtAuthFieldsState extends State<JwtAuthFields> {
         SizedBox(height: 4),
         ADPopupMenu<String>(
           value: _algorithm,
-          values: const [
-            ('HS256', 'HS256'),
-            ('HS384', 'HS384'),
-            ('HS512', 'HS512'),
-            ('RS256', 'RS256'),
-            ('RS384', 'RS384'),
-            ('RS512', 'RS512'),
-            ('PS256', 'PS256'),
-            ('PS384', 'PS384'),
-            ('PS512', 'PS512'),
-            ('ES256', 'ES256'),
-            ('ES256K', 'ES256K'),
-            ('ES384', 'ES384'),
-            ('ES512', 'ES512'),
-            ('EdDSA', 'EdDSA'),
-          ],
-          tooltip: "Select JWT algorithm",
+          values: kJwtAlgos.map((i) => (i, null)),
+          tooltip: kTooltipJWTAlgo,
           isOutlined: true,
           onChanged: widget.readOnly
               ? null
@@ -113,20 +95,19 @@ class _JwtAuthFieldsState extends State<JwtAuthFields> {
                 },
         ),
         const SizedBox(height: 16),
-        if (_algorithm.startsWith('HS')) ...[
+        if (_algorithm.startsWith(kStartAlgo)) ...[
           AuthTextField(
             readOnly: widget.readOnly,
             controller: _secretController,
             isObscureText: true,
-            hintText: "Secret key",
-            infoText:
-                "The secret key used to sign the JWT token. Keep this secure and match it with your server configuration.",
+            hintText: kHintSecret,
+            infoText: kInfoSecret,
             onChanged: (value) => _updateJwtAuth(),
           ),
           const SizedBox(height: 16),
           CheckboxListTile(
             title: Text(
-              "Secret is Base64 encoded",
+              kMsgSecret,
               style: TextStyle(
                 fontWeight: FontWeight.normal,
                 fontSize: 14,
@@ -145,7 +126,7 @@ class _JwtAuthFieldsState extends State<JwtAuthFields> {
           ),
         ] else ...[
           Text(
-            "Private Key",
+            kMsgPrivateKey,
             style: TextStyle(
               fontWeight: FontWeight.normal,
               fontSize: 14,
@@ -163,11 +144,7 @@ class _JwtAuthFieldsState extends State<JwtAuthFields> {
                 maxWidth: MediaQuery.sizeOf(context).width - 100,
               ),
               contentPadding: const EdgeInsets.all(18),
-              hintText: '''
------BEGIN RSA PRIVATE KEY-----
-Private Key in PKCS#8 PEM Format
------END RSA PRIVATE KEY-----
-''',
+              hintText: kHintRSA,
               hintStyle: Theme.of(context).textTheme.bodyMedium,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
@@ -188,7 +165,7 @@ Private Key in PKCS#8 PEM Format
         ],
         const SizedBox(height: 16),
         Text(
-          "Payload (JSON format)",
+          kMsgPayload,
           style: TextStyle(
             fontWeight: FontWeight.normal,
             fontSize: 14,
@@ -206,8 +183,7 @@ Private Key in PKCS#8 PEM Format
               maxWidth: MediaQuery.sizeOf(context).width - 100,
             ),
             contentPadding: const EdgeInsets.all(18),
-            hintText:
-                '{"sub": "1234567890", "name": "John Doe", "iat": 1516239022}',
+            hintText: kHintJson,
             hintStyle: Theme.of(context).textTheme.bodyMedium,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
@@ -230,21 +206,26 @@ Private Key in PKCS#8 PEM Format
   }
 
   void _updateJwtAuth() {
+    final jwt = AuthJwtModel(
+      secret: _secretController.text.trim(),
+      privateKey: _privateKeyController.text.trim(),
+      payload: _payloadController.text.trim(),
+      addTokenTo: _addTokenTo,
+      algorithm: _algorithm,
+      isSecretBase64Encoded: _isSecretBase64Encoded,
+      headerPrefix: kHeaderPrefix,
+      queryParamKey: kQueryParamKey,
+      header: '',
+    );
     widget.updateAuth(
       widget.authData?.copyWith(
-        type: APIAuthType.jwt,
-        jwt: AuthJwtModel(
-          secret: _secretController.text.trim(),
-          privateKey: _privateKeyController.text.trim(),
-          payload: _payloadController.text.trim(),
-          addTokenTo: _addTokenTo,
-          algorithm: _algorithm,
-          isSecretBase64Encoded: _isSecretBase64Encoded,
-          headerPrefix: 'Bearer',
-          queryParamKey: 'token',
-          header: '',
-        ),
-      ),
+            type: APIAuthType.jwt,
+            jwt: jwt,
+          ) ??
+          AuthModel(
+            type: APIAuthType.jwt,
+            jwt: jwt,
+          ),
     );
   }
 }
