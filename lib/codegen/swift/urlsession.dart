@@ -83,15 +83,10 @@ request.httpBody = postData
 
 let semaphore = DispatchSemaphore(value: 0) 
 
-let semaphore = DispatchSemaphore(value: 0) 
-
 let task = URLSession.shared.dataTask(with: request) { data, response, error in 
-    defer { semaphore.signal() }  
-
-    defer { semaphore.signal() }  
+    defer { semaphore.signal() }   
 
     if let error = error {
-        print("Error: \\(error.localizedDescription)")
         print("Error: \\(error.localizedDescription)")
         return
     }
@@ -101,14 +96,11 @@ let task = URLSession.shared.dataTask(with: request) { data, response, error in
     }
     if let responseString = String(data: data, encoding: .utf8) {
         print("Response: \\(responseString)")
-        print("Response: \\(responseString)")
     }
 }
 
 
 task.resume()
-
-semaphore.wait()
 
 semaphore.wait()
 """;
@@ -118,9 +110,6 @@ semaphore.wait()
     try {
       String result = kTemplateStart;
 
-      if (requestModel.hasFormData) {
-        result += kTemplateFormDataImport;
-      }
 
       var rec = 
       getValidRequestUri(requestModel.url, requestModel.enabledParams);
