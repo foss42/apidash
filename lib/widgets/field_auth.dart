@@ -1,6 +1,5 @@
-import 'package:apidash_design_system/tokens/measurements.dart';
-import 'package:apidash_design_system/tokens/typography.dart';
 import 'package:flutter/material.dart';
+import 'package:apidash_design_system/apidash_design_system.dart';
 
 class AuthTextField extends StatefulWidget {
   final String hintText;
