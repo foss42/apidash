@@ -1,6 +1,7 @@
 import 'package:apidash/widgets/auth_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:apidash_core/apidash_core.dart';
+import 'consts.dart';
 
 class BasicAuthFields extends StatelessWidget {
   final AuthModel? authData;
@@ -28,7 +29,7 @@ class BasicAuthFields extends StatelessWidget {
       children: [
         AuthTextField(
           readOnly: readOnly,
-          hintText: "Username",
+          hintText: kHintUsername,
           controller: usernameController,
           onChanged: (_) => _updateBasicAuth(
             usernameController,
@@ -38,7 +39,7 @@ class BasicAuthFields extends StatelessWidget {
         const SizedBox(height: 16),
         AuthTextField(
           readOnly: readOnly,
-          hintText: "Password",
+          hintText: kHintPassword,
           isObscureText: true,
           controller: passwordController,
           onChanged: (_) => _updateBasicAuth(
@@ -54,20 +55,17 @@ class BasicAuthFields extends StatelessWidget {
     TextEditingController usernameController,
     TextEditingController passwordController,
   ) {
-    updateAuth(
-      authData?.copyWith(
-        type: APIAuthType.basic,
-        basic: AuthBasicAuthModel(
-          username: usernameController.text.trim(),
-          password: passwordController.text.trim(),
-        ),
-      ) ?? AuthModel(
-          type: APIAuthType.basic,
-          basic: AuthBasicAuthModel(
-            username: usernameController.text.trim(),
-            password: passwordController.text.trim(),
-          ),
-        )
+    final basicAuth = AuthBasicAuthModel(
+      username: usernameController.text.trim(),
+      password: passwordController.text.trim(),
     );
+    updateAuth(authData?.copyWith(
+          type: APIAuthType.basic,
+          basic: basicAuth,
+        ) ??
+        AuthModel(
+          type: APIAuthType.basic,
+          basic: basicAuth,
+        ));
   }
 }
