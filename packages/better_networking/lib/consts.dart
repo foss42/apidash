@@ -23,6 +23,9 @@ enum APIAuthType {
   final String displayType;
 }
 
+const kDigestAlgos = ['MD5', 'MD5-sess', 'SHA-256', 'SHA-256-sess'];
+const kQop = ['auth', 'auth-int'];
+
 enum HTTPVerb {
   get("GET"),
   head("HEAD"),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:apidash/widgets/widgets.dart';
+import 'consts.dart';
 
 class DigestAuthFields extends StatefulWidget {
   final AuthModel? authData;
@@ -36,8 +37,8 @@ class _DigestAuthFieldsState extends State<DigestAuthFields> {
     _passwordController = TextEditingController(text: digest?.password ?? '');
     _realmController = TextEditingController(text: digest?.realm ?? '');
     _nonceController = TextEditingController(text: digest?.nonce ?? '');
-    _algorithmController = digest?.algorithm ?? 'MD5';
-    _qopController = TextEditingController(text: digest?.qop ?? 'auth');
+    _algorithmController = digest?.algorithm ?? kDigestAlgos[0];
+    _qopController = TextEditingController(text: digest?.qop ?? kQop[0]);
     _opaqueController = TextEditingController(text: digest?.opaque ?? '');
   }
 
@@ -50,42 +51,38 @@ class _DigestAuthFieldsState extends State<DigestAuthFields> {
           AuthTextField(
             readOnly: widget.readOnly,
             controller: _usernameController,
-            hintText: "Username",
-            infoText:
-                "Your username for digest authentication. This will be sent to the server for credential verification.",
+            hintText: kHintUsername,
+            infoText: kInfoDigestUsername,
             onChanged: (_) => _updateDigestAuth(),
           ),
           const SizedBox(height: 12),
           AuthTextField(
             readOnly: widget.readOnly,
             controller: _passwordController,
-            hintText: "Password",
+            hintText: kHintPassword,
             isObscureText: true,
-            infoText:
-                "Your password for digest authentication. This is hashed and not sent in plain text to the server.",
+            infoText: kInfoDigestPassword,
             onChanged: (_) => _updateDigestAuth(),
           ),
           const SizedBox(height: 12),
           AuthTextField(
             readOnly: widget.readOnly,
             controller: _realmController,
-            hintText: "Realm",
-            infoText:
-                "Authentication realm as specified by the server. This defines the protection space for the credentials.",
+            hintText: kHintRealm,
+            infoText: kInfoDigestRealm,
             onChanged: (_) => _updateDigestAuth(),
           ),
           const SizedBox(height: 12),
           AuthTextField(
             readOnly: widget.readOnly,
             controller: _nonceController,
-            hintText: "Nonce",
-            infoText:
-                "Server-generated random value used to prevent replay attacks.",
+            hintText: kHintNonce,
+            infoText: kInfoDigestNonce,
             onChanged: (_) => _updateDigestAuth(),
           ),
           const SizedBox(height: 12),
           Text(
-            "Algorithm",
+            kAlgorithm,
             style: TextStyle(
               fontWeight: FontWeight.normal,
               fontSize: 14,
@@ -94,13 +91,8 @@ class _DigestAuthFieldsState extends State<DigestAuthFields> {
           SizedBox(height: 4),
           ADPopupMenu<String>(
             value: _algorithmController.trim(),
-            values: const [
-              ('MD5', 'MD5'),
-              ('MD5-sess', 'MD5-sess'),
-              ('SHA-256', 'SHA-256'),
-              ('SHA-256-sess', 'SHA-256-sess'),
-            ],
-            tooltip: "Algorithm that will be used to produce the digest",
+            values: kDigestAlgos.map((i) => (i, null)),
+            tooltip: kTooltipAlgorithm,
             isOutlined: true,
             onChanged: widget.readOnly
                 ? null
@@ -117,18 +109,16 @@ class _DigestAuthFieldsState extends State<DigestAuthFields> {
           AuthTextField(
             readOnly: widget.readOnly,
             controller: _qopController,
-            hintText: "QOP",
-            infoText:
-                "Quality of Protection. Typically 'auth' for authentication only, or 'auth-int' for authentication with integrity protection.",
+            hintText: kHintQop,
+            infoText: kInfoDigestQop,
             onChanged: (_) => _updateDigestAuth(),
           ),
           const SizedBox(height: 12),
           AuthTextField(
             readOnly: widget.readOnly,
             controller: _opaqueController,
-            hintText: "Opaque",
-            infoText:
-                "Server-specified data string that should be returned unchanged in the authorization header. Usually obtained from server's 401 response.",
+            hintText: kHintDataString,
+            infoText: kInfoDigestDataString,
             onChanged: (_) => _updateDigestAuth(),
           ),
         ],
@@ -137,29 +127,22 @@ class _DigestAuthFieldsState extends State<DigestAuthFields> {
   }
 
   void _updateDigestAuth() {
+    final digest = AuthDigestModel(
+      username: _usernameController.text.trim(),
+      password: _passwordController.text.trim(),
+      realm: _realmController.text.trim(),
+      nonce: _nonceController.text.trim(),
+      algorithm: _algorithmController.trim(),
+      qop: _qopController.text.trim(),
+      opaque: _opaqueController.text.trim(),
+    );
     widget.updateAuth(widget.authData?.copyWith(
           type: APIAuthType.digest,
-          digest: AuthDigestModel(
-            username: _usernameController.text.trim(),
-            password: _passwordController.text.trim(),
-            realm: _realmController.text.trim(),
-            nonce: _nonceController.text.trim(),
-            algorithm: _algorithmController.trim(),
-            qop: _qopController.text.trim(),
-            opaque: _opaqueController.text.trim(),
-          ),
+          digest: digest,
         ) ??
         AuthModel(
           type: APIAuthType.digest,
-          digest: AuthDigestModel(
-            username: _usernameController.text.trim(),
-            password: _passwordController.text.trim(),
-            realm: _realmController.text.trim(),
-            nonce: _nonceController.text.trim(),
-            algorithm: _algorithmController.trim(),
-            qop: _qopController.text.trim(),
-            opaque: _opaqueController.text.trim(),
-          ),
+          digest: digest,
         ));
   }
 }

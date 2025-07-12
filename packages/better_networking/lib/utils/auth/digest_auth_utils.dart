@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:math' as math;
-
 import 'package:convert/convert.dart';
 import 'package:crypto/crypto.dart' as crypto;
+import '../../consts.dart';
 import '../../models/models.dart';
 
 Map<String, String>? splitAuthenticateHeader(String header) {
@@ -130,7 +130,7 @@ Map<String, String?> computeResponse(
     if (qop == null) {
       final token3 = '$ha1:$nonce:$ha2';
       ret['response'] = md5Hash(token3);
-    } else if (qop == 'auth' || qop == 'auth-int') {
+    } else if (kQop.contains(qop)) {
       final token3 = '$ha1:$nonce:$nonceCount:$cnonce:$qop:$ha2';
       ret['response'] = md5Hash(token3);
     }
@@ -138,7 +138,7 @@ Map<String, String?> computeResponse(
     if (qop == null) {
       final token3 = '$ha1:$nonce:$ha2';
       ret['response'] = sha256Hash(token3);
-    } else if (qop == 'auth' || qop == 'auth-int') {
+    } else if (kQop.contains(qop)) {
       final token3 = '$ha1:$nonce:$nonceCount:$cnonce:$qop:$ha2';
       ret['response'] = sha256Hash(token3);
     }
