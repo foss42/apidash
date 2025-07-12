@@ -1,6 +1,6 @@
-import 'package:apidash/widgets/auth_textfield.dart';
-import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
+import 'package:apidash_core/apidash_core.dart';
+import 'package:apidash/widgets/widgets.dart';
 import 'consts.dart';
 
 class BearerAuthFields extends StatefulWidget {

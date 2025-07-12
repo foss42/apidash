@@ -1,7 +1,7 @@
-import 'package:apidash/widgets/auth_textfield.dart';
-import 'package:apidash_core/apidash_core.dart';
-import 'package:apidash_design_system/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:apidash_core/apidash_core.dart';
+import 'package:apidash_design_system/apidash_design_system.dart';
+import 'package:apidash/widgets/widgets.dart';
 
 class DigestAuthFields extends StatefulWidget {
   final AuthModel? authData;
