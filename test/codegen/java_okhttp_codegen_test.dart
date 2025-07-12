@@ -57,11 +57,11 @@ import java.io.IOException;
 public class Main {
     public static void main(String[] args) {
         OkHttpClient client = new OkHttpClient().newBuilder().build();
-
-        HttpUrl url = HttpUrl.parse("https://api.apidash.dev/country/data").newBuilder()
-            .addQueryParameter("code", "US")
-            .build();
-
+        HttpUrl.Builder urlBuilder = HttpUrl.parse("https://api.apidash.dev/country/data").newBuilder();
+         
+        urlBuilder.addQueryParameter("code", "US");  
+        HttpUrl url = urlBuilder.build();      
+        
         Request request = new Request.Builder()
             .url(url)
             .get()
@@ -98,11 +98,12 @@ import java.io.IOException;
 public class Main {
     public static void main(String[] args) {
         OkHttpClient client = new OkHttpClient().newBuilder().build();
-
-        HttpUrl url = HttpUrl.parse("https://api.apidash.dev/country/data").newBuilder()
-            .addQueryParameter("code", "IND")
-            .build();
-
+        HttpUrl.Builder urlBuilder = HttpUrl.parse("https://api.apidash.dev/country/data").newBuilder();
+         
+        urlBuilder.addQueryParameter("code", "IND"); 
+        urlBuilder.addQueryParameter("code", "US");  
+        HttpUrl url = urlBuilder.build();      
+        
         Request request = new Request.Builder()
             .url(url)
             .get()
@@ -139,15 +140,15 @@ import java.io.IOException;
 public class Main {
     public static void main(String[] args) {
         OkHttpClient client = new OkHttpClient().newBuilder().build();
-
-        HttpUrl url = HttpUrl.parse("https://api.apidash.dev/humanize/social").newBuilder()
-            .addQueryParameter("num", "8700000")
-            .addQueryParameter("digits", "3")
-            .addQueryParameter("system", "SS")
-            .addQueryParameter("add_space", "true")
-            .addQueryParameter("trailing_zeros", "true")
-            .build();
-
+        HttpUrl.Builder urlBuilder = HttpUrl.parse("https://api.apidash.dev/humanize/social").newBuilder();
+         
+        urlBuilder.addQueryParameter("num", "8700000"); 
+        urlBuilder.addQueryParameter("digits", "3"); 
+        urlBuilder.addQueryParameter("system", "SS"); 
+        urlBuilder.addQueryParameter("add_space", "true"); 
+        urlBuilder.addQueryParameter("trailing_zeros", "true");  
+        HttpUrl url = urlBuilder.build();      
+        
         Request request = new Request.Builder()
             .url(url)
             .get()
@@ -223,11 +224,11 @@ import java.io.IOException;
 public class Main {
     public static void main(String[] args) {
         OkHttpClient client = new OkHttpClient().newBuilder().build();
-
-        HttpUrl url = HttpUrl.parse("https://api.github.com/repos/foss42/apidash").newBuilder()
-            .addQueryParameter("raw", "true")
-            .build();
-
+        HttpUrl.Builder urlBuilder = HttpUrl.parse("https://api.github.com/repos/foss42/apidash").newBuilder();
+         
+        urlBuilder.addQueryParameter("raw", "true");  
+        HttpUrl url = urlBuilder.build();      
+        
         Request request = new Request.Builder()
             .url(url)
             .addHeader("User-Agent", "Test Agent")
@@ -303,11 +304,11 @@ import java.io.IOException;
 public class Main {
     public static void main(String[] args) {
         OkHttpClient client = new OkHttpClient().newBuilder().build();
-
-        HttpUrl url = HttpUrl.parse("https://api.github.com/repos/foss42/apidash").newBuilder()
-            .addQueryParameter("raw", "true")
-            .build();
-
+        HttpUrl.Builder urlBuilder = HttpUrl.parse("https://api.github.com/repos/foss42/apidash").newBuilder();
+         
+        urlBuilder.addQueryParameter("raw", "true");  
+        HttpUrl url = urlBuilder.build();      
+        
         Request request = new Request.Builder()
             .url(url)
             .addHeader("User-Agent", "Test Agent")
@@ -345,12 +346,12 @@ import java.io.IOException;
 public class Main {
     public static void main(String[] args) {
         OkHttpClient client = new OkHttpClient().newBuilder().build();
-
-        HttpUrl url = HttpUrl.parse("https://api.apidash.dev/humanize/social").newBuilder()
-            .addQueryParameter("num", "8700000")
-            .addQueryParameter("add_space", "true")
-            .build();
-
+        HttpUrl.Builder urlBuilder = HttpUrl.parse("https://api.apidash.dev/humanize/social").newBuilder();
+         
+        urlBuilder.addQueryParameter("num", "8700000"); 
+        urlBuilder.addQueryParameter("add_space", "true");  
+        HttpUrl url = urlBuilder.build();      
+        
         Request request = new Request.Builder()
             .url(url)
             .get()
@@ -426,12 +427,12 @@ import java.io.IOException;
 public class Main {
     public static void main(String[] args) {
         OkHttpClient client = new OkHttpClient().newBuilder().build();
-
-        HttpUrl url = HttpUrl.parse("https://api.apidash.dev/humanize/social").newBuilder()
-            .addQueryParameter("num", "8700000")
-            .addQueryParameter("digits", "3")
-            .build();
-
+        HttpUrl.Builder urlBuilder = HttpUrl.parse("https://api.apidash.dev/humanize/social").newBuilder();
+         
+        urlBuilder.addQueryParameter("num", "8700000"); 
+        urlBuilder.addQueryParameter("digits", "3");  
+        HttpUrl url = urlBuilder.build();      
+        
         Request request = new Request.Builder()
             .url(url)
             .addHeader("User-Agent", "Test Agent")
@@ -590,7 +591,7 @@ public class Main {
         OkHttpClient client = new OkHttpClient().newBuilder().build();
 
         String url = "https://api.apidash.dev/case/lower";
-
+        
         MediaType mediaType = MediaType.parse("text/plain");
 
         RequestBody body = RequestBody.create("{\n\"text\": \"I LOVE Flutter\"\n}", mediaType);
@@ -634,7 +635,7 @@ public class Main {
         OkHttpClient client = new OkHttpClient().newBuilder().build();
 
         String url = "https://api.apidash.dev/case/lower";
-
+        
         MediaType mediaType = MediaType.parse("application/json");
 
         RequestBody body = RequestBody.create("{\n\"text\": \"I LOVE Flutter\",\n\"flag\": null,\n\"male\": true,\n\"female\": false,\n\"no\": 1.2,\n\"arr\": [\"null\", \"true\", \"false\", null]\n}", mediaType);
@@ -678,7 +679,7 @@ public class Main {
         OkHttpClient client = new OkHttpClient().newBuilder().build();
 
         String url = "https://api.apidash.dev/case/lower";
-
+        
         MediaType mediaType = MediaType.parse("application/json");
 
         RequestBody body = RequestBody.create("{\n\"text\": \"I LOVE Flutter\"\n}", mediaType);
@@ -901,12 +902,12 @@ import java.io.IOException;
 public class Main {
     public static void main(String[] args) {
         OkHttpClient client = new OkHttpClient().newBuilder().build();
-
-        HttpUrl url = HttpUrl.parse("https://api.apidash.dev/io/form").newBuilder()
-            .addQueryParameter("size", "2")
-            .addQueryParameter("len", "3")
-            .build();
-        RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)
+        HttpUrl.Builder urlBuilder = HttpUrl.parse("https://api.apidash.dev/io/form").newBuilder();
+         
+        urlBuilder.addQueryParameter("size", "2"); 
+        urlBuilder.addQueryParameter("len", "3");  
+        HttpUrl url = urlBuilder.build();      
+                RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)
             .addFormDataPart("text","API")
             .addFormDataPart("sep","|")
             .addFormDataPart("times","3")
@@ -950,12 +951,12 @@ import java.io.IOException;
 public class Main {
     public static void main(String[] args) {
         OkHttpClient client = new OkHttpClient().newBuilder().build();
-
-        HttpUrl url = HttpUrl.parse("https://api.apidash.dev/io/img").newBuilder()
-            .addQueryParameter("size", "2")
-            .addQueryParameter("len", "3")
-            .build();
-        RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)
+        HttpUrl.Builder urlBuilder = HttpUrl.parse("https://api.apidash.dev/io/img").newBuilder();
+         
+        urlBuilder.addQueryParameter("size", "2"); 
+        urlBuilder.addQueryParameter("len", "3");  
+        HttpUrl url = urlBuilder.build();      
+                RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)
             .addFormDataPart("token","xyz")
             .addFormDataPart("imfile",null,RequestBody.create(MediaType.parse("application/octet-stream"),new File("/Documents/up/1.png")))
             .build();
@@ -1003,13 +1004,14 @@ public class Main {
         OkHttpClient client = new OkHttpClient().newBuilder().build();
 
         String url = "https://reqres.in/api/users/2";
-
+        
         MediaType mediaType = MediaType.parse("application/json");
 
         RequestBody body = RequestBody.create("{\n\"name\": \"morpheus\",\n\"job\": \"zion resident\"\n}", mediaType);
 
         Request request = new Request.Builder()
             .url(url)
+            .addHeader("x-api-key", "reqres-free-v1")
             .put(body)
             .build();
 
@@ -1049,13 +1051,14 @@ public class Main {
         OkHttpClient client = new OkHttpClient().newBuilder().build();
 
         String url = "https://reqres.in/api/users/2";
-
+        
         MediaType mediaType = MediaType.parse("application/json");
 
         RequestBody body = RequestBody.create("{\n\"name\": \"marfeus\",\n\"job\": \"accountant\"\n}", mediaType);
 
         Request request = new Request.Builder()
             .url(url)
+            .addHeader("x-api-key", "reqres-free-v1")
             .patch(body)
             .build();
 
@@ -1096,6 +1099,7 @@ public class Main {
 
         Request request = new Request.Builder()
             .url(url)
+            .addHeader("x-api-key", "reqres-free-v1")
             .delete()
             .build();
 
@@ -1133,13 +1137,14 @@ public class Main {
         OkHttpClient client = new OkHttpClient().newBuilder().build();
 
         String url = "https://reqres.in/api/users/2";
-
+        
         MediaType mediaType = MediaType.parse("application/json");
 
         RequestBody body = RequestBody.create("{\n\"name\": \"marfeus\",\n\"job\": \"accountant\"\n}", mediaType);
 
         Request request = new Request.Builder()
             .url(url)
+            .addHeader("x-api-key", "reqres-free-v1")
             .delete(body)
             .build();
 
