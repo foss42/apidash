@@ -186,7 +186,6 @@ Private Key in PKCS#8 PEM Format
             onChanged: (value) => _updateJwtAuth(),
           ),
         ],
-
         const SizedBox(height: 16),
         Text(
           "Payload (JSON format)",
@@ -226,118 +225,6 @@ Private Key in PKCS#8 PEM Format
           ),
           onChanged: (value) => _updateJwtAuth(),
         ),
-        // const SizedBox(height: 16),
-        // if (currentAddTokenTo == 'header') ...[
-        //   Text(
-        //     "Header Prefix",
-        //     style: TextStyle(
-        //       fontWeight: FontWeight.bold,
-        //     ),
-        //   ),
-        //   SizedBox(height: 4),
-        //   TextField(
-        //     controller: jwtHeaderPrefixController,
-        //     decoration: InputDecoration(
-        //       constraints: BoxConstraints(
-        //         maxWidth: MediaQuery.sizeOf(context).width - 100,
-        //       ),
-        //       contentPadding: const EdgeInsets.all(18),
-        //       hintText: "Bearer",
-        //       hintStyle: Theme.of(context).textTheme.bodyMedium,
-        //       border: OutlineInputBorder(
-        //         borderRadius: BorderRadius.circular(8),
-        //       ),
-        //     ),
-        //     onChanged: (value) => updateAuth(ApiAuthModel(
-        //       type: APIAuthType.jwt,
-        //       jwt: AuthJwtModel(
-        //         secret: jwtSecretController.text.trim(),
-        //         payload: jwtPayloadController.text.trim(),
-        //         addTokenTo: currentAddTokenTo,
-        //         algorithm: currentAlgorithm,
-        //         isSecretBase64Encoded: isSecretBase64Encoded,
-        //         headerPrefix: jwtHeaderPrefixController.text.trim(),
-        //         queryParamKey: jwtQueryParamKeyController.text.trim(),
-        //         header: jwtHeaderController.text.trim(),
-        //       ),
-        //     )),
-        //   ),
-        //   const SizedBox(height: 16),
-        // ],
-        // if (currentAddTokenTo == 'query') ...[
-        //   Text(
-        //     "Query Parameter Key",
-        //     style: TextStyle(
-        //       fontWeight: FontWeight.bold,
-        //     ),
-        //   ),
-        //   SizedBox(height: 4),
-        //   TextField(
-        //     controller: jwtQueryParamKeyController,
-        //     decoration: InputDecoration(
-        //       constraints: BoxConstraints(
-        //         maxWidth: MediaQuery.sizeOf(context).width - 100,
-        //       ),
-        //       contentPadding: const EdgeInsets.all(18),
-        //       hintText: "token",
-        //       hintStyle: Theme.of(context).textTheme.bodyMedium,
-        //       border: OutlineInputBorder(
-        //         borderRadius: BorderRadius.circular(8),
-        //       ),
-        //     ),
-        //     onChanged: (value) => updateAuth(ApiAuthModel(
-        //       type: APIAuthType.jwt,
-        //       jwt: AuthJwtModel(
-        //         secret: jwtSecretController.text.trim(),
-        //         payload: jwtPayloadController.text.trim(),
-        //         addTokenTo: currentAddTokenTo,
-        //         algorithm: currentAlgorithm,
-        //         isSecretBase64Encoded: isSecretBase64Encoded,
-        //         headerPrefix: jwtHeaderPrefixController.text.trim(),
-        //         queryParamKey: jwtQueryParamKeyController.text.trim(),
-        //         header: jwtHeaderController.text.trim(),
-        //       ),
-        //     )),
-        //   ),
-        //   const SizedBox(height: 16),
-        // ],
-        // Text(
-        //   "JWT Headers (JSON format)",
-        //   style: TextStyle(
-        //     fontWeight: FontWeight.bold,
-        //   ),
-        // ),
-        // SizedBox(height: 4),
-        // TextField(
-        //   controller: jwtHeaderController,
-        //   maxLines: 3,
-        //   decoration: InputDecoration(
-        //     constraints: BoxConstraints(
-        //       maxWidth: MediaQuery.sizeOf(context).width - 100,
-        //     ),
-        //     contentPadding: const EdgeInsets.all(18),
-        //     hintText: '{"typ": "JWT", "alg": "HS256"}',
-        //     hintStyle: Theme.of(context).textTheme.bodyMedium,
-        //     border: OutlineInputBorder(
-        //       borderRadius: BorderRadius.circular(8),
-        //     ),
-        //   ),
-        //   onChanged: (value) => updateAuth(
-        //     ApiAuthModel(
-        //       type: APIAuthType.jwt,
-        //       jwt: AuthJwtModel(
-        //         secret: jwtSecretController.text.trim(),
-        //         payload: jwtPayloadController.text.trim(),
-        //         addTokenTo: currentAddTokenTo,
-        //         algorithm: currentAlgorithm,
-        //         isSecretBase64Encoded: isSecretBase64Encoded,
-        //         headerPrefix: jwtHeaderPrefixController.text.trim(),
-        //         queryParamKey: jwtQueryParamKeyController.text.trim(),
-        //         header: jwtHeaderController.text.trim(),
-        //       ),
-        //     ),
-        //   ),
-        // ),
       ],
     );
   }
