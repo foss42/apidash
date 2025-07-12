@@ -1,3 +1,4 @@
+const kEmpty = '';
 const kApiKeyHeaderName = 'x-api-key';
 const kAddToLocations = [
   ('header', 'Header'),
@@ -10,3 +11,8 @@ const kTooltipApiKeyAuth = "Select where to add API key";
 const kHintTextFieldName = "Header/Query Param Name";
 const kLabelApiKey = "API Key";
 const kHintTextKey = "Key";
+
+const kHintUsername = "Username";
+const kHintPassword = "Password";
+
+const kHintToken = "Token";
