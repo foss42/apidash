@@ -2,6 +2,7 @@ import 'package:apidash/widgets/auth_textfield.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
+import 'consts.dart';
 
 class ApiKeyAuthFields extends StatefulWidget {
   final AuthModel? authData;
@@ -28,8 +29,9 @@ class _ApiKeyAuthFieldsState extends State<ApiKeyAuthFields> {
     super.initState();
     final apiAuth = widget.authData?.apikey;
     _keyController = TextEditingController(text: apiAuth?.key ?? '');
-    _nameController = TextEditingController(text: apiAuth?.name ?? 'x-api-key');
-    _addKeyTo = apiAuth?.location ?? 'header';
+    _nameController =
+        TextEditingController(text: apiAuth?.name ?? kApiKeyHeaderName);
+    _addKeyTo = apiAuth?.location ?? kAddToDefaultLocation;
   }
 
   @override
@@ -38,7 +40,7 @@ class _ApiKeyAuthFieldsState extends State<ApiKeyAuthFields> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Add to",
+          kLabelAddTo,
           style: TextStyle(
             fontWeight: FontWeight.normal,
             fontSize: 14,
@@ -48,12 +50,9 @@ class _ApiKeyAuthFieldsState extends State<ApiKeyAuthFields> {
           height: 4,
         ),
         ADPopupMenu<String>(
-          value: _addKeyTo == 'header' ? 'Header' : 'Query Params',
-          values: const [
-            ('header', 'Header'),
-            ('query', 'Query Params'),
-          ],
-          tooltip: "Select where to add API key",
+          value: kAddToLocationsMap[_addKeyTo],
+          values: kAddToLocations,
+          tooltip: kTooltipApiKeyAuth,
           isOutlined: true,
           onChanged: widget.readOnly
               ? null
@@ -70,15 +69,15 @@ class _ApiKeyAuthFieldsState extends State<ApiKeyAuthFields> {
         AuthTextField(
           readOnly: widget.readOnly,
           controller: _nameController,
-          hintText: "Header/Query Param Name",
+          hintText: kHintTextFieldName,
           onChanged: (value) => _updateApiKeyAuth(),
         ),
         const SizedBox(height: 16),
         AuthTextField(
           readOnly: widget.readOnly,
           controller: _keyController,
-          title: "API Key",
-          hintText: "Key",
+          title: kLabelApiKey,
+          hintText: kHintTextKey,
           isObscureText: true,
           onChanged: (value) => _updateApiKeyAuth(),
         ),
@@ -87,21 +86,18 @@ class _ApiKeyAuthFieldsState extends State<ApiKeyAuthFields> {
   }
 
   void _updateApiKeyAuth() {
+    final apiKey = AuthApiKeyModel(
+      key: _keyController.text.trim(),
+      name: _nameController.text.trim(),
+      location: _addKeyTo,
+    );
     widget.updateAuth(widget.authData?.copyWith(
           type: APIAuthType.apiKey,
-          apikey: AuthApiKeyModel(
-            key: _keyController.text.trim(),
-            name: _nameController.text.trim(),
-            location: _addKeyTo,
-          ),
+          apikey: apiKey,
         ) ??
         AuthModel(
           type: APIAuthType.apiKey,
-          apikey: AuthApiKeyModel(
-            key: _keyController.text.trim(),
-            name: _nameController.text.trim(),
-            location: _addKeyTo,
-          ),
+          apikey: apiKey,
         ));
   }
 }
