@@ -33,6 +33,7 @@ dependencies:
   flutter_riverpod: ^2.5.1
   flutter_svg: ^2.0.17
   fvp: ^0.32.1
+  highlight: ^0.7.0
   highlighter: ^0.1.1
   hive_flutter: ^1.1.0
   hooks_riverpod: ^2.5.2
