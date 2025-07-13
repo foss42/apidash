@@ -91,7 +91,7 @@ class _DigestAuthFieldsState extends State<DigestAuthFields> {
           SizedBox(height: 4),
           ADPopupMenu<String>(
             value: _algorithmController.trim(),
-            values: kDigestAlgos.map((i) => (i, null)),
+            values: kDigestAlgos.map((i) => (i, i)),
             tooltip: kTooltipAlgorithm,
             isOutlined: true,
             onChanged: widget.readOnly

@@ -80,7 +80,7 @@ class _JwtAuthFieldsState extends State<JwtAuthFields> {
         SizedBox(height: 4),
         ADPopupMenu<String>(
           value: _algorithm,
-          values: kJwtAlgos.map((i) => (i, null)),
+          values: kJwtAlgos.map((i) => (i, i)),
           tooltip: kTooltipJWTAlgo,
           isOutlined: true,
           onChanged: widget.readOnly
