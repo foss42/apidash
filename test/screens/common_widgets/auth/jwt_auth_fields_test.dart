@@ -37,7 +37,7 @@ void main() {
       expect(find.text('Algorithm'), findsOneWidget);
       expect(find.text('Payload (JSON format)'), findsOneWidget);
       expect(find.byType(ADPopupMenu<String>), findsNWidgets(2));
-      expect(find.text('Request Header'), findsOneWidget);
+      expect(find.text('Header'), findsOneWidget);
       expect(find.text('HS256'), findsOneWidget);
     });
 
@@ -71,7 +71,7 @@ void main() {
 
       expect(find.text('Add JWT token to'), findsOneWidget);
       expect(find.text('Algorithm'), findsOneWidget);
-      expect(find.text('Request Header'), findsOneWidget);
+      expect(find.text('Header'), findsOneWidget);
       expect(find.text('HS256'), findsOneWidget);
     });
 
@@ -103,7 +103,7 @@ void main() {
         ),
       );
 
-      expect(find.text('Secret key'), findsExactly(2));
+      expect(find.text('Secret Key'), findsExactly(2));
       expect(find.text('Secret is Base64 encoded'), findsOneWidget);
       expect(find.byType(AuthTextField), findsOneWidget);
       expect(find.byType(CheckboxListTile), findsOneWidget);
@@ -138,7 +138,7 @@ void main() {
       );
 
       expect(find.text('Private Key'), findsOneWidget);
-      expect(find.text('Secret key'), findsNothing);
+      expect(find.text('Secret Key'), findsNothing);
       expect(find.byType(TextField), findsNWidgets(2)); // Private key + payload
     });
 
@@ -175,7 +175,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Select Query Parameters option
-      await tester.tap(find.text('Query Parameters').last);
+      await tester.tap(find.text('Query Params').last);
       await tester.pumpAndSettle();
 
       // Verify that updateAuth was called
@@ -360,7 +360,7 @@ void main() {
       );
 
       // Default token location should be header
-      expect(find.text('Request Header'), findsOneWidget);
+      expect(find.text('Header'), findsOneWidget);
 
       // Default algorithm should be HS256
       expect(find.text('HS256'), findsOneWidget);
