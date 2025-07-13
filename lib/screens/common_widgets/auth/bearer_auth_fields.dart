@@ -5,13 +5,13 @@ import 'consts.dart';
 
 class BearerAuthFields extends StatefulWidget {
   final AuthModel? authData;
-  final Function(AuthModel?) updateAuth;
+  final Function(AuthModel?)? updateAuth;
   final bool readOnly;
 
   const BearerAuthFields({
     super.key,
     required this.authData,
-    required this.updateAuth,
+    this.updateAuth,
     this.readOnly = false,
   });
 
@@ -44,7 +44,7 @@ class _BearerAuthFieldsState extends State<BearerAuthFields> {
     final bearer = AuthBearerModel(
       token: _tokenController.text.trim(),
     );
-    widget.updateAuth(widget.authData?.copyWith(
+    widget.updateAuth?.call(widget.authData?.copyWith(
           type: APIAuthType.bearer,
           bearer: bearer,
         ) ??

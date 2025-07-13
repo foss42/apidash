@@ -7,12 +7,12 @@ import 'consts.dart';
 class DigestAuthFields extends StatefulWidget {
   final AuthModel? authData;
   final bool readOnly;
-  final Function(AuthModel?) updateAuth;
+  final Function(AuthModel?)? updateAuth;
 
   const DigestAuthFields({
     super.key,
     required this.authData,
-    required this.updateAuth,
+    this.updateAuth,
     this.readOnly = false,
   });
 
@@ -136,7 +136,7 @@ class _DigestAuthFieldsState extends State<DigestAuthFields> {
       qop: _qopController.text.trim(),
       opaque: _opaqueController.text.trim(),
     );
-    widget.updateAuth(widget.authData?.copyWith(
+    widget.updateAuth?.call(widget.authData?.copyWith(
           type: APIAuthType.digest,
           digest: digest,
         ) ??

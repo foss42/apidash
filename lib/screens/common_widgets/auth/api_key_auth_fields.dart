@@ -7,12 +7,12 @@ import 'consts.dart';
 class ApiKeyAuthFields extends StatefulWidget {
   final AuthModel? authData;
   final bool readOnly;
-  final Function(AuthModel?) updateAuth;
+  final Function(AuthModel?)? updateAuth;
 
   const ApiKeyAuthFields(
       {super.key,
       required this.authData,
-      required this.updateAuth,
+      this.updateAuth,
       this.readOnly = false});
 
   @override
@@ -91,7 +91,7 @@ class _ApiKeyAuthFieldsState extends State<ApiKeyAuthFields> {
       name: _nameController.text.trim(),
       location: _addKeyTo,
     );
-    widget.updateAuth(widget.authData?.copyWith(
+    widget.updateAuth?.call(widget.authData?.copyWith(
           type: APIAuthType.apiKey,
           apikey: apiKey,
         ) ??

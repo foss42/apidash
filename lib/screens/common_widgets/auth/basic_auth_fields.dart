@@ -5,13 +5,13 @@ import 'consts.dart';
 
 class BasicAuthFields extends StatelessWidget {
   final AuthModel? authData;
-  final Function(AuthModel?) updateAuth;
+  final Function(AuthModel?)? updateAuth;
   final bool readOnly;
 
   const BasicAuthFields({
     super.key,
     required this.authData,
-    required this.updateAuth,
+    this.updateAuth,
     this.readOnly = false,
   });
 
@@ -59,7 +59,7 @@ class BasicAuthFields extends StatelessWidget {
       username: usernameController.text.trim(),
       password: passwordController.text.trim(),
     );
-    updateAuth(authData?.copyWith(
+    updateAuth?.call(authData?.copyWith(
           type: APIAuthType.basic,
           basic: basicAuth,
         ) ??
