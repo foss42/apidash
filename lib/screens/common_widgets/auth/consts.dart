@@ -62,3 +62,12 @@ const kHintJson =
     '{"sub": "1234567890", "name": "John Doe", "iat": 1516239022}';
 const kHeaderPrefix = 'Bearer';
 const kQueryParamKey = 'token';
+
+//AuthPAge
+const kLabelSelectAuthType = "Authentication Type";
+const kTooltipSelectAuth = "Select Authentication Type";
+const kMsgNoAuth = "No authentication was used for this request.";
+const kMsgNoAuthSelected = "No authentication selected.";
+const kMsgAuthNotSupported =
+    "authentication details are not yet supported in history view.";
+const kMsgNotImplemented = "This auth type is not implemented yet.";
