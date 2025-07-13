@@ -3,7 +3,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:seed/seed.dart';
 import '../extensions/extensions.dart';
 import '../utils/utils.dart'
-    show rowsToFormDataMapList, rowsToMap, getEnabledRows;
+    show rowsToFormDataMapList, rowsToMap, getEnabledRows,rowsToRequestMap;
 import '../consts.dart';
 import 'auth/api_auth_model.dart';
 
@@ -33,14 +33,28 @@ class HttpRequestModel with _$HttpRequestModel {
       _$HttpRequestModelFromJson(json);
 
   Map<String, String> get headersMap => rowsToMap(headers) ?? {};
-  Map<String, String> get paramsMap => rowsToMap(params) ?? {};
+  Map<String, List<String>> get paramsMap => rowsToRequestMap(params) ?? {};
   List<NameValueModel>? get enabledHeaders =>
       getEnabledRows(headers, isHeaderEnabledList);
   List<NameValueModel>? get enabledParams =>
       getEnabledRows(params, isParamEnabledList);
 
   Map<String, String> get enabledHeadersMap => rowsToMap(enabledHeaders) ?? {};
-  Map<String, String> get enabledParamsMap => rowsToMap(enabledParams) ?? {};
+Map<String, List<String>> get enabledParamsMap {  
+  var extractedParams = Uri.parse(url).queryParametersAll;  
+  var userParams = rowsToRequestMap(enabledParams) ?? {};  
+  
+  extractedParams.forEach((key, values) {
+    if (userParams.containsKey(key)) {
+      userParams[key]!.addAll(values);
+    } else {
+      userParams[key] = List.from(values);
+    }
+  });
+  
+  return userParams;
+}
+
 
   bool get hasContentTypeHeader => enabledHeadersMap.hasKeyContentType();
   bool get hasFormDataContentType => bodyContentType == ContentType.formdata;
