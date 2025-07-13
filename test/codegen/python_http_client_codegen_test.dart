@@ -258,8 +258,13 @@ params = { 'num': ['8700000'],
 'digits': ['3'] }
 queryParamsStr = '?' + urlencode(params,doseq=True)
 
+headers = {
+  "User-Agent": "Test Agent"
+}
+
 conn = http.client.HTTPSConnection("api.apidash.dev")
-conn.request("GET", "/humanize/social" + queryParamsStr)
+conn.request("GET", "/humanize/social" + queryParamsStr,
+              headers= headers)
 
 res = conn.getresponse()
 data = res.read()

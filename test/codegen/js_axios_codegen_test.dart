@@ -40,6 +40,9 @@ axios(config)
     "code": [
       "US"
     ]
+  },
+  paramsSerializer: (params) => {
+    return qs.stringify(params, { arrayFormat: 'repeat' });
   }
 };
 
@@ -70,6 +73,9 @@ axios(config)
       "IND",
       "US"
     ]
+  },
+  paramsSerializer: (params) => {
+    return qs.stringify(params, { arrayFormat: 'repeat' });
   }
 };
 
@@ -111,6 +117,9 @@ axios(config)
     "trailing_zeros": [
       "true"
     ]
+  },
+  paramsSerializer: (params) => {
+    return qs.stringify(params, { arrayFormat: 'repeat' });
   }
 };
 
@@ -168,6 +177,9 @@ axios(config)
       "true"
     ]
   },
+  paramsSerializer: (params) => {
+    return qs.stringify(params, { arrayFormat: 'repeat' });
+  },
   headers: {
     "User-Agent": "Test Agent"
   }
@@ -224,6 +236,9 @@ axios(config)
       "true"
     ]
   },
+  paramsSerializer: (params) => {
+    return qs.stringify(params, { arrayFormat: 'repeat' });
+  },
   headers: {
     "User-Agent": "Test Agent"
   }
@@ -258,6 +273,9 @@ axios(config)
     "add_space": [
       "true"
     ]
+  },
+  paramsSerializer: (params) => {
+    return qs.stringify(params, { arrayFormat: 'repeat' });
   }
 };
 
@@ -317,6 +335,9 @@ axios(config)
     "digits": [
       "3"
     ]
+  },
+  paramsSerializer: (params) => {
+    return qs.stringify(params, { arrayFormat: 'repeat' });
   },
   headers: {
     "User-Agent": "Test Agent"
@@ -643,6 +664,9 @@ axios(config)
       "3"
     ]
   },
+  paramsSerializer: (params) => {
+    return qs.stringify(params, { arrayFormat: 'repeat' });
+  },
   headers: {
     "Content-Type": "multipart/form-data"
   },
@@ -684,6 +708,9 @@ const config = {
     "len": [
       "3"
     ]
+  },
+  paramsSerializer: (params) => {
+    return qs.stringify(params, { arrayFormat: 'repeat' });
   },
   headers: {
     "Content-Type": "multipart/form-data",
