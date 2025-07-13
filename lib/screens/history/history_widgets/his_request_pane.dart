@@ -1,4 +1,3 @@
-import 'package:apidash/screens/home_page/editor_pane/details_card/request_pane/request_auth.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/providers/providers.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash/consts.dart';
+import '../../common_widgets/common_widgets.dart';
 import 'his_scripts_tab.dart';
 
 class HistoryRequestPane extends ConsumerWidget {
@@ -81,7 +81,7 @@ class HistoryRequestPane extends ConsumerWidget {
               rows: paramsMap,
               keyName: kNameURLParam,
             ),
-            EditAuthType(
+            AuthPage(
               authModel: authModel,
               readOnly: true,
             ),
@@ -119,7 +119,7 @@ class HistoryRequestPane extends ConsumerWidget {
               rows: headersMap,
               keyName: kNameHeader,
             ),
-            EditAuthType(
+            AuthPage(
               authModel: authModel,
               readOnly: true,
             ),
