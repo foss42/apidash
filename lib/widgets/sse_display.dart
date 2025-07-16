@@ -64,9 +64,7 @@ class _SSEDisplayState extends State<SSEDisplay> {
                               Expanded(
                                 child: Text(
                                   entry.value.toString(),
-                                  style: theme.textTheme.bodyMedium?.copyWith(
-                                    fontFamily: 'monospace',
-                                  ),
+                                  style: kCodeStyle,
                                 ),
                               ),
                             ],

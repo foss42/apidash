@@ -63,9 +63,10 @@ class ResponseBody extends StatelessWidget {
       return ResponseBodySuccess(
         key: Key("${selectedRequestModel!.id}-response"),
         mediaType: MediaType('text', 'event-stream'),
-        options: [ResponseBodyView.sse],
+        options: [ResponseBodyView.sse, ResponseBodyView.raw],
         bytes: utf8.encode((responseModel.sseOutput!).toString()),
         body: jsonEncode(responseModel.sseOutput!),
+        formattedBody: responseModel.sseOutput!.join('\n'),
       );
     }
 
