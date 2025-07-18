@@ -9,6 +9,40 @@ enum APIType {
   final String abbr;
 }
 
+enum APIAuthType {
+  none("None"),
+  basic("Basic Auth"),
+  apiKey("API Key"),
+  bearer("Bearer Token"),
+  jwt("JWT Bearer"),
+  digest("Digest Auth"),
+  oauth1("OAuth 1.0"),
+  oauth2("OAuth 2.0");
+
+  const APIAuthType(this.displayType);
+  final String displayType;
+}
+
+const kDigestAlgos = ['MD5', 'MD5-sess', 'SHA-256', 'SHA-256-sess'];
+const kQop = ['auth', 'auth-int'];
+
+const kJwtAlgos = [
+  'HS256',
+  'HS384',
+  'HS512',
+  'RS256',
+  'RS384',
+  'RS512',
+  'PS256',
+  'PS384',
+  'PS512',
+  'ES256',
+  'ES256K',
+  'ES384',
+  'ES512',
+  'EdDSA',
+];
+
 enum HTTPVerb {
   get("GET"),
   head("HEAD"),
@@ -96,4 +130,5 @@ const LineSplitter kSplitter = LineSplitter();
 const kCodeCharsPerLineLimit = 200;
 
 const kHeaderContentType = "Content-Type";
+const kHeaderWwwAuthenticate = 'www-authenticate';
 const kMsgRequestCancelled = 'Request Cancelled';
