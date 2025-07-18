@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/consts.dart';
 import 'providers.dart';
 import '../models/models.dart';
+import '../models/mqtt_request_model.dart';
+import '../services/mqtt_service.dart' show MQTTConnectionState;
 import '../services/services.dart';
 import '../utils/utils.dart';
 
@@ -68,6 +70,7 @@ class CollectionStateNotifier
     final newRequestModel = RequestModel(
       id: id,
       httpRequestModel: const HttpRequestModel(),
+      mqttRequestModel: const MQTTRequestModel(),
     );
     var map = {...state!};
     map[id] = newRequestModel;
@@ -225,6 +228,8 @@ class CollectionStateNotifier
     HttpResponseModel? httpResponseModel,
     String? preRequestScript,
     String? postRequestScript,
+    MQTTRequestModel? mqttRequestModel,
+    MQTTConnectionState? mqttConnectionState,
   }) {
     final rId = id ?? ref.read(selectedIdStateProvider);
     if (rId == null) {
@@ -233,6 +238,13 @@ class CollectionStateNotifier
     }
     var currentModel = state![rId]!;
     var currentHttpRequestModel = currentModel.httpRequestModel;
+    
+    // Initialize MQTT request model if API type is changed to MQTT
+    MQTTRequestModel? finalMqttRequestModel = mqttRequestModel ?? currentModel.mqttRequestModel;
+    if (apiType == APIType.mqtt && finalMqttRequestModel == null) {
+      finalMqttRequestModel = const MQTTRequestModel();
+    }
+    
     final newModel = currentModel.copyWith(
       apiType: apiType ?? currentModel.apiType,
       name: name ?? currentModel.name,
@@ -259,12 +271,26 @@ class CollectionStateNotifier
       httpResponseModel: httpResponseModel ?? currentModel.httpResponseModel,
       preRequestScript: preRequestScript ?? currentModel.preRequestScript,
       postRequestScript: postRequestScript ?? currentModel.postRequestScript,
+      mqttRequestModel: finalMqttRequestModel,
+      mqttConnectionState: mqttConnectionState ?? currentModel.mqttConnectionState,
     );
 
     var map = {...state!};
     map[rId] = newModel;
     state = map;
     unsave();
+  }
+
+  void updateMQTTState({
+    String? id,
+    MQTTRequestModel? mqttRequestModel,
+    MQTTConnectionState? mqttConnectionState,
+  }) {
+    update(
+      id: id,
+      mqttRequestModel: mqttRequestModel,
+      mqttConnectionState: mqttConnectionState,
+    );
   }
 
   Future<void> sendRequest() async {
@@ -279,7 +305,7 @@ class CollectionStateNotifier
     }
     RequestModel? requestModel = state![requestId];
 
-    if (requestModel?.httpRequestModel == null) {
+    if (requestModel?.httpRequestModel == null && requestModel?.apiType != APIType.mqtt) {
       return;
     }
 
@@ -302,6 +328,13 @@ class CollectionStateNotifier
     }
 
     APIType apiType = executionRequestModel.apiType;
+    
+    // Handle MQTT requests
+    if (apiType == APIType.mqtt) {
+      await _handleMQTTRequest(requestId, requestModel);
+      return;
+    }
+
     HttpRequestModel substitutedHttpRequestModel =
         getSubstitutedHttpRequestModel(executionRequestModel.httpRequestModel!);
 
@@ -389,6 +422,65 @@ class CollectionStateNotifier
     unsave();
   }
 
+  Future<void> _handleMQTTRequest(String requestId, RequestModel requestModel) async {
+    final mqttService = ref.read(mqttServiceProvider);
+    final mqttModel = requestModel.mqttRequestModel;
+    
+    if (mqttModel == null) {
+      return;
+    }
+
+    // set current model's isWorking to true and update state
+    var map = {...state!};
+    map[requestId] = requestModel.copyWith(
+      isWorking: true,
+      sendingTime: DateTime.now(),
+    );
+    state = map;
+
+    try {
+      final isConnected = mqttService.currentState.isConnected;
+      
+      if (isConnected) {
+        // Disconnect if already connected
+        await mqttService.disconnect();
+        final newRequestModel = requestModel.copyWith(
+          mqttConnectionState: mqttService.currentState,
+          isWorking: false,
+          responseStatus: 200,
+          message: 'Disconnected from MQTT broker',
+        );
+        map = {...state!};
+        map[requestId] = newRequestModel;
+        state = map;
+      } else {
+        // Connect to MQTT broker
+        final success = await mqttService.connect(mqttModel);
+        final newRequestModel = requestModel.copyWith(
+          mqttConnectionState: mqttService.currentState,
+          isWorking: false,
+          responseStatus: success ? 200 : -1,
+          message: success ? 'Connected to MQTT broker' : 'Failed to connect to MQTT broker',
+        );
+        map = {...state!};
+        map[requestId] = newRequestModel;
+        state = map;
+      }
+    } catch (e) {
+      final newRequestModel = requestModel.copyWith(
+        mqttConnectionState: mqttService.currentState,
+        isWorking: false,
+        responseStatus: -1,
+        message: 'MQTT error: $e',
+      );
+      map = {...state!};
+      map[requestId] = newRequestModel;
+      state = map;
+    }
+
+    unsave();
+  }
+
   void cancelRequest() {
     final id = ref.read(selectedIdStateProvider);
     cancelHttpRequest(id);
@@ -426,6 +518,11 @@ class CollectionStateNotifier
           if (requestModel.httpRequestModel == null) {
             requestModel = requestModel.copyWith(
               httpRequestModel: const HttpRequestModel(),
+            );
+          }
+          if (requestModel.mqttRequestModel == null) {
+            requestModel = requestModel.copyWith(
+              mqttRequestModel: const MQTTRequestModel(),
             );
           }
           data[id] = requestModel;
