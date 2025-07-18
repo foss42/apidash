@@ -58,8 +58,11 @@ class _AuthFieldState extends State<EnvAuthField> {
           const SizedBox(height: 6),
           EnvironmentTriggerField(
             keyId: "auth-${widget.title ?? widget.hintText}-${Random.secure()}",
-            onChanged: widget.readOnly ? null : widget.onChanged,
+            onChanged: widget.onChanged,
             initialValue: widget.initialValue,
+            readOnly: widget.readOnly,
+            // TODO: Needs some new implementation
+            // obscureText: widget.isObscureText,
             style: kCodeStyle.copyWith(
               color: Theme.of(context).colorScheme.onSurface,
               fontSize: Theme.of(context).textTheme.bodyMedium?.fontSize,
