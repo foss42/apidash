@@ -142,7 +142,7 @@ Future<
     // Process Results
     if (result.isError) {
       print("Pre-request script execution error: ${result.stringResult}");
-      // Handle error - maybe show in UI, keep original request/env
+      //TODO: Handle error - log this error in the logs console
     } else if (result.stringResult.isNotEmpty) {
       final resultMap = jsonDecode(result.stringResult);
       if (resultMap is Map<String, dynamic>) {
@@ -153,7 +153,7 @@ Future<
                 Map<String, Object?>.from(resultMap['request']));
           } catch (e) {
             print("Error deserializing modified request from script: $e");
-            //TODO: Handle error - maybe keep original request?
+            //TODO: Handle error - log this error in the logs console
           }
         }
         // Get Environment Modifications
