@@ -21,7 +21,7 @@ class JwtAuthFields extends StatefulWidget {
 }
 
 class _JwtAuthFieldsState extends State<JwtAuthFields> {
-  late TextEditingController _secretController;
+  late String _secret;
   late TextEditingController _privateKeyController;
   late TextEditingController _payloadController;
   late String _addTokenTo;
@@ -32,7 +32,7 @@ class _JwtAuthFieldsState extends State<JwtAuthFields> {
   void initState() {
     super.initState();
     final jwt = widget.authData?.jwt;
-    _secretController = TextEditingController(text: jwt?.secret ?? '');
+    _secret = jwt?.secret ?? '';
     _privateKeyController = TextEditingController(text: jwt?.privateKey ?? '');
     _payloadController = TextEditingController(text: jwt?.payload ?? '');
     _addTokenTo = jwt?.addTokenTo ?? kAddToDefaultLocation;
@@ -96,13 +96,16 @@ class _JwtAuthFieldsState extends State<JwtAuthFields> {
         ),
         const SizedBox(height: 16),
         if (_algorithm.startsWith(kStartAlgo)) ...[
-          AuthTextField(
+          EnvAuthField(
             readOnly: widget.readOnly,
-            controller: _secretController,
             isObscureText: true,
             hintText: kHintSecret,
             infoText: kInfoSecret,
-            onChanged: (value) => _updateJwtAuth(),
+            initialValue: widget.authData?.jwt?.secret,
+            onChanged: (value) {
+              _secret = value;
+              _updateJwtAuth();
+            },
           ),
           const SizedBox(height: 16),
           CheckboxListTile(
@@ -207,7 +210,7 @@ class _JwtAuthFieldsState extends State<JwtAuthFields> {
 
   void _updateJwtAuth() {
     final jwt = AuthJwtModel(
-      secret: _secretController.text.trim(),
+      secret: _secret.trim(),
       privateKey: _privateKeyController.text.trim(),
       payload: _payloadController.text.trim(),
       addTokenTo: _addTokenTo,

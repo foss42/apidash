@@ -21,25 +21,25 @@ class DigestAuthFields extends StatefulWidget {
 }
 
 class _DigestAuthFieldsState extends State<DigestAuthFields> {
-  late TextEditingController _usernameController;
-  late TextEditingController _passwordController;
-  late TextEditingController _realmController;
-  late TextEditingController _nonceController;
+  late String _username;
+  late String _password;
+  late String _realm;
+  late String _nonce;
   late String _algorithmController;
-  late TextEditingController _qopController;
-  late TextEditingController _opaqueController;
+  late String _qop;
+  late String _opaque;
 
   @override
   void initState() {
     super.initState();
     final digest = widget.authData?.digest;
-    _usernameController = TextEditingController(text: digest?.username ?? '');
-    _passwordController = TextEditingController(text: digest?.password ?? '');
-    _realmController = TextEditingController(text: digest?.realm ?? '');
-    _nonceController = TextEditingController(text: digest?.nonce ?? '');
+    _username = digest?.username ?? '';
+    _password = digest?.password ?? '';
+    _realm = digest?.realm ?? '';
+    _nonce = digest?.nonce ?? '';
     _algorithmController = digest?.algorithm ?? kDigestAlgos[0];
-    _qopController = TextEditingController(text: digest?.qop ?? kQop[0]);
-    _opaqueController = TextEditingController(text: digest?.opaque ?? '');
+    _qop = digest?.qop ?? kQop[0];
+    _opaque = digest?.opaque ?? '';
   }
 
   @override
@@ -48,37 +48,49 @@ class _DigestAuthFieldsState extends State<DigestAuthFields> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          AuthTextField(
+          EnvAuthField(
             readOnly: widget.readOnly,
-            controller: _usernameController,
             hintText: kHintUsername,
             infoText: kInfoDigestUsername,
-            onChanged: (_) => _updateDigestAuth(),
+            initialValue: widget.authData?.digest?.username,
+            onChanged: (value) {
+              _username = value;
+              _updateDigestAuth();
+            },
           ),
           const SizedBox(height: 12),
-          AuthTextField(
+          EnvAuthField(
             readOnly: widget.readOnly,
-            controller: _passwordController,
             hintText: kHintPassword,
             isObscureText: true,
             infoText: kInfoDigestPassword,
-            onChanged: (_) => _updateDigestAuth(),
+            initialValue: widget.authData?.digest?.password,
+            onChanged: (value) {
+              _password = value;
+              _updateDigestAuth();
+            },
           ),
           const SizedBox(height: 12),
-          AuthTextField(
+          EnvAuthField(
             readOnly: widget.readOnly,
-            controller: _realmController,
             hintText: kHintRealm,
             infoText: kInfoDigestRealm,
-            onChanged: (_) => _updateDigestAuth(),
+            initialValue: widget.authData?.digest?.realm,
+            onChanged: (value) {
+              _realm = value;
+              _updateDigestAuth();
+            },
           ),
           const SizedBox(height: 12),
-          AuthTextField(
+          EnvAuthField(
             readOnly: widget.readOnly,
-            controller: _nonceController,
             hintText: kHintNonce,
             infoText: kInfoDigestNonce,
-            onChanged: (_) => _updateDigestAuth(),
+            initialValue: widget.authData?.digest?.nonce,
+            onChanged: (value) {
+              _nonce = value;
+              _updateDigestAuth();
+            },
           ),
           const SizedBox(height: 12),
           Text(
@@ -106,20 +118,26 @@ class _DigestAuthFieldsState extends State<DigestAuthFields> {
                   },
           ),
           const SizedBox(height: 12),
-          AuthTextField(
+          EnvAuthField(
             readOnly: widget.readOnly,
-            controller: _qopController,
             hintText: kHintQop,
             infoText: kInfoDigestQop,
-            onChanged: (_) => _updateDigestAuth(),
+            initialValue: widget.authData?.digest?.qop,
+            onChanged: (value) {
+              _qop = value;
+              _updateDigestAuth();
+            },
           ),
           const SizedBox(height: 12),
-          AuthTextField(
+          EnvAuthField(
             readOnly: widget.readOnly,
-            controller: _opaqueController,
             hintText: kHintDataString,
             infoText: kInfoDigestDataString,
-            onChanged: (_) => _updateDigestAuth(),
+            initialValue: widget.authData?.digest?.opaque,
+            onChanged: (value) {
+              _opaque = value;
+              _updateDigestAuth();
+            },
           ),
         ],
       ),
@@ -128,13 +146,13 @@ class _DigestAuthFieldsState extends State<DigestAuthFields> {
 
   void _updateDigestAuth() {
     final digest = AuthDigestModel(
-      username: _usernameController.text.trim(),
-      password: _passwordController.text.trim(),
-      realm: _realmController.text.trim(),
-      nonce: _nonceController.text.trim(),
+      username: _username.trim(),
+      password: _password.trim(),
+      realm: _realm.trim(),
+      nonce: _nonce.trim(),
       algorithm: _algorithmController.trim(),
-      qop: _qopController.text.trim(),
-      opaque: _opaqueController.text.trim(),
+      qop: _qop.trim(),
+      opaque: _opaque.trim(),
     );
     widget.updateAuth?.call(widget.authData?.copyWith(
           type: APIAuthType.digest,

@@ -3,7 +3,7 @@ import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'consts.dart';
 
-class BasicAuthFields extends StatelessWidget {
+class BasicAuthFields extends StatefulWidget {
   final AuthModel? authData;
   final Function(AuthModel?)? updateAuth;
   final bool readOnly;
@@ -16,50 +16,55 @@ class BasicAuthFields extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    final usernameController = TextEditingController(
-      text: authData?.basic?.username ?? '',
-    );
-    final passwordController = TextEditingController(
-      text: authData?.basic?.password ?? '',
-    );
+  State<BasicAuthFields> createState() => _BasicAuthFieldsState();
+}
 
+class _BasicAuthFieldsState extends State<BasicAuthFields> {
+  late String _username;
+  late String _password;
+
+  @override
+  void initState() {
+    super.initState();
+    _username = widget.authData?.basic?.username ?? '';
+    _password = widget.authData?.basic?.password ?? '';
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        AuthTextField(
-          readOnly: readOnly,
+        EnvAuthField(
+          readOnly: widget.readOnly,
           hintText: kHintUsername,
-          controller: usernameController,
-          onChanged: (_) => _updateBasicAuth(
-            usernameController,
-            passwordController,
-          ),
+          initialValue: widget.authData?.basic?.username,
+          onChanged: (value) {
+            _username = value;
+            _updateBasicAuth();
+          },
         ),
         const SizedBox(height: 16),
-        AuthTextField(
-          readOnly: readOnly,
+        EnvAuthField(
+          readOnly: widget.readOnly,
           hintText: kHintPassword,
           isObscureText: true,
-          controller: passwordController,
-          onChanged: (_) => _updateBasicAuth(
-            usernameController,
-            passwordController,
-          ),
+          initialValue: widget.authData?.basic?.password,
+          onChanged: (value) {
+            _password = value;
+            _updateBasicAuth();
+          },
         ),
       ],
     );
   }
 
-  void _updateBasicAuth(
-    TextEditingController usernameController,
-    TextEditingController passwordController,
-  ) {
+  void _updateBasicAuth() {
     final basicAuth = AuthBasicAuthModel(
-      username: usernameController.text.trim(),
-      password: passwordController.text.trim(),
+      username: _username.trim(),
+      password: _password.trim(),
     );
-    updateAuth?.call(authData?.copyWith(
+    widget.updateAuth?.call(widget.authData?.copyWith(
           type: APIAuthType.basic,
           basic: basicAuth,
         ) ??
