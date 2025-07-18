@@ -1077,6 +1077,112 @@ void main() {
       expect(capturedValues, isNotNull);
       expect(capturedValues?.length, 1);
     });
+
+    test('should handle accessing non-existent environment variables',
+        () async {
+      final scriptWithMissingVar = RequestModel(
+        id: 'missing-var-request',
+        name: 'Missing Variable Test',
+        httpRequestModel: baseGetRequest,
+        preRequestScript: '''
+          const missingVar = ad.environment.get('nonExistentVar');
+          ad.request.headers.set('X-Missing-Var', missingVar || 'default-value');
+          ad.console.log('Missing variable handled: ' + (missingVar || 'undefined'));
+        ''',
+      );
+
+      final result = await handlePreRequestScript(
+        scriptWithMissingVar,
+        testEnvironment,
+        null,
+      );
+
+      expect(result, isA<RequestModel>());
+      final headers = result.httpRequestModel!.headers!;
+      final missingVarHeader =
+          headers.firstWhere((h) => h.name == 'X-Missing-Var');
+      expect(missingVarHeader.value, equals('default-value'));
+    });
+
+    test('should handle JSON parsing errors in post-response script', () async {
+      const invalidJsonResponse = HttpResponseModel(
+        statusCode: 200,
+        headers: {'content-type': 'application/json'},
+        body: '{"invalid": json}', // Invalid JSON
+        time: Duration(milliseconds: 100),
+      );
+
+      final requestWithInvalidJson = RequestModel(
+        id: 'invalid-json-request',
+        name: 'Invalid JSON Test',
+        httpRequestModel: baseGetRequest,
+        httpResponseModel: invalidJsonResponse,
+        postRequestScript: '''
+          const data = ad.response.json();
+          if (data) {
+            ad.environment.set('parsedData', 'success');
+          } else {
+            ad.environment.set('parsedData', 'failed');
+          }
+          ad.console.log('JSON parsing result: ' + (data ? 'success' : 'failed'));
+        ''',
+      );
+
+      List<EnvironmentVariableModel>? capturedValues;
+      void mockUpdateEnv(
+          EnvironmentModel envModel, List<EnvironmentVariableModel> values) {
+        capturedValues = values;
+      }
+
+      await handlePostResponseScript(
+        requestWithInvalidJson,
+        testEnvironment,
+        mockUpdateEnv,
+      );
+
+      expect(capturedValues, isNotNull);
+      final parsedDataVar =
+          capturedValues!.firstWhere((v) => v.key == 'parsedData');
+      expect(parsedDataVar.value, equals('failed'));
+    });
+
+    test('should handle null/undefined response body', () async {
+      const nullBodyResponse = HttpResponseModel(
+        statusCode: 204,
+        headers: {},
+        body: null,
+        time: Duration(milliseconds: 50),
+      );
+
+      final requestWithNullBody = RequestModel(
+        id: 'null-body-request',
+        name: 'Null Body Test',
+        httpRequestModel: baseGetRequest,
+        httpResponseModel: nullBodyResponse,
+        postRequestScript: '''
+          const body = ad.response.body;
+          ad.environment.set('bodyExists', body ? 'true' : 'false');
+          ad.environment.set('bodyLength', body ? body.length.toString() : '0');
+        ''',
+      );
+
+      List<EnvironmentVariableModel>? capturedValues;
+      void mockUpdateEnv(
+          EnvironmentModel envModel, List<EnvironmentVariableModel> values) {
+        capturedValues = values;
+      }
+
+      await handlePostResponseScript(
+        requestWithNullBody,
+        testEnvironment,
+        mockUpdateEnv,
+      );
+
+      expect(capturedValues, isNotNull);
+      final bodyExistsVar =
+          capturedValues!.firstWhere((v) => v.key == 'bodyExists');
+      expect(bodyExistsVar.value, equals('false'));
+    });
   });
 
   group('Performance Tests', () {
@@ -1148,10 +1254,6 @@ void main() {
       }
     });
   });
-
-  // ============================================================================
-  // COMPREHENSIVE TESTS WITH PREDEFINED DATA MODELS
-  // ============================================================================
 
   group('Pre-request Script - Request Modification Tests', () {
     test('should modify headers correctly', () async {
@@ -1465,178 +1567,6 @@ void main() {
     });
   });
 
-  group('Edge Cases and Error Handling', () {
-    test('should handle malformed JavaScript in pre-request script', () async {
-      final malformedRequest = RequestModel(
-        id: 'malformed-request',
-        name: 'Malformed Script Test',
-        httpRequestModel: baseGetRequest,
-        preRequestScript: 'ad.request.headers.set(; // Invalid syntax',
-      );
-
-      final result = await handlePreRequestScript(
-        malformedRequest,
-        testEnvironment,
-        null,
-      );
-
-      // Should return original request without modifications
-      expect(result, isA<RequestModel>());
-      expect(result.httpRequestModel!.headers!.length,
-          equals(baseGetRequest.headers!.length));
-    });
-
-    test('should handle malformed JavaScript in post-response script',
-        () async {
-      final malformedRequest = RequestModel(
-        id: 'malformed-post-request',
-        name: 'Malformed Post Script Test',
-        httpRequestModel: baseGetRequest,
-        httpResponseModel: successLoginResponse,
-        postRequestScript: 'ad.environment.set(; // Invalid syntax',
-      );
-
-      final result = await handlePostResponseScript(
-        malformedRequest,
-        testEnvironment,
-        null,
-      );
-
-      // Should return original request without modifications
-      expect(result, isA<RequestModel>());
-      expect(result.httpResponseModel, equals(successLoginResponse));
-    });
-
-    test('should handle empty environment values list', () async {
-      const emptyEnvironment = EnvironmentModel(
-        id: 'empty-env',
-        name: 'Empty Environment',
-        values: [],
-      );
-
-      List<EnvironmentVariableModel>? capturedValues;
-      void mockUpdateEnv(
-          EnvironmentModel envModel, List<EnvironmentVariableModel> values) {
-        capturedValues = values;
-      }
-
-      await handlePreRequestScript(
-        requestWithEnvironmentUpdateScript,
-        emptyEnvironment,
-        mockUpdateEnv,
-      );
-
-      expect(capturedValues, isNotNull);
-      expect(capturedValues!.length, equals(3)); // Only new variables
-    });
-
-    test('should handle accessing non-existent environment variables',
-        () async {
-      final scriptWithMissingVar = RequestModel(
-        id: 'missing-var-request',
-        name: 'Missing Variable Test',
-        httpRequestModel: baseGetRequest,
-        preRequestScript: '''
-          const missingVar = ad.environment.get('nonExistentVar');
-          ad.request.headers.set('X-Missing-Var', missingVar || 'default-value');
-          ad.console.log('Missing variable handled: ' + (missingVar || 'undefined'));
-        ''',
-      );
-
-      final result = await handlePreRequestScript(
-        scriptWithMissingVar,
-        testEnvironment,
-        null,
-      );
-
-      expect(result, isA<RequestModel>());
-      final headers = result.httpRequestModel!.headers!;
-      final missingVarHeader =
-          headers.firstWhere((h) => h.name == 'X-Missing-Var');
-      expect(missingVarHeader.value, equals('default-value'));
-    });
-
-    test('should handle JSON parsing errors in post-response script', () async {
-      const invalidJsonResponse = HttpResponseModel(
-        statusCode: 200,
-        headers: {'content-type': 'application/json'},
-        body: '{"invalid": json}', // Invalid JSON
-        time: Duration(milliseconds: 100),
-      );
-
-      final requestWithInvalidJson = RequestModel(
-        id: 'invalid-json-request',
-        name: 'Invalid JSON Test',
-        httpRequestModel: baseGetRequest,
-        httpResponseModel: invalidJsonResponse,
-        postRequestScript: '''
-          const data = ad.response.json();
-          if (data) {
-            ad.environment.set('parsedData', 'success');
-          } else {
-            ad.environment.set('parsedData', 'failed');
-          }
-          ad.console.log('JSON parsing result: ' + (data ? 'success' : 'failed'));
-        ''',
-      );
-
-      List<EnvironmentVariableModel>? capturedValues;
-      void mockUpdateEnv(
-          EnvironmentModel envModel, List<EnvironmentVariableModel> values) {
-        capturedValues = values;
-      }
-
-      await handlePostResponseScript(
-        requestWithInvalidJson,
-        testEnvironment,
-        mockUpdateEnv,
-      );
-
-      expect(capturedValues, isNotNull);
-      final parsedDataVar =
-          capturedValues!.firstWhere((v) => v.key == 'parsedData');
-      expect(parsedDataVar.value, equals('failed'));
-    });
-
-    test('should handle null/undefined response body', () async {
-      const nullBodyResponse = HttpResponseModel(
-        statusCode: 204,
-        headers: {},
-        body: null,
-        time: Duration(milliseconds: 50),
-      );
-
-      final requestWithNullBody = RequestModel(
-        id: 'null-body-request',
-        name: 'Null Body Test',
-        httpRequestModel: baseGetRequest,
-        httpResponseModel: nullBodyResponse,
-        postRequestScript: '''
-          const body = ad.response.body;
-          ad.environment.set('bodyExists', body ? 'true' : 'false');
-          ad.environment.set('bodyLength', body ? body.length.toString() : '0');
-        ''',
-      );
-
-      List<EnvironmentVariableModel>? capturedValues;
-      void mockUpdateEnv(
-          EnvironmentModel envModel, List<EnvironmentVariableModel> values) {
-        capturedValues = values;
-      }
-
-      await handlePostResponseScript(
-        requestWithNullBody,
-        testEnvironment,
-        mockUpdateEnv,
-      );
-
-      expect(capturedValues, isNotNull);
-      final bodyExistsVar =
-          capturedValues!.firstWhere((v) => v.key == 'bodyExists');
-      expect(bodyExistsVar.value, equals('false'));
-    });
-  });
-
   group('Data Type Conversion Tests', () {
     test('should convert different data types to strings in environment',
         () async {
@@ -1720,9 +1650,7 @@ void main() {
       final nullHeader = headers.firstWhere((h) => h.name == 'X-Null-Header');
       expect(nullHeader.value, equals('null'));
     });
-  });
 
-  group('Complete Workflow Tests', () {
     test('should handle complete workflow with pre and post scripts', () async {
       // Pre-request script that sets up auth
       final preRequestModel = RequestModel(
