@@ -36,7 +36,13 @@ mixin _$RequestModel {
   @JsonKey(includeToJson: false)
   DateTime? get sendingTime => throw _privateConstructorUsedError;
   String? get preRequestScript => throw _privateConstructorUsedError;
-  String? get postRequestScript => throw _privateConstructorUsedError;
+  String? get postRequestScript =>
+      throw _privateConstructorUsedError;
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  MQTTConnectionState? get mqttConnectionState =>
+      throw _privateConstructorUsedError;
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  MQTTRequestModel? get mqttRequestModel => throw _privateConstructorUsedError;
 
   /// Serializes this RequestModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -67,10 +73,15 @@ abstract class $RequestModelCopyWith<$Res> {
       @JsonKey(includeToJson: false) bool isWorking,
       @JsonKey(includeToJson: false) DateTime? sendingTime,
       String? preRequestScript,
-      String? postRequestScript});
+      String? postRequestScript,
+      @JsonKey(includeFromJson: false, includeToJson: false)
+      MQTTConnectionState? mqttConnectionState,
+      @JsonKey(includeFromJson: false, includeToJson: false)
+      MQTTRequestModel? mqttRequestModel});
 
   $HttpRequestModelCopyWith<$Res>? get httpRequestModel;
   $HttpResponseModelCopyWith<$Res>? get httpResponseModel;
+  $MQTTRequestModelCopyWith<$Res>? get mqttRequestModel;
 }
 
 /// @nodoc
@@ -101,6 +112,8 @@ class _$RequestModelCopyWithImpl<$Res, $Val extends RequestModel>
     Object? sendingTime = freezed,
     Object? preRequestScript = freezed,
     Object? postRequestScript = freezed,
+    Object? mqttConnectionState = freezed,
+    Object? mqttRequestModel = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -155,6 +168,14 @@ class _$RequestModelCopyWithImpl<$Res, $Val extends RequestModel>
           ? _value.postRequestScript
           : postRequestScript // ignore: cast_nullable_to_non_nullable
               as String?,
+      mqttConnectionState: freezed == mqttConnectionState
+          ? _value.mqttConnectionState
+          : mqttConnectionState // ignore: cast_nullable_to_non_nullable
+              as MQTTConnectionState?,
+      mqttRequestModel: freezed == mqttRequestModel
+          ? _value.mqttRequestModel
+          : mqttRequestModel // ignore: cast_nullable_to_non_nullable
+              as MQTTRequestModel?,
     ) as $Val);
   }
 
@@ -185,6 +206,20 @@ class _$RequestModelCopyWithImpl<$Res, $Val extends RequestModel>
       return _then(_value.copyWith(httpResponseModel: value) as $Val);
     });
   }
+
+  /// Create a copy of RequestModel
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $MQTTRequestModelCopyWith<$Res>? get mqttRequestModel {
+    if (_value.mqttRequestModel == null) {
+      return null;
+    }
+
+    return $MQTTRequestModelCopyWith<$Res>(_value.mqttRequestModel!, (value) {
+      return _then(_value.copyWith(mqttRequestModel: value) as $Val);
+    });
+  }
 }
 
 /// @nodoc
@@ -208,12 +243,18 @@ abstract class _$$RequestModelImplCopyWith<$Res>
       @JsonKey(includeToJson: false) bool isWorking,
       @JsonKey(includeToJson: false) DateTime? sendingTime,
       String? preRequestScript,
-      String? postRequestScript});
+      String? postRequestScript,
+      @JsonKey(includeFromJson: false, includeToJson: false)
+      MQTTConnectionState? mqttConnectionState,
+      @JsonKey(includeFromJson: false, includeToJson: false)
+      MQTTRequestModel? mqttRequestModel});
 
   @override
   $HttpRequestModelCopyWith<$Res>? get httpRequestModel;
   @override
   $HttpResponseModelCopyWith<$Res>? get httpResponseModel;
+  @override
+  $MQTTRequestModelCopyWith<$Res>? get mqttRequestModel;
 }
 
 /// @nodoc
@@ -242,6 +283,8 @@ class __$$RequestModelImplCopyWithImpl<$Res>
     Object? sendingTime = freezed,
     Object? preRequestScript = freezed,
     Object? postRequestScript = freezed,
+    Object? mqttConnectionState = freezed,
+    Object? mqttRequestModel = freezed,
   }) {
     return _then(_$RequestModelImpl(
       id: null == id
@@ -295,6 +338,14 @@ class __$$RequestModelImplCopyWithImpl<$Res>
           ? _value.postRequestScript
           : postRequestScript // ignore: cast_nullable_to_non_nullable
               as String?,
+      mqttConnectionState: freezed == mqttConnectionState
+          ? _value.mqttConnectionState
+          : mqttConnectionState // ignore: cast_nullable_to_non_nullable
+              as MQTTConnectionState?,
+      mqttRequestModel: freezed == mqttRequestModel
+          ? _value.mqttRequestModel
+          : mqttRequestModel // ignore: cast_nullable_to_non_nullable
+              as MQTTRequestModel?,
     ));
   }
 }
@@ -316,7 +367,11 @@ class _$RequestModelImpl implements _RequestModel {
       @JsonKey(includeToJson: false) this.isWorking = false,
       @JsonKey(includeToJson: false) this.sendingTime,
       this.preRequestScript,
-      this.postRequestScript});
+      this.postRequestScript,
+      @JsonKey(includeFromJson: false, includeToJson: false)
+      this.mqttConnectionState,
+      @JsonKey(includeFromJson: false, includeToJson: false)
+      this.mqttRequestModel});
 
   factory _$RequestModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$RequestModelImplFromJson(json);
@@ -353,10 +408,17 @@ class _$RequestModelImpl implements _RequestModel {
   final String? preRequestScript;
   @override
   final String? postRequestScript;
+// MQTT support (move to end)
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  final MQTTConnectionState? mqttConnectionState;
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  final MQTTRequestModel? mqttRequestModel;
 
   @override
   String toString() {
-    return 'RequestModel(id: $id, apiType: $apiType, name: $name, description: $description, requestTabIndex: $requestTabIndex, httpRequestModel: $httpRequestModel, responseStatus: $responseStatus, message: $message, httpResponseModel: $httpResponseModel, isWorking: $isWorking, sendingTime: $sendingTime, preRequestScript: $preRequestScript, postRequestScript: $postRequestScript)';
+    return 'RequestModel(id: $id, apiType: $apiType, name: $name, description: $description, requestTabIndex: $requestTabIndex, httpRequestModel: $httpRequestModel, responseStatus: $responseStatus, message: $message, httpResponseModel: $httpResponseModel, isWorking: $isWorking, sendingTime: $sendingTime, preRequestScript: $preRequestScript, postRequestScript: $postRequestScript, mqttConnectionState: $mqttConnectionState, mqttRequestModel: $mqttRequestModel)';
   }
 
   @override
@@ -385,7 +447,11 @@ class _$RequestModelImpl implements _RequestModel {
             (identical(other.preRequestScript, preRequestScript) ||
                 other.preRequestScript == preRequestScript) &&
             (identical(other.postRequestScript, postRequestScript) ||
-                other.postRequestScript == postRequestScript));
+                other.postRequestScript == postRequestScript) &&
+            (identical(other.mqttConnectionState, mqttConnectionState) ||
+                other.mqttConnectionState == mqttConnectionState) &&
+            (identical(other.mqttRequestModel, mqttRequestModel) ||
+                other.mqttRequestModel == mqttRequestModel));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -404,7 +470,9 @@ class _$RequestModelImpl implements _RequestModel {
       isWorking,
       sendingTime,
       preRequestScript,
-      postRequestScript);
+      postRequestScript,
+      mqttConnectionState,
+      mqttRequestModel);
 
   /// Create a copy of RequestModel
   /// with the given fields replaced by the non-null parameter values.
@@ -436,7 +504,11 @@ abstract class _RequestModel implements RequestModel {
       @JsonKey(includeToJson: false) final bool isWorking,
       @JsonKey(includeToJson: false) final DateTime? sendingTime,
       final String? preRequestScript,
-      final String? postRequestScript}) = _$RequestModelImpl;
+      final String? postRequestScript,
+      @JsonKey(includeFromJson: false, includeToJson: false)
+      final MQTTConnectionState? mqttConnectionState,
+      @JsonKey(includeFromJson: false, includeToJson: false)
+      final MQTTRequestModel? mqttRequestModel}) = _$RequestModelImpl;
 
   factory _RequestModel.fromJson(Map<String, dynamic> json) =
       _$RequestModelImpl.fromJson;
@@ -469,7 +541,13 @@ abstract class _RequestModel implements RequestModel {
   @override
   String? get preRequestScript;
   @override
-  String? get postRequestScript;
+  String? get postRequestScript; // MQTT support (move to end)
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  MQTTConnectionState? get mqttConnectionState;
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  MQTTRequestModel? get mqttRequestModel;
 
   /// Create a copy of RequestModel
   /// with the given fields replaced by the non-null parameter values.

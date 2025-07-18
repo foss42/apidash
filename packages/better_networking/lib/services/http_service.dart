@@ -21,6 +21,10 @@ Future<(HttpResponse?, Duration?, String?)> sendHttpRequest(
   SupportedUriSchemes defaultUriScheme = kDefaultUriScheme,
   bool noSSL = false,
 }) async {
+  if (apiType == APIType.mqtt) {
+    // MQTT is not supported in this HTTP service
+    return (null, null, 'MQTT protocol is not supported in HTTP service.');
+  }
   if (httpClientManager.wasRequestCancelled(requestId)) {
     httpClientManager.removeCancelledRequest(requestId);
   }

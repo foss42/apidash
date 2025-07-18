@@ -36,6 +36,7 @@ Color getAPIColor(
         method,
       ),
     APIType.graphql => kColorGQL,
+    APIType.mqtt => Colors.orange, // Or define kColorMQTT if you have one
   };
   if (brightness == Brightness.dark) {
     col = getDarkModeColor(col);
