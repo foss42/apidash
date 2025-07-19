@@ -1,7 +1,9 @@
 import 'package:apidash/screens/common_widgets/auth/bearer_auth_fields.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash_core/apidash_core.dart';
+import 'package:extended_text_field/extended_text_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_portal/flutter_portal.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -22,17 +24,19 @@ void main() {
       mockAuthData = null;
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: BearerAuthFields(
-              authData: mockAuthData,
-              updateAuth: mockUpdateAuth,
+        Portal(
+          child: MaterialApp(
+            home: Scaffold(
+              body: BearerAuthFields(
+                authData: mockAuthData,
+                updateAuth: mockUpdateAuth,
+              ),
             ),
           ),
         ),
       );
 
-      expect(find.byType(AuthTextField), findsOneWidget);
+      expect(find.byType(EnvAuthField), findsOneWidget);
       expect(find.text('Token'), findsNWidgets(2));
     });
 
@@ -46,17 +50,19 @@ void main() {
       );
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: BearerAuthFields(
-              authData: mockAuthData,
-              updateAuth: mockUpdateAuth,
+        Portal(
+          child: MaterialApp(
+            home: Scaffold(
+              body: BearerAuthFields(
+                authData: mockAuthData,
+                updateAuth: mockUpdateAuth,
+              ),
             ),
           ),
         ),
       );
 
-      expect(find.byType(AuthTextField), findsOneWidget);
+      expect(find.byType(EnvAuthField), findsOneWidget);
       expect(find.text('Token'), findsNWidgets(2));
     });
 
@@ -70,20 +76,28 @@ void main() {
       );
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: BearerAuthFields(
-              authData: mockAuthData,
-              updateAuth: mockUpdateAuth,
+        Portal(
+          child: MaterialApp(
+            home: Scaffold(
+              body: BearerAuthFields(
+                authData: mockAuthData,
+                updateAuth: mockUpdateAuth,
+              ),
             ),
           ),
         ),
       );
 
       // Find the token field
-      final tokenField = find.byType(AuthTextField);
+      final textFields = find.byType(ExtendedTextField);
+      expect(textFields, findsAtLeastNWidgets(1));
+
+      final tokenField = textFields.first;
       await tester.tap(tokenField);
-      await tester.enterText(tokenField, 'new-bearer-token');
+      await tester.pumpAndSettle();
+
+      // Use tester.testTextInput to enter text directly
+      tester.testTextInput.enterText('new-bearer-token');
       await tester.pumpAndSettle();
 
       // Verify that updateAuth was called
@@ -102,21 +116,23 @@ void main() {
       );
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: BearerAuthFields(
-              authData: mockAuthData,
-              updateAuth: mockUpdateAuth,
-              readOnly: true,
+        Portal(
+          child: MaterialApp(
+            home: Scaffold(
+              body: BearerAuthFields(
+                authData: mockAuthData,
+                updateAuth: mockUpdateAuth,
+                readOnly: true,
+              ),
             ),
           ),
         ),
       );
 
-      // Verify that AuthTextField widget is rendered
-      expect(find.byType(AuthTextField), findsOneWidget);
+      // Verify that EnvAuthField widget is rendered
+      expect(find.byType(EnvAuthField), findsOneWidget);
 
-      // The readOnly property should be passed to AuthTextField widget
+      // The readOnly property should be passed to EnvAuthField widget
       // This is verified by the widget structure itself
     });
 
@@ -124,17 +140,19 @@ void main() {
       mockAuthData = null;
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: BearerAuthFields(
-              authData: mockAuthData,
-              updateAuth: mockUpdateAuth,
+        Portal(
+          child: MaterialApp(
+            home: Scaffold(
+              body: BearerAuthFields(
+                authData: mockAuthData,
+                updateAuth: mockUpdateAuth,
+              ),
             ),
           ),
         ),
       );
 
-      expect(find.byType(AuthTextField), findsOneWidget);
+      expect(find.byType(EnvAuthField), findsOneWidget);
     });
 
     testWidgets('handles empty auth data gracefully',
@@ -147,17 +165,19 @@ void main() {
       );
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: BearerAuthFields(
-              authData: mockAuthData,
-              updateAuth: mockUpdateAuth,
+        Portal(
+          child: MaterialApp(
+            home: Scaffold(
+              body: BearerAuthFields(
+                authData: mockAuthData,
+                updateAuth: mockUpdateAuth,
+              ),
             ),
           ),
         ),
       );
 
-      expect(find.byType(AuthTextField), findsOneWidget);
+      expect(find.byType(EnvAuthField), findsOneWidget);
     });
 
     testWidgets('creates proper AuthModel on token change',
@@ -165,20 +185,28 @@ void main() {
       mockAuthData = null;
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: BearerAuthFields(
-              authData: mockAuthData,
-              updateAuth: mockUpdateAuth,
+        Portal(
+          child: MaterialApp(
+            home: Scaffold(
+              body: BearerAuthFields(
+                authData: mockAuthData,
+                updateAuth: mockUpdateAuth,
+              ),
             ),
           ),
         ),
       );
 
       // Enter token
-      final tokenField = find.byType(AuthTextField);
+      final textFields = find.byType(ExtendedTextField);
+      expect(textFields, findsAtLeastNWidgets(1));
+
+      final tokenField = textFields.first;
       await tester.tap(tokenField);
-      await tester.enterText(tokenField, 'test-bearer-token');
+      await tester.pumpAndSettle();
+
+      // Use tester.testTextInput to enter text directly
+      tester.testTextInput.enterText('test-bearer-token');
       await tester.pumpAndSettle();
 
       // Verify that updateAuth was called with correct structure
@@ -193,18 +221,20 @@ void main() {
       mockAuthData = null;
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: BearerAuthFields(
-              authData: mockAuthData,
-              updateAuth: mockUpdateAuth,
+        Portal(
+          child: MaterialApp(
+            home: Scaffold(
+              body: BearerAuthFields(
+                authData: mockAuthData,
+                updateAuth: mockUpdateAuth,
+              ),
             ),
           ),
         ),
       );
 
       // The token field should be empty initially
-      expect(find.byType(AuthTextField), findsOneWidget);
+      expect(find.byType(EnvAuthField), findsOneWidget);
     });
 
     testWidgets('trims whitespace from token input',
@@ -212,20 +242,28 @@ void main() {
       mockAuthData = null;
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: BearerAuthFields(
-              authData: mockAuthData,
-              updateAuth: mockUpdateAuth,
+        Portal(
+          child: MaterialApp(
+            home: Scaffold(
+              body: BearerAuthFields(
+                authData: mockAuthData,
+                updateAuth: mockUpdateAuth,
+              ),
             ),
           ),
         ),
       );
 
       // Enter token with whitespace
-      final tokenField = find.byType(AuthTextField);
+      final textFields = find.byType(ExtendedTextField);
+      expect(textFields, findsAtLeastNWidgets(1));
+
+      final tokenField = textFields.first;
       await tester.tap(tokenField);
-      await tester.enterText(tokenField, '  test-token  ');
+      await tester.pumpAndSettle();
+
+      // Use tester.testTextInput to enter text directly
+      tester.testTextInput.enterText('  test-token  ');
       await tester.pumpAndSettle();
 
       // Verify that updateAuth was called with trimmed token
