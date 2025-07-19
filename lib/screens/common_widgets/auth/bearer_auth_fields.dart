@@ -34,7 +34,7 @@ class _BearerAuthFieldsState extends State<BearerAuthFields> {
       readOnly: widget.readOnly,
       hintText: kHintToken,
       isObscureText: true,
-      initialValue: widget.authData?.bearer?.token,
+      initialValue: _token,
       onChanged: (value) {
         _token = value;
         _updateBearerAuth();

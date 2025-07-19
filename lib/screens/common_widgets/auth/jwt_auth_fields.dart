@@ -101,7 +101,7 @@ class _JwtAuthFieldsState extends State<JwtAuthFields> {
             isObscureText: true,
             hintText: kHintSecret,
             infoText: kInfoSecret,
-            initialValue: widget.authData?.jwt?.secret,
+            initialValue: _secret,
             onChanged: (value) {
               _secret = value;
               _updateJwtAuth();

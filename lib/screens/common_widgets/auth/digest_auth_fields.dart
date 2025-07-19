@@ -52,7 +52,7 @@ class _DigestAuthFieldsState extends State<DigestAuthFields> {
             readOnly: widget.readOnly,
             hintText: kHintUsername,
             infoText: kInfoDigestUsername,
-            initialValue: widget.authData?.digest?.username,
+            initialValue: _username,
             onChanged: (value) {
               _username = value;
               _updateDigestAuth();
@@ -64,7 +64,7 @@ class _DigestAuthFieldsState extends State<DigestAuthFields> {
             hintText: kHintPassword,
             isObscureText: true,
             infoText: kInfoDigestPassword,
-            initialValue: widget.authData?.digest?.password,
+            initialValue: _password,
             onChanged: (value) {
               _password = value;
               _updateDigestAuth();
@@ -75,7 +75,7 @@ class _DigestAuthFieldsState extends State<DigestAuthFields> {
             readOnly: widget.readOnly,
             hintText: kHintRealm,
             infoText: kInfoDigestRealm,
-            initialValue: widget.authData?.digest?.realm,
+            initialValue: _realm,
             onChanged: (value) {
               _realm = value;
               _updateDigestAuth();
@@ -86,7 +86,7 @@ class _DigestAuthFieldsState extends State<DigestAuthFields> {
             readOnly: widget.readOnly,
             hintText: kHintNonce,
             infoText: kInfoDigestNonce,
-            initialValue: widget.authData?.digest?.nonce,
+            initialValue: _nonce,
             onChanged: (value) {
               _nonce = value;
               _updateDigestAuth();
@@ -122,7 +122,7 @@ class _DigestAuthFieldsState extends State<DigestAuthFields> {
             readOnly: widget.readOnly,
             hintText: kHintQop,
             infoText: kInfoDigestQop,
-            initialValue: widget.authData?.digest?.qop,
+            initialValue: _qop,
             onChanged: (value) {
               _qop = value;
               _updateDigestAuth();
@@ -133,7 +133,7 @@ class _DigestAuthFieldsState extends State<DigestAuthFields> {
             readOnly: widget.readOnly,
             hintText: kHintDataString,
             infoText: kInfoDigestDataString,
-            initialValue: widget.authData?.digest?.opaque,
+            initialValue: _opaque,
             onChanged: (value) {
               _opaque = value;
               _updateDigestAuth();

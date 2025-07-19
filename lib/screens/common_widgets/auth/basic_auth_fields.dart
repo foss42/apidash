@@ -38,7 +38,7 @@ class _BasicAuthFieldsState extends State<BasicAuthFields> {
         EnvAuthField(
           readOnly: widget.readOnly,
           hintText: kHintUsername,
-          initialValue: widget.authData?.basic?.username,
+          initialValue: _username,
           onChanged: (value) {
             _username = value;
             _updateBasicAuth();
@@ -49,7 +49,7 @@ class _BasicAuthFieldsState extends State<BasicAuthFields> {
           readOnly: widget.readOnly,
           hintText: kHintPassword,
           isObscureText: true,
-          initialValue: widget.authData?.basic?.password,
+          initialValue: _password,
           onChanged: (value) {
             _password = value;
             _updateBasicAuth();

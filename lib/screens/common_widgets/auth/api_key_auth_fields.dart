@@ -31,12 +31,9 @@ class _ApiKeyAuthFieldsState extends State<ApiKeyAuthFields> {
     super.initState();
     final apiAuth = widget.authData?.apikey;
     _key = apiAuth?.key ?? '';
-    log(apiAuth?.name ?? "By default name is empty");
     _name = (apiAuth?.name != null && apiAuth!.name.isNotEmpty)
         ? apiAuth.name
         : kApiKeyHeaderName;
-
-    log(_name);
     _addKeyTo = apiAuth?.location ?? kAddToDefaultLocation;
   }
 
