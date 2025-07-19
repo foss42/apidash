@@ -50,7 +50,6 @@ class _AuthFieldState extends State<EnvAuthField> {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint(widget.initialValue);
     return AutofillGroup(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
