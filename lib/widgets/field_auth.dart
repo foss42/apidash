@@ -21,15 +21,36 @@ class EnvAuthField extends StatefulWidget {
       this.readOnly = false,
       this.isObscureText = false,
       this.infoText,
-      required this.initialValue});
+      this.initialValue = ""});
 
   @override
   State<EnvAuthField> createState() => _AuthFieldState();
 }
 
 class _AuthFieldState extends State<EnvAuthField> {
+  late bool _obscureText;
+  late String _currentValue;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentValue = widget.initialValue ?? "";
+    if (_currentValue.contains("{{")) {
+      _obscureText = false;
+    } else {
+      _obscureText = widget.isObscureText;
+    }
+  }
+
+  void _toggleVisibility() {
+    setState(() {
+      _obscureText = !_obscureText;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    debugPrint(widget.initialValue);
     return AutofillGroup(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -58,11 +79,21 @@ class _AuthFieldState extends State<EnvAuthField> {
           const SizedBox(height: 6),
           EnvironmentTriggerField(
             keyId: "auth-${widget.title ?? widget.hintText}-${Random.secure()}",
-            onChanged: widget.onChanged,
-            initialValue: widget.initialValue ?? "",
+            onChanged: (value) {
+              setState(() {
+                _currentValue = value;
+                // Update obscure text based on whether the current value contains env vars
+                if (value.contains("{{")) {
+                  _obscureText = false;
+                } else {
+                  _obscureText = widget.isObscureText;
+                }
+              });
+              widget.onChanged?.call(value);
+            },
+            initialValue: widget.initialValue,
             readOnly: widget.readOnly,
-            // TODO: Needs some new implementation
-            // obscureText: widget.isObscureText,
+            obscureText: _obscureText,
             style: kCodeStyle.copyWith(
               color: Theme.of(context).colorScheme.onSurface,
               fontSize: Theme.of(context).textTheme.bodyMedium?.fontSize,
@@ -72,6 +103,17 @@ class _AuthFieldState extends State<EnvAuthField> {
               hintText: widget.hintText,
               isDense: true,
               contentPadding: kIsMobile ? kPh6b12 : null,
+              // null when initial text contains env vars
+              suffixIcon: (widget.isObscureText &&
+                      !_currentValue.contains("{{"))
+                  ? IconButton(
+                      icon: Icon(
+                        _obscureText ? Icons.visibility_off : Icons.visibility,
+                        size: 20,
+                      ),
+                      onPressed: _toggleVisibility,
+                    )
+                  : null,
             ),
           ),
         ],
