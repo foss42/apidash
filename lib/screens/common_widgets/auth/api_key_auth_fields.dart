@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
@@ -29,7 +31,12 @@ class _ApiKeyAuthFieldsState extends State<ApiKeyAuthFields> {
     super.initState();
     final apiAuth = widget.authData?.apikey;
     _key = apiAuth?.key ?? '';
-    _name = apiAuth?.name ?? kApiKeyHeaderName;
+    log(apiAuth?.name ?? "By default name is empty");
+    _name = (apiAuth?.name != null && apiAuth!.name.isNotEmpty)
+        ? apiAuth.name
+        : kApiKeyHeaderName;
+
+    log(_name);
     _addKeyTo = apiAuth?.location ?? kAddToDefaultLocation;
   }
 
@@ -68,7 +75,7 @@ class _ApiKeyAuthFieldsState extends State<ApiKeyAuthFields> {
         EnvAuthField(
           readOnly: widget.readOnly,
           hintText: kHintTextFieldName,
-          initialValue: widget.authData?.apikey?.name,
+          initialValue: _name,
           onChanged: (value) {
             _name = value;
             _updateApiKeyAuth();
@@ -80,7 +87,7 @@ class _ApiKeyAuthFieldsState extends State<ApiKeyAuthFields> {
           title: kLabelApiKey,
           hintText: kHintTextKey,
           isObscureText: true,
-          initialValue: widget.authData?.apikey?.key,
+          initialValue: _key,
           onChanged: (value) {
             _key = value;
             _updateApiKeyAuth();

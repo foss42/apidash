@@ -2,8 +2,10 @@ import 'package:apidash/screens/common_widgets/auth/jwt_auth_fields.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
+import 'package:extended_text_field/extended_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_portal/flutter_portal.dart';
 
 void main() {
   group('JwtAuthFields Widget Tests', () {
@@ -23,11 +25,13 @@ void main() {
       mockAuthData = null;
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: JwtAuthFields(
-              authData: mockAuthData,
-              updateAuth: mockUpdateAuth,
+        Portal(
+          child: MaterialApp(
+            home: Scaffold(
+              body: JwtAuthFields(
+                authData: mockAuthData,
+                updateAuth: mockUpdateAuth,
+              ),
             ),
           ),
         ),
@@ -59,11 +63,13 @@ void main() {
       );
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: JwtAuthFields(
-              authData: mockAuthData,
-              updateAuth: mockUpdateAuth,
+        Portal(
+          child: MaterialApp(
+            home: Scaffold(
+              body: JwtAuthFields(
+                authData: mockAuthData,
+                updateAuth: mockUpdateAuth,
+              ),
             ),
           ),
         ),
@@ -93,11 +99,13 @@ void main() {
       );
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: JwtAuthFields(
-              authData: mockAuthData,
-              updateAuth: mockUpdateAuth,
+        Portal(
+          child: MaterialApp(
+            home: Scaffold(
+              body: JwtAuthFields(
+                authData: mockAuthData,
+                updateAuth: mockUpdateAuth,
+              ),
             ),
           ),
         ),
@@ -105,7 +113,7 @@ void main() {
 
       expect(find.text('Secret Key'), findsExactly(2));
       expect(find.text('Secret is Base64 encoded'), findsOneWidget);
-      expect(find.byType(AuthTextField), findsOneWidget);
+      expect(find.byType(EnvAuthField), findsOneWidget);
       expect(find.byType(CheckboxListTile), findsOneWidget);
     });
 
@@ -127,11 +135,13 @@ void main() {
       );
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: JwtAuthFields(
-              authData: mockAuthData,
-              updateAuth: mockUpdateAuth,
+        Portal(
+          child: MaterialApp(
+            home: Scaffold(
+              body: JwtAuthFields(
+                authData: mockAuthData,
+                updateAuth: mockUpdateAuth,
+              ),
             ),
           ),
         ),
@@ -160,11 +170,13 @@ void main() {
       );
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: JwtAuthFields(
-              authData: mockAuthData,
-              updateAuth: mockUpdateAuth,
+        Portal(
+          child: MaterialApp(
+            home: Scaffold(
+              body: JwtAuthFields(
+                authData: mockAuthData,
+                updateAuth: mockUpdateAuth,
+              ),
             ),
           ),
         ),
@@ -202,11 +214,13 @@ void main() {
       );
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: JwtAuthFields(
-              authData: mockAuthData,
-              updateAuth: mockUpdateAuth,
+        Portal(
+          child: MaterialApp(
+            home: Scaffold(
+              body: JwtAuthFields(
+                authData: mockAuthData,
+                updateAuth: mockUpdateAuth,
+              ),
             ),
           ),
         ),
@@ -244,20 +258,22 @@ void main() {
       );
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: JwtAuthFields(
-              authData: mockAuthData,
-              updateAuth: mockUpdateAuth,
+        Portal(
+          child: MaterialApp(
+            home: Scaffold(
+              body: JwtAuthFields(
+                authData: mockAuthData,
+                updateAuth: mockUpdateAuth,
+              ),
             ),
           ),
         ),
       );
 
       // Find the secret field
-      final secretField = find.byType(AuthTextField).first;
+      final secretField = find.byType(ExtendedTextField).first;
       await tester.tap(secretField);
-      await tester.enterText(secretField, 'new-secret');
+      tester.testTextInput.enterText('new-secret');
       await tester.pumpAndSettle();
 
       // Verify that updateAuth was called
@@ -284,11 +300,13 @@ void main() {
       );
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: JwtAuthFields(
-              authData: mockAuthData,
-              updateAuth: mockUpdateAuth,
+        Portal(
+          child: MaterialApp(
+            home: Scaffold(
+              body: JwtAuthFields(
+                authData: mockAuthData,
+                updateAuth: mockUpdateAuth,
+              ),
             ),
           ),
         ),
@@ -297,7 +315,7 @@ void main() {
       // Find the payload field (TextField)
       final payloadField = find.byType(TextField).last;
       await tester.tap(payloadField);
-      await tester.enterText(payloadField, '{"sub": "1234567890"}');
+      tester.testTextInput.enterText('{"sub": "1234567890"}');
       await tester.pumpAndSettle();
 
       // Verify that updateAuth was called
@@ -324,11 +342,13 @@ void main() {
       );
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: JwtAuthFields(
-              authData: mockAuthData,
-              updateAuth: mockUpdateAuth,
+        Portal(
+          child: MaterialApp(
+            home: Scaffold(
+              body: JwtAuthFields(
+                authData: mockAuthData,
+                updateAuth: mockUpdateAuth,
+              ),
             ),
           ),
         ),
@@ -349,11 +369,13 @@ void main() {
       mockAuthData = null;
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: JwtAuthFields(
-              authData: mockAuthData,
-              updateAuth: mockUpdateAuth,
+        Portal(
+          child: MaterialApp(
+            home: Scaffold(
+              body: JwtAuthFields(
+                authData: mockAuthData,
+                updateAuth: mockUpdateAuth,
+              ),
             ),
           ),
         ),

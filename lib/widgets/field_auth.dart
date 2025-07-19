@@ -21,7 +21,7 @@ class EnvAuthField extends StatefulWidget {
       this.readOnly = false,
       this.isObscureText = false,
       this.infoText,
-      this.initialValue});
+      required this.initialValue});
 
   @override
   State<EnvAuthField> createState() => _AuthFieldState();
@@ -59,7 +59,7 @@ class _AuthFieldState extends State<EnvAuthField> {
           EnvironmentTriggerField(
             keyId: "auth-${widget.title ?? widget.hintText}-${Random.secure()}",
             onChanged: widget.onChanged,
-            initialValue: widget.initialValue,
+            initialValue: widget.initialValue ?? "",
             readOnly: widget.readOnly,
             // TODO: Needs some new implementation
             // obscureText: widget.isObscureText,

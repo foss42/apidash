@@ -2,7 +2,9 @@ import 'package:apidash/screens/common_widgets/auth/api_key_auth_fields.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
+import 'package:extended_text_field/extended_text_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_portal/flutter_portal.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -23,11 +25,15 @@ void main() {
       mockAuthData = null;
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: ApiKeyAuthFields(
-              authData: mockAuthData,
-              updateAuth: mockUpdateAuth,
+        Portal(
+          child: MaterialApp(
+            home: Scaffold(
+              body: SingleChildScrollView(
+                child: ApiKeyAuthFields(
+                  authData: mockAuthData,
+                  updateAuth: mockUpdateAuth,
+                ),
+              ),
             ),
           ),
         ),
@@ -35,7 +41,7 @@ void main() {
 
       expect(find.text('Add to'), findsOneWidget);
       expect(find.byType(ADPopupMenu<String>), findsOneWidget);
-      expect(find.byType(AuthTextField), findsNWidgets(2));
+      expect(find.byType(EnvAuthField), findsNWidgets(2));
       expect(find.text('Header'), findsOneWidget);
     });
 
@@ -43,20 +49,38 @@ void main() {
         'updates auth data when authData is null and API key value is changed',
         (WidgetTester tester) async {
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: ApiKeyAuthFields(
-              authData: null,
-              updateAuth: mockUpdateAuth,
+        Portal(
+          child: MaterialApp(
+            home: Scaffold(
+              body: SingleChildScrollView(
+                child: ApiKeyAuthFields(
+                  authData: null,
+                  updateAuth: mockUpdateAuth,
+                ),
+              ),
             ),
           ),
         ),
       );
 
-      // Find the key field (second AuthTextField)
-      final keyField = find.byType(AuthTextField).last;
-      await tester.tap(keyField);
-      await tester.enterText(keyField, 'new-api-key');
+      // Wait for the widget to settle
+      await tester.pumpAndSettle();
+
+      // Find EnvAuthField widgets
+      final authFields = find.byType(EnvAuthField);
+      expect(authFields, findsNWidgets(2));
+
+      // Find ExtendedTextField widgets within the EnvAuthField widgets
+      final textFields = find.byType(ExtendedTextField);
+      expect(textFields, findsAtLeastNWidgets(2));
+
+      // Use testTextInput to directly input text
+      final lastField = textFields.last;
+      await tester.tap(lastField);
+      await tester.pumpAndSettle();
+
+      // Use tester.testTextInput to enter text directly
+      tester.testTextInput.enterText('new-api-key');
       await tester.pumpAndSettle();
 
       // Verify that updateAuth was called
@@ -77,11 +101,15 @@ void main() {
       );
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: ApiKeyAuthFields(
-              authData: mockAuthData,
-              updateAuth: mockUpdateAuth,
+        Portal(
+          child: MaterialApp(
+            home: Scaffold(
+              body: SingleChildScrollView(
+                child: ApiKeyAuthFields(
+                  authData: mockAuthData,
+                  updateAuth: mockUpdateAuth,
+                ),
+              ),
             ),
           ),
         ),
@@ -89,7 +117,7 @@ void main() {
 
       expect(find.text('Add to'), findsOneWidget);
       expect(find.text('Header'), findsOneWidget);
-      expect(find.byType(AuthTextField), findsNWidgets(2));
+      expect(find.byType(EnvAuthField), findsNWidgets(2));
     });
 
     testWidgets('renders with query params location',
@@ -104,11 +132,15 @@ void main() {
       );
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: ApiKeyAuthFields(
-              authData: mockAuthData,
-              updateAuth: mockUpdateAuth,
+        Portal(
+          child: MaterialApp(
+            home: Scaffold(
+              body: SingleChildScrollView(
+                child: ApiKeyAuthFields(
+                  authData: mockAuthData,
+                  updateAuth: mockUpdateAuth,
+                ),
+              ),
             ),
           ),
         ),
@@ -130,11 +162,15 @@ void main() {
       );
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: ApiKeyAuthFields(
-              authData: mockAuthData,
-              updateAuth: mockUpdateAuth,
+        Portal(
+          child: MaterialApp(
+            home: Scaffold(
+              body: SingleChildScrollView(
+                child: ApiKeyAuthFields(
+                  authData: mockAuthData,
+                  updateAuth: mockUpdateAuth,
+                ),
+              ),
             ),
           ),
         ),
@@ -166,20 +202,33 @@ void main() {
       );
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: ApiKeyAuthFields(
-              authData: mockAuthData,
-              updateAuth: mockUpdateAuth,
+        Portal(
+          child: MaterialApp(
+            home: Scaffold(
+              body: SingleChildScrollView(
+                child: ApiKeyAuthFields(
+                  authData: mockAuthData,
+                  updateAuth: mockUpdateAuth,
+                ),
+              ),
             ),
           ),
         ),
       );
 
-      // Find the name field (first AuthTextField)
-      final nameField = find.byType(AuthTextField).first;
-      await tester.tap(nameField);
-      await tester.enterText(nameField, 'Authorization');
+      // Wait for the widget to settle
+      await tester.pumpAndSettle();
+
+      // Find ExtendedTextField widgets
+      final textFields = find.byType(ExtendedTextField);
+      expect(textFields, findsAtLeastNWidgets(2));
+
+      // Tap and enter text in the name field (should be the first text field)
+      await tester.tap(textFields.first);
+      await tester.pumpAndSettle();
+
+      // Use tester.testTextInput to enter text directly
+      tester.testTextInput.enterText('Authorization');
       await tester.pumpAndSettle();
 
       // Verify that updateAuth was called
@@ -200,20 +249,37 @@ void main() {
       );
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: ApiKeyAuthFields(
-              authData: mockAuthData,
-              updateAuth: mockUpdateAuth,
+        Portal(
+          child: MaterialApp(
+            home: Scaffold(
+              body: SingleChildScrollView(
+                child: ApiKeyAuthFields(
+                  authData: mockAuthData,
+                  updateAuth: mockUpdateAuth,
+                ),
+              ),
             ),
           ),
         ),
       );
 
-      // Find the key field (second AuthTextField)
-      final keyField = find.byType(AuthTextField).last;
-      await tester.tap(keyField);
-      await tester.enterText(keyField, 'new-api-key');
+      // Wait for the widget to settle
+      await tester.pumpAndSettle();
+
+      // Find EnvAuthField widgets
+      final textFields = find.byType(EnvAuthField);
+      expect(textFields, findsNWidgets(2));
+
+      // Find the underlying ExtendedTextField widgets
+      final extendedTextFields = find.byType(ExtendedTextField);
+      expect(extendedTextFields, findsAtLeastNWidgets(2));
+
+      // Tap and enter text in the key field (should be the last text field)
+      await tester.tap(extendedTextFields.last);
+      await tester.pumpAndSettle();
+
+      // Use tester.testTextInput to enter text directly
+      tester.testTextInput.enterText('new-api-key');
       await tester.pumpAndSettle();
 
       // Verify that updateAuth was called
@@ -233,21 +299,25 @@ void main() {
       );
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: ApiKeyAuthFields(
-              authData: mockAuthData,
-              updateAuth: mockUpdateAuth,
-              readOnly: true,
+        Portal(
+          child: MaterialApp(
+            home: Scaffold(
+              body: SingleChildScrollView(
+                child: ApiKeyAuthFields(
+                  authData: mockAuthData,
+                  updateAuth: mockUpdateAuth,
+                  readOnly: true,
+                ),
+              ),
             ),
           ),
         ),
       );
 
-      // Verify that AuthTextField widgets are rendered
-      expect(find.byType(AuthTextField), findsNWidgets(2));
+      // Verify that EnvAuthField widgets are rendered
+      expect(find.byType(EnvAuthField), findsNWidgets(2));
 
-      // The readOnly property should be passed to AuthTextField widgets
+      // The readOnly property should be passed to EnvAuthField widgets
       // This is verified by the widget structure itself
     });
 
@@ -255,11 +325,15 @@ void main() {
       mockAuthData = null;
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: ApiKeyAuthFields(
-              authData: mockAuthData,
-              updateAuth: mockUpdateAuth,
+        Portal(
+          child: MaterialApp(
+            home: Scaffold(
+              body: SingleChildScrollView(
+                child: ApiKeyAuthFields(
+                  authData: mockAuthData,
+                  updateAuth: mockUpdateAuth,
+                ),
+              ),
             ),
           ),
         ),
@@ -267,28 +341,40 @@ void main() {
 
       expect(find.text('Add to'), findsOneWidget);
       // Check for the existence of the auth text fields
-      expect(find.byType(AuthTextField), findsNWidgets(2));
+      expect(find.byType(EnvAuthField), findsNWidgets(2));
     });
     testWidgets('initializes with correct default values',
         (WidgetTester tester) async {
       mockAuthData = null;
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: ApiKeyAuthFields(
-              authData: mockAuthData,
-              updateAuth: mockUpdateAuth,
+        Portal(
+          child: MaterialApp(
+            home: Scaffold(
+              body: SingleChildScrollView(
+                child: ApiKeyAuthFields(
+                  authData: mockAuthData,
+                  updateAuth: mockUpdateAuth,
+                ),
+              ),
             ),
           ),
         ),
       );
 
+      // Wait for the widget to settle
+      await tester.pumpAndSettle();
+
       // Default location should be header
       expect(find.text('Header'), findsOneWidget);
 
-      // Default name should be 'x-api-key' in the text field
-      expect(find.text('x-api-key'), findsOneWidget);
+      // Check for the existence of text fields with default values
+      final textFields = find.byType(EnvAuthField);
+      expect(textFields, findsNWidgets(2));
+
+      // Verify the first text field (name) has the default value in its controller
+      final nameTextField = tester.widget<EnvAuthField>(textFields.first);
+      expect(nameTextField.initialValue, 'x-api-key');
     });
   });
 }

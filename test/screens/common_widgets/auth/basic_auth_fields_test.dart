@@ -1,7 +1,9 @@
 import 'package:apidash/screens/common_widgets/auth/basic_auth_fields.dart';
 import 'package:apidash/widgets/widgets.dart';
 import 'package:apidash_core/apidash_core.dart';
+import 'package:extended_text_field/extended_text_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_portal/flutter_portal.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -22,17 +24,19 @@ void main() {
       mockAuthData = null;
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: BasicAuthFields(
-              authData: mockAuthData,
-              updateAuth: mockUpdateAuth,
+        Portal(
+          child: MaterialApp(
+            home: Scaffold(
+              body: BasicAuthFields(
+                authData: mockAuthData,
+                updateAuth: mockUpdateAuth,
+              ),
             ),
           ),
         ),
       );
 
-      expect(find.byType(AuthTextField), findsNWidgets(2));
+      expect(find.byType(EnvAuthField), findsNWidgets(2));
       expect(find.text('Username'), findsNWidgets(2));
       expect(find.text('Password'), findsNWidgets(2));
     });
@@ -48,17 +52,19 @@ void main() {
       );
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: BasicAuthFields(
-              authData: mockAuthData,
-              updateAuth: mockUpdateAuth,
+        Portal(
+          child: MaterialApp(
+            home: Scaffold(
+              body: BasicAuthFields(
+                authData: mockAuthData,
+                updateAuth: mockUpdateAuth,
+              ),
             ),
           ),
         ),
       );
 
-      expect(find.byType(AuthTextField), findsNWidgets(2));
+      expect(find.byType(EnvAuthField), findsNWidgets(2));
       expect(find.text('Username'), findsExactly(2));
       expect(find.text('Password'), findsExactly(2));
     });
@@ -74,20 +80,28 @@ void main() {
       );
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: BasicAuthFields(
-              authData: mockAuthData,
-              updateAuth: mockUpdateAuth,
+        Portal(
+          child: MaterialApp(
+            home: Scaffold(
+              body: BasicAuthFields(
+                authData: mockAuthData,
+                updateAuth: mockUpdateAuth,
+              ),
             ),
           ),
         ),
       );
 
-      // Find the username field (first AuthTextField)
-      final usernameField = find.byType(AuthTextField).first;
+      // Find the username field (first ExtendedTextField)
+      final textFields = find.byType(ExtendedTextField);
+      expect(textFields, findsAtLeastNWidgets(2));
+
+      final usernameField = textFields.first;
       await tester.tap(usernameField);
-      await tester.enterText(usernameField, 'newuser');
+      await tester.pumpAndSettle();
+
+      // Use tester.testTextInput to enter text directly
+      tester.testTextInput.enterText('newuser');
       await tester.pumpAndSettle();
 
       // Verify that updateAuth was called
@@ -108,20 +122,28 @@ void main() {
       );
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: BasicAuthFields(
-              authData: mockAuthData,
-              updateAuth: mockUpdateAuth,
+        Portal(
+          child: MaterialApp(
+            home: Scaffold(
+              body: BasicAuthFields(
+                authData: mockAuthData,
+                updateAuth: mockUpdateAuth,
+              ),
             ),
           ),
         ),
       );
 
-      // Find the password field (second AuthTextField)
-      final passwordField = find.byType(AuthTextField).last;
+      // Find the password field (second ExtendedTextField)
+      final textFields = find.byType(ExtendedTextField);
+      expect(textFields, findsAtLeastNWidgets(2));
+
+      final passwordField = textFields.last;
       await tester.tap(passwordField);
-      await tester.enterText(passwordField, 'newpass');
+      await tester.pumpAndSettle();
+
+      // Use tester.testTextInput to enter text directly
+      tester.testTextInput.enterText('newpass');
       await tester.pumpAndSettle();
 
       // Verify that updateAuth was called
@@ -141,21 +163,23 @@ void main() {
       );
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: BasicAuthFields(
-              authData: mockAuthData,
-              updateAuth: mockUpdateAuth,
-              readOnly: true,
+        Portal(
+          child: MaterialApp(
+            home: Scaffold(
+              body: BasicAuthFields(
+                authData: mockAuthData,
+                updateAuth: mockUpdateAuth,
+                readOnly: true,
+              ),
             ),
           ),
         ),
       );
 
-      // Verify that AuthTextField widgets are rendered
-      expect(find.byType(AuthTextField), findsNWidgets(2));
+      // Verify that EnvAuthField widgets are rendered
+      expect(find.byType(EnvAuthField), findsNWidgets(2));
 
-      // The readOnly property should be passed to AuthTextField widgets
+      // The readOnly property should be passed to EnvAuthField widgets
       // This is verified by the widget structure itself
     });
 
@@ -163,17 +187,19 @@ void main() {
       mockAuthData = null;
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: BasicAuthFields(
-              authData: mockAuthData,
-              updateAuth: mockUpdateAuth,
+        Portal(
+          child: MaterialApp(
+            home: Scaffold(
+              body: BasicAuthFields(
+                authData: mockAuthData,
+                updateAuth: mockUpdateAuth,
+              ),
             ),
           ),
         ),
       );
 
-      expect(find.byType(AuthTextField), findsNWidgets(2));
+      expect(find.byType(EnvAuthField), findsNWidgets(2));
     });
 
     testWidgets('handles empty auth data gracefully',
@@ -187,17 +213,19 @@ void main() {
       );
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: BasicAuthFields(
-              authData: mockAuthData,
-              updateAuth: mockUpdateAuth,
+        Portal(
+          child: MaterialApp(
+            home: Scaffold(
+              body: BasicAuthFields(
+                authData: mockAuthData,
+                updateAuth: mockUpdateAuth,
+              ),
             ),
           ),
         ),
       );
 
-      expect(find.byType(AuthTextField), findsNWidgets(2));
+      expect(find.byType(EnvAuthField), findsNWidgets(2));
     });
 
     testWidgets('creates proper AuthModel on field changes',
@@ -205,20 +233,28 @@ void main() {
       mockAuthData = null;
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: BasicAuthFields(
-              authData: mockAuthData,
-              updateAuth: mockUpdateAuth,
+        Portal(
+          child: MaterialApp(
+            home: Scaffold(
+              body: BasicAuthFields(
+                authData: mockAuthData,
+                updateAuth: mockUpdateAuth,
+              ),
             ),
           ),
         ),
       );
 
       // Enter username
-      final usernameField = find.byType(AuthTextField).first;
+      final textFields = find.byType(ExtendedTextField);
+      expect(textFields, findsAtLeastNWidgets(2));
+
+      final usernameField = textFields.first;
       await tester.tap(usernameField);
-      await tester.enterText(usernameField, 'testuser');
+      await tester.pumpAndSettle();
+
+      // Use tester.testTextInput to enter text directly
+      tester.testTextInput.enterText('testuser');
       await tester.pumpAndSettle();
 
       // Verify that updateAuth was called with correct structure
