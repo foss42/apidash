@@ -31,11 +31,8 @@ print(data.decode("utf-8"))
     test('GET 2', () {
       const expectedCode = r"""import http.client
 from urllib.parse import urlencode
-
-queryParams = {
-  "code": "US"
-}
-queryParamsStr = '?' + urlencode(queryParams)
+params = { 'code': ['US'] }
+queryParamsStr = '?' + urlencode(params,doseq=True)
 
 conn = http.client.HTTPSConnection("api.apidash.dev")
 conn.request("GET", "/country/data" + queryParamsStr)
@@ -57,11 +54,8 @@ print(data.decode("utf-8"))
     test('GET 3', () {
       const expectedCode = r"""import http.client
 from urllib.parse import urlencode
-
-queryParams = {
-  "code": "IND"
-}
-queryParamsStr = '?' + urlencode(queryParams)
+params = { 'code': ['IND', 'US'] }
+queryParamsStr = '?' + urlencode(params,doseq=True)
 
 conn = http.client.HTTPSConnection("api.apidash.dev")
 conn.request("GET", "/country/data" + queryParamsStr)
@@ -83,15 +77,12 @@ print(data.decode("utf-8"))
     test('GET 4', () {
       const expectedCode = r"""import http.client
 from urllib.parse import urlencode
-
-queryParams = {
-  "num": "8700000",
-  "digits": "3",
-  "system": "SS",
-  "add_space": "true",
-  "trailing_zeros": "true"
-}
-queryParamsStr = '?' + urlencode(queryParams)
+params = { 'num': ['8700000'],
+'digits': ['3'],
+'system': ['SS'],
+'add_space': ['true'],
+'trailing_zeros': ['true'] }
+queryParamsStr = '?' + urlencode(params,doseq=True)
 
 conn = http.client.HTTPSConnection("api.apidash.dev")
 conn.request("GET", "/humanize/social" + queryParamsStr)
@@ -138,11 +129,8 @@ print(data.decode("utf-8"))
     test('GET 6', () {
       const expectedCode = r"""import http.client
 from urllib.parse import urlencode
-
-queryParams = {
-  "raw": "true"
-}
-queryParamsStr = '?' + urlencode(queryParams)
+params = { 'raw': ['true'] }
+queryParamsStr = '?' + urlencode(params,doseq=True)
 
 headers = {
   "User-Agent": "Test Agent"
@@ -189,11 +177,8 @@ print(data.decode("utf-8"))
     test('GET 8', () {
       const expectedCode = r"""import http.client
 from urllib.parse import urlencode
-
-queryParams = {
-  "raw": "true"
-}
-queryParamsStr = '?' + urlencode(queryParams)
+params = { 'raw': ['true'] }
+queryParamsStr = '?' + urlencode(params,doseq=True)
 
 headers = {
   "User-Agent": "Test Agent"
@@ -220,12 +205,9 @@ print(data.decode("utf-8"))
     test('GET 9', () {
       const expectedCode = r"""import http.client
 from urllib.parse import urlencode
-
-queryParams = {
-  "num": "8700000",
-  "add_space": "true"
-}
-queryParamsStr = '?' + urlencode(queryParams)
+params = { 'num': ['8700000'],
+'add_space': ['true'] }
+queryParamsStr = '?' + urlencode(params,doseq=True)
 
 conn = http.client.HTTPSConnection("api.apidash.dev")
 conn.request("GET", "/humanize/social" + queryParamsStr)
@@ -272,12 +254,9 @@ print(data.decode("utf-8"))
     test('GET 11', () {
       const expectedCode = r"""import http.client
 from urllib.parse import urlencode
-
-queryParams = {
-  "num": "8700000",
-  "digits": "3"
-}
-queryParamsStr = '?' + urlencode(queryParams)
+params = { 'num': ['8700000'],
+'digits': ['3'] }
+queryParamsStr = '?' + urlencode(params,doseq=True)
 
 headers = {
   "User-Agent": "Test Agent"
@@ -663,12 +642,9 @@ print(data.decode("utf-8"))
 import mimetypes
 from codecs import encode
 from urllib.parse import urlencode
-
-queryParams = {
-  "size": "2",
-  "len": "3"
-}
-queryParamsStr = '?' + urlencode(queryParams)
+params = { 'size': ['2'],
+'len': ['3'] }
+queryParamsStr = '?' + urlencode(params,doseq=True)
 
 headers = {
   "content-type": "multipart/form-data; boundary=a990b150-7683-1f0c-814d-a1b3d90cd6b3"
@@ -719,12 +695,9 @@ print(data.decode("utf-8"))
 import mimetypes
 from codecs import encode
 from urllib.parse import urlencode
-
-queryParams = {
-  "size": "2",
-  "len": "3"
-}
-queryParamsStr = '?' + urlencode(queryParams)
+params = { 'size': ['2'],
+'len': ['3'] }
+queryParamsStr = '?' + urlencode(params,doseq=True)
 
 headers = {
   "User-Agent": "Test Agent",
@@ -783,6 +756,7 @@ body = r'''{
 }'''
 
 headers = {
+  "x-api-key": "reqres-free-v1",
   "content-type": "application/json"
 }
 
@@ -816,6 +790,7 @@ body = r'''{
 }'''
 
 headers = {
+  "x-api-key": "reqres-free-v1",
   "content-type": "application/json"
 }
 
@@ -843,8 +818,13 @@ print(data.decode("utf-8"))
     test('DELETE 1', () {
       const expectedCode = r"""import http.client
 
+headers = {
+  "x-api-key": "reqres-free-v1"
+}
+
 conn = http.client.HTTPSConnection("reqres.in")
-conn.request("DELETE", "/api/users/2")
+conn.request("DELETE", "/api/users/2",
+              headers= headers)
 
 res = conn.getresponse()
 data = res.read()
@@ -869,6 +849,7 @@ body = r'''{
 }'''
 
 headers = {
+  "x-api-key": "reqres-free-v1",
   "content-type": "application/json"
 }
 

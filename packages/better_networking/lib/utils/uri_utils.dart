@@ -55,12 +55,14 @@ String stripUrlParams(String url) {
     uri = uri.removeFragment();
   }
 
-  Map<String, String>? queryParams = rowsToMap(requestParams);
-  if (queryParams != null && queryParams.isNotEmpty) {
-    if (uri.hasQuery) {
-      Map<String, String> urlQueryParams = uri.queryParameters;
-      queryParams = mergeMaps(urlQueryParams, queryParams);
-    }
+  Map<String, List<String>> queryParams = uri.queryParametersAll;
+
+  Map<String, List<String>>? requestQueryParams = rowsToRequestMap(requestParams);
+ if (requestQueryParams != null) {
+  queryParams = mergeMaps(queryParams, requestQueryParams, value: (v1, v2) => v1 + v2);
+}
+  
+  if (queryParams.isNotEmpty) {
     uri = uri.replace(queryParameters: queryParams);
   }
   return (uri, null);

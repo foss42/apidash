@@ -40,7 +40,9 @@ void main() async {
 
 void main() async {
   try {
-    final queryParams = {'code': 'US'};
+    final queryParams = {
+      'code': ['US']
+    };
     final response = await dio.Dio().get(
       'https://api.apidash.dev/country/data',
       queryParameters: queryParams,
@@ -71,9 +73,14 @@ void main() async {
 
 void main() async {
   try {
-    final queryParams = {'code': 'IND'};
+    final queryParams = {
+      'code': [
+        'IND',
+        'US',
+      ]
+    };
     final response = await dio.Dio().get(
-      'https://api.apidash.dev/country/data?code=US',
+      'https://api.apidash.dev/country/data',
       queryParameters: queryParams,
     );
     print(response.statusCode);
@@ -103,11 +110,11 @@ void main() async {
 void main() async {
   try {
     final queryParams = {
-      'num': '8700000',
-      'digits': '3',
-      'system': 'SS',
-      'add_space': 'true',
-      'trailing_zeros': 'true',
+      'num': ['8700000'],
+      'digits': ['3'],
+      'system': ['SS'],
+      'add_space': ['true'],
+      'trailing_zeros': ['true'],
     };
     final response = await dio.Dio().get(
       'https://api.apidash.dev/humanize/social',
@@ -170,7 +177,9 @@ void main() async {
 
 void main() async {
   try {
-    final queryParams = {'raw': 'true'};
+    final queryParams = {
+      'raw': ['true']
+    };
     final headers = {'User-Agent': 'Test Agent'};
     final response = await dio.Dio().get(
       'https://api.github.com/repos/foss42/apidash',
@@ -230,7 +239,9 @@ void main() async {
 
 void main() async {
   try {
-    final queryParams = {'raw': 'true'};
+    final queryParams = {
+      'raw': ['true']
+    };
     final headers = {'User-Agent': 'Test Agent'};
     final response = await dio.Dio().get(
       'https://api.github.com/repos/foss42/apidash',
@@ -264,8 +275,8 @@ void main() async {
 void main() async {
   try {
     final queryParams = {
-      'num': '8700000',
-      'add_space': 'true',
+      'num': ['8700000'],
+      'add_space': ['true'],
     };
     final response = await dio.Dio().get(
       'https://api.apidash.dev/humanize/social',
@@ -329,8 +340,8 @@ void main() async {
 void main() async {
   try {
     final queryParams = {
-      'num': '8700000',
-      'digits': '3',
+      'num': ['8700000'],
+      'digits': ['3'],
     };
     final headers = {'User-Agent': 'Test Agent'};
     final response = await dio.Dio().get(
@@ -777,8 +788,8 @@ void main() async {
 void main() async {
   try {
     final queryParams = {
-      'size': '2',
-      'len': '3',
+      'size': ['2'],
+      'len': ['3'],
     };
     final data = dio.FormData();
     final List<Map<String, String>> formDataList = [
@@ -835,8 +846,8 @@ void main() async {
 void main() async {
   try {
     final queryParams = {
-      'size': '2',
-      'len': '3',
+      'size': ['2'],
+      'len': ['3'],
     };
     final headers = {
       'User-Agent': 'Test Agent',
@@ -902,12 +913,14 @@ import 'dart:convert' as convert;
 
 void main() async {
   try {
+    final headers = {'x-api-key': 'reqres-free-v1'};
     final data = convert.json.decode(r'''{
 "name": "morpheus",
 "job": "zion resident"
 }''');
     final response = await dio.Dio().put(
       'https://reqres.in/api/users/2',
+      options: dio.Options(headers: headers),
       data: data,
     );
     print(response.statusCode);
@@ -939,12 +952,14 @@ import 'dart:convert' as convert;
 
 void main() async {
   try {
+    final headers = {'x-api-key': 'reqres-free-v1'};
     final data = convert.json.decode(r'''{
 "name": "marfeus",
 "job": "accountant"
 }''');
     final response = await dio.Dio().patch(
       'https://reqres.in/api/users/2',
+      options: dio.Options(headers: headers),
       data: data,
     );
     print(response.statusCode);
@@ -975,7 +990,11 @@ void main() async {
 
 void main() async {
   try {
-    final response = await dio.Dio().delete('https://reqres.in/api/users/2');
+    final headers = {'x-api-key': 'reqres-free-v1'};
+    final response = await dio.Dio().delete(
+      'https://reqres.in/api/users/2',
+      options: dio.Options(headers: headers),
+    );
     print(response.statusCode);
     print(response.data);
   } on dio.DioException catch (e, s) {
@@ -1003,12 +1022,14 @@ import 'dart:convert' as convert;
 
 void main() async {
   try {
+    final headers = {'x-api-key': 'reqres-free-v1'};
     final data = convert.json.decode(r'''{
 "name": "marfeus",
 "job": "accountant"
 }''');
     final response = await dio.Dio().delete(
       'https://reqres.in/api/users/2',
+      options: dio.Options(headers: headers),
       data: data,
     );
     print(response.statusCode);
