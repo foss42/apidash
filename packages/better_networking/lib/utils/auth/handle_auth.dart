@@ -202,7 +202,7 @@ Future<HttpRequestModel> handleAuth(
 
           break;
         case OAuth2GrantType.clientCredentials:
-          final client = await oAuth2ClientCredentialsHandler(
+          final client = await oAuth2ClientCredentialsGrantHandler(
             oauth2Model: oauth2,
             credentialsFile: credentialsFile,
           );
@@ -218,8 +218,22 @@ Future<HttpRequestModel> handleAuth(
           updatedHeaderEnabledList.add(true);
           break;
         case OAuth2GrantType.resourceOwnerPassword:
-          // TODO: Handle this case.
-          throw UnimplementedError();
+          debugPrint("==Resource Owner Password==");
+          final client = await oAuth2ResourceOwnerPasswordGrantHandler(
+            oauth2Model: oauth2,
+            credentialsFile: credentialsFile,
+          );
+          debugPrint(client.credentials.accessToken);
+
+          // Add the access token to the request headers
+          updatedHeaders.add(
+            NameValueModel(
+              name: 'Authorization',
+              value: 'Bearer ${client.credentials.accessToken}',
+            ),
+          );
+          updatedHeaderEnabledList.add(true);
+          break;
       }
   }
 

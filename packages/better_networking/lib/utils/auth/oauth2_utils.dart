@@ -76,7 +76,7 @@ Future<oauth2.Client> oAuth2AuthorizationCodeGrantHandler({
   }
 }
 
-Future<oauth2.Client> oAuth2ClientCredentialsHandler({
+Future<oauth2.Client> oAuth2ClientCredentialsGrantHandler({
   required AuthOAuth2Model oauth2Model,
   required File credentialsFile,
 }) async {
@@ -88,12 +88,10 @@ Future<oauth2.Client> oAuth2ClientCredentialsHandler({
 
       if (credentials.accessToken.isNotEmpty && !credentials.isExpired) {
         log('Using existing valid credentials');
-        // TODO: This adds the client_id parameter to the body instead of the header
-        return oauth2.clientCredentialsGrant(
-          Uri.parse(oauth2Model.authorizationUrl),
-          oauth2Model.clientId,
-          oauth2Model.clientSecret,
-          scopes: oauth2Model.scope != null ? [oauth2Model.scope!] : null,
+        return oauth2.Client(
+          credentials,
+          identifier: oauth2Model.clientId,
+          secret: oauth2Model.clientSecret,
         );
       }
     } catch (e) {
@@ -109,6 +107,62 @@ Future<oauth2.Client> oAuth2ClientCredentialsHandler({
     oauth2Model.clientId,
     oauth2Model.clientSecret,
     scopes: oauth2Model.scope != null ? [oauth2Model.scope!] : null,
+    basicAuth: false,
+  );
+  log("Created Client with id: ${client.identifier}");
+  log("Created Client with sec: ${client.secret}");
+  log("Created Client with sec: ${client.credentials.toJson()}");
+
+  log('Successfully authenticated via client credentials grant');
+
+  try {
+    await credentialsFile.writeAsString(client.credentials.toJson());
+    log('Saved credentials to file');
+  } catch (e) {
+    log('Failed to save credentials: $e');
+  }
+
+  return client;
+}
+
+Future<oauth2.Client> oAuth2ResourceOwnerPasswordGrantHandler({
+  required AuthOAuth2Model oauth2Model,
+  required File credentialsFile,
+}) async {
+  // Try to use saved credentials
+  if (await credentialsFile.exists()) {
+    try {
+      final json = await credentialsFile.readAsString();
+      final credentials = oauth2.Credentials.fromJson(json);
+
+      if (credentials.accessToken.isNotEmpty && !credentials.isExpired) {
+        log('Using existing valid credentials');
+        return oauth2.Client(
+          credentials,
+          identifier: oauth2Model.clientId,
+          secret: oauth2Model.clientSecret,
+        );
+      }
+    } catch (e) {
+      log('Error reading existing credentials: $e');
+    }
+  }
+  if ((oauth2Model.username == null || oauth2Model.username!.isEmpty) ||
+      (oauth2Model.password == null || oauth2Model.password!.isEmpty)) {
+    throw Exception("Username or Password cannot be empty");
+  }
+  log("Creating Client with id: ${oauth2Model.clientId}");
+  log("Creating Client with sec: ${oauth2Model.clientSecret}");
+
+  // Otherwise, perform the owner password grant
+  final client = await oauth2.resourceOwnerPasswordGrant(
+    Uri.parse(oauth2Model.authorizationUrl),
+    oauth2Model.username!,
+    oauth2Model.password!,
+    identifier: oauth2Model.clientId,
+    secret: oauth2Model.clientSecret,
+    scopes: oauth2Model.scope != null ? [oauth2Model.scope!] : null,
+    basicAuth: false,
   );
   log("Created Client with id: ${client.identifier}");
   log("Created Client with sec: ${client.secret}");
