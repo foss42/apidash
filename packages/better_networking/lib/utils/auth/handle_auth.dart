@@ -202,8 +202,21 @@ Future<HttpRequestModel> handleAuth(
 
           break;
         case OAuth2GrantType.clientCredentials:
-          // TODO: Handle this case.
-          throw UnimplementedError();
+          final client = await oAuth2ClientCredentialsHandler(
+            oauth2Model: oauth2,
+            credentialsFile: credentialsFile,
+          );
+          debugPrint(client.credentials.accessToken);
+
+          // Add the access token to the request headers
+          updatedHeaders.add(
+            NameValueModel(
+              name: 'Authorization',
+              value: 'Bearer ${client.credentials.accessToken}',
+            ),
+          );
+          updatedHeaderEnabledList.add(true);
+          break;
         case OAuth2GrantType.resourceOwnerPassword:
           // TODO: Handle this case.
           throw UnimplementedError();
