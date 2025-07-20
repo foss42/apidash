@@ -9,7 +9,9 @@ part of 'auth_oauth2_model.dart';
 _$AuthOAuth2ModelImpl _$$AuthOAuth2ModelImplFromJson(
   Map<String, dynamic> json,
 ) => _$AuthOAuth2ModelImpl(
-  grantType: json['grantType'] as String? ?? "authorization_code",
+  grantType:
+      $enumDecodeNullable(_$OAuth2GrantTypeEnumMap, json['grantType']) ??
+      OAuth2GrantType.authorizationCode,
   authorizationUrl: json['authorizationUrl'] as String,
   accessTokenUrl: json['accessTokenUrl'] as String,
   clientId: json['clientId'] as String,
@@ -30,7 +32,7 @@ _$AuthOAuth2ModelImpl _$$AuthOAuth2ModelImplFromJson(
 Map<String, dynamic> _$$AuthOAuth2ModelImplToJson(
   _$AuthOAuth2ModelImpl instance,
 ) => <String, dynamic>{
-  'grantType': instance.grantType,
+  'grantType': _$OAuth2GrantTypeEnumMap[instance.grantType]!,
   'authorizationUrl': instance.authorizationUrl,
   'accessTokenUrl': instance.accessTokenUrl,
   'clientId': instance.clientId,
@@ -46,4 +48,10 @@ Map<String, dynamic> _$$AuthOAuth2ModelImplToJson(
   'refreshToken': instance.refreshToken,
   'identityToken': instance.identityToken,
   'accessToken': instance.accessToken,
+};
+
+const _$OAuth2GrantTypeEnumMap = {
+  OAuth2GrantType.authorizationCode: 'authorizationCode',
+  OAuth2GrantType.clientCredentials: 'clientCredentials',
+  OAuth2GrantType.resourceOwnerPassword: 'resourceOwnerPassword',
 };

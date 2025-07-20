@@ -5,3 +5,5 @@ export 'http_response_utils.dart';
 export 'string_utils.dart' hide RandomStringGenerator;
 export 'uri_utils.dart';
 export 'auth/handle_auth.dart';
+export 'auth/oauth2_webview_utils.dart';
+export 'auth/handle_auth_webview.dart';

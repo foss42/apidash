@@ -34,6 +34,18 @@ Future<String?> getFileDownloadpath(String? name, String? ext) async {
   return null;
 }
 
+Future<String?> getTempFilePath(String? name, String? ext) async {
+  final Directory tempDir = await getApplicationCacheDirectory();
+  name = name ?? getTempFileName();
+  ext = (ext != null) ? ".$ext" : "";
+  String path = '${tempDir.path}/$name$ext';
+  int num = 1;
+  while (await File(path).exists()) {
+    path = '${tempDir.path}/$name (${num++})$ext';
+  }
+  return path;
+}
+
 Future<void> saveFile(String path, Uint8List content) async {
   final file = File(path);
   await file.writeAsBytes(content);

@@ -43,6 +43,15 @@ const kJwtAlgos = [
   'EdDSA',
 ];
 
+enum OAuth2GrantType {
+  authorizationCode("Authorization Code"),
+  clientCredentials("Client Credentials"),
+  resourceOwnerPassword("Resource Owner Password");
+
+  const OAuth2GrantType(this.displayType);
+  final String displayType;
+}
+
 enum HTTPVerb {
   get("GET"),
   head("HEAD"),

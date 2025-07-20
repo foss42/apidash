@@ -1,8 +1,11 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 import 'package:better_networking/utils/auth/jwt_auth_utils.dart';
 import 'package:better_networking/utils/auth/digest_auth_utils.dart';
 import 'package:better_networking/better_networking.dart';
+import 'package:better_networking/utils/auth/oauth2_utils.dart';
+import 'package:flutter/foundation.dart';
 
 Future<HttpRequestModel> handleAuth(
   HttpRequestModel httpRequestModel,
@@ -157,8 +160,54 @@ Future<HttpRequestModel> handleAuth(
       // TODO: Handle this case.
       throw UnimplementedError();
     case APIAuthType.oauth2:
-      // TODO: Handle this case.
-      throw UnimplementedError();
+      final oauth2 = authData.oauth2;
+
+      if (oauth2 == null) {
+        throw Exception("Failed to get OAuth2 Data");
+      }
+
+      if (oauth2.redirectUrl == null) {
+        throw Exception("No Redirect URL found!");
+      }
+
+      //TODO: Create a proper credentials file path, use the existing file utils if needed.
+      final credentialsDir = Directory.systemTemp;
+      final credentialsFile = File(
+        '${credentialsDir.path}/oauth2_credentials.json',
+      );
+
+      switch (oauth2.grantType) {
+        case OAuth2GrantType.authorizationCode:
+          final res = await oAuth2AuthorizationCodeGrantHandler(
+            identifier: oauth2.clientId,
+            secret: oauth2.clientSecret,
+            authorizationEndpoint: Uri.parse(oauth2.authorizationUrl),
+            redirectUrl: Uri.parse(
+              oauth2.redirectUrl ?? "apidash://oauth2/callback",
+            ),
+            tokenEndpoint: Uri.parse(oauth2.accessTokenUrl),
+            credentialsFile: credentialsFile,
+            scope: oauth2.scope,
+          );
+          debugPrint(res.credentials.accessToken);
+
+          // Add the access token to the request headers
+          updatedHeaders.add(
+            NameValueModel(
+              name: 'Authorization',
+              value: 'Bearer ${res.credentials.accessToken}',
+            ),
+          );
+          updatedHeaderEnabledList.add(true);
+
+          break;
+        case OAuth2GrantType.clientCredentials:
+          // TODO: Handle this case.
+          throw UnimplementedError();
+        case OAuth2GrantType.resourceOwnerPassword:
+          // TODO: Handle this case.
+          throw UnimplementedError();
+      }
   }
 
   return httpRequestModel.copyWith(
