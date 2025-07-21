@@ -28,10 +28,9 @@ dependencies:
   json_annotation: ^4.9.0
   seed: ^0.0.3
   xml: ^6.3.0
+  oauth1: ^2.1.0
   oauth2: ^2.0.3
   flutter_web_auth_2: ^4.1.0
-  app_links: ^6.4.0
-  webview_flutter: ^4.10.0
 
 dev_dependencies:
   flutter_test:

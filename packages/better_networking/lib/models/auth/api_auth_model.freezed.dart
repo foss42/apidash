@@ -27,6 +27,7 @@ mixin _$AuthModel {
   AuthBasicAuthModel? get basic => throw _privateConstructorUsedError;
   AuthJwtModel? get jwt => throw _privateConstructorUsedError;
   AuthDigestModel? get digest => throw _privateConstructorUsedError;
+  AuthOAuth1Model? get oauth1 => throw _privateConstructorUsedError;
   AuthOAuth2Model? get oauth2 => throw _privateConstructorUsedError;
 
   /// Serializes this AuthModel to a JSON map.
@@ -51,6 +52,7 @@ abstract class $AuthModelCopyWith<$Res> {
     AuthBasicAuthModel? basic,
     AuthJwtModel? jwt,
     AuthDigestModel? digest,
+    AuthOAuth1Model? oauth1,
     AuthOAuth2Model? oauth2,
   });
 
@@ -59,6 +61,7 @@ abstract class $AuthModelCopyWith<$Res> {
   $AuthBasicAuthModelCopyWith<$Res>? get basic;
   $AuthJwtModelCopyWith<$Res>? get jwt;
   $AuthDigestModelCopyWith<$Res>? get digest;
+  $AuthOAuth1ModelCopyWith<$Res>? get oauth1;
   $AuthOAuth2ModelCopyWith<$Res>? get oauth2;
 }
 
@@ -83,6 +86,7 @@ class _$AuthModelCopyWithImpl<$Res, $Val extends AuthModel>
     Object? basic = freezed,
     Object? jwt = freezed,
     Object? digest = freezed,
+    Object? oauth1 = freezed,
     Object? oauth2 = freezed,
   }) {
     return _then(
@@ -111,6 +115,10 @@ class _$AuthModelCopyWithImpl<$Res, $Val extends AuthModel>
                 ? _value.digest
                 : digest // ignore: cast_nullable_to_non_nullable
                       as AuthDigestModel?,
+            oauth1: freezed == oauth1
+                ? _value.oauth1
+                : oauth1 // ignore: cast_nullable_to_non_nullable
+                      as AuthOAuth1Model?,
             oauth2: freezed == oauth2
                 ? _value.oauth2
                 : oauth2 // ignore: cast_nullable_to_non_nullable
@@ -194,6 +202,20 @@ class _$AuthModelCopyWithImpl<$Res, $Val extends AuthModel>
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
+  $AuthOAuth1ModelCopyWith<$Res>? get oauth1 {
+    if (_value.oauth1 == null) {
+      return null;
+    }
+
+    return $AuthOAuth1ModelCopyWith<$Res>(_value.oauth1!, (value) {
+      return _then(_value.copyWith(oauth1: value) as $Val);
+    });
+  }
+
+  /// Create a copy of AuthModel
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
   $AuthOAuth2ModelCopyWith<$Res>? get oauth2 {
     if (_value.oauth2 == null) {
       return null;
@@ -221,6 +243,7 @@ abstract class _$$AuthModelImplCopyWith<$Res>
     AuthBasicAuthModel? basic,
     AuthJwtModel? jwt,
     AuthDigestModel? digest,
+    AuthOAuth1Model? oauth1,
     AuthOAuth2Model? oauth2,
   });
 
@@ -234,6 +257,8 @@ abstract class _$$AuthModelImplCopyWith<$Res>
   $AuthJwtModelCopyWith<$Res>? get jwt;
   @override
   $AuthDigestModelCopyWith<$Res>? get digest;
+  @override
+  $AuthOAuth1ModelCopyWith<$Res>? get oauth1;
   @override
   $AuthOAuth2ModelCopyWith<$Res>? get oauth2;
 }
@@ -258,6 +283,7 @@ class __$$AuthModelImplCopyWithImpl<$Res>
     Object? basic = freezed,
     Object? jwt = freezed,
     Object? digest = freezed,
+    Object? oauth1 = freezed,
     Object? oauth2 = freezed,
   }) {
     return _then(
@@ -286,6 +312,10 @@ class __$$AuthModelImplCopyWithImpl<$Res>
             ? _value.digest
             : digest // ignore: cast_nullable_to_non_nullable
                   as AuthDigestModel?,
+        oauth1: freezed == oauth1
+            ? _value.oauth1
+            : oauth1 // ignore: cast_nullable_to_non_nullable
+                  as AuthOAuth1Model?,
         oauth2: freezed == oauth2
             ? _value.oauth2
             : oauth2 // ignore: cast_nullable_to_non_nullable
@@ -306,6 +336,7 @@ class _$AuthModelImpl implements _AuthModel {
     this.basic,
     this.jwt,
     this.digest,
+    this.oauth1,
     this.oauth2,
   });
 
@@ -325,11 +356,13 @@ class _$AuthModelImpl implements _AuthModel {
   @override
   final AuthDigestModel? digest;
   @override
+  final AuthOAuth1Model? oauth1;
+  @override
   final AuthOAuth2Model? oauth2;
 
   @override
   String toString() {
-    return 'AuthModel(type: $type, apikey: $apikey, bearer: $bearer, basic: $basic, jwt: $jwt, digest: $digest, oauth2: $oauth2)';
+    return 'AuthModel(type: $type, apikey: $apikey, bearer: $bearer, basic: $basic, jwt: $jwt, digest: $digest, oauth1: $oauth1, oauth2: $oauth2)';
   }
 
   @override
@@ -343,6 +376,7 @@ class _$AuthModelImpl implements _AuthModel {
             (identical(other.basic, basic) || other.basic == basic) &&
             (identical(other.jwt, jwt) || other.jwt == jwt) &&
             (identical(other.digest, digest) || other.digest == digest) &&
+            (identical(other.oauth1, oauth1) || other.oauth1 == oauth1) &&
             (identical(other.oauth2, oauth2) || other.oauth2 == oauth2));
   }
 
@@ -356,6 +390,7 @@ class _$AuthModelImpl implements _AuthModel {
     basic,
     jwt,
     digest,
+    oauth1,
     oauth2,
   );
 
@@ -381,6 +416,7 @@ abstract class _AuthModel implements AuthModel {
     final AuthBasicAuthModel? basic,
     final AuthJwtModel? jwt,
     final AuthDigestModel? digest,
+    final AuthOAuth1Model? oauth1,
     final AuthOAuth2Model? oauth2,
   }) = _$AuthModelImpl;
 
@@ -399,6 +435,8 @@ abstract class _AuthModel implements AuthModel {
   AuthJwtModel? get jwt;
   @override
   AuthDigestModel? get digest;
+  @override
+  AuthOAuth1Model? get oauth1;
   @override
   AuthOAuth2Model? get oauth2;
 
