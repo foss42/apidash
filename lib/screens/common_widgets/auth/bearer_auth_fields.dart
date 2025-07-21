@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:apidash_core/apidash_core.dart';
-import 'package:apidash/widgets/widgets.dart';
+import '../common_widgets.dart';
 import 'consts.dart';
 
 class BearerAuthFields extends StatefulWidget {
@@ -20,29 +20,31 @@ class BearerAuthFields extends StatefulWidget {
 }
 
 class _BearerAuthFieldsState extends State<BearerAuthFields> {
-  late TextEditingController _tokenController;
+  late String _token;
 
   @override
   void initState() {
     super.initState();
-    final bearerAuth = widget.authData?.bearer;
-    _tokenController = TextEditingController(text: bearerAuth?.token ?? '');
+    _token = widget.authData?.bearer?.token ?? '';
   }
 
   @override
   Widget build(BuildContext context) {
-    return AuthTextField(
+    return EnvAuthField(
       readOnly: widget.readOnly,
-      controller: _tokenController,
       hintText: kHintToken,
       isObscureText: true,
-      onChanged: (value) => _updateBearerAuth(),
+      initialValue: _token,
+      onChanged: (value) {
+        _token = value;
+        _updateBearerAuth();
+      },
     );
   }
 
   void _updateBearerAuth() {
     final bearer = AuthBearerModel(
-      token: _tokenController.text.trim(),
+      token: _token.trim(),
     );
     widget.updateAuth?.call(widget.authData?.copyWith(
           type: APIAuthType.bearer,

@@ -317,7 +317,7 @@ class CollectionStateNotifier
     var responseRec = await sendHttpRequest(
       requestId,
       apiType,
-      requestModel.httpRequestModel?.authModel,
+      substitutedHttpRequestModel.authModel,
       substitutedHttpRequestModel,
       defaultUriScheme: defaultUriScheme,
       noSSL: noSSL,
