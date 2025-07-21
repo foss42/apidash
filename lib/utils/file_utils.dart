@@ -34,8 +34,9 @@ Future<String?> getFileDownloadpath(String? name, String? ext) async {
   return null;
 }
 
-Future<String?> getDocumentsDirectoryFilePath(String name, String? ext) async {
-  final Directory tempDir = await getApplicationDocumentsDirectory();
+Future<String?> getApplicationSupportDirectoryFilePath(
+    String name, String? ext) async {
+  final Directory tempDir = await getApplicationSupportDirectory();
   name = name;
   ext = (ext != null) ? ".$ext" : "";
   String path = '${tempDir.path}/$name$ext';
@@ -72,4 +73,29 @@ String getTempFileName() {
 Future<XFile?> pickFile() async {
   XFile? pickedResult = await openFile();
   return pickedResult;
+}
+
+Future<File?> loadFileFromPath(String filePath) async {
+  try {
+    final file = File(filePath);
+    if (!await file.exists()) {
+      return null;
+    }
+    return file;
+  } catch (e) {
+    return null;
+  }
+}
+
+Future<bool> deleteFileFromPath(String filePath) async {
+  try {
+    final file = File(filePath);
+    if (await file.exists()) {
+      await file.delete();
+      return true;
+    }
+    return false;
+  } catch (e) {
+    return false;
+  }
 }

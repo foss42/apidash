@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:apidash/utils/file_utils.dart';
 import 'package:apidash/widgets/field_auth.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
@@ -52,18 +55,50 @@ class _OAuth2FieldsState extends State<OAuth2Fields> {
     _usernameController = TextEditingController(text: oauth2?.username ?? '');
     _passwordController = TextEditingController(text: oauth2?.password ?? '');
     _refreshTokenController =
-        TextEditingController(text: oauth2?.refreshToken ?? '');
+        TextEditingController(text: oauth2?.refreshToken ?? 'N/A');
     _identityTokenController =
-        TextEditingController(text: oauth2?.identityToken ?? '');
+        TextEditingController(text: oauth2?.identityToken ?? 'N/A');
     _accessTokenController =
-        TextEditingController(text: oauth2?.accessToken ?? '');
+        TextEditingController(text: oauth2?.accessToken ?? 'N/A');
     _codeChallengeMethod = oauth2?.codeChallengeMethod ?? 'sha-256';
+
+    // Load credentials from file if available
+    _loadCredentialsFromFile();
+  }
+
+  Future<void> _loadCredentialsFromFile() async {
+    final credentialsFilePath = widget.authData?.oauth2?.credentialsFilePath;
+    if (credentialsFilePath != null && credentialsFilePath.isNotEmpty) {
+      final credentialsFile = await loadFileFromPath(credentialsFilePath);
+      if (credentialsFile != null) {
+        final credentials = await credentialsFile.readAsString();
+        final Map<String, dynamic> decoded = jsonDecode(credentials);
+        setState(() {
+          if (decoded['refreshToken'] != null) {
+            _refreshTokenController.text = decoded['refreshToken']!;
+          } else {
+            _refreshTokenController.text = "N/A";
+          }
+          if (decoded['id_token'] != null) {
+            _identityTokenController.text = decoded['identityToken']!;
+          } else {
+            _identityTokenController.text = "N/A";
+          }
+          if (decoded['accessToken'] != null) {
+            _accessTokenController.text = decoded['accessToken']!;
+          } else {
+            _accessTokenController.text = "N/A";
+          }
+        });
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return ListView(
+      shrinkWrap: true,
+      physics: AlwaysScrollableScrollPhysics(),
       children: [
         Text(
           "Grant Type",
@@ -177,9 +212,7 @@ class _OAuth2FieldsState extends State<OAuth2Fields> {
               onChanged: (_) => _updateOAuth2(),
             ),
           ),
-        if (_shouldShowField(
-            OAuth2Field.scope)) // Based on refined list, Scope is always shown
-
+        if (_shouldShowField(OAuth2Field.scope))
           ..._buildFieldWithSpacing(
             AuthTextField(
               readOnly: widget.readOnly,
@@ -197,6 +230,12 @@ class _OAuth2FieldsState extends State<OAuth2Fields> {
               onChanged: (_) => _updateOAuth2(),
             ),
           ),
+        ..._buildFieldWithSpacing(
+          ADTextButton(
+            label: "Clear OAuth2 Session",
+            onPressed: clearStoredCredentials,
+          ),
+        ),
         Divider(),
         kVSpacer16,
         ..._buildFieldWithSpacing(
@@ -204,6 +243,7 @@ class _OAuth2FieldsState extends State<OAuth2Fields> {
             readOnly: widget.readOnly,
             controller: _refreshTokenController,
             hintText: "Refresh Token",
+            isObscureText: true,
             onChanged: (_) => _updateOAuth2(),
           ),
         ),
@@ -212,6 +252,7 @@ class _OAuth2FieldsState extends State<OAuth2Fields> {
             readOnly: widget.readOnly,
             controller: _identityTokenController,
             hintText: "Identity Token",
+            isObscureText: true,
             onChanged: (_) => _updateOAuth2(),
           ),
         ),
@@ -219,6 +260,7 @@ class _OAuth2FieldsState extends State<OAuth2Fields> {
           AuthTextField(
             readOnly: widget.readOnly,
             controller: _accessTokenController,
+            isObscureText: true,
             hintText: "Access Token",
             onChanged: (_) => _updateOAuth2(),
           ),
@@ -244,6 +286,7 @@ class _OAuth2FieldsState extends State<OAuth2Fields> {
       OAuth2Field.refreshToken,
       OAuth2Field.identityToken,
       OAuth2Field.accessToken,
+      OAuth2Field.clearSession,
     };
 
     if (alwaysShownFields.contains(field)) {
@@ -270,13 +313,20 @@ class _OAuth2FieldsState extends State<OAuth2Fields> {
     }
   }
 
-  void _updateOAuth2() {
+  void _updateOAuth2() async {
+    final String? credentialsFilePath =
+        await getApplicationSupportDirectoryFilePath(
+            "oauth2_credentials", "json");
+    if (credentialsFilePath == null) {
+      return;
+    }
     final updatedOAuth2 = AuthOAuth2Model(
       grantType: _grantType,
       authorizationUrl: _authorizationUrlController.text.trim(),
       clientId: _clientIdController.text.trim(),
       accessTokenUrl: _accessTokenUrlController.text.trim(),
       clientSecret: _clientSecretController.text.trim(),
+      credentialsFilePath: credentialsFilePath,
       codeChallengeMethod: _codeChallengeMethod,
       redirectUrl: _redirectUrlController.text.trim(),
       scope: _scopeController.text.trim(),
@@ -298,6 +348,13 @@ class _OAuth2FieldsState extends State<OAuth2Fields> {
             oauth2: updatedOAuth2,
           ),
     );
+  }
+
+  Future<void> clearStoredCredentials() async {
+    final credentialsFilePath = widget.authData?.oauth2?.credentialsFilePath;
+    if (credentialsFilePath != null && credentialsFilePath.isNotEmpty) {
+      await deleteFileFromPath(credentialsFilePath);
+    }
   }
 
   @override
@@ -332,4 +389,5 @@ enum OAuth2Field {
   refreshToken,
   identityToken,
   accessToken,
+  clearSession,
 }
