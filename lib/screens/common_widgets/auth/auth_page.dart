@@ -7,6 +7,7 @@ import 'bearer_auth_fields.dart';
 import 'digest_auth_fields.dart';
 import 'jwt_auth_fields.dart';
 import 'consts.dart';
+import 'oauth1_fields.dart';
 import 'oauth2_field.dart';
 
 class AuthPage extends StatelessWidget {
@@ -72,6 +73,11 @@ class AuthPage extends StatelessWidget {
                   updateAuth: updateAuthData,
                 ),
               APIAuthType.digest => DigestAuthFields(
+                  readOnly: readOnly,
+                  authData: authModel,
+                  updateAuth: updateAuthData,
+                ),
+                APIAuthType.oauth1 => OAuth1Fields(
                   readOnly: readOnly,
                   authData: authModel,
                   updateAuth: updateAuthData,
