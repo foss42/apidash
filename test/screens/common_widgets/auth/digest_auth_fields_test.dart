@@ -1,5 +1,4 @@
-import 'package:apidash/screens/common_widgets/auth/digest_auth_fields.dart';
-import 'package:apidash/widgets/widgets.dart';
+import 'package:apidash/screens/common_widgets/common_widgets.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/widgets/widgets.dart';
 import 'package:extended_text_field/extended_text_field.dart';
