@@ -28,7 +28,6 @@ export 'editor_code.dart';
 export 'editor_json.dart';
 export 'editor.dart';
 export 'error_message.dart';
-export 'field_auth.dart';
 export 'field_cell_obscurable.dart';
 export 'field_cell.dart';
 export 'field_json_search.dart';

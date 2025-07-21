@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:apidash_core/apidash_core.dart';
 import 'package:apidash_design_system/apidash_design_system.dart';
-import 'package:apidash/widgets/widgets.dart';
+import '../common_widgets.dart';
 import 'consts.dart';
 
 class DigestAuthFields extends StatefulWidget {
