@@ -34,9 +34,9 @@ Future<String?> getFileDownloadpath(String? name, String? ext) async {
   return null;
 }
 
-Future<String?> getTempFilePath(String? name, String? ext) async {
-  final Directory tempDir = await getApplicationCacheDirectory();
-  name = name ?? getTempFileName();
+Future<String?> getDocumentsDirectoryFilePath(String name, String? ext) async {
+  final Directory tempDir = await getApplicationDocumentsDirectory();
+  name = name;
   ext = (ext != null) ? ".$ext" : "";
   String path = '${tempDir.path}/$name$ext';
   int num = 1;

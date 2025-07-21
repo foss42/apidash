@@ -5,98 +5,58 @@ import 'package:flutter/material.dart';
 
 class OAuth2Fields extends StatefulWidget {
   final AuthModel? authData;
-
   final bool readOnly;
-
   final Function(AuthModel?)? updateAuth;
-
   const OAuth2Fields({
     super.key,
     required this.authData,
     this.updateAuth,
     this.readOnly = false,
   });
-
   @override
   State<OAuth2Fields> createState() => _OAuth2FieldsState();
 }
 
 class _OAuth2FieldsState extends State<OAuth2Fields> {
   late OAuth2GrantType _grantType;
-
   late TextEditingController _authorizationUrlController;
-
   late TextEditingController _accessTokenUrlController;
-
   late TextEditingController _clientIdController;
-
   late TextEditingController _clientSecretController;
-
   late TextEditingController _redirectUrlController;
-
   late TextEditingController _scopeController;
-
   late TextEditingController _stateController;
-
   late String _codeChallengeMethod;
-
   late TextEditingController _usernameController;
-
   late TextEditingController _passwordController;
-
   late TextEditingController _refreshTokenController;
-
   late TextEditingController _identityTokenController;
-
   late TextEditingController _accessTokenController;
-
-// late TextEditingController _headerPrefixController;
-
-// late TextEditingController _audienceController;
 
   @override
   void initState() {
     super.initState();
-
     final oauth2 = widget.authData?.oauth2;
-
     _grantType = oauth2?.grantType ?? OAuth2GrantType.authorizationCode;
-
     _authorizationUrlController =
         TextEditingController(text: oauth2?.authorizationUrl ?? '');
-
     _accessTokenUrlController =
         TextEditingController(text: oauth2?.accessTokenUrl ?? '');
-
     _clientIdController = TextEditingController(text: oauth2?.clientId ?? '');
-
     _clientSecretController =
         TextEditingController(text: oauth2?.clientSecret ?? '');
-
     _redirectUrlController =
         TextEditingController(text: oauth2?.redirectUrl ?? '');
-
     _scopeController = TextEditingController(text: oauth2?.scope ?? '');
-
     _stateController = TextEditingController(text: oauth2?.state ?? '');
-
     _usernameController = TextEditingController(text: oauth2?.username ?? '');
-
     _passwordController = TextEditingController(text: oauth2?.password ?? '');
-
     _refreshTokenController =
         TextEditingController(text: oauth2?.refreshToken ?? '');
-
     _identityTokenController =
         TextEditingController(text: oauth2?.identityToken ?? '');
-
     _accessTokenController =
         TextEditingController(text: oauth2?.accessToken ?? '');
-
-// _headerPrefixController = TextEditingController(text: oauth2?.headerPrefix ?? '');
-
-// _audienceController = TextEditingController(text: oauth2?.audience ?? '');
-
     _codeChallengeMethod = oauth2?.codeChallengeMethod ?? 'sha-256';
   }
 
@@ -109,9 +69,7 @@ class _OAuth2FieldsState extends State<OAuth2Fields> {
           "Grant Type",
           style: Theme.of(context).textTheme.labelLarge,
         ),
-
         kVSpacer5,
-
         ADPopupMenu<OAuth2GrantType>(
           value: _grantType.displayType,
           values: OAuth2GrantType.values.map((e) => (e, e.displayType)),
@@ -127,9 +85,7 @@ class _OAuth2FieldsState extends State<OAuth2Fields> {
             }
           },
         ),
-
         kVSpacer16,
-
         if (_shouldShowField(OAuth2Field.authorizationUrl))
           ..._buildFieldWithSpacing(
             AuthTextField(
@@ -139,7 +95,6 @@ class _OAuth2FieldsState extends State<OAuth2Fields> {
               onChanged: (_) => _updateOAuth2(),
             ),
           ),
-
         if (_shouldShowField(OAuth2Field.username))
           ..._buildFieldWithSpacing(
             AuthTextField(
@@ -149,7 +104,6 @@ class _OAuth2FieldsState extends State<OAuth2Fields> {
               onChanged: (_) => _updateOAuth2(),
             ),
           ),
-
         if (_shouldShowField(OAuth2Field.password))
           ..._buildFieldWithSpacing(
             AuthTextField(
@@ -160,7 +114,6 @@ class _OAuth2FieldsState extends State<OAuth2Fields> {
               onChanged: (_) => _updateOAuth2(),
             ),
           ),
-
         if (_shouldShowField(OAuth2Field.accessTokenUrl))
           ..._buildFieldWithSpacing(
             AuthTextField(
@@ -170,7 +123,6 @@ class _OAuth2FieldsState extends State<OAuth2Fields> {
               onChanged: (_) => _updateOAuth2(),
             ),
           ),
-
         if (_shouldShowField(OAuth2Field.clientId))
           ..._buildFieldWithSpacing(
             AuthTextField(
@@ -180,7 +132,6 @@ class _OAuth2FieldsState extends State<OAuth2Fields> {
               onChanged: (_) => _updateOAuth2(),
             ),
           ),
-
         if (_shouldShowField(OAuth2Field.clientSecret))
           ..._buildFieldWithSpacing(
             AuthTextField(
@@ -191,7 +142,6 @@ class _OAuth2FieldsState extends State<OAuth2Fields> {
               onChanged: (_) => _updateOAuth2(),
             ),
           ),
-
         if (_shouldShowField(OAuth2Field.codeChallengeMethod)) ...[
           Text(
             "Code Challenge Method",
@@ -218,7 +168,6 @@ class _OAuth2FieldsState extends State<OAuth2Fields> {
           ),
           kVSpacer16,
         ],
-
         if (_shouldShowField(OAuth2Field.redirectUrl))
           ..._buildFieldWithSpacing(
             AuthTextField(
@@ -228,7 +177,6 @@ class _OAuth2FieldsState extends State<OAuth2Fields> {
               onChanged: (_) => _updateOAuth2(),
             ),
           ),
-
         if (_shouldShowField(
             OAuth2Field.scope)) // Based on refined list, Scope is always shown
 
@@ -240,7 +188,6 @@ class _OAuth2FieldsState extends State<OAuth2Fields> {
               onChanged: (_) => _updateOAuth2(),
             ),
           ),
-
         if (_shouldShowField(OAuth2Field.state))
           ..._buildFieldWithSpacing(
             AuthTextField(
@@ -250,51 +197,8 @@ class _OAuth2FieldsState extends State<OAuth2Fields> {
               onChanged: (_) => _updateOAuth2(),
             ),
           ),
-
-// if (_shouldShowField(OAuth2Field
-
-// .headerPrefix))
-
-// ..._buildFieldWithSpacing(
-
-// AuthTextField(
-
-// readOnly: widget.readOnly,
-
-// controller: _headerPrefixController,
-
-// hintText: "Header Prefix",
-
-// onChanged: (_) => _updateOAuth2(),
-
-// ),
-
-// ),
-
-// if (_shouldShowField(OAuth2Field
-
-// .audience))
-
-// ..._buildFieldWithSpacing(
-
-// AuthTextField(
-
-// readOnly: widget.readOnly,
-
-// controller: _audienceController,
-
-// hintText: "Audience",
-
-// onChanged: (_) => _updateOAuth2(),
-
-// ),
-
-// ),
-
         Divider(),
-
         kVSpacer16,
-
         ..._buildFieldWithSpacing(
           AuthTextField(
             readOnly: widget.readOnly,
@@ -303,7 +207,6 @@ class _OAuth2FieldsState extends State<OAuth2Fields> {
             onChanged: (_) => _updateOAuth2(),
           ),
         ),
-
         ..._buildFieldWithSpacing(
           AuthTextField(
             readOnly: widget.readOnly,
@@ -312,7 +215,6 @@ class _OAuth2FieldsState extends State<OAuth2Fields> {
             onChanged: (_) => _updateOAuth2(),
           ),
         ),
-
         ..._buildFieldWithSpacing(
           AuthTextField(
             readOnly: widget.readOnly,
@@ -321,7 +223,6 @@ class _OAuth2FieldsState extends State<OAuth2Fields> {
             onChanged: (_) => _updateOAuth2(),
           ),
         ),
-
         kVSpacer16,
       ],
     );
@@ -340,8 +241,6 @@ class _OAuth2FieldsState extends State<OAuth2Fields> {
       OAuth2Field.clientId,
       OAuth2Field.clientSecret,
       OAuth2Field.scope,
-      OAuth2Field.headerPrefix,
-      OAuth2Field.audience,
       OAuth2Field.refreshToken,
       OAuth2Field.identityToken,
       OAuth2Field.accessToken,
@@ -374,36 +273,19 @@ class _OAuth2FieldsState extends State<OAuth2Fields> {
   void _updateOAuth2() {
     final updatedOAuth2 = AuthOAuth2Model(
       grantType: _grantType,
-
       authorizationUrl: _authorizationUrlController.text.trim(),
-
       clientId: _clientIdController.text.trim(),
-
       accessTokenUrl: _accessTokenUrlController.text.trim(),
-
       clientSecret: _clientSecretController.text.trim(),
-
       codeChallengeMethod: _codeChallengeMethod,
-
       redirectUrl: _redirectUrlController.text.trim(),
-
       scope: _scopeController.text.trim(),
-
       state: _stateController.text.trim(),
-
       username: _usernameController.text.trim(),
-
       password: _passwordController.text.trim(),
-
       refreshToken: _refreshTokenController.text.trim(),
-
       identityToken: _identityTokenController.text.trim(),
-
       accessToken: _accessTokenController.text.trim(),
-
-// headerPrefix: _headerPrefixController.text.trim(),
-
-// audience: _audienceController.text.trim(),
     );
 
     widget.updateAuth?.call(
@@ -421,65 +303,33 @@ class _OAuth2FieldsState extends State<OAuth2Fields> {
   @override
   void dispose() {
     _authorizationUrlController.dispose();
-
     _accessTokenUrlController.dispose();
-
     _clientIdController.dispose();
-
     _clientSecretController.dispose();
-
     _redirectUrlController.dispose();
-
     _scopeController.dispose();
-
     _stateController.dispose();
-
     _usernameController.dispose();
-
     _passwordController.dispose();
-
     _refreshTokenController.dispose();
-
     _identityTokenController.dispose();
-
     _accessTokenController.dispose();
-
-// _headerPrefixController.dispose();
-
-// _audienceController.dispose();
-
     super.dispose();
   }
 }
 
 enum OAuth2Field {
   authorizationUrl,
-
   accessTokenUrl,
-
   clientId,
-
   clientSecret,
-
   redirectUrl,
-
   scope,
-
   state,
-
   codeChallengeMethod,
-
   username,
-
   password,
-
   refreshToken,
-
   identityToken,
-
   accessToken,
-
-  headerPrefix,
-
-  audience
 }
