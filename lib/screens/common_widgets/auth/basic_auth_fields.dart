@@ -32,8 +32,8 @@ class _BasicAuthFieldsState extends State<BasicAuthFields> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return ListView(
+      shrinkWrap: true,
       children: [
         EnvAuthField(
           readOnly: widget.readOnly,

@@ -37,8 +37,8 @@ class _ApiKeyAuthFieldsState extends State<ApiKeyAuthFields> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return ListView(
+      shrinkWrap: true,
       children: [
         Text(
           kLabelAddTo,

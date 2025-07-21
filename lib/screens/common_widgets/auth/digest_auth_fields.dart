@@ -45,8 +45,8 @@ class _DigestAuthFieldsState extends State<DigestAuthFields> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: ListView(
+        shrinkWrap: true,
         children: [
           EnvAuthField(
             readOnly: widget.readOnly,

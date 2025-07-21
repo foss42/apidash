@@ -42,8 +42,8 @@ class _JwtAuthFieldsState extends State<JwtAuthFields> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return ListView(
+      shrinkWrap: true,
       children: [
         Text(
           kMsgAddToken,
